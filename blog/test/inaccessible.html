@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Große Kardinalzahlen – Interaktive Hierarchie</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2a;
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        h1 {
+            text-align: center;
+            padding: 30px;
+            font-size: 2em;
+            background: linear-gradient(135deg, #1a1a4a, #2a2a6a);
+            border-bottom: 2px solid #4444aa;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+        .hierarchy-panel {
+            flex: 1;
+            min-width: 350px;
+            background: #12123a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #3333aa;
+        }
+        .info-panel {
+            flex: 1;
+            min-width: 350px;
+            background: #12123a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #3333aa;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .card {
+            padding: 12px 18px;
+            margin: 6px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+        .card:hover {
+            transform: translateX(8px);
+            background: #1e1e5a;
+        }
+        .card.active {
+            background: #2a2a7a;
+            border-left-color: #66aaff;
+            box-shadow: 0 0 15px rgba(100, 150, 255, 0.3);
+        }
+        .card .level-indicator {
+            font-size: 0.7em;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+        .card .name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .card .short-desc {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        .strength-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #2244aa, #ff4488);
+            border-radius: 2px;
+            margin-top: 6px;
+            transition: width 0.5s ease;
+        }
+        .info-panel h2 {
+            color: #88aaff;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .info-panel h3 {
+            color: #aa88ff;
+            margin: 15px 0 8px;
+        }
+        .info-panel p {
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        .info-panel .formula {
+            background: #1a1a4a;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border: 1px solid #4444aa;
+            overflow-x: auto;
+        }
+        .info-panel .analogy {
+            background: #1a2a1a;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-left: 4px solid #44aa44;
+            margin: 10px 0;
+        }
+        .info-panel .warning {
+            background: #2a1a1a;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-left: 4px solid #aa4444;
+            margin: 10px 0;
+        }
+        .compare-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0a2a;
+            border-radius: 8px;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: #1a1a3a;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .category-label {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 8px 0 4px 10px;
+            color: #8888cc;
+            border-top: 1px solid #2a2a5a;
+            margin-top: 10px;
+        }
+        #canvas-container {
+            width: 100%;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        canvas {
+            width: 100%;
+            background: #0e0e2e;
+            border-radius: 12px;
+            border: 1px solid #3333aa;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 5px;
+            padding: 10px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #1a1a4a;
+            border: 1px solid #3333aa;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab:hover, .tab.active {
+            background: #2a2a7a;
+            border-bottom-color: transparent;
+        }
+        .view { display: none; }
+        .view.active { display: flex; }
+        #graph-view { display: none; }
+        #graph-view.active { display: block; }
+    </style>
+</head>
+<body>
+    <h1>🔢 Große Kardinalzahlen – Interaktive Hierarchie</h1>
+    
+    <div class="tab-bar">
+        <div class="tab active" onclick="switchView('list')">📋 Liste & Details</div>
+        <div class="tab" onclick="switchView('graph')">🕸️ Graph-Ansicht</div>
+    </div>
+
+    <div class="container view active" id="list-view">
+        <div class="hierarchy-panel">
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#ff4488"></div> Inkonsistenz-Grenze</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ff8844"></div> Extrem stark</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ffcc44"></div> Sehr stark</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#44cc88"></div> Stark</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#4488ff"></div> Mittel</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#8844ff"></div> Basis</div>
+            </div>
+            <div id="card-list"></div>
+        </div>
+        <div class="info-panel" id="info-panel">
+            <h2>👈 Wähle eine Kardinalzahl</h2>
+            <p>Klicke links auf eine der großen Kardinalzahlen, um eine detaillierte Erklärung zu sehen.</p>
+            <div class="analogy">
+                <strong>Was sind große Kardinalzahlen?</strong><br><br>
+                Große Kardinalzahlen sind bestimmte unendliche Zahlen, deren Existenz nicht aus den normalen Axiomen der Mengenlehre (ZFC) bewiesen werden kann. Sie bilden eine Hierarchie der „Stärke" – je höher in der Hierarchie, desto stärker die Existenzannahme und desto mehr kann man damit beweisen.<br><br>
+                Stell dir eine Leiter vor, die ins Unendliche reicht. Jede Sprosse ist eine stärkere Annahme über die Struktur des mathematischen Universums.
+            </div>
+        </div>
+    </div>
+
+    <div id="graph-view">
+        <div id="canvas-container">
+            <canvas id="hierarchy-canvas" width="1200" height="800"></canvas>
+        </div>
+    </div>
+
+<script>
+const cardinals = [
+    {
+        name: "0 = 1 (Inkonsistenz)",
+        category: "Inkonsistenz-Grenze",
+        color: "#ff4488",
+        strength: 100,
+        shortDesc: "Widerspruch – alles ist beweisbar",
+        description: `<h2>0 = 1 – Die Inkonsistenz</h2>
+            <p>Dies ist <strong>keine echte Kardinalzahl</strong>, sondern die absolute Obergrenze: Wenn man aus einem Axiomensystem „0 = 1" ableiten kann, ist das System <strong>inkonsistent</strong> (widersprüchlich).</p>
+            <h3>Was bedeutet das?</h3>
+            <p>In einem inkonsistenten System kann man <em>alles</em> beweisen (ex falso quodlibet). Das System ist damit nutzlos.</p>
+            <div class="warning"><strong>⚠️ Wichtig:</strong> Alle großen Kardinalzahlen unterhalb dieser Grenze sind so gewählt, dass sie (hoffentlich) konsistent mit ZFC sind. Je näher an dieser Grenze, desto „gefährlicher" die Annahme.</div>
+            <h3>Warum steht das ganz oben?</h3>
+            <p>Die Hierarchie ordnet sich nach Konsistenzstärke. „0=1" ist die stärkste (und nutzlose) Annahme. Alles darunter ist der Versuch, so stark wie möglich zu sein, ohne inkonsistent zu werden.</p>`
+    },
+    {
+        name: "I0 – I3 (Rank-into-Rank)",
+        category: "Inkonsistenz-Grenze",
+        color: "#ff4488",
+        strength: 97,
+        shortDesc: "Stärkste bekannte konsistente Axiome",
+        description: `<h2>I0 – I3: Rank-into-Rank Axiome</h2>
+            <p>Die <strong>Rank-into-Rank</strong>-Axiome (I3, I2, I1, I0) sind die stärksten großen Kardinalzahl-Axiome, von denen man annimmt, dass sie noch konsistent sind.</p>
+            <h3>Die Hierarchie (schwächstes → stärkstes):</h3>
+            <div class="formula">
+I3: ∃ j: V_λ → V_λ (elementare Einbettung)<br>
+I2: ∃ j: V → M mit V_δ ⊆ M<br>
+I1: ∃ j: V_{λ+1} → V_{λ+1}<br>
+I0: ∃ j: L(V_{λ+1}) → L(V_{λ+1})
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir vor, das mathematische Universum ist so „symmetrisch", dass du es in sich selbst einbetten kannst – wie ein Fraktal, das auf jeder Ebene die gleiche Struktur hat. I0-I3 sagen: Es gibt eine nicht-triviale Selbstähnlichkeit des Universums auf höchster Ebene.
+            </div>
+            <h3>Warum so stark?</h3>
+            <p>Diese Axiome sind so nah an der Inkonsistenz, dass Kunen bewiesen hat: Eine elementare Einbettung j: V → V kann es <strong>nicht</strong> geben (Kunens Inkonsistenz). I0-I3 sind die stärksten Abschwächungen davon.</p>
+            <div class="warning"><strong>⚠️ Status:</strong> Es ist nicht bewiesen, dass diese konsistent sind! Aber bisher hat niemand einen Widerspruch gefunden.</div>`
+    },
+    {
+        name: "n-huge",
+        category: "Extrem stark",
+        color: "#ff8844",
+        strength: 90,
+        shortDesc: "Verallgemeinerung von huge auf n Schritte",
+        description: `<h2>n-huge Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>n-huge</strong>, wenn es eine elementare Einbettung j: V → M gibt mit einer Kette von n Schritten der Abgeschlossenheit.</p>
+            <div class="formula">
+κ ist n-huge ⟺ ∃ j: V → M mit<br>
+M^{j^n(κ)} ⊆ M<br><br>
+(j^n bedeutet: j n-mal auf κ anwenden)
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir vor, du hast einen Spiegel (die Einbettung j). „1-huge" bedeutet, das Spiegelbild ist extrem detailgetreu. „n-huge" bedeutet, du stellst n Spiegel hintereinander auf, und selbst nach n Reflexionen bleibt alles perfekt erhalten.
+            </div>
+            <p>Je größer n, desto stärker die Annahme. ω-huge (unendlich viele Schritte) wäre noch stärker.</p>`
+    },
+    {
+        name: "superhuge",
+        category: "Extrem stark",
+        color: "#ff8844",
+        strength: 89,
+        shortDesc: "Stärkere Version von huge",
+        description: `<h2>Superhuge Kardinalzahlen</h2>
+            <p>Eine <strong>superhuge</strong> Kardinalzahl ist eine Verstärkung des huge-Konzepts.</p>
+            <p>κ ist superhuge, wenn für jedes γ eine elementare Einbettung j: V → M existiert mit kritischem Punkt κ, sodass j(κ) > γ und M^{j(κ)} ⊆ M.</p>
+            <div class="formula">
+∀γ ∃j: V → M, crit(j) = κ,<br>
+j(κ) > γ, M^{j(κ)} ⊆ M
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Während „huge" sagt „der Spiegel funktioniert für eine bestimmte Größe", sagt „superhuge": „Egal wie groß du das Bild machst, der Spiegel funktioniert immer noch perfekt."
+            </div>`
+    },
+    {
+        name: "huge",
+        category: "Extrem stark",
+        color: "#ff8844",
+        strength: 85,
+        shortDesc: "Elementare Einbettung mit starker Abgeschlossenheit",
+        description: `<h2>Huge Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>huge</strong> (= 1-huge), wenn es eine elementare Einbettung j: V → M gibt mit kritischem Punkt κ, sodass M^{j(κ)} ⊆ M.</p>
+            <div class="formula">
+κ ist huge ⟺ ∃ j: V → M,<br>
+crit(j) = κ, M^{j(κ)} ⊆ M
+            </div>
+            <h3>Was bedeutet M^{j(κ)} ⊆ M?</h3>
+            <p>Das Zielmodell M ist so „dick", dass es alle Folgen der Länge j(κ) seiner eigenen Elemente enthält. Das ist eine extrem starke Abgeschlossenheitsbedingung.</p>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir eine Kopie des Universums vor (M), die so vollständig ist, dass sie alle „Bücher" enthält, die man aus ihren eigenen Elementen schreiben könnte – selbst wenn diese Bücher j(κ) viele Seiten haben.
+            </div>`
+    },
+    {
+        name: "almost huge",
+        category: "Extrem stark",
+        color: "#ff8844",
+        strength: 82,
+        shortDesc: "Knapp unterhalb von huge",
+        description: `<h2>Almost Huge Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>almost huge</strong>, wenn es eine elementare Einbettung j: V → M gibt mit kritischem Punkt κ, sodass M^{<j(κ)} ⊆ M.</p>
+            <div class="formula">
+κ ist almost huge ⟺ ∃ j: V → M,<br>
+crit(j) = κ, M^{<j(κ)} ⊆ M<br><br>
+(Abgeschlossen unter Folgen kürzer als j(κ),<br>
+aber nicht notwendig unter Folgen der Länge j(κ) selbst)
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Wie huge, aber das „Buch" darf beliebig viele Seiten haben – solange es <em>weniger</em> als j(κ) sind. Genau j(κ) Seiten sind nicht garantiert.
+            </div>`
+    },
+    {
+        name: "Vopěnkas Prinzip",
+        category: "Sehr stark",
+        color: "#ffcc44",
+        strength: 75,
+        shortDesc: "Jede echte Klasse hat ähnliche Strukturen",
+        description: `<h2>Vopěnkas Prinzip (VP)</h2>
+            <p><strong>Vopěnkas Prinzip</strong> ist ein mengentheoretisches Axiom, das besagt:</p>
+            <div class="formula">
+Für jede echte Klasse von Strukturen<br>
+gleicher Signatur gibt es zwei verschiedene<br>
+Strukturen A, B in der Klasse mit einer<br>
+elementaren Einbettung j: A → B.
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir eine unendliche Galerie mit Gemälden vor. Vopěnkas Prinzip sagt: Wenn du genug Gemälde hast (eine echte Klasse), dann müssen zwei davon so ähnlich sein, dass eines eine „perfekte Vergrößerung" des anderen ist.
+            </div>
+            <h3>Konsequenzen</h3>
+            <p>VP impliziert die Existenz von extendible Kardinalzahlen und ist äquivalent zu bestimmten Aussagen über Kategorientheorie. Es ist ein „Kompaktheitsprinzip" auf höchster Ebene.</p>`
+    },
+    {
+        name: "extendible",
+        category: "Sehr stark",
+        color: "#ffcc44",
+        strength: 72,
+        shortDesc: "Einbettungen zwischen Anfangsstücken des Universums",
+        description: `<h2>Extendible Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>η-extendible</strong>, wenn es eine elementare Einbettung j: V_{κ+η} → V_{j(κ)+j(η)} gibt mit kritischem Punkt κ.</p>
+            <div class="formula">
+κ ist extendible ⟺<br>
+∀η ∃j: V_{κ+η} → V_{j(κ+η)}<br>
+mit crit(j) = κ
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Das Universum bis zur Höhe κ+η kann immer in ein größeres Stück des Universums „hineinprojiziert" werden – egal wie weit über κ du schaust.
+            </div>
+            <p>Extendible Kardinalzahlen sind stärker als supercompact und implizieren Vopěnkas Prinzip für eine Menge von Strukturen.</p>`
+    },
+    {
+        name: "supercompact",
+        category: "Sehr stark",
+        color: "#ffcc44",
+        strength: 68,
+        shortDesc: "Ultrafilter-Charakterisierung mit maximaler Abgeschlossenheit",
+        description: `<h2>Supercompact Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>supercompact</strong>, wenn für jedes λ ≥ κ ein normaler feiner Ultrafilter auf P_κ(λ) existiert.</p>
+            <div class="formula">
+κ ist supercompact ⟺<br>
+∀λ ≥ κ: ∃ normaler feiner Ultrafilter auf P_κ(λ)<br><br>
+Äquivalent: ∀λ ∃j: V → M mit crit(j) = κ,<br>
+j(κ) > λ, M^λ ⊆ M
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> κ ist so „groß", dass es jede Menge von Teilmengen beliebiger Größe „überblicken" kann. Egal wie groß λ ist – κ hat genug Struktur, um λ zu „messen".
+            </div>
+            <h3>Bedeutung</h3>
+            <p>Supercompact Kardinalzahlen sind zentral in der modernen Mengenlehre. Sie implizieren viele Konsistenzresultate und sind eng mit dem <strong>Proper Forcing Axiom</strong> verbunden.</p>`
+    },
+    {
+        name: "strongly compact",
+        category: "Sehr stark",
+        color: "#ffcc44",
+        strength: 65,
+        shortDesc: "Kompaktheitssatz für infinitäre Logik",
+        description: `<h2>Strongly Compact Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>strongly compact</strong>, wenn die infinitäre Logik L_{κ,κ} den Kompaktheitssatz erfüllt.</p>
+            <div class="formula">
+κ ist strongly compact ⟺<br>
+L_{κ,κ} hat die Kompaktheitseigenschaft:<br>
+Jede Menge von Sätzen, deren jede Teilmenge<br>
+der Größe < κ erfüllbar ist, ist selbst erfüllbar.
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Der Kompaktheitssatz der normalen Logik sagt: „Wenn jedes endliche Stück einer Theorie ein Modell hat, hat die ganze Theorie ein Modell." Strongly compact hebt das auf die Ebene κ: „Wenn jedes Stück der Größe < κ erfüllbar ist, ist alles erfüllbar."
+            </div>`
+    },
+    {
+        name: "superstrong",
+        category: "Sehr stark",
+        color: "#ffcc44",
+        strength: 62,
+        shortDesc: "Einbettung mit V_{j(κ)} ⊆ M",
+        description: `<h2>Superstrong Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>superstrong</strong>, wenn es eine elementare Einbettung j: V → M gibt mit kritischem Punkt κ und V_{j(κ)} ⊆ M.</p>
+            <div class="formula">
+κ ist superstrong ⟺ ∃j: V → M,<br>
+crit(j) = κ, V_{j(κ)} ⊆ M
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Das Zielmodell M enthält das gesamte Universum bis zur Höhe j(κ). Es ist „lokal vollständig" – alles was unterhalb von j(κ) passiert, ist in M sichtbar.
+            </div>
+            <p>Superstrong impliziert strong und ist schwächer als supercompact.</p>`
+    },
+    {
+        name: "Woodin",
+        category: "Stark",
+        color: "#44cc88",
+        strength: 58,
+        shortDesc: "Zentral für Determiniertheitsbeweise",
+        description: `<h2>Woodin-Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl δ ist eine <strong>Woodin-Kardinalzahl</strong>, wenn für jede Funktion f: δ → δ eine Kardinalzahl κ < δ existiert mit {f-Abgeschlossenheit} und einer elementaren Einbettung.</p>
+            <div class="formula">
+δ ist Woodin ⟺<br>
+∀f: δ → δ ∃κ < δ ∃j: V → M mit<br>
+crit(j) = κ, V_{j(f)(κ)} ⊆ M
+            </div>
+            <h3>Bedeutung</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Eine Woodin-Kardinalzahl ist wie ein „Kontrollturm", der für jede mögliche Funktion einen passenden „starken Punkt" unterhalb von sich hat. Sie organisiert die Stärke unterhalb von sich.
+            </div>
+            <p>Woodin-Kardinalzahlen sind zentral für:</p>
+            <p>• Projective Determinacy (PD)<br>• AD^{L(ℝ)} (Determiniertheit in L(ℝ))<br>• Die Theorie des Kontinuums</p>
+            <p>Unendlich viele Woodin-Kardinalzahlen implizieren, dass alle projizierbaren Mengen determiniert sind.</p>`
+    },
+    {
+        name: "strong",
+        category: "Stark",
+        color: "#44cc88",
+        strength: 52,
+        shortDesc: "Einbettung mit beliebiger Abgeschlossenheit",
+        description: `<h2>Strong Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>strong</strong> (stark), wenn für jedes λ eine elementare Einbettung j: V → M existiert mit crit(j) = κ und V_λ ⊆ M.</p>
+            <div class="formula">
+κ ist strong ⟺<br>
+∀λ ∃j: V → M, crit(j) = κ, V_λ ⊆ M
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Egal wie weit du ins Universum hinausschaust (beliebiges λ), es gibt immer eine Einbettung, die alles bis zu dieser Höhe im Zielmodell bewahrt. κ ist „stark genug", um jede Höhe zu erreichen.
+            </div>
+            <p>Strong impliziert measurable, ist aber schwächer als superstrong.</p>`
+    },
+    {
+        name: "measurable",
+        category: "Stark",
+        color: "#44cc88",
+        strength: 45,
+        shortDesc: "Nicht-trivialer κ-vollständiger Ultrafilter existiert",
+        description: `<h2>Measurable Kardinalzahlen (Messbare)</h2>
+            <p>Eine Kardinalzahl κ ist <strong>messbar</strong>, wenn ein nicht-trivialer κ-vollständiger Ultrafilter auf κ existiert.</p>
+            <div class="formula">
+κ ist measurable ⟺<br>
+∃U Ultrafilter auf κ mit:<br>
+• U ist nicht-prinzipal (nicht-trivial)<br>
+• U ist κ-vollständig (abgeschlossen unter < κ vielen Schnitten)<br><br>
+Äquivalent: ∃j: V → M elementare Einbettung<br>
+mit crit(j) = κ
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir vor, du willst auf κ ein „Maß" definieren – eine Methode, Teilmengen als „groß" oder „klein" zu klassifizieren. Bei ℵ₀ geht das nicht nicht-trivial. Eine messbare Kardinalzahl ist so groß, dass so ein Maß existiert!
+            </div>
+            <h3>Historische Bedeutung</h3>
+            <p>Messbare Kardinalzahlen waren die ersten „modernen" großen Kardinalzahlen (Ulam, 1930). Sie markieren die Grenze, ab der elementare Einbettungen ins Spiel kommen.</p>
+            <div class="warning"><strong>Wichtig:</strong></strong> Die Existenz einer messbaren Kardinalzahl impliziert, dass V ≠ L (das Universum ist nicht das konstruktible Universum). Das war Scotts bahnbrechendes Ergebnis von 1961.</div>`
+    },
+    {
+        name: "Ramsey",
+        category: "Stark",
+        color: "#44cc88",
+        strength: 40,
+        shortDesc: "Partitionseigenschaft für unendliche Mengen",
+        description: `<h2>Ramsey-Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist eine <strong>Ramsey-Kardinalzahl</strong>, wenn sie die Partitionseigenschaft κ → (κ)^{<ω}_2 erfüllt.</p>
+            <div class="formula">
+κ ist Ramsey ⟺ κ → (κ)^{<ω}_2<br><br>
+Das bedeutet: Für jede Färbung der endlichen<br>
+Teilmengen von κ mit 2 Farben gibt es eine<br>
+Teilmenge H ⊆ κ der Größe κ, die für jede<br>
+feste Länge n homogen ist.
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir vor, du färbst alle endlichen Gruppen von Personen aus einer Stadt entweder rot oder blau. Eine Ramsey-Kardinalzahl garantiert: Es gibt eine ganze „Großstadt" (Größe κ), in der für jede Gruppengröße n alle n-er-Gruppen die gleiche Farbe haben.
+            </div>
+            <p>Ramsey-Kardinalzahlen implizieren die Existenz von 0# und sind stärker als ω₁-iterable.</p>`
+    },
+    {
+        name: "strongly Ramsey",
+        category: "Stark",
+        color: "#44cc88",
+        strength: 42,
+        shortDesc: "Verstärkung der Ramsey-Eigenschaft",
+        description: `<h2>Strongly Ramsey Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>strongly Ramsey</strong>, wenn jede Menge A ⊆ κ in einem schwach amenablen κ-Modell M enthalten ist, für das ein M-Ultrafilter mit der Maß-Eins-Eigenschaft existiert.</p>
+            <div class="formula">
+κ ist strongly Ramsey ⟺<br>
+∀A ⊆ κ ∃M (schwach amenables κ-Modell mit A ∈ M)<br>
+∃U (M-Ultrafilter auf κ mit Wohlgegründetheit<br>
+des Ultraprodukts)
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Wie Ramsey, aber mit einer zusätzlichen „Strukturgarantie": Nicht nur existiert die homogene Menge, sondern sie kommt mit einem vollständigen Messsystem, das gut mit dem umgebenden Modell zusammenarbeitet.
+            </div>`
+    },
+    {
+        name: "0# existiert",
+        category: "Mittel",
+        color: "#4488ff",
+        strength: 35,
+        shortDesc: "Das konstruktible Universum ist 'dünn'",
+        description: `<h2>0# (Zero Sharp) existiert</h2>
+            <p><strong>0#</strong> ist eine Menge natürlicher Zahlen (technisch: eine Menge von Gödelnummern), deren Existenz besagt, dass das konstruktible Universum L „extrem dünn" ist.</p>
+            <div class="formula">
+0# existiert ⟺<br>
+Es gibt eine nicht-triviale elementare Einbettung<br>
+j: L → L<br><br>
+Äquivalent: Die Theorie (L, ∈) mit Konstanten<br>
+für alle Ordinalzahlen hat überabzählbar viele<br>
+„Indiscernibles" (ununterscheidbare Elemente).
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir das konstruktible Universum L als ein „minimales Haus" vor, das nur das Nötigste enthält. 0# zu haben bedeutet: Dieses Haus ist SO minimal, dass es eine geheime Symmetrie hat – man kann es in sich selbst verschieben, ohne dass es jemand merkt. Das „echte" Universum V ist viel reicher als L.
+            </div>
+            <h3>Konsequenzen</h3>
+            <p>• Jede überabzählbare Kardinalzahl ist in L unerreichbar<br>• L „sieht" die wahre Größe der Kardinalzahlen nicht<br>• Impliziert durch jede messbare Kardinalzahl</p>`
+    },
+    {
+        name: "ω₁-iterable",
+        category: "Mittel",
+        color: "#4488ff",
+        strength: 37,
+        shortDesc: "Iterierbare Ultrapotenzen der Länge ω₁",
+        description: `<h2>ω₁-iterable Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>ω₁-iterable</strong>, wenn es ein schwaches κ-Modell M mit einem M-Ultrafilter gibt, dessen iterierte Ultrapotenzen für ω₁ viele Schritte wohlgegründet bleiben.</p>
+            <div class="formula">
+κ ist ω₁-iterable ⟺<br>
+∃M (schwaches κ-Modell) ∃U (M-Ultrafilter auf κ)<br>
+sodass die Iteration von U für ω₁ Schritte<br>
+wohlgegründet bleibt.
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir vor, du kopierst ein Foto immer wieder (Ultrapotenz = Kopie). Normalerweise wird die Kopie irgendwann unbrauchbar. ω₁-iterable bedeutet: Du kannst ω₁ viele Kopien machen, und das Bild bleibt immer noch scharf (wohlgegründet).
+            </div>`
+    },
+    {
+        name: "strongly unfoldable",
+        category: "Mittel",
+        color: "#4488ff",
+        strength: 30,
+        shortDesc: "Verallgemeinerung von schwach kompakt",
+        description: `<h2>Strongly Unfoldable Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>strongly unfoldable</strong>, wenn für jedes λ und jedes transitive M der Größe κ mit κ ∈ M eine elementare Einbettung j: M → N existiert mit crit(j) = κ, j(κ) ≥ λ und V_λ ⊆ N.</p>
+            <div class="formula">
+κ ist strongly unfoldable ⟺<br>
+∀λ ∀M (transitiv, |M| = κ, κ ∈ M)<br>
+∃j: M → N, crit(j) = κ, j(κ) ≥ λ, V_λ ⊆ N
+            </div>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Wie ein Origami-Papier, das man beliebig weit „auffalten" kann (unfold). Egal wie weit du es auffaltest (λ), die Struktur bleibt erhalten und das Ergebnis enthält alles bis zur Höhe λ.
+            </div>
+            <p>Strongly unfoldable liegt zwischen weakly compact und Ramsey in der Stärke.</p>`
+    },
+    {
+        name: "indescribable",
+        category: "Mittel",
+        color: "#4488ff",
+        strength: 25,
+        shortDesc: "Nicht durch bestimmte Formeln beschreibbar",
+        description: `<h2>Indescribable (Unbeschreibbare) Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>Π^m_n-indescribable</strong>, wenn für jeden Π^m_n-Satz φ gilt: Wenn (V_κ, ∈, A) ⊨ φ, dann gibt es ein α < κ mit (V_α, ∈, A∩V_α) ⊨ φ.</p>
+            <div class="formula">
+κ ist Π^m_n-indescribable ⟺<br>
+∀φ ∈ Π^m_n ∀A ⊆ V_κ:<br>
+(V_κ, ∈, A) ⊨ φ ⟹ ∃α < κ: (V_α, ∈, A∩V_α) ⊨ φ
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> κ ist so „groß", dass man es nicht von kleineren Kardinalzahlen unterscheiden kann, wenn man nur Formeln einer bestimmten Komplexität benutzt. Es ist „unbeschreibbar" – jede Eigenschaft, die κ hat, hat auch schon ein kleineres α.
+            </div>
+            <p>• Π^1_0-indescribable = weakly compact<br>• Höhere Stufen (Π^m_n für größere m, n) sind stärker</p>`
+    },
+    {
+        name: "weakly compact",
+        category: "Basis",
+        color: "#8844ff",
+        strength: 20,
+        shortDesc: "Kompaktheitssatz für L_{κ,κ} (schwache Version)",
+        description: `<h2>Weakly Compact (Schwach Kompakte) Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>weakly compact</strong>, wenn sie unerreichbar ist und die Baumeigenschaft hat (tree property).</p>
+            <div class="formula">
+κ ist weakly compact ⟺ (viele äquivalente Def.)<br><br>
+1. κ ist unerreichbar + κ → (κ)^2_2<br>
+   (Partitionseigenschaft für Paare)<br><br>
+2. Jeder κ-Baum hat einen Ast der Länge κ<br>
+   (keine κ-Aronszajn-Bäume)<br><br>
+3. κ ist Π^1_1-indescribable<br><br>
+4. L_{κ,κ} hat die schwache Kompaktheitseigenschaft
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir einen Baum vor, der auf jeder Ebene weniger als κ Äste hat und κ Ebenen hoch ist. Bei ω₁ kann so ein Baum existieren, ohne einen unendlich langen Ast zu haben (Aronszajn-Baum). Bei einer schwach kompakten Kardinalzahl ist das UNMÖGLICH – jeder solche Baum MUSS einen langen Ast haben.
+            </div>
+            <p>Weakly compact ist äquivalent zu vielen verschiedenen Eigenschaften aus Kombinatorik, Logik und Topologie – daher der Name „kompakt".</p>`
+    },
+    {
+        name: "inaccessible (unerreichbar)",
+        category: "Basis",
+        color: "#8844ff",
+        strength: 15,
+        shortDesc: "Nicht von unten erreichbar – regulär und starker Limes",
+        description: `<h2>Inaccessible (Unerreichbare) Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist <strong>(stark) unerreichbar</strong>, wenn sie:</p>
+            <div class="formula">
+κ ist inaccessible ⟺<br>
+1. κ > ω (überabzählbar)<br>
+2. κ ist regulär: cf(κ) = κ<br>
+   (nicht als Vereinigung von weniger als κ<br>
+    kleineren Mengen darstellbar)<br>
+3. κ ist starker Limes: ∀λ < κ: 2^λ < κ<br>
+   (Potenzmengenoperation führt nicht aus κ heraus)
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Stell dir eine Bergspitze vor, die du von unten NICHT erreichen kannst:<br><br>
+• <strong>Regulär:</strong> Du kannst nicht „von der Seite" kommen – egal wie viele kleinere Leitern (< κ viele) du aneinanderreihst, du kommst nicht hoch.<br><br>
+• <strong>Starker Limes:</strong> Du kannst nicht „exponentiell springen" – selbst wenn du 2^λ für jedes λ < κ berechnest, landest du immer noch unter κ.<br><br>
+κ ist wie eine Mauer, die alle „normalen" Konstruktionen nicht durchbrechen können.
+            </div>
+            <h3>Bedeutung</h3>
+            <p>• Die Existenz einer unerreichbaren Kardinalzahl kann nicht in ZFC bewiesen werden<br>• V_κ (das Universum bis Höhe κ) ist selbst ein Modell von ZFC!<br>• Dies ist die „Einstiegsdroge" der großen Kardinalzahlen</p>
+            <div class="warning"><strong>Schwach vs. Stark unerreichbar:</strong><br>• Schwach unerreichbar: regulär + schwacher Limes (∀λ < κ: λ⁺ < κ, wobei λ⁺ der Nachfolger ist)<br>• Stark unerreichbar: regulär + starker Limes (∀λ < κ: 2^λ < κ)<br>Unter GCH sind beide äquivalent.</div>`
+    },
+    {
+        name: "Mahlo",
+        category: "Basis",
+        color: "#8844ff",
+        strength: 18,
+        shortDesc: "Die Menge der Unerreichbaren ist stationär",
+        description: `<h2>Mahlo-Kardinalzahlen</h2>
+            <p>Eine Kardinalzahl κ ist eine <strong>Mahlo-Kardinalzahl</strong>, wenn sie unerreichbar ist und die Menge der unerreichbaren Kardinalzahlen unterhalb von κ stationär in κ ist.</p>
+            <div class="formula">
+κ ist Mahlo ⟺<br>
+1. κ ist inaccessible<br>
+2. {α < κ : α ist inaccessible} ist stationär in κ<br><br>
+(Stationär = trifft jeden Club, d.h. jede<br>
+abgeschlossene unbeschränkte Teilmenge von κ)
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Eine unerreichbare Kardinalzahl ist ein hoher Berg. Eine Mahlo-Kardinalzahl ist ein Berg, der SO hoch ist, dass unterhalb von ihm „überall" andere hohe Berge (unerreichbare) stehen – nicht nur vereinzelt, sondern so dicht, dass man ihnen nicht ausweichen kann (stationär).
+            </div>
+            <h3>Hyper-Mahlo und weiter</h3>
+            <p>Man kann das iterieren:<br>• 1-Mahlo = Mahlo<br>• 2-Mahlo = die Menge der Mahlo-Kardinalzahlen unterhalb ist stationär<br>• α-Mahlo für jedes α<br>• Hyper-Mahlo = α-Mahlo für alle α</p>`
+    },
+    {
+        name: "ℵ₀, ℵ₁, ... (ZFC-Kardinalzahlen)",
+        category: "Basis",
+        color: "#8844ff",
+        strength: 5,
+        shortDesc: "Die 'normalen' unendlichen Kardinalzahlen",
+        description: `<h2>Die Aleph-Zahlen: ℵ₀, ℵ₁, ℵ₂, ...</h2>
+            <p>Dies sind die <strong>„normalen" unendlichen Kardinalzahlen</strong>, deren Existenz bereits in ZFC bewiesen werden kann.</p>
+            <div class="formula">
+ℵ₀ = |ℕ| (Größe der natürlichen Zahlen)<br>
+ℵ₁ = kleinste überabzählbare Kardinalzahl<br>
+ℵ₂ = nächste Kardinalzahl nach ℵ₁<br>
+...<br>
+ℵ_ω = sup{ℵ₀, ℵ₁, ℵ₂, ...} (singulärer Limes)<br>
+ℵ_{ω+1}, ℵ_{ω·2}, ..., ℵ_{ω²}, ..., ℵ_{ω^ω}, ...
+            </div>
+            <h3>Intuition</h3>
+            <div class="analogy">
+                <strong>🎯 Analogie:</strong> Die Aleph-Zahlen sind wie die Stockwerke eines unendlich hohen Gebäudes. Jedes Stockwerk ist „größer" als das darunter. Aber all diese Stockwerke sind noch „erreichbar" – man kann sie durch normale Konstruktionen (Nachfolger, Limites) bauen.<br><br>
+Große Kardinalzahlen sind dagegen wie ein ANDERES Gebäude, das so hoch ist, dass man es vom ersten Gebäude aus nicht einmal sehen kann.
+            </div>
+            <h3>Warum reichen sie nicht?</h3>
+            <p>Alle ℵ-Zahlen (auch ℵ_{ℵ_{ℵ_...}}) sind „von unten erreichbar". Eine unerreichbare Kardinalzahl ist größer als ALL diese – sie ist der erste Schritt in die Welt der großen Kardinalzahlen.</p>`
+    }
+];
+
+// Sort by strength descending
+cardinals.sort((a, b) => b.strength - a.strength);
+
+function renderCards() {
+    const list = document.getElementById('card-list');
+    let currentCategory = '';
+    
+    cardinals.forEach((card, index) => {
+        if (card.category !== currentCategory) {
+            currentCategory = card.category;
+            const label = document.createElement('div');
+            label.className = 'category-label';
+            label.textContent = currentCategory;
+            list.appendChild(label);
+        }
+        
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.onclick = () => selectCard(index);
+        div.innerHTML = `
+            <div class="level-indicator">Stärke: ${card.strength}/100</div>
+            <div class="name" style="color: ${card.color}">${card.name}</div>
+            <div class="short-desc">${card.shortDesc}</div>
+            <div class="strength-bar" style="width: ${card.strength}%; background: linear-gradient(90deg, ${card.color}44, ${card.color})"></div>
+        `;
+        div.id = `card-${index}`;
+        list.appendChild(div);
+    });
+}
+
+function selectCard(index) {
+    // Remove active from all
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.getElementById(`card-${index}`).classList.add('active');
+    
+    const card = cardinals[index];
+    const panel = document.getElementById('info-panel');
+    panel.innerHTML = card.description + `
+        <div class="compare-section">
+            <h3>📊 Position in der Hierarchie</h3>
+            <p><strong>Konsistenzstärke:</strong> ${card.strength}/100</p>
+            <p><strong>Kategorie:</strong> ${card.category}</p>
+            <div style="background: #1a1a4a; border-radius: 8px; padding: 10px; margin-top: 10px;">
+                <div style="position: relative; height: 30px; background: linear-gradient(90deg, #8844ff, #4488ff, #44cc88, #ffcc44, #ff8844, #ff4488); border-radius: 4px;">
+                    <div style="position: absolute; left: ${card.strength}%; top: -5px; transform: translateX(-50%);">
+                        <div style="width: 3px; height: 40px; background: white; margin: 0 auto;"></div>
+                        <div style="color: white; font-size: 0.7em; text-align: center; white-space: nowrap;">${card.name.substring(0, 15)}</div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.7em; margin-top: 5px; opacity: 0.6;">
+                    <span>ZFC</span>
+                    <span>Inaccessible</span>
+                    <span>Measurable</span>
+                    <span>Supercompact</span>
+                    <span>I0-I3</span>
+                    <span>0=1</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Graph View
+function drawGraph() {
+    const canvas = document.getElementById('hierarchy-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set actual pixel dimensions
+    canvas.width = canvas.offsetWidth * 2 || 2400;
+    canvas.height = 1600;
+    
+    const w = canvas.width;
+    const h = canvas.height;
+    
+    ctx.fillStyle = '#0e0e2e';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Position nodes
+    const nodes = cardinals.map((card, i) => {
+        const y = 60 + (i / (cardinals.length - 1)) * (h - 120);
+        const x = w/2 + Math.sin(i * 0.8) * 200;
+        return { ...card, x, y, index: i };
+    });
+    
+    // Draw connections (each node connects to the one below)
+    ctx.strokeStyle = '#333366';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < nodes.length - 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[i+1].x, nodes[i+1].y);
+        ctx.stroke();
+        
+        // Arrow
+        const angle = Math.atan2(nodes[i+1].y - nodes[i].y, nodes[i+1].x - nodes[i].x);
+        const midX = (nodes[i].x + nodes[i+1].x) / 2;
+        const midY = (nodes[i].y + nodes[i+1].y) / 2;
+        ctx.beginPath();
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(midX - 10 * Math.cos(angle - 0.4), midY - 10 * Math.sin(angle - 0.4));
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(midX - 10 * Math.cos(angle + 0.4), midY - 10 * Math.sin(angle + 0.4));
+        ctx.stroke();
+    }
+    
+    // Draw nodes
+    nodes.forEach((node, i) => {
+        // Glow
+        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, 40);
+        gradient.addColorStop(0, node.color + '44');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Circle
+        ctx.fillStyle = node.color;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 12, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Label
+        ctx.fillStyle = '#e0e0ff';
+        ctx.font = '20px Segoe UI';
+        ctx.textAlign = node.x > w/2 ? 'left' : 'right';
+        ctx.fillText(node.name, node.x + (node.x > w/2 ? 25 : -25), node.y + 6);
+        
+        // Strength label
+        ctx.fillStyle = '#888899';
+        ctx.font = '14px Segoe UI';
+        ctx.fillText(`Stärke: ${node.strength}`, node.x + (node.x > w/2 ? 25 : -25), node.y + 24);
+    });
+    
+    // Title
+    ctx.fillStyle = '#88aaff';
+    ctx.font = 'bold 28px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Hierarchie der Großen Kardinalzahlen', w/2, 35);
+    ctx.font = '16px Segoe UI';
+    ctx.fillStyle = '#666688';
+    ctx.fillText('(von stärkster Annahme oben zu schwächster unten)', w/2, 58);
+}
+
+function switchView(view) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    
+    if (view === 'list') {
+        document.getElementById('list-view').classList.add('active');
+        document.getElementById('graph-view').classList.remove('active');
+        document.querySelectorAll('.tab')[0].classList.add('active');
+    } else {
+        document.getElementById('list-view').classList.remove('active');
+        document.getElementById('graph-view').classList.add('active');
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        setTimeout(drawGraph, 100);
+    }
+}
+
+// Initialize
+renderCards();
+</script>
+</body>
+</html>
