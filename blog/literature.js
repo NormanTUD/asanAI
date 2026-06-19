@@ -1,4 +1,11 @@
 window.bibData = {
+	"thomasdcolmar1820": {
+		title: "Machine arithmétique dite Arithmomètre",
+		author: "Charles Xavier Thomas de Colmar",
+		year: 1820,
+		url: "https://en.wikipedia.org/wiki/Arithmometer"
+	},
+
 	"summaarithmetica": {
 		url: "https://dn790008.ca.archive.org/0/items/summa-de-arithmetica-geometria-proportioni-et-proportionalita/Summa%20de%20arithmetica%2C%20geometria%2C%20proportioni%20et%20proportionalita_text.pdf",
 		title: "Summa de arithmetica",
