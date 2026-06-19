@@ -2379,3 +2379,23 @@ body:not(.darkmode) .bar-tooltip-raw {
 	background-color: rgba(0, 0, 0, 0.15);
 	border-style: inset;
 }
+
+.left_border_radius {
+  display: inline-block;
+  vertical-align: top;
+  border-top-left-radius: 12px;     /* Fester Wert links */
+  border-bottom-left-radius: 12px;  /* Fester Wert links */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-right: 0;
+}
+
+.right_border_radius {
+  display: inline-block;
+  vertical-align: top;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 12px;    /* Fester Wert rechts */
+  border-bottom-right-radius: 12px; /* Fester Wert rechts */
+  margin-left: 0;
+}
