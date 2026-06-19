@@ -1,0 +1,1 @@
+die welt ist voller muster, zB die form der sonnenbewegung übers jahr, die man mit fkts approximieren kann. llm nutzen solche muster insofern als dass sie in den daten enthalten sind (winter = sonne niedrig, kalt, ...) und finden sie und approx sie über dense
