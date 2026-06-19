@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Bloom Garden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            background: #1a0a2e;
+            cursor: default;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #garden {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: background 3s ease;
+        }
+
+        #ui-top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #ui-top > * {
+            pointer-events: all;
+        }
+
+        .stat-bar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 20px;
+        }
+
+        #seeds-count, #flowers-count, #butterflies-count, #level-display {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        #ui-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            pointer-events: none;
+            flex-wrap: wrap;
+        }
+
+        #ui-bottom > * {
+            pointer-events: all;
+        }
+
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-btn:hover {
+            transform: scale(1.15);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-btn.active {
+            border-color: #ffdd57;
+            background: rgba(255, 221, 87, 0.3);
+            box-shadow: 0 0 20px rgba(255, 221, 87, 0.4);
+        }
+
+        .tool-btn .tooltip {
+            position: absolute;
+            bottom: 65px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .tool-btn:hover .tooltip {
+            opacity: 1;
+        }
+
+        .flower {
+            position: absolute;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            animation: bloom 0.8s ease-out forwards;
+        }
+
+        .flower:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        @keyframes bloom {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+
+        @keyframes butterfly-fly {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, -30px) rotate(5deg); }
+            50% { transform: translate(100px, 10px) rotate(-5deg); }
+            75% { transform: translate(50px, 40px) rotate(3deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: float-up 1.5s ease-out forwards;
+            font-size: 20px;
+        }
+
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #fff, transparent);
+            border-radius: 50%;
+            animation: sparkle 1s ease-out forwards;
+        }
+
+        .butterfly {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: butterfly-fly 8s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .raindrop {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, transparent, rgba(150, 200, 255, 0.6));
+            border-radius: 0 0 2px 2px;
+            animation: rain-fall linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rain-fall {
+            0% { transform: translateY(-20px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0.3; }
+        }
+
+        .sun-ray {
+            position: absolute;
+            top: -50px;
+            width: 3px;
+            background: linear-gradient(to bottom, rgba(255, 220, 100, 0.8), transparent);
+            pointer-events: none;
+            animation: sun-shine 2s ease-in-out forwards;
+        }
+
+        @keyframes sun-shine {
+            0% { opacity: 0; height: 0; }
+            50% { opacity: 1; height: 200px; }
+            100% { opacity: 0; height: 300px; }
+        }
+
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 1s ease;
+        }
+
+        #welcome-screen h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        #welcome-screen p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        #start-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+
+        #start-btn:hover {
+            background: white;
+            color: #764ba2;
+            transform: scale(1.05);
+        }
+
+        #level-up-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            z-index: 500;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            width: 90%;
+        }
+
+        #level-up-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #level-up-popup h2 {
+            color: #764ba2;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        #level-up-popup p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        #level-up-popup .unlock-text {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #level-up-popup button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Georgia', serif;
+            transition: transform 0.2s;
+        }
+
+        #level-up-popup button:hover {
+            transform: scale(1.05);
+        }
+
+        .ground-decoration {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(to top, rgba(34, 139, 34, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .grass-blade {
+            position: absolute;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to top, rgba(34, 139, 34, 0.4), transparent);
+            border-radius: 0 0 2px 2px;
+            animation: sway 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        #combo-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 200;
+            transition: all 0.3s ease;
+        }
+
+        #combo-display.show {
+            opacity: 1;
+            animation: combo-pop 0.5s ease-out;
+        }
+
+        @keyframes combo-pop {
+            0% { transform: translate(-50%, -50%) scale(0.5); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .firefly {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(255, 255, 150, 0.9), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: firefly-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes firefly-glow {
+            0%, 100% { opacity: 0.2; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        #music-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        #music-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        #discovery-log {
+            position: fixed;
+            top: 60px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            max-width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            color: white;
+            font-size: 12px;
+            display: none;
+            scrollbar-width: thin;
+        }
+
+        #discovery-log.show {
+            display: block;
+        }
+
+        #discovery-log h3 {
+            margin-bottom: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .discovery-item {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slide-in 0.3s ease-out;
+        }
+
+        @keyframes slide-in {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        #garden-stats {
+            position: fixed;
+            bottom: 80px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 12px;
+            z-index: 100;
+            line-height: 1.8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffdd57, #ff6b6b);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .magic-trail {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: trail-fade 0.8s ease-out forwards;
+        }
+
+        @keyframes trail-fade {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        #achievement-toast {
+            position: fixed;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 14px;
+            z-index: 600;
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #achievement-toast.show {
+            top: 70px;
+        }
+
+        .wishing-well {
+            position: absolute;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .wishing-well:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .pond {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(100, 180, 255, 0.4), rgba(50, 100, 200, 0.2));
+            border: 2px solid rgba(100, 180, 255, 0.3);
+            pointer-events: none;
+            animation: pond-ripple 4s ease-in-out infinite;
+        }
+
+        @keyframes pond-ripple {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .tree {
+            position: absolute;
+            font-size: 50px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: sway 5s ease-in-out infinite;
+        }
+
+        .tree:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 600px) {
+            .tool-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+            .stat-bar {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            #welcome-screen h1 {
+                font-size: 36px;
+            }
+            #garden-stats {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="garden"></div>
+
+        <div id="welcome-screen">
+            <h1>🌸 Bloom Garden</h1>
+            <p>Tap anywhere to plant flowers.<br>Watch your garden grow.<br>Discover magical things.</p>
+            <button id="start-btn">✨ Begin</button>
+        </div>
+
+        <div id="ui-top">
+            <div class="stat-bar">
+                <span class="stat-icon">🌱</span>
+                <span id="seeds-count">50</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-icon">🌸</span>
+                <span id="flowers-count">0</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-icon">🦋</span>
+                <span id="butterflies-count">0</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-icon">⭐</span>
+                <span id="level-display">1</span>
+            </div>
+        </div>
+
+        <div id="ui-bottom">
+            <div class="tool-btn active" data-tool="plant" onclick="selectTool('plant')">
+                🌱
+                <span class="tooltip">Plant</span>
+            </div>
+            <div class="tool-btn" data-tool="water" onclick="selectTool('water')">
+                💧
+                <span class="tooltip">Water</span>
+            </div>
+            <div class="tool-btn" data-tool="sun" onclick="selectTool('sun')">
+                ☀️
+                <span class="tooltip">Sunshine</span>
+            </div>
+            <div class="tool-btn" data-tool="magic" onclick="selectTool('magic')" style="display:none">
+                ✨
+                <span class="tooltip">Magic</span>
+            </div>
+            <div class="tool-btn" data-tool="paint" onclick="selectTool('paint')" style="display:none">
+                🎨
+                <span class="tooltip">Paint</span>
+            </div>
+            <div class="tool-btn" data-tool="music" onclick="selectTool('music')" style="display:none">
+                🎵
+                <span class="tooltip">Music</span>
+            </div>
+            <div class="tool-btn" data-tool="wish" onclick="selectTool('wish')" style="display:none">
+                🌟
+                <span class="tooltip">Wish</span>
+            </div>
+            <div class="tool-btn" data-tool="love" onclick="selectTool('love')" style="display:none">
+                💕
+                <span class="tooltip">Love</span>
+            </div>
+            <div class="tool-btn" id="log-btn" onclick="toggleLog()">
+                📖
+                <span class="tooltip">Discoveries</span>
+            </div>
+        </div>
+
+        <div id="combo-display"></div>
+        <div id="level-up-popup">
+            <h2>🎉 Level Up!</h2>
+            <p id="level-up-text"></p>
+            <p class="unlock-text" id="unlock-text"></p>
+            <button onclick="closeLevelUp()">Continue ✨</button>
+        </div>
+        <div id="achievement-toast"></div>
+        <div id="discovery-log">
+            <h3>📖 Discoveries</h3>
+            <div id="discovery-list"></div>
+        </div>
+        <div id="garden-stats">
+            <div>Garden Beauty: <span id="beauty-score">0</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="xp-bar" style="width: 0%"></div></div>
+            <div style="margin-top: 8px; opacity: 0.7;">Next level: <span id="xp-needed">10</span> more 🌸</div>
+        </div>
+        <div id="music-toggle" onclick="toggleMusic()">🔇</div>
+    </div>
+
+    <script>
+        // ============ GAME STATE ============
+        const state = {
+            seeds: 50,
+            flowers: 0,
+            butterflies: 0,
+            level: 1,
+            xp: 0,
+            xpToNext: 10,
+            tool: 'plant',
+            totalPlanted: 0,
+            combo: 0,
+            comboTimer: null,
+            lastPlantTime: 0,
+            discoveries: [],
+            achievements: [],
+            gardenElements: [],
+            timeOfDay: 'day',
+            weather: 'clear',
+            musicPlaying: false,
+            unlockedTools: ['plant', 'water', 'sun'],
+            rareFlowersFound: 0,
+            treesGrown: 0,
+            pondsCreated: 0,
+            magicUsed: 0,
+            autoGrowEnabled: false,
+            gardenTheme: 0,
+            clickCount: 0,
+            sessionStart: Date.now()
+        };
+
+        // ============ FLOWER DATA ============
+        const flowerTypes = [
+            { emoji: '🌸', name: 'Cherry Blossom', rarity: 'common', minLevel: 1 },
+            { emoji: '🌺', name: 'Hibiscus', rarity: 'common', minLevel: 1 },
+            { emoji: '🌻', name: 'Sunflower', rarity: 'common', minLevel: 1 },
+            { emoji: '🌹', name: 'Rose', rarity: 'common', minLevel: 1 },
+            { emoji: '🌷', name: 'Tulip', rarity: 'common', minLevel: 1 },
+            { emoji: '💐', name: 'Bouquet', rarity: 'uncommon', minLevel: 2 },
+            { emoji: '🪻', name: 'Lavender', rarity: 'uncommon', minLevel: 2 },
+            { emoji: '🌼', name: 'Daisy', rarity: 'common', minLevel: 1 },
+            { emoji: '🪷', name: 'Lotus', rarity: 'rare', minLevel: 3 },
+            { emoji: '🏵️', name: 'Rosette', rarity: 'rare', minLevel: 3 },
+            { emoji: '💮', name: 'White Flower', rarity: 'rare', minLevel: 4 },
+            { emoji: '🌾', name: 'Wheat', rarity: 'common', minLevel: 2 },
+            { emoji: '☘️', name: 'Shamrock', rarity: 'uncommon', minLevel: 2 },
+            { emoji: '🍀', name: 'Four-Leaf Clover', rarity: 'legendary', minLevel: 5 },
+            { emoji: '🌵', name: 'Cactus Bloom', rarity: 'uncommon', minLevel: 3 },
+            { emoji: '🎋', name: 'Bamboo', rarity: 'uncommon', minLevel: 3 },
+            { emoji: '🌿', name: 'Fern', rarity: 'common', minLevel: 1 },
+            { emoji: '🍄', name: 'Mushroom', rarity: 'uncommon', minLevel: 2 },
+            { emoji: '🫧', name: 'Bubble Bloom', rarity: 'legendary', minLevel: 6 },
+            { emoji: '⚡', name: 'Lightning Flower', rarity: 'legendary', minLevel: 7 },
+        ];
+
+        const butterflyTypes = ['🦋', '🦋', '🪽', '🐝', '🐞', '🪲'];
+        const treeTypes = ['🌳', '🌲', '🌴', '🎄', '🎋', '🪴'];
+        const magicEffects = ['✨', '💫', '⭐', '🌟', '💥', '🔮'];
+
+        const gardenThemes = [
+            { name: 'Twilight Meadow', bg: 'linear-gradient(180deg, #1a0a2e 0%, #2d1b69 30%, #1a472a 70%, #0d2818 100%)' },
+            { name: 'Sunrise Valley', bg: 'linear-gradient(180deg, #ff9a9e 0%, #fecfef 30%, #a8e6cf 70%, #3d7a4a 100%)' },
+            { name: 'Ocean Breeze', bg: 'linear-gradient(180deg, #667eea 0%, #764ba2 30%, #43cea2 70%, #185a5a 100%)' },
+            { name: 'Golden Hour', bg: 'linear-gradient(180deg, #f093fb 0%, #f5576c 20%, #ffd89b 50%, #4a7c59 80%, #2d5a27 100%)' },
+            { name: 'Northern Lights', bg: 'linear-gradient(180deg, #0f0c29 0%, #302b63 25%, #24243e 50%, #43cea2 75%, #185a5a 100%)' },
+            { name: 'Cherry Sky', bg: 'linear-gradient(180deg, #ffecd2 0%, #fcb69f 30%, #ff9a9e 50%, #a18cd1 75%, #2d1b69 100%)' },
+            { name: 'Enchanted Forest', bg: 'linear-gradient(180deg, #0a1628 0%, #1a3a2a 30%, #2d6a4f 60%, #40916c 80%, #52b788 100%)' },
+            { name: 'Cosmic Garden', bg: 'linear-gradient(180deg, #0d0221 0%, #1a0533 20%, #3d1f8e 40%, #7b2ff7 60%, #c471f5 80%, #f993d5 100%)' },
+        ];
+
+        // ============ AUDIO CONTEXT ============
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playNote(freq, duration = 0.15, type = 'sine', volume = 0.1) {
+            if (!audioCtx || !state.musicPlaying) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playPlantSound() {
+            const notes = [523, 659, 784, 880, 1047];
+            const note = notes[Math.floor(Math.random() * notes.length)];
+
+            playNote(note, 0.2, 'sine', 0.08);
+            setTimeout(() => playNote(note * 1.5, 0.15, 'sine', 0.05), 80);
+        }
+
+        function playWaterSound() {
+            playNote(200 + Math.random() * 100, 0.3, 'sine', 0.06);
+            setTimeout(() => playNote(300 + Math.random() * 150, 0.2, 'sine', 0.04), 100);
+        }
+
+        function playSunSound() {
+            playNote(880, 0.4, 'triangle', 0.05);
+            setTimeout(() => playNote(1100, 0.3, 'triangle', 0.03), 150);
+        }
+
+        function playMagicSound() {
+            const notes = [660, 880, 1100, 1320, 1540];
+            notes.forEach((n, i) => {
+                setTimeout(() => playNote(n, 0.2, 'sine', 0.04), i * 60);
+            });
+        }
+
+        function playLevelUpSound() {
+            const melody = [523, 659, 784, 1047, 1319, 1568];
+            melody.forEach((n, i) => {
+                setTimeout(() => playNote(n, 0.3, 'sine', 0.07), i * 100);
+            });
+        }
+
+        function playComboSound(combo) {
+            const baseNote = 400 + (combo * 50);
+            playNote(baseNote, 0.15, 'sine', 0.06);
+            playNote(baseNote * 1.25, 0.15, 'sine', 0.04);
+        }
+
+        function toggleMusic() {
+            initAudio();
+            state.musicPlaying = !state.musicPlaying;
+            document.getElementById('music-toggle').textContent = state.musicPlaying ? '🔊' : '🔇';
+            if (state.musicPlaying) {
+                playNote(523, 0.3, 'sine', 0.05);
+            }
+        }
+
+        // ============ GARDEN BACKGROUND ============
+        function updateGardenBackground() {
+            const garden = document.getElementById('garden');
+            const theme = gardenThemes[state.gardenTheme % gardenThemes.length];
+            garden.style.background = theme.bg;
+        }
+
+        function cycleTheme() {
+            state.gardenTheme = (state.gardenTheme + 1) % gardenThemes.length;
+            updateGardenBackground();
+            addDiscovery(`🎨 Discovered: ${gardenThemes[state.gardenTheme].name}`);
+        }
+
+        // ============ TOOLS ============
+        function selectTool(tool) {
+            if (!state.unlockedTools.includes(tool)) return;
+            state.tool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            const btn = document.querySelector(`[data-tool="${tool}"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        // ============ PLANTING ============
+        function getRandomFlower() {
+            const available = flowerTypes.filter(f => f.minLevel <= state.level);
+            const weights = available.map(f => {
+                switch (f.rarity) {
+                    case 'common': return 50;
+                    case 'uncommon': return 25;
+                    case 'rare': return 10;
+                    case 'legendary': return 3;
+                    default: return 50;
+                }
+            });
+            const totalWeight = weights.reduce((a, b) => a + b, 0);
+            let random = Math.random() * totalWeight;
+            for (let i = 0; i < available.length; i++) {
+                random -= weights[i];
+                if (random <= 0) return available[i];
+            }
+            return available[0];
+        }
+
+        function plantFlower(x, y) {
+            if (state.seeds <= 0) {
+                showAchievement("🌱 Out of seeds! Water flowers to get more!");
+                return;
+            }
+
+            state.seeds--;
+            state.flowers++;
+            state.totalPlanted++;
+            state.clickCount++;
+
+            const flower = getRandomFlower();
+            const el = document.createElement('div');
+            el.className = 'flower';
+            el.textContent = flower.emoji;
+
+            const size = 24 + Math.random() * 20;
+            el.style.fontSize = size + 'px';
+            el.style.left = (x - size / 2) + 'px';
+            el.style.top = (y - size / 2) + 'px';
+            el.style.animationDelay = '0s';
+            el.dataset.type = flower.name;
+            el.dataset.rarity = flower.rarity;
+            el.dataset.age = '0';
+            el.dataset.watered = '0';
+            el.dataset.sunned = '0';
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                interactWithFlower(el, e);
+            });
+
+            document.getElementById('garden').appendChild(el);
+            state.gardenElements.push(el);
+
+            // Combo system
+            const now = Date.now();
+            if (now - state.lastPlantTime < 800) {
+                state.combo++;
+                if (state.combo >= 3) {
+                    showCombo(state.combo);
+                    playComboSound(state.combo);
+                    // Bonus seeds for combos
+                    if (state.combo % 5 === 0) {
+                        state.seeds += 5;
+                        spawnParticle(x, y, '🌱+5');
+                    }
+                }
+            } else {
+                state.combo = 0;
+            }
+            state.lastPlantTime = now;
+
+            // Particles
+            createSparkles(x, y, 3);
+            spawnParticle(x, y, flower.emoji);
+
+            // Sound
+            playPlantSound();
+
+            // Rarity discovery
+            if (flower.rarity === 'rare' || flower.rarity === 'legendary') {
+                state.rareFlowersFound++;
+                addDiscovery(`${flower.emoji} Found: ${flower.name} (${flower.rarity}!)`);
+                if (flower.rarity === 'legendary') {
+                    createSparkles(x, y, 15);
+                    showAchievement(`🌟 LEGENDARY: ${flower.name}!`);
+                    state.seeds += 10;
+                }
+            }
+
+            // XP and level
+            let xpGain = 1;
+            if (flower.rarity === 'uncommon') xpGain = 2;
+            if (flower.rarity === 'rare') xpGain = 5;
+            if (flower.rarity === 'legendary') xpGain = 15;
+            xpGain += Math.floor(state.combo / 3);
+            gainXP(xpGain);
+
+            // Random events
+            if (Math.random() < 0.1 + (state.level * 0.02)) {
+                spawnButterfly(x, y);
+            }
+
+            // Achievements
+            checkAchievements();
+            updateUI();
+        }
+
+        function interactWithFlower(el, e) {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            if (state.tool === 'water') {
+                waterFlower(el, x, y);
+            } else if (state.tool === 'sun') {
+                sunFlower(el, x, y);
+            } else if (state.tool === 'magic') {
+                magicFlower(el, x, y);
+            } else if (state.tool === 'paint') {
+                paintFlower(el, x, y);
+            } else if (state.tool === 'music') {
+                musicFlower(el, x, y);
+            } else if (state.tool === 'love') {
+                loveFlower(el, x, y);
+            } else {
+                // Tapping a flower gives a seed back sometimes
+                if (Math.random() < 0.3) {
+                    state.seeds += 1;
+                    spawnParticle(x, y, '🌱');
+                }
+                el.style.transform = 'scale(1.3)';
+                setTimeout(() => el.style.transform = 'scale(1)', 200);
+                createSparkles(x, y, 2);
+            }
+        }
+
+        function waterFlower(el, x, y) {
+            el.dataset.watered = parseInt(el.dataset.watered) + 1;
+            const watered = parseInt(el.dataset.watered);
+
+            // Rain effect
+            for (let i = 0; i < 8; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'raindrop';
+                drop.style.left = (x - 20 + Math.random() * 40) + 'px';
+                drop.style.top = (y - 50) + 'px';
+                drop.style.animationDuration = (0.5 + Math.random() * 0.3) + 's';
+                document.getElementById('garden').appendChild(drop);
+                setTimeout(() => drop.remove(), 1000);
+            }
+
+            playWaterSound();
+            spawnParticle(x, y, '💧');
+
+            // Watering grows the flower
+            const currentSize = parseFloat(el.style.fontSize);
+            el.style.fontSize = Math.min(currentSize + 3, 60) + 'px';
+
+            // Watering gives seeds
+            if (watered % 3 === 0) {
+                state.seeds += 2;
+                spawnParticle(x, y - 20, '🌱+2');
+                gainXP(1);
+            }
+
+            // Heavily watered flowers can spawn new ones
+            if (watered >= 5 && Math.random() < 0.3) {
+                const newX = x + (Math.random() - 0.5) * 100;
+                const newY = y + (Math.random() - 0.5) * 100;
+                plantFlowerAt(newX, newY);
+                addDiscovery('🌊 A flower spread from watering!');
+            }
+
+            updateUI();
+        }
+
+        function sunFlower(el, x, y) {
+            el.dataset.sunned = parseInt(el.dataset.sunned) + 1;
+            const sunned = parseInt(el.dataset.sunned);
+
+            // Sun rays
+            for (let i = 0; i < 5; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'sun-ray';
+                ray.style.left = (x - 30 + Math.random() * 60) + 'px';
+                ray.style.height = '0px';
+                document.getElementById('garden').appendChild(ray);
+                setTimeout(() => ray.remove(), 2000);
+            }
+
+            playSunSound();
+            spawnParticle(x, y, '☀️');
+
+            // Sun makes flowers glow
+            el.style.filter = `brightness(${1 + sunned * 0.1}) drop-shadow(0 0 ${sunned * 2}px gold)`;
+
+            // Sun gives XP
+            gainXP(2);
+
+            // Lots of sun can evolve a flower
+            if (sunned >= 4 && Math.random() < 0.4) {
+                const evolved = getRandomFlower();
+                el.textContent = evolved.emoji;
+                el.dataset.type = evolved.name;
+                el.dataset.rarity = evolved.rarity;
+                createSparkles(x, y, 8);
+                addDiscovery(`☀️ Flower evolved into ${evolved.name}!`);
+                if (evolved.rarity !== 'common') {
+                    state.rareFlowersFound++;
+                }
+            }
+
+            // Sun can attract butterflies
+            if (Math.random() < 0.2) {
+                spawnButterfly(x, y);
+            }
+
+            updateUI();
+        }
+
+        function magicFlower(el, x, y) {
+            state.magicUsed++;
+            playMagicSound();
+
+            // Explosion of sparkles
+            createSparkles(x, y, 20);
+
+            // Magic transforms everything nearby
+            const nearby = state.gardenElements.filter(other => {
+                const rect = other.getBoundingClientRect();
+                const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                return dist < 150;
+            });
+
+            nearby.forEach((other, i) => {
+                setTimeout(() => {
+                    const newFlower = getRandomFlower();
+                    other.textContent = newFlower.emoji;
+                    other.dataset.type = newFlower.name;
+                    other.dataset.rarity = newFlower.rarity;
+                    other.style.filter = 'hue-rotate(' + Math.random() * 360 + 'deg) brightness(1.3)';
+                    const rect = other.getBoundingClientRect();
+                    createSparkles(rect.left + rect.width/2, rect.top + rect.height/2, 3);
+                }, i * 100);
+            });
+
+            // Magic spawns bonus stuff
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const nx = x + (Math.random() - 0.5) * 200;
+                    const ny = y + (Math.random() - 0.5) * 200;
+                    plantFlowerAt(nx, ny);
+                }, i * 200);
+            }
+
+            gainXP(5);
+            state.seeds += 3;
+            spawnParticle(x, y, '✨+3🌱');
+
+            if (state.magicUsed === 1) {
+                addDiscovery('✨ First magic cast! Everything transforms!');
+            }
+            if (state.magicUsed % 10 === 0) {
+                cycleTheme();
+            }
+
+            updateUI();
+        }
+
+        function paintFlower(el, x, y) {
+            const hue = Math.random() * 360;
+            el.style.filter = `hue-rotate(${hue}deg) saturate(1.5) brightness(1.1)`;
+            createSparkles(x, y, 5);
+            spawnParticle(x, y, '🎨');
+            playNote(400 + hue, 0.2, 'triangle', 0.05);
+            gainXP(1);
+
+            // Paint nearby flowers too
+            state.gardenElements.forEach(other => {
+                const rect = other.getBoundingClientRect();
+                const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                if (dist < 80 && other !== el) {
+                    other.style.filter = `hue-rotate(${hue + Math.random() * 60}deg) saturate(1.3)`;
+                }
+            });
+
+            if (!state.discoveries.includes('🎨 Painted your first flower!')) {
+                addDiscovery('🎨 Painted your first flower!');
+            }
+            updateUI();
+        }
+
+        function musicFlower(el, x, y) {
+            const notes = [261, 293, 329, 349, 392, 440, 493, 523];
+            const index = state.gardenElements.indexOf(el) % notes.length;
+            playNote(notes[index], 0.4, 'sine', 0.08);
+
+            el.style.animation = 'none';
+            el.offsetHeight;
+            el.style.animation = 'sway 0.5s ease-in-out 3';
+
+            spawnParticle(x, y, '🎵');
+            createSparkles(x, y, 3);
+            gainXP(1);
+
+            // Music makes nearby flowers dance
+            state.gardenElements.forEach((other, i) => {
+                const rect = other.getBoundingClientRect();
+                const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                if (dist < 120) {
+                    setTimeout(() => {
+                        other.style.animation = 'none';
+                        other.offsetHeight;
+                        other.style.animation = 'sway 0.5s ease-in-out 2';
+                        playNote(notes[i % notes.length], 0.2, 'sine', 0.03);
+                    }, i * 80);
+                }
+            });
+
+            if (!state.discoveries.includes('🎵 Made your garden sing!')) {
+                addDiscovery('🎵 Made your garden sing!');
+            }
+            updateUI();
+        }
+
+        function loveFlower(el, x, y) {
+            // Love makes flowers multiply
+            createSparkles(x, y, 10);
+            spawnParticle(x, y, '💕');
+            playNote(523, 0.3, 'sine', 0.06);
+            playNote(659, 0.3, 'sine', 0.04);
+
+            // Spawn heart particles
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const px = x + (Math.random() - 0.5) * 80;
+                    const py = y + (Math.random() - 0.5) * 80;
+                    spawnParticle(px, py, '💗');
+                }, i * 100);
+            }
+
+            // Love breeds new flowers nearby
+            for (let i = 0; i < 2; i++) {
+                const nx = x + (Math.random() - 0.5) * 150;
+                const ny = y + (Math.random() - 0.5) * 150;
+                setTimeout(() => plantFlowerAt(nx, ny), 300 + i * 200);
+            }
+
+            // Love boosts everything
+            el.style.fontSize = (parseFloat(el.style.fontSize) + 5) + 'px';
+            el.style.filter = 'brightness(1.3) drop-shadow(0 0 8px pink)';
+
+            gainXP(3);
+            state.seeds += 2;
+
+            if (!state.discoveries.includes('💕 Spread love in your garden!')) {
+                addDiscovery('💕 Spread love in your garden!');
+            }
+            updateUI();
+        }
+
+        function plantFlowerAt(x, y) {
+            if (x < 0 || x > window.innerWidth || y < 50 || y > window.innerHeight - 80) return;
+
+            const flower = getRandomFlower();
+            const el = document.createElement('div');
+            el.className = 'flower';
+            el.textContent = flower.emoji;
+
+            const size = 24 + Math.random() * 20;
+            el.style.fontSize = size + 'px';
+            el.style.left = (x - size / 2) + 'px';
+            el.style.top = (y - size / 2) + 'px';
+            el.dataset.type = flower.name;
+            el.dataset.rarity = flower.rarity;
+            el.dataset.age = '0';
+            el.dataset.watered = '0';
+            el.dataset.sunned = '0';
+
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                interactWithFlower(el, e);
+            });
+
+            document.getElementById('garden').appendChild(el);
+            state.gardenElements.push(el);
+            state.flowers++;
+        }
+
+        // ============ WISH TOOL ============
+        function useWish(x, y) {
+            playMagicSound();
+            createSparkles(x, y, 30);
+
+            const wishes = [
+                () => { state.seeds += 20; spawnParticle(x, y, '🌱+20'); addDiscovery('🌟 Wished for seeds!'); },
+                () => { for(let i = 0; i < 8; i++) { setTimeout(() => spawnButterfly(x + (Math.random()-0.5)*200, y + (Math.random()-0.5)*200), i*200); } addDiscovery('🌟 Wished for butterflies!'); },
+                () => { for(let i = 0; i < 10; i++) { setTimeout(() => plantFlowerAt(x + (Math.random()-0.5)*300, y + (Math.random()-0.5)*300), i*100); } addDiscovery('🌟 Wished for a flower burst!'); },
+                () => { cycleTheme(); addDiscovery('🌟 Wished for a new sky!'); },
+                () => { gainXP(20); spawnParticle(x, y, '⭐+20XP'); addDiscovery('🌟 Wished for experience!'); },
+                () => { spawnTree(x, y); addDiscovery('🌟 Wished for a tree!'); },
+                () => { spawnPond(x, y); addDiscovery('🌟 Wished for a pond!'); },
+                () => { state.seeds += 50; for(let i=0;i<20;i++){setTimeout(()=>createSparkles(x+(Math.random()-0.5)*400, y+(Math.random()-0.5)*400, 3), i*50);} addDiscovery('🌟 MEGA WISH! 50 seeds!'); },
+            ];
+
+            const wish = wishes[Math.floor(Math.random() * wishes.length)];
+            wish();
+            updateUI();
+        }
+
+        // ============ SPECIAL ELEMENTS ============
+        function spawnButterfly(x, y) {
+            state.butterflies++;
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            butterfly.textContent = butterflyTypes[Math.floor(Math.random() * butterflyTypes.length)];
+            butterfly.style.left = x + 'px';
+            butterfly.style.top = y + 'px';
+            butterfly.style.animationDuration = (6 + Math.random() * 6) + 's';
+            butterfly.style.animationDelay = Math.random() * 2 + 's';
+            document.getElementById('garden').appendChild(butterfly);
+
+            // Butterflies wander
+            setInterval(() => {
+                if (butterfly.parentNode) {
+                    const newX = Math.random() * window.innerWidth;
+                    const newY = 50 + Math.random() * (window.innerHeight - 150);
+                    butterfly.style.left = newX + 'px';
+                    butterfly.style.top = newY + 'px';
+                }
+            }, 8000 + Math.random() * 4000);
+
+            updateUI();
+        }
+
+        function spawnTree(x, y) {
+            state.treesGrown++;
+            const tree = document.createElement('div');
+            tree.className = 'tree';
+            tree.textContent = treeTypes[Math.floor(Math.random() * treeTypes.length)];
+            tree.style.left = (x - 25) + 'px';
+            tree.style.top = (y - 25) + 'px';
+            tree.style.animationDuration = (4 + Math.random() * 3) + 's';
+
+            tree.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Shaking a tree drops seeds
+                tree.style.animation = 'none';
+                tree.offsetHeight;
+                tree.style.animation = 'sway 0.2s ease-in-out 5';
+                const seeds = 1 + Math.floor(Math.random() * 3);
+                state.seeds += seeds;
+                spawnParticle(e.clientX, e.clientY, `🌱+${seeds}`);
+                createSparkles(e.clientX, e.clientY, 5);
+                playNote(200, 0.2, 'triangle', 0.05);
+
+                // Sometimes fruit falls
+                if (Math.random() < 0.3) {
+                    const fruits = ['🍎', '🍊', '🍋', '🍒', '🫐', '🍇'];
+                    spawnParticle(e.clientX + (Math.random()-0.5)*40, e.clientY, fruits[Math.floor(Math.random()*fruits.length)]);
+                    gainXP(3);
+                }
+                updateUI();
+            });
+
+            document.getElementById('garden').appendChild(tree);
+
+            if (state.treesGrown === 1) {
+                addDiscovery('🌳 Grew your first tree! Tap it for seeds!');
+            }
+        }
+
+        function spawnPond(x, y) {
+            state.pondsCreated++;
+            const pond = document.createElement('div');
+            pond.className = 'pond';
+            const size = 60 + Math.random() * 40;
+            pond.style.width = size + 'px';
+            pond.style.height = (size * 0.6) + 'px';
+            pond.style.left = (x - size/2) + 'px';
+            pond.style.top = (y - size*0.3) + 'px';
+            document.getElementById('garden').appendChild(pond);
+
+            // Ponds attract life
+            setInterval(() => {
+                if (pond.parentNode && Math.random() < 0.3) {
+                    const px = x + (Math.random() - 0.5) * size;
+                    const py = y + (Math.random() - 0.5) * size * 0.6;
+                    const lifeforms = ['🐸', '🦆', '🐟', '🪷', '💧'];
+                    spawnParticle(px, py, lifeforms[Math.floor(Math.random() * lifeforms.length)]);
+                }
+            }, 5000);
+
+            if (state.pondsCreated === 1) {
+                addDiscovery('💧 Created a pond! Life gathers here.');
+            }
+        }
+
+        function spawnFireflies() {
+            for (let i = 0; i < 15; i++) {
+                const firefly = document.createElement('div');
+                firefly.className = 'firefly';
+                firefly.style.left = Math.random() * window.innerWidth + 'px';
+                firefly.style.top = Math.random() * window.innerHeight + 'px';
+                firefly.style.animationDelay = Math.random() * 3 + 's';
+                firefly.style.animationDuration = (2 + Math.random() * 3) + 's';
+                document.getElementById('garden').appendChild(firefly);
+
+                // Fireflies drift
+                setInterval(() => {
+                    if (firefly.parentNode) {
+                        firefly.style.left = Math.random() * window.innerWidth + 'px';
+                        firefly.style.top = Math.random() * window.innerHeight + 'px';
+                        firefly.style.transition = 'left 4s ease, top 4s ease';
+                    }
+                }, 4000 + Math.random() * 3000);
+            }
+        }
+
+        // ============ PARTICLES & EFFECTS ============
+        function spawnParticle(x, y, emoji) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = emoji;
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            document.getElementById('garden').appendChild(particle);
+            setTimeout(() => particle.remove(), 1500);
+        }
+
+        function createSparkles(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = (x + (Math.random() - 0.5) * 60) + 'px';
+                sparkle.style.top = (y + (Math.random() - 0.5) * 60) + 'px';
+                sparkle.style.animationDelay = (Math.random() * 0.3) + 's';
+                sparkle.style.background = `radial-gradient(circle, ${getRandomColor()}, transparent)`;
+                document.getElementById('garden').appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+        }
+
+        function getRandomColor() {
+            const colors = ['#ffdd57', '#ff6b6b', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#01a3a4', '#feca57'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function showCombo(combo) {
+            const display = document.getElementById('combo-display');
+            display.textContent = `${combo}x Combo! 🔥`;
+            display.className = 'show';
+            setTimeout(() => display.className = '', 1000);
+        }
+
+        // ============ XP & LEVELING ============
+        function gainXP(amount) {
+            state.xp += amount;
+            while (state.xp >= state.xpToNext) {
+                state.xp -= state.xpToNext;
+                levelUp();
+            }
+            updateXPBar();
+        }
+
+        function updateXPBar() {
+            const percent = (state.xp / state.xpToNext) * 100;
+            document.getElementById('xp-bar').style.width = percent + '%';
+            document.getElementById('xp-needed').textContent = (state.xpToNext - state.xp);
+        }
+
+        function levelUp() {
+            state.level++;
+            state.xpToNext = Math.floor(state.xpToNext * 1.5);
+            state.seeds += 10 + state.level * 5;
+
+            playLevelUpSound();
+
+            // Unlock new tools
+            let unlockMessage = '';
+            switch (state.level) {
+                case 2:
+                    unlockMessage = '🌿 New flowers available!';
+                    break;
+                case 3:
+                    state.unlockedTools.push('magic');
+                    document.querySelector('[data-tool="magic"]').style.display = 'flex';
+                    unlockMessage = '✨ Magic tool unlocked!';
+                    break;
+                case 4:
+                    state.unlockedTools.push('paint');
+                    document.querySelector('[data-tool="paint"]').style.display = 'flex';
+                    unlockMessage = '🎨 Paint tool unlocked!';
+                    break;
+                case 5:
+                    state.unlockedTools.push('music');
+                    document.querySelector('[data-tool="music"]').style.display = 'flex';
+                    unlockMessage = '🎵 Music tool unlocked!';
+                    spawnFireflies();
+                    break;
+                case 6:
+                    state.unlockedTools.push('wish');
+                    document.querySelector('[data-tool="wish"]').style.display = 'flex';
+                    unlockMessage = '🌟 Wish tool unlocked!';
+                    break;
+                case 7:
+                    state.unlockedTools.push('love');
+                    document.querySelector('[data-tool="love"]').style.display = 'flex';
+                    unlockMessage = '💕 Love tool unlocked!';
+                    break;
+                case 8:
+                    unlockMessage = '🌳 Trees now grow randomly!';
+                    state.autoGrowEnabled = true;
+                    break;
+                case 10:
+                    unlockMessage = '🍀 Legendary flowers more common!';
+                    cycleTheme();
+                    break;
+                case 12:
+                    unlockMessage = '🌌 Cosmic garden unlocked!';
+                    state.gardenTheme = 7;
+                    updateGardenBackground();
+                    break;
+                default:
+                    unlockMessage = `🌸 +${10 + state.level * 5} seeds!`;
+            }
+
+            // Show level up popup
+            document.getElementById('level-up-text').textContent = `You reached level ${state.level}!`;
+            document.getElementById('unlock-text').textContent = unlockMessage;
+            document.getElementById('level-up-popup').classList.add('show');
+
+            // Celebration effects
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createSparkles(x, y, 3);
+                    spawnParticle(x, y, ['🎉', '🎊', '⭐', '✨', '💫'][Math.floor(Math.random() * 5)]);
+                }, i * 100);
+            }
+
+            updateUI();
+        }
+
+        function closeLevelUp() {
+            document.getElementById('level-up-popup').classList.remove('show');
+        }
+
+        // ============ DISCOVERIES & ACHIEVEMENTS ============
+        function addDiscovery(text) {
+            if (state.discoveries.includes(text)) return;
+            state.discoveries.push(text);
+
+            const list = document.getElementById('discovery-list');
+            const item = document.createElement('div');
+            item.className = 'discovery-item';
+            item.textContent = text;
+            list.insertBefore(item, list.firstChild);
+
+            // Brief flash of the log
+            const log = document.getElementById('discovery-log');
+            log.classList.add('show');
+            setTimeout(() => {
+                if (!log.dataset.pinned) log.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleLog() {
+            const log = document.getElementById('discovery-log');
+            if (log.classList.contains('show')) {
+                log.classList.remove('show');
+                log.dataset.pinned = '';
+            } else {
+                log.classList.add('show');
+                log.dataset.pinned = 'true';
+            }
+        }
+
+        function showAchievement(text) {
+            const toast = document.getElementById('achievement-toast');
+            toast.textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function checkAchievements() {
+            const checks = [
+                { condition: state.totalPlanted >= 10, text: '🌱 Planted 10 flowers!', id: 'plant10' },
+                { condition: state.totalPlanted >= 50, text: '🌺 Planted 50 flowers!', id: 'plant50' },
+                { condition: state.totalPlanted >= 100, text: '🏆 Planted 100 flowers!', id: 'plant100' },
+                { condition: state.totalPlanted >= 500, text: '👑 Planted 500 flowers! Garden Royalty!', id: 'plant500' },
+                { condition: state.butterflies >= 5, text: '🦋 Attracted 5 butterflies!', id: 'butterfly5' },
+                { condition: state.butterflies >= 20, text: '🦋 Butterfly paradise! 20 butterflies!', id: 'butterfly20' },
+                { condition: state.combo >= 10, text: '🔥 10x Combo! Speed planter!', id: 'combo10' },
+                { condition: state.combo >= 20, text: '💥 20x MEGA COMBO!', id: 'combo20' },
+                { condition: state.rareFlowersFound >= 5, text: '💎 Found 5 rare flowers!', id: 'rare5' },
+                { condition: state.rareFlowersFound >= 15, text: '👑 Rare flower collector! 15 found!', id: 'rare15' },
+                { condition: state.treesGrown >= 3, text: '🌳 Grew a mini forest!', id: 'trees3' },
+                { condition: state.level >= 5, text: '⭐ Reached level 5!', id: 'level5' },
+                { condition: state.level >= 10, text: '🌟 Reached level 10! Master Gardener!', id: 'level10' },
+                { condition: state.discoveries.length >= 10, text: '📖 10 discoveries! Explorer!', id: 'disc10' },
+                { condition: state.pondsCreated >= 2, text: '💧 Created a water garden!', id: 'ponds2' },
+                { condition: (Date.now() - state.sessionStart) > 300000, text: '⏰ Played for 5 minutes! Dedicated!', id: 'time5' },
+                { condition: (Date.now() - state.sessionStart) > 600000, text: '💝 10 minutes of zen gardening!', id: 'time10' },
+            ];
+
+            checks.forEach(check => {
+                if (check.condition && !state.achievements.includes(check.id)) {
+                    state.achievements.push(check.id);
+                    showAchievement(check.text);
+                    addDiscovery(check.text);
+                    gainXP(5);
+                    state.seeds += 5;
+                }
+            });
+        }
+
+        // ============ UI UPDATE ============
+        function updateUI() {
+            document.getElementById('seeds-count').textContent = state.seeds;
+            document.getElementById('flowers-count').textContent = state.flowers;
+            document.getElementById('butterflies-count').textContent = state.butterflies;
+            document.getElementById('level-display').textContent = state.level;
+            document.getElementById('beauty-score').textContent = state.flowers + state.butterflies * 5 + state.treesGrown * 10 + state.rareFlowersFound * 3;
+            updateXPBar();
+        }
+
+        // ============ MAIN CLICK HANDLER ============
+        function handleGardenClick(e) {
+            const x = e.clientX;
+            const y = e.clientY;
+
+            // Don't plant on UI areas
+            if (y < 55 || y > window.innerHeight - 75) return;
+
+            switch (state.tool) {
+                case 'plant':
+                    plantFlower(x, y);
+                    break;
+                case 'water':
+                    // Water the ground - creates rain
+                    for (let i = 0; i < 12; i++) {
+                        const drop = document.createElement('div');
+                        drop.className = 'raindrop';
+                        drop.style.left = (x - 40 + Math.random() * 80) + 'px';
+                        drop.style.top = (y - 60) + 'px';
+                        drop.style.animationDuration = (0.4 + Math.random() * 0.4) + 's';
+                        document.getElementById('garden').appendChild(drop);
+                        setTimeout(() => drop.remove(), 1000);
+                    }
+                    playWaterSound();
+                    // Water nearby flowers
+                    state.gardenElements.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                        if (dist < 100) {
+                            el.dataset.watered = parseInt(el.dataset.watered || 0) + 1;
+                            const currentSize = parseFloat(el.style.fontSize);
+                            el.style.fontSize = Math.min(currentSize + 1, 55) + 'px';
+                        }
+                    });
+                    state.seeds += 1;
+                    gainXP(1);
+                    updateUI();
+                    break;
+                case 'sun':
+                    // Sun the area
+                    for (let i = 0; i < 7; i++) {
+                        const ray = document.createElement('div');
+                        ray.className = 'sun-ray';
+                        ray.style.left = (x - 50 + Math.random() * 100) + 'px';
+                        document.getElementById('garden').appendChild(ray);
+                        setTimeout(() => ray.remove(), 2500);
+                    }
+                    playSunSound();
+                    // Sun nearby flowers
+                    state.gardenElements.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                        if (dist < 120) {
+                            el.dataset.sunned = parseInt(el.dataset.sunned || 0) + 1;
+                            el.style.filter = `brightness(${1 + parseInt(el.dataset.sunned) * 0.05})`;
+                        }
+                    });
+                    gainXP(1);
+                    // Sun can spawn butterflies
+                    if (Math.random() < 0.15) spawnButterfly(x, y);
+                    updateUI();
+                    break;
+                case 'magic':
+                    magicFlower(null, x, y);
+                    // Also plant some flowers
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            const angle = (i / 5) * Math.PI * 2;
+                            const radius = 50 + Math.random() * 50;
+                            plantFlowerAt(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius);
+                        }, i * 150);
+                    }
+                    break;
+                case 'paint':
+                    // Paint the area
+                    const hue = Math.random() * 360;
+                    state.gardenElements.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                        if (dist < 150) {
+                            el.style.filter = `hue-rotate(${hue + (dist/150) * 60}deg) saturate(1.5)`;
+                        }
+                    });
+                    createSparkles(x, y, 8);
+                    playNote(300 + hue, 0.3, 'triangle', 0.05);
+                    gainXP(1);
+                    updateUI();
+                    break;
+                case 'music':
+                    // Create a musical wave
+                    const notes = [261, 293, 329, 349, 392, 440, 493, 523];
+                    state.gardenElements.forEach((el, i) => {
+                        const rect = el.getBoundingClientRect();
+                        const dist = Math.hypot(rect.left + rect.width/2 - x, rect.top + rect.height/2 - y);
+                        if (dist < 200) {
+                            setTimeout(() => {
+                                el.style.animation = 'none';
+                                el.offsetHeight;
+                                el.style.animation = 'sway 0.4s ease-in-out 3';
+                                playNote(notes[i % notes.length], 0.2, 'sine', 0.03);
+                                spawnParticle(rect.left + rect.width/2, rect.top, '🎵');
+                            }, dist * 3);
+                        }
+                    });
+                    gainXP(2);
+                    updateUI();
+                    break;
+                case 'wish':
+                    useWish(x, y);
+                    break;
+                case 'love':
+                    // Love burst
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (i / 8) * Math.PI * 2;
+                        const radius = 40 + Math.random() * 60;
+                        const nx = x + Math.cos(angle) * radius;
+                        const ny = y + Math.sin(angle) * radius;
+                        setTimeout(() => {
+                            spawnParticle(nx, ny, '💗');
+                            plantFlowerAt(nx, ny);
+                        }, i * 100);
+                    }
+                    playNote(523, 0.4, 'sine', 0.06);
+                    setTimeout(() => playNote(659, 0.3, 'sine', 0.05), 150);
+                    setTimeout(() => playNote(784, 0.3, 'sine', 0.04), 300);
+                    gainXP(3);
+                    state.seeds += 3;
+                    updateUI();
+                    break;
+            }
+
+            // Magic trail on cursor
+            const trail = document.createElement('div');
+            trail.className = 'magic-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            trail.style.background = `radial-gradient(circle, ${getRandomColor()}, transparent)`;
+            document.getElementById('garden').appendChild(trail);
+            setTimeout(() => trail.remove(), 800);
+        }
+
+        // ============ AUTO-GROW SYSTEM ============
+        function autoGrow() {
+            if (!state.autoGrowEnabled) return;
+
+            // Random tree growth
+            if (Math.random() < 0.05 && state.treesGrown < 20) {
+                const x = 50 + Math.random() * (window.innerWidth - 100);
+                const y = 100 + Math.random() * (window.innerHeight - 200);
+                spawnTree(x, y);
+            }
+
+            // Random butterfly spawn
+            if (Math.random() < 0.08) {
+                const x = Math.random() * window.innerWidth;
+                const y = 50 + Math.random() * (window.innerHeight - 150);
+                spawnButterfly(x, y);
+            }
+
+            // Flowers spread on their own
+            if (state.gardenElements.length > 0 && Math.random() < 0.03) {
+                const randomFlower = state.gardenElements[Math.floor(Math.random() * state.gardenElements.length)];
+                const rect = randomFlower.getBoundingClientRect();
+                const nx = rect.left + (Math.random() - 0.5) * 80;
+                const ny = rect.top + (Math.random() - 0.5) * 80;
+                plantFlowerAt(nx, ny);
+            }
+        }
+
+        // ============ PASSIVE SEED GENERATION ============
+        function passiveSeedGen() {
+            // Earn seeds passively based on garden size
+            const bonus = Math.floor(state.flowers / 20) + Math.floor(state.treesGrown / 2);
+            if (bonus > 0) {
+                state.seeds += bonus;
+                updateUI();
+            }
+        }
+
+        // ============ GRASS DECORATION ============
+        function createGrass() {
+            const garden = document.getElementById('garden');
+            for (let i = 0; i < 40; i++) {
+                const grass = document.createElement('div');
+                grass.className = 'grass-blade';
+                grass.style.left = Math.random() * 100 + '%';
+                grass.style.height = (20 + Math.random() * 40) + 'px';
+                grass.style.animationDelay = Math.random() * 3 + 's';
+                grass.style.opacity = 0.3 + Math.random() * 0.3;
+                garden.appendChild(grass);
+            }
+        }
+
+        // ============ MOUSE TRAIL ============
+        let lastTrailTime = 0;
+        function handleMouseMove(e) {
+            const now = Date.now();
+            if (now - lastTrailTime < 50) return;
+            lastTrailTime = now;
+
+            if (state.level >= 3) {
+                const trail = document.createElement('div');
+                trail.className = 'magic-trail';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                trail.style.background = `radial-gradient(circle, ${getRandomColor()}44, transparent)`;
+                trail.style.width = '12px';
+                trail.style.height = '12px';
+                document.getElementById('garden').appendChild(trail);
+                setTimeout(() => trail.remove(), 800);
+            }
+        }
+
+        // ============ TOUCH SUPPORT ============
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleGardenClick({ clientX: touch.clientX, clientY: touch.clientY });
+        }
+
+        // ============ INITIALIZATION ============
+        function startGame() {
+            const welcome = document.getElementById('welcome-screen');
+            welcome.style.opacity = '0';
+            setTimeout(() => welcome.style.display = 'none', 1000);
+
+            initAudio();
+            updateGardenBackground();
+            createGrass();
+            updateUI();
+
+            // Plant a few starter flowers
+            setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    const x = window.innerWidth * 0.3 + Math.random() * window.innerWidth * 0.4;
+                    const y = window.innerHeight * 0.3 + Math.random() * window.innerHeight * 0.4;
+                    plantFlowerAt(x, y);
+                }
+            }, 500);
+
+            addDiscovery('🌱 Welcome to your garden! Tap to plant!');
+
+            // Start game loops
+            setInterval(autoGrow, 3000);
+            setInterval(passiveSeedGen, 10000);
+            setInterval(checkAchievements, 5000);
+
+            // Ambient effects
+            setInterval(() => {
+                if (state.level >= 2 && Math.random() < 0.3) {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createSparkles(x, y, 1);
+                }
+            }, 2000);
+
+            // Random weather events
+            setInterval(() => {
+                if (Math.random() < 0.1 && state.level >= 3) {
+                    // Random rain shower
+                    addDiscovery('🌧️ A gentle rain shower!');
+                    for (let i = 0; i < 50; i++) {
+                        setTimeout(() => {
+                            const drop = document.createElement('div');
+                            drop.className = 'raindrop';
+                            drop.style.left = Math.random() * window.innerWidth + 'px';
+                            drop.style.top = '-20px';
+                            drop.style.animationDuration = (0.8 + Math.random() * 0.5) + 's';
+                            document.getElementById('garden').appendChild(drop);
+                            setTimeout(() => drop.remove(), 1500);
+                        }, i * 60);
+                    }
+                    // Rain waters all flowers
+                    state.gardenElements.forEach(el => {
+                        el.dataset.watered = parseInt(el.dataset.watered || 0) + 1;
+                    });
+                    state.seeds += 5;
+                    updateUI();
+                }
+            }, 30000);
+
+            // Random sunshine events
+            setInterval(() => {
+                if (Math.random() < 0.1 && state.level >= 2) {
+                    addDiscovery('☀️ A burst of warm sunshine!');
+                    for (let i = 0; i < 15; i++) {
+                        setTimeout(() => {
+                            const ray = document.createElement('div');
+                            ray.className = 'sun-ray';
+                            ray.style.left = Math.random() * window.innerWidth + 'px';
+                            document.getElementById('garden').appendChild(ray);
+                            setTimeout(() => ray.remove(), 2500);
+                        }, i * 100);
+                    }
+                    state.gardenElements.forEach(el => {
+                        el.dataset.sunned = parseInt(el.dataset.sunned || 0) + 1;
+                    });
+                    gainXP(3);
+                    updateUI();
+                }
+            }, 45000);
+
+            // Theme cycling hint
+            setTimeout(() => {
+                if (state.level >= 3) {
+                    addDiscovery('💡 Tip: Use magic 10 times to change the sky!');
+                }
+            }, 60000);
+        }
+
+        // ============ EVENT LISTENERS ============
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('garden').addEventListener('click', handleGardenClick);
+        document.getElementById('garden').addEventListener('touchstart', handleTouch, { passive: false });
+        document.addEventListener('mousemove', handleMouseMove);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case '1': selectTool('plant'); break;
+                case '2': selectTool('water'); break;
+                case '3': selectTool('sun'); break;
+                case '4': if (state.unlockedTools.includes('magic')) selectTool('magic'); break;
+                case '5': if (state.unlockedTools.includes('paint')) selectTool('paint'); break;
+                case '6': if (state.unlockedTools.includes('music')) selectTool('music'); break;
+                case '7': if (state.unlockedTools.includes('wish')) selectTool('wish'); break;
+                case '8': if (state.unlockedTools.includes('love')) selectTool('love'); break;
+                case 't': cycleTheme(); break;
+                case 'm': toggleMusic(); break;
+            }
+        });
+
+        // Prevent context menu on long press (mobile)
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            // Keep flowers in bounds
+            state.gardenElements.forEach(el => {
+                const left = parseFloat(el.style.left);
+                const top = parseFloat(el.style.top);
+                if (left > window.innerWidth) el.style.left = (window.innerWidth - 30) + 'px';
+                if (top > window.innerHeight) el.style.top = (window.innerHeight - 80) + 'px';
+            });
+        });
+
+        // Save/Load (localStorage)
+        function saveGame() {
+            const saveData = {
+                seeds: state.seeds,
+                flowers: state.flowers,
+                butterflies: state.butterflies,
+                level: state.level,
+                xp: state.xp,
+                xpToNext: state.xpToNext,
+                totalPlanted: state.totalPlanted,
+                discoveries: state.discoveries,
+                achievements: state.achievements,
+                rareFlowersFound: state.rareFlowersFound,
+                treesGrown: state.treesGrown,
+                pondsCreated: state.pondsCreated,
+                gardenTheme: state.gardenTheme,
+                unlockedTools: state.unlockedTools,
+                autoGrowEnabled: state.autoGrowEnabled
+            };
+            localStorage.setItem('bloomGardenSave', JSON.stringify(saveData));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('bloomGardenSave');
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.assign(state, data);
+                // Restore unlocked tools visibility
+                state.unlockedTools.forEach(tool => {
+                    const btn = document.querySelector(`[data-tool="${tool}"]`);
+                    if (btn) btn.style.display = 'flex';
+                });
+                updateGardenBackground();
+                updateUI();
+                updateXPBar();
+                // Restore discoveries
+                data.discoveries.forEach(d => {
+                    const list = document.getElementById('discovery-list');
+                    const item = document.createElement('div');
+                    item.className = 'discovery-item';
+                    item.textContent = d;
+                    list.appendChild(item);
+                });
+            }
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(saveGame, 30000);
+
+        // Load on page load
+        window.addEventListener('load', loadGame);
+
+        // Save before leaving
+        window.addEventListener('beforeunload', saveGame);
+    </script>
+</body>
+</html>
