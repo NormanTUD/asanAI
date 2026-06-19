@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S – Iterative Mengenlehre (Boolos)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2a;
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 span {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        .intro {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            color: #a0a0d0;
+            line-height: 1.6;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: transparent;
+            color: #667eea;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stage Visualization */
+        .stage-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border: 2px solid #333;
+            border-radius: 20px;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a1a4a 0%, #0a0a2a 100%);
+            margin-bottom: 20px;
+        }
+
+        .stage {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .stage:hover {
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        .stage-label {
+            position: absolute;
+            right: -80px;
+            font-size: 0.9em;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .set-node {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid;
+        }
+
+        .set-node:hover {
+            transform: scale(1.5);
+            z-index: 100;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #1a1a4a;
+            border: 1px solid #667eea;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 250px;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .control-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .control-btn.secondary {
+            background: #2a2a5a;
+            color: #a0a0d0;
+            border: 1px solid #444;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Axiom Cards */
+        .axiom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .axiom-card {
+            background: linear-gradient(135deg, #1a1a4a 0%, #2a2a5a 100%);
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .axiom-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .axiom-card.highlighted {
+            border-color: #f0a030;
+            box-shadow: 0 0 20px rgba(240, 160, 48, 0.3);
+        }
+
+        .axiom-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .axiom-formal {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            color: #f0a030;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .axiom-intuition {
+            color: #c0c0e0;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+
+        /* Paradox Section */
+        .paradox-demo {
+            background: linear-gradient(135deg, #2a1a1a 0%, #1a1a4a 100%);
+            border: 2px solid #aa3333;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .paradox-demo h3 {
+            color: #ff6666;
+            margin-bottom: 15px;
+        }
+
+        .paradox-animation {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #0a0a1a;
+            margin: 15px 0;
+        }
+
+        /* Spec Builder */
+        .spec-builder {
+            background: #1a1a4a;
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .spec-builder h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .spec-input-group {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .spec-input-group label {
+            color: #a0a0d0;
+            min-width: 120px;
+        }
+
+        .spec-input-group select, .spec-input-group input {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #0a0a2a;
+            color: #e0e0ff;
+            font-size: 1em;
+        }
+
+        .result-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            min-height: 60px;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .comparison-table td {
+            background: #1a1a4a;
+        }
+
+        .comparison-table tr:hover td {
+            background: #2a2a5a;
+        }
+
+        .checkmark { color: #44ff44; font-size: 1.3em; }
+        .crossmark { color: #ff4444; font-size: 1.3em; }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+        }
+
+        .timeline-item {
+            position: relative;
+            width: 45%;
+            padding: 20px;
+            background: #1a1a4a;
+            border-radius: 10px;
+            border: 1px solid #444;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: 5%;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 50%;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #667eea;
+            border-radius: 50%;
+            top: 25px;
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -8%;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -8%;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            background: linear-gradient(135deg, #1a2a4a 0%, #1a1a3a 100%);
+            border: 1px solid #4a6eaa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            line-height: 1.7;
+        }
+
+        .info-panel h3 {
+            color: #88aaff;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .axiom-grid { grid-template-columns: 1fr; }
+            .stage-container { height: 400px; }
+            .timeline-item { width: 80%; margin-left: 10% !important; }
+            .timeline::before { left: 5%; }
+            .timeline-item::before { left: -8% !important; right: auto !important; }
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+
+        .membership-arrow {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <h1>𝐒 – Iterative Mengenlehre</h1>
+        <p class="intro">
+            Eine interaktive Erkundung von George Boolos' axiomatischer Mengenlehre <strong>S</strong> (1989).<br>
+            Klicke, spiele, entdecke – und baue dir eine Intuition auf, wie Mengen Stufe für Stufe entstehen.
+        </p>
+
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="hierarchy">🏗️ Stufenhierarchie</button>
+            <button class="tab-btn" data-tab="axioms">📜 Axiome</button>
+            <button class="tab-btn" data-tab="spec">🔧 Spec-Baukasten</button>
+            <button class="tab-btn" data-tab="paradoxes">💥 Paradoxien</button>
+            <button class="tab-btn" data-tab="comparison">⚖️ Vergleich mit Z/ZF</button>
+        </nav>
+
+        <!-- TAB 1: Hierarchy -->
+        <div class="tab-content active" id="tab-hierarchy">
+            <div class="info-panel">
+                <h3>💡 Die Kernidee</h3>
+                <p>In <strong>S</strong> gibt es zwei Sorten von Dingen: <em>Mengen</em> und <em>Stufen</em> (Stages). 
+                Mengen werden auf Stufen „geformt" (formed). Eine Menge kann nur aus Elementen bestehen, 
+                die auf <em>früheren</em> Stufen geformt wurden. So entsteht eine geschichtete Hierarchie – 
+                das <strong>iterative Konzept der Menge</strong>.</p>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn primary" id="btn-add-stage">+ Stufe hinzufügen</button>
+                <button class="control-btn secondary" id="btn-reset">↺ Reset</button>
+                <button class="control-btn secondary" id="btn-auto">▶ Auto-Aufbau</button>
+            </div>
+
+            <div class="stage-container" id="stage-viz">
+                <div class="tooltip" id="tooltip"></div>
+            </div>
+
+            <div class="info-panel" id="stage-info">
+                <h3>📋 Aktuelle Hierarchie</h3>
+                <p id="stage-description">Klicke auf „+ Stufe hinzufügen" um die Hierarchie aufzubauen, oder auf eine Menge/Stufe für Details.</p>
+            </div>
+        </div>
+
+        <!-- TAB 2: Axioms -->
+        <div class="tab-content" id="tab-axioms">
+            <div class="info-panel">
+                <h3>Die 6 Axiome von S</h3>
+                <p>S hat zwei Gruppen von je 3 Axiomen: Die ersten drei betreffen nur Stufen, 
+                die letzten drei verbinden Mengen mit Stufen. Klicke auf ein Axiom für eine visuelle Demonstration!</p>
+            </div>
+
+            <div class="axiom-grid">
+                <div class="axiom-card" data-axiom="tra">
+                    <div class="axiom-name">Tra (Transitivität)</div>
+                    <div class="axiom-formal">∀r ∀s ∀t [r&lt;s ∧ s&lt;t → r&lt;t]</div>
+                    <div class="axiom-intuition">
+                        „Früher als" ist transitiv. Wenn Stufe r vor s kommt, und s vor t, 
+                        dann kommt r auch vor t. Die Stufen bilden eine lineare Ordnung.
+                    </div>
+                </div>
+
+                <div class="axiom-card" data-axiom="net">
+                    <div class="axiom-name">Net (Kein Ende)</div>
+                    <div class="axiom-formal">∀s ∀t ∃r [t&lt;r ∧ s&lt;r]</div>
+                    <div class="axiom-intuition">
+                        Zu je zwei Stufen gibt es eine spätere. Es gibt kein „letztes Level" – 
+                        die Hierarchie wächst immer weiter nach oben.
+                    </div>
+                </div>
+
+                <div class="axiom-card" data-axiom="inf">
+                    <div class="axiom-name">Inf (Unendlichkeit)</div>
+                    <div class="axiom-formal">∃r ∃u [u&lt;r ∧ ∀t[t&lt;r → ∃s[t&lt;s ∧ s&lt;r]]]</div>
+                    <div class="axiom-intuition">
+                        Es gibt eine Limitstufe – eine Stufe, die nicht direkt auf eine andere folgt, 
+                        sondern „nach unendlich vielen" kommt. Das ermöglicht unendliche Mengen!
+                    </div>
+                </div>
+
+                <div class="axiom-card" data-axiom="all">
+                    <div class="axiom-name">All (Vollständigkeit)</div>
+                    <div class="axiom-formal">∀x ∃r Fxr</div>
+                    <div class="axiom-intuition">
+                        Jede Menge wird irgendwo geformt. Keine Menge schwebt „außerhalb" der Hierarchie – 
+                        alles hat seinen Platz auf einer bestimmten Stufe.
+                    </div>
+                </div>
+
+                <div class="axiom-card" data-axiom="when">
+                    <div class="axiom-name">When (Wann geformt?)</div>
+                    <div class="axiom-formal">∀r ∀x [Fxr ↔ [∀y(y∈x → Byr) ∧ ¬Bxr]]</div>
+                    <div class="axiom-intuition">
+                        Eine Menge wird genau dann auf Stufe r geformt, wenn (1) alle ihre Elemente 
+                        auf früheren Stufen geformt wurden und (2) sie selbst nicht schon vorher existierte. 
+                        Das ist das Herzstück der iterativen Idee!
+                    </div>
+                </div>
+
+                <div class="axiom-card" data-axiom="spec">
+                    <div class="axiom-name">Spec (Spezifikation)</div>
+                    <div class="axiom-formal">∃r ∀y[A(y)→Byr] → ∃x ∀y[y∈x ↔ A(y)]</div>
+                    <div class="axiom-intuition">
+                        Wenn alle Dinge mit Eigenschaft A(y) vor einer gemeinsamen Stufe r geformt wurden, 
+                        dann gibt es eine Menge, die genau diese Dinge enthält. 
+                        Das ist die „sichere" Version von Komprehension!
+                    </div>
+                </div>
+            </div>
+
+            <div class="stage-container" id="axiom-viz" style="height:350px;">
+                <div class="tooltip" id="axiom-tooltip"></div>
+                <p style="text-align:center; padding-top: 150px; color: #666;">
+                    ← Klicke auf ein Axiom für eine Animation
+                </p>
+            </div>
+        </div>
+
+        <!-- TAB 3: Spec Builder -->
+        <div class="tab-content" id="tab-spec">
+            <div class="info-panel">
+                <h3>🔧 Spec-Axiom interaktiv</h3>
+                <p>Das Spec-Axiom ist das mächtigste Werkzeug in S. Es sagt: 
+                „Wenn du eine Eigenschaft hast und alle Dinge mit dieser Eigenschaft vor einer bestimmten Stufe existieren, 
+                dann kannst du sie zu einer Menge zusammenfassen." Probiere es aus!</p>
+            </div>
+
+            <div class="spec-builder">
+                <h3>Wähle eine Eigenschaft A(y):</h3>
+                <div class="spec-input-group">
+                    <label>Eigenschaft:</label>
+                    <select id="spec-property">
+                        <option value="empty">y = ∅ (ist die leere Menge)</option>
+                        <option value="singleton">y ist eine Einermenge</option>
+                        <option value="subset_of">y ⊆ {∅} (Teilmenge von {∅})</option>
+                        <option value="finite_ordinal">y ist eine endliche Ordinalzahl</option>
+                        <option value="all_stage0">y wurde auf Stufe 0 geformt</option>
+                        <option value="all_before2">y wurde vor Stufe 2 geformt</option>
+                    </select>
+                </div>
+                <div class="spec-input-group">
+                    <label>Prüfe Stufe r:</label>
+                    <input type="range" id="spec-stage" min="0" max="5" value="2" style="width:200px;">
+                    <span id="spec-stage-label">Stufe 2</span>
+                </div>
+                <button class="control-btn primary" id="btn-check-spec">✓ Spec prüfen</button>
+                <div class="result-box" id="spec-result">
+                    <p style="color:#666;">Wähle eine Eigenschaft und klicke „Spec prüfen"...</p>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h3>⚠️ Warum Spec sicher ist</h3>
+                <p>Im Gegensatz zur <em>uneingeschränkten Komprehension</em> (die zu Russells Paradox führt) 
+                verlangt Spec eine <strong>Schranke</strong>: Alle Objekte müssen vor einer bestimmten Stufe existieren. 
+                Dadurch kann man nie „die Menge aller Mengen" bilden – denn diese Objekte existieren auf ALLEN Stufen, 
+                nicht vor einer bestimmten!</p>
+            </div>
+        </div>
+
+        <!-- TAB 4: Paradoxes -->
+        <div class="tab-content" id="tab-paradoxes">
+            <div class="paradox-demo">
+                <h3>💥 Russells Paradox – und warum S es vermeidet</h3>
+                <p style="margin:10px 0; color:#ffaaaa;">
+                    Naive Mengenlehre: „Es gibt eine Menge R = {x | x ∉ x}" → Widerspruch!
+                </p>
+                <div class="paradox-animation" id="russell-anim">
+                    <canvas id="russell-canvas" width="800" height="300"></canvas>
+                </div>
+                <div class="controls">
+                    <button class="control-btn primary" id="btn-russell">▶ Russell-Paradox zeigen</button>
+                    <button class="control-btn secondary" id="btn-russell-fix">🛡️ Wie S es löst</button>
+                </div>
+                <div class="result-box" id="russell-explanation" style="text-align:left; margin-top:15px;">
+                    <p>Klicke auf einen Button um die Animation zu starten...</p>
+                </div>
+            </div>
+
+            <div class="paradox-demo" style="border-color: #aa8833;">
+                <h3 style="color:#ffcc44;">🌊 Burali-Forti & Cantor – Zu große Sammlungen</h3>
+                <p style="margin:10px 0; color:#ffddaa;">
+                    „Die Klasse aller Ordinalzahlen" und „Die Klasse aller Mengen" – 
+                    diese Sammlungen durchlaufen ALLE Stufen und können daher auf keiner einzelnen Stufe geformt werden.
+                </p>
+                <div class="controls">
+                    <button class="control-btn primary" id="btn-too-big">▶ Visualisieren</button>
+                </div>
+                <div class="paradox-animation" id="toobig-anim" style="height:200px;">
+                    <canvas id="toobig-canvas" width="800" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: Comparison -->
+        <div class="tab-content" id="tab-comparison">
+            <div class="info-panel">
+                <h3>⚖️ S im Vergleich zu anderen Mengenlehren</h3>
+                <p>S ist schwächer als ZFC, aber stark genug für fast die gesamte Mathematik. 
+                Hier siehst du, welche Axiome von Z (Zermelo) in S ableitbar sind:</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Axiom</th>
+                        <th>Z (Zermelo)</th>
+                        <th>S (Boolos)</th>
+                        <th>S+ + Ext</th>
+                        <th>ZFC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Extensionalität</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Leere Menge</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span> (ableitbar)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Paarung</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span> (ableitbar)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Vereinigung</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span> (ableitbar)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Potenzmenge</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span> (ableitbar)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Unendlichkeit</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span> (via Inf)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Aussonderung (Spec)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span> (Spec)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ersetzung</td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="checkmark">✓</span> (S+)</td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                
+                    <tr>
+                        <td>Auswahlaxiom</td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Fundierung</td>
+                        <td><span class="crossmark">✗</span></td>
+                        <td><span class="checkmark">✓</span> (implizit)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-panel">
+                <h3>🔑 Wichtige Unterschiede</h3>
+                <p><strong>Keine Extensionalität in S:</strong> Zwei Mengen mit denselben Elementen sind in S nicht automatisch identisch. 
+                Extensionalität folgt nicht aus der iterativen Konzeption – sie ist eine zusätzliche Annahme.</p>
+                <p style="margin-top:10px;"><strong>Kein Auswahlaxiom:</strong> Boolos argumentierte, dass Choice nicht aus der iterativen 
+                Konzeption folgt. S+ + Extensionalität hat die Stärke von ZF, aber nicht ZFC.</p>
+                <p style="margin-top:10px;"><strong>Zwei Sorten:</strong> S ist zweisortig (Mengen + Stufen), während Z/ZF einsortig sind (nur Mengen). 
+                Die Stufen in S machen die iterative Idee explizit.</p>
+            </div>
+
+            <div class="info-panel" style="border-color: #44aa44;">
+                <h3 style="color:#66dd66;">✨ Was S leistet</h3>
+                <p>Trotz seiner relativen Einfachheit kann S fast die gesamte moderne Mathematik begründen. 
+                Die Hierarchie reicht bis ω + n (für endliche n), was für die „überwältigende Mehrheit der Mathematik des 20. Jahrhunderts" ausreicht – 
+                alles ist durch Mengen von relativ niedrigem unendlichem Rang darstellbar (unter ω + 20).</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ TAB NAVIGATION ============
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ============ PARTICLES BACKGROUND ============
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            particle.style.width = particle.style.height = (Math.random() * 4 + 2) + 'px';
+            particlesContainer.appendChild(particle);
+        }
+
+        // ============ HIERARCHY VISUALIZATION ============
+        const stageViz = document.getElementById('stage-viz');
+        const tooltip = document.getElementById('tooltip');
+        let currentStages = 0;
+        let maxStages = 6;
+        let sets = []; // {name, stage, elements[], x, y, color}
+        let autoInterval = null;
+
+        const stageColors = [
+            '#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#01a3a4'
+        ];
+
+        const setsByStage = {
+            0: [{ name: '∅', elements: [], desc: 'Die leere Menge – hat keine Elemente' }],
+            1: [{ name: '{∅}', elements: ['∅'], desc: 'Enthält nur die leere Menge' }],
+            2: [
+                { name: '{{∅}}', elements: ['{∅}'], desc: 'Enthält nur {∅}' },
+                { name: '{∅,{∅}}', elements: ['∅', '{∅}'], desc: 'Enthält ∅ und {∅} – das ist die Zahl 2 in von Neumann!' }
+            ],
+            3: [
+                { name: '{{{∅}}}', elements: ['{{∅}}'], desc: 'Enthält nur {{∅}}' },
+                { name: '{∅,{∅},{{∅}}}', elements: ['∅', '{∅}', '{{∅}}'], desc: 'Die Ordinalzahl 3' },
+                { name: '℘({∅,{∅}})', elements: ['∅', '{∅}', '{{∅}}', '{∅,{∅}}'], desc: 'Potenzmenge von {∅,{∅}} – alle Teilmengen!' }
+            ],
+            4: [
+                { name: '℘(℘({∅}))', elements: ['∅', '{∅}', '{{∅}}', '{∅,{∅}}'], desc: 'Potenzmenge der Potenzmenge von {∅}' },
+                { name: '{∅,{∅},{∅,{∅}},…}', elements: ['...'], desc: 'Ordinalzahl 4 – das Muster setzt sich fort' }
+            ],
+            5: [
+                { name: 'V₅', elements: ['...'], desc: 'Alle möglichen Mengen aus Elementen der Stufen 0–4. Exponentiell viele!' }
+            ]
+        };
+
+        function renderHierarchy() {
+            stageViz.innerHTML = '<div class="tooltip" id="tooltip"></div>';
+            const width = stageViz.clientWidth;
+            const height = stageViz.clientHeight;
+
+            for (let i = 0; i < currentStages; i++) {
+                const stageEl = document.createElement('div');
+                stageEl.className = 'stage';
+                const size = width * 0.85 - (i * (width * 0.12));
+                const bottom = 20 + i * ((height - 80) / maxStages);
+
+                stageEl.style.width = size + 'px';
+                stageEl.style.height = '60px';
+                stageEl.style.bottom = bottom + 'px';
+                stageEl.style.borderColor = stageColors[i];
+                stageEl.style.color = stageColors[i];
+                stageEl.style.background = `rgba(${hexToRgb(stageColors[i])}, 0.05)`;
+                stageEl.style.borderRadius = '30px';
+
+                const label = document.createElement('span');
+                label.className = 'stage-label';
+                label.textContent = i === 0 ? 'Stufe 0' : `Stufe ${i}`;
+                label.style.color = stageColors[i];
+                stageEl.appendChild(label);
+
+                stageEl.addEventListener('click', () => showStageInfo(i));
+                stageEl.addEventListener('mouseenter', (e) => showTooltip(e, `Stufe ${i}: Hier werden Mengen geformt, deren Elemente alle auf Stufen < ${i} existieren.`));
+                stageEl.addEventListener('mouseleave', hideTooltip);
+
+                stageViz.appendChild(stageEl);
+
+                // Add sets for this stage
+                if (setsByStage[i]) {
+                    setsByStage[i].forEach((set, idx) => {
+                        const setEl = document.createElement('div');
+                        setEl.className = 'set-node';
+                        const setSize = 35 + set.name.length * 2;
+                        setEl.style.width = setSize + 'px';
+                        setEl.style.height = '30px';
+                        setEl.style.borderRadius = '15px';
+                        setEl.style.borderColor = stageColors[i];
+                        setEl.style.color = stageColors[i];
+                        setEl.style.background = `rgba(${hexToRgb(stageColors[i])}, 0.2)`;
+                        setEl.style.fontSize = set.name.length > 8 ? '0.55em' : '0.7em';
+                        setEl.textContent = set.name;
+
+                        const totalSets = setsByStage[i].length;
+                        const spacing = size * 0.7 / (totalSets + 1);
+                        const xPos = (width / 2) - (size * 0.35) + spacing * (idx + 1);
+                        setEl.style.left = xPos + 'px';
+                        setEl.style.bottom = (bottom + 15) + 'px';
+                        setEl.style.position = 'absolute';
+
+                        setEl.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            showSetInfo(set, i);
+                        });
+                        setEl.addEventListener('mouseenter', (e) => showTooltip(e, `${set.name}\n${set.desc}`));
+                        setEl.addEventListener('mouseleave', hideTooltip);
+
+                        stageViz.appendChild(setEl);
+                    });
+                }
+            }
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255,255,255';
+        }
+
+        function showTooltip(e, text) {
+            const tt = document.getElementById('tooltip') || tooltip;
+            tt.textContent = text;
+            tt.style.left = (e.offsetX + 15) + 'px';
+            tt.style.top = (e.offsetY - 40) + 'px';
+            tt.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            const tt = document.getElementById('tooltip') || tooltip;
+            tt.classList.remove('visible');
+        }
+
+        function showStageInfo(stageNum) {
+            const desc = document.getElementById('stage-description');
+            const stageDescriptions = [
+                `<strong>Stufe 0:</strong> Enthält nur Entitäten ohne Elemente – die leere Menge ∅. Dies ist der Startpunkt der gesamten Hierarchie.`,
+                `<strong>Stufe 1:</strong> Hier können wir Mengen bilden, deren Elemente auf Stufe 0 existieren. Also z.B. {∅} – die Menge, die die leere Menge enthält.`,
+                `<strong>Stufe 2:</strong> Mengen aus Elementen der Stufen 0 und 1. Jetzt explodiert die Vielfalt: {{∅}}, {∅, {∅}}, etc.`,
+                `<strong>Stufe 3:</strong> Noch mehr Möglichkeiten! Hier entsteht z.B. die Potenzmenge von {∅, {∅}}.`,
+                `<strong>Stufe 4:</strong> Die Anzahl möglicher Mengen wächst exponentiell mit jeder Stufe.`,
+                `<strong>Stufe 5:</strong> V₅ enthält bereits astronomisch viele Mengen – mehr als genug für die meiste Mathematik!`
+            ];
+            desc.innerHTML = stageDescriptions[stageNum] || `Stufe ${stageNum}`;
+        }
+
+        function showSetInfo(set, stage) {
+            const desc = document.getElementById('stage-description');
+            desc.innerHTML = `<strong>${set.name}</strong> (geformt auf Stufe ${stage})<br>
+                ${set.desc}<br>
+                <em>Elemente:</em> ${set.elements.length === 0 ? 'keine (leere Menge)' : set.elements.join(', ')}<br>
+                <em>Axiom „When" sagt:</em> Alle Elemente existieren vor Stufe ${stage} ✓`;
+        }
+
+        document.getElementById('btn-add-stage').addEventListener('click', () => {
+            if (currentStages < maxStages) {
+                currentStages++;
+                renderHierarchy();
+                showStageInfo(currentStages - 1);
+            }
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            currentStages = 0;
+            if (autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+            renderHierarchy();
+            document.getElementById('stage-description').textContent = 'Klicke auf „+ Stufe hinzufügen" um die Hierarchie aufzubauen.';
+        });
+
+        document.getElementById('btn-auto').addEventListener('click', () => {
+            if (autoInterval) { clearInterval(autoInterval); autoInterval = null; return; }
+            currentStages = 0;
+            renderHierarchy();
+            autoInterval = setInterval(() => {
+                if (currentStages < maxStages) {
+                    currentStages++;
+                    renderHierarchy();
+                    showStageInfo(currentStages - 1);
+                } else {
+                    clearInterval(autoInterval);
+                    autoInterval = null;
+                }
+            }, 1200);
+        });
+
+        // ============ AXIOM VISUALIZATION ============
+        const axiomViz = document.getElementById('axiom-viz');
+        const axiomCards = document.querySelectorAll('.axiom-card');
+
+        axiomCards.forEach(card => {
+            card.addEventListener('click', () => {
+                axiomCards.forEach(c => c.classList.remove('highlighted'));
+                card.classList.add('highlighted');
+                animateAxiom(card.dataset.axiom);
+            });
+        });
+
+        function animateAxiom(axiom) {
+            axiomViz.innerHTML = '';
+            const width = axiomViz.clientWidth;
+            const height = axiomViz.clientHeight;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            axiomViz.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+
+            switch (axiom) {
+                case 'tra':
+                    animateTra(ctx, width, height);
+                    break;
+                case 'net':
+                    animateNet(ctx, width, height);
+                    break;
+                case 'inf':
+                    animateInf(ctx, width, height);
+                    break;
+                case 'all':
+                    animateAll(ctx, width, height);
+                    break;
+                case 'when':
+                    animateWhen(ctx, width, height);
+                    break;
+                case 'spec':
+                    animateSpec(ctx, width, height);
+                    break;
+            }
+        }
+
+        function animateTra(ctx, w, h) {
+            let progress = 0;
+            const stages = [
+                { x: w * 0.2, y: h * 0.7, label: 'r', color: '#ff6b6b' },
+                { x: w * 0.5, y: h * 0.5, label: 's', color: '#feca57' },
+                { x: w * 0.8, y: h * 0.3, label: 't', color: '#48dbfb' }
+            ];
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.font = '14px Segoe UI';
+
+                // Draw stages
+                stages.forEach((s, i) => {
+                    if (progress > i * 30) {
+                        ctx.beginPath();
+                        ctx.arc(s.x, s.y, 25, 0, Math.PI * 2);
+                        ctx.fillStyle = s.color + '33';
+                        ctx.fill();
+                        ctx.strokeStyle = s.color;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        ctx.fillStyle = s.color;
+                        ctx.font = 'bold 18px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(s.label, s.x, s.y + 6);
+                    }
+                });
+
+                // Draw arrows
+                if (progress > 40) {
+                    drawArrow(ctx, stages[0].x + 25, stages[0].y - 10, stages[1].x - 25, stages[1].y + 10, '#feca57');
+                    ctx.fillStyle = '#feca57';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillText('r < s', (stages[0].x + stages[1].x) / 2 - 20, (stages[0].y + stages[1].y) / 2 - 15);
+                }
+
+                if (progress > 60) {
+                    drawArrow(ctx, stages[1].x + 25, stages[1].y - 10, stages[2].x - 25, stages[2].y + 10, '#48dbfb');
+                    ctx.fillStyle = '#48dbfb';
+                    ctx.fillText('s < t', (stages[1].x + stages[2].x) / 2 - 20, (stages[1].y + stages[2].y) / 2 - 15);
+                }
+
+                if (progress > 80) {
+                    drawArrow(ctx, stages[0].x + 20, stages[0].y - 20, stages[2].x - 20, stages[2].y + 20, '#54a0ff');
+                    ctx.fillStyle = '#54a0ff';
+                    ctx.font = 'bold 16px Segoe UI';
+                    ctx.fillText('→ r < t ✓', w / 2, h * 0.85);
+                    ctx.strokeStyle = '#54a0ff';
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(stages[0].x + 20, stages[0].y - 20);
+                    ctx.lineTo(stages[2].x - 20, stages[2].y + 20);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                progress += 2;
+                if (progress < 100) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function animateNet(ctx, w, h) {
+            let progress = 0;
+            let stageCount = 2;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                const stages = [];
+                for (let i = 0; i < stageCount; i++) {
+                    stages.push({
+                        x: w * 0.15 + i * (w * 0.7 / (stageCount)),
+                        y: h * 0.6 - i * 15,
+                        label: `s${i}`
+                    });
+                }
+
+                // Draw existing stages
+                stages.forEach((s, i) => {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, 20, 0, Math.PI * 2);
+                    ctx.fillStyle = stageColors[i % stageColors.length] + '33';
+                    ctx.fill();
+                    ctx.strokeStyle = stageColors[i % stageColors.length];
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.fillStyle = stageColors[i % stageColors.length];
+                    ctx.font = '12px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(s.label, s.x, s.y + 4);
+                });
+
+                // Pulsing "new stage" indicator
+                if (progress % 120 < 60) {
+                    const pulse = Math.sin(progress * 0.1) * 5;
+                    const newX = stages[stages.length - 1].x + 80;
+                    const newY = stages[stages.length - 1].y - 20;
+                    ctx.beginPath();
+                    ctx.arc(newX, newY, 20 + pulse, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#ffffff55';
+                    ctx.setLineDash([3, 3]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#ffffff88';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('∃r ...', newX, newY + 4);
+                }
+
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '14px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Es gibt immer eine weitere Stufe – kein Ende!', w / 2, h * 0.9);
+                ctx.fillText('→ ∞', w * 0.9, h * 0.5);
+
+                progress++;
+                if (progress % 120 === 0 && stageCount < 7) stageCount++;
+                if (progress < 500) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function animateInf(ctx, w, h) {
+            let progress = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw finite stages
+                const numStages = Math.min(Math.floor(progress / 15), 10);
+                for (let i = 0; i < numStages; i++) {
+                    const x = w * 0.05 + i * (w * 0.06);
+                    const y = h * 0.6;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 8, 0, Math.PI * 2);
+                    ctx.fillStyle = stageColors[i % stageColors.length] + '88';
+                    ctx.fill();
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '10px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(i.toString(), x, y + 20);
+                }
+
+                // Draw dots suggesting infinity
+                if (progress > 100) {
+                    ctx.fillStyle = '#888';
+                    ctx.font = '20px Segoe UI';
+                    ctx.fillText('· · ·', w * 0.7, h * 0.6);
+                }
+
+                // Draw limit stage ω
+                if (progress > 130) {
+                    const pulse = Math.sin(progress * 0.05) * 3;
+                    const omegaX = w * 0.85;
+                    const omegaY = h * 0.4;
+                    ctx.beginPath();
+                    ctx.arc(omegaX, omegaY, 25 + pulse, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ff9ff333';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff9ff3';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    ctx.fillStyle = '#ff9ff3';
+                    ctx.font = 'bold 20px serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('ω', omegaX, omegaY + 7);
+
+                    ctx.fillStyle = '#c0c0e0';
+                    ctx.font = '13px Segoe UI';
+                    ctx.fillText('Limitstufe!', omegaX, omegaY + 45);
+                    ctx.fillText('Kein direkter Vorgänger', omegaX, omegaY + 62);
+
+                    // Arrow from dots to omega
+                    drawArrow(ctx, w * 0.75, h * 0.55, omegaX - 30, omegaY + 10, '#ff9ff3');
+                }
+
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Inf garantiert: Es gibt eine Stufe nach unendlich vielen endlichen Stufen', w / 2, h * 0.92);
+
+                progress++;
+                if (progress < 200) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function animateAll(ctx, w, h) {
+            let progress = 0;
+            const floatingSets = [];
+            for (let i = 0; i < 8; i++) {
+                floatingSets.push({
+                    x: Math.random() * w * 0.8 + w * 0.1,
+                    y: Math.random() * h * 0.4 + 10,
+                    name: ['∅', '{∅}', '{{∅}}', '{∅,{∅}}', 'x', 'y', '{x}', '{x,y}'][i],
+                    targetStage: Math.floor(Math.random() * 4),
+                    settled: false
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw stages at bottom
+                for (let i = 0; i < 4; i++) {
+                    const y = h * 0.95 - i * 50;
+                    ctx.strokeStyle = stageColors[i] + '88';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(w * 0.1, y);
+                    ctx.lineTo(w * 0.9, y);
+                    ctx.stroke();
+                    ctx.fillStyle = stageColors[i];
+                    ctx.font = '11px Segoe UI';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`Stufe ${i}`, w * 0.02, y);
+                }
+
+                // Animate sets finding their stage
+                floatingSets.forEach((s, i) => {
+                    const targetY = h * 0.95 - s.targetStage * 50 - 15;
+                    if (progress > i * 20 && !s.settled) {
+                        s.y += (targetY - s.y) * 0.03;
+                        if (Math.abs(s.y - targetY) < 2) s.settled = true;
+                    }
+
+                    ctx.fillStyle = s.settled ? stageColors[s.targetStage] : '#ffffff88';
+                    ctx.font = '13px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(s.name, s.x, s.y);
+
+                    if (s.settled) {
+                        ctx.fillStyle = stageColors[s.targetStage] + '44';
+                        ctx.fillRect(s.x - 20, s.y - 12, 40, 16);
+                    }
+                });
+
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '14px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Jede Menge findet ihren Platz auf einer Stufe (All: ∀x ∃r Fxr)', w / 2, 25);
+
+                progress++;
+                if (progress < 300) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function animateWhen(ctx, w, h) {
+            let progress = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Stage 2 highlighted
+                const stageY = h * 0.4;
+                ctx.strokeStyle = '#48dbfb';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(w * 0.1, stageY);
+                ctx.lineTo(w * 0.9, stageY);
+                ctx.stroke();
+                ctx.fillStyle = '#48dbfb';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.textAlign = 'left';
+                ctx.fillText('Stufe 2', w * 0.02, stageY - 5);
+
+                // Elements below (formed before stage 2)
+                if (progress > 20) {
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = '16px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('∅', w * 0.3, stageY + 50);
+                    ctx.fillText('{∅}', w * 0.6, stageY + 50);
+                    ctx.fillStyle = '#ff6b6b88';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('(Stufe 0)', w * 0.3, stageY + 70);
+                    ctx.fillText('(Stufe 1)', w * 0.6, stageY + 70);
+                    ctx.fillStyle = '#88ff88';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('✓ Byr: geformt VOR Stufe 2', w * 0.45, stageY + 95);
+                }
+
+                // Set formed AT stage 2
+                if (progress > 60) {
+                    const pulse = Math.sin(progress * 0.08) * 3;
+                    ctx.strokeStyle = '#feca57';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(w * 0.5, stageY - 50, 30 + pulse, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.fillStyle = '#feca57';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('{∅, {∅}}', w * 0.5, stageY - 45);
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('Fxr: geformt AUF Stufe 2', w * 0.5, stageY - 75);
+
+                    // Arrows from elements to set
+                    drawArrow(ctx, w * 0.3, stageY + 35, w * 0.45, stageY - 25, '#feca5788');
+                    drawArrow(ctx, w * 0.6, stageY + 35, w * 0.55, stageY - 25, '#feca5788');
+                }
+
+                // Explanation
+                if (progress > 80) {
+                    ctx.fillStyle = '#c0c0e0';
+                    ctx.font = '13px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('When: Eine Menge wird genau DORT geformt, wo alle Elemente schon existieren', w / 2, h * 0.92);
+                }
+
+                progress++;
+                if (progress < 150) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function animateSpec(ctx, w, h) {
+            let progress = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw bounding stage r
+                if (progress > 10) {
+                    ctx.strokeStyle = '#54a0ff';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(w * 0.1, h * 0.35);
+                    ctx.lineTo(w * 0.9, h * 0.35);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#54a0ff';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.textAlign = 'right';
+                    ctx.fillText('Stufe r (Schranke)', w * 0.95, h * 0.33);
+                }
+
+                // Draw sets satisfying A(y) below stage r
+                const satisfyingSets = ['∅', '{∅}', '{{∅}}'];
+                if (progress > 30) {
+                    ctx.fillStyle = '#88ff88';
+                    ctx.font = '12px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Alle y mit A(y) existieren VOR Stufe r:', w / 2, h * 0.45);
+
+                    satisfyingSets.forEach((s, i) => {
+                        const x = w * 0.3 + i * (w * 0.2);
+                        const y = h * 0.58;
+                        const pulse = Math.sin(progress * 0.05 + i) * 2;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 18 + pulse, 0, Math.PI * 2);
+                        ctx.fillStyle = '#88ff8822';
+                        ctx.fill();
+                        ctx.strokeStyle = '#88ff88';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        ctx.fillStyle = '#88ff88';
+                        ctx.font = '14px Segoe UI';
+                        ctx.fillText(s, x, y + 5);
+                        ctx.font = '10px Segoe UI';
+                        ctx.fillText('A(y) ✓', x, y + 25);
+                    });
+                }
+
+                // Draw resulting set
+                if (progress > 80) {
+                    const pulse = Math.sin(progress * 0.06) * 4;
+                    ctx.strokeStyle = '#feca57';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(w / 2, h * 0.15, 35 + pulse, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.fillStyle = '#feca57';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('{∅, {∅}, {{∅}}}', w / 2, h * 0.17);
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('→ ∃x mit genau diesen Elementen!', w / 2, h * 0.08);
+
+                    // Arrows from elements to new set
+                    satisfyingSets.forEach((s, i) => {
+                        const sx = w * 0.3 + i * (w * 0.2);
+                        drawArrow(ctx, sx, h * 0.58 - 20, w / 2, h * 0.15 + 35, '#feca5766');
+                    });
+                }
+
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Spec: Gebundene Komprehension – nur „kleine" Sammlungen werden zu Mengen', w / 2, h * 0.95);
+
+                progress++;
+                if (progress < 200) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function drawArrow(ctx, fromX, fromY, toX, toY, color) {
+            const headLen = 8;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headLen * Math.cos(angle - 0.4), toY - headLen * Math.sin(angle - 0.4));
+            ctx.lineTo(toX - headLen * Math.cos(angle + 0.4), toY - headLen * Math.sin(angle + 0.4));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // ============ SPEC BUILDER ============
+        const specStageSlider = document.getElementById('spec-stage');
+        const specStageLabel = document.getElementById('spec-stage-label');
+        const specProperty = document.getElementById('spec-property');
+
+        specStageSlider.addEventListener('input', () => {
+            specStageLabel.textContent = `Stufe ${specStageSlider.value}`;
+        });
+
+        document.getElementById('btn-check-spec').addEventListener('click', () => {
+            const prop = specProperty.value;
+            const stage = parseInt(specStageSlider.value);
+            const result = document.getElementById('spec-result');
+
+            const checks = {
+                'empty': {
+                    elements: ['∅'],
+                    formedAt: [0],
+                    desc: 'y = ∅',
+                    needed: 1
+                },
+                'singleton': {
+                    elements: ['{∅}', '{{∅}}', '{{{∅}}}'],
+                    formedAt: [1, 2, 3],
+                    desc: 'y ist eine Einermenge',
+                    needed: 2
+                },
+                'subset_of': {
+                    elements: ['∅', '{∅}'],
+                    formedAt: [0, 1],
+                    desc: 'y ⊆ {∅}',
+                    needed: 2
+                },
+                'finite_ordinal': {
+                    elements: ['∅', '{∅}', '{∅,{∅}}', '{∅,{∅},{∅,{∅}}}'],
+                    formedAt: [0, 1, 2, 3],
+                    desc: 'y ist endliche Ordinalzahl',
+                    needed: Infinity
+                },
+                'all_stage0': {
+                    elements: ['∅'],
+                    formedAt: [0],
+                    desc: 'y wurde auf Stufe 0 geformt',
+                    needed: 1
+                },
+                'all_before2': {
+                    elements: ['∅', '{∅}'],
+                    formedAt: [0, 1],
+                    desc: 'y wurde vor Stufe 2 geformt',
+                    needed: 2
+                }
+            };
+
+            const check = checks[prop];
+            const bounded = check.formedAt.every(s => s < stage);
+            const relevantElements = check.elements.filter((_, i) => check.formedAt[i] < stage);
+
+            let html = `<h4 style="color:#667eea; margin-bottom:10px;">Eigenschaft: ${check.desc}</h4>`;
+            html += `<p><strong>Elemente mit dieser Eigenschaft:</strong> ${check.elements.join(', ')}</p>`;
+            html += `<p><strong>Geformt auf Stufen:</strong> ${check.formedAt.join(', ')}</p>`;
+            html += `<p><strong>Gewählte Schranke:</strong> Stufe ${stage}</p>`;
+            html += `<hr style="border-color:#333; margin:10px 0;">`;
+
+            if (prop === 'finite_ordinal' && stage < 100) {
+                html += `<p style="color:#ff6666;">❌ <strong>Spec NICHT anwendbar!</strong></p>`;
+                html += `<p>Es gibt unendlich viele endliche Ordinalzahlen – sie existieren auf ALLEN endlichen Stufen. 
+                Keine endliche Stufe r kann sie alle beschränken!</p>`;
+                html += `<p style="color:#feca57;">💡 Aber: Mit dem Inf-Axiom gibt es Stufe ω, und DORT existieren alle endlichen Ordinalzahlen davor. 
+                Also kann Spec mit r = ω angewendet werden → ω = {0, 1, 2, 3, ...} existiert!</p>`;
+            } else if (bounded) {
+                html += `<p style="color:#88ff88;">✅ <strong>Spec anwendbar!</strong></p>`;
+                html += `<p>Alle Elemente mit A(y) wurden vor Stufe ${stage} geformt (∀y[A(y) → Byr] ✓)</p>`;
+                html += `<p>→ Es existiert eine Menge <strong>x = {${relevantElements.join(', ')}}</strong></p>`;
+                html += `<p style="color:#a0a0d0;">Diese Menge wird auf Stufe ${stage} (oder früher) geformt.</p>`;
+            } else {
+                html += `<p style="color:#ff6666;">❌ <strong>Spec NICHT anwendbar mit Stufe ${stage}!</strong></p>`;
+                html += `<p>Nicht alle Elemente existieren vor Stufe ${stage}. `;
+                html += `Manche werden erst auf Stufe ${Math.max(...check.formedAt)} oder später geformt.</p>`;
+                html += `<p style="color:#feca57;">💡 Versuche eine höhere Stufe als Schranke!</p>`;
+            }
+
+            result.innerHTML = html;
+        });
+
+        // ============ RUSSELL'S PARADOX ============
+        document.getElementById('btn-russell').addEventListener('click', () => {
+            const canvas = document.getElementById('russell-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 300;
+            const w = canvas.width, h = canvas.height;
+            let progress = 0;
+
+            const explanation = document.getElementById('russell-explanation');
+            explanation.innerHTML = '<p style="color:#ffaaaa;">Beobachte: Wir versuchen R = {x | x ∉ x} zu bilden...</p>';
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw R
+                const pulse = Math.sin(progress * 0.05) * 5;
+                ctx.strokeStyle = '#ff4444';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(w / 2, h / 2, 80 + pulse, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.fillStyle = '#ff4444';
+                ctx.font = 'bold 24px serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('R', w / 2, h / 2 - 30);
+
+                // Question: R ∈ R?
+                if (progress > 50) {
+                    ctx.font = '16px Segoe UI';
+                    ctx.fillStyle = '#ffaaaa';
+                    ctx.fillText('R ∈ R ?', w / 2, h / 2 + 10);
+                }
+
+                if (progress > 80) {
+                    // Left side: If yes
+                    ctx.fillStyle = '#ff8888';
+                    ctx.font = '13px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Wenn R ∈ R:', w * 0.25, h / 2 - 10);
+                    ctx.fillText('→ R erfüllt x ∉ x nicht', w * 0.25, h / 2 + 10);
+                    ctx.fillText('→ R ∉ R  💥', w * 0.25, h / 2 + 30);
+
+                    // Right side: If no
+                    ctx.fillText('Wenn R ∉ R:', w * 0.75, h / 2 - 10);
+                    ctx.fillText('→ R erfüllt x ∉ x', w * 0.75, h / 2 + 10);
+                    ctx.fillText('→ R ∈ R  💥', w * 0.75, h / 2 + 30);
+                }
+
+                if (progress > 120) {
+                    // Explosion effect
+                    const explodeProgress = (progress - 120) / 50;
+                    if (explodeProgress < 1) {
+                        for (let i = 0; i < 12; i++) {
+                            const angle = (i / 12) * Math.PI * 2;
+                            const dist = explodeProgress * 100;
+                            ctx.beginPath();
+                            ctx.arc(w / 2 + Math.cos(angle) * dist, h / 2 + Math.sin(angle) * dist, 5 * (1 - explodeProgress), 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(255, ${Math.floor(100 - explodeProgress * 100)}, 0, ${1 - explodeProgress})`;
+                            ctx.fill();
+                        }
+                    }
+
+                    ctx.fillStyle = '#ff4444';
+                    ctx.font = 'bold 20px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('WIDERSPRUCH!', w / 2, h - 30);
+                }
+
+                progress++;
+                if (progress < 200) requestAnimationFrame(draw);
+                else {
+                    explanation.innerHTML = `<p style="color:#ffaaaa;"><strong>Russells Paradox:</strong> 
+                    Die Annahme „R = {x | x ∉ x} ist eine Menge" führt zu einem Widerspruch. 
+                    R ∈ R ↔ R ∉ R – unmöglich!</p>
+                    <p style="margin-top:10px; color:#aaa;">In der naiven Mengenlehre mit uneingeschränkter Komprehension 
+                    kann man R bilden → das System ist inkonsistent.</p>`;
+                }
+            }
+            draw();
+        });
+
+        document.getElementById('btn-russell-fix').addEventListener('click', () => {
+            const canvas = document.getElementById('russell-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 300;
+            const w = canvas.width, h = canvas.height;
+            let progress = 0;
+
+            const explanation = document.getElementById('russell-explanation');
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw stages
+                for (let i = 0; i < 5; i++) {
+                    const y = h - 30 - i * 55;
+                    ctx.strokeStyle = stageColors[i] + '66';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(50, y);
+                    ctx.lineTo(w - 50, y);
+                    ctx.stroke();
+                    ctx.fillStyle = stageColors[i];
+                    ctx.font = '10px Segoe UI';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`Stufe ${i}`, 5, y - 3);
+                }
+
+                // Show sets on stages
+                if (progress > 20) {
+                    const setsOnStages = [
+                        { name: '∅', stage: 0, x: w * 0.3 },
+                        { name: '{∅}', stage: 1, x: w * 0.4 },
+                        { name: '{∅,{∅}}', stage: 2, x: w * 0.5 },
+                    ];
+                    setsOnStages.forEach(s => {
+                        const y = h - 30 - s.stage * 55 - 20;
+                        ctx.fillStyle = stageColors[s.stage];
+                        ctx.font = '12px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(s.name, s.x, y);
+                    });
+                }
+
+                // Show R trying to form
+                if (progress > 60) {
+                    ctx.fillStyle = '#ff444488';
+                    ctx.font = '14px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('R = {x | x ∉ x} ?', w * 0.7, h * 0.3);
+
+                    // Show it needs elements from ALL stages
+                    if (progress > 80) {
+                        ctx.strokeStyle = '#ff444444';
+                        ctx.setLineDash([3, 3]);
+                        for (let i = 0; i < 5; i++) {
+                            const y = h - 30 - i * 55 - 20;
+                            ctx.beginPath();
+                            ctx.moveTo(w * 0.7, h * 0.35);
+                            ctx.lineTo(w * 0.5, y);
+                            ctx.stroke();
+                        }
+                        ctx.setLineDash([]);
+
+                        ctx.fillStyle = '#ff8888';
+                        ctx.font = '11px Segoe UI';
+                        ctx.fillText('Braucht Elemente von JEDER Stufe!', w * 0.7, h * 0.4);
+                    }
+
+                    // Shield / block
+                    if (progress > 110) {
+                        ctx.fillStyle = '#44ff4488';
+                        ctx.font = 'bold 40px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🛡️', w * 0.7, h * 0.55);
+                        ctx.fillStyle = '#44ff44';
+                        ctx.font = '12px Segoe UI';
+                        ctx.fillText('Spec verlangt: ∃r ∀y[A(y)→Byr]', w * 0.7, h * 0.65);
+                        ctx.fillText('Aber kein r beschränkt ALLE x mit x∉x!', w * 0.7, h * 0.72);
+                        ctx.fillStyle = '#88ff88';
+                        ctx.font = 'bold 14px Segoe UI';
+                        ctx.fillText('→ R kann NICHT gebildet werden ✓', w * 0.7, h * 0.82);
+                    }
+                }
+
+                progress++;
+                if (progress < 180) requestAnimationFrame(draw);
+                else {
+                    explanation.innerHTML = `<p style="color:#88ff88;"><strong>Wie S das Paradox vermeidet:</strong></p>
+                    <p style="margin-top:8px;">In S kann man nur dann eine Menge {y | A(y)} bilden, wenn ALLE y mit A(y) 
+                    vor einer gemeinsamen Stufe r existieren (Spec-Axiom).</p>
+                    <p style="margin-top:8px;">Aber die Sammlung {x | x ∉ x} enthält Mengen von JEDER Stufe – 
+                    es gibt keine obere Schranke r. Also ist Spec nicht anwendbar, und R wird nie als Menge gebildet.</p>
+                    <p style="margin-top:8px; color:#feca57;">Die „Sammlung" existiert als <em>echte Klasse</em> (proper class), 
+                    aber nicht als Menge. Kein Widerspruch!</p>`;
+                }
+            }
+            draw();
+        });
+
+        // ============ TOO BIG COLLECTIONS ============
+        document.getElementById('btn-too-big').addEventListener('click', () => {
+            const canvas = document.getElementById('toobig-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = 200;
+            const w = canvas.width, h = canvas.height;
+            let progress = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw infinite stages going right
+                const numVisible = Math.min(Math.floor(progress / 8), 15);
+                for (let i = 0; i < numVisible; i++) {
+                    const x = 50 + i * (w * 0.055);
+                    const stageH = h * 0.7;
+
+                    ctx.strokeStyle = stageColors[i % stageColors.length] + '88';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x, stageH);
+                    ctx.lineTo(x, stageH - 20 - i * 3);
+                    ctx.stroke();
+
+                    // Dot for a set on this stage
+                    ctx.beginPath();
+                    ctx.arc(x, stageH - 10 - i * 2, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = stageColors[i % stageColors.length];
+                    ctx.fill();
+                }
+
+                // Dots suggesting infinity
+                if (numVisible >= 15) {
+                    ctx.fillStyle = '#888';
+                    ctx.font = '24px Segoe UI';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('· · · → ∞', 50 + 15 * (w * 0.055), h * 0.65);
+                }
+
+                // "Class of all sets" trying to collect everything
+                if (progress > 80) {
+                    ctx.strokeStyle = '#ff444488';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.ellipse(w / 2, h * 0.4, w * 0.42, h * 0.25, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.fillStyle = '#ff6666';
+                    ctx.font = '13px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('„Klasse aller Mengen" – durchläuft ALLE Stufen', w / 2, h * 0.12);
+                    ctx.fillStyle = '#ff444488';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('→ Keine Stufe r kann sie beschränken → KEINE Menge!', w / 2, h * 0.93);
+                }
+
+                progress++;
+                if (progress < 200) requestAnimationFrame(draw);
+            }
+            draw();
+        });
+
+        // ============ INITIAL RENDER ============
+        window.addEventListener('resize', () => {
+            if (currentStages > 0) renderHierarchy();
+        });
+
+        // Start with one stage for visual appeal
+        setTimeout(() => {
+            currentStages = 1;
+            renderHierarchy();
+            showStageInfo(0);
+        }, 500);
+    </script>
+</body>
+</html>
