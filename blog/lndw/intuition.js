@@ -1403,7 +1403,7 @@ const IntuitionViz = {
 
 // Add to the existing lazy loading system for the new forward-pass slides
 
-function initForwardPassSlides() {
+async function initForwardPassSlides() {
     // Forward Pass Overview
         ForwardPassViz.render();
 
