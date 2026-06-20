@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Was ist Wahrscheinlichkeit? – Interaktiv erkunden</title>
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <!-- temml für Formeln -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .section h2 {
+            color: #00d2ff;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+        }
+        .section h3 {
+            color: #7dd3fc;
+            margin: 1rem 0 0.5rem;
+        }
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.3rem;
+            overflow-x: auto;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        .controls label {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+        input[type="range"] {
+            width: 200px;
+            accent-color: #00d2ff;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 0.3rem;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        button {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        button:hover { transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
+        canvas {
+            border-radius: 10px;
+            display: block;
+            margin: 1rem auto;
+            background: #0a0a1a;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .result-box {
+            background: rgba(0,210,255,0.1);
+            border: 1px solid rgba(0,210,255,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        .explanation {
+            color: #bbb;
+            line-height: 1.7;
+            margin: 0.5rem 0;
+        }
+        .tab-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: rgba(0,210,255,0.2);
+            border-color: #00d2ff;
+            color: #00d2ff;
+        }
+        .tab:hover { background: rgba(0,210,255,0.1); }
+        .plotly-chart { width: 100%; min-height: 400px; }
+        .coin-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 1rem 0;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        .coin {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: bold;
+        }
+        .coin.heads { background: #ffd700; color: #000; }
+        .coin.tails { background: #555; color: #fff; }
+        .entropy-bar {
+            height: 20px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00ff88, #ffff00, #ff4444);
+            position: relative;
+            margin: 0.5rem 0;
+        }
+        .entropy-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px; height: 30px;
+            background: #fff;
+            border-radius: 2px;
+            transition: left 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Was ist Wahrscheinlichkeit?</h1>
+<p class="subtitle">Interaktive Erkundung aus 6 wissenschaftlichen Perspektiven</p>
+
+<!-- ============================================ -->
+<!-- SEKTION 1: KLASSISCHE / LAPLACE -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>1. Klassische Wahrscheinlichkeit (Laplace)</h2>
+    <p class="explanation">
+        Pierre-Simon Laplace (1814): Wenn alle Ergebnisse gleich möglich sind, ist die Wahrscheinlichkeit eines Ereignisses das Verhältnis der günstigen zu den möglichen Fällen.
+    </p>
+    <div class="formula-box" id="formula-laplace"></div>
+    
+    <div class="grid-2">
+        <div>
+            <h3>🎲 Würfel-Experiment</h3>
+            <div class="controls">
+                <label>Anzahl Würfel: <input type="number" id="numDice" value="2" min="1" max="6"></label>
+                <label>Zielwert ≥ <input type="number" id="targetSum" value="7" min="2" max="36"></label>
+                <button onclick="calculateLaplace()">Berechnen</button>
+            </div>
+            <canvas id="diceCanvas" width="500" height="250"></canvas>
+            <div class="result-box" id="laplaceResult">Klicke "Berechnen" um die Wahrscheinlichkeit zu sehen.</div>
+        </div>
+        <div>
+            <h3>📊 Verteilung der Augensummen</h3>
+            <div id="dicePlot" class="plotly-chart"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEKTION 2: FREQUENTISTISCHE -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>2. Frequentistische Wahrscheinlichkeit</h2>
+    <p class="explanation">
+        Richard von Mises (1928): Wahrscheinlichkeit ist der Grenzwert der relativen Häufigkeit bei unendlich vielen Wiederholungen eines Experiments.
+    </p>
+    <div class="formula-box" id="formula-freq"></div>
+    
+    <h3>🪙 Münzwurf-Simulation – Gesetz der großen Zahlen</h3>
+    <div class="controls">
+        <label>Wahre P(Kopf): <input type="range" id="trueProbSlider" min="0" max="100" value="50" oninput="updateTrueProb()"> <span id="trueProbVal">0.50</span></label>
+        <button onclick="flipCoins(10)">+10 Würfe</button>
+        <button onclick="flipCoins(100)">+100 Würfe</button>
+        <button onclick="flipCoins(1000)">+1000 Würfe</button>
+        <button onclick="resetCoins()">Reset</button>
+    </div>
+    <div class="coin-display" id="coinDisplay"></div>
+    <div id="freqPlot" class="plotly-chart"></div>
+    <div class="result-box" id="freqResult">Starte die Simulation!</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEKTION 3: BAYESIANISCHE -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>3. Bayesianische Wahrscheinlichkeit</h2>
+    <p class="explanation">
+        Thomas Bayes (1763) / Harold Jeffreys: Wahrscheinlichkeit drückt unseren Grad der Überzeugung (degree of belief) aus, der durch Evidenz aktualisiert wird.
+    </p>
+    <div class="formula-box" id="formula-bayes"></div>
+    
+    <h3>🏥 Medizinischer Test – Bayes in Aktion</h3>
+    <p class="explanation">Ein Krankheitstest: Wie verändert ein positives Testergebnis unsere Überzeugung?</p>
+    <div class="controls">
+        <label>Prävalenz (Prior): <input type="range" id="prevalence" min="0.1" max="50" step="0.1" value="1" oninput="updateBayes()"> <span id="prevVal">1%</span></label>
+        <label>Sensitivität: <input type="range" id="sensitivity" min="50" max="100" step="1" value="95" oninput="updateBayes()"> <span id="sensVal">95%</span></label>
+        <label>Spezifität: <input type="range" id="specificity" min="50" max="100" step="1" value="90" oninput="updateBayes()"> <span id="specVal">90%</span></label>
+    </div>
+    <div class="grid-2">
+        <div>
+            <div id="bayesPlot" class="plotly-chart"></div>
+        </div>
+        <div>
+            <canvas id="bayesTreeCanvas" width="450" height="350"></canvas>
+            <div class="result-box" id="bayesResult"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEKTION 4: INFORMATIONSTHEORETISCHE -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>4. Informationstheoretische Perspektive (Shannon)</h2>
+    <p class="explanation">
+        Claude Shannon (1948): Wahrscheinlichkeit ist mit Information verknüpft. Je unwahrscheinlicher ein Ereignis, desto mehr Information trägt sein Eintreten.
+    </p>
+    <div class="formula-box" id="formula-entropy"></div>
+    
+    <h3>📡 Entropie & Informationsgehalt</h3>
+    <div class="controls">
+        <label>P(Ereignis A): <input type="range" id="entropySlider" min="1" max="99" value="50" oninput="updateEntropy()"> <span id="entropyPVal">0.50</span></label>
+    </div>
+    <div class="grid-2">
+        <div>
+            <div id="entropyPlot" class="plotly-chart"></div>
+        </div>
+        <div>
+            <canvas id="entropyCanvas" width="450" height="300"></canvas>
+            <div class="result-box" id="entropyResult"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEKTION 5: QUANTENMECHANISCHE -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>5. Quantenmechanische Wahrscheinlichkeit</h2>
+    <p class="explanation">
+        Max Born (1926): In der Quantenmechanik ist Wahrscheinlichkeit fundamental – nicht Ausdruck von Unwissenheit, sondern intrinsische Eigenschaft der Natur. Die Wahrscheinlichkeit ergibt sich aus dem Betragsquadrat der Wellenfunktion.
+    </p>
+    <div class="formula-box" id="formula-quantum"></div>
+    
+    <h3>⚛️ Teilchen im Potentialtopf – Aufenthaltswahrscheinlichkeit</h3>
+    <div class="controls">
+        <label>Quantenzahl n: <input type="range" id="quantumN" min="1" max="8" value="1" oninput="updateQuantum()"> <span id="quantumNVal">1</span></label>
+        <label>Messbereich: <input type="range" id="quantumRange" min="5" max="50" value="20" oninput="updateQuantum()"> <span id="quantumRangeVal">20%</span></label>
+    </div>
+    <canvas id="quantumCanvas" width="900" height="350"></canvas>
+    <div class="result-box" id="quantumResult"></div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEKTION 6: STOCHASTISCHE PROZESSE -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>6. Stochastische Prozesse – Wahrscheinlichkeit in der Zeit</h2>
+    <p class="explanation">
+        Andrei Kolmogorov (1933): Wahrscheinlichkeit als axiomatisches Maß. Hier visualisiert durch Markov-Ketten und Random Walks.
+    </p>
+    <div class="formula-box" id="formula-markov"></div>
+    
+    <h3>🚶 Random Walk & Diffusion</h3>
+    <div class="controls">
+        <label>Anzahl Pfade: <input type="number" id="numPaths" value="20" min="1" max="200"></label>
+        <label>Schritte: <input type="number" id="numSteps" value="200" min="10" max="1000"></label>
+        <label>P(rechts): <input type="range" id="rwBias" min="30" max="70" value="50" oninput="document.getElementById('rwBiasVal').textContent=(this.value/100).toFixed(2)"> <span id="rwBiasVal">0.50</span></label>
+        <button onclick="simulateRandomWalk()">Simulieren</button>
+    </div>
+    <div id="rwPlot" class="plotly-chart"></div>
+    <div class="result-box" id="rwResult">Klicke "Simulieren" um Random Walks zu erzeugen.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SEKTION 7: ZUSAMMENFASSUNG -->
+<!-- ============================================ -->
+<div class="section">
+    <h2>🔗 Zusammenhang der Perspektiven</h2>
+    <canvas id="summaryCanvas" width="900" height="400"></canvas>
+    <p class="explanation" style="margin-top:1rem; text-align:center;">
+        Alle Perspektiven erfüllen Kolmogorovs Axiome (1933): <br>
+    </p>
+    <div class="formula-box" id="formula-axioms"></div>
+</div>
+
+<script>
+// ============================================
+// FORMELN MIT TEMML RENDERN
+// ============================================
+function renderFormulas() {
+    const formulas = {
+        'formula-laplace': String.raw`P(A) = \frac{|A|}{|\Omega|} = \frac{\text{Anzahl günstiger Ergebnisse}}{\text{Anzahl aller möglichen Ergebnisse}}`,
+        'formula-freq': String.raw`P(A) = \lim_{n \to \infty} \frac{h_n(A)}{n} = \lim_{n \to \infty} \frac{\text{Anzahl Eintreten von A in } n \text{ Versuchen}}{n}`,
+        'formula-bayes': String.raw`P(H|E) = \frac{P(E|H) \cdot P(H)}{P(E)} = \frac{P(E|H) \cdot P(H)}{P(E|H)P(H) + P(E|\neg H)P(\neg H)}`,
+        'formula-entropy': String.raw`H(X) = -\sum_{i=1}^{n} p_i \log_2(p_i) \qquad I(x) = -\log_2(p(x)) \text{ [Bit]}`,
+        'formula-quantum': String.raw`P(a \leq x \leq b) = \int_a^b |\psi(x)|^2 \, dx \qquad \psi_n(x) = \sqrt{\frac{2}{L}} \sin\!\left(\frac{n\pi x}{L}\right)`,
+        'formula-markov': String.raw`P(X_{t+1} = j \mid X_t = i) = p_{ij} \qquad \mathbf{p}(t) = \mathbf{p}(0) \cdot \mathbf{P}^t`,
+        'formula-axioms': String.raw`\text{1. } P(A) \geq 0 \qquad \text{2. } P(\Omega) = 1 \qquad \text{3. } P\!\left(\bigcup_{i=1}^{\infty} A_i\right) = \sum_{i=1}^{\infty} P(A_i) \text{ für disjunkte } A_i`
+    };
+    
+    for (const [id, tex] of Object.entries(formulas)) {
+        const el = document.getElementById(id);
+        if (el) {
+            try {
+                el.innerHTML = temml.renderToString(tex, { displayMode: true });
+            } catch(e) {
+                el.innerHTML = `<code>${tex}</code>`;
+            }
+        }
+    }
+}
+
+// ============================================
+// SEKTION 1: LAPLACE / WÜRFEL
+// ============================================
+function calculateLaplace() {
+    const numDice = parseInt(document.getElementById('numDice').value);
+    const target = parseInt(document.getElementById('targetSum').value);
+    
+    // Alle möglichen Ergebnisse berechnen
+    const outcomes = [];
+    function generate(dice, current) {
+        if (dice === 0) { outcomes.push(current); return; }
+        for (let i = 1; i <= 6; i++) generate(dice - 1, current + i);
+    }
+    generate(numDice, 0);
+    
+    const total = outcomes.length;
+    const favorable = outcomes.filter(s => s >= target).length;
+    const prob = favorable / total;
+    
+    // Verteilung berechnen
+    const freq = {};
+    outcomes.forEach(s => { freq[s] = (freq[s] || 0) + 1; });
+    
+    const sums = Object.keys(freq).map(Number).sort((a,b) => a-b);
+    const counts = sums.map(s => freq[s]);
+    const probs = counts.map(c => c / total);
+    
+    // Plotly Chart
+    const colors = sums.map(s => s >= target ? '#00d2ff' : '#333');
+    Plotly.newPlot('dicePlot', [{
+        x: sums, y: probs, type: 'bar',
+        marker: { color: colors },
+        hovertemplate: 'Summe %{x}<br>P = %{y:.4f}<extra></extra>'
+    }], {
+        title: { text: `Verteilung: ${numDice} Würfel`, font: { color: '#fff' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0.2)',
+        xaxis: { title: 'Augensumme', color: '#aaa', gridcolor: '#333' },
+        yaxis: { title: 'P(Summe)', color: '#aaa', gridcolor: '#333' },
+        font: { color: '#ccc' }
+    }, { responsive: true });
+    
+    // Canvas Visualisierung
+    drawDice(numDice, target, prob);
+    
+    document.getElementById('laplaceResult').innerHTML = 
+        `<strong>P(Summe ≥ ${target}) = ${favorable} / ${total} = ${prob.toFixed(4)} (${(prob*100).toFixed(1)}%)</strong><br>
+        Günstige Fälle: ${favorable} | Mögliche Fälle: ${total} = 6<sup>${numDice}</sup>`;
+}
+
+function drawDice(numDice, target, prob) {
+    const canvas = document.getElementById('diceCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Zeichne Beispielwürfel
+    const size = 40;
+    const padding = 5;
+    const startX = 20;
+    const startY = 20;
+    
+    // Zeige einige zufällige Würfe
+    ctx.fillStyle = '#aaa';
+    ctx.font = '14px sans-serif';
+    ctx.fillText(`Beispielwürfe (${numDice} Würfel):`, startX, startY);
+    
+    for (let row = 0; row < 4; row++) {
+        let sum = 0;
+        const dice = [];
+        for (let d = 0; d < numDice; d++) {
+            const val = Math.floor(Math.random() * 6) + 1;
+            dice.push(val);
+            sum += val;
+        }
+        
+        const y = startY + 20 + row * (size + 15);
+        dice.forEach((val, d) => {
+            const x = startX + d * (size + padding);
+            ctx.fillStyle = sum >= target ? 'rgba(0,210,255,0.3)' : 'rgba(255,255,255,0.1)';
+            ctx.strokeStyle = sum >= target ? '#00d2ff' : '#555';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, size, size, 5);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Augen zeichnen
+            ctx.fillStyle = sum >= target ? '#fff' : '#aaa';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(val, x + size/2, y + size/2 + 6);
+        });
+        
+        ctx.textAlign = 'left';
+        ctx.fillStyle = sum >= target ? '#00d2ff' : '#666';
+        ctx.font = '14px sans-serif';
+        ctx.fillText(`= ${sum} ${sum >= target ? '✓' : '✗'}`, startX + numDice * (size + padding) + 10, y + size/2 + 5);
+    }
+    
+    // Wahrscheinlichkeitsbalken
+    const barY = 220;
+    const barWidth = 460;
+    ctx.fillStyle = '#333';
+    ctx.fillRect(startX, barY, barWidth, 20);
+    ctx.fillStyle = '#00d2ff';
+    ctx.fillRect(startX, barY, barWidth * prob, 20);
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(`${(prob*100).toFixed(1)}%`, startX + barWidth * prob + 5, barY + 14);
+}
+
+// ============================================
+// SEKTION 2: FREQUENTISTISCH / MÜNZWURF
+// ============================================
+let coinResults = [];
+let freqHistory = [];
+
+function updateTrueProb() {
+    document.getElementById('trueProbVal').textContent = (document.getElementById('trueProbSlider').value / 100).toFixed(2);
+}
+
+function flipCoins(n) {
+    const trueP = document.getElementById('trueProbSlider').value / 100;
+    
+    for (let i = 0; i < n; i++) {
+        const result = Math.random() < trueP ? 1 : 0;
+        coinResults.push(result);
+        const heads = coinResults.filter(r => r === 1).length;
+        freqHistory.push(heads / coinResults.length);
+    }
+    
+    updateCoinDisplay();
+    updateFreqPlot();
+}
+
+function resetCoins() {
+    coinResults = [];
+    freqHistory = [];
+    document.getElementById('coinDisplay').innerHTML = '';
+    document.getElementById('freqResult').textContent = 'Starte die Simulation!';
+    Plotly.purge('freqPlot');
+}
+
+function updateCoinDisplay() {
+    const display = document.getElementById('coinDisplay');
+    // Zeige nur die letzten 100
+    const recent = coinResults.slice(-100);
+    display.innerHTML = recent.map(r => 
+        `<div class="coin ${r ? 'heads' : 'tails'}">${r ? 'K' : 'Z'}</div>`
+    ).join('');
+    
+    const heads = coinResults.filter(r => r === 1).length;
+    const total = coinResults.length;
+    document.getElementById('freqResult').innerHTML = 
+        `<strong>n = ${total}</strong> | Kopf: ${heads} | Zahl: ${total - heads} | 
+        <strong>Relative Häufigkeit: ${(heads/total).toFixed(4)}</strong> | 
+        Wahre P: ${(document.getElementById('trueProbSlider').value/100).toFixed(2)}`;
+}
+
+function updateFreqPlot() {
+    const trueP = document.getElementById('trueProbSlider').value / 100;
+    const n = freqHistory.length;
+    const x = Array.from({length: n}, (_, i) => i + 1);
+    
+    // Konfidenzband
+    const upper = x.map(i => trueP + 1.96 * Math.sqrt(trueP * (1-trueP) / i));
+    const lower = x.map(i => trueP - 1.96 * Math.sqrt(trueP * (1-trueP) / i));
+    
+    Plotly.newPlot('freqPlot', [
+        { x, y: freqHistory, type: 'scatter', mode: 'lines', name: 'Relative Häufigkeit', line: { color: '#00d2ff', width: 2 } },
+        { x, y: Array(n).fill(trueP), type: 'scatter', mode: 'lines', name: `Wahrer Wert (${trueP})`, line: { color: '#ff6b6b', dash: 'dash' } },
+        { x, y: upper, type: 'scatter', mode: 'lines', name: '95% Konfidenz', line: { color: '#444', dash: 'dot' }, showlegend: false },
+        { x, y: lower, type: 'scatter', mode: 'lines', line: { color: '#444', dash: 'dot' }, showlegend: false, fill: 'tonexty', fillcolor: 'rgba(255,255,255,0.05)' }
+    ], {
+        title: { text: 'Konvergenz: Gesetz der großen Zahlen', font: { color: '#fff' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0.2)',
+        xaxis: { title: 'Anzahl Würfe (n)', color: '#aaa', gridcolor: '#333' },
+        yaxis: { title: 'h_n(Kopf) / n', color: '#aaa', gridcolor: '#333', range: [0, 1] },
+        font: { color: '#ccc' },
+        legend: { x: 0.6, y: 0.95 }
+    }, { responsive: true });
+}
+
+// ============================================
+// SEKTION 3: BAYES
+// ============================================
+function updateBayes() {
+    const prev = document.getElementById('prevalence').value / 100;
+    const sens = document.getElementById('sensitivity').value / 100;
+    const spec = document.getElementById('specificity').value / 100;
+    
+    document.getElementById('prevVal').textContent = (prev * 100).toFixed(1) + '%';
+    document.getElementById('sensVal').textContent = (sens * 100).toFixed(0) + '%';
+    document.getElementById('specVal').textContent = (spec * 100).toFixed(0) + '%';
+    
+    // Bayes berechnen
+    const pEgivenH = sens;
+    const pEgivenNotH = 1 - spec;
+    const pH = prev;
+    const pNotH = 1 - prev;
+    const pE = pEgivenH * pH + pEgivenNotH * pNotH;
+    const posterior = (pEgivenH * pH) / pE;
+    
+    // Plotly: Prior vs Posterior
+    Plotly.newPlot('bayesPlot', [{
+        x: ['Prior P(krank)', 'Posterior P(krank|+)'],
+        y: [pH, posterior],
+        type: 'bar',
+        marker: { color: ['#3a7bd5', '#00d2ff'] },
+        text: [(pH*100).toFixed(2)+'%', (posterior*100).toFixed(2)+'%'],
+        textposition: 'outside',
+        textfont: { color: '#fff' }
+    }], {
+        title: { text: 'Bayes-Update: Vor vs. Nach dem Test', font: { color: '#fff' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0.2)',
+        yaxis: { title: 'Wahrscheinlichkeit', color: '#aaa', gridcolor: '#333', range: [0, Math.min(1, posterior * 1.3)] },
+        xaxis: { color: '#aaa' },
+        font: { color: '#ccc' }
+    }, { responsive: true });
+    
+    // Baumdiagramm zeichnen
+    drawBayesTree(pH, sens, spec, posterior, pE);
+    
+    document.getElementById('bayesResult').innerHTML = 
+        `<strong>P(krank | Test positiv) = ${(posterior*100).toFixed(2)}%</strong><br>
+        Obwohl der Test ${(sens*100).toFixed(0)}% Sensitivität hat, beträgt die Wahrscheinlichkeit tatsächlich krank zu sein nur ${(posterior*100).toFixed(2)}%!<br>
+        <em>Falsch-Positiv-Rate: ${((1-spec)*100).toFixed(1)}% der Gesunden werden fälschlich positiv getestet.</em>`;
+}
+
+function drawBayesTree(pH, sens, spec, posterior, pE) {
+    const canvas = document.getElementById('bayesTreeCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const w = canvas.width, h = canvas.height;
+    
+    // Baumstruktur
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 2;
+    ctx.font = '12px sans-serif';
+    
+    // Wurzel
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText('Population', w/2, 20);
+    
+    // Äste: krank / gesund
+    ctx.beginPath();
+    ctx.moveTo(w/2, 30);
+    ctx.lineTo(w/4, 100);
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(w/2, 30);
+    ctx.lineTo(3*w/4, 100);
+    ctx.strokeStyle = '#4ecdc4';
+    ctx.stroke();
+    
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText(`Krank: ${(pH*100).toFixed(1)}%`, w/4, 115);
+    ctx.fillStyle = '#4ecdc4';
+    ctx.fillText(`Gesund: ${((1-pH)*100).toFixed(1)}%`, 3*w/4, 115);
+    
+    // Zweite Ebene: Test+/Test-
+    // Krank -> Test+
+    ctx.beginPath();
+    ctx.moveTo(w/4, 125);
+    ctx.lineTo(w/8, 200);
+    ctx.strokeStyle = '#ffd700';
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(w/4, 125);
+    ctx.lineTo(3*w/8, 200);
+    ctx.strokeStyle = '#666';
+    ctx.stroke();
+    
+    ctx.fillStyle = '#ffd700';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(`Test+: ${(sens*100).toFixed(0)}%`, w/8, 215);
+    ctx.fillStyle = '#888';
+    ctx.fillText(`Test-: ${((1-sens)*100).toFixed(0)}%`, 3*w/8, 215);
+    
+    // Gesund -> Test+
+    ctx.beginPath();
+    ctx.moveTo(3*w/4, 125);
+    ctx.lineTo(5*w/8, 200);
+    ctx.strokeStyle = '#ffd700';
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(3*w/4, 125);
+    ctx.lineTo(7*w/8, 200);
+    ctx.strokeStyle = '#666';
+    ctx.stroke();
+    
+    ctx.fillStyle = '#ffd700';
+    ctx.fillText(`Test+: ${((1-spec)*100).toFixed(0)}%`, 5*w/8, 215);
+    ctx.fillStyle = '#888';
+    ctx.fillText(`Test-: ${(spec*100).toFixed(0)}%`, 7*w/8, 215);
+    
+    // Ergebnisse
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillStyle = '#00d2ff';
+    const truePos = pH * sens;
+    const falsePos = (1-pH) * (1-spec);
+    ctx.fillText(`Wahr-Positiv: ${(truePos*100).toFixed(2)}%`, w/4, 270);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText(`Falsch-Positiv: ${(falsePos*100).toFixed(2)}%`, 3*w/4, 270);
+    
+    // Posterior
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillStyle = '#00ff88';
+    ctx.fillText(`→ P(krank|+) = ${(truePos*100).toFixed(2)} / (${(truePos*100).toFixed(2)} + ${(falsePos*100).toFixed(2)}) = ${(posterior*100).toFixed(1)}%`, w/2, 320);
+}
+
+// ============================================
+// SEKTION 4: ENTROPIE / INFORMATION
+// ============================================
+function updateEntropy() {
+    const p = document.getElementById('entropySlider').value / 100;
+    document.getElementById('entropyPVal').textContent = p.toFixed(2);
+    
+    const q = 1 - p;
+    const entropy = (p > 0 && q > 0) ? -(p * Math.log2(p) + q * Math.log2(q)) : 0;
+    const infoA = p > 0 ? -Math.log2(p) : Infinity;
+    const infoB = q > 0 ? -Math.log2(q) : Infinity;
+    
+    // Entropie-Kurve plotten
+    const pVals = [];
+    const hVals = [];
+    for (let i = 0.01; i <= 0.99; i += 0.01) {
+        pVals.push(i);
+        hVals.push(-(i * Math.log2(i) + (1-i) * Math.log2(1-i)));
+    }
+    
+    Plotly.newPlot('entropyPlot', [
+        { x: pVals, y: hVals, type: 'scatter', mode: 'lines', name: 'H(X)', line: { color: '#00d2ff', width: 3 } },
+        { x: [p], y: [entropy], type: 'scatter', mode: 'markers', name: 'Aktuell', marker: { color: '#ff6b6b', size: 14, symbol: 'diamond' } }
+    ], {
+        title: { text: 'Shannon-Entropie H(X) für binäre Quelle', font: { color: '#fff' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0.2)',
+        xaxis: { title: 'P(A)', color: '#aaa', gridcolor: '#333' },
+        yaxis: { title: 'H(X) [Bit]', color: '#aaa', gridcolor: '#333', range: [0, 1.1] },
+        font: { color: '#ccc' }
+    }, { responsive: true });
+    
+    // Canvas: Informationsgehalt visualisieren
+    drawEntropyVis(p, entropy, infoA, infoB);
+    
+    document.getElementById('entropyResult').innerHTML = 
+        `<strong>H(X) = ${entropy.toFixed(4)} Bit</strong><br>
+        Informationsgehalt von A (p=${p.toFixed(2)}): I(A) = ${infoA.toFixed(3)} Bit<br>
+        Informationsgehalt von B (p=${q.toFixed(2)}): I(B) = ${infoB.toFixed(3)} Bit<br>
+        <em>Maximale Entropie (1 Bit) bei p = 0.5 → maximale Unsicherheit</em>`;
+}
+
+function drawEntropyVis(p, entropy, infoA, infoB) {
+    const canvas = document.getElementById('entropyCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const w = canvas.width, h = canvas.height;
+    
+    // Überraschungs-Balken
+    ctx.font = '13px sans-serif';
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'left';
+    ctx.fillText('Informationsgehalt (Überraschung):', 20, 25);
+    
+    // Ereignis A
+    const maxBar = 300;
+    const barA = Math.min(infoA / 7 * maxBar, maxBar);
+    const barB = Math.min(infoB / 7 * maxBar, maxBar);
+    
+    ctx.fillStyle = '#00d2ff';
+    ctx.fillRect(120, 40, barA, 30);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(`A (p=${p.toFixed(2)}): ${infoA.toFixed(2)} Bit`, 20, 60);
+    
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillRect(120, 85, barB, 30);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(`B (p=${(1-p).toFixed(2)}): ${infoB.toFixed(2)} Bit`, 20, 105);
+    
+    // Entropie-Meter
+    ctx.fillStyle = '#aaa';
+    ctx.fillText('Entropie (Unsicherheit):', 20, 150);
+    
+    // Gradient bar
+    const gradient = ctx.createLinearGradient(20, 0, 420, 0);
+    gradient.addColorStop(0, '#003');
+    gradient.addColorStop(0.5, '#00d2ff');
+    gradient.addColorStop(1, '#003');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(20, 165, 400, 25);
+    
+    // Marker
+    const markerX = 20 + entropy * 400;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.moveTo(markerX, 160);
+    ctx.lineTo(markerX - 6, 150);
+    ctx.lineTo(markerX + 6, 150);
+    ctx.fill();
+    ctx.fillRect(markerX - 2, 160, 4, 35);
+    
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText(`H = ${entropy.toFixed(3)} Bit`, markerX, 215);
+    
+    // Visuelle Metapher: Münzen
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'left';
+    ctx.fillText('Visuelle Metapher – Vorhersagbarkeit:', 20, 250);
+    
+    const numCoins = 20;
+    for (let i = 0; i < numCoins; i++) {
+        const x = 30 + i * 21;
+        const y = 265;
+        const isA = Math.random() < p;
+        ctx.beginPath();
+        ctx.arc(x, y, 9, 0, Math.PI * 2);
+        ctx.fillStyle = isA ? '#ffd700' : '#555';
+        ctx.fill();
+        ctx.strokeStyle = '#888';
+        ctx.stroke();
+    }
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(p > 0.8 ? '→ Sehr vorhersagbar (niedrige Entropie)' : 
+                 p < 0.2 ? '→ Sehr vorhersagbar (niedrige Entropie)' :
+                 '→ Schwer vorhersagbar (hohe Entropie)', 30, 295);
+}
+
+// ============================================
+// SEKTION 5: QUANTENMECHANIK
+// ============================================
+function updateQuantum() {
+    const n = parseInt(document.getElementById('quantumN').value);
+    const rangePercent = parseInt(document.getElementById('quantumRange').value);
+    document.getElementById('quantumNVal').textContent = n;
+    document.getElementById('quantumRangeVal').textContent = rangePercent + '%';
+    
+    const canvas = document.getElementById('quantumCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const w = canvas.width, h = canvas.height;
+    const L = w - 100; // Breite des Potentialtopfs
+    const offsetX = 50;
+    const baseY = h - 50;
+    const amplitude = 120;
+    
+    // Potentialtopf zeichnen
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(offsetX, 30);
+    ctx.lineTo(offsetX, baseY);
+    ctx.lineTo(offsetX + L, baseY);
+    ctx.lineTo(offsetX + L, 30);
+    ctx.stroke();
+    
+    // Wellenfunktion ψ(x)
+    const points = 500;
+    const dx = L / points;
+    
+    // ψ(x) zeichnen
+    ctx.beginPath();
+    ctx.strokeStyle = '#00d2ff';
+    ctx.lineWidth = 2;
+    for (let i = 0; i <= points; i++) {
+        const x = i / points;
+        const psi = Math.sqrt(2) * Math.sin(n * Math.PI * x);
+        const canvasX = offsetX + i * dx;
+        const canvasY = baseY - 150 - psi * 40;
+        if (i === 0) ctx.moveTo(canvasX, canvasY);
+        else ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.stroke();
+    
+    // |ψ(x)|² zeichnen (Wahrscheinlichkeitsdichte)
+    ctx.beginPath();
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2.5;
+    const psiSquared = [];
+    for (let i = 0; i <= points; i++) {
+        const x = i / points;
+        const psi = Math.sqrt(2) * Math.sin(n * Math.PI * x);
+        const psiSq = psi * psi;
+        psiSquared.push(psiSq);
+        const canvasX = offsetX + i * dx;
+        const canvasY = baseY - psiSq * 50;
+        if (i === 0) ctx.moveTo(canvasX, canvasY);
+        else ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.stroke();
+    
+    // Füllung unter |ψ|²
+    ctx.beginPath();
+    ctx.moveTo(offsetX, baseY);
+    for (let i = 0; i <= points; i++) {
+        const canvasX = offsetX + i * dx;
+        const canvasY = baseY - psiSquared[i] * 50;
+        ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.lineTo(offsetX + L, baseY);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255, 107, 107, 0.15)';
+    ctx.fill();
+    
+    // Messbereich markieren
+    const rangeStart = 0.5 - rangePercent / 200;
+    const rangeEnd = 0.5 + rangePercent / 200;
+    const startX = offsetX + rangeStart * L;
+    const endX = offsetX + rangeEnd * L;
+    
+    ctx.fillStyle = 'rgba(0, 255, 136, 0.2)';
+    ctx.fillRect(startX, 30, endX - startX, baseY - 30);
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(startX, 30, endX - startX, baseY - 30);
+    ctx.setLineDash([]);
+    
+    // Wahrscheinlichkeit im Bereich berechnen (numerische Integration)
+    let prob = 0;
+    const integrationSteps = 1000;
+    const dxInt = (rangeEnd - rangeStart) / integrationSteps;
+    for (let i = 0; i < integrationSteps; i++) {
+        const x = rangeStart + (i + 0.5) * dxInt;
+        const psiVal = Math.sqrt(2) * Math.sin(n * Math.PI * x);
+        prob += psiVal * psiVal * dxInt;
+    }
+    
+    // Legende
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#00d2ff';
+    ctx.fillText('── ψ(x) Wellenfunktion', offsetX + 10, 25);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('── |ψ(x)|² Wahrscheinlichkeitsdichte', offsetX + 220, 25);
+    ctx.fillStyle = '#00ff88';
+    ctx.fillText(`■ Messbereich (${rangePercent}% um Mitte)`, offsetX + 500, 25);
+    
+    // Knotenlinien
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    for (let k = 1; k < n; k++) {
+        const nodeX = offsetX + (k / n) * L;
+        ctx.beginPath();
+        ctx.moveTo(nodeX, baseY);
+        ctx.lineTo(nodeX, baseY - 10);
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillText(`Knoten`, nodeX - 15, baseY + 15);
+    }
+    
+    document.getElementById('quantumResult').innerHTML = 
+        `<strong>P(Teilchen im markierten Bereich) = ${(prob*100).toFixed(2)}%</strong><br>
+        Quantenzahl n = ${n} → ${n} Wellenberg(e), ${n-1} Knoten<br>
+        <em>Die Wahrscheinlichkeit ist NICHT gleichverteilt – sie folgt |ψ|². Das ist keine Unwissenheit, sondern fundamentale Quantenunbestimmtheit!</em>`;
+}
+
+// ============================================
+// SEKTION 6: RANDOM WALK
+// ============================================
+function simulateRandomWalk() {
+    const numPaths = parseInt(document.getElementById('numPaths').value);
+    const numSteps = parseInt(document.getElementById('numSteps').value);
+    const pRight = parseInt(document.getElementById('rwBias').value) / 100;
+    
+    const traces = [];
+    const finalPositions = [];
+    const x = Array.from({length: numSteps + 1}, (_, i) => i);
+    
+    for (let p = 0; p < numPaths; p++) {
+        let pos = 0;
+        const path = [0];
+        for (let s = 0; s < numSteps; s++) {
+            pos += Math.random() < pRight ? 1 : -1;
+            path.push(pos);
+        }
+        finalPositions.push(pos);
+        
+        traces.push({
+            x: x, y: path, type: 'scatter', mode: 'lines',
+            line: { width: 1, color: `hsla(${(p/numPaths)*360}, 70%, 60%, 0.5)` },
+            showlegend: false
+        });
+    }
+    
+    // Theoretische Standardabweichung
+    const sigma = Math.sqrt(numSteps * 4 * pRight * (1-pRight));
+    const mean = numSteps * (2 * pRight - 1);
+    const upperBound = x.map(t => mean * t / numSteps + 1.96 * Math.sqrt(t * 4 * pRight * (1-pRight)));
+    const lowerBound = x.map(t => mean * t / numSteps - 1.96 * Math.sqrt(t * 4 * pRight * (1-pRight)));
+    
+    traces.push({
+        x: x, y: upperBound, type: 'scatter', mode: 'lines',
+        line: { color: '#ff6b6b', dash: 'dash', width: 2 }, name: '±1.96σ (95%)'
+    });
+    traces.push({
+        x: x, y: lowerBound, type: 'scatter', mode: 'lines',
+        line: { color: '#ff6b6b', dash: 'dash', width: 2 }, showlegend: false
+    });
+    
+    // Erwartungswert
+    traces.push({
+        x: x, y: x.map(t => mean * t / numSteps), type: 'scatter', mode: 'lines',
+        line: { color: '#00ff88', dash: 'dot', width: 2 }, name: `E[X] = ${mean.toFixed(1)}`
+    });
+    
+    Plotly.newPlot('rwPlot', traces, {
+        title: { text: `${numPaths} Random Walks (${numSteps} Schritte, P(rechts)=${pRight.toFixed(2)})`, font: { color: '#fff' } },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0.2)',
+        xaxis: { title: 'Schritt t', color: '#aaa', gridcolor: '#333' },
+        yaxis: { title: 'Position X(t)', color: '#aaa', gridcolor: '#333' },
+        font: { color: '#ccc' },
+        legend: { x: 0.01, y: 0.99 }
+    }, { responsive: true });
+    
+    // Statistik
+    const avgFinal = finalPositions.reduce((a,b) => a+b, 0) / numPaths;
+    const stdFinal = Math.sqrt(finalPositions.reduce((a,b) => a + (b-avgFinal)**2, 0) / numPaths);
+    
+    document.getElementById('rwResult').innerHTML = 
+        `<strong>Ergebnisse nach ${numSteps} Schritten:</strong><br>
+        Mittlere Endposition: ${avgFinal.toFixed(2)} (Theorie: ${mean.toFixed(2)})<br>
+        Standardabweichung: ${stdFinal.toFixed(2)} (Theorie: σ = √(n·4pq) = ${sigma.toFixed(2)})<br>
+        <em>Die Pfade divergieren wie √t – das ist Diffusion! Einzelne Pfade sind unvorhersagbar, aber die Statistik ist exakt berechenbar.</em>`;
+}
+
+// ============================================
+// SEKTION 7: ZUSAMMENFASSUNG CANVAS
+// ============================================
+function drawSummary() {
+    const canvas = document.getElementById('summaryCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    
+    ctx.clearRect(0, 0, w, h);
+    
+    const perspectives = [
+        { name: 'Laplace\n(Klassisch)', x: w/2, y: 60, color: '#ffd700', desc: 'Symmetrie' },
+        { name: 'Frequentistisch\n(von Mises)', x: w/6, y: 160, color: '#00d2ff', desc: 'Grenzwert' },
+        { name: 'Bayesianisch\n(Subjektiv)', x: 5*w/6, y: 160, color: '#ff6b6b', desc: 'Überzeugung' },
+        { name: 'Information\n(Shannon)', x: w/6, y: 300, color: '#00ff88', desc: 'Unsicherheit' },
+        { name: 'Quanten\n(Born)', x: 5*w/6, y: 300, color: '#ff88ff', desc: 'Fundamental' },
+        { name: 'Stochastisch\n(Kolmogorov)', x: w/2, y: 350, color: '#ffaa00', desc: 'Axiomatisch' }
+    ];
+    
+    // Verbindungslinien
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < perspectives.length; i++) {
+        for (let j = i+1; j < perspectives.length; j++) {
+            ctx.beginPath();
+            ctx.moveTo(perspectives[i].x, perspectives[i].y);
+            ctx.lineTo(perspectives[j].x, perspectives[j].y);
+            ctx.stroke();
+        }
+    }
+    
+    // Zentraler Knoten
+    ctx.beginPath();
+    ctx.arc(w/2, 200, 40, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Kolmogorov', w/2, 196);
+    ctx.fillText('Axiome', w/2, 210);
+    
+    // Perspektiven-Knoten
+    perspectives.forEach(p => {
+        // Verbindung zum Zentrum
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(w/2, 200);
+        ctx.strokeStyle = p.color + '44';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Knoten
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 30, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + '33';
+        ctx.fill();
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Text
+        ctx.fillStyle = p.color;
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        const lines = p.name.split('\n');
+        lines.forEach((line, i) => {
+            ctx.fillText(line, p.x, p.y - 5 + i * 14);
+        });
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.fillText(p.desc, p.x, p.y + 45);
+    });
+}
+
+// ============================================
+// INITIALISIERUNG
+// ============================================
+window.addEventListener('load', () => {
+    renderFormulas();
+    calculateLaplace();
+    updateBayes();
+    updateEntropy();
+    updateQuantum();
+    drawSummary();
+});
+</script>
+
+</body>
+</html>
