@@ -3942,7 +3942,6 @@ function loadIntuitionModule() {
     // --- Register each section for lazy init ---
 
     // Step 1: Tokenizer
-    _lazyRegister('tokenizer-output', () => {
         const tokInput = document.getElementById('tokenizer-input');
         if (tokInput) {
 		let _tokenDebounce = null;
@@ -3952,7 +3951,6 @@ function loadIntuitionModule() {
 		});
         }
         TokenizerViz.render();
-    });
 
     // Step 2: Embedding
     _lazyRegister('embedding-viz-plot', () => {
