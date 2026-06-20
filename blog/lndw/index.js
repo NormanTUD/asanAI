@@ -3005,9 +3005,6 @@ function loadIntuitionModule() {
     // Step 4a: Attention (bank/river/money plot)
         runAttention();
 
-    // Step 4b: FFN
-        FFNViz.setScenario('apple_fruit');
-
     // Step 4c: Residual Stream
         ResidualStreamViz.init();
         ResidualStreamViz.render();
