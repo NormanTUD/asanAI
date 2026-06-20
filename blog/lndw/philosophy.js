@@ -140,15 +140,11 @@ const CooccurrencePlot = {
 // ============================================================
 
 function initPhilosophySlides() {
-    _lazyRegister('sunrise-plot', () => {
-        SunrisePlot.render();
-    });
+	SunrisePlot.render();
 
-    _lazyRegister('cooccurrence-plot', () => {
-        CooccurrencePlot.render();
-    });
+	CooccurrencePlot.render();
 
-    _lazyCreateObserver();
+	_lazyCreateObserver();
 }
 
 // Auto-init
