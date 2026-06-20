@@ -303,8 +303,7 @@
 <div class="slide" data-title="Neuronales Netz Intro">
     <div class="slide-content">
         <h2>Was ist Dense + ReLU + Dense?</h2>
-        <p>Das einfachste neuronale Netz besteht aus nur <b>drei Schritten</b>:</p>
-        <div class="formula-box fragment">
+        <div class="formula-box">
             <div class="math-display">$$f(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2$$</div>
         </div>
         <ol class="fragment">
@@ -385,46 +384,6 @@
         </div>
     </div>
 </div>
-
-
-    <!-- ==================== SLIDE 13: FFN ==================== -->
-    <div class="slide" data-title="Feed-Forward Network">
-        <div class="slide-content">
-            <h2>Feed-Forward-Netzwerk</h2>
-            <p>Wenn Attention das <b>Umschauen</b> ist, dann ist das FFN das <b>Nachdenken</b> – die Wissensdatenbank.</p>
-            <div class="formula-box fragment">
-                <div class="math-display">$$\text{FFN}(x) = W_2 \cdot \max(0,\; W_1 \cdot x + b_1) + b_2$$</div>
-            </div>
-            <div class="fragment" style="margin-top:20px;">
-                <div class="demo-box" style="max-width:900px;">
-                    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
-                        <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit" style="padding:10px 20px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; font-size:1em; cursor:pointer;">🍎 "eating an apple"</button>
-                        <button onclick="FFNViz.setScenario('apple_tech')" id="btn-ffn-tech" style="padding:10px 20px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; font-size:1em; cursor:pointer;">💻 "buying an apple"</button>
-                    </div>
-                    <div id="ffn-viz-container" style="position:relative; height:300px; background:white; border-radius:8px; border:1px solid #e2e8f0; padding:20px; display:flex; justify-content:space-between; align-items:center; overflow:hidden;">
-                        <div style="width:110px; text-align:center; z-index:2;">
-                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Input</div>
-                            <div id="ffn-input-box" style="background:#e0e7ff; border:2px solid #818cf8; padding:8px; border-radius:8px; font-weight:bold; color:#312e81; font-size:0.85em;">"Apple" + Kontext</div>
-                        </div>
-                        <div style="width:160px; text-align:center; z-index:2;">
-                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Detektoren</div>
-                            <div id="ffn-detectors" style="display:flex; flex-direction:column; gap:8px;"></div>
-                        </div>
-                        <div style="width:180px; text-align:center; z-index:2;">
-                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Wissen</div>
-                            <div id="ffn-facts" style="display:flex; flex-direction:column; gap:8px;"></div>
-                        </div>
-                        <div style="width:110px; text-align:center; z-index:2;">
-                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Output</div>
-                            <div id="ffn-output-box" style="background:#dcfce7; border:2px solid #34d399; padding:8px; border-radius:8px; font-weight:bold; color:#065f46; font-size:0.85em;">Angereicherter Vektor</div>
-                        </div>
-                        <svg id="ffn-lines" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none;"></svg>
-                    </div>
-                    <div id="ffn-explanation" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.9em; color:#475569; text-align:center;">Wähle einen Kontext oben.</div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- ==================== SLIDE 14: Residual Stream Demo ==================== -->
     <div class="slide" data-title="Residual Stream">
@@ -729,7 +688,6 @@
 </div>
 
 <!-- ============ SCRIPTS ============ -->
-<script src="ffn_viz.js"></script>
 <script src="index.js"></script>
 <script src="intuition.js"></script>
 <script src="philosophy.js"></script>
