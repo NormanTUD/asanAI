@@ -1405,39 +1405,25 @@ const IntuitionViz = {
 
 function initForwardPassSlides() {
     // Forward Pass Overview
-    _lazyRegister('forward-pass-3d', () => {
         ForwardPassViz.render();
-    });
 
     // Embedding 3D
-    _lazyRegister('embedding-3d-plot', () => {
         Embedding3DViz.render();
-    });
 
     // Attention 3D
-    _lazyRegister('attention-3d-plot', () => {
         Attention3DViz.render();
-    });
 
     // FFN 3D
-    _lazyRegister('ffn-3d-plot', () => {
         FFN3DViz.render();
-    });
 
     // Grid Warp
-    _lazyRegister('grid-warp-plot', () => {
         GridWarpViz.render();
-    });
 
     // Basins 3D
-    _lazyRegister('basins-3d-plot', () => {
         Basins3DViz.render();
-    });
 
     // Intuition (final slide)
-    _lazyRegister('intuition-3d-plot', () => {
         IntuitionViz.render(0);
-    });
 
     // Start observing
     _lazyCreateObserver();

@@ -1695,12 +1695,6 @@ const FFNViz = {
 const _lazyInitRegistry = [];
 let _lazyObserver = null;
 
-function _lazyRegister(elementId, initFn) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    _lazyInitRegistry.push({ el, initFn, initialized: false });
-}
-
 function _lazyCreateObserver() {
     if (_lazyObserver) return;
 
@@ -3953,7 +3947,6 @@ function loadIntuitionModule() {
         TokenizerViz.render();
 
     // Step 2: Embedding
-    _lazyRegister('embedding-viz-plot', () => {
         const embInput = document.getElementById('embedding-viz-input');
         if (embInput) {
             embInput.addEventListener('input', () => EmbeddingViz.render());
@@ -3966,10 +3959,8 @@ function loadIntuitionModule() {
         }
         EmbeddingViz.render();
         EmbeddingViz.doArithmetic();
-    });
 
     // Step 3: Positional Encoding
-    _lazyRegister('positional-encoding-plot', () => {
         const peSlider = document.getElementById('pe-num-dims');
         if (peSlider) {
             peSlider.addEventListener('input', () => PositionalEncodingViz.render());
@@ -3981,20 +3972,14 @@ function loadIntuitionModule() {
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', () => PositionalEncodingViz.renderAdditionDemo());
         });
-    });
 
     // Step 4a: Attention (bank/river/money plot)
-    _lazyRegister('transformer-plot', () => {
         runAttention();
-    });
 
     // Step 4b: FFN
-    _lazyRegister('ffn-viz-container', () => {
         FFNViz.setScenario('apple_fruit');
-    });
 
     // Step 4c: Residual Stream
-    _lazyRegister('residual-stream-plot', () => {
         ResidualStreamViz.init();
         ResidualStreamViz.render();
         const layerSlider = document.getElementById('residual-stream-layer');
@@ -4003,53 +3988,36 @@ function loadIntuitionModule() {
                 ResidualStreamViz.setLayer(parseInt(this.value));
             });
         }
-    });
 
     // Step 5: Prediction
-    _lazyRegister('prediction-plot', () => {
         const tempSlider = document.getElementById('prediction-temperature');
         if (tempSlider) {
             tempSlider.addEventListener('input', () => PredictionViz.render());
         }
         PredictionViz.render();
-    });
 
 
     // NN Approximation Demo
-    _lazyRegister('nn-approx-plot', () => {
         const nnTargetFn = document.getElementById('nn-target-fn');
         const nnNeuronSlider = document.getElementById('nn-num-neurons');
         if (nnTargetFn) nnTargetFn.addEventListener('change', () => NNApproxViz.render());
         if (nnNeuronSlider) nnNeuronSlider.addEventListener('input', () => NNApproxViz.render());
         NNApproxViz.render();
-    });
 
     // NN Step-by-Step Demo
-    _lazyRegister('nn-step-viz', () => {
         const nnStepInput = document.getElementById('nn-step-input');
         if (nnStepInput) nnStepInput.addEventListener('input', () => NNStepViz.render());
         NNStepViz.render();
-    });
 
     // Dimension Visualizer
-    _lazyRegister('dimension-plot', () => {
         DimensionViz.setDim(2);
-    });
 
     // NN Token Prediction Demo
-    _lazyRegister('nn-token-viz', () => {
         NNTokenViz.setStep(0);
-    });
 
-	_lazyRegister('training-texts-container', () => {
 	    TrainingViz.render();
-	});
 
-	_lazyRegister('loss-landscape-plot', () => {
 	    LossLandscapeViz.reset();
-	});
-
-
 
     // Start observing everything
     _lazyCreateObserver();
