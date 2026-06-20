@@ -666,27 +666,6 @@
     </div>
 </div>
 
-<!-- ==================== FOLIE: Gitter-Verzerrung ==================== -->
-<div class="slide" data-title="Raumverzerrung durch Layer">
-    <div class="slide-content">
-        <h2>Wie der Raum sich verzerrt – Layer für Layer</h2>
-        <p>Jeder Layer ist eine <b>stückweise Transformation</b> – er "biegt" den Raum. Unten fast flach, oben stark verzerrt. Das ist das "Twisten" des Bedeutungsraums.</p>
-        <div class="demo-box" style="min-height:520px;">
-            <div class="demo-title">🌀 Gitter-Verzerrung: Wie Layer den Raum biegen</div>
-            <div id="grid-warp-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
-                <label style="font-size:0.85em; font-weight:bold; color:#475569;">Layer:</label>
-                <input type="range" id="grid-warp-slider" min="0" max="5" step="1" value="0" style="width:200px; accent-color:#6366f1;" oninput="GridWarpViz.setLayer(parseInt(this.value))">
-                <span id="grid-warp-label" style="font-weight:bold; color:#6366f1; min-width:100px;">Layer 0 (flach)</span>
-                <button onclick="GridWarpViz.animateLayers()" style="padding:8px 16px; border-radius:8px; border:none; background:#6366f1; color:#fff; font-weight:bold; cursor:pointer;">⏩ Animieren</button>
-            </div>
-            <div id="grid-warp-info" style="margin-top:8px; padding:10px; background:#eef2ff; border-radius:8px; border:1px solid #c7d2fe; font-size:0.85em; color:#3730a3; text-align:center;">
-                Unten: fast flaches Gitter (Embedding). Oben: stark verzerrt (nach vielen Layern). Die ReLU-Knickpunkte erzeugen die "Falten" im Raum.
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- ============ SCRIPTS ============ -->
 <script src="index.js"></script>
 <script src="intuition.js"></script>
