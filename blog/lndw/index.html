@@ -728,49 +728,6 @@
     </div>
 </div>
 
-<!-- ==================== FOLIE: Bassins & Konvergenz ==================== -->
-<div class="slide" data-title="Bassins – Deterministische Konvergenz">
-    <div class="slide-content">
-        <h2>Bassins – Viele Wege, ein Ziel</h2>
-        <p>Verschiedene Inputs (verschiedene Sätze über Katzen) werden alle in <b>dieselbe Region</b> geschoben – deterministisch, nicht zufällig. Das sind "Bassins" im Raum.</p>
-        <div class="demo-box" style="min-height:520px;">
-            <div class="demo-title">🎯 Verschiedene Startpunkte → gleiche Zielregion</div>
-            <div id="basins-3d-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
-                <button onclick="Basins3DViz.addTrajectory()" style="padding:8px 16px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">+ Neuen Satz hinzufügen</button>
-                <button onclick="Basins3DViz.animateAll()" style="padding:8px 16px; border-radius:8px; border:none; background:#10b981; color:#fff; font-weight:bold; cursor:pointer;">⏩ Alle animieren</button>
-                <button onclick="Basins3DViz.reset()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">⟲ Reset</button>
-            </div>
-            <div id="basins-3d-info" style="margin-top:8px; padding:10px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.85em; color:#166534; text-align:center;">
-                Das System ist <b>intern vollständig deterministisch</b>. Gleicher Input → immer gleicher Output. Zufall existiert nur bei der Gewichts-Initialisierung (vor Training) und beim Sampling (nach dem Durchlauf).
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== FOLIE: Gesamtbild – Intuition ==================== -->
-<div class="slide" data-title="Gesamtbild – Meine Intuition">
-    <div class="slide-content">
-        <h2>Das Gesamtbild – Meine Intuition</h2>
-        <div class="demo-box" style="min-height:480px;">
-            <div class="demo-title">🧠 Der vollständige Vorwärtsdurchlauf – animiert</div>
-            <div id="intuition-3d-plot" style="height:360px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div style="display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
-                <button onclick="IntuitionViz.play()" id="intuition-play-btn" style="padding:8px 18px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">▶ Abspielen</button>
-                <button onclick="IntuitionViz.reset()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">⟲ Reset</button>
-            </div>
-            <div id="intuition-info" style="margin-top:8px; padding:10px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:0.85em; color:#334155; text-align:center;"></div>
-        </div>
-        <div style="margin-top:14px; padding:16px; background:#fffbeb; border:2px dashed #f59e0b; border-radius:12px;">
-            <div style="font-weight:bold; color:#92400e; margin-bottom:6px;">⚠️ Hypothese (spekulativ):</div>
-            <p style="font-size:0.9em; color:#78350f; margin:0;">In Zwischenlayern entstehen <b>kurzlebige Cluster</b> – temporäre Strukturen die sich bilden und wieder auflösen. Diese "Mannigfaltigkeiten" existieren nur zwischen bestimmten Layern und sind dynamisch generiert durch die Durchmischung der Signale.</p>
-        </div>
-        <div class="key-insight" style="margin-top:14px; font-size:0.95em;">
-            <b>Das System ist intern vollständig deterministisch.</b> Zufall nur vor dem Training (Initialisierung) und nach dem Durchlauf (Sampling). Die Magie entsteht durch die Stapelung einfacher Operationen: Addition, Multiplikation, Vergleich – angewandt auf Punkte in einem konkreten Raum. Reale Dinge haben eine Ordnung – diese Ordnung propagiert sich durch Sprache ins Modell.
-        </div>
-    </div>
-</div>
-
 <!-- ============ SCRIPTS ============ -->
 <script src="ffn_viz.js"></script>
 <script src="index.js"></script>
