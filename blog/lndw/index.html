@@ -598,24 +598,6 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Schrittweise Berechnung ==================== -->
-<div class="slide" data-title="Schritt für Schritt">
-    <div class="slide-content">
-        <h2>Schritt für Schritt durch das Netz</h2>
-        <div class="demo-box">
-            <div class="demo-title">🔬 Beobachte jeden Schritt: Input → Dense → ReLU → Dense → Output</div>
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-size:0.85em; font-weight:bold;">Input x =</label>
-                <input type="range" id="nn-step-input" min="-3" max="3" step="0.1" value="1.5" style="width:160px; accent-color:#3b82f6;">
-                <span id="nn-step-input-val" style="font-weight:bold; color:#3b82f6; min-width:40px;">1.5</span>
-                <button id="nn-step-animate-btn" onclick="NNStepViz.animateSteps()" style="padding:8px 18px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; margin-left:auto;">▶ Animieren</button>
-            </div>
-            <div id="nn-step-viz" style="position:relative; min-height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:20px; overflow-x:auto;"></div>
-            <div id="nn-step-explanation" style="margin-top:10px; padding:10px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; font-size:0.9em; color:#1e40af; text-align:center;"></div>
-        </div>
-    </div>
-</div>
-
 <!-- ==================== SLIDE: Verbindung zu Next-Token ==================== -->
 <div class="slide" data-title="NN → Next Token">
     <div class="slide-content">
