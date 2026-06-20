@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept Attractors in LLMs - Interaktive Erklärung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        .scroll-hint {
+            margin-top: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #f093fb;
+        }
+
+        .section p, .section .desc {
+            max-width: 800px;
+            line-height: 1.8;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+            position: relative;
+            margin: 2rem 0;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #111;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn.active {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .slider-container label {
+            min-width: 100px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            accent-color: #667eea;
+        }
+
+        .info-card {
+            background: rgba(30, 30, 60, 0.8);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 800px;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-card h4 {
+            color: #f093fb;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 26, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            border-bottom: 1px solid #222;
+        }
+
+        .nav a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover, .nav a.active {
+            color: #667eea;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+        }
+
+        .token-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .token {
+            padding: 0.4rem 0.8rem;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid #667eea;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .layer-viz {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .layer-block {
+            width: 30px;
+            height: 60px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .layer-block:hover {
+            transform: scaleY(1.2);
+        }
+
+        .application-card {
+            background: rgba(30, 30, 60, 0.6);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .application-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .application-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(50, 50, 80, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #f093fb;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #f093fb);
+            z-index: 1001;
+            transition: width 0.1s;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(20, 20, 40, 0.95);
+            border: 1px solid #667eea;
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 100;
+            max-width: 250px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 0.8rem;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .comparison-table th {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        .highlight {
+            color: #f093fb;
+            font-weight: bold;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <nav class="nav">
+        <a href="#hero">Start</a>
+        <a href="#concept">Kernidee</a>
+        <a href="#ifs">IFS-Theorie</a>
+        <a href="#demo">Demo</a>
+        <a href="#layers">Schichten</a>
+        <a href="#applications">Anwendungen</a>
+        <a href="#guardrail">Guardrailing</a>
+        <a href="#steering">Steering</a>
+        <a href="#datagen">Datengenerierung</a>
+        <a href="#summary">Zusammenfassung</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <h1>Concept Attractors in LLMs</h1>
+        <p>Eine interaktive Erklärung des Papers von Chytas & Singh (2025), das zeigt, wie Large Language Models semantisch verwandte Konzepte zu "Attraktoren" in ihrem latenten Raum zusammenführen – und wie man das praktisch nutzen kann.</p>
+        <div class="scroll-hint">↓</div>
+    </section>
+
+    <!-- Core Concept -->
+    <section class="section" id="concept">
+        <h2>Die Kernidee</h2>
+        <p class="desc">Stell dir vor, du gibst einem LLM verschiedene Fragen zum Herrn der Ringe: "Wer ist Gandalf?" und "Was ist die Bedeutung des Schicksalsbergs?" – obwohl die Wörter komplett unterschiedlich sind, konvergieren die internen Repräsentationen in einer bestimmten Schicht zu fast identischen Punkten.</p>
+
+        <div class="canvas-container">
+            <canvas id="conceptCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="showConcept('lotr')">Herr der Ringe</button>
+            <button class="btn" onclick="showConcept('python')">Python</button>
+            <button class="btn" onclick="showConcept('starwars')">Star Wars</button>
+            <button class="btn" onclick="showConcept('all')">Alle zusammen</button>
+        </div>
+
+        <div class="info-card">
+            <h4>💡 Warum ist das wichtig?</h4>
+            <p>Das bedeutet: LLMs bilden intern eine Art "Weltkarte" der Konzepte. Jedes Konzept hat einen festen Platz – einen <strong>Attraktor</strong> – unabhängig davon, wie die Frage formuliert ist.</p>
+        </div>
+    </section>
+
+    <!-- IFS Theory -->
+    <section class="section" id="ifs">
+        <h2>Iterierte Funktionensysteme (IFS)</h2>
+        <p class="desc">Das Paper erklärt dieses Phänomen durch die Theorie der Iterierten Funktionensysteme: Jede Schicht des LLMs wirkt wie eine kontraktive Abbildung, die Eingaben schrittweise zu konzeptspezifischen Attraktoren zusammenzieht.</p>
+
+        <div class="formula">
+            F(S) = ⋃ᵢ fᵢ(S) → S* (Attraktor)
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="ifsCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="startIFS()">▶ IFS starten</button>
+            <button class="btn" onclick="resetIFS()">↺ Reset</button>
+        </div>
+
+        <div class="slider-container">
+            <label>Iterationen:</label>
+            <input type="range" id="ifsIter" min="1" max="30" value="1" oninput="updateIFSIter(this.value)">
+            <span id="ifsIterVal">1</span>
+        </div>
+
+        <div class="info-card">
+            <h4>🔬 Mathematischer Hintergrund</h4>
+            <p>Ein IFS besteht aus kontraktiven Abbildungen auf einem metrischen Raum. Der Hutchinson-Operator vereinigt alle Abbildungen und konvergiert zu einem einzigartigen, kompakten invarianten Set – dem <strong>Attraktor</strong>. Das LLM implementiert implizit solche Systeme durch seine Schichten.</p>
+        </div>
+    </section>
+
+    <!-- Interactive Demo -->
+    <section class="section" id="demo">
+        <h2>Interaktive Attraktor-Demo</h2>
+        <p class="desc">Beobachte, wie verschiedene Prompts durch die Schichten des LLMs wandern und zu ihren jeweiligen Attraktoren konvergieren. Klicke, um neue Punkte hinzuzufügen!</p>
+
+        <div class="canvas-container" id="demoContainer">
+            <canvas id="demoCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="addPoints('lotr')">+ Herr der Ringe</button>
+            <button class="btn" onclick="addPoints('hp')">+ Harry Potter</button>
+            <button class="btn" onclick="addPoints('sw')">+ Star Wars</button>
+            <button class="btn" onclick="clearDemo()">Löschen</button>
+        </div>
+
+        <div class="slider-container">
+            <label>Schicht (Layer):</label>
+            <input type="range" id="layerSlider" min="0" max="31" value="0" oninput="updateLayer(this.value)">
+            <span id="layerVal">0</span>
+        </div>
+    </section>
+
+    <!-- Layer Analysis -->
+    <section class="section" id="layers">
+        <h2>Verschiedene Konzepte, verschiedene Schichten</h2>
+        <p class="desc">Nicht alle Konzepte konvergieren in derselben Schicht! Programmiersprachen bilden Attraktoren in Schicht 19, natürliche Sprachen in Schicht 27, und Literatur in Schicht 18.</p>
+
+        <div class="canvas-container">
+            <canvas id="layerCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="showLayerConcept('programming')">Programmiersprachen (L19)</button>
+            <button class="btn" onclick="showLayerConcept('languages')">Sprachen (L27)</button>
+            <button class="btn" onclick="showLayerConcept('literature')">Literatur (L18)</button>
+            <button class="btn" onclick="showLayerConcept('fiction')">Fiktive Welten (L24)</button>
+        </div>
+
+        <div class="info-card">
+            <h4>🧠 Induzierte Tokens</h4>
+            <p>Projiziert man einen Attraktor zurück in den Vokabularraum, erhält man die "Essenz" des Konzepts:</p>
+            <div id="tokenDisplay" class="token-list">
+                <span class="token">Harry</span>
+                <span class="token">wizard</span>
+                <span class="token">Hogwarts</span>
+                <span class="token">magical</span>
+                <span class="token">Voldemort</span>
+                <span class="token">London</span>
+                <span class="token">British</span>
+                <span class="token">£</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Applications Overview -->
+    <section class="section" id="applications">
+        <h2>Praktische Anwendungen</h2>
+        <p class="desc">Das Attractor-Framework ermöglicht einfache, trainingsfreie Lösungen für diverse Aufgaben:</p>
+
+        <div class="grid-2">
+            <div class="application-card" onclick="scrollToSection('guardrail')">
+                <h4>🛡️ Guardrailing / Unlearning</h4>
+                <p>Erkennung und Blockierung von Konzepten ohne Retraining</p>
+            </div>
+            <div class="application-card" onclick="scrollToSection('steering')">
+                <h4>🧭 Steering / Traversal</h4>
+                <p>Steuerung der Generierung durch Attraktor-Manipulation</p>
+            </div>
+            <div class="application-card" onclick="scrollToSection('datagen')">
+                <h4>📊 Datengenerierung</h4>
+                <p>Diverse synthetische Daten durch Attraktor-Perturbation</p>
+            </div>
+            <div class="application-card">
+                <h4>👁️ Halluzinationsreduktion</h4>
+                <p>Visuellen Attraktor in VLMs verstärken</p>
+            </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 2rem;">
+            <h4>✨ Alle Methoden sind:</h4>
+            <p>• <strong>Trainingsfrei</strong> – kein Fine-Tuning nötig<br>
+            • <strong>Dateneffizient</strong> – keine Retention-Daten benötigt<br>
+            • <strong>Einfach</strong> – nur Forward-Hooks auf bestimmten Schichten<br>
+            • <strong>Effektiv</strong> – vergleichbar mit spezialisierten Baselines</p>
+        </div>
+    </section>
+
+    <!-- Guardrailing -->
+    <section class="section" id="guardrail">
+        <h2>🛡️ Konzept-Guardrailing</h2>
+        <p class="desc">Erkennung, ob ein Prompt zu einem "verbotenen" Konzept gehört, durch Cosinus-Ähnlichkeit zum gespeicherten Attraktor.</p>
+
+        <div class="canvas-container">
+            <canvas id="guardrailCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="testGuardrail('safe')">✅ Sicherer Prompt</button>
+            <button class="btn" onclick="testGuardrail('blocked')">🚫 Blockierter Prompt</button>
+            <button class="btn" onclick="testGuardrail('edge')">⚠️ Grenzfall</button>
+        </div>
+
+        <div class="slider-container">
+            <label>Schwellwert τ:</label>
+            <input type="range" id="tauSlider" min="0" max="100" value="70" oninput="updateTau(this.value)">
+            <span id="tauVal">0.70</span>
+        </div>
+
+        <div class="info-card">
+            <h4>📈 Ergebnis auf TOFU-Benchmark</h4>
+            <p>Selbst für forget10 (härteste Version): >90% Cutoff bei hoher Model Utility. Kompetitiv mit trainierten Methoden wie NPO und ECO – ohne jegliches Training!</p>
+        </div>
+    </section>
+
+    <!-- Steering -->
+    <section class="section" id="steering">
+        <h2>🧭 Attraktor-Steering</h2>
+        <p class="desc">Durch Addition/Subtraktion von Attraktoren kann man die Generierung steuern: Toxizität reduzieren, Code übersetzen, oder die Sprache wechseln.</p>
+
+        <div class="formula">
+            dx/dt = f(x) + λ(y - x)  →  Steuerung zum Ziel-Attraktor y
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="steeringCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="steerTo('detox')">🧹 Detoxifizierung</button>
+            <button class="btn" onclick="steerTo('translate')">🔄 Code-Translation</button>
+            <button class="btn" onclick="steerTo('visual')">👁️ Visueller Attraktor</button>
+        </div>
+
+        <div class="grid-2" style="margin-top: 1.5rem;">
+            <div class="info-card">
+                <h4>🧹 Detoxifizierung</h4>
+                <p>Toxizitäts-Attraktor subtrahieren → weniger toxische Ausgaben. Besser als LoRA-Finetuning!</p>
+            </div>
+            <div class="info-card">
+                <h4>🔄 Code-Translation</h4>
+                <p>Sprach-Attraktor wechseln → LLM wird zum Transpiler. Python→Java, C++→JS, etc.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Generation -->
+    <section class="section" id="datagen">
+        <h2>📊 Synthetische Datengenerierung</h2>
+        <p class="desc">Durch Perturbation des Attraktors kann man diverse Daten generieren, die qualitativ besser sind als Temperature-Sampling.</p>
+
+        <div class="canvas-container">
+            <canvas id="datagenCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="generateData('temperature')">🌡️ Temperature Sampling</button>
+            <button class="btn" onclick="generateData('attractor')">🎯 Attraktor-Perturbation</button>
+            <button class="btn" onclick="generateData('compare')">⚖️ Vergleich</button>
+        </div>
+
+        <div class="info-card">
+            <h4>📊 Ergebnisse</h4>
+            <p>• <strong>+20%</strong> Faktualität bei Faktengenerierung<br>
+            • Bessere Test-Accuracy bei BoolQ und AG News<br>
+            • Mehr Diversität ohne Qualitätsverlust</p>
+        </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="section" id="summary">
+        <h2>Zusammenfassung</h2>
+
+        <div class="info-card" style="max-width: 900px;">
+            <h4>🎯 Hauptaussagen des Papers</h4>
+            <p style="line-height: 2;">
+                1. LLMs bilden <strong>konzeptspezifische Attraktoren</strong> in bestimmten Schichten<br>
+                2. Dieses Verhalten lässt sich durch <strong>Iterierte Funktionensysteme (IFS)</strong> erklären<br>
+                3. Verschiedene Konzepte konvergieren in <strong>verschiedenen Schichten</strong><br>
+                4. Attraktoren zeigen eine <strong>fraktale Struktur</strong><br>
+                5. Einfache Manipulationen der Attraktoren ermöglichen <strong>trainingsfreie Lösungen</strong> für:<br>
+                &nbsp;&nbsp;&nbsp;• Guardrailing & Unlearning<br>
+                &nbsp;&nbsp;&nbsp;• Toxizitätsreduktion<br>
+                &nbsp;&nbsp;&nbsp;• Code-Translation<br>
+                &nbsp;&nbsp;&nbsp;• Halluzinationsreduktion<br>
+                &nbsp;&nbsp;&nbsp;• Synthetische Datengenerierung
+            </p>
+        </div>
+
+        <table class="comparison-table" style="margin-top: 2rem;">
+            <tr>
+                <th>Methode</th>
+                <th>Training nötig?</th>
+                <th>Retention-Daten?</th>
+                <th>Performance</th>
+            </tr>
+            <tr>
+                <td>Fine-Tuning (LoRA)</td>
+                <td>✅ Ja</td>
+                <td>✅ Ja</td>
+                <td>Gut</td>
+            </tr>
+            <tr>
+                <td>Gradient Ascent</td>
+                <td>✅ Ja</td>
+                <td>✅ Ja</td>
+                <td>Mittel</td>
+            </tr>
+            <tr>
+                <td>ICV</td>
+                <td>❌ Nein</td>
+                <td>✅ Ja (gepaart)</td>
+                <td>Gut</td>
+            </tr>
+            <tr style="background: rgba(102, 126, 234, 0.1);">
+                <td><strong>Attractor (dieses Paper)</strong></td>
+                <td class="highlight">❌ Nein</td>
+                <td class="highlight">❌ Nein</td>
+                <td class="highlight">Gut-Sehr gut</td>
+            </tr>
+        </table>
+
+        <div class="info-card" style="margin-top: 2rem;">
+            <h4>⚠️ Limitierungen</h4>
+            <p>• Zugang zu Hidden Activations nötig (kein Black-Box-API)<br>
+            • Bisher nur bis 8B Parameter getestet<br>
+            • Keine theoretische Garantie gegen Attraktor-Überlappung</p>
+        </div>
+    </section>
+
+    <script>
+        // ===== UTILITY FUNCTIONS =====
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Fade-in observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ===== CONCEPT CLUSTERING VISUALIZATION =====
+        const conceptCanvas = document.getElementById('conceptCanvas');
+        const conceptCtx = conceptCanvas.getContext('2d');
+
+        function resizeCanvas(canvas) {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        const concepts = {
+            lotr: { color: '#ff6b6b', label: 'Herr der Ringe', center: { x: 0.3, y: 0.35 } },
+            python: { color: '#4ecdc4', label: 'Python', center: { x: 0.7, y: 0.65 } },
+            starwars: { color: '#ffe66d', label: 'Star Wars', center: { x: 0.65, y: 0.3 } },
+            hp: { color: '#a29bfe', label: 'Harry Potter', center: { x: 0.35, y: 0.7 } }
+        };
+
+        let conceptPoints = {};
+        let currentConcept = 'all';
+
+        function generateConceptPoints() {
+            conceptPoints = {};
+            for (let [key, concept] of Object.entries(concepts)) {
+                conceptPoints[key] = [];
+                for (let i = 0; i < 7; i++) {
+                    conceptPoints[key].push({
+                        x: concept.center.x + (Math.random() - 0.5) * 0.08,
+                        y: concept.center.y + (Math.random() - 0.5) * 0.08,
+                        initialX: Math.random(),
+                        initialY: Math.random()
+                    });
+                }
+            }
+        }
+
+        function drawConcepts(showConcepts) {
+            resizeCanvas(conceptCanvas);
+            const w = conceptCanvas.width;
+            const h = conceptCanvas.height;
+            conceptCtx.clearRect(0, 0, w, h);
+
+            // Background grid
+            conceptCtx.strokeStyle = '#1a1a3e';
+            conceptCtx.lineWidth = 0.5;
+            for (let i = 0; i < w; i += 40) {
+                conceptCtx.beginPath();
+                conceptCtx.moveTo(i, 0);
+                conceptCtx.lineTo(i, h);
+                conceptCtx.stroke();
+            }
+            for (let i = 0; i < h; i += 40) {
+                conceptCtx.beginPath();
+                conceptCtx.moveTo(0, i);
+                conceptCtx.lineTo(w, i);
+                conceptCtx.stroke();
+            }
+
+            const toDraw = showConcepts === 'all' ? Object.keys(concepts) : [showConcepts];
+
+            for (let key of toDraw) {
+                const concept = concepts[key];
+                const points = conceptPoints[key];
+
+                // Draw cluster area
+                conceptCtx.beginPath();
+                conceptCtx.arc(concept.center.x * w, concept.center.y * h, 50, 0, Math.PI * 2);
+                conceptCtx.fillStyle = concept.color + '15';
+                conceptCtx.fill();
+                conceptCtx.strokeStyle = concept.color + '40';
+                conceptCtx.lineWidth = 2;
+                conceptCtx.stroke();
+
+                // Draw attractor center
+                conceptCtx.beginPath();
+                conceptCtx.arc(concept.center.x * w, concept.center.y * h, 6, 0, Math.PI * 2);
+                conceptCtx.fillStyle = concept.color;
+                conceptCtx.fill();
+
+                // Draw points
+                if (points) {
+                    for (let point of points) {
+                        conceptCtx.beginPath();
+                        conceptCtx.arc(point.x * w, point.y * h, 4, 0, Math.PI * 2);
+                        conceptCtx.fillStyle = concept.color + 'cc';
+                        conceptCtx.fill();
+                    }
+                }
+
+                // Label
+                conceptCtx.fillStyle = concept.color;
+                conceptCtx.font = '14px Segoe UI';
+                conceptCtx.textAlign = 'center';
+                conceptCtx.fillText(concept.label, concept.center.x * w, concept.center.y * h - 60);
+            }
+        }
+
+        function showConcept(type) {
+            currentConcept = type;
+            drawConcepts(type);
+        }
+
+        generateConceptPoints();
+        drawConcepts('all');
+
+        // ===== IFS VISUALIZATION =====
+        const ifsCanvas = document.getElementById('ifsCanvas');
+        const ifsCtx = ifsCanvas.getContext('2d');
+        let ifsAnimating = false;
+        let ifsIteration = 1;
+        let ifsPoints = [];
+
+        function generateIFSPoints() {
+            ifsPoints = [];
+            for (let i = 0; i < 50; i++) {
+                ifsPoints.push({
+                    x: Math.random(),
+                    y: Math.random(),
+                    origX: Math.random(),
+                    origY: Math.random()
+                });
+            }
+        }
+
+        function drawIFS(iteration) {
+            resizeCanvas(ifsCanvas);
+            const w = ifsCanvas.width;
+            const h = ifsCanvas.height;
+            ifsCtx.clearRect(0, 0, w, h);
+
+            // Background grid
+            ifsCtx.strokeStyle = '#1a1a3e';
+            ifsCtx.lineWidth = 0.5;
+            for (let i = 0; i < w; i += 40) {
+                ifsCtx.beginPath();
+                ifsCtx.moveTo(i, 0);
+                ifsCtx.lineTo(i, h);
+                ifsCtx.stroke();
+            }
+            for (let i = 0; i < h; i += 40) {
+                ifsCtx.beginPath();
+                ifsCtx.moveTo(0, i);
+                ifsCtx.lineTo(w, i);
+                ifsCtx.stroke();
+            }
+
+            // Attractor target
+            const attractorX = 0.5;
+            const attractorY = 0.5;
+            const contractionRate = 0.85;
+
+            // Draw attractor region
+            const radius = Math.max(5, 150 * Math.pow(1 - contractionRate, iteration * 0.3));
+            ifsCtx.beginPath();
+            ifsCtx.arc(attractorX * w, attractorY * h, radius, 0, Math.PI * 2);
+            ifsCtx.fillStyle = 'rgba(102, 126, 234, 0.1)';
+            ifsCtx.fill();
+            ifsCtx.strokeStyle = 'rgba(102, 126, 234, 0.5)';
+            ifsCtx.lineWidth = 2;
+            ifsCtx.stroke();
+
+            // Draw label
+            ifsCtx.fillStyle = '#667eea';
+            ifsCtx.font = '12px Segoe UI';
+            ifsCtx.textAlign = 'center';
+            ifsCtx.fillText('Attraktor S*', attractorX * w, attractorY * h - radius - 10);
+
+            // Draw points converging
+            for (let point of ifsPoints) {
+                const t = 1 - Math.pow(1 - contractionRate, iteration * 0.15);
+                const currentX = point.origX + (attractorX - point.origX) * t;
+                const currentY = point.origY + (attractorY - point.origY) * t;
+
+                // Trail
+                ifsCtx.beginPath();
+                ifsCtx.moveTo(point.origX * w, point.origY * h);
+                ifsCtx.lineTo(currentX * w, currentY * h);
+                ifsCtx.strokeStyle = 'rgba(240, 147, 251, 0.2)';
+                ifsCtx.lineWidth = 1;
+                ifsCtx.stroke();
+
+                // Point
+                ifsCtx.beginPath();
+                ifsCtx.arc(currentX * w, currentY * h, 4, 0, Math.PI * 2);
+                ifsCtx.fillStyle = '#f093fb';
+                ifsCtx.fill();
+            }
+
+            // Iteration label
+            ifsCtx.fillStyle = '#fff';
+            ifsCtx.font = '16px Segoe UI';
+            ifsCtx.textAlign = 'left';
+            ifsCtx.fillText(`Iteration: ${iteration}`, 20, 30);
+        }
+
+        function startIFS() {
+            if (ifsAnimating) return;
+            ifsAnimating = true;
+            let iter = 1;
+            const interval = setInterval(() => {
+                iter++;
+                document.getElementById('ifsIter').value = iter;
+                document.getElementById('ifsIterVal').textContent = iter;
+                drawIFS(iter);
+                if (iter >= 30) {
+                    clearInterval(interval);
+                    ifsAnimating = false;
+                }
+            }, 200);
+        }
+
+        function resetIFS() {
+            ifsAnimating = false;
+            ifsIteration = 1;
+            document.getElementById('ifsIter').value = 1;
+            document.getElementById('ifsIterVal').textContent = '1';
+            generateIFSPoints();
+            drawIFS(1);
+        }
+
+        function updateIFSIter(val) {
+            document.getElementById('ifsIterVal').textContent = val;
+            drawIFS(parseInt(val));
+        }
+
+        generateIFSPoints();
+        drawIFS(1);
+
+        // ===== INTERACTIVE DEMO =====
+        const demoCanvas = document.getElementById('demoCanvas');
+        const demoCtx = demoCanvas.getContext('2d');
+        let demoPoints = [];
+
+        const attractors = {
+            lotr: { x: 0.25, y: 0.3, color: '#ff6b6b', label: 'LotR' },
+            hp: { x: 0.5, y: 0.7, color: '#a29bfe', label: 'Harry Potter' },
+            sw: { x: 0.75, y: 0.35, color: '#ffe66d', label: 'Star Wars' }
+        };
+
+        function addPoints(concept) {
+            const attractor = attractors[concept];
+            for (let i = 0; i < 5; i++) {
+                demoPoints.push({
+                    concept: concept,
+                    origX: Math.random(),
+                    origY: Math.random(),
+                    targetX: attractor.x + (Math.random() - 0.5) * 0.05,
+                    targetY: attractor.y + (Math.random() - 0.5) * 0.05,
+                    color: attractor.color
+                });
+            }
+            drawDemo(parseInt(document.getElementById('layerSlider').value));
+        }
+
+        function clearDemo() {
+            demoPoints = [];
+            drawDemo(0);
+        }
+
+        function updateLayer(val) {
+            document.getElementById('layerVal').textContent = val;
+            drawDemo(parseInt(val));
+        }
+
+        function drawDemo(layer) {
+            resizeCanvas(demoCanvas);
+            const w = demoCanvas.width;
+            const h = demoCanvas.height;
+            demoCtx.clearRect(0, 0, w, h);
+
+            // Background
+            demoCtx.strokeStyle = '#1a1a3e';
+            demoCtx.lineWidth = 0.5;
+            for (let i = 0; i < w; i += 40) {
+                demoCtx.beginPath();
+                demoCtx.moveTo(i, 0);
+                demoCtx.lineTo(i, h);
+                demoCtx.stroke();
+            }
+            for (let i = 0; i < h; i += 40) {
+                demoCtx.beginPath();
+                demoCtx.moveTo(0, i);
+                demoCtx.lineTo(w, i);
+                demoCtx.stroke();
+            }
+
+            // Draw attractors
+            for (let [key, att] of Object.entries(attractors)) {
+                demoCtx.beginPath();
+                demoCtx.arc(att.x * w, att.y * h, 30, 0, Math.PI * 2);
+                demoCtx.fillStyle = att.color + '20';
+                demoCtx.fill();
+                demoCtx.strokeStyle = att.color + '60';
+                demoCtx.lineWidth = 2;
+                demoCtx.stroke();
+
+                demoCtx.fillStyle = att.color;
+                demoCtx.font = '13px Segoe UI';
+                demoCtx.textAlign = 'center';
+                demoCtx.fillText(att.label, att.x * w, att.y * h - 40);
+            }
+
+            // Draw points
+            const t = Math.min(1, layer / 24);
+            for (let point of demoPoints) {
+                const currentX = point.origX + (point.targetX - point.origX) * t;
+                const currentY = point.origY + (point.targetY - point.origY) * t;
+
+                // Trail
+                if (layer > 0) {
+                    demoCtx.beginPath();
+                    demoCtx.moveTo(point.origX * w, point.origY * h);
+                    demoCtx.lineTo(currentX * w, currentY * h);
+                    demoCtx.strokeStyle = point.color + '30';
+                    demoCtx.lineWidth = 1;
+                    demoCtx.stroke();
+                }
+
+                demoCtx.beginPath();
+                demoCtx.arc(currentX * w, currentY * h, 5, 0, Math.PI * 2);
+                demoCtx.fillStyle = point.color;
+                demoCtx.fill();
+            }
+
+            // Layer info
+            demoCtx.fillStyle = '#aaa';
+            demoCtx.font = '14px Segoe UI';
+            demoCtx.textAlign = 'left';
+            demoCtx.fillText(`Layer ${layer}/31 | Punkte: ${demoPoints.length}`, 15, 25);
+        }
+
+        drawDemo(0);
+
+        // ===== LAYER ANALYSIS =====
+        const layerCanvas = document.getElementById('layerCanvas');
+        const layerCtx = layerCanvas.getContext('2d');
+
+        const layerConcepts = {
+            programming: { layer: 19, items: ['Python', 'Java', 'C++', 'JavaScript'], colors: ['#4ecdc4', '#ff6b6b', '#667eea', '#ffe66d'] },
+            languages: { layer: 27, items: ['English', 'Spanish', 'Chinese', 'French'], colors: ['#ff6b6b', '#ffe66d', '#4ecdc4', '#a29bfe'] },
+            literature: { layer: 18, items: ['Romantik', 'Sci-Fi', 'Fantasy', 'Krimi'], colors: ['#f093fb', '#4ecdc4', '#667eea', '#ffe66d'] },
+            fiction: { layer: 24, items: ['LotR', 'Harry Potter', 'Star Wars', 'Narnia'], colors: ['#ff6b6b', '#a29bfe', '#ffe66d', '#4ecdc4'] }
+        };
+
+        let currentLayerConcept = 'fiction';
+
+        function showLayerConcept(type) {
+            currentLayerConcept = type;
+            drawLayerViz(type);
+            updateTokenDisplay(type);
+        }
+
+        function drawLayerViz(type) {
+            resizeCanvas(layerCanvas);
+            const w = layerCanvas.width;
+            const h = layerCanvas.height;
+            layerCtx.clearRect(0, 0, w, h);
+
+            const concept = layerConcepts[type];
+
+            // Draw layer bars at bottom
+            const barWidth = (w - 100) / 32;
+            for (let i = 0; i < 32; i++) {
+                const isTarget = i === concept.layer;
+                const barHeight = isTarget ? 80 : 30;
+                const y = h - 100;
+
+                layerCtx.fillStyle = isTarget ? '#667eea' : '#2a2a4a';
+                layerCtx.fillRect(50 + i * barWidth, y - barHeight, barWidth - 2, barHeight);
+
+                if (isTarget) {
+                    layerCtx.fillStyle = '#fff';
+                    layerCtx.font = '11px Segoe UI';
+                    layerCtx.textAlign = 'center';
+                    layerCtx.fillText(`L${i}`, 50 + i * barWidth + barWidth / 2, y + 15);
+                }
+            }
+
+            // Label
+            layerCtx.fillStyle = '#aaa';
+            layerCtx.font = '12px Segoe UI';
+            layerCtx.textAlign = 'left';
+            layerCtx.fillText('Schichten 0-31 (Separation)', 50, h - 10);
+
+            // Draw clusters
+            const clusterY = h / 2 - 50;
+            const spacing = w / (concept.items.length + 1);
+
+            for (let i = 0; i < concept.items.length; i++) {
+                const cx = spacing * (i + 1);
+                const cy = clusterY + (Math.random() - 0.5) * 40;
+
+                // Cluster circle
+                layerCtx.beginPath();
+                layerCtx.arc(cx, cy, 35, 0, Math.PI * 2);
+                layerCtx.fillStyle = concept.colors[i] + '25';
+                layerCtx.fill();
+                layerCtx.strokeStyle = concept.colors[i];
+                layerCtx.lineWidth = 2;
+                layerCtx.stroke();
+
+                // Points inside cluster
+                for (let j = 0; j < 7; j++) {
+                    const px = cx + (Math.random() - 0.5) * 40;
+                    const py = cy + (Math.random() - 0.5) * 40;
+                    layerCtx.beginPath();
+                    layerCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    layerCtx.fillStyle = concept.colors[i];
+                    layerCtx.fill();
+                }
+
+                // Label
+                layerCtx.fillStyle = concept.colors[i];
+                layerCtx.font = '13px Segoe UI';
+                layerCtx.textAlign = 'center';
+                layerCtx.fillText(concept.items[i], cx, cy + 55);
+            }
+
+            // Title
+            layerCtx.fillStyle = '#fff';
+            layerCtx.font = '16px Segoe UI';
+            layerCtx.textAlign = 'center';
+            layerCtx.fillText(`Attraktoren in Schicht ${concept.layer}`, w / 2, 30);
+        }
+
+        function updateTokenDisplay(type) {
+            const tokens = {
+                programming: ['def', 'class', 'import', 'function', 'var', 'int', 'return', 'loop'],
+                languages: ['the', 'el', '的', 'le', 'grammar', 'syntax', 'verb', 'noun'],
+                literature: ['chapter', 'novel', 'prose', 'verse', 'author', 'narrative', 'theme', 'plot'],
+                fiction: ['Harry', 'wizard', 'Hogwarts', 'magical', 'Voldemort', 'London', 'British', '£']
+            };
+
+            const display = document.getElementById('tokenDisplay');
+            display.innerHTML = tokens[type].map(t => `<span class="token">${t}</span>`).join('');
+        }
+
+        drawLayerViz('fiction');
+
+        // ===== GUARDRAIL VISUALIZATION =====
+        const guardrailCanvas = document.getElementById('guardrailCanvas');
+        const guardrailCtx = guardrailCanvas.getContext('2d');
+        let currentTau = 0.70;
+
+        function testGuardrail(type) {
+            resizeCanvas(guardrailCanvas);
+            const w = guardrailCanvas.width;
+            const h = guardrailCanvas.height;
+            guardrailCtx.clearRect(0, 0, w, h);
+
+            // Draw stored attractor
+            const attractorX = w * 0.5;
+            const attractorY = h * 0.4;
+
+            guardrailCtx.beginPath();
+            guardrailCtx.arc(attractorX, attractorY, 60, 0, Math.PI * 2);
+            guardrailCtx.fillStyle = 'rgba(255, 107, 107, 0.1)';
+            guardrailCtx.fill();
+            guardrailCtx.strokeStyle = '#ff6b6b';
+            guardrailCtx.lineWidth = 2;
+            guardrailCtx.setLineDash([5, 5]);
+            guardrailCtx.stroke();
+            guardrailCtx.setLineDash([]);
+
+            guardrailCtx.fillStyle = '#ff6b6b';
+            guardrailCtx.font = '13px Segoe UI';
+            guardrailCtx.textAlign = 'center';
+            guardrailCtx.fillText('Gespeicherter Attraktor', attractorX, attractorY - 70);
+            guardrailCtx.fillText('(verbotenes Konzept)', attractorX, attractorY - 55);
+
+            // Draw threshold circle
+            const tauRadius = 60 + (1 - currentTau) * 150;
+            guardrailCtx.beginPath();
+            guardrailCtx.arc(attractorX, attractorY, tauRadius, 0, Math.PI * 2);
+            guardrailCtx.strokeStyle = 'rgba(255, 230, 109, 0.5)';
+            guardrailCtx.lineWidth = 2;
+            guardrailCtx.setLineDash([10, 5]);
+            guardrailCtx.stroke();
+            guardrailCtx.setLineDash([]);
+
+            guardrailCtx.fillStyle = '#ffe66d';
+            guardrailCtx.font = '11px Segoe UI';
+            guardrailCtx.fillText(`τ = ${currentTau.toFixed(2)}`, attractorX + tauRadius + 10, attractorY);
+
+            // Draw test point
+            let testX, testY, similarity, blocked;
+            if (type === 'blocked') {
+                testX = attractorX + (Math.random() - 0.5) * 30;
+                testY = attractorY + (Math.random() - 0.5) * 30;
+                similarity = 0.85 + Math.random() * 0.1;
+                blocked = similarity > currentTau;
+            } else if (type === 'safe') {
+                testX = w * 0.15 + Math.random() * 50;
+                testY = h * 0.7 + Math.random() * 50;
+                similarity = 0.2 + Math.random() * 0.2;
+                blocked = similarity > currentTau;
+            } else {
+                const angle = Math.random() * Math.PI * 2;
+                testX = attractorX + Math.cos(angle) * tauRadius * 0.9;
+                testY = attractorY + Math.sin(angle) * tauRadius * 0.9;
+                similarity = currentTau - 0.05 + Math.random() * 0.1;
+                blocked = similarity > currentTau;
+            }
+
+            // Draw line from test to attractor
+            guardrailCtx.beginPath();
+            guardrailCtx.moveTo(testX, testY);
+            guardrailCtx.lineTo(attractorX, attractorY);
+            guardrailCtx.strokeStyle = blocked ? 'rgba(255, 107, 107, 0.5)' : 'rgba(78, 205, 196, 0.5)';
+            guardrailCtx.lineWidth = 2;
+            guardrailCtx.stroke();
+
+            // Test point
+            guardrailCtx.beginPath();
+            guardrailCtx.arc(testX, testY, 8, 0, Math.PI * 2);
+            guardrailCtx.fillStyle = blocked ? '#ff6b6b' : '#4ecdc4';
+            guardrailCtx.fill();
+
+            // Result
+            const resultY = h - 80;
+            guardrailCtx.fillStyle = blocked ? '#ff6b6b' : '#4ecdc4';
+            guardrailCtx.font = 'bold 18px Segoe UI';
+            guardrailCtx.textAlign = 'center';
+            guardrailCtx.fillText(blocked ? '🚫 BLOCKIERT' : '✅ ERLAUBT', w / 2, resultY);
+
+            guardrailCtx.fillStyle = '#aaa';
+            guardrailCtx.font = '14px Segoe UI';
+            guardrailCtx.fillText(`Cosinus-Ähnlichkeit: ${similarity.toFixed(3)} | Schwellwert τ: ${currentTau.toFixed(2)}`, w / 2, resultY + 25);
+        }
+
+        function updateTau(val) {
+            currentTau = val / 100;
+            document.getElementById('tauVal').textContent = currentTau.toFixed(2);
+        }
+
+        testGuardrail('safe');
+
+        // ===== STEERING VISUALIZATION =====
+        const steeringCanvas = document.getElementById('steeringCanvas');
+        const steeringCtx = steeringCanvas.getContext('2d');
+        let steeringAnimation = null;
+
+        function steerTo(type) {
+            resizeCanvas(steeringCanvas);
+            const w = steeringCanvas.width;
+            const h = steeringCanvas.height;
+
+            if (steeringAnimation) cancelAnimationFrame(steeringAnimation);
+
+            const configs = {
+                detox: {
+                    from: { x: 0.7, y: 0.3, label: 'Toxisch', color: '#ff6b6b' },
+                    to: { x: 0.3, y: 0.7, label: 'Neutral', color: '#4ecdc4' },
+                    operation: 'Subtraktion'
+                },
+                translate: {
+                    from: { x: 0.2, y: 0.5, label: 'Python', color: '#4ecdc4' },
+                    to: { x: 0.8, y: 0.5, label: 'Java', color: '#ff6b6b' },
+                    operation: 'Attraktor-Wechsel'
+                },
+                visual: {
+                    from: { x: 0.5, y: 0.2, label: 'Text-only', color: '#ffe66d' },
+                    to: { x: 0.5, y: 0.8, label: 'Visuell', color: '#a29bfe' },
+                    operation: 'Addition'
+                }
+            };
+
+            const config = configs[type];
+            let progress = 0;
+
+            function animate() {
+                progress += 0.015;
+                if (progress > 1) progress = 1;
+
+                steeringCtx.clearRect(0, 0, w, h);
+
+                // Grid
+                steeringCtx.strokeStyle = '#1a1a3e';
+                steeringCtx.lineWidth = 0.5;
+                for (let i = 0; i < w; i += 40) {
+                    steeringCtx.beginPath();
+                    steeringCtx.moveTo(i, 0);
+                    steeringCtx.lineTo(i, h);
+                    steeringCtx.stroke();
+                }
+                for (let i = 0; i < h; i += 40) {
+                    steeringCtx.beginPath();
+                    steeringCtx.moveTo(0, i);
+                    steeringCtx.lineTo(w, i);
+                    steeringCtx.stroke();
+                }
+
+                // From attractor
+                steeringCtx.beginPath();
+                steeringCtx.arc(config.from.x * w, config.from.y * h, 40, 0, Math.PI * 2);
+                steeringCtx.fillStyle = config.from.color + '20';
+                steeringCtx.fill();
+                steeringCtx.strokeStyle = config.from.color;
+                steeringCtx.lineWidth = 2;
+                steeringCtx.stroke();
+                steeringCtx.fillStyle = config.from.color;
+                steeringCtx.font = '14px Segoe UI';
+                steeringCtx.textAlign = 'center';
+                steeringCtx.fillText(config.from.label, config.from.x * w, config.from.y * h - 50);
+
+                // To attractor
+                steeringCtx.beginPath();
+                steeringCtx.arc(config.to.x * w, config.to.y * h, 40, 0, Math.PI * 2);
+                steeringCtx.fillStyle = config.to.color + '20';
+                steeringCtx.fill();
+                steeringCtx.strokeStyle = config.to.color;
+                steeringCtx.lineWidth = 2;
+                steeringCtx.stroke();
+                steeringCtx.fillStyle = config.to.color;
+                steeringCtx.font = '14px Segoe UI';
+                steeringCtx.textAlign = 'center';
+                steeringCtx.fillText(config.to.label, config.to.x * w, config.to.y * h + 60);
+
+                // Arrow path
+                steeringCtx.beginPath();
+                steeringCtx.moveTo(config.from.x * w, config.from.y * h);
+                steeringCtx.lineTo(config.to.x * w, config.to.y * h);
+                steeringCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+                steeringCtx.lineWidth = 2;
+                steeringCtx.setLineDash([5, 5]);
+                steeringCtx.stroke();
+                steeringCtx.setLineDash([]);
+
+                // Moving point
+                const currentX = config.from.x + (config.to.x - config.from.x) * progress;
+                const currentY = config.from.y + (config.to.y - config.from.y) * progress;
+
+                // Glow effect
+                const gradient = steeringCtx.createRadialGradient(
+                    currentX * w, currentY * h, 0,
+                    currentX * w, currentY * h, 20
+                );
+                gradient.addColorStop(0, '#f093fb');
+                gradient.addColorStop(1, 'transparent');
+                steeringCtx.beginPath();
+                steeringCtx.arc(currentX * w, currentY * h, 20, 0, Math.PI * 2);
+                steeringCtx.fillStyle = gradient;
+                steeringCtx.fill();
+
+                steeringCtx.beginPath();
+                steeringCtx.arc(currentX * w, currentY * h, 8, 0, Math.PI * 2);
+                steeringCtx.fillStyle = '#f093fb';
+                steeringCtx.fill();
+
+                // Operation label
+                steeringCtx.fillStyle = '#fff';
+                steeringCtx.font = '16px Segoe UI';
+                steeringCtx.textAlign = 'center';
+                steeringCtx.fillText(`Operation: ${config.operation}`, w / 2, 30);
+
+                // Formula
+                steeringCtx.fillStyle = '#f093fb';
+                steeringCtx.font = '14px Courier New';
+                steeringCtx.fillText(`dx/dt = f(x) + λ(y - x)  |  λ-Fortschritt: ${(progress * 100).toFixed(0)}%`, w / 2, h - 20);
+
+                if (progress < 1) {
+                    steeringAnimation = requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        steerTo('detox');
+
+        // ===== DATA GENERATION VISUALIZATION =====
+        const datagenCanvas = document.getElementById('datagenCanvas');
+        const datagenCtx = datagenCanvas.getContext('2d');
+
+        function generateData(type) {
+            resizeCanvas(datagenCanvas);
+            const w = datagenCanvas.width;
+            const h = datagenCanvas.height;
+            datagenCtx.clearRect(0, 0, w, h);
+
+            // Grid
+            datagenCtx.strokeStyle = '#1a1a3e';
+            datagenCtx.lineWidth = 0.5;
+            for (let i = 0; i < w; i += 40) {
+                datagenCtx.beginPath();
+                datagenCtx.moveTo(i, 0);
+                datagenCtx.lineTo(i, h);
+                datagenCtx.stroke();
+            }
+            for (let i = 0; i < h; i += 40) {
+                datagenCtx.beginPath();
+                datagenCtx.moveTo(0, i);
+                datagenCtx.lineTo(w, i);
+                datagenCtx.stroke();
+            }
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+
+            if (type === 'temperature') {
+                // Temperature sampling - clustered, less diverse
+                datagenCtx.fillStyle = '#fff';
+                datagenCtx.font = '16px Segoe UI';
+                datagenCtx.textAlign = 'center';
+                datagenCtx.fillText('Temperature Sampling', centerX, 30);
+
+                // Draw attractor
+                datagenCtx.beginPath();
+                datagenCtx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+                datagenCtx.fillStyle = '#667eea';
+                datagenCtx.fill();
+
+                // Points - clustered tightly or scattered randomly
+                for (let i = 0; i < 40; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = Math.random() < 0.7 ? Math.random() * 30 : Math.random() * 150;
+                    const px = centerX + Math.cos(angle) * r;
+                    const py = centerY + Math.sin(angle) * r;
+
+                    datagenCtx.beginPath();
+                    datagenCtx.arc(px, py, 4, 0, Math.PI * 2);
+                    datagenCtx.fillStyle = r > 100 ? 'rgba(255, 107, 107, 0.7)' : 'rgba(78, 205, 196, 0.7)';
+                    datagenCtx.fill();
+                }
+
+                // Legend
+                datagenCtx.fillStyle = '#4ecdc4';
+                datagenCtx.font = '12px Segoe UI';
+                datagenCtx.textAlign = 'left';
+                datagenCtx.fillText('● Gute Qualität (nah am Attraktor)', 20, h - 40);
+                datagenCtx.fillStyle = '#ff6b6b';
+                datagenCtx.fillText('● Schlechte Qualität (zu weit entfernt)', 20, h - 20);
+
+            } else if (type === 'attractor') {
+                // Attractor perturbation - evenly distributed, diverse
+                datagenCtx.fillStyle = '#fff';
+                datagenCtx.font = '16px Segoe UI';
+                datagenCtx.textAlign = 'center';
+                datagenCtx.fillText('Attraktor-Perturbation', centerX, 30);
+
+                // Draw attractor
+                datagenCtx.beginPath();
+                datagenCtx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+                datagenCtx.fillStyle = '#667eea';
+                datagenCtx.fill();
+
+                // Draw perturbation ring
+                datagenCtx.beginPath();
+                datagenCtx.arc(centerX, centerY, 80, 0, Math.PI * 2);
+                datagenCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+                datagenCtx.lineWidth = 2;
+                datagenCtx.setLineDash([5, 5]);
+                datagenCtx.stroke();
+                datagenCtx.setLineDash([]);
+
+                datagenCtx.fillStyle = '#667eea';
+                datagenCtx.font = '11px Segoe UI';
+                datagenCtx.fillText('Perturbationsradius', centerX, centerY - 90);
+
+                // Points - evenly distributed around attractor
+                for (let i = 0; i < 40; i++) {
+                    const angle = (i / 40) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+                    const r = 30 + Math.random() * 50;
+                    const px = centerX + Math.cos(angle) * r;
+                    const py = centerY + Math.sin(angle) * r;
+
+                    datagenCtx.beginPath();
+                    datagenCtx.arc(px, py, 4, 0, Math.PI * 2);
+                    datagenCtx.fillStyle = 'rgba(78, 205, 196, 0.8)';
+                    datagenCtx.fill();
+                }
+
+                // Legend
+                datagenCtx.fillStyle = '#4ecdc4';
+                datagenCtx.font = '12px Segoe UI';
+                datagenCtx.textAlign = 'left';
+                datagenCtx.fillText('● Diverse, qualitativ hochwertige Samples', 20, h - 40);
+                datagenCtx.fillStyle = '#667eea';
+                datagenCtx.fillText('● Attraktor-Zentrum', 20, h - 20);
+
+            } else if (type === 'compare') {
+                // Side by side comparison
+                datagenCtx.fillStyle = '#fff';
+                datagenCtx.font = '16px Segoe UI';
+                datagenCtx.textAlign = 'center';
+                datagenCtx.fillText('Vergleich: Temperature vs. Attraktor-Perturbation', centerX, 30);
+
+                const leftX = w * 0.25;
+                const rightX = w * 0.75;
+
+                // Left: Temperature
+                datagenCtx.fillStyle = '#ffe66d';
+                datagenCtx.font = '13px Segoe UI';
+                datagenCtx.fillText('Temperature Sampling', leftX, 60);
+
+                datagenCtx.beginPath();
+                datagenCtx.arc(leftX, centerY, 6, 0, Math.PI * 2);
+                datagenCtx.fillStyle = '#667eea';
+                datagenCtx.fill();
+
+                for (let i = 0; i < 25; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = Math.random() < 0.7 ? Math.random() * 20 : Math.random() * 120;
+                    const px = leftX + Math.cos(angle) * r;
+                    const py = centerY + Math.sin(angle) * r;
+
+                    datagenCtx.beginPath();
+                    datagenCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    datagenCtx.fillStyle = r > 80 ? 'rgba(255, 107, 107, 0.6)' : 'rgba(255, 230, 109, 0.7)';
+                    datagenCtx.fill();
+                }
+
+                // Right: Attractor
+                datagenCtx.fillStyle = '#4ecdc4';
+                datagenCtx.font = '13px Segoe UI';
+                datagenCtx.textAlign = 'center';
+                datagenCtx.fillText('Attraktor-Perturbation', rightX, 60);
+
+                datagenCtx.beginPath();
+                datagenCtx.arc(rightX, centerY, 6, 0, Math.PI * 2);
+                datagenCtx.fillStyle = '#667eea';
+                datagenCtx.fill();
+
+                // Perturbation ring
+                datagenCtx.beginPath();
+                datagenCtx.arc(rightX, centerY, 60, 0, Math.PI * 2);
+                datagenCtx.strokeStyle = 'rgba(102, 126, 234, 0.2)';
+                datagenCtx.lineWidth = 1;
+                datagenCtx.setLineDash([3, 3]);
+                datagenCtx.stroke();
+                datagenCtx.setLineDash([]);
+
+                for (let i = 0; i < 25; i++) {
+                    const angle = (i / 25) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+                    const r = 25 + Math.random() * 35;
+                    const px = rightX + Math.cos(angle) * r;
+                    const py = centerY + Math.sin(angle) * r;
+
+                    datagenCtx.beginPath();
+                    datagenCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    datagenCtx.fillStyle = 'rgba(78, 205, 196, 0.8)';
+                    datagenCtx.fill();
+                }
+
+                // Divider
+                datagenCtx.beginPath();
+                datagenCtx.moveTo(w / 2, 80);
+                datagenCtx.lineTo(w / 2, h - 80);
+                datagenCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                datagenCtx.lineWidth = 1;
+                datagenCtx.setLineDash([5, 5]);
+                datagenCtx.stroke();
+                datagenCtx.setLineDash([]);
+
+                // Stats
+                datagenCtx.font = '12px Segoe UI';
+                datagenCtx.textAlign = 'center';
+
+                datagenCtx.fillStyle = '#ffe66d';
+                datagenCtx.fillText('Diversität: Niedrig', leftX, h - 60);
+                datagenCtx.fillText('Qualität: Variabel', leftX, h - 40);
+                datagenCtx.fillText('Faktualität: ~60%', leftX, h - 20);
+
+                datagenCtx.fillStyle = '#4ecdc4';
+                datagenCtx.fillText('Diversität: Hoch', rightX, h - 60);
+                datagenCtx.fillText('Qualität: Konsistent', rightX, h - 40);
+                datagenCtx.fillText('Faktualität: ~80%', rightX, h - 20);
+            }
+        }
+
+        generateData('compare');
+
+        // ===== WINDOW RESIZE HANDLER =====
+        window.addEventListener('resize', () => {
+            drawConcepts(currentConcept);
+            drawIFS(parseInt(document.getElementById('ifsIter').value));
+            drawDemo(parseInt(document.getElementById('layerSlider').value));
+            drawLayerViz(currentLayerConcept);
+            testGuardrail('safe');
+            generateData('compare');
+        });
+
+        // ===== SMOOTH SCROLL FOR NAV =====
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ===== ACTIVE NAV HIGHLIGHT =====
+        const sections = document.querySelectorAll('.section, .hero');
+        const navLinks = document.querySelectorAll('.nav a');
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(section => navObserver.observe(section));
+    </script>
+</body>
+</html>
