@@ -242,6 +242,44 @@
             .slide p { font-size: 1em; }
             #nav-bar { padding: 0 12px; }
         }
+
+        .floating-questions {
+            width: 100%; height: 100%; position: relative;
+        }
+        .q {
+            position: absolute;
+            font-size: 3em;
+            font-weight: bold;
+            opacity: 0.08;
+            color: #6366f1;
+            animation: floatUp linear infinite;
+        }
+        .q1  { left: 5%;  font-size: 2.5em; animation-duration: 7s;  animation-delay: 0s;   }
+        .q2  { left: 15%; font-size: 4em;   animation-duration: 9s;  animation-delay: 1.2s; }
+        .q3  { left: 25%; font-size: 3em;   animation-duration: 8s;  animation-delay: 0.5s; }
+        .q4  { left: 35%; font-size: 5em;   animation-duration: 11s; animation-delay: 2s;   }
+        .q5  { left: 45%; font-size: 2em;   animation-duration: 6s;  animation-delay: 0.8s; }
+        .q6  { left: 55%; font-size: 3.5em; animation-duration: 10s; animation-delay: 1.5s; }
+        .q7  { left: 65%; font-size: 2.8em; animation-duration: 7.5s;animation-delay: 0.3s; }
+        .q8  { left: 75%; font-size: 4.5em; animation-duration: 12s; animation-delay: 2.5s; }
+        .q9  { left: 85%; font-size: 2.2em; animation-duration: 6.5s;animation-delay: 1s;   }
+        .q10 { left: 92%; font-size: 3.2em; animation-duration: 8.5s;animation-delay: 0.7s; }
+        .q11 { left: 10%; font-size: 3.8em; animation-duration: 9.5s;animation-delay: 3s;   }
+        .q12 { left: 50%; font-size: 2.6em; animation-duration: 7.2s;animation-delay: 1.8s; }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.1; }
+            90%  { opacity: 0.08; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes pulseQuestion {
+            0%, 100% { transform: scale(1) rotate(-3deg); }
+            25%      { transform: scale(1.1) rotate(3deg); }
+            50%      { transform: scale(1.05) rotate(-2deg); }
+            75%      { transform: scale(1.12) rotate(2deg); }
+        }
     </style>
 </head>
 <body>
@@ -873,46 +911,6 @@
             </p>
         </div>
     </div>
-
-    <style>
-        .floating-questions {
-            width: 100%; height: 100%; position: relative;
-        }
-        .q {
-            position: absolute;
-            font-size: 3em;
-            font-weight: bold;
-            opacity: 0.08;
-            color: #6366f1;
-            animation: floatUp linear infinite;
-        }
-        .q1  { left: 5%;  font-size: 2.5em; animation-duration: 7s;  animation-delay: 0s;   }
-        .q2  { left: 15%; font-size: 4em;   animation-duration: 9s;  animation-delay: 1.2s; }
-        .q3  { left: 25%; font-size: 3em;   animation-duration: 8s;  animation-delay: 0.5s; }
-        .q4  { left: 35%; font-size: 5em;   animation-duration: 11s; animation-delay: 2s;   }
-        .q5  { left: 45%; font-size: 2em;   animation-duration: 6s;  animation-delay: 0.8s; }
-        .q6  { left: 55%; font-size: 3.5em; animation-duration: 10s; animation-delay: 1.5s; }
-        .q7  { left: 65%; font-size: 2.8em; animation-duration: 7.5s;animation-delay: 0.3s; }
-        .q8  { left: 75%; font-size: 4.5em; animation-duration: 12s; animation-delay: 2.5s; }
-        .q9  { left: 85%; font-size: 2.2em; animation-duration: 6.5s;animation-delay: 1s;   }
-        .q10 { left: 92%; font-size: 3.2em; animation-duration: 8.5s;animation-delay: 0.7s; }
-        .q11 { left: 10%; font-size: 3.8em; animation-duration: 9.5s;animation-delay: 3s;   }
-        .q12 { left: 50%; font-size: 2.6em; animation-duration: 7.2s;animation-delay: 1.8s; }
-
-        @keyframes floatUp {
-            0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10%  { opacity: 0.1; }
-            90%  { opacity: 0.08; }
-            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-        }
-
-        @keyframes pulseQuestion {
-            0%, 100% { transform: scale(1) rotate(-3deg); }
-            25%      { transform: scale(1.1) rotate(3deg); }
-            50%      { transform: scale(1.05) rotate(-2deg); }
-            75%      { transform: scale(1.12) rotate(2deg); }
-        }
-    </style>
 </div>
 
 <!-- ==================== FOLIE: Vorwärtsdurchlauf Überblick ==================== -->
