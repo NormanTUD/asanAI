@@ -1936,184 +1936,6 @@ const NNApproxViz = {
 };
 
 // ============================================================
-// NEURAL NET STEP-BY-STEP VISUALIZER
-// ============================================================
-
-const NNStepViz = {
-    // A small fixed network for demonstration
-    weights1: [0.8, -1.2, 0.5, -0.7],  // 4 neurons, 1 input each
-    biases1: [0.3, 1.0, -0.5, 0.8],
-    weights2: [0.6, -0.4, 0.9, -0.3],  // 4 neurons → 1 output
-    bias2: 0.1,
-
-    currentStep: 4, // 0=input, 1=dense1, 2=relu, 3=dense2, 4=all
-    animating: false,
-
-    compute: function(x) {
-        // Dense 1
-        const z1 = this.weights1.map((w, i) => w * x + this.biases1[i]);
-        // ReLU
-        const a1 = z1.map(v => Math.max(0, v));
-        // Dense 2
-        const output = a1.reduce((sum, a, i) => sum + a * this.weights2[i], 0) + this.bias2;
-        return { x, z1, a1, output };
-    },
-
-    render: function() {
-        const container = document.getElementById('nn-step-viz');
-        if (!container) return;
-
-        const slider = document.getElementById('nn-step-input');
-        const x = slider ? parseFloat(slider.value) : 1.5;
-        const valLabel = document.getElementById('nn-step-input-val');
-        if (valLabel) valLabel.textContent = x.toFixed(1);
-
-        const result = this.compute(x);
-        const step = this.currentStep;
-
-        // Build visualization
-        let html = '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:280px;">';
-
-        // INPUT
-        html += this.renderInputColumn(result.x, step >= 0);
-
-        // Arrow
-        html += this.renderArrow(step >= 1);
-
-        // DENSE 1
-        html += this.renderDense1Column(result.z1, step >= 1);
-
-        // Arrow
-        html += this.renderArrow(step >= 2);
-
-        // ReLU
-        html += this.renderReLUColumn(result.z1, result.a1, step >= 2);
-
-        // Arrow
-        html += this.renderArrow(step >= 3);
-
-        // DENSE 2
-        html += this.renderDense2Column(result.a1, result.output, step >= 3);
-
-        // Arrow
-        html += this.renderArrow(step >= 4);
-
-        // OUTPUT
-        html += this.renderOutputColumn(result.output, step >= 4);
-
-        html += '</div>';
-        container.innerHTML = html;
-
-        // Explanation
-        const explDiv = document.getElementById('nn-step-explanation');
-        if (explDiv) {
-            const explanations = [
-                `<b>Schritt 1:</b> Input x = ${x.toFixed(1)} wird in das Netz eingespeist.`,
-                `<b>Schritt 2 – Dense₁:</b> Jedes Neuron berechnet w·x + b. Die 4 Neuronen erzeugen: [${result.z1.map(v => v.toFixed(2)).join(', ')}]`,
-                `<b>Schritt 3 – ReLU:</b> max(0, z) schneidet negative Werte ab → [${result.a1.map(v => v.toFixed(2)).join(', ')}]. Nur aktive Neuronen "feuern"!`,
-                `<b>Schritt 4 – Dense₂:</b> Die aktiven Werte werden gewichtet summiert: ${result.a1.map((a, i) => `${a.toFixed(2)}×${this.weights2[i]}`).join(' + ')} + ${this.bias2} = <b>${result.output.toFixed(3)}</b>`,
-                `<b>Fertig!</b> Input ${x.toFixed(1)} → Output ${result.output.toFixed(3)}. Jedes Neuron ist ein "Detektor" – ReLU entscheidet, welche feuern.`
-            ];
-            explDiv.innerHTML = explanations[Math.min(step, 4)];
-        }
-    },
-
-    renderInputColumn: function(x, active) {
-        const opacity = active ? '1' : '0.2';
-        return `
-            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
-                <div style="font-size:0.75em; font-weight:bold; color:#64748b; margin-bottom:6px;">INPUT</div>
-                <div style="width:60px; height:60px; border-radius:50%; background:#dbeafe; border:3px solid #3b82f6; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2em; color:#1e40af; margin:0 auto;">
-                    ${x.toFixed(1)}
-                </div>
-            </div>`;
-    },
-
-    renderDense1Column: function(z1, active) {
-        const opacity = active ? '1' : '0.2';
-        let neurons = '';
-        z1.forEach((z, i) => {
-            const bg = z >= 0 ? '#e0e7ff' : '#fee2e2';
-            const border = z >= 0 ? '#818cf8' : '#fca5a5';
-            const color = z >= 0 ? '#312e81' : '#991b1b';
-            neurons += `<div style="padding:4px 8px; border-radius:6px; background:${bg}; border:1px solid ${border}; font-size:0.75em; color:${color}; font-weight:bold; margin:3px 0;">${z.toFixed(2)}</div>`;
-        });
-        return `
-            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
-                <div style="font-size:0.75em; font-weight:bold; color:#6366f1; margin-bottom:6px;">DENSE₁<br><span style="font-weight:normal; font-size:0.85em;">w·x + b</span></div>
-                ${neurons}
-            </div>`;
-    },
-
-    renderReLUColumn: function(z1, a1, active) {
-        const opacity = active ? '1' : '0.2';
-        let neurons = '';
-        a1.forEach((a, i) => {
-            const fired = a > 0;
-            const bg = fired ? '#dcfce7' : '#f1f5f9';
-            const border = fired ? '#34d399' : '#e2e8f0';
-            const color = fired ? '#065f46' : '#94a3b8';
-            const icon = fired ? '🔥' : '❌';
-            neurons += `<div style="padding:4px 8px; border-radius:6px; background:${bg}; border:1px solid ${border}; font-size:0.75em; color:${color}; font-weight:bold; margin:3px 0;">${icon} ${a.toFixed(2)}</div>`;
-        });
-        return `
-            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
-                <div style="font-size:0.75em; font-weight:bold; color:#10b981; margin-bottom:6px;">ReLU<br><span style="font-weight:normal; font-size:0.85em;">max(0, z)</span></div>
-                ${neurons}
-            </div>`;
-    },
-
-    renderDense2Column: function(a1, output, active) {
-        const opacity = active ? '1' : '0.2';
-        return `
-            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
-                <div style="font-size:0.75em; font-weight:bold; color:#d97706; margin-bottom:6px;">DENSE₂<br><span style="font-weight:normal; font-size:0.85em;">Σ wᵢ·aᵢ + b</span></div>
-                <div style="padding:8px 12px; border-radius:8px; background:#fef3c7; border:2px solid #f59e0b; font-weight:bold; color:#92400e; font-size:0.95em;">
-                    ${output.toFixed(3)}
-                </div>
-            </div>`;
-    },
-
-    renderOutputColumn: function(output, active) {
-        const opacity = active ? '1' : '0.2';
-        return `
-            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
-                <div style="font-size:0.75em; font-weight:bold; color:#64748b; margin-bottom:6px;">OUTPUT</div>
-                <div style="width:60px; height:60px; border-radius:50%; background:#dcfce7; border:3px solid #10b981; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.1em; color:#065f46; margin:0 auto;">
-                    ${output.toFixed(2)}
-                </div>
-            </div>`;
-    },
-
-    renderArrow: function(active) {
-        const color = active ? '#3b82f6' : '#e2e8f0';
-        return `<div style="font-size:1.5em; color:${color}; transition:color 0.4s;">→</div>`;
-    },
-
-    animateSteps: function() {
-        if (this.animating) return;
-        this.animating = true;
-        this.currentStep = 0;
-        this.render();
-
-        const btn = document.getElementById('nn-step-animate-btn');
-        if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
-
-        let step = 0;
-        const interval = setInterval(() => {
-            step++;
-            this.currentStep = step;
-            this.render();
-            if (step >= 4) {
-                clearInterval(interval);
-                this.animating = false;
-                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-            }
-        }, 900);
-    }
-};
-
-// ============================================================
 // NN → TOKEN PREDICTION STEP-BY-STEP
 // ============================================================
 
@@ -2359,12 +2181,6 @@ function initNNDemos() {
     }
     if (nnNeuronSlider) {
         nnNeuronSlider.addEventListener('input', () => NNApproxViz.render());
-    }
-
-    // NN Step-by-Step Demo
-    const nnStepInput = document.getElementById('nn-step-input');
-    if (nnStepInput) {
-        nnStepInput.addEventListener('input', () => NNStepViz.render());
     }
 
     // NN Token Prediction Demo
@@ -4003,11 +3819,6 @@ function loadIntuitionModule() {
         if (nnTargetFn) nnTargetFn.addEventListener('change', () => NNApproxViz.render());
         if (nnNeuronSlider) nnNeuronSlider.addEventListener('input', () => NNApproxViz.render());
         NNApproxViz.render();
-
-    // NN Step-by-Step Demo
-        const nnStepInput = document.getElementById('nn-step-input');
-        if (nnStepInput) nnStepInput.addEventListener('input', () => NNStepViz.render());
-        NNStepViz.render();
 
     // Dimension Visualizer
         DimensionViz.setDim(2);
