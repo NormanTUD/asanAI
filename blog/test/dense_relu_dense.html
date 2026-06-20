@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dense → ReLU → Dense: Interaktive Visualisierung</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 { color: #00d4ff; text-align: center; margin-bottom: 10px; font-size: 1.8em; }
+        h2 { color: #ff6b6b; margin: 20px 0 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        h3 { color: #feca57; margin: 15px 0 8px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .section {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .formula-box {
+            background: #0a0a1a;
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1.1em;
+            overflow-x: auto;
+        }
+        .formula-step {
+            margin: 5px 0;
+            padding: 5px 10px;
+            border-left: 3px solid #00d4ff;
+        }
+        .formula-step.relu { border-left-color: #ff6b6b; }
+        .formula-step.output { border-left-color: #feca57; }
+        canvas {
+            background: #0a0a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            display: block;
+            margin: 10px auto;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .control-group label {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 120px;
+            accent-color: #00d4ff;
+        }
+        input[type="number"] {
+            width: 80px;
+            background: #0a0a1a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        button:hover { background: #00a8cc; }
+        button.danger { background: #ff6b6b; }
+        button.danger:hover { background: #ee5a24; }
+        .result-display {
+            background: #0a0a1a;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 5px 0;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .tab-bar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .tab-bar button {
+            background: #0f3460;
+            color: #e0e0e0;
+            padding: 10px 20px;
+        }
+        .tab-bar button.active {
+            background: #00d4ff;
+            color: #000;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .matrix-input {
+            display: grid;
+            gap: 3px;
+            margin: 5px 0;
+        }
+        .matrix-input input {
+            width: 60px;
+            text-align: center;
+        }
+        .explanation {
+            background: #1a1a3e;
+            border-left: 4px solid #feca57;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .color-pos { color: #00ff88; }
+        .color-neg { color: #ff6b6b; }
+        .color-zero { color: #666; }
+        .viz-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+            flex-wrap: wrap;
+        }
+        .arrow { color: #00d4ff; font-size: 1.5em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧠 Dense → ReLU → Dense: Was passiert wirklich?</h1>
+    <p style="text-align:center; color:#aaa; margin-bottom:20px;">
+        Interaktive Visualisierung: Wie neuronale Netze den Raum transformieren
+    </p>
+
+    <div class="tab-bar" id="mainTabs">
+        <button class="active" onclick="switchTab('tab1d')">1D</button>
+        <button onclick="switchTab('tab2d')">2D</button>
+        <button onclick="switchTab('tab3d')">3D</button>
+        <button onclick="switchTab('tabNd')">nD (Tensor)</button>
+        <button onclick="switchTab('tabExplain')">📖 Erklärung</button>
+    </div>
+
+    <!-- ==================== 1D TAB ==================== -->
+    <div class="tab-content active" id="tab1d">
+        <h2>1D: Skalar → Dense → ReLU → Dense</h2>
+        <div class="explanation">
+            <strong>Was passiert:</strong> Ein einzelner Wert x wird linear transformiert (gestreckt + verschoben),
+            dann durch ReLU (negative Werte → 0), dann nochmal linear transformiert.
+            Das Ergebnis: <strong>stückweise lineare Funktionen</strong> – der Raum wird "gefaltet"!
+        </div>
+
+        <div class="formula-box">
+            <div class="formula-step">z = a₁ · x + b₁ &nbsp;&nbsp; <span style="color:#aaa">(Affine Transformation 1)</span></div>
+            <div class="formula-step relu">h = ReLU(z) = max(0, z) &nbsp;&nbsp; <span style="color:#aaa">(Nichtlinearität / Faltung)</span></div>
+            <div class="formula-step output">y = a₂ · h + b₂ &nbsp;&nbsp; <span style="color:#aaa">(Affine Transformation 2)</span></div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>a₁ (Gewicht 1)</label>
+                <input type="range" id="a1_1d" min="-5" max="5" step="0.1" value="2">
+                <span id="a1_1d_val">2.0</span>
+            </div>
+            <div class="control-group">
+                <label>b₁ (Bias 1)</label>
+                <input type="range" id="b1_1d" min="-5" max="5" step="0.1" value="-1">
+                <span id="b1_1d_val">-1.0</span>
+            </div>
+            <div class="control-group">
+                <label>a₂ (Gewicht 2)</label>
+                <input type="range" id="a2_1d" min="-5" max="5" step="0.1" value="1.5">
+                <span id="a2_1d_val">1.5</span>
+            </div>
+            <div class="control-group">
+                <label>b₂ (Bias 2)</label>
+                <input type="range" id="b2_1d" min="-5" max="5" step="0.1" value="0.5">
+                <span id="b2_1d_val">0.5</span>
+            </div>
+            <div class="control-group">
+                <label>x Bereich</label>
+                <input type="range" id="xrange_1d" min="1" max="20" step="1" value="5">
+                <span id="xrange_1d_val">±5</span>
+            </div>
+            <div class="control-group">
+                <label>Test x</label>
+                <input type="number" id="testx_1d" value="1.0" step="0.1">
+            </div>
+            <button onclick="compute1D()">Berechne!</button>
+        </div>
+
+        <div class="result-display" id="result1d"></div>
+        <canvas id="canvas1d" width="800" height="400"></canvas>
+
+        <h3>1D mit mehreren Neuronen (Hidden Layer Breite)</h3>
+        <div class="explanation">
+            Mit <strong>n Neuronen</strong> im Hidden Layer bekommt man n "Knickstellen" – 
+            je mehr Neuronen, desto komplexere stückweise lineare Funktionen!
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <label>Anzahl Neuronen</label>
+                <input type="range" id="neurons_1d" min="1" max="8" step="1" value="3">
+                <span id="neurons_1d_val">3</span>
+            </div>
+            <button onclick="randomize1DMulti()">Zufällige Gewichte</button>
+            <button onclick="draw1DMulti()">Zeichne!</button>
+        </div>
+        <canvas id="canvas1d_multi" width="800" height="400"></canvas>
+        <div class="result-display" id="result1d_multi"></div>
+    </div>
+
+    <!-- ==================== 2D TAB ==================== -->
+    <div class="tab-content" id="tab2d">
+        <h2>2D: Vektor [x₁, x₂] → Dense → ReLU → Dense</h2>
+        <div class="explanation">
+            <strong>Was passiert:</strong> Ein 2D-Punkt wird durch eine Matrix transformiert (Rotation, Scherung, Skalierung),
+            verschoben (Translation), durch ReLU gefaltet, und dann nochmal transformiert.
+            <br><strong>Ergebnis:</strong> Der 2D-Raum wird in Regionen aufgeteilt und stückweise linear abgebildet!
+        </div>
+
+        <div class="formula-box">
+            <div class="formula-step">z = W₁ · x + b₁ &nbsp;&nbsp; wobei W₁ ∈ ℝ²ˣ², x ∈ ℝ², b₁ ∈ ℝ²</div>
+            <div class="formula-step relu">h = ReLU(z) = [max(0,z₁), max(0,z₂)]</div>
+            <div class="formula-step output">y = W₂ · h + b₂ &nbsp;&nbsp; wobei W₂ ∈ ℝ²ˣ², b₂ ∈ ℝ²</div>
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <h3>W₁ (2×2 Matrix)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>w₁₁</label>
+                        <input type="number" id="w1_00" value="1.5" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>w₁₂</label>
+                        <input type="number" id="w1_01" value="0.5" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>w₂₁</label>
+                        <input type="number" id="w1_10" value="-0.5" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>w₂₂</label>
+                        <input type="number" id="w1_11" value="1.0" step="0.1" style="width:60px">
+                    </div>
+                </div>
+                <h3>b₁ (Bias 1)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>b₁₁</label>
+                        <input type="number" id="b1_2d_0" value="0" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>b₁₂</label>
+                        <input type="number" id="b1_2d_1" value="0" step="0.1" style="width:60px">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3>W₂ (2×2 Matrix)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>w₁₁</label>
+                        <input type="number" id="w2_00" value="1.0" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>w₁₂</label>
+                        <input type="number" id="w2_01" value="0" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>w₂₁</label>
+                        <input type="number" id="w2_10" value="0" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>w₂₂</label>
+                        <input type="number" id="w2_11" value="1.0" step="0.1" style="width:60px">
+                    </div>
+                </div>
+                <h3>b₂ (Bias 2)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>b₂₁</label>
+                        <input type="number" id="b2_2d_0" value="0" step="0.1" style="width:60px">
+                    </div>
+                    <div class="control-group">
+                        <label>b₂₂</label>
+                        <input type="number" id="b2_2d_1" value="0" step="0.1" style="width:60px">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="draw2D()">Zeichne Transformation!</button>
+            <button onclick="preset2D('rotation')">Preset: Rotation</button>
+            <button onclick="preset2D('shear')">Preset: Scherung</button>
+            <button onclick="preset2D('scale')">Preset: Skalierung</button>
+            <button onclick="preset2D('fold')">Preset: Faltung</button>
+            <button class="danger" onclick="randomize2D()">Zufällig</button>
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <h3>Eingabe (Gitter)</h3>
+                <canvas id="canvas2d_in" width="400" height="400"></canvas>
+            </div>
+            <div>
+                <h3>Ausgabe nach Dense→ReLU→Dense</h3>
+                <canvas id="canvas2d_out" width="400" height="400"></canvas>
+            </div>
+        </div>
+
+        <h3>Schritt-für-Schritt Visualisierung</h3>
+        <div class="grid-2">
+            <div>
+                <h3>Nach W₁·x + b₁ (vor ReLU)</h3>
+                <canvas id="canvas2d_mid1" width="400" height="400"></canvas>
+            </div>
+            <div>
+                <h3>Nach ReLU (Faltung!)</h3>
+                <canvas id="canvas2d_mid2" width="400" height="400"></canvas>
+            </div>
+        </div>
+        <div class="result-display" id="result2d"></div>
+    </div>
+
+    <!-- ==================== 3D TAB ==================== -->
+    <div class="tab-content" id="tab3d">
+        <h2>3D: Vektor [x₁, x₂, x₃] → Dense → ReLU → Dense</h2>
+        <div class="explanation">
+            In 3D wird ein Volumen transformiert. ReLU "schneidet" entlang von Hyperebenen 
+            (in 3D: Ebenen) und faltet den Raum. Wir projizieren das Ergebnis auf 2D.
+        </div>
+
+        <div class="formula-box">
+            <div class="formula-step">z = W₁ · x + b₁ &nbsp;&nbsp; wobei W₁ ∈ ℝ³ˣ³, x ∈ ℝ³, b₁ ∈ ℝ³</div>
+            <div class="formula-step relu">h = ReLU(z) = [max(0,z₁), max(0,z₂), max(0,z₃)]</div>
+            <div class="formula-step output">y = W₂ · h + b₂ &nbsp;&nbsp; wobei W₂ ∈ ℝ³ˣ³, b₂ ∈ ℝ³</div>
+        </div>
+
+        <div class="controls">
+            <button onclick="draw3D()">Zeichne 3D!</button>
+            <button onclick="preset3D('identity')">Identität</button>
+            <button onclick="preset3D('rotateXY')">Rotation XY</button>
+            <button onclick="preset3D('fold')">Faltung</button>
+            <button class="danger" onclick="randomize3D()">Zufällig</button>
+            <div class="control-group">
+                <label>Rotation Ansicht</label>
+                <input type="range" id="rot3d" min="0" max="360" value="30">
+            </div>
+            <div class="control-group">
+                <label>Elevation</label>
+                <input type="range" id="elev3d" min="-90" max="90" value="20">
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <h3>Eingabe (3D Punkte)</h3>
+                <canvas id="canvas3d_in" width="400" height="400"></canvas>
+            </div>
+            <div>
+                <h3>Ausgabe nach Dense→ReLU→Dense</h3>
+                <canvas id="canvas3d_out" width="400" height="400"></canvas>
+            </div>
+        </div>
+
+        <h3>3D Gewichte (vereinfacht – Diagonale + Off-Diagonal)</h3>
+        <div class="controls">
+            <div class="control-group"><label>W₁ diag</label><input type="number" id="w1_3d_diag" value="1.5" step="0.1" style="width:60px"></div>
+            <div class="control-group"><label>W₁ off</label><input type="number" id="w1_3d_off" value="0.3" step="0.1" style="width:60px"></div>
+            <div class="control-group"><label>b₁</label><input type="number" id="b1_3d" value="-0.5" step="0.1" style="width:60px"></div>
+            <div class="control-group"><label>W₂ diag</label><input type="number" id="w2_3d_diag" value="1.0" step="0.1" style="width:60px"></div>
+            <div class="control-group"><label>W₂ off</label><input type="number" id="w2_3d_off" value="0" step="0.1" style="width:60px"></div>
+            <div class="control-group"><label>b₂</label><input type="number" id="b2_3d" value="0" step="0.1" style="width:60px"></div>
+        </div>
+        <div class="result-display" id="result3d"></div>
+    </div>
+
+    <!-- ==================== nD TAB ==================== -->
+    <div class="tab-content" id="tabNd">
+        <h2>nD: Tensor-Operationen beliebiger Dimension</h2>
+        <div class="explanation">
+            Hier kannst du die Dimension frei wählen. Du siehst die Matrizen, die Berechnung,
+            und eine Heatmap-Visualisierung der Transformation.
+            <br><strong>Kernidee:</strong> In nD teilt jedes ReLU-Neuron den Raum mit einer Hyperebene.
+            n Neuronen → bis zu 2ⁿ lineare Regionen!
+        </div>
+
+        <div class="formula-box">
+            <div class="formula-step">z = W₁ · x + b₁ &nbsp;&nbsp; wobei W₁ ∈ ℝⁿˣⁿ, x ∈ ℝⁿ, b₁ ∈ ℝⁿ</div>
+            <div class="formula-step relu">h = ReLU(z) = [max(0,z₁), ..., max(0,zₙ)]</div>
+            <div class="formula-step output">y = W₂ · h + b₂ &nbsp;&nbsp; wobei W₂ ∈ ℝⁿˣⁿ, b₂ ∈ ℝⁿ</div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Dimension n</label>
+                <input type="range" id="nd_dim" min="1" max="10" value="4">
+                <span id="nd_dim_val">4</span>
+            </div>
+            <button onclick="setupNd()">Setup</button>
+            <button onclick="computeNd()">Berechne!</button>
+            <button class="danger" onclick="randomizeNd()">Zufällige Gewichte</button>
+        </div>
+
+        <div id="nd_inputs"></div>
+        <div class="grid-2">
+            <div>
+                <h3>Matrizen & Vektoren</h3>
+                <div class="result-display" id="nd_matrices" style="max-height:400px"></div>
+            </div>
+            <div>
+                <h3>Berechnung Schritt für Schritt</h3>
+                <div class="result-display" id="nd_computation" style="max-height:400px"></div>
+            </div>
+        </div>
+
+        <h3>Heatmap: Wie viele Dimensionen werden durch ReLU "abgeschaltet"?</h3>
+        <canvas id="canvasNd" width="800" height="300"></canvas>
+
+        <h3>Lineare Regionen Zähler</h3>
+        <div class="result-display" id="nd_regions"></div>
+    </div>
+
+    <!-- ==================== EXPLAIN TAB ==================== -->
+    <div class="tab-content" id="tabExplain">
+        <h2>📖 Was Dense → ReLU → Dense wirklich macht</h2>
+        
+        <div class="section">
+            <h3>Die Grundidee</h3>
+            <div class="formula-box">
+                <p><strong>Dense (Affine Transformation):</strong></p>
+                <p>z = W·x + b</p>
+                <p>→ Rotation, Skalierung, Scherung, Translation</p>
+                <br>
+                <p><strong>ReLU (Rectified Linear Unit):</strong></p>
+                <p>h = max(0, z)</p>
+                <p>→ "Faltet" den Raum: alles Negative wird auf 0 gesetzt</p>
+                <br>
+                <p><strong>Dense (nochmal Affine):</strong></p>
+                <p>y = W·h + b</p>
+                <p>→ Nochmal drehen, strecken, verschieben</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Was kann es pro Dimension?</h3>
+            <table style="width:100%; border-collapse:collapse;">
+                <tr style="border-bottom:1px solid #333">
+                    <td style="padding:8px"><strong>1D</strong></td>
+                    <td>Stückweise lineare Funktion mit 1 Knick pro Neuron</td>
+                </tr>
+                <tr style="border-bottom:1px solid #333">
+                    <td style="padding:8px"><strong>2D</strong></td>
+                    <td>Raum wird entlang von Linien gefaltet → stückweise lineare Abbildung</td>
+                </tr>
+                <tr style="border-bottom:1px solid #333">
+                    <td style="padding:8px"><strong>3D</strong></td>
+                    <td>Raum wird entlang von Ebenen gefaltet</td>
+                </tr>
+                <tr style="border-bottom:1px solid #333">
+                    <td style="padding:8px"><strong>nD</strong></td>
+                    <td>Raum wird entlang von Hyperebenen gefaltet. n Neuronen → bis zu 2ⁿ lineare Regionen!</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3>Affine Transformationen erklärt</h3>
+            <div class="formula-box">
+                <p><strong>Skalierung:</strong> W = [[s₁, 0], [0, s₂]] → streckt/staucht Achsen</p>
+                <p><strong>Rotation:</strong> W = [[cos θ, -sin θ], [sin θ, cos θ]] → dreht um Ursprung</p>
+                <p><strong>Scherung:</strong> W = [[1, k], [0, 1]] → verschiebt proportional</p>
+                <p><strong>Translation:</strong> +b → verschiebt alles um b</p>
+                <p><strong>Kombination:</strong> W·x + b kann all das gleichzeitig!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Warum ist ReLU so mächtig?</h3>
+            <div class="explanation">
+                <p>Ohne ReLU: Dense → Dense = eine einzige affine Transformation (W₂·W₁·x + W₂·b₁ + b₂)</p>
+                <p><strong>Mit ReLU dazwischen:</strong> Der Raum wird in Regionen aufgeteilt, und in jeder Region gilt eine ANDERE lineare Funktion!</p>
+                <p>→ Das ist der <strong>Universal Approximation Theorem</strong> in Aktion: genug Neuronen → beliebige Funktion approximierbar!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Maximale Anzahl linearer Regionen</h3>
+            <div class="formula-box">
+                <p>Für ein Netzwerk mit Eingabedimension d und n ReLU-Neuronen:</p>
+                <p><strong>Max. Regionen = Σᵢ₌₀ᵈ C(n, i)</strong></p>
+                <p>Für n ≥ d: ≈ nᵈ/d! (polynomiell in n, exponentiell in d)</p>
+                <p>Für d = 1, n Neuronen: n+1 Regionen (n Knickstellen)</p>
+                <p>Für d = 2, n Neuronen: bis zu 1 + n + n(n-1)/2 Regionen</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============ TAB SWITCHING ============
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    const tabs = ['tab1d','tab2d','tab3d','tabNd','tabExplain'];
+    const idx = tabs.indexOf(tabId);
+    document.querySelectorAll('#mainTabs button')[idx].classList.add('active');
+    
+    if(tabId === 'tab1d') { draw1D(); draw1DMulti(); }
+    if(tabId === 'tab2d') { draw2D(); }
+    if(tabId === 'tab3d') { draw3D(); }
+}
+
+// ============ UTILITY ============
+function relu(x) { return Math.max(0, x); }
+function reluVec(v) { return v.map(x => Math.max(0, x)); }
+
+function matVecMul(M, v) {
+    const n = v.length;
+    const result = new Array(n).fill(0);
+    for(let i = 0; i < n; i++) {
+        
+        for(let j = 0; j < n; j++) {
+            result[i] += M[i][j] * v[j];
+        }
+    }
+    return result;
+}
+
+function vecAdd(a, b) { return a.map((v, i) => v + b[i]); }
+
+function makeMatrix(n, diag, off) {
+    const M = [];
+    for(let i = 0; i < n; i++) {
+        M[i] = [];
+        for(let j = 0; j < n; j++) {
+            M[i][j] = (i === j) ? diag : off;
+        }
+    }
+    return M;
+}
+
+function randomMatrix(n, scale=1) {
+    const M = [];
+    for(let i = 0; i < n; i++) {
+        M[i] = [];
+        for(let j = 0; j < n; j++) {
+            M[i][j] = (Math.random() - 0.5) * 2 * scale;
+        }
+    }
+    return M;
+}
+
+function randomVec(n, scale=1) {
+    return Array.from({length: n}, () => (Math.random() - 0.5) * 2 * scale);
+}
+
+function formatNum(x) { return x.toFixed(3); }
+function formatVec(v) { return '[' + v.map(x => formatNum(x)).join(', ') + ']'; }
+function formatMat(M) {
+    return M.map(row => '  [' + row.map(x => formatNum(x).padStart(7)).join(', ') + ']').join('\n');
+}
+
+function hslToRgb(h, s, l) {
+    let r, g, b;
+    if(s === 0) { r = g = b = l; }
+    else {
+        const hue2rgb = (p, q, t) => {
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+}
+
+// ============ 1D VISUALIZATION ============
+function getParams1D() {
+    const a1 = parseFloat(document.getElementById('a1_1d').value);
+    const b1 = parseFloat(document.getElementById('b1_1d').value);
+    const a2 = parseFloat(document.getElementById('a2_1d').value);
+    const b2 = parseFloat(document.getElementById('b2_1d').value);
+    const xrange = parseFloat(document.getElementById('xrange_1d').value);
+    return {a1, b1, a2, b2, xrange};
+}
+
+function compute1DValue(x, a1, b1, a2, b2) {
+    const z = a1 * x + b1;
+    const h = relu(z);
+    const y = a2 * h + b2;
+    return {z, h, y};
+}
+
+function compute1D() {
+    const {a1, b1, a2, b2} = getParams1D();
+    const x = parseFloat(document.getElementById('testx_1d').value);
+    const {z, h, y} = compute1DValue(x, a1, b1, a2, b2);
+    
+    const resultDiv = document.getElementById('result1d');
+    resultDiv.innerHTML = `Eingabe:  x = ${formatNum(x)}
+─────────────────────────────────────
+Schritt 1: z = a₁·x + b₁ = ${formatNum(a1)}·${formatNum(x)} + ${formatNum(b1)} = ${formatNum(z)}
+Schritt 2: h = ReLU(z) = max(0, ${formatNum(z)}) = ${formatNum(h)}  ${z < 0 ? '← ABGESCHNITTEN!' : '← durchgelassen'}
+Schritt 3: y = a₂·h + b₂ = ${formatNum(a2)}·${formatNum(h)} + ${formatNum(b2)} = ${formatNum(y)}
+─────────────────────────────────────
+Ergebnis:  y = ${formatNum(y)}
+
+Knickstelle bei x = ${formatNum(-b1/a1)} (wo a₁·x + b₁ = 0)
+Für x > ${formatNum(-b1/a1)}: y = a₂·(a₁·x + b₁) + b₂ = ${formatNum(a2*a1)}·x + ${formatNum(a2*b1 + b2)}
+Für x < ${formatNum(-b1/a1)}: y = a₂·0 + b₂ = ${formatNum(b2)} (konstant!)`;
+    
+    draw1D();
+}
+
+function draw1D() {
+    const {a1, b1, a2, b2, xrange} = getParams1D();
+    
+    // Update display values
+    document.getElementById('a1_1d_val').textContent = a1.toFixed(1);
+    document.getElementById('b1_1d_val').textContent = b1.toFixed(1);
+    document.getElementById('a2_1d_val').textContent = a2.toFixed(1);
+    document.getElementById('b2_1d_val').textContent = b2.toFixed(1);
+    document.getElementById('xrange_1d_val').textContent = '±' + xrange;
+    
+    const canvas = document.getElementById('canvas1d');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    
+    // Coordinate system
+    const margin = 50;
+    const plotW = W - 2*margin;
+    const plotH = H - 2*margin;
+    
+    function toCanvasX(x) { return margin + (x + xrange) / (2*xrange) * plotW; }
+    
+    // Find y range
+    let ymin = Infinity, ymax = -Infinity;
+    for(let px = 0; px <= plotW; px++) {
+        const x = (px / plotW) * 2 * xrange - xrange;
+        const {z, h, y} = compute1DValue(x, a1, b1, a2, b2);
+        ymin = Math.min(ymin, y, z, h);
+        ymax = Math.max(ymax, y, z, h);
+    }
+    const ypad = (ymax - ymin) * 0.1 || 1;
+    ymin -= ypad; ymax += ypad;
+    
+    function toCanvasY(y) { return margin + (1 - (y - ymin) / (ymax - ymin)) * plotH; }
+    
+    // Grid
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    // Vertical grid
+    for(let x = -xrange; x <= xrange; x += xrange/5) {
+        const cx = toCanvasX(x);
+        ctx.moveTo(cx, margin); ctx.lineTo(cx, H-margin);
+    }
+    // Horizontal grid
+    const yStep = (ymax - ymin) / 8;
+    for(let y = ymin; y <= ymax; y += yStep) {
+        const cy = toCanvasY(y);
+        ctx.moveTo(margin, cy); ctx.lineTo(W-margin, cy);
+    }
+    ctx.stroke();
+    
+    // Axes
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    const zeroY = toCanvasY(0);
+    const zeroX = toCanvasX(0);
+    if(zeroY >= margin && zeroY <= H-margin) {
+        ctx.moveTo(margin, zeroY); ctx.lineTo(W-margin, zeroY);
+    }
+    if(zeroX >= margin && zeroX <= W-margin) {
+        ctx.moveTo(zeroX, margin); ctx.lineTo(zeroX, H-margin);
+    }
+    ctx.stroke();
+    
+    // Draw functions
+    function drawCurve(fn, color, label) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for(let px = 0; px <= plotW; px++) {
+            const x = (px / plotW) * 2 * xrange - xrange;
+            const y = fn(x);
+            const cx = margin + px;
+            const cy = toCanvasY(y);
+            if(px === 0) ctx.moveTo(cx, cy);
+            else ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+        
+        // Label
+        ctx.fillStyle = color;
+        ctx.font = '12px Courier New';
+        const labelX = margin + plotW - 100;
+        const labelY = toCanvasY(fn(xrange * 0.8));
+        ctx.fillText(label, labelX, Math.max(margin+15, Math.min(H-margin-5, labelY)));
+    }
+    
+    // z = a1*x + b1
+    drawCurve(x => a1*x + b1, '#4ecdc4', 'z = a₁x+b₁');
+    // h = relu(z)
+    drawCurve(x => relu(a1*x + b1), '#ff6b6b', 'h = ReLU(z)');
+    // y = a2*h + b2
+    drawCurve(x => { const {y} = compute1DValue(x, a1, b1, a2, b2); return y; }, '#feca57', 'y = a₂h+b₂');
+    
+    // Knickstelle markieren
+    const kink = -b1/a1;
+    if(kink > -xrange && kink < xrange) {
+        const cx = toCanvasX(kink);
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5,5]);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin); ctx.lineTo(cx, H-margin);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText('Knick: x=' + formatNum(kink), cx+5, margin+15);
+    }
+    
+    // Test point
+    const testX = parseFloat(document.getElementById('testx_1d').value);
+    if(!isNaN(testX)) {
+        const {y} = compute1DValue(testX, a1, b1, a2, b2);
+        const cx = toCanvasX(testX);
+        const cy = toCanvasY(y);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI*2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    // Axis labels
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Courier New';
+    ctx.fillText(`x: [${(-xrange).toFixed(0)}, ${xrange.toFixed(0)}]`, margin, H-10);
+    ctx.fillText(`y: [${ymin.toFixed(1)}, ${ymax.toFixed(1)}]`, margin, margin-10);
+    
+    // Legend
+    ctx.fillStyle = '#4ecdc4'; ctx.fillText('── z (nach Dense 1)', W-200, 20);
+    ctx.fillStyle = '#ff6b6b'; ctx.fillText('── h (nach ReLU)', W-200, 35);
+    ctx.fillStyle = '#feca57'; ctx.fillText('── y (nach Dense 2)', W-200, 50);
+}
+
+// 1D Multi-neuron
+let multiWeights = null;
+
+function randomize1DMulti() {
+    const n = parseInt(document.getElementById('neurons_1d').value);
+    multiWeights = {
+        w1: Array.from({length: n}, () => (Math.random()-0.5)*4),
+        b1: Array.from({length: n}, () => (Math.random()-0.5)*4),
+        w2: Array.from({length: n}, () => (Math.random()-0.5)*4),
+        b2: (Math.random()-0.5)*2
+    };
+    draw1DMulti();
+}
+
+function draw1DMulti() {
+    const n = parseInt(document.getElementById('neurons_1d').value);
+    document.getElementById('neurons_1d_val').textContent = n;
+    
+    if(!multiWeights || multiWeights.w1.length !== n) {
+        randomize1DMulti();
+        return;
+    }
+    
+    const {w1, b1, w2, b2} = multiWeights;
+    
+    const canvas = document.getElementById('canvas1d_multi');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    
+    const margin = 50;
+    const plotW = W - 2*margin;
+    const plotH = H - 2*margin;
+    const xrange = 5;
+    
+    function computeMulti(x) {
+        let y = b2;
+        for(let i = 0; i < n; i++) {
+            const z = w1[i] * x + b1[i];
+            const h = relu(z);
+            y += w2[i] * h;
+        }
+        return y;
+    }
+    
+    // Find y range
+    let ymin = Infinity, ymax = -Infinity;
+    for(let px = 0; px <= plotW; px++) {
+        const x = (px / plotW) * 2 * xrange - xrange;
+        const y = computeMulti(x);
+        ymin = Math.min(ymin, y);
+        ymax = Math.max(ymax, y);
+    }
+    const ypad = (ymax - ymin) * 0.1 || 1;
+    ymin -= ypad; ymax += ypad;
+    
+    function toCanvasY(y) { return margin + (1 - (y - ymin) / (ymax - ymin)) * plotH; }
+    
+    // Grid
+    ctx.strokeStyle = '#333'; ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    for(let x = -xrange; x <= xrange; x++) {
+        const cx = margin + (x+xrange)/(2*xrange)*plotW;
+        ctx.moveTo(cx, margin); ctx.lineTo(cx, H-margin);
+    }
+    ctx.stroke();
+    
+    // Zero line
+    const zy = toCanvasY(0);
+    if(zy >= margin && zy <= H-margin) {
+        ctx.strokeStyle = '#666'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(margin, zy); ctx.lineTo(W-margin, zy); ctx.stroke();
+    }
+    
+    // Draw individual neuron contributions
+    for(let i = 0; i < n; i++) {
+        const hue = i / n;
+        const [r,g,b_c] = hslToRgb(hue, 0.7, 0.5);
+        ctx.strokeStyle = `rgba(${r},${g},${b_c},0.4)`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for(let px = 0; px <= plotW; px++) {
+            const x = (px / plotW) * 2 * xrange - xrange;
+            const z = w1[i] * x + b1[i];
+            const h = relu(z);
+            const contrib = w2[i] * h;
+            const cy = toCanvasY(contrib);
+            if(px === 0) ctx.moveTo(margin+px, cy);
+            else ctx.lineTo(margin+px, cy);
+        }
+        ctx.stroke();
+    }
+    
+    // Draw combined output
+    ctx.strokeStyle = '#feca57';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for(let px = 0; px <= plotW; px++) {
+        const x = (px / plotW) * 2 * xrange - xrange;
+        const y = computeMulti(x);
+        const cy = toCanvasY(y);
+        if(px === 0) ctx.moveTo(margin+px, cy);
+        else ctx.lineTo(margin+px, cy);
+    }
+    ctx.stroke();
+    
+    // Mark kink points
+    ctx.fillStyle = '#ff6b6b';
+    for(let i = 0; i < n; i++) {
+        const kink = -b1[i] / w1[i];
+        if(kink > -xrange && kink < xrange) {
+            const cx = margin + (kink+xrange)/(2*xrange)*plotW;
+            const cy = toCanvasY(computeMulti(kink));
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, Math.PI*2);
+            ctx.fill();
+        }
+    }
+    
+    // Legend
+    ctx.fillStyle = '#feca57'; ctx.font = '12px Courier New';
+    ctx.fillText(`y = Σ w2ᵢ·ReLU(w1ᵢ·x + b1ᵢ) + b2  (${n} Neuronen, ${n} Knickstellen)`, margin, 20);
+    
+    // Show formula
+    const resultDiv = document.getElementById('result1d_multi');
+    let formula = `y = `;
+    let parts = [];
+    for(let i = 0; i < n; i++) {
+        parts.push(`${formatNum(w2[i])}·ReLU(${formatNum(w1[i])}·x + ${formatNum(b1[i])})`);
+    }
+    formula += parts.join('\n  + ') + `\n  + ${formatNum(b2)}`;
+    formula += `\n\nKnickstellen bei: ` + w1.map((w,i) => `x=${formatNum(-b1[i]/w)}`).join(', ');
+    formula += `\n\nDas ergibt ${n+1} lineare Regionen (${n} Knickstellen teilen die x-Achse)`;
+    resultDiv.textContent = formula;
+}
+
+// ============ 2D VISUALIZATION ============
+function getParams2D() {
+    return {
+        W1: [
+            [parseFloat(document.getElementById('w1_00').value), parseFloat(document.getElementById('w1_01').value)],
+            [parseFloat(document.getElementById('w1_10').value), parseFloat(document.getElementById('w1_11').value)]
+        ],
+        b1: [parseFloat(document.getElementById('b1_2d_0').value), parseFloat(document.getElementById('b1_2d_1').value)],
+        W2: [
+            [parseFloat(document.getElementById('w2_00').value), parseFloat(document.getElementById('w2_01').value)],
+            [parseFloat(document.getElementById('w2_10').value), parseFloat(document.getElementById('w2_11').value)]
+        ],
+        b2: [parseFloat(document.getElementById('b2_2d_0').value), parseFloat(document.getElementById('b2_2d_1').value)]
+    };
+}
+
+function setParams2D(W1, b1, W2, b2) {
+    document.getElementById('w1_00').value = W1[0][0];
+    document.getElementById('w1_01').value = W1[0][1];
+    document.getElementById('w1_10').value = W1[1][0];
+    document.getElementById('w1_11').value = W1[1][1];
+    document.getElementById('b1_2d_0').value = b1[0];
+    document.getElementById('b1_2d_1').value = b1[1];
+    document.getElementById('w2_00').value = W2[0][0];
+    document.getElementById('w2_01').value = W2[0][1];
+    document.getElementById('w2_10').value = W2[1][0];
+    document.getElementById('w2_11').value = W2[1][1];
+    document.getElementById('b2_2d_0').value = b2[0];
+    document.getElementById('b2_2d_1').value = b2[1];
+}
+
+function preset2D(type) {
+    const angle = Math.PI/6;
+    switch(type) {
+        case 'rotation':
+            setParams2D(
+                [[Math.cos(angle), -Math.sin(angle)], [Math.sin(angle), Math.cos(angle)]],
+                [0, 0],
+                [[1, 0], [0, 1]],
+                [0, 0]
+            );
+            break;
+        case 'shear':
+            setParams2D([[1, 1.5], [0, 1]], [0, 0], [[1, 0], [0, 1]], [0, 0]);
+            break;
+        case 'scale':
+            setParams2D([[2, 0], [0, 0.5]], [0, 0], [[1, 0], [0, 1]], [0, 0]);
+            break;
+        case 'fold':
+            setParams2D([[1.5, 0.5], [-0.5, 1.0]], [-0.5, -0.3], [[1, 0.3], [0.2, 1]], [0, 0]);
+            break;
+    }
+    draw2D();
+}
+
+function randomize2D() {
+    setParams2D(
+        randomMatrix(2, 2), randomVec(2, 1),
+        randomMatrix(2, 2), randomVec(2, 0.5)
+    );
+    draw2D();
+}
+
+function draw2DGrid(canvas, points, colors, title) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    
+    // Find bounds
+    let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
+    for(const p of points) {
+        xmin = Math.min(xmin, p[0]); xmax = Math.max(xmax, p[0]);
+        ymin = Math.min(ymin, p[1]); ymax = Math.max(ymax, p[1]);
+    }
+    const pad = Math.max(xmax-xmin, ymax-ymin) * 0.1 || 1;
+    xmin -= pad; xmax += pad; ymin -= pad; ymax += pad;
+    
+    // Make square
+    const range = Math.max(xmax-xmin, ymax-ymin);
+    const cx = (xmin+xmax)/2, cy = (ymin+ymax)/2;
+    xmin = cx - range/2; xmax = cx + range/2;
+    ymin = cy - range/2; ymax = cy + range/2;
+    
+    const margin = 30;
+    const plotW = W - 2*margin;
+    const plotH = H - 2*margin;
+    
+    function toCanvas(p) {
+        return [
+            margin + (p[0] - xmin) / (xmax - xmin) * plotW,
+            margin + (1 - (p[1] - ymin) / (ymax - ymin)) * plotH
+        ];
+    }
+    
+    // Grid lines
+    ctx.strokeStyle = '#333'; ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    for(let i = 0; i <= 10; i++) {
+        const x = xmin + i/10*(xmax-xmin);
+        const y = ymin + i/10*(ymax-ymin);
+        const [cx1, cy1] = toCanvas([x, ymin]);
+        const [cx2, cy2] = toCanvas([x, ymax]);
+        ctx.moveTo(cx1, cy1); ctx.lineTo(cx2, cy2);
+        const [cx3, cy3] = toCanvas([xmin, y]);
+        const [cx4, cy4] = toCanvas([xmax, y]);
+        ctx.moveTo(cx3, cy3); ctx.lineTo(cx4, cy4);
+    }
+    ctx.stroke();
+    
+    // Axes
+    const [ox, oy] = toCanvas([0, 0]);
+    if(ox >= margin && ox <= W-margin) {
+        ctx.strokeStyle = '#666'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(ox, margin); ctx.lineTo(ox, H-margin); ctx.stroke();
+    }
+    if(oy >= margin && oy <= H-margin) {
+        ctx.strokeStyle = '#666'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(margin, oy); ctx.lineTo(W-margin, oy); ctx.stroke();
+    }
+    
+    // Draw connected grid lines
+    const gridSize = Math.round(Math.sqrt(points.length));
+    
+    // Draw horizontal lines
+    for(let i = 0; i < gridSize; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = colors[i * gridSize] || '#4ecdc4';
+        ctx.lineWidth = 1.5;
+        for(let j = 0; j < gridSize; j++) {
+            const idx = i * gridSize + j;
+            if(idx < points.length) {
+                const [cx, cy] = toCanvas(points[idx]);
+                if(j === 0) ctx.moveTo(cx, cy);
+                else ctx.lineTo(cx, cy);
+            }
+        }
+        ctx.stroke();
+    }
+    
+    // Draw vertical lines
+    for(let j = 0; j < gridSize; j++) {
+        ctx.beginPath();
+        ctx.strokeStyle = colors[j] || '#ff6b6b';
+        ctx.lineWidth = 1.5;
+        for(let i = 0; i < gridSize; i++) {
+            const idx = i * gridSize + j;
+            if(idx < points.length) {
+                const [cx, cy] = toCanvas(points[idx]);
+                if(i === 0) ctx.moveTo(cx, cy);
+                else ctx.lineTo(cx, cy);
+            }
+        }
+        ctx.stroke();
+    }
+    
+    // Draw points
+    for(let i = 0; i < points.length; i++) {
+        const [cx, cy] = toCanvas(points[i]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2, 0, Math.PI*2);
+        ctx.fillStyle = colors[i] || '#fff';
+        ctx.fill();
+    }
+    
+    // Title
+    ctx.fillStyle = '#aaa'; ctx.font = '11px Courier New';
+    ctx.fillText(title || '', margin, 15);
+    ctx.fillText(`x:[${xmin.toFixed(1)},${xmax.toFixed(1)}] y:[${ymin.toFixed(1)},${ymax.toFixed(1)}]`, margin, H-5);
+}
+
+function draw2D() {
+    const {W1, b1, W2, b2} = getParams2D();
+    
+    // Generate grid
+    const gridSize = 20;
+    const range = 2;
+    const inputPoints = [];
+    const colors = [];
+    
+    for(let i = 0; i < gridSize; i++) {
+        for(let j = 0; j < gridSize; j++) {
+            const x = -range + (2*range) * i / (gridSize-1);
+            const y = -range + (2*range) * j / (gridSize-1);
+            inputPoints.push([x, y]);
+            const hue = (i / gridSize * 0.7 + j / gridSize * 0.3) % 1;
+            const [r,g,b] = hslToRgb(hue, 0.8, 0.5);
+            colors.push(`rgb(${r},${g},${b})`);
+        }
+    }
+    
+    // Compute transformations
+    const afterDense1 = inputPoints.map(p => vecAdd(matVecMul(W1, p), b1));
+    const afterRelu = afterDense1.map(p => reluVec(p));
+    const afterDense2 = afterRelu.map(p => vecAdd(matVecMul(W2, p), b2));
+    
+    // Draw all stages
+    draw2DGrid(document.getElementById('canvas2d_in'), inputPoints, colors, 'Eingabe-Gitter');
+    draw2DGrid(document.getElementById('canvas2d_mid1'), afterDense1, colors, 'Nach W₁·x + b₁');
+    draw2DGrid(document.getElementById('canvas2d_mid2'), afterRelu, colors, 'Nach ReLU (Faltung!)');
+    draw2DGrid(document.getElementById('canvas2d_out'), afterDense2, colors, 'Nach W₂·h + b₂ (Endergebnis)');
+    
+    // Result text
+    const testP = [1, 0.5];
+    const z = vecAdd(matVecMul(W1, testP), b1);
+    const h = reluVec(z);
+    const y = vecAdd(matVecMul(W2, h), b2);
+    
+    document.getElementById('result2d').textContent = 
+`Beispiel: x = ${formatVec(testP)}
+W₁ = 
+${formatMat(W1)}
+b₁ = ${formatVec(b1)}
+
+z = W₁·x + b₁ = ${formatVec(z)}
+h = ReLU(z) = ${formatVec(h)}  ${z[0]<0||z[1]<0 ? '← Faltung aktiv!' : ''}
+
+W₂ = 
+${formatMat(W2)}
+b₂ = ${formatVec(b2)}
+
+y = W₂·h + b₂ = ${formatVec(y)}
+
+Ohne ReLU wäre es: W₂·(W₁·x + b₁) + b₂ = W₂·W₁·x + W₂·b₁ + b₂
+= eine einzige affine Transformation (langweilig!)
+MIT ReLU: verschiedene lineare Funktionen in verschiedenen Regionen!`;
+}
+
+// ============ 3D VISUALIZATION ============
+function project3D(point, rotAngle, elevAngle) {
+    const rad = rotAngle * Math.PI / 180;
+    const elev = elevAngle * Math.PI / 180;
+    
+    // Rotate around Y axis
+    
+    const x1 = point[0] * Math.cos(rad) - point[2] * Math.sin(rad);
+    const z1 = point[0] * Math.sin(rad) + point[2] * Math.cos(rad);
+    const y1 = point[1];
+    
+    // Rotate around X axis (elevation)
+    const y2 = y1 * Math.cos(elev) - z1 * Math.sin(elev);
+    const z2 = y1 * Math.sin(elev) + z1 * Math.cos(elev);
+    const x2 = x1;
+    
+    // Simple orthographic projection
+    return [x2, y2, z2];
+}
+
+function draw3DPoints(canvas, points, colors, title) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    
+    const rotAngle = parseFloat(document.getElementById('rot3d').value);
+    const elevAngle = parseFloat(document.getElementById('elev3d').value);
+    
+    // Project all points
+    const projected = points.map(p => project3D(p, rotAngle, elevAngle));
+    
+    // Find bounds
+    let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
+    for(const p of projected) {
+        xmin = Math.min(xmin, p[0]); xmax = Math.max(xmax, p[0]);
+        ymin = Math.min(ymin, p[1]); ymax = Math.max(ymax, p[1]);
+    }
+    const pad = Math.max(xmax-xmin, ymax-ymin) * 0.1 || 1;
+    xmin -= pad; xmax += pad; ymin -= pad; ymax += pad;
+    const range = Math.max(xmax-xmin, ymax-ymin);
+    const cx = (xmin+xmax)/2, cy = (ymin+ymax)/2;
+    xmin = cx - range/2; xmax = cx + range/2;
+    ymin = cy - range/2; ymax = cy + range/2;
+    
+    const margin = 30;
+    const plotW = W - 2*margin;
+    const plotH = H - 2*margin;
+    
+    function toCanvas(p) {
+        return [
+            margin + (p[0] - xmin) / (xmax - xmin) * plotW,
+            margin + (1 - (p[1] - ymin) / (ymax - ymin)) * plotH
+        ];
+    }
+    
+    // Sort by depth for painter's algorithm
+    const indices = projected.map((p, i) => ({z: p[2], i}));
+    indices.sort((a, b) => a.z - b.z);
+    
+    // Draw axes
+    const axes = [[1,0,0],[0,1,0],[0,0,1]];
+    const axisColors = ['#ff4444','#44ff44','#4444ff'];
+    const axisLabels = ['X','Y','Z'];
+    for(let a = 0; a < 3; a++) {
+        const origin = project3D([0,0,0], rotAngle, elevAngle);
+        const end = project3D(axes[a].map(v=>v*1.5), rotAngle, elevAngle);
+        const [ox, oy] = toCanvas(origin);
+        const [ex, ey] = toCanvas(end);
+        ctx.strokeStyle = axisColors[a];
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ex, ey); ctx.stroke();
+        ctx.fillStyle = axisColors[a];
+        ctx.font = '11px Courier New';
+        ctx.fillText(axisLabels[a], ex+3, ey-3);
+    }
+    
+    // Draw points
+    for(const {i} of indices) {
+        const [cx2, cy2] = toCanvas(projected[i]);
+        const depth = (projected[i][2] - projected[indices[0].z] ) / (range || 1);
+        const size = 2 + depth * 3;
+        ctx.beginPath();
+        ctx.arc(cx2, cy2, Math.max(1.5, size), 0, Math.PI*2);
+        ctx.fillStyle = colors[i] || '#fff';
+        ctx.globalAlpha = 0.5 + depth * 0.5;
+        ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    
+    // Title
+    ctx.fillStyle = '#aaa'; ctx.font = '11px Courier New';
+    ctx.fillText(title || '', margin, 15);
+}
+
+function getParams3D() {
+    const d = parseFloat(document.getElementById('w1_3d_diag').value);
+    const o = parseFloat(document.getElementById('w1_3d_off').value);
+    const b1 = parseFloat(document.getElementById('b1_3d').value);
+    const d2 = parseFloat(document.getElementById('w2_3d_diag').value);
+    const o2 = parseFloat(document.getElementById('w2_3d_off').value);
+    const b2 = parseFloat(document.getElementById('b2_3d').value);
+    
+    const W1 = [[d,o,o],[o,d,o],[o,o,d]];
+    const B1 = [b1, b1, b1];
+    const W2 = [[d2,o2,o2],[o2,d2,o2],[o2,o2,d2]];
+    const B2 = [b2, b2, b2];
+    return {W1, B1, W2, B2};
+}
+
+function preset3D(type) {
+    switch(type) {
+        case 'identity':
+            document.getElementById('w1_3d_diag').value = 1;
+            document.getElementById('w1_3d_off').value = 0;
+            document.getElementById('b1_3d').value = 0;
+            document.getElementById('w2_3d_diag').value = 1;
+            document.getElementById('w2_3d_off').value = 0;
+            document.getElementById('b2_3d').value = 0;
+            break;
+        case 'rotateXY':
+            document.getElementById('w1_3d_diag').value = 0.87;
+            document.getElementById('w1_3d_off').value = 0.5;
+            document.getElementById('b1_3d').value = 0;
+            document.getElementById('w2_3d_diag').value = 1;
+            document.getElementById('w2_3d_off').value = 0;
+            document.getElementById('b2_3d').value = 0;
+            break;
+        case 'fold':
+            document.getElementById('w1_3d_diag').value = 1.5;
+            document.getElementById('w1_3d_off').value = 0.3;
+            document.getElementById('b1_3d').value = -0.5;
+            document.getElementById('w2_3d_diag').value = 1;
+            document.getElementById('w2_3d_off').value = 0.2;
+            document.getElementById('b2_3d').value = 0;
+            break;
+    }
+    draw3D();
+}
+
+function randomize3D() {
+    document.getElementById('w1_3d_diag').value = ((Math.random()-0.5)*3).toFixed(2);
+    document.getElementById('w1_3d_off').value = ((Math.random()-0.5)*2).toFixed(2);
+    document.getElementById('b1_3d').value = ((Math.random()-0.5)*2).toFixed(2);
+    document.getElementById('w2_3d_diag').value = ((Math.random()-0.5)*3).toFixed(2);
+    document.getElementById('w2_3d_off').value = ((Math.random()-0.5)*2).toFixed(2);
+    document.getElementById('b2_3d').value = ((Math.random()-0.5)*2).toFixed(2);
+    draw3D();
+}
+
+function draw3D() {
+    const {W1, B1, W2, B2} = getParams3D();
+    
+    // Generate 3D point cloud (cube grid)
+    const gridSize = 8;
+    const range = 1.5;
+    const inputPoints = [];
+    const colors = [];
+    
+    for(let i = 0; i < gridSize; i++) {
+        for(let j = 0; j < gridSize; j++) {
+            for(let k = 0; k < gridSize; k++) {
+                const x = -range + 2*range*i/(gridSize-1);
+                const y = -range + 2*range*j/(gridSize-1);
+                const z = -range + 2*range*k/(gridSize-1);
+                inputPoints.push([x, y, z]);
+                const hue = (i/gridSize*0.4 + j/gridSize*0.3 + k/gridSize*0.3) % 1;
+                const [r,g,b] = hslToRgb(hue, 0.8, 0.55);
+                colors.push(`rgb(${r},${g},${b})`);
+            }
+        }
+    }
+    
+    // Transform
+    const outputPoints = inputPoints.map(p => {
+        const z = vecAdd(matVecMul(W1, p), B1);
+        const h = reluVec(z);
+        const y = vecAdd(matVecMul(W2, h), B2);
+        return y;
+    });
+    
+    draw3DPoints(document.getElementById('canvas3d_in'), inputPoints, colors, 'Eingabe (3D Gitter)');
+    draw3DPoints(document.getElementById('canvas3d_out'), outputPoints, colors, 'Ausgabe (Dense→ReLU→Dense)');
+    
+    // Result text
+    const testP = [1, 0.5, -0.3];
+    const z = vecAdd(matVecMul(W1, testP), B1);
+    const h = reluVec(z);
+    const y = vecAdd(matVecMul(W2, h), B2);
+    
+    const clipped = z.filter(v => v < 0).length;
+    
+    document.getElementById('result3d').textContent = 
+`Beispiel: x = ${formatVec(testP)}
+
+W₁ = 
+${formatMat(W1)}
+b₁ = ${formatVec(B1)}
+
+z = W₁·x + b₁ = ${formatVec(z)}
+h = ReLU(z) = ${formatVec(h)}  ← ${clipped} von 3 Dimensionen abgeschnitten!
+
+W₂ = 
+${formatMat(W2)}
+b₂ = ${formatVec(B2)}
+
+y = W₂·h + b₂ = ${formatVec(y)}
+
+In 3D: ReLU schneidet entlang von 3 Ebenen (eine pro Neuron).
+Das teilt den 3D-Raum in bis zu 2³ = 8 lineare Regionen!`;
+}
+
+// ============ nD VISUALIZATION ============
+let ndState = { dim: 4, W1: null, b1: null, W2: null, b2: null, x: null };
+
+function setupNd() {
+    const n = parseInt(document.getElementById('nd_dim').value);
+    document.getElementById('nd_dim_val').textContent = n;
+    ndState.dim = n;
+    ndState.W1 = makeMatrix(n, 1, 0.3);
+    ndState.b1 = new Array(n).fill(-0.5);
+    ndState.W2 = makeMatrix(n, 1, 0);
+    ndState.b2 = new Array(n).fill(0);
+    ndState.x = Array.from({length: n}, (_, i) => (i+1) * 0.5 - n*0.25);
+    
+    renderNdInputs();
+    computeNd();
+}
+
+function randomizeNd() {
+    const n = ndState.dim;
+    ndState.W1 = randomMatrix(n, 1.5);
+    ndState.b1 = randomVec(n, 1);
+    ndState.W2 = randomMatrix(n, 1.5);
+    ndState.b2 = randomVec(n, 0.5);
+    ndState.x = randomVec(n, 2);
+    renderNdInputs();
+    computeNd();
+}
+
+function renderNdInputs() {
+    const n = ndState.dim;
+    const container = document.getElementById('nd_inputs');
+    
+    let html = '<div class="controls"><div class="control-group"><label>Eingabe x:</label>';
+    for(let i = 0; i < n; i++) {
+        html += `<input type="number" id="nd_x_${i}" value="${ndState.x[i].toFixed(2)}" step="0.1" style="width:60px" onchange="updateNdX()">`;
+    }
+    html += '</div></div>';
+    container.innerHTML = html;
+}
+
+function updateNdX() {
+    const n = ndState.dim;
+    for(let i = 0; i < n; i++) {
+        ndState.x[i] = parseFloat(document.getElementById(`nd_x_${i}`).value) || 0;
+    }
+}
+
+function computeNd() {
+    const n = ndState.dim;
+    updateNdX();
+    
+    const {W1, b1, W2, b2, x} = ndState;
+    
+    // Compute
+    const z = vecAdd(matVecMul(W1, x), b1);
+    const h = reluVec(z);
+    const y = vecAdd(matVecMul(W2, h), b2);
+    
+    // Display matrices
+    const matDiv = document.getElementById('nd_matrices');
+    matDiv.textContent = 
+`Dimension: ${n}D
+
+x = ${formatVec(x)}
+
+W₁ (${n}×${n}) =
+${formatMat(W1)}
+
+b₁ = ${formatVec(b1)}
+
+W₂ (${n}×${n}) =
+${formatMat(W2)}
+
+b₂ = ${formatVec(b2)}`;
+
+    // Display computation
+    const compDiv = document.getElementById('nd_computation');
+    let compText = `SCHRITT 1: z = W₁·x + b₁\n`;
+    compText += `─────────────────────────\n`;
+    for(let i = 0; i < n; i++) {
+        let terms = [];
+        for(let j = 0; j < n; j++) {
+            terms.push(`${formatNum(W1[i][j])}·${formatNum(x[j])}`);
+        }
+        compText += `z[${i}] = ${terms.join(' + ')} + ${formatNum(b1[i])} = ${formatNum(z[i])}\n`;
+    }
+    compText += `\nz = ${formatVec(z)}\n\n`;
+    
+    compText += `SCHRITT 2: h = ReLU(z)\n`;
+    compText += `─────────────────────────\n`;
+    let clippedCount = 0;
+    for(let i = 0; i < n; i++) {
+        const clipped = z[i] < 0;
+        if(clipped) clippedCount++;
+        compText += `h[${i}] = max(0, ${formatNum(z[i])}) = ${formatNum(h[i])}${clipped ? '  ← ABGESCHNITTEN!' : ''}\n`;
+    }
+    compText += `\nh = ${formatVec(h)}\n`;
+    compText += `${clippedCount}/${n} Dimensionen abgeschnitten (${((clippedCount/n)*100).toFixed(0)}%)\n\n`;
+    
+    compText += `SCHRITT 3: y = W₂·h + b₂\n`;
+    compText += `─────────────────────────\n`;
+    for(let i = 0; i < n; i++) {
+        let terms = [];
+        for(let j = 0; j < n; j++) {
+            terms.push(`${formatNum(W2[i][j])}·${formatNum(h[j])}`);
+        }
+        compText += `y[${i}] = ${terms.join(' + ')} + ${formatNum(b2[i])} = ${formatNum(y[i])}\n`;
+    }
+    compText += `\ny = ${formatVec(y)}\n\n`;
+    compText += `═══════════════════════════\n`;
+    compText += `ERGEBNIS: ${formatVec(x)} → ${formatVec(y)}\n`;
+    compText += `═══════════════════════════\n`;
+    
+    compDiv.textContent = compText;
+    
+    // Draw heatmap
+    drawNdHeatmap();
+    
+    // Regions info
+    const regionsDiv = document.getElementById('nd_regions');
+    const maxRegions = computeMaxRegions(n, n);
+    regionsDiv.textContent = 
+`Dimension: ${n}
+Neuronen im Hidden Layer: ${n}
+Maximale Anzahl linearer Regionen: ${maxRegions}
+(Formel: Σᵢ₌₀ⁿ C(${n}, i) = ${maxRegions})
+
+Jedes ReLU-Neuron definiert eine Hyperebene im ${n}D-Raum.
+${n} Hyperebenen teilen den ℝ${n} in bis zu ${maxRegions} Regionen.
+In jeder Region ist die Gesamtfunktion eine ANDERE affine Abbildung!
+
+Aktuell aktive Neuronen: ${n - clippedCount}/${n}
+Aktuelle Region: [${h.map(v => v > 0 ? '1' : '0').join(', ')}]
+(1 = Neuron aktiv, 0 = Neuron abgeschaltet)
+
+Effektive Transformation in dieser Region:
+y = W₂ · diag([${h.map(v => v > 0 ? '1' : '0').join(',')}]) · W₁ · x + ...
+= eine spezifische affine Abbildung (von ${maxRegions} möglichen)`;
+}
+
+function computeMaxRegions(d, n) {
+    // Sum of C(n, i) for i = 0 to d
+    let sum = 0;
+    for(let i = 0; i <= Math.min(d, n); i++) {
+        sum += binomial(n, i);
+    }
+    return sum;
+}
+
+function binomial(n, k) {
+    if(k > n) return 0;
+    if(k === 0 || k === n) return 1;
+    let result = 1;
+    for(let i = 0; i < k; i++) {
+        result *= (n - i) / (i + 1);
+    }
+    return Math.round(result);
+}
+
+function drawNdHeatmap() {
+    const canvas = document.getElementById('canvasNd');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    
+    const n = ndState.dim;
+    const {W1, b1, W2, b2} = ndState;
+    
+    // Sample many random points and see which get clipped
+    const numSamples = 200;
+    const margin = 40;
+    const cellW = (W - 2*margin) / numSamples;
+    const cellH = (H - 2*margin) / n;
+    
+    // Header
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px Courier New';
+    ctx.fillText('Samples →', margin, 15);
+    ctx.fillText('Dim ↓', 5, margin + cellH);
+    
+    for(let i = 0; i < n; i++) {
+        ctx.fillStyle = '#888';
+        ctx.fillText(`d${i}`, 5, margin + i*cellH + cellH/2 + 4);
+    }
+    
+    // Generate samples and visualize
+    const regionCounts = {};
+    
+    for(let s = 0; s < numSamples; s++) {
+        const x = randomVec(n, 3);
+        const z = vecAdd(matVecMul(W1, x), b1);
+        const h = reluVec(z);
+        
+        // Region signature
+        const sig = z.map(v => v > 0 ? '1' : '0').join('');
+        regionCounts[sig] = (regionCounts[sig] || 0) + 1;
+        
+        for(let i = 0; i < n; i++) {
+            const cx = margin + s * cellW;
+            const cy = margin + i * cellH;
+            
+            if(z[i] > 0) {
+                // Active: green intensity based on value
+                const intensity = Math.min(1, Math.abs(z[i]) / 3);
+                ctx.fillStyle = `rgba(0, ${Math.round(100 + 155*intensity)}, ${Math.round(50 + 100*intensity)}, 0.8)`;
+            } else {
+                // Clipped: red
+                const intensity = Math.min(1, Math.abs(z[i]) / 3);
+                ctx.fillStyle = `rgba(${Math.round(100 + 155*intensity)}, 0, 0, 0.8)`;
+            }
+            ctx.fillRect(cx, cy, Math.max(1, cellW), cellH - 1);
+        }
+    }
+    
+    // Legend
+    ctx.fillStyle = '#00ff88'; ctx.fillText('■ Grün = Neuron aktiv (z > 0)', W - 250, 15);
+    ctx.fillStyle = '#ff4444'; ctx.fillText('■ Rot = Neuron abgeschnitten (z ≤ 0)', W - 250, 30);
+    
+    // Region count
+    const uniqueRegions = Object.keys(regionCounts).length;
+    ctx.fillStyle = '#feca57';
+    ctx.font = '12px Courier New';
+    ctx.fillText(`Gefundene Regionen: ${uniqueRegions} (von max. ${computeMaxRegions(n,n)})`, margin, H - 10);
+}
+
+// ============ EVENT LISTENERS ============
+// 1D sliders
+['a1_1d', 'b1_1d', 'a2_1d', 'b2_1d', 'xrange_1d'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+        draw1D();
+        compute1D();
+    });
+});
+
+document.getElementById('neurons_1d').addEventListener('input', () => {
+    document.getElementById('neurons_1d_val').textContent = document.getElementById('neurons_1d').value;
+    randomize1DMulti();
+});
+
+// 3D rotation
+['rot3d', 'elev3d'].forEach(id => {
+    document.getElementById(id).addEventListener('input', draw3D);
+});
+
+// nD dimension
+document.getElementById('nd_dim').addEventListener('input', () => {
+    document.getElementById('nd_dim_val').textContent = document.getElementById('nd_dim').value;
+});
+
+// ============ INITIALIZATION ============
+window.addEventListener('load', () => {
+    draw1D();
+    compute1D();
+    randomize1DMulti();
+    draw2D();
+    draw3D();
+    setupNd();
+});
+</script>
+</body>
+</html>
