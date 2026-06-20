@@ -217,7 +217,6 @@ const Embedding3DViz = {
     showDirections: true,
     showArith: false,
 
-    // Word positions in 3D (simulated projection)
     words: {
         'König': { pos: [2.0, -0.8, 1.5], color: '#3b82f6', cluster: 'royalty' },
         'Königin': { pos: [2.0, 0.8, 1.5], color: '#ec4899', cluster: 'royalty' },
@@ -252,6 +251,48 @@ const Embedding3DViz = {
     arithStep: 0,
     arithInterval: null,
 
+    // Pre-computed cluster sphere points (generated once)
+    _clusterPointsCache: null,
+
+    _getClusterPoints: function() {
+        if (this._clusterPointsCache) return this._clusterPointsCache;
+
+        // Generate all cluster sphere points once, deterministically
+        const allX = [], allY = [], allZ = [], allColors = [];
+        const labelX = [], labelY = [], labelZ = [], labelTexts = [], labelColors = [];
+
+        const clusters = Object.values(this.clusters);
+        // Use seeded pseudo-random for deterministic points
+        let seed = 42;
+        const seededRandom = () => {
+            seed = (seed * 16807 + 7) % 2147483647;
+            return (seed - 1) / 2147483646;
+        };
+
+        clusters.forEach(cl => {
+            const pts = 30;
+            for (let i = 0; i < pts; i++) {
+                const phi = Math.acos(2 * seededRandom() - 1);
+                const theta = seededRandom() * Math.PI * 2;
+                allX.push(cl.center[0] + cl.radius * Math.sin(phi) * Math.cos(theta));
+                allY.push(cl.center[1] + cl.radius * Math.sin(phi) * Math.sin(theta));
+                allZ.push(cl.center[2] + cl.radius * Math.cos(phi));
+                allColors.push(cl.color.replace('0.0', '0.3'));
+            }
+            labelX.push(cl.center[0]);
+            labelY.push(cl.center[1]);
+            labelZ.push(cl.center[2] + cl.radius + 0.2);
+            labelTexts.push(cl.label);
+            labelColors.push('#94a3b8');
+        });
+
+        this._clusterPointsCache = {
+            points: { x: allX, y: allY, z: allZ, colors: allColors },
+            labels: { x: labelX, y: labelY, z: labelZ, texts: labelTexts, colors: labelColors }
+        };
+        return this._clusterPointsCache;
+    },
+
     render: function() {
         const plotDiv = document.getElementById('embedding-3d-plot');
         if (!plotDiv) return;
@@ -260,7 +301,7 @@ const Embedding3DViz = {
         const traces = [];
         const wordEntries = Object.entries(this.words);
 
-        // Word points
+        // Trace 0: All word points (single trace)
         traces.push({
             x: wordEntries.map(([_, w]) => w.pos[0]),
             y: wordEntries.map(([_, w]) => w.pos[1]),
@@ -279,67 +320,75 @@ const Embedding3DViz = {
             name: 'Wörter'
         });
 
-        // Clusters (transparent spheres approximated with mesh3d)
+        // Trace 1: All cluster sphere points (single trace, cached)
         if (this.showClusters) {
-            Object.values(this.clusters).forEach(cl => {
-                // Approximate sphere with scatter points on surface
-                const pts = 30;
-                const cx = [], cy = [], cz = [];
-                for (let i = 0; i < pts; i++) {
-                    const phi = Math.acos(2 * Math.random() - 1);
-                    const theta = Math.random() * Math.PI * 2;
-                    cx.push(cl.center[0] + cl.radius * Math.sin(phi) * Math.cos(theta));
-                    cy.push(cl.center[1] + cl.radius * Math.sin(phi) * Math.sin(theta));
-                    cz.push(cl.center[2] + cl.radius * Math.cos(phi));
-                }
-                traces.push({
-                    x: cx, y: cy, z: cz,
-                    mode: 'markers',
-                    type: 'scatter3d',
-                    marker: { size: 3, color: cl.color.replace('0.0', '0.3'), opacity: 0.15 },
-                    hoverinfo: 'none',
-                    showlegend: false
-                });
-                // Cluster label
-                traces.push({
-                    x: [cl.center[0]], y: [cl.center[1]], z: [cl.center[2] + cl.radius + 0.2],
-                    mode: 'text',
-                    type: 'scatter3d',
-                    text: [cl.label],
-                    textfont: { size: 10, color: '#94a3b8' },
-                    hoverinfo: 'none',
-                    showlegend: false
-                });
+            const cached = this._getClusterPoints();
+            traces.push({
+                x: cached.points.x,
+                y: cached.points.y,
+                z: cached.points.z,
+                mode: 'markers',
+                type: 'scatter3d',
+                marker: { size: 3, color: cached.points.colors, opacity: 0.15 },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+            // Trace 2: All cluster labels (single trace)
+            traces.push({
+                x: cached.labels.x,
+                y: cached.labels.y,
+                z: cached.labels.z,
+                mode: 'text',
+                type: 'scatter3d',
+                text: cached.labels.texts,
+                textfont: { size: 10, color: cached.labels.colors },
+                hoverinfo: 'none',
+                showlegend: false
             });
         }
 
-        // Direction arrows
+        // Trace 3: All direction lines (single trace using null separators)
         if (this.showDirections) {
+            const dirX = [], dirY = [], dirZ = [];
+            const dirLabelX = [], dirLabelY = [], dirLabelZ = [], dirLabelTexts = [], dirLabelColors = [];
+
             this.directions.forEach(dir => {
-                traces.push({
-                    x: [dir.from[0], dir.to[0]],
-                    y: [dir.from[1], dir.to[1]],
-                    z: [dir.from[2], dir.to[2]],
-                    mode: 'lines',
-                    type: 'scatter3d',
-                    line: { color: dir.color, width: 4, dash: 'dash' },
-                    hoverinfo: 'none',
-                    showlegend: false
-                });
-                // Arrow label at endpoint
-                traces.push({
-                    x: [dir.to[0]], y: [dir.to[1]], z: [dir.to[2]],
-                    mode: 'text',
-                    type: 'scatter3d',
-                    text: [dir.label],
-                    textfont: { size: 9, color: dir.color },
-                    hoverinfo: 'none',
-                    showlegend: false
-                });
+                dirX.push(dir.from[0], dir.to[0], null);
+                dirY.push(dir.from[1], dir.to[1], null);
+                dirZ.push(dir.from[2], dir.to[2], null);
+                dirLabelX.push(dir.to[0]);
+                dirLabelY.push(dir.to[1]);
+                dirLabelZ.push(dir.to[2]);
+                dirLabelTexts.push(dir.label);
+                dirLabelColors.push(dir.color);
+            });
+
+            traces.push({
+                x: dirX,
+                y: dirY,
+                z: dirZ,
+                mode: 'lines',
+                type: 'scatter3d',
+                line: { color: '#a855f7', width: 4, dash: 'dash' },
+                hoverinfo: 'none',
+                showlegend: false,
+                connectgaps: false
+            });
+            // Trace 4: All direction labels (single trace)
+            traces.push({
+                x: dirLabelX,
+                y: dirLabelY,
+                z: dirLabelZ,
+                mode: 'text',
+                type: 'scatter3d',
+                text: dirLabelTexts,
+                textfont: { size: 9, color: dirLabelColors },
+                hoverinfo: 'none',
+                showlegend: false
             });
         }
 
-        // Arithmetic visualization
+        // Arithmetic visualization (max 2 additional traces)
         if (this.showArith && this.arithStep > 0) {
             this._renderArithTraces(traces);
         }
@@ -366,33 +415,27 @@ const Embedding3DViz = {
         const man = this.words['Mann'].pos;
         const woman = this.words['Frau'].pos;
 
-        // Step 1: König position
-        const step1 = king;
-        // Step 2: König - Mann
         const step2 = [king[0] - man[0], king[1] - man[1], king[2] - man[2]];
-        // Step 3: + Frau
         const step3 = [step2[0] + woman[0], step2[1] + woman[1], step2[2] + woman[2]];
 
-        const points = [step1];
-        if (this.arithStep >= 2) points.push(step2);
-        if (this.arithStep >= 3) points.push(step3);
+        const pathX = [king[0]], pathY = [king[1]], pathZ = [king[2]];
+        if (this.arithStep >= 2) { pathX.push(step2[0]); pathY.push(step2[1]); pathZ.push(step2[2]); }
+        if (this.arithStep >= 3) { pathX.push(step3[0]); pathY.push(step3[1]); pathZ.push(step3[2]); }
 
-        // Path
-        if (points.length > 1) {
-            traces.push({
-                x: points.map(p => p[0]),
-                y: points.map(p => p[1]),
-                z: points.map(p => p[2]),
-                mode: 'lines+markers',
-                type: 'scatter3d',
-                line: { color: '#ef4444', width: 5 },
-                marker: { size: 6, color: '#ef4444' },
-                hoverinfo: 'none',
-                showlegend: false
-            });
-        }
+        // Single trace for path + markers
+        traces.push({
+            x: pathX,
+            y: pathY,
+            z: pathZ,
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: { color: '#ef4444', width: 5 },
+            marker: { size: 6, color: '#ef4444' },
+            hoverinfo: 'none',
+            showlegend: false
+        });
 
-        // Result point (step 3)
+        // Result label (step 3)
         if (this.arithStep >= 3) {
             traces.push({
                 x: [step3[0]], y: [step3[1]], z: [step3[2]],
@@ -424,7 +467,7 @@ const Embedding3DViz = {
         this.arithInterval = setInterval(() => {
             step++;
             this.arithStep = step;
-            if (info) info.innerHTML = '👑 ' + steps[Math.min(step - 1, steps.length - 1)];
+            if (info) info.innerHTML = '👉 ' + steps[Math.min(step - 1, steps.length - 1)];
             this.render();
             if (step >= 3) { clearInterval(this.arithInterval); this.arithInterval = null; }
         }, 1200);
@@ -658,7 +701,6 @@ const FFN3DViz = {
     currentFact: 'rare',
     animating: false,
 
-    // Point positions for different facts
     facts: {
         rare: {
             label: 'Selten: "Hauptstadt von Liechtenstein = Vaduz"',
@@ -703,7 +745,7 @@ const FFN3DViz = {
         const fact = this.facts[this.currentFact];
         const traces = [];
 
-        // Start point
+        // Trace 0: Start point
         traces.push({
             x: [fact.startPos[0]], y: [fact.startPos[1]], z: [fact.startPos[2]],
             mode: 'markers+text',
@@ -715,7 +757,7 @@ const FFN3DViz = {
             name: 'Start'
         });
 
-        // End point
+        // Trace 1: End point
         traces.push({
             x: [fact.endPos[0]], y: [fact.endPos[1]], z: [fact.endPos[2]],
             mode: 'markers+text',
@@ -727,7 +769,7 @@ const FFN3DViz = {
             name: 'Ende'
         });
 
-        // Arrow (displacement vector)
+        // Trace 2: Arrow line
         traces.push({
             x: [fact.startPos[0], fact.endPos[0]],
             y: [fact.startPos[1], fact.endPos[1]],
@@ -739,25 +781,40 @@ const FFN3DViz = {
             showlegend: false
         });
 
-        // Neuron activation bar (visual representation)
+        // Trace 3: ALL neurons as a single batched trace
         const neuronY = -1.5;
+        const neuronX = [], neuronYArr = [], neuronZ = [];
+        const neuronSizes = [], neuronColors = [], neuronOpacities = [];
+        const neuronHoverTexts = [];
+
         for (let i = 0; i < fact.totalNeurons; i++) {
             const active = fact.detectorStates[i];
-            traces.push({
-                x: [-2 + i * 0.25], y: [neuronY], z: [-1.5],
-                mode: 'markers',
-                type: 'scatter3d',
-                marker: {
-                    size: active ? 8 : 4,
-                    color: active ? '#f59e0b' : '#e2e8f0',
-                    opacity: active ? 1 : 0.4
-                },
-                hovertemplate: active ? `Neuron ${i + 1}: AKTIV 🔥<extra></extra>` : `Neuron ${i + 1}: still<extra></extra>`,
-                showlegend: false
-            });
+            neuronX.push(-2 + i * 0.25);
+            neuronYArr.push(neuronY);
+            neuronZ.push(-1.5);
+            neuronSizes.push(active ? 8 : 4);
+            neuronColors.push(active ? '#f59e0b' : '#e2e8f0');
+            neuronOpacities.push(active ? 1 : 0.4);
+            neuronHoverTexts.push(active ? `Neuron ${i + 1}: AKTIV 🔥` : `Neuron ${i + 1}: still`);
         }
 
-        // Label for neuron bar
+        traces.push({
+            x: neuronX,
+            y: neuronYArr,
+            z: neuronZ,
+            mode: 'markers',
+            type: 'scatter3d',
+            marker: {
+                size: neuronSizes,
+                color: neuronColors,
+                opacity: neuronOpacities
+            },
+            text: neuronHoverTexts,
+            hovertemplate: '%{text}<extra></extra>',
+            showlegend: false
+        });
+
+        // Trace 4: Neuron count label
         traces.push({
             x: [-2], y: [neuronY], z: [-1.9],
             mode: 'text',
@@ -807,10 +864,9 @@ const FFN3DViz = {
         const interval = setInterval(() => {
             step++;
             const t = step / steps;
-            const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // easeInOutQuad
+            const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
             const currentPos = fact.startPos.map((s, i) => s + (fact.endPos[i] - s) * eased);
 
-            // Update just the start point position
             Plotly.restyle(plotDiv, {
                 x: [[currentPos[0]]],
                 y: [[currentPos[1]]],
