@@ -664,8 +664,52 @@
     <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
 </div>
 
+<!-- ==================== SLIDE: Versteht die KI? (Schlussfolie) ==================== -->
+<div class="slide" data-title="Versteht die KI?">
+    <div class="slide-content" style="text-align:center; position:relative; overflow:hidden;">
+        <!-- Subtle animated background -->
+        <div style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.04;">
+            <div style="font-size:15em; color:#3b82f6; position:absolute; top:10%; left:5%; animation: pulseQuestion 4s ease-in-out infinite;">?</div>
+            <div style="font-size:10em; color:#8b5cf6; position:absolute; top:40%; right:10%; animation: pulseQuestion 5s ease-in-out infinite 1s;">?</div>
+            <div style="font-size:8em; color:#f59e0b; position:absolute; bottom:15%; left:20%; animation: pulseQuestion 3.5s ease-in-out infinite 0.5s;">?</div>
+        </div>
+
+        <div style="position:relative; z-index:1;">
+            <h2 style="font-size:1.8em; margin-bottom:24px;">Versteht die KI, was sie sagt?</h2>
+
+            <div style="max-width:700px; margin:0 auto 24px; padding:24px 30px; background:rgba(255,255,255,0.9); border-radius:16px; border:2px solid #e2e8f0; text-align:left; line-height:1.8;">
+                <p style="font-size:1.05em; color:#334155; margin:0 0 16px;">
+                    Die KI gibt uns das <b>Gefühl</b> von Verständnis.<br>
+                    Aber sie hat <b>keinen Körper</b>. Keine Sinne. Kein Grounding.
+                </p>
+
+                <div class="fragment" style="padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; margin:16px 0;">
+                    <strong style="color:#92400e;">🧠 Das Vector Grounding Problem:</strong><br>
+                    <span style="font-size:0.92em; color:#78350f;">
+                        Sie kennt die Muster von "rot", "warm", "schmerzhaft" –
+                        aber sie hat nie etwas <em>gesehen</em>, <em>gefühlt</em> oder <em>erlitten</em>.<br>
+                        Ihre Vektoren sind Beziehungen zwischen <b>Wörtern</b>, nicht zwischen Wörtern und <b>Welt</b>.
+                    </span>
+                </div>
+
+                <div class="fragment" style="padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; margin:16px 0;">
+                    <span style="font-size:1em; color:#1e40af;">
+                        Ist das <b>Verständnis</b>?<br>
+                        Oder eine so überzeugende Approximation, dass der Unterschied praktisch keine Rolle spielt?
+                    </span>
+                </div>
+            </div>
+
+            <div class="fragment" style="font-size:1.4em; color:#64748b; margin-top:20px; font-style:italic;">
+                Ich kann euch meine Meinung sagen –<br>
+                aber <b style="color:#f59e0b; font-style:normal;">sicher weiß ich es nicht.</b>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Fragezeichen / Meinungsfolie ==================== -->
-<div class="slide" data-title="Meine Einschätzung">
+<div class="slide" data-title="Fragen?">
     <div class="slide-content" style="text-align:center; overflow:hidden; position:relative;">
         <!-- Animierte Fragezeichen im Hintergrund -->
         <div style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden;">
@@ -687,11 +731,7 @@
         <!-- Hauptinhalt -->
         <div style="position:relative; z-index:1;">
             <div style="font-size:8em; margin-bottom:20px; animation: pulseQuestion 2s ease-in-out infinite; color:#3b82f6; text-shadow: 0 0 40px rgba(59,130,246,0.3);">?</div>
-            <h2 style="font-size:1.8em; color:#1e293b; margin-bottom:16px;">Meine Einschätzung</h2>
-            <p style="font-size:1.3em; color:#64748b; max-width:700px; margin:0 auto; line-height:1.6;">
-                Ich kann euch meine Meinung dazu sagen –<br>
-                aber <b style="color:#f59e0b;">sicher weiß ich es nicht.</b>
-            </p>
+            <h2 style="font-size:1.8em; color:#1e293b; margin-bottom:16px;">Habt ihr Fragen?</h2>
         </div>
     </div>
 </div>
