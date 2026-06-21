@@ -1,5 +1,5 @@
 // ============================================================
-// SUNRISE PLOT – Interactive sine with phase/vertical shift
+// SUNRISE PLOT – Sonnenhöhe über 24h am Polartag (Concordia, 75°S)
 // ============================================================
 
 const SunrisePlot = {
@@ -18,59 +18,64 @@ const SunrisePlot = {
         if (phaseVal) phaseVal.textContent = c.toFixed(2);
         if (vshiftVal) vshiftVal.textContent = d.toFixed(2);
 
-        // Hamburg sunrise data (approximate real values, hours after midnight)
-        // Amplitude ~1.75h, mean ~6.75h, period = 12 months
-        const A = 1.75;
-        const mean = 6.75;
-        const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+        // Concordia Station (75°S) – Polartag: Sonnenhöhe über 24 Stunden
+        // Die Sonne kreist um den Beobachter. Amplitude ~15°, Mittel ~25°
+        // Mittag (Sonne am höchsten, ~40°), Mitternacht (am niedrigsten, ~10°)
+        // Differenz: 2 × (90° - 75°) = 30° → Amplitude 15°, Mittel ca. 25°
+        const A = 15;       // Amplitude in Grad (halbe Differenz Mittag–Mitternacht)
+        const mean = 25;    // Mittlere Sonnenhöhe in Grad
+        const hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                       '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
         
-        // "Real" data points (with some noise to show imperfection)
-        const realData = [8.32, 7.45, 6.38, 5.15, 4.20, 4.04, 4.35, 5.20, 6.15, 7.05, 7.55, 8.25];
+        // "Reale" Datenpunkte (simuliert, mit leichtem Rauschen durch Refraktion etc.)
+        const realData = [10.2, 11.0, 13.5, 17.0, 21.2, 25.8, 30.5, 34.8, 37.5, 39.2, 39.8, 39.5,
+                          38.5, 36.8, 34.0, 30.2, 26.0, 21.5, 17.2, 13.8, 11.5, 10.0, 9.8, 10.0];
         
-        // Sine model: f(x) = A * sin(2π/12 * (x + c)) + mean + d
+        // Sinus-Modell: f(x) = A * cos(2π/24 * (x + c)) + mean + d
+        // cos statt sin, damit Maximum bei x=12 (Mittag) liegt bei c=12
         const xs = [];
         const ysModel = [];
-        for (let i = 0; i <= 120; i++) {
-            const x = i / 10; // 0 to 12 (months)
+        for (let i = 0; i <= 240; i++) {
+            const x = i / 10; // 0 bis 24 (Stunden)
             xs.push(x);
-            ysModel.push(A * Math.cos((2 * Math.PI / 12) * (x + c)) + mean + d);
+            ysModel.push(-A * Math.cos((2 * Math.PI / 24) * (x + c)) + mean + d);
         }
 
         const traces = [
-            // Noisy "real" data points
+            // "Reale" Datenpunkte (stündliche Messungen)
             {
-                x: [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5],
+                x: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
                 y: realData,
                 mode: 'markers',
-                name: 'Daten aus Texten',
+                name: 'Stündliche Messungen',
                 marker: { size: 9, color: '#f59e0b', line: { width: 1, color: '#fff' } },
-                hovertemplate: '<b>%{x}</b><br>Sonnenaufgang: %{y:.2f} Uhr<extra></extra>'
+                hovertemplate: '<b>%{x}:00 Uhr</b><br>Sonnenhöhe: %{y:.1f}°<extra></extra>'
             },
-            // Sine model
+            // Sinus-Modell
             {
                 x: xs,
                 y: ysModel,
                 mode: 'lines',
                 name: 'Gelerntes Muster (Sinus)',
                 line: { color: '#3b82f6', width: 3 },
-                hovertemplate: 'Monat %{x:.1f}<br>Modell: %{y:.2f} Uhr<extra></extra>'
+                hovertemplate: '%{x:.1f}:00 Uhr<br>Modell: %{y:.1f}°<extra></extra>'
             }
         ];
 
         const layout = {
             margin: { l: 50, r: 20, b: 40, t: 10 },
             xaxis: { 
-                title: 'Monat', 
-                tickvals: [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5],
-                ticktext: months,
-                range: [0, 12],
+                title: 'Uhrzeit (h)', 
+                tickvals: [0, 3, 6, 9, 12, 15, 18, 21, 24],
+                ticktext: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00', '24:00'],
+                range: [0, 24],
                 gridcolor: '#f1f5f9' 
             },
             yaxis: { 
-                title: 'Uhrzeit (h)', 
-                range: [3, 10], 
+                title: 'Sonnenhöhe (°)', 
+                range: [0, 50], 
                 gridcolor: '#f1f5f9',
-                dtick: 1
+                dtick: 10
             },
             showlegend: true,
             legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.9)', font: { size: 10 } },

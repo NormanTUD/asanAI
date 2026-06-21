@@ -69,28 +69,28 @@
             <!-- Left: Images -->
             <div style="flex:1; min-width:320px;">
                 <div style="margin-bottom:16px;">
-                    <img src="sun_run.jpg" alt="Sonnenbahn über Concordia Station" style="width:100%; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
-                    <p style="font-size:0.75em; color:#64748b; text-align:center; margin-top:6px;">Sonnenbahn über Concordia (Antarktis) – 24h. Die Natur zeichnet eine Sinuskurve.</p>
+                    <img src="sun_run.jpg" alt="Sonnenbahn über Concordia Station – 24 Stunden Polartag" style="width:100%; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+                    <p style="font-size:0.75em; color:#64748b; text-align:center; margin-top:6px;">Sonnenbahn über Concordia (75°S, Antarktis) über 24 Stunden – die Natur zeichnet eine Sinuskurve. 24 Aufnahmen im Stundenabstand, zusammengefügt zu einem Panorama.</p>
                 </div>
             </div>
             
             <!-- Right: Interactive sine plot -->
             <div style="flex:1; min-width:360px;">
                 <div class="demo-box" style="min-height:auto; padding:16px;">
-                    <div class="demo-title">🌅 Sonnenaufgangszeit über das Jahr (Hamburg)</div>
+                    <div class="demo-title">☀️ Sonnenhöhe über 24 Stunden am Polartag (Concordia, Antarktis)</div>
                     <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
                         <label style="font-size:0.8em; font-weight:bold; color:#475569;">Horizontal (c):</label>
-                        <input type="range" id="sun-phase-slider" min="-3.14" max="3.14" step="0.05" value="0.0" style="width:100px; accent-color:#f59e0b;" oninput="SunrisePlot.render()">
+                        <input type="range" id="sun-phase-slider" min="-12" max="12" step="0.2" value="0.0" style="width:100px; accent-color:#f59e0b;" oninput="SunrisePlot.render()">
                         <span id="sun-phase-val" style="font-size:0.8em; font-weight:bold; color:#f59e0b; min-width:40px;">0.00</span>
                     </div>
                     <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
                         <label style="font-size:0.8em; font-weight:bold; color:#475569;">Vertikal (d):</label>
-                        <input type="range" id="sun-vshift-slider" min="-2" max="2" step="0.05" value="0.0" style="width:100px; accent-color:#3b82f6;" oninput="SunrisePlot.render()">
+                        <input type="range" id="sun-vshift-slider" min="-15" max="15" step="0.5" value="0.0" style="width:100px; accent-color:#3b82f6;" oninput="SunrisePlot.render()">
                         <span id="sun-vshift-val" style="font-size:0.8em; font-weight:bold; color:#3b82f6; min-width:40px;">0.00</span>
                     </div>
                     <div id="sunrise-plot" style="height:240px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
                     <div style="margin-top:10px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; font-size:0.82em; color:#92400e;">
-                        <b>Der Zusammenhang:</b> In Texten steht "Im Juni geht die Sonne um 5:04 auf" und "Im Dezember um 8:32". 
+                        <b>Der Zusammenhang:</b> In Texten steht "Um Mitternacht steht die Sonne nur 10° über dem Horizont" und "Mittags erreicht sie fast 40°". 
                         Implizit steckt darin eine Sinusfunktion – und genau solche Muster kann ein Modell aus Textzusammenhängen lernen.
                     </div>
                 </div>
