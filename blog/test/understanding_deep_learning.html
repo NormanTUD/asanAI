@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Deep Learning — Interactive Visual Guide</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0e1a;
+            --card-bg: #141b2d;
+            --accent: #6c63ff;
+            --accent2: #00d4aa;
+            --accent3: #ff6b6b;
+            --text: #e0e6ed;
+            --text-muted: #8892a4;
+            --border: #1e2a42;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(108,99,255,0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0,212,170,0.08) 0%, transparent 40%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #6c63ff, #00d4aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            color: var(--accent2);
+        }
+
+        p { margin-bottom: 1rem; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(108,99,255,0.15);
+        }
+
+        .interactive-area {
+            background: #0d1220;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            align-items: center;
+        }
+
+        .controls label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            width: 150px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: #5a52e0;
+            transform: scale(1.05);
+        }
+
+        button:active { transform: scale(0.98); }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(108,99,255,0.1);
+        }
+
+        .math-block {
+            background: rgba(108,99,255,0.05);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            overflow-x: auto;
+        }
+
+        .math-inline { display: inline; }
+
+        .insight-box {
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(108,99,255,0.1));
+            border: 1px solid rgba(0,212,170,0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .insight-box::before {
+            content: '💡';
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .network-viz {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .neuron {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .neuron.active {
+            background: var(--accent2);
+            box-shadow: 0 0 15px rgba(0,212,170,0.5);
+            transform: scale(1.2);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: var(--border);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .nav-dots { display: none; }
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dashed var(--accent);
+            cursor: help;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            background: #1e2a42;
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .epoch-counter {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--accent2);
+        }
+
+        .loss-display {
+            font-family: monospace;
+            color: var(--accent3);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <div class="hero">
+        <h1>Understanding Deep Learning</h1>
+        <p>An interactive visual journey through neural networks — from neurons to transformers. Based on the textbook by Simon J.D. Prince.</p>
+        <div class="scroll-hint">↓</div>
+    </div>
+
+    <div class="container">
+        <!-- Section 1: What is a Neural Network? -->
+        <section id="sec-nn" class="fade-in">
+            <h2>🧠 What is a Neural Network?</h2>
+            <p>A neural network is simply a mathematical function that maps inputs to outputs. The "magic" is that it can represent an incredibly rich family of functions, and we can search through this family to find one that fits our data.</p>
+
+            <div class="card">
+                <h3>The Simplest Network: One Input, One Output</h3>
+                <p>A shallow neural network with ReLU activations creates a <strong>piecewise linear function</strong> — essentially a series of connected line segments. Each hidden unit contributes one "joint" where the function changes slope.</p>
+
+                <div class="math-block" id="math-nn-eq"></div>
+
+                <div class="interactive-area">
+                    <canvas id="nnCanvas" width="700" height="350"></canvas>
+                    <div class="controls">
+                        <div>
+                            <label>Hidden Units: <span id="hiddenCount">3</span></label>
+                            <input type="range" id="hiddenSlider" min="1" max="15" value="3">
+                        </div>
+                        <button id="randomizeBtn">Randomize Weights</button>
+                        <button id="smoothBtn" class="btn-secondary">Animate Smoothly</button>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>Key Insight:</strong> With enough hidden units, a shallow network can approximate <em>any</em> continuous function. This is the <strong>Universal Approximation Theorem</strong>. More units = more joints = better approximation. But "enough" might be impractically many — which is why we use <em>deep</em> networks.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: ReLU Activation -->
+        <section id="sec-relu" class="fade-in">
+            <h2>⚡ The ReLU: Simplicity is Power</h2>
+            <p>The Rectified Linear Unit is embarrassingly simple: it returns its input if positive, and zero otherwise. Yet this tiny nonlinearity is what gives neural networks their power.</p>
+
+            <div class="math-block" id="math-relu"></div>
+
+            <div class="card">
+                <div class="interactive-area">
+                    <canvas id="reluCanvas" width="700" height="300"></canvas>
+                    <div class="controls">
+                        <div class="tab-container">
+                            <div class="tab active" data-activation="relu">ReLU</div>
+                            <div class="tab" data-activation="leaky">Leaky ReLU</div>
+                            <div class="tab" data-activation="sigmoid">Sigmoid</div>
+                            <div class="tab" data-activation="tanh">Tanh</div>
+                            <div class="tab" data-activation="swish">Swish</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>Why ReLU works:</strong> Its derivative is always 0 or 1. This means gradients flow cleanly during backpropagation — no vanishing gradients from saturating regions like sigmoid has. It's also computationally trivial: just a max(0, x) operation.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Deep vs Shallow -->
+        <section id="sec-deep" class="fade-in">
+            <h2>🏗️ Why Go Deep?</h2>
+            <p>Deep networks compose simple functions to build complex ones. Each layer "folds" the input space, creating exponentially more linear regions than a shallow network with the same number of parameters.</p>
+
+            <div class="card">
+                <h3>Exponential Growth of Regions</h3>
+                <p>A deep network with <em>K</em> layers of <em>D</em> hidden units can create up to:</p>
+                <div class="math-block" id="math-regions"></div>
+
+                <div class="interactive-area">
+                    <canvas id="regionsCanvas" width="700" height="350"></canvas>
+                    <div class="controls">
+                        <div>
+                            <label>Layers (K): <span id="layerCount">3</span></label>
+                            <input type="range" id="layerSlider" min="1" max="10" value="3">
+                        </div>
+                        <div>
+                            <label>Units/Layer (D): <span id="unitCount">5</span></label>
+                            <input type="range" id="unitSlider" min="2" max="20" value="5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>The Folding Metaphor:</strong> Think of the first layer as "folding" the input space back on itself. The second layer then applies a function that gets duplicated at every fold. With K folds, you get exponentially many copies — this is depth efficiency.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Training with Gradient Descent -->
+        <section id="sec-training" class="fade-in">
+            <h2>🎯 Training: Walking Downhill</h2>
+            <p>Training a neural network means finding parameters that minimize a loss function. We do this by iteratively computing the gradient (which direction is "downhill") and taking a step in that direction.</p>
+
+            <div class="card">
+                <h3>Interactive Gradient Descent</h3>
+                <p>Click anywhere on the loss surface to place your starting point, then watch gradient descent find the minimum!</p>
+
+                <div class="interactive-area">
+                    <canvas id="gdCanvas" width="700" height="400"></canvas>
+                    <div class="controls">
+                        <div>
+                            <label>Learning Rate: <span id="lrDisplay">0.05</span></label>
+                            <input type="range" id="lrSlider" min="1" max="50" value="5">
+                        </div>
+                        <button id="gdResetBtn">Reset</button>
+                        <button id="gdStepBtn">Step</button>
+                        <button id="gdRunBtn" class="btn-secondary">Auto-Run</button>
+                        <span class="loss-display" id="gdLoss">Click to start</span>
+                    </div>
+                </div>
+
+                <div class="math-block" id="math-gd"></div>
+
+                <div class="insight-box">
+                    <strong>The learning rate dilemma:</strong> Too small → painfully slow convergence. Too large → overshooting and instability. Modern optimizers like Adam adapt the learning rate per-parameter, making training much more robust.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Backpropagation -->
+        <section id="sec-backprop" class="fade-in">
+            <h2>🔄 Backpropagation: The Chain Rule at Scale</h2>
+            <p>Computing gradients for millions of parameters sounds impossible. Backpropagation makes it elegant: it's just the chain rule applied systematically, reusing computations as we work backward through the network.</p>
+
+            <div class="card">
+                <h3>Watch Signals Flow</h3>
+                <p>Click "Forward" to see data flow through the network, then "Backward" to see gradients propagate back.</p>
+
+                <div class="interactive-area">
+                    <canvas id="bpCanvas" width="700" height="350"></canvas>
+                    <div class="controls">
+                        <button id="bpForward">▶ Forward Pass</button>
+                        <button id="bpBackward">◀ Backward Pass</button>
+                        <button id="bpReset" class="btn-secondary">Reset</button>
+                    </div>
+                </div>
+
+                <div class="math-block" id="math-chain"></div>
+
+                <div class="insight-box">
+                    <strong>Two key observations:</strong> (1) Each weight's effect is scaled by the activation of its source neuron — so we store activations in the forward pass. (2) Changes ripple through subsequent layers — but we can reuse these calculations by working backward. This makes backprop <em>linear</em> in network size!
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Loss Functions -->
+        <section id="sec-loss" class="fade-in">
+            <h2>📊 Loss Functions: Measuring "Wrong"</h2>
+            <p>The loss function quantifies how badly the model predicts the training data. Different tasks need different losses — and they all come from a beautiful unifying principle: <strong>maximum likelihood</strong>.</p>
+
+            <div class="card">
+                <h3>From Probability to Loss</h3>
+                <div class="math-block" id="math-loss"></div>
+
+                <div class="grid-2">
+                    <div class="interactive-area">
+                        <h3 style="margin-top:0">Regression: Least Squares</h3>
+                        <canvas id="regressionCanvas" width="320" height="250"></canvas>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem">Assumes Gaussian noise → minimizing squared errors</p>
+                    </div>
+                    <div class="interactive-area">
+                        <h3 style="margin-top:0">Classification: Cross-Entropy</h3>
+                        <canvas id="classificationCanvas" width="320" height="250"></canvas>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.5rem">Assumes Bernoulli distribution → binary cross-entropy</p>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>The recipe:</strong> (1) Choose a probability distribution over your output domain. (2) Use the network to predict its parameters. (3) Minimize the negative log-likelihood. That's it! Least squares, cross-entropy, and exotic losses all emerge from this one recipe.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Overfitting & Generalization -->
+        <section id="sec-overfit" class="fade-in">
+            <h2>🎭 The Generalization Mystery</h2>
+            <p>A network can perfectly memorize training data yet fail on new examples. Understanding <em>why</em> models generalize (or don't) is one of the deepest open questions in deep learning.</p>
+
+            <div class="card">
+                <h3>Bias-Variance Trade-off & Double Descent</h3>
+                <p>Watch what happens as we increase model capacity. Something surprising occurs...</p>
+
+                <div class="interactive-area">
+                    <canvas id="biasVarCanvas" width="700" height="350"></canvas>
+                    <div class="controls">
+                        <div>
+                            <label>Model Capacity: <span id="capacityDisplay">5</span></label>
+                            <input type="range" id="capacitySlider" min="1" max="50" value="5">
+                        </div>
+                        <button id="bvAnimateBtn">Animate Double Descent</button>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>Double Descent:</strong> Classical theory says more parameters → more overfitting. But modern networks show a U-shaped test error that <em>decreases again</em> past the interpolation threshold! Over-parameterized models interpolate smoothly between data points, which generalizes well. Nobody fully understands why.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Transformers -->
+        <section id="sec-transformers" class="fade-in">
+            <h2>🔮 Transformers: Attention is All You Need</h2>
+            <p>The transformer revolutionized AI by letting every element in a sequence attend to every other element. The key innovation: <strong>self-attention</strong> — a mechanism where the connections between words depend on the words themselves.</p>
+
+            <div class="card">
+                <h3>Self-Attention Visualized</h3>
+                <p>Hover over words to see which other words they "attend" to. The thickness of connections shows attention strength.</p>
+
+                <div class="interactive-area" id="attentionViz">
+                    <div id="sentenceDisplay" style="display:flex; justify-content:center; gap:0.8rem; flex-wrap:wrap; padding:1rem; font-size:1.1rem;"></div>
+                    <canvas id="attentionCanvas" width="700" height="200"></canvas>
+                </div>
+
+                <div class="math-block" id="math-attention"></div>
+
+                <div class="insight-box">
+                    <strong>Why attention works:</strong> Unlike RNNs that process words sequentially (and forget distant ones), transformers let every word directly interact with every other word. The attention weights are computed from the data itself — creating a dynamic, content-dependent wiring pattern. This is why "it" can attend to "restaurant" even many words apart.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Generative Models -->
+        <section id="sec-generative" class="fade-in">
+            <h2>🎨 Generative Models: Learning to Create</h2>
+            <p>Generative models learn the probability distribution of training data and can synthesize new examples. The four major approaches each have different strengths.</p>
+
+            <div class="card">
+                <h3>From Noise to Data</h3>
+                <p>Watch random noise get transformed into structured data through a learned mapping:</p>
+
+                <div class="interactive-area">
+                    <canvas id="genCanvas" width="700" height="350"></canvas>
+                    <div class="controls">
+                        <button id="genSampleBtn">Generate Samples</button>
+                        <button id="genAnimateBtn" class="btn-secondary">Animate Flow</button>
+                        <div>
+                            <label>Complexity: <span id="genComplexity">3</span></label>
+                            <input type="range" id="genSlider" min="1" max="8" value="3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card" style="margin:0">
+                        <h3 style="color:var(--accent3)">GANs</h3>
+                        <p>Two networks compete: a generator creates fakes, a discriminator tries to catch them. Game theory meets neural nets.</p>
+                    </div>
+                    <div class="card" style="margin:0">
+                        <h3 style="color:var(--accent)">Diffusion Models</h3>
+                        <p>Gradually add noise until data becomes random, then learn to reverse the process step by step.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 10: The Big Picture -->
+        <section id="sec-bigpicture" class="fade-in">
+            <h2>🌌 Why Does Deep Learning Work?</h2>
+            <p>Modern networks have more parameters than training examples, learn piecewise linear functions with more regions than atoms in the universe, yet generalize beautifully. This shouldn't work — but it does.</p>
+
+            <div class="card">
+                <h3>Open Mysteries</h3>
+                <div class="grid-2">
+                    <div class="insight-box">
+                        <strong>Loss Landscape:</strong> Despite having billions of parameters, the loss surface is surprisingly benign — most local minima are roughly as good as the global minimum.
+                    </div>
+                    <div class="insight-box">
+                        <strong>Implicit Regularization:</strong> SGD doesn't just find <em>any</em> minimum — it's biased toward flat, wide minima that generalize better. The algorithm itself is a regularizer.
+                    </div>
+                    <div class="insight-box">
+                        <strong>Lottery Tickets:</strong> Inside every large network is a small subnetwork that could have been trained in isolation to achieve similar performance.
+                    </div>
+                    <div class="insight-box">
+                        <strong>Grokking:</strong> Networks can suddenly generalize long after perfectly memorizing training data — understanding emerges from continued training.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="text-align:center; margin-top:3rem;">
+                <p style="font-size:1.1rem; color:var(--text-muted);">Based on <em>Understanding Deep Learning</em> by Simon J.D. Prince (MIT Press, 2023)</p>
+                <p style="font-size:0.9rem; color:var(--text-muted);">Available at <a href="http://udlbook.com" style="color:var(--accent)">udlbook.com</a></p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    // ==================== MATH RENDERING ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        const mathExpressions = {
+            'math-nn-eq': `y = \\phi_0 + \\sum_{d=1}^{D} \\phi_d \\cdot \\text{ReLU}[\\theta_{d0} + \\theta_{d1} x]`,
+            'math-relu': `\\text{ReLU}[z] = \\max(0, z) = \\begin{cases} 0 & z < 0 \\\\ z & z \\geq 0 \\end{cases}`,
+            'math-regions': `N_{\\text{regions}} \\leq (D+1)^K \\text{ linear regions with } K \\text{ layers of } D \\text{ units}`,
+            'math-gd': `\\phi_{t+1} \\leftarrow \\phi_t - \\alpha \\cdot \\frac{\\partial \\mathcal{L}}{\\partial \\phi}`,
+            'math-chain': `\\frac{\\partial \\ell}{\\partial \\mathbf{f}_{k-1}} = \\mathbb{I}[\\mathbf{f}_{k-1} > 0] \\odot \\left(\\mathbf{\\Omega}_k^T \\frac{\\partial \\ell}{\\partial \\mathbf{f}_k}\\right)`,
+            'math-loss': `\\hat{\\phi} = \\underset{\\phi}{\\text{argmin}} \\left[ -\\sum_{i=1}^{I} \\log \\Pr(y_i | f[x_i, \\phi]) \\right]`,
+            'math-attention': `\\text{Sa}[\\mathbf{X}] = \\mathbf{V} \\cdot \\text{softmax}\\!\\left[\\frac{\\mathbf{K}^T \\mathbf{Q}}{
+\\sqrt{D_q}}\\right]`,
+        };
+
+        Object.entries(mathExpressions).forEach(([id, expr]) => {
+            const el = document.getElementById(id);
+            if (el) {
+                try {
+                    temml.render(expr, el, { displayMode: true });
+                } catch(e) {
+                    el.innerHTML = `<code>${expr}</code>`;
+                }
+            }
+        });
+
+        // ==================== SCROLL ANIMATIONS ====================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Nav dots
+        const sections = document.querySelectorAll('section');
+        const navDots = document.getElementById('navDots');
+        sections.forEach((sec, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
+            navDots.appendChild(dot);
+        });
+
+        window.addEventListener('scroll', () => {
+            const dots = document.querySelectorAll('.nav-dot');
+            sections.forEach((sec, i) => {
+                const rect = sec.getBoundingClientRect();
+                if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+                    dots.forEach(d => d.classList.remove('active'));
+                    dots[i]?.classList.add('active');
+                }
+            });
+        });
+
+        // ==================== NEURAL NETWORK CANVAS ====================
+        const nnCanvas = document.getElementById('nnCanvas');
+        const nnCtx = nnCanvas.getContext('2d');
+        let hiddenUnits = 3;
+        let nnParams = [];
+
+        function randomizeNN() {
+            nnParams = [];
+            for (let d = 0; d < hiddenUnits; d++) {
+                nnParams.push({
+                    theta0: (Math.random() - 0.5) * 4,
+                    theta1: (Math.random() - 0.5) * 6,
+                    phi: (Math.random() - 0.5) * 2
+                });
+            }
+            nnParams.phi0 = (Math.random() - 0.5) * 2;
+            drawNN();
+        }
+
+        function relu(x) { return Math.max(0, x); }
+
+        function evalNN(x) {
+            let y = nnParams.phi0 || 0;
+            for (let d = 0; d < nnParams.length; d++) {
+                const p = nnParams[d];
+                y += p.phi * relu(p.theta0 + p.theta1 * x);
+            }
+            return y;
+        }
+
+        function drawNN() {
+            const w = nnCanvas.width, h = nnCanvas.height;
+            nnCtx.clearRect(0, 0, w, h);
+
+            // Background grid
+            nnCtx.strokeStyle = 'rgba(108,99,255,0.1)';
+            nnCtx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                nnCtx.beginPath();
+                nnCtx.moveTo(50 + (w-100) * i/10, 30);
+                nnCtx.lineTo(50 + (w-100) * i/10, h-30);
+                nnCtx.stroke();
+                nnCtx.beginPath();
+                nnCtx.moveTo(50, 30 + (h-60) * i/10);
+                nnCtx.lineTo(w-50, 30 + (h-60) * i/10);
+                nnCtx.stroke();
+            }
+
+            // Axes
+            nnCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+            nnCtx.lineWidth = 1;
+            nnCtx.beginPath();
+            nnCtx.moveTo(50, h/2);
+            nnCtx.lineTo(w-50, h/2);
+            nnCtx.stroke();
+            nnCtx.beginPath();
+            nnCtx.moveTo(w/2, 30);
+            nnCtx.lineTo(w/2, h-30);
+            nnCtx.stroke();
+
+            // Draw individual hidden unit contributions
+            const colors = ['rgba(255,107,107,0.3)', 'rgba(0,212,170,0.3)', 'rgba(108,99,255,0.3)',
+                           'rgba(255,200,50,0.3)', 'rgba(150,100,255,0.3)'];
+            for (let d = 0; d < Math.min(nnParams.length, 5); d++) {
+                const p = nnParams[d];
+                nnCtx.strokeStyle = colors[d % colors.length];
+                nnCtx.lineWidth = 1;
+                nnCtx.beginPath();
+                for (let px = 50; px < w-50; px++) {
+                    const x = (px - 50) / (w - 100) * 4 - 2;
+                    const contrib = p.phi * relu(p.theta0 + p.theta1 * x);
+                    const py = h/2 - contrib * (h-60) / 6;
+                    if (px === 50) nnCtx.moveTo(px, py);
+                    else nnCtx.lineTo(px, py);
+                }
+                nnCtx.stroke();
+            }
+
+            // Draw main function
+            nnCtx.strokeStyle = '#00d4aa';
+            nnCtx.lineWidth = 3;
+            nnCtx.beginPath();
+            for (let px = 50; px < w-50; px++) {
+                const x = (px - 50) / (w - 100) * 4 - 2;
+                const y = evalNN(x);
+                const py = h/2 - y * (h-60) / 6;
+                if (px === 50) nnCtx.moveTo(px, py);
+                else nnCtx.lineTo(px, py);
+            }
+            nnCtx.stroke();
+
+            // Labels
+            nnCtx.fillStyle = '#8892a4';
+            nnCtx.font = '12px Inter, sans-serif';
+            nnCtx.fillText('x', w - 40, h/2 + 15);
+            nnCtx.fillText('y', w/2 + 8, 25);
+            nnCtx.fillText(`${hiddenUnits} hidden units → ${hiddenUnits + 1} linear regions`, 60, 25);
+        }
+
+        document.getElementById('hiddenSlider').addEventListener('input', (e) => {
+            hiddenUnits = parseInt(e.target.value);
+            document.getElementById('hiddenCount').textContent = hiddenUnits;
+            randomizeNN();
+        });
+
+        document.getElementById('randomizeBtn').addEventListener('click', randomizeNN);
+
+        let smoothAnimating = false;
+        document.getElementById('smoothBtn').addEventListener('click', () => {
+            if (smoothAnimating) return;
+            smoothAnimating = true;
+            const targetParams = [];
+            for (let d = 0; d < hiddenUnits; d++) {
+                targetParams.push({
+                    theta0: (Math.random() - 0.5) * 4,
+                    theta1: (Math.random() - 0.5) * 6,
+                    phi: (Math.random() - 0.5) * 2
+                });
+            }
+            const startParams = JSON.parse(JSON.stringify(nnParams));
+            const startPhi0 = nnParams.phi0;
+            const targetPhi0 = (Math.random() - 0.5) * 2;
+            let t = 0;
+            function animate() {
+                t += 0.02;
+                if (t >= 1) {
+                    smoothAnimating = false;
+                    return;
+                }
+                const ease = t * t * (3 - 2 * t);
+                for (let d = 0; d < Math.min(startParams.length, targetParams.length); d++) {
+                    nnParams[d] = {
+                        theta0: startParams[d].theta0 + (targetParams[d].theta0 - startParams[d].theta0) * ease,
+                        theta1: startParams[d].theta1 + (targetParams[d].theta1 - startParams[d].theta1) * ease,
+                        phi: startParams[d].phi + (targetParams[d].phi - startParams[d].phi) * ease
+                    };
+                }
+                nnParams.phi0 = startPhi0 + (targetPhi0 - startPhi0) * ease;
+                drawNN();
+                requestAnimationFrame(animate);
+            }
+            animate();
+        });
+
+        randomizeNN();
+
+        // ==================== RELU CANVAS ====================
+        const reluCanvas = document.getElementById('reluCanvas');
+        const reluCtx = reluCanvas.getContext('2d');
+        let currentActivation = 'relu';
+
+        const activations = {
+            relu: (x) => Math.max(0, x),
+            leaky: (x) => x > 0 ? x : 0.1 * x,
+            sigmoid: (x) => 1 / (1 + Math.exp(-x)),
+            tanh: (x) => Math.tanh(x),
+            swish: (x) => x / (1 + Math.exp(-x))
+        };
+
+        const activationNames = {
+            relu: 'ReLU: max(0, x)',
+            leaky: 'Leaky ReLU: x > 0 ? x : 0.1x',
+            sigmoid: 'Sigmoid: 1/(1+e⁻ˣ)',
+            tanh: 'Tanh: tanh(x)',
+            swish: 'Swish: x·σ(x)'
+        };
+
+        function drawActivation() {
+            const w = reluCanvas.width, h = reluCanvas.height;
+            reluCtx.clearRect(0, 0, w, h);
+
+            // Grid
+            reluCtx.strokeStyle = 'rgba(108,99,255,0.08)';
+            for (let i = 0; i <= 10; i++) {
+                reluCtx.beginPath();
+                reluCtx.moveTo(50 + (w-100)*i/10, 20);
+                reluCtx.lineTo(50 + (w-100)*i/10, h-20);
+                reluCtx.stroke();
+                reluCtx.beginPath();
+                reluCtx.moveTo(50, 20 + (h-40)*i/10);
+                reluCtx.lineTo(w-50, 20 + (h-40)*i/10);
+                reluCtx.stroke();
+            }
+
+            // Axes
+            const cx = w / 2, cy = h / 2;
+            reluCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+            reluCtx.lineWidth = 1;
+            reluCtx.beginPath();
+            reluCtx.moveTo(50, cy);
+            reluCtx.lineTo(w-50, cy);
+            reluCtx.stroke();
+            reluCtx.beginPath();
+            reluCtx.moveTo(cx, 20);
+            reluCtx.lineTo(cx, h-20);
+            reluCtx.stroke();
+
+            // Function
+            const fn = activations[currentActivation];
+            const xRange = currentActivation === 'sigmoid' || currentActivation === 'tanh' || currentActivation === 'swish' ? 6 : 4;
+            const yRange = currentActivation === 'sigmoid' ? 1.5 : currentActivation === 'tanh' ? 1.5 : 4;
+
+            reluCtx.strokeStyle = '#6c63ff';
+            reluCtx.lineWidth = 3;
+            reluCtx.beginPath();
+            for (let px = 50; px < w-50; px++) {
+                const x = (px - cx) / (w - 100) * xRange * 2;
+                const y = fn(x);
+                const py = cy - y / yRange * (h/2 - 20);
+                if (px === 50) reluCtx.moveTo(px, Math.max(20, Math.min(h-20, py)));
+                else reluCtx.lineTo(px, Math.max(20, Math.min(h-20, py)));
+            }
+            reluCtx.stroke();
+
+            // Derivative
+            reluCtx.strokeStyle = 'rgba(0,212,170,0.6)';
+            reluCtx.lineWidth = 2;
+            reluCtx.setLineDash([5, 5]);
+            reluCtx.beginPath();
+            const dx = 0.001;
+            for (let px = 50; px < w-50; px++) {
+                const x = (px - cx) / (w - 100) * xRange * 2;
+                const deriv = (fn(x + dx) - fn(x - dx)) / (2 * dx);
+                const py = cy - deriv / yRange * (h/2 - 20);
+                if (px === 50) reluCtx.moveTo(px, Math.max(20, Math.min(h-20, py)));
+                else reluCtx.lineTo(px, Math.max(20, Math.min(h-20, py)));
+            }
+            reluCtx.stroke();
+            reluCtx.setLineDash([]);
+
+            // Label
+            reluCtx.fillStyle = '#e0e6ed';
+            reluCtx.font = '14px Inter, sans-serif';
+            reluCtx.fillText(activationNames[currentActivation], 60, 40);
+            reluCtx.fillStyle = '#6c63ff';
+            reluCtx.fillText('— Function', 60, 60);
+            reluCtx.fillStyle = '#00d4aa';
+            reluCtx.fillText('--- Derivative', 200, 60);
+        }
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentActivation = tab.dataset.activation;
+                drawActivation();
+            });
+        });
+
+        drawActivation();
+
+        // ==================== REGIONS CANVAS ====================
+        const regionsCanvas = document.getElementById('regionsCanvas');
+        const regCtx = regionsCanvas.getContext('2d');
+
+        function drawRegions() {
+            const w = regionsCanvas.width, h = regionsCanvas.height;
+            regCtx.clearRect(0, 0, w, h);
+
+            const K = parseInt(document.getElementById('layerSlider').value);
+            const D = parseInt(document.getElementById('unitSlider').value);
+            document.getElementById('layerCount').textContent = K;
+            document.getElementById('unitCount').textContent = D;
+
+            const deepRegions = Math.pow(D + 1, K);
+            const shallowUnits = K * D;
+            const shallowRegions = shallowUnits + 1;
+            const deepParams = 3 * D + 1 + (K - 1) * D * (D + 1);
+            const shallowParams = 3 * shallowUnits + 1;
+
+            // Bar chart
+            const barWidth = 120;
+            const maxRegions = Math.max(deepRegions, shallowRegions);
+            const logMax = Math.log10(maxRegions + 1);
+
+            // Deep network bar
+            const deepHeight = (Math.log10(deepRegions + 1) / logMax) * (h - 120);
+            regCtx.fillStyle = '#6c63ff';
+            regCtx.fillRect(w/2 - barWidth - 40, h - 60 - deepHeight, barWidth, deepHeight);
+
+            // Shallow network bar
+            const shallowHeight = (Math.log10(shallowRegions + 1) / logMax) * (h - 120);
+            regCtx.fillStyle = '#00d4aa';
+            regCtx.fillRect(w/2 + 40, h - 60 - shallowHeight, barWidth, shallowHeight);
+
+            // Labels
+            regCtx.fillStyle = '#e0e6ed';
+            regCtx.font = '13px Inter, sans-serif';
+            regCtx.textAlign = 'center';
+            regCtx.fillText(`Deep: ${K} layers × ${D} units`, w/2 - barWidth/2 - 40, h - 35);
+            regCtx.fillText(`${deepParams} params`, w/2 - barWidth/2 - 40, h - 18);
+            regCtx.fillText(`Shallow: ${shallowUnits} units`, w/2 + barWidth/2 + 40, h - 35);
+            regCtx.fillText(`${shallowParams} params`, w/2 + barWidth/2 + 40, h - 18);
+
+            // Region counts
+            regCtx.font = 'bold 16px Inter, sans-serif';
+            regCtx.fillStyle = '#6c63ff';
+            const deepLabel = deepRegions > 1e9 ? deepRegions.toExponential(1) : deepRegions.toLocaleString();
+            regCtx.fillText(deepLabel + ' regions', w/2 - barWidth/2 - 40, h - 70 - deepHeight);
+            regCtx.fillStyle = '#00d4aa';
+            regCtx.fillText(shallowRegions.toLocaleString() + ' regions', w/2 + barWidth/2 + 40, h - 70 - shallowHeight);
+
+            // Title
+            regCtx.fillStyle = '#8892a4';
+            regCtx.font = '12px Inter, sans-serif';
+            regCtx.fillText('(log scale)', w/2, 25);
+            regCtx.fillText(`Deep creates ${(deepRegions/shallowRegions).toFixed(0)}× more regions!`, w/2, 50);
+            regCtx.textAlign = 'left';
+        }
+
+        document.getElementById('layerSlider').addEventListener('input', drawRegions);
+        document.getElementById('unitSlider').addEventListener('input', drawRegions);
+        drawRegions();
+
+        // ==================== GRADIENT DESCENT CANVAS ====================
+        const gdCanvas = document.getElementById('gdCanvas');
+        const gdCtx = gdCanvas.getContext('2d');
+        let gdPoint = null;
+        let gdPath = [];
+        let gdRunning = false;
+
+        function lossSurface(x, y) {
+            return Math.sin(x * 1.5) * Math.cos(y * 1.5) * 2 +
+                   0.3 * (x * x + y * y) +
+                   Math.sin(x * 3) * 0.5 +
+                   Math.cos(y * 2.5) * 0.4;
+        }
+
+        function lossGradient(x, y) {
+            const dx = 0.001;
+            const gx = (lossSurface(x + dx, y) - lossSurface(x - dx, y)) / (2 * dx);
+            const gy = (lossSurface(x, y + dx) - lossSurface(x, y - dx)) / (2 * dx);
+            return [gx, gy];
+        }
+
+        function drawGD() {
+            const w = gdCanvas.width, h = gdCanvas.height;
+            gdCtx.clearRect(0, 0, w, h);
+
+            // Draw loss surface as heatmap
+            const imgData = gdCtx.createImageData(w, h);
+            let minLoss = Infinity, maxLoss = -Infinity;
+            const losses = [];
+            for (let py = 0; py < h; py++) {
+                for (let px = 0; px < w; px++) {
+                    const x = (px / w) * 8 - 4;
+                    const y = (py / h) * 8 - 4;
+                    const l = lossSurface(x, y);
+                    losses.push(l);
+                    minLoss = Math.min(minLoss, l);
+                    maxLoss = Math.max(maxLoss, l);
+                }
+            }
+
+            for (let i = 0; i < losses.length; i++) {
+                const norm = (losses[i] - minLoss) / (maxLoss - minLoss);
+                const r = Math.floor(10 + norm * 60);
+                const g = Math.floor(14 + norm * 30);
+                const b = Math.floor(26 + norm * 80);
+                imgData.data[i * 4] = r;
+                imgData.data[i * 4 + 1] = g;
+                imgData.data[i * 4 + 2] = b;
+                imgData.data[i * 4 + 3] = 255;
+            }
+            gdCtx.putImageData(imgData, 0, 0);
+
+            // Draw contours
+            gdCtx.strokeStyle = 'rgba(108,99,255,0.2)';
+            gdCtx.lineWidth = 0.5;
+            const levels = 15;
+            for (let l = 0; l < levels; l++) {
+                const threshold = minLoss + (maxLoss - minLoss) * l / levels;
+                for (let py = 1; py < h - 1; py += 3) {
+                    for (let px = 1; px < w - 1; px += 3) {
+                        const idx = py * w + px;
+                        if ((losses[idx] - threshold) * (losses[idx + 1] - threshold) < 0 ||
+                            (losses[idx] - threshold) * (losses[idx + w] - threshold) < 0) {
+                            gdCtx.fillStyle = 'rgba(108,99,255,0.3)';
+                            gdCtx.fillRect(px, py, 1, 1);
+                        }
+                    }
+                }
+            }
+
+            // Draw path
+            if (gdPath.length > 1) {
+                gdCtx.strokeStyle = '#ff6b6b';
+                gdCtx.lineWidth = 2;
+                gdCtx.beginPath();
+                for (let i = 0; i < gdPath.length; i++) {
+                    const px = (gdPath[i][0] + 4) / 8 * w;
+                    const py = (gdPath[i][1] + 4) / 8 * h;
+                    if (i === 0) gdCtx.moveTo(px, py);
+                    else gdCtx.lineTo(px, py);
+                }
+                gdCtx.stroke();
+
+                // Draw points
+                gdPath.forEach((p, i) => {
+                    const px = (p[0] + 4) / 8 * w;
+                    const py = (p[1] + 4) / 8 * h;
+                    gdCtx.beginPath();
+                    gdCtx.arc(px, py, i === gdPath.length - 1 ? 6 : 3, 0, Math.PI * 2);
+                    gdCtx.fillStyle = i === gdPath.length - 1 ? '#ff6b6b' : 'rgba(255,107,107,0.6)';
+                    gdCtx.fill();
+                });
+            }
+
+            if (gdPoint) {
+                const px = (gdPoint[0] + 4) / 8 * w;
+                const py = (gdPoint[1] + 4) / 8 * h;
+                gdCtx.beginPath();
+                gdCtx.arc(px, py, 8, 0, Math.PI * 2);
+                gdCtx.fillStyle = '#00d4aa';
+                gdCtx.fill();
+                gdCtx.strokeStyle = '#fff';
+                gdCtx.lineWidth = 2;
+                gdCtx.stroke();
+            }
+        }
+
+        function gdStep() {
+            if (!gdPoint) return;
+            const lr = parseInt(document.getElementById('lrSlider').value) / 100;
+            document.getElementById('lrDisplay').textContent = lr.toFixed(2);
+            const [gx, gy] = lossGradient(gdPoint[0], gdPoint[1]);
+            gdPoint[0] -= lr * gx;
+            gdPoint[1] -= lr * gy;
+            gdPoint[0] = Math.max(-4, Math.min(4, gdPoint[0]));
+            gdPoint[1] = Math.max(-4, Math.min(4, gdPoint[1]));
+            gdPath.push([...gdPoint]);
+            const loss = lossSurface(gdPoint[0], gdPoint[1]);
+            document.getElementById('gdLoss').textContent = `Loss: ${loss.toFixed(4)} | Step: ${gdPath.length}`;
+            drawGD();
+        }
+
+        gdCanvas.addEventListener('click', (e) => {
+            const rect = gdCanvas.getBoundingClientRect();
+            const px = e.clientX - rect.left;
+            const py = e.clientY - rect.top;
+            gdPoint = [(px / gdCanvas.width) * 8 - 4, (py / gdCanvas.height) * 8 - 4];
+            gdPath = [[...gdPoint]];
+            gdRunning = false;
+            drawGD();
+            document.getElementById('gdLoss').textContent = `Loss: ${lossSurface(gdPoint[0], gdPoint[1]).toFixed(4)}`;
+        });
+
+        document.getElementById('gdStepBtn').addEventListener('click', gdStep);
+        document.getElementById('gdResetBtn').addEventListener('click', () => {
+            gdPoint = null;
+            gdPath = [];
+            gdRunning = false;
+            document.getElementById('gdLoss').textContent = 'Click to start';
+            drawGD();
+        });
+
+        document.getElementById('gdRunBtn').addEventListener('click', () => {
+            if (!gdPoint) return;
+            gdRunning = !gdRunning;
+            function autoStep() {
+                if (!gdRunning) return;
+                gdStep();
+                if (gdPath.length < 200) setTimeout(autoStep, 50);
+                else gdRunning = false;
+            }
+            autoStep();
+        });
+
+        document.getElementById('lrSlider').addEventListener('input', (e) => {
+            document.getElementById('lrDisplay').textContent = (parseInt(e.target.value) / 100).toFixed(2);
+        });
+
+        drawGD();
+
+        // ==================== BACKPROPAGATION CANVAS ====================
+        const bpCanvas = document.getElementById('bpCanvas');
+        const bpCtx = bpCanvas.getContext('2d');
+        let bpState = 'idle'; // idle, forward, backward
+        let bpProgress = 0;
+
+        const bpLayers = [3, 4, 4, 3, 2];
+        const bpPositions = [];
+
+        function initBP() {
+            bpPositions.length = 0;
+            const w = bpCanvas.width, h = bpCanvas.height;
+            const layerSpacing = (w - 100) / (bpLayers.length - 1);
+            for (let l = 0; l < bpLayers.length; l++) {
+                const layer = [];
+                const unitSpacing = (h - 80) / (bpLayers[l] + 1);
+                for (let u = 0; u < bpLayers[l]; u++) {
+                    layer.push({
+                        x: 50 + l * layerSpacing,
+                        y: 40 + (u + 1) * unitSpacing,
+                        activation: 0
+                    });
+                }
+                bpPositions.push(layer);
+            }
+        }
+
+        function drawBP() {
+            const w = bpCanvas.width, h = bpCanvas.height;
+            bpCtx.clearRect(0, 0, w, h);
+
+            // Draw connections
+            for (let l = 0; l < bpPositions.length - 1; l++) {
+                for (let u = 0; u < bpPositions[l].length; u++) {
+                    for (let v = 0; v < bpPositions[l + 1].length; v++) {
+                        const from = bpPositions[l][u];
+                        const to = bpPositions[l + 1][v];
+                        let alpha = 0.1;
+
+                        if (bpState === 'forward' && l < bpProgress) {
+                            alpha = 0.4;
+                        } else if (bpState === 'backward' && l >= bpLayers.length - 1 - bpProgress) {
+                            alpha = 0.4;
+                        }
+
+                        bpCtx.strokeStyle = bpState === 'backward' && l >= bpLayers.length - 1 - bpProgress
+                            ? `rgba(255,107,107,${alpha})`
+                            : `rgba(108,99,255,${alpha})`;
+                        bpCtx.lineWidth = 1;
+                        bpCtx.beginPath();
+                        bpCtx.moveTo(from.x, from.y);
+                        bpCtx.lineTo(to.x, to.y);
+                        bpCtx.stroke();
+                    }
+                }
+            }
+
+            // Draw neurons
+            for (let l = 0; l < bpPositions.length; l++) {
+                for (let u = 0; u < bpPositions[l].length; u++) {
+                    const node = bpPositions[l][u];
+                    let color = '#1e2a42';
+                    let borderColor = '#6c63ff';
+                    let glow = false;
+
+                    if (bpState === 'forward' && l <= bpProgress) {
+                        color = '#6c63ff';
+                        glow = true;
+                    } else if (bpState === 'backward' && l >= bpLayers.length - 1 - bpProgress) {
+                        color = '#ff6b6b';
+                        borderColor = '#ff6b6b';
+                        glow = true;
+                    }
+
+                    if (glow) {
+                        bpCtx.shadowColor = color;
+                        bpCtx.shadowBlur = 10;
+                    }
+
+                    bpCtx.beginPath();
+                    bpCtx.arc(node.x, node.y, 14, 0, Math.PI * 2);
+                    bpCtx.fillStyle = color;
+                    bpCtx.fill();
+                    bpCtx.strokeStyle = borderColor;
+                    bpCtx.lineWidth = 2;
+                    bpCtx.stroke();
+                    bpCtx.shadowBlur = 0;
+                }
+            }
+
+            // Labels
+            bpCtx.fillStyle = '#8892a4';
+            bpCtx.font = '11px Inter, sans-serif';
+            bpCtx.textAlign = 'center';
+            const labels = ['Input', 'Hidden 1', 'Hidden 2', 'Hidden 3', 'Output'];
+            for (let l = 0;
+ l < bpPositions.length; l++) {
+                bpCtx.fillText(labels[l] || `Layer ${l}`, bpPositions[l][0].x, h - 10);
+            }
+            bpCtx.textAlign = 'left';
+
+            // State label
+            if (bpState !== 'idle') {
+                bpCtx.fillStyle = bpState === 'forward' ? '#6c63ff' : '#ff6b6b';
+                bpCtx.font = 'bold 14px Inter, sans-serif';
+                bpCtx.fillText(bpState === 'forward' ? '▶ Forward Pass' : '◀ Backward Pass', 20, 25);
+            }
+        }
+
+        function animateBP(direction) {
+            bpState = direction;
+            bpProgress = 0;
+            function step() {
+                bpProgress += 0.5;
+                if (bpProgress > bpLayers.length) {
+                    return;
+                }
+                drawBP();
+                requestAnimationFrame(step);
+            }
+            step();
+        }
+
+        document.getElementById('bpForward').addEventListener('click', () => animateBP('forward'));
+        document.getElementById('bpBackward').addEventListener('click', () => animateBP('backward'));
+        document.getElementById('bpReset').addEventListener('click', () => {
+            bpState = 'idle';
+            bpProgress = 0;
+            drawBP();
+        });
+
+        initBP();
+        drawBP();
+
+        // ==================== LOSS FUNCTIONS CANVASES ====================
+        const regressionCanvas = document.getElementById('regressionCanvas');
+        const regLossCtx = regressionCanvas.getContext('2d');
+        const classificationCanvas = document.getElementById('classificationCanvas');
+        const classCtx = classificationCanvas.getContext('2d');
+
+        function drawRegressionLoss() {
+            const w = regressionCanvas.width, h = regressionCanvas.height;
+            regLossCtx.clearRect(0, 0, w, h);
+
+            // Generate data
+            const points = [];
+            for (let i = 0; i < 20; i++) {
+                const x = i / 19;
+                const y = 0.3 + 0.4 * Math.sin(x * 4) + (Math.random() - 0.5) * 0.15;
+                points.push([x, y]);
+            }
+
+            // Draw fit line
+            regLossCtx.strokeStyle = '#6c63ff';
+            regLossCtx.lineWidth = 2;
+            regLossCtx.beginPath();
+            for (let px = 0; px < w; px++) {
+                const x = px / w;
+                const y = 0.3 + 0.4 * Math.sin(x * 4);
+                const py = h - 20 - y * (h - 40);
+                if (px === 0) regLossCtx.moveTo(px, py);
+                else regLossCtx.lineTo(px, py);
+            }
+            regLossCtx.stroke();
+
+            // Draw points and residuals
+            points.forEach(([x, y]) => {
+                const px = x * w;
+                const py = h - 20 - y * (h - 40);
+                const predY = 0.3 + 0.4 * Math.sin(x * 4);
+                const predPy = h - 20 - predY * (h - 40);
+
+                // Residual line
+                regLossCtx.strokeStyle = 'rgba(255,107,107,0.5)';
+                regLossCtx.lineWidth = 1;
+                regLossCtx.setLineDash([3, 3]);
+                regLossCtx.beginPath();
+                regLossCtx.moveTo(px, py);
+                regLossCtx.lineTo(px, predPy);
+                regLossCtx.stroke();
+                regLossCtx.setLineDash([]);
+
+                // Point
+                regLossCtx.beginPath();
+                regLossCtx.arc(px, py, 4, 0, Math.PI * 2);
+                regLossCtx.fillStyle = '#ff6b6b';
+                regLossCtx.fill();
+            });
+        }
+
+        function drawClassificationLoss() {
+            const w = classificationCanvas.width, h = classificationCanvas.height;
+            classCtx.clearRect(0, 0, w, h);
+
+            // Sigmoid decision boundary
+            classCtx.strokeStyle = '#6c63ff';
+            classCtx.lineWidth = 2;
+            classCtx.beginPath();
+            for (let px = 0; px < w; px++) {
+                const x = (px / w) * 6 - 3;
+                const y = 1 / (1 + Math.exp(-x * 2));
+                const py = h - 20 - y * (h - 40);
+                if (px === 0) classCtx.moveTo(px, py);
+                else classCtx.lineTo(px, py);
+            }
+            classCtx.stroke();
+
+            // Decision boundary line
+            classCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+            classCtx.setLineDash([5, 5]);
+            classCtx.beginPath();
+            classCtx.moveTo(w / 2, 20);
+            classCtx.lineTo(w / 2, h - 20);
+            classCtx.stroke();
+            classCtx.setLineDash([]);
+
+            // Class 0 points (left)
+            for (let i = 0; i < 10; i++) {
+                const x = Math.random() * 0.4 + 0.05;
+                const py = h - 20 - (0.05 + Math.random() * 0.2) * (h - 40);
+                classCtx.beginPath();
+                classCtx.arc(x * w, py, 4, 0, Math.PI * 2);
+                classCtx.fillStyle = '#00d4aa';
+                classCtx.fill();
+            }
+
+            // Class 1 points (right)
+            for (let i = 0; i < 10; i++) {
+                const x = Math.random() * 0.4 + 0.55;
+                const py = h - 20 - (0.8 + Math.random() * 0.15) * (h - 40);
+                classCtx.beginPath();
+                classCtx.arc(x * w, py, 4, 0, Math.PI * 2);
+                classCtx.fillStyle = '#ff6b6b';
+                classCtx.fill();
+            }
+
+            // Labels
+            classCtx.fillStyle = '#8892a4';
+            classCtx.font = '11px Inter, sans-serif';
+            classCtx.fillText('P(y=1)', 5, 30);
+            classCtx.fillText('0.5', w / 2 + 5, h / 2);
+        }
+
+        drawRegressionLoss();
+        drawClassificationLoss();
+
+        // ==================== BIAS-VARIANCE / DOUBLE DESCENT ====================
+        const biasVarCanvas = document.getElementById('biasVarCanvas');
+        const bvCtx = biasVarCanvas.getContext('2d');
+        let bvCapacity = 5;
+        let bvAnimating = false;
+
+        function drawBiasVariance() {
+            const w = biasVarCanvas.width, h = biasVarCanvas.height;
+            bvCtx.clearRect(0, 0, w, h);
+
+            const capacity = parseInt(document.getElementById('capacitySlider').value);
+            document.getElementById('capacityDisplay').textContent = capacity;
+
+            // Draw double descent curve
+            const maxCap = 50;
+            const interpThreshold = 20; // where interpolation threshold is
+
+            bvCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+            bvCtx.lineWidth = 1;
+            // Axes
+            bvCtx.beginPath();
+            bvCtx.moveTo(50, h - 40);
+            bvCtx.lineTo(w - 20, h - 40);
+            bvCtx.stroke();
+            bvCtx.beginPath();
+            bvCtx.moveTo(50, 20);
+            bvCtx.lineTo(50, h - 40);
+            bvCtx.stroke();
+
+            // Labels
+            bvCtx.fillStyle = '#8892a4';
+            bvCtx.font = '11px Inter, sans-serif';
+            bvCtx.fillText('Model Capacity →', w / 2 - 40, h - 10);
+            bvCtx.save();
+            bvCtx.translate(15, h / 2);
+            bvCtx.rotate(-Math.PI / 2);
+            bvCtx.fillText('Test Error', 0, 0);
+            bvCtx.restore();
+
+            // Double descent curve
+            function testError(c) {
+                const x = c / maxCap;
+                // Classical regime: bias-variance tradeoff
+                const bias = Math.exp(-x * 8) * 0.6;
+                const variance = x < 0.4 ? Math.pow(x / 0.4, 3) * 0.5 : 0;
+                // Critical regime peak
+                const peak = Math.exp(-Math.pow((x - 0.4) / 0.05, 2)) * 0.4;
+                // Modern regime: decreasing
+                const modern = x > 0.4 ? 0.3 * Math.exp(-(x - 0.4) * 3) : 0;
+                return bias + variance + peak + modern + 0.15;
+            }
+
+            function trainError(c) {
+                const x = c / maxCap;
+                return Math.max(0, 0.5 * Math.exp(-x * 6));
+            }
+
+            // Test error curve
+            bvCtx.strokeStyle = '#ff6b6b';
+            bvCtx.lineWidth = 2.5;
+            bvCtx.beginPath();
+            for (let c = 1; c <= maxCap; c++) {
+                const px = 50 + (c / maxCap) * (w - 70);
+                const py = 30 + testError(c) * (h - 80);
+                if (c === 1) bvCtx.moveTo(px, py);
+                else bvCtx.lineTo(px, py);
+            }
+            bvCtx.stroke();
+
+            // Train error curve
+            bvCtx.strokeStyle = '#00d4aa';
+            bvCtx.lineWidth = 2.5;
+            bvCtx.beginPath();
+            for (let c = 1; c <= maxCap; c++) {
+                const px = 50 + (c / maxCap) * (w - 70);
+                const py = 30 + trainError(c) * (h - 80);
+                if (c === 1) bvCtx.moveTo(px, py);
+                else bvCtx.lineTo(px, py);
+            }
+            bvCtx.stroke();
+
+            // Interpolation threshold
+            const threshX = 50 + (interpThreshold / maxCap) * (w - 70);
+            bvCtx.strokeStyle = 'rgba(255,255,255,0.3)';
+            bvCtx.setLineDash([5, 5]);
+            bvCtx.beginPath();
+            bvCtx.moveTo(threshX, 20);
+            bvCtx.lineTo(threshX, h - 40);
+            bvCtx.stroke();
+            bvCtx.setLineDash([]);
+            bvCtx.fillStyle = '#8892a4';
+            bvCtx.font = '10px Inter, sans-serif';
+            bvCtx.textAlign = 'center';
+            bvCtx.fillText('Interpolation', threshX, h - 45);
+            bvCtx.fillText('Threshold', threshX, h - 33);
+
+            // Current capacity marker
+            const capX = 50 + (capacity / maxCap) * (w - 70);
+            const capY = 30 + testError(capacity) * (h - 80);
+            bvCtx.beginPath();
+            bvCtx.arc(capX, capY, 8, 0, Math.PI * 2);
+            bvCtx.fillStyle = '#ff6b6b';
+            bvCtx.fill();
+            bvCtx.strokeStyle = '#fff';
+            bvCtx.lineWidth = 2;
+            bvCtx.stroke();
+
+            // Legend
+            bvCtx.textAlign = 'left';
+            bvCtx.fillStyle = '#ff6b6b';
+            bvCtx.font = '12px Inter, sans-serif';
+            bvCtx.fillText('— Test Error', w - 150, 35);
+            bvCtx.fillStyle = '#00d4aa';
+            bvCtx.fillText('— Train Error', w - 150, 55);
+
+            // Regime labels
+            bvCtx.fillStyle = 'rgba(108,99,255,0.3)';
+            bvCtx.font = '10px Inter, sans-serif';
+            bvCtx.textAlign = 'center';
+            bvCtx.fillText('Classical Regime', (50 + threshX) / 2, 45);
+            bvCtx.fillText('Modern Regime', (threshX + w - 20) / 2, 45);
+            bvCtx.textAlign = 'left';
+        }
+
+        document.getElementById('capacitySlider').addEventListener('input', drawBiasVariance);
+        document.getElementById('bvAnimateBtn').addEventListener('click', () => {
+            if (bvAnimating) return;
+            bvAnimating = true;
+            let cap = 1;
+            const slider = document.getElementById('capacitySlider');
+            function animate() {
+                cap++;
+                if (cap > 50) {
+                    bvAnimating = false;
+                    return;
+                }
+                slider.value = cap;
+                drawBiasVariance();
+                setTimeout(animate, 80);
+            }
+            animate();
+        });
+
+        drawBiasVariance();
+
+        // ==================== ATTENTION VISUALIZATION ====================
+        const sentence = ['The', 'restaurant', 'refused', 'to', 'serve', 'me', 'because', 'it', 'only', 'cooks', 'vegetarian', 'food'];
+        const attentionCanvas = document.getElementById('attentionCanvas');
+        const attCtx = attentionCanvas.getContext('2d');
+        const sentenceDisplay = document.getElementById('sentenceDisplay');
+
+        // Fake attention weights (it → restaurant should be strong)
+        const attentionWeights = [];
+        for (let i = 0; i < sentence.length; i++) {
+            const row = [];
+            for (let j = 0; j < sentence.length; j++) {
+                let w = Math.random() * 0.1;
+                if (i === j) w = 0.3;
+                // "it" attends to "restaurant"
+                if (i === 7 && j === 1) w = 0.6;
+                // "it" attends to "refused"
+                if (i === 7 && j === 2) w = 0.15;
+                // "cooks" attends to "restaurant"
+                if (i === 9 && j === 1) w = 0.4;
+                // "vegetarian" attends to "food"
+                if (i === 10 && j === 11) w = 0.35;
+                // "food" attends to "cooks"
+                if (i === 11 && j === 9) w = 0.3;
+                row.push(w);
+            }
+            // Normalize
+            const sum = row.reduce((a, b) => a + b, 0);
+            attentionWeights.push(row.map(v => v / sum));
+        }
+
+        let hoveredWord = -1;
+
+        // Create word elements
+        sentence.forEach((word, i) => {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.style.padding = '0.3rem 0.5rem';
+            span.style.borderRadius = '4px';
+            span.style.cursor = 'pointer';
+            span.style.transition = 'all 0.2s';
+            span.addEventListener('mouseenter', () => {
+                hoveredWord = i;
+                drawAttention();
+                updateWordHighlights();
+            });
+            span.addEventListener('mouseleave', () => {
+                hoveredWord = -1;
+                drawAttention();
+                updateWordHighlights();
+            });
+            sentenceDisplay.appendChild(span);
+        });
+
+        function updateWordHighlights() {
+            const spans = sentenceDisplay.querySelectorAll('span');
+            spans.forEach((span, i) => {
+                if (hoveredWord === -1) {
+                    span.style.background = 'transparent';
+                    span.style.color = 'var(--text)';
+                } else if (i === hoveredWord) {
+                    span.style.background = 'var(--accent)';
+                    span.style.color = '#fff';
+                } else {
+                    const weight = attentionWeights[hoveredWord][i];
+                    span.style.background = `rgba(0,212,170,${weight})`;
+                    span.style.color = weight > 0.2 ? '#fff' : 'var(--text)';
+                }
+            });
+        }
+
+        function drawAttention() {
+            const w = attentionCanvas.width, h = attentionCanvas.height;
+            attCtx.clearRect(0, 0, w, h);
+
+            if (hoveredWord === -1) {
+                attCtx.fillStyle = '#8892a4';
+                attCtx.font = '13px Inter, sans-serif';
+                attCtx.textAlign = 'center';
+                attCtx.fillText('Hover over words above to see attention patterns', w / 2, h / 2);
+                attCtx.textAlign = 'left';
+                return;
+            }
+
+            const spans = sentenceDisplay.querySelectorAll('span');
+            const containerRect = sentenceDisplay.getBoundingClientRect();
+            const canvasRect = attentionCanvas.getBoundingClientRect();
+
+            // Draw attention arcs
+            const sourceSpan = spans[hoveredWord];
+            const sourceRect = sourceSpan.getBoundingClientRect();
+            const sourceX = sourceRect.left + sourceRect.width / 2 - canvasRect.left;
+
+            for (let j = 0; j < sentence.length; j++) {
+                if (j === hoveredWord) continue;
+                const weight = attentionWeights[hoveredWord][j];
+                if (weight < 0.05) continue;
+
+                const targetSpan = spans[j];
+                const targetRect = targetSpan.getBoundingClientRect();
+                const targetX = targetRect.left + targetRect.width / 2 - canvasRect.left;
+
+                const midY = 20 + Math.abs(hoveredWord - j) * 12;
+
+                attCtx.strokeStyle = `rgba(0,212,170,${Math.min(1, weight * 2)})`;
+                attCtx.lineWidth = weight * 8;
+                attCtx.beginPath();
+                attCtx.moveTo(sourceX, 5);
+                attCtx.quadraticCurveTo((sourceX + targetX) / 2, midY + 30, targetX, 5);
+                attCtx.stroke();
+
+                // Arrow head
+                if (weight > 0.1) {
+                    attCtx.beginPath();
+                    attCtx.arc(targetX, 5, 3, 0, Math.PI * 2);
+                    attCtx.fillStyle = `rgba(0,212,170,${Math.min(1, weight * 2)})`;
+                    attCtx.fill();
+                }
+            }
+
+            // Label
+            attCtx.fillStyle = '#8892a4';
+            attCtx.font = '11px Inter, sans-serif';
+            attCtx.textAlign = 'center';
+            attCtx.fillText(`"${sentence[hoveredWord]}" attends to:`, w / 2, h - 15);
+            attCtx.textAlign = 'left';
+        }
+
+        drawAttention();
+
+        // ==================== GENERATIVE MODEL CANVAS ====================
+        const genCanvas = document.getElementById('genCanvas');
+        const genCtx = genCanvas.getContext('2d');
+        let genPoints = [];
+        let genAnimating = false;
+
+        function generateNoise(n) {
+            const points = [];
+            for (let i = 0; i < n; i++) {
+                // Box-Muller transform
+                const u1 = Math.random();
+                const u2 = Math.random();
+                const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+                points.push([z0, z1]);
+            }
+            return points;
+        }
+
+        function transformPoint(p, complexity) {
+            let [x, y] = p;
+            for (let i = 0; i < complexity; i++) {
+                const r = Math.sqrt(x * x + y * y);
+                const theta = Math.atan2(y, x);
+                x = r * Math.cos(theta + r * 0.5) + 0.3 * Math.sin(y * 2);
+                y = r * Math.sin(theta + r * 0.5) + 0.3 * Math.cos(x * 2);
+            }
+            return [x, y];
+        }
+
+        function drawGenerative(t = 1) {
+            const w = genCanvas.width, h = genCanvas.height;
+            genCtx.clearRect(0, 0, w, h);
+
+            const complexity = parseInt(document.getElementById('genSlider').value);
+            document.getElementById('genComplexity').textContent = complexity;
+
+            // Draw noise on left
+            genCtx.fillStyle = '#8892a4';
+            genCtx.font = '12px Inter, sans-serif';
+            genCtx.textAlign = 'center';
+            genCtx.fillText('Latent Space (Noise)', w * 0.25, 25);
+            genCtx.fillText('Data Space (Generated)', w * 0.75, 25);
+
+            // Arrow
+            genCtx.strokeStyle = 'rgba(108,99,255,0.5)';
+            genCtx.lineWidth = 2;
+            genCtx.beginPath();
+            genCtx.moveTo(w * 0.4, h / 2);
+            genCtx.lineTo(w * 0.55, h / 2);
+            genCtx.stroke();
+            genCtx.beginPath();
+            genCtx.moveTo(w * 0.55, h / 2);
+            genCtx.lineTo(w * 0.53, h / 2 - 5);
+            genCtx.lineTo(w * 0.53, h / 2 + 5);
+            genCtx.closePath();
+            genCtx.fillStyle = 'rgba(108,99,255,0.5)';
+            genCtx.fill();
+
+            genCtx.fillStyle = 'rgba(108,99,255,0.4)';
+            genCtx.font = '11px Inter, sans-serif';
+            genCtx.fillText('Neural Network', w * 0.475, h / 2 - 15);
+            genCtx.fillText('f(z, φ)', w * 0.475, h / 2 + 25);
+
+            // Draw points
+            genPoints.forEach(([nx, ny]) => {
+                // Noise point (left side)
+                const npx = w * 0.25 + nx * 30;
+                const npy = h / 2 + ny * 30;
+                genCtx.beginPath();
+                genCtx.arc(npx, npy, 2.5, 0, Math.PI * 2);
+                genCtx.fillStyle = 'rgba(108,99,255,0.6)';
+                genCtx.fill();
+
+                // Transformed point (right side)
+                const [tx, ty] = transformPoint([nx, ny], complexity);
+                const tpx = w * 0.75 + tx * 25 * t + nx * 25 * (1 - t);
+                const tpy = h / 2 + ty * 25 * t + ny * 25 * (1 - t);
+                genCtx.beginPath();
+                genCtx.arc(tpx, tpy, 2.5, 0, Math.PI * 2);
+                genCtx.fillStyle = 'rgba(0,212,170,0.7)';
+                genCtx.fill();
+            });
+
+            genCtx.textAlign = 'left';
+        }
+
+        document.getElementById('genSampleBtn').addEventListener('click', () => {
+            genPoints = generateNoise(150);
+            drawGenerative();
+        });
+
+        document.getElementById('genAnimateBtn').addEventListener('click', () => {
+            if (genAnimating) return;
+            if (genPoints.length === 0) genPoints = generateNoise(150);
+            genAnimating = true;
+            let t = 0;
+            function animate() {
+                t += 0.02;
+                if (t > 1) {
+                    genAnimating = false;
+                    drawGenerative(1);
+                    return;
+                }
+                drawGenerative(t);
+                requestAnimationFrame(animate);
+            }
+            animate();
+        });
+
+        document.getElementById('genSlider').addEventListener('input', () => {
+            if (genPoints.length > 0) drawGenerative();
+        });
+
+        genPoints = generateNoise(150);
+        drawGenerative();
+
+    }); // end DOMContentLoaded
+    </script>
+</body>
+</html>
