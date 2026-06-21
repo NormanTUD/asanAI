@@ -8,73 +8,75 @@ const AttentionMatrixViz = {
         koenig: ['Der', 'König', 'gab', 'der', 'Königin', 'den', 'Ring'],
     },
 
-    // Simulated attention weights per aspect
+    // Causal masked attention weights (nur unteres Dreieck + Diagonale haben echte Werte)
+    // Jede Zeile i hat nur Gewichte für Spalten 0..i (summiert sich zu 1)
+    // Spalten j > i sind null (causal mask)
     weights: {
         katze: {
             syntax: [
-                [0.15, 0.60, 0.05, 0.05, 0.05, 0.02, 0.02, 0.02, 0.02, 0.02],  // Die → Katze
-                [0.10, 0.15, 0.55, 0.05, 0.03, 0.03, 0.03, 0.02, 0.02, 0.02],  // Katze → saß
-                [0.05, 0.60, 0.10, 0.05, 0.03, 0.07, 0.02, 0.03, 0.03, 0.02],  // saß → Katze
-                [0.03, 0.03, 0.10, 0.10, 0.05, 0.55, 0.04, 0.03, 0.04, 0.03],  // auf → Matte
-                [0.03, 0.03, 0.03, 0.03, 0.10, 0.65, 0.03, 0.03, 0.04, 0.03],  // der → Matte
-                [0.03, 0.05, 0.08, 0.50, 0.15, 0.07, 0.03, 0.03, 0.03, 0.03],  // Matte → auf
-                [0.02, 0.03, 0.03, 0.02, 0.02, 0.02, 0.10, 0.08, 0.12, 0.56],  // weil → war
-                [0.05, 0.62, 0.03, 0.03, 0.03, 0.03, 0.05, 0.06, 0.05, 0.05],  // sie → Katze
-                [0.02, 0.05, 0.03, 0.02, 0.02, 0.02, 0.04, 0.55, 0.15, 0.10],  // müde → sie
-                [0.02, 0.05, 0.05, 0.02, 0.02, 0.02, 0.10, 0.10, 0.52, 0.10],  // war → müde
+                [1.00, 0, 0, 0, 0, 0, 0, 0, 0, 0],                          // Die: kann nur sich selbst sehen
+                [0.35, 0.65, 0, 0, 0, 0, 0, 0, 0, 0],                        // Katze → Die
+                [0.08, 0.62, 0.30, 0, 0, 0, 0, 0, 0, 0],                     // saß → Katze (Subjekt-Verb)
+                [0.05, 0.08, 0.22, 0.65, 0, 0, 0, 0, 0, 0],                  // auf → saß
+                [0.04, 0.06, 0.05, 0.20, 0.65, 0, 0, 0, 0, 0],              // der → auf
+                [0.03, 0.07, 0.10, 0.40, 0.15, 0.25, 0, 0, 0, 0],           // Matte → auf (Präp→Obj)
+                [0.02, 0.05, 0.15, 0.03, 0.03, 0.05, 0.67, 0, 0, 0],        // weil → saß
+                [0.03, 0.55, 0.05, 0.03, 0.03, 0.04, 0.07, 0.20, 0, 0],     // sie → Katze (Pronomen!)
+                [0.02, 0.05, 0.04, 0.02, 0.02, 0.03, 0.04, 0.48, 0.30, 0],  // müde → sie
+                [0.02, 0.05, 0.08, 0.02, 0.02, 0.02, 0.12, 0.12, 0.45, 0.10], // war → müde
             ],
             coref: [
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
-                [0.02, 0.72, 0.02, 0.02, 0.02, 0.05, 0.02, 0.05, 0.04, 0.04],  // sie → Katze (stark!)
-                [0.02, 0.05, 0.02, 0.02, 0.02, 0.02, 0.02, 0.70, 0.08, 0.05],  // müde → sie
-                [0.02, 0.08, 0.02, 0.02, 0.02, 0.02, 0.02, 0.60, 0.15, 0.05],  // war → sie
+                [1.00, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0.50, 0.50, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0.20, 0.40, 0.40, 0, 0, 0, 0, 0, 0, 0],
+                [0.15, 0.20, 0.30, 0.35, 0, 0, 0, 0, 0, 0],
+                [0.12, 0.18, 0.20, 0.20, 0.30, 0, 0, 0, 0, 0],
+                [0.10, 0.15, 0.15, 0.20, 0.15, 0.25, 0, 0, 0, 0],
+                [0.08, 0.12, 0.20, 0.10, 0.10, 0.15, 0.25, 0, 0, 0],
+                [0.02, 0.72, 0.03, 0.02, 0.02, 0.04, 0.03, 0.12, 0, 0],     // sie → Katze (stark!)
+                [0.02, 0.08, 0.03, 0.02, 0.02, 0.02, 0.03, 0.63, 0.15, 0],  // müde → sie
+                [0.02, 0.10, 0.03, 0.02, 0.02, 0.02, 0.03, 0.52, 0.14, 0.10], // war → sie
             ],
             adjacent: [
-                [0.50, 0.35, 0.05, 0.03, 0.02, 0.02, 0.01, 0.01, 0.005, 0.005],
-                [0.30, 0.20, 0.35, 0.05, 0.03, 0.03, 0.02, 0.01, 0.005, 0.005],
-                [0.05, 0.30, 0.20, 0.30, 0.05, 0.04, 0.03, 0.015, 0.01, 0.005],
-                [0.03, 0.05, 0.30, 0.20, 0.28, 0.05, 0.04, 0.02, 0.02, 0.01],
-                [0.02, 0.03, 0.05, 0.28, 0.22, 0.28, 0.05, 0.03, 0.02, 0.02],
-                [0.02, 0.02, 0.04, 0.05, 0.30, 0.22, 0.25, 0.04, 0.03, 0.03],
-                [0.01, 0.02, 0.03, 0.04, 0.05, 0.28, 0.22, 0.25, 0.05, 0.05],
-                [0.01, 0.01, 0.02, 0.03, 0.04, 0.05, 0.28, 0.22, 0.25, 0.09],
-                [0.005, 0.01, 0.01, 0.02, 0.03, 0.04, 0.05, 0.28, 0.25, 0.305],
-                [0.005, 0.005, 0.01, 0.02, 0.02, 0.03, 0.04, 0.06, 0.30, 0.50],
+                [1.00, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0.40, 0.60, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0.10, 0.55, 0.35, 0, 0, 0, 0, 0, 0, 0],
+                [0.05, 0.10, 0.50, 0.35, 0, 0, 0, 0, 0, 0],
+                [0.03, 0.05, 0.10, 0.47, 0.35, 0, 0, 0, 0, 0],
+                [0.02, 0.03, 0.05, 0.10, 0.45, 0.35, 0, 0, 0, 0],
+                [0.02, 0.02, 0.03, 0.05, 0.08, 0.45, 0.35, 0, 0, 0],
+                [0.01, 0.02, 0.02, 0.03, 0.05, 0.07, 0.42, 0.38, 0, 0],
+                [0.01, 0.01, 0.02, 0.02, 0.03, 0.05, 0.07, 0.42, 0.37, 0],
+                [0.01, 0.01, 0.01, 0.02, 0.02, 0.03, 0.05, 0.06, 0.40, 0.39],
             ],
         },
         koenig: {
             syntax: [
-                [0.15, 0.65, 0.05, 0.03, 0.05, 0.03, 0.04],
-                [0.08, 0.12, 0.60, 0.03, 0.05, 0.05, 0.07],
-                [0.03, 0.50, 0.10, 0.03, 0.15, 0.04, 0.15],
-                [0.03, 0.03, 0.03, 0.10, 0.65, 0.06, 0.10],
-                [0.03, 0.05, 0.50, 0.10, 0.12, 0.05, 0.15],
-                [0.03, 0.03, 0.05, 0.03, 0.05, 0.11, 0.70],
-                [0.03, 0.05, 0.55, 0.03, 0.10, 0.14, 0.10],
+                [1.00, 0, 0, 0, 0, 0, 0],
+                [0.30, 0.70, 0, 0, 0, 0, 0],
+                [0.05, 0.55, 0.40, 0, 0, 0, 0],                    // gab → König (Subj-Verb)
+                [0.08, 0.05, 0.12, 0.75, 0, 0, 0],                 // der → gab
+                [0.04, 0.10, 0.42, 0.14, 0.30, 0, 0],              // Königin → gab (indir. Obj)
+                [0.03, 0.05, 0.15, 0.05, 0.07, 0.65, 0],           // den → Königin
+                [0.03, 0.08, 0.48, 0.04, 0.12, 0.10, 0.15],        // Ring → gab (dir. Obj)
             ],
             coref: [
-                [0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.16],
-                [0.14, 0.14, 0.14, 0.14, 0.16, 0.14, 0.14],
-                [0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.16],
-                [0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.16],
-                [0.05, 0.55, 0.05, 0.05, 0.10, 0.10, 0.10],  // Königin → König
-                [0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.16],
-                [0.05, 0.15, 0.40, 0.05, 0.20, 0.05, 0.10],  // Ring → gab, Königin
+                [1.00, 0, 0, 0, 0, 0, 0],
+                [0.40, 0.60, 0, 0, 0, 0, 0],
+                [0.20, 0.30, 0.50, 0, 0, 0, 0],
+                [0.15, 0.20, 0.25, 0.40, 0, 0, 0],
+                [0.05, 0.50, 0.10, 0.10, 0.25, 0, 0],              // Königin → König (Koreferenz!)
+                [0.10, 0.15, 0.15, 0.15, 0.20, 0.25, 0],
+                [0.05, 0.15, 0.35, 0.05, 0.20, 0.08, 0.12],        // Ring → gab, Königin
             ],
             adjacent: [
-                [0.45, 0.40, 0.05, 0.03, 0.03, 0.02, 0.02],
-                [0.25, 0.25, 0.35, 0.05, 0.04, 0.03, 0.03],
-                [0.05, 0.30, 0.25, 0.25, 0.05, 0.05, 0.05],
-                [0.03, 0.05, 0.25, 0.27, 0.30, 0.05, 0.05],
-                [0.03, 0.04, 0.05, 0.28, 0.25, 0.25, 0.10],
-                [0.02, 0.03, 0.04, 0.05, 0.28, 0.28, 0.30],
-                [0.02, 0.02, 0.03, 0.04, 0.06, 0.33, 0.50],
+                [1.00, 0, 0, 0, 0, 0, 0],
+                [0.40, 0.60, 0, 0, 0, 0, 0],
+                [0.08, 0.52, 0.40, 0, 0, 0, 0],
+                [0.04, 0.08, 0.48, 0.40, 0, 0, 0],
+                [0.03, 0.05, 0.08, 0.44, 0.40, 0, 0],
+                [0.02, 0.03, 0.05, 0.08, 0.42, 0.40, 0],
+                [0.02, 0.02, 0.03, 0.05, 0.08, 0.42, 0.38],
             ],
         }
     },
@@ -87,52 +89,114 @@ const AttentionMatrixViz = {
         const aspect = document.getElementById('attn-matrix-aspect')?.value || 'syntax';
 
         const tokens = this.sentences[sentenceKey];
-        const matrix = this.weights[sentenceKey][aspect];
+        const rawMatrix = this.weights[sentenceKey][aspect];
+        const n = tokens.length;
 
+        // Erstelle die Display-Matrix: echte Werte unten-links, null oben-rechts (causal mask)
+        const displayMatrix = [];
+        for (let i = 0; i < n; i++) {
+            const row = [];
+            for (let j = 0; j < n; j++) {
+                if (j > i) {
+                    row.push(null); // Causal mask: kann Zukunft nicht sehen
+                } else {
+                    row.push(rawMatrix[i][j]);
+                }
+            }
+            displayMatrix.push(row);
+        }
+
+        // Custom colorscale mit grau für null
         const trace = {
-            z: matrix,
+            z: displayMatrix,
             x: tokens,
             y: tokens.slice(),
             type: 'heatmap',
             colorscale: [
                 [0, '#f8fafc'],
-                [0.15, '#dbeafe'],
-                [0.3, '#93c5fd'],
-                [0.5, '#3b82f6'],
-                [0.75, '#1d4ed8'],
-                [1, '#1e3a5f']
+                [0.08, '#e0f2fe'],
+                [0.15, '#bae6fd'],
+                [0.25, '#7dd3fc'],
+                [0.4, '#38bdf8'],
+                [0.55, '#0ea5e9'],
+                [0.7, '#0284c7'],
+                [0.85, '#0369a1'],
+                [1, '#0c4a6e']
             ],
             showscale: true,
             colorbar: { title: 'Gewicht', titleside: 'right', len: 0.8, thickness: 14 },
             hovertemplate: '<b>%{y}</b> → <b>%{x}</b><br>Attention: %{z:.3f}<extra></extra>',
             xgap: 2,
             ygap: 2,
+            zmin: 0,
+            zmax: 1,
         };
 
-        // Add text annotations showing values
+        // Text-Annotationen für ALLE Zellen
         const annotations = [];
-        for (let i = 0; i < tokens.length; i++) {
-            for (let j = 0; j < tokens.length; j++) {
-                const val = matrix[i][j];
-                if (val >= 0.15) {
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (j > i) {
+                    // Maskierte Zelle: zeige "✕" oder "—"
                     annotations.push({
                         x: tokens[j],
                         y: tokens[i],
-                        text: val.toFixed(2),
-                        font: { size: tokens.length > 8 ? 9 : 11, color: val > 0.4 ? '#fff' : '#1e293b' },
+                        text: '✕',
+                        font: { size: tokens.length > 8 ? 8 : 10, color: '#cbd5e1' },
+                        showarrow: false,
+                    });
+                } else {
+                    // Echte Werte: immer anzeigen
+                    const val = displayMatrix[i][j];
+                    annotations.push({
+                        x: tokens[j],
+                        y: tokens[i],
+                        text: val >= 0.01 ? val.toFixed(2) : '0',
+                        font: {
+                            size: tokens.length > 8 ? 8 : 10,
+                            color: val > 0.45 ? '#fff' : val > 0.25 ? '#f0f9ff' : '#334155'
+                        },
                         showarrow: false,
                     });
                 }
             }
         }
 
+        // Zeichne eine diagonale Linie für die Causal-Mask-Grenze
+        const shapes = [];
+        // Visuelles Overlay für den maskierten Bereich (oberes Dreieck)
+        // Wir nutzen Plotly shapes um ein halbtransparentes Dreieck zu zeichnen
+        shapes.push({
+            type: 'line',
+            x0: -0.5,
+            y0: -0.5,
+            x1: n - 0.5,
+            y1: n - 0.5,
+            xref: 'x',
+            yref: 'y',
+            line: { color: '#ef4444', width: 2, dash: 'dot' },
+        });
+
         const layout = {
-            margin: { l: 80, r: 60, b: 80, t: 40 },
-            xaxis: { title: '← schaut auf (Key)', tickangle: -30, tickfont: { size: 12, weight: 'bold' }, side: 'bottom' },
-            yaxis: { title: 'Dieses Wort (Query) →', tickfont: { size: 12, weight: 'bold' }, autorange: 'reversed' },
+            margin: { l: 80, r: 60, b: 80, t: 50 },
+            xaxis: {
+                title: '← schaut auf (Key)',
+                tickangle: -30,
+                tickfont: { size: 11, weight: 'bold' },
+                side: 'bottom'
+            },
+            yaxis: {
+                title: 'Dieses Wort (Query) →',
+                tickfont: { size: 11, weight: 'bold' },
+                autorange: 'reversed'
+            },
             annotations: annotations,
+            shapes: shapes,
             plot_bgcolor: '#fff',
-            title: { text: `Aspekt: ${aspect === 'syntax' ? 'Syntaktische Beziehungen' : aspect === 'coref' ? 'Koreferenz (Pronomen-Auflösung)' : 'Lokale Nähe'}`, font: { size: 14, color: '#475569' } }
+            title: {
+                text: `Aspekt: ${aspect === 'syntax' ? 'Syntaktische Beziehungen' : aspect === 'coref' ? 'Koreferenz (Pronomen-Auflösung)' : 'Lokale Nähe'} │ 🔺 Causal Mask (oberes Dreieck blockiert)`,
+                font: { size: 13, color: '#475569' }
+            }
         };
 
         Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
@@ -141,11 +205,12 @@ const AttentionMatrixViz = {
         const info = document.getElementById('attn-matrix-info');
         if (info) {
             const aspectDescs = {
-                syntax: '🔗 <b>Syntax-Head:</b> "Katze" achtet stark auf "saß" (Subjekt→Verb), "auf" achtet auf "Matte" (Präposition→Objekt). Jeder Head lernt andere grammatische Beziehungen.',
-                coref: '👆 <b>Koreferenz-Head:</b> "sie" achtet stark auf "Katze" – es löst das Pronomen auf! So "weiß" das Modell, wer müde ist.',
-                adjacent: '📍 <b>Lokaler Head:</b> Jedes Wort achtet vor allem auf seine direkten Nachbarn. Nützlich für Subword-Komposition und lokale Phrasen.',
+                syntax: '🔗 <b>Syntax-Head:</b> "saß" achtet stark auf "Katze" (Subjekt→Verb), "Matte" auf "auf" (Präp→Objekt). Jeder Head lernt andere grammatische Beziehungen.',
+                coref: '👆 <b>Koreferenz-Head:</b> "sie" achtet mit 0.72 auf "Katze" – es löst das Pronomen auf! So "weiß" das Modell, wer müde ist.',
+                adjacent: '📍 <b>Lokaler Head:</b> Jedes Wort achtet vor allem auf seinen direkten Vorgänger. Nützlich für Subword-Komposition und lokale Phrasen.',
             };
-            info.innerHTML = aspectDescs[aspect] + '<br><span style="font-size:0.82em; color:#64748b;">Jede Zeile summiert sich zu 1 (Softmax). Verschiedene Heads = verschiedene Aspekte gleichzeitig.</span>';
+            info.innerHTML = aspectDescs[aspect] +
+                '<br><span style="font-size:0.82em; color:#64748b;">Jede Zeile summiert sich zu 1 (Softmax). <b style="color:#ef4444;">✕ = Causal Mask</b>: Ein Wort kann nur auf sich selbst und vorherige Wörter schauen – nie in die Zukunft!</span>';
         }
     }
 };
