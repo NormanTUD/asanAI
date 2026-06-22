@@ -80,9 +80,9 @@ const KnowledgeViz = {
 
 		// Update explanation
 		const explanations = [
-			'🧭️ <b>Schritt 1: Embedding-Richtung.</b> ...',
-			'👁️ <b>Schritt 2: Attention sammelt Kontext.</b> ...',
-			'🔥 <b>Schritt 3: FFN-Neuronen feuern.</b> ...',
+			'🧭️ <b>Schritt 1: Embedding-Richtung.</b> Liegt <i>irgendwo</i> im Raum',
+			'👁️ <b>Schritt 2: Attention sammelt Kontext.</b> Schaut sich alle Tokens an und bestimmt, wo die Bedeutung insgesamt liegt',
+			'🔥 <b>Schritt 3: FFN-Neuronen feuern.</b> Welche Neuronen feuern bestimmt, welche Themengebiete aktiv werden (Coding, Geographie, ...)',
 			'🎯 <b>Gesamtbild:</b> Am Ende wird das (hoffentlich) nächste sinnvolle Wort ausgewählt'
 		];
 		const el = document.getElementById('knowledge-explanation');
