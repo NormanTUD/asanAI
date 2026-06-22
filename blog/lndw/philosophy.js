@@ -32,30 +32,33 @@ const SunrisePlot = {
         const plotDiv = document.getElementById('sunrise-plot');
         if (!plotDiv || !this.sinusVisible) return;
 
-        const phaseSlider = document.getElementById('sun-phase-slider');
         const vshiftSlider = document.getElementById('sun-vshift-slider');
+        const ampSlider = document.getElementById('sun-amp-slider');
+        const phaseSlider = document.getElementById('sun-phase-slider');
         const stretchSlider = document.getElementById('sun-stretch-slider');
 
+        const d = vshiftSlider ? parseFloat(vshiftSlider.value) : 12.0;
+        const A = ampSlider ? parseFloat(ampSlider.value) : 11;
         const c = phaseSlider ? parseFloat(phaseSlider.value) : 5.60;
-        const d = vshiftSlider ? parseFloat(vshiftSlider.value) : 10.5;
         const period = stretchSlider ? parseFloat(stretchSlider.value) : 24;
 
-        const phaseVal = document.getElementById('sun-phase-val');
+        // Update display values
         const vshiftVal = document.getElementById('sun-vshift-val');
+        const ampVal = document.getElementById('sun-amp-val');
+        const phaseVal = document.getElementById('sun-phase-val');
         const stretchVal = document.getElementById('sun-stretch-val');
-        if (phaseVal) phaseVal.textContent = c.toFixed(2);
         if (vshiftVal) vshiftVal.textContent = d.toFixed(2);
+        if (ampVal) ampVal.textContent = A.toFixed(1);
+        if (phaseVal) phaseVal.textContent = c.toFixed(2);
         if (stretchVal) stretchVal.textContent = period.toFixed(1);
 
         const yMin = -5;
         const yMax = 52;
+        const mean = 25;
 
-        const A = 15;       // Amplitude in Grad
-        const mean = 25;    // Mittlere Sonnenhöhe
-
-        // Modell-Funktion mit variablem Stretch (Periode)
-        function sinModel(x, phase, vshift, T) {
-            return -A * Math.cos((2 * Math.PI / T) * (x + phase)) + mean + vshift;
+        // Modell-Funktion mit allen Parametern
+        function sinModel(x) {
+            return -A * Math.cos((2 * Math.PI / period) * (x + c)) + mean + d;
         }
 
         const traces = [];
@@ -66,7 +69,7 @@ const SunrisePlot = {
         for (let i = 0; i <= 230; i++) {
             const x = i / 10;
             xs.push(x);
-            ysModel.push(sinModel(x, c, d, period));
+            ysModel.push(sinModel(x));
         }
         traces.push({
             x: xs,
@@ -183,8 +186,11 @@ const CooccurrencePlot = {
 // INIT
 // ============================================================
 
+// ============================================================
+// INIT
+// ============================================================
+
 function initPhilosophySlides() {
-    // Sunrise plot starts hidden – no initial render needed
     CooccurrencePlot.render();
     if (typeof _lazyCreateObserver === 'function') _lazyCreateObserver();
 }

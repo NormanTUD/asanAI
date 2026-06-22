@@ -21,36 +21,40 @@ const Presentation = (() => {
     }
 
 function next() {
+    // First, reveal next fragment on current slide
     const fragments = getFragments(currentSlide);
     const visibleCount = fragmentIndex[currentSlide];
     if (visibleCount < fragments.length) {
         const frag = fragments[visibleCount];
         frag.classList.add('visible');
         fragmentIndex[currentSlide]++;
-        // Check for sunrise sinus trigger
+        // Trigger sunrise sinus overlay
         if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
             SunrisePlot.showSinus();
         }
         return;
     }
+    // No more fragments, go to next slide
     if (currentSlide < slides.length - 1) {
         goTo(currentSlide + 1);
     }
 }
 
 function prev() {
+    // First, hide last visible fragment on current slide
     const fragments = getFragments(currentSlide);
     const visibleCount = fragmentIndex[currentSlide];
     if (visibleCount > 0) {
         const frag = fragments[visibleCount - 1];
         frag.classList.remove('visible');
         fragmentIndex[currentSlide]--;
-        // Check for sunrise sinus hide
+        // Hide sunrise sinus overlay
         if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
             SunrisePlot.hideSinus();
         }
         return;
     }
+    // No fragments to hide, go to previous slide
     if (currentSlide > 0) {
         goTo(currentSlide - 1, true);
     }
