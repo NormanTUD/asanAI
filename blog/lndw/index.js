@@ -294,7 +294,6 @@ const TokenizerViz = {
     render: function() {
         const input = document.getElementById('tokenizer-input');
         const outputDiv = document.getElementById('tokenizer-output');
-        const statsDiv = document.getElementById('tokenizer-stats');
         if (!input || !outputDiv) return;
 
         const text = input.value || 'Donaudampfschifffahrt ist ein langes Wort';
@@ -388,20 +387,6 @@ const TokenizerViz = {
         }
 
         outputDiv.innerHTML = html;
-
-        // Stats
-        if (statsDiv) {
-            const words = text.split(/\s+/).filter(w => w.length > 0);
-            const splitWordCount = compoundWords.length;
-            const wsTokenCount = tokens.filter(t => t.isWhitespace).length;
-            statsDiv.innerHTML = `
-                <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; font-size:0.85em; color:#475569;">
-                    <span><b>${tokens.length}</b> tokens</span>
-                    <span><b>${words.length}</b> Wörter</span>
-                    <span><b>${wsTokenCount}</b> Whitespace-Tokens</span>
-                    <span><b>${splitWordCount}</b> davon in Subwords zerlegt</span>
-                </div>`;
-        }
     }
 };
 
