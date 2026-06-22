@@ -320,7 +320,6 @@ const TokenizerViz = {
                         padding:8px 10px; background:#f1f5f9; border-radius:8px;
                         border:1px dashed #94a3b8;
                         box-shadow:0 1px 2px rgba(0,0,0,0.05);
-                        animation: tokenAppear 0.3s ease-out ${i * 0.05}s both;
                         cursor:default; font-family:monospace;
                         transition: transform 0.15s;
                     " onmouseover="this.style.transform='translateY(-3px)'"
@@ -344,7 +343,6 @@ const TokenizerViz = {
                     border-left:3px ${isSubword ? 'dashed' : 'solid'} ${color};
                     border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;
                     box-shadow:0 2px 4px rgba(0,0,0,0.05);
-                    animation: tokenAppear 0.3s ease-out ${i * 0.05}s both;
                     cursor:default; transition: transform 0.15s;
                     ${isSubword ? 'margin-left:-3px;' : ''}
                 " onmouseover="this.style.transform='translateY(-3px)'"
