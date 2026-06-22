@@ -161,52 +161,46 @@
 <!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
 <div class="slide" data-title="Daten sind fehlerhaft">
     <div class="slide-content">
-        <h2>Daten sind fehlerhaft</h2>
-        <p>Texte bilden die Wirklichkeit <b>unvollständig</b> und <b>ungenau</b> ab. Trotzdem enthalten sie genug Struktur, um Muster zu lernen.</p>
-        
-        <div style="display:flex; gap:24px; margin-top:20px; flex-wrap:wrap;">
-            <!-- Left: Error sources -->
+        <h2>Daten sind fehlerhaft – und trotzdem nützlich</h2>
+
+        <div style="display:flex; gap:24px; margin-top:16px; flex-wrap:wrap;">
+            <!-- Links: Fehler + Lösung kompakt -->
             <div style="flex:1; min-width:300px;">
-                <div style="padding:16px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca; margin-bottom:12px;">
-                    <div style="font-weight:bold; color:#991b1b; margin-bottom:8px;">⚠️ Fehlerquellen in Texten:</div>
-                    <ul style="font-size:0.9em; color:#7f1d1d; line-height:1.8; margin-left:16px;">
-                        <li><b>Lügen & Fehler</b> – "Die Erde ist flach"</li>
-                        <li><b>Mehrdeutigkeiten</b> – "Bank" (Sitzbank? Geldinstitut?)</li>
-                        <li><b>Unvollständigkeit</b> – nicht alles wird aufgeschrieben</li>
-                        <li><b>Widersprüche</b> – verschiedene Quellen, verschiedene Aussagen</li>
-                        <li><b>Veraltetes Wissen</b> – Texte von 2005 kennen kein iPhone</li>
+                <div style="padding:14px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca; margin-bottom:12px;">
+                    <div style="font-weight:bold; color:#991b1b; margin-bottom:6px;">⚠️ Fehlerquellen</div>
+                    <ul style="font-size:0.85em; color:#7f1d1d; line-height:1.9; margin-left:16px; padding:0;">
+                        <li><b>Lügen & Fehler</b> – „Die Erde ist flach"</li>
+                        <li><b>Mehrdeutigkeiten</b> – „Bank" = ?</li>
+                        <li><b>Widersprüche & Lücken</b></li>
                     </ul>
                 </div>
-                <div class="fragment" style="padding:16px; background:#f0fdf4; border-radius:12px; border:1px solid #86efac;">
-                    <div style="font-weight:bold; color:#166534; margin-bottom:8px;">✓ Aber: Statistische Muster bleiben erhalten</div>
-                    <p style="font-size:0.88em; color:#334155; margin:0;">
-                        Wenn in 10.000 Texten "Hamburg" zusammen mit "Elbe" vorkommt und nur in 3 mit "Spree" – 
-                        dann lernt das Modell: Hamburg hat etwas mit der Elbe zu tun. 
-                        Die <b>Häufigkeit der Zusammenhänge</b> spiegelt die Wirklichkeit wider.
+                <div class="fragment" style="padding:14px; background:#f0fdf4; border-radius:12px; border:1px solid #86efac;">
+                    <div style="font-weight:bold; color:#166534; margin-bottom:6px;">✓ Masse schlägt Rauschen</div>
+                    <p style="font-size:0.85em; color:#334155; margin:0; line-height:1.6;">
+                        „Hamburg" + „Elbe" → <b>10.000×</b><br>
+                        „Hamburg" + „Spree" → <b>3×</b><br>
+                        → Häufigkeit filtert Fehler heraus.
                     </p>
                 </div>
             </div>
-            
-            <!-- Right: Co-occurrence bar chart -->
+
+            <!-- Rechts: Ko-Okkurrenz-Plot (beibehalten) -->
             <div style="flex:1; min-width:340px;">
-                <div class="demo-box" style="min-height:auto; padding:16px;">
-                    <div class="demo-title">Wie oft kommen Wörter zusammen vor?</div>
-                    <div id="cooccurrence-plot" style="height:280px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-                    <div style="margin-top:8px; font-size:0.78em; color:#64748b; text-align:center;">
-                        Simulierte Häufigkeiten aus einem großen Textkorpus. Die Wirklichkeit "scheint durch" die Texte hindurch.
+                <div class="demo-box" style="min-height:auto; padding:14px;">
+                    <div class="demo-title">📊 Ko-Okkurrenz: Wie oft kommen Wörter zusammen vor?</div>
+                    <div id="cooccurrence-plot" style="height:260px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+                    <div style="margin-top:6px; font-size:0.75em; color:#64748b; text-align:center;">
+                        Die Wirklichkeit „scheint durch" die Texte hindurch.
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="key-insight fragment" style="margin-top:16px; font-size:0.95em;">
-            <strong>Fazit:</strong> Texte sind ein fehlerhafter, unvollständiger Spiegel der Wirklichkeit. 
-            Aber in der Masse enthalten sie genug statistische Struktur, damit ein Modell die <b>Muster der Welt</b> lernen kann – 
-            nicht perfekt, aber erstaunlich gut.
+
+        <div class="key-insight fragment" style="margin-top:14px; font-size:0.92em;">
+            <strong>Kernaussage:</strong> Einzelne Texte liegen falsch – aber in der Masse scheint die Wirklichkeit (hoffentlich) durch.
         </div>
     </div>
 </div>
-
 
 <!-- ==================== SLIDE 2: Was ist ein LLM? ==================== -->                                                     
     <div class="slide" data-title="Was ist ein LLM?">                                                                                
