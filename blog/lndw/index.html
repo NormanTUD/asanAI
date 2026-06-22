@@ -428,7 +428,7 @@
             <div class="demo-title">🧩 Dense + ReLU + Dense approximiert jede Funktion</div>
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
                 <label style="font-size:0.85em; font-weight:bold;">Zielfunktion:</label>
-                <select id="nn-target-fn" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;">
+                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;">
                     <option value="sin">sin(x)</option>
                     <option value="quadratic">x²</option>
                     <option value="abs">|x|</option>

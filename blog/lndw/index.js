@@ -3076,3 +3076,7 @@ function loadIntuitionModule() {
     // Start observing everything
     _lazyCreateObserver();
 }
+
+function reset_nn_num_neurons () {
+	$("#nn-num-neurons").val(1).trigger("change");
+}
