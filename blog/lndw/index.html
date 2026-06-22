@@ -194,22 +194,7 @@
             <p class="fragment">Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
         </div>                                                                                                                                        
     </div>                                                                                                                           
-                                                                                                                                     
-    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->                                              
-    <div class="slide" data-title="Autoregressive Schleife">                                                                         
-        <div class="slide-content">                                                                                                  
-            <h2>Die autoregressive Schleife</h2>                                                                                     
-            <div class="formula-box">                                                                                                
-                <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>                                                                                                                                                                                                             
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein}) \rightarrow \text{Drache}$$</div>                                                                                                                                                                                                         
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache}) \rightarrow \text{der}$$</div>        
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der}) \rightarrow \text{fliegen}$$</div>      
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen}) \rightarrow \text{konnte}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>                                                                                                        
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>                                                                                                        
-            </div>                                                                                                                                                                                                            
-        </div>                                                                                                                       
-    </div>                                                                                                                           
+                                                                                                                                    
 
     <!-- ==================== SLIDE 5: Tokenisierung ==================== -->
     <div class="slide" data-title="Tokenisierung">
@@ -234,6 +219,22 @@
             </div>
         </div>
     </div>
+
+    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->                                              
+    <div class="slide" data-title="Autoregressive Schleife">                                                                         
+        <div class="slide-content">                                                                                                  
+            <h2>Die autoregressive Schleife</h2>                                                                                     
+            <div class="formula-box">                                                                                                
+                <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>                                                                                                                                                                                                             
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein}) \rightarrow \text{Drache}$$</div>                                                                                                                                                                                                         
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache}) \rightarrow \text{der}$$</div>        
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der}) \rightarrow \text{fliegen}$$</div>      
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen}) \rightarrow \text{konnte}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>                                                                                                        
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>                                                                                                        
+            </div>                                                                                                                                                                                                            
+        </div>                                                                                                                       
+    </div>       
 
     <!-- ==================== SLIDE 7: Embedding ==================== -->
     <div class="slide" data-title="Embedding">
