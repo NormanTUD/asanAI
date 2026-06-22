@@ -76,7 +76,7 @@ const SunrisePlot = {
             y: ysModel,
             mode: 'lines',
             name: 'Sinus-Modell',
-            line: { color: '#3b82f6', width: 4, shape: 'spline' },
+            line: { color: '#ffea00', width: 4, shape: 'spline' },
             hovertemplate: '%{x:.1f}:00 Uhr<br>Modell: %{y:.1f}°<extra></extra>'
         });
 
