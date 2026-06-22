@@ -431,17 +431,6 @@ const positionalWavesObserver = createLazyRenderObserver(positionalWavesRegistry
 	_execute_positional_waves_render(data.d_model, data.tokens);
 });
 
-function observer_vector_math() {
-    const vmResult = document.getElementById('transformer-vector-math-result');
-    const vmInput  = document.getElementById('transformer-vector-math-input');
-    if (vmResult) vectorMathObserver.observe(vmResult);
-    // Observe the STABLE parent wrapper — it never gets innerHTML'd
-    if (vmInput) {
-        const stableParent = vmInput.closest('div[style*="background"]');
-        if (stableParent) vectorMathObserver.observe(stableParent);
-    }
-}
-
 function _vmProtectInput(fn) {
     const inputEl = document.getElementById('transformer-vector-math-input');
     if (!inputEl) { fn(); return; }
