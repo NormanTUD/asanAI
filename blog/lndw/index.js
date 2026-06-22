@@ -36,7 +36,7 @@ const TokenizerViz = {
         'ung', 'heit', 'keit', 'lich', 'isch', 'bar', 'sam', 'haft',
         'chen', 'lein', 'schaft', 'tum', 'nis', 'sal', 'ig', 'los',
         // Komposita-Bausteine
-        'donau', 'dampf', 'schiff', 'fahrt', 'schifffahrt',
+        'donau', 'dampf', 'schiff', 'fahrt', 'fahrt',
         'gesellschaft', 'haupt', 'stadt', 'bahn', 'hof', 'straße',
         'arbeit', 'geber', 'nehmer', 'platz', 'zeit', 'raum',
         'hand', 'werk', 'zeug', 'bau', 'stein', 'holz', 'wasser',
