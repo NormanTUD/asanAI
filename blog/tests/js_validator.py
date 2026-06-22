@@ -81,7 +81,7 @@ IGNORE_FILENAMES = {
     "echarts-gl.min.js",
     "jquery.js",
     "jquery-3.7.1.min.js",
-    "lndw/jquery.min.js",
+    "jquery.min.js",
     "plotly-2.24.1.min.js",
     "prism.min.js",
     "prism-python.min.js",
