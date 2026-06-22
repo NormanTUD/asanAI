@@ -64,20 +64,40 @@
     <div class="slide-content">
         <h2>Die Wirklichkeit hat mathematische Muster</h2>
         <p style="margin-bottom:10px;">Und diese Muster spiegeln sich in Texten wider – weil Texte versuchen, die Wirklichkeit zu beschreiben.</p>
-        
-        <!-- Step Buttons -->
-        <div style="display:flex; gap:8px; justify-content:center; margin-bottom:12px; flex-wrap:wrap;">
-            <button onclick="SunrisePlot.setStep(0)" id="sun-step-0" style="padding:8px 14px; border-radius:8px; border:2px solid #f59e0b; background:#fffbeb; font-weight:bold; cursor:pointer; font-size:0.85em;">1. Reale Sonne</button>
-            <button onclick="SunrisePlot.setStep(1)" id="sun-step-1" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; font-size:0.85em;">2. + Messwerte</button>
-            <button onclick="SunrisePlot.setStep(2)" id="sun-step-2" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; font-size:0.85em;">3. + Sinus-Modell</button>
-        </div>
 
         <!-- Overlay Container: Bild + Plot exakt übereinander -->
-        <div id="sunrise-overlay-container" style="position:relative; width:100%; max-width:1100px; margin:0 auto; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
-            <!-- Hintergrundbild bestimmt die Größe -->
-            <img id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station – 24 Stunden Polartag" style="width:100%; display:block;">
-            <!-- Plot exakt darüber -->
-            <div id="sunrise-plot" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; mix-blend-mode: multiply;"></div>
+        <div class="fragment" id="sunrise-fragment-1">
+            <div id="sunrise-overlay-container" style="position:relative; width:100%; max-width:1100px; margin:0 auto; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+                <!-- Hintergrundbild bestimmt die Größe -->
+                <img id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station – 24 Stunden Polartag" style="width:100%; display:block;">
+                <!-- Plot exakt darüber (nur Sinus) -->
+                <div id="sunrise-plot" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; mix-blend-mode: multiply; opacity:0; transition: opacity 0.5s ease;"></div>
+            </div>
+        </div>
+
+        <!-- Sinus-Overlay Fragment -->
+        <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus">
+        </div>
+
+        <!-- Sliders: vshift, phase, stretch -->
+        <div id="sunrise-sliders" style="margin-top:14px; max-width:900px; margin-left:auto; margin-right:auto; opacity:0; transition: opacity 0.4s ease; pointer-events:none;">
+            <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <label style="font-size:0.82em; font-weight:bold; color:#475569;">↕ Vertikal:</label>
+                    <input type="range" id="sun-vshift-slider" min="-15" max="25" step="0.5" value="10.5" style="width:120px; accent-color:#3b82f6;" oninput="SunrisePlot.render()">
+                    <span id="sun-vshift-val" style="font-size:0.82em; font-weight:bold; color:#3b82f6; min-width:40px;">10.50</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <label style="font-size:0.82em; font-weight:bold; color:#475569;">↔ Phase:</label>
+                    <input type="range" id="sun-phase-slider" min="0" max="12" step="0.1" value="5.6" style="width:120px; accent-color:#f59e0b;" oninput="SunrisePlot.render()">
+                    <span id="sun-phase-val" style="font-size:0.82em; font-weight:bold; color:#f59e0b; min-width:40px;">5.60</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <label style="font-size:0.82em; font-weight:bold; color:#475569;">↔ Stretch:</label>
+                    <input type="range" id="sun-stretch-slider" min="12" max="48" step="0.5" value="24" style="width:120px; accent-color:#10b981;" oninput="SunrisePlot.render()">
+                    <span id="sun-stretch-val" style="font-size:0.82em; font-weight:bold; color:#10b981; min-width:40px;">24.0</span>
+                </div>
+            </div>
         </div>
 
         <p style="font-size:0.75em; color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn über Concordia (75°S, Antarktis) über 24 Stunden – 24 Aufnahmen im Stundenabstand, zusammengefügt zu einem Panorama.</p>
