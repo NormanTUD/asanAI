@@ -21,40 +21,59 @@ const Presentation = (() => {
     }
 
 function next() {
-    // First, reveal next fragment on current slide
     const fragments = getFragments(currentSlide);
     const visibleCount = fragmentIndex[currentSlide];
     if (visibleCount < fragments.length) {
         const frag = fragments[visibleCount];
         frag.classList.add('visible');
         fragmentIndex[currentSlide]++;
+
         // Trigger sunrise sinus overlay
         if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
             SunrisePlot.showSinus();
         }
+
+        // === NEW: Knowledge step handling ===
+        if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
+            const step = parseInt(frag.getAttribute('data-knowledge-step'));
+            KnowledgeViz.setStep(step);
+            // Hide all previous knowledge fragments visually (exclusive mode)
+            fragments.forEach((f, idx) => {
+                if (f.getAttribute('data-fragment-action') === 'knowledge-step' && idx < visibleCount) {
+                    // Keep .visible for fragment counting, but the viz handles exclusivity
+                }
+            });
+        }
+
         return;
     }
-    // No more fragments, go to next slide
     if (currentSlide < slides.length - 1) {
         goTo(currentSlide + 1);
     }
 }
 
 function prev() {
-    // First, hide last visible fragment on current slide
     const fragments = getFragments(currentSlide);
     const visibleCount = fragmentIndex[currentSlide];
     if (visibleCount > 0) {
         const frag = fragments[visibleCount - 1];
         frag.classList.remove('visible');
         fragmentIndex[currentSlide]--;
-        // Hide sunrise sinus overlay
+
         if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
             SunrisePlot.hideSinus();
         }
+
+        // === NEW: Knowledge step – go back to previous step ===
+        if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
+            const step = parseInt(frag.getAttribute('data-knowledge-step'));
+            if (step > 0) {
+                KnowledgeViz.setStep(step - 1);
+            }
+        }
+
         return;
     }
-    // No fragments to hide, go to previous slide
     if (currentSlide > 0) {
         goTo(currentSlide - 1, true);
     }

@@ -67,33 +67,29 @@ const KnowledgeViz = {
         this.setStep(0);
     },
 
-    setStep: function(step) {
-        this.currentStep = step;
-        this.animProgress = 0;
-        this.animating = true;
+	setStep: function(step) {
+		this.currentStep = step;
+		this.animProgress = 0;
+		this.animating = true;
 
-        // Update button styles
-        for (let i = 0; i <= 3; i++) {
-            const btn = document.getElementById(`know-step${i}`);
-            if (btn) {
-                btn.style.borderColor = i === step ? '#3b82f6' : '#cbd5e1';
-                btn.style.background = i === step ? '#eff6ff' : '#fff';
-                btn.style.borderWidth = i === step ? '2px' : '1px';
-            }
-        }
+		// Update indicator styles (replaces old button logic)
+		document.querySelectorAll('.know-indicator').forEach(el => {
+			const s = parseInt(el.getAttribute('data-step'));
+			el.classList.toggle('active', s === step);
+		});
 
-        // Update explanation
-        const explanations = [
-            '🗺️ <b>Schritt 1: Embedding-Richtung.</b> "Paris" und "Frankreich" sind Punkte im Raum. Der Vektor von Frankreich→Paris zeigt in <b>dieselbe Richtung</b> wie Deutschland→Berlin. Das Modell hat gelernt: Es gibt eine "Hauptstadt-von"-Richtung. Das Wissen steckt in der <b>geometrischen Beziehung</b> der Punkte.',
-            '👁️ <b>Schritt 2: Attention sammelt Kontext.</b> Wenn im Text steht "Die Hauptstadt von Frankreich ist ___", schaut das letzte Token zurück auf "Hauptstadt" und "Frankreich". Attention <b>kopiert diese Information</b> in den aktuellen Vektor. Jetzt trägt der Punkt die Frage: "Welche Hauptstadt? Von Frankreich!"',
-            '🔥 <b>Schritt 3: FFN-Neuronen feuern.</b> Der kontextualisierte Vektor fließt durch tausende "Detektor-Neuronen". Die meisten bleiben still. Aber einige erkennen das Muster "Hauptstadt + Frankreich" und <b>schieben den Punkt in Richtung "Paris"</b>. Das Wissen steckt in den Gewichten dieser Neuronen!',
-            '🎯 <b>Gesamtbild:</b> Es gibt keine Tabelle "Paris = Hauptstadt von Frankreich". Stattdessen: (1) Embedding kodiert Beziehungen als Richtungen, (2) Attention sammelt den Kontext, (3) FFN-Neuronen erkennen das Muster und verschieben den Punkt. Das Wissen ist <b>verteilt über Millionen von Gewichten</b>.'
-        ];
-        const el = document.getElementById('knowledge-explanation');
-        if (el) el.innerHTML = explanations[step];
+		// Update explanation
+		const explanations = [
+			'🧭️ <b>Schritt 1: Embedding-Richtung.</b> ...',
+			'👁️ <b>Schritt 2: Attention sammelt Kontext.</b> ...',
+			'🔥 <b>Schritt 3: FFN-Neuronen feuern.</b> ...',
+			'🎯 <b>Gesamtbild:</b> ...'
+		];
+		const el = document.getElementById('knowledge-explanation');
+		if (el) el.innerHTML = explanations[step];
 
-        this.startAnimation();
-    },
+		this.startAnimation();
+	},
 
     startAnimation: function() {
         if (this.animFrame) cancelAnimationFrame(this.animFrame);

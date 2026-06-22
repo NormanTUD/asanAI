@@ -270,3 +270,21 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	50%      { transform: scale(1.05) rotate(-2deg); }
 	75%      { transform: scale(1.12) rotate(2deg); }
 }
+
+.know-indicator {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: #64748b;
+    transition: all 0.3s ease;
+}
+
+.know-indicator.active {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1e40af;
+    border-width: 2px;
+}
