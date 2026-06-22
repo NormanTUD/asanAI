@@ -246,7 +246,7 @@ const KnowledgeViz = {
         if (t > 0.8) {
             const alpha = Math.min(1, (t - 0.8) / 0.2);
             ctx.globalAlpha = alpha;
-            const boxX = padL + 0.62 * plotW;
+            const boxX = padL + 0.62 * plotW + 50;
             const boxY = padT + 0.1 * plotH;
             const boxW = 260;
             const boxH = 100;
