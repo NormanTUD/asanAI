@@ -193,6 +193,69 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Halluzinationen ==================== -->
+<div class="slide" data-title="Halluzinationen">
+    <div class="slide-content">
+        <h2>Halluzinationen — Wenn die KI „lügt"</h2>
+        <p>Ein LLM <b>muss</b> immer ein nächstes Wort produzieren — es gibt kein internes Signal für „Ich weiß es nicht".</p>
+
+        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
+            <!-- Links: Mechanismus -->
+            <div style="flex:1; min-width:300px; padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
+                <div style="font-size:1.4em; margin-bottom:8px;">🎰</div>
+                <div style="font-weight:bold; font-size:1.1em; color:#991b1b; margin-bottom:10px;">Warum passiert das?</div>
+                <ul style="font-size:0.85em; color:#7f1d1d; line-height:1.9; margin-left:16px; padding:0;">
+                    <li>Das Modell sagt immer das <b>statistisch plausibelste</b> nächste Wort</li>
+                    <li>Es hat <b>kein Weltmodell</b>, das Fakten „nachschlägt"</li>
+                    <li>Wenn die echte Antwort in den Trainingsdaten selten oder gar nicht vorkam → das Modell <b>interpoliert</b></li>
+                    <li>Das Ergebnis <em>klingt</em> perfekt — ist aber frei erfunden</li>
+                </ul>
+            </div>
+
+            <!-- Rechts: Beispiel -->
+            <div style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
+                <div style="font-size:1.4em; margin-bottom:8px;">💬</div>
+                <div style="font-weight:bold; font-size:1.1em; color:#334155; margin-bottom:10px;">Typisches Beispiel</div>
+                <div style="padding:14px; background:#fff; border-radius:10px; border:1px solid #e2e8f0; font-family:monospace; font-size:0.82em; line-height:1.8;">
+                    <span style="color:#3b82f6; font-weight:bold;">User:</span> Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.<br><br>
+                    <span style="color:#10b981; font-weight:bold;">KI:</span> 1. „Quantenwelten" (2008)<br>
+                    2. „Die Ordnung der Teilchen" (2012)<br>
+                    3. „Verschränkung und Realität" (2015)<br><br>
+                    <span style="color:#ef4444; font-weight:bold;">Realität:</span> ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
+                </div>
+            </div>
+        </div>
+
+        <div class="fragment" style="margin-top:16px; display:flex; gap:16px; flex-wrap:wrap; align-items:stretch;">
+            <!-- Analogie -->
+            <div style="flex:1; min-width:250px; padding:16px; background:#fffbeb; border-radius:12px; border:1px solid #fde68a;">
+                <div style="font-weight:bold; color:#92400e; margin-bottom:6px;">🧠 Analogie</div>
+                <p style="font-size:0.85em; color:#78350f; line-height:1.6; margin:0;">
+                    Stell dir vor, jemand hat <b>tausende Kochbücher gelesen</b>, aber nie gekocht.
+                    Wenn du nach einem Rezept für „Marskartoffel-Soufflé" fragst, erfindet er eins —
+                    es <em>klingt</em> wie ein Rezept, <em>liest sich</em> wie ein Rezept, aber es wurde nie getestet.
+                </p>
+            </div>
+            <!-- Wann besonders gefährlich -->
+            <div style="flex:1; min-width:250px; padding:16px; background:#faf5ff; border-radius:12px; border:1px solid #e9d5ff;">
+                <div style="font-weight:bold; color:#6b21a8; margin-bottom:6px;">⚠️ Besonders gefährlich bei:</div>
+                <ul style="font-size:0.85em; color:#581c87; line-height:1.8; margin-left:16px; padding:0;">
+                    <li>Konkreten Fakten (Jahreszahlen, Namen, Zitate)</li>
+                    <li>Nischenthemen mit wenig Trainingsdaten</li>
+                    <li>Rechtlichen oder medizinischen Aussagen</li>
+                    <li>Quellenangaben und Referenzen</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:18px;">
+            <strong>Merke:</strong> Eine Halluzination ist kein „Bug" — sie ist eine <b>direkte Konsequenz der Architektur</b>.
+            Das Modell optimiert auf „klingt plausibel", nicht auf „ist wahr".
+            <b>Immer kritisch prüfen</b>, besonders wenn es überzeugend klingt.
+        </div>
+    </div>
+</div>
+
     <!-- ==================== SLIDE 5: Tokenisierung ==================== -->
     <div class="slide" data-title="Tokenisierung">
         <div class="slide-content">
