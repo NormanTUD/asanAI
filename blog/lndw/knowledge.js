@@ -266,7 +266,7 @@ const KnowledgeViz = {
             ctx.font = 'bold 12px system-ui';
             ctx.fillStyle = '#92400e';
             ctx.textAlign = 'left';
-            ctx.fillText('💡 Kernidee:', boxX + 14, boxY + 22);
+            ctx.fillText('💡 Idee:', boxX + 14, boxY + 22);
             ctx.font = '11px system-ui';
             ctx.fillText('Alle Pfeile zeigen in dieselbe', boxX + 14, boxY + 42);
             ctx.fillText('Richtung! Das Wissen "X ist', boxX + 14, boxY + 58);
