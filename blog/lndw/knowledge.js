@@ -83,7 +83,7 @@ const KnowledgeViz = {
 			'🧭️ <b>Schritt 1: Embedding-Richtung.</b> ...',
 			'👁️ <b>Schritt 2: Attention sammelt Kontext.</b> ...',
 			'🔥 <b>Schritt 3: FFN-Neuronen feuern.</b> ...',
-			'🎯 <b>Gesamtbild:</b> ...'
+			'🎯 <b>Gesamtbild:</b> Am Ende wird das (hoffentlich) nächste sinnvolle Wort ausgewählt'
 		];
 		const el = document.getElementById('knowledge-explanation');
 		if (el) el.innerHTML = explanations[step];
