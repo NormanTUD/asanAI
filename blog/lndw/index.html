@@ -687,20 +687,52 @@
     </div>
 </div>
 
-<!-- ============ SLIDE OVERVIEW ============ -->
-<div id="slide-overview">
-    <div class="overview-grid" id="overview-grid"></div>
-</div>
+<!-- ==================== SLIDE: Pre-Training & Fine-Tuning ==================== -->
+<div class="slide" data-title="Pre-Training & Fine-Tuning">
+    <div class="slide-content">
+        <h2>Vom Textberg zum Assistenten</h2>
+        <p>Das Training eines LLM passiert in <b>zwei Phasen</b>:</p>
 
-<!-- ============ NAVIGATION BAR ============ -->
-<div id="nav-bar">
-    <button id="btn-prev" onclick="Presentation.prev()">← Zurück</button>
-    <div class="nav-center">
-        <span id="slide-counter">1 / 18</span>
-        <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2em; cursor:pointer;" title="Übersicht (O)">▦</button>
-        <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2em; cursor:pointer;" title="Vollbild (F)">⛶</button>
+        <div style="display:flex; gap:24px; margin:24px 0; flex-wrap:wrap; align-items:stretch;">
+            <!-- Phase 1: Pre-Training -->
+            <div style="flex:1; min-width:300px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
+                <div style="font-size:1.4em; margin-bottom:8px;">📚</div>
+                <div style="font-weight:bold; font-size:1.1em; color:#1e40af; margin-bottom:10px;">Phase 1: Pre-Training</div>
+                <ul style="font-size:0.85em; color:#1e3a5f; line-height:1.9; margin-left:16px; padding:0;">
+                    <li><b>Daten:</b> Wikipedia, Common Crawl (das gesamte öffentliche Internet), Bücher, Code, …</li>
+                    <li><b>Umfang:</b> Billionen von Tokens</li>
+                    <li><b>Ziel:</b> Nächstes Wort vorhersagen</li>
+                    <li><b>Ergebnis:</b> Das Netz „weiß" faktisch alles, was in den Texten steht</li>
+                </ul>
+            </div>
+
+            <!-- Pfeil -->
+            <div style="display:flex; align-items:center; font-size:2em; color:#94a3b8;">→</div>
+
+            <!-- Phase 2: Fine-Tuning -->
+            <div style="flex:1; min-width:300px; padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff;">
+                <div style="font-size:1.4em; margin-bottom:8px;">💬</div>
+                <div style="font-weight:bold; font-size:1.1em; color:#6b21a8; margin-bottom:10px;">Phase 2: Fine-Tuning (Instruction Tuning)</div>
+                <ul style="font-size:0.85em; color:#581c87; line-height:1.9; margin-left:16px; padding:0;">
+                    <li><b>Daten:</b> Zehntausende bis Hunderttausende konkrete Frage-Antwort-Paare</li>
+                    <li><b>Umfang:</b> Winzig im Vergleich (aber hochwertig & kuratiert)</li>
+                    <li><b>Ziel:</b> Lerne das <em>Format</em> — wie Fragen aussehen und wie Antworten strukturiert sind</li>
+                    <li><b>Ergebnis:</b> Das Netz kann sein Wissen nun als hilfreicher Assistent abrufen</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="key-insight fragment">
+            <strong>Die Kernidee:</strong> Nach Phase 1 hat das Modell das Wissen — aber es „redet" nicht mit dir.
+            Phase 2 bringt ihm bei, <b>wie ein Gespräch aussieht</b>: Frage → Antwort.
+            Die Antworten „erfindet" es nicht neu — es weiß sie bereits aus den Milliarden Texten.
+        </div>
+
+        <div class="fragment" style="margin-top:16px; padding:12px 18px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca; font-size:0.88em; color:#991b1b; text-align:center;">
+            ⚠️ <b>Aber:</b> Wer die Trainingsdaten auswählt, bestimmt, was das Modell „weiß" und was nicht.
+            Diese Vorauswahl ist <b>nie neutral</b> — sie spiegelt Interessen, Werte und politische Entscheidungen der Betreiber wider.
+        </div>
     </div>
-    <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
 </div>
 
 <!-- ==================== SLIDE: Versteht die KI? (Schlussfolie) ==================== -->
@@ -758,6 +790,22 @@
         </div>
     </div>
 </div><!-- end #presentation -->
+
+<!-- ============ SLIDE OVERVIEW ============ -->
+<div id="slide-overview">
+    <div class="overview-grid" id="overview-grid"></div>
+</div>
+
+<!-- ============ NAVIGATION BAR ============ -->
+<div id="nav-bar">
+    <button id="btn-prev" onclick="Presentation.prev()">← Zurück</button>
+    <div class="nav-center">
+        <span id="slide-counter">1 / 18</span>
+        <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2em; cursor:pointer;" title="Übersicht (O)">▦</button>
+        <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2em; cursor:pointer;" title="Vollbild (F)">⛶</button>
+    </div>
+    <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
+</div>
 
 <!-- ============ SCRIPTS ============ -->
 <script src="index.js"></script>
