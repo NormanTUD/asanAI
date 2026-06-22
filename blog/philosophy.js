@@ -872,47 +872,6 @@ const SheafViz = (() => {
 		updateUI_germs();
 	}
 
-	function formStalks() {
-		if (!cam || !gStalk) {
-			info('⚠️ Visualization is still loading. Please wait a moment…');
-			return;
-		}
-		if (ungroupedGerms.length === 0) {
-			info('⚠️ Place some germs first with <strong>🌱 Place Germs</strong>.');
-			return;
-		}
-
-		for (const g of ungroupedGerms) {
-			g.id = ms.length;
-			g.dotIds.forEach(did => {
-				const dot = dotById(did);
-				if (dot) {
-					dot.owners.delete(g.id);
-					dot.owners.add(ms.length);
-				}
-			});
-			ms.push(g);
-		}
-
-		ms.forEach((m, idx) => {
-			m.id = idx;
-			m.dotIds.forEach(did => {
-				const dot = dotById(did);
-				if (dot) dot.owners.add(idx);
-			});
-		});
-
-		ungroupedGerms = [];
-		stalksFormed = true;
-
-		rebuildStalkBackgrounds();
-
-		const btnStalks = document.getElementById('btn-stalks');
-		if (btnStalks) btnStalks.disabled = true;
-
-		updateUI();
-	}
-
 	function showPresheaf() {
 		if (!cam || !gStalk) { info('⚠️ Still loading…'); return; }
 		if (ms.length < 2) { info('⚠️ Form at least <strong>2</strong> stalks first.'); return; }
