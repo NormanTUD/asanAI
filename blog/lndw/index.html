@@ -74,15 +74,15 @@
         <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus"></div>
         <p style="font-size:0.75em; color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn über Concordia (75°S, Antarktis) über 24 Stunden an einem Polartag – 24 Aufnahmen im Stundenabstand, zusammengefügt zu einem Panorama.</p>
 
-        <!-- Sinus-Formel -->
-        <div class="fragment" style="margin-top:16px;">
-            <div class="formula-box" style="max-width:900px; margin-left:auto; margin-right:auto;">
-                <div class="math-display">$$h(t) = A \cdot \sin\left(\frac{2\pi}{T}(t + c)\right) + d$$</div>
-                <div style="font-size:0.8em; color:#64748b; margin-top:8px; text-align:center;">
-                    <b>h(t)</b> = Sonnenhöhe in Grad &nbsp;|&nbsp; <b>A</b> = Amplitude &nbsp;|&nbsp; <b>T</b> = Periode (24h) &nbsp;|&nbsp; <b>c</b> = Phasenverschiebung &nbsp;|&nbsp; <b>d</b> = vertikale Verschiebung
-                </div>
-            </div>
-        </div>
+	<!-- Sinus-Formel (vereinfacht) -->
+	<div class="fragment" style="margin-top:16px;">
+	    <div class="formula-box" style="max-width:900px; margin-left:auto; margin-right:auto;">
+		<div class="math-display">$$h(t) = A \cdot \sin\!\left(\frac{t}{24} \cdot 2\pi\right) + d$$</div>
+		<div style="font-size:0.82em; color:#64748b; margin-top:10px; text-align:center;">
+		    <b>h(t)</b> = Sonnenhöhe &nbsp;|&nbsp; <b>t</b> = Uhrzeit &nbsp;|&nbsp; <b>A</b> = Schwankung &nbsp;|&nbsp; <b>d</b> = Durchschnittshöhe
+		</div>
+	    </div>
+	</div>
 
         <div class="fragment" style="margin-top:12px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; font-size:0.82em; color:#92400e; max-width:900px; margin-left:auto; margin-right:auto;">
             <b>Der Zusammenhang:</b> In Texten steht "Um Mitternacht steht die Sonne nur 10° über dem Horizont" und "Mittags erreicht sie fast 40°".
