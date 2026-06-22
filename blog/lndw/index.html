@@ -599,24 +599,6 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Demo Token Prediction mit NN ==================== -->
-<div class="slide" data-title="NN → Token">
-    <div class="slide-content">
-        <h2>Vom Netz zum nächsten Wort</h2>
-        <div class="demo-box">
-            <div class="demo-title">🎯 Schrittweise: Vektor → FFN → Scores → Softmax → Token</div>
-            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;">
-                <button onclick="NNTokenViz.setStep(0)" id="nn-tok-step0" style="padding:8px 14px; border-radius:8px; border:2px solid #3b82f6; background:#eff6ff; font-weight:bold; cursor:pointer;">1. Input-Vektor</button>
-                <button onclick="NNTokenViz.setStep(1)" id="nn-tok-step1" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">2. Dense₁ + ReLU</button>
-                <button onclick="NNTokenViz.setStep(2)" id="nn-tok-step2" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">3. Dense₂ (Scores)</button>
-                <button onclick="NNTokenViz.setStep(3)" id="nn-tok-step3" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">4. Softmax → Token</button>
-            </div>
-            <div id="nn-token-viz" style="min-height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:20px;"></div>
-            <div id="nn-token-explanation" style="margin-top:10px; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:0.9em; color:#334155; text-align:center;"></div>
-        </div>
-    </div>
-</div>
-
     <!-- ==================== SLIDE 14: Residual Stream Demo ==================== -->
     <div class="slide" data-title="Residual Stream">
         <div class="slide-content">
