@@ -563,10 +563,6 @@ const KnowledgeViz = {
             const activeCount = this.neurons.filter(n => n.active).length;
             const totalCount = this.neurons.length;
 
-            ctx.font = 'bold 13px system-ui';
-            ctx.fillStyle = '#92400e';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${activeCount} von ${totalCount} Neuronen feuern → Verschiebung!`, (neuronStartX + neuronEndX) / 2, H - 30);
             ctx.globalAlpha = 1;
         }
     },
