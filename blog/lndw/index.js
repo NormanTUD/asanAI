@@ -22,10 +22,7 @@ const TokenizerViz = {
         '#14b8a6', '#e11d48', '#0ea5e9', '#a855f7', '#d946ef'
     ],
 
-    // ─── Bekannte Subwords (simuliert ein vortrainiertes BPE-Vocab) ───
-    // Diese werden beim Longest-Match bevorzugt.
-    // Aber: Alles was NICHT hier drin ist, wird trotzdem per BPE zerlegt!
-    knownSubwords: null, // wird in init() als Set erstellt
+    knownSubwords: null,
 
     _rawSubwords: [
         // Deutsche Morpheme — Präfixe
@@ -36,7 +33,7 @@ const TokenizerViz = {
         'ung', 'heit', 'keit', 'lich', 'isch', 'bar', 'sam', 'haft',
         'chen', 'lein', 'schaft', 'tum', 'nis', 'sal', 'ig', 'los',
         // Komposita-Bausteine
-        'donau', 'dampf', 'schiff', 'fahrt', 'fahrt',
+        'donau', 'dampf', 'schiff', 'fahrt',
         'gesellschaft', 'haupt', 'stadt', 'bahn', 'hof', 'straße',
         'arbeit', 'geber', 'nehmer', 'platz', 'zeit', 'raum',
         'hand', 'werk', 'zeug', 'bau', 'stein', 'holz', 'wasser',
@@ -51,7 +48,7 @@ const TokenizerViz = {
         'wort', 'satz', 'text', 'buch', 'brief', 'bild', 'lied',
         'spiel', 'leben', 'liebe', 'freund', 'feind', 'kraft',
         'elektr', 'izität', 'kapitän', 'betrieb', 'beamte',
-        // Ganze kurze Wörter (häufig genug für eigenes Token)
+        // Ganze kurze Wörter
         'ist', 'und', 'oder', 'aber', 'weil', 'dass', 'wenn', 'als',
         'der', 'die', 'das', 'den', 'dem', 'des', 'ein', 'eine', 'einer',
         'ich', 'du', 'wir', 'ihr', 'sie', 'es', 'er', 'man',
@@ -78,12 +75,10 @@ const TokenizerViz = {
     maxSubwordLen: 14,
     minSubwordLen: 2,
 
-    // ─── Initialisierung ───
     init: function() {
         this.knownSubwords = new Set(this._rawSubwords);
     },
 
-    // ─── Deterministischer Hash → Pseudo-Vocab-ID ───
     _hashID: function(str) {
         let hash = 5381;
         for (let i = 0; i < str.length; i++) {
@@ -92,21 +87,18 @@ const TokenizerViz = {
         return hash % 50000;
     },
 
-    // ─── Kernalgorithmus: Greedy Longest Match + BPE Fallback ───
     segmentWord: function(word) {
         if (!this.knownSubwords) this.init();
         word = word.toLowerCase();
 
-        // Schritt 1: Versuche Greedy Longest Match
         const segments = [];
         let i = 0;
-        let unknownBuffer = ''; // sammelt Zeichen die kein Match haben
+        let unknownBuffer = '';
 
         while (i < word.length) {
             let bestLen = 0;
             let bestSegment = '';
 
-            // Suche längstes bekanntes Subword ab Position i
             for (let len = Math.min(this.maxSubwordLen, word.length - i); len >= this.minSubwordLen; len--) {
                 const candidate = word.substring(i, i + len);
                 if (this.knownSubwords.has(candidate)) {
@@ -117,9 +109,7 @@ const TokenizerViz = {
             }
 
             if (bestLen > 0) {
-                // Falls wir unbekannte Zeichen gesammelt haben, erst die ausgeben
                 if (unknownBuffer.length > 0) {
-                    // BPE-Fallback auf den unbekannten Buffer
                     const fallbackTokens = this._bpeFallback(unknownBuffer);
                     segments.push(...fallbackTokens);
                     unknownBuffer = '';
@@ -127,13 +117,11 @@ const TokenizerViz = {
                 segments.push(bestSegment);
                 i += bestLen;
             } else {
-                // Kein Match → Zeichen in Buffer sammeln
                 unknownBuffer += word[i];
                 i++;
             }
         }
 
-        // Rest des Buffers verarbeiten
         if (unknownBuffer.length > 0) {
             const fallbackTokens = this._bpeFallback(unknownBuffer);
             segments.push(...fallbackTokens);
@@ -142,8 +130,6 @@ const TokenizerViz = {
         return segments;
     },
 
-    // ─── BPE Fallback für unbekannte Zeichenfolgen ───
-    // Mergt häufige Buchstabenpaare basierend auf deutschen/englischen Bigramm-Häufigkeiten
     _commonPairs: new Set([
         'th', 'he', 'in', 'er', 'an', 'en', 'on', 'at', 'es', 'or',
         'te', 'of', 'ed', 'is', 'it', 'al', 'ar', 'st', 'to', 'nt',
@@ -155,21 +141,17 @@ const TokenizerViz = {
     _bpeFallback: function(str) {
         if (str.length <= 2) return [str];
 
-        // Starte mit Einzelzeichen
         let tokens = str.split('');
 
-        // Iterativ die häufigsten Paare mergen (max 20 Runden)
         for (let round = 0; round < 20 && tokens.length > 1; round++) {
             let bestIdx = -1;
             let bestScore = -1;
 
-            // Finde das "beste" Paar (basierend auf Häufigkeitstabelle)
             for (let i = 0; i < tokens.length - 1; i++) {
                 const pair = tokens[i] + tokens[i + 1];
-                // Score: bekanntes Paar = 10, sonst = Länge (längere Merges bevorzugen)
                 let score = tokens[i].length + tokens[i + 1].length;
                 if (this._commonPairs.has(pair)) score += 10;
-                if (this.knownSubwords.has(pair)) score += 100; // Jackpot!
+                if (this.knownSubwords.has(pair)) score += 100;
 
                 if (score > bestScore) {
                     bestScore = score;
@@ -181,31 +163,59 @@ const TokenizerViz = {
 
             const merged = tokens[bestIdx] + tokens[bestIdx + 1];
 
-            // Wenn der Merge ein bekanntes Subword ergibt → sofort nehmen
             if (this.knownSubwords.has(merged)) {
                 tokens = [...tokens.slice(0, bestIdx), merged, ...tokens.slice(bestIdx + 2)];
                 continue;
             }
 
-            // Sonst nur mergen wenn das Paar "häufig" ist oder wir noch sehr fragmentiert sind
             if (this._commonPairs.has(tokens[bestIdx] + tokens[bestIdx + 1]) || tokens.length > 4) {
                 tokens = [...tokens.slice(0, bestIdx), merged, ...tokens.slice(bestIdx + 2)];
             } else {
-                break; // Keine sinnvollen Merges mehr
+                break;
             }
         }
 
         return tokens;
     },
 
-    // ─── Hauptfunktion: Text → Tokens ───
+    // ——— Hauptfunktion: Text → Tokens (MIT Whitespace-Support) ———
     tokenize: function(text) {
         if (!this.knownSubwords) this.init();
 
-        const rawWords = text.split(/\s+/).filter(w => w.length > 0);
+        // Split mit Capture-Group: Whitespace bleibt als eigenes Element erhalten
+        const parts = text.split(/(\s+)/).filter(p => p.length > 0);
         const allTokens = [];
+        let wordIdx = 0;
 
-        rawWords.forEach((rawWord, wordIdx) => {
+        parts.forEach((part) => {
+            // Prüfe ob es ein Whitespace-Segment ist
+            if (/^\s+$/.test(part)) {
+                const displayText = part
+                    .replace(/ /g, '␣')
+                    .replace(/\t/g, '⇥')
+                    .replace(/\n/g, '↵')
+                    .replace(/\r/g, '⏎');
+
+                allTokens.push({
+                    text: part,
+                    displayText: displayText,
+                    id: this._hashID(part),
+                    isSubword: false,
+                    originalWord: part,
+                    displayOriginal: displayText,
+                    splitIndex: 0,
+                    splitTotal: 1,
+                    wordIndex: wordIdx,
+                    isPunct: false,
+                    isWhitespace: true
+                });
+                wordIdx++;
+                return;
+            }
+
+            // Normales Wort verarbeiten
+            const rawWord = part;
+
             // Satzzeichen abtrennen
             let word = rawWord;
             let punctBefore = '';
@@ -228,23 +238,23 @@ const TokenizerViz = {
                     text: punctBefore, displayText: punctBefore,
                     id: this._hashID(punctBefore), isSubword: false,
                     originalWord: rawWord, displayOriginal: rawWord,
-                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: true
+                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: true,
+                    isWhitespace: false
                 });
             }
 
             // Wort segmentieren
             const lowerWord = word.toLowerCase();
 
-            // Prüfe ob das ganze Wort bekannt ist
             if (this.knownSubwords.has(lowerWord)) {
                 allTokens.push({
                     text: lowerWord, displayText: word.toLowerCase(),
                     id: this._hashID(lowerWord), isSubword: false,
                     originalWord: rawWord, displayOriginal: rawWord,
-                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: false
+                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: false,
+                    isWhitespace: false
                 });
             } else {
-                // Segmentieren
                 const segments = this.segmentWord(word);
                 segments.forEach((seg, segIdx) => {
                     allTokens.push({
@@ -257,7 +267,8 @@ const TokenizerViz = {
                         splitIndex: segIdx,
                         splitTotal: segments.length + (punctAfter ? 1 : 0),
                         wordIndex: wordIdx,
-                        isPunct: false
+                        isPunct: false,
+                        isWhitespace: false
                     });
                 });
             }
@@ -268,15 +279,18 @@ const TokenizerViz = {
                     text: punctAfter, displayText: punctAfter,
                     id: this._hashID(punctAfter), isSubword: false,
                     originalWord: rawWord, displayOriginal: rawWord,
-                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: true
+                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: true,
+                    isWhitespace: false
                 });
             }
+
+            wordIdx++;
         });
 
         return allTokens;
     },
 
-    // ─── Rendering ───
+    // ——— Rendering ———
     render: function() {
         const input = document.getElementById('tokenizer-input');
         const outputDiv = document.getElementById('tokenizer-output');
@@ -286,7 +300,7 @@ const TokenizerViz = {
         const text = input.value || 'Donaudampfschifffahrt ist ein langes Wort';
         const tokens = this.tokenize(text);
 
-        // ─── Token-Chips ───
+        // Token-Chips
         let html = '<div style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; min-height:60px; align-items:flex-start;">';
 
         let currentWordIdx = -1;
@@ -297,6 +311,28 @@ const TokenizerViz = {
                 currentWordIdx = token.wordIndex;
                 colorIdx++;
             }
+
+            // Whitespace-Token speziell darstellen
+            if (token.isWhitespace) {
+                html += `
+                    <div class="token-chip" style="
+                        display:inline-flex; flex-direction:column; align-items:center;
+                        padding:8px 10px; background:#f1f5f9; border-radius:8px;
+                        border:1px dashed #94a3b8;
+                        box-shadow:0 1px 2px rgba(0,0,0,0.05);
+                        animation: tokenAppear 0.3s ease-out ${i * 0.05}s both;
+                        cursor:default; font-family:monospace;
+                        transition: transform 0.15s;
+                    " onmouseover="this.style.transform='translateY(-3px)'"
+                      onmouseout="this.style.transform='translateY(0)'"
+                      title="Whitespace: ${token.text.length} Zeichen">
+                        <span style="font-weight:bold; font-size:1.05em; color:#64748b;">${token.displayText}</span>
+                        <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
+                        <span style="font-size:0.6em; color:#94a3b8;">ws</span>
+                    </div>`;
+                return;
+            }
+
             const color = this.tokenColors[colorIdx % this.tokenColors.length];
             const isSplit = token.splitTotal > 1 && !token.isPunct;
             const isSubword = token.isSubword;
@@ -321,13 +357,13 @@ const TokenizerViz = {
         });
         html += '</div>';
 
-        // ─── Zerlegungsanzeige ───
+        // Zerlegungsanzeige
         const compoundWords = [];
         const seen = new Set();
         tokens.forEach(t => {
-            if (t.splitTotal > 1 && !seen.has(t.originalWord) && !t.isPunct) {
+            if (t.splitTotal > 1 && !seen.has(t.originalWord) && !t.isPunct && !t.isWhitespace) {
                 seen.add(t.originalWord);
-                const parts = tokens.filter(tok => tok.originalWord === t.originalWord && !tok.isPunct);
+                const parts = tokens.filter(tok => tok.originalWord === t.originalWord && !tok.isPunct && !tok.isWhitespace);
                 if (parts.length > 1) {
                     compoundWords.push({ word: t.displayOriginal, parts: parts.map(p => p.displayText) });
                 }
@@ -355,14 +391,16 @@ const TokenizerViz = {
 
         outputDiv.innerHTML = html;
 
-        // ─── Stats ───
+        // Stats
         if (statsDiv) {
             const words = text.split(/\s+/).filter(w => w.length > 0);
             const splitWordCount = compoundWords.length;
+            const wsTokenCount = tokens.filter(t => t.isWhitespace).length;
             statsDiv.innerHTML = `
                 <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; font-size:0.85em; color:#475569;">
                     <span><b>${tokens.length}</b> tokens</span>
                     <span><b>${words.length}</b> Wörter</span>
+                    <span><b>${wsTokenCount}</b> Whitespace-Tokens</span>
                     <span><b>${splitWordCount}</b> davon in Subwords zerlegt</span>
                 </div>
                 <div style="margin-top:6px; font-size:0.72em; color:#94a3b8; text-align:center;">
