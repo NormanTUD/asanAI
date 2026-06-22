@@ -105,7 +105,7 @@ const SunrisePlot = {
                 tickfont: { color: 'rgba(255,255,255,0.9)', size: 11, family: 'system-ui, sans-serif' },
                 fixedrange: true
             },
-            showlegend: true,
+            showlegend: false,
             legend: {
                 x: 0.01, y: 0.99,
                 bgcolor: 'rgba(0,0,0,0.6)',
