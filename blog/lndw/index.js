@@ -400,9 +400,6 @@ const TokenizerViz = {
                     <span><b>${words.length}</b> Wörter</span>
                     <span><b>${wsTokenCount}</b> Whitespace-Tokens</span>
                     <span><b>${splitWordCount}</b> davon in Subwords zerlegt</span>
-                </div>
-                <div style="margin-top:6px; font-size:0.72em; color:#94a3b8; text-align:center;">
-                    Vocab IDs: [${tokens.map(t => t.id).join(', ')}]
                 </div>`;
         }
     }
