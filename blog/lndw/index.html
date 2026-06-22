@@ -445,6 +445,91 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Alles ist Muster – Erinnerung ==================== -->
+<div class="slide" data-title="Alles ist Muster">
+    <div class="slide-content">
+        <h2>Erinnerung: <em>Alles</em> ist Muster – und das Netz kann sie lernen</h2>
+        <p style="margin-bottom:12px; font-size:0.95em; color:#475569;">Wir haben gesehen, dass <b>Dense + ReLU + Dense</b> jede Funktion durch Stückelung approximieren kann. Aber die Welt besteht nicht nur aus Sinuskurven und Parabeln – sie ist <b>durchdrungen</b> von Mustern auf allen Ebenen:</p>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin:14px 0;">
+            <div style="padding:12px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a;">
+                <div style="font-size:1.3em; margin-bottom:4px;">🔁</div>
+                <div style="font-weight:bold; color:#92400e; font-size:0.85em;">Periodische Muster</div>
+                <div style="font-size:0.72em; color:#78350f; line-height:1.5;">Jahreszeiten, Gezeiten, Herzschlag, Tag/Nacht, Atmung, Wirtschaftszyklen</div>
+            </div>
+            <div style="padding:12px; background:#f0fdf4; border-radius:10px; border:1px solid #86efac;">
+                <div style="font-size:1.3em; margin-bottom:4px;">📈</div>
+                <div style="font-weight:bold; color:#065f46; font-size:0.85em;">Wachstum & Zerfall</div>
+                <div style="font-size:0.72em; color:#166534; line-height:1.5;">Bevölkerung, Radioaktivität, Zinsen, Epidemien, Lernkurven</div>
+            </div>
+            <div style="padding:12px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;">
+                <div style="font-size:1.3em; margin-bottom:4px;">🧬</div>
+                <div style="font-weight:bold; color:#1e40af; font-size:0.85em;">Strukturelle Muster</div>
+                <div style="font-size:0.72em; color:#1e3a5f; line-height:1.5;">Grammatik, DNA-Sequenzen, Musikharmonien, Kristallgitter, Taxonomien</div>
+            </div>
+            <div style="padding:12px; background:#faf5ff; border-radius:10px; border:1px solid #e9d5ff;">
+                <div style="font-size:1.3em; margin-bottom:4px;">🔗</div>
+                <div style="font-weight:bold; color:#6b21a8; font-size:0.85em;">Relationale Muster</div>
+                <div style="font-size:0.72em; color:#581c87; line-height:1.5;">Ursache→Wirkung, Teil→Ganzes, Analogien, Hierarchien, Korrelationen</div>
+            </div>
+            <div style="padding:12px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca;">
+                <div style="font-size:1.3em; margin-bottom:4px;">🎲</div>
+                <div style="font-weight:bold; color:#991b1b; font-size:0.85em;">Statistische Muster</div>
+                <div style="font-size:0.72em; color:#7f1d1d; line-height:1.5;">Häufigkeitsverteilungen, Normalverteilung, Zipf's Law, Bayes'sche Priors</div>
+            </div>
+            <div style="padding:12px; background:#f0f9ff; border-radius:10px; border:1px solid #bae6fd;">
+                <div style="font-size:1.3em; margin-bottom:4px;">💬</div>
+                <div style="font-weight:bold; color:#0c4a6e; font-size:0.85em;">Sprachliche Muster</div>
+                <div style="font-size:0.72em; color:#164e63; line-height:1.5;">Syntax, Semantik, Pragmatik, Redewendungen, Argumentationsstrukturen, Stil</div>
+            </div>
+        </div>
+
+        <!-- Die Architektur-Formeln -->
+        <div class="fragment" style="margin-top:16px; padding:16px 20px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0;">
+            <div style="font-weight:bold; color:#1e293b; margin-bottom:10px; font-size:0.95em;">🏗️ Und genau dafür ist die Transformer-Architektur gebaut:</div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+                <!-- Embedding -->
+                <div style="padding:10px 14px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.72em; font-weight:bold; color:#6366f1; margin-bottom:4px;">① EMBEDDING – Bedeutung als Vektor</div>
+                    <div class="math-display" style="font-size:0.85em;">$$\mathbf{e}_i = W_{\text{embed}} \cdot \text{onehot}(token_i)$$</div>
+                    <div style="font-size:0.68em; color:#64748b; margin-top:4px;">Jedes Wort wird ein Punkt im hochdimensionalen Raum. Ähnliche Bedeutung → ähnliche Position.</div>
+                </div>
+                <!-- Attention -->
+                <div style="padding:10px 14px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.72em; font-weight:bold; color:#8b5cf6; margin-bottom:4px;">② ATTENTION – Kontext herstellen</div>
+                    <div class="math-display" style="font-size:0.85em;">$$\text{Attn}(Q,K,V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$</div>
+                    <div style="font-size:0.68em; color:#64748b; margin-top:4px;">Jedes Token fragt: "Wer ist relevant für mich?" und mischt Information gezielt zusammen.</div>
+                </div>
+                <!-- Dense + ReLU -->
+                <div style="padding:10px 14px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.72em; font-weight:bold; color:#d97706; margin-bottom:4px;">③ FFN (Dense+ReLU+Dense) – Wissen abrufen</div>
+                    <div class="math-display" style="font-size:0.85em;">$$\text{FFN}(x) = W_2 \cdot \text{ReLU}(W_1 x + b_1) + b_2$$</div>
+                    <div style="font-size:0.68em; color:#64748b; margin-top:4px;">Tausende Detektoren feuern oder nicht → universelle Funktionsapproximation durch Stückelung.</div>
+                </div>
+                <!-- Softmax Output -->
+                <div style="padding:10px 14px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-size:0.72em; font-weight:bold; color:#10b981; margin-bottom:4px;">④ SOFTMAX – Vorhersage</div>
+                    <div class="math-display" style="font-size:0.85em;">$$P(w_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}$$</div>
+                    <div style="font-size:0.68em; color:#64748b; margin-top:4px;">Scores werden zu Wahrscheinlichkeiten → das nächste Token wird gewählt.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kernbotschaft -->
+        <div class="fragment" style="margin-top:16px; padding:14px 20px; background:linear-gradient(135deg, #fef3c7, #fef9c3); border-radius:12px; border:2px solid #fbbf24; text-align:center;">
+            <div style="font-size:1.1em; font-weight:bold; color:#1e293b; margin-bottom:6px;">📚 Die Kernbotschaft:</div>
+            <div style="font-size:0.95em; color:#334155; line-height:1.7;">
+                Die Wirklichkeit ist <b>durchdrungen von Mustern</b> – physikalischen, biologischen, sozialen, sprachlichen.<br>
+                Texte <b>spiegeln</b> diese Muster. Ein Transformer mit genug Parametern kann <b>jedes dieser Muster</b><br>
+                durch seine Architektur lernen und als <b>komprimiertes Weltmodell</b> speichern.
+            </div>
+            <div style="margin-top:10px; font-size:0.8em; color:#92400e; font-style:italic;">
+                "Alles was regelmäßig ist, ist lernbar. Alles was in Texten beschrieben wird, ist erreichbar."
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Verbindung zu Next-Token ==================== -->
 <div class="slide" data-title="NN → Next Token">
     <div class="slide-content">
