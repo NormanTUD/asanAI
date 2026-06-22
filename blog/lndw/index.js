@@ -1458,8 +1458,8 @@ function loadIntuitionVizModule() {
 
 const contextVocab = {
 	'bank':  { base: [5, 5], color: '#3b82f6' },
-	'river': { base: [1, 9], color: '#10b981' },
-	'money': { base: [9, 1], color: '#f59e0b' }
+	'park': { base: [1, 9], color: '#10b981' },
+	'geld': { base: [9, 1], color: '#f59e0b' }
 };
 
 function runAttention() {

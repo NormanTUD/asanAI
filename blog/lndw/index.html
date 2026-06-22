@@ -329,13 +329,10 @@
         <div class="slide-content">
             <h2>Attention</h2>
             <p>"Welche anderen Wörter sind für <em>dieses</em> Wort wichtig?"</p>
-            <p class="fragment"><b>Beispiel:</b> "The cat sat on the mat because <b>it</b> was tired" – worauf bezieht sich "it"?</p>
-            <div class="key-insight fragment">
-                Attention bewegt das Embedding kontextabhängig. Tippe <b>"bank river"</b> oder <b>"bank money"</b>:
-            </div>
+            <p class="fragment"><b>Beispiel:</b> "Ich bringe mein Geld auf die Bank" – worauf bezieht sich "Bank"?</p>
             <div class="fragment" style="margin-top:16px;">
                 <div class="layers-vertical">
-                    <input type="text" id="trans-input" class="bw-cell" style="width:80%; font-size:1.1em;" value="bank river" oninput="runAttention()">
+                    <input type="text" id="trans-input" class="bw-cell" style="width:80%; font-size:1.1em;" value="bank" oninput="runAttention()">
                 </div>
                 <div id="transformer-plot" class="plot-container" style="height:380px;"></div>
             </div>
