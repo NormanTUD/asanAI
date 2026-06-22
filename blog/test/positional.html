@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>RoPE 3D Slice Visualizer (1-64D)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            padding: 10px 20px;
+            background: #1a1a2e;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            z-index: 10;
+        }
+        .header h1 {
+            color: #7ecfff;
+            font-size: 1.2em;
+            white-space: nowrap;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .control-group label {
+            font-size: 0.75em;
+            color: #aaa;
+        }
+        .control-group input, .control-group select {
+            background: #2a2a3e;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            width: 65px;
+        }
+        .control-group select { width: auto; }
+        button {
+            padding: 5px 12px;
+            background: #7ecfff;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        button:hover { background: #a0dfff; }
+        button.active { background: #ff6b6b; color: #fff; }
+        .main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 200px;
+            background: #12122a;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            padding: 10px;
+            flex-shrink: 0;
+        }
+        .sidebar h3 {
+            color: #7ecfff;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+        .dim-btn {
+            display: block;
+            width: 100%;
+            padding: 6px 10px;
+            margin-bottom: 3px;
+            background: #1e1e3a;
+            border: 1px solid #333;
+            color: #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            text-align: left;
+            transition: all 0.15s;
+        }
+        .dim-btn:hover { background: #2a2a4e; border-color: #7ecfff; }
+        .dim-btn.active { background: #7ecfff22; border-color: #7ecfff; color: #7ecfff; }
+        .dim-btn .freq {
+            float: right;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .canvas-area {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        #mainCanvas {
+            flex: 1;
+            display: block;
+        }
+        .info-bar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            font-size: 0.8em;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .info-item { color: #aaa; }
+        .info-item span { color: #7ecfff; font-weight: bold; }
+        .mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            pointer-events: none;
+            display: none;
+            border: 1px solid #7ecfff;
+        }
+        .color-bar {
+            position: absolute;
+            right: 15px;
+            top: 50px;
+            bottom: 80px;
+            width: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        .color-bar-label {
+            position: absolute;
+            right: 35px;
+            font-size: 0.65em;
+            color: #888;
+        }
+        .color-bar-label.top { top: 50px; }
+        .color-bar-label.bottom { bottom: 80px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔄 RoPE 3D Slice Explorer</h1>
+        <div class="controls">
+            <div class="control-group">
+                <label>x₁:</label>
+                <input type="number" id="x1" value="1.0" step="0.1">
+            </div>
+            <div class="control-group">
+                <label>x₂:</label>
+                <input type="number" id="x2" value="0.5" step="0.1">
+            </div>
+            <div class="control-group">
+                <label>Basis:</label>
+                <input type="number" id="base" value="10000" step="500" style="width:75px">
+            </div>
+            <div class="control-group">
+                <label>Positionen:</label>
+                <input type="number" id="numPos" value="200" min="10" max="2000" step="10" style="width:65px">
+            </div>
+            <div class="control-group">
+                <label>Max Dim:</label>
+                <select id="maxDim">
+                    <option value="8">8D</option>
+                    <option value="16">16D</option>
+                    <option value="32">32D</option>
+                    <option value="64" selected>64D</option>
+                    <option value="128">128D</option>
+                </select>
+            </div>
+            <button onclick="rebuildSidebar(); renderScene();">Aktualisieren</button>
+            <button id="animBtn" onclick="toggleAnimation()">▶ Animieren</button>
+        </div>
+    </div>
+    <div class="main">
+        <div class="sidebar" id="sidebar">
+            <h3>Dimensionspaare</h3>
+            <div id="dimList"></div>
+        </div>
+        <div class="canvas-area">
+            <canvas id="mainCanvas"></canvas>
+            <div class="mode-toggle">
+                <button id="mode2d" onclick="setMode('2d')" class="active">2D</button>
+                <button id="mode3d" onclick="setMode('3d')">3D</button>
+                <button id="modeMulti" onclick="setMode('multi')">Multi-Slice</button>
+            </div>
+            <div class="color-bar" id="colorBar"></div>
+            <div class="color-bar-label top">Pos 0</div>
+            <div class="color-bar-label bottom" id="colorBarBottom">Pos 199</div>
+            <div class="info-bar" id="infoBar"></div>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+    </div>
+
+    <script>
+    // ============ STATE ============
+    let state = {
+        mode: '2d', // '2d', '3d', 'multi'
+        selectedPair: 0,
+        selectedPairs: [0, 1, 2], // for multi
+        rotX: -0.5,
+        rotY: 0.4,
+        rotZ: 0,
+        zoom: 1.0,
+        dragging: false,
+        lastMouse: { x: 0, y: 0 },
+        animating: false,
+        animPhase: 0,
+        highlightPos: -1,
+    };
+
+    // ============ ROPE MATH ============
+    function getTheta(pairIndex, totalDim, base) {
+        return Math.pow(base, -2 * pairIndex / totalDim);
+    }
+
+    function computeRoPE(x1, x2, position, pairIndex, totalDim, base) {
+        const theta = getTheta(pairIndex, totalDim, base);
+        const angle = position * theta;
+        return {
+            x: x1 * Math.cos(angle) - x2 * Math.sin(angle),
+            y: x2 * Math.cos(angle) + x1 * Math.sin(angle),
+            angle: angle
+        };
+    }
+
+    function getParams() {
+        return {
+            x1: parseFloat(document.getElementById('x1').value),
+            x2: parseFloat(document.getElementById('x2').value),
+            base: parseFloat(document.getElementById('base').value),
+            numPos: parseInt(document.getElementById('numPos').value),
+            maxDim: parseInt(document.getElementById('maxDim').value),
+        };
+    }
+
+    // ============ COLOR ============
+    function posColor(pos, maxPos) {
+        const t = pos / maxPos;
+        // HSL rainbow from red to blue
+        const h = t * 270;
+        return `hsl(${h}, 90%, 55%)`;
+    }
+
+    function posColorRGB(pos, maxPos) {
+        const t = pos / maxPos;
+        const h = t * 270;
+        const s = 0.9, l = 0.55;
+        // HSL to RGB
+        const c = (1 - Math.abs(2 * l - 1)) * s;
+        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+        const m = l - c / 2;
+        let r, g, b;
+        if (h < 60) { r = c; g = x; b = 0; }
+        else if (h < 120) { r = x; g = c; b = 0; }
+        else if (h < 180) { r = 0; g = c; b = x; }
+        else if (h < 240) { r = 0; g = x; b = c; }
+        else if (h < 300) { r = x; g = 0; b = c; }
+        else { r = c; g = 0; b = x; }
+        return { r: Math.floor((r + m) * 255), g: Math.floor((g + m) * 255), b: Math.floor((b + m) * 255) };
+    }
+
+    // ============ SIDEBAR ============
+    function rebuildSidebar() {
+        const { base, maxDim } = getParams();
+        const numPairs = maxDim / 2;
+        const list = document.getElementById('dimList');
+        list.innerHTML = '';
+
+        for (let i = 0; i < numPairs; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'dim-btn' + (i === state.selectedPair ? ' active' : '');
+            const theta = getTheta(i, maxDim, base);
+            const freqLabel = theta > 0.01 ? theta.toFixed(4) : theta.toExponential(2);
+            btn.innerHTML = `Paar ${i} <span class="freq">θ=${freqLabel}</span>`;
+            btn.dataset.pair = i;
+            btn.onclick = () => {
+                state.selectedPair = i;
+                document.querySelectorAll('.dim-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderScene();
+            };
+            list.appendChild(btn);
+        }
+    }
+
+    // ============ RENDERING ============
+    function getCanvas() {
+        const canvas = document.getElementById('mainCanvas');
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        return canvas;
+    }
+
+    function renderScene() {
+        const canvas = getCanvas();
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (state.mode === '2d') render2D(ctx, canvas);
+        else if (state.mode === '3d') render3D(ctx, canvas);
+        else if (state.mode === 'multi') renderMulti(ctx, canvas);
+
+        renderColorBar();
+        renderInfoBar();
+    }
+
+    // ---- 2D MODE ----
+    function render2D(ctx, canvas) {
+        const { x1, x2, base, numPos, maxDim } = getParams();
+        const pair = state.selectedPair;
+        const w = canvas.width, h = canvas.height;
+        const cx = w / 2, cy = h / 2;
+
+        // Compute points
+        const points = [];
+        for (let m = 0; m < numPos; m++) {
+            points.push(computeRoPE(x1, x2, m, pair, maxDim, base));
+        }
+
+        const maxR = Math.sqrt(x1 * x1 + x2 * x2) || 1;
+        const scale = (Math.min(w, h) / 2 - 60) / maxR * state.zoom;
+
+        // Grid
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 1;
+        for (let i = -5; i <= 5; i++) {
+            const gx = cx + i * scale * 0.2 * maxR;
+            ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+            const gy = cy + i * scale * 0.2 * maxR;
+            ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+
+        // Unit circle
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath(); ctx.arc(cx, cy, maxR * scale, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Path
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(126, 207, 255, 0.2)';
+        ctx.beginPath();
+        for (let i = 0; i < points.length; i++) {
+            const sx = cx + points[i].x * scale;
+            const sy = cy - points[i].y * scale;
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+
+        // Points
+        for (let i = 0; i < points.length; i++) {
+            const sx = cx + points[i].x * scale;
+            const sy = cy - points[i].y * scale;
+            const radius = (state.highlightPos === i) ? 6 : 3;
+            ctx.fillStyle = posColor(i, numPos - 1);
+            ctx.beginPath();
+            ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Origin vector
+        ctx.strokeStyle = '#ffff00';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + x1 * scale, cy - x2 * scale);
+        ctx.stroke();
+        ctx.fillStyle = '#ffff00';
+        ctx.beginPath();
+        ctx.arc(cx + x1 * scale, cy - x2 * scale, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffff00';
+        ctx.font = '12px monospace';
+        ctx.fillText(`Original (${x1}, ${x2})`, cx + x1 * scale + 10, cy - x2 * scale - 10);
+
+        // Labels
+        ctx.fillStyle = '#666';
+        ctx.font = '11px monospace';
+        ctx.fillText(`d${pair * 2}`, w - 30, cy - 8);
+        ctx.fillText(`d${pair * 2 + 1}`, cx + 8, 15);
+
+        // Position markers
+        const markers = [0, Math.floor(numPos / 4), Math.floor(numPos / 2), Math.floor(3 * numPos / 4), numPos - 1];
+        for (const m of markers) {
+            const sx = cx + points[m].x * scale;
+            const sy = cy - points[m].y * scale;
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px monospace';
+            ctx.fillText(`m=${m}`, sx + 7, sy - 5);
+        }
+    }
+
+    // ---- 3D MODE ----
+    function render3D(ctx, canvas) {
+        const { x1, x2, base, numPos, maxDim } = getParams();
+        const w = canvas.width, h = canvas.height;
+        const cx = w / 2, cy = h / 2;
+        const numPairs = maxDim / 2;
+        const pair = state.selectedPair;
+        const pair2 = Math.min(pair + 1, numPairs - 1);
+
+        // 3D points: x = rope_pair_x, y = rope_pair_y, z = rope_pair2_x
+        const points3D = [];
+        for (let m = 0; m < numPos; m++) {
+            const p1 = computeRoPE(x1, x2, m, pair, maxDim, base);
+            const p2 = computeRoPE(x1, x2, m, pair2, maxDim, base);
+            points3D.push({ x: p1.x, y: p1.y, z: p2.x });
+        }
+
+        const maxR = Math.sqrt(x1 * x1 + x2 * x2) || 1;
+        const scale = (Math.min(w, h) / 3) * state.zoom;
+
+        // Rotation matrix
+        const cosX = Math.cos(state.rotX), sinX = Math.sin(state.rotX);
+        const cosY = Math.cos(state.rotY), sinY = Math.sin(state.rotY);
+
+        function project(x, y, z) {
+            // Rotate Y
+            let x1r = x * cosY - z * sinY;
+            let z1 = x * sinY + z * cosY;
+            // Rotate X
+            let y1 = y * cosX - z1 * sinX;
+            let z2 = y * sinX + z1 * cosX;
+            // Perspective
+            const perspective = 4;
+            const factor = perspective / (perspective + z2);
+            return {
+                x: cx + x1r * scale * factor,
+                y: cy - y1 * scale * factor,
+                z: z2
+            };
+        }
+
+        // Axes
+        const axisLen = 1.3;
+        const axes = [
+            { from: [0,0,0], to: [axisLen,0,0], color: '#ff4444', label: `d${pair*2}` },
+            { from: [0,0,0], to: [0,axisLen,0], color: '#44ff44', label: `d${pair*2+1}` },
+            { from: [0,0,0], to: [0,0,axisLen], color: '#4488ff', label: `d${pair2*2}` },
+        ];
+
+        for (const axis of axes) {
+            const from = project(...axis.from);
+            const to = project(...axis.to);
+            ctx.strokeStyle = axis.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.stroke();
+            ctx.fillStyle = axis.color;
+            ctx.font = '12px monospace';
+            ctx.fillText(axis.label, to.x + 5, to.y - 5);
+        }
+
+        // Sort by z for depth
+        const projected = points3D.map((p, i) => {
+            const proj = project(p.x, p.y, p.z);
+            return { ...proj, idx: i };
+        });
+        projected.sort((a, b) => a.z - b.z);
+
+        // Path
+        ctx.strokeStyle = 'rgba(126, 207, 255, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let i = 0; i < points3D.length; i++) {
+            const p = project(points3D[i].x, points3D[i].y, points3D[i].z);
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+
+        // Points (depth sorted)
+        for (const p of projected) {
+            const depthFactor = 0.5 + 0.5 * ((p.z + 2) / 4);
+            const radius = Math.max(1.5, 3.5 * depthFactor);
+            ctx.globalAlpha = 0.4 + 0.6 * depthFactor;
+            ctx.fillStyle = posColor(p.idx, numPos - 1);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // Info text
+        ctx.fillStyle = '#555';
+        ctx.font = '11px monospace';
+        ctx.fillText('Maus ziehen zum Rotieren, Scroll zum Zoomen', 10, h - 10);
+        ctx.fillText(`Zeige: Paar ${pair} (d${pair*2},d${pair*2+1}) + Paar ${pair2} (d${pair2*2})`, 10, h - 25);
+    }
+
+    // ---- MULTI-SLICE MODE ----
+    function renderMulti(ctx, canvas) {
+        const { x1, x2, base, numPos, maxDim } = getParams();
+        const numPairs = maxDim / 2;
+        const w = canvas.width, h = canvas.height;
+
+        // Grid layout
+        const cols = Math.ceil(Math.sqrt(numPairs));
+        const rows = Math.ceil(numPairs / cols);
+        const cellW = w / cols;
+        const cellH = h / rows;
+
+        for (let pair = 0; pair < numPairs; pair++) {
+            const col = pair % cols;
+            const row = Math.floor(pair / cols);
+            const ox = col * cellW;
+            const oy = row * cellH;
+            const ccx = ox + cellW / 2;
+            const ccy = oy + cellH / 2;
+
+            // Border
+            ctx.strokeStyle = pair === state.selectedPair ? '#7ecfff' : '#222';
+            ctx.lineWidth = pair === state.selectedPair ? 2 : 1;
+            ctx.strokeRect(ox + 1, oy + 1, cellW - 2, cellH - 2);
+
+            // Compute
+            const points = [];
+            for (let m = 0; m < numPos; m++) {
+                points.push(computeRoPE(x1, x2, m, pair, maxDim, base));
+            }
+
+            const maxR = Math.sqrt(x1 * x1 + x2 * x2) || 1;
+            const scale = (Math.min(cellW, cellH) / 2 - 15) / maxR;
+
+            // Circle
+            ctx.strokeStyle = '#1a1a2e';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(ccx, ccy, maxR * scale, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Path
+            ctx.strokeStyle = 'rgba(126, 207, 255, 0.15)';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            for (let i = 0; i < points.length; i++) {
+                const sx = ccx + points[i].x * scale;
+                const sy = ccy - points[i].y * scale;
+                if (i === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.stroke();
+
+            // Points (every nth for performance)
+            const step = numPairs > 16 ? 3 : 1;
+            for (let i = 0; i < points.length; i += step) {
+                const sx = ccx + points[i].x * scale;
+                const sy = ccy - points[i].y * scale;
+                ctx.fillStyle = posColor(i, numPos - 1);
+                ctx.beginPath();
+                ctx.arc(sx, sy, numPairs > 16 ? 1.5 : 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Label
+            ctx.fillStyle = pair === state.selectedPair ? '#7ecfff' : '#666';
+            ctx.font = `${Math.max(8, Math.min(11, cellW / 8))}px monospace`;
+            ctx.fillText(`P${pair}`, ox + 4, oy + 12);
+
+            // Theta info
+            const theta = getTheta(pair, maxDim, base);
+            const rotations = (numPos * theta) / (2 * Math.PI);
+            ctx.fillStyle = '#444';
+            ctx.font = `${Math.max(7, Math.min(9, cellW / 10))}px monospace`;
+            ctx.fillText(`${rotations.toFixed(1)}×`, ox + 4, oy + cellH - 5);
+        }
+    }
+
+    // ============ COLOR BAR ============
+    function renderColorBar() {
+        const { numPos } = getParams();
+        const bar = document.getElementById('colorBar');
+        let gradient = 'linear-gradient(to bottom, ';
+        for (let i = 0; i <= 10; i++) {
+            const t = i / 10;
+            gradient += posColor(Math.floor(t * (numPos - 1)), numPos - 1);
+            if (i < 10) gradient += ', ';
+        }
+        gradient += ')';
+        bar.style.background = gradient;
+        document.getElementById('colorBarBottom').textContent = `Pos ${numPos - 1}`;
+    }
+
+    // ============ INFO BAR ============
+    function renderInfoBar() {
+        const { x1, x2, base, numPos, maxDim } = getParams();
+        const pair = state.selectedPair;
+        const theta = getTheta(pair, maxDim, base);
+        const rotations = (numPos * theta) / (2 * Math.PI);
+        const degPerPos = theta * 180 / Math.PI;
+
+        const bar = document.getElementById('infoBar');
+        bar.innerHTML = `
+            <div class="info-item">Paar: <span>${pair}</span> (d${pair*2}, d${pair*2+1})</div>
+            <div class="info-item">θ: <span>${theta.toExponential(4)}</span></div>
+            <div class="info-item">°/Position: <span>${degPerPos.toFixed(4)}°</span></div>
+            <div class="info-item">Rotationen: <span>${rotations.toFixed(3)}×</span></div>
+            <div class="info-item">Modus: <span>${state.mode.toUpperCase()}</span></div>
+            <div class="info-item">Vektor: <span>(${x1}, ${x2})</span> |v|=${Math.sqrt(x1*x1+x2*x2).toFixed(3)}</div>
+        `;
+    }
+
+    // ============ MODE SWITCHING ============
+    function setMode(mode) {
+        state.mode = mode;
+        document.querySelectorAll('.mode-toggle button').forEach(b => b.classList.remove('active'));
+        document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+        renderScene();
+    }
+
+    // ============ INTERACTION ============
+    function setupInteraction() {
+        const canvas = document.getElementById('mainCanvas');
+
+        canvas.addEventListener('mousedown', (e) => {
+            state.dragging = true;
+            state.lastMouse = { x: e.clientX, y: e.clientY };
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (state.dragging && state.mode === '3d') {
+                const dx = e.clientX - state.lastMouse.x;
+                const dy = e.clientY - state.lastMouse.y;
+                state.rotY += dx * 0.01;
+                state.rotX += dy * 0.01;
+                state.lastMouse = { x: e.clientX, y: e.clientY };
+                renderScene();
+            }
+
+            // Tooltip
+            if (state.mode === '2d') {
+                showTooltip(e, canvas);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => { state.dragging = false; });
+        canvas.addEventListener('mouseleave', () => {
+            state.dragging = false;
+            document.getElementById('tooltip').style.display = 'none';
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            state.zoom *= e.deltaY > 0 ? 0.9 : 1.1;
+            state.zoom = Math.max(0.1, Math.min(10, state.zoom));
+            renderScene();
+        });
+
+        // Click in multi mode to select pair
+        canvas.addEventListener('click', (e) => {
+            if (state.mode === 'multi') {
+                const { maxDim } = getParams();
+                const numPairs = maxDim / 2;
+                const rect = canvas.getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+                const cols = Math.ceil(Math.sqrt(numPairs));
+                const rows = Math.ceil(numPairs / cols);
+                const cellW = canvas.width / cols;
+                const cellH = canvas.height / rows;
+                const col = Math.floor(mx / cellW);
+                const row = Math.floor(my / cellH);
+                const clickedPair = row * cols + col;
+                if (clickedPair >= 0 && clickedPair < numPairs) {
+                    state.selectedPair = clickedPair;
+                    document.querySelectorAll('.dim-btn').forEach(b => b.classList.remove('active'));
+                    const btns = document.querySelectorAll('.dim-btn');
+                    if (btns[clickedPair]) btns[clickedPair].classList.add('active');
+                    renderScene();
+                }
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const { maxDim } = getParams();
+            const numPairs = maxDim / 2;
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                state.selectedPair = Math.max(0, state.selectedPair - 1);
+                updateSidebarSelection();
+                renderScene();
+                e.preventDefault();
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                state.selectedPair = Math.min(numPairs - 1, state.selectedPair + 1);
+                updateSidebarSelection();
+                renderScene();
+                e.preventDefault();
+            } else if (e.key === '1') { setMode('2d'); }
+            else if (e.key === '2') { setMode('3d'); }
+            else if (e.key === '3') { setMode('multi'); }
+            else if (e.key === ' ') { toggleAnimation(); e.preventDefault(); }
+        });
+    }
+
+    function updateSidebarSelection() {
+        document.querySelectorAll('.dim-btn').forEach((b, i) => {
+            b.classList.toggle('active', i === state.selectedPair);
+        });
+    }
+
+    // ============ TOOLTIP ============
+    function showTooltip(e, canvas) {
+        const { x1, x2, base, numPos, maxDim } = getParams();
+        const pair = state.selectedPair;
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const w = canvas.width, h = canvas.height;
+        const cx = w / 2, cy = h / 2;
+        const maxR = Math.sqrt(x1 * x1 + x2 * x2) || 1;
+        const scale = (Math.min(w, h) / 2 - 60) / maxR * state.zoom;
+
+        let closestDist = Infinity;
+        let closestIdx = -1;
+
+        for (let m = 0; m < numPos; m++) {
+            const p = computeRoPE(x1, x2, m, pair, maxDim, base);
+            const sx = cx + p.x * scale;
+            const sy = cy - p.y * scale;
+            const dist = Math.sqrt((mx - sx) ** 2 + (my - sy) ** 2);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestIdx = m;
+            }
+        }
+
+        const tooltip = document.getElementById('tooltip');
+        if (closestDist < 20 && closestIdx >= 0) {
+            const p = computeRoPE(x1, x2, closestIdx, pair, maxDim, base);
+            const theta = getTheta(pair, maxDim, base);
+            const angleDeg = (closestIdx * theta * 180 / Math.PI) % 360;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+            tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+            tooltip.innerHTML = `
+                <strong>Position ${closestIdx}</strong><br>
+                x: ${p.x.toFixed(4)}<br>
+                y: ${p.y.toFixed(4)}<br>
+                Winkel: ${angleDeg.toFixed(2)}°<br>
+                |v|: ${Math.sqrt(p.x * p.x + p.y * p.y).toFixed(4)}
+            `;
+            state.highlightPos = closestIdx;
+            renderScene();
+        } else {
+            tooltip.style.display = 'none';
+            if (state.highlightPos !== -1) {
+                state.highlightPos = -1;
+                renderScene();
+            }
+        }
+    }
+
+    // ============ ANIMATION ============
+    let animFrame = null;
+
+    function toggleAnimation() {
+        state.animating = !state.animating;
+        const btn = document.getElementById('animBtn');
+        btn.textContent = state.animating ? '⏸ Stop' : '▶ Animieren';
+        btn.classList.toggle('active', state.animating);
+        if (state.animating) animate();
+        else if (animFrame) cancelAnimationFrame(animFrame);
+    }
+
+    function animate() {
+        if (!state.animating) return;
+        state.animPhase += 0.02;
+
+        if (state.mode === '3d') {
+            state.rotY += 0.008;
+            state.rotX = Math.sin(state.animPhase * 0.3) * 0.5;
+        } else if (state.mode === '2d') {
+            // Cycle through pairs
+            const { maxDim } = getParams();
+            const numPairs = maxDim / 2;
+            const pairCycle = Math.floor(state.animPhase * 0.5) % numPairs;
+            if (pairCycle !== state.selectedPair) {
+                state.selectedPair = pairCycle;
+                updateSidebarSelection();
+            }
+        }
+
+        renderScene();
+        animFrame = requestAnimationFrame(animate);
+    }
+
+    // ============ RESIZE ============
+    window.addEventListener('resize', () => {
+        renderScene();
+    });
+
+    // ============ INIT ============
+    function init() {
+        rebuildSidebar();
+        setupInteraction();
+        renderScene();
+    }
+
+    window.addEventListener('load', init);
+    </script>
+</body>
+</html>
