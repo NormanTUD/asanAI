@@ -19,8 +19,6 @@ x_1 soll sein 1.05
 
 layer(x_0) = 0.05
 
-"Die Transformer-Schichten" umbenennen (geht um residual stream)
-
 
 "Attention "Welche anderen Wörter sind für dieses Wort wichtig?"" sollte auf sitzen usw reagieren
 (guckt in den gesamtkontext)
