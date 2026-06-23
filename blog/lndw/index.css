@@ -10,21 +10,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 
 /* ============ SLIDES ============ */
-.slide {
-	position: absolute;
-	top: 0; left: 0;
-	width: 100%;
-	height: 100%;
-	display: none;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding: 30px 20px 70px 20px;
-	background: #ffffff;
-	overflow-y: auto;
-	overflow-x: hidden;
-	transition: opacity 0.4s ease;
-}
+
 .slide.active {
 	display: flex;
 	opacity: 1;
@@ -56,11 +42,25 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .slide-content {
 	max-width: 100%;
 	width: 100%;
-	/* max-height entfernen oder vergrößern */
+	max-height: calc(100vh - 100px); /* Viewport minus Padding oben/unten + nav-bar */
+	overflow: hidden;                 /* oder 'auto' falls du notfalls scrollen willst */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .slide {
-	padding: 30px 60px 70px 60px; /* oben/seiten reduziert, unten Platz für nav-bar */
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%;
+	height: 100%;
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 30px 60px 70px 60px; /* unten Platz für nav-bar */
+	background: #ffffff;
+	overflow: hidden;          /* ← KEIN Scrollen, alles muss reinpassen */
 }
 
 .dim-btn {
