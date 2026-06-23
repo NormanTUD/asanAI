@@ -1,0 +1,40 @@
+was sind das für lücken (rechnen), was wir von ki wollen
+warum KI nicht rechnen können
+
+"Daten sind fehlerhaft – und trotzdem nützlich" zahlen hauen nicht hin
+
+halluzinationen -> mit RAG weniger, zu viel text
+
+"Die autoregressive Schleife" -> egal was man rein gibt -> immer nur ein token
+
+
+"transformer schichten" statt x_1 = x_0 + layer(x_0)
+
+
+
+x_0 = 1
+x_1 soll sein 1.05
+
+
+
+layer(x_0) = 0.05
+
+"Die Transformer-Schichten" umbenennen (geht um residual stream)
+
+
+"Attention "Welche anderen Wörter sind für dieses Wort wichtig?"" sollte auf sitzen usw reagieren
+(guckt in den gesamtkontext)
+
+
+"Was ist Dense + ReLU + Dense?" -> FFN
+
+"Funktionsapproximation durch Stückelung" -> einfacher machen
+
+sonnenbild zeigen
+
+
+"Von Dense+ReLU+Dense → Next Token Prediction" ist doppelung
+
+"Residual Stream – Schicht für Schicht" -> rausnehmen
+
+allgemein größer ziehen, texte sind sehr klein
