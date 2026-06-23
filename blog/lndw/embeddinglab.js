@@ -975,6 +975,29 @@ function _renderMathSkippingCode(el) {
     }
 }
 
+function _manualRenderMath(el) {
+    if (!el || typeof temml === 'undefined') return;
+    let html = el.innerHTML;
+    if (!html.includes('$')) return;
+
+    // Display math: $$...$$
+    html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, inner) => {
+        const clean = inner.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+        try { return temml.renderToString(clean, { displayMode: true }); }
+        catch (e) { return match; }
+    });
+
+    // Inline math: $...$
+    html = html.replace(/(?<!\$)\$(?!\$)([^$\n]+?)\$(?!\$)/g, (match, inner) => {
+        if (!inner.trim() || inner.includes('<math')) return match;
+        const clean = inner.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+        try { return temml.renderToString(clean, { displayMode: false }); }
+        catch (e) { return match; }
+    });
+
+    el.innerHTML = html;
+}
+
 const _temmlObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -986,7 +1009,11 @@ const _temmlObserver = new IntersectionObserver((entries) => {
                 const fixed = _fixMathInElement(el);
                 // Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
                 if (!fixed) {
-                    temml.renderMathInElement(el, _temmlOpts);
+                    if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
+                        temml.renderMathInElement(el, _temmlOpts);
+                    } else {
+                        _manualRenderMath(el);
+                    }
                     el.setAttribute('data-math-rendered', 'true');
                 }
             }
@@ -1373,20 +1400,27 @@ function render_temml() {
 			const rect = el.getBoundingClientRect();
 
 			if (rect.width === 0 && rect.height === 0) {
-				temml.renderMathInElement(el, _temmlOpts);
+				if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
+					temml.renderMathInElement(el, _temmlOpts);
+				} else {
+					_manualRenderMath(el);
+				}
 				el.setAttribute('data-math-rendered', 'true');
 				return;
 			}
 
 			if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
-				temml.renderMathInElement(el, _temmlOpts);
+				if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
+					temml.renderMathInElement(el, _temmlOpts);
+				} else {
+					_manualRenderMath(el);
+				}
 				el.setAttribute('data-math-rendered', 'true');
 			} else {
 				_temmlObserver.observe(el);
 			}
 		}
 	});
-
 
 	/* ═══════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
