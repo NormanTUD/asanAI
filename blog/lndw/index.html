@@ -421,7 +421,7 @@
             <div class="key-insight fragment">
                 <strong>Der Residual Stream – das "gemeinsame Notizbuch":</strong>
                 <div class="formula-box" style="background:#fef3c7; border-color:#fbbf24; margin-top:12px;">
-                    <div class="math-display" style="font-size:1.3em;">$$\mathbf{x}_1 := \mathbf{x}_0 + \text{Layer}(\mathbf{x}_0)$$</div>
+                    <div class="math-display">$$\mathbf{x}_1 := \mathbf{x}_0 + \text{Layer}(\mathbf{x}_0)$$</div>
                 </div>
                 <p style="margin-top:8px;">Jede Schicht liest, denkt nach, und <b>schreibt ihre Erkenntnisse zurück</b>.</p>
             </div>
@@ -436,7 +436,7 @@
 	    <p class="fragment"><b>Beispiel:</b> "Ich bringe mein <b>Geld</b> auf die <b>Bank</b>" – worauf bezieht sich "<b>Bank</b>", eine Parkbank oder die Bank zu der man Geld bringt?</p>
             <div class="fragment" style="margin-top:16px;">
                 <div class="layers-vertical">
-                    <input type="text" id="trans-input" class="bw-cell" style="width:80%; font-size:1.1em;" value="bank" oninput="runAttention()">
+                    <input type="text" id="trans-input" class="bw-cell" style="width:80%;" value="bank" oninput="runAttention()">
                 </div>
                 <div id="transformer-plot" class="plot-container" style="height:380px;"></div>
             </div>
@@ -450,20 +450,20 @@
         <p>Jedes Wort berechnet einen <b>Score</b> für jedes vorherige Wort: "Wie relevant bist du für mich?" – aber es darf <b>nicht in die Zukunft schauen</b> (Causal Masking).</p>
         <div class="demo-box">
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-size:0.85em; font-weight:bold; color:#475569;">Aspekt (Head):</label>
-                <select id="attn-matrix-aspect" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;" onchange="AttentionMatrixViz.render()">
+                <label style="font-weight:bold; color:#475569;">Aspekt (Head):</label>
+                <select id="attn-matrix-aspect" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;" onchange="AttentionMatrixViz.render()">
                     <option value="syntax">Syntax (Subjekt↔Verb)</option>
                     <option value="coref">Koreferenz (Pronomen → Bezug)</option>
                     <option value="adjacent">Lokale Nähe (benachbart)</option>
                 </select>
-                <label style="font-size:0.85em; font-weight:bold; color:#475569; margin-left:12px;">Satz:</label>
-                <select id="attn-matrix-sentence" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;" onchange="AttentionMatrixViz.render()">
+                <label style="font-weight:bold; color:#475569; margin-left:12px;">Satz:</label>
+                <select id="attn-matrix-sentence" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;" onchange="AttentionMatrixViz.render()">
                     <option value="katze">Die Katze saß auf der Matte weil sie müde war</option>
                     <option value="koenig">Der König gab der Königin den Ring</option>
                 </select>
             </div>
             <div id="attn-matrix-plot" style="height:450px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div id="attn-matrix-info" style="margin-top:10px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; font-size:0.88em; color:#1e40af; text-align:center;">
+            <div id="attn-matrix-info" style="margin-top:10px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; text-align:center;">
                 Jede Zeile zeigt: <b>Wohin schaut dieses Wort?</b> Helle Zellen = hohe Aufmerksamkeit. Die Werte jeder Zeile summieren sich zu 1 (Softmax). <b style="color:#ef4444;">✕ = maskiert (Zukunft)</b>.
             </div>
         </div>
@@ -478,8 +478,8 @@
         <div class="demo-box">
             <div class="demo-title">🚦 Routing-Visualisierung: Wer bekommt was?</div>
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-size:0.85em; font-weight:bold; color:#475569;">Fokus auf Output:</label>
-                <select id="attn-router-focus" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;" onchange="AttentionRouterViz.render()">
+                <label style="font-weight:bold; color:#475569;">Fokus auf Output:</label>
+                <select id="attn-router-focus" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;" onchange="AttentionRouterViz.render()">
                     <option value="0">Output 1 (sa₁)</option>
                     <option value="1">Output 2 (sa₂)</option>
                     <option value="2">Output 3 (sa₃)</option>
@@ -488,7 +488,7 @@
                 <button onclick="AttentionRouterViz.animate()" style="padding:8px 16px; border-radius:8px; border:none; background:#8b5cf6; color:#fff; font-weight:bold; cursor:pointer;">▶️ Routing animieren</button>
             </div>
             <div id="attn-router-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div id="attn-router-info" style="margin-top:10px; padding:12px; background:#faf5ff; border-radius:8px; border:1px solid #e9d5ff; font-size:0.88em; color:#6b21a8; text-align:center;">
+            <div id="attn-router-info" style="margin-top:10px; padding:12px; background:#faf5ff; border-radius:8px; border:1px solid #e9d5ff; color:#6b21a8; text-align:center;">
                 <b>Kernidee:</b> Attention bestimmt für spätere Layer, <b>wohin die Information fließt</b>. Jeder Output-Slot bekommt eine andere Mischung – das ist das "Routing". Verschiedene Heads routen nach verschiedenen Kriterien (Syntax, Semantik, Position…).
             </div>
         </div>
@@ -520,20 +520,20 @@
         <div class="demo-box">
             <p>Ein Feed-Forward-Netzwerk kann (mit genug Neuronen) jede stetige Funktion beliebig genau approximieren</p>
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-size:0.85em; font-weight:bold;">Zielfunktion:</label>
-                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;">
+                <label style="font-weight:bold;">Zielfunktion:</label>
+                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
                     <option value="sin">sin(x)</option>
                     <option value="quadratic">x²</option>
                     <option value="abs">|x|</option>
                     <option value="step">Treppenfunktion</option>
                     <option value="custom">Wellenform</option>
                 </select>
-                <label style="font-size:0.85em; font-weight:bold; margin-left:12px;">Neuronen (Stücke):</label>
+                <label style="font-weight:bold; margin-left:12px;">Neuronen (Stücke):</label>
                 <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
                 <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
             </div>
             <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-            <div id="nn-approx-info" style="padding:10px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.9em; color:#334155; text-align:center;"></div>
+            <div id="nn-approx-info" style="padding:10px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; color:#334155; text-align:center;"></div>
         </div>
     </div>
 </div>
@@ -545,44 +545,44 @@
 
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:10px; margin:16px 0;">
             <div style="padding:12px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; text-align:center;">
-                <div style="font-size:1.6em;">🔁</div>
-                <div style="font-weight:bold; color:#92400e; font-size:0.82em;">Zyklen</div>
-                <div style="font-size:0.68em; color:#78350f; margin-top:3px; line-height:1.4;">Gezeiten, Herzschlag,<br>Jahreszeiten, Atmung</div>
+                <div>🔁</div>
+                <div style="font-weight:bold; color:#92400e;">Zyklen</div>
+                <div style="color:#78350f; margin-top:3px; line-height:1.4;">Gezeiten, Herzschlag,<br>Jahreszeiten, Atmung</div>
             </div>
             <div style="padding:12px; background:#f0fdf4; border-radius:10px; border:1px solid #86efac; text-align:center;">
-                <div style="font-size:1.6em;">📈</div>
-                <div style="font-weight:bold; color:#065f46; font-size:0.82em;">Wachstum</div>
-                <div style="font-size:0.68em; color:#166534; margin-top:3px; line-height:1.4;">Bevölkerung, Zinsen,<br>Epidemien, Lernkurven</div>
+                <div>📈</div>
+                <div style="font-weight:bold; color:#065f46;">Wachstum</div>
+                <div style="color:#166534; margin-top:3px; line-height:1.4;">Bevölkerung, Zinsen,<br>Epidemien, Lernkurven</div>
             </div>
             <div style="padding:12px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; text-align:center;">
-                <div style="font-size:1.6em;">🧬</div>
-                <div style="font-weight:bold; color:#1e40af; font-size:0.82em;">Strukturen</div>
-                <div style="font-size:0.68em; color:#1e3a5f; margin-top:3px; line-height:1.4;">Grammatik, DNA,<br>Kristalle, Taxonomien</div>
+                <div>🧬</div>
+                <div style="font-weight:bold; color:#1e40af;">Strukturen</div>
+                <div style="color:#1e3a5f; margin-top:3px; line-height:1.4;">Grammatik, DNA,<br>Kristalle, Taxonomien</div>
             </div>
             <div style="padding:12px; background:#faf5ff; border-radius:10px; border:1px solid #e9d5ff; text-align:center;">
-                <div style="font-size:1.6em;">🔗</div>
-                <div style="font-weight:bold; color:#6b21a8; font-size:0.82em;">Relationen</div>
-                <div style="font-size:0.68em; color:#581c87; margin-top:3px; line-height:1.4;">Ursache→Wirkung,<br>Analogien, Hierarchien</div>
+                <div>🔗</div>
+                <div style="font-weight:bold; color:#6b21a8;">Relationen</div>
+                <div style="color:#581c87; margin-top:3px; line-height:1.4;">Ursache→Wirkung,<br>Analogien, Hierarchien</div>
             </div>
             <div style="padding:12px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca; text-align:center;">
-                <div style="font-size:1.6em;">🎲</div>
-                <div style="font-weight:bold; color:#991b1b; font-size:0.82em;">Statistik</div>
-                <div style="font-size:0.68em; color:#7f1d1d; margin-top:3px; line-height:1.4;">Verteilungen, Zipf,<br>Bayes, Korrelationen</div>
+                <div>🎲</div>
+                <div style="font-weight:bold; color:#991b1b;">Statistik</div>
+                <div style="color:#7f1d1d; margin-top:3px; line-height:1.4;">Verteilungen, Zipf,<br>Bayes, Korrelationen</div>
             </div>
             <div style="padding:12px; background:#f0f9ff; border-radius:10px; border:1px solid #bae6fd; text-align:center;">
-                <div style="font-size:1.6em;">💬</div>
-                <div style="font-weight:bold; color:#0c4a6e; font-size:0.82em;">Sprache</div>
-                <div style="font-size:0.68em; color:#164e63; margin-top:3px; line-height:1.4;">Syntax, Stil, Pragmatik,<br>Argumentation</div>
+                <div>💬</div>
+                <div style="font-weight:bold; color:#0c4a6e;">Sprache</div>
+                <div style="color:#164e63; margin-top:3px; line-height:1.4;">Syntax, Stil, Pragmatik,<br>Argumentation</div>
             </div>
             <div style="padding:12px; background:#fefce8; border-radius:10px; border:1px solid #fef08a; text-align:center;">
-                <div style="font-size:1.6em;">⚖️</div>
-                <div style="font-weight:bold; color:#854d0e; font-size:0.82em;">Kausalität</div>
-                <div style="font-size:0.68em; color:#713f12; margin-top:3px; line-height:1.4;">Wenn→Dann, Physik,<br>Logik, Konsequenzen</div>
+                <div>⚖️</div>
+                <div style="font-weight:bold; color:#854d0e;">Kausalität</div>
+                <div style="color:#713f12; margin-top:3px; line-height:1.4;">Wenn→Dann, Physik,<br>Logik, Konsequenzen</div>
             </div>
             <div style="padding:12px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:1.6em;">🎵</div>
-                <div style="font-weight:bold; color:#334155; font-size:0.82em;">Harmonien</div>
-                <div style="font-size:0.68em; color:#475569; margin-top:3px; line-height:1.4;">Musik, Farben, Ästhetik,<br>Proportionen</div>
+                <div>🎵</div>
+                <div style="font-weight:bold; color:#334155;">Harmonien</div>
+                <div style="color:#475569; margin-top:3px; line-height:1.4;">Musik, Farben, Ästhetik,<br>Proportionen</div>
             </div>
         </div>
 
@@ -590,43 +590,43 @@
         <div class="fragment" style="margin-top:18px; display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap;">
             <!-- Embedding -->
             <div style="text-align:center; padding:10px 14px; background:#eef2ff; border-radius:10px 0 0 10px; border:1px solid #c7d2fe;">
-                <div style="font-size:0.68em; font-weight:bold; color:#6366f1;">EMBED</div>
-                <div class="math-display" style="font-size:0.7em; margin:4px 0;">$$W_e \cdot x$$</div>
-                <div style="font-size:0.65em; color:#64748b;">Bedeutung<br>→ Vektor</div>
+                <div style="font-weight:bold; color:#6366f1;">EMBED</div>
+                <div class="math-display" style="margin:4px 0;">$$W_e \cdot x$$</div>
+                <div style="color:#64748b;">Bedeutung<br>→ Vektor</div>
             </div>
-            <div style="font-size:1.3em; color:#94a3b8; padding:0 3px;">→</div>
+            <div style="color:#94a3b8; padding:0 3px;">→</div>
 
             <!-- Wiederholter Block: ATTN + FFN, mit Klammer -->
             <div style="position:relative; display:flex; align-items:center; gap:0; border:2px dashed #94a3b8; border-radius:10px; padding:6px 10px;">
                 <!-- ATTN -->
                 <div style="text-align:center; padding:10px 12px; background:#f5f3ff; border-radius:8px; border:1px solid #e9d5ff;">
-                    <div style="font-size:0.68em; font-weight:bold; color:#8b5cf6;">ATTN</div>
-                    <div class="math-display" style="font-size:0.65em; margin:4px 0;">$$\text{softmax}\!\left(\frac{QK^T}{\sqrt{d}}\right)\!V$$</div>
-                    <div style="font-size:0.65em; color:#64748b;">Kontext<br>herstellen</div>
+                    <div style="font-weight:bold; color:#8b5cf6;">ATTN</div>
+                    <div class="math-display" style="margin:4px 0;">$$\text{softmax}\!\left(\frac{QK^T}{\sqrt{d}}\right)\!V$$</div>
+                    <div style="color:#64748b;">Kontext<br>herstellen</div>
                 </div>
-                <div style="font-size:1.1em; color:#94a3b8; padding:0 3px;">→</div>
+                <div style="color:#94a3b8; padding:0 3px;">→</div>
                 <!-- FFN -->
                 <div style="text-align:center; padding:10px 12px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a;">
-                    <div style="font-size:0.68em; font-weight:bold; color:#d97706;">FFN</div>
-                    <div class="math-display" style="font-size:0.65em; margin:4px 0;">$$W_2 \cdot \text{ReLU}(W_1 x\!+\!b)$$</div>
-                    <div style="font-size:0.65em; color:#64748b;">Wissen<br>abrufen</div>
+                    <div style="font-weight:bold; color:#d97706;">FFN</div>
+                    <div class="math-display" style="margin:4px 0;">$$W_2 \cdot \text{ReLU}(W_1 x\!+\!b)$$</div>
+                    <div style="color:#64748b;">Wissen<br>abrufen</div>
                 </div>
                 <!-- ×100 Label -->
-                <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-size:0.65em; font-weight:bold; padding:2px 8px; border-radius:10px;">×100</div>
+                <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:2px 8px; border-radius:10px;">×100</div>
             </div>
 
-            <div style="font-size:1.3em; color:#94a3b8; padding:0 3px;">→</div>
+            <div style="color:#94a3b8; padding:0 3px;">→</div>
             <!-- Softmax -->
             <div style="text-align:center; padding:10px 14px; background:#ecfdf5; border-radius:0 10px 10px 0; border:1px solid #86efac;">
-                <div style="font-size:0.68em; font-weight:bold; color:#10b981;">SOFTMAX</div>
-                <div class="math-display" style="font-size:0.7em; margin:4px 0;">$$\frac{e^{z_i}}{\sum e^{z_j}}$$</div>
-                <div style="font-size:0.65em; color:#64748b;">Scores →<br>Vorhersage</div>
+                <div style="font-weight:bold; color:#10b981;">SOFTMAX</div>
+                <div class="math-display" style="margin:4px 0;">$$\frac{e^{z_i}}{\sum e^{z_j}}$$</div>
+                <div style="color:#64748b;">Scores →<br>Vorhersage</div>
             </div>
         </div>
 
         <!-- Kernbotschaft -->
         <div class="fragment" style="margin-top:18px; padding:14px 22px; background:linear-gradient(135deg, #fef3c7, #fef9c3); border-radius:12px; border:2px solid #fbbf24; text-align:center;">
-            <div style="font-size:1.05em; color:#1e293b; line-height:1.6;">
+            <div style="color:#1e293b; line-height:1.6;">
                 Jedes Muster der Wirklichkeit spiegelt sich in Texten.<br>
                 <b>~100× [Kontext herstellen + Wissen abrufen]</b> scheint zu reichen, um Muster soweit approximieren zu können, wie große LLM es heute tun.
             </div>
@@ -655,7 +655,7 @@
             </div>
 
             <!-- Explanation -->
-            <div id="knowledge-explanation" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; font-size:0.92em; color:#1e40af; text-align:center; line-height:1.6;"></div>
+            <div id="knowledge-explanation" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
 
 		<!-- Hidden fragments that trigger step changes -->
 		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="1" style="display:none;"></div>
@@ -688,11 +688,11 @@
             <h2>Temperature & Sampling</h2>
             <div class="demo-box">
                 <div class="demo-title">🎲 Vorhersage: Wahrscheinlichkeit über Vokabular</div>
-                <div style="font-size:0.85em; color:#64748b; text-align:center; margin-bottom:10px;">
+                <div style="color:#64748b; text-align:center; margin-bottom:10px;">
                     Input: "Es war einmal" → Was kommt als nächstes?
                 </div>
                 <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-                    <span style="font-size:0.85em; color:#3b82f6; font-weight:bold;">🎯 Greedy</span>
+                    <span style="color:#3b82f6; font-weight:bold;">🎯 Greedy</span>
                     <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
                     <span style="font-size:0.85em; color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
                     <span id="prediction-temp-val" style="font-size:0.9em; font-weight:bold; min-width:120px; text-align:right;">1.00</span>

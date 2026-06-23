@@ -293,3 +293,14 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	min-height: 60px; /* verhindert Layout-Shift */
 	contain: content;  /* isoliert Repaints */
 }
+
+
+
+/* ============ TYPOGRAPHY ============ */
+.slide h1 { font-size: clamp(2em, 4vw, 3.5em); color: #1e40af; margin-bottom: 20px; line-height: 1.2; }
+.slide h2 { font-size: clamp(1.6em, 3vw, 2.8em); color: #3b82f6; margin-bottom: 16px; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; }
+.slide h3 { font-size: clamp(1.2em, 2.2vw, 2em); color: #6366f1; margin-top: 20px; margin-bottom: 12px; }
+.slide p  { font-size: clamp(1em, 1.5vw, 1.4em); line-height: 1.8; margin-bottom: 14px; color: #334155; }
+.slide ul, .slide ol { font-size: clamp(0.95em, 1.4vw, 1.35em); line-height: 1.8; margin: 12px 0 12px 30px; color: #334155; }
+.slide li { margin-bottom: 8px; }
+.slide code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
