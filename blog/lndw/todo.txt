@@ -14,5 +14,3 @@ halluzinationen -> mit RAG weniger, zu viel text
 "Funktionsapproximation durch Stückelung" -> einfacher machen
 
 sonnenbild zeigen
-
-allgemein größer ziehen, texte sind sehr klein
