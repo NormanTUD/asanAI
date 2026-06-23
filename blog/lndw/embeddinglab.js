@@ -624,32 +624,41 @@ function renderSpace(key, highlightPos = null, steps = []) {
 }
 
 let _calcEvoFocusState = {};
-
 let _calcEvoTimers = {};
+let _renderingInProgress = {};
 
 function calcEvo(key) {
     const inputEl = document.getElementById(`input-${key}`);
+    if (!inputEl) return;
+    
+    // ═══════════════════════════════════════════════════════════
+    // CRITICAL FIX: Save the CURRENT input value immediately
+    // because DOM mutations can clear it
+    // ═══════════════════════════════════════════════════════════
     const inputVal = inputEl.value;
     const space = evoSpaces[key];
     const resDiv = document.getElementById(`res-${key}`);
 
-    // Save cursor state IMMEDIATELY
     const selStart = inputEl.selectionStart;
     const selEnd = inputEl.selectionEnd;
+    _calcEvoFocusState[key] = { selStart, selEnd, value: inputVal };
 
-    // Debounce plot render only
+    _renderingInProgress[key] = true;
+
     if (_calcEvoTimers[key]) {
         clearTimeout(_calcEvoTimers[key]);
     }
 
-    // Create a lowercase map for lookups
     const lowerVocab = Object.keys(space.vocab).reduce((acc, word) => {
         acc[word.toLowerCase()] = { vec: space.vocab[word], original: word };
         return acc;
     }, {});
 
     const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-    if (!tokens) return;
+    if (!tokens) {
+        _renderingInProgress[key] = false;
+        return;
+    }
 
     let pos = 0;
     let steps = [];
@@ -659,36 +668,36 @@ function calcEvo(key) {
     function peek() { return tokens[pos]; }
     function consume() { return tokens[pos++]; }
 
-	function parseFactor() {
-		let token = peek();
-		if (token === undefined) return { val: [0, 0, 0], tex: '', isScalar: false, label: '' };
-		consume();
+    function parseFactor() {
+        let token = peek();
+        if (token === undefined) return { val: [0, 0, 0], tex: '', isScalar: false, label: '' };
+        consume();
 
-		if (token === '(') {
-			let res = parseExpression();
-			if (peek() === ')') consume(); // safe consume
-			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
-		}
-		if (token === '-') {
-			let res = parseFactor();
-			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
-		}
-		if (!isNaN(token)) {
-			const s = parseFloat(token);
-			return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
-		}
+        if (token === '(') {
+            let res = parseExpression();
+            if (peek() === ')') consume();
+            return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+        }
+        if (token === '-') {
+            let res = parseFactor();
+            return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+        }
+        if (!isNaN(token)) {
+            const s = parseFloat(token);
+            return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
+        }
 
-		const entry = lowerVocab[token.toLowerCase()];
-		const vec = [...(entry ? entry.vec : [0, 0, 0])];
-		const displayName = entry ? entry.original : token;
+        const entry = lowerVocab[token.toLowerCase()];
+        const vec = [...(entry ? entry.vec : [0, 0, 0])];
+        const displayName = entry ? entry.original : token;
 
-		return {
-			val: vec,
-			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
-			isScalar: false,
-			label: displayName
-		};
-	}
+        return {
+            val: vec,
+            tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
+            isScalar: false,
+            label: displayName
+        };
+    }
 
     function parseTerm() {
         let left = parseFactor();
@@ -754,86 +763,128 @@ function calcEvo(key) {
         const symbol = isExact ? "=" : "\\approx";
         const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
-        // ═══════════════════════════════════════════════════════
-        // FLICKER-FREE RENDERING:
-        // 1. Render into a detached div
-        // 2. Only swap when fully ready (no raw $$ flash)
-        // ═══════════════════════════════════════════════════════
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = `
-            <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-            $$ ${result.tex} = ${resultTex} $$
-            </div>
-        `;
-
-        // Render math on the DETACHED element
-        if (typeof temml !== 'undefined' && temml.renderMathInElement) {
-            temml.renderMathInElement(tempDiv, { throwOnError: false });
-        } else if (typeof renderMathInElement !== 'undefined') {
-            renderMathInElement(tempDiv, { throwOnError: false });
-        } else {
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.top = '-9999px';
-            document.body.appendChild(tempDiv);
-            render_temml(tempDiv);
-            document.body.removeChild(tempDiv);
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL FIX: Render math COMPLETELY offline, then inject
+        // as pre-rendered HTML. Mark with data-math-rendered so
+        // render_temml() NEVER touches it again.
+        // ═══════════════════════════════════════════════════════════
+        const fullTex = `${result.tex} = ${resultTex}`;
+        let renderedHtml;
+        try {
+            renderedHtml = temml.renderToString(fullTex, { displayMode: true });
+        } catch(e) {
+            renderedHtml = `<span style="color:red;">Render Error</span>`;
         }
 
-        // Smooth swap: fade transition instead of hard innerHTML replace
-        const newContent = tempDiv.firstElementChild || tempDiv;
-        newContent.setAttribute('data-math-rendered', 'true');
-        newContent.style.opacity = '1';
-        newContent.style.transition = 'none'; // no transition on the NEW element
-
-        // If resDiv already has content, just replace children directly
-        // This avoids the "flash of raw LaTeX" because we never show unrendered math
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL FIX: Use innerHTML on resDiv directly with
+        // data-math-rendered already set BEFORE the write, so the
+        // MutationObserver doesn't re-trigger render_temml on it
+        // ═══════════════════════════════════════════════════════════
         resDiv.setAttribute('data-math-rendered', 'true');
-        
-        // Use replaceChildren for atomic DOM swap (no intermediate empty state)
-        resDiv.replaceChildren(newContent);
+        resDiv.innerHTML = `<div data-math-rendered="true" style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">${renderedHtml}</div>`;
 
-        // Debounce the plot render (150ms)
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL FIX: Restore input value AND focus immediately
+        // because innerHTML on a sibling can cause browser to reset
+        // ═══════════════════════════════════════════════════════════
+        if (inputEl.value !== inputVal) {
+            inputEl.value = inputVal;
+        }
+        if (document.activeElement !== inputEl) {
+            inputEl.focus();
+        }
+        inputEl.setSelectionRange(selStart, selEnd);
+
+        // Debounced plot render
         const capturedResult = [...result.val];
-        const capturedSteps = steps;
+        const capturedSteps = steps.map(s => ({...s, from: [...s.from], to: [...s.to]}));
+        const capturedSelStart = selStart;
+        const capturedSelEnd = selEnd;
+        const capturedValue = inputVal;
+
         _calcEvoTimers[key] = setTimeout(() => {
+            const inputStillFocused = (document.activeElement === inputEl);
+
+            _renderingInProgress[key] = true;
+
             renderSpace(key, capturedResult, capturedSteps);
-            setTimeout(() => {
-                if (document.activeElement !== inputEl) {
-                    inputEl.focus();
-                    inputEl.setSelectionRange(selStart, selEnd);
+
+            const restoreFocus = () => {
+                // Also restore value if it got wiped
+                if (inputEl.value !== capturedValue && inputEl.value === '') {
+                    inputEl.value = capturedValue;
                 }
-            }, 0);
+                if (inputStillFocused && document.activeElement !== inputEl) {
+                    const freshState = _calcEvoFocusState[key] || { selStart: capturedSelStart, selEnd: capturedSelEnd };
+                    inputEl.focus();
+                    inputEl.setSelectionRange(freshState.selStart, freshState.selEnd);
+                }
+            };
+
+            restoreFocus();
+            requestAnimationFrame(() => {
+                restoreFocus();
+                setTimeout(() => {
+                    restoreFocus();
+                    _renderingInProgress[key] = false;
+                }, 50);
+            });
+
+            setTimeout(() => {
+                restoreFocus();
+                _renderingInProgress[key] = false;
+            }, 200);
+
         }, 150);
 
     } catch(e) {
         console.error(e);
+        resDiv.setAttribute('data-math-rendered', 'true');
         resDiv.innerText = "Syntax Error";
+        _renderingInProgress[key] = false;
     }
 }
 
 function observeAndRenderMath(targetNode = document.body) {
-	if (!targetNode) {
-		console.warn("MutationObserver: Ziel-Element nicht gefunden.");
-		return;
-	}
+    if (!targetNode) {
+        console.warn("MutationObserver: Ziel-Element nicht gefunden.");
+        return;
+    }
 
-	const config = { childList: true, subtree: true, characterData: true };
+    const config = { childList: true, subtree: true, characterData: true };
 
-	const callback = function(mutationsList) {
-		for (const mutation of mutationsList) {
-			if (mutation.type === 'characterData' || mutation.type === 'childList') {
-				const parent = mutation.target.parentElement;
-				if (parent && parent.hasAttribute('data-math-rendered')) {
-					parent.removeAttribute('data-math-rendered');
-				}
-			}
-		}
-		render_temml();
-	};
+    const callback = function(mutationsList) {
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL: Skip mutations caused by calcEvo result rendering
+        // ═══════════════════════════════════════════════════════════
+        let shouldRender = false;
+        for (const mutation of mutationsList) {
+            const target = mutation.target;
+            // Skip if mutation is inside a res-* div (our own output)
+            if (target && (
+                target.id === 'res-2d' || target.id === 'res-1d' || target.id === 'res-3d' ||
+                (target.closest && (target.closest('#res-2d') || target.closest('#res-1d') || target.closest('#res-3d') ||
+                 target.closest('#res-2d-wrapper') || target.closest('#res-1d-wrapper') || target.closest('#res-3d-wrapper')))
+            )) {
+                continue; // Skip this mutation
+            }
+            
+            if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                const parent = mutation.target.parentElement;
+                if (parent && parent.hasAttribute('data-math-rendered')) {
+                    parent.removeAttribute('data-math-rendered');
+                }
+                shouldRender = true;
+            }
+        }
+        if (shouldRender) {
+            render_temml();
+        }
+    };
 
-	const observer = new MutationObserver(callback);
-	observer.observe(targetNode, config);
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
 }
 
 const _temmlOpts = {
@@ -1029,9 +1080,9 @@ const _temmlObserver = new IntersectionObserver((entries) => {
 
 function render_temml() {
 
-	/* ═══════════════════════════════════════════════════════════════
+	/* ═══════════════════════════════════════════════════════════════════════════
 	   ONE-TIME POPUP BOOTSTRAP
-	   ═══════════════════════════════════════════════════════════ */
+	   ═══════════════════════════════════════════════════════════════════════════ */
 	if (!render_temml._popupReady) {
 		render_temml._popupReady   = true;
 		render_temml._overlay      = null;
@@ -1132,11 +1183,9 @@ function render_temml() {
 				border:1px solid #e5e7eb;
 				border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}
 
-			/* ── Animated swap (user switches to a different equation) ── */
 			.lp-swap .lp-preview,
 			.lp-swap .lp-code{opacity:.15}
 
-			/* ── Subtle pulse for live updates (same equation changed) ── */
 			@keyframes lpPulse{
 				0%{box-shadow:inset 0 0 0 2px rgba(79,70,229,.2)}
 				100%{box-shadow:inset 0 0 0 2px transparent}}
@@ -1152,7 +1201,6 @@ function render_temml() {
 		`;
 		document.head.appendChild(s);
 
-		/* ── Helpers ── */
 		function _close() {
 			if (!render_temml._overlay) return;
 			render_temml._overlay.remove();
@@ -1228,10 +1276,6 @@ function render_temml() {
 			});
 		}
 
-		/* ── Content update — two modes ── */
-
-		// Animated swap: fades out old → swaps → fades in new
-		// Used when user right-clicks a DIFFERENT equation
 		function _animatedSwap(overlay, latex, isDisplay, mathEl) {
 			render_temml._mathEl       = mathEl;
 			render_temml._currentLatex = latex;
@@ -1247,29 +1291,23 @@ function render_temml() {
 				_resetCopyBtn(overlay);
 
 				requestAnimationFrame(() => box.classList.remove('lp-swap'));
-			}, 180); // matches the CSS transition duration
+			}, 180);
 		}
 
-		// Instant swap + subtle pulse: no opacity change, just swaps content
-		// Used when the SAME equation re-renders (live update)
 		function _liveSwap(overlay, latex, isDisplay, mathEl) {
 			render_temml._mathEl       = mathEl;
 			render_temml._currentLatex = latex;
 
-			// Swap content instantly — no flicker
 			overlay.querySelector('.lp-preview').innerHTML = '';
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
 			overlay.querySelector('.lp-code').textContent = latex;
 			_setBadge(overlay, isDisplay);
 
-			// Gentle inset glow to signal the update
 			const box = overlay.querySelector('.lp-box');
 			box.classList.remove('lp-live-pulse');
-			// Force reflow so animation restarts if triggered rapidly
 			void box.offsetWidth;
 			box.classList.add('lp-live-pulse');
 
-			// Clean up class after animation ends
 			const onEnd = () => { box.classList.remove('lp-live-pulse'); box.removeEventListener('animationend', onEnd); };
 			box.addEventListener('animationend', onEnd);
 		}
@@ -1278,14 +1316,12 @@ function render_temml() {
 			const container = _findContainer(mathEl);
 			const mathIndex = container ? _getMathIndex(container, mathEl) : -1;
 
-			// Same equation, same content → no-op
 			if (render_temml._overlay &&
 				render_temml._mathEl === mathEl &&
 				render_temml._currentLatex === latex) {
 				return;
 			}
 
-			// Popup already open → animated swap to new equation
 			if (render_temml._overlay) {
 				render_temml._containerEl = container;
 				render_temml._mathIndex   = mathIndex;
@@ -1293,7 +1329,6 @@ function render_temml() {
 				return;
 			}
 
-			// ── Create new popup ──
 			const overlay = document.createElement('div');
 			overlay.className = 'lp-overlay';
 			overlay.innerHTML = `
@@ -1333,7 +1368,6 @@ function render_temml() {
 			render_temml._mathIndex    = mathIndex;
 		}
 
-		/* ── Live-update hook — called at end of every render pass ── */
 		render_temml._liveUpdate = function() {
 			if (!render_temml._overlay || !render_temml._containerEl) return;
 
@@ -1345,22 +1379,17 @@ function render_temml() {
 			const newLatex = _extractLatex(newMath);
 			if (!newLatex) return;
 
-			// Always keep the DOM reference fresh (Temml replaces nodes)
 			render_temml._mathEl = newMath;
 
-			// Content actually changed → smooth live swap
 			if (newLatex !== render_temml._currentLatex) {
 				const isDisplay = newMath.getAttribute('display') === 'block';
 				_liveSwap(render_temml._overlay, newLatex, isDisplay, newMath);
 			}
 		};
 
-		/* ── Global listeners (once) ── */
 		document.addEventListener('contextmenu', function(e) {
 			const mathEl = e.target.closest('math');
 			if (!mathEl) return;
-
-			// Ignore math clones inside the popup preview
 			if (mathEl.closest('.lp-overlay')) return;
 
 			const latex = _extractLatex(mathEl);
@@ -1379,9 +1408,9 @@ function render_temml() {
 	} /* end one-time bootstrap */
 
 
-	/* ═══════════════════════════════════════════════════════════════
+	/* ═══════════════════════════════════════════════════════════════════════════
 	   NORMAL RENDERING PASS
-	   ═══════════════════════════════════════════════════════════ */
+	   ═══════════════════════════════════════════════════════════════════════════ */
 	const elements = document.querySelectorAll(
 		'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
 		'div:not([data-math-rendered]), li:not([data-math-rendered])'
@@ -1389,6 +1418,23 @@ function render_temml() {
 
 	elements.forEach(el => {
 		if (!el.textContent.includes('$')) return;
+
+		// ═══════════════════════════════════════════════════════════
+		// CRITICAL: Never process elements that contain input fields
+		// or are part of the embedding calculator UI.
+		// This prevents render_temml from destroying input state.
+		// ═══════════════════════════════════════════════════════════
+		if (el.querySelector('input')) return;
+		if (el.closest && el.closest('[id^="input-"]')) return;
+
+		// Skip the res-* divs and their wrappers — calcEvo handles these
+		const elId = el.id || '';
+		if (elId === 'res-1d' || elId === 'res-2d' || elId === 'res-3d') return;
+		if (elId === 'res-1d-wrapper' || elId === 'res-2d-wrapper' || elId === 'res-3d-wrapper') return;
+		if (el.closest && (
+			el.closest('#res-1d') || el.closest('#res-2d') || el.closest('#res-3d') ||
+			el.closest('#res-1d-wrapper') || el.closest('#res-2d-wrapper') || el.closest('#res-3d-wrapper')
+		)) return;
 
 		// Skip elements that ARE code blocks or are INSIDE code blocks
 		if (el.tagName === 'PRE' || el.tagName === 'CODE') return;
@@ -1424,9 +1470,9 @@ function render_temml() {
 		}
 	});
 
-	/* ═══════════════════════════════════════════════════════════════
+	/* ═══════════════════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
-	   ═══════════════════════════════════════════════════════════ */
+	   ═══════════════════════════════════════════════════════════════════════════ */
 	if (render_temml._liveUpdate) render_temml._liveUpdate();
 }
 
@@ -1438,59 +1484,180 @@ function render_temml() {
 // the flag is set.
 // ══════════════════════════════════════════════════════════════
 
-let _renderingInProgress = {};
+// ═══════════════════════════════════════════════════════════════════
+// NUCLEAR FOCUS PROTECTION — MULTI-LAYERED
+// Prevents ALL focus-stealing during rendering from:
+// - Plotly DOM mutations
+// - ECharts canvas creation
+// - SVG/Canvas element focus grabs
+// - MutationObserver-triggered reflows
+// - Temml math rendering side effects
+// ═══════════════════════════════════════════════════════════════════
 
 ['1d', '2d', '3d'].forEach(key => {
     const inputEl = document.getElementById(`input-${key}`);
     if (!inputEl) return;
 
-    // Track cursor position continuously so we always have a fresh value
-    inputEl.addEventListener('keydown', function() {
+    // ═══════════════════════════════════════════════════════════
+    // GUARDRAIL 13: Continuously track cursor position
+    // so we ALWAYS have a fresh value to restore to
+    // ═══════════════════════════════════════════════════════════
+    const trackCursor = function() {
         _calcEvoFocusState[key] = {
             selStart: this.selectionStart,
             selEnd: this.selectionEnd
         };
-    });
-    inputEl.addEventListener('keyup', function() {
-        _calcEvoFocusState[key] = {
-            selStart: this.selectionStart,
-            selEnd: this.selectionEnd
-        };
-    });
-    inputEl.addEventListener('input', function() {
-        _calcEvoFocusState[key] = {
-            selStart: this.selectionStart,
-            selEnd: this.selectionEnd
-        };
-    });
+    };
 
-    // The NUCLEAR blur handler: if rendering is in progress, ALWAYS refocus
+    inputEl.addEventListener('keydown', trackCursor);
+    inputEl.addEventListener('keyup', trackCursor);
+    inputEl.addEventListener('input', trackCursor);
+    inputEl.addEventListener('click', trackCursor);
+    inputEl.addEventListener('mouseup', trackCursor);
+    inputEl.addEventListener('focus', trackCursor);
+    inputEl.addEventListener('select', trackCursor);
+
+    // ═══════════════════════════════════════════════════════════
+    // GUARDRAIL 14: Prevent the input from EVER losing focus
+    // to a Plotly/ECharts/SVG/Canvas element during rendering
+    // ═══════════════════════════════════════════════════════════
     inputEl.addEventListener('blur', function(e) {
+        const self = this;
+        const state = _calcEvoFocusState[key] || {
+            selStart: self.value.length,
+            selEnd: self.value.length
+        };
+
+        // ═══════════════════════════════════════════════════════
+        // GUARDRAIL 15: If rendering is in progress, ALWAYS refocus
+        // No exceptions — rendering caused this blur
+        // ═══════════════════════════════════════════════════════
         if (_renderingInProgress[key]) {
-            // Rendering caused this blur — block it unconditionally
-            const state = _calcEvoFocusState[key] || { selStart: this.value.length, selEnd: this.value.length };
-            const self = this;
-            setTimeout(function() {
+            e.preventDefault();
+            setTimeout(() => {
                 self.focus();
                 self.setSelectionRange(state.selStart, state.selEnd);
             }, 0);
             return;
         }
-        // Not rendering — check if focus went to null (DOM mutation steal)
-        if (!e.relatedTarget || e.relatedTarget.tagName === 'svg' || 
-            e.relatedTarget.tagName === 'rect' || e.relatedTarget.tagName === 'path' ||
-            e.relatedTarget.tagName === 'CANVAS' ||
-            (e.relatedTarget.closest && e.relatedTarget.closest('.js-plotly-plot'))) {
-            const state = _calcEvoFocusState[key] || { selStart: this.value.length, selEnd: this.value.length };
-            const self = this;
-            setTimeout(function() {
+
+        // ═══════════════════════════════════════════════════════
+        // GUARDRAIL 16: If focus went to null/body (DOM mutation steal)
+        // ═══════════════════════════════════════════════════════
+        if (!e.relatedTarget || e.relatedTarget === document.body) {
+            setTimeout(() => {
+                if (document.activeElement === document.body || !document.activeElement) {
+                    self.focus();
+                    self.setSelectionRange(state.selStart, state.selEnd);
+                }
+            }, 0);
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // GUARDRAIL 17: If focus went to SVG/Canvas/Plotly elements
+        // (these are never intentional user interactions with the plot
+        //  while typing in the input)
+        // ═══════════════════════════════════════════════════════
+        const target = e.relatedTarget;
+        const tagName = target ? target.tagName : '';
+        const isPlotElement = (
+            tagName === 'svg' ||
+            tagName === 'SVG' ||
+            tagName === 'rect' ||
+            tagName === 'RECT' ||
+            tagName === 'path' ||
+            tagName === 'PATH' ||
+            tagName === 'CANVAS' ||
+            tagName === 'canvas' ||
+            tagName === 'g' ||
+            tagName === 'G' ||
+            (target && target.closest && (
+                target.closest('.js-plotly-plot') ||
+                target.closest('.plotly') ||
+                target.closest('[data-echarts-bindbindbindto]') ||
+                target.closest('canvas') ||
+                target.closest('svg')
+            ))
+        );
+
+        if (isPlotElement) {
+            setTimeout(() => {
                 self.focus();
                 self.setSelectionRange(state.selStart, state.selEnd);
             }, 0);
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // GUARDRAIL 18: If focus went to the result div or its children
+        // (math rendering can make elements focusable)
+        // ═══════════════════════════════════════════════════════
+        const resDiv = document.getElementById(`res-${key}`);
+        const resWrapper = document.getElementById(`res-${key}-wrapper`);
+        if (target && (
+            target === resDiv ||
+            target === resWrapper ||
+            (resDiv && resDiv.contains(target)) ||
+            (resWrapper && resWrapper.contains(target))
+        )) {
+            setTimeout(() => {
+                self.focus();
+                self.setSelectionRange(state.selStart, state.selEnd);
+            }, 0);
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // GUARDRAIL 19: If focus went to the plot container itself
+        // ═══════════════════════════════════════════════════════
+        const plotDiv = document.getElementById(`plot-${key}`);
+        if (target && plotDiv && (target === plotDiv || plotDiv.contains(target))) {
+            setTimeout(() => {
+                self.focus();
+                self.setSelectionRange(state.selStart, state.selEnd);
+            }, 0);
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // GUARDRAIL 20: Safety net — if ANY rendering timer is pending
+        // for this key, assume the blur was caused by rendering
+        // ═══════════════════════════════════════════════════════
+        if (_calcEvoTimers[key]) {
+            setTimeout(() => {
+                // Only refocus if nothing else meaningful got focus
+                if (document.activeElement === document.body ||
+                    !document.activeElement ||
+                    document.activeElement.tagName === 'DIV') {
+                    self.focus();
+                    self.setSelectionRange(state.selStart, state.selEnd);
+                }
+            }, 10);
+            return;
         }
     });
-});
 
+    // ═══════════════════════════════════════════════════════════
+    // GUARDRAIL BONUS: Make the input "sticky" — if it had focus
+    // and a focusin event fires on a plot element, steal it back
+    // ═══════════════════════════════════════════════════════════
+    const plotDiv = document.getElementById(`plot-${key}`);
+    if (plotDiv) {
+        plotDiv.addEventListener('focusin', function(e) {
+            if (_renderingInProgress[key] || _calcEvoTimers[key]) {
+                const state = _calcEvoFocusState[key] || {
+                    selStart: inputEl.value.length,
+                    selEnd: inputEl.value.length
+                };
+                setTimeout(() => {
+                    inputEl.focus();
+                    inputEl.setSelectionRange(state.selStart, state.selEnd);
+                }, 0);
+            }
+        });
+    }
+});
 
 
 function renderComparison3D(config) {
