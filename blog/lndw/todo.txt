@@ -1,11 +1,7 @@
 was sind das für lücken (rechnen), was wir von ki wollen
 warum KI nicht rechnen können
 
-"Daten sind fehlerhaft – und trotzdem nützlich" zahlen hauen nicht hin
-
 halluzinationen -> mit RAG weniger, zu viel text
-
-"Die autoregressive Schleife" -> egal was man rein gibt -> immer nur ein token
 
 "Attention "Welche anderen Wörter sind für dieses Wort wichtig?"" sollte auf sitzen usw reagieren
 (guckt in den gesamtkontext)
