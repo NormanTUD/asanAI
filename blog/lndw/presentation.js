@@ -33,16 +33,17 @@ function next() {
             SunrisePlot.showSinus();
         }
 
-        // === NEW: Knowledge step handling ===
+        // Knowledge step handling
         if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
             const step = parseInt(frag.getAttribute('data-knowledge-step'));
             KnowledgeViz.setStep(step);
-            // Hide all previous knowledge fragments visually (exclusive mode)
-            fragments.forEach((f, idx) => {
-                if (f.getAttribute('data-fragment-action') === 'knowledge-step' && idx < visibleCount) {
-                    // Keep .visible for fragment counting, but the viz handles exclusivity
-                }
-            });
+        }
+
+        // Manifold alignment animation
+        if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
+            if (typeof animateDualManifoldAlignment === 'function') {
+                animateDualManifoldAlignment();
+            }
         }
 
         return;
@@ -64,11 +65,18 @@ function prev() {
             SunrisePlot.hideSinus();
         }
 
-        // === NEW: Knowledge step – go back to previous step ===
+        // Knowledge step — go back to previous step
         if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
             const step = parseInt(frag.getAttribute('data-knowledge-step'));
             if (step > 0) {
                 KnowledgeViz.setStep(step - 1);
+            }
+        }
+
+        // Manifold alignment — reset on backward
+        if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
+            if (typeof resetDualManifold === 'function') {
+                resetDualManifold();
             }
         }
 

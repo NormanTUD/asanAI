@@ -391,209 +391,6 @@ const TokenizerViz = {
 };
 
 // ============================================================
-// STEP 2: EMBEDDING VISUALIZER
-// ============================================================
-
-const EmbeddingViz = {
-    // Simplified 2D embedding positions for common words
-    embeddings: {
-        'once': [2, 5], 'upon': [3, 5.5], 'a': [0, 0.5], 'time': [4, 3],
-        'the': [0.5, 0.2], 'king': [8, -3], 'queen': [8, 3],
-        'man': [3, -3], 'woman': [3, 3], 'prince': [6, -3], 'princess': [6, 3],
-	'power': [5, 0], 'baby': [6, 0],
-        'boy': [-1, -3], 'girl': [-1, 3],
-        'cat': [-5, -6], 'dog': [-5, -4], 'dragon': [-3, -8],
-        'happy': [6, 6], 'sad': [-6, 6], 'love': [7, 7],
-        'was': [1, 1], 'there': [2.5, 2], 'is': [0.8, 0.8],
-        'good': [5, 5], 'great': [6, 5.5], 'big': [4, -1], 'small': [-4, -1],
-    },
-
-    currentDemo: 'basic',
-    arithmeticResult: null,
-
-    render: function() {
-        const plotDiv = document.getElementById('embedding-viz-plot');
-        if (!plotDiv) return;
-
-        const input = document.getElementById('embedding-viz-input');
-        const text = (input ? input.value : 'king queen man woman').toLowerCase();
-        const words = text.split(/\s+/).filter(w => this.embeddings[w]);
-
-        const traces = [];
-        const annotations = [];
-
-        // ── Background vocabulary (greyed out but visible) ──
-        const bgWords = Object.keys(this.embeddings).filter(w => !words.includes(w));
-        if (bgWords.length > 0) {
-            traces.push({
-                x: bgWords.map(w => this.embeddings[w][0]),
-                y: bgWords.map(w => this.embeddings[w][1]),
-                text: bgWords,
-                mode: 'markers+text',
-                textposition: 'top center',
-                textfont: { size: 9, color: '#cbd5e1' },
-                marker: { size: 5, color: '#e2e8f0', opacity: 0.5 },
-                showlegend: false,
-                hovertemplate: '<b>%{text}</b><br>(%{x:.1f}, %{y:.1f})<extra></extra>'
-            });
-        }
-
-        // ── Active (typed) words ──
-        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
-        words.forEach((word, i) => {
-            const pos = this.embeddings[word];
-            traces.push({
-                x: [pos[0]], y: [pos[1]],
-                text: [word],
-                mode: 'markers+text',
-                textposition: 'top center',
-                textfont: { size: 13, color: colors[i % colors.length], weight: 'bold' },
-                marker: { size: 14, color: colors[i % colors.length], line: { width: 2, color: '#fff' } },
-                showlegend: false,
-                hovertemplate: `<b>${word}</b><br>Vector: (${pos[0]}, ${pos[1]})<extra></extra>`
-            });
-        });
-
-        // ── Vector arithmetic: draw arrows for each calculation step ──
-        if (this.arithmeticResult) {
-            const r = this.arithmeticResult;
-
-            if (r.steps && r.steps.length > 0) {
-                r.steps.forEach((step, idx) => {
-                    // 1. Plotly annotation arrow (from → to) with arrowhead
-                    annotations.push({
-                        ax: step.from[0],
-                        ay: step.from[1],
-                        axref: 'x',
-                        ayref: 'y',
-                        x: step.to[0],
-                        y: step.to[1],
-                        xref: 'x',
-                        yref: 'y',
-                        showarrow: true,
-                        arrowhead: 2,
-                        arrowsize: 1.5,
-                        arrowwidth: 3,
-                        arrowcolor: '#3b82f6'
-                    });
-
-                    // 2. Invisible midpoint marker for hover label on the arrow
-                    const midX = (step.from[0] + step.to[0]) / 2;
-                    const midY = (step.from[1] + step.to[1]) / 2;
-                    traces.push({
-                        x: [midX],
-                        y: [midY],
-                        mode: 'markers',
-                        marker: { size: 14, color: 'rgba(59,130,246,0.01)' },
-                        text: [step.label],
-                        hovertemplate: '<b>%{text}</b><extra></extra>',
-                        showlegend: false,
-                        cliponaxis: false
-                    });
-
-                    // 3. Visible text label next to the arrow midpoint
-                    annotations.push({
-                        x: midX,
-                        y: midY + 0.7,
-                        xref: 'x',
-                        yref: 'y',
-                        text: `<b>${step.label}</b>`,
-                        showarrow: false,
-                        font: { size: 11, color: '#3b82f6' },
-                        bgcolor: 'rgba(255,255,255,0.85)',
-                        borderpad: 3
-                    });
-                });
-            }
-
-            // ── Result point (diamond) ──
-            traces.push({
-                x: [r.pos[0]], y: [r.pos[1]],
-                text: ['≈ ' + r.nearest],
-                mode: 'markers+text',
-                textposition: 'bottom center',
-                textfont: { size: 14, color: '#ef4444', weight: 'bold' },
-                marker: { size: 18, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: '#fff' } },
-                showlegend: false,
-                hovertemplate: `<b>Result ≈ ${r.nearest}</b><br>(${r.pos[0].toFixed(1)}, ${r.pos[1].toFixed(1)})<extra></extra>`
-            });
-        }
-
-        const layout = {
-            margin: { l: 40, r: 40, b: 40, t: 20 },
-            showlegend: false,
-            xaxis: { title: 'Dimension 1', range: [-10, 12], gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
-            yaxis: { title: 'Dimension 2', range: [-10, 10], gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0', scaleanchor: 'x' },
-            annotations: annotations,
-            plot_bgcolor: '#fff'
-        };
-
-        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-    },
-
-    doArithmetic: function() {
-        const input = document.getElementById('embedding-arithmetic-input');
-        if (!input) return;
-
-        const expr = input.value.toLowerCase().trim();
-        // Parse simple "king - man + woman" style expressions
-        const tokens = expr.match(/[a-z]+|[+\-]/g);
-        if (!tokens) return;
-
-        let result = null;
-        let op = '+';
-        const steps = [];
-
-        tokens.forEach(token => {
-            if (token === '+' || token === '-') {
-                op = token;
-            } else if (this.embeddings[token]) {
-                const vec = this.embeddings[token];
-                if (result === null) {
-                    result = [...vec];
-                } else {
-                    const prev = [...result];
-                    if (op === '+') {
-                        result[0] += vec[0];
-                        result[1] += vec[1];
-                    } else {
-                        result[0] -= vec[0];
-                        result[1] -= vec[1];
-                    }
-                    steps.push({
-                        from: prev,
-                        to: [...result],
-                        label: `${op === '+' ? '+' : '−'}${token}`
-                    });
-                }
-            }
-        });
-
-        if (result) {
-            // Find nearest word
-            let nearest = '';
-            let minDist = Infinity;
-            Object.entries(this.embeddings).forEach(([word, vec]) => {
-                const d = Math.sqrt(Math.pow(vec[0] - result[0], 2) + Math.pow(vec[1] - result[1], 2));
-                if (d < minDist) { minDist = d; nearest = word; }
-            });
-
-            this.arithmeticResult = { pos: result, nearest, steps };
-
-            const resultDiv = document.getElementById('embedding-arithmetic-result');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <span style="font-size:1.1em;">Result: <b style="color:#ef4444;">(${result[0].toFixed(1)}, ${result[1].toFixed(1)})</b>
-                    ≈ <b style="color:#10b981;">"${nearest}"</b>
-                    <span style="color:#94a3b8; font-size:0.85em;">(distance: ${minDist.toFixed(2)})</span></span>`;
-            }
-        }
-
-        this.render();
-    }
-};
-
-// ============================================================
 // STEP 3: POSITIONAL ENCODING VISUALIZER
 // ============================================================
 
@@ -1428,19 +1225,13 @@ function loadIntuitionVizModule() {
 		TokenizerViz.render();
 	}
 
-	// Step 2: Embedding
-	const embInput = document.getElementById('embedding-viz-input');
-	if (embInput) {
-		embInput.addEventListener('input', () => EmbeddingViz.render());
-	}
-	const embArithInput = document.getElementById('embedding-arithmetic-input');
-	if (embArithInput) {
-		embArithInput.addEventListener('keyup', (e) => {
-			if (e.key === 'Enter') EmbeddingViz.doArithmetic();
-		});
-	}
-	EmbeddingViz.render();
-	EmbeddingViz.doArithmetic()
+// Step 2: Embedding (from embeddinglab.js)
+initEmbeddingEditor();  // Renders the editable table
+renderSpace('2d');      // Renders the 2D plot
+// Also render the dual manifold if the div exists
+if (document.getElementById('plot-dual-manifolds')) {
+    renderDualManifolds();
+}
 
 	// Step 3: Positional Encoding
 	const peSlider = document.getElementById('pe-num-dims');
@@ -2758,20 +2549,6 @@ function loadIntuitionModule() {
         }
         TokenizerViz.render();
 
-    // Step 2: Embedding
-        const embInput = document.getElementById('embedding-viz-input');
-        if (embInput) {
-            embInput.addEventListener('input', () => EmbeddingViz.render());
-        }
-        const embArithInput = document.getElementById('embedding-arithmetic-input');
-        if (embArithInput) {
-            embArithInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') EmbeddingViz.doArithmetic();
-            });
-        }
-        EmbeddingViz.render();
-        EmbeddingViz.doArithmetic();
-
     // Step 3: Positional Encoding
         const peSlider = document.getElementById('pe-num-dims');
         if (peSlider) {
@@ -2819,6 +2596,11 @@ function loadIntuitionModule() {
 
     // Start observing everything
     _lazyCreateObserver();
+
+
+	renderSpace('2d');
+
+	initEmbeddingEditor();
 }
 
 function reset_nn_num_neurons () {

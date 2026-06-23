@@ -297,22 +297,57 @@
         </div>
     </div>
 
-    <!-- ==================== SLIDE 8: Embedding Demo ==================== -->
-    <div class="slide" data-title="Embedding">
-        <div class="slide-content">
-            <h2>Embedding-Raum</h2>
-            <div class="demo-box">
-                <input type="text" id="embedding-viz-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:1em; margin-bottom:8px;" placeholder="z.B. king queen man woman" value="king queen man woman">
-                <div id="embedding-viz-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-                <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
-                    <input type="text" id="embedding-arithmetic-input" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;" placeholder="z.B. king - man + woman" value="king - man + woman">
-                    <div id="embedding-arithmetic-result" style="margin-top:8px;"></div>
+<!-- ==================== SLIDE 8: Embedding Demo (aus embeddinglab) ==================== -->
+<div class="slide" data-title="Embedding">
+    <div class="slide-content">
+        <h2>Embedding-Raum</h2>
+        <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
+            <div id="plot-2d" style="height: 400px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+            <div>
+                <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Man + Power" onkeyup="calcEvo('2d')">
+                <div id="res-2d-wrapper">
+                    <div id="res-2d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #10b981; overflow-x: auto;">Match: -</div>
                 </div>
             </div>
+            <div class="embedding-table-container" id="editor-2d" data-space="2d"></div>
+        </section>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: The Manifold Hypothesis ==================== -->
+<div class="slide" data-title="Manifold Hypothesis">
+    <div class="slide-content">
+        <h2>The Manifold Hypothesis – Translation als Pfadfindung</h2>
+        <p style="font-size:0.88em; color:#475569; margin-bottom:12px;">
+            Zwei Sprachen kodieren dieselben Konzepte auf <b>verschiedenen Mannigfaltigkeiten</b> – mit identischer interner Geometrie.
+            Übersetzung = den gleichen Pfad auf einer anderen Oberfläche finden.
+        </p>
+        <div id="plot-dual-manifolds" style="height: 520px; background: #fff; border-radius: 8px; width: 100%; border: 1px solid #e2e8f0;"></div>
+
+        <!-- Hidden sliders (needed by the code but not shown to user) -->
+        <div style="display:none;">
+            <input type="range" id="dm-rotation" min="0" max="180" step="1" value="55">
+            <span id="dm-rot-val">55°</span>
+            <input type="range" id="dm-separation" min="0" max="8" step="0.1" value="5">
+            <span id="dm-sep-val">5.0</span>
+            <input type="checkbox" id="dm-correspondence" checked>
+            <input type="checkbox" id="dm-paths" checked>
+            <span id="dm-status"></span>
+            <button id="btn-dm-align"></button>
+        </div>
+
+        <!-- Fragments to control animation via arrow keys -->
+        <div class="fragment" data-fragment-action="manifold-align" style="display:none;"></div>
+
+        <div style="margin-top:12px; padding:12px 16px; font-size:0.82em; color:#475569; line-height:1.6; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;">
+            <b>Was du siehst:</b> Die <span style="color:#3b82f6; font-weight:bold;">blaue Fläche</span> ist die englische semantische Mannigfaltigkeit;
+            die <span style="color:#10b981; font-weight:bold;">grüne Fläche</span> ist die japanische.
+            Beide kodieren dieselben Beziehungen – nur in verschiedenen Orientierungen.
+            <span style="color:#8b5cf6; font-weight:bold;">Lila gestrichelte Linien</span> verbinden korrespondierende Wortpaare.
+            <b>→ Pfeil vorwärts</b> startet die Alignment-Animation.
         </div>
     </div>
-
-
+</div>
 
 <!-- ==================== SLIDE 2: Autoregressive Schleife ==================== -->                                                     
     <div class="slide" data-title="Autoregressive Schleife">                                                                                
@@ -1083,6 +1118,7 @@
 </div>
 
 <!-- ============ SCRIPTS ============ -->
+<script src="embeddinglab.js"></script>
 <script src="index.js"></script>
 <script src="intuition.js"></script>
 <script src="philosophy.js"></script>
