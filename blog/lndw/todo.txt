@@ -24,8 +24,6 @@ layer(x_0) = 0.05
 (guckt in den gesamtkontext)
 
 
-"Was ist Dense + ReLU + Dense?" -> FFN
-
 "Funktionsapproximation durch Stückelung" -> einfacher machen
 
 sonnenbild zeigen
