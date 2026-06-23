@@ -15,9 +15,6 @@ halluzinationen -> mit RAG weniger, zu viel text
 
 sonnenbild zeigen
 
-
-"Von Dense+ReLU+Dense → Next Token Prediction" ist doppelung
-
 "Residual Stream – Schicht für Schicht" -> rausnehmen
 
 allgemein größer ziehen, texte sind sehr klein
