@@ -1093,6 +1093,39 @@
 
 <script>
 	renderDualManifolds();
+
+	function fitSlides() {
+		const slides = document.querySelectorAll('.slide');
+		const viewportHeight = window.innerHeight;
+
+		slides.forEach(slide => {
+			const content = slide.querySelector('.slide-content');
+			if (!content) return;
+
+			// 1. Reset: Scale auf 1 setzen, damit wir die echte Höhe messen können
+			content.style.transform = 'scale(1)';
+
+			// 2. Natürliche Höhe messen
+			const naturalHeight = content.scrollHeight;
+
+			// 3. Verfügbare Höhe (Viewport minus Nav-Bar)
+			const available = viewportHeight - 52; // 52px = nav-bar height
+
+			// 4. Scale berechnen
+			const scale = Math.min(available / naturalHeight, 1); // nie > 1
+
+			// 5. Anwenden
+			content.style.transform = `scale(${scale})`;
+			content.style.transformOrigin = 'top center';
+		});
+	}
+
+	// Aufrufen bei Load und Resize
+	window.addEventListener('load', () => {
+		// Kurz warten bis alles gerendert ist (Plots, MathML etc.)
+		setTimeout(fitSlides, 300);
+	});
+	window.addEventListener('resize', fitSlides);
 </script>
 
 </body>

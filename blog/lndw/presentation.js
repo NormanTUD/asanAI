@@ -87,31 +87,33 @@ function prev() {
     }
 }
 
-    function goTo(idx, showAllFragments = false) {
-        if (idx < 0 || idx >= slides.length) return;
-        slides[currentSlide].classList.remove('active');
-        currentSlide = idx;
-        slides[currentSlide].classList.remove('slide-entering');
-        slides[currentSlide].classList.add('active');
+	function goTo(idx, showAllFragments = false) {
+		if (idx < 0 || idx >= slides.length) return;
+		slides[currentSlide].classList.remove('active');
+		currentSlide = idx;
+		slides[currentSlide].classList.remove('slide-entering');
+		slides[currentSlide].classList.add('active');
 
-        if (showAllFragments) {
-            // When going back, show all fragments
-            const fragments = getFragments(currentSlide);
-            fragments.forEach(f => f.classList.add('visible'));
-            fragmentIndex[currentSlide] = fragments.length;
-        } else {
-            // Reset fragments when going forward to a new slide
-            const fragments = getFragments(currentSlide);
-            fragments.forEach(f => f.classList.remove('visible'));
-            fragmentIndex[currentSlide] = 0;
-        }
+		if (showAllFragments) {
+			// When going back, show all fragments
+			const fragments = getFragments(currentSlide);
+			fragments.forEach(f => f.classList.add('visible'));
+			fragmentIndex[currentSlide] = fragments.length;
+		} else {
+			// Reset fragments when going forward to a new slide
+			const fragments = getFragments(currentSlide);
+			fragments.forEach(f => f.classList.remove('visible'));
+			fragmentIndex[currentSlide] = 0;
+		}
 
-        updateUI();
-        closeOverview();
+		updateUI();
+		closeOverview();
 
-        // Trigger any lazy-loaded demos on this slide
-        triggerSlideInit(currentSlide);
-    }
+		// Trigger any lazy-loaded demos on this slide
+		triggerSlideInit(currentSlide);
+
+		setTimeout(fitSlides, 50);
+	}
 
     function updateUI() {
         document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${slides.length}`;
