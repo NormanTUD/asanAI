@@ -659,33 +659,36 @@ function calcEvo(key) {
     function peek() { return tokens[pos]; }
     function consume() { return tokens[pos++]; }
 
-    function parseFactor() {
-        let token = consume();
-        if (token === '(') {
-            let res = parseExpression();
-            consume();
-            return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
-        }
-        if (token === '-') {
-            let res = parseFactor();
-            return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
-        }
-        if (!isNaN(token)) {
-            const s = parseFloat(token);
-            return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
-        }
+	function parseFactor() {
+		let token = peek();
+		if (token === undefined) return { val: [0, 0, 0], tex: '', isScalar: false, label: '' };
+		consume();
 
-        const entry = lowerVocab[token.toLowerCase()];
-        const vec = [...(entry ? entry.vec : [0, 0, 0])];
-        const displayName = entry ? entry.original : token;
+		if (token === '(') {
+			let res = parseExpression();
+			if (peek() === ')') consume(); // safe consume
+			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+		}
+		if (token === '-') {
+			let res = parseFactor();
+			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+		}
+		if (!isNaN(token)) {
+			const s = parseFloat(token);
+			return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
+		}
 
-        return {
-            val: vec,
-            tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
-            isScalar: false,
-            label: displayName
-        };
-    }
+		const entry = lowerVocab[token.toLowerCase()];
+		const vec = [...(entry ? entry.vec : [0, 0, 0])];
+		const displayName = entry ? entry.original : token;
+
+		return {
+			val: vec,
+			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
+			isScalar: false,
+			label: displayName
+		};
+	}
 
     function parseTerm() {
         let left = parseFactor();
