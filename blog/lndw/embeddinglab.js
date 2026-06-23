@@ -9155,41 +9155,6 @@ window.animateGrammarRotation = function () {
     st.animFrame = requestAnimationFrame(step);
 };
 
-function initGrammarRotation() {
-    const canvas = document.getElementById('canvas-grammar-rotation');
-    if (!canvas) return;
-
-    const st = grammarRotState;
-    st.canvas = canvas;
-
-    function resizeCanvas() {
-        const rect = canvas.getBoundingClientRect();
-        st.width = rect.width;
-        st.height = rect.height;
-        canvas.width = rect.width * window.devicePixelRatio;
-        canvas.height = rect.height * window.devicePixelRatio;
-        st.ctx = canvas.getContext('2d');
-        st.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    }
-    resizeCanvas();
-
-    const slider = document.getElementById('grammar-rot-angle');
-    if (slider) {
-        slider.addEventListener('input', () => {
-            st.progress = parseFloat(slider.value);
-            renderGrammarRotation();
-        });
-    }
-
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => { resizeCanvas(); renderGrammarRotation(); }, 150);
-    });
-
-    renderGrammarRotation();
-}
-
 function renderGrammarRotation() {
     const st = grammarRotState;
     if (!st.ctx) return;
@@ -9508,42 +9473,6 @@ function updateGrammarRotStats(op, t) {
     `;
 }
 
-// Also update the info panel on operation change
-function updateGrammarRotInfo() {
-    const infoDiv = document.getElementById('grammar-rot-info');
-    if (!infoDiv) return;
-
-    const op = grammarRotState.operations[grammarRotState.currentOp];
-    const angleDeg = (op.rotAngle * 180 / Math.PI).toFixed(1);
-
-    infoDiv.innerHTML = `
-        <div style="margin-bottom: 8px;">
-            <b style="font-size: 1.05em; color: #1e293b;">${op.name}</b>
-        </div>
-        <div style="margin-bottom: 6px; font-size: 0.9em;">
-            <b>Rotation angle:</b> <span style="color: #8b5cf6; font-weight: bold;">${angleDeg}°</span>
-        </div>
-        <div style="margin-bottom: 6px; font-size: 0.9em;">
-            <b>Word pairs:</b> ${op.pairs.length}
-        </div>
-        <div style="font-size: 0.85em; color: #94a3b8; line-height: 1.6;">
-            Every word in the <span style="color:${op.colorA}; font-weight:bold;">${op.labelA}</span> form
-            rotates by exactly the same angle to reach its
-            <span style="color:${op.colorB}; font-weight:bold;">${op.labelB}</span> form.
-            The magnitude (distance from origin) is perfectly preserved —
-            only the <b>direction</b> changes. This is why grammar is a
-            <b>rotation</b>, not a translation.
-        </div>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 8px 0;">
-        <div style="font-size: 0.8em; color: #94a3b8;">
-            <b>Key insight:</b> The model learned this rotation matrix
-            purely from statistical co-occurrence. Nobody programmed
-            "past tense = rotate by ${angleDeg}°." The geometric
-            structure of grammar <b>emerged</b> from data.
-        </div>
-    `;
-}
-
 // Prevent temml/math renderers from stealing focus by blocking
 // attribute mutations on containers that hold input elements
 document.querySelectorAll('input[id^="input-"]').forEach(input => {
@@ -9769,12 +9698,6 @@ function loadEmbeddingModule() {
     // 24. Polytope Hulls — Boundaries of the Conceivable
     _embLazyRegister('canvas-polytope', () => {
         initPolytope();
-    });
-
-    // 25. Vector Rotations as Grammar Operators
-    _embLazyRegister('canvas-grammar-rotation', () => {
-        initGrammarRotation();
-        updateGrammarRotInfo();
     });
 
     // Start observing all registered sections
