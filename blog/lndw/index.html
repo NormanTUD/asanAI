@@ -49,8 +49,8 @@
             </div>
         </div>
         <div class="key-insight fragment">
-            <strong>Die Kernidee:</strong> Ein <b>Modell</b> ist ein vereinfachtes Abbild der Wirklichkeit. 
-            Die KI hat keinen direkten Zugang zur Welt. Ihr einziger Zugang sind Texte. 
+            <strong>Die Kernidee:</strong> Ein <b>Modell</b> ist ein vereinfachtes Abbild der Wirklichkeit.
+            Die KI hat keinen direkten Zugang zur Welt. Ihr einziger Zugang sind Texte.
             Aber weil Texte <b>versuchen</b>, die Wirklichkeit abzubilden, lernt die KI indirekt Muster der Wirklichkeit.
         </div>
     </div>
@@ -349,33 +349,33 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE 2: Autoregressive Schleife ==================== -->                                                     
-    <div class="slide" data-title="Autoregressive Schleife">                                                                                
-        <div class="slide-content">                                                                                                  
-            <h2>Die autoregressive Schleife</h2>                                                                                     
+<!-- ==================== SLIDE 2: Autoregressive Schleife ==================== -->
+    <div class="slide" data-title="Autoregressive Schleife">
+        <div class="slide-content">
+            <h2>Die autoregressive Schleife</h2>
             <p>LLMs sind Maschinen, die das <b>nächste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal.</p>
-            <div class="formula-box">                                                                                       
-                <div class="math-display">$$\text{Nächstes Wort} = \text{LLM}(\underbrace{\text{Es war einmal}}_{\text{Benutzereingabe}}) \rightarrow \text{ein}$$</div>                                                                                                                                               
-            </div>                                                                                                                   
+            <div class="formula-box">
+                <div class="math-display">$$\text{Nächstes Wort} = \text{LLM}(\underbrace{\text{Es war einmal}}_{\text{Benutzereingabe}}) \rightarrow \text{ein}$$</div>
+            </div>
             <p class="fragment">Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
-        </div>                                                                                                                                        
-    </div>                                                                                                                           
-                                                                                                                                    
-    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->                                              
-    <div class="slide" data-title="Autoregressive Schleife">                                                                         
-        <div class="slide-content">                                                                                                  
-            <h2>Die autoregressive Schleife</h2>                                                                                     
-            <div class="formula-box">                                                                                                
-                <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>                                                                                                                                                                                                             
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein}) \rightarrow \text{Drache}$$</div>                                                                                                                                                                                                         
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache}) \rightarrow \text{der}$$</div>        
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der}) \rightarrow \text{fliegen}$$</div>      
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->
+    <div class="slide" data-title="Autoregressive Schleife">
+        <div class="slide-content">
+            <h2>Die autoregressive Schleife</h2>
+            <div class="formula-box">
+                <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein}) \rightarrow \text{Drache}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache}) \rightarrow \text{der}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der}) \rightarrow \text{fliegen}$$</div>
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen}) \rightarrow \text{konnte}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>                                                                                                        
-                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>                                                                                                        
-            </div>                                                                                                                                                                                                            
-        </div>                                                                                                                       
-    </div>       
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>
+            </div>
+        </div>
+    </div>
 
     <!-- ==================== SLIDE 9: Positional Encoding ==================== -->
     <div class="slide" data-title="Positional Encoding">
@@ -403,10 +403,10 @@
             <div id="positional-encoding-plot" style="height:250px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
             <div id="positional-encoding-heatmap" style="height:250px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 		<p style="margin-top:14px; color:#334155; max-width:900px; margin-left:auto; margin-right:auto; line-height:1.7;">
-		    <b>Die Idee:</b> Auf jeder Dimension des Vektors wird eine Welle mit unterschiedlicher Frequenz addiert. 
-		    Dadurch erhält jede Position ein einzigartiges Muster — wie ein Fingerabdruck. 
-		    Die Details der Sinus-/Kosinus-Formeln sind nicht entscheidend. 
-		    <b>Relevant ist:</b> Die Positionsinformation wird direkt in die Token-Vektoren selbst hineinkodiert — 
+		    <b>Die Idee:</b> Auf jeder Dimension des Vektors wird eine Welle mit unterschiedlicher Frequenz addiert.
+		    Dadurch erhält jede Position ein einzigartiges Muster — wie ein Fingerabdruck.
+		    Die Details der Sinus-/Kosinus-Formeln sind nicht entscheidend.
+		    <b>Relevant ist:</b> Die Positionsinformation wird direkt in die Token-Vektoren selbst hineinkodiert —
 		    das Token „weiß" danach nicht nur <b>was</b> es ist, sondern auch <b>wo</b> es steht.
 		</p>
         </div>
