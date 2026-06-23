@@ -288,3 +288,8 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     color: #1e40af;
     border-width: 2px;
 }
+
+[id^="res-"] {
+	min-height: 60px; /* verhindert Layout-Shift */
+	contain: content;  /* isoliert Repaints */
+}

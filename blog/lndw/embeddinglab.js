@@ -754,11 +754,11 @@ function calcEvo(key) {
         const symbol = isExact ? "=" : "\\approx";
         const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
-        // ═══════════════════════════════════════════════════════════
-        // THE FIX: Render math into a DETACHED fragment first,
-        // then swap it in. This prevents render_temml() from ever
-        // touching the live DOM tree that contains the input.
-        // ═══════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════
+        // FLICKER-FREE RENDERING:
+        // 1. Render into a detached div
+        // 2. Only swap when fully ready (no raw $$ flash)
+        // ═══════════════════════════════════════════════════════
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = `
             <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
@@ -766,15 +766,12 @@ function calcEvo(key) {
             </div>
         `;
 
-        // Render math on the DETACHED element (not in the DOM yet)
-        // This means render_temml cannot walk up to the input's parent
+        // Render math on the DETACHED element
         if (typeof temml !== 'undefined' && temml.renderMathInElement) {
             temml.renderMathInElement(tempDiv, { throwOnError: false });
         } else if (typeof renderMathInElement !== 'undefined') {
             renderMathInElement(tempDiv, { throwOnError: false });
         } else {
-            // Fallback: use the global render_temml but only on our temp div
-            // We need to temporarily add it to DOM for render_temml to find it
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '-9999px';
             tempDiv.style.top = '-9999px';
@@ -783,22 +780,24 @@ function calcEvo(key) {
             document.body.removeChild(tempDiv);
         }
 
-        // Now swap the pre-rendered content into the actual resDiv
-        // Mark it so render_temml won't re-process it
-        tempDiv.setAttribute('data-math-rendered', 'true');
-        resDiv.innerHTML = '';
-        resDiv.appendChild(tempDiv.firstElementChild || tempDiv);
-        resDiv.setAttribute('data-math-rendered', 'true');
+        // Smooth swap: fade transition instead of hard innerHTML replace
+        const newContent = tempDiv.firstElementChild || tempDiv;
+        newContent.setAttribute('data-math-rendered', 'true');
+        newContent.style.opacity = '1';
+        newContent.style.transition = 'none'; // no transition on the NEW element
 
-        // Focus is NEVER lost because we never called render_temml()
-        // on a live DOM tree containing the input
+        // If resDiv already has content, just replace children directly
+        // This avoids the "flash of raw LaTeX" because we never show unrendered math
+        resDiv.setAttribute('data-math-rendered', 'true');
+        
+        // Use replaceChildren for atomic DOM swap (no intermediate empty state)
+        resDiv.replaceChildren(newContent);
 
         // Debounce the plot render (150ms)
         const capturedResult = [...result.val];
         const capturedSteps = steps;
         _calcEvoTimers[key] = setTimeout(() => {
             renderSpace(key, capturedResult, capturedSteps);
-            // Restore focus after Plotly/ECharts (safety net)
             setTimeout(() => {
                 if (document.activeElement !== inputEl) {
                     inputEl.focus();
