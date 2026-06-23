@@ -634,26 +634,6 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Verbindung zu Next-Token ==================== -->
-<div class="slide" data-title="NN → Next Token">
-    <div class="slide-content">
-        <h2>Von Dense+ReLU+Dense → Next Token Prediction</h2>
-        <p>Genau dieses Prinzip steckt im <b>Feed-Forward-Netzwerk jeder Transformer-Schicht</b>:</p>
-        <div class="formula-box fragment">
-            <div class="math-display">$$\text{FFN}(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2$$</div>
-        </div>
-        <div class="fragment" style="margin-top:16px;">
-            <div class="key-insight">
-                <strong>Der Zusammenhang:</strong><br><br>
-                1️⃣ <b>Input x</b> = der kontextualisierte Vektor eines Tokens (nach Attention)<br>
-                2️⃣ <b>Dense 1 + ReLU</b> = tausende "Wissens-Detektoren" feuern oder nicht<br>
-                3️⃣ <b>Dense 2</b> = aktive Detektoren schreiben Wissen zurück in den Vektor<br>
-                4️⃣ Am Ende: Vektor → Softmax über Vokabular → <b>nächstes Token</b>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- ==================== FOLIE: Wie wird Wissen gespeichert? ==================== -->
 <div class="slide" data-title="Wissen im Netz">
     <div class="slide-content">
