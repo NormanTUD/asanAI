@@ -42,7 +42,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .slide-content {
 	max-width: 100%;
 	width: 100%;
-	max-height: calc(100vh - 100px); /* Viewport minus Padding oben/unten + nav-bar */
+	max-height: calc(90vh - 100px); /* Viewport minus Padding oben/unten + nav-bar */
 	overflow: hidden;                 /* oder 'auto' falls du notfalls scrollen willst */
 	display: flex;
 	flex-direction: column;
