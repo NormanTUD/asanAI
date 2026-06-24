@@ -344,7 +344,6 @@ const TokenizerViz = {
                   title="${token.displayOriginal} → Teil ${token.splitIndex + 1}/${token.splitTotal}">
                     <span style="font-weight:bold; font-size:1.05em; color:${color};">${token.displayText}</span>
                     <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
-                    ${isSplit && !token.isPunct ? `<span style="font-size:0.6em; color:${isSubword ? '#f59e0b' : '#6366f1'};">${isSubword ? '##sub' : 'start▸'}</span>` : ''}
                 </div>`;
         });
         html += '</div>';
