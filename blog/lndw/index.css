@@ -585,3 +585,14 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     color: #64748b;
     min-height: 24px;
 }
+
+.quote {
+  margin: 0;
+  background: #eee;
+  padding: 1em;
+  border-radius: 1em;
+}
+.quote figcaption,
+.quote blockquote {
+  margin: 1em;
+}
