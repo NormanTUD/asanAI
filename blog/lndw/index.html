@@ -685,21 +685,30 @@
     </div>
 
 
-<!-- ==================== SLIDE: Training – Next Token Prediction ==================== -->
+<!-- ==================== SLIDE: Training – Next Token Prediction (VEREINFACHT) ==================== -->
 <div class="slide" data-title="Training">
     <div class="slide-content">
         <h2>Training: Das nächste Wort vorhersagen</h2>
-        <p>Das Modell bekommt <b>riesige Mengen Text</b>. Jeder Text ist vollständig bekannt – aber das Modell sieht immer nur <b>einen Anfang</b> und muss das nächste Wort vorhersagen.</p>
-        <div class="demo-box" style="min-height:auto; padding:20px;">
-            <div class="demo-title">📚 Next-Token-Prediction aus echten Texten</div>
-            <div id="training-texts-container" style="margin-top:14px;"></div>
-            <div style="display:flex; gap:12px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
-                <button onclick="TrainingViz.nextExample()" style="padding:10px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; ">▶ Nächstes Wort</button>
-                <button onclick="TrainingViz.nextText()" style="padding:10px 22px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; ">⏭ Nächster Text</button>
-                <button onclick="TrainingViz.toggleAutoplay()" id="training-autoplay-btn" style="padding:10px 22px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; ">⏩ Autoplay</button>
+
+        <div class="demo-box" style="min-height:auto; padding:30px;">
+
+            <!-- DER SATZ -->
+            <div id="training-sentence" style="font-size:1.4em; line-height:2.2; text-align:center; margin-bottom:30px; font-weight:500;"></div>
+
+            <!-- VORHERSAGE: Falsch vs. Richtig -->
+            <div id="training-prediction" style="display:flex; justify-content:center; gap:40px; align-items:stretch; margin-bottom:30px;"></div>
+
+            <!-- LOSS-ANZEIGE -->
+            <div id="training-loss-display" style="text-align:center; margin-bottom:20px;"></div>
+
+            <!-- BUTTONS -->
+            <div style="display:flex; gap:12px; justify-content:center; margin-top:20px;">
+                <button onclick="SimpleTraining.next()" style="padding:12px 28px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; font-size:1em;">▶ Nächstes Wort</button>
+                <button onclick="SimpleTraining.toggleAuto()" id="simple-auto-btn" style="padding:12px 28px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; font-size:1em;">⏩ Autoplay</button>
             </div>
-            <div id="training-loss-chart" style="height:140px; margin-top:16px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div id="training-explanation" style="margin-top:12px; padding:14px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center;"></div>
+
+            <!-- MINI LOSS-CHART -->
+            <div id="training-loss-chart" style="height:120px; margin-top:24px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
         </div>
     </div>
 </div>
