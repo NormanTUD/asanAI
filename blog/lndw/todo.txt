@@ -22,7 +22,6 @@ gleichung haut nicht hin
 "erst eigenschaften, dann funktionsweise" (mannigfalitkgietne hypthese anknüpfunpgsunkt)
 unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embedding, attn, residual stream, attn scores sind schwierig)
 was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersichtsdiagramm zeigen)
-neuronen (stücke) -> gesamtanzahl neuronen
 
 fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
 "ist Alles ein muster" -> alles klein
