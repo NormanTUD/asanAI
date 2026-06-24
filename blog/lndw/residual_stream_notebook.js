@@ -94,8 +94,7 @@ const ResidualNotebook = (() => {
                 { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },
                 { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
                 { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus (Rhema)" },
-                { type: "checkmark", x: 530, y: 30, color: "#0077b6" },
-                { type: "scribble", x: 200, y: 80, text: "FERTIG! Alle Experten\nhaben beigetragen.\n→ Nächstes Token\nkann vorhergesagt werden!", color: "#0077b6", rotation: 0, font: "bold 13px monospace" },
+                { type: "checkmark", x: 530, y: 30, color: "#0077b6" }
             ]
         }
     ];
@@ -223,10 +222,10 @@ const ResidualNotebook = (() => {
             setTimeout(() => {
                 renderAnnotation(ann, annotationsContainer, textEl, layer.color);
             }, delay);
-            delay += baseDelay + Math.random() * 250;
+            delay += baseDelay + Math.random() * 50;
         });
 
-        setTimeout(onComplete, delay + 300);
+        setTimeout(onComplete, delay + 100);
     }
 
     function renderAnnotation(ann, container, textEl, defaultColor) {
