@@ -58,9 +58,7 @@ const ResidualNotebook = (() => {
                 { type: "scribble", x: 250, y: -60, text: "Genus-Match:\nKatze=fem → sie=fem ✓\nMatte=fem → sie=fem ✓\n→ Semantik entscheidet!", color: "#e76f51", rotation: 3, font: "11px Courier New" },
                 { type: "strikethrough", start: 22, end: 27, color: "#e76f51", label: "" },
                 { type: "scribble", x: 220, y: 50, text: "Matte kann nicht\nmüde sein! ✗", color: "#c1121f", rotation: -4, font: "bold italic 12px Georgia" },
-                { type: "margin-note", x: "right", y: 90, text: "Koreferenz-Kette:\nDie Katze...sie\n\nEntscheidung durch\nWeltwissen!", color: "#e76f51" },
                 { type: "circle", start: 4, end: 9, color: "#e76f51" },
-                { type: "scribble", x: 420, y: -40, text: "↑ ANTEZEDENT", color: "#e76f51", rotation: 15, font: "bold 14px Impact" },
             ]
         },
         {
