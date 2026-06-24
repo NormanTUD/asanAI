@@ -194,7 +194,6 @@ const AttentionRouterViz = {
 // ============================================================
 
 function initAttentionSlides() {
-    AttentionMatrixViz.render();
     AttentionRouterViz.render();
 }
 
