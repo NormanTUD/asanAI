@@ -1095,18 +1095,20 @@ const ResidualStreamViz = {
 const PredictionViz = {
     // Mock vocabulary with probabilities at different temperatures
     vocabulary: [
-        { word: 'time', baseScore: 3.2 },
-        { word: 'day', baseScore: 1.8 },
-        { word: 'night', baseScore: 1.5 },
-        { word: 'hill', baseScore: -0.5 },
-        { word: 'table', baseScore: -1.2 },
-        { word: 'dragon', baseScore: 0.8 },
-        { word: 'king', baseScore: 0.6 },
-        { word: 'warm', baseScore: -0.8 },
-        { word: 'beautiful', baseScore: 0.3 },
-        { word: 'the', baseScore: -1.5 },
-        { word: 'very', baseScore: -0.3 },
-        { word: 'summer', baseScore: 1.0 },
+        { word: 'ein', baseScore: 3.2 },
+        { word: 'Drache', baseScore: 1.5 },
+        { word: 'Königin', baseScore: -0.5 },
+        { word: 'König', baseScore: -0.5 },
+        { word: 'der', baseScore: -1.2 },
+        { word: 'die', baseScore: 0.8 },
+        { word: 'konnte', baseScore: 0.6 },
+        { word: 'wollte', baseScore: -0.8 },
+        { word: 'fliegen', baseScore: 0.3 },
+        { word: 'für', baseScore: -0.3 },
+        { word: 'dass', baseScore: 1.0 },
+        { word: 'eine', baseScore: -1.8 },
+        { word: ',', baseScore: -1.5 },
+        { word: '.', baseScore: -1.5 },
     ],
 
     softmax: function(scores, temperature) {
@@ -1128,10 +1130,10 @@ const PredictionViz = {
         const tempLabel = document.getElementById('prediction-temp-val');
         if (tempLabel) {
             let desc = '';
-            if (temperature < 0.3) desc = ' (very greedy)';
-            else if (temperature < 0.7) desc = ' (focused)';
-            else if (temperature < 1.3) desc = ' (balanced)';
-            else if (temperature < 2.0) desc = ' (creative)';
+            if (temperature < 0.3) desc = ' (wenig kreativ)';
+            else if (temperature < 0.7) desc = ' (sehr fokussiert)';
+            else if (temperature < 1.3) desc = ' (balanciert)';
+            else if (temperature < 2.0) desc = ' (kreativ)';
             else desc = ' (very random)';
             tempLabel.textContent = temperature.toFixed(2) + desc;
         }
