@@ -213,7 +213,7 @@ const ResidualNotebook = (() => {
         }
 
         let delay = 0;
-        const baseDelay = 350;
+        const baseDelay = 1;
 
         layer.annotations.forEach((ann, idx) => {
             setTimeout(() => {
