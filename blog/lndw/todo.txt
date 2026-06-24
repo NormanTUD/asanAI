@@ -7,5 +7,3 @@ halluzinationen -> mit RAG weniger, zu viel text
 (guckt in den gesamtkontext)
 
 "Funktionsapproximation durch Stückelung" -> einfacher machen
-
-sonnenbild zeigen
