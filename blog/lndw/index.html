@@ -459,8 +459,7 @@
         <div class="fragment" style="margin-top:18px; display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap;">
             <!-- Embedding -->
             <div style="text-align:center; padding:10px 14px; background:#eef2ff; border-radius:10px 0 0 10px; border:1px solid #c7d2fe;">
-                <div style="font-weight:bold; color:#6366f1;">EMBED</div>
-                <div class="math-display" style="margin:4px 0;">$$W_e \cdot x$$</div>
+                <div style="font-weight:bold; color:#6366f1;">Embedding</div>
                 <div style="color:#64748b;">Bedeutung<br>→ Vektor</div>
             </div>
             <div style="color:#94a3b8; padding:0 3px;">→</div>
@@ -469,15 +468,12 @@
             <div style="position:relative; display:flex; align-items:center; gap:0; border:2px dashed #94a3b8; border-radius:10px; padding:6px 10px;">
                 <!-- ATTN -->
                 <div style="text-align:center; padding:10px 12px; background:#f5f3ff; border-radius:8px; border:1px solid #e9d5ff;">
-                    <div style="font-weight:bold; color:#8b5cf6;">ATTN</div>
-                    <div class="math-display" style="margin:4px 0;">$$\text{softmax}\!\left(\frac{QK^T}{\sqrt{d}}\right)\!V$$</div>
                     <div style="color:#64748b;">Kontext<br>herstellen</div>
                 </div>
                 <div style="color:#94a3b8; padding:0 3px;">→</div>
                 <!-- FFN -->
                 <div style="text-align:center; padding:10px 12px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a;">
-                    <div style="font-weight:bold; color:#d97706;">FFN</div>
-                    <div class="math-display" style="margin:4px 0;">$$W_2 \cdot \text{ReLU}(W_1 x\!+\!b)$$</div>
+                    <div style="font-weight:bold; color:#d97706;">Feed-Forward-Netzwerk</div>
                     <div style="color:#64748b;">Wissen<br>abrufen</div>
                 </div>
                 <!-- ×100 Label -->
@@ -487,8 +483,7 @@
             <div style="color:#94a3b8; padding:0 3px;">→</div>
             <!-- Softmax -->
             <div style="text-align:center; padding:10px 14px; background:#ecfdf5; border-radius:0 10px 10px 0; border:1px solid #86efac;">
-                <div style="font-weight:bold; color:#10b981;">SOFTMAX</div>
-                <div class="math-display" style="margin:4px 0;">$$\frac{e^{z_i}}{\sum e^{z_j}}$$</div>
+                <div style="font-weight:bold; color:#10b981;">Softmax</div>
                 <div style="color:#64748b;">Scores →<br>Vorhersage</div>
             </div>
         </div>
