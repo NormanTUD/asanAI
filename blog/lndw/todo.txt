@@ -1,4 +1,3 @@
-llm auf titelseite
 was muss gegeben sein texte (nichta lle texte)
 ki -> LLM
 "ein modell des musters in der wirklichkeit"
