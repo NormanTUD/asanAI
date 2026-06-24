@@ -1767,7 +1767,6 @@ function initEmbeddingEditor() {
 		    <th style="padding: 10px; text-align: center;">X</th>
 		    ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
 		    ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
-		    <th style="padding: 10px; text-align: center;">Delete Entry?</th>
 		</tr>
 	    </thead>
 	    <tbody>`;
@@ -1809,15 +1808,6 @@ function generateRowHtml(spaceKey, word, vec, dims) {
 		>
 	    </td>
 	`).join('')}
-	<td style="padding: 5px; text-align: center;">
-	    <button 
-		onclick="removeTokenFromSpace('${spaceKey}', '${word}')" 
-		style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 18px; font-weight: bold; padding: 0 10px;"
-		title="Remove ${word}"
-	    >
-		&times;
-	    </button>
-	</td>
     </tr>`;
 }
 
