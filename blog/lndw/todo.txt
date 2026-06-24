@@ -19,7 +19,7 @@ hang zur geschwätzigkeit
 positional embedding: "token" != embedding tokens
 "token versucht man durch 2 aspekte einzufangen, erstmal den punkt des tokens im embedding + die position"
 gleichung haut nicht hin
-"erst eigenschaften, dann funktionsweise" (mannigfalitkgietne hypthese anknüpfunpgsunkt)
+"erst eigenschaften, dann funktionsweise"
 unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embedding, attn, residual stream, attn scores sind schwierig)
 was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersichtsdiagramm zeigen)
 
