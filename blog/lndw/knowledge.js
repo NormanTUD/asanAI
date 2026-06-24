@@ -285,7 +285,7 @@ const KnowledgeViz = {
         ctx.font = 'bold 16px system-ui';
         ctx.fillStyle = '#1e293b';
         ctx.textAlign = 'center';
-        ctx.fillText('Attention: Kontext sammeln für "___"', W/2, 30);
+        ctx.fillText('Attention: Kontext sammeln für "___", Routing an die richtigen Neuronen', W/2, 30);
 
         // Draw tokens
         const tokenColors = ['#94a3b8', '#8b5cf6', '#94a3b8', '#3b82f6', '#94a3b8', '#ef4444'];
