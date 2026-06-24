@@ -301,7 +301,7 @@
 <div class="slide" data-title="Positional Embedding">
 	<div class="slide-content">
 		<h2>Positional Embedding</h2>
-		<p>"Der Hund beißt den Mann" ≠ "Der Mann beißt den Hund" – gleiche Wörter, andere Reihenfolge!</p>
+		<p>"Der Hund beißt den Mann" ≠ "Der Mann beißt den Hund": gleiche Wörter, andere Reihenfolge!</p>
 		<p class="fragment">Die Reihenfolge ist wichtig: sie wird <b>in</b> die Tokens selbst durch <b>Positional Embedding</b> kodiert, so dass jeder Tokenvektor beinhaltet, <b>was es bedeutet</b> und <b>wo es steht</b>.</p>
 	</div>
 </div>
@@ -342,7 +342,7 @@
         <div class="slide-content">
             <h2>Attention</h2>
             <p>"Welche anderen Wörter sind für <b>dieses</b> Token wichtig?"</p>
-	    <p class="fragment"><b>Beispiel:</b> "Ich bringe mein <b>Geld</b> auf die <b>Bank</b>" – worauf bezieht sich "<b>Bank</b>", eine Parkbank oder die Bank zu der man Geld bringt?</p>
+	    <p class="fragment"><b>Beispiel:</b> "Ich bringe mein <b>Geld</b> auf die <b>Bank</b>", worauf bezieht sich "<b>Bank</b>", eine Parkbank oder die Bank zu der man Geld bringt?</p>
             <div class="fragment" style="margin-top:16px;">
                 <div class="layers-vertical">
                     <input type="text" id="trans-input" class="bw-cell" style="width:80%;" value="bank" oninput="runAttention()">
@@ -401,7 +401,7 @@
 	    <br>
 	    <center class="fragment">
 <center class="fragment visible">
-    <img height="100" id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station – 24 Stunden Polartag" style="width: auto; display:block; margin: 0 auto;">
+    <img height="100" id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto; display:block; margin: 0 auto;">
 
     <div style="font-size: 24px; margin: 10px 0; color: #333;">↓</div>
 
@@ -509,7 +509,7 @@
 <div class="slide" data-title="Wissen im Netz">
     <div class="slide-content">
         <h2>Wie "weiß" das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
-        <p>Es gibt <b>keine Tabelle</b> und <b>keine Zelle</b> mit diesem Fakt. Das Wissen steckt <b>verteilt in den Gewichten</b> – als Muster, die feuern und Punkte verschieben.</p>
+        <p>Es gibt <b>keine Tabelle</b> und <b>keine Zelle</b> mit diesem Fakt. Das Wissen steckt <b>verteilt in den Gewichten</b> als Muster, die feuern und Punkte verschieben.</p>
         <div class="fragment demo-box" style="min-height:auto; padding:20px;">
 
             <!-- Step Indicator (updates automatically) -->
@@ -710,7 +710,7 @@
 				<div class="fragment" style="padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; margin:16px 0;">
 					<strong style="color:#92400e;">🗺️ Das Vector Grounding Problem:</strong><br>
 					<span style="color:#78350f;">
-						Sie kennt die Muster von "rot", "warm", "schmerzhaft" –
+						Sie kennt die Muster von "rot", "warm", "schmerzhaft",
 						aber sie hat nie etwas <b>gesehen</b>, <b>gefühlt</b> oder <b>erlitten</b>.<br>
 						Ihre Vektoren sind Beziehungen zwischen <b>Wörtern</b>, nicht zwischen Wörtern und <b>Welt</b>.
 					</span>
@@ -845,7 +845,7 @@
 <!-- ==================== SLIDE: Halluzinationen ==================== -->
 <div class="slide" data-title="Halluzinationen">
     <div class="slide-content">
-        <h2>Halluzinationen – Wenn das LLM „lügt"</h2>
+        <h2>Halluzinationen: Wenn das LLM „lügt"</h2>
 
         <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
             <!-- Beispiel 1: Mango -->
@@ -869,7 +869,7 @@
                     ❌ Diese „Mango-Manufaktur" existiert nicht. Frei erfunden.
                 </div>
                 <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
-                    <b>Was passiert ist:</b> Das Modell wusste nichts – aber statt zu schweigen, hat es etwas erzeugt, das <b>plausibel klingt</b>: ein Ortsname, ein Bundesland, eine Jahreszahl.
+                    <b>Was passiert ist:</b> Das Modell wusste nichts, aber statt zu schweigen, hat es etwas erzeugt, das <b>plausibel klingt</b>: ein Ortsname, ein Bundesland, eine Jahreszahl.
                 </div>
             </div>
 
