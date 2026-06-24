@@ -228,7 +228,6 @@ const PEOrbitViz = (() => {
             `;
         } else {
             html = `
-                <span style="color:#1e293b; font-weight:bold;">✓ 12 Positionen — 12 einzigartige Punkte auf der Kreisbahn.</span><br>
                 <span style="color:#64748b;">Das Token bleibt in der Nähe seiner Bedeutung, aber jede Position hat einen eigenen Fingerabdruck.</span>
             `;
         }
