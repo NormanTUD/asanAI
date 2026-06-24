@@ -1,19 +1,17 @@
 // ============================================================
-// SIMPLE TRAINING VISUALIZATION – Maximum Clarity
+// SIMPLE TRAINING VISUALIZATION — Maximum Clarity
 // ============================================================
 
 const TrainingViz = {
     examples: [
         { words: ["Die", "Katze", "saß", "auf", "der", "Matte"], wrongs: ["Hund", "lief", "unter", "dem", "Straße"] },
         { words: ["Es", "war", "einmal", "ein", "König"], wrongs: ["ist", "nie", "kein", "Bauer"] },
-        { words: ["Die", "Sonne", "ging", "langsam", "unter"], wrongs: ["Mond", "kam", "schnell", "auf"] },
     ],
 
     textIdx: 0,
     wordIdx: 1,
     lossHistory: [],
     correctHistory: [],
-    autoInterval: null,
     totalSteps: 0,
 
     // History für Zurück-Navigation
@@ -39,7 +37,7 @@ const TrainingViz = {
         });
         document.getElementById('training-sentence').innerHTML = sentenceHTML;
 
-        // === VORHERSAGE: Zwei Karten – Falsch & Richtig ===
+        // === VORHERSAGE: Zwei Karten — Falsch & Richtig ===
         const hasResult = typeof isCorrect !== 'undefined';
         const modelPickedCorrect = hasResult ? isCorrect : null;
 
@@ -79,12 +77,17 @@ const TrainingViz = {
         }
         document.getElementById('training-loss-display').innerHTML = lossHTML;
 
-        // === LOSS CHART (immer rendern – auch leer) ===
+        // === LOSS CHART (immer rendern — auch leer) ===
         this.renderChart();
     },
 
     next: function() {
         const ex = this.examples[this.textIdx];
+
+        // Prüfen ob alle Beispiele durch sind BEVOR wir weitermachen
+        // (wordIdx zeigt bereits auf das nächste Wort nach dem letzten Advance)
+        // Wir machen erst den aktuellen Schritt, dann prüfen wir ob wir am Ende sind
+
         // Modell wird mit der Zeit besser
         const correctProb = Math.min(0.85, 0.3 + this.totalSteps * 0.02);
         const isCorrect = Math.random() < correctProb;
@@ -107,7 +110,12 @@ const TrainingViz = {
         // Advance
         this.wordIdx++;
         if (this.wordIdx >= ex.words.length) {
-            this.textIdx = (this.textIdx + 1) % this.examples.length;
+            this.textIdx++;
+            if (this.textIdx >= this.examples.length) {
+                // Alle Beispiele durch → nächste Folie
+                setTimeout(() => Presentation.next(), 800);
+                return;
+            }
             this.wordIdx = 1;
         }
     },
@@ -138,7 +146,6 @@ const TrainingViz = {
 
     // Für Pfeiltasten-Integration: Kann vorwärts/rückwärts?
     isOnTrainingSlide: function() {
-        const slides = document.querySelectorAll('.slide');
         const activeSlide = document.querySelector('.slide.active');
         return activeSlide && activeSlide.getAttribute('data-title') === 'Training';
     },
@@ -155,7 +162,7 @@ const TrainingViz = {
         const plotDiv = document.getElementById('training-loss-chart');
         if (!plotDiv) return;
 
-        // IMMER rendern – auch wenn leer (verhindert Ruckeln)
+        // IMMER rendern — auch wenn leer (verhindert Ruckeln)
         const colors = this.correctHistory.map(c => c ? '#10b981' : '#ef4444');
 
         const traces = [{
@@ -169,7 +176,7 @@ const TrainingViz = {
             mode: 'markers+lines',
             marker: {
                 color: colors.length > 0 ? colors : ['#cbd5e1'],
-                size: 8,
+                size: 10,
                 line: { width: 1, color: '#fff' }
             },
             line: { color: '#cbd5e1', width: 1 },
@@ -177,8 +184,8 @@ const TrainingViz = {
         }];
 
         const layout = {
-            margin: { l: 40, r: 10, b: 25, t: 5 },
-            xaxis: { title: '', gridcolor: '#f1f5f9' },
+            margin: { l: 50, r: 20, b: 35, t: 10 },
+            xaxis: { title: 'Schritt', gridcolor: '#f1f5f9' },
             yaxis: { title: 'Loss', gridcolor: '#f1f5f9', range: [0, 6] },
             plot_bgcolor: '#fff',
             paper_bgcolor: '#fff',
@@ -186,27 +193,11 @@ const TrainingViz = {
             annotations: [{
                 x: 0.5, y: 5.5, xref: 'paper', yref: 'y',
                 text: '🔴 = falsch (hoher Loss)  🟢 = richtig (niedriger Loss)',
-                showarrow: false, font: { size: 11, color: '#64748b' }
+                showarrow: false, font: { size: 12, color: '#64748b' }
             }]
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-    },
-
-    toggleAuto: function() {
-        const btn = document.getElementById('simple-auto-btn');
-        if (this.autoInterval) {
-            clearInterval(this.autoInterval);
-            this.autoInterval = null;
-            btn.textContent = '⏩ Autoplay';
-            btn.style.background = '#fff';
-            btn.style.color = '#1e293b';
-        } else {
-            this.autoInterval = setInterval(() => this.next(), 1200);
-            btn.textContent = '⏸ Stopp';
-            btn.style.background = '#ef4444';
-            btn.style.color = '#fff';
-        }
     },
 
     init: function() {
