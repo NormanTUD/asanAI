@@ -162,8 +162,12 @@ document.addEventListener('keydown', (e) => {
         case ' ':
         case 'Enter':
             e.preventDefault();
+            // Training-Folie: Pfeiltaste rechts = nächster Schritt
+            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoNext()) {
+                SimpleTraining.next();
+            }
             // Notebook-Folie: Pfeiltaste rechts steuert Schichten
-            if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             } else {
                 Presentation.next();
@@ -172,8 +176,12 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowLeft':
         case 'Backspace':
             e.preventDefault();
+            // Training-Folie: Pfeiltaste links = Schritt zurück
+            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoPrev()) {
+                SimpleTraining.prev();
+            }
             // Notebook-Folie: Pfeiltaste links geht Schichten zurück
-            if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             } else {
                 Presentation.prev();
@@ -181,7 +189,9 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowUp':
             e.preventDefault();
-            if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoPrev()) {
+                SimpleTraining.prev();
+            } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             } else {
                 Presentation.prev();
@@ -189,7 +199,9 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowDown':
             e.preventDefault();
-            if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoNext()) {
+                SimpleTraining.next();
+            } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             } else {
                 Presentation.next();

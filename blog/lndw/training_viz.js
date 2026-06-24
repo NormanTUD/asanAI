@@ -16,6 +16,9 @@ const SimpleTraining = {
     autoInterval: null,
     totalSteps: 0,
 
+    // History für Zurück-Navigation
+    history: [], // speichert {textIdx, wordIdx, isCorrect, loss}
+
     render: function(isCorrect) {
         const ex = this.examples[this.textIdx];
         const words = ex.words;
@@ -27,13 +30,10 @@ const SimpleTraining = {
         let sentenceHTML = '';
         words.forEach((w, i) => {
             if (i < targetIdx) {
-                // Kontext – sichtbar, schwarz
                 sentenceHTML += `<span style="color:#1e293b; font-weight:600;">${w} </span>`;
             } else if (i === targetIdx) {
-                // Zielwort – grün hervorgehoben
                 sentenceHTML += `<span style="background:#dcfce7; border:2px solid #10b981; padding:2px 10px; border-radius:6px; font-weight:bold; color:#065f46;">${w}</span> `;
             } else {
-                // Zukunft – ausgegraut
                 sentenceHTML += `<span style="color:#d1d5db;">${w} </span>`;
             }
         });
@@ -41,7 +41,6 @@ const SimpleTraining = {
 
         // === VORHERSAGE: Zwei Karten – Falsch & Richtig ===
         const hasResult = typeof isCorrect !== 'undefined';
-        // Simuliere: 30% Chance falsch am Anfang, wird besser
         const modelPickedCorrect = hasResult ? isCorrect : null;
 
         let predHTML = '';
@@ -50,6 +49,7 @@ const SimpleTraining = {
         predHTML += `<div style="padding:20px 30px; border-radius:12px; text-align:center; min-width:150px;
             border:3px solid ${hasResult && !modelPickedCorrect ? '#ef4444' : '#e2e8f0'};
             background:${hasResult && !modelPickedCorrect ? '#fef2f2' : '#f8fafc'};
+            transition: all 0.3s ease;
             ${hasResult && !modelPickedCorrect ? 'transform:scale(1.05);' : ''}">
             <div style="font-size:0.8em; color:#ef4444; font-weight:bold; margin-bottom:6px;">✗ FALSCH</div>
             <div style="font-size:1.3em; font-weight:bold; color:#991b1b; text-decoration:line-through;">"${wrong}"</div>
@@ -60,6 +60,7 @@ const SimpleTraining = {
         predHTML += `<div style="padding:20px 30px; border-radius:12px; text-align:center; min-width:150px;
             border:3px solid ${hasResult && modelPickedCorrect ? '#10b981' : '#e2e8f0'};
             background:${hasResult && modelPickedCorrect ? '#f0fdf4' : '#f8fafc'};
+            transition: all 0.3s ease;
             ${hasResult && modelPickedCorrect ? 'transform:scale(1.05);' : ''}">
             <div style="font-size:0.8em; color:#10b981; font-weight:bold; margin-bottom:6px;">✓ RICHTIG</div>
             <div style="font-size:1.3em; font-weight:bold; color:#065f46;">"${target}"</div>
@@ -78,7 +79,7 @@ const SimpleTraining = {
         }
         document.getElementById('training-loss-display').innerHTML = lossHTML;
 
-        // === LOSS CHART ===
+        // === LOSS CHART (immer rendern – auch leer) ===
         this.renderChart();
     },
 
@@ -88,6 +89,14 @@ const SimpleTraining = {
         const correctProb = Math.min(0.85, 0.3 + this.totalSteps * 0.02);
         const isCorrect = Math.random() < correctProb;
         const loss = isCorrect ? (0.2 + Math.random() * 0.3) : (3.5 + Math.random() * 1.5);
+
+        // State speichern für Zurück-Navigation
+        this.history.push({
+            textIdx: this.textIdx,
+            wordIdx: this.wordIdx,
+            isCorrect: isCorrect,
+            loss: loss
+        });
 
         this.lossHistory.push(loss);
         this.correctHistory.push(isCorrect);
@@ -103,18 +112,66 @@ const SimpleTraining = {
         }
     },
 
+    prev: function() {
+        if (this.history.length === 0) return false; // nichts zum Zurückgehen
+
+        // Letzten Schritt rückgängig machen
+        const lastState = this.history.pop();
+        this.lossHistory.pop();
+        this.correctHistory.pop();
+        this.totalSteps--;
+
+        // Position zurücksetzen
+        this.textIdx = lastState.textIdx;
+        this.wordIdx = lastState.wordIdx;
+
+        // Vorherigen Zustand anzeigen
+        if (this.history.length > 0) {
+            const prevState = this.history[this.history.length - 1];
+            this.render(prevState.isCorrect);
+        } else {
+            this.render(); // Anfangszustand ohne Ergebnis
+        }
+
+        return true;
+    },
+
+    // Für Pfeiltasten-Integration: Kann vorwärts/rückwärts?
+    isOnTrainingSlide: function() {
+        const slides = document.querySelectorAll('.slide');
+        const activeSlide = document.querySelector('.slide.active');
+        return activeSlide && activeSlide.getAttribute('data-title') === 'Training';
+    },
+
+    canGoNext: function() {
+        return this.isOnTrainingSlide();
+    },
+
+    canGoPrev: function() {
+        return this.isOnTrainingSlide() && this.history.length > 0;
+    },
+
     renderChart: function() {
         const plotDiv = document.getElementById('training-loss-chart');
-        if (!plotDiv || this.lossHistory.length === 0) return;
+        if (!plotDiv) return;
 
+        // IMMER rendern – auch wenn leer (verhindert Ruckeln)
         const colors = this.correctHistory.map(c => c ? '#10b981' : '#ef4444');
 
         const traces = [{
-            x: Array.from({length: this.lossHistory.length}, (_, i) => i + 1),
-            y: this.lossHistory,
+            x: this.lossHistory.length > 0
+                ? Array.from({length: this.lossHistory.length}, (_, i) => i + 1)
+                : [0],
+            y: this.lossHistory.length > 0
+                ? this.lossHistory
+                : [null],
             type: 'scatter',
             mode: 'markers+lines',
-            marker: { color: colors, size: 8, line: { width: 1, color: '#fff' } },
+            marker: {
+                color: colors.length > 0 ? colors : ['#cbd5e1'],
+                size: 8,
+                line: { width: 1, color: '#fff' }
+            },
             line: { color: '#cbd5e1', width: 1 },
             showlegend: false,
         }];
@@ -124,6 +181,7 @@ const SimpleTraining = {
             xaxis: { title: '', gridcolor: '#f1f5f9' },
             yaxis: { title: 'Loss', gridcolor: '#f1f5f9', range: [0, 6] },
             plot_bgcolor: '#fff',
+            paper_bgcolor: '#fff',
             showlegend: false,
             annotations: [{
                 x: 0.5, y: 5.5, xref: 'paper', yref: 'y',
@@ -152,9 +210,14 @@ const SimpleTraining = {
     },
 
     init: function() {
+        // Chart sofort mit leerem Zustand rendern (reserviert den Platz)
+        this.renderChart();
         this.render();
     }
 };
 
 // Auto-init when slide becomes visible
-document.addEventListener('DOMContentLoaded', () => SimpleTraining.init());
+document.addEventListener('DOMContentLoaded', () => {
+    // Verzögert initialisieren, damit Plotly geladen ist
+    setTimeout(() => SimpleTraining.init(), 200);
+});
