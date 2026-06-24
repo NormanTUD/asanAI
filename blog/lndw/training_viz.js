@@ -17,114 +17,116 @@ const TrainingViz = {
     // History für Zurück-Navigation
     history: [], // speichert {textIdx, wordIdx, isCorrect, loss}
 
-    render: function(isCorrect) {
-        const ex = this.examples[this.textIdx];
-        const words = ex.words;
-        const targetIdx = Math.min(this.wordIdx, words.length - 1);
-        const target = words[targetIdx];
-        const wrong = ex.wrongs[Math.min(targetIdx - 1, ex.wrongs.length - 1)] || "???";
+	render: function(isCorrect) {
+		// Guard: prevent out-of-bounds access
+		if (this.textIdx >= this.examples.length) return;
 
-        // === SATZ: Kontext schwarz, Zukunft grau, Ziel grün ===
-        let sentenceHTML = '';
-        words.forEach((w, i) => {
-            if (i < targetIdx) {
-                sentenceHTML += `<span style="color:#1e293b; font-weight:600;">${w} </span>`;
-            } else if (i === targetIdx) {
-                sentenceHTML += `<span style="background:#dcfce7; border:2px solid #10b981; padding:2px 10px; border-radius:6px; font-weight:bold; color:#065f46;">${w}</span> `;
-            } else {
-                sentenceHTML += `<span style="color:#d1d5db;">${w} </span>`;
-            }
-        });
-        document.getElementById('training-sentence').innerHTML = sentenceHTML;
+		const ex = this.examples[this.textIdx];
+		if (!ex) return;
 
-        // === VORHERSAGE: Zwei Karten — Falsch & Richtig ===
-        const hasResult = typeof isCorrect !== 'undefined';
-        const modelPickedCorrect = hasResult ? isCorrect : null;
+		const words = ex.words;
+		const targetIdx = Math.min(this.wordIdx, words.length - 1);
+		const target = words[targetIdx];
+		const wrong = ex.wrongs[Math.min(targetIdx - 1, ex.wrongs.length - 1)] || "???";
 
-        let predHTML = '';
+		// === SATZ: Kontext schwarz, Zukunft grau, Ziel grün ===
+		let sentenceHTML = '';
+		words.forEach((w, i) => {
+			if (i < targetIdx) {
+				sentenceHTML += `<span style="color:#1e293b; font-weight:600;">${w} </span>`;
+			} else if (i === targetIdx) {
+				sentenceHTML += `<span style="background:#dcfce7; border:2px solid #10b981; padding:2px 10px; border-radius:6px; font-weight:bold; color:#065f46;">${w}</span> `;
+			} else {
+				sentenceHTML += `<span style="color:#d1d5db;">${w} </span>`;
+			}
+		});
+		document.getElementById('training-sentence').innerHTML = sentenceHTML;
 
-        // FALSCHE Vorhersage
-        predHTML += `<div style="padding:20px 30px; border-radius:12px; text-align:center; min-width:150px;
-            border:3px solid ${hasResult && !modelPickedCorrect ? '#ef4444' : '#e2e8f0'};
-            background:${hasResult && !modelPickedCorrect ? '#fef2f2' : '#f8fafc'};
-            transition: all 0.3s ease;
-            ${hasResult && !modelPickedCorrect ? 'transform:scale(1.05);' : ''}">
-            <div style="font-size:0.8em; color:#ef4444; font-weight:bold; margin-bottom:6px;">✗ FALSCH</div>
-            <div style="font-size:1.3em; font-weight:bold; color:#991b1b; text-decoration:line-through;">"${wrong}"</div>
-            ${hasResult && !modelPickedCorrect ? '<div style="margin-top:8px; font-size:1.4em; font-weight:bold; color:#ef4444;">Loss: 4.2</div>' : ''}
-        </div>`;
+		// === VORHERSAGE: Zwei Karten — Falsch & Richtig ===
+		const hasResult = typeof isCorrect !== 'undefined';
+		const modelPickedCorrect = hasResult ? isCorrect : null;
 
-        // RICHTIGE Vorhersage
-        predHTML += `<div style="padding:20px 30px; border-radius:12px; text-align:center; min-width:150px;
-            border:3px solid ${hasResult && modelPickedCorrect ? '#10b981' : '#e2e8f0'};
-            background:${hasResult && modelPickedCorrect ? '#f0fdf4' : '#f8fafc'};
-            transition: all 0.3s ease;
-            ${hasResult && modelPickedCorrect ? 'transform:scale(1.05);' : ''}">
-            <div style="font-size:0.8em; color:#10b981; font-weight:bold; margin-bottom:6px;">✓ RICHTIG</div>
-            <div style="font-size:1.3em; font-weight:bold; color:#065f46;">"${target}"</div>
-            ${hasResult && modelPickedCorrect ? '<div style="margin-top:8px; font-size:1.4em; font-weight:bold; color:#10b981;">Loss: 0.3</div>' : ''}
-        </div>`;
+		let predHTML = '';
 
-        document.getElementById('training-prediction').innerHTML = predHTML;
+		// FALSCHE Vorhersage
+		predHTML += `<div style="padding:20px 30px; border-radius:12px; text-align:center; min-width:150px;
+	border:3px solid ${hasResult && !modelPickedCorrect ? '#ef4444' : '#e2e8f0'};
+	background:${hasResult && !modelPickedCorrect ? '#fef2f2' : '#f8fafc'};
+	transition: all 0.3s ease;
+	${hasResult && !modelPickedCorrect ? 'transform:scale(1.05);' : ''}">
+	<div style="font-size:0.8em; color:#ef4444; font-weight:bold; margin-bottom:6px;">✗ FALSCH</div>
+	<div style="font-size:1.3em; font-weight:bold; color:#991b1b; text-decoration:line-through;">"${wrong}"</div>
+	${hasResult && !modelPickedCorrect ? '<div style="margin-top:8px; font-size:1.4em; font-weight:bold; color:#ef4444;">Loss: 4.2</div>' : ''}
+    </div>`;
 
-        // === LOSS DISPLAY ===
-        let lossHTML = '';
-// === LOSS DISPLAY ===
-	    const lossDisplay = document.getElementById('training-loss-display');
-	    if (hasResult) {
-		    const loss = modelPickedCorrect ? 0.3 : 4.2;
-		    const color = modelPickedCorrect ? '#10b981' : '#ef4444';
-		    const icon = modelPickedCorrect ? '✓ Richtig → niedriger Loss' : '✗ Falsch → hoher Loss';
-		    lossDisplay.innerHTML = `<div style="font-size:1.2em; font-weight:bold; color:${color}; padding:10px 20px; background:${modelPickedCorrect ? '#f0fdf4' : '#fef2f2'}; border-radius:10px; display:inline-block;">${icon} = ${loss.toFixed(1)}</div>`;
-		    lossDisplay.style.visibility = 'visible';
-	    } else {
-		    lossDisplay.innerHTML = '';
-		    lossDisplay.style.visibility = 'hidden';
-	    }
+		// RICHTIGE Vorhersage
+		predHTML += `<div style="padding:20px 30px; border-radius:12px; text-align:center; min-width:150px;
+	border:3px solid ${hasResult && modelPickedCorrect ? '#10b981' : '#e2e8f0'};
+	background:${hasResult && modelPickedCorrect ? '#f0fdf4' : '#f8fafc'};
+	transition: all 0.3s ease;
+	${hasResult && modelPickedCorrect ? 'transform:scale(1.05);' : ''}">
+	<div style="font-size:0.8em; color:#10b981; font-weight:bold; margin-bottom:6px;">✓ RICHTIG</div>
+	<div style="font-size:1.3em; font-weight:bold; color:#065f46;">"${target}"</div>
+	${hasResult && modelPickedCorrect ? '<div style="margin-top:8px; font-size:1.4em; font-weight:bold; color:#10b981;">Loss: 0.3</div>' : ''}
+    </div>`;
 
+		document.getElementById('training-prediction').innerHTML = predHTML;
 
-        // === LOSS CHART (immer rendern — auch leer) ===
-        this.renderChart();
-    },
+		// === LOSS DISPLAY ===
+		const lossDisplay = document.getElementById('training-loss-display');
+		if (hasResult) {
+			const loss = modelPickedCorrect ? 0.3 : 4.2;
+			const color = modelPickedCorrect ? '#10b981' : '#ef4444';
+			const icon = modelPickedCorrect ? '✓ Richtig → niedriger Loss' : '✗ Falsch → hoher Loss';
+			lossDisplay.innerHTML = `<div style="font-size:1.2em; font-weight:bold; color:${color}; padding:10px 20px; background:${modelPickedCorrect ? '#f0fdf4' : '#fef2f2'}; border-radius:10px; display:inline-block;">${icon} = ${loss.toFixed(1)}</div>`;
+			lossDisplay.style.visibility = 'visible';
+		} else {
+			lossDisplay.innerHTML = '';
+			lossDisplay.style.visibility = 'hidden';
+		}
 
-    next: function() {
-        const ex = this.examples[this.textIdx];
+		// === LOSS CHART (immer rendern — auch leer) ===
+		this.renderChart();
+	},
 
-        // Prüfen ob alle Beispiele durch sind BEVOR wir weitermachen
-        // (wordIdx zeigt bereits auf das nächste Wort nach dem letzten Advance)
-        // Wir machen erst den aktuellen Schritt, dann prüfen wir ob wir am Ende sind
+	next: function() {
+		// Guard: prevent out-of-bounds access after all examples are done
+		if (this.textIdx >= this.examples.length) return;
 
-        // Modell wird mit der Zeit besser
-        const correctProb = Math.min(0.85, 0.3 + this.totalSteps * 0.02);
-        const isCorrect = Math.random() < correctProb;
-        const loss = isCorrect ? (0.2 + Math.random() * 0.3) : (3.5 + Math.random() * 1.5);
+		const ex = this.examples[this.textIdx];
+		if (!ex) return;
 
-        // State speichern für Zurück-Navigation
-        this.history.push({
-            textIdx: this.textIdx,
-            wordIdx: this.wordIdx,
-            isCorrect: isCorrect,
-            loss: loss
-        });
+		// Modell wird mit der Zeit besser
+		const correctProb = Math.min(0.85, 0.3 + this.totalSteps * 0.02);
+		const isCorrect = Math.random() < correctProb;
+		const loss = isCorrect ? (0.2 + Math.random() * 0.3) : (3.5 + Math.random() * 1.5);
 
-        this.lossHistory.push(loss);
-        this.correctHistory.push(isCorrect);
-        this.totalSteps++;
+		// State speichern für Zurück-Navigation
+		this.history.push({
+			textIdx: this.textIdx,
+			wordIdx: this.wordIdx,
+			isCorrect: isCorrect,
+			loss: loss
+		});
 
-        this.render(isCorrect);
+		this.lossHistory.push(loss);
+		this.correctHistory.push(isCorrect);
+		this.totalSteps++;
 
-        // Advance
-        this.wordIdx++;
-        if (this.wordIdx >= ex.words.length) {
-            this.textIdx++;
-            if (this.textIdx >= this.examples.length) {
-                // Alle Beispiele durch → nächste Folie
-                setTimeout(() => Presentation.next(), 800);
-                return;
-            }
-            this.wordIdx = 1;
-        }
-    },
+		this.render(isCorrect);
+
+		// Advance
+		this.wordIdx++;
+		if (this.wordIdx >= ex.words.length) {
+			this.textIdx++;
+			if (this.textIdx >= this.examples.length) {
+				// Alle Beispiele durch → nächste Folie
+				setTimeout(() => Presentation.next(), 800);
+				return;
+			}
+			this.wordIdx = 1;
+		}
+	},
 
     prev: function() {
         if (this.history.length === 0) return false; // nichts zum Zurückgehen
