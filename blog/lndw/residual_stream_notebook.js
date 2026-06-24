@@ -1,52 +1,102 @@
 // ============================================================
-// RESIDUAL STREAM NOTEBOOK ANIMATION
+// RESIDUAL STREAM NOTEBOOK ANIMATION (ERWEITERT)
 // Visualisiert den Residual Stream als Notizbuch, auf das
-// mehrere "Experten" (Layer) nacheinander schreiben.
+// mehrere "Experten" (Layer) nacheinander kritzeln.
+// Jede Stufe wird komplexer. Alles auf Deutsch.
 // ============================================================
 const ResidualNotebook = (() => {
     let currentLayer = 0;
     let animationRunning = false;
     let container = null;
 
-    const baseText = "The cat sat on the mat because it was tired";
+    const baseText = "Die Katze saß auf der Matte weil sie müde war";
 
-    // Annotations für jede Schicht (Layer)
+    // 5 Stufen: von fundamental bis hochkomplex
     const layers = [
         {
-            name: "Layer 1 — Syntax-Experte",
+            name: "Schicht 1 — Wortarten-Erkenner",
             color: "#e63946",
+            description: "Erkennt die grundlegendsten Bausteine: Was ist ein Nomen? Ein Verb? Ein Artikel?",
             annotations: [
-                { type: "underline", start: 0, end: 7, color: "#e63946", label: "Subjekt" },        // "The cat"
-                { type: "underline", start: 8, end: 11, color: "#457b9d", label: "Verb" },           // "sat"
-                { type: "arrow", from: 8, to: 0, color: "#e63946", label: "Verb → Subjekt" },
-                { type: "margin-note", x: "right", y: 30, text: "Subjekt-Verb\nAgreement ✓", color: "#e63946" },
-                { type: "circle", start: 8, end: 11, color: "#e63946" },                            // circle "sat"
-                { type: "bracket", start: 12, end: 25, color: "#457b9d", label: "Präpositionalphrase" }, // "on the mat"
+                // Fundamentale Wortarten markieren
+                { type: "underline", start: 0, end: 3, color: "#e63946", label: "Artikel" },           // "Die"
+                { type: "underline", start: 4, end: 9, color: "#d62828", label: "Nomen" },             // "Katze"
+                { type: "circle", start: 10, end: 13, color: "#e63946" },                              // "saß"
+                { type: "scribble", x: 120, y: -30, text: "VERB!", color: "#e63946", rotation: -8, font: "bold 14px Comic Sans MS" },
+                { type: "underline", start: 14, end: 17, color: "#457b9d", label: "Präp." },           // "auf"
+                { type: "underline", start: 18, end: 21, color: "#e63946", label: "Artikel" },         // "der"
+                { type: "underline", start: 22, end: 27, color: "#d62828", label: "Nomen" },           // "Matte"
+                { type: "scribble", x: 350, y: -25, text: "Konjunktion↓", color: "#a8201a", rotation: 12, font: "italic 11px Georgia" },
+                { type: "highlight", start: 28, end: 32, color: "rgba(230, 57, 70, 0.15)" },           // "weil"
+                { type: "underline", start: 33, end: 36, color: "#6a040f", label: "Pron." },           // "sie"
+                { type: "circle", start: 43, end: 46, color: "#e63946" },                              // "war"
+                { type: "scribble", x: 480, y: -35, text: "auch Verb!", color: "#e63946", rotation: -5, font: "bold 12px Courier New" },
+                { type: "margin-note", x: "right", y: 25, text: "Grundgerüst:\nArtikel+Nomen+Verb\n= Satzstruktur ✓", color: "#e63946" },
             ]
         },
         {
-            name: "Layer 2 — Koreferenz-Experte",
+            name: "Schicht 2 — Syntax-Architekt",
             color: "#2a9d8f",
+            description: "Erkennt Satzglieder, Subjekt-Verb-Beziehungen und Phrasenstruktur.",
             annotations: [
-                { type: "highlight", start: 34, end: 36, color: "rgba(42, 157, 143, 0.3)" },        // "it"
-                { type: "arrow", from: 34, to: 0, color: "#2a9d8f", label: "it → cat" },
-                { type: "strikethrough", start: 26, end: 33, color: "#999", label: "" },             // "because" leicht
-                { type: "margin-note", x: "left", y: 80, text: "\"it\" bezieht sich\nauf \"cat\" (nicht \"mat\"!)", color: "#2a9d8f" },
-                { type: "underline", start: 37, end: 44, color: "#2a9d8f", label: "Zustand von 'cat'" },  // "was tired"
-                { type: "scribble", x: 180, y: -20, text: "Pronomen-Auflösung!", color: "#2a9d8f", rotation: -3 },
+                // Subjekt-Verb-Kongruenz
+                { type: "bracket", start: 0, end: 9, color: "#2a9d8f", label: "Subjekt (Nominativ)" },
+                { type: "arrow", from: 10, to: 4, color: "#2a9d8f", label: "Verb → Subjekt" },
+                { type: "bracket", start: 14, end: 27, color: "#264653", label: "Präpositionalphrase (lokal)" },
+                { type: "scribble", x: 30, y: -45, text: "Subjekt-Verb\nKongruenz: 3.Pers.Sg.", color: "#2a9d8f", rotation: -3, font: "bold 11px monospace" },
+                { type: "box", start: 28, end: 46, color: "#2a9d8f", label: "Nebensatz (kausal)" },
+                { type: "scribble", x: 300, y: 55, text: "← Verb am Ende!\n   (Nebensatz-Regel)", color: "#264653", rotation: 4, font: "italic bold 11px Georgia" },
+                { type: "margin-note", x: "left", y: 60, text: "Hauptsatz:\nS-V-Adverbial\n\nNebensatz:\nKonj-S-Adj-V", color: "#2a9d8f" },
+                { type: "scribble", x: 180, y: -50, text: "V2-Stellung ✓", color: "#2a9d8f", rotation: -7, font: "bold 13px Impact" },
             ]
         },
         {
-            name: "Layer 3 — Semantik-Experte",
-            color: "#6b21a8",
+            name: "Schicht 3 — Koreferenz-Detektiv",
+            color: "#e76f51",
+            description: "Löst Pronomen auf: Wer ist 'sie'? Worauf bezieht sich was?",
             annotations: [
-                { type: "highlight", start: 8, end: 11, color: "rgba(107, 33, 168, 0.2)" },         // "sat"
-                { type: "margin-note", x: "right", y: 120, text: "sat = ruhend, passiv\n→ konsistent mit\n\"tired\"", color: "#6b21a8" },
-                { type: "scribble", x: 60, y: -35, text: "Kausal: tired → sat", color: "#6b21a8", rotation: 2 },
-                { type: "arrow", from: 37, to: 8, color: "#6b21a8", label: "Grund → Handlung" },
-                { type: "box", start: 0, end: 44, color: "#6b21a8", label: "Kohärentes Narrativ ✓" },
-                { type: "scribble", x: 300, y: -45, text: "Semantische Rolle:\ncat=EXPERIENCER", color: "#6b21a8", rotation: -2 },
-                { type: "checkmark", x: 420, y: 60, color: "#6b21a8" },
+                { type: "highlight", start: 33, end: 36, color: "rgba(231, 111, 81, 0.35)" },          // "sie"
+                { type: "arrow", from: 33, to: 4, color: "#e76f51", label: "sie → Katze" },
+                { type: "scribble", x: 60, y: -55, text: "\"sie\" = DIE KATZE\n(nicht die Matte!)", color: "#e76f51", rotation: -6, font: "bold 13px Comic Sans MS" },
+                { type: "scribble", x: 250, y: -60, text: "Genus-Match:\nKatze=fem → sie=fem ✓\nMatte=fem → sie=fem ✓\n→ Semantik entscheidet!", color: "#e76f51", rotation: 3, font: "11px Courier New" },
+                { type: "strikethrough", start: 22, end: 27, color: "#e76f51", label: "" },            // "Matte" durchgestrichen als Kandidat
+                { type: "scribble", x: 220, y: 50, text: "Matte kann nicht\nmüde sein! ✗", color: "#c1121f", rotation: -4, font: "bold italic 12px Georgia" },
+                { type: "margin-note", x: "right", y: 90, text: "Koreferenz-Kette:\nDie Katze...sie\n\nEntscheidung durch\nWeltwissen!", color: "#e76f51" },
+                { type: "circle", start: 4, end: 9, color: "#e76f51" },                               // Katze einkreisen
+                { type: "scribble", x: 420, y: -40, text: "↑ ANTEZEDENT", color: "#e76f51", rotation: 15, font: "bold 14px Impact" },
+            ]
+        },
+        {
+            name: "Schicht 4 — Semantik-Versteher",
+            color: "#6b21a8",
+            description: "Versteht Bedeutungsbeziehungen, Kausalität und semantische Rollen.",
+            annotations: [
+                { type: "arrow", from: 37, to: 10, color: "#6b21a8", label: "Grund → Handlung" },
+                { type: "scribble", x: 10, y: -65, text: "KAUSALITÄT:\nmüde → saß\n(nicht umgekehrt!)", color: "#6b21a8", rotation: -4, font: "bold 12px monospace" },
+                { type: "highlight", start: 10, end: 13, color: "rgba(107, 33, 168, 0.2)" },          // "saß"
+                { type: "scribble", x: 100, y: 60, text: "saß = STATISCH\n= passiv, ruhend\n→ passt zu \"müde\"", color: "#7b2cbf", rotation: 5, font: "italic 11px Georgia" },
+                { type: "margin-note", x: "left", y: 120, text: "Semantische Rollen:\n• Katze = EXPERIENCER\n• Matte = LOCATION\n• müde = STATE", color: "#6b21a8" },
+                { type: "scribble", x: 320, y: -55, text: "Kohärenz-Check:\nLebewesen + müde ✓\nObjekt + müde ✗", color: "#6b21a8", rotation: -2, font: "bold 11px Courier New" },
+                { type: "box", start: 0, end: 46, color: "#6b21a8", label: "Kohärentes Narrativ ✓" },
+                { type: "scribble", x: 400, y: 55, text: "Frame: RUHEN\nAgent: Katze\nOrt: Matte\nGrund: Müdigkeit", color: "#9d4edd", rotation: -8, font: "12px monospace" },
+                { type: "checkmark", x: 500, y: -20, color: "#6b21a8" },
+            ]
+        },
+        {
+            name: "Schicht 5 — Pragmatik & Vorhersage",
+            color: "#0077b6",
+            description: "Versteht den kommunikativen Zweck und bereitet die Vorhersage des nächsten Tokens vor.",
+            annotations: [
+                { type: "scribble", x: 5, y: -75, text: "TEXTSORTE: Erzählung\n→ nächstes Token:\nFortsetzung erwartet!", color: "#0077b6", rotation: -3, font: "bold 12px Georgia" },
+                { type: "scribble", x: 250, y: -75, text: "Informationsstruktur:\nTHEMA: Katze (bekannt)\nRHEMA: müde (neu!)", color: "#023e8a", rotation: 5, font: "italic 11px monospace" },
+                { type: "margin-note", x: "right", y: 140, text: "Vorhersage-Kandidaten:\n• \".\" (Satzende) 45%\n• \",\" (Aufzählung) 20%\n• \"und\" (Fortsetz.) 15%\n• \"obwohl\" (Kontrast) 8%", color: "#0077b6" },
+                { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Comic Sans MS" },
+                { type: "scribble", x: 350, y: 60, text: "Pragmatik:\nWarum sagt jemand das?\n→ Erklärung für Verhalten\n→ Empathie-Signal", color: "#0096c7", rotation: 7, font: "italic 12px Georgia" },
+                { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },          // "müde war"
+                { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
+                { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus (Rhema)" },
+                { type: "checkmark", x: 530, y: 30, color: "#0077b6" },
+                { type: "scribble", x: 200, y: 80, text: "FERTIG! Alle Experten\nhaben beigetragen.\n→ Nächstes Token\nkann vorhergesagt werden!", color: "#0077b6", rotation: 0, font: "bold 13px monospace" },
             ]
         }
     ];
@@ -61,9 +111,9 @@ const ResidualNotebook = (() => {
         container.innerHTML = `
             <div class="notebook-wrapper">
                 <div class="notebook-header">
-                    <div class="notebook-title">📓 Residual Stream — Das gemeinsame Notizbuch</div>
+                    <div class="notebook-title">📝 Residual Stream — Das gemeinsame Notizbuch</div>
                     <div class="notebook-layer-info" id="notebook-layer-info">
-                        Klicke "Nächster Layer" um zu sehen, wie jeder Experte seine Notizen hinzufügt.
+                        Klicke "Nächste Schicht" um zu sehen, wie jeder Experte seine Notizen hinzufügt — von einfach bis komplex.
                     </div>
                 </div>
                 <div class="notebook-page" id="notebook-page">
@@ -75,7 +125,7 @@ const ResidualNotebook = (() => {
                     <div class="notebook-layer-indicators" id="notebook-indicators"></div>
                     <div class="notebook-buttons">
                         <button onclick="ResidualNotebook.reset()" class="nb-btn nb-btn-reset">↺ Reset</button>
-                        <button onclick="ResidualNotebook.nextLayer()" class="nb-btn nb-btn-next" id="nb-next-btn">▶ Nächster Layer</button>
+                        <button onclick="ResidualNotebook.nextLayer()" class="nb-btn nb-btn-next" id="nb-next-btn">▶ Nächste Schicht</button>
                         <button onclick="ResidualNotebook.autoplay()" class="nb-btn nb-btn-auto" id="nb-auto-btn">⏩ Autoplay</button>
                     </div>
                 </div>
@@ -128,30 +178,20 @@ const ResidualNotebook = (() => {
         // Info aktualisieren
         const info = document.getElementById('notebook-layer-info');
         if (info) {
-            info.innerHTML = `<span style="color:${layer.color}; font-weight:bold;">✍️ ${layer.name} schreibt...</span>`;
+            info.innerHTML = `<span style="color:${layer.color}; font-weight:bold;">✍️ ${layer.name} kritzelt...</span><br><span style="color:#64748b; font-size:0.85em;">${layer.description}</span>`;
         }
 
         let delay = 0;
-        const baseDelay = 400;
+        const baseDelay = 350;
 
         layer.annotations.forEach((ann, idx) => {
             setTimeout(() => {
                 renderAnnotation(ann, annotationsContainer, textEl, layer.color);
             }, delay);
-            delay += baseDelay + Math.random() * 200;
+            delay += baseDelay + Math.random() * 250;
         });
 
         setTimeout(onComplete, delay + 300);
-    }
-
-    function getCharPosition(textEl, charIndex) {
-        // Approximation: monospace-basiert
-        const style = window.getComputedStyle(textEl);
-        const fontSize = parseFloat(style.fontSize);
-        const charWidth = fontSize * 0.6; // Approximation für monospace
-        const x = charIndex * charWidth;
-        const y = 0;
-        return { x, y };
     }
 
     function renderAnnotation(ann, container, textEl, defaultColor) {
@@ -170,7 +210,7 @@ const ResidualNotebook = (() => {
                 if (ann.label) {
                     const label = document.createElement('span');
                     label.className = 'nb-label';
-                    label.style.cssText = `position:absolute; top:4px; left:0; font-size:10px; color:${ann.color}; white-space:nowrap;`;
+                    label.style.cssText = `position:absolute; top:4px; left:0; font-size:10px; color:${ann.color}; white-space:nowrap; font-weight:bold;`;
                     label.textContent = ann.label;
                     el.appendChild(label);
                 }
@@ -185,7 +225,7 @@ const ResidualNotebook = (() => {
             case 'circle': {
                 const left = textLeft + ann.start * charWidth - 4;
                 const width = (ann.end - ann.start) * charWidth + 8;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 5}px; width:${width}px; height:30px; border:2px solid ${ann.color}; border-radius:50%; pointer-events:none;`;
+                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 5}px; width:${width}px; height:30px; border:2.5px solid ${ann.color}; border-radius:50%; pointer-events:none;`;
                 break;
             }
             case 'arrow': {
@@ -193,8 +233,6 @@ const ResidualNotebook = (() => {
                 const toX = textLeft + ann.to * charWidth + 5;
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.style.cssText = `position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:visible;`;
-                const minX = Math.min(fromX, toX);
-                const maxX = Math.max(fromX, toX);
                 const midX = (fromX + toX) / 2;
                 const curveY = textTop - 20 - Math.random() * 15;
 
@@ -205,7 +243,6 @@ const ResidualNotebook = (() => {
                 path.setAttribute('fill', 'none');
                 path.setAttribute('marker-end', 'url(#arrowhead-' + ann.color.replace('#', '') + ')');
 
-                // Arrowhead marker
                 const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
                 const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
                 marker.setAttribute('id', 'arrowhead-' + ann.color.replace('#', ''));
@@ -222,7 +259,6 @@ const ResidualNotebook = (() => {
                 svg.appendChild(defs);
                 svg.appendChild(path);
 
-                // Label
                 if (ann.label) {
                     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                     text.setAttribute('x', midX);
@@ -242,24 +278,25 @@ const ResidualNotebook = (() => {
             case 'margin-note': {
                 const x = ann.x === 'right' ? 'right: -10px;' : 'left: -10px;';
                 const transform = ann.x === 'right' ? 'translateX(100%)' : 'translateX(-100%)';
-                el.style.cssText = `position:absolute; ${x} top:${ann.y}px; transform:${transform}; padding:6px 10px; background:#fffef0; border:1px solid ${ann.color}; border-radius:6px; font-size:11px; color:${ann.color}; white-space:pre-line; max-width:160px; line-height:1.4; box-shadow: 1px 1px 4px rgba(0,0,0,0.1);`;
+                el.style.cssText = `position:absolute; ${x} top:${ann.y}px; transform:${transform}; padding:6px 10px; background:#fffef0; border:1.5px solid ${ann.color}; border-radius:6px; font-size:11px; color:${ann.color}; white-space:pre-line; max-width:180px; line-height:1.4; box-shadow: 2px 2px 6px rgba(0,0,0,0.12); font-family: 'Comic Sans MS', cursive, sans-serif;`;
                 el.textContent = ann.text;
                 break;
             }
             case 'scribble': {
                 const rotation = ann.rotation || 0;
-                el.style.cssText = `position:absolute; left:${textLeft + ann.x}px; top:${textTop + ann.y}px; font-size:12px; color:${ann.color}; font-weight:bold; font-style:italic; transform:rotate(${rotation}deg); white-space:pre-line; pointer-events:none;`;
+                const font = ann.font || `bold italic 12px 'Comic Sans MS', cursive`;
+                el.style.cssText = `position:absolute; left:${textLeft + ann.x}px; top:${textTop + ann.y}px; font:${font}; color:${ann.color}; transform:rotate(${rotation}deg); white-space:pre-line; pointer-events:none; text-shadow: 0 0 1px ${ann.color}33;`;
                 el.textContent = ann.text;
                 break;
             }
             case 'bracket': {
                 const left = textLeft + ann.start * charWidth;
                 const width = (ann.end - ann.start) * charWidth;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 24}px; width:${width}px; height:12px; border-bottom:2px solid ${ann.color}; border-left:2px solid ${ann.color}; border-right:2px solid ${ann.color}; border-radius:0 0 4px 4px;`;
+                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 24}px; width:${width}px; height:12px; border-bottom:2.5px solid ${ann.color}; border-left:2.5px solid ${ann.color}; border-right:2.5px solid ${ann.color}; border-radius:0 0 4px 4px;`;
                 if (ann.label) {
                     const label = document.createElement('span');
                     label.className = 'nb-label';
-                    label.style.cssText = `position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap;`;
+                    label.style.cssText = `position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; font-weight:bold;`;
                     label.textContent = ann.label;
                     el.appendChild(label);
                 }
@@ -268,17 +305,17 @@ const ResidualNotebook = (() => {
             case 'strikethrough': {
                 const left = textLeft + ann.start * charWidth;
                 const width = (ann.end - ann.start) * charWidth;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 10}px; width:${width}px; height:2px; background:${ann.color}; opacity:0.6;`;
+                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 10}px; width:${width}px; height:2.5px; background:${ann.color}; opacity:0.7; transform:rotate(-1deg);`;
                 break;
             }
             case 'box': {
                 const left = textLeft + ann.start * charWidth - 6;
                 const width = (ann.end - ann.start) * charWidth + 12;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 8}px; width:${width}px; height:38px; border:2px dashed ${ann.color}; border-radius:8px; pointer-events:none;`;
+                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 8}px; width:${width}px; height:38px; border:2.5px dashed ${ann.color}; border-radius:8px; pointer-events:none;`;
                 if (ann.label) {
                     const label = document.createElement('span');
                     label.className = 'nb-label';
-                    label.style.cssText = `position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; background:#fff; padding:0 4px;`;
+                    label.style.cssText = `position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; background:#fffef7; padding:0 4px; font-weight:bold;`;
                     label.textContent = ann.label;
                     el.appendChild(label);
                 }
@@ -298,9 +335,10 @@ const ResidualNotebook = (() => {
         const info = document.getElementById('notebook-layer-info');
         if (!info) return;
         if (currentLayer >= layers.length) {
-            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle 3 Layer haben geschrieben — der Residual Stream enthält nun das gesammelte Wissen aller Experten!</span>`;
+            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle ${layers.length} Schichten haben geschrieben!</span><br><span style="color:#64748b; font-size:0.85em;">Der Residual Stream enthält nun das gesammelte Wissen aller Experten — von Wortarten bis Pragmatik. Jede Schicht hat auf dem aufgebaut, was die vorherigen geschrieben haben.</span>`;
         } else {
-            info.innerHTML = `<span style="color:#64748b;">Layer ${currentLayer + 1} von ${layers.length} — Klicke "Nächster Layer"</span>`;
+            const next = layers[currentLayer];
+            info.innerHTML = `<span style="color:#64748b;">Schicht ${currentLayer + 1} von ${layers.length} — </span><span style="color:${next.color}; font-weight:bold;">${next.name}</span><br><span style="color:#94a3b8; font-size:0.85em;">${next.description}</span>`;
         }
     }
 
@@ -331,7 +369,7 @@ const ResidualNotebook = (() => {
                 return;
             }
             nextLayer();
-            setTimeout(step, 2500);
+            setTimeout(step, 3000);
         }
         step();
     }
