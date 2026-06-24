@@ -158,47 +158,47 @@ const TrainingViz = {
         return this.isOnTrainingSlide() && this.history.length > 0;
     },
 
-    renderChart: function() {
-        const plotDiv = document.getElementById('training-loss-chart');
-        if (!plotDiv) return;
+	renderChart: function() {
+		const plotDiv = document.getElementById('training-loss-chart');
+		if (!plotDiv) return;
 
-        // IMMER rendern — auch wenn leer (verhindert Ruckeln)
-        const colors = this.correctHistory.map(c => c ? '#10b981' : '#ef4444');
+		const colors = this.correctHistory.map(c => c ? '#10b981' : '#ef4444');
 
-        const traces = [{
-            x: this.lossHistory.length > 0
-                ? Array.from({length: this.lossHistory.length}, (_, i) => i + 1)
-                : [0],
-            y: this.lossHistory.length > 0
-                ? this.lossHistory
-                : [null],
-            type: 'scatter',
-            mode: 'markers+lines',
-            marker: {
-                color: colors.length > 0 ? colors : ['#cbd5e1'],
-                size: 10,
-                line: { width: 1, color: '#fff' }
-            },
-            line: { color: '#cbd5e1', width: 1 },
-            showlegend: false,
-        }];
+		const traces = [{
+			x: this.lossHistory.length > 0
+			? Array.from({length: this.lossHistory.length}, (_, i) => i + 1)
+			: [0],
+			y: this.lossHistory.length > 0
+			? this.lossHistory
+			: [null],
+			type: 'scatter',
+			mode: 'markers+lines',
+			marker: {
+				color: colors.length > 0 ? colors : ['#cbd5e1'],
+				size: 10,
+				line: { width: 1, color: '#fff' }
+			},
+			line: { color: '#cbd5e1', width: 1 },
+			showlegend: false,
+		}];
 
-        const layout = {
-            margin: { l: 50, r: 20, b: 35, t: 10 },
-            xaxis: { title: 'Schritt', gridcolor: '#f1f5f9' },
-            yaxis: { title: 'Loss', gridcolor: '#f1f5f9', range: [0, 6] },
-            plot_bgcolor: '#fff',
-            paper_bgcolor: '#fff',
-            showlegend: false,
-            annotations: [{
-                x: 0.5, y: 5.5, xref: 'paper', yref: 'y',
-                text: '🔴 = falsch (hoher Loss)  🟢 = richtig (niedriger Loss)',
-                showarrow: false, font: { size: 12, color: '#64748b' }
-            }]
-        };
+		const layout = {
+			autosize: true,  // ← DAS ist der Fix für die Breite
+			margin: { l: 50, r: 20, b: 35, t: 10 },
+			xaxis: { title: 'Schritt', gridcolor: '#f1f5f9' },
+			yaxis: { title: 'Loss', gridcolor: '#f1f5f9', range: [0, 6] },
+			plot_bgcolor: '#fff',
+			paper_bgcolor: '#fff',
+			showlegend: false,
+			annotations: [{
+				x: 0.5, y: 5.5, xref: 'paper', yref: 'y',
+				text: '🔴 = falsch (hoher Loss)  🟢 = richtig (niedriger Loss)',
+				showarrow: false, font: { size: 12, color: '#64748b' }
+			}]
+		};
 
-        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-    },
+		Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+	},
 
     init: function() {
         // Chart sofort mit leerem Zustand rendern (reserviert den Platz)
