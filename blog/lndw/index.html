@@ -209,17 +209,9 @@
         <div class="slide-content">
             <h2>Tokenisierung</h2>
             <p>Computer verstehen keine Wörter, nur Zahlen. Der Text wird in kleine Stücke (<b>Tokens</b>) zerlegt.</p>
-            <div class="formula-box">
-                <div class="math-display">$$\text{"Es war einmal"} \rightarrow [\text{"Es"}, \ \text{"war"}, \ \text{"ein"}, \ \text{"mal"}]$$</div>
-            </div>
-        </div>
-    </div>
+            <p class="fragment">Diese können ganze Wörter sein, oder Bestandteile von Wörtern, aber auch Leerzeichen, Komma, Fragezeichen, Emojis usw.</p>
 
-    <!-- ==================== SLIDE 6: Tokenisierung Demo ==================== -->
-    <div class="slide" data-title="Tokenisierung">
-        <div class="slide-content">
-            <h2>Tokenisierung</h2>
-            <div class="demo-box">
+            <div class="demo-box fragment">
                 <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:14px;" placeholder="z.B. 'Es war einmal ein Königskind'" value="Es war einmal ein Königskind">
                 <div id="tokenizer-output" style="min-height:60px;"></div>
             </div>
