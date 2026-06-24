@@ -1569,23 +1569,6 @@ const NNApproxViz = {
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-
-        // Info
-        const infoDiv = document.getElementById('nn-approx-info');
-        if (infoDiv) {
-            // Compute MSE
-            let mse = 0;
-            for (let i = 0; i < xs.length; i++) {
-                mse += Math.pow(ysTarget[i] - ysApprox[i], 2);
-            }
-            mse /= xs.length;
-
-            infoDiv.innerHTML = `
-                <b>${numNeurons} Neuronen</b> = <b>${numNeurons} ReLU-Knickpunkte</b> = <b>${numNeurons + 1} lineare Segmente</b>.
-                Je mehr Neuronen, desto feiner die Stückelung!
-                <span style="margin-left:12px; color:#64748b;">MSE: ${mse.toFixed(6)}</span>
-            `;
-        }
     }
 };
 

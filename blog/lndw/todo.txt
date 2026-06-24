@@ -42,8 +42,6 @@ was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersich
 neuronen (stücke) -> gesamtanzahl neuronen
 
 statt dense(x) graphdarstellung
-image.png
-das hier kann weg
 fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
 "ist Alles ein muster" -> alles klein
 "alles ist muster" -> raus
