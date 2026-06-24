@@ -162,6 +162,76 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Transformer-Architektur (vereinfacht) ==================== -->
+<div class="slide" data-title="Transformer-Architektur">
+    <div class="slide-content">
+        <h2>Die Transformer-Architektur – vereinfacht</h2>
+        <p>Das hier ist das berühmte Diagramm aus dem Paper "Attention Is All You Need". Sieht erstmal wild aus – aber im Kern sind es nur ein paar Bausteine, die sich wiederholen. Schauen wir uns die mal an.</p>
+
+        <!-- Vereinfachtes Architektur-Diagramm -->
+        <div style="display:flex; flex-direction:column; align-items:center; gap:0; margin:24px auto; max-width:360px;">
+
+            <!-- Softmax / Output -->
+            <div style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
+                Vorhersage des nächsten Tokens
+            </div>
+            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+
+            <!-- Wiederholter Block -->
+            <div style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:16px; width:100%; box-sizing:border-box;">
+                <!-- ×N Label -->
+                <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:3px 10px; border-radius:10px; font-size:0.85em;">×N</div>
+
+                <!-- Feed Forward -->
+                <div style="padding:12px 20px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; font-weight:bold; color:#92400e; text-align:center; margin-bottom:10px;">
+                    Feed-Forward-Netzwerk
+                </div>
+                <div style="font-size:1.2em; color:#94a3b8; text-align:center;">↑</div>
+
+                <!-- Multi-Head Attention -->
+                <div style="padding:12px 20px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; font-weight:bold; color:#5b21b6; text-align:center; margin-top:6px;">
+                    Multi-Head Attention
+                </div>
+
+                <!-- Residual-Hinweis -->
+                <div style="margin-top:10px; text-align:center; color:#64748b; font-size:0.8em; font-style:italic;">
+                    (+ Residual Connection nach jedem Block)
+                </div>
+            </div>
+            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+
+            <!-- Positional Embedding -->
+            <div style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; font-weight:bold; color:#0c4a6e; text-align:center; width:100%; box-sizing:border-box;">
+                + Positional Embedding
+            </div>
+            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+
+            <!-- Embedding -->
+            <div style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; font-weight:bold; color:#9d174d; text-align:center; width:100%; box-sizing:border-box;">
+                Embedding
+            </div>
+            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+
+            <!-- Input -->
+            <div style="padding:10px 20px; background:#f1f5f9; border:2px solid #cbd5e1; border-radius:10px; color:#475569; text-align:center; width:100%; box-sizing:border-box;">
+                Input-Tokens
+            </div>
+        </div>
+
+        <!-- Erklärungstext – locker formuliert -->
+        <div class="fragment" style="margin-top:20px; padding:16px 22px; background:linear-gradient(135deg, #eff6ff, #faf5ff); border-radius:12px; border:2px solid #e2e8f0; line-height:1.8; color:#334155;">
+            <b>Kurz gesagt – wir schauen uns gleich an:</b>
+            <ul style="margin:8px 0 0 16px; padding:0;">
+                <li><b>Embedding</b> – wie Wörter zu Zahlenvektoren werden</li>
+                <li><b>Positional Embedding</b> – wie die Reihenfolge reinkommt</li>
+                <li><b>Attention (Multi-Head)</b> – wie Wörter aufeinander "achten"</li>
+                <li><b>Feed-Forward-Netzwerk</b> – wo das eigentliche "Wissen" steckt</li>
+                <li><b>Vorhersage</b> – wie am Ende eine Vorhersage rauskommt</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
 <div class="slide" data-title="Daten sind fehlerhaft">
     <div class="slide-content">
