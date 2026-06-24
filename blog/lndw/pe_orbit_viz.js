@@ -213,8 +213,6 @@ const PEOrbitViz = (() => {
         if (currentStep === 0) {
             html = `
                 <span style="color:#1e293b;"><b>★ "${WORD}"</b> = Embedding-Punkt <code>[${BASE_EMBEDDING[0]}, ${BASE_EMBEDDING[1]}]</code></span>
-                <span style="color:#94a3b8;"> — die grauen Punkte sind andere Wörter im selben Raum.</span><br>
-                <span style="color:#64748b;">Noch keine Positionsinformation. → Weiter mit Pfeiltaste</span>
             `;
         } else if (currentStep <= MAX_POS) {
             const pos = currentStep - 1;
