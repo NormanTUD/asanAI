@@ -163,8 +163,8 @@ document.addEventListener('keydown', (e) => {
         case 'Enter':
             e.preventDefault();
             // Training-Folie: Pfeiltaste rechts = nächster Schritt
-            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoNext()) {
-                SimpleTraining.next();
+            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+                TrainingViz.next();
             }
             // Notebook-Folie: Pfeiltaste rechts steuert Schichten
             else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
@@ -177,8 +177,8 @@ document.addEventListener('keydown', (e) => {
         case 'Backspace':
             e.preventDefault();
             // Training-Folie: Pfeiltaste links = Schritt zurück
-            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoPrev()) {
-                SimpleTraining.prev();
+            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+                TrainingViz.prev();
             }
             // Notebook-Folie: Pfeiltaste links geht Schichten zurück
             else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
@@ -189,8 +189,8 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowUp':
             e.preventDefault();
-            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoPrev()) {
-                SimpleTraining.prev();
+            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+                TrainingViz.prev();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             } else {
@@ -199,8 +199,8 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowDown':
             e.preventDefault();
-            if (typeof SimpleTraining !== 'undefined' && SimpleTraining.canGoNext()) {
-                SimpleTraining.next();
+            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+                TrainingViz.next();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             } else {

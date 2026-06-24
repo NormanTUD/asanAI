@@ -2,7 +2,7 @@
 // SIMPLE TRAINING VISUALIZATION – Maximum Clarity
 // ============================================================
 
-const SimpleTraining = {
+const TrainingViz = {
     examples: [
         { words: ["Die", "Katze", "saß", "auf", "der", "Matte"], wrongs: ["Hund", "lief", "unter", "dem", "Straße"] },
         { words: ["Es", "war", "einmal", "ein", "König"], wrongs: ["ist", "nie", "kein", "Bauer"] },
@@ -219,5 +219,5 @@ const SimpleTraining = {
 // Auto-init when slide becomes visible
 document.addEventListener('DOMContentLoaded', () => {
     // Verzögert initialisieren, damit Plotly geladen ist
-    setTimeout(() => SimpleTraining.init(), 200);
+    setTimeout(() => TrainingViz.init(), 200);
 });
