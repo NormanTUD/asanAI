@@ -25,7 +25,7 @@ const evoSpaces = {
 		},
 		axes: { x: 'Power / Age', y: 'Gender' }, 
 		dims: 2,
-		rangeX: [-15, 30]
+		rangeX: [-15, 40]
 	},
 };
 
