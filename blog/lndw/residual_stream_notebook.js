@@ -159,43 +159,47 @@ const ResidualNotebook = (() => {
         ind.innerHTML = html;
     }
 
-    function nextLayer() {
-        if (currentLayer >= layers.length) return false;
-        const layer = layers[currentLayer];
-        animateLayer(layer, () => {
-            currentLayer++;
-            renderIndicators();
-            updateInfo();
-        });
-        return true; // signalisiert: Event wurde konsumiert
-    }
+	function nextLayer() {
+		if (currentLayer >= layers.length || animationRunning) return false;
+		animationRunning = true; // lock
+		const layer = layers[currentLayer];
+		animateLayer(layer, () => {
+			currentLayer++;
+			animationRunning = false; // unlock
+			renderIndicators();
+			updateInfo();
+		});
+		return true;
+	}
 
-    function prevLayer() {
-        if (currentLayer <= 0) return false;
-        currentLayer--;
-        // Entferne die Annotationen der letzten Schicht und rendere alles bis currentLayer neu
-        rebuildUpToLayer(currentLayer);
-        renderIndicators();
-        updateInfo();
-        return true; // signalisiert: Event wurde konsumiert
-    }
+	function prevLayer() {
+		if (currentLayer <= 0 || animationRunning) return false;
+		currentLayer--;
+		rebuildUpToLayer(currentLayer);
+		renderIndicators();
+		updateInfo();
+		return true;
+	}
 
-    function rebuildUpToLayer(upTo) {
-        // Annotations-Container leeren und alle Schichten bis upTo neu rendern (sofort, ohne Animation)
-        const annotationsContainer = document.getElementById('notebook-annotations');
-        if (!annotationsContainer) return;
-        annotationsContainer.innerHTML = '';
+	function rebuildUpToLayer(upTo) {
+		const annotationsContainer = document.getElementById('notebook-annotations');
+		if (!annotationsContainer) return;
+		annotationsContainer.innerHTML = '';
 
-        const textEl = document.getElementById('notebook-text');
-        if (!textEl) return;
+		const textEl = document.getElementById('notebook-text');
+		if (!textEl) return;
 
-        for (let i = 0; i < upTo; i++) {
-            const layer = layers[i];
-            layer.annotations.forEach(ann => {
-                renderAnnotation(ann, annotationsContainer, textEl, layer.color);
-            });
-        }
-    }
+		// FIX: Clamp upTo to valid range
+		const safeUpTo = Math.min(Math.max(0, upTo), layers.length);
+
+		for (let i = 0; i < safeUpTo; i++) {
+			const layer = layers[i];
+			if (!layer || !layer.annotations) continue; // FIX: guard against undefined
+			layer.annotations.forEach(ann => {
+				renderAnnotation(ann, annotationsContainer, textEl, layer.color);
+			});
+		}
+	}
 
     function animateLayer(layer, onComplete) {
         const annotationsContainer = document.getElementById('notebook-annotations');
