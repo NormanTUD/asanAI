@@ -8,6 +8,7 @@ const ResidualNotebook = (() => {
     let currentLayer = 0;
     let animationRunning = false;
     let container = null;
+    let isActive = false; // ob diese Folie gerade aktiv ist
 
     const baseText = "Die Katze saß auf der Matte weil sie müde war";
 
@@ -18,18 +19,17 @@ const ResidualNotebook = (() => {
             color: "#e63946",
             description: "Erkennt die grundlegendsten Bausteine: Was ist ein Nomen? Ein Verb? Ein Artikel?",
             annotations: [
-                // Fundamentale Wortarten markieren
-                { type: "underline", start: 0, end: 3, color: "#e63946", label: "Artikel" },           // "Die"
-                { type: "underline", start: 4, end: 9, color: "#d62828", label: "Nomen" },             // "Katze"
-                { type: "circle", start: 10, end: 13, color: "#e63946" },                              // "saß"
+                { type: "underline", start: 0, end: 3, color: "#e63946", label: "Artikel" },
+                { type: "underline", start: 4, end: 9, color: "#d62828", label: "Nomen" },
+                { type: "circle", start: 10, end: 13, color: "#e63946" },
                 { type: "scribble", x: 120, y: -30, text: "VERB!", color: "#e63946", rotation: -8, font: "bold 14px Comic Sans MS" },
-                { type: "underline", start: 14, end: 17, color: "#457b9d", label: "Präp." },           // "auf"
-                { type: "underline", start: 18, end: 21, color: "#e63946", label: "Artikel" },         // "der"
-                { type: "underline", start: 22, end: 27, color: "#d62828", label: "Nomen" },           // "Matte"
+                { type: "underline", start: 14, end: 17, color: "#457b9d", label: "Präp." },
+                { type: "underline", start: 18, end: 21, color: "#e63946", label: "Artikel" },
+                { type: "underline", start: 22, end: 27, color: "#d62828", label: "Nomen" },
                 { type: "scribble", x: 350, y: -25, text: "Konjunktion↓", color: "#a8201a", rotation: 12, font: "italic 11px Georgia" },
-                { type: "highlight", start: 28, end: 32, color: "rgba(230, 57, 70, 0.15)" },           // "weil"
-                { type: "underline", start: 33, end: 36, color: "#6a040f", label: "Pron." },           // "sie"
-                { type: "circle", start: 43, end: 46, color: "#e63946" },                              // "war"
+                { type: "highlight", start: 28, end: 32, color: "rgba(230, 57, 70, 0.15)" },
+                { type: "underline", start: 33, end: 36, color: "#6a040f", label: "Pron." },
+                { type: "circle", start: 43, end: 46, color: "#e63946" },
                 { type: "scribble", x: 480, y: -35, text: "auch Verb!", color: "#e63946", rotation: -5, font: "bold 12px Courier New" },
                 { type: "margin-note", x: "right", y: 25, text: "Grundgerüst:\nArtikel+Nomen+Verb\n= Satzstruktur ✓", color: "#e63946" },
             ]
@@ -39,7 +39,6 @@ const ResidualNotebook = (() => {
             color: "#2a9d8f",
             description: "Erkennt Satzglieder, Subjekt-Verb-Beziehungen und Phrasenstruktur.",
             annotations: [
-                // Subjekt-Verb-Kongruenz
                 { type: "bracket", start: 0, end: 9, color: "#2a9d8f", label: "Subjekt (Nominativ)" },
                 { type: "arrow", from: 10, to: 4, color: "#2a9d8f", label: "Verb → Subjekt" },
                 { type: "bracket", start: 14, end: 27, color: "#264653", label: "Präpositionalphrase (lokal)" },
@@ -55,14 +54,14 @@ const ResidualNotebook = (() => {
             color: "#e76f51",
             description: "Löst Pronomen auf: Wer ist 'sie'? Worauf bezieht sich was?",
             annotations: [
-                { type: "highlight", start: 33, end: 36, color: "rgba(231, 111, 81, 0.35)" },          // "sie"
+                { type: "highlight", start: 33, end: 36, color: "rgba(231, 111, 81, 0.35)" },
                 { type: "arrow", from: 33, to: 4, color: "#e76f51", label: "sie → Katze" },
                 { type: "scribble", x: 60, y: -55, text: "\"sie\" = DIE KATZE\n(nicht die Matte!)", color: "#e76f51", rotation: -6, font: "bold 13px Comic Sans MS" },
                 { type: "scribble", x: 250, y: -60, text: "Genus-Match:\nKatze=fem → sie=fem ✓\nMatte=fem → sie=fem ✓\n→ Semantik entscheidet!", color: "#e76f51", rotation: 3, font: "11px Courier New" },
-                { type: "strikethrough", start: 22, end: 27, color: "#e76f51", label: "" },            // "Matte" durchgestrichen als Kandidat
+                { type: "strikethrough", start: 22, end: 27, color: "#e76f51", label: "" },
                 { type: "scribble", x: 220, y: 50, text: "Matte kann nicht\nmüde sein! ✗", color: "#c1121f", rotation: -4, font: "bold italic 12px Georgia" },
                 { type: "margin-note", x: "right", y: 90, text: "Koreferenz-Kette:\nDie Katze...sie\n\nEntscheidung durch\nWeltwissen!", color: "#e76f51" },
-                { type: "circle", start: 4, end: 9, color: "#e76f51" },                               // Katze einkreisen
+                { type: "circle", start: 4, end: 9, color: "#e76f51" },
                 { type: "scribble", x: 420, y: -40, text: "↑ ANTEZEDENT", color: "#e76f51", rotation: 15, font: "bold 14px Impact" },
             ]
         },
@@ -73,7 +72,7 @@ const ResidualNotebook = (() => {
             annotations: [
                 { type: "arrow", from: 37, to: 10, color: "#6b21a8", label: "Grund → Handlung" },
                 { type: "scribble", x: 10, y: -65, text: "KAUSALITÄT:\nmüde → saß\n(nicht umgekehrt!)", color: "#6b21a8", rotation: -4, font: "bold 12px monospace" },
-                { type: "highlight", start: 10, end: 13, color: "rgba(107, 33, 168, 0.2)" },          // "saß"
+                { type: "highlight", start: 10, end: 13, color: "rgba(107, 33, 168, 0.2)" },
                 { type: "scribble", x: 100, y: 60, text: "saß = STATISCH\n= passiv, ruhend\n→ passt zu \"müde\"", color: "#7b2cbf", rotation: 5, font: "italic 11px Georgia" },
                 { type: "margin-note", x: "left", y: 120, text: "Semantische Rollen:\n• Katze = EXPERIENCER\n• Matte = LOCATION\n• müde = STATE", color: "#6b21a8" },
                 { type: "scribble", x: 320, y: -55, text: "Kohärenz-Check:\nLebewesen + müde ✓\nObjekt + müde ✗", color: "#6b21a8", rotation: -2, font: "bold 11px Courier New" },
@@ -92,7 +91,7 @@ const ResidualNotebook = (() => {
                 { type: "margin-note", x: "right", y: 140, text: "Vorhersage-Kandidaten:\n• \".\" (Satzende) 45%\n• \",\" (Aufzählung) 20%\n• \"und\" (Fortsetz.) 15%\n• \"obwohl\" (Kontrast) 8%", color: "#0077b6" },
                 { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Comic Sans MS" },
                 { type: "scribble", x: 350, y: 60, text: "Pragmatik:\nWarum sagt jemand das?\n→ Erklärung für Verhalten\n→ Empathie-Signal", color: "#0096c7", rotation: 7, font: "italic 12px Georgia" },
-                { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },          // "müde war"
+                { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },
                 { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
                 { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus (Rhema)" },
                 { type: "checkmark", x: 530, y: 30, color: "#0077b6" },
@@ -105,15 +104,31 @@ const ResidualNotebook = (() => {
         container = document.getElementById('residual-notebook');
         if (!container) return;
         render();
+        observeSlideActivation();
+    }
+
+    // Beobachte, ob die Residual-Stream-Folie aktiv ist
+    function observeSlideActivation() {
+        const observer = new MutationObserver(() => {
+            const slide = container.closest('.slide');
+            if (slide) {
+                isActive = slide.classList.contains('active');
+            }
+        });
+
+        // Beobachte alle Slides auf class-Änderungen
+        document.querySelectorAll('.slide').forEach(slide => {
+            observer.observe(slide, { attributes: true, attributeFilter: ['class'] });
+        });
     }
 
     function render() {
         container.innerHTML = `
             <div class="notebook-wrapper">
                 <div class="notebook-header">
-                    <div class="notebook-title">📝 Residual Stream — Das gemeinsame Notizbuch</div>
+                    <div class="notebook-title">📖 Residual Stream — Das gemeinsame Notizbuch</div>
                     <div class="notebook-layer-info" id="notebook-layer-info">
-                        Klicke "Nächste Schicht" um zu sehen, wie jeder Experte seine Notizen hinzufügt — von einfach bis komplex.
+                        Drücke <kbd style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.85em;">→</kbd> um die nächste Schicht zu sehen, <kbd style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.85em;">←</kbd> um zurückzugehen.
                     </div>
                 </div>
                 <div class="notebook-page" id="notebook-page">
@@ -123,11 +138,6 @@ const ResidualNotebook = (() => {
                 </div>
                 <div class="notebook-controls">
                     <div class="notebook-layer-indicators" id="notebook-indicators"></div>
-                    <div class="notebook-buttons">
-                        <button onclick="ResidualNotebook.reset()" class="nb-btn nb-btn-reset">↺ Reset</button>
-                        <button onclick="ResidualNotebook.nextLayer()" class="nb-btn nb-btn-next" id="nb-next-btn">▶ Nächste Schicht</button>
-                        <button onclick="ResidualNotebook.autoplay()" class="nb-btn nb-btn-auto" id="nb-auto-btn">⏩ Autoplay</button>
-                    </div>
                 </div>
             </div>
         `;
@@ -158,16 +168,41 @@ const ResidualNotebook = (() => {
     }
 
     function nextLayer() {
-        if (currentLayer >= layers.length) return;
+        if (currentLayer >= layers.length) return false;
         const layer = layers[currentLayer];
         animateLayer(layer, () => {
             currentLayer++;
             renderIndicators();
             updateInfo();
-            if (currentLayer >= layers.length) {
-                document.getElementById('nb-next-btn').disabled = true;
-            }
         });
+        return true; // signalisiert: Event wurde konsumiert
+    }
+
+    function prevLayer() {
+        if (currentLayer <= 0) return false;
+        currentLayer--;
+        // Entferne die Annotationen der letzten Schicht und rendere alles bis currentLayer neu
+        rebuildUpToLayer(currentLayer);
+        renderIndicators();
+        updateInfo();
+        return true; // signalisiert: Event wurde konsumiert
+    }
+
+    function rebuildUpToLayer(upTo) {
+        // Annotations-Container leeren und alle Schichten bis upTo neu rendern (sofort, ohne Animation)
+        const annotationsContainer = document.getElementById('notebook-annotations');
+        if (!annotationsContainer) return;
+        annotationsContainer.innerHTML = '';
+
+        const textEl = document.getElementById('notebook-text');
+        if (!textEl) return;
+
+        for (let i = 0; i < upTo; i++) {
+            const layer = layers[i];
+            layer.annotations.forEach(ann => {
+                renderAnnotation(ann, annotationsContainer, textEl, layer.color);
+            });
+        }
     }
 
     function animateLayer(layer, onComplete) {
@@ -198,9 +233,9 @@ const ResidualNotebook = (() => {
         const el = document.createElement('div');
         el.className = `nb-annotation nb-annotation-appear nb-type-${ann.type}`;
 
-        const charWidth = 11.5; // px per character approximation
-        const textTop = 45; // offset from top of notebook-page
-        const textLeft = 30; // left padding
+        const charWidth = 11.5;
+        const textTop = 45;
+        const textLeft = 30;
 
         switch (ann.type) {
             case 'underline': {
@@ -335,7 +370,9 @@ const ResidualNotebook = (() => {
         const info = document.getElementById('notebook-layer-info');
         if (!info) return;
         if (currentLayer >= layers.length) {
-            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle ${layers.length} Schichten haben geschrieben!</span><br><span style="color:#64748b; font-size:0.85em;">Der Residual Stream enthält nun das gesammelte Wissen aller Experten — von Wortarten bis Pragmatik. Jede Schicht hat auf dem aufgebaut, was die vorherigen geschrieben haben.</span>`;
+            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle ${layers.length} Schichten haben geschrieben!</span><br><span style="color:#64748b; font-size:0.85em;">Der Residual Stream enthält nun das gesammelte Wissen aller Experten — von Wortarten bis Pragmatik. Drücke <kbd style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.85em;">→</kbd> um zur nächsten Folie zu gehen.</span>`;
+        } else if (currentLayer === 0) {
+            info.innerHTML = `<span style="color:#64748b;">Drücke <kbd style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.85em;">→</kbd> um zu sehen, wie jeder Experte seine Notizen hinzufügt — von einfach bis komplex.</span>`;
         } else {
             const next = layers[currentLayer];
             info.innerHTML = `<span style="color:#64748b;">Schicht ${currentLayer + 1} von ${layers.length} — </span><span style="color:${next.color}; font-weight:bold;">${next.name}</span><br><span style="color:#94a3b8; font-size:0.85em;">${next.description}</span>`;
@@ -345,37 +382,25 @@ const ResidualNotebook = (() => {
     function reset() {
         currentLayer = 0;
         animationRunning = false;
-        const btn = document.getElementById('nb-next-btn');
-        if (btn) btn.disabled = false;
-        const autoBtn = document.getElementById('nb-auto-btn');
-        if (autoBtn) autoBtn.textContent = '⏩ Autoplay';
         render();
     }
 
-    function autoplay() {
-        if (animationRunning) {
-            animationRunning = false;
-            document.getElementById('nb-auto-btn').textContent = '⏩ Autoplay';
-            return;
-        }
-        animationRunning = true;
-        document.getElementById('nb-auto-btn').textContent = '⏸ Stop';
+    // Wird vom Presentation-Engine aufgerufen um zu prüfen ob Notebook aktiv ist
+    function isOnNotebookSlide() {
+        const slide = container ? container.closest('.slide') : null;
+        return slide && slide.classList.contains('active');
+    }
 
-        function step() {
-            if (!animationRunning || currentLayer >= layers.length) {
-                animationRunning = false;
-                const autoBtn = document.getElementById('nb-auto-btn');
-                if (autoBtn) autoBtn.textContent = '⏩ Autoplay';
-                return;
-            }
-            nextLayer();
-            setTimeout(step, 3000);
-        }
-        step();
+    function canGoNext() {
+        return currentLayer < layers.length;
+    }
+
+    function canGoPrev() {
+        return currentLayer > 0;
     }
 
     // Public API
-    return { init, nextLayer, reset, autoplay };
+    return { init, nextLayer, prevLayer, reset, isOnNotebookSlide, canGoNext, canGoPrev };
 })();
 
 // Auto-init when DOM is ready
