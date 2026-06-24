@@ -50,8 +50,6 @@ farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwi
 "das wissen steckt als muster verteilt in den gewichten des netzes"
 "feuern" ist unverständlich ohne sicht dass es neuronen sind
 "am ende wird das (hoffentlich) nächste" hoffentlich vershcieben
-"die finale vorhersage": woher kommt das "vokabular" (vorher erwähnen: vokabular = alle tokens)
-"die finale vorhersage": "wahrscheinlichkeit" statt P()
 temperature -> deutsch (ohne e), steuert die kreativität statt zufälligkeit
 tempreature und sampling vereinheitlichen
 "vom textberg zum assistenten" -> berg -> loss landscape keine verbindung
@@ -77,7 +75,5 @@ neu schreiben, herzchenw eg
 "was ki kann und nicht" vorletzte folie nochmal gewaltig krüzen, 
 
 wichtig: langfristiges lernen, "echtes verstehen"/bewusstsein&ki zsmführen/moral
-RAG raus, wurde nie erklrät
-
 
 todo abarbeiten
