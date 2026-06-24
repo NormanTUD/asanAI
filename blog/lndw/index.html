@@ -476,31 +476,6 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Attention als Router ==================== -->
-<div class="slide" data-title="Attention als Router">
-    <div class="slide-content">
-        <h2>Attention als Router – Wohin fließt Information?</h2>
-        <p>Jeder Output ist eine <b>gewichtete Mischung</b> aller Value-Vektoren. Die Gewichte bestimmen, <b>welche Information wohin geroutet wird</b> – wie eine Weiche im Bahnnetz.</p>
-        <div class="demo-box">
-            <div class="demo-title">🚦 Routing-Visualisierung: Wer bekommt was?</div>
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-weight:bold; color:#475569;">Fokus auf Output:</label>
-                <select id="attn-router-focus" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;" onchange="AttentionRouterViz.render()">
-                    <option value="0">Output 1 (sa₁)</option>
-                    <option value="1">Output 2 (sa₂)</option>
-                    <option value="2">Output 3 (sa₃)</option>
-                    <option value="all">Alle gleichzeitig</option>
-                </select>
-                <button onclick="AttentionRouterViz.animate()" style="padding:8px 16px; border-radius:8px; border:none; background:#8b5cf6; color:#fff; font-weight:bold; cursor:pointer;">▶️ Routing animieren</button>
-            </div>
-            <div id="attn-router-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div id="attn-router-info" style="margin-top:10px; padding:12px; background:#faf5ff; border-radius:8px; border:1px solid #e9d5ff; color:#6b21a8; text-align:center;">
-                <b>Kernidee:</b> Attention bestimmt für spätere Layer, <b>wohin die Information fließt</b>. Jeder Output-Slot bekommt eine andere Mischung – das ist das "Routing". Verschiedene Heads routen nach verschiedenen Kriterien (Syntax, Semantik, Position…).
-            </div>
-        </div>
-    </div>
-</div>
-
     <!-- ==================== SLIDE: Neural Net Intro ==================== -->
 <div class="slide" data-title="Neuronales Netz Intro">
     <div class="slide-content">
