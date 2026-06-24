@@ -2183,7 +2183,7 @@ function loadIntuitionModule() {
         if (nnNeuronSlider) nnNeuronSlider.addEventListener('input', () => NNApproxViz.render());
         NNApproxViz.render();
 
-	    TrainingViz.render();
+	    //TrainingViz.render();
 
 	    LossLandscapeViz.reset();
 
