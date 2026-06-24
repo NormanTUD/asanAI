@@ -19,61 +19,61 @@ const Presentation = (() => {
         return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
     }
 
-    function next() {
-        const fragments = getFragments(currentSlide);
-        const visibleCount = fragmentIndex[currentSlide];
-        if (visibleCount < fragments.length) {
-            const frag = fragments[visibleCount];
-            frag.classList.add('visible');
-            fragmentIndex[currentSlide]++;
+function next() {
+    const fragments = getFragments(currentSlide);
+    const visibleCount = fragmentIndex[currentSlide];
+    if (visibleCount < fragments.length) {
+        const frag = fragments[visibleCount];
+        frag.classList.add('visible');
+        fragmentIndex[currentSlide]++;
 
-            if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
-                SunrisePlot.showSinus();
-            }
-            if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
-                const step = parseInt(frag.getAttribute('data-knowledge-step'));
-                KnowledgeViz.setStep(step);
-            }
-            if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
-                if (typeof animateDualManifoldAlignment === 'function') {
-                    animateDualManifoldAlignment();
-                }
-            }
-            return;
+        if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
+            SunrisePlot.showSinus();
         }
-        if (currentSlide < slides.length - 1) {
-            goTo(currentSlide + 1);
+        if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
+            const step = parseInt(frag.getAttribute('data-knowledge-step'));
+            KnowledgeViz.setStep(step);
         }
+        if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
+            if (typeof animateDualManifoldAlignment === 'function') {
+                animateDualManifoldAlignment();
+            }
+        }
+        return;
     }
-
-    function prev() {
-        const fragments = getFragments(currentSlide);
-        const visibleCount = fragmentIndex[currentSlide];
-        if (visibleCount > 0) {
-            const frag = fragments[visibleCount - 1];
-            frag.classList.remove('visible');
-            fragmentIndex[currentSlide]--;
-
-            if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
-                SunrisePlot.hideSinus();
-            }
-            if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
-                const step = parseInt(frag.getAttribute('data-knowledge-step'));
-                if (step > 0) {
-                    KnowledgeViz.setStep(step - 1);
-                }
-            }
-            if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
-                if (typeof resetDualManifold === 'function') {
-                    resetDualManifold();
-                }
-            }
-            return;
-        }
-        if (currentSlide > 0) {
-            goTo(currentSlide - 1, true);
-        }
+    if (currentSlide < slides.length - 1) {
+        goTo(currentSlide + 1);
     }
+}
+
+function prev() {
+    const fragments = getFragments(currentSlide);
+    const visibleCount = fragmentIndex[currentSlide];
+    if (visibleCount > 0) {
+        const frag = fragments[visibleCount - 1];
+        frag.classList.remove('visible');
+        fragmentIndex[currentSlide]--;
+
+        if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
+            SunrisePlot.hideSinus();
+        }
+        if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
+            const step = parseInt(frag.getAttribute('data-knowledge-step'));
+            if (step > 0) {
+                KnowledgeViz.setStep(step - 1);
+            }
+        }
+        if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
+            if (typeof resetDualManifold === 'function') {
+                resetDualManifold();
+            }
+        }
+        return;
+    }
+    if (currentSlide > 0) {
+        goTo(currentSlide - 1, true);
+    }
+}
 
 	function goTo(idx, showAllFragments = false) {
 		if (idx < 0 || idx >= slides.length) return;
@@ -171,6 +171,10 @@ document.addEventListener('keydown', (e) => {
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
                 TrainingViz.next();
             }
+            // PE Orbit Folie: Pfeiltaste rechts = nächster Schritt
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+                PEOrbitViz.next();
+            }
             // Notebook-Folie: Pfeiltaste rechts steuert Schichten
             else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
@@ -185,6 +189,10 @@ document.addEventListener('keydown', (e) => {
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
                 TrainingViz.prev();
             }
+            // PE Orbit Folie: Pfeiltaste links = Schritt zurück
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+                PEOrbitViz.prev();
+            }
             // Notebook-Folie: Pfeiltaste links geht Schichten zurück
             else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
@@ -196,6 +204,8 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
                 TrainingViz.prev();
+            } else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+                PEOrbitViz.prev();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             } else {
@@ -206,6 +216,8 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
                 TrainingViz.next();
+            } else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+                PEOrbitViz.next();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             } else {

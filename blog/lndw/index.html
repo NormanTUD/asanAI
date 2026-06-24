@@ -391,25 +391,13 @@
         </div>
     </div>
 
-<!-- ==================== SLIDE 10: Positional Encoding Demo ==================== -->
+<!-- ==================== SLIDE 10: Positional Encoding Demo (Kreisbahn v3) ==================== -->
 <div class="slide" data-title="Positional Encoding">
     <div class="slide-content">
-        <h2>Positional Encoding</h2>
-        <div class="demo-box">
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                <label style="font-weight:bold;">Dimensionen:</label>
-                <input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
-                <span style="font-weight:bold; color:#8b5cf6;">8</span>
-            </div>
-            <div id="positional-encoding-plot" style="height:250px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
-            <div id="positional-encoding-heatmap" style="height:250px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-		<p style="margin-top:14px; color:#334155; margin-left:auto; margin-right:auto; line-height:1.7;">
-		    <b>Die Idee:</b> Auf jeder Dimension des Vektors wird eine Welle mit unterschiedlicher Frequenz addiert.
-		    Dadurch erhält jede Position ein einzigartiges Muster — wie ein Fingerabdruck.
-		    Die Details der Sinus-/Kosinus-Formeln sind nicht entscheidend.
-		    <b>Relevant ist:</b> Die Positionsinformation wird direkt in die Token-Vektoren selbst hineinkodiert —
-		    das Token „weiß" danach nicht nur <b>was</b> es ist, sondern auch <b>wo</b> es steht.
-		</p>
+        <h2>Positional Encoding – Was passiert mit einem Wort?</h2>
+        <div style="max-width:700px; margin:0 auto;">
+            <div id="pe-orbit-plot" style="height:420px; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0;"></div>
+            <div id="pe-orbit-caption" style="margin-top:10px; padding:10px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; color:#475569; line-height:1.8; text-align:center; font-size:0.9em; min-height:48px;"></div>
         </div>
     </div>
 </div>
@@ -1076,6 +1064,7 @@
 <script>
 	const rootMargin = "800px";
 </script>
+<script src="pe_orbit_viz.js"></script>
 <script src="embeddinglab.js"></script>
 <script src="training_viz.js"></script>
 <script src="residual_stream_notebook.js"></script>
