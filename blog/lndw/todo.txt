@@ -30,7 +30,6 @@ unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embeddin
 was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersichtsdiagramm zeigen)
 neuronen (stücke) -> gesamtanzahl neuronen
 
-statt dense(x) graphdarstellung
 fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
 "ist Alles ein muster" -> alles klein
 "alles ist muster" -> raus
