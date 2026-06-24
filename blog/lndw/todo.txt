@@ -53,3 +53,6 @@ datenumfang ist ne kritische größe, mehr thematisieren (inter extrapolation, d
 wichtig: langfristiges lernen, "echtes verstehen"/bewusstsein&ki zsmführen/moral
 
 todo abarbeiten
+
+
+"large" einerseits wegen wirklich großen daten, andererseits weil sie wirklich viele parameter haben
