@@ -1663,8 +1663,6 @@ function loadIntuitionModule() {
 
 	    //TrainingViz.render();
 
-	    //LossLandscapeViz.reset();
-
     // Start observing everything
     _lazyCreateObserver();
 

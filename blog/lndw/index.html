@@ -357,33 +357,6 @@
         </div>
     </div>
 
-<!-- ==================== SLIDE: Attention Matrix ==================== -->
-<div class="slide" data-title="Attention-Matrix">
-    <div class="slide-content">
-        <h2>Attention-Matrix – Wer achtet auf wen?</h2>
-        <p>Jedes Token berechnet einen <b>Score</b> für jedes vorherige Token: "Wie relevant bist du für mich?" – aber es darf <b>nicht in die Zukunft schauen</b> (Causal Masking).</p>
-        <div class="demo-box">
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-weight:bold; color:#475569;">Aspekt (Head):</label>
-                <select id="attn-matrix-aspect" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;" onchange="AttentionMatrixViz.render()">
-                    <option value="syntax">Syntax (Subjekt↔Verb)</option>
-                    <option value="coref">Koreferenz (Pronomen → Bezug)</option>
-                    <option value="adjacent">Lokale Nähe (benachbart)</option>
-                </select>
-                <label style="font-weight:bold; color:#475569; margin-left:12px;">Satz:</label>
-                <select id="attn-matrix-sentence" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;" onchange="AttentionMatrixViz.render()">
-                    <option value="katze">Die Katze saß auf der Matte weil sie müde war</option>
-                    <option value="koenig">Der König gab der Königin den Ring</option>
-                </select>
-            </div>
-            <div id="attn-matrix-plot" style="height:450px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div id="attn-matrix-info" style="margin-top:10px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; text-align:center;">
-                Jede Zeile zeigt: <b>Wohin schaut dieses Token?</b> Helle Zellen = hohe Aufmerksamkeit. Die Werte jeder Zeile summieren sich zu 1 (Softmax). <b style="color:#ef4444;">✕ = maskiert (Zukunft)</b>.
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- ==================== SLIDE: Neural Net Intro ==================== -->
 <div class="slide" data-title="Neuronales Netz Intro">
     <div class="slide-content">
