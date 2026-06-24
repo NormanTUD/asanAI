@@ -291,8 +291,8 @@
     <div class="slide" data-title="Autoregressive Schleife">
         <div class="slide-content">
             <h2>Die autoregressive Schleife</h2>
-            <p>LLMs sind Maschinen, die das <b>nächste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal.</p>
-            <p class="fragment">Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
+            <p>LLMs sind Maschinen, die das <b>nächste Token</b> vorhersagen – immer nur <b>ein einziges Token</b> auf einmal.</p>
+            <p class="fragment">Dieses Token wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
 
             <div class="fragment formula-box">
                 <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>
@@ -323,7 +323,7 @@
 <!-- ==================== SLIDE 10: Positional Encoding Demo (Kreisbahn v3) ==================== -->
 <div class="slide" data-title="Positional Encoding">
     <div class="slide-content">
-        <h2>Positional Encoding – Was passiert mit einem Wort?</h2>
+        <h2>Positional Encoding – Was passiert mit einem Token?</h2>
         <div style="max-width:700px; margin:0 auto;">
             <div id="pe-orbit-plot" style="height:420px; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0;"></div>
             <div id="pe-orbit-caption" style="margin-top:10px; padding:10px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; color:#475569; line-height:1.8; text-align:center; font-size:0.9em; min-height:48px;"></div>
@@ -355,7 +355,7 @@
     <div class="slide" data-title="Attention">
         <div class="slide-content">
             <h2>Attention</h2>
-            <p>"Welche anderen Wörter sind für <b>dieses</b> Wort wichtig?"</p>
+            <p>"Welche anderen Wörter sind für <b>dieses</b> Token wichtig?"</p>
 	    <p class="fragment"><b>Beispiel:</b> "Ich bringe mein <b>Geld</b> auf die <b>Bank</b>" – worauf bezieht sich "<b>Bank</b>", eine Parkbank oder die Bank zu der man Geld bringt?</p>
             <div class="fragment" style="margin-top:16px;">
                 <div class="layers-vertical">
@@ -370,7 +370,7 @@
 <div class="slide" data-title="Attention-Matrix">
     <div class="slide-content">
         <h2>Attention-Matrix – Wer achtet auf wen?</h2>
-        <p>Jedes Wort berechnet einen <b>Score</b> für jedes vorherige Wort: "Wie relevant bist du für mich?" – aber es darf <b>nicht in die Zukunft schauen</b> (Causal Masking).</p>
+        <p>Jedes Token berechnet einen <b>Score</b> für jedes vorherige Token: "Wie relevant bist du für mich?" – aber es darf <b>nicht in die Zukunft schauen</b> (Causal Masking).</p>
         <div class="demo-box">
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
                 <label style="font-weight:bold; color:#475569;">Aspekt (Head):</label>
@@ -387,7 +387,7 @@
             </div>
             <div id="attn-matrix-plot" style="height:450px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
             <div id="attn-matrix-info" style="margin-top:10px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; text-align:center;">
-                Jede Zeile zeigt: <b>Wohin schaut dieses Wort?</b> Helle Zellen = hohe Aufmerksamkeit. Die Werte jeder Zeile summieren sich zu 1 (Softmax). <b style="color:#ef4444;">✕ = maskiert (Zukunft)</b>.
+                Jede Zeile zeigt: <b>Wohin schaut dieses Token?</b> Helle Zellen = hohe Aufmerksamkeit. Die Werte jeder Zeile summieren sich zu 1 (Softmax). <b style="color:#ef4444;">✕ = maskiert (Zukunft)</b>.
             </div>
         </div>
     </div>
@@ -596,31 +596,6 @@
         </div>
     </div>
 
-
-<!-- ==================== SLIDE: Training, Next Token Prediction (VEREINFACHT) ==================== -->
-<!--
-<div class="slide" data-title="Training">
-    <div class="slide-content">
-        <h2>Training: Das nächste Wort vorhersagen</h2>
-
-        <div class="demo-box" style="min-height:auto; padding:30px;">
-
-            <!-- DER SATZ -->
-            <div id="training-sentence" style="font-size:1.4em; line-height:2.2; text-align:center; margin-bottom:30px; font-weight:500;"></div>
-
-            <!-- VORHERSAGE: Falsch vs. Richtig -->
-            <div id="training-prediction" style="display:flex; justify-content:center; gap:40px; align-items:stretch; margin-bottom:30px;"></div>
-
-            <!-- LOSS-ANZEIGE -->
-	    <div id="training-loss-display" style="text-align:center; margin-bottom:20px; min-height:52px; display:flex; align-items:center; justify-content:center; visibility: hidden;"></div>
-
-            <!-- MINI LOSS-CHART (volle Breite, größer) -->
-            <div id="training-loss-chart" style="height:200px; margin-top:24px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; width:100%;"></div>
-        </div>
-    </div>
-</div>
--->
-
 <!-- ==================== SLIDE: Loss Landscape ==================== -->
 <div class="slide" data-title="Loss Landscape">
     <div class="slide-content">
@@ -659,7 +634,7 @@
                 <ul style="color:#1e3a5f; line-height:1.9; margin-left:16px; padding:0;">
                     <li><b>Daten:</b> Wikipedia, Common Crawl (das gesamte öffentliche Internet), Bücher, Code, …</li>
                     <li><b>Umfang:</b> Billionen von Tokens</li>
-                    <li><b>Ziel:</b> Nächstes Wort vorhersagen</li>
+		    <li><b>Ziel:</b> Nächstes <b>Token</b> vorhersagen</li>
                     <li><b>Ergebnis:</b> Das Netz „weiß" faktisch alles, was in den Texten steht</li>
                 </ul>
             </div>
@@ -996,7 +971,7 @@
         <div class="fragment" style="padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-top:16px;">
             <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">🎯 Warum passiert das?</div>
             <ul style="color:#7f1d1d; line-height:2.0; margin-left:16px; padding:0;">
-                <li>Das Modell <b>muss</b> immer ein nächstes Wort ausgeben; es hat <b>keinen „Ich weiß es nicht"-Knopf</b></li>
+		    <li>Das Modell <b>muss</b> immer ein nächstes <b>Token</b> ausgeben; es hat <b>keinen „Ich weiß es nicht"-Knopf</b></li>
                 <li>Es hat <b>keinen Überprüfungsmechanismus</b>, der fragt: „Stimmt das eigentlich?"</li>
                 <li>Wenn es zu einem Thema wenig weiß, <b>füllt es die Lücke mit etwas Plausiblem</b></li>
             </ul>
