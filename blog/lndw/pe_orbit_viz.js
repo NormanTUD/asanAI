@@ -15,11 +15,6 @@ const PEOrbitViz = (() => {
 
     // Context words — other tokens in the embedding space (outside the orbit)
     const CONTEXT_WORDS = [
-        { word: "dem", pos: [1.5, 0.8], color: '#94a3b8' },
-        { word: "schläft", pos: [0.35, -0.55], color: '#94a3b8' },
-        { word: "die", pos: [-0.6, 0.9], color: '#94a3b8' },
-        { word: "auf", pos: [-0.6, 0.1], color: '#94a3b8' },
-        { word: "Sofa", pos: [1.6, -0.4], color: '#94a3b8' },
     ];
 
     const POS_COLORS = [
