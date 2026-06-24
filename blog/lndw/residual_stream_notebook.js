@@ -31,7 +31,6 @@ const ResidualNotebook = (() => {
                 { type: "underline", start: 33, end: 36, color: "#6a040f", label: "Pron." },
                 { type: "circle", start: 43, end: 46, color: "#e63946" },
                 { type: "scribble", x: 480, y: -35, text: "auch Verb!", color: "#e63946", rotation: -5, font: "bold 12px Courier New" },
-                { type: "margin-note", x: "right", y: 25, text: "Grundgerüst:\nArtikel+Nomen+Verb\n= Satzstruktur ✓", color: "#e63946" },
             ]
         },
         {
@@ -45,7 +44,6 @@ const ResidualNotebook = (() => {
                 { type: "scribble", x: 30, y: -45, text: "Subjekt-Verb\nKongruenz: 3.Pers.Sg.", color: "#2a9d8f", rotation: -3, font: "bold 11px monospace" },
                 { type: "box", start: 28, end: 46, color: "#2a9d8f", label: "Nebensatz (kausal)" },
                 { type: "scribble", x: 300, y: 55, text: "← Verb am Ende!\n   (Nebensatz-Regel)", color: "#264653", rotation: 4, font: "italic bold 11px Georgia" },
-                { type: "margin-note", x: "left", y: 60, text: "Hauptsatz:\nS-V-Adverbial\n\nNebensatz:\nKonj-S-Adj-V", color: "#2a9d8f" },
                 { type: "scribble", x: 180, y: -50, text: "V2-Stellung ✓", color: "#2a9d8f", rotation: -7, font: "bold 13px Impact" },
             ]
         },
@@ -86,11 +84,8 @@ const ResidualNotebook = (() => {
             color: "#0077b6",
             description: "Versteht den kommunikativen Zweck und bereitet die Vorhersage des nächsten Tokens vor.",
             annotations: [
-                { type: "scribble", x: 5, y: -75, text: "TEXTSORTE: Erzählung\n→ nächstes Token:\nFortsetzung erwartet!", color: "#0077b6", rotation: -3, font: "bold 12px Georgia" },
                 { type: "scribble", x: 250, y: -75, text: "Informationsstruktur:\nTHEMA: Katze (bekannt)\nRHEMA: müde (neu!)", color: "#023e8a", rotation: 5, font: "italic 11px monospace" },
-                { type: "margin-note", x: "right", y: 140, text: "Vorhersage-Kandidaten:\n• \".\" (Satzende) 45%\n• \",\" (Aufzählung) 20%\n• \"und\" (Fortsetz.) 15%\n• \"obwohl\" (Kontrast) 8%", color: "#0077b6" },
                 { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Comic Sans MS" },
-                { type: "scribble", x: 350, y: 60, text: "Pragmatik:\nWarum sagt jemand das?\n→ Erklärung für Verhalten\n→ Empathie-Signal", color: "#0096c7", rotation: 7, font: "italic 12px Georgia" },
                 { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },
                 { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
                 { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus (Rhema)" },
