@@ -484,13 +484,13 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 
 .notebook-annotations {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 3;
+	position: absolute;
+	top: 6px;
+	left: 9px;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 3;
 }
 
 .nb-annotation {
@@ -517,7 +517,6 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .notebook-layer-indicators {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
     justify-content: center;
 }
 
