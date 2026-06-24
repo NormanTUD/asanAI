@@ -214,15 +214,35 @@
 
             <!-- Rechts: Beispiel -->
             <div style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
-                <div style="margin-bottom:8px;">💬</div>
-                <div style="font-weight:bold; color:#334155; margin-bottom:10px;">Typisches Beispiel</div>
-                <div style="padding:14px; background:#fff; border-radius:10px; border:1px solid #e2e8f0; line-height:1.8;">
-                    <span style="color:#3b82f6; font-weight:bold;">User:</span> Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.<br><br>
-                    <span style="color:#10b981; font-weight:bold;">KI:</span> 1. „Quantenwelten" (2008)<br>
-                    2. „Die Ordnung der Teilchen" (2012)<br>
-                    3. „Verschränkung und Realität" (2015)<br><br>
-                    <span style="color:#ef4444; font-weight:bold;">Realität:</span> ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
-                </div>
+		<div class="chat-container">
+		    <div class="chat-header">Beispiel: Halluzination</div>
+
+		    <!-- User -->
+		    <div class="message user">
+			<div class="message-avatar">🔵</div>
+			<div class="message-bubble">
+			    <div class="message-label">User</div>
+			    Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.
+			</div>
+		    </div>
+
+		    <!-- KI -->
+		    <div class="message ki">
+			<div class="message-avatar">🟢</div>
+			<div class="message-bubble">
+			    <div class="message-label">KI</div>
+			    <ol>
+				<li>„Quantenwelten" (2008)</li>
+				<li>„Die Ordnung der Teilchen" (2012)</li>
+				<li>„Verschränkung und Realität" (2015)</li>
+			    </ol>
+			</div>
+		    </div>
+
+		    <!-- Realität -->
+		    <div class="message-label">Realität</div>
+		    ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
+		</div>
             </div>
         </div>
 
