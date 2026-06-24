@@ -5,8 +5,6 @@ steckt die modellhafter vorstellung einer sinusfkt
 "muster exist in wirklichkeit" ist ne annahme, muss nicht sein, können auch nur in uns esin
 approx hat lücken: aber welche approx? "die vereinfachung hat lücken"
 "daten sind fehlerhaft" -> wie groß ist der kontext? was heißt "in der nähe"?
-"halluzination" -> softmax nicht erklärt
-halluzinatioenn weiter nach hinten verschieben
 seltene daten interpolation, fehlende daten extrapolation
 kein meta-modul -> kein überprüfungsmechanismus
 "training belohnt immer eine antwort" -> geschwärtzigkeit vs "keine ahnung" sagen
