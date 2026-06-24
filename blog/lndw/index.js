@@ -1584,8 +1584,6 @@ const NNApproxViz = {
                 <b>${numNeurons} Neuronen</b> = <b>${numNeurons} ReLU-Knickpunkte</b> = <b>${numNeurons + 1} lineare Segmente</b>.
                 Je mehr Neuronen, desto feiner die Stückelung!
                 <span style="margin-left:12px; color:#64748b;">MSE: ${mse.toFixed(6)}</span>
-                ${numNeurons >= 15 ? '<br><span style="color:#10b981;">✓ Fast perfekte Approximation!</span>' : ''}
-                ${numNeurons <= 3 ? '<br><span style="color:#f59e0b;">→ Erhöhe die Neuronen für bessere Annäherung</span>' : ''}
             `;
         }
     }
