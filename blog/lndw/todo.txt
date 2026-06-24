@@ -16,7 +16,6 @@ kein meta-modul -> kein überprüfungsmechanismus
 embedding & vektor arithmetik: "jedes token durch vektor ersetzt", es ist für uns interpretierbar wie bedeutung
 "indem es" -> "indem er"
 "embedding raum" -> default (pfeiltasten machen "mann + macht")
-autoregressive schleife: ein einziges wort -> token
 simon rasniewski (moritz fragen) demonstrator "für immer generieren" (ignoriert endoftext)
 "autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
