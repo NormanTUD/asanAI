@@ -33,10 +33,6 @@ farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwi
 
 "das wissen steckt als muster verteilt in den gewichten des netzes"
 "feuern" ist unverständlich ohne sicht dass es neuronen sind
-"am ende wird das (hoffentlich) nächste" hoffentlich vershcieben
-temperature -> deutsch (ohne e), steuert die kreativität statt zufälligkeit
-tempreature und sampling vereinheitlichen
-"vom textberg zum assistenten" -> berg -> loss landscape keine verbindung
 statt "billionen" 10hochirgendwas
 "formt das verhalten" -> bestimmt das verhalten
 Wer die Infrastruktur
