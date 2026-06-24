@@ -587,206 +587,182 @@
         </div>
     </div>
 
-<!-- ==================== SLIDE: Loss Landscape ==================== -->
-<div class="slide" data-title="Loss Landscape">
-    <div class="slide-content">
-        <h2>Loss Landscape – Den Berg hinab</h2>
-        <p>Die <b>Milliarden Gewichte</b> des Modells bilden eine riesige "Landschaft". Der Loss ist die Höhe. Training = den tiefsten Punkt finden.</p>
-        <div class="demo-box" style="min-height:auto;">
-            <div class="demo-title">🏔️ 3D Loss Landscape – Gradient Descent</div>
-            <div id="loss-landscape-plot" style="height:420px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-            <div style="display:flex; gap:12px; justify-content:center; margin-top:14px; flex-wrap:wrap; align-items:center;">
-                <button onclick="LossLandscapeViz.reset()" style="padding:9px 18px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">🔄 Reset</button>
-                <button onclick="LossLandscapeViz.step()" style="padding:9px 18px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">📉 Ein Schritt</button>
-                <button onclick="LossLandscapeViz.animate()" id="loss-animate-btn" style="padding:9px 18px; border-radius:8px; border:none; background:#10b981; color:#fff; font-weight:bold; cursor:pointer;">⏩ Animieren</button>
-                <label style="font-weight:bold; color:#475569; margin-left:8px;">Schrittweite:</label>
-                <input type="range" id="loss-lr-slider" min="0.02" max="0.5" step="0.02" value="0.18" style="width:100px; accent-color:#6366f1;" oninput="document.getElementById('loss-lr-val').textContent=this.value">
-                <span id="loss-lr-val" style="font-weight:bold; color:#6366f1; min-width:32px;">0.18</span>
-                <span id="loss-step-counter" style="color:#64748b; font-weight:bold; margin-left:8px;">Schritt: 0 | Loss: ?</span>
-            </div>
-            <div id="loss-landscape-info" style="margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; color:#166534; text-align:center;">
-                Klicke <b>"Ein Schritt"</b> oder <b>"Animieren"</b> um zu sehen, wie das Modell schrittweise den Loss minimiert. <b>Du kannst den 3D-Plot jederzeit frei drehen!</b>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- ==================== SLIDE: Pre-Training & Fine-Tuning ==================== -->
 <div class="slide" data-title="Pre-Training & Fine-Tuning">
-    <div class="slide-content">
-        <h2>Von großen Textmengen zum Assistenten</h2>
-        <p>Das Training eines LLM passiert in <b>drei Phasen</b>:</p>
+	<div class="slide-content">
+		<h2>Von großen Textmengen zum Assistenten</h2>
+		<p>Das Training eines LLM passiert in <b>drei Phasen</b>:</p>
 
-        <div style="display:flex; gap:24px; margin:24px 0; flex-wrap:wrap; align-items:stretch;">
-            <!-- Phase 1: Pre-Training -->
-            <div style="flex:1; min-width:300px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
-                <div style="margin-bottom:8px;">📚</div>
-                <div style="font-weight:bold; color:#1e40af; margin-bottom:10px;">Phase 1: Pre-Training</div>
-                <ul style="color:#1e3a5f; line-height:1.9; margin-left:16px; padding:0;">
-                    <li><b>Daten:</b> Wikipedia, Common Crawl (das gesamte öffentliche Internet), Bücher, Code, …</li>
-                    <li><b>Umfang:</b> Billionen von Tokens</li>
-		    <li><b>Ziel:</b> Nächstes <b>Token</b> vorhersagen</li>
-                    <li><b>Ergebnis:</b> Das Netz „weiß" faktisch alles, was in den Texten steht</li>
-                </ul>
-            </div>
+		<div style="display:flex; gap:24px; margin:24px 0; flex-wrap:wrap; align-items:stretch;">
+			<!-- Phase 1: Pre-Training -->
+			<div style="flex:1; min-width:300px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
+				<div style="margin-bottom:8px;">📚</div>
+				<div style="font-weight:bold; color:#1e40af; margin-bottom:10px;">Phase 1: Pre-Training</div>
+				<ul style="color:#1e3a5f; line-height:1.9; margin-left:16px; padding:0;">
+					<li><b>Daten:</b> Wikipedia, Common Crawl (das gesamte öffentliche Internet), Bücher, Code, …</li>
+					<li><b>Umfang:</b> Billionen von Tokens</li>
+					<li><b>Ziel:</b> Nächstes <b>Token</b> vorhersagen</li>
+					<li><b>Ergebnis:</b> Das Netz „weiß" faktisch alles, was in den Texten steht</li>
+				</ul>
+			</div>
 
-            <!-- Pfeil -->
-            <div style="display:flex; align-items:center; color:#94a3b8;">→</div>
+			<!-- Pfeil -->
+			<div style="display:flex; align-items:center; color:#94a3b8;">→</div>
 
-            <!-- Phase 2: Fine-Tuning -->
-            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff;">
-                <div style="margin-bottom:8px;">💬</div>
-                <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">Phase 2: Fine-Tuning (Instruction Tuning)</div>
-                <ul style="color:#581c87; line-height:1.9; margin-left:16px; padding:0;">
-                    <li><b>Daten:</b> Zehntausende bis Hunderttausende konkrete Frage-Antwort-Paare</li>
-                    <li><b>Umfang:</b> Winzig im Vergleich (aber hochwertig & kuratiert)</li>
-                    <li><b>Ziel:</b> Lerne das <b>Format</b>, wie Fragen aussehen und wie Antworten strukturiert sind</li>
-                    <li><b>Ergebnis:</b> Das Netz kann sein Wissen nun als hilfreicher Assistent abrufen</li>
-                </ul>
-            </div>
-        </div>
-
-	<!-- Ergänzung: RLHF, als fragment auf der Pre-Training/Fine-Tuning-Folie oder separat -->
-	<div class="fragment" style="margin-top:18px; padding:16px 20px; background:#ecfdf5; border-radius:12px; border:2px solid #86efac;">
-	    <div style="display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap;">
-		<div style="">👍👎</div>
-		<div style="flex:1; min-width:260px;">
-		    <div style="font-weight:bold; color:#166534; margin-bottom:6px;">Phase 3: RLHF, Reinforcement Learning from Human Feedback</div>
-		    <p style="color:#14532d; line-height:1.7; margin:0;">
-			Nach dem Fine-Tuning gibt es oft noch eine <b>dritte Phase</b>: Menschen bewerten verschiedene Antworten des Modells
-			(„Antwort A ist besser als B"). Daraus lernt das Modell, welcher Stil bevorzugt wird, höflich, vorsichtig, hilfreich.
-		    </p>
+			<!-- Phase 2: Fine-Tuning -->
+			<div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff;">
+				<div style="margin-bottom:8px;">💬</div>
+				<div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">Phase 2: Fine-Tuning (Instruction Tuning)</div>
+				<ul style="color:#581c87; line-height:1.9; margin-left:16px; padding:0;">
+					<li><b>Daten:</b> Zehntausende bis Hunderttausende konkrete Frage-Antwort-Paare</li>
+					<li><b>Umfang:</b> Winzig im Vergleich (aber hochwertig & kuratiert)</li>
+					<li><b>Ziel:</b> Lerne das <b>Format</b>, wie Fragen aussehen und wie Antworten strukturiert sind</li>
+					<li><b>Ergebnis:</b> Das Netz kann sein Wissen nun als hilfreicher Assistent abrufen</li>
+				</ul>
+			</div>
 		</div>
-	    </div>
+
+		<!-- Ergänzung: RLHF, als fragment auf der Pre-Training/Fine-Tuning-Folie oder separat -->
+		<div class="fragment" style="margin-top:18px; padding:16px 20px; background:#ecfdf5; border-radius:12px; border:2px solid #86efac;">
+			<div style="display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap;">
+				<div style="">👍👎</div>
+				<div style="flex:1; min-width:260px;">
+					<div style="font-weight:bold; color:#166534; margin-bottom:6px;">Phase 3: RLHF, Reinforcement Learning from Human Feedback</div>
+					<p style="color:#14532d; line-height:1.7; margin:0;">
+					Nach dem Fine-Tuning gibt es oft noch eine <b>dritte Phase</b>: Menschen bewerten verschiedene Antworten des Modells
+					(„Antwort A ist besser als B"). Daraus lernt das Modell, welcher Stil bevorzugt wird, höflich, vorsichtig, hilfreich.
+					</p>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="key-insight fragment">
+			<strong>Die Kernidee:</strong> Nach Phase 1 hat das Modell das Wissen, aber es „redet" nicht mit dir.
+			Phase 2 bringt ihm bei, <b>wie ein Gespräch aussieht</b>: Frage → Antwort.
+			Die Antworten „erfindet" es nicht neu, es weiß sie bereits aus den Milliarden Texten.
+		</div>
+
+		<!-- TODO
+
+			<div class="fragment" style="margin-top:16px; padding:12px 18px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca; color:#991b1b; text-align:center;">
+			⚠️ <b>Aber:</b> Wer die Trainingsdaten auswählt, bestimmt, was das Modell „weiß" und was nicht.
+			Diese Vorauswahl ist <b>nie neutral</b>, sie spiegelt Interessen, Werte und politische Entscheidungen der Betreiber wider.
+			</div>
+		-->
 	</div>
-
-
-        <div class="key-insight fragment">
-            <strong>Die Kernidee:</strong> Nach Phase 1 hat das Modell das Wissen, aber es „redet" nicht mit dir.
-            Phase 2 bringt ihm bei, <b>wie ein Gespräch aussieht</b>: Frage → Antwort.
-            Die Antworten „erfindet" es nicht neu, es weiß sie bereits aus den Milliarden Texten.
-        </div>
-
-	<!-- TODO
-
-        <div class="fragment" style="margin-top:16px; padding:12px 18px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca; color:#991b1b; text-align:center;">
-            ⚠️ <b>Aber:</b> Wer die Trainingsdaten auswählt, bestimmt, was das Modell „weiß" und was nicht.
-            Diese Vorauswahl ist <b>nie neutral</b>, sie spiegelt Interessen, Werte und politische Entscheidungen der Betreiber wider.
-        </div>
-	-->
-    </div>
 </div>
 
 <!-- ==================== SLIDE: Kosten & Energie ==================== -->
 <div class="slide" data-title="Kosten & Energie">
-    <div class="slide-content">
-        <h2>Kosten & Energie, Was KI die Welt kostet</h2>
+	<div class="slide-content">
+		<h2>Kosten & Energie, Was KI die Welt kostet</h2>
 
-	<!-- TODO: RIchtige Zahlen -->
+		<!-- TODO: RIchtige Zahlen -->
 
-        <div style="display:flex; gap:20px; margin-top:16px; flex-wrap:wrap; align-items:stretch;">
-            <!-- Links: Training -->
-            <div class="fragment" style="flex:1; min-width:280px; padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
-                <div style="display:grid; grid-template-columns:auto 1fr; gap:8px 14px; color:#7f1d1d; line-height:1.8;">
-			<span style="font-weight:bold;">💰 Kosten:</span>
-			<span>US $370.000.000</span>
-			<span style="font-weight:bold;">🔌 Rechenaufwand:</span>
-			<span>3.8 ExaFLOP (3.8e26 FLOP, 380 Septillionen Operationen pro Sekunde)</span>
-			<span style="font-weight:bold;">⏱ Dauer:</span>
-			<span>125 Tage</span>
-			<span style="font-weight:bold;">⚡ Energieverbrauch:</span>
-			<span>~ 50,000 MWh (so viel wie 41 Einpersonenhaushalte im Jahr)</span>
-                </div>
-            </div>
+		<div style="display:flex; gap:20px; margin-top:16px; flex-wrap:wrap; align-items:stretch;">
+			<!-- Links: Training -->
+			<div class="fragment" style="flex:1; min-width:280px; padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
+				<div style="display:grid; grid-template-columns:auto 1fr; gap:8px 14px; color:#7f1d1d; line-height:1.8;">
+					<span style="font-weight:bold;">💰 Kosten:</span>
+					<span>US $370.000.000</span>
+					<span style="font-weight:bold;">🔌 Rechenaufwand:</span>
+					<span>3.8 ExaFLOP (3.8e26 FLOP, 380 Septillionen Operationen pro Sekunde)</span>
+					<span style="font-weight:bold;">⏱ Dauer:</span>
+					<span>125 Tage</span>
+					<span style="font-weight:bold;">⚡ Energieverbrauch:</span>
+					<span>~ 50,000 MWh (so viel wie 41 Einpersonenhaushalte im Jahr)</span>
+				</div>
+			</div>
 
-	    <center class="fragment" >
-		    <figure>
-			    <img style="width: 50%; height: auto;" src="juelich.jpeg" />
-			    <figcaption>Zum Vergleich: das größte Rechenzentrum in Deutschland (Jülich) hat 1 ExaFLOP.</figcaption>
-		    </figure>
-	    </center>
+			<center class="fragment" >
+				<figure>
+					<img style="width: 50%; height: auto;" src="juelich.jpeg" />
+					<figcaption>Zum Vergleich: das größte Rechenzentrum in Deutschland (Jülich) hat 1 ExaFLOP.</figcaption>
+				</figure>
+			</center>
 
-	    <!-- Quelle: https://epoch.ai/data/ai-models?utm_source=you.com&view=graph&tab=notable -->
+			<!-- Quelle: https://epoch.ai/data/ai-models?utm_source=you.com&view=graph&tab=notable -->
 
-            <!-- Rechts: Inferenz -->
-            <div class="fragment" style="flex:1; min-width:280px; padding:18px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
-                <div style="font-weight:bold; color:#1e40af; margin-bottom:12px;">💬 Jede einzelne Anfrage</div>
-                <div style="color:#1e3a5f; line-height:1.8;">
-                    <p style="margin:0 0 10px;">Auch das <b>Beantworten</b> einer Frage kostet Energie:</p>
-                    <ul style="margin-left:16px; padding:0;">
-                        <li>Eine ChatGPT-Anfrage: ~10× so viel Strom wie eine Google-Suche</li>
-                        <li>~0003 bis 0,0029 kWh pro Antwort</li>
-                        <li>Bei Milliarden Anfragen/Tag summiert sich das enorm</li>
-                    </ul>
-                </div>
-                <div style="margin-top:14px; padding:10px; background:#dbeafe; border-radius:8px; text-align:center;">
-			<span style="color:#1e40af;">Microsoft ist in Gesprächen, das Kernkraftwerk <b>Three Mile Island</b> für ihre KI-Rechenzentren zu kaufen.</span>
-                </div>
-            </div>
-        </div>
+			<!-- Rechts: Inferenz -->
+			<div class="fragment" style="flex:1; min-width:280px; padding:18px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
+				<div style="font-weight:bold; color:#1e40af; margin-bottom:12px;">💬 Jede einzelne Anfrage</div>
+				<div style="color:#1e3a5f; line-height:1.8;">
+					<p style="margin:0 0 10px;">Auch das <b>Beantworten</b> einer Frage kostet Energie:</p>
+					<ul style="margin-left:16px; padding:0;">
+						<li>Eine ChatGPT-Anfrage: ~10× so viel Strom wie eine Google-Suche</li>
+						<li>~0003 bis 0,0029 kWh pro Antwort</li>
+						<li>Bei Milliarden Anfragen/Tag summiert sich das enorm</li>
+					</ul>
+				</div>
+				<div style="margin-top:14px; padding:10px; background:#dbeafe; border-radius:8px; text-align:center;">
+					<span style="color:#1e40af;">Microsoft ist in Gesprächen, das Kernkraftwerk <b>Three Mile Island</b> für ihre KI-Rechenzentren zu kaufen.</span>
+				</div>
+			</div>
+		</div>
 
-        <!-- Machtkonzentration -->
-        <div class="fragment" style="margin-top:18px; padding:16px 20px; background:#fffbeb; border-radius:12px; border:2px solid #fde68a;">
-            <div style="font-weight:bold; color:#92400e; margin-bottom:8px;">🏢 Die Konsequenz: Machtkonzentration</div>
-            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
-                <div style="flex:1; min-width:250px; color:#78350f; line-height:1.7;">
-                    <p style="margin:0;">Nur eine <b>Handvoll Firmen</b> weltweit kann sich Training leisten: OpenAI, Google, Meta, Anthropic, DeepSeek, Mistral…</p>
-                    <p style="margin:8px 0 0;">→ Diese wenigen Akteure entscheiden, <b>welche Daten</b> verwendet werden, <b>welche Werte</b> eingebaut werden, und <b>wer Zugang</b> bekommt.</p>
-                </div>
-                <div style="min-width:180px; text-align:center; padding:12px; background:#fef3c7; border-radius:10px; max-width: 200px;">
-                    <div style="">🏗️</div>
-                    <div style="color:#92400e; margin-top:4px; line-height:1.4;">Wer die Infrastruktur besitzt (und wer die, die sie besitzen, reguliert), bestimmt die Regeln.</div>
-                </div>
-            </div>
-        </div>
+		<!-- Machtkonzentration -->
+		<div class="fragment" style="margin-top:18px; padding:16px 20px; background:#fffbeb; border-radius:12px; border:2px solid #fde68a;">
+			<div style="font-weight:bold; color:#92400e; margin-bottom:8px;">🏢 Die Konsequenz: Machtkonzentration</div>
+			<div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+				<div style="flex:1; min-width:250px; color:#78350f; line-height:1.7;">
+					<p style="margin:0;">Nur eine <b>Handvoll Firmen</b> weltweit kann sich Training leisten: OpenAI, Google, Meta, Anthropic, DeepSeek, Mistral…</p>
+					<p style="margin:8px 0 0;">→ Diese wenigen Akteure entscheiden, <b>welche Daten</b> verwendet werden, <b>welche Werte</b> eingebaut werden, und <b>wer Zugang</b> bekommt.</p>
+				</div>
+				<div style="min-width:180px; text-align:center; padding:12px; background:#fef3c7; border-radius:10px; max-width: 200px;">
+					<div style="">🏗️</div>
+					<div style="color:#92400e; margin-top:4px; line-height:1.4;">Wer die Infrastruktur besitzt (und wer die, die sie besitzen, reguliert), bestimmt die Regeln.</div>
+				</div>
+			</div>
+		</div>
 
-        <div class="key-insight fragment" style="margin-top:16px;">
-            <strong>Fazit:</strong> LLM und KI sind nicht „kostenlos", sie verbraucht <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
-        </div>
-    </div>
+		<div class="key-insight fragment" style="margin-top:16px;">
+			<strong>Fazit:</strong> LLM und KI sind nicht „kostenlos", sie verbraucht <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
+		</div>
+	</div>
 </div>
 
 <!-- ==================== SLIDE: Versteht das LLM?s ==================== -->
 <div class="slide" data-title="Versteht das LLM?">
-    <div class="slide-content" style="text-align:center; position:relative; overflow:hidden;">
-        <div style="position:relative; z-index:1;">
-            <h2 style="margin-bottom:24px;">Versteht das LLM, was es sagt?</h2>
+	<div class="slide-content" style="text-align:center; position:relative; overflow:hidden;">
+		<div style="position:relative; z-index:1;">
+			<h2 style="margin-bottom:24px;">Versteht das LLM, was es sagt?</h2>
 
-            <div style="margin:0 auto 24px; padding:24px 30px; background:rgba(255,255,255,0.9); border-radius:16px; border:2px solid #e2e8f0; text-align:left; line-height:1.8;">
-                <p style="color:#334155; margin:0 0 16px;">
-                    LLM geben uns das <b>Gefühl</b> von Verständnis.<br>
-                    Aber sie hat <b>keinen Körper</b>. Keine Sinne. Kein Grounding.
-                </p>
+			<div style="margin:0 auto 24px; padding:24px 30px; background:rgba(255,255,255,0.9); border-radius:16px; border:2px solid #e2e8f0; text-align:left; line-height:1.8;">
+				<p style="color:#334155; margin:0 0 16px;">
+				LLM geben uns das <b>Gefühl</b> von Verständnis.<br>
+				Aber sie hat <b>keinen Körper</b>. Keine Sinne. Kein Grounding.
+				</p>
 
-		<center>
-			<img src="vector_grounding_problem_2.jpeg" />
-		</center>
+				<center>
+					<img src="vector_grounding_problem_2.jpeg" />
+				</center>
 
-                <div class="fragment" style="padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; margin:16px 0;">
-                    <strong style="color:#92400e;">🗺️ Das Vector Grounding Problem:</strong><br>
-                    <span style="color:#78350f;">
-                        Sie kennt die Muster von "rot", "warm", "schmerzhaft" –
-                        aber sie hat nie etwas <b>gesehen</b>, <b>gefühlt</b> oder <b>erlitten</b>.<br>
-                        Ihre Vektoren sind Beziehungen zwischen <b>Wörtern</b>, nicht zwischen Wörtern und <b>Welt</b>.
-                    </span>
+				<div class="fragment" style="padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; margin:16px 0;">
+					<strong style="color:#92400e;">🗺️ Das Vector Grounding Problem:</strong><br>
+					<span style="color:#78350f;">
+						Sie kennt die Muster von "rot", "warm", "schmerzhaft" –
+						aber sie hat nie etwas <b>gesehen</b>, <b>gefühlt</b> oder <b>erlitten</b>.<br>
+						Ihre Vektoren sind Beziehungen zwischen <b>Wörtern</b>, nicht zwischen Wörtern und <b>Welt</b>.
+					</span>
 
-                </div>
-            </div>
-        </div>
-    </div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- ==================== SLIDE: Vorsicht, Bias & Intransparenz ==================== -->
 <div class="slide" data-title="Vorsicht: Bias & Grenzen">
-    <div class="slide-content">
-        <h2>Vorsicht: Approximation, Bias & Intransparenz</h2>
+	<div class="slide-content">
+		<h2>Vorsicht: Approximation, Bias & Intransparenz</h2>
 
-        <div style="display:flex; gap:20px; margin-top:16px; flex-wrap:wrap;">
-            <!-- Links: Approximation -->
-            <div style="flex:1; min-width:280px;">
-                <div style="padding:16px; background:#fffbeb; border-radius:12px; border:1px solid #fde68a; margin-bottom:14px;">
-                    <div style="font-weight:bold; color:#92400e; margin-bottom:8px;">📐 Immer nur Approximation</div>
-                    <p style="color:#78350f; line-height:1.7; margin:0;">
+		<div style="display:flex; gap:20px; margin-top:16px; flex-wrap:wrap;">
+			<!-- Links: Approximation -->
+			<div style="flex:1; min-width:280px;">
+				<div style="padding:16px; background:#fffbeb; border-radius:12px; border:1px solid #fde68a; margin-bottom:14px;">
+					<div style="font-weight:bold; color:#92400e; margin-bottom:8px;">📐 Immer nur Approximation</div>
+					<p style="color:#78350f; line-height:1.7; margin:0;">
                         Ein LLM ist <b>kein Lexikon</b>. Es speichert keine Fakten exakt, sondern lernt statistische Muster.
                         Jede Antwort ist eine <b>Annäherung</b>, manchmal erstaunlich gut, manchmal subtil falsch.
                     </p>
