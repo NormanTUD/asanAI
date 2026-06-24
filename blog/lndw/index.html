@@ -481,15 +481,21 @@
     <div class="slide-content">
         <h2>Was ist das Feed-Forward-Netzwerk?</h2>
         <div class="fragment formula-box">
-		<div class="math-display">$$\text{dense}(x) = W_1 \cdot x + b_1$$</div>
+		<div class="math-display">$$\text{dense}(x) = W \cdot x + b$$</div>
         </div>
 
         <div class="fragment formula-box">
-            <div class="math-display">$$f(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2$$</div>
+		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
+        </div>
+
+        <div class="fragment formula-box">
+		<div class="math-display">$$x_1 = \text{dense}(x_0)$$</div>
+		<div class="math-display">$$x_2 = \text{ReLU}(x_1)$$</div>
+		<div class="math-display">$$x_3 = \text{dense}(x_2)$$</div>
         </div>
         <ol class="fragment">
             <li><b>Dense 1:</b> Multipliziere Input mit Gewichten + Bias → viele "Detektoren"</li>
-            <li><b>ReLU:</b> Schneide alles Negative ab → <code>max(0, x)</code></li>
+            <li><b>ReLU:</b> Schneide alles Negative ab</code></li>
             <li><b>Dense 2:</b> Kombiniere die aktiven Detektoren zum Output</li>
         </ol>
         <div class="key-insight fragment">
