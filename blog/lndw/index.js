@@ -321,7 +321,6 @@ const TokenizerViz = {
                       title="Whitespace: ${token.text.length} Zeichen">
                         <span style="font-weight:bold; font-size:1.05em; color:#64748b;">${token.displayText}</span>
                         <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
-                        <span style="font-size:0.6em; color:#94a3b8;">ws</span>
                     </div>`;
                 return;
             }
