@@ -197,18 +197,23 @@
 <div class="slide" data-title="Halluzinationen">
     <div class="slide-content">
         <h2>Halluzinationen — Wenn die KI „lügt"</h2>
-        <p>Ein LLM <b>muss</b> immer ein nächstes Wort produzieren — es gibt kein internes Signal für „Ich weiß es nicht".</p>
 
         <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
-            <!-- Links: Mechanismus -->
+            <!-- Links: Warum -->
             <div style="flex:1; min-width:300px; padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
                 <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">🎰 Warum passiert das?</div>
                 <ul style="color:#7f1d1d; line-height:1.9; margin-left:16px; padding:0;">
-                    <li>Immer das <b>statistisch plausibelste</b> nächste Wort</li>
-                    <li><b>Kein Weltmodell</b>, das Fakten „nachschlägt"</li>
+                    <li>Softmax <b>muss</b> sich zu 1 summieren → irgendein Token bekommt immer die höchste Wahrscheinlichkeit</li>
+                    <li><b>Kein Meta-Modul</b>, das prüft: „Habe ich dazu verlässliche Daten gesehen?"</li>
+                    <li>Training belohnt <b>immer eine Antwort</b> — nie Schweigen</li>
                     <li>Seltene/fehlende Trainingsdaten → das Modell <b>interpoliert</b></li>
                     <li>Ergebnis <b>klingt</b> perfekt — ist aber frei erfunden</li>
                 </ul>
+                <div class="fragment" style="margin-top:12px; padding:10px; background:#fff5f5; border-radius:8px; border:1px dashed #fca5a5;">
+                    <p style="color:#991b1b; margin:0; line-height:1.5;">
+                        <b>Kurz:</b> Die Architektur hat keinen „Enthaltungs-Knopf" — sie ist eine Funktion, die Input nimmt und <b>immer</b> Output produziert.
+                    </p>
+                </div>
             </div>
 
             <!-- Rechts: Beispiel -->
@@ -262,7 +267,7 @@
 
         <div class="key-insight fragment" style="margin-top:18px;">
             <strong>Merke:</strong> Halluzination ist kein „Bug" — sie ist eine <b>direkte Konsequenz der Architektur</b>.
-            Das Modell optimiert auf „klingt plausibel", nicht auf „ist wahr".
+            Wenn Modelle heute „Ich bin mir nicht sicher" sagen, ist das <b>angelerntes Verhalten</b> (RLHF) — kein echtes Konfidenz-Signal.
             <b>Immer kritisch prüfen!</b>
         </div>
     </div>
