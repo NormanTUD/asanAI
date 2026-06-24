@@ -15,49 +15,18 @@ function _getEC3D(divId) {
 }
 
 const evoSpaces = {
-	'1d': {
-		vocab: { 
-			'Freezing': [-30, 0, 0], 
-			'Icy': [-10, 0, 0], 
-			'Cold': [5, 0, 0], 
-			'Mild': [20, 0, 0], 
-			'Warm': [35, 0, 0],
-			'Hot': [60, 0, 0], 
-			'Boiling': [100, 0, 0] 
-		},
-		axes: { x: 'Temperature (°C)' }, 
-		dims: 1,
-		rangeX: [-50, 120]
-	},
 	'2d': {
 		vocab: { 
 			'Man': [5, -10, 0], 'Woman': [5, 10, 0], 
 			'Boy': [-10, -10, 0], 'Girl': [-10, 10, 0],
 			'Prince': [15, -10, 0], 'Princess': [15, 10, 0], // Knight durch Prince ersetzt, Princess ergänzt
 			'King': [25, -10, 0], 'Queen': [25, 10, 0],
-			'Power': [15, 0, 0], 'Childhood': [-20, 0, 0]
+			'Power': [15, 0, 0]
 		},
 		axes: { x: 'Power / Age', y: 'Gender' }, 
 		dims: 2,
-		rangeX: [-30, 50]
+		rangeX: [-15, 30]
 	},
-	'3d': {
-		vocab: {
-			'Human': [0, 0, 0], 'Man': [0, -10, 0], 'Woman': [0, 10, 0], 
-			'Prince': [8, -10, 0], 'Princess': [8, 10, 0],
-			'King': [15, -10, 0], 'Queen': [15, 10, 0],
-			'Divine': [0, 0, 25], 
-			'Demigod': [12, -10, 12], 'Demigoddess': [12, 10, 12],
-			'God': [25, -10, 25], 'Goddess': [25, 10, 25], 
-			'Animal': [0, 0, -20], 
-			'Lion': [18, -10, -20], 'Lioness': [18, 10, -20], // Klare Gender-Trennung (-10, 10)
-			'Tomcat': [0, -10, -20], 'Cat': [0, 10, -20],     // "Kater" vs "Katze"
-			'Power': [7.5, 0, 0], 'Weak': [-15, 0, 0]
-		},
-		axes: { x: 'Power', y: 'Gender', z: 'Species' }, 
-		dims: 3,
-		rangeX: [-30, 30]
-	}
 };
 
 // ============================================================
