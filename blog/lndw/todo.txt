@@ -13,9 +13,6 @@ kein meta-modul -> kein überprüfungsmechanismus
 "ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 "die architektur hat keinen enthaltungs knoopf" -> funktion ist hier missverständlich, mathematische fkt oder funktion im sinen von "um zu zsmhang"
-für marskartoffelsouffle tatsächlich rezept bauen -> "es klingt richtig" -> statt richtig plausibel
-"konfidenzsignal" ?
-tokenisierung ein blauer kasten, doppelwort "es war einmal ein königskind" -> "es war einmal ein königs kind"
 embedding & vektor arithmetik: "jedes token durch vektor ersetzt", es ist für uns interpretierbar wie bedeutung
 "indem es" -> "indem er"
 "embedding raum" -> default (pfeiltasten machen "mann + macht")
@@ -28,8 +25,6 @@ positional embedding: "token" != embedding tokens
 "token versucht man durch 2 aspekte einzufangen, erstmal den punkt des tokens im embedding + die position"
 gleichung haut nicht hin
 nehm die anderen punkte aus "positional embedding was passiert mit wort" raus, es geht nur um katze
-attn matrix sätze zu lang, zahlen zu klein
-attn matrix ans ende für leute die bocjk habebn
 mannigfaltigkeitsfolie -> anknüpfungspunkte?
 "erst eigenschaften, dann funktionsweise" (mannigfalitkgietne hypthese anknüpfunpgsunkt)
 unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embedding, attn, residual stream, attn scores sind schwierig)
