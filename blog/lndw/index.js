@@ -1185,20 +1185,6 @@ const PredictionViz = {
         };
 
         Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
-
-        // Update info
-        const infoDiv = document.getElementById('prediction-info');
-        if (infoDiv) {
-            const top = items[0];
-            const entropy = -items.reduce((s, it) => s + (it.prob > 0 ? it.prob * Math.log2(it.prob) : 0), 0);
-            infoDiv.innerHTML = `
-                <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; font-size:0.85em; color:#475569;">
-                    <span>🏆 Top: <b style="color:#3b82f6;">"${top.word}"</b> (${(top.prob * 100).toFixed(1)}%)</span>
-                    <span>🌡️ Temp.: <b>${temperature.toFixed(2)}</b></span>
-                    <span>📊 Entropy: <b>${entropy.toFixed(2)} bits</b></span>
-                    <span>${temperature < 0.5 ? '🎯 Near deterministic' : temperature > 1.5 ? '🎲 Highly random' : '⚖️ Balanced'}</span>
-                </div>`;
-        }
     }
 };
 
