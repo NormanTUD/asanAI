@@ -794,6 +794,89 @@
 	</div>
 </div>
 
+<!-- ==================== SLIDE: Halluzinationen ==================== -->
+<div class="slide" data-title="Halluzinationen">
+    <div class="slide-content">
+        <h2>Halluzinationen: Wenn das LLM „lügt"</h2>
+
+        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
+            <!-- Beispiel 1: Mango -->
+            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
+                <div class="chat-container">
+                    <div class="message user">
+                        <div class="message-avatar">🔵</div>
+                        <div class="message-bubble">
+                            <div class="message-label">User</div>
+                            Kann man in Deutschland Mangos anbauen?
+                        </div>
+                    </div>
+                    <div class="message ki">
+                        <div class="message-avatar">🟢</div>
+                        <div class="message-bubble">
+                            <div class="message-label">ChatGPT</div>
+                            Ja, das geht! In der <b>Mango-Manufaktur in Lindow in Brandenburg</b> werden seit 2009 erfolgreich Mangos angebaut. 🥭
+                        </div>
+                    </div>
+                    <div class="message-label">Realität</div>
+                    ❌ Diese „Mango-Manufaktur" existiert nicht. Frei erfunden.
+                </div>
+                <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
+                    <b>Was passiert ist:</b> Das Modell wusste nichts, aber statt zu schweigen, hat es etwas erzeugt, das <b>plausibel klingt</b>: ein Ortsname, ein Bundesland, eine Jahreszahl.
+                </div>
+            </div>
+
+            <!-- Beispiel 2: Quantenphysik -->
+            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
+                <div class="chat-container">
+                    <div class="message user">
+                        <div class="message-avatar">🔵</div>
+                        <div class="message-bubble">
+                            <div class="message-label">User</div>
+                            Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.
+                        </div>
+                    </div>
+                    <div class="message ki">
+                        <div class="message-avatar">🟢</div>
+                        <div class="message-bubble">
+                            <div class="message-label">LLM</div>
+                            <ol>
+                                <li>„Quantenwelten" (2008)</li>
+                                <li>„Die Ordnung der Teilchen" (2012)</li>
+                                <li>„Verschränkung und Realität" (2015)</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="message-label">Realität</div>
+                    ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
+                </div>
+                <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
+                    <b>Was passiert ist:</b> Das Modell kennt das Muster „Autor + Fachgebiet → Buchtitel mit Jahreszahl" und erzeugt etwas, das <b>aussieht</b> wie eine echte Antwort.
+                </div>
+            </div>
+        </div>
+
+        <!-- Warum passiert das? -->
+        <div class="fragment" style="padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-top:16px;">
+            <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">🎯 Warum passiert das?</div>
+            <ul style="color:#7f1d1d; line-height:2.0; margin-left:16px; padding:0;">
+		    <li>Das Modell <b>muss</b> immer ein nächstes <b>Token</b> ausgeben; es hat <b>keinen „Ich weiß es nicht"-Knopf</b></li>
+                <li>Es hat <b>keinen Überprüfungsmechanismus</b>, der fragt: „Stimmt das eigentlich?"</li>
+                <li>Wenn es zu einem Thema wenig weiß, <b>füllt es die Lücke mit etwas Plausiblem</b></li>
+            </ul>
+        </div>
+
+        <!-- Bullshitting nach Frankfurt -->
+        <div class="fragment" style="padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; margin-top:16px;">
+            <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💩 Nicht Lügen, sondern „Bullshitting" (Harry Frankfurt, 2005)</div>
+            <p style="color:#581c87; line-height:1.8; margin:0;">
+                Ein <b>Lügner</b> kennt die Wahrheit und versucht bewusst, dich davon wegzuführen, er hat eine <b>Relation zur Wirklichkeit</b>.<br>
+                Ein <b>Bullshitter</b> hingegen kümmert sich überhaupt nicht darum, ob etwas wahr oder falsch ist, die Wahrheit ist ihm <b>schlicht egal</b>.<br><br>
+                Ein LLM <b>kann nicht lügen</b>, denn es kennt keine Wahrheit. Aber es kann <b>bullshitten</b>: Es produziert Aussagen ohne jede Rücksicht darauf, ob sie stimmen, weil es gar keinen Begriff von „stimmen" hat.
+            </p>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Vorsicht, Bias & Intransparenz ==================== -->
 <div class="slide" data-title="Vorsicht: Bias & Grenzen">
 	<div class="slide-content">
@@ -911,89 +994,6 @@
 
         <div class="key-insight fragment" style="margin-top:14px;">
             <strong>Für den Alltag:</strong> LLMs sind <b>extrem nützliche Werkzeuge</b>, aber sie sind keine denkenden Wesen.
-        </div>
-    </div>
-</div>
-
-<!-- ==================== SLIDE: Halluzinationen ==================== -->
-<div class="slide" data-title="Halluzinationen">
-    <div class="slide-content">
-        <h2>Halluzinationen: Wenn das LLM „lügt"</h2>
-
-        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
-            <!-- Beispiel 1: Mango -->
-            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
-                <div class="chat-container">
-                    <div class="message user">
-                        <div class="message-avatar">🔵</div>
-                        <div class="message-bubble">
-                            <div class="message-label">User</div>
-                            Kann man in Deutschland Mangos anbauen?
-                        </div>
-                    </div>
-                    <div class="message ki">
-                        <div class="message-avatar">🟢</div>
-                        <div class="message-bubble">
-                            <div class="message-label">ChatGPT</div>
-                            Ja, das geht! In der <b>Mango-Manufaktur in Lindow in Brandenburg</b> werden seit 2009 erfolgreich Mangos angebaut. 🥭
-                        </div>
-                    </div>
-                    <div class="message-label">Realität</div>
-                    ❌ Diese „Mango-Manufaktur" existiert nicht. Frei erfunden.
-                </div>
-                <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
-                    <b>Was passiert ist:</b> Das Modell wusste nichts, aber statt zu schweigen, hat es etwas erzeugt, das <b>plausibel klingt</b>: ein Ortsname, ein Bundesland, eine Jahreszahl.
-                </div>
-            </div>
-
-            <!-- Beispiel 2: Quantenphysik -->
-            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
-                <div class="chat-container">
-                    <div class="message user">
-                        <div class="message-avatar">🔵</div>
-                        <div class="message-bubble">
-                            <div class="message-label">User</div>
-                            Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.
-                        </div>
-                    </div>
-                    <div class="message ki">
-                        <div class="message-avatar">🟢</div>
-                        <div class="message-bubble">
-                            <div class="message-label">LLM</div>
-                            <ol>
-                                <li>„Quantenwelten" (2008)</li>
-                                <li>„Die Ordnung der Teilchen" (2012)</li>
-                                <li>„Verschränkung und Realität" (2015)</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="message-label">Realität</div>
-                    ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
-                </div>
-                <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
-                    <b>Was passiert ist:</b> Das Modell kennt das Muster „Autor + Fachgebiet → Buchtitel mit Jahreszahl" und erzeugt etwas, das <b>aussieht</b> wie eine echte Antwort.
-                </div>
-            </div>
-        </div>
-
-        <!-- Warum passiert das? -->
-        <div class="fragment" style="padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-top:16px;">
-            <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">🎯 Warum passiert das?</div>
-            <ul style="color:#7f1d1d; line-height:2.0; margin-left:16px; padding:0;">
-		    <li>Das Modell <b>muss</b> immer ein nächstes <b>Token</b> ausgeben; es hat <b>keinen „Ich weiß es nicht"-Knopf</b></li>
-                <li>Es hat <b>keinen Überprüfungsmechanismus</b>, der fragt: „Stimmt das eigentlich?"</li>
-                <li>Wenn es zu einem Thema wenig weiß, <b>füllt es die Lücke mit etwas Plausiblem</b></li>
-            </ul>
-        </div>
-
-        <!-- Bullshitting nach Frankfurt -->
-        <div class="fragment" style="padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; margin-top:16px;">
-            <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💩 Nicht Lügen, sondern „Bullshitting" (Harry Frankfurt, 2005)</div>
-            <p style="color:#581c87; line-height:1.8; margin:0;">
-                Ein <b>Lügner</b> kennt die Wahrheit und versucht bewusst, dich davon wegzuführen, er hat eine <b>Relation zur Wirklichkeit</b>.<br>
-                Ein <b>Bullshitter</b> hingegen kümmert sich überhaupt nicht darum, ob etwas wahr oder falsch ist, die Wahrheit ist ihm <b>schlicht egal</b>.<br><br>
-                Ein LLM <b>kann nicht lügen</b>, denn es kennt keine Wahrheit. Aber es kann <b>bullshitten</b>: Es produziert Aussagen ohne jede Rücksicht darauf, ob sie stimmen, weil es gar keinen Begriff von „stimmen" hat.
-            </p>
         </div>
     </div>
 </div>
