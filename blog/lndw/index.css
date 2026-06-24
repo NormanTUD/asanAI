@@ -430,7 +430,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 
 .notebook-header {
     text-align: center;
-    margin-bottom: 14px;
+    margin-bottom: 50px;
 }
 
 .notebook-title {
