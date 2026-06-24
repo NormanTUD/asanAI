@@ -25,7 +25,6 @@ positional embedding: "token" != embedding tokens
 "token versucht man durch 2 aspekte einzufangen, erstmal den punkt des tokens im embedding + die position"
 gleichung haut nicht hin
 nehm die anderen punkte aus "positional embedding was passiert mit wort" raus, es geht nur um katze
-mannigfaltigkeitsfolie -> anknüpfungspunkte?
 "erst eigenschaften, dann funktionsweise" (mannigfalitkgietne hypthese anknüpfunpgsunkt)
 unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embedding, attn, residual stream, attn scores sind schwierig)
 was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersichtsdiagramm zeigen)
