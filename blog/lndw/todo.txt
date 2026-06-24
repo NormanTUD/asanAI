@@ -1,9 +1,5 @@
 was sind das für lücken (rechnen), was wir von ki wollen
 warum KI nicht rechnen können
 
-halluzinationen -> mit RAG weniger, zu viel text
-
 "Attention "Welche anderen Wörter sind für dieses Wort wichtig?"" sollte auf sitzen usw reagieren
 (guckt in den gesamtkontext)
-
-"Funktionsapproximation durch Stückelung" -> einfacher machen
