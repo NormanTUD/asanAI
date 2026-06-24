@@ -23,6 +23,7 @@ const TokenizerViz = {
         'un', 'ver', 'be', 'ge', 'er', 'zer', 'ent', 'emp', 'miss', 'vor',
         'nach', 'aus', 'ein', 'auf', 'ab', 'an', 'über', 'unter', 'durch',
         'um', 'mit', 'zu', 'bei', 'von', 'hin', 'her', 'weg', 'zurück',
+	"ein", "mal", "ein", "könig", "s", "kind",
         // Suffixe
         'ung', 'heit', 'keit', 'lich', 'isch', 'bar', 'sam', 'haft',
         'chen', 'lein', 'schaft', 'tum', 'nis', 'sal', 'ig', 'los',
