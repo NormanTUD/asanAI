@@ -414,26 +414,10 @@
     </div>
 </div>
 
-    <!-- ==================== SLIDE 11: Transformer Intro ==================== -->
-    <div class="slide" data-title="Der Residual-Stream">
-        <div class="slide-content">
-            <h2>Der Residual-Stream</h2>
-            <p>Das <b>Herzstück</b> des Modells. Token-Vektoren fließen durch <b>viele gestapelte Schichten</b> (100+ bei modernen LLMs). Jede Schicht besteht aus Experten, die auf verschiedene Dinge achten und ihre Ergebnisse in den Residual-Stream schreiben.</p>
-            <div class="key-insight fragment">
-                <strong>Der Residual Stream – das "gemeinsame Notizbuch":</strong>
-                <div class="formula-box" style="background:#fef3c7; border-color:#fbbf24; margin-top:12px;">
-                    <div class="math-display">$$\mathbf{x}_1 := \mathbf{x}_0 + \text{Layer}(\mathbf{x}_0)$$</div>
-                </div>
-                <p style="margin-top:8px;">Jede Schicht liest, denkt nach, und <b>schreibt ihre Erkenntnisse zurück</b>.</p>
-            </div>
-        </div>
-    </div>
-
-
 <!-- ==================== SLIDE: Residual Stream Notebook Animation ==================== -->
 <div class="slide" data-title="Residual Stream Notebook">
     <div class="slide-content">
-        <h2>Der Residual Stream — Notizbuch der Experten</h2>
+        <h2>Der Residual Stream</h2>
         <p>Stell dir den Residual Stream als <b>gemeinsames Notizbuch</b> vor: Jede Schicht (Layer) ist ein anderer Experte, der den Text liest und seine Erkenntnisse <b>dazuschreibt</b> — ohne das Vorherige zu löschen.</p>
         <div class="demo-box" style="min-height:auto; padding:20px;">
             <div id="residual-notebook"></div>
@@ -443,6 +427,13 @@
             Jeder liest, was die Vorgänger geschrieben haben, und fügt seine eigene Analyse hinzu.
             Am Ende enthält das Notizbuch das <b>gesammelte Wissen aller Schichten</b>.
         </div>
+
+            <div class="key-insight fragment">
+		    <p>Mathematisch sieht es so aus:</p>
+                <div class="formula-box" style="background:#fef3c7; border-color:#fbbf24; margin-top:12px;">
+                    <div class="math-display">$$\mathbf{x}_1 := \mathbf{x}_0 + \text{Layer}(\mathbf{x}_0)$$</div>
+                </div>
+	    </div>
     </div>
 </div>
 
