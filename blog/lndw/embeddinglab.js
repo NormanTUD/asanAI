@@ -17,11 +17,11 @@ function _getEC3D(divId) {
 const evoSpaces = {
 	'2d': {
 		vocab: { 
-			'Man': [5, -10, 0], 'Woman': [5, 10, 0], 
-			'Boy': [-10, -10, 0], 'Girl': [-10, 10, 0],
-			'Prince': [15, -10, 0], 'Princess': [15, 10, 0], // Knight durch Prince ersetzt, Princess ergänzt
-			'King': [25, -10, 0], 'Queen': [25, 10, 0],
-			'Power': [15, 0, 0]
+			'Mann': [5, -10, 0], 'Frau': [5, 10, 0], 
+			'Junge': [-10, -10, 0], 'Mädchen': [-10, 10, 0],
+			'Prinz': [15, -10, 0], 'Prinzessin': [15, 10, 0], // Knight durch Prince ersetzt, Princess ergänzt
+			'König': [25, -10, 0], 'Königin': [25, 10, 0],
+			'Macht': [15, 0, 0]
 		},
 		axes: { x: 'Power / Age', y: 'Gender' }, 
 		dims: 2,
