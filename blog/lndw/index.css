@@ -46,9 +46,9 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     height: 100%;
     display: none;
     flex-direction: column;
-    justify-content: flex-start;   /* ← WICHTIG: nicht center */
+    justify-content: center;    /* ← von flex-start zu center */
     align-items: center;
-    padding: 0;                    /* ← Padding entfernen, kommt in slide-content */
+    padding: 0;
     background: #ffffff;
     overflow: hidden;
 }

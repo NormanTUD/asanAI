@@ -1103,21 +1103,15 @@
 			const content = slide.querySelector('.slide-content');
 			if (!content) return;
 
-			// 1. Reset: Scale auf 1 setzen, damit wir die echte Höhe messen können
 			content.style.transform = 'scale(1)';
 
-			// 2. Natürliche Höhe messen
 			const naturalHeight = content.scrollHeight;
+			const available = viewportHeight - 52;
 
-			// 3. Verfügbare Höhe (Viewport minus Nav-Bar)
-			const available = viewportHeight - 52; // 52px = nav-bar height
+			const scale = Math.min(available / naturalHeight, 1);
 
-			// 4. Scale berechnen
-			const scale = Math.min(available / naturalHeight, 1); // nie > 1
-
-			// 5. Anwenden
 			content.style.transform = `scale(${scale})`;
-			content.style.transformOrigin = 'top center';
+			content.style.transformOrigin = 'center center';  // ← geändert
 		});
 	}
 
