@@ -1,5 +1,3 @@
-was muss gegeben sein texte (nichta lle texte)
-ki -> LLM
 "ein modell des musters in der wirklichkeit"
 wirklichkeiut hat muster -> mehr als nur 2 punkte
 steckt die modellhafter vorstellung einer sinusfkt
@@ -7,7 +5,6 @@ steckt die modellhafter vorstellung einer sinusfkt
 "muster exist in wirklichkeit" ist ne annahme, muss nicht sein, können auch nur in uns esin
 approx hat lücken: aber welche approx? "die vereinfachung hat lücken"
 "daten sind fehlerhaft" -> wie groß ist der kontext? was heißt "in der nähe"?
-"wenn die ki lügt" -> bullshiting, kein vorsatz
 "halluzination" -> softmax nicht erklärt
 halluzinatioenn weiter nach hinten verschieben
 seltene daten interpolation, fehlende daten extrapolation
