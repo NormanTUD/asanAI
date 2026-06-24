@@ -1,0 +1,88 @@
+llm auf titelseite
+was muss gegeben sein texte (nichta lle texte)
+ki -> LLM
+"ein modell des musters in der wirklichkeit"
+wirklichkeiut hat muster -> mehr als nur 2 punkte
+steckt die modellhafter vorstellung einer sinusfkt
+"der punkt" -> "der entscheidende aspekt" (punkt später andere bedeutung)
+"muster exist in wirklichkeit" ist ne annahme, muss nicht sein, können auch nur in uns esin
+approx hat lücken: aber welche approx? "die vereinfachung hat lücken"
+"daten sind fehlerhaft" -> wie groß ist der kontext? was heißt "in der nähe"?
+"wenn die ki lügt" -> bullshiting, kein vorsatz
+"halluzination" -> softmax nicht erklärt
+halluzinatioenn weiter nach hinten verschieben
+seltene daten interpolation, fehlende daten extrapolation
+kein meta-modul -> kein überprüfungsmechanismus
+"training belohnt immer eine antwort" -> geschwärtzigkeit vs "keine ahnung" sagen
+"ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
+-> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
+"die architektur hat keinen enthaltungs knoopf" -> funktion ist hier missverständlich, mathematische fkt oder funktion im sinen von "um zu zsmhang"
+für marskartoffelsouffle tatsächlich rezept bauen -> "es klingt richtig" -> statt richtig plausibel
+"konfidenzsignal" ?
+tokenisierung ein blauer kasten, doppelwort "es war einmal ein königskind" -> "es war einmal ein königs kind"
+embedding & vektor arithmetik: "jedes token durch vektor ersetzt", es ist für uns interpretierbar wie bedeutung
+"indem es" -> "indem er"
+"embedding raum" -> default (pfeiltasten machen "mann + macht")
+manifold hypothesis -> mannigfaltigkeiten hypothese
+autoregressive schleife: ein einziges wort -> token
+simon rasniewski (moritz fragen) demonstrator "für immer generieren" (ignoriert endoftext)
+"autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
+
+hang zur geschwätzigkeit
+positional embedding: "token" != embedding tokens
+"token versucht man durch 2 aspekte einzufangen, erstmal den punkt des tokens im embedding + die position"
+gleichung haut nicht hin
+nehm die anderen punkte aus "positional embedding was passiert mit wort" raus, es geht nur um katze
+attn matrix sätze zu lang, zahlen zu klein
+attn matrix ans ende für leute die bocjk habebn
+mannigfaltigkeitsfolie -> anknüpfungspunkte?
+"erst eigenschaften, dann funktionsweise" (mannigfalitkgietne hypthese anknüpfunpgsunkt)
+unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embedding, attn, residual stream, attn scores sind schwierig)
+was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersichtsdiagramm zeigen)
+neuronen (stücke) -> gesamtanzahl neuronen
+
+statt dense(x) graphdarstellung
+image.png
+das hier kann weg
+fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
+"ist Alles ein muster" -> alles klein
+"alles ist muster" -> raus
+"ursache -> wirkung" wirdz u kausalkette
+farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwischen den punkten oben und unten, größerer abstand oder seperate folie für allgemeines muster
+"jedes muster der wirklichkeit" ist weit aus dem fenster gelenh
+"scheint zu reichen, um muster soweit approx zu können, um zu" ... besser formulieren, es ist ein "um-zu-zsmhang"
+"das wissen steckt als muster verteilt in den gewichten", gedankenstriche weg, besserer satz, den satz komplett neu
+
+"das wissen steckt als muster verteilt in den gewichten des netzes"
+"feuern" ist unverständlich ohne sicht dass es neuronen sind
+"am ende wird das (hoffentlich) nächste" hoffentlich vershcieben
+"die finale vorhersage": woher kommt das "vokabular" (vorher erwähnen: vokabular = alle tokens)
+"die finale vorhersage": "wahrscheinlichkeit" statt P()
+temperature -> deutsch (ohne e), steuert die kreativität statt zufälligkeit
+tempreature und sampling vereinheitlichen
+"vom textberg zum assistenten" -> berg -> loss landscape keine verbindung
+statt "billionen" 10hochirgendwas
+"formt das verhalten" -> bestimmt das verhalten
+rhlf -> manipulierbar weg
+Wer die Infrastruktur
+besitzt, bestimmt die Regeln. -> "wer die regeln für die bestimmt die die infrastruktur besitzen bestimmt die regeln" (us regierung, anthropic mythos zB)
+"versteht die ki was sie sagt" -> kein greifbarer realitätsbezug
+"manchmal subitl falsch" -> manchmal auch offensichtlich
+"llms sind mächtige werkzeuge aber sie KÖNNEN nicht neutral sein"
+"Fazit: LLMs sind mächtige Werkzeuge — aber sie sind nicht neutral, ihre Fehler sind schwer zu finden, und ihre Antworten sind immer nur Approximationen, geformt durch die Entscheidungen derer, die sie trainiert haben."
+
+
+approx raus, satz neu strukturieren
+was rot aussieht -> WIE rot aussieht
+datenumfang ist ne kritische größe, mehr thematisieren (inter extrapolation, datensatz größe ist ne relevante größe, mehr der richtigend daten helfen)
+"was ki kann und was nicht" -> moral und ethik durcheinander
+"Bewusstsein & Empathie
+Sie simuliert Mitgefühl überzeugend — aber es ist niemand „zu Hause". Kein Erleben, kein Fühlen."
+
+neu schreiben, herzchenw eg
+"versteht" sie, was Trauer ist? " -> trauer versteht man nicht, sondern fühlt sie
+"was ki kann und nicht" vorletzte folie nochmal gewaltig krüzen, 
+
+wichtig: langfristiges lernen, "echtes verstehen"/bewusstsein&ki zsmführen/moral
+RAG raus, wurde nie erklrät
+"vielen dank für die aufmerksamkeit"
