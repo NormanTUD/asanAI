@@ -363,18 +363,9 @@
         <div class="slide-content">
             <h2>Die autoregressive Schleife</h2>
             <p>LLMs sind Maschinen, die das <b>nächste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal.</p>
-            <div class="formula-box">
-                <div class="math-display">$$\text{Nächstes Wort} = \text{LLM}(\underbrace{\text{Es war einmal}}_{\text{Benutzereingabe}}) \rightarrow \text{ein}$$</div>
-            </div>
             <p class="fragment">Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
-        </div>
-    </div>
 
-    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->
-    <div class="slide" data-title="Autoregressive Schleife">
-        <div class="slide-content">
-            <h2>Die autoregressive Schleife</h2>
-            <div class="formula-box">
+            <div class="fragment formula-box">
                 <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein}) \rightarrow \text{Drache}$$</div>
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache}) \rightarrow \text{der}$$</div>
@@ -383,8 +374,8 @@
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>
             </div>
+		<p class="fragment">Bei jedem Aufruf wird nur <b>ein</b> Token generiert! Es wird angehangen und wieder und wieder aufgerufen, bis <tt>|endoftext|</tt> kommt.</p>
         </div>
-	<p class="fragment">Bei jedem Aufruf wird nur <b>ein</b> Token generiert! Es wird angehangen und wieder und wieder aufgerufen, bis <tt>|endoftext|</tt> kommt.</p>
     </div>
 
     <!-- ==================== SLIDE 9: Positional Encoding ==================== -->
