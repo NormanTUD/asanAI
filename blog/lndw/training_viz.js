@@ -69,13 +69,19 @@ const TrainingViz = {
 
         // === LOSS DISPLAY ===
         let lossHTML = '';
-        if (hasResult) {
-            const loss = modelPickedCorrect ? 0.3 : 4.2;
-            const color = modelPickedCorrect ? '#10b981' : '#ef4444';
-            const icon = modelPickedCorrect ? '✓ Richtig → niedriger Loss' : '✗ Falsch → hoher Loss';
-            lossHTML = `<div style="font-size:1.2em; font-weight:bold; color:${color}; padding:10px 20px; background:${modelPickedCorrect ? '#f0fdf4' : '#fef2f2'}; border-radius:10px; display:inline-block;">${icon} = ${loss.toFixed(1)}</div>`;
-        }
-        document.getElementById('training-loss-display').innerHTML = lossHTML;
+// === LOSS DISPLAY ===
+	    const lossDisplay = document.getElementById('training-loss-display');
+	    if (hasResult) {
+		    const loss = modelPickedCorrect ? 0.3 : 4.2;
+		    const color = modelPickedCorrect ? '#10b981' : '#ef4444';
+		    const icon = modelPickedCorrect ? '✓ Richtig → niedriger Loss' : '✗ Falsch → hoher Loss';
+		    lossDisplay.innerHTML = `<div style="font-size:1.2em; font-weight:bold; color:${color}; padding:10px 20px; background:${modelPickedCorrect ? '#f0fdf4' : '#fef2f2'}; border-radius:10px; display:inline-block;">${icon} = ${loss.toFixed(1)}</div>`;
+		    lossDisplay.style.visibility = 'visible';
+	    } else {
+		    lossDisplay.innerHTML = '';
+		    lossDisplay.style.visibility = 'hidden';
+	    }
+
 
         // === LOSS CHART (immer rendern — auch leer) ===
         this.renderChart();
@@ -162,6 +168,9 @@ const TrainingViz = {
 		const plotDiv = document.getElementById('training-loss-chart');
 		if (!plotDiv) return;
 
+		// Wenn Container nicht sichtbar ist (width=0), nicht rendern
+		if (plotDiv.offsetWidth === 0) return;
+
 		const colors = this.correctHistory.map(c => c ? '#10b981' : '#ef4444');
 
 		const traces = [{
@@ -183,7 +192,8 @@ const TrainingViz = {
 		}];
 
 		const layout = {
-			autosize: true,  // ← DAS ist der Fix für die Breite
+			autosize: true,
+			width: plotDiv.offsetWidth,  // ← explizit die aktuelle Container-Breite setzen
 			margin: { l: 50, r: 20, b: 35, t: 10 },
 			xaxis: { title: 'Schritt', gridcolor: '#f1f5f9' },
 			yaxis: { title: 'Loss', gridcolor: '#f1f5f9', range: [0, 6] },
@@ -200,11 +210,26 @@ const TrainingViz = {
 		Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
 	},
 
-    init: function() {
-        // Chart sofort mit leerem Zustand rendern (reserviert den Platz)
-        this.renderChart();
-        this.render();
-    }
+	init: function() {
+		this.render();
+		// Chart wird erst korrekt gerendert wenn der Container sichtbar ist
+		// Wir beobachten das mit einem IntersectionObserver
+		const plotDiv = document.getElementById('training-loss-chart');
+		if (plotDiv) {
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						this.renderChart();
+						// Nach dem ersten sichtbaren Render nochmal resize erzwingen
+						setTimeout(() => {
+							Plotly.Plots.resize(plotDiv);
+						}, 50);
+					}
+				});
+			}, { threshold: 0.1 });
+			observer.observe(plotDiv);
+		}
+	}
 };
 
 // Auto-init when slide becomes visible
