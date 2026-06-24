@@ -75,28 +75,33 @@ const Presentation = (() => {
         }
     }
 
-    function goTo(idx, showAllFragments = false) {
-        if (idx < 0 || idx >= slides.length) return;
-        slides[currentSlide].classList.remove('active');
-        currentSlide = idx;
-        slides[currentSlide].classList.remove('slide-entering');
-        slides[currentSlide].classList.add('active');
+	function goTo(idx, showAllFragments = false) {
+		if (idx < 0 || idx >= slides.length) return;
+		slides[currentSlide].classList.remove('active');
+		currentSlide = idx;
+		slides[currentSlide].classList.remove('slide-entering');
+		slides[currentSlide].classList.add('active');
 
-        if (showAllFragments) {
-            const fragments = getFragments(currentSlide);
-            fragments.forEach(f => f.classList.add('visible'));
-            fragmentIndex[currentSlide] = fragments.length;
-        } else {
-            const fragments = getFragments(currentSlide);
-            fragments.forEach(f => f.classList.remove('visible'));
-            fragmentIndex[currentSlide] = 0;
-        }
+		if (showAllFragments) {
+			const fragments = getFragments(currentSlide);
+			fragments.forEach(f => f.classList.add('visible'));
+			fragmentIndex[currentSlide] = fragments.length;
+		} else {
+			const fragments = getFragments(currentSlide);
+			fragments.forEach(f => f.classList.remove('visible'));
+			fragmentIndex[currentSlide] = 0;
+		}
 
-        updateUI();
-        closeOverview();
-        triggerSlideInit(currentSlide);
-        setTimeout(fitSlides, 50);
-    }
+		// *** FIX: ResidualNotebook zurücksetzen wenn Folie gewechselt wird ***
+		if (typeof ResidualNotebook !== 'undefined') {
+			ResidualNotebook.reset();
+		}
+
+		updateUI();
+		closeOverview();
+		triggerSlideInit(currentSlide);
+		setTimeout(fitSlides, 50);
+	}
 
     function updateUI() {
         document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${slides.length}`;
