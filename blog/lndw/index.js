@@ -1780,6 +1780,91 @@ function loadIntuitionModule() {
 	initEmbeddingEditor();
 }
 
+// ============================================================
+// NN STEP DEMO – Pfeiltasten-gesteuertes Durchlaufen der Stückelungs-Folie
+// ============================================================
+
+const NNStepDemo = (() => {
+    // Schritte: Sinus mit 1,2,4,6,8,10,20 Neuronen, dann Wellenform, dann Bilder
+    const sinSteps = [1, 2, 4, 6, 8, 10, 20];
+    // step 0..6 = sinus mit sinSteps[step] Neuronen
+    // step 7 = wechsel zu Wellenform (custom)
+    // step 8 = Bilder einblenden
+    const totalSteps = 9; // 0-based: 0..8
+    let currentStep = 0;
+
+    function isOnStückelungSlide() {
+        const activeSlide = document.querySelector('.slide.active');
+        if (!activeSlide) return false;
+        return activeSlide.getAttribute('data-title') === 'Stückelung';
+    }
+
+    function canGoNext() {
+        if (!isOnStückelungSlide()) return false;
+        return currentStep < totalSteps - 1;
+    }
+
+    function canGoPrev() {
+        if (!isOnStückelungSlide()) return false;
+        return currentStep > 0;
+    }
+
+    function applyStep() {
+        const slider = document.getElementById('nn-num-neurons');
+        const fnSelect = document.getElementById('nn-target-fn');
+        const countLabel = document.getElementById('nn-neuron-count');
+        const imagesDiv = document.getElementById('nn-bottom-images');
+
+        if (!slider || !fnSelect) return;
+
+        if (currentStep <= 6) {
+            // Sinus-Schritte
+            fnSelect.value = 'sin';
+            const neurons = sinSteps[currentStep];
+            slider.value = neurons;
+            if (countLabel) countLabel.textContent = neurons;
+            if (imagesDiv) imagesDiv.style.opacity = '0';
+            NNApproxViz.render();
+        } else if (currentStep === 7) {
+            // Wechsel zu Wellenform
+            fnSelect.value = 'custom';
+            slider.value = 20;
+            if (countLabel) countLabel.textContent = '20';
+            if (imagesDiv) imagesDiv.style.opacity = '0';
+            NNApproxViz.render();
+        } else if (currentStep === 8) {
+            // Bilder einblenden
+            if (imagesDiv) imagesDiv.style.opacity = '1';
+        }
+    }
+
+    function next() {
+        if (!canGoNext()) return;
+        currentStep++;
+        applyStep();
+    }
+
+    function prev() {
+        if (!canGoPrev()) return;
+        currentStep--;
+        applyStep();
+    }
+
+    function reset() {
+        currentStep = 0;
+        applyStep();
+    }
+
+    return {
+        isOnStückelungSlide,
+        canGoNext,
+        canGoPrev,
+        next,
+        prev,
+        reset
+    };
+})();
+
 function reset_nn_num_neurons () {
 	$("#nn-num-neurons").val(1).trigger("change");
 }

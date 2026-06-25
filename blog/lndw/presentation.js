@@ -76,41 +76,45 @@ function prev() {
 }
 
 function goTo(idx, showAllFragments = false) {
-	if (idx < 0 || idx >= slides.length) return;
-	slides[currentSlide].classList.remove('active');
-	currentSlide = idx;
-	slides[currentSlide].classList.remove('slide-entering');
-	slides[currentSlide].classList.add('active');
+    if (idx < 0 || idx >= slides.length) return;
+    slides[currentSlide].classList.remove('active');
+    currentSlide = idx;
+    slides[currentSlide].classList.remove('slide-entering');
+    slides[currentSlide].classList.add('active');
 
-	if (showAllFragments) {
-		const fragments = getFragments(currentSlide);
-		fragments.forEach(f => f.classList.add('visible'));
-		fragmentIndex[currentSlide] = fragments.length;
-	} else {
-		const fragments = getFragments(currentSlide);
-		fragments.forEach(f => f.classList.remove('visible'));
-		fragmentIndex[currentSlide] = 0;
-	}
+    if (showAllFragments) {
+        const fragments = getFragments(currentSlide);
+        fragments.forEach(f => f.classList.add('visible'));
+        fragmentIndex[currentSlide] = fragments.length;
+    } else {
+        const fragments = getFragments(currentSlide);
+        fragments.forEach(f => f.classList.remove('visible'));
+        fragmentIndex[currentSlide] = 0;
+    }
 
-	if (typeof ResidualNotebook !== 'undefined') {
-		ResidualNotebook.reset();
-	}
-	if (typeof AttentionDemo !== 'undefined') {
-		AttentionDemo.reset();
-	}
-	// *** NEU: Embedding Auto-Demo ***
-	if (typeof EmbeddingAutoDemo !== 'undefined') {
-		if (EmbeddingAutoDemo.isOnEmbeddingSlide()) {
-			EmbeddingAutoDemo.activate();
-		} else {
-			EmbeddingAutoDemo.reset();
-		}
-	}
+    if (typeof ResidualNotebook !== 'undefined') {
+        ResidualNotebook.reset();
+    }
+    if (typeof AttentionDemo !== 'undefined') {
+        AttentionDemo.reset();
+    }
+    // *** NEU: Embedding Auto-Demo ***
+    if (typeof EmbeddingAutoDemo !== 'undefined') {
+        if (EmbeddingAutoDemo.isOnEmbeddingSlide()) {
+            EmbeddingAutoDemo.activate();
+        } else {
+            EmbeddingAutoDemo.reset();
+        }
+    }
+    // *** NEU: NN Step Demo reset ***
+    if (typeof NNStepDemo !== 'undefined') {
+        NNStepDemo.reset();
+    }
 
-	updateUI();
-	closeOverview();
-	triggerSlideInit(currentSlide);
-	setTimeout(fitSlides, 50);
+    updateUI();
+    closeOverview();
+    triggerSlideInit(currentSlide);
+    setTimeout(fitSlides, 50);
 }
 
     function updateUI() {
@@ -177,7 +181,10 @@ document.addEventListener('keydown', (e) => {
         case ' ':
         case 'Enter':
             e.preventDefault();
-            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+                NNStepDemo.next();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
                 TrainingViz.next();
             }
             else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
@@ -189,7 +196,6 @@ document.addEventListener('keydown', (e) => {
             else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             }
-            // *** EmbeddingAutoDemo ***
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
                 EmbeddingAutoDemo.next();
             }
@@ -200,7 +206,10 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowLeft':
         case 'Backspace':
             e.preventDefault();
-            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+                NNStepDemo.prev();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
                 TrainingViz.prev();
             }
             else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
@@ -212,7 +221,6 @@ document.addEventListener('keydown', (e) => {
             else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             }
-            // *** EmbeddingAutoDemo ***
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
                 EmbeddingAutoDemo.prev();
             }
@@ -222,16 +230,21 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowUp':
             e.preventDefault();
-            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+                NNStepDemo.prev();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
                 TrainingViz.prev();
-            } else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+            }
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
                 AttentionDemo.prev();
-            } else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+            }
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
                 PEOrbitViz.prev();
-            } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+            }
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             }
-            // *** EmbeddingAutoDemo ***
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
                 EmbeddingAutoDemo.prev();
             }
@@ -241,16 +254,21 @@ document.addEventListener('keydown', (e) => {
             break;
         case 'ArrowDown':
             e.preventDefault();
-            if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+                NNStepDemo.next();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
                 TrainingViz.next();
-            } else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+            }
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
                 AttentionDemo.next();
-            } else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+            }
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
                 PEOrbitViz.next();
-            } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+            }
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             }
-            // *** EmbeddingAutoDemo ***
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
                 EmbeddingAutoDemo.next();
             }
@@ -296,7 +314,9 @@ document.addEventListener('touchend', (e) => {
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
         if (dx < 0) {
             // Swipe left = next
-            if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+                NNStepDemo.next();
+            } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             } else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
                 EmbeddingAutoDemo.next();
@@ -305,7 +325,9 @@ document.addEventListener('touchend', (e) => {
             }
         } else {
             // Swipe right = prev
-            if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+                NNStepDemo.prev();
+            } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             } else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
                 EmbeddingAutoDemo.prev();
