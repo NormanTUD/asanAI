@@ -20,8 +20,6 @@ farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwi
 
 "das wissen steckt als muster verteilt in den gewichten des netzes"
 "feuern" ist unverständlich ohne sicht dass es neuronen sind
-"formt das verhalten" -> bestimmt das verhalten
-Wer die Infrastruktur
 besitzt, bestimmt die Regeln. -> "wer die regeln für die bestimmt die die infrastruktur besitzen bestimmt die regeln" (us regierung, anthropic mythos zB)
 "versteht die ki was sie sagt" -> kein greifbarer realitätsbezug
 "manchmal subitl falsch" -> manchmal auch offensichtlich
