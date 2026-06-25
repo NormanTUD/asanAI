@@ -1792,44 +1792,10 @@ function generateRowHtml(spaceKey, word, vec, dims) {
     <tr style="border-bottom: 1px solid #f1f5f9;" id="row-${spaceKey}-${word}">
 	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
 	${[0, 1, 2].slice(0, dims).map(dim => `
-	    <td style="padding: 5px; text-align: center;">
-		<input
-		    type="number"
-		    value="${vec[dim]}"
-		    step="0.5"
-		    data-space="${spaceKey}"
-		    data-word="${word}"
-		    data-dim="${dim}"
-		    style="width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"
-		    oninput="updateEmbeddingFromTable(this)"
-		>
-	    </td>
+	    <td style="padding: 5px; text-align: center;">${vec[dim]}</td>
 	`).join('')}
     </tr>`;
 }
-
-/**
- * Verarbeitet die Eingabe in der Tabelle und aktualisiert die Grafik.
- */
-window.updateEmbeddingFromTable = function(input) {
-	const spaceKey = input.getAttribute('data-space');
-	const word = input.getAttribute('data-word');
-	const dim = parseInt(input.getAttribute('data-dim'));
-	const val = parseFloat(input.value) || 0;
-
-	// 1. Wert im zentralen Datenobjekt speichern
-	if (evoSpaces[spaceKey] && evoSpaces[spaceKey].vocab[word]) {
-		evoSpaces[spaceKey].vocab[word][dim] = val;
-	}
-
-	// 2. Den Hauptplot aktualisieren
-	renderSpace(spaceKey);
-
-	// 3. Wenn es der 3D Raum ist, auch den Vergleichsplot (Man/King/Lion) updaten
-	if (spaceKey === '3d') {
-		renderComparison3D();
-	}
-};
 
 /**
  * Removes a token from the space and updates the UI/Plot
