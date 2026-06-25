@@ -4,8 +4,6 @@ steckt die modellhafter vorstellung einer sinusfkt
 approx hat lücken: aber welche approx? "die vereinfachung hat lücken"
 "daten sind fehlerhaft" -> wie groß ist der kontext? was heißt "in der nähe"?
 seltene daten interpolation, fehlende daten extrapolation
-kein meta-modul -> kein überprüfungsmechanismus
-"training belohnt immer eine antwort" -> geschwärtzigkeit vs "keine ahnung" sagen
 "ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 "die architektur hat keinen enthaltungs knoopf" -> funktion ist hier missverständlich, mathematische fkt oder funktion im sinen von "um zu zsmhang"
