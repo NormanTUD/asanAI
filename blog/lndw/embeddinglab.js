@@ -1498,10 +1498,22 @@ function render_temml() {
             selEnd: self.value.length
         };
 
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL: If EmbeddingAutoDemo is active and triggered this,
+        // ALLOW the blur — we WANT the input unfocused so arrow keys work
+        // ═══════════════════════════════════════════════════════════
+        if (typeof EmbeddingAutoDemo !== 'undefined' &&
+            EmbeddingAutoDemo.isOnEmbeddingSlide() &&
+            EmbeddingAutoDemo.canGoNext !== undefined) {
+            // Check if the demo is active (canGoNext or canGoPrev would be true,
+            // or we just activated). Allow blur.
+            return;
+        }
+
+        // ═══════════════════════════════════════════════════════════
         // GUARDRAIL 15: If rendering is in progress, ALWAYS refocus
         // No exceptions — rendering caused this blur
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         if (_renderingInProgress[key]) {
             e.preventDefault();
             setTimeout(() => {
@@ -1511,9 +1523,9 @@ function render_temml() {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // GUARDRAIL 16: If focus went to null/body (DOM mutation steal)
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         if (!e.relatedTarget || e.relatedTarget === document.body) {
             setTimeout(() => {
                 if (document.activeElement === document.body || !document.activeElement) {
@@ -1524,11 +1536,9 @@ function render_temml() {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // GUARDRAIL 17: If focus went to SVG/Canvas/Plotly elements
-        // (these are never intentional user interactions with the plot
-        //  while typing in the input)
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         const target = e.relatedTarget;
         const tagName = target ? target.tagName : '';
         const isPlotElement = (
@@ -1559,10 +1569,9 @@ function render_temml() {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // GUARDRAIL 18: If focus went to the result div or its children
-        // (math rendering can make elements focusable)
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         const resDiv = document.getElementById(`res-${key}`);
         const resWrapper = document.getElementById(`res-${key}-wrapper`);
         if (target && (
@@ -1578,9 +1587,9 @@ function render_temml() {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // GUARDRAIL 19: If focus went to the plot container itself
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         const plotDiv = document.getElementById(`plot-${key}`);
         if (target && plotDiv && (target === plotDiv || plotDiv.contains(target))) {
             setTimeout(() => {
@@ -1590,13 +1599,11 @@ function render_temml() {
             return;
         }
 
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         // GUARDRAIL 20: Safety net — if ANY rendering timer is pending
-        // for this key, assume the blur was caused by rendering
-        // ═══════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
         if (_calcEvoTimers[key]) {
             setTimeout(() => {
-                // Only refocus if nothing else meaningful got focus
                 if (document.activeElement === document.body ||
                     !document.activeElement ||
                     document.activeElement.tagName === 'DIV') {
@@ -2026,6 +2033,115 @@ document.querySelectorAll('input[id^="input-"]').forEach(input => {
         });
     }).observe(parent, { attributes: true, attributeFilter: ['data-math-rendered'] });
 });
+
+// ============================================================
+// EMBEDDING DEMO AUTO-EXAMPLES
+// Automatisch Beispiele durchspielen auf der "Embedding-Raum"-Folie
+// ============================================================
+// ============================================================
+// EMBEDDING DEMO AUTO-EXAMPLES
+// Automatisch Beispiele durchspielen auf der "Embedding-Raum"-Folie
+// ============================================================
+const EmbeddingAutoDemo = (() => {
+    const examples = [
+        'König - Mann + Frau',
+        'Mann + Macht',
+        'Frau + 2*Macht',
+        'Prinz + Macht'
+    ];
+
+    let currentExample = -1;
+    let active = false;
+
+    function isOnEmbeddingSlide() {
+        const activeSlide = document.querySelector('.slide.active');
+        if (!activeSlide) return false;
+        // Es gibt zwei Slides mit data-title="Embedding" — wir wollen den mit dem Input
+        return activeSlide.getAttribute('data-title') === 'Embedding' &&
+               activeSlide.querySelector('#input-2d') !== null;
+    }
+
+    function canGoNext() {
+        return active && isOnEmbeddingSlide() && currentExample < examples.length - 1;
+    }
+
+    function canGoPrev() {
+        return active && isOnEmbeddingSlide() && currentExample > 0;
+    }
+
+    function setExample(index) {
+        const inputEl = document.getElementById('input-2d');
+        if (!inputEl) return;
+
+        currentExample = index;
+        const text = examples[currentExample];
+
+        // Wert setzen
+        inputEl.value = text;
+
+        // calcEvo DIREKT aufrufen statt Event zu dispatchen
+        // Das verhindert, dass der Focus-Protection-Code das Inputfeld fokussiert
+        calcEvo('2d');
+
+        // Sicherstellen dass das Inputfeld NICHT fokussiert ist
+        // damit Pfeiltasten weiterhin funktionieren
+        setTimeout(() => {
+            if (document.activeElement === inputEl) {
+                inputEl.blur();
+            }
+        }, 10);
+        setTimeout(() => {
+            if (document.activeElement === inputEl) {
+                inputEl.blur();
+            }
+        }, 200);
+        setTimeout(() => {
+            if (document.activeElement === inputEl) {
+                inputEl.blur();
+            }
+        }, 400);
+
+        // Visuelles Feedback: kurz aufleuchten lassen
+        inputEl.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+        inputEl.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.3)';
+        inputEl.style.borderColor = '#3b82f6';
+        setTimeout(() => {
+            inputEl.style.boxShadow = 'none';
+            inputEl.style.borderColor = '#cbd5e1';
+        }, 600);
+    }
+
+    function next() {
+        if (!canGoNext()) return false;
+        setExample(currentExample + 1);
+        return true;
+    }
+
+    function prev() {
+        if (!canGoPrev()) return false;
+        setExample(currentExample - 1);
+        return true;
+    }
+
+    function reset() {
+        currentExample = -1;
+        active = false;
+        const inputEl = document.getElementById('input-2d');
+        if (inputEl) {
+            inputEl.value = '';
+        }
+    }
+
+    // Beim Betreten der Folie: aktivieren, aber NICHT sofort ein Beispiel zeigen
+    // Der User muss erst Pfeiltaste drücken
+    function activate() {
+        if (active) return;
+        active = true;
+        currentExample = -1; // Startet bei -1, erster Pfeil → Index 0
+    }
+
+    return { next, prev, canGoNext, canGoPrev, reset, activate, isOnEmbeddingSlide };
+})();
 
 function loadEmbeddingModule() {
 	const fastConfig = {
