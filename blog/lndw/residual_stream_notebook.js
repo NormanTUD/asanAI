@@ -15,7 +15,7 @@ const ResidualNotebook = (() => {
     // 5 Stufen: von fundamental bis hochkomplex
     const layers = [
         {
-            name: "Schicht 1 — Wortarten-Erkenner",
+            name: "Schicht 1",
             color: "#e63946",
             description: "Erkennt die grundlegendsten Bausteine: Was ist ein Nomen? Ein Verb? Ein Artikel?",
             annotations: [
@@ -34,7 +34,7 @@ const ResidualNotebook = (() => {
             ]
         },
         {
-            name: "Schicht 2 — Syntax-Architekt",
+            name: "Schicht 2",
             color: "#2a9d8f",
             description: "Erkennt Satzglieder, Subjekt-Verb-Beziehungen und Phrasenstruktur.",
             annotations: [
@@ -48,7 +48,7 @@ const ResidualNotebook = (() => {
             ]
         },
         {
-            name: "Schicht 3 — Koreferenz-Detektiv",
+            name: "Schicht 3",
             color: "#e76f51",
             description: "Löst Pronomen auf: Wer ist 'sie'? Worauf bezieht sich was?",
             annotations: [
@@ -62,7 +62,7 @@ const ResidualNotebook = (() => {
             ]
         },
         {
-            name: "Schicht 4 — Semantik-Versteher",
+            name: "Schicht 4",
             color: "#6b21a8",
             description: "Versteht Bedeutungsbeziehungen, Kausalität und semantische Rollen.",
             annotations: [
@@ -78,7 +78,7 @@ const ResidualNotebook = (() => {
             ]
         },
         {
-            name: "Schicht 5 — Pragmatik & Vorhersage",
+            name: "Schicht 5",
             color: "#0077b6",
             description: "Versteht den kommunikativen Zweck und bereitet die Vorhersage des nächsten Tokens vor.",
             annotations: [
