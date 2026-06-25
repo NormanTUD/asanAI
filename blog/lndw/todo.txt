@@ -16,7 +16,6 @@ hang zur geschwätzigkeit
 
 fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
 farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwischen den punkten oben und unten, größerer abstand oder seperate folie für allgemeines muster
-"scheint zu reichen, um muster soweit approx zu können, um zu" ... besser formulieren, es ist ein "um-zu-zsmhang"
 "das wissen steckt als muster verteilt in den gewichten", gedankenstriche weg, besserer satz, den satz komplett neu
 
 "das wissen steckt als muster verteilt in den gewichten des netzes"
