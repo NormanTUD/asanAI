@@ -1259,26 +1259,32 @@ const contextVocab = {
 const AttentionDemo = {
     currentExample: 0,
 
-    examples: [
-        {
-            sentence: 'Ich bringe mein <b class="attnexample" style="color:#f59e0b;">Geld</b> auf die <b class="attnexample" style="color:#3b82f6;">Bank</b>.',
-            // "Bank" wird Richtung "Geld" gezogen (Finanzinstitut)
-            contextWords: ['geld'],
-            bankShift: [7.5, 2.5] // Richtung Geld (oben rechts = Finanzen)
-        },
-        {
-            sentence: 'Ich sitze im <b class="attnexample" style="color:#10b981;">Park</b> auf der <b class="attnexample" style="color:#3b82f6;">Bank</b>.',
-            // "Bank" wird Richtung "Park" gezogen (Sitzgelegenheit)
-            contextWords: ['park'],
-            bankShift: [2.5, 7.5] // Richtung Park (oben links = Natur/Sitzen)
-        },
-        {
-            sentence: 'Nach dem <b class="attnexample" style="color:#10b981;">Spaziergang</b> im <b class="attnexample" style="color:#10b981;">Park</b> gehe ich zur <b class="attnexample" style="color:#f59e0b;">Bank</b>, um <b class="attnexample" style="color:#f59e0b;">Geld</b> abzuheben.',
-            // Beide Kontexte, aber "Geld" + "Bank" (abheben) dominiert → Finanzinstitut
-            contextWords: ['park', 'geld'],
-            bankShift: [6.8, 3.8] // Stärker Richtung Geld, leicht von Park beeinflusst
-        }
-    ],
+	examples: [
+		{
+			sentence: 'Ich gehe zur <b class="attnexample" style="color:#3b82f6;">Bank</b>.',
+			// Kein Kontextwort → "Bank" bleibt in der Mitte (ambig)
+			contextWords: [],
+			bankShift: [5, 5] // Bleibt genau auf der Basisposition – keine Verschiebung
+		},
+		{
+			sentence: 'Ich bringe mein <b class="attnexample" style="color:#f59e0b;">Geld</b> auf die <b class="attnexample" style="color:#3b82f6;">Bank</b>.',
+			// "Bank" wird Richtung "Geld" gezogen (Finanzinstitut)
+			contextWords: ['geld'],
+			bankShift: [7.5, 2.5] // Richtung Geld (oben rechts = Finanzen)
+		},
+		{
+			sentence: 'Ich sitze im <b class="attnexample" style="color:#10b981;">Park</b> auf der <b class="attnexample" style="color:#3b82f6;">Bank</b>.',
+			// "Bank" wird Richtung "Park" gezogen (Sitzgelegenheit)
+			contextWords: ['park'],
+			bankShift: [2.5, 7.5] // Richtung Park (oben links = Natur/Sitzen)
+		},
+		{
+			sentence: 'Nach dem <b class="attnexample" style="color:#10b981;">Spaziergang</b> im <b class="attnexample" style="color:#10b981;">Park</b> gehe ich zur <b class="attnexample" style="color:#f59e0b;">Bank</b>, um <b class="attnexample" style="color:#f59e0b;">Geld</b> abzuheben.',
+			// Beide Kontexte, aber "Geld" + "Bank" (abheben) dominiert → Finanzinstitut
+			contextWords: ['park', 'geld'],
+			bankShift: [6.8, 3.8] // Stärker Richtung Geld, leicht von Park beeinflusst
+		}
+	],
 
     vocabPositions: {
         'bank':  { base: [5, 5], color: '#3b82f6', label: 'Bank' },
