@@ -377,24 +377,14 @@
                 <div style="padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-bottom:14px;">
                     <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">⚠️ Was sind Glitch Tokens?</div>
                     <p style="color:#7f1d1d; line-height:1.8; margin:0;">
-                        Tokens, die der <b>Tokenizer</b> kennt (sie haben eine ID),<br>
-                        aber das <b>Modell</b> nie richtig gelernt hat, was sie bedeuten.
-                    </p>
-                </div>
-
-                <div style="padding:18px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe; margin-bottom:14px;">
-                    <div style="font-weight:bold; color:#1e40af; margin-bottom:10px;">🔧 Warum existieren sie?</div>
-                    <p style="color:#1e3a5f; line-height:1.8; margin:0;">
-                        Der Tokenizer wird auf <b>anderen Daten</b> trainiert als das Modell selbst.<br>
-                        → Manche Tokens kommen im Tokenizer-Korpus vor, aber im Modell-Training <b>fast nie</b>.<br>
-                        → Ihr Embedding wurde nie sinnvoll aktualisiert → <b>quasi zufällig</b>.
+                        Tokens, die der <b>Tokenizer</b> kennt (sie haben eine ID),
+			weil sie häufig vorkamen, aber das <b>Modell</b> nie richtig gelernt hat, was sie bedeuten.
                     </p>
                 </div>
 
                 <div style="padding:18px; background:#f0fdf4; border-radius:14px; border:2px solid #86efac;">
                     <div style="font-weight:bold; color:#166534; margin-bottom:10px;">🎯 Beispiele</div>
                     <table style="width:100%; color:#14532d; line-height:1.8; border-collapse:collapse;">
-                        <tr><td style="font-family:monospace; font-weight:bold;">SolidGoldMagikarp</td><td>Reddit-Username → im Tokenizer, nie im Training</td></tr>
                         <tr><td style="font-family:monospace; font-weight:bold;">TheNitromeFan</td><td>Reddit-User, der in r/counting nur <b>Zahlen</b> gepostet hat</td></tr>
                     </table>
                 </div>
@@ -415,7 +405,7 @@
         </div>
 
         <div class="key-insight" style="margin-top:14px;">
-            <strong>Merke:</strong> Tokenizer kennt das Wort ✓ — Modell hat es nie gelernt ✗ → <b>unvorhersagbares Verhalten</b>.
+            <strong>Merke:</strong> Tokenizer kennt das Wort ✓ — Modell hat nie sinnvollen Kontext gesehen ✗ → <b>unvorhersagbares Verhalten</b>.
         </div>
     </div>
 </div>
