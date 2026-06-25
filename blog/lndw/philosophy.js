@@ -165,7 +165,7 @@ const CooccurrencePlot = {
         const layout = {
             margin: { l: 130, r: 60, b: 40, t: 10 },
             xaxis: {
-                title: 'Gemeinsame Vorkommen im Korpus',
+                title: 'Gemeinsame Vorkommen',
                 gridcolor: '#f1f5f9',
                 type: 'log',
                 dtick: 1
