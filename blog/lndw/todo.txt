@@ -30,5 +30,4 @@ wichtig: langfristiges lernen, "echtes verstehen"/bewusstsein&ki zsmführen/mora
 
 todo abarbeiten
 
-
 "large" einerseits wegen wirklich großen daten, andererseits weil sie wirklich viele parameter haben
