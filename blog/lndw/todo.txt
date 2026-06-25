@@ -21,7 +21,6 @@ farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwi
 "das wissen steckt als muster verteilt in den gewichten des netzes"
 "feuern" ist unverständlich ohne sicht dass es neuronen sind
 "versteht die ki was sie sagt" -> kein greifbarer realitätsbezug
-"manchmal subitl falsch" -> manchmal auch offensichtlich
 "llms sind mächtige werkzeuge aber sie KÖNNEN nicht neutral sein"
 "Fazit: LLMs sind mächtige Werkzeuge — aber sie sind nicht neutral, ihre Fehler sind schwer zu finden, und ihre Antworten sind immer nur Approximationen, geformt durch die Entscheidungen derer, die sie trainiert haben."
 
