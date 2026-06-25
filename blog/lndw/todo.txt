@@ -10,18 +10,13 @@ kein meta-modul -> kein überprüfungsmechanismus
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 "die architektur hat keinen enthaltungs knoopf" -> funktion ist hier missverständlich, mathematische fkt oder funktion im sinen von "um zu zsmhang"
 embedding & vektor arithmetik: "jedes token durch vektor ersetzt", es ist für uns interpretierbar wie bedeutung
-"indem es" -> "indem er"
 "embedding raum" -> default (pfeiltasten machen "mann + macht")
 simon rasniewski (moritz fragen) demonstrator "für immer generieren" (ignoriert endoftext)
 "autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
 hang zur geschwätzigkeit
-positional embedding: "token" != embedding tokens
 "token versucht man durch 2 aspekte einzufangen, erstmal den punkt des tokens im embedding + die position"
-gleichung haut nicht hin
 "erst eigenschaften, dann funktionsweise"
-unterschiedliche aspekte nach komplexitätsgraden sortieren (positional embedding, attn, residual stream, attn scores sind schwierig)
-was ist ffn -> überleitung, weil FFN in transformer drin (transformer übersichtsdiagramm zeigen)
 
 fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
 "ist Alles ein muster" -> alles klein
