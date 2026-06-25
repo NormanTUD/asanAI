@@ -1088,11 +1088,10 @@ const ResidualStreamViz = {
 };
 
 // ============================================================
-// STEP 5: FINAL PREDICTION VISUALIZER
+// STEP 5: FINAL PREDICTION VISUALIZER — Smooth Tween Animation
 // ============================================================
 
 const PredictionViz = {
-    // Mock vocabulary with probabilities at different temperatures
     vocabulary: [
         { word: 'ein', baseScore: 3.2 },
         { word: 'Drache', baseScore: 1.5 },
@@ -1110,6 +1109,164 @@ const PredictionViz = {
         { word: '.', baseScore: -1.5 },
     ],
 
+    // Animation state
+    animStep: 0,
+
+    // Current interpolated values (what's actually displayed)
+    currentTopK: 3,
+    currentTemp: 1.0,
+
+    // Tween state
+    _tweenActive: false,
+    _tweenStartTopK: 3,
+    _tweenEndTopK: 3,
+    _tweenStartTemp: 1.0,
+    _tweenEndTemp: 1.0,
+    _tweenStartTime: 0,
+    _tweenDuration: 600,
+
+    // Steps definition — each step is a TARGET state
+    // Phase 1: Top-K von 3 auf 6 (bleibt dort)
+    // Phase 2: Temperatur von 1.0 auf 1.8 (kreativ, Zwischenschritt)
+    // Phase 3: Temperatur von 1.8 auf 3.0 (sehr kreativ)
+    // Phase 4: Temperatur von 3.0 auf 0.1 (sehr unkreativ)
+    _steps: [
+        { topK: 3, temp: 1.0 },  // 0: Start
+        { topK: 4, temp: 1.0 },  // 1
+        { topK: 5, temp: 1.0 },  // 2
+        { topK: 6, temp: 1.0 },  // 3: Top-K bleibt hier
+        { topK: 6, temp: 1.8 },  // 4: Zwischenschritt — kreativ
+        { topK: 6, temp: 3.0 },  // 5: sehr kreativ
+        { topK: 6, temp: 0.1 },  // 6: sehr unkreativ
+    ],
+
+    getAnimState: function(step) {
+        if (step < 0) step = 0;
+        if (step >= this._steps.length) step = this._steps.length - 1;
+        return this._steps[step];
+    },
+
+    isOnPredictionSlide: function() {
+        const activeSlide = document.querySelector('.slide.active');
+        if (!activeSlide) return false;
+        return activeSlide.getAttribute('data-title') === 'Die finale Vorhersage';
+    },
+
+    canGoNext: function() {
+        if (!this.isOnPredictionSlide()) return false;
+        if (this._tweenActive) return false;
+        const demoBox = document.querySelector('[data-title="Die finale Vorhersage"] .demo-box');
+        if (!demoBox) return false;
+        const parentFragment = demoBox.closest('.fragment');
+        if (parentFragment && !parentFragment.classList.contains('visible')) return false;
+        return this.animStep < this._steps.length - 1;
+    },
+
+    canGoPrev: function() {
+        if (!this.isOnPredictionSlide()) return false;
+        if (this._tweenActive) return false;
+        const demoBox = document.querySelector('[data-title="Die finale Vorhersage"] .demo-box');
+        if (!demoBox) return false;
+        const parentFragment = demoBox.closest('.fragment');
+        if (parentFragment && !parentFragment.classList.contains('visible')) return false;
+        return this.animStep > 0;
+    },
+
+    next: function() {
+        if (this.animStep < this._steps.length - 1) {
+            this.animStep++;
+            this._startTween();
+        }
+    },
+
+    prev: function() {
+        if (this.animStep > 0) {
+            this.animStep--;
+            this._startTween();
+        }
+    },
+
+    reset: function() {
+        this.animStep = 0;
+        this._tweenActive = false;
+        this.currentTopK = 3;
+        this.currentTemp = 1.0;
+        this._applyCurrentValues();
+    },
+
+    // ---- Smooth Tween Engine ----
+
+    _startTween: function() {
+        const target = this.getAnimState(this.animStep);
+        this._tweenStartTopK = this.currentTopK;
+        this._tweenEndTopK = target.topK;
+        this._tweenStartTemp = this.currentTemp;
+        this._tweenEndTemp = target.temp;
+        this._tweenStartTime = performance.now();
+
+        // Duration depends on distance — longer for temperature changes
+        const topKDist = Math.abs(this._tweenEndTopK - this._tweenStartTopK);
+        const tempDist = Math.abs(this._tweenEndTemp - this._tweenStartTemp);
+
+        if (tempDist > 0.01) {
+            // Temperature animation: scale duration with distance, min 800ms, max 2500ms
+            this._tweenDuration = Math.min(2500, Math.max(800, tempDist * 700));
+        } else if (topKDist > 0) {
+            // TopK animation: 400ms per step
+            this._tweenDuration = 400;
+        } else {
+            this._tweenDuration = 300;
+        }
+
+        if (!this._tweenActive) {
+            this._tweenActive = true;
+            this._tweenLoop();
+        }
+    },
+
+    _easeInOutCubic: function(t) {
+        return t < 0.5
+            ? 4 * t * t * t
+            : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    },
+
+    _tweenLoop: function() {
+        if (!this._tweenActive) return;
+
+        const now = performance.now();
+        const elapsed = now - this._tweenStartTime;
+        let t = Math.min(elapsed / this._tweenDuration, 1.0);
+        const eased = this._easeInOutCubic(t);
+
+        // Interpolate
+        this.currentTopK = this._tweenStartTopK + (this._tweenEndTopK - this._tweenStartTopK) * eased;
+        this.currentTemp = this._tweenStartTemp + (this._tweenEndTemp - this._tweenStartTemp) * eased;
+
+        this._applyCurrentValues();
+
+        if (t >= 1.0) {
+            // Snap to exact target
+            this.currentTopK = this._tweenEndTopK;
+            this.currentTemp = this._tweenEndTemp;
+            this._applyCurrentValues();
+            this._tweenActive = false;
+        } else {
+            requestAnimationFrame(() => this._tweenLoop());
+        }
+    },
+
+    _applyCurrentValues: function() {
+        // Update sliders visually (smooth movement)
+        const topKSlider = document.getElementById('prediction-topk');
+        const tempSlider = document.getElementById('prediction-temperature');
+        if (topKSlider) topKSlider.value = this.currentTopK;
+        if (tempSlider) tempSlider.value = this.currentTemp;
+
+        this.render();
+    },
+
+    // ---- Rendering ----
+
     softmax: function(scores, temperature) {
         temperature = Math.max(temperature, 0.01);
         const scaled = scores.map(s => s / temperature);
@@ -1123,35 +1280,42 @@ const PredictionViz = {
         const plotDiv = document.getElementById('prediction-plot');
         if (!plotDiv) return;
 
-        const tempSlider = document.getElementById('prediction-temperature');
-        const temperature = tempSlider ? parseFloat(tempSlider.value) : 1.0;
+        const temperature = this.currentTemp;
+        const topK = Math.round(this.currentTopK);
 
+        // Update labels
         const tempLabel = document.getElementById('prediction-temp-val');
         if (tempLabel) {
             let desc = '';
-            if (temperature < 0.3) desc = ' (wenig kreativ)';
-            else if (temperature < 0.7) desc = ' (sehr fokussiert)';
+            if (temperature < 0.2) desc = ' (sehr unkreativ)';
+            else if (temperature < 0.5) desc = ' (unkreativ)';
+            else if (temperature < 0.8) desc = ' (fokussiert)';
             else if (temperature < 1.3) desc = ' (balanciert)';
-            else if (temperature < 2.0) desc = ' (kreativ)';
-            else desc = ' (very random)';
+            else if (temperature < 2.2) desc = ' (kreativ)';
+            else desc = ' (sehr kreativ)';
             tempLabel.textContent = temperature.toFixed(2) + desc;
         }
+
+        const topKLabel = document.getElementById('prediction-topk-val');
+        if (topKLabel) topKLabel.textContent = topK;
 
         const scores = this.vocabulary.map(v => v.baseScore);
         const probs = this.softmax(scores, temperature);
 
-        // Sort by probability for display
+        // Sort by probability
         const items = this.vocabulary.map((v, i) => ({
             word: v.word,
             score: v.baseScore,
             prob: probs[i]
         })).sort((a, b) => b.prob - a.prob);
 
+        const tokenColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1', '#14b8a6', '#e11d48', '#0ea5e9', '#a855f7'];
+
         const colors = items.map((item, i) => {
-            if (i === 0) return '#3b82f6';
-            if (i === 1) return '#10b981';
-            if (i === 2) return '#f59e0b';
-            return '#94a3b8';
+            if (i < topK) {
+                return tokenColors[i % tokenColors.length];
+            }
+            return '#e2e8f0';
         });
 
         const trace = {
@@ -1163,16 +1327,16 @@ const PredictionViz = {
                 color: colors,
                 line: { width: 1, color: '#fff' }
             },
-            text: items.map(it => (it.prob * 100).toFixed(1) + '%'),
+            text: items.map((it, i) => i < topK ? (it.prob * 100).toFixed(1) + '%' : ''),
             textposition: 'outside',
             textfont: { size: 11 },
-            hovertemplate: '<b>%{y}</b><br>P = %{x:.4f} (%{text})<extra></extra>'
+            hovertemplate: '<b>%{y}</b><br>P = %{x:.4f}<extra></extra>'
         };
 
         const layout = {
             margin: { l: 80, r: 60, b: 40, t: 10 },
             xaxis: {
-                title: 'Probability',
+                title: 'Wahrscheinlichkeit',
                 range: [0, Math.min(1, Math.max(...items.map(it => it.prob)) * 1.3)],
                 gridcolor: '#f1f5f9'
             },
@@ -1181,13 +1345,78 @@ const PredictionViz = {
                 tickfont: { size: 12 }
             },
             plot_bgcolor: '#fff',
-            bargap: 0.15
+            bargap: 0.15,
+            shapes: [{
+                type: 'rect',
+                xref: 'paper', yref: 'paper',
+                x0: 0, x1: 1,
+                y0: 0, y1: topK / items.length,
+                fillcolor: 'rgba(99, 102, 241, 0.03)',
+                line: { width: 0 }
+            }],
+            annotations: [{
+                x: 0.95, y: 0,
+                xref: 'paper', yref: 'paper',
+                text: `Top-${topK}`,
+                showarrow: false,
+                font: { size: 12, color: '#6366f1', weight: 'bold' },
+                xanchor: 'right', yanchor: 'top'
+            }]
         };
 
         Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
+
+        // Render token display below
+        const topKItems = items.slice(0, topK);
+        this.renderTokenDisplay(topKItems, temperature);
+    },
+
+    renderTokenDisplay: function(topKItems, temperature) {
+        const container = document.getElementById('prediction-token-display');
+        if (!container) return;
+
+        const tokenColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1', '#14b8a6', '#e11d48', '#0ea5e9', '#a855f7'];
+
+        const totalProb = topKItems.reduce((s, it) => s + it.prob, 0);
+
+        let html = '<div style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; align-items:center;">';
+        html += '<span style="color:#64748b; font-size:0.85em; margin-right:8px;">Auswahl aus:</span>';
+
+        topKItems.forEach((item, i) => {
+            const color = tokenColors[i % tokenColors.length];
+            const relProb = (item.prob / totalProb * 100).toFixed(0);
+            const opacity = 0.4 + (item.prob / topKItems[0].prob) * 0.6;
+
+            html += `<div style="
+                display:inline-flex; align-items:center; gap:4px;
+                padding:6px 12px; border-radius:8px;
+                background:${color}15; border:2px solid ${color};
+                opacity:${opacity};
+                transition: all 0.1s ease;
+            ">
+                <span style="font-weight:bold; color:${color};">${item.word}</span>
+                <span style="font-size:0.75em; color:${color}88;">${relProb}%</span>
+            </div>`;
+        });
+
+        html += '</div>';
+
+        // Temperature indicator
+        let tempNote = '';
+        if (temperature < 0.3) {
+            tempNote = '🎯 Niedrige Temperatur: Fast immer wird das wahrscheinlichste Token gewählt.';
+        } else if (temperature > 2.0) {
+            tempNote = '🎲 Hohe Temperatur: Auch unwahrscheinliche Tokens haben eine Chance — mehr Überraschung!';
+        } else if (temperature > 1.4) {
+            tempNote = '🎲 Kreative Temperatur: Die Verteilung wird flacher, mehr Variation möglich.';
+        } else {
+            tempNote = '⚖️ Balancierte Temperatur: Gute Mischung aus Vorhersagbarkeit und Variation.';
+        }
+        html += `<div style="margin-top:8px; color:#64748b; font-size:0.85em; text-align:center;">${tempNote}</div>`;
+
+        container.innerHTML = html;
     }
 };
-
 
 // ============================================================
 // INITIALIZATION
@@ -1754,13 +1983,22 @@ function loadIntuitionModule() {
             });
         }
 
-    // Step 5: Prediction
-        const tempSlider = document.getElementById('prediction-temperature');
-        if (tempSlider) {
-            tempSlider.addEventListener('input', () => PredictionViz.render());
-        }
-        PredictionViz.render();
-
+    // Step 5: Prediction — beide Slider + smooth
+    const tempSlider = document.getElementById('prediction-temperature');
+    const topKSlider = document.getElementById('prediction-topk');
+    if (tempSlider) {
+        tempSlider.addEventListener('input', () => {
+            PredictionViz.currentTemp = parseFloat(tempSlider.value);
+            PredictionViz.render();
+        });
+    }
+    if (topKSlider) {
+        topKSlider.addEventListener('input', () => {
+            PredictionViz.currentTopK = parseInt(topKSlider.value);
+            PredictionViz.render();
+        });
+    }
+    PredictionViz.render();
 
     // NN Approximation Demo
         const nnTargetFn = document.getElementById('nn-target-fn');

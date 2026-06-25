@@ -19,103 +19,107 @@ const Presentation = (() => {
         return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
     }
 
-function next() {
-    const fragments = getFragments(currentSlide);
-    const visibleCount = fragmentIndex[currentSlide];
-    if (visibleCount < fragments.length) {
-        const frag = fragments[visibleCount];
-        frag.classList.add('visible');
-        fragmentIndex[currentSlide]++;
-
-        if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
-            SunrisePlot.showSinus();
-        }
-        if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
-            const step = parseInt(frag.getAttribute('data-knowledge-step'));
-            KnowledgeViz.setStep(step);
-        }
-        if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
-            if (typeof animateDualManifoldAlignment === 'function') {
-                animateDualManifoldAlignment();
-            }
-        }
-        return;
-    }
-    if (currentSlide < slides.length - 1) {
-        goTo(currentSlide + 1);
-    }
-}
-
-function prev() {
-    const fragments = getFragments(currentSlide);
-    const visibleCount = fragmentIndex[currentSlide];
-    if (visibleCount > 0) {
-        const frag = fragments[visibleCount - 1];
-        frag.classList.remove('visible');
-        fragmentIndex[currentSlide]--;
-
-        if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
-            SunrisePlot.hideSinus();
-        }
-        if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
-            const step = parseInt(frag.getAttribute('data-knowledge-step'));
-            if (step > 0) {
-                KnowledgeViz.setStep(step - 1);
-            }
-        }
-        if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
-            if (typeof resetDualManifold === 'function') {
-                resetDualManifold();
-            }
-        }
-        return;
-    }
-    if (currentSlide > 0) {
-        goTo(currentSlide - 1, true);
-    }
-}
-
-function goTo(idx, showAllFragments = false) {
-    if (idx < 0 || idx >= slides.length) return;
-    slides[currentSlide].classList.remove('active');
-    currentSlide = idx;
-    slides[currentSlide].classList.remove('slide-entering');
-    slides[currentSlide].classList.add('active');
-
-    if (showAllFragments) {
+    function next() {
         const fragments = getFragments(currentSlide);
-        fragments.forEach(f => f.classList.add('visible'));
-        fragmentIndex[currentSlide] = fragments.length;
-    } else {
-        const fragments = getFragments(currentSlide);
-        fragments.forEach(f => f.classList.remove('visible'));
-        fragmentIndex[currentSlide] = 0;
+        const visibleCount = fragmentIndex[currentSlide];
+        if (visibleCount < fragments.length) {
+            const frag = fragments[visibleCount];
+            frag.classList.add('visible');
+            fragmentIndex[currentSlide]++;
+
+            if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
+                SunrisePlot.showSinus();
+            }
+            if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
+                const step = parseInt(frag.getAttribute('data-knowledge-step'));
+                KnowledgeViz.setStep(step);
+            }
+            if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
+                if (typeof animateDualManifoldAlignment === 'function') {
+                    animateDualManifoldAlignment();
+                }
+            }
+            return;
+        }
+        if (currentSlide < slides.length - 1) {
+            goTo(currentSlide + 1);
+        }
     }
 
-    if (typeof ResidualNotebook !== 'undefined') {
-        ResidualNotebook.reset();
+    function prev() {
+        const fragments = getFragments(currentSlide);
+        const visibleCount = fragmentIndex[currentSlide];
+        if (visibleCount > 0) {
+            const frag = fragments[visibleCount - 1];
+            frag.classList.remove('visible');
+            fragmentIndex[currentSlide]--;
+
+            if (frag.getAttribute('data-fragment-action') === 'show-sinus') {
+                SunrisePlot.hideSinus();
+            }
+            if (frag.getAttribute('data-fragment-action') === 'knowledge-step') {
+                const step = parseInt(frag.getAttribute('data-knowledge-step'));
+                if (step > 0) {
+                    KnowledgeViz.setStep(step - 1);
+                }
+            }
+            if (frag.getAttribute('data-fragment-action') === 'manifold-align') {
+                if (typeof resetDualManifold === 'function') {
+                    resetDualManifold();
+                }
+            }
+            return;
+        }
+        if (currentSlide > 0) {
+            goTo(currentSlide - 1, true);
+        }
     }
-    if (typeof AttentionDemo !== 'undefined') {
-        AttentionDemo.reset();
-    }
-    // *** NEU: Embedding Auto-Demo ***
-    if (typeof EmbeddingAutoDemo !== 'undefined') {
-        if (EmbeddingAutoDemo.isOnEmbeddingSlide()) {
-            EmbeddingAutoDemo.activate();
+
+    function goTo(idx, showAllFragments = false) {
+        if (idx < 0 || idx >= slides.length) return;
+        slides[currentSlide].classList.remove('active');
+        currentSlide = idx;
+        slides[currentSlide].classList.remove('slide-entering');
+        slides[currentSlide].classList.add('active');
+
+        if (showAllFragments) {
+            const fragments = getFragments(currentSlide);
+            fragments.forEach(f => f.classList.add('visible'));
+            fragmentIndex[currentSlide] = fragments.length;
         } else {
-            EmbeddingAutoDemo.reset();
+            const fragments = getFragments(currentSlide);
+            fragments.forEach(f => f.classList.remove('visible'));
+            fragmentIndex[currentSlide] = 0;
         }
-    }
-    // *** NEU: NN Step Demo reset ***
-    if (typeof NNStepDemo !== 'undefined') {
-        NNStepDemo.reset();
-    }
 
-    updateUI();
-    closeOverview();
-    triggerSlideInit(currentSlide);
-    setTimeout(fitSlides, 50);
-}
+        if (typeof ResidualNotebook !== 'undefined') {
+            ResidualNotebook.reset();
+        }
+        if (typeof AttentionDemo !== 'undefined') {
+            AttentionDemo.reset();
+        }
+        // *** NEU: Embedding Auto-Demo ***
+        if (typeof EmbeddingAutoDemo !== 'undefined') {
+            if (EmbeddingAutoDemo.isOnEmbeddingSlide()) {
+                EmbeddingAutoDemo.activate();
+            } else {
+                EmbeddingAutoDemo.reset();
+            }
+        }
+        // *** NEU: NN Step Demo reset ***
+        if (typeof NNStepDemo !== 'undefined') {
+            NNStepDemo.reset();
+        }
+        // *** NEU: PredictionViz reset ***
+        if (typeof PredictionViz !== 'undefined') {
+            PredictionViz.reset();
+        }
+
+        updateUI();
+        closeOverview();
+        triggerSlideInit(currentSlide);
+        setTimeout(fitSlides, 50);
+    }
 
     function updateUI() {
         document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${slides.length}`;
@@ -171,7 +175,7 @@ function goTo(idx, showAllFragments = false) {
 })();
 
 // ============================================================
-// KEYBOARD & TOUCH CONTROLS (mit Notebook-Integration)
+// KEYBOARD & TOUCH CONTROLS (mit Notebook-Integration + PredictionViz)
 // ============================================================
 document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -199,6 +203,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
                 EmbeddingAutoDemo.next();
             }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+                PredictionViz.next();
+            }
             else {
                 Presentation.next();
             }
@@ -224,6 +231,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
                 EmbeddingAutoDemo.prev();
             }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+                PredictionViz.prev();
+            }
             else {
                 Presentation.prev();
             }
@@ -248,6 +258,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
                 EmbeddingAutoDemo.prev();
             }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+                PredictionViz.prev();
+            }
             else {
                 Presentation.prev();
             }
@@ -271,6 +284,9 @@ document.addEventListener('keydown', (e) => {
             }
             else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
                 EmbeddingAutoDemo.next();
+            }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+                PredictionViz.next();
             }
             else {
                 Presentation.next();
@@ -320,6 +336,8 @@ document.addEventListener('touchend', (e) => {
                 ResidualNotebook.nextLayer();
             } else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
                 EmbeddingAutoDemo.next();
+            } else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+                PredictionViz.next();
             } else {
                 Presentation.next();
             }
@@ -331,6 +349,8 @@ document.addEventListener('touchend', (e) => {
                 ResidualNotebook.prevLayer();
             } else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
                 EmbeddingAutoDemo.prev();
+            } else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+                PredictionViz.prev();
             } else {
                 Presentation.prev();
             }

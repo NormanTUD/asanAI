@@ -405,7 +405,7 @@
             </div>
         </div>
 
-        <div class="key-insight" style="margin-top:14px;">
+        <div class="fragment" class="key-insight" style="margin-top:14px;">
             <strong>Merke:</strong> Tokenizer kennt das Wort, aber das Modell hat nie sinnvollen Kontext gesehen → <b>unvorhersagbares Verhalten</b>.
         </div>
     </div>
@@ -586,27 +586,49 @@
     </div>
 </div>
 
-    <!-- ==================== SLIDE 15: Finale Vorhersage ==================== -->
-    <div class="slide" data-title="Finale Vorhersage">
-        <div class="slide-content">
-            <h2>Die finale Vorhersage</h2>
-	    <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht es mit allen bekannten <b>Tokens</b> nach Ähnlichkeit, wobei ähnliche Vektoren einen geringeren Winkel zueinander haben als unähnliche.</p>
-	    <p class="fragment">Die Größe der Winkel wandelt man relativ zueinander in Prozentwerte um, um sie als <b>(Pseudo-)Wahrheitscheinlichkeit</b> zu interpretieren.</p>
-            <p class="fragment"><b>Top-K-Sampling</b>: Man nimmt die Top-20 wahrscheinlichsten Worte, und wählt zufällig eines von ihnen aus, damit es natürlich wirkt. </p>
-            <p class="fragment"><b>Temperatur</b> steuert wie kreativ das Netz sein soll.</p>
-            <div class="demo-box fragment">
-		<h3>Es war einmal...</h3>
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-                    <span style="color:#3b82f6; font-weight:bold;">🎯 Unkreativ</span>
-                    <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
-                    <span style="color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
-                    <span id="prediction-temp-val" style="font-weight:bold; min-width:120px; text-align:right;">1.00</span>
-                </div>
-                <div id="prediction-plot" style="height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-                <div id="prediction-info"></div>
+<!-- ==================== SLIDE 15: Finale Vorhersage ==================== -->
+<div class="slide" data-title="Die finale Vorhersage">
+    <div class="slide-content">
+        <h2>Die finale Vorhersage</h2>
+        <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht es mit allen bekannten <b>Tokens</b> nach Ähnlichkeit, wobei ähnliche Vektoren einen geringeren Winkel zueinander haben als unähnliche.</p>
+        <p class="fragment">Die Größe der Winkel wandelt man relativ zueinander in Prozentwerte um, um sie als <b>(Pseudo-)Wahrscheinlichkeit</b> zu interpretieren.</p>
+
+        <div class="demo-box fragment">
+            <h3>Es war einmal...</h3>
+
+            <!-- Top-K Slider -->
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                <span style="color:#6366f1; font-weight:bold; min-width:90px;">Top-K:</span>
+                <input type="range" id="prediction-topk" min="1" max="14" step="1" value="3" style="flex:1; accent-color:#6366f1;">
+                <span id="prediction-topk-val" style="font-weight:bold; color:#6366f1; min-width:40px; text-align:right;">3</span>
+            </div>
+
+            <!-- Temperature Slider -->
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                <span style="color:#f59e0b; font-weight:bold; min-width:90px;">Temperatur:</span>
+                <span style="color:#3b82f6; font-weight:bold; font-size:0.85em;">🎯 Unkreativ</span>
+                <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
+                <span style="color:#ef4444; font-weight:bold; font-size:0.85em;">🎲 Kreativ</span>
+                <span id="prediction-temp-val" style="font-weight:bold; min-width:130px; text-align:right;">1.00 (balanciert)</span>
+            </div>
+
+            <div id="prediction-plot" style="height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+
+            <!-- Token-Anzeige unten -->
+            <div id="prediction-token-display" style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; min-height:40px; padding:10px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+            <!-- Hinweis: Kreativ ist nicht immer gut -->
+            <div style="margin-top:14px; padding:12px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.7;">
+                <strong>⚠️ Kreativ ist nicht immer gut!</strong><br>
+                Bei <b>Gedichten</b> oder <b>Geschichten</b>? Ja, da ist Kreativität erwünscht.<br>
+                Aber <b>„kreative Buchführung"</b> ist nichts Gutes. 🧾💀<br>
+                <span style="font-size:0.9em; color:#78350f;">Für Fakten, Berechnungen oder rechtliche Texte will man niedrige Temperatur = wenig Kreativität.</span>
             </div>
         </div>
+
+        <div style="text-align:center; margin-top:8px; color:#94a3b8; font-size:0.8em;">← → Pfeiltasten für schrittweise Animation</div>
     </div>
+</div>
 
 <!-- ==================== SLIDE: Für das LLM ist Alles ein Muster – Erinnerung ==================== -->
 <div class="slide" data-title="Für das LLM ist Alles ein Muster">
