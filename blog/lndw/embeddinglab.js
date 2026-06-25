@@ -1779,10 +1779,6 @@ function initEmbeddingEditor() {
 		html += `
 	    </tbody>
 	</table>
-	<div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
-	    <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
-	    <button onclick="addTokenToSpace('${spaceKey}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Add</button>
-	</div>
     </div>`;
 		container.innerHTML = html;
 	});
@@ -1811,44 +1807,6 @@ function generateRowHtml(spaceKey, word, vec, dims) {
 	`).join('')}
     </tr>`;
 }
-
-/**
- * Adds a new token with random coordinates within current bounds
- */
-window.addTokenToSpace = function(spaceKey) {
-	const nameInput = document.getElementById(`new-token-${spaceKey}`);
-	const tokenName = nameInput.value.trim();
-	const space = evoSpaces[spaceKey];
-
-	if (!tokenName || space.vocab[tokenName]) {
-		alert("Please enter a unique token name.");
-		return;
-	}
-
-	// 1. Calculate current bounds to keep the new point "in range"
-	const vecs = Object.values(space.vocab);
-	const newVec = [0, 0, 0];
-
-	for (let d = 0; d < 3; d++) {
-		const coords = vecs.map(v => v[d]);
-		const min = Math.min(0, ...coords);
-		const max = Math.max(1, ...coords);
-		// Random value between current min and max
-		newVec[d] = Math.round((min + Math.random() * (max - min)) * 2) / 2;
-	}
-
-	// 2. Update Data
-	space.vocab[tokenName] = newVec;
-
-	// 3. Update Table UI
-	const tbody = document.querySelector(`#table-${spaceKey} tbody`);
-	tbody.insertAdjacentHTML('beforeend', generateRowHtml(spaceKey, tokenName, newVec, space.dims));
-
-	// 4. Update Plots and clear input
-	nameInput.value = "";
-	renderSpace(spaceKey);
-	if (spaceKey === '3d') renderComparison3D();
-};
 
 /**
  * Verarbeitet die Eingabe in der Tabelle und aktualisiert die Grafik.
