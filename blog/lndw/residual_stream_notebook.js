@@ -120,7 +120,6 @@ const ResidualNotebook = (() => {
                 <div class="notebook-header">
                     <div class="notebook-title">📖 Residual Stream — Das gemeinsame Notizbuch</div>
                     <div class="notebook-layer-info" id="notebook-layer-info">
-                        Drücke <kbd style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.85em;">→</kbd> um die nächste Schicht zu sehen, <kbd style="background:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.85em;">←</kbd> um zurückzugehen.
                     </div>
                 </div>
                 <div class="notebook-page" id="notebook-page">
