@@ -15,9 +15,10 @@ const Presentation = (() => {
         buildOverview();
     }
 
-    function getFragments(slideIdx) {
-        return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
-    }
+	function getFragments(slideIdx) {
+		if (!slides[slideIdx]) return [];
+		return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
+	}
 
     function next() {
         const fragments = getFragments(currentSlide);
