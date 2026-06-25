@@ -307,7 +307,7 @@
                 <div class="math-display">$$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
             </div>
 	    <p class="fragment">Die konkreten Werte bringt der Computer sich selbstständig anhand von Trainingsdaten bei, indem er statistische Muster und Wortbeziehungen aus riesigen Textmengen lernt.</p>
-	    <p class="fragment">Die Startpunkte werden zufällig gewählt, und immer mehr angepasst, so dass das Ergebnis (die Auswahl des nächsten Wortes) möglichst gut wird.</p>
+	    <p class="fragment">Die Startpunkte werden zufällig gewählt, und immer mehr angepasst, so dass das Ergebnis (die Auswahl des nächsten Tokens) möglichst gut wird.</p>
 
     <figure class="quote fragment visible">
         <blockquote>
@@ -584,7 +584,7 @@
         <h2>Die finale Vorhersage</h2>
         <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht es mit allen bekannten <b>Tokens</b> nach Ähnlichkeit, wobei ähnliche Vektoren einen geringeren Winkel zueinander haben als unähnliche.</p>
         <p class="fragment">Die Größe der Winkel wandelt man relativ zueinander in Prozentwerte um, um sie als <b>(Pseudo-)Wahrscheinlichkeit</b> zu interpretieren.</p>
-        <p class="fragment">Aus den möglichen Worten wird mit der Wahrscheinlichkeit die sie haben nach der Temperature eines zufällig ausgewählt.</p>
+        <p class="fragment">Aus den möglichen Tokens wird mit der Wahrscheinlichkeit die sie haben nach der Temperature eines zufällig ausgewählt.</p>
 
         <div class="demo-box fragment">
             <h3>Es war einmal...</h3>
