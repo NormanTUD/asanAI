@@ -242,69 +242,6 @@ function renderDualManifolds() {
 		});
 	}
 
-	// ---- Translation paths (geodesics on each surface) ----
-	if (st.showPaths) {
-		const pathWords = ['Man', 'King', 'Queen'];
-		const pathSteps = 25;
-		const enPX = [], enPY = [], enPZ = [];
-		const jpPX = [], jpPY = [], jpPZ = [];
-
-		for (let seg = 0; seg < pathWords.length - 1; seg++) {
-			const from = wordDefs.find(w => w.en === pathWords[seg]);
-			const to = wordDefs.find(w => w.en === pathWords[seg + 1]);
-			for (let s = 0; s <= pathSteps; s++) {
-				const t = s / pathSteps;
-				const iu = from.u + t * (to.u - from.u);
-				const iv = from.v + t * (to.v - from.v);
-
-				const ep = getDualEnPos(iu, iv);
-				enPX.push(ep[0]); enPY.push(ep[1]); enPZ.push(ep[2]);
-
-				const jp = getDualJpPos(iu, iv);
-				jpPX.push(jp[0]); jpPY.push(jp[1]); jpPZ.push(jp[2]);
-			}
-		}
-
-		traces.push({
-			type: 'scatter3d',
-			x: enPX, y: enPY, z: enPZ,
-			mode: 'lines',
-			line: { width: 7, color: '#3b82f6' },
-			name: 'English: Man → King → Queen',
-			hovertemplate: '<b>English geodesic</b><br>Man → King → Queen<extra></extra>'
-		});
-
-		traces.push({
-			type: 'scatter3d',
-			x: jpPX, y: jpPY, z: jpPZ,
-			mode: 'lines',
-			line: { width: 7, color: '#10b981' },
-			name: 'Japanese: 男 → 王様 → 女王',
-			hovertemplate: '<b>Japanese geodesic</b><br>男 → 王様 → 女王<extra></extra>'
-		});
-
-		// Arrowhead cones at the end of each path
-		const enEnd = getDualEnPos(wordDefs.find(w=>w.en==='Queen').u, wordDefs.find(w=>w.en==='Queen').v);
-		const enPrev = getDualEnPos(wordDefs.find(w=>w.en==='King').u, wordDefs.find(w=>w.en==='King').v);
-		traces.push({
-			type: 'cone',
-			x: [enEnd[0]], y: [enEnd[1]], z: [enEnd[2]],
-			u: [enEnd[0]-enPrev[0]], v: [enEnd[1]-enPrev[1]], w: [enEnd[2]-enPrev[2]],
-			sizemode: 'absolute', sizeref: 0.4, showscale: false,
-			colorscale: [[0,'#3b82f6'],[1,'#3b82f6']], hoverinfo: 'skip'
-		});
-
-		const jpEnd = getDualJpPos(wordDefs.find(w=>w.en==='Queen').u, wordDefs.find(w=>w.en==='Queen').v);
-		const jpPrev = getDualJpPos(wordDefs.find(w=>w.en==='King').u, wordDefs.find(w=>w.en==='King').v);
-		traces.push({
-			type: 'cone',
-			x: [jpEnd[0]], y: [jpEnd[1]], z: [jpEnd[2]],
-			u: [jpEnd[0]-jpPrev[0]], v: [jpEnd[1]-jpPrev[1]], w: [jpEnd[2]-jpPrev[2]],
-			sizemode: 'absolute', sizeref: 0.4, showscale: false,
-			colorscale: [[0,'#10b981'],[1,'#10b981']], hoverinfo: 'skip'
-		});
-	}
-
 	const layout = {
 		margin: { l: 0, r: 0, b: 0, t: 0 },
 		showlegend: true,
@@ -1970,7 +1907,6 @@ function renderManifoldVisualization() {
 			name: 'Words (on manifold)',
 			hovertemplate: '<b>%{text}</b><br>Lives on the manifold surface<br>x: %{x:.2f}, y: %{y:.2f}, z: %{z:.2f}<extra></extra>'
 		},
-		// Geodesic path (on the manifold surface)
 		{
 			type: 'scatter3d',
 			x: geoX, y: geoY, z: geoZ,
