@@ -4,7 +4,6 @@ approx hat lücken: aber welche approx? "die vereinfachung hat lücken"
 seltene daten interpolation, fehlende daten extrapolation
 "ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
-"autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
 farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwischen den punkten oben und unten, größerer abstand oder seperate folie für allgemeines muster
 
