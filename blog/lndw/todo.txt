@@ -6,7 +6,6 @@ approx hat lücken: aber welche approx? "die vereinfachung hat lücken"
 seltene daten interpolation, fehlende daten extrapolation
 "ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
-"die architektur hat keinen enthaltungs knoopf" -> funktion ist hier missverständlich, mathematische fkt oder funktion im sinen von "um zu zsmhang"
 simon rasniewski (moritz fragen) demonstrator "für immer generieren" (ignoriert endoftext)
 "autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
