@@ -510,6 +510,57 @@
     </div>
 </div>
 
+<!-- ==================== FOLIE: Wie wird Wissen gespeichert? ==================== -->
+<div class="slide" data-title="Wissen im Netz">
+    <div class="slide-content">
+        <h2>Wie „weiß” das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
+	<p>Es gibt <b>keine Tabelle</b> und <b>keine Zelle</b> mit diesem Fakt. Das Wissen steckt <b>verteilt</b> in den Gewichten.</p>
+        <div class="fragment demo-box" style="min-height:auto; padding:20px;">
+
+            <!-- Step Indicator (updates automatically) -->
+            <div id="knowledge-step-indicator" style="display:flex; gap:8px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;">
+                <span class="know-indicator active" data-step="0">1. Embedding-Richtung</span>
+                <span class="know-indicator" data-step="1">2. Attention sammelt Kontext</span>
+                <span class="know-indicator" data-step="2">3. FFN-Neuronen feuern</span>
+                <span class="know-indicator" data-step="3">4. Gesamtbild</span>
+            </div>
+
+            <!-- Visualization Container -->
+            <div id="knowledge-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto;">
+                <canvas id="knowledge-canvas" style="width:100%; height:480px; display:block; border-radius:10px; border:1px solid #e2e8f0; background:#fafafa;"></canvas>
+            </div>
+
+            <!-- Explanation -->
+            <div id="knowledge-explanation" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
+
+		<!-- Hidden fragments that trigger step changes -->
+		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="1" style="display:none;"></div>
+		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="2" style="display:none;"></div>
+		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="3" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+    <!-- ==================== SLIDE 15: Finale Vorhersage ==================== -->
+    <div class="slide" data-title="Finale Vorhersage">
+        <div class="slide-content">
+            <h2>Die finale Vorhersage</h2>
+	    <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht es mit allen bekannten <b>Tokens</b> nach Ähnlichkeit, wobei ähnliche Vektoren einen geringeren Winkel zueinander haben als unähnliche.</p>
+            <p class="fragment"><b>Temperatur</b> steuert wie kreativ das Netz sein soll.</p>
+            <div class="demo-box fragment">
+		<h3>Es war einmal...</h3>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                    <span style="color:#3b82f6; font-weight:bold;">🎯 Unkreativ</span>
+                    <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
+                    <span style="color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
+                    <span id="prediction-temp-val" style="font-weight:bold; min-width:120px; text-align:right;">1.00</span>
+                </div>
+                <div id="prediction-plot" style="height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+                <div id="prediction-info"></div>
+            </div>
+        </div>
+    </div>
+
 <!-- ==================== SLIDE: Für das LLM ist Alles ein Muster – Erinnerung ==================== -->
 <div class="slide" data-title="Für das LLM ist Alles ein Muster">
     <div class="slide-content">
@@ -596,56 +647,7 @@
     </div>
 </div>
 
-<!-- ==================== FOLIE: Wie wird Wissen gespeichert? ==================== -->
-<div class="slide" data-title="Wissen im Netz">
-    <div class="slide-content">
-        <h2>Wie „weiß” das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
-	<p>Es gibt <b>keine Tabelle</b> und <b>keine Zelle</b> mit diesem Fakt. Das Wissen steckt <b>verteilt</b> in den Gewichten.</p>
-        <div class="fragment demo-box" style="min-height:auto; padding:20px;">
 
-            <!-- Step Indicator (updates automatically) -->
-            <div id="knowledge-step-indicator" style="display:flex; gap:8px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;">
-                <span class="know-indicator active" data-step="0">1. Embedding-Richtung</span>
-                <span class="know-indicator" data-step="1">2. Attention sammelt Kontext</span>
-                <span class="know-indicator" data-step="2">3. FFN-Neuronen feuern</span>
-                <span class="know-indicator" data-step="3">4. Gesamtbild</span>
-            </div>
-
-            <!-- Visualization Container -->
-            <div id="knowledge-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto;">
-                <canvas id="knowledge-canvas" style="width:100%; height:480px; display:block; border-radius:10px; border:1px solid #e2e8f0; background:#fafafa;"></canvas>
-            </div>
-
-            <!-- Explanation -->
-            <div id="knowledge-explanation" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
-
-		<!-- Hidden fragments that trigger step changes -->
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="1" style="display:none;"></div>
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="2" style="display:none;"></div>
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="3" style="display:none;"></div>
-        </div>
-    </div>
-</div>
-
-    <!-- ==================== SLIDE 15: Finale Vorhersage ==================== -->
-    <div class="slide" data-title="Finale Vorhersage">
-        <div class="slide-content">
-            <h2>Die finale Vorhersage</h2>
-	    <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht es mit allen bekannten <b>Tokens</b> nach Ähnlichkeit, wobei ähnliche Vektoren einen geringeren Winkel zueinander haben als unähnliche.</p>
-            <p class="fragment"><b>Temperatur</b> steuert wie kreativ das Netz sein soll.</p>
-            <div class="demo-box fragment">
-		<h3>Es war einmal...</h3>
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-                    <span style="color:#3b82f6; font-weight:bold;">🎯 Unkreativ</span>
-                    <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
-                    <span style="color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
-                    <span id="prediction-temp-val" style="font-weight:bold; min-width:120px; text-align:right;">1.00</span>
-                </div>
-                <div id="prediction-plot" style="height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-                <div id="prediction-info"></div>
-            </div>
-        </div>
-    </div>
 
 <!-- ==================== SLIDE: Pre-Training & Fine-Tuning ==================== -->
 <div class="slide" data-title="Pre-Training & Fine-Tuning">
