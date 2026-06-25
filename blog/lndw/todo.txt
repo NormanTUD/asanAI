@@ -10,7 +10,6 @@ kein meta-modul -> kein überprüfungsmechanismus
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 "die architektur hat keinen enthaltungs knoopf" -> funktion ist hier missverständlich, mathematische fkt oder funktion im sinen von "um zu zsmhang"
 embedding & vektor arithmetik: "jedes token durch vektor ersetzt", es ist für uns interpretierbar wie bedeutung
-"embedding raum" -> default (pfeiltasten machen "mann + macht")
 simon rasniewski (moritz fragen) demonstrator "für immer generieren" (ignoriert endoftext)
 "autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
