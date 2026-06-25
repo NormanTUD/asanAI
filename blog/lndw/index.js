@@ -1784,13 +1784,19 @@ function loadIntuitionModule() {
 // NN STEP DEMO – Pfeiltasten-gesteuertes Durchlaufen der Stückelungs-Folie
 // ============================================================
 
+// ============================================================
+// NN STEP DEMO – Pfeiltasten-gesteuertes Durchlaufen der Stückelungs-Folie
+// ============================================================
+
 const NNStepDemo = (() => {
-    // Schritte: Sinus mit 1,2,4,6,8,10,20 Neuronen, dann Wellenform, dann Bilder
+    // Schritte für Sinus: 1,2,4,6,8,10,20 Neuronen
     const sinSteps = [1, 2, 4, 6, 8, 10, 20];
+    // Schritte für Wellenform: auch 1,2,4,6,8,10,20 Neuronen
+    const customSteps = [1, 2, 4, 6, 8, 10, 20];
     // step 0..6 = sinus mit sinSteps[step] Neuronen
-    // step 7 = wechsel zu Wellenform (custom)
-    // step 8 = Bilder einblenden
-    const totalSteps = 9; // 0-based: 0..8
+    // step 7..13 = wellenform mit customSteps[step-7] Neuronen
+    // step 14 = Bilder einblenden
+    const totalSteps = sinSteps.length + customSteps.length + 1; // 15
     let currentStep = 0;
 
     function isOnStückelungSlide() {
@@ -1817,7 +1823,12 @@ const NNStepDemo = (() => {
 
         if (!slider || !fnSelect) return;
 
-        if (currentStep <= 6) {
+        const sinEnd = sinSteps.length - 1;          // 6
+        const customStart = sinSteps.length;          // 7
+        const customEnd = sinSteps.length + customSteps.length - 1; // 13
+        const imagesStep = sinSteps.length + customSteps.length;    // 14
+
+        if (currentStep <= sinEnd) {
             // Sinus-Schritte
             fnSelect.value = 'sin';
             const neurons = sinSteps[currentStep];
@@ -1825,14 +1836,15 @@ const NNStepDemo = (() => {
             if (countLabel) countLabel.textContent = neurons;
             if (imagesDiv) imagesDiv.style.opacity = '0';
             NNApproxViz.render();
-        } else if (currentStep === 7) {
-            // Wechsel zu Wellenform
+        } else if (currentStep >= customStart && currentStep <= customEnd) {
+            // Wellenform-Schritte
             fnSelect.value = 'custom';
-            slider.value = 20;
-            if (countLabel) countLabel.textContent = '20';
+            const neurons = customSteps[currentStep - customStart];
+            slider.value = neurons;
+            if (countLabel) countLabel.textContent = neurons;
             if (imagesDiv) imagesDiv.style.opacity = '0';
             NNApproxViz.render();
-        } else if (currentStep === 8) {
+        } else if (currentStep === imagesStep) {
             // Bilder einblenden
             if (imagesDiv) imagesDiv.style.opacity = '1';
         }
