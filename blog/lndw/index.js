@@ -1413,13 +1413,13 @@ const AttentionDemo = {
             hovermode: 'closest',
             xaxis: {
                 range: [0, 10],
-                title: 'Semantische Dimension A (Finanzen →)',
+                title: 'Semantische Dimension A',
                 gridcolor: '#e2e8f0',
                 zeroline: false
             },
             yaxis: {
                 range: [0, 10],
-                title: 'Semantische Dimension B (Natur/Ort →)',
+                title: 'Semantische Dimension B',
                 gridcolor: '#e2e8f0',
                 zeroline: false
             },
@@ -1427,13 +1427,11 @@ const AttentionDemo = {
             annotations: [
                 {
                     x: 9, y: 0.5,
-                    text: '💰 Finanzen',
                     showarrow: false,
                     font: { size: 11, color: '#f59e0b' }
                 },
                 {
                     x: 1, y: 9.5,
-                    text: '🌳 Natur/Ort',
                     showarrow: false,
                     font: { size: 11, color: '#10b981' }
                 }
