@@ -118,7 +118,7 @@ const ResidualNotebook = (() => {
         container.innerHTML = `
             <div class="notebook-wrapper">
                 <div class="notebook-header">
-                    <div class="notebook-title">📖 Residual Stream — Das gemeinsame Notizbuch</div>
+                    <div class="notebook-title">📖 Residual Stream: Das gemeinsame Notizbuch</div>
                     <div class="notebook-layer-info" id="notebook-layer-info">
                     </div>
                 </div>
@@ -365,12 +365,11 @@ const ResidualNotebook = (() => {
         const info = document.getElementById('notebook-layer-info');
         if (!info) return;
         if (currentLayer >= layers.length) {
-            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle ${layers.length} Schichten haben geschrieben!</span><br><span style="color:#64748b; font-size:0.85em;">Der Residual Stream enthält nun das gesammelte Wissen aller Experten — von Wortarten bis Pragmatik.</span>`;
+            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle ${layers.length} Schichten haben geschrieben!</span><br><span style="color:#64748b; font-size:0.85em;">Der Residual Stream enthält nun das gesammelte Wissen aller Experten, von Wortarten bis Pragmatik.</span>`;
         } else if (currentLayer === 0) {
-            //info.innerHTML = `<span style="color:#64748b;">Drücke <kbd style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:0.85em;">→</kbd> um zu sehen, wie jeder Experte seine Notizen hinzufügt — von einfach bis komplex.</span>`;
         } else {
             const next = layers[currentLayer];
-            info.innerHTML = `<span style="color:#64748b;">Schicht ${currentLayer + 1} von ${layers.length} — </span><span style="color:${next.color}; font-weight:bold;">${next.name}</span><br><span style="color:#94a3b8; font-size:0.85em;">${next.description}</span>`;
+            info.innerHTML = `<span style="color:#64748b;">Schicht ${currentLayer + 1} von ${layers.length}, </span><span style="color:${next.color}; font-weight:bold;">${next.name}</span><br><span style="color:#94a3b8; font-size:0.85em;">${next.description}</span>`;
         }
     }
 
