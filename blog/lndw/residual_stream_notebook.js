@@ -22,7 +22,7 @@ const ResidualNotebook = (() => {
                 { type: "underline", start: 0, end: 3, color: "#e63946", label: "Artikel" },
                 { type: "underline", start: 4, end: 9, color: "#d62828", label: "Nomen" },
                 { type: "circle", start: 10, end: 13, color: "#e63946" },
-                { type: "scribble", x: 120, y: -30, text: "VERB!", color: "#e63946", rotation: -8, font: "bold 14px Comic Sans MS" },
+                { type: "scribble", x: 120, y: -30, text: "VERB!", color: "#e63946", rotation: -8, font: "bold 14px Courier" },
                 { type: "underline", start: 14, end: 17, color: "#457b9d", label: "Präp." },
                 { type: "underline", start: 18, end: 21, color: "#e63946", label: "Artikel" },
                 { type: "underline", start: 22, end: 27, color: "#d62828", label: "Nomen" },
@@ -54,7 +54,7 @@ const ResidualNotebook = (() => {
             annotations: [
                 { type: "highlight", start: 33, end: 36, color: "rgba(231, 111, 81, 0.35)" },
                 { type: "arrow", from: 33, to: 4, color: "#e76f51", label: "sie → Katze" },
-                { type: "scribble", x: 60, y: -55, text: "\"sie\" = DIE KATZE\n(nicht die Matte!)", color: "#e76f51", rotation: -6, font: "bold 13px Comic Sans MS" },
+                { type: "scribble", x: 60, y: -55, text: "\"sie\" = DIE KATZE\n(nicht die Matte!)", color: "#e76f51", rotation: -6, font: "bold 13px Courier" },
                 { type: "scribble", x: 250, y: -60, text: "Genus-Match:\nKatze=fem → sie=fem ✓\nMatte=fem → sie=fem ✓\n→ Semantik entscheidet!", color: "#e76f51", rotation: 3, font: "11px Courier New" },
                 { type: "strikethrough", start: 22, end: 27, color: "#e76f51", label: "" },
                 { type: "scribble", x: 220, y: 50, text: "Matte kann nicht\nmüde sein! ✗", color: "#c1121f", rotation: -4, font: "bold italic 12px Georgia" },
@@ -83,7 +83,7 @@ const ResidualNotebook = (() => {
             description: "Versteht den kommunikativen Zweck und bereitet die Vorhersage des nächsten Tokens vor.",
             annotations: [
                 { type: "scribble", x: 250, y: -75, text: "Informationsstruktur:\nTHEMA: Katze (bekannt)\nRHEMA: müde (neu!)", color: "#023e8a", rotation: 5, font: "italic 11px monospace" },
-                { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Comic Sans MS" },
+                { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Courier" },
                 { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },
                 { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
                 { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus (Rhema)" },
@@ -308,13 +308,13 @@ const ResidualNotebook = (() => {
             case 'margin-note': {
                 const x = ann.x === 'right' ? 'right: -10px;' : 'left: -10px;';
                 const transform = ann.x === 'right' ? 'translateX(100%)' : 'translateX(-100%)';
-                el.style.cssText = `position:absolute; ${x} top:${ann.y}px; transform:${transform}; padding:6px 10px; background:#fffef0; border:1.5px solid ${ann.color}; border-radius:6px; font-size:11px; color:${ann.color}; white-space:pre-line; max-width:180px; line-height:1.4; box-shadow: 2px 2px 6px rgba(0,0,0,0.12); font-family: 'Comic Sans MS', cursive, sans-serif;`;
+                el.style.cssText = `position:absolute; ${x} top:${ann.y}px; transform:${transform}; padding:6px 10px; background:#fffef0; border:1.5px solid ${ann.color}; border-radius:6px; font-size:11px; color:${ann.color}; white-space:pre-line; max-width:180px; line-height:1.4; box-shadow: 2px 2px 6px rgba(0,0,0,0.12); font-family: 'Courier', cursive, sans-serif;`;
                 el.textContent = ann.text;
                 break;
             }
             case 'scribble': {
                 const rotation = ann.rotation || 0;
-                const font = ann.font || `bold italic 12px 'Comic Sans MS', cursive`;
+                const font = ann.font || `bold italic 12px 'Courier', cursive`;
                 el.style.cssText = `position:absolute; left:${textLeft + ann.x}px; top:${textTop + ann.y}px; font:${font}; color:${ann.color}; transform:rotate(${rotation}deg); white-space:pre-line; pointer-events:none; text-shadow: 0 0 1px ${ann.color}33;`;
                 el.textContent = ann.text;
                 break;
