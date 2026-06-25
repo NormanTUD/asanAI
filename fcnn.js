@@ -132,7 +132,6 @@ async function force_restart_fcnn() {
 }
 
 function _get_layer_name(layer_idx, nr_layers, class_name) {
-	if (layer_idx === 0) return "Input Layer";
 	if (layer_idx === nr_layers - 1) return "Output Layer";
 	return `${class_name} ${layer_idx}`;
 }
