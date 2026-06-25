@@ -547,6 +547,7 @@
             <h2>Die finale Vorhersage</h2>
 	    <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht es mit allen bekannten <b>Tokens</b> nach Ähnlichkeit, wobei ähnliche Vektoren einen geringeren Winkel zueinander haben als unähnliche.</p>
 	    <p class="fragment">Die Größe der Winkel wandelt man relativ zueinander in Prozentwerte um, um sie als <b>(Pseudo-)Wahrheitscheinlichkeit</b> zu interpretieren.</p>
+            <p class="fragment"><b>Top-K-Sampling</b>: Man nimmt die Top-20 wahrscheinlichsten Worte, und wählt zufällig eines von ihnen aus, damit es natürlich wirkt. </p>
             <p class="fragment"><b>Temperatur</b> steuert wie kreativ das Netz sein soll.</p>
             <div class="demo-box fragment">
 		<h3>Es war einmal...</h3>
@@ -665,7 +666,7 @@
 					<li><b>Daten:</b> Wikipedia, Common Crawl (das gesamte öffentliche Internet), Bücher, Code, …</li>
 					<li><b>Umfang:</b> 1.5 Billionen (<span class="math-inline">$1{,}5 \times 10^{13}$</span>) Tokens. 
 						<br>Vergleich: Vom Urknall vor ~14 Mrd. Jahren bis heute sind es ~<span class="math-inline">$5 \times 10^{12}$</span> Tage.</li>
-					<li><b>Ziel:</b> Lerne sehr häufige<b>Muster</b></li>
+					<li><b>Ziel:</b> Lerne sehr häufige <b>Muster</b></li>
 					<li><b>Ergebnis:</b> Das Netz „weiß" faktisch alles, was in den Texten steht</li>
 				</ul>
 			</div>
