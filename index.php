@@ -20,6 +20,9 @@
 		<title>asanAI</title>
 		<meta charset="utf-8">
 		<link rel="manifest" href="manifest.json">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="0">
 <?php
 		_include("initializing.php");
 		$theme_base = "light";
