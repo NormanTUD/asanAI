@@ -6,10 +6,6 @@ seltene daten interpolation, fehlende daten extrapolation
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 "autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
-hang zur geschwätzigkeit
-"token versucht man durch 2 aspekte einzufangen, erstmal den punkt des tokens im embedding + die position"
-"erst eigenschaften, dann funktionsweise"
-
 fkt approx -> bild am ende impliziert dass es vom bild geht, aber es geht über den text, muster ist als sinuskurve interpretierbar
 farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwischen den punkten oben und unten, größerer abstand oder seperate folie für allgemeines muster
 "das wissen steckt als muster verteilt in den gewichten", gedankenstriche weg, besserer satz, den satz komplett neu
