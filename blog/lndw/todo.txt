@@ -7,9 +7,7 @@ seltene daten interpolation, fehlende daten extrapolation
 "autoregressive schleife" zeigt words statt tokens, evtl "ein" "mal" zwei tokens
 
 farbgebung auf der "für die ki ist alles ein muster" folie hat keinen bezug zwischen den punkten oben und unten, größerer abstand oder seperate folie für allgemeines muster
-"das wissen steckt als muster verteilt in den gewichten", gedankenstriche weg, besserer satz, den satz komplett neu
 
-"das wissen steckt als muster verteilt in den gewichten des netzes"
 "feuern" ist unverständlich ohne sicht dass es neuronen sind
 "versteht die ki was sie sagt" -> kein greifbarer realitätsbezug
 
