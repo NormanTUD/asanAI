@@ -596,3 +596,8 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .quote blockquote {
   margin: 1em;
 }
+
+.attnexample {
+	padding-left: 5px;
+	padding-right: 5px;
+}
