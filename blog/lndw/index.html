@@ -433,12 +433,13 @@
             <h2>Attention</h2>
             <p>„Welche anderen Wörter sind für <b>dieses</b> Token wichtig?”</p>
 	    <p class="fragment"><b>Beispiel:</b> „Ich bringe mein <b>Geld</b> auf die <b>Bank</b>”, worauf bezieht sich „<b>Bank</b>”, eine Parkbank oder die Bank zu der man Geld bringt?</p>
-            <div class="fragment" style="margin-top:16px;">
-                <div class="layers-vertical">
-                    <input type="text" id="trans-input" class="bw-cell" style="width:80%;" value="bank" oninput="runAttention()">
-                </div>
-                <div id="transformer-plot" class="plot-container" style="height:380px;"></div>
-            </div>
+		<div class="fragment" style="margin-top:16px;">
+		    <div id="attention-sentence-display" style="text-align:center; padding:14px 20px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:12px; font-size:1.2em; color:#1e293b; font-weight:500; min-height:48px; display:flex; align-items:center; justify-content:center;">
+			Ich bringe mein <b style="color:#3b82f6;">Geld</b> auf die <b style="color:#3b82f6;">Bank</b>.
+		    </div>
+		    <div id="transformer-plot" class="plot-container" style="height:380px;"></div>
+		    <div style="text-align:center; margin-top:8px; color:#94a3b8; font-size:0.8em;">← → Pfeiltasten zum Wechseln der Beispiele</div>
+		</div>
 
 		<div class="key-insight fragment" style="margin-top:14px;">
 		    Statt nur auf einen Aspekt zu achten, packt man mehrere <b>Attention Heads</b> zusammen. Einer achtet darauf, worauf sich „sie" oder „er" bezieht. Ein anderer erkennt, dass „nicht schlecht" zusammengehört. Ein dritter führt getrennte Tokens wie „Königs" und „kind" zu ihrer gemeinsamen Bedeutung „Königskind" zusammen. Und wieder ein anderer verbindet weit entfernte Stellen: wenn auf Seite 1 steht „Der Detektiv heißt Müller" und auf Seite 30 jemand fragt „Wer hat den Fall gelöst?", wird das „Wer" mit „Müller" in Verbindung gebracht.

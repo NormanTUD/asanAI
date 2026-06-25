@@ -1252,83 +1252,201 @@ const contextVocab = {
 	'geld': { base: [9, 1], color: '#f59e0b' }
 };
 
+// ============================================================
+// ATTENTION DEMO — Beispielsätze mit Pfeiltasten-Navigation
+// ============================================================
+
+const AttentionDemo = {
+    currentExample: 0,
+
+    examples: [
+        {
+            sentence: 'Ich bringe mein <b style="color:#f59e0b;">Geld</b> auf die <b style="color:#3b82f6;">Bank</b>.',
+            // "Bank" wird Richtung "Geld" gezogen (Finanzinstitut)
+            contextWords: ['geld'],
+            bankShift: [7.5, 2.5] // Richtung Geld (oben rechts = Finanzen)
+        },
+        {
+            sentence: 'Ich sitze im <b style="color:#10b981;">Park</b> auf der <b style="color:#3b82f6;">Bank</b>.',
+            // "Bank" wird Richtung "Park" gezogen (Sitzgelegenheit)
+            contextWords: ['park'],
+            bankShift: [2.5, 7.5] // Richtung Park (oben links = Natur/Sitzen)
+        },
+        {
+            sentence: 'Nach dem <b style="color:#10b981;">Spaziergang</b> im <b style="color:#10b981;">Park</b> gehe ich zur <b style="color:#f59e0b;">Bank</b>, um <b style="color:#f59e0b;">Geld</b> abzuheben.',
+            // Beide Kontexte, aber "Geld" + "Bank" (abheben) dominiert → Finanzinstitut
+            contextWords: ['park', 'geld'],
+            bankShift: [6.8, 3.8] // Stärker Richtung Geld, leicht von Park beeinflusst
+        }
+    ],
+
+    vocabPositions: {
+        'bank':  { base: [5, 5], color: '#3b82f6', label: 'Bank' },
+        'park':  { base: [1, 9], color: '#10b981', label: 'Park' },
+        'geld':  { base: [9, 1], color: '#f59e0b', label: 'Geld' }
+    },
+
+    isOnAttentionSlide: function() {
+        const slides = document.querySelectorAll('.slide');
+        const activeSlide = document.querySelector('.slide.active');
+        if (!activeSlide) return false;
+        return activeSlide.getAttribute('data-title') === 'Attention';
+    },
+
+    canGoNext: function() {
+        if (!this.isOnAttentionSlide()) return false;
+        // Prüfe ob das fragment mit dem Plot schon sichtbar ist
+        const plotContainer = document.getElementById('transformer-plot');
+        if (!plotContainer) return false;
+        const parentFragment = plotContainer.closest('.fragment');
+        if (parentFragment && !parentFragment.classList.contains('visible')) return false;
+        return this.currentExample < this.examples.length - 1;
+    },
+
+    canGoPrev: function() {
+        if (!this.isOnAttentionSlide()) return false;
+        const plotContainer = document.getElementById('transformer-plot');
+        if (!plotContainer) return false;
+        const parentFragment = plotContainer.closest('.fragment');
+        if (parentFragment && !parentFragment.classList.contains('visible')) return false;
+        return this.currentExample > 0;
+    },
+
+    next: function() {
+        if (this.currentExample < this.examples.length - 1) {
+            this.currentExample++;
+            this.render();
+        }
+    },
+
+    prev: function() {
+        if (this.currentExample > 0) {
+            this.currentExample--;
+            this.render();
+        }
+    },
+
+    reset: function() {
+        this.currentExample = 0;
+        this.render();
+    },
+
+    render: function() {
+        const container = 'transformer-plot';
+        const plotDiv = document.getElementById(container);
+        const sentenceDisplay = document.getElementById('attention-sentence-display');
+        if (!plotDiv) return;
+
+        const example = this.examples[this.currentExample];
+
+        // Update sentence display
+        if (sentenceDisplay) {
+            sentenceDisplay.innerHTML = example.sentence;
+        }
+
+        let traces = [];
+
+        // 1. Statische Vokabular-Punkte (Hintergrund)
+        Object.keys(this.vocabPositions).forEach(word => {
+            const pos = this.vocabPositions[word].base;
+            traces.push({
+                x: [pos[0]], y: [pos[1]],
+                mode: 'markers+text',
+                name: this.vocabPositions[word].label,
+                text: [this.vocabPositions[word].label],
+                textposition: 'bottom center',
+                textfont: { size: 13, color: this.vocabPositions[word].color },
+                marker: { size: 14, opacity: 0.5, color: this.vocabPositions[word].color },
+                type: 'scatter',
+                showlegend: false
+            });
+        });
+
+        // 2. Attention-Linien von Bank zu Kontextwörtern
+        const bankBase = this.vocabPositions['bank'].base;
+
+        example.contextWords.forEach(word => {
+            if (this.vocabPositions[word]) {
+                const otherBase = this.vocabPositions[word].base;
+                traces.push({
+                    x: [bankBase[0], otherBase[0]],
+                    y: [bankBase[1], otherBase[1]],
+                    mode: 'lines',
+                    line: { color: '#f97316', width: 2.5, dash: 'dot' },
+                    hoverinfo: 'none',
+                    showlegend: false,
+                    type: 'scatter'
+                });
+            }
+        });
+
+        // 3. Kontextualisiertes Embedding (verschobener Punkt)
+        traces.push({
+            x: [example.bankShift[0]], y: [example.bankShift[1]],
+            mode: 'markers+text',
+            text: ['"Bank" im Kontext'],
+            textposition: 'top center',
+            textfont: { size: 12, color: '#1e293b' },
+            marker: {
+                size: 18,
+                color: '#3b82f6',
+                symbol: 'diamond',
+                line: { color: '#1e293b', width: 2 }
+            },
+            type: 'scatter',
+            showlegend: false
+        });
+
+        // 4. Pfeil/Linie von Bank-Basis zum verschobenen Punkt
+        traces.push({
+            x: [bankBase[0], example.bankShift[0]],
+            y: [bankBase[1], example.bankShift[1]],
+            mode: 'lines',
+            line: { color: '#3b82f6', width: 2, dash: 'solid' },
+            hoverinfo: 'none',
+            showlegend: false,
+            type: 'scatter'
+        });
+
+        const layout = {
+            margin: { l: 40, r: 40, b: 40, t: 40 },
+            hovermode: 'closest',
+            xaxis: {
+                range: [0, 10],
+                title: 'Semantische Dimension A (Finanzen →)',
+                gridcolor: '#e2e8f0',
+                zeroline: false
+            },
+            yaxis: {
+                range: [0, 10],
+                title: 'Semantische Dimension B (Natur/Ort →)',
+                gridcolor: '#e2e8f0',
+                zeroline: false
+            },
+            showlegend: false,
+            annotations: [
+                {
+                    x: 9, y: 0.5,
+                    text: '💰 Finanzen',
+                    showarrow: false,
+                    font: { size: 11, color: '#f59e0b' }
+                },
+                {
+                    x: 1, y: 9.5,
+                    text: '🌳 Natur/Ort',
+                    showarrow: false,
+                    font: { size: 11, color: '#10b981' }
+                }
+            ]
+        };
+
+        Plotly.react(container, traces, layout, { displayModeBar: false, responsive: true });
+    }
+};
+
+// Alte runAttention-Funktion ersetzen
 function runAttention() {
-	const inputField = document.getElementById('trans-input');
-	const container = 'transformer-plot';
-
-	if (!inputField || !document.getElementById(container)) return;
-
-	const input = inputField.value.toLowerCase();
-	const words = input.split(/\s+/).filter(w => contextVocab[w]);
-
-	let traces = [];
-
-	// 1. Static Vocabulary (Background)
-	Object.keys(contextVocab).forEach(word => {
-		const pos = contextVocab[word].base;
-		traces.push({
-			x: [pos[0]], y: [pos[1]],
-			mode: 'markers+text',
-			name: word,
-			text: word,
-			textposition: 'bottom center',
-			marker: { size: 12, opacity: 0.6, color: contextVocab[word].color },
-			type: 'scatter' // Changed from scatter3d
-		});
-	});
-
-	// 2. Attention Logic
-	if (words.includes('bank')) {
-		const bankBase = contextVocab['bank'].base;
-		// Start at the base position
-		let currentPos = [...bankBase]; 
-
-		words.forEach(other => {
-			if (other !== 'bank') {
-				const otherBase = contextVocab[other].base;
-
-				// Move 50% of the remaining distance to the "other" word
-				// Formula: Current + (Target - Current) * 0.5
-				currentPos = currentPos.map((coord, i) => coord + (otherBase[i] - coord) * 0.5);
-
-				// Draw attention line (the "Handshake") from the original bank base
-				traces.push({
-					x: [bankBase[0], otherBase[0]],
-					y: [bankBase[1], otherBase[1]],
-					mode: 'lines',
-					line: { color: '#f97316', width: 3, dash: 'dot' },
-					hoverinfo: 'none',
-					showlegend: false,
-					type: 'scatter'
-				});
-			}
-		});
-
-		// The Resulting Contextual Embedding (now using the iteratively shifted position)
-		traces.push({
-			x: [currentPos[0]], y: [currentPos[1]],
-			mode: 'markers+text',
-			text: 'Kontextualisiertes Embedding für "Bank"',
-			textposition: 'top center',
-			marker: { 
-				size: 16, 
-				color: '#3b82f6', 
-				symbol: 'diamond', 
-				line: {color:'black', width:2} 
-			},
-			type: 'scatter'
-		});
-	}
-
-	const layout = {
-		margin: { l: 40, r: 40, b: 40, t: 40 },
-		hovermode: 'closest',
-		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: '#e2e8f0' },
-		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: '#e2e8f0' },
-		showlegend: false
-	};
-
-	Plotly.react(container, traces, layout);
+    AttentionDemo.render();
 }
 
 // ============================================================

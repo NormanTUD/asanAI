@@ -96,6 +96,9 @@ function prev() {
 		if (typeof ResidualNotebook !== 'undefined') {
 			ResidualNotebook.reset();
 		}
+		if (typeof AttentionDemo !== 'undefined') {
+			AttentionDemo.reset();
+		}
 
 		updateUI();
 		closeOverview();
@@ -171,6 +174,10 @@ document.addEventListener('keydown', (e) => {
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
                 TrainingViz.next();
             }
+            // Attention-Folie: Pfeiltaste rechts = nächstes Beispiel
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+                AttentionDemo.next();
+            }
             // PE Orbit Folie: Pfeiltaste rechts = nächster Schritt
             else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
                 PEOrbitViz.next();
@@ -189,6 +196,10 @@ document.addEventListener('keydown', (e) => {
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
                 TrainingViz.prev();
             }
+            // Attention-Folie: Pfeiltaste links = vorheriges Beispiel
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+                AttentionDemo.prev();
+            }
             // PE Orbit Folie: Pfeiltaste links = Schritt zurück
             else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
                 PEOrbitViz.prev();
@@ -204,6 +215,8 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
                 TrainingViz.prev();
+            } else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+                AttentionDemo.prev();
             } else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
                 PEOrbitViz.prev();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
@@ -216,6 +229,8 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
                 TrainingViz.next();
+            } else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+                AttentionDemo.next();
             } else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
                 PEOrbitViz.next();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
