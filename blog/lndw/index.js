@@ -1401,19 +1401,6 @@ const PredictionViz = {
 
         html += '</div>';
 
-        // Temperature indicator
-        let tempNote = '';
-        if (temperature < 0.3) {
-            tempNote = '🎯 Niedrige Temperatur: Fast immer wird das wahrscheinlichste Token gewählt.';
-        } else if (temperature > 2.0) {
-            tempNote = '🎲 Hohe Temperatur: Auch unwahrscheinliche Tokens haben eine Chance — mehr Überraschung!';
-        } else if (temperature > 1.4) {
-            tempNote = '🎲 Kreative Temperatur: Die Verteilung wird flacher, mehr Variation möglich.';
-        } else {
-            tempNote = '⚖️ Balancierte Temperatur: Gute Mischung aus Vorhersagbarkeit und Variation.';
-        }
-        html += `<div style="margin-top:8px; color:#64748b; font-size:0.85em; text-align:center;">${tempNote}</div>`;
-
         container.innerHTML = html;
     }
 };
