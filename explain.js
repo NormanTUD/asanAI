@@ -21,9 +21,12 @@ function visualizeNumbersOnCanvas(numberArray, blockWidth = 1, blockHeight = 25)
 	var ctx = canvas.getContext("2d");
 	var blocksPerRow = Math.floor(canvas.width / blockWidth);
 
+	var min = Math.min(...numberArray);
+	var max = Math.max(...numberArray);
+
 	for (var numberArray_idx = 0; numberArray_idx < numberArray.length; numberArray_idx++) {
 		var value = numberArray[numberArray_idx];
-		var grayscaleValue = Math.round((value / numberArray[numberArray.length - 1]) * 255);
+		var grayscaleValue = normalize_to_rgb_min_max(value, min, max);
 		var color = "rgb(" + grayscaleValue + "," + grayscaleValue + "," + grayscaleValue + ")";
 
 		var x = (numberArray_idx % blocksPerRow) * blockWidth;
