@@ -1042,18 +1042,24 @@ $(document).ready(async function() {
 
 window.addEventListener('pageshow', function(event) {
     document.querySelectorAll('input, select, textarea').forEach(function(el) {
-        if (el.type === 'checkbox' || el.type === 'radio') {
-            el.checked = el.defaultChecked;
-        } else if (el.tagName === 'SELECT') {
-            // Finde die Option die im HTML "selected" hat, oder nimm die erste
-            var defaultOption = el.querySelector('option[selected]');
-            if (defaultOption) {
-                el.value = defaultOption.value;
+        try {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = el.defaultChecked;
+            } else if (el.tagName === 'SELECT') {
+                var defaultOption = el.querySelector('option[selected]');
+                if (defaultOption) {
+                    el.value = defaultOption.value;
+                } else {
+                    el.selectedIndex = 0;
+                }
+            } else if (el.type === 'file') {
+                // File-Inputs können nicht programmatisch gesetzt werden, überspringen
+                return;
             } else {
-                el.selectedIndex = 0;
+                el.value = el.defaultValue;
             }
-        } else {
-            el.value = el.defaultValue;
+        } catch (e) {
+            // Manche Elemente (z.B. file inputs) werfen DOMException beim Setzen von value
         }
     });
 });
