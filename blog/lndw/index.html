@@ -333,6 +333,41 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Glitch Tokens ==================== -->
+<div class="slide" data-title="Glitch Tokens">
+    <div class="slide-content">
+        <h2>Glitch Tokens</h2>
+
+        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
+            <!-- Links: Erklärung -->
+            <div style="flex:1; min-width:300px;">
+                <div style="padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-bottom:14px;">
+                    <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">⚠️ Was sind Glitch Tokens?</div>
+                    <p style="color:#7f1d1d; line-height:1.8; margin:0;">
+                        Tokens, die der <b>Tokenizer</b> kennt (d.h. sie haben einen eigenen Vektor),
+			weil sie häufig vorkamen, aber das <b>Modell</b> nie richtig gelernt hat, was sie bedeuten.
+                    </p>
+                </div>
+
+                <div style="padding:18px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; text-align:center; flex:1;">
+                    <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💬 „TheNitromeFan" → 182</div>
+                    <img src="thenitromefan.jpg" alt="Glitch Token Chat-Beispiel" style="max-width:100%; max-height:280px; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="color:#581c87; margin-top:12px; line-height:1.6; text-align:left;">
+			Reddit-User, der in r/counting nur <b>Zahlen</b> gepostet hat.<br>
+			Das Token kam fast nur <b>neben Zahlen</b> vor (Zähl-Threads).<br>
+			→ Das Modell assoziiert es vage mit Zahlen<br>
+			→ Gibt z.B. „182" aus statt den Namen zu wiederholen.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="fragment key-insight" style="margin-top:14px;">
+            <strong>Merke:</strong> Tokenizer kennt das Wort, aber das Modell hat nie sinnvollen Kontext gesehen → <b>unvorhersagbares Verhalten</b>.
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Mannigfaltigkeiten-Hypothese ==================== -->
 <div class="slide" data-title="Mannigfaltigkeiten-Hypothese">
     <div class="slide-content">
@@ -359,41 +394,6 @@
         <p class="fragment">
 		Das bekommt man quasi „for free”, wenn man die Embeddings hat, einfach durch ihre Struktur. Dafür wurde die Transformer-Architektur auch erfunden: für Übersetzungen.
 	</p>
-    </div>
-</div>
-
-<!-- ==================== SLIDE: Glitch Tokens ==================== -->
-<div class="slide" data-title="Glitch Tokens">
-    <div class="slide-content">
-        <h2>Glitch Tokens</h2>
-
-        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
-            <!-- Links: Erklärung -->
-            <div style="flex:1; min-width:300px;">
-                <div style="padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-bottom:14px;">
-                    <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">⚠️ Was sind Glitch Tokens?</div>
-                    <p style="color:#7f1d1d; line-height:1.8; margin:0;">
-                        Tokens, die der <b>Tokenizer</b> kennt (sie haben eine ID und einen eigenen Vektor),
-			weil sie häufig vorkamen, aber das <b>Modell</b> nie richtig gelernt hat, was sie bedeuten.
-                    </p>
-                </div>
-
-                <div style="padding:18px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; text-align:center; flex:1;">
-                    <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💬 „TheNitromeFan" → 182</div>
-                    <img src="thenitromefan.jpg" alt="Glitch Token Chat-Beispiel" style="max-width:100%; max-height:280px; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-                    <p style="color:#581c87; margin-top:12px; line-height:1.6; text-align:left;">
-			Reddit-User, der in r/counting nur <b>Zahlen</b> gepostet hat.<br>
-			Das Token kam fast nur <b>neben Zahlen</b> vor (Zähl-Threads).<br>
-			→ Das Modell assoziiert es vage mit Zahlen<br>
-			→ Gibt z.B. „182" aus statt den Namen zu wiederholen.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="fragment key-insight" style="margin-top:14px;">
-            <strong>Merke:</strong> Tokenizer kennt das Wort, aber das Modell hat nie sinnvollen Kontext gesehen → <b>unvorhersagbares Verhalten</b>.
-        </div>
     </div>
 </div>
 
