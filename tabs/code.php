@@ -254,7 +254,36 @@
 						<div id="pyodide_editor_line_numbers" aria-hidden="true">1
 					</div>
 						<pre id="pyodide_editor_highlight" class="pe-hl" aria-hidden="true"></pre>
-						<textarea id="pyodide_editor_textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+						<textarea id="pyodide_editor_textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"># 👋 Hello World!
+# The simplest example to get started.
+
+print("Hello, World! 🌍")
+print("This is Python running in your browser via Pyodide!")
+print()
+print("Try editing this code and pressing ▶ Run (or Ctrl+Enter)")
+print()
+print("Available functions:")
+print("  predict(data)           — Run model prediction")
+print("  get_model_info()        — Get model architecture info")
+print("  get_weights()           — Get model weights")
+print("  rand_nested(shape)      — Generate random nested list")
+print("  create_canvas(w, h)     — Create a drawable canvas")
+print("  display(canvas)         — Show canvas in console")
+print("  display_html(html)      — Render HTML in console")
+print("  display_image(url)      — Show image in console")
+print()
+print("Pre-injected helpers (call or override):")
+print("  _setup_model()          — Setup + return state dict")
+print("  _print_model_summary()  — Print formatted model info")
+print("  _predict_and_show(data) — Predict + display result")
+print("  _format_result(result)  — Format result as string")
+print("  _print_all_classes(r)   — Print sorted class bars")
+print("  _get_label(idx)         — Get label for class index")
+print("  _sample_shape()         — Get sample input shape")
+print("  _draw_bar_chart(vals)   — Draw bar chart on canvas")
+print("  _smooth_predictions(buf)— Average prediction buffer")
+print("  _top_prediction(result) — Get (idx, conf) of top class")
+</textarea>
 					</div>
 				</div>
 
