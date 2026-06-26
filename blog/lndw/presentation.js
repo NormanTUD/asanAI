@@ -179,142 +179,144 @@ const Presentation = (() => {
 // KEYBOARD & TOUCH CONTROLS (mit Notebook-Integration + PredictionViz)
 // ============================================================
 document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+	if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    switch(e.key) {
-        case 'ArrowRight':
-        case ' ':
-        case 'Enter':
-            e.preventDefault();
-            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
-                NNStepDemo.next();
-            }
-            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
-                TrainingViz.next();
-            }
-            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
-                AttentionDemo.next();
-            }
-            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
-                PEOrbitViz.next();
-            }
-            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
-                ResidualNotebook.nextLayer();
-            }
-            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
-                EmbeddingAutoDemo.next();
-            }
-            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
-                PredictionViz.next();
-            }
-            else {
-                Presentation.next();
-            }
-            break;
-        case 'ArrowLeft':
-        case 'Backspace':
-            e.preventDefault();
-            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
-                NNStepDemo.prev();
-            }
-            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
-                TrainingViz.prev();
-            }
-            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
-                AttentionDemo.prev();
-            }
-            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
-                PEOrbitViz.prev();
-            }
-            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
-                ResidualNotebook.prevLayer();
-            }
-            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
-                EmbeddingAutoDemo.prev();
-            }
-            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
-                PredictionViz.prev();
-            }
-            else {
-                Presentation.prev();
-            }
-            break;
-        case 'ArrowUp':
-            e.preventDefault();
-            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
-                NNStepDemo.prev();
-            }
-            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
-                TrainingViz.prev();
-            }
-            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
-                AttentionDemo.prev();
-            }
-            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
-                PEOrbitViz.prev();
-            }
-            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
-                ResidualNotebook.prevLayer();
-            }
-            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
-                EmbeddingAutoDemo.prev();
-            }
-            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
-                PredictionViz.prev();
-            }
-            else {
-                Presentation.prev();
-            }
-            break;
-        case 'ArrowDown':
-            e.preventDefault();
-            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
-                NNStepDemo.next();
-            }
-            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
-                TrainingViz.next();
-            }
-            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
-                AttentionDemo.next();
-            }
-            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
-                PEOrbitViz.next();
-            }
-            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
-                ResidualNotebook.nextLayer();
-            }
-            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
-                EmbeddingAutoDemo.next();
-            }
-            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
-                PredictionViz.next();
-            }
-            else {
-                Presentation.next();
-            }
-            break;
-        case 'f':
-        case 'F':
-            e.preventDefault();
-            Presentation.toggleFullscreen();
-            break;
-        case 'o':
-        case 'O':
-            e.preventDefault();
-            Presentation.toggleOverview();
-            break;
-        case 'Escape':
-            Presentation.closeOverview();
-            break;
-        case 'Home':
-            e.preventDefault();
-            Presentation.goTo(0);
-            break;
-        case 'End':
-            e.preventDefault();
-            Presentation.goTo(document.querySelectorAll('.slide').length - 1);
-            break;
-    }
+	switch(e.key) {
+		case 'ArrowRight':
+		case ' ':
+		case 'Enter':
+		case 'PageDown':  // ← Presenter vorwärts-Taste
+			e.preventDefault();
+			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+				NNStepDemo.next();
+			}
+			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+				TrainingViz.next();
+			}
+			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+				AttentionDemo.next();
+			}
+			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+				PEOrbitViz.next();
+			}
+			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+				ResidualNotebook.nextLayer();
+			}
+			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
+				EmbeddingAutoDemo.next();
+			}
+			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+				PredictionViz.next();
+			}
+			else {
+				Presentation.next();
+			}
+			break;
+		case 'ArrowLeft':
+		case 'Backspace':
+		case 'PageUp':    // ← Presenter rückwärts-Taste
+			e.preventDefault();
+			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+				NNStepDemo.prev();
+			}
+			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+				TrainingViz.prev();
+			}
+			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+				AttentionDemo.prev();
+			}
+			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+				PEOrbitViz.prev();
+			}
+			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+				ResidualNotebook.prevLayer();
+			}
+			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
+				EmbeddingAutoDemo.prev();
+			}
+			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+				PredictionViz.prev();
+			}
+			else {
+				Presentation.prev();
+			}
+			break;
+		case 'ArrowUp':
+			e.preventDefault();
+			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+				NNStepDemo.prev();
+			}
+			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+				TrainingViz.prev();
+			}
+			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+				AttentionDemo.prev();
+			}
+			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+				PEOrbitViz.prev();
+			}
+			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+				ResidualNotebook.prevLayer();
+			}
+			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
+				EmbeddingAutoDemo.prev();
+			}
+			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+				PredictionViz.prev();
+			}
+			else {
+				Presentation.prev();
+			}
+			break;
+		case 'ArrowDown':
+			e.preventDefault();
+			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+				NNStepDemo.next();
+			}
+			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+				TrainingViz.next();
+			}
+			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+				AttentionDemo.next();
+			}
+			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+				PEOrbitViz.next();
+			}
+			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+				ResidualNotebook.nextLayer();
+			}
+			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
+				EmbeddingAutoDemo.next();
+			}
+			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+				PredictionViz.next();
+			}
+			else {
+				Presentation.next();
+			}
+			break;
+		case 'f':
+		case 'F':
+			e.preventDefault();
+			Presentation.toggleFullscreen();
+			break;
+		case 'o':
+		case 'O':
+			e.preventDefault();
+			Presentation.toggleOverview();
+			break;
+		case 'Escape':
+			Presentation.closeOverview();
+			break;
+		case 'Home':
+			e.preventDefault();
+			Presentation.goTo(0);
+			break;
+		case 'End':
+			e.preventDefault();
+			Presentation.goTo(document.querySelectorAll('.slide').length - 1);
+			break;
+	}
 });
 
 // Touch/swipe support
