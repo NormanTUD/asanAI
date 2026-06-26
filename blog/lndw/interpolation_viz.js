@@ -24,7 +24,7 @@
 
             // Extrapolation: Punkt außerhalb
             const extrapX = [9, 10];
-            const extrapY = [7.8, 9.1];
+            const extrapY = [7.8, 8];
 
             // "Wahre" Funktion (gestrichelt)
             const trueX = [];
