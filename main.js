@@ -1039,3 +1039,21 @@ $(document).ready(async function() {
 
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
+
+window.addEventListener('pageshow', function(event) {
+    document.querySelectorAll('input, select, textarea').forEach(function(el) {
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            el.checked = el.defaultChecked;
+        } else if (el.tagName === 'SELECT') {
+            // Finde die Option die im HTML "selected" hat, oder nimm die erste
+            var defaultOption = el.querySelector('option[selected]');
+            if (defaultOption) {
+                el.value = defaultOption.value;
+            } else {
+                el.selectedIndex = 0;
+            }
+        } else {
+            el.value = el.defaultValue;
+        }
+    });
+});
