@@ -172,18 +172,7 @@ const AttentionDemo = {
                 zeroline: false
             },
             showlegend: false,
-            annotations: [
-                {
-                    x: 9, y: 0.5,
-                    showarrow: false,
-                    font: { size: 11, color: '#f59e0b' }
-                },
-                {
-                    x: 1, y: 9.5,
-                    showarrow: false,
-                    font: { size: 11, color: '#10b981' }
-                }
-            ]
+            annotations: []
         };
 
         Plotly.react(container, traces, layout, { displayModeBar: false, responsive: true });
