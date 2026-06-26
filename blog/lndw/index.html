@@ -167,67 +167,72 @@
 <div class="slide" data-title="Transformer-Architektur">
     <div class="slide-content">
         <h2>Die Transformer-Architektur</h2>
-        <p>Eine vereinfachte Version des Architektur-Diagramms aus dem Paper „Attention Is All You Need”. Im Kern sind es nur ein paar Bausteine, die sich wiederholen.</p>
+        <p>Eine vereinfachte Version des Architektur-Diagramms aus dem Paper „Attention Is All You Need". Im Kern sind es nur ein paar Bausteine, die sich wiederholen.</p>
 
-        <!-- Vereinfachtes Architektur-Diagramm -->
+        <!-- Vereinfachtes Architektur-Diagramm: von oben nach unten -->
         <div style="display:flex; flex-direction:column; align-items:center; gap:0; margin:24px auto; max-width:360px;">
 
-            <!-- Softmax / Output -->
-            <div style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
-                Vorhersage des nächsten Tokens
+            <!-- Input -->
+            <div class="fragment" style="padding:10px 20px; background:#f1f5f9; border:2px solid #cbd5e1; border-radius:10px; color:#475569; text-align:center; width:100%; box-sizing:border-box;">
+                <div style="font-weight:bold;">Eingabetext</div>
             </div>
-            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
+
+            <!-- Tokenisierung -->
+            <div class="fragment" style="padding:12px 20px; background:#fff7ed; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                <div style="font-weight:bold; color:#9d174d;">Tokenisierung</div>
+                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Aus Worten Tokens machen</div>
+            </div>
+            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
+
+            <!-- Embedding -->
+            <div class="fragment" style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                <div style="font-weight:bold; color:#9d174d;">Embedding</div>
+                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Tokens zu Punkten</div>
+            </div>
+            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
+
+            <!-- Positional Embedding -->
+            <div class="fragment" style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                <div style="font-weight:bold; color:#0c4a6e;">+ Positional Embedding</div>
+                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Position kodieren</div>
+            </div>
+            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
             <!-- Wiederholter Block -->
-            <div style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:16px; width:100%; box-sizing:border-box;">
+            <div class="fragment" style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:16px; width:100%; box-sizing:border-box;">
                 <!-- ×N Label -->
                 <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:3px 10px; border-radius:10px; font-size:0.85em;">×N</div>
 
-                <!-- Feed Forward -->
-                <div style="padding:12px 20px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; font-weight:bold; color:#92400e; text-align:center; margin-bottom:10px;">
-                    Feed-Forward-Netzwerk (Wissen abfragen)
-                </div>
-                <div style="font-size:1.2em; color:#94a3b8; text-align:center;">↑</div>
-
                 <!-- Multi-Head Attention -->
-                <div style="padding:12px 20px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; font-weight:bold; color:#5b21b6; text-align:center; margin-top:6px;">
-                    Multi-Head Attention (Kontext herstellen)
+                <div style="padding:12px 20px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; text-align:center; margin-bottom:10px;">
+                    <div style="font-weight:bold; color:#5b21b6;">Multi-Head Attention</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Kontext herstellen</div>
+                </div>
+                <div style="font-size:1.2em; color:#94a3b8; text-align:center;">↓</div>
+
+                <!-- Feed Forward -->
+                <div style="padding:12px 20px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; text-align:center; margin-top:6px;">
+                    <div style="font-weight:bold; color:#92400e;">Feed-Forward-Netzwerk</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Wissen abfragen</div>
                 </div>
 
                 <!-- Residual-Hinweis -->
                 <div style="margin-top:10px; text-align:center; color:#64748b; font-size:0.8em; font-style:italic;">
-                    (+ Residual Connection nach jedem Block)
+                    + Residual Connection nach jedem Block
                 </div>
             </div>
-            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Positional Embedding -->
-            <div style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; font-weight:bold; color:#0c4a6e; text-align:center; width:100%; box-sizing:border-box;">
-                + Positional Embedding (Position kodieren)
+            <!-- Softmax / Output -->
+            <div class="fragment" style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
+                Vorhersage des nächsten Tokens
             </div>
-            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
+        </div>
 
-            <!-- Embedding -->
-            <div style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; font-weight:bold; color:#9d174d; text-align:center; width:100%; box-sizing:border-box;">
-                Embedding (Tokens zu Punkten)
-            </div>
+        <p class="fragment">Einige Bausteine habe ich weg gelassen, weil sie relevant für die Technik, aber nicht fürs intuitive Verständnis sind (z.B. Layer Normalization).</p>
 
-            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
-
-            <!-- Embedding -->
-            <div style="padding:12px 20px; background:#fff7ed; border:2px solid #f9a8d4; border-radius:10px; font-weight:bold; color:#9d174d; text-align:center; width:100%; box-sizing:border-box;">
-                Tokenisierung (Aus Worte Tokens machen)
-            </div>
-
-            <div style="font-size:1.4em; color:#94a3b8;">↑</div>
-
-            <!-- Input -->
-            <div style="padding:10px 20px; background:#f1f5f9; border:2px solid #cbd5e1; border-radius:10px; color:#475569; text-align:center; width:100%; box-sizing:border-box;">
-		Eingabetext
-	    </div>
-	</div>
-
-	<p class="fragment">Einige Bausteine habe ich weg gelassen, weil sie relevant für die Technik, aber nicht fürs intuitive Verständnis sind (z.B. Layer Normalization).</p>
+        <p class="fragment">Ich werde auf diese einzelnen Blöcke nun näher eingehen.</p>
     </div>
 </div>
 
