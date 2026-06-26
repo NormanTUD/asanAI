@@ -5,7 +5,6 @@ seltene daten interpolation, fehlende daten extrapolation
 "ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 
-"feuern" ist unverständlich ohne sicht dass es neuronen sind
 "versteht die ki was sie sagt" -> kein greifbarer realitätsbezug
 
 datenumfang ist ne kritische größe, mehr thematisieren (inter extrapolation, datensatz größe ist ne relevante größe, mehr der richtigend daten helfen)

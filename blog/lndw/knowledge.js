@@ -82,7 +82,7 @@ const KnowledgeViz = {
 		const explanations = [
 			'🧭️ <b>Schritt 1: Embedding-Richtung.</b> Liegt <i>irgendwo</i> im Raum',
 			'👁️ <b>Schritt 2: Attention sammelt Kontext.</b> Schaut sich alle Tokens an und bestimmt, wo die Bedeutung insgesamt liegt',
-			'🔥 <b>Schritt 3: FFN-Neuronen feuern.</b> Welche Neuronen feuern bestimmt, welche Themengebiete aktiv werden (Coding, Geographie, ...)',
+			'🔥 <b>Schritt 3: FFN-Neuronen werden stark aktiviert.</b> Welche Neuronen stark aktiviert werden bestimmt, welche Themengebiete aktiv werden (Coding, Geographie, ...)',
 			'🎯 <b>Gesamtbild:</b> Am Ende wird das (hoffentlich) nächste sinnvolle Wort ausgewählt'
 		];
 		const el = document.getElementById('knowledge-explanation');
@@ -706,7 +706,7 @@ const KnowledgeViz = {
         this.drawColumn(ctx, col3X, colY, colW - 20, colH, t, 0.4, {
             icon: '🔥',
             title: '3. FFN',
-            subtitle: 'Neuronen feuern',
+            subtitle: 'Neuronen werden stark aktiviert',
             color: '#d97706',
             description: [
                 'Muster erkannt!',
