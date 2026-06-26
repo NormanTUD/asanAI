@@ -1282,7 +1282,6 @@ hr {
 }
 
 .neurons_canvas_class {
-	max-width: 100%;
 	margin: 10px;
 	border: 1px black dotted;
 }
