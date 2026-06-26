@@ -156,10 +156,6 @@
 		<div style="font-weight:bold; color:#92400e;">Geben sie in unserer<br> Sprache zurück</div>
             </div>
         </div>
-
-        <div class="fragment" style="margin-top:16px; padding:12px 18px; background:#fef2f2; border-radius:10px; border:1px solid #fecaca; color:#991b1b; text-align:center;">
-            ⚠️ <b>Aber:</b> Das Modell hat Lücken!
-        </div>
     </div>
 </div>
 
@@ -204,6 +200,28 @@
         </div>
     </div>
 </div>
+
+<!-- ==================== SLIDE: Was wir von LLM wollen ==================== -->
+<div class="slide" data-title="Datengrenzen">
+    <div class="slide-content">
+        <h2>Die Grenzen von Daten</h2>
+
+        <div>
+		LLM haben viel gesehen, aber egal wie viel sie gesehen haben, es gibt immer Lücken. Es gibt zwei Arten, wie Lücken aufgefüllt werden können:
+
+		<ul>
+			<li>Interpolation</li>
+			<li>Extrapolation</li>
+		</ul>
+        </div>
+
+        <div class="fragment" style="margin-top:16px;">
+            <div id="interpolation-extrapolation-viz" style="width:100%; height:320px; background:#fff; border-radius:12px; border:1px solid #e2e8f0;"></div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- ==================== SLIDE: Transformer-Architektur (vereinfacht) ==================== -->
 <div class="slide" data-title="Transformer-Architektur">
@@ -856,10 +874,6 @@
         <div class="fragment" style="margin-top:20px; padding:16px; background:#fffbeb; border-radius:12px; border:2px solid #fde68a; text-align:center;">
             <strong style="color:#92400e;">Aber: Lücken bleiben!</strong><br>
             <span style="color:#78350f;">Kein Datensatz deckt alles ab. Lücken werden auf zwei Weisen gefüllt:</span>
-        </div>
-
-        <div class="fragment" style="margin-top:16px;">
-            <div id="interpolation-extrapolation-viz" style="width:100%; height:320px; background:#fff; border-radius:12px; border:1px solid #e2e8f0;"></div>
         </div>
     </div>
 </div>
