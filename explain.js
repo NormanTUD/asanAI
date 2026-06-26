@@ -327,6 +327,15 @@ function draw_image_if_possible (layer, canvas_type, colors, get_canvas_object) 
 	try {
 		var ret = false;
 
+		if(!colors || !Array.isArray(colors) || colors.length == 0) {
+			return false;
+		}
+
+		// Guard: wenn es ein 2D-Array ist (z.B. Dense kernel), nicht als Bild zeichnen
+		if(canvas_type == "kernel" && Array.isArray(colors) && colors.length > 0 && !Array.isArray(colors[0][0])) {
+			return false;
+		}
+
 		var data_type = looks_like_image_data(colors);
 
 		if(data_type == "simple") {
@@ -908,12 +917,106 @@ function draw_internal_states (layer, inputs, applied) {
 				kernel_data = tidy(() => {
 					return array_sync(tf_transpose(model?.layers[layer]?.kernel?.val, [filters, ks_x, ks_y, number_filters]));
 				});
+			} else if(model?.layers[layer]?.kernel?.val?.shape?.length == 2) {
+				kernel_data = tidy(() => {
+					return array_sync(model?.layers[layer]?.kernel?.val);
+				});
 			}
 		}
 
 		var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
 		var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
 		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
+
+		// Fallback für Dense-Layer: Gewichtungsmatrix bunt visualisieren (transponiert)
+		if(!canvas_kernel && kernel_data.length && model?.layers[layer]?.kernel?.val?.shape?.length == 2) {
+			// Transponiert: Breite = input_units, Höhe = output_units
+			var k_original_height = kernel_data.length;        // input_units
+			var k_original_width = kernel_data[0].length;      // output_units
+
+			var k_width = k_original_height;   // input_units -> Breite
+			var k_height = k_original_width;   // output_units -> Höhe
+
+			var k_pixel_size = Math.max(1, Math.min(12, Math.floor(400 / Math.max(k_height, k_width))));
+			// Mindestgröße damit man was sieht
+			if(k_pixel_size * k_width < 80) {
+				k_pixel_size = Math.max(1, Math.ceil(80 / k_width));
+			}
+
+			var kernel_canvas = document.createElement("canvas");
+			kernel_canvas.width = k_width * k_pixel_size;
+			kernel_canvas.height = k_height * k_pixel_size;
+
+			var k_ctx = kernel_canvas.getContext("2d");
+
+			// Alle Werte sammeln
+			var all_vals = [];
+			for(var ki = 0; ki < k_original_height; ki++) {
+				for(var kj = 0; kj < k_original_width; kj++) {
+					all_vals.push(kernel_data[ki][kj]);
+				}
+			}
+
+			// Standardabweichung berechnen
+			var k_mean = 0;
+			for(var vi = 0; vi < all_vals.length; vi++) {
+				k_mean += all_vals[vi];
+			}
+			k_mean /= all_vals.length;
+
+			var k_variance = 0;
+			for(var vi = 0; vi < all_vals.length; vi++) {
+				k_variance += (all_vals[vi] - k_mean) * (all_vals[vi] - k_mean);
+			}
+			k_variance /= all_vals.length;
+			var k_std = Math.sqrt(k_variance);
+
+			// Symmetrisches Clipping um 0: ±2*std
+			var k_clip = Math.max(k_std * 2, 1e-7);
+
+			// Pixel zeichnen (transponiert + divergierende Farbskala)
+			var tmpCanvas = document.createElement("canvas");
+			tmpCanvas.width = k_width;
+			tmpCanvas.height = k_height;
+			var tmpCtx = tmpCanvas.getContext("2d");
+			var imgData = tmpCtx.createImageData(k_width, k_height);
+
+			for(var kj = 0; kj < k_original_width; kj++) {       // output neuron -> Zeile im Bild
+				for(var ki = 0; ki < k_original_height; ki++) {   // input neuron -> Spalte im Bild
+					var raw_val = kernel_data[ki][kj];
+					// Auf [-1, 1] normalisieren (symmetrisch um 0)
+					var normalized = raw_val / k_clip;
+					normalized = Math.max(-1, Math.min(1, normalized));
+
+					// Divergierende Farbskala: blau (-1) -> weiß (0) -> rot (+1)
+					var r, g, b;
+					if(normalized < 0) {
+						var t = 1 + normalized; // 0 bei -1, 1 bei 0
+						r = Math.round(20 + 235 * t);
+						g = Math.round(60 + 195 * t);
+						b = Math.round(220 + 35 * t);
+					} else {
+						var t = normalized;
+						r = 255;
+						g = Math.round(255 - 210 * t);
+						b = Math.round(255 - 230 * t);
+					}
+
+					var idx = (kj * k_width + ki) * 4;
+					imgData.data[idx] = r;
+					imgData.data[idx + 1] = g;
+					imgData.data[idx + 2] = b;
+					imgData.data[idx + 3] = 255;
+				}
+			}
+
+			tmpCtx.putImageData(imgData, 0, 0);
+			k_ctx.imageSmoothingEnabled = false;
+			k_ctx.drawImage(tmpCanvas, 0, 0, kernel_canvas.width, kernel_canvas.height);
+
+			kernel.append(kernel_canvas).show();
+			canvas_kernel = [];
+		}
 
 		if(canvas_output.length && canvas_input.length) {
 			[input, kernel, output] = show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer);
