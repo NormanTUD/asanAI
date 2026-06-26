@@ -755,13 +755,6 @@
 			</div>
 		</div>
 
-		<!-- Einschub in die Pre-Training-Folie, nach der Aufzählung von Phase 1 -->
-		<div class="fragment" style="margin-top:16px; padding:16px 20px; background:#f8fafc; border-radius:12px; border:2px solid #e2e8f0; text-align:center; line-height:1.8; color:#334155;">
-			<strong>Warum „Large"?</strong><br>
-			Empirisch zeigt sich: mehr Daten + mehr Parameter + mehr Rechenzeit → bessere Ergebnisse.<br>
-			<span style="color:#64748b;">Warum genau das so gut funktioniert, ist eine offene Forschungsfrage.</span>
-		</div>
-
 		<div class="key-insight fragment">
 			<strong>Die Kernidee:</strong> Nach Phase 1 hat das Modell das Wissen, aber es „redet" nicht mit dir.
 			Phase 2 bringt ihm bei, <b>wie ein Gespräch aussieht</b>: Frage → Antwort.
@@ -835,6 +828,40 @@
 			<strong>Fazit:</strong> LLM und KI sind nicht „kostenlos", sie verbraucht <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
 		</div>
 	</div>
+</div>
+
+<!-- ==================== SLIDE: Warum Large? ==================== -->
+<div class="slide" data-title="Warum Large?">
+    <div class="slide-content">
+        <h2>Warum „Large"?</h2>
+
+        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
+            <div style="flex:1; min-width:250px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe; text-align:center;">
+                <div style="font-size:2em;">📚</div>
+                <div style="font-weight:bold; color:#1e40af; margin:8px 0;">Mehr Daten</div>
+                <div style="color:#1e3a5f; line-height:1.6;">Billionen Tokens<br>→ mehr Muster gesehen</div>
+            </div>
+            <div class="fragment" style="flex:1; min-width:250px; padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; text-align:center;">
+                <div style="font-size:2em;">📈</div>
+                <div style="font-weight:bold; color:#6b21a8; margin:8px 0;">Mehr Gewichte</div>
+                <div style="color:#581c87; line-height:1.6;">Hunderte Milliarden Parameter<br>→ feinere Approximation</div>
+            </div>
+            <div class="fragment" style="flex:1; min-width:250px; padding:20px; background:#f0fdf4; border-radius:14px; border:2px solid #86efac; text-align:center;">
+                <div style="font-size:2em;">⚡</div>
+                <div style="font-weight:bold; color:#065f46; margin:8px 0;">Mehr Rechenzeit</div>
+                <div style="color:#166534; line-height:1.6;">Monate auf tausenden GPUs<br>→ bessere Optimierung</div>
+            </div>
+        </div>
+
+        <div class="fragment" style="margin-top:20px; padding:16px; background:#fffbeb; border-radius:12px; border:2px solid #fde68a; text-align:center;">
+            <strong style="color:#92400e;">Aber: Lücken bleiben!</strong><br>
+            <span style="color:#78350f;">Kein Datensatz deckt alles ab. Lücken werden auf zwei Weisen gefüllt:</span>
+        </div>
+
+        <div class="fragment" style="margin-top:16px;">
+            <div id="interpolation-extrapolation-viz" style="width:100%; height:320px; background:#fff; border-radius:12px; border:1px solid #e2e8f0;"></div>
+        </div>
+    </div>
 </div>
 
 <!-- ==================== SLIDE: Versteht das LLM?s ==================== -->
@@ -1131,6 +1158,7 @@
 <script src="presentation.js"></script>
 <script src="attention_slides.js"></script>
 <script src="knowledge.js"></script>
+<script src="interpolation_viz.js"></script>
 
 <script>
 	renderDualManifolds();
