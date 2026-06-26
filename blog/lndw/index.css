@@ -212,7 +212,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .speaker-notes { display: none; }
 
 /* ============ PLOT CONTAINERS ============ */
-.plot-container { height: 400px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; }
+.plot-container { background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; }
 .layers-vertical { text-align: center; margin: 10px 0; }
 .bw-cell { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 1em; }
 
