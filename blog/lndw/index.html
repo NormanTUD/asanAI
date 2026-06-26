@@ -213,7 +213,7 @@
         <p>Eine vereinfachte Version des Architektur-Diagramms aus dem Paper „Attention Is All You Need". Im Kern sind es nur ein paar Bausteine, die sich wiederholen.</p>
 
         <!-- Vereinfachtes Architektur-Diagramm: von oben nach unten -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:0; margin:24px auto; max-width:360px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:0; margin:24px auto; max-width:420px; position:relative;">
 
             <!-- Input -->
             <div class="fragment" style="padding:10px 20px; background:#f1f5f9; border:2px solid #cbd5e1; border-radius:10px; color:#475569; text-align:center; width:100%; box-sizing:border-box;">
@@ -242,34 +242,77 @@
             </div>
             <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Wiederholter Block -->
-            <div class="fragment" style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:16px; width:100%; box-sizing:border-box;">
-                <!-- ×N Label -->
-                <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:3px 10px; border-radius:10px; font-size:0.85em;">×N</div>
-
-                <!-- Multi-Head Attention -->
-                <div style="padding:12px 20px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; text-align:center; margin-bottom:10px;">
-                    <div style="font-weight:bold; color:#5b21b6;">Multi-Head Attention</div>
-                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Kontext herstellen</div>
-                </div>
-                <div style="font-size:1.2em; color:#94a3b8; text-align:center;">↓</div>
-
-                <!-- Feed Forward -->
-                <div style="padding:12px 20px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; text-align:center; margin-top:6px;">
-                    <div style="font-weight:bold; color:#92400e;">Feed-Forward-Netzwerk</div>
-                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Wissen abfragen</div>
+            <!-- Residual Stream Start -->
+            <div class="fragment" style="width:100%; position:relative;">
+                <!-- Residual Stream: vertikaler Balken links -->
+                <div style="position:absolute; left:-38px; top:0; bottom:0; width:18px; background:linear-gradient(180deg, #6ee7b7, #34d399, #10b981); border-radius:9px; display:flex; align-items:center; justify-content:center;">
+                    <span style="writing-mode:vertical-rl; transform:rotate(180deg); color:#065f46; font-weight:bold; font-size:0.7em; letter-spacing:1px;">RESIDUAL STREAM</span>
                 </div>
 
-                <!-- Residual-Hinweis -->
-                <div style="margin-top:10px; text-align:center; color:#64748b; font-size:0.8em; font-style:italic;">
-                    + Residual Connection nach jedem Block
+                <!-- Wiederholter Block -->
+                <div style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:16px; width:100%; box-sizing:border-box;">
+                    <!-- ×N Label -->
+                    <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:3px 10px; border-radius:10px; font-size:0.85em;">×N</div>
+
+                    <!-- Multi-Head Attention -->
+                    <div style="padding:12px 20px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; text-align:center; margin-bottom:6px;">
+                        <div style="font-weight:bold; color:#5b21b6;">Multi-Head Attention</div>
+                        <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Kontext herstellen</div>
+                    </div>
+
+                    <!-- Residual Add -->
+                    <div style="text-align:center; color:#10b981; font-weight:bold; font-size:0.85em; margin:4px 0;">⊕ Residual Add</div>
+
+                    <div style="font-size:1.2em; color:#94a3b8; text-align:center;">↓</div>
+
+                    <!-- Feed Forward -->
+                    <div style="padding:12px 20px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; text-align:center; margin-top:6px;">
+                        <div style="font-weight:bold; color:#92400e;">Feed-Forward-Netzwerk</div>
+                        <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Wissen abfragen</div>
+                    </div>
+
+                    <!-- Residual Add -->
+                    <div style="text-align:center; color:#10b981; font-weight:bold; font-size:0.85em; margin:4px 0;">⊕ Residual Add</div>
+
+                    <!-- Residual-Erklärung -->
+                    <div style="margin-top:10px; text-align:center; color:#065f46; font-size:0.8em; font-style:italic; background:#ecfdf5; padding:6px 10px; border-radius:6px; border:1px solid #a7f3d0;">
+                        Jeder Block schreibt ins „Notizbuch" dazu: x<sub>neu</sub> = x<sub>alt</sub> + Layer(x<sub>alt</sub>)
+                    </div>
                 </div>
             </div>
+
             <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
             <!-- Softmax / Output -->
             <div class="fragment" style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
                 Vorhersage des nächsten Tokens
+            </div>
+
+            <!-- Autoregressive Schleife -->
+            <div class="fragment" style="width:100%; position:relative; margin-top:8px;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 18px; background:linear-gradient(135deg, #fef3c7, #fde68a); border:2px solid #f59e0b; border-radius:12px; position:relative;">
+                    <!-- Rückpfeil -->
+                    <div style="position:absolute; right:-48px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; align-items:center;">
+                        <div style="width:2px; height:40px; background:#f59e0b;"></div>
+                        <div style="color:#f59e0b; font-size:1.4em; margin-top:-4px;">↩</div>
+                    </div>
+                    <span style="font-size:1.2em;">🔁</span>
+                    <div style="text-align:left;">
+                        <div style="font-weight:bold; color:#92400e;">Autoregressive Schleife</div>
+                        <div style="color:#78350f; font-size:0.85em; margin-top:2px;">
+                            Token wird an Eingabe angehängt → gesamter Prozess wiederholt sich, bis <code>|endoftext|</code>
+                        </div>
+                    </div>
+                </div>
+                <!-- Visueller Rückpfeil zum Input -->
+                <svg style="position:absolute; right:-58px; top:-100%; width:60px; height:200%; pointer-events:none; overflow:visible;" viewBox="0 0 60 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 10 380 C 10 400, 50 400, 50 380 L 50 30 C 50 10, 30 10, 30 20" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#arrowhead-auto)"/>
+                    <defs>
+                        <marker id="arrowhead-auto" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+                        </marker>
+                    </defs>
+                </svg>
             </div>
         </div>
 
