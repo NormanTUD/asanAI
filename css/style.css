@@ -623,7 +623,6 @@ button:disabled:hover {
 	-webkit-backdrop-filter: blur(20px) saturate(180%);
 	border-top: 0.5px solid var(--color-separator);
 	box-shadow: 0 -0.5px 0 rgba(0, 0, 0, 0.04);
-	overflow: clip;
 }
 
 #data_progressbar {
