@@ -88,13 +88,13 @@
             const annotations = [
                 {
                     x: 4, y: -0.3, xref: 'x', yref: 'y',
-                    text: '<b>Zwischen</b> bekannten Daten → sicher',
+                    text: '<b>Zwischen</b> bekannten Daten → halbwegs sicher',
                     showarrow: false,
                     font: { color: '#065f46', size: 12 }
                 },
                 {
                     x: 9.5, y: -0.3, xref: 'x', yref: 'y',
-                    text: '<b>Außerhalb</b> → unsicher',
+                    text: '<b>Außerhalb</b> → sehr unsicher',
                     showarrow: false,
                     font: { color: '#991b1b', size: 12 }
                 }
