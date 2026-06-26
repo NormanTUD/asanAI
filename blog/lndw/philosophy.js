@@ -129,13 +129,18 @@ const SunrisePlot = {
 };
 
 // ============================================================
-// CO-OCCURRENCE BAR CHART (unverändert)
+// CO-OCCURRENCE BAR CHART – LAZY
 // ============================================================
 
 const CooccurrencePlot = {
+    rendered: false,
+
     render: function() {
+        if (this.rendered) return;
         const plotDiv = document.getElementById('cooccurrence-plot');
         if (!plotDiv) return;
+
+        this.rendered = true;
 
         const pairs = [
             { label: 'Hamburg + Elbe', value: 8420, color: '#3b82f6' },
@@ -167,8 +172,7 @@ const CooccurrencePlot = {
             xaxis: {
                 title: 'Gemeinsame Vorkommen',
                 gridcolor: '#f1f5f9',
-                type: 'log',
-                dtick: 1
+                type: 'linear'    // ← Fix: linear statt log
             },
             yaxis: {
                 autorange: 'reversed',
@@ -178,21 +182,29 @@ const CooccurrencePlot = {
             bargap: 0.2
         };
 
-        Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
+        Plotly.newPlot(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
     }
 };
 
 // ============================================================
-// INIT
-// ============================================================
-
-// ============================================================
-// INIT
+// INIT – nur Sunrise sofort, CooccurrencePlot lazy per Observer
 // ============================================================
 
 function initPhilosophySlides() {
-    CooccurrencePlot.render();
-    if (typeof _lazyCreateObserver === 'function') _lazyCreateObserver();
+    // CooccurrencePlot NICHT sofort rendern!
+    // Stattdessen IntersectionObserver nutzen:
+    const plotDiv = document.getElementById('cooccurrence-plot');
+    if (plotDiv) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    CooccurrencePlot.render();
+                    observer.disconnect();
+                }
+            });
+        }, { rootMargin: '200px' });
+        observer.observe(plotDiv);
+    }
 }
 
 if (document.readyState === 'loading') {
