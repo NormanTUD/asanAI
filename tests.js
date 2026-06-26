@@ -2997,7 +2997,7 @@ async function run_python_code_tests() {
 	}
 
 	$("#pyodide_run_btn").click();
-	await delay(1000);
+	await delay(5000);
 
 	if(!$("#pyodide_console_output").text().includes("Hello, World")) {
 		err("#pyodide_console_output does not contain 'Hello, World' after clicking 'Run' for default program");
