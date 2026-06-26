@@ -163,6 +163,49 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
+<div class="slide" data-title="Daten sind fehlerhaft">
+    <div class="slide-content">
+        <h2>Daten sind fehlerhaft, und trotzdem nützlich</h2>
+
+        <div style="display:flex; gap:24px; margin-top:16px; flex-wrap:wrap;">
+            <!-- Links: Fehler + Lösung kompakt -->
+            <div style="flex:1; min-width:300px;">
+                <div style="padding:14px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca; margin-bottom:12px;">
+                    <div style="font-weight:bold; color:#991b1b; margin-bottom:6px;">⚠️ Fehlerquellen</div>
+                    <ul style="color:#7f1d1d; line-height:1.9; margin-left:16px; padding:0;">
+                        <li><b>Lügen & Fehler</b>: „Die Erde ist flach"</li>
+                        <li><b>Mehrdeutigkeiten</b>: „Bank" = ?</li>
+                        <li><b>Widersprüche & Lücken</b></li>
+                    </ul>
+                </div>
+
+            <!-- Rechts: Ko-Okkurrenz-Plot (beibehalten) -->
+            <div class="fragment" style="flex:1; min-width:340px;">
+                <div class="demo-box" style="min-height:auto; padding:14px; height: 470px;">
+                    <div class="demo-title">Wie oft kommen Wörter in der Nähe voneinander vor?</div>
+                    <div id="cooccurrence-plot" style="height:260px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+                </div>
+            </div>
+
+                <div class="fragment" style="padding:14px; background:#f0fdf4; border-radius:12px; border:1px solid #86efac;">
+                    <div style="font-weight:bold; color:#166534; margin-bottom:6px;">✓ Masse schlägt Rauschen</div>
+                    <p style="color:#334155; margin:0; line-height:1.6;">
+                        „Hamburg" + „Elbe" → <b>8420×</b><br>
+                        „Hamburg" + „Spree" → <b>45×</b><br>
+                        → Häufigkeit filtert Fehler (hoffentlich) heraus.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:14px; ">
+            <strong>Kernaussage:</strong> Einzelne Texte liegen falsch, aber in der Masse scheint die Wirklichkeit (hoffentlich) durch.
+        </div>
+    </div>
+</div>
+
+
 <!-- ==================== SLIDE: Transformer-Architektur (vereinfacht) ==================== -->
 <div class="slide" data-title="Transformer-Architektur">
     <div class="slide-content">
@@ -233,48 +276,6 @@
         <p class="fragment">Einige Bausteine habe ich weg gelassen, weil sie relevant für die Technik, aber nicht fürs intuitive Verständnis sind (z.B. Layer Normalization).</p>
 
         <p class="fragment">Ich werde auf diese einzelnen Blöcke nun näher eingehen.</p>
-    </div>
-</div>
-
-<!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
-<div class="slide" data-title="Daten sind fehlerhaft">
-    <div class="slide-content">
-        <h2>Daten sind fehlerhaft, und trotzdem nützlich</h2>
-
-        <div style="display:flex; gap:24px; margin-top:16px; flex-wrap:wrap;">
-            <!-- Links: Fehler + Lösung kompakt -->
-            <div style="flex:1; min-width:300px;">
-                <div style="padding:14px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca; margin-bottom:12px;">
-                    <div style="font-weight:bold; color:#991b1b; margin-bottom:6px;">⚠️ Fehlerquellen</div>
-                    <ul style="color:#7f1d1d; line-height:1.9; margin-left:16px; padding:0;">
-                        <li><b>Lügen & Fehler</b>: „Die Erde ist flach"</li>
-                        <li><b>Mehrdeutigkeiten</b>: „Bank" = ?</li>
-                        <li><b>Widersprüche & Lücken</b></li>
-                    </ul>
-                </div>
-
-            <!-- Rechts: Ko-Okkurrenz-Plot (beibehalten) -->
-            <div class="fragment" style="flex:1; min-width:340px;">
-                <div class="demo-box" style="min-height:auto; padding:14px; height: 470px;">
-                    <div class="demo-title">Wie oft kommen Wörter in der Nähe voneinander vor?</div>
-                    <div id="cooccurrence-plot" style="height:260px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-                </div>
-            </div>
-
-                <div class="fragment" style="padding:14px; background:#f0fdf4; border-radius:12px; border:1px solid #86efac;">
-                    <div style="font-weight:bold; color:#166534; margin-bottom:6px;">✓ Masse schlägt Rauschen</div>
-                    <p style="color:#334155; margin:0; line-height:1.6;">
-                        „Hamburg" + „Elbe" → <b>8420×</b><br>
-                        „Hamburg" + „Spree" → <b>45×</b><br>
-                        → Häufigkeit filtert Fehler (hoffentlich) heraus.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="key-insight fragment" style="margin-top:14px; ">
-            <strong>Kernaussage:</strong> Einzelne Texte liegen falsch, aber in der Masse scheint die Wirklichkeit (hoffentlich) durch.
-        </div>
     </div>
 </div>
 
