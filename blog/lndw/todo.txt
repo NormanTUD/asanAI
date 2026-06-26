@@ -1,7 +1,6 @@
 "muster exist in wirklichkeit" ist ne annahme, muss nicht sein, können auch nur in uns esin
 "daten sind fehlerhaft" -> wie groß ist der kontext? was heißt "in der nähe"?
 seltene daten interpolation, fehlende daten extrapolation
-"ergebnis klingt perfekt" -> "sprachstrukturell plausibel, aber faktisch korrekt ist kein zielkriterium"
 -> "sprachlich plausibler text der in hinsicht auf fakten zufällig plausibel sein kann"
 
 "versteht die ki was sie sagt" -> kein greifbarer realitätsbezug
