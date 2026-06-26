@@ -27,9 +27,9 @@ const ResidualNotebook = (() => {
                 { type: "underline", start: 18, end: 21, color: "#e63946", label: "Artikel" },
                 { type: "underline", start: 22, end: 27, color: "#d62828", label: "Nomen" },
                 { type: "scribble", x: 350, y: -25, text: "Konjunktion↓", color: "#a8201a", rotation: 12, font: "italic 11px Georgia" },
-                { type: "highlight", start: 28, end: 32, color: "rgba(230, 57, 70, 0.15)" },
-                { type: "underline", start: 33, end: 36, color: "#6a040f", label: "Pron." },
-                { type: "circle", start: 43, end: 46, color: "#e63946" },
+                { type: "highlight", start: 30, end: 34, color: "rgba(230, 57, 70, 0.15)" },
+                { type: "underline", start: 36, end: 38, color: "#6a040f", label: "Pron." },
+                { type: "circle", start: 45, end: 48, color: "#e63946" },
                 { type: "scribble", x: 480, y: -35, text: "auch Verb!", color: "#e63946", rotation: -5, font: "bold 12px Courier New" },
             ]
         },
