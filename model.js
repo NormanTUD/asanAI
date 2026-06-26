@@ -1524,8 +1524,13 @@ async function compile_fake_model(layer_nr, layer_type) {
 			ret = false;
 		}
 
-		if(model?.output?.shape?.join(",") != fake_model?.output?.shape?.join(",")) {
-			ret = false;
+		// Only enforce output shape match if this is the LAST layer.
+		// For intermediate layers, it's enough that the model compiles successfully.
+		var num_layers = get_number_of_layers();
+		if(layer_nr == num_layers - 1) {
+			if(model?.output?.shape?.join(",") != fake_model?.output?.shape?.join(",")) {
+				ret = false;
+			}
 		}
 
 		await dispose(fake_model);
