@@ -1149,13 +1149,13 @@ const PredictionViz = {
     isOnPredictionSlide: function() {
         const activeSlide = document.querySelector('.slide.active');
         if (!activeSlide) return false;
-        return activeSlide.getAttribute('data-title') === 'Die finale Vorhersage';
+        return activeSlide.getAttribute('data-title') === 'Die Vorhersage';
     },
 
     canGoNext: function() {
         if (!this.isOnPredictionSlide()) return false;
         if (this._tweenActive) return false;
-        const demoBox = document.querySelector('[data-title="Die finale Vorhersage"] .demo-box');
+        const demoBox = document.querySelector('[data-title="Die Vorhersage"] .demo-box');
         if (!demoBox) return false;
         const parentFragment = demoBox.closest('.fragment');
         if (parentFragment && !parentFragment.classList.contains('visible')) return false;
@@ -1165,7 +1165,7 @@ const PredictionViz = {
     canGoPrev: function() {
         if (!this.isOnPredictionSlide()) return false;
         if (this._tweenActive) return false;
-        const demoBox = document.querySelector('[data-title="Die finale Vorhersage"] .demo-box');
+        const demoBox = document.querySelector('[data-title="Die Vorhersage"] .demo-box');
         if (!demoBox) return false;
         const parentFragment = demoBox.closest('.fragment');
         if (parentFragment && !parentFragment.classList.contains('visible')) return false;
