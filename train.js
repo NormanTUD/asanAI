@@ -1705,7 +1705,9 @@ function extractCategoryFromURL(_url, image_element) {
 				return labels[category_number % labels.length];
 			}
 
-			wrn(`Category could not be found for the url ${_url} and the image element ${image_element}`);
+			if(!_url.startsWith("data:image/png")) {
+				wrn(`Category could not be found for the url ${_url} and the image element ${image_element}`);
+			}
 
 			return null;
 		}
