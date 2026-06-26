@@ -42,7 +42,7 @@ const ResidualNotebook = (() => {
                 { type: "arrow", from: 10, to: 4, color: "#2a9d8f", label: "Verb → Subjekt" },
                 { type: "bracket", start: 14, end: 27, color: "#264653", label: "Präpositionalphrase (lokal)" },
                 { type: "scribble", x: 30, y: -45, text: "Subjekt-Verb\nKongruenz: 3.Pers.Sg.", color: "#2a9d8f", rotation: -3, font: "bold 11px monospace" },
-                { type: "box", start: 28, end: 46, color: "#2a9d8f", label: "Nebensatz (kausal)" },
+                { type: "box", start: 36, end: 46, color: "#2a9d8f", label: "Nebensatz (kausal)" },
                 { type: "scribble", x: 300, y: 55, text: "← Verb am Ende!\n   (Nebensatz-Regel)", color: "#264653", rotation: 4, font: "italic bold 11px Georgia" },
                 { type: "scribble", x: 180, y: -50, text: "V2-Stellung ✓", color: "#2a9d8f", rotation: -7, font: "bold 13px Impact" },
             ]
@@ -86,7 +86,7 @@ const ResidualNotebook = (() => {
                 { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Courier" },
                 { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },
                 { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
-                { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus (Rhema)" },
+                { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus" },
                 { type: "checkmark", x: 530, y: 30, color: "#0077b6" }
             ]
         }
@@ -365,7 +365,6 @@ const ResidualNotebook = (() => {
         const info = document.getElementById('notebook-layer-info');
         if (!info) return;
         if (currentLayer >= layers.length) {
-            info.innerHTML = `<span style="color:#166534; font-weight:bold;">✅ Alle ${layers.length} Schichten haben geschrieben!</span><br><span style="color:#64748b; font-size:0.85em;">Der Residual Stream enthält nun das gesammelte Wissen aller Experten, von Wortarten bis Pragmatik.</span>`;
         } else if (currentLayer === 0) {
         } else {
             const next = layers[currentLayer];
