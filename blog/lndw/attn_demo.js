@@ -24,7 +24,7 @@ const AttentionDemo = {
 			sentence: 'Nach dem <b class="attnexample" style="color:#10b981;">Spaziergang</b> im <b class="attnexample" style="color:#10b981;">Park</b> gehe ich zur <b class="attnexample" style="color:#f59e0b;">Bank</b>, um <b class="attnexample" style="color:#f59e0b;">Geld</b> abzuheben.',
 			// Beide Kontexte, aber "Geld" + "Bank" (abheben) dominiert → Finanzinstitut
 			contextWords: ['park', 'geld'],
-			bankShift: [6.8, 3.8] // Stärker Richtung Geld, leicht von Park beeinflusst
+			bankShift: [7, 4] // Stärker Richtung Geld, leicht von Park beeinflusst
 		}
 	],
 
