@@ -175,7 +175,15 @@ function dbg(...args) {
 		time: parse_int(Date.now() / 1000)
 	};
 
+	l_if_needed(args);
+
 	_full_debug_log.push(struct);
+}
+
+function l_if_needed (args) {
+	if(function checkCurrentUrlParams()) {
+		args.forEach(arg => l(arg));
+	}
 }
 
 function log_less (...args) {
