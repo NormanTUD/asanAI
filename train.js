@@ -254,6 +254,82 @@ function get_empty_training_memory_history_plotly() {
 	};
 }
 
+/**
+ * Selectively repairs NaN values in optimizer accumulators WITHOUT resetting
+ * the entire optimizer. Only the corrupted slots are zeroed out.
+ * This preserves the momentum information for all non-corrupted weights.
+ *
+ * Returns: { repaired: boolean, nan_slots: number, total_slots: number }
+ */
+async function selective_repair_nan_optimizer_slots() {
+	if (!model || !model.optimizer) return { repaired: false, nan_slots: 0, total_slots: 0 };
+	if (typeof model.optimizer.getWeights !== "function") return { repaired: false, nan_slots: 0, total_slots: 0 };
+	if (typeof model.optimizer.setWeights !== "function") return { repaired: false, nan_slots: 0, total_slots: 0 };
+
+	try {
+		const opt_weights = await model.optimizer.getWeights();
+		if (!opt_weights || opt_weights.length === 0) return { repaired: false, nan_slots: 0, total_slots: 0 };
+
+		let nan_slots = 0;
+		let total_slots = opt_weights.length;
+		let needs_repair = false;
+		const repaired_weights = [];
+
+		for (let ow_idx = 0; ow_idx < opt_weights.length; ow_idx++) {
+			const ow = opt_weights[ow_idx];
+			if (!ow || !ow.tensor || ow.tensor.isDisposed) {
+				repaired_weights.push(ow);
+				continue;
+			}
+
+			const data = ow.tensor.dataSync();
+			let has_nan_in_this = false;
+
+			for (let di = 0; di < data.length; di++) {
+				if (isNaN(data[di]) || !isFinite(data[di])) {
+					has_nan_in_this = true;
+					break;
+				}
+			}
+
+			if (has_nan_in_this) {
+				nan_slots++;
+				needs_repair = true;
+				// Replace this slot with zeros (safe reset for this specific accumulator)
+				const zero_tensor = tf.zeros(ow.tensor.shape, ow.tensor.dtype);
+				repaired_weights.push({ name: ow.name, tensor: zero_tensor });
+				wrn(`[selective_repair_nan_optimizer_slots] Zeroed NaN accumulator slot "${ow.name}" (shape: [${ow.tensor.shape.join(",")}])`);
+			} else {
+				repaired_weights.push(ow);
+			}
+		}
+
+		if (needs_repair) {
+			try {
+				await model.optimizer.setWeights(repaired_weights.map(w => w.tensor));
+				dbg(`[selective_repair_nan_optimizer_slots] Repaired ${nan_slots}/${total_slots} NaN accumulator slots.`);
+			} catch (set_err) {
+				// If setWeights fails (some optimizers don't support it well),
+				// fall back to full optimizer reset
+				wrn(`[selective_repair_nan_optimizer_slots] setWeights failed: ${set_err.message}. Falling back to full optimizer reset.`);
+				await repair_nan_optimizer_if_needed();
+			}
+
+			// Dispose the zero tensors we created
+			for (let rw_idx = 0; rw_idx < repaired_weights.length; rw_idx++) {
+				if (repaired_weights[rw_idx] !== opt_weights[rw_idx]) {
+					try { repaired_weights[rw_idx].tensor.dispose(); } catch(e) {}
+				}
+			}
+		}
+
+		return { repaired: needs_repair, nan_slots: nan_slots, total_slots: total_slots };
+	} catch (e) {
+		wrn("[selective_repair_nan_optimizer_slots] Error: " + (e.message || e));
+		return { repaired: false, nan_slots: 0, total_slots: 0 };
+	}
+}
+
 function get_key_by_value(_object, value) {
 	try {
 		var res = Object.keys(_object).find(key => _object[key] === value);
@@ -409,8 +485,6 @@ async function get_model_data () {
 
 	// =====================================================================
 	// GUARD: If training is active, do NOT create a new optimizer.
-	// This is the CRITICAL fix: creating a new optimizer resets Adam's
-	// m/v buffers to zero, which causes the "only biases update" symptom.
 	// =====================================================================
 	if (started_training && model && model.optimizer) {
 		dbg("[get_model_data] SKIPPED optimizer creation: training is in progress. " +
@@ -434,6 +508,31 @@ async function get_model_data () {
 		if (typeof new_optimizer.minimize !== "function") {
 			err("[get_model_data] FATAL: Created optimizer has no minimize() method!");
 			return;
+		}
+
+		// =====================================================================
+		// CRITICAL FIX: Apply gradient clipping to prevent NaN in Adam accumulators.
+		//
+		// The root cause of NaN in Adam's m/v buffers is that gradients can
+		// become very large (or Infinity) for certain weight configurations,
+		// especially in the first few training steps when weights are randomly
+		// initialized. When gradient² = Infinity, and then Infinity - Infinity
+		// occurs in bias correction, NaN is produced.
+		//
+		// By clipping gradients, we ensure that no gradient exceeds a safe
+		// magnitude, preventing the cascade: large_grad → Inf in v_t → NaN.
+		//
+		// We use clipValue (element-wise clipping) which is the safest option.
+		// =====================================================================
+		var clip_value = parse_float($("#gradient_clip_value").val ? ($("#gradient_clip_value").val() || "1.0") : "1.0");
+		
+		if (clip_value > 0 && isFinite(clip_value)) {
+			new_optimizer.clipValue = clip_value;
+			dbg(`[get_model_data] Gradient clipping applied: clipValue=${clip_value}`);
+		} else {
+			// Default safe clip value
+			new_optimizer.clipValue = 1.0;
+			dbg(`[get_model_data] Gradient clipping applied: clipValue=1.0 (default)`);
 		}
 
 		if (typeof new_optimizer.getClassName === "function") {
@@ -465,9 +564,11 @@ async function get_model_data () {
 			". Error: " + error_msg);
 
 		try {
-			wrn("[get_model_data] Attempting fallback: default Adam(0.001)...");
+			wrn("[get_model_data] Attempting fallback: default Adam(0.001) with clipValue=1.0...");
 			await tf.ready();
-			global_model_data["optimizer"] = tf.train.adam(0.001);
+			var fallback_opt = tf.train.adam(0.001);
+			fallback_opt.clipValue = 1.0;
+			global_model_data["optimizer"] = fallback_opt;
 			wrn("[get_model_data] Fallback Adam created successfully.");
 		} catch (fallback_err) {
 			err("[get_model_data] FATAL: Even fallback optimizer failed: " + fallback_err);
@@ -650,8 +751,128 @@ async function get_fit_data () {
 		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
+	callbacks["onBatchBegin"] = async function () {
+		confusion_matrix_and_grid_cache = {};
+		if(!started_training) {
+			model.stopTraining = true;
+		}
+
+		// =====================================================================
+		// GUARD: Quick NaN check on model weights every N batches.
+		// If weights become NaN during training, stop immediately.
+		// We only check every 10 batches for performance.
+		// =====================================================================
+		if (typeof callbacks._batch_counter === "undefined") {
+			callbacks._batch_counter = 0;
+		}
+		callbacks._batch_counter++;
+
+		if (callbacks._batch_counter % 10 === 0) {
+			try {
+				const weights = model.getWeights();
+				let found_nan = false;
+				for (let wi = 0; wi < weights.length; wi++) {
+					if (weights[wi].isDisposed) continue;
+					// Quick sample check - just first few values
+					const data = weights[wi].dataSync();
+					for (let di = 0; di < Math.min(data.length, 20); di++) {
+						if (isNaN(data[di])) {
+							found_nan = true;
+							err(`[onBatchBegin] NaN detected in weight tensor ${wi} at batch ${callbacks._batch_counter}! Attempting repair...`);
+							break;
+						}
+					}
+					if (found_nan) break;
+				}
+
+				if (found_nan) {
+					const repaired = await repair_nan_weights_if_needed();
+					if (repaired) {
+						const opt_repaired = await selective_repair_nan_optimizer_slots();
+						wrn(`[onBatchBegin] NaN repair: weights=${repaired}, optimizer_slots=${opt_repaired.nan_slots} fixed. Training continues.`);
+					} else {
+						err("[onBatchBegin] NaN repair failed. Stopping training.");
+						model.stopTraining = true;
+						return;
+					}
+				}
+			} catch (nan_batch_err) {
+				dbg(`[onBatchBegin] Batch NaN check error (non-fatal): ${nan_batch_err}`);
+			}
+		}
+
+		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
+			await write_model_to_latex_to_page();
+		}
+
+		confusion_matrix_and_grid_cache = {};
+
+		show_or_hide_beginner_or_expert_mode_stuff();
+	};
+
 	callbacks["onEpochEnd"] = async function (batch, logs) {
 		confusion_matrix_and_grid_cache = {};
+
+		// =====================================================================
+		// CRITICAL: Check for NaN in optimizer accumulators at end of each epoch.
+		// If NaN has crept into Adam's m/v buffers during this epoch, we repair
+		// it NOW before the next epoch starts, preventing NaN from spreading
+		// to all future weight updates.
+		// =====================================================================
+		if (logs && (isNaN(logs["loss"]) || !isFinite(logs["loss"]))) {
+			err(`[onEpochEnd] Loss is ${logs["loss"]} at epoch ${batch}! Attempting NaN repair...`);
+			const repair_result = await selective_repair_nan_optimizer_slots();
+			if (repair_result.repaired) {
+				wrn(`[onEpochEnd] Repaired ${repair_result.nan_slots} NaN optimizer slots. Training will continue.`);
+				// Also repair any NaN weights
+				await repair_nan_weights_if_needed();
+			} else {
+				err("[onEpochEnd] Could not repair NaN. Stopping training.");
+				model.stopTraining = true;
+				return;
+			}
+		} else {
+			// Even if loss looks OK, check optimizer accumulators periodically
+			// because NaN can exist in individual weight slots without making
+			// the overall loss NaN (if those weights have small influence)
+			try {
+				if (model.optimizer && typeof model.optimizer.getWeights === "function") {
+					const opt_weights = await model.optimizer.getWeights();
+					if (opt_weights && opt_weights.length > 0) {
+						let has_any_nan = false;
+						for (let ow_idx = 0; ow_idx < opt_weights.length; ow_idx++) {
+							const ow = opt_weights[ow_idx];
+							if (ow && ow.tensor && !ow.tensor.isDisposed) {
+								// Sample check - don't check every element for performance
+								const data = ow.tensor.dataSync();
+								const check_count = Math.min(data.length, 200);
+								const step = Math.max(1, Math.floor(data.length / check_count));
+								for (let di = 0; di < data.length; di += step) {
+									if (isNaN(data[di]) || !isFinite(data[di])) {
+										has_any_nan = true;
+										break;
+									}
+								}
+							}
+							if (has_any_nan) break;
+						}
+
+						if (has_any_nan) {
+							wrn(`[onEpochEnd] NaN detected in optimizer accumulators (epoch ${batch}). Performing selective repair...`);
+							const repair_result = await selective_repair_nan_optimizer_slots();
+							if (repair_result.repaired) {
+								wrn(`[onEpochEnd] Repaired ${repair_result.nan_slots} NaN slots. Training continues.`);
+							}
+							// Also check and repair weights
+							await repair_nan_weights_if_needed();
+						}
+					}
+				}
+			} catch (nan_check_err) {
+				dbg(`[onEpochEnd] Optimizer NaN check failed (non-fatal): ${nan_check_err}`);
+			}
+		}
+
 		delete logs["epoch"];
 		delete logs["size"];
 
@@ -3256,45 +3477,107 @@ function cached_load_resized_image (image_element) {
 	}
 
 	var res = tidy(() => {
-		var image_from_element = fromPixels(image_element);
+		var image_from_element;
+		
+		try {
+			image_from_element = fromPixels(image_element);
+		} catch (from_pixels_err) {
+			wrn(`[cached_load_resized_image] fromPixels failed for "${image_element_xpath}": ${from_pixels_err.message || from_pixels_err}. Using zero tensor.`);
+			// Create a zero tensor with the expected shape [height, width, 3]
+			image_from_element = tf.zeros([
+				image_element.naturalHeight || image_element.height || height || 40,
+				image_element.naturalWidth || image_element.width || width || 40,
+				3
+			], 'int32');
+		}
 		
 		// =====================================================================
-		// GUARD: Check if fromPixels produced valid data
-		// Some browsers return all-zero or corrupted data for images that
-		// haven't fully loaded yet, or for cross-origin images.
+		// GUARD: Validate pixel data integrity
+		// Check for NaN/Inf in the raw pixel data. This can happen when:
+		// 1. Image hasn't fully loaded (incomplete decode)
+		// 2. Cross-origin image without CORS headers
+		// 3. Browser bug with certain image formats
+		// 4. Canvas tainted by cross-origin data
 		// =====================================================================
-		var image_data = image_from_element.dataSync();
-		var has_nan_pixel = false;
-		var all_zero = true;
+		var needs_replacement = false;
 		
-		for (var pi = 0; pi < Math.min(image_data.length, 100); pi++) {
-			if (isNaN(image_data[pi]) || !isFinite(image_data[pi])) {
-				has_nan_pixel = true;
-				break;
+		try {
+			// Use tf.any(tf.isNaN(...)) for efficient GPU-side check
+			var has_nan_tensor = image_from_element.isNaN().any();
+			var has_nan_val = has_nan_tensor.dataSync()[0];
+			has_nan_tensor.dispose();
+			
+			if (has_nan_val) {
+				wrn(`[cached_load_resized_image] Image "${image_element_xpath}" contains NaN pixel values!`);
+				needs_replacement = true;
 			}
-			if (image_data[pi] !== 0) {
-				all_zero = false;
+			
+			if (!needs_replacement) {
+				// Check for Inf
+				var has_inf_tensor = tf.isInf(image_from_element.toFloat()).any();
+				var has_inf_val = has_inf_tensor.dataSync()[0];
+				has_inf_tensor.dispose();
+				
+				if (has_inf_val) {
+					wrn(`[cached_load_resized_image] Image "${image_element_xpath}" contains Infinity pixel values!`);
+					needs_replacement = true;
+				}
+			}
+		} catch (check_err) {
+			// Fallback: manual check on a sample
+			try {
+				var sample_data = image_from_element.dataSync();
+				for (var pi = 0; pi < Math.min(sample_data.length, 300); pi++) {
+					if (isNaN(sample_data[pi]) || !isFinite(sample_data[pi])) {
+						wrn(`[cached_load_resized_image] Image "${image_element_xpath}" has invalid pixel at index ${pi}: ${sample_data[pi]}`);
+						needs_replacement = true;
+						break;
+					}
+				}
+			} catch (sample_err) {
+				wrn(`[cached_load_resized_image] Could not validate image data: ${sample_err}`);
+				needs_replacement = true;
 			}
 		}
 		
-		if (has_nan_pixel) {
-			wrn(`[cached_load_resized_image] Image at "${image_element_xpath}" contains NaN/Inf pixel values! Replacing with zeros.`);
-			image_from_element = tf.zeros(image_from_element.shape, image_from_element.dtype);
-		} else if (all_zero && image_data.length > 100) {
-			dbg(`[cached_load_resized_image] Image at "${image_element_xpath}" appears to be all-zero (may not be loaded yet).`);
+		if (needs_replacement) {
+			err(`[cached_load_resized_image] Replacing corrupted image "${image_element_xpath}" with zero tensor to prevent NaN propagation.`);
+			var replacement_shape = image_from_element.shape;
+			image_from_element = tf.zeros(replacement_shape, 'float32');
 		}
 		
-		var _res = expand_dims(resize_image(image_from_element, [height, width]));
+		// Resize
+		var resized = resize_image(image_from_element, [height, width]);
+		var _res = expand_dims(resized);
 
+		// Divide by normalization factor
 		var divide_by_val = parse_float($("#divide_by").val());
 		
-		// Guard against divide_by = 0
-		if (!divide_by_val || divide_by_val === 0 || isNaN(divide_by_val)) {
-			wrn("[cached_load_resized_image] divide_by is 0 or NaN! Using 255 as fallback.");
+		// Guard against divide_by = 0 or NaN
+		if (!divide_by_val || divide_by_val === 0 || isNaN(divide_by_val) || !isFinite(divide_by_val)) {
+			wrn("[cached_load_resized_image] divide_by is 0/NaN/Inf! Using 255 as fallback.");
 			divide_by_val = 255;
 		}
 		
 		_res = divNoNan(_res, divide_by_val);
+		
+		// =====================================================================
+		// FINAL GUARD: Verify the output tensor is clean
+		// This catches any NaN that might have been introduced by resize or divNoNan
+		// =====================================================================
+		try {
+			var final_nan_check = _res.isNaN().any();
+			var final_has_nan = final_nan_check.dataSync()[0];
+			final_nan_check.dispose();
+			
+			if (final_has_nan) {
+				err(`[cached_load_resized_image] FINAL CHECK FAILED: Output tensor for "${image_element_xpath}" still contains NaN after processing! Replacing with zeros.`);
+				var final_shape = _res.shape;
+				_res = tf.zeros(final_shape, _res.dtype);
+			}
+		} catch (final_check_err) {
+			dbg(`[cached_load_resized_image] Final NaN check failed (non-fatal): ${final_check_err}`);
+		}
 
 		return _res;
 	});
