@@ -249,7 +249,7 @@ function get_key_by_value(_object, value) {
 
 async function get_model_data () {
 	// =====================================================================
-	// GUARD: Basic sanity check
+	// GUARD: Basic sanity checks
 	// =====================================================================
 	if (typeof tf === "undefined" || !tf || !tf.train) {
 		err("[get_model_data] FATAL: tf or tf.train is not defined. Cannot create optimizer.");
@@ -260,9 +260,17 @@ async function get_model_data () {
 	// DISPOSE: Clean up any old tensors in global_model_data
 	// =====================================================================
 	if (global_model_data) {
-		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
-		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
-			await dispose(model_data_tensors[model_data_tensor_idx]);
+		try {
+			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
+			for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
+				try {
+					await dispose(model_data_tensors[model_data_tensor_idx]);
+				} catch (dispose_err) {
+					dbg("[get_model_data] Error disposing old tensor: " + dispose_err);
+				}
+			}
+		} catch (e) {
+			dbg("[get_model_data] Error during old tensor cleanup: " + e);
 		}
 	}
 
@@ -272,6 +280,21 @@ async function get_model_data () {
 	var loss = get_loss();
 	var optimizer_type = get_optimizer();
 	var metric_type = get_metric();
+
+	if (!loss) {
+		err("[get_model_data] FATAL: loss is empty/undefined!");
+		return;
+	}
+
+	if (!optimizer_type) {
+		err("[get_model_data] FATAL: optimizer_type is empty/undefined!");
+		return;
+	}
+
+	if (!metric_type) {
+		wrn("[get_model_data] WARNING: metric_type is empty/undefined, defaulting to loss.");
+		metric_type = loss;
+	}
 
 	if (Object.values(metric_shortnames).includes(metric_type)) {
 		metric_type = get_key_by_value(metric_shortnames, metric_type);
@@ -285,34 +308,34 @@ async function get_model_data () {
 	if (looks_like_number(epochs)) {
 		epochs = parse_int(epochs);
 	} else {
-		finished_loading && wrn("#epochs doesnt look like a number");
+		finished_loading && wrn("[get_model_data] #epochs doesn't look like a number: " + epochs);
+		epochs = 1;
 	}
 
 	if (looks_like_number(batchSize)) {
 		batchSize = parse_int(batchSize);
 	} else {
-		finished_loading && wrn("#batchSize doesnt look like a number");
+		finished_loading && wrn("[get_model_data] #batchSize doesn't look like a number: " + batchSize);
+		batchSize = 32;
 	}
 
 	if (looks_like_number(validationSplit)) {
 		validationSplit = parse_float(validationSplit);
 	} else {
-		finished_loading && wrn("#validation_split doesnt look like a number");
+		finished_loading && wrn("[get_model_data] #validationSplit doesn't look like a number: " + validationSplit);
+		validationSplit = 0;
 	}
 
 	if (looks_like_number(divide_by)) {
 		divide_by = parse_float(divide_by);
 	} else {
-		finished_loading && wrn("#divide_by doesnt look like a number");
+		finished_loading && wrn("[get_model_data] #divide_by doesn't look like a number: " + divide_by);
+		divide_by = 1;
 	}
 
 	// =====================================================================
 	// BUILD: Construct the global_model_data object
 	// =====================================================================
-	var previous_optimizer = global_model_data ? global_model_data.optimizer : null;
-	var previous_optimizer_name = global_model_data ? global_model_data.optimizer_name : null;
-	var previous_optimizer_params_hash = global_model_data ? global_model_data._optimizer_params_hash : null;
-
 	global_model_data = {
 		loss: loss,
 		optimizer_name: optimizer_type,
@@ -331,12 +354,13 @@ async function get_model_data () {
 	}
 
 	// =====================================================================
-	// COLLECT OPTIMIZER HYPERPARAMETERS
+	// COLLECT OPTIMIZER HYPERPARAMETERS from UI
 	// =====================================================================
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
 	if (!optimizer_data_names || !Array.isArray(optimizer_data_names)) {
-		err(`[get_model_data] FATAL: No optimizer data structure found for optimizer type "${optimizer_type}". Available: ${Object.keys(model_data_structure).join(", ")}`);
+		err(`[get_model_data] FATAL: No optimizer data structure found for "${optimizer_type}". ` +
+			`Available: ${Object.keys(model_data_structure).join(", ")}`);
 		return;
 	}
 
@@ -352,7 +376,9 @@ async function get_model_data () {
 		var element_val = $element_field.val();
 
 		if (!looks_like_number(element_val)) {
-			wrn(`[get_model_data] WARNING: Optimizer param "${optimizer_data_names[optimizer_idx]}" value "${element_val}" does not look like a number.`);
+			wrn(`[get_model_data] WARNING: Optimizer param "${optimizer_data_names[optimizer_idx]}" ` +
+				`value "${element_val}" does not look like a number. Using 0.`);
+			element_val = "0";
 		}
 
 		global_model_data[optimizer_data_names[optimizer_idx]] = parse_float(element_val);
@@ -371,162 +397,94 @@ async function get_model_data () {
 	};
 
 	if (!Object.keys(optimizer_constructors).includes(optimizer_type)) {
-		err(`[get_model_data] FATAL: Unknown optimizer type "${optimizer_type}". Available: ${Object.keys(optimizer_constructors).join(", ")}`);
+		err(`[get_model_data] FATAL: Unknown optimizer type "${optimizer_type}". ` +
+			`Available: ${Object.keys(optimizer_constructors).join(", ")}`);
 		return;
 	}
 
 	// =====================================================================
-	// CRITICAL FIX (Option C): OPTIMIZER CACHING
+	// CREATE OPTIMIZER
 	// 
-	// The core problem: Every call to get_model_data() previously created
-	// a brand-new optimizer via eval(). This destroys Adam's internal
-	// accumulatedFirstMoment (m) and accumulatedSecondMoment (v) buffers.
-	// 
-	// Without these buffers, Adam degenerates to essentially SGD with a
-	// fixed step size of ~lr for the first few steps. For layers with
-	// very small gradients (e.g., behind a 1-filter bottleneck), the
-	// raw gradient magnitude is so tiny that without momentum accumulation,
-	// the weight update rounds to zero in float32.
+	// CRITICAL: Always create a FRESH optimizer here. The old approach of
+	// caching the optimizer across compile_model() calls fails because
+	// TF.js optimizers hold internal references to the engine/backend state
+	// at creation time. If a tf.engine().startScope() is called between
+	// optimizer creation and model.fit(), the optimizer's internal tensor
+	// slots become invalid ("n is undefined" / "backend is undefined").
 	//
-	// FIX: We compute a hash of the optimizer type + all its hyperparameters.
-	// If the hash matches the previous call AND we already have a valid
-	// optimizer object, we REUSE it instead of creating a new one.
-	// This preserves the gradient accumulator state across compile_model()
-	// calls that don't actually change the optimizer configuration.
+	// The REAL fix for gradient propagation is in fit_model() and 
+	// compile_model(): we prevent compile_model() from being called during
+	// training (via the started_training guard), so the optimizer created
+	// here at the START of training will persist throughout the entire
+	// training run without being replaced.
+	//
+	// The gradient vanishing issue was caused by compile_model() being
+	// called DURING training (via UI events / incrementAndReset), which
+	// created a NEW optimizer mid-training, resetting Adam's m/v buffers.
+	// With the started_training guard in compile_model(), this no longer
+	// happens, so a fresh optimizer at training start is perfectly fine.
 	// =====================================================================
 
-	// --- Compute a hash of current optimizer parameters ---
-	var optimizer_params_for_hash = {
-		type: optimizer_type
-	};
+	var optimizer_as_code = "tf.train." + optimizer_constructors[optimizer_type];
 
-	for (var param_idx = 0; param_idx < optimizer_data_names.length; param_idx++) {
-		var param_name = optimizer_data_names[param_idx];
-		optimizer_params_for_hash[param_name] = global_model_data[param_name];
-	}
+	dbg("[get_model_data] Creating optimizer: " + optimizer_as_code);
 
-	var current_optimizer_params_hash = JSON.stringify(optimizer_params_for_hash);
+	try {
+		// Ensure TF.js backend is ready before creating optimizer
+		await tf.ready();
 
-	// --- GUARD: Check if we can reuse the existing optimizer ---
-	var can_reuse_optimizer = false;
+		var new_optimizer = eval(optimizer_as_code);
 
-	if (previous_optimizer && previous_optimizer_name && previous_optimizer_params_hash) {
-		// Check 1: Same optimizer type?
-		if (previous_optimizer_name === optimizer_type) {
-			// Check 2: Same hyperparameters?
-			if (previous_optimizer_params_hash === current_optimizer_params_hash) {
-				// Check 3: Is the previous optimizer object still valid (not disposed)?
-				var optimizer_is_valid = false;
-				try {
-					// TF.js optimizers have internal variables. If they're disposed,
-					// accessing them will throw or return disposed tensors.
-					if (previous_optimizer && typeof previous_optimizer.getConfig === "function") {
-						var config_check = previous_optimizer.getConfig();
-						if (config_check && typeof config_check === "object") {
-							optimizer_is_valid = true;
-						}
-					}
-				} catch (e) {
-					dbg(`[get_model_data] Previous optimizer validation failed: ${e}. Will create new one.`);
-					optimizer_is_valid = false;
-				}
-
-				// Check 4: If training is in progress, ALWAYS reuse to protect accumulators
-				if (started_training) {
-					if (optimizer_is_valid) {
-						can_reuse_optimizer = true;
-					} else {
-						err("[get_model_data] CRITICAL: Training is in progress but optimizer is invalid! This will likely cause gradient issues.");
-					}
-				} else {
-					// Not training: still reuse if valid (preserves state for retrain scenarios)
-					if (optimizer_is_valid) {
-						can_reuse_optimizer = true;
-					}
-				}
-			} else {
-				dbg(`[get_model_data] Optimizer params changed. Old hash: ${previous_optimizer_params_hash.substring(0, 60)}... New hash: ${current_optimizer_params_hash.substring(0, 60)}...`);
-			}
-		} else {
-			dbg(`[get_model_data] Optimizer type changed from "${previous_optimizer_name}" to "${optimizer_type}".`);
+		// GUARD: Validate the newly created optimizer
+		if (!new_optimizer) {
+			err("[get_model_data] FATAL: eval() returned null/undefined for: " + optimizer_as_code);
+			return;
 		}
-	}
 
-	// --- GUARD: Extra protection during training ---
-	if (started_training && !can_reuse_optimizer && previous_optimizer) {
-		wrn("[get_model_data] WARNING: Cannot reuse optimizer during training! " +
-			"This means compile_model() or get_model_data() was called with changed parameters " +
-			"while training is active. Gradient accumulators will be RESET. " +
-			"This WILL cause vanishing gradients in earlier layers.");
-	}
+		if (typeof new_optimizer.minimize !== "function") {
+			err("[get_model_data] FATAL: Created optimizer has no minimize() method!");
+			return;
+		}
 
-	// --- Create or reuse the optimizer ---
-	if (can_reuse_optimizer) {
-		// REUSE: Keep the existing optimizer with its accumulated gradient state
-		global_model_data["optimizer"] = previous_optimizer;
-		global_model_data["_optimizer_params_hash"] = current_optimizer_params_hash;
+		// GUARD: Log optimizer class for debugging
+		if (typeof new_optimizer.getClassName === "function") {
+			dbg(`[get_model_data] Optimizer created: ${new_optimizer.getClassName()}`);
+		}
 
-		dbg("[get_model_data] REUSING existing optimizer (preserving gradient accumulators). " +
-			"Type: " + optimizer_type + ", Hash match: true");
-	} else {
-		// CREATE NEW: Either first time, or parameters actually changed
-		var optimizer_as_code = "tf.train." + optimizer_constructors[optimizer_type];
-
-		dbg("[get_model_data] Creating NEW optimizer: " + optimizer_as_code);
-
-		try {
-			var new_optimizer = eval(optimizer_as_code);
-
-			// GUARD: Validate the newly created optimizer
-			if (!new_optimizer) {
-				err("[get_model_data] FATAL: eval() returned null/undefined for optimizer code: " + optimizer_as_code);
-				return;
-			}
-
-			if (typeof new_optimizer.minimize !== "function") {
-				err("[get_model_data] FATAL: Created optimizer does not have a minimize() method. Something is very wrong.");
-				return;
-			}
-
-			if (typeof new_optimizer.getClassName !== "function") {
-				wrn("[get_model_data] WARNING: Created optimizer does not have getClassName(). May be an older TF.js version.");
-			} else {
-				var class_name = new_optimizer.getClassName();
-				dbg(`[get_model_data] New optimizer class: ${class_name}`);
-			}
-
-			// GUARD: Validate hyperparameters were applied correctly
-			if (typeof new_optimizer.getConfig === "function") {
+		// GUARD: Validate learning rate was applied
+		if (typeof new_optimizer.getConfig === "function") {
+			try {
 				var applied_config = new_optimizer.getConfig();
-				var lr_key = "learningRate";
-				if (applied_config && applied_config[lr_key] !== undefined) {
+				if (applied_config && applied_config.learningRate !== undefined) {
 					var expected_lr = global_model_data["learningRate"];
-					var actual_lr = applied_config[lr_key];
+					var actual_lr = applied_config.learningRate;
 					if (Math.abs(expected_lr - actual_lr) > 1e-10) {
-						wrn(`[get_model_data] WARNING: Learning rate mismatch! Expected: ${expected_lr}, Got: ${actual_lr}`);
+						wrn(`[get_model_data] LR mismatch! Expected: ${expected_lr}, Got: ${actual_lr}`);
+					} else {
+						dbg(`[get_model_data] LR verified: ${actual_lr}`);
 					}
 				}
+			} catch (config_err) {
+				dbg("[get_model_data] Could not verify optimizer config: " + config_err);
 			}
+		}
 
-			global_model_data["optimizer"] = new_optimizer;
-			global_model_data["_optimizer_params_hash"] = current_optimizer_params_hash;
+		global_model_data["optimizer"] = new_optimizer;
 
-			dbg("[get_model_data] New optimizer created successfully. Type: " + optimizer_type);
+	} catch (e) {
+		var error_msg = (e && e.message) ? e.message : ("" + e);
+		err("[get_model_data] FATAL: Failed to create optimizer. Code: " + optimizer_as_code + 
+			". Error: " + error_msg);
 
-		} catch (e) {
-			var error_msg = (e && e.message) ? e.message : ("" + e);
-			err("[get_model_data] FATAL: Failed to create optimizer. Code: " + optimizer_as_code + ". Error: " + error_msg);
-
-			// Fallback: try to create a basic Adam optimizer
-			try {
-				wrn("[get_model_data] Attempting fallback: creating default Adam optimizer...");
-				global_model_data["optimizer"] = tf.train.adam(0.001);
-				global_model_data["_optimizer_params_hash"] = "FALLBACK";
-				wrn("[get_model_data] Fallback Adam optimizer created. Training may not use intended hyperparameters.");
-			} catch (fallback_err) {
-				err("[get_model_data] FATAL: Even fallback optimizer creation failed: " + fallback_err);
-				return;
-			}
+		// Fallback: try basic Adam
+		try {
+			wrn("[get_model_data] Attempting fallback: default Adam(0.001)...");
+			await tf.ready();
+			global_model_data["optimizer"] = tf.train.adam(0.001);
+			wrn("[get_model_data] Fallback Adam created successfully.");
+		} catch (fallback_err) {
+			err("[get_model_data] FATAL: Even fallback optimizer failed: " + fallback_err);
+			return;
 		}
 	}
 
@@ -534,18 +492,16 @@ async function get_model_data () {
 	// FINAL VALIDATION
 	// =====================================================================
 	if (!global_model_data["optimizer"]) {
-		err("[get_model_data] FATAL: After all attempts, optimizer is still null/undefined!");
+		err("[get_model_data] FATAL: After all attempts, optimizer is still null!");
 		return;
 	}
 
-	// GUARD: Log a summary for debugging
+	// GUARD: Summary log
 	if (finished_loading) {
-		var opt_summary = `[get_model_data] Summary: optimizer=${optimizer_type}, ` +
-			`reused=${can_reuse_optimizer}, ` +
+		dbg(`[get_model_data] Summary: optimizer=${optimizer_type}, ` +
 			`lr=${global_model_data["learningRate"]}, ` +
 			`loss=${loss}, metric=${metric_type}, ` +
-			`epochs=${epochs}, batchSize=${batchSize}`;
-		dbg(opt_summary);
+			`epochs=${epochs}, batchSize=${batchSize}`);
 	}
 }
 
@@ -1383,38 +1339,210 @@ async function prepare_gui_for_training() {
 }
 
 async function fit_model(x_and_y) {
+	var weights_before_training = null;
+	var fit_data = null;
+
 	try {
-		const fit_data = await _get_fit_data(x_and_y);
+		dbg("[fit_model] ========== FIT_MODEL START ==========");
+
+		// =====================================================================
+		// GUARD: Validate x_and_y input
+		// =====================================================================
+		if (!x_and_y) {
+			err("[fit_model] FATAL: x_and_y is null/undefined!");
+			throw new Error("[fit_model] x_and_y is null/undefined");
+		}
+
+		if (typeof x_and_y !== "object") {
+			err(`[fit_model] FATAL: x_and_y is not an object, but ${typeof x_and_y}`);
+			throw new Error("[fit_model] x_and_y is not an object");
+		}
+
+		if (!("x" in x_and_y)) {
+			err("[fit_model] FATAL: x_and_y has no 'x' key! Keys: " + Object.keys(x_and_y).join(", "));
+			throw new Error("[fit_model] x_and_y missing 'x'");
+		}
+
+		if (!("y" in x_and_y)) {
+			err("[fit_model] FATAL: x_and_y has no 'y' key! Keys: " + Object.keys(x_and_y).join(", "));
+			throw new Error("[fit_model] x_and_y missing 'y'");
+		}
+
+		// =====================================================================
+		// GUARD: Get fit_data (callbacks, epochs, batchSize, etc.)
+		// =====================================================================
+		dbg("[fit_model] Getting fit_data...");
+
+		try {
+			fit_data = await _get_fit_data(x_and_y);
+		} catch (fit_data_err) {
+			err("[fit_model] FATAL: _get_fit_data threw: " + (fit_data_err.message || fit_data_err));
+			throw fit_data_err;
+		}
 
 		if (!fit_data || fit_data === true) {
-			err("[fit_model] ERROR: fit_data is invalid (was true or falsy). Cannot train.");
+			err("[fit_model] FATAL: fit_data is invalid (was " + JSON.stringify(fit_data) + "). Cannot train.");
 			throw new Error("[fit_model] fit_data was not properly created.");
 		}
 
-		await tf.ready();
-
-		// =====================================================================
-		// GUARD: Do NOT recompile if model is already compiled and has an optimizer.
-		// Recompiling destroys the optimizer's accumulated gradient statistics
-		// (Adam's m and v buffers, etc.), which causes the kernel weights in
-		// earlier layers to stop updating while biases still update.
-		// =====================================================================
-		if (!model || !model.optimizer) {
-			dbg("[fit_model] Model or optimizer missing — compiling model now.");
-			await compile_model();
-		} else {
-			dbg("[fit_model] Model already compiled with optimizer (" + 
-				(model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown") + 
-				"). Skipping recompilation to preserve gradient accumulator state.");
+		if (typeof fit_data !== "object") {
+			err(`[fit_model] FATAL: fit_data is not an object, but ${typeof fit_data}`);
+			throw new Error("[fit_model] fit_data is not an object");
 		}
 
-		if (!model || !model.optimizer) {
-			err("[fit_model] FATAL: Model or optimizer is null/undefined after compile attempt.");
-			throw new Error("[fit_model] Model or optimizer is null/undefined after await compile_model().");
+		dbg("[fit_model] fit_data obtained. epochs=" + fit_data.epochs + ", batchSize=" + fit_data.batchSize);
+
+		// =====================================================================
+		// GUARD: Ensure TF.js backend is ready
+		// =====================================================================
+		dbg("[fit_model] Ensuring tf.ready()...");
+		try {
+			await tf.ready();
+			dbg("[fit_model] tf.ready() completed. Backend: " + tf.getBackend());
+		} catch (tf_ready_err) {
+			err("[fit_model] FATAL: tf.ready() failed: " + (tf_ready_err.message || tf_ready_err));
+			throw tf_ready_err;
+		}
+
+		// =====================================================================
+		// GUARD: Ensure model exists
+		// =====================================================================
+		if (!model) {
+			err("[fit_model] Model is null/undefined. Attempting to compile...");
+			try {
+				await compile_model();
+			} catch (compile_err) {
+				err("[fit_model] FATAL: compile_model() threw: " + (compile_err.message || compile_err));
+				throw compile_err;
+			}
+		}
+
+		if (!model) {
+			err("[fit_model] FATAL: Model is STILL null after compile_model()!");
+			throw new Error("[fit_model] Model is null after compile_model()");
+		}
+
+		if (!model.layers || !model.layers.length) {
+			err("[fit_model] FATAL: Model has no layers!");
+			throw new Error("[fit_model] Model has no layers");
+		}
+
+		dbg("[fit_model] Model exists with " + model.layers.length + " layers.");
+
+		// =====================================================================
+		// CRITICAL: Optimizer handling
+		//
+		// We need a VALID optimizer that was created in the CURRENT TF.js
+		// engine scope. If the optimizer was created in a different scope
+		// (e.g., during page init before tf.engine().startScope() was called
+		// in train_neural_network), its internal tensor slots may reference
+		// a stale backend context, causing "n is undefined" / "backend is
+		// undefined" errors during model.fit().
+		//
+		// Strategy:
+		// 1. If model.optimizer exists, TEST it by calling getConfig()
+		// 2. If the test fails, or optimizer is missing, create a FRESH one
+		//    right here, in the current scope, and recompile.
+		// =====================================================================
+		var optimizer_is_valid = false;
+		var optimizer_class_name = "unknown";
+
+		if (model.optimizer) {
+			try {
+				// Test 1: Can we call getConfig()?
+				var test_config = null;
+				if (typeof model.optimizer.getConfig === "function") {
+					test_config = model.optimizer.getConfig();
+				}
+
+				if (!test_config || typeof test_config !== "object") {
+					wrn("[fit_model] Optimizer getConfig() returned invalid result: " + JSON.stringify(test_config));
+					optimizer_is_valid = false;
+				} else {
+					// Test 2: Can we access the className?
+					if (typeof model.optimizer.getClassName === "function") {
+						optimizer_class_name = model.optimizer.getClassName();
+					}
+
+					// Test 3: Try to verify the optimizer can actually work
+					// by checking if it has the minimize method
+					if (typeof model.optimizer.minimize !== "function") {
+						wrn("[fit_model] Optimizer has no minimize() method!");
+						optimizer_is_valid = false;
+					} else {
+						// Test 4: Try a lightweight operation to see if backend is accessible
+						try {
+							var test_var = tf.scalar(1.0);
+							var test_grad = tf.grad(x => x.mul(tf.scalar(2.0)));
+							var test_result = test_grad(test_var);
+							test_result.dispose();
+							test_var.dispose();
+							optimizer_is_valid = true;
+						} catch (backend_test_err) {
+							wrn("[fit_model] Backend accessibility test failed: " + (backend_test_err.message || backend_test_err));
+							optimizer_is_valid = false;
+						}
+					}
+				}
+			} catch (opt_test_err) {
+				wrn("[fit_model] Optimizer validation threw: " + (opt_test_err.message || opt_test_err));
+				optimizer_is_valid = false;
+			}
+		} else {
+			dbg("[fit_model] model.optimizer is null/undefined.");
+			optimizer_is_valid = false;
+		}
+
+		if (optimizer_is_valid) {
+			dbg("[fit_model] Existing optimizer VALID: " + optimizer_class_name +
+				". Skipping recompilation to preserve gradient accumulator state (Adam m/v buffers).");
+		} else {
+			wrn("[fit_model] Optimizer is INVALID or missing. Creating fresh optimizer in current scope...");
+
+			try {
+				// Ensure we get fresh model data with a new optimizer
+				await get_model_data();
+
+				if (!global_model_data || !global_model_data.optimizer) {
+					err("[fit_model] FATAL: get_model_data() did not produce a valid optimizer!");
+					throw new Error("[fit_model] No optimizer after get_model_data()");
+				}
+
+				// Compile with the fresh optimizer
+				model.compile({
+					optimizer: global_model_data.optimizer,
+					loss: global_model_data.loss,
+					metrics: [global_model_data.metric]
+				});
+
+				// Verify compilation worked
+				if (!model.optimizer) {
+					err("[fit_model] FATAL: model.optimizer is STILL null after compile!");
+					throw new Error("[fit_model] Compilation failed - no optimizer");
+				}
+
+				optimizer_class_name = model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown";
+				dbg("[fit_model] Fresh optimizer created and model compiled: " + optimizer_class_name);
+
+			} catch (recompile_err) {
+				err("[fit_model] FATAL: Failed to create fresh optimizer: " + (recompile_err.message || recompile_err));
+				throw recompile_err;
+			}
+		}
+
+		// =====================================================================
+		// Final optimizer sanity check
+		// =====================================================================
+		if (!model.optimizer) {
+			err("[fit_model] FATAL: After all attempts, model.optimizer is null!");
+			throw new Error("[fit_model] No optimizer available for training");
 		}
 
 		l(language[lang]["started_training"]);
 
+		// =====================================================================
+		// PREPARE: x and y tensors
+		// =====================================================================
 		let x = x_and_y["x"];
 		let y = x_and_y["y"];
 
@@ -1428,24 +1556,72 @@ async function fit_model(x_and_y) {
 			throw new Error("[fit_model] y is null or undefined");
 		}
 
+		// =====================================================================
+		// GUARD: Convert to tensors if needed
+		// =====================================================================
 		warn_if_not_tensors(x, y);
 
 		if (!is_tensor(x)) {
 			dbg("[fit_model] x is not a tensor, converting...");
-			x = tf.tensor(Array.isArray(x) ? x : array_sync(x));
+			try {
+				x = tf.tensor(Array.isArray(x) ? x : array_sync(x));
+				dbg("[fit_model] x converted to tensor successfully.");
+			} catch (x_conv_err) {
+				err("[fit_model] FATAL: Failed to convert x to tensor: " + (x_conv_err.message || x_conv_err));
+				throw x_conv_err;
+			}
 		}
+
 		if (!is_tensor(y)) {
 			dbg("[fit_model] y is not a tensor, converting...");
-			y = tf.tensor(Array.isArray(y) ? y : array_sync(y));
+			try {
+				y = tf.tensor(Array.isArray(y) ? y : array_sync(y));
+				dbg("[fit_model] y converted to tensor successfully.");
+			} catch (y_conv_err) {
+				err("[fit_model] FATAL: Failed to convert y to tensor: " + (y_conv_err.message || y_conv_err));
+				throw y_conv_err;
+			}
 		}
 
-		const x_shape = get_shape_from_array_or_tensor(x);
-		const y_shape = get_shape_from_array_or_tensor(y);
+		// =====================================================================
+		// GUARD: Check tensor disposal status
+		// =====================================================================
+		if (x.isDisposed) {
+			err("[fit_model] FATAL: x tensor is already disposed!");
+			throw new Error("[fit_model] x tensor is disposed");
+		}
 
-		dbg(`[fit_model] x shape: [${x_shape.join(", ")}], y shape: [${y_shape.join(", ")}]`);
+		if (y.isDisposed) {
+			err("[fit_model] FATAL: y tensor is already disposed!");
+			throw new Error("[fit_model] y tensor is disposed");
+		}
 
 		// =====================================================================
-		// GUARD: Label checks
+		// GUARD: Shape logging and validation
+		// =====================================================================
+		const x_shape = x.shape;
+		const y_shape = y.shape;
+
+		dbg(`[fit_model] x shape: [${x_shape.join(", ")}], y shape: [${y_shape.join(", ")}]`);
+		dbg(`[fit_model] x dtype: ${x.dtype}, y dtype: ${y.dtype}`);
+
+		if (x_shape[0] === 0) {
+			err("[fit_model] FATAL: x has 0 samples!");
+			throw new Error("[fit_model] x has 0 samples");
+		}
+
+		if (y_shape[0] === 0) {
+			err("[fit_model] FATAL: y has 0 samples!");
+			throw new Error("[fit_model] y has 0 samples");
+		}
+
+		if (x_shape[0] !== y_shape[0]) {
+			err(`[fit_model] FATAL: x and y have different number of samples! x: ${x_shape[0]}, y: ${y_shape[0]}`);
+			throw new Error("[fit_model] x/y sample count mismatch");
+		}
+
+		// =====================================================================
+		// GUARD: Label checks (classification)
 		// =====================================================================
 		if (y_shape.length === 2) {
 			const num_samples = y_shape[0];
@@ -1454,7 +1630,7 @@ async function fit_model(x_and_y) {
 			dbg(`[fit_model] Classification: ${num_samples} samples, ${num_classes} classes.`);
 
 			if (num_classes <= 1) {
-				err(`[fit_model] WARNING: y has only ${num_classes} class(es).`);
+				wrn(`[fit_model] WARNING: y has only ${num_classes} class(es). This may cause issues with categoricalCrossentropy.`);
 			}
 
 			try {
@@ -1468,72 +1644,137 @@ async function fit_model(x_and_y) {
 					}
 				}
 				if (all_same && num_samples > 1) {
-					err(`[fit_model] CRITICAL: All y labels identical! First label: ${first_label}. Check data pipeline!`);
+					err(`[fit_model] CRITICAL: All y labels are IDENTICAL! First label: ${first_label}. The model cannot learn from uniform labels!`);
 				}
 
 				const class_counts = new Array(num_classes).fill(0);
 				for (let i = 0; i < y_data.length; i++) {
 					const max_idx = y_data[i].indexOf(Math.max(...y_data[i]));
-					class_counts[max_idx]++;
+					if (max_idx >= 0 && max_idx < num_classes) {
+						class_counts[max_idx]++;
+					}
 				}
 				dbg(`[fit_model] Class distribution: [${class_counts.join(", ")}]`);
 
 				const empty_classes = class_counts.filter(c => c === 0).length;
 				if (empty_classes > 0) {
-					err(`[fit_model] WARNING: ${empty_classes} class(es) have ZERO samples!`);
+					wrn(`[fit_model] WARNING: ${empty_classes} class(es) have ZERO samples! Classes: [${class_counts.join(", ")}]`);
 				}
 			} catch (label_check_err) {
-				dbg(`[fit_model] Label check error: ${label_check_err}`);
+				dbg(`[fit_model] Label distribution check error (non-fatal): ${label_check_err}`);
 			}
+		} else {
+			dbg(`[fit_model] Regression or non-standard output: y_shape=[${y_shape.join(", ")}]`);
 		}
 
 		// =====================================================================
-		// GUARD: Shape validation
-		// =====================================================================
-		validate_model_io_shapes(x_shape, y_shape);
-
-		// =====================================================================
-		// GUARD: x value range
+		// GUARD: Model I/O shape validation
 		// =====================================================================
 		try {
-			const x_max = x.max().dataSync()[0];
-			const x_min = x.min().dataSync()[0];
+			var shapes_valid = validate_model_io_shapes(x_shape, y_shape);
+			if (!shapes_valid) {
+				err("[fit_model] WARNING: Model I/O shape validation FAILED. Training may error.");
+			} else {
+				dbg("[fit_model] Model I/O shape validation passed.");
+			}
+		} catch (shape_val_err) {
+			wrn("[fit_model] Shape validation threw (non-fatal): " + (shape_val_err.message || shape_val_err));
+		}
+
+		// =====================================================================
+		// GUARD: x value range check
+		// =====================================================================
+		try {
+			const x_max_tensor = x.max();
+			const x_min_tensor = x.min();
+			const x_max = x_max_tensor.dataSync()[0];
+			const x_min = x_min_tensor.dataSync()[0];
+			x_max_tensor.dispose();
+			x_min_tensor.dispose();
+
 			dbg(`[fit_model] x range: [${x_min.toFixed(4)}, ${x_max.toFixed(4)}]`);
 
 			if (x_max > 10) {
-				wrn(`[fit_model] WARNING: x max=${x_max.toFixed(2)}. If pixel values, set divide_by=255.`);
+				wrn(`[fit_model] WARNING: x max=${x_max.toFixed(2)}. Data may not be normalized. Consider divide_by=255 for pixel values.`);
 			}
 			if (x_max === x_min) {
-				err(`[fit_model] CRITICAL: All x values identical (${x_max})!`);
+				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! Model cannot learn from constant input.`);
 			}
-		} catch (e) {
-			dbg(`[fit_model] x range check failed: ${e}`);
+			if (isNaN(x_max) || isNaN(x_min)) {
+				err(`[fit_model] CRITICAL: x contains NaN values! max=${x_max}, min=${x_min}`);
+			}
+			if (!isFinite(x_max) || !isFinite(x_min)) {
+				err(`[fit_model] CRITICAL: x contains Infinity! max=${x_max}, min=${x_min}`);
+			}
+		} catch (range_err) {
+			dbg(`[fit_model] x range check failed (non-fatal): ${range_err}`);
 		}
 
 		// =====================================================================
-		// GUARD: Trainability
+		// GUARD: Trainability check
 		// =====================================================================
-		let any_trainable = false;
+		let trainable_count = 0;
+		let non_trainable_count = 0;
+		let total_params = 0;
+
 		for (let li = 0; li < model.layers.length; li++) {
-			if (model.layers[li].trainable) {
-				any_trainable = true;
-				break;
+			const layer = model.layers[li];
+			if (layer.trainable) {
+				trainable_count++;
+			} else {
+				non_trainable_count++;
 			}
+			try {
+				const layer_weights = layer.getWeights();
+				for (let wi = 0; wi < layer_weights.length; wi++) {
+					total_params += layer_weights[wi].size;
+				}
+			} catch (e) { /* ignore */ }
 		}
-		if (!any_trainable) {
-			err("[fit_model] CRITICAL: No layers are trainable!");
+
+		dbg(`[fit_model] Trainable layers: ${trainable_count}, Non-trainable: ${non_trainable_count}, Total params: ${total_params}`);
+
+		if (trainable_count === 0) {
+			err("[fit_model] CRITICAL: No layers are trainable! All gradients will be zero.");
+		}
+
+		if (total_params === 0) {
+			err("[fit_model] CRITICAL: Model has 0 parameters! Nothing to train.");
 		}
 
 		// =====================================================================
-		// GUARD: Optimizer and loss info
+		// GUARD: Optimizer and loss info logging
 		// =====================================================================
 		try {
 			const opt_class = model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown";
 			const opt_config = model.optimizer.getConfig ? model.optimizer.getConfig() : {};
-			dbg(`[fit_model] Optimizer: ${opt_class}, lr: ${opt_config.learningRate || "?"}`);
-			dbg(`[fit_model] Loss: ${get_loss()}`);
-		} catch (e) {
-			dbg(`[fit_model] Could not log optimizer: ${e}`);
+			const lr = opt_config.learningRate || opt_config.learning_rate || "?";
+			dbg(`[fit_model] Optimizer: ${opt_class}, lr: ${lr}`);
+
+			if (typeof lr === "number" && lr === 0) {
+				err("[fit_model] CRITICAL: Learning rate is 0! No weight updates will occur.");
+			}
+			if (typeof lr === "number" && lr > 1) {
+				wrn(`[fit_model] WARNING: Learning rate is very high (${lr}). Training may diverge.`);
+			}
+		} catch (opt_log_err) {
+			dbg(`[fit_model] Could not log optimizer details: ${opt_log_err}`);
+		}
+
+		try {
+			const current_loss = get_loss();
+			dbg(`[fit_model] Loss function: ${current_loss}`);
+
+			// Check loss/activation compatibility
+			if (current_loss === "categoricalCrossentropy" && y_shape.length === 2 && y_shape[1] > 1) {
+				const last_layer = model.layers[model.layers.length - 1];
+				const last_activation = last_layer.getConfig ? last_layer.getConfig().activation : "unknown";
+				if (last_activation && last_activation !== "softmax" && last_activation !== "linear") {
+					wrn(`[fit_model] WARNING: Using categoricalCrossentropy but last layer activation is "${last_activation}" (expected "softmax").`);
+				}
+			}
+		} catch (loss_check_err) {
+			dbg(`[fit_model] Loss compatibility check failed (non-fatal): ${loss_check_err}`);
 		}
 
 		// =====================================================================
@@ -1542,39 +1783,144 @@ async function fit_model(x_and_y) {
 		try {
 			for (let li = 0; li < model.layers.length; li++) {
 				const layer = model.layers[li];
-				const layer_class = layer.getClassName();
+				const layer_class = layer.getClassName ? layer.getClassName() : "";
+
 				if (layer_class === "Conv2D" || layer_class === "Conv1D" || layer_class === "Conv3D") {
 					const config = layer.getConfig();
-					if (config.filters <= 1) {
-						dbg(`[fit_model] ARCHITECTURE: Layer "${layer.name}" has only ${config.filters} filter(s). This may limit gradient flow.`);
+					if (config && config.filters !== undefined && config.filters <= 1) {
+						wrn(`[fit_model] ARCHITECTURE WARNING: Layer "${layer.name}" (${layer_class}) has only ${config.filters} filter(s). This creates a severe information bottleneck and may prevent gradient flow to earlier layers.`);
+					}
+				}
+
+				if (layer_class === "Dense") {
+					const config = layer.getConfig();
+					if (config && config.units !== undefined && config.units <= 1 && li < model.layers.length - 1) {
+						wrn(`[fit_model] ARCHITECTURE WARNING: Hidden layer "${layer.name}" has only ${config.units} unit(s). This may bottleneck gradient flow.`);
 					}
 				}
 			}
-		} catch (e) {
-			dbg(`[fit_model] Architecture check failed: ${e}`);
+		} catch (arch_err) {
+			dbg(`[fit_model] Architecture check failed (non-fatal): ${arch_err}`);
 		}
 
 		// =====================================================================
-		// SAVE WEIGHTS BEFORE TRAINING (for gradient flow check)
+		// SAVE WEIGHTS BEFORE TRAINING (for gradient flow verification)
 		// =====================================================================
-		let weights_before_training = null;
 		try {
 			weights_before_training = model.getWeights().map(w => w.clone());
-		} catch (e) {
-			dbg(`[fit_model] Could not snapshot weights: ${e}`);
+			dbg(`[fit_model] Saved ${weights_before_training.length} weight tensors for post-training gradient check.`);
+		} catch (snapshot_err) {
+			wrn(`[fit_model] Could not snapshot weights before training: ${snapshot_err}`);
+			weights_before_training = null;
+		}
+
+		// =====================================================================
+		// GUARD: Final pre-flight check - test a single forward pass
+		// =====================================================================
+		try {
+			dbg("[fit_model] Running pre-flight forward pass test...");
+			const test_x = x.slice(0, 1); // Take first sample
+			const test_pred = model.predict(test_x);
+			const test_pred_data = test_pred.dataSync();
+
+			if (test_pred_data.some(v => isNaN(v))) {
+				err("[fit_model] CRITICAL: Forward pass produces NaN BEFORE training! Model weights may be corrupted.");
+			} else if (test_pred_data.some(v => !isFinite(v))) {
+				err("[fit_model] CRITICAL: Forward pass produces Infinity BEFORE training!");
+			} else {
+				dbg(`[fit_model] Pre-flight forward pass OK. Output sample: [${Array.from(test_pred_data).slice(0, 5).map(v => v.toFixed(4)).join(", ")}${test_pred_data.length > 5 ? "..." : ""}]`);
+			}
+
+			test_pred.dispose();
+			test_x.dispose();
+		} catch (preflight_err) {
+			wrn("[fit_model] Pre-flight forward pass failed (non-fatal): " + (preflight_err.message || preflight_err));
+		}
+
+		// =====================================================================
+		// GUARD: Log memory state before training
+		// =====================================================================
+		try {
+			const mem_info = tf.memory();
+			dbg(`[fit_model] Memory before training: ${mem_info.numTensors} tensors, ${(mem_info.numBytes / 1024 / 1024).toFixed(2)} MB`);
+		} catch (mem_err) {
+			dbg("[fit_model] Could not read memory info: " + mem_err);
 		}
 
 		await wait_for_updated_page(2);
 
 		// =====================================================================
-		// ACTUAL TRAINING
+		// ==================== ACTUAL TRAINING ====================
 		// =====================================================================
-		dbg("[fit_model] Calling model.fit()...");
-		const h = await model.fit(x, y, fit_data);
-		dbg("[fit_model] model.fit() completed.");
+		dbg("[fit_model] >>>>>> Calling model.fit() <<<<<<");
+		dbg(`[fit_model] fit params: epochs=${fit_data.epochs}, batchSize=${fit_data.batchSize}, validationSplit=${fit_data.validationSplit}, shuffle=${fit_data.shuffle}`);
+
+		var h = null;
+
+		try {
+			h = await model.fit(x, y, fit_data);
+		} catch (fit_err) {
+			var fit_err_msg = fit_err.message || ("" + fit_err);
+
+			err("[fit_model] model.fit() THREW: " + fit_err_msg);
+
+			// Diagnose common errors
+			if (fit_err_msg.includes("backend") && fit_err_msg.includes("undefined")) {
+				err("[fit_model] DIAGNOSIS: 'backend undefined' error. This means the optimizer was created in a different TF.js engine scope than where model.fit() is running. The optimizer's internal tensor slots reference a stale backend context.");
+				err("[fit_model] ATTEMPTED FIX: Creating a completely fresh optimizer in the current scope and retrying...");
+
+				try {
+					await tf.ready();
+					await get_model_data();
+					model.compile({
+						optimizer: global_model_data.optimizer,
+						loss: global_model_data.loss,
+						metrics: [global_model_data.metric]
+					});
+					dbg("[fit_model] Recompiled with fresh optimizer. Retrying model.fit()...");
+					h = await model.fit(x, y, fit_data);
+					dbg("[fit_model] RETRY SUCCEEDED!");
+				} catch (retry_err) {
+					err("[fit_model] RETRY ALSO FAILED: " + (retry_err.message || retry_err));
+					throw retry_err;
+				}
+			} else if (fit_err_msg.includes("is already disposed")) {
+				err("[fit_model] DIAGNOSIS: A tensor was disposed during training. This usually means compile_model() was called mid-training, disposing the model's internal tensors.");
+				throw fit_err;
+			} else if (fit_err_msg.includes("NaN")) {
+				err("[fit_model] DIAGNOSIS: NaN encountered during training. Possible causes: learning rate too high, data not normalized, or exploding gradients.");
+				throw fit_err;
+			} else {
+				throw fit_err;
+			}
+		}
+
+		dbg("[fit_model] model.fit() completed successfully.");
 
 		// =====================================================================
-		// POST-TRAINING: GRADIENT FLOW CHECK
+		// POST-TRAINING: Log final loss
+		// =====================================================================
+		if (h && h.history && h.history.loss) {
+			const losses = h.history.loss;
+			const final_loss = losses[losses.length - 1];
+			const first_loss = losses[0];
+			dbg(`[fit_model] Loss: first=${first_loss.toFixed(6)}, final=${final_loss.toFixed(6)}, delta=${(first_loss - final_loss).toFixed(6)}`);
+
+			if (isNaN(final_loss)) {
+				err("[fit_model] CRITICAL: Final loss is NaN! Training diverged.");
+			}
+			if (final_loss > first_loss * 10) {
+				wrn("[fit_model] WARNING: Loss INCREASED significantly during training (exploding gradients?).");
+			}
+			if (Math.abs(first_loss - final_loss) < 1e-10 && losses.length > 1) {
+				wrn("[fit_model] WARNING: Loss did not change at all during training. Possible dead model.");
+			}
+		} else {
+			wrn("[fit_model] WARNING: No loss history available after training.");
+		}
+
+		// =====================================================================
+		// POST-TRAINING: GRADIENT FLOW VERIFICATION
 		// =====================================================================
 		try {
 			if (weights_before_training) {
@@ -1582,14 +1928,28 @@ async function fit_model(x_and_y) {
 				let weight_idx = 0;
 				let frozen_layers = [];
 				let updated_layers = [];
+				let near_zero_layers = [];
 
 				for (let li = 0; li < model.layers.length; li++) {
 					const layer = model.layers[li];
 					const num_weights = layer.getWeights().length;
+
 					for (let wi = 0; wi < num_weights; wi++) {
+						if (weight_idx >= weights_before_training.length || weight_idx >= weights_after.length) {
+							wrn(`[fit_model] GRADIENT CHECK: weight_idx ${weight_idx} out of bounds (before: ${weights_before_training.length}, after: ${weights_after.length})`);
+							break;
+						}
+
 						const before = weights_before_training[weight_idx];
 						const after = weights_after[weight_idx];
-						const weight_name = layer.weights[wi] ? layer.weights[wi].name : `weight_${wi}`;
+
+						if (before.isDisposed || after.isDisposed) {
+							dbg(`[fit_model] GRADIENT CHECK: Skipping disposed tensor at idx ${weight_idx}`);
+							weight_idx++;
+							continue;
+						}
+
+						const weight_name = (layer.weights && layer.weights[wi]) ? layer.weights[wi].name : `weight_${wi}`;
 
 						const diff = tf.tidy(() => {
 							return tf.abs(tf.sub(after, before)).max().dataSync()[0];
@@ -1599,40 +1959,178 @@ async function fit_model(x_and_y) {
 
 						if (diff === 0) {
 							frozen_layers.push(full_name);
-							dbg(`[fit_model] GRADIENT: ${full_name} — NO CHANGE (diff=0)`);
 						} else if (diff < 1e-10) {
-							frozen_layers.push(`${full_name} (${diff.toExponential(2)})`);
-							dbg(`[fit_model] GRADIENT: ${full_name} — NEAR-ZERO (${diff.toExponential(2)})`);
+							near_zero_layers.push(`${full_name}(${diff.toExponential(2)})`);
 						} else {
-							updated_layers.push(full_name);
-							dbg(`[fit_model] GRADIENT: ${full_name} — OK (${diff.toExponential(4)})`);
+							updated_layers.push(`${full_name}(${diff.toExponential(2)})`);
 						}
 
 						weight_idx++;
 					}
 				}
 
-				if (frozen_layers.length > 0 && updated_layers.length > 0) {
-					err(`[fit_model] VANISHING GRADIENT: ${frozen_layers.length} weight(s) did NOT update: [${frozen_layers.join(", ")}]. Updated: [${updated_layers.join(", ")}]. LIKELY CAUSE: compile_model() was called during training, destroying optimizer state. Or architecture bottleneck.`); // await not required here
-				} else if (frozen_layers.length > 0 && updated_layers.length === 0) {
-					err(`[fit_model] CRITICAL: NO weights updated! Check trainable flags, learning rate, and loss function.`);
-				} else {
-					dbg(`[fit_model] GRADIENT CHECK PASSED: All ${updated_layers.length} weights updated.`);
+				dbg(`[fit_model] GRADIENT SUMMARY: updated=${updated_layers.length}, frozen=${frozen_layers.length}, near_zero=${near_zero_layers.length}`);
+
+				if (updated_layers.length > 0) {
+					dbg(`[fit_model] UPDATED weights: [${updated_layers.join(", ")}]`);
 				}
 
-				for (let wi = 0; wi < weights_before_training.length; wi++) {
-					weights_before_training[wi].dispose();
+				if (frozen_layers.length > 0) {
+					wrn(`[fit_model] FROZEN weights (diff=0): [${frozen_layers.join(", ")}]`);
 				}
+
+				if (near_zero_layers.length > 0) {
+					wrn(`[fit_model] NEAR-ZERO weights: [${near_zero_layers.join(", ")}]`);
+				}
+
+				if (frozen_layers.length > 0 && updated_layers.length > 0) {
+					err(`[fit_model] VANISHING GRADIENT DETECTED: ${frozen_layers.length} weight tensor(s) did NOT update while ${updated_layers.length} did. ` +
+						`Frozen: [${frozen_layers.join(", ")}]. ` +
+						`This indicates gradient flow is blocked. Possible causes: ` +
+						`(1) Architecture bottleneck (e.g., Conv layer with 1 filter), ` +
+						`(2) Optimizer state was reset mid-training (compile_model called during training), ` +
+						`(3) Dead neurons (all-zero activations after ReLU).`);
+				} else if (frozen_layers.length > 0 && updated_layers.length === 0) {
+					err(`[fit_model] CRITICAL: NO weights updated at all! All ${frozen_layers.length} weight tensors are frozen. ` +
+						`Check: (1) learning rate > 0, (2) layers are trainable, (3) loss function is correct, (4) data is not constant.`);
+				} else if (frozen_layers.length === 0 && updated_layers.length > 0) {
+					dbg(`[fit_model] GRADIENT CHECK PASSED: All ${updated_layers.length} weight tensors updated successfully.`);
+				}
+
+				// Cleanup cloned weights
+				for (let wi = 0; wi < weights_before_training.length; wi++) {
+					try {
+						if (!weights_before_training[wi].isDisposed) {
+							weights_before_training[wi].dispose();
+						}
+					} catch (disp_err) { /* ignore */ }
+				}
+				weights_before_training = null;
 			}
-		} catch (e) {
-			dbg(`[fit_model] Gradient check failed: ${e}`);
+		} catch (grad_check_err) {
+			wrn(`[fit_model] Gradient flow check failed (non-fatal): ${grad_check_err}`);
+			// Cleanup cloned weights even if the check itself failed
 			if (weights_before_training) {
 				for (let wi = 0; wi < weights_before_training.length; wi++) {
-					try { weights_before_training[wi].dispose(); } catch(ee) {}
+					try {
+						if (!weights_before_training[wi].isDisposed) {
+							weights_before_training[wi].dispose();
+						}
+					} catch (disp_err) { /* ignore */ }
 				}
+				weights_before_training = null;
 			}
 		}
 
+		// =====================================================================
+		// POST-TRAINING: Check optimizer accumulator state (Adam m/v buffers)
+		// =====================================================================
+		try {
+			if (model.optimizer && typeof model.optimizer.getWeights === "function") {
+				const opt_weights = await model.optimizer.getWeights();
+				if (opt_weights && opt_weights.length > 0) {
+					let all_zero_count = 0;
+					let non_zero_count = 0;
+					let total_opt_weights = opt_weights.length;
+
+					for (let ow_idx = 0; ow_idx < opt_weights.length; ow_idx++) {
+						const ow = opt_weights[ow_idx];
+						if (ow && ow.tensor && !ow.tensor.isDisposed) {
+							const max_val = ow.tensor.abs().max().dataSync()[0];
+							if (max_val === 0) {
+								all_zero_count++;
+							} else {
+								non_zero_count++;
+							}
+						}
+					}
+
+					dbg(`[fit_model] Optimizer accumulator state: ${non_zero_count}/${total_opt_weights} non-zero, ${all_zero_count}/${total_opt_weights} all-zero.`);
+
+					if (all_zero_count === total_opt_weights && total_opt_weights > 0) {
+						err("[fit_model] CRITICAL: ALL optimizer accumulators are zero after training! " +
+							"This means Adam's m/v buffers were never populated. " +
+							"Possible cause: optimizer was replaced/reset during training.");
+					} else if (all_zero_count > 0 && non_zero_count > 0) {
+						wrn(`[fit_model] WARNING: ${all_zero_count} optimizer accumulator(s) are still zero. ` +
+							"This may indicate partial gradient flow issues.");
+					}
+				} else {
+					dbg("[fit_model] Optimizer has no weights/accumulators to inspect (may be SGD or first epoch).");
+				}
+			}
+		} catch (opt_state_err) {
+			dbg(`[fit_model] Optimizer state inspection failed (non-fatal): ${opt_state_err}`);
+		}
+
+		// =====================================================================
+		// POST-TRAINING: Check for NaN in model weights
+		// =====================================================================
+		try {
+			let has_nan = false;
+			let has_inf = false;
+			const current_weights = model.getWeights();
+
+			for (let wi = 0; wi < current_weights.length; wi++) {
+				if (current_weights[wi].isDisposed) continue;
+
+				const w_data = current_weights[wi].dataSync();
+				for (let di = 0; di < Math.min(w_data.length, 1000); di++) {
+					if (isNaN(w_data[di])) {
+						has_nan = true;
+						break;
+					}
+					if (!isFinite(w_data[di])) {
+						has_inf = true;
+						break;
+					}
+				}
+				if (has_nan || has_inf) break;
+			}
+
+			if (has_nan) {
+				err("[fit_model] CRITICAL: Model weights contain NaN after training! Training has diverged.");
+			}
+			if (has_inf) {
+				err("[fit_model] CRITICAL: Model weights contain Infinity after training! Exploding gradients detected.");
+			}
+		} catch (nan_check_err) {
+			dbg(`[fit_model] NaN/Inf weight check failed (non-fatal): ${nan_check_err}`);
+		}
+
+		// =====================================================================
+		// POST-TRAINING: Log memory state
+		// =====================================================================
+		try {
+			const mem_info = tf.memory();
+			dbg(`[fit_model] Memory after training: ${mem_info.numTensors} tensors, ${(mem_info.numBytes / 1024 / 1024).toFixed(2)} MB`);
+		} catch (mem_err) {
+			dbg("[fit_model] Could not read memory info after training: " + mem_err);
+		}
+
+		// =====================================================================
+		// POST-TRAINING: Final forward pass sanity check
+		// =====================================================================
+		try {
+			const test_x_post = x.slice(0, 1);
+			const test_pred_post = model.predict(test_x_post);
+			const test_pred_post_data = test_pred_post.dataSync();
+
+			if (test_pred_post_data.some(v => isNaN(v))) {
+				err("[fit_model] CRITICAL: Forward pass produces NaN AFTER training!");
+			} else {
+				dbg(`[fit_model] Post-training forward pass OK. Output: [${Array.from(test_pred_post_data).slice(0, 5).map(v => v.toFixed(4)).join(", ")}${test_pred_post_data.length > 5 ? "..." : ""}]`);
+			}
+
+			test_pred_post.dispose();
+			test_x_post.dispose();
+		} catch (post_pred_err) {
+			dbg(`[fit_model] Post-training forward pass check failed (non-fatal): ${post_pred_err}`);
+		}
+
+		// =====================================================================
+		// FINALIZE
+		// =====================================================================
 		await nextFrame();
 		l(language[lang]["finished_training"]);
 
@@ -1641,18 +2139,100 @@ async function fit_model(x_and_y) {
 		reset_predict_container_after_training();
 
 		if (h && h.history && h.history.loss) {
-			const final_loss = h.history.loss[h.history.loss.length - 1];
-			dbg(`[fit_model] Final loss: ${final_loss.toFixed(6)}`);
+			const losses = h.history.loss;
+			const final_loss = losses[losses.length - 1];
+			const first_loss = losses[0];
+			dbg(`[fit_model] Loss summary: first=${first_loss.toFixed(6)}, final=${final_loss.toFixed(6)}, improvement=${((1 - final_loss/first_loss) * 100).toFixed(1)}%`);
+
+			if (losses.length > 1 && final_loss >= first_loss) {
+				wrn("[fit_model] WARNING: Loss did not decrease during training. Model may not be learning.");
+			}
 		}
+
+		dbg("[fit_model] ========== FIT_MODEL END (SUCCESS) ==========");
 
 		await dispose(fit_data);
 		return h;
+
 	} catch (_err) {
-		if (Object.keys(_err).includes("message")) {
-			err("[fit_model] Training failed: " + _err.message);
+		// =====================================================================
+		// ERROR HANDLING
+		// =====================================================================
+		var err_msg = "";
+		if (_err && typeof _err === "object" && "message" in _err) {
+			err_msg = _err.message;
 		} else {
-			err("[fit_model] Training failed: " + _err);
+			err_msg = "" + _err;
 		}
+
+		err("[fit_model] Training failed: " + err_msg);
+
+		// Log the full stack trace if available
+		if (_err && _err.stack) {
+			dbg("[fit_model] Stack trace: " + _err.stack);
+		}
+
+		// Diagnose specific error patterns
+		if (err_msg.includes("backend") && err_msg.includes("undefined")) {
+			err("[fit_model] DIAGNOSIS: 'backend undefined' — The optimizer was created in a different " +
+				"TF.js engine scope than where model.fit() is running. This happens when " +
+				"compile_model() is called before tf.engine().startScope() in train_neural_network(), " +
+				"and then model.fit() runs inside that scope.");
+			err("[fit_model] ATTEMPTED FIX: Will try to recompile with a fresh optimizer in the current scope...");
+
+			try {
+				await tf.ready();
+				await get_model_data();
+
+				if (global_model_data && global_model_data.optimizer) {
+					model.compile({
+						optimizer: global_model_data.optimizer,
+						loss: global_model_data.loss,
+						metrics: [global_model_data.metric]
+					});
+					dbg("[fit_model] Recompiled successfully. Please retry training.");
+				} else {
+					err("[fit_model] Could not get valid optimizer for recompilation.");
+				}
+			} catch (recompile_err) {
+				err("[fit_model] Recompilation attempt also failed: " + (recompile_err.message || recompile_err));
+			}
+		} else if (err_msg.includes("is already disposed")) {
+			err("[fit_model] DIAGNOSIS: A tensor was disposed during training. " +
+				"This usually means compile_model() or create_model() was called mid-training, " +
+				"disposing the model's internal tensors. Check that started_training guard is working.");
+		} else if (err_msg.includes("NaN")) {
+			err("[fit_model] DIAGNOSIS: NaN encountered. Possible causes: " +
+				"(1) Learning rate too high, (2) Data not normalized (divide_by=255?), " +
+				"(3) Exploding gradients, (4) Invalid loss function for this data type.");
+		} else if (err_msg.includes("expected a batch of elements")) {
+			err("[fit_model] DIAGNOSIS: Shape mismatch between data and model. " +
+				"Check that input_shape matches your data dimensions.");
+		}
+
+		// Cleanup weights snapshot if it exists
+		if (weights_before_training) {
+			for (let wi = 0; wi < weights_before_training.length; wi++) {
+				try {
+					if (!weights_before_training[wi].isDisposed) {
+						weights_before_training[wi].dispose();
+					}
+				} catch (disp_err) { /* ignore */ }
+			}
+			weights_before_training = null;
+		}
+
+		// Cleanup fit_data if possible
+		if (fit_data && fit_data !== true && typeof fit_data === "object") {
+			try {
+				await dispose(fit_data);
+			} catch (fd_err) {
+				dbg("[fit_model] Could not dispose fit_data in error handler: " + fd_err);
+			}
+		}
+
+		dbg("[fit_model] ========== FIT_MODEL END (ERROR) ==========");
+
 		throw _err;
 	}
 }
