@@ -2166,7 +2166,7 @@ async function fit_model(x_and_y) {
 			dbg(`[fit_model] Classification: ${num_samples} samples, ${num_classes} classes.`);
 
 			if (num_classes <= 1) {
-				wrn(`[fit_model] WARNING: y has only ${num_classes} class(es). This may cause issues with categoricalCrossentropy.`);
+				dbg(`[fit_model] WARNING: y has only ${num_classes} class(es). This may cause issues with categoricalCrossentropy.`);
 			}
 
 			try {
