@@ -1404,7 +1404,7 @@ async function fit_model(x_and_y) {
 				}
 
 				if (frozen_layers.length > 0 && updated_layers.length > 0) {
-					err(`[fit_model] VANISHING GRADIENT: ${frozen_layers.length} weight(s) did NOT update: [${frozen_layers.join(", ")}]. Updated: [${updated_layers.join(", ")}]. LIKELY CAUSE: compile_model() was called during training, destroying optimizer state. Or architecture bottleneck.`);
+					err(`[fit_model] VANISHING GRADIENT: ${frozen_layers.length} weight(s) did NOT update: [${frozen_layers.join(", ")}]. Updated: [${updated_layers.join(", ")}]. LIKELY CAUSE: compile_model() was called during training, destroying optimizer state. Or architecture bottleneck.`); // await not required here
 				} else if (frozen_layers.length > 0 && updated_layers.length === 0) {
 					err(`[fit_model] CRITICAL: NO weights updated! Check trainable flags, learning rate, and loss function.`);
 				} else {
