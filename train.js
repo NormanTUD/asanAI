@@ -23,10 +23,6 @@ async function gui_not_in_training(set_started_training = 1) {
 	await update_translations();
 	favicon_default();
 
-	// Do NOT end the TF scope here — let the caller (train_neural_network)
-	// manage scope lifecycle to avoid premature backend invalidation.
-	// The scope will be cleaned up in train_neural_network's finally block.
-
 	await enable_everything();
 	$(".show_after_training").show();
 	$("#program_looks_at_data_span").hide();
@@ -73,22 +69,48 @@ function get_empty_plotly(name) {
 	return obj;
 }
 
-async function incrementAndReset() {
-    const $el = $('input').filter('.input_data.units, .input_data.filters').first();
-    if ($el.length === 0) return;
-
-    const originalValue = parseFloat($el.val()) || 0;
-    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-    $el.val(originalValue + 1).trigger('change');
-
-    await wait(1000);
-
-    $el.val(originalValue).trigger('change');
-}
-
 async function retrain_neural_network() {
-	await incrementAndReset();
+	// =====================================================================
+	// FIX: Do NOT call incrementAndReset() before training.
+	// The old approach of incrementing/decrementing a UI value to force
+	// model recreation caused a race condition: compile_model() would be
+	// triggered BEFORE started_training=true, creating a fresh optimizer
+	// with empty m/v buffers. Then training would start with this fresh
+	// optimizer, but another compile_model() call (from the reset) could
+	// sneak in and replace it again.
+	//
+	// Instead, we simply force a fresh model creation and compilation
+	// directly, in a controlled manner, BEFORE setting started_training.
+	// =====================================================================
+	
+	dbg("[retrain_neural_network] Forcing fresh model creation for retraining...");
+	
+	// Force model recreation by invalidating the config hash
+	model_config_hash = "";
+	no_weights_current_status_hash = "";
+	
+	// Create a fresh model (this resets all weights)
+	try {
+		model = await create_model(model, undefined, 1); // force=1
+		await get_model_data();
+		
+		if (!model) {
+			err("[retrain_neural_network] Failed to create fresh model!");
+			return null;
+		}
+		
+		// Compile with fresh optimizer
+		model.compile({
+			optimizer: global_model_data.optimizer,
+			loss: global_model_data.loss,
+			metrics: [global_model_data.metric]
+		});
+		
+		dbg("[retrain_neural_network] Fresh model compiled. Starting training...");
+	} catch (e) {
+		err("[retrain_neural_network] Error during model recreation: " + (e.message || e));
+		return null;
+	}
 
 	await train_neural_network();
 }
@@ -118,7 +140,6 @@ async function train_neural_network() {
 		err("[train_neural_network] Unexpected error:", e);
 		return null;
 	} finally {
-		// Only end scope if we started it and it's still active
 		if (scopeStarted) {
 			try {
 				if (tf.engine().state.activeScope !== null) {
@@ -145,7 +166,7 @@ async function _train_neural_network () {
 		return;
 	}
 
-	restart_fcnn(); // await not possible i think
+	restart_fcnn();
 
 	if(started_training) {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
@@ -248,17 +269,11 @@ function get_key_by_value(_object, value) {
 }
 
 async function get_model_data () {
-	// =====================================================================
-	// GUARD: Basic sanity checks
-	// =====================================================================
 	if (typeof tf === "undefined" || !tf || !tf.train) {
 		err("[get_model_data] FATAL: tf or tf.train is not defined. Cannot create optimizer.");
 		return;
 	}
 
-	// =====================================================================
-	// DISPOSE: Clean up any old tensors in global_model_data
-	// =====================================================================
 	if (global_model_data) {
 		try {
 			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
@@ -274,9 +289,6 @@ async function get_model_data () {
 		}
 	}
 
-	// =====================================================================
-	// COLLECT: Gather all training parameters from the UI
-	// =====================================================================
 	var loss = get_loss();
 	var optimizer_type = get_optimizer();
 	var metric_type = get_metric();
@@ -333,9 +345,6 @@ async function get_model_data () {
 		divide_by = 1;
 	}
 
-	// =====================================================================
-	// BUILD: Construct the global_model_data object
-	// =====================================================================
 	global_model_data = {
 		loss: loss,
 		optimizer_name: optimizer_type,
@@ -353,9 +362,6 @@ async function get_model_data () {
 		global_model_data["height"] = height;
 	}
 
-	// =====================================================================
-	// COLLECT OPTIMIZER HYPERPARAMETERS from UI
-	// =====================================================================
 	var optimizer_data_names = model_data_structure[optimizer_type];
 
 	if (!optimizer_data_names || !Array.isArray(optimizer_data_names)) {
@@ -384,9 +390,6 @@ async function get_model_data () {
 		global_model_data[optimizer_data_names[optimizer_idx]] = parse_float(element_val);
 	}
 
-	// =====================================================================
-	// OPTIMIZER CONSTRUCTORS MAP
-	// =====================================================================
 	var optimizer_constructors = {
 		"adadelta": "adadelta(global_model_data['learningRate'], global_model_data['rho'], global_model_data['epsilon'])",
 		"adagrad": "adagrad(global_model_data['learningRate'], global_model_data['initialAccumulatorValue'])",
@@ -402,40 +405,27 @@ async function get_model_data () {
 		return;
 	}
 
-	// =====================================================================
-	// CREATE OPTIMIZER
-	// 
-	// CRITICAL: Always create a FRESH optimizer here. The old approach of
-	// caching the optimizer across compile_model() calls fails because
-	// TF.js optimizers hold internal references to the engine/backend state
-	// at creation time. If a tf.engine().startScope() is called between
-	// optimizer creation and model.fit(), the optimizer's internal tensor
-	// slots become invalid ("n is undefined" / "backend is undefined").
-	//
-	// The REAL fix for gradient propagation is in fit_model() and 
-	// compile_model(): we prevent compile_model() from being called during
-	// training (via the started_training guard), so the optimizer created
-	// here at the START of training will persist throughout the entire
-	// training run without being replaced.
-	//
-	// The gradient vanishing issue was caused by compile_model() being
-	// called DURING training (via UI events / incrementAndReset), which
-	// created a NEW optimizer mid-training, resetting Adam's m/v buffers.
-	// With the started_training guard in compile_model(), this no longer
-	// happens, so a fresh optimizer at training start is perfectly fine.
-	// =====================================================================
-
 	var optimizer_as_code = "tf.train." + optimizer_constructors[optimizer_type];
+
+	// =====================================================================
+	// GUARD: If training is active, do NOT create a new optimizer.
+	// This is the CRITICAL fix: creating a new optimizer resets Adam's
+	// m/v buffers to zero, which causes the "only biases update" symptom.
+	// =====================================================================
+	if (started_training && model && model.optimizer) {
+		dbg("[get_model_data] SKIPPED optimizer creation: training is in progress. " +
+			"Preserving existing optimizer to maintain gradient accumulator state.");
+		global_model_data["optimizer"] = model.optimizer;
+		return;
+	}
 
 	dbg("[get_model_data] Creating optimizer: " + optimizer_as_code);
 
 	try {
-		// Ensure TF.js backend is ready before creating optimizer
 		await tf.ready();
 
 		var new_optimizer = eval(optimizer_as_code);
 
-		// GUARD: Validate the newly created optimizer
 		if (!new_optimizer) {
 			err("[get_model_data] FATAL: eval() returned null/undefined for: " + optimizer_as_code);
 			return;
@@ -446,12 +436,10 @@ async function get_model_data () {
 			return;
 		}
 
-		// GUARD: Log optimizer class for debugging
 		if (typeof new_optimizer.getClassName === "function") {
 			dbg(`[get_model_data] Optimizer created: ${new_optimizer.getClassName()}`);
 		}
 
-		// GUARD: Validate learning rate was applied
 		if (typeof new_optimizer.getConfig === "function") {
 			try {
 				var applied_config = new_optimizer.getConfig();
@@ -476,7 +464,6 @@ async function get_model_data () {
 		err("[get_model_data] FATAL: Failed to create optimizer. Code: " + optimizer_as_code + 
 			". Error: " + error_msg);
 
-		// Fallback: try basic Adam
 		try {
 			wrn("[get_model_data] Attempting fallback: default Adam(0.001)...");
 			await tf.ready();
@@ -488,21 +475,31 @@ async function get_model_data () {
 		}
 	}
 
-	// =====================================================================
-	// FINAL VALIDATION
-	// =====================================================================
 	if (!global_model_data["optimizer"]) {
 		err("[get_model_data] FATAL: After all attempts, optimizer is still null!");
 		return;
 	}
 
-	// GUARD: Summary log
 	if (finished_loading) {
 		dbg(`[get_model_data] Summary: optimizer=${optimizer_type}, ` +
 			`lr=${global_model_data["learningRate"]}, ` +
 			`loss=${loss}, metric=${metric_type}, ` +
 			`epochs=${epochs}, batchSize=${batchSize}`);
 	}
+}
+
+async function incrementAndReset() {
+    const $el = $('input').filter('.input_data.units, .input_data.filters').first();
+    if ($el.length === 0) return;
+
+    const originalValue = parseFloat($el.val()) || 0;
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    $el.val(originalValue + 1).trigger('change');
+
+    await wait(1000);
+
+    $el.val(originalValue).trigger('change');
 }
 
 function delay(time) {
@@ -1500,8 +1497,12 @@ async function fit_model(x_and_y) {
 			wrn("[fit_model] Optimizer is INVALID or missing. Creating fresh optimizer in current scope...");
 
 			try {
-				// Ensure we get fresh model data with a new optimizer
+				// Temporarily allow get_model_data to create a new optimizer
+				// even though started_training is true, by using a direct approach
+				var saved_started_training = started_training;
+				started_training = false;
 				await get_model_data();
+				started_training = saved_started_training;
 
 				if (!global_model_data || !global_model_data.optimizer) {
 					err("[fit_model] FATAL: get_model_data() did not produce a valid optimizer!");
@@ -1819,7 +1820,7 @@ async function fit_model(x_and_y) {
 		// =====================================================================
 		try {
 			dbg("[fit_model] Running pre-flight forward pass test...");
-			const test_x = x.slice(0, 1); // Take first sample
+			const test_x = x.slice(0, 1);
 			const test_pred = model.predict(test_x);
 			const test_pred_data = test_pred.dataSync();
 
@@ -1871,7 +1872,10 @@ async function fit_model(x_and_y) {
 
 				try {
 					await tf.ready();
+					var saved_st = started_training;
+					started_training = false;
 					await get_model_data();
+					started_training = saved_st;
 					model.compile({
 						optimizer: global_model_data.optimizer,
 						loss: global_model_data.loss,
@@ -1922,6 +1926,9 @@ async function fit_model(x_and_y) {
 		// =====================================================================
 		// POST-TRAINING: GRADIENT FLOW VERIFICATION
 		// =====================================================================
+		var gradient_flow_failed = false;
+		var frozen_kernel_layers = [];
+
 		try {
 			if (weights_before_training) {
 				const weights_after = model.getWeights();
@@ -1956,9 +1963,13 @@ async function fit_model(x_and_y) {
 						});
 
 						const full_name = `${layer.name}/${weight_name}`;
+						const is_kernel = weight_name.includes("kernel");
 
 						if (diff === 0) {
 							frozen_layers.push(full_name);
+							if (is_kernel) {
+								frozen_kernel_layers.push(full_name);
+							}
 						} else if (diff < 1e-10) {
 							near_zero_layers.push(`${full_name}(${diff.toExponential(2)})`);
 						} else {
@@ -1990,11 +2001,147 @@ async function fit_model(x_and_y) {
 						`(1) Architecture bottleneck (e.g., Conv layer with 1 filter), ` +
 						`(2) Optimizer state was reset mid-training (compile_model called during training), ` +
 						`(3) Dead neurons (all-zero activations after ReLU).`);
+					gradient_flow_failed = true;
 				} else if (frozen_layers.length > 0 && updated_layers.length === 0) {
 					err(`[fit_model] CRITICAL: NO weights updated at all! All ${frozen_layers.length} weight tensors are frozen. ` +
 						`Check: (1) learning rate > 0, (2) layers are trainable, (3) loss function is correct, (4) data is not constant.`);
+					gradient_flow_failed = true;
 				} else if (frozen_layers.length === 0 && updated_layers.length > 0) {
 					dbg(`[fit_model] GRADIENT CHECK PASSED: All ${updated_layers.length} weight tensors updated successfully.`);
+				}
+
+				// =====================================================================
+				// ACTIVE GRADIENT REPAIR: If kernel weights are frozen but biases
+				// updated, this is the exact symptom described in the bug report.
+				// We detect this and attempt an automatic repair by:
+				// 1. Creating a completely fresh optimizer
+				// 2. Recompiling the model (preserving weights)
+				// 3. Re-running a single epoch to "kick-start" gradient flow
+				// =====================================================================
+				let frozen_kernels = frozen_layers.filter(name => name.includes("kernel"));
+				let updated_biases = updated_layers.filter(name => name.includes("bias"));
+
+				if (frozen_kernels.length > 0 && updated_biases.length > 0 && fit_data && fit_data.epochs > 0) {
+					err(`[fit_model] GRADIENT REPAIR TRIGGERED: ${frozen_kernels.length} kernel(s) frozen while ${updated_biases.length} bias(es) updated. ` +
+						`This is the "only biases update" bug. Attempting automatic repair...`);
+
+					// Check if this is purely an architecture issue (1-filter conv)
+					let is_architecture_bottleneck = false;
+					for (let li = 0; li < model.layers.length; li++) {
+						const layer_class = model.layers[li].getClassName ? model.layers[li].getClassName() : "";
+						if (layer_class.includes("Conv")) {
+							const config = model.layers[li].getConfig();
+							if (config && config.filters !== undefined && config.filters <= 1) {
+								is_architecture_bottleneck = true;
+								wrn(`[fit_model] GRADIENT REPAIR: Architecture bottleneck detected at "${model.layers[li].name}" (${config.filters} filter). ` +
+									`This limits gradient flow by design. Repair may not fully resolve the issue.`);
+							}
+						}
+					}
+
+					if (!is_architecture_bottleneck) {
+						// The problem is optimizer state corruption. Fix it aggressively.
+						try {
+							wrn("[fit_model] GRADIENT REPAIR: Creating fresh optimizer and recompiling...");
+
+							// Save current weights (they may have partially trained)
+							const current_weights = model.getWeights().map(w => w.clone());
+
+							// Create a completely fresh optimizer
+							var saved_st = started_training;
+							started_training = false;
+							await get_model_data();
+							started_training = saved_st;
+
+							if (!global_model_data || !global_model_data.optimizer) {
+								err("[fit_model] GRADIENT REPAIR FAILED: Could not create fresh optimizer.");
+							} else {
+								// Recompile with fresh optimizer
+								model.compile({
+									optimizer: global_model_data.optimizer,
+									loss: global_model_data.loss,
+									metrics: [global_model_data.metric]
+								});
+
+								// Restore weights
+								model.setWeights(current_weights);
+
+								dbg("[fit_model] GRADIENT REPAIR: Model recompiled with fresh optimizer. Weights preserved.");
+
+								// Run a single repair epoch to verify gradients now flow
+								try {
+									const repair_fit_data = {
+										epochs: 1,
+										batchSize: fit_data.batchSize,
+										shuffle: true,
+										verbose: 0
+									};
+
+									// Snapshot weights again for verification
+									const repair_weights_before = model.getWeights().map(w => w.clone());
+
+									dbg("[fit_model] GRADIENT REPAIR: Running verification epoch...");
+									const repair_h = await model.fit(x, y, repair_fit_data);
+
+									// Check if kernels now update
+									const repair_weights_after = model.getWeights();
+									let repair_kernel_updated = false;
+									let repair_weight_idx = 0;
+
+									for (let li = 0; li < model.layers.length; li++) {
+										const layer = model.layers[li];
+										const num_w = layer.getWeights().length;
+
+										for (let wi = 0; wi < num_w; wi++) {
+											if (repair_weight_idx >= repair_weights_before.length) break;
+
+											const w_name = (layer.weights && layer.weights[wi]) ? layer.weights[wi].name : "";
+											if (w_name.includes("kernel")) {
+												const before_w = repair_weights_before[repair_weight_idx];
+												const after_w = repair_weights_after[repair_weight_idx];
+
+												if (!before_w.isDisposed && !after_w.isDisposed) {
+													const diff = tf.tidy(() => tf.abs(tf.sub(after_w, before_w)).max().dataSync()[0]);
+													if (diff > 0) {
+														repair_kernel_updated = true;
+													}
+												}
+											}
+											repair_weight_idx++;
+										}
+										if (repair_kernel_updated) break;
+									}
+
+									// Cleanup repair snapshots
+									for (let wi = 0; wi < repair_weights_before.length; wi++) {
+										try { if (!repair_weights_before[wi].isDisposed) repair_weights_before[wi].dispose(); } catch(e) {}
+									}
+
+									if (repair_kernel_updated) {
+										dbg("[fit_model] GRADIENT REPAIR SUCCESS: Kernels are now updating after optimizer reset!");
+
+										// Update the history with the repair epoch loss
+										if (repair_h && repair_h.history && repair_h.history.loss && h && h.history && h.history.loss) {
+											h.history.loss.push(...repair_h.history.loss);
+										}
+									} else {
+										wrn("[fit_model] GRADIENT REPAIR PARTIAL: Kernels still not updating after optimizer reset. " +
+											"This may be a deeper architectural issue or dead neurons.");
+									}
+								} catch (repair_epoch_err) {
+									wrn("[fit_model] GRADIENT REPAIR: Verification epoch failed: " + (repair_epoch_err.message || repair_epoch_err));
+								}
+							}
+
+							// Cleanup saved weights
+							for (let wi = 0; wi < current_weights.length; wi++) {
+								try { if (!current_weights[wi].isDisposed) current_weights[wi].dispose(); } catch(e) {}
+							}
+
+						} catch (repair_err) {
+							wrn("[fit_model] GRADIENT REPAIR FAILED: " + (repair_err.message || repair_err));
+						}
+					}
 				}
 
 				// Cleanup cloned weights
@@ -2182,7 +2329,10 @@ async function fit_model(x_and_y) {
 
 			try {
 				await tf.ready();
+				var saved_st_err = started_training;
+				started_training = false;
 				await get_model_data();
+				started_training = saved_st_err;
 
 				if (global_model_data && global_model_data.optimizer) {
 					model.compile({
@@ -2236,6 +2386,7 @@ async function fit_model(x_and_y) {
 		throw _err;
 	}
 }
+
 
 async function run_neural_network (recursive=0) {
 	var ret = null;

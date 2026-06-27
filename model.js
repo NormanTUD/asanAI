@@ -207,19 +207,34 @@ async function create_model_or_throw () {
 	}
 }
 
+
+
 async function recreate_model_if_needed (new_model_config_hash) {
-    // Don't recreate model if training is in progress or about to start
-    if (started_training) {
-        return;
-    }
-    
-    var recreate_model = await _get_recreate_model(new_model_config_hash);
-    if(recreate_model) {
-        model_is_trained = false;
-        reset_summary();
-        await _create_model();
-        await last_shape_layer_warning();
-    }
+	// =====================================================================
+	// CRITICAL GUARD: Do NOT recreate model during training.
+	// This was the source of the intermittent bug: if any UI event triggered
+	// updated_page() -> compile_model() -> recreate_model_if_needed() while
+	// training was starting (but started_training wasn't yet true), the model
+	// would be recreated with a fresh optimizer, zeroing all Adam m/v buffers.
+	// =====================================================================
+	if (started_training) {
+		dbg("[recreate_model_if_needed] SKIPPED: Training is in progress.");
+		return;
+	}
+
+	// Also check if model.isTraining (TF.js internal flag)
+	if (model && model.isTraining) {
+		dbg("[recreate_model_if_needed] SKIPPED: model.isTraining is true.");
+		return;
+	}
+
+	var recreate_model = await _get_recreate_model(new_model_config_hash);
+	if(recreate_model) {
+		model_is_trained = false;
+		reset_summary();
+		await _create_model();
+		await last_shape_layer_warning();
+	}
 }
 
 async function compile_model(recursion_level=0) {
@@ -232,13 +247,17 @@ async function compile_model(recursion_level=0) {
 
 	// =====================================================================
 	// GUARD: If training is in progress, do NOT recompile.
-	// Recompiling during training destroys the optimizer's internal state
-	// (momentum buffers, Adam moving averages, etc.), which causes gradients
-	// to not propagate correctly through earlier layers.
-	// Symptom: only biases update, kernels stay frozen.
+	// This guard now checks BOTH the global flag AND the TF.js internal flag.
+	// The TF.js flag catches the case where model.fit() has started but our
+	// global flag hasn't been set yet (race condition window).
 	// =====================================================================
 	if (started_training) {
-		dbg("[compile_model] SKIPPED: Training is in progress. Recompiling would destroy optimizer state and freeze kernel gradients.");
+		dbg("[compile_model] SKIPPED: started_training is true. Recompiling would destroy optimizer state.");
+		return;
+	}
+
+	if (model && model.isTraining) {
+		dbg("[compile_model] SKIPPED: model.isTraining is true. Recompiling would destroy optimizer state.");
 		return;
 	}
 
@@ -262,10 +281,8 @@ async function compile_model(recursion_level=0) {
 		await create_model_or_throw();
 	}
 
-	// --- Determine if the config (layer structure/settings) actually changed ---
 	var config_changed = (model_config_hash != new_model_config_hash);
 
-	// --- Save/restore weights logic ---
 	var saved_weights_json = null;
 	if (!config_changed && model && model.layers && model.layers.length) {
 		saved_weights_json = await get_weights_as_json(model);
@@ -273,7 +290,6 @@ async function compile_model(recursion_level=0) {
 
 	await recreate_model_if_needed(new_model_config_hash);
 
-	// --- Restore weights only if we saved them above ---
 	if (saved_weights_json && model && model.layers && model.layers.length) {
 		try {
 			var current_weights_json = await get_weights_as_json(model);
@@ -313,6 +329,15 @@ async function compile_model(recursion_level=0) {
 
 	try {
 		await get_model_data();
+
+		// =====================================================================
+		// SECOND GUARD: Check again after get_model_data() since it's async
+		// and training could have started in the meantime.
+		// =====================================================================
+		if (started_training || (model && model.isTraining)) {
+			dbg("[compile_model] SKIPPED (post-get_model_data check): Training started during compilation.");
+			return;
+		}
 
 		model.compile({
 			optimizer: global_model_data.optimizer,
