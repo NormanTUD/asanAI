@@ -2939,7 +2939,7 @@ async function run_neural_network (recursive=0) {
 		}
 
 		if (!model || !model.optimizer) {
-			err("[run_neural_network] FATAL: No optimizer after compilation.");
+		    dbg("[run_neural_network] FATAL: No optimizer after compilation.");
 			await gui_not_in_training();
 			return;
 		}
