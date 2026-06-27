@@ -6,12 +6,11 @@ var printed_msgs = [];
 var printed_wrns = [];
 
 function checkCurrentUrlParams() {
-	// window.location.search contains everything from the '?' onwards
-	if (window.location.search.length > 0) {
-		return true;
-	} else {
-		return false;
-	}
+	// URLSearchParams liest automatisch die Parameter aus window.location.search
+	const urlParams = new URLSearchParams(window.location.search);
+
+	// Überprüft, ob der Parameter 'debug' existiert und den Wert '1' hat
+	return urlParams.get('debug') === '1';
 }
 
 function get_latest_caller(full_stacktrace) {
