@@ -185,10 +185,11 @@ function l_if_needed (args) {
 	try {
 		if(checkCurrentUrlParams()) {
 			const stack_trace = get_stack_trace(1);
-			l("======= Messages ========");
+			l(">>>>>> Messages >>>>>>");
 			args.forEach(arg => l(arg));
 			l("stack_trace for the previous message blocks")
-			l(`Stack-Trace: ${stack_trace}`);
+			l(stack_trace);
+			l("<<<<<< Messages <<<<<<"); 
 		}
 	} catch (e) {
 		// ignored
