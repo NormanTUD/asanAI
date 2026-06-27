@@ -316,7 +316,7 @@ This "Symbolic AI" dominated the field for nearly forty years. It was believed t
 
 ## The earliest roots of modern AI
 
-### The First Practical AI (1914)
+### The First Practical AI (1913)
 
 <figure>
     <img style="width: 100%" src="gonzalo.jpg" alt="Gonzalo showing El Ajedrecista to Norbert Wiener" />
