@@ -4691,11 +4691,6 @@ async function new_origin_is_non_default(show_own_images, show_images_per_catego
 }
 
 async function change_data_origin() {
-	if (started_training || training_requested) {
-		dbg("[change_data_origin] BLOCKED: Training is active or requested.");
-		return;
-	}
-
 	currently_running_change_data_origin = 1;
 	dbg("[change_data_origin] " + language[lang]["changed_data_source"] + ", " + $("#data_origin").val() + " (" + $("#dataset").val() + ")");
 
@@ -6422,7 +6417,7 @@ function l(msg) {
 			var _load_time = new Date().toLocaleString();
 			_load_time = _load_time.replace(/ GMT.*/, "");
 			msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
-			$("#log").val(_load_time + ": " + msg + "\n" + $("#log").val());
+			$("#log").prepend(_load_time + ": " + msg + "\n");
 			last_l = msg;
 			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
 				err(msg);

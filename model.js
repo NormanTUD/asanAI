@@ -208,61 +208,25 @@ async function create_model_or_throw () {
 }
 
 async function recreate_model_if_needed (new_model_config_hash) {
-	// GUARD: Nicht waehrend Training oder Training-Anfrage
-	if (started_training || training_requested) {
-		dbg("[recreate_model_if_needed] SKIPPED: Training is in progress or requested.");
-		return;
-	}
-
-	if (model && model.isTraining) {
-		dbg("[recreate_model_if_needed] SKIPPED: model.isTraining is true.");
-		return;
-	}
-
-	var recreate_model = await _get_recreate_model(new_model_config_hash);
-	if(recreate_model) {
-		model_is_trained = false;
-		reset_summary();
-		await _create_model();
-		await last_shape_layer_warning();
-	}
+    // Don't recreate model if training is in progress or about to start
+    if (started_training) {
+        return;
+    }
+    
+    var recreate_model = await _get_recreate_model(new_model_config_hash);
+    if(recreate_model) {
+        model_is_trained = false;
+        reset_summary();
+        await _create_model();
+        await last_shape_layer_warning();
+    }
 }
 
-async function compile_model(recursion_level = 0) {
-	return new Promise((resolve) => {
-		_compile_model_resolve_queue.push(resolve);
-
-		if (_compile_model_timeout) {
-			clearTimeout(_compile_model_timeout);
-		}
-
-		_compile_model_timeout = setTimeout(async () => {
-			_compile_model_timeout = null;
-			await _compile_model(recursion_level);
-
-			// Resolve all queued promises
-			const queue = _compile_model_resolve_queue.splice(0);
-			queue.forEach(r => r());
-		}, 100);  // 100ms debounce
-	});
-}
-
-async function _compile_model(recursion_level=0) {
+async function compile_model(recursion_level=0) {
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {
 		err(language[lang]["recursion_level_for_compile_model_too_high"]);
-		return;
-	}
-
-	// GUARD: Nicht waehrend Training oder Training-Anfrage kompilieren
-	if (started_training || training_requested) {
-		dbg("[_compile_model] SKIPPED: training requested or in progress.");
-		return;
-	}
-
-	if (model && model.isTraining) {
-		dbg("[_compile_model] SKIPPED: model.isTraining is true.");
 		return;
 	}
 
@@ -286,36 +250,47 @@ async function _compile_model(recursion_level=0) {
 		await create_model_or_throw();
 	}
 
+	// --- Determine if the config (layer structure/settings) actually changed ---
 	var config_changed = (model_config_hash != new_model_config_hash);
 
+	// --- Save/restore weights logic ---
+	// ONLY save weights if:
+	//   1. The config has NOT changed (no structural change by the user)
+	//   2. We are NOT currently training (training updates weights via backprop;
+	//      saving/restoring here would overwrite those updates and cause
+	//      loss/weights to appear frozen)
 	var saved_weights_json = null;
-	if (!config_changed && model && model.layers && model.layers.length) {
+	if (!config_changed && !started_training && model && model.layers && model.layers.length) {
 		saved_weights_json = await get_weights_as_json(model);
 	}
 
 	await recreate_model_if_needed(new_model_config_hash);
 
-	if (saved_weights_json && model && model.layers && model.layers.length) {
+	// --- Restore weights only if we saved them above (i.e. not during training) ---
+	if (saved_weights_json && !started_training && model && model.layers && model.layers.length) {
 		try {
 			var current_weights_json = await get_weights_as_json(model);
+			// Only restore if shapes match (model structure didn't actually change)
 			if (current_weights_json && saved_weights_json &&
 				JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
 				JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
 				await set_weights_from_json_object(saved_weights_json, true, true, model);
 			} else {
+				// Shapes DON'T match → model structure actually changed → clear editables
 				math_clear_editables();
 			}
 		} catch (e) {
-			dbg("[_compile_model] Could not restore weights after recreation: " + e);
+			dbg("[compile_model] Could not restore weights after recreation: " + e);
 		}
 	}
 
 	if (config_changed) {
+		// Config changed → new initializers applied → clear editables so they re-sync
 		math_clear_editables();
 	}
 
 	if(!model) {
-		dbg(`[_compile_model] ${language[lang]["no_model_to_compile"]}!`);
+		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
 	}
 
@@ -328,23 +303,12 @@ async function _compile_model(recursion_level=0) {
 	}
 
 	if (typeof model.compile !== "function") {
-		dbg("model has no compile method");
+		dbg("model has no compile() method");
 		return;
 	}
 
 	try {
 		await get_model_data();
-
-		// ZWEITER GUARD: Nochmal pruefen nach get_model_data da es async ist
-		if (started_training || training_requested || (model && model.isTraining)) {
-			dbg("[_compile_model] SKIPPED post-get_model_data: Training started during compilation.");
-			return;
-		}
-
-		if (!global_model_data || !global_model_data.optimizer) {
-			err("[_compile_model] No optimizer available after get_model_data!");
-			return;
-		}
 
 		model.compile({
 			optimizer: global_model_data.optimizer,
@@ -353,12 +317,13 @@ async function _compile_model(recursion_level=0) {
 		});
 		model_config_hash = new_model_config_hash;
 
-		dbg("[_compile_model] Model compiled successfully. Optimizer: " + (model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown"));
-
 		if (typeof pyodideOnModelChanged === "function") {
 			pyodideOnModelChanged();
 			pyodideEditorStop();
 		}
+
+		// Do NOT clear editables here unconditionally.
+		// Only cleared above when model structure actually changed.
 	} catch (e) {
 		var ret = await handle_model_compile_error(e, recursion_level);
 

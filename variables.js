@@ -1966,8 +1966,3 @@ function toggle_math_interactive_mode() {
 }
 
 var CONNECTION_CANVAS_CACHE = new Map();
-
-var training_requested = false;
-
-var _compile_model_timeout = null;
-var _compile_model_resolve_queue = [];
