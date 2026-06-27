@@ -8,7 +8,6 @@ var printed_wrns = [];
 function checkCurrentUrlParams() {
 	// window.location.search contains everything from the '?' onwards
 	if (window.location.search.length > 0) {
-		console.debug("Debug: Current URL contains query parameters:", window.location.search);
 		return true;
 	} else {
 		return false;
