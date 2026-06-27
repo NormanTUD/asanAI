@@ -1376,6 +1376,9 @@ function get_unique_seed_for_layer(layer_nr) {
 	var base_seed = 1234;
 	var prime = 2654435761; // Knuth's multiplicative hash constant
 	var seed = Math.abs(((layer_nr + 1) * prime + base_seed) % 2147483647);
+
+	dbg(`get_unique_seed_for_layer: layer_nr: ${layer_nr}, prime = ${prime}, seed: ${seed}`);
+
 	return seed;
 }
 
