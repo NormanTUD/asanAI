@@ -1788,7 +1788,7 @@ async function fit_model(x_and_y) {
 				if (layer_class === "Conv2D" || layer_class === "Conv1D" || layer_class === "Conv3D") {
 					const config = layer.getConfig();
 					if (config && config.filters !== undefined && config.filters <= 1) {
-						wrn(`[fit_model] ARCHITECTURE WARNING: Layer "${layer.name}" (${layer_class}) has only ${config.filters} filter(s). This creates a severe information bottleneck and may prevent gradient flow to earlier layers.`);
+						dbg(`[fit_model] ARCHITECTURE WARNING: Layer "${layer.name}" (${layer_class}) has only ${config.filters} filter(s). This creates a severe information bottleneck and may prevent gradient flow to earlier layers.`);
 					}
 				}
 
