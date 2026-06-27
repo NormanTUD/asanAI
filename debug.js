@@ -11,7 +11,6 @@ function checkCurrentUrlParams() {
 		console.debug("Debug: Current URL contains query parameters:", window.location.search);
 		return true;
 	} else {
-		console.debug("Debug: Current URL does not contain query parameters.");
 		return false;
 	}
 }
