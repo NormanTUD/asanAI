@@ -213,7 +213,7 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	// =====================================================================
 	// CRITICAL GUARD: Do NOT recreate model during training.
 	// This was the source of the intermittent bug: if any UI event triggered
-	// updated_page() -> compile_model() -> recreate_model_if_needed() while
+	// updated_page -> compile_model -> recreate_model_if_needed while
 	// training was starting (but started_training wasn't yet true), the model
 	// would be recreated with a fresh optimizer, zeroing all Adam m/v buffers.
 	// =====================================================================
