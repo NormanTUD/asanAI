@@ -131,7 +131,7 @@ from the direct task.
     <figcaption class="md">\citealternativetitle{lebombobone}, found in the 1970s, is the oldest object that was used for mathematical purposes</figcaption>
 </figure>
 
-The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately 35,000-40,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
+The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately 35,000-40,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar, probably used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
 
 It can be thought of as the earliest surviving external mathematical memory of early humans.
 
