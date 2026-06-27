@@ -2240,7 +2240,7 @@ async function fit_model(x_and_y) {
 				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! Model cannot learn from constant input.`);
 			} else if (x_max > 2.0) {
 				// Daten sind nicht normalisiert - das ist die Hauptursache fuer NaN!
-				wrn(`[fit_model] WARNING: x max=${x_max.toFixed(2)} > 2.0. Data appears unnormalized. ` +
+				dbg(`[fit_model] WARNING: x max=${x_max.toFixed(2)} > 2.0. Data appears unnormalized. ` +
 					`This WILL cause NaN in Adam optimizer. Auto-normalizing...`);
 
 				// Auto-Normalisierung: Teile durch den Max-Wert
@@ -2254,7 +2254,7 @@ async function fit_model(x_and_y) {
 					}
 					x = x_normalized;
 
-					wrn(`[fit_model] Auto-normalized x by dividing by ${norm_factor.toFixed(2)}. ` +
+					dbg(`[fit_model] Auto-normalized x by dividing by ${norm_factor.toFixed(2)}. ` +
 						`New range: [${(x_min/norm_factor).toFixed(4)}, ${(x_max/norm_factor).toFixed(4)}]`);
 				}
 			}
