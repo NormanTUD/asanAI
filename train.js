@@ -1337,7 +1337,7 @@ async function fit_model(x_and_y) {
 				if (layer_class === "Conv2D" || layer_class === "Conv1D" || layer_class === "Conv3D") {
 					const config = layer.getConfig();
 					if (config.filters <= 1) {
-						wrn(`[fit_model] ARCHITECTURE: Layer "${layer.name}" has only ${config.filters} filter(s). This may limit gradient flow.`);
+						dbg(`[fit_model] ARCHITECTURE: Layer "${layer.name}" has only ${config.filters} filter(s). This may limit gradient flow.`);
 					}
 				}
 			}
