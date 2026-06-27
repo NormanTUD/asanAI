@@ -1,5 +1,30 @@
 "use strict";
 
+function check_low_filter_warning() {
+	var layer_types = $(".layer_type");
+	var all_layer_settings = $(".layer_setting");
+
+	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+		var type = $(layer_types[layer_idx]).val();
+
+		// Prüfe ob es ein Conv-Layer ist
+		if (type && (type.includes("conv") && !type.includes("Transpose"))) {
+			var filters_val = get_item_value(layer_idx, "filters");
+
+			var warn_msg_key = "conv_low_filter_warning";
+			var warn_msg = language[lang][warn_msg_key];
+
+			if (looks_like_number(filters_val) && parse_int(filters_val) <= 1) {
+				// Warnung hinzufügen
+				layer_warning_container(layer_idx, warn_msg);
+			} else {
+				// Warnung entfernen falls sie existiert
+				remove_layer_warning(layer_idx, warn_msg);
+			}
+		}
+	}
+}
+
 async function except (errname, e) {
 	remove_overlay();
 
@@ -208,18 +233,18 @@ async function create_model_or_throw () {
 }
 
 async function recreate_model_if_needed (new_model_config_hash) {
-    // Don't recreate model if training is in progress or about to start
-    if (started_training) {
-        return;
-    }
-    
-    var recreate_model = await _get_recreate_model(new_model_config_hash);
-    if(recreate_model) {
-        model_is_trained = false;
-        reset_summary();
-        await _create_model();
-        await last_shape_layer_warning();
-    }
+	// Don't recreate model if training is in progress or about to start
+	if (started_training) {
+		return;
+	}
+
+	var recreate_model = await _get_recreate_model(new_model_config_hash);
+	if(recreate_model) {
+		model_is_trained = false;
+		reset_summary();
+		await _create_model();
+		await last_shape_layer_warning();
+	}
 }
 
 async function compile_model(recursion_level=0) {

@@ -748,7 +748,8 @@
                        'globalMaxPooling1d_description' => 'This layer picks the maximum value across all time steps for each feature, reducing a sequence to a single summary vector. You can think of it as keeping only the strongest signal from the entire sequence for each feature. <div class="globalpooling_visual_explanation visual_explanations"></div>',
                        'globalMaxPooling2d_description' => 'This layer picks the maximum value across all spatial positions (height and width) for each channel, reducing a full feature map to a single value per channel. You can think of it as keeping only the most prominent activation from the entire image for each channel. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 		       "certainty" => "Certainty",
-		       "error_starting_webcam" => "Error starting webcam"
+		       "error_starting_webcam" => "Error starting webcam",
+		       "conv_low_filter_warning" => "Warning: This Conv2D layer has only 1 filter. This may extract too little information from the input. Consider using more filters (e.g. 8, 16, or 32).",
 		),
 
 		'de' => array(
@@ -1498,7 +1499,8 @@
 			'globalMaxPooling1d_description' => 'Diese Schicht wählt den maximalen Wert über alle Zeitschritte für jedes Merkmal aus und reduziert eine Sequenz auf einen einzigen zusammenfassenden Vektor. Man kann sich vorstellen, dass nur das stärkste Signal aus der gesamten Sequenz für jedes Merkmal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 			'globalMaxPooling2d_description' => 'Diese Schicht wählt den maximalen Wert über alle räumlichen Positionen (Höhe und Breite) für jeden Kanal aus und reduziert eine vollständige Feature-Map auf einen einzigen Wert pro Kanal. Man kann sich vorstellen, dass nur die stärkste Aktivierung aus dem gesamten Bild für jeden Kanal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 			"certainty" => "Sicherheit",
-		       "error_starting_webcam" => "Fehler beim Starten der Webcam"
+		       "error_starting_webcam" => "Fehler beim Starten der Webcam",
+			"conv_low_filter_warning" => "Warnung: Dieser Conv2D-Layer hat nur 1 Filter. Dadurch werden möglicherweise zu wenig Informationen aus der Eingabe extrahiert. Erwäge, mehr Filter zu verwenden (z.B. 8, 16 oder 32).",
 		)
 	);
 
