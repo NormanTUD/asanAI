@@ -230,6 +230,18 @@ async function compile_model(recursion_level=0) {
 		return;
 	}
 
+	// =====================================================================
+	// GUARD: If training is in progress, do NOT recompile.
+	// Recompiling during training destroys the optimizer's internal state
+	// (momentum buffers, Adam moving averages, etc.), which causes gradients
+	// to not propagate correctly through earlier layers.
+	// Symptom: only biases update, kernels stay frozen.
+	// =====================================================================
+	if (started_training) {
+		dbg("[compile_model] SKIPPED: Training is in progress. Recompiling would destroy optimizer state and freeze kernel gradients.");
+		return;
+	}
+
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
 	var new_model_config_hash = await get_model_config_hash();
@@ -254,29 +266,22 @@ async function compile_model(recursion_level=0) {
 	var config_changed = (model_config_hash != new_model_config_hash);
 
 	// --- Save/restore weights logic ---
-	// ONLY save weights if:
-	//   1. The config has NOT changed (no structural change by the user)
-	//   2. We are NOT currently training (training updates weights via backprop;
-	//      saving/restoring here would overwrite those updates and cause
-	//      loss/weights to appear frozen)
 	var saved_weights_json = null;
-	if (!config_changed && !started_training && model && model.layers && model.layers.length) {
+	if (!config_changed && model && model.layers && model.layers.length) {
 		saved_weights_json = await get_weights_as_json(model);
 	}
 
 	await recreate_model_if_needed(new_model_config_hash);
 
-	// --- Restore weights only if we saved them above (i.e. not during training) ---
-	if (saved_weights_json && !started_training && model && model.layers && model.layers.length) {
+	// --- Restore weights only if we saved them above ---
+	if (saved_weights_json && model && model.layers && model.layers.length) {
 		try {
 			var current_weights_json = await get_weights_as_json(model);
-			// Only restore if shapes match (model structure didn't actually change)
 			if (current_weights_json && saved_weights_json &&
 				JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
 				JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
 				await set_weights_from_json_object(saved_weights_json, true, true, model);
 			} else {
-				// Shapes DON'T match → model structure actually changed → clear editables
 				math_clear_editables();
 			}
 		} catch (e) {
@@ -285,7 +290,6 @@ async function compile_model(recursion_level=0) {
 	}
 
 	if (config_changed) {
-		// Config changed → new initializers applied → clear editables so they re-sync
 		math_clear_editables();
 	}
 
@@ -317,13 +321,12 @@ async function compile_model(recursion_level=0) {
 		});
 		model_config_hash = new_model_config_hash;
 
+		dbg("[compile_model] Model compiled successfully. Optimizer: " + (model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown"));
+
 		if (typeof pyodideOnModelChanged === "function") {
 			pyodideOnModelChanged();
 			pyodideEditorStop();
 		}
-
-		// Do NOT clear editables here unconditionally.
-		// Only cleared above when model structure actually changed.
 	} catch (e) {
 		var ret = await handle_model_compile_error(e, recursion_level);
 
