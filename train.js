@@ -1177,14 +1177,10 @@ async function fit_model(x_and_y) {
 			throw new Error("[fit_model] fit_data was not properly created.");
 		}
 
-		// Ensure TF.js backend is ready before compilation and training
 		await tf.ready();
 
 		// =====================================================================
 		// GUARD: Do NOT recompile if model is already compiled and has an optimizer.
-		// Recompiling mid-training destroys the optimizer state (momentum, Adam
-		// moving averages, etc.) which can cause the model to get stuck predicting
-		// a single class.
 		// =====================================================================
 		if (!model || !model.optimizer) {
 			dbg("[fit_model] Model or optimizer missing — compiling model now.");
@@ -1193,10 +1189,9 @@ async function fit_model(x_and_y) {
 			dbg("[fit_model] Model already compiled with optimizer. Skipping recompilation to preserve optimizer state.");
 		}
 
-		// Verify model is valid after potential compilation
 		if (!model || !model.optimizer) {
-			err("[fit_model] FATAL: Model or optimizer is null/undefined after compile attempt. Backend may not be initialized.");
-			throw new Error("[fit_model] Model or optimizer is null/undefined after await compile_model(). Backend may not be initialized.");
+			err("[fit_model] FATAL: Model or optimizer is null/undefined after compile attempt.");
+			throw new Error("[fit_model] Model or optimizer is null/undefined after await compile_model().");
 		}
 
 		l(language[lang]["started_training"]);
@@ -1219,8 +1214,6 @@ async function fit_model(x_and_y) {
 
 		warn_if_not_tensors(x, y);
 
-		// Convert to tensors if they aren't already, ensuring they are
-		// bound to the current active backend
 		if (!is_tensor(x)) {
 			dbg("[fit_model] x is not a tensor, converting...");
 			x = tf.tensor(Array.isArray(x) ? x : array_sync(x));
@@ -1248,7 +1241,6 @@ async function fit_model(x_and_y) {
 				err(`[fit_model] WARNING: y has only ${num_classes} class(es). The model cannot learn to distinguish categories with <= 1 output neuron.`);
 			}
 
-			// Check if all labels are the same (degenerate dataset)
 			try {
 				const y_data = y.arraySync();
 				const first_label = JSON.stringify(y_data[0]);
@@ -1260,12 +1252,11 @@ async function fit_model(x_and_y) {
 					}
 				}
 				if (all_same && num_samples > 1) {
-					err(`[fit_model] CRITICAL WARNING: All y labels appear identical! The first 50 samples all have label: ${first_label}. The model will only learn to predict this one class. Check your data labeling pipeline!`);
+					err(`[fit_model] CRITICAL WARNING: All y labels appear identical! The first 50 samples all have label: ${first_label}. Check your data labeling pipeline!`);
 				} else {
-					dbg(`[fit_model] Label diversity check passed — labels are not all identical.`);
+					dbg(`[fit_model] Label diversity check passed.`);
 				}
 
-				// Check class distribution
 				const class_counts = new Array(num_classes).fill(0);
 				for (let i = 0; i < y_data.length; i++) {
 					const max_idx = y_data[i].indexOf(Math.max(...y_data[i]));
@@ -1275,13 +1266,13 @@ async function fit_model(x_and_y) {
 
 				const empty_classes = class_counts.filter(c => c === 0).length;
 				if (empty_classes > 0) {
-					err(`[fit_model] WARNING: ${empty_classes} class(es) have ZERO training samples! The model cannot learn these categories.`);
+					err(`[fit_model] WARNING: ${empty_classes} class(es) have ZERO training samples!`);
 				}
 
 				const max_count = Math.max(...class_counts);
 				const min_count = Math.min(...class_counts.filter(c => c > 0));
 				if (max_count > min_count * 5) {
-					wrn(`[fit_model] WARNING: Severe class imbalance detected. Largest class has ${max_count} samples, smallest has ${min_count}. This may cause the model to predict only the majority class.`);
+					wrn(`[fit_model] WARNING: Severe class imbalance. Largest: ${max_count}, smallest: ${min_count}.`);
 				}
 			} catch (label_check_err) {
 				dbg(`[fit_model] Could not perform label diversity check: ${label_check_err}`);
@@ -1300,14 +1291,14 @@ async function fit_model(x_and_y) {
 			const model_num_outputs = model_output_shape[model_output_shape.length - 1];
 			const data_num_outputs = y_shape[y_shape.length - 1];
 			if (model_num_outputs !== data_num_outputs) {
-				err(`[fit_model] SHAPE MISMATCH: Model output has ${model_num_outputs} neurons but y data has ${data_num_outputs} classes. Training will likely fail or produce garbage results!`);
+				err(`[fit_model] SHAPE MISMATCH: Model output has ${model_num_outputs} neurons but y data has ${data_num_outputs} classes!`);
 			}
 		}
 
 		validate_model_io_shapes(x_shape, y_shape);
 
 		// =====================================================================
-		// GUARD: Check that x values are in a reasonable range (divide_by check)
+		// GUARD: Check x value range (divide_by check)
 		// =====================================================================
 		try {
 			const x_max = x.max().dataSync()[0];
@@ -1315,18 +1306,18 @@ async function fit_model(x_and_y) {
 			dbg(`[fit_model] x value range: [${x_min.toFixed(4)}, ${x_max.toFixed(4)}]`);
 
 			if (x_max > 10) {
-				wrn(`[fit_model] WARNING: x values have max=${x_max.toFixed(2)}. If these are pixel values (0-255), you may need to set divide_by=255. Large input values can prevent learning.`);
+				wrn(`[fit_model] WARNING: x values have max=${x_max.toFixed(2)}. If pixel values (0-255), set divide_by=255.`);
 			}
 
 			if (x_max === x_min) {
-				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! The model cannot learn from constant input.`);
+				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! Model cannot learn from constant input.`);
 			}
 		} catch (range_check_err) {
 			dbg(`[fit_model] Could not check x value range: ${range_check_err}`);
 		}
 
 		// =====================================================================
-		// GUARD: Check that at least one layer is trainable
+		// GUARD: Check trainability
 		// =====================================================================
 		let any_trainable = false;
 		for (let li = 0; li < model.layers.length; li++) {
@@ -1336,9 +1327,9 @@ async function fit_model(x_and_y) {
 			}
 		}
 		if (!any_trainable) {
-			err("[fit_model] CRITICAL: No layers are trainable! Weights will never update. Check the 'trainable' checkbox on your layers.");
+			err("[fit_model] CRITICAL: No layers are trainable! Weights will never update.");
 		} else {
-			dbg("[fit_model] Trainability check passed — at least one layer is trainable.");
+			dbg("[fit_model] Trainability check passed.");
 		}
 
 		// =====================================================================
@@ -1353,11 +1344,63 @@ async function fit_model(x_and_y) {
 		}
 
 		// =====================================================================
-		// GUARD: Log loss function
+		// GUARD: Log loss function and check consistency
 		// =====================================================================
 		dbg(`[fit_model] Loss function: ${get_loss()}`);
 		if (is_classification && get_loss() !== "categoricalCrossentropy") {
-			wrn(`[fit_model] WARNING: This appears to be a classification problem but loss is "${get_loss()}" instead of "categoricalCrossentropy". This may prevent proper learning.`);
+			wrn(`[fit_model] WARNING: Classification problem but loss is "${get_loss()}" instead of "categoricalCrossentropy".`);
+		}
+
+		// =====================================================================
+		// GUARD: ARCHITECTURE BOTTLENECK DETECTION
+		// Detect layers with very few parameters that could cause vanishing gradients
+		// =====================================================================
+		try {
+			let prev_output_size = null;
+			for (let li = 0; li < model.layers.length; li++) {
+				const layer = model.layers[li];
+				const layer_output_shape = layer.getOutputAt(0).shape;
+				const layer_name = layer.name;
+				const layer_class = layer.getClassName();
+
+				// Calculate output volume (excluding batch dimension)
+				const output_volume = layer_output_shape.slice(1).reduce((a, b) => (b !== null ? a * b : a), 1);
+
+				// Check for extreme bottlenecks in conv layers
+				if (layer_class === "Conv2D" || layer_class === "Conv1D" || layer_class === "Conv3D") {
+					const config = layer.getConfig();
+					const filters = config.filters;
+
+					if (filters <= 1) {
+						err(`[fit_model] ARCHITECTURE WARNING: Layer "${layer_name}" (${layer_class}) has only ${filters} filter(s)! This creates an extreme information bottleneck that will likely cause vanishing gradients. Layers before this one will NOT learn. Increase filters to at least 4-8.`);
+					} else if (filters <= 2) {
+						wrn(`[fit_model] ARCHITECTURE WARNING: Layer "${layer_name}" (${layer_class}) has only ${filters} filters. This is very few and may cause poor gradient flow to earlier layers. Consider increasing to at least 4-8.`);
+					}
+				}
+
+				// Check for extreme size reduction
+				if (prev_output_size !== null && output_volume > 0) {
+					const ratio = prev_output_size / output_volume;
+					if (ratio > 100 && li < model.layers.length - 2) {
+						wrn(`[fit_model] ARCHITECTURE WARNING: Layer "${layer_name}" reduces data volume by ${ratio.toFixed(0)}x (from ${prev_output_size} to ${output_volume}). This extreme compression may cause vanishing gradients.`);
+					}
+				}
+
+				prev_output_size = output_volume;
+			}
+		} catch (arch_check_err) {
+			dbg(`[fit_model] Could not perform architecture bottleneck check: ${arch_check_err}`);
+		}
+
+		// =====================================================================
+		// SAVE WEIGHTS BEFORE TRAINING (for gradient flow check after first epoch)
+		// =====================================================================
+		let weights_before_training = null;
+		try {
+			weights_before_training = model.getWeights().map(w => w.clone());
+			dbg("[fit_model] Saved weight snapshot for post-training gradient flow check.");
+		} catch (snapshot_err) {
+			dbg(`[fit_model] Could not snapshot weights before training: ${snapshot_err}`);
 		}
 
 		await wait_for_updated_page(2);
@@ -1368,6 +1411,80 @@ async function fit_model(x_and_y) {
 		dbg("[fit_model] Calling model.fit() now...");
 		const h = await model.fit(x, y, fit_data);
 		dbg("[fit_model] model.fit() completed successfully.");
+
+		// =====================================================================
+		// POST-TRAINING: CHECK WHICH LAYERS ACTUALLY UPDATED
+		// This detects vanishing gradient problems
+		// =====================================================================
+		try {
+			if (weights_before_training) {
+				const weights_after = model.getWeights();
+				const layer_weight_index_map = [];
+
+				// Build a map of which weight tensors belong to which layer
+				let weight_idx = 0;
+				for (let li = 0; li < model.layers.length; li++) {
+					const layer = model.layers[li];
+					const num_weights = layer.getWeights().length;
+					for (let wi = 0; wi < num_weights; wi++) {
+						layer_weight_index_map.push({
+							layer_index: li,
+							layer_name: layer.name,
+							weight_name: layer.weights[wi] ? layer.weights[wi].name : `weight_${wi}`,
+							global_index: weight_idx
+						});
+						weight_idx++;
+					}
+				}
+
+				let frozen_layers = [];
+				let updated_layers = [];
+
+				for (let wi = 0; wi < weights_before_training.length; wi++) {
+					const before = weights_before_training[wi];
+					const after = weights_after[wi];
+
+					// Calculate max absolute difference
+					const diff = tf.tidy(() => {
+						return tf.abs(tf.sub(after, before)).max().dataSync()[0];
+					});
+
+					const info = layer_weight_index_map[wi] || { layer_name: `unknown_${wi}`, weight_name: `weight_${wi}` };
+
+					if (diff === 0) {
+						frozen_layers.push(`${info.layer_name}/${info.weight_name}`);
+						dbg(`[fit_model] GRADIENT CHECK: ${info.layer_name}/${info.weight_name} — NO CHANGE (max_diff=0). Gradients did not reach this weight!`);
+					} else if (diff < 1e-10) {
+						frozen_layers.push(`${info.layer_name}/${info.weight_name} (near-zero: ${diff.toExponential(2)})`);
+						dbg(`[fit_model] GRADIENT CHECK: ${info.layer_name}/${info.weight_name} — NEAR-ZERO change (max_diff=${diff.toExponential(2)}). Vanishing gradient likely.`);
+					} else {
+						updated_layers.push(`${info.layer_name}/${info.weight_name}`);
+						dbg(`[fit_model] GRADIENT CHECK: ${info.layer_name}/${info.weight_name} — OK (max_diff=${diff.toExponential(4)})`);
+					}
+				}
+
+				if (frozen_layers.length > 0 && updated_layers.length > 0) {
+					err(`[fit_model] VANISHING GRADIENT DETECTED: ${frozen_layers.length} weight tensor(s) did NOT update during training: [${frozen_layers.join(", ")}]. Only these updated: [${updated_layers.join(", ")}]. This means gradients are not flowing to the earlier layers. Common causes: (1) A layer with very few filters (e.g. Conv2D with 1 filter) creates a bottleneck. (2) The learning rate is too low. (3) The model architecture is too deep without skip connections. FIX: Increase the number of filters in convolutional layers (especially if any have only 1-2 filters).`);
+				} else if (frozen_layers.length > 0 && updated_layers.length === 0) {
+					err(`[fit_model] CRITICAL: NO weights updated at all during training! All ${frozen_layers.length} weight tensors are frozen. Check: (1) Are all layers set to trainable? (2) Is the learning rate > 0? (3) Is the loss function correct?`);
+				} else {
+					dbg(`[fit_model] GRADIENT CHECK PASSED: All ${updated_layers.length} weight tensors updated during training.`);
+				}
+
+				// Dispose cloned tensors
+				for (let wi = 0; wi < weights_before_training.length; wi++) {
+					weights_before_training[wi].dispose();
+				}
+			}
+		} catch (gradient_check_err) {
+			dbg(`[fit_model] Could not perform post-training gradient check: ${gradient_check_err}`);
+			// Dispose cloned tensors on error too
+			if (weights_before_training) {
+				for (let wi = 0; wi < weights_before_training.length; wi++) {
+					try { weights_before_training[wi].dispose(); } catch(e) {}
+				}
+			}
+		}
 
 		await nextFrame();
 		l(language[lang]["finished_training"]);
@@ -1382,7 +1499,7 @@ async function fit_model(x_and_y) {
 			dbg(`[fit_model] Final training loss: ${final_loss.toFixed(6)}`);
 
 			if (final_loss > 1.5 && is_classification && labels.length >= 3) {
-				wrn(`[fit_model] WARNING: Final loss (${final_loss.toFixed(4)}) is still high for ${labels.length}-class classification. Expected < ${Math.log(labels.length).toFixed(2)} for random guessing. The model may not have learned meaningful features. Consider: more epochs, larger model, or checking data quality.`);
+				wrn(`[fit_model] WARNING: Final loss (${final_loss.toFixed(4)}) is still high for ${labels.length}-class classification. Expected < ${Math.log(labels.length).toFixed(2)} for random guessing. Consider: more epochs, larger model, or checking data quality.`);
 			}
 		}
 
