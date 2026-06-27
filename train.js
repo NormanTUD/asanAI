@@ -166,7 +166,7 @@ async function _train_neural_network () {
 		return;
 	}
 
-	restart_fcnn();
+	await restart_fcnn();
 
 	if(started_training) {
 		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
@@ -1850,14 +1850,14 @@ async function fit_model(x_and_y) {
 			try {
 				await compile_model();
 			} catch (compile_err) {
-				err("[fit_model] FATAL: compile_model() threw: " + (compile_err.message || compile_err));
+				err("[fit_model] FATAL: compile_model threw: " + (compile_err.message || compile_err));
 				throw compile_err;
 			}
 		}
 
 		if (!model) {
-			err("[fit_model] FATAL: Model is STILL null after compile_model()!");
-			throw new Error("[fit_model] Model is null after compile_model()");
+			err("[fit_model] FATAL: Model is STILL null after compile_model!");
+			throw new Error("[fit_model] Model is null after compile_model");
 		}
 
 		if (!model.layers || !model.layers.length) {
@@ -1946,8 +1946,8 @@ async function fit_model(x_and_y) {
 				started_training = saved_started_training;
 
 				if (!global_model_data || !global_model_data.optimizer) {
-					err("[fit_model] FATAL: get_model_data() did not produce a valid optimizer!");
-					throw new Error("[fit_model] No optimizer after get_model_data()");
+					err("[fit_model] FATAL: get_model_data did not produce a valid optimizer!");
+					throw new Error("[fit_model] No optimizer after get_model_data");
 				}
 
 				// Compile with the fresh optimizer
@@ -2375,7 +2375,7 @@ async function fit_model(x_and_y) {
 					throw retry_err;
 				}
 			} else if (fit_err_msg.includes("is already disposed")) {
-				err("[fit_model] DIAGNOSIS: A tensor was disposed during training. This usually means compile_model() was called mid-training, disposing the model's internal tensors.");
+				err("[fit_model] DIAGNOSIS: A tensor was disposed during training. This usually means compile_model was called mid-training, disposing the model's internal tensors.");
 				throw fit_err;
 			} else if (fit_err_msg.includes("NaN")) {
 				err("[fit_model] DIAGNOSIS: NaN encountered during training. Possible causes: learning rate too high, data not normalized, or exploding gradients.");
@@ -2853,7 +2853,7 @@ async function fit_model(x_and_y) {
 		if (err_msg.includes("backend") && err_msg.includes("undefined")) {
 			err("[fit_model] DIAGNOSIS: 'backend undefined' — The optimizer was created in a different " +
 				"TF.js engine scope than where model.fit() is running. This happens when " +
-				"compile_model() is called before tf.engine().startScope() in train_neural_network(), " +
+				"compile_model is called before tf.engine.startScope in train_neural_network(), " +
 				"and then model.fit() runs inside that scope.");
 			err("[fit_model] ATTEMPTED FIX: Will try to recompile with a fresh optimizer in the current scope...");
 
@@ -2879,7 +2879,7 @@ async function fit_model(x_and_y) {
 			}
 		} else if (err_msg.includes("is already disposed")) {
 			err("[fit_model] DIAGNOSIS: A tensor was disposed during training. " +
-				"This usually means compile_model() or create_model() was called mid-training, " +
+				"This usually means compile_model or create_model was called mid-training, " +
 				"disposing the model's internal tensors. Check that started_training guard is working.");
 		} else if (err_msg.includes("NaN")) {
 			err("[fit_model] DIAGNOSIS: NaN encountered. Possible causes: " +
