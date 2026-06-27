@@ -117,6 +117,8 @@ function err (...args) {
 
 	_full_debug_log.push(struct);
 
+	l_if_needed(args);
+
 	num_errs++;
 }
 
