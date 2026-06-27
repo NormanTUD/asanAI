@@ -580,6 +580,27 @@ async function get_fit_data () {
 	callbacks["onBatchEnd"] = async function (batch, logs) {
 		confusion_matrix_and_grid_cache = {};
 
+		// =====================================================================
+		// CRITICAL: Detect NaN loss IMMEDIATELY and stop training
+		// If loss becomes NaN, every subsequent optimizer step will corrupt
+		// the m/v buffers further. Stop immediately to limit damage.
+		// =====================================================================
+		if (logs && (isNaN(logs["loss"]) || !isFinite(logs["loss"]))) {
+			err(`[onBatchEnd] CRITICAL: Loss is ${logs["loss"]} at batch ${batch}! ` +
+				"Stopping training immediately to prevent optimizer corruption.");
+			model.stopTraining = true;
+
+			// Attempt immediate repair
+			try {
+				await repair_nan_weights_if_needed();
+				await repair_nan_optimizer_if_needed();
+				wrn("[onBatchEnd] Emergency NaN repair attempted. Training stopped.");
+			} catch (repair_err) {
+				err("[onBatchEnd] Emergency repair failed: " + (repair_err.message || repair_err));
+			}
+			return;
+		}
+
 		delete logs["batch"];
 		delete logs["size"];
 
@@ -602,7 +623,7 @@ async function get_fit_data () {
 
 		show_plotly_graphs();
 
-		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
+		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) {
 			const plot_func = (batchNr === 1) ? Plotly.newPlot : Plotly.update;
 
 			plot_func("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
@@ -625,8 +646,6 @@ async function get_fit_data () {
 		await restart_fcnn();
 
 		current_loss_value = logs.loss;
-
-		//history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));
 
 		show_or_hide_beginner_or_expert_mode_stuff();
 	};
@@ -1335,6 +1354,207 @@ async function prepare_gui_for_training() {
 	add_stop_training_class_to_train_button();
 }
 
+/**
+ * Validates and sanitizes training tensors before they are passed to model.fit().
+ * Removes samples that contain NaN or Infinity values.
+ * Returns sanitized {x, y} or throws if all data is invalid.
+ */
+function sanitize_training_data(x, y) {
+	return tf.tidy(() => {
+		const x_shape = x.shape;
+		const y_shape = y.shape;
+		const num_samples = x_shape[0];
+
+		if (num_samples === 0) {
+			throw new Error("[sanitize_training_data] No samples in input data!");
+		}
+
+		// Check each sample for NaN/Inf
+		// Reshape x to [num_samples, -1] to check per-sample
+		const x_flat = x.reshape([num_samples, -1]);
+
+		// For each sample, check if it contains NaN or Inf
+		// tf.isNaN returns boolean tensor, reduce over features axis
+		const has_nan = x_flat.isNaN().any(1); // [num_samples] boolean
+		const has_inf = x_flat.abs().equal(Infinity).any(1); // [num_samples] boolean
+		const x_invalid = has_nan.logicalOr(has_inf); // [num_samples] boolean
+
+		// Also check y
+		const y_flat = y.reshape([num_samples, -1]);
+		const y_has_nan = y_flat.isNaN().any(1);
+		const y_has_inf = y_flat.abs().equal(Infinity).any(1);
+		const y_invalid = y_has_nan.logicalOr(y_has_inf);
+
+		// Combined invalid mask
+		const invalid = x_invalid.logicalOr(y_invalid);
+		const valid = invalid.logicalNot();
+
+		const valid_data = valid.dataSync();
+		const num_valid = Array.from(valid_data).filter(v => v).length;
+		const num_invalid = num_samples - num_valid;
+
+		if (num_invalid > 0) {
+			wrn(`[sanitize_training_data] Found ${num_invalid}/${num_samples} samples with NaN/Inf values. Removing them.`);
+		}
+
+		if (num_valid === 0) {
+			throw new Error("[sanitize_training_data] ALL samples contain NaN or Inf! Cannot train.");
+		}
+
+		if (num_valid === num_samples) {
+			dbg("[sanitize_training_data] All samples are clean (no NaN/Inf).");
+			return { x: x, y: y, removed: 0 };
+		}
+
+		// Gather only valid indices
+		const valid_indices_arr = [];
+		for (let i = 0; i < num_samples; i++) {
+			if (valid_data[i]) {
+				valid_indices_arr.push(i);
+			}
+		}
+
+		const valid_indices = tf.tensor1d(valid_indices_arr, 'int32');
+		const x_clean = tf.gather(x, valid_indices);
+		const y_clean = tf.gather(y, valid_indices);
+
+		dbg(`[sanitize_training_data] Kept ${num_valid}/${num_samples} clean samples.`);
+
+		return { x: x_clean, y: y_clean, removed: num_invalid };
+	});
+}
+
+/**
+ * Checks if the model weights contain NaN and attempts to fix them
+ * by reinitializing only the corrupted weight tensors.
+ * Returns true if any weights were repaired.
+ */
+async function repair_nan_weights_if_needed() {
+	if (!model || !model.layers) return false;
+
+	let has_nan = false;
+	let nan_weight_indices = [];
+	const all_weights = model.getWeights();
+
+	for (let wi = 0; wi < all_weights.length; wi++) {
+		if (all_weights[wi].isDisposed) continue;
+		const w_data = all_weights[wi].dataSync();
+		for (let di = 0; di < w_data.length; di++) {
+			if (isNaN(w_data[di]) || !isFinite(w_data[di])) {
+				has_nan = true;
+				nan_weight_indices.push(wi);
+				break;
+			}
+		}
+	}
+
+	if (!has_nan) {
+		return false;
+	}
+
+	err(`[repair_nan_weights_if_needed] Found NaN/Inf in ${nan_weight_indices.length} weight tensor(s): indices [${nan_weight_indices.join(", ")}]. Reinitializing corrupted weights...`);
+
+	// Clone all weights, replace NaN ones with fresh random values
+	const repaired_weights = [];
+	for (let wi = 0; wi < all_weights.length; wi++) {
+		if (nan_weight_indices.includes(wi)) {
+			const shape = all_weights[wi].shape;
+			// Use Glorot uniform initialization as a safe default
+			const fan_in = shape.length >= 2 ? shape[shape.length - 2] : shape[0];
+			const fan_out = shape.length >= 2 ? shape[shape.length - 1] : shape[0];
+			const limit = Math.sqrt(6.0 / (fan_in + fan_out));
+			const new_weight = tf.randomUniform(shape, -limit, limit);
+			repaired_weights.push(new_weight);
+			wrn(`[repair_nan_weights_if_needed] Reinitialized weight tensor ${wi} (shape: [${shape.join(", ")}]) with Glorot uniform.`);
+		} else {
+			repaired_weights.push(all_weights[wi].clone());
+		}
+	}
+
+	model.setWeights(repaired_weights);
+
+	// Dispose cloned tensors
+	for (let wi = 0; wi < repaired_weights.length; wi++) {
+		try { repaired_weights[wi].dispose(); } catch(e) {}
+	}
+
+	dbg("[repair_nan_weights_if_needed] Weight repair complete.");
+	return true;
+}
+
+/**
+ * Checks optimizer accumulators for NaN values and resets the optimizer if found.
+ * This prevents NaN from propagating through all future training steps.
+ * Returns true if optimizer was reset.
+ */
+async function repair_nan_optimizer_if_needed() {
+	if (!model || !model.optimizer) return false;
+	if (typeof model.optimizer.getWeights !== "function") return false;
+
+	try {
+		const opt_weights = await model.optimizer.getWeights();
+		if (!opt_weights || opt_weights.length === 0) return false;
+
+		let has_nan = false;
+		for (let ow_idx = 0; ow_idx < opt_weights.length; ow_idx++) {
+			const ow = opt_weights[ow_idx];
+			if (ow && ow.tensor && !ow.tensor.isDisposed) {
+				const data = ow.tensor.dataSync();
+				for (let di = 0; di < Math.min(data.length, 5000); di++) {
+					if (isNaN(data[di]) || !isFinite(data[di])) {
+						has_nan = true;
+						break;
+					}
+				}
+			}
+			if (has_nan) break;
+		}
+
+		if (!has_nan) return false;
+
+		err("[repair_nan_optimizer_if_needed] NaN detected in optimizer accumulators! " +
+			"Resetting optimizer to prevent NaN propagation...");
+
+		// Save current model weights (they should already be repaired by repair_nan_weights_if_needed)
+		const current_weights = model.getWeights().map(w => w.clone());
+
+		// Create fresh optimizer
+		var saved_st = started_training;
+		started_training = false;
+		await get_model_data();
+		started_training = saved_st;
+
+		if (!global_model_data || !global_model_data.optimizer) {
+			err("[repair_nan_optimizer_if_needed] Could not create fresh optimizer!");
+			for (let wi = 0; wi < current_weights.length; wi++) {
+				try { current_weights[wi].dispose(); } catch(e) {}
+			}
+			return false;
+		}
+
+		// Recompile with fresh optimizer
+		model.compile({
+			optimizer: global_model_data.optimizer,
+			loss: global_model_data.loss,
+			metrics: [global_model_data.metric]
+		});
+
+		// Restore weights
+		model.setWeights(current_weights);
+
+		// Cleanup
+		for (let wi = 0; wi < current_weights.length; wi++) {
+			try { current_weights[wi].dispose(); } catch(e) {}
+		}
+
+		dbg("[repair_nan_optimizer_if_needed] Optimizer reset complete. Fresh Adam m/v buffers.");
+		return true;
+	} catch (e) {
+		wrn("[repair_nan_optimizer_if_needed] Error during NaN check: " + (e.message || e));
+		return false;
+	}
+}
+
 async function fit_model(x_and_y) {
 	var weights_before_training = null;
 	var fit_data = null;
@@ -1710,6 +1930,51 @@ async function fit_model(x_and_y) {
 		} catch (range_err) {
 			dbg(`[fit_model] x range check failed (non-fatal): ${range_err}`);
 		}
+
+		// =====================================================================
+		// GUARD: Sanitize training data (remove NaN/Inf samples)
+		// This prevents NaN from entering the model during training, which
+		// would corrupt optimizer accumulators permanently.
+		// =====================================================================
+		try {
+			const sanitized = sanitize_training_data(x, y);
+			if (sanitized.removed > 0) {
+				// Replace x and y with clean versions
+				if (x !== x_and_y["x"]) {
+					// x was already a copy we created, dispose it
+					x.dispose();
+				}
+				if (y !== x_and_y["y"]) {
+					y.dispose();
+				}
+				x = sanitized.x;
+				y = sanitized.y;
+				wrn(`[fit_model] Removed ${sanitized.removed} corrupted sample(s) from training data.`);
+			}
+		} catch (sanitize_err) {
+			if (sanitize_err.message && sanitize_err.message.includes("ALL samples contain NaN")) {
+				err("[fit_model] FATAL: " + sanitize_err.message);
+				throw sanitize_err;
+			}
+			wrn("[fit_model] Data sanitization failed (non-fatal): " + (sanitize_err.message || sanitize_err));
+		}
+
+		// =====================================================================
+		// GUARD: Check and repair NaN in model weights BEFORE training
+		// If weights are already NaN (from a previous failed training run),
+		// training will immediately produce NaN loss and corrupt the optimizer.
+		// =====================================================================
+		try {
+			const weights_repaired = await repair_nan_weights_if_needed();
+			if (weights_repaired) {
+				wrn("[fit_model] Model weights contained NaN and were repaired. " +
+					"Also resetting optimizer to clear corrupted accumulators...");
+				await repair_nan_optimizer_if_needed();
+			}
+		} catch (repair_err) {
+			wrn("[fit_model] Weight/optimizer NaN repair failed (non-fatal): " + (repair_err.message || repair_err));
+		}
+
 
 		// =====================================================================
 		// GUARD: Trainability check
@@ -2171,6 +2436,7 @@ async function fit_model(x_and_y) {
 
 		// =====================================================================
 		// POST-TRAINING: Check optimizer accumulator state (Adam m/v buffers)
+		// Now also checks for NaN in accumulators.
 		// =====================================================================
 		try {
 			if (model.optimizer && typeof model.optimizer.getWeights === "function") {
@@ -2178,13 +2444,28 @@ async function fit_model(x_and_y) {
 				if (opt_weights && opt_weights.length > 0) {
 					let all_zero_count = 0;
 					let non_zero_count = 0;
+					let nan_count = 0;
 					let total_opt_weights = opt_weights.length;
 
 					for (let ow_idx = 0; ow_idx < opt_weights.length; ow_idx++) {
 						const ow = opt_weights[ow_idx];
 						if (ow && ow.tensor && !ow.tensor.isDisposed) {
-							const max_val = ow.tensor.abs().max().dataSync()[0];
-							if (max_val === 0) {
+							const data = ow.tensor.dataSync();
+							let has_nan_in_this = false;
+							let max_val = 0;
+
+							for (let di = 0; di < data.length; di++) {
+								if (isNaN(data[di]) || !isFinite(data[di])) {
+									has_nan_in_this = true;
+									break;
+								}
+								const abs_val = Math.abs(data[di]);
+								if (abs_val > max_val) max_val = abs_val;
+							}
+
+							if (has_nan_in_this) {
+								nan_count++;
+							} else if (max_val === 0) {
 								all_zero_count++;
 							} else {
 								non_zero_count++;
@@ -2192,15 +2473,25 @@ async function fit_model(x_and_y) {
 						}
 					}
 
-					dbg(`[fit_model] Optimizer accumulator state: ${non_zero_count}/${total_opt_weights} non-zero, ${all_zero_count}/${total_opt_weights} all-zero.`);
+					dbg(`[fit_model] Optimizer accumulator state: ${non_zero_count}/${total_opt_weights} non-zero, ` +
+						`${all_zero_count}/${total_opt_weights} all-zero, ${nan_count}/${total_opt_weights} contain NaN.`);
 
-					if (all_zero_count === total_opt_weights && total_opt_weights > 0) {
+					if (nan_count > 0) {
+						err(`[fit_model] CRITICAL: ${nan_count} optimizer accumulator(s) contain NaN! ` +
+							"This will cause all future training to produce NaN. Resetting optimizer...");
+						const opt_repaired = await repair_nan_optimizer_if_needed();
+						if (opt_repaired) {
+							dbg("[fit_model] Optimizer successfully reset after NaN detection.");
+						} else {
+							err("[fit_model] Failed to reset optimizer after NaN detection!");
+						}
+					} else if (all_zero_count === total_opt_weights && total_opt_weights > 0) {
 						err("[fit_model] CRITICAL: ALL optimizer accumulators are zero after training! " +
 							"This means Adam's m/v buffers were never populated. " +
 							"Possible cause: optimizer was replaced/reset during training.");
 					} else if (all_zero_count > 0 && non_zero_count > 0) {
 						wrn(`[fit_model] WARNING: ${all_zero_count} optimizer accumulator(s) are still zero. ` +
-							"This may indicate partial gradient flow issues.");
+							"This may indicate partial gradient flow issues (architecture bottleneck?).");
 					}
 				} else {
 					dbg("[fit_model] Optimizer has no weights/accumulators to inspect (may be SGD or first epoch).");
@@ -2243,6 +2534,24 @@ async function fit_model(x_and_y) {
 			}
 		} catch (nan_check_err) {
 			dbg(`[fit_model] NaN/Inf weight check failed (non-fatal): ${nan_check_err}`);
+		}
+
+		// =====================================================================
+		// POST-TRAINING: If NaN detected in weights, repair and warn
+		// =====================================================================
+		if (has_nan || has_inf) {
+			wrn("[fit_model] Attempting automatic NaN/Inf repair...");
+			try {
+				const repaired = await repair_nan_weights_if_needed();
+				if (repaired) {
+					await repair_nan_optimizer_if_needed();
+					wrn("[fit_model] NaN repair completed. Model weights and optimizer have been reset. " +
+						"Consider: (1) reducing learning rate, (2) adding gradient clipping, " +
+						"(3) checking data normalization (divide_by=255).");
+				}
+			} catch (nan_repair_err) {
+				err("[fit_model] NaN repair failed: " + (nan_repair_err.message || nan_repair_err));
+			}
 		}
 
 		// =====================================================================
@@ -2948,9 +3257,44 @@ function cached_load_resized_image (image_element) {
 
 	var res = tidy(() => {
 		var image_from_element = fromPixels(image_element);
+		
+		// =====================================================================
+		// GUARD: Check if fromPixels produced valid data
+		// Some browsers return all-zero or corrupted data for images that
+		// haven't fully loaded yet, or for cross-origin images.
+		// =====================================================================
+		var image_data = image_from_element.dataSync();
+		var has_nan_pixel = false;
+		var all_zero = true;
+		
+		for (var pi = 0; pi < Math.min(image_data.length, 100); pi++) {
+			if (isNaN(image_data[pi]) || !isFinite(image_data[pi])) {
+				has_nan_pixel = true;
+				break;
+			}
+			if (image_data[pi] !== 0) {
+				all_zero = false;
+			}
+		}
+		
+		if (has_nan_pixel) {
+			wrn(`[cached_load_resized_image] Image at "${image_element_xpath}" contains NaN/Inf pixel values! Replacing with zeros.`);
+			image_from_element = tf.zeros(image_from_element.shape, image_from_element.dtype);
+		} else if (all_zero && image_data.length > 100) {
+			dbg(`[cached_load_resized_image] Image at "${image_element_xpath}" appears to be all-zero (may not be loaded yet).`);
+		}
+		
 		var _res = expand_dims(resize_image(image_from_element, [height, width]));
 
-		_res = divNoNan(_res, parse_float($("#divide_by").val()));
+		var divide_by_val = parse_float($("#divide_by").val());
+		
+		// Guard against divide_by = 0
+		if (!divide_by_val || divide_by_val === 0 || isNaN(divide_by_val)) {
+			wrn("[cached_load_resized_image] divide_by is 0 or NaN! Using 255 as fallback.");
+			divide_by_val = 255;
+		}
+		
+		_res = divNoNan(_res, divide_by_val);
 
 		return _res;
 	});
