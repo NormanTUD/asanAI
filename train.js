@@ -248,18 +248,32 @@ function get_key_by_value(_object, value) {
 }
 
 async function get_model_data () {
-	if(global_model_data) {
+	// =====================================================================
+	// GUARD: Basic sanity check
+	// =====================================================================
+	if (typeof tf === "undefined" || !tf || !tf.train) {
+		err("[get_model_data] FATAL: tf or tf.train is not defined. Cannot create optimizer.");
+		return;
+	}
+
+	// =====================================================================
+	// DISPOSE: Clean up any old tensors in global_model_data
+	// =====================================================================
+	if (global_model_data) {
 		var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 		for (var model_data_tensor_idx = 0; model_data_tensor_idx < model_data_tensors.length; model_data_tensor_idx++) {
 			await dispose(model_data_tensors[model_data_tensor_idx]);
 		}
 	}
 
+	// =====================================================================
+	// COLLECT: Gather all training parameters from the UI
+	// =====================================================================
 	var loss = get_loss();
 	var optimizer_type = get_optimizer();
 	var metric_type = get_metric();
 
-	if(Object.values(metric_shortnames).includes(metric_type)) {
+	if (Object.values(metric_shortnames).includes(metric_type)) {
 		metric_type = get_key_by_value(metric_shortnames, metric_type);
 	}
 
@@ -268,29 +282,36 @@ async function get_model_data () {
 	var validationSplit = $("#validationSplit").val();
 	var divide_by = $("#divide_by").val();
 
-	if(looks_like_number(epochs)) {
+	if (looks_like_number(epochs)) {
 		epochs = parse_int(epochs);
 	} else {
 		finished_loading && wrn("#epochs doesnt look like a number");
 	}
 
-	if(looks_like_number(batchSize)) {
+	if (looks_like_number(batchSize)) {
 		batchSize = parse_int(batchSize);
 	} else {
 		finished_loading && wrn("#batchSize doesnt look like a number");
 	}
 
-	if(looks_like_number(validationSplit)) {
+	if (looks_like_number(validationSplit)) {
 		validationSplit = parse_float(validationSplit);
 	} else {
 		finished_loading && wrn("#validation_split doesnt look like a number");
 	}
 
-	if(looks_like_number(divide_by)) {
+	if (looks_like_number(divide_by)) {
 		divide_by = parse_float(divide_by);
 	} else {
 		finished_loading && wrn("#divide_by doesnt look like a number");
 	}
+
+	// =====================================================================
+	// BUILD: Construct the global_model_data object
+	// =====================================================================
+	var previous_optimizer = global_model_data ? global_model_data.optimizer : null;
+	var previous_optimizer_name = global_model_data ? global_model_data.optimizer_name : null;
+	var previous_optimizer_params_hash = global_model_data ? global_model_data._optimizer_params_hash : null;
 
 	global_model_data = {
 		loss: loss,
@@ -304,21 +325,42 @@ async function get_model_data () {
 		labels: labels
 	};
 
-	if(!is_hidden_or_has_hidden_parent($("#height"))) {
+	if (!is_hidden_or_has_hidden_parent($("#height"))) {
 		global_model_data["width"] = width;
 		global_model_data["height"] = height;
 	}
 
+	// =====================================================================
+	// COLLECT OPTIMIZER HYPERPARAMETERS
+	// =====================================================================
 	var optimizer_data_names = model_data_structure[optimizer_type];
+
+	if (!optimizer_data_names || !Array.isArray(optimizer_data_names)) {
+		err(`[get_model_data] FATAL: No optimizer data structure found for optimizer type "${optimizer_type}". Available: ${Object.keys(model_data_structure).join(", ")}`);
+		return;
+	}
 
 	for (var optimizer_idx = 0; optimizer_idx < optimizer_data_names.length; optimizer_idx++) {
 		var element_name = optimizer_data_names[optimizer_idx] + "_" + optimizer_type;
 		var $element_field = $("#" + element_name);
+
+		if (!$element_field.length) {
+			wrn(`[get_model_data] WARNING: UI element #${element_name} not found for optimizer "${optimizer_type}".`);
+			continue;
+		}
+
 		var element_val = $element_field.val();
+
+		if (!looks_like_number(element_val)) {
+			wrn(`[get_model_data] WARNING: Optimizer param "${optimizer_data_names[optimizer_idx]}" value "${element_val}" does not look like a number.`);
+		}
 
 		global_model_data[optimizer_data_names[optimizer_idx]] = parse_float(element_val);
 	}
 
+	// =====================================================================
+	// OPTIMIZER CONSTRUCTORS MAP
+	// =====================================================================
 	var optimizer_constructors = {
 		"adadelta": "adadelta(global_model_data['learningRate'], global_model_data['rho'], global_model_data['epsilon'])",
 		"adagrad": "adagrad(global_model_data['learningRate'], global_model_data['initialAccumulatorValue'])",
@@ -328,16 +370,183 @@ async function get_model_data () {
 		"sgd": "sgd(global_model_data['learningRate'])"
 	};
 
+	if (!Object.keys(optimizer_constructors).includes(optimizer_type)) {
+		err(`[get_model_data] FATAL: Unknown optimizer type "${optimizer_type}". Available: ${Object.keys(optimizer_constructors).join(", ")}`);
+		return;
+	}
+
 	// =====================================================================
-	// CRITICAL FIX: Do NOT create the optimizer inside tf.tidy()!
-	// tf.tidy() disposes intermediate tensors. While the optimizer object
-	// itself is returned and thus not disposed, creating it inside tidy()
-	// can interfere with its internal tensor slot allocation in some
-	// TF.js versions/backends. Create it outside tidy() to be safe.
+	// CRITICAL FIX (Option C): OPTIMIZER CACHING
+	// 
+	// The core problem: Every call to get_model_data() previously created
+	// a brand-new optimizer via eval(). This destroys Adam's internal
+	// accumulatedFirstMoment (m) and accumulatedSecondMoment (v) buffers.
+	// 
+	// Without these buffers, Adam degenerates to essentially SGD with a
+	// fixed step size of ~lr for the first few steps. For layers with
+	// very small gradients (e.g., behind a 1-filter bottleneck), the
+	// raw gradient magnitude is so tiny that without momentum accumulation,
+	// the weight update rounds to zero in float32.
+	//
+	// FIX: We compute a hash of the optimizer type + all its hyperparameters.
+	// If the hash matches the previous call AND we already have a valid
+	// optimizer object, we REUSE it instead of creating a new one.
+	// This preserves the gradient accumulator state across compile_model()
+	// calls that don't actually change the optimizer configuration.
 	// =====================================================================
-	var optimizer_as_code = "tf.train." + optimizer_constructors[get_optimizer()];
-	dbg("[get_model_data] Creating optimizer: " + optimizer_as_code);
-	global_model_data["optimizer"] = eval(optimizer_as_code);
+
+	// --- Compute a hash of current optimizer parameters ---
+	var optimizer_params_for_hash = {
+		type: optimizer_type
+	};
+
+	for (var param_idx = 0; param_idx < optimizer_data_names.length; param_idx++) {
+		var param_name = optimizer_data_names[param_idx];
+		optimizer_params_for_hash[param_name] = global_model_data[param_name];
+	}
+
+	var current_optimizer_params_hash = JSON.stringify(optimizer_params_for_hash);
+
+	// --- GUARD: Check if we can reuse the existing optimizer ---
+	var can_reuse_optimizer = false;
+
+	if (previous_optimizer && previous_optimizer_name && previous_optimizer_params_hash) {
+		// Check 1: Same optimizer type?
+		if (previous_optimizer_name === optimizer_type) {
+			// Check 2: Same hyperparameters?
+			if (previous_optimizer_params_hash === current_optimizer_params_hash) {
+				// Check 3: Is the previous optimizer object still valid (not disposed)?
+				var optimizer_is_valid = false;
+				try {
+					// TF.js optimizers have internal variables. If they're disposed,
+					// accessing them will throw or return disposed tensors.
+					if (previous_optimizer && typeof previous_optimizer.getConfig === "function") {
+						var config_check = previous_optimizer.getConfig();
+						if (config_check && typeof config_check === "object") {
+							optimizer_is_valid = true;
+						}
+					}
+				} catch (e) {
+					dbg(`[get_model_data] Previous optimizer validation failed: ${e}. Will create new one.`);
+					optimizer_is_valid = false;
+				}
+
+				// Check 4: If training is in progress, ALWAYS reuse to protect accumulators
+				if (started_training) {
+					if (optimizer_is_valid) {
+						can_reuse_optimizer = true;
+					} else {
+						err("[get_model_data] CRITICAL: Training is in progress but optimizer is invalid! This will likely cause gradient issues.");
+					}
+				} else {
+					// Not training: still reuse if valid (preserves state for retrain scenarios)
+					if (optimizer_is_valid) {
+						can_reuse_optimizer = true;
+					}
+				}
+			} else {
+				dbg(`[get_model_data] Optimizer params changed. Old hash: ${previous_optimizer_params_hash.substring(0, 60)}... New hash: ${current_optimizer_params_hash.substring(0, 60)}...`);
+			}
+		} else {
+			dbg(`[get_model_data] Optimizer type changed from "${previous_optimizer_name}" to "${optimizer_type}".`);
+		}
+	}
+
+	// --- GUARD: Extra protection during training ---
+	if (started_training && !can_reuse_optimizer && previous_optimizer) {
+		wrn("[get_model_data] WARNING: Cannot reuse optimizer during training! " +
+			"This means compile_model() or get_model_data() was called with changed parameters " +
+			"while training is active. Gradient accumulators will be RESET. " +
+			"This WILL cause vanishing gradients in earlier layers.");
+	}
+
+	// --- Create or reuse the optimizer ---
+	if (can_reuse_optimizer) {
+		// REUSE: Keep the existing optimizer with its accumulated gradient state
+		global_model_data["optimizer"] = previous_optimizer;
+		global_model_data["_optimizer_params_hash"] = current_optimizer_params_hash;
+
+		dbg("[get_model_data] REUSING existing optimizer (preserving gradient accumulators). " +
+			"Type: " + optimizer_type + ", Hash match: true");
+	} else {
+		// CREATE NEW: Either first time, or parameters actually changed
+		var optimizer_as_code = "tf.train." + optimizer_constructors[optimizer_type];
+
+		dbg("[get_model_data] Creating NEW optimizer: " + optimizer_as_code);
+
+		try {
+			var new_optimizer = eval(optimizer_as_code);
+
+			// GUARD: Validate the newly created optimizer
+			if (!new_optimizer) {
+				err("[get_model_data] FATAL: eval() returned null/undefined for optimizer code: " + optimizer_as_code);
+				return;
+			}
+
+			if (typeof new_optimizer.minimize !== "function") {
+				err("[get_model_data] FATAL: Created optimizer does not have a minimize() method. Something is very wrong.");
+				return;
+			}
+
+			if (typeof new_optimizer.getClassName !== "function") {
+				wrn("[get_model_data] WARNING: Created optimizer does not have getClassName(). May be an older TF.js version.");
+			} else {
+				var class_name = new_optimizer.getClassName();
+				dbg(`[get_model_data] New optimizer class: ${class_name}`);
+			}
+
+			// GUARD: Validate hyperparameters were applied correctly
+			if (typeof new_optimizer.getConfig === "function") {
+				var applied_config = new_optimizer.getConfig();
+				var lr_key = "learningRate";
+				if (applied_config && applied_config[lr_key] !== undefined) {
+					var expected_lr = global_model_data["learningRate"];
+					var actual_lr = applied_config[lr_key];
+					if (Math.abs(expected_lr - actual_lr) > 1e-10) {
+						wrn(`[get_model_data] WARNING: Learning rate mismatch! Expected: ${expected_lr}, Got: ${actual_lr}`);
+					}
+				}
+			}
+
+			global_model_data["optimizer"] = new_optimizer;
+			global_model_data["_optimizer_params_hash"] = current_optimizer_params_hash;
+
+			dbg("[get_model_data] New optimizer created successfully. Type: " + optimizer_type);
+
+		} catch (e) {
+			var error_msg = (e && e.message) ? e.message : ("" + e);
+			err("[get_model_data] FATAL: Failed to create optimizer. Code: " + optimizer_as_code + ". Error: " + error_msg);
+
+			// Fallback: try to create a basic Adam optimizer
+			try {
+				wrn("[get_model_data] Attempting fallback: creating default Adam optimizer...");
+				global_model_data["optimizer"] = tf.train.adam(0.001);
+				global_model_data["_optimizer_params_hash"] = "FALLBACK";
+				wrn("[get_model_data] Fallback Adam optimizer created. Training may not use intended hyperparameters.");
+			} catch (fallback_err) {
+				err("[get_model_data] FATAL: Even fallback optimizer creation failed: " + fallback_err);
+				return;
+			}
+		}
+	}
+
+	// =====================================================================
+	// FINAL VALIDATION
+	// =====================================================================
+	if (!global_model_data["optimizer"]) {
+		err("[get_model_data] FATAL: After all attempts, optimizer is still null/undefined!");
+		return;
+	}
+
+	// GUARD: Log a summary for debugging
+	if (finished_loading) {
+		var opt_summary = `[get_model_data] Summary: optimizer=${optimizer_type}, ` +
+			`reused=${can_reuse_optimizer}, ` +
+			`lr=${global_model_data["learningRate"]}, ` +
+			`loss=${loss}, metric=${metric_type}, ` +
+			`epochs=${epochs}, batchSize=${batchSize}`;
+		dbg(opt_summary);
+	}
 }
 
 function delay(time) {
