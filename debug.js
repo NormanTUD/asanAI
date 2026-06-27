@@ -161,7 +161,10 @@ function dbg(...args) {
 	if (function_name) function_name = `[${function_name}] `; else function_name = "";
 
 	var msg = args.map(a => `${a}`).join(" ");
-	if (msg === last_dbg_msg) return;
+	
+	var is_debug = checkCurrentUrlParams();
+	
+	if (!is_debug && msg === last_dbg_msg) return;
 	last_dbg_msg = msg;
 
 	console.debug(function_name + msg);
@@ -185,11 +188,16 @@ function l_if_needed (args) {
 	try {
 		if(checkCurrentUrlParams()) {
 			const stack_trace = get_stack_trace(1);
+			var old_last_l = last_l;
+			last_l = ""; // Deduplizierung in l() temporär umgehen
+
 			l(">>>>>> Messages >>>>>>");
 			args.forEach(arg => l(arg));
-			l("stack_trace for the previous message blocks")
+			l("stack_trace for the previous message blocks");
 			l(stack_trace);
-			l("<<<<<< Messages <<<<<<"); 
+			l("<<<<<< Messages <<<<<<");
+
+			last_l = old_last_l;
 		}
 	} catch (e) {
 		// ignored
