@@ -5,6 +5,17 @@ var _full_debug_log = [];
 var printed_msgs = [];
 var printed_wrns = [];
 
+function checkCurrentUrlParams() {
+	// window.location.search contains everything from the '?' onwards
+	if (window.location.search.length > 0) {
+		console.debug("Debug: Current URL contains query parameters:", window.location.search);
+		return true;
+	} else {
+		console.debug("Debug: Current URL does not contain query parameters.");
+		return false;
+	}
+}
+
 function get_latest_caller(full_stacktrace) {
 	var isChrome = navigator. userAgent. includes("Chrome") && navigator;
 
