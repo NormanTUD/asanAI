@@ -250,23 +250,27 @@ async function compile_model(recursion_level=0) {
 		await create_model_or_throw();
 	}
 
-	// --- FIX: Only save/restore weights if the config hash has NOT changed ---
-	// If the config hash changed, the user intentionally changed something (e.g., initializer),
-	// so we should NOT restore old weights — let the new initializer take effect.
+	// --- Determine if the config (layer structure/settings) actually changed ---
 	var config_changed = (model_config_hash != new_model_config_hash);
 
+	// --- Save/restore weights logic ---
+	// ONLY save weights if:
+	//   1. The config has NOT changed (no structural change by the user)
+	//   2. We are NOT currently training (training updates weights via backprop;
+	//      saving/restoring here would overwrite those updates and cause
+	//      loss/weights to appear frozen)
 	var saved_weights_json = null;
-	if (!config_changed && model && model.layers && model.layers.length) {
+	if (!config_changed && !started_training && model && model.layers && model.layers.length) {
 		saved_weights_json = await get_weights_as_json(model);
 	}
 
 	await recreate_model_if_needed(new_model_config_hash);
 
-	// --- FIX: Only restore weights if config did NOT change ---
-	if (saved_weights_json && model && model.layers && model.layers.length) {
+	// --- Restore weights only if we saved them above (i.e. not during training) ---
+	if (saved_weights_json && !started_training && model && model.layers && model.layers.length) {
 		try {
 			var current_weights_json = await get_weights_as_json(model);
-			// Only restore if shapes match (model structure didn't change)
+			// Only restore if shapes match (model structure didn't actually change)
 			if (current_weights_json && saved_weights_json &&
 				JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
 				JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
@@ -318,8 +322,8 @@ async function compile_model(recursion_level=0) {
 			pyodideEditorStop();
 		}
 
-		// --- FIX: Do NOT clear editables here. Only clear if model structure actually changed. ---
-		// math_clear_editables();  // REMOVED
+		// Do NOT clear editables here unconditionally.
+		// Only cleared above when model structure actually changed.
 	} catch (e) {
 		var ret = await handle_model_compile_error(e, recursion_level);
 
