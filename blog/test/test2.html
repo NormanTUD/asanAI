@@ -1,0 +1,2840 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Attractor Dynamics</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121a;
+            --bg3: #1a1a25;
+            --accent: #00ff88;
+            --accent2: #00aaff;
+            --accent3: #ff6600;
+            --accent4: #ff00aa;
+            --text: #c8c8d4;
+            --text-dim: #666680;
+            --border: #2a2a3a;
+            --glow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            color: var(--accent);
+            text-shadow: var(--glow);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9em;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            padding: 30px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .section::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--bg);
+            padding: 0 10px;
+            color: var(--accent);
+            font-size: 0.8em;
+            letter-spacing: 1px;
+        }
+
+        .section h2 {
+            color: var(--accent2);
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .icon {
+            font-size: 1.2em;
+        }
+
+        .math-block {
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .math-inline {
+            display: inline;
+        }
+
+        .expandable {
+            margin: 10px 0;
+        }
+
+        .expandable summary {
+            cursor: pointer;
+            color: var(--accent2);
+            font-size: 0.85em;
+            padding: 5px 0;
+            user-select: none;
+        }
+
+        .expandable summary:hover {
+            color: var(--accent);
+        }
+
+        .expandable .content {
+            padding: 10px 15px;
+            margin-top: 5px;
+            background: var(--bg3);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            font-size: 0.9em;
+            color: var(--text-dim);
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg3);
+            border-top: 1px solid var(--border);
+        }
+
+        .controls label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8em;
+            color: var(--text-dim);
+        }
+
+        .controls input[type="range"] {
+            width: 100px;
+            accent-color: var(--accent);
+        }
+
+        .controls button {
+            background: var(--bg);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .controls button.active {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .flow-node {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.8em;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .flow-node:hover {
+            border-color: var(--accent);
+            box-shadow: var(--glow);
+        }
+
+        .flow-node.active {
+            border-color: var(--accent);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .flow-arrow {
+            color: var(--text-dim);
+            font-size: 1.2em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .annotation {
+            position: absolute;
+            background: var(--bg2);
+            border: 1px solid var(--accent);
+            padding: 5px 8px;
+            font-size: 0.7em;
+            border-radius: 3px;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 10px;
+            font-size: 0.75em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .info-text {
+            color: var(--text-dim);
+            font-size: 0.85em;
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .highlight {
+            color: var(--accent);
+        }
+
+        .highlight2 {
+            color: var(--accent2);
+        }
+
+        .highlight3 {
+            color: var(--accent3);
+        }
+
+        .token-display {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .token {
+            padding: 4px 8px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-size: 0.8em;
+            transition: all 0.3s;
+        }
+
+        .token.active {
+            border-color: var(--accent);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .token.query {
+            border-color: var(--accent3);
+            background: rgba(255, 102, 0, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg3);
+            border-radius: 2px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .tab-container {
+            margin: 15px 0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 2px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.8em;
+            color: var(--text-dim);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .hypothesis-box {
+            border: 1px solid var(--accent2);
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(0, 170, 255, 0.05);
+        }
+
+        .hypothesis-box h4 {
+            color: var(--accent2);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        #sphere-container {
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+
+        .status-line {
+            font-size: 0.75em;
+            color: var(--text-dim);
+            padding: 5px 10px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⟨ TRANSFORMER ATTRACTOR DYNAMICS ⟩</h1>
+            <p class="subtitle">Ein interaktives Framework: Layer als Zeitschritte, Bedeutung als Attraktor</p>
+        </header>
+
+        <!-- STEP 0: Overview -->
+        <div class="section" data-step="OVERVIEW">
+            <h2><span class="icon">◈</span> Der Datenfluss</h2>
+            <p class="info-text">Klicke auf einen Knoten um zu sehen, was dort passiert. Der gesamte Prozess für den Satz <span class="highlight">"Die Hauptstadt von Frankreich ist"</span> → <span class="highlight2">"Paris"</span>:</p>
+            
+            <div class="flow-diagram" id="flow-diagram">
+                <div class="flow-node" data-target="tokenizer" id="fn-tok">Tokenizer</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node" data-target="embedding" id="fn-emb">Embedding</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node" data-target="posemb" id="fn-pos">+PosEmb</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node active" data-target="layers" id="fn-layers">Layer 1..N</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node" data-target="output" id="fn-out">Softmax</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node" data-target="token" id="fn-token">"Paris"</div>
+            </div>
+
+            <div class="token-display" id="token-display">
+                <span class="token">[Die]</span>
+                <span class="token">[Haupt]</span>
+                <span class="token">[stadt]</span>
+                <span class="token">[von]</span>
+                <span class="token">[Frank]</span>
+                <span class="token">[reich]</span>
+                <span class="token query">[ist]</span>
+            </div>
+
+            <details class="expandable">
+                <summary>▶ Was passiert vor den Layern? (Tokenizer + Embedding)</summary>
+                <div class="content">
+                    <p>Der <strong>Tokenizer</strong> zerlegt Text in Subwörter. "Hauptstadt" → ["Haupt", "stadt"]. Klassischer Algorithmus (BPE), kein neuronales Netz.</p>
+                    <p>Das <strong>Embedding</strong> mappt jeden Token auf einen Vektor in ℝ<sup>d</sup> (z.B. d=4096). Diese Vektoren sind gelernte Parameter.</p>
+                    <p>Das <strong>Positional Embedding</strong> addiert Positionsinformation. Danach: jeder Token ist ein Punkt auf der Hypersphäre (nach LayerNorm).</p>
+                </div>
+            </details>
+        </div>
+
+        <!-- STEP 1: The Dynamical System -->
+        <div class="section" data-step="STEP 1 — DAS DYNAMISCHE SYSTEM">
+            <h2><span class="icon">◈</span> Layer = Zeitschritt</h2>
+            
+            <p class="info-text">Jeder Layer addiert eine Veränderung auf den bestehenden Zustand. Das ist ein <span class="highlight">Euler-Schritt</span> eines dynamischen Systems:</p>
+
+            <div class="math-block" id="math-euler"></div>
+
+            <p class="info-text">Dabei ist <span class="math-inline" id="math-fl"></span> die kombinierte Transformation aus Attention + FFN in Layer ℓ. Der Vektor <span class="math-inline" id="math-hl"></span> ist der <span class="highlight">Residual Stream</span> – das akkumulierende "Notizbuch" eines Tokens.</p>
+
+            <div class="math-block" id="math-fl-decomp"></div>
+
+            <details class="expandable">
+                <summary>▶ Warum "Euler-Schritt"?</summary>
+                <div class="content">
+                    <p>Die Euler-Methode approximiert eine Differentialgleichung dh/dt = f(h) durch diskrete Schritte: h(t+Δt) = h(t) + Δt·f(h(t)). Bei einem Transformer ist Δt=1 und t=ℓ (Layer-Index). Chen et al. (2018) haben gezeigt, dass ResNets genau so interpretiert werden können – als diskretisierte ODEs.</p>
+                </div>
+            </details>
+
+            <details class="expandable">
+                <summary>▶ Was bedeutet "nicht-autonom"?</summary>
+                <div class="content">
+                    <p>Bei einem autonomen System ist f überall gleich – die Landschaft ändert sich nicht. Bei einem Transformer hat jeder Layer eigene Gewichte: f₁ ≠ f₂ ≠ ... ≠ fₙ. Das heißt: die "Attraktor-Landschaft" verschiebt sich mit jedem Schritt. Frühe Layer formen breite Bassins, späte Layer schärfen die Grenzen.</p>
+                </div>
+            </details>
+
+            <!-- Interactive: Euler step visualization -->
+            <div class="canvas-container">
+                <canvas id="canvas-euler" height="350"></canvas>
+                <div class="controls">
+                    <label>Layer: <input type="range" id="euler-layer" min="0" max="24" value="0"> <span id="euler-layer-val">0</span></label>
+                    <button id="euler-play">▶ Abspielen</button>
+                    <button id="euler-reset">↺ Reset</button>
+                    <label>Speed: <input type="range" id="euler-speed" min="1" max="10" value="5"></label>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #00ff88"></div> Token "ist" (Query-Position)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #00aaff"></div> Andere Tokens</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ff6600"></div> Attraktor "Paris"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: rgba(255,102,0,0.2)"></div> Basin of Attraction</div>
+                </div>
+                <div class="status-line" id="euler-status">Layer 0/24 — Initialer Zustand nach Embedding + PosEmb</div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Attention -->
+        <div class="section" data-step="STEP 2 — ATTENTION">
+            <h2><span class="icon">◈</span> Attention: Relationale Bezugnahme</h2>
+
+            <p class="info-text">Attention berechnet für jeden Token: <span class="highlight">"Was an den anderen Tokens ist relevant für mich?"</span></p>
+
+            <div class="math-block" id="math-attn"></div>
+
+            <p class="info-text">Zerlegt in drei Schritte:</p>
+            <ol style="color: var(--text-dim); font-size: 0.85em; padding-left: 20px; margin: 10px 0;">
+                <li><span class="highlight2">Q = Wq·h</span> — "Welche Frage stelle ich?"</li>
+                <li><span class="highlight2">K = Wk·h</span> — "Welche Frage kann ich beantworten?"</li>
+                <li><span class="highlight2">V = Wv·h</span> — "Was ist mein Inhalt, wenn ich gefragt werde?"</li>
+            </ol>
+
+            <div class="math-block" id="math-qkv"></div>
+
+            <details class="expandable">
+                <summary>▶ Multi-Head: Parallele Subspace-Operationen</summary>
+                <div class="content">
+                    <p>Ein Modell hat z.B. 32 Attention-Heads. Jeder operiert in einem Unterraum der Dimension d/32. Head 1 könnte "syntaktische Beziehungen" finden, Head 2 "semantische Ähnlichkeit", Head 3 "Positionsnähe" usw. Die Ergebnisse werden konkateniert und linear projiziert.</p>
+                    <div class="math-block" id="math-multihead"></div>
+                </div>
+            </details>
+
+            <details class="expandable">
+                <summary>▶ Geometrische Interpretation</summary>
+                <div class="content">
+                    <p>Q und K sind Projektionen in einen "Vergleichsraum". Das Skalarprodukt QK⊤ misst die Ausrichtung. Softmax macht daraus eine Wahrscheinlichkeitsverteilung. Das Ergebnis: jeder Token bewegt sich in Richtung einer gewichteten Mischung der Value-Vektoren der anderen.</p>
+                    <p><strong>Im Attraktor-Bild:</strong> Attention verschiebt Tokens nicht zu Attraktoren, sondern zueinander. Es ist die Kraft, die "Kontext" erzeugt – sie dreht und verschiebt die Punkte so, dass zusammengehörige Tokens in ähnliche Richtungen zeigen.</p>
+                </div>
+            </details>
+
+            <!-- Interactive: Attention weights -->
+            <div class="canvas-container">
+                <canvas id="canvas-attn" height="300"></canvas>
+                <div class="controls">
+                    <button id="attn-head1" class="active">Head 1 (Syntax)</button>
+                    <button id="attn-head2">Head 2 (Semantik)</button>
+                    <button id="attn-head3">Head 3 (Position)</button>
+                    <label>Layer: <input type="range" id="attn-layer" min="1" max="24" value="1"> <span id="attn-layer-val">1</span></label>
+                </div>
+                <div class="status-line" id="attn-status">Head 1 — Syntaktische Bezüge: "ist" ← "Hauptstadt" (Subjekt-Prädikat)</div>
+            </div>
+        </div>
+
+        <!-- STEP 3: FFN -->
+        <div class="section" data-step="STEP 3 — FEED-FORWARD NETWORK">
+            <h2><span class="icon">◈</span> FFN: Assoziatives Nachschlagen</h2>
+
+            <p class="info-text">Das FFN operiert auf jedem Token <span class="highlight">einzeln</span> (keine Interaktion zwischen Positionen). Es ist ein gelernter assoziativer Speicher:</p>
+
+            <div class="math-block" id="math-ffn"></div>
+
+            <p class="info-text">Die erste Schicht (<span class="math-inline" id="math-w1"></span>) ist ein <span class="highlight">Pattern-Matcher</span>: jede Zeile von W₁ ist ein gelerntes Muster. ReLU aktiviert nur die passenden. Die zweite Schicht (<span class="math-inline" id="math-w2"></span>) gibt den zugehörigen <span class="highlight2">Wissensinhalt</span> zurück.</p>
+
+            <details class="expandable">
+                <summary>▶ FFN als Key-Value-Memory (Geva et al., 2021)</summary>
+                <div class="content">
+                    <p>Stell dir W₁ als eine Tabelle mit 16384 "Schlüsseln" vor (Zeilen). Jeder Schlüssel erkennt ein Muster. Wenn der Input-Vektor ähnlich zu Schlüssel k ist, wird ReLU(W₁x)ₖ > 0. Dann wird die k-te Spalte von W₂ (der "Wert") auf den Residual Stream addiert.</p>
+                    <p><strong>Beispiel:</strong> Ein Schlüssel könnte "Hauptstadt + europäisches Land" erkennen. Der zugehörige Wert schiebt den Vektor in Richtung "Städtename".</p>
+                </div>
+            </details>
+
+            <details class="expandable">
+                <summary>▶ Im Attraktor-Bild</summary>
+                <div class="content">
+                    <p>Das FFN ist die Kraft, die Tokens zu Attraktoren zieht. Attention sagt "der Kontext ist X", FFN sagt "wenn der Kontext X ist, dann bewege dich in Richtung Y". Die Bassins werden durch die W₁-Muster definiert: alle Inputs, die dasselbe Muster aktivieren, werden in dieselbe Richtung geschoben.</p>
+                </div>
+            </details>
+
+            <!-- Interactive: FFN activation patterns -->
+            <div class="canvas-container">
+                <canvas id="canvas-ffn" height="300"></canvas>
+                <div class="controls">
+                    <button id="ffn-show-keys">Schlüssel (W₁-Patterns)</button>
+                    <button id="ffn-show-activation" class="active">Aktivierung</button>
+                    <button id="ffn-show-output">Output-Verschiebung</button>
+                    <label>Neuron: <input type="range" id="ffn-neuron" min="0" max="100" value="42"> <span id="ffn-neuron-val">42</span></label>
+                </div>
+                <div class="status-line" id="ffn-status">Neuron 42 aktiviert: Pattern "Hauptstadt + Land" erkannt → Verschiebung Richtung "Städtename"</div>
+            </div>
+        </div>
+
+        <!-- STEP 4: LayerNorm + Sphere -->
+        <div class="section" data-step="STEP 4 — LAYERNORM & DIE SPHÄRE">
+            <h2><span class="icon">◈</span> LayerNorm: Alles lebt auf einer Kugel</h2>
+
+            <p class="info-text">Nach jedem Teilschritt wird der Vektor normalisiert:</p>
+
+            <div class="math-block" id="math-ln"></div>
+
+            <p class="info-text">Geometrisch: <span class="highlight">alle Repräsentationen werden auf eine Hypersphäre projiziert</span>. Die Attraktoren liegen nicht frei im ℝ<sup>d</sup>, sondern auf S<sup>d-1</sup>. Das bedeutet:</p>
+
+            <ul style="color: var(--text-dim); font-size: 0.85em; padding-left: 20px; margin: 10px 0; line-height: 2;">
+                <li>Kein Punkt kann "unendlich weit" von einem anderen sein</li>
+                <li>Die maximale Distanz ist begrenzt (Durchmesser der Sphäre)</li>
+                <li>Richtung (Winkel) ist wichtiger als Magnitude</li>
+                <li>Die Topologie der Attraktoren ist die einer Kugeloberfläche</li>
+            </ul>
+
+            <details class="expandable">
+                <summary>▶ Warum ist das wichtig für Attraktoren?</summary>
+                <div class="content">
+                    <p>Auf einer Sphäre kann es keine "Flucht ins Unendliche" geben. Jede stetige Abbildung S^n → S^n hat (unter bestimmten Bedingungen) Fixpunkte. Die Bassins sind sphärische Kappen oder komplexere Regionen auf der Kugeloberfläche. Zwei Attraktoren können maximal diametral gegenüber liegen.</p>
+                </div>
+            </details>
+
+            <div class="canvas-container">
+                <canvas id="canvas-sphere" height="400"></canvas>
+                <div class="controls">
+                    <button id="sphere-rotate" class="active">Rotieren</button>
+                    <button id="sphere-basins">Bassins zeigen</button>
+                    <button id="sphere-trajectories">Trajektorien</button>
+                    <label>Azimut: <input type="range" id="sphere-azimuth" min="0" max="360" value="45"> <span id="sphere-az-val">45°</span></label>
+                    <label>Elevation: <input type="range" id="sphere-elevation" min="-90" max="90" value="20"> <span id="sphere-el-val">20°</span></label>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #00ff88"></div> Attraktor "Paris"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #00aaff"></div> Attraktor "Berlin"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ff6600"></div> Attraktor "Madrid"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ff00aa"></div> Saddle Point (Entscheidung)</div>
+                </div>
+                <div class="status-line" id="sphere-status">3D-Projektion der Hypersphäre S^(d-1) — Attraktoren als Regionen auf der Kugeloberfläche</div>
+            </div>
+        </div>
+
+        <!-- STEP 5: Basin Dynamics -->
+        <div class="section" data-step="STEP 5 — BASSIN-DYNAMIK">
+            <h2><span class="icon">◈</span> Bassins: Wo landet der Token?</h2>
+
+            <p class="info-text">Die zentrale Frage: Wenn der Token <span class="highlight">"ist"</span> nach dem Embedding bei Position <span class="math-inline" id="math-h0"></span> startet – in welchem Bassin landet er nach 24 Layern?</p>
+
+            <div class="hypothesis-box">
+                <h4>Hypothese 1 — Attraktor-Existenz</h4>
+                <p style="font-size: 0.85em; color: var(--text-dim);">Für typische Inputs existieren Regionen A<sub>k</sub> ⊂ S<sup>d-1</sup>, so dass h<sup>(ℓ)</sup> → A<sub>k</sub> für ℓ → L. Diese A<sub>k</sub> korrespondieren mit Output-Tokens.</p>
+            </div>
+
+            <div class="hypothesis-box">
+                <h4>Hypothese 2 — Basin-Struktur</h4>
+                <p style="font-size: 0.85em; color: var(--text-dim);">Die Bassins B<sub>k</sub> = {h<sup>(0)</sup> : Trajektorie konvergiert zu A<sub>k</sub>} haben komplexe, möglicherweise fraktale Grenzen. Nahe der Grenze: hohe Unsicherheit (flache Softmax-Verteilung).</p>
+            </div>
+
+            <div class="hypothesis-box">
+                <h
+            <div class="hypothesis-box">
+                <h4>Hypothese 3 — Progressive Schärfung</h4>
+                <p style="font-size: 0.85em; color: var(--text-dim);">Frühe Layer haben breite, überlappende Bassins. Späte Layer schärfen die Grenzen. Die Layer-spezifischen f<sub>ℓ</sub> sind so trainiert, dass die Konvergenz monoton zunimmt: ‖f<sub>ℓ</sub>(h)‖ nimmt mit ℓ ab.</p>
+            </div>
+
+            <p class="info-text">Interaktiv: Beobachte wie sich die <span class="highlight">Basin-Grenzen</span> über die Layer hinweg entwickeln. Jeder Punkt im 2D-Raum repräsentiert einen möglichen Startzustand. Die Farbe zeigt, zu welchem Attraktor er konvergiert.</p>
+
+            <!-- Interactive: Basin visualization -->
+            <div class="canvas-container">
+                <canvas id="canvas-basins" height="450"></canvas>
+                <div class="controls">
+                    <label>Layer: <input type="range" id="basin-layer" min="0" max="24" value="0"> <span id="basin-layer-val">0</span>/24</label>
+                    <button id="basin-animate">▶ Layer durchlaufen</button>
+                    <button id="basin-reset">↺ Reset</button>
+                    <button id="basin-fractal">Fraktale Grenzen</button>
+                    <label>Auflösung: <input type="range" id="basin-res" min="20" max="80" value="40"> <span id="basin-res-val">40</span></label>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background: #00ff88"></div> Basin → "Paris"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #00aaff"></div> Basin → "Berlin"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ff6600"></div> Basin → "Madrid"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ff00aa"></div> Basin → "London"</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #ffff00"></div> Unsicher (Basin-Grenze)</div>
+                </div>
+                <div class="status-line" id="basin-status">Layer 0 — Bassins noch undifferenziert, breite Überlappung</div>
+            </div>
+        </div>
+
+        <!-- STEP 6: The Full Trajectory -->
+        <div class="section" data-step="STEP 6 — DIE VOLLSTÄNDIGE TRAJEKTORIE">
+            <h2><span class="icon">◈</span> Von Embedding zu "Paris": Die Reise eines Tokens</h2>
+
+            <p class="info-text">Hier siehst du die <span class="highlight">vollständige Trajektorie</span> des Tokens <span class="highlight">"ist"</span> durch alle 24 Layer. Beobachte:</p>
+            <ul style="color: var(--text-dim); font-size: 0.85em; padding-left: 20px; margin: 10px 0; line-height: 2;">
+                <li>Frühe Layer: große Sprünge, Orientierung</li>
+                <li>Mittlere Layer: Annäherung an Basin, "Entscheidung"</li>
+                <li>Späte Layer: Feinabstimmung, Konvergenz zum Attraktor</li>
+            </ul>
+
+            <div class="tab-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="traj-2d">2D Projektion</div>
+                    <div class="tab" data-tab="traj-3d">3D Projektion</div>
+                    <div class="tab" data-tab="traj-norm">‖Δh‖ über Layer</div>
+                </div>
+                <div class="tab-content active" id="tab-traj-2d">
+                    <div class="canvas-container">
+                        <canvas id="canvas-traj2d" height="400"></canvas>
+                        <div class="controls">
+                            <button id="traj-play">▶ Abspielen</button>
+                            <button id="traj-reset">↺ Reset</button>
+                            <label>Geschwindigkeit: <input type="range" id="traj-speed" min="1" max="10" value="4"></label>
+                            <button id="traj-show-all">Alle Tokens zeigen</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-traj-3d">
+                    <div class="canvas-container">
+                        <canvas id="canvas-traj3d" height="400"></canvas>
+                        <div class="controls">
+                            <label>Rotation X: <input type="range" id="traj3d-rx" min="0" max="360" value="30"></label>
+                            <label>Rotation Y: <input type="range" id="traj3d-ry" min="0" max="360" value="45"></label>
+                            <button id="traj3d-auto">Auto-Rotate</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-traj-norm">
+                    <div class="canvas-container">
+                        <canvas id="canvas-norm" height="300"></canvas>
+                        <div class="controls">
+                            <button id="norm-log">Log-Skala</button>
+                            <button id="norm-all-tokens">Alle Tokens</button>
+                        </div>
+                        <div class="status-line">‖h<sup>(ℓ+1)</sup> - h<sup>(ℓ)</sup>‖ — Konvergenzrate. Fällt monoton → Attraktor-Evidenz.</div>
+                    </div>
+                </div>
+            </div>
+
+            <details class="expandable">
+                <summary>▶ Was passiert am Saddle Point?</summary>
+                <div class="content">
+                    <p>Zwischen Layer 8-12 (bei einem 24-Layer-Modell) passiert oft die "Entscheidung". Hier ist ‖f<sub>ℓ</sub>(h)‖ groß, aber die Richtung instabil. Kleine Perturbationen können den Token in ein anderes Basin kippen. Das ist der Saddle Point – ein instabiles Gleichgewicht zwischen Bassins.</p>
+                    <p><strong>Analogie:</strong> Ein Ball auf einem Bergrücken. Er wird in ein Tal rollen – aber welches, hängt von minimalen Unterschieden ab. Bei einem LLM: hier entscheidet sich, ob "Paris" oder "Lyon" kommt.</p>
+                </div>
+            </details>
+        </div>
+
+        <!-- STEP 7: Superposition -->
+        <div class="section" data-step="STEP 7 — SUPERPOSITION">
+            <h2><span class="icon">◈</span> Superposition: Mehr Konzepte als Dimensionen</h2>
+
+            <p class="info-text">Ein kritischer Punkt, der dein Attraktor-Bild verkompliziert: Ein Vektor der Dimension d kann <span class="highlight">mehr als d Konzepte</span> kodieren, wenn diese selten gleichzeitig aktiv sind.</p>
+
+            <div class="math-block" id="math-superposition"></div>
+
+            <p class="info-text">Das bedeutet: die "Attraktoren" sind nicht sauber getrennte Punkte, sondern <span class="highlight2">fast-orthogonale Richtungen</span>, die sich ein Volumen teilen. In 4096 Dimensionen können ~100.000 fast-orthogonale Richtungen existieren.</p>
+
+            <details class="expandable">
+                <summary>▶ Warum funktioniert das?</summary>
+                <div class="content">
+                    <p>In hohen Dimensionen ist fast alles fast-orthogonal. Zwei zufällige Vektoren in ℝ<sup>4096</sup> haben ein erwartetes Skalarprodukt nahe 0. Das heißt: man kann exponentiell viele "Richtungen" unterbringen, die sich kaum stören – solange nicht zu viele gleichzeitig aktiv sind.</p>
+                    <p><strong>Für Attraktoren:</strong> Die Bassins überlappen sich in den meisten Dimensionen, sind aber in wenigen kritischen Dimensionen getrennt. Die "Entscheidung" zwischen Paris und Berlin passiert vielleicht nur in 50 von 4096 Dimensionen.</p>
+                </div>
+            </details>
+
+            <div class="canvas-container">
+                <canvas id="canvas-superposition" height="350"></canvas>
+                <div class="controls">
+                    <label>Dimensionen: <input type="range" id="super-dims" min="2" max="50" value="2"> <span id="super-dims-val">2</span></label>
+                    <label>Konzepte: <input type="range" id="super-concepts" min="2" max="20" value="3"> <span id="super-concepts-val">3</span></label>
+                    <button id="super-animate">Interferenz zeigen</button>
+                    <button id="super-reset">↺ Reset</button>
+                </div>
+                <div class="status-line" id="super-status">2D: 3 Konzepte können nicht orthogonal sein → Interferenz. Erhöhe Dimensionen!</div>
+            </div>
+        </div>
+
+        <!-- STEP 8: The Output -->
+        <div class="section" data-step="STEP 8 — OUTPUT: VOM ATTRAKTOR ZUM TOKEN">
+            <h2><span class="icon">◈</span> Softmax: Der letzte Schritt</h2>
+
+            <p class="info-text">Nach dem letzten Layer wird der finale Vektor <span class="math-inline" id="math-hL"></span> mit der <span class="highlight">Unembedding-Matrix</span> multipliziert, um Logits für jedes Token im Vokabular zu erhalten:</p>
+
+            <div class="math-block" id="math-logits"></div>
+            <div class="math-block" id="math-softmax"></div>
+
+            <p class="info-text">Im Attraktor-Bild: Der finale Vektor liegt nahe am Attraktor "Paris". Die Unembedding-Matrix misst die <span class="highlight2">Ähnlichkeit</span> (Skalarprodukt) zu allen Token-Embeddings. "Paris" hat das höchste Skalarprodukt → höchste Wahrscheinlichkeit.</p>
+
+            <details class="expandable">
+                <summary>▶ Temperatur und Sampling</summary>
+                <div class="content">
+                    <p>Die Temperatur T skaliert die Logits vor Softmax: p = softmax(logits/T). T→0: deterministisch (immer der wahrscheinlichste Token). T→∞: uniform (zufällig). T=1: Standard.</p>
+                    <p><strong>Im Attraktor-Bild:</strong> Temperatur bestimmt, wie "scharf" die Basin-Grenzen sind. Hohe Temperatur = weiche Grenzen, der Token kann auch in benachbarte Bassins "springen".</p>
+                </div>
+            </details>
+
+            <div class="canvas-container">
+                <canvas id="canvas-output" height="250"></canvas>
+                <div class="controls">
+                    <label>Temperatur: <input type="range" id="output-temp" min="1" max="30" value="10" step="1"> <span id="output-temp-val">1.0</span></label>
+                    <button id="output-sample">Sample!</button>
+                </div>
+                <div class="status-line" id="output-status">P("Paris") = 0.87, P("Lyon") = 0.04, P("Marseille") = 0.02, ...</div>
+            </div>
+        </div>
+
+        <!-- STEP 9: Summary -->
+        <div class="section" data-step="ZUSAMMENFASSUNG">
+            <h2><span class="icon">◈</span> Das Gesamtbild</h2>
+
+            <div class="math-block" id="math-summary"></div>
+
+            <p class="info-text" style="font-size: 1em; line-height: 1.9;">
+                <span class="highlight">1.</span> Tokens werden als Punkte auf einer Hypersphäre S<sup>d-1</sup> platziert.<br>
+                <span class="highlight">2.</span> Jeder Layer ist ein Zeitschritt eines nicht-autonomen dynamischen Systems.<br>
+                <span class="highlight">3.</span> Attention erzeugt Kontext-Kräfte zwischen Tokens (relationale Verschiebung).<br>
+                <span class="highlight">4.</span> FFN erzeugt Attraktor-Kräfte (assoziatives Nachschlagen → Richtungsverschiebung).<br>
+                <span class="highlight">5. </span> LayerNorm projiziert zurück auf die Sphäre (Constraint).<br>
+                <span class="highlight">6.</span> Über 24+ Layer konvergieren die Tokens gegen stabile Regionen (Attraktoren).<br>
+                <span class="highlight">7.</span> Der finale Attraktor wird via Unembedding zum Output-Token decodiert.<br>
+            </p>
+
+            <div class="math-block" id="math-final-eq"></div>
+
+            <details class="expandable">
+                <summary>▶ Offene Fragen</summary>
+                <div class="content">
+                    <p><strong>Q1:</strong> Sind die Attraktoren Punkt-Attraktoren oder ausgedehnte Mannigfaltigkeiten?</p>
+                    <p><strong>Q2:</strong> Haben die Basin-Grenzen fraktale Struktur?</p>
+                    <p><strong>Q3:</strong> Gibt es Limit Cycles (periodische Attraktoren) in Transformer-Dynamik?</p>
+                    <p><strong>Q4:</strong> Wie verändert sich die Attraktor-Landschaft mit dem Kontext (nicht-autonome Dynamik)?</p>
+                    <p><strong>Q5:</strong> Kann man die Bassins direkt aus den Gewichten berechnen, ohne Trajektorien zu simulieren?</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+    // ============ MATH RENDERING ============
+    function renderMath() {
+        const mathElements = {
+            'math-euler': 'h^{(\\ell+1)} = h^{(\\ell)} + f_\\ell\\bigl(h^{(\\ell)}\\bigr)',
+            'math-fl': 'f_\\ell',
+            'math-hl': 'h^{(\\ell)}',
+            'math-fl-decomp': 'f_\\ell(h) = \\underbrace{\\text{Attn}^{(\\ell)}(h_1, \\ldots, h_n)}_\\text{Kontext-Kraft} + \\underbrace{\\text{FFN}^{(\\ell)}(\\cdot)}_\\text{Attraktor-Kraft}',
+            'math-attn': '\\text{Attn}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right) V',
+            'math-qkv': 'Q = W_Q h, \\quad K = W_K h, \\quad V = W_V h',
+            'math-multihead': '\\text{MultiHead}(h) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_H) W_O',
+            'math-ffn': '\\text{FFN}(x) = W_2 \\cdot \\text{ReLU}(W_1 x + b_1) + b_2',
+            'math-w1': 'W_1 \\in \\mathbb{R}^{d_{ff} \\times d}',
+            'math-w2': 'W_2 \\in \\mathbb{R}^{d \\times d_{ff}}',
+            'math-ln': '\\text{LN}(x) = \\gamma \\odot \\frac{x - \\mu}{\\sigma} + \\beta, \\quad \\mu = \\frac{1}{d}\\sum_i x_i, \\quad \\sigma = \\sqrt{\\frac{1}{d}\\sum_i (x_i - \\mu)^2}',
+            'math-h0': 'h^{(0)}',
+            'math-superposition': '\\text{If } \\langle v_i, v_j \\rangle \\approx 0 \\text{ for } i \\neq j, \\text{ then } d \\text{ dims can store } \\gg d \\text{ features}',
+            'math-hL': 'h^{(L)}',
+            'math-logits': '\\text{logits} = W_U \\cdot h^{(L)}, \\quad W_U \\in \\mathbb{R}^{|V| \\times d}',
+            'math-softmax': 'P(\\text{token}_i) = \\frac{e^{\\text{logits}_i / T}}{\\sum_j e^{\\text{logits}_j / T}}',
+            'math-summary': 'h^{(0)} \\xrightarrow{f_1} h^{(1)} \\xrightarrow{f_2} \\cdots \\xrightarrow{f_L} h^{(L)} \\xrightarrow{W_U} \\text{logits} \\xrightarrow{\\text{softmax}} P(\\text{next token})',
+            'math-final-eq': '\\boxed{\\text{Token}_{\\text{next}} = \\arg\\max_t \\; \\langle W_U[t], \\; \\underbrace{h^{(0)} + \\sum_{\\ell=1}^{L} f_\\ell(h^{(\\ell-1)})}_\\text{Akkumulierte Trajektorie auf } S^{d-1} \\rangle}'
+        };
+
+        for (const [id, tex] of Object.entries(mathElements)) {
+            const el = document.getElementById(id);
+            if (el) {
+                try {
+                    temml.render(tex, el, { displayMode: !el.classList.contains('math-inline') });
+                } catch(e) {
+                    el.textContent = tex;
+                }
+            }
+        }
+    }
+
+    // ============ UTILITY FUNCTIONS ============
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function dist(x1, y1, x2, y2) { return Math.sqrt((x2-x1)**2 + (y2-y1)**2); }
+    function normalize2d(x, y) { const l = Math.sqrt(x*x + y*y) || 1; return [x/l, y/l]; }
+
+    // ============ CANVAS 1: EULER STEP / TRAJECTORY ============
+    const canvasEuler = document.getElementById('canvas-euler');
+    const ctxEuler = canvasEuler.getContext('2d');
+    let eulerAnimId = null;
+    let eulerCurrentLayer = 0;
+    let eulerPlaying = false;
+
+    // Define attractors and tokens for the simulation
+    const attractors = [
+        { x: 0.75, y: 0.3, label: 'Paris', color: '#ff6600', radius: 0.12 },
+        { x: 0.25, y: 0.25, label: 'Berlin', color: '#00aaff', radius: 0.10 },
+        { x: 0.5, y: 0.8, label: 'Madrid', color: '#ff00aa', radius: 0.09 },
+        { x: 0.15, y: 0.7, label: 'London', color: '#aa00ff', radius: 0.08 }
+    ];
+
+    // Token trajectories (simulated)
+    const numLayers = 24;
+    function generateTrajectory(startX, startY, targetAttractor, noise) {
+        const traj = [{ x: startX, y: startY }];
+        for (let l = 0; l < numLayers; l++) {
+            const prev = traj[traj.length - 1];
+            const progress = (l + 1) / numLayers;
+            // Non-linear convergence: slow start, fast middle, slow end
+            const t = 1 - Math.pow(1 - progress, 2.5);
+            const targetX = targetAttractor.x;
+            const targetY = targetAttractor.y;
+            // Add some noise that decreases with layer
+            const noiseFactor = noise * (1 - progress) * 0.8;
+            const nx = (Math.random() - 0.5) * noiseFactor;
+            const ny = (Math.random() - 0.5) * noiseFactor;
+            // Wandering path with eventual convergence
+            const wanderX = Math.sin(l * 0.7 + startX * 10) * 0.03 * (1 - progress);
+            const wanderY = Math.cos(l * 0.5 + startY * 8) * 0.03 * (1 - progress);
+            traj.push({
+                x: lerp(startX, targetX, t) + nx + wanderX,
+                y: lerp(startY, targetY, t) + ny + wanderY
+            });
+        }
+        return traj;
+    }
+
+    // Seed random for reproducibility
+    let seed = 42;
+    function seededRandom() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+    }
+
+    // Generate token trajectories
+    const tokenTrajectories = [];
+    const tokenLabels = ['Die', 'Haupt', 'stadt', 'von', 'Frank', 'reich', 'ist'];
+    const tokenColors = ['#00aaff', '#00aaff', '#00aaff', '#00aaff', '#00aaff', '#00aaff', '#00ff88'];
+
+    // "ist" goes to Paris attractor, others go to various places
+    seed = 42;
+    const startPositions = [
+        { x: 0.3, y: 0.5 }, { x: 0.35, y: 0.45 }, { x: 0.38, y: 0.48 },
+        { x: 0.45, y: 0.55 }, { x: 0.5, y: 0.42 }, { x: 0.52, y: 0.44 },
+        { x: 0.55, y: 0.5 }
+    ];
+
+    for (let i = 0; i < 7; i++) {
+        const target = i === 6 ? attractors[0] : attractors[i % 4]; // "ist" → Paris
+        seed = 42 + i * 7;
+        tokenTrajectories.push(generateTrajectory(startPositions[i].x, startPositions[i].y, target, 0.15));
+    }
+
+    function drawEuler(layer) {
+        const w = canvasEuler.width = canvasEuler.offsetWidth * 2;
+        const h = canvasEuler.height = 700;
+        const ctx = ctxEuler;
+        ctx.clearRect(0, 0, w, h);
+
+        // Background grid
+        ctx.strokeStyle = 'rgba(42, 42, 58, 0.5)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < w; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+        }
+        for (let i = 0; i < h; i += 40) {
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+        }
+
+        // Draw basins (soft circles around attractors)
+        for (const attr of attractors) {
+            const ax = attr.x * w;
+            const ay = attr.y * h;
+            const ar = attr.radius * w * (0.5 + 0.5 * (layer / numLayers));
+            
+            const grad = ctx.createRadialGradient(ax, ay, 0, ax, ay, ar);
+            grad.addColorStop(0, attr.color + '30');
+            grad.addColorStop(0.7, attr.color + '10');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(ax, ay, ar, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Attractor point
+            ctx.fillStyle = attr.color;
+            ctx.beginPath();
+            ctx.arc(ax, ay, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Label
+            ctx.fillStyle = attr.color;
+            ctx.font = '22px JetBrains Mono, monospace';
+            ctx.fillText(attr.label, ax + 12, ay - 10);
+        }
+
+        // Draw trajectories up to current layer
+        for (let t = 0; t < 7; t++) {
+            const traj = tokenTrajectories[t];
+            const color = tokenColors[t];
+
+            // Draw path
+            ctx.strokeStyle = color + '60';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            for (let l = 0; l <= layer; l++) {
+                const px = traj[l].x * w;
+                const py = traj[l].y * h;
+                if (l === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // Draw current position
+            const curr = traj[layer];
+            const cx = curr.x * w;
+            const cy = curr.y * h;
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(cx, cy, t === 6 ? 8 : 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Glow for query token
+            if (t === 6) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Label
+            ctx.fillStyle = color + 'cc';
+            ctx.font = '18px JetBrains Mono, monospace';
+            ctx.fillText(tokenLabels[t], cx + 10, cy + 5);
+        }
+
+        // Draw velocity vector for "ist" token
+        if (layer < numLayers) {
+            const curr = tokenTrajectories[6][layer];
+            const next = tokenTrajectories[6][layer + 1];
+            const dx = (next.x - curr.x) * w;
+            const dy = (next.y - curr.y) * h;
+            const mag = Math.sqrt(dx*dx + dy*dy);
+            
+            if (mag > 2) {
+                const cx = curr.x * w;
+                const cy = curr.y * h;
+                ctx.strokeStyle = '#00ff88';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + dx * 2, cy + dy * 2);
+                ctx.stroke();
+
+                // Arrowhead
+                const angle = Math.atan2(dy, dx);
+                ctx.beginPath();
+                ctx.moveTo(cx + dx * 2, cy + dy * 2);
+                ctx.lineTo(cx + dx * 2 - 10 * Math.cos(angle - 0.4), cy + dy * 2 - 10 * Math.sin(angle - 0.4));
+                ctx.lineTo(cx + dx * 2 - 10 * Math.cos(angle + 0.4), cy + dy * 2 - 10 * Math.sin(angle + 0.4));
+                ctx.closePath();
+                ctx.fillStyle = '#00ff88';
+                ctx.fill();
+            }
+        }
+
+        // Layer indicator
+        ctx.fillStyle = '#666680';
+        ctx.font = '20px JetBrains Mono, monospace';
+        ctx.fillText(`Layer ${layer}/${numLayers}`, 20, 30);
+
+        // Convergence indicator
+        if (layer > 0) {
+            const prev = tokenTrajectories[6][layer - 1];
+            const curr = tokenTrajectories[6][layer];
+            const delta = dist(prev.x, prev.y, curr.x, curr.y);
+            ctx.fillStyle = '#666680';
+            ctx.fillText(`‖Δh‖ = ${delta.toFixed(4)}`, 20, 55);
+        }
+    }
+
+    // Euler controls
+    const eulerLayerSlider = document.getElementById('euler-layer');
+    const eulerLayerVal = document.getElementById('euler-layer-val');
+    const eulerStatus = document.getElementById('euler-status');
+
+    eulerLayerSlider.addEventListener('input', () => {
+        eulerCurrentLayer = parseInt(eulerLayerSlider.value);
+        eulerLayerVal.textContent = eulerCurrentLayer;
+        drawEuler(eulerCurrentLayer);
+        updateEulerStatus();
+    });
+
+    function updateEulerStatus() {
+        const descriptions = [
+            'Initialer Zustand nach Embedding + PosEmb',
+            'Erste Orientierung — Attention findet syntaktische Bezüge',
+            'Kontextaufbau — "Frankreich" wird mit "ist" verknüpft',
+            'Semantische Verdichtung beginnt',
+            'Bewegung Richtung "Geographie"-Region',
+            'Annäherung an Hauptstadt-Konzept',
+            'Basin-Grenze wird sichtbar',
+            'Entscheidungsphase beginnt',
+            'Saddle Point — "Paris" vs. andere Städte',
+            'Entscheidung fällt: Paris-Basin betreten',
+            'Konvergenz beschleunigt sich',
+            'Feinabstimmung im Paris-Basin',
+        ];
+        const desc = descriptions[Math.min(Math.floor(eulerCurrentLayer / 2), descriptions.length - 1)];
+        eulerStatus.textContent = `Layer ${eulerCurrentLayer}/${numLayers} — ${desc}
+`;
+        eulerStatus.textContent = `Layer ${eulerCurrentLayer}/${numLayers} — ${desc}`;
+    }
+
+    document.getElementById('euler-play').addEventListener('click', () => {
+        if (eulerPlaying) {
+            eulerPlaying = false;
+            document.getElementById('euler-play').textContent = '▶ Abspielen';
+            return;
+        }
+        eulerPlaying = true;
+        document.getElementById('euler-play').textContent = '⏸ Pause';
+        
+        function step() {
+            if (!eulerPlaying) return;
+            eulerCurrentLayer++;
+            if (eulerCurrentLayer > numLayers) {
+                eulerCurrentLayer = numLayers;
+                eulerPlaying = false;
+                document.getElementById('euler-play').textContent = '▶ Abspielen';
+                return;
+            }
+            eulerLayerSlider.value = eulerCurrentLayer;
+            eulerLayerVal.textContent = eulerCurrentLayer;
+            drawEuler(eulerCurrentLayer);
+            updateEulerStatus();
+            const speed = parseInt(document.getElementById('euler-speed').value);
+            setTimeout(step, 600 - speed * 50);
+        }
+        step();
+    });
+
+    document.getElementById('euler-reset').addEventListener('click', () => {
+        eulerPlaying = false;
+        document.getElementById('euler-play').textContent = '▶ Abspielen';
+        eulerCurrentLayer = 0;
+        eulerLayerSlider.value = 0;
+        eulerLayerVal.textContent = '0';
+        drawEuler(0);
+        updateEulerStatus();
+    });
+
+    // ============ CANVAS 2: ATTENTION ============
+    const canvasAttn = document.getElementById('canvas-attn');
+    const ctxAttn = canvasAttn.getContext('2d');
+
+    const attnPatterns = {
+        head1: [ // Syntax: "ist" attends to "Hauptstadt"
+            [0.1, 0.3, 0.1, 0.05, 0.05, 0.05, 0.35],
+            [0.05, 0.2, 0.4, 0.05, 0.1, 0.1, 0.1],
+            [0.05, 0.5, 0.2, 0.05, 0.05, 0.05, 0.1],
+            [0.2, 0.1, 0.1, 0.1, 0.2, 0.2, 0.1],
+            [0.05, 0.05, 0.05, 0.1, 0.3, 0.4, 0.05],
+            [0.05, 0.05, 0.05, 0.1, 0.4, 0.3, 0.05],
+            [0.05, 0.45, 0.25, 0.05, 0.05, 0.05, 0.1]
+        ],
+        head2: [ // Semantics: "ist" attends to "Frankreich"
+            [0.2, 0.1, 0.1, 0.1, 0.2, 0.2, 0.1],
+            [0.1, 0.2, 0.2, 0.1, 0.15, 0.15, 0.1],
+            [0.1, 0.3, 0.2, 0.1, 0.1, 0.1, 0.1],
+            [0.15, 0.1, 0.1, 0.15, 0.2, 0.2, 0.1],
+            [0.1, 0.1, 0.1, 0.15, 0.2, 0.25, 0.1],
+            [0.1, 0.1, 0.1, 0.15, 0.25, 0.2, 0.1],
+            [0.05, 0.1, 0.1, 0.05, 0.3, 0.35, 0.05]
+        ],
+        head3: [ // Position: attend to nearby
+            [0.4, 0.3, 0.15, 0.08, 0.04, 0.02, 0.01],
+            [0.3, 0.3, 0.2, 0.1, 0.05, 0.03, 0.02],
+            [0.15, 0.25, 0.3, 0.15, 0.08, 0.05, 0.02],
+            [0.08, 0.12, 0.2, 0.3, 0.15, 0.1, 0.05],
+            [0.04, 0.06, 0.1, 0.2, 0.3, 0.2, 0.1],
+            [0.02, 0.04, 0.06, 0.12, 0.25, 0.3, 0.21],
+            [0.02, 0.03, 0.05, 0.08, 0.15, 0.27, 0.4]
+        ]
+    };
+
+    let currentHead = 'head1';
+
+    function drawAttn() {
+        const w = canvasAttn.width = canvasAttn.offsetWidth * 2;
+        const h = canvasAttn.height = 600;
+        const ctx = ctxAttn;
+        ctx.clearRect(0, 0, w, h);
+
+        const pattern = attnPatterns[currentHead];
+        const tokens = tokenLabels;
+        const n = tokens.length;
+
+        const leftX = w * 0.15;
+        const rightX = w * 0.85;
+        const topY = h * 0.1;
+        const bottomY = h * 0.9;
+        const stepY = (bottomY - topY) / (n - 1);
+
+        // Draw tokens on both sides
+        ctx.font = '22px JetBrains Mono, monospace';
+        for (let i = 0; i < n; i++) {
+            const y = topY + i * stepY;
+            
+            // Left side (Query)
+            ctx.fillStyle = i === 6 ? '#00ff88' : '#00aaff';
+            ctx.textAlign = 'right';
+            ctx.fillText(tokens[i], leftX - 20, y + 6);
+            ctx.beginPath();
+            ctx.arc(leftX, y, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Right side (Key/Value)
+            ctx.fillStyle = '#ff6600';
+            ctx.textAlign = 'left';
+            ctx.fillText(tokens[i], rightX + 20, y + 6);
+            ctx.beginPath();
+            ctx.arc(rightX, y, 6, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Draw attention lines for query token "ist" (index 6)
+        const queryIdx = 6;
+        const queryY = topY + queryIdx * stepY;
+
+        for (let k = 0; k < n; k++) {
+            const keyY = topY + k * stepY;
+            const weight = pattern[queryIdx][k];
+            
+            ctx.strokeStyle = `rgba(0, 255, 136, ${weight * 1.5})`;
+            ctx.lineWidth = weight * 8;
+            ctx.beginPath();
+            ctx.moveTo(leftX, queryY);
+            
+            // Bezier curve
+            const cpx = (leftX + rightX) / 2;
+            ctx.bezierCurveTo(cpx, queryY, cpx, keyY, rightX, keyY);
+            ctx.stroke();
+
+            // Weight label
+            if (weight > 0.1) {
+                const midX = (leftX + rightX) / 2;
+                const midY = (queryY + keyY) / 2;
+                ctx.fillStyle = '#00ff88cc';
+                ctx.font = '18px JetBrains Mono, monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText((weight * 100).toFixed(0) + '%', midX, midY);
+            }
+        }
+
+        // Labels
+        ctx.fillStyle = '#666680';
+        ctx.font = '18px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Query (Q)', leftX, h * 0.03);
+        ctx.fillText('Key/Value (K, V)', rightX, h * 0.03);
+    }
+
+    // Attention head buttons
+    document.getElementById('attn-head1').addEventListener('click', () => {
+        currentHead = 'head1';
+        document.querySelectorAll('[id^="attn-head"]').forEach(b => b.classList.remove('active'));
+        document.getElementById('attn-head1').classList.add('active');
+        document.getElementById('attn-status').textContent = 'Head 1 — Syntaktische Bezüge: "ist" ← "Hauptstadt" (Subjekt-Prädikat)';
+        drawAttn();
+    });
+    document.getElementById('attn-head2').addEventListener('click', () => {
+        currentHead = 'head2';
+        document.querySelectorAll('[id^="attn-head"]').forEach(b => b.classList.remove('active'));
+        document.getElementById('attn-head2').classList.add('active');
+        document.getElementById('attn-status').textContent = 'Head 2 — Semantische Bezüge: "ist" ← "Frankreich" (Land → Hauptstadt-Assoziation)';
+        drawAttn();
+    });
+    document.getElementById('attn-head3').addEventListener('click', () => {
+        currentHead = 'head3';
+        document.querySelectorAll('[id^="attn-head"]').forEach(b => b.classList.remove('active'));
+        document.getElementById('attn-head3').classList.add('active');
+        document.getElementById('attn-status').textContent = 'Head 3 — Positionsbezüge: jeder Token beachtet primär seine Nachbarn';
+        drawAttn();
+    });
+
+    document.getElementById('attn-layer').addEventListener('input', (e) => {
+        document.getElementById('attn-layer-val').textContent = e.target.value;
+    });
+
+    // ============ CANVAS 3: FFN ============
+    const canvasFFN = document.getElementById('canvas-ffn');
+    const ctxFFN = canvasFFN.getContext('2d');
+    let ffnMode = 'activation';
+
+    function drawFFN() {
+        const w = canvasFFN.width = canvasFFN.offsetWidth * 2;
+        const h = canvasFFN.height = 600;
+        const ctx = ctxFFN;
+        ctx.clearRect(0, 0, w, h);
+
+        const neuronIdx = parseInt(document.getElementById('ffn-neuron').value);
+        const numNeurons = 100;
+
+        if (ffnMode === 'activation') {
+            // Show activation pattern: bar chart of neuron activations
+            const barWidth = (w * 0.8) / numNeurons;
+            const baseY = h * 0.7;
+
+            ctx.fillStyle = '#666680';
+            ctx.font = '18px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('FFN Neuron-Aktivierungen für Token "ist" (nach Attention)', w / 2, 30);
+            ctx.fillText('ReLU(W₁ · h + b₁)', w / 2, 55);
+
+            // Generate fake activations
+            seed = 123;
+            const activations = [];
+            for (let i = 0; i < numNeurons; i++) {
+                seed = (seed * 16807) % 2147483647;
+                const raw = (seed / 2147483647) * 2 - 1;
+                activations.push(Math.max(0, raw + (i === neuronIdx ? 0.8 : 0))); // ReLU
+            }
+
+            // Highlight specific neurons
+            const specialNeurons = [12, 27, 42, 58, 73, 89];
+            const specialLabels = ['Land', 'Europa', 'Hauptstadt', 'Geographie', 'Frage', 'Eigenname'];
+
+            for (let i = 0; i < numNeurons; i++) {
+                const x = w * 0.1 + i * barWidth;
+                const barH = activations[i] * h * 0.5;
+                
+                let color = '#333355';
+                if (activations[i] > 0) color = '#00aaff40';
+                if (activations[i] > 0.3) color = '#00aaff80';
+                if (activations[i] > 0.6) color = '#00aaffcc';
+                if (i === neuronIdx) color = '#00ff88';
+                if (specialNeurons.includes(i) && activations[i] > 0) color = '#ff6600cc';
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, baseY - barH, barWidth - 1, barH);
+
+                // Special neuron labels
+                if (specialNeurons.includes(i)) {
+                    const labelIdx = specialNeurons.indexOf(i);
+                    ctx.save();
+                    ctx.translate(x + barWidth / 2, baseY + 15);
+                    ctx.rotate(Math.PI / 4);
+                    ctx.fillStyle = '#ff6600';
+                    ctx.font = '14px JetBrains Mono, monospace';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(specialLabels[labelIdx], 0, 0);
+                    ctx.restore();
+                }
+            }
+
+            // Highlight selected neuron
+            const selX = w * 0.1 + neuronIdx * barWidth;
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(selX - 2, baseY - activations[neuronIdx] * h * 0.5 - 2, barWidth + 2, activations[neuronIdx] * h * 0.5 + 4);
+
+            // Axis
+            ctx.strokeStyle = '#666680';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.1, baseY);
+            ctx.lineTo(w * 0.9, baseY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#666680';
+            ctx.font = '16px JetBrains Mono, monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('0', w * 0.06, baseY + 5);
+            ctx.fillText('Neuron Index →', w * 0.4, baseY + 40);
+
+        } else if (ffnMode === 'keys') {
+            // Show W1 patterns as heatmap
+            ctx.fillStyle = '#666680';
+            ctx.font = '18px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('W₁ Schlüssel-Patterns (jede Zeile = ein gelerntes Muster)', w / 2, 30);
+
+            const rows = 20;
+            const cols = 40;
+            const cellW = (w * 0.8) / cols;
+            const cellH = (h * 0.7) / rows;
+            const startX = w * 0.1;
+            const startY = h * 0.1;
+
+            seed = 456;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    seed = (seed * 16807) % 2147483647;
+                    const val = (seed / 2147483647);
+                    const intensity = Math.floor(val * 255);
+                    
+                    let color;
+                    if (r === Math.floor(neuronIdx / 5)) {
+                        color = `rgb(0, ${intensity}, ${Math.floor(intensity * 0.5)})`;
+                    } else {
+                        color = `rgb(${Math.floor(intensity * 0.3)}, ${Math.floor(intensity * 0.3)}, ${Math.floor(intensity * 0.5)})`;
+                    }
+                    
+                    ctx.fillStyle = color;
+                    ctx.fillRect(startX + c * cellW, startY + r * cellH, cellW - 1, cellH - 1);
+                }
+            }
+
+            // Highlight row
+            const highlightRow = Math.floor(neuronIdx / 5);
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX - 2, startY + highlightRow * cellH - 2, cols * cellW + 4, cellH + 4);
+
+            ctx.fillStyle = '#00ff88';
+            ctx.font = '16px JetBrains Mono, monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(`← Neuron ${neuronIdx}: Pattern-Vektor`, startX + cols * cellW + 10, startY + highlightRow * cellH + cellH / 2 + 5);
+
+        } else if (ffnMode === 'output') {
+            // Show output shift vector
+            ctx.fillStyle = '#666680';
+            ctx.font = '18px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('W₂ Output: Verschiebungsvektor im Residual Stream', w / 2, 30);
+            ctx.fillText('Aktivierte Neuronen → gewichtete Summe der W₂-Spalten', w / 2, 55);
+
+            // Draw a 2D vector field showing the shift
+            const centerX = w / 2;
+            const centerY = h / 2;
+            const radius = Math.min(w, h) * 0.35;
+
+            // Draw circle (sphere projection)
+            ctx.strokeStyle = '#2a2a3a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Current position
+            const currAngle = -0.3;
+            const currX = centerX + Math.cos(currAngle) * radius * 0.6;
+            const currY = centerY + Math.sin(currAngle) * radius * 0.6;
+
+            ctx.fillStyle = '#00aaff';
+            ctx.beginPath();
+            ctx.arc(currX, currY, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#00aaffcc';
+            ctx.font = '16px JetBrains Mono, monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('h (vor FFN)', currX + 15, currY - 10);
+
+            // Target (after FFN)
+            const targetAngle = 0.4;
+            const targetX = centerX + Math.cos(targetAngle) * radius * 0.75;
+            const targetY = centerY + Math.sin(targetAngle) * radius * 0.75;
+
+            // Arrow from current to target
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(currX, currY);
+            ctx.lineTo(targetX, targetY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Arrowhead
+            const aAngle = Math.atan2(targetY - currY, targetX - currX);
+            ctx.beginPath();
+            ctx.moveTo(targetX, targetY);
+            ctx.lineTo(targetX - 15 * Math.cos(aAngle - 0.3), targetY - 15 * Math.sin(aAngle - 0.3));
+            ctx.lineTo(targetX - 15 * Math.cos(aAngle + 0.3), targetY - 15 * Math.sin(aAngle + 0.3));
+            ctx.closePath();
+            ctx.fillStyle = '#00ff88';
+            ctx.fill();
+
+            ctx.fillStyle = '#00ff88cc';
+            ctx.fillText('h + FFN(h)', targetX + 15, targetY - 10);
+            ctx.fillText('→ Richtung "Paris"', targetX + 15, targetY + 15);
+
+            // Attractor
+            const attrAngle = 0.6;
+            const attrX = centerX + Math.cos(attrAngle) * radius * 0.9;
+            const attrY = centerY + Math.sin(attrAngle) * radius * 0.9;
+
+            ctx.fillStyle = '#ff6600';
+            ctx.beginPath();
+            ctx.arc(attrX, attrY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ff6600';
+            ctx.font = '18px JetBrains Mono, monospace';
+            ctx.fillText('★ Paris', attrX + 15, attrY + 5);
+
+            // Label the shift
+            const midX = (currX + targetX) / 2;
+            const midY = (currY + targetY) / 2;
+            ctx.fillStyle = '#00ff8880';
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('FFN(h) = Σ aₖ · W₂[:,k]', midX, midY - 20);
+        }
+    }
+
+    document.getElementById('ffn-show-keys').addEventListener('click', () => {
+        ffnMode = 'keys';
+        document.getElementById('ffn-show-keys').classList.add('active');
+        document.getElementById('ffn-show-activation').classList.remove('active');
+        document.getElementById('ffn-show-output').classList.remove('active');
+        document.getElementById('ffn-status').textContent = 'W₁-Patterns: Jede Zeile ist ein gelerntes Erkennungsmuster. Highlighted = ausgewähltes Neuron.';
+        drawFFN();
+    });
+    document.getElementById('ffn-show-activation').addEventListener('click', () => {
+        ffnMode = 'activation';
+        document.getElementById('ffn-show-activation').classList.add('active');
+        document.getElementById('ffn-show-keys').classList.remove('active');
+        document.getElementById('ffn-show-output').classList.remove('active');
+        document.getElementById('ffn-status').textContent = `Neuron ${document.getElementById('ffn-neuron').value} aktiviert: Pattern erkannt → Verschiebung Richtung "Städtename"`;
+        drawFFN();
+    });
+    document.getElementById('ffn-show-output').addEventListener('click', () => {
+        ffnMode = 'output';
+        document.getElementById('ffn-show-output').classList.add('active');
+        document.getElementById('ffn-show-keys').classList.remove('active');
+        document.getElementById('ffn-show-activation').classList.remove('active');
+        document.getElementById('ffn-status').textContent = 'Output: Die gewichtete Summe der W₂-Spalten verschiebt h in Richtung des Attraktors.';
+        drawFFN();
+    });
+
+    document.getElementById('ffn-neuron').addEventListener('input', (e) => {
+        document.getElementById('ffn-neuron-val').textContent = e.target.value;
+        if (ffnMode === 'activation') {
+            document.getElementById('ffn-status').textContent = `Neuron ${e.target.value} — Pattern-Matching im Eingabevektor`;
+        }
+        drawFFN();
+    });
+
+    // ============ CANVAS 4: SPHERE ============
+    const canvasSphere = document.getElementById('canvas-sphere');
+    const ctxSphere = canvasSphere.getContext('2d');
+    let sphereAzimuth = 45;
+    let sphereElevation = 20;
+    let sphereAutoRotate = true;
+    let sphereShowBasins = false;
+    let sphereShowTrajectories = false;
+    let sphereAnimId = null;
+
+    function project3D(x, y, z, azimuth, elevation) {
+        const az = azimuth * Math.PI / 180;
+        const el = elevation * Math.PI / 180;
+        
+        // Rotate around Y axis (azimuth)
+        const x1 = x * Math.cos(az) - z * Math.sin(az);
+        const z1 = x * Math.sin(az) + z * Math.cos(az);
+        const y1 = y;
+        
+        // Rotate around X axis (elevation)
+        const y2 = y1 * Math.cos(el) - z1 * Math.sin(el);
+        const z2 = y1 * Math.sin(el) + z1 * Math.cos(el);
+        
+        return { x: x1, y: y2, z: z2 };
+    }
+
+    function drawSphere() {
+        const w = canvasSphere.width = canvasSphere.offsetWidth * 2;
+        const h = canvasSphere.height = 800;
+        const ctx = ctxSphere;
+        ctx.clearRect(0, 0, w, h);
+
+        const centerX = w / 2;
+        const centerY = h / 2;
+        const radius = Math.min(w, h) * 0.38;
+
+        // Draw sphere wireframe
+        ctx.strokeStyle = '#1a1a2a';
+        ctx.lineWidth = 1;
+
+        // Latitude lines
+        for (let lat = -60; lat <= 60; lat += 30) {
+            const latRad = lat * Math.PI / 180;
+            const r = Math.cos(latRad) * radius;
+            const yOff = Math.sin(latRad) * radius;
+            
+            ctx.beginPath();
+            for (let lon = 0; lon <= 360; lon += 5) {
+                const lonRad = lon * Math.PI / 180;
+                const px = Math.cos(lonRad) * r;
+                const pz = Math.sin(lonRad) * r;
+                const py = yOff;
+                
+                const proj = project3D(px, py, pz, sphereAzimuth, sphereElevation);
+                const sx = centerX + proj.x;
+                const sy = centerY - proj.y;
+                
+                if (lon === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.stroke();
+        }
+
+        // Longitude lines
+        for (let lon = 0; lon < 360; lon += 30) {
+            const lonRad = lon * Math.PI / 180;
+            ctx.beginPath();
+            for (let lat = -90; lat <= 90; lat += 5) {
+                const latRad = lat * Math.PI / 180;
+                const px = Math.cos(latRad) * Math.cos(lonRad) * radius;
+                const py = Math.sin(latRad) * radius;
+                const pz = Math.cos(latRad) * Math.sin(lonRad) * radius;
+                
+                const proj = project3D(px, py, pz, sphereAzimuth, sphereElevation);
+                const sx = centerX + proj.x;
+                const sy = centerY - proj.y;
+                
+                if (lat === -90) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.stroke();
+        }
+
+        // Define attractor positions on sphere
+        const sphereAttractors = [
+            { lat: 30, lon: 60, label: 'Paris', color: '#00ff88' },
+            { lat: 45, lon: 150, label: 'Berlin', color: '#00aaff' },
+            { lat: -20, lon: 240, label: 'Madrid', color: '#ff6600' },
+            { lat: 10, lon: -30, label: 'London', color: '#ff00aa' }
+        ];
+
+        // Draw basins if enabled
+        if (sphereShowBasins) {
+            for (const attr of sphereAttractors) {
+                const latRad = attr.lat * Math.PI / 180;
+                const lonRad = attr.lon * Math.PI / 180;
+                
+                // Draw basin as a spherical cap
+                ctx.beginPath();
+                for (let angle = 0; angle <= 360; angle += 10) {
+                    const aRad = angle * Math.PI / 180;
+                    const capRadius = 25 * Math.PI / 180; // 25 degrees
+                    
+                    const pLat = Math.asin(Math.sin(latRad) * Math.cos(capRadius) + Math.cos(latRad) * Math.sin(capRadius) * Math.cos(aRad));
+                    const pLon = lonRad + Math.atan2(Math.sin(aRad) * Math.sin(capRadius) * Math.cos(latRad), Math.cos(capRadius) - Math.sin(latRad) * Math.sin(pLat));
+                    
+                    const px = Math.cos(pLat) * Math.cos(pLon) * radius;
+                    const py = Math.sin(pLat) * radius;
+                    const pz = Math.cos(pLat) * Math.sin(pLon) * radius;
+                    
+                    const proj = project3D(px, py, pz, sphereAzimuth, sphereElevation);
+                    const sx = centerX + proj.x;
+                    const sy = centerY - proj.y;
+                    
+                    if (angle === 0) ctx.moveTo(sx, sy);
+                    else ctx.lineTo(sx, sy);
+                }
+                ctx.closePath();
+                ctx.fillStyle = attr.color + '20';
+                ctx.fill();
+                ctx.strokeStyle = attr.color + '60';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
+
+        // Draw trajectories if enabled
+        if (sphereShowTrajectories) {
+            // Trajectory from initial position to Paris attractor
+            const startLat = -10;
+            const startLon = 180;
+            const endLat = 30;
+            const endLon = 60;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ff8880';
+            ctx.lineWidth = 2;
+            
+            for (let t = 0; t <= 1; t += 0.02) {
+                const curvedT = 1 - Math.pow(1 - t, 2.5);
+                const lat = lerp(startLat, endLat, curvedT) + Math.sin(t * 8) * 5 * (1 - t);
+                const lon = lerp(startLon, endLon, curvedT) + Math.cos(t * 6) * 8 * (1 - t);
+                
+                const latRad = lat * Math.PI / 180;
+                const lonRad = lon * Math.PI / 180;
+                const px = Math.cos(latRad) * Math.cos(lonRad) * radius;
+                const py = Math.sin(latRad) * radius;
+                const pz = Math.cos(latRad) * Math.sin(lonRad) * radius;
+                
+                const proj = project3D(px, py, pz, sphereAzimuth, sphereElevation);
+                const sx = centerX + proj.x;
+                const sy = centerY - proj.y;
+                if (t === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.stroke();
+
+            // Draw dots along trajectory for layer markers
+            for (let l = 0; l <= numLayers; l += 4) {
+                const t = l / numLayers;
+                const curvedT = 1 - Math.pow(1 - t, 2.5);
+                const lat = lerp(startLat, endLat, curvedT) + Math.sin(t * 8) * 5 * (1 - t);
+                const lon = lerp(startLon, endLon, curvedT) + Math.cos(t * 6) * 8 * (1 - t);
+                
+                const latRad = lat * Math.PI / 180;
+                const lonRad = lon * Math.PI / 180;
+                const px = Math.cos(latRad) * Math.cos(lonRad) * radius;
+                const py = Math.sin(latRad) * radius;
+                const pz = Math.cos(latRad) * Math.sin(lonRad) * radius;
+                
+                const proj = project3D(px, py, pz, sphereAzimuth, sphereElevation);
+                const sx2 = centerX + proj.x;
+                const sy2 = centerY - proj.y;
+                
+                ctx.fillStyle = '#00ff88';
+                ctx.beginPath();
+                ctx.arc(sx2, sy2, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (l % 8 === 0) {
+                    ctx.fillStyle = '#00ff8899';
+                    ctx.font = '14px JetBrains Mono, monospace';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`L${l}`, sx2 + 8, sy2 - 5);
+                }
+            }
+        }
+
+        // Draw attractor points
+        for (const attr of sphereAttractors) {
+            const latRad = attr.lat * Math.PI / 180;
+            const lonRad = attr.lon * Math.PI / 180;
+            const px = Math.cos(latRad) * Math.cos(lonRad) * radius;
+            const py = Math.sin(latRad) * radius;
+            const pz = Math.cos(latRad) * Math.sin(lonRad) * radius;
+            
+            const proj = project3D(px, py, pz, sphereAzimuth, sphereElevation);
+            const sx = centerX + proj.x;
+            const sy = centerY - proj.y;
+            
+            // Only draw if on front side
+            if (proj.z > -radius * 0.3) {
+                // Glow
+                const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 25);
+                grad.addColorStop(0, attr.color + '80');
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 25, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Point
+                ctx.fillStyle = attr.color;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 7, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Label
+                ctx.fillStyle = attr.color;
+                ctx.font = '18px JetBrains Mono, monospace';
+                ctx.textAlign = 'left';
+                ctx.fillText(attr.label, sx + 14, sy + 5);
+            }
+        }
+
+        // Draw saddle point
+        const saddleLat = 10;
+        const saddleLon = 110;
+        const sLatRad = saddleLat * Math.PI / 180;
+        const sLonRad = saddleLon * Math.PI / 180;
+        const spx = Math.cos(sLatRad) * Math.cos(sLonRad) * radius;
+        const spy = Math.sin(sLatRad) * radius;
+        const spz = Math.cos(sLatRad) * Math.sin(sLonRad) * radius;
+        const sproj = project3D(spx, spy, spz, sphereAzimuth, sphereElevation);
+        
+        if (sproj.z > -radius * 0.3) {
+            const ssx = centerX + sproj.x;
+            const ssy = centerY - sproj.y;
+            ctx.strokeStyle = '#ff00aa';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ssx - 8, ssy - 8); ctx.lineTo(ssx + 8, ssy + 8);
+            ctx.moveTo(ssx + 8, ssy - 8); ctx.lineTo(ssx - 8, ssy + 8);
+            ctx.stroke();
+            ctx.fillStyle = '#ff00aa99';
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.fillText('Saddle', ssx + 12, ssy + 4);
+        }
+
+        // Title
+        ctx.fillStyle = '#666680';
+        ctx.font = '16px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Hypersphäre S^(d-1) — Projektion auf 3D', centerX, 25);
+    }
+
+    function animateSphere() {
+        if (sphereAutoRotate) {
+            sphereAzimuth += 0.3;
+            if (sphereAzimuth > 360) sphereAzimuth -= 360;
+            document.getElementById('sphere-azimuth').value = Math.floor(sphereAzimuth);
+            document.getElementById('sphere-az-val').textContent = Math.floor(sphereAzimuth) + '°';
+        }
+        drawSphere();
+        sphereAnimId = requestAnimationFrame(animateSphere);
+    }
+
+    document.getElementById('sphere-rotate').addEventListener('click', () => {
+        sphereAutoRotate = !sphereAutoRotate;
+        document.getElementById('sphere-rotate').classList.toggle('active', sphereAutoRotate);
+    });
+
+    document.getElementById('sphere-basins').addEventListener('click', (e) => {
+        sphereShowBasins = !sphereShowBasins;
+        e.target.classList.toggle('active', sphereShowBasins);
+    });
+
+    document.getElementById('sphere-trajectories').addEventListener('click', (e) => {
+        sphereShowTrajectories = !sphereShowTrajectories;
+        e.target.classList.toggle('active', sphereShowTrajectories);
+    });
+
+    document.getElementById('sphere-azimuth').addEventListener('input', (e) => {
+        sphereAzimuth = parseInt(e.target.value);
+        document.getElementById('sphere-az-val').textContent = sphereAzimuth + '°';
+        sphereAutoRotate = false;
+        document.getElementById('sphere-rotate').classList.remove('active');
+    });
+
+    document.getElementById('sphere-elevation').addEventListener('input', (e) => {
+        sphereElevation = parseInt(e.target.value);
+        document.getElementById('sphere-el-val').textContent = sphereElevation + '°';
+    });
+
+    // ============ CANVAS 5: BASINS ============
+    const canvasBasins = document.getElementById('canvas-basins');
+    const ctxBasins = canvasBasins.getContext('2d');
+    let basinLayer = 0;
+    let basinAnimating = false;
+    let basinShowFractal = false;
+
+    function computeBasinColor(x, y, layer, showFractal) {
+        // Simulate which attractor a point converges to based on position and layer
+        const attractorPositions = [
+            { x: 0.75, y: 0.3 },  // Paris
+            { x: 0.25, y: 0.25 }, // Berlin
+            { x: 0.5, y: 0.8 },   // Madrid
+            { x: 0.15, y: 0.7 }   // London
+        ];
+        const colors = ['#00ff88', '#00aaff', '#ff6600', '#ff00aa'];
+
+        // Compute distances to attractors
+        const distances = attractorPositions.map(a => dist(x, y, a.x, a.y));
+        const minDist = Math.min(...distances);
+        const minIdx = distances.indexOf(minDist);
+
+        // Layer effect: early layers = blurry boundaries, late layers = sharp
+        const sharpness = 1 + layer * 1.5;
+        
+        // Add fractal-like boundary complexity
+        let perturbation = 0;
+        if (showFractal) {
+            perturbation = Math.sin(x * 30 + y * 20) * 0.03 +
+                          Math.sin(x * 50 - y * 40) * 0.02 +
+                          Math.sin((x + y) * 70) * 0.015;
+            perturbation *= (1 - layer / numLayers) * 2; // Decreases with layer
+        }
+
+        // Compute softmax-like assignment
+        const scores = distances.map(d => Math.exp(-(d + perturbation) * sharpness));
+        const sum = scores.reduce((a, b) => a + b, 0);
+        const probs = scores.map(s => s / sum);
+
+        // Find winner and confidence
+        const maxProb = Math.max(...probs);
+        const winner = probs.indexOf(maxProb);
+
+        // Color based on winner with confidence as alpha
+        const confidence = maxProb;
+        
+        // Near boundary: yellow
+        if (confidence < 0.4) {
+            return { color: '#ffff00', alpha: 0.3 + confidence * 0.5 };
+        }
+        
+        return { color: colors[winner], alpha: 0.2 + confidence * 0.7 };
+    }
+
+    function drawBasins() {
+        const w = canvasBasins.width = canvasBasins.offsetWidth * 2;
+        const h = canvasBasins.height = 900;
+        const ctx = ctxBasins;
+        ctx.clearRect(0, 0, w, h);
+
+        const resolution = parseInt(document.getElementById('basin-res').value);
+        const cellW = w / resolution;
+        const cellH = h / resolution;
+
+        for (let i = 0; i < resolution; i++) {
+            for (let j = 0; j < resolution; j++) {
+                const x = (i + 0.5) / resolution;
+                const y = (j + 0.5) / resolution;
+                
+                const { color, alpha } = computeBasinColor(x, y, basinLayer, basinShowFractal);
+                
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = color;
+                ctx.fillRect(i * cellW, j * cellH, cellW + 1, cellH + 1);
+            }
+        }
+        ctx.globalAlpha = 1;
+
+        // Draw attractor points
+        const attractorPositions = [
+            { x: 0.75, y: 0.3, label: 'Paris', color: '#00ff88' },
+            { x: 0.25, y: 0.25, label: 'Berlin', color: '#00aaff' },
+            { x: 0.5, y: 0.8, label: 'Madrid', color: '#ff6600' },
+            { x: 0.15, y: 0.7, label: 'London', color: '#ff00aa' }
+        ];
+
+        for (const attr of attractorPositions) {
+            const ax = attr.x * w;
+            const ay = attr.y * h;
+
+            // Pulsing glow
+            ctx.fillStyle = attr.color;
+            ctx.beginPath();
+            ctx.arc(ax, ay, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = attr.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(ax, ay, 16, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(attr.label, ax, ay - 22);
+        }
+
+        // Draw the "ist" token trajectory
+        const traj = tokenTrajectories[6];
+        ctx.strokeStyle = '#ffffffaa';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (let l = 0; l <= basinLayer; l++) {
+            const px = traj[l].x * w;
+            const py = traj[l].y * h;
+            if (l === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Current position
+        const curr = traj[basinLayer];
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(curr.x * w, curr.y * h, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffffcc';
+        ctx.font = '16px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('"ist"', curr.x * w + 12, curr.y * h + 5);
+
+        // Layer label
+        ctx.fillStyle = '#ffffff99';
+        ctx.font = '18px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Layer ${basinLayer}/${numLayers}`, 15, 30);
+        
+        // Sharpness indicator
+        const sharpness = (basinLayer / numLayers * 100).toFixed(0);
+        ctx.fillText(`Basin-Schärfe: ${sharpness}%`, 15, 55);
+    }
+
+    document.getElementById('basin-layer').addEventListener('input', (e) => {
+        basinLayer = parseInt(e.target.value);
+        document.getElementById('basin-layer-val').textContent = basinLayer;
+        drawBasins();
+        
+        const descriptions = ['Bassins undifferenziert', 'Erste Struktur erkennbar', 'Grenzen bilden sich',
+            'Regionen werden klarer', 'Entscheidungszonen sichtbar', 'Bassins schärfen sich',
+            'Klare Zuordnung', 'Fast konvergiert', 'Stabile Bassins'];
+        const desc = descriptions[Math.min(Math.floor(basinLayer / 3), descriptions.length - 1)];
+        document.getElementById('basin-status').textContent = `Layer ${basinLayer} — ${desc}`;
+    });
+
+    document.getElementById('basin-animate').addEventListener('click', () => {
+        if (basinAnimating) {
+            basinAnimating = false;
+            document.getElementById('basin-animate').textContent = '▶ Layer durchlaufen';
+            return;
+        }
+        basinAnimating = true;
+        document.getElementById('basin-animate').textContent = '⏸ Stop';
+        basinLayer = 0;
+
+        function stepBasin() {
+            if (!basinAnimating) return;
+            basinLayer++;
+            if (basinLayer > numLayers) {
+                basinLayer = numLayers;
+                basinAnimating = false;
+                document.getElementById('basin-animate').textContent = '▶ Layer durchlaufen';
+                return;
+            }
+            document.getElementById('basin-layer').value = basinLayer;
+            document.getElementById('basin-layer-val').textContent = basinLayer;
+            drawBasins();
+            setTimeout(stepBasin, 300);
+        }
+        stepBasin();
+    });
+
+    document.getElementById('basin-reset').addEventListener('click', () => {
+        basinAnimating = false;
+        basinLayer = 0;
+        document.getElementById('basin-layer').value = 0;
+        document.getElementById('basin-layer-val').textContent = '0';
+        document.getElementById('basin-animate').textContent = '▶ Layer durchlaufen';
+        drawBasins();
+    });
+
+    document.getElementById('basin-fractal').addEventListener('click', (e) => {
+        basinShowFractal = !basinShowFractal;
+        e.target.classList.toggle('active', basinShowFractal);
+        drawBasins();
+    });
+
+    document.getElementById('basin-res').addEventListener('input', (e) => {
+        document.getElementById('basin-res-val').textContent = e.target.value;
+        drawBasins();
+    });
+
+    // ============ CANVAS 6: TRAJECTORY TABS ============
+    const canvasTraj2d = document.getElementById('canvas-traj2d');
+    const ctxTraj2d = canvasTraj2d.getContext('2d');
+    let trajLayer = 0;
+    let trajPlaying = false;
+    let trajShowAll = false;
+
+    function drawTraj2d() {
+        const w = canvasTraj2d.width = canvasTraj2d.offsetWidth * 2;
+        const h = canvasTraj2d.height = 800;
+        const ctx = ctxTraj2d;
+        ctx.clearRect(0, 0, w, h);
+
+        // Background
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, w, h);
+
+        // Grid
+        ctx.strokeStyle = '#1a1a25';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < w; i += 50) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+        }
+        for (let i = 0; i < h; i += 50) {
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+        }
+
+        // Draw attractor basins (faint)
+        for (const attr of attractors) {
+            const ax = attr.x * w;
+            const ay = attr.y * h;
+            const grad = ctx.createRadialGradient(ax, ay, 0, ax, ay, 80);
+            grad.addColorStop(0, attr.color + '25');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(ax, ay, 80, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = attr.color;
+            ctx.beginPath();
+            ctx.arc(ax, ay, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.font = '16px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(attr.label, ax, ay - 15);
+        }
+
+        // Draw trajectories
+        const tokensToShow = trajShowAll ? [0, 1, 2, 3, 4, 5, 6] : [6];
+
+        for (const t of tokensToShow) {
+            const traj = tokenTrajectories[t];
+            const color = t === 6 ? '#00ff88' : '#00aaff60';
+            const lineWidth = t === 6 ? 2.5 : 1;
+
+            // Full path up to current layer
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.beginPath();
+            for (let l = 0; l <= trajLayer; l++) {
+                const px = traj[l].x * w;
+                const py = traj[l].y * h;
+                if (l === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // Layer dots
+            for (let l = 0; l <= trajLayer; l++) {
+                const px = traj[l].x * w;
+                const py = traj[l].y * h;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(px, py, t === 6 ? 4 : 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Current position highlight
+            const curr = traj[trajLayer];
+            if (t === 6) {
+                ctx.strokeStyle = '#00ff88';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(curr.x * w, curr.y * h, 10, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.fillStyle = '#00ff88';
+                ctx.font = '14px JetBrains Mono, monospace';
+                ctx.textAlign = 'left';
+                ctx.fillText(`"ist" @ L${trajLayer}`, curr.x * w + 15, curr.y * h - 5);
+            }
+
+            // Start marker
+            ctx.fillStyle = '#ffffff40';
+            ctx.beginPath();
+            ctx.arc(traj[0].x * w, traj[0].y * h, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Velocity vector for "ist"
+        if (trajLayer < numLayers) {
+            const curr = tokenTrajectories[6][trajLayer];
+            const next = tokenTrajectories[6][trajLayer + 1];
+            const dx = (next.x - curr.x) * w * 3;
+            const dy = (next.y - curr.y) * h * 3;
+            
+            ctx.strokeStyle = '#ffff0088';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(curr.x * w, curr.y * h);
+            ctx.lineTo(curr.x * w + dx, curr.y * h + dy);
+            ctx.stroke();
+
+            const angle = Math.atan2(dy, dx);
+            ctx.beginPath();
+            ctx.moveTo(curr.x * w + dx, curr.y * h + dy);
+            ctx.lineTo(curr.x * w + dx - 12 * Math.cos(angle - 0.4), curr.y * h + dy - 12 * Math.sin(angle - 0.4));
+            ctx.lineTo(curr.x * w + dx - 12 * Math.cos(angle + 0.4), curr.y * h + dy - 12 * Math.sin(angle + 0.4));
+            ctx.closePath();
+            ctx.fillStyle = '#ffff0088';
+            ctx.fill();
+        }
+
+        // Info
+        ctx.fillStyle = '#666680';
+        ctx.font = '16px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Layer ${trajLayer}/${numLayers}`, 15, 25);
+    }
+
+    document.getElementById('traj-play').addEventListener('click', () => {
+        if (trajPlaying) {
+            trajPlaying = false;
+            document.getElementById('traj-play').textContent = '▶ Abspielen';
+            return;
+        }
+        trajPlaying = true;
+        document.getElementById('traj-play').textContent = '⏸ Pause';
+        trajLayer = 0;
+
+        function stepTraj() {
+            if (!trajPlaying) return;
+            trajLayer++;
+            if (trajLayer > numLayers) {
+                trajLayer = numLayers;
+                trajPlaying = false;
+                document.getElementById('traj-play').textContent = '▶ Abspielen';
+                return;
+            }
+            drawTraj2d();
+            const speed = parseInt(document.getElementById('traj-speed').value);
+            setTimeout(stepTraj, 500 - speed * 40);
+        }
+        stepTraj();
+    });
+
+    document.getElementById('traj-reset').addEventListener('click', () => {
+        trajPlaying = false;
+        trajLayer = 0;
+        document.getElementById('traj-play').textContent = '▶ Abspielen';
+        drawTraj2d();
+    });
+
+    document.getElementById('traj-show-all').addEventListener('click', (e) => {
+        trajShowAll = !trajShowAll;
+        e.target.classList.toggle('active', trajShowAll);
+        drawTraj2d();
+    });
+
+    // 3D Trajectory
+    const canvasTraj3d = document.getElementById('canvas-traj3d');
+    const ctxTraj3d = canvasTraj3d.getContext('2d');
+    let traj3dRx = 30;
+    let traj3dRy = 45;
+    let traj3dAutoRotate = false;
+
+    function drawTraj3d() {
+        const w = canvasTraj3d.width = canvasTraj3d.offsetWidth * 2;
+        const h = canvasTraj3d.height = 800;
+        const ctx = ctxTraj3d;
+        ctx.clearRect(0, 0, w, h);
+
+        const centerX = w / 2;
+        const centerY = h / 2;
+
+        // Project trajectory into 3D using layer as Z axis
+        const traj = tokenTrajectories[6];
+
+        // Draw axes
+        const axisLen = 200;
+        const axes = [
+            { dx: 1, dy: 0, dz: 0, label: 'Dim 1', color: '#ff6600' },
+            { dx: 0, dy: 1, dz: 0, label: 'Dim 2', color: '#00aaff' },
+            { dx: 0, dy: 0, dz: 1, label: 'Layer (t)', color: '#00ff88' }
+        ];
+
+        for (const axis of axes) {
+            const proj = project3D(axis.dx * axisLen, axis.dy * axisLen, axis.dz * axisLen, traj3dRy, traj3dRx);
+            ctx.strokeStyle = axis.color + '60';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + proj.x, centerY - proj.y);
+            ctx.stroke();
+
+            ctx.fillStyle = axis.color;
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(axis.label, centerX + proj.x * 1.15, centerY - proj.y * 1.15);
+        }
+
+        // Draw 3D trajectory
+        ctx.strokeStyle = '#00ff88';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        const scale = 300;
+        for (let l = 0; l <= numLayers; l++) {
+            const px = (traj[l].x - 0.5) * scale;
+            const py = (traj[l].y - 0.5) * scale;
+            const pz = (l / numLayers - 0.5) * scale;
+
+            const proj = project3D(px, py, pz, traj3dRy, traj3dRx);
+            const sx = centerX + proj.x;
+            const sy = centerY - proj.y;
+
+            if (l === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+
+        // Draw layer markers
+        for (let l = 0; l <= numLayers; l += 2) {
+            const px = (traj[l].x - 0.5) * scale;
+            const py = (traj[l].y - 0.5) * scale;
+            const pz = (l / numLayers - 0.5) * scale;
+
+            const proj = project3D(px, py, pz, traj3dRy, traj3dRx);
+            const sx = centerX + proj.x;
+            const sy = centerY - proj.y;
+
+            const size = 3 + (l / numLayers) * 4;
+            ctx.fillStyle = `hsl(${140 + l * 3}, 80%, 60%)`;
+            ctx.beginPath();
+            ctx.arc(sx, sy, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Start and end markers
+        const startProj = project3D((traj[0].x - 0.5) * scale, (traj[0].y - 0.5) * scale, -0.5 * scale, traj3dRy, traj3dRx);
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(centerX + startProj.x, centerY - startProj.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffffcc';
+        ctx.font = '14px JetBrains Mono, monospace';
+        ctx.fillText('Start (L0)', centerX + startProj.x + 10, centerY - startProj.y);
+
+        const endProj = project3D((traj[numLayers].x - 0.5) * scale, (traj[numLayers].y - 0.5) * scale, 0.5 * scale, traj3dRy, traj3dRx);
+        ctx.fillStyle = '#ff6600';
+        ctx.beginPath();
+        ctx.arc(centerX + endProj.x, centerY - endProj.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ff6600';
+        ctx.font = '14px JetBrains Mono, monospace';
+        ctx.fillText('→ Paris (L24)', centerX + endProj.x + 10, centerY - endProj.y);
+    }
+
+    document.getElementById('traj3d-rx').addEventListener('input', (e) => {
+        traj3dRx = parseInt(e.target.value);
+        drawTraj3d();
+    });
+    document.getElementById('traj3d-ry').addEventListener('input', (e) => {
+        traj3dRy = parseInt(e.target.value);
+        drawTraj3d();
+    });
+    document.getElementById('traj3d-auto').addEventListener('click', (e) => {
+        traj3dAutoRotate = !traj3dAutoRotate;
+        e.target.classList.toggle('active', traj3dAutoRotate);
+        if (traj3dAutoRotate) {
+            function rotateTraj3d() {
+                if (!traj3dAutoRotate) return;
+                traj3dRy += 0.5;
+                document.getElementById('traj3d-ry').value = Math.floor(traj3dRy % 360);
+                drawTraj3d();
+                requestAnimationFrame(rotateTraj3d);
+            }
+            rotateTraj3d();
+        }
+    });
+
+    // Norm plot
+    const canvasNorm = document.getElementById('canvas-norm');
+    const ctxNorm = canvasNorm.getContext('2d');
+    let normLogScale = false;
+    let normAllTokens = false;
+
+    function drawNorm() {
+        const w = canvasNorm.width = canvasNorm.offsetWidth * 2;
+        const h = canvasNorm.height = 600;
+        const ctx = ctxNorm;
+        ctx.clearRect(0, 0, w, h);
+
+        const padL = 80;
+        const padR = 40;
+        const padT = 40;
+        const padB = 60;
+        const plotW = w - padL - padR;
+        const plotH = h - padT - padB;
+        // Compute norms for each token
+        const tokensForNorm = normAllTokens ? [0, 1, 2, 3, 4, 5, 6] : [6];
+        const normData = [];
+
+        for (const t of tokensForNorm) {
+            const norms = [];
+            const traj = tokenTrajectories[t];
+            for (let l = 0; l < numLayers; l++) {
+                const dx = traj[l + 1].x - traj[l].x;
+                const dy = traj[l + 1].y - traj[l].y;
+                const norm = Math.sqrt(dx * dx + dy * dy);
+                norms.push(norm);
+            }
+            normData.push({ token: t, norms });
+        }
+
+        // Find max norm for scaling
+        let maxNorm = 0;
+        for (const nd of normData) {
+            for (const n of nd.norms) {
+                if (n > maxNorm) maxNorm = n;
+            }
+        }
+
+        // Draw axes
+        ctx.strokeStyle = '#666680';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, padT);
+        ctx.lineTo(padL, padT + plotH);
+        ctx.lineTo(padL + plotW, padT + plotH);
+        ctx.stroke();
+
+        // Y axis labels
+        ctx.fillStyle = '#666680';
+        ctx.font = '16px JetBrains Mono, monospace';
+        ctx.textAlign = 'right';
+        const ySteps = 5;
+        for (let i = 0; i <= ySteps; i++) {
+            const val = normLogScale ? 
+                Math.exp(lerp(Math.log(0.001), Math.log(maxNorm), i / ySteps)) :
+                (maxNorm * i / ySteps);
+            const y = padT + plotH - (i / ySteps) * plotH;
+            ctx.fillText(val.toFixed(3), padL - 10, y + 5);
+            ctx.strokeStyle = '#1a1a25';
+            ctx.beginPath();
+            ctx.moveTo(padL, y);
+            ctx.lineTo(padL + plotW, y);
+            ctx.stroke();
+        }
+
+        // X axis labels
+        ctx.textAlign = 'center';
+        for (let l = 0; l < numLayers; l += 4) {
+            const x = padL + (l / (numLayers - 1)) * plotW;
+            ctx.fillText(`L${l}`, x, padT + plotH + 25);
+        }
+
+        // Axis titles
+        ctx.fillStyle = '#888';
+        ctx.font = '14px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Layer →', padL + plotW / 2, padT + plotH + 50);
+        ctx.save();
+        ctx.translate(20, padT + plotH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('‖Δh‖ = ‖h^(ℓ+1) - h^(ℓ)‖', 0, 0);
+        ctx.restore();
+
+        // Draw norm curves
+        const normColors = ['#00aaff', '#00aaff', '#00aaff', '#00aaff', '#00aaff', '#00aaff', '#00ff88'];
+        
+        for (const nd of normData) {
+            const color = nd.token === 6 ? '#00ff88' : '#00aaff60';
+            const lineWidth = nd.token === 6 ? 3 : 1.5;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.beginPath();
+
+            for (let l = 0; l < numLayers; l++) {
+                const x = padL + (l / (numLayers - 1)) * plotW;
+                let yVal;
+                if (normLogScale) {
+                    const logNorm = Math.log(Math.max(nd.norms[l], 0.001));
+                    const logMax = Math.log(maxNorm);
+                    const logMin = Math.log(0.001);
+                    yVal = (logNorm - logMin) / (logMax - logMin);
+                } else {
+                    yVal = nd.norms[l] / maxNorm;
+                }
+                const y = padT + plotH - yVal * plotH;
+
+                if (l === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Dots
+            for (let l = 0; l < numLayers; l++) {
+                const x = padL + (l / (numLayers - 1)) * plotW;
+                let yVal;
+                if (normLogScale) {
+                    const logNorm = Math.log(Math.max(nd.norms[l], 0.001));
+                    const logMax = Math.log(maxNorm);
+                    const logMin = Math.log(0.001);
+                    yVal = (logNorm - logMin) / (logMax - logMin);
+                } else {
+                    yVal = nd.norms[l] / maxNorm;
+                }
+                const y = padT + plotH - yVal * plotH;
+
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, y, nd.token === 6 ? 4 : 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Annotation: "Convergence zone"
+        if (!normAllTokens) {
+            ctx.fillStyle = '#00ff8840';
+            ctx.fillRect(padL + plotW * 0.6, padT, plotW * 0.4, plotH);
+            ctx.fillStyle = '#00ff8880';
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('Konvergenz-Zone', padL + plotW * 0.8, padT + 20);
+            ctx.fillText('(Attraktor erreicht)', padL + plotW * 0.8, padT + 38);
+        }
+
+        // Saddle point annotation
+        ctx.strokeStyle = '#ff00aa60';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        const saddleX = padL + (8 / (numLayers - 1)) * plotW;
+        ctx.beginPath();
+        ctx.moveTo(saddleX, padT);
+        ctx.lineTo(saddleX, padT + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ff00aa80';
+        ctx.font = '12px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Saddle', saddleX, padT + plotH + 45);
+    }
+
+    document.getElementById('norm-log').addEventListener('click', (e) => {
+        normLogScale = !normLogScale;
+        e.target.classList.toggle('active', normLogScale);
+        drawNorm();
+    });
+
+    document.getElementById('norm-all-tokens').addEventListener('click', (e) => {
+        normAllTokens = !normAllTokens;
+        e.target.classList.toggle('active', normAllTokens);
+        drawNorm();
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.dataset.tab;
+            const container = tab.closest('.tab-container');
+            container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            container.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            // Redraw the newly visible canvas
+            if (tabId === 'traj-2d') drawTraj2d();
+            if (tabId === 'traj-3d') drawTraj3d();
+            if (tabId === 'traj-norm') drawNorm();
+        });
+    });
+
+    // ============ CANVAS 7: SUPERPOSITION ============
+    const canvasSuper = document.getElementById('canvas-superposition');
+    const ctxSuper = canvasSuper.getContext('2d');
+    let superDims = 2;
+    let superConcepts = 3;
+    let superAnimating = false;
+
+    function drawSuperposition() {
+        const w = canvasSuper.width = canvasSuper.offsetWidth * 2;
+        const h = canvasSuper.height = 700;
+        const ctx = ctxSuper;
+        ctx.clearRect(0, 0, w, h);
+
+        const centerX = w / 2;
+        const centerY = h / 2;
+        const radius = Math.min(w, h) * 0.35;
+
+        superDims = parseInt(document.getElementById('super-dims').value);
+        superConcepts = parseInt(document.getElementById('super-concepts').value);
+
+        // Draw unit circle/sphere
+        ctx.strokeStyle = '#2a2a3a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Generate concept vectors
+        const concepts = [];
+        const conceptColors = ['#00ff88', '#00aaff', '#ff6600', '#ff00aa', '#ffff00', '#aa00ff',
+            '#ff8800', '#00ffff', '#ff0066', '#66ff00', '#0066ff', '#ff66ff',
+            '#88ff00', '#00ff66', '#6600ff', '#ff0088', '#00ffaa', '#ffaa00', '#aa00ff', '#00aaff'];
+        const conceptLabels = ['Paris', 'Berlin', 'Madrid', 'London', 'Rom', 'Wien',
+            'Hauptstadt', 'Land', 'Europa', 'Geographie', 'Frage', 'Antwort',
+            'Kultur', 'Sprache', 'Politik', 'Geschichte', 'Fluss', 'Berg', 'Meer', 'Stadt'];
+
+        if (superDims === 2) {
+            // In 2D, distribute concepts as evenly as possible
+            for (let i = 0; i < superConcepts; i++) {
+                const angle = (i / superConcepts) * Math.PI * 2;
+                concepts.push({
+                    x: Math.cos(angle),
+                    y: Math.sin(angle),
+                    color: conceptColors[i % conceptColors.length],
+                    label: conceptLabels[i % conceptLabels.length]
+                });
+            }
+        } else {
+            // Higher dims: project random high-dim vectors to 2D
+            // Show that they become more orthogonal
+            seed = 777;
+            const vectors = [];
+            for (let i = 0; i < superConcepts; i++) {
+                const v = [];
+                for (let d = 0; d < superDims; d++) {
+                    seed = (seed * 16807) % 2147483647;
+                    v.push((seed / 2147483647) * 2 - 1);
+                }
+                // Normalize
+                const norm = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+                for (let d = 0; d < v.length; d++) v[d] /= norm;
+                vectors.push(v);
+            }
+
+            // Project to 2D using first two components (PCA-like)
+            for (let i = 0; i < superConcepts; i++) {
+                concepts.push({
+                    x: vectors[i][0],
+                    y: vectors[i][1],
+                    color: conceptColors[i % conceptColors.length],
+                    label: conceptLabels[i % conceptLabels.length]
+                });
+            }
+        }
+
+        // Draw concept vectors
+        for (let i = 0; i < concepts.length; i++) {
+            const c = concepts[i];
+            const ex = centerX + c.x * radius;
+            const ey = centerY - c.y * radius;
+
+            // Vector line
+            ctx.strokeStyle = c.color + 'cc';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+
+            // Arrowhead
+            const angle = Math.atan2(-c.y, c.x);
+            ctx.beginPath();
+            ctx.moveTo(ex, ey);
+            ctx.lineTo(ex - 12 * Math.cos(angle - 0.3), ey + 12 * Math.sin(angle - 0.3));
+            ctx.lineTo(ex - 12 * Math.cos(angle + 0.3), ey + 12 * Math.sin(angle + 0.3));
+            ctx.closePath();
+            ctx.fillStyle = c.color;
+            ctx.fill();
+
+            // Label
+            ctx.fillStyle = c.color;
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.textAlign = c.x > 0 ? 'left' : 'right';
+            ctx.fillText(c.label, ex + (c.x > 0 ? 10 : -10), ey + (c.y > 0 ? -8 : 15));
+        }
+
+        // Compute and display pairwise dot products (interference)
+        ctx.fillStyle = '#666680';
+        ctx.font = '14px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        
+        let yPos = 30;
+        ctx.fillText(`Dimensionen: ${superDims}, Konzepte: ${superConcepts}`, 15, yPos);
+        yPos += 25;
+
+        // Max interference
+        let maxInterference = 0;
+        for (let i = 0; i < concepts.length; i++) {
+            for (let j = i + 1; j < concepts.length; j++) {
+                const dot = concepts[i].x * concepts[j].x + concepts[i].y * concepts[j].y;
+                if (Math.abs(dot) > maxInterference) maxInterference = Math.abs(dot);
+            }
+        }
+
+        const interferenceColor = maxInterference > 0.5 ? '#ff6600' : maxInterference > 0.2 ? '#ffff00' : '#00ff88';
+        ctx.fillStyle = interferenceColor;
+        ctx.fillText(`Max Interferenz: ${maxInterference.toFixed(3)}`, 15, yPos);
+        yPos += 20;
+
+        if (superDims === 2 && superConcepts > 2) {
+            ctx.fillStyle = '#ff660099';
+            ctx.fillText('⚠ 2D kann nur 2 orthogonale Richtungen!', 15, yPos);
+            yPos += 20;
+            ctx.fillText('→ Erhöhe Dimensionen für weniger Interferenz', 15, yPos);
+        } else if (superDims >= 10 && superConcepts <= superDims) {
+            ctx.fillStyle = '#00ff8899';
+            ctx.fillText('✓ Genug Dimensionen → fast orthogonal', 15, yPos);
+            yPos += 20;
+            ctx.fillText('→ Konzepte stören sich kaum', 15, yPos);
+        }
+
+        // Update status
+        const ratio = superConcepts / superDims;
+        let statusText;
+        if (ratio > 1) {
+            statusText = `${superDims}D: ${superConcepts} Konzepte > ${superDims} Dims → Superposition nötig, Interferenz unvermeidbar`;
+        } else if (ratio > 0.5) {
+            statusText = `${superDims}D: ${superConcepts} Konzepte ≈ ${superDims} Dims → knapp, leichte Interferenz`;
+        } else {
+            statusText = `${superDims}D: ${superConcepts} Konzepte << ${superDims} Dims → fast perfekte Orthogonalität`;
+        }
+        document.getElementById('super-status').textContent = statusText;
+    }
+
+    document.getElementById('super-dims').addEventListener('input', (e) => {
+        document.getElementById('super-dims-val').textContent = e.target.value;
+        drawSuperposition();
+    });
+    document.getElementById('super-concepts').addEventListener('input', (e) => {
+        document.getElementById('super-concepts-val').textContent = e.target.value;
+        drawSuperposition();
+    });
+    document.getElementById('super-reset').addEventListener('click', () => {
+        document.getElementById('super-dims').value = 2;
+        document.getElementById('super-concepts').value = 3;
+        document.getElementById('super-dims-val').textContent = '2';
+        document.getElementById('super-concepts-val').textContent = '3';
+        drawSuperposition();
+    });
+
+    // ============ CANVAS 8: OUTPUT ============
+    const canvasOutput = document.getElementById('canvas-output');
+    const ctxOutput = canvasOutput.getContext('2d');
+
+    const outputTokens = ['Paris', 'Lyon', 'Marseille', 'Berlin', 'London', 'Madrid', 'Rom', 'Wien', 'Brüssel', 'Amsterdam'];
+    const baseLogits = [4.2, 1.8, 1.2, 0.8, 0.6, 0.4, 0.3, 0.2, 0.1, 0.05];
+
+    function softmax(logits, temperature) {
+        const scaled = logits.map(l => l / temperature);
+        const maxL = Math.max(...scaled);
+        const exps = scaled.map(l => Math.exp(l - maxL));
+        const sum = exps.reduce((a, b) => a + b, 0);
+        return exps.map(e => e / sum);
+    }
+
+    function drawOutput() {
+        const w = canvasOutput.width = canvasOutput.offsetWidth * 2;
+        const h = canvasOutput.height = 500;
+        const ctx = ctxOutput;
+        ctx.clearRect(0, 0, w, h);
+
+        const temperature = parseInt(document.getElementById('output-temp').value) / 10;
+        document.getElementById('output-temp-val').textContent = temperature.toFixed(1);
+
+        const probs = softmax(baseLogits, temperature);
+
+        const barWidth = (w * 0.7) / outputTokens.length;
+        const baseY = h * 0.85;
+        const maxBarH = h * 0.7;
+        const startX = w * 0.15;
+
+        // Draw bars
+        for (let i = 0; i < outputTokens.length; i++) {
+            const x = startX + i * barWidth;
+            const barH = probs[i] * maxBarH;
+
+            // Gradient bar
+            const grad = ctx.createLinearGradient(x, baseY - barH, x, baseY);
+            if (i === 0) {
+                grad.addColorStop(0, '#00ff88');
+                grad.addColorStop(1, '#00ff8840');
+            } else {
+                grad.addColorStop(0, '#00aaff80');
+                grad.addColorStop(1, '#00aaff20');
+            }
+            ctx.fillStyle = grad;
+            ctx.fillRect(x + 4, baseY - barH, barWidth - 8, barH);
+
+            // Border
+            ctx.strokeStyle = i === 0 ? '#00ff88' : '#00aaff40';
+            ctx.lineWidth = i === 0 ? 2 : 1;
+            ctx.strokeRect(x + 4, baseY - barH, barWidth - 8, barH);
+
+            // Probability label
+            ctx.fillStyle = i === 0 ? '#00ff88' : '#666680';
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText((probs[i] * 100).toFixed(1) + '%', x + barWidth / 2, baseY - barH - 8);
+
+            // Token label
+            ctx.save();
+            ctx.translate(x + barWidth / 2, baseY + 10);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillStyle = i === 0 ? '#00ff88' : '#888';
+            ctx.font = '14px JetBrains Mono, monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(outputTokens[i], 0, 0);
+            ctx.restore();
+        }
+
+        // Axis
+        ctx.strokeStyle = '#666680';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(startX, baseY);
+        ctx.lineTo(startX + outputTokens.length * barWidth, baseY);
+        ctx.stroke();
+
+        // Temperature indicator
+        ctx.fillStyle = '#666680';
+        ctx.font = '16px JetBrains Mono, monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`T = ${temperature.toFixed(1)}`, 15, 25);
+        
+        if (temperature < 0.5) {
+            ctx.fillStyle = '#00ff88';
+            ctx.fillText('→ Deterministisch (fast immer "Paris")', 15, 50);
+        } else if (temperature > 2) {
+            ctx.fillStyle = '#ff6600';
+            ctx.fillText('→ Hohe Entropie (fast zufällig)', 15, 50);
+        } else {
+            ctx.fillStyle = '#00aaff';
+            ctx.fillText('→ Balanciert', 15, 50);
+        }
+
+        // Update status
+        const topProbs = probs.slice(0, 5).map((p, i) => `P("${outputTokens[i]}") = ${p.toFixed(3)}`);
+        document.getElementById('output-status').textContent = topProbs.join(', ') + ', ...';
+    }
+
+    document.getElementById('output-temp').addEventListener('input', () => {
+        drawOutput();
+    });
+
+    document.getElementById('output-sample').addEventListener('click', () => {
+        const temperature = parseInt(document.getElementById('output-temp').value) / 10;
+        const probs = softmax(baseLogits, temperature);
+        
+        // Sample from distribution
+        let r = Math.random();
+        let sampled = 0;
+        for (let i = 0; i < probs.length; i++) {
+            r -= probs[i];
+            if (r <= 0) { sampled = i; break; }
+        }
+
+        // Flash the sampled token
+        document.getElementById('output-status').textContent = `🎲 Sampled: "${outputTokens[sampled]}" (P = ${(probs[sampled] * 100).toFixed(1)}%)`;
+        
+        // Redraw with highlight
+        drawOutput();
+        const w = canvasOutput.width;
+        const h = canvasOutput.height;
+        const barWidth = (w * 0.7) / outputTokens.length;
+        const startX = w * 0.15;
+        const x = startX + sampled * barWidth;
+        
+        ctxOutput.strokeStyle = '#ffff00';
+        ctxOutput.lineWidth = 3;
+        ctxOutput.strokeRect(x + 2, 50, barWidth - 4, h * 0.85 - 50);
+        ctxOutput.fillStyle = '#ffff00';
+        ctxOutput.font = 'bold 18px JetBrains Mono, monospace';
+        ctxOutput.textAlign = 'center';
+        ctxOutput.fillText('★ SAMPLED', x + barWidth / 2, 75);
+    });
+
+    // ============ INITIALIZATION ============
+    function init() {
+        renderMath();
+        drawEuler(0);
+        drawAttn();
+        drawFFN();
+        animateSphere();
+        drawBasins();
+        drawTraj2d();
+        drawTraj3d();
+        drawNorm();
+        drawSuperposition();
+        drawOutput();
+        updateEulerStatus();
+    }
+
+    // Handle resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            drawEuler(eulerCurrentLayer);
+            drawAttn();
+            drawFFN();
+            drawBasins();
+            drawTraj2d();
+            drawTraj3d();
+            drawNorm();
+            drawSuperposition();
+            drawOutput();
+        }, 200);
+    });
+
+    // Start
+    window.addEventListener('load', init);
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
