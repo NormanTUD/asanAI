@@ -2684,9 +2684,10 @@ async function fit_model(x_and_y) {
 		// =====================================================================
 		// POST-TRAINING: Check for NaN in model weights
 		// =====================================================================
+		let has_nan = false;
+		let has_inf = false;
+
 		try {
-			let has_nan = false;
-			let has_inf = false;
 			const current_weights = model.getWeights();
 
 			for (let wi = 0; wi < current_weights.length; wi++) {
