@@ -1160,62 +1160,6 @@ function warn_if_not_tensors(x, y) {
 	warn_if_not_tensor(y, "y");
 }
 
-async function fit_model(x_and_y) {
-	try {
-		const fit_data = await _get_fit_data(x_and_y);
-
-		// Ensure TF.js backend is ready before compilation and training
-		await tf.ready();
-
-		await compile_model();
-
-		// Verify model is valid after compilation
-		if (!model || !model.optimizer) {
-			throw new Error("[fit_model] Model or optimizer is null/undefined after await compile_model(). Backend may not be initialized.");
-		}
-
-		l(language[lang]["started_training"]);
-
-		let x = x_and_y["x"];
-		let y = x_and_y["y"];
-
-		warn_if_not_tensors(x, y);
-
-		// Convert to tensors if they aren't already, ensuring they are
-		// bound to the current active backend
-		if (!is_tensor(x)) {
-			x = tf.tensor(Array.isArray(x) ? x : array_sync(x));
-		}
-		if (!is_tensor(y)) {
-			y = tf.tensor(Array.isArray(y) ? y : array_sync(y));
-		}
-
-		const x_shape = get_shape_from_array_or_tensor(x);
-		const y_shape = get_shape_from_array_or_tensor(y);
-
-		dbg(`Starting model-fit. Shapes: [${x_shape.join(", ")}] -> [${y_shape.join(", ")}]`);
-
-		validate_model_io_shapes(x_shape, y_shape);
-
-		await wait_for_updated_page(2);
-
-		const h = await model.fit(x, y, fit_data);
-
-		await nextFrame();
-		l(language[lang]["finished_training"]);
-
-		assert(typeof h === "object", "history object is not of type object");
-		model_is_trained = true;
-		reset_predict_container_after_training();
-
-		await dispose(fit_data);
-		return h;
-	} catch (_err) {
-		err("[fit_model] Training failed:", _err);
-		throw _err;
-	}
-}
-
 async function prepare_gui_for_training() {
 	await wait_for_updated_page(2);
 
@@ -1224,18 +1168,250 @@ async function prepare_gui_for_training() {
 	add_stop_training_class_to_train_button();
 }
 
+async function fit_model(x_and_y) {
+	try {
+		const fit_data = await _get_fit_data(x_and_y);
+
+		if (!fit_data || fit_data === true) {
+			err("[fit_model] ERROR: fit_data is invalid (was true or falsy). Cannot train.");
+			throw new Error("[fit_model] fit_data was not properly created.");
+		}
+
+		// Ensure TF.js backend is ready before compilation and training
+		await tf.ready();
+
+		// =====================================================================
+		// GUARD: Do NOT recompile if model is already compiled and has an optimizer.
+		// Recompiling mid-training destroys the optimizer state (momentum, Adam
+		// moving averages, etc.) which can cause the model to get stuck predicting
+		// a single class.
+		// =====================================================================
+		if (!model || !model.optimizer) {
+			dbg("[fit_model] Model or optimizer missing — compiling model now.");
+			await compile_model();
+		} else {
+			dbg("[fit_model] Model already compiled with optimizer. Skipping recompilation to preserve optimizer state.");
+		}
+
+		// Verify model is valid after potential compilation
+		if (!model || !model.optimizer) {
+			err("[fit_model] FATAL: Model or optimizer is null/undefined after compile attempt. Backend may not be initialized.");
+			throw new Error("[fit_model] Model or optimizer is null/undefined after await compile_model(). Backend may not be initialized.");
+		}
+
+		l(language[lang]["started_training"]);
+
+		let x = x_and_y["x"];
+		let y = x_and_y["y"];
+
+		// =====================================================================
+		// GUARD: Validate x and y exist
+		// =====================================================================
+		if (!x) {
+			err("[fit_model] FATAL: x (input data) is null or undefined!");
+			throw new Error("[fit_model] x is null or undefined");
+		}
+
+		if (!y) {
+			err("[fit_model] FATAL: y (label data) is null or undefined!");
+			throw new Error("[fit_model] y is null or undefined");
+		}
+
+		warn_if_not_tensors(x, y);
+
+		// Convert to tensors if they aren't already, ensuring they are
+		// bound to the current active backend
+		if (!is_tensor(x)) {
+			dbg("[fit_model] x is not a tensor, converting...");
+			x = tf.tensor(Array.isArray(x) ? x : array_sync(x));
+		}
+		if (!is_tensor(y)) {
+			dbg("[fit_model] y is not a tensor, converting...");
+			y = tf.tensor(Array.isArray(y) ? y : array_sync(y));
+		}
+
+		const x_shape = get_shape_from_array_or_tensor(x);
+		const y_shape = get_shape_from_array_or_tensor(y);
+
+		dbg(`[fit_model] Starting model.fit. x shape: [${x_shape.join(", ")}], y shape: [${y_shape.join(", ")}]`);
+
+		// =====================================================================
+		// GUARD: Check that y has more than one class and is one-hot encoded
+		// =====================================================================
+		if (y_shape.length === 2) {
+			const num_samples = y_shape[0];
+			const num_classes = y_shape[1];
+
+			dbg(`[fit_model] Classification detected: ${num_samples} samples, ${num_classes} classes.`);
+
+			if (num_classes <= 1) {
+				err(`[fit_model] WARNING: y has only ${num_classes} class(es). The model cannot learn to distinguish categories with <= 1 output neuron.`);
+			}
+
+			// Check if all labels are the same (degenerate dataset)
+			try {
+				const y_data = y.arraySync();
+				const first_label = JSON.stringify(y_data[0]);
+				let all_same = true;
+				for (let i = 1; i < Math.min(y_data.length, 50); i++) {
+					if (JSON.stringify(y_data[i]) !== first_label) {
+						all_same = false;
+						break;
+					}
+				}
+				if (all_same && num_samples > 1) {
+					err(`[fit_model] CRITICAL WARNING: All y labels appear identical! The first 50 samples all have label: ${first_label}. The model will only learn to predict this one class. Check your data labeling pipeline!`);
+				} else {
+					dbg(`[fit_model] Label diversity check passed — labels are not all identical.`);
+				}
+
+				// Check class distribution
+				const class_counts = new Array(num_classes).fill(0);
+				for (let i = 0; i < y_data.length; i++) {
+					const max_idx = y_data[i].indexOf(Math.max(...y_data[i]));
+					class_counts[max_idx]++;
+				}
+				dbg(`[fit_model] Class distribution: [${class_counts.join(", ")}] (labels: [${labels.join(", ")}])`);
+
+				const empty_classes = class_counts.filter(c => c === 0).length;
+				if (empty_classes > 0) {
+					err(`[fit_model] WARNING: ${empty_classes} class(es) have ZERO training samples! The model cannot learn these categories.`);
+				}
+
+				const max_count = Math.max(...class_counts);
+				const min_count = Math.min(...class_counts.filter(c => c > 0));
+				if (max_count > min_count * 5) {
+					wrn(`[fit_model] WARNING: Severe class imbalance detected. Largest class has ${max_count} samples, smallest has ${min_count}. This may cause the model to predict only the majority class.`);
+				}
+			} catch (label_check_err) {
+				dbg(`[fit_model] Could not perform label diversity check: ${label_check_err}`);
+			}
+		}
+
+		// =====================================================================
+		// GUARD: Validate model input/output shapes match data
+		// =====================================================================
+		const model_input_shape = model?.layers?.[0]?.input?.shape;
+		const model_output_shape = model?.layers?.[model.layers.length - 1]?.output?.shape;
+
+		dbg(`[fit_model] Model input shape: [${model_input_shape}], Model output shape: [${model_output_shape}]`);
+
+		if (model_output_shape && y_shape.length >= 2) {
+			const model_num_outputs = model_output_shape[model_output_shape.length - 1];
+			const data_num_outputs = y_shape[y_shape.length - 1];
+			if (model_num_outputs !== data_num_outputs) {
+				err(`[fit_model] SHAPE MISMATCH: Model output has ${model_num_outputs} neurons but y data has ${data_num_outputs} classes. Training will likely fail or produce garbage results!`);
+			}
+		}
+
+		validate_model_io_shapes(x_shape, y_shape);
+
+		// =====================================================================
+		// GUARD: Check that x values are in a reasonable range (divide_by check)
+		// =====================================================================
+		try {
+			const x_max = x.max().dataSync()[0];
+			const x_min = x.min().dataSync()[0];
+			dbg(`[fit_model] x value range: [${x_min.toFixed(4)}, ${x_max.toFixed(4)}]`);
+
+			if (x_max > 10) {
+				wrn(`[fit_model] WARNING: x values have max=${x_max.toFixed(2)}. If these are pixel values (0-255), you may need to set divide_by=255. Large input values can prevent learning.`);
+			}
+
+			if (x_max === x_min) {
+				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! The model cannot learn from constant input.`);
+			}
+		} catch (range_check_err) {
+			dbg(`[fit_model] Could not check x value range: ${range_check_err}`);
+		}
+
+		// =====================================================================
+		// GUARD: Check that at least one layer is trainable
+		// =====================================================================
+		let any_trainable = false;
+		for (let li = 0; li < model.layers.length; li++) {
+			if (model.layers[li].trainable) {
+				any_trainable = true;
+				break;
+			}
+		}
+		if (!any_trainable) {
+			err("[fit_model] CRITICAL: No layers are trainable! Weights will never update. Check the 'trainable' checkbox on your layers.");
+		} else {
+			dbg("[fit_model] Trainability check passed — at least one layer is trainable.");
+		}
+
+		// =====================================================================
+		// GUARD: Log optimizer info
+		// =====================================================================
+		try {
+			const opt_class = model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown";
+			const opt_config = model.optimizer.getConfig ? model.optimizer.getConfig() : {};
+			dbg(`[fit_model] Optimizer: ${opt_class}, config: ${JSON.stringify(opt_config)}`);
+		} catch (opt_err) {
+			dbg(`[fit_model] Could not get optimizer info: ${opt_err}`);
+		}
+
+		// =====================================================================
+		// GUARD: Log loss function
+		// =====================================================================
+		dbg(`[fit_model] Loss function: ${get_loss()}`);
+		if (is_classification && get_loss() !== "categoricalCrossentropy") {
+			wrn(`[fit_model] WARNING: This appears to be a classification problem but loss is "${get_loss()}" instead of "categoricalCrossentropy". This may prevent proper learning.`);
+		}
+
+		await wait_for_updated_page(2);
+
+		// =====================================================================
+		// ACTUAL TRAINING
+		// =====================================================================
+		dbg("[fit_model] Calling model.fit() now...");
+		const h = await model.fit(x, y, fit_data);
+		dbg("[fit_model] model.fit() completed successfully.");
+
+		await nextFrame();
+		l(language[lang]["finished_training"]);
+
+		assert(typeof h === "object", "history object is not of type object");
+		model_is_trained = true;
+		reset_predict_container_after_training();
+
+		// Log final loss
+		if (h && h.history && h.history.loss) {
+			const final_loss = h.history.loss[h.history.loss.length - 1];
+			dbg(`[fit_model] Final training loss: ${final_loss.toFixed(6)}`);
+
+			if (final_loss > 1.5 && is_classification && labels.length >= 3) {
+				wrn(`[fit_model] WARNING: Final loss (${final_loss.toFixed(4)}) is still high for ${labels.length}-class classification. Expected < ${Math.log(labels.length).toFixed(2)} for random guessing. The model may not have learned meaningful features. Consider: more epochs, larger model, or checking data quality.`);
+			}
+		}
+
+		await dispose(fit_data);
+		return h;
+	} catch (_err) {
+		if (Object.keys(_err).includes("message")) {
+			err("[fit_model] Training failed: " + _err.message);
+		} else {
+			err("[fit_model] Training failed: " + _err);
+		}
+		throw _err;
+	}
+}
+
 async function run_neural_network (recursive=0) {
 	var ret = null;
 
 	if(!model) {
-		err(`[run_neural_network] ${language[lang]["no_model_defined"]}`);
+		err(`[run_neural_network] ${language[lang]["no_model_defined"]}. Cannot proceed.`);
 		return;
 	}
 
 	if(!model?.layers?.length) {
-		err(`[run_neural_network] ${language[lang]["no_layers"]}`);
+		err(`[run_neural_network] ${language[lang]["no_layers"]}. Model has no layers.`);
 		return;
 	}
+
+	dbg(`[run_neural_network] Starting. Model has ${model.layers.length} layers. recursive=${recursive}`);
 
 	await prepare_gui_for_training();
 
@@ -1244,14 +1420,24 @@ async function run_neural_network (recursive=0) {
 	var x_and_y = await get_x_and_y_or_die_in_case_of_error();
 
 	if(x_and_y === false) {
-		err(`run_neural_network: Error trying to get x_and_y, it was false`);
+		err(`[run_neural_network] Error: get_x_and_y_or_die_in_case_of_error returned false. Cannot train.`);
+		return;
 	}
 
 	await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 	if(!x_and_y) {
-		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}`);
+		err(`[run_neural_network] ${language[lang]["could_not_get_xs_and_xy"]}. x_and_y is falsy.`);
 		return;
+	}
+
+	// =====================================================================
+	// GUARD: Log data shapes before training
+	// =====================================================================
+	if (x_and_y["x"] && x_and_y["y"]) {
+		const x_s = is_tensor(x_and_y["x"]) ? x_and_y["x"].shape : (Array.isArray(x_and_y["x"]) ? get_shape_from_array(x_and_y["x"]) : "unknown");
+		const y_s = is_tensor(x_and_y["y"]) ? x_and_y["y"].shape : (Array.isArray(x_and_y["y"]) ? get_shape_from_array(x_and_y["y"]) : "unknown");
+		dbg(`[run_neural_network] Data shapes — x: [${x_s}], y: [${y_s}]`);
 	}
 
 	var repaired = false;
@@ -1261,7 +1447,24 @@ async function run_neural_network (recursive=0) {
 
 		await set_input_shape_from_xs(x_and_y);
 		prepare_site_for_training();
+
+		// =====================================================================
+		// IMPORTANT: Compile model ONCE before training, not inside fit_model
+		// This ensures the optimizer is fresh and won't be destroyed mid-training
+		// =====================================================================
 		await compile_model_if_not_defined();
+
+		// =====================================================================
+		// GUARD: Verify compilation succeeded
+		// =====================================================================
+		if (!model || !model.optimizer) {
+			err("[run_neural_network] FATAL: Model compilation failed — model or optimizer is null after compile_model_if_not_defined().");
+			await gui_not_in_training();
+			return;
+		}
+
+		dbg(`[run_neural_network] Model compiled. Optimizer: ${model.optimizer.getClassName ? model.optimizer.getClassName() : 'unknown'}`);
+
 		await go_to_training_tab_label();
 
 		["x", "y"].forEach(tensor_name => {
@@ -1269,7 +1472,7 @@ async function run_neural_network (recursive=0) {
 				if(Array.isArray(x_and_y[tensor_name])) {
 					x_and_y[tensor_name] = tensor(x_and_y[tensor_name]);
 				} else {
-					err(`run_neural_network: ${tensor_name} is not a tensor, nor is it an array.`, x_and_y[tensor_name]);
+					err(`[run_neural_network] ${tensor_name} is not a tensor, nor is it an array. Type: ${typeof x_and_y[tensor_name]}`);
 				}
 			}
 		});
