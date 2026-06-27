@@ -182,12 +182,16 @@ function dbg(...args) {
 }
 
 function l_if_needed (args) {
-	if(function checkCurrentUrlParams()) {
-		const stack_trace = get_stack_trace(1);
-		l("======= Messages ========");
-		args.forEach(arg => l(arg));
-		l("stack_trace for the previous message blocks")
-		l(`Stack-Trace: ${stack_trace}`);
+	try {
+		if(function checkCurrentUrlParams()) {
+			const stack_trace = get_stack_trace(1);
+			l("======= Messages ========");
+			args.forEach(arg => l(arg));
+			l("stack_trace for the previous message blocks")
+			l(`Stack-Trace: ${stack_trace}`);
+		}
+	} catch (e) {
+		// ignored
 	}
 }
 
