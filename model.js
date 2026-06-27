@@ -207,22 +207,13 @@ async function create_model_or_throw () {
 	}
 }
 
-
-
 async function recreate_model_if_needed (new_model_config_hash) {
-	// =====================================================================
-	// CRITICAL GUARD: Do NOT recreate model during training.
-	// This was the source of the intermittent bug: if any UI event triggered
-	// updated_page -> compile_model -> recreate_model_if_needed while
-	// training was starting (but started_training wasn't yet true), the model
-	// would be recreated with a fresh optimizer, zeroing all Adam m/v buffers.
-	// =====================================================================
-	if (started_training) {
-		dbg("[recreate_model_if_needed] SKIPPED: Training is in progress.");
+	// GUARD: Nicht waehrend Training oder Training-Anfrage
+	if (started_training || training_requested) {
+		dbg("[recreate_model_if_needed] SKIPPED: Training is in progress or requested.");
 		return;
 	}
 
-	// Also check if model.isTraining (TF.js internal flag)
 	if (model && model.isTraining) {
 		dbg("[recreate_model_if_needed] SKIPPED: model.isTraining is true.");
 		return;
@@ -237,7 +228,26 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 }
 
-async function compile_model(recursion_level=0) {
+async function compile_model(recursion_level = 0) {
+	return new Promise((resolve) => {
+		_compile_model_resolve_queue.push(resolve);
+
+		if (_compile_model_timeout) {
+			clearTimeout(_compile_model_timeout);
+		}
+
+		_compile_model_timeout = setTimeout(async () => {
+			_compile_model_timeout = null;
+			await _compile_model(recursion_level);
+
+			// Resolve all queued promises
+			const queue = _compile_model_resolve_queue.splice(0);
+			queue.forEach(r => r());
+		}, 100);  // 100ms debounce
+	});
+}
+
+async function _compile_model(recursion_level=0) {
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {
@@ -245,19 +255,14 @@ async function compile_model(recursion_level=0) {
 		return;
 	}
 
-	// =====================================================================
-	// GUARD: If training is in progress, do NOT recompile.
-	// This guard now checks BOTH the global flag AND the TF.js internal flag.
-	// The TF.js flag catches the case where model.fit() has started but our
-	// global flag hasn't been set yet (race condition window).
-	// =====================================================================
-	if (started_training) {
-		dbg("[compile_model] SKIPPED: started_training is true. Recompiling would destroy optimizer state.");
+	// GUARD: Nicht waehrend Training oder Training-Anfrage kompilieren
+	if (started_training || training_requested) {
+		dbg("[_compile_model] SKIPPED: training requested or in progress.");
 		return;
 	}
 
 	if (model && model.isTraining) {
-		dbg("[compile_model] SKIPPED: model.isTraining is true. Recompiling would destroy optimizer state.");
+		dbg("[_compile_model] SKIPPED: model.isTraining is true.");
 		return;
 	}
 
@@ -301,7 +306,7 @@ async function compile_model(recursion_level=0) {
 				math_clear_editables();
 			}
 		} catch (e) {
-			dbg("[compile_model] Could not restore weights after recreation: " + e);
+			dbg("[_compile_model] Could not restore weights after recreation: " + e);
 		}
 	}
 
@@ -310,7 +315,7 @@ async function compile_model(recursion_level=0) {
 	}
 
 	if(!model) {
-		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
+		dbg(`[_compile_model] ${language[lang]["no_model_to_compile"]}!`);
 		return;
 	}
 
@@ -323,19 +328,21 @@ async function compile_model(recursion_level=0) {
 	}
 
 	if (typeof model.compile !== "function") {
-		dbg("model has no compile() method");
+		dbg("model has no compile method");
 		return;
 	}
 
 	try {
 		await get_model_data();
 
-		// =====================================================================
-		// SECOND GUARD: Check again after get_model_data() since it's async
-		// and training could have started in the meantime.
-		// =====================================================================
-		if (started_training || (model && model.isTraining)) {
-			dbg("[compile_model] SKIPPED (post-get_model_data check): Training started during compilation.");
+		// ZWEITER GUARD: Nochmal pruefen nach get_model_data da es async ist
+		if (started_training || training_requested || (model && model.isTraining)) {
+			dbg("[_compile_model] SKIPPED post-get_model_data: Training started during compilation.");
+			return;
+		}
+
+		if (!global_model_data || !global_model_data.optimizer) {
+			err("[_compile_model] No optimizer available after get_model_data!");
 			return;
 		}
 
@@ -346,7 +353,7 @@ async function compile_model(recursion_level=0) {
 		});
 		model_config_hash = new_model_config_hash;
 
-		dbg("[compile_model] Model compiled successfully. Optimizer: " + (model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown"));
+		dbg("[_compile_model] Model compiled successfully. Optimizer: " + (model.optimizer.getClassName ? model.optimizer.getClassName() : "unknown"));
 
 		if (typeof pyodideOnModelChanged === "function") {
 			pyodideOnModelChanged();
