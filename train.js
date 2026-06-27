@@ -2853,7 +2853,7 @@ async function fit_model(x_and_y) {
 		if (err_msg.includes("backend") && err_msg.includes("undefined")) {
 			err("[fit_model] DIAGNOSIS: 'backend undefined' — The optimizer was created in a different " +
 				"TF.js engine scope than where model.fit() is running. This happens when " +
-				"compile_model is called before tf.engine.startScope in train_neural_network(), " +
+				"compile_model is called before tf.engine.startScope in train_neural_network, " +
 				"and then model.fit() runs inside that scope.");
 			err("[fit_model] ATTEMPTED FIX: Will try to recompile with a fresh optimizer in the current scope...");
 
