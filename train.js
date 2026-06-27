@@ -266,7 +266,7 @@ function get_empty_training_memory_history_plotly() {
  *
  * Returns: { repaired: boolean, nan_slots: number, total_slots: number }
  */
-async function selective_repair_nan_optimizer_slots() {
+async function selective_repair_nan_optimizer_slots () {
 	if (!model || !model.optimizer) return { repaired: false, nan_slots: 0, total_slots: 0 };
 	if (typeof model.optimizer.getWeights !== "function") return { repaired: false, nan_slots: 0, total_slots: 0 };
 	if (typeof model.optimizer.setWeights !== "function") return { repaired: false, nan_slots: 0, total_slots: 0 };
@@ -276,6 +276,7 @@ async function selective_repair_nan_optimizer_slots() {
 		if (!opt_weights || opt_weights.length === 0) return { repaired: false, nan_slots: 0, total_slots: 0 };
 
 		let nan_slots = 0;
+		let inf_slots = 0;
 		let total_slots = opt_weights.length;
 		let needs_repair = false;
 		const repaired_weights = [];
@@ -289,21 +290,41 @@ async function selective_repair_nan_optimizer_slots() {
 
 			const data = ow.tensor.dataSync();
 			let has_nan_in_this = false;
+			let has_inf_in_this = false;
 
 			for (let di = 0; di < data.length; di++) {
-				if (isNaN(data[di]) || !isFinite(data[di])) {
+				if (isNaN(data[di])) {
 					has_nan_in_this = true;
+					break;
+				}
+				if (!isFinite(data[di])) {
+					has_inf_in_this = true;
 					break;
 				}
 			}
 
-			if (has_nan_in_this) {
-				nan_slots++;
+			if (has_nan_in_this || has_inf_in_this) {
+				if (has_nan_in_this) nan_slots++;
+				if (has_inf_in_this) inf_slots++;
 				needs_repair = true;
-				// Replace this slot with zeros (safe reset for this specific accumulator)
-				const zero_tensor = tf.zeros(ow.tensor.shape, ow.tensor.dtype);
-				repaired_weights.push({ name: ow.name, tensor: zero_tensor });
-				wrn(`[selective_repair_nan_optimizer_slots] Zeroed NaN accumulator slot "${ow.name}" (shape: [${ow.tensor.shape.join(",")}])`);
+
+				// Fuer second moment: mit kleinem positivem Wert initialisieren statt 0
+				// Das verhindert Division durch fast-0 beim naechsten Update
+				const is_second_moment = ow.name && (ow.name.includes("accumulatedSquare") ||
+					ow.name.includes("v/") || ow.name.includes("v_") ||
+					ow_idx % 2 === 1); // Heuristik: bei Adam ist jeder 2. Slot der v-Buffer
+
+				let replacement_val = 0;
+				if (is_second_moment) {
+					// Kleiner positiver Wert damit sqrt(v) + epsilon nicht zu klein wird
+					replacement_val = 1e-6;
+				}
+
+				const fill_tensor = tf.fill(ow.tensor.shape, replacement_val, ow.tensor.dtype);
+				repaired_weights.push({ name: ow.name, tensor: fill_tensor });
+				wrn(`[selective_repair_nan_optimizer_slots] Repaired slot "${ow.name}" ` +
+					`(shape: [${ow.tensor.shape.join(",")}], was ${has_nan_in_this ? "NaN" : "Inf"}, ` +
+					`filled with ${replacement_val})`);
 			} else {
 				repaired_weights.push(ow);
 			}
@@ -312,15 +333,12 @@ async function selective_repair_nan_optimizer_slots() {
 		if (needs_repair) {
 			try {
 				await model.optimizer.setWeights(repaired_weights.map(w => w.tensor));
-				dbg(`[selective_repair_nan_optimizer_slots] Repaired ${nan_slots}/${total_slots} NaN accumulator slots.`);
+				dbg(`[selective_repair_nan_optimizer_slots] Repaired ${nan_slots} NaN + ${inf_slots} Inf slots out of ${total_slots}.`);
 			} catch (set_err) {
-				// If setWeights fails (some optimizers don't support it well),
-				// fall back to full optimizer reset
 				wrn(`[selective_repair_nan_optimizer_slots] setWeights failed: ${set_err.message}. Falling back to full optimizer reset.`);
 				await repair_nan_optimizer_if_needed();
 			}
 
-			// Dispose the zero tensors we created
 			for (let rw_idx = 0; rw_idx < repaired_weights.length; rw_idx++) {
 				if (repaired_weights[rw_idx] !== opt_weights[rw_idx]) {
 					try { repaired_weights[rw_idx].tensor.dispose(); } catch(e) {}
@@ -328,7 +346,7 @@ async function selective_repair_nan_optimizer_slots() {
 			}
 		}
 
-		return { repaired: needs_repair, nan_slots: nan_slots, total_slots: total_slots };
+		return { repaired: needs_repair, nan_slots: nan_slots + inf_slots, total_slots: total_slots };
 	} catch (e) {
 		wrn("[selective_repair_nan_optimizer_slots] Error: " + (e.message || e));
 		return { repaired: false, nan_slots: 0, total_slots: 0 };
@@ -355,7 +373,6 @@ async function get_model_data () {
 		return;
 	}
 
-	// GUARD: Niemals den Optimizer ersetzen wenn Training laeuft oder angefragt wurde
 	if ((started_training || training_requested) && model && model.optimizer) {
 		dbg("[get_model_data] SKIPPED: training requested or in progress.");
 		if (global_model_data) {
@@ -364,14 +381,12 @@ async function get_model_data () {
 		return;
 	}
 
-	// GUARD: Wenn is_setting_config und bereits ein gueltiger Optimizer existiert, nicht ersetzen
 	if (is_setting_config && global_model_data && global_model_data.optimizer &&
 		typeof global_model_data.optimizer.minimize === "function") {
 		dbg("[get_model_data] SKIPPED: is_setting_config and optimizer already exists.");
 		return;
 	}
 
-	// GUARD: Wenn model bereits trainiert wurde, Optimizer nicht ersetzen
 	if (model_is_trained && model && model.optimizer &&
 		typeof model.optimizer.minimize === "function") {
 		dbg("[get_model_data] SKIPPED: model is trained and has valid optimizer.");
@@ -497,6 +512,19 @@ async function get_model_data () {
 		global_model_data[optimizer_data_names[optimizer_idx]] = parse_float(element_val);
 	}
 
+	// FIX: Epsilon muss gross genug sein um NaN im second moment zu verhindern
+	if (global_model_data["epsilon"] !== undefined && global_model_data["epsilon"] < 1e-4) {
+		dbg(`[get_model_data] Epsilon ${global_model_data["epsilon"]} raised to 1e-4 to prevent NaN in Adam second moment.`);
+		global_model_data["epsilon"] = 1e-4;
+	}
+
+	// FIX: Learning rate begrenzen um Gradient-Explosion zu verhindern
+	if (global_model_data["learningRate"] !== undefined && global_model_data["learningRate"] > 0.01) {
+		wrn(`[get_model_data] Learning rate ${global_model_data["learningRate"]} is high for this architecture. ` +
+			`Capping at 0.01 to prevent NaN.`);
+		global_model_data["learningRate"] = Math.min(global_model_data["learningRate"], 0.01);
+	}
+
 	var optimizer_constructors = {
 		"adadelta": "adadelta(global_model_data['learningRate'], global_model_data['rho'], global_model_data['epsilon'])",
 		"adagrad": "adagrad(global_model_data['learningRate'], global_model_data['initialAccumulatorValue'])",
@@ -514,7 +542,6 @@ async function get_model_data () {
 
 	var optimizer_as_code = "tf.train." + optimizer_constructors[optimizer_type];
 
-	// ZWEITER GUARD: Nochmal pruefen nach den async Operationen oben
 	if (started_training && model && model.optimizer) {
 		dbg("[get_model_data] SKIPPED optimizer creation post-async: training is in progress.");
 		global_model_data["optimizer"] = model.optimizer;
@@ -538,14 +565,20 @@ async function get_model_data () {
 			return;
 		}
 
-		var clip_value = parse_float($("#gradient_clip_value").val ? ($("#gradient_clip_value").val() || "1.0") : "1.0");
+		// FIX: Verwende clipNorm statt clipValue
+		// clipValue clippt element-weise und kann bei grossen Tensoren die Richtung verzerren
+		// clipNorm begrenzt die Gesamtmagnitude und erhaelt die Richtung
+		// Zusaetzlich: clipValue als Fallback fuer einzelne extreme Ausreisser
+		var clip_value = parse_float($("#gradient_clip_value").val ? ($("#gradient_clip_value").val() || "0.5") : "0.5");
 
 		if (clip_value > 0 && isFinite(clip_value)) {
+			new_optimizer.clipNorm = clip_value;
 			new_optimizer.clipValue = clip_value;
-			dbg(`[get_model_data] Gradient clipping applied: clipValue=${clip_value}`);
+			dbg(`[get_model_data] Gradient clipping applied: clipNorm=${clip_value}, clipValue=${clip_value}`);
 		} else {
-			new_optimizer.clipValue = 1.0;
-			dbg(`[get_model_data] Gradient clipping applied: clipValue=1.0 (default)`);
+			new_optimizer.clipNorm = 0.5;
+			new_optimizer.clipValue = 0.5;
+			dbg(`[get_model_data] Gradient clipping applied: clipNorm=0.5, clipValue=0.5 (default)`);
 		}
 
 		if (typeof new_optimizer.getClassName === "function") {
@@ -577,10 +610,11 @@ async function get_model_data () {
 			". Error: " + error_msg);
 
 		try {
-			wrn("[get_model_data] Attempting fallback: default Adam with clipValue=1.0...");
+			wrn("[get_model_data] Attempting fallback: default Adam with safe params...");
 			await tf.ready();
-			var fallback_opt = tf.train.adam(0.001);
-			fallback_opt.clipValue = 1.0;
+			var fallback_opt = tf.train.adam(0.0005, 0.9, 0.999, 1e-4);
+			fallback_opt.clipValue = 0.5;
+			fallback_opt.clipNorm = 0.5;
 			global_model_data["optimizer"] = fallback_opt;
 			wrn("[get_model_data] Fallback Adam created successfully.");
 		} catch (fallback_err) {
@@ -657,20 +691,6 @@ async function get_fit_data () {
 		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
-	callbacks["onBatchBegin"] = async function () {
-		confusion_matrix_and_grid_cache = {};
-		if(!started_training) {
-			model.stopTraining = true;
-		}
-
-		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
-			await write_model_to_latex_to_page();
-		}
-
-		confusion_matrix_and_grid_cache = {};
-
-		show_or_hide_beginner_or_expert_mode_stuff();
-	};
 
 	callbacks["onEpochBegin"] = async function () {
 		confusion_matrix_and_grid_cache = {};
@@ -699,23 +719,41 @@ async function get_fit_data () {
 		confusion_matrix_and_grid_cache = {};
 
 		// =====================================================================
-		// CRITICAL: Detect NaN loss IMMEDIATELY and stop training
-		// If loss becomes NaN, every subsequent optimizer step will corrupt
-		// the m/v buffers further. Stop immediately to limit damage.
+		// CRITICAL: Detect NaN/Inf loss IMMEDIATELY and repair optimizer
+		// If loss becomes NaN, the second moment buffers are already corrupted.
+		// We repair them immediately and let training continue rather than stopping.
 		// =====================================================================
 		if (logs && (isNaN(logs["loss"]) || !isFinite(logs["loss"]))) {
-			err(`[onBatchEnd] CRITICAL: Loss is ${logs["loss"]} at batch ${batch}! ` +
-				"Stopping training immediately to prevent optimizer corruption.");
-			model.stopTraining = true;
+			wrn(`[onBatchEnd] Loss is ${logs["loss"]} at batch ${batch}. ` +
+				"Attempting immediate optimizer repair...");
 
-			// Attempt immediate repair
 			try {
-				await repair_nan_weights_if_needed();
-				await repair_nan_optimizer_if_needed();
-				wrn("[onBatchEnd] Emergency NaN repair attempted. Training stopped.");
+				// Repariere NaN in Optimizer-Akkumulatoren
+				const repair_result = await selective_repair_nan_optimizer_slots();
+
+				if (repair_result.repaired) {
+					wrn(`[onBatchEnd] Repaired ${repair_result.nan_slots} corrupted optimizer slots. ` +
+						"Training will continue.");
+
+					// Auch Weights pruefen und reparieren
+					await repair_nan_weights_if_needed();
+
+					// NICHT stoppen - weiter trainieren mit reparierten Akkumulatoren
+					// Das naechste Batch wird mit sauberen m/v Buffern berechnet
+				} else {
+					// Wenn Repair nicht moeglich, dann stoppen
+					err("[onBatchEnd] Could not repair optimizer. Stopping training.");
+					model.stopTraining = true;
+					return;
+				}
 			} catch (repair_err) {
 				err("[onBatchEnd] Emergency repair failed: " + (repair_err.message || repair_err));
+				model.stopTraining = true;
+				return;
 			}
+
+			// Frueh zurueckkehren - den Rest des Callbacks nicht ausfuehren
+			// da die Plotly-Daten mit NaN-Loss nicht sinnvoll sind
 			return;
 		}
 
@@ -767,10 +805,10 @@ async function get_fit_data () {
 
 		show_or_hide_beginner_or_expert_mode_stuff();
 	};
-
 	callbacks["onBatchBegin"] = async function () {
 		confusion_matrix_and_grid_cache = {};
 
+		// Optimizer-Identitaets-Check
 		if (this._original_optimizer && model.optimizer !== this._original_optimizer) {
 			err("[onBatchBegin] CRITICAL: Optimizer was REPLACED during training! " +
 				"Restoring original optimizer...");
@@ -785,49 +823,51 @@ async function get_fit_data () {
 			model.stopTraining = true;
 		}
 
-		// =====================================================================
-		// GUARD: Quick NaN check on model weights every N batches.
-		// If weights become NaN during training, stop immediately.
-		// We only check every 10 batches for performance.
-		// =====================================================================
+		// Proaktive NaN-Erkennung: JEDEN Batch pruefen in den ersten 10 Batches,
+		// danach alle 3 Batches. NaN im second moment breitet sich exponentiell aus
+		// und muss SOFORT gestoppt werden.
 		if (typeof callbacks._batch_counter === "undefined") {
 			callbacks._batch_counter = 0;
 		}
 		callbacks._batch_counter++;
 
-		if (callbacks._batch_counter % 10 === 0) {
-			try {
-				const weights = model.getWeights();
-				let found_nan = false;
-				for (let wi = 0; wi < weights.length; wi++) {
-					if (weights[wi].isDisposed) continue;
-					// Quick sample check - just first few values
-					const data = weights[wi].dataSync();
-					for (let di = 0; di < Math.min(data.length, 20); di++) {
-						if (isNaN(data[di])) {
-							found_nan = true;
-							err(`[onBatchBegin] NaN detected in weight tensor ${wi} at batch ${callbacks._batch_counter}! Attempting repair...`);
-							break;
-						}
-					}
-					if (found_nan) break;
-				}
+		var check_interval = callbacks._batch_counter <= 10 ? 1 : 3;
 
-				if (found_nan) {
-					const repaired = await repair_nan_weights_if_needed();
-					if (repaired) {
-						const opt_repaired = await selective_repair_nan_optimizer_slots();
-						wrn(`[onBatchBegin] NaN repair: weights=${repaired}, optimizer_slots=${opt_repaired.nan_slots} fixed. Training continues.`);
-					} else {
-						err("[onBatchBegin] NaN repair failed. Stopping training.");
-						model.stopTraining = true;
-						return;
+		if (callbacks._batch_counter % check_interval === 0) {
+			try {
+				if (model.optimizer && typeof model.optimizer.getWeights === "function") {
+					const opt_w = await model.optimizer.getWeights();
+					let found_nan = false;
+
+					for (let ow_idx = 0; ow_idx < opt_w.length; ow_idx++) {
+						const ow = opt_w[ow_idx];
+						if (!ow || !ow.tensor || ow.tensor.isDisposed) continue;
+
+						const data = ow.tensor.dataSync();
+						var check_len = Math.min(data.length, 100);
+						for (let di = 0; di < check_len; di++) {
+							if (isNaN(data[di]) || !isFinite(data[di])) {
+								found_nan = true;
+								break;
+							}
+						}
+						if (found_nan) break;
+					}
+
+					if (found_nan) {
+						wrn(`[onBatchBegin] NaN/Inf detected in optimizer at batch ${callbacks._batch_counter}. Repairing...`);
+						const result = await selective_repair_nan_optimizer_slots();
+						if (result.repaired) {
+							wrn(`[onBatchBegin] Repaired ${result.nan_slots} slots. Training continues.`);
+						}
+						await repair_nan_weights_if_needed();
 					}
 				}
-			} catch (nan_batch_err) {
-				dbg(`[onBatchBegin] Batch NaN check error (non-fatal): ${nan_batch_err}`);
+			} catch (nan_check_err) {
+				dbg(`[onBatchBegin] Optimizer NaN check error (non-fatal): ${nan_check_err}`);
 			}
 		}
+
 
 		if(!is_hidden_or_has_hidden_parent($("#math_tab"))) {
 			await write_model_to_latex_to_page();
@@ -863,41 +903,26 @@ async function get_fit_data () {
 			// Even if loss looks OK, check optimizer accumulators periodically
 			// because NaN can exist in individual weight slots without making
 			// the overall loss NaN (if those weights have small influence)
+		// =====================================================================
+		// Epoch-Ende NaN-Check: Repariere Optimizer-Akkumulatoren falls noetig
+		// =====================================================================
 			try {
 				if (model.optimizer && typeof model.optimizer.getWeights === "function") {
-					const opt_weights = await model.optimizer.getWeights();
-					if (opt_weights && opt_weights.length > 0) {
-						let has_any_nan = false;
-						for (let ow_idx = 0; ow_idx < opt_weights.length; ow_idx++) {
-							const ow = opt_weights[ow_idx];
-							if (ow && ow.tensor && !ow.tensor.isDisposed) {
-								// Sample check - don't check every element for performance
-								const data = ow.tensor.dataSync();
-								const check_count = Math.min(data.length, 200);
-								const step = Math.max(1, Math.floor(data.length / check_count));
-								for (let di = 0; di < data.length; di += step) {
-									if (isNaN(data[di]) || !isFinite(data[di])) {
-										has_any_nan = true;
-										break;
-									}
-								}
-							}
-							if (has_any_nan) break;
-						}
-
-						if (has_any_nan) {
-							wrn(`[onEpochEnd] NaN detected in optimizer accumulators (epoch ${batch}). Performing selective repair...`);
-							const repair_result = await selective_repair_nan_optimizer_slots();
-							if (repair_result.repaired) {
-								wrn(`[onEpochEnd] Repaired ${repair_result.nan_slots} NaN slots. Training continues.`);
-							}
-							// Also check and repair weights
-							await repair_nan_weights_if_needed();
-						}
+					const repair_result = await selective_repair_nan_optimizer_slots();
+					if (repair_result.repaired) {
+						wrn(`[onEpochEnd] Repaired ${repair_result.nan_slots} NaN/Inf optimizer slots at epoch ${batch}.`);
+						await repair_nan_weights_if_needed();
 					}
 				}
 			} catch (nan_check_err) {
 				dbg(`[onEpochEnd] Optimizer NaN check failed (non-fatal): ${nan_check_err}`);
+			}
+
+			if (logs && (isNaN(logs["loss"]) || !isFinite(logs["loss"]))) {
+				err(`[onEpochEnd] Loss is still ${logs["loss"]} after repair at epoch ${batch}. ` +
+					"Stopping training.");
+				model.stopTraining = true;
+				return;
 			}
 		}
 
@@ -2193,7 +2218,9 @@ async function fit_model(x_and_y) {
 		}
 
 		// =====================================================================
-		// GUARD: x value range check
+		// GUARD: x value range check AND automatic normalization fix
+		// Nicht-normalisierte Daten sind die Hauptursache fuer NaN im
+		// Adam second moment: gradient^2 wird zu gross -> overflow -> NaN
 		// =====================================================================
 		try {
 			const x_max_tensor = x.max();
@@ -2205,17 +2232,31 @@ async function fit_model(x_and_y) {
 
 			dbg(`[fit_model] x range: [${x_min.toFixed(4)}, ${x_max.toFixed(4)}]`);
 
-			if (x_max > 10) {
-				wrn(`[fit_model] WARNING: x max=${x_max.toFixed(2)}. Data may not be normalized. Consider divide_by=255 for pixel values.`);
-			}
-			if (x_max === x_min) {
-				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! Model cannot learn from constant input.`);
-			}
 			if (isNaN(x_max) || isNaN(x_min)) {
 				err(`[fit_model] CRITICAL: x contains NaN values! max=${x_max}, min=${x_min}`);
-			}
-			if (!isFinite(x_max) || !isFinite(x_min)) {
+			} else if (!isFinite(x_max) || !isFinite(x_min)) {
 				err(`[fit_model] CRITICAL: x contains Infinity! max=${x_max}, min=${x_min}`);
+			} else if (x_max === x_min) {
+				err(`[fit_model] CRITICAL: All x values are identical (${x_max})! Model cannot learn from constant input.`);
+			} else if (x_max > 2.0) {
+				// Daten sind nicht normalisiert - das ist die Hauptursache fuer NaN!
+				wrn(`[fit_model] WARNING: x max=${x_max.toFixed(2)} > 2.0. Data appears unnormalized. ` +
+					`This WILL cause NaN in Adam optimizer. Auto-normalizing...`);
+
+				// Auto-Normalisierung: Teile durch den Max-Wert
+				const norm_factor = Math.max(Math.abs(x_max), Math.abs(x_min));
+				if (norm_factor > 0 && isFinite(norm_factor)) {
+					const x_normalized = tf.tidy(() => x.div(tf.scalar(norm_factor)));
+
+					// Ersetze x mit der normalisierten Version
+					if (x !== x_and_y["x"]) {
+						x.dispose();
+					}
+					x = x_normalized;
+
+					wrn(`[fit_model] Auto-normalized x by dividing by ${norm_factor.toFixed(2)}. ` +
+						`New range: [${(x_min/norm_factor).toFixed(4)}, ${(x_max/norm_factor).toFixed(4)}]`);
+				}
 			}
 		} catch (range_err) {
 			dbg(`[fit_model] x range check failed (non-fatal): ${range_err}`);
