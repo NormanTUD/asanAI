@@ -183,7 +183,7 @@ function dbg(...args) {
 
 function l_if_needed (args) {
 	try {
-		if(function checkCurrentUrlParams()) {
+		if(checkCurrentUrlParams()) {
 			const stack_trace = get_stack_trace(1);
 			l("======= Messages ========");
 			args.forEach(arg => l(arg));
