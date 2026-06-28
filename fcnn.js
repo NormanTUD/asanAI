@@ -1025,15 +1025,16 @@ function _handle_fcnn_mousemove(e, canvas, lastHitIdx) {
 }
 
 function _build_tooltip_html_for_region(hit) {
-	switch (hit.type) {
-		case "neuron": return _build_neuron_tooltip_html(hit);
-		case "conv2d": return _build_conv2d_tooltip_html(hit);
-		case "flatten": return _build_flatten_tooltip_html(hit);
-		case "layernorm": return _build_layernorm_tooltip_html(hit);
-		case "connection": return _build_connection_tooltip_html(hit);
-		case "input_image": return _build_input_image_tooltip_html(hit);
-		default: return `<div>Element: <b>${hit.type}</b></div>`;
-	}
+    switch (hit.type) {
+        case "neuron": return _build_neuron_tooltip_html(hit);
+        case "conv2d": return _build_conv2d_tooltip_html(hit);
+        case "flatten": return _build_flatten_tooltip_html(hit);
+        case "layernorm": return _build_layernorm_tooltip_html(hit);
+        case "connection": return _build_connection_tooltip_html(hit);
+        case "input_image": return _build_input_image_tooltip_html(hit);
+        case "skip_connection": return _build_skip_connection_tooltip_html(hit);
+        default: return `<div>Element: <b>${hit.type}</b></div>`;
+    }
 }
 
 function _reposition_tooltip(e) {
@@ -1475,6 +1476,10 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 	}
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, canvasHeight / 2, (layers.length) * layerSpacing, maxRadius, null, maxSpacingConv2d, font_size);
+
+	// === DRAW SKIP CONNECTIONS ===
+	_draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxRadius, maxSpacingConv2d, font_size);
+
 	_bind_fcnn_canvas_mouse_events();
 }
 
@@ -2340,3 +2345,251 @@ window.addEventListener("beforeunload", function () {
 		}
 	}, 500);
 })();
+
+function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxRadius, maxSpacingConv2d, font_size) {
+    var layerY = canvasHeight / 2;
+
+    for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+        var skip_info = get_skip_connection_info(layer_idx);
+        if (!skip_info.enabled) continue;
+
+        // Skip connection goes from input of this layer to output of this layer
+        // Visually: draw an arc/curve from the left side of this layer to the right side
+        var layerX = (layer_idx + 1) * layerSpacing;
+
+        // Get the previous layer's X position (input to this layer)
+        var prevLayerX = layer_idx * layerSpacing;
+        if (layer_idx === 0) {
+            prevLayerX = layerSpacing * 0.3; // Before first layer
+        }
+
+        var numNeurons = layers[layer_idx];
+        var meta_info = meta_infos[layer_idx] || {};
+        var layer_type = meta_info.layer_type || "";
+        var isConv2d = layer_type.toLowerCase().includes("conv2d");
+        var isOutputLayer = (layer_idx === layers.length - 1);
+
+        var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
+
+        // Calculate top and bottom of the layer
+        var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
+        var bottomY = layerY + ((numNeurons - 1) / 2) * verticalSpacing + 15;
+
+        // Draw the skip connection arc
+        var strength = skip_info.strength;
+        var alpha = 0.3 + strength * 0.5;
+        var lineWidth = 1 + strength * 3;
+
+        ctx.save();
+        ctx.strokeStyle = `rgba(50, 200, 50, ${alpha})`;
+        ctx.lineWidth = lineWidth;
+        ctx.setLineDash([6, 4]);
+
+        // Draw arc above the layer
+        var arcHeight = 25 + strength * 15;
+        var startX = layerX - maxRadius - 5;
+        var endX = layerX + maxRadius + 5;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, topY);
+        ctx.quadraticCurveTo(layerX, topY - arcHeight, endX, topY);
+        ctx.stroke();
+
+        // Draw small "+" symbol at the connection point
+        ctx.setLineDash([]);
+        ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
+        ctx.font = "bold " + (font_size + 2) + "px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("+", endX + 10, topY - 2);
+
+        // Draw strength label
+        ctx.font = (font_size - 2) + "px Arial";
+        ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
+        ctx.fillText(language[lang]["skip_connection"], layerX, topY - arcHeight - 5);
+
+        ctx.restore();
+
+        // Register hit region for tooltip
+        _register_fcnn_hit_region({
+            type: "skip_connection",
+            shape: "rect",
+            x: startX,
+            y: topY - arcHeight - 15,
+            w: endX - startX + 20,
+            h: arcHeight + 20,
+            layer_idx: layer_idx,
+            strength: strength,
+            layer_type: layer_type
+        });
+    }
+}
+
+function _build_skip_connection_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🔄 Skip Connection</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function(label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Layer", region.layer_idx));
+	parts.push(row("Layer Type", region.layer_type || "Unknown"));
+	parts.push(row("Operation", "output = f(x) + W·x"));
+	parts.push(row("Projection", "1×1 Conv / Dense (learned)"));
+	parts.push(row("Info", "Strength is computed from weight norms (skip / (skip + main))"));
+
+	parts.push(`</table>`);
+	return parts.join("");
+}
+
+/**
+ * Berechnet die relative Stärke der Skip Connection aus den Modellgewichten.
+ * Vergleicht die Norm der Skip-Projektionsgewichte mit der Norm der Hauptlayer-Gewichte.
+ * Gibt einen Wert zwischen 0 und 1 zurück (0 = Skip hat keinen Einfluss, 1 = Skip dominiert).
+ */
+function _compute_skip_strength_from_model(layer_nr) {
+    if (!model || !model._allLayers) {
+        return 0.5; // Default wenn kein Modell vorhanden
+    }
+
+    try {
+        // Suche den Skip-Projektionslayer für diesen Layer-Index
+        var skip_proj_layer = null;
+        var main_layer = null;
+
+        var all_layers = model._allLayers || model.layers;
+
+        for (var i = 0; i < all_layers.length; i++) {
+            var layer_name = all_layers[i].name || "";
+            if (layer_name.includes("skip_proj_") && layer_name.includes("_" + layer_nr + "_")) {
+                skip_proj_layer = all_layers[i];
+            }
+        }
+
+        // Finde den Hauptlayer (der Layer an Position layer_nr)
+        // In den sichtbaren Layern ist er an Index layer_nr
+        var visible_layers = model.layers;
+        if (layer_nr < visible_layers.length) {
+            main_layer = visible_layers[layer_nr];
+        }
+
+        if (!skip_proj_layer || !skip_proj_layer.weights || skip_proj_layer.weights.length === 0) {
+            return 0.5; // Kein Projektionslayer gefunden (shapes matched direkt)
+        }
+
+        // Berechne L2-Norm der Skip-Projektionsgewichte
+        var skip_weights = skip_proj_layer.weights[0];
+        if (!skip_weights || !skip_weights.val) return 0.5;
+
+        var skip_data = skip_weights.val.dataSync();
+        var skip_norm = 0;
+        for (var i = 0; i < skip_data.length; i++) {
+            skip_norm += skip_data[i] * skip_data[i];
+        }
+        skip_norm = Math.sqrt(skip_norm);
+
+        // Berechne L2-Norm der Hauptlayer-Gewichte
+        var main_norm = 0;
+        if (main_layer && main_layer.weights && main_layer.weights.length > 0) {
+            var main_weights = main_layer.weights[0];
+            if (main_weights && main_weights.val) {
+                var main_data = main_weights.val.dataSync();
+                for (var i = 0; i < main_data.length; i++) {
+                    main_norm += main_data[i] * main_data[i];
+                }
+                main_norm = Math.sqrt(main_norm);
+            }
+        }
+
+        if (main_norm === 0 && skip_norm === 0) return 0.5;
+        if (main_norm === 0) return 1.0;
+        if (skip_norm === 0) return 0.0;
+
+        // Relative Stärke: skip / (skip + main)
+        var relative_strength = skip_norm / (skip_norm + main_norm);
+
+        return Math.max(0, Math.min(1, relative_strength));
+
+    } catch (e) {
+        // Bei Fehler: neutraler Wert
+        return 0.5;
+    }
+}
+
+function apply_skip_connection(input_tensor, layer_output, strength, layer_type, layer_idx) {
+    var input_shape = input_tensor.shape;
+    var output_shape = layer_output.shape;
+
+    var in_shape = input_shape.slice(1);
+    var out_shape = output_shape.slice(1);
+
+    var projected_input;
+
+    if (JSON.stringify(in_shape) === JSON.stringify(out_shape)) {
+        projected_input = input_tensor;
+    } else if (in_shape.length === out_shape.length) {
+        if (in_shape.length === 1) {
+            var projection = tf.layers.dense({
+                units: out_shape[0],
+                useBias: false,
+                name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
+            });
+            projected_input = projection.apply(input_tensor);
+        } else if (in_shape.length === 3) {
+            var target_h = out_shape[0];
+            var target_w = out_shape[1];
+            var target_c = out_shape[2];
+
+            var stride_h = Math.max(1, Math.floor(in_shape[0] / target_h));
+            var stride_w = Math.max(1, Math.floor(in_shape[1] / target_w));
+
+            var projection_conv = tf.layers.conv2d({
+                filters: target_c,
+                kernelSize: [1, 1],
+                strides: [stride_h, stride_w],
+                padding: "valid",
+                useBias: false,
+                name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+            });
+            projected_input = projection_conv.apply(input_tensor);
+
+            var proj_shape = projected_input.shape.slice(1);
+            if (proj_shape[0] !== target_h || proj_shape[1] !== target_w) {
+                throw new Error("Spatial dimension mismatch after projection: got [" + proj_shape.join(",") + "] expected [" + out_shape.join(",") + "]");
+            }
+        } else if (in_shape.length === 2) {
+            var target_steps = out_shape[0];
+            var target_channels = out_shape[1];
+
+            var stride_s = Math.max(1, Math.floor(in_shape[0] / target_steps));
+
+            var projection_conv1d = tf.layers.conv1d({
+                filters: target_channels,
+                kernelSize: 1,
+                strides: stride_s,
+                padding: "valid",
+                useBias: false,
+                name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+            });
+            projected_input = projection_conv1d.apply(input_tensor);
+
+            var proj_shape_1d = projected_input.shape.slice(1);
+            if (proj_shape_1d[0] !== target_steps) {
+                throw new Error("Temporal dimension mismatch after 1D projection");
+            }
+        } else {
+            throw new Error("Skip connection not supported for rank " + in_shape.length);
+        }
+    } else {
+        throw new Error("Cannot apply skip connection: input rank " + in_shape.length + " != output rank " + out_shape.length);
+    }
+
+    // Einfache Addition: output = f(x) + W*x
+    // Die Gewichte der Projektion lernen selbst die richtige Skalierung
+    var added = tf.layers.add({
+        name: "skip_add_" + layer_idx + "_" + uuidv4().substring(0, 8)
+    }).apply([layer_output, projected_input]);
+
+    return added;
+}

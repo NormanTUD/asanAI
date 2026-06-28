@@ -750,6 +750,7 @@
 		       "certainty" => "Certainty",
 		       "error_starting_webcam" => "Error starting webcam",
 		       "conv_low_filter_warning" => "Warning: This Conv2D layer has only 1 filter. This may extract too little information from the input. Consider using more filters (e.g. 8, 16, or 32).",
+		       "skip_connection" => "Skip-Connection"
 		),
 
 		'de' => array(
@@ -1501,6 +1502,7 @@
 			"certainty" => "Sicherheit",
 		       "error_starting_webcam" => "Fehler beim Starten der Webcam",
 			"conv_low_filter_warning" => "Warnung: Dieser Conv2D-Layer hat nur 1 Filter. Dadurch werden möglicherweise zu wenig Informationen aus der Eingabe extrahiert. Erwäge, mehr Filter zu verwenden (z.B. 8, 16 oder 32).",
+		       "skip_connection" => "Skip-Verbindung"
 		)
 	);
 

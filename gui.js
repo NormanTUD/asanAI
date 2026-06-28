@@ -2612,42 +2612,47 @@ function get_option_for_layer_by_type(nr) {
 	return str;
 }
 
-function build_layer_options_html (values, str, type, nr) {
-	if (values["options"]) {
-		var options = values["options"];
+function build_layer_options_html(values, str, type, nr) {
+    if (values["options"]) {
+        var options = values["options"];
 
-		for (var j = 0; j < options.length; j++) {
-			var item = options[j];
+        for (var j = 0; j < options.length; j++) {
+            var item = options[j];
 
-			if (item == "activation") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr, "", 0, 0);
-			} else if (item == "kernel_initializer") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr, "", 0, 0);
-			} else if (item == "bias_initializer") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr, "", 0, 0);
-			} else if (item == "beta_initializer") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_beta_initializer'></span>", "beta_initializer", "select", initializers, nr, "", 0, 0);
-			} else if (item == "depthwise_initializer") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_depthwise_initializer'></span>", "depthwise_initializer", "select", initializers, nr, "", 0, 0);
-			} else if (item == "pointwise_initializer") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_pointwise_initializer'></span>", "pointwise_initializer", "select", initializers, nr, "", 0, 0);
-			} else if (item == "gamma_initializer") {
-				str += get_tr_str_for_layer_table("<span class='TRANSLATEME_gamma_initializer'></span>", "gamma_initializer", "select", initializers, nr, "", 0, 0);
-			} else {
-				var _code = `str += add_${item}_option('${type}', ${nr});`;
+            if (item == "activation") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr, "", 0, 0);
+            } else if (item == "kernel_initializer") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr, "", 0, 0);
+            } else if (item == "bias_initializer") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr, "", 0, 0);
+            } else if (item == "beta_initializer") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_beta_initializer'></span>", "beta_initializer", "select", initializers, nr, "", 0, 0);
+            } else if (item == "depthwise_initializer") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_depthwise_initializer'></span>", "depthwise_initializer", "select", initializers, nr, "", 0, 0);
+            } else if (item == "pointwise_initializer") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_pointwise_initializer'></span>", "pointwise_initializer", "select", initializers, nr, "", 0, 0);
+            } else if (item == "gamma_initializer") {
+                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_gamma_initializer'></span>", "gamma_initializer", "select", initializers, nr, "", 0, 0);
+            } else {
+                var _code = `str += add_${item}_option('${type}', ${nr});`;
 
-				try {
-					eval(_code);
-				} catch (e) {
-					err("[build_layer_options_html] Failed to eval option '" + item + "' for type '" + type + "': " + e);
-				}
-			}
-		}
-	} else {
-		err("[build_layer_options_html] No options defined for layer type '" + type + "'");
-	}
+                try {
+                    eval(_code);
+                } catch (e) {
+                    err("[build_layer_options_html] Failed to eval option '" + item + "' for type '" + type + "': " + e);
+                }
+            }
+        }
+    } else {
+        err("[build_layer_options_html] No options defined for layer type '" + type + "'");
+    }
 
-	return str;
+    // === SKIP CONNECTION OPTION (automatisch für alle Layer außer reshape/flatten) ===
+    if (!skip_connection_excluded_types.includes(type)) {
+        str += add_skip_connection_option(type, nr);
+    }
+
+    return str;
 }
 
 async function initializer_layer_options(thisitem) {
@@ -9123,4 +9128,59 @@ function close_popups() {
 	close_popup('save_model_dialog');
 	close_popup('upload_dialog');
 	close_popup('sources_popup');
+}
+
+function add_skip_connection_option(type, nr) {
+	if (skip_connection_excluded_types.includes(type)) {
+		return "";
+	}
+
+	var str = "";
+	str += "<tr class='skip_connection_tr'>";
+	str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
+	str += "<td>";
+	str += "<input type='checkbox' class='skip_connection_enabled' id='skip_conn_enabled_" + nr + "' onchange='toggle_skip_connection(" + nr + ", this)' />";
+	str += "</td>";
+	str += "</tr>";
+
+	return str;
+}
+
+function toggle_skip_connection(layer_nr, elem) {
+	var enabled = $(elem).is(":checked");
+
+	if (!skip_connection_settings[layer_nr]) {
+		skip_connection_settings[layer_nr] = { enabled: false };
+	}
+
+	skip_connection_settings[layer_nr].enabled = enabled;
+
+	updated_page();
+}
+
+function get_skip_connection_info(layer_nr) {
+	if (!skip_connection_settings[layer_nr]) {
+		return { enabled: false, strength: 0 };
+	}
+	// Strength wird jetzt aus dem Modell gelesen, nicht vom Slider
+	var strength = _compute_skip_strength_from_model(layer_nr);
+	return { enabled: skip_connection_settings[layer_nr].enabled, strength: strength };
+}
+
+function update_skip_connection_strength(layer_nr, elem) {
+	var val = parseFloat($(elem).val());
+
+	if (!skip_connection_settings[layer_nr]) {
+		skip_connection_settings[layer_nr] = { enabled: true, strength: val };
+	}
+
+	skip_connection_settings[layer_nr].strength = val;
+	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
+
+	updated_page(); // await not possible here
+}
+
+function update_skip_connection_strength_display(layer_nr, elem) {
+	var val = parseFloat($(elem).val());
+	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
 }

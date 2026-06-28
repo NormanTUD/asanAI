@@ -6,6 +6,10 @@ var git_hash;
 var original_title;
 var traindata_struct;
 
+var skip_connection_excluded_types = ["reshape", "flatten"];
+
+var skip_connection_settings = {};
+
 var last_known_good_input_shape = "[]";
 
 function get_input_shape_as_string () {
