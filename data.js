@@ -24,7 +24,7 @@ function numpy_str_to_tf_tensor(numpy_str) {
 		return tensor([]);
 	}
 
-	var tensor_type = $($(".dtype")[0]).val();
+	var tensor_type = "float32";
 	var data = [];
 	var k = -1;
 
