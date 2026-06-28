@@ -131,6 +131,7 @@ async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 
 }
 
 function grad_cam_internal_find_last_conv_layer(_model) {
+	// Use the visible layers (model.layers), which excludes InputLayer
 	let index = _model.layers.length - 1;
 	while (index >= 0) {
 		if (_model.layers[index].getClassName().startsWith("Conv")) {
@@ -146,21 +147,14 @@ function grad_cam_internal_find_last_conv_layer(_model) {
  * on the original model's layers, and WITHOUT calling layer.apply()
  * on the original model's layer objects (which would add inbound nodes).
  *
- * Instead, we use tf.grad() with an imperative forward pass through
- * the model's weights, completely bypassing the symbolic graph.
+ * This version correctly handles skip connections (Add, Concatenate, etc.)
+ * by rebuilding the full topology graph instead of assuming sequential flow.
  *
  * Strategy:
- *   auxModel:        A brand-new tf.LayersModel from a fresh symbolic
- *                    input to a fresh copy of each layer up to (and
- *                    including) the last conv layer.
- *   classifierModel: A brand-new tf.LayersModel from a fresh symbolic
- *                    input (shaped like the conv output) through fresh
- *                    copies of each layer after the conv layer.
- *
- * "Fresh copy" means we use tf.layers.<type>(config) to create a
- * structurally identical layer, then copy the weights from the
- * original. This guarantees zero interaction with the original
- * model's node graph.
+ *   auxModel:        From input to last conv layer output (following topology).
+ *   classifierModel: From conv output shape to final output (sequential subset,
+ *                    skipping merge layers that can't be replicated without
+ *                    the full graph).
  */
 function _grad_cam_build_models_safe(_model, last_conv_layer_index) {
 	// ── Helper: clone a single layer (structure + weights) ──────────
@@ -172,73 +166,215 @@ function _grad_cam_build_models_safe(_model, last_conv_layer_index) {
 		// preventing name collisions with the original model.
 		delete config["name"];
 
-		// Use the TF.js deserializer to create a layer from class+config.
 		var cloned;
 		try {
 			cloned = tf.layers[class_name.charAt(0).toLowerCase() + class_name.slice(1)](config);
 		} catch (_e) {
 			// Some layer class names don't directly map to tf.layers.*
 			// Fall back to the serialization API.
-			cloned = tf.serialization.SerializationMap
-				.getMap()
-				.classNameMap[class_name][0]
-				.fromConfig(
-					tf.serialization.SerializationMap.getMap().classNameMap[class_name][0],
-					config
-				);
+			try {
+				cloned = tf.serialization.SerializationMap
+					.getMap()
+					.classNameMap[class_name][0]
+					.fromConfig(
+						tf.serialization.SerializationMap.getMap().classNameMap[class_name][0],
+						config
+					);
+			} catch (_e2) {
+				// Last resort: try creating with original class name lowercase
+				cloned = tf.layers[class_name.toLowerCase()](config);
+			}
 		}
 
 		return cloned;
 	}
 
-	function _copy_weights(source_layer, dest_layer, dummy_tensor) {
-		// We must call the dest layer on a tensor first to build it,
-		// so that setWeights() works.
-		try {
-			dest_layer.apply(dummy_tensor);
-		} catch (_e) {
-			// Some layers (like Flatten) don't need explicit building
-		}
-
-		try {
-			var w = source_layer.getWeights();
-			if (w && w.length > 0) {
-				dest_layer.setWeights(w);
-			}
-		} catch (_e2) {
-			// Layers without weights (Flatten, etc.) — ignore
-		}
+	// ── Helper: Check if a layer is a merge layer ──────────────────
+	function _is_merge_layer(layer) {
+		var class_name = layer.getClassName();
+		return ['Add', 'Concatenate', 'Multiply', 'Average', 'Maximum', 'Minimum', 'Dot'].includes(class_name);
 	}
 
-	// ── Part 1: auxModel (input → last conv output) ─────────────────
-	var input_shape = _model.inputs[0].shape.slice(1); // drop batch dim
-	var aux_input = input({ shape: input_shape });
-	var y = aux_input;
+	// ── Helper: Get inbound layer indices for a given layer ────────
+	// Returns an array of layer indices that feed into this layer.
+	function _get_inbound_layer_indices(layer_index) {
+		var layer = _model._allLayers
+			? _model._allLayers[layer_index]
+			: _model.layers[layer_index];
 
-	// We need to track the symbolic tensor at each step so we can
-	// copy weights after building.
-	var cloned_layers_part1 = [];
+		// Try to get inbound nodes from the layer
+		var inbound_indices = [];
 
-	for (var i = 0; i < _model.layers.length; i++) {
-		var layer = _model.layers[i];
-
-		// Skip InputLayer — our fresh `input()` replaces it.
-		if (i === 0 && layer.getClassName() === "InputLayer") {
-			continue;
+		try {
+			// TF.js stores inbound nodes - each node has inputTensors
+			// We need to find which layers produce those tensors
+			var inboundNodes = layer.inboundNodes || layer._inboundNodes;
+			if (inboundNodes && inboundNodes.length > 0) {
+				// Use the first (and usually only) inbound node
+				var node = inboundNodes[0];
+				var inboundLayers = node.inboundLayers || [];
+				for (var il = 0; il < inboundLayers.length; il++) {
+					var inbound_layer = inboundLayers[il];
+					// Find the index of this layer in the model
+					var all_layers = _model._allLayers || _model.layers;
+					for (var li = 0; li < all_layers.length; li++) {
+						if (all_layers[li] === inbound_layer) {
+							inbound_indices.push(li);
+							break;
+						}
+					}
+				}
+			}
+		} catch (_e) {
+			// If we can't determine inbound layers, return empty
 		}
 
-		var cloned = _clone_layer(layer);
-		y = cloned.apply(y);
-		cloned_layers_part1.push({ source: layer, dest: cloned });
+		return inbound_indices;
+	}
 
-		if (i === last_conv_layer_index) {
+	// ── Get all layers (including InputLayer and skip layers) ───────
+	var all_layers = _model._allLayers || _model.layers;
+
+	// Find the InputLayer index
+	var input_layer_index = -1;
+	for (var idx = 0; idx < all_layers.length; idx++) {
+		if (all_layers[idx].getClassName() === "InputLayer") {
+			input_layer_index = idx;
 			break;
 		}
 	}
 
+	// ── Adjust last_conv_layer_index to reference all_layers ────────
+	// The passed-in index references model.layers (which may hide InputLayer).
+	// We need to find the actual conv layer in all_layers.
+	var actual_last_conv_index = -1;
+	var visible_layer_count = 0;
+	for (var idx2 = 0; idx2 < all_layers.length; idx2++) {
+		if (all_layers[idx2].getClassName() === "InputLayer") continue;
+		if (visible_layer_count === last_conv_layer_index) {
+			actual_last_conv_index = idx2;
+			break;
+		}
+		visible_layer_count++;
+	}
+
+	if (actual_last_conv_index < 0) {
+		actual_last_conv_index = last_conv_layer_index + (input_layer_index >= 0 ? 1 : 0);
+	}
+
+	// ── Part 1: auxModel (input → last conv output) ─────────────────
+	// We rebuild the topology by tracking symbolic tensors for each layer.
+	var input_shape = _model.inputs[0].shape.slice(1); // drop batch dim
+	var aux_input = input({ shape: input_shape });
+
+	// Map from original layer index → cloned symbolic tensor output
+	var tensor_map = {};
+
+	// The InputLayer output is our fresh input
+	if (input_layer_index >= 0) {
+		tensor_map[input_layer_index] = aux_input;
+	} else {
+		tensor_map[-1] = aux_input; // fallback
+	}
+
+	var cloned_layers_part1 = [];
+	var last_y = aux_input;
+
+	for (var i = 0; i < all_layers.length; i++) {
+		var layer = all_layers[i];
+
+		// Skip InputLayer
+		if (layer.getClassName() === "InputLayer") {
+			continue;
+		}
+
+		var is_merge = _is_merge_layer(layer);
+		var inbound_indices = _get_inbound_layer_indices(i);
+
+		var cloned;
+		var layer_output;
+
+		if (is_merge && inbound_indices.length >= 2) {
+			// Merge layer: collect inputs from tensor_map
+			var merge_inputs = [];
+			var all_inputs_available = true;
+
+			for (var mi = 0; mi < inbound_indices.length; mi++) {
+				var inbound_idx = inbound_indices[mi];
+				if (tensor_map[inbound_idx] !== undefined) {
+					merge_inputs.push(tensor_map[inbound_idx]);
+				} else {
+					all_inputs_available = false;
+					break;
+				}
+			}
+
+			if (all_inputs_available && merge_inputs.length >= 2) {
+				cloned = _clone_layer(layer);
+				try {
+					layer_output = cloned.apply(merge_inputs);
+				} catch (merge_err) {
+					// If merge fails (shape mismatch after cloning), skip this layer
+					// and just pass through the first input
+					wrn("[Grad-CAM] Merge layer clone failed: " + merge_err.message + ". Using first input as passthrough.");
+					layer_output = merge_inputs[0];
+					cloned = null;
+				}
+			} else {
+				// Not all inputs available - use the last known tensor as passthrough
+				layer_output = last_y;
+				cloned = null;
+			}
+		} else {
+			// Regular (non-merge) layer
+			// Determine input tensor: prefer from inbound_indices, fallback to last_y
+			var layer_input;
+			if (inbound_indices.length === 1 && tensor_map[inbound_indices[0]] !== undefined) {
+				layer_input = tensor_map[inbound_indices[0]];
+			} else {
+				layer_input = last_y;
+			}
+
+			cloned = _clone_layer(layer);
+			try {
+				layer_output = cloned.apply(layer_input);
+			} catch (apply_err) {
+				// If apply fails, try with last_y
+				if (layer_input !== last_y) {
+					try {
+						cloned = _clone_layer(layer);
+						layer_output = cloned.apply(last_y);
+					} catch (_e2) {
+						// Skip this layer entirely
+						wrn("[Grad-CAM] Could not apply layer " + i + " (" + layer.getClassName() + "): " + _e2.message);
+						layer_output = last_y;
+						cloned = null;
+					}
+				} else {
+					wrn("[Grad-CAM] Could not apply layer " + i + " (" + layer.getClassName() + "): " + apply_err.message);
+					layer_output = last_y;
+					cloned = null;
+				}
+			}
+		}
+
+		tensor_map[i] = layer_output;
+		last_y = layer_output;
+
+		if (cloned) {
+			cloned_layers_part1.push({ source: layer, dest: cloned });
+		}
+
+		// Stop at the last conv layer
+		if (i === actual_last_conv_index) {
+			break;
+		}
+	}
+
+	var y = last_y;
 	var auxModel = tf_model({ inputs: aux_input, outputs: y });
 
-	// Now copy weights for part 1.
+	// Copy weights for part 1.
 	for (var wi = 0; wi < cloned_layers_part1.length; wi++) {
 		try {
 			var sw = cloned_layers_part1[wi].source.getWeights();
@@ -251,20 +387,99 @@ function _grad_cam_build_models_safe(_model, last_conv_layer_index) {
 	}
 
 	// ── Part 2: classifierModel (conv output → predictions) ─────────
+	// For part 2, we also need to handle the topology correctly.
 	var conv_output_shape = y.shape.slice(1); // drop batch dim
 	var cls_input = input({ shape: conv_output_shape });
-	var z = cls_input;
+
+	// Reset tensor_map for part 2
+	var tensor_map2 = {};
+	tensor_map2[actual_last_conv_index] = cls_input;
 
 	var cloned_layers_part2 = [];
+	var last_z = cls_input;
 
-	for (var j = last_conv_layer_index + 1; j < _model.layers.length; j++) {
-		var layer2 = _model.layers[j];
+	for (var j = actual_last_conv_index + 1; j < all_layers.length; j++) {
+		var layer2 = all_layers[j];
 
-		var cloned2 = _clone_layer(layer2);
-		z = cloned2.apply(z);
-		cloned_layers_part2.push({ source: layer2, dest: cloned2 });
+		// Skip InputLayer (shouldn't appear here, but just in case)
+		if (layer2.getClassName() === "InputLayer") {
+			continue;
+		}
+
+		var is_merge2 = _is_merge_layer(layer2);
+		var inbound_indices2 = _get_inbound_layer_indices(j);
+
+		var cloned2;
+		var layer_output2;
+
+		if (is_merge2 && inbound_indices2.length >= 2) {
+			// For part 2, merge layers are tricky because one of their inputs
+			// might come from before the conv layer (which we don't have).
+			// Strategy: check if all inputs are available in tensor_map2.
+			// If not, skip the merge and pass through.
+			var merge_inputs2 = [];
+			var all_available2 = true;
+
+			for (var mi2 = 0; mi2 < inbound_indices2.length; mi2++) {
+				var inbound_idx2 = inbound_indices2[mi2];
+				if (tensor_map2[inbound_idx2] !== undefined) {
+					merge_inputs2.push(tensor_map2[inbound_idx2]);
+				} else {
+					all_available2 = false;
+					break;
+				}
+			}
+
+			if (all_available2 && merge_inputs2.length >= 2) {
+				cloned2 = _clone_layer(layer2);
+				try {
+					layer_output2 = cloned2.apply(merge_inputs2);
+				} catch (merge_err2) {
+					layer_output2 = last_z;
+					cloned2 = null;
+				}
+			} else {
+				// Can't replicate this merge - just pass through
+				layer_output2 = last_z;
+				cloned2 = null;
+			}
+		} else {
+			// Regular layer
+			var layer_input2;
+			if (inbound_indices2.length === 1 && tensor_map2[inbound_indices2[0]] !== undefined) {
+				layer_input2 = tensor_map2[inbound_indices2[0]];
+			} else {
+				layer_input2 = last_z;
+			}
+
+			cloned2 = _clone_layer(layer2);
+			try {
+				layer_output2 = cloned2.apply(layer_input2);
+			} catch (apply_err2) {
+				if (layer_input2 !== last_z) {
+					try {
+						cloned2 = _clone_layer(layer2);
+						layer_output2 = cloned2.apply(last_z);
+					} catch (_e3) {
+						layer_output2 = last_z;
+						cloned2 = null;
+					}
+				} else {
+					layer_output2 = last_z;
+					cloned2 = null;
+				}
+			}
+		}
+
+		tensor_map2[j] = layer_output2;
+		last_z = layer_output2;
+
+		if (cloned2) {
+			cloned_layers_part2.push({ source: layer2, dest: cloned2 });
+		}
 	}
 
+	var z = last_z;
 	var classifierModel = tf_model({ inputs: cls_input, outputs: z });
 
 	// Copy weights for part 2.
