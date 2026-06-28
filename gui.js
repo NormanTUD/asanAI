@@ -7956,7 +7956,7 @@ function model_is_ok () {
 		}
 
 		const nr_of_layers_in_gui = $("#layers_container").find("li").length;
-		const nr_of_layers_in_model = model?.layers?.length - 1; // -1 because the input is now also a seperate layer from changing to functional API
+		const nr_of_layers_in_model = model?.layers?.length;
 
 		if(!model) {
 			color = red;
