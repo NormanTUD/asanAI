@@ -832,39 +832,46 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 }
 
 function get_layer_data() {
-	var layer_data = [];
+    var layer_data = [];
 
-	var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel", "snakeAlpha", "aSin", "aElu", "aSnake", "aRelu"];
+    var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel", "snakeAlpha", "aSin", "aElu", "aSnake", "aRelu"];
 
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		var this_layer_weights = {};
+    for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+        var layer_name = model.layers[layer_idx].name || "";
 
-		for (var n = 0; n < possible_weight_names.length; n++) {
-			this_layer_weights[possible_weight_names[n]] = [];
-		}
+        // Skip internal skip-connection layers
+        if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+            continue;
+        }
 
-		try {
-			if("weights" in model.layers[layer_idx]) {
-				for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
-					this_layer_weights = populate_layer_weight(this_layer_weights, possible_weight_names, layer_idx, k);
-				}
-			}
-		} catch (e) {
-			if(("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
-				dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
-			} else {
-				err("" + e);
+        var this_layer_weights = {};
 
-				if (e && e.stack) {
-					err("Full stack:\n" + e.stack);
-				}
-			}
-		}
+        for (var n = 0; n < possible_weight_names.length; n++) {
+            this_layer_weights[possible_weight_names[n]] = [];
+        }
 
-		layer_data.push(this_layer_weights);
-	}
+        try {
+            if ("weights" in model.layers[layer_idx]) {
+                for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
+                    this_layer_weights = populate_layer_weight(this_layer_weights, possible_weight_names, layer_idx, k);
+                }
+            }
+        } catch (e) {
+            if (("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
+                dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
+            } else {
+                err("" + e);
 
-	return layer_data;
+                if (e && e.stack) {
+                    err("Full stack:\n" + e.stack);
+                }
+            }
+        }
+
+        layer_data.push(this_layer_weights);
+    }
+
+    return layer_data;
 }
 
 function replace_non_numbers_with_matching_latex (ar) {
@@ -1433,28 +1440,39 @@ function model_to_latex() {
 
     var has_any_skip_connection = false;
 
+    // Build a mapping from model layer index to GUI layer index,
+    // skipping internal skip-connection layers
+    var gui_layer_idx = 0;
+
     for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-        var this_layer_type = $($(".layer_type")[layer_idx]).val();
+        var layer_name = model.layers[layer_idx].name || "";
+
+        // Skip internal skip-connection layers entirely
+        if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+            continue;
+        }
+
+        var this_layer_type = $($(".layer_type")[gui_layer_idx]).val();
         var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
-        if (layer_idx == 0) {
+        if (gui_layer_idx == 0) {
             str += "\n<h2>Layers:</h2>\n";
         }
 
         // Check if this layer has a skip connection for the legend
-        var skip_info_check = get_skip_connection_info(layer_idx);
+        var skip_info_check = get_skip_connection_info(gui_layer_idx);
         if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
             has_any_skip_connection = true;
         }
 
-        var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias);
+        var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
 
         // --- Generalized interactive marker handling ---
         var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
 
         if (interactive_info) {
             var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
-            str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
+            str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
             str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div><br>";
 
             // Schedule the hybrid render after DOM update
@@ -1466,6 +1484,8 @@ function model_to_latex() {
         } else {
             str += "<div class='temml_me'> " + layer_str + " </div><br>";
         }
+
+        gui_layer_idx++;
     }
 
     // === SKIP CONNECTION EXPLANATION ===
@@ -1537,7 +1557,10 @@ function get_activation_layer_names() {
 	});
 }
 
-function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias) {
+function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {
+    // Use gui_layer_idx if provided, otherwise fall back to layer_idx
+    var effective_gui_idx = (gui_layer_idx !== undefined) ? gui_layer_idx : layer_idx;
+
     var _af = get_layer_activation_function(layer_idx);
 
     var layer_str = "";
@@ -1609,7 +1632,7 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
     }
 
     // === SKIP CONNECTION ANNOTATION ===
-    var skip_info = get_skip_connection_info(layer_idx);
+    var skip_info = get_skip_connection_info(effective_gui_idx);
     if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
         var skip_input_str = (layer_idx === 0) ? "x" : _get_h(layer_idx - 1);
         layer_str = layer_str + " + \\underbrace{W_{\\text{skip}} \\cdot " + skip_input_str + "}_{\\text{Skip Connection}}";
@@ -2467,46 +2490,55 @@ function fmt_shape(shape) {
 }
 
 function latex_blocks() {
-	if (!model || !Array.isArray(model?.layers)) {
-		return "\\text{No model or no layers}";
-	}
+    if (!model || !Array.isArray(model?.layers)) {
+        return "\\text{No model or no layers}";
+    }
 
-	const blocks = model.layers.map(layer => {
-		if (!layer) {
-			return "\\text{Invalid layer}";
-		}
+    const blocks = model.layers
+        .filter(layer => {
+            // Skip internal skip-connection layers
+            var lname = layer.name || "";
+            if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) {
+                return false;
+            }
+            return true;
+        })
+        .map(layer => {
+            if (!layer) {
+                return "\\text{Invalid layer}";
+            }
 
-		const io = extract_layer_io(layer) || {};
+            const io = extract_layer_io(layer) || {};
 
-		const top = `\\text{Input: } ${fmt_shape(io.input)}`;
-		const bottom = `\\text{Output: } ${fmt_shape(io.output)}`;
+            const top = `\\text{Input: } ${fmt_shape(io.input)}`;
+            const bottom = `\\text{Output: } ${fmt_shape(io.output)}`;
 
-		const matrix = `
+            const matrix = `
 \\begin{matrix}
-		${top} \\\\
-		${bottom}
+        ${top} \\\\
+        ${bottom}
 \\end{matrix}
-	`.trim();
+    `.trim();
 
-		var lname = typeof layer.name === "string" ? layer.name : "layer";
+            var lname = typeof layer.name === "string" ? layer.name : "layer";
 
-		// Escape underscores for LaTeX to prevent "double subscript" errors
-		lname = lname.replace(/_/g, "\\_");
+            // Escape underscores for LaTeX to prevent "double subscript" errors
+            lname = lname.replace(/_/g, "\\_");
 
-		return `
+            return `
 \\underbrace{
-		${matrix}
+        ${matrix}
 }_{\\mathrm{${lname}}}
-	`.trim();
-	});
+    `.trim();
+        });
 
-	if (blocks.length === 0) {
-		return "\\text{No layers found}";
-	}
+    if (blocks.length === 0) {
+        return "\\text{No layers found}";
+    }
 
-	const str = "<h2>Model-Shapes:</h2>\n<span class='temml_me'>" + blocks.join(" \\rightarrow ") + "</span>";
+    const str = "<h2>Model-Shapes:</h2>\n<span class='temml_me'>" + blocks.join(" \\rightarrow ") + "</span>";
 
-	return str;
+    return str;
 }
 
 function _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors, input_layer) {
