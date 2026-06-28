@@ -1074,6 +1074,23 @@ async function _add_layers_to_model (model_structure, fake_model_structure, mode
 
 	var new_model = tf.model({inputs: inputLayer, outputs: currentOutput});
 
+	// Hide the InputLayer from model.layers so that external code
+	// (which expects model.layers to match the GUI layer count) is not broken.
+	// The real layers array (including InputLayer) is preserved as _allLayers.
+	var allLayers = new_model.layers;
+	var visibleLayers = allLayers.filter(function(l) {
+		return l.getClassName() !== "InputLayer";
+	});
+
+	Object.defineProperty(new_model, "layers", {
+		get: function() { return visibleLayers; },
+		configurable: true,
+		enumerable: true
+	});
+
+	// Keep a reference to all layers (including InputLayer) in case it's ever needed internally
+	new_model._allLayers = allLayers;
+
 	if(!fake_model_structure) {
 		_custom_tensors["" + new_model.id] = ["UUID:" + model_uuid, new_model, "[model in tf_sequential]"];
 		_clean_custom_tensors();
