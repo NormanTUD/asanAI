@@ -9155,7 +9155,7 @@ function toggle_skip_connection(layer_nr, elem) {
 
 	skip_connection_settings[layer_nr].enabled = enabled;
 
-	updated_page();
+	updated_page(); // await not possible here
 }
 
 function get_skip_connection_info(layer_nr) {
