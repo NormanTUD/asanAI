@@ -1431,12 +1431,20 @@ function model_to_latex() {
         str += get_metric_equations_string();
     }
 
+    var has_any_skip_connection = false;
+
     for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
         var this_layer_type = $($(".layer_type")[layer_idx]).val();
         var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
         if (layer_idx == 0) {
             str += "\n<h2>Layers:</h2>\n";
+        }
+
+        // Check if this layer has a skip connection for the legend
+        var skip_info_check = get_skip_connection_info(layer_idx);
+        if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+            has_any_skip_connection = true;
         }
 
         var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias);
@@ -1458,6 +1466,13 @@ function model_to_latex() {
         } else {
             str += "<div class='temml_me'> " + layer_str + " </div><br>";
         }
+    }
+
+    // === SKIP CONNECTION EXPLANATION ===
+    if (has_any_skip_connection) {
+        str += "<h3>Skip Connections:</h3>\n";
+        str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
+        str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the input dimensions to the output dimensions if needed. If dimensions already match, the identity is used.</p>\n";
     }
 
     str += get_optimizer_latex_equations();
@@ -1591,6 +1606,13 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 
     if (this_layer_type && !this_layer_type.startsWith("conv")) {
         layer_str = wrap_with_activation_function(layer_idx, layer_str);
+    }
+
+    // === SKIP CONNECTION ANNOTATION ===
+    var skip_info = get_skip_connection_info(layer_idx);
+    if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+        var skip_input_str = (layer_idx === 0) ? "x" : _get_h(layer_idx - 1);
+        layer_str = layer_str + " + \\underbrace{W_{\\text{skip}} \\cdot " + skip_input_str + "}_{\\text{Skip Connection}}";
     }
 
     layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
@@ -2380,22 +2402,48 @@ function get_shape_from(x) {
 }
 
 function extract_layer_io(layer) {
-	let input = get_shape_from(layer.inputShape)
-		|| get_shape_from(layer.input)
-		|| null;
+	let input = null;
+	let output = null;
 
-	let output = get_shape_from(layer.outputShape)
-		|| get_shape_from(layer.output)
-		|| null;
+	// Try outputShape first (most reliable for single-output layers)
+	if (Array.isArray(layer.outputShape)) {
+		output = layer.outputShape;
+	}
 
+	// For inputShape, handle multi-input layers (like Add, Concatenate)
+	// which return an array of shapes instead of a single shape
+	if (Array.isArray(layer.inputShape)) {
+		// Check if it's an array of arrays (multi-input layer)
+		if (Array.isArray(layer.inputShape[0]) && Array.isArray(layer.inputShape[0])) {
+			// Multi-input layer: just use the first input shape for display
+			input = layer.inputShape[0];
+		} else {
+			input = layer.inputShape;
+		}
+	}
+
+	// Fallback to inboundNodes
 	if (!input && layer.inboundNodes?.length > 0) {
 		const n = layer.inboundNodes[0];
-		if (Array.isArray(n.inputShapes) && n.inputShapes[0]) input = n.inputShapes[0];
+		if (Array.isArray(n.inputShapes) && n.inputShapes.length > 0) {
+			// For multi-input layers, inputShapes is an array of shapes
+			if (Array.isArray(n.inputShapes[0])) {
+				input = n.inputShapes[0]; // Use first input shape
+			} else {
+				input = n.inputShapes;
+			}
+		}
 	}
 
 	if (!output && layer.inboundNodes?.length > 0) {
 		const n = layer.inboundNodes[0];
-		if (Array.isArray(n.outputShapes) && n.outputShapes[0]) output = n.outputShapes[0];
+		if (Array.isArray(n.outputShapes) && n.outputShapes.length > 0) {
+			if (Array.isArray(n.outputShapes[0])) {
+				output = n.outputShapes[0];
+			} else {
+				output = n.outputShapes;
+			}
+		}
 	}
 
 	return { input, output };
@@ -2407,7 +2455,15 @@ function fmt_value(v) {
 
 function fmt_shape(shape) {
 	if (!shape) return "[\\text{null}]";
-	return "[" + shape.map(fmt_value).join(", ") + "]";
+	if (!Array.isArray(shape)) return "[\\text{null}]";
+
+	var formatted = shape.map(function(v) {
+		if (v === null || v === undefined) return "\\text{null}";
+		if (typeof v === "object") return "\\text{null}"; // Prevent [object Object]
+		return v;
+	});
+
+	return "[" + formatted.join(", ") + "]";
 }
 
 function latex_blocks() {
@@ -2432,7 +2488,10 @@ function latex_blocks() {
 \\end{matrix}
 	`.trim();
 
-		const lname = typeof layer.name === "string" ? layer.name : "layer";
+		var lname = typeof layer.name === "string" ? layer.name : "layer";
+
+		// Escape underscores for LaTeX to prevent "double subscript" errors
+		lname = lname.replace(/_/g, "\\_");
 
 		return `
 \\underbrace{

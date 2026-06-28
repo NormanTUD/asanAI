@@ -182,6 +182,12 @@ function get_fcnn_data() {
 
 	for (var layer_idx = 0; layer_idx < nr_layers; layer_idx++) {
 		var class_name = get_layer_classname_by_nr(layer_idx);
+		var layer_name = model.layers[layer_idx].name || "";
+
+		// Skip internal skip-connection layers (projection, add, scale)
+		if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+			continue;
+		}
 
 		if (!["Dense", "Flatten", "LayerNormalization"].includes(class_name) &&
 			!(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {

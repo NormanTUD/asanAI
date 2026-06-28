@@ -1090,7 +1090,9 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 
     var new_model = tf.model({inputs: inputLayer, outputs: currentOutput});
 
-    // Hide the InputLayer from model.layers
+    // Hide the InputLayer from model.layers, but keep ALL other layers
+    // (including skip connection layers like skip_proj_*, skip_add_*, skip_scale_*)
+    // so that model.summary() shows them correctly.
     var allLayers = new_model.layers;
     var visibleLayers = allLayers.filter(function(l) {
         return l.getClassName() !== "InputLayer";
