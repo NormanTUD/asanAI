@@ -2353,81 +2353,83 @@ window.addEventListener("beforeunload", function () {
 })();
 
 function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxRadius, maxSpacingConv2d, font_size) {
-    var layerY = canvasHeight / 2;
+	var layerY = canvasHeight / 2;
 
-    for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-        var skip_info = get_skip_connection_info(layer_idx);
-        if (!skip_info.enabled) continue;
+	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+		var skip_info = get_skip_connection_info(layer_idx);
+		if (!skip_info.enabled) continue;
 
-        // Skip connection goes from input of this layer to output of this layer
-        // Visually: draw an arc/curve from the left side of this layer to the right side
-        var layerX = (layer_idx + 1) * layerSpacing;
+		// Skip connection goes from input of this layer to output of this layer
+		// Visually: draw an arc/curve from the left side of this layer to the right side
+		var layerX = (layer_idx + 1) * layerSpacing;
 
-        // Get the previous layer's X position (input to this layer)
-        var prevLayerX = layer_idx * layerSpacing;
-        if (layer_idx === 0) {
-            prevLayerX = layerSpacing * 0.3; // Before first layer
-        }
+		// Get the previous layer's X position (input to this layer)
+		var prevLayerX = layer_idx * layerSpacing;
+		if (layer_idx === 0) {
+			prevLayerX = layerSpacing * 0.3; // Before first layer
+		}
 
-        var numNeurons = layers[layer_idx];
-        var meta_info = meta_infos[layer_idx] || {};
-        var layer_type = meta_info.layer_type || "";
-        var isConv2d = layer_type.toLowerCase().includes("conv2d");
-        var isOutputLayer = (layer_idx === layers.length - 1);
+		var numNeurons = layers[layer_idx];
+		var meta_info = meta_infos[layer_idx] || {};
+		var layer_type = meta_info.layer_type || "";
+		var isConv2d = layer_type.toLowerCase().includes("conv2d");
+		var isOutputLayer = (layer_idx === layers.length - 1);
 
-        var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
+		var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
 
-        // Calculate top and bottom of the layer
-        var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
-        var bottomY = layerY + ((numNeurons - 1) / 2) * verticalSpacing + 15;
+		// Calculate top and bottom of the layer
+		var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
+		var bottomY = layerY + ((numNeurons - 1) / 2) * verticalSpacing + 15;
 
-        // Draw the skip connection arc
-        var strength = skip_info.strength;
-        var alpha = 0.3 + strength * 0.5;
-        var lineWidth = 1 + strength * 3;
+		// Draw the skip connection arc
+		var strength = skip_info.strength;
+		var alpha = 0.3 + strength * 0.5;
+		var lineWidth = 1 + strength * 3;
 
-        ctx.save();
-        ctx.strokeStyle = `rgba(50, 200, 50, ${alpha})`;
-        ctx.lineWidth = lineWidth;
-        ctx.setLineDash([6, 4]);
+		ctx.save();
+		ctx.strokeStyle = `rgba(50, 200, 50, ${alpha})`;
+		ctx.lineWidth = lineWidth;
+		ctx.setLineDash([6, 4]);
 
-        // Draw arc above the layer
-        var arcHeight = 25 + strength * 15;
-        var startX = layerX - maxRadius - 5;
-        var endX = layerX + maxRadius + 5;
+		// Draw arc above the layer
+		var arcHeight = 25 + strength * 15;
+		var startX = layerX - maxRadius - 5;
+		var endX = layerX + maxRadius + 5;
 
-        ctx.beginPath();
-        ctx.moveTo(startX, topY);
-        ctx.quadraticCurveTo(layerX, topY - arcHeight, endX, topY);
-        ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(startX, topY);
+		ctx.quadraticCurveTo(layerX, topY - arcHeight, endX, topY);
+		ctx.stroke();
 
-        // Draw small "+" symbol at the connection point
-        ctx.setLineDash([]);
-        ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
-        ctx.font = "bold " + (font_size + 2) + "px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("+", endX + 10, topY - 2);
+		// Draw small "+" symbol at the connection point
+		ctx.setLineDash([]);
+		ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
+		ctx.font = "bold " + (font_size + 2) + "px Arial";
+		ctx.textAlign = "center";
+		ctx.fillText("+", endX + 10, topY - 2);
 
-        // Draw strength label
-        ctx.font = (font_size - 2) + "px Arial";
-        ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
-        ctx.fillText(language[lang]["skip_connection"], layerX, topY - arcHeight - 5);
+		// Draw strength label
+		ctx.font = (font_size - 2) + "px Arial";
+		ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
+		ctx.fillText(language[lang]["skip_connection"], layerX, topY - arcHeight - 5);
 
-        ctx.restore();
+		ctx.restore();
 
-        // Register hit region for tooltip
-        _register_fcnn_hit_region({
-            type: "skip_connection",
-            shape: "rect",
-            x: startX,
-            y: topY - arcHeight - 15,
-            w: endX - startX + 20,
-            h: arcHeight + 20,
-            layer_idx: layer_idx,
-            strength: strength,
-            layer_type: layer_type
-        });
-    }
+		const this_region = {
+			type: "skip_connection",
+			shape: "rect",
+			x: startX,
+			y: topY - arcHeight - 15,
+			w: endX - startX + 20,
+			h: arcHeight + 20,
+			layer_idx: layer_idx,
+			strength: strength,
+			layer_type: layer_type
+		};
+
+		// Register hit region for tooltip
+		_register_fcnn_hit_region(this_region);
+	}
 }
 
 function _build_skip_connection_tooltip_html(region) {
