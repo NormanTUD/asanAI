@@ -297,7 +297,6 @@ var layer_options = {
 			"kernel_regularizer",
 			"bias_regularizer",
 			"visualize",
-			"dtype"
 		],
 		"category": `Basic`
 	},
@@ -312,7 +311,6 @@ var layer_options = {
 		"description": `<span class="TRANSLATEME_dropout_description" />`,
 		"options": [
 			"dropout_rate",
-			"dtype",
 			"seed"
 		],
 		"category": `Basic`
@@ -321,7 +319,6 @@ var layer_options = {
 		"description": `<span class="TRANSLATEME_reshape_description" />`,
 		"options": [
 			"target_shape",
-			"dtype"
 		],
 		"category": `Basic`
 	},
@@ -329,7 +326,6 @@ var layer_options = {
 		"description": `<span class="TRANSLATEME_elu_description" />`,
 		"options": [
 			"alpha",
-			"dtype"
 		],
 		"category": `Activation`
 	},
@@ -337,7 +333,6 @@ var layer_options = {
 		"description": `<span class="TRANSLATEME_leakyReLU_description" />`,
 		"options": [
 			"alpha",
-			"dtype"
 		],
 		"category": `Activation`
 	},
@@ -345,14 +340,12 @@ var layer_options = {
 		"description": `<span class="TRANSLATEME_reLU_description" />`,
 		"options": [
 			"max_value",
-			"dtype"
 		],
 		"category": `Activation`
 	},
 	"softmax": {
 		"description": `<span class="TRANSLATEME_softmax_description" />`,
 		"options": [
-			"dtype"
 		],
 		"category": `Activation`
 	},
@@ -393,7 +386,6 @@ var layer_options = {
 			"beta_constraint",
 			"moving_mean_initializer",
 			"moving_variance_initializer",
-			"dtype"
 		],
 		"category": `Normalization`
 	},
@@ -409,7 +401,6 @@ var layer_options = {
 			"gamma_initializer",
 			"beta_regularizer",
 			"gamma_regularizer",
-			"dtype"
 		],
 		"category": `Normalization`
 	},
@@ -429,7 +420,6 @@ var layer_options = {
 			"kernel_regularizer",
 			"bias_regularizer",
 			"visualize",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -449,7 +439,6 @@ var layer_options = {
 			"kernel_regularizer",
 			"bias_regularizer",
 			"visualize",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -470,7 +459,6 @@ var layer_options = {
 			"bias_constraint",
 			"kernel_regularizer",
 			"bias_regularizer",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -490,7 +478,6 @@ var layer_options = {
 			"kernel_regularizer",
 			"bias_regularizer",
 			"visualize",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -514,7 +501,6 @@ var layer_options = {
 			"bias_regularizer",
 			"bias_constraint",
 			"depthwise_regularizer",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -539,7 +525,6 @@ var layer_options = {
 			"bias_regularizer",
 			"depthwise_regularizer",
 			"pointwise_regularizer",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -549,7 +534,6 @@ var layer_options = {
 			"trainable",
 			"size",
 			"interpolation",
-			"dtype"
 		],
 		"category": `Convolutional`
 	},
@@ -559,7 +543,6 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
-			"dtype"
 		],
 		"category": `Pooling`
 	},
@@ -569,7 +552,6 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
-			"dtype"
 		],
 		"category": `Pooling`
 	},
@@ -579,7 +561,6 @@ var layer_options = {
 			"padding",
 			"pool_size",
 			"strides",
-			"dtype"
 		],
 		"category": `Pooling`
 	},
@@ -589,7 +570,6 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
-			"dtype"
 		],
 		"category": `Pooling`
 	},
@@ -599,7 +579,6 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
-			"dtype"
 		],
 		"category": `Pooling`
 	},
@@ -609,35 +588,30 @@ var layer_options = {
 			"pool_size",
 			"strides",
 			"padding",
-			"dtype"
 		],
 		"category": `Pooling`
 	},
 	"globalAveragePooling1d": {
 		"description": `<span class="TRANSLATEME_globalAveragePooling1d_description" />`,
 		"options": [
-			"dtype"
 		],
 		"category": `Pooling`
 	},
 	"globalAveragePooling2d": {
 		"description": `<span class="TRANSLATEME_globalAveragePooling2d_description" />`,
 		"options": [
-			"dtype"
 		],
 		"category": `Pooling`
 	},
 	"globalMaxPooling1d": {
 		"description": `<span class="TRANSLATEME_globalMaxPooling1d_description" />`,
 		"options": [
-			"dtype"
 		],
 		"category": `Pooling`
 	},
 	"globalMaxPooling2d": {
 		"description": `<span class="TRANSLATEME_globalMaxPooling2d_description" />`,
 		"options": [
-			"dtype"
 		],
 		"category": `Pooling`
 	},
@@ -646,7 +620,6 @@ var layer_options = {
 		"options": [
 			"rate",
 			"seed",
-			"dtype"
 		],
 		"category": `Noise`
 	},
@@ -654,7 +627,6 @@ var layer_options = {
 		"description": `<span class="TRANSLATEME_gaussianDropout_description" />`,
 		"options": [
 			"rate",
-			"dtype"
 		],
 		"category": `Noise`
 	},
@@ -663,7 +635,6 @@ var layer_options = {
 		"options": [
 			"stddev",
 			"seed",
-			"dtype"
 		],
 		"category": `Noise`
 	},
