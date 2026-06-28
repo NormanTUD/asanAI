@@ -1635,12 +1635,154 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
     var skip_info = get_skip_connection_info(effective_gui_idx);
     if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
         var skip_input_str = (layer_idx === 0) ? "x" : _get_h(layer_idx - 1);
-        layer_str = layer_str + " + \\underbrace{W_{\\text{skip}} \\cdot " + skip_input_str + "}_{\\text{Skip Connection}}";
+        var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx);
+        layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\cdot " + skip_input_str + "}_{\\text{Skip Connection}}";
     }
 
     layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
 
     return layer_str;
+}
+
+/**
+ * Finds the skip projection layer for a given layer_idx in model.layers
+ * and returns its kernel weights as a LaTeX matrix.
+ * If no projection layer is found (identity skip), returns "I" (identity matrix).
+ */
+function _get_skip_connection_weight_latex(layer_idx) {
+    if (!model || !Array.isArray(model.layers)) {
+        return "W_{\\text{skip}}";
+    }
+
+    // Search for the skip projection layer that corresponds to this layer_idx
+    // The naming convention is: skip_proj_dense_<gui_layer_idx>_<hash> or skip_proj_conv2d_<gui_layer_idx>_<hash>
+    var skip_proj_layer = null;
+
+    for (var i = 0; i < model.layers.length; i++) {
+        var lname = model.layers[i].name || "";
+        // Match patterns like "skip_proj_dense_4_aaf9fdbe" or "skip_proj_conv2d_2_abcd1234"
+        // We need to check if this projection layer belongs to the current layer_idx
+        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, layer_idx)) {
+            skip_proj_layer = model.layers[i];
+            break;
+        }
+    }
+
+    // If no projection layer found, it's an identity skip connection
+    if (!skip_proj_layer) {
+        // Check if there's an add layer for this index (meaning identity was used)
+        var has_add = false;
+        for (var j = 0; j < model.layers.length; j++) {
+            var aname = model.layers[j].name || "";
+            if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, layer_idx)) {
+                has_add = true;
+                break;
+            }
+        }
+
+        if (has_add) {
+            return "I";
+        }
+        return "W_{\\text{skip}}";
+    }
+
+    // Extract the kernel weights from the projection layer
+    try {
+        var kernel_weight = null;
+        for (var k = 0; k < skip_proj_layer.weights.length; k++) {
+            var wname = skip_proj_layer.weights[k].name || "";
+            if (wname.includes("kernel")) {
+                kernel_weight = skip_proj_layer.weights[k].val;
+                break;
+            }
+        }
+
+        if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
+            var synced_kernel = array_sync(kernel_weight, true);
+            if (synced_kernel) {
+                synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
+                synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
+                var kernel_shape = get_shape_from_array(synced_kernel);
+                var shape_str = kernel_shape.join(" \\times ");
+                return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+            }
+        }
+    } catch (e) {
+        dbg("[_get_skip_connection_weight_latex] Error extracting skip weights: " + e);
+    }
+
+    return "W_{\\text{skip}}";
+}
+
+/**
+ * Checks if a skip layer name (like "skip_proj_dense_4_aaf9fdbe") belongs to a given layer_idx.
+ * The layer_idx is embedded in the name after "skip_proj_dense_" or "skip_proj_conv2d_" or "skip_add_" etc.
+ */
+function _skip_proj_belongs_to_layer(layer_name, layer_idx) {
+    // Extract the number from the layer name
+    // Patterns: skip_proj_dense_4_hash, skip_proj_conv2d_4_hash, skip_add_4_hash, skip_scale_4_hash
+    var patterns = [
+        /skip_proj_dense_(\d+)_/,
+        /skip_proj_conv2d_(\d+)_/,
+        /skip_add_(\d+)_/,
+        /skip_scale_(\d+)_/
+    ];
+
+    for (var p = 0; p < patterns.length; p++) {
+        var match = layer_name.match(patterns[p]);
+        if (match) {
+            var extracted_idx = parseInt(match[1], 10);
+            return extracted_idx === layer_idx;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Formats the rows of a skip kernel matrix into LaTeX pmatrix rows.
+ * Respects max_nr_cols_rows for truncation.
+ */
+function _format_skip_kernel_rows(kernel) {
+    var max_vals = get_max_nr_cols_rows();
+    var shape = get_shape_from_array(kernel);
+
+    if (shape.length === 1) {
+        // 1D kernel (e.g., for 1x1 conv or single-dim projection)
+        var truncated = kernel.slice(0, max_vals);
+        var row_str = truncated.join(" & ");
+        if (kernel.length > max_vals) {
+            row_str += " & \\cdots";
+        }
+        return row_str;
+    }
+
+    // 2D kernel
+    var rows = [];
+    var num_rows = Math.min(kernel.length, max_vals);
+    var num_cols = kernel[0] ? Math.min(kernel[0].length, max_vals) : 0;
+
+    for (var i = 0; i < num_rows; i++) {
+        var row = kernel[i].slice(0, num_cols);
+        var row_str = row.join(" & ");
+        if (kernel[i].length > num_cols) {
+            row_str += " & \\cdots";
+        }
+        rows.push(row_str);
+    }
+
+    if (kernel.length > max_vals) {
+        var vdots_row = [];
+        for (var c = 0; c < num_cols; c++) {
+            vdots_row.push("\\vdots");
+        }
+        if (kernel[0] && kernel[0].length > num_cols) {
+            vdots_row.push("\\ddots");
+        }
+        rows.push(vdots_row.join(" & "));
+    }
+
+    return rows.join(" \\\\\n");
 }
 
 function get_alpha_dropout_latex (layer_idx) {
