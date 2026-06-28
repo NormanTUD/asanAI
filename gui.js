@@ -7955,6 +7955,9 @@ function model_is_ok () {
 			model_has_input = 0;
 		}
 
+		const nr_of_layers_in_gui = $("#layers_container").find("li").length;
+		const nr_of_layers_in_model = model?.layers?.length - 1; // -1 because the input is now also a seperate layer from changing to functional API
+
 		if(!model) {
 			color = red;
 			msg = language[lang]["model_is_not_defined"];
@@ -7967,9 +7970,9 @@ function model_is_ok () {
 		} else if(layer_has_multiple_nodes()) {
 			color = red;
 			msg = "Model has multiple output nodes.";
-		} else if($("#layers_container").find("li").length != model?.layers?.length ) {
+		} else if(nr_of_layers_in_gui != nr_of_layers_in_model) {
 			color = red;
-			msg = `${language[lang]["different_number_layers_gui_model"]} (GUI: ${$("#layers_container").find("li").length}, ${language[lang]["model"]}: ${model?.layers?.length}).`;
+			msg = `${language[lang]["different_number_layers_gui_model"]} (GUI: ${nr_of_layers_in_gui}, ${language[lang]["model"]}: ${nr_of_layers_in_model}).`;
 		}
 	} catch (e) {
 		color = red;

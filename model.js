@@ -1030,37 +1030,116 @@ function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
 	}
 }
 
-async function _add_layer_to_model (type, data, fake_model_structure, model_structure_idx, new_model, model_uuid) {
-	try {
-		if(layer_options[type]["custom"]) {
-			if(model_structure_idx == 0) {
-				data["inputShape"] = get_input_shape();
-			} else {
-				delete data["inputShape"];
+async function _add_layers_to_model (model_structure, fake_model_structure, model_uuid) {
+	var inputShape = get_input_shape();
+	var inputLayer = tf.input({shape: inputShape});
+
+	if(!fake_model_structure) {
+		_custom_tensors["" + inputLayer.id] = ["UUID:" + model_uuid, inputLayer, "[model in tf_sequential]"];
+		_clean_custom_tensors();
+	}
+
+	var currentOutput = inputLayer;
+
+	for (let model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
+		var type = model_structure[model_structure_idx]["type"];
+		var data = model_structure[model_structure_idx]["data"];
+
+		data = _check_data(data, type, model_structure_idx);
+
+		// Remove inputShape from data since the functional API handles it via the input tensor
+		delete data["inputShape"];
+
+		_set_layer_gui(data, fake_model_structure, model_structure_idx);
+
+		try {
+			var result = await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid);
+			if(result === false) {
+				if(!fake_model_structure) {
+					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
+				} else {
+					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
+				}
+				return null;
 			}
-
-			var model_add_code = `new_model.add(new ${type}(${JSON.stringify(data)}))`;
-
-			eval(model_add_code);
-		} else {
-			var new_layer = tf.layers[type](data);
-
-			new_model.add(new_layer);
-
-			var added_layer = new_model.layers[new_model.layers.length - 1];
-
-			add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid);
-
-			throw_if_shape_contains_0_or_has_multihead(new_model);
+			currentOutput = result;
+		} catch (e) {
+			var msg = "" + e;
+			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
+			layer_warning_container(model_structure_idx, msg);
+			await write_descriptions();
+			throw new Error(e);
 		}
-		set_layer_background(model_structure_idx, "");
-	} catch (e) {
-		await handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, new_model, model_uuid);
+	}
 
-		return false;
+	var new_model = tf.model({inputs: inputLayer, outputs: currentOutput});
+
+	if(!fake_model_structure) {
+		_custom_tensors["" + new_model.id] = ["UUID:" + model_uuid, new_model, "[model in tf_sequential]"];
+		_clean_custom_tensors();
 	}
 
 	return new_model;
+}
+
+async function _add_layer_to_model (type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid) {
+	try {
+		var new_layer;
+		if(layer_options[type]["custom"]) {
+			new_layer = new (eval(type))(data);
+		} else {
+			new_layer = tf.layers[type](data);
+		}
+
+		var layerOutput = new_layer.apply(currentOutput);
+
+		add_kernel_and_bias_to_custom_tensors(new_layer, model_uuid);
+
+		// Check output shape for issues
+		var new_output_shape = layerOutput.shape;
+		if(new_output_shape) {
+			throw_if_output_shape_contains_0(new_output_shape);
+		}
+
+		set_layer_background(model_structure_idx, "");
+
+		return layerOutput;
+	} catch (e) {
+		await handle_add_to_layer_model_catch(fake_model_structure, e, model_structure_idx, type, data, currentOutput, model_uuid);
+
+		return false;
+	}
+}
+
+async function handle_add_to_layer_model_catch (fake_model_structure, e, model_structure_idx, type, data, currentOutput, model_uuid) {
+	if(Object.keys(e).includes("message")) {
+		e = e.message;
+	}
+
+	if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) {
+		if(
+			("" + e).includes("Negative dimension size caused by adding layer") ||
+			("" + e).includes("Has Multi-Output") ||
+			("" + e).includes("Input shape contains 0") ||
+			("" + e).includes("is incompatible with layer") ||
+			("" + e).includes("targetShape is undefined") ||
+			("" + e).includes("is not fully defined") ||
+			("" + e).includes("The dilationRate argument must be an integer") ||
+			("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
+		) {
+			set_layer_background(model_structure_idx, "red");
+			set_model_layer_warning(model_structure_idx, "" + e);
+			has_missing_values = true;
+		} else {
+			set_model_layer_warning(model_structure_idx, "" + e);
+			l(language[lang]["error"] + ": " + e);
+			dbg("type:");
+			dbg(type);
+			dbg("data:");
+			dbg(data);
+			throw new Error(e);
+		}
+	}
 }
 
 function throw_if_shape_contains_0_or_has_multihead(new_model) {
@@ -1092,39 +1171,6 @@ function throw_if_output_shape_contains_0(new_output_shape) {
 			}
 			throw new Error("Input shape contains 0 at layer " + j);
 		}
-	}
-}
-
-async function handle_add_to_layer_model_catch (fake_model_structure, e, model_structure_idx, type, data, new_model, model_uuid) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
-
-	if(!fake_model_structure && !("" + e).includes("nodeIndex is not a number")) { // "nodeIndex is not a number" means the model has only one output node, which is good
-		if(
-			("" + e).includes("Negative dimension size caused by adding layer") ||
-			("" + e).includes("Has Multi-Output") ||
-			("" + e).includes("Input shape contains 0") ||
-			("" + e).includes("is incompatible with layer") ||
-			("" + e).includes("targetShape is undefined") ||
-			("" + e).includes("is not fully defined") ||
-			("" + e).includes("The dilationRate argument must be an integer") ||
-			("" + e).includes("The first layer in a Sequential model must get an `inputShape` or `batchInputShape` argument")
-		) {
-			set_layer_background(model_structure_idx, "red");
-			set_model_layer_warning(model_structure_idx, "" + e);
-			has_missing_values = true;
-		} else {
-			set_model_layer_warning(model_structure_idx, "" + e);
-			l(language[lang]["error"] + ": " + e);
-			dbg("type:");
-			dbg(type);
-			dbg("data:");
-			dbg(data);
-			throw new Error(e);
-		}
-
-		await dispose(new_model);
 	}
 }
 
@@ -1343,36 +1389,6 @@ async function dispose_old_model_tensors (model_uuid) {
 	}
 
 	_clean_custom_tensors();
-}
-
-async function _add_layers_to_model (model_structure, fake_model_structure, model_uuid) {
-	var new_model = tf_sequential(model_uuid);
-	for (let model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
-		var type = model_structure[model_structure_idx]["type"];
-		var data = model_structure[model_structure_idx]["data"];
-
-		data = _check_data(data, type, model_structure_idx);
-
-		_set_layer_gui(data, fake_model_structure, model_structure_idx);
-
-		try {
-			if(!await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, new_model, model_uuid)) {
-				if(!fake_model_structure) {
-					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
-				} else {
-					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
-				}
-			}
-		} catch (e) {
-			var msg = "" + e;
-			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
-			layer_warning_container(model_structure_idx, msg);
-			await write_descriptions();
-			throw new Error(e);
-		}
-	}
-
-	return new_model;
 }
 
 function layer_warning_container(layer_idx, msg) {
