@@ -12,6 +12,7 @@ const BASIC_OPTIONS = new Set([
 	"kernel_size",
 	"pool_size",
 	"dropout_rate",
+	"visualize",
 	"rate"
 ]);
 
