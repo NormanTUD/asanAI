@@ -191,31 +191,59 @@ function load_file (event) {
 
 			var async_func;
 
-			eval(`async_func = async function() {
-				var _img_elem = $($(".uploaded_file_img")[${files_idx}])[0];
-				URL.revokeObjectURL(_img_elem.src);
-
-				var _result = await predict(_img_elem);
-
-				var $set_this = $($(".uploaded_file_prediction")[${files_idx}]);
-
-				assert($set_this.length, \`.uploaded_file_prediction[${files_idx}] not found!\`);
-
-				//console.log("_img_elem:", _img_elem, "files_idx:", ${files_idx}, "$set_this:", $set_this, "_result:", _result, "_result md5:", await md5(_result));
-
-				$set_this.html(_result).show();
-
-				$(".only_show_when_predicting_image_file").show();
-			}`);
-
 			img_elem.src = URL.createObjectURL(files[files_idx]);
-			img_elem.onload = async_func;
+
+			img_elem.onload = (function(filesIdx) {
+				return async function() {
+					var _img_elem = $($(".uploaded_file_img")[filesIdx])[0];
+					URL.revokeObjectURL(_img_elem.src);
+					var _result = await predict(_img_elem);
+					var $set_this = $($(".uploaded_file_prediction")[filesIdx]);
+					assert($set_this.length, `.uploaded_file_prediction[${filesIdx}] not found!`);
+					$set_this.html(_result).show();
+					$(".only_show_when_predicting_image_file").show();
+				};
+			})(files_idx);
 		}
 
 		$output.show();
 	} catch (e) {
 		assert(false, extract_error_message(e));
 	}
+}
+
+function show_predict_spinner(target_selector) {
+	$(target_selector).html("<span class='predict-spinner'>⏳ Predicting...</span>");
+}
+
+function hide_predict_spinner(target_selector) {
+	$(target_selector).find(".predict-spinner").remove();
+}
+
+function match_error(e, handlers, fallback) {
+	var msg = "" + e;
+	for (var [pattern, handler] of handlers) {
+		if (msg.includes(pattern)) return handler(msg);
+	}
+	return fallback ? fallback(msg) : null;
+}
+
+function compute_pixel_size(largest_dim, max_size = 150) {
+	var max_hw = Math.min(max_size, Math.floor(window.innerWidth / 5));
+	var pxsz = Math.max(1, Math.floor(max_hw / largest_dim));
+	return pxsz;
+}
+
+function find_max_index(arr) {
+	var max_i = 0;
+	for (var i = 1; i < arr.length; i++) {
+		if (arr[i] > arr[max_i]) max_i = i;
+	}
+	return max_i;
+}
+
+function find_max_value(arr) {
+	return arr[find_max_index(arr)];
 }
 
 function _predict_error (e) {
@@ -486,16 +514,10 @@ async function _predict_result(predictions_tensor, nr, _dispose = 1) {
 
 async function _predict_image (predictions_tensor, desc) {
 	try {
-		var pxsz = 1;
 		var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
 		assert(typeof(largest) == "number", "_predict_image: largest is not a number");
 
-		var max_height_width = Math.min(100, Math.floor(window.innerWidth / 5));
-		assert(typeof(max_height_width) == "number", "_predict_image: max_height_width is not a number");
-
-		while ((pxsz * largest) < max_height_width) {
-			pxsz += 1;
-		}
+		var pxsz = compute_pixel_size(largest, 100);
 
 		if (predictions_tensor.shape[3] == 3) {
 			// Draw as single RGB image
@@ -623,20 +645,43 @@ async function _predict_table(predictions_tensor, desc) {
 	}
 }
 
-function _predict_table_row(label, w, max_i, probability, predictions_idx) {
-	var str = "";
-	if (show_bars_instead_of_numbers()) {
-		var isHighest = predictions_idx == max_i && get_show_green();
-		var bar = _create_bar_html(w, isHighest, probability);
-		str = `<tr><td class='label_element'>${label}</td><td>${bar}</td></tr>`;
-	} else {
-		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-		if (predictions_idx == max_i && get_show_green()) {
-			str = `<tr><td class='label_element'>${label}</td><td><b class='best_result label_input_element'>${probability}</b></td></tr>`;
-		}
+async function _predict_table(predictions_tensor, desc) {
+	if(!predictions_tensor) {
+		wrn("[_predict_table] predictions_tensor was empty");
+		return;
 	}
 
-	return str;
+	try {
+		var predictions = tidy(() => { return predictions_tensor.dataSync(); });
+
+		if(predictions.length) {
+			var max_i = find_max_index(predictions);
+
+			var fullstr = "";
+
+			fullstr += "<table class='predict_table'>";
+
+			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+				var label = labels[predictions_idx % labels.length];
+				let probability = predictions[predictions_idx];
+				var w = Math.floor(probability * 50);
+
+				fullstr += _predict_table_row(label, w, max_i, probability, predictions_idx);
+			}
+
+			fullstr += "</table>";
+			if(desc) {
+				desc.html(fullstr);
+			}
+		}
+
+		$("#predict_error").hide();
+		reset_predict_error();
+
+		return fullstr;
+	} catch (e) {
+		wrn("" + extract_error_message(e));
+	}
 }
 
 function _prepare_data(item, original_item) {
@@ -900,6 +945,8 @@ async function predict(item) {
 
 	reset_predict_error_and_predict_tab(pred_tab);
 
+	show_predict_spinner("#" + pred_tab);
+
 	var predictions = [];
 	var str = "";
 	var ok = 1;
@@ -913,17 +960,20 @@ async function predict(item) {
 		predict_data = await get_predict_data(is_image_prediction, predict_data, item);
 
 		if(predict_data === false) {
+			hide_predict_spinner("#" + pred_tab);
 			return;
 		}
 
 		if (should_abort_predict(predict_data)) {
 			dbg("[predict] predict_data is already disposed!");
+			hide_predict_spinner("#" + pred_tab);
 			return;
 		}
 
 		var predict_data_error_string_or_false = await get_predict_data_error_string_or_false(predict_data);
 
 		if (predict_data_error_string_or_false !== false) {
+			hide_predict_spinner("#" + pred_tab);
 			return predict_data_error_string_or_false;
 		}
 
@@ -932,12 +982,14 @@ async function predict(item) {
 		}
 
 		if(check_predict_data_and_model(predict_data)) {
+			hide_predict_spinner("#" + pred_tab);
 			return;
 		}
 
 		var mi = model?.input?.shape;
 		if(!mi) {
 			err(language[lang]["cannot_get_model_input_shape"]);
+			hide_predict_spinner("#" + pred_tab);
 			return;
 		}
 		mi[0] = 1;
@@ -948,6 +1000,7 @@ async function predict(item) {
 		try {
 			if(predict_data["isDisposedInternal"]) {
 				dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+				hide_predict_spinner("#" + pred_tab);
 				return;
 			}
 
@@ -958,6 +1011,7 @@ async function predict(item) {
 
 			if(predict_data["isDisposedInternal"]) {
 				dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+				hide_predict_spinner("#" + pred_tab);
 				return;
 			}
 
@@ -965,6 +1019,7 @@ async function predict(item) {
 		} catch (e) {
 			report_prediction_shape_mismatch(mi, predict_data, e);
 			ok = 0;
+			hide_predict_spinner("#" + pred_tab);
 			return;
 		}
 
@@ -984,6 +1039,8 @@ async function predict(item) {
 
 		ok = 0;
 	}
+
+	hide_predict_spinner("#" + pred_tab);
 
 	allow_editable_labels(); // await not useful here
 
@@ -1494,17 +1551,7 @@ function get_index_of_highest_category (predictions_tensor) {
 	try {
 		var js = predictions_tensor.dataSync();
 
-		var highest_index = 0;
-		var highest = 0;
-
-		for (var js_idx = 0; js_idx < js.length; js_idx++) {
-			if(js[js_idx] > highest) {
-				highest = js[js_idx];
-				highest_index = js_idx;
-			}
-		}
-
-		return highest_index;
+		return find_max_index(js);
 	} catch (e) {
 		if(("" + e).includes("disposed")) {
 			dbg("[get_index_of_highest_category] Tensor, probably predictions_tensor, already disposed");
@@ -1572,11 +1619,7 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 
 			var largest = Math.max(_height, _width);
 
-			var pxsz = 1;
-
-			while ((pxsz * largest) < max_height_width) {
-				pxsz += 1;
-			}
+			var pxsz = compute_pixel_size(largest, max_height_width);
 
 			scaleNestedArray(img);
 			var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
@@ -1662,6 +1705,8 @@ async function predict_webcam () {
 			return;
 		}
 
+		show_predict_spinner("#webcam_prediction");
+
 		var wait = null;
 
 		try {
@@ -1670,6 +1715,7 @@ async function predict_webcam () {
 			});
 		} catch (e) {
 			console.error(e);
+			hide_predict_spinner("#webcam_prediction");
 			currently_predicting_webcam = false;
 			return;
 		}
@@ -1678,6 +1724,7 @@ async function predict_webcam () {
 
 		if(!predict_data) {
 			dbg("[predict_webcam] predict_data is null after resize, skipping this frame");
+			hide_predict_spinner("#webcam_prediction");
 			currently_predicting_webcam = false;
 			return;
 		}
@@ -1689,9 +1736,11 @@ async function predict_webcam () {
 
 			if(!predictions_tensor) {
 				dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"]);
+				hide_predict_spinner("#webcam_prediction");
 				return;
 			}
 		} catch (e) {
+			hide_predict_spinner("#webcam_prediction");
 			await handle_predict_webcam_error(e, predictions_tensor, predict_data);
 
 			return;
@@ -1712,14 +1761,8 @@ async function predict_webcam () {
 			if(predictions.length) {
 				webcam_prediction.html("");
 				if(model.outputShape.length == 4) {
-					var pxsz = 1;
-
 					var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
-
-					var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
-					while ((pxsz * largest) < max_height_width) {
-						pxsz += 1;
-					}
+					var pxsz = compute_pixel_size(largest);
 
 					if(predictions_tensor.shape[3] == 3) {
 						draw_rgb(predictions_tensor, predictions, pxsz, webcam_prediction);
@@ -1734,6 +1777,8 @@ async function predict_webcam () {
 			}
 		}
 
+		hide_predict_spinner("#webcam_prediction");
+
 		await dispose(predictions_tensor, predict_data);
 
 		await nextFrame();
@@ -1742,6 +1787,7 @@ async function predict_webcam () {
 	} catch (e) {
 		e = extract_error_message(e);
 
+		hide_predict_spinner("#webcam_prediction");
 		log(e);
 		assert(false, e);
 	}
@@ -1788,16 +1834,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 
 async function _webcam_predict_text (webcam_prediction, predictions) {
 	try {
-		var max_i = 0;
-		var max_probability = -9999999;
-
-		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
-			var probability = predictions[predictions_idx];
-			if(probability > max_probability) {
-				max_probability = probability;
-				max_i = predictions_idx;
-			}
-		}
+		var max_i = find_max_index(predictions);
 
 		if(labels.length == 0) {
 			await get_label_data();
@@ -2009,6 +2046,8 @@ async function _predict_handdrawn_internal () {
 		return;
 	}
 
+	show_predict_spinner("#handdrawn_predictions");
+
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
@@ -2020,18 +2059,21 @@ async function _predict_handdrawn_internal () {
 			}
 		});
 	} catch (e) {
+		hide_predict_spinner("#handdrawn_predictions");
 		await write_error("" + e, null, null);
 		await dispose(predict_data);
 		return;
 	}
 
 	if(!predict_data) {
+		hide_predict_spinner("#handdrawn_predictions");
 		await dispose(predict_data);
 		err("[predict_handdrawn] No predict data");
 		return;
 	}
 
 	if(await dispose_predict_data_if_not_needed_anymore(predict_data)) {
+		hide_predict_spinner("#handdrawn_predictions");
 		return;
 	}
 
@@ -2046,19 +2088,23 @@ async function _predict_handdrawn_internal () {
 		if(warn_if_tensor_is_disposed(predict_data)) {
 			predictions_tensor = await __predict(predict_data);
 		} else {
+			hide_predict_spinner("#handdrawn_predictions");
 			return;
 		}
 	} catch (e) {
+		hide_predict_spinner("#handdrawn_predictions");
 		await handle_handdrawn_error(e, predictions_tensor, predict_data);
 		return;
 	}
 
 	if(!warn_if_tensor_is_disposed(predictions_tensor)) {
+		hide_predict_spinner("#handdrawn_predictions");
 		return;
 	}
 
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
+	hide_predict_spinner("#handdrawn_predictions");
 	temml_or_wrn();
 	await dispose(predictions_tensor, predict_data);
 
@@ -2172,14 +2218,8 @@ async function _image_output_handdrawn(predictions_tensor) {
 		var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
 		var predictions = array_sync(predictions_tensor_transposed);
 
-		var pxsz = 1;
-
 		var largest = Math.max(predictions_tensor_transposed[1], predictions_tensor_transposed[2]);
-
-		var max_height_width = Math.min(150, Math.floor(window.innerWidth / 5));
-		while ((pxsz * largest) < max_height_width) {
-			pxsz += 1;
-		}
+		var pxsz = compute_pixel_size(largest);
 
 		scaleNestedArray(predictions);
 		for (var predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
@@ -2211,13 +2251,7 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 			predictions = array_sync(predictions_tensor);
 		}
 
-		var max = 0;
-
-		for (var predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
-			if(max < predictions[0][predictions_idx]) {
-				max = predictions[0][predictions_idx];
-			}
-		}
+		var max = find_max_value(predictions[0]);
 
 		var html = "<table class='predict_table'>";
 
@@ -2358,4 +2392,20 @@ function _create_bar_html(width, isHighest, probability) {
 		+ `<span class='${fillClass}' style='width: ${width}px'></span>`
 		+ tooltip
 		+ `</span>`;
+}
+
+function _predict_table_row(label, w, max_i, probability, predictions_idx) {
+	var str = "";
+	if (show_bars_instead_of_numbers()) {
+		var isHighest = predictions_idx == max_i && get_show_green();
+		var bar = _create_bar_html(w, isHighest, probability);
+		str = `<tr><td class='label_element'>${label}</td><td>${bar}</td></tr>`;
+	} else {
+		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
+		if (predictions_idx == max_i && get_show_green()) {
+			str = `<tr><td class='label_element'>${label}</td><td><b class='best_result label_input_element'>${probability}</b></td></tr>`;
+		}
+	}
+
+	return str;
 }
