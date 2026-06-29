@@ -2274,7 +2274,7 @@ async function predict_data_img (item, force_category) {
 
 	var results;
 	try {
-		results = await predict(item, force_category, 1);
+		results = await predict(item);
 	} catch (e) {
 		err(extract_error_message(e));
 	}
