@@ -11,7 +11,6 @@ function show_overlay(text, title="", options={}) {
 		}
 
 		// Options with defaults
-		var show_spinner = options.spinner !== false; // default: true
 		var show_progress = options.progress || false; // default: false
 
 		var overlay = document.createElement("div");
