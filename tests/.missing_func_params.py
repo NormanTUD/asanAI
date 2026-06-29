@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os, re, sys
 
-ignored_files = ["asanai.js", "manual.js"]
+ignored_files = ["asanai.js", "manual.js", "python_code.js"]
 ignored_file_funcs = [
     "main.js:fire",
     "gui.js:fire",
