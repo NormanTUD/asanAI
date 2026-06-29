@@ -1508,16 +1508,27 @@ function draw_category_to_training_visualization(canvasses, numCategories, categ
 	}
 }
 
-function draw_images_in_grid (images, categories, probabilities, category_overview) {
-	$("#canvas_grid_visualization").html("");
+function draw_images_in_grid(images, categories, probabilities, category_overview) {
+	var $container = $("#canvas_grid_visualization");
+
+	// === FIX: Prevent scroll jump by keeping container height stable ===
+	// Before clearing, lock the container to its current rendered height.
+	// This prevents layout collapse which causes the browser to scroll up.
+	var currentHeight = $container.outerHeight();
+	if (currentHeight > 0) {
+		$container.css("min-height", currentHeight + "px");
+	}
+
+	$container.html("");
+
 	var numCategories = labels.length;
 
 	var margin = 10;
-	var scaleWidth = 40; // Width reserved for the scale on the left
+	var scaleWidth = 40;
 
-	var _height = $("#canvas_grid_visualization").height();
+	var _height = $container.height();
 
-	if(!_height) {
+	if (!_height) {
 		_height = 460;
 	}
 
@@ -1531,7 +1542,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	scaleCtx.fillRect(0, 0, scaleCanvas.width, scaleCanvas.height);
 
 	scaleCtx.font = "12px Arial";
-	if(is_dark_mode) {
+	if (is_dark_mode) {
 		scaleCtx.fillStyle = "#ffffff";
 		scaleCtx.strokeStyle = "#ffffff";
 	} else {
@@ -1540,33 +1551,28 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	}
 	scaleCtx.textAlign = "right";
 
-	var graphHeight = _height - margin * 2 - 50; // Account for bottom text area
+	var graphHeight = _height - margin * 2 - 50;
 	var scaleTop = margin;
 	var scaleBottom = scaleTop + graphHeight;
 
-	// Draw the vertical line for the scale axis
 	scaleCtx.beginPath();
 	scaleCtx.moveTo(scaleWidth - 5, scaleTop);
 	scaleCtx.lineTo(scaleWidth - 5, scaleBottom);
 	scaleCtx.stroke();
 
-	// Draw scale labels and tick marks from 0 to 100
 	var numTicks = 10;
 	for (var tick = 0; tick <= numTicks; tick++) {
-		var value = tick * 10; // 0, 10, 20, ..., 100
+		var value = tick * 10;
 		var yPos = scaleBottom - (value / 100) * graphHeight;
 
-		// Draw tick mark
 		scaleCtx.beginPath();
 		scaleCtx.moveTo(scaleWidth - 10, yPos);
 		scaleCtx.lineTo(scaleWidth - 5, yPos);
 		scaleCtx.stroke();
 
-		// Draw label
 		scaleCtx.fillText(value.toString(), scaleWidth - 12, yPos + 4);
 	}
 
-	// Draw "Certainty %" label rotated
 	scaleCtx.save();
 	scaleCtx.translate(12, scaleTop + graphHeight / 2);
 	scaleCtx.rotate(-Math.PI / 2);
@@ -1574,16 +1580,12 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	scaleCtx.fillText(language[lang]["certainty"] + " in %", 0, 0);
 	scaleCtx.restore();
 
-	// Append scale canvas to DOM first
-	$(scaleCanvas).appendTo($("#canvas_grid_visualization"));
+	$(scaleCanvas).appendTo($container);
 
-	// create a canvas for each category
 	var canvasses = get_canvasses(numCategories, _height);
 
 	var graphWidth = canvasses[0].width - margin * 2;
 	var maxProb = 1;
-
-	// draw y-axis labels
 
 	draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
 
@@ -1592,32 +1594,26 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
 		let category = categories[image_idx];
-
 		real_canvas_img_counter[category] = 0;
 	}
 
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
 		let category = categories[image_idx];
-
 		canvas_img_counter[category] = 0;
-
 		real_canvas_img_counter[category]++;
 	}
 
-	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]); // Change this to the desired size
+	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]);
 
-	// draw x-axis labels and images
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
 		var image = images[image_idx];
 		var category = categories[image_idx];
 		var probability = probabilities[image_idx];
 
-		if(real_canvas_img_counter[category] > 0) {
+		if (real_canvas_img_counter[category] > 0) {
 			var canvas_width = canvasses[0].width;
-
 			targetSize = canvas_width / real_canvas_img_counter[category];
-
-			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize); // Change this to the desired size
+			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize);
 		}
 
 		var xPos = margin * 1;
@@ -1625,10 +1621,9 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 
 		var canvasIndex = category;
 		var canvas = canvasses[canvasIndex];
-		if(canvas) {
+		if (canvas) {
 			var ctx = canvas.getContext("2d");
 
-			// draw image
 			var scale = targetSize / Math.max(image.width, image.height);
 			var w = image.width * scale;
 			var h = image.height * scale;
@@ -1636,7 +1631,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 			var imageX = xPos - model?.input?.shape[2] / 2;
 			imageX += canvas_img_counter[category] * targetSize;
 
-			if(imageX < 0) {
+			if (imageX < 0) {
 				imageX = 0;
 			}
 
@@ -1650,6 +1645,13 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	}
 
 	append_grid_image_to_dom(numCategories, canvasses, _height);
+
+	// === FIX: After content is inserted, release the min-height lock ===
+	// Use requestAnimationFrame to ensure the new content is rendered first,
+	// then remove the artificial min-height so the container can size naturally.
+	requestAnimationFrame(function () {
+		$container.css("min-height", "");
+	});
 }
 
 function append_grid_image_to_dom(numCategories, canvasses, _height) {
@@ -1984,7 +1986,17 @@ async function render_grid_or_hide(imgs, categories, probabilities, category_ove
 		if (!imgs.length) dbg("render_grid_or_hide: imgs empty");
 		if (!categories.length) dbg("render_grid_or_hide: categories empty");
 		if (!probabilities.length) dbg("render_grid_or_hide: probabilities empty");
-		$("#canvas_grid_visualization").html("");
+
+		// Lock height before clearing to prevent scroll jump
+		var $container = $("#canvas_grid_visualization");
+		var currentHeight = $container.outerHeight();
+		if (currentHeight > 0) {
+			$container.css("min-height", currentHeight + "px");
+		}
+		$container.html("");
+		requestAnimationFrame(function () {
+			$container.css("min-height", "");
+		});
 		return;
 	}
 

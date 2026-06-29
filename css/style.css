@@ -2438,3 +2438,7 @@ body:not(.darkmode) .bar-tooltip-raw {
 	font-size: 0;
 	line-height: 0;
 }
+
+#canvas_grid_visualization {
+	overflow-anchor: none;
+}
