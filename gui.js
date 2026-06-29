@@ -7775,30 +7775,3 @@ function toggle_skip_connection(layer_nr, elem) {
 
 	updated_page(); // await not possible here
 }
-
-function get_skip_connection_info(layer_nr) {
-	if (!skip_connection_settings[layer_nr]) {
-		return { enabled: false, strength: 0 };
-	}
-	// Strength wird jetzt aus dem Modell gelesen, nicht vom Slider
-	var strength = _compute_skip_strength_from_model(layer_nr);
-	return { enabled: skip_connection_settings[layer_nr].enabled, strength: strength };
-}
-
-function update_skip_connection_strength(layer_nr, elem) {
-	var val = parseFloat($(elem).val());
-
-	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: true, strength: val };
-	}
-
-	skip_connection_settings[layer_nr].strength = val;
-	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
-
-	updated_page(); // await not possible here
-}
-
-function update_skip_connection_strength_display(layer_nr, elem) {
-	var val = parseFloat($(elem).val());
-	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
-}
