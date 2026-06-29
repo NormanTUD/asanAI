@@ -1605,10 +1605,6 @@ async function upload_model(evt) {
 	reader.readAsText(f);
 }
 
-function remove_overlay() {
-	$(".overlay").remove();
-}
-
 async function upload_weights(evt) {
 	let files = evt.target.files;
 
@@ -3540,20 +3536,29 @@ function load_msg(swal_msg_format) {
 	remove_overlay();
 
 	var _overlay = null;
-	if(started_training && stop_downloading_data) {
+	if (started_training && stop_downloading_data) {
 		info(language[lang]["training_not_started_anymore_stopped_downloading"]);
 		return;
 	}
 
-	if(finished_loading) {
-		_overlay = show_overlay(swal_msg_format["html"] ? swal_msg_format["html"] : "", swal_msg_format["title"] ? swal_msg_format["title"] : "");
+	if (finished_loading) {
+		_overlay = show_overlay(
+			swal_msg_format["html"] ? swal_msg_format["html"] : "",
+			swal_msg_format["title"] ? swal_msg_format["title"] : "",
+			{
+				spinner: true,
+				progress: !!swal_msg_format["progress"],
+				cancelable: swal_msg_format["cancelable"] !== false, // cancelable by default
+				onCancel: swal_msg_format["onCancel"] || null
+			}
+		);
 	} else {
 		var html_msg = "";
-		if(Object.keys(swal_msg_format).includes("title")) {
+		if (Object.keys(swal_msg_format).includes("title")) {
 			html_msg = "<h1 style='font-size: 3vw;'>" + swal_msg_format["title"] + "</h1>";
 		}
 
-		if(Object.keys(swal_msg_format).includes("html")) {
+		if (Object.keys(swal_msg_format).includes("html")) {
 			html_msg += swal_msg_format["html"];
 		}
 
@@ -3937,71 +3942,6 @@ function ribbon_shower_hack () {
 	// nasty hack to prevent both, ribbon icons and ribbon at the same time
 	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
 		show_ribbon();
-	}
-}
-
-function show_overlay(text, title="") {
-	try {
-		var bg_color = "white";
-		var text_color = "black";
-
-		if (is_dark_mode) {
-			bg_color = "black";
-			text_color = "white";
-		}
-
-		var overlay = document.createElement("div");
-		overlay.style.position = "fixed";
-		overlay.style.top = "0";
-		overlay.style.left = "0";
-		overlay.style.width = "100%";
-		overlay.style.height = "100%";
-		overlay.style.opacity = "1";
-		overlay.style.display = "flex";
-		overlay.style.alignItems = "center";
-		overlay.style.justifyContent = "center";
-		overlay.style.userSelect = "none";
-		overlay.style.zIndex = "9999";
-		$(overlay).addClass("overlay");
-
-		if (bg_color.toLowerCase() === "black") {
-			overlay.style.backgroundImage = "radial-gradient(circle at 12% 22%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px), radial-gradient(circle at 32% 38%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px), radial-gradient(circle at 68% 18%, rgba(255,255,255,0.35) 0.5px, transparent 1.5px), radial-gradient(circle at 78% 52%, rgba(255,255,255,0.25) 0.5px, transparent 1.5px), radial-gradient(circle at 52% 76%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px), radial-gradient(circle at 60% 60%, rgba(255,255,255,0.04) 0%, transparent 70%), radial-gradient(circle at 20% 70%, rgba(255,255,255,0.03) 0%, transparent 80%), linear-gradient(180deg, rgba(10,15,35,1) 0%, rgba(0,0,15,1) 100%)";
-		} else if (bg_color.toLowerCase() === "white") {
-			overlay.style.backgroundImage = "linear-gradient( 180deg, rgba(200, 230, 255, 1) 0%, rgba(245, 250, 255, 1) 100% ), radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 60%), radial-gradient(circle at 70% 20%, rgba(255,255,255,0.5) 0%, transparent 70%), radial-gradient(circle at 40% 70%, rgba(255,255,255,0.4) 0%, transparent 65%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 70%)";
-		} else {
-			overlay.style.backgroundImage = "linear-gradient(to bottom, " + bg_color + ", #000000)";
-		}
-
-		var textElement = document.createElement("p");
-		textElement.innerHTML = text;
-		textElement.style.textAlign = "center";
-		textElement.style.fontFamily = "Arial, sans-serif";
-		textElement.style.fontSize = "24px";
-		textElement.style.color = text_color;
-		textElement.style.padding = "20px";
-
-		overlay.appendChild(textElement);
-
-		if(title) {
-			var hElement = document.createElement("h1");
-			hElement.innerHTML = title;
-			hElement.style.textAlign = "center";
-			hElement.style.fontFamily = "Arial, sans-serif";
-			hElement.style.fontSize = "24px";
-			hElement.style.color = text_color;
-			hElement.style.padding = "20px";
-
-			overlay.appendChild(hElement);
-		}
-
-		document.body.appendChild(overlay);
-
-		assert(true, "Overlay displayed successfully.");
-
-		return overlay;
-	} catch (error) {
-		log(language[lang]["an_error_occurred"], error);
-		wrn("[show_overlay] Failed to display overlay.");
 	}
 }
 
