@@ -1654,39 +1654,6 @@ function open_upload_dialog() {
 	open_popup("upload_dialog");
 }
 
-function close_all_popups() {
-	$(".popup_body").each((i, e) => {
-		$(e).is(":visible") && $(e).find(".close_button").click();
-	});
-}
-
-function open_popup(name) {
-	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
-	var el = document.getElementById(name);
-	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
-
-	var visible = $($(".popup_body:visible")[0]).parent().attr("id");
-
-	close_all_popups();
-
-	if(visible != name) {
-		if ($(el).css("display") == "none") {
-			el.style.display = "block";
-		} else {
-			el.style.display = "none";
-		}
-	} else {
-		el.style.display = "none";
-	}
-}
-
-function close_popup(name) {
-	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
-	var el = document.getElementById(name);
-	assert(typeof(el) == "object", "document.getElementById(" + name + " is not an object");
-	el.style.display = "none";
-}
-
 async function upload_model(evt) {
 	let files = evt.target.files;
 
