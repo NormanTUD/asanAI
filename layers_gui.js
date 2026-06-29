@@ -1740,19 +1740,23 @@ function toggle_advanced_options(button) {
 		});
 		$icon.html("&#9654;");
 		$button.data("expanded", false);
+
+		setTimeout(function() {
+			write_descriptions(1); // await not possible here
+		}, 160);
 	} else {
 		$rows.each(function () {
 			var $row = $(this);
 			if (should_row_stay_hidden($row)) {
-				return; // skip this row
+				return;
 			}
 			$row.fadeIn(150);
 		});
 		$icon.html("&#9660;");
 		$button.data("expanded", true);
-	}
 
-	write_descriptions(1); // await not possible
+		write_descriptions(1); // await not possible here
+	}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
