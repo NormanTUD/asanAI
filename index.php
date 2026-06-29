@@ -94,6 +94,7 @@
 		_js("grad_cam.js");
 		_js("data.js");
 		_js("webcam.js");
+		_js("layers_gui.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
