@@ -99,6 +99,7 @@
 		_js("python_code.js");
 		_js("csv.js");
 		_js("data_origin.js");
+		_js("theme.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");

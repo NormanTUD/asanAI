@@ -2179,26 +2179,6 @@ async function toggle_layer_view() {
 	await restart_fcnn();
 }
 
-async function theme_choser () {
-	var theme = $("#theme_choser").val();
-
-	if(theme) {
-		document.getElementById("css_mode").href = "css/" + theme + ".css";
-		document.getElementById("css_ribbon").href = "css/" + "ribbon" + theme + ".css";
-
-		set_cookie("theme", theme);
-
-		await write_descriptions();
-		await write_model_to_latex_to_page();
-
-		invert_elements_in_dark_mode();
-
-		await restart_fcnn();
-	}
-
-	check_number_values();
-}
-
 // Returns: old parent div
 function move_element_to_another_div(element, new_element_id) {
 	var old_parent = $(element).parent();
