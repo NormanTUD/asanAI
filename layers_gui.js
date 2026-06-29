@@ -1751,6 +1751,8 @@ function toggle_advanced_options(button) {
 		$icon.html("&#9660;");
 		$button.data("expanded", true);
 	}
+
+	write_descriptions(1);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
