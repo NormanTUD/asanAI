@@ -1,5 +1,93 @@
 "use strict";
 
+async function check_signal_flow() {
+	if (!model || !model.layers || !model.layers.length) {
+		wrn("[check_signal_flow] No model available.");
+		return;
+	}
+
+	var inputShape = model.input.shape.slice(1); // remove batch dim
+	var sampleInput;
+
+	try {
+		sampleInput = tf.randomNormal([1, ...inputShape]);
+	} catch (e) {
+		wrn("[check_signal_flow] Could not create sample input: " + e);
+		return;
+	}
+
+	var allDead = false;
+
+	for (var i = 0; i < model.layers.length; i++) {
+		var layer = model.layers[i];
+		var layerName = layer.name;
+
+		try {
+			var intermediateModel = tf.model({
+				inputs: model.input,
+				outputs: layer.getOutputAt(0)
+			});
+
+			var output = intermediateModel.predict(sampleInput);
+			var data = output.dataSync();
+
+			var total = data.length;
+			var zeros = 0;
+			var maxAbs = 0;
+			var sum = 0;
+			var hasNaN = false;
+			var hasInf = false;
+
+			for (var j = 0; j < total; j++) {
+				var val = data[j];
+				if (isNaN(val)) { hasNaN = true; continue; }
+				if (!isFinite(val)) { hasInf = true; continue; }
+				var absVal = Math.abs(val);
+				if (val === 0) zeros++;
+				if (absVal > maxAbs) maxAbs = absVal;
+				sum += absVal;
+			}
+
+			var zeroPct = ((zeros / total) * 100).toFixed(1);
+			var mean = (sum / total);
+
+			if (hasNaN) {
+				err(`🔴 LAYER ${i} ("${layerName}"): Contains NaN values! Model is broken.`);
+			} else if (hasInf) {
+				err(`🔴 LAYER ${i} ("${layerName}"): Contains Infinity! Exploding activations.`);
+			} else if (maxAbs === 0) {
+				err(`🔴 DEAD SIGNAL at layer ${i} ("${layerName}"): ALL ${total} activations are ZERO.`);
+				allDead = true;
+			} else if (parseFloat(zeroPct) > 95) {
+				wrn(`🟡 NEARLY DEAD layer ${i} ("${layerName}"): ${zeroPct}% zeros (${zeros}/${total}), max=${maxAbs.toExponential(2)}, mean=${mean.toExponential(2)}`);
+			} else if (maxAbs > 1e6) {
+				wrn(`🟡 EXPLODING layer ${i} ("${layerName}"): max=${maxAbs.toExponential(2)}, mean=${mean.toExponential(2)}`);
+			} else {
+				l(`✅ Layer ${i} ("${layerName}"): ${zeroPct}% zeros, max=${maxAbs.toExponential(2)}, mean=${mean.toExponential(2)}`);
+			}
+
+			// ONLY dispose the output tensor, NOT the intermediate model!
+			// The intermediate model shares weights with the real model.
+			// Disposing it would destroy the real model's kernels.
+			output.dispose();
+			// DO NOT: intermediateModel.dispose();
+
+		} catch (e) {
+			dbg(`[check_signal_flow] Could not check layer ${i} ("${layerName}"): ${e}`);
+		}
+	}
+
+	sampleInput.dispose();
+
+	if (allDead) {
+		wrn("⚠️ SUGGESTION: Your network has dead layers. Try:");
+		wrn("   1. Use 'leakyReLU' or 'elu' instead of 'relu'");
+		wrn("   2. Use 'heNormal' kernel initializer");
+		wrn("   3. Increase the number of filters (currently only 4)");
+		wrn("   4. Lower the learning rate");
+	}
+}
+
 async function gui_in_training (set_started_training=1) {
 	if(set_started_training) {
 		started_training = true;
@@ -1228,6 +1316,8 @@ async function run_neural_network (recursive=0) {
 	await prepare_gui_for_training();
 
 	_set_apply_to_original_apply();
+
+	await check_signal_flow();
 
 	var x_and_y = await get_x_and_y_or_die_in_case_of_error();
 
