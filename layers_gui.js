@@ -1,5 +1,219 @@
 "use strict";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Configuration: which options are considered "basic" (shown by default)
+// Everything else is hidden behind an "Advanced" toggle.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const BASIC_OPTIONS = new Set([
+	"activation",
+	"units",
+	"filters",
+	"kernel_size",
+	"pool_size",
+	"dropout_rate",
+	"rate"
+]);
+
+function is_basic_option(item) {
+	return BASIC_OPTIONS.has(item);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_layer_options_html
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_layer_options_html(values, str, type, nr) {
+	if (!values["options"]) {
+		err("[build_layer_options_html] No options defined for layer type '" + type + "'");
+		return str;
+	}
+
+	var options = values["options"];
+	var basic_str = "";
+	var advanced_str = "";
+
+	for (var j = 0; j < options.length; j++) {
+		var item = options[j];
+		var option_html = build_single_option_html(item, type, nr);
+
+		if (is_basic_option(item)) {
+			basic_str += option_html;
+		} else {
+			advanced_str += option_html;
+		}
+	}
+
+	advanced_str += build_skip_connection_html(type, nr);
+
+	str += basic_str;
+	str += build_advanced_section(advanced_str, nr);
+
+	return str;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _update_bias_initializer_visibility
+// FIXED: Uses the new show_or_hide_bias_initializer that respects advanced state
+// ─────────────────────────────────────────────────────────────────────────────
+
+function _update_bias_initializer_visibility() {
+	var number_of_layers = get_number_of_layers();
+	show_or_hide_bias_initializer(number_of_layers);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_single_option_html
+// Renders a single layer option row (activation, initializer, or eval-based)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_single_option_html(item, type, nr) {
+	var html = "";
+
+	if (item == "activation") {
+		html = get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr, "", 0, 0);
+	} else if (is_known_initializer_option(item)) {
+		html = build_initializer_option_html(item, nr);
+	} else {
+		html = build_eval_option_html(item, type, nr);
+	}
+
+	return html;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// is_known_initializer_option
+// Checks if an option name matches one of the known initializer patterns
+// ─────────────────────────────────────────────────────────────────────────────
+
+const KNOWN_INITIALIZER_OPTIONS = [
+	"kernel_initializer",
+	"bias_initializer",
+	"beta_initializer",
+	"depthwise_initializer",
+	"pointwise_initializer",
+	"gamma_initializer"
+];
+
+function is_known_initializer_option(item) {
+	return KNOWN_INITIALIZER_OPTIONS.includes(item);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_initializer_option_html
+// Renders a select row for a known initializer option
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_initializer_option_html(item, nr) {
+	var translate_key = "<span class='TRANSLATEME_" + item + "'></span>";
+	return get_tr_str_for_layer_table(translate_key, item, "select", initializers, nr, "", 0, 0);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_eval_option_html
+// Renders a custom option by calling its add_*_option function
+// Falls back gracefully if the function doesn't exist
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_eval_option_html(item, type, nr) {
+	var func_name = "add_" + item + "_option";
+
+	if (typeof window[func_name] === "function") {
+		return window[func_name](type, nr);
+	}
+
+	err("[build_layer_options_html] No function '" + func_name + "' found for option '" + item + "' (type: '" + type + "')");
+	return "";
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_skip_connection_html
+// Appends skip connection option if applicable
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_skip_connection_html(type, nr) {
+	if (skip_connection_excluded_types.includes(type)) {
+		return "";
+	}
+	return add_skip_connection_option(type, nr);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// collapse_advanced_section
+// Animates the advanced section closed and rotates the arrow icon
+// ─────────────────────────────────────────────────────────────────────────────
+
+function collapse_advanced_section($section, $icon) {
+	$section.slideUp(200);
+	$icon.html("&#9654;"); // ▶ right arrow (collapsed)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// expand_advanced_section
+// Animates the advanced section open and rotates the arrow icon
+// ─────────────────────────────────────────────────────────────────────────────
+
+function expand_advanced_section($section, $icon) {
+	$section.slideDown(200);
+	$icon.html("&#9660;"); // ▼ down arrow (expanded)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// get_tr_str_for_layer_table (updated)
+// Now uses expert_mode_only to also add the option to the advanced section
+// when rendered outside of build_layer_options_html context
+// ─────────────────────────────────────────────────────────────────────────────
+
+function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden, expert_mode_only = 0) {
+	assert(typeof(classname) == "string", "classname is not a string");
+	assert(typeof(data) == "object", "data is not an object");
+	assert(typeof(nr) == "number", "nr is not a number");
+	assert(typeof(tr_class) == "string" || tr_class === undefined || tr_class === null, "tr_class is not a string");
+	assert(expert_mode_only === 0 || expert_mode_only === 1, "expert_mode_only must be 0 or 1, got " + expert_mode_only);
+
+	var new_uuid = uuidv4();
+
+	var str = "<tr";
+	if (expert_mode_only) {
+		tr_class = tr_class ? tr_class + " expert_mode_only" : "expert_mode_only";
+	}
+	if (tr_class) {
+		str += " class='" + tr_class + "'";
+	}
+	if (hidden) {
+		str += " style='display: none' ";
+	}
+	str += ">";
+
+	str += "<td>" + desc + ":</td>";
+	str += "<td>";
+	str += build_input_element(type, classname, new_uuid, data, nr);
+	str += "</td>";
+
+	return str;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_input_element
+// Dispatches to the correct input creator based on type
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_input_element(type, classname, new_uuid, data, nr) {
+	if (type == "select") {
+		return create_select_for_layer_panel_str(classname, new_uuid, data);
+	} else if (type == "text") {
+		return create_text_for_layer_panel_str(classname, data, nr);
+	} else if (type == "number") {
+		return create_number_input_for_layer_panel_str(classname, new_uuid, data);
+	} else if (type == "checkbox") {
+		return create_checkbox_for_layer_panel_str(classname, new_uuid, data);
+	}
+
+	err("[build_input_element] Invalid table type: " + type);
+	return "";
+}
+
 async function show_layers(number) {
 	assert(typeof(number) == "number", "show_layer(" + number + ") is not a number but " + typeof(number));
 
@@ -121,121 +335,6 @@ function get_option_for_layer_by_type(nr) {
 	return str;
 }
 
-function build_layer_options_html(values, str, type, nr) {
-    if (values["options"]) {
-        var options = values["options"];
-
-        for (var j = 0; j < options.length; j++) {
-            var item = options[j];
-
-            if (item == "activation") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_activation_function'></span>", "activation", "select", activations, nr, "", 0, 0);
-            } else if (item == "kernel_initializer") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_kernel_initializer'></span>", "kernel_initializer", "select", initializers, nr, "", 0, 0);
-            } else if (item == "bias_initializer") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_bias_initializer'></span>", "bias_initializer", "select", initializers, nr, "", 0, 0);
-            } else if (item == "beta_initializer") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_beta_initializer'></span>", "beta_initializer", "select", initializers, nr, "", 0, 0);
-            } else if (item == "depthwise_initializer") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_depthwise_initializer'></span>", "depthwise_initializer", "select", initializers, nr, "", 0, 0);
-            } else if (item == "pointwise_initializer") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_pointwise_initializer'></span>", "pointwise_initializer", "select", initializers, nr, "", 0, 0);
-            } else if (item == "gamma_initializer") {
-                str += get_tr_str_for_layer_table("<span class='TRANSLATEME_gamma_initializer'></span>", "gamma_initializer", "select", initializers, nr, "", 0, 0);
-            } else {
-                var _code = `str += add_${item}_option('${type}', ${nr});`;
-
-                try {
-                    eval(_code);
-                } catch (e) {
-                    err("[build_layer_options_html] Failed to eval option '" + item + "' for type '" + type + "': " + e);
-                }
-            }
-        }
-    } else {
-        err("[build_layer_options_html] No options defined for layer type '" + type + "'");
-    }
-
-    // === SKIP CONNECTION OPTION (automatisch für alle Layer außer reshape/flatten) ===
-    if (!skip_connection_excluded_types.includes(type)) {
-        str += add_skip_connection_option(type, nr);
-    }
-
-    return str;
-}
-
-async function set_option_for_layer_by_layer_nr(layer_idx) {
-	assert(typeof(layer_idx) == "number", "initializer_layer_options_by_layer_nr(" + layer_idx + ") is not a number but " + typeof(layer_idx));
-
-	var layer = $(".layer_options_internal")[layer_idx];
-
-	const layer_str = get_option_for_layer_by_type(layer_idx);
-
-	layer.innerHTML = layer_str;
-
-	$($(".layer_options_internal")[layer_idx]).find("select").trigger("change");
-
-	var valid_subtypes = ["initializer", "regularizer"];
-	for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
-		var kn = valid_initializer_types[valid_initializer_idx];
-
-		for (var vs = 0; vs < valid_subtypes.length; vs++) {
-			var t = valid_subtypes[vs];
-			var name = kn + "_" + t;
-			$(layer).find("." + name).trigger("change");
-		}
-	}
-
-	var layer_type = $($(".layer_type")[layer_idx]);
-
-	var type = layer_type.val();
-
-	for (var [key, values] of Object.entries(layer_options)) {
-		if (key == type) {
-			if (values["description"]) {
-				const help = get_str_for_description(values["description"]);
-				$(layer).parent().find(".layer_explanation_help").html(help);
-			} else {
-				err("[build_layer_options_html] No description given for layer type '" + type + "'");
-			}
-		}
-	}
-
-	await write_descriptions();
-}
-
-async function initializer_layer_options(thisitem) {
-	if ($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
-		return;
-	}
-
-	//assert(typeof(thisitem) == "object", "initializer_layer_options(" + thisitem + ") is not an object but " + typeof(thisitem));
-
-	layer_structure_cache = null;
-
-	var nr = thisitem;
-	if (typeof(nr) != "number") {
-		nr = find_layer_number_by_element(thisitem);
-	}
-
-	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
-
-	await set_option_for_layer_by_layer_nr(nr);
-
-	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
-	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
-		if (chosen_option == $(x).val()) {
-			$(x).attr("selected", "selected");
-		} else {
-			$(x).removeAttr("selected");
-		}
-	});
-
-	await updated_page(null, 1);
-
-	await show_visual_explanations(0);
-}
-
 function add_seed_option (type, nr) {
 	var style = "";
 
@@ -324,55 +423,38 @@ function add_strides_option(type, nr) {
 	return str;
 }
 
-/* activation gui functions end */
+// ─────────────────────────────────────────────────────────────────────────────
+// insert_activation_option_trs
+// Same fix for activation sub-options.
+// ─────────────────────────────────────────────────────────────────────────────
 
 function insert_activation_option_trs(layer_nr, option_type) {
 	assert(["alpha", "max_value", "axis", "theta", "alpha_initializer", "alpha_regularizer", "alpha_constraint", "shared_axes"].includes(option_type), "invalid option type " + option_type);
 	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
 
-	if (option_type != "none") {
-		var eval_string = `$(add_activation_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".activation")[${layer_nr}]).parent().parent());`;
-
-		eval(eval_string);
-	} else {
-		log("[insert_activation_option] option_type is '" + option_type + "'");
+	if (option_type == "none") {
+		log("[insert_activation_option_trs] option_type is '" + option_type + "'");
+		return;
 	}
-}
 
-function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) {
-	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs: layer_nr, " + regularizer_type + " is not a valid regularizer_type (2nd option)");
-	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
-	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
+	var function_name = `add_activation_${option_type}_option`;
 
-	if (option_type != "none") {
-		var eval_string = `$(add_${regularizer_type}_regularizer_${option_type}_option($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).insertAfter($($(".layer_setting")[${layer_nr}]).find(".${regularizer_type}_regularizer").parent().parent())`;
-
-		eval(eval_string);
-	} else {
-		log("[insert_regularizer_option_trs] option_type is '" + option_type + "'");
+	if (typeof window[function_name] !== "function") {
+		err("[insert_activation_option_trs] Function '" + function_name + "' not found");
+		return;
 	}
+
+	var layer_type = $($(".layer_type")[layer_nr]).val();
+	var $new_row = $(window[function_name](layer_type, layer_nr));
+
+	var $parent_row = $($(".activation")[layer_nr]).parent().parent();
+
+	$new_row.insertAfter($parent_row);
+
+	// Activation is a basic option, so its sub-options should be visible
+	// (no need to hide them behind advanced toggle)
 }
 
-function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
-	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs: layer_nr, " + initializer_type + " is not a valid initializer_type (2nd option)");
-	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale", ...valid_initializer_types].includes(option_type), "invalid option type " + option_type);
-	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
-
-	var function_name = `add_${initializer_type}_initializer_${option_type}_option`;
-
-	var eval_string = `$(${function_name}($($(".layer_type")[${layer_nr}]).val(), ${layer_nr})).
-		insertAfter($($(".layer_setting")[${layer_nr}]).
-			find(".${initializer_type}_initializer").
-			parent().
-			parent()
-		)
-	`;
-
-	//console.log(eval_string);
-
-	eval(eval_string);
-
-}
 
 async function insert_activation_options(layer_nr) {
 	// TODO NOT YET USED
@@ -443,52 +525,6 @@ function create_checkbox_for_layer_panel_str (classname, new_uuid, data) {
 	}
 
 	str += `_onchange='${on_change_string}' />`;
-
-	return str;
-}
-
-function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, hidden, expert_mode_only = 0) {
-	assert(typeof(classname) == "string", "classname is not a string");
-	assert(typeof(data) == "object", "data is not an object");
-	assert(typeof(nr) == "number", "nr is not a number");
-	assert(typeof(tr_class) == "string" ||tr_class === undefined || tr_class === null, "tr_class is not a string");
-
-	assert(expert_mode_only === 0 || expert_mode_only === 1, "expert_mode_only for get_tr_str_for_layer_table must be either 0 or 1, but is " + expert_mode_only);
-
-	var new_uuid = uuidv4();
-
-	var str = "<tr";
-	if(expert_mode_only) {
-		if(tr_class) {
-			tr_class = tr_class + " expert_mode_only";
-		} else {
-			tr_class = "expert_mode_only";
-		}
-	}
-	if (tr_class) {
-		str += " class='" + tr_class + "'";
-	}
-	if (hidden) {
-		str += " style='display: none' ";
-	}
-	str += ">";
-
-	var help = "";
-
-	str += "<td>" + desc + help + ":</td>";
-	str += "<td>";
-	if (type == "select") {
-		str += create_select_for_layer_panel_str(classname, new_uuid, data);
-	} else if (type == "text") {
-		str += create_text_for_layer_panel_str(classname, data, nr);
-	} else if (type == "number") {
-		str += create_number_input_for_layer_panel_str(classname, new_uuid, data);
-	} else if (type == "checkbox") {
-		str += create_checkbox_for_layer_panel_str(classname, new_uuid, data);
-	} else {
-		alert("Invalid table type: " + type);
-	}
-	str += "</td>";
 
 	return str;
 }
@@ -937,103 +973,6 @@ function disable_all_non_selected_layer_types() {
 	}
 }
 
-async function insert_regularizer_options(layer_nr, regularizer_type) {
-	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
-	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
-	var max_layer = get_number_of_layers();
-	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
-		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
-		return;
-	}
-
-	const $layer = $($(".layer_options_internal")[layer_nr]);
-
-	$layer.find("." + regularizer_type + "_regularizer_tr").remove();
-
-	var regularizer = $layer.find("." + regularizer_type + "_regularizer");
-
-	if (regularizer.length) {
-		var regularizer_name = regularizer.val();
-
-		var options = regularizer_options[regularizer_name]["options"];
-
-		for (var option_idx = 0; option_idx < options.length; option_idx++) {
-			insert_regularizer_option_trs(layer_nr, regularizer_type, options[option_idx]);
-		}
-	} else {
-		if(get_layer_type_array()[layer_nr] != "flatten") {
-			log("[insert_regularizer_options] Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
-		}
-	}
-	await updated_page();
-}
-
-async function insert_initializer_options (layer_nr, initializer_type) {
-	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
-	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
-
-	var max_layer = get_number_of_layers();
-	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
-		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
-		return;
-	}
-
-	const $layer = $($(".layer_options_internal")[layer_nr]);
-
-	var existing_init_elements = $layer.find("." + initializer_type + "_initializer_tr");
-
-	var initializer = $layer.find("." + initializer_type + "_initializer");
-
-	var initializer_name = initializer.val();
-
-	if(existing_init_elements.length) {
-		var number_of_removed_items = 0;
-
-		var options = initializer_options[initializer_name]["options"];
-
-		var prev_classes = [];
-
-		for (var init_idx = 0; init_idx < existing_init_elements.length; init_idx++) {
-			var remove = true;
-
-			var found_element = $(existing_init_elements[init_idx]);
-			if(found_element.length) {
-				var found_input_element = $(found_element[0]).find("input");
-				if(found_input_element.length) {
-					var class_list = found_input_element[0].classList;
-					var this_initializer_class_type = findInitializerElement(class_list);
-
-					var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
-
-					if(options.includes(this_initializer_type) && prev_classes.includes(this_initializer_type)) {
-						remove = false;
-					} else {
-						prev_classes.push(this_initializer_type);
-
-					}
-				}
-			}
-
-			if(remove) {
-				$(existing_init_elements[init_idx]).remove();
-				number_of_removed_items++;
-			}
-		}
-
-		if(number_of_removed_items == 0) {
-			return;
-		}
-	}
-
-	if(initializer_name) {
-		let options = initializer_options[initializer_name]["options"];
-
-		for (var option_idx = 0; option_idx < options.length; option_idx++) {
-			insert_initializer_option_trs(layer_nr, initializer_type, options[option_idx]);
-		}
-	}
-}
-
 async function insert_initializer (name) {
 	var nr_of_layer = model?.layers?.length;
 	if(!nr_of_layer) {
@@ -1045,16 +984,6 @@ async function insert_initializer (name) {
 	}
 
 	await update_translations();
-}
-
-async function update_initializers () {
-	await insert_initializer("kernel");
-	await insert_initializer("bias");
-	await insert_initializer("depthwise");
-	await insert_initializer("beta");
-	await insert_initializer("gamma");
-	await insert_initializer("moving_mean");
-	await insert_initializer("pointwise");
 }
 
 function get_layer_initializer_config(layer_nr, initializer_type) {
@@ -1191,26 +1120,6 @@ function set_xyz_values(j, name, values) {
 		var this_name = name + "_" + String.fromCharCode(letter.charCodeAt() + val_idx);
 		set_item_value(j, this_name, values[val_idx]);
 	}
-}
-
-function show_or_hide_bias_initializer(number_of_layers) {
-	var layer_settings = $(".layer_setting");
-	for (var layer_idx = 0; layer_idx < number_of_layers; layer_idx++) {
-		var this_layer = $(layer_settings[layer_idx]);
-		var use_bias_setting = this_layer.find(".use_bias");
-		if (use_bias_setting.length) {
-			if ($(use_bias_setting[0]).is(":checked")) {
-				this_layer.find(".bias_initializer").parent().parent().show();
-			} else {
-				this_layer.find(".bias_initializer").parent().parent().hide();
-			}
-		}
-	}
-}
-
-function _update_bias_initializer_visibility() {
-	var number_of_layers = get_number_of_layers();
-	show_or_hide_bias_initializer(number_of_layers);
 }
 
 function change_bias_selection (elem) {
@@ -1364,6 +1273,522 @@ function get_str_for_description(desc) {
 	return "<span class='typeset_me'>" + desc + "</span>";
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// enforce_advanced_section_visibility
+// After dynamic rows are inserted (via trigger("change")), this function
+// ensures all rows belonging to a collapsed advanced section are hidden.
+// Now uses a more robust approach: finds ALL elements with the section class
+// within the layer, not just direct children.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function enforce_advanced_section_visibility(layer_idx) {
+	var $layer = $($(".layer_options_internal")[layer_idx]);
+
+	var $toggle_button = $layer.find(".advanced_options_toggle_button");
+
+	if (!$toggle_button.length) {
+		return;
+	}
+
+	var section_class = $toggle_button.data("section-class");
+	var is_expanded = $toggle_button.data("expanded") === true;
+
+	if (!is_expanded) {
+		// Force-hide all rows in this section — use global selector since
+		// the rows are definitely inside this layer's tbody
+		$layer.find("." + section_class).css("display", "none");
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// enforce_all_advanced_section_visibility
+// Runs enforce on ALL layers. Call this after any global operation that
+// might have shown advanced rows (like update_initializers, updated_page, etc.)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function enforce_all_advanced_section_visibility() {
+	var $all_layers = $(".layer_options_internal");
+	$all_layers.each(function (layer_idx) {
+		enforce_advanced_section_visibility(layer_idx);
+	});
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// insert_regularizer_options
+// FIXED: Calls enforce_advanced_section_visibility after inserting rows.
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function insert_regularizer_options(layer_nr, regularizer_type) {
+	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_trs(layer_nr, " + regularizer_type + ") is not a valid regularizer_type (2nd option)");
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
+	var max_layer = get_number_of_layers();
+	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
+		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
+		return;
+	}
+
+	const $layer = $($(".layer_options_internal")[layer_nr]);
+
+	$layer.find("." + regularizer_type + "_regularizer_tr").remove();
+
+	var regularizer = $layer.find("." + regularizer_type + "_regularizer");
+
+	if (regularizer.length) {
+		var regularizer_name = regularizer.val();
+
+		var options = regularizer_options[regularizer_name]["options"];
+
+		for (var option_idx = 0; option_idx < options.length; option_idx++) {
+			insert_regularizer_option_trs(layer_nr, regularizer_type, options[option_idx]);
+		}
+	} else {
+		if(get_layer_type_array()[layer_nr] != "flatten") {
+			log("[insert_regularizer_options] Layer " + layer_nr + " does not seem to have a " + regularizer_type + " regularizer setting");
+		}
+	}
+
+	// Re-enforce visibility after inserting new rows
+	enforce_advanced_section_visibility(layer_nr);
+
+	await updated_page();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// insert_initializer_options
+// FIXED: Calls enforce_advanced_section_visibility after inserting rows.
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function insert_initializer_options (layer_nr, initializer_type) {
+	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_trs(layer_nr, " + initializer_type + ") is not a valid initializer_type (2nd option)");
+	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
+
+	var max_layer = get_number_of_layers();
+	if(!(layer_nr >= 0 && layer_nr <= max_layer)) {
+		dbg(sprintf(language[lang]["invalid_layer_nr_max_layer_n_layer_nr_m"], max_layer, layer_nr));
+		return;
+	}
+
+	const $layer = $($(".layer_options_internal")[layer_nr]);
+
+	var existing_init_elements = $layer.find("." + initializer_type + "_initializer_tr");
+
+	var initializer = $layer.find("." + initializer_type + "_initializer");
+
+	var initializer_name = initializer.val();
+
+	if(existing_init_elements.length) {
+		var number_of_removed_items = 0;
+
+		var options = initializer_options[initializer_name]["options"];
+
+		var prev_classes = [];
+
+		for (var init_idx = 0; init_idx < existing_init_elements.length; init_idx++) {
+			var remove = true;
+
+			var found_element = $(existing_init_elements[init_idx]);
+			if(found_element.length) {
+				var found_input_element = $(found_element[0]).find("input");
+				if(found_input_element.length) {
+					var class_list = found_input_element[0].classList;
+					var this_initializer_class_type = findInitializerElement(class_list);
+
+					var this_initializer_type = this_initializer_class_type.replace(/.*_initializer_/, "");
+
+					if(options.includes(this_initializer_type) && prev_classes.includes(this_initializer_type)) {
+						remove = false;
+					} else {
+						prev_classes.push(this_initializer_type);
+
+					}
+				}
+			}
+
+			if(remove) {
+				$(existing_init_elements[init_idx]).remove();
+				number_of_removed_items++;
+			}
+		}
+
+		if(number_of_removed_items == 0) {
+			return;
+		}
+	}
+
+	if(initializer_name) {
+		let options = initializer_options[initializer_name]["options"];
+
+		for (var option_idx = 0; option_idx < options.length; option_idx++) {
+			insert_initializer_option_trs(layer_nr, initializer_type, options[option_idx]);
+		}
+	}
+
+	// Re-enforce visibility after inserting new rows
+	enforce_advanced_section_visibility(layer_nr);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// update_initializers
+// FIXED: Calls enforce_all_advanced_section_visibility after all insertions.
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function update_initializers () {
+	await insert_initializer("kernel");
+	await insert_initializer("bias");
+	await insert_initializer("depthwise");
+	await insert_initializer("beta");
+	await insert_initializer("gamma");
+	await insert_initializer("moving_mean");
+	await insert_initializer("pointwise");
+
+	enforce_all_advanced_section_visibility();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// show_or_hide_bias_initializer
+// FIXED: Now respects the advanced section collapse state.
+// Only shows the bias initializer row if the advanced section is expanded.
+// When hiding (use_bias unchecked), always hides regardless of section state.
+// Also handles bias_regularizer row.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function show_or_hide_bias_initializer(number_of_layers) {
+	var layer_settings = $(".layer_setting");
+	for (var layer_idx = 0; layer_idx < number_of_layers; layer_idx++) {
+		var this_layer = $(layer_settings[layer_idx]);
+		var use_bias_setting = this_layer.find(".use_bias");
+		if (use_bias_setting.length) {
+			var $bias_init_row = this_layer.find(".bias_initializer").parent().parent();
+			var $bias_reg_row = this_layer.find(".bias_regularizer").parent().parent();
+
+			if ($(use_bias_setting[0]).is(":checked")) {
+				// Only show if the advanced section is currently expanded
+				if (is_advanced_section_expanded($bias_init_row)) {
+					$bias_init_row.show();
+				}
+				if (is_advanced_section_expanded($bias_reg_row)) {
+					$bias_reg_row.show();
+				}
+			} else {
+				$bias_init_row.hide();
+				$bias_reg_row.hide();
+			}
+		}
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// is_advanced_section_expanded
+// Helper: checks if a row's advanced section is currently expanded.
+// Returns true if the row is NOT in an advanced section (always visible),
+// or if the section's toggle button says expanded=true.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function is_advanced_section_expanded($row) {
+	if (!$row.length) {
+		return true;
+	}
+
+	var row_classes = ($row.attr("class") || "").split(/\s+/);
+	var section_class = null;
+
+	for (var i = 0; i < row_classes.length; i++) {
+		if (row_classes[i].startsWith("advanced_options_section_")) {
+			section_class = row_classes[i];
+			break;
+		}
+	}
+
+	if (!section_class) {
+		// Not in an advanced section — treat as always visible
+		return true;
+	}
+
+	var $toggle_button = $("button[data-section-class='" + section_class + "']");
+	return $toggle_button.length && $toggle_button.data("expanded") === true;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// set_option_for_layer_by_layer_nr
+// FIXED: Calls enforce_advanced_section_visibility AFTER all triggers,
+// and also after write_descriptions which may cause further DOM changes.
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function set_option_for_layer_by_layer_nr(layer_idx) {
+	assert(typeof(layer_idx) == "number", "initializer_layer_options_by_layer_nr(" + layer_idx + ") is not a number but " + typeof(layer_idx));
+
+	var layer = $(".layer_options_internal")[layer_idx];
+
+	const layer_str = get_option_for_layer_by_type(layer_idx);
+
+	layer.innerHTML = layer_str;
+
+	$($(".layer_options_internal")[layer_idx]).find("select").trigger("change");
+
+	var valid_subtypes = ["initializer", "regularizer"];
+	for (var valid_initializer_idx = 0; valid_initializer_idx < valid_initializer_types.length; valid_initializer_idx++) {
+		var kn = valid_initializer_types[valid_initializer_idx];
+
+		for (var vs = 0; vs < valid_subtypes.length; vs++) {
+			var t = valid_subtypes[vs];
+			var name = kn + "_" + t;
+			$(layer).find("." + name).trigger("change");
+		}
+	}
+
+	// Re-enforce advanced section hidden state on all rows that were
+	// dynamically inserted by the trigger("change") calls above
+	enforce_advanced_section_visibility(layer_idx);
+
+	var layer_type = $($(".layer_type")[layer_idx]);
+
+	var type = layer_type.val();
+
+	for (var [key, values] of Object.entries(layer_options)) {
+		if (key == type) {
+			if (values["description"]) {
+				const help = get_str_for_description(values["description"]);
+				$(layer).parent().find(".layer_explanation_help").html(help);
+			} else {
+				err("[build_layer_options_html] No description given for layer type '" + type + "'");
+			}
+		}
+	}
+
+	await write_descriptions();
+
+	// Final enforce after everything is done
+	enforce_advanced_section_visibility(layer_idx);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// initializer_layer_options
+// FIXED: Calls enforce after updated_page which may trigger further changes.
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function initializer_layer_options(thisitem) {
+	if ($(thisitem).hasClass("swal2-select") || $(thisitem).attr("id") == "model_dataset") {
+		return;
+	}
+
+	layer_structure_cache = null;
+
+	var nr = thisitem;
+	if (typeof(nr) != "number") {
+		nr = find_layer_number_by_element(thisitem);
+	}
+
+	assert(typeof(nr) == "number", "found nr is not an integer but " + typeof(nr));
+
+	await set_option_for_layer_by_layer_nr(nr);
+
+	var chosen_option = $($(".layer_setting")[nr]).find(".layer_type").val();
+	$($(".layer_setting")[nr]).find("option").each(function (i, x) {
+		if (chosen_option == $(x).val()) {
+			$(x).attr("selected", "selected");
+		} else {
+			$(x).removeAttr("selected");
+		}
+	});
+
+	await updated_page(null, 1);
+
+	// Enforce after updated_page, which may have called update_initializers
+	// or show_or_hide_bias_initializer
+	enforce_advanced_section_visibility(nr);
+
+	await show_visual_explanations(0);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// apply_advanced_section_state_to_row
+// Checks if the parent row belongs to an advanced section (has the
+// advanced_options_section_* class). If so, applies the same class and
+// hides the row if the advanced section is currently collapsed.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function apply_advanced_section_state_to_row($parent_row, $new_row) {
+	var parent_classes = ($parent_row.attr("class") || "").split(/\s+/);
+	var section_class = null;
+
+	for (var i = 0; i < parent_classes.length; i++) {
+		if (parent_classes[i].startsWith("advanced_options_section_")) {
+			section_class = parent_classes[i];
+			break;
+		}
+	}
+
+	if (!section_class) {
+		return;
+	}
+
+	$new_row.addClass(section_class);
+
+	var $toggle_button = $("button[data-section-class='" + section_class + "']");
+	var is_expanded = $toggle_button.length && $toggle_button.data("expanded") === true;
+
+	if (!is_expanded) {
+		$new_row.css("display", "none");
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// insert_initializer_option_trs
+// ─────────────────────────────────────────────────────────────────────────────
+
+function insert_initializer_option_trs(layer_nr, initializer_type, option_type) {
+	assert(valid_initializer_types.includes(initializer_type), "insert_initializer_option_trs: layer_nr, " + initializer_type + " is not a valid initializer_type (2nd option)");
+	assert(["seed", "mean", "stddev", "value", "mode", "distribution", "minval", "maxval", "scale", ...valid_initializer_types].includes(option_type), "invalid option type " + option_type);
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
+
+	var function_name = `add_${initializer_type}_initializer_${option_type}_option`;
+
+	if (typeof window[function_name] !== "function") {
+		err("[insert_initializer_option_trs] Function '" + function_name + "' not found");
+		return;
+	}
+
+	var layer_type = $($(".layer_type")[layer_nr]).val();
+	var $new_row = $(window[function_name](layer_type, layer_nr));
+
+	var $parent_row = $($(".layer_setting")[layer_nr])
+		.find("." + initializer_type + "_initializer")
+		.parent()
+		.parent();
+
+	$new_row.insertAfter($parent_row);
+
+	apply_advanced_section_state_to_row($parent_row, $new_row);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// insert_regularizer_option_trs
+// ─────────────────────────────────────────────────────────────────────────────
+
+function insert_regularizer_option_trs(layer_nr, regularizer_type, option_type) {
+	assert(valid_initializer_types.includes(regularizer_type), "insert_regularizer_option_trs: layer_nr, " + regularizer_type + " is not a valid regularizer_type (2nd option)");
+	assert(["l1", "l1l2", "l2", "none"].includes(option_type), "invalid option type " + option_type);
+	assert(typeof(layer_nr) == "number", "Layer number's type must be number, is: " + typeof(layer_nr));
+
+	if (option_type == "none") {
+		log("[insert_regularizer_option_trs] option_type is '" + option_type + "'");
+		return;
+	}
+
+	var function_name = `add_${regularizer_type}_regularizer_${option_type}_option`;
+
+	if (typeof window[function_name] !== "function") {
+		err("[insert_regularizer_option_trs] Function '" + function_name + "' not found");
+		return;
+	}
+
+	var layer_type = $($(".layer_type")[layer_nr]).val();
+	var $new_row = $(window[function_name](layer_type, layer_nr));
+
+	var $parent_row = $($(".layer_setting")[layer_nr])
+		.find("." + regularizer_type + "_regularizer")
+		.parent()
+		.parent();
+
+	$new_row.insertAfter($parent_row);
+
+	apply_advanced_section_state_to_row($parent_row, $new_row);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// build_advanced_section
+// ─────────────────────────────────────────────────────────────────────────────
+
+function build_advanced_section(advanced_html, nr) {
+	if (!advanced_html || !advanced_html.trim()) {
+		return "";
+	}
+
+	var section_class = "advanced_options_section_" + nr + "_" + uuidv4();
+
+	var $temp = $("<table><tbody>" + advanced_html + "</tbody></table>");
+	$temp.find("tr").each(function () {
+		$(this).addClass(section_class);
+		$(this).css("display", "none");
+	});
+
+	var marked_html = $temp.find("tbody").html();
+
+	var toggle_btn = "<tr class='advanced_toggle_row'><td colspan='2'>";
+	toggle_btn += "<button type='button' class='advanced_options_toggle_button' ";
+	toggle_btn += "data-section-class='" + section_class + "' ";
+	toggle_btn += "data-expanded='false' ";
+	toggle_btn += "onclick='toggle_advanced_options(this)'>";
+	toggle_btn += "<span class='advanced_toggle_icon'>&#9654;</span>&nbsp;";
+	toggle_btn += "<span class='TRANSLATEME_advanced_options'>Advanced</span>";
+	toggle_btn += "</button></td></tr>";
+
+	return toggle_btn + marked_html;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// toggle_advanced_options
+// ─────────────────────────────────────────────────────────────────────────────
+
+function toggle_advanced_options(button) {
+	var $button = $(button);
+	var section_class = $button.data("section-class");
+	var is_expanded = $button.data("expanded");
+	var $rows = $("." + section_class);
+	var $icon = $button.find(".advanced_toggle_icon");
+
+	if (is_expanded) {
+		$rows.each(function () {
+			$(this).fadeOut(150);
+		});
+		$icon.html("&#9654;");
+		$button.data("expanded", false);
+	} else {
+		$rows.each(function () {
+			var $row = $(this);
+			if (should_row_stay_hidden($row)) {
+				return; // skip this row
+			}
+			$row.fadeIn(150);
+		});
+		$icon.html("&#9660;");
+		$button.data("expanded", true);
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// should_row_stay_hidden
+// Checks if a row should remain hidden even when the advanced section expands.
+// Handles the case where use_bias is unchecked.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function should_row_stay_hidden($row) {
+	var is_bias_row = $row.find(".bias_initializer").length > 0 ||
+		$row.find(".bias_regularizer").length > 0 ||
+		$row.hasClass("bias_initializer_tr") ||
+		$row.hasClass("bias_regularizer_tr");
+
+	if (is_bias_row) {
+		var $layer_options = $row.closest(".layer_options_internal");
+		var $layer_setting = $layer_options.closest(".layer_setting");
+		if (!$layer_setting.length) {
+			$layer_setting = $layer_options.parent().closest(".layer_setting");
+		}
+		var $use_bias = $layer_setting.find(".use_bias");
+		if ($use_bias.length && !$use_bias.is(":checked")) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// rename_tmp_onchange
+// FIXED: After renaming _onchange to onchange, re-enforce advanced visibility
+// because the onchange handlers may now fire and show hidden rows.
+// ─────────────────────────────────────────────────────────────────────────────
+
 function rename_tmp_onchange() {
 	$("*[_onchange]").each(function (i, x) {
 		var elem = $(this);
@@ -1371,6 +1796,9 @@ function rename_tmp_onchange() {
 		elem.removeAttr("_onchange");
 	});
 
+	// After enabling onchange handlers, enforce advanced section state
+	// because some handlers may have been triggered during the rename
+	enforce_all_advanced_section_visibility();
 }
 
 function get_skip_connection_info(layer_nr) {
