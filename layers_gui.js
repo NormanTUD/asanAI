@@ -1752,7 +1752,7 @@ function toggle_advanced_options(button) {
 		$button.data("expanded", true);
 	}
 
-	write_descriptions(1);
+	write_descriptions(1); // await not possible
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
