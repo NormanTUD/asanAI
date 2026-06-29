@@ -95,6 +95,7 @@
 		_js("data.js");
 		_js("webcam.js");
 		_js("layers_gui.js");
+		_js("python_code.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
