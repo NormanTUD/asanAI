@@ -2382,21 +2382,59 @@ body:not(.darkmode) .bar-tooltip-raw {
 }
 
 .left_border_radius {
-  display: inline-block;
-  vertical-align: top;
-  border-top-left-radius: 12px;     /* Fester Wert links */
-  border-bottom-left-radius: 12px;  /* Fester Wert links */
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  margin-right: 0;
+	display: inline-block;
+	vertical-align: top;
+	border-top-left-radius: 12px;     /* Fester Wert links */
+	border-bottom-left-radius: 12px;  /* Fester Wert links */
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	margin-right: 0;
 }
 
 .right_border_radius {
-  display: inline-block;
-  vertical-align: top;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 12px;    /* Fester Wert rechts */
-  border-bottom-right-radius: 12px; /* Fester Wert rechts */
-  margin-left: 0;
+	display: inline-block;
+	vertical-align: top;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 12px;    /* Fester Wert rechts */
+	border-bottom-right-radius: 12px; /* Fester Wert rechts */
+	margin-left: 0;
+}
+
+#photos {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 40px);
+	grid-auto-rows: 40px;
+	gap: 2px;
+
+	/* Prevent layout recalculation per image */
+	contain: layout style paint;
+	content-visibility: auto;
+	contain-intrinsic-size: 400px;
+
+	/* Use fixed dimensions to avoid reflow */
+	height: 95%;
+	min-height: 400px;
+	overflow-y: auto;
+	display: block;
+
+	/* Opt out of subpixel rendering recalculations */
+	will-change: transform;
+}
+
+#photos img.class_download_img {
+	/* Prevent layout shift on load */
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+
+	/* Tell browser the size ahead of time */
+	contain: strict;
+
+	/* Use inline-block instead of default inline to avoid line-box recalculations */
+	display: inline-block;
+	vertical-align: top;
+
+	/* Prevent text-related reflows */
+	font-size: 0;
+	line-height: 0;
 }
