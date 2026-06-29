@@ -809,3 +809,14 @@ async function updated_page_restart_webcam_if_applicable() {
 		await show_webcam();
 	}
 }
+
+function show_webcam_when_needed_else_hide() {
+	if (window.location.href.indexOf("no_webcam") == -1) {
+		if (input_shape_is_image()) {
+			$("#show_webcam_button").show();
+		} else {
+			$("#show_webcam_button").hide();
+			stop_webcam();
+		}
+	}
+}
