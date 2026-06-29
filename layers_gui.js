@@ -171,14 +171,10 @@ function get_tr_str_for_layer_table(desc, classname, type, data, nr, tr_class, h
 	assert(typeof(data) == "object", "data is not an object");
 	assert(typeof(nr) == "number", "nr is not a number");
 	assert(typeof(tr_class) == "string" || tr_class === undefined || tr_class === null, "tr_class is not a string");
-	assert(expert_mode_only === 0 || expert_mode_only === 1, "expert_mode_only must be 0 or 1, got " + expert_mode_only);
 
 	var new_uuid = uuidv4();
 
 	var str = "<tr";
-	if (expert_mode_only) {
-		tr_class = tr_class ? tr_class + " expert_mode_only" : "expert_mode_only";
-	}
 	if (tr_class) {
 		str += " class='" + tr_class + "'";
 	}
