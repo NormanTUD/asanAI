@@ -3542,16 +3542,17 @@ function load_msg(swal_msg_format) {
 	}
 
 	if (finished_loading) {
-		_overlay = show_overlay(
-			swal_msg_format["html"] ? swal_msg_format["html"] : "",
-			swal_msg_format["title"] ? swal_msg_format["title"] : "",
-			{
-				spinner: true,
-				progress: !!swal_msg_format["progress"],
-				cancelable: swal_msg_format["cancelable"] !== false, // cancelable by default
-				onCancel: swal_msg_format["onCancel"] || null
-			}
-		);
+		const overlay_msg = swal_msg_format["html"] ? swal_msg_format["html"] : "";
+		const overlay_title = swal_msg_format["title"] ? swal_msg_format["title"] : "";
+
+		const overlay_options = {
+			spinner: true,
+			progress: !!swal_msg_format["progress"],
+			cancelable: swal_msg_format["cancelable"] !== false, // cancelable by default
+			onCancel: swal_msg_format["onCancel"] || null
+		};
+
+		_overlay = show_overlay(overlay_msg, overlay_title, overlay_options);
 	} else {
 		var html_msg = "";
 		if (Object.keys(swal_msg_format).includes("title")) {
