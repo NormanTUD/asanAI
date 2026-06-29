@@ -1289,8 +1289,6 @@ async function reset_stuff_after_training (x_and_y) {
 }
 
 function prepare_site_for_training() {
-	prepend_hr_to_training_content();
-
 	_clear_plotly_epoch_history();
 }
 
@@ -1340,10 +1338,6 @@ async function try_repair_and_rerun_if_classification (repaired, e, recursive) {
 	}
 
 	return repaired;
-}
-
-function prepend_hr_to_training_content () {
-	$("#training_content").clone().prepend("<hr>").appendTo("#training_tab");
 }
 
 async function set_new_loss_and_metric_if_different (new_loss_and_metric) {
