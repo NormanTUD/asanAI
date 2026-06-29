@@ -29,6 +29,7 @@ ignored_file_funcs = [
     "data.js:random",
     "debug.js:random",
     "debug.js:l",
+    "python_code.js:predict"
     "predict.js:predict",
     "online_python.js:predict",
     "online_python.js:draw_grid",
