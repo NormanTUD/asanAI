@@ -358,8 +358,6 @@ function renderLayerIOStats(divTarget) {
 		style.textContent = `
 	    .layer_io_monitor {
 		padding: 20px;
-		max-height: 90vh;
-		overflow-y: auto;
 	    }
 	    .layer_io_monitor h2 {
 		margin: 0 0 12px 0;
