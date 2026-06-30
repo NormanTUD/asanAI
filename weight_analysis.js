@@ -898,7 +898,7 @@ var WeightAnalysis = (function() {
 
         // Trigger translation system
         if (typeof update_translations === "function") {
-            update_translations();
+            update_translations(); // await not possible here
         }
 
         return container;
