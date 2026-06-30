@@ -335,12 +335,16 @@ async function compile_model(recursion_level=0) {
 	try {
 		await get_model_data();
 
-		model.compile({
+		const compile_data = {
 			optimizer: global_model_data.optimizer,
 			loss: global_model_data.loss,
 			metrics: [global_model_data.metric]
-		});
+		};
+
+		model.compile(compile_data);
 		model_config_hash = new_model_config_hash;
+
+		enableAutoRecord();
 
 		if (typeof pyodideOnModelChanged === "function") {
 			pyodideOnModelChanged();

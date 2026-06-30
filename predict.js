@@ -62,6 +62,8 @@ async function get_model_predict (data, __model = model, recursion = 0) {
 	try {
 		var res = await __model.predict(data);
 
+		renderLayerIOStats("health_status");
+
 		return res;
 	} catch (e) {
 		var ret = await handle_predict_internal_errors(e, data, __model, recursion);
