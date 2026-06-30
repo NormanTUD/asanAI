@@ -675,7 +675,7 @@ var WeightAnalysis = (function() {
     // RENDER FUNCTION
     // ============================================================
 
-    function render(divOrId) {
+    function weight_analysis_render(divOrId) {
         var container;
 
         if (typeof divOrId === "string" && divOrId !== "") {
@@ -915,7 +915,7 @@ var WeightAnalysis = (function() {
         stopAutoRefresh();
         _autoRefreshInterval = setInterval(function() {
             try {
-                render(divOrId);
+                weight_analysis_render(divOrId);
             } catch (e) {
                 console.warn("[WeightAnalysis] Auto-refresh error:", e);
             }
@@ -1055,7 +1055,7 @@ var WeightAnalysis = (function() {
 
     return {
         analyzeModel: analyzeModel,
-        render: render,
+        weight_analysis_render: weight_analysis_render,
         startAutoRefresh: startAutoRefresh,
         stopAutoRefresh: stopAutoRefresh,
         detectDeadNeurons: detectDeadNeurons,
@@ -1075,7 +1075,7 @@ var WeightAnalysis = (function() {
         var _autoInit = function() {
             var target = document.getElementById("weight_analysis");
             if (target) {
-                WeightAnalysis.render(target);
+                WeightAnalysis.weight_analysis_render(target);
             }
         };
 
