@@ -304,6 +304,8 @@ function _detectWarnings(layerData) {
 	var stats = _computeStats(layerData.output);
 	if (!stats) return warnings;
 
+	// ===== EXISTING CHECKS (keep all of these) =====
+
 	// Dying ReLU
 	if (stats.zeroFraction > 0.8) {
 		warnings.push({ type: "dying_relu", severity: stats.zeroFraction > 0.95 ? "critical" : "warning", zeroFraction: stats.zeroFraction });
@@ -324,12 +326,12 @@ function _detectWarnings(layerData) {
 		warnings.push({ type: "nan_inf", severity: "critical", nanCount: stats.nanCount, infCount: stats.infCount });
 	}
 
-	// Vanishing activations (very small range)
+	// Vanishing activations
 	if (stats.range > 0 && stats.range < 1e-5 && stats.count > 10) {
 		warnings.push({ type: "vanishing", severity: "warning", range: stats.range });
 	}
 
-	// High kurtosis (heavy tails, potential instability)
+	// High kurtosis
 	if (Math.abs(stats.kurtosis) > 10) {
 		warnings.push({ type: "high_kurtosis", severity: "info", kurtosis: stats.kurtosis });
 	}
@@ -339,16 +341,17 @@ function _detectWarnings(layerData) {
 		warnings.push({ type: "high_skewness", severity: "info", skewness: stats.skewness });
 	}
 
-	// All same value (constant output)
+	// Constant output
 	if (stats.min === stats.max && stats.count > 1) {
 		warnings.push({ type: "constant_output", severity: "critical", value: stats.min });
 	}
 
-	// Negative-only output (unusual for ReLU networks)
+	// All negative
 	if (stats.positives === 0 && stats.negatives > 0 && stats.zeros === 0) {
 		warnings.push({ type: "all_negative", severity: "info", negativeFraction: 1.0 });
 	}
 
+	// Magnitude explosion/collapse
 	if (layerData.input) {
 		var inputStats = _computeStats(layerData.input);
 		if (inputStats && inputStats.std > 0 && stats.std > 0) {
@@ -358,6 +361,274 @@ function _detectWarnings(layerData) {
 			} else if (magnitudeRatio < 0.01) {
 				warnings.push({ type: "magnitude_collapse", severity: "warning", ratio: magnitudeRatio });
 			}
+		}
+	}
+
+	// ===== NEW CHECKS =====
+
+	// --- 1. Saturated Sigmoid/Tanh ---
+	// If a sigmoid/tanh layer has most values near ±1 or 0/1 boundaries,
+	// gradients will be near zero (vanishing gradient problem)
+	if (layerData.layerType === "Dense" || layerData.layerType === "Activation") {
+		var nearBoundary = 0;
+		var threshold = 0.05; // how close to boundary counts as "saturated"
+		for (var i = 0; i < layerData.output.length; i++) {
+			var v = layerData.output[i];
+			// Sigmoid saturation: values near 0 or 1
+			if ((v > (1 - threshold) && v <= 1) || (v < threshold && v >= 0)) {
+				nearBoundary++;
+			}
+			// Tanh saturation: values near -1 or 1
+			if (v > (1 - threshold) || v < -(1 - threshold)) {
+				nearBoundary++;
+			}
+		}
+		var saturationFraction = nearBoundary / (layerData.output.length * 2); // *2 because we check both
+		if (saturationFraction > 0.4) {
+			warnings.push({
+				type: "activation_saturation",
+				severity: saturationFraction > 0.7 ? "warning" : "info",
+				saturationFraction: saturationFraction
+			});
+		}
+	}
+
+	// --- 2. Dead Neurons (per-neuron check) ---
+	// Unlike dying ReLU which checks overall zeros, this checks if specific
+	// neurons are always outputting the same value across the output shape
+	// (useful for detecting individual dead units in a layer)
+	if (layerData.outputShape && layerData.outputShape.length === 2 && layerData.outputShape[1] > 1) {
+		var numNeurons = layerData.outputShape[1];
+		var batchSize = layerData.output.length / numNeurons;
+		if (batchSize >= 1) {
+			var deadNeurons = 0;
+			for (var n = 0; n < numNeurons; n++) {
+				var neuronVal = layerData.output[n]; // first sample's value for this neuron
+				var isConstant = true;
+				for (var b = 1; b < batchSize; b++) {
+					if (layerData.output[b * numNeurons + n] !== neuronVal) {
+						isConstant = false;
+						break;
+					}
+				}
+				if (isConstant) deadNeurons++;
+			}
+			var deadFraction = deadNeurons / numNeurons;
+			if (deadFraction > 0.3 && numNeurons > 2) {
+				warnings.push({
+					type: "dead_neurons",
+					severity: deadFraction > 0.7 ? "critical" : "warning",
+					deadFraction: deadFraction,
+					deadCount: deadNeurons,
+					totalNeurons: numNeurons
+				});
+			}
+		}
+	}
+
+	// --- 3. Rank Collapse / Low Effective Dimensionality ---
+	// If outputs are highly correlated (low rank), the layer isn't using its capacity
+	// Approximation: check if variance is concentrated in very few dimensions
+	if (layerData.outputShape && layerData.outputShape.length === 2 && layerData.outputShape[1] > 4) {
+		var numFeatures = layerData.outputShape[1];
+		var featureVariances = [];
+		var totalSamples = layerData.output.length / numFeatures;
+
+		if (totalSamples >= 2) {
+			for (var f = 0; f < numFeatures; f++) {
+				var fSum = 0, fSumSq = 0;
+				for (var s = 0; s < totalSamples; s++) {
+					var val = layerData.output[s * numFeatures + f];
+					fSum += val;
+					fSumSq += val * val;
+				}
+				var fMean = fSum / totalSamples;
+				var fVar = (fSumSq / totalSamples) - (fMean * fMean);
+				featureVariances.push(Math.max(0, fVar));
+			}
+
+			// Sort variances descending
+			featureVariances.sort(function(a, b) { return b - a; });
+			var totalVar = 0;
+			for (var f = 0; f < featureVariances.length; f++) totalVar += featureVariances[f];
+
+			if (totalVar > 0) {
+				// How many dimensions explain 95% of variance?
+				var cumVar = 0;
+				var effectiveDims = 0;
+				for (var f = 0; f < featureVariances.length; f++) {
+					cumVar += featureVariances[f];
+					effectiveDims++;
+					if (cumVar / totalVar >= 0.95) break;
+				}
+				var dimRatio = effectiveDims / numFeatures;
+				if (dimRatio < 0.2 && numFeatures > 8) {
+					warnings.push({
+						type: "rank_collapse",
+						severity: dimRatio < 0.1 ? "warning" : "info",
+						effectiveDims: effectiveDims,
+						totalDims: numFeatures,
+						dimRatio: dimRatio
+					});
+				}
+			}
+		}
+	}
+
+	// --- 4. Bimodal Distribution Detection ---
+	// A bimodal output distribution may indicate the layer is acting as a
+	// binary switch rather than extracting useful features
+	if (stats.count > 20) {
+		var histogram = _computeHistogram(layerData.output, 20);
+		if (histogram && histogram.counts) {
+			var counts = histogram.counts;
+			var totalCount = 0;
+			for (var h = 0; h < counts.length; h++) totalCount += counts[h];
+
+			// Find valleys: local minima surrounded by higher bins
+			var valleys = 0;
+			var deepestValleyDepth = 0;
+			for (var h = 2; h < counts.length - 2; h++) {
+				var left = Math.max(counts[h - 1], counts[h - 2]);
+				var right = Math.max(counts[h + 1], counts[h + 2]);
+				var current = counts[h];
+				if (current < left * 0.5 && current < right * 0.5 && left > totalCount * 0.05 && right > totalCount * 0.05) {
+					valleys++;
+					var depth = 1 - (current / Math.min(left, right));
+					if (depth > deepestValleyDepth) deepestValleyDepth = depth;
+				}
+			}
+
+			if (valleys > 0 && deepestValleyDepth > 0.5) {
+				warnings.push({
+					type: "bimodal_distribution",
+					severity: "info",
+					valleys: valleys,
+					depth: deepestValleyDepth
+				});
+			}
+		}
+	}
+
+	// --- 5. Output Clipping / Railing ---
+	// Many values stuck at the same extreme (e.g., clipped at 0 by ReLU,
+	// or at 1 by sigmoid, or at clip boundaries)
+	if (stats.count > 10) {
+		var atMax = 0, atMin = 0;
+		for (var i = 0; i < layerData.output.length; i++) {
+			if (layerData.output[i] === stats.max) atMax++;
+			if (layerData.output[i] === stats.min) atMin++;
+		}
+		var railFraction = Math.max(atMax, atMin) / stats.count;
+		// Only flag if not already caught by dying_relu or constant_output
+		if (railFraction > 0.4 && stats.min !== stats.max && stats.zeroFraction <= 0.8) {
+			warnings.push({
+				type: "output_railing",
+				severity: railFraction > 0.7 ? "warning" : "info",
+				railFraction: railFraction,
+				railValue: atMax > atMin ? stats.max : stats.min
+			});
+		}
+	}
+
+	// --- 6. Numerical Instability (pre-explosion) ---
+	// Large values that haven't hit 1e6 yet but are growing dangerously
+	if (stats.max > 1000 || stats.min < -1000) {
+		if (stats.max <= 1e6 && stats.min >= -1e6) { // Not already caught by exploding
+			warnings.push({
+				type: "large_activations",
+				severity: (stats.max > 10000 || stats.min < -10000) ? "warning" : "info",
+				max: stats.max,
+				min: stats.min
+			});
+		}
+	}
+
+	// --- 7. Entropy Collapse (for softmax/probability outputs) ---
+	// If the output looks like probabilities, check if entropy is too low (overconfident)
+	// or too high (uniform/underfitting)
+	if (stats.min >= 0 && stats.max <= 1.001) {
+		var sumProbs = 0;
+		for (var i = 0; i < layerData.output.length; i++) {
+			sumProbs += layerData.output[i];
+		}
+		// Check if it sums to ~1 (probability distribution)
+		var numClasses = layerData.output.length;
+		if (numClasses > 1 && Math.abs(sumProbs - 1.0) < 0.01) {
+			// Compute entropy
+			var entropy = 0;
+			for (var i = 0; i < numClasses; i++) {
+				var p = layerData.output[i];
+				if (p > 1e-10) {
+					entropy -= p * Math.log(p);
+				}
+			}
+			var maxEntropy = Math.log(numClasses);
+			var normalizedEntropy = entropy / maxEntropy;
+
+			if (normalizedEntropy < 0.1 && numClasses > 2) {
+				warnings.push({
+					type: "overconfident_output",
+					severity: "info",
+					entropy: entropy,
+					normalizedEntropy: normalizedEntropy,
+					maxProb: stats.max
+				});
+			} else if (normalizedEntropy > 0.95) {
+				warnings.push({
+					type: "uniform_output",
+					severity: "warning",
+					entropy: entropy,
+					normalizedEntropy: normalizedEntropy
+				});
+			}
+		}
+	}
+
+	// --- 8. Oscillating Outputs (sign changes indicating instability) ---
+	// Rapid sign alternations in sequential outputs can indicate instability
+	if (stats.count > 10 && stats.negatives > 0 && stats.positives > 0) {
+		var signChanges = 0;
+		var prevSign = layerData.output[0] >= 0 ? 1 : -1;
+		for (var i = 1; i < layerData.output.length; i++) {
+			var v = layerData.output[i];
+			if (isNaN(v) || !isFinite(v)) continue;
+			var currSign = v >= 0 ? 1 : -1;
+			if (currSign !== prevSign) signChanges++;
+			prevSign = currSign;
+		}
+		var signChangeRate = signChanges / (stats.count - 1);
+		// A random signal would have ~0.5 sign change rate
+		// Much higher than 0.5 suggests high-frequency oscillation
+		if (signChangeRate > 0.7) {
+			warnings.push({
+				type: "high_frequency_oscillation",
+				severity: "info",
+				signChangeRate: signChangeRate
+			});
+		}
+	}
+
+	// --- 9. Near-Zero Mean with High Std (potential instability for non-normalized layers) ---
+	if (Math.abs(stats.mean) < 0.01 && stats.std > 10 && stats.count > 10) {
+		warnings.push({
+			type: "high_variance_zero_mean",
+			severity: "info",
+			mean: stats.mean,
+			std: stats.std
+		});
+	}
+
+	// --- 10. Coefficient of Variation (CV) too extreme ---
+	// CV = std/|mean| — if very high, the signal-to-noise ratio is poor
+	if (Math.abs(stats.mean) > 1e-6) {
+		var cv = stats.std / Math.abs(stats.mean);
+		if (cv > 50) {
+			warnings.push({
+				type: "high_coefficient_of_variation",
+				severity: "info",
+				cv: cv
+			});
 		}
 	}
 
@@ -1050,38 +1321,51 @@ function _renderWarningItem(wn) {
 	var msg = "";
 
 	switch (wn.type) {
-		case "dying_relu":
-			msg = "<span class='TRANSLATEME_layer_io_dying_relu'></span>: " + (wn.zeroFraction * 100).toFixed(1) + "% <span class='TRANSLATEME_layer_io_zeros'></span>";
+		// ... existing cases ...
+
+		case "activation_saturation":
+			msg = "<span class='TRANSLATEME_layer_io_activation_saturation'></span>: " +
+				(wn.saturationFraction * 100).toFixed(1) + "% <span class='TRANSLATEME_layer_io_near_boundary'></span>";
 			break;
-		case "exploding":
-			msg = "<span class='TRANSLATEME_layer_io_exploding'></span> [" + wn.min.toExponential(1) + ", " + wn.max.toExponential(1) + "]";
+		case "dead_neurons":
+			msg = "<span class='TRANSLATEME_layer_io_dead_neurons'></span>: " +
+				wn.deadCount + "/" + wn.totalNeurons + " (" + (wn.deadFraction * 100).toFixed(1) + "%)";
 			break;
-		case "saturated":
-			msg = "<span class='TRANSLATEME_layer_io_saturated'></span> (std=" + wn.std.toExponential(2) + ")";
+		case "rank_collapse":
+			msg = "<span class='TRANSLATEME_layer_io_rank_collapse'></span>: " +
+				wn.effectiveDims + "/" + wn.totalDims + " <span class='TRANSLATEME_layer_io_effective_dims'></span> (" +
+				(wn.dimRatio * 100).toFixed(1) + "%)";
 			break;
-		case "nan_inf":
-			msg = "<span class='TRANSLATEME_layer_io_nan_inf'></span> (NaN:" + wn.nanCount + ", Inf:" + wn.infCount + ")";
+		case "bimodal_distribution":
+			msg = "<span class='TRANSLATEME_layer_io_bimodal'></span> (" +
+				wn.valleys + " valley(s), depth=" + (wn.depth * 100).toFixed(0) + "%)";
 			break;
-		case "vanishing":
-			msg = "<span class='TRANSLATEME_layer_io_vanishing'></span> (range=" + wn.range.toExponential(2) + ")";
+		case "output_railing":
+			msg = "<span class='TRANSLATEME_layer_io_output_railing'></span>: " +
+				(wn.railFraction * 100).toFixed(1) + "% <span class='TRANSLATEME_layer_io_at_value'></span> " + wn.railValue.toFixed(4);
 			break;
-		case "high_kurtosis":
-			msg = "<span class='TRANSLATEME_layer_io_high_kurtosis'></span> (\u03BA=" + wn.kurtosis.toFixed(2) + ")";
+		case "large_activations":
+			msg = "<span class='TRANSLATEME_layer_io_large_activations'></span> [" +
+				wn.min.toFixed(1) + ", " + wn.max.toFixed(1) + "]";
 			break;
-		case "high_skewness":
-			msg = "<span class='TRANSLATEME_layer_io_high_skewness'></span> (\u03B3\u2081=" + wn.skewness.toFixed(2) + ")";
+		case "overconfident_output":
+			msg = "<span class='TRANSLATEME_layer_io_overconfident'></span> (entropy=" +
+				wn.normalizedEntropy.toFixed(3) + ", max_p=" + wn.maxProb.toFixed(4) + ")";
 			break;
-		case "constant_output":
-			msg = "<span class='TRANSLATEME_layer_io_constant_output'></span> (value=" + wn.value + ")";
+		case "uniform_output":
+			msg = "<span class='TRANSLATEME_layer_io_uniform_output'></span> (normalized entropy=" +
+				wn.normalizedEntropy.toFixed(3) + ")";
 			break;
-		case "all_negative":
-			msg = "<span class='TRANSLATEME_layer_io_all_negative'></span>";
+		case "high_frequency_oscillation":
+			msg = "<span class='TRANSLATEME_layer_io_oscillation'></span> (sign change rate=" +
+				wn.signChangeRate.toFixed(3) + ")";
 			break;
-		case "magnitude_explosion":
-			msg = "<span class='TRANSLATEME_layer_io_magnitude_explosion'></span> (ratio=" + wn.ratio.toFixed(1) + "x)";
+		case "high_variance_zero_mean":
+			msg = "<span class='TRANSLATEME_layer_io_high_var_zero_mean'></span> (\u03BC=" +
+				wn.mean.toFixed(4) + ", \u03C3=" + wn.std.toFixed(2) + ")";
 			break;
-		case "magnitude_collapse":
-			msg = "<span class='TRANSLATEME_layer_io_magnitude_collapse'></span> (ratio=" + wn.ratio.toExponential(2) + ")";
+		case "high_coefficient_of_variation":
+			msg = "<span class='TRANSLATEME_layer_io_high_cv'></span> (CV=" + wn.cv.toFixed(1) + ")";
 			break;
 		default:
 			msg = wn.type;
