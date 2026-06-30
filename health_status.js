@@ -744,7 +744,7 @@ function renderLayerIOStats(divTarget) {
 	// Update translations
 	try {
 		if (typeof update_translations === "function") {
-			update_translations();
+			update_translations(); // await not possible here
 		}
 	} catch (e) { }
 
