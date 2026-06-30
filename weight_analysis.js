@@ -194,53 +194,7 @@ var WeightAnalysis = (function() {
 		return Math.max(0, Math.min(100, finalLayerScore));
 	}
 
-	function _computeInitDeviationScore(stats, shape) {
-		if (!stats || !shape || shape.length < 2) return 0;
 
-		var fanIn, fanOut;
-
-		if (shape.length === 4) {
-			var receptiveFieldSize = shape[0] * shape[1];
-			fanIn = shape[2] * receptiveFieldSize;
-			fanOut = shape[3] * receptiveFieldSize;
-		} else if (shape.length === 2) {
-			fanIn = shape[0];
-			fanOut = shape[1];
-		} else {
-			return 0;
-		}
-
-		// Expected std for different initialization schemes
-		var glorotUniformLimit = Math.sqrt(6.0 / (fanIn + fanOut));
-		var glorotUniformStd = glorotUniformLimit / Math.sqrt(3);
-		var glorotNormalStd = Math.sqrt(2.0 / (fanIn + fanOut));
-		var heNormalStd = Math.sqrt(2.0 / fanIn);
-		var lecunNormalStd = Math.sqrt(1.0 / fanIn);
-
-		var candidates = [glorotUniformStd, glorotNormalStd, heNormalStd, lecunNormalStd];
-		var actualStd = stats.std;
-
-		var minDeviation = Infinity;
-		for (var i = 0; i < candidates.length; i++) {
-			var deviation = Math.abs(actualStd - candidates[i]) / Math.max(candidates[i], 1e-8);
-			if (deviation < minDeviation) minDeviation = deviation;
-		}
-
-		// Mean shift from zero is a very strong training signal
-		var meanShift = Math.abs(stats.mean) / Math.max(actualStd, 1e-8);
-
-		// Score: even small deviations from init should register
-		// Random init: minDeviation ~ 0-0.05, meanShift ~ 0
-		// Trained: minDeviation can be 0.1-1.0+, meanShift can be 0.01+
-		var stdScore = Math.min(minDeviation * 250, 100);
-		var meanScore = Math.min(meanShift * 500, 100);
-
-		// Kurtosis deviation from expected (uniform=-1.2, normal=0)
-		// Trained networks often develop excess kurtosis
-		var kurtosisBonus = Math.min(Math.abs(stats.kurtosis) * 20, 30);
-
-		return Math.min(100, stdScore * 0.50 + meanScore * 0.35 + kurtosisBonus);
-	}
 
 	function _computeLayerScore(indicators, isBiasLayer, shape) {
 		var entropyScore = indicators.entropy.score;
@@ -286,6 +240,75 @@ var WeightAnalysis = (function() {
 		return Math.max(0, Math.min(100, finalLayerScore));
 	}
 
+	function _computeInitDeviationScore(stats, shape) {
+		if (!stats || !shape || shape.length < 2) return 0;
+
+		var fanIn, fanOut;
+
+		if (shape.length === 4) {
+			var receptiveFieldSize = shape[0] * shape[1];
+			fanIn = shape[2] * receptiveFieldSize;
+			fanOut = shape[3] * receptiveFieldSize;
+		} else if (shape.length === 2) {
+			fanIn = shape[0];
+			fanOut = shape[1];
+		} else {
+			return 0;
+		}
+
+		// Expected std for different initialization schemes
+		var glorotUniformLimit = Math.sqrt(6.0 / (fanIn + fanOut));
+		var glorotUniformStd = glorotUniformLimit / Math.sqrt(3);
+		var glorotNormalStd = Math.sqrt(2.0 / (fanIn + fanOut));
+		var heNormalStd = Math.sqrt(2.0 / fanIn);
+		var lecunNormalStd = Math.sqrt(1.0 / fanIn);
+
+		var candidates = [glorotUniformStd, glorotNormalStd, heNormalStd, lecunNormalStd];
+		var actualStd = stats.std;
+
+		// Find closest init scheme
+		var minDeviation = Infinity;
+		var closestExpectedStd = candidates[0];
+		for (var i = 0; i < candidates.length; i++) {
+			var deviation = Math.abs(actualStd - candidates[i]) / Math.max(candidates[i], 1e-8);
+			if (deviation < minDeviation) {
+				minDeviation = deviation;
+				closestExpectedStd = candidates[i];
+			}
+		}
+
+		// Mean shift from zero — THE strongest signal for training
+		// Even 1 epoch of training shifts the mean away from 0
+		var meanShift = Math.abs(stats.mean) / Math.max(closestExpectedStd, 1e-8);
+
+		// Std deviation change — trained networks' std drifts from init
+		var stdScore = Math.min(minDeviation / 0.03 * 100, 100);
+
+		// Mean score — even tiny mean shifts are significant
+		// Random init mean for N params: expected |mean| ~ std/sqrt(N)
+		// So normalize by expected random mean
+		var expectedRandomMean = closestExpectedStd / Math.sqrt(Math.max(stats.count, 1));
+		var meanSignificance = Math.abs(stats.mean) / Math.max(expectedRandomMean, 1e-10);
+		// If mean is more than 2x what random would produce, that's training
+		var meanScore = Math.min((meanSignificance / 2.0) * 100, 100);
+
+		// Kurtosis deviation — uniform init has kurtosis=-1.2, normal has 0
+		// Training pushes kurtosis positive (heavy tails / sparsity)
+		var kurtosisScore = 0;
+		// Check against both uniform (-1.2) and normal (0) expected values
+		var kurtDevFromUniform = Math.abs(stats.kurtosis - (-1.2));
+		var kurtDevFromNormal = Math.abs(stats.kurtosis - 0);
+		var minKurtDev = Math.min(kurtDevFromUniform, kurtDevFromNormal);
+		kurtosisScore = Math.min(minKurtDev / 0.3 * 100, 100);
+
+		// Skewness — init should be ~0, training can introduce asymmetry
+		var skewScore = Math.min(Math.abs(stats.skewness) / 0.05 * 100, 100);
+
+		// Combined with emphasis on mean shift (most reliable for short training)
+		var combined = stdScore * 0.25 + meanScore * 0.35 + kurtosisScore * 0.20 + skewScore * 0.20;
+		return Math.max(0, Math.min(100, combined));
+	}
+
 	function analyzeModel(m) {
 		var weights = _getWeightsFromModel(m);
 		if (!weights || weights.length === 0) {
@@ -309,56 +332,96 @@ var WeightAnalysis = (function() {
 			var entropy = _computeEntropy(data, 50);
 			var maxEntropy = Math.log2(50);
 			var entropyRatio = entropy / maxEntropy;
-			// Lowered baseline: random init is typically 0.90-0.98
-			// Anything below 0.88 starts scoring
-			var entropyBaseline = 0.88;
-			var entropyScore = entropyRatio < entropyBaseline
-				? ((entropyBaseline - entropyRatio) / entropyBaseline) * 200
-				: 0;
-			// Also score if entropy is VERY high (saturated layers)
-			if (entropyRatio > 0.98) {
-				entropyScore = Math.max(entropyScore, 15); // slight signal
+			var entropyBaseline = 0.92;
+			var entropyScore = 0;
+			if (entropyRatio < entropyBaseline) {
+				entropyScore = ((entropyBaseline - entropyRatio) / entropyBaseline) * 250;
+			}
+			// Very high entropy can also be a signal (saturated/dead layers)
+			if (entropyRatio > 0.99) {
+				entropyScore = Math.max(entropyScore, 10);
 			}
 			entropyScore = Math.min(Math.max(0, entropyScore), 100);
 			indicators.entropy = { value: entropy, maxEntropy: maxEntropy, ratio: entropyRatio, score: entropyScore };
 
 			// 2. Sparsity
 			var sparsity = _computeSparsity(data, stats);
-			// Lowered baseline: random init has ~2-3% near zero
-			var sparsityBaseline = 0.03;
+			var sparsityBaseline = 0.02;
 			var sparsityAdjusted = Math.max(0, sparsity - sparsityBaseline);
-			var sparsityScore = Math.min(sparsityAdjusted * 300, 100);
+			var sparsityScore = Math.min(sparsityAdjusted * 400, 100);
 			indicators.sparsity = { value: sparsity, score: sparsityScore };
 
 			// 3. SVD steepness
 			var svdSteepness = _computeSVDSteepness(data, w.shape);
-			var svdScore = Math.min(svdSteepness * 180, 100);
+			var svdScore = Math.min(svdSteepness * 200, 100);
 			indicators.svd = { steepness: svdSteepness, score: svdScore };
 
-			// 4. Kurtosis - lowered baseline
-			var kurtosisBaseline = 0.5; // was 1.5
+			// 4. Kurtosis
+			var kurtosisBaseline = 0.3;
 			var kurtosisAdjusted = Math.max(0, Math.abs(stats.kurtosis) - kurtosisBaseline);
-			var kurtosisScore = Math.min(kurtosisAdjusted * 30, 100);
+			var kurtosisScore = Math.min(kurtosisAdjusted * 40, 100);
 			indicators.kurtosis = { value: stats.kurtosis, score: kurtosisScore };
 
-			// 5. KS-test - lowered baseline
+			// 5. KS-test
 			var ksD = _ksTestAgainstNormal(Array.from(data), stats.mean, stats.std);
-			var ksBaseline = 0.02; // was 0.06
+			var ksBaseline = 0.01;
 			var ksAdjusted = Math.max(0, ksD - ksBaseline);
-			var ksScore = Math.min(ksAdjusted * 600, 100);
+			var ksScore = Math.min(ksAdjusted * 800, 100);
 			indicators.ksTest = { d: ksD, score: ksScore };
 
 			// 6. Inter-filter correlation
 			var correlation = _computeAvgInterFilterCorrelation(data, w.shape);
-			var corrScore = Math.min(correlation * 400, 100);
+			var corrScore = Math.min(correlation * 500, 100);
 			indicators.correlation = { value: correlation, score: corrScore };
 
-			// 7. Init deviation (THE KEY MISSING INDICATOR)
+			// 7. Init deviation — THE PRIMARY INDICATOR
 			var initDevScore = _computeInitDeviationScore(stats, w.shape);
 			indicators.initDeviation = { score: initDevScore };
 
-			// Use the proper _computeLayerScore with boost logic
-			var layerScore = _computeLayerScore(indicators, isBiasLayer, w.shape);
+			// === LAYER SCORING ===
+			var layerScore = 0;
+
+			if (isBiasLayer) {
+				// Biases init to 0. ANY non-zero value = trained.
+				var biasNonZero = 0;
+				var biasMaxAbs = 0;
+				for (var j = 0; j < data.length; j++) {
+					if (Math.abs(data[j]) > 1e-7) biasNonZero++;
+					if (Math.abs(data[j]) > biasMaxAbs) biasMaxAbs = Math.abs(data[j]);
+				}
+				var biasNonZeroFrac = biasNonZero / Math.max(data.length, 1);
+				// If even 10% of biases are non-zero, that's strong evidence
+				layerScore = Math.min(biasNonZeroFrac * 120, 100);
+				// Magnitude boost
+				layerScore = Math.max(layerScore, Math.min(biasMaxAbs * 200, 100));
+			} else {
+				// Kernel layers: weighted combination with initDeviation as primary
+				var allScores = [
+					{ score: initDevScore, weight: 0.40 },
+					{ score: svdScore, weight: 0.15 },
+					{ score: ksScore, weight: 0.12 },
+					{ score: sparsityScore, weight: 0.10 },
+					{ score: kurtosisScore, weight: 0.08 },
+					{ score: entropyScore, weight: 0.08 },
+					{ score: corrScore, weight: 0.07 }
+				];
+
+				var weightedSum = 0;
+				for (var j = 0; j < allScores.length; j++) {
+					weightedSum += allScores[j].score * allScores[j].weight;
+				}
+
+				// Top-signal boost: if any single indicator is very confident, boost
+				var sortedScores = allScores.map(function(x) { return x.score; }).sort(function(a, b) { return b - a; });
+				var topBoost = 0;
+				if (sortedScores[0] > 25) topBoost += sortedScores[0] * 0.20;
+				if (sortedScores[1] > 15) topBoost += sortedScores[1] * 0.10;
+				if (sortedScores[2] > 10) topBoost += sortedScores[2] * 0.05;
+
+				layerScore = weightedSum + topBoost;
+			}
+
+			layerScore = Math.max(0, Math.min(100, layerScore));
 
 			var layerWeight = data.length;
 			totalScore += layerScore * layerWeight;
@@ -384,23 +447,23 @@ var WeightAnalysis = (function() {
 			});
 		}
 
-		// Bias analysis
+		// Bias analysis (global)
 		var biasScore = _analyzeBiases(weights) * 100;
 
-		// Final score: bias gets 30% weight (was 15%)
+		// Final score: bias gets significant weight since it's the most reliable signal
 		var rawScore = totalWeight > 0 ? totalScore / totalWeight : 0;
-		var finalScore = rawScore * 0.70 + biasScore * 0.30;
+		var finalScore = rawScore * 0.65 + biasScore * 0.35;
 		finalScore = Math.max(0, Math.min(100, finalScore));
 
-		// Confidence
+		// Confidence based on parameter count
 		var totalParams = 0;
 		for (var i = 0; i < weights.length; i++) totalParams += weights[i].data.length;
 		var confidence = Math.min(100, Math.log10(totalParams + 1) * 25);
 
 		var messageKey = "";
-		if (finalScore > 65) messageKey = "wa_model_very_likely_trained";
-		else if (finalScore > 40) messageKey = "wa_model_shows_training_signs";
-		else if (finalScore > 18) messageKey = "wa_model_slightly_trained_or_special_init";
+		if (finalScore > 60) messageKey = "wa_model_very_likely_trained";
+		else if (finalScore > 50) messageKey = "wa_model_shows_training_signs";
+		else if (finalScore > 15) messageKey = "wa_model_slightly_trained_or_special_init";
 		else messageKey = "wa_model_seems_untrained";
 
 		return {
@@ -728,145 +791,6 @@ var WeightAnalysis = (function() {
 		var upper = Math.ceil(idx);
 		if (lower === upper) return sortedArr[lower];
 		return sortedArr[lower] + (idx - lower) * (sortedArr[upper] - sortedArr[lower]);
-	}
-
-	// ============================================================
-	// MAIN ANALYSIS FUNCTION
-	// ============================================================
-
-	function analyzeModel(m) {
-		var weights = _getWeightsFromModel(m);
-		if (!weights || weights.length === 0) {
-			return { score: 0, confidence: 0, message: "wa_no_weights_found", layers: [] };
-		}
-
-		var layerResults = [];
-		var totalScore = 0;
-		var totalWeight = 0;
-
-		for (var i = 0; i < weights.length; i++) {
-			var w = weights[i];
-			var data = w.data;
-			var stats = _computeStats(data);
-			if (!stats) continue;
-
-			var layerScore = 0;
-			var indicators = {};
-
-			// 1. Entropy
-			var entropy = _computeEntropy(data, 50);
-			var maxEntropy = Math.log2(50);
-			var entropyRatio = entropy / maxEntropy;
-			// Random uniform/Gaussian init typically has entropyRatio > 0.85
-			// Only score as "trained" if entropy drops significantly below that
-			var entropyBaseline = 0.82;
-			var entropyScore = entropyRatio < entropyBaseline 
-				? ((entropyBaseline - entropyRatio) / entropyBaseline) * 100 
-				: 0;
-			entropyScore = Math.min(Math.max(0, entropyScore), 100);
-			indicators.entropy = { value: entropy, maxEntropy: maxEntropy, ratio: entropyRatio, score: entropyScore };
-
-			// 2. Sparsity
-			var sparsity = _computeSparsity(data, 0.01);
-			var sparsityBaseline = 0.05; // Random init can have ~3-5% near zero by chance
-			var sparsityAdjusted = Math.max(0, sparsity - sparsityBaseline);
-			var sparsityScore = Math.min(sparsityAdjusted * 180, 100);
-			indicators.sparsity = { value: sparsity, score: sparsityScore };
-
-			// 3. SVD steepness
-			var svdSteepness = _computeSVDSteepness(data);
-			var svdScore = Math.min(svdSteepness * 130, 100);
-			indicators.svd = { steepness: svdSteepness, score: svdScore };
-
-			// 4. Kurtosis
-			var kurtosisBaseline = 1.5; // Allow some natural variation
-			var kurtosisAdjusted = Math.max(0, Math.abs(stats.kurtosis) - kurtosisBaseline);
-			var kurtosisScore = Math.min(kurtosisAdjusted * 15, 100);
-			indicators.kurtosis = { value: stats.kurtosis, score: kurtosisScore };
-
-			// 5. KS-test
-			var ksD = _ksTestAgainstNormal(Array.from(data), stats.mean, stats.std);
-			// Baseline: even a perfect Gaussian sample has KS-D ~ 0.03-0.06 for typical sizes
-			// Only score deviations above 0.06 as evidence of training
-			var ksBaseline = 0.06;
-			var ksAdjusted = Math.max(0, ksD - ksBaseline);
-			var ksScore = Math.min(ksAdjusted * 400, 100);
-			indicators.ksTest = { d: ksD, score: ksScore };
-
-			// 6. Inter-filter correlation
-			var correlation = _computeAvgInterFilterCorrelation(data, w.shape);
-			var corrScore = Math.min(correlation * 200, 100);
-			indicators.correlation = { value: correlation, score: corrScore };
-
-			// Weighted combination
-			layerScore = (
-				entropyScore * 0.15 +
-				sparsityScore * 0.15 +
-				svdScore * 0.25 +
-				kurtosisScore * 0.15 +
-				ksScore * 0.20 +
-				corrScore * 0.10
-			);
-
-			layerScore = Math.max(0, Math.min(100, layerScore));
-
-			var layerWeight = data.length;
-			totalScore += layerScore * layerWeight;
-			totalWeight += layerWeight;
-
-			// Compute sorted data for box plot / CDF
-			var sortedData = [];
-			for (var si = 0; si < data.length; si++) {
-				if (!isNaN(data[si]) && isFinite(data[si])) sortedData.push(data[si]);
-			}
-			sortedData.sort(function(a, b) { return a - b; });
-
-			layerResults.push({
-				name: w.name,
-				shape: w.shape,
-				paramCount: data.length,
-				stats: stats,
-				indicators: indicators,
-				score: layerScore,
-				histogram: _computeHistogram(data, 40),
-				sortedData: sortedData,
-				l2Norm: Math.sqrt(sortedData.reduce(function(s, v) { return s + v * v; }, 0))
-			});
-		}
-
-		// Bias analysis
-
-		var biasScore = _analyzeBiases(weights) * 100;
-
-		// Final score - reduce bias weight since it's less reliable
-		var rawScore = totalWeight > 0 ? totalScore / totalWeight : 0;
-		var finalScore = rawScore * 0.90 + biasScore * 0.10;
-		finalScore = Math.max(0, Math.min(100, finalScore));
-
-		// Final score
-		var rawScore = totalWeight > 0 ? totalScore / totalWeight : 0;
-		var finalScore = rawScore * 0.85 + biasScore * 0.15;
-		finalScore = Math.max(0, Math.min(100, finalScore));
-
-		// Confidence
-		var totalParams = 0;
-		for (var i = 0; i < weights.length; i++) totalParams += weights[i].data.length;
-		var confidence = Math.min(100, Math.log10(totalParams + 1) * 25);
-
-		var messageKey = "";
-		if (finalScore > 70) messageKey = "wa_model_very_likely_trained";
-		else if (finalScore > 45) messageKey = "wa_model_shows_training_signs";
-		else if (finalScore > 20) messageKey = "wa_model_slightly_trained_or_special_init";
-		else messageKey = "wa_model_seems_untrained";
-
-		return {
-			score: Math.round(finalScore),
-			confidence: Math.round(confidence),
-			messageKey: messageKey,
-			biasScore: Math.round(biasScore),
-			layers: layerResults,
-			totalParams: totalParams
-		};
 	}
 
 	// ============================================================
