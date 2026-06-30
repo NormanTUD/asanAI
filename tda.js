@@ -105,7 +105,7 @@ var TDAAnalysis = (function () {
 	function _triggerTranslations() {
 		try {
 			if (typeof update_translations === "function") {
-				update_translations();
+				update_translations(); // await not possible
 			}
 		} catch (e) {
 			// silent
