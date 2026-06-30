@@ -1,11 +1,22 @@
 window.bibData = {
+	"chessprogrammingwiki": {
+		title: "El Ajedrecista",
+		author: "Chessprogramming Wiki contributors",
+		year: 2020,
+		url: "https://www.chessprogramming.org/El_Ajedrecista"
+	},
+	"ieeespectrum2023chess": {
+		title: "This 1920 Chess Automaton Was Wired to Win",
+		author: "Allison Marsh",
+		year: 2023,
+		url: "https://spectrum.ieee.org/chess-computer-1920"
+	},
 	"thomasdcolmar1820": {
 		title: "Machine arithmétique dite Arithmomètre",
 		author: "Charles Xavier Thomas de Colmar",
 		year: 1820,
 		url: "https://en.wikipedia.org/wiki/Arithmometer"
 	},
-
 	"summaarithmetica": {
 		url: "https://dn790008.ca.archive.org/0/items/summa-de-arithmetica-geometria-proportioni-et-proportionalita/Summa%20de%20arithmetica%2C%20geometria%2C%20proportioni%20et%20proportionalita_text.pdf",
 		title: "Summa de arithmetica",

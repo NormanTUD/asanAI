@@ -323,7 +323,11 @@ This "Symbolic AI" dominated the field for nearly forty years. It was believed t
     <figcaption class="md">The \citealternativetitle{wienerajedrecista}, a chess playing machine first demonstrated in 1913, invented by Leonardo Torres Quevedo.</figcaption>
 </figure>
 
-Before the term "Artificial Intelligence" existed, before McCulloch-Pitts formalized the artificial neuron, the Spanish engineer \citeauthor{torres1914} built the first working AI system: **El Ajedrecista**, an electromechanical chess end-game player capable of automatically checkmating a human opponent with king and rook against king. Back then, chess was considered an activity restricted to the realm of intelligent creatures. The machine was still considered impressive decades later when AI pioneer Norbert Wiener played against it at the 1951 Paris conference on calculating machines and human thought, now often viewed as the first conference on AI.
+Before the term "Artificial Intelligence" existed, the Spanish engineer \citeauthor{torres1914} built the first working AI system: **El Ajedrecista**, an electromechanical chess endgame player capable of automatically checkmating a human opponent with king and rook against king \cite{torres1914}. Back then, chess was considered an activity restricted to the realm of intelligent creatures. Torres Quevedo wanted to redefine what we mean by "thinking," demonstrating that machines could make choices from a complex set of relational possibilities without human intervention \cite{ieeespectrum2023chess}.
+
+The machine's sensing system used a chessboard where each of the 64 squares consisted of three metallic pieces separated by insulating material: a circular central piece connected to the positive terminal and two triangular side pieces connected to horizontal and vertical conductors. The black king's silver mesh base closed two electrical circuits upon placement, driving sliding bars to positions encoding its coordinates; four additional bars tracked the white pieces similarly. The decision logic, implemented via battery-driven relays in a tree structure, partitioned the board into three zones (left: a–c files; center: d–e files; right: f–h files) and selected one of six operations based on the relative positions of the pieces, whether the black king shared a zone with the rook, the vertical distance between pieces, and the parity of horizontal separation \cite{torres1914}. Actuation was achieved through eight electro-mechanical actuators using a disc-and-pawl mechanism: when an electromagnet released the pawl, one full disc rotation executed a mechanical "microprogram" for a specific piece movement. In the upgraded 1920 version, electromagnets concealed beneath an ordinary chessboard moved the white pieces, and a gramophone announced *jaque al rey* (check) or *mate* (checkmate). If the opponent made three illegal moves, the machine shut down \cite{ieeespectrum2023chess}.
+
+While the algorithm was suboptimal, it guaranteed checkmate in fewer than 63 moves against any defense \cite{ieeespectrum2023chess}. The machine was still considered impressive decades later when AI pioneer Norbert Wiener played against it at the 1951 Paris conference on calculating machines and human thought \cite{torres1914} \cite{ieeespectrum2023chess}.
 
 ### The formalization of Neurons
 
@@ -1378,7 +1382,7 @@ The Python stack (Pandas + Matplotlib + Scikit-learn + Jupyter Notebooks) repres
 
 ### Jupyter Notebooks (2014)
 
-**Project Jupyter** (evolved from IPython, created by Fernando Pérez in 2001) introduced the **computational notebook** — a document combining:
+**Project Jupyter** (evolved from IPython, created by Fernando Pérez in 2001) introduced the **computational notebook**, a document combining:
 
 - Executable code cells
 - Rich text (Markdown, LaTeX)
@@ -1409,10 +1413,10 @@ $$\text{Punched cards} \to \text{SQL} \to \text{Spreadsheets} \to \text{Drag-and
 
 The latest evolution integrates **large language models** directly into data tools:
 
-- **Excel Copilot** — "Create a pivot table showing quarterly revenue by region"
-- **ChatGPT Code Interpreter** — upload a CSV, ask questions in natural language
-- **Pandas AI** — natural language queries over DataFrames
-- **Databricks Assistant** — AI-generated SQL and Python for data engineering
+- **Excel Copilot**: "Create a pivot table showing quarterly revenue by region"
+- **ChatGPT Code Interpreter**: upload a CSV, ask questions in natural language
+- **Pandas AI**: natural language queries over DataFrames
+- **Databricks Assistant**: AI-generated SQL and Python for data engineering
 
 This represents the logical endpoint of the abstraction trajectory: the user describes *what* they want in human language, and the system generates the *how* (formulas, code, queries) automatically.
 
@@ -1424,7 +1428,7 @@ This represents the logical endpoint of the abstraction trajectory: the user des
 | 1890s | Hollerith machines | Trained operators | Physical card encoding |
 | 1950s–60s | Mainframe batch | Programmers only | FORTRAN/COBOL expertise |
 | 1970s | Time-sharing terminals | Technical staff | Command-line fluency |
-| 1979 | VisiCalc | Business professionals | Minimal — visual grid |
+| 1979 | VisiCalc | Business professionals | Minimal, visual grid |
 | 1983 | Lotus 1-2-3 | Office workers | Basic computer literacy |
 | 1985–present | Microsoft Excel | Nearly everyone | Almost none |
 | 2006 | Google Sheets | Anyone with internet | None (free, browser-based) |
@@ -1437,9 +1441,9 @@ $$\text{Abstraction} \uparrow \implies \text{Barrier to entry} \downarrow \impli
 
 ## Summary
 
-The history of "Excel-like things" is fundamentally a history of **making data manipulation accessible to non-programmers**. From Pacioli's ruled ledgers through LANPAR's automatic recalculation, VisiCalc's visual grid, Lotus's integrated charting, Excel's GUI and VBA, Google Sheets' collaboration, to today's AI-powered natural language interfaces — each step removed a layer of technical friction between humans and their data.
+The history of "Excel-like things" is fundamentally a history of **making data manipulation accessible to non-programmers**. From Pacioli's ruled ledgers through LANPAR's automatic recalculation, VisiCalc's visual grid, Lotus's integrated charting, Excel's GUI and VBA, Google Sheets' collaboration, to today's AI-powered natural language interfaces, each step removed a layer of technical friction between humans and their data.
 
-The spreadsheet's enduring genius lies not in computational power (Python and SQL are vastly more capable) but in its **cognitive fit**: the two-dimensional grid mirrors how humans naturally think about structured information. Rows are records. Columns are attributes. Cells are facts. Formulas are relationships. This mental model, unchanged since 1979, has proven more durable than any specific technology — and every successor, from Pandas DataFrames to BI dashboards, ultimately pays homage to it.
+The spreadsheet's enduring genius lies not in computational power (Python and SQL are vastly more capable) but in its **cognitive fit**: the two-dimensional grid mirrors how humans naturally think about structured information. Rows are records. Columns are attributes. Cells are facts. Formulas are relationships. This mental model, unchanged since 1979, has proven more durable than any specific technology, and every successor, from Pandas DataFrames to BI dashboards, ultimately pays homage to it.
 
 All these developments, even though they were focussed for the normal user, are now used by data scientists creating systems like LLM as well, as well as the algorithms developed for those tools.
 </div>
