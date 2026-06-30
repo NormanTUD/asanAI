@@ -1,0 +1,2456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept Attractors in LLMs — Interactive Explainer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a1a;
+            --bg-card: #12122a;
+            --accent-blue: #4fc3f7;
+            --accent-purple: #b388ff;
+            --accent-pink: #ff80ab;
+            --accent-green: #69f0ae;
+            --accent-orange: #ffab40;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0c0;
+            --border-subtle: rgba(255,255,255,0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .hero canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.4;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 26, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            overflow-x: auto;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav.visible {
+            transform: translateY(0);
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: color 0.2s;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .nav a:hover, .nav a.active {
+            color: var(--accent-blue);
+        }
+
+        /* Sections */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+            margin: 2rem 0 1rem;
+        }
+
+        section p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-bottom: 1.25rem;
+            max-width: 75ch;
+        }
+
+        /* Interactive Panels */
+        .interactive-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+        }
+
+        .interactive-panel h4 {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .interactive-panel h4::before {
+            content: '▶';
+            font-size: 0.7rem;
+        }
+
+        .interactive-panel .description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Canvas containers */
+        .canvas-container {
+            width: 100%;
+            height: 450px;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .canvas-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            align-items: center;
+        }
+
+        .controls label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .controls input[type="range"] {
+            width: 120px;
+            accent-color: var(--accent-blue);
+        }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--accent-blue);
+            background: transparent;
+            color: var(--accent-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--accent-blue);
+            color: var(--bg-dark);
+        }
+
+        .btn.active {
+            background: var(--accent-blue);
+            color: var(--bg-dark);
+        }
+
+        /* Info cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-purple);
+        }
+
+        .info-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .info-card h5 {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Token table */
+        .token-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .token-table th, .token-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .token-table th {
+            color: var(--accent-purple);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .token-table td {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .token-tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: rgba(79, 195, 247, 0.15);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            margin: 0.1rem;
+        }
+
+        /* Flow diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            padding: 2rem;
+        }
+
+        .flow-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .flow-step .step-label {
+            font-size: 0.7rem;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .flow-step .step-title {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+        }
+
+        .flow-arrow {
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+        }
+
+        /* Equation display */
+        .equation {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: var(--accent-green);
+            overflow-x: auto;
+        }
+
+        /* Comparison section */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(18, 18, 42, 0.95);
+            border: 1px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+
+        /* Separator */
+        .section-sep {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Status indicator */
+        .status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+    <a href="#intro">Intro</a>
+    <a href="#what-are-attractors">What Are Attractors?</a>
+    <a href="#ifs-demo">IFS Demo</a>
+    <a href="#llm-layers">LLM Layers</a>
+    <a href="#concept-detection">Concept Detection</a>
+    <a href="#steering">Steering</a>
+    <a href="#applications">Applications</a>
+    <a href="#data-gen">Data Generation</a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-content">
+        <h1>Concept Attractors in LLMs</h1>
+        <p>An interactive exploration of how Large Language Models map semantically related prompts to specific regions in their latent space — and how we can exploit this for practical tasks.</p>
+        <p style="font-size: 0.9rem; color: var(--accent-purple);">Chytas & Singh, University of Wisconsin-Madison (2025)</p>
+    </div>
+    <div class="scroll-hint">↓</div>
+</div>
+
+<!-- Section: Introduction -->
+<section id="intro" class="fade-in">
+    <h2>The Core Insight</h2>
+    <p>When you ask an LLM about "Who is Gandalf the Grey?" and "What is the significance of Mount Doom?" — these prompts look completely different on the surface. Yet inside the model, at a specific layer, their internal representations <strong>converge to nearly the same point</strong>.</p>
+    <p>This paper shows that this convergence isn't random — it's the behavior of a <strong>dynamical system</strong> with concept-specific <em>Attractors</em>. And once you understand this, you can manipulate these Attractors to do remarkable things <em>without any training</em>.</p>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="icon">🌀</div>
+            <h5>Attractors Exist</h5>
+            <p>Semantically related prompts collapse to specific regions at specific layers inside LLMs.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🔬</div>
+            <h5>IFS Framework</h5>
+            <p>This behavior is explained through Iterated Function Systems — layers act as contractive mappings.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">⚡</div>
+            <h5>Training-Free</h5>
+            <p>By manipulating Attractors directly, we can solve translation, guardrailing, hallucination reduction, and more — without fine-tuning.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🎯</div>
+            <h5>Competitive Results</h5>
+            <p>Despite extreme simplicity, these methods match or exceed specialized baselines that require heavy training.</p>
+        </div>
+    </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: What Are Attractors? -->
+<section id="what-are-attractors" class="fade-in">
+    <h2>What Are Attractors?</h2>
+    <p>In dynamical systems, an <strong>Attractor</strong> is a set of states toward which a system tends to evolve, regardless of where it starts. Think of it like a drain in a bathtub — no matter where you place the water, it flows toward the drain.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Point Attractor</h4>
+        <p class="description">Click anywhere to place particles. Watch them all converge to the attractor point (the glowing center). This is the simplest type of attractor — a fixed point.</p>
+        <div class="canvas-container">
+            <canvas id="pointAttractorCanvas"></canvas>
+            <div class="status">Live simulation</div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="addParticlesBtn">Add Random Particles</button>
+            <button class="btn" id="clearParticlesBtn">Clear</button>
+            <label>Attraction Strength: <input type="range" id="attractionStrength" min="1" max="20" value="8"></label>
+        </div>
+    </div>
+
+    <h3>Types of Attractors</h3>
+    <p>Attractors come in different forms depending on the system:</p>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="icon">⚫</div>
+            <h5>Fixed Point</h5>
+            <p>The simplest attractor. All trajectories converge to a single point. Like a ball rolling to the bottom of a bowl.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🔄</div>
+            <h5>Limit Cycle</h5>
+            <p>Trajectories converge to a repeating loop. Like a heartbeat or a pendulum with friction.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🌊</div>
+            <h5>Strange Attractor</h5>
+            <p>Complex, fractal-like structures. Trajectories are attracted but never repeat exactly. The Lorenz attractor is famous.</p>
+        </div>
+    </div>
+
+    <p style="margin-top: 2rem;">In this paper, the authors discover that <strong>LLM layers act as contractive mappings</strong> that push representations of related concepts toward concept-specific attractors. Different concepts converge at different layers — Lord of the Rings at layer 24, programming languages at layer 19, literature at layer 18.</p>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: IFS Demo -->
+<section id="ifs-demo" class="fade-in">
+    <h2>Iterated Function Systems (IFS)</h2>
+    <p>An <strong>Iterated Function System</strong> is a collection of contractive mappings. When you repeatedly apply these mappings to any starting set, it converges to a unique <em>invariant set</em> — the Attractor. This is exactly what the paper claims LLM layers do!</p>
+
+    <div class="equation">
+        F(S) = ⋃ᵢ fᵢ(S)  →  The Hutchinson operator combines all contractive maps<br>
+        F(F(F(...F(S₀)...))) → S*  →  Repeated application converges to the Attractor S*
+    </div>
+
+    <div class="interactive-panel">
+        <h4>Interactive: IFS Fractal Generator (Barnsley Fern / Sierpinski)</h4>
+        <p class="description">Watch how repeatedly applying simple contractive transformations to random points generates complex, self-similar structures. Each colored region shows where one of the contractive maps sends points. This is analogous to how LLM layers transform representations.</p>
+        <div class="canvas-container">
+            <canvas id="ifsCanvas"></canvas>
+            <div class="status">Generating</div>
+        </div>
+        <div class="controls">
+            <button class="btn active" id="ifsFern">Barnsley Fern</button>
+            <button class="btn" id="ifsSierpinski">Sierpinski Triangle</button>
+            <button class="btn" id="ifsCustom">Custom (Concept-like)</button>
+            <button class="btn" id="ifsReset">Reset & Regenerate</button>
+            <label>Speed: <input type="range" id="ifsSpeed" min="1" max="100" value="50"></label>
+        </div>
+    </div>
+
+    <h3>The Collage Theorem</h3>
+    <p>The <strong>Collage Theorem</strong> is key to the paper's methodology. It states: if you can find contractive maps that "tile" (collage) a target set well, then the attractor of those maps will be close to that target. The authors use this to find the effective contractive map that each LLM implements for each concept.</p>
+
+    <div class="equation">
+        min_{M_eff, t_eff, iter} Σⱼ D(h_l(pⱼ), φ^iter_eff(h₀(pⱼ)))<br>
+        subject to: ||M_eff||_op < 1  (contractivity constraint)<br><br>
+        Where φ_eff(V) = M_eff · V + t_eff  is the effective affine contractive map
+    </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: LLM Layers as IFS -->
+<section id="llm-layers" class="fade-in">
+    <h2>LLM Layers as Contractive Maps</h2>
+    <p>The key hypothesis: each layer of an LLM acts like one iteration of a contractive mapping. As representations pass through layers, semantically related inputs get pulled closer together until they "collapse" into a concept-specific Attractor at a particular layer.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Layer-by-Layer Convergence</h4>
+        <p class="description">Watch how different prompts (colored dots) from the same concept start far apart but converge as they pass through layers. Each concept has its own attractor at a specific layer. Drag the layer slider to see the progression.</p>
+        <div class="canvas-container">
+            <canvas id="layerCanvas"></canvas>
+            <div class="status">Interactive</div>
+        </div>
+        <div class="controls">
+            <label>Layer: <span id="layerNum">0</span>/32 <input type="range" id="layerSlider" min="0" max="32" value="0"></label>
+            <button class="btn" id="animateLayers">▶ Animate Through Layers</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #4fc3f7;"></div> Lord of the Rings</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ff80ab;"></div> Harry Potter</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #69f0ae;"></div> Star Wars</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ffab40;"></div> Narnia</div>
+        </div>
+    </div>
+
+    <h3>Different Concepts, Different Layers</h3>
+    <p>A crucial finding: not all concepts converge at the same layer. The LLM organizes its knowledge hierarchically:</p>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="icon">📐</div>
+            <h5>Layer 16</h5>
+            <p>Task vectors (arithmetic operations) — fractal-like structure based on number of digits</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">📚</div>
+            <h5>Layer 18</h5>
+            <p>Literature concepts — books, genres, authors cluster here</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">💻</div>
+            <h5>Layer 19</h5>
+            <p>Programming languages — Python, Java, C++, JavaScript form distinct attractors</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🌍</div>
+            <h5>Layer 24</h5>
+            <p>Fictional worlds — Lord of the Rings, Harry Potter, Star Wars, Narnia</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🗣️</div>
+            <h5>Layer 27</h5>
+            <p>Natural languages — English, Spanish, Chinese, etc.</p>
+        </div>
+    </div>
+
+    <h3>What Do Attractors "Contain"?</h3>
+    <p>When you project an Attractor vector back to vocabulary space through the LLM's output layer, you get the "essence" of that concept — including things never explicitly in the prompts:</p>
+
+    <table class="token-table">
+        <thead>
+            <tr><th>Concept</th><th>Top Induced Tokens</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Harry Potter</td>
+                <td>
+                    <span class="token-tag">Harry</span>
+                    <span class="token-tag">wizard</span>
+                    <span class="token-tag">Hogwarts</span>
+                    <span class="token-tag">magical</span>
+                    <span class="token-tag">Voldemort</span>
+                    <span class="token-tag">London</span>
+                    <span class="token-tag">British</span>
+                    <span class="token-tag">£</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Lord of the Rings</td>
+                <td>
+                    <span class="token-tag">Lord</span>
+                    <span class="token-tag">Tolkien</span>
+                    <span class="token-tag">Middle</span>
+                    <span class="token-tag">Auckland</span>
+                    <span class="token-tag">NZ</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Star Wars</td>
+                <td>
+                    <span class="token-tag">Imperial</span>
+                    <span class="token-tag">Star</span>
+                    <span class="token-tag">galaxy</span>
+                    <span class="token-tag">Galactic</span>
+                    <span class="token-tag">Jedi</span>
+                    <span class="token-tag">Empire</span>
+                    <span class="token-tag">Skywalker</span>
+                    <span class="token-tag">Force</span>
+                </td>
+            </tr>
+            <tr>
+                <td>Narnia</td>
+                <td>
+                    <span class="token-tag">Kingdom</span>
+                    <span class="token-tag">Tolkien</span>
+                    <span class="token-tag">British</span>
+                    <span class="token-tag">Oxford</span>
+                    <span class="token-tag">Aslan</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p style="font-size: 0.9rem; color: var(--accent-purple);">Notice: £ for Harry Potter (British setting), Auckland/NZ for LOTR (filming location), Oxford for Narnia (C.S. Lewis's home) — knowledge beyond the surface text!</p>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: Concept Detection / Guardrailing -->
+<section id="concept-detection" class="fade-in">
+    <h2>Application: Concept Detection & Guardrailing</h2>
+    <p>Since concepts form distinct Attractors, we can <strong>detect</strong> when a prompt belongs to a specific concept by measuring how close its representation is to the known Attractor. This enables training-free "unlearning" — blocking responses about specific topics.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Concept Detection via Cosine Similarity</h4>
+        <p class="description">Drag the "query" point around. When it gets close enough to a concept's attractor (within threshold τ), it gets detected and blocked. Adjust τ to see the tradeoff between catching more queries vs. accidentally blocking unrelated ones.</p>
+        <div class="canvas-container">
+            <canvas id="guardrailCanvas"></canvas>
+            <div class="status">Interactive</div>
+        </div>
+        <div class="controls">
+            <label>Threshold τ: <span id="tauValue">0.75</span> <input type="range" id="tauSlider" min="50" max="95" value="75"></label>
+            <button class="btn" id="resetQuery">Reset Query Position</button>
+        </div>
+    </div>
+
+    <h3>How It Works</h3>
+    <div class="flow-diagram">
+        <div class="flow-step">
+            <div class="step-label">Step 1</div>
+            <div class="step-title">Collect concept samples</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Step 2</div>
+            <div class="step-title">Average hidden states at layer l</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Step 3</div>
+            <div class="step-title">Store as Attractor vector</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Inference</div>
+            <div class="step-title">Compare query to Attractor</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Decision</div>
+            <div class="step-title">Block if sim > τ</div>
+        </div>
+    </div>
+
+    <div class="equation">
+        cos_sim(h_l(query), Attractor_C) > τ  →  Block response<br>
+        cos_sim(h_l(query), Attractor_C) ≤ τ  →  Allow response
+    </div>
+
+    <p>The beauty of this approach: <strong>no training required</strong>, no retention data needed, and the threshold τ gives fine-grained control over the tradeoff between catching unwanted queries and accidentally blocking legitimate ones.</p>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: Steering -->
+<section id="steering" class="fade-in">
+    <h2>Attractor Traversals: Steering the LLM</h2>
+    <p>If the LLM is a dynamical system, we can <strong>intervene on its trajectory</strong> and guide it toward a different Attractor. The modification is elegantly simple:</p>
+
+    <div class="equation">
+        dx/dt = f(x) + λ(y − x)<br><br>
+        Where f(x) is the original dynamics, y is the target Attractor,<br>
+        and λ controls the steering strength.
+    </div>
+
+    <p>In practice, this means adding or subtracting Attractor vectors at specific intermediate layers using a simple forward hook. No retraining, no fine-tuning, no retention data.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Attractor Steering</h4>
+        <p class="description">Drag the "steering target" (star) to different Attractors. Watch how the trajectory of the generation (moving dot) gets pulled toward the target. This simulates how adding an Attractor vector at a specific layer redirects the LLM's output.</p>
+        <div class="canvas-container">
+            <canvas id="steeringCanvas"></canvas>
+            <div class="status">Interactive</div>
+        </div>
+        <div class="controls">
+            <label>Steering Strength λ: <span id="lambdaValue">0.5</span> <input type="range" id="lambdaSlider" min="0" max="100" value="50"></label>
+            <button class="btn" id="resetSteering">Reset Trajectory</button>
+            <button class="btn" id="toggleSteering">Toggle Steering On/Off</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #ff5252;"></div> Toxicity Attractor (subtract to detoxify)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #4fc3f7;"></div> Python Attractor</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ffab40;"></div> JavaScript Attractor</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #69f0ae;"></div> Target (drag me!)</div>
+        </div>
+    </div>
+
+    <h3>Applications of Steering</h3>
+
+    <div class="comparison">
+        <div class="interactive-panel" style="margin: 0;">
+            <h4>Toxicity Reduction</h4>
+            <p class="description">Estimate the toxicity Attractor on layer 16, then <em>subtract</em> it during generation. The model drifts away from toxic outputs without any paired data or training.</p>
+            <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                <p style="font-size: 0.85rem; color: var(--accent-pink); margin-bottom: 0.5rem;">Before:</p>
+                <p style="font-size: 0.85rem;">"You're such a worthless idiot who can't do anything right"</p>
+                <p style="font-size: 0.85rem; color: var(--accent-green); margin: 0.5rem 0;">After steering:</p>
+                <p style="font-size: 0.85rem;">"You're struggling with this task and could use some guidance"</p>
+            </div>
+        </div>
+        <div class="interactive-panel" style="margin: 0;">
+            <h4>Code Translation (Transpiling)</h4>
+            <p class="description">Programming languages form Attractors at layer 19. Switch from one language's Attractor to another to transpile code — zero-shot, no instructions needed.</p>
+            <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                <p style="font-size: 0.85rem; color: var(--accent-blue); margin-bottom: 0.5rem;">Input (Python):</p>
+                <p style="font-size: 0.85rem; font-family: monospace;">def fib(n): return n if n<=1 else fib(n-1)+fib(n-2)</p>
+                <p style="font-size: 0.85rem; color: var(--accent-orange); margin: 0.5rem 0;">Output (JavaScript):</p>
+                <p style="font-size: 0.85rem; font-family: monospace;">function fib(n) { return n<=1 ? n : fib(n-1)+fib(n-2); }</p>
+            </div>
+        </div>
+    </div>
+
+    <h3>Visual Hallucination Reduction</h3>
+    <p>In Vision-Language Models (VLMs), the model starts aligned with a <strong>visual Attractor</strong> but drifts toward a text-only Attractor during generation. The fix: continuously re-add the initial visual Attractor vector at each generation step to keep the model grounded in what it actually sees.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Visual Attractor Drift</h4>
+        <p class="description">Watch the generation trajectory (white dot) drift from the Visual Attractor toward the Text-Only Attractor over time. Toggle "Reinforce Visual" to see how adding the visual Attractor at each step keeps it grounded.</p>
+        <div class="canvas-container">
+            <canvas id="driftCanvas"></canvas>
+            <div class="status">Simulating</div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="toggleDriftFix">Toggle Visual Reinforcement</button>
+            <button class="btn" id="resetDrift">Reset</button>
+            <label>Drift Speed: <input type="range" id="driftSpeed" min="1" max="20" value="8"></label>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #4fc3f7;"></div> Visual Attractor (grounded)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ff80ab;"></div> Text-Only Attractor (hallucination-prone)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: white;"></div> Generation trajectory</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: Applications -->
+<section id="applications" class="fade-in">
+    <h2>Results at a Glance</h2>
+    <p>Despite extreme simplicity — no training, no fine-tuning, no retention data — the Attractor-based methods are competitive with or exceed specialized baselines across all tasks.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Performance Comparison</h4>
+        <p class="description">Click each task to see how the Attractor method compares to baselines. Green bars = Attractor method, Gray bars = baselines requiring training/data.</p>
+        <div class="canvas-container" style="height: 350px;">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="controls">
+            <button class="btn active" id="taskGuardrail">Guardrailing</button>
+            <button class="btn" id="taskTranspile">Transpiling</button>
+            <button class="btn" id="taskToxicity">Detoxification</button>
+            <button class="btn" id="taskHallucination">Hallucination</button>
+            <button class="btn" id="taskData">Data Gen</button>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="icon">🛡️</div>
+            <h5>Guardrailing</h5>
+            <p>90%+ cutoff on TOFU forget sets while maintaining high model utility. Outperforms Gradient Ascent, NPO, and ECO — all of which require training.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🔄</div>
+            <h5>Code Translation</h5>
+            <p>Successfully transpiles between Python, Java, C++, and JavaScript. Beats ICV, Difference of Means, and even trained classifiers (Logistic/Linear Regression, RFM).</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">🧹</div>
+            <h5>Detoxification</h5>
+            <p>Reduces toxicity significantly while maintaining text quality (ROUGE). Matches ICV (which needs paired data) and beats LoRA fine-tuning.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">👁️</div>
+            <h5>Hallucination Reduction</h5>
+            <p>Significant CHAIR improvement on LLaVA-1.5 and InstructBLIP. No extra inference passes needed (unlike VCD, M3ID, AvisC).</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">📊</div>
+            <h5>Synthetic Data</h5>
+            <p>20%+ factuality improvement over temperature sampling. Better downstream accuracy on BoolQ and AG News when training on generated data.</p>
+        </div>
+        <div class="info-card">
+            <div class="icon">⚡</div>
+            <h5>Efficiency</h5>
+            <p>Single forward pass to estimate Attractors. No gradient computation. No auxiliary networks. Works on models from 3B to 14B parameters.</p>
+        </div>
+    </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Section: Data Generation -->
+<section id="data-gen" class="fade-in">
+    <h2>Attractor Perturbation for Data Generation</h2>
+    <p>Temperature sampling adds randomness but often produces low-quality or repetitive outputs. The Attractor perspective offers a better approach: <strong>perturb the Attractor itself</strong> to generate diverse, high-quality samples from a single prompt.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Temperature vs. Attractor Perturbation</h4>
+        <p class="description">Left: Temperature sampling scatters outputs randomly (many fall outside the "quality zone"). Right: Attractor perturbation explores the space around the Attractor systematically, staying within the quality zone. Click to generate samples.</p>
+        <div class="canvas-container">
+            <canvas id="dataGenCanvas"></canvas>
+            <div class="status">Interactive</div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="genTemperature">Generate with Temperature</button>
+            <button class="btn" id="genAttractor">Generate with Attractor Perturbation</button>
+            <button class="btn" id="clearGen">Clear All</button>
+            <label>Perturbation Magnitude: <input type="range" id="perturbMag" min="5" max="50" value="20"></label>
+        </div>
+    </div>
+
+    <h3>Key Insight: Sample-Wise Attractors</h3>
+    <p>Different generation instructions for the <em>same sample</em> converge to the same point at layer 16. This means we can replicate the diversity of multiple carefully-crafted prompts by simply perturbing a single Attractor — no prompt engineering needed.</p>
+
+    <div class="equation">
+        Multiple instructions → Same Attractor (layer 16) for same sample<br>
+        ∴ Perturbing Attractor ≈ Using multiple diverse instructions<br><br>
+        Result: 20%+ factuality improvement, better downstream task accuracy
+    </div>
+
+    <h3>The Fractal Structure</h3>
+    <p>Attractors aren't just single points — they have <strong>fractal-like hierarchical structure</strong>. For arithmetic tasks, the Attractor splits by number of digits, then by operation type, then by specific values. Using the wrong "level" of Attractor (e.g., averaging all digit-lengths together) produces a noisy, less effective representation.</p>
+
+    <div class="interactive-panel">
+        <h4>Interactive: Fractal Attractor Structure</h4>
+        <p class="description">Zoom into the Attractor structure. At the top level, clusters form by digit count. Zoom in to see sub-clusters by operation type. This hierarchical structure is key to understanding why naive averaging can fail.</p>
+        <div class="canvas-container">
+            <canvas id="fractalCanvas"></canvas>
+            <div class="status">Interactive</div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="zoomOut">Zoom Out (All)</button>
+            <button class="btn" id="zoomMid">Zoom Mid (By Digits)</button>
+            <button class="btn" id="zoomIn">Zoom In (By Operation)</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #4fc3f7;"></div> 2-digit numbers</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ff80ab;"></div> 3-digit numbers</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #69f0ae;"></div> Addition</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ffab40;"></div> Subtraction</div>
+        </div>
+    </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- Conclusion -->
+<section class="fade-in" style="text-align: center; padding-bottom: 8rem;">
+    <h2>Summary</h2>
+    <p style="max-width: 700px; margin: 0 auto 2rem; text-align: center;">LLMs are dynamical systems. Their layers are contractive maps. Concepts form Attractors. And once you see this, you can do remarkable things — without any training at all.</p>
+
+    <div class="flow-diagram" style="justify-content: center;">
+        <div class="flow-step">
+            <div class="step-label">Theory</div>
+            <div class="step-title">LLM ≈ IFS</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Observation</div>
+            <div class="step-title">Concepts → Attractors</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Method</div>
+            <div class="step-title">Manipulate Attractors</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-label">Result</div>
+            <div class="step-title">Training-free solutions</div>
+        </div>
+    </div>
+
+    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 3rem;">
+        Based on "Concept Attractors in LLMs and their Applications" by Chytas & Singh (2025)<br>
+        University of Wisconsin-Madison | arXiv:2601.11575v1
+    </p>
+</section>
+
+<!-- Tooltip element -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function lerp(a, b, t) { return a + (b - a) * t; }
+function dist(x1, y1, x2, y2) { return Math.sqrt((x2-x1)**2 + (y2-y1)**2); }
+function rand(min, max) { return Math.random() * (max - min) + min; }
+function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+// High-DPI canvas setup
+function setupCanvas(canvas) {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx, w: rect.width, h: rect.height };
+}
+
+// ============================================================
+// HERO CANVAS - Flowing particles
+// ============================================================
+(function() {
+    const canvas = document.getElementById('heroCanvas');
+    let ctx, w, h;
+    let particles = [];
+    const NUM_PARTICLES = 150;
+
+    function init() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        w = rect.width;
+        h = rect.height;
+
+        particles = [];
+        for (let i = 0; i < NUM_PARTICLES; i++) {
+            particles.push({
+                x: rand(0, w),
+                y: rand(0, h),
+                vx: rand(-0.3, 0.3),
+                vy: rand(-0.3, 0.3),
+                size: rand(1, 3),
+                color: ['#4fc3f7', '#b388ff', '#ff80ab', '#69f0ae'][Math.floor(rand(0, 4))],
+                alpha: rand(0.2, 0.7)
+            });
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, w, h);
+
+        // Attractors for hero
+        const attractors = [
+            { x: w * 0.25, y: h * 0.4 },
+            { x: w * 0.75, y: h * 0.4 },
+            { x: w * 0.5, y: h * 0.7 }
+        ];
+
+        for (let p of particles) {
+            // Gentle attraction
+            let ax = 0, ay = 0;
+            for (let a of attractors) {
+                let dx = a.x - p.x;
+                let dy = a.y - p.y;
+                let d = Math.max(dist(p.x, p.y, a.x, a.y), 50);
+                ax += dx / (d * 50);
+                ay += dy / (d * 50);
+            }
+
+            p.vx += ax;
+            p.vy += ay;
+            p.vx *= 0.99;
+            p.vy *= 0.99;
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Wrap
+            if (p.x < 0) p.x = w;
+            if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h;
+            if (p.y > h) p.y = 0;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
+        }
+
+        // Draw connections
+        ctx.globalAlpha = 0.1;
+        ctx.strokeStyle = '#4fc3f7';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                let d = dist(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+                if (d < 80) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        ctx.globalAlpha = 1;
+
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+    window.addEventListener('resize', init);
+})();
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+(function() {
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > window.innerHeight * 0.5) {
+            nav.classList.add('visible');
+        } else {
+            nav.classList.remove('visible');
+        }
+    });
+})();
+
+// ============================================================
+// FADE-IN OBSERVER
+// ============================================================
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+})();
+
+// ============================================================
+// POINT ATTRACTOR DEMO
+// ============================================================
+(function() {
+    const canvas = document.getElementById('pointAttractorCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+    let particles = [];
+    const attractor = { x: w / 2, y: h / 2 };
+
+    function addParticles(count, x, y) {
+        for (let i = 0; i < count; i++) {
+            particles.push({
+                x: x !== undefined ? x + rand(-30, 30) : rand(0, w),
+                y: y !== undefined ? y + rand(-30, 30) : rand(0, h),
+                trail: [],
+                color: `hsl(${rand(180, 320)}, 80%, 65%)`
+            });
+        }
+    }
+
+    addParticles(30);
+
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        addParticles(8, e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    document.getElementById('addParticlesBtn').addEventListener('click', () => addParticles(15));
+    document.getElementById('clearParticlesBtn').addEventListener('click', () => { particles = []; });
+
+    function animate() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, w, h);
+
+        const strength = document.getElementById('attractionStrength').value / 1000;
+
+        // Draw attractor
+        ctx.beginPath();
+        ctx.arc(attractor.x, attractor.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#4fc3f7';
+        ctx.shadowColor = '#4fc3f7';
+        ctx.shadowBlur = 20;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Pulsing ring
+        const pulse = Math.sin(Date.now() / 500) * 5 + 15;
+        ctx.beginPath();
+        ctx.arc(attractor.x, attractor.y, pulse, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(79, 195, 247, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        for (let p of particles) {
+            let dx = attractor.x - p.x;
+            let dy = attractor.y - p.y;
+            p.x += dx * strength;
+            p.y += dy * strength;
+
+            p.trail.push({ x: p.x, y: p.y });
+            if (p.trail.length > 30) p.trail.shift();
+
+            // Draw trail
+            if (p.trail.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(p.trail[0].x, p.trail[0].y);
+                for (let t of p.trail) {
+                    ctx.lineTo(t.x, t.y);
+                }
+                ctx.strokeStyle = p.color;
+                ctx.globalAlpha = 0.4;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        attractor.x = w / 2;
+        attractor.y = h / 2;
+    });
+})();
+
+// ============================================================
+// IFS FRACTAL GENERATOR
+// ============================================================
+(function() {
+    const canvas = document.getElementById('ifsCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+    let animId;
+    let points = [];
+    let currentType = 'fern';
+    let generating = false;
+    let batchSize = 50;
+
+    const transforms = {
+        fern: [
+            { a: 0, b: 0, c: 0, d: 0.16, e: 0, f: 0, p: 0.01 },
+            { a: 0.85, b: 0.04, c: -0.04, d: 0.85, e: 0, f: 1.6, p: 0.85 },
+            { a: 0.2, b: -0.26, c: 0.23, d: 0.22, e: 0, f: 1.6, p: 0.07 },
+            { a: -0.15, b: 0.28, c: 0.26, d: 0.24, e: 0, f: 0.44, p: 0.07 }
+        ],
+        sierpinski: [
+            { a: 0.5, b: 0, c: 0, d: 0.5, e: 0, f: 0, p: 0.33 },
+            { a: 0.5, b: 0, c: 0, d: 0.5, e: 0.5, f: 0, p: 0.33 },
+            { a: 0.5, b: 0, c: 0, d: 0.5, e: 0.25, f: 0.43, p: 0.34 }
+        ],
+        custom: [
+            { a: 0.4, b: -0.3, c: 0.3, d: 0.4, e: 0.1, f: 0.1, p: 0.25 },
+            { a: 0.4, b: 0.3, c: -0.3, d: 0.4, e: 0.6, f: 0.1, p: 0.25 },
+            { a: 0.4, b: -0.1, c: 0.1, d: 0.4, e: 0.3, f: 0.6, p: 0.25 },
+            { a: 0.3, b: 0, c: 0, d: 0.3, e: 0.35, f: 0.35, p: 0.25 }
+        ]
+    };
+
+    const colors = ['#4fc3f7', '#b388ff', '#ff80ab', '#69f0ae'];
+
+    function selectTransform(tfs) {
+        let r = Math.random();
+        let cumP = 0;
+        for (let i = 0; i < tfs.length; i++) {
+            cumP += tfs[i].p;
+            if (r <= cumP) return i;
+        }
+        return tfs.length - 1;
+    }
+
+    function reset() {
+        points = [];
+        ctx.fillStyle = 'rgba(0,0,0,1)';
+        ctx.fillRect(0, 0, w, h);
+        generating = true;
+    }
+
+    function generate() {
+        if (!generating) { requestAnimationFrame(generate); return; }
+
+        const tfs = transforms[currentType];
+        const speed = document.getElementById('ifsSpeed').value;
+        batchSize = Math.floor(speed * 2) + 10;
+
+        let x = points.length > 0 ? points[points.length - 1].x : 0;
+        let y = points.length > 0 ? points[points.length - 1].y : 0;
+
+        for (let i = 0; i < batchSize; i++) {
+            let idx = selectTransform(tfs);
+            let t = tfs[idx];
+            let nx = t.a * x + t.b * y + t.e;
+            let ny = t.c * x + t.d * y + t.f;
+            x = nx;
+            y = ny;
+
+            // Map to canvas
+            let px, py;
+            if (currentType === 'fern') {
+                px = w / 2 + x * w / 12;
+                py = h - y * h / 12 - 10;
+            } else if (currentType === 'sierpinski') {
+                px = x * w * 0.8 + w * 0.1;
+                py = h - y * h * 0.8 - h * 0.1;
+            } else {
+                px = x * w * 0.7 + w * 0.15;
+                py = h - y * h * 0.7 - h * 0.1;
+            }
+
+            ctx.beginPath();
+            ctx.arc(px, py, 0.8, 0, Math.PI * 2);
+            ctx.fillStyle = colors[idx % colors.length];
+            ctx.globalAlpha = 0.7;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            points.push({ x, y });
+        }
+
+        if (points.length < 100000) {
+            requestAnimationFrame(generate);
+        }
+    }
+
+    reset();
+    generate();
+
+    document.getElementById('ifsFern').addEventListener('click', function() {
+        document.querySelectorAll('#ifsCanvas').closest('.interactive-panel').querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentType = 'fern';
+        reset();
+    });
+    document.getElementById('ifsSierpinski').addEventListener('click', function() {
+        document.querySelectorAll('.controls .btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentType = 'sierpinski';
+        reset();
+    });
+    document.getElementById('ifsCustom').addEventListener('click', function() {
+        document.querySelectorAll('#ifsCanvas').closest?.('.interactive-panel')?.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentType = 'custom';
+        reset();
+    });
+    document.getElementById('ifsReset').addEventListener('click', reset);
+
+    // Fix button active states
+    document.querySelectorAll('#ifsFern, #ifsSierpinski, #ifsCustom').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('ifsFern').classList.remove('active');
+            document.getElementById('ifsSierpinski').classList.remove('active');
+            document.getElementById('ifsCustom').classList.remove('active');
+            this.classList.add('active');
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        reset();
+    });
+})();
+
+// ============================================================
+// LAYER-BY-LAYER CONVERGENCE
+// ============================================================
+(function() {
+    const canvas = document.getElementById('layerCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    // Concepts with their colors
+    const concepts = [
+        { name: 'Lord of the Rings', color: '#4fc3f7', points: [] },
+        { name: 'Harry Potter', color: '#ff80ab', points: [] },
+        { name: 'Star Wars', color: '#69f0ae', points: [] },
+        { name: 'Narnia', color: '#ffab40', points: [] }
+    ];
+
+    // Generate initial scattered positions and target attractor positions
+    const numPoints = 7; // 7 prompts per concept as in the paper
+    const attractorPositions = [
+        { x: w * 0.25, y: h * 0.3 },
+        { x: w * 0.75, y: h * 0.3 },
+        { x: w * 0.25, y: h * 0.7 },
+        { x: w * 0.75, y: h * 0.7 }
+    ];
+
+    function initPoints() {
+        concepts.forEach((concept, ci) => {
+            concept.points = [];
+            for (let i = 0; i < numPoints; i++) {
+                concept.points.push({
+                    startX: rand(50, w - 50),
+                    startY: rand(50, h - 50),
+                    targetX: attractorPositions[ci].x + rand(-15, 15),
+                    targetY: attractorPositions[ci].y + rand(-15, 15)
+                });
+            }
+        });
+    }
+
+    initPoints();
+
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const layer = parseInt(document.getElementById('layerSlider').value);
+        document.getElementById('layerNum').textContent = layer;
+
+        // The convergence happens around layer 24 (out of 32)
+        // Map layer to a convergence factor using a sigmoid-like curve
+        const convergenceLayer = 24;
+        const t = Math.min(1, Math.max(0, layer / convergenceLayer));
+        // Use an easing function that accelerates convergence near the target layer
+        const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+        // Draw grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < w; x += 50) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+            ctx.stroke();
+        }
+        for (let y = 0; y < h; y += 50) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+        }
+
+        // Draw attractor targets (faint)
+        attractorPositions.forEach((pos, i) => {
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 20 + Math.sin(Date.now() / 1000) * 3, 0, Math.PI * 2);
+            ctx.strokeStyle = concepts[i].color;
+            ctx.globalAlpha = 0.15 + ease * 0.3;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+
+            // Label
+            ctx.fillStyle = concepts[i].color;
+            ctx.globalAlpha = 0.5 + ease * 0.5;
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(concepts[i].name, pos.x, pos.y + 35);
+            ctx.globalAlpha = 1;
+        });
+
+        // Draw points
+        concepts.forEach((concept) => {
+            concept.points.forEach((p) => {
+                const x = lerp(p.startX, p.targetX, ease);
+                const y = lerp(p.startY, p.targetY, ease);
+
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = concept.color;
+                ctx.fill();
+
+                // Glow
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = concept.color;
+                ctx.globalAlpha = 0.2;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            });
+        });
+
+        // Layer indicator
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Layer ${layer}/32`, 15, 25);
+
+        if (layer >= 22 && layer <= 26) {
+            ctx.fillStyle = var_accent_green;
+            ctx.font = '12px sans-serif';
+            ctx.fillText('← Convergence zone for fictional worlds', 15, 45);
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    const var_accent_green = '#69f0ae';
+    draw();
+
+    // Animate button
+    let animating = false;
+    document.getElementById('animateLayers').addEventListener('click', () => {
+        if (animating) return;
+        animating = true;
+        const slider = document.getElementById('layerSlider');
+        slider.value = 0;
+        let frame = 0;
+        const interval = setInterval(() => {
+            frame++;
+            slider.value = Math.min(32, Math.floor(frame / 3));
+            if (slider.value >= 32) {
+                clearInterval(interval);
+                animating = false;
+            }
+        }, 50);
+    });
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        initPoints();
+    });
+})();
+
+// ============================================================
+// GUARDRAIL / CONCEPT DETECTION DEMO
+// ============================================================
+(function() {
+    const canvas = document.getElementById('guardrailCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    const conceptAttractors = [
+        { x: w * 0.2, y: h * 0.4, label: 'Author A', color: '#4fc3f7' },
+        { x: w * 0.5, y: h * 0.3, label: 'Author B', color: '#b388ff' },
+        { x: w * 0.8, y: h * 0.5, label: 'Author C', color: '#ff80ab' },
+        { x: w * 0.35, y: h * 0.75, label: 'World Facts', color: '#69f0ae' },
+        { x: w * 0.7, y: h * 0.8, label: 'Real Authors', color: '#ffab40' }
+    ];
+
+    let query = { x: w * 0.5, y: h * 0.6 };
+    let dragging = false;
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        if (dist(mx, my, query.x, query.y) < 20) {
+            dragging = true;
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const rect = canvas.getBoundingClientRect();
+        query.x = e.clientX - rect.left;
+        query.y = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseup', () => { dragging = false; });
+    canvas.addEventListener('mouseleave', () => { dragging = false; });
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const mx = touch.clientX - rect.left;
+        const my = touch.clientY - rect.top;
+        if (dist(mx, my, query.x, query.y) < 30) {
+            dragging = true;
+            e.preventDefault();
+        }
+    });
+    canvas.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        query.x = touch.clientX - rect.left;
+        query.y = touch.clientY - rect.top;
+        e.preventDefault();
+    });
+    canvas.addEventListener('touchend', () => { dragging = false; });
+
+    document.getElementById('resetQuery').addEventListener('click', () => {
+        query = { x: w * 0.5, y: h * 0.6 };
+    });
+
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const tau = parseInt(document.getElementById('tauSlider').value) / 100;
+        document.getElementById('tauValue').textContent = tau.toFixed(2);
+
+        // The "radius" for detection based on tau (inverse: higher tau = smaller radius)
+        const maxDist = Math.min(w, h) * 0.4;
+        const thresholdDist = maxDist * (1 - tau);
+
+        let blocked = false;
+        let blockedBy = '';
+
+        // Draw attractors
+        conceptAttractors.forEach((att) => {
+            // Draw threshold circle
+            ctx.beginPath();
+            ctx.arc(att.x, att.y, thresholdDist, 0, Math.PI * 2);
+            ctx.strokeStyle = att.color;
+            ctx.globalAlpha = 0.15;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+
+            // Check if query is within threshold
+            const d = dist(query.x, query.y, att.x, att.y);
+            const isDetected = d < thresholdDist;
+
+            if (isDetected && (att.label.startsWith('Author'))) {
+                blocked = true;
+                blockedBy = att.label;
+
+                // Draw connection line
+                ctx.beginPath();
+                ctx.moveTo(query.x, query.y);
+                ctx.lineTo(att.x, att.y);
+                ctx.strokeStyle = '#ff5252';
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.6;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            // Draw attractor point
+            ctx.beginPath();
+            ctx.arc(att.x, att.y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = att.color;
+            ctx.shadowColor = att.color;
+            ctx.shadowBlur = isDetected ? 20 : 10;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Label
+            ctx.fillStyle = att.color;
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(att.label, att.x, att.y - 20);
+        });
+
+        // Draw query point
+        ctx.beginPath();
+        ctx.arc(query.x, query.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = blocked ? '#ff5252' : '#ffffff';
+        ctx.shadowColor = blocked ? '#ff5252' : '#ffffff';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#fff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Query (drag me)', query.x, query.y + 25);
+
+        // Status
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        if (blocked) {
+            ctx.fillStyle = '#ff5252';
+            ctx.fillText(`⛔ BLOCKED — Detected as "${blockedBy}" concept`, 15, 25);
+            ctx.font = '11px sans-serif';
+            ctx.fillText(`"I cannot provide information about ${blockedBy} due to removal request."`, 15, 45);
+        } else {
+            ctx.fillStyle = '#69f0ae';
+            ctx.fillText('✓ ALLOWED — No concept match above threshold', 15, 25);
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+    });
+})();
+
+// ============================================================
+// STEERING DEMO
+// ============================================================
+(function() {
+    const canvas = document.getElementById('steeringCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    const attractors = [
+        { x: w * 0.15, y: h * 0.3, label: 'Toxicity', color: '#ff5252' },
+        { x: w * 0.5, y: h * 0.2, label: 'Python', color: '#4fc3f7' },
+        { x: w * 0.85, y: h * 0.3, label: 'JavaScript', color: '#ffab40' }
+    ];
+
+    let target = { x: w * 0.7, y: h * 0.7 };
+    let particle = { x: w * 0.3, y: h * 0.5, vx: 1.5, vy: 0.5 };
+    let trail = [];
+    let steeringOn = true;
+    let draggingTarget = false;
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        if (dist(mx, my, target.x, target.y) < 25) {
+            draggingTarget = true;
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!draggingTarget) return;
+        const rect = canvas.getBoundingClientRect();
+        target.x = e.clientX - rect.left;
+        target.y = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseup', () => { draggingTarget = false; });
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const mx = touch.clientX - rect.left;
+        const my = touch.clientY - rect.top;
+        if (dist(mx, my, target.x, target.y) < 35) {
+            draggingTarget = true;
+            e.preventDefault();
+        }
+    });
+    canvas.addEventListener('touchmove', (e) => {
+        if (!draggingTarget) return;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        target.x = touch.clientX - rect.left;
+        target.y = touch.clientY - rect.top;
+        e.preventDefault();
+    });
+    canvas.addEventListener('touchend', () => { draggingTarget = false; });
+
+    document.getElementById('resetSteering').addEventListener('click', () => {
+        particle = { x: w * 0.3, y: h * 0.5, vx: 1.5, vy: 0.5 };
+        trail = [];
+    });
+
+    document.getElementById('toggleSteering').addEventListener('click', function() {
+        steeringOn = !steeringOn;
+        this.textContent = steeringOn ? 'Steering: ON' : 'Steering: OFF';
+        this.classList.toggle('active', steeringOn);
+    });
+
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const lambda = parseInt(document.getElementById('lambdaSlider').value) / 100;
+        document.getElementById('lambdaValue').textContent = lambda.toFixed(2);
+
+        // Natural dynamics (gentle drift toward toxicity attractor as default)
+        const naturalTarget = attractors[0]; // toxicity
+        let fx = (naturalTarget.x - particle.x) * 0.002;
+        let fy = (naturalTarget.y - particle.y) * 0.002;
+
+        // Add some noise
+        fx += (Math.random() - 0.5) * 0.3;
+        fy += (Math.random() - 0.5) * 0.3;
+
+        // Steering force
+        if (steeringOn) {
+            fx += (target.x - particle.x) * lambda * 0.01;
+            fy += (target.y - particle.y) * lambda * 0.01;
+        }
+
+        particle.vx = particle.vx * 0.95 + fx;
+        particle.vy = particle.vy * 0.95 + fy;
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        // Bounds
+        particle.x = clamp(particle.x, 10, w - 10);
+        particle.y = clamp(particle.y, 10, h - 10);
+
+        trail.push({ x: particle.x, y: particle.y });
+        if (trail.length > 200) trail.shift();
+
+        // Clear and redraw
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw attractors
+        attractors.forEach((att) => {
+            ctx.beginPath();
+            ctx.arc(att.x, att.y, 15, 0, Math.PI * 2);
+            ctx.fillStyle = att.color;
+            ctx.shadowColor = att.color;
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = att.color;
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(att.label, att.x, att.y - 22);
+        });
+
+        // Draw target (star shape)
+        ctx.beginPath();
+        const starPoints = 5;
+        for (let i = 0; i < starPoints * 2; i++) {
+            const angle = (i * Math.PI) / starPoints - Math.PI / 2;
+            const r = i % 2 === 0 ? 12 : 6;
+            const sx = target.x + Math.cos(angle) * r;
+            const sy = target.y + Math.sin(angle) * r;
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+        }
+        ctx.closePath();
+        ctx.fillStyle = '#69f0ae';
+        ctx.shadowColor = '#69f0ae';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#69f0ae';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Target (drag me)', target.x, target.y + 22);
+
+        // Draw trail
+        if (trail.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(trail[0].x, trail[0].y);
+            for (let i = 1; i < trail.length; i++) {
+                ctx.lineTo(trail[i].x, trail[i].y);
+            }
+            ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Status text
+        ctx.fillStyle = steeringOn ? '#69f0ae' : '#ff5252';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(steeringOn ? `Steering ON (λ=${lambda.toFixed(2)})` : 'Steering OFF (drifting to toxicity)', 15, 25);
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+    });
+})();
+
+// ============================================================
+// VISUAL ATTRACTOR DRIFT DEMO
+// ============================================================
+(function() {
+    const canvas = document.getElementById('driftCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    const visualAttractor = { x: w * 0.25, y: h * 0.5 };
+    const textAttractor = { x: w * 0.75, y: h * 0.5 };
+
+    let particle = { x: w * 0.25, y: h * 0.5 };
+    let trail = [];
+    let reinforceVisual = false;
+    let time = 0;
+
+    document.getElementById('toggleDriftFix').addEventListener('click', function() {
+        reinforceVisual = !reinforceVisual;
+        this.textContent = reinforceVisual ? 'Visual Reinforcement: ON' : 'Visual Reinforcement: OFF';
+        this.classList.toggle('active', reinforceVisual);
+        // Reset
+        particle = { x: w * 0.25, y: h * 0.5 };
+        trail = [];
+        time = 0;
+    });
+
+    document.getElementById('resetDrift').addEventListener('click', () => {
+        particle = { x: w * 0.25, y: h * 0.5 };
+        trail = [];
+        time = 0;
+    });
+
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const speed = parseInt(document.getElementById('driftSpeed').value) / 1000;
+        time += speed;
+
+        // Natural drift toward text attractor
+        let dx = (textAttractor.x - particle.x) * 0.005 * speed * 10;
+        let dy = (textAttractor.y - particle.y) * 0.003 * speed * 10;
+
+        // Add some oscillation
+        dy += Math.sin(time * 5) * 0.3;
+
+        // Visual reinforcement
+        if (reinforceVisual) {
+            dx += (visualAttractor.x - particle.x) * 0.008 * speed * 10;
+            dy += (visualAttractor.y - particle.y) * 0.008 * speed * 10;
+        }
+
+        particle.x += dx;
+        particle.y += dy;
+
+        trail.push({ x: particle.x, y: particle.y });
+        if (trail.length > 300) trail.shift();
+
+        // Draw connection zone
+        const gradient = ctx.createLinearGradient(visualAttractor.x, 0, textAttractor.x, 0);
+        gradient.addColorStop(0, 'rgba(79, 195, 247, 0.05)');
+        gradient.addColorStop(1, 'rgba(255, 128, 171, 0.05)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw attractors
+        // Visual
+        ctx.beginPath();
+        ctx.arc(visualAttractor.x, visualAttractor.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = '#4fc3f7';
+        ctx.shadowColor = '#4fc3f7';
+        ctx.shadowBlur = 20;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#4fc3f7';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Visual Attractor', visualAttractor.x, visualAttractor.y - 30);
+        ctx.font = '10px sans-serif';
+        ctx.fillText('(grounded in image)', visualAttractor.x, visualAttractor.y - 16);
+
+        // Text
+        ctx.beginPath();
+        ctx.arc(textAttractor.x, textAttractor.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff80ab';
+        ctx.shadowColor = '#ff80ab';
+        ctx.shadowBlur = 20;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#ff80ab';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Text-Only Attractor', textAttractor.x, textAttractor.y - 30);
+        ctx.font = '10px sans-serif';
+        ctx.fillText('(hallucination-prone)', textAttractor.x, textAttractor.y - 16);
+
+        // Draw trail
+        if (trail.length > 1) {
+            for (let i = 1; i < trail.length; i++) {
+                const alpha = i / trail.length;
+                ctx.beginPath();
+                ctx.moveTo(trail[i-1].x, trail[i-1].y);
+                ctx.lineTo(trail[i].x, trail[i].y);
+                ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.6})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Status
+        const distToText = dist(particle.x, particle.y, textAttractor.x, textAttractor.y);
+        const distToVisual = dist(particle.x, particle.y, visualAttractor.x, visualAttractor.y);
+        const hallucinationRisk = 1 - distToText / (distToText + distToVisual);
+
+        ctx.fillStyle = hallucinationRisk > 0.6 ? '#ff5252' : '#69f0ae';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Hallucination Risk: ${(hallucinationRisk * 100).toFixed(0)}%`, 15, 25);
+        ctx.fillStyle = reinforceVisual ? '#69f0ae' : '#ffab40';
+        ctx.font = '11px sans-serif';
+        ctx.fillText(reinforceVisual ? '✓ Visual Attractor reinforced at each step' : '⚠ Drifting toward text-only generation...', 15, 45);
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        visualAttractor.x = w * 0.25;
+        visualAttractor.y = h * 0.5;
+        textAttractor.x = w * 0.75;
+        textAttractor.y = h * 0.5;
+    });
+})();
+
+// ============================================================
+// BAR CHART - Performance Comparison
+// ============================================================
+(function() {
+    const canvas = document.getElementById('barChart');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    const taskData = {
+        guardrail: {
+            title: 'Guardrailing (TOFU Benchmark)',
+            metric: 'Model Utility (%)',
+            bars: [
+                { label: 'Gradient Ascent', value: 55, color: '#666' },
+                { label: 'NPO', value: 62, color: '#666' },
+                { label: 'ECO', value: 68, color: '#666' },
+                { label: 'Attractor (Ours)', value: 72, color: '#69f0ae' }
+            ]
+        },
+        transpile: {
+            title: 'Code Transpilation (o4-judge score)',
+            metric: 'Quality Score',
+            bars: [
+                { label: 'DM', value: 45, color: '#666' },
+                { label: 'ICV', value: 52, color: '#666' },
+                { label: 'Logistic Reg.', value: 58, color: '#666' },
+                { label: 'RFM', value: 63, color: '#666' },
+                { label: 'Attractor (Ours)', value: 70, color: '#69f0ae' }
+            ]
+        },
+        toxicity: {
+            title: 'Detoxification (ParaDetox)',
+            metric: 'Toxicity Reduction',
+            bars: [
+                { label: 'ICL', value: 40, color: '#666' },
+                { label: 'LoRA', value: 55, color: '#666' },
+                { label: 'ICV', value: 65, color: '#666' },
+                { label: 'Attractor (Ours)', value: 68, color: '#69f0ae' }
+            ]
+        },
+        hallucination: {
+            title: 'Hallucination Reduction (CHAIR↓)',
+            metric: 'Improvement (%)',
+            bars: [
+                { label: 'VCD', value: 50, color: '#666' },
+                { label: 'M3ID', value: 55, color: '#666' },
+                { label: 'AvisC', value: 58, color: '#666' },
+                { label: 'Attractor (Ours)', value: 65, color: '#69f0ae' }
+            ]
+        },
+        data: {
+            title: 'Synthetic Data (Factuality)',
+            metric: 'Factuality (%)',
+            bars: [
+                { label: 'Temperature', value: 55, color: '#666' },
+                { label: 'Top-K/Top-P', value: 58, color: '#666' },
+                { label: 'Multiple Prompts', value: 65, color: '#666' },
+                { label: 'Attractor Perturb. (Ours)', value: 78, color: '#69f0ae' }
+            ]
+        }
+    };
+
+    let currentTask = 'guardrail';
+
+    function drawBars() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const data = taskData[currentTask];
+        const bars = data.bars;
+        const barWidth = Math.min(80, (w - 100) / bars.length - 20);
+        const maxBarHeight = h - 120;
+        const startX = (w - (bars.length * (barWidth + 20))) / 2;
+
+        // Title
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(data.title, w / 2, 30);
+
+        // Y-axis label
+        ctx.fillStyle = var_text_secondary;
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(data.metric, w / 2, 50);
+
+        // Draw bars
+        bars.forEach((bar, i) => {
+            const x = startX + i * (barWidth + 20);
+            const barHeight = (bar.value / 100) * maxBarHeight;
+            const y = h - 50 - barHeight;
+
+            // Bar
+            const grad = ctx.createLinearGradient(x, y, x, h - 50);
+            grad.addColorStop(0, bar.color);
+            grad.addColorStop(1, bar.color === '#69f0ae' ? 'rgba(105, 240, 174, 0.3)' : 'rgba(102, 102, 102, 0.3)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.roundRect(x, y, barWidth, barHeight, [4, 4, 0, 0]);
+            ctx.fill();
+
+            // Value
+            ctx.fillStyle = bar.color;
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(bar.value + '%', x + barWidth / 2, y - 8);
+
+            // Label
+            ctx.fillStyle = var_text_secondary;
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            // Wrap text
+            const words = bar.label.split(' ');
+            words.forEach((word, wi) => {
+                ctx.fillText(word, x + barWidth / 2, h - 35 + wi * 12);
+            });
+        });
+    }
+
+    const var_text_secondary = '#a0a0c0';
+
+    drawBars();
+
+    // Task buttons
+    document.getElementById('taskGuardrail').addEventListener('click', function() { currentTask = 'guardrail'; setActiveTask(this); drawBars(); });
+    document.getElementById('taskTranspile').addEventListener('click', function() { currentTask = 'transpile'; setActiveTask(this); drawBars(); });
+    document.getElementById('taskToxicity').addEventListener('click', function() { currentTask = 'toxicity'; setActiveTask(this); drawBars(); });
+    document.getElementById('taskHallucination').addEventListener('click', function() { currentTask = 'hallucination'; setActiveTask(this); drawBars(); });
+    document.getElementById('taskData').addEventListener('click', function() { currentTask = 'data'; setActiveTask(this); drawBars(); });
+
+    function setActiveTask(el) {
+        document.querySelectorAll('#taskGuardrail, #taskTranspile, #taskToxicity, #taskHallucination, #taskData').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        drawBars();
+    });
+})();
+
+// ============================================================
+// DATA GENERATION: Temperature vs Attractor Perturbation
+// ============================================================
+(function() {
+    const canvas = document.getElementById('dataGenCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    let tempPoints = [];
+    let attractorPoints = [];
+    const qualityCenter = { x: w / 2, y: h / 2 };
+    const qualityRadius = Math.min(w, h) * 0.3;
+
+    function drawScene() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw quality zone
+        ctx.beginPath();
+        ctx.arc(qualityCenter.x, qualityCenter.y, qualityRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(105, 240, 174, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = 'rgba(105, 240, 174, 0.05)';
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = '#69f0ae';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Quality Zone', qualityCenter.x, qualityCenter.y - qualityRadius - 10);
+
+        // Draw attractor center
+        ctx.beginPath();
+        ctx.arc(qualityCenter.x, qualityCenter.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#b388ff';
+        ctx.shadowColor = '#b388ff';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#b388ff';
+        ctx.font = '10px sans-serif';
+        ctx.fillText('Attractor', qualityCenter.x, qualityCenter.y + 20);
+
+        // Draw temperature points
+        tempPoints.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            const inZone = dist(p.x, p.y, qualityCenter.x, qualityCenter.y) < qualityRadius;
+            ctx.fillStyle = inZone ? 'rgba(255, 171, 64, 0.8)' : 'rgba(255, 82, 82, 0.6)';
+            ctx.fill();
+        });
+
+        // Draw attractor points
+        attractorPoints.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(79, 195, 247, 0.8)';
+            ctx.fill();
+        });
+
+        // Stats
+        const tempInZone = tempPoints.filter(p => dist(p.x, p.y, qualityCenter.x, qualityCenter.y) < qualityRadius).length;
+        const attInZone = attractorPoints.filter(p => dist(p.x, p.y, qualityCenter.x, qualityCenter.y) < qualityRadius).length;
+
+        ctx.fillStyle = '#ffab40';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Temperature: ${tempPoints.length} samples, ${tempInZone} in quality zone (${tempPoints.length ? Math.round(tempInZone/tempPoints.length*100) : 0}%)`, 15, 25);
+
+        ctx.fillStyle = '#4fc3f7';
+        ctx.fillText(`Attractor Perturb: ${attractorPoints.length} samples, ${attInZone} in quality zone (${attractorPoints.length ? Math.round(attInZone/attractorPoints.length*100) : 0}%)`, 15, 45);
+    }
+
+    drawScene();
+
+    document.getElementById('genTemperature').addEventListener('click', () => {
+        const mag = parseInt(document.getElementById('perturbMag').value);
+        for (let i = 0; i < 20; i++) {
+            // Temperature sampling: random scatter, many outside quality zone
+            const angle = rand(0, Math.PI * 2);
+            const r = rand(0, qualityRadius * 2.5) * (Math.random() < 0.4 ? 1.5 : 0.7);
+            tempPoints.push({
+                x: qualityCenter.x + Math.cos(angle) * r,
+                y: qualityCenter.y + Math.sin(angle) * r
+            });
+        }
+        drawScene();
+    });
+
+    document.getElementById('genAttractor').addEventListener('click', () => {
+        const mag = parseInt(document.getElementById('perturbMag').value);
+        for (let i = 0; i < 20; i++) {
+            // Attractor perturbation: controlled scatter around attractor, mostly in quality zone
+            const angle = rand(0, Math.PI * 2);
+            const r = rand(0, qualityRadius * (mag / 50)) * (0.3 + Math.random() * 0.7);
+            attractorPoints.push({
+                x: qualityCenter.x + Math.cos(angle) * r,
+                y: qualityCenter.y + Math.sin(angle) * r
+            });
+        }
+        drawScene();
+    });
+
+    document.getElementById('clearGen').addEventListener('click', () => {
+        tempPoints = [];
+        attractorPoints = [];
+        drawScene();
+    });
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        qualityCenter.x = w / 2;
+        qualityCenter.y = h / 2;
+        drawScene();
+    });
+})();
+
+// ============================================================
+// FRACTAL ATTRACTOR STRUCTURE
+// ============================================================
+(function() {
+    const canvas = document.getElementById('fractalCanvas');
+    let { ctx, w, h } = setupCanvas(canvas);
+
+    let zoomLevel = 'out'; // 'out', 'mid', 'in'
+
+    // Generate hierarchical cluster data
+    function generateClusters() {
+        const clusters = [];
+
+        // Level 1: By digit count
+        const digitCenters = [
+            { x: w * 0.3, y: h * 0.4, label: '2-digit', color: '#4fc3f7' },
+            { x: w * 0.7, y: h * 0.5, label: '3-digit', color: '#ff80ab' }
+        ];
+
+        // Level 2: By operation (within each digit cluster)
+        const opTypes = [
+            { offset: { x: -60, y: -40 }, label: 'Addition', color: '#69f0ae' },
+            { offset: { x: 60, y: 40 }, label: 'Subtraction', color: '#ffab40' }
+        ];
+
+        digitCenters.forEach((dc, di) => {
+            opTypes.forEach((op, oi) => {
+                const cx = dc.x + op.offset.x * (zoomLevel === 'out' ? 0.3 : zoomLevel === 'mid' ? 1 : 2);
+                const cy = dc.y + op.offset.y * (zoomLevel === 'out' ? 0.3 : zoomLevel === 'mid' ? 1 : 2);
+
+                // Generate points around this sub-cluster
+                const numPoints = 15;
+                for (let i = 0; i < numPoints; i++) {
+                    const spread = zoomLevel === 'out' ? 30 : zoomLevel === 'mid' ? 20 : 12;
+                    clusters.push({
+                        x: cx + (Math.random() - 0.5) * spread * 2,
+                        y: cy + (Math.random() - 0.5) * spread * 2,
+                        digitColor: dc.color,
+                        opColor: op.color,
+                        digitLabel: dc.label,
+                        opLabel: op.label
+                    });
+                }
+            });
+        });
+
+        return clusters;
+    }
+
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const clusters = generateClusters();
+
+        // Draw points with appropriate coloring
+        clusters.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+
+            if (zoomLevel === 'out') {
+                ctx.fillStyle = '#b388ff'; // All same color at highest level
+            } else if (zoomLevel === 'mid') {
+                ctx.fillStyle = p.digitColor; // Color by digit count
+            } else {
+                ctx.fillStyle = p.opColor; // Color by operation
+            }
+
+            ctx.fill();
+
+            // Glow
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = (zoomLevel === 'out' ? '#b388ff' : zoomLevel === 'mid' ? p.digitColor : p.opColor);
+            ctx.globalAlpha = 0.15;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        });
+
+        // Labels
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+
+        if (zoomLevel === 'out') {
+            ctx.fillStyle = '#b388ff';
+            ctx.fillText('Arithmetic Task Attractor (all operations mixed)', w / 2, 30);
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = '#a0a0c0';
+            ctx.fillText('Zoom in to see sub-structure...', w / 2, h - 20);
+        } else if (zoomLevel === 'mid') {
+            ctx.fillStyle = '#4fc3f7';
+            ctx.fillText('2-digit numbers', w * 0.3, h * 0.15);
+            ctx.fillStyle = '#ff80ab';
+            ctx.fillText('3-digit numbers', w * 0.7, h * 0.15);
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = '#a0a0c0';
+            ctx.fillText('Clusters separate by digit count. Zoom in further...', w / 2, h - 20);
+        } else {
+            ctx.fillStyle = '#69f0ae';
+            ctx.fillText('Addition', w * 0.25, h * 0.1);
+            ctx.fillStyle = '#ffab40';
+            ctx.fillText('Subtraction', w * 0.45, h * 0.1);
+            ctx.fillStyle = '#69f0ae';
+            ctx.fillText('Addition', w * 0.6, h * 0.1);
+            ctx.fillStyle = '#ffab40';
+            ctx.fillText('Subtraction', w * 0.8, h * 0.1);
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = '#a0a0c0';
+            ctx.fillText('Sub-clusters by operation type within each digit group', w / 2, h - 20);
+            ctx.fillText('Using wrong level of Attractor (naive average) produces noisy results!', w / 2, h - 5);
+        }
+
+        // Zoom level indicator
+        ctx.fillStyle = '#fff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Zoom: ${zoomLevel === 'out' ? 'Overview' : zoomLevel === 'mid' ? 'By Digits' : 'By Operation'}`, 15, 25);
+    }
+
+    draw();
+
+    document.getElementById('zoomOut').addEventListener('click', () => { zoomLevel = 'out'; draw(); });
+    document.getElementById('zoomMid').addEventListener('click', () => { zoomLevel = 'mid'; draw(); });
+    document.getElementById('zoomIn').addEventListener('click', () => { zoomLevel = 'in'; draw(); });
+
+    window.addEventListener('resize', () => {
+        ({ ctx, w, h } = setupCanvas(canvas));
+        draw();
+    });
+})();
+
+// ============================================================
+// POLYFILL for roundRect (older browsers)
+// ============================================================
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
+        const r = radii[0] || 0;
+        this.moveTo(x + r, y);
+        this.lineTo(x + w - r, y);
+        this.quadraticCurveTo(x + w, y, x + w, y + r);
+        this.lineTo(x + w, y + h - r);
+        this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        this.lineTo(x + r, y + h);
+        this.quadraticCurveTo(x, y + h, x, y + h - r);
+        this.lineTo(x, y + r);
+        this.quadraticCurveTo(x, y, x + r, y);
+        this.closePath();
+    };
+}
+</script>
+</body>
+</html>
