@@ -54,7 +54,6 @@ var WeightAnalysis = (function() {
         var variance = n > 1 ? (sumSq / n) - (mean * mean) : 0;
         var std = Math.sqrt(Math.max(0, variance));
 
-        // Kurtosis (excess)
         var kurtosis = 0;
         var skewness = 0;
         if (n > 2 && std > 0) {
@@ -146,15 +145,11 @@ var WeightAnalysis = (function() {
     }
 
     // ============================================================
-    // SVD SPECTRUM (approximation via sorted singular-value-like magnitudes)
-    // For a full SVD we'd need a library, so we approximate by computing
-    // the sorted absolute values of the flattened weight matrix
-    // and checking how steep the decay is.
+    // SVD SPECTRUM (approximation)
     // ============================================================
 
     function _computeSVDSteepness(arr) {
         if (!arr || arr.length < 4) return 0;
-        // Sort absolute values descending
         var sorted = [];
         for (var i = 0; i < arr.length; i++) {
             if (!isNaN(arr[i]) && isFinite(arr[i])) {
@@ -165,7 +160,6 @@ var WeightAnalysis = (function() {
 
         if (sorted.length < 4) return 0;
 
-        // Compute ratio of top 10% energy vs total energy
         var topN = Math.max(1, Math.floor(sorted.length * 0.1));
         var topEnergy = 0, totalEnergy = 0;
         for (var i = 0; i < sorted.length; i++) {
@@ -174,11 +168,11 @@ var WeightAnalysis = (function() {
         }
 
         if (totalEnergy === 0) return 0;
-        return topEnergy / totalEnergy; // Higher = more concentrated = more trained
+        return topEnergy / totalEnergy;
     }
 
     // ============================================================
-    // BIAS ANALYSIS (non-zero biases indicate training)
+    // BIAS ANALYSIS
     // ============================================================
 
     function _analyzeBiases(weights) {
@@ -195,7 +189,7 @@ var WeightAnalysis = (function() {
             }
         }
 
-        if (biasTotal === 0) return 0.5; // No biases, neutral
+        if (biasTotal === 0) return 0.5;
         return biasNonZeroCount / biasTotal;
     }
 
@@ -221,7 +215,6 @@ var WeightAnalysis = (function() {
     }
 
     function _computeAvgInterFilterCorrelation(weightData, shape) {
-        // Only for conv layers with shape [kH, kW, inC, outC] or dense [in, out]
         if (!shape || shape.length < 2) return 0;
 
         var lastDim = shape[shape.length - 1];
@@ -230,7 +223,6 @@ var WeightAnalysis = (function() {
         var filterSize = weightData.length / lastDim;
         if (filterSize < 1) return 0;
 
-        // Extract filters
         var filters = [];
         for (var f = 0; f < lastDim; f++) {
             var filter = [];
@@ -240,7 +232,6 @@ var WeightAnalysis = (function() {
             filters.push(filter);
         }
 
-        // Compute average pairwise correlation (sample max 20 pairs)
         var totalCorr = 0;
         var pairs = 0;
         var maxPairs = Math.min(20, lastDim * (lastDim - 1) / 2);
@@ -255,7 +246,7 @@ var WeightAnalysis = (function() {
     }
 
     // ============================================================
-    // KOLMOGOROV-SMIRNOV TEST (simplified) against uniform/normal
+    // KOLMOGOROV-SMIRNOV TEST
     // ============================================================
 
     function _ksTestAgainstNormal(arr, mean, std) {
@@ -272,7 +263,7 @@ var WeightAnalysis = (function() {
             var d = Math.abs(empirical - theoretical);
             if (d > maxD) maxD = d;
         }
-        return maxD; // Higher = more different from normal = more likely trained
+        return maxD;
     }
 
     function _erf(x) {
@@ -286,13 +277,26 @@ var WeightAnalysis = (function() {
     }
 
     // ============================================================
+    // PERCENTILE HELPER (for box plots)
+    // ============================================================
+
+    function _percentile(sortedArr, p) {
+        if (!sortedArr || sortedArr.length === 0) return 0;
+        var idx = (p / 100) * (sortedArr.length - 1);
+        var lower = Math.floor(idx);
+        var upper = Math.ceil(idx);
+        if (lower === upper) return sortedArr[lower];
+        return sortedArr[lower] + (idx - lower) * (sortedArr[upper] - sortedArr[lower]);
+    }
+
+    // ============================================================
     // MAIN ANALYSIS FUNCTION
     // ============================================================
 
     function analyzeModel(m) {
         var weights = _getWeightsFromModel(m);
         if (!weights || weights.length === 0) {
-            return { score: 0, confidence: 0, message: "No weights found", layers: [] };
+            return { score: 0, confidence: 0, message: "wa_no_weights_found", layers: [] };
         }
 
         var layerResults = [];
@@ -308,29 +312,28 @@ var WeightAnalysis = (function() {
             var layerScore = 0;
             var indicators = {};
 
-            // 1. Entropy (high entropy = more random)
+            // 1. Entropy
             var entropy = _computeEntropy(data, 50);
-            var maxEntropy = Math.log2(50); // max possible with 50 bins
+            var maxEntropy = Math.log2(50);
             var entropyRatio = entropy / maxEntropy;
-            // Trained models have LOWER entropy (more structured)
             var entropyScore = (1 - entropyRatio) * 100;
             indicators.entropy = { value: entropy, maxEntropy: maxEntropy, ratio: entropyRatio, score: entropyScore };
 
-            // 2. Sparsity (trained models often have more near-zero weights)
+            // 2. Sparsity
             var sparsity = _computeSparsity(data, 0.01);
-            var sparsityScore = Math.min(sparsity * 150, 100); // More sparsity = more trained
+            var sparsityScore = Math.min(sparsity * 150, 100);
             indicators.sparsity = { value: sparsity, score: sparsityScore };
 
-            // 3. SVD steepness (trained = concentrated energy)
+            // 3. SVD steepness
             var svdSteepness = _computeSVDSteepness(data);
             var svdScore = Math.min(svdSteepness * 120, 100);
             indicators.svd = { steepness: svdSteepness, score: svdScore };
 
-            // 4. Kurtosis (trained weights often have higher kurtosis)
+            // 4. Kurtosis
             var kurtosisScore = Math.min(Math.abs(stats.kurtosis) * 10, 100);
             indicators.kurtosis = { value: stats.kurtosis, score: kurtosisScore };
 
-            // 5. KS-test against expected initializer distribution
+            // 5. KS-test
             var ksD = _ksTestAgainstNormal(Array.from(data), 0, stats.std);
             var ksScore = Math.min(ksD * 300, 100);
             indicators.ksTest = { d: ksD, score: ksScore };
@@ -352,9 +355,16 @@ var WeightAnalysis = (function() {
 
             layerScore = Math.max(0, Math.min(100, layerScore));
 
-            var layerWeight = data.length; // Weight by number of parameters
+            var layerWeight = data.length;
             totalScore += layerScore * layerWeight;
             totalWeight += layerWeight;
+
+            // Compute sorted data for box plot / CDF
+            var sortedData = [];
+            for (var si = 0; si < data.length; si++) {
+                if (!isNaN(data[si]) && isFinite(data[si])) sortedData.push(data[si]);
+            }
+            sortedData.sort(function(a, b) { return a - b; });
 
             layerResults.push({
                 name: w.name,
@@ -363,7 +373,9 @@ var WeightAnalysis = (function() {
                 stats: stats,
                 indicators: indicators,
                 score: layerScore,
-                histogram: _computeHistogram(data, 40)
+                histogram: _computeHistogram(data, 40),
+                sortedData: sortedData,
+                l2Norm: Math.sqrt(sortedData.reduce(function(s, v) { return s + v * v; }, 0))
             });
         }
 
@@ -372,25 +384,24 @@ var WeightAnalysis = (function() {
 
         // Final score
         var rawScore = totalWeight > 0 ? totalScore / totalWeight : 0;
-        // Mix in bias score
         var finalScore = rawScore * 0.85 + biasScore * 0.15;
         finalScore = Math.max(0, Math.min(100, finalScore));
 
-        // Confidence based on number of parameters
+        // Confidence
         var totalParams = 0;
         for (var i = 0; i < weights.length; i++) totalParams += weights[i].data.length;
         var confidence = Math.min(100, Math.log10(totalParams + 1) * 25);
 
-        var message = "";
-        if (finalScore > 75) message = "Das Modell ist sehr wahrscheinlich trainiert.";
-        else if (finalScore > 50) message = "Das Modell zeigt Anzeichen von Training.";
-        else if (finalScore > 30) message = "Das Modell könnte leicht trainiert sein oder hat spezielle Initialisierung.";
-        else message = "Das Modell scheint nicht trainiert zu sein (random weights).";
+        var messageKey = "";
+        if (finalScore > 75) messageKey = "wa_model_very_likely_trained";
+        else if (finalScore > 50) messageKey = "wa_model_shows_training_signs";
+        else if (finalScore > 30) messageKey = "wa_model_slightly_trained_or_special_init";
+        else messageKey = "wa_model_seems_untrained";
 
         return {
             score: Math.round(finalScore),
             confidence: Math.round(confidence),
-            message: message,
+            messageKey: messageKey,
             biasScore: Math.round(biasScore),
             layers: layerResults,
             totalParams: totalParams
@@ -398,8 +409,12 @@ var WeightAnalysis = (function() {
     }
 
     // ============================================================
-    // RENDERING
+    // RENDERING HELPERS
     // ============================================================
+
+    function _trm(key) {
+        return "<span class='TRANSLATEME_" + key + "'></span>";
+    }
 
     function _histogramSVG(histogram, title) {
         if (!histogram || !histogram.counts || histogram.binWidth === 0) return "";
@@ -422,7 +437,6 @@ var WeightAnalysis = (function() {
                 "' height='" + barHeight + "' fill='" + color + "' opacity='0.8'/>";
         }
 
-        // Zero line
         if (histogram.min < 0 && histogram.max > 0) {
             var zeroX = ((0 - histogram.min) / (histogram.max - histogram.min)) * width;
             svg += "<line x1='" + zeroX + "' y1='0' x2='" + zeroX + "' y2='" + height + "' stroke='#333' stroke-width='0.5' stroke-dasharray='2,2' opacity='0.5'/>";
@@ -454,11 +468,11 @@ var WeightAnalysis = (function() {
         return svg;
     }
 
-    function _indicatorBar(label, score, detail) {
+    function _indicatorBar(labelKey, score, detail) {
         var color = score > 70 ? "#2ecc71" : score > 40 ? "#f39c12" : "#e74c3c";
         var html = "<div style='margin: 6px 0;'>";
         html += "<div style='display:flex; justify-content:space-between; font-size:0.85em;'>";
-        html += "<span>" + label + "</span>";
+        html += "<span>" + _trm(labelKey) + "</span>";
         html += "<span style='opacity:0.6;'>" + detail + "</span>";
         html += "</div>";
         html += "<div style='height:6px; background:rgba(128,128,128,0.15); border-radius:3px; overflow:hidden;'>";
@@ -466,6 +480,200 @@ var WeightAnalysis = (function() {
         html += "</div></div>";
         return html;
     }
+
+    // ============================================================
+    // NEW VISUALIZATIONS
+    // ============================================================
+
+    // Box Plot SVG per layer
+    function _boxPlotSVG(sortedData, stats) {
+        if (!sortedData || sortedData.length < 5) return "";
+        var width = 300, height = 40;
+        var q1 = _percentile(sortedData, 25);
+        var q2 = _percentile(sortedData, 50);
+        var q3 = _percentile(sortedData, 75);
+        var iqr = q3 - q1;
+        var whiskerLow = Math.max(stats.min, q1 - 1.5 * iqr);
+        var whiskerHigh = Math.min(stats.max, q3 + 1.5 * iqr);
+
+        var dataMin = stats.min;
+        var dataMax = stats.max;
+        var range = dataMax - dataMin;
+        if (range === 0) return "";
+
+        function xPos(v) { return ((v - dataMin) / range) * (width - 20) + 10; }
+
+        var svg = "<svg width='100%' viewBox='0 0 " + width + " " + height + "' style='display:block; max-width:400px;'>";
+        var cy = height / 2;
+
+        // Whisker line
+        svg += "<line x1='" + xPos(whiskerLow) + "' y1='" + cy + "' x2='" + xPos(whiskerHigh) + "' y2='" + cy + "' stroke='currentColor' stroke-width='1' opacity='0.5'/>";
+        // Whisker caps
+        svg += "<line x1='" + xPos(whiskerLow) + "' y1='" + (cy - 8) + "' x2='" + xPos(whiskerLow) + "' y2='" + (cy + 8) + "' stroke='currentColor' stroke-width='1.5'/>";
+        svg += "<line x1='" + xPos(whiskerHigh) + "' y1='" + (cy - 8) + "' x2='" + xPos(whiskerHigh) + "' y2='" + (cy + 8) + "' stroke='currentColor' stroke-width='1.5'/>";
+        // Box
+        svg += "<rect x='" + xPos(q1) + "' y='" + (cy - 12) + "' width='" + (xPos(q3) - xPos(q1)) + "' height='24' fill='rgba(52,152,219,0.3)' stroke='#3498db' stroke-width='1.5' rx='2'/>";
+        // Median
+        svg += "<line x1='" + xPos(q2) + "' y1='" + (cy - 12) + "' x2='" + xPos(q2) + "' y2='" + (cy + 12) + "' stroke='#e74c3c' stroke-width='2'/>";
+        // Mean dot
+        svg += "<circle cx='" + xPos(stats.mean) + "' cy='" + cy + "' r='3' fill='#f39c12'/>";
+
+        svg += "</svg>";
+        return svg;
+    }
+
+    // CDF (Cumulative Distribution Function) SVG
+    function _cdfSVG(sortedData) {
+        if (!sortedData || sortedData.length < 2) return "";
+        var width = 300, height = 50;
+        var n = sortedData.length;
+        var step = Math.max(1, Math.floor(n / 150)); // sample points
+
+        var svg = "<svg width='100%' viewBox='0 0 " + width + " " + (height + 14) + "' style='display:block; max-width:400px;'>";
+        var path = "M";
+        var dataMin = sortedData[0];
+        var dataMax = sortedData[n - 1];
+        var range = dataMax - dataMin;
+        if (range === 0) return "";
+
+        for (var i = 0; i < n; i += step) {
+            var x = ((sortedData[i] - dataMin) / range) * width;
+            var y = height - ((i + 1) / n) * height;
+            path += (i === 0 ? "" : " L") + x.toFixed(1) + " " + y.toFixed(1);
+        }
+        // Ensure last point
+        path += " L" + width + " 0";
+
+        svg += "<path d='" + path + "' fill='none' stroke='#9b59b6' stroke-width='1.5'/>";
+        svg += "<text x='2' y='" + (height + 12) + "' font-size='7' fill='currentColor' opacity='0.5'>" + dataMin.toFixed(3) + "</text>";
+        svg += "<text x='" + (width - 40) + "' y='" + (height + 12) + "' font-size='7' fill='currentColor' opacity='0.5'>" + dataMax.toFixed(3) + "</text>";
+        svg += "</svg>";
+        return svg;
+    }
+
+    // Weight Norm Heatmap (all layers)
+    function _weightNormHeatmapSVG(layers) {
+        if (!layers || layers.length === 0) return "";
+        var width = 400, height = 30;
+        var barWidth = width / layers.length;
+        var maxNorm = 0;
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].l2Norm > maxNorm) maxNorm = layers[i].l2Norm;
+        }
+        if (maxNorm === 0) return "";
+
+        var svg = "<svg width='100%' viewBox='0 0 " + width + " " + (height + 20) + "' style='display:block; max-width:500px;'>";
+        for (var i = 0; i < layers.length; i++) {
+            var intensity = layers[i].l2Norm / maxNorm;
+            var r = Math.round(255 * intensity);
+            var g = Math.round(100 * (1 - intensity));
+            var b = Math.round(50);
+            var x = i * barWidth;
+            svg += "<rect x='" + x + "' y='0' width='" + Math.max(barWidth - 1, 1) + "' height='" + height + "' fill='rgb(" + r + "," + g + "," + b + ")' opacity='0.85'/>";
+            if (layers.length <= 20) {
+                svg += "<text x='" + (x + barWidth / 2) + "' y='" + (height + 12) + "' text-anchor='middle' font-size='6' fill='currentColor' opacity='0.6'>" + (i + 1) + "</text>";
+            }
+        }
+        svg += "</svg>";
+        return svg;
+    }
+
+    // Parameter Distribution Pie Chart
+    function _paramPieChartSVG(layers) {
+        if (!layers || layers.length === 0) return "";
+        var size = 140;
+        var cx = size / 2, cy = size / 2, radius = size / 2 - 10;
+        var totalParams = 0;
+        for (var i = 0; i < layers.length; i++) totalParams += layers[i].paramCount;
+        if (totalParams === 0) return "";
+
+        var colors = ["#3498db", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6", "#1abc9c", "#e67e22", "#34495e", "#16a085", "#c0392b"];
+        var svg = "<svg width='" + size + "' height='" + size + "' viewBox='0 0 " + size + " " + size + "'>";
+        var startAngle = 0;
+
+        for (var i = 0; i < layers.length; i++) {
+            var fraction = layers[i].paramCount / totalParams;
+            var endAngle = startAngle + fraction * 2 * Math.PI;
+            var largeArc = fraction > 0.5 ? 1 : 0;
+
+            var x1 = cx + radius * Math.cos(startAngle);
+            var y1 = cy + radius * Math.sin(startAngle);
+            
+            var x2 = cx + radius * Math.cos(endAngle);
+            var y2 = cy + radius * Math.sin(endAngle);
+
+            var color = colors[i % colors.length];
+
+            if (fraction > 0.001) {
+                var path = "M " + cx + " " + cy + " L " + x1 + " " + y1 + " A " + radius + " " + radius + " 0 " + largeArc + " 1 " + x2 + " " + y2 + " Z";
+                svg += "<path d='" + path + "' fill='" + color + "' opacity='0.8' stroke='white' stroke-width='0.5'/>";
+            }
+
+            startAngle = endAngle;
+        }
+
+        svg += "</svg>";
+        return svg;
+    }
+
+    // Training Score Timeline (bar chart of layer scores)
+    function _layerScoreBarChartSVG(layers) {
+        if (!layers || layers.length === 0) return "";
+        var width = 400, height = 80;
+        var barWidth = (width - 20) / layers.length;
+        var maxScore = 100;
+
+        var svg = "<svg width='100%' viewBox='0 0 " + width + " " + (height + 20) + "' style='display:block; max-width:500px;'>";
+
+        for (var i = 0; i < layers.length; i++) {
+            var barHeight = (layers[i].score / maxScore) * height;
+            var x = 10 + i * barWidth;
+            var y = height - barHeight;
+            var color = layers[i].score > 60 ? "#2ecc71" : layers[i].score > 35 ? "#f39c12" : "#e74c3c";
+
+            svg += "<rect x='" + x + "' y='" + y + "' width='" + Math.max(barWidth - 2, 2) + "' height='" + barHeight + "' fill='" + color + "' opacity='0.8' rx='2'/>";
+            if (layers.length <= 15) {
+                svg += "<text x='" + (x + barWidth / 2) + "' y='" + (height + 14) + "' text-anchor='middle' font-size='7' fill='currentColor' opacity='0.6'>" + Math.round(layers[i].score) + "</text>";
+            }
+        }
+
+        // Threshold lines
+        svg += "<line x1='10' y1='" + (height - 60 * height / 100) + "' x2='" + (width - 10) + "' y2='" + (height - 60 * height / 100) + "' stroke='#2ecc71' stroke-width='0.5' stroke-dasharray='3,3' opacity='0.4'/>";
+        svg += "<line x1='10' y1='" + (height - 35 * height / 100) + "' x2='" + (width - 10) + "' y2='" + (height - 35 * height / 100) + "' stroke='#f39c12' stroke-width='0.5' stroke-dasharray='3,3' opacity='0.4'/>";
+
+        svg += "</svg>";
+        return svg;
+    }
+
+    // Std deviation comparison across layers
+    function _stdComparisonSVG(layers) {
+        if (!layers || layers.length === 0) return "";
+        var width = 400, height = 50;
+        var maxStd = 0;
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].stats.std > maxStd) maxStd = layers[i].stats.std;
+        }
+        if (maxStd === 0) return "";
+
+        var barWidth = (width - 20) / layers.length;
+        var svg = "<svg width='100%' viewBox='0 0 " + width + " " + (height + 16) + "' style='display:block; max-width:500px;'>";
+
+        for (var i = 0; i < layers.length; i++) {
+            var barHeight = (layers[i].stats.std / maxStd) * height;
+            var x = 10 + i * barWidth;
+            var y = height - barHeight;
+            svg += "<rect x='" + x + "' y='" + y + "' width='" + Math.max(barWidth - 2, 2) + "' height='" + barHeight + "' fill='#9b59b6' opacity='0.7' rx='1'/>";
+        }
+
+        svg += "<text x='2' y='" + (height + 12) + "' font-size='7' fill='currentColor' opacity='0.5'>0</text>";
+        svg += "<text x='" + (width - 50) + "' y='" + (height + 12) + "' font-size='7' fill='currentColor' opacity='0.5'>max=" + maxStd.toFixed(4) + "</text>";
+        svg += "</svg>";
+        return svg;
+    }
+
+    // ============================================================
+    // RENDER FUNCTION
+    // ============================================================
 
     function render(divOrId) {
         var container;
@@ -506,6 +714,9 @@ var WeightAnalysis = (function() {
                 .wa_comparison { margin-top: 24px; padding: 16px; border-radius: 10px; background: rgba(52,152,219,0.05); border: 2px solid rgba(52,152,219,0.2); }
                 .wa_comparison h3 { margin: 0 0 12px 0; }
                 .wa_no_model { padding: 40px; text-align: center; opacity: 0.6; font-size: 1.1em; }
+                .wa_section { margin-top: 20px; padding: 16px; border-radius: 10px; background: rgba(155,89,182,0.05); border: 2px solid rgba(155,89,182,0.15); }
+                .wa_section h3 { margin: 0 0 12px 0; }
+                .wa_viz_label { font-size: 0.8em; opacity: 0.6; margin-bottom: 4px; margin-top: 12px; }
             `;
             document.head.appendChild(style);
         }
@@ -513,34 +724,69 @@ var WeightAnalysis = (function() {
         // Run analysis
         var m = (typeof model !== "undefined") ? model : null;
         if (!m || !m.getWeights) {
-            container.innerHTML = "<div class='wa_container'><div class='wa_no_model'>⚠️ Kein Modell geladen. Bitte erstelle oder lade zuerst ein Modell.</div></div>";
+            container.innerHTML = "<div class='wa_container'><div class='wa_no_model'>" + _trm("wa_no_model_loaded") + "</div></div>";
             return container;
         }
 
         var result = analyzeModel(m);
 
         if (!result || result.layers.length === 0) {
-            container.innerHTML = "<div class='wa_container'><div class='wa_no_model'>⚠️ Keine Gewichte im Modell gefunden.</div></div>";
+            container.innerHTML = "<div class='wa_container'><div class='wa_no_model'>" + _trm("wa_no_weights_in_model") + "</div></div>";
             return container;
         }
 
         var html = "<div class='wa_container'>";
 
         // Header with gauge
-        html += "<h2>🔬 Weight Analysis – Ist das Modell trainiert?</h2>";
+        html += "<h2>" + _trm("wa_title") + "</h2>";
         html += "<div class='wa_header'>";
         html += _scoreGauge(result.score, 140);
         html += "<div>";
-        html += "<div class='wa_message'>" + result.message + "</div>";
-        html += "<div class='wa_confidence'>Konfidenz: " + result.confidence + "% (basierend auf " + result.totalParams.toLocaleString() + " Parametern)</div>";
-        html += "<div style='margin-top:8px; font-size:0.85em; opacity:0.7;'>Bias-Score: " + result.biasScore + "% (nicht-null Biases deuten auf Training hin)</div>";
+        html += "<div class='wa_message'>" + _trm(result.messageKey) + "</div>";
+        html += "<div class='wa_confidence'>" + _trm("wa_confidence") + ": " + result.confidence + "% (" + _trm("wa_based_on") + " " + result.totalParams.toLocaleString() + " " + _trm("wa_parameters") + ")</div>";
+        html += "<div style='margin-top:8px; font-size:0.85em; opacity:0.7;'>" + _trm("wa_bias_score") + ": " + result.biasScore + "% (" + _trm("wa_nonzero_biases_hint") + ")</div>";
         html += "</div></div>";
 
-        // Overall indicators
-        html += "<div class='wa_comparison'>";
-        html += "<h3>📊 Gesamtübersicht der Indikatoren</h3>";
+        // ============================================================
+        // NEW: Global Visualizations Section
+        // ============================================================
 
-        // Aggregate indicators across layers
+        html += "<div class='wa_section'>";
+        html += "<h3>" + _trm("wa_global_visualizations") + "</h3>";
+
+        // Weight Norm Heatmap
+        html += "<div class='wa_viz_label'>" + _trm("wa_weight_norm_heatmap") + "</div>";
+        html += _weightNormHeatmapSVG(result.layers);
+
+        // Layer Score Bar Chart
+        html += "<div class='wa_viz_label'>" + _trm("wa_layer_score_overview") + "</div>";
+        html += _layerScoreBarChartSVG(result.layers);
+
+        // Std Comparison
+        html += "<div class='wa_viz_label'>" + _trm("wa_std_per_layer") + "</div>";
+        html += _stdComparisonSVG(result.layers);
+
+        // Parameter Distribution Pie Chart
+        html += "<div class='wa_viz_label'>" + _trm("wa_param_distribution") + "</div>";
+        html += "<div style='display:flex; align-items:center; gap:16px; flex-wrap:wrap;'>";
+        html += _paramPieChartSVG(result.layers);
+        html += "<div style='font-size:0.75em; opacity:0.6;'>";
+        var colors = ["#3498db", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6", "#1abc9c", "#e67e22", "#34495e", "#16a085", "#c0392b"];
+        for (var i = 0; i < Math.min(result.layers.length, 10); i++) {
+            html += "<div><span style='display:inline-block;width:10px;height:10px;background:" + colors[i % colors.length] + ";border-radius:2px;margin-right:4px;'></span>" + result.layers[i].name + " (" + result.layers[i].paramCount.toLocaleString() + ")</div>";
+        }
+        if (result.layers.length > 10) html += "<div>...</div>";
+        html += "</div></div>";
+
+        html += "</div>"; // wa_section
+
+        // ============================================================
+        // Overall indicators
+        // ============================================================
+
+        html += "<div class='wa_comparison'>";
+        html += "<h3>" + _trm("wa_overall_indicators") + "</h3>";
+
         var avgEntropy = 0, avgSparsity = 0, avgSVD = 0, avgKurtosis = 0, avgKS = 0, avgCorr = 0;
         for (var i = 0; i < result.layers.length; i++) {
             var ind = result.layers[i].indicators;
@@ -555,17 +801,20 @@ var WeightAnalysis = (function() {
         avgEntropy /= nLayers; avgSparsity /= nLayers; avgSVD /= nLayers;
         avgKurtosis /= nLayers; avgKS /= nLayers; avgCorr /= nLayers;
 
-        html += _indicatorBar("Entropie (niedrig = strukturiert)", avgEntropy, avgEntropy.toFixed(1) + "%");
-        html += _indicatorBar("Sparsity (viele near-zero Werte)", avgSparsity, avgSparsity.toFixed(1) + "%");
-        html += _indicatorBar("SVD Energiekonzentration", avgSVD, avgSVD.toFixed(1) + "%");
-        html += _indicatorBar("Kurtosis (schwere Tails)", avgKurtosis, avgKurtosis.toFixed(1) + "%");
-        html += _indicatorBar("KS-Test vs. Normal (Abweichung)", avgKS, avgKS.toFixed(1) + "%");
-        html += _indicatorBar("Inter-Filter Korrelation", avgCorr, avgCorr.toFixed(1) + "%");
+        html += _indicatorBar("wa_indicator_entropy", avgEntropy, avgEntropy.toFixed(1) + "%");
+        html += _indicatorBar("wa_indicator_sparsity", avgSparsity, avgSparsity.toFixed(1) + "%");
+        html += _indicatorBar("wa_indicator_svd", avgSVD, avgSVD.toFixed(1) + "%");
+        html += _indicatorBar("wa_indicator_kurtosis", avgKurtosis, avgKurtosis.toFixed(1) + "%");
+        html += _indicatorBar("wa_indicator_ks_test", avgKS, avgKS.toFixed(1) + "%");
+        html += _indicatorBar("wa_indicator_correlation", avgCorr, avgCorr.toFixed(1) + "%");
 
         html += "</div>";
 
+        // ============================================================
         // Per-layer details
-        html += "<h3 style='margin-top:24px;'>📋 Analyse pro Layer</h3>";
+        // ============================================================
+
+        html += "<h3 style='margin-top:24px;'>" + _trm("wa_per_layer_analysis") + "</h3>";
 
         for (var i = 0; i < result.layers.length; i++) {
             var layer = result.layers[i];
@@ -573,26 +822,37 @@ var WeightAnalysis = (function() {
 
             html += "<div class='wa_layer_card'>";
             html += "<div class='wa_layer_header'>";
-            html += "<span class='wa_layer_name'>" + layer.name + " <span style='opacity:0.5; font-weight:normal;'>[" + layer.shape.join("×") + "] (" + layer.paramCount.toLocaleString() + " params)</span></span>";
-            html += "<span class='wa_layer_score " + scoreClass + "'>" + Math.round(layer.score) + "% trainiert</span>";
+            html += "<span class='wa_layer_name'>" + layer.name + " <span style='opacity:0.5; font-weight:normal;'>[" + layer.shape.join("\u00d7") + "] (" + layer.paramCount.toLocaleString() + " " + _trm("wa_params") + ")</span></span>";
+            html += "<span class='wa_layer_score " + scoreClass + "'>" + Math.round(layer.score) + "% " + _trm("wa_trained") + "</span>";
             html += "</div>";
 
             // Indicators
             html += "<div class='wa_indicators'>";
             var ind = layer.indicators;
-            html += _indicatorBar("Entropie", ind.entropy.score, "H=" + ind.entropy.value.toFixed(3) + " / " + ind.entropy.maxEntropy.toFixed(3));
-            html += _indicatorBar("Sparsity", ind.sparsity.score, (ind.sparsity.value * 100).toFixed(1) + "% near-zero");
-            html += _indicatorBar("Sparsity", ind.sparsity.score, (ind.sparsity.value * 100).toFixed(1) + "% near-zero");
-            html += _indicatorBar("SVD Energie", ind.svd.score, "Steepness: " + ind.svd.steepness.toFixed(3));
-            html += _indicatorBar("Kurtosis", ind.kurtosis.score, "k=" + ind.kurtosis.value.toFixed(3));
-            html += _indicatorBar("KS-Test vs. Normal", ind.ksTest.score, "D=" + ind.ksTest.d.toFixed(4));
-            html += _indicatorBar("Inter-Filter Korrelation", ind.correlation.score, "r=" + ind.correlation.value.toFixed(4));
+            html += _indicatorBar("wa_indicator_entropy", ind.entropy.score, "H=" + ind.entropy.value.toFixed(3) + " / " + ind.entropy.maxEntropy.toFixed(3));
+            html += _indicatorBar("wa_indicator_sparsity", ind.sparsity.score, (ind.sparsity.value * 100).toFixed(1) + "% near-zero");
+            html += _indicatorBar("wa_indicator_svd", ind.svd.score, "Steepness: " + ind.svd.steepness.toFixed(3));
+            html += _indicatorBar("wa_indicator_kurtosis", ind.kurtosis.score, "k=" + ind.kurtosis.value.toFixed(3));
+            html += _indicatorBar("wa_indicator_ks_test", ind.ksTest.score, "D=" + ind.ksTest.d.toFixed(4));
+            html += _indicatorBar("wa_indicator_correlation", ind.correlation.score, "r=" + ind.correlation.value.toFixed(4));
             html += "</div>";
 
             // Histogram
             html += "<div style='margin-top:10px;'>";
-            html += "<div style='font-size:0.8em; opacity:0.6; margin-bottom:4px;'>Weight-Verteilung:</div>";
+            html += "<div class='wa_viz_label'>" + _trm("wa_weight_distribution") + "</div>";
             html += _histogramSVG(layer.histogram, layer.name);
+            html += "</div>";
+
+            // Box Plot
+            html += "<div style='margin-top:10px;'>";
+            html += "<div class='wa_viz_label'>" + _trm("wa_box_plot") + "</div>";
+            html += _boxPlotSVG(layer.sortedData, layer.stats);
+            html += "</div>";
+
+            // CDF
+            html += "<div style='margin-top:10px;'>";
+            html += "<div class='wa_viz_label'>" + _trm("wa_cdf") + "</div>";
+            html += _cdfSVG(layer.sortedData);
             html += "</div>";
 
             // Mini stats
@@ -600,36 +860,46 @@ var WeightAnalysis = (function() {
             html += "mean=" + layer.stats.mean.toFixed(5) + " | std=" + layer.stats.std.toFixed(5);
             html += " | min=" + layer.stats.min.toFixed(4) + " | max=" + layer.stats.max.toFixed(4);
             html += " | zeros=" + layer.stats.zeros + " | NaN=" + layer.stats.nanCount + " | Inf=" + layer.stats.infCount;
+            html += " | L2=" + layer.l2Norm.toFixed(4);
+            html += " | skew=" + layer.stats.skewness.toFixed(3) + " | kurt=" + layer.stats.kurtosis.toFixed(3);
             html += "</div>";
 
             html += "</div>"; // wa_layer_card
         }
 
+        // ============================================================
         // Comparison section: Random vs. Trained
+        // ============================================================
+
         html += "<div class='wa_comparison' style='margin-top:24px;'>";
-        html += "<h3>🔍 Vergleich: Random vs. Trainiert</h3>";
+        html += "<h3>" + _trm("wa_comparison_title") + "</h3>";
         html += "<div class='wa_grid'>";
-        html += "<div><strong>Random Weights:</strong><ul style='font-size:0.85em; opacity:0.8;'>";
-        html += "<li>Gleichmäßige Verteilung (hohe Entropie)</li>";
-        html += "<li>Keine Sparsity (wenig near-zero)</li>";
-        html += "<li>Flaches SVD-Spektrum</li>";
-        html += "<li>Kurtosis ≈ 0 (Normalverteilung)</li>";
-        html += "<li>Keine Inter-Filter Korrelation</li>";
-        html += "<li>Biases = 0</li>";
+        html += "<div><strong>" + _trm("wa_random_weights") + ":</strong><ul style='font-size:0.85em; opacity:0.8;'>";
+        html += "<li>" + _trm("wa_random_uniform_distribution") + "</li>";
+        html += "<li>" + _trm("wa_random_no_sparsity") + "</li>";
+        html += "<li>" + _trm("wa_random_flat_svd") + "</li>";
+        html += "<li>" + _trm("wa_random_kurtosis_zero") + "</li>";
+        html += "<li>" + _trm("wa_random_no_correlation") + "</li>";
+        html += "<li>" + _trm("wa_random_biases_zero") + "</li>";
         html += "</ul></div>";
-        html += "<div><strong>Trainierte Weights:</strong><ul style='font-size:0.85em; opacity:0.8;'>";
-        html += "<li>Strukturierte Verteilung (niedrige Entropie)</li>";
-        html += "<li>Hohe Sparsity (viele near-zero Werte)</li>";
-        html += "<li>Steiles SVD-Spektrum (Energiekonzentration)</li>";
-        html += "<li>Hohe Kurtosis (schwere Tails)</li>";
-        html += "<li>Korrelierte Filter</li>";
-        html += "<li>Biases ≠ 0</li>";
+        html += "<div><strong>" + _trm("wa_trained_weights") + ":</strong><ul style='font-size:0.85em; opacity:0.8;'>";
+        html += "<li>" + _trm("wa_trained_structured_distribution") + "</li>";
+        html += "<li>" + _trm("wa_trained_high_sparsity") + "</li>";
+        html += "<li>" + _trm("wa_trained_steep_svd") + "</li>";
+        html += "<li>" + _trm("wa_trained_high_kurtosis") + "</li>";
+        html += "<li>" + _trm("wa_trained_correlated_filters") + "</li>";
+        html += "<li>" + _trm("wa_trained_biases_nonzero") + "</li>";
         html += "</ul></div>";
         html += "</div></div>";
 
         html += "</div>"; // wa_container
 
         container.innerHTML = html;
+
+        // Trigger translation system
+        if (typeof update_translations === "function") {
+            update_translations();
+        }
 
         return container;
     }
@@ -767,7 +1037,7 @@ var WeightAnalysis = (function() {
 
         for (var i = 0; i < weights.length; i++) {
             totalParams += weights[i].data.length;
-            trainableParams += weights[i].data.length; // Simplified
+            trainableParams += weights[i].data.length;
         }
 
         return {
@@ -775,7 +1045,7 @@ var WeightAnalysis = (function() {
             trainableParams: trainableParams,
             layerCount: weights.length,
             paramsPerLayer: totalParams / Math.max(1, weights.length),
-            memoryMB: (totalParams * 4) / (1024 * 1024) // float32 = 4 bytes
+            memoryMB: (totalParams * 4) / (1024 * 1024)
         };
     }
 
@@ -797,11 +1067,10 @@ var WeightAnalysis = (function() {
 })();
 
 // ============================================================
-// AUTO-INIT: Automatically render when called without arguments
+// AUTO-INIT
 // ============================================================
 
 (function() {
-    // Auto-render on DOMContentLoaded if a target div exists
     if (typeof document !== "undefined") {
         var _autoInit = function() {
             var target = document.getElementById("weight_analysis");
@@ -813,7 +1082,6 @@ var WeightAnalysis = (function() {
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", _autoInit);
         } else {
-            // DOM already loaded, try after a short delay to ensure model is ready
             setTimeout(_autoInit, 1000);
         }
     }
