@@ -148,50 +148,67 @@ var WeightAnalysis = (function() {
     // SVD SPECTRUM (approximation)
     // ============================================================
 
-    function _computeSVDSteepness(arr) {
-        if (!arr || arr.length < 4) return 0;
-        var sorted = [];
-        for (var i = 0; i < arr.length; i++) {
-            if (!isNaN(arr[i]) && isFinite(arr[i])) {
-                sorted.push(Math.abs(arr[i]));
-            }
-        }
-        sorted.sort(function(a, b) { return b - a; });
+	function _computeSVDSteepness(arr) {
+		if (!arr || arr.length < 4) return 0;
+		var sorted = [];
+		for (var i = 0; i < arr.length; i++) {
+			if (!isNaN(arr[i]) && isFinite(arr[i])) {
+				sorted.push(Math.abs(arr[i]));
+			}
+		}
+		sorted.sort(function(a, b) { return b - a; });
 
-        if (sorted.length < 4) return 0;
+		if (sorted.length < 4) return 0;
 
-        var topN = Math.max(1, Math.floor(sorted.length * 0.1));
-        var topEnergy = 0, totalEnergy = 0;
-        for (var i = 0; i < sorted.length; i++) {
-            totalEnergy += sorted[i] * sorted[i];
-            if (i < topN) topEnergy += sorted[i] * sorted[i];
-        }
+		var topN = Math.max(1, Math.floor(sorted.length * 0.1));
+		var topEnergy = 0, totalEnergy = 0;
+		for (var i = 0; i < sorted.length; i++) {
+			totalEnergy += sorted[i] * sorted[i];
+			if (i < topN) topEnergy += sorted[i] * sorted[i];
+		}
 
-        if (totalEnergy === 0) return 0;
-        return topEnergy / totalEnergy;
-    }
+		if (totalEnergy === 0) return 0;
+		var rawSteepness = topEnergy / totalEnergy;
+
+		// Baseline correction: for a random Gaussian/uniform distribution,
+		// the top 10% of absolute values naturally holds ~27% of total energy
+		// (due to squared values amplifying the tail of the distribution).
+		// We subtract this baseline so random init scores near 0.
+		var baseline = 0.27;
+		var corrected = (rawSteepness - baseline) / (1 - baseline);
+		return Math.max(0, corrected);
+	}
 
     // ============================================================
     // BIAS ANALYSIS
     // ============================================================
 
-    function _analyzeBiases(weights) {
-        var biasNonZeroCount = 0;
-        var biasTotal = 0;
+	function _analyzeBiases(weights) {
+		var biasNonZeroCount = 0;
+		var biasTotal = 0;
+		var biasLargeCount = 0;
 
-        for (var i = 0; i < weights.length; i++) {
-            if (weights[i].name.toLowerCase().includes("bias")) {
-                var data = weights[i].data;
-                for (var j = 0; j < data.length; j++) {
-                    biasTotal++;
-                    if (Math.abs(data[j]) > 1e-6) biasNonZeroCount++;
-                }
-            }
-        }
+		for (var i = 0; i < weights.length; i++) {
+			if (weights[i].name.toLowerCase().includes("bias")) {
+				var data = weights[i].data;
+				for (var j = 0; j < data.length; j++) {
+					biasTotal++;
+					// Only count biases that have moved significantly from zero
+					// Standard init is zeros; small random values (< 0.05) are not evidence of training
+					if (Math.abs(data[j]) > 0.05) biasNonZeroCount++;
+					// Strong evidence: biases with large magnitude
+					if (Math.abs(data[j]) > 0.1) biasLargeCount++;
+				}
+			}
+		}
 
-        if (biasTotal === 0) return 0.5;
-        return biasNonZeroCount / biasTotal;
-    }
+		if (biasTotal === 0) return 0; // No biases = no evidence (was 0.5 before, which inflated score)
+
+		// Weighted: large biases count more
+		var smallScore = biasNonZeroCount / biasTotal;
+		var largeScore = biasLargeCount / biasTotal;
+		return smallScore * 0.4 + largeScore * 0.6;
+	}
 
     // ============================================================
     // INTER-FILTER CORRELATION
@@ -313,30 +330,44 @@ var WeightAnalysis = (function() {
             var indicators = {};
 
             // 1. Entropy
-            var entropy = _computeEntropy(data, 50);
-            var maxEntropy = Math.log2(50);
-            var entropyRatio = entropy / maxEntropy;
-            var entropyScore = (1 - entropyRatio) * 100;
-            indicators.entropy = { value: entropy, maxEntropy: maxEntropy, ratio: entropyRatio, score: entropyScore };
+		var entropy = _computeEntropy(data, 50);
+		var maxEntropy = Math.log2(50);
+		var entropyRatio = entropy / maxEntropy;
+		// Random uniform/Gaussian init typically has entropyRatio > 0.85
+		// Only score as "trained" if entropy drops significantly below that
+		var entropyBaseline = 0.82;
+		var entropyScore = entropyRatio < entropyBaseline 
+			? ((entropyBaseline - entropyRatio) / entropyBaseline) * 100 
+			: 0;
+		entropyScore = Math.min(Math.max(0, entropyScore), 100);
+		indicators.entropy = { value: entropy, maxEntropy: maxEntropy, ratio: entropyRatio, score: entropyScore };
 
             // 2. Sparsity
-            var sparsity = _computeSparsity(data, 0.01);
-            var sparsityScore = Math.min(sparsity * 150, 100);
-            indicators.sparsity = { value: sparsity, score: sparsityScore };
+		var sparsity = _computeSparsity(data, 0.01);
+		var sparsityBaseline = 0.05; // Random init can have ~3-5% near zero by chance
+		var sparsityAdjusted = Math.max(0, sparsity - sparsityBaseline);
+		var sparsityScore = Math.min(sparsityAdjusted * 180, 100);
+		indicators.sparsity = { value: sparsity, score: sparsityScore };
 
             // 3. SVD steepness
-            var svdSteepness = _computeSVDSteepness(data);
-            var svdScore = Math.min(svdSteepness * 120, 100);
-            indicators.svd = { steepness: svdSteepness, score: svdScore };
+		var svdSteepness = _computeSVDSteepness(data);
+		var svdScore = Math.min(svdSteepness * 130, 100);
+		indicators.svd = { steepness: svdSteepness, score: svdScore };
 
-            // 4. Kurtosis
-            var kurtosisScore = Math.min(Math.abs(stats.kurtosis) * 10, 100);
-            indicators.kurtosis = { value: stats.kurtosis, score: kurtosisScore };
+		// 4. Kurtosis
+		var kurtosisBaseline = 1.5; // Allow some natural variation
+		var kurtosisAdjusted = Math.max(0, Math.abs(stats.kurtosis) - kurtosisBaseline);
+		var kurtosisScore = Math.min(kurtosisAdjusted * 15, 100);
+		indicators.kurtosis = { value: stats.kurtosis, score: kurtosisScore };
 
             // 5. KS-test
-            var ksD = _ksTestAgainstNormal(Array.from(data), 0, stats.std);
-            var ksScore = Math.min(ksD * 300, 100);
-            indicators.ksTest = { d: ksD, score: ksScore };
+		var ksD = _ksTestAgainstNormal(Array.from(data), stats.mean, stats.std);
+		// Baseline: even a perfect Gaussian sample has KS-D ~ 0.03-0.06 for typical sizes
+		// Only score deviations above 0.06 as evidence of training
+		var ksBaseline = 0.06;
+		var ksAdjusted = Math.max(0, ksD - ksBaseline);
+		var ksScore = Math.min(ksAdjusted * 400, 100);
+		indicators.ksTest = { d: ksD, score: ksScore };
 
             // 6. Inter-filter correlation
             var correlation = _computeAvgInterFilterCorrelation(data, w.shape);
@@ -380,7 +411,13 @@ var WeightAnalysis = (function() {
         }
 
         // Bias analysis
-        var biasScore = _analyzeBiases(weights) * 100;
+
+	    var biasScore = _analyzeBiases(weights) * 100;
+
+	    // Final score - reduce bias weight since it's less reliable
+	    var rawScore = totalWeight > 0 ? totalScore / totalWeight : 0;
+	    var finalScore = rawScore * 0.90 + biasScore * 0.10;
+	    finalScore = Math.max(0, Math.min(100, finalScore));
 
         // Final score
         var rawScore = totalWeight > 0 ? totalScore / totalWeight : 0;
@@ -392,11 +429,11 @@ var WeightAnalysis = (function() {
         for (var i = 0; i < weights.length; i++) totalParams += weights[i].data.length;
         var confidence = Math.min(100, Math.log10(totalParams + 1) * 25);
 
-        var messageKey = "";
-        if (finalScore > 75) messageKey = "wa_model_very_likely_trained";
-        else if (finalScore > 50) messageKey = "wa_model_shows_training_signs";
-        else if (finalScore > 30) messageKey = "wa_model_slightly_trained_or_special_init";
-        else messageKey = "wa_model_seems_untrained";
+	    var messageKey = "";
+	    if (finalScore > 70) messageKey = "wa_model_very_likely_trained";
+	    else if (finalScore > 45) messageKey = "wa_model_shows_training_signs";
+	    else if (finalScore > 20) messageKey = "wa_model_slightly_trained_or_special_init";
+	    else messageKey = "wa_model_seems_untrained";
 
         return {
             score: Math.round(finalScore),
