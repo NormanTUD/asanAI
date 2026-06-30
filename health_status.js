@@ -308,7 +308,6 @@ function _detectWarnings(layerData) {
 		warnings.push({ type: "all_negative", severity: "info", negativeFraction: 1.0 });
 	}
 
-	// Magnitude ratio check (input vs output)
 	if (layerData.input) {
 		var inputStats = _computeStats(layerData.input);
 		if (inputStats && inputStats.std > 0 && stats.std > 0) {
