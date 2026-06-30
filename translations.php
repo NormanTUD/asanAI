@@ -922,6 +922,18 @@
 		       "tda_no_raw_data" => "No raw training data available. Load a dataset first.",
 		       "tda_no_data_available" => "No data available for analysis. Load data or run the model.",
 		       "tda_analysis_error" => "An error occurred during topological analysis.",
+		       "tda_interactive_controls" => "Interactive Controls",
+		       "tda_slider_max_points" => "Max Points",
+		       "tda_slider_min_persistence" => "Min Persistence Threshold",
+		       "tda_slider_takens_window" => "Takens Window Size",
+		       "tda_slider_epsilon_steps" => "Epsilon Steps",
+		       "tda_switch_to" => "Switch to",
+		       "tda_explain_persistence_diagram" => "Each dot represents a topological feature. Distance from the diagonal = importance. Blue dots are connected components (clusters), red dots are loops. Features far from the diagonal are significant structures in your data.",
+		       "tda_explain_barcode" => "Each bar represents a topological feature's lifetime. Longer bars = more persistent (real) structures. Short bars = noise. The bars are sorted by length so the most important features appear at the top.",
+		       "tda_explain_betti_curves" => "Shows how many topological features exist at each distance scale. β₀ (blue) = number of separate clusters. β₁ (red) = number of loops/holes. Watch how these change as the scale (ε) increases.",
+		       "tda_explain_point_cloud" => "A 2D projection (PCA) of the high-dimensional point cloud used for analysis. This shows the overall shape and clustering of the data. Hover over points to see coordinates.",
+		       "tda_explain_landscape" => "The persistence landscape shows the top-k most persistent features as bars. Taller bars indicate more significant topological structures. This is a stable summary of the persistence diagram.",
+
 		),
 
 		'de' => array(
@@ -1845,6 +1857,17 @@
 		       "tda_no_raw_data" => "Keine Rohdaten verf&uuml;gbar. Lade zuerst einen Datensatz.",
 		       "tda_no_data_available" => "Keine Daten f&uuml;r die Analyse verf&uuml;gbar. Lade Daten oder f&uuml;hre das Modell aus.",
 		       "tda_analysis_error" => "Bei der topologischen Analyse ist ein Fehler aufgetreten.",
+		       "tda_interactive_controls" => "Interaktive Steuerung",
+		       "tda_slider_max_points" => "Max. Punkte",
+		       "tda_slider_min_persistence" => "Min. Persistenz-Schwelle",
+		       "tda_slider_takens_window" => "Takens-Fenstergr&ouml;&szlig;e",
+		       "tda_slider_epsilon_steps" => "Epsilon-Schritte",
+		       "tda_switch_to" => "Wechseln zu",
+		       "tda_explain_persistence_diagram" => "Jeder Punkt repr&auml;sentiert ein topologisches Merkmal. Abstand zur Diagonale = Wichtigkeit. Blaue Punkte sind Zusammenhangskomponenten (Cluster), rote Punkte sind Schleifen. Merkmale weit von der Diagonale sind bedeutende Strukturen in deinen Daten.",
+		       "tda_explain_barcode" => "Jeder Balken repr&auml;sentiert die Lebensdauer eines topologischen Merkmals. L&auml;ngere Balken = persistentere (echte) Strukturen. Kurze Balken = Rauschen. Die Balken sind nach L&auml;nge sortiert, die wichtigsten Merkmale stehen oben.",
+		       "tda_explain_betti_curves" => "Zeigt, wie viele topologische Merkmale bei jeder Distanzskala existieren. &beta;&#8320; (blau) = Anzahl separater Cluster. &beta;&#8321; (rot) = Anzahl der Schleifen/L&ouml;cher. Beobachte, wie sich diese &auml;ndern wenn die Skala (&epsilon;) zunimmt.",
+		       "tda_explain_point_cloud" => "Eine 2D-Projektion (PCA) der hochdimensionalen Punktwolke. Dies zeigt die Gesamtform und Clusterung der Daten. Fahre &uuml;ber Punkte um Koordinaten zu sehen.",
+		       "tda_explain_landscape" => "Die Persistenz-Landschaft zeigt die Top-k persistentesten Merkmale als Balken. H&ouml;here Balken bedeuten signifikantere topologische Strukturen. Dies ist eine stabile Zusammenfassung des Persistenzdiagramms.",
 		)
 	);
 
