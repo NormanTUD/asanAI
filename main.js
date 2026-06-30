@@ -1037,6 +1037,8 @@ $(document).ready(async function() {
 
 	register_resize_observers();
 
+	WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 

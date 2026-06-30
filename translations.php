@@ -815,6 +815,8 @@
 		       "layer_io_issue_gradient_vanishing" => "Gradient vanishing risk (low std ratio across network)",
 		       "layer_io_skewness_per_layer" => "Skewness per layer",
 		       "layer_io_kurtosis_per_layer" => "Kurtosis per layer",
+		       "no_weight_analysis" => "No weight-analysis data yet.",
+		       "weight_analysis" => "Weight Analysis"
 		),
 
 		'de' => array(
@@ -1631,6 +1633,8 @@
 		       "layer_io_issue_gradient_vanishing" => "Gradient-Verschwindungsrisiko (niedriges Std-Verhältnis im Netzwerk)",
 		       "layer_io_skewness_per_layer" => "Schiefe pro Layer",
 		       "layer_io_kurtosis_per_layer" => "Kurtosis pro Layer",
+		       "no_weight_analysis" => "Bisher keine Gewichtsanalysedaten.",
+		       "weight_analysis" => "Gewichsanalysen"
 		)
 	);
 
