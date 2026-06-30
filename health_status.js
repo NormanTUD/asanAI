@@ -139,7 +139,7 @@ function recordLayerIO(input) {
 			}
 		});
 	} catch (e) {
-		console.warn("[layerIO] recording error:", e);
+		wrn("[layerIO] recording error:", e);
 	}
 
 	layerIOStats._isRecording = false;
@@ -157,7 +157,7 @@ var _recordEveryN = 50; // Nur jeden 50. Predict aufzeichnen
 function enableAutoRecord() {
 	if (!model) {
 		// FIX: Wenn model noch nicht existiert, versuche es später erneut
-		console.warn("[layerIO] enableAutoRecord called but model is null. Will retry...");
+		wrn("[layerIO] enableAutoRecord called but model is null. Will retry...");
 		setTimeout(function () {
 			enableAutoRecord();
 		}, 1000);
@@ -188,7 +188,7 @@ function enableAutoRecord() {
 	model._io_auto_record_patched = true;
 	layerIOStats._lastPatchedModel = model;
 
-	console.log("[layerIO] Auto-record patched on model successfully.");
+	dbg("[layerIO] Auto-record patched on model successfully.");
 }
 
 // ============================================================
