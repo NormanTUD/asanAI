@@ -134,9 +134,11 @@ var WeightAnalysis = (function() {
 	// SPARSITY ANALYSIS
 	// ============================================================
 
-	function _computeSparsity(arr, threshold) {
-		threshold = threshold || 1e-5;
-		if (!arr || arr.length === 0) return 0;
+	function _computeSparsity(arr, stats) {
+		if (!arr || arr.length === 0 || !stats) return 0;
+		// Use a threshold relative to the layer's std deviation
+		// Weights within 5% of std are considered "near-zero" (pruned/sparse)
+		var threshold = Math.max(1e-6, stats.std * 0.05);
 		var nearZero = 0;
 		for (var i = 0; i < arr.length; i++) {
 			if (Math.abs(arr[i]) < threshold) nearZero++;
@@ -144,39 +146,233 @@ var WeightAnalysis = (function() {
 		return nearZero / arr.length;
 	}
 
+	function _computeLayerScore(indicators, isBiasLayer, shape) {
+		var entropyScore = indicators.entropy.score;
+		var sparsityScore = indicators.sparsity.score;
+		var svdScore = indicators.svd.score;
+		var kurtosisScore = indicators.kurtosis.score;
+		var ksScore = indicators.ksTest.score;
+		var corrScore = indicators.correlation.score;
+		var initDevScore = indicators.initDeviation ? indicators.initDeviation.score : 0;
+
+		if (isBiasLayer) {
+			// For bias layers, the primary signal is: are they non-zero?
+			// Biases are almost always initialized to 0. Any significant value = trained.
+			// Use initDeviation and KS-test as primary indicators
+			var biasScore = Math.max(initDevScore, ksScore, entropyScore);
+			return Math.max(0, Math.min(100, biasScore));
+		}
+
+		// For kernel layers: use a "max of strong signals" approach combined with average
+		// This prevents a single weak indicator from dragging down the score
+		var allScores = [entropyScore, sparsityScore, svdScore, kurtosisScore, ksScore, corrScore, initDevScore];
+		allScores.sort(function(a, b) { return b - a; }); // descending
+
+		// Weighted average emphasizing top signals
+		var weightedAvg = (
+			entropyScore * 0.10 +
+			sparsityScore * 0.12 +
+			svdScore * 0.20 +
+			kurtosisScore * 0.10 +
+			ksScore * 0.15 +
+			corrScore * 0.08 +
+			initDevScore * 0.25
+		);
+
+		// "Any strong signal" boost: if top-2 indicators are high, boost overall
+		var topSignalBoost = 0;
+		if (allScores[0] > 50) {
+			topSignalBoost = allScores[0] * 0.2;
+		}
+		if (allScores.length > 1 && allScores[1] > 40) {
+			topSignalBoost += allScores[1] * 0.1;
+		}
+
+		var finalLayerScore = weightedAvg + topSignalBoost;
+
+		// Clamp
+		return Math.max(0, Math.min(100, finalLayerScore));
+	}
+	
+	function _computeInitDeviationScore(stats, shape) {
+		if (!stats || !shape || shape.length < 2) return 0;
+
+		// Estimate expected std from common initialization schemes
+		var fanIn, fanOut;
+
+		if (shape.length === 4) {
+			// Conv: [H, W, C_in, C_out]
+			var receptiveFieldSize = shape[0] * shape[1];
+			fanIn = shape[2] * receptiveFieldSize;
+			fanOut = shape[3] * receptiveFieldSize;
+		} else if (shape.length === 2) {
+			// Dense: [in, out]
+			fanIn = shape[0];
+			fanOut = shape[1];
+		} else {
+			return 0;
+		}
+
+		// Expected std for different initialization schemes
+		var glorotUniformLimit = Math.sqrt(6.0 / (fanIn + fanOut));
+		var glorotUniformStd = glorotUniformLimit / Math.sqrt(3); // std of uniform[-a, a] = a/sqrt(3)
+
+		var glorotNormalStd = Math.sqrt(2.0 / (fanIn + fanOut));
+		var heNormalStd = Math.sqrt(2.0 / fanIn);
+		var lecunNormalStd = Math.sqrt(1.0 / fanIn);
+
+		// Check which initialization is closest
+		var candidates = [glorotUniformStd, glorotNormalStd, heNormalStd, lecunNormalStd];
+		var actualStd = stats.std;
+
+		var minDeviation = Infinity;
+		for (var i = 0; i < candidates.length; i++) {
+			var deviation = Math.abs(actualStd - candidates[i]) / candidates[i];
+			if (deviation < minDeviation) minDeviation = deviation;
+		}
+
+		// Also check if mean has shifted from zero (strong training signal)
+		var meanShift = Math.abs(stats.mean) / Math.max(actualStd, 1e-8);
+
+		// Score: deviation from expected init std
+		// Random init: minDeviation ~ 0-0.1, meanShift ~ 0
+		// Trained: minDeviation can be 0.2-0.8+, meanShift can be 0.05+
+		var stdScore = Math.min(minDeviation * 150, 100);
+		var meanScore = Math.min(meanShift * 300, 100);
+
+		// Combined (std deviation is more reliable)
+		return stdScore * 0.7 + meanScore * 0.3;
+	}
+
 	// ============================================================
 	// SVD SPECTRUM (approximation)
 	// ============================================================
 
-	function _computeSVDSteepness(arr) {
-		if (!arr || arr.length < 4) return 0;
-		var sorted = [];
-		for (var i = 0; i < arr.length; i++) {
-			if (!isNaN(arr[i]) && isFinite(arr[i])) {
-				sorted.push(Math.abs(arr[i]));
+	function _computeSVDSteepness(arr, shape) {
+		if (!arr || !shape || shape.length < 2) return 0;
+
+		// Reshape into 2D matrix: (inputDim, outputDim)
+		var rows, cols;
+		if (shape.length === 4) {
+			// Conv layer: [H, W, C_in, C_out] -> reshape to (H*W*C_in, C_out)
+			rows = shape[0] * shape[1] * shape[2];
+			cols = shape[3];
+		} else if (shape.length === 2) {
+			// Dense layer: [in, out]
+			rows = shape[0];
+			cols = shape[1];
+		} else if (shape.length === 1) {
+			// Bias vector - no meaningful SVD
+			return 0;
+		} else {
+			// Fallback: flatten to roughly square
+			var total = 1;
+			for (var i = 0; i < shape.length; i++) total *= shape[i];
+			cols = shape[shape.length - 1];
+			rows = total / cols;
+		}
+
+		if (rows < 2 || cols < 2) return 0;
+
+		// Compute Gram matrix (A^T * A) for singular value approximation
+		// This is cols x cols, which is manageable
+		var minDim = Math.min(rows, cols);
+		var maxDim = Math.max(rows, cols);
+
+		// If matrix is too large, subsample rows
+		var sampleRows = Math.min(rows, 2000);
+		var rowStep = Math.max(1, Math.floor(rows / sampleRows));
+		var actualRows = Math.ceil(rows / rowStep);
+
+		// Build A^T * A (cols x cols)
+		var gram = new Float64Array(cols * cols);
+		for (var sampledR = 0; sampledR < rows; sampledR += rowStep) {
+			for (var c1 = 0; c1 < cols; c1++) {
+				var val1 = arr[sampledR * cols + c1] || 0;
+				for (var c2 = c1; c2 < cols; c2++) {
+					var val2 = arr[sampledR * cols + c2] || 0;
+					var prod = val1 * val2;
+					gram[c1 * cols + c2] += prod;
+					if (c1 !== c2) gram[c2 * cols + c1] += prod;
+				}
 			}
 		}
-		sorted.sort(function(a, b) { return b - a; });
 
-		if (sorted.length < 4) return 0;
+		// Power iteration to get top-k singular values (approximation)
+		var k = Math.min(cols, 10);
+		var singularValues = [];
 
-		var topN = Math.max(1, Math.floor(sorted.length * 0.1));
-		var topEnergy = 0, totalEnergy = 0;
-		for (var i = 0; i < sorted.length; i++) {
-			totalEnergy += sorted[i] * sorted[i];
-			if (i < topN) topEnergy += sorted[i] * sorted[i];
+		// Deflated power iteration
+		var deflatedGram = new Float64Array(gram);
+
+		for (var sv = 0; sv < k; sv++) {
+			// Random initial vector
+			var vec = new Float64Array(cols);
+			for (var j = 0; j < cols; j++) vec[j] = Math.random() - 0.5;
+
+			// Normalize
+			var norm = 0;
+			for (var j = 0; j < cols; j++) norm += vec[j] * vec[j];
+			norm = Math.sqrt(norm);
+			if (norm === 0) break;
+			for (var j = 0; j < cols; j++) vec[j] /= norm;
+
+			// Power iteration (20 iterations is usually enough)
+			for (var iter = 0; iter < 30; iter++) {
+				var newVec = new Float64Array(cols);
+				for (var r = 0; r < cols; r++) {
+					var sum = 0;
+					for (var c = 0; c < cols; c++) {
+						sum += deflatedGram[r * cols + c] * vec[c];
+					}
+					newVec[r] = sum;
+				}
+				// Compute eigenvalue (Rayleigh quotient)
+				norm = 0;
+				for (var j = 0; j < cols; j++) norm += newVec[j] * newVec[j];
+				norm = Math.sqrt(norm);
+				if (norm < 1e-12) break;
+				for (var j = 0; j < cols; j++) vec[j] = newVec[j] / norm;
+			}
+
+			// Eigenvalue = v^T * A * v
+			var eigenvalue = 0;
+			for (var r = 0; r < cols; r++) {
+				var sum = 0;
+				for (var c = 0; c < cols; c++) {
+					sum += deflatedGram[r * cols + c] * vec[c];
+				}
+				eigenvalue += vec[r] * sum;
+			}
+
+			singularValues.push(Math.max(0, eigenvalue));
+
+			// Deflate: remove this eigenvector's contribution
+			for (var r = 0; r < cols; r++) {
+				for (var c = 0; c < cols; c++) {
+					deflatedGram[r * cols + c] -= eigenvalue * vec[r] * vec[c];
+				}
+			}
 		}
 
+		// Compute energy concentration
+		var totalEnergy = 0;
+		for (var i = 0; i < singularValues.length; i++) totalEnergy += singularValues[i];
 		if (totalEnergy === 0) return 0;
-		var rawSteepness = topEnergy / totalEnergy;
 
-		// Baseline correction: for a random Gaussian/uniform distribution,
-		// the top 10% of absolute values naturally holds ~27% of total energy
-		// (due to squared values amplifying the tail of the distribution).
-		// We subtract this baseline so random init scores near 0.
-		var baseline = 0.27;
-		var corrected = (rawSteepness - baseline) / (1 - baseline);
-		return Math.max(0, corrected);
+		// Top-1 concentration (how much the first singular value dominates)
+		var top1Ratio = singularValues[0] / totalEnergy;
+
+		// For random matrices, the Marchenko-Pastur law predicts the top eigenvalue ratio
+		// For a random (m x n) matrix with m >> n, top eigenvalue ~ (1 + sqrt(n/m))^2 * sigma^2
+		// The expected top-1 ratio for random is approximately 1/min(rows,cols) * correction
+		var aspectRatio = Math.min(rows, cols) / Math.max(rows, cols);
+		var randomBaseline = (1 + Math.sqrt(aspectRatio)) * (1 + Math.sqrt(aspectRatio)) / cols;
+		// Simplified: for typical layers, random baseline for top-1 ratio is ~0.15-0.35
+		var empiricalBaseline = 0.30;
+
+		var corrected = (top1Ratio - empiricalBaseline) / (1 - empiricalBaseline);
+		return Math.max(0, Math.min(1, corrected));
 	}
 
 	// ============================================================
@@ -184,30 +380,89 @@ var WeightAnalysis = (function() {
 	// ============================================================
 
 	function _analyzeBiases(weights) {
-		var biasNonZeroCount = 0;
-		var biasTotal = 0;
-		var biasLargeCount = 0;
+		var biasLayers = [];
 
 		for (var i = 0; i < weights.length; i++) {
 			if (weights[i].name.toLowerCase().includes("bias")) {
-				var data = weights[i].data;
-				for (var j = 0; j < data.length; j++) {
-					biasTotal++;
-					// Only count biases that have moved significantly from zero
-					// Standard init is zeros; small random values (< 0.05) are not evidence of training
-					if (Math.abs(data[j]) > 0.05) biasNonZeroCount++;
-					// Strong evidence: biases with large magnitude
-					if (Math.abs(data[j]) > 0.1) biasLargeCount++;
-				}
+				biasLayers.push(weights[i]);
 			}
 		}
 
-		if (biasTotal === 0) return 0; // No biases = no evidence (was 0.5 before, which inflated score)
+		if (biasLayers.length === 0) return 0;
 
-		// Weighted: large biases count more
-		var smallScore = biasNonZeroCount / biasTotal;
-		var largeScore = biasLargeCount / biasTotal;
-		return smallScore * 0.4 + largeScore * 0.6;
+		var totalScore = 0;
+
+		for (var b = 0; b < biasLayers.length; b++) {
+			var data = biasLayers[b].data;
+			var n = data.length;
+			if (n === 0) continue;
+
+			// Metric 1: L2 norm of biases (should be 0 for untrained)
+			var l2 = 0;
+			var maxAbs = 0;
+			var sum = 0;
+			var nonZeroCount = 0;
+
+			for (var j = 0; j < n; j++) {
+				var v = data[j];
+				l2 += v * v;
+				sum += v;
+				if (Math.abs(v) > maxAbs) maxAbs = Math.abs(v);
+				if (Math.abs(v) > 1e-7) nonZeroCount++;
+			}
+			l2 = Math.sqrt(l2);
+			var mean = sum / n;
+
+			// Metric 2: Fraction of non-zero biases
+			var nonZeroFraction = nonZeroCount / n;
+
+			// Metric 3: Variance of biases (trained biases have structure/variance)
+			var variance = 0;
+			for (var j = 0; j < n; j++) {
+				var diff = data[j] - mean;
+				variance += diff * diff;
+			}
+			variance = variance / Math.max(1, n - 1);
+			var std = Math.sqrt(variance);
+
+			// Metric 4: Are biases correlated with their position?
+			// (trained biases often have patterns, e.g., some channels activated more)
+			var hasPattern = 0;
+			if (n >= 4) {
+				// Check if there's a trend or clustering
+				var firstHalfMean = 0, secondHalfMean = 0;
+				var half = Math.floor(n / 2);
+				for (var j = 0; j < half; j++) firstHalfMean += data[j];
+				for (var j = half; j < n; j++) secondHalfMean += data[j];
+				firstHalfMean /= half;
+				secondHalfMean /= (n - half);
+				var halfDiff = Math.abs(firstHalfMean - secondHalfMean);
+				if (std > 0) hasPattern = Math.min(halfDiff / std, 1.0);
+			}
+
+			// Scoring for this bias layer
+			// Any non-zero bias is evidence (since init is always 0)
+			var layerBiasScore = 0;
+
+			// Strong signal: large magnitude biases
+			var magnitudeScore = Math.min(maxAbs * 150, 100); // maxAbs > 0.67 -> 100%
+
+			// Medium signal: most biases are non-zero
+			var coverageScore = nonZeroFraction * 100;
+
+			// Supporting signal: variance (structured biases)
+			var varianceScore = Math.min(std * 200, 100); // std > 0.5 -> 100%
+
+			// Pattern bonus
+			var patternBonus = hasPattern * 20;
+
+			layerBiasScore = magnitudeScore * 0.45 + coverageScore * 0.25 + varianceScore * 0.20 + patternBonus * 0.10;
+			layerBiasScore = Math.min(100, layerBiasScore);
+
+			totalScore += layerBiasScore;
+		}
+
+		return biasLayers.length > 0 ? totalScore / biasLayers.length / 100 : 0;
 	}
 
 	// ============================================================
