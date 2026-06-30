@@ -331,21 +331,26 @@ async function get_cached_json(url) {
 
 	try {
 		var worked = 1;
-		var data = await $.getJSON(url).fail(function() {
+
+		// Cache-Busting: ? oder & je nach URL-Aufbau
+		var separator = url.includes('?') ? '&' : '?';
+		var fetchUrl = url + separator + 'cache_id=' + Math.random().toString(36).substring(2);
+
+		var data = await $.getJSON(fetchUrl).fail(function() {
 			worked = 0;
 			log_once("Could not get " + url);
 		});
-		if(worked) {
+		if (worked) {
 			_cached_json[url] = data;
 		}
 
 		return data;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
+		if (Object.keys(e).includes("message")) {
 			e = e.message;
 		}
 
-		if(Object.keys(e).includes("statusText")) {
+		if (Object.keys(e).includes("statusText")) {
 			e = e.statusText;
 		}
 
