@@ -2442,3 +2442,116 @@ body:not(.darkmode) .bar-tooltip-raw {
 #canvas_grid_visualization {
 	overflow-anchor: none;
 }
+
+/* ===== Confusion Matrix ===== */
+
+.confusion_matrix_table {
+	border-collapse: separate;
+	border-spacing: 3px;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	font-size: 14px;
+	margin: 1.5em auto;
+	border-radius: 10px;
+	overflow: hidden;
+	background: var(--cm-bg);
+	box-shadow: 0 2px 12px var(--cm-shadow);
+}
+
+/* ===== Custom Properties – ein Theme für beide Modi ===== */
+:root {
+	--cm-bg: #f5f5f7;
+	--cm-shadow: rgba(0, 0, 0, 0.06);
+	--cm-header-bg: #e4e4e8;
+	--cm-header-color: #1d1d1f;
+	--cm-header-border: #d1d1d6;
+	--cm-cell-bg: #ffffff;
+	--cm-cell-color: #1d1d1f;
+	--cm-cell-border: #e5e5ea;
+	--cm-correct-bg: #28a745;
+	--cm-correct-color: #ffffff;
+	--cm-incorrect-bg: #dc3545;
+	--cm-incorrect-color: #ffffff;
+	--cm-zero-color: #aaaaaa;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--cm-bg: #1c1c1e;
+		--cm-shadow: rgba(0, 0, 0, 0.4);
+		--cm-header-bg: #2c2c2e;
+		--cm-header-color: #f0f0f5;
+		--cm-header-border: #3a3a3c;
+		--cm-cell-bg: #252528;
+		--cm-cell-color: #f0f0f5;
+		--cm-cell-border: #3a3a3c;
+		--cm-correct-bg: #2ea44f;
+		--cm-correct-color: #ffffff;
+		--cm-incorrect-bg: #e5534b;
+		--cm-incorrect-color: #ffffff;
+		--cm-zero-color: #636366;
+	}
+}
+
+/* Class-basierter Dark Mode Fallback */
+body.dark,
+html.dark-mode,
+.dark-theme {
+	--cm-bg: #1c1c1e;
+	--cm-shadow: rgba(0, 0, 0, 0.4);
+	--cm-header-bg: #2c2c2e;
+	--cm-header-color: #f0f0f5;
+	--cm-header-border: #3a3a3c;
+	--cm-cell-bg: #252528;
+	--cm-cell-color: #f0f0f5;
+	--cm-cell-border: #3a3a3c;
+	--cm-correct-bg: #2ea44f;
+	--cm-correct-color: #ffffff;
+	--cm-incorrect-bg: #e5534b;
+	--cm-incorrect-color: #ffffff;
+	--cm-zero-color: #636366;
+}
+
+/* ===== Zellen ===== */
+.confusion_matrix_tx {
+	padding: 10px 14px;
+	text-align: center;
+	font-weight: 600;
+	font-size: 13px;
+	letter-spacing: 0.02em;
+	line-height: 1.4;
+	border-radius: 6px;
+}
+
+th.confusion_matrix_tx {
+	background: var(--cm-header-bg);
+	color: var(--cm-header-color);
+	border: 1px solid var(--cm-header-border);
+}
+
+td.confusion_matrix_tx {
+	background: var(--cm-cell-bg);
+	color: var(--cm-cell-color);
+	border: 1px solid var(--cm-cell-border);
+	font-weight: 700;
+	font-size: 14px;
+	min-width: 44px;
+}
+
+td.confusion_matrix_tx.cm-correct {
+	background: var(--cm-correct-bg);
+	color: var(--cm-correct-color);
+	border-color: transparent;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+td.confusion_matrix_tx.cm-incorrect {
+	background: var(--cm-incorrect-bg);
+	color: var(--cm-incorrect-color);
+	border-color: transparent;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+td.confusion_matrix_tx.cm-zero {
+	color: var(--cm-zero-color);
+	font-weight: 500;
+}

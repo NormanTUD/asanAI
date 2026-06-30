@@ -2590,17 +2590,28 @@ async function get_table_data_from_images(imgs) {
 function get_confusion_matrix_table(table_data) {
 	let str = `<table class="confusion_matrix_table">`;
 
-	str += `<tr><th class='confusion_matrix_tx' style='text-align: right'>
-		<i>${language[lang]["correct_category"]}</i> &rarr;<br>
-		<i>${language[lang]["predicted_category"]}</i> &darr;</th>` +
-		labels.map(h => `<th class='confusion_matrix_tx'>${h}</th>`).join('') + `</tr>`;
+	str += `<tr><th class="confusion_matrix_tx" style="text-align:right">` +
+		`<i>${language[lang]["correct_category"]}</i> &rarr;<br>` +
+		`<i>${language[lang]["predicted_category"]}</i> &darr;</th>` +
+		labels.map(h => `<th class="confusion_matrix_tx">${h}</th>`).join('') +
+		`</tr>`;
 
 	labels.forEach(left_header => {
 		str += `<tr><th class="confusion_matrix_tx">${left_header}</th>` +
 			labels.map(second_left_header => {
-				let text = table_data[left_header]?.[second_left_header] ?? "0";
-				let bg_color = text === "0" ? "" : (left_header === second_left_header ? "#83F511" : "#F51137");
-				return `<td class="confusion_matrix_tx"${bg_color ? ` style="background-color: ${bg_color}"` : ""}>${text}</td>`;
+				const value = table_data[left_header]?.[second_left_header] ?? 0;
+				const text = "" + value;
+
+				let cls = "confusion_matrix_tx";
+				if (value === 0 || text === "0") {
+					cls += " cm-zero";
+				} else if (left_header === second_left_header) {
+					cls += " cm-correct";
+				} else {
+					cls += " cm-incorrect";
+				}
+
+				return `<td class="${cls}">${text}</td>`;
 			}).join('') +
 			`</tr>`;
 	});
