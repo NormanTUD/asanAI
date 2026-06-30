@@ -103,6 +103,7 @@
 		_js("popups.js");
 		_js("overlay.js");
 		_js("health_status.js");
+		_js("weight_analysis.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
