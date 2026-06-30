@@ -9,55 +9,67 @@ var layerIOStats = {
 	maxRecords: 50,
 	enabled: true,
 	_isRecording: false,
-	_extractors: null,
+	_multiModel: null,
+	_outputMeta: null,
 	_extractorModelId: null,
 	_container: null
 };
 
+// --- FIX 1: Multi-Output-Modell statt N separate Modelle ---
 function _ensureExtractors() {
 	if (!model || !model._allLayers) return false;
 
 	var currentModelId = model._allLayers.length + "_" + (model.inputs ? model.inputs[0].id : "");
-	if (layerIOStats._extractorModelId === currentModelId && layerIOStats._extractors) {
+	if (layerIOStats._extractorModelId === currentModelId && layerIOStats._multiModel) {
 		return true;
 	}
 
-	if (layerIOStats._extractors) {
-		for (var i = 0; i < layerIOStats._extractors.length; i++) {
-			if (layerIOStats._extractors[i] && layerIOStats._extractors[i].model) {
-				try { layerIOStats._extractors[i].model.dispose(); } catch (e) { }
-			}
-		}
+	// Altes Modell aufräumen
+	if (layerIOStats._multiModel) {
+		try { layerIOStats._multiModel.dispose(); } catch (e) { }
 	}
 
-	layerIOStats._extractors = [];
+	layerIOStats._multiModel = null;
+	layerIOStats._outputMeta = [];
 	layerIOStats._extractorModelId = currentModelId;
 
 	var inputTensor = model.inputs[0];
 	var allLayers = model._allLayers;
 
+	var allOutputs = [];
+	var outputMeta = [];
+
 	for (var i = 0; i < allLayers.length; i++) {
-		if (allLayers[i].getClassName() === "InputLayer") {
-			layerIOStats._extractors.push(null);
-			continue;
-		}
+		if (allLayers[i].getClassName() === "InputLayer") continue;
 		try {
 			var layerOutput = allLayers[i].getOutputAt(0);
-			var extModel = tf.model({ inputs: inputTensor, outputs: layerOutput });
-			layerIOStats._extractors.push({
-				model: extModel,
+			allOutputs.push(layerOutput);
+			outputMeta.push({
 				layerIndex: i,
 				layerName: allLayers[i].name,
 				layerType: allLayers[i].getClassName()
 			});
-		} catch (e) {
-			layerIOStats._extractors.push(null);
-		}
+		} catch (e) { }
+	}
+
+	if (allOutputs.length === 0) return false;
+
+	try {
+		// EIN Modell mit ALLEN Layer-Outputs
+		layerIOStats._multiModel = tf.model({ inputs: inputTensor, outputs: allOutputs });
+		layerIOStats._outputMeta = outputMeta;
+	} catch (e) {
+		// Fallback: Wenn Multi-Output nicht klappt (z.B. bei bestimmten Architekturen),
+		// versuche einzelne Modelle
+		layerIOStats._multiModel = null;
+		layerIOStats._outputMeta = [];
+		return false;
 	}
 
 	return true;
 }
 
+// --- FIX 2 & 3: Optimiertes Recording mit Multi-Output und ohne Stats-Berechnung ---
 function recordLayerIO(input) {
 	if (!model || layerIOStats._isRecording) return;
 	if (!layerIOStats.enabled) return;
@@ -93,24 +105,33 @@ function recordLayerIO(input) {
 				inputTensor = inputTensor.expandDims(0);
 			}
 
+			// EIN Forward-Pass für ALLE Layer-Outputs
+			var outputs = layerIOStats._multiModel.predict(inputTensor);
+
+			// Falls nur ein Output, in Array wrappen
+			if (!Array.isArray(outputs)) {
+				outputs = [outputs];
+			}
+
+			// Input-Daten einmal holen
 			var inputDataSync = inputTensor.dataSync();
 			var prevOutput = inputDataSync;
 
-			for (var i = 0; i < layerIOStats._extractors.length; i++) {
-				var ext = layerIOStats._extractors[i];
-				if (!ext) continue;
+			for (var i = 0; i < outputs.length; i++) {
+				var meta = layerIOStats._outputMeta[i];
+				if (!meta) continue;
 
 				try {
-					var outputTensor = ext.model.predict(inputTensor);
-					var outputData = outputTensor.dataSync();
+					var outputData = outputs[i].dataSync();
 
+					// FIX 3: Nur Rohdaten speichern, KEINE Stats hier berechnen
 					record.layers.push({
-						layerIndex: ext.layerIndex,
-						layerName: ext.layerName,
-						layerType: ext.layerType,
+						layerIndex: meta.layerIndex,
+						layerName: meta.layerName,
+						layerType: meta.layerType,
 						input: prevOutput ? new Float32Array(prevOutput) : null,
 						output: new Float32Array(outputData),
-						outputShape: outputTensor.shape
+						outputShape: outputs[i].shape
 					});
 
 					prevOutput = outputData;
@@ -129,10 +150,27 @@ function recordLayerIO(input) {
 	}
 }
 
-function enableAutoRecord() {
-	if (!model) return;
-	if (model._io_auto_record_patched) return;
+// --- FIX 4: Sampling – nur jeden N-ten Predict aufzeichnen ---
+var _predictCounter = 0;
+var _recordEveryN = 50; // Nur jeden 50. Predict aufzeichnen
 
+function enableAutoRecord() {
+	if (!model) {
+		// FIX: Wenn model noch nicht existiert, versuche es später erneut
+		console.warn("[layerIO] enableAutoRecord called but model is null. Will retry...");
+		setTimeout(function () {
+			enableAutoRecord();
+		}, 1000);
+		return;
+	}
+
+	// FIX: Wenn das Modell sich geändert hat, neu patchen
+	if (layerIOStats._lastPatchedModel === model && model._io_auto_record_patched) {
+		return; // Bereits gepatcht, gleiches Modell
+	}
+
+	// Falls ein anderes Modell vorher gepatcht war, ist das egal –
+	// wir patchen jetzt das aktuelle
 	var _origPredict = model.predict.bind(model);
 
 	model.predict = function (input, config) {
@@ -148,10 +186,13 @@ function enableAutoRecord() {
 	};
 
 	model._io_auto_record_patched = true;
+	layerIOStats._lastPatchedModel = model;
+
+	console.log("[layerIO] Auto-record patched on model successfully.");
 }
 
 // ============================================================
-// STATS
+// STATS (nur beim Rendering berechnet – Lazy)
 // ============================================================
 
 function _computeStats(arr) {
@@ -617,7 +658,7 @@ function renderLayerIOStats(divTarget) {
 	// Overall health score
 	html += _renderHealthScore(latestRecord);
 
-	// Per-layer cards
+	// Per-layer cards – Stats werden JETZT erst berechnet (lazy)
 	for (var i = 0; i < latestRecord.layers.length; i++) {
 		var layer = latestRecord.layers[i];
 		var inputStats = layer.input ? _computeStats(layer.input) : null;
@@ -744,7 +785,7 @@ function renderLayerIOStats(divTarget) {
 	// Update translations
 	try {
 		if (typeof update_translations === "function") {
-			update_translations(); // await not possible here
+			update_translations();
 		}
 	} catch (e) { }
 
@@ -768,7 +809,6 @@ function _renderHealthScore(record) {
 		}
 	}
 
-	// Score: 100 = perfect, deduct for issues
 	var score = 100;
 	score -= criticalCount * 25;
 	score -= warningCount * 10;
@@ -797,12 +837,11 @@ function _renderHealthScore(record) {
 function _renderConfigIssues(record) {
 	var issues = [];
 
-	// Check for common config problems that would help detect faulty configs
 	if (!model || !model._allLayers) return "";
 
 	var allLayers = model._allLayers;
 
-	// 1. Check: Dense layer after Conv without Flatten
+	// 1. Dense layer after Conv without Flatten
 	var lastWasConv = false;
 	for (var i = 0; i < allLayers.length; i++) {
 		var className = allLayers[i].getClassName();
@@ -811,7 +850,6 @@ function _renderConfigIssues(record) {
 		} else if (className === "Flatten" || className === "GlobalAveragePooling2D" || className === "GlobalMaxPooling2D") {
 			lastWasConv = false;
 		} else if (className === "Dense" && lastWasConv) {
-			// This would actually fail at model creation, but check anyway
 			issues.push({
 				type: "dense_after_conv_no_flatten",
 				severity: "critical",
@@ -821,7 +859,7 @@ function _renderConfigIssues(record) {
 		}
 	}
 
-	// 2. Check: Very high learning rate (if accessible)
+	// 2. Very high learning rate
 	try {
 		if (model.optimizer && model.optimizer.learningRate) {
 			var lr = typeof model.optimizer.learningRate === "function" ?
@@ -835,7 +873,7 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 3. Check: Last layer activation mismatch with loss
+	// 3. Last layer activation mismatch with loss
 	try {
 		var lastLayer = allLayers[allLayers.length - 1];
 		var lastActivation = "";
@@ -858,7 +896,7 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 4. Check: Dropout as last layer
+	// 4. Dropout as last layer
 	try {
 		var visibleLayers = model.layers;
 		if (visibleLayers.length > 0) {
@@ -869,7 +907,7 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 5. Check: Very few parameters in a layer (potential bottleneck)
+	// 5. Very few parameters in a layer (potential bottleneck)
 	try {
 		for (var i = 0; i < record.layers.length; i++) {
 			var layerOutput = record.layers[i].output;
@@ -879,12 +917,11 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 6. Check: Consecutive identical layers without activation change
+	// 6. Consecutive identical layers without activation change
 	try {
 		for (var i = 1; i < record.layers.length; i++) {
 			if (record.layers[i].layerType === record.layers[i - 1].layerType &&
 				record.layers[i].layerType === "Dense") {
-				// Check if output stats are very similar (potential redundancy)
 				var s1 = _computeStats(record.layers[i - 1].output);
 				var s2 = _computeStats(record.layers[i].output);
 				if (s1 && s2 && Math.abs(s1.mean - s2.mean) < 0.001 && Math.abs(s1.std - s2.std) < 0.001) {
@@ -894,13 +931,12 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 7. Check: Output layer units mismatch with number of labels
+	// 7. Output layer units mismatch with number of labels
 	try {
 		if (typeof labels !== "undefined" && labels.length > 0) {
 			var lastLayerOutput = record.layers[record.layers.length - 1];
 			if (lastLayerOutput && lastLayerOutput.output) {
 				var outputSize = lastLayerOutput.output.length;
-				// For batch size > 1, divide by batch
 				var outputShape = lastLayerOutput.outputShape;
 				if (outputShape && outputShape.length === 2 && outputShape[0] !== null) {
 					outputSize = outputShape[1];
@@ -914,7 +950,7 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 8. Check: No trainable layers
+	// 8. No trainable layers
 	try {
 		var hasTrainable = false;
 		for (var i = 0; i < allLayers.length; i++) {
@@ -928,7 +964,7 @@ function _renderConfigIssues(record) {
 		}
 	} catch (e) { }
 
-	// 9. Check: Gradient ratio (output std vs input std across network)
+	// 9. Gradient ratio
 	try {
 		if (record.layers.length >= 2) {
 			var firstStats = _computeStats(record.layers[0].output);
@@ -947,7 +983,7 @@ function _renderConfigIssues(record) {
 	if (issues.length === 0) return "";
 
 	var html = "<div class='lio_config_issues'>";
-	html += "<h3>⚙️ <span class='TRANSLATEME_layer_io_config_issues'></span> (" + issues.length + ")</h3>";
+	html += "<h3>\u2692\uFE0F <span class='TRANSLATEME_layer_io_config_issues'></span> (" + issues.length + ")</h3>";
 
 	for (var i = 0; i < issues.length; i++) {
 		html += "<div class='lio_config_issue_item'>";
@@ -960,7 +996,7 @@ function _renderConfigIssues(record) {
 }
 
 function _renderConfigIssueItem(issue) {
-	var icon = issue.severity === "critical" ? "🔴" : issue.severity === "warning" ? "🟡" : "🔵";
+	var icon = issue.severity === "critical" ? "\uD83D\uDEA5" : issue.severity === "warning" ? "\uD83D\uDEA0" : "\uD83D\uDEB5";
 	var html = icon + " ";
 
 	switch (issue.type) {
@@ -975,7 +1011,7 @@ function _renderConfigIssueItem(issue) {
 			break;
 		case "activation_loss_mismatch":
 			html += "<span class='TRANSLATEME_layer_io_issue_activation_mismatch'></span>: " +
-				issue.activation + " + " + issue.loss + " → <span class='TRANSLATEME_layer_io_suggestion'></span>: " + issue.suggestion;
+				issue.activation + " + " + issue.loss + " \u2192 <span class='TRANSLATEME_layer_io_suggestion'></span>: " + issue.suggestion;
 			break;
 		case "dropout_last_layer":
 			html += "<span class='TRANSLATEME_layer_io_issue_dropout_last'></span>";
@@ -1010,7 +1046,7 @@ function _renderConfigIssueItem(issue) {
 // ============================================================
 
 function _renderWarningItem(wn) {
-	var icon = wn.severity === "critical" ? "🔴" : wn.severity === "warning" ? "🟡" : "🔵";
+	var icon = wn.severity === "critical" ? "\uD83D\uDEA5" : wn.severity === "warning" ? "\uD83D\uDEA0" : "\uD83D\uDEB5";
 	var msg = "";
 
 	switch (wn.type) {
@@ -1030,10 +1066,10 @@ function _renderWarningItem(wn) {
 			msg = "<span class='TRANSLATEME_layer_io_vanishing'></span> (range=" + wn.range.toExponential(2) + ")";
 			break;
 		case "high_kurtosis":
-			msg = "<span class='TRANSLATEME_layer_io_high_kurtosis'></span> (κ=" + wn.kurtosis.toFixed(2) + ")";
+			msg = "<span class='TRANSLATEME_layer_io_high_kurtosis'></span> (\u03BA=" + wn.kurtosis.toFixed(2) + ")";
 			break;
 		case "high_skewness":
-			msg = "<span class='TRANSLATEME_layer_io_high_skewness'></span> (γ₁=" + wn.skewness.toFixed(2) + ")";
+			msg = "<span class='TRANSLATEME_layer_io_high_skewness'></span> (\u03B3\u2081=" + wn.skewness.toFixed(2) + ")";
 			break;
 		case "constant_output":
 			msg = "<span class='TRANSLATEME_layer_io_constant_output'></span> (value=" + wn.value + ")";
@@ -1153,20 +1189,20 @@ function _renderAggregateSection(record) {
 
 	if (dyingLayers.length === 0 && explodingLayers.length === 0 && saturatedLayers.length === 0 &&
 		nanLayers.length === 0 && vanishingLayers.length === 0 && constantLayers.length === 0) {
-		html += "<div class='lio_ok'>✅ <span class='TRANSLATEME_layer_io_all_healthy'></span></div>";
+		html += "<div class='lio_ok'>\u2705 <span class='TRANSLATEME_layer_io_all_healthy'></span></div>";
 	} else {
-		if (nanLayers.length > 0) html += "<div class='lio_crit'>🔴 <span class='TRANSLATEME_layer_io_nan_inf'></span>: " + nanLayers.join(", ") + "</div>";
-		if (explodingLayers.length > 0) html += "<div class='lio_crit'>🔴 <span class='TRANSLATEME_layer_io_exploding'></span>: " + explodingLayers.join(", ") + "</div>";
-		if (constantLayers.length > 0) html += "<div class='lio_crit'>🔴 <span class='TRANSLATEME_layer_io_constant_output'></span>: " + constantLayers.join(", ") + "</div>";
-		if (dyingLayers.length > 0) html += "<div class='lio_crit'>🔴 <span class='TRANSLATEME_layer_io_dying_relu'></span>: " + dyingLayers.join(", ") + "</div>";
-		if (saturatedLayers.length > 0) html += "<div class='lio_warn'>🟡 <span class='TRANSLATEME_layer_io_saturated'></span>: " + saturatedLayers.join(", ") + "</div>";
-		if (vanishingLayers.length > 0) html += "<div class='lio_warn'>🟡 <span class='TRANSLATEME_layer_io_vanishing'></span>: " + vanishingLayers.join(", ") + "</div>";
+		if (nanLayers.length > 0) html += "<div class='lio_crit'>\uD83D\uDEA5 <span class='TRANSLATEME_layer_io_nan_inf'></span>: " + nanLayers.join(", ") + "</div>";
+		if (explodingLayers.length > 0) html += "<div class='lio_crit'>\uD83D\uDEA5 <span class='TRANSLATEME_layer_io_exploding'></span>: " + explodingLayers.join(", ") + "</div>";
+		if (constantLayers.length > 0) html += "<div class='lio_crit'>\uD83D\uDEA5 <span class='TRANSLATEME_layer_io_constant_output'></span>: " + constantLayers.join(", ") + "</div>";
+		if (dyingLayers.length > 0) html += "<div class='lio_crit'>\uD83D\uDEA5 <span class='TRANSLATEME_layer_io_dying_relu'></span>: " + dyingLayers.join(", ") + "</div>";
+		if (saturatedLayers.length > 0) html += "<div class='lio_warn'>\uD83D\uDEA0 <span class='TRANSLATEME_layer_io_saturated'></span>: " + saturatedLayers.join(", ") + "</div>";
+		if (vanishingLayers.length > 0) html += "<div class='lio_warn'>\uD83D\uDEA0 <span class='TRANSLATEME_layer_io_vanishing'></span>: " + vanishingLayers.join(", ") + "</div>";
 	}
 
 	// Multi-plot section
 	html += "<div class='lio_multi_plot'>";
 
-	// Plot 1: Magnitude per layer (bar chart)
+	// Plot 1: Magnitude per layer
 	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_magnitude_per_layer'></span></div>";
 	html += _barChartSVG(record, function (s) { return Math.abs(s.mean) + s.std; }, function (s) {
 		return s.zeroFraction > 0.8 ? "#e74c3c" : s.std < 1e-6 ? "#f39c12" : "#2ecc71";
@@ -1187,7 +1223,7 @@ function _renderAggregateSection(record) {
 	});
 	html += "</div>";
 
-	// Plot 4: Mean flow (line chart)
+	// Plot 4: Mean flow
 	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_mean_flow'></span></div>";
 	html += _lineChartSVG(record, function (s) { return s.mean; }, "#00d4ff");
 	html += "</div>";
