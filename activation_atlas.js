@@ -34,7 +34,11 @@ var ActivationAtlas = (function () {
 		stopRequested: false,
 		progressBar: null,
 		progressLabel: null,
-		stopBtn: null
+		timeEstimateLabel: null,
+		toggleBtn: null,
+		generationStartTime: 0,
+		cellsCompleted: 0,
+		totalCells: 0
 	};
 
 	// ============================================================
@@ -206,10 +210,6 @@ var ActivationAtlas = (function () {
 	// ============================================================
 
 	function _gaussianBlur3x3(img4d) {
-		// Approximate Gaussian blur using depthwise conv with 3x3 kernel
-		var shape = img4d.shape;
-		var channels = shape[3];
-		// Use avgPool as approximation
 		var blurred = tf.avgPool(img4d, [3, 3], [1, 1], 'same');
 		return blurred;
 	}
@@ -224,9 +224,7 @@ var ActivationAtlas = (function () {
 		var imgW = inputShape[2];
 		var channels = inputShape[3];
 
-		// Start from low-frequency noise (smoother initialization)
 		var initNoise = tf.tidy(function () {
-			// Create small noise and upsample for low-freq start
 			var smallH = Math.max(4, Math.floor(imgH / 4));
 			var smallW = Math.max(4, Math.floor(imgW / 4));
 			var small = tf.randomNormal([1, smallH, smallW, channels], 0, 0.01);
@@ -237,25 +235,21 @@ var ActivationAtlas = (function () {
 		var inputImg = tf.variable(initNoise);
 		initNoise.dispose();
 
-		// Return a promise-like structure that processes steps in batches
 		var currentStep = 0;
-		var batchSize = 16; // steps per animation frame
+		var batchSize = 16;
 
 		function processBatch() {
 			return new Promise(function (resolve) {
 				var endStep = Math.min(currentStep + batchSize, steps);
 
 				for (var step = currentStep; step < endStep; step++) {
-					// Random jitter (shift image by a few pixels) for translation invariance
 					var jitterX = Math.floor(Math.random() * 5) - 2;
 					var jitterY = Math.floor(Math.random() * 5) - 2;
 
 					var grads = tf.tidy(function () {
 						return tf.grad(function (img) {
-							// Apply jitter
 							var jittered = img;
 							if (jitterX !== 0 || jitterY !== 0) {
-								// Pad and crop to simulate translation
 								var padded = tf.pad(img, [[0, 0], [2, 2], [2, 2], [0, 0]], 0);
 								var startY = 2 + jitterY;
 								var startX = 2 + jitterX;
@@ -265,7 +259,6 @@ var ActivationAtlas = (function () {
 							var activation = extractModel.predict(jittered.reshape(inputShape));
 							var flat = activation.reshape([activation.size]);
 
-							// Cosine similarity objective
 							var dotProd = flat.mul(targetTensor).sum();
 							var normA = flat.norm().add(1e-8);
 							var cosSim = dotProd.div(normA.mul(targetNorm));
@@ -275,11 +268,9 @@ var ActivationAtlas = (function () {
 					});
 
 					tf.tidy(function () {
-						// Normalize gradients (prevents vanishing/exploding)
 						var gradNorm = grads.norm().add(1e-8);
 						var normalized = grads.div(gradNorm);
 
-						// Adaptive learning rate: start larger, decrease
 						var progress = step / steps;
 						var currentLR = lr * (1.0 - progress * 0.5);
 
@@ -287,7 +278,6 @@ var ActivationAtlas = (function () {
 					});
 					grads.dispose();
 
-					// L2 decay every step (gentle)
 					if (step % 2 === 0) {
 						tf.tidy(function () {
 							var decayed = inputImg.mul(0.995);
@@ -295,13 +285,11 @@ var ActivationAtlas = (function () {
 						});
 					}
 
-					// Gaussian blur every 4 steps (strong early, weaker later)
 					if (step % 4 === 0) {
 						tf.tidy(function () {
 							var img4d = inputImg.reshape(inputShape);
 							var blurred = _gaussianBlur3x3(img4d);
 
-							// Stronger blur early, weaker later
 							var progress = step / steps;
 							var blurWeight = 0.5 * (1.0 - progress * 0.7);
 							var mixed = img4d.mul(1.0 - blurWeight).add(blurred.mul(blurWeight));
@@ -309,7 +297,6 @@ var ActivationAtlas = (function () {
 						});
 					}
 
-					// Clip to prevent runaway values
 					if (step % 8 === 0) {
 						tf.tidy(function () {
 							var clipped = inputImg.clipByValue(-2.5, 2.5);
@@ -317,16 +304,13 @@ var ActivationAtlas = (function () {
 						});
 					}
 
-					// Bilateral-like: additional smoothing pass at certain intervals
 					if (step % 32 === 0 && step > 0 && imgH >= 8 && imgW >= 8) {
 						tf.tidy(function () {
 							var img4d = inputImg.reshape(inputShape);
-							// Downscale and upscale to remove high-freq noise
 							var halfH = Math.max(4, Math.floor(imgH / 2));
 							var halfW = Math.max(4, Math.floor(imgW / 2));
 							var down = tf.image.resizeBilinear(img4d, [halfH, halfW]);
 							var up = tf.image.resizeBilinear(down, [imgH, imgW]);
-							// Mix: mostly original, a bit of smoothed
 							var progress = step / steps;
 							var smoothWeight = 0.3 * (1.0 - progress);
 							var mixed = img4d.mul(1.0 - smoothWeight).add(up.mul(smoothWeight));
@@ -343,18 +327,15 @@ var ActivationAtlas = (function () {
 		function getPixelData() {
 			var result = tf.tidy(function () {
 				var img = inputImg.reshape(inputShape).squeeze([0]);
-				// Robust normalization using percentile-like approach
 				var flat = img.reshape([-1]);
 				var sorted = tf.topk(flat, flat.size).values;
 				var numPixels = sorted.size;
-				// Use 1st and 99th percentile for normalization
 				var lowIdx = Math.floor(numPixels * 0.01);
 				var highIdx = Math.floor(numPixels * 0.99);
 				var vals = sorted.dataSync();
 				var lowVal = vals[numPixels - 1 - lowIdx] || vals[numPixels - 1];
 				var highVal = vals[numPixels - 1 - highIdx] || vals[0];
 
-				// Swap if needed (topk returns descending)
 				if (lowVal > highVal) { var tmp = lowVal; lowVal = highVal; highVal = tmp; }
 				var range = highVal - lowVal;
 				if (range < 0.001) range = 0.001;
@@ -408,8 +389,6 @@ var ActivationAtlas = (function () {
 
 	// ============================================================
 	// WEIGHT-BASED ACTIVATION SPACE EXPLORATION
-	// Extract "prototype directions" from the layer's weights,
-	// project them to 2D, grid the space, and interpolate to fill.
 	// ============================================================
 
 	function _getLayerWeights(layerIdx) {
@@ -543,12 +522,29 @@ var ActivationAtlas = (function () {
 
 	function _getInputShape() {
 		var inputShape = model.inputShape || model.inputs[0].shape;
-		// inputShape is like [null, 28, 28, 1]
-		var shape = inputShape.slice(1); // remove batch dim
+		var shape = inputShape.slice(1);
 		var imgH = shape[0];
 		var imgW = shape[1];
 		var channels = shape[2] || 1;
 		return { imgH: imgH, imgW: imgW, channels: channels, batchedShape: [1, imgH, imgW, channels] };
+	}
+
+	function _formatTime(seconds) {
+		if (seconds < 60) return Math.round(seconds) + "s";
+		if (seconds < 3600) return Math.floor(seconds / 60) + "m " + Math.round(seconds % 60) + "s";
+		return Math.floor(seconds / 3600) + "h " + Math.floor((seconds % 3600) / 60) + "m";
+	}
+
+	function _updateTimeEstimate() {
+		if (!_state.timeEstimateLabel) return;
+		if (_state.cellsCompleted < 1) {
+			_state.timeEstimateLabel.textContent = "Estimating time...";
+			return;
+		}
+		var elapsed = (Date.now() - _state.generationStartTime) / 1000;
+		var perCell = elapsed / _state.cellsCompleted;
+		var remaining = perCell * (_state.totalCells - _state.cellsCompleted);
+		_state.timeEstimateLabel.textContent = "⏱ " + _formatTime(remaining) + " remaining (~" + perCell.toFixed(1) + "s/cell)";
 	}
 
 	function _buildAtlas(callback, progressFn) {
@@ -557,6 +553,8 @@ var ActivationAtlas = (function () {
 
 		_state.isComputing = true;
 		_state.stopRequested = false;
+		_state.generationStartTime = Date.now();
+		_state.cellsCompleted = 0;
 
 		try {
 			var inputInfo = _getInputShape();
@@ -587,10 +585,8 @@ var ActivationAtlas = (function () {
 
 			if (progressFn) progressFn("Running t-SNE on " + prototypes.length + " prototypes...", 0.05);
 
-			// Project prototypes to 2D via t-SNE
 			var protoVectors = prototypes.map(function (p) { return Array.from(p.activation); });
 
-			// Truncate for t-SNE if too high-dim
 			var maxDim = 50;
 			var truncated = protoVectors;
 			if (protoVectors[0] && protoVectors[0].length > maxDim) {
@@ -618,7 +614,6 @@ var ActivationAtlas = (function () {
 
 			if (progressFn) progressFn("Building grid and interpolating...", 0.1);
 
-			// Grid the 2D space
 			var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
 			for (var i = 0; i < embedded.length; i++) {
 				if (embedded[i][0] < minX) minX = embedded[i][0];
@@ -630,8 +625,6 @@ var ActivationAtlas = (function () {
 			var rangeY = (maxY - minY) || 1;
 
 			var gridSize = _state.gridSize;
-
-			// For each grid cell, compute the activation vector via IDW
 			var allCells = [];
 
 			for (var r = 0; r < gridSize; r++) {
@@ -675,8 +668,7 @@ var ActivationAtlas = (function () {
 						var dy3 = cellCenterY - embedded[p][1];
 						var dist3 = Math.sqrt(dx3 * dx3 + dy3 * dy3);
 						if (dist3 < 0.0001) dist3 = 0.0001;
-						var w3 = 1.0 / (dist3 *
- dist3 * dist3);
+						var w3 = 1.0 / (dist3 * dist3 * dist3);
 						contributions.push({ idx: p, weight: w3 / totalWeight });
 					}
 					contributions.sort(function (a, b) { return b.weight - a.weight; });
@@ -696,8 +688,8 @@ var ActivationAtlas = (function () {
 
 			if (progressFn) progressFn("Generating feature visualizations...", 0.12);
 
-			// Set up canvas immediately so we can draw live
 			_state.gridCells = allCells;
+			_state.totalCells = allCells.length;
 			var inputShapeArr = inputInfo.batchedShape;
 			var totalCells = allCells.length;
 			var cellIdx = 0;
@@ -709,7 +701,7 @@ var ActivationAtlas = (function () {
 				if (_state.stopRequested) {
 					_state.isComputing = false;
 					_state.stopRequested = false;
-					if (_state.stopBtn) _state.stopBtn.disabled = true;
+					_setToggleState("start");
 					if (progressFn) progressFn("Stopped by user.", cellIdx / totalCells);
 					callback(null, {
 						layerName: targetLayer.name || ("Layer " + layerIdx),
@@ -727,7 +719,7 @@ var ActivationAtlas = (function () {
 				if (cellIdx >= totalCells) {
 					_state.isComputing = false;
 					_state.lastComputeTime = Date.now();
-					if (_state.stopBtn) _state.stopBtn.disabled = true;
+					_setToggleState("start");
 
 					var meta = {
 						layerName: targetLayer.name || ("Layer " + layerIdx),
@@ -747,15 +739,8 @@ var ActivationAtlas = (function () {
 				var pct = 0.12 + 0.88 * (cellIdx / totalCells);
 				if (progressFn) progressFn("Generating cell " + (cellIdx + 1) + "/" + totalCells, pct);
 
-				// Update progress bar
-				if (_state.progressBar) {
-					_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
-				}
-				if (_state.progressLabel) {
-					_state.progressLabel.textContent = "Cell " + (cellIdx + 1) + "/" + totalCells + " (" + Math.round(pct * 100) + "%)";
-				}
+				_updateProgressUI(pct, cellIdx, totalCells);
 
-				// Create the live generator for this cell
 				var generator = _generateFeatureVisLive(
 					Array.from(cell.avgActivation),
 					layerIdx,
@@ -770,7 +755,7 @@ var ActivationAtlas = (function () {
 						generator.cleanup();
 						_state.isComputing = false;
 						_state.stopRequested = false;
-						if (_state.stopBtn) _state.stopBtn.disabled = true;
+						_setToggleState("start");
 						if (progressFn) progressFn("Stopped by user.", cellIdx / totalCells);
 						callback(null, {
 							layerName: targetLayer.name || ("Layer " + layerIdx),
@@ -786,17 +771,13 @@ var ActivationAtlas = (function () {
 					}
 
 					generator.processBatch().then(function () {
-						// Draw intermediate result
 						try {
 							var pixelData = generator.getPixelData();
 							cell.generatedImage = _pixelDataToCanvas(pixelData, imgH, imgW, channels);
 							_drawAtlas();
-						} catch (e) {
-							// ignore intermediate draw errors
-						}
+						} catch (e) { /* ignore intermediate draw errors */ }
 
 						if (generator.isDone()) {
-							// Final draw for this cell
 							try {
 								var finalPixelData = generator.getPixelData();
 								cell.generatedImage = _pixelDataToCanvas(finalPixelData, imgH, imgW, channels);
@@ -807,9 +788,10 @@ var ActivationAtlas = (function () {
 							}
 							generator.cleanup();
 							cellIdx++;
+							_state.cellsCompleted = cellIdx;
+							_updateTimeEstimate();
 							tf.nextFrame().then(_generateNextLive);
 						} else {
-							// Continue processing this cell
 							tf.nextFrame().then(_processAndDraw);
 						}
 					});
@@ -818,13 +800,38 @@ var ActivationAtlas = (function () {
 				_processAndDraw();
 			}
 
-			// Start live generation
 			tf.nextFrame().then(_generateNextLive);
 
 		} catch (e) {
 			_state.isComputing = false;
 			console.error("[ActivationAtlas]", e);
 			callback("Error: " + (e.message || e));
+		}
+	}
+
+	// ============================================================
+	// PROGRESS UI HELPERS
+	// ============================================================
+
+	function _updateProgressUI(pct, cellIdx, totalCells) {
+		if (_state.progressBar) {
+			_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
+		}
+		if (_state.progressLabel) {
+			_state.progressLabel.textContent = "Cell " + (cellIdx + 1) + "/" + totalCells + " (" + Math.round(pct * 100) + "%)";
+		}
+	}
+
+	function _setToggleState(mode) {
+		if (!_state.toggleBtn) return;
+		if (mode === "stop") {
+			_state.toggleBtn.textContent = "⏹ Stop";
+			_state.toggleBtn.classList.add("atlas_toggle_stop");
+			_state.toggleBtn.classList.remove("atlas_toggle_start");
+		} else {
+			_state.toggleBtn.textContent = "▶ Generate";
+			_state.toggleBtn.classList.remove("atlas_toggle_stop");
+			_state.toggleBtn.classList.add("atlas_toggle_start");
 		}
 	}
 
@@ -879,19 +886,16 @@ var ActivationAtlas = (function () {
 			} else {
 				ctx.fillStyle = "rgba(30,30,50,0.8)";
 				ctx.fillRect(cx, cy, cw, ch);
-				// Draw a small placeholder indicator
-				ctx.strokeStyle = "rgba(255,255,255,0.1)";
-				ctx.lineWidth = 0.5;
+				// Animated pulse placeholder
+				var pulse = 0.3 + 0.2 * Math.sin(Date.now() / 600 + i * 0.3);
+				ctx.fillStyle = "rgba(52,152,219," + pulse.toFixed(2) + ")";
 				ctx.beginPath();
-				ctx.moveTo(cx + cw * 0.3, cy + ch * 0.3);
-				ctx.lineTo(cx + cw * 0.7, cy + ch * 0.7);
-				ctx.moveTo(cx + cw * 0.7, cy + ch * 0.3);
-				ctx.lineTo(cx + cw * 0.3, cy + ch * 0.7);
-				ctx.stroke();
+				ctx.arc(cx + cw / 2, cy + ch / 2, Math.min(cw, ch) * 0.15, 0, Math.PI * 2);
+				ctx.fill();
 			}
 
 			// Subtle grid lines
-			ctx.strokeStyle = "rgba(255,255,255,0.08)";
+			ctx.strokeStyle = "rgba(255,255,255,0.06)";
 			ctx.lineWidth = 0.5;
 			ctx.strokeRect(cx, cy, cw, ch);
 
@@ -899,8 +903,8 @@ var ActivationAtlas = (function () {
 			if (cell.dominantNeuron >= 0) {
 				var color = _COLORS[cell.dominantNeuron % _COLORS.length];
 				ctx.fillStyle = color;
-				ctx.globalAlpha = 0.6;
-				ctx.fillRect(cx, cy, 4 * zoom, 4 * zoom);
+				ctx.globalAlpha = 0.5;
+				ctx.fillRect(cx, cy, 3 * zoom, 3 * zoom);
 				ctx.globalAlpha = 1.0;
 			}
 		}
@@ -916,52 +920,57 @@ var ActivationAtlas = (function () {
 			var hch = cellH * zoom;
 
 			ctx.strokeStyle = "#ffffff";
-			ctx.lineWidth = 3;
+			ctx.lineWidth = 2.5;
+			ctx.shadowColor = "rgba(52,152,219,0.6)";
+			ctx.shadowBlur = 12;
 			ctx.strokeRect(hcx - 2, hcy - 2, hcw + 4, hch + 4);
+			ctx.shadowBlur = 0;
 
-			// Tooltip
-			var tooltipX = hcx + hcw + 10;
+			var tooltipX = hcx + hcw + 12;
 			var tooltipY = hcy;
-			if (tooltipX + 220 > W) tooltipX = hcx - 230;
-			if (tooltipY + 100 > H) tooltipY = H - 110;
+			if (tooltipX + 240 > W) tooltipX = hcx - 250;
+			if (tooltipY + 110 > H) tooltipY = H - 120;
 			if (tooltipY < 10) tooltipY = 10;
 
-			ctx.fillStyle = "rgba(10,10,30,0.95)";
-			ctx.strokeStyle = "rgba(52,152,219,0.8)";
-			ctx.lineWidth = 2;
-			_roundRect(ctx, tooltipX, tooltipY, 220, 95, 8);
+			ctx.fillStyle = "rgba(8,8,24,0.95)";
+			ctx.strokeStyle = "rgba(52,152,219,0.6)";
+			ctx.lineWidth = 1.5;
+			_roundRect(ctx, tooltipX, tooltipY, 230, 100, 10);
 			ctx.fill();
 			ctx.stroke();
 
 			ctx.fillStyle = "#ffffff";
-			ctx.font = "bold 11px sans-serif";
-			ctx.fillText("Grid [" + hc.row + ", " + hc.col + "]", tooltipX + 8, tooltipY + 18);
+			ctx.font = "bold 11px -apple-system, BlinkMacSystemFont, sans-serif";
+			ctx.fillText("Grid [" + hc.row + ", " + hc.col + "]", tooltipX + 10, tooltipY + 20);
 
-			ctx.font = "11px sans-serif";
+			ctx.font = "11px -apple-system, BlinkMacSystemFont, sans-serif";
 			ctx.fillStyle = "#aaaaaa";
 			if (hc.dominantNeuron >= 0) {
-				ctx.fillText("Nearest neuron: #" + hc.dominantNeuron, tooltipX + 8, tooltipY + 36);
+				ctx.fillText("Nearest neuron: #" + hc.dominantNeuron, tooltipX + 10, tooltipY + 38);
 			}
 
 			if (hc.topContributions && hc.topContributions.length > 0) {
 				ctx.fillStyle = "#888888";
-				ctx.font = "10px sans-serif";
+				ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
 				var contribStr = "Mix: ";
 				for (var ti = 0; ti < Math.min(hc.topContributions.length, 3); ti++) {
 					var contrib = hc.topContributions[ti];
 					contribStr += "#" + contrib.idx + "(" + (contrib.weight * 100).toFixed(0) + "%) ";
 				}
-				ctx.fillText(contribStr.trim(), tooltipX + 8, tooltipY + 54);
+				ctx.fillText(contribStr.trim(), tooltipX + 10, tooltipY + 56);
 			}
 
 			ctx.fillStyle = "#666666";
-			ctx.font = "10px sans-serif";
-			ctx.fillText("Interpolated from " + (hc.topContributions ? hc.topContributions.length : "?") + " prototypes", tooltipX + 8, tooltipY + 72);
+			ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
+			ctx.fillText("Interpolated from " + (hc.topContributions ? hc.topContributions.length : "?") + " prototypes", tooltipX + 10, tooltipY + 74);
 
 			if (hc.topContributions) {
-				var cBarX = tooltipX + 8;
-				var cBarY = tooltipY + 80;
-				var cBarW = 200;
+				var cBarX = tooltipX + 10;
+				var cBarY = tooltipY + 84;
+				var cBarW = 210;
+				ctx.beginPath();
+				_roundRect(ctx, cBarX - 1, cBarY - 1, cBarW + 2, 8, 3);
+				ctx.clip();
 				for (var ci = 0; ci < Math.min(hc.topContributions.length, 8); ci++) {
 					var cFrac = hc.topContributions[ci].weight;
 					var segW = cBarW * cFrac;
@@ -969,7 +978,15 @@ var ActivationAtlas = (function () {
 					ctx.fillRect(cBarX, cBarY, segW, 6);
 					cBarX += segW;
 				}
+				ctx.restore();
 			}
+		}
+
+		// Animate placeholder pulses while computing
+		if (_state.isComputing) {
+			requestAnimationFrame(function () {
+				if (_state.isComputing) _drawAtlas();
+			});
 		}
 	}
 
@@ -1086,7 +1103,7 @@ var ActivationAtlas = (function () {
 	}
 
 	// ============================================================
-	// UI BUILDING
+	// UI BUILDING - FINAL (after generation completes)
 	// ============================================================
 
 	function _buildUI(container, meta) {
@@ -1094,22 +1111,26 @@ var ActivationAtlas = (function () {
 		_injectStyles();
 
 		var wrapper = document.createElement("div");
-		wrapper.className = "atlas_wrapper";
+		wrapper.className = "atlas_wrapper atlas_fade_in";
 
 		// Header
 		var header = document.createElement("div");
 		header.className = "atlas_header";
-		header.innerHTML = "<span class='TRANSLATEME_atlas_title'>Activation Atlas</span>";
+		header.innerHTML = "<span class='atlas_title_text'>✦ Activation Atlas</span>";
 
 		var controls = document.createElement("div");
 		controls.className = "atlas_controls";
 
-		var refreshBtn = document.createElement("button");
-		refreshBtn.className = "atlas_btn";
-		refreshBtn.textContent = "⟳";
-		refreshBtn.title = "Refresh";
-		refreshBtn.onclick = function () { activationAtlas(_state.container); };
-		controls.appendChild(refreshBtn);
+		// Toggle button (now shows "Generate" since we're done)
+		var toggleBtn = document.createElement("button");
+		toggleBtn.className = "atlas_btn atlas_toggle_btn atlas_toggle_start";
+		toggleBtn.textContent = "▶ Generate";
+		toggleBtn.title = "Regenerate atlas";
+		toggleBtn.onclick = function () {
+			_handleToggle(container);
+		};
+		controls.appendChild(toggleBtn);
+		_state.toggleBtn = toggleBtn;
 
 		var layerSelect = document.createElement("select");
 		layerSelect.className = "atlas_select";
@@ -1128,39 +1149,27 @@ var ActivationAtlas = (function () {
 		layerSelect.value = "" + _state.layerIndex;
 		layerSelect.onchange = function () {
 			_state.layerIndex = parseInt(this.value);
-			activationAtlas(_state.container);
 		};
 		controls.appendChild(layerSelect);
 
-		// Grid size control
-		var gridSelect = document.createElement("select");
-		gridSelect.className = "atlas_select";
-		[6, 8, 10, 12, 16].forEach(function (g) {
-			var opt = document.createElement("option");
-			opt.value = "" + g;
-			opt.textContent = g + "×" + g;
-			if (g === _state.gridSize) opt.selected = true;
-			gridSelect.appendChild(opt);
-		});
-		gridSelect.onchange = function () {
-			_state.gridSize = parseInt(this.value);
-			activationAtlas(_state.container);
-		};
-		controls.appendChild(gridSelect);
-
 		header.appendChild(controls);
 		wrapper.appendChild(header);
+
+		// Parameters panel
+		var paramsPanel = _buildParamsPanel();
+		wrapper.appendChild(paramsPanel);
 
 		// Info bar
 		if (meta) {
 			var info = document.createElement("div");
 			info.className = "atlas_info";
-			info.innerHTML = "<span class='TRANSLATEME_atlas_layer'>Layer</span>: <strong>" + (meta.layerName || "?") + "</strong> | " +
-				meta.gridSize + "×" + meta.gridSize + " grid (" + meta.totalCells + " cells) | " +
-				meta.numPrototypes + " prototypes from " + meta.numNeurons + " neurons | " +
-				meta.imgH + "×" + meta.imgW + "px | " +
-				(meta.stopped ? "<span style='color:#e74c3c;'>Stopped early</span> | " : "") +
-				new Date().toLocaleTimeString();
+			var elapsed = ((Date.now() - _state.generationStartTime) / 1000).toFixed(1);
+			info.innerHTML = "<strong>" + (meta.layerName || "?") + "</strong> · " +
+				meta.gridSize + "×" + meta.gridSize + " (" + meta.totalCells + " cells) · " +
+				meta.numPrototypes + " prototypes · " + meta.numNeurons + " neurons · " +
+				meta.imgH + "×" + meta.imgW + "px · " +
+				(meta.stopped ? "<span style='color:#e74c3c;'>⏹ Stopped</span> · " : "") +
+				"<span style='color:#2ecc71;'>✓ " + elapsed + "s</span>";
 			wrapper.appendChild(info);
 		}
 
@@ -1187,7 +1196,7 @@ var ActivationAtlas = (function () {
 
 		var zoomLabel = document.createElement("span");
 		zoomLabel.className = "atlas_zoom_label";
-		zoomLabel.textContent = "Zoom";
+		zoomLabel.textContent = "Zoom & Pan";
 		zoomBar.appendChild(zoomLabel);
 
 		var zoomInBtn = document.createElement("button");
@@ -1198,7 +1207,7 @@ var ActivationAtlas = (function () {
 
 		var resetBtn = document.createElement("button");
 		resetBtn.className = "atlas_btn";
-		resetBtn.textContent = "Reset";
+		resetBtn.textContent = "⟲ Reset View";
 		resetBtn.onclick = function () { _state.zoom = 1; _state.panX = 0; _state.panY = 0; _drawAtlas(); };
 		zoomBar.appendChild(resetBtn);
 
@@ -1207,25 +1216,88 @@ var ActivationAtlas = (function () {
 		// Explanation
 		var explanation = document.createElement("div");
 		explanation.className = "atlas_explanation";
-		explanation.innerHTML = "<span class='TRANSLATEME_atlas_explanation'>This atlas explores the model's learned activation space without requiring training data. " +
-			"Prototype activation directions are extracted from the layer's weights (one per neuron/filter), " +
-			"projected to 2D via t-SNE, and the space is filled via inverse-distance interpolation. " +
-			"Each cell shows a gradient-ascent-generated image of what the model \"sees\" for that interpolated activation. " +
-			"Transition regions between neurons reveal mixture/hybrid concepts the network has learned.</span>";
+		explanation.innerHTML = "This atlas explores the model's learned activation space <em>without training data</em>. " +
+			"Prototype directions are extracted from layer weights, projected to 2D via t-SNE, and the space is filled via IDW interpolation. " +
+			"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation. " +
+			"Transition regions reveal mixture concepts the network has learned.";
 		wrapper.appendChild(explanation);
 
 		container.appendChild(wrapper);
 
 		_bindCanvasEvents();
 		_drawAtlas();
-
-		if (typeof update_translations === "function") {
-			update_translations(); // await not possible
-		}
 	}
 
 	// ============================================================
-	// LIVE UI - shown during generation with progress bar and stop
+	// PARAMETERS PANEL
+	// ============================================================
+
+	function _buildParamsPanel() {
+		var panel = document.createElement("div");
+		panel.className = "atlas_params_panel";
+
+		var params = [
+			{ label: "Grid Size", key: "gridSize", type: "select", options: [6, 8, 10, 12, 16] },
+			{ label: "Vis Steps", key: "featureVisSteps", type: "range", min: 64, max: 1024, step: 64 },
+			{ label: "Learning Rate", key: "featureVisLR", type: "range", min: 0.005, max: 0.1, step: 0.005, decimals: 3 }
+		];
+
+		params.forEach(function (param) {
+			var row = document.createElement("div");
+			row.className = "atlas_param_row";
+
+			var label = document.createElement("label");
+			label.className = "atlas_param_label";
+			label.textContent = param.label;
+			row.appendChild(label);
+
+			if (param.type === "select") {
+				var sel = document.createElement("select");
+				sel.className = "atlas_select atlas_param_input";
+				param.options.forEach(function (val) {
+					var opt = document.createElement("option");
+					opt.value = "" + val;
+					opt.textContent = val + "×" + val;
+					if (val === _state[param.key]) opt.selected = true;
+					sel.appendChild(opt);
+				});
+				sel.onchange = function () { _state[param.key] = parseInt(this.value); };
+				row.appendChild(sel);
+			} else if (param.type === "range") {
+				var rangeWrap = document.createElement("div");
+				rangeWrap.className = "atlas_range_wrap";
+
+				var range = document.createElement("input");
+				range.type = "range";
+				range.className = "atlas_range";
+				range.min = param.min;
+				range.max = param.max;
+				range.step = param.step;
+				range.value = _state[param.key];
+
+				var valDisplay = document.createElement("span");
+				valDisplay.className = "atlas_range_val";
+				valDisplay.textContent = param.decimals ? _state[param.key].toFixed(param.decimals) : _state[param.key];
+
+				range.oninput = function () {
+					var v = parseFloat(this.value);
+					_state[param.key] = v;
+					valDisplay.textContent = param.decimals ? v.toFixed(param.decimals) : v;
+				};
+
+				rangeWrap.appendChild(range);
+				rangeWrap.appendChild(valDisplay);
+				row.appendChild(rangeWrap);
+			}
+
+			panel.appendChild(row);
+		});
+
+		return panel;
+	}
+
+	// ============================================================
+	// LIVE UI - shown during generation
 	// ============================================================
 
 	function _buildLiveUI(container) {
@@ -1233,35 +1305,33 @@ var ActivationAtlas = (function () {
 		_injectStyles();
 
 		var wrapper = document.createElement("div");
-		wrapper.className = "atlas_wrapper";
+		wrapper.className = "atlas_wrapper atlas_fade_in";
 
 		// Header
 		var header = document.createElement("div");
 		header.className = "atlas_header";
-		header.innerHTML = "<span class='TRANSLATEME_atlas_title'>Activation Atlas</span>";
+		header.innerHTML = "<span class='atlas_title_text'>✦ Activation Atlas</span>";
 
 		var controls = document.createElement("div");
 		controls.className = "atlas_controls";
 
-		// Stop button
-		var stopBtn = document.createElement("button");
-		stopBtn.className = "atlas_btn atlas_stop_btn";
-		stopBtn.textContent = "⏹ Stop";
-		stopBtn.title = "Stop generation";
-		stopBtn.onclick = function () {
-			_state.stopRequested = true;
-			stopBtn.disabled = true;
-			stopBtn.textContent = "Stopping...";
+		// Toggle button (shows "Stop" during generation)
+		var toggleBtn = document.createElement("button");
+		toggleBtn.className = "atlas_btn atlas_toggle_btn atlas_toggle_stop";
+		toggleBtn.textContent = "⏹ Stop";
+		toggleBtn.title = "Stop generation";
+		toggleBtn.onclick = function () {
+			_handleToggle(container);
 		};
-		controls.appendChild(stopBtn);
-		_state.stopBtn = stopBtn;
+		controls.appendChild(toggleBtn);
+		_state.toggleBtn = toggleBtn;
 
 		header.appendChild(controls);
 		wrapper.appendChild(header);
 
-		// Progress bar container
-		var progressContainer = document.createElement("div");
-		progressContainer.className = "atlas_progress_container";
+		// Progress section
+		var progressSection = document.createElement("div");
+		progressSection.className = "atlas_progress_section";
 
 		var progressBarOuter = document.createElement("div");
 		progressBarOuter.className = "atlas_progress_outer";
@@ -1272,17 +1342,27 @@ var ActivationAtlas = (function () {
 		_state.progressBar = progressBarInner;
 
 		progressBarOuter.appendChild(progressBarInner);
-		progressContainer.appendChild(progressBarOuter);
+		progressSection.appendChild(progressBarOuter);
 
-		var progressLabel = document.createElement("div");
+		var progressInfo = document.createElement("div");
+		progressInfo.className = "atlas_progress_info";
+
+		var progressLabel = document.createElement("span");
 		progressLabel.className = "atlas_progress_label";
 		progressLabel.textContent = "Initializing...";
 		_state.progressLabel = progressLabel;
-		progressContainer.appendChild(progressLabel);
+		progressInfo.appendChild(progressLabel);
 
-		wrapper.appendChild(progressContainer);
+		var timeEstimate = document.createElement("span");
+		timeEstimate.className = "atlas_time_estimate";
+		timeEstimate.textContent = "";
+		_state.timeEstimateLabel = timeEstimate;
+		progressInfo.appendChild(timeEstimate);
 
-		// Canvas (shown immediately, updated live)
+		progressSection.appendChild(progressInfo);
+		wrapper.appendChild(progressSection);
+
+		// Canvas
 		var canvas = document.createElement("canvas");
 		canvas.className = "atlas_canvas";
 		canvas.width = _state.canvasWidth;
@@ -1294,11 +1374,44 @@ var ActivationAtlas = (function () {
 		_state.ctx = canvas.getContext("2d");
 
 		container.appendChild(wrapper);
-
 		_bindCanvasEvents();
+	}
 
-		if (typeof update_translations === "function") {
-			update_translations(); // await not possible
+	// ============================================================
+	// TOGGLE HANDLER
+	// ============================================================
+
+	function _handleToggle(container) {
+		if (_state.isComputing) {
+			// Currently generating -> stop
+			_state.stopRequested = true;
+			_setToggleState("start");
+		} else {
+			// Currently idle -> start generation
+			_state.zoom = 1;
+			_state.panX = 0;
+			_state.panY = 0;
+			_state.hoveredCell = null;
+			_state.stopRequested = false;
+
+			_buildLiveUI(container);
+
+			setTimeout(function () {
+				_buildAtlas(function (error, meta) {
+					if (error) {
+						container.innerHTML = "<div class='atlas_wrapper'><div class='atlas_error'>" + error + "</div></div>";
+						return;
+					}
+					_buildUI(container, meta);
+				}, function (msg, pct) {
+					if (_state.progressBar) {
+						_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
+					}
+					if (_state.progressLabel) {
+						_state.progressLabel.textContent = msg;
+					}
+				});
+			}, 50);
 		}
 	}
 
@@ -1307,30 +1420,53 @@ var ActivationAtlas = (function () {
 	// ============================================================
 
 	function _injectStyles() {
-		if (document.getElementById("atlas_styles")) return;
+		if (document.getElementById("atlas_styles_v2")) return;
 		var style = document.createElement("style");
-		style.id = "atlas_styles";
+		style.id = "atlas_styles_v2";
 		style.textContent = [
-			".atlas_wrapper { padding: 16px; font-family: inherit; }",
-			".atlas_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }",
-			".atlas_controls { display: flex; gap: 8px; align-items: center; }",
-			".atlas_btn { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 1em; transition: all 0.2s; }",
-			".atlas_btn:hover { background: rgba(128,128,128,0.15); }",
-			".atlas_btn:disabled { opacity: 0.4; cursor: not-allowed; }",
-			".atlas_stop_btn { border-color: rgba(231,76,60,0.5); color: #e74c3c; }",
-			".atlas_stop_btn:hover { background: rgba(231,76,60,0.1); }",
-			".atlas_select { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 6px; padding: 4px 8px; font-size: 0.85em; cursor: pointer; }",
-			".atlas_info { font-size: 0.82em; opacity: 0.6; margin-bottom: 10px; }",
-			".atlas_canvas { display: block; width: 100%; max-width: 900px; border: 2px solid rgba(128,128,128,0.15); border-radius: 10px; background: #0d0d1a; }",
-			".atlas_zoom_bar { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.85em; }",
-			".atlas_zoom_label { opacity: 0.6; min-width: 60px; text-align: center; }",
-			".atlas_explanation { font-size: 0.75em; opacity: 0.5; margin-top: 12px; line-height: 1.5; padding: 8px 10px; background: rgba(52,152,219,0.04); border-radius: 6px; border-left: 3px solid rgba(52,152,219,0.3); }",
-			".atlas_loading { padding: 40px; text-align: center; opacity: 0.6; font-size: 1.1em; }",
-			".atlas_error { padding: 24px; text-align: center; opacity: 0.5; font-size: 1em; color: #e74c3c; }",
-			".atlas_progress_container { margin-bottom: 12px; }",
-			".atlas_progress_outer { width: 100%; max-width: 900px; height: 8px; background: rgba(128,128,128,0.15); border-radius: 4px; overflow: hidden; }",
-			".atlas_progress_inner { height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); border-radius: 4px; transition: width 0.3s ease; }",
-			".atlas_progress_label { font-size: 0.8em; opacity: 0.6; margin-top: 4px; }"
+			"@keyframes atlas_fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }",
+			"@keyframes atlas_shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }",
+			"@keyframes atlas_pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }",
+			".atlas_fade_in { animation: atlas_fadeIn 0.4s ease-out; }",
+			".atlas_wrapper { padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }",
+			".atlas_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }",
+			".atlas_title_text { font-size: 1.2em; font-weight: 700; background: linear-gradient(135deg, #3498db, #9b59b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }",			".atlas_controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }",
+			".atlas_btn { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: 0.9em; transition: all 0.25s ease; backdrop-filter: blur(4px); }",
+			".atlas_btn:hover { background: rgba(128,128,128,0.18); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }",
+			".atlas_btn:active { transform: translateY(0); }",
+			".atlas_btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }",
+			".atlas_toggle_btn { font-weight: 600; padding: 8px 18px; border-radius: 10px; font-size: 0.95em; letter-spacing: 0.3px; }",
+			".atlas_toggle_start { border-color: rgba(46,204,113,0.5); color: #2ecc71; background: rgba(46,204,113,0.08); }",
+			".atlas_toggle_start:hover { background: rgba(46,204,113,0.18); box-shadow: 0 4px 16px rgba(46,204,113,0.2); }",
+			".atlas_toggle_stop { border-color: rgba(231,76,60,0.5); color: #e74c3c; background: rgba(231,76,60,0.08); animation: atlas_pulse 2s infinite; }",
+			".atlas_toggle_stop:hover { background: rgba(231,76,60,0.18); box-shadow: 0 4px 16px rgba(231,76,60,0.2); }",
+			".atlas_select { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 8px; padding: 6px 10px; font-size: 0.85em; cursor: pointer; transition: all 0.2s; }",
+			".atlas_select:hover { border-color: rgba(52,152,219,0.5); }",
+			".atlas_info { font-size: 0.82em; opacity: 0.7; margin-bottom: 12px; padding: 8px 12px; background: rgba(52,152,219,0.04); border-radius: 8px; border: 1px solid rgba(52,152,219,0.1); line-height: 1.6; }",
+			".atlas_canvas { display: block; width: 100%; max-width: 900px; border: 2px solid rgba(128,128,128,0.12); border-radius: 12px; background: #0d0d1a; box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: box-shadow 0.3s; }",
+			".atlas_canvas:hover { box-shadow: 0 12px 48px rgba(0,0,0,0.4); }",
+			".atlas_zoom_bar { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.85em; }",
+			".atlas_zoom_label { opacity: 0.6; min-width: 80px; text-align: center; font-size: 0.85em; }",
+			".atlas_explanation { font-size: 0.78em; opacity: 0.55; margin-top: 14px; line-height: 1.6; padding: 10px 14px; background: rgba(52,152,219,0.03); border-radius: 8px; border-left: 3px solid rgba(52,152,219,0.25); }",
+			".atlas_error { padding: 24px; text-align: center; opacity: 0.6; font-size: 1em; color: #e74c3c; }",
+			// Progress section
+			".atlas_progress_section { margin-bottom: 16px; animation: atlas_fadeIn 0.3s ease-out; }",
+			".atlas_progress_outer { width: 100%; max-width: 900px; height: 10px; background: rgba(128,128,128,0.12); border-radius: 6px; overflow: hidden; position: relative; }",
+			".atlas_progress_outer::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; animation: atlas_shimmer 2s infinite; }",
+			".atlas_progress_inner { height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6, #2ecc71); background-size: 200% 100%; animation: atlas_shimmer 3s infinite; border-radius: 6px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(52,152,219,0.4); }",
+			".atlas_progress_info { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }",
+			".atlas_progress_label { font-size: 0.82em; opacity: 0.7; font-weight: 500; }",
+			".atlas_time_estimate { font-size: 0.78em; opacity: 0.5; font-style: italic; }",
+			// Parameters panel
+			".atlas_params_panel { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; padding: 12px 14px; background: rgba(128,128,128,0.04); border: 1px solid rgba(128,128,128,0.1); border-radius: 10px; animation: atlas_fadeIn 0.4s ease-out; }",
+			".atlas_param_row { display: flex; align-items: center; gap: 8px; }",
+			".atlas_param_label { font-size: 0.8em; opacity: 0.6; min-width: 70px; font-weight: 500; }",
+			".atlas_param_input { max-width: 100px; }",
+			".atlas_range_wrap { display: flex; align-items: center; gap: 6px; }",
+			".atlas_range { width: 100px; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(128,128,128,0.2); border-radius: 2px; outline: none; cursor: pointer; }",
+			".atlas_range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #3498db; cursor: pointer; box-shadow: 0 2px 6px rgba(52,152,219,0.4); transition: transform 0.2s; }",
+			".atlas_range::-webkit-slider-thumb:hover { transform: scale(1.2); }",
+			".atlas_range_val { font-size: 0.78em; opacity: 0.6; min-width: 40px; font-family: 'SF Mono', 'Fira Code', monospace; }"
 		].join("\n");
 		document.head.appendChild(style);
 	}
@@ -1349,13 +1485,13 @@ var ActivationAtlas = (function () {
 		_state.hoveredCell = null;
 		_state.stopRequested = false;
 
-		// Build the live UI immediately (with canvas, progress bar, stop button)
+		// Build the live UI immediately (with canvas, progress bar, toggle button)
 		_buildLiveUI(container);
 
 		setTimeout(function () {
 			_buildAtlas(function (error, meta) {
 				if (error) {
-					container.innerHTML = "<div class='atlas_wrapper'><div class='atlas_error'>" + error + "</div></div>";
+					container.innerHTML = "<div class='atlas_wrapper atlas_fade_in'><div class='atlas_error'>⚠ " + error + "</div></div>";
 					return;
 				}
 				// Rebuild the final UI with all controls
@@ -1365,7 +1501,7 @@ var ActivationAtlas = (function () {
 					_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
 				}
 				if (_state.progressLabel) {
-					_state.progressLabel.textContent = msg + " (" + Math.round(pct * 100) + "%)";
+					_state.progressLabel.textContent = msg;
 				}
 			});
 		}, 50);
