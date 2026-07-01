@@ -1239,6 +1239,52 @@ async function test_augmented_training_images () {
 	return true;
 }
 
+async function test_training_images_with_skip_connection () {
+	const wanted_epochs = 2;
+
+	$("#show_grad_cam").click();
+
+	log_test("Test Training images");
+
+	await set_dataset_and_wait("signs");
+
+	await set_model_dataset("signs");
+
+	await _set_initializers();
+
+	set_imgcat(3);
+	set_adam_lr(0.001);
+
+	$(".skip_connection_enabled").prop("checked", true);
+
+	await delay(5000);
+
+	await set_epochs(wanted_epochs);
+
+	const ret = await train_neural_network();
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	$("#show_bars_instead_of_numbers").prop("checked", false);
+	await updated_page();
+
+	$("[href='#predict_tab']").click();
+	await wait_for_updated_page(2);
+
+	$("#training_tab_label").click();
+
+	if(!$("#canvas_grid_visualization").is(":visible")) {
+		err(`test_training_images: #canvas_grid_visualization was not visible`);
+		return false;
+	}
+
+	$("#show_grad_cam").click();
+
+	return true;
+}
+
 async function test_training_images () {
 	const wanted_epochs = 2;
 
@@ -3210,6 +3256,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		expect_memory_leak = "a new layer was added";
 		test_equal("test_custom_csv()", await test_custom_csv(), true);
 		test_equal("test_training_images()", await test_training_images(), true);
+		test_equal("test_training_images_with_skip_connection()", await test_training_images_with_skip_connection(), true);
 
 		await test_shuffle();
 		await test_resize_time();
