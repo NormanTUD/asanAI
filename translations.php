@@ -957,6 +957,9 @@
 		       "dimriver_no_labels_hint" => "No class labels available. Points cannot be colored by class. Load a classification dataset to see class separation.",
 		       "dimriver_error" => "An error occurred while computing the dimensionality river. Please try again after training.",
 		       "dimriver_awaiting_training" => "Waiting for training to start... The dimensionality river will appear once the model has been trained and data is available.",
+		       "atlas_title" => "Activation Atlas",
+		       "atlas_layer" => "Layer",
+		       "atlas_explanation" => "Each point represents a training sample projected into 2D via t-SNE on the chosen layer's activations. Thumbnails show the actual input. Border color = true class. Red border = misclassified. Zoom with scroll wheel, pan by dragging. Hover for details.",
 		),
 
 		'de' => array(
@@ -1915,6 +1918,9 @@
 			"dimriver_no_labels_hint" => "Keine Klassenlabels verfügbar. Punkte können nicht nach Klasse eingefärbt werden. Lade einen Klassifikationsdatensatz, um die Klassentrennung zu sehen.",
 			"dimriver_error" => "Ein Fehler ist bei der Berechnung des Dimensionality Rivers aufgetreten. Bitte versuche es nach dem Training erneut.",
 			"dimriver_awaiting_training" => "Warte auf den Trainingsstart... Der Dimensionsfluss erscheint, sobald das Modell trainiert wurde und Daten verf&uuml;gbar sind.",
+			"atlas_title" => "Aktivierungsatlas",
+			"atlas_layer" => "Layer",
+			"atlas_explanation" => "Jeder Punkt repräsentiert ein Trainingsbeispiel, das mittels t-SNE auf den Aktivierungen des gewählten Layers in 2D projiziert wurde. Thumbnails zeigen die tatsächliche Eingabe. Randfarbe = wahre Klasse. Roter Rand = falsch klassifiziert. Zoomen mit Scrollrad, Verschieben durch Ziehen. Hover für Details.",
 		)
 	);
 
