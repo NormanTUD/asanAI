@@ -1046,7 +1046,9 @@ var DimensionalityRiver = (function () {
 
 	function _triggerTranslations() {
 		try {
-			if (typeof update_translations === "function") update_translations();
+			if (typeof update_translations === "function") {
+				update_translations(); // await not possible
+			}
 		} catch (e) { }
 	}
 
