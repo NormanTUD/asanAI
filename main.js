@@ -1041,6 +1041,8 @@ $(document).ready(async function() {
 
 	dimensionalityRiver("dimensionality_river");
 
+	activationAtlas("activation_atlas");
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 

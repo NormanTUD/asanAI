@@ -970,6 +970,7 @@
 		       "atlas_tab_done" => "Atlas generation complete.",
 		       "atlas_tab_stopped" => "Atlas generation stopped by user.",
 		       "atlas_tab_no_model" => "No model available. Please create or load a model first.",
+		       "activation_atlas" => "Activation Atlas"
 		),
 
 		'de' => array(
@@ -1941,6 +1942,7 @@
 			"atlas_tab_done" => "Atlas-Generierung abgeschlossen.",
 			"atlas_tab_stopped" => "Atlas-Generierung vom Benutzer gestoppt.",
 			"atlas_tab_no_model" => "Kein Modell verfügbar. Bitte erstellen oder laden Sie zuerst ein Modell.",
+		       "activation_atlas" => "Aktivierungsatlas"
 		)
 	);
 
