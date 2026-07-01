@@ -1774,7 +1774,7 @@
 		       "layer_io_skewness_per_layer" => "Schiefe pro Layer",
 		       "layer_io_kurtosis_per_layer" => "Kurtosis pro Layer",
 		       "no_weight_analysis" => "Bisher keine Gewichtsanalysedaten.",
-		       "weight_analysis" => "Gewichsanalysen",
+		       "weight_analysis" => "Gewichtsanalysen",
 		       "wa_title" => "Gewichtsanalyse &ndash; Ist das Modell trainiert?",
 		       "wa_no_model_loaded" => "&#9888;&#65039; Kein Modell geladen. Bitte erstelle oder lade zuerst ein Modell.",
 		       "wa_no_weights_in_model" => "&#9888;&#65039; Keine Gewichte im Modell gefunden.",
