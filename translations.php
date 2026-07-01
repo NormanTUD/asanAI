@@ -956,6 +956,7 @@
 		       "dimriver_interpretation_poor" => "The network does not separate classes well yet. More training, more data, or architectural changes may help.",
 		       "dimriver_no_labels_hint" => "No class labels available. Points cannot be colored by class. Load a classification dataset to see class separation.",
 		       "dimriver_error" => "An error occurred while computing the dimensionality river. Please try again after training.",
+		       "dimriver_awaiting_training" => "Waiting for training to start... The dimensionality river will appear once the model has been trained and data is available.",
 		),
 
 		'de' => array(
@@ -1913,6 +1914,7 @@
 			"dimriver_interpretation_poor" => "Das Netzwerk trennt die Klassen noch nicht gut. Mehr Training, mehr Daten oder Architekturänderungen könnten helfen.",
 			"dimriver_no_labels_hint" => "Keine Klassenlabels verfügbar. Punkte können nicht nach Klasse eingefärbt werden. Lade einen Klassifikationsdatensatz, um die Klassentrennung zu sehen.",
 			"dimriver_error" => "Ein Fehler ist bei der Berechnung des Dimensionality Rivers aufgetreten. Bitte versuche es nach dem Training erneut.",
+			"dimriver_awaiting_training" => "Warte auf den Trainingsstart... Der Dimensionsfluss erscheint, sobald das Modell trainiert wurde und Daten verf&uuml;gbar sind.",
 		)
 	);
 
