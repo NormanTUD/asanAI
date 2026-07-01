@@ -27,7 +27,7 @@ var WeightAnalysis = (function() {
 				}
 			}
 		} catch (e) {
-			console.warn("[WeightAnalysis] Could not get weights:", e);
+			dbg("[WeightAnalysis] Could not get weights:", e);
 			return null;
 		}
 		return weights;
@@ -1325,7 +1325,7 @@ var WeightAnalysis = (function() {
 			try {
 				weight_analysis_render(divOrId);
 			} catch (e) {
-				console.warn("[WeightAnalysis] Auto-refresh error:", e);
+				wrn("[WeightAnalysis] Auto-refresh error:", e);
 			}
 		}, intervalMs);
 	}
