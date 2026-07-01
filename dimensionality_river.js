@@ -1082,7 +1082,7 @@ var DimensionalityRiver = (function () {
 		// Replace the legend block (search for "// Legend" in _renderResult)
 		// ============================================================
 
-		// Legend (replace the existing legend block in _renderResult)
+		// Legend
 		if (result.layers.length > 0 && result.layers[0].labels) {
 			var numClasses = 0;
 			var lbls = result.layers[0].labels;
@@ -1095,8 +1095,8 @@ var DimensionalityRiver = (function () {
 					var labelName = (typeof labels !== "undefined" && labels[c]) ? labels[c] : "Class " + c;
 					html += "<div class='dimriver_legend_item'><div class='dimriver_legend_dot' style='background:" + _COLORS[c % _COLORS.length] + ";'></div>" + _escapeHtml(labelName) + "</div>";
 				}
-				// NEW: Add misclassified legend item
-				html += "<div class='dimriver_legend_item'><div class='dimriver_legend_dot' style='background:repeating-linear-gradient(45deg, #ff4444, #ff4444 2px, white 2px, white 4px); border: 1.5px solid #ff0000;'></div>Misclassified (◆ + ✗)</div>";
+				// Misclassified legend item: colored dot with red ring
+				html += "<div class='dimriver_legend_item'><div class='dimriver_legend_dot' style='background:#9b59b6; border: 2.5px solid #ff0000;'></div>Misclassified</div>";
 				html += "</div>";
 			}
 		}
@@ -1285,7 +1285,7 @@ var DimensionalityRiver = (function () {
 			".dimriver_scatter_wrapper { position: relative; overflow: visible; }",
 			".dimriver_point:hover { filter: drop-shadow(0 0 4px rgba(255,255,255,0.5)); }",
 			".dimriver_tooltip { max-width: 120px; }",
-			".dimriver_misclassified:hover { filter: drop-shadow(0 0 6px rgba(255,0,0,0.7)); }",
+			".dimriver_misclassified:hover { filter: drop-shadow(0 0 6px rgba(255,0,0,0.6)) !important; }",
 		].join("\n");
 		document.head.appendChild(style);
 	}
