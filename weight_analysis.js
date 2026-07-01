@@ -1151,7 +1151,6 @@ var WeightAnalysis = (function() {
 		html += _scoreGauge(result.score, 140);
 		html += "<div>";
 		html += "<div class='wa_message'>" + _trm(result.messageKey) + "</div>";
-		html += "<div class='wa_confidence'>" + _trm("wa_confidence") + ": " + result.confidence + "% (" + _trm("wa_based_on") + " " + result.totalParams.toLocaleString() + " " + _trm("wa_parameters") + ")</div>";
 		html += "<div style='margin-top:8px; font-size:0.85em; opacity:0.7;'>" + _trm("wa_bias_score") + ": " + result.biasScore + "% (" + _trm("wa_nonzero_biases_hint") + ")</div>";
 		html += "</div></div>";
 
