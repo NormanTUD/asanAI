@@ -642,9 +642,8 @@ var DimensionalityRiver = (function () {
 		}
 		_lastRenderTime = Date.now();
 
-		// If container is empty (first render), show loading
-		// Otherwise keep existing content visible during computation
-		if (!container.querySelector(".dimriver_container")) {
+		// If container is empty AND no cached result, show loading
+		if (!container.querySelector(".dimriver_container") && !_state.lastResult) {
 			container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_calculating'></span>...</div></div>";
 			_triggerTranslations();
 		}
@@ -658,6 +657,12 @@ var DimensionalityRiver = (function () {
 
 			_collectMultiSampleActivations(function (data, error) {
 				if (error || !data) {
+					// If we have a previous good result, just keep showing it
+					if (_state.lastResult && !_state.lastResult.error) {
+						// Don't overwrite - just leave the existing display as-is
+						return;
+					}
+					// Only show error if we never had a good result
 					var html = "<div class='dimriver_container'>";
 					html += "<div class='dimriver_header'><h2><span class='TRANSLATEME_dimriver_title'></span></h2></div>";
 					html += "<p class='dimriver_subtitle'><span class='TRANSLATEME_dimriver_subtitle'></span></p>";
@@ -679,19 +684,21 @@ var DimensionalityRiver = (function () {
 	}
 
 	function _smoothSwap(container, newHtml) {
-		// If container has existing content, crossfade
 		var existing = container.querySelector(".dimriver_container");
 		if (existing) {
-			// Create new content off-screen, then swap with opacity transition
-			existing.classList.add("dimriver_fade_out");
-			setTimeout(function () {
+			// Directly swap content without fade-out blank state
+			// Use requestAnimationFrame for smooth visual update
+			existing.style.opacity = "0.7";
+			requestAnimationFrame(function () {
 				container.innerHTML = newHtml;
-				// Force reflow then add fade-in
 				var newEl = container.querySelector(".dimriver_container");
 				if (newEl) {
-					newEl.classList.add("dimriver_fade_in");
+					newEl.style.opacity = "0.7";
+					requestAnimationFrame(function () {
+						newEl.style.opacity = "1";
+					});
 				}
-			}, 120); // Short fade-out duration
+			});
 		} else {
 			container.innerHTML = newHtml;
 		}
@@ -985,7 +992,7 @@ var DimensionalityRiver = (function () {
 	}
 
 	function _startVisibilityWatch() {
-		if (_visibilityTimer) return; // Already watching
+		if (_visibilityTimer) return;
 		_visibilityTimer = setInterval(function () {
 			if (!_initialized) return;
 			if (_state.isComputing) return;
@@ -995,12 +1002,19 @@ var DimensionalityRiver = (function () {
 			if (now - _lastRenderTime < _MIN_RENDER_INTERVAL) return;
 
 			// Check if model exists and is not disposed
+			var modelAvailable = false;
 			try {
-				if (typeof model === "undefined" || !model) return;
-				model.layers[0].getWeights();
+				if (typeof model !== "undefined" && model) {
+					model.layers[0].getWeights();
+					modelAvailable = true;
+				}
 			} catch (e) {
-				return; // Model disposed, skip
+				modelAvailable = false;
 			}
+
+			// Only re-render if model is available (new data possible)
+			// If model not available, keep showing last good result
+			if (!modelAvailable) return;
 
 			_lastRenderTime = now;
 			_state.cachedActivations = null;
