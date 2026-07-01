@@ -1037,30 +1037,14 @@ var DimensionalityRiver = (function () {
 			realImageIdx = sampleIndices[sampleIdx];
 		}
 
-		// Try to generate thumbnail from tensor data first (correct order guaranteed)
+		// Generate thumbnail ONLY from tensor data (guaranteed correct alignment)
 		var thumbnailHTML = "";
 		if (isImageData && realImageIdx >= 0) {
 			thumbnailHTML = _getThumbnailFromTensor(realImageIdx, imageDataCache);
 		}
 
-		// Fallback: if tensor thumbnail failed but we have image elements,
-		// try to use the DOM gallery (may be wrong order due to shuffle, but better than nothing)
-		if (!thumbnailHTML && isImageData && imageElements && imageElements.length > 0 && realImageIdx >= 0) {
-			try {
-				// Use sampleIdx as a rough fallback index into DOM gallery
-				var fallbackIdx = Math.min(realImageIdx, imageElements.length - 1);
-				var imgEl = imageElements[fallbackIdx];
-				if (imgEl && (imgEl.tagName === "IMG" || imgEl.tagName === "CANVAS")) {
-					if (!imageDataCache["dom_" + fallbackIdx]) {
-						imageDataCache["dom_" + fallbackIdx] = _imageToDataURL(imgEl, 80);
-					}
-					var dataUrl = imageDataCache["dom_" + fallbackIdx];
-					if (dataUrl) {
-						thumbnailHTML = "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;opacity:0.7;'/>";
-					}
-				}
-			} catch (e) { /* ignore fallback failure */ }
-		}
+		// NO DOM FALLBACK - the DOM gallery order does not match tensor order
+		// after shuffling, so using DOM images would show wrong images.
 
 		var tooltipHTML = _buildTooltipHTML(sampleIdx, trueName, predName, isMisclassified, realImageIdx, thumbnailHTML);
 
