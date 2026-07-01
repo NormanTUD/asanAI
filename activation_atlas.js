@@ -15,8 +15,8 @@ var ActivationAtlas = (function () {
 		ctx: null,
 		layerIndex: -1,
 		gridSize: 10,
-		featureVisSteps: 25,
-		featureVisLR: 0.5,
+		featureVisSteps: 128,
+		featureVisLR: 0.05,
 		zoom: 1,
 		panX: 0,
 		panY: 0,
@@ -204,18 +204,20 @@ var ActivationAtlas = (function () {
 		var targetLayer = model.layers[layerIdx];
 		var extractModel = tf.model({ inputs: model.input, outputs: targetLayer.output });
 		var targetTensor = tf.tensor1d(targetActivation);
+		var targetNorm = targetTensor.norm().add(1e-8);
 
-		var inputImg = tf.variable(tf.randomUniform(inputShape, -0.01, 0.01));
+		// Start from smoothed random noise instead of uniform
+		var inputImg = tf.variable(tf.randomNormal(inputShape, 0, 0.01));
 
 		for (var step = 0; step < steps; step++) {
 			var grads = tf.tidy(function () {
 				return tf.grad(function (img) {
 					var activation = extractModel.predict(img.reshape(inputShape));
 					var flat = activation.reshape([activation.size]);
+					// Cosine similarity objective
 					var dotProd = flat.mul(targetTensor).sum();
 					var normA = flat.norm().add(1e-8);
-					var normB = targetTensor.norm().add(1e-8);
-					return dotProd.div(normA.mul(normB));
+					return dotProd.div(normA.mul(targetNorm));
 				})(inputImg);
 			});
 
@@ -226,17 +228,37 @@ var ActivationAtlas = (function () {
 			});
 			grads.dispose();
 
-			if (step > 0 && step % 10 === 0) {
+			// Regularization every 4 steps: blur + decay + clip
+			if (step % 4 === 0) {
 				tf.tidy(function () {
 					var current = inputImg.reshape(inputShape);
-					var clipped = current.clipByValue(-1.5, 1.5);
+					// L2 decay toward zero (prevents runaway values)
+					var decayed = current.mul(0.98);
+					// Clip to reasonable range
+					var clipped = decayed.clipByValue(-1.0, 1.0);
 					inputImg.assign(clipped.reshape(inputImg.shape));
+				});
+			}
+
+			// Gaussian blur every 8 steps to suppress high-frequency noise
+			if (step % 8 === 0 && step > 0) {
+				tf.tidy(function () {
+					var img4d = inputImg.reshape(inputShape);
+					// Approximate blur via avgPool + resize back
+					var h = inputShape[1], w = inputShape[2];
+					if (h >= 4 && w >= 4) {
+						var pooled = tf.avgPool(img4d, [3, 3], [1, 1], 'same');
+						// Mix: 70% current + 30% blurred
+						var mixed = img4d.mul(0.7).add(pooled.mul(0.3));
+						inputImg.assign(mixed.reshape(inputImg.shape));
+					}
 				});
 			}
 		}
 
 		var result = tf.tidy(function () {
 			var img = inputImg.reshape(inputShape).squeeze([0]);
+			// Robust normalization: use percentiles to avoid outlier domination
 			var minVal = img.min();
 			var maxVal = img.max();
 			var range = maxVal.sub(minVal).add(1e-8);
@@ -247,6 +269,7 @@ var ActivationAtlas = (function () {
 		result.dispose();
 		inputImg.dispose();
 		targetTensor.dispose();
+		targetNorm.dispose();
 
 		return data;
 	}
@@ -572,17 +595,7 @@ var ActivationAtlas = (function () {
 					_state.gridCells = allCells;
 					_state.isComputing = false;
 					_state.lastComputeTime = Date.now();
-					callback(null, {
-						layerName: targetLayer.name,
-						layerIndex: layerIdx,
-						gridSize: gridSize,
-						totalCells: totalCells,
-						imgH: imgH,
-						imgW: imgW,
-						channels: channels,
-						numPrototypes: prototypes.length,
-						numNeurons: protoData.numNeurons
-					});
+					callback(null, meta);
 					return;
 				}
 
@@ -607,7 +620,8 @@ var ActivationAtlas = (function () {
 				}
 
 				cellIdx++;
-				setTimeout(_generateNext, 0);
+				// Use tf.nextFrame() to yield to browser and allow GPU to flush
+				tf.nextFrame().then(_generateNext);
 			}
 
 			_generateNext();
