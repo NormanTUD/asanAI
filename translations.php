@@ -948,7 +948,14 @@
 		       "dimriver_per_layer" => "Per-Layer t-SNE Embeddings",
 		       "dimriver_scatter_explanation" => "Each scatter plot shows a 2D t-SNE projection of the layer's activations. Points colored by class label reveal how well the network separates classes at each stage. Well-separated clusters = good discrimination.",
 		       "dimriver_spread" => "Spread",
-			"dimensionality_river" => "Dimensionality River"
+		       "dimensionality_river" => "Dimensionality River",
+
+		       "dimriver_no_model" => "No model loaded. Please create or load a model first.",
+		       "dimriver_interpretation_good" => "The network separates classes well. Clusters are clearly distinct in the final layers.",
+		       "dimriver_interpretation_moderate" => "The network partially separates classes. Consider more training or a deeper architecture.",
+		       "dimriver_interpretation_poor" => "The network does not separate classes well yet. More training, more data, or architectural changes may help.",
+		       "dimriver_no_labels_hint" => "No class labels available. Points cannot be colored by class. Load a classification dataset to see class separation.",
+
 		),
 
 		'de' => array(
@@ -1898,7 +1905,13 @@
 			"dimriver_per_layer" => "t-SNE-Einbettungen pro Layer",
 			"dimriver_scatter_explanation" => "Jeder Scatter-Plot zeigt eine 2D-t-SNE-Projektion der Layer-Aktivierungen. Punkte, die nach Klassenlabel eingefärbt sind, zeigen, wie gut das Netzwerk die Klassen in jeder Stufe trennt. Gut getrennte Cluster = gute Diskriminierung.",
 			"dimriver_spread" => "Streuung",
-			"dimensionality_river" => "Dimensionsfluss"
+			"dimensionality_river" => "Dimensionsfluss",
+
+			"dimriver_no_model" => "Kein Modell geladen. Bitte erstelle oder lade zuerst ein Modell.",
+			"dimriver_interpretation_good" => "Das Netzwerk trennt die Klassen gut. Cluster sind in den letzten Layern deutlich separiert.",
+			"dimriver_interpretation_moderate" => "Das Netzwerk trennt die Klassen teilweise. Mehr Training oder eine tiefere Architektur könnte helfen.",
+			"dimriver_interpretation_poor" => "Das Netzwerk trennt die Klassen noch nicht gut. Mehr Training, mehr Daten oder Architekturänderungen könnten helfen.",
+			"dimriver_no_labels_hint" => "Keine Klassenlabels verfügbar. Punkte können nicht nach Klasse eingefärbt werden. Lade einen Klassifikationsdatensatz, um die Klassentrennung zu sehen.",
 		)
 	);
 
