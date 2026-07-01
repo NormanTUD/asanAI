@@ -960,6 +960,16 @@
 		       "atlas_title" => "Activation Atlas",
 		       "atlas_layer" => "Layer",
 		       "atlas_explanation" => "Each point represents a training sample projected into 2D via t-SNE on the chosen layer's activations. Thumbnails show the actual input. Border color = true class. Red border = misclassified. Zoom with scroll wheel, pan by dragging. Hover for details.",
+		       "activation_atlas_tab" => "Activation Atlas",
+		       "atlas_tab_description" => "The Activation Atlas explores what your neural network has learned by generating visualizations directly from the model's weights — no training data required. It extracts prototype activation directions from a chosen layer, projects them into 2D using t-SNE, and fills the space with gradient-ascent-generated images showing what the model 'sees' for each interpolated activation.",
+		       "atlas_tab_time_hint" => "This process is computationally intensive and may take several minutes depending on your model size and grid resolution. Each cell requires multiple optimization steps. You can stop at any time and see partial results.",
+		       "atlas_tab_start" => "Generate Atlas",
+		       "atlas_tab_stop" => "Stop",
+		       "atlas_tab_estimated_time" => "Estimated time remaining",
+		       "atlas_tab_generating" => "Generating activation atlas...",
+		       "atlas_tab_done" => "Atlas generation complete.",
+		       "atlas_tab_stopped" => "Atlas generation stopped by user.",
+		       "atlas_tab_no_model" => "No model available. Please create or load a model first.",
 		),
 
 		'de' => array(
@@ -1921,6 +1931,16 @@
 			"atlas_title" => "Aktivierungsatlas",
 			"atlas_layer" => "Layer",
 			"atlas_explanation" => "Jeder Punkt repräsentiert ein Trainingsbeispiel, das mittels t-SNE auf den Aktivierungen des gewählten Layers in 2D projiziert wurde. Thumbnails zeigen die tatsächliche Eingabe. Randfarbe = wahre Klasse. Roter Rand = falsch klassifiziert. Zoomen mit Scrollrad, Verschieben durch Ziehen. Hover für Details.",
+			"activation_atlas_tab" => "Aktivierungsatlas",
+			"atlas_tab_description" => "Der Aktivierungsatlas erkundet, was Ihr neuronales Netz gelernt hat, indem er Visualisierungen direkt aus den Gewichten des Modells erzeugt — ohne Trainingsdaten. Er extrahiert prototypische Aktivierungsrichtungen aus einem gewählten Layer, projiziert sie mittels t-SNE in 2D und füllt den Raum mit per Gradient-Ascent erzeugten Bildern, die zeigen, was das Modell für jede interpolierte Aktivierung 'sieht'.",
+			"atlas_tab_time_hint" => "Dieser Prozess ist rechenintensiv und kann je nach Modellgröße und Gitterauflösung mehrere Minuten dauern. Jede Zelle erfordert viele Optimierungsschritte. Sie können jederzeit stoppen und Teilergebnisse sehen.",
+			"atlas_tab_start" => "Atlas generieren",
+			"atlas_tab_stop" => "Stopp",
+			"atlas_tab_estimated_time" => "Geschätzte verbleibende Zeit",
+			"atlas_tab_generating" => "Aktivierungsatlas wird generiert...",
+			"atlas_tab_done" => "Atlas-Generierung abgeschlossen.",
+			"atlas_tab_stopped" => "Atlas-Generierung vom Benutzer gestoppt.",
+			"atlas_tab_no_model" => "Kein Modell verfügbar. Bitte erstellen oder laden Sie zuerst ein Modell.",
 		)
 	);
 
