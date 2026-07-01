@@ -3,7 +3,7 @@
   // LOSS & METRIC EXPLAINER - Self-contained module
   // ============================================================
 
-  const HELP_ICON_PATH = '_gui/icons/help_icon.svg';
+  const HELP_ICON_PATH = '_gui/icons/info.svg';
 
   // ============================================================
   // CONTENT DATABASE (EN/DE)
