@@ -532,7 +532,7 @@ var DimensionalityRiver = (function () {
 	];
 
 	// ============================================================
-	// Replace _scatterSVG to render misclassified points with stripes
+	// Replace _scatterSVG to _render misclassified points with stripes
 	// ============================================================
 
 	function _scatterSVG(layer, width, height) {
@@ -915,10 +915,10 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
-	// MAIN RENDER
+	// MAIN _RENDER
 	// ============================================================
 
-	function render(divOrId) {
+	function _render(divOrId) {
 		var container = _getOrCreateContainer(divOrId);
 		_injectStyles();
 
@@ -1182,7 +1182,7 @@ var DimensionalityRiver = (function () {
 			});
 			sliders[i].addEventListener("change", function () {
 				_state.cachedActivations = null; // Force re-collect if maxSamples changed
-				render(_state.container);
+				_render(_state.container);
 			});
 		}
 	}
@@ -1354,12 +1354,12 @@ var DimensionalityRiver = (function () {
 				dataAvailable = false;
 			}
 
-			// Only re-render if both model and data are available
+			// Only re-_render if both model and data are available
 			if (!modelAvailable || !dataAvailable) return;
 
 			_lastRenderTime = now;
 			_state.cachedActivations = null;
-			render(_state.container);
+			_render(_state.container);
 		}, 5000);
 	}
 
@@ -1382,7 +1382,7 @@ var DimensionalityRiver = (function () {
 			try {
 				_state.cachedActivations = null;
 				_lastRenderTime = Date.now();
-				render(_state.container);
+				_render(_state.container);
 			} catch (e) { }
 		}, intervalMs || 5000);
 	}
@@ -1397,13 +1397,13 @@ var DimensionalityRiver = (function () {
 	function toggleAutoUpdate() {
 		if (_state.autoUpdateTimer) stopAutoUpdate();
 		else startAutoUpdate();
-		render(_state.container);
+		_render(_state.container);
 	}
 
 	function refresh() {
 		_state.cachedActivations = null;
 		_lastRenderTime = Date.now();
-		render(_state.container);
+		_render(_state.container);
 	}
 
 	// ============================================================
@@ -1411,7 +1411,7 @@ var DimensionalityRiver = (function () {
 	// ============================================================
 
 	return {
-		render: render,
+		render: _render,
 		refresh: refresh,
 		startAutoUpdate: startAutoUpdate,
 		stopAutoUpdate: stopAutoUpdate,
@@ -1435,5 +1435,5 @@ var DimensionalityRiver = (function () {
 // ============================================================
 
 function dimensionalityRiver(divOrId) {
-	return DimensionalityRiver.render(divOrId);
+	return DimensionalityRiver._render(divOrId);
 }
