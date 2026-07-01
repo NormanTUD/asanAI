@@ -15,7 +15,7 @@ var ActivationAtlas = (function () {
 		ctx: null,
 		layerIndex: -1,
 		gridSize: 10,
-		featureVisSteps: 10,
+		featureVisSteps: 25,
 		featureVisLR: 0.5,
 		zoom: 1,
 		panX: 0,
