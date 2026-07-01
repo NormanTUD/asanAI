@@ -884,14 +884,18 @@ var ActivationAtlas = (function () {
 			if (cell.generatedImage) {
 				ctx.drawImage(cell.generatedImage, cx, cy, cw, ch);
 			} else {
-				ctx.fillStyle = "rgba(30,30,50,0.8)";
+				// Empty cell: subtle dark fill with thin inset border
+				ctx.fillStyle = "rgba(20,20,35,0.9)";
 				ctx.fillRect(cx, cy, cw, ch);
-				// Animated pulse placeholder
-				var pulse = 0.3 + 0.2 * Math.sin(Date.now() / 600 + i * 0.3);
-				ctx.fillStyle = "rgba(52,152,219," + pulse.toFixed(2) + ")";
-				ctx.beginPath();
-				ctx.arc(cx + cw / 2, cy + ch / 2, Math.min(cw, ch) * 0.15, 0, Math.PI * 2);
-				ctx.fill();
+
+				// Thin dashed inset border to indicate pending
+				ctx.save();
+				ctx.setLineDash([3, 3]);
+				ctx.strokeStyle = "rgba(255,255,255,0.08)";
+				ctx.lineWidth = 0.5;
+				var inset = 4 * zoom;
+				ctx.strokeRect(cx + inset, cy + inset, cw - inset * 2, ch - inset * 2);
+				ctx.restore();
 			}
 
 			// Subtle grid lines
@@ -968,6 +972,7 @@ var ActivationAtlas = (function () {
 				var cBarX = tooltipX + 10;
 				var cBarY = tooltipY + 84;
 				var cBarW = 210;
+				ctx.save();
 				ctx.beginPath();
 				_roundRect(ctx, cBarX - 1, cBarY - 1, cBarW + 2, 8, 3);
 				ctx.clip();
@@ -982,12 +987,7 @@ var ActivationAtlas = (function () {
 			}
 		}
 
-		// Animate placeholder pulses while computing
-		if (_state.isComputing) {
-			requestAnimationFrame(function () {
-				if (_state.isComputing) _drawAtlas();
-			});
-		}
+		// No more continuous re-render loop for placeholder animation since we removed the pulsing dots
 	}
 
 	function _roundRect(ctx, x, y, w, h, r) {
@@ -1171,6 +1171,126 @@ var ActivationAtlas = (function () {
 	}
 
 	// ============================================================
+	// FINAL UI - shown after generation completes or is stopped
+	// (preserves the canvas and generated cells)
+	// ============================================================
+
+	function _buildFinalUI(container, meta) {
+		// Instead of wiping the container, we just update the header controls
+		// and remove the progress bar, keeping the canvas intact.
+
+		var wrapper = container.querySelector(".atlas_wrapper");
+		if (!wrapper) return;
+
+		// Remove progress section
+		var progressSection = wrapper.querySelector(".atlas_progress_section");
+		if (progressSection) progressSection.remove();
+
+		// Update toggle button to "Start" for re-generation
+		if (_state.toggleBtn) {
+			_state.toggleBtn.textContent = "▶ Generate";
+			_state.toggleBtn.classList.remove("atlas_toggle_stop");
+			_state.toggleBtn.classList.add("atlas_toggle_start");
+			_state.toggleBtn.style.animation = "none";
+			_state.toggleBtn.onclick = function () {
+				_handleToggle(container);
+			};
+		}
+
+		// Add layer selector if not present
+		var header = wrapper.querySelector(".atlas_header");
+		if (header && !header.querySelector(".atlas_select")) {
+			var controls = header.querySelector(".atlas_controls");
+			if (!controls) {
+				controls = document.createElement("div");
+				controls.className = "atlas_controls";
+				header.appendChild(controls);
+			}
+
+			var layerSelect = document.createElement("select");
+			layerSelect.className = "atlas_select";
+			if (typeof model !== "undefined" && model && model.layers) {
+				var autoOpt = document.createElement("option");
+				autoOpt.value = "-1";
+				autoOpt.textContent = "Auto (last hidden)";
+				layerSelect.appendChild(autoOpt);
+				for (var i = 0; i < model.layers.length; i++) {
+					var opt = document.createElement("option");
+					opt.value = "" + i;
+					opt.textContent = model.layers[i].name || ("Layer " + i);
+					layerSelect.appendChild(opt);
+				}
+			}
+			layerSelect.value = "" + _state.layerIndex;
+			layerSelect.onchange = function () {
+				_state.layerIndex = parseInt(this.value);
+			};
+			controls.insertBefore(layerSelect, controls.firstChild);
+		}
+
+		// Add zoom bar below canvas if not present
+		if (!wrapper.querySelector(".atlas_zoom_bar")) {
+			var zoomBar = document.createElement("div");
+			zoomBar.className = "atlas_zoom_bar";
+
+			var zoomOut = document.createElement("button");
+			zoomOut.className = "atlas_btn";
+			zoomOut.textContent = "−";
+			zoomOut.onclick = function () {
+				_state.zoom = Math.max(0.3, _state.zoom * 0.8);
+				_drawAtlas();
+			};
+			zoomBar.appendChild(zoomOut);
+
+			var zoomLabel = document.createElement("span");
+			zoomLabel.className = "atlas_zoom_label";
+			zoomLabel.textContent = "Scroll to zoom · Drag to pan";
+			zoomBar.appendChild(zoomLabel);
+
+			var zoomIn = document.createElement("button");
+			zoomIn.className = "atlas_btn";
+			zoomIn.textContent = "+";
+			zoomIn.onclick = function () {
+				_state.zoom = Math.min(10, _state.zoom * 1.25);
+				_drawAtlas();
+			};
+			zoomBar.appendChild(zoomIn);
+
+			var canvas = wrapper.querySelector(".atlas_canvas");
+			if (canvas) {
+				canvas.parentNode.insertBefore(zoomBar, canvas.nextSibling);
+			} else {
+				wrapper.appendChild(zoomBar);
+			}
+		}
+
+		// Add info text if meta available
+		if (meta && !meta.stopped && !wrapper.querySelector(".atlas_info")) {
+			var info = document.createElement("div");
+			info.className = "atlas_info";
+			info.innerHTML = "Layer: <strong>" + meta.layerName + "</strong> · Grid: " + meta.gridSize + "×" + meta.gridSize +
+				" · Prototypes: " + meta.numPrototypes + " · Neurons: " + meta.numNeurons +
+				" · Image: " + meta.imgH + "×" + meta.imgW;
+			var canvas = wrapper.querySelector(".atlas_canvas");
+			if (canvas) {
+				wrapper.insertBefore(info, canvas);
+			} else {
+				wrapper.appendChild(info);
+			}
+		}
+
+		// Add explanation if not present
+		if (!wrapper.querySelector(".atlas_explanation")) {
+			var explanation = document.createElement("div");
+			explanation.className = "atlas_explanation";
+			explanation.innerHTML = "This atlas explores the model's learned activation space <em>without training data</em>. " +
+				"Prototype directions are extracted from layer weights, projected to 2D via t-SNE, and the space is filled via IDW interpolation. " +
+				"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation.";
+			wrapper.appendChild(explanation);
+		}
+	}
+
+	// ============================================================
 	// LIVE UI - shown during generation
 	// ============================================================
 
@@ -1247,9 +1367,15 @@ var ActivationAtlas = (function () {
 		_state.canvas = canvas;
 		_state.ctx = canvas.getContext("2d");
 
+		// Draw initial empty state
+		var ctx = _state.ctx;
+		ctx.fillStyle = "#0d0d1a";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
 		container.appendChild(wrapper);
 		_bindCanvasEvents();
 	}
+
 
 	// ============================================================
 	// TOGGLE HANDLER
@@ -1257,7 +1383,7 @@ var ActivationAtlas = (function () {
 
 	function _handleToggle(container) {
 		if (_state.isComputing) {
-			// Currently generating -> stop
+			// Currently generating -> stop (preserve what we have)
 			_state.stopRequested = true;
 			_setToggleState("start");
 		} else {
@@ -1267,6 +1393,7 @@ var ActivationAtlas = (function () {
 			_state.panY = 0;
 			_state.hoveredCell = null;
 			_state.stopRequested = false;
+			_state.gridCells = null;
 
 			_buildLiveUI(container);
 
@@ -1276,7 +1403,8 @@ var ActivationAtlas = (function () {
 						container.innerHTML = "<div class='atlas_wrapper'><div class='atlas_error'>" + error + "</div></div>";
 						return;
 					}
-					_buildReadyUI(container, meta);
+					// Generation done or stopped — transition to final state without wiping canvas
+					_buildFinalUI(container, meta);
 				}, function (msg, pct) {
 					if (_state.progressBar) {
 						_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
@@ -1288,6 +1416,7 @@ var ActivationAtlas = (function () {
 			}, 50);
 		}
 	}
+
 
 	// ============================================================
 	// STYLES
