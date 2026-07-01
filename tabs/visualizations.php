@@ -6,7 +6,7 @@
 		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation Function</a></li>
 		<li><a href="#weight_surfaces" onclick="create_weight_surfaces(true)" id="weight_surfaces_tab_label"><span class="TRANSLATEME_weightsurfaces"></span></a></li>
 		<li><a id="health_status_tab_label" href="#health_status"><span class="TRANSLATEME_health_status"></span></a></li>
-		<li><a id="activation_atlas_tab_label" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
+		<li><a id="activation_atlas_tab_label" class="hide_when_no_image" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
 		<li><a id="dimensionality_river_tab_label" href="#dimensionality_river"><span class="TRANSLATEME_dimensionality_river"></span></a></li>
 		<li><a onclick="WeightAnalysis.weight_analysis_render('weight_analysis');" id="weight_analysis_tab_label" href="#weight_analysis"><span class="TRANSLATEME_weight_analysis"></span></a></li>
 		<!--<li><a href="#loss_landscape_tab" id="loss_landscape_tab_label"><span class="TRANSLATEME_loss_landscape"></span></a></li>-->
