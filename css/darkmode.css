@@ -19,7 +19,7 @@ html {
 }
 
 .glass_box {
-	background: #363636;
+	background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
 	border: solid #626567 1px;
 }
 
@@ -60,7 +60,7 @@ button, select, input, textarea, checkbox, .large_button {
 }
 
 .descriptions_of_layers {
-	background: #363636;
+	background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
 	border: solid #626567 1px;
 }
 
