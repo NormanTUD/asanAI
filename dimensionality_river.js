@@ -958,11 +958,22 @@ var DimensionalityRiver = (function () {
 			var xTensor = xy_data_global.x;
 			var shape = xTensor.shape;
 
-			// Only works for image data (rank 4: [batch, h, w, channels])
-			if (shape.length !== 4 || shape[3] !== 3) return "";
+			// Must be rank 4: [batch, h, w, channels]
+			if (shape.length !== 4) return "";
+
+			var batchSize = shape[0];
+			var imgH = shape[1];
+			var imgW = shape[2];
+			var channels = shape[3];
+
+			// Only support 1 or 3 channels
+			if (channels !== 1 && channels !== 3) return "";
+
+			// Bounds check
+			if (realImageIdx < 0 || realImageIdx >= batchSize) return "";
 
 			var imgTensor = tf.tidy(function () {
-				var single = tf.slice(xTensor, [realImageIdx, 0, 0, 0], [1, shape[1], shape[2], shape[3]]);
+				var single = tf.slice(xTensor, [realImageIdx, 0, 0, 0], [1, imgH, imgW, channels]);
 				single = single.squeeze([0]);
 
 				// Normalize to 0-255 for display
@@ -973,30 +984,36 @@ var DimensionalityRiver = (function () {
 				return normalized;
 			});
 
-			var canvas = document.createElement("canvas");
-			canvas.width = shape[2];
-			canvas.height = shape[1];
-
-			// Use tf.browser.toPixels synchronously via a workaround
 			var data = imgTensor.dataSync();
+			imgTensor.dispose();
+
+			var canvas = document.createElement("canvas");
+			canvas.width = imgW;
+			canvas.height = imgH;
 			var ctx = canvas.getContext("2d");
-			var imgData = ctx.createImageData(shape[2], shape[1]);
-			for (var i = 0; i < shape[1] * shape[2]; i++) {
-				imgData.data[i * 4] = data[i * 3];
-				imgData.data[i * 4 + 1] = data[i * 3 + 1];
-				imgData.data[i * 4 + 2] = data[i * 3 + 2];
+			var imgData = ctx.createImageData(imgW, imgH);
+
+			for (var i = 0; i < imgH * imgW; i++) {
+				if (channels === 3) {
+					imgData.data[i * 4] = data[i * 3];
+					imgData.data[i * 4 + 1] = data[i * 3 + 1];
+					imgData.data[i * 4 + 2] = data[i * 3 + 2];
+				} else {
+					// Grayscale: repeat single channel
+					imgData.data[i * 4] = data[i];
+					imgData.data[i * 4 + 1] = data[i];
+					imgData.data[i * 4 + 2] = data[i];
+				}
 				imgData.data[i * 4 + 3] = 255;
 			}
 			ctx.putImageData(imgData, 0, 0);
 
-			imgTensor.dispose();
-
 			// Scale down for tooltip
 			var thumbCanvas = document.createElement("canvas");
 			var maxSize = 80;
-			var scale = Math.min(maxSize / shape[2], maxSize / shape[1], 1);
-			thumbCanvas.width = Math.round(shape[2] * scale);
-			thumbCanvas.height = Math.round(shape[1] * scale);
+			var scale = Math.min(maxSize / imgW, maxSize / imgH, 1);
+			thumbCanvas.width = Math.max(1, Math.round(imgW * scale));
+			thumbCanvas.height = Math.max(1, Math.round(imgH * scale));
 			var thumbCtx = thumbCanvas.getContext("2d");
 			thumbCtx.imageSmoothingEnabled = false;
 			thumbCtx.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
@@ -1033,10 +1050,29 @@ var DimensionalityRiver = (function () {
 			realImageIdx = sampleIndices[sampleIdx];
 		}
 
-		// Generate thumbnail directly from tensor data instead of DOM gallery
+		// Try to generate thumbnail from tensor data first (correct order guaranteed)
 		var thumbnailHTML = "";
 		if (isImageData && realImageIdx >= 0) {
 			thumbnailHTML = _getThumbnailFromTensor(realImageIdx, imageDataCache);
+		}
+
+		// Fallback: if tensor thumbnail failed but we have image elements,
+		// try to use the DOM gallery (may be wrong order due to shuffle, but better than nothing)
+		if (!thumbnailHTML && isImageData && imageElements && imageElements.length > 0 && realImageIdx >= 0) {
+			try {
+				// Use sampleIdx as a rough fallback index into DOM gallery
+				var fallbackIdx = Math.min(realImageIdx, imageElements.length - 1);
+				var imgEl = imageElements[fallbackIdx];
+				if (imgEl && (imgEl.tagName === "IMG" || imgEl.tagName === "CANVAS")) {
+					if (!imageDataCache["dom_" + fallbackIdx]) {
+						imageDataCache["dom_" + fallbackIdx] = _imageToDataURL(imgEl, 80);
+					}
+					var dataUrl = imageDataCache["dom_" + fallbackIdx];
+					if (dataUrl) {
+						thumbnailHTML = "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;opacity:0.7;'/>";
+					}
+				}
+			} catch (e) { /* ignore fallback failure */ }
 		}
 
 		var tooltipHTML = _buildTooltipHTML(sampleIdx, trueName, predName, isMisclassified, realImageIdx, thumbnailHTML);
