@@ -1304,7 +1304,7 @@ var ActivationAtlas = (function () {
 		// Header
 		var header = document.createElement("div");
 		header.className = "atlas_header";
-		header.innerHTML = "<span class='atlas_title_text'>✦ Activation Atlas</span>";
+		header.innerHTML = "<span class='atlas_title_text'>Activation Atlas</span>";
 
 		var controls = document.createElement("div");
 		controls.className = "atlas_controls";
@@ -1490,7 +1490,7 @@ var ActivationAtlas = (function () {
 		// Header
 		var header = document.createElement("div");
 		header.className = "atlas_header";
-		header.innerHTML = "<span class='atlas_title_text'>✦ Activation Atlas</span>";
+		header.innerHTML = "<span class='atlas_title_text'>Activation Atlas</span>";
 
 		var controls = document.createElement("div");
 		controls.className = "atlas_controls";
