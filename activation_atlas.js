@@ -1220,7 +1220,7 @@ var ActivationAtlas = (function () {
 		_drawAtlas();
 
 		if (typeof update_translations === "function") {
-			update_translations();
+			update_translations(); // await not possible
 		}
 	}
 
@@ -1298,7 +1298,7 @@ var ActivationAtlas = (function () {
 		_bindCanvasEvents();
 
 		if (typeof update_translations === "function") {
-			update_translations();
+			update_translations(); // await not possible
 		}
 	}
 

@@ -30,7 +30,9 @@ function atlasTabStart() {
 			var textEl = msgEl.querySelector(".atlas_tab_message_text");
 			if (textEl) {
 				textEl.innerHTML = "<span class='TRANSLATEME_atlas_tab_no_model'></span>";
-				if (typeof update_translations === "function") update_translations();
+				if (typeof update_translations === "function") {
+					update_translations(); // await not possible
+				}
 			}
 		}
 		return;
@@ -332,7 +334,7 @@ function _atlasTabFinish(reason) {
 
 	// Update translations if available
 	if (typeof update_translations === "function") {
-		update_translations();
+		update_translations(); // await not possible
 	}
 }
 
