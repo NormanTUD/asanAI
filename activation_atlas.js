@@ -1453,7 +1453,7 @@ var ActivationAtlas = (function () {
 			".atlas_progress_section { margin-bottom: 16px; animation: atlas_fadeIn 0.3s ease-out; }",
 			".atlas_progress_outer { width: 100%; max-width: 900px; height: 10px; background: rgba(128,128,128,0.12); border-radius: 6px; overflow: hidden; position: relative; }",
 			".atlas_progress_outer::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; animation: atlas_shimmer 2s infinite; }",
-			".atlas_progress_inner { height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6, #2ecc71); background-size: 200% 100%; animation: atlas_shimmer 3s infinite; border-radius: 6px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(52,152,219,0.4); }",
+			".atlas_progress_inner { height: 100%; background: linear-gradient(90deg, #3498db, #9b59b6, #2ecc71); background-size: 200% 100%; border-radius: 6px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(52,152,219,0.4); }",
 			".atlas_progress_info { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }",
 			".atlas_progress_label { font-size: 0.82em; opacity: 0.7; font-weight: 500; }",
 			".atlas_time_estimate { font-size: 0.78em; opacity: 0.5; font-style: italic; }",
