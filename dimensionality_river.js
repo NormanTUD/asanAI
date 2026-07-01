@@ -903,9 +903,34 @@ var DimensionalityRiver = (function () {
 		}
 		_lastRenderTime = Date.now();
 
-		// If container is empty AND no cached result, show loading
+		// If container is empty AND no cached result, show appropriate waiting message
 		if (!container.querySelector(".dimriver_container") && !_state.lastResult) {
-			container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_calculating'></span>...</div></div>";
+			// Detect if we're in a pre-training state (no model or no data yet)
+			var preTrainingState = false;
+			try {
+				if (typeof model === "undefined" || !model) {
+					preTrainingState = true;
+				} else {
+					model.layers[0].getWeights();
+				}
+			} catch (e) {
+				preTrainingState = true;
+			}
+			if (!preTrainingState) {
+				try {
+					if (typeof xy_data_global === "undefined" || !xy_data_global || !xy_data_global.x || xy_data_global.x.isDisposed) {
+						preTrainingState = true;
+					}
+				} catch (e) {
+					preTrainingState = true;
+				}
+			}
+
+			if (preTrainingState) {
+				container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_dimriver_awaiting_training'></span></div></div>";
+			} else {
+				container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_calculating'></span>...</div></div>";
+			}
 			_triggerTranslations();
 		}
 
