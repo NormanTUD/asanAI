@@ -393,39 +393,6 @@ function _detectWarnings(layerData) {
 		}
 	}
 
-	// --- 2. Dead Neurons (per-neuron check) ---
-	// Unlike dying ReLU which checks overall zeros, this checks if specific
-	// neurons are always outputting the same value across the output shape
-	// (useful for detecting individual dead units in a layer)
-	if (layerData.outputShape && layerData.outputShape.length === 2 && layerData.outputShape[1] > 1) {
-		var numNeurons = layerData.outputShape[1];
-		var batchSize = layerData.output.length / numNeurons;
-		if (batchSize >= 1) {
-			var deadNeurons = 0;
-			for (var n = 0; n < numNeurons; n++) {
-				var neuronVal = layerData.output[n]; // first sample's value for this neuron
-				var isConstant = true;
-				for (var b = 1; b < batchSize; b++) {
-					if (layerData.output[b * numNeurons + n] !== neuronVal) {
-						isConstant = false;
-						break;
-					}
-				}
-				if (isConstant) deadNeurons++;
-			}
-			var deadFraction = deadNeurons / numNeurons;
-			if (deadFraction > 0.3 && numNeurons > 2) {
-				warnings.push({
-					type: "dead_neurons",
-					severity: deadFraction > 0.7 ? "critical" : "warning",
-					deadFraction: deadFraction,
-					deadCount: deadNeurons,
-					totalNeurons: numNeurons
-				});
-			}
-		}
-	}
-
 	// --- 3. Rank Collapse / Low Effective Dimensionality ---
 	// If outputs are highly correlated (low rank), the layer isn't using its capacity
 	// Approximation: check if variance is concentrated in very few dimensions
