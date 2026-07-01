@@ -65,6 +65,20 @@ var DimensionalityRiver = (function () {
 			return;
 		}
 
+		// Check if tensor data is still valid (not disposed)
+		try {
+			var xTensor = xy_data_global.x;
+			if (!xTensor || !xTensor.shape || xTensor.isDisposed) {
+				callback(null, "dimriver_no_data");
+				return;
+			}
+			// Try to access the data to confirm it's not disposed
+			xTensor.dataSync().length;
+		} catch (e) {
+			callback(null, "dimriver_no_data");
+			return;
+		}
+
 		_state.isComputing = true;
 
 		try {
@@ -153,7 +167,6 @@ var DimensionalityRiver = (function () {
 			xSubset.dispose();
 
 			// Do NOT dispose multiOutputModel - it shares layers with the original model!
-			// Just remove the reference, let GC handle the lightweight wrapper
 			multiOutputModel = null;
 
 			_state.isComputing = false;
@@ -684,23 +697,25 @@ var DimensionalityRiver = (function () {
 	}
 
 	function _smoothSwap(container, newHtml) {
+		// Parse new HTML into a temporary element
+		var temp = document.createElement("div");
+		temp.innerHTML = newHtml;
+		var newContent = temp.firstElementChild;
+
+		if (!newContent) {
+			container.innerHTML = newHtml;
+			return;
+		}
+
 		var existing = container.querySelector(".dimriver_container");
 		if (existing) {
-			// Directly swap content without fade-out blank state
-			// Use requestAnimationFrame for smooth visual update
-			existing.style.opacity = "0.7";
-			requestAnimationFrame(function () {
-				container.innerHTML = newHtml;
-				var newEl = container.querySelector(".dimriver_container");
-				if (newEl) {
-					newEl.style.opacity = "0.7";
-					requestAnimationFrame(function () {
-						newEl.style.opacity = "1";
-					});
-				}
-			});
+			// Swap in-place: replace the old container with the new one
+			// No opacity flash, no blank state
+			newContent.style.opacity = "1";
+			container.replaceChild(newContent, existing);
 		} else {
-			container.innerHTML = newHtml;
+			container.innerHTML = "";
+			container.appendChild(newContent);
 		}
 	}
 
@@ -1012,9 +1027,21 @@ var DimensionalityRiver = (function () {
 				modelAvailable = false;
 			}
 
-			// Only re-render if model is available (new data possible)
-			// If model not available, keep showing last good result
-			if (!modelAvailable) return;
+			// Check if data tensors are still valid
+			var dataAvailable = false;
+			try {
+				if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
+					if (!xy_data_global.x.isDisposed) {
+						xy_data_global.x.dataSync();
+						dataAvailable = true;
+					}
+				}
+			} catch (e) {
+				dataAvailable = false;
+			}
+
+			// Only re-render if both model and data are available
+			if (!modelAvailable || !dataAvailable) return;
 
 			_lastRenderTime = now;
 			_state.cachedActivations = null;
