@@ -1189,7 +1189,7 @@ var DimensionalityRiver = (function () {
 	// AUTO-UPDATE (manual toggle, separate from visibility watch)
 	// ============================================================
 
-	function startAutoUpdate(intervalMs) {
+	function startAutoUpdate(intervalMs=5000) {
 		stopAutoUpdate();
 		_state.autoUpdateTimer = setInterval(function () {
 			if (_state.isComputing) return;
