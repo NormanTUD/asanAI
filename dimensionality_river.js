@@ -19,7 +19,13 @@ var DimensionalityRiver = (function () {
 		maxSamples: 150,
 		lastResult: null,
 		cachedActivations: null, // {layers: [{name, type, activations: [sample0vec, sample1vec, ...]}], labels: [...]}
-		isComputing: false
+		isComputing: false,
+		// FIX #1/#2/#3/#5: Store the exact indices used during collection
+		_collectionIndices: null,
+		// FIX #9: Generation counter to detect stale hover events
+		_generation: 0,
+		// FIX #10: Snapshot of labels at collection time
+		_labelsSnapshot: null
 	};
 
 	// ============================================================
@@ -45,8 +51,96 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
+	// FIX #1, #2, #3: Unified index computation function
+	// All subsampling now uses a SINGLE indices array computed once
+	// and shared between activation gathering, label extraction,
+	// and prediction extraction. This eliminates floating-point
+	// drift between independent step calculations.
+	// ============================================================
+
+	function _computeUnifiedIndices(numTotalSamples, maxSamples) {
+		var indices = [];
+		if (maxSamples < numTotalSamples) {
+			var step = numTotalSamples / maxSamples;
+			for (var i = 0; i < maxSamples; i++) {
+				var idx = Math.min(Math.floor(i * step), numTotalSamples - 1);
+				indices.push(idx);
+			}
+		} else {
+			for (var i = 0; i < Math.min(maxSamples, numTotalSamples); i++) {
+				indices.push(i);
+			}
+		}
+		return indices;
+	}
+
+	// ============================================================
+	// FIX #3, #8: Extract labels using the EXACT same indices
+	// that were used for activation collection
+	// ============================================================
+
+	function _extractLabelsForIndices(indices) {
+		try {
+			if (!xy_data_global || !xy_data_global.y) return null;
+			var yTensor = xy_data_global.y;
+			if (!yTensor || yTensor.isDisposed) return null;
+
+			var yShape = yTensor.shape;
+			var yData = yTensor.dataSync();
+
+			// GUARDRAIL: Validate yData is not empty
+			if (!yData || yData.length === 0) return null;
+
+			var decoded = [];
+			var totalSamples = yShape[0];
+
+			if (yShape.length === 2 && yShape[1] > 1) {
+				// One-hot: argmax per row
+				var numClasses = yShape[1];
+				for (var i = 0; i < totalSamples; i++) {
+					var maxIdx = 0, maxVal = -Infinity;
+					for (var c = 0; c < numClasses; c++) {
+						var val = yData[i * numClasses + c];
+						if (val > maxVal) { maxVal = val; maxIdx = c; }
+					}
+					decoded.push(maxIdx);
+				}
+			} else {
+				// Flat labels
+				for (var i = 0; i < yData.length; i++) {
+					decoded.push(Math.round(yData[i]));
+				}
+			}
+
+			// FIX #3: Use the EXACT same indices as activation collection
+			var result = [];
+			for (var i = 0; i < indices.length; i++) {
+				var idx = indices[i];
+				// GUARDRAIL #8: Bounds check
+				if (idx >= 0 && idx < decoded.length) {
+					result.push(decoded[idx]);
+				} else {
+					result.push(-1); // Unknown marker
+				}
+			}
+
+			// GUARDRAIL #8: Verify length matches
+			if (result.length !== indices.length) {
+				console.warn("[DimRiver] Label count mismatch: expected", indices.length, "got", result.length);
+				while (result.length < indices.length) result.push(-1);
+				result = result.slice(0, indices.length);
+			}
+
+			return result;
+		} catch (e) {
+			console.warn("[DimRiver] _extractLabelsForIndices error:", e);
+			return null;
+		}
+	}
+
+	// ============================================================
 	// Replace _collectMultiSampleActivations with this updated version
-	// (only the relevant changed section shown — add predicted labels)
+	// FIX #1, #2, #3, #5, #7, #8, #9, #10: Uses unified indices
 	// ============================================================
 
 	function _collectMultiSampleActivations(callback) {
@@ -81,20 +175,28 @@ var DimensionalityRiver = (function () {
 			var numSamples = xTensor.shape[0];
 			var maxSamples = Math.min(_state.maxSamples, numSamples);
 
-			var labelsResult = _extractLabels(maxSamples);
+			// FIX #1, #2, #3: Compute indices ONCE and reuse everywhere
+			var indices = _computeUnifiedIndices(numSamples, maxSamples);
 
-			var indices = [];
-			if (maxSamples < numSamples) {
-				var step = numSamples / maxSamples;
-				for (var i = 0; i < maxSamples; i++) {
-					indices.push(Math.min(Math.floor(i * step), numSamples - 1));
-				}
-			} else {
-				for (var i = 0; i < maxSamples; i++) indices.push(i);
+			// FIX #3: Extract labels using the SAME indices
+			var labelsResult = _extractLabelsForIndices(indices);
+
+			// GUARDRAIL #8: Validate labels length matches indices length
+			if (labelsResult && labelsResult.length !== indices.length) {
+				console.warn("[DimRiver] Labels length mismatch, adjusting");
+				while (labelsResult.length < indices.length) labelsResult.push(-1);
+				labelsResult = labelsResult.slice(0, indices.length);
 			}
 
-			// NEW: Get predicted labels for misclassification detection
+			// FIX #7: Extract predictions using the SAME indices (same xSubset)
 			var predictedLabels = _extractPredictions(indices);
+
+			// GUARDRAIL #8: Validate predictions length
+			if (predictedLabels && predictedLabels.length !== indices.length) {
+				console.warn("[DimRiver] Predictions length mismatch, adjusting");
+				while (predictedLabels.length < indices.length) predictedLabels.push(-1);
+				predictedLabels = predictedLabels.slice(0, indices.length);
+			}
 
 			var layerInfos = [];
 			var layerOutputSymbols = [];
@@ -158,12 +260,29 @@ var DimensionalityRiver = (function () {
 
 			multiOutputModel = null;
 
+			// FIX #5, #9: Store the exact indices used, increment generation
+			_state._collectionIndices = indices.slice(); // defensive copy
+			_state._generation++;
+
+			// FIX #10: Snapshot the labels array at collection time
+			try {
+				if (typeof labels !== "undefined" && Array.isArray(labels)) {
+					_state._labelsSnapshot = labels.slice();
+				} else {
+					_state._labelsSnapshot = null;
+				}
+			} catch (e) {
+				_state._labelsSnapshot = null;
+			}
+
 			_state.isComputing = false;
 			_state.cachedActivations = {
 				layers: results,
 				labels: labelsResult,
-				predictedLabels: predictedLabels, // NEW
-				numSamples: maxSamples
+				predictedLabels: predictedLabels,
+				numSamples: indices.length,
+				indices: indices.slice(), // FIX #5: Store indices with cached data
+				generation: _state._generation // FIX #9: Tag with generation
 			};
 			callback(_state.cachedActivations, null);
 
@@ -173,6 +292,10 @@ var DimensionalityRiver = (function () {
 			callback(null, "dimriver_error");
 		}
 	}
+
+	// ============================================================
+	// KEPT FOR BACKWARD COMPAT (no longer called by main flow)
+	// ============================================================
 
 	function _extractLabels(numSamples) {
 		try {
@@ -216,7 +339,8 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
-	// Add this new function after _extractLabels in dimensionality_river.js
+	// _extractPredictions - uses provided indices for consistency
+	// FIX #7: Uses the same indices array passed in
 	// ============================================================
 
 	function _extractPredictions(indices) {
@@ -402,12 +526,15 @@ var DimensionalityRiver = (function () {
 		if (!labels || embedded.length < 4) return null;
 		var n = embedded.length;
 		var uniqueLabels = {};
-		for (var i = 0; i < n; i++) uniqueLabels[labels[i]] = true;
+		for (var i = 0; i < n; i++) {
+			if (labels[i] !== -1) uniqueLabels[labels[i]] = true;
+		}
 		var classes = Object.keys(uniqueLabels);
 		if (classes.length < 2) return null;
 
 		var totalSil = 0, count = 0;
 		for (var i = 0; i < n; i++) {
+			if (labels[i] === -1) continue; // GUARDRAIL: Skip unknown labels
 			var myClass = labels[i];
 			var intraSum = 0, intraCount = 0;
 			var interMin = Infinity;
@@ -444,6 +571,7 @@ var DimensionalityRiver = (function () {
 		var counts = {};
 		for (var i = 0; i < embedded.length; i++) {
 			var lbl = labels[i];
+			if (lbl === -1) continue; // GUARDRAIL: Skip unknown
 			if (!centroids[lbl]) { centroids[lbl] = [0, 0]; counts[lbl] = 0; }
 			centroids[lbl][0] += embedded[i][0];
 			centroids[lbl][1] += embedded[i][1];
@@ -457,7 +585,7 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
-	// Replace _analyzeFromCache to pass predictedLabels through
+	// _analyzeFromCache - passes predictedLabels and indices through
 	// ============================================================
 
 	function _analyzeFromCache(data) {
@@ -471,6 +599,12 @@ var DimensionalityRiver = (function () {
 			var points = layer.activations;
 			if (!points || points.length < 3) continue;
 
+			// GUARDRAIL: Verify points count matches labels count
+			if (data.labels && points.length !== data.labels.length) {
+				console.warn("[DimRiver] Layer", layer.name, "has", points.length,
+					"points but", data.labels.length, "labels");
+			}
+
 			var maxDim = 50;
 			var truncatedPoints = points;
 			if (points[0] && points[0].length > maxDim) {
@@ -480,7 +614,7 @@ var DimensionalityRiver = (function () {
 				}
 			}
 
-			const opts = {
+			var opts = {
 				perplexity: Math.min(_state.perplexity, Math.floor(truncatedPoints.length / 3)),
 				iterations: _state.iterations,
 				learningRate: _state.learningRate
@@ -491,12 +625,22 @@ var DimensionalityRiver = (function () {
 			var silhouette = _computeSilhouetteScore(embedded, data.labels);
 			var centroids = _computeClassCentroids(embedded, data.labels);
 
-			// NEW: Compute misclassified mask
+			// Compute misclassified mask with bounds checking
 			var misclassified = null;
 			if (data.labels && data.predictedLabels) {
 				misclassified = [];
-				for (var s = 0; s < data.labels.length; s++) {
-					misclassified.push(data.labels[s] !== data.predictedLabels[s]);
+				var minLen = Math.min(data.labels.length, data.predictedLabels.length, embedded.length);
+				for (var s = 0; s < minLen; s++) {
+					// GUARDRAIL: Only mark as misclassified if both labels are valid
+					if (data.labels[s] === -1 || data.predictedLabels[s] === -1) {
+						misclassified.push(false);
+					} else {
+						misclassified.push(data.labels[s] !== data.predictedLabels[s]);
+					}
+				}
+				// Pad if needed
+				while (misclassified.length < embedded.length) {
+					misclassified.push(false);
 				}
 			}
 
@@ -508,8 +652,8 @@ var DimensionalityRiver = (function () {
 				originalDim: layer.flatDim,
 				embedded: embedded,
 				labels: data.labels,
-				predictedLabels: data.predictedLabels, // NEW
-				misclassified: misclassified, // NEW
+				predictedLabels: data.predictedLabels,
+				misclassified: misclassified,
 				silhouette: silhouette,
 				centroids: centroids
 			});
@@ -519,6 +663,8 @@ var DimensionalityRiver = (function () {
 			layers: results,
 			timestamp: Date.now(),
 			numSamples: data.numSamples,
+			indices: data.indices, // FIX #5: Pass through for hover
+			generation: data.generation, // FIX #9: Pass through for staleness check
 			error: results.length === 0 ? "dimriver_no_layers" : null
 		};
 	}
@@ -534,13 +680,15 @@ var DimensionalityRiver = (function () {
 	];
 
 	// ============================================================
-	// Replace _scatterSVG to _render misclassified points with stripes
+	// _scatterSVG - renders scatter plot for a layer
+	// FIX #4: Now passes predictedLabels to _renderPoints
 	// ============================================================
 
 	function _scatterSVG(layer, width, height) {
 		var embedded = layer.embedded;
-		var labels = layer.labels;
+		var layerLabels = layer.labels;
 		var misclassified = layer.misclassified;
+		var predictedLabels = layer.predictedLabels;
 		if (!embedded || embedded.length < 3) return "<div class='dimriver_empty'>—</div>";
 
 		var margin = 30;
@@ -555,37 +703,30 @@ var DimensionalityRiver = (function () {
 
 		var scatterId = "dimriver_scatter_" + (layer.index || 0) + "_" + Date.now();
 
+		var labelsSnapshot = _state._labelsSnapshot || (typeof labels !== "undefined" ? labels : null);
+
 		var html = "<div class='dimriver_scatter_wrapper' style='position:relative;'>";
 		html += "<svg class='dimriver_svg' id='" + scatterId + "' width='100%' viewBox='0 0 " + width + " " + height + "'>";
 
-		// Background
 		html += "<rect x='" + margin + "' y='" + margin + "' width='" + plotW + "' height='" + plotH + "' fill='rgba(128,128,128,0.02)' stroke='rgba(128,128,128,0.1)' rx='4'/>";
 
-		// Grid
 		html += _renderGrid(margin, plotW, plotH, width, height);
 
-		// Centroids
 		html += _renderCentroids(layer, margin, plotW, plotH, minX, minY, rangeX, rangeY);
 
-		// Points
-		html += _renderPoints(embedded, labels, misclassified, margin, plotW, plotH, minX, minY, rangeX, rangeY);
+		html += _renderPoints(embedded, layerLabels, misclassified, predictedLabels, margin, plotW, plotH, minX, minY, rangeX, rangeY, labelsSnapshot);
 
-		// Silhouette badge
 		html += _renderSilhouetteBadge(layer, width, margin);
 
-		// Misclassification count badge
 		html += _renderMisclassificationBadge(misclassified, margin, height);
 
-		// Axis labels
 		html += "<text x='" + (width / 2) + "' y='" + (height - 6) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4'>t-SNE dim 1</text>";
 		html += "<text x='8' y='" + (height / 2) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4' transform='rotate(-90, 8, " + (height / 2) + ")'>t-SNE dim 2</text>";
 
-		// Info
 		html += "<text x='" + (margin + 4) + "' y='" + (margin + 14) + "' font-size='8' fill='currentColor' opacity='0.4'>" + layer.numSamples + " samples, " + layer.originalDim + "D→2D</text>";
 
 		html += "</svg>";
 
-		// Tooltip container
 		html += "<div class='dimriver_tooltip' id='" + scatterId + "_tooltip' style='display:none;position:absolute;pointer-events:none;z-index:1000;background:#1a1a2e;border:2px solid #3498db;border-radius:8px;padding:6px;box-shadow:0 4px 20px rgba(0,0,0,0.5);'></div>";
 
 		html += "</div>";
@@ -631,25 +772,71 @@ var DimensionalityRiver = (function () {
 		return html;
 	}
 
-	function _renderPoints(embedded, labels, misclassified, margin, plotW, plotH, minX, minY, rangeX, rangeY) {
+	// ============================================================
+	// FIX #4: _renderPoints now embeds BOTH true label AND predicted
+	// label directly as data attributes on each SVG circle element.
+	// This eliminates any need for index-based lookups during hover.
+	// ============================================================
+
+	function _escapeAttr(str) {
+		if (!str) return "";
+		return String(str)
+			.replace(/&/g, "&amp;")
+			.replace(/'/g, "&#39;")
+				.replace(/"/g, "&quot;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;");
+				}
+
+	function _renderPoints(embedded, labels, misclassified, predictedLabels, margin, plotW, plotH, minX, minY, rangeX, rangeY, labelsSnapshot) {
 		var html = "";
 		for (var i = 0; i < embedded.length; i++) {
 			var x = margin + ((embedded[i][0] - minX) / rangeX) * plotW;
 			var y = margin + ((embedded[i][1] - minY) / rangeY) * plotH;
 
-			var color = "#8e44ad";
-			if (labels && labels[i] !== undefined && labels[i] !== null) {
-				color = _COLORS[Math.abs(labels[i]) % _COLORS.length];
+			if (!isFinite(x) || !isFinite(y)) {
+				x = margin + plotW / 2;
+				y = margin + plotH / 2;
 			}
 
-			var isMisclassified = misclassified && misclassified[i];
+			x = Math.max(margin, Math.min(margin + plotW, x));
+			y = Math.max(margin, Math.min(margin + plotH, y));
+
+			var trueLabel = -1;
+			if (labels && i < labels.length && labels[i] !== undefined && labels[i] !== null) {
+				trueLabel = labels[i];
+			}
+
+			var predLabel = -1;
+			if (predictedLabels && i < predictedLabels.length && predictedLabels[i] !== undefined && predictedLabels[i] !== null) {
+				predLabel = predictedLabels[i];
+			}
+
+			var trueName = _getLabelNameSafe(trueLabel, labelsSnapshot);
+			var predName = _getLabelNameSafe(predLabel, labelsSnapshot);
+
+			var color = "#8e44ad";
+			if (trueLabel >= 0) {
+				color = _COLORS[Math.abs(trueLabel) % _COLORS.length];
+			}
+
+			var isMisclassified = misclassified && i < misclassified.length && misclassified[i];
+
+			var dataAttrs = "data-sample-idx='" + i + "'"
+				+ " data-true-label='" + trueLabel + "'"
+				+ " data-predicted-label='" + predLabel + "'"
+				+ " data-true-name='" + _escapeAttr(trueName) + "'"
+				+ " data-predicted-name='" + _escapeAttr(predName) + "'"
+				+ " data-misclassified='" + (isMisclassified ? "true" : "false") + "'";
 
 			if (isMisclassified) {
-				// Misclassified: same colored circle with a bold red ring around it
-				html += "<circle class='dimriver_point dimriver_misclassified' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' data-misclassified='true' cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color + "' opacity='0.85' stroke='#ff0000' stroke-width='2.5' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
+				html += "<circle class='dimriver_point dimriver_misclassified' " + dataAttrs
+					+ " cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color
+					+ "' opacity='0.85' stroke='#ff0000' stroke-width='2.5' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
 			} else {
-				// Correctly classified: solid circle
-				html += "<circle class='dimriver_point' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' data-misclassified='false' cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color + "' opacity='0.65' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
+				html += "<circle class='dimriver_point' " + dataAttrs
+					+ " cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color
+					+ "' opacity='0.65' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
 			}
 		}
 		return html;
@@ -681,21 +868,34 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
-	// Update _bindHoverEvents to handle both circles and polygons
-	// (replace the mouseenter handler content to show misclassification info)
+	// FIX #5, #6, #9, #10: Completely rewritten hover event system
+	// - No longer recomputes indices independently via _buildSampleIndices
+	// - Uses data attributes embedded at render time (FIX #4)
+	// - Validates generation to detect stale data (FIX #9)
+	// - Uses snapshotted labels (FIX #10)
 	// ============================================================
 
 	function _bindHoverEvents() {
 		if (!_state.container) return;
 
-		var sampleIndices = _buildSampleIndices();
+		// FIX #9: Capture the current generation at bind time
+		var bindGeneration = _state._generation;
+
+		// FIX #5: Use the stored indices from collection, not recomputed ones
+		var storedIndices = _state._collectionIndices;
+
+		// GUARDRAIL: If no stored indices, fall back to building them (backward compat)
+		if (!storedIndices || storedIndices.length === 0) {
+			storedIndices = _buildSampleIndices();
+		}
+
 		var isImageData = _checkIsImageData();
 		var imageElements = _getImageElements();
 		var imageDataCache = {};
 
 		var points = _state.container.querySelectorAll(".dimriver_point");
 		for (var p = 0; p < points.length; p++) {
-			_attachPointEvents(points[p], sampleIndices, isImageData, imageElements, imageDataCache);
+			_attachPointEvents(points[p], storedIndices, isImageData, imageElements, imageDataCache, bindGeneration);
 		}
 	}
 
@@ -728,8 +928,12 @@ var DimensionalityRiver = (function () {
 		}
 	}
 
-	function _attachPointEvents(point, sampleIndices, isImageData, imageElements, imageDataCache) {
+	function _attachPointEvents(point, sampleIndices, isImageData, imageElements, imageDataCache, bindGeneration) {
 		point.addEventListener("mouseenter", function (e) {
+			// FIX #9: If generation has changed since we bound, don't show stale tooltip
+			if (_state._generation !== bindGeneration) {
+				return;
+			}
 			_handlePointEnter(point, sampleIndices, isImageData, imageElements, imageDataCache);
 		});
 		point.addEventListener("mouseleave", function (e) {
@@ -737,12 +941,85 @@ var DimensionalityRiver = (function () {
 		});
 	}
 
+	// ============================================================
+	// FIX #4, #5, #6, #10: Rewritten _handlePointEnter
+	// Reads ALL needed info from data attributes (no external lookups
+	// that could produce wrong categories)
+	// ============================================================
+
+	function _getThumbnailFromTensor(realImageIdx, imageDataCache) {
+		if (imageDataCache[realImageIdx]) {
+			return imageDataCache[realImageIdx];
+		}
+
+		try {
+			if (!xy_data_global || !xy_data_global.x || xy_data_global.x.isDisposed) return "";
+
+			var xTensor = xy_data_global.x;
+			var shape = xTensor.shape;
+
+			// Only works for image data (rank 4: [batch, h, w, channels])
+			if (shape.length !== 4 || shape[3] !== 3) return "";
+
+			var imgTensor = tf.tidy(function () {
+				var single = tf.slice(xTensor, [realImageIdx, 0, 0, 0], [1, shape[1], shape[2], shape[3]]);
+				single = single.squeeze([0]);
+
+				// Normalize to 0-255 for display
+				var minVal = single.min();
+				var maxVal = single.max();
+				var range = maxVal.sub(minVal);
+				var normalized = single.sub(minVal).div(range.add(1e-8)).mul(255).clipByValue(0, 255).toInt();
+				return normalized;
+			});
+
+			var canvas = document.createElement("canvas");
+			canvas.width = shape[2];
+			canvas.height = shape[1];
+
+			// Use tf.browser.toPixels synchronously via a workaround
+			var data = imgTensor.dataSync();
+			var ctx = canvas.getContext("2d");
+			var imgData = ctx.createImageData(shape[2], shape[1]);
+			for (var i = 0; i < shape[1] * shape[2]; i++) {
+				imgData.data[i * 4] = data[i * 3];
+				imgData.data[i * 4 + 1] = data[i * 3 + 1];
+				imgData.data[i * 4 + 2] = data[i * 3 + 2];
+				imgData.data[i * 4 + 3] = 255;
+			}
+			ctx.putImageData(imgData, 0, 0);
+
+			imgTensor.dispose();
+
+			// Scale down for tooltip
+			var thumbCanvas = document.createElement("canvas");
+			var maxSize = 80;
+			var scale = Math.min(maxSize / shape[2], maxSize / shape[1], 1);
+			thumbCanvas.width = Math.round(shape[2] * scale);
+			thumbCanvas.height = Math.round(shape[1] * scale);
+			var thumbCtx = thumbCanvas.getContext("2d");
+			thumbCtx.imageSmoothingEnabled = false;
+			thumbCtx.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
+
+			var dataUrl = thumbCanvas.toDataURL("image/png");
+			var html = "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;'/>";
+
+			imageDataCache[realImageIdx] = html;
+			return html;
+		} catch (e) {
+			imageDataCache[realImageIdx] = "";
+			return "";
+		}
+	}
+
 	function _handlePointEnter(point, sampleIndices, isImageData, imageElements, imageDataCache) {
 		var sampleIdx = parseInt(point.getAttribute("data-sample-idx"));
-		var labelIdx = point.getAttribute("data-label");
+		var trueName = point.getAttribute("data-true-name") || "Unknown";
+		var predName = point.getAttribute("data-predicted-name") || "Unknown";
 		var isMisclassified = point.getAttribute("data-misclassified") === "true";
 
-		// Enlarge point (all are circles now)
+		if (isNaN(sampleIdx) || sampleIdx < 0) return;
+
 		point.setAttribute("r", "7");
 		point.setAttribute("opacity", "1");
 		point.style.filter = "drop-shadow(0 0 4px rgba(255,255,255,0.5))";
@@ -751,8 +1028,18 @@ var DimensionalityRiver = (function () {
 		var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
 		if (!tooltip) return;
 
-		var realImageIdx = sampleIndices[sampleIdx];
-		var tooltipHTML = _buildTooltipHTML(sampleIdx, labelIdx, isMisclassified, realImageIdx, isImageData, imageElements, imageDataCache);
+		var realImageIdx = -1;
+		if (sampleIndices && sampleIdx >= 0 && sampleIdx < sampleIndices.length) {
+			realImageIdx = sampleIndices[sampleIdx];
+		}
+
+		// Generate thumbnail directly from tensor data instead of DOM gallery
+		var thumbnailHTML = "";
+		if (isImageData && realImageIdx >= 0) {
+			thumbnailHTML = _getThumbnailFromTensor(realImageIdx, imageDataCache);
+		}
+
+		var tooltipHTML = _buildTooltipHTML(sampleIdx, trueName, predName, isMisclassified, realImageIdx, thumbnailHTML);
 
 		tooltip.innerHTML = tooltipHTML;
 		tooltip.style.display = "block";
@@ -771,32 +1058,26 @@ var DimensionalityRiver = (function () {
 		if (tooltip) tooltip.style.display = "none";
 	}
 
-	function _buildTooltipHTML(sampleIdx, labelIdx, isMisclassified, realImageIdx, isImageData, imageElements, imageDataCache) {
+	// ============================================================
+	// FIX #4, #10: _buildTooltipHTML now receives labels array
+	// and reads true/predicted labels from data attributes
+	// instead of doing any external lookups
+	// ============================================================
+
+	function _buildTooltipHTML(sampleIdx, trueName, predName, isMisclassified, realImageIdx, thumbnailHTML) {
 		var tooltipHTML = "";
 
-		var labelName = _getLabelName(labelIdx);
-		var imgEl = (realImageIdx !== undefined) ? imageElements[realImageIdx] : null;
-
-		if (isImageData && imgEl) {
-			if (!imageDataCache[realImageIdx]) {
-				imageDataCache[realImageIdx] = _imageToDataURL(imgEl, 80);
-			}
-			var dataUrl = imageDataCache[realImageIdx];
-			if (dataUrl) {
-				tooltipHTML += "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;'/>";
-			}
+		if (thumbnailHTML) {
+			tooltipHTML += thumbnailHTML;
 		}
 
 		tooltipHTML += "<div style='font-size:11px;color:#ccc;text-align:center;'>";
-		tooltipHTML += "<strong>" + _escapeHtml(labelName) + "</strong><br>";
-		tooltipHTML += "<span style='opacity:0.6;'>Sample #" + realImageIdx + "</span>";
+		tooltipHTML += "<strong>" + _escapeHtml(trueName) + "</strong><br>";
+		tooltipHTML += "<span style='opacity:0.6;'>Sample #" + (realImageIdx >= 0 ? realImageIdx : sampleIdx) + "</span>";
 
 		if (isMisclassified) {
-			var predictedLabel = _getPredictedLabel(sampleIdx);
 			tooltipHTML += "<br><span style='color:#ff4444;font-weight:bold;'>✗ Misclassified</span>";
-			if (predictedLabel) {
-				tooltipHTML += "<br><span style='color:#ff8888;'>Predicted: " + _escapeHtml(predictedLabel) + "</span>";
-			}
+			tooltipHTML += "<br><span style='color:#ff8888;'>Predicted: " + _escapeHtml(predName) + "</span>";
 		} else {
 			tooltipHTML += "<br><span style='color:#44ff44;'>✓ Correct</span>";
 		}
@@ -805,6 +1086,23 @@ var DimensionalityRiver = (function () {
 		return tooltipHTML;
 	}
 
+	// ============================================================
+	// FIX #10: Safe label name lookup that doesn't rely on global state
+	// ============================================================
+
+	function _getLabelNameSafe(labelIdx, labelsArray) {
+		if (labelIdx < 0 || labelIdx === undefined || labelIdx === null || isNaN(labelIdx)) {
+			return "Unknown";
+		}
+		try {
+			if (labelsArray && Array.isArray(labelsArray) && labelIdx < labelsArray.length && labelsArray[labelIdx]) {
+				return String(labelsArray[labelIdx]);
+			}
+		} catch (e) { /* fall through */ }
+		return "Class " + labelIdx;
+	}
+
+	// Keep original _getLabelName for backward compat but it's no longer used in hover
 	function _getLabelName(labelIdx) {
 		try {
 			if (typeof labels !== "undefined" && labels[labelIdx]) {
@@ -828,15 +1126,25 @@ var DimensionalityRiver = (function () {
 	}
 
 	function _positionTooltip(point, svg, tooltip) {
-		var wrapperRect = svg.parentElement.getBoundingClientRect();
-		var ptCTM = point.getBoundingClientRect();
+		try {
+			var wrapperRect = svg.parentElement.getBoundingClientRect();
+			var ptCTM = point.getBoundingClientRect();
 
-		var tooltipX = ptCTM.left - wrapperRect.left + ptCTM.width / 2 + 10;
-		var tooltipY = ptCTM.top - wrapperRect.top - 10;
+			var tooltipX = ptCTM.left - wrapperRect.left + ptCTM.width / 2 + 10;
+			var tooltipY = ptCTM.top - wrapperRect.top - 10;
 
-		tooltip.style.left = tooltipX + "px";
-		tooltip.style.top = tooltipY + "px";
-		tooltip.style.transform = "translateY(-100%)";
+			// GUARDRAIL: Ensure tooltip stays within container bounds
+			var maxX = wrapperRect.width - 130;
+			if (tooltipX > maxX) tooltipX = maxX;
+			if (tooltipX < 0) tooltipX = 0;
+
+			tooltip.style.left = tooltipX + "px";
+			tooltip.style.top = tooltipY + "px";
+			tooltip.style.transform = "translateY(-100%)";
+		} catch (e) {
+			// GUARDRAIL: If positioning fails, just hide tooltip
+			tooltip.style.display = "none";
+		}
 	}
 
 	function _riverOverviewSVG(results) {
@@ -973,10 +1281,8 @@ var DimensionalityRiver = (function () {
 				if (error || !data) {
 					// If we have a previous good result, just keep showing it
 					if (_state.lastResult && !_state.lastResult.error) {
-						// Don't overwrite - just leave the existing display as-is
 						return;
 					}
-					// Only show error if we never had a good result
 					var html = "<div class='dimriver_container'>";
 					html += "<div class='dimriver_header'><h2><span class='TRANSLATEME_dimriver_title'></span></h2></div>";
 					html += "<p class='dimriver_subtitle'><span class='TRANSLATEME_dimriver_subtitle'></span></p>";
@@ -998,7 +1304,6 @@ var DimensionalityRiver = (function () {
 	}
 
 	function _smoothSwap(container, newHtml) {
-		// Parse new HTML into a temporary element
 		var temp = document.createElement("div");
 		temp.innerHTML = newHtml;
 		var newContent = temp.firstElementChild;
@@ -1010,8 +1315,6 @@ var DimensionalityRiver = (function () {
 
 		var existing = container.querySelector(".dimriver_container");
 		if (existing) {
-			// Swap in-place: replace the old container with the new one
-			// No opacity flash, no blank state
 			newContent.style.opacity = "1";
 			container.replaceChild(newContent, existing);
 		} else {
@@ -1079,11 +1382,6 @@ var DimensionalityRiver = (function () {
 		}
 		html += "</div>";
 
-		// ============================================================
-		// Update the legend section in _renderResult to include misclassified indicator
-		// Replace the legend block (search for "// Legend" in _renderResult)
-		// ============================================================
-
 		// Legend
 		if (result.layers.length > 0 && result.layers[0].labels) {
 			var numClasses = 0;
@@ -1097,7 +1395,7 @@ var DimensionalityRiver = (function () {
 					var labelName = (typeof labels !== "undefined" && labels[c]) ? labels[c] : "Class " + c;
 					html += "<div class='dimriver_legend_item'><div class='dimriver_legend_dot' style='background:" + _COLORS[c % _COLORS.length] + ";'></div>" + _escapeHtml(labelName) + "</div>";
 				}
-				// Misclassified legend item: colored dot with red ring
+				// Misclassified legend item
 				html += "<div class='dimriver_legend_item'><div class='dimriver_legend_dot' style='background:#9b59b6; border: 2.5px solid #ff0000;'></div>Misclassified</div>";
 				html += "</div>";
 			}
@@ -1120,7 +1418,6 @@ var DimensionalityRiver = (function () {
 
 		var html = "<div class='dimriver_summary'>";
 
-		// Check silhouette progression
 		var hasLabels = result.layers[0].labels !== null;
 		var silhouettes = [];
 		for (var i = 0; i < result.layers.length; i++) {
@@ -1183,7 +1480,7 @@ var DimensionalityRiver = (function () {
 				}
 			});
 			sliders[i].addEventListener("change", function () {
-				_state.cachedActivations = null; // Force re-collect if maxSamples changed
+				_state.cachedActivations = null;
 				_render(_state.container);
 			});
 		}
@@ -1199,7 +1496,6 @@ var DimensionalityRiver = (function () {
 	}
 
 	function _getImageElements() {
-		// Same source as used in train.js for grid visualization
 		var imgs = [];
 		try {
 			imgs = [
@@ -1216,7 +1512,6 @@ var DimensionalityRiver = (function () {
 			var canvas = document.createElement("canvas");
 			var w = imgElement.naturalWidth || imgElement.width || maxSize;
 			var h = imgElement.naturalHeight || imgElement.height || maxSize;
-			// Scale down to maxSize
 			var scale = Math.min(maxSize / w, maxSize / h, 1);
 			canvas.width = Math.round(w * scale);
 			canvas.height = Math.round(h * scale);
@@ -1231,7 +1526,7 @@ var DimensionalityRiver = (function () {
 	function _triggerTranslations() {
 		try {
 			if (typeof update_translations === "function") {
-				update_translations(); // await not possible
+				update_translations();
 			}
 		} catch (e) { }
 	}
@@ -1294,24 +1589,19 @@ var DimensionalityRiver = (function () {
 
 	// ============================================================
 	// VISIBILITY-BASED AUTO-REFRESH
-	// Once initialized, checks every 5s if visible and re-renders
 	// ============================================================
 
 	var _visibilityTimer = null;
 	var _initialized = false;
 	var _lastRenderTime = 0;
-	var _MIN_RENDER_INTERVAL = 5000; // 5 seconds
+	var _MIN_RENDER_INTERVAL = 5000;
 
 	function _isContainerVisible() {
 		if (!_state.container) return false;
-		// Check offsetParent (null = hidden via display:none or not in DOM)
 		if (_state.container.offsetParent === null) return false;
-		// Check computed visibility
 		var style = window.getComputedStyle(_state.container);
 		if (style.display === "none" || style.visibility === "hidden") return false;
-		// Check aria-hidden (for tab panels)
 		if (_state.container.getAttribute("aria-hidden") === "true") return false;
-		// Check if any parent has aria-hidden or display:none
 		var parent = _state.container.parentElement;
 		while (parent && parent !== document.body) {
 			var pStyle = window.getComputedStyle(parent);
@@ -1332,7 +1622,6 @@ var DimensionalityRiver = (function () {
 			var now = Date.now();
 			if (now - _lastRenderTime < _MIN_RENDER_INTERVAL) return;
 
-			// Check if model exists and is not disposed
 			var modelAvailable = false;
 			try {
 				if (typeof model !== "undefined" && model) {
@@ -1343,7 +1632,6 @@ var DimensionalityRiver = (function () {
 				modelAvailable = false;
 			}
 
-			// Check if data tensors are still valid
 			var dataAvailable = false;
 			try {
 				if (typeof xy_data_global !== "undefined" && xy_data_global && xy_data_global.x) {
@@ -1356,7 +1644,6 @@ var DimensionalityRiver = (function () {
 				dataAvailable = false;
 			}
 
-			// Only re-_render if both model and data are available
 			if (!modelAvailable || !dataAvailable) return;
 
 			_lastRenderTime = now;
@@ -1373,10 +1660,11 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
-	// AUTO-UPDATE (manual toggle, separate from visibility watch)
+	// AUTO-UPDATE
 	// ============================================================
 
-	function startAutoUpdate(intervalMs=5000) {
+	function startAutoUpdate(intervalMs) {
+		intervalMs = intervalMs || 5000;
 		stopAutoUpdate();
 		_state.autoUpdateTimer = setInterval(function () {
 			if (_state.isComputing) return;
@@ -1386,7 +1674,7 @@ var DimensionalityRiver = (function () {
 				_lastRenderTime = Date.now();
 				_render(_state.container);
 			} catch (e) { }
-		}, intervalMs || 5000);
+		}, intervalMs);
 	}
 
 	function stopAutoUpdate() {
