@@ -1590,6 +1590,116 @@ async function cycle_through_visualization_tabs() {
 	return true;
 }
 
+async function test_different_layer_types_with_skip_connection() {
+	enable_debug_layer = false;
+	const datasets_to_check = ["and_xor", "signs"];
+
+	$("#beginner").click();
+
+	await delay(1000);
+
+	for (var d = 0; d < datasets_to_check.length; d++) {
+		const ds = datasets_to_check[d];
+
+		log_test(`Test different layer types (dataset: ${ds})`);
+
+		await set_dataset_and_wait(ds);
+
+		if($("#height").is(":visible")) {
+			await set_width_and_height_and_wait(10);
+		}
+
+		const layer_types = $(".layer_type");
+
+		for (var k = 0; k < layer_types.length; k++) {
+			if ($(layer_types[k]).val() == "flatten") {
+				dbg("Skipping changing flatten layer...");
+				continue;
+			}
+
+			if (k == layer_types.length - 1) {
+				dbg("Skipping last layer...");
+				continue;
+			}
+
+			const $layer_type = $(layer_types[k]);
+
+			if($layer_type.length == 0) {
+				console.error(`test_different_layer_types: .layer_type not found`);
+				enable_debug_layer = true;
+				return false;
+			}
+
+			special_disable_invalid_layers_event_uuid = uuidv4();
+
+			$layer_type.trigger("focus");
+
+			while (last_disable_invalid_layers_event_uuid != special_disable_invalid_layers_event_uuid) {
+				log("Waiting for finishing disabling invalid layers...");
+				await delay(200);
+			}
+
+			special_disable_invalid_layers_event_uuid = null;
+
+			const possible_layer_types = Object.keys(layer_options);
+
+			if(!possible_layer_types.length) {
+				console.error(`test_different_layer_types: possible_layer_types is empty!`);
+				enable_debug_layer = true;
+				return false;
+			}
+
+			const enabled_layer_types = get_enabled_layer_types($layer_type, possible_layer_types);
+
+			for (var i = 0; i < enabled_layer_types.length; i++) {
+				const this_layer_type = enabled_layer_types[i];
+				if(!["flatten", "conv2d"].includes(this_layer_type)) {
+					var old_num_errs = num_errs;
+					var old_num_wrns = num_wrns;
+
+					log(`Setting layer to ${this_layer_type}`);
+
+					$layer_type.val(this_layer_type).trigger("change");
+
+					await wait_for_updated_page(3);
+
+					await test_if_python_code_is_valid();
+
+					if(old_num_wrns != num_wrns) {
+						console.error(`New warning detected`);
+						enable_debug_layer = true;
+						return false;
+					}
+
+					if(old_num_errs != num_errs) {
+						console.error(`New error detected`);
+						enable_debug_layer = true;
+						return false;
+					}
+				}
+			}
+
+			$(".skip_connection_enabled").prop("checked", true);
+
+			set_epochs(1);
+			$("#max_number_of_files_per_category").val(1);
+
+			const ret = await train_neural_network();
+
+			await delay(3000);
+
+			if(!is_valid_ret_object(ret, 1)) {
+				return false;
+			}
+		}
+
+		await test_if_python_code_is_valid();
+	}
+
+	enable_debug_layer = true;
+	return true;
+}
+
 async function test_different_layer_types() {
 	enable_debug_layer = false;
 	const datasets_to_check = ["and_xor", "signs"];
@@ -3114,6 +3224,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_prediction_for_csv_results()", await test_prediction_for_csv_results(), true);
 		test_equal("test_check_categorical_predictions()", await test_check_categorical_predictions(), true);
 		test_equal("test_different_layer_types()", await test_different_layer_types(), true);
+		test_equal("test_different_layer_types_with_skip_connection()", await test_different_layer_types_with_skip_connection(), true);
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
 		test_equal("test_math_history()", await test_math_history(), true);
