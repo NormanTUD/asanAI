@@ -123,7 +123,7 @@ async function update_translations(force=0) {
 				newly_translated++;
 			}
 		} else {
-			alert("Could not translate " + translationKey + " to " + lang);
+			err("Could not translate " + translationKey + " to " + lang);
 		}
 
 	});
@@ -179,7 +179,6 @@ function trm (name) {
 	}
 
 	err(`${name} NOT FOUND`);
-	alert(`${name} NOT FOUND`);
 
 	return `${name} NOT FOUND`;
 }
