@@ -608,11 +608,13 @@ function hide_no_conv_stuff() {
 
 	if(input_shape_is_image()) {
 		$(".hide_when_no_image").show();
+		$("[aria-labelledby='activation_atlas_tab_label']").hide();
 		$(".hide_when_image").hide();
 	} else {
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("#auto_augment").prop("checked", false);
 		$(".hide_when_no_image").hide();
+		$("[aria-labelledby='activation_atlas_tab_label']").show();
 		$(".hide_when_image").show();
 	}
 
