@@ -20,7 +20,7 @@ html {
 }
 
 .glass_box {
-	background: white;
+	background: radial-gradient(circle at top left, #ffffff 0%, #f7f5f2 100%);;
 	border: solid #a3a8ac 1px;
 }
 
@@ -55,7 +55,7 @@ button, select, input, #predict_own_data {
 }
 
 .descriptions_of_layers {
-	background: #ffffff;
+	background: radial-gradient(circle at top left, #ffffff 0%, #f7f5f2 100%);
 	border: solid #a3a8ac 1px;
 }
 
