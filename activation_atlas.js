@@ -15,8 +15,8 @@ var ActivationAtlas = (function () {
 		ctx: null,
 		layerIndex: -1,
 		gridSize: 10,
-		featureVisSteps: 128,
-		featureVisLR: 0.05,
+		featureVisSteps: 512,
+		featureVisLR: 0.02,
 		zoom: 1,
 		panX: 0,
 		panY: 0,
@@ -30,7 +30,11 @@ var ActivationAtlas = (function () {
 		isComputing: false,
 		canvasWidth: 900,
 		canvasHeight: 900,
-		lastComputeTime: 0
+		lastComputeTime: 0,
+		stopRequested: false,
+		progressBar: null,
+		progressLabel: null,
+		stopBtn: null
 	};
 
 	// ============================================================
@@ -197,81 +201,186 @@ var ActivationAtlas = (function () {
 	}
 
 	// ============================================================
-	// GRADIENT ASCENT - Optimize input to match target activation
+	// GRADIENT ASCENT - Improved with multi-scale, jitter, and
+	// stronger regularization for clearer feature visualizations
 	// ============================================================
 
-	function _generateFeatureVis(targetActivation, layerIdx, inputShape, steps, lr) {
+	function _gaussianBlur3x3(img4d) {
+		// Approximate Gaussian blur using depthwise conv with 3x3 kernel
+		var shape = img4d.shape;
+		var channels = shape[3];
+		// Use avgPool as approximation
+		var blurred = tf.avgPool(img4d, [3, 3], [1, 1], 'same');
+		return blurred;
+	}
+
+	function _generateFeatureVisLive(targetActivation, layerIdx, inputShape, steps, lr, onStepCallback) {
 		var targetLayer = model.layers[layerIdx];
 		var extractModel = tf.model({ inputs: model.input, outputs: targetLayer.output });
 		var targetTensor = tf.tensor1d(targetActivation);
 		var targetNorm = targetTensor.norm().add(1e-8);
 
-		// Start from smoothed random noise instead of uniform
-		var inputImg = tf.variable(tf.randomNormal(inputShape, 0, 0.01));
+		var imgH = inputShape[1];
+		var imgW = inputShape[2];
+		var channels = inputShape[3];
 
-		for (var step = 0; step < steps; step++) {
-			var grads = tf.tidy(function () {
-				return tf.grad(function (img) {
-					var activation = extractModel.predict(img.reshape(inputShape));
-					var flat = activation.reshape([activation.size]);
-					// Cosine similarity objective
-					var dotProd = flat.mul(targetTensor).sum();
-					var normA = flat.norm().add(1e-8);
-					return dotProd.div(normA.mul(targetNorm));
-				})(inputImg);
-			});
-
-			tf.tidy(function () {
-				var gradNorm = grads.norm().add(1e-8);
-				var normalized = grads.div(gradNorm);
-				inputImg.assign(inputImg.add(normalized.mul(lr)));
-			});
-			grads.dispose();
-
-			// Regularization every 4 steps: blur + decay + clip
-			if (step % 4 === 0) {
-				tf.tidy(function () {
-					var current = inputImg.reshape(inputShape);
-					// L2 decay toward zero (prevents runaway values)
-					var decayed = current.mul(0.98);
-					// Clip to reasonable range
-					var clipped = decayed.clipByValue(-1.0, 1.0);
-					inputImg.assign(clipped.reshape(inputImg.shape));
-				});
-			}
-
-			// Gaussian blur every 8 steps to suppress high-frequency noise
-			if (step % 8 === 0 && step > 0) {
-				tf.tidy(function () {
-					var img4d = inputImg.reshape(inputShape);
-					// Approximate blur via avgPool + resize back
-					var h = inputShape[1], w = inputShape[2];
-					if (h >= 4 && w >= 4) {
-						var pooled = tf.avgPool(img4d, [3, 3], [1, 1], 'same');
-						// Mix: 70% current + 30% blurred
-						var mixed = img4d.mul(0.7).add(pooled.mul(0.3));
-						inputImg.assign(mixed.reshape(inputImg.shape));
-					}
-				});
-			}
-		}
-
-		var result = tf.tidy(function () {
-			var img = inputImg.reshape(inputShape).squeeze([0]);
-			// Robust normalization: use percentiles to avoid outlier domination
-			var minVal = img.min();
-			var maxVal = img.max();
-			var range = maxVal.sub(minVal).add(1e-8);
-			return img.sub(minVal).div(range).mul(255).clipByValue(0, 255).toInt();
+		// Start from low-frequency noise (smoother initialization)
+		var initNoise = tf.tidy(function () {
+			// Create small noise and upsample for low-freq start
+			var smallH = Math.max(4, Math.floor(imgH / 4));
+			var smallW = Math.max(4, Math.floor(imgW / 4));
+			var small = tf.randomNormal([1, smallH, smallW, channels], 0, 0.01);
+			var upsampled = tf.image.resizeBilinear(small, [imgH, imgW]);
+			return upsampled;
 		});
 
-		var data = result.dataSync();
-		result.dispose();
-		inputImg.dispose();
-		targetTensor.dispose();
-		targetNorm.dispose();
+		var inputImg = tf.variable(initNoise);
+		initNoise.dispose();
 
-		return data;
+		// Return a promise-like structure that processes steps in batches
+		var currentStep = 0;
+		var batchSize = 16; // steps per animation frame
+
+		function processBatch() {
+			return new Promise(function (resolve) {
+				var endStep = Math.min(currentStep + batchSize, steps);
+
+				for (var step = currentStep; step < endStep; step++) {
+					// Random jitter (shift image by a few pixels) for translation invariance
+					var jitterX = Math.floor(Math.random() * 5) - 2;
+					var jitterY = Math.floor(Math.random() * 5) - 2;
+
+					var grads = tf.tidy(function () {
+						return tf.grad(function (img) {
+							// Apply jitter
+							var jittered = img;
+							if (jitterX !== 0 || jitterY !== 0) {
+								// Pad and crop to simulate translation
+								var padded = tf.pad(img, [[0, 0], [2, 2], [2, 2], [0, 0]], 0);
+								var startY = 2 + jitterY;
+								var startX = 2 + jitterX;
+								jittered = padded.slice([0, startY, startX, 0], [1, imgH, imgW, channels]);
+							}
+
+							var activation = extractModel.predict(jittered.reshape(inputShape));
+							var flat = activation.reshape([activation.size]);
+
+							// Cosine similarity objective
+							var dotProd = flat.mul(targetTensor).sum();
+							var normA = flat.norm().add(1e-8);
+							var cosSim = dotProd.div(normA.mul(targetNorm));
+
+							return cosSim;
+						})(inputImg);
+					});
+
+					tf.tidy(function () {
+						// Normalize gradients (prevents vanishing/exploding)
+						var gradNorm = grads.norm().add(1e-8);
+						var normalized = grads.div(gradNorm);
+
+						// Adaptive learning rate: start larger, decrease
+						var progress = step / steps;
+						var currentLR = lr * (1.0 - progress * 0.5);
+
+						inputImg.assign(inputImg.add(normalized.mul(currentLR)));
+					});
+					grads.dispose();
+
+					// L2 decay every step (gentle)
+					if (step % 2 === 0) {
+						tf.tidy(function () {
+							var decayed = inputImg.mul(0.995);
+							inputImg.assign(decayed);
+						});
+					}
+
+					// Gaussian blur every 4 steps (strong early, weaker later)
+					if (step % 4 === 0) {
+						tf.tidy(function () {
+							var img4d = inputImg.reshape(inputShape);
+							var blurred = _gaussianBlur3x3(img4d);
+
+							// Stronger blur early, weaker later
+							var progress = step / steps;
+							var blurWeight = 0.5 * (1.0 - progress * 0.7);
+							var mixed = img4d.mul(1.0 - blurWeight).add(blurred.mul(blurWeight));
+							inputImg.assign(mixed.reshape(inputImg.shape));
+						});
+					}
+
+					// Clip to prevent runaway values
+					if (step % 8 === 0) {
+						tf.tidy(function () {
+							var clipped = inputImg.clipByValue(-2.5, 2.5);
+							inputImg.assign(clipped);
+						});
+					}
+
+					// Bilateral-like: additional smoothing pass at certain intervals
+					if (step % 32 === 0 && step > 0 && imgH >= 8 && imgW >= 8) {
+						tf.tidy(function () {
+							var img4d = inputImg.reshape(inputShape);
+							// Downscale and upscale to remove high-freq noise
+							var halfH = Math.max(4, Math.floor(imgH / 2));
+							var halfW = Math.max(4, Math.floor(imgW / 2));
+							var down = tf.image.resizeBilinear(img4d, [halfH, halfW]);
+							var up = tf.image.resizeBilinear(down, [imgH, imgW]);
+							// Mix: mostly original, a bit of smoothed
+							var progress = step / steps;
+							var smoothWeight = 0.3 * (1.0 - progress);
+							var mixed = img4d.mul(1.0 - smoothWeight).add(up.mul(smoothWeight));
+							inputImg.assign(mixed.reshape(inputImg.shape));
+						});
+					}
+				}
+
+				currentStep = endStep;
+				resolve();
+			});
+		}
+
+		function getPixelData() {
+			var result = tf.tidy(function () {
+				var img = inputImg.reshape(inputShape).squeeze([0]);
+				// Robust normalization using percentile-like approach
+				var flat = img.reshape([-1]);
+				var sorted = tf.topk(flat, flat.size).values;
+				var numPixels = sorted.size;
+				// Use 1st and 99th percentile for normalization
+				var lowIdx = Math.floor(numPixels * 0.01);
+				var highIdx = Math.floor(numPixels * 0.99);
+				var vals = sorted.dataSync();
+				var lowVal = vals[numPixels - 1 - lowIdx] || vals[numPixels - 1];
+				var highVal = vals[numPixels - 1 - highIdx] || vals[0];
+
+				// Swap if needed (topk returns descending)
+				if (lowVal > highVal) { var tmp = lowVal; lowVal = highVal; highVal = tmp; }
+				var range = highVal - lowVal;
+				if (range < 0.001) range = 0.001;
+
+				return img.sub(lowVal).div(range).mul(255).clipByValue(0, 255).toInt();
+			});
+
+			var data = result.dataSync();
+			result.dispose();
+			return data;
+		}
+
+		function cleanup() {
+			inputImg.dispose();
+			targetTensor.dispose();
+			targetNorm.dispose();
+		}
+
+		return {
+			processBatch: processBatch,
+			getPixelData: getPixelData,
+			cleanup: cleanup,
+			getCurrentStep: function () { return currentStep; },
+			getTotalSteps: function () { return steps; },
+			isDone: function () { return currentStep >= steps; }
+		};
 	}
 
 	function _pixelDataToCanvas(pixelData, imgH, imgW, channels) {
@@ -447,6 +556,7 @@ var ActivationAtlas = (function () {
 		if (typeof model === "undefined" || !model) { callback("No model available"); return; }
 
 		_state.isComputing = true;
+		_state.stopRequested = false;
 
 		try {
 			var inputInfo = _getInputShape();
@@ -463,7 +573,7 @@ var ActivationAtlas = (function () {
 			var layerIdx = _getTargetLayerIndex();
 			var targetLayer = model.layers[layerIdx];
 
-			if (progressFn) progressFn("Extracting prototype activations from weights...", 0.05);
+			if (progressFn) progressFn("Extracting prototype activations from weights...", 0.02);
 
 			var protoData = _extractPrototypeActivations(layerIdx);
 			if (!protoData || protoData.prototypes.length < 3) {
@@ -475,7 +585,7 @@ var ActivationAtlas = (function () {
 			var prototypes = protoData.prototypes;
 			var flatOutputSize = protoData.flatOutputSize;
 
-			if (progressFn) progressFn("Running t-SNE on " + prototypes.length + " prototypes...", 0.1);
+			if (progressFn) progressFn("Running t-SNE on " + prototypes.length + " prototypes...", 0.05);
 
 			// Project prototypes to 2D via t-SNE
 			var protoVectors = prototypes.map(function (p) { return Array.from(p.activation); });
@@ -506,7 +616,7 @@ var ActivationAtlas = (function () {
 			var perp = Math.max(2, Math.min(15, Math.floor(prototypes.length / 4)));
 			var embedded = _tsne(truncated, perp, 400);
 
-			if (progressFn) progressFn("Building grid and interpolating...", 0.25);
+			if (progressFn) progressFn("Building grid and interpolating...", 0.1);
 
 			// Grid the 2D space
 			var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -522,16 +632,13 @@ var ActivationAtlas = (function () {
 			var gridSize = _state.gridSize;
 
 			// For each grid cell, compute the activation vector via IDW
-			// interpolation from ALL prototypes based on their 2D positions
 			var allCells = [];
 
 			for (var r = 0; r < gridSize; r++) {
 				for (var c = 0; c < gridSize; c++) {
-					// Grid cell center in 2D
 					var cellCenterX = minX + (c + 0.5) / gridSize * rangeX;
 					var cellCenterY = minY + (r + 0.5) / gridSize * rangeY;
 
-					// IDW interpolation from all prototypes
 					var interpolated = new Float32Array(flatOutputSize);
 					var totalWeight = 0;
 
@@ -540,7 +647,7 @@ var ActivationAtlas = (function () {
 						var dy = cellCenterY - embedded[p][1];
 						var dist = Math.sqrt(dx * dx + dy * dy);
 						if (dist < 0.0001) dist = 0.0001;
-						var weight = 1.0 / (dist * dist * dist); // power 3 for sharper locality
+						var weight = 1.0 / (dist * dist * dist);
 						totalWeight += weight;
 						var protoAct = prototypes[p].activation;
 						for (var d = 0; d < flatOutputSize; d++) {
@@ -554,7 +661,6 @@ var ActivationAtlas = (function () {
 						}
 					}
 
-					// Find nearest prototype for labeling
 					var nearestDist = Infinity, nearestIdx = 0;
 					for (var p = 0; p < embedded.length; p++) {
 						var dx2 = cellCenterX - embedded[p][0];
@@ -563,14 +669,14 @@ var ActivationAtlas = (function () {
 						if (d2 < nearestDist) { nearestDist = d2; nearestIdx = p; }
 					}
 
-					// Compute mixture: top contributing prototypes
 					var contributions = [];
 					for (var p = 0; p < embedded.length; p++) {
 						var dx3 = cellCenterX - embedded[p][0];
 						var dy3 = cellCenterY - embedded[p][1];
 						var dist3 = Math.sqrt(dx3 * dx3 + dy3 * dy3);
 						if (dist3 < 0.0001) dist3 = 0.0001;
-						var w3 = 1.0 / (dist3 * dist3 * dist3);
+						var w3 = 1.0 / (dist3 *
+ dist3 * dist3);
 						contributions.push({ idx: p, weight: w3 / totalWeight });
 					}
 					contributions.sort(function (a, b) { return b.weight - a.weight; });
@@ -588,18 +694,40 @@ var ActivationAtlas = (function () {
 				}
 			}
 
-			if (progressFn) progressFn("Generating feature visualizations...", 0.3);
+			if (progressFn) progressFn("Generating feature visualizations...", 0.12);
 
-			// Generate images for all cells
-			var inputShape = inputInfo.batchedShape;
+			// Set up canvas immediately so we can draw live
+			_state.gridCells = allCells;
+			var inputShapeArr = inputInfo.batchedShape;
 			var totalCells = allCells.length;
 			var cellIdx = 0;
 
-			function _generateNext() {
+			// Draw the empty grid first
+			_drawAtlas();
+
+			function _generateNextLive() {
+				if (_state.stopRequested) {
+					_state.isComputing = false;
+					_state.stopRequested = false;
+					if (_state.stopBtn) _state.stopBtn.disabled = true;
+					if (progressFn) progressFn("Stopped by user.", cellIdx / totalCells);
+					callback(null, {
+						layerName: targetLayer.name || ("Layer " + layerIdx),
+						gridSize: gridSize,
+						totalCells: totalCells,
+						numPrototypes: prototypes.length,
+						numNeurons: protoData.numNeurons,
+						imgH: imgH,
+						imgW: imgW,
+						stopped: true
+					});
+					return;
+				}
+
 				if (cellIdx >= totalCells) {
-					_state.gridCells = allCells;
 					_state.isComputing = false;
 					_state.lastComputeTime = Date.now();
+					if (_state.stopBtn) _state.stopBtn.disabled = true;
 
 					var meta = {
 						layerName: targetLayer.name || ("Layer " + layerIdx),
@@ -616,31 +744,82 @@ var ActivationAtlas = (function () {
 				}
 
 				var cell = allCells[cellIdx];
-				if (progressFn) {
-					var pct = 0.3 + 0.7 * (cellIdx / totalCells);
-					progressFn("Generating cell " + (cellIdx + 1) + "/" + totalCells, pct);
+				var pct = 0.12 + 0.88 * (cellIdx / totalCells);
+				if (progressFn) progressFn("Generating cell " + (cellIdx + 1) + "/" + totalCells, pct);
+
+				// Update progress bar
+				if (_state.progressBar) {
+					_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
+				}
+				if (_state.progressLabel) {
+					_state.progressLabel.textContent = "Cell " + (cellIdx + 1) + "/" + totalCells + " (" + Math.round(pct * 100) + "%)";
 				}
 
-				try {
-					var pixelData = _generateFeatureVis(
-						Array.from(cell.avgActivation),
-						layerIdx,
-						inputShape,
-						_state.featureVisSteps,
-						_state.featureVisLR
-					);
-					cell.generatedImage = _pixelDataToCanvas(pixelData, imgH, imgW, channels);
-				} catch (e) {
-					console.warn("[Atlas] Cell generation failed:", e.message);
-					cell.generatedImage = null;
+				// Create the live generator for this cell
+				var generator = _generateFeatureVisLive(
+					Array.from(cell.avgActivation),
+					layerIdx,
+					inputShapeArr,
+					_state.featureVisSteps,
+					_state.featureVisLR,
+					null
+				);
+
+				function _processAndDraw() {
+					if (_state.stopRequested) {
+						generator.cleanup();
+						_state.isComputing = false;
+						_state.stopRequested = false;
+						if (_state.stopBtn) _state.stopBtn.disabled = true;
+						if (progressFn) progressFn("Stopped by user.", cellIdx / totalCells);
+						callback(null, {
+							layerName: targetLayer.name || ("Layer " + layerIdx),
+							gridSize: gridSize,
+							totalCells: totalCells,
+							numPrototypes: prototypes.length,
+							numNeurons: protoData.numNeurons,
+							imgH: imgH,
+							imgW: imgW,
+							stopped: true
+						});
+						return;
+					}
+
+					generator.processBatch().then(function () {
+						// Draw intermediate result
+						try {
+							var pixelData = generator.getPixelData();
+							cell.generatedImage = _pixelDataToCanvas(pixelData, imgH, imgW, channels);
+							_drawAtlas();
+						} catch (e) {
+							// ignore intermediate draw errors
+						}
+
+						if (generator.isDone()) {
+							// Final draw for this cell
+							try {
+								var finalPixelData = generator.getPixelData();
+								cell.generatedImage = _pixelDataToCanvas(finalPixelData, imgH, imgW, channels);
+								_drawAtlas();
+							} catch (e) {
+								console.warn("[Atlas] Cell generation failed:", e.message);
+								cell.generatedImage = null;
+							}
+							generator.cleanup();
+							cellIdx++;
+							tf.nextFrame().then(_generateNextLive);
+						} else {
+							// Continue processing this cell
+							tf.nextFrame().then(_processAndDraw);
+						}
+					});
 				}
 
-				cellIdx++;
-				// Use tf.nextFrame() to yield to browser and allow GPU to flush
-				tf.nextFrame().then(_generateNext);
+				_processAndDraw();
 			}
 
-			_generateNext();
+			// Start live generation
+			tf.nextFrame().then(_generateNextLive);
 
 		} catch (e) {
 			_state.isComputing = false;
@@ -700,6 +879,15 @@ var ActivationAtlas = (function () {
 			} else {
 				ctx.fillStyle = "rgba(30,30,50,0.8)";
 				ctx.fillRect(cx, cy, cw, ch);
+				// Draw a small placeholder indicator
+				ctx.strokeStyle = "rgba(255,255,255,0.1)";
+				ctx.lineWidth = 0.5;
+				ctx.beginPath();
+				ctx.moveTo(cx + cw * 0.3, cy + ch * 0.3);
+				ctx.lineTo(cx + cw * 0.7, cy + ch * 0.7);
+				ctx.moveTo(cx + cw * 0.7, cy + ch * 0.3);
+				ctx.lineTo(cx + cw * 0.3, cy + ch * 0.7);
+				ctx.stroke();
 			}
 
 			// Subtle grid lines
@@ -728,7 +916,6 @@ var ActivationAtlas = (function () {
 			var hch = cellH * zoom;
 
 			ctx.strokeStyle = "#ffffff";
-			ctx.strokeStyle = "#ffffff";
 			ctx.lineWidth = 3;
 			ctx.strokeRect(hcx - 2, hcy - 2, hcw + 4, hch + 4);
 
@@ -756,7 +943,6 @@ var ActivationAtlas = (function () {
 				ctx.fillText("Nearest neuron: #" + hc.dominantNeuron, tooltipX + 8, tooltipY + 36);
 			}
 
-			// Top contributions
 			if (hc.topContributions && hc.topContributions.length > 0) {
 				ctx.fillStyle = "#888888";
 				ctx.font = "10px sans-serif";
@@ -772,7 +958,6 @@ var ActivationAtlas = (function () {
 			ctx.font = "10px sans-serif";
 			ctx.fillText("Interpolated from " + (hc.topContributions ? hc.topContributions.length : "?") + " prototypes", tooltipX + 8, tooltipY + 72);
 
-			// Small contribution bar
 			if (hc.topContributions) {
 				var cBarX = tooltipX + 8;
 				var cBarY = tooltipY + 80;
@@ -974,6 +1159,7 @@ var ActivationAtlas = (function () {
 				meta.gridSize + "×" + meta.gridSize + " grid (" + meta.totalCells + " cells) | " +
 				meta.numPrototypes + " prototypes from " + meta.numNeurons + " neurons | " +
 				meta.imgH + "×" + meta.imgW + "px | " +
+				(meta.stopped ? "<span style='color:#e74c3c;'>Stopped early</span> | " : "") +
 				new Date().toLocaleTimeString();
 			wrapper.appendChild(info);
 		}
@@ -1039,6 +1225,84 @@ var ActivationAtlas = (function () {
 	}
 
 	// ============================================================
+	// LIVE UI - shown during generation with progress bar and stop
+	// ============================================================
+
+	function _buildLiveUI(container) {
+		container.innerHTML = "";
+		_injectStyles();
+
+		var wrapper = document.createElement("div");
+		wrapper.className = "atlas_wrapper";
+
+		// Header
+		var header = document.createElement("div");
+		header.className = "atlas_header";
+		header.innerHTML = "<span class='TRANSLATEME_atlas_title'>Activation Atlas</span>";
+
+		var controls = document.createElement("div");
+		controls.className = "atlas_controls";
+
+		// Stop button
+		var stopBtn = document.createElement("button");
+		stopBtn.className = "atlas_btn atlas_stop_btn";
+		stopBtn.textContent = "⏹ Stop";
+		stopBtn.title = "Stop generation";
+		stopBtn.onclick = function () {
+			_state.stopRequested = true;
+			stopBtn.disabled = true;
+			stopBtn.textContent = "Stopping...";
+		};
+		controls.appendChild(stopBtn);
+		_state.stopBtn = stopBtn;
+
+		header.appendChild(controls);
+		wrapper.appendChild(header);
+
+		// Progress bar container
+		var progressContainer = document.createElement("div");
+		progressContainer.className = "atlas_progress_container";
+
+		var progressBarOuter = document.createElement("div");
+		progressBarOuter.className = "atlas_progress_outer";
+
+		var progressBarInner = document.createElement("div");
+		progressBarInner.className = "atlas_progress_inner";
+		progressBarInner.style.width = "0%";
+		_state.progressBar = progressBarInner;
+
+		progressBarOuter.appendChild(progressBarInner);
+		progressContainer.appendChild(progressBarOuter);
+
+		var progressLabel = document.createElement("div");
+		progressLabel.className = "atlas_progress_label";
+		progressLabel.textContent = "Initializing...";
+		_state.progressLabel = progressLabel;
+		progressContainer.appendChild(progressLabel);
+
+		wrapper.appendChild(progressContainer);
+
+		// Canvas (shown immediately, updated live)
+		var canvas = document.createElement("canvas");
+		canvas.className = "atlas_canvas";
+		canvas.width = _state.canvasWidth;
+		canvas.height = _state.canvasHeight;
+		canvas.style.cursor = "crosshair";
+		wrapper.appendChild(canvas);
+
+		_state.canvas = canvas;
+		_state.ctx = canvas.getContext("2d");
+
+		container.appendChild(wrapper);
+
+		_bindCanvasEvents();
+
+		if (typeof update_translations === "function") {
+			update_translations();
+		}
+	}
+
+	// ============================================================
 	// STYLES
 	// ============================================================
 
@@ -1052,6 +1316,9 @@ var ActivationAtlas = (function () {
 			".atlas_controls { display: flex; gap: 8px; align-items: center; }",
 			".atlas_btn { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 1em; transition: all 0.2s; }",
 			".atlas_btn:hover { background: rgba(128,128,128,0.15); }",
+			".atlas_btn:disabled { opacity: 0.4; cursor: not-allowed; }",
+			".atlas_stop_btn { border-color: rgba(231,76,60,0.5); color: #e74c3c; }",
+			".atlas_stop_btn:hover { background: rgba(231,76,60,0.1); }",
 			".atlas_select { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 6px; padding: 4px 8px; font-size: 0.85em; cursor: pointer; }",
 			".atlas_info { font-size: 0.82em; opacity: 0.6; margin-bottom: 10px; }",
 			".atlas_canvas { display: block; width: 100%; max-width: 900px; border: 2px solid rgba(128,128,128,0.15); border-radius: 10px; background: #0d0d1a; }",
@@ -1059,7 +1326,11 @@ var ActivationAtlas = (function () {
 			".atlas_zoom_label { opacity: 0.6; min-width: 60px; text-align: center; }",
 			".atlas_explanation { font-size: 0.75em; opacity: 0.5; margin-top: 12px; line-height: 1.5; padding: 8px 10px; background: rgba(52,152,219,0.04); border-radius: 6px; border-left: 3px solid rgba(52,152,219,0.3); }",
 			".atlas_loading { padding: 40px; text-align: center; opacity: 0.6; font-size: 1.1em; }",
-			".atlas_error { padding: 24px; text-align: center; opacity: 0.5; font-size: 1em; color: #e74c3c; }"
+			".atlas_error { padding: 24px; text-align: center; opacity: 0.5; font-size: 1em; color: #e74c3c; }",
+			".atlas_progress_container { margin-bottom: 12px; }",
+			".atlas_progress_outer { width: 100%; max-width: 900px; height: 8px; background: rgba(128,128,128,0.15); border-radius: 4px; overflow: hidden; }",
+			".atlas_progress_inner { height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); border-radius: 4px; transition: width 0.3s ease; }",
+			".atlas_progress_label { font-size: 0.8em; opacity: 0.6; margin-top: 4px; }"
 		].join("\n");
 		document.head.appendChild(style);
 	}
@@ -1076,11 +1347,10 @@ var ActivationAtlas = (function () {
 		_state.panX = 0;
 		_state.panY = 0;
 		_state.hoveredCell = null;
+		_state.stopRequested = false;
 
-		container.innerHTML = "<div class='atlas_wrapper'><div class='atlas_loading'><span class='TRANSLATEME_calculating'>Calculating</span>...<div id='atlas_progress_text' style='margin-top:8px;font-size:0.8em;opacity:0.5;'></div></div></div>";
-		if (typeof update_translations === "function") update_translations();
-
-		var progressText = document.getElementById("atlas_progress_text");
+		// Build the live UI immediately (with canvas, progress bar, stop button)
+		_buildLiveUI(container);
 
 		setTimeout(function () {
 			_buildAtlas(function (error, meta) {
@@ -1088,10 +1358,14 @@ var ActivationAtlas = (function () {
 					container.innerHTML = "<div class='atlas_wrapper'><div class='atlas_error'>" + error + "</div></div>";
 					return;
 				}
+				// Rebuild the final UI with all controls
 				_buildUI(container, meta);
 			}, function (msg, pct) {
-				if (progressText) {
-					progressText.textContent = msg + " (" + Math.round(pct * 100) + "%)";
+				if (_state.progressBar) {
+					_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
+				}
+				if (_state.progressLabel) {
+					_state.progressLabel.textContent = msg + " (" + Math.round(pct * 100) + "%)";
 				}
 			});
 		}, 50);
