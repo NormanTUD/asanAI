@@ -85,52 +85,35 @@ var DimensionalityRiver = (function () {
 			var yTensor = xy_data_global.y;
 			if (!yTensor || yTensor.isDisposed) return null;
 
-			var yShape = yTensor.shape;
-			var yData = yTensor.dataSync();
+			// FIX: Gather the EXACT y rows corresponding to our indices
+			// This guarantees alignment with the x data we gathered
+			var ySubset = tf.tidy(function() {
+				return tf.gather(yTensor, indices);
+			});
 
-			// GUARDRAIL: Validate yData is not empty
-			if (!yData || yData.length === 0) return null;
+			var yShape = ySubset.shape;
+			var yData = ySubset.dataSync();
 
-			var decoded = [];
-			var totalSamples = yShape[0];
-
+			var result = [];
 			if (yShape.length === 2 && yShape[1] > 1) {
 				// One-hot: argmax per row
 				var numClasses = yShape[1];
-				for (var i = 0; i < totalSamples; i++) {
+				for (var i = 0; i < indices.length; i++) {
 					var maxIdx = 0, maxVal = -Infinity;
 					for (var c = 0; c < numClasses; c++) {
 						var val = yData[i * numClasses + c];
 						if (val > maxVal) { maxVal = val; maxIdx = c; }
 					}
-					decoded.push(maxIdx);
+					result.push(maxIdx);
 				}
 			} else {
 				// Flat labels
 				for (var i = 0; i < yData.length; i++) {
-					decoded.push(Math.round(yData[i]));
+					result.push(Math.round(yData[i]));
 				}
 			}
 
-			// FIX #3: Use the EXACT same indices as activation collection
-			var result = [];
-			for (var i = 0; i < indices.length; i++) {
-				var idx = indices[i];
-				// GUARDRAIL #8: Bounds check
-				if (idx >= 0 && idx < decoded.length) {
-					result.push(decoded[idx]);
-				} else {
-					result.push(-1); // Unknown marker
-				}
-			}
-
-			// GUARDRAIL #8: Verify length matches
-			if (result.length !== indices.length) {
-				console.warn("[DimRiver] Label count mismatch: expected", indices.length, "got", result.length);
-				while (result.length < indices.length) result.push(-1);
-				result = result.slice(0, indices.length);
-			}
-
+			ySubset.dispose();
 			return result;
 		} catch (e) {
 			console.warn("[DimRiver] _extractLabelsForIndices error:", e);
@@ -177,6 +160,21 @@ var DimensionalityRiver = (function () {
 
 			// FIX #1, #2, #3: Compute indices ONCE and reuse everywhere
 			var indices = _computeUnifiedIndices(numSamples, maxSamples);
+
+			// FIX #10: Snapshot the labels array BEFORE extracting labels
+			// This ensures the mapping from class index -> class name is captured
+			// at the exact same moment we interpret the y tensor
+			var labelsSnapshotNow = null;
+			try {
+				if (typeof labels !== "undefined" && Array.isArray(labels) && labels.length > 0) {
+					labelsSnapshotNow = labels.slice();
+				} else if (xy_data_global && xy_data_global.keys && Array.isArray(xy_data_global.keys)) {
+					labelsSnapshotNow = xy_data_global.keys.slice();
+				}
+			} catch (e) {
+				labelsSnapshotNow = null;
+			}
+			_state._labelsSnapshot = labelsSnapshotNow;
 
 			// FIX #3: Extract labels using the SAME indices
 			var labelsResult = _extractLabelsForIndices(indices);
@@ -261,19 +259,8 @@ var DimensionalityRiver = (function () {
 			multiOutputModel = null;
 
 			// FIX #5, #9: Store the exact indices used, increment generation
-			_state._collectionIndices = indices.slice(); // defensive copy
+			_state._collectionIndices = indices.slice();
 			_state._generation++;
-
-			// FIX #10: Snapshot the labels array at collection time
-			try {
-				if (typeof labels !== "undefined" && Array.isArray(labels)) {
-					_state._labelsSnapshot = labels.slice();
-				} else {
-					_state._labelsSnapshot = null;
-				}
-			} catch (e) {
-				_state._labelsSnapshot = null;
-			}
 
 			_state.isComputing = false;
 			_state.cachedActivations = {
@@ -281,8 +268,8 @@ var DimensionalityRiver = (function () {
 				labels: labelsResult,
 				predictedLabels: predictedLabels,
 				numSamples: indices.length,
-				indices: indices.slice(), // FIX #5: Store indices with cached data
-				generation: _state._generation // FIX #9: Tag with generation
+				indices: indices.slice(),
+				generation: _state._generation
 			};
 			callback(_state.cachedActivations, null);
 
@@ -703,7 +690,7 @@ var DimensionalityRiver = (function () {
 
 		var scatterId = "dimriver_scatter_" + (layer.index || 0) + "_" + Date.now();
 
-		var labelsSnapshot = _state._labelsSnapshot || (typeof labels !== "undefined" ? labels : null);
+		var labelsSnapshot = _state._labelsSnapshot ? _state._labelsSnapshot.slice() : (typeof labels !== "undefined" && Array.isArray(labels) ? labels.slice() : null);
 
 		var html = "<div class='dimriver_scatter_wrapper' style='position:relative;'>";
 		html += "<svg class='dimriver_svg' id='" + scatterId + "' width='100%' viewBox='0 0 " + width + " " + height + "'>";
