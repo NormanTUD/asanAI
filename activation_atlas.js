@@ -1466,9 +1466,106 @@ var ActivationAtlas = (function () {
 			".atlas_range { width: 100px; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(128,128,128,0.2); border-radius: 2px; outline: none; cursor: pointer; }",
 			".atlas_range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #3498db; cursor: pointer; box-shadow: 0 2px 6px rgba(52,152,219,0.4); transition: transform 0.2s; }",
 			".atlas_range::-webkit-slider-thumb:hover { transform: scale(1.2); }",
-			".atlas_range_val { font-size: 0.78em; opacity: 0.6; min-width: 40px; font-family: 'SF Mono', 'Fira Code', monospace; }"
+			".atlas_range_val { font-size: 0.78em; opacity: 0.6; min-width: 40px; font-family: 'SF Mono', 'Fira Code', monospace; }",
+			".atlas_start_section { display: flex; justify-content: center; margin: 16px 0; }",
+			".atlas_start_btn { font-size: 1.1em; padding: 12px 32px; border-radius: 12px; }",
 		].join("\n");
 		document.head.appendChild(style);
+	}
+
+	// ============================================================
+	// READY UI - shown before generation starts (waiting for user)
+	// ============================================================
+
+	function _buildReadyUI(container) {
+		container.innerHTML = "";
+		_injectStyles();
+
+		var wrapper = document.createElement("div");
+		wrapper.className = "atlas_wrapper atlas_fade_in";
+
+		// Header
+		var header = document.createElement("div");
+		header.className = "atlas_header";
+		header.innerHTML = "<span class='atlas_title_text'>✦ Activation Atlas</span>";
+
+		var controls = document.createElement("div");
+		controls.className = "atlas_controls";
+
+		// Layer selector
+		var layerSelect = document.createElement("select");
+		layerSelect.className = "atlas_select";
+		if (typeof model !== "undefined" && model && model.layers) {
+			var autoOpt = document.createElement("option");
+			autoOpt.value = "-1";
+			autoOpt.textContent = "Auto (last hidden)";
+			layerSelect.appendChild(autoOpt);
+			for (var i = 0; i < model.layers.length; i++) {
+				var opt = document.createElement("option");
+				opt.value = "" + i;
+				opt.textContent = model.layers[i].name || ("Layer " + i);
+				layerSelect.appendChild(opt);
+			}
+		}
+		layerSelect.value = "" + _state.layerIndex;
+		layerSelect.onchange = function () {
+			_state.layerIndex = parseInt(this.value);
+		};
+		controls.appendChild(layerSelect);
+
+		header.appendChild(controls);
+		wrapper.appendChild(header);
+
+		// Parameters panel (so user can configure before starting)
+		var paramsPanel = _buildParamsPanel();
+		wrapper.appendChild(paramsPanel);
+
+		// Start button (prominent)
+		var startSection = document.createElement("div");
+		startSection.className = "atlas_start_section";
+
+		var startBtn = document.createElement("button");
+		startBtn.className = "atlas_btn atlas_toggle_btn atlas_toggle_start atlas_start_btn";
+		startBtn.textContent = "▶ Start";
+		startBtn.title = "Start generating the activation atlas";
+		startBtn.onclick = function () {
+			_handleToggle(container);
+		};
+		startSection.appendChild(startBtn);
+		_state.toggleBtn = startBtn;
+
+		wrapper.appendChild(startSection);
+
+		// Placeholder canvas (empty, dark background)
+		var canvas = document.createElement("canvas");
+		canvas.className = "atlas_canvas";
+		canvas.width = _state.canvasWidth;
+		canvas.height = _state.canvasHeight;
+		canvas.style.cursor = "default";
+		wrapper.appendChild(canvas);
+
+		_state.canvas = canvas;
+		_state.ctx = canvas.getContext("2d");
+
+		// Draw empty state
+		var ctx = _state.ctx;
+		ctx.fillStyle = "#0d0d1a";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = "rgba(255,255,255,0.15)";
+		ctx.font = "16px -apple-system, BlinkMacSystemFont, sans-serif";
+		ctx.textAlign = "center";
+		ctx.fillText("Click \"Start\" to generate the activation atlas", canvas.width / 2, canvas.height / 2);
+		ctx.textAlign = "left";
+
+		// Explanation
+		var explanation = document.createElement("div");
+		explanation.className = "atlas_explanation";
+		explanation.innerHTML = "This atlas explores the model's learned activation space <em>without training data</em>. " +
+			"Prototype directions are extracted from layer weights, projected to 2D via t-SNE, and the space is filled via IDW interpolation. " +
+			"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation.";
+		wrapper.appendChild(explanation);
+
+		container.appendChild(wrapper);
 	}
 
 	// ============================================================
@@ -1477,7 +1574,6 @@ var ActivationAtlas = (function () {
 
 	function activationAtlas(divOrId) {
 		var container = _getOrCreateContainer(divOrId);
-		_injectStyles();
 
 		_state.zoom = 1;
 		_state.panX = 0;
@@ -1485,26 +1581,8 @@ var ActivationAtlas = (function () {
 		_state.hoveredCell = null;
 		_state.stopRequested = false;
 
-		// Build the live UI immediately (with canvas, progress bar, toggle button)
-		_buildLiveUI(container);
-
-		setTimeout(function () {
-			_buildAtlas(function (error, meta) {
-				if (error) {
-					container.innerHTML = "<div class='atlas_wrapper atlas_fade_in'><div class='atlas_error'>⚠ " + error + "</div></div>";
-					return;
-				}
-				// Rebuild the final UI with all controls
-				_buildUI(container, meta);
-			}, function (msg, pct) {
-				if (_state.progressBar) {
-					_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";
-				}
-				if (_state.progressLabel) {
-					_state.progressLabel.textContent = msg;
-				}
-			});
-		}, 50);
+		// Only prepare the GUI — don't start generating yet
+		_buildReadyUI(container);
 
 		return container;
 	}
