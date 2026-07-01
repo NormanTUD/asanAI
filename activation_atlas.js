@@ -1103,132 +1103,6 @@ var ActivationAtlas = (function () {
 	}
 
 	// ============================================================
-	// UI BUILDING - FINAL (after generation completes)
-	// ============================================================
-
-	function _buildUI(container, meta) {
-		container.innerHTML = "";
-		_injectStyles();
-
-		var wrapper = document.createElement("div");
-		wrapper.className = "atlas_wrapper atlas_fade_in";
-
-		// Header
-		var header = document.createElement("div");
-		header.className = "atlas_header";
-		header.innerHTML = "<span class='atlas_title_text'>✦ Activation Atlas</span>";
-
-		var controls = document.createElement("div");
-		controls.className = "atlas_controls";
-
-		// Toggle button (now shows "Generate" since we're done)
-		var toggleBtn = document.createElement("button");
-		toggleBtn.className = "atlas_btn atlas_toggle_btn atlas_toggle_start";
-		toggleBtn.textContent = "▶ Generate";
-		toggleBtn.title = "Regenerate atlas";
-		toggleBtn.onclick = function () {
-			_handleToggle(container);
-		};
-		controls.appendChild(toggleBtn);
-		_state.toggleBtn = toggleBtn;
-
-		var layerSelect = document.createElement("select");
-		layerSelect.className = "atlas_select";
-		if (typeof model !== "undefined" && model && model.layers) {
-			var autoOpt = document.createElement("option");
-			autoOpt.value = "-1";
-			autoOpt.textContent = "Auto (last hidden)";
-			layerSelect.appendChild(autoOpt);
-			for (var i = 0; i < model.layers.length; i++) {
-				var opt = document.createElement("option");
-				opt.value = "" + i;
-				opt.textContent = model.layers[i].name || ("Layer " + i);
-				layerSelect.appendChild(opt);
-			}
-		}
-		layerSelect.value = "" + _state.layerIndex;
-		layerSelect.onchange = function () {
-			_state.layerIndex = parseInt(this.value);
-		};
-		controls.appendChild(layerSelect);
-
-		header.appendChild(controls);
-		wrapper.appendChild(header);
-
-		// Parameters panel
-		var paramsPanel = _buildParamsPanel();
-		wrapper.appendChild(paramsPanel);
-
-		// Info bar
-		if (meta) {
-			var info = document.createElement("div");
-			info.className = "atlas_info";
-			var elapsed = ((Date.now() - _state.generationStartTime) / 1000).toFixed(1);
-			info.innerHTML = "<strong>" + (meta.layerName || "?") + "</strong> · " +
-				meta.gridSize + "×" + meta.gridSize + " (" + meta.totalCells + " cells) · " +
-				meta.numPrototypes + " prototypes · " + meta.numNeurons + " neurons · " +
-				meta.imgH + "×" + meta.imgW + "px · " +
-				(meta.stopped ? "<span style='color:#e74c3c;'>⏹ Stopped</span> · " : "") +
-				"<span style='color:#2ecc71;'>✓ " + elapsed + "s</span>";
-			wrapper.appendChild(info);
-		}
-
-		// Canvas
-		var canvas = document.createElement("canvas");
-		canvas.className = "atlas_canvas";
-		canvas.width = _state.canvasWidth;
-		canvas.height = _state.canvasHeight;
-		canvas.style.cursor = "crosshair";
-		wrapper.appendChild(canvas);
-
-		_state.canvas = canvas;
-		_state.ctx = canvas.getContext("2d");
-
-		// Zoom controls
-		var zoomBar = document.createElement("div");
-		zoomBar.className = "atlas_zoom_bar";
-
-		var zoomOutBtn = document.createElement("button");
-		zoomOutBtn.className = "atlas_btn";
-		zoomOutBtn.textContent = "−";
-		zoomOutBtn.onclick = function () { _state.zoom = Math.max(0.3, _state.zoom * 0.8); _drawAtlas(); };
-		zoomBar.appendChild(zoomOutBtn);
-
-		var zoomLabel = document.createElement("span");
-		zoomLabel.className = "atlas_zoom_label";
-		zoomLabel.textContent = "Zoom & Pan";
-		zoomBar.appendChild(zoomLabel);
-
-		var zoomInBtn = document.createElement("button");
-		zoomInBtn.className = "atlas_btn";
-		zoomInBtn.textContent = "+";
-		zoomInBtn.onclick = function () { _state.zoom = Math.min(10, _state.zoom * 1.25); _drawAtlas(); };
-		zoomBar.appendChild(zoomInBtn);
-
-		var resetBtn = document.createElement("button");
-		resetBtn.className = "atlas_btn";
-		resetBtn.textContent = "⟲ Reset View";
-		resetBtn.onclick = function () { _state.zoom = 1; _state.panX = 0; _state.panY = 0; _drawAtlas(); };
-		zoomBar.appendChild(resetBtn);
-
-		wrapper.appendChild(zoomBar);
-
-		// Explanation
-		var explanation = document.createElement("div");
-		explanation.className = "atlas_explanation";
-		explanation.innerHTML = "This atlas explores the model's learned activation space <em>without training data</em>. " +
-			"Prototype directions are extracted from layer weights, projected to 2D via t-SNE, and the space is filled via IDW interpolation. " +
-			"Each cell shows a gradient-ascent image of what the model \"sees\" for that interpolated activation. " +
-			"Transition regions reveal mixture concepts the network has learned.";
-		wrapper.appendChild(explanation);
-
-		container.appendChild(wrapper);
-
-		_bindCanvasEvents();
-		_drawAtlas();
-	}
-
-	// ============================================================
 	// PARAMETERS PANEL
 	// ============================================================
 
@@ -1402,7 +1276,7 @@ var ActivationAtlas = (function () {
 						container.innerHTML = "<div class='atlas_wrapper'><div class='atlas_error'>" + error + "</div></div>";
 						return;
 					}
-					_buildUI(container, meta);
+					_buildReadyUI(container, meta);
 				}, function (msg, pct) {
 					if (_state.progressBar) {
 						_state.progressBar.style.width = (pct * 100).toFixed(1) + "%";

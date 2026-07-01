@@ -1942,7 +1942,7 @@
 			"atlas_tab_done" => "Atlas-Generierung abgeschlossen.",
 			"atlas_tab_stopped" => "Atlas-Generierung vom Benutzer gestoppt.",
 			"atlas_tab_no_model" => "Kein Modell verfügbar. Bitte erstellen oder laden Sie zuerst ein Modell.",
-		       "activation_atlas" => "Aktivierungsatlas"
+			"activation_atlas" => "Aktivierungsatlas"
 		)
 	);
 
