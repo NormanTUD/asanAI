@@ -595,6 +595,17 @@ var ActivationAtlas = (function () {
 					_state.gridCells = allCells;
 					_state.isComputing = false;
 					_state.lastComputeTime = Date.now();
+
+					var meta = {
+						layerName: targetLayer.name || ("Layer " + layerIdx),
+						gridSize: gridSize,
+						totalCells: totalCells,
+						numPrototypes: prototypes.length,
+						numNeurons: protoData.numNeurons,
+						imgH: imgH,
+						imgW: imgW
+					};
+
 					callback(null, meta);
 					return;
 				}
