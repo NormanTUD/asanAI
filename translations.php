@@ -934,6 +934,20 @@
 		       "tda_explain_point_cloud" => "A 2D projection (PCA) of the high-dimensional point cloud used for analysis. This shows the overall shape and clustering of the data. Hover over points to see coordinates.",
 		       "tda_explain_landscape" => "The persistence landscape shows the top-k most persistent features as bars. Taller bars indicate more significant topological structures. This is a stable summary of the persistence diagram.",
 
+		       // Dimensionality River
+		       "dimriver_title" => "Dimensionality River",
+		       "dimriver_subtitle" => "t-SNE embedding per layer — watch how representations evolve through the network",
+		       "dimriver_no_data" => "No activation data recorded yet. Run a prediction first.",
+		       "dimriver_no_layers" => "No layers could be embedded. Ensure the model has been run at least once.",
+		       "dimriver_hint_train" => "Run a prediction or start training to generate layer activation data.",
+		       "dimriver_perplexity" => "Perplexity",
+		       "dimriver_iterations" => "Iterations",
+		       "dimriver_max_points" => "Max Points per Layer",
+		       "dimriver_river_overview" => "River Overview (Cluster Spread)",
+		       "dimriver_river_explanation" => "The width of the river shows how spread out (variance) the embedded points are at each layer. A narrowing river means the network is compressing representations; a widening river means it is expanding them.",
+		       "dimriver_per_layer" => "Per-Layer t-SNE Embeddings",
+		       "dimriver_scatter_explanation" => "Each scatter plot shows a 2D t-SNE projection of the layer's activations. Points colored by class label reveal how well the network separates classes at each stage. Well-separated clusters = good discrimination.",
+		       "dimriver_spread" => "Spread",
 		),
 
 		'de' => array(
@@ -1868,6 +1882,21 @@
 		       "tda_explain_betti_curves" => "Zeigt, wie viele topologische Merkmale bei jeder Distanzskala existieren. &beta;&#8320; (blau) = Anzahl separater Cluster. &beta;&#8321; (rot) = Anzahl der Schleifen/L&ouml;cher. Beobachte, wie sich diese &auml;ndern wenn die Skala (&epsilon;) zunimmt.",
 		       "tda_explain_point_cloud" => "Eine 2D-Projektion (PCA) der hochdimensionalen Punktwolke. Dies zeigt die Gesamtform und Clusterung der Daten. Fahre &uuml;ber Punkte um Koordinaten zu sehen.",
 		       "tda_explain_landscape" => "Die Persistenz-Landschaft zeigt die Top-k persistentesten Merkmale als Balken. H&ouml;here Balken bedeuten signifikantere topologische Strukturen. Dies ist eine stabile Zusammenfassung des Persistenzdiagramms.",
+
+			// Dimensionality River
+			"dimriver_title" => "Dimensionality River",
+			"dimriver_subtitle" => "t-SNE-Einbettung pro Layer — beobachte, wie sich Repräsentationen durch das Netzwerk entwickeln",
+			"dimriver_no_data" => "Noch keine Aktivierungsdaten aufgezeichnet. Führe zuerst eine Prediction aus.",
+			"dimriver_no_layers" => "Keine Layer konnten eingebettet werden. Stelle sicher, dass das Modell mindestens einmal ausgeführt wurde.",
+			"dimriver_hint_train" => "Führe eine Prediction aus oder starte das Training, um Layer-Aktivierungsdaten zu erzeugen.",
+			"dimriver_perplexity" => "Perplexität",
+			"dimriver_iterations" => "Iterationen",
+			"dimriver_max_points" => "Max. Punkte pro Layer",
+			"dimriver_river_overview" => "River-Übersicht (Cluster-Streuung)",
+			"dimriver_river_explanation" => "Die Breite des Flusses zeigt, wie stark die eingebetteten Punkte in jedem Layer gestreut sind (Varianz). Ein enger werdender Fluss bedeutet, dass das Netzwerk Repräsentationen komprimiert; ein breiter werdender Fluss bedeutet, dass es sie expandiert.",
+			"dimriver_per_layer" => "t-SNE-Einbettungen pro Layer",
+			"dimriver_scatter_explanation" => "Jeder Scatter-Plot zeigt eine 2D-t-SNE-Projektion der Layer-Aktivierungen. Punkte, die nach Klassenlabel eingefärbt sind, zeigen, wie gut das Netzwerk die Klassen in jeder Stufe trennt. Gut getrennte Cluster = gute Diskriminierung.",
+			"dimriver_spread" => "Streuung",
 		)
 	);
 

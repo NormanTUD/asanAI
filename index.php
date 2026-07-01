@@ -105,6 +105,7 @@
 		_js("health_status.js");
 		_js("weight_analysis.js");
 		_js("tda.js");
+		_js("dimensionality_river.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
