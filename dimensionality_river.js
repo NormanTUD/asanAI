@@ -735,6 +735,7 @@ var DimensionalityRiver = (function () {
  *   dimensionalityRiver("my_div");      // renders into #my_div
  *   dimensionalityRiver(someElement);   // renders into the given element
  */
+
 function dimensionalityRiver(divOrId) {
 	return DimensionalityRiver.render(divOrId);
 }

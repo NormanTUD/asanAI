@@ -1039,6 +1039,8 @@ $(document).ready(async function() {
 
 	WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
 
+	dimensionalityRiver("dimensionality_river");
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 

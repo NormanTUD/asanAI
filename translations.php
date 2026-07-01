@@ -948,6 +948,7 @@
 		       "dimriver_per_layer" => "Per-Layer t-SNE Embeddings",
 		       "dimriver_scatter_explanation" => "Each scatter plot shows a 2D t-SNE projection of the layer's activations. Points colored by class label reveal how well the network separates classes at each stage. Well-separated clusters = good discrimination.",
 		       "dimriver_spread" => "Spread",
+			"dimensionality_river" => "Dimensionality River"
 		),
 
 		'de' => array(
@@ -1897,6 +1898,7 @@
 			"dimriver_per_layer" => "t-SNE-Einbettungen pro Layer",
 			"dimriver_scatter_explanation" => "Jeder Scatter-Plot zeigt eine 2D-t-SNE-Projektion der Layer-Aktivierungen. Punkte, die nach Klassenlabel eingefärbt sind, zeigen, wie gut das Netzwerk die Klassen in jeder Stufe trennt. Gut getrennte Cluster = gute Diskriminierung.",
 			"dimriver_spread" => "Streuung",
+			"dimensionality_river" => "Dimensionsfluss"
 		)
 	);
 
