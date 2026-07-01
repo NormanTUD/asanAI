@@ -303,46 +303,30 @@ var ActivationAtlas = (function () {
 	// project them to 2D, grid the space, and interpolate to fill.
 	// ============================================================
 
-	function _extractPrototypeActivations(layerIdx) {
-		// Strategy: Use the weight columns/rows of the target layer
-		// (or the layer after it) as prototype activation directions.
-		// These represent the "features" the layer has learned to detect.
-
+	function _getLayerWeights(layerIdx) {
 		var targetLayer = model.layers[layerIdx];
 		var weights = targetLayer.getWeights();
 
 		if (!weights || weights.length === 0) {
-			// Try the next layer's incoming weights
 			for (var i = layerIdx + 1; i < model.layers.length; i++) {
 				weights = model.layers[i].getWeights();
 				if (weights && weights.length > 0) break;
 			}
 		}
 
-		if (!weights || weights.length === 0) return null;
+		return weights;
+	}
 
-		// Get the kernel (first weight tensor, ignoring bias)
+	function _getKernelInfo(weights) {
 		var kernel = weights[0];
 		var kernelShape = kernel.shape;
-		var kernelData;
-
-		// For dense layers: shape is [inputDim, outputDim]
-		// Each column = one neuron's incoming weight pattern
-		// For conv layers: shape is [h, w, inChannels, outChannels]
-		// Each filter = one feature detector
-
-		var numPrototypes, prototypeSize;
+		var numPrototypes, prototypeSize, kernelData;
 
 		if (kernelShape.length === 2) {
-			// Dense: columns are prototypes
-			// We want the OUTPUT neurons as prototypes (what the layer produces)
 			numPrototypes = kernelShape[1];
-			prototypeSize = kernelShape[1]; // activation space dimension
-			// Each prototype = a one-hot direction in activation space
-			// But better: use random combinations of the weight columns
+			prototypeSize = kernelShape[1];
 			kernelData = kernel.arraySync();
 		} else if (kernelShape.length === 4) {
-			// Conv: [h, w, inC, outC] — each filter is a prototype
 			numPrototypes = kernelShape[3];
 			var flatKernel = tf.tidy(function () {
 				return kernel.reshape([kernelShape[0] * kernelShape[1] * kernelShape[2], kernelShape[3]]);
@@ -354,30 +338,31 @@ var ActivationAtlas = (function () {
 			return null;
 		}
 
-		// Build the activation-space dimension from the target layer output
+		return {
+			numPrototypes: numPrototypes,
+			prototypeSize: prototypeSize,
+			kernelData: kernelData,
+			kernelShape: kernelShape
+		};
+	}
+
+	function _getFlatOutputSize(layerIdx) {
+		var targetLayer = model.layers[layerIdx];
 		var extractModel = tf.model({ inputs: model.input, outputs: targetLayer.output });
 		var outputShape = extractModel.outputShape;
-		var flatOutputSize;
 		if (Array.isArray(outputShape[0])) {
-			flatOutputSize = outputShape.slice(1).reduce(function (a, b) { return a * b; }, 1);
-		} else {
-			flatOutputSize = outputShape.slice(1).reduce(function (a, b) { return a * b; }, 1);
+			return outputShape.slice(1).reduce(function (a, b) { return a * b; }, 1);
 		}
+		return outputShape.slice(1).reduce(function (a, b) { return a * b; }, 1);
+	}
 
-		// Generate prototype activation vectors:
-		// Use one-hot directions + random interpolations between them
+	function _buildOneHotPrototypes(maxPrototypes, flatOutputSize, numPrototypes) {
 		var prototypes = [];
-		var maxPrototypes = Math.min(numPrototypes, 80);
-
-		// Pure one-hot prototypes (individual neurons/filters)
 		for (var i = 0; i < maxPrototypes; i++) {
 			var proto = new Float32Array(flatOutputSize);
-			// Activate a single unit (or a small group for conv)
 			if (flatOutputSize === numPrototypes) {
-				// Dense layer: one-hot
 				proto[i] = 1.0;
 			} else {
-				// Conv layer: activate one filter across all spatial positions
 				var spatialSize = flatOutputSize / numPrototypes;
 				for (var s = 0; s < spatialSize; s++) {
 					proto[s * numPrototypes + i] = 1.0;
@@ -385,14 +370,17 @@ var ActivationAtlas = (function () {
 			}
 			prototypes.push({ activation: proto, neuronIdx: i, isMixed: false });
 		}
+		return prototypes;
+	}
 
-		// Add interpolated/mixed prototypes between pairs
+	function _buildMixedPrototypes(prototypes, maxPrototypes, flatOutputSize) {
 		var numMixed = Math.min(maxPrototypes, 40);
+		var mixed_prototypes = [];
 		for (var m = 0; m < numMixed; m++) {
 			var idxA = Math.floor(Math.random() * maxPrototypes);
 			var idxB = Math.floor(Math.random() * maxPrototypes);
 			if (idxA === idxB) idxB = (idxB + 1) % maxPrototypes;
-			var alpha = 0.2 + Math.random() * 0.6; // mix ratio
+			var alpha = 0.2 + Math.random() * 0.6;
 
 			var mixed = new Float32Array(flatOutputSize);
 			var protoA = prototypes[idxA].activation;
@@ -400,8 +388,25 @@ var ActivationAtlas = (function () {
 			for (var d = 0; d < flatOutputSize; d++) {
 				mixed[d] = protoA[d] * alpha + protoB[d] * (1 - alpha);
 			}
-			prototypes.push({ activation: mixed, neuronIdx: -1, isMixed: true, mixA: idxA, mixB: idxB, alpha: alpha });
+			mixed_prototypes.push({ activation: mixed, neuronIdx: -1, isMixed: true, mixA: idxA, mixB: idxB, alpha: alpha });
 		}
+		return mixed_prototypes;
+	}
+
+	function _extractPrototypeActivations(layerIdx) {
+		var weights = _getLayerWeights(layerIdx);
+		if (!weights || weights.length === 0) return null;
+
+		var kernelInfo = _getKernelInfo(weights);
+		if (!kernelInfo) return null;
+
+		var numPrototypes = kernelInfo.numPrototypes;
+		var flatOutputSize = _getFlatOutputSize(layerIdx);
+		var maxPrototypes = Math.min(numPrototypes, 80);
+
+		var prototypes = _buildOneHotPrototypes(maxPrototypes, flatOutputSize, numPrototypes);
+		var mixedPrototypes = _buildMixedPrototypes(prototypes, maxPrototypes, flatOutputSize);
+		prototypes = prototypes.concat(mixedPrototypes);
 
 		return {
 			prototypes: prototypes,
