@@ -57,6 +57,14 @@ var DimensionalityRiver = (function () {
 		if (typeof model === "undefined" || !model) { callback(null, "dimriver_no_model"); return; }
 		if (typeof xy_data_global === "undefined" || !xy_data_global || !xy_data_global.x) { callback(null, "dimriver_no_data"); return; }
 
+		// Check if model is disposed
+		try {
+			model.layers[0].getWeights();
+		} catch (e) {
+			callback(null, "dimriver_no_model");
+			return;
+		}
+
 		_state.isComputing = true;
 
 		try {
@@ -65,39 +73,7 @@ var DimensionalityRiver = (function () {
 			var maxSamples = Math.min(_state.maxSamples, numSamples);
 
 			// Get labels
-			var labels = _extractLabels(maxSamples);
-
-			// Create intermediate models for each layer
-			var layerOutputs = [];
-			var layerInfos = [];
-
-			for (var i = 0; i < model.layers.length; i++) {
-				var layer = model.layers[i];
-				// Skip input layers
-				if (layer.getClassName && layer.getClassName() === "InputLayer") continue;
-
-				try {
-					var intermediateModel = tf.model({
-						inputs: model.input,
-						outputs: layer.output
-					});
-					layerInfos.push({
-						name: layer.name || ("layer_" + i),
-						type: layer.getClassName ? layer.getClassName() : "unknown",
-						index: i
-					});
-					layerOutputs.push(intermediateModel);
-				} catch (e) {
-					// Some layers can't be used as output, skip
-					continue;
-				}
-			}
-
-			if (layerOutputs.length === 0) {
-				_state.isComputing = false;
-				callback(null, "dimriver_no_layers");
-				return;
-			}
+			var labelsResult = _extractLabels(maxSamples);
 
 			// Subsample input data
 			var indices = [];
@@ -110,48 +86,84 @@ var DimensionalityRiver = (function () {
 				for (var i = 0; i < maxSamples; i++) indices.push(i);
 			}
 
+			// Use tf.tidy for the whole operation and a single execute call
+			var layerInfos = [];
+			var layerOutputSymbols = [];
+
+			for (var i = 0; i < model.layers.length; i++) {
+				var layer = model.layers[i];
+				if (layer.getClassName && layer.getClassName() === "InputLayer") continue;
+				layerInfos.push({
+					name: layer.name || ("layer_" + i),
+					type: layer.getClassName ? layer.getClassName() : "unknown",
+					index: i
+				});
+				layerOutputSymbols.push(layer.output);
+			}
+
+			if (layerOutputSymbols.length === 0) {
+				_state.isComputing = false;
+				callback(null, "dimriver_no_layers");
+				return;
+			}
+
+			// Create ONE intermediate model with ALL layer outputs (no dispose issues)
+			var multiOutputModel = tf.model({
+				inputs: model.input,
+				outputs: layerOutputSymbols
+			});
+
 			var xSubset = tf.tidy(function () {
 				return tf.gather(xTensor, indices);
 			});
 
-			// Collect activations per layer
+			// Predict all layers at once
+			var allOutputs = multiOutputModel.predict(xSubset);
+
+			// If only one layer, wrap in array
+			if (!Array.isArray(allOutputs)) allOutputs = [allOutputs];
+
+			// Extract data from each layer output
 			var results = [];
-			for (var l = 0; l < layerOutputs.length; l++) {
-				var activation = tf.tidy(function () {
-					var out = layerOutputs[l].predict(xSubset);
-					// Flatten each sample to a 1D vector
-					var batchSize = out.shape[0];
-					var flatSize = out.size / batchSize;
-					return out.reshape([batchSize, flatSize]);
+			for (var l = 0; l < allOutputs.length; l++) {
+				var outTensor = allOutputs[l];
+				var batchSize = outTensor.shape[0];
+				var flatSize = outTensor.size / batchSize;
+
+				var flattened = tf.tidy(function () {
+					return outTensor.reshape([batchSize, flatSize]);
 				});
 
-				var activationData = activation.arraySync();
-				activation.dispose();
+				var activationData = flattened.arraySync();
+				flattened.dispose();
 
 				results.push({
 					name: layerInfos[l].name,
 					type: layerInfos[l].type,
 					index: layerInfos[l].index,
-					activations: activationData, // [numSamples][flatDim]
+					activations: activationData,
 					flatDim: activationData[0] ? activationData[0].length : 0
 				});
 			}
 
+			// Dispose outputs and subset - but NOT the multiOutputModel's layers
+			for (var l = 0; l < allOutputs.length; l++) {
+				allOutputs[l].dispose();
+			}
 			xSubset.dispose();
 
-			// Dispose intermediate models
-			for (var l = 0; l < layerOutputs.length; l++) {
-				try { layerOutputs[l].dispose(); } catch (e) { }
-			}
+			// Do NOT dispose multiOutputModel - it shares layers with the original model!
+			// Just remove the reference, let GC handle the lightweight wrapper
+			multiOutputModel = null;
 
 			_state.isComputing = false;
-			_state.cachedActivations = { layers: results, labels: labels, numSamples: maxSamples };
+			_state.cachedActivations = { layers: results, labels: labelsResult, numSamples: maxSamples };
 			callback(_state.cachedActivations, null);
 
 		} catch (e) {
 			_state.isComputing = false;
 			console.error("DimensionalityRiver error:", e);
-			callback(null, "dimriver_no_data");
+			callback(null, "dimriver_error");
 		}
 	}
 
@@ -623,12 +635,24 @@ var DimensionalityRiver = (function () {
 		var container = _getOrCreateContainer(divOrId);
 		_injectStyles();
 
+		// Mark as initialized and start visibility watching
+		if (!_initialized) {
+			_initialized = true;
+			_startVisibilityWatch();
+		}
+		_lastRenderTime = Date.now();
+
 		// Show loading state
 		container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_calculating'></span>...</div></div>";
 		_triggerTranslations();
 
 		// Use setTimeout to allow UI to update before heavy computation
 		setTimeout(function () {
+			// Double-check visibility before expensive computation
+			if (!_isContainerVisible()) {
+				return;
+			}
+
 			_collectMultiSampleActivations(function (data, error) {
 				if (error || !data) {
 					var html = "<div class='dimriver_container'>";
@@ -905,6 +929,103 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
+	// VISIBILITY-BASED AUTO-REFRESH
+	// Once initialized, checks every 5s if visible and re-renders
+	// ============================================================
+
+	var _visibilityTimer = null;
+	var _initialized = false;
+	var _lastRenderTime = 0;
+	var _MIN_RENDER_INTERVAL = 5000; // 5 seconds
+
+	function _isContainerVisible() {
+		if (!_state.container) return false;
+		// Check offsetParent (null = hidden via display:none or not in DOM)
+		if (_state.container.offsetParent === null) return false;
+		// Check computed visibility
+		var style = window.getComputedStyle(_state.container);
+		if (style.display === "none" || style.visibility === "hidden") return false;
+		// Check aria-hidden (for tab panels)
+		if (_state.container.getAttribute("aria-hidden") === "true") return false;
+		// Check if any parent has aria-hidden or display:none
+		var parent = _state.container.parentElement;
+		while (parent && parent !== document.body) {
+			var pStyle = window.getComputedStyle(parent);
+			if (pStyle.display === "none" || pStyle.visibility === "hidden") return false;
+			if (parent.getAttribute("aria-hidden") === "true") return false;
+			parent = parent.parentElement;
+		}
+		return true;
+	}
+
+	function _startVisibilityWatch() {
+		if (_visibilityTimer) return; // Already watching
+		_visibilityTimer = setInterval(function () {
+			if (!_initialized) return;
+			if (_state.isComputing) return;
+			if (!_isContainerVisible()) return;
+
+			var now = Date.now();
+			if (now - _lastRenderTime < _MIN_RENDER_INTERVAL) return;
+
+			// Check if model exists and is not disposed
+			try {
+				if (typeof model === "undefined" || !model) return;
+				model.layers[0].getWeights();
+			} catch (e) {
+				return; // Model disposed, skip
+			}
+
+			_lastRenderTime = now;
+			_state.cachedActivations = null;
+			render(_state.container);
+		}, 5000);
+	}
+
+	function _stopVisibilityWatch() {
+		if (_visibilityTimer) {
+			clearInterval(_visibilityTimer);
+			_visibilityTimer = null;
+		}
+	}
+
+	// ============================================================
+	// AUTO-UPDATE (manual toggle, separate from visibility watch)
+	// ============================================================
+
+	function startAutoUpdate(intervalMs) {
+		stopAutoUpdate();
+		_state.autoUpdateTimer = setInterval(function () {
+			if (_state.isComputing) return;
+			if (!_isContainerVisible()) return;
+			try {
+				_state.cachedActivations = null;
+				_lastRenderTime = Date.now();
+				render(_state.container);
+			} catch (e) { }
+		}, intervalMs || 8000);
+	}
+
+	function stopAutoUpdate() {
+		if (_state.autoUpdateTimer) {
+			clearInterval(_state.autoUpdateTimer);
+			_state.autoUpdateTimer = null;
+		}
+	}
+
+	function toggleAutoUpdate() {
+		if (_state.autoUpdateTimer) stopAutoUpdate();
+		else startAutoUpdate();
+		render(_state.container);
+	}
+
+	function refresh() {
+		_state.cachedActivations = null;
+		_lastRenderTime = Date.now();
+		render(_state.container);
+	}
+
+	// ============================================================
 	// PUBLIC API
 	// ============================================================
 
@@ -914,8 +1035,10 @@ var DimensionalityRiver = (function () {
 		startAutoUpdate: startAutoUpdate,
 		stopAutoUpdate: stopAutoUpdate,
 		toggleAutoUpdate: toggleAutoUpdate,
+		stopVisibilityWatch: _stopVisibilityWatch,
 		getLastResult: function () { return _state.lastResult; },
 		getState: function () { return _state; },
+		isVisible: _isContainerVisible,
 		setConfig: function (cfg) {
 			if (cfg && typeof cfg === "object") {
 				for (var k in cfg) {
@@ -924,7 +1047,6 @@ var DimensionalityRiver = (function () {
 			}
 		}
 	};
-
 })();
 
 // ============================================================
