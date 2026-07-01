@@ -1411,7 +1411,7 @@ var DimensionalityRiver = (function () {
 	// ============================================================
 
 	return {
-		render: _render,
+		_render: _render,
 		refresh: refresh,
 		startAutoUpdate: startAutoUpdate,
 		stopAutoUpdate: stopAutoUpdate,
