@@ -505,17 +505,21 @@ var DimensionalityRiver = (function () {
 		var rangeX = maxX - minX || 1;
 		var rangeY = maxY - minY || 1;
 
-		var svg = "<svg class='dimriver_svg' width='100%' viewBox='0 0 " + width + " " + height + "'>";
+		// Generate a unique ID for this scatter plot
+		var scatterId = "dimriver_scatter_" + (layer.index || 0) + "_" + Date.now();
+
+		var html = "<div class='dimriver_scatter_wrapper' style='position:relative;'>";
+		html += "<svg class='dimriver_svg' id='" + scatterId + "' width='100%' viewBox='0 0 " + width + " " + height + "'>";
 
 		// Background
-		svg += "<rect x='" + margin + "' y='" + margin + "' width='" + plotW + "' height='" + plotH + "' fill='rgba(128,128,128,0.02)' stroke='rgba(128,128,128,0.1)' rx='4'/>";
+		html += "<rect x='" + margin + "' y='" + margin + "' width='" + plotW + "' height='" + plotH + "' fill='rgba(128,128,128,0.02)' stroke='rgba(128,128,128,0.1)' rx='4'/>";
 
 		// Grid
 		for (var g = 0; g <= 4; g++) {
 			var gx = margin + (g / 4) * plotW;
 			var gy = margin + (g / 4) * plotH;
-			svg += "<line x1='" + gx + "' y1='" + margin + "' x2='" + gx + "' y2='" + (height - margin) + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
-			svg += "<line x1='" + margin + "' y1='" + gy + "' x2='" + (width - margin) + "' y2='" + gy + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
+			html += "<line x1='" + gx + "' y1='" + margin + "' x2='" + gx + "' y2='" + (height - margin) + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
+			html += "<line x1='" + margin + "' y1='" + gy + "' x2='" + (width - margin) + "' y2='" + gy + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
 		}
 
 		// Draw centroids first (larger, semi-transparent)
@@ -524,12 +528,12 @@ var DimensionalityRiver = (function () {
 				var cx = margin + ((layer.centroids[lbl][0] - minX) / rangeX) * plotW;
 				var cy = margin + ((layer.centroids[lbl][1] - minY) / rangeY) * plotH;
 				var color = _COLORS[Math.abs(parseInt(lbl)) % _COLORS.length];
-				svg += "<circle cx='" + cx.toFixed(1) + "' cy='" + cy.toFixed(1) + "' r='12' fill='" + color + "' opacity='0.12' stroke='" + color + "' stroke-width='2' stroke-opacity='0.4'/>";
-				svg += "<text x='" + cx.toFixed(1) + "' y='" + (cy + 3).toFixed(1) + "' text-anchor='middle' font-size='8' font-weight='bold' fill='" + color + "' opacity='0.8'>" + lbl + "</text>";
+				html += "<circle cx='" + cx.toFixed(1) + "' cy='" + cy.toFixed(1) + "' r='12' fill='" + color + "' opacity='0.12' stroke='" + color + "' stroke-width='2' stroke-opacity='0.4'/>";
+				html += "<text x='" + cx.toFixed(1) + "' y='" + (cy + 3).toFixed(1) + "' text-anchor='middle' font-size='8' font-weight='bold' fill='" + color + "' opacity='0.8'>" + lbl + "</text>";
 			}
 		}
 
-		// Points
+		// Points - add data attributes for hover
 		for (var i = 0; i < embedded.length; i++) {
 			var x = margin + ((embedded[i][0] - minX) / rangeX) * plotW;
 			var y = margin + ((embedded[i][1] - minY) / rangeY) * plotH;
@@ -539,28 +543,148 @@ var DimensionalityRiver = (function () {
 				color = _COLORS[Math.abs(labels[i]) % _COLORS.length];
 			}
 
-			svg += "<circle cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='3.5' fill='" + color + "' opacity='0.65'>";
-			svg += "<title>" + (labels ? "Sample " + i + " | Class " + labels[i] : "Sample " + i) + "</title>";
-			svg += "</circle>";
+			html += "<circle class='dimriver_point' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color + "' opacity='0.65' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
 		}
 
 		// Silhouette score badge
 		if (layer.silhouette !== null && layer.silhouette !== undefined) {
 			var silVal = layer.silhouette.toFixed(3);
 			var silColor = layer.silhouette > 0.5 ? "#27ae60" : (layer.silhouette > 0.2 ? "#f39c12" : "#e74c3c");
-			svg += "<rect x='" + (width - margin - 90) + "' y='" + (margin + 4) + "' width='86' height='20' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + silColor + "' stroke-width='1'/>";
-			svg += "<text x='" + (width - margin - 47) + "' y='" + (margin + 17) + "' text-anchor='middle' font-size='9' fill='" + silColor + "' font-weight='bold'>Silhouette: " + silVal + "</text>";
+			html += "<rect x='" + (width - margin - 90) + "' y='" + (margin + 4) + "' width='86' height='20' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + silColor + "' stroke-width='1'/>";
+			html += "<text x='" + (width - margin - 47) + "' y='" + (margin + 17) + "' text-anchor='middle' font-size='9' fill='" + silColor + "' font-weight='bold'>Silhouette: " + silVal + "</text>";
 		}
 
 		// Axis labels
-		svg += "<text x='" + (width / 2) + "' y='" + (height - 6) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4'>t-SNE dim 1</text>";
-		svg += "<text x='8' y='" + (height / 2) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4' transform='rotate(-90, 8, " + (height / 2) + ")'>t-SNE dim 2</text>";
+		html += "<text x='" + (width / 2) + "' y='" + (height - 6) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4'>t-SNE dim 1</text>";
+		html += "<text x='8' y='" + (height / 2) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4' transform='rotate(-90, 8, " + (height / 2) + ")'>t-SNE dim 2</text>";
 
-		// Info: dim and samples
-		svg += "<text x='" + (margin + 4) + "' y='" + (margin + 14) + "' font-size='8' fill='currentColor' opacity='0.4'>" + layer.numSamples + " samples, " + layer.originalDim + "D→2D</text>";
+		// Info
+		html += "<text x='" + (margin + 4) + "' y='" + (margin + 14) + "' font-size='8' fill='currentColor' opacity='0.4'>" + layer.numSamples + " samples, " + layer.originalDim + "D→2D</text>";
 
-		svg += "</svg>";
-		return svg;
+		html += "</svg>";
+
+		// Tooltip container (positioned absolutely over the SVG)
+		html += "<div class='dimriver_tooltip' id='" + scatterId + "_tooltip' style='display:none;position:absolute;pointer-events:none;z-index:1000;background:#1a1a2e;border:2px solid #3498db;border-radius:8px;padding:6px;box-shadow:0 4px 20px rgba(0,0,0,0.5);'></div>";
+
+		html += "</div>"; // end wrapper
+
+		return html;
+	}
+
+	function _bindHoverEvents() {
+		if (!_state.container) return;
+
+		// Cache image data URLs for performance
+		var imageElements = _getImageElements();
+		var imageDataCache = {};
+
+		// Compute the sample indices used during activation collection
+		// (mirrors the logic in _collectMultiSampleActivations)
+		var numTotalSamples = 0;
+		try {
+			if (xy_data_global && xy_data_global.x && !xy_data_global.x.isDisposed) {
+				numTotalSamples = xy_data_global.x.shape[0];
+			}
+		} catch (e) {}
+
+		var maxSamples = _state.lastResult ? _state.lastResult.numSamples : _state.maxSamples;
+		var sampleIndices = [];
+		if (maxSamples < numTotalSamples) {
+			var step = numTotalSamples / maxSamples;
+			for (var i = 0; i < maxSamples; i++) {
+				sampleIndices.push(Math.min(Math.floor(i * step), numTotalSamples - 1));
+			}
+		} else {
+			for (var i = 0; i < maxSamples; i++) sampleIndices.push(i);
+		}
+
+		// Check if input is image-based
+		var isImageData = false;
+		try {
+			isImageData = (typeof input_shape_is_image === "function") && input_shape_is_image();
+		} catch (e) {}
+
+		// Bind events on all scatter points
+		var points = _state.container.querySelectorAll(".dimriver_point");
+		for (var p = 0; p < points.length; p++) {
+			(function(point) {
+				point.addEventListener("mouseenter", function(e) {
+					var sampleIdx = parseInt(point.getAttribute("data-sample-idx"));
+					var labelIdx = point.getAttribute("data-label");
+
+					// Enlarge point
+					point.setAttribute("r", "7");
+					point.setAttribute("opacity", "1");
+					point.style.filter = "drop-shadow(0 0 4px rgba(255,255,255,0.5))";
+
+					// Find the tooltip container (sibling of the SVG)
+					var svg = point.closest("svg");
+					var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
+					if (!tooltip) return;
+
+					// Build tooltip content
+					var tooltipHTML = "";
+					var labelName = "";
+					try {
+						if (typeof labels !== "undefined" && labels[labelIdx]) {
+							labelName = labels[labelIdx];
+						} else {
+							labelName = "Class " + labelIdx;
+						}
+					} catch (e) {
+						labelName = "Class " + labelIdx;
+					}
+
+					// Try to get the actual image
+					var realImageIdx = sampleIndices[sampleIdx];
+					var imgEl = (realImageIdx !== undefined) ? imageElements[realImageIdx] : null;
+
+					if (isImageData && imgEl) {
+						// Get or cache the data URL
+						var cacheKey = realImageIdx;
+						if (!imageDataCache[cacheKey]) {
+							imageDataCache[cacheKey] = _imageToDataURL(imgEl, 80);
+						}
+						var dataUrl = imageDataCache[cacheKey];
+
+						if (dataUrl) {
+							tooltipHTML += "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;'/>";
+						}
+					}
+
+					tooltipHTML += "<div style='font-size:11px;color:#ccc;text-align:center;'>";
+					tooltipHTML += "<strong>" + _escapeHtml(labelName) + "</strong><br>";
+					tooltipHTML += "<span style='opacity:0.6;'>Sample #" + realImageIdx + "</span>";
+					tooltipHTML += "</div>";
+
+					tooltip.innerHTML = tooltipHTML;
+					tooltip.style.display = "block";
+
+					// Position tooltip near the point
+					var svgRect = svg.getBoundingClientRect();
+					var wrapperRect = svg.parentElement.getBoundingClientRect();
+					var ptCTM = point.getBoundingClientRect();
+
+					var tooltipX = ptCTM.left - wrapperRect.left + ptCTM.width / 2 + 10;
+					var tooltipY = ptCTM.top - wrapperRect.top - 10;
+
+					// Keep tooltip in bounds
+					tooltip.style.left = tooltipX + "px";
+					tooltip.style.top = tooltipY + "px";
+					tooltip.style.transform = "translateY(-100%)";
+				});
+
+				point.addEventListener("mouseleave", function(e) {
+					point.setAttribute("r", "4");
+					point.setAttribute("opacity", "0.65");
+					point.style.filter = "";
+
+					var svg = point.closest("svg");
+					var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
+					if (tooltip) tooltip.style.display = "none";
+				});
+			})(points[p]);
+		}
 	}
 
 	function _riverOverviewSVG(results) {
@@ -800,6 +924,7 @@ var DimensionalityRiver = (function () {
 		_smoothSwap(container, html);
 		_bindSliders();
 		_triggerTranslations();
+		_bindHoverEvents();
 	}
 
 	// ============================================================
@@ -889,6 +1014,36 @@ var DimensionalityRiver = (function () {
 		return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 	}
 
+	function _getImageElements() {
+		// Same source as used in train.js for grid visualization
+		var imgs = [];
+		try {
+			imgs = [
+				...$("#photos").find("img,canvas").toArray(),
+				...$(".own_images").find("img,canvas").toArray()
+			];
+		} catch (e) {}
+		return imgs;
+	}
+
+	function _imageToDataURL(imgElement, maxSize) {
+		maxSize = maxSize || 64;
+		try {
+			var canvas = document.createElement("canvas");
+			var w = imgElement.naturalWidth || imgElement.width || maxSize;
+			var h = imgElement.naturalHeight || imgElement.height || maxSize;
+			// Scale down to maxSize
+			var scale = Math.min(maxSize / w, maxSize / h, 1);
+			canvas.width = Math.round(w * scale);
+			canvas.height = Math.round(h * scale);
+			var ctx = canvas.getContext("2d");
+			ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+			return canvas.toDataURL("image/png");
+		} catch (e) {
+			return null;
+		}
+	}
+
 	function _triggerTranslations() {
 		try {
 			if (typeof update_translations === "function") update_translations();
@@ -972,6 +1127,9 @@ var DimensionalityRiver = (function () {
 			".dimriver_fade_out { opacity: 0.3; transition: opacity 0.12s ease-out; }",
 			".dimriver_fade_in { animation: dimriver_fadein 0.2s ease-in-out; }",
 			"@keyframes dimriver_fadein { from { opacity: 0.3; } to { opacity: 1; } }",
+			".dimriver_scatter_wrapper { position: relative; overflow: visible; }",
+			".dimriver_point:hover { filter: drop-shadow(0 0 4px rgba(255,255,255,0.5)); }",
+			".dimriver_tooltip { max-width: 120px; }",
 		].join("\n");
 		document.head.appendChild(style);
 	}
