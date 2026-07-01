@@ -545,112 +545,34 @@ var DimensionalityRiver = (function () {
 		var plotW = width - 2 * margin;
 		var plotH = height - 2 * margin;
 
-		var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-		for (var i = 0; i < embedded.length; i++) {
-			if (embedded[i][0] < minX) minX = embedded[i][0];
-			if (embedded[i][0] > maxX) maxX = embedded[i][0];
-			if (embedded[i][1] < minY) minY = embedded[i][1];
-			if (embedded[i][1] > maxY) maxY = embedded[i][1];
-		}
-		var rangeX = maxX - minX || 1;
-		var rangeY = maxY - minY || 1;
+		var bounds = _computeBounds(embedded);
+		var rangeX = bounds.rangeX;
+		var rangeY = bounds.rangeY;
+		var minX = bounds.minX;
+		var minY = bounds.minY;
 
 		var scatterId = "dimriver_scatter_" + (layer.index || 0) + "_" + Date.now();
 
 		var html = "<div class='dimriver_scatter_wrapper' style='position:relative;'>";
 		html += "<svg class='dimriver_svg' id='" + scatterId + "' width='100%' viewBox='0 0 " + width + " " + height + "'>";
 
-		// Defs for stripe patterns (one per class color)
-		html += "<defs>";
-		for (var c = 0; c < _COLORS.length; c++) {
-			var patternId = scatterId + "_stripe_" + c;
-			html += "<pattern id='" + patternId + "' patternUnits='userSpaceOnUse' width='6' height='6' patternTransform='rotate(45)'>";
-			html += "<rect width='6' height='6' fill='" + _COLORS[c] + "' opacity='0.3'/>";
-			html += "<line x1='0' y1='0' x2='0' y2='6' stroke='white' stroke-width='2' opacity='0.8'/>";
-			html += "</pattern>";
-		}
-		// Also add a cross-hatch pattern for misclassified overlay
-		html += "<pattern id='" + scatterId + "_cross' patternUnits='userSpaceOnUse' width='5' height='5' patternTransform='rotate(45)'>";
-		html += "<line x1='0' y1='0' x2='0' y2='5' stroke='white' stroke-width='1.5' opacity='0.9'/>";
-		html += "</pattern>";
-		html += "</defs>";
-
 		// Background
 		html += "<rect x='" + margin + "' y='" + margin + "' width='" + plotW + "' height='" + plotH + "' fill='rgba(128,128,128,0.02)' stroke='rgba(128,128,128,0.1)' rx='4'/>";
 
 		// Grid
-		for (var g = 0; g <= 4; g++) {
-			var gx = margin + (g / 4) * plotW;
-			var gy = margin + (g / 4) * plotH;
-			html += "<line x1='" + gx + "' y1='" + margin + "' x2='" + gx + "' y2='" + (height - margin) + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
-			html += "<line x1='" + margin + "' y1='" + gy + "' x2='" + (width - margin) + "' y2='" + gy + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
-		}
+		html += _renderGrid(margin, plotW, plotH, width, height);
 
-		// Draw centroids first (larger, semi-transparent)
-		if (layer.centroids) {
-			for (var lbl in layer.centroids) {
-				var cx = margin + ((layer.centroids[lbl][0] - minX) / rangeX) * plotW;
-				var cy = margin + ((layer.centroids[lbl][1] - minY) / rangeY) * plotH;
-				var color = _COLORS[Math.abs(parseInt(lbl)) % _COLORS.length];
-				html += "<circle cx='" + cx.toFixed(1) + "' cy='" + cy.toFixed(1) + "' r='12' fill='" + color + "' opacity='0.12' stroke='" + color + "' stroke-width='2' stroke-opacity='0.4'/>";
-				html += "<text x='" + cx.toFixed(1) + "' y='" + (cy + 3).toFixed(1) + "' text-anchor='middle' font-size='8' font-weight='bold' fill='" + color + "' opacity='0.8'>" + lbl + "</text>";
-			}
-		}
+		// Centroids
+		html += _renderCentroids(layer, margin, plotW, plotH, minX, minY, rangeX, rangeY);
 
-		// Points - correctly classified as solid circles, misclassified as striped with X marker
-		for (var i = 0; i < embedded.length; i++) {
-			var x = margin + ((embedded[i][0] - minX) / rangeX) * plotW;
-			var y = margin + ((embedded[i][1] - minY) / rangeY) * plotH;
+		// Points
+		html += _renderPoints(embedded, labels, misclassified, margin, plotW, plotH, minX, minY, rangeX, rangeY);
 
-			var color = "#8e44ad";
-			var colorIdx = 0;
-			if (labels && labels[i] !== undefined && labels[i] !== null) {
-				colorIdx = Math.abs(labels[i]) % _COLORS.length;
-				color = _COLORS[colorIdx];
-			}
+		// Silhouette badge
+		html += _renderSilhouetteBadge(layer, width, margin);
 
-			var isMisclassified = misclassified && misclassified[i];
-
-			if (isMisclassified) {
-				// Misclassified: striped fill + diamond/square shape + red border
-				var patternFill = "url(#" + scatterId + "_stripe_" + colorIdx + ")";
-				// Draw as a diamond (rotated square) to make it visually distinct
-				var size = 5;
-				var diamondPoints = [
-					(x) + "," + (y - size),
-					(x + size) + "," + (y),
-					(x) + "," + (y + size),
-					(x - size) + "," + (y)
-				].join(" ");
-				html += "<polygon class='dimriver_point dimriver_misclassified' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' data-misclassified='true' points='" + diamondPoints + "' fill='" + patternFill + "' stroke='#ff0000' stroke-width='1.5' opacity='0.9' style='cursor:pointer;transition:opacity 0.15s;'/>";
-				// Add a small X on top
-				html += "<line x1='" + (x - 2.5).toFixed(1) + "' y1='" + (y - 2.5).toFixed(1) + "' x2='" + (x + 2.5).toFixed(1) + "' y2='" + (y + 2.5).toFixed(1) + "' stroke='#ff0000' stroke-width='1' opacity='0.7' pointer-events='none'/>";
-				html += "<line x1='" + (x + 2.5).toFixed(1) + "' y1='" + (y - 2.5).toFixed(1) + "' x2='" + (x - 2.5).toFixed(1) + "' y2='" + (y + 2.5).toFixed(1) + "' stroke='#ff0000' stroke-width='1' opacity='0.7' pointer-events='none'/>";
-			} else {
-				// Correctly classified: solid circle (original behavior)
-				html += "<circle class='dimriver_point' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' data-misclassified='false' cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color + "' opacity='0.65' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
-			}
-		}
-
-		// Silhouette score badge
-		if (layer.silhouette !== null && layer.silhouette !== undefined) {
-			var silVal = layer.silhouette.toFixed(3);
-			var silColor = layer.silhouette > 0.5 ? "#27ae60" : (layer.silhouette > 0.2 ? "#f39c12" : "#e74c3c");
-			html += "<rect x='" + (width - margin - 90) + "' y='" + (margin + 4) + "' width='86' height='20' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + silColor + "' stroke-width='1'/>";
-			html += "<text x='" + (width - margin - 47) + "' y='" + (margin + 17) + "' text-anchor='middle' font-size='9' fill='" + silColor + "' font-weight='bold'>Silhouette: " + silVal + "</text>";
-		}
-
-		// Misclassification count badge (NEW)
-		if (misclassified) {
-			var misCount = 0;
-			for (var i = 0; i < misclassified.length; i++) { if (misclassified[i]) misCount++; }
-			if (misCount > 0) {
-				var misColor = "#e74c3c";
-				var misPct = ((misCount / misclassified.length) * 100).toFixed(1);
-				html += "<rect x='" + margin + "' y='" + (height - margin - 22) + "' width='110' height='18' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + misColor + "' stroke-width='1'/>";
-				html += "<text x='" + (margin + 55) + "' y='" + (height - margin - 9) + "' text-anchor='middle' font-size='8' fill='" + misColor + "' font-weight='bold'>✗ " + misCount + " wrong (" + misPct + "%)</text>";
-			}
-		}
+		// Misclassification count badge
+		html += _renderMisclassificationBadge(misclassified, margin, height);
 
 		// Axis labels
 		html += "<text x='" + (width / 2) + "' y='" + (height - 6) + "' text-anchor='middle' font-size='9' fill='currentColor' opacity='0.4'>t-SNE dim 1</text>";
@@ -665,7 +587,94 @@ var DimensionalityRiver = (function () {
 		html += "<div class='dimriver_tooltip' id='" + scatterId + "_tooltip' style='display:none;position:absolute;pointer-events:none;z-index:1000;background:#1a1a2e;border:2px solid #3498db;border-radius:8px;padding:6px;box-shadow:0 4px 20px rgba(0,0,0,0.5);'></div>";
 
 		html += "</div>";
+		return html;
+	}
 
+	function _computeBounds(embedded) {
+		var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+		for (var i = 0; i < embedded.length; i++) {
+			if (embedded[i][0] < minX) minX = embedded[i][0];
+			if (embedded[i][0] > maxX) maxX = embedded[i][0];
+			if (embedded[i][1] < minY) minY = embedded[i][1];
+			if (embedded[i][1] > maxY) maxY = embedded[i][1];
+		}
+		return {
+			minX: minX, maxX: maxX, minY: minY, maxY: maxY,
+			rangeX: (maxX - minX) || 1,
+			rangeY: (maxY - minY) || 1
+		};
+	}
+
+	function _renderGrid(margin, plotW, plotH, width, height) {
+		var html = "";
+		for (var g = 0; g <= 4; g++) {
+			var gx = margin + (g / 4) * plotW;
+			var gy = margin + (g / 4) * plotH;
+			html += "<line x1='" + gx + "' y1='" + margin + "' x2='" + gx + "' y2='" + (height - margin) + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
+			html += "<line x1='" + margin + "' y1='" + gy + "' x2='" + (width - margin) + "' y2='" + gy + "' stroke='currentColor' stroke-width='0.3' opacity='0.06'/>";
+		}
+		return html;
+	}
+
+	function _renderCentroids(layer, margin, plotW, plotH, minX, minY, rangeX, rangeY) {
+		var html = "";
+		if (!layer.centroids) return html;
+		for (var lbl in layer.centroids) {
+			var cx = margin + ((layer.centroids[lbl][0] - minX) / rangeX) * plotW;
+			var cy = margin + ((layer.centroids[lbl][1] - minY) / rangeY) * plotH;
+			var color = _COLORS[Math.abs(parseInt(lbl)) % _COLORS.length];
+			html += "<circle cx='" + cx.toFixed(1) + "' cy='" + cy.toFixed(1) + "' r='12' fill='" + color + "' opacity='0.12' stroke='" + color + "' stroke-width='2' stroke-opacity='0.4'/>";
+			html += "<text x='" + cx.toFixed(1) + "' y='" + (cy + 3).toFixed(1) + "' text-anchor='middle' font-size='8' font-weight='bold' fill='" + color + "' opacity='0.8'>" + lbl + "</text>";
+		}
+		return html;
+	}
+
+	function _renderPoints(embedded, labels, misclassified, margin, plotW, plotH, minX, minY, rangeX, rangeY) {
+		var html = "";
+		for (var i = 0; i < embedded.length; i++) {
+			var x = margin + ((embedded[i][0] - minX) / rangeX) * plotW;
+			var y = margin + ((embedded[i][1] - minY) / rangeY) * plotH;
+
+			var color = "#8e44ad";
+			if (labels && labels[i] !== undefined && labels[i] !== null) {
+				color = _COLORS[Math.abs(labels[i]) % _COLORS.length];
+			}
+
+			var isMisclassified = misclassified && misclassified[i];
+
+			if (isMisclassified) {
+				// Misclassified: same colored circle with a bold red ring around it
+				html += "<circle class='dimriver_point dimriver_misclassified' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' data-misclassified='true' cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color + "' opacity='0.85' stroke='#ff0000' stroke-width='2.5' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
+			} else {
+				// Correctly classified: solid circle
+				html += "<circle class='dimriver_point' data-sample-idx='" + i + "' data-label='" + (labels ? labels[i] : "") + "' data-misclassified='false' cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='4' fill='" + color + "' opacity='0.65' style='cursor:pointer;transition:r 0.15s,opacity 0.15s;'/>";
+			}
+		}
+		return html;
+	}
+
+	function _renderSilhouetteBadge(layer, width, margin) {
+		if (layer.silhouette === null || layer.silhouette === undefined) return "";
+		var silVal = layer.silhouette.toFixed(3);
+		var silColor = layer.silhouette > 0.5 ? "#27ae60" : (layer.silhouette > 0.2 ? "#f39c12" : "#e74c3c");
+		var html = "";
+		html += "<rect x='" + (width - margin - 90) + "' y='" + (margin + 4) + "' width='86' height='20' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + silColor + "' stroke-width='1'/>";
+		html += "<text x='" + (width - margin - 47) + "' y='" + (margin + 17) + "' text-anchor='middle' font-size='9' fill='" + silColor + "' font-weight='bold'>Silhouette: " + silVal + "</text>";
+		return html;
+	}
+
+	function _renderMisclassificationBadge(misclassified, margin, height) {
+		if (!misclassified) return "";
+		var misCount = 0;
+		for (var i = 0; i < misclassified.length; i++) {
+			if (misclassified[i]) misCount++;
+		}
+		if (misCount === 0) return "";
+		var misColor = "#e74c3c";
+		var misPct = ((misCount / misclassified.length) * 100).toFixed(1);
+		var html = "";
+		html += "<rect x='" + margin + "' y='" + (height - margin - 22) + "' width='110' height='18' rx='4' fill='rgba(255,255,255,0.85)' stroke='" + misColor + "' stroke-width='1'/>";
+		html += "<text x='" + (margin + 55) + "' y='" + (height - margin - 9) + "' text-anchor='middle' font-size='8' fill='" + misColor + "' font-weight='bold'>✗ " + misCount + " wrong (" + misPct + "%)</text>";
 		return html;
 	}
 
@@ -677,9 +686,18 @@ var DimensionalityRiver = (function () {
 	function _bindHoverEvents() {
 		if (!_state.container) return;
 
+		var sampleIndices = _buildSampleIndices();
+		var isImageData = _checkIsImageData();
 		var imageElements = _getImageElements();
 		var imageDataCache = {};
 
+		var points = _state.container.querySelectorAll(".dimriver_point");
+		for (var p = 0; p < points.length; p++) {
+			_attachPointEvents(points[p], sampleIndices, isImageData, imageElements, imageDataCache);
+		}
+	}
+
+	function _buildSampleIndices() {
 		var numTotalSamples = 0;
 		try {
 			if (xy_data_global && xy_data_global.x && !xy_data_global.x.isDisposed) {
@@ -697,118 +715,126 @@ var DimensionalityRiver = (function () {
 		} else {
 			for (var i = 0; i < maxSamples; i++) sampleIndices.push(i);
 		}
+		return sampleIndices;
+	}
 
-		var isImageData = false;
+	function _checkIsImageData() {
 		try {
-			isImageData = (typeof input_shape_is_image === "function") && input_shape_is_image();
-		} catch (e) {}
-
-		// Bind events on all scatter points (both circle and polygon elements)
-		var points = _state.container.querySelectorAll(".dimriver_point");
-		for (var p = 0; p < points.length; p++) {
-			(function(point) {
-				point.addEventListener("mouseenter", function(e) {
-					var sampleIdx = parseInt(point.getAttribute("data-sample-idx"));
-					var labelIdx = point.getAttribute("data-label");
-					var isMisclassified = point.getAttribute("data-misclassified") === "true";
-
-					// Enlarge point
-					if (point.tagName.toLowerCase() === "circle") {
-						point.setAttribute("r", "7");
-					}
-					point.setAttribute("opacity", "1");
-					point.style.filter = "drop-shadow(0 0 4px rgba(255,255,255,0.5))";
-
-					var svg = point.closest("svg");
-					var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
-					if (!tooltip) return;
-
-					var tooltipHTML = "";
-					var labelName = "";
-					try {
-						if (typeof labels !== "undefined" && labels[labelIdx]) {
-							labelName = labels[labelIdx];
-						} else {
-							labelName = "Class " + labelIdx;
-						}
-					} catch (e) {
-						labelName = "Class " + labelIdx;
-					}
-
-					var realImageIdx = sampleIndices[sampleIdx];
-					var imgEl = (realImageIdx !== undefined) ? imageElements[realImageIdx] : null;
-
-					if (isImageData && imgEl) {
-						var cacheKey = realImageIdx;
-						if (!imageDataCache[cacheKey]) {
-							imageDataCache[cacheKey] = _imageToDataURL(imgEl, 80);
-						}
-						var dataUrl = imageDataCache[cacheKey];
-
-						if (dataUrl) {
-							tooltipHTML += "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;'/>";
-						}
-					}
-
-					tooltipHTML += "<div style='font-size:11px;color:#ccc;text-align:center;'>";
-					tooltipHTML += "<strong>" + _escapeHtml(labelName) + "</strong><br>";
-					tooltipHTML += "<span style='opacity:0.6;'>Sample #" + realImageIdx + "</span>";
-
-					// NEW: Show misclassification info
-					if (isMisclassified) {
-						// Find what it was predicted as
-						var predictedLabel = "";
-						try {
-							if (_state.cachedActivations && _state.cachedActivations.predictedLabels) {
-								var predIdx = _state.cachedActivations.predictedLabels[sampleIdx];
-								if (typeof labels !== "undefined" && labels[predIdx]) {
-									predictedLabel = labels[predIdx];
-								} else {
-									predictedLabel = "Class " + predIdx;
-								}
-							}
-						} catch (ex) {}
-						tooltipHTML += "<br><span style='color:#ff4444;font-weight:bold;'>✗ Misclassified</span>";
-						if (predictedLabel) {
-							tooltipHTML += "<br><span style='color:#ff8888;'>Predicted: " + _escapeHtml(predictedLabel) + "</span>";
-						}
-					} else {
-						tooltipHTML += "<br><span style='color:#44ff44;'>✓ Correct</span>";
-					}
-
-					tooltipHTML += "</div>";
-
-					tooltip.innerHTML = tooltipHTML;
-					tooltip.style.display = "block";
-
-					// Update border color for misclassified
-					tooltip.style.borderColor = isMisclassified ? "#ff4444" : "#3498db";
-
-					var svgRect = svg.getBoundingClientRect();
-					var wrapperRect = svg.parentElement.getBoundingClientRect();
-					var ptCTM = point.getBoundingClientRect();
-
-					var tooltipX = ptCTM.left - wrapperRect.left + ptCTM.width / 2 + 10;
-					var tooltipY = ptCTM.top - wrapperRect.top - 10;
-
-					tooltip.style.left = tooltipX + "px";
-					tooltip.style.top = tooltipY + "px";
-					tooltip.style.transform = "translateY(-100%)";
-				});
-
-				point.addEventListener("mouseleave", function(e) {
-					if (point.tagName.toLowerCase() === "circle") {
-						point.setAttribute("r", "4");
-					}
-					point.setAttribute("opacity", point.getAttribute("data-misclassified") === "true" ? "0.9" : "0.65");
-					point.style.filter = "";
-
-					var svg = point.closest("svg");
-					var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
-					if (tooltip) tooltip.style.display = "none";
-				});
-			})(points[p]);
+			return (typeof input_shape_is_image === "function") && input_shape_is_image();
+		} catch (e) {
+			return false;
 		}
+	}
+
+	function _attachPointEvents(point, sampleIndices, isImageData, imageElements, imageDataCache) {
+		point.addEventListener("mouseenter", function (e) {
+			_handlePointEnter(point, sampleIndices, isImageData, imageElements, imageDataCache);
+		});
+		point.addEventListener("mouseleave", function (e) {
+			_handlePointLeave(point);
+		});
+	}
+
+	function _handlePointEnter(point, sampleIndices, isImageData, imageElements, imageDataCache) {
+		var sampleIdx = parseInt(point.getAttribute("data-sample-idx"));
+		var labelIdx = point.getAttribute("data-label");
+		var isMisclassified = point.getAttribute("data-misclassified") === "true";
+
+		// Enlarge point (all are circles now)
+		point.setAttribute("r", "7");
+		point.setAttribute("opacity", "1");
+		point.style.filter = "drop-shadow(0 0 4px rgba(255,255,255,0.5))";
+
+		var svg = point.closest("svg");
+		var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
+		if (!tooltip) return;
+
+		var realImageIdx = sampleIndices[sampleIdx];
+		var tooltipHTML = _buildTooltipHTML(sampleIdx, labelIdx, isMisclassified, realImageIdx, isImageData, imageElements, imageDataCache);
+
+		tooltip.innerHTML = tooltipHTML;
+		tooltip.style.display = "block";
+		tooltip.style.borderColor = isMisclassified ? "#ff4444" : "#3498db";
+
+		_positionTooltip(point, svg, tooltip);
+	}
+
+	function _handlePointLeave(point) {
+		point.setAttribute("r", "4");
+		point.setAttribute("opacity", point.getAttribute("data-misclassified") === "true" ? "0.85" : "0.65");
+		point.style.filter = "";
+
+		var svg = point.closest("svg");
+		var tooltip = svg ? svg.parentElement.querySelector(".dimriver_tooltip") : null;
+		if (tooltip) tooltip.style.display = "none";
+	}
+
+	function _buildTooltipHTML(sampleIdx, labelIdx, isMisclassified, realImageIdx, isImageData, imageElements, imageDataCache) {
+		var tooltipHTML = "";
+
+		var labelName = _getLabelName(labelIdx);
+		var imgEl = (realImageIdx !== undefined) ? imageElements[realImageIdx] : null;
+
+		if (isImageData && imgEl) {
+			if (!imageDataCache[realImageIdx]) {
+				imageDataCache[realImageIdx] = _imageToDataURL(imgEl, 80);
+			}
+			var dataUrl = imageDataCache[realImageIdx];
+			if (dataUrl) {
+				tooltipHTML += "<img src='" + dataUrl + "' style='display:block;border-radius:4px;margin-bottom:4px;max-width:80px;max-height:80px;image-rendering:pixelated;'/>";
+			}
+		}
+
+		tooltipHTML += "<div style='font-size:11px;color:#ccc;text-align:center;'>";
+		tooltipHTML += "<strong>" + _escapeHtml(labelName) + "</strong><br>";
+		tooltipHTML += "<span style='opacity:0.6;'>Sample #" + realImageIdx + "</span>";
+
+		if (isMisclassified) {
+			var predictedLabel = _getPredictedLabel(sampleIdx);
+			tooltipHTML += "<br><span style='color:#ff4444;font-weight:bold;'>✗ Misclassified</span>";
+			if (predictedLabel) {
+				tooltipHTML += "<br><span style='color:#ff8888;'>Predicted: " + _escapeHtml(predictedLabel) + "</span>";
+			}
+		} else {
+			tooltipHTML += "<br><span style='color:#44ff44;'>✓ Correct</span>";
+		}
+
+		tooltipHTML += "</div>";
+		return tooltipHTML;
+	}
+
+	function _getLabelName(labelIdx) {
+		try {
+			if (typeof labels !== "undefined" && labels[labelIdx]) {
+				return labels[labelIdx];
+			}
+		} catch (e) {}
+		return "Class " + labelIdx;
+	}
+
+	function _getPredictedLabel(sampleIdx) {
+		try {
+			if (_state.cachedActivations && _state.cachedActivations.predictedLabels) {
+				var predIdx = _state.cachedActivations.predictedLabels[sampleIdx];
+				if (typeof labels !== "undefined" && labels[predIdx]) {
+					return labels[predIdx];
+				}
+				return "Class " + predIdx;
+			}
+		} catch (e) {}
+		return "";
+	}
+
+	function _positionTooltip(point, svg, tooltip) {
+		var wrapperRect = svg.parentElement.getBoundingClientRect();
+		var ptCTM = point.getBoundingClientRect();
+
+		var tooltipX = ptCTM.left - wrapperRect.left + ptCTM.width / 2 + 10;
+		var tooltipY = ptCTM.top - wrapperRect.top - 10;
+
+		tooltip.style.left = tooltipX + "px";
+		tooltip.style.top = tooltipY + "px";
+		tooltip.style.transform = "translateY(-100%)";
 	}
 
 	function _riverOverviewSVG(results) {
