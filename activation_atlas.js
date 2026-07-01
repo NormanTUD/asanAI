@@ -1260,7 +1260,7 @@ var ActivationAtlas = (function () {
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		container.appendChild(wrapper);
-		_bindCanvasEvents();
+		//_bindCanvasEvents();
 	}
 
 
@@ -1385,6 +1385,7 @@ var ActivationAtlas = (function () {
 		zoomBar.className = "atlas_zoom_bar";
 
 		var zoomOut = document.createElement("button");
+		/*
 		zoomOut.className = "atlas_btn";
 		zoomOut.textContent = "−";
 		zoomOut.onclick = function () {
@@ -1406,6 +1407,7 @@ var ActivationAtlas = (function () {
 			_drawAtlas();
 		};
 		zoomBar.appendChild(zoomIn);
+		*/
 
 		return zoomBar;
 	}
