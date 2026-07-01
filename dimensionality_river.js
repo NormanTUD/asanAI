@@ -642,9 +642,12 @@ var DimensionalityRiver = (function () {
 		}
 		_lastRenderTime = Date.now();
 
-		// Show loading state
-		container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_calculating'></span>...</div></div>";
-		_triggerTranslations();
+		// If container is empty (first render), show loading
+		// Otherwise keep existing content visible during computation
+		if (!container.querySelector(".dimriver_container")) {
+			container.innerHTML = "<div class='dimriver_container'><div class='dimriver_loading'><span class='TRANSLATEME_calculating'></span>...</div></div>";
+			_triggerTranslations();
+		}
 
 		// Use setTimeout to allow UI to update before heavy computation
 		setTimeout(function () {
@@ -675,8 +678,27 @@ var DimensionalityRiver = (function () {
 		return container;
 	}
 
+	function _smoothSwap(container, newHtml) {
+		// If container has existing content, crossfade
+		var existing = container.querySelector(".dimriver_container");
+		if (existing) {
+			// Create new content off-screen, then swap with opacity transition
+			existing.classList.add("dimriver_fade_out");
+			setTimeout(function () {
+				container.innerHTML = newHtml;
+				// Force reflow then add fade-in
+				var newEl = container.querySelector(".dimriver_container");
+				if (newEl) {
+					newEl.classList.add("dimriver_fade_in");
+				}
+			}, 120); // Short fade-out duration
+		} else {
+			container.innerHTML = newHtml;
+		}
+	}
+
 	function _renderResult(container, result) {
-		var html = "<div class='dimriver_container'>";
+		var html = "<div class='dimriver_container dimriver_fade_in'>";
 
 		// Header
 		html += "<div class='dimriver_header'>";
@@ -691,7 +713,7 @@ var DimensionalityRiver = (function () {
 		if (result.error) {
 			html += "<div class='dimriver_error'><span class='TRANSLATEME_" + result.error + "'></span></div>";
 			html += "</div>";
-			container.innerHTML = html;
+			_smoothSwap(container, html);
 			_triggerTranslations();
 			return;
 		}
@@ -752,8 +774,8 @@ var DimensionalityRiver = (function () {
 		}
 
 		html += "</div>";
-		container.innerHTML = html;
 
+		_smoothSwap(container, html);
 		_bindSliders();
 		_triggerTranslations();
 	}
@@ -923,7 +945,11 @@ var DimensionalityRiver = (function () {
 			".dimriver_good { color: #27ae60; }",
 			".dimriver_moderate { color: #f39c12; }",
 			".dimriver_poor { color: #e74c3c; }",
-			".dimriver_info { color: #3498db; opacity: 0.7; }"
+			".dimriver_info { color: #3498db; opacity: 0.7; }",
+			".dimriver_container { padding: 16px; font-family: inherit; opacity: 1; transition: opacity 0.15s ease-in-out; }",
+			".dimriver_fade_out { opacity: 0.3; transition: opacity 0.12s ease-out; }",
+			".dimriver_fade_in { animation: dimriver_fadein 0.2s ease-in-out; }",
+			"@keyframes dimriver_fadein { from { opacity: 0.3; } to { opacity: 1; } }",
 		].join("\n");
 		document.head.appendChild(style);
 	}
