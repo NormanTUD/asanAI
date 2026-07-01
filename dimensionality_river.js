@@ -1051,35 +1051,6 @@ var DimensionalityRiver = (function () {
 	}
 
 	// ============================================================
-	// AUTO-UPDATE
-	// ============================================================
-
-	function startAutoUpdate(intervalMs) {
-		stopAutoUpdate();
-		_state.autoUpdateTimer = setInterval(function () {
-			try { _state.cachedActivations = null; render(_state.container); } catch (e) { }
-		}, intervalMs || 8000);
-	}
-
-	function stopAutoUpdate() {
-		if (_state.autoUpdateTimer) {
-			clearInterval(_state.autoUpdateTimer);
-			_state.autoUpdateTimer = null;
-		}
-	}
-
-	function toggleAutoUpdate() {
-		if (_state.autoUpdateTimer) stopAutoUpdate();
-		else startAutoUpdate();
-		render(_state.container);
-	}
-
-	function refresh() {
-		_state.cachedActivations = null;
-		render(_state.container);
-	}
-
-	// ============================================================
 	// STYLES
 	// ============================================================
 
@@ -1228,7 +1199,7 @@ var DimensionalityRiver = (function () {
 				_lastRenderTime = Date.now();
 				render(_state.container);
 			} catch (e) { }
-		}, intervalMs || 8000);
+		}, intervalMs || 5000);
 	}
 
 	function stopAutoUpdate() {
