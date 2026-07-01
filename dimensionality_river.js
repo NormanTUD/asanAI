@@ -480,11 +480,13 @@ var DimensionalityRiver = (function () {
 				}
 			}
 
-			var embedded = _tsne(truncatedPoints, {
+			const opts = {
 				perplexity: Math.min(_state.perplexity, Math.floor(truncatedPoints.length / 3)),
 				iterations: _state.iterations,
 				learningRate: _state.learningRate
-			});
+			};
+
+			var embedded = _tsne(truncatedPoints, opts);
 
 			var silhouette = _computeSilhouetteScore(embedded, data.labels);
 			var centroids = _computeClassCentroids(embedded, data.labels);
