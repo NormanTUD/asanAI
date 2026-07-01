@@ -1255,8 +1255,6 @@ function show_or_hide_photos_depending_on_if_index(index) {
 }
 
 async function wait_for_updated_page(seconds) {
-	dbg("Started waiting for updated page...");
-
 	let waited = 0;
 	while (waiting_updated_page_uuids.length) {
 		if (waited % 2000 === 0 && waited > 0) {
@@ -1269,8 +1267,6 @@ async function wait_for_updated_page(seconds) {
 			break;
 		}
 	}
-
-	dbg("Finished waiting for updated page.");
 }
 
 function init_download_link() {
