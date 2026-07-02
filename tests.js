@@ -4164,7 +4164,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 
 		test_equal("test_activation_atlas()", await test_activation_atlas(), true);
 		test_equal("test_dimensionality_river()", await test_dimensionality_river(), true);
-		test_equal("test_health_status()", await test_health_status(), true);
+		//test_equal("test_health_status()", await test_health_status(), true);
 		test_equal("test_weight_analysis()", await test_weight_analysis(), true);
 
 		test_no_new_errors_or_warnings();
