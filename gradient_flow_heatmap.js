@@ -650,22 +650,58 @@ var GradientFlowHeatmap = (function () {
 
 		var layers = latestRecord.layers;
 		var norms = layers.map(function (l) { return l.gradNorm; });
+		var totalLayers = norms.length;
 		var positiveNorms = norms.filter(function (n) { return n > 0; });
+		var zeroNorms = norms.filter(function (n) { return n === 0 || n < 1e-30; });
 
-		if (positiveNorms.length === 0) return null;
+		if (positiveNorms.length === 0) {
+			// ALL layers have zero gradient — completely dead network
+			return {
+				status: "vanishing",
+				ratio: Infinity,
+				maxNorm: 0,
+				minNorm: 0,
+				zeroLayerCount: totalLayers,
+				totalLayerCount: totalLayers
+			};
+		}
 
 		var maxNorm = Math.max.apply(null, norms);
-		var minNorm = Math.min.apply(null, positiveNorms);
+		var minNorm = positiveNorms.length > 0 ? Math.min.apply(null, positiveNorms) : 0;
 		var ratio = (minNorm > 0 && maxNorm > 0) ? maxNorm / minNorm : 1;
 
-		return _classifyGradientHealth(maxNorm, minNorm, ratio);
+		return _classifyGradientHealth(maxNorm, minNorm, ratio, zeroNorms.length, totalLayers, norms);
 	}
 
-	function _classifyGradientHealth(maxNorm, minNorm, ratio) {
+	function _classifyGradientHealth(maxNorm, minNorm, ratio, zeroLayerCount, totalLayerCount, norms) {
 		var status = "healthy";
 		var message = "";
 
-		if (maxNorm > 1e4) {
+		// --- NEW: Detect layers with zero/near-zero gradients (dying ReLU, dead layers) ---
+		// If ANY layer has zero gradient while others don't, that's a vanishing gradient problem
+		var nearZeroThreshold = 1e-10;
+		var nearZeroCount = 0;
+		if (norms) {
+			for (var i = 0; i < norms.length; i++) {
+				if (norms[i] < nearZeroThreshold) {
+					nearZeroCount++;
+				}
+			}
+		} else {
+			nearZeroCount = zeroLayerCount;
+		}
+
+		var fractionDead = nearZeroCount / totalLayerCount;
+
+		if (nearZeroCount > 0 && nearZeroCount < totalLayerCount) {
+			// Some layers receive gradient, some don't — classic vanishing/dying ReLU
+			status = "vanishing";
+			message = nearZeroCount + " of " + totalLayerCount + " layers have near-zero gradients (dead). Gradient is not flowing through the full network. Consider using residual connections, batch normalization, or different activation functions.";
+		} else if (nearZeroCount === totalLayerCount) {
+			// All layers dead
+			status = "vanishing";
+			message = "All layers have zero gradients. The network is completely unable to learn. Check for dying ReLU, extreme bias values, or disconnected layers.";
+		} else if (maxNorm > 1e4) {
 			status = "exploding";
 			message = "Gradient magnitudes are extremely large (max: " + maxNorm.toExponential(2) + "). Consider reducing learning rate or adding gradient clipping.";
 		} else if (minNorm < 1e-8 && maxNorm > 1e-2) {
@@ -674,11 +710,22 @@ var GradientFlowHeatmap = (function () {
 		} else if (ratio > 1e4) {
 			status = "vanishing";
 			message = "Gradient ratio across layers is " + ratio.toExponential(1) + "\u00d7. Early layers may not be learning effectively.";
+		} else if (fractionDead > 0) {
+			// Catch edge case: some layers are near-zero but didn't trigger above
+			status = "vanishing";
+			message = nearZeroCount + " of " + totalLayerCount + " layers have negligible gradients.";
 		} else {
 			message = "Gradient flow looks healthy. All layers are receiving meaningful gradient signal.";
 		}
 
-		return { status: status, ratio: ratio, maxNorm: maxNorm, minNorm: minNorm };
+		return {
+			status: status,
+			ratio: ratio,
+			maxNorm: maxNorm,
+			minNorm: minNorm,
+			zeroLayerCount: nearZeroCount,
+			totalLayerCount: totalLayerCount
+		};
 	}
 
 	// ============================================================
