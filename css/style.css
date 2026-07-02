@@ -2555,3 +2555,7 @@ td.confusion_matrix_tx.cm-zero {
 	color: var(--cm-zero-color);
 	font-weight: 500;
 }
+
+.ui-tabs .ui-tabs-panel[aria-hidden="true"] {
+	display: none !important;
+}
