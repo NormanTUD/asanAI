@@ -970,7 +970,22 @@
 		       "atlas_tab_done" => "Atlas generation complete.",
 		       "atlas_tab_stopped" => "Atlas generation stopped by user.",
 		       "atlas_tab_no_model" => "No model available. Please create or load a model first.",
-		       "activation_atlas" => "Activation Atlas"
+		       "activation_atlas" => "Activation Atlas",
+		       "gflow_title" => "Gradient Flow",
+		       "gflow_subtitle" => "Visualizes the L2 norm of gradients per layer. Bright = strong gradient signal (learning). Dark = weak gradient (stuck). Monitors vanishing/exploding gradient problems in real-time.",
+		       "gflow_waiting" => "Waiting for model and data...",
+		       "gflow_waiting_sub" => "Load a model and training data, then call this visualization during or after training.",
+		       "gflow_low_gradient" => "Low gradient",
+		       "gflow_high_gradient" => "High gradient",
+		       "gflow_log_scale" => "(log scale)",
+		       "gflow_max_norm" => "Max Gradient Norm",
+		       "gflow_min_norm" => "Min Gradient Norm",
+		       "gflow_mean_norm" => "Mean Gradient Norm",
+		       "gflow_layer_ratio" => "Layer Ratio (max/min)",
+		       "gflow_snapshots" => "snapshots",
+		       "gflow_healthy" => "Gradient flow looks healthy. All layers are receiving meaningful gradient signal.",
+		       "gflow_exploding" => "Gradient magnitudes are extremely large. Consider reducing learning rate or adding gradient clipping.",
+		       "gflow_vanishing" => "Some layers have near-zero gradients. Consider using residual connections, batch normalization, or different activation functions.",
 		),
 
 		'de' => array(
@@ -1942,7 +1957,22 @@
 			"atlas_tab_done" => "Atlas-Generierung abgeschlossen.",
 			"atlas_tab_stopped" => "Atlas-Generierung vom Benutzer gestoppt.",
 			"atlas_tab_no_model" => "Kein Modell verfügbar. Bitte erstellen oder laden Sie zuerst ein Modell.",
-			"activation_atlas" => "Aktivierungsatlas"
+			"activation_atlas" => "Aktivierungsatlas",
+			"gflow_title" => "Gradientenfluss",
+			"gflow_subtitle" => "Visualisiert die L2-Norm der Gradienten pro Layer. Hell = starkes Gradientensignal (lernt). Dunkel = schwaches Signal (steckt fest). Überwacht Vanishing/Exploding-Gradient-Probleme in Echtzeit.",
+			"gflow_waiting" => "Warte auf Modell und Daten...",
+			"gflow_waiting_sub" => "Lade ein Modell und Trainingsdaten, dann rufe diese Visualisierung während oder nach dem Training auf.",
+			"gflow_low_gradient" => "Niedriger Gradient",
+			"gflow_high_gradient" => "Hoher Gradient",
+			"gflow_log_scale" => "(Log-Skala)",
+			"gflow_max_norm" => "Max. Gradientennorm",
+			"gflow_min_norm" => "Min. Gradientennorm",
+			"gflow_mean_norm" => "Mittlere Gradientennorm",
+			"gflow_layer_ratio" => "Layer-Verhältnis (max/min)",
+			"gflow_snapshots" => "Schnappschüsse",
+			"gflow_healthy" => "Gradientenfluss sieht gesund aus. Alle Layer erhalten ein sinnvolles Gradientensignal.",
+			"gflow_exploding" => "Gradientenmagnitude ist extrem groß. Erwäge, die Lernrate zu reduzieren oder Gradient Clipping hinzuzufügen.",
+			"gflow_vanishing" => "Einige Layer haben nahezu Null-Gradienten. Erwäge Residual-Verbindungen, Batch-Normalisierung oder andere Aktivierungsfunktionen.",
 		)
 	);
 

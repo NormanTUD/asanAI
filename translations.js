@@ -136,6 +136,8 @@ async function update_translations(force=0) {
 
 	if (typeof show_visual_explanations === 'function') {
 		await show_visual_explanations(wd);
+
+		GradientFlowHeatmap.reset();
 	}
 }
 
