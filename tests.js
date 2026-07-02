@@ -3341,6 +3341,113 @@ async function test_activation_atlas() {
 	}
 }
 
+async function test_dimensionality_river() {
+	log_test("Test signs example visibility with max_files=1 and epochs=10");
+
+	await set_dataset_and_wait("signs");
+	await delay(3000);
+
+	$("#max_number_of_files_per_category").val(1).trigger("change");
+
+	$("#jump_to_interesting_tab").prop("checked", false);
+
+	$("#visualization_tab_label").click();
+
+	$("#dimensionality_river_tab_label").click();
+
+	await delay(1000);
+
+	const wanted_epochs = 2;
+
+	set_epochs(wanted_epochs);
+
+	await delay(3000);
+
+	if ($("#dataset").val() !== "signs") {
+		err("test_signs_example_visibility: dataset selector does not show 'signs', got: " + $("#dataset").val());
+		return false;
+	}
+
+	var epoch_val = parseInt($("#epochs").val());
+	if (epoch_val !== wanted_epochs) {
+		err(`test_signs_example_visibility: epochs is not ${wanted_epochs}, got: ${epoch_val}`);
+		return false;
+	}
+
+	var max_files_val = parseInt($("#max_number_of_files_per_category").val());
+	if (max_files_val !== 1) {
+		err("test_signs_example_visibility: max_number_of_files_per_category is not 1, got: " + max_files_val);
+		return false;
+	}
+
+	if (!$(".train_neural_network_button").length) {
+		err("test_signs_example_visibility: .train_neural_network_button not found");
+		return false;
+	}
+
+	if ($(".train_neural_network_button").prop("disabled")) {
+		err("test_signs_example_visibility: .train_neural_network_button is disabled");
+		return false;
+	}
+
+	if (!$(".layer_setting").length) {
+		err("test_signs_example_visibility: No .layer_setting elements found");
+		return false;
+	}
+
+	if (!$(".layer_type").length) {
+		err("test_signs_example_visibility: No .layer_type elements found");
+		return false;
+	}
+
+	const ret = await train_neural_network();
+
+	if (!is_valid_ret_object(ret, wanted_epochs)) {
+		err("test_signs_example_visibility: Training did not complete successfully");
+		return false;
+	}
+
+	await delay(5000);
+
+	if(!$("#dimensionality_river").length) {
+		err("#dimensionality_river not found");
+		return false;
+	}
+
+	if(!$(".dimriver_grid").length) {
+		err(".dimriver_grid doesn't exist");
+		return false;
+	}
+
+	await delay(10000);
+
+	const model_layers_length = model.layers.length;
+	const dimriver_grid_length = $(".dimriver_card").length;
+
+	if(!dimriver_grid_length) {
+		err(".dimriver_grid length is zero");
+		return false;
+	}
+
+	if(dimriver_grid_length != model_layers_length) {
+		err(`model_layers_length (${model_layers_length}) is not the same as dimriver_grid_length (${dimriver_grid_length})`);
+		return false;
+	}
+
+	const nr_of_dimriver_svg = $(".dimriver_svg").length - 1;
+
+	if(nr_of_dimriver_svg != model_layers_length) {
+		err(`nr_of_dimriver_svg (${nr_of_dimriver_svg}) is not the same as model_layers_length (${model_layers_length})`);
+		return false;
+	}
+
+	await test_if_python_code_is_valid();
+
+	test_no_new_errors_or_warnings();
+
+	return true;
+}
+
 async function run_tests (quick=0, disable_webcam=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -3429,6 +3536,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("run_python_code_tests()", await run_python_code_tests(), true);
 
 		test_equal("test_activation_atlas()", await test_activation_atlas(), true);
+		test_equal("test_dimensionality_river()", await test_dimensionality_river(), true);
 
 		test_no_new_errors_or_warnings();
 

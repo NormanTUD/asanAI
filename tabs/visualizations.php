@@ -76,7 +76,7 @@
 	<div id="dimensionality_river" class="tab">
 	</div>
 
-	<div id="activation_atlas" class="tab">
+	<div id="activation_atlas" class="tab" style="display: none">
 	</div>
 
 	<div id="weight_analysis" class="tab">
