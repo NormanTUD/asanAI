@@ -1171,13 +1171,6 @@ var ActivationAtlas = (function () {
 	}
 
 	// ============================================================
-	// FINAL UI - shown after generation completes or is stopped
-	// (preserves the canvas and generated cells)
-	// ============================================================
-
-
-
-	// ============================================================
 	// LIVE UI - shown during generation
 	// ============================================================
 
