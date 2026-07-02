@@ -12,7 +12,7 @@ var GradientFlowHeatmap = (function () {
     var _state = {
         container: null,
         history: [],
-        maxHistory: 60,
+        maxHistory: 200,
         isComputing: false,
         lastRenderTime: 0,
         animationFrame: null,
@@ -26,11 +26,17 @@ var GradientFlowHeatmap = (function () {
         skeletonBuiltOnce: false,
         suppressEmptyUntil: 0,
         consecutiveFailures: 0,
-        maxConsecutiveFailures: 20,
-        minRenderInterval: 100,
+        maxConsecutiveFailures: 100,
+        minRenderInterval: 300,
         isTraining: false,
         visibilityState: "empty",
-        contentShownOnce: false  // NEW: tracks if we've ever successfully shown content
+        contentShownOnce: false,
+        lastLayerCount: -1,
+        offscreenCanvas: null,
+        offscreenCtx: null,
+        pendingRender: null,
+        frozenDuringCompute: false,
+        lastContainerId: null  // NEW: remember where we render
     };
 
     // ============================================================
@@ -92,6 +98,7 @@ var GradientFlowHeatmap = (function () {
 
     function _getOrCreateContainer(divOrId) {
         if (typeof divOrId === "string" && divOrId !== "") {
+            _state.lastContainerId = divOrId;
             var el = document.getElementById(divOrId);
             if (el) { _state.container = el; return el; }
         } else if (divOrId instanceof HTMLElement) {
@@ -110,41 +117,41 @@ var GradientFlowHeatmap = (function () {
     }
 
     // ============================================================
-    // DOM INTEGRITY CHECK
+    // DOM INTEGRITY CHECK — checks if our root still exists in DOM
     // ============================================================
 
     function _isDomIntact(container) {
         if (!container) return false;
         if (!_state.initialized) return false;
+        // Check the root is still a child of the container AND in the document
         var root = container.querySelector("[data-gflow-root]");
         if (!root) return false;
-        // Only check that root exists and has our marker — don't be too strict
-        // about sub-elements since _attemptMinimalRepair can fix those
+        if (!document.body.contains(root)) return false;
         return true;
     }
 
-
-    function _isCanvasAttached() {
-        if (!_state.heatCanvas) return false;
-        return document.body.contains(_state.heatCanvas);
-    }
-
     // ============================================================
-    // BUILD SKELETON
+    // BUILD SKELETON — only builds if truly needed
     // ============================================================
 
     function _buildSkeleton(container) {
-        // CRITICAL: If we already have a valid root, never rebuild — just repair
+        // If root exists in this container, just repair
         var existingRoot = container.querySelector("[data-gflow-root]");
-        if (existingRoot) {
+        if (existingRoot && document.body.contains(existingRoot)) {
             _attemptMinimalRepair(container);
             _state.initialized = true;
             return;
         }
 
+        // Clear any orphaned content in the container before building
+        // (the container was likely wiped externally, so it's empty or has stale content)
+
         var root = document.createElement("div");
-        root.className = "gflow_container gflow_fade_in";
+        root.className = "gflow_container";
         root.setAttribute("data-gflow-root", "1");
+
+        // CRITICAL: If we have data, build skeleton with content visible, empty hidden
+        var showContent = (_state.history.length > 0 || _state.lastValidHistory.length > 0);
 
         root.innerHTML = [
             "<div class='gflow_header'>",
@@ -153,29 +160,35 @@ var GradientFlowHeatmap = (function () {
             "</div>",
             "<p class='gflow_subtitle'>" + _t("gflow_subtitle", "Visualizes the L2 norm of gradients per layer over time. Helps detect vanishing or exploding gradients.") + "</p>",
             "<div class='gflow_warning gflow_warning_healthy' data-gflow='warning' style='display:none;'></div>",
-            "<div class='gflow_stats_grid' data-gflow='stats' style='display:none;'></div>",
-            "<div class='gflow_canvas_wrap' data-gflow='heatmap_wrap' style='display:none;'></div>",
-            "<div class='gflow_time_axis' data-gflow='time_axis' style='display:none;'><span data-gflow='time_start'></span><span>Time \u2192</span><span data-gflow='time_end'></span></div>",
-            "<div class='gflow_legend' data-gflow='legend' style='display:none;'>",
+            "<div class='gflow_stats_grid' data-gflow='stats' style='" + (showContent ? "" : "display:none;") + "'></div>",
+            "<div class='gflow_canvas_wrap' data-gflow='heatmap_wrap' style='" + (showContent ? "" : "display:none;") + "'></div>",
+            "<div class='gflow_time_axis' data-gflow='time_axis' style='" + (showContent ? "" : "display:none;") + "'><span data-gflow='time_start'></span><span>Time \u2192</span><span data-gflow='time_end'></span></div>",
+            "<div class='gflow_legend' data-gflow='legend' style='" + (showContent ? "" : "display:none;") + "'>",
             "  <span>" + _t("gflow_low_gradient", "Low gradient") + "</span>",
             "  <canvas data-gflow='legend_bar' width='120' height='10' class='gflow_legend_bar'></canvas>",
             "  <span>" + _t("gflow_high_gradient", "High gradient") + "</span>",
             "  <span style='margin-left:12px;opacity:0.5;'>" + _t("gflow_log_scale", "(log scale)") + "</span>",
             "</div>",
-            "<div class='gflow_layer_bars' data-gflow='layer_bars' style='display:none;'></div>",
-            "<div class='gflow_empty' data-gflow='empty'>" + _t("gflow_waiting", "Waiting for model and data...") + "<br><small>" + _t("gflow_waiting_sub", "Load a model and start training to see gradient flow.") + "</small></div>",
+            "<div class='gflow_layer_bars' data-gflow='layer_bars' style='" + (showContent ? "" : "display:none;") + "'></div>",
+            "<div class='gflow_empty' data-gflow='empty' style='" + (showContent ? "display:none;" : "") + "'>" + _t("gflow_waiting", "Waiting for model and data...") + "<br><small>" + _t("gflow_waiting_sub", "Load a model and start training to see gradient flow.") + "</small></div>",
         ].join("\n");
 
-        // Instead of innerHTML = "", append without destroying
-        // Only clear if container has no gflow root at all
         container.appendChild(root);
 
         _renderLegendBar(root);
 
+        // Reset canvas references since we rebuilt
         _state.heatCanvas = null;
         _state.legendCanvas = null;
+        _state.offscreenCanvas = null;
+        _state.offscreenCtx = null;
         _state.initialized = true;
         _state.skeletonBuiltOnce = true;
+
+        // If we have data, set visibility state to content immediately
+        if (showContent) {
+            _state.visibilityState = "content";
+        }
     }
 
     // ============================================================
@@ -185,6 +198,8 @@ var GradientFlowHeatmap = (function () {
     function _attemptMinimalRepair(container) {
         var root = container.querySelector("[data-gflow-root]");
         if (!root) return false;
+
+        var showContent = (_state.history.length > 0 || _state.lastValidHistory.length > 0 || _state.contentShownOnce);
 
         var criticalElements = [
             { attr: "heatmap_wrap", tag: "div", cls: "gflow_canvas_wrap" },
@@ -203,15 +218,10 @@ var GradientFlowHeatmap = (function () {
                 var el = document.createElement(spec.tag);
                 el.className = spec.cls;
                 el.setAttribute("data-gflow", spec.attr);
-                // If we have data, hide empty; if not, hide content elements
-                if (_state.contentShownOnce) {
-                    if (spec.attr === "empty") {
-                        el.style.display = "none";
-                    }
+                if (showContent) {
+                    el.style.display = (spec.attr === "empty") ? "none" : "";
                 } else {
-                    if (spec.attr !== "empty") {
-                        el.style.display = "none";
-                    }
+                    el.style.display = (spec.attr !== "empty") ? "none" : "";
                 }
                 root.appendChild(el);
             }
@@ -229,9 +239,11 @@ var GradientFlowHeatmap = (function () {
             _renderLegendBar(root);
         }
 
-        // Don't null out heatCanvas if it's still attached
+        // Only null out heatCanvas if it's truly gone from the document
         if (_state.heatCanvas && !document.body.contains(_state.heatCanvas)) {
             _state.heatCanvas = null;
+            _state.offscreenCanvas = null;
+            _state.offscreenCtx = null;
         }
 
         _state.initialized = true;
@@ -319,7 +331,6 @@ var GradientFlowHeatmap = (function () {
                 }
             }
         } catch (e) {
-            // Model may have been disposed mid-iteration
             return { weights: [], meta: [] };
         }
 
@@ -421,7 +432,6 @@ var GradientFlowHeatmap = (function () {
 
     function _computeGradients() {
         if (!_canComputeGradients()) {
-            _state.consecutiveFailures++;
             return null;
         }
 
@@ -430,7 +440,7 @@ var GradientFlowHeatmap = (function () {
 
         try {
             result = tf.tidy(function () {
-                // Re-validate inside tidy — state can change between check and execution
+                // Re-validate inside tidy
                 if (!_isDataAvailable() || !_isModelAvailable()) return null;
 
                 var xTensor, yTensor;
@@ -496,9 +506,10 @@ var GradientFlowHeatmap = (function () {
             });
         } catch (e) {
             result = null;
+        } finally {
+            // *** CRITICAL FIX: ALWAYS reset isComputing ***
+            _state.isComputing = false;
         }
-
-        _state.isComputing = false;
 
         if (result && result.layers && result.layers.length > 0) {
             _state.consecutiveFailures = 0;
@@ -510,7 +521,7 @@ var GradientFlowHeatmap = (function () {
     }
 
     // ============================================================
-    // HEATMAP CANVAS RENDERING
+    // HEATMAP CANVAS RENDERING (DOUBLE-BUFFERED)
     // ============================================================
 
     function _computeHeatmapDimensions(numSteps, numLayers) {
@@ -536,6 +547,20 @@ var GradientFlowHeatmap = (function () {
         return { logMin: logMin, logMax: logMax, logRange: logRange };
     }
 
+    function _ensureOffscreenCanvas(width, height) {
+        if (_state.offscreenCanvas &&
+            _state.offscreenCanvas.width === width &&
+            _state.offscreenCanvas.height === height) {
+            return _state.offscreenCanvas;
+        }
+
+        _state.offscreenCanvas = document.createElement("canvas");
+        _state.offscreenCanvas.width = width;
+        _state.offscreenCanvas.height = height;
+        _state.offscreenCtx = _state.offscreenCanvas.getContext("2d");
+        return _state.offscreenCanvas;
+    }
+
     function _renderHeatmapInPlace(canvas, history) {
         if (!canvas || history.length === 0) return;
         if (!history[0].layers || history[0].layers.length === 0) return;
@@ -544,24 +569,30 @@ var GradientFlowHeatmap = (function () {
         var numSteps = history.length;
         var dims = _computeHeatmapDimensions(numSteps, numLayers);
 
+        // Ensure the visible canvas has correct dimensions
         if (canvas.width !== dims.width || canvas.height !== dims.height) {
             canvas.width = dims.width;
             canvas.height = dims.height;
             canvas.style.height = dims.height + "px";
         }
 
-        var ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, dims.width, dims.height);
-
         var range = _computeLogRange(history);
         if (!range) return;
+
+        // DOUBLE BUFFER: Render to offscreen canvas first, then copy in one
+        // operation. This eliminates flicker from clearRect + progressive draw.
+        var offscreen = _ensureOffscreenCanvas(dims.width, dims.height);
+        var ctx = _state.offscreenCtx;
+        ctx.clearRect(0, 0, dims.width, dims.height);
 
         var cellW = dims.width / numSteps;
         var cellH = dims.height / numLayers;
 
         for (var t = 0; t < numSteps; t++) {
-            for (var l = 0; l < history[t].layers.length; l++) {
-                var norm = history[t].layers[l].gradNorm;
+            var record = history[t];
+            if (!record || !record.layers) continue;
+            for (var l = 0; l < Math.min(record.layers.length, numLayers); l++) {
+                var norm = record.layers[l].gradNorm;
                 var logNorm = Math.log10(Math.max(norm, 1e-12));
                 var normalized = (logNorm - range.logMin) / range.logRange;
                 normalized = Math.max(0, Math.min(1, normalized));
@@ -575,6 +606,11 @@ var GradientFlowHeatmap = (function () {
                 );
             }
         }
+
+        // Single atomic copy to visible canvas — no flicker
+        var visibleCtx = canvas.getContext("2d");
+        visibleCtx.clearRect(0, 0, dims.width, dims.height);
+        visibleCtx.drawImage(offscreen, 0, 0);
     }
 
     // ============================================================
@@ -666,7 +702,10 @@ var GradientFlowHeatmap = (function () {
             snapshotCount = _state.lastValidHistory.length;
         }
         var timeStr = new Date().toLocaleTimeString();
-        metaEl.textContent = snapshotCount + " snapshots \u00b7 " + timeStr;
+        var newText = snapshotCount + " snapshots \u00b7 " + timeStr;
+        if (metaEl.textContent !== newText) {
+            metaEl.textContent = newText;
+        }
     }
 
     function _updateWarning(warningEl, diagnosis) {
@@ -674,13 +713,19 @@ var GradientFlowHeatmap = (function () {
         if (!diagnosis) { _hideElement(warningEl); return; }
 
         _showElement(warningEl);
-        warningEl.className = "gflow_warning " + (
+        var newClass = "gflow_warning " + (
             diagnosis.status === "exploding" ? "gflow_warning_exploding" :
             diagnosis.status === "vanishing" ? "gflow_warning_vanishing" : "gflow_warning_healthy"
         );
+        if (warningEl.className !== newClass) {
+            warningEl.className = newClass;
+        }
         var icon = diagnosis.status === "exploding" ? "\ud83d\udd25" :
             diagnosis.status === "vanishing" ? "\u26a0\ufe0f" : "\u2705";
-        warningEl.textContent = icon + " " + diagnosis.message;
+        var newText = icon + " " + diagnosis.message;
+        if (warningEl.textContent !== newText) {
+            warningEl.textContent = newText;
+        }
     }
 
     function _updateStatsCards(statsEl, latest, diagnosis) {
@@ -712,27 +757,26 @@ var GradientFlowHeatmap = (function () {
         } else {
             for (var si = 0; si < 4; si++) {
                 var valEl = statsEl.querySelector("[data-gflow-stat='" + si + "']");
-                if (valEl) valEl.textContent = statValues[si];
+                if (valEl && valEl.textContent !== statValues[si]) {
+                    valEl.textContent = statValues[si];
+                }
             }
         }
     }
 
     function _ensureHeatCanvas(heatmapWrap) {
-        // If canvas exists and is still in the DOM inside our wrap, reuse it
         if (_state.heatCanvas && document.body.contains(_state.heatCanvas)) {
             if (heatmapWrap.contains(_state.heatCanvas)) {
                 return _state.heatCanvas;
             }
         }
 
-        // Check if there's already a canvas in the wrap we can reuse
         var existing = heatmapWrap.querySelector("canvas.gflow_canvas");
         if (existing) {
             _state.heatCanvas = existing;
             return existing;
         }
 
-        // Create new canvas — append, don't replace
         _state.heatCanvas = document.createElement("canvas");
         _state.heatCanvas.className = "gflow_canvas";
         _state.heatCanvas.style.width = "100%";
@@ -780,8 +824,14 @@ var GradientFlowHeatmap = (function () {
             _showElement(timeAxisEl);
             var startEl = timeAxisEl.querySelector("[data-gflow='time_start']");
             var endEl = timeAxisEl.querySelector("[data-gflow='time_end']");
-            if (startEl) startEl.textContent = new Date(historyToUse[0].timestamp).toLocaleTimeString();
-            if (endEl) endEl.textContent = new Date(historyToUse[historyToUse.length - 1].timestamp).toLocaleTimeString();
+            if (startEl) {
+                var newStart = new Date(historyToUse[0].timestamp).toLocaleTimeString();
+                if (startEl.textContent !== newStart) startEl.textContent = newStart;
+            }
+            if (endEl) {
+                var newEnd = new Date(historyToUse[historyToUse.length - 1].timestamp).toLocaleTimeString();
+                if (endEl.textContent !== newEnd) endEl.textContent = newEnd;
+            }
         } else {
             _hideElement(timeAxisEl);
         }
@@ -825,7 +875,10 @@ var GradientFlowHeatmap = (function () {
                     barEl.style.backgroundColor = barColor;
                 }
                 if (valEl) {
-                    valEl.textContent = layer.gradNorm.toExponential(2);
+                    var newText = layer.gradNorm.toExponential(2);
+                    if (valEl.textContent !== newText) {
+                        valEl.textContent = newText;
+                    }
                 }
             }
         }
@@ -860,6 +913,7 @@ var GradientFlowHeatmap = (function () {
             _state.lastValidHistory = _state.history.slice();
             _state.contentShownOnce = true;
         } else if (_state.lastValidRecord) {
+            // Use last valid data instead of showing empty
             latest = _state.lastValidRecord;
             hasData = true;
         }
@@ -875,18 +929,18 @@ var GradientFlowHeatmap = (function () {
         var metaEl = root.querySelector("[data-gflow='meta']");
 
         if (!hasData) {
-            // During training or if we've shown content, never flash empty
-            if (_state.isTraining && _state.contentShownOnce) {
+            // CRITICAL: During training, NEVER show empty state
+            if (_state.isTraining) {
+                return;
+            }
+            // If we've ever shown content, suppress empty unless massive failure streak
+            if (_state.contentShownOnce && _state.consecutiveFailures < _state.maxConsecutiveFailures) {
                 return;
             }
             if (Date.now() < _state.suppressEmptyUntil) {
                 return;
             }
-            if (_state.consecutiveFailures < _state.maxConsecutiveFailures && _state.contentShownOnce) {
-                return;
-            }
 
-            // Only transition to empty if we're not already showing empty
             if (_state.visibilityState !== "empty") {
                 _showElement(emptyEl);
                 _hideElement(statsEl);
@@ -903,17 +957,25 @@ var GradientFlowHeatmap = (function () {
         // Debounce — but never block the first transition from empty to content
         var now = Date.now();
         if (_state.visibilityState === "content" && now - _state.lastRenderTime < _state.minRenderInterval) {
+            if (!_state.pendingRender) {
+                _state.pendingRender = setTimeout(function () {
+                    _state.pendingRender = null;
+                    if (_state.container && document.body.contains(_state.container)) {
+                        _updateDOM(_state.container);
+                    }
+                }, _state.minRenderInterval);
+            }
             return;
         }
 
-        // Show content sections (no-op if already visible — no flicker)
+        // Show content sections
         _hideElement(emptyEl);
         _showElement(statsEl);
         _showElement(heatmapWrap);
         _showElement(layerBarsEl);
         _showElement(legendEl);
 
-        // Update each section in-place (no innerHTML replacement)
+        // Update each section in-place
         _updateMeta(metaEl);
 
         var diagnosis = _diagnose(latest);
@@ -940,9 +1002,16 @@ var GradientFlowHeatmap = (function () {
         // Attempt gradient computation
         var newRecord = _computeGradients();
         if (newRecord && newRecord.layers && newRecord.layers.length > 0) {
-            if (_state.history.length > 0 &&
-                _state.history[_state.history.length - 1].layers.length !== newRecord.layers.length) {
-                _state.history = [];
+            var currentLayerCount = newRecord.layers.length;
+            if (_state.history.length > 0) {
+                var lastLayerCount = _state.history[_state.history.length - 1].layers.length;
+                if (lastLayerCount !== currentLayerCount) {
+                    // Layer count changed — save backup before clearing
+                    _state.lastValidHistory = _state.history.slice();
+                    _state.lastValidRecord = _state.history[_state.history.length - 1];
+                    _state.history = [];
+                    _state.lastLayerCount = currentLayerCount;
+                }
             }
 
             _state.history.push(newRecord);
@@ -953,12 +1022,9 @@ var GradientFlowHeatmap = (function () {
             _state.consecutiveFailures = 0;
         }
 
-        // Build or repair skeleton — never destroys existing content
+        // Build or repair skeleton
         if (!_isDomIntact(container)) {
             _buildSkeleton(container);
-        } else {
-            // Ensure all sub-elements exist (cheap check)
-            _attemptMinimalRepair(container);
         }
 
         // Update DOM in-place
@@ -966,7 +1032,6 @@ var GradientFlowHeatmap = (function () {
 
         return container;
     }
-
 
     // ============================================================
     // PUBLIC API
@@ -977,6 +1042,10 @@ var GradientFlowHeatmap = (function () {
     }
 
     gradientFlow.reset = function () {
+        if (_state.pendingRender) {
+            clearTimeout(_state.pendingRender);
+            _state.pendingRender = null;
+        }
         _state.history = [];
         _state.lastValidRecord = null;
         _state.lastValidHistory = [];
@@ -984,12 +1053,16 @@ var GradientFlowHeatmap = (function () {
         _state.initialized = false;
         _state.heatCanvas = null;
         _state.legendCanvas = null;
+        _state.offscreenCanvas = null;
+        _state.offscreenCtx = null;
         _state.consecutiveFailures = 0;
+        _state.isComputing = false;
         _state.isTraining = false;
         _state.renderLock = false;
         _state.visibilityState = "empty";
         _state.skeletonBuiltOnce = false;
         _state.contentShownOnce = false;
+        _state.lastLayerCount = -1;
         if (_state.container) {
             _state.container.innerHTML = "";
         }
@@ -997,12 +1070,14 @@ var GradientFlowHeatmap = (function () {
 
     gradientFlow.onTrainingStart = function () {
         _state.isTraining = true;
+        _state.isComputing = false;  // CRITICAL: Reset computing lock
         _state.consecutiveFailures = 0;
-        _state.suppressEmptyUntil = Date.now() + 2000;
+        _state.suppressEmptyUntil = Date.now() + 30000;
     };
 
     gradientFlow.onTrainingEnd = function () {
         _state.isTraining = false;
+        _state.isComputing = false;  // CRITICAL: Reset computing lock
         _state.consecutiveFailures = 0;
         if (_state.history.length > 0) {
             _state.lastValidRecord = _state.history[_state.history.length - 1];
@@ -1010,10 +1085,15 @@ var GradientFlowHeatmap = (function () {
             _state.hasEverRendered = true;
             _state.contentShownOnce = true;
         }
+        if (_state.pendingRender) {
+            clearTimeout(_state.pendingRender);
+            _state.pendingRender = null;
+        }
     };
 
     gradientFlow.onEpochBoundary = function () {
-        _state.suppressEmptyUntil = Date.now() + 200;
+        _state.isComputing = false;  // CRITICAL: Reset computing lock at epoch boundary
+        _state.suppressEmptyUntil = Date.now() + 10000;
     };
 
     gradientFlow.getHistory = function () {
