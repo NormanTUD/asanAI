@@ -488,9 +488,7 @@ var GradientFlowHeatmap = (function () {
 
                 if (!gradsResult || !gradsResult.grads) return null;
 
-                var layerGradients = _aggregateLayerGradients(
-                    weightInfo.weights, weightInfo.meta, gradsResult.grads
-                );
+                var layerGradients = _aggregateLayerGradients(weightInfo.weights, weightInfo.meta, gradsResult.grads);
 
                 if (gradsResult.value && !gradsResult.value.isDisposed) {
                     gradsResult.value.dispose();
