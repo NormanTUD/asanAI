@@ -797,7 +797,6 @@ var GradientFlowHeatmap = (function () {
 			"<span class='TRANSLATEME_gflow_layer_ratio_label'></span>"
 		];
 
-
 		var existingCards = statsEl.querySelectorAll(".gflow_stat_card");
 		if (existingCards.length !== 4) {
 			statsEl.innerHTML = "";

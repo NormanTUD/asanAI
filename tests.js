@@ -2334,7 +2334,6 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 	    click()
 	;
 
-
 	await delay(3000);
 
 	await wait_for_updated_page(3);
