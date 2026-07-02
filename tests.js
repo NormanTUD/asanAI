@@ -3198,6 +3198,149 @@ async function run_python_code_tests() {
 	return true;
 }
 
+async function test_activation_atlas() {
+	await set_dataset_and_wait("signs");
+	await delay(3000);
+
+	try {
+		var old_errs = num_errs;
+		var old_wrns = num_wrns;
+
+		// Requires a model to be loaded
+		if (typeof model === "undefined" || !model || !model.layers) {
+			console.error("[test_activation_atlas] No model available");
+			return false;
+		}
+
+		// Create the atlas UI in the existing tab container
+		var container = document.getElementById("activation_atlas");
+		if (!container) {
+			container = document.createElement("div");
+			container.id = "activation_atlas_test";
+			document.body.appendChild(container);
+		}
+
+		ActivationAtlas(container);
+
+		// Override state to minimal config BEFORE clicking start:
+		// We need to set the smallest possible grid and fewest steps.
+		// The state is internal, but the UI controls set it.
+		// Set grid size to 6 (smallest option) via the select
+		var gridSelect = container.querySelector(".atlas_param_row .atlas_param_input");
+		if (gridSelect) {
+			gridSelect.value = "6";
+			gridSelect.dispatchEvent(new Event("change"));
+		}
+
+		// Set vis steps to minimum (64) via the range input
+		var ranges = container.querySelectorAll(".atlas_range");
+		if (ranges[0]) {
+			ranges[0].value = "64";
+			ranges[0].dispatchEvent(new Event("input"));
+		}
+
+		// Set learning rate to max (0.1) for faster convergence
+		if (ranges[1]) {
+			ranges[1].value = "0.1";
+			ranges[1].dispatchEvent(new Event("input"));
+		}
+
+		// Click the Start button to trigger the full process
+		var startBtn = container.querySelector(".atlas_start_btn");
+		if (!startBtn) {
+			console.error("[test_activation_atlas] Start button not found");
+			return false;
+		}
+
+		// Wrap the generation in a promise that resolves when done or after timeout
+		var finished = false;
+		var hadError = false;
+
+		startBtn.click();
+
+		// Wait for generation to complete (poll for _state.isComputing via UI cues)
+		// The toggle button changes from "Stop" to "Generate" when done
+		var maxWaitMs = 120000; // 2 minutes max
+		var elapsed = 0;
+		var pollInterval = 500;
+
+		while (elapsed < maxWaitMs) {
+			await new Promise(function (r) { setTimeout(r, pollInterval); });
+			elapsed += pollInterval;
+
+			var toggleBtn = container.querySelector(".atlas_toggle_btn");
+			if (!toggleBtn) {
+				// UI was replaced — check if error message appeared
+				var errDiv = container.querySelector(".atlas_error");
+				if (errDiv) {
+					console.error("[test_activation_atlas] Generation error: " + errDiv.textContent);
+					hadError = true;
+				}
+				break;
+			}
+
+			// When generation finishes, button text changes to "▶ Generate"
+			if (toggleBtn.classList.contains("atlas_toggle_start") && elapsed > 1000) {
+				finished = true;
+				break;
+			}
+		}
+
+		if (!finished && !hadError) {
+			console.error("[test_activation_atlas] Timed out after " + maxWaitMs + "ms");
+			// Stop it gracefully
+			var stopBtn = container.querySelector(".atlas_toggle_stop");
+			if (stopBtn) stopBtn.click();
+			await new Promise(function (r) { setTimeout(r, 2000); });
+			return false;
+		}
+
+		if (hadError) {
+			return false;
+		}
+
+		// Verify results: canvas should have generated cell images
+		var canvas = container.querySelector(".atlas_canvas");
+		if (!canvas) {
+			console.error("[test_activation_atlas] Canvas not found after generation");
+			return false;
+		}
+
+		// Check that the canvas is not blank (all black)
+		var ctx = canvas.getContext("2d");
+		var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		var hasNonBlackPixel = false;
+		for (var i = 0; i < imageData.data.length; i += 4) {
+			// Check if any pixel is not the background color (#0d0d1a = 13,13,26)
+			if (imageData.data[i] > 30 || imageData.data[i + 1] > 30 || imageData.data[i + 2] > 40) {
+				hasNonBlackPixel = true;
+				break;
+			}
+		}
+
+		if (!hasNonBlackPixel) {
+			console.error("[test_activation_atlas] Canvas appears blank after generation");
+			return false;
+		}
+
+		// Verify no new errors or warnings
+		if (num_errs !== old_errs) {
+			console.error("[test_activation_atlas] New errors detected during generation");
+			return false;
+		}
+
+		if (num_wrns !== old_wrns) {
+			console.error("[test_activation_atlas] New warnings detected during generation");
+			return false;
+		}
+
+		return true;
+	} catch (e) {
+		console.error("[test_activation_atlas] Exception:", e.message || e);
+		return false;
+	}
+}
+
 async function run_tests (quick=0, disable_webcam=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -3284,6 +3427,8 @@ async function run_tests (quick=0, disable_webcam=0) {
 
 		test_equal("test_math_editable_system()", await test_math_editable_system(), true);
 		test_equal("run_python_code_tests()", await run_python_code_tests(), true);
+
+		test_equal("test_activation_atlas()", await test_activation_atlas(), true);
 
 		test_no_new_errors_or_warnings();
 
