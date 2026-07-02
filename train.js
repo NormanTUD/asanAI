@@ -461,7 +461,7 @@ async function get_fit_data () {
 
 		gradientFlowToSummary();
 
-		GradientFlowHeatmap.reset();
+		// GradientFlowHeatmap.reset();
 
 		gradientFlow.onTrainingStart();
 	};
