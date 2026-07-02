@@ -986,6 +986,7 @@
 		       "gflow_healthy" => "Gradient flow looks healthy. All layers are receiving meaningful gradient signal.",
 		       "gflow_exploding" => "Gradient magnitudes are extremely large. Consider reducing learning rate or adding gradient clipping.",
 		       "gflow_vanishing" => "Some layers have near-zero gradients. Consider using residual connections, batch normalization, or different activation functions.",
+		       "gradient_flow" => "Gradient Flow"
 		),
 
 		'de' => array(
@@ -1973,6 +1974,7 @@
 			"gflow_healthy" => "Gradientenfluss sieht gesund aus. Alle Layer erhalten ein sinnvolles Gradientensignal.",
 			"gflow_exploding" => "Gradientenmagnitude ist extrem groß. Erwäge, die Lernrate zu reduzieren oder Gradient Clipping hinzuzufügen.",
 			"gflow_vanishing" => "Einige Layer haben nahezu Null-Gradienten. Erwäge Residual-Verbindungen, Batch-Normalisierung oder andere Aktivierungsfunktionen.",
+		       "gradient_flow" => "Gradientenfluss"
 		)
 	);
 
