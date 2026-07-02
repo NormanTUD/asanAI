@@ -153,25 +153,25 @@ var GradientFlowHeatmap = (function () {
         // CRITICAL: If we have data, build skeleton with content visible, empty hidden
         var showContent = (_state.history.length > 0 || _state.lastValidHistory.length > 0);
 
-        root.innerHTML = [
-            "<div class='gflow_header'>",
-            "  <h2>" + _t("gflow_title", "Gradient Flow") + "</h2>",
-            "  <span class='gflow_header_meta' data-gflow='meta'></span>",
-            "</div>",
-            "<p class='gflow_subtitle'>" + _t("gflow_subtitle", "Visualizes the L2 norm of gradients per layer over time. Helps detect vanishing or exploding gradients.") + "</p>",
-            "<div class='gflow_warning gflow_warning_healthy' data-gflow='warning' style='display:none;'></div>",
-            "<div class='gflow_stats_grid' data-gflow='stats' style='" + (showContent ? "" : "display:none;") + "'></div>",
-            "<div class='gflow_canvas_wrap' data-gflow='heatmap_wrap' style='" + (showContent ? "" : "display:none;") + "'></div>",
-            "<div class='gflow_time_axis' data-gflow='time_axis' style='" + (showContent ? "" : "display:none;") + "'><span data-gflow='time_start'></span><span>Time \u2192</span><span data-gflow='time_end'></span></div>",
-            "<div class='gflow_legend' data-gflow='legend' style='" + (showContent ? "" : "display:none;") + "'>",
-            "  <span>" + _t("gflow_low_gradient", "Low gradient") + "</span>",
-            "  <canvas data-gflow='legend_bar' width='120' height='10' class='gflow_legend_bar'></canvas>",
-            "  <span>" + _t("gflow_high_gradient", "High gradient") + "</span>",
-            "  <span style='margin-left:12px;opacity:0.5;'>" + _t("gflow_log_scale", "(log scale)") + "</span>",
-            "</div>",
-            "<div class='gflow_layer_bars' data-gflow='layer_bars' style='" + (showContent ? "" : "display:none;") + "'></div>",
-            "<div class='gflow_empty' data-gflow='empty' style='" + (showContent ? "display:none;" : "") + "'>" + _t("gflow_waiting", "Waiting for model and data...") + "<br><small>" + _t("gflow_waiting_sub", "Load a model and start training to see gradient flow.") + "</small></div>",
-        ].join("\n");
+	    root.innerHTML = [
+		    "<div class='gflow_header'>",
+		    "  <h2><span class='TRANSLATEME_gflow_title'></span></h2>",
+		    "  <span class='gflow_header_meta' data-gflow='meta'></span>",
+		    "</div>",
+		    "<p class='gflow_subtitle'><span class='TRANSLATEME_gflow_subtitle'></span></p>",
+		    "<div class='gflow_warning gflow_warning_healthy' data-gflow='warning' style='display:none;'></div>",
+		    "<div class='gflow_stats_grid' data-gflow='stats' style='" + (showContent ? "" : "display:none;") + "'></div>",
+		    "<div class='gflow_canvas_wrap' data-gflow='heatmap_wrap' style='" + (showContent ? "" : "display:none;") + "'></div>",
+		    "<div class='gflow_time_axis' data-gflow='time_axis' style='" + (showContent ? "" : "display:none;") + "'><span data-gflow='time_start'></span><span class='TRANSLATEME_gflow_time_arrow'></span><span data-gflow='time_end'></span></div>",
+		    "<div class='gflow_legend' data-gflow='legend' style='" + (showContent ? "" : "display:none;") + "'>",
+		    "  <span class='TRANSLATEME_gflow_low_gradient'></span>",
+		    "  <canvas data-gflow='legend_bar' width='120' height='10' class='gflow_legend_bar'></canvas>",
+		    "  <span class='TRANSLATEME_gflow_high_gradient'></span>",
+		    "  <span style='margin-left:12px;opacity:0.5;' class='TRANSLATEME_gflow_log_scale'></span>",
+		    "</div>",
+		    "<div class='gflow_layer_bars' data-gflow='layer_bars' style='" + (showContent ? "" : "display:none;") + "'></div>",
+		    "<div class='gflow_empty' data-gflow='empty' style='" + (showContent ? "display:none;" : "") + "'><span class='TRANSLATEME_gflow_waiting'></span><br><small><span class='TRANSLATEME_gflow_waiting_sub'></span></small></div>",
+	    ].join("\n");
 
         container.appendChild(root);
 
@@ -678,7 +678,7 @@ var GradientFlowHeatmap = (function () {
             message = "Gradient flow looks healthy. All layers are receiving meaningful gradient signal.";
         }
 
-        return { status: status, message: message, ratio: ratio, maxNorm: maxNorm, minNorm: minNorm };
+	return { status: status, ratio: ratio, maxNorm: maxNorm, minNorm: minNorm };
     }
 
     // ============================================================
@@ -706,25 +706,27 @@ var GradientFlowHeatmap = (function () {
         }
     }
 
-    function _updateWarning(warningEl, diagnosis) {
-        if (!warningEl) return;
-        if (!diagnosis) { _hideElement(warningEl); return; }
+	function _updateWarning(warningEl, diagnosis) {
+		if (!warningEl) return;
+		if (!diagnosis) { _hideElement(warningEl); return; }
 
-        _showElement(warningEl);
-        var newClass = "gflow_warning " + (
-            diagnosis.status === "exploding" ? "gflow_warning_exploding" :
-            diagnosis.status === "vanishing" ? "gflow_warning_vanishing" : "gflow_warning_healthy"
-        );
-        if (warningEl.className !== newClass) {
-            warningEl.className = newClass;
-        }
-        var icon = diagnosis.status === "exploding" ? "\ud83d\udd25" :
-            diagnosis.status === "vanishing" ? "\u26a0\ufe0f" : "\u2705";
-        var newText = icon + " " + diagnosis.message;
-        if (warningEl.textContent !== newText) {
-            warningEl.textContent = newText;
-        }
-    }
+		_showElement(warningEl);
+		var newClass = "gflow_warning " + (
+			diagnosis.status === "exploding" ? "gflow_warning_exploding" :
+			diagnosis.status === "vanishing" ? "gflow_warning_vanishing" : "gflow_warning_healthy"
+		);
+		if (warningEl.className !== newClass) {
+			warningEl.className = newClass;
+		}
+		var icon = diagnosis.status === "exploding" ? "\ud83d\udd25" :
+			diagnosis.status === "vanishing" ? "\u26a0\ufe0f" : "\u2705";
+		var msgKey = diagnosis.status === "exploding" ? "gflow_exploding" :
+			diagnosis.status === "vanishing" ? "gflow_vanishing" : "gflow_healthy";
+		var newText = icon + " <span class='TRANSLATEME_" + msgKey + "'></span>";
+		if (warningEl.innerHTML !== newText) {
+			warningEl.innerHTML = newText;
+		}
+	}
 
     function _updateStatsCards(statsEl, latest, diagnosis) {
         if (!statsEl || !latest || !latest.layers || latest.layers.length === 0) return;
@@ -741,7 +743,13 @@ var GradientFlowHeatmap = (function () {
             avgN.toExponential(3),
             diagnosis ? diagnosis.ratio.toExponential(2) + "\u00d7" : "N/A"
         ];
-        var statLabels = ["Max Gradient Norm", "Min Gradient Norm", "Mean Gradient Norm", "Layer Ratio (max/min)"];
+	    var statLabels = [
+		    "<span class='TRANSLATEME_gflow_max_norm_label'></span>",
+		    "<span class='TRANSLATEME_gflow_min_norm_label'></span>",
+		    "<span class='TRANSLATEME_gflow_mean_norm_label'></span>",
+		    "<span class='TRANSLATEME_gflow_layer_ratio_label'></span>"
+	    ];
+
 
         var existingCards = statsEl.querySelectorAll(".gflow_stat_card");
         if (existingCards.length !== 4) {
@@ -1027,6 +1035,8 @@ var GradientFlowHeatmap = (function () {
 
         // Update DOM in-place
         _updateDOM(container);
+
+	    update_translations(); // await not possible here
 
         return container;
     }
