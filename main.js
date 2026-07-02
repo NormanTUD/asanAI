@@ -1043,6 +1043,8 @@ $(document).ready(async function() {
 
 	activationAtlas("activation_atlas");
 
+	gradientFlowToSummary();
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 
