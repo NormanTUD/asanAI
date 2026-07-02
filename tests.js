@@ -3448,6 +3448,259 @@ async function test_dimensionality_river() {
 	return true;
 }
 
+async function test_health_status() {
+	log_test("Test health status");
+
+	await set_dataset_and_wait("signs");
+	await delay(3000);
+
+	$("#max_number_of_files_per_category").val(1).trigger("change");
+
+	$("#jump_to_interesting_tab").prop("checked", false);
+
+	$("#visualization_tab_label").click();
+
+	$("#health_status_tab_label").click();
+
+	await delay(1000);
+
+	const wanted_epochs = 2;
+
+	set_epochs(wanted_epochs);
+
+	await delay(3000);
+
+	if ($("#dataset").val() !== "signs") {
+		err("test_health_status: dataset selector does not show 'signs', got: " + $("#dataset").val());
+		return false;
+	}
+
+	var epoch_val = parseInt($("#epochs").val());
+	if (epoch_val !== wanted_epochs) {
+		err(`test_health_status: epochs is not ${wanted_epochs}, got: ${epoch_val}`);
+		return false;
+	}
+
+	var max_files_val = parseInt($("#max_number_of_files_per_category").val());
+	if (max_files_val !== 1) {
+		err("test_health_status: max_number_of_files_per_category is not 1, got: " + max_files_val);
+		return false;
+	}
+
+	if (!$(".train_neural_network_button").length) {
+		err("test_health_status: .train_neural_network_button not found");
+		return false;
+	}
+
+	if ($(".train_neural_network_button").prop("disabled")) {
+		err("test_health_status: .train_neural_network_button is disabled");
+		return false;
+	}
+
+	if (!$(".layer_setting").length) {
+		err("test_health_status: No .layer_setting elements found");
+		return false;
+	}
+
+	if (!$(".layer_type").length) {
+		err("test_health_status: No .layer_type elements found");
+		return false;
+	}
+
+	// Enable auto-recording before training
+	layerIOStats.enabled = true;
+	layerIOStats.records = [];
+
+	try {
+		enableAutoRecord();
+	} catch (e) {
+		wrn("test_health_status: enableAutoRecord warning: " + e.message);
+	}
+
+	const ret = await train_neural_network();
+
+	if (!is_valid_ret_object(ret, wanted_epochs)) {
+		err("test_health_status: Training did not complete successfully");
+		return false;
+	}
+
+	await delay(5000);
+
+	// Verify that layer I/O records were captured during training
+	if (layerIOStats.records.length === 0) {
+		err("test_health_status: No layer I/O records were captured during training");
+		return false;
+	}
+
+	// Verify the health status tab container exists
+	if (!$("#health_status").length) {
+		err("test_health_status: #health_status not found");
+		return false;
+	}
+
+	// Render the health status into the tab
+	var container = renderLayerIOStats("health_status");
+
+	if (!container) {
+		err("test_health_status: renderLayerIOStats returned null");
+		return false;
+	}
+
+	await delay(3000);
+
+	// Verify that the container has content rendered
+	if (container.innerHTML.length === 0) {
+		err("test_health_status: renderLayerIOStats produced empty content");
+		return false;
+	}
+
+	// Verify that layer cards were rendered (one per layer)
+	var layerCards = $(container).find(".lio_card");
+	if (!layerCards.length) {
+		err("test_health_status: No .lio_card elements found after rendering");
+		return false;
+	}
+
+	var latestRecord = layerIOStats.records[layerIOStats.records.length - 1];
+	var expectedCards = latestRecord.layers.length;
+
+	if (layerCards.length !== expectedCards) {
+		err(`test_health_status: Expected ${expectedCards} .lio_card elements, got ${layerCards.length}`);
+		return false;
+	}
+
+	// Verify the health score bar is rendered
+	if (!$(container).find(".lio_score_bar").length) {
+		err("test_health_status: .lio_score_bar not found");
+		return false;
+	}
+
+	if (!$(container).find(".lio_score_fill").length) {
+		err("test_health_status: .lio_score_fill not found");
+		return false;
+	}
+
+	// Verify stats grids are rendered within cards
+	if (!$(container).find(".lio_stats_grid").length) {
+		err("test_health_status: .lio_stats_grid not found in any card");
+		return false;
+	}
+
+	// Verify histograms are rendered (SVG elements)
+	if (!$(container).find(".lio_plot_section svg").length) {
+		err("test_health_status: No histogram SVGs found in .lio_plot_section");
+		return false;
+	}
+
+	// Verify the aggregate section is rendered
+	if (!$(container).find(".lio_aggregate").length) {
+		err("test_health_status: .lio_aggregate section not found");
+		return false;
+	}
+
+	// Verify multi-plot section exists within aggregate
+	if (!$(container).find(".lio_multi_plot").length) {
+		err("test_health_status: .lio_multi_plot not found in aggregate section");
+		return false;
+	}
+
+	// Verify that each card has a header with layer name and type
+	var allHeadersValid = true;
+	layerCards.each(function (i, card) {
+		if (!$(card).find(".lio_header").length) {
+			err("test_health_status: .lio_header missing in card " + i);
+			allHeadersValid = false;
+		}
+		if (!$(card).find(".lio_status_badge").length) {
+			err("test_health_status: .lio_status_badge missing in card " + i);
+			allHeadersValid = false;
+		}
+	});
+
+	if (!allHeadersValid) {
+		return false;
+	}
+
+	// Verify _computeStats works correctly on recorded data
+	var firstLayerOutput = latestRecord.layers[0].output;
+	var stats = _computeStats(firstLayerOutput);
+
+	if (!stats) {
+		err("test_health_status: _computeStats returned null for first layer output");
+		return false;
+	}
+
+	if (typeof stats.mean !== "number" || isNaN(stats.mean)) {
+		err("test_health_status: _computeStats mean is not a valid number");
+		return false;
+	}
+
+	if (typeof stats.std !== "number" || isNaN(stats.std)) {
+		err("test_health_status: _computeStats std is not a valid number");
+		return false;
+	}
+
+	if (stats.count !== firstLayerOutput.length) {
+		err(`test_health_status: _computeStats count (${stats.count}) doesn't match output length (${firstLayerOutput.length})`);
+		return false;
+	}
+
+	// Verify _detectWarnings returns an array
+	var warnings = _detectWarnings(latestRecord.layers[0]);
+	if (!Array.isArray(warnings)) {
+		err("test_health_status: _detectWarnings did not return an array");
+		return false;
+	}
+
+	// Verify _computeHistogram works
+	var histogram = _computeHistogram(firstLayerOutput, 40);
+	if (!histogram) {
+		err("test_health_status: _computeHistogram returned null");
+		return false;
+	}
+
+	if (!histogram.counts || !histogram.binEdges) {
+		err("test_health_status: _computeHistogram missing counts or binEdges");
+		return false;
+	}
+
+	if (histogram.counts.length !== 40) {
+		err(`test_health_status: _computeHistogram expected 40 bins, got ${histogram.counts.length}`);
+		return false;
+	}
+
+	// Verify _computePercentiles works
+	var percentiles = _computePercentiles(firstLayerOutput);
+	if (!percentiles) {
+		err("test_health_status: _computePercentiles returned null");
+		return false;
+	}
+
+	if (percentiles.p50 === undefined || percentiles.p25 === undefined || percentiles.p75 === undefined) {
+		err("test_health_status: _computePercentiles missing expected percentile keys");
+		return false;
+	}
+
+	// Verify percentile ordering is correct
+	if (percentiles.p25 > percentiles.p50 || percentiles.p50 > percentiles.p75) {
+		err("test_health_status: Percentiles are not in correct order (p25 <= p50 <= p75)");
+		return false;
+	}
+
+	// Test that re-rendering doesn't crash (idempotency)
+	var container2 = renderLayerIOStats("health_status");
+	if (!container2 || container2.innerHTML.length === 0) {
+		err("test_health_status: Re-rendering produced empty content");
+		return false;
+	}
+
+	await test_if_python_code_is_valid();
+
+	test_no_new_errors_or_warnings();
+
+	return true;
+}
+
 async function run_tests (quick=0, disable_webcam=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -3537,6 +3790,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 
 		test_equal("test_activation_atlas()", await test_activation_atlas(), true);
 		test_equal("test_dimensionality_river()", await test_dimensionality_river(), true);
+		test_equal("test_health_status()", await test_health_status(), true);
 
 		test_no_new_errors_or_warnings();
 
