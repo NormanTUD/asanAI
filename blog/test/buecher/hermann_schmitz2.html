@@ -277,13 +277,13 @@ draw();
 // ===== GEFÜHLE CANVAS =====
 let currentGefuehl='none';
 function setGefuehl(g){currentGefuehl=g;
-const data={
-freude:{text:'☀️ FREUDE: Hebende Atmosphäre – überspielt Erdenschwere. Der Leib wird leicht, will hüpfen. Nicht eigene Kraft hebt, sondern die Atmosphäre selbst.'},
-trauer:{text:'🌧️ TRAUER: Drückende Atmosphäre mit stärkerem Anspruch als Freude. Gebietet Respekt – auch der Fröhliche unter Traurigen wird gehemmt.'},
-zorn:{text:'🔥 ZORN: Ergreifende Macht – überfallartig im Leib aufsteigend. Man MUSS erst mitgehen, bevor man Stellung nehmen kann. Schwellung windet sich aus Engung.'},
-scham:{text:'🕳️ SCHAM: Kehrt den Richtungsraum um – alle Vektoren zentripetal. Von allen Seiten dringt die Atmosphäre ein. Tendenz: im Boden versinken.'},
-angst:{text:'🌀 ANGST: Übermächtige Engung hemmt expansiven Impuls „Weg!". Rhythmisch: keuchende Atemkurve. Panische Flucht möglich, nimmt Engung mit.'}
-};
+	const data={
+		freude:{text:'☀️ FREUDE: Hebende Atmosphäre – überspielt Erdenschwere. Der Leib wird leicht, will hüpfen. Nicht eigene Kraft hebt, sondern die Atmosphäre selbst.'},
+		trauer:{text:'🌧️ TRAUER: Drückende Atmosphäre mit stärkerem Anspruch als Freude. Gebietet Respekt – auch der Fröhliche unter Traurigen wird gehemmt.'},
+		zorn:{text:'🔥 ZORN: Ergreifende Macht – überfallartig im Leib aufsteigend. Man MUSS erst mitgehen, bevor man Stellung nehmen kann. Schwellung windet sich aus Engung.'},
+		scham:{text:'🕳️ SCHAM: Kehrt den Richtungsraum um – alle Vektoren zentripetal. Von allen Seiten dringt die Atmosphäre ein. Tendenz: im Boden versinken.'},
+		angst:{text:'🌀 ANGST: Übermächtige Engung hemmt expansiven Impuls „Weg!". Rhythmisch: keuchende Atemkurve. Panische Flucht möglich, nimmt Engung mit.'}
+	};
 document.getElementById('gefuehlInfo').innerHTML=data[g]?data[g].text:'Wähle ein Gefühl';
 }
 (function(){
@@ -374,14 +374,15 @@ draw();
 
 // ===== PERSON CANVAS =====
 let personLayer=1;
-function setPersonLayer(l){personLayer=l;
-const texts=[
-'Personale Emanzipation: Distanz, Reflexion, Vernunft. Du schreibst dir Eigenschaften zu, nimmst Verantwortung. Aber: Ohne Regression verlierst du den Faden zum affektiven Betroffensein.',
-    fassung: 'Fassung = was man verliert, wenn man „die Fassung verliert". Sie stabilisiert die Person zwischen Emanzipation und Regression. Sensibelster Fühler der Einleibung – und Schutzschild gegen den Blick des Anderen.',
-    antrieb: 'Der vitale Antrieb (Spannung vs. Schwellung) ist die Grundlage allen Bewusstseins. Bindungsform bestimmt den Persönlichkeitstyp: kompakt (Bathmothymiker), rhythmisch (Zyklothymiker), locker (Schizothymiker).',
-    regression: 'Personale Regression: Rückkehr zur primitiven Gegenwart – Lachen, Weinen, Ekstase, Rausch. Die Person gibt ihr emanzipiertes Selbst preis und taucht in primitive Gegenwart ein. Lachen = Bauchwelle am Reck: fallen + sicher hochkommen = Triumph.'
-  };
-  document.getElementById('personInfo').textContent = info[l] || '';
+function setPersonLayer(l){
+	personLayer=l;
+	const texts={
+		emanzipation: 'Personale Emanzipation: Distanz, Reflexion, Vernunft. Du schreibst dir Eigenschaften zu, nimmst Verantwortung. Aber: Ohne Regression verlierst du den Faden zum affektiven Betroffensein.',
+		fassung: 'Fassung = was man verliert, wenn man „die Fassung verliert". Sie stabilisiert die Person zwischen Emanzipation und Regression. Sensibelster Fühler der Einleibung – und Schutzschild gegen den Blick des Anderen.',
+		antrieb: 'Der vitale Antrieb (Spannung vs. Schwellung) ist die Grundlage allen Bewusstseins. Bindungsform bestimmt den Persönlichkeitstyp: kompakt (Bathmothymiker), rhythmisch (Zyklothymiker), locker (Schizothymiker).',
+		regression: 'Personale Regression: Rückkehr zur primitiven Gegenwart – Lachen, Weinen, Ekstase, Rausch. Die Person gibt ihr emanzipiertes Selbst preis und taucht in primitive Gegenwart ein. Lachen = Bauchwelle am Reck: fallen + sicher hochkommen = Triumph.'
+	};
+	document.getElementById('personInfo').textContent = info[l] || '';
 }
 (function(){
 const c=document.getElementById('personCanvas'),ctx=c.getContext('2d');
