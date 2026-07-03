@@ -8,6 +8,7 @@
 				"own_images",
 				"own_tensor",
 				"own_csv",
+				"own_embedding",
 				"training",
 				"predict",
 				"code"

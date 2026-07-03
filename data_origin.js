@@ -128,6 +128,9 @@ async function new_origin_is_non_default(show_own_images, show_images_per_catego
 		// Show the embedding tab
 		show_tab_label("own_embedding_tab_label", 1);
 		$("#own_embedding_tab").show();
+		// Set input shape to 1D so embedding layers become selectable
+		var seq_len = parseInt($("#embedding_seq_length").val()) || 10;
+		await set_input_shape("[" + seq_len + "]");
 	} else {
 		alert("Unknown data_origin: " + data_origin);
 	}

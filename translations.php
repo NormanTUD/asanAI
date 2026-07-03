@@ -1015,6 +1015,7 @@
 		       "load_example_embedding_data" => "Load example embedding data",
 		       "own_embedding_data" => "Own embedding data",
 		       "parse_embedding_data" => "Parse embedding data",
+		       "own_embedding" => "Own Embedding"
 		),
 
 		'de' => array(
@@ -2031,6 +2032,7 @@
 			"load_example_embedding_data" => "Beispiel-Embedding-Daten laden",
 			"own_embedding_data" => "Eigene Embedding-Daten",
 			"parse_embedding_data" => "Embedding-Daten parsen",
+		       "own_embedding" => "Eigenes Embedding"
 		)
 	);
 
