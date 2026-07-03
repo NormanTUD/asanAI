@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kants Kritik der reinen Vernunft – Interaktiv</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        #header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            border-bottom: 2px solid #e94560;
+        }
+        #header h1 { font-size: 1.8em; color: #fff; margin-bottom: 10px; }
+        #header p { color: #aaa; font-size: 0.95em; }
+
+        #nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #16213e;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid #e94560;
+            background: transparent;
+            color: #e94560;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section.active { display: block; }
+
+        .section h2 {
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .section h3 {
+            color: #f0a500;
+            margin: 15px 0 10px;
+        }
+        .explanation {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #e94560;
+            line-height: 1.7;
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+            background: #0a0a1a;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+
+        .interactive-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .ctrl-btn {
+            padding: 10px 20px;
+            background: #0f3460;
+            color: #fff;
+            border: 1px solid #e94560;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .ctrl-btn:hover { background: #e94560; }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            justify-content: center;
+        }
+        .slider-container input[type="range"] {
+            width: 200px;
+            accent-color: #e94560;
+        }
+        .slider-container label {
+            color: #aaa;
+            min-width: 150px;
+        }
+        .slider-container span {
+            color: #e94560;
+            min-width: 40px;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #aaa;
+            border-left: 3px solid #f0a500;
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .concept-card {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .concept-card:hover {
+            border-color: #e94560;
+            transform: translateY(-3px);
+        }
+        .concept-card h4 { color: #e94560; margin-bottom: 8px; }
+        .concept-card p { color: #aaa; font-size: 0.9em; line-height: 1.5; }
+
+        #tooltip {
+            position: fixed;
+            background: #0f3460;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 300px;
+            border: 1px solid #e94560;
+            z-index: 1000;
+        }
+
+        .drag-item {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #0f3460;
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            margin: 5px;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .drag-item:active { cursor: grabbing; transform: scale(1.05); }
+        .drag-item.correct { border-color: #4caf50; background: #1b5e20; }
+        .drag-item.wrong { border-color: #f44336; background: #b71c1c; }
+
+        .drop-zone {
+            min-height: 60px;
+            border: 2px dashed #555;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .drop-zone.over { border-color: #e94560; background: rgba(233,69,96,0.1); }
+        .drop-zone-label {
+            color: #888;
+            font-size: 0.9em;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            #header h1 { font-size: 1.3em; }
+            canvas { width: 100% !important; height: 300px !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <h1>🔭 Kants Kritik der reinen Vernunft</h1>
+    <p>Interaktive Erkundung der wichtigsten Ideen – Klicke, ziehe und experimentiere!</p>
+</div>
+
+<div id="nav">
+    <button class="nav-btn active" onclick="showSection('overview')">Überblick</button>
+    <button class="nav-btn" onclick="showSection('copernican')">Kopernikanische Wende</button>
+    <button class="nav-btn" onclick="showSection('spacetime')">Raum & Zeit</button>
+    <button class="nav-btn" onclick="showSection('categories')">Kategorien</button>
+    <button class="nav-btn" onclick="showSection('analytic-synthetic')">Analytisch/Synthetisch</button>
+    <button class="nav-btn" onclick="showSection('phenomena')">Erscheinung & Ding an sich</button>
+    <button class="nav-btn" onclick="showSection('dialectic')">Dialektik</button>
+    <button class="nav-btn" onclick="showSection('quiz')">Quiz</button>
+</div>
+
+<div id="tooltip"></div>
+
+<!-- SECTION: OVERVIEW -->
+<div class="section active" id="sec-overview">
+    <h2>Die Architektur der Kritik</h2>
+    <div class="explanation">
+        <p>Kant fragt: <strong>Was können wir überhaupt wissen?</strong> Er untersucht nicht die Welt, sondern unser Erkenntnisvermögen selbst. Die Kritik ist wie eine Landkarte unseres Denkens – sie zeigt, wo sicheres Wissen möglich ist und wo wir uns in Illusionen verlieren.</p>
+    </div>
+    <canvas id="overviewCanvas" width="900" height="500"></canvas>
+    <div class="interactive-controls">
+        <button class="ctrl-btn" onclick="animateOverview()">🔄 Animation starten</button>
+        <button class="ctrl-btn" onclick="resetOverview()">↺ Zurücksetzen</button>
+    </div>
+    <p style="text-align:center; color:#888; font-size:0.85em;">Klicke auf die Elemente im Diagramm für mehr Informationen!</p>
+</div>
+
+<!-- SECTION: COPERNICAN REVOLUTION -->
+<div class="section" id="sec-copernican">
+    <h2>Die Kopernikanische Wende</h2>
+    <div class="explanation">
+        <p>Kants revolutionäre Idee: Nicht unsere Erkenntnis richtet sich nach den Gegenständen, sondern <strong>die Gegenstände richten sich nach unserer Erkenntnis</strong>. So wie Kopernikus den Zuschauer sich drehen ließ statt die Sterne, dreht Kant das Verhältnis von Subjekt und Objekt um.</p>
+    </div>
+    <canvas id="copernicanCanvas" width="900" height="450"></canvas>
+    <div class="slider-container">
+        <label>Perspektive:</label>
+        <input type="range" id="copernicanSlider" min="0" max="100" value="0" oninput="updateCopernican(this.value)">
+        <span id="copernicanLabel">Vor Kant</span>
+    </div>
+    <div class="explanation" id="copernicanExplanation">
+        <p><strong>Vor Kant (Dogmatismus):</strong> Der Geist ist ein passiver Spiegel, der die Welt einfach abbildet. Erkenntnis = Kopie der Realität.</p>
+    </div>
+</div>
+
+<!-- SECTION: SPACE AND TIME -->
+<div class="section" id="sec-spacetime">
+    <h2>Raum und Zeit – Formen der Anschauung</h2>
+    <div class="explanation">
+        <p>Raum und Zeit sind für Kant keine Eigenschaften der Dinge selbst, sondern <strong>Formen unserer Anschauung</strong> – die „Brille", durch die wir alles wahrnehmen. Sie sind a priori (vor aller Erfahrung) in uns und machen Erfahrung erst möglich.</p>
+    </div>
+    <canvas id="spacetimeCanvas" width="900" height="450"></canvas>
+    <div class="interactive-controls">
+        <button class="ctrl-btn" onclick="toggleSpaceTime('space')">🔲 Raum zeigen</button>
+        <button class="ctrl-btn" onclick="toggleSpaceTime('time')">⏱️ Zeit zeigen</button>
+        <button class="ctrl-btn" onclick="toggleSpaceTime('both')">🌐 Beides</button>
+        <button class="ctrl-btn" onclick="toggleSpaceTime('remove')">❌ Formen entfernen</button>
+    </div>
+    <div class="explanation" id="spacetimeExplanation">
+        <p>Klicke auf die Buttons, um zu sehen, was passiert, wenn wir die Formen der Anschauung „an-" oder „ausschalten".</p>
+    </div>
+</div>
+
+<!-- SECTION: CATEGORIES -->
+<div class="section" id="sec-categories">
+    <h2>Die Kategorien des Verstandes</h2>
+    <div class="explanation">
+        <p>Die Kategorien sind die <strong>Grundbegriffe des Verstandes</strong>, mit denen wir das Mannigfaltige der Anschauung ordnen und zu Erkenntnis verbinden. Sie sind wie die Grammatik unseres Denkens – ohne sie wäre Erfahrung nur ein chaotischer Strom von Eindrücken.</p>
+    </div>
+    <canvas id="categoriesCanvas" width="900" height="500"></canvas>
+    <div class="interactive-controls">
+        <button class="ctrl-btn" onclick="highlightCategory(0)">Quantität</button>
+        <button class="ctrl-btn" onclick="highlightCategory(1)">Qualität</button>
+        <button class="ctrl-btn" onclick="highlightCategory(2)">Relation</button>
+        <button class="ctrl-btn" onclick="highlightCategory(3)">Modalität</button>
+        <button class="ctrl-btn" onclick="showCategoryExample()">💡 Beispiel</button>
+    </div>
+</div>
+
+<!-- SECTION: ANALYTIC/SYNTHETIC -->
+<div class="section" id="sec-analytic-synthetic">
+    <h2>Analytische und Synthetische Urteile</h2>
+    <div class="explanation">
+        <p>Kants zentrale Frage: <strong>Wie sind synthetische Urteile a priori möglich?</strong> Das sind Urteile, die unser Wissen erweitern (synthetisch), aber nicht auf Erfahrung beruhen (a priori). Beispiel: „Alles, was geschieht, hat eine Ursache."</p>
+    </div>
+    <canvas id="analyticCanvas" width="900" height="400"></canvas>
+    <div class="interactive-controls">
+        <button class="ctrl-btn" onclick="showJudgment('analytic')">Analytisch</button>
+        <button class="ctrl-btn" onclick="showJudgment('synthetic-post')">Synthetisch a posteriori</button>
+        <button class="ctrl-btn" onclick="showJudgment('synthetic-prior')">Synthetisch a priori</button>
+    </div>
+    <div id="judgmentExplanation" class="explanation">
+        <p>Wähle einen Urteilstyp, um die Visualisierung zu sehen.</p>
+    </div>
+</div>
+
+<!-- SECTION: PHENOMENA/NOUMENA -->
+<div class="section" id="sec-phenomena">
+    <h2>Erscheinung und Ding an sich</h2>
+    <div class="explanation">
+        <p>Wir erkennen die Dinge nur, <strong>wie sie uns erscheinen</strong> (Phänomene), nie wie sie an sich selbst sind (Noumena). Das „Ding an sich" bleibt für immer unerkennbar – es ist der Grenzbegriff unseres Wissens.</p>
+    </div>
+    <canvas id="phenomenaCanvas" width="900" height="450"></canvas>
+    <div class="slider-container">
+        <label>Erkenntnistiefe:</label>
+        <input type="range" id="phenomenaSlider" min="0" max="100" value="50" oninput="updatePhenomena(this.value)">
+        <span id="phenomenaLabel">50%</span>
+    </div>
+    <div class="explanation">
+        <p>Bewege den Regler: Egal wie tief wir vordringen, wir bleiben immer in der Welt der Erscheinungen. Das Ding an sich bleibt unerreichbar.</p>
+    </div>
+</div>
+
+<!-- SECTION: DIALECTIC -->
+<div class="section" id="sec-dialectic">
+    <h2>Die Transzendentale Dialektik</h2>
+    <div class="explanation">
+        <p>Wenn die Vernunft über die Grenzen möglicher Erfahrung hinausgeht, verstrickt sie sich in <strong>unvermeidliche Widersprüche (Antinomien)</strong>. Kant zeigt: Fragen wie „Hat die Welt einen Anfang?" können weder bejaht noch verneint werden – sie überschreiten unser Erkenntnisvermögen.</p>
+    </div>
+    <canvas id="dialecticCanvas" width="900" height="450"></canvas>
+    <div class="interactive-controls">
+        <button class="ctrl-btn" onclick="showAntinomy(1)">1. Antinomie (Welt/Zeit)</button>
+        <button class="ctrl-btn" onclick="showAntinomy(2)">2. Antinomie (Teilbarkeit)</button>
+        <button class="ctrl-btn" onclick="showAntinomy(3)">3. Antinomie (Freiheit)</button>
+        <button class="ctrl-btn" onclick="showAntinomy(4)">4. Antinomie (Gott)</button>
+    </div>
+    <div id="antinomyExplanation" class="explanation">
+        <p>Wähle eine Antinomie, um These und Antithese zu sehen.</p>
+    </div>
+</div>
+
+<!-- SECTION: QUIZ -->
+<div class="section" id="sec-quiz">
+    <h2>🧩 Teste dein Verständnis</h2>
+    <div class="explanation">
+        <p>Ziehe die Begriffe in die richtige Kategorie!</p>
+    </div>
+
+    <div id="quizArea">
+        <div style="text-align:center; margin: 20px 0;">
+            <div class="drag-item" draggable="true" data-answer="sinnlichkeit" id="d1">Raum</div>
+            <div class="drag-item" draggable="true" data-answer="verstand" id="d2">Kausalität</div>
+            <div class="drag-item" draggable="true" data-answer="sinnlichkeit" id="d3">Zeit</div>
+            <div class="drag-item" draggable="true" data-answer="verstand" id="d4">Substanz</div>
+            <div class="drag-item" draggable="true" data-answer="vernunft" id="d5">Gott</div>
+            <div class="drag-item" draggable="true" data-answer="vernunft" id="d6">Freiheit</div>
+            <div class="drag-item" draggable="true" data-answer="sinnlichkeit" id="d7">Empfindung</div>
+            <div class="drag-item" draggable="true" data-answer="verstand" id="d8">Einheit</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:15px;">
+            <div>
+                <div class="drop-zone-label">🌊 Sinnlichkeit (Rezeptivität)</div>
+                <div class="drop-zone" data-accept="sinnlichkeit" id="zone-sinnlichkeit"></div>
+            </div>
+            <div>
+                <div class="drop-zone-label">⚙️ Verstand (Spontaneität)</div>
+                <div class="drop-zone" data-accept="verstand" id="zone-verstand"></div>
+            </div>
+            <div>
+                <div class="drop-zone-label">🌟 Vernunft (Ideen)</div>
+                <div class="drop-zone" data-accept="vernunft" id="zone-vernunft"></div>
+            </div>
+        </div>
+
+        <div class="interactive-controls" style="margin-top:20px;">
+            <button class="ctrl-btn" onclick="checkQuiz()">✓ Prüfen</button>
+            <button class="ctrl-btn" onclick="resetQuiz()">↺ Neu starten</button>
+        </div>
+        <div id="quizResult" style="text-align:center; margin-top:15px; font-size:1.1em;"></div>
+    </div>
+</div>
+
+<script>
+// ============ NAVIGATION ============
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    event.target.classList.add('active');
+
+    // Initialize canvases when shown
+    setTimeout(() => {
+        switch(id) {
+            case 'overview': drawOverview(); break;
+            case 'copernican': drawCopernican(0); break;
+            case 'spacetime': drawSpaceTime('both'); break;
+            case 'categories': drawCategories(-1); break;
+            case 'analytic-synthetic': drawAnalytic('none'); break;
+            case 'phenomena': drawPhenomena(50); break;
+            case 'dialectic': drawDialectic(0); break;
+        }
+    }, 50);
+}
+
+// ============ TOOLTIP ============
+const tooltip = document.getElementById('tooltip');
+function showTooltip(x, y, text) {
+    tooltip.style.left = x + 15 + 'px';
+    tooltip.style.top = y + 15 + 'px';
+    tooltip.textContent = text;
+    tooltip.style.opacity = 1;
+}
+function hideTooltip() { tooltip.style.opacity = 0; }
+
+// ============ OVERVIEW SECTION ============
+let overviewAnimating = false;
+let overviewFrame = 0;
+
+function drawOverview() {
+    const canvas = document.getElementById('overviewCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Architektur der Kritik der reinen Vernunft', w/2, 30);
+
+    // Draw the structure
+    const boxes = [
+        { x: w/2-100, y: 50, w: 200, h: 40, text: 'KRITIK DER REINEN VERNUNFT', color: '#e94560' },
+        { x: w/4-100, y: 130, w: 200, h: 35, text: 'Transzendentale Elementarlehre', color: '#f0a500' },
+        { x: 3*w/4-100, y: 130, w: 200, h: 35, text: 'Transzendentale Methodenlehre', color: '#f0a500' },
+        { x: w/6-80, y: 210, w: 160, h: 35, text: 'Transzendentale Ästhetik', color: '#4caf50' },
+        { x: w/3+10, y: 210, w: 160, h: 35, text: 'Transzendentale Logik', color: '#4caf50' },
+        { x: w/6-80, y: 290, w: 160, h: 30, text: 'Raum & Zeit', color: '#2196f3' },
+        { x: w/4-50, y: 340, w: 140, h: 30, text: 'Analytik', color: '#9c27b0' },
+        { x: w/2-30, y: 340, w: 140, h: 30, text: 'Dialektik', color: '#9c27b0' },
+        { x: w/4-60, y: 400, w: 160, h: 28, text: 'Kategorien & Grundsätze', color: '#00bcd4' },
+        { x: w/2-40, y: 400, w: 160, h: 28, text: 'Antinomien & Ideen', color: '#00bcd4' },
+    ];
+
+    // Draw connections
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1.5;
+    // Main to parts
+    drawLine(ctx, w/2, 90, w/4, 130);
+    drawLine(ctx, w/2, 90, 3*w/4, 130);
+    // Elementarlehre to sub
+    drawLine(ctx, w/4, 165, w/6, 210);
+    drawLine(ctx, w/4, 165, w/3+90, 210);
+    // Ästhetik to Raum&Zeit
+    drawLine(ctx, w/6, 245, w/6, 290);
+    // Logik to Analytik/Dialektik
+    drawLine(ctx, w/3+90, 245, w/4+20, 340);
+    drawLine(ctx, w/3+90, 245, w/2+40, 340);
+    // Analytik/Dialektik to sub
+    drawLine(ctx, w/4+20, 370, w/4+20, 400);
+    drawLine(ctx, w/2+40, 370, w/2+40, 400);
+
+    // Draw boxes
+    boxes.forEach((box, i) => {
+        const alpha = overviewAnimating ? Math.min(1, (overviewFrame - i*8) / 15) : 1;
+        if (alpha <= 0) return;
+        ctx.globalAlpha = Math.max(0, alpha);
+        ctx.fillStyle = box.color + '33';
+        ctx.strokeStyle = box.color;
+        ctx.lineWidth = 2;
+        roundRect(ctx, box.x, box.y, box.w, box.h, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.font = box.h > 35 ? 'bold 12px Georgia' : '11px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(box.text, box.x + box.w/2, box.y + box.h/2 + 4);
+        ctx.globalAlpha = 1;
+    });
+
+    // Legend
+    ctx.font = '12px Georgia';
+    ctx.fillStyle = '#888';
+    ctx.textAlign = 'left';
+    ctx.fillText('Die Kritik untersucht unser Erkenntnisvermögen:', 50, h-60);
+    ctx.fillText('• Sinnlichkeit (wie uns Dinge gegeben werden)', 50, h-40);
+    ctx.fillText('• Verstand (wie wir Dinge denken)', 50, h-20);
+    ctx.fillText('• Vernunft (wie wir über Erfahrung hinausstreben)', 400, h-40);
+}
+
+function animateOverview() {
+    overviewAnimating = true;
+    overviewFrame = 0;
+    function step() {
+        overviewFrame++;
+        drawOverview();
+        if (overviewFrame < 120) requestAnimationFrame(step);
+        else overviewAnimating = false;
+    }
+    step();
+}
+function resetOverview() { overviewAnimating = false; overviewFrame = 200; drawOverview(); }
+
+// Click handler for overview
+document.getElementById('overviewCanvas').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const infos = [
+        { x: 350, y: 50, w: 200, h: 40, text: 'Das Hauptwerk: Untersucht die Grenzen und Möglichkeiten unserer Erkenntnis' },
+        { x: 125, y: 130, w: 200, h: 35, text: 'Elementarlehre: Die Bausteine unserer Erkenntnis (Sinnlichkeit + Verstand)' },
+        { x: 575, y: 130, w: 200, h: 35, text: 'Methodenlehre: Wie soll Philosophie als Wissenschaft verfahren?' },
+        { x: 70, y: 210, w: 160, h: 35, text: 'Ästhetik: Lehre von Raum und Zeit als Formen unserer Anschauung' },
+        { x: 310, y: 210, w: 160, h: 35, text: 'Logik: Lehre vom Verstand und seinen Begriffen (Kategorien)' },
+    ];
+
+    for (let info of infos) {
+        if (x >= info.x && x <= info.x + info.w && y >= info.y && y <= info.y + info.h) {
+            showTooltip(e.clientX, e.clientY, info.text);
+            setTimeout(hideTooltip, 3000);
+            return;
+        }
+    }
+});
+
+// ============ COPERNICAN REVOLUTION ============
+function drawCopernican(value) {
+    const canvas = document.getElementById('copernicanCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const t = value / 100; // 0 = pre-Kant, 1 = Kant
+
+    // Left side: Pre-Kant (objects determine knowledge)
+    // Right side: Kant (knowledge determines objects)
+
+    const centerX = w / 2;
+    const centerY = h / 2;
+
+    // Draw "mind" (subject)
+    const mindX = lerp(centerX + 150, centerX, t);
+    const mindY = centerY;
+    const mindRadius = lerp(30, 60, t);
+
+    // Draw "world" (objects)
+    const worldX = lerp(centerX - 150, centerX, t);
+    const worldY = centerY;
+    const worldRadius = lerp(60, 40, t);
+
+    // Arrows
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 3;
+
+    if (t < 0.5) {
+        // Arrow from world to mind (objects → knowledge)
+        const arrowAlpha = 1 - t * 2;
+        ctx.globalAlpha = arrowAlpha;
+        drawArrow(ctx, worldX + worldRadius + 20, worldY, mindX - mindRadius - 20, mindY);
+        ctx.fillStyle = '#e94560';
+        ctx.font = '14px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('strukturiert Erfahrung', (worldX + mindX) / 2, worldY - 25);
+        ctx.globalAlpha = 1;
+    }
+
+    // Draw mind circle
+    ctx.beginPath();
+    ctx.arc(mindX, mindY, mindRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#e9456033';
+    ctx.fill();
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('SUBJEKT', mindX, mindY - 5);
+    ctx.font = '11px Georgia';
+    ctx.fillText('(Geist)', mindX, mindY + 12);
+
+    // Draw world circle
+    ctx.beginPath();
+    ctx.arc(worldX, worldY, worldRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#4caf5033';
+    ctx.fill();
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Georgia';
+    ctx.fillText('OBJEKT', worldX, worldY - 5);
+    ctx.font = '11px Georgia';
+    ctx.fillText('(Welt)', worldX, worldY + 12);
+
+    // Labels
+    ctx.font = '13px Georgia';
+    ctx.fillStyle = '#aaa';
+    ctx.textAlign = 'left';
+    if (t < 0.5) {
+        ctx.fillText('Vor Kant: Der Geist passt sich der Welt an', 30, 40);
+    } else {
+        ctx.fillText('Kant: Die Welt passt sich den Formen des Geistes an', 30, 40);
+    }
+}
+
+function updateCopernican(value) {
+    drawCopernican(value);
+    const label = document.getElementById('copernicanLabel');
+    const explanation = document.getElementById('copernicanExplanation');
+    if (value < 33) {
+        label.textContent = 'Vor Kant';
+        explanation.innerHTML = '<p><strong>Vor Kant (Dogmatismus):</strong> Der Geist ist ein passiver Spiegel, der die Welt einfach abbildet. Erkenntnis = Kopie der Realität. Problem: Wie können wir dann etwas a priori (vor aller Erfahrung) wissen?</p>';
+    } else if (value < 66) {
+        label.textContent = 'Übergang';
+        explanation.innerHTML = '<p><strong>Übergang:</strong> Kant erkennt, dass weder reiner Rationalismus noch reiner Empirismus funktionieren. Es muss einen dritten Weg geben...</p>';
+    } else {
+        label.textContent = 'Kant';
+        explanation.innerHTML = '<p><strong>Kants Revolution:</strong> Der Geist bringt Formen (Raum, Zeit, Kategorien) mit, die jede Erfahrung erst möglich machen. Wir erkennen nur, was unsere eigenen Strukturen zulassen – aber dafür mit Sicherheit!</p>';
+    }
+}
+
+// ============ SPACE AND TIME ============
+let spaceTimeMode = 'both';
+
+function drawSpaceTime(mode) {
+    spaceTimeMode = mode;
+    const canvas = document.getElementById('spacetimeCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const centerX = w / 2;
+    const centerY = h / 2;
+
+    if (mode === 'remove') {
+        // Chaos - no forms of intuition
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('Ohne Raum und Zeit: Kein geordnetes Erleben möglich!', centerX, 30);
+
+        // Draw chaotic dots
+        for (let i = 0; i < 200; i++) {
+            const x = Math.random() * w;
+            const y = 60 + Math.random() * (h - 80);
+            const size = Math.random() * 5 + 1;
+            ctx.fillStyle = `hsl(${Math.random()*360}, 70%, 50%)`;
+            ctx.fillRect(x, y, size, size);
+        }
+
+        ctx.fillStyle = '#e94560';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Ohne die Formen der Anschauung wäre alles ein ungeordnetes Chaos', centerX, h - 30);
+        ctx.fillText('von Eindrücken – keine Erfahrung, keine Erkenntnis möglich.', centerX, h - 10);
+
+        document.getElementById('spacetimeExplanation').innerHTML = '<p><strong>Ohne Raum und Zeit:</strong> Kant argumentiert, dass ohne diese „Brillengläser" keine Erfahrung möglich wäre. Raum und Zeit sind nicht Eigenschaften der Dinge, sondern die Art, wie unser Geist Eindrücke ordnet.</p>';
+        return;
+    }
+
+    // Draw the "lens" metaphor
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Die Formen der Anschauung als „Brille" des Geistes', centerX, 30);
+
+    // Left: Raw "thing in itself"
+    ctx.fillStyle = '#888';
+    ctx.font = '12px Georgia';
+    ctx.fillText('Ding an sich', 100, 80);
+    ctx.fillText('(unerkennbar)', 100, 95);
+
+    // Draw mysterious object
+    ctx.beginPath();
+    ctx.arc(100, 160, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#33333388';
+    ctx.fill();
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#888';
+    ctx.font = '20px Georgia';
+    ctx.fillText('?', 100, 167);
+
+    // Draw lens/filter in the middle
+    if (mode === 'space' || mode === 'both') {
+        // Space lens
+        ctx.fillStyle = '#2196f322';
+        ctx.strokeStyle = '#2196f3';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(centerX - 60, centerY, 30, 100, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#2196f3';
+        ctx.font = 'bold 13px Georgia';
+        ctx.save();
+        ctx.translate(centerX - 60, centerY);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('RAUM', 0, 5);
+        ctx.restore();
+    }
+
+    if (mode === 'time' || mode === 'both') {
+        // Time lens
+        ctx.fillStyle = '#f0a50022';
+        ctx.strokeStyle = '#f0a500';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(centerX + 60, centerY, 30, 100, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#f0a500';
+        ctx.font = 'bold 13px Georgia';
+        ctx.save();
+        ctx.translate(centerX + 60, centerY);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('ZEIT', 0, 5);
+        ctx.restore();
+    }
+
+    // Arrow through lenses
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    drawArrow(ctx, 150, 160, centerX - 100, centerY);
+    drawArrow(ctx, centerX + 100, centerY, w - 200, centerY);
+
+    // Right: Structured experience
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Erscheinung', w - 150, 80);
+    ctx.fillText('(erkennbar)', w - 150, 95);
+
+    // Draw structured object
+    if (mode === 'both') {
+        // Full structured cube
+        drawCube(ctx, w - 190, centerY - 40, 80);
+        ctx.fillStyle = '#4caf50';
+        ctx.font = '11px Georgia';
+        ctx.fillText('Räumlich geordnet', w - 150, centerY + 60);
+        ctx.fillText('& zeitlich bestimmt', w - 150, centerY + 75);
+    } else if (mode === 'space') {
+        drawCube(ctx, w - 190, centerY - 40, 80);
+        ctx.fillStyle = '#2196f3';
+        ctx.font = '11px Georgia';
+        ctx.fillText('Räumlich geordnet', w - 150, centerY + 60);
+    } else if (mode === 'time') {
+        // Timeline
+        ctx.strokeStyle = '#f0a500';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(w - 220, centerY);
+        ctx.lineTo(w - 80, centerY);
+        ctx.stroke();
+        for (let i = 0; i < 5; i++) {
+            const x = w - 210 + i * 30;
+            ctx.beginPath();
+            ctx.arc(x, centerY, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#f0a500';
+            ctx.fill();
+        }
+        ctx.fillStyle = '#f0a500';
+        ctx.font = '11px Georgia';
+        ctx.fillText('Zeitlich geordnet', w - 150, centerY + 30);
+    }
+
+    // Bottom explanation
+    ctx.fillStyle = '#aaa';
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'center';
+    if (mode === 'space') {
+        ctx.fillText('Raum: Die Form des äußeren Sinnes – alle äußeren Dinge erscheinen uns im Raum', centerX, h - 40);
+        document.getElementById('spacetimeExplanation').innerHTML = '<p><strong>Raum</strong> ist für Kant kein „Behälter", in dem Dinge existieren, sondern die Art, wie unser Geist äußere Eindrücke ordnet. Deshalb gilt Geometrie a priori für alle Erfahrung!</p>';
+    } else if (mode === 'time') {
+        ctx.fillText('Zeit: Die Form des inneren Sinnes – alles Erleben geschieht in der Zeit', centerX, h - 40);
+        document.getElementById('spacetimeExplanation').innerHTML = '<p><strong>Zeit</strong> ist die Form, in der wir alle inneren Zustände erleben. Sie ist universaler als der Raum: Auch Gedanken und Gefühle sind zeitlich geordnet.</p>';
+    } else {
+        ctx.fillText('Raum und Zeit zusammen machen geordnete Erfahrung erst möglich', centerX, h - 40);
+        document.getElementById('spacetimeExplanation').innerHTML = '<p><strong>Raum und Zeit zusammen</strong> bilden das Gerüst jeder möglichen Erfahrung. Sie sind „a priori" – vor aller Erfahrung in uns – und machen Mathematik und Physik als sichere Wissenschaften möglich.</p>';
+    }
+}
+
+function toggleSpaceTime(mode) { drawSpaceTime(mode); }
+
+// ============ CATEGORIES ============
+let highlightedCategory = -1;
+
+const categoryData = [
+    {
+        title: 'Quantität',
+        items: ['Einheit', 'Vielheit', 'Allheit'],
+        color: '#e94560',
+        example: 'Wenn du sagst "Alle Schwäne sind weiß", nutzt du die Kategorie der Allheit, um eine Menge zu bestimmen.'
+    },
+    {
+        title: 'Qualität',
+        items: ['Realität', 'Negation', 'Limitation'],
+        color: '#4caf50',
+        example: '"Das Licht ist an" (Realität) vs. "Das Licht ist aus" (Negation) vs. "Das Licht ist gedimmt" (Limitation).'
+    },
+    {
+        title: 'Relation',
+        items: ['Substanz/Akzidens', 'Ursache/Wirkung', 'Wechselwirkung'],
+        color: '#2196f3',
+        example: '"Der Stein (Substanz) fällt (Akzidens), weil die Schwerkraft ihn zieht (Ursache→Wirkung)."'
+    },
+    {
+        title: 'Modalität',
+        items: ['Möglichkeit', 'Wirklichkeit', 'Notwendigkeit'],
+        color: '#f0a500',
+        example: '"Es könnte regnen" (möglich), "Es regnet" (wirklich), "Es muss regnen, wenn Wolken da sind" (notwendig).'
+    }
+];
+
+function drawCategories(highlight) {
+    highlightedCategory = highlight;
+    const canvas = document.getElementById('categoriesCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Die 12 Kategorien des reinen Verstandes', w/2, 30);
+    ctx.font = '12px Georgia';
+    ctx.fillStyle = '#aaa';
+    ctx.fillText('Die „Grammatik" unseres Denkens – ohne sie keine Erfahrung möglich', w/2, 50);
+
+    // Draw central "Verstand" node
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, 50, 0, Math.PI * 2);
+    ctx.fillStyle = '#16213e';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Georgia';
+    ctx.fillText('VERSTAND', w/2, h/2 - 5);
+    ctx.font = '11px Georgia';
+    ctx.fillText('(Spontaneität)', w/2, h/2 + 12);
+
+    // Draw 4 category groups
+    const positions = [
+        { x: w/2, y: 100 },      // top
+        { x: 150, y: h/2 },      // left
+        { x: w - 150, y: h/2 },  // right
+        { x: w/2, y: h - 100 }   // bottom
+    ];
+
+    categoryData.forEach((cat, i) => {
+        const pos = positions[i];
+        const isHighlighted = highlight === i;
+        const alpha = highlight === -1 ? 1 : (isHighlighted ? 1 : 0.3);
+
+        ctx.globalAlpha = alpha;
+
+        // Line to center
+        ctx.strokeStyle = cat.color;
+        ctx.lineWidth = isHighlighted ? 3 : 1;
+        ctx.beginPath();
+        ctx.moveTo(w/2, h/2);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+
+        // Category box
+        const boxW = 180, boxH = 100;
+        ctx.fillStyle = cat.color + '22';
+        ctx.strokeStyle = cat.color;
+        ctx.lineWidth = isHighlighted ? 3 : 1.5;
+        roundRect(ctx, pos.x - boxW/2, pos.y - boxH/2, boxW, boxH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        // Title
+        ctx.fillStyle = cat.color;
+        ctx.font = 'bold 13px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(cat.title, pos.x, pos.y - boxH/2 + 20);
+
+        // Items
+        ctx.fillStyle = '#ddd';
+        ctx.font = '11px Georgia';
+        cat.items.forEach((item, j) => {
+            ctx.fillText(item, pos.x, pos.y - boxH/2 + 40 + j * 18);
+        });
+
+        ctx.globalAlpha = 1;
+    });
+
+    // Show example if highlighted
+    if (highlight >= 0) {
+        ctx.fillStyle = '#16213e';
+        roundRect(ctx, 50, h - 60, w - 100, 50, 8);
+        ctx.fill();
+        ctx.strokeStyle = categoryData[highlight].color;
+        ctx.lineWidth = 1;
+        roundRect(ctx, 50, h - 60, w - 100, 50, 8);
+        ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(categoryData[highlight].example, w/2, h - 32);
+    }
+}
+
+function highlightCategory(i) { drawCategories(i); }
+function showCategoryExample() {
+    const i = Math.floor(Math.random() * 4);
+    drawCategories(i);
+}
+
+// ============ ANALYTIC/SYNTHETIC ============
+function drawAnalytic(type) {
+    const canvas = document.getElementById('analyticCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Arten von Urteilen', w/2, 30);
+
+    // Draw the grid
+    const gridX = 150, gridY = 70;
+    const cellW = 300, cellH = 140;
+
+    // Headers
+    ctx.fillStyle = '#aaa';
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('A priori', gridX + cellW/2, gridY - 10);
+    ctx.fillText('A posteriori', gridX + cellW + cellW/2, gridY - 10);
+
+    ctx.save();
+    ctx.translate(gridX - 20, gridY + cellH/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('Analytisch', 0, 0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(gridX - 20, gridY + cellH + cellH/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('Synthetisch', 0, 0);
+    ctx.restore();
+
+    // Cells
+    const cells = [
+        { x: gridX, y: gridY, label: 'Analytisch a priori', example: '"Alle Junggesellen sind unverheiratet"', desc: 'Erläuternd, notwendig', color: '#4caf50', active: type === 'analytic' },
+        { x: gridX + cellW, y: gridY, label: 'Analytisch a posteriori', example: '(gibt es nicht)', desc: 'Unmöglich!', color: '#666', active: false },
+        { x: gridX, y: gridY + cellH, label: 'Synthetisch a priori', example: '"Alles was geschieht hat eine Ursache"', desc: 'Erweiternd UND notwendig!', color: '#e94560', active: type === 'synthetic-prior' },
+        { x: gridX + cellW, y: gridY + cellH, label: 'Synthetisch a posteriori', example: '"Alle Schwäne sind weiß"', desc: 'Erweiternd, zufällig', color: '#2196f3', active: type === 'synthetic-post' },
+    ];
+
+    cells.forEach(cell => {
+        const alpha = cell.active ? 1 : (type === 'none' ? 0.7 : 0.3);
+        ctx.globalAlpha = alpha;
+
+        ctx.fillStyle = cell.color + '22';
+        ctx.strokeStyle = cell.color;
+        ctx.lineWidth = cell.active ? 3 : 1;
+        roundRect(ctx, cell.x + 5, cell.y + 5, cellW - 10, cellH - 10, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = cell.color;
+        ctx.font = 'bold 12px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(cell.label, cell.x + cellW/2, cell.y + 30);
+
+        ctx.fillStyle = '#fff';
+        ctx.font = '11px Georgia';
+        ctx.fillText(cell.example, cell.x + cellW/2, cell.y + 55);
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '10px Georgia';
+        ctx.fillText(cell.desc, cell.x + cellW/2, cell.y + 80);
+
+        ctx.globalAlpha = 1;
+    });
+
+    // Explanation
+    const explanations = {
+        'analytic': '<p><strong>Analytische Urteile:</strong> Das Prädikat ist schon im Subjekt enthalten. "Alle Körper sind ausgedehnt" – Ausdehnung gehört zum Begriff des Körpers. Sie erläutern, erweitern aber unser Wissen nicht.</p>',
+        'synthetic-post': '<p><strong>Synthetische Urteile a posteriori:</strong> Das Prädikat fügt etwas Neues hinzu, das wir aus Erfahrung wissen. "Alle Körper sind schwer" – Schwere gehört nicht zum Begriff des Körpers, wir lernen es durch Erfahrung.</p>',
+        'synthetic-prior': '<p><strong>Synthetische Urteile a priori:</strong> Kants große Entdeckung! Sie erweitern unser Wissen UND gelten notwendig, ohne auf Erfahrung zu beruhen. "7+5=12" oder "Jede Veränderung hat eine Ursache". Die zentrale Frage der Kritik: <em>Wie sind solche Urteile möglich?</em></p>',
+        'none': '<p>Wähle einen Urteilstyp, um die Visualisierung zu sehen.</p>'
+    };
+    document.getElementById('judgmentExplanation').innerHTML = explanations[type] || explanations['none'];
+}
+
+function showJudgment(type) { drawAnalytic(type); }
+
+// ============ PHENOMENA / NOUMENA ============
+function drawPhenomena(value) {
+    const canvas = document.getElementById('phenomenaCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const t = value / 100;
+    document.getElementById('phenomenaLabel').textContent = value + '%';
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Erscheinung vs. Ding an sich', w/2, 30);
+
+    // Draw layers
+    const centerX = w/2, centerY = h/2 + 20;
+
+    // Outer layer: Phenomena (what we can know)
+    const outerRadius = 150;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#2196f322';
+    ctx.fill();
+    ctx.strokeStyle = '#2196f3';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#2196f3';
+    ctx.font = '13px Georgia';
+    ctx.fillText('ERSCHEINUNGEN (Phänomene)', centerX, centerY - outerRadius - 10);
+    ctx.font = '11px Georgia';
+    ctx.fillStyle = '#aaa';
+    ctx.fillText('Was wir erkennen können', centerX, centerY - outerRadius + 8);
+
+    // Inner core: Noumenon (unknowable)
+    const innerRadius = 50;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fill();
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#e94560';
+    ctx.font = 'bold 12px Georgia';
+    ctx.fillText('DING AN SICH', centerX, centerY - 5);
+    ctx.font = '11px Georgia';
+    ctx.fillText('(Noumenon)', centerX, centerY + 12);
+
+    // Draw the "probe" that tries to reach the core
+    const probeAngle = -Math.PI / 4;
+    const probeStart = outerRadius + 20;
+    const probeEnd = innerRadius + 10 + (outerRadius - innerRadius - 10) * (1 - t);
+
+    const startX = centerX + Math.cos(probeAngle) * probeStart;
+    const startY = centerY + Math.sin(probeAngle) * probeStart;
+    const endX = centerX + Math.cos(probeAngle) * probeEnd;
+    const endY = centerY + Math.sin(probeAngle) * probeEnd;
+
+    ctx.strokeStyle = '#f0a500';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    // Probe tip
+    ctx.beginPath();
+    ctx.arc(endX, endY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#f0a500';
+    ctx.fill();
+
+    // Label for probe
+    ctx.fillStyle = '#f0a500';
+    ctx.font = '11px Georgia';
+    ctx.textAlign = 'left';
+    ctx.fillText('Unsere Erkenntnis', startX + 10, startY - 10);
+
+    // Barrier indicator
+    if (t > 0.7) {
+        ctx.fillStyle = '#e94560';
+        ctx.font = 'bold 12px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚠ GRENZE!', endX + 30, endY - 15);
+        ctx.font = '10px Georgia';
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Unüberwindbar', endX + 30, endY);
+    }
+
+    // Right side explanation
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Georgia';
+    const textX = w - 250;
+    ctx.fillText('Wir erkennen:', textX, 80);
+    ctx.fillStyle = '#2196f3';
+    ctx.fillText('✓ Wie Dinge uns erscheinen', textX, 105);
+    ctx.fillText('✓ Raum, Zeit, Kausalität', textX, 125);
+    ctx.fillText('✓ Naturgesetze', textX, 145);
+
+    ctx.fillStyle = '#fff';
+    ctx.fillText('Wir erkennen NICHT:', textX, 180);
+    ctx.fillStyle = '#e94560';
+    ctx.fillText('✗ Was Dinge an sich sind', textX, 205);
+    ctx.fillText('✗ Gott, Freiheit, Seele', textX, 225);
+    ctx.fillText('  (als theoretisches Wissen)', textX, 242);
+}
+
+function updatePhenomena(value) { drawPhenomena(value); }
+
+// ============ DIALECTIC ============
+const antinomies = [
+    {
+        title: '1. Antinomie: Anfang der Welt',
+        thesis: 'Die Welt hat einen Anfang in der Zeit und ist dem Raum nach in Grenzen eingeschlossen.',
+        antithesis: 'Die Welt hat keinen Anfang und keine Grenzen im Raume, sondern ist sowohl in Ansehung der Zeit als des Raumes unendlich.',
+        resolution: 'Beide Beweise sind gültig – weil die Frage die Grenzen möglicher Erfahrung überschreitet!'
+    },
+    {
+        title: '2. Antinomie: Einfache Teile',
+        thesis: 'Jede zusammengesetzte Substanz besteht aus einfachen Teilen (Atomen).',
+        antithesis: 'Kein zusammengesetztes Ding besteht aus einfachen Teilen, und es existiert nichts Einfaches.',
+        resolution: 'Die Teilbarkeit betrifft nur Erscheinungen – über Dinge an sich können wir nichts aussagen.'
+    },
+    {
+        title: '3. Antinomie: Freiheit',
+        thesis: 'Es gibt eine Kausalität durch Freiheit (neben der Naturkausalität).',
+        antithesis: 'Es gibt keine Freiheit, alles geschieht nach Naturgesetzen.',        resolution: 'Beide können wahr sein! Freiheit gilt für das Ding an sich (noumenale Welt), Naturkausalität für Erscheinungen (phänomenale Welt).'
+    },
+    {
+        title: '4. Antinomie: Notwendiges Wesen',
+        thesis: 'Zur Welt gehört ein schlechthin notwendiges Wesen als ihre Ursache.',
+        antithesis: 'Es existiert kein schlechthin notwendiges Wesen, weder in der Welt noch außer ihr als ihre Ursache.',
+        resolution: 'Ein notwendiges Wesen kann außerhalb der Erscheinungswelt gedacht werden – aber nicht theoretisch bewiesen.'
+    }
+];
+
+function drawDialectic(index) {
+    const canvas = document.getElementById('dialecticCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Die Antinomien der reinen Vernunft', w/2, 30);
+
+    if (index === 0) {
+        // Overview - show all four
+        ctx.font = '13px Georgia';
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Die Vernunft verstrickt sich in Widersprüche, wenn sie über die Erfahrung hinausgeht', w/2, 55);
+
+        const positions = [
+            { x: 100, y: 100, label: '1. Welt/Zeit' },
+            { x: 350, y: 100, label: '2. Teilbarkeit' },
+            { x: 100, y: 280, label: '3. Freiheit' },
+            { x: 350, y: 280, label: '4. Gott' }
+        ];
+
+        positions.forEach((pos, i) => {
+            ctx.fillStyle = '#e9456022';
+            ctx.strokeStyle = '#e94560';
+            ctx.lineWidth = 2;
+            roundRect(ctx, pos.x, pos.y, 200, 130, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#e94560';
+            ctx.font = 'bold 13px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(pos.label, pos.x + 100, pos.y + 25);
+
+            // Draw thesis vs antithesis arrows
+            ctx.fillStyle = '#4caf50';
+            ctx.font = '11px Georgia';
+            ctx.fillText('These ←→ Antithese', pos.x + 100, pos.y + 55);
+
+            ctx.fillStyle = '#aaa';
+            ctx.font = '10px Georgia';
+            const shortThesis = antinomies[i].thesis.substring(0, 40) + '...';
+            ctx.fillText(shortThesis, pos.x + 100, pos.y + 80);
+
+            // Resolution hint
+            ctx.fillStyle = '#f0a500';
+            ctx.font = '10px Georgia';
+            ctx.fillText('⚠ Unlösbar ohne Kants Unterscheidung', pos.x + 100, pos.y + 110);
+        });
+
+        // Right side explanation
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Georgia';
+        ctx.textAlign = 'left';
+        ctx.fillText('Kants Lösung:', 600, 120);
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Die Widersprüche entstehen,', 600, 145);
+        ctx.fillText('weil die Vernunft Fragen stellt,', 600, 165);
+        ctx.fillText('die über mögliche Erfahrung', 600, 185);
+        ctx.fillText('hinausgehen.', 600, 205);
+        ctx.fillStyle = '#e94560';
+        ctx.fillText('→ Wir verwechseln', 600, 240);
+        ctx.fillText('  Erscheinungen mit', 600, 260);
+        ctx.fillText('  Dingen an sich!', 600, 280);
+
+        return;
+    }
+
+    const ant = antinomies[index - 1];
+
+    // Title
+    ctx.fillStyle = '#f0a500';
+    ctx.font = 'bold 14px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText(ant.title, w/2, 60);
+
+    // Draw thesis (left)
+    const thesisX = 50, thesisY = 90;
+    ctx.fillStyle = '#4caf5022';
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    roundRect(ctx, thesisX, thesisY, 350, 120, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#4caf50';
+    ctx.font = 'bold 13px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('THESE', thesisX + 175, thesisY + 25);
+
+    ctx.fillStyle = '#ddd';
+    ctx.font = '11px Georgia';
+    wrapText(ctx, ant.thesis, thesisX + 175, thesisY + 50, 320, 16);
+
+    // Draw antithesis (right)
+    const antiX = 500, antiY = 90;
+    ctx.fillStyle = '#f4433622';
+    ctx.strokeStyle = '#f44336';
+    ctx.lineWidth = 2;
+    roundRect(ctx, antiX, antiY, 350, 120, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#f44336';
+    ctx.font = 'bold 13px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('ANTITHESE', antiX + 175, antiY + 25);
+
+    ctx.fillStyle = '#ddd';
+    ctx.font = '11px Georgia';
+    wrapText(ctx, ant.antithesis, antiX + 175, antiY + 50, 320, 16);
+
+    // VS symbol
+    ctx.fillStyle = '#e94560';
+    ctx.font = 'bold 24px Georgia';
+    ctx.fillText('⚡', w/2, 155);
+
+    // Draw conflict visualization
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(w/2, 220);
+    ctx.lineTo(w/2, 290);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Resolution
+    const resY = 300;
+    ctx.fillStyle = '#f0a50022';
+    ctx.strokeStyle = '#f0a500';
+    ctx.lineWidth = 2;
+    roundRect(ctx, 100, resY, w - 200, 100, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#f0a500';
+    ctx.font = 'bold 13px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('💡 KANTS AUFLÖSUNG', w/2, resY + 25);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Georgia';
+    wrapText(ctx, ant.resolution, w/2, resY + 50, w - 240, 16);
+
+    document.getElementById('antinomyExplanation').innerHTML = `<p><strong>${ant.title}:</strong> Beide Seiten haben gleich starke Argumente. Kant zeigt: Der Widerspruch entsteht, weil wir die Grenzen unserer Erkenntnis überschreiten. Die Vernunft fragt hier nach etwas, das keine mögliche Erfahrung je beantworten kann.</p>`;
+}
+
+function showAntinomy(n) { drawDialectic(n); }
+
+// ============ QUIZ (DRAG & DROP) ============
+let draggedItem = null;
+
+document.querySelectorAll('.drag-item').forEach(item => {
+    item.addEventListener('dragstart', function(e) {
+        draggedItem = this;
+        setTimeout(() => this.style.opacity = '0.5', 0);
+    });
+    item.addEventListener('dragend', function() {
+        this.style.opacity = '1';
+        draggedItem = null;
+    });
+});
+
+document.querySelectorAll('.drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('over');
+    });
+    zone.addEventListener('dragleave', function() {
+        this.classList.remove('over');
+    });
+    zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('over');
+        if (draggedItem) {
+            this.appendChild(draggedItem);
+        }
+    });
+});
+
+function checkQuiz() {
+    let correct = 0;
+    let total = 0;
+    document.querySelectorAll('.drag-item').forEach(item => {
+        const parent = item.parentElement;
+        if (parent.classList.contains('drop-zone')) {
+            total++;
+            const expected = item.getAttribute('data-answer');
+            const zone = parent.getAttribute('data-accept');
+            if (expected === zone) {
+                item.classList.add('correct');
+                item.classList.remove('wrong');
+                correct++;
+            } else {
+                item.classList.add('wrong');
+                item.classList.remove('correct');
+            }
+        }
+    });
+    const result = document.getElementById('quizResult');
+    if (total === 0) {
+        result.innerHTML = '<span style="color:#f0a500;">Ziehe zuerst die Begriffe in die Felder!</span>';
+    } else if (correct === total) {
+        result.innerHTML = '<span style="color:#4caf50;">🎉 Perfekt! Alle ' + correct + ' richtig!</span>';
+    } else {
+        result.innerHTML = '<span style="color:#e94560;">' + correct + ' von ' + total + ' richtig. Grün = richtig, Rot = falsch.</span>';
+    }
+}
+
+function resetQuiz() {
+    const quizArea = document.getElementById('quizArea');
+    const itemContainer = quizArea.querySelector('div[style*="text-align:center"]');
+    document.querySelectorAll('.drag-item').forEach(item => {
+        item.classList.remove('correct', 'wrong');
+        itemContainer.appendChild(item);
+    });
+    document.getElementById('quizResult').innerHTML = '';
+}
+
+// ============ UTILITY FUNCTIONS ============
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+}
+
+function drawLine(ctx, x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+}
+
+function drawArrow(ctx, fromX, fromY, toX, toY) {
+    const headLen = 10;
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const angle = Math.atan2(dy, dx);
+
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI/6), toY - headLen * Math.sin(angle - Math.PI/6));
+    ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI/6), toY - headLen * Math.sin(angle + Math.PI/6));
+    ctx.closePath();
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+}
+
+function drawCube(ctx, x, y, size) {
+    const d = size * 0.3;
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    // Front face
+    ctx.strokeRect(x, y, size, size);
+    // Top face
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + d, y - d);
+    ctx.lineTo(x + size + d, y - d);
+    ctx.lineTo(x + size, y);
+    ctx.stroke();
+    // Right face
+    ctx.beginPath();
+    ctx.moveTo(x + size, y);
+    ctx.lineTo(x + size + d, y - d);
+    ctx.lineTo(x + size + d, y + size - d);
+    ctx.lineTo(x + size, y + size);
+    ctx.stroke();
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    let currentY = y;
+
+    for (let i = 0; i < words.length; i++) {
+        const testLine = line + words[i] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && i > 0) {
+            ctx.fillText(line.trim(), x, currentY);
+            line = words[i] + ' ';
+            currentY += lineHeight;
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line.trim(), x, currentY);
+}
+
+// ============ INITIALIZE ============
+window.addEventListener('load', function() {
+    drawOverview();
+});
+</script>
+</body>
+</html>
