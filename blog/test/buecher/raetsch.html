@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enzyklopädie der Psychoaktiven Pflanzen - Visuelle Konzepte</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a0a2e 0%, #0d1b2a 50%, #1b2838 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid #2d4a5e;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #64ffda, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p { color: #8892b0; font-size: 1.1em; }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            background: #0d1117;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #21262d;
+        }
+        .nav-tab {
+            padding: 10px 18px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            color: #8b949e;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: #1f6feb33;
+            border-color: #1f6feb;
+            color: #58a6ff;
+        }
+        .section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section.active { display: block; }
+        .section h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #64ffda;
+        }
+        .section h3 {
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            color: #a78bfa;
+        }
+        .description {
+            background: #161b22;
+            border-left: 3px solid #64ffda;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.7;
+        }
+        .chart-container {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 400px;
+        }
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .chart-row { grid-template-columns: 1fr; }
+        }
+        .interactive-demo {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .slider-group { margin: 15px 0; }
+        .slider-group label { display: block; margin-bottom: 5px; color: #8b949e; }
+        .slider-group input[type="range"] { width: 100%; accent-color: #64ffda; }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .info-stat {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .info-stat .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #64ffda, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .info-stat .label { color: #8b949e; margin-top: 5px; }
+        select, button {
+            background: #21262d;
+            color: #e0e0e0;
+            border: 1px solid #30363d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        select:hover, button:hover { border-color: #58a6ff; }
+        .concept-card {
+            background: linear-gradient(135deg, #161b22, #1c2333);
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .concept-card h4 { color: #f472b6; margin-bottom: 8px; }
+        .concept-card p { color: #8b949e; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🌿 Enzyklopädie der Psychoaktiven Pflanzen</h1>
+    <p>Visuelle Abstraktion der Kernkonzepte — Ethnobotanik, Pharmakologie & Kulturgeschichte</p>
+</div>
+
+<div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('overview')">📊 Überblick</div>
+    <div class="nav-tab" onclick="showSection('synergy')">🔬 Synergismus</div>
+    <div class="nav-tab" onclick="showSection('neurotransmitter')">🧠 Neurotransmitter</div>
+    <div class="nav-tab" onclick="showSection('families')">🌱 Pflanzenfamilien</div>
+    <div class="nav-tab" onclick="showSection('cultural')">🌍 Kulturmuster</div>
+    <div class="nav-tab" onclick="showSection('chemistry')">🧪 Wirkstoffklassen</div>
+    <div class="nav-tab" onclick="showSection('network')">🕸️ Vernetzung</div>
+    <div class="nav-tab" onclick="showSection('ritual')">🔮 Ritualstruktur</div>
+</div>
+
+<!-- SECTION 1: OVERVIEW -->
+<div class="section active" id="overview">
+    <h2>Kernerkenntnisse im Überblick</h2>
+    <div class="description">
+        Das Werk dokumentiert die gesamte Bandbreite psychoaktiver Pflanzen, deren kulturelle Nutzung über Jahrtausende,
+        die pharmakologischen Wirkmechanismen und die daraus resultierenden Kombinationspräparate.
+        Das zentrale Muster: <strong>Mensch und Pflanze stehen in einer ko-evolutionären Beziehung</strong>,
+        in der Pflanzenwirkstoffe als exogene Neurotransmitter fungieren.
+    </div>
+    <div class="info-grid">
+        <div class="info-stat"><div class="number">300+</div><div class="label">Erythroxylum-Arten in der Gattung</div></div>
+        <div class="info-stat"><div class="number">11</div><div class="label">Datura-Arten weltweit</div></div>
+        <div class="info-stat"><div class="number">5000+</div><div class="label">Jahre Coca-Gebrauch (archäologisch)</div></div>
+        <div class="info-stat"><div class="number">44</div><div class="label">Ephedra-Arten beschrieben</div></div>
+    </div>
+    <h3>Die 7 Grundprinzipien des Werkes</h3>
+    <div id="principlesChart" class="chart-container" style="height:500px;"></div>
+    <h3>Verteilung der Wirkstoffklassen</h3>
+    <div id="substanceClassChart" class="chart-container" style="height:450px;"></div>
+</div>
+
+<!-- SECTION 2: SYNERGY -->
+<div class="section" id="synergy">
+    <h2>Das Synergismus-Prinzip</h2>
+    <div class="description">
+        <strong>Kernkonzept:</strong> Viele psychoaktive Zubereitungen wirken nur durch die geschickte Kombination
+        mehrerer Pflanzen. Die Einzelbestandteile sind oft wirkungslos — erst die Kombination erzeugt den Effekt.
+        Beispiel: <em>Coca + Llipta (alkalische Substanz)</em> — Kokain wird erst durch den alkalischen Zusatz aus den Blättern gelöst.
+        Oder: <em>Ayahuasca</em> — DMT allein ist oral unwirksam, erst der MAO-Hemmer ermöglicht die Wirkung.
+    </div>
+    <div class="interactive-demo">
+        <h3>🧪 Interaktives Synergismus-Modell</h3>
+        <p style="color:#8b949e; margin-bottom:15px;">Verändere die Anteile und beobachte die resultierende Wirkung:</p>
+        <div class="slider-group">
+            <label>Wirkstoff-Lieferant (z.B. DMT, Kokain): <span id="activeVal">50</span>%</label>
+            <input type="range" id="activeSlider" min="0" max="100" value="50" oninput="updateSynergy()">
+        </div>
+        <div class="slider-group">
+            <label>Potentiator/Enabler (z.B. MAO-Hemmer, Kalk): <span id="enablerVal">50</span>%</label>
+            <input type="range" id="enablerSlider" min="0" max="100" value="50" oninput="updateSynergy()">
+        </div>
+        <div id="synergyResult" class="chart-container" style="height:350px;"></div>
+    </div>
+    <h3>Synergismus-Typen im Werk</h3>
+    <div id="synergyTypes" class="chart-container" style="height:400px;"></div>
+</div>
+
+<!-- SECTION 3: NEUROTRANSMITTER -->
+<div class="section" id="neurotransmitter">
+    <h2>Pflanzenstoffe = Körpereigene Botenstoffe</h2>
+    <div class="description">
+        <strong>Zentrale Erkenntnis:</strong> Pflanzenwirkstoffe wirken, weil sie mit körpereigenen Neurotransmittern
+        strukturell verwandt oder identisch sind. Sie docken an dieselben Rezeptoren an.
+        Beispiele: Morphin → Endorphin-Rezeptoren; THC → Anandamid-Rezeptoren; Nikotin → Acetylcholin-Rezeptoren.
+    </div>
+    <div id="neuroChart" class="chart-container" style="height:550px;"></div>
+</div>
+
+<!-- SECTION 4: FAMILIES -->
+<div class="section" id="families">
+    <h2>Pflanzenfamilien & ihre Wirkstoffe</h2>
+    <div class="description">
+        Bestimmte Pflanzenfamilien sind besonders reich an psychoaktiven Substanzen.
+        Die <strong>Solanaceae</strong> (Nachtschattengewächse) liefern Tropanalkaloide,
+        die <strong>Erythroxylaceae</strong> das Kokain, die <strong>Ephedraceae</strong> das Ephedrin.
+    </div>
+    <div id="familyChart" class="chart-container" style="height:550px;"></div>
+</div>
+
+<!-- SECTION 5: CULTURAL -->
+<div class="section" id="cultural">
+    <h2>Kulturelle Nutzungsmuster</h2>
+    <div class="description">
+        Psychoaktive Pflanzen werden in allen Kulturen für ähnliche Zwecke genutzt:
+        Heilung, Divination, Initiation, soziale Bindung, Ekstase und Kommunikation mit dem Numinosen.
+    </div>
+    <div id="usageChart" class="chart-container" style="height:450px;"></div>
+    <h3>Dreistufenmodell der Dosierung (indianisch)</h3>
+    <div id="doseChart" class="chart-container" style="height:400px;"></div>
+</div>
+
+<!-- SECTION 6: CHEMISTRY -->
+<div class="section" id="chemistry">
+    <h2>Wirkstoffklassen & Strukturen</h2>
+    <div class="description">
+        Die psychoaktiven Wirkstoffe lassen sich in wenige Hauptklassen einteilen.
+        Jede Klasse hat ein charakteristisches Wirkprofil und interagiert mit spezifischen Rezeptorsystemen.
+    </div>
+    <div id="chemTreeChart" class="chart-container" style="height:600px;"></div>
+    <h3>Wirkprofile im Vergleich</h3>
+    <div class="interactive-demo">
+        <label>Wähle eine Substanzklasse: </label>
+        <select id="substanceSelect" onchange="updateRadar()">
+            <option value="tropane">Tropanalkaloide (Atropin, Scopolamin, Kokain)</option>
+            <option value="ephedrine">Ephedrin-Typ (Ephedra)</option>
+            <option value="purine">Purinalkaloide (Koffein, Theobromin)</option>
+            <option value="erythrina">Erythrina-Alkaloide (Korallenbaum)</option>
+            <option value="quinolizidine">Chinolizidinalkaloide (Cytisin, Heimia)</option>
+        </select>
+        <div id="radarChart" class="chart-container" style="height:420px;"></div>
+    </div>
+</div>
+
+<!-- SECTION 7: NETWORK -->
+<div class="section" id="network">
+    <h2>Vernetzung: Pflanzen — Wirkstoffe — Kulturen</h2>
+    <div class="description">
+        Alles ist mit allem verbunden: Dieselben Wirkstoffe tauchen in verschiedenen Pflanzen auf,
+        dieselben Pflanzen werden in verschiedenen Kulturen genutzt.
+        Koffein z.B. kommt in Coffea, Cola, Ephedra und vielen anderen Pflanzen vor.
+    </div>
+    <div id="networkChart" class="chart-container" style="height:600px;"></div>
+</div>
+
+<!-- SECTION 8: RITUAL -->
+<div class="section" id="ritual">
+    <h2>Universelle Ritualstruktur</h2>
+    <div class="description">
+        Ob Datura-Initiation, Coca-Orakel oder Bilsenkraut-Räucherung —
+        die Grundstruktur ist überall gleich: <strong>Vorbereitung → Einnahme → Erfahrung → Integration</strong>.
+    </div>
+    <div id="ritualFlow" class="chart-container" style="height:500px;"></div>
+    <h3>Set & Setting: Die Determinanten der Erfahrung</h3>
+    <div id="setSettingChart" class="chart-container" style="height:400px;"></div>
+</div>
+
+<script>
+// Navigation
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+    setTimeout(() => renderSectionCharts(id), 100);
+}
+
+const colors = { cyan: '#64ffda', purple: '#a78bfa', pink: '#f472b6', blue: '#58a6ff', green: '#3fb950', orange: '#f0883e', yellow: '#d29922', red: '#f85149' };
+
+// Render all charts for a section
+function renderSectionCharts(id) {
+    switch(id) {
+        case 'overview': renderOverview(); break;
+        case 'synergy': renderSynergy(); break;
+        case 'neurotransmitter': renderNeuro(); break;
+        case 'families': renderFamilies(); break;
+        case 'cultural': renderCultural(); break;
+        case 'chemistry': renderChemistry(); break;
+        case 'network': renderNetwork(); break;
+        case 'ritual': renderRitual(); break;
+    }
+}
+
+// ===== OVERVIEW =====
+function renderOverview() {
+    const pc = echarts.init(document.getElementById('principlesChart'));
+    pc.setOption({
+        tooltip: {},
+        radar: {
+            indicator: [
+                { name: 'Synergismus', max: 10 },
+                { name: 'Exogene=Endogene\nNeurotransmitter', max: 10 },
+                { name: 'Set & Setting', max: 10 },
+                { name: 'Kulturelle\nKodierung', max: 10 },
+                { name: 'Rituelle\nEinbettung', max: 10 },
+                { name: 'Schamanische\nTechnologie', max: 10 },
+                { name: 'Ko-Evolution\nMensch-Pflanze', max: 10 }
+            ],
+            shape: 'polygon',
+            splitArea: { areaStyle: { color: ['#161b2200'] } },
+            axisLine: { lineStyle: { color: '#30363d' } },
+            splitLine: { lineStyle: { color: '#21262d' } },
+            axisName: { color: '#8b949e', fontSize: 11 }
+        },
+        series: [{ type: 'radar', data: [{ value: [10, 9, 8, 9, 10, 9, 8], name: 'Bedeutung', areaStyle: { color: 'rgba(100,255,218,0.15)' }, lineStyle: { color: colors.cyan, width: 2 }, itemStyle: { color: colors.cyan } }] }]
+    });
+
+    const sc = echarts.init(document.getElementById('substanceClassChart'));
+    sc.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {d}%' },
+        series: [{ type: 'pie', radius: ['35%', '70%'], itemStyle: { borderRadius: 8, borderColor: '#0d1117', borderWidth: 2 }, label: { color: '#e0e0e0' },
+            data: [
+                { value: 30, name: 'Tropanalkaloide\n(Datura, Hyoscyamus, Coca)', itemStyle: { color: colors.purple } },
+                { value: 15, name: 'Purinalkaloide\n(Koffein: Coffea, Cola)', itemStyle: { color: colors.blue } },
+                { value: 12, name: 'Ephedrin-Typ\n(Ephedra spp.)', itemStyle: { color: colors.green } },
+                { value: 10, name: 'Erythrina-Alkaloide\n(Korallenbäume)', itemStyle: { color: colors.pink } },
+                { value: 8, name: 'Chinolizidinalkaloide\n(Cytisin, Heimia)', itemStyle: { color: colors.orange } },
+                { value: 8, name: 'Isoquinoline\n(Eschscholzia)', itemStyle: { color: colors.yellow } },
+                { value: 7, name: 'Ätherische Öle\n(Fabiana, Crocus)', itemStyle: { color: colors.cyan } },
+                { value: 10, name: 'Andere\n(Diterpene, Flavonoide)', itemStyle: { color: colors.red } }
+            ]
+        }]
+    });
+}
+
+// ===== SYNERGY =====
+function updateSynergy() {
+    const active = parseInt(document.getElementById('activeSlider').value);
+    const enabler = parseInt(document.getElementById('enablerSlider').value);
+    document.getElementById('activeVal').textContent = active;
+    document.getElementById('enablerVal').textContent = enabler;
+
+    const threshold = 20;
+    let effect = 0, sideEffects = 0, duration = 0;
+    if (active > threshold && enabler > threshold) {
+        const syn = Math.min(active, enabler) / 50;
+        effect = Math.min(10, (active / 10) * syn);
+        sideEffects = Math.min(6, (enabler / 20));
+        duration = Math.min(8, syn * 4);
+    } else if (active > threshold) {
+        effect = active / 50;
+    }
+
+    const chart = echarts.init(document.getElementById('synergyResult'));
+    chart.setOption({
+        title: { text: effect > 2 ? '✨ Synergismus aktiv!' : '❌ Schwache/keine Wirkung', left: 'center', textStyle: { color: effect > 2 ? colors.cyan : colors.red } },
+        radar: {
+            indicator: [{ name: 'Psychoaktive Wirkung', max: 10 }, { name: 'Nebenwirkungen', max: 10 }, { name: 'Wirkdauer (h)', max: 8 }],
+            shape: 'polygon', splitArea: { areaStyle: { color: ['#161b2200'] } }, axisLine: { lineStyle: { color: '#30363d' } }, splitLine: { lineStyle: { color: '#21262d' } }, axisName: { color: '#8b949e' }
+        },
+        series: [{ type: 'radar', data: [{ value: [effect, sideEffects, duration], areaStyle: { color: effect > 2 ? 'rgba(100,255,218,0.2)' : 'rgba(248,81,73,0.1)' }, lineStyle: { color: effect > 2 ? colors.cyan : colors.red }, itemStyle: { color: effect > 2 ? colors.cyan : colors.red } }] }]
+    });
+}
+
+function renderSynergy() {
+    updateSynergy();
+    const tc = echarts.init(document.getElementById('synergyTypes'));
+    tc.setOption({
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: ['Coca+Kalk', 'Ayahuasca\n(MAO+DMT)', 'Datura+Fett\n(Hexensalbe)', 'Bilsenkraut\n+Wein', 'Ephedra\n+MAO-Hemmer', 'Kaffee+\nKardamom'], axisLabel: { color: '#8b949e', fontSize: 10 } },
+        yAxis: { type: 'value', name: 'Wirkungsverstärkung', axisLabel: { color: '#8b949e' }, nameTextStyle: { color: '#8b949e' } },
+        series: [
+            { name: 'Ohne Kombination', type: 'bar', data: [1, 0, 2, 3, 5, 6], itemStyle: { color: '#30363d' } },
+            { name: 'Mit Kombination', type: 'bar', data: [8, 9, 8, 7, 9, 7], itemStyle: { color: colors.cyan } }
+        ],
+        legend: { textStyle: { color: '#8b949e' }, top: 10 },
+        grid: { top: 60, bottom: 60 }
+    });
+}
+
+// ===== NEUROTRANSMITTER =====
+function renderNeuro() {
+    const chart = echarts.init(document.getElementById('neuroChart'));
+    const categories = ['Pflanzenstoff', 'Körpereigener Stoff', 'Rezeptorsystem'];
+    const nodes = [
+        { name: 'Kokain', category: 0 }, { name: 'Noradrenalin', category: 1 }, { name: 'Dopamin-Transporter', category: 2 },
+        { name: 'Nikotin', category: 0 }, { name: 'Acetylcholin', category: 1 }, { name: 'nACh-Rezeptor', category: 2 },
+        { name: 'Koffein', category: 0 }, { name: 'Adenosin', category: 1 }, { name: 'Adenosin-Rezeptor', category: 2 },
+        { name: 'Scopolamin', category: 0 }, { name: 'mACh-Rezeptor', category: 2 },
+        { name: 'Ephedrin', category: 0 }, { name: 'Adrenalin', category: 1 }, { name: 'Adrenerg. Rezeptor', category: 2 },
+        { name: 'Morphin', category: 0 }, { name: 'Endorphin', category: 1 }, { name: 'Opioid-Rezeptor', category: 2 },
+        { name: 'Atropin', category: 0 }
+    ];
+    const links = [
+        { source: 'Kokain', target: 'Noradrenalin' }, { source: 'Kokain', target: 'Dopamin-Transporter' },
+        { source: 'Nikotin', target: 'Acetylcholin' }, { source: 'Nikotin', target: 'nACh-Rezeptor' },
+        { source: 'Koffein', target: 'Adenosin' }, { source: 'Koffein', target: 'Adenosin-Rezeptor' },
+        { source: 'Scopolamin', target: 'Acetylcholin' }, { source: 'Scopolamin', target: 'mACh-Rezeptor' },
+        { source: 'Atropin', target: 'Acetylcholin' }, { source: 'Atropin', target: 'mACh-Rezeptor' },
+        { source: 'Ephedrin', target: 'Adrenalin' }, { source: 'Ephedrin', target: 'Adrenerg. Rezeptor' },
+        { source: 'Morphin', target: 'Endorphin' }, { source: 'Morphin', target: 'Opioid-Rezeptor' }
+    ];
+    chart.setOption({
+        tooltip: {},
+        legend: { data: categories, textStyle: { color: '#8b949e' }, top: 10 },
+        series: [{ type: 'graph', layout: 'force', data: nodes.map(n => ({ ...n, symbolSize: 40, label: { show: true, color: '#e0e0e0', fontSize: 10 } })),
+            links: links.map(l => ({ ...l, lineStyle: { color: '#58a6ff55', width: 2 } })),
+            categories: categories.map((c, i) => ({ name: c, itemStyle: { color: [colors.cyan, colors.pink, colors.purple][i] } })),
+            force: { repulsion: 300, edgeLength: 120 }, roam: true
+        }]
+    });
+}
+
+// ===== FAMILIES =====
+function renderFamilies() {
+    const chart = echarts.init(document.getElementById('familyChart'));
+    chart.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{ type: 'treemap', data: [
+            { name: 'Solanaceae', value: 40, children: [
+                { name: 'Datura (11 Arten)', value: 15 }, { name: 'Hyoscyamus (3+ Arten)', value: 10 },
+                { name: 'Duboisia (3 Arten)', value: 8 }, { name: 'Scopolia', value: 4 }, { name: 'Andere', value: 3 }
+            ]},
+            { name: 'Erythroxylaceae', value: 15, children: [
+                { name: 'E. coca var. coca', value: 5 }, { name: 'E. coca var. ipadu', value: 4 },
+                { name: 'E. novogranatense', value: 4 }, { name: 'Andere (300 Arten)', value: 2 }
+            ]},
+            { name: 'Ephedraceae', value: 12, children: [
+                { name: 'E. sinica', value: 4 }, { name: 'E. gerardiana', value: 3 },
+                { name: 'E. nevadensis', value: 2 }, { name: 'Andere (44 Arten)', value: 3 }
+            ]},
+            { name: 'Leguminosae', value: 12, children: [
+                { name: 'Erythrina (100 Arten)', value: 6 }, { name: 'Cytisus/Genista', value: 4 }, { name: 'Andere', value: 2 }
+            ]},
+            { name: 'Rubiaceae', value: 8, children: [
+                { name: 'Coffea arabica', value: 4 }, { name: 'Corynanthe', value: 2 }, { name: 'Andere', value: 2 }
+            ]},
+            { name: 'Andere Familien', value: 13, children: [
+                { name: 'Lythraceae (Heimia)', value: 3 }, { name: 'Papaveraceae (Eschscholzia)', value: 3 },
+                { name: 'Cannabaceae (Humulus)', value: 3 }, { name: 'Iridaceae (Crocus)', value: 4 }
+            ]},
+            { name: 'Andere Familien', value: 13, children: [
+                { name: 'Lythraceae (Heimia)', value: 3 }, { name: 'Papaveraceae (Eschscholzia)', value: 3 },
+                { name: 'Cannabaceae (Humulus)', value: 3 }, { name: 'Iridaceae (Crocus)', value: 2 },
+                { name: 'Zygophyllaceae (Peganum)', value: 2 }
+            ]}
+        ],
+        label: { color: '#e0e0e0', fontSize: 12 },
+        upperLabel: { show: true, color: '#e0e0e0', fontSize: 11 },
+        breadcrumb: { show: true, itemStyle: { color: '#21262d' }, textStyle: { color: '#8b949e' } },
+        levels: [
+            { itemStyle: { borderColor: '#0d1117', borderWidth: 2, gapWidth: 2 }, upperLabel: { show: false } },
+            { itemStyle: { borderColor: '#21262d', borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.3, 0.7] }
+        ]
+        }]
+    });
+}
+
+// ===== CULTURAL =====
+function renderCultural() {
+    const uc = echarts.init(document.getElementById('usageChart'));
+    uc.setOption({
+        tooltip: { trigger: 'axis' },
+        radar: {
+            indicator: [
+                { name: 'Heilung', max: 10 },
+                { name: 'Divination/Orakel', max: 10 },
+                { name: 'Initiation', max: 10 },
+                { name: 'Soziale Bindung', max: 10 },
+                { name: 'Hedonismus', max: 10 },
+                { name: 'Aphrodisiakum', max: 10 },
+                { name: 'Stimulans/Arbeit', max: 10 }
+            ],
+            shape: 'polygon',
+            splitArea: { areaStyle: { color: ['#161b2200'] } },
+            axisLine: { lineStyle: { color: '#30363d' } },
+            splitLine: { lineStyle: { color: '#21262d' } },
+            axisName: { color: '#8b949e', fontSize: 11 }
+        },
+        legend: { data: ['Coca (Anden)', 'Betel (Asien)', 'Ayahuasca (Amazonien)', 'Balché (Maya)'], textStyle: { color: '#8b949e' }, top: 10 },
+        series: [{ type: 'radar', data: [
+            { value: [8, 9, 5, 7, 4, 3, 10], name: 'Coca (Anden)', lineStyle: { color: colors.cyan }, itemStyle: { color: colors.cyan } },
+            { value: [5, 3, 4, 10, 9, 7, 8], name: 'Betel (Asien)', lineStyle: { color: colors.pink }, itemStyle: { color: colors.pink } },
+            { value: [10, 10, 8, 6, 2, 2, 3], name: 'Ayahuasca (Amazonien)', lineStyle: { color: colors.purple }, itemStyle: { color: colors.purple } },
+            { value: [8, 8, 7, 10, 5, 4, 3], name: 'Balché (Maya)', lineStyle: { color: colors.orange }, itemStyle: { color: colors.orange } }
+        ]}]
+    });
+
+    // Dose model
+    const dc = echarts.init(document.getElementById('doseChart'));
+    dc.setOption({
+        title: { text: 'Dreistufenmodell: Dosis bestimmt Wirkung', left: 'center', textStyle: { color: '#e0e0e0' } },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: ['Niedrig\n(Stimulans)', 'Mittel\n(Heilmittel)', 'Hoch\n(Entheogen/Gift)'], axisLabel: { color: '#8b949e' } },
+        yAxis: [
+            { type: 'value', name: 'Wirkintensität', axisLabel: { color: '#8b949e' }, nameTextStyle: { color: '#8b949e' } },
+            { type: 'value', name: 'Risiko', axisLabel: { color: '#8b949e' }, nameTextStyle: { color: '#8b949e' }, position: 'right' }
+        ],
+        series: [
+            { name: 'Psychoaktive Wirkung', type: 'bar', data: [2, 6, 10], itemStyle: { color: colors.cyan } },
+            { name: 'Therapeutischer Nutzen', type: 'bar', data: [5, 10, 4], itemStyle: { color: colors.green } },
+            { name: 'Risiko/Toxizität', type: 'line', yAxisIndex: 1, data: [1, 3, 9], lineStyle: { color: colors.red, width: 3 }, itemStyle: { color: colors.red } }
+        ],
+        legend: { textStyle: { color: '#8b949e' }, top: 30 },
+        grid: { top: 80 }
+    });
+}
+
+// ===== CHEMISTRY =====
+function renderChemistry() {
+    const ct = echarts.init(document.getElementById('chemTreeChart'));
+    ct.setOption({
+        tooltip: { trigger: 'item', triggerOn: 'mousemove' },
+        series: [{ type: 'tree', data: [{
+            name: 'Psychoaktive\nAlkaloide',
+            children: [
+                { name: 'Tropanalkaloide', children: [
+                    { name: 'Atropin\n(Atropa)' }, { name: 'Scopolamin\n(Datura, Brugmansia)' },
+                    { name: 'Kokain\n(Erythroxylum)' }, { name: 'Hyoscyamin\n(Hyoscyamus)' }
+                ]},
+                { name: 'Purinalkaloide', children: [
+                    { name: 'Koffein\n(Coffea, Cola, Paullinia)' }, { name: 'Theobromin\n(Theobroma)' }
+                ]},
+                { name: 'Phenylpropylamine', children: [
+                    { name: 'Ephedrin\n(Ephedra)' }, { name: 'Cathinon\n(Catha)' }
+                ]},
+                { name: 'β-Carboline', children: [
+                    { name: 'Harmalin\n(Peganum, Banisteriopsis)' }, { name: 'Harmin' }
+                ]},
+                { name: 'Indolalkaloide', children: [
+                    { name: 'Erythrina-Alk.\n(Erythrina spp.)' }, { name: 'Ibogain\n(Tabernanthe)' },
+                    { name: 'Strychnin\n(Strychnos)' }
+                ]},
+                { name: 'Isoquinoline', children: [
+                    { name: 'Morphin\n(Papaver)' }, { name: 'Protopin\n(Eschscholzia)' }
+                ]},
+                { name: 'Chinolizidin-Alk.', children: [
+                    { name: 'Cytisin\n(Cytisus, Sophora)' }, { name: 'Spartein\n(Sarothamnus)' }
+                ]},
+                { name: 'Steroidalkaloide', children: [
+                    { name: 'Samandarin\n(Salamandra)' }, { name: 'Veratrin\n(Veratrum)' }
+                ]}
+            ]
+        }],
+        top: '5%', bottom: '5%', left: '15%', right: '15%',
+        orient: 'vertical', expandAndCollapse: true, initialTreeDepth: 2,
+        label: { color: '#e0e0e0', fontSize: 10 },
+        lineStyle: { color: '#30363d', width: 1.5 },
+        itemStyle: { color: colors.cyan, borderColor: colors.cyan }
+        }]
+    });
+
+    updateRadar();
+}
+
+function updateRadar() {
+    const sel = document.getElementById('substanceSelect').value;
+    const profiles = {
+        tropane: { name: 'Tropanalkaloide', values: [2, 9, 8, 3, 7, 5], color: colors.purple },
+        ephedrine: { name: 'Ephedrin-Typ', values: [8, 1, 1, 2, 3, 9], color: colors.green },
+        purine: { name: 'Purinalkaloide', values: [7, 0, 0, 1, 2, 8], color: colors.blue },
+        erythrina: { name: 'Erythrina-Alkaloide', values: [3, 4, 5, 6, 4, 3], color: colors.pink },
+        quinolizidine: { name: 'Chinolizidinalkaloide', values: [4, 3, 4, 7, 5, 4], color: colors.orange }
+    };
+    const p = profiles[sel];
+    const rc = echarts.init(document.getElementById('radarChart'));
+    rc.setOption({
+        radar: {
+            indicator: [
+                { name: 'Stimulation', max: 10 }, { name: 'Halluzination', max: 10 },
+                { name: 'Sedierung', max: 10 }, { name: 'Toxizität', max: 10 },
+                { name: 'Suchtpotential', max: 10 }, { name: 'Therapeut. Breite', max: 10 }
+            ],
+            shape: 'polygon',
+            splitArea: { areaStyle: { color: ['#161b2200'] } },
+            axisLine: { lineStyle: { color: '#30363d' } },
+            splitLine: { lineStyle: { color: '#21262d' } },
+            axisName: { color: '#8b949e' }
+        },
+        series: [{ type: 'radar', data: [{ value: p.values, name: p.name, areaStyle: { color: p.color + '22' }, lineStyle: { color: p.color, width: 2 }, itemStyle: { color: p.color } }] }]
+    });
+}
+
+// ===== NETWORK =====
+function renderNetwork() {
+    const chart = echarts.init(document.getElementById('networkChart'));
+    const categories = ['Pflanze', 'Wirkstoff', 'Kultur', 'Präparat'];
+    const nodes = [
+        // Pflanzen
+        { name: 'Banisteriopsis caapi', category: 0, symbolSize: 35 },
+        { name: 'Psychotria viridis', category: 0, symbolSize: 30 },
+        { name: 'Erythroxylum coca', category: 0, symbolSize: 35 },
+        { name: 'Datura spp.', category: 0, symbolSize: 30 },
+        { name: 'Peganum harmala', category: 0, symbolSize: 30 },
+        { name: 'Lonchocarpus', category: 0, symbolSize: 25 },
+        { name: 'Areca catechu', category: 0, symbolSize: 30 },
+        { name: 'Piper betle', category: 0, symbolSize: 25 },
+        { name: 'Ephedra spp.', category: 0, symbolSize: 28 },
+        // Wirkstoffe
+        { name: 'DMT', category: 1, symbolSize: 35 },
+        { name: 'Harmalin/Harmin', category: 1, symbolSize: 32 },
+        { name: 'Kokain', category: 1, symbolSize: 30 },
+        { name: 'Tropanalkaloide', category: 1, symbolSize: 30 },
+        { name: 'Arecolin', category: 1, symbolSize: 25 },
+        { name: 'Ephedrin', category: 1, symbolSize: 25 },
+        // Kulturen
+        { name: 'Amazonas-Indianer', category: 2, symbolSize: 30 },
+        { name: 'Anden-Kulturen', category: 2, symbolSize: 28 },
+        { name: 'Maya', category: 2, symbolSize: 28 },
+        { name: 'Südostasien', category: 2, symbolSize: 28 },
+        { name: 'Persien/Orient', category: 2, symbolSize: 25 },
+        // Präparate
+        { name: 'Ayahuasca', category: 3, symbolSize: 40 },
+        { name: 'Betelbissen', category: 3, symbolSize: 32 },
+        { name: 'Balché', category: 3, symbolSize: 30 },
+        { name: 'Hexensalbe', category: 3, symbolSize: 28 },
+        { name: 'Haoma', category: 3, symbolSize: 28 }
+    ];
+    const links = [
+        { source: 'Banisteriopsis caapi', target: 'Harmalin/Harmin' },
+        { source: 'Banisteriopsis caapi', target: 'Ayahuasca' },
+        { source: 'Psychotria viridis', target: 'DMT' },
+        { source: 'Psychotria viridis', target: 'Ayahuasca' },
+        { source: 'Ayahuasca', target: 'Amazonas-Indianer' },
+        { source: 'Harmalin/Harmin', target: 'Ayahuasca' },
+        { source: 'DMT', target: 'Ayahuasca' },
+        { source: 'Erythroxylum coca', target: 'Kokain' },
+        { source: 'Erythroxylum coca', target: 'Anden-Kulturen' },
+        { source: 'Datura spp.', target: 'Tropanalkaloide' },
+        { source: 'Datura spp.', target: 'Hexensalbe' },
+        { source: 'Tropanalkaloide', target: 'Hexensalbe' },
+        { source: 'Peganum harmala', target: 'Harmalin/Harmin' },
+        { source: 'Peganum harmala', target: 'Haoma' },
+        { source: 'Haoma', target: 'Persien/Orient' },
+        { source: 'Lonchocarpus', target: 'Balché' },
+        { source: 'Balché', target: 'Maya' },
+        { source: 'Areca catechu', target: 'Arecolin' },
+        { source: 'Areca catechu', target: 'Betelbissen' },
+        { source: 'Piper betle', target: 'Betelbissen' },
+        { source: 'Betelbissen', target: 'Südostasien' },
+        { source: 'Ephedra spp.', target: 'Ephedrin' },
+        { source: 'Ephedra spp.', target: 'Haoma' },
+        { source: 'Harmalin/Harmin', target: 'Haoma' }
+    ];
+    chart.setOption({
+        tooltip: {},
+        legend: { data: categories, textStyle: { color: '#8b949e' }, top: 10 },
+        series: [{
+            type: 'graph', layout: 'force',
+            data: nodes.map(n => ({ ...n, label: { show: true, color: '#e0e0e0', fontSize: 9 } })),
+            links: links.map(l => ({ ...l, lineStyle: { color: '#58a6ff44', width: 1.5 } })),
+            categories: categories.map((c, i) => ({ name: c, itemStyle: { color: [colors.green, colors.cyan, colors.orange, colors.purple][i] } })),
+            force: { repulsion: 400, edgeLength: [80, 160], gravity: 0.1 },
+            roam: true, draggable: true
+        }]
+    });
+}
+
+// ===== RITUAL =====
+function renderRitual() {
+    const rf = echarts.init(document.getElementById('ritualFlow'));
+    rf.setOption({
+        title: { text: 'Universelle Ritualstruktur (alle Kulturen)', left: 'center', textStyle: { color: '#e0e0e0' } },
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'sankey',
+            layout: 'none',
+            emphasis: { focus: 'adjacency' },
+            nodeAlign: 'left',
+            data: [
+                { name: 'Vorbereitung\n(Diät, Fasten, Reinigung)' },
+                { name: 'Ritualraum\n(Kreis, Tempel, Natur)' },
+                { name: 'Einnahme\n(Trinken, Kauen, Schnupfen)' },
+                { name: 'Anflutung\n(Übelkeit, Körpergefühle)' },
+                { name: 'Visionäre Phase\n(Bilder, Geister, Einsichten)' },
+                { name: 'Rückkehr\n(Landung, Erdung)' },
+                { name: 'Integration\n(Erzählen, Deuten, Handeln)' },
+                { name: 'Schamane/Leiter' },
+                { name: 'Gesänge/Musik' },
+                { name: 'Räucherwerk' }
+            ],
+            links: [
+                { source: 'Vorbereitung\n(Diät, Fasten, Reinigung)', target: 'Ritualraum\n(Kreis, Tempel, Natur)', value: 10 },
+                { source: 'Ritualraum\n(Kreis, Tempel, Natur)', target: 'Einnahme\n(Trinken, Kauen, Schnupfen)', value: 10 },
+                { source: 'Einnahme\n(Trinken, Kauen, Schnupfen)', target: 'Anflutung\n(Übelkeit, Körpergefühle)', value: 10 },
+                { source: 'Anflutung\n(Übelkeit, Körpergefühle)', target: 'Visionäre Phase\n(Bilder, Geister, Einsichten)', value: 10 },
+                { source: 'Visionäre Phase\n(Bilder, Geister, Einsichten)', target: 'Rückkehr\n(Landung, Erdung)', value: 10 },
+                { source: 'Rückkehr\n(Landung, Erdung)', target: 'Integration\n(Erzählen, Deuten, Handeln)', value: 10 },
+                { source: 'Schamane/Leiter', target: 'Ritualraum\n(Kreis, Tempel, Natur)', value: 5 },
+                { source: 'Schamane/Leiter', target: 'Einnahme\n(Trinken, Kauen, Schnupfen)', value: 5 },
+                { source: 'Schamane/Leiter', target: 'Visionäre Phase\n(Bilder, Geister, Einsichten)', value: 5 },
+                { source: 'Gesänge/Musik', target: 'Visionäre Phase\n(Bilder, Geister, Einsichten)', value: 4 },
+                { source: 'Räucherwerk', target: 'Ritualraum\n(Kreis, Tempel, Natur)', value: 3 }
+            ],
+            label: { color: '#e0e0e0', fontSize: 10 },
+            lineStyle: { color: 'gradient', curveness: 0.5 },
+            itemStyle: { borderWidth: 0 }
+        }]
+    });
+
+    // Set & Setting
+    const ss = echarts.init(document.getElementById('setSettingChart'));
+    ss.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'pie', radius: ['20%', '55%'],
+            roseType: 'area',
+            itemStyle: { borderRadius: 5, borderColor: '#0d1117', borderWidth: 2 },
+            label: { color: '#e0e0e0', fontSize: 11 },
+            data: [
+                { value: 25, name: 'Substanz\n(Pflanze, Dosis, Qualität)', itemStyle: { color: colors.cyan } },
+                { value: 25, name: 'Set\n(Erwartung, Psyche, Erfahrung)', itemStyle: { color: colors.purple } },
+                { value: 25, name: 'Setting\n(Ort, Ritual, Gemeinschaft)', itemStyle: { color: colors.pink } },
+                { value: 15, name: 'Ritualleiter\n(Schamane, Erfahrung)', itemStyle: { color: colors.orange } },
+                { value: 10, name: 'Kulturelle Kodierung\n(Mythen, Symbole)', itemStyle: { color: colors.green } }
+            ]
+        }]
+    });
+}
+
+// Initial render
+renderOverview();
+
+// Handle resize
+window.addEventListener('resize', () => {
+    document.querySelectorAll('.chart-container').forEach(el => {
+        const instance = echarts.getInstanceByDom(el);
+        if (instance) instance.resize();
+    });
+});
+</script>
+
+</body>
+</html>
