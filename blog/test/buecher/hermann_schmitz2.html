@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermann Schmitz – Philosophie des Leibes | Interaktiv</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Georgia',serif;background:#0f0f23;color:#eee;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(15,15,35,0.95);padding:0.8rem 2rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;border-bottom:1px solid #333}
+nav a{color:#e94560;text-decoration:none;font-size:0.85rem;padding:0.3rem 0.8rem;border:1px solid #e94560;border-radius:20px;transition:0.3s}
+nav a:hover{background:#e94560;color:#fff}
+section{min-height:100vh;padding:5rem 2rem 3rem;display:flex;flex-direction:column;align-items:center;justify-content:center}
+section:nth-child(even){background:#16213e}
+section:nth-child(odd){background:#0f0f23}
+h1{font-size:2.4rem;text-align:center;background:linear-gradient(90deg,#e94560,#f5a623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:1rem}
+h2{font-size:1.8rem;color:#e94560;margin-bottom:1.5rem;text-align:center}
+.card{background:#0f3460;border-radius:16px;padding:2rem;max-width:750px;width:100%;margin:1rem auto;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.card p{line-height:1.8;color:#ccc}
+canvas{border-radius:12px;display:block;margin:1rem auto;cursor:crosshair}
+.controls{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin:1rem 0}
+.btn{padding:0.7rem 1.4rem;border:none;border-radius:10px;cursor:pointer;font-size:0.95rem;font-weight:bold;color:#fff;transition:0.2s}
+.btn:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(233,69,96,0.4)}
+.info-box{min-height:80px;margin:1rem auto;padding:1.5rem;border-radius:12px;background:#0a1628;color:#ddd;line-height:1.7;text-align:center;max-width:700px}
+.slider-row{display:flex;align-items:center;gap:1rem;max-width:600px;width:100%;margin:1rem auto}
+.slider-row input[type=range]{flex:1;accent-color:#e94560}
+.slider-row label{font-size:0.85rem;color:#aaa;min-width:80px}
+.subtitle{color:#aaa;text-align:center;max-width:600px;margin:0.5rem auto 1.5rem;line-height:1.6}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="#hero">Start</a>
+<a href="#leib">Leib≠Körper</a>
+<a href="#dynamik">Enge↔Weite</a>
+<a href="#gefuehle">Gefühle</a>
+<a href="#einleibung">Einleibung</a>
+<a href="#person">Person</a>
+<a href="#bombe">Atombombe</a>
+<a href="#tiere">Tiere</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+<h1>Hermann Schmitz – Philosophie des Leibes</h1>
+<p class="subtitle">Eine interaktive Erkundung der Kernideen: Wie wir uns spüren, was Gefühle wirklich sind, warum der Leib mehr ist als der Körper – und was die Atombombe ethisch bedeutet.</p>
+<canvas id="heroCanvas" width="600" height="200"></canvas>
+<p style="color:#888;font-size:0.85rem;text-align:center">↑ Dein Atem als vitaler Antrieb – Spannung und Schwellung in Echtzeit visualisiert</p>
+</section>
+
+<!-- LEIB VS KÖRPER -->
+<section id="leib">
+<h2>1. Leib ≠ Körper</h2>
+<div class="card">
+<p><strong>Der Körper</strong> = sichtbar, tastbar, messbar. Flächen, Ränder, relative Orte.<br><br>
+<strong>Der Leib</strong> = das Gespürte ohne Sehen/Tasten. Flächenlos, randlos, in „Inseln" organisiert, die kommen und gehen. Kein stetiger Zusammenhang wie beim Körper – ein Gewoge verschwommener Inseln.</p>
+</div>
+<canvas id="leibCanvas" width="600" height="350"></canvas>
+<p class="subtitle">Klicke auf die Leinwand, um Leibesinseln entstehen und vergehen zu lassen. Beachte: keine Ränder, keine Flächen – nur prädimensionales Volumen.</p>
+</section>
+
+<!-- DYNAMIK -->
+<section id="dynamik">
+<h2>2. Enge ↔ Weite: Der vitale Antrieb</h2>
+<div class="card">
+<p>Alles leibliche Erleben spielt zwischen <strong>Engung</strong> (Schreck, Angst, Schmerz) und <strong>Weitung</strong> (Erleichterung, Wollust, Müdigkeit). Ihr Zusammenspiel = <strong>vitaler Antrieb</strong> (Spannung vs. Schwellung). Ohne ihn: kein Bewusstsein.</p>
+</div>
+<canvas id="dynamikCanvas" width="700" height="300"></canvas>
+<div class="slider-row">
+<label>← Enge</label>
+<input type="range" id="ewSlider" min="0" max="100" value="50">
+<label>Weite →</label>
+</div>
+<div class="info-box" id="ewInfo">⚖️ Gleichgewicht: Einatmen, Kraftanstrengung – vitaler Antrieb schwingt frei</div>
+</section>
+
+<!-- GEFÜHLE -->
+<section id="gefuehle">
+<h2>3. Gefühle = räumliche Atmosphären</h2>
+<div class="card">
+<p>Gefühle sind <strong>keine privaten Seelenzustände</strong>. Sie sind ortlos ergossene Atmosphären – wie Wetter. Man „betritt" sie. <strong>Fühlen</strong> = leiblich ergriffen werden. Die Gebärden kommen von selbst (Freudensprung, gebeugtes Sitzen bei Kummer).</p>
+</div>
+<canvas id="gefuehlCanvas" width="700" height="350"></canvas>
+<div class="controls">
+<button class="btn" style="background:#27ae60" onclick="setGefuehl('freude')">😊 Freude</button>
+<button class="btn" style="background:#2c3e50" onclick="setGefuehl('trauer')">😢 Trauer</button>
+<button class="btn" style="background:#c0392b" onclick="setGefuehl('zorn')">😡 Zorn</button>
+<button class="btn" style="background:#8e44ad" onclick="setGefuehl('scham')">😳 Scham</button>
+<button class="btn" style="background:#2980b9" onclick="setGefuehl('angst')">😰 Angst</button>
+</div>
+<div class="info-box" id="gefuehlInfo">Wähle ein Gefühl – beobachte die Atmosphäre auf der Leinwand</div>
+</section>
+
+<!-- EINLEIBUNG -->
+<section id="einleibung">
+<h2>4. Leibliche Kommunikation (Einleibung)</h2>
+<div class="card">
+<p>Durch <strong>Einleibung</strong> verschmelzen Leiber zu einem gemeinsamen vitalen Antrieb:<br>
+• <em>Antagonistisch</em>: Blickwechsel, Ringkampf – Dominanz fluktuiert<br>
+• <em>Solidarisch</em>: Gemeinsames Singen, Marschieren – ohne Zuwendung zueinander<br>
+Sogar mit Maschinen (Auto, Motorrad) entsteht Einleibung!</p>
+</div>
+<canvas id="einleibungCanvas" width="700" height="400"></canvas>
+<p class="subtitle">Bewege die Maus – beobachte antagonistische Einleibung: Dominanz fluktuiert zwischen dir (rot) und dem Anderen (türkis).</p>
+</section>
+
+<!-- PERSON -->
+<section id="person">
+<h2>5. Leib und Person</h2>
+<div class="card">
+<p>Person = Fähigkeit zur <strong>Selbstzuschreibung</strong>. Geht nur durch <em>affektives Betroffensein</em> – leiblich. Ohne Leib keine Person!<br><br>
+Die Person lebt im Spagat: <strong>Personale Emanzipation</strong> (Vernunft, Distanz) ↔ <strong>Personale Regression</strong> (Ergriffenheit, Hingabe). Beide brauchen einander.</p>
+</div>
+<canvas id="personCanvas" width="700" height="300"></canvas>
+<div class="controls">
+<button class="btn" style="background:#e94560" onclick="setPersonLayer(0)">Emanzipation</button>
+<button class="btn" style="background:#533483" onclick="setPersonLayer(1)">Fassung</button>
+<button class="btn" style="background:#0f3460" onclick="setPersonLayer(2)">Vitaler Antrieb</button>
+<button class="btn" style="background:#1a5c4c" onclick="setPersonLayer(3)">Regression</button>
+</div>
+<div class="info-box" id="personInfo">Klicke eine Schicht – beobachte ihre Dynamik auf der Leinwand</div>
+</section>
+
+<!-- ATOMBOMBE -->
+<section id="bombe">
+<h2>6. Die ethische Bedeutung der Atombombe</h2>
+<div class="card">
+<p>Der traditionelle Krieg bot eine „ernste Schule" der Integration von Emanzipation und Regression. Die Atombombe hat diese Möglichkeit zerstört – die Menschheit wird auf einem <strong>zu hohen Niveau personaler Emanzipation festgeklemmt</strong>.<br><br>
+Das Bedürfnis nach Regression bleibt. Ersatz: Straßenverkehr, Sport, Feste – aber keiner reicht an den „Ernst" heran.</p>
+</div>
+<canvas id="bombeCanvas" width="700" height="280"></canvas>
+<div class="controls">
+<button class="btn" style="background:#e94560" onclick="setBombeView(0)">Vor der Bombe</button>
+<button class="btn" style="background:#f5a623" onclick="setBombeView(1)">Nach der Bombe</button>
+<button class="btn" style="background:#533483" onclick="setBombeView(2)">Verklemmung</button>
+</div>
+<div class="info-box" id="bombeInfo">Wähle eine Phase – die Visualisierung zeigt das Verhältnis von Emanzipation und Regression</div>
+</section>
+
+<!-- TIERE -->
+<section id="tiere">
+<h2>7. Sind Tiere Bewussthaber?</h2>
+<div class="card">
+<p>Die <strong>Du-Evidenz</strong> – die Gewissheit, es mit einem Bewussthaber zu tun zu haben – entsteht durch <em>wechselseitige Einleibung</em>: Fluktuieren der Dominanz im gemeinsamen vitalen Antrieb.<br><br>
+Das funktioniert mit Tieren genauso! Keine Sprache nötig, kein Analogieschluss – nur leibliche Kommunikation.</p>
+</div>
+<canvas id="tiereCanvas" width="700" height="300"></canvas>
+<p class="subtitle">Bewege die Maus über die Leinwand – erlebe Du-Evidenz durch wechselseitige Einleibung mit dem „Tier".</p>
+</section>
+
+<!-- ZUSAMMENFASSUNG -->
+<section style="min-height:50vh">
+<h2 style="color:#f5a623">Zusammenfassung</h2>
+<div class="card" style="max-width:800px">
+<p>
+1. <strong>Leib ≠ Körper</strong> – Flächenlos, in Inseln, nur gespürt<br>
+2. <strong>Enge ↔ Weite</strong> – Vitaler Antrieb als Grundlage allen Bewusstseins<br>
+3. <strong>Gefühle = Atmosphären</strong> – Räumlich ergossen, nicht privat<br>
+4. <strong>Einleibung</strong> – Leibliche Kommunikation durch gemeinsamen Antrieb<br>
+5. <strong>Person braucht Leib</strong> – Ohne affektives Betroffensein keine Selbstzuschreibung<br>
+6. <strong>Atombombe</strong> – Verklemmt auf zu hohem Emanzipationsniveau<br>
+7. <strong>Tiere = Bewussthaber</strong> – Du-Evidenz durch Einleibung, nicht Sprache
+</p>
+</div>
+</section>
+
+<script>
+// ===== HERO CANVAS: Breathing Vital Antrieb =====
+(function(){
+const c=document.getElementById('heroCanvas'),ctx=c.getContext('2d');
+let t=0;
+function draw(){
+ctx.fillStyle='rgba(15,15,35,0.1)';ctx.fillRect(0,0,c.width,c.height);
+const cx=c.width/2,cy=c.height/2;
+const spannung=Math.sin(t*0.03)*40+50;
+const schwellung=Math.cos(t*0.03)*40+50;
+// Draw wave
+ctx.beginPath();
+for(let x=0;x<c.width;x++){
+const y=cy+Math.sin((x+t*2)*0.02)*spannung*0.5*Math.cos((x-t)*0.01);
+if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.strokeStyle=`hsl(${340+schwellung*0.5},70%,${40+spannung*0.3}%)`;
+ctx.lineWidth=2;ctx.stroke();
+// Labels
+ctx.fillStyle='#e94560';ctx.font='12px Georgia';
+ctx.fillText('Spannung: '+Math.round(spannung),20,20);
+ctx.fillStyle='#4ecdc4';
+ctx.fillText('Schwellung: '+Math.round(schwellung),20,40);
+t++;requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== LEIB CANVAS: Leibesinseln =====
+(function(){
+const c=document.getElementById('leibCanvas'),ctx=c.getContext('2d');
+let islands=[];
+function addIsland(x,y){
+islands.push({x,y,r:10+Math.random()*40,life:1,maxLife:2+Math.random()*3,speed:0.005+Math.random()*0.01,phase:Math.random()*Math.PI*2});
+}
+// Initial islands
+for(let i=0;i<5;i++)addIsland(100+Math.random()*400,80+Math.random()*200);
+c.addEventListener('click',e=>{const r=c.getBoundingClientRect();addIsland(e.clientX-r.left,e.clientY-r.top);});
+function draw(){
+ctx.fillStyle='rgba(15,15,35,0.05)';ctx.fillRect(0,0,c.width,c.height);
+// Body outline (faint)
+ctx.beginPath();ctx.ellipse(c.width/2,c.height/2,180,140,0,0,Math.PI*2);
+ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();
+ctx.font='11px Georgia';ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fillText('(Körperumriss – nur Orientierung, nicht gespürt)',c.width/2-140,c.height-20);
+islands.forEach((isl,idx)=>{
+isl.life-=isl.speed;
+if(isl.life<=0){islands.splice(idx,1);return;}
+const alpha=Math.min(isl.life,1)*0.6;
+const pulse=Math.sin(Date.now()*0.003+isl.phase)*5;
+const grad=ctx.createRadialGradient(isl.x,isl.y,0,isl.x,isl.y,isl.r+pulse);
+grad.addColorStop(0,`rgba(233,69,96,${alpha})`);
+grad.addColorStop(0.6,`rgba(83,52,131,${alpha*0.5})`);
+grad.addColorStop(1,`rgba(15,15,35,0)`);
+ctx.beginPath();ctx.arc(isl.x,isl.y,isl.r+pulse,0,Math.PI*2);
+ctx.fillStyle=grad;ctx.fill();
+});
+// Spontaneously add
+if(Math.random()<0.01&&islands.length<12)addIsland(100+Math.random()*400,50+Math.random()*250);
+requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== DYNAMIK CANVAS =====
+(function(){
+const c=document.getElementById('dynamikCanvas'),ctx=c.getContext('2d');
+const slider=document.getElementById('ewSlider');
+const info=document.getElementById('ewInfo');
+let val=50;
+slider.addEventListener('input',function(){val=+this.value;updateInfo();});
+function updateInfo(){
+if(val<20)info.textContent='😰 Extreme Enge: Schreck – Bewusstsein droht auszusetzen, privative Engung';
+else if(val<40)info.textContent='😣 Starke Engung: Angst, Schmerz – expansiver Impuls gehemmt';
+else if(val<60)info.textContent='⚖️ Gleichgewicht: Einatmen, Kraftanstrengung – vitaler Antrieb schwingt';
+else if(val<80)info.textContent='😌 Schwellung dominiert: Wollust, Zorn – Triumph über Hemmung';
+else info.textContent='🕊️ Privative Weitung: Erleichterung, Schweben, Müdigkeit – Loslassen';
+}
+let t=0;
+function draw(){
+ctx.fillStyle='rgba(22,33,62,0.15)';ctx.fillRect(0,0,c.width,c.height);
+const cx=c.width/2,cy=c.height/2;
+const enge=1-val/100,weite=val/100;
+// Particles
+for(let i=0;i<8;i++){
+const angle=t*0.02+i*Math.PI/4;
+const dist=50+weite*120+Math.sin(t*0.05+i)*20;
+const x=cx+Math.cos(angle)*dist;
+const y=cy+Math.sin(angle)*dist*0.6;
+const size=3+weite*8;
+ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);
+ctx.fillStyle=`hsla(${340-weite*80},70%,${50+weite*20}%,0.7)`;ctx.fill();
+}
+// Center (Enge)
+const coreSize=20+enge*60;
+const coreGrad=ctx.createRadialGradient(cx,cy,0,cx,cy,coreSize);
+coreGrad.addColorStop(0,`rgba(233,69,96,${0.3+enge*0.5})`);
+coreGrad.addColorStop(1,'rgba(15,15,35,0)');
+ctx.beginPath();ctx.arc(cx,cy,coreSize,0,Math.PI*2);ctx.fillStyle=coreGrad;ctx.fill();
+// Labels
+ctx.fillStyle='#e94560';ctx.font='bold 13px Georgia';
+ctx.fillText('ENGE',30,cy);
+ctx.fillStyle='#4ecdc4';ctx.fillText('WEITE',c.width-70,cy);
+ctx.fillStyle='#f5a623';ctx.font='11px Georgia';
+ctx.fillText('Spannung',cx-30,30);ctx.fillText('Schwellung',cx-35,c.height-15);
+t++;requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== GEFÜHLE CANVAS =====
+let currentGefuehl='none';
+function setGefuehl(g){currentGefuehl=g;
+const data={
+freude:{text:'☀️ FREUDE: Hebende Atmosphäre – überspielt Erdenschwere. Der Leib wird leicht, will hüpfen. Nicht eigene Kraft hebt, sondern die Atmosphäre selbst.'},
+trauer:{text:'🌧️ TRAUER: Drückende Atmosphäre mit stärkerem Anspruch als Freude. Gebietet Respekt – auch der Fröhliche unter Traurigen wird gehemmt.'},
+zorn:{text:'🔥 ZORN: Ergreifende Macht – überfallartig im Leib aufsteigend. Man MUSS erst mitgehen, bevor man Stellung nehmen kann. Schwellung windet sich aus Engung.'},
+scham:{text:'🕳️ SCHAM: Kehrt den Richtungsraum um – alle Vektoren zentripetal. Von allen Seiten dringt die Atmosphäre ein. Tendenz: im Boden versinken.'},
+angst:{text:'🌀 ANGST: Übermächtige Engung hemmt expansiven Impuls „Weg!". Rhythmisch: keuchende Atemkurve. Panische Flucht möglich, nimmt Engung mit.'}
+};
+document.getElementById('gefuehlInfo').innerHTML=data[g]?data[g].text:'Wähle ein Gefühl';
+}
+(function(){
+const c=document.getElementById('gefuehlCanvas'),ctx=c.getContext('2d');
+let particles=[];
+for(let i=0;i<80;i++)particles.push({x:Math.random()*700,y:Math.random()*350,vx:0,vy:0,size:2+Math.random()*4});
+let t=0;
+function draw(){
+ctx.fillStyle='rgba(15,15,35,0.12)';ctx.fillRect(0,0,c.width,c.height);
+const cx=c.width/2,cy=c.height/2;
+particles.forEach(p=>{
+let fx=0,fy=0;
+if(currentGefuehl==='freude'){fy=-0.3-Math.random()*0.2;fx=Math.sin(t*0.02+p.x*0.01)*0.5;}
+else if(currentGefuehl==='trauer'){fy=0.2+Math.random()*0.1;fx=Math.sin(t*0.01)*0.1;}
+else if(currentGefuehl==='zorn'){const a=Math.atan2(p.y-cy,p.x-cx);fx=Math.cos(a)*0.8;fy=Math.sin(a)*0.8;fx+=Math.random()*1-0.5;}
+else if(currentGefuehl==='scham'){const a=Math.atan2(cy-p.y,cx-p.x);fx=Math.cos(a)*0.5;fy=Math.sin(a)*0.5;}
+else if(currentGefuehl==='angst'){fx=(Math.random()-0.5)*2;fy=(Math.random()-0.5)*2;const a=Math.atan2(cy-p.y,cx-p.x);fx+=Math.cos(a)*0.3;fy+=Math.sin(a)*0.3;}
+else{fx=Math.sin(t*0.01+p.y*0.01)*0.1;fy=Math.cos(t*0.01+p.x*0.01)*0.1;}
+p.vx=p.vx*0.92+fx*0.08;p.vy=p.vy*0.92+fy*0.08;
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0)p.x=c.width;if(p.x>c.width)p.x=0;
+if(p.y<0)p.y=c.height;if(p.y>c.height)p.y=0;
+let col='rgba(200,200,200,0.5)';
+if(currentGefuehl==='freude')col=`hsla(50,80%,60%,0.7)`;
+else if(currentGefuehl==='trauer')col=`hsla(220,40%,40%,0.6)`;
+else if(currentGefuehl==='zorn')col=`hsla(0,80%,50%,0.7)`;
+else if(currentGefuehl==='scham')col=`hsla(280,60%,40%,0.6)`;
+else if(currentGefuehl==='angst')col=`hsla(200,60%,30%,0.7)`;
+ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+});
+// Person in center
+ctx.beginPath();ctx.arc(cx,cy,12,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.8)';ctx.fill();
+ctx.font='10px Georgia';ctx.fillStyle='#fff';ctx.fillText('Leib',cx-10,cy+25);
+t++;requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== EINLEIBUNG CANVAS =====
+(function(){
+const c=document.getElementById('einleibungCanvas'),ctx=c.getContext('2d');
+let mx=c.width*0.3,my=c.height/2;
+let ox=c.width*0.7,oy=c.height/2;
+let dominance=0.5;// 0=you dominate, 1=other dominates
+c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;});
+let t=0;
+function draw(){
+ctx.fillStyle='rgba(10,22,40,0.1)';ctx.fillRect(0,0,c.width,c.height);
+// Other reacts
+const dx=mx-ox,dy=my-oy;
+const dist=Math.sqrt(dx*dx+dy*dy);
+// Antagonistic: approach when far, retreat when close
+if(dist<120){ox-=dx*0.02;oy-=dy*0.02;dominance=Math.min(1,dominance+0.01);}
+else if(dist>250){ox+=dx*0.005;oy+=dy*0.005;dominance=Math.max(0,dominance-0.01);}
+else{dominance+=Math.sin(t*0.05)*0.005;}
+ox=Math.max(30,Math.min(c.width-30,ox));
+oy=Math.max(30,Math.min(c.height-30,oy));
+// Connection field
+const grad=ctx.createLinearGradient(mx,my,ox,oy);
+grad.addColorStop(0,`rgba(233,69,96,${0.3+dominance*0.3})`);
+grad.addColorStop(1,`rgba(78,205,196,${0.3+(1-dominance)*0.3})`);
+ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(ox,oy);ctx.strokeStyle=grad;ctx.lineWidth=2+Math.sin(t*0.1)*1;ctx.stroke();
+// Dominance indicator
+const domX=mx+(ox-mx)*dominance;
+const domY=my+(oy-my)*dominance;
+ctx.beginPath();ctx.arc(domX,domY,8,0,Math.PI*2);ctx.fillStyle='rgba(245,166,35,0.8)';ctx.fill();
+// You
+const yourSize=20+dominance*15;
+ctx.beginPath();ctx.arc(mx,my,yourSize,0,Math.PI*2);
+const yg=ctx.createRadialGradient(mx,my,0,mx,my,yourSize);
+yg.addColorStop(0,'rgba(233,69,96,0.9)');yg.addColorStop(1,'rgba(233,69,96,0)');
+ctx.fillStyle=yg;ctx.fill();
+// Other
+const otherSize=20+(1-dominance)*15;
+ctx.beginPath();ctx.arc(ox,oy,otherSize,0,Math.PI*2);
+const og=ctx.createRadialGradient(ox,oy,0,ox,oy,otherSize);
+og.addColorStop(0,'rgba(78,205,196,0.9)');og.addColorStop(1,'rgba(78,205,196,0)');
+ctx.fillStyle=og;ctx.fill();
+// Labels
+ctx.font='11px Georgia';ctx.fillStyle='#e94560';ctx.fillText('Du',mx-8,my+yourSize+15);
+ctx.fillStyle='#4ecdc4';ctx.fillText('Anderer',ox-20,oy+otherSize+15);
+ctx.fillStyle='#f5a623';ctx.font='10px Georgia';
+ctx.fillText(`Dominanz: ${dominance<0.4?'Du führst':dominance>0.6?'Anderer führt':'Fluktuiert'}`,10,20);
+t++;requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== PERSON CANVAS =====
+let personLayer=1;
+function setPersonLayer(l){personLayer=l;
+const texts=[
+'Personale Emanzipation: Distanz, Reflexion, Vernunft. Du schreibst dir Eigenschaften zu, nimmst Verantwortung. Aber: Ohne Regression verlierst du den Faden zum affektiven Betroffensein.',
+    fassung: 'Fassung = was man verliert, wenn man „die Fassung verliert". Sie stabilisiert die Person zwischen Emanzipation und Regression. Sensibelster Fühler der Einleibung – und Schutzschild gegen den Blick des Anderen.',
+    antrieb: 'Der vitale Antrieb (Spannung vs. Schwellung) ist die Grundlage allen Bewusstseins. Bindungsform bestimmt den Persönlichkeitstyp: kompakt (Bathmothymiker), rhythmisch (Zyklothymiker), locker (Schizothymiker).',
+    regression: 'Personale Regression: Rückkehr zur primitiven Gegenwart – Lachen, Weinen, Ekstase, Rausch. Die Person gibt ihr emanzipiertes Selbst preis und taucht in primitive Gegenwart ein. Lachen = Bauchwelle am Reck: fallen + sicher hochkommen = Triumph.'
+  };
+  document.getElementById('personInfo').textContent = info[l] || '';
+}
+(function(){
+const c=document.getElementById('personCanvas'),ctx=c.getContext('2d');
+let layer=1,t=0;
+function draw(){
+ctx.fillStyle='rgba(15,15,35,0.08)';ctx.fillRect(0,0,c.width,c.height);
+const cx=c.width/2,cy=c.height/2;
+// Draw layers as concentric dynamic shapes
+const layers=[
+  {label:'Emanzipation',color:'#e94560',radius:130,speed:0.01},
+  {label:'Fassung',color:'#533483',radius:100,speed:0.015},
+  {label:'Vitaler Antrieb',color:'#0f3460',radius:70,speed:0.025},
+  {label:'Regression',color:'#4ecdc4',radius:40,speed:0.04}
+];
+layers.forEach((lay,i)=>{
+  const active=(i===personLayer);
+  const pulse=active?Math.sin(t*lay.speed*3)*10:0;
+  const alpha=active?0.7:0.25;
+  const r=lay.radius+pulse;
+  // Draw wobbly circle
+  ctx.beginPath();
+  for(let a=0;a<Math.PI*2;a+=0.1){
+    const wobble=active?Math.sin(a*3+t*0.05)*8:Math.sin(a*2+t*0.02)*3;
+    const x=cx+Math.cos(a)*(r+wobble);
+    const y=cy+Math.sin(a)*(r+wobble);
+    if(a===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.strokeStyle=lay.color;
+  ctx.lineWidth=active?3:1;
+  ctx.globalAlpha=alpha;
+  ctx.stroke();
+  if(active){
+    ctx.fillStyle=lay.color+'33';
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  // Label
+  ctx.font=(active?'bold ':'')+' 11px Georgia';
+  ctx.fillStyle=lay.color;
+  ctx.fillText(lay.label,cx+r+15,cy-r/2+i*20);
+});
+// Center dot
+ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);
+ctx.fillStyle='#fff';ctx.fill();
+ctx.font='10px Georgia';ctx.fillStyle='#888';
+ctx.fillText('Primitive Gegenwart',cx-40,cy+55);
+t++;requestAnimationFrame(draw);
+}
+// Update layer from button
+const origSetPerson=window.setPersonLayer;
+window.setPersonLayer=function(l){personLayer=l;origSetPerson?origSetPerson(l):null;};
+setInterval(()=>{personLayer=window.personLayer||personLayer;},100);
+draw();
+// Override
+window.setPersonLayer=function(l){
+  personLayer=l;
+  const info={
+    0:'Personale Emanzipation: Distanz, Reflexion, Vernunft. Du schreibst dir Eigenschaften zu, nimmst Verantwortung. Aber: Ohne Regression verlierst du den Faden zum affektiven Betroffensein.',
+    1:'Fassung = was man verliert, wenn man „die Fassung verliert". Sie stabilisiert die Person zwischen Emanzipation und Regression. Sensibelster Fühler der Einleibung – und Schutzschild gegen den Blick des Anderen.',
+    2:'Der vitale Antrieb (Spannung vs. Schwellung) ist die Grundlage allen Bewusstseins. Bindungsform bestimmt den Persönlichkeitstyp: kompakt (Bathmothymiker), rhythmisch (Zyklothymiker), locker (Schizothymiker).',
+    3:'Personale Regression: Rückkehr zur primitiven Gegenwart – Lachen, Weinen, Ekstase, Rausch. Die Person gibt ihr emanzipiertes Selbst preis. Lachen = Bauchwelle am Reck: fallen + sicher hochkommen = Triumph.'
+  };
+  document.getElementById('personInfo').textContent=info[l]||'';
+};
+})();
+
+// ===== BOMBE CANVAS =====
+let bombeView=0;
+function setBombeView(v){bombeView=v;
+const info={
+  0:'VOR der Bombe: Krieg bot eine „ernste Schule" – personale Emanzipation (Wachsamkeit, Kontrolle) und Regression (Eifer des Gefechts, Ergriffenheit) wurden gleichmäßig hochstilisiert.',
+  1:'NACH der Bombe: Die absolute Drohung erzwingt dauerhaft „gute Manieren". Kriege nur noch unter Kleinen. Rhythmisches Schwingen zwischen Frieden und Gewalt wird unterbunden.',
+  2:'VERKLEMMUNG: Menschheit auf zu hohem Niveau personaler Emanzipation festgeklemmt. Bedürfnis nach Regression bleibt. Ersatz: Straßenverkehr, Sport, Feste – aber keiner reicht an den Ernst heran.'
+};
+document.getElementById('bombeInfo').textContent=info[v]||'';
+}
+(function(){
+const c=document.getElementById('bombeCanvas'),ctx=c.getContext('2d');
+let t=0;
+function draw(){
+ctx.fillStyle='rgba(22,33,62,0.12)';ctx.fillRect(0,0,c.width,c.height);
+const cx=c.width/2,cy=c.height/2;
+// Two bars: Emanzipation and Regression
+const eLabel='Emanzipation';const rLabel='Regression';
+let eHeight,rHeight,eColor,rColor;
+if(bombeView===0){// Before bomb: balanced
+  eHeight=80+Math.sin(t*0.03)*30;
+  rHeight=80+Math.cos(t*0.03)*30;
+  eColor='#e94560';rColor='#4ecdc4';
+} else if(bombeView===1){// After bomb: emanzipation high, regression suppressed
+  eHeight=140+Math.sin(t*0.02)*10;
+  rHeight=30+Math.sin(t*0.05)*5;
+  eColor='#e94560';rColor='#4ecdc4';
+} else {// Verklemmung: emanzipation stuck high, regression trying to push
+  eHeight=150;
+  rHeight=20+Math.abs(Math.sin(t*0.08))*40;
+  eColor='#f5a623';rColor='#e94560';
+}
+// Draw bars
+const barW=80;
+// Emanzipation bar
+const ex=cx-100;
+ctx.fillStyle=eColor;
+ctx.globalAlpha=0.7;
+ctx.fillRect(ex-barW/2,cy-eHeight,barW,eHeight);
+ctx.globalAlpha=1;
+ctx.strokeStyle=eColor;ctx.strokeRect(ex-barW/2,cy-eHeight,barW,eHeight);
+// Regression bar
+const rx=cx+100;
+ctx.fillStyle=rColor;
+ctx.globalAlpha=0.7;
+ctx.fillRect(rx-barW/2,cy-rHeight,barW,rHeight);
+ctx.globalAlpha=1;
+ctx.strokeStyle=rColor;ctx.strokeRect(rx-barW/2,cy-rHeight,barW,rHeight);
+// Labels
+ctx.font='bold 12px Georgia';
+ctx.fillStyle=eColor;ctx.fillText(eLabel,ex-35,cy+20);
+ctx.fillStyle=rColor;ctx.fillText(rLabel,rx-30,cy+20);
+// Baseline
+ctx.strokeStyle='#555';ctx.beginPath();ctx.moveTo(cx-200,cy);ctx.lineTo(cx+200,cy);ctx.stroke();
+// If verklemmung, show pressure arrows
+if(bombeView===2){
+  ctx.strokeStyle='#e94560';ctx.lineWidth=2;
+  for(let i=0;i<3;i++){
+    const ay=cy-rHeight-10-i*15;
+    ctx.beginPath();ctx.moveTo(rx-20,ay);ctx.lineTo(rx,ay-10);ctx.lineTo(rx+20,ay);ctx.stroke();
+  }
+  ctx.lineWidth=1;
+  ctx.font='10px Georgia';ctx.fillStyle='#e94560';
+  ctx.fillText('Bedürfnis drängt!',rx-30,cy-rHeight-55);
+}
+// Bomb symbol if view 1 or 2
+if(bombeView>=1){
+  ctx.font='30px Georgia';ctx.fillText('☢',cx-15,50);
+  ctx.font='10px Georgia';ctx.fillStyle='#f5a623';
+  ctx.fillText('Absolute Drohung',cx-40,70);
+}
+t++;requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== TIERE CANVAS =====
+(function(){
+const c=document.getElementById('tiereCanvas'),ctx=c.getContext('2d');
+let mx=c.width/2,my=c.height/2;
+let eyeX=c.width*0.5,eyeY=c.height*0.5;
+let pupilX=0,pupilY=0;
+let dominance=0.5;
+c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;});
+let t=0;
+function draw(){
+ctx.fillStyle='rgba(15,15,35,0.15)';ctx.fillRect(0,0,c.width,c.height);
+// Draw animal eye (large)
+const ex=c.width*0.5,ey=c.height*0.5;
+const eyeW=80,eyeH=50;
+// Eye white
+ctx.beginPath();ctx.ellipse(ex,ey,eyeW,eyeH,0,0,Math.PI*2);
+ctx.fillStyle='#1a2a1a';ctx.fill();
+ctx.strokeStyle='#4ecdc4';ctx.lineWidth=2;ctx.stroke();
+// Pupil follows mouse
+const dx=mx-ex,dy=my-ey;
+const dist=Math.sqrt(dx*dx+dy*dy);
+const maxDist=30;
+const pd=Math.min(dist,maxDist);
+const angle=Math.atan2(dy,dx);
+pupilX=ex+Math.cos(angle)*pd*0.5;
+pupilY=ey+Math.sin(angle)*pd*0.3;
+// Iris
+ctx.beginPath();ctx.arc(pupilX,pupilY,25,0,Math.PI*2);
+const irisGrad=ctx.createRadialGradient(pupilX,pupilY,5,pupilX,pupilY,25);
+irisGrad.addColorStop(0,'#2d8f8a');irisGrad.addColorStop(0.7,'#1a5c4c');irisGrad.addColorStop(1,'#0a2a20');
+ctx.fillStyle=irisGrad;ctx.fill();
+// Pupil
+const pupilSize=10+Math.sin(t*0.05)*3;
+ctx.beginPath();ctx.arc(pupilX,pupilY,pupilSize,0,Math.PI*2);
+ctx.fillStyle='#000';ctx.fill();
+// Highlight
+ctx.beginPath();ctx.arc(pupilX-4,pupilY-4,4,0,Math.PI*2);
+ctx.fillStyle='rgba(255,255,255,0.6)';ctx.fill();
+// Du-Evidenz indicator
+dominance+=(dist<150?0.005:-0.003);
+dominance=Math.max(0.2,Math.min(0.9,dominance+Math.sin(t*0.03)*0.005));
+// Connection lines (Einleibung)
+if(dist<250){
+  ctx.beginPath();
+  ctx.moveTo(mx,my);ctx.lineTo(pupilX,pupilY);
+  ctx.strokeStyle=`rgba(78,205,196,${0.3*(1-dist/250)})`;
+  ctx.lineWidth=1+dominance*2;ctx.stroke();
+  ctx.lineWidth=1;
+}
+// Your eye (small)
+ctx.beginPath();ctx.ellipse(mx,my,15,10,0,0,Math.PI*2);
+ctx.fillStyle='#2a1a1a';ctx.fill();
+ctx.strokeStyle='#e94560';ctx.stroke();
+ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);ctx.fillStyle='#e94560';ctx.fill();
+// Labels
+ctx.font='11px Georgia';
+ctx.fillStyle='#4ecdc4';ctx.fillText('Tier (Bewussthaber)',ex-45,ey+eyeH+20);
+ctx.fillStyle='#e94560';ctx.fillText('Dein Blick',mx-20,my+20);
+ctx.fillStyle='#f5a623';
+const duText=dist<150?'✓ Du-Evidenz: Wechselseitige Einleibung aktiv!':'Nähere dich – erlebe Du-Evidenz...';
+ctx.fillText(duText,20,25);
+ctx.fillStyle='#888';ctx.font='10px Georgia';
+ctx.fillText(`Dominanz fluktuiert: ${dominance<0.4?'Du führst':dominance>0.6?'Tier führt':'Gleichgewicht'}`,20,c.height-15);
+t++;requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// Tabs for Bombe
+function showTab(t){
+document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+const tab=document.getElementById('tab-'+t);if(tab)tab.classList.add('active');
+if(event&&event.target)event.target.classList.add('active');
+}
+
+// Smooth scroll for nav
+document.querySelectorAll('nav a').forEach(a=>{
+a.addEventListener('click',function(e){
+  e.preventDefault();
+  const target=document.querySelector(this.getAttribute('href'));
+  if(target)target.scrollIntoView({behavior:'smooth'});
+});
+});
+</script>
+</body>
+</html>
