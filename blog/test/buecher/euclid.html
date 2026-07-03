@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euklids Elemente - Interaktive Visualisierung</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 2px solid transparent;
+            border-image: linear-gradient(90deg, transparent, #ffd700, transparent) 1;
+        }
+        .header h1 { font-size: 2.5em; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+        .header p { font-size: 1.1em; color: #aaa; font-style: italic; margin-top: 10px; }
+        .nav-tabs {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;
+            padding: 20px; background: rgba(0,0,0,0.4);
+            position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px);
+        }
+        .nav-tab {
+            padding: 10px 20px; background: rgba(255,215,0,0.1);
+            border: 1px solid rgba(255,215,0,0.3); border-radius: 25px;
+            cursor: pointer; transition: all 0.3s; font-size: 0.9em; color: #ccc;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(255,215,0,0.3); color: #ffd700;
+            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,215,0,0.2);
+        }
+        .section { display: none; padding: 40px 20px; max-width: 1400px; margin: 0 auto; animation: fadeIn 0.5s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .section h2 { color: #ffd700; font-size: 2em; margin-bottom: 20px; text-align: center; }
+        .section h3 { color: #87ceeb; font-size: 1.4em; margin: 20px 0 10px; }
+        .concept-box {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 15px; padding: 25px; margin: 20px 0;
+        }
+        .concept-box p { line-height: 1.8; color: #ccc; }
+        .chart-container { width: 100%; height: 500px; margin: 20px 0; border-radius: 15px; background: rgba(0,0,0,0.3); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .canvas-container {
+            position: relative; width: 100%; height: 450px;
+            background: rgba(0,0,0,0.4); border-radius: 15px;
+            border: 1px solid rgba(255,215,0,0.2); margin: 20px 0;
+        }
+        canvas { border-radius: 15px; }
+        .insight-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(135,206,235,0.1));
+            border-left: 4px solid #ffd700; padding: 20px; margin: 15px 0; border-radius: 0 10px 10px 0;
+        }
+        .insight-card h4 { color: #ffd700; margin-bottom: 8px; }
+        .axiom-list { list-style: none; padding: 0; }
+        .axiom-list li {
+            padding: 12px 20px; margin: 8px 0; background: rgba(135,206,235,0.1);
+            border-radius: 8px; border-left: 3px solid #87ceeb; transition: all 0.3s;
+        }
+        .axiom-list li:hover { background: rgba(135,206,235,0.2); transform: translateX(5px); }
+        .proof-step {
+            display: flex; align-items: center; padding: 10px; margin: 5px 0;
+            background: rgba(255,255,255,0.03); border-radius: 8px; transition: all 0.3s;
+        }
+        .proof-step:hover { background: rgba(255,215,0,0.1); }
+        .step-number {
+            width: 30px; height: 30px; background: #ffd700; color: #000;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; margin-right: 15px; flex-shrink: 0;
+        }
+        .interactive-btn {
+            padding: 12px 24px; background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border: none; border-radius: 25px; color: #000; font-weight: bold;
+            cursor: pointer; transition: all 0.3s; margin: 5px;
+        }
+        .interactive-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(255,215,0,0.4); }
+        .timeline-item {
+            display: flex; align-items: flex-start; margin: 15px 0; padding: 15px;
+            background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid #87ceeb;
+        }
+        .timeline-dot {
+            width: 12px; height: 12px; background: #ffd700; border-radius: 50%;
+            margin-right: 15px; margin-top: 5px; flex-shrink: 0;
+        }
+        .slider-container { margin: 20px 0; text-align: center; }
+        .slider-container label { color: #ffd700; display: block; margin-bottom: 10px; }
+        .slider-container input[type="range"] {
+            width: 80%; height: 6px; -webkit-appearance: none;
+            background: linear-gradient(90deg, #ffd700, #87ceeb); border-radius: 3px;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px; background: #ffd700;
+            border-radius: 50%; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⬡ EUKLIDS ELEMENTE ⬡</h1>
+        <p>Die 13 Bücher der Geometrie — Interaktiv visualisiert</p>
+        <p style="font-size: 0.9em; margin-top: 10px; color: #888;">
+            ~300 v. Chr. • Das Fundament der Mathematik • Übersetzt & kommentiert von T.L. Heath
+        </p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('overview')">Überblick</div>
+        <div class="nav-tab" onclick="showSection('axioms')">Axiome & Postulate</div>
+        <div class="nav-tab" onclick="showSection('structure')">Struktur</div>
+        <div class="nav-tab" onclick="showSection('proofs')">Beweismethoden</div>
+        <div class="nav-tab" onclick="showSection('constructions')">Konstruktionen</div>
+        <div class="nav-tab" onclick="showSection('proportions')">Proportionen</div>
+        <div class="nav-tab" onclick="showSection('philosophy')">Philosophie</div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="overview">
+        <h2>Das Gesamtbild: Euklids Elemente</h2>
+        <div class="concept-box">
+            <p>Euklids Elemente sind das <strong>erste vollständig axiomatisch-deduktive System</strong> der Menschheitsgeschichte. Aus wenigen Grundannahmen (5 Postulate, 5 Axiome, 23 Definitionen) werden 465 Propositionen abgeleitet. Das Werk zeigt: <em>Aus Einfachheit entsteht Komplexität.</em></p>
+        </div>
+        <div class="chart-container" id="overviewChart"></div>
+        <div class="grid-2">
+            <div class="insight-card">
+                <h4>🔑 Deduktion</h4>
+                <p>Jeder Satz wird aus vorherigen bewiesen. Nichts wird angenommen außer den expliziten Axiomen.</p>
+            </div>
+            <div class="insight-card">
+                <h4>🔑 Konstruktivismus</h4>
+                <p>Existenz wird durch Konstruktion bewiesen. Ein Objekt "existiert" erst, wenn es mit Zirkel und Lineal erzeugt werden kann.</p>
+            </div>
+            <div class="insight-card">
+                <h4>🔑 Minimalismus</h4>
+                <p>5 Postulate + 5 Axiome + 23 Definitionen → 465 Propositionen in 13 Büchern.</p>
+            </div>
+            <div class="insight-card">
+                <h4>🔑 Universalität</h4>
+                <p>Beweise gelten nicht für eine spezifische Figur, sondern für ALLE Figuren der gleichen Art.</p>
+            </div>
+        </div>
+        <div class="chart-container" id="dependencyChart"></div>
+    </div>
+
+    <!-- AXIOMS -->
+    <div class="section" id="axioms">
+        <h2>Axiome & Postulate: Das Fundament</h2>
+        <div class="concept-box">
+            <p><strong>Postulate</strong> betreffen geometrische Konstruktionen (was man TUN kann). <strong>Axiome</strong> (Gemeinsame Begriffe) betreffen logische Wahrheiten (was GILT).</p>
+        </div>
+        <h3>Die 5 Postulate</h3>
+        <ul class="axiom-list">
+            <li><strong>P1:</strong> Von jedem Punkt zu jedem Punkt kann eine Gerade gezogen werden.</li>
+            <li><strong>P2:</strong> Eine begrenzte Gerade kann stetig verlängert werden.</li>
+            <li><strong>P3:</strong> Mit jedem Mittelpunkt und Abstand kann ein Kreis beschrieben werden.</li>
+            <li><strong>P4:</strong> Alle rechten Winkel sind einander gleich.</li>
+            <li style="border-left-color: #ff6b6b;"><strong>P5 (Parallelenpostulat):</strong> Wenn eine Gerade zwei Geraden schneidet und die inneren Winkel auf einer Seite < 180°, treffen sich die Geraden auf dieser Seite.</li>
+        </ul>
+        <h3>Die 5 Axiome</h3>
+        <ul class="axiom-list">
+            <li><strong>A1:</strong> Was demselben gleich ist, ist auch einander gleich. (Transitivität)</li>
+            <li><strong>A2:</strong> Gleichem Gleiches hinzugefügt → Ganzen gleich. (Addition)</li>
+            <li><strong>A3:</strong> Von Gleichem Gleiches weggenommen → Reste gleich. (Subtraktion)</li>
+            <li><strong>A4:</strong> Was einander deckt, ist einander gleich. (Kongruenz)</li>
+            <li><strong>A5:</strong> Das Ganze ist größer als der Teil. (Ordnung)</li>
+        </ul>
+        <div class="chart-container" id="axiomsVisual"></div>
+        <div class="insight-card">
+            <h4>⚡ Das Parallelenpostulat — Warum es besonders ist</h4>
+            <p>2000 Jahre versuchten Mathematiker, P5 aus den anderen zu beweisen. Das Scheitern führte zur Entdeckung nicht-euklidischer Geometrien (Lobatschewski, Bolyai, Riemann). P5 legt die "Flachheit" des Raumes fest.</p>
+        </div>
+    </div>
+
+    <!-- STRUCTURE -->
+    <div class="section" id="structure">
+        <h2>Die Architektur der 13 Bücher</h2>
+        <div class="concept-box">
+            <p>Die 13 Bücher bilden eine <strong>aufsteigende Spirale</strong> vom Einfachen zum Komplexen. Endziel: Die Konstruktion der fünf platonischen Körper in Buch XIII.</p>
+        </div>
+        <div class="chart-container" id="booksChart" style="height: 600px;"></div>
+        <div class="grid-2">
+            <div class="concept-box">
+                <h3>Planimetrie (I-VI)</h3>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>I:</strong> Dreiecke, Parallelen, Flächengleichheit</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>II:</strong> Geometrische Algebra</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>III:</strong> Kreisgeometrie</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>IV:</strong> Reguläre Polygone</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>V:</strong> Proportionenlehre (Eudoxos)</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>VI:</strong> Ähnlichkeit</div></div>
+            </div>
+            <div class="concept-box">
+                <h3>Arithmetik & Stereometrie (VII-XIII)</h3>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>VII-IX:</strong> Zahlentheorie, Primzahlen</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>X:</strong> Irrationale Größen (längstes Buch!)</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>XI:</strong> Raumgeometrie</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>XII:</strong> Exhaustionsmethode</div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div><strong>XIII:</strong> Die 5 Platonischen Körper ⬡</div></div>
+            </div>
+        </div>
+        <div class="chart-container" id="propositionsChart"></div>
+    </div>
+
+    <!-- PROOFS -->
+    <div class="section" id="proofs">
+        <h2>Beweismethoden</h2>
+        <div class="concept-box">
+            <p>Euklid verwendet ein <strong>streng formales Beweisschema</strong> mit 6 festen Bestandteilen.</p>
+        </div>
+        <h3>Die 6 Teile einer Proposition</h3>
+        <div class="proof-step"><div class="step-number">1</div><div><strong>Protasis:</strong> Was gegeben ist und was zu beweisen ist</div></div>
+        <div class="proof-step"><div class="step-number">2</div><div><strong>Ekthesis:</strong> Die gegebenen Objekte werden benannt</div></div>
+        <div class="proof-step"><div class="step-number">3</div><div><strong>Diorismos:</strong> Was genau zu zeigen ist</div></div>
+        <div class="proof-step"><div class="step-number">4</div><div><strong>Kataskeue:</strong> Hilfslinien werden gezeichnet</div></div>
+        <div class="proof-step"><div class="step-number">5</div><div><strong>Apodeixis:</strong> Die logische Argumentation</div></div>
+        <div class="proof-step"><div class="step-number">6</div><div><strong>Symperasma:</strong> "Was zu beweisen war" (QED)</div></div>
+        <div class="chart-container" id="proofMethodsChart"></div>
+        <div class="grid-3">
+            <div class="concept-box" style="text-align:center;">
+                <h4 style="color:#98fb98;">Direkter Beweis</h4>
+                <p>A → B → C → Ziel ✓</p>
+            </div>
+            <div class="concept-box" style="text-align:center;">
+                <h4 style="color:#ff6b6b;">Reductio ad Absurdum</h4>
+                <p>¬A → Widerspruch! → A ✓</p>
+            </div>
+            <div class="concept-box" style="text-align:center;">
+                <h4 style="color:#87ceeb;">Exhaustion</h4>
+                <p>Einschachtelung → Differenz → 0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONSTRUCTIONS -->
+    <div class="section" id="constructions">
+        <h2>Konstruktionen: Existenz durch Tun</h2>
+        <div class="concept-box">
+            <p><strong>Konstruktivismus:</strong> Etwas existiert nur, wenn es mit Zirkel & Lineal konstruiert werden kann. Die Postulate 1-3 definieren die erlaubten Operationen.</p>
+        </div>
+        <div class="canvas-container">
+            <canvas id="constructionCanvas" width="800" height="450"></canvas>
+        </div>
+        <div style="text-align: center; margin: 10px 0;">
+            <button class="interactive-btn" onclick="drawConstruction('equilateral')">Gleichseitiges Dreieck (I.1)</button>
+            <button class="interactive-btn" onclick="drawConstruction('bisect')">Winkelhalbierende (I.9)</button>
+            <button class="interactive-btn" onclick="drawConstruction('perpendicular')">Senkrechte (I.11)</button>
+        </div>
+        <div class="insight-card">
+            <h4>🔧 Die zwei Werkzeuge</h4>
+            <p><strong>Lineal:</strong> Gerade durch zwei Punkte (P1, P2).<br>
+            <strong>Zirkel:</strong> Kreis mit Mittelpunkt und Radius (P3).<br>
+            Der Zirkel "kollabiert" — Abstandstransport wird erst in I.2 bewiesen!</p>
+        </div>
+    </div>
+
+    <!-- PROPORTIONS -->
+    <div class="section" id="proportions">
+        <h2>Proportionen & Geometrische Algebra</h2>
+        <div class="concept-box">
+            <p><strong>Buch V — Die Proportionenlehre des Eudoxos:</strong> Löst das Problem der irrationalen Verhältnisse. Definition: a:b = c:d genau dann, wenn für alle ganzen Zahlen m,n gilt: wenn ma ≷ nb, dann mc ≷ nd. Dies ist äquivalent zu Dedekinds Schnitt-Definition der reellen Zahlen (2200 Jahre später!).</p>
+        </div>
+        <div class="chart-container" id="proportionChart"></div>
+        <div class="grid-2">
+            <div class="insight-card">
+                <h4>📐 Geometrische Algebra (Buch II)</h4>
+                <p>Die Griechen lösten algebraische Probleme geometrisch. (a+b)² = a² + 2ab + b² wird als Flächenzerlegung eines Quadrats bewiesen. Quadratische Gleichungen werden durch "Flächenanlegung" gelöst.</p>
+            </div>
+            <div class="insight-card">
+                <h4>√ Irrationale (Buch X)</h4>
+                <p>Das längste Buch klassifiziert irrationale Größen in 13+ Typen. Entdeckung: √2 ist nicht als Bruch darstellbar — eine Krise der pythagoreischen Mathematik, die Eudoxos' Proportionenlehre löste.</p>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="algebraCanvas" width="800" height="450"></canvas>
+        </div>
+        <div style="text-align:center; margin:10px;">
+            <div class="slider-container">
+                <label>Verhältnis a:b anpassen: <span id="ratioDisplay">1:1</span></label>
+                <input type="range" min="20" max="80" value="50" id="ratioSlider" oninput="drawAlgebra()">
+            </div>
+        </div>
+    </div>
+
+    <!-- PHILOSOPHY -->
+    <div class="section" id="philosophy">
+        <h2>Philosophie & Historischer Kontext</h2>
+        <div class="concept-box">
+            <p>Euklid lebte um 300 v. Chr. in Alexandria unter Ptolemaios I. Er sammelte und systematisierte das Wissen seiner Vorgänger (Eudoxos, Theaitetos, Pythagoreer) in einem einzigen kohärenten System. Die Elemente waren 2000 Jahre DAS Lehrbuch der Mathematik.</p>
+        </div>
+        <div class="chart-container" id="timelineChart"></div>
+        <div class="grid-2">
+            <div class="concept-box">
+                <h3>Aristoteles' Einfluss</h3>
+                <p style="line-height:1.8; color:#ccc;">Euklid folgt Aristoteles' Wissenschaftstheorie:<br>
+                • <strong>Axiome</strong> = selbstevidente, unbeweisbare Wahrheiten<br>
+                • <strong>Postulate</strong> = Annahmen spezifisch für die Geometrie<br>
+                • <strong>Definitionen</strong> = sagen nichts über Existenz aus<br>
+                • Existenz muss konstruktiv bewiesen werden</p>
+            </div>
+            <div class="concept-box">
+                <h3>Platonischer Einfluss</h3>
+                <p style="line-height:1.8; color:#ccc;">Das Endziel (Buch XIII) sind die 5 platonischen Körper — die "kosmischen Figuren" aus Platons Timaios:<br>
+                • Tetraeder = Feuer 🔥<br>
+                • Oktaeder = Luft 💨<br>
+                • Ikosaeder = Wasser 💧<br>
+                • Hexaeder = Erde 🌍<br>
+                • Dodekaeder = Kosmos ✨</p>
+            </div>
+        </div>
+        <div class="insight-card">
+            <h4>📜 Überlieferung</h4>
+            <p>Kein Original erhalten. Älteste Quelle: Vatikan-MS P (10. Jh.), das eine vor-theonische Fassung bewahrt. Theon von Alexandria (4. Jh.) redigierte den Text — seine Version dominierte 1500 Jahre. Arabische Übersetzungen (al-Hajjaj, Ishaq-Thabit, 9. Jh.) bieten teils abweichende Lesarten.</p>
+        </div>
+    </div>
+
+    <script>
+    // Navigation
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+        // Initialize charts when section becomes visible
+        setTimeout(() => initCharts(id), 100);
+    }
+
+    function initCharts(id) {
+        if (id === 'overview') { initOverviewChart(); initDependencyChart(); }
+        if (id === 'axioms') { initAxiomsVisual(); }
+        if (id === 'structure') { initBooksChart(); initPropositionsChart(); }
+        if (id === 'proofs') { initProofMethodsChart(); }
+        if (id === 'proportions') { initProportionChart(); drawAlgebra(); }
+        if (id === 'philosophy') { initTimelineChart(); }
+    }
+
+    // OVERVIEW CHART - Deductive Structure
+    function initOverviewChart() {
+        const el = document.getElementById('overviewChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+        const chart = echarts.init(el);
+        chart.setOption({
+            title: { text: 'Das Deduktive System', left: 'center', textStyle: { color: '#ffd700' } },
+            tooltip: { trigger: 'item' },
+            series: [{
+                type: 'sunburst',
+                data: [
+                    { name: 'Definitionen (23)', value: 23, children: [
+                        { name: 'Punkt', value: 1 }, { name: 'Linie', value: 1 },
+                        { name: 'Fläche', value: 1 }, { name: 'Winkel', value: 3 },
+                        { name: 'Figuren', value: 17 }
+                    ]},
+                    { name: 'Postulate (5)', value: 5, children: [
+                        { name: 'P1: Gerade', value: 1 }, { name: 'P2: Verlängern', value: 1 },
+                        { name: 'P3: Kreis', value: 1 }, { name: 'P4: Rechte ∠', value: 1 },
+                        { name: 'P5: Parallelen', value: 1 }
+                    ]},
+                    { name: 'Axiome (5)', value: 5, children: [
+                        { name: 'A1: Transitivität', value: 1 }, { name: 'A2: Addition', value: 1 },
+                        { name: 'A3: Subtraktion', value: 1 }, { name: 'A4: Kongruenz', value: 1 },
+                        { name: 'A5: Ganzes > Teil', value: 1 }
+                    ]},
+                    { name: '465 Propositionen', value: 465, children: [
+                        { name: 'Buch I-VI\n(Planimetrie)', value: 173 },
+                        { name: 'Buch VII-IX\n(Arithmetik)', value: 102 },
+                        { name: 'Buch X\n(Irrationale)', value: 115 },
+                        { name: 'Buch XI-XIII\n(Stereometrie)', value: 75 }
+                    ]}
+                ],
+                radius: ['10%', '90%'],
+                label: { fontSize: 11, color: '#e0e0e0' },
+                itemStyle: { borderWidth: 2, borderColor: '#1a1a4e' },
+                levels: [
+                    { itemStyle: { color: '#ffd700' } },
+                    { itemStyle: { color: '#87ceeb' }, label: { fontSize: 12 } },
+                    { itemStyle: { color: '#98fb98' }, label: { fontSize: 9 } }
+                ]
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function initDependencyChart() {
+        const el = document.getElementById('dependencyChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+        const chart = echarts.init(el);
+        chart.setOption({
+            title: { text: 'Abhängigkeitsfluss: Vom Einfachen zum Komplexen', left: 'center', textStyle: { color: '#ffd700' } },
+            tooltip: {},
+            series: [{
+                type: 'sankey',
+                layout: 'none',
+                emphasis: { focus: 'adjacency' },
+                nodeAlign: 'left',
+                data: [
+                    { name: 'Definitionen' }, { name: 'Postulate' }, { name: 'Axiome' },
+                    { name: 'Buch I' }, { name: 'Buch II' }, { name: 'Buch III' },
+                    { name: 'Buch V' }, { name: 'Buch VI' }, { name: 'Buch XI' },
+                    { name: 'Buch XII' }, { name: 'Buch XIII' }
+                ],
+                links: [
+                    { source: 'Definitionen', target: 'Buch I', value: 10 },
+                    { source: 'Postulate', target: 'Buch I', value: 8 },
+                    { source: 'Axiome', target: 'Buch I', value: 5 },
+                    { source: 'Buch I', target: 'Buch II', value: 8 },
+                    { source: 'Buch I', target: 'Buch III', value: 6 },
+                    { source: 'Buch I', target: 'Buch VI', value: 5 },
+                    { source: 'Buch II', target: 'Buch VI', value: 4 },
+                    { source: 'Buch III', target: 'Buch VI', value: 3 },
+                    { source: 'Buch V', target: 'Buch VI', value: 7 },
+                    { source: 'Buch V', target: 'Buch XII', value: 5 },
+                    { source: 'Buch VI', target: 'Buch XI', value: 4 },
+                    { source: 'Buch VI', target: 'Buch XII', value: 4 },
+                    { source: 'Buch XI', target: 'Buch XII', value: 6 },
+                    { source: 'Buch XI', target: 'Buch XIII', value: 5 },
+                    { source: 'Buch XII', target: 'Buch XIII', value: 4 }
+                ],
+                label: { color: '#ccc', fontSize: 11 },
+                lineStyle: { color: 'gradient', curveness: 0.5 },
+                itemStyle: { borderWidth: 1, borderColor: '#333' }
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // AXIOMS VISUAL
+    function initAxiomsVisual() {
+        const el = document.getElementById('axiomsVisual');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+        const chart = echarts.init(el);
+        chart.setOption({
+            title: { text: 'Postulate vs. Axiome: Zwei Arten von Grundannahmen', left: 'center', textStyle: { color: '#ffd700' } },
+            tooltip: { trigger: 'item' },
+            legend: { top: '10%', textStyle: { color: '#ccc' } },
+            series: [{
+                type: 'pie',
+                radius: ['35%', '70%'],
+                center: ['50%', '60%'],
+                avoidLabelOverlap: true,
+                itemStyle: { borderRadius: 10, borderColor: '#1a1a4e', borderWidth: 2 },
+                label: { show: true, color: '#e0e0e0', fontSize: 12 },
+                data: [
+                    { value: 3, name: 'Konstruktions-\nPostulate (P1-P3)', itemStyle: { color: '#ffd700' } },
+                    { value: 1, name: 'Homogenitäts-\nPostulat (P4)', itemStyle: { color: '#ff8c00' } },
+                    { value: 1, name: 'Parallelen-\nPostulat (P5)', itemStyle: { color: '#ff4444' } },
+                    { value: 2, name: 'Gleichheits-\nAxiome (A1-A3)', itemStyle: { color: '#87ceeb' } },
+                    { value: 1, name: 'Kongruenz-\nAxiom (A4)', itemStyle: { color: '#4da6ff' } },
+                    { value: 1, name: 'Ordnungs-\nAxiom (A5)', itemStyle: { color: '#3366cc' } }
+                ]
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // BOOKS CHART
+    function initBooksChart() {
+        const el = document.getElementById('booksChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+        const chart = echarts.init(el);
+        chart.setOption({
+            title: { text: 'Die 13 Bücher: Themen & Komplexität', left: 'center', textStyle: { color: '#ffd700' } },
+            tooltip: { trigger: 'axis' },
+            grid: { left: '8%', right: '5%', bottom: '15%', top: '15%' },
+            xAxis: {
+                type: 'category',
+                data: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII'],
+                axisLabel: { color: '#ccc', fontSize: 12 },
+                axisLine: { lineStyle: { color: '#555' } }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Propositionen',
+                nameTextStyle: { color: '#ccc' },
+                axisLabel: { color: '#ccc' },
+                splitLine: { lineStyle: { color: '#333' } }
+            },
+            series: [
+                {
+                    name: 'Propositionen',
+                    type: 'bar',
+                    data: [48, 14, 37, 16, 25, 33, 39, 27, 36, 115, 39, 18, 18],
+                    itemStyle: {
+                        color: function(params) {
+                            const colors = ['#ffd700','#ffd700','#ffd700','#ffd700','#ff8c00','#ff8c00',
+                                          '#87ceeb','#87ceeb','#87ceeb','#ff6b6b','#98fb98','#98fb98','#98fb98'];
+                            return colors[params.dataIndex];
+                        },
+                        borderRadius: [4, 4, 0, 0]
+                    },
+                    label: { show: true, position: 'top', color: '#ccc', fontSize: 10 }
+                }
+            ]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // PROPOSITIONS CHART
+    function initPropositionsChart() {
+        const el = document.getElementById('propositionsChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+
+        const data = [
+            { book: 'I', topic: 'Planimetrie', props: 48, color: '#ffd700' },
+            { book: 'II', topic: 'Geom. Algebra', props: 14, color: '#ffd700' },
+            { book: 'III', topic: 'Kreise', props: 37, color: '#ffd700' },
+            { book: 'IV', topic: 'Polygone', props: 16, color: '#ffd700' },
+            { book: 'V', topic: 'Proportionen', props: 25, color: '#ff8c00' },
+            { book: 'VI', topic: 'Ähnlichkeit', props: 33, color: '#ff8c00' },
+            { book: 'VII', topic: 'Zahlentheorie', props: 39, color: '#87ceeb' },
+            { book: 'VIII', topic: 'Proportionen (Zahlen)', props: 27, color: '#87ceeb' },
+            { book: 'IX', topic: 'Primzahlen', props: 36, color: '#87ceeb' },
+            { book: 'X', topic: 'Irrationale', props: 115, color: '#ff6b6b' },
+            { book: 'XI', topic: 'Raumgeometrie', props: 39, color: '#98fb98' },
+            { book: 'XII', topic: 'Exhaustion', props: 18, color: '#98fb98' },
+            { book: 'XIII', topic: 'Platon. Körper', props: 18, color: '#98fb98' }
+        ];
+
+        Plotly.newPlot(el, [{
+            type: 'treemap',
+            labels: data.map(d => `Buch ${d.book}<br>${d.topic}<br>(${d.props} Props.)`),
+            parents: data.map(() => ''),
+            values: data.map(d => d.props),
+            marker: { colors: data.map(d => d.color) },
+            textfont: { color: '#000', size: 11 }
+        }], {
+            title: { text: 'Relative Größe der Bücher (nach Propositionen)', font: { color: '#ffd700', size: 16 } },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            margin: { t: 50, l: 20, r: 20, b: 20 }
+        }, { responsive: true });
+    }
+
+    // PROOF METHODS CHART
+    function initProofMethodsChart() {
+        const el = document.getElementById('proofMethodsChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+        const chart = echarts.init(el);
+        chart.setOption({
+            title: { text: 'Beweistypen in den Elementen', left: 'center', textStyle: { color: '#ffd700' } },
+            tooltip: {},
+            radar: {
+                indicator: [
+                    { name: 'Direkter Beweis', max: 100 },
+                    { name: 'Reductio ad\nAbsurdum', max: 100 },
+                    { name: 'Konstruktiver\nBeweis', max: 100 },
+                    { name: 'Exhaustion', max: 100 },
+                    { name: 'Analyse &\nSynthese', max: 100 }
+                ],
+                axisName: { color: '#ccc' },
+                splitArea: { areaStyle: { color: ['rgba(255,215,0,0.05)', 'rgba(255,215,0,0.1)'] } },
+                splitLine: { lineStyle: { color: '#444' } }
+            },
+            series: [{
+                type: 'radar',
+                data: [{
+                    value: [85, 60, 75, 25, 15],
+                    name: 'Häufigkeit',
+                    areaStyle: { color: 'rgba(255,215,0,0.3)' },
+                    lineStyle: { color: '#ffd700' },
+                    itemStyle: { color: '#ffd700' }
+                }]
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // PROPORTION CHART
+    function initProportionChart() {
+        const el = document.getElementById('proportionChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+        const chart = echarts.init(el);
+        chart.setOption({
+            title: { text: 'Eudoxos\' Proportionenlehre: a:b = c:d', left: 'center', textStyle: { color: '#ffd700' }, subtext: 'Für ALLE m,n ∈ ℕ: wenn ma ≷ nb, dann mc ≷ nd', subtextStyle: { color: '#aaa', fontSize: 13 } },
+            tooltip: { trigger: 'axis' },
+            grid: { left: '10%', right: '10%', bottom: '15%', top: '25%' },
+            xAxis: { type: 'category', data: ['m=1','m=2','m=3','m=4','m=5','m=6','m=7','m=8'], axisLabel: { color: '#ccc' }, axisLine: { lineStyle: { color: '#555' } } },
+            yAxis: { type: 'value', name: 'Vielfache', nameTextStyle: { color: '#ccc' }, axisLabel: { color: '#ccc' }, splitLine: { lineStyle: { color: '#333' } } },
+            legend: { top: '18%', textStyle: { color: '#ccc' } },
+            series: [
+                { name: 'ma (a=3)', type: 'line', data: [3,6,9,12,15,18,21,24], lineStyle: { color: '#ffd700', width: 3 }, itemStyle: { color: '#ffd700' } },
+                { name: 'nb (b=2, n=1..8)', type: 'line', data: [2,4,6,8,10,12,14,16], lineStyle: { color: '#87ceeb', width: 3 }, itemStyle: { color: '#87ceeb' } },
+                { name: 'mc (c=6)', type: 'line', data: [6,12,18,24,30,36,42,48], lineStyle: { color: '#ff8c00', width: 3, type: 'dashed' }, itemStyle: { color: '#ff8c00' } },
+                { name: 'nd (d=4, n=1..8)', type: 'line', data: [4,8,12,16,20,24,28,32], lineStyle: { color: '#98fb98', width: 3, type: 'dashed' }, itemStyle: { color: '#98fb98' } }
+            ]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // TIMELINE CHART
+    function initTimelineChart() {
+        const el = document.getElementById('timelineChart');
+        if (!el || el.dataset.init) return;
+        el.dataset.init = '1';
+
+        const events = [
+            { year: -600, name: 'Thales', desc: 'Erste Beweise' },
+            { year: -530, name: 'Pythagoreer', desc: 'Zahlentheorie, √2' },
+            { year: -450, name: 'Hippokrates', desc: 'Erste "Elemente"' },
+            { year: -400, name: 'Platon', desc: 'Akademie, Ideenlehre' },
+            { year: -370, name: 'Eudoxos', desc: 'Proportionenlehre, Exhaustion' },
+            { year: -360, name: 'Theaitetos', desc: 'Irrationale, Platonische Körper' },
+            { year: -340, name: 'Aristoteles', desc: 'Logik, Axiomatik' },
+            { year: -300, name: 'EUKLID', desc: 'Die Elemente' },
+            { year: -250, name: 'Archimedes', desc: 'Nutzt die Elemente' },
+            { year: -200, name: 'Apollonius', desc: 'Kegelschnitte' },
+            { year: 320, name: 'Theon', desc: 'Redaktion der Elemente' },
+            { year: 500, name: 'Proclus', desc: 'Kommentar zu Buch I' }
+        ];
+
+        Plotly.newPlot(el, [{
+            type: 'scatter',
+            mode: 'markers+text',
+            x: events.map(e => e.year),
+            y: events.map((e, i) => (i % 2 === 0 ? 1 : -1) * (0.5 + Math.random() * 0.3)),
+            text: events.map(e => e.name),
+            textposition: events.map((e, i) => i % 2 === 0 ? 'top center' : 'bottom center'),
+            textfont: { color: '#ffd700', size: 11 },
+            marker: { size: 12, color: events.map(e => e.name === 'EUKLID' ? '#ff4444' : '#ffd700') },
+            hovertext: events.map(e => `${e.name} (${e.year > 0 ? e.year + ' n.Chr.' : Math.abs(e.year) + ' v.Chr.'})<br>${e.desc}`)
+        }], {
+            title: { text: 'Historische Zeitlinie', font: { color: '#ffd700', size: 16 } },
+            xaxis: { title: { text: 'Jahr (negativ = v. Chr.)', font: { color: '#ccc' } }, color: '#ccc', gridcolor: '#333', zerolinecolor: '#555' },
+            yaxis: { visible: false, range: [-2, 2] },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#ccc' },
+            margin: { t: 50, b: 60 },
+            shapes: [{ type: 'line', x0: -300, x1: -300, y0: -2, y1: 2, line: { color: '#ff4444', width: 2, dash: 'dot' } }]
+        }, { responsive: true });
+    }
+
+    // CONSTRUCTION CANVAS
+    let constructionCtx;
+    function drawConstruction(type) {
+        const canvas = document.getElementById('constructionCanvas');
+        if (!canvas) return;
+        constructionCtx = canvas.getContext('2d');
+        const ctx = constructionCtx;
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '14px Georgia';
+
+        if (type === 'equilateral') {
+            // Proposition I.1: Equilateral triangle
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillText('Proposition I.1: Gleichseitiges Dreieck auf gegebener Strecke', 20, 30);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText('Gegeben: Strecke AB. Gesucht: Gleichseitiges Dreieck.', 20, 55);
+            ctx.fillText('Konstruktion: Kreis um A mit Radius AB, Kreis um B mit Radius BA.', 20, 75);
+            ctx.fillText('Schnittpunkt C ergibt das Dreieck ABC.', 20, 95);
+
+            const ax = 250, ay = 380, bx = 550, by = 380;
+            const r = Math.sqrt((bx-ax)**2 + (by-ay)**2);
+            // Circle around A
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(135,206,235,0.5)';
+            ctx.arc(ax, ay, r, 0, Math.PI * 2);
+            ctx.stroke();
+            // Circle around B
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(152,251,152,0.5)';
+            ctx.arc(bx, by, r, 0, Math.PI * 2);
+            ctx.stroke();
+            // Triangle
+            const cx2 = (ax + bx) / 2;
+            const cy2 = ay - Math.sqrt(r*r - ((bx-ax)/2)**2);
+            ctx.beginPath();
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 3;
+            ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.lineTo(cx2, cy2); ctx.closePath();
+            ctx.stroke();
+            // Labels
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '16px Georgia';
+            ctx.fillText('A', ax - 15, ay + 20);
+            ctx.fillText('B', bx + 5, by + 20);
+            ctx.fillText('C', cx2 - 5, cy2 - 10);
+        } else if (type === 'bisect') {
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillText('Proposition I.9: Winkelhalbierende', 20, 30);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText('Gegeben: Winkel BAC. Gesucht: Halbierende.', 20, 55);
+            ctx.fillText('Konstruktion: Gleiche Strecken AD, AE abtragen. Gleichseitiges Dreieck DEF.', 20, 75);
+            ctx.fillText('AF halbiert den Winkel.', 20, 95);
+
+            const ax = 200, ay = 350;
+            ctx.beginPath(); ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2;
+            ctx.moveTo(ax, ay); ctx.lineTo(ax + 400, ay - 100); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax + 400, ay + 80); ctx.stroke();
+            // Bisector
+            ctx.beginPath(); ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 3;
+            ctx.setLineDash([8, 4]);
+            ctx.moveTo(ax, ay); ctx.lineTo(ax + 420, ay - 10); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ffd700'; ctx.font = '16px Georgia';
+            ctx.fillText('A', ax - 20, ay + 5);
+        } else if (type === 'perpendicular') {
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillText('Proposition I.11: Senkrechte auf einer Geraden errichten', 20, 30);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText('Gegeben: Gerade AB, Punkt C darauf.', 20, 55);
+            ctx.fillText('Konstruktion: Gleiche Strecken CD, CE. Gleichseitiges Dreieck DEF.', 20, 75);
+            ctx.fillText('CF ist senkrecht zu AB.', 20, 95);
+
+            const y = 350;
+            ctx.beginPath(); ctx.strokeStyle = '#87ceeb'; ctx.lineWidth = 2;
+            ctx.moveTo(100, y); ctx.lineTo(700, y); ctx.stroke();
+            ctx.beginPath(); ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 3;
+            ctx.moveTo(400, y); ctx.lineTo(400, y - 220); ctx.stroke();
+            // Right angle mark
+            ctx.beginPath(); ctx.strokeStyle = '#98fb98'; ctx.lineWidth = 1.5;
+            ctx.moveTo(400, y - 20); ctx.lineTo(420, y - 20); ctx.lineTo(420, y); ctx.stroke();
+            ctx.fillStyle = '#ffd700'; ctx.font = '16px Georgia';
+            ctx.fillText('C', 395, y + 25);
+            ctx.fillText('F', 395, y - 230);
+        }
+    }
+
+    // GEOMETRIC ALGEBRA CANVAS
+    function drawAlgebra() {
+        const canvas = document.getElementById('algebraCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const slider = document.getElementById('ratioSlider');
+        if (!slider) return;
+        const ratio = slider.value / 100;
+        const display = document.getElementById('ratioDisplay');
+        if (display) display.textContent = `a:b = ${Math.round(ratio*100)}:${Math.round((1-ratio)*100)}`;
+
+        const totalSize = 300;
+        const a = totalSize * ratio;
+        const b = totalSize * (1 - ratio);
+        const startX = 100, startY = 80;
+
+        ctx.fillStyle = '#87ceeb';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Geometrische Algebra: (a+b)² = a² + 2ab + b²', 20, 30);
+        ctx.fillStyle = '#ccc';
+        ctx.fillText('Das Quadrat über (a+b) wird in 4 Teile zerlegt:', 20, 55);
+
+        // Draw the big square
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(startX, startY, totalSize, totalSize);
+
+        // a² (top-left)
+        ctx.fillStyle = 'rgba(255,215,0,0.3)';
+        ctx.fillRect(startX, startY, a, a);
+        ctx.strokeStyle = '#ffd700';
+        ctx.strokeRect(startX, startY, a, a);
+
+        // b² (bottom-right)
+        ctx.fillStyle = 'rgba(135,206,235,0.3)';
+        ctx.fillRect(startX + a, startY + a, b, b);
+        ctx.strokeStyle = '#87ceeb';
+        ctx.strokeRect(startX + a, startY + a, b, b);
+
+        // ab (top-right)
+        ctx.fillStyle = 'rgba(152,251,152,0.2)';
+        ctx.fillRect(startX + a, startY, b, a);
+        ctx.strokeStyle = '#98fb98';
+        ctx.strokeRect(startX + a, startY, b, a);
+
+        // ab (bottom-left)
+        ctx.fillStyle = 'rgba(152,251,152,0.2)';
+        ctx.fillRect(startX, startY + a, a, b);
+        ctx.strokeStyle = '#98fb98';
+        ctx.strokeRect(startX, startY + a, a, b);
+
+        // Labels
+        ctx.font = '16px Georgia';
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText('a²', startX + a/2 - 10, startY + a/2 + 5);
+        ctx.fillStyle = '#87ceeb';
+        ctx.fillText('b²', startX + a + b/2 - 10, startY + a + b/2 + 5);
+        ctx.fillStyle = '#98fb98';
+        ctx.fillText('ab', startX + a + b/2 - 10, startY + a/2 + 5);
+        ctx.fillText('ab', startX + a/2 - 10, startY + a + b/2 + 5);
+
+        // Dimension labels
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '13px Georgia';
+        ctx.fillText('a', startX + a/2, startY - 10);
+        ctx.fillText('b', startX + a + b/2, startY - 10);
+        ctx.fillText('a', startX - 20, startY + a/2);
+        ctx.fillText('b', startX - 20, startY + a + b/2);
+
+        // Formula
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 18px Georgia';
+        ctx.fillText('(a+b)² = a² + 2ab + b²', startX + totalSize + 60, startY + totalSize/2);
+
+        // Numerical example
+        const aVal = Math.round(ratio * 10);
+        const bVal = 10 - aVal;
+        ctx.fillStyle = '#ccc';
+        ctx.font = '14px Georgia';
+        ctx.fillText(`Beispiel: a=${aVal}, b=${bVal}`, startX + totalSize + 60, startY + totalSize/2 + 40);
+        ctx.fillText(`(${aVal}+${bVal})² = ${(aVal+bVal)**2}`, startX + totalSize + 60, startY + totalSize/2 + 65);
+        ctx.fillText(`${aVal}² + 2·${aVal}·${bVal} + ${bVal}² = ${aVal**2} + ${2*aVal*bVal} + ${bVal**2} = ${aVal**2 + 2*aVal*bVal + bVal**2}`, startX + totalSize + 60, startY + totalSize/2 + 90);
+    }
+
+    // Initialize first section
+    setTimeout(() => initCharts('overview'), 200);
+    </script>
+</body>
+</html>
