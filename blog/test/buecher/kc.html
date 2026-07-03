@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In den Unterwelten des Web 2.0 – Visuelle Konzeptkarte</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .hero {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        .hero p { color: #aaa; font-size: 1.1em; max-width: 800px; margin: 0 auto; }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: #e94560;
+            border-color: #e94560;
+            color: white;
+        }
+        .section {
+            display: none;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section.active { display: block; }
+        .section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #48dbfb;
+        }
+        .section h3 {
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            color: #feca57;
+        }
+        .chart-container {
+            width: 100%;
+            height: 500px;
+            margin: 20px 0;
+            background: #111;
+            border-radius: 12px;
+            border: 1px solid #222;
+        }
+        .chart-container-large {
+            height: 650px;
+        }
+        .explanation {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #e94560;
+            line-height: 1.7;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.8em; }
+        }
+        .concept-card {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 15px 0;
+            transition: transform 0.3s;
+        }
+        .concept-card:hover { transform: translateY(-3px); border-color: #e94560; }
+        .concept-card h4 { color: #ff6b6b; margin-bottom: 10px; }
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e94560;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin: 3px;
+        }
+        .tag.green { background: #2ecc71; }
+        .tag.blue { background: #3498db; }
+        .tag.yellow { background: #f39c12; color: #000; }
+        .tag.purple { background: #9b59b6; }
+        .spectrum-bar {
+            height: 30px;
+            border-radius: 15px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .spectrum-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #aaa;
+        }
+        .marker {
+            position: absolute;
+            top: -5px;
+            width: 20px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e94560;
+        }
+        .timeline-item {
+            padding: 15px 20px;
+            border-left: 3px solid #48dbfb;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            background: #1a1a2e;
+            border-radius: 0 12px 12px 0;
+        }
+        .timeline-item .year { color: #48dbfb; font-weight: bold; }
+        .quote {
+            font-style: italic;
+            color: #aaa;
+            border-left: 3px solid #feca57;
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+        .interactive-demo {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .btn {
+            padding: 8px 16px;
+            background: #1a1a2e;
+            border: 1px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #e0e0e0;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #e94560; border-color: #e94560; }
+        .btn.active { background: #e94560; border-color: #e94560; }
+        #d3-network { width: 100%; height: 500px; background: #111; border-radius: 12px; border: 1px solid #222; }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin: 5px 10px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>In den Unterwelten des Web 2.0</h1>
+    <p>Visuelle Abstraktion der Kernkonzepte aus Nils Löbers Ethnografie eines Imageboards (Krautchan/4chan) – Tübingen 2011</p>
+</div>
+
+<div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('overview')">🗺️ Überblick</div>
+    <div class="nav-tab" onclick="showSection('structure')">🏗️ Struktur</div>
+    <div class="nav-tab" onclick="showSection('identity')">🎭 Identität</div>
+    <div class="nav-tab" onclick="showSection('creativity')">🎨 Kreativität/Meme</div>
+    <div class="nav-tab" onclick="showSection('aggression')">⚔️ Aggressivität</div>
+    <div class="nav-tab" onclick="showSection('gender')">♂️ Gender/Sexualität</div>
+    <div class="nav-tab" onclick="showSection('dynamics')">🔄 Dynamiken</div>
+    <div class="nav-tab" onclick="showSection('theory')">📐 Theorie</div>
+</div>
+
+<!-- SECTION 1: OVERVIEW -->
+<div class="section active" id="overview">
+    <h2>Gesamtarchitektur der Imageboard-Kultur</h2>
+    <div class="explanation">
+        <strong>Kernthese:</strong> Imageboards sind aufgrund von Anonymität und Regellosigkeit ein Raum, in dem Nutzer Einstellungen und Begehren ausdrücken können, für die es sonst keine Ausdrucksmöglichkeiten gibt. Bei Krautchan ist das zentrale Thema die Verunsicherung einer zwischen Unterordnung und Komplizenschaft oszillierenden Männlichkeit.
+    </div>
+    <div id="chart-overview" class="chart-container chart-container-large"></div>
+    <div class="explanation">
+        Das Diagramm zeigt die vier analytischen Hauptdimensionen (Kreativität, Aggressivität, Identität, Widerständigkeit) und ihre Verbindungen zu konkreten Praktiken. Alles wird zusammengehalten durch den "Lulz"-Rahmen – Schadenfreude als ideologischer Überbau.
+    </div>
+</div>
+
+<!-- SECTION 2: STRUCTURE -->
+<div class="section" id="structure">
+    <h2>Soziotechnische Struktur: Imageboards vs. andere Foren</h2>
+    <div class="explanation">
+        Imageboards unterscheiden sich fundamental von klassischen Foren (phpBB) durch 6 Dimensionen. Diese technischen Rahmenbedingungen erzeugen eine völlig andere Kommunikationskultur.
+    </div>
+    <div id="chart-radar" class="chart-container"></div>
+
+    <h3>Historische Entwicklung</h3>
+    <div class="timeline-item"><span class="year">1999</span> – 2channel (nichanneru) in Japan: Anonyme Textforen</div>
+    <div class="timeline-item"><span class="year">2001</span> – Futaba Channel: Erstes Imageboard (Bilder möglich)</div>
+    <div class="timeline-item"><span class="year">2003</span> – 4chan gegründet von "moot" (15 Jahre alt)</div>
+    <div class="timeline-item"><span class="year">2005</span> – onechan: Erstes deutsches Imageboard</div>
+    <div class="timeline-item"><span class="year">2007</span> – Krautchan entsteht als deutschsprachige Variante</div>
+    <div class="timeline-item"><span class="year">2008</span> – Project Chanology: Proteste gegen Scientology</div>
+    <div class="timeline-item"><span class="year">2009</span> – Amoklauf Winnenden: Krautchan in Massenmedien</div>
+
+    <h3>Größenvergleich</h3>
+    <div id="chart-size" class="chart-container"></div>
+</div>
+
+<!-- SECTION 3: IDENTITY -->
+<div class="section" id="identity">
+    <h2>Kollektividentität: Anonymous & Bernd</h2>
+    <div class="explanation">
+        Durch erzwungene Anonymität entsteht eine Kollektividentität. Alle Beiträge erscheinen unter einem festen Namen ("Anonymous" bei 4chan, "Bernd" bei Krautchan). Dies ermöglicht drei Modi der Identifikation.
+    </div>
+    <div id="chart-identity" class="chart-container"></div>
+
+    <h3>Die drei Modi der Identifikation</h3>
+    <div class="grid-2">
+        <div class="concept-card">
+            <h4>1. Individuelle Übernahme</h4>
+            <p>"Ich bin ein Bernd" – Wie Fankultur oder Nationalität</p>
+            <span class="tag">Zugehörigkeit</span>
+        </div>
+        <div class="concept-card">
+            <h4>2. Konstitution durch Summe</h4>
+            <p>"We are Anonymous" – Kollektiv als Summe der Individuen</p>
+            <span class="tag blue">Legion</span>
+        </div>
+        <div class="concept-card">
+            <h4>3. Transpersonale Entität</h4>
+            <p>"Bernd lebt im Keller" – Dritte Person, fiktive Gestalt</p>
+            <span class="tag purple">Mythos</span>
+        </div>
+    </div>
+
+    <h3>Das Bernd-Stereotyp (Konstruierte Persona)</h3>
+    <div id="chart-bernd" class="chart-container"></div>
+    <div class="explanation">
+        Bernd ist eine Projektionsfläche: 15-25 Jahre alt, weiß, männlich, gebildet, lebt "im Keller", Einzelgänger, interessiert an Computerspielen und japanischer Popkultur. Grenzt sich gegen "Unterschicht" ab, sieht sich als "Elite" – scheitert aber am eigenen Geschlechtsideal.
+    </div>
+
+    <div class="quote">"Internet-Helden – Wir tun was wir woll'n, weil wir es könn'. [...] Wir wohnen im Keller, haben ausser Versagen nicht viel drauf, dafür aber schlimme Angst vor Stränden!"</div>
+</div>
+
+<!-- SECTION 4: CREATIVITY -->
+<div class="section" id="creativity">
+    <h2>Kreativität: Meme als kulturelle Replikatoren</h2>
+    <div class="explanation">
+        Meme sind Artefakte (Bilder, Texte, Videos), die häufig verwendet, verändert und rekombiniert werden. Sie folgen Regeln auf drei Ebenen: syntaktisch, semantisch und pragmatisch. Ihre Kenntnis ist ein Distinktionsmerkmal ("kulturelles Kapital").
+    </div>
+
+    <div id="chart-meme-types" class="chart-container"></div>
+
+    <h3>Mem-Lebenszyklus</h3>
+    <div id="chart-lifecycle" class="chart-container"></div>
+
+    <h3>Funktionen von Memen</h3>
+    <div class="grid-2">
+        <div class="concept-card">
+            <h4>🗣️ Kommunikativ</h4>
+            <p>Direkte Sprechakte ("Halt die Fresse"-Papagei), paraverbale Signale, Kommentare</p>
+        </div>
+        <div class="concept-card">
+            <h4>🏅 Distinktion</h4>
+            <p>Kenntnis = Status. "Lauer Meer!" als Abgrenzung gegen Neulinge. Kein anderes Kapital möglich.</p>
+        </div>
+        <div class="concept-card">
+            <h4>🧬 Kulturelles Gedächtnis</h4>
+            <p>Archive (Encyclopedia Dramatica) als Speicher des kollektiven Wissens</p>
+        </div>
+        <div class="concept-card">
+            <h4>🚫 Autorenlosigkeit</h4>
+            <p>Kein Urheberrecht, keine Zuordnung → fördert Remix und Bricolage</p>
+        </div>
+    </div>
+
+    <h3>Regelstruktur eines Mems (am Beispiel LOLcats)</h3>
+    <div id="chart-rules" class="chart-container"></div>
+</div>
+
+<!-- SECTION 5: AGGRESSION -->
+<div class="section" id="aggression">
+    <h2>Aggressivität: Provokation, Raids & Bullying</h2>
+    <div class="explanation">
+        "Lulz" (Schadenfreude auf Kosten anderer) ist der ideologische Überbau. Aggression dient als Selbstzweck UND als Mittel: Abschreckung von Neulingen, Gruppenbildung, Machtdemonstration.
+    </div>
+
+    <div id="chart-aggression" class="chart-container"></div>
+
+    <h3>Raid-Mechanismus (Flussdiagramm)</h3>
+    <div id="chart-raid-flow" class="chart-container chart-container-large"></div>
+
+    <h3>Zielauswahl-Logik</h3>
+    <div class="grid-2">
+        <div class="concept-card">
+            <h4>🎯 Hoher Investitionsgrad</h4>
+            <p>Je mehr Bedeutung das Ziel seinen Artefakten beimisst, desto attraktiver die Zerstörung</p>
+        </div>
+        <div class="concept-card">
+            <h4>✨ Reinheit & Unschuld</h4>
+            <p>"The more beautiful and pure a thing is – the more satisfying it is to corrupt it"</p>
+        </div>
+        <div class="concept-card">
+            <h4>🛡️ Widerstand</h4>
+            <p>Gegenwehr erhöht den Reiz. Zu leichte Ziele sind unbefriedigend.</p>
+        </div>
+        <div class="concept-card">
+            <h4>🚫 Keine "Moralfaggotry"</h4>
+            <p>Politische/moralische Rechtfertigung ist verpönt. Nur Lulz zählen.</p>
+        </div>
+    </div>
+
+    <h3>Schockbilder als Zugangshürde</h3>
+    <div class="explanation">
+        Gewaltbilder, Nazi-Symbolik und extreme Pornografie dienen als "Initiationsritus" – wer es nicht verträgt, bleibt fern. Dies ist ein bewusster Ausschlussmechanismus neben der Mem-Kennerschaft.
+    </div>
+</div>
+
+<!-- SECTION 6: GENDER -->
+<div class="section" id="gender">
+    <h2>Gender, Sexualität & Widerständigkeit</h2>
+    <div class="explanation">
+        Krautchan ist ein explizit männlicher Raum. Die Geschlechterperformanz ist von einem charakteristischen Bruch geprägt: Ideal der Härte vs. ständige Betonung des eigenen Versagens. Bernd scheitert am eigenen Geschlechtsideal.
+    </div>
+
+    <div id="chart-gender" class="chart-container"></div>
+
+    <h3>Der zentrale Widerspruch</h3>
+    <div id="chart-tension" class="chart-container"></div>
+
+    <h3>Frauen bei Krautchan: Drei Modi</h3>
+    <div class="grid-2">
+        <div class="concept-card">
+            <h4>1. "(Aufmerksamkeits-)Hure"</h4>
+            <p>Frauen, die sich zeigen, werden gleichzeitig begrüßt und beschimpft</p>
+            <span class="tag">Ambivalenz</span>
+        </div>
+        <div class="concept-card">
+            <h4>2. Regulierende Instanz</h4>
+            <p>Mütterlich-kontrollierende Figur (symbolisiert durch Ursula von der Leyen)</p>
+            <span class="tag yellow">Bedrohung</span>
+        </div>
+        <div class="concept-card">
+            <h4>3. Abwesendes Objekt der Sehnsucht</h4>
+            <p>Unerreichbare Partnerin, deren Fehlen beklagt wird</p>
+            <span class="tag purple">Frustration</span>
+        </div>
+    </div>
+
+    <h3>Kompensationsmechanismen</h3>
+    <div class="explanation">
+        <strong>Robert Connell:</strong> "Der dramatische Kontrast zwischen kollektiver Privilegiertheit und persönlicher Unsicherheit ist eine Schlüsselsituation der gegenwärtigen Männlichkeitspolitik."<br><br>
+        Pornografie + Masturbation = Unabhängigkeit von der Außenwelt → Rückzug vor einer als feindlich erlebten Welt. Verteidigung dieser Möglichkeiten = größtes Widerständigkeitspotential.
+    </div>
+</div>
+
+<!-- SECTION 7: DYNAMICS -->
+<div class="section" id="dynamics">
+    <h2>Systemdynamiken & Austauschbeziehungen</h2>
+
+    <h3>Oberwelt vs. Unterwelt des Internets</h3>
+    <div id="chart-layers" class="chart-container chart-container-large"></div>
+    <div class="explanation">
+        Imageboards als "Unterwelt" unter der hellen Web 2.0-Oberfläche. Psychoanalytisch: Wo oben Selbstdarstellung, soziales Kapital und Regeln herrschen, finden sich unten Anonymität, Triebe, Gewalt und Ausscheidungen. Austausch in beide Richtungen.
+    </div>
+
+    <h3>Netzwerk der Schauplätze</h3>
+    <div id="d3-network"></div>
+    <div style="text-align:center; margin-top:10px;">
+        <span class="legend-item"><span class="legend-dot" style="background:#e94560"></span>Imageboards</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#48dbfb"></span>Archive/Wikis</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#2ecc71"></span>Web 2.0</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#feca57"></span>Chat/IRC</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#9b59b6"></span>Offline</span>
+    </div>
+
+    <h3>Flüchtigkeit & Gedächtnis</h3>
+    <div id="chart-memory" class="chart-container"></div>
+</div>
+
+<!-- SECTION 8: THEORY -->
+<div class="section" id="theory">
+    <h2>Theoretischer Rahmen & Abstrakte Muster</h2>
+
+    <h3>Das Grundmodell</h3>
+    <div id="chart-model" class="chart-container chart-container-large"></div>
+
+    <h3>Zentrale abstrakte Muster</h3>
+    <div class="concept-card">
+        <h4>🔄 Muster 1: Anonymität → Enthemmung → Kreativität + Destruktion</h4>
+        <p>Geringe Über-Ich-Wirksamkeit ermöglicht sowohl produktive Bricolage als auch aggressive Exzesse. Beides speist sich aus derselben Quelle.</p>
+    </div>
+    <div class="concept-card">
+        <h4>⚡ Muster 2: Selbstwirksamkeit als Kompensation</h4>
+        <p>Real-Life-Versagen → Internet-Heldentum. Raids, Meme-Produktion und Trolling als Erfahrung von Macht und Einfluss.</p>
+    </div>
+    <div class="concept-card">
+        <h4>🎭 Muster 3: Nihilismus als Schutzschild</h4>
+        <p>"Alles ist Satire" → Man spielt nur, dass man nur spielt. Der Lulz-Rahmen immunisiert gegen Kritik und ermöglicht Grenzüberschreitung.</p>
+    </div>
+    <div class="concept-card">
+        <h4>🏰 Muster 4: Exklusion durch Komplexität</h4>
+        <p>Mem-Kennerschaft + Schockresistenz + Spezialsprache = dreifache Zugangshürde. Kulturelles Kapital ohne Autorenschaft.</p>
+    </div>
+    <div class="concept-card">
+        <h4>♻️ Muster 5: Oszillation zwischen Hegemonialität und Unterordnung</h4>
+        <p>Komplizenschaft mit hegemonialer Männlichkeit bei gleichzeitigem Scheitern daran. Weder Rebellion noch Konformität, sondern ein Dazwischen.</p>
+    </div>
+    <div class="concept-card">
+        <h4>🌊 Muster 6: Kollektives Unbewusstes im digitalen Raum</h4>
+        <p>Unter Bedingungen geringer Zensur treten triebnahe Inhalte zutage – eine "Wiederkehr des Verdrängten" auf kollektiver Ebene.</p>
+    </div>
+
+    <h3>Theoretische Bezüge</h3>
+    <div id="chart-theory" class="chart-container"></div>
+</div>
+
+<script>
+// Navigation
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// CHART 1: Overview Mind Map (ECharts)
+const overviewChart = echarts.init(document.getElementById('chart-overview'));
+overviewChart.setOption({
+    tooltip: { trigger: 'item', formatter: '{b}' },
+    series: [{
+        type: 'graph',
+        layout: 'force',
+        roam: true,
+        force: { repulsion: 300, gravity: 0.1, edgeLength: [100, 200] },
+        label: { show: true, fontSize: 11, color: '#fff' },
+        lineStyle: { color: '#555', width: 1.5, curveness: 0.1 },
+        categories: [
+            { name: 'Kern', itemStyle: { color: '#e94560' } },
+            { name: 'Kreativität', itemStyle: { color: '#2ecc71' } },
+            { name: 'Aggressivität', itemStyle: { color: '#e74c3c' } },
+            { name: 'Identität', itemStyle: { color: '#3498db' } },
+            { name: 'Widerständigkeit', itemStyle: { color: '#9b59b6' } },
+            { name: 'Rahmen', itemStyle: { color: '#f39c12' } }
+        ],
+        data: [
+            { name: 'IMAGEBOARD\nKULTUR', symbolSize: 70, category: 0 },
+            { name: 'Anonymität', symbolSize: 50, category: 5 },
+            { name: 'Lulz\n(Schadenfreude)', symbolSize: 45, category: 5 },
+            { name: 'Flüchtigkeit', symbolSize: 40, category: 5 },
+            { name: 'Meme', symbolSize: 45, category: 1 },
+            { name: 'Image Macros', symbolSize: 30, category: 1 },
+            { name: 'Copypasta', symbolSize: 30, category: 1 },
+            { name: 'Sprachspiele', symbolSize: 30, category: 1 },
+            { name: 'Remix/Bricolage', symbolSize: 30, category: 1 },
+            { name: 'Raids', symbolSize: 40, category: 2 },
+            { name: 'Trolling', symbolSize: 35, category: 2 },
+            { name: 'Schockbilder', symbolSize: 30, category: 2 },
+            { name: 'Bullying', symbolSize: 30, category: 2 },
+            { name: 'Kollektividentität', symbolSize: 45, category: 3 },
+            { name: '"Bernd"', symbolSize: 35, category: 3 },
+            { name: '"Anonymous"', symbolSize: 35, category: 3 },
+            { name: 'Distinktion', symbolSize: 30, category: 3 },
+            { name: 'Pornografie', symbolSize: 35, category: 4 },
+            { name: 'Gender-Bending', symbolSize: 25, category: 4 },
+            { name: 'Männl. Solidarität', symbolSize: 30, category: 4 },
+            { name: 'Anti-Zensur', symbolSize: 30, category: 4 },
+            { name: 'Selbstwirksamkeit', symbolSize: 35, category: 5 },
+        ],
+        links: [
+            { source: 'IMAGEBOARD\nKULTUR', target: 'Anonymität' },
+            { source: 'IMAGEBOARD\nKULTUR', target: 'Lulz\n(Schadenfreude)' },
+            { source: 'IMAGEBOARD\nKULTUR', target: 'Flüchtigkeit' },
+            { source: 'Anonymität', target: 'Kollektividentität' },
+            { source: 'Anonymität', target: 'Meme' },
+            { source: 'Anonymität', target: 'Raids' },
+            { source: 'Anonymität', target: 'Pornografie' },
+            { source: 'Lulz\n(Schadenfreude)', target: 'Trolling' },
+            { source: 'Lulz\n(Schadenfreude)', target: 'Raids' },
+            { source: 'Lulz\n(Schadenfreude)', target: 'Schockbilder' },
+            { source: 'Meme', target: 'Image Macros' },
+            { source: 'Meme', target: 'Image Macros' },
+            { source: 'Meme', target: 'Copypasta' },
+            { source: 'Meme', target: 'Sprachspiele' },
+            { source: 'Meme', target: 'Remix/Bricolage' },
+            { source: 'Raids', target: 'Trolling' },
+            { source: 'Raids', target: 'Bullying' },
+            { source: 'Kollektividentität', target: '"Bernd"' },
+            { source: 'Kollektividentität', target: '"Anonymous"' },
+            { source: 'Kollektividentität', target: 'Distinktion' },
+            { source: 'Pornografie', target: 'Gender-Bending' },
+            { source: 'Pornografie', target: 'Männl. Solidarität' },
+            { source: 'Pornografie', target: 'Anti-Zensur' },
+            { source: 'Flüchtigkeit', target: 'Meme' },
+            { source: 'Selbstwirksamkeit', target: 'Raids' },
+            { source: 'Selbstwirksamkeit', target: 'Meme' },
+            { source: 'Schockbilder', target: 'Bullying' },
+            { source: 'Distinktion', target: 'Meme' },
+        ]
+    }]
+});
+
+// CHART 2: Radar Chart - Imageboard vs phpBB
+const radarChart = echarts.init(document.getElementById('chart-radar'));
+radarChart.setOption({
+    tooltip: {},
+    legend: { data: ['Imageboard', 'phpBB-Forum', 'Usenet'], textStyle: { color: '#aaa' } },
+    radar: {
+        indicator: [
+            { name: 'Anonymität', max: 10 },
+            { name: 'Anarchie/Regellosigkeit', max: 10 },
+            { name: 'Flüchtigkeit', max: 10 },
+            { name: 'Multimedialität', max: 10 },
+            { name: 'Egalität (keine Hierarchie)', max: 10 },
+            { name: 'Nicht-kommerziell', max: 10 }
+        ],
+        axisName: { color: '#ccc' },
+        splitArea: { areaStyle: { color: ['#1a1a2e', '#111'] } }
+    },
+    series: [{
+        type: 'radar',
+        data: [
+            { value: [10, 9, 10, 8, 9, 9], name: 'Imageboard', lineStyle: { color: '#e94560' }, areaStyle: { color: 'rgba(233,69,96,0.2)' } },
+            { value: [3, 4, 1, 6, 3, 5], name: 'phpBB-Forum', lineStyle: { color: '#48dbfb' }, areaStyle: { color: 'rgba(72,219,251,0.2)' } },
+            { value: [7, 6, 2, 2, 7, 9], name: 'Usenet', lineStyle: { color: '#2ecc71' }, areaStyle: { color: 'rgba(46,204,113,0.2)' } }
+        ]
+    }]
+});
+
+// CHART 3: Size comparison
+const sizeChart = echarts.init(document.getElementById('chart-size'));
+sizeChart.setOption({
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: ['4chan /b/', '4chan gesamt', 'Krautchan /b/', 'Krautchan gesamt'], axisLabel: { color: '#aaa' } },
+    yAxis: { type: 'log', name: 'Beiträge (log)', axisLabel: { color: '#aaa' }, nameTextStyle: { color: '#aaa' } },
+    series: [{
+        type: 'bar',
+        data: [
+            { value: 115000000, itemStyle: { color: '#e94560' } },
+            { value: 220000000, itemStyle: { color: '#ff6b6b' } },
+            { value: 500000, itemStyle: { color: '#48dbfb' } },
+            { value: 800000, itemStyle: { color: '#74b9ff' } }
+        ],
+        label: { show: true, position: 'top', color: '#aaa', formatter: function(p) { return (p.value/1000000).toFixed(1) + 'M'; } }
+    }]
+});
+
+// CHART 4: Identity Modes
+const identityChart = echarts.init(document.getElementById('chart-identity'));
+identityChart.setOption({
+    tooltip: {},
+    series: [{
+        type: 'sunburst',
+        radius: ['10%', '90%'],
+        label: { fontSize: 11, color: '#fff' },
+        data: [{
+            name: 'Kollektiv-\nidentität',
+            children: [
+                { name: 'Individuelle\nÜbernahme', value: 3, itemStyle: { color: '#e94560' },
+                  children: [
+                    { name: '"Ich bin\nein Bernd"', value: 1 },
+                    { name: 'Wie Fan-\nkultur', value: 1 },
+                    { name: 'Zugehörig-\nkeit', value: 1 }
+                  ]
+                },
+                { name: 'Summe der\nIndividuen', value: 3, itemStyle: { color: '#48dbfb' },
+                  children: [
+                    { name: '"We are\nAnonymous"', value: 1 },
+                    { name: '"We are\nLegion"', value: 1 },
+                    { name: 'Kollektiv-\nsubjekt', value: 1 }
+                  ]
+                },
+                { name: 'Transpersonale\nEntität', value: 3, itemStyle: { color: '#9b59b6' },
+                  children: [
+                    { name: '"Bernd lebt\nim Keller"', value: 1 },
+                    { name: 'Fiktive\nGestalt', value: 1 },
+                    { name: 'Projektions-\nfläche', value: 1 }
+                  ]
+                }
+            ]
+        }]
+    }]
+});
+
+// CHART 5: Bernd Stereotype
+const berndChart = echarts.init(document.getElementById('chart-bernd'));
+berndChart.setOption({
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    xAxis: { type: 'value', axisLabel: { color: '#aaa' } },
+    yAxis: { type: 'category', data: ['Soziale Kompetenz', 'Körperliche Fitness', 'Sexueller Erfolg', 'Finanzen', 'Bildung/Intellekt', 'Technisches Wissen', 'Mem-Kennerschaft', 'Internet-Macht', 'Zynismus/Härte'], axisLabel: { color: '#aaa' } },
+    series: [{
+        type: 'bar',
+        data: [2, 2, 1, 3, 8, 9, 10, 8, 9],
+        itemStyle: { color: function(params) { return params.value > 5 ? '#2ecc71' : '#e94560'; } },
+        label: { show: true, position: 'right', color: '#aaa' }
+    }]
+});
+
+// CHART 6: Meme Types (Treemap)
+const memeChart = echarts.init(document.getElementById('chart-meme-types'));
+memeChart.setOption({
+    tooltip: {},
+    series: [{
+        type: 'treemap',
+        roam: false,
+        label: { show: true, fontSize: 12 },
+        data: [
+            { name: 'Image Macros', value: 45000, children: [
+                { name: 'LOLcats', value: 15000, itemStyle: { color: '#e94560' } },
+                { name: 'Advice Dog', value: 8000, itemStyle: { color: '#ff6b6b' } },
+                { name: 'HDF-Papagei', value: 5000, itemStyle: { color: '#c0392b' } },
+                { name: 'How do I shot web', value: 4000, itemStyle: { color: '#e74c3c' } },
+                { name: 'Andere', value: 13000, itemStyle: { color: '#922b21' } }
+            ]},
+            { name: 'Copypasta', value: 20000, children: [
+                { name: 'Trolltexte', value: 8000, itemStyle: { color: '#48dbfb' } },
+                { name: 'Erfahrungsberichte', value: 6000, itemStyle: { color: '#3498db' } },
+                { name: 'Reaktionen', value: 6000, itemStyle: { color: '#2980b9' } }
+            ]},
+            { name: 'Streiche', value: 15000, children: [
+                { name: 'Rickrolling', value: 8000, itemStyle: { color: '#2ecc71' } },
+                { name: 'Duckrolling', value: 3000, itemStyle: { color: '#27ae60' } },
+                { name: 'Put Shoe On Head', value: 4000, itemStyle: { color: '#1abc9c' } }
+            ]},
+            { name: 'Textstrukturell', value: 12000, children: [
+                { name: '"Ich aus versehen"', value: 5000, itemStyle: { color: '#f39c12' } },
+                { name: 'Rules of Internet', value: 4000, itemStyle: { color: '#e67e22' } },
+                { name: 'Andere', value: 3000, itemStyle: { color: '#d35400' } }
+            ]},
+            { name: 'Medienamateur', value: 8000, children: [
+                { name: 'Tay Zonday', value: 3000, itemStyle: { color: '#9b59b6' } },
+                { name: 'Boxxy', value: 3000, itemStyle: { color: '#8e44ad' } },
+                { name: 'Andere', value: 2000, itemStyle: { color: '#6c3483' } }
+            ]}
+        ]
+    }]
+});
+
+// CHART 7: Meme Lifecycle
+const lifecycleDiv = document.getElementById('chart-lifecycle');
+Plotly.newPlot(lifecycleDiv, [{
+    x: ['Entstehung', 'Frühe\nAdoption', 'Verbreitung', 'Peak', 'Übersättigung', 'Archivierung'],
+    y: [5, 25, 70, 100, 40, 20],
+    type: 'scatter',
+    mode: 'lines+markers+text',
+    text: ['Zufällige\nSchöpfung', 'Kenner\nnutzen es', 'Breite\nNutzung', '"Forced\nMeme"', '"Old\nMeme"', 'ED/Wiki\nEintrag'],
+    textposition: 'top center',
+    textfont: { color: '#aaa', size: 10 },
+    line: { color: '#e94560', width: 3 },
+    marker: { size: 10, color: '#e94560' },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(233,69,96,0.1)'
+}], {
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    font: { color: '#aaa' },
+    xaxis: { gridcolor: '#333' },
+    yaxis: { title: 'Verbreitung/Nutzung', gridcolor: '#333' },
+    margin: { t: 40, b: 60 }
+});
+
+// CHART 8: Meme Rules
+const rulesChart = echarts.init(document.getElementById('chart-rules'));
+rulesChart.setOption({
+    tooltip: {},
+    series: [{
+        type: 'graph',
+        layout: 'force',
+        roam: true,
+        force: { repulsion: 200, gravity: 0.1 },
+        label: { show: true, fontSize: 10, color: '#fff' },
+        categories: [
+            { name: 'Ebene', itemStyle: { color: '#e94560' } },
+            { name: 'Regel', itemStyle: { color: '#48dbfb' } },
+            { name: 'Beispiel', itemStyle: { color: '#2ecc71' } }
+        ],
+        data: [
+            { name: 'SYNTAKTISCH', symbolSize: 50, category: 0 },
+            { name: 'SEMANTISCH', symbolSize: 50, category: 0 },
+            { name: 'PRAGMATISCH', symbolSize: 50, category: 0 },
+            { name: 'Bild: Katze/Tier', symbolSize: 30, category: 1 },
+            { name: 'Schrift: Impact', symbolSize: 30, category: 1 },
+            { name: 'Grammatik: LOLspeak', symbolSize: 30, category: 1 },
+            { name: 'Anthropomorphisierung', symbolSize: 30, category: 1 },
+            { name: 'Tier spricht', symbolSize: 30, category: 1 },
+            { name: 'Kontext: Thread', symbolSize: 30, category: 1 },
+            { name: 'Fortsetzung', symbolSize: 30, category: 1 },
+            { name: '"I can has\ncheezburger?"', symbolSize: 25, category: 2 },
+            { name: 'LOLrus-Saga', symbolSize: 25, category: 2 },
+        ],
+        links: [
+            { source: 'SYNTAKTISCH', target: 'Bild: Katze/Tier' },
+            { source: 'SYNTAKTISCH', target: 'Schrift: Impact' },
+            { source: 'SYNTAKTISCH', target: 'Grammatik: LOLspeak' },
+            { source: 'SEMANTISCH', target: 'Anthropomorphisierung' },
+            { source: 'SEMANTISCH', target: 'Tier spricht' },
+            { source: 'PRAGMATISCH', target: 'Kontext: Thread' },
+            { source: 'PRAGMATISCH', target: 'Fortsetzung' },
+            { source: 'Grammatik: LOLspeak', target: '"I can has\ncheezburger?"' },
+            { source: 'Fortsetzung', target: 'LOLrus-Saga' },
+        ]
+    }]
+});
+
+// CHART 9: Aggression Spectrum
+const aggressionChart = echarts.init(document.getElementById('chart-aggression'));
+aggressionChart.setOption({
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: ['Schockbilder\n(intern)', 'Trolling\n(intern)', 'Trolling\n(extern)', 'Raids auf\nForen', 'Raids auf\nSpiele', 'Bullying\n(Einzelne)', 'Offline-\nAktionen'], axisLabel: { color: '#aaa', interval: 0, fontSize: 10 } },
+    yAxis: [
+        { type: 'value', name: 'Intensität', axisLabel: { color: '#aaa' }, nameTextStyle: { color: '#aaa' } },
+        { type: 'value', name: 'Häufigkeit', axisLabel: { color: '#aaa' }, nameTextStyle: { color: '#aaa' } }
+    ],
+    series: [
+        { name: 'Schaden', type: 'bar', data: [2, 3, 5, 7, 6, 9, 8], itemStyle: { color: '#e94560' } },
+        { name: 'Häufigkeit', type: 'line', yAxisIndex: 1, data: [9, 8, 6, 4, 3, 2, 1], lineStyle: { color: '#48dbfb' }, itemStyle: { color: '#48dbfb' } }
+    ],
+    legend: { textStyle: { color: '#aaa' } }
+});
+
+// CHART 10: Raid Flow
+const raidChart = echarts.init(document.getElementById('chart-raid-flow'));
+raidChart.setOption({
+    tooltip: { trigger: 'item' },
+    series: [{
+        type: 'sankey',
+        layout: 'none',
+        emphasis: { focus: 'adjacency' },
+        label: { color: '#fff', fontSize: 11 },
+        lineStyle: { color: 'gradient', curveness: 0.5 },
+        data: [
+            { name: 'Ziel entdeckt' },
+            { name: 'Lulz-Potential?' },
+            { name: 'JA: Raid!' },
+            { name: 'NEIN: "Not your\npersonal army"' },
+            { name: 'Docs sammeln' },
+            { name: 'Koordination\n(IRC/Wiki)' },
+            { name: 'Crapflooding' },
+            { name: 'DDOS' },
+            { name: 'Schockbilder' },
+            { name: 'Social Engineering' },
+            { name: 'Ziel reagiert' },
+            { name: 'Widerstand\n→ mehr Lulz' },
+            { name: 'Aufgabe\n→ Sieg' },
+            { name: 'Dokumentation\n(ED/Wiki)' }
+        ],
+        links: [
+            { source: 'Ziel entdeckt', target: 'Lulz-Potential?', value: 10 },
+            { source: 'Lulz-Potential?', target: 'JA: Raid!', value: 7 },
+            { source: 'Lulz-Potential?', target: 'NEIN: "Not your\npersonal army"', value: 3 },
+            { source: 'JA: Raid!', target: 'Docs sammeln', value: 7 },
+            { source: 'Docs sammeln', target: 'Koordination\n(IRC/Wiki)', value: 7 },
+            { source: 'Koordination\n(IRC/Wiki)', target: 'Crapflooding', value: 3 },
+            { source: 'Koordination\n(IRC/Wiki)', target: 'DDOS', value: 2 },
+            { source: 'Koordination\n(IRC/Wiki)', target: 'Schockbilder', value: 2 },
+            { source: 'Koordination\n(IRC/Wiki)', target: 'Social Engineering', value: 2 },
+            { source: 'Crapflooding', target: 'Ziel reagiert', value: 3 },
+            { source: 'DDOS', target: 'Ziel reagiert', value: 2 },
+            { source: 'Schockbilder', target: 'Ziel reagiert', value: 2 },
+            { source: 'Social Engineering', target: 'Ziel reagiert', value: 2 },
+            { source: 'Ziel reagiert', target: 'Widerstand\n→ mehr Lulz', value: 5 },
+            { source: 'Ziel reagiert', target: 'Aufgabe\n→ Sieg', value: 4 },
+            { source: 'Widerstand\n→ mehr Lulz', target: 'Dokumentation\n(ED/Wiki)', value: 5 },
+            { source: 'Aufgabe\n→ Sieg', target: 'Dokumentation\n(ED/Wiki)', value: 4 }
+        ]
+    }]
+});
+
+// CHART 11: Gender
+const genderChart = echarts.init(document.getElementById('chart-gender'));
+genderChart.setOption({
+    tooltip: {},
+    series: [{
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: true,
+        label: { show: true, color: '#fff', fontSize: 12 },
+        data: [
+            { value: 35, name: 'Hegemoniale\nMännlichkeit\n(Ideal)', itemStyle: { color: '#e94560' } },
+            { value: 30, name: 'Versagen/\nEinsamkeit\n(Realität)', itemStyle: { color: '#48dbfb' } },
+            { value: 15, name: 'Kompensation\n(Internet-Held)', itemStyle: { color: '#2ecc71' } },
+            { value: 10, name: 'Solidarität\n(Heulsusen)', itemStyle: { color: '#9b59b6' } },
+            { value: 10, name: 'Gender-Bending\n(Ambivalenz)', itemStyle: { color: '#f39c12' } }
+        ]
+    }]
+});
+
+// CHART 12: Tension
+const tensionDiv = document.getElementById('chart-tension');
+Plotly.newPlot(tensionDiv, [{
+    type: 'scatterpolar',
+    r: [9, 2, 1, 9, 2, 8, 9],
+    theta: ['Internet-Macht', 'Soziale Kompetenz', 'Sexueller Erfolg', 'Zynismus', 'Körperliche Stärke', 'Intellekt', 'Internet-Macht'],
+    fill: 'toself',
+    fillcolor: 'rgba(233,69,96,0.2)',
+    line: { color: '#e94560' },
+    name: 'Bernd (Selbstbild)'
+}, {
+    type: 'scatterpolar',
+    r: [3, 9, 9, 3, 8, 5, 3],
+    theta: ['Internet-Macht', 'Soziale Kompetenz', 'Sexueller Erfolg', 'Zynismus', 'Körperliche Stärke', 'Intellekt', 'Internet-Macht'],
+    fill: 'toself',
+    fillcolor: 'rgba(72,219,251,0.2)',
+    line: { color: '#48dbfb' },
+    name: 'Hegemoniales Ideal'
+}], {
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    font: { color: '#aaa' },
+    polar: { bgcolor: 'transparent', radialaxis: { gridcolor: '#333', linecolor: '#333' }, angularaxis: { gridcolor: '#333', linecolor: '#333' } },
+    legend: { font: { color: '#aaa' } },
+    margin: { t: 40, b: 40 }
+});
+
+// CHART 13: Layers (Oberwelt/Unterwelt)
+const layersChart = echarts.init(document.getElementById('chart-layers'));
+layersChart.setOption({
+    tooltip: {},
+    series: [{
+        type: 'graph',
+        layout: 'none',
+        roam: true,
+        label: { show: true, fontSize: 11, color: '#fff' },
+        lineStyle: { color: '#555', width: 2, curveness: 0.3 },
+        data: [
+            // Oberwelt
+            { name: 'Facebook', x: 100, y: 50, symbolSize: 40, itemStyle: { color: '#3498db' } },
+            { name: 'YouTube', x: 250, y: 30, symbolSize: 45, itemStyle: { color: '#e74c3c' } },
+            { name: 'MySpace', x: 400, y: 50, symbolSize: 35, itemStyle: { color: '#2ecc71' } },
+            { name: 'Blogs', x: 550, y: 40, symbolSize: 35, itemStyle: { color: '#f39c12' } },
+            { name: 'Twitter', x: 700, y: 50, symbolSize: 30, itemStyle: { color: '#1abc9c' } },
+            // Grenze
+            { name: '── OBERFLÄCHE ──', x: 400, y: 150, symbolSize: 5, itemStyle: { color: '#feca57' }, label: { fontSize: 14, color: '#feca57' } },
+            // Unterwelt
+            { name: '4chan', x: 150, y: 280, symbolSize: 55, itemStyle: { color: '#e94560' } },
+            { name: 'Krautchan', x: 350, y: 300, symbolSize: 45, itemStyle: { color: '#e94560' } },
+            { name: 'Encyclopedia\nDramatica', x: 550, y: 270, symbolSize: 40, itemStyle: { color: '#9b59b6' } },
+            { name: 'IRC', x: 700, y: 310, symbolSize: 30, itemStyle: { color: '#f39c12' } },
+            { name: 'Andere\nChans', x: 200, y: 380, symbolSize: 30, itemStyle: { color: '#e94560' } },
+            { name: 'Raid-Wikis', x: 500, y: 380, symbolSize: 25, itemStyle: { color: '#9b59b6' } },
+            // Attribute Oberwelt
+            { name: '✓ Identität', x: 50, y: 100, symbolSize: 5, itemStyle: { color: '#2ecc71' }, label: { color: '#2ecc71' } },
+            { name: '✓ Regeln', x: 200, y: 100, symbolSize: 5, itemStyle: { color: '#2ecc71' }, label: { color: '#2ecc71' } },
+            { name: '✓ Archiv', x: 350, y: 100, symbolSize: 5, itemStyle: { color: '#2ecc71' }, label: { color: '#2ecc71' } },
+            { name: '✓ Kommerz', x: 500, y: 100, symbolSize: 5, itemStyle: { color: '#2ecc71' }, label: { color: '#2ecc71' } },
+            // Attribute Unterwelt
+            { name: '✗ Anonymität', x: 50, y: 230, symbolSize: 5, itemStyle: { color: '#e94560' }, label: { color: '#e94560' } },
+            { name: '✗ Anarchie', x: 200, y: 230, symbolSize: 5, itemStyle: { color: '#e94560' }, label: { color: '#e94560' } },
+            { name: '✗ Flüchtigkeit', x: 380, y: 230, symbolSize: 5, itemStyle: { color: '#e94560' }, label: { color: '#e94560' } },
+            { name: '✗ Triebe/Gewalt', x: 560, y: 230, symbolSize: 5, itemStyle: { color: '#e94560' }, label: { color: '#e94560' } },
+        ],
+        links: [
+            { source: 'YouTube', target: '4chan' },
+            { source: 'YouTube', target: 'Krautchan' },
+            { source: 'MySpace', target: '4chan' },
+            { source: '4chan', target: 'Krautchan' },
+            { source: '4chan', target: 'Encyclopedia\nDramatica' },
+            { source: 'Krautchan', target: 'Encyclopedia\nDramatica' },
+            { source: 'Krautchan', target: 'IRC' },
+            { source: '4chan', target: 'Andere\nChans' },
+            { source: 'Encyclopedia\nDramatica', target: 'Raid-Wikis' },
+            { source: 'Encyclopedia\nDramatica', target: 'Facebook' },
+            { source: 'Blogs', target: '4chan' },
+        ]
+    }]
+});
+
+// CHART 14: D3 Network
+const networkData = {
+    nodes: [
+        { id: 'Krautchan', group: 1, size: 30 },
+        { id: '4chan', group: 1, size: 40 },
+        { id: '7chan', group: 1, size: 15 },
+        { id: '420chan', group: 1, size: 12 },
+        { id: 'Futaba', group: 1, size: 20 },
+        { id: 'ED', group: 2, size: 25 },
+        { id: 'Krautwiki', group: 2, size: 12 },
+        { id: 'Macrochan', group: 2, size: 10 },
+        { id: 'YouTube', group: 3, size: 30 },
+        { id: 'MySpace', group: 3, size: 15 },
+        { id: 'Lachschon', group: 3, size: 10 },
+        { id: 'Something Awful', group: 3, size: 15 },
+        { id: '#krautchan', group: 4, size: 15 },
+        { id: '#4chan', group: 4, size: 15 },
+        { id: 'Protests', group: 5, size: 12 },
+        { id: 'Lulzcon', group: 5, size: 8 },
+    ],
+    links: [
+        { source: 'Krautchan', target: '4chan', value: 5 },
+        { source: '4chan', target: '7chan', value: 3 },
+        { source: '4chan', target: '420chan', value: 2 },
+        { source: 'Futaba', target: '4chan', value: 4 },
+        { source: '4chan', target: 'ED', value: 5 },
+        { source: 'Krautchan', target: 'Krautwiki', value: 4 },
+        { source: '4chan', target: 'Macrochan', value: 3 },
+        { source: '4chan', target: 'YouTube', value: 4 },
+        { source: 'Krautchan', target: 'YouTube', value: 2 },
+        { source: '4chan', target: 'MySpace', value: 2 },
+        { source: 'Krautchan', target: 'Lachschon', value: 3 },
+        { source: 'Something Awful', target: '4chan', value: 3 },
+        { source: 'Krautchan', target: '#krautchan', value: 5 },
+        { source: '4chan', target: '#4chan', value: 5 },
+        { source: '4chan', target: 'Protests', value: 3 },
+        { source: '4chan', target: 'Lulzcon', value: 2 },
+        { source: 'ED', target: 'MySpace', value: 1 },
+    ]
+};
+
+const svgContainer = document.getElementById('d3-network');
+const width = svgContainer.clientWidth || 800;
+const height = 500;
+
+const svg = d3.select('#d3-network')
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height);
+
+const colorMap = { 1: '#e94560', 2: '#48dbfb', 3: '#2ecc71', 4: '#feca57', 5: '#9b59b6' };
+
+const simulation = d3.forceSimulation(networkData.nodes)
+    .force('link', d3.forceLink(networkData.links).id(d => d.id).distance(80))
+    .force('charge', d3.forceManyBody().strength(-200))
+    .force('center', d3.forceCenter(width / 2, height / 2));
+
+const link = svg.append('g')
+    .selectAll('line')
+    .data(networkData.links)
+    .enter().append('line')
+    .attr('stroke', '#444')
+    .attr('stroke-width', d => Math.sqrt(d.value));
+
+const node = svg.append('g')
+    .selectAll('circle')
+    .data(networkData.nodes)
+    .enter().append('circle')
+    .attr('r', d => d.size / 2)
+    .attr('fill', d => colorMap[d.group])
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 1)
+    .call(d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended));
+
+const labels = svg.append('g')
+    .selectAll('text')
+    .data(networkData.nodes)
+    .enter().append('text')
+    .text(d => d.id)
+    .attr('font-size', 10)
+    .attr('fill', '#ccc')
+    .attr('dx', 12)
+    .attr('dy', 4);
+
+simulation.on('tick', () => {
+    link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+    node.attr('cx', d => d.x).attr('cy', d => d.y);
+    labels.attr('x', d => d.x).attr('y', d => d.y);
+});
+
+function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+
+// CHART 15: Memory/Flüchtigkeit
+const memoryDiv = document.getElementById('chart-memory');
+Plotly.newPlot(memoryDiv, [{
+    x: ['Sekunden', 'Minuten', 'Stunden', 'Tage', 'Wochen', 'Monate', 'Jahre', 'Unbegrenzt'],
+    y: [0, 5, 30, 70, 85, 90, 95, 100],
+    name: 'phpBB-Forum',
+    type: 'scatter',
+    mode: 'lines+markers',
+    line: { color: '#48dbfb', width: 3 }
+}, {
+    x: ['Sekunden', 'Minuten', 'Stunden', 'Tage', 'Wochen', 'Monate', 'Jahre', 'Unbegrenzt'],
+    y: [100, 95, 60, 20, 5, 2, 0, 0],
+    name: 'Imageboard (/b/)',
+    type: 'scatter',
+    mode: 'lines+markers',
+    line: { color: '#e94560', width: 3 },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(233,69,96,0.1)'
+}, {
+    x: ['Sekunden', 'Minuten', 'Stunden', 'Tage', 'Wochen', 'Monate', 'Jahre', 'Unbegrenzt'],
+    y: [0, 0, 5, 20, 40, 60, 80, 95],
+    name: 'Encyclopedia Dramatica',
+    type: 'scatter',
+    mode: 'lines+markers',
+    line: { color: '#2ecc71', width: 3, dash: 'dash' }
+}], {
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    font: { color: '#aaa' },
+    xaxis: { title: 'Zeitspanne', gridcolor: '#333' },
+    yaxis: { title: '% Inhalte noch verfügbar', gridcolor: '#333' },
+    legend: { font: { color: '#aaa' } },
+    margin: { t: 30, b: 60 }
+});
+
+// CHART 16: Theoretical Model
+const modelChart = echarts.init(document.getElementById('chart-model'));
+modelChart.setOption({
+    tooltip: { trigger: 'item' },
+    series: [{
+        type: 'graph',
+        layout: 'force',
+        roam: true,
+        force: { repulsion: 250, gravity: 0.08, edgeLength: [80, 180] },
+        label: { show: true, fontSize: 10, color: '#fff' },
+        lineStyle: { color: '#555', width: 2, curveness: 0.2 },
+        edgeLabel: { show: true, fontSize: 9, color: '#aaa', formatter: '{c}' },
+        categories: [
+            { name: 'Bedingung', itemStyle: { color: '#f39c12' } },
+            { name: 'Mechanismus', itemStyle: { color: '#e94560' } },
+            { name: 'Ergebnis', itemStyle: { color: '#2ecc71' } },
+            { name: 'Kontext', itemStyle: { color: '#9b59b6' } }
+        ],
+        data: [
+            { name: 'Anonymität', symbolSize: 55, category: 0 },
+            { name: 'Regellosigkeit', symbolSize: 45, category: 0 },
+            { name: 'Flüchtigkeit', symbolSize: 40, category: 0 },
+            { name: 'Multimedialität', symbolSize: 35, category: 0 },
+            { name: 'Geringe\nÜber-Ich-\nWirksamkeit', symbolSize: 50, category: 1 },
+            { name: 'Selbst-\nwirksamkeit', symbolSize: 45, category: 1 },
+            { name: 'Kollektiv-\nidentität', symbolSize: 40, category: 1 },
+            { name: 'Enthemmung', symbolSize: 40, category: 1 },
+            { name: 'Kreativität\n(Meme)', symbolSize: 45, category: 2 },
+            { name: 'Aggressivität\n(Raids)', symbolSize: 45, category: 2 },
+            { name: 'Solidarität\n(Heulsusen)', symbolSize: 35, category: 2 },
+            { name: 'Pornografie/\nKompensation', symbolSize: 40, category: 2 },
+            { name: 'Männliche\nVerunsicherung', symbolSize: 50, category: 3 },
+            { name: 'Adoleszenz/\nPost-Adoleszenz', symbolSize: 40, category: 3 },
+            { name: 'Internet als\nRückzugsort', symbolSize: 35, category: 3 },
+            { name: 'Lulz-Rahmen\n(Nihilismus)', symbolSize: 45, category: 1 },
+        ],
+        links: [
+            { source: 'Anonymität', target: 'Geringe\nÜber-Ich-\nWirksamkeit', value: 'ermöglicht' },
+            { source: 'Anonymität', target: 'Kollektiv-\nidentität', value: 'erzeugt' },
+            { source: 'Regellosigkeit', target: 'Enthemmung', value: 'fördert' },
+            { source: 'Regellosigkeit', target: 'Geringe\nÜber-Ich-\nWirksamkeit', value: 'verstärkt' },
+            { source: 'Flüchtigkeit', target: 'Kreativität\n(Meme)', value: 'beschleunigt' },
+            { source: 'Multimedialität', target: 'Kreativität\n(Meme)', value: 'ermöglicht' },
+            { source: 'Geringe\nÜber-Ich-\nWirksamkeit', target: 'Kreativität\n(Meme)', value: '' },
+            { source: 'Geringe\nÜber-Ich-\nWirksamkeit', target: 'Aggressivität\n(Raids)', value: '' },
+            { source: 'Geringe\nÜber-Ich-\nWirksamkeit', target: 'Pornografie/\nKompensation', value: '' },
+            { source: 'Selbst-\nwirksamkeit', target: 'Aggressivität\n(Raids)', value: 'motiviert' },
+            { source: 'Selbst-\nwirksamkeit', target: 'Kreativität\n(Meme)', value: 'motiviert' },
+            { source: 'Kollektiv-\nidentität', target: 'Solidarität\n(Heulsusen)', value: '' },
+            { source: 'Kollektiv-\nidentität', target: 'Aggressivität\n(Raids)', value: '' },
+            { source: 'Enthemmung', target: 'Aggressivität\n(Raids)', value: '' },
+            { source: 'Enthemmung', target: 'Pornografie/\nKompensation', value: '' },
+            { source: 'Männliche\nVerunsicherung', target: 'Selbst-\nwirksamkeit', value: 'treibt' },
+            { source: 'Männliche\nVerunsicherung', target: 'Solidarität\n(Heulsusen)', value: 'erzeugt' },
+            { source: 'Männliche\nVerunsicherung', target: 'Pornografie/\nKompensation', value: 'treibt' },
+            { source: 'Adoleszenz/\nPost-Adoleszenz', target: 'Männliche\nVerunsicherung', value: '' },
+            { source: 'Internet als\nRückzugsort', target: 'Männliche\nVerunsicherung', value: '' },
+            { source: 'Lulz-Rahmen\n(Nihilismus)', target: 'Aggressivität\n(Raids)', value: 'rechtfertigt' },
+            { source: 'Lulz-Rahmen\n(Nihilismus)', target: 'Kreativität\n(Meme)', value: 'rahmt' },
+        ]
+    }]
+});
+
+// CHART 17: Theory References
+const theoryChart = echarts.init(document.getElementById('chart-theory'));
+theoryChart.setOption({
+    tooltip: {},
+    series: [{
+        type: 'graph',
+        layout: 'force',
+        roam: true,
+        force: { repulsion: 180, gravity: 0.1 },
+        label: { show: true, fontSize: 10, color: '#fff' },
+        categories: [
+            { name: 'Theoretiker', itemStyle: { color: '#e94560' } },
+            { name: 'Konzept', itemStyle: { color: '#48dbfb' } },
+            { name: 'Anwendung', itemStyle: { color: '#2ecc71' } }
+        ],
+        data: [
+            { name: 'Robert Connell', symbolSize: 40, category: 0 },
+            { name: 'Freud', symbolSize: 35, category: 0 },
+            { name: 'Bourdieu', symbolSize: 35, category: 0 },
+            { name: 'Goffman', symbolSize: 30, category: 0 },
+            { name: 'Dawkins', symbolSize: 30, category: 0 },
+            { name: 'Jan Assmann', symbolSize: 30, category: 0 },
+            { name: 'Warneken', symbolSize: 30, category: 0 },
+            { name: 'Hegemoniale\nMännlichkeit', symbolSize: 35, category: 1 },
+            { name: 'Untergeordnete\nMännlichkeit', symbolSize: 35, category: 1 },
+            { name: 'Komplizenschaft', symbolSize: 30, category: 1 },
+            { name: 'Über-Ich', symbolSize: 30, category: 1 },
+            { name: 'Massenpsychologie', symbolSize: 30, category: 1 },
+            { name: 'Kulturelles\nKapital', symbolSize: 30, category: 1 },
+            { name: 'Rahmenanalyse', symbolSize: 30, category: 1 },
+            { name: 'Mem als\nReplikator', symbolSize: 30, category: 1 },
+            { name: 'Kulturelles\nGedächtnis', symbolSize: 30, category: 1 },
+            { name: 'Kreativität/\nPrimitivität/\nSubversivität', symbolSize: 30, category: 1 },
+            { name: 'Bernd scheitert\nam Geschlechtsideal', symbolSize: 25, category: 2 },
+            { name: 'Lulz als\nRahmung', symbolSize: 25, category: 2 },
+            { name: 'Meme als\nDistinktion', symbolSize: 25, category: 2 },
+            { name: 'ED als kult.\nGedächtnis', symbolSize: 25, category: 2 },
+            { name: 'Anonymität =\ngeringe Über-Ich-\nWirksamkeit', symbolSize: 25, category: 2 },
+        ],
+        links: [
+            { source: 'Robert Connell', target: 'Hegemoniale\nMännlichkeit' },
+            { source: 'Robert Connell', target: 'Untergeordnete\nMännlichkeit' },
+            { source: 'Robert Connell', target: 'Komplizenschaft' },
+            { source: 'Freud', target: 'Über-Ich' },
+            { source: 'Freud', target: 'Massenpsychologie' },
+            { source: 'Bourdieu', target: 'Kulturelles\nKapital' },
+            { source: 'Goffman', target: 'Rahmenanalyse' },
+            { source: 'Dawkins', target: 'Mem als\nReplikator' },
+            { source: 'Jan Assmann', target: 'Kulturelles\nGedächtnis' },
+            { source: 'Warneken', target: 'Kreativität/\nPrimitivität/\nSubversivität' },
+            { source: 'Hegemoniale\nMännlichkeit', target: 'Bernd scheitert\nam Geschlechtsideal' },
+            { source: 'Untergeordnete\nMännlichkeit', target: 'Bernd scheitert\nam Geschlechtsideal' },
+            { source: 'Komplizenschaft', target: 'Bernd scheitert\nam Geschlechtsideal' },
+            { source: 'Rahmenanalyse', target: 'Lulz als\nRahmung' },
+            { source: 'Kulturelles\nKapital', target: 'Meme als\nDistinktion' },
+            { source: 'Kulturelles\nGedächtnis', target: 'ED als kult.\nGedächtnis' },
+            { source: 'Über-Ich', target: 'Anonymität =\ngeringe Über-Ich-\nWirksamkeit' },
+        ]
+    }]
+});
+
+// Responsive resize
+window.addEventListener('resize', () => {
+    overviewChart.resize();
+    radarChart.resize();
+    sizeChart.resize();
+    identityChart.resize();
+    berndChart.resize();
+    memeChart.resize();
+    rulesChart.resize();
+    aggressionChart.resize();
+    raidChart.resize();
+    genderChart.resize();
+    layersChart.resize();
+    memoryDiv && Plotly.Plots.resize(memoryDiv);
+    tensionDiv && Plotly.Plots.resize(tensionDiv);
+    lifecycleDiv && Plotly.Plots.resize(lifecycleDiv);
+    modelChart.resize();
+    theoryChart.resize();
+});
+</script>
+</body>
+</html>
