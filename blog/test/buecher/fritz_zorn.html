@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars im Exil – Interaktiv erleben</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #1a1a2e; color: #e0e0e0; overflow-x: hidden; }
+        
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); text-align: center; padding: 2rem; position: relative; }
+        .hero h1 { font-size: 3.5rem; color: #e94560; margin-bottom: 1rem; text-shadow: 0 0 30px rgba(233,69,96,0.5); }
+        .hero p { font-size: 1.3rem; max-width: 600px; opacity: 0.8; margin-bottom: 2rem; }
+        .scroll-hint { animation: bounce 2s infinite; font-size: 2rem; cursor: pointer; }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+        section { min-height: 100vh; padding: 4rem 2rem; max-width: 900px; margin: 0 auto; }
+        h2 { color: #e94560; font-size: 2rem; margin-bottom: 1.5rem; border-left: 4px solid #e94560; padding-left: 1rem; }
+        
+        /* Harmonie-Käfig */
+        .cage { position: relative; border: 3px solid #gold; border-radius: 20px; padding: 3rem; margin: 2rem 0; background: rgba(255,215,0,0.05); border-color: gold; transition: all 1s; cursor: pointer; }
+        .cage:hover { border-color: #e94560; background: rgba(233,69,96,0.05); box-shadow: 0 0 30px rgba(233,69,96,0.3); }
+        .cage::before { content: "🔒 Klick mich, um die Harmonie zu brechen"; position: absolute; top: -15px; left: 20px; background: #1a1a2e; padding: 0 10px; font-size: 0.9rem; color: gold; }
+        .cage.broken { border-style: dashed; border-color: #e94560; }
+        .cage.broken::before { content: "🔓 Die Fassade bröckelt..."; color: #e94560; }
+        .cage .hidden-truth { display: none; margin-top: 1rem; padding: 1rem; background: rgba(233,69,96,0.1); border-radius: 10px; }
+        .cage.broken .hidden-truth { display: block; animation: fadeIn 0.5s; }
+
+        /* Ja-Sager Simulator */
+        .jasager-sim { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 2rem; margin: 2rem 0; }
+        .jasager-sim .question { font-size: 1.2rem; margin-bottom: 1rem; font-style: italic; }
+        .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: 2px solid; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.3s; background: transparent; color: #e0e0e0; }
+        .btn-ja { border-color: gold; }
+        .btn-ja:hover { background: rgba(255,215,0,0.2); }
+        .btn-nein { border-color: #e94560; }
+        .btn-nein:hover { background: rgba(233,69,96,0.2); }
+        .btn-schwierig { border-color: #7b68ee; }
+        .btn-schwierig:hover { background: rgba(123,104,238,0.2); }
+        .response-box { margin-top: 1rem; padding: 1rem; border-radius: 8px; min-height: 60px; transition: all 0.3s; }
+
+        /* Schallplatten */
+        .vinyl-container { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0; }
+        .vinyl { width: 180px; height: 180px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: all 0.5s; font-size: 0.9rem; padding: 1rem; position: relative; }
+        .vinyl-klassik { background: conic-gradient(#2d2d2d, #1a1a1a, #2d2d2d, #1a1a1a, #2d2d2d); border: 3px solid gold; }
+        .vinyl-jazz { background: conic-gradient(#2d2d2d, #1a1a1a, #2d2d2d, #1a1a1a, #2d2d2d); border: 3px solid #e94560; }
+        .vinyl::after { content: ""; width: 20px; height: 20px; background: #1a1a2e; border-radius: 50%; position: absolute; }
+        .vinyl:hover { transform: rotate(360deg) scale(1.1); }
+        .vinyl-label { margin-top: 0.5rem; font-size: 0.85rem; text-align: center; }
+
+        /* Schwierig-Meter */
+        .schwierig-section { margin: 2rem 0; }
+        .topic-btn { display: inline-block; margin: 0.5rem; padding: 10px 18px; background: rgba(123,104,238,0.1); border: 1px solid #7b68ee; border-radius: 20px; cursor: pointer; transition: all 0.3s; }
+        .topic-btn:hover { background: rgba(123,104,238,0.3); transform: scale(1.05); }
+        .topic-btn.blocked { background: rgba(233,69,96,0.2); border-color: #e94560; text-decoration: line-through; }
+        .schwierig-meter { height: 20px; background: #2d2d2d; border-radius: 10px; margin: 1rem 0; overflow: hidden; }
+        .schwierig-fill { height: 100%; background: linear-gradient(90deg, #7b68ee, #e94560); width: 0%; transition: width 0.5s; border-radius: 10px; }
+
+        /* Oder-Flipper */
+        .oder-box { background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: center; }
+        .oder-statement { font-size: 1.4rem; min-height: 80px; display: flex; align-items: center; justify-content: center; margin: 1rem 0; }
+        .oder-btn { padding: 15px 30px; background: linear-gradient(135deg, #7b68ee, #e94560); border: none; color: white; border-radius: 8px; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s; }
+        .oder-btn:hover { transform: scale(1.05); }
+
+        /* Meinungs-Spiegel */
+        .mirror { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 2px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 2rem; margin: 2rem 0; position: relative; overflow: hidden; }
+        .mirror::before { content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%); animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
+
+        /* Erkenntnisse */
+        .insight-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .insight-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1.5rem; border-left: 4px solid; cursor: pointer; transition: all 0.3s; }
+        .insight-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .insight-card:nth-child(1) { border-color: #e94560; }
+        .insight-card:nth-child(2) { border-color: gold; }
+        .insight-card:nth-child(3) { border-color: #7b68ee; }
+        .insight-card:nth-child(4) { border-color: #00d2d3; }
+        .insight-card h3 { margin-bottom: 0.5rem; }
+        .insight-card .detail { display: none; margin-top: 1rem; font-size: 0.9rem; opacity: 0.8; }
+        .insight-card.open .detail { display: block; animation: fadeIn 0.3s; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 30px; margin: 2rem 0; }
+        .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #e94560, #7b68ee, gold); }
+        .timeline-item { position: relative; margin-bottom: 2rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 10px; }
+        .timeline-item::before { content: "●"; position: absolute; left: -25px; color: #e94560; font-size: 1.2rem; }
+
+        /* Zitat-Highlight */
+        .quote { border-left: 3px solid #e94560; padding: 1rem 1.5rem; margin: 1.5rem 0; font-style: italic; background: rgba(233,69,96,0.05); border-radius: 0 8px 8px 0; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .nav-dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
+        .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.3); margin: 8px 0; cursor: pointer; transition: all 0.3s; }
+        .nav-dot:hover, .nav-dot.active { background: #e94560; transform: scale(1.3); }
+
+        .conclusion { background: linear-gradient(135deg, #16213e, #1a1a2e); border: 1px solid rgba(233,69,96,0.3); border-radius: 20px; padding: 3rem; margin: 2rem 0; text-align: center; }
+        .conclusion h2 { border: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+<nav class="nav-dots">
+    <div class="nav-dot active" onclick="scrollToSection(0)" title="Start"></div>
+    <div class="nav-dot" onclick="scrollToSection(1)" title="Harmonie"></div>
+    <div class="nav-dot" onclick="scrollToSection(2)" title="Ja-Sager"></div>
+    <div class="nav-dot" onclick="scrollToSection(3)" title="Schwierig"></div>
+    <div class="nav-dot" onclick="scrollToSection(4)" title="Geschmack"></div>
+    <div class="nav-dot" onclick="scrollToSection(5)" title="Oder"></div>
+    <div class="nav-dot" onclick="scrollToSection(6)" title="Erkenntnisse"></div>
+</nav>
+
+<div class="hero" id="sec0">
+    <h1>Mars im Exil</h1>
+    <p>Fritz Zorn erzählt die Geschichte seiner Neurose – aufgewachsen in perfekter Harmonie, die in Wahrheit eine Lüge war. Erlebe interaktiv, wie eine „heile Welt" einen Menschen zerstören kann.</p>
+    <div class="scroll-hint" onclick="scrollToSection(1)">↓</div>
+</div>
+
+<section id="sec1">
+    <h2>1. Der Käfig der Harmonie</h2>
+    <p>Der Erzähler wächst in einer Familie auf, in der <strong>alles harmonisch sein muss</strong>. Nicht weil es harmonisch ist – sondern weil Disharmonie verboten ist. Klicke auf den Käfig:</p>
+    
+    <div class="cage" id="cage1" onclick="breakCage(this)">
+        <p>✨ „Alles ist wunderbar. Wir sind alle einer Meinung. Es gibt keine Probleme. Alles ist gut."</p>
+        <div class="hidden-truth">
+            <p>⚡ <strong>Die Wahrheit:</strong> Niemand durfte eine eigene Meinung haben. Konflikte existierten nicht – weil sie nicht existieren <em>durften</em>. Die Familie konnte nicht streiten, „so wie jemand nicht wissen kann, wie man Trompete bläst." Harmonie war kein Zustand – sie war ein Zwang.</p>
+        </div>
+    </div>
+
+    <div class="quote">„Nicht in einer unglücklichen Welt bin ich aufgewachsen, sondern in einer verlogenen."</div>
+
+    <div class="cage" id="cage2" onclick="breakCage(this)">
+        <p>🏠 „Wir hatten eine glückliche Kindheit. Es ging uns immer gut. Wir hatten nie Probleme."</p>
+        <div class="hidden-truth">
+            <p>⚡ <strong>Das Gift:</strong> Keine Probleme zu haben bedeutete: nie gelernt zu haben, mit Problemen umzugehen. „Was mir in meiner Jugend erspart wurde, war nicht das Leid, sondern es waren die Probleme und somit auch die Fähigkeit, sich mit Problemen auseinanderzusetzen."</p>
+        </div>
+    </div>
+</section>
+
+<section id="sec2">
+    <h2>2. Der Ja-Sager-Simulator</h2>
+    <p>Erlebe, wie es sich anfühlt, nie „Nein" sagen zu dürfen. In dieser Familie wartet jeder ab, bis ein anderer seine Meinung sagt – um dann zuzustimmen.</p>
+
+    <div class="jasager-sim">
+        <div class="question" id="simQuestion">Ein Schulkamerad fragt: „Magst du Tiere?"</div>
+        <div class="btn-group">
+            <button class="btn btn-ja" onclick="jasagerResponse('ja')">Ja (obwohl du Angst vor Tieren hast)</button>
+            <button class="btn btn-nein" onclick="jasagerResponse('nein')">Nein (ehrlich sein)</button>
+            <button class="btn btn-schwierig" onclick="jasagerResponse('schwierig')">„Das ist schwierig..."</button>
+        </div>
+        <div class="response-box" id="simResponse"></div>
+    </div>
+
+    <div class="jasager-sim">
+        <div class="question">Deine Tante sagt, ein Bild sei „herrlich". Du hast „gräßlich" verstanden. Was tust du?</div>
+        <div class="btn-group">
+            <button class="btn btn-ja" onclick="tanteResponse('agree')">Sofort zustimmen: „Ja, gräßlich!"</button>
+            <button class="btn btn-ja" onclick="tanteResponse('switch')">Korrektur hören → umschwenken: „Ja, herrlich!"</button>
+            <button class="btn btn-nein" onclick="tanteResponse('own')">Eigene Meinung sagen</button>
+        </div>
+        <div class="response-box" id="tanteResponse"></div>
+    </div>
+</section>
+
+<section id="sec3">
+    <h2>3. Das „Schwierig"-Ritual</h2>
+    <p>In dieser Familie war „schwierig" ein Zauberwort. Sobald ein Thema unbequem wurde, erklärte man es für „schwierig" – und es verschwand. Klicke auf die Themen und beobachte, wie sie verschwinden:</p>
+
+    <div class="schwierig-section">
+        <div class="schwierig-meter"><div class="schwierig-fill" id="schwierigFill"></div></div>
+        <p id="schwierigCount">Verbotene Themen: 0 / 6</p>
+        
+        <div class="topic-btn" onclick="blockTopic(this, 'Politik')">🗳️ Politik</div>
+        <div class="topic-btn" onclick="blockTopic(this, 'Religion')">⛪ Religion</div>
+        <div class="topic-btn" onclick="blockTopic(this, 'Sexualität')">💕 Sexualität</div>
+        <div class="topic-btn" onclick="blockTopic(this, 'Geld')">💰 Geld</div>
+        <div class="topic-btn" onclick="blockTopic(this, 'Beziehungen')">👥 Menschliche Beziehungen</div>
+        <div class="topic-btn" onclick="blockTopic(this, 'Gefühle')">💔 Eigene Gefühle</div>
+        
+        <div class="response-box" id="schwierigResponse" style="margin-top:1rem;"></div>
+    </div>
+
+    <div class="quote">„Ich glaube heute, daß alles Interessante bei uns zuhause ‚schwierig' war und folglich nie besprochen wurde."</div>
+    
+    <p style="margin-top:1rem;">Was blieb übrig? Das Essen, das Wetter, die Schule, und tote Klassiker.</p>
+</section>
+
+<section id="sec4">
+    <h2>4. Der gestohlene Geschmack</h2>
+    <p>Der Erzähler lernte nie, selbst zu urteilen. Er übernahm blind, was „gut" und „schlecht" war. Drehe an den Platten:</p>
+
+    <div class="vinyl-container">
+        <div>
+            <div class="vinyl vinyl-klassik" onclick="playVinyl('klassik')">
+                <span>Mozart<br>„gut"</span>
+            </div>
+            <p class="vinyl-label">Erste eigene Platte:<br>Pflichtbewusst „richtig"</p>
+        </div>
+        <div>
+            <div class="vinyl vinyl-jazz" onclick="playVinyl('jazz')">
+                <span>Kriminal-<br>tango<br>„kitschig"</span>
+            </div>
+            <p class="vinyl-label">Platte des Bruders:<br>Spontan & ehrlich gewählt</p>
+        </div>
+    </div>
+    <div class="response-box" id="vinylResponse" style="text-align:center; margin-top:1rem;"></div>
+
+    <div class="mirror" style="margin-top: 2rem;">
+        <h3 style="color: gold; margin-bottom: 1rem;">🪞 Der Spiegel der falschen Überlegenheit</h3>
+        <p>Der Erzähler glaubte, er sei seinen Klassenkameraden <em>überlegen</em>, weil er „gute" Musik hörte. In Wahrheit hatte er nie verglichen, nie gewählt, nie selbst gefühlt.</p>
+        <p style="margin-top:1rem; color: #e94560;"><strong>Die Erkenntnis:</strong> „Daß ich gar nicht verglichen hatte, daß ich nie zwischen der einen und der anderen Art von Musik gewählt hatte, war mir vollkommen unbewußt geblieben."</p>
+    </div>
+</section>
+
+<section id="sec5">
+    <h2>5. Die „Oder"-Auflösung der Wirklichkeit</h2>
+    <p>Die Mutter des Erzählers hatte eine Vorliebe für das Wort „oder" – und löste damit jede Aussage auf. Klicke und erlebe, wie Realität zerfällt:</p>
+
+    <div class="oder-box">
+        <div class="oder-statement" id="oderStatement">„Heute abend gibt es Spaghetti zum Essen."</div>
+        <button class="oder-btn" onclick="addOder()">+ ODER</button>
+        <p id="oderComment" style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;"></p>
+    </div>
+
+    <div class="quote">„Wenn man zuviel ‚oder' sagt, verlieren die Worte jedes Gewicht und jeden Sinn; die Sprache zerfällt in eine amorphe Masse von bedeutungslosen Partikeln; nichts ist mehr fest, und alles wird unwirklich."</div>
+</section>
+
+<section id="sec6">
+    <h2>6. Die Kernerkenntnisse</h2>
+    <p>Klicke auf jede Karte, um die tiefere Bedeutung zu sehen:</p>
+
+    <div class="insight-cards">
+        <div class="insight-card" onclick="toggleInsight(this)">
+            <h3>🎭 Harmonie als Gewalt</h3>
+            <p>Erzwungene Harmonie ist schlimmer als offener Konflikt.</p>
+            <div class="detail">Wer nie streiten lernt, kann nie eine eigene Position entwickeln. Die Familie konnte nicht streiten – „genau so, wie jemand nicht wissen kann, wie man Trompete bläst." In 30 Jahren Ehe stritten die Eltern genau einmal – und brachen es ab, weil sie nicht wussten wie.</div>
+        </div>
+        <div class="insight-card" onclick="toggleInsight(this)">
+            <h3>🤐 Verlogenheit statt Unglück</h3>
+            <p>Das Problem war nicht Leid – sondern die Leugnung von Leid.</p>
+            <div class="detail">„Nicht in einer unglücklichen Welt bin ich aufgewachsen, sondern in einer verlogenen." Die Kindheit war nicht unglücklich – sie war falsch. Alles Problematische wurde unsichtbar gemacht, bis der Erzähler selbst die Fähigkeit verlor, Probleme zu erkennen.</div>
+        </div>
+        <div class="insight-card" onclick="toggleInsight(this)">
+            <h3>🔇 Sprache als Waffe</h3>
+            <p>„Schwierig", „unvergleichbar", „oder" – Worte, die Denken verhindern.</p>
+            <div class="detail">Drei Strategien der Vermeidung: 1) „Schwierig" = Thema ist tabu. 2) „Unvergleichbar" = keine Wertung möglich. 3) „Oder" = jede Aussage wird aufgelöst. So wurde Sprache zum Werkzeug, das Denken und Fühlen verhinderte statt ermöglichte.</div>
+        </div>
+        <div class="insight-card" onclick="toggleInsight(this)">
+            <h3>🦠 Krebs als Metapher</h3>
+            <p>Die Krankheit als Ausbruch des lebenslang Unterdrückten.</p>
+            <div class="detail">Der Erzähler sieht seinen Krebs als „das bei weitem Gescheiteste, was ich je in meinem Leben getan habe." Die körperliche Krankheit ist zugleich seelisch: der Ausbruch von allem, was nie sein durfte. Erst die Krankheit zwingt ihn, hinzusehen.</div>
+        </div>
+    </div>
+
+    <div class="conclusion">
+        <h2>Die zentrale Botschaft</h2>
+        <p style="font-size: 1.2rem; margin: 1.5rem 0;">Eine Erziehung, die alle Konflikte vermeidet, erzeugt Menschen, die unfähig sind zu leben. Die „beste aller Welten" produziert die tiefste Zerstörung – nicht durch Gewalt, sondern durch Verleugnung.</p>
+        <p style="opacity: 0.7; margin-top: 1rem;">Fritz Zorn starb 1976 mit 32 Jahren an Krebs. „Mars im Exil" erschien posthum 1977.</p>
+    </div>
+</section>
+
+<script>
+    function scrollToSection(n) {
+        document.getElementById('sec' + n).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Cage breaking
+    function breakCage(el) {
+        el.classList.toggle('broken');
+    }
+
+    // Ja-Sager Simulator
+    function jasagerResponse(type) {
+        const box = document.getElementById('simResponse');
+        if (type === 'ja') {
+            box.innerHTML = '<p style="color:gold">✓ Genau so handelte der Erzähler. Er log aus Höflichkeit – und verlor dabei jede Chance auf echte Verbindung. Der Kamerad merkte, dass das „Ja" nicht ehrlich war.</p>';
+            box.style.background = 'rgba(255,215,0,0.1)';
+        } else if (type === 'nein') {
+            box.innerHTML = '<p style="color:#e94560">✗ Das konnte der Erzähler nicht. „Nein" zu sagen hätte die Harmonie zerstört. Er hatte das Wort „nein" nie von seinen Eltern gelernt.</p>';
+            box.style.background = 'rgba(233,69,96,0.1)';
+        } else {
+            box.innerHTML = '<p style="color:#7b68ee">~ Das Lieblingswort der Familie! Damit wird jedes Thema begraben, ohne je eine Position bezogen zu haben.</p>';
+            box.style.background = 'rgba(123,104,238,0.1)';
+        }
+    }
+
+    function tanteResponse(type) {
+        const box = document.getElementById('tanteResponse');
+        if (type === 'agree') {
+            box.innerHTML = '<p style="color:gold">Das tat die Mutter zuerst – sofort „gräßlich" zustimmen, weil sie das erwartete.</p>';
+        } else if (type === 'switch') {
+            box.innerHTML = '<p style="color:#e94560">✓ Genau das passierte! Die Mutter schwenkte sofort um und fand Erni plötzlich auch „herrlich". Keine eigene Meinung – nur Echo.</p>';
+        } else {
+            box.innerHTML = '<p style="color:#7b68ee">Das war in dieser Familie unmöglich. Eine eigene Meinung hätte die Harmonie gefährdet.</p>';
+        }
+        box.style.background = 'rgba(255,255,255,0.05)';
+    }
+
+    // Schwierig
+    let blockedCount = 0;
+    function blockTopic(el, name) {
+        if (el.classList.contains('blocked')) return;
+        el.classList.add('blocked');
+        blockedCount++;
+        document.getElementById('schwierigFill').style.width = (blockedCount / 6 * 100) + '%';
+        document.getElementById('schwierigCount').textContent = `Verbotene Themen: ${blockedCount} / 6`;
+        
+        const responses = {
+            'Politik': '„Das ist halt schwierig..." → Thema erledigt. Nie wieder besprochen.',
+            'Religion': '„Ach, das ist so schwierig..." → Tabu. Stille.',
+            'Sexualität': '„Das ist viel zu schwierig..." → Existiert nicht.',
+            'Geld': '„Schwierig, schwierig..." → Darüber spricht man nicht.',
+            'Beziehungen': '„Menschliche Beziehungen sind halt schwierig..." → Keine Nähe.',
+            'Gefühle': '„Das ist alles so schwierig..." → Fühle nichts.'
+        };
+        document.getElementById('schwierigResponse').innerHTML = `<p style="color:#7b68ee">${responses[name]}</p>`;
+        
+        if (blockedCount === 6) {
+            document.getElementById('schwierigResponse').innerHTML += '<p style="color:#e94560; margin-top:1rem;"><strong>Alles Interessante ist jetzt „schwierig" – und damit tot. Was bleibt? Essen, Wetter, Schule.</strong></p>';
+        }
+    }
+
+    // Vinyl
+    function playVinyl(type) {
+        const box = document.getElementById('vinylResponse');
+        if (type === 'klassik') {
+            box.innerHTML = '<p>Der Erzähler kaufte „das Richtige" – ohne je gehört zu haben, ob es ihm gefällt. Er war stolz auf seinen „guten Geschmack", der in Wahrheit nur blinder Gehorsam war.</p>';
+        } else {
+            box.innerHTML = '<p style="color:#e94560">Der kleine Bruder wählte spontan, nach eigenem Gefühl. Jahre später erkannte der Erzähler: <em>„Seine Wahl war die spontanere und im wahrsten Sinne des Wortes richtigere."</em></p>';
+        }
+    }
+
+    // Oder
+    const oderStatements = [
+        '„Heute abend gibt es Spaghetti zum Essen."',
+        '„Heute abend gibt es Spaghetti. Oder Wurstsalat."',
+        '„Ich fahre am Freitag nach Zürich. Oder ich bleibe zuhause."',
+        '„Ich bin anwesend. Oder ich bin gerade abwesend."',
+        '„Die Erde ist rund. Oder sie ist dreieckig."',
+        '„Nichts ist mehr fest. Alles ist unwirklich."'
+    ];
+    const oderComments = [
+        'Eine klare Aussage. Noch.',
+        'Schon wackelt die Realität...',
+        'Jetzt ist alles beliebig.',
+        'Existiere ich überhaupt?',
+        'Sprache hat jeden Sinn verloren.',
+        '💀 Die Wirklichkeit ist zerfallen.'
+    ];
+    let oderIndex = 0;
+    function addOder() {
+        oderIndex = (oderIndex + 1) % oderStatements.length;
+        document.getElementById('oderStatement').textContent = oderStatements[oderIndex];
+        document.getElementById('oderComment').textContent = oderComments[oderIndex];
+        document.getElementById('oderStatement').style.opacity = 1 - (oderIndex * 0.15);
+    }
+
+    // Insight cards
+    function toggleInsight(el) {
+        el.classList.toggle('open');
+    }
+
+    // Nav dots highlight on scroll
+    window.addEventListener('scroll', () => {
+        const sections = document.querySelectorAll('[id^="sec"]');
+        const dots = document.querySelectorAll('.nav-dot');
+        let current = 0;
+        sections.forEach((sec, i) => {
+            if (window.scrollY >= sec.offsetTop - 300) current = i;
+        });
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[current]) dots[current].classList.add('active');
+    });
+</script>
+
+</body>
+</html>
