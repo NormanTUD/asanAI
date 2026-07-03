@@ -275,7 +275,12 @@ var js_names_to_python_names = {
 	"GaussianNoise": `gaussianNoise`,
 	"gaussianNoise": `GaussianNoise`,
 	"gaussianDropout": `GaussianDropout`,
-	"GaussianDropout": `gaussianDropout`
+	"GaussianDropout": `gaussianDropout`,
+	"inputDim": `input_dim`,
+	"outputDim": `output_dim`,
+	"AsanEmbedding": `AsanEmbedding`,
+	"SimpleAttention": `SimpleAttention`,
+	"ResidualStream": `ResidualStream`
 };
 
 var python_names_to_js_names = {};
@@ -782,6 +787,8 @@ var interpolation = {
 
 var layer_options_defaults = {
 	"alpha": 1,
+	"input_dim": 100,
+	"output_dim": 32,
 	"units": 2,
 	"dropout_rate": 0.25,
 	"rate": 0.25,
@@ -1482,7 +1489,10 @@ var general_options = {
 	"pointwise_regularizer_l1": `"l1", "pointwise_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 	"pointwise_regularizer_l2": `"l2", "pointwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 	"depthwise_regularizer_l1": `"l1", "depthwise_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"depthwise_regularizer_l2": `"l2", "depthwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`
+	"depthwise_regularizer_l2": `"l2", "depthwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+
+	"input_dim": `"Input Dim (Vocab Size)", "input_dim", "number", { "min": 1, "max": 100000, "step": 1, "value": 100 }, nr`,
+	"output_dim": `"Output Dim (Embedding Size)", "output_dim", "number", { "min": 1, "max": 4096, "step": 1, "value": 32 }, nr`
 
 };
 

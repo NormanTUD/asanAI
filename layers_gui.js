@@ -13,7 +13,9 @@ const BASIC_OPTIONS = new Set([
 	"pool_size",
 	"dropout_rate",
 	"visualize",
-	"rate"
+	"rate",
+	"input_dim",
+	"output_dim"
 ]);
 
 function is_basic_option(item) {

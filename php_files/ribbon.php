@@ -45,9 +45,10 @@
 						<td>
 							<select id="data_origin" onchange="change_data_origin()" style="width: 239px;">
 								<option class="TRANSLATEME_no_default_data" value="default"></option>
-								<option value="tensordata" class="TRANSLATEME_yes_own_tensor"></option>
 								<option class="TRANSLATEME_yes_own_images" value="image"></option>
+								<option value="embedding"><span class="TRANSLATEME_embedding_sequence_data">Embedding/Sequence</span></option>
 								<option value="csv" class="TRANSLATEME_yes_own_csv"></option>
+								<option value="tensordata" class="TRANSLATEME_yes_own_tensor"></option>
 							</select>
 						</td>
 					</tr>

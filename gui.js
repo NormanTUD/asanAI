@@ -1249,9 +1249,15 @@ function show_or_hide_photos_depending_on_if_index(index) {
 		if(input_shape_is_image()) {
 			$("#photos").show();
 			$("#xy_display_data").hide();
+			$("#own_embedding_tab").hide();
+		} else if(get_data_origin() == "embedding") {
+			$("#photos").hide();
+			$("#xy_display_data").hide();
+			$("#own_embedding_tab").show();
 		} else {
 			$("#photos").hide();
 			$("#xy_display_data").show();
+			$("#own_embedding_tab").hide();
 		}
 	}
 }
@@ -2025,6 +2031,8 @@ function _allow_training() {
 		}
 	} else if (data_origin == "csv") {
 		return csv_allow_training;
+	} else if (data_origin == "embedding") {
+		return is_embedding_data_ready();
 	} else if (data_origin == "tensordata") {
 		if (special_reason_disable_training) {
 			return false;
@@ -2036,7 +2044,6 @@ function _allow_training() {
 			}
 		}
 	}
-
 }
 
 async function show_layer_view() {

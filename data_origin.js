@@ -29,9 +29,15 @@ async function change_data_origin() {
 		: show_own_csv   ? "own_csv"
 		: "training_data";
 
-	["own_images","own_tensor","own_csv","training_data"].forEach(t =>
+	["own_images","own_tensor","own_csv","training_data","own_embedding"].forEach(t =>
 		t === active_tab ? show_tab_label(`${t}_tab_label`,1) : hide_tab_label(`${t}_tab_label`)
 	);
+
+	// Hide embedding tab when not in embedding mode
+	if(new_origin !== "embedding") {
+		hide_tab_label("own_embedding_tab_label");
+		$("#own_embedding_tab").hide();
+	}
 
 	if(show_own_images){
 		$("#own_images_container").html("");
@@ -115,6 +121,13 @@ async function new_origin_is_non_default(show_own_images, show_images_per_catego
 	} else if(data_origin === "csv") {
 		await show_csv_file(1);
 		show_own_csv = 1;
+	} else if(data_origin === "embedding") {
+		show_own_csv = 0;
+		show_own_tensor = 0;
+		show_own_images = 0;
+		// Show the embedding tab
+		show_tab_label("own_embedding_tab_label", 1);
+		$("#own_embedding_tab").show();
 	} else {
 		alert("Unknown data_origin: " + data_origin);
 	}
@@ -470,6 +483,10 @@ async function finish_category_setup(do_not_reset_labels) {
 function is_custom_data_and_has_custom_data () {
 	if(get_data_origin() != "image") {
 		return true;
+	}
+
+	if (data_origin == "embedding") {
+		return is_embedding_data_ready();
 	}
 
 	var has_canvasses = $(".own_images").toArray().every(function(el) {

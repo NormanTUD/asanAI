@@ -109,6 +109,8 @@
 		_js("activation_atlas.js");
 		_js("activation_atlas_tab.js");
 		_js("gradient_flow_heatmap.js");
+		_js("embedding_layer.js");
+		_js("embedding_gui.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
@@ -125,6 +127,7 @@
 		_js("layer_grouping.js");
 		_js("layer_descriptions.js");
 		_js("loss_landscape.js");
+		_js("embedding_data.js");
 
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");
@@ -243,6 +246,7 @@
 <?php
 							_include("navbar.php");
 							_include("tabs/own_csv.php");
+							_include("tabs/own_embedding.php");
 							_include("tabs/own_tensor.php");
 							_include("tabs/own_images.php");
 							_include("tabs/data.php");
