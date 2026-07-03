@@ -616,6 +616,8 @@ async function jump_to_tab_if_applicable () {
 			await show_tab_label("own_images_tab_label", 1);
 		} else if (_data_origin == "tensordata") {
 			await show_tab_label("own_tensor_tab_label", 1);
+		} else if (_data_origin == "embedding") {
+			await show_tab_label("own_embedding_tab_label", 1);
 		} else {
 			log(language[lang]["invalid_option"] + " " + _data_origin);
 		}
@@ -998,6 +1000,12 @@ async function get_xy_data_for_noncustom_data() {
 		xy_data = get_xy_data_from_tensordata();
 	} else if (_data_origin == "csv") {
 		xy_data = await get_x_y_from_csv();
+	} else if (_data_origin == "embedding") {
+		xy_data = get_embedding_training_data();
+		if (xy_data && xy_data.x && xy_data.y) {
+			xy_data.keys = [];
+			xy_data.number_of_categories = xy_data.numClasses || 0;
+		}
 	} else {
 		alert("Unknown data type: " + _data_origin);
 	}
