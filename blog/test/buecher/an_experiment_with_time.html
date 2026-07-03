@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An Experiment with Time – Interaktiv</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #0a0a2e; color: #e0e0ff; overflow-x: hidden; }
+        canvas#bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+        h1 { text-align: center; font-size: 2.2em; margin: 40px 0 10px; background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; opacity: 0.7; margin-bottom: 40px; font-style: italic; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 30px; margin: 30px 0; backdrop-filter: blur(10px); transition: transform 0.3s, box-shadow 0.3s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(72,219,251,0.15); }
+        .card h2 { color: #48dbfb; margin-bottom: 15px; font-size: 1.4em; }
+        .card p { line-height: 1.8; opacity: 0.9; }
+        .interactive-zone { background: rgba(72,219,251,0.08); border: 2px dashed rgba(72,219,251,0.3); border-radius: 12px; padding: 20px; margin: 15px 0; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .interactive-zone:hover { background: rgba(72,219,251,0.15); border-color: #48dbfb; }
+        button { background: linear-gradient(135deg, #48dbfb, #0abde3); color: #0a0a2e; border: none; padding: 12px 28px; border-radius: 30px; font-size: 1em; font-weight: bold; cursor: pointer; transition: all 0.3s; margin: 5px; }
+        button:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(72,219,251,0.4); }
+        button.secondary { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
+        button.gold { background: linear-gradient(135deg, #feca57, #ff9f43); }
+        .timeline { position: relative; padding: 20px 0; }
+        .timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, #48dbfb, #ff9ff3, #feca57); }
+        .timeline-item { position: relative; padding: 15px 20px; width: 45%; margin-bottom: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.3s; }
+        .timeline-item:hover { background: rgba(255,255,255,0.1); }
+        .timeline-item:nth-child(odd) { margin-left: 5%; }
+        .timeline-item:nth-child(even) { margin-left: 50%; }
+        .reveal-text { max-height: 0; overflow: hidden; transition: max-height 0.6s ease; opacity: 0.9; }
+        .reveal-text.open { max-height: 1000px; }
+        .diagram-canvas { width: 100%; height: 250px; background: rgba(0,0,0,0.3); border-radius: 10px; margin: 15px 0; }
+        .dream-journal textarea { width: 100%; background: transparent; border: 1px solid #333; border-radius: 8px; padding: 15px; color: #48dbfb; font-family: 'Courier New', monospace; font-size: 0.95em; resize: vertical; min-height: 80px; outline: none; }
+        .quiz-option { display: block; width: 100%; text-align: left; padding: 15px 20px; margin: 8px 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #e0e0ff; cursor: pointer; transition: all 0.3s; font-size: 0.95em; }
+        .quiz-option:hover { background: rgba(72,219,251,0.15); border-color: #48dbfb; transform: none; box-shadow: none; }
+        .quiz-option.correct { background: rgba(0,200,100,0.2); border-color: #00c864; }
+        .quiz-option.wrong { background: rgba(255,50,50,0.2); border-color: #ff3232; }
+        .score-display { font-size: 1.5em; text-align: center; color: #feca57; margin: 20px 0; }
+        .progress-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #48dbfb, #ff9ff3); border-radius: 4px; transition: width 0.5s ease; }
+        .badge { display: inline-block; background: linear-gradient(135deg, #feca57, #ff9f43); color: #0a0a2e; padding: 5px 15px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin: 5px; }
+        .hidden { display: none; }
+        .glow { animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 5px #48dbfb; } to { text-shadow: 0 0 20px #48dbfb, 0 0 40px #0abde3; } }
+        footer { text-align: center; padding: 40px 0; opacity: 0.5; font-size: 0.85em; }
+    </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="container">
+    <h1 class="glow">An Experiment with Time</h1>
+    <p class="subtitle">J.W. Dunne (1927) – Die Kernideen, interaktiv erlebbar</p>
+    
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+    <div class="score-display">🧠 Erkenntnispunkte: <span id="score">0</span></div>
+
+    <!-- KAPITEL 1 -->
+    <div class="card">
+        <h2>🌀 Kapitel 1: Die Grundidee</h2>
+        <p>Dunne entdeckte etwas Unglaubliches: <strong>Unsere Träume enthalten Bilder aus der Zukunft</strong> – genauso häufig wie aus der Vergangenheit. Nicht als mystische Prophezeiung, sondern als normales Merkmal der menschlichen Zeitwahrnehmung.</p>
+        <div class="interactive-zone" onclick="revealSection('idea1')">
+            🔮 Klick mich: Was bedeutet das konkret?
+        </div>
+        <div class="reveal-text" id="idea1">
+            <p style="margin-top:15px;">Stell dir vor, du träumst von einem roten Buch, das von einem Tisch fällt. Am nächsten Tag passiert genau das. Dunne sagt: Das ist <em>kein</em> Zufall und <em>keine</em> Hellseherei – es ist so normal wie eine Erinnerung, nur in die andere Zeitrichtung.</p>
+            <p style="margin-top:10px;">🎯 <strong>Kernthese:</strong> Die Zeit ist wie eine Landschaft, die bereits existiert. Im Wachzustand sehen wir nur den "jetzigen" Punkt. Im Schlaf wandert unsere Aufmerksamkeit frei – auch in die Zukunft.</p>
+        </div>
+    </div>
+
+    <!-- KAPITEL 2 -->
+    <div class="card">
+        <h2>💭 Kapitel 2: Dunnes berühmte Träume</h2>
+        <p>Dunne dokumentierte über Jahre hinweg Träume, die sich als Vorschauen auf kommende Erlebnisse herausstellten:</p>
+        <div class="timeline">
+            <div class="timeline-item" onclick="showDream(1)">
+                <strong>1902: Der Vulkan</strong><br>
+                <small>Traum von 4.000 Toten auf einer Insel...</small>
+            </div>
+            <div class="timeline-item" onclick="showDream(2)">
+                <strong>1904: Das Pferd</strong><br>
+                <small>Ein Pferd bricht aus einem Zaun aus...</small>
+            </div>
+            <div class="timeline-item" onclick="showDream(3)">
+                <strong>1913: Der Zug</strong><br>
+                <small>Ein Zug stürzt von einem Bahndamm...</small>
+            </div>
+        </div>
+        <div class="reveal-text" id="dreamDetail">
+            <div id="dreamContent" style="padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- KAPITEL 3 -->
+    <div class="card">
+        <h2>🧪 Kapitel 3: Das Experiment – Mach es selbst!</h2>
+        <p>Dunnes Methode ist verblüffend einfach:</p>
+        <ol style="padding-left: 20px; line-height: 2.2;">
+            <li>📓 Lege Notizbuch + Stift neben dein Bett</li>
+            <li>⏰ Schreibe <strong>sofort</strong> beim Aufwachen deinen Traum auf – bevor du die Augen öffnest!</li>
+            <li>🔍 Lies abends deine Notizen und vergleiche mit dem Tag</li>
+            <li>📊 Achte auf ungewöhnliche Details, nicht auf vage Übereinstimmungen</li>
+        </ol>
+        <div class="interactive-zone" onclick="revealSection('tips')">
+            💡 Profi-Tipps von Dunne anzeigen
+        </div>
+        <div class="reveal-text" id="tips">
+            <ul style="padding: 15px 20px; line-height: 2;">
+                <li>Erinnere dich, <em>woran du beim Aufwachen gedacht hast</em> – der Traum kommt dann zurück!</li>
+                <li>Trenne: Was hast du <strong>gesehen</strong> vs. was hast du <strong>interpretiert</strong>?</li>
+                <li>Kino/Theater am Vortag erhöht die Trefferquote</li>
+                <li>Zeitlimit: 2 Tage für die Übereinstimmung</li>
+                <li>Lies deine Notizen so, als wären es Träume der <em>kommenden</em> Nacht!</li>
+            </ul>
+        </div>
+        <h3 style="margin-top: 25px; color: #ff9ff3;">✍️ Dein Traum-Journal</h3>
+        <div class="dream-journal">
+            <textarea id="dreamInput" placeholder="Schreibe hier deinen Traum auf... Was hast du gesehen? Welche ungewöhnlichen Details gab es?"></textarea>
+        </div>
+        <button onclick="analyzeDream()" style="margin-top: 15px;">🔬 Traum analysieren</button>
+        <div id="dreamResult"></div>
+    </div>
+
+    <!-- KAPITEL 4 -->
+    <div class="card">
+        <h2>⏳ Kapitel 4: Serielle Zeit – Das Herzstück</h2>
+        <p>Dunnes revolutionäre Theorie: <strong>Zeit ist nicht eindimensional, sondern seriell</strong> – eine unendliche Schachtelung von Zeitdimensionen.</p>
+        <canvas id="timeCanvas" class="diagram-canvas"></canvas>
+        <div style="text-align: center; margin: 10px 0;">
+            <button onclick="animateTime(1)">Zeit 1 zeigen</button>
+            <button class="secondary" onclick="animateTime(2)">Zeit 2 zeigen</button>
+            <button class="gold" onclick="animateTime(3)">Zeit 3 zeigen</button>
+        </div>
+        <div class="interactive-zone" onclick="revealSection('serial')">
+            🧩 Was bedeutet "serielle Zeit"?
+        </div>
+        <div class="reveal-text" id="serial">
+            <p style="margin-top: 15px;"><strong>Die Logik:</strong></p>
+            <p>1️⃣ Wenn die Zeit "fließt", braucht dieses Fließen selbst Zeit → <strong>Zeit 2</strong></p>
+            <p>2️⃣ Wenn Zeit 2 fließt, braucht das auch Zeit → <strong>Zeit 3</strong></p>
+            <p>3️⃣ Und so weiter bis ins Unendliche!</p>
+            <p style="margin-top: 10px;">🎯 <strong>Konsequenz:</strong> Du bist nicht nur ein 3D-Wesen, das durch Zeit 1 reist. Du bist ein serieller Beobachter – ein Wesen, das in jeder Zeitdimension existiert. Im Schlaf wird dein Aufmerksamkeitsfeld in Zeit 2 frei und kann "vor" und "zurück" in Zeit 1 wandern.</p>
+        </div>
+    </div>
+
+    <!-- KAPITEL 5 -->
+    <div class="card">
+        <h2>👁️ Kapitel 5: Der serielle Beobachter</h2>
+        <p>Du bist nicht EIN Beobachter – du bist eine unendliche Serie von Beobachtern:</p>
+        <div style="text-align: center; padding: 20px; font-size: 1.1em;">
+            <span class="badge">Beobachter 1</span> → sieht Gehirnzustände nacheinander<br><br>
+            <span class="badge" style="background: linear-gradient(135deg, #ff9ff3, #f368e0);">Beobachter 2</span> → sieht Beobachter 1 + Vergangenheit & Zukunft<br><br>
+            <span class="badge" style="background: linear-gradient(135deg, #48dbfb, #0abde3);">Beobachter ∞</span> → DU – dein wahres Selbst
+        </div>
+        <div class="interactive-zone" onclick="revealSection('observer')">
+            🪞 Was bedeutet das für mich?
+        </div>
+        <div class="reveal-text" id="observer">
+            <p style="margin-top: 15px;">• <strong>Beobachter 1</strong> stirbt mit dem Gehirn – er ist der "bewusste Automat"</p>
+            <p>• <strong>Beobachter 2+</strong> sind unsterblich – sie existieren in höheren Zeitdimensionen</p>
+            <p>• <strong>Bewusstsein</strong> entsteht nur durch die serielle Struktur: Jeder Beobachter beobachtet den darunter</p>
+            <p>• <strong>Freier Wille</strong> kommt vom "Beobachter bei Unendlich" – er kann Aufmerksamkeit lenken und eingreifen</p>
+            <p style="margin-top: 10px; color: #feca57;">💀 Tod = Ende von Feld 1. Nicht das Ende von DIR.</p>
+        </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="card">
+        <h2>🎮 Quiz: Teste dein Verständnis!</h2>
+        <div id="quizContainer">
+            <p id="quizQuestion" style="font-size: 1.1em; margin-bottom: 15px;"></p>
+            <div id="quizOptions"></div>
+        </div>
+        <div id="quizFeedback"></div>
+        <button id="nextBtn" class="hidden" onclick="nextQuestion()">Nächste Frage →</button>
+    </div>
+
+    <!-- ZUSAMMENFASSUNG -->
+    <div class="card">
+        <h2>🗝️ Die 7 Kernerkenntnisse</h2>
+        <div id="keyInsights">
+            <div class="interactive-zone" onclick="revealInsight(this, 1)">1️⃣ Zeit ist eine Landschaft, kein Fluss</div>
+            <div class="interactive-zone" onclick="revealInsight(this, 2)">2️⃣ Träume sind zeitlich frei – sie zeigen Zukunft UND Vergangenheit</div>
+            <div class="interactive-zone" onclick="revealInsight(this, 3)">3️⃣ Das ist NORMAL – nicht paranormal</div>
+            <div class="interactive-zone" onclick="revealInsight(this, 4)">4️⃣ Wir bemerken es nicht, weil wir Träume vergessen & falsch zuordnen</div>
+            <div class="interactive-zone" onclick="revealInsight(this, 5)">5️⃣ Der "Beobachter bei Unendlich" ist deine unsterbliche Seele</div>
+            <div class="interactive-zone" onclick="revealInsight(this, 6)">6️⃣ Freier Wille existiert – du kannst die Zukunft ändern</div>
+            <div class="interactive-zone" onclick="revealInsight(this, 7)">7️⃣ Schlaf ist Training für das Bewusstsein jenseits des Körpers</div>
+        </div>
+    </div>
+
+    <footer>
+        Basierend auf "An Experiment with Time" von J.W. Dunne (1927/1929) · Interaktive Zusammenfassung
+    </footer>
+</div>
+
+<script>
+// Background Canvas
+const bgCanvas = document.getElementById('bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+let particles = [];
+
+function resizeBg() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+}
+resizeBg();
+window.addEventListener('resize', resizeBg);
+
+for (let i = 0; i < 60; i++) {
+    particles.push({
+        x: Math.random() * bgCanvas.width,
+        y: Math.random() * bgCanvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.5 + 0.1
+    });
+}
+
+function animateBg() {
+    bgCtx.fillStyle = 'rgba(10, 10, 46, 0.1)';
+    bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+    particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(72, 219, 251, ${p.alpha})`;
+        bgCtx.fill();
+    });
+    requestAnimationFrame(animateBg);
+}
+animateBg();
+
+// Score System
+let score = 0;
+let sectionsRevealed = new Set();
+
+function addPoints(pts) {
+    score += pts;
+    document.getElementById('score').textContent = score;
+    const max = 85;
+    document.getElementById('progressFill').style.width = Math.min((score / max) * 100, 100) + '%';
+}
+
+function revealSection(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+    if (!sectionsRevealed.has(id)) {
+        sectionsRevealed.add(id);
+        addPoints(5);
+    }
+}
+
+// Dream Timeline
+const dreams = {
+    1: `<strong>🌋 Martinique 1902:</strong> Dunne träumte von einer Insel, die explodiert – 4.000 Tote. Tage später las er in der Zeitung vom Ausbruch des Mont Pelée: 40.000 Tote. Er hatte die Zahl falsch gelesen – sein Traum basierte auf dem LESEN der Zeitung, nicht auf dem Ereignis selbst! Das bewies: Der Traum war eine Vorschau auf seine eigene Erfahrung (Zeitung lesen), nicht auf das ferne Ereignis.`,
+    2: `<strong>🐴 Österreich 1904:</strong> Dunne träumte von einem Pferd, das aus einem hohen Eisenzaun ausbricht und ihn verfolgt. Am nächsten Tag sah er genau diese Szene – aber die Details waren "falsch": Der Zaun war niedriger, das Pferd kleiner. Der Traum war ein normaler, leicht verzerrter Traum – nur auf der falschen Nachtseite des Ereignisses!`,
+    3: `<strong>🚂 Schottland 1913:</strong> Dunne träumte von einem Zug, der nördlich der Forth Bridge von einem Bahndamm stürzt. Er datierte den Traum auf "nächsten Frühling". Am 14. April stürzte der "Flying Scotsman" bei Burntisland – 15 Meilen nördlich der Forth Bridge – auf einen Golfplatz 20 Fuß tiefer.`
+};
+
+function showDream(n) {
+    document.getElementById('dreamContent').innerHTML = dreams[n];
+    document.getElementById('dreamDetail').classList.add('open');
+    if (!sectionsRevealed.has('dream' + n)) {
+        sectionsRevealed.add('dream' + n);
+        addPoints(3);
+    }
+}
+
+// Dream Analysis
+function analyzeDream() {
+    const text = document.getElementById('dreamInput').value.trim();
+    const result = document.getElementById('dreamResult');
+    if (text.length < 10) {
+        result.innerHTML = '<p style="color: #ff6b6b; margin-top:15px;">✏️ Schreibe mindestens ein paar Sätze!</p>';
+        return;
+    }
+    const details = text.split(/[.,!?]/).length;
+    const hasColor = /rot|blau|grün|gelb|schwarz|weiß|pink|lila|orange/i.test(text);
+    const hasNumber = /\d/.test(text);
+    const hasPlace = /haus|straße|schule|wald|meer|berg|stadt|zimmer|garten/i.test(text);
+    
+    let feedback = '<div style="margin-top:15px; padding:15px; background:rgba(72,219,251,0.05); border-radius:10px;">';
+    feedback += '<p style="color: #48dbfb; font-weight: bold;">📊 Analyse nach Dunnes Methode:</p>';
+    feedback += `<p>📝 Details: ${details > 5 ? '✅ Gut' : '⚠️ Mehr Details!'} (${details} Fragmente)</p>`;
+    feedback += `<p>🎨 Farben: ${hasColor ? '✅ Vorhanden – wichtig!' : '❌ Fehlen – versuche dich zu erinnern'}</p>`;
+    feedback += `<p>🔢 Zahlen: ${hasNumber ? '✅ Starkes Identifikationsmerkmal!' : '⚪ Keine'}</p>`;
+    feedback += `<p>📍 Orte: ${hasPlace ? '✅ Vorhanden' : '⚪ Keine spezifischen'}</p>`;
+    feedback += `<p style="margin-top:10px; color: #feca57;">💡 Lies diese Notiz heute Abend und vergleiche mit deinem Tag!</p></div>`;
+    
+    result.innerHTML = feedback;
+    if (!sectionsRevealed.has('dreamAnalysis')) {
+        sectionsRevealed.add('dreamAnalysis');
+        addPoints(10);
+    }
+}
+
+// Time Diagram Canvas
+const timeCanvas = document.getElementById('timeCanvas');
+const tCtx = timeCanvas.getContext('2d');
+
+function initTimeCanvas() {
+    timeCanvas.width = timeCanvas.offsetWidth;
+    timeCanvas.height = 250;
+}
+initTimeCanvas();
+window.addEventListener('resize', initTimeCanvas);
+
+let timeAnim = null;
+
+function animateTime(level) {
+    if (timeAnim) cancelAnimationFrame(timeAnim);
+    const w = timeCanvas.width, h = timeCanvas.height;
+    let t = 0;
+    
+    if (!sectionsRevealed.has('time' + level)) {
+        sectionsRevealed.add('time' + level);
+        addPoints(5);
+    }
+    
+    function draw() {
+        tCtx.fillStyle = 'rgba(0,0,0,0.85)';
+        tCtx.fillRect(0, 0, w, h);
+        t += 0.02;
+        
+        tCtx.fillStyle = '#666';
+        tCtx.font = '12px Georgia';
+        tCtx.fillText('Vergangenheit ←', 10, h - 10);
+        tCtx.fillText('→ Zukunft', w - 80, h - 10);
+        
+        if (level >= 1) {
+            tCtx.strokeStyle = '#48dbfb';
+            tCtx.lineWidth = 2;
+            tCtx.beginPath();
+            tCtx.moveTo(50, h / 2);
+            tCtx.lineTo(w - 50, h / 2);
+            tCtx.stroke();
+            
+            for (let i = 80; i < w - 50; i += 40) {
+                tCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+                tCtx.beginPath();
+                tCtx.moveTo(i, h / 2 - 15);
+                tCtx.lineTo(i, h / 2 + 15);
+                tCtx.stroke();
+            }
+            
+            const px = 50 + ((t * 30) % (w - 100));
+            tCtx.beginPath();
+            tCtx.arc(px, h / 2, 8, 0, Math.PI * 2);
+            tCtx.fillStyle = '#ff6b6b';
+            tCtx.fill();
+            tCtx.fillStyle = '#fff';
+            tCtx.font = 'bold 11px Georgia';
+            tCtx.fillText('JETZT', px - 18, h / 2 + 25);
+            tCtx.fillStyle = '#48dbfb';
+            tCtx.fillText('Zeit 1 →', w - 75, h / 2 - 20);
+        }
+        
+        if (level >= 2) {
+            tCtx.strokeStyle = '#ff9ff3';
+            tCtx.lineWidth = 1.5;
+            tCtx.beginPath();
+            tCtx.moveTo(50, h - 30);
+            tCtx.lineTo(w - 50, 30);
+            tCtx.stroke();
+            
+            const fy = h - 30 - ((t * 20) % (h - 60));
+            tCtx.strokeStyle = 'rgba(255, 159, 243, 0.6)';
+            tCtx.setLineDash([5, 5]);
+            tCtx.beginPath();
+            tCtx.moveTo(30, fy);
+            tCtx.lineTo(w - 30, fy);
+            tCtx.stroke();
+            tCtx.setLineDash([]);
+            
+            tCtx.fillStyle = '#ff9ff3';
+            tCtx.font = '11px Georgia';
+            tCtx.fillText('↑ Zeit 2', 10, 20);
+            tCtx.fillText('Feld 2 (Traum-Bereich)', w / 2 - 60, fy - 8);
+        }
+        
+        if (level >= 3) {
+            // Time 3: pulsing concentric ellipses representing the encompassing dimension
+            for (let i = 0; i < 5; i++) {
+                const radius = 20 + i * 25 + Math.sin(t + i) * 5;
+                const alpha = 0.3 - i * 0.05;
+                tCtx.strokeStyle = `rgba(254, 202, 87, ${alpha})`;
+                tCtx.lineWidth = 1;
+                tCtx.beginPath();
+                tCtx.ellipse(w / 2, h / 2, radius, radius * 0.4, 0, 0, Math.PI * 2);
+                tCtx.stroke();
+            }
+            
+            tCtx.fillStyle = '#feca57';
+            tCtx.font = '11px Georgia';
+            tCtx.fillText('Zeit 3 (umschließt alles)', w / 2 - 55, 20);
+            tCtx.fillText('∞ Dimensionen', w / 2 - 40, h - 15);
+            
+            // Observer at infinity - pulsing central dot
+            const oSize = 4 + Math.sin(t * 3) * 2;
+            tCtx.beginPath();
+            tCtx.arc(w / 2, h / 2, oSize, 0, Math.PI * 2);
+            tCtx.fillStyle = '#feca57';
+            tCtx.fill();
+            tCtx.fillStyle = '#fff';
+            tCtx.font = 'bold 10px Georgia';
+            tCtx.fillText('DU ∞', w / 2 + 10, h / 2 + 4);
+        }
+        
+        timeAnim = requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+// Quiz System
+const questions = [
+    {
+        q: "Was zeigen Dunnes Träume laut seiner Theorie?",
+        opts: ["Botschaften von Geistern", "Normale Bilder zukünftiger persönlicher Erlebnisse", "Zufällige Gehirnaktivität", "Astralreisen in andere Welten"],
+        correct: 1,
+        explain: "Dunne betont: Die Träume sind NORMALE Träume – nur zeitlich verschoben. Sie zeigen persönliche Erlebnisse (z.B. das Lesen einer Zeitung), nicht die fernen Ereignisse selbst."
+    },
+    {
+        q: "Warum bemerken wir die Zukunftsbilder in Träumen normalerweise nicht?",
+        opts: ["Weil sie nicht existieren", "Weil wir Träume vergessen und die Verbindung unbewusst ablehnen", "Weil nur Hellseher sie haben", "Weil sie nur bei Vollmond auftreten"],
+        correct: 1,
+        explain: "Drei Gründe: 1) Wir vergessen 90% aller Träume sofort. 2) Unser Verstand lehnt die 'falsche' Zeitrichtung automatisch ab. 3) Die meisten Träume sind über Alltägliches – wir ordnen sie der Vergangenheit zu."
+    },
+    {
+        q: "Was bedeutet 'Serielle Zeit'?",
+        opts: ["Zeit läuft rückwärts", "Es gibt nur eine Zeitdimension", "Jede Zeitbewegung braucht eine weitere Zeit – bis ins Unendliche", "Zeit ist eine Illusion"],
+        correct: 2,
+        explain: "Wenn Zeit 'fließt', braucht dieses Fließen selbst Zeit (Zeit 2). Deren Fließen braucht Zeit 3. Und so weiter – eine unendliche Serie von Zeitdimensionen."
+    },
+    {
+        q: "Was passiert laut Dunne mit dem 'Beobachter bei Unendlich' beim Tod?",
+        opts: ["Er stirbt mit dem Körper", "Er wird wiedergeboren", "Er existiert weiter – nur Feld 1 endet", "Er verschwindet ins Nichts"],
+        correct: 2,
+        explain: "Der Tod ist das Ende von Feld 1 (der normalen Wachwahrnehmung). Aber die höheren Beobachter existieren in anderen Zeitdimensionen weiter – sie 'reisen' nicht auf Feld 1 zu."
+    },
+    {
+        q: "Was ist der erste Schritt in Dunnes Experiment?",
+        opts: ["Meditation vor dem Schlaf", "Sofort beim Aufwachen den Traum aufschreiben", "Einen Hellseher konsultieren", "Tagsüber an die Zukunft denken"],
+        correct: 1,
+        explain: "Notizbuch neben das Bett, sofort beim Aufwachen schreiben – BEVOR man die Augen öffnet. Dann abends vergleichen mit dem Tag."
+    }
+];
+
+let currentQ = 0;
+let quizAnswered = false;
+
+function loadQuestion() {
+    const q = questions[currentQ];
+    document.getElementById('quizQuestion').textContent = `Frage ${currentQ + 1}/${questions.length}: ${q.q}`;
+    const optsDiv = document.getElementById('quizOptions');
+    optsDiv.innerHTML = '';
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.onclick = () => answerQuiz(i);
+        optsDiv.appendChild(btn);
+    });
+    document.getElementById('quizFeedback').innerHTML = '';
+    document.getElementById('nextBtn').classList.add('hidden');
+    quizAnswered = false;
+}
+
+function answerQuiz(idx) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+    const q = questions[currentQ];
+    const opts = document.querySelectorAll('.quiz-option');
+    opts.forEach((opt, i) => {
+        if (i === q.correct) opt.classList.add('correct');
+        else if (i === idx) opt.classList.add('wrong');
+    });
+    const isCorrect = idx === q.correct;
+    const feedback = document.getElementById('quizFeedback');
+    feedback.innerHTML = `<div style="margin-top:15px; padding:15px; background:rgba(${isCorrect ? '0,200,100' : '255,50,50'},0.1); border-radius:10px;">
+        <p style="font-weight:bold; color:${isCorrect ? '#00c864' : '#ff3232'};">${isCorrect ? '✅ Richtig!' : '❌ Nicht ganz.'}</p>
+        <p style="margin-top:8px;">${q.explain}</p>
+    </div>`;
+    if (isCorrect) addPoints(5);
+    if (currentQ < questions.length - 1) {
+        document.getElementById('nextBtn').classList.remove('hidden');
+    }
+}
+
+function nextQuestion() {
+    currentQ++;
+    if (currentQ < questions.length) loadQuestion();
+}
+
+loadQuestion();
+
+// Key Insights Reveal
+const insightDetails = {
+    1: "Dunne sagt: Vergangenheit und Zukunft existieren gleichzeitig – wie Orte auf einer Landkarte. Wir 'reisen' durch sie hindurch.",
+    2: "Im Schlaf ist unsere Aufmerksamkeit nicht an das 'Jetzt' gebunden. Sie wandert frei – auch zu Gehirnzuständen, die wir erst in der Zukunft erleben werden.",
+    3: "Keine Magie, kein Übersinnliches. Es ist eine normale Eigenschaft des menschlichen Bewusstseins – nur schwer zu bemerken.",
+    4: "90% aller Träume werden in 5 Sekunden vergessen. Und unser Verstand WEIGERT sich, die Verbindung zur Zukunft zu akzeptieren.",
+    5: "Der 'Observer at Infinity' – das bist DU. Nicht dein Gehirn, nicht dein Körper. Dein wahres Selbst, das in allen Zeitdimensionen existiert.",
+    6: "Du kannst aufgrund eines Traums handeln und damit die geträumte Zukunft verändern. Das beweist: Die Zukunft ist nicht festgelegt.",
+    7: "Jede Nacht übt dein Bewusstsein, ohne Gehirn zu denken. Das bereitet dich auf die Existenz nach dem Tod vor."
+};
+
+function revealInsight(el, n) {
+    if (el.querySelector('.insight-detail')) {
+        el.querySelector('.insight-detail').remove();
+        return;
+    }
+    const detail = document.createElement('p');
+    detail.className = 'insight-detail';
+    detail.style.cssText = 'margin-top:10px; font-size:0.9em; opacity:0.85; text-align:left;';
+    detail.textContent = insightDetails[n];
+    el.appendChild(detail);
+    if (!sectionsRevealed.has('insight' + n)) {
+        sectionsRevealed.add('insight' + n);
+        addPoints(2);
+    }
+}
+</script>
+
+</body>
+</html>
