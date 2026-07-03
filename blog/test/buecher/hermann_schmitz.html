@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermann Schmitz – Philosophie des Leibes | Interaktiv</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Georgia', serif; background: #1a1a2e; color: #eee; overflow-x: hidden; }
+.hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #16213e 0%, #0f0f23 100%); padding: 2rem; text-align: center; }
+.hero h1 { font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(90deg, #e94560, #f5a623); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { max-width: 600px; line-height: 1.7; color: #aaa; margin-bottom: 2rem; }
+.nav-dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
+.nav-dots a { display: block; width: 12px; height: 12px; border-radius: 50%; background: #555; margin: 10px 0; transition: 0.3s; }
+.nav-dots a.active, .nav-dots a:hover { background: #e94560; transform: scale(1.4); }
+section { min-height: 100vh; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+section:nth-child(even) { background: #16213e; }
+section:nth-child(odd) { background: #1a1a2e; }
+h2 { font-size: 2rem; margin-bottom: 1.5rem; color: #e94560; text-align: center; }
+.card { background: #0f3460; border-radius: 16px; padding: 2rem; max-width: 700px; width: 100%; margin: 1rem auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.card p { line-height: 1.8; color: #ccc; }
+
+/* Interactive Enge-Weite Slider */
+.slider-container { width: 100%; max-width: 600px; margin: 2rem auto; text-align: center; }
+.slider-container input[type=range] { width: 100%; accent-color: #e94560; }
+.enge-weite-visual { height: 120px; border-radius: 12px; margin: 1rem 0; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease; font-size: 1.2rem; font-weight: bold; }
+.slider-label { display: flex; justify-content: space-between; color: #888; font-size: 0.9rem; }
+
+/* Breathing Animation */
+.breath-circle { width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #e94560, #533483); margin: 2rem auto; animation: breathe 4s ease-in-out infinite; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; cursor: pointer; }
+@keyframes breathe { 0%,100% { transform: scale(0.8); opacity: 0.7; } 50% { transform: scale(1.3); opacity: 1; } }
+
+/* Gefühle Buttons */
+.gefuehl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; max-width: 700px; width: 100%; margin: 1.5rem auto; }
+.gefuehl-btn { padding: 1rem; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: bold; color: #fff; transition: transform 0.2s, box-shadow 0.2s; }
+.gefuehl-btn:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(233,69,96,0.4); }
+.gefuehl-result { min-height: 80px; margin-top: 1rem; padding: 1.5rem; border-radius: 12px; background: #0a1628; color: #ddd; line-height: 1.7; text-align: center; }
+
+/* Einleibung Demo */
+.einleibung-area { width: 100%; max-width: 500px; height: 300px; background: #0a1628; border-radius: 16px; position: relative; overflow: hidden; margin: 1.5rem auto; cursor: crosshair; }
+.einleibung-circle { width: 60px; height: 60px; border-radius: 50%; position: absolute; transition: all 0.08s linear; pointer-events: none; }
+.circle-you { background: radial-gradient(circle, #e94560, #a8325a); top: 50%; left: 30%; transform: translate(-50%,-50%); }
+.circle-other { background: radial-gradient(circle, #4ecdc4, #2d8f8a); top: 50%; left: 70%; transform: translate(-50%,-50%); }
+.connection-line { position: absolute; height: 3px; background: linear-gradient(90deg, #e94560, #4ecdc4); transform-origin: left center; pointer-events: none; opacity: 0.6; }
+
+/* Person Section */
+.person-layers { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; max-width: 400px; margin: 1.5rem auto; }
+.person-layer { width: 100%; padding: 1rem; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-weight: bold; }
+.person-layer:hover { transform: scale(1.05); }
+.layer-info { min-height: 60px; margin-top: 1rem; padding: 1rem; background: #0a1628; border-radius: 10px; color: #ccc; text-align: center; line-height: 1.6; }
+
+/* Atombombe Section */
+.timeline { max-width: 600px; width: 100%; margin: 1.5rem auto; position: relative; padding-left: 30px; border-left: 3px solid #e94560; }
+.timeline-item { margin-bottom: 2rem; position: relative; padding-left: 20px; }
+.timeline-item::before { content: ''; width: 14px; height: 14px; background: #e94560; border-radius: 50%; position: absolute; left: -38px; top: 5px; }
+.timeline-item h3 { color: #f5a623; margin-bottom: 0.3rem; }
+.timeline-item p { color: #bbb; line-height: 1.6; font-size: 0.95rem; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+.tab-btn { padding: 0.6rem 1.2rem; border: 2px solid #e94560; background: transparent; color: #e94560; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
+.tab-btn.active, .tab-btn:hover { background: #e94560; color: #fff; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.scroll-hint { margin-top: 2rem; color: #555; animation: bounce 2s infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+</style>
+</head>
+<body>
+
+<nav class="nav-dots">
+<a href="#hero" class="active" title="Start"></a>
+<a href="#leib" title="Leib vs Körper"></a>
+<a href="#dynamik" title="Dynamik"></a>
+<a href="#gefuehle" title="Gefühle"></a>
+<a href="#einleibung" title="Einleibung"></a>
+<a href="#person" title="Person"></a>
+<a href="#atombombe" title="Atombombe"></a>
+<a href="#tiere" title="Tiere"></a>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="hero">
+<h1>Hermann Schmitz – Die Philosophie des Leibes</h1>
+<p>Eine interaktive Reise durch die Kernideen aus mehreren Texten von Hermann Schmitz: Wie wir uns selbst spüren, was Gefühle wirklich sind, warum der Leib mehr ist als der Körper – und was die Atombombe ethisch bedeutet.</p>
+<p style="color:#e94560; font-size:0.9rem;">Scrolle nach unten und interagiere mit den Elementen!</p>
+<div class="scroll-hint">↓ Scroll ↓</div>
+</section>
+
+<!-- LEIB VS KÖRPER -->
+<section id="leib">
+<h2>1. Leib ≠ Körper</h2>
+<div class="card">
+<p><strong>Der Körper</strong> ist das, was du siehst und tastest: Masse, Oberfläche, messbare Orte.<br><br>
+<strong>Der Leib</strong> ist das, was du <em>spürst</em>, ohne hinzusehen: Schmerz, Angst, Frische, Müdigkeit, der Blick, den du wirfst. Er hat keine glatten Flächen, keine messbaren Ränder – nur „Inseln" (Leibesinseln), die kommen und gehen.</p>
+</div>
+<div class="card" style="background:#0a1628;">
+<p style="text-align:center; color:#f5a623;">🧪 Experiment: Schließe die Augen. Spüre deinen Atem. Wo genau endet dein Bauch? Gibt es eine klare Grenze? – Nein. Das ist der <em>flächenlose Raum</em> des Leibes.</p>
+</div>
+</section>
+
+<!-- DYNAMIK -->
+<section id="dynamik">
+<h2>2. Die Dynamik: Enge ↔ Weite</h2>
+<div class="card">
+<p>Alles leibliche Erleben spielt sich zwischen zwei Polen ab:<br>
+<strong>Engung</strong> (Zusammenziehen: Schreck, Angst, Schmerz) und <strong>Weitung</strong> (Ausdehnen: Erleichterung, Wollust, Müdigkeit).<br><br>
+Ihr Zusammenspiel ist der <strong>vitale Antrieb</strong> – Spannung gegen Schwellung. Ohne ihn: kein Bewusstsein.</p>
+</div>
+
+<div class="slider-container">
+<p style="margin-bottom:1rem; color:#f5a623;">Bewege den Regler – spüre den Unterschied:</p>
+<div class="slider-label"><span>← ENGE (Schreck, Angst)</span><span>WEITE (Erleichterung) →</span></div>
+<input type="range" id="engeWeiteSlider" min="0" max="100" value="50">
+<div class="enge-weite-visual" id="ewVisual">Vitaler Antrieb: Gleichgewicht</div>
+</div>
+
+<div class="breath-circle" id="breathCircle" title="Klicke mich!">
+Atme mit
+</div>
+<p style="text-align:center; color:#888; font-size:0.85rem;">Der Kreis atmet: Einatmen = Engung+Weitung verschränkt. Klicke für Pause (= Schreck).</p>
+</section>
+
+<!-- GEFÜHLE -->
+<section id="gefuehle">
+<h2>3. Gefühle = Atmosphären</h2>
+<div class="card">
+<p>Gefühle sind <strong>keine privaten Seelenzustände</strong>. Sie sind räumlich ergossene <em>Atmosphären</em> – wie das Wetter. Man „betritt" Trauer, Freude, Scham, so wie man in schwüle Luft tritt.<br><br>
+<strong>Fühlen</strong> = leiblich ergriffen werden von einer solchen Atmosphäre. Die Gebärden kommen dann von selbst (Freudensprung, gebeugtes Sitzen bei Kummer).</p>
+</div>
+
+<p style="color:#f5a623; margin:1rem 0;">Klicke ein Gefühl – erfahre seine Atmosphäre:</p>
+<div class="gefuehl-grid">
+<button class="gefuehl-btn" style="background:#27ae60;" onclick="showGefuehl('freude')">😊 Freude</button>
+<button class="gefuehl-btn" style="background:#2c3e50;" onclick="showGefuehl('trauer')">😢 Trauer</button>
+<button class="gefuehl-btn" style="background:#c0392b;" onclick="showGefuehl('zorn')">😡 Zorn</button>
+<button class="gefuehl-btn" style="background:#8e44ad;" onclick="showGefuehl('scham')">😳 Scham</button>
+<button class="gefuehl-btn" style="background:#2980b9;" onclick="showGefuehl('angst')">😰 Angst</button>
+</div>
+<div class="gefuehl-result" id="gefuehlResult">Wähle ein Gefühl oben...</div>
+</section>
+
+<!-- EINLEIBUNG -->
+<section id="einleibung">
+<h2>4. Leibliche Kommunikation (Einleibung)</h2>
+<div class="card">
+<p>Wir kommunizieren nicht nur mit Worten. Durch <strong>Einleibung</strong> verschmelzen Leiber zu einem gemeinsamen vitalen Antrieb:<br>
+• <em>Antagonistisch</em>: Blickwechsel, Ringkampf, Gespräch – Dominanz fluktuiert.<br>
+• <em>Solidarisch</em>: Gemeinsames Singen, Marschieren, Feste – ohne Zuwendung zueinander.<br><br>
+Sogar mit Maschinen (Auto, Motorrad) entsteht Einleibung – der „Eugenie-Effekt"!</p>
+</div>
+
+<p style="color:#f5a623; text-align:center; margin:1rem 0;">Bewege deine Maus im Feld – beobachte die Einleibung:</p>
+<div class="einleibung-area" id="einleibungArea">
+<div class="connection-line" id="connLine"></div>
+<div class="einleibung-circle circle-you" id="circleYou"></div>
+<div class="einleibung-circle circle-other" id="circleOther"></div>
+</div>
+<p style="text-align:center; color:#888; font-size:0.85rem;">Rot = dein Leib. Türkis = der Andere. Beobachte, wie der Andere auf dich reagiert (antagonistische Einleibung).</p>
+</section>
+
+<!-- PERSON -->
+<section id="person">
+<h2>5. Leib und Person</h2>
+<div class="card">
+<p>Person-Sein heißt: sich selbst etwas zuschreiben können (<em>Selbstzuschreibung</em>). Das geht nur, weil wir uns <strong>affektiv betroffen</strong> spüren – leiblich. Ohne Leib keine Person!<br><br>
+Die Person lebt in einem Spagat zwischen <strong>personaler Emanzipation</strong> (Vernunft, Distanz) und <strong>personaler Regression</strong> (Ergriffenheit, Hingabe). Beide brauchen einander.</p>
+</div>
+
+<p style="color:#f5a623; text-align:center; margin:1rem 0;">Klicke die Schichten:</p>
+<div class="person-layers">
+<div class="person-layer" style="background:#e94560;" onclick="showLayer('emanz')">Personale Emanzipation</div>
+<div class="person-layer" style="background:#533483;" onclick="showLayer('fassung')">Fassung (Stabilisierung)</div>
+<div class="person-layer" style="background:#0f3460;" onclick="showLayer('antrieb')">Vitaler Antrieb</div>
+<div class="person-layer" style="background:#1a1a2e; border:2px solid #4ecdc4;" onclick="showLayer('regression')">Personale Regression / Primitive Gegenwart</div>
+</div>
+<div class="layer-info" id="layerInfo">Klicke eine Schicht für Details...</div>
+</section>
+
+<!-- ATOMBOMBE -->
+<section id="atombombe">
+<h2>6. Die ethische Bedeutung der Atombombe</h2>
+<div class="card">
+<p>Schmitz' provokante These: Der traditionelle Krieg bot eine „ernste Schule" der Integration von Emanzipation und Regression. Die Atombombe hat diese Möglichkeit zerstört – und die Menschheit auf einem <strong>zu hohen Niveau personaler Emanzipation festgeklemmt</strong>.<br><br>
+Das Bedürfnis nach Regression bleibt aber. Ersatz: Straßenverkehr, Sport, Feste – aber keiner reicht an den „Ernst" heran.</p>
+</div>
+
+<div class="tabs">
+<button class="tab-btn active" onclick="showTab('these')">Kernthese</button>
+<button class="tab-btn" onclick="showTab('hitler')">Hitler & Bombe</button>
+<button class="tab-btn" onclick="showTab('folgen')">Folgen</button>
+</div>
+<div class="card">
+<div class="tab-content active" id="tab-these">
+<p>Die Atombombe erzwingt dauerhaft „gute Manieren" in der Politik. Das klingt gut – aber es verklemmt die Menschheit auf einem Niveau, das dem Bedürfnis nach personaler Regression (Ergriffenheit, Hingabe, Rausch) nicht gerecht wird. Eine neue Ethik muss <em>beide</em> Seiten bedienen.</p>
+</div>
+<div class="tab-content" id="tab-hitler">
+<p>Hitler und die Bombe bilden eine „Bruchstelle": Die Weltgeschichte tritt in die Dimension des <strong>Absoluten</strong> – Sein oder Nichtsein, ohne Zwischentöne. Hitlers Vernichtungswille war nicht durch einfühlbare Interessen motiviert, sondern „Alles oder Nichts" um seiner selbst willen. Die Bombe macht diese absolute Konfrontation permanent.</p>
+</div>
+<div class="tab-content" id="tab-folgen">
+<p>• Kriege nur noch unter „Kleinen" zulässig<br>• Rezessive Entfremdung der Subjektivität (Langeweile, Coolness, Dandytum)<br>• Straßenverkehr als partieller Ersatz für die Integration von Emanzipation und Regression<br>• Bedarf einer Ethik, die personale Regression nicht unterdrückt</p>
+</div>
+</div>
+</section>
+
+<!-- TIERE -->
+<section id="tiere">
+<h2>7. Sind Tiere Bewussthaber?</h2>
+<div class="card">
+<p>Tinbergen: „Subjektives lässt sich am Tier nicht objektiv beobachten." Schmitz widerspricht: Die <strong>Du-Evidenz</strong> – die Gewissheit, es mit einem anderen Bewussthaber zu tun zu haben – entsteht durch <em>wechselseitige Einleibung</em>.<br><br>
+Diese funktioniert mit Tieren genauso wie mit Menschen! Wer einer Katze, einem Wolf in die Augen blickt, spürt sofort: Da ist jemand. Keine Sprache nötig, kein Analogieschluss – nur leibliche Kommunikation.</p>
+</div>
+<div class="card" style="background:#0a1628; text-align:center;">
+<p style="color:#4ecdc4; font-size:1.1rem;">🐾 Die Quelle der Du-Evidenz ist nicht Sprache oder Ähnlichkeit – sondern das Fluktuieren der Dominanz im gemeinsamen vitalen Antrieb der Einleibung.</p>
+</div>
+</section>
+
+<!-- FOOTER -->
+<section style="min-height:40vh; background:#0f0f23;">
+<h2 style="color:#f5a623;">Zusammenfassung</h2>
+<div class="card" style="max-width:800px;">
+<p>
+1. <strong>Leib ≠ Körper</strong> – Der Leib ist das Gespürte, flächenlos, in Inseln organisiert.<br>
+2. <strong>Enge ↔ Weite</strong> – Alle leibliche Dynamik spielt zwischen diesen Polen.<br>
+3. <strong>Gefühle = Atmosphären</strong> – Räumlich ergossen, nicht privat in der Seele.<br>
+4. <strong>Einleibung</strong> – Leibliche Kommunikation durch gemeinsamen vitalen Antrieb.<br>
+5. <strong>Person braucht Leib</strong> – Ohne affektives Betroffensein keine Selbstzuschreibung.<br>
+6. <strong>Atombombe</strong> – Verklemmt die Menschheit auf zu hohem Emanzipationsniveau.<br>
+7. <strong>Tiere sind Bewussthaber</strong> – Du-Evidenz durch Einleibung, nicht durch Sprache.
+</p>
+</div>
+<p style="color:#555; margin-top:2rem; text-align:center; font-size:0.8rem;">Basierend auf Texten von Hermann Schmitz: „Der Leib", „Die ethische Bedeutung der Atombombe", „Sind Tiere Bewußthaber?", „Der Gefühlsraum", „Das leibliche Befinden und die Gefühle"</p>
+</section>
+
+<script>
+// Enge-Weite Slider
+const slider = document.getElementById('engeWeiteSlider');
+const ewVisual = document.getElementById('ewVisual');
+slider.addEventListener('input', function() {
+  const v = this.value;
+  let bg, text;
+  if (v < 25) { bg = 'linear-gradient(135deg, #1a0a0a, #4a0e0e)'; text = '😰 Extreme Enge: Schreck, Panik – Bewusstsein droht auszusetzen'; }
+  else if (v < 40) { bg = 'linear-gradient(135deg, #2d0a0a, #6b1a1a)'; text = '😣 Starke Engung: Angst, Schmerz – expansiver Impuls gehemmt'; }
+  else if (v < 60) { bg = 'linear-gradient(135deg, #1a2a4a, #2a4a6a)'; text = '⚖️ Gleichgewicht: Kraftanstrengung, Einatmen – vitaler Antrieb schwingt'; }
+  else if (v < 80) { bg = 'linear-gradient(135deg, #1a3a2a, #2a6a4a)'; text = '😌 Weitung dominiert: Wollust, Schwellung – Triumph über Hemmung'; }
+  else { bg = 'linear-gradient(135deg, #0a2a4a, #1a4a7a)'; text = '🕊️ Privative Weitung: Erleichterung, Schweben, Müdigkeit – Loslassen'; }
+  ewVisual.style.background = bg;
+  ewVisual.textContent = text;
+});
+
+// Breathing circle
+const breathCircle = document.getElementById('breathCircle');
+let paused = false;
+breathCircle.addEventListener('click', () => {
+  paused = !paused;
+  if (paused) { breathCircle.style.animation = 'none'; breathCircle.style.transform = 'scale(0.6)'; breathCircle.style.opacity = '0.5'; breathCircle.textContent = '⚡ Schreck! (Privative Engung)'; }
+  else { breathCircle.style.animation = 'breathe 4s ease-in-out infinite'; breathCircle.style.opacity = '1'; breathCircle.textContent = 'Atme mit'; }
+});
+
+// Gefühle
+function showGefuehl(g) {
+  const data = {
+    freude: { bg: '#1a3a1a', text: '☀️ <strong>Freude</strong> ist eine HEBENDE Atmosphäre. Sie überspielt die Erdenschwere – der Leib wird leicht, will hüpfen, springen. Nicht eigene Kraft hebt, sondern die Atmosphäre selbst kehrt die Schwere um. Freude ist ortlos ergossen – sie kennt keine Grenzen.' },
+    trauer: { bg: '#1a1a2a', text: '🌧️ <strong>Trauer</strong> ist eine DRÜCKENDE Atmosphäre mit stärkerem Anspruch als Freude. Sie gebietet Respekt – auch der Fröhliche unter Traurigen wird gehemmt. Trauer betont die atmosphärische Schwere wie ein trüber, heißer Tag.' },
+    zorn: { bg: '#3a1a1a', text: '🔥 <strong>Zorn</strong> ist eine ergreifende Macht wie die reißende Schwere – überfallartig im Leib aufsteigend. Man MUSS erst ein Stück mitgehen, bevor man Stellung nehmen kann. Schwellung windet sich aus Engung hervor: grimmiger Triumph.' },
+    scham: { bg: '#2a1a3a', text: '🕳️ <strong>Scham</strong> kehrt den Richtungsraum um: Alle Vektoren werden zentripetal – von allen Seiten dringt die Atmosphäre auf den Beschämten ein. Tendenz: im Boden versinken, sich in sich verkriechen. Auch Anwesende spüren sie als Peinlichkeit.' },
+    angst: { bg: '#0a1a2a', text: '🌀 <strong>Angst</strong> = übermächtige Engung hemmt einen expansiven Impuls „Weg!". Rhythmisch: keuchende Atemkurve. Der Geängstete kann fliehen (panische Flucht), nimmt aber die Engung mit, bis das Ziel erreicht ist.' }
+  };
+  const d = data[g];
+  const el = document.getElementById('gefuehlResult');
+  el.style.background = d.bg;
+  el.innerHTML = d.text;
+}
+
+// Einleibung Demo
+const area = document.getElementById('einleibungArea');
+const circleYou = document.getElementById('circleYou');
+const circleOther = document.getElementById('circleOther');
+const connLine = document.getElementById('connLine');
+let otherX = 70, otherY = 50;
+
+area.addEventListener('mousemove', (e) => {
+  const rect = area.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  circleYou.style.left = x + '%';
+  circleYou.style.top = y + '%';
+  // Other reacts (antagonistic: moves away but stays connected)
+  const dx = x - otherX, dy = y - otherY;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  if (dist < 30) { otherX += (otherX - x) * 0.05; otherY += (otherY - y) * 0.05; }
+  else { otherX += (x - otherX) * 0.01; otherY += (y - otherY) * 0.01; }
+  otherX = Math.max(10, Math.min(90, otherX));
+  otherY = Math.max(10, Math.min(90, otherY));
+  circleOther.style.left = otherX + '%';
+  circleOther.style.top = otherY + '%';
+  // Line
+  const x1 = x/100*rect.width, y1 = y/100*rect.height;
+  const x2 = otherX/100*rect.width, y2 = otherY/100*rect.height;
+  const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+  const angle = Math.atan2(y2-y1, x2-x1) * 180/Math.PI;
+  connLine.style.width = len + 'px';
+  connLine.style.left = x1 + 'px';
+  connLine.style.top = y1 + 'px';
+  connLine.style.transform = `rotate(${angle}deg)`;
+});
+
+// Person Layers
+function showLayer(l) {
+  const info = {
+    emanz: 'Personale Emanzipation: Distanz, Reflexion, Vernunft. Du schreibst dir selbst Eigenschaften zu, nimmst Verantwortung. Aber: Ohne Regression verlierst du den „Faden" zum affektiven Betroffensein – und damit dich selbst.',
+    fassung: 'Fassung = was man verliert, wenn man „die Fassung verliert". Sie stabilisiert die Person zwischen Emanzipation und Regression. Sie ist der sensibelste Fühler für Einleibung – und zugleich Schutzschild gegen den Blick des Anderen.',
+    antrieb: 'Der vitale Antrieb (Spannung vs. Schwellung) ist die Grundlage allen Bewusstseins. Seine Bindungsform bestimmt den Persönlichkeitstyp: kompakt (Bathmothymiker), rhythmisch (Zyklothymiker), locker (Schizothymiker).',
+    regression: 'Personale Regression: Rückkehr zur primitiven Gegenwart – Lachen, Weinen, Ekstase, Rausch, Ekstase. Die Person gibt ihr emanzipiertes Selbst preis und taucht in primitive Gegenwart ein. Lachen = Bauchwelle am Reck: fallen + sicher wieder hochkommen = Triumph.'
+  };
+  document.getElementById('layerInfo').textContent = info[l] || '';
+}
+
+// Tabs
+function showTab(t) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Nav dots
+const sections = document.querySelectorAll('section');
+const dots = document.querySelectorAll('.nav-dots a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (pageYOffset >= sectionTop - 300) {
+      current = section.getAttribute('id') || '';
+    }
+  });
+  dots.forEach(dot => {
+    dot.classList.remove('active');
+    if (dot.getAttribute('href') === '#' + current) {
+      dot.classList.add('active');
+    }
+  });
+});
+
+// Smooth scroll
+document.querySelectorAll('.nav-dots a').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
