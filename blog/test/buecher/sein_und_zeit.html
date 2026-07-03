@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sein und Zeit – Interaktiv</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #0a0a0f; color: #e0e0e0; overflow-x: hidden; }
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%);
+            text-align: center;
+            padding: 2rem;
+        }
+        .hero h1 { font-size: 3.5rem; letter-spacing: 0.3rem; margin-bottom: 1rem; color: #f0e6d3; }
+        .hero p { font-size: 1.2rem; opacity: 0.7; max-width: 600px; margin-bottom: 2rem; }
+        .scroll-hint { animation: bounce 2s infinite; font-size: 2rem; cursor: pointer; }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+
+        section { min-height: 100vh; padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; }
+        h2 { font-size: 2rem; color: #f0e6d3; margin-bottom: 1.5rem; border-left: 4px solid #c9a96e; padding-left: 1rem; }
+        h3 { font-size: 1.3rem; color: #c9a96e; margin: 1.5rem 0 0.8rem; }
+        p, li { line-height: 1.8; font-size: 1.05rem; }
+        ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+
+        /* Interactive Cards */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .card {
+            background: #16162a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover { transform: translateY(-4px); border-color: #c9a96e; box-shadow: 0 8px 30px rgba(201,169,110,0.15); }
+        .card h4 { color: #c9a96e; margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .card .reveal { display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #2a2a4a; font-size: 0.95rem; opacity: 0.85; }
+        .card.open .reveal { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Canvas Section */
+        #dasein-canvas { width: 100%; height: 500px; border-radius: 12px; background: #0d0d1a; border: 1px solid #2a2a4a; display: block; }
+        .canvas-controls { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+        .canvas-controls button {
+            padding: 0.6rem 1.2rem;
+            background: #1a1a2e;
+            border: 1px solid #c9a96e;
+            color: #c9a96e;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .canvas-controls button:hover, .canvas-controls button.active { background: #c9a96e; color: #0a0a0f; }
+
+        /* Quiz */
+        .quiz-box {
+            background: #16162a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .quiz-box .question { font-size: 1.15rem; margin-bottom: 1.5rem; color: #f0e6d3; }
+        .quiz-box .options { display: flex; flex-direction: column; gap: 0.8rem; }
+        .quiz-box .option {
+            padding: 1rem;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-box .option:hover { border-color: #c9a96e; }
+        .quiz-box .option.correct { background: #1a3a1a; border-color: #4a9a4a; }
+        .quiz-box .option.wrong { background: #3a1a1a; border-color: #9a4a4a; }
+        .quiz-box .feedback { margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none; }
+
+        /* Slider */
+        .slider-container { margin: 2rem 0; }
+        .slider-container input[type="range"] { width: 100%; accent-color: #c9a96e; }
+        .slider-label { display: flex; justify-content: space-between; font-size: 0.85rem; opacity: 0.6; margin-top: 0.3rem; }
+        .slider-output { text-align: center; font-size: 1.2rem; color: #c9a96e; margin-top: 1rem; min-height: 3rem; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 2rem; margin: 2rem 0; }
+        .timeline::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #2a2a4a; }
+        .timeline-item { position: relative; margin-bottom: 2rem; padding-left: 1.5rem; }
+        .timeline-item::before { content:''; position: absolute; left: -2.35rem; top: 0.5rem; width: 12px; height: 12px; border-radius: 50%; background: #c9a96e; }
+        .timeline-item h4 { color: #c9a96e; margin-bottom: 0.3rem; }
+
+        /* Nav dots */
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); z-index: 100; }
+        .nav-dots a { display: block; width: 10px; height: 10px; border-radius: 50%; background: #2a2a4a; margin: 0.8rem 0; transition: all 0.3s; }
+        .nav-dots a:hover, .nav-dots a.active { background: #c9a96e; transform: scale(1.3); }
+
+        .highlight { color: #c9a96e; font-weight: bold; }
+        .note { background: #1a1a2e; border-left: 3px solid #c9a96e; padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<nav class="nav-dots" id="navDots"></nav>
+
+<div class="hero" id="sec-hero">
+    <h1>SEIN UND ZEIT</h1>
+    <p>Martin Heideggers Hauptwerk (1927) – interaktiv erklärt. Klicke, spiele, verstehe.</p>
+    <div class="scroll-hint" onclick="document.getElementById('sec-1').scrollIntoView({behavior:'smooth'})">↓</div>
+</div>
+
+<section id="sec-1">
+    <h2>1. Die Grundfrage: Was bedeutet „Sein"?</h2>
+    <p>Heidegger stellt die Frage, die die Philosophie seit den Griechen vergessen hat: <span class="highlight">Was meinen wir eigentlich, wenn wir sagen, etwas „ist"?</span></p>
+    <div class="note">Wir benutzen das Wort „ist" ständig – „der Himmel ist blau", „ich bin froh" – aber wir haben keine Ahnung, was „Sein" selbst bedeutet.</div>
+    
+    <h3>Drei Vorurteile, die uns blockieren:</h3>
+    <div class="card-grid">
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>1. „Sein ist der allgemeinste Begriff"</h4>
+            <p>→ Klick für Heideggers Antwort</p>
+            <div class="reveal">Gerade weil „Sein" so allgemein ist, ist es der <em>dunkelste</em> Begriff. Allgemeinheit heißt nicht Klarheit – im Gegenteil!</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>2. „Sein ist undefinierbar"</h4>
+            <p>→ Klick für Heideggers Antwort</p>
+            <div class="reveal">Stimmt – aber das befreit uns nicht von der Frage! Undefinierbarkeit heißt nur: wir brauchen einen anderen Zugang als klassische Definitionen.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>3. „Sein ist selbstverständlich"</h4>
+            <p>→ Klick für Heideggers Antwort</p>
+            <div class="reveal">Gerade das „Selbstverständliche" ist das größte Rätsel. Dass wir Sein immer schon verstehen, beweist, dass die Frage dringend ist.</div>
+        </div>
+    </div>
+</section>
+
+<section id="sec-2">
+    <h2>2. Dasein – Das Seiende, das wir selbst sind</h2>
+    <p>Heidegger nennt den Menschen <span class="highlight">„Dasein"</span> – nicht „Subjekt", nicht „Bewusstsein", nicht „Seele". Warum?</p>
+    
+    <div class="card-grid">
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>Existenz vor Essenz</h4>
+            <p>Das „Wesen" des Daseins liegt in seiner Existenz</p>
+            <div class="reveal">Du bist nicht zuerst ein „Was" (wie ein Tisch ein Tisch ist), sondern ein „Wie" – du bist deine Möglichkeiten. Dein Sein ist dir aufgegeben.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>Jemeinigkeit</h4>
+            <p>Dasein ist je meines</p>
+            <div class="reveal">Niemand kann dir dein Sein abnehmen. Du bist immer „ich bin" – nie ein austauschbares Exemplar einer Gattung.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>Eigentlichkeit & Uneigentlichkeit</h4>
+            <p>Zwei Grundmodi des Existierens</p>
+            <div class="reveal">Du kannst dich selbst ergreifen (eigentlich) oder dich an das „Man" verlieren (uneigentlich). Beides ist echtes Sein – kein Werturteil!</div>
+        </div>
+    </div>
+</section>
+
+<section id="sec-3">
+    <h2>3. In-der-Welt-sein – Die Grundverfassung</h2>
+    <p>Du bist nie ein isoliertes Subjekt, das erst nachträglich eine Beziehung zur Welt aufnimmt. <span class="highlight">Du bist immer schon in einer Welt.</span></p>
+    
+    <canvas id="dasein-canvas"></canvas>
+    <div class="canvas-controls">
+        <button class="active" onclick="setCanvasMode('world')">Welt & Zeug</button>
+        <button onclick="setCanvasMode('mitsein')">Mitsein</button>
+        <button onclick="setCanvasMode('sorge')">Sorge-Struktur</button>
+    </div>
+    <p id="canvas-explanation" style="margin-top:1rem; min-height: 3rem;"></p>
+</section>
+
+<section id="sec-4">
+    <h2>4. Zuhandenheit vs. Vorhandenheit</h2>
+    <p>Dinge begegnen uns nicht zuerst als neutrale Objekte, sondern als <span class="highlight">Zeug</span> – Werkzeuge in einem Zusammenhang.</p>
+    
+    <div class="slider-container">
+        <label style="display:block; margin-bottom:0.5rem; color:#c9a96e;">Bewege den Regler: Wie begegnest du dem Hammer?</label>
+        <input type="range" min="0" max="100" value="0" id="hammerSlider" oninput="updateHammer(this.value)">
+        <div class="slider-label"><span>Zuhandenheit (im Gebrauch)</span><span>Vorhandenheit (nur anstarren)</span></div>
+        <div class="slider-output" id="hammerOutput">← Bewege den Regler</div>
+    </div>
+
+    <div class="note">
+        <strong>Schlüsselerkenntnis:</strong> Erst wenn der Hammer <em>kaputt</em> geht, fällt er dir als „Ding" auf. Im reibungslosen Gebrauch zieht er sich zurück – er ist „zuhanden", nicht „vorhanden".
+    </div>
+</section>
+
+<section id="sec-5">
+    <h2>5. Das Man – Wer bin ich eigentlich?</h2>
+    <p>Im Alltag bin nicht „ich" es, der entscheidet – sondern <span class="highlight">das Man</span>: man tut, man sagt, man denkt.</p>
+    
+    <div class="quiz-box">
+        <div class="question">❓ Was ist das „Man" bei Heidegger?</div>
+        <div class="options">
+            <div class="option" onclick="checkQuiz(this, false)">A) Die Gesellschaft als Ganzes</div>
+            <div class="option" onclick="checkQuiz(this, false)">B) Eine moralische Verurteilung der Masse</div>
+            <div class="option" onclick="checkQuiz(this, true)">C) Eine Seinsweise des Daseins selbst – das Niemand, dem wir uns ausliefern</div>
+            <div class="option" onclick="checkQuiz(this, false)">D) Das Unbewusste im Sinne Freuds</div>
+        </div>
+        <div class="feedback" id="quizFeedback1"></div>
+    </div>
+
+    <h3>Drei Merkmale des Man:</h3>
+    <ul>
+        <li><strong>Abständigkeit</strong> – ständiger Vergleich mit Anderen</li>
+        <li><strong>Durchschnittlichkeit</strong> – alles Herausragende wird eingeebnet</li>
+        <li><strong>Öffentlichkeit</strong> – regelt, was „man" denkt und tut</li>
+    </ul>
+</section>
+
+<section id="sec-6">
+    <h2>6. Befindlichkeit, Verstehen, Rede</h2>
+    <p>Das „Da" des Daseins wird durch drei gleichursprüngliche Strukturen erschlossen:</p>
+    
+    <div class="card-grid">
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>🎭 Befindlichkeit (Stimmung)</h4>
+            <p>Wie einem ist und wird</p>
+            <div class="reveal">Du bist immer schon gestimmt. Stimmungen sind keine „Gefühle drinnen" – sie erschließen die Welt. In der Angst zeigt sich die Welt als Ganzes. Die Stimmung offenbart deine <em>Geworfenheit</em>: dass du bist, ohne es gewählt zu haben.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>💡 Verstehen (Entwurf)</h4>
+            <p>Sein-können, Möglichkeiten</p>
+            <div class="reveal">Verstehen heißt nicht „intellektuell begreifen", sondern: sich auf Möglichkeiten entwerfen. Du „verstehst" dich auf etwas = du kannst es. Das Dasein ist immer schon voraus – es entwirft sich auf sein Seinkönnen.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>🗣️ Rede (Sprache)</h4>
+            <p>Artikulation der Verständlichkeit</p>
+            <div class="reveal">Rede ist nicht bloß „Sprechen". Sie gliedert das, was in Befindlichkeit und Verstehen erschlossen ist. Hören ist ursprünglicher als Reden – wir hören immer schon den Sinn, nie bloße Geräusche.</div>
+        </div>
+    </div>
+</section>
+
+<section id="sec-7">
+    <h2>7. Angst & Sorge – Das Sein des Daseins</h2>
+    <p>Die <span class="highlight">Angst</span> (nicht Furcht!) enthüllt das Dasein in seiner Grundstruktur:</p>
+    
+    <div class="quiz-box">
+        <div class="question">❓ Wovor ängstet sich die Angst?</div>
+        <div class="options">
+            <div class="option" onclick="checkQuiz2(this, false)">A) Vor einem bestimmten bedrohlichen Ding</div>
+            <div class="option" onclick="checkQuiz2(this, false)">B) Vor dem Tod</div>
+            <div class="option" onclick="checkQuiz2(this, true)">C) Vor dem In-der-Welt-sein als solchem – vor dem Nichts und Nirgends</div>
+            <div class="option" onclick="checkQuiz2(this, false)">D) Vor anderen Menschen</div>
+        </div>
+        <div class="feedback" id="quizFeedback2"></div>
+    </div>
+
+    <h3>Die Sorge-Formel:</h3>
+    <div class="note" style="font-style:normal; font-size:1.1rem; text-align:center;">
+        <strong style="color:#c9a96e; font-size:1.3rem;">Sich-vorweg-schon-sein-in-(der-Welt) als Sein-bei (innerweltlichem Seienden)</strong>
+        <br><br>
+        <span style="opacity:0.8;">= Existenzialität + Faktizität + Verfallen</span>
+    </div>
+    
+    <div class="slider-container">
+        <label style="display:block; margin-bottom:0.5rem; color:#c9a96e;">Erkunde die drei Momente der Sorge:</label>
+        <input type="range" min="0" max="2" value="0" step="1" id="sorgeSlider" oninput="updateSorge(this.value)">
+        <div class="slider-label"><span>Sich-vorweg</span><span>Schon-sein-in</span><span>Sein-bei</span></div>
+        <div class="slider-output" id="sorgeOutput"><strong>Sich-vorweg-sein</strong> = Existenzialität. Du bist immer schon über dich hinaus, auf deine Möglichkeiten hin entworfen.</div>
+    </div>
+</section>
+
+<section id="sec-8">
+    <h2>8. Zeitlichkeit – Der Sinn der Sorge</h2>
+    <p>Die Sorge hat ihren Sinn in der <span class="highlight">Zeitlichkeit</span>. Zeit ist nicht die Uhrzeit, sondern die Art, wie Dasein existiert:</p>
+    
+    <div class="timeline">
+        <div class="timeline-item">
+            <h4>Zukunft (Sich-vorweg)</h4>
+            <p>Das Dasein kommt auf sich selbst zu – es entwirft sich auf Möglichkeiten. Eigentliche Zukunft: Vorlaufen zum Tod.</p>
+        </div>
+        <div class="timeline-item">
+            <h4>Gewesenheit (Schon-sein-in)</h4>
+            <p>Du bist immer schon geworfen – deine Faktizität. Nicht „Vergangenheit" als vorbei, sondern als das, was du immer noch bist.</p>
+        </div>
+        <div class="timeline-item">
+            <h4>Gegenwart (Sein-bei)</h4>
+            <p>Das Begegnenlassen von innerweltlichem Seienden. Uneigentlich: Gegenwärtigen (Verfallen). Eigentlich: der Augenblick.</p>
+        </div>
+    </div>
+    <div class="note">Die drei Ekstasen der Zeitlichkeit sind gleichursprünglich. Keine ist „früher" – sie bilden eine Einheit. Die vulgäre Zeit (Uhrzeit, „jetzt-jetzt-jetzt") ist nur ein abgeleiteter Modus.</div>
+</section>
+
+<section id="sec-9">
+    <h2>9. Sein zum Tode & Eigentlichkeit</h2>
+    <p>Der Tod ist nicht ein Ereignis am Ende des Lebens, sondern eine <span class="highlight">ständige Möglichkeit</span>, die das Dasein als Ganzes bestimmt.</p>
+    
+    <div class="card-grid">
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>☠️ Sein zum Tode</h4>
+            <p>Die eigenste, unbezügliche, unüberholbare Möglichkeit</p>
+            <div class="reveal">Niemand kann für dich sterben. Der Tod vereinzelt dich radikal. Er ist keine „Tatsache", sondern die äußerste Möglichkeit deiner Existenz – die Möglichkeit der Unmöglichkeit.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>📢 Gewissen & Entschlossenheit</h4>
+            <p>Der Ruf der Sorge</p>
+            <div class="reveal">Das Gewissen ruft das Dasein aus dem Man zurück zu sich selbst. Es ruft „schuldig!" – nicht moralisch, sondern: du bist der Grund deines eigenen Nichtseins. Entschlossenheit = das eigentliche Ergreifen dieser Situation.</div>
+        </div>
+        <div class="card" onclick="this.classList.toggle('open')">
+            <h4>⏳ Vorlaufende Entschlossenheit</h4>
+            <p>Eigentliches Ganzseinkönnen</p>
+            <div class="reveal">Wer den Tod als eigenste Möglichkeit vorlaufend ergreift, wird frei für die faktischen Möglichkeiten seines Daseins. Nicht Todessehnsucht – sondern radikale Freiheit im Leben.</div>
+        </div>
+    </div>
+</section>
+
+<section id="sec-10" style="padding-bottom: 6rem;">
+    <h2>10. Zusammenfassung – Die Architektur</h2>
+    <div class="card-grid">
+        <div class="card" style="grid-column: 1/-1; cursor:default;">
+            <h4 style="text-align:center; font-size:1.3rem;">Die Struktur von Sein und Zeit auf einen Blick</h4>
+            <div style="margin-top:1rem; display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <strong style="color:#c9a96e;">Frage:</strong> Was ist der Sinn von Sein?<br><br>
+                    <strong style="color:#c9a96e;">Methode:</strong> Phänomenologie / Hermeneutik<br><br>
+                    <strong style="color:#c9a96e;">Zugang:</strong> Über das Dasein (das Seiende, das Sein versteht)<br><br>
+                    <strong style="color:#c9a96e;">Grundverfassung:</strong> In-der-Welt-sein
+                </div>
+                <div>
+                    <strong style="color:#c9a96e;">Sein des Daseins:</strong> Sorge<br><br>
+                    <strong style="color:#c9a96e;">Sinn der Sorge:</strong> Zeitlichkeit<br><br>
+                    <strong style="color:#c9a96e;">Eigentlichkeit:</strong> Vorlaufende Entschlossenheit<br><br>
+                    <strong style="color:#c9a96e;">Horizont:</strong> Zeit als Sinn von Sein überhaupt (unvollendet!)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="note" style="margin-top:2rem; text-align:center; font-style:normal;">
+        🎯 <strong>Die zentrale Erkenntnis:</strong> Du bist kein Ding unter Dingen. Du bist ein Wesen, dem es in seinem Sein um dieses Sein selbst geht – geworfen in eine Welt, entwerfend auf Möglichkeiten, zeitlich bis in den Grund.
+    </div>
+</section>
+
+<script>
+// Navigation dots
+const sections = ['sec-hero','sec-1','sec-2','sec-3','sec-4','sec-5','sec-6','sec-7','sec-8','sec-9','sec-10'];
+const navDots = document.getElementById('navDots');
+sections.forEach((id, i) => {
+    const a = document.createElement('a');
+    a.href = '#' + id;
+    a.title = i === 0 ? 'Start' : 'Abschnitt ' + i;
+    navDots.appendChild(a);
+});
+window.addEventListener('scroll', () => {
+    const dots = navDots.querySelectorAll('a');
+    sections.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+            dots.forEach(d => d.classList.remove('active'));
+            dots[i].classList.add('active');
+        }
+    });
+});
+
+// Hammer Slider
+function updateHammer(val) {
+    const output = document.getElementById('hammerOutput');
+    const v = parseInt(val);
+    if (v < 20) output.innerHTML = '🔨 <strong>Voll zuhanden:</strong> Du hämmerst – der Hammer „verschwindet" im Gebrauch. Du denkst nicht an ihn, sondern an den Nagel.';
+    else if (v < 40) output.innerHTML = '🔨 <strong>Leicht auffällig:</strong> Der Hammer ist etwas schwer... du merkst ihn, aber arbeitest weiter.';
+    else if (v < 60) output.innerHTML = '⚠️ <strong>Störung:</strong> Der Hammer ist kaputt! Plötzlich „fällt er auf" – er wird zum Gegenstand. Die Verweisung ist gestört.';
+    else if (v < 80) output.innerHTML = '👁️ <strong>Betrachtung:</strong> Du legst den Hammer hin und schaust ihn an. Gewicht, Material, Form – er wird zum „Vorhandenen".';
+    else output.innerHTML = '🔬 <strong>Reine Vorhandenheit:</strong> Der Hammer als physikalisches Objekt: Masse, Ausdehnung, Moleküle. Völlig entweltlicht.';
+}
+
+// Sorge Slider
+function updateSorge(val) {
+    const output = document.getElementById('sorgeOutput');
+    const texts = [
+        '<strong>Sich-vorweg-sein</strong> = Existenzialität. Du bist immer schon über dich hinaus, auf deine Möglichkeiten hin entworfen. (Zukunft)',
+        '<strong>Schon-sein-in-einer-Welt</strong> = Faktizität / Geworfenheit. Du findest dich immer schon in einer Situation vor, die du nicht gewählt hast. (Gewesenheit)',
+        '<strong>Sein-bei innerweltlichem Seienden</strong> = Verfallen. Du gehst auf in der besorgten Welt, verlierst dich an die Dinge und das Man. (Gegenwart)'
+    ];
+    output.innerHTML = texts[parseInt(val)];
+}
+
+// Quiz
+function checkQuiz(el, correct) {
+    const options = el.parentElement.querySelectorAll('.option');
+    options.forEach(o => { o.style.pointerEvents = 'none'; });
+    if (correct) {
+        el.classList.add('correct');
+        document.getElementById('quizFeedback1').style.display = 'block';
+        document.getElementById('quizFeedback1').innerHTML = '✅ Richtig! Das Man ist kein äußerer Feind, sondern eine Seinsweise des Daseins selbst – das Niemand, in das wir uns zerstreuen.';
+        document.getElementById('quizFeedback1').style.background = '#1a3a1a';
+    } else {
+        el.classList.add('wrong');
+        options.forEach(o => { if (o.textContent.includes('C)')) o.classList.add('correct'); });
+        document.getElementById('quizFeedback1').style.display = 'block';
+        document.getElementById('quizFeedback1').innerHTML = '❌ Nicht ganz. Das Man ist eine Seinsweise des Daseins selbst – das Niemand, dem wir uns ausliefern.';
+        document.getElementById('quizFeedback1').style.background = '#3a1a1a';
+    }
+}
+
+function checkQuiz2(el, correct) {
+    const options = el.parentElement.querySelectorAll('.option');
+    options.forEach(o => { o.style.pointerEvents = 'none'; });
+    if (correct) {
+        el.classList.add('correct');
+        document.getElementById('quizFeedback2').style.display = 'block';
+        document.getElementById('quizFeedback2').innerHTML = '✅ Richtig! Die Angst ängstet sich vor dem In-der-Welt-sein als solchem. Das Bedrohende ist nirgends – und gerade deshalb überall. Die Welt sinkt in Unbedeutsamkeit zusammen.';
+        document.getElementById('quizFeedback2').style.background = '#1a3a1a';
+    } else {
+        el.classList.add('wrong');
+        options.forEach(o => { if (o.textContent.includes('C)')) o.classList.add('correct'); });
+        document.getElementById('quizFeedback2').style.display = 'block';
+        document.getElementById('quizFeedback2').innerHTML = '❌ Nicht ganz. Die Angst (anders als Furcht!) hat kein bestimmtes innerweltliches Seiendes als Wovor. Sie ängstet sich vor dem In-der-Welt-sein selbst.';
+        document.getElementById('quizFeedback2').style.background = '#3a1a1a';
+    }
+}
+
+// Canvas visualization
+const canvas = document.getElementById('dasein-canvas');
+const ctx = canvas.getContext('2d');
+let canvasMode = 'world';
+let animFrame;
+let particles = [];
+let mouseX = 0, mouseY = 0;
+
+canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.touches[0].clientX - rect.left;
+    mouseY = e.touches[0].clientY - rect.top;
+});
+
+function resizeCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function setCanvasMode(mode) {
+    canvasMode = mode;
+    document.querySelectorAll('.canvas-controls button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    particles = [];
+    const exp = document.getElementById('canvas-explanation');
+    if (mode === 'world') exp.innerHTML = '🔨 <strong>Welt & Zeug:</strong> Bewege die Maus/den Finger. Das Dasein (gold) ist immer schon bei seinem Zeug (weiß). Die Verweisungen (Linien) bilden die Bewandtnisganzheit. Zeug zieht sich zurück – es verschwindet im Gebrauch.';
+    else if (mode === 'mitsein') exp.innerHTML = '👥 <strong>Mitsein:</strong> Die Anderen (blau) sind immer schon mit-da. Wir begegnen ihnen aus der Welt her – nicht als isolierte Subjekte. Beobachte, wie sie sich am Man (Mitte) orientieren.';
+    else if (mode === 'sorge') exp.innerHTML = '⏳ <strong>Sorge-Struktur:</strong> Sich-vorweg (Zukunft/oben) → Schon-sein-in (Gewesenheit/links) → Sein-bei (Gegenwart/rechts). Die drei Momente bilden die einheitliche Struktur der Sorge.';
+}
+
+function initParticles() {
+    if (particles.length > 0) return;
+    for (let i = 0; i < 25; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 3 + 2,
+            opacity: Math.random() * 0.5 + 0.3
+        });
+    }
+}
+
+function drawWorld() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    initParticles();
+    
+    const cx = mouseX || canvas.width / 2;
+    const cy = mouseY || canvas.height / 2;
+    
+    // Draw Verweisungen (reference connections)
+    particles.forEach((p, i) => {
+        const dist = Math.hypot(p.x - cx, p.y - cy);
+        if (dist < 200) {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(p.x, p.y);
+            ctx.strokeStyle = `rgba(201, 169, 110, ${0.3 * (1 - dist / 200)})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+        // Connect particles to each other (Bewandtnisganzheit)
+        particles.forEach((p2, j) => {
+            if (i >= j) return;
+            const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (d < 100) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - d / 100)})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        });
+    });
+    
+    // Draw Zeug (tools/equipment)
+    particles.forEach(p => {
+        const dist = Math.hypot(p.x - cx, p.y - cy);
+        const opacity = dist < 150 ? 0.2 : p.opacity; // Zuhandenheit: zieht sich zurück in der Nähe
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.fill();
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    });
+    
+    // Draw Dasein
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.fillStyle = '#c9a96e';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(201, 169, 110, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.font = '11px Georgia';
+    ctx.fillStyle = '#c9a96e';
+    ctx.textAlign = 'center';
+    ctx.fillText('Dasein', cx, cy + 32);
+}
+
+function drawMitsein() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() * 0.001;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    
+    // Das Man (center)
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 30, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(100, 100, 140, 0.3)';
+    ctx.fill();
+    ctx.font = '12px Georgia';
+    ctx.fillStyle = '#8888aa';
+    ctx.textAlign = 'center';
+    ctx.fillText('das Man', centerX, centerY + 4);
+    
+    // Others orbiting
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + time * 0.3;
+        const radius = 100 + Math.sin(time + i) * 20;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'rgba(100, 150, 200, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(100, 150, 200, 0.6)';
+        ctx.fill();
+    }
+    
+    // Dasein (follows mouse or default position)
+    const dx = mouseX || centerX + 150;
+    const dy = mouseY || centerY - 50;
+    
+    // Connection to Man
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(dx, dy);
+    ctx.strokeStyle = 'rgba(201, 169, 110, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    ctx.beginPath();
+    ctx.arc(dx, dy, 12, 0, Math.PI * 2);
+    ctx.fillStyle = '#c9a96e';
+    ctx.fill();
+    ctx.font = '11px Georgia';
+    ctx.fillStyle = '#c9a96e';
+    ctx.fillText('Dasein (ich)', dx, dy + 26);
+}
+
+function drawSorge() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() * 0.001;
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    
+    // Three ecstases
+    const points = [
+        { x: cx, y: cy - 140, label: 'Sich-vorweg', sub: '(Zukunft / Existenzialität)', color: '#c9a96e' },
+        { x: cx - 160, y: cy + 100, label: 'Schon-sein-in', sub: '(Gewesenheit / Faktizität)', color: '#7a9a6e' },
+        { x: cx + 160, y: cy + 100, label: 'Sein-bei', sub: '(Gegenwart / Verfallen)', color: '#6e7a9a' }
+    ];
+    
+    // Animated triangle
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    ctx.lineTo(points[1].x, points[1].y);
+    ctx.lineTo(points[2].x, points[2].y);
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(201, 169, 110, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(201, 169, 110, 0.05)';
+    ctx.fill();
+    
+    // Animated pulse along edges
+    const pulsePos = (time % 3) / 3;
+    let px, py;
+    if (pulsePos < 0.33) {
+        const t = pulsePos / 0.33;
+        px = points[0].x + (points[1].x - points[0].x) * t;
+        py = points[0].y + (points[1].y - points[0].y) * t;
+    } else if (pulsePos < 0.66) {
+        const t = (pulsePos - 0.33) / 0.33;
+        px = points[1].x + (points[2].x - points[1].x) * t;
+        py = points[1].y + (points[2].y - points[1].y) * t;
+    } else {
+        const t = (pulsePos - 0.66) / 0.34;
+        px = points[2].x + (points[0].x - points[2].x) * t;
+        py = points[2].y + (points[0].y - points[2].y) * t;
+    }
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#c9a96e';
+    ctx.fill();
+    
+    // Draw nodes
+    points.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 20 + Math.sin(time * 2) * 3, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.7;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        
+        ctx.font = 'bold 13px Georgia';
+        ctx.fillStyle = '#f0e6d3';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.label, p.x, p.y + 40);
+        ctx.font = '11px Georgia';
+        ctx.fillStyle = 'rgba(240, 230, 211, 0.6)';
+        ctx.fillText(p.sub, p.x, p.y + 55);
+    });
+    
+    // Center label
+    ctx.font = 'bold 16px Georgia';
+    ctx.fillStyle = '#c9a96e';
+    ctx.textAlign = 'center';
+    ctx.fillText('SORGE', cx, cy + 10);
+    ctx.font = '11px Georgia';
+    ctx.fillStyle = 'rgba(201, 169, 110, 0.6)';
+    ctx.fillText('(einheitliche Struktur)', cx, cy + 28);
+}
+
+function animate() {
+    if (canvasMode === 'world') drawWorld();
+    else if (canvasMode === 'mitsein') drawMitsein();
+    else if (canvasMode === 'sorge') drawSorge();
+    animFrame = requestAnimationFrame(animate);
+}
+animate();
+
+// Set initial canvas explanation
+document.getElementById('canvas-explanation').innerHTML = '🔨 <strong>Welt & Zeug:</strong> Bewege die Maus/den Finger. Das Dasein (gold) ist immer schon bei seinem Zeug (weiß). Die Verweisungen (Linien) bilden die Bewandtnisganzheit. Zeug zieht sich zurück – es verschwindet im Gebrauch.';
+</script>
+</body>
+</html>
