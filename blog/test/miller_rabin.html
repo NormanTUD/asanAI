@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miller-Rabin Primzahltest – Interaktiv erklärt</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #58a6ff;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #58a6ff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .card h3 {
+            color: #79c0ff;
+            margin: 15px 0 10px;
+            font-size: 1.1em;
+        }
+        .explanation {
+            background: #1c2128;
+            border-left: 4px solid #58a6ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .explanation p { margin-bottom: 8px; }
+        input[type="number"] {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            width: 150px;
+            margin-right: 10px;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88,166,255,0.2);
+        }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background: #2ea043; }
+        button.secondary {
+            background: #21262d;
+            border: 1px solid #30363d;
+        }
+        button.secondary:hover { background: #30363d; }
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .input-row label {
+            color: #8b949e;
+            min-width: 80px;
+        }
+        .step-container {
+            margin-top: 20px;
+        }
+        .step {
+            background: #1c2128;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+        .step.active {
+            border-color: #58a6ff;
+            box-shadow: 0 0 10px rgba(88,166,255,0.15);
+        }
+        .step.pass {
+            border-color: #238636;
+            background: #0d1117;
+        }
+        .step.fail {
+            border-color: #f85149;
+            background: #1c1012;
+        }
+        .step-header {
+            font-weight: bold;
+            color: #79c0ff;
+            margin-bottom: 8px;
+        }
+        .math {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #f0883e;
+        }
+        .result-box {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .result-prime {
+            background: #0d2818;
+            border: 2px solid #238636;
+            color: #3fb950;
+        }
+        .result-composite {
+            background: #2d1012;
+            border: 2px solid #f85149;
+            color: #f85149;
+        }
+        /* Geometrische Visualisierung */
+        .geo-canvas-container {
+            position: relative;
+            margin: 15px 0;
+            text-align: center;
+        }
+        canvas {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #8b949e;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .tree-container {
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        table.decomp {
+            margin: 10px auto;
+            border-collapse: collapse;
+        }
+        table.decomp td {
+            padding: 8px 15px;
+            border: 1px solid #30363d;
+            text-align: center;
+        }
+        table.decomp .highlight {
+            background: #1f3a5f;
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        .arrow { color: #58a6ff; font-size: 1.5em; }
+        .sequence-row {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .seq-item {
+            background: #21262d;
+            border: 1px solid #30363d;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .seq-item.is-one { background: #0d2818; border-color: #238636; color: #3fb950; }
+        .seq-item.is-minus-one { background: #1f2d5f; border-color: #58a6ff; color: #79c0ff; }
+        .seq-item.is-other { background: #2d1012; border-color: #f85149; color: #f85149; }
+        .seq-arrow { color: #484f58; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .card { padding: 15px; }
+            input[type="number"] { width: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Miller-Rabin Primzahltest</h1>
+        <p class="subtitle">Interaktiv erklärt – mit geometrischer Visualisierung zum Nachrechnen</p>
+
+        <!-- Erklärung -->
+        <div class="card">
+            <h2>📖 Was macht dieser Test?</h2>
+            <div class="explanation">
+                <p><strong>Ziel:</strong> Herausfinden, ob eine Zahl <em>n</em> eine Primzahl ist (nur durch 1 und sich selbst teilbar).</p>
+                <p><strong>Idee:</strong> Primzahlen haben besondere mathematische Eigenschaften. Wenn eine Zahl diese Eigenschaften verletzt, ist sie <em>definitiv keine</em> Primzahl. Wenn sie sie erfüllt, ist sie <em>wahrscheinlich</em> eine Primzahl.</p>
+                <p><strong>Analogie:</strong> Stell dir einen Kreis mit <em>n−1</em> Positionen vor. Wenn du von einer Startposition aus immer wieder quadrierst (Position × Position mod n), landest du bei einer Primzahl immer auf vorhersagbare Weise bei 1. Bei zusammengesetzten Zahlen passieren "unmögliche" Sprünge.</p>
+            </div>
+        </div>
+
+        <!-- Schritt 1: Zerlegung -->
+        <div class="card">
+            <h2>⚙️ Schritt 1: Zerlegung von n−1</h2>
+            <div class="explanation">
+                <p>Wir schreiben <strong>n − 1 = 2<sup>s</sup> · d</strong>, wobei <em>d</em> ungerade ist.</p>
+                <p>Das heißt: Wir teilen n−1 so oft wie möglich durch 2, bis eine ungerade Zahl übrig bleibt.</p>
+            </div>
+            <div class="input-row">
+                <label>Zahl n:</label>
+                <input type="number" id="inputN" value="221" min="3" max="9999">
+                <button onclick="startTest()">Test starten</button>
+                <button class="secondary" onclick="document.getElementById('inputN').value=getRandomOdd(); startTest();">Zufällig</button>
+            </div>
+            <div id="decomposition"></div>
+        </div>
+
+        <!-- Schritt 2: Basis wählen -->
+        <div class="card">
+            <h2>🎯 Schritt 2: Basis (Zeuge) wählen</h2>
+            <div class="explanation">
+                <p>Wir wählen eine Zahl <strong>a</strong> (zwischen 2 und n−2) als "Zeugen". Dieser Zeuge wird die Zahl "befragen".</p>
+                <p>Verschiedene Zeugen können unterschiedliche Ergebnisse liefern – je mehr Zeugen bestätigen, desto sicherer ist das Ergebnis.</p>
+            </div>
+            <div class="input-row">
+                <label>Basis a:</label>
+                <input type="number" id="inputA" value="174" min="2">
+                <button onclick="runWitness()">Zeuge befragen</button>
+                <button class="secondary" onclick="autoPickA()">Auto-wählen</button>
+            </div>
+        </div>
+
+        <!-- Schritt 3: Berechnung -->
+        <div class="card">
+            <h2>📐 Schritt 3: Berechnung & Geometrische Visualisierung</h2>
+            <div class="explanation">
+                <p><strong>Geometrische Idee:</strong> Stell dir die Zahlen 0 bis n−1 auf einem Kreis vor (wie eine Uhr mit n−1 Positionen). Die Potenzierung "springt" auf dem Kreis. Bei Primzahlen folgen die Sprünge einem regelmäßigen Muster.</p>
+                <p><strong>Regel für Primzahlen:</strong></p>
+                <p>1️⃣ Entweder a<sup>d</sup> mod n = 1 (wir starten direkt bei 1)</p>
+                <p>2️⃣ Oder eines der a<sup>2<sup>r</sup>·d</sup> mod n = n−1 (wir passieren −1 auf dem Weg)</p>
+                <p>Wenn <em>keines</em> davon zutrifft → n ist <strong>definitiv zusammengesetzt</strong>!</p>
+            </div>
+            <div id="computation"></div>
+            <div class="geo-canvas-container">
+                <canvas id="geoCanvas" width="500" height="500"></canvas>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div> = 1 (Ziel)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> = n−1 (≡ −1)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Zwischenwerte</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#f85149"></div> Verdächtig!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ergebnis -->
+        <div class="card">
+            <h2>✅ Ergebnis</h2>
+            <div id="result"></div>
+        </div>
+
+        <!-- Mehrfachtest -->
+        <div class="card">
+            <h2>🔄 Mehrfach-Test (Sicherheit erhöhen)</h2>
+            <div class="explanation">
+                <p>Ein einzelner Zeuge kann sich "irren" (max. 25% Fehlerwahrscheinlichkeit). Mit <em>k</em> Zeugen sinkt die Fehlerwahrscheinlichkeit auf (1/4)<sup>k</sup>.</p>
+            </div>
+            <div class="input-row">
+                <label>Runden k:</label>
+                <input type="number" id="inputK" value="5" min="1" max="20">
+                <button onclick="multiTest()">Mehrfach testen</button>
+            </div>
+            <div id="multiResult"></div>
+        </div>
+
+        <!-- Handbuch -->
+        <div class="card">
+            <h2>✍️ Zum Nachrechnen per Hand</h2>
+            <div class="explanation">
+                <p><strong>Beispiel: Ist 221 eine Primzahl?</strong></p>
+                <p>1. n−1 = 220 = 2² · 55 → s=2, d=55</p>
+                <p>2. Wähle a=174</p>
+                <p>3. Berechne 174⁵⁵ mod 221:</p>
+                <p>&nbsp;&nbsp;&nbsp;→ Nutze wiederholtes Quadrieren (siehe Schritte oben)</p>
+                <p>4. Quadriere das Ergebnis s-mal und prüfe die Regeln</p>
+                <p><strong>Tipp:</strong> Für die modulare Potenzierung per Hand: Zerlege den Exponenten in Binärdarstellung und quadriere schrittweise!</p>
+            </div>
+            <div id="handCalc"></div>
+        </div>
+    </div>
+
+    <script>
+    // Globale Variablen
+    let currentN = 221;
+    let currentS = 0;
+    let currentD = 0;
+
+    function getRandomOdd() {
+        const candidates = [15, 21, 35, 49, 51, 61, 67, 91, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 221, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 289, 293, 307, 311, 313, 317, 331, 337, 341, 343, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 451, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 561, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887];
+        return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    // Modulare Potenzierung
+    function modPow(base, exp, mod) {
+        if (mod === 1) return 0;
+        let result = 1;
+        base = base % mod;
+        while (exp > 0) {
+            if (exp % 2 === 1) {
+                result = (result * base) % mod;
+            }
+            exp = Math.floor(exp / 2);
+            base = (base * base) % mod;
+        }
+        return result;
+    }
+
+    // Modulare Potenzierung mit Zwischenschritten
+    function modPowSteps(base, exp, mod) {
+        let steps = [];
+        if (mod === 1) return { result: 0, steps: [] };
+        let result = 1;
+        let b = base % mod;
+        let e = exp;
+        let binary = exp.toString(2);
+        
+        while (e > 0) {
+            if (e % 2 === 1) {
+                let oldResult = result;
+                result = (result * b) % mod;
+                steps.push({ bit: 1, base: b, result: result, oldResult: oldResult });
+            } else {
+                steps.push({ bit: 0, base: b, result: result, oldResult: result });
+            }
+            e = Math.floor(e / 2);
+            b = (b * b) % mod;
+        }
+        return { result, steps, binary };
+    }
+
+    // Zerlegung n-1 = 2^s * d
+    function decompose(n) {
+        let nm1 = n - 1;
+        let s = 0;
+        let d = nm1;
+        while (d % 2 === 0) {
+            d = d / 2;
+            s++;
+        }
+        return { s, d, nm1 };
+    }
+
+    function startTest() {
+        let n = parseInt(document.getElementById('inputN').value);
+        if (n < 3 || n % 2 === 0) {
+            document.getElementById('decomposition').innerHTML = 
+                '<p style="color:#f85149">Bitte eine ungerade Zahl ≥ 3 eingeben!</p>';
+            return;
+        }
+        currentN = n;
+        let { s, d, nm1 } = decompose(n);
+        currentS = s;
+        currentD = d;
+
+        // Visualisierung der Zerlegung
+        let html = '<h3>Zerlegung von n−1 = ' + nm1 + '</h3>';
+        html += '<div class="tree-container">';
+        html += '<table class="decomp"><tr>';
+        html += '<td>' + nm1 + '</td><td class="arrow">→</td>';
+        
+        let temp = nm1;
+        let divisions = [];
+        while (temp % 2 === 0) {
+            temp = temp / 2;
+            divisions.push(temp);
+        }
+        
+        for (let i = 0; i < divisions.length; i++) {
+            html += '<td>' + divisions[i] + ' (÷2)</td>';
+            if (i < divisions.length - 1) html += '<td class="arrow">→</td>';
+        }
+        html += '</tr></table>';
+        html += '</div>';
+        
+        html += '<p style="margin-top:15px">Ergebnis: <span class="math">n − 1 = ' + nm1 + ' = 2<sup>' + s + '</sup> · ' + d + '</span></p>';
+        html += '<p>Also: <strong>s = ' + s + '</strong> (Anzahl der Quadrierungsschritte) und <strong>d = ' + d + '</strong> (ungerade Startzahl)</p>';
+        
+        document.getElementById('decomposition').innerHTML = html;
+        
+        // Auto-set a
+        let aMax = n - 2;
+        let aVal = Math.min(parseInt(document.getElementById('inputA').value), aMax);
+        if (aVal < 2) aVal = 2;
+        document.getElementById('inputA').value = aVal;
+        document.getElementById('inputA').max = aMax;
+    }
+
+    function autoPickA() {
+        let n = currentN;
+        if (n < 4) return;
+        let a = 2 + Math.floor(Math.random() * (n - 3));
+        document.getElementById('inputA').value = a;
+        runWitness();
+    }
+
+    function runWitness() {
+        if (!currentN || currentN < 3) { startTest(); }
+        let n = currentN;
+        let s = currentS;
+        let d = currentD;
+        let a = parseInt(document.getElementById('inputA').value);
+
+        if (a < 2 || a > n - 2) {
+            document.getElementById('computation').innerHTML = 
+                '<p style="color:#f85149">Basis a muss zwischen 2 und ' + (n-2) + ' liegen!</p>';
+            return;
+        }
+
+        // Berechne die Sequenz
+        let sequence = [];
+        let x = modPow(a, d, n);
+        sequence.push({ exp: 'd=' + d, value: x, label: 'a^d mod n' });
+
+        for (let r = 0; r < s; r++) {
+            let prev = x;
+            x = (x * x) % n;
+            sequence.push({ exp: '2^' + (r+1) + '·d=' + (Math.pow(2, r+1) * d), value: x, label: 'Quadrierung ' + (r+1) });
+        }
+
+        // Bestimme Ergebnis
+        let isComposite = true;
+        let reason = '';
+        
+        if (sequence[0].value === 1) {
+            isComposite = false;
+            reason = 'a^d ≡ 1 (mod n) – Erste Bedingung erfüllt!';
+        } else if (sequence[0].value === n - 1) {
+            isComposite = false;
+            reason = 'a^d ≡ −1 (mod n) – Zweite Bedingung erfüllt (r=0)!';
+        } else {
+            for (let r = 1; r < s; r++) {
+                if (sequence[r].value === n - 1) {
+                    isComposite = false;
+                    reason = 'a^(2^' + r + '·d) ≡ −1 (mod n) – Zweite Bedingung erfüllt (r=' + r + ')!';
+                    break;
+                }
+            }
+        }
+        
+        if (isComposite) {
+            reason = 'Keine Bedingung erfüllt → n ist ZUSAMMENGESETZT! Zeuge a=' + a + ' beweist es.';
+        }
+
+        // HTML für Berechnung
+        let html = '<h3>Sequenz der Quadrierungen:</h3>';
+        html += '<div class="sequence-row">';
+        for (let i = 0; i < sequence.length; i++) {
+            let cls = 'seq-item';
+            if (sequence[i].value === 1) cls += ' is-one';
+            else if (sequence[i].value === n - 1) cls += ' is-minus-one';
+            else if (isComposite && i === sequence.length - 1) cls += ' is-other';
+            
+            html += '<div class="' + cls + '">';
+            html += '<small>' + sequence[i].label + '</small><br>';
+            html += '<strong>' + sequence[i].value + '</strong>';
+            html += '</div>';
+            if (i < sequence.length - 1) html += '<span class="seq-arrow"> →² </span>';
+        }
+        html += '</div>';
+
+        html += '<div class="step ' + (isComposite ? 'fail' : 'pass') + '" style="margin-top:15px">';
+        html += '<div class="step-header">' + (isComposite ? '❌' : '✅') + ' Bewertung:</div>';
+        html += '<p>' + reason + '</p>';
+        html += '</div>';
+
+        // Detaillierte Handrechnung
+        html += '<h3>Detailrechnung (zum Nachvollziehen):</h3>';
+        html += '<div class="step">';
+        html += '<p>1. <span class="math">a<sup>d</sup> mod n = ' + a + '<sup>' + d + '</sup> mod ' + n + ' = ' + sequence[0].value + '</span></p>';
+        for (let r = 1; r < sequence.length; r++) {
+            html += '<p>' + (r+1) + '. <span class="math">' + sequence[r-1].value + '² mod ' + n + ' = ' + (sequence[r-1].value * sequence[r-1].value) + ' mod ' + n + ' = ' + sequence[r].value + '</span></p>';
+        }
+        html += '</div>';
+
+        document.getElementById('computation').innerHTML = html;
+
+        // Ergebnis
+        let resultHtml = '';
+        if (isComposite) {
+            resultHtml = '<div class="result-box result-composite">❌ ' + n + ' ist KEINE Primzahl!<br><small>Zeuge a=' + a + ' hat es bewiesen.</small></div>';
+        } else {
+            resultHtml = '<div class="result-box result-prime">✅ ' + n + ' ist wahrscheinlich eine Primzahl<br><small>Zeuge a=' + a + ' hat keinen Beweis gegen Primalität gefunden.</small></div>';
+        }
+        document.getElementById('result').innerHTML = resultHtml;
+
+        // Geometrische Visualisierung zeichnen
+        drawGeometric(n, sequence, isComposite);
+    }
+
+    function drawGeometric(n, sequence, isComposite) {
+        const canvas = document.getElementById('geoCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width;
+        const H = canvas.height;
+        const cx = W / 2;
+        const cy = H / 2;
+        const radius = Math.min(W, H) * 0.38;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Bestimme welche Positionen wir zeigen
+        // Bei großem n zeigen wir nur die relevanten Positionen
+        let positions = new Set();
+        positions.add(0);
+        positions.add(1);
+        positions.add(n - 1);
+        for (let item of sequence) {
+            positions.add(item.value);
+        }
+        let posArray = Array.from(positions).sort((a, b) => a - b);
+
+        // Kreis zeichnen
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#30363d';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Beschriftung Mitte
+        ctx.fillStyle = '#484f58';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Zahlenkreis mod ' + n, cx, cy - 15);
+        ctx.fillText('(n−1 = ' + (n-1) + ' Positionen)', cx, cy + 5);
+
+        // Positionen auf dem Kreis zeichnen
+        // Wir verteilen die relevanten Zahlen gleichmäßig, aber mit korrekter Proportion
+        function getAngle(value) {
+            return (value / n) * 2 * Math.PI - Math.PI / 2;
+        }
+
+        function getPos(value) {
+            let angle = getAngle(value);
+            return {
+                x: cx + radius * Math.cos(angle),
+                y: cy + radius * Math.sin(angle)
+            };
+        }
+
+        // Markierungen für 0, 1, n-1
+        let specialPoints = [
+            { val: 0, label: '0', color: '#484f58' },
+            { val: 1, label: '1', color: '#3fb950' },
+            { val: n - 1, label: (n-1) + ' (≡−1)', color: '#58a6ff' }
+        ];
+
+        // Kleine Punkte auf dem Kreis für Orientierung
+        for (let i = 0; i < Math.min(n, 60); i++) {
+            let angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+            let px = cx + radius * Math.cos(angle);
+            let py = cy + radius * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(px, py, 1.5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#21262d';
+            ctx.fill();
+        }
+
+        // Spezielle Punkte
+        for (let sp of specialPoints) {
+            let pos = getPos(sp.val);
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = sp.color;
+            ctx.fill();
+            
+            ctx.fillStyle = sp.color;
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            let labelAngle = getAngle(sp.val);
+            let lx = cx + (radius + 25) * Math.cos(labelAngle);
+            let ly = cy + (radius + 25) * Math.sin(labelAngle);
+            ctx.fillText(sp.label, lx, ly);
+        }
+
+        // Sequenz-Pfad zeichnen
+        let colors = ['#f0883e', '#f0883e', '#f0883e', '#f0883e', '#f0883e', '#f0883e'];
+        
+        for (let i = 0; i < sequence.length; i++) {
+            let pos = getPos(sequence[i].value);
+            let color = '#f0883e';
+            if (sequence[i].value === 1) color = '#3fb950';
+            else if (sequence[i].value === n - 1) color = '#58a6ff';
+            else if (isComposite) color = '#f85149';
+
+            // Punkt zeichnen
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.globalAlpha = 0.8;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Wert beschriften
+            ctx.fillStyle = '#e6edf3';
+            ctx.font = 'bold 11px Courier New';
+            ctx.textAlign = 'center';
+            let labelAngle2 = getAngle(sequence[i].value);
+            let lx2 = cx + (radius - 25) * Math.cos(labelAngle2);
+            let ly2 = cy + (radius - 25) * Math.sin(labelAngle2);
+            ctx.fillText(sequence[i].value, lx2, ly2);
+
+            // Pfeil zum nächsten
+            if (i < sequence.length - 1) {
+                let nextPos = getPos(sequence[i + 1].value);
+                drawArrow(ctx, pos.x, pos.y, nextPos.x, nextPos.y, color);
+            }
+        }
+
+        // Startpunkt markieren
+        if (sequence.length > 0) {
+            let startPos = getPos(sequence[0].value);
+            ctx.beginPath();
+            ctx.arc(startPos.x, startPos.y, 14, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '10px Segoe UI';
+            ctx.fillText('START', startPos.x, startPos.y + 22);
+        }
+
+        // Legende im Canvas
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText('Quadrierungsschritte: a^d → a^(2d) → a^(4d) → ...', 15, H - 15);
+    }
+
+    function drawArrow(ctx, fromX, fromY, toX, toY, color) {
+        let dx = toX - fromX;
+        let dy = toY - fromY;
+        let len = Math.sqrt(dx * dx + dy * dy);
+        if (len < 1) return;
+
+        // Verkürze Start und Ende um Kreisradius
+        let startOffset = 12;
+        let endOffset = 12;
+        let nx = dx / len;
+        let ny = dy / len;
+        
+        let sx = fromX + nx * startOffset;
+        let sy = fromY + ny * startOffset;
+        let ex = toX - nx * endOffset;
+        let ey = toY - ny * endOffset;
+
+        // Gebogener Pfeil
+        let midX = (sx + ex) / 2;
+        let midY = (sy + ey) / 2;
+        // Leichte Krümmung nach innen
+        let perpX = -ny * 20;
+        let perpY = nx * 20;
+        let cpX = midX + perpX;
+        let cpY = midY + perpY;
+
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.quadraticCurveTo(cpX, cpY, ex, ey);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.7;
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+
+        // Pfeilspitze
+        let angle = Math.atan2(ey - cpY, ex - cpX);
+        let headLen = 8;
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - headLen * Math.cos(angle - 0.4), ey - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(ex - headLen * Math.cos(angle + 0.4), ey - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    function multiTest() {
+        let n = currentN;
+        if (!n || n < 3) { startTest(); n = currentN; }
+        let k = parseInt(document.getElementById('inputK').value);
+        
+        let witnesses = [];
+        let isComposite = false;
+        let compositeWitness = -1;
+
+        for (let i = 0; i < k; i++) {
+            let a = 2 + Math.floor(Math.random() * (n - 3));
+            let result = millerRabinSingle(n, a);
+            witnesses.push({ a: a, result: result });
+            if (result === 'composite') {
+                isComposite = true;
+                compositeWitness = a;
+                break;
+            }
+        }
+
+        let html = '<h3>Ergebnisse der ' + witnesses.length + ' Runde(n):</h3>';
+        html += '<div class="sequence-row">';
+        for (let w of witnesses) {
+            let cls = w.result === 'composite' ? 'seq-item is-other' : 'seq-item is-one';
+            html += '<div class="' + cls + '">a=' + w.a + '<br><small>' + 
+                    (w.result === 'composite' ? '❌ Zusammengesetzt!' : '✅ Bestanden') + '</small></div>';
+        }
+        html += '</div>';
+
+        if (isComposite) {
+            html += '<div class="result-box result-composite">❌ ' + n + ' ist KEINE Primzahl!<br><small>Zeuge a=' + compositeWitness + ' hat es bewiesen.</small></div>';
+        } else {
+            let errorProb = Math.pow(0.25, k);
+            html += '<div class="result-box result-prime">✅ ' + n + ' ist wahrscheinlich prim<br><small>Fehlerwahrscheinlichkeit: ≤ (1/4)^' + k + ' = ' + errorProb.toExponential(2) + '</small></div>';
+        }
+
+        document.getElementById('multiResult').innerHTML = html;
+    }
+
+    function millerRabinSingle(n, a) {
+        let { s, d } = decompose(n);
+        let x = modPow(a, d, n);
+        
+        if (x === 1 || x === n - 1) return 'probably_prime';
+        
+        for (let r = 1; r < s; r++) {
+            x = (x * x) % n;
+            if (x === n - 1) return 'probably_prime';
+        }
+        
+        return 'composite';
+    }
+
+    // Initialisierung
+    window.onload = function() {
+        startTest();
+    };
+    </script>
+</body>
+</html>
