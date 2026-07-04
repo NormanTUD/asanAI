@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Also sprach Zarathustra – Interaktive Konzeptvisualisierung</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 20px 0;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: #ffd700;
+            margin: 15px 0 10px 0;
+            font-size: 1.5em;
+        }
+        h3 {
+            color: #ffaa00;
+            margin: 10px 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            backdrop-filter: blur(5px);
+        }
+        .section:hover {
+            border-color: rgba(255,215,0,0.6);
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+        .description {
+            font-style: italic;
+            color: #aaa;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .quote {
+            background: rgba(255,215,0,0.1);
+            border-left: 4px solid #ffd700;
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .control-group label {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        input[type="range"] {
+            width: 200px;
+            accent-color: #ffd700;
+            cursor: pointer;
+        }
+        input[type="number"], input[type="text"], select {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #ffd700;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        button {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            margin: 15px 0;
+        }
+        canvas {
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.4);
+        }
+        .plotly-chart {
+            width: 100%;
+            min-height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: rgba(255,215,0,0.2);
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .controls {
+                flex-direction: column;
+            }
+            input[type="range"] {
+                width: 100%;
+            }
+        }
+        .value-display {
+            font-size: 1.2em;
+            color: #ffd700;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+        }
+        .info-box {
+            background: rgba(255,215,0,0.05);
+            border: 1px dashed rgba(255,215,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        #eternal-return-canvas {
+            cursor: pointer;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px 10px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦅 Also sprach Zarathustra 🐍<br><small style="font-size:0.5em; color:#aaa;">Interaktive Philosophie-Visualisierung nach Friedrich Nietzsche</small></h1>
+
+        <!-- SECTION 1: Die drei Verwandlungen -->
+        <div class="section">
+            <h2>🐪 → 🦁 → 👶 Die drei Verwandlungen des Geistes</h2>
+            <p class="description">
+                Der Geist durchläuft drei Verwandlungen: Vom Kamel (das Schweres trägt und "Du sollst" gehorcht), 
+                zum Löwen (der "Ich will" sagt und Freiheit erkämpft), zum Kind (das unschuldig "Ja" sagt und neu schafft).
+            </p>
+            <div class="quote">
+                „Drei Verwandlungen nenne ich euch des Geistes: wie der Geist zum Kamele wird, und zum Löwen das Kamel, und zum Kinde zuletzt der Löwe."
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Dein Geistes-Zustand:</label>
+                    <input type="range" id="spirit-state" min="0" max="100" value="0" oninput="updateSpiritTransformation()">
+                </div>
+                <div class="control-group">
+                    <label>Phase:</label>
+                    <span id="spirit-phase" class="value-display">Kamel</span>
+                </div>
+                <div class="control-group">
+                    <label>Last des "Du sollst":</label>
+                    <input type="range" id="burden-weight" min="0" max="100" value="80" oninput="updateSpiritTransformation()">
+                </div>
+            </div>
+            
+            <canvas id="transformation-canvas" width="900" height="350"></canvas>
+            
+            <div id="transformation-info" class="info-box">
+                <strong>Kamel-Phase:</strong> Du trägst die Last der Tradition, der Moral, der Pflicht. Du fragst: "Was ist das Schwerste?" und nimmst es auf dich.
+            </div>
+        </div>
+
+        <!-- SECTION 2: Übermensch & Letzter Mensch -->
+        <div class="section">
+            <h2>⚡ Der Übermensch vs. Der letzte Mensch</h2>
+            <p class="description">
+                Der Übermensch ist das Ziel der menschlichen Entwicklung – der Sinn der Erde. 
+                Der letzte Mensch ist sein Gegenteil: bequem, ohne Sehnsucht, ohne Stern.
+            </p>
+            <div class="quote">
+                „Ich lehre euch den Übermenschen. Der Mensch ist Etwas, das überwunden werden soll."<br>
+                „Man muß noch Chaos in sich haben, um einen tanzenden Stern gebären zu können."
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Chaos in dir (Kreativität):</label>
+                    <input type="range" id="chaos-level" min="0" max="100" value="50" oninput="updateUbermensch()">
+                    <span id="chaos-val" class="value-display">50</span>
+                </div>
+                <div class="control-group">
+                    <label>Selbstüberwindung:</label>
+                    <input type="range" id="overcoming-level" min="0" max="100" value="50" oninput="updateUbermensch()">
+                    <span id="overcoming-val" class="value-display">50</span>
+                </div>
+                <div class="control-group">
+                    <label>Behagen/Bequemlichkeit:</label>
+                    <input type="range" id="comfort-level" min="0" max="100" value="50" oninput="updateUbermensch()">
+                    <span id="comfort-val" class="value-display">50</span>
+                </div>
+                <div class="control-group">
+                    <label>Wille zur Macht:</label>
+                    <input type="range" id="will-power" min="0" max="100" value="50" oninput="updateUbermensch()">
+                    <span id="will-val" class="value-display">50</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <div id="ubermensch-chart" class="plotly-chart"></div>
+                </div>
+                <div>
+                    <div id="ubermensch-gauge" class="plotly-chart"></div>
+                    <div id="ubermensch-result" class="info-box" style="margin-top:10px;">
+                        Bewege die Slider, um zu sehen, ob du dem Übermenschen oder dem letzten Menschen näher bist.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Ewige Wiederkunft -->
+        <div class="section">
+            <h2>♾️ Die Ewige Wiederkunft des Gleichen</h2>
+            <p class="description">
+                Der abgründlichste Gedanke Zarathustras: Was wäre, wenn alles – jede Freude, jeder Schmerz – 
+                sich ewig wiederholen würde? Könntest du zu deinem Leben "Ja" sagen?
+            </p>
+            <div class="quote">
+                „Alles geht, alles kommt zurück; ewig rollt das Rad des Seins. Alles stirbt, alles blüht wieder auf, ewig läuft das Jahr des Seins."
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Geschwindigkeit der Wiederkehr:</label>
+                    <input type="range" id="return-speed" min="1" max="10" value="3" oninput="updateEternalReturn()">
+                </div>
+                <div class="control-group">
+                    <label>Lebensereignisse (Anzahl):</label>
+                    <input type="range" id="life-events" min="3" max="20" value="8" oninput="updateEternalReturn()">
+                </div>
+                <div class="control-group">
+                    <label>Dein Ja-Sagen zum Leben:</label>
+                    <input type="range" id="yes-saying" min="0" max="100" value="50" oninput="updateEternalReturn()">
+                    <span id="yes-val" class="value-display">50%</span>
+                </div>
+                <button onclick="toggleEternalReturn()">⏯️ Start/Stop</button>
+            </div>
+
+            <canvas id="eternal-return-canvas" width="900" height="400"></canvas>
+            
+            <div id="eternal-return-info" class="info-box">
+                <strong>Der Test:</strong> Stelle dir vor, ein Dämon sagt dir: "Dieses Leben, wie du es jetzt lebst, wirst du noch einmal und noch unzählige Male leben müssen." – Würdest du dich niederwerfen oder jubeln?
+            </div>
+        </div>
+
+        <!-- SECTION 4: Wille zur Macht -->
+        <div class="section">
+            <h2>💪 Der Wille zur Macht</h2>
+            <p class="description">
+                Nicht bloß Selbsterhaltung, sondern Selbstüberwindung und Wachstum. 
+                Das Leben selbst ist Wille zur Macht – es will sich immer wieder selbst überwinden.
+            </p>
+            <div class="quote">
+                „Wo ich Lebendiges fand, da fand ich Willen zur Macht; und noch im Willen des Dienenden fand ich den Willen, Herr zu sein."
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Schöpferische Kraft:</label>
+                    <input type="range" id="creative-force" min="0" max="100" value="60" oninput="updateWillToPower()">
+                </div>
+                <div class="control-group">
+                    <label>Widerstand/Hindernis:</label>
+                    <input type="range" id="resistance" min="0" max="100" value="40" oninput="updateWillToPower()">
+                </div>
+                <div class="control-group">
+                    <label>Selbstüberwindungs-Zyklen:</label>
+                    <input type="number" id="cycles" min="1" max="10" value="5" oninput="updateWillToPower()">
+                </div>
+            </div>
+
+            <div id="will-to-power-chart" class="plotly-chart"></div>
+        </div>
+
+        <!-- SECTION 5: Wertschätzung & Moral -->
+        <div class="section">
+            <h2>📜 Umwertung aller Werte</h2>
+            <p class="description">
+                Zarathustra lehrt, dass Gut und Böse nicht ewig sind – sie wurden von Menschen geschaffen 
+                und müssen von Schaffenden immer wieder neu geschaffen werden.
+            </p>
+            <div class="quote">
+                „Wahrlich, die Menschen gaben sich alles ihr Gutes und Böses. Wahrlich, sie nahmen es nicht, sie fanden es nicht, nicht fiel es ihnen als Stimme vom Himmel."
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Wähle eine Tugend:</label>
+                    <select id="virtue-select" onchange="updateValues()">
+                        <option value="courage">Tapferkeit</option>
+                        <option value="honesty">Redlichkeit</option>
+                        <option value="creativity">Schöpferkraft</option>
+                        <option value="solitude">Einsamkeit</option>
+                        <option value="compassion">Mitleid</option>
+                        <option value="obedience">Gehorsam</option>
+                        <option value="humility">Demut</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Herren-Moral ↔ Sklaven-Moral:</label>
+                    <input type="range" id="moral-spectrum" min="0" max="100" value="50" oninput="updateValues()">
+                </div>
+                <div class="control-group">
+                    <label>Eigene Wertschätzung (0-100):</label>
+                    <input type="number" id="own-value" min="0" max="100" value="70" oninput="updateValues()">
+                </div>
+                <button onclick="updateValues()">Werte neu schaffen!</button>
+            </div>
+
+            <div id="values-chart" class="plotly-chart"></div>
+            <div id="values-info" class="info-box"></div>
+        </div>
+
+        <!-- SECTION 6: Der Seiltänzer – Mensch als Brücke -->
+        <div class="section">
+            <h2>🎪 Der Mensch als Seil über dem Abgrund</h2>
+            <p class="description">
+                „Der Mensch ist ein Seil, geknüpft zwischen Tier und Übermensch – ein Seil über einem Abgrunde."
+                Interaktiv: Balanciere den Seiltänzer!
+            </p>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Balance (Maus/Touch bewegen):</label>
+                    <span id="balance-display" class="value-display">Mitte</span>
+                </div>
+                <div class="control-group">
+                    <label>Wind (Zufall/Schicksal):</label>
+                    <input type="range" id="wind-force" min="0" max="100" value="30" oninput="updateTightrope()">
+                </div>
+                <div class="control-group">
+                    <label>Mut des Seiltänzers:</label>
+                    <input type="range" id="courage-level" min="1" max="100" value="50" oninput="updateTightrope()">
+                </div>
+                <button onclick="resetTightrope()">🔄 Neustart</button>
+            </div>
+
+            <canvas id="tightrope-canvas" width="900" height="350"></canvas>
+            <div id="tightrope-info" class="info-box">
+                Bewege die Maus über das Canvas, um den Seiltänzer zu balancieren. Er geht vom Tier (links) zum Übermenschen (rechts).
+            </div>
+        </div>
+
+        <!-- SECTION 7: Tod Gottes & Nihilismus -->
+        <div class="section">
+            <h2>⚰️ Gott ist tot – und die Folgen</h2>
+            <p class="description">
+                Der Tod Gottes hinterlässt ein Vakuum. Wie füllt man es? 
+                Nihilismus, neue Werte, oder der Übermensch?
+            </p>
+            <div class="quote">
+                „Dieser alte Heilige hat in seinem Walde noch nichts davon gehört, daß Gott tot ist!"
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Reaktion auf Gottes Tod:</label>
+                    <select id="god-death-reaction" onchange="updateGodDeath()">
+                        <option value="nihilism">Nihilismus ("Alles ist sinnlos")</option>
+                        <option value="lastman">Letzter Mensch ("Wir haben das Glück erfunden")</option>
+                        <option value="creator">Schaffender (Neue Werte schaffen)</option>
+                        <option value="ubermensch">Übermensch (Sinn der Erde)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Stärke der Sinnkrise:</label>
+                    <input type="range" id="crisis-level" min="0" max="100" value="60" oninput="updateGodDeath()">
+                </div>
+            </div>
+
+            <div id="god-death-chart" class="plotly-chart"></div>
+        </div>
+
+        <!-- SECTION 8: Gesamtübersicht -->
+        <div class="section">
+            <h2>🗺️ Konzept-Landkarte: Zarathustras Lehren</h2>
+            <p class="description">
+                Eine interaktive Übersicht aller Kernkonzepte und ihrer Verbindungen.
+            </p>
+            <div id="concept-map" class="plotly-chart" style="min-height:500px;"></div>
+        </div>
+
+    </div>
+
+    <script>
+    // ============================================
+    // SECTION 1: Die drei Verwandlungen
+    // ============================================
+    function updateSpiritTransformation() {
+        const state = parseInt(document.getElementById('spirit-state').value);
+        const burden = parseInt(document.getElementById('burden-weight').value);
+        const canvas = document.getElementById('transformation-canvas');
+        const ctx = canvas.getContext('2d');
+        const info = document.getElementById('transformation-info');
+        const phaseDisplay = document.getElementById('spirit-phase');
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let phase, color, emoji, description;
+        if (state < 33) {
+            phase = 'Kamel';
+            color = '#8B4513';
+            emoji = '🐪';
+            description = `<strong>Kamel-Phase (${state}%):</strong> Du trägst die Last der Tradition. "Du sollst" – ${burden}% Last auf deinen Schultern. Der tragsame Geist kniet nieder und will gut beladen sein. Du fragst: "Was ist das Schwerste?" und nimmst es auf dich.`;
+        } else if (state < 66) {
+            phase = 'Löwe';
+            color = '#DAA520';
+            emoji = '🦁';
+            description = `<strong>Löwen-Phase (${state}%):</strong> "Ich will!" – Du kämpfst gegen den Drachen "Du-sollst". Freiheit sich schaffen zu neuem Schaffen! Aber neue Werte schaffen – das vermag auch der Löwe noch nicht. Last reduziert auf ${Math.max(0, burden - state)}%.`;
+        } else {
+            phase = 'Kind';
+            color = '#FFD700';
+            emoji = '👶';
+            description = `<strong>Kind-Phase (${state}%):</strong> Unschuld und Vergessen, ein Neubeginnen, ein Spiel, ein aus sich rollendes Rad, eine erste Bewegung, ein heiliges Ja-sagen. Die Last ist überwunden (${Math.max(0, burden - state)}%).`;
+        }
+        
+        phaseDisplay.textContent = `${emoji} ${phase}`;
+        info.innerHTML = description;
+        
+        // Draw the transformation path
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, '#8B4513');
+        gradient.addColorStop(0.33, '#8B4513');
+        gradient.addColorStop(0.5, '#DAA520');
+        gradient.addColorStop(0.66, '#DAA520');
+        gradient.addColorStop(0.83, '#FFD700');
+        gradient.addColorStop(1, '#FFD700');
+        
+        // Background path
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = 3;
+        ctx.moveTo(50, 175);
+        ctx.bezierCurveTo(250, 280, 450, 70, 650, 175);
+        ctx.lineTo(850, 175);
+        ctx.stroke();
+        
+        // Animated path
+        ctx.beginPath();
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 5;
+        ctx.setLineDash([]);
+        
+        const progress = state / 100;
+        const steps = Math.floor(progress * 100);
+        
+        for (let i = 0; i <= steps; i++) {
+            const t = i / 100;
+            const x = 50 + t * 800;
+            let y;
+            if (t < 0.33) {
+                y = 175 + Math.sin(t * Math.PI * 3) * 50 + (burden / 100) * 50 * (1 - t * 3);
+            } else if (t < 0.66) {
+                y = 175 - Math.sin((t - 0.33) * Math.PI * 2) * 60;
+            } else {
+                y = 175 - 60 + Math.sin((t - 0.66) * Math.PI * 4) * 20;
+            }
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        
+        // Draw phases
+        const phases = [
+            { x: 150, label: '🐪 KAMEL', sub: '"Du sollst"', color: '#8B4513' },
+            { x: 450, label: '🦁 LÖWE', sub: '"Ich will"', color: '#DAA520' },
+            { x: 750, label: '👶 KIND', sub: '"Ja-sagen"', color: '#FFD700' }
+        ];
+        
+        phases.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.font = 'bold 18px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(p.label, p.x, 30);
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText(p.sub, p.x, 50);
+        });
+        
+        // Draw current position marker
+        const markerX = 50 + progress * 800;
+        let markerY;
+        if (progress < 0.33) {
+            markerY = 175 + Math.sin(progress * Math.PI * 3) * 50 + (burden / 100) * 50 * (1 - progress * 3);
+        } else if (progress < 0.66) {
+            markerY = 175 - Math.sin((progress - 0.33) * Math.PI * 2) * 60;
+        } else {
+            markerY = 175 - 60 + Math.sin((progress - 0.66) * Math.PI * 4) * 20;
+        }
+        
+        ctx.beginPath();
+        ctx.arc(markerX, markerY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.font = '20px serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(emoji, markerX, markerY + 7);
+        
+        // Draw burden visualization
+        if (state < 66) {
+            const effectiveBurden = Math.max(0, burden - state);
+            ctx.fillStyle = 'rgba(139, 69, 19, 0.3)';
+            ctx.fillRect(50, 290, effectiveBurden * 3, 20);
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(50, 290, effectiveBurden * 3, 20);
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Georgia';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Last: ${effectiveBurden}%`, 55, 305);
+        }
+        
+        // Dragon "Du-sollst" in lion phase
+        if (state >= 33 && state < 66) {
+            ctx.font = '30px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🐉', 550, 300);
+            ctx.font = '12px Georgia';
+            ctx.fillStyle = '#ff4444';
+            ctx.fillText('"Du-sollst!" Drache', 550, 325);
+        }
+    }
+
+    // ============================================
+    // SECTION 2: Übermensch
+    // ============================================
+    function updateUbermensch() {
+        const chaos = parseInt(document.getElementById('chaos-level').value);
+        const overcoming = parseInt(document.getElementById('overcoming-level').value);
+        const comfort = parseInt(document.getElementById('comfort-level').value);
+        const willPower = parseInt(document.getElementById('will-power').value);
+        
+        document.getElementById('chaos-val').textContent = chaos;
+        document.getElementById('overcoming-val').textContent = overcoming;
+        document.getElementById('comfort-val').textContent = comfort;
+        document.getElementById('will-val').textContent = willPower;
+        
+        // Calculate Übermensch score
+        const ubermenschScore = (chaos * 0.25 + overcoming * 0.3 + (100 - comfort) * 0.2 + willPower * 0.25);
+        const lastManScore = 100 - ubermenschScore;
+        
+        // Radar chart
+        const radarData = [{
+            type: 'scatterpolar',
+            r: [chaos, overcoming, 100 - comfort, willPower, chaos],
+            theta: ['Chaos/Kreativität', 'Selbstüberwindung', 'Unbehagen', 'Wille zur Macht', 'Chaos/Kreativität'],
+            fill: 'toself',
+            fillcolor: 'rgba(255,215,0,0.2)',
+            line: { color: '#ffd700' },
+            name: 'Übermensch-Faktoren'
+        }];
+
+        Plotly.newPlot('ubermensch-chart', radarData, {
+            polar: {
+                radialaxis: { visible: true, range: [0, 100], color: '#aaa' },
+                angularaxis: { color: '#aaa' },
+                bgcolor: 'rgba(0,0,0,0)'
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#e0e0e0' },
+            showlegend: false,
+            margin: { t: 30, b: 30 }
+        }, {responsive: true});
+
+        // Gauge
+        const gaugeData = [{
+            type: 'indicator',
+            mode: 'gauge+number+delta',
+            value: ubermenschScore,
+            title: { text: 'Übermensch-Score', font: { color: '#ffd700', size: 16 } },
+            gauge: {
+                axis: { range: [0, 100], tickcolor: '#aaa' },
+                bar: { color: ubermenschScore > 60 ? '#ffd700' : '#ff4444' },
+                bgcolor: 'rgba(0,0,0,0.3)',
+                bordercolor: '#555',
+                steps: [
+                    { range: [0, 30], color: 'rgba(255,68,68,0.3)' },
+                    { range: [30, 60], color: 'rgba(255,165,0,0.3)' },
+                    { range: [60, 100], color: 'rgba(255,215,0,0.3)' }
+                ],
+                threshold: {
+                    line: { color: '#fff', width: 3 },
+                    thickness: 0.75,
+                    value: 50
+                }
+            }
+        }];
+
+        Plotly.newPlot('ubermensch-gauge', gaugeData, {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#e0e0e0' },
+            margin: { t: 60, b: 20, l: 30, r: 30 }
+        }, {responsive: true});
+
+        // Result text
+        const resultDiv = document.getElementById('ubermensch-result');
+        if (ubermenschScore > 70) {
+            resultDiv.innerHTML = `<strong>⚡ Nahe am Übermenschen (${ubermenschScore.toFixed(0)}%)</strong><br>Du hast Chaos in dir, du überwindest dich, du sagst Ja zum Leben! "Man muss noch Chaos in sich haben, um einen tanzenden Stern gebären zu können."`;
+        } else if (ubermenschScore > 40) {
+            resultDiv.innerHTML = `<strong>🌗 Auf dem Weg (${ubermenschScore.toFixed(0)}%)</strong><br>Du bist ein Seil zwischen Tier und Übermensch. Mehr Selbstüberwindung, weniger Behagen! "Der Mensch ist etwas, das überwunden werden soll."`;
+        } else {
+            resultDiv.innerHTML = `<strong>😶 Nahe am letzten Menschen (${ubermenschScore.toFixed(0)}%)</strong><br>"Wir haben das Glück erfunden" – sagen die letzten Menschen und blinzeln. Zu viel Bequemlichkeit, zu wenig Chaos!`;
+        }
+    }
+
+    // ============================================
+    // SECTION 3: Ewige Wiederkunft
+    // ============================================
+    let eternalReturnRunning = false;
+    let eternalReturnAngle = 0;
+    let eternalReturnAnimId = null;
+
+    function toggleEternalReturn() {
+        eternalReturnRunning = !eternalReturnRunning;
+        if (eternalReturnRunning) {
+            animateEternalReturn();
+        } else {
+            cancelAnimationFrame(eternalReturnAnimId);
+        }
+    }
+
+    function updateEternalReturn() {
+        document.getElementById('yes-val').textContent = document.getElementById('yes-saying').value + '%';
+        drawEternalReturn();
+    }
+
+    function animateEternalReturn() {
+        if (!eternalReturnRunning) return;
+        const speed = parseInt(document.getElementById('return-speed').value);
+        eternalReturnAngle += speed * 0.02;
+        drawEternalReturn();
+        eternalReturnAnimId = requestAnimationFrame(animateEternalReturn);
+    }
+
+    function drawEternalReturn() {
+        const canvas = document.getElementById('eternal-return-canvas');
+        const ctx = canvas.getContext('2d');
+        const numEvents = parseInt(document.getElementById('life-events').value);
+        const yesSaying = parseInt(document.getElementById('yes-saying').value);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 150;
+
+        // Draw the eternal circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.3 + yesSaying / 200})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Draw infinity symbol hint
+        ctx.font = '20px serif';
+        ctx.fillStyle = 'rgba(255,215,0,0.5)';
+        ctx.textAlign = 'center';
+        ctx.fillText('♾️', centerX, centerY - radius - 20);
+
+        // Draw life events on the circle
+        const eventColors = ['#ff6b6b', '#ffd700', '#51cf66', '#339af0', '#cc5de8', '#ff922b', '#20c997', '#f06595'];
+        const eventLabels = ['Geburt', 'Freude', 'Schmerz', 'Liebe', 'Verlust', 'Schöpfung', 'Einsamkeit', 'Erkenntnis', 'Kampf', 'Sieg', 'Niederlage', 'Tod', 'Wiedergeburt', 'Tanz', 'Stille', 'Feuer', 'Eis', 'Licht', 'Dunkel', 'Ewigkeit'];
+
+        for (let i = 0; i < numEvents; i++) {
+            const angle = (i / numEvents) * Math.PI * 2 + eternalReturnAngle;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            const color = eventColors[i % eventColors.length];
+
+            // Event dot
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            // Event label
+            const labelX = centerX + Math.cos(angle) * (radius + 30);
+            const labelY = centerY + Math.sin(angle) * (radius + 30);
+            ctx.font = '11px Georgia';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.fillText(eventLabels[i % eventLabels.length], labelX, labelY);
+        }
+
+        // Draw the "current moment" marker
+        const currentAngle = eternalReturnAngle;
+        const currentX = centerX + Math.cos(currentAngle) * radius;
+        const currentY = centerY + Math.sin(currentAngle) * radius;
+
+        ctx.beginPath();
+        ctx.arc(currentX, currentY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.fill();
+        ctx.font = '12px serif';
+        ctx.fillStyle = '#1a1a2e';
+        ctx.textAlign = 'center';
+        ctx.fillText('JETZT', currentX, currentY + 4);
+
+        // Center text
+        ctx.font = 'bold 14px Georgia';
+        ctx.fillStyle = '#ffd700';
+        ctx.textAlign = 'center';
+        ctx.fillText('Ewige Wiederkunft', centerX, centerY - 10);
+
+        // Yes-saying visualization
+        const yesColor = yesSaying > 70 ? '#51cf66' : yesSaying > 40 ? '#ffd700' : '#ff6b6b';
+        ctx.font = '12px Georgia';
+        ctx.fillStyle = yesColor;
+        ctx.fillText(`Ja-Sagen: ${yesSaying}%`, centerX, centerY + 15);
+
+        if (yesSaying > 70) {
+            ctx.fillText('"Noch einmal! Noch einmal!"', centerX, centerY + 35);
+        } else if (yesSaying > 40) {
+            ctx.fillText('"War das das Leben?"', centerX, centerY + 35);
+        } else {
+            ctx.fillText('"Ewig dies wieder?"', centerX, centerY + 35);
+        }
+
+        // Spiral trails
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255,215,0,${yesSaying / 300})`;
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 100; i++) {
+            const trailAngle = eternalReturnAngle - i * 0.05;
+            const trailRadius = radius - i * 0.3;
+            const tx = centerX + Math.cos(trailAngle) * trailRadius;
+            const ty = centerY + Math.sin(trailAngle) * trailRadius;
+            if (i === 0) ctx.moveTo(tx, ty);
+            else ctx.lineTo(tx, ty);
+        }
+        ctx.stroke();
+    }
+
+    // ============================================
+    // SECTION 4: Wille zur Macht
+    // ============================================
+    function updateWillToPower() {
+        const creative = parseInt(document.getElementById('creative-force').value);
+        const resistance = parseInt(document.getElementById('resistance').value);
+        const cycles = parseInt(document.getElementById('cycles').value);
+
+        const xValues = [];
+        const growthValues = [];
+        const resistanceValues = [];
+        const overcomingValues = [];
+
+        for (let i = 0; i <= cycles * 20; i++) {
+            const x = i / 20;
+            xValues.push(x);
+
+            // Growth through overcoming resistance
+            const baseGrowth = creative * (1 - Math.exp(-x * 0.5));
+            const resistanceEffect = resistance * Math.sin(x * Math.PI) * 0.5 * Math.exp(-x * 0.2);
+            const overcoming = baseGrowth * (1 + 0.3 * Math.sin(x * Math.PI * 2)) - resistanceEffect * 0.3;
+
+            growthValues.push(baseGrowth);
+            resistanceValues.push(resistanceEffect + 30);
+            overcomingValues.push(Math.max(0, overcoming));
+        }
+
+        const traces = [
+            {
+                x: xValues,
+                y: growthValues,
+                name: 'Schöpferische Kraft',
+                line: { color: '#ffd700', width: 3 },
+                fill: 'tonexty',
+                fillcolor: 'rgba(255,215,0,0.1)'
+            },
+            {
+                x: xValues,
+                y: resistanceValues,
+                name: 'Widerstand',
+                line: { color: '#ff6b6b', width: 2, dash: 'dash' }
+            },
+            {
+                x: xValues,
+                y: overcomingValues,
+                name: 'Selbstüberwindung (Wille zur Macht)',
+                line: { color: '#51cf66', width: 3 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(81,207,102,0.1)'
+            }
+        ];
+
+        Plotly.newPlot('will-to-power-chart', traces, {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0.2)',
+            font: { color: '#e0e0e0' },
+            xaxis: { title: 'Selbstüberwindungs-Zyklen', color: '#aaa', gridcolor: 'rgba(255,255,255,0.1)' },
+            yaxis: { title: 'Kraft / Wachstum', color: '#aaa', gridcolor: 'rgba(255,255,255,0.1)' },
+            legend: { x: 0, y: 1.15, orientation: 'h' },
+            margin: { t: 40, b: 60 }
+        }, {responsive: true});
+    }
+
+    // ============================================
+    // SECTION 5: Umwertung aller Werte
+    // ============================================
+    function updateValues() {
+        const virtue = document.getElementById('virtue-select').value;
+        const moralSpectrum = parseInt(document.getElementById('moral-spectrum').value);
+        const ownValue = parseInt(document.getElementById('own-value').value);
+
+        const virtueData = {
+            courage: { herren: 95, sklaven: 20, zarathustra: 90, name: 'Tapferkeit' },
+            honesty: { herren: 80, sklaven: 30, zarathustra: 95, name: 'Redlichkeit' },
+            creativity: { herren: 85, sklaven: 15, zarathustra: 100, name: 'Schöpferkraft' },
+            solitude: { herren: 70, sklaven: 10, zarathustra: 90, name: 'Einsamkeit' },
+            compassion: { herren: 20, sklaven: 95, zarathustra: 40, name: 'Mitleid' },
+            obedience: { herren: 10, sklaven: 90, zarathustra: 5, name: 'Gehorsam' },
+            humility: { herren: 15, sklaven: 95, zarathustra: 10, name: 'Demut' }
+        };
+
+        const v = virtueData[virtue];
+        const currentValue = v.herren * (moralSpectrum / 100) + v.sklaven * (1 - moralSpectrum / 100);
+
+        const traces = [{
+            type: 'bar',
+            x: ['Herren-Moral', 'Sklaven-Moral', 'Zarathustra', 'Deine Wertung'],
+            y: [v.herren, v.sklaven, v.zarathustra, ownValue],
+            marker: {
+                color: ['#ffd700', '#8888ff', '#ff6b6b', '#51cf66'],
+                line: { color: '#fff', width: 1 }
+            },
+            text: [v.herren + '%', v.sklaven + '%', v.zarathustra + '%', ownValue + '%'],
+            textposition: 'outside',
+            textfont: { color: '#fff' }
+        }];
+
+        Plotly.newPlot('values-chart', traces, {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0.2)',
+            font: { color: '#e0e0e0' },
+            title: { text: `Wertung: "${v.name}"`, font: { color: '#ffd700' } },
+            yaxis: { range: [0, 110], gridcolor: 'rgba(255,255,255,0.1)' },
+            xaxis: { color: '#aaa' },
+            margin: { t: 60, b: 40 }
+        }, {responsive: true});
+
+        // Info text
+        const infoDiv = document.getElementById('values-info');
+        const moralType = moralSpectrum > 60 ? 'Herren-Moral' : moralSpectrum < 40 ? 'Sklaven-Moral' : 'Mischung';
+        infoDiv.innerHTML = `<strong>Dein Moral-Typ:</strong> ${moralType} (${moralSpectrum}%)<br>
+        <strong>Zarathustra sagt:</strong> "Wahrlich, die Menschen gaben sich alles ihr Gutes und Böses. Nicht fiel es ihnen als Stimme vom Himmel." – Werte sind menschengemacht und müssen immer wieder neu geschaffen werden!<br>
+        <em>Deine Wertung von "${v.name}": ${ownValue}% – Bist du ein Schaffender neuer Werte?</em>`;
+    }
+
+    // ============================================
+    // SECTION 6: Seiltänzer
+    // ============================================
+    let tightropeX = 100;
+    let tightropeBalance = 0;
+    let tightropeFallen = false;
+    let tightropeProgress = 0;
+
+    function updateTightrope() {
+        drawTightrope();
+    }
+
+    function resetTightrope() {
+        tightropeX = 100;
+        tightropeBalance = 0;
+        tightropeFallen = false;
+        tightropeProgress = 0;
+        drawTightrope();
+    }
+
+    function drawTightrope() {
+        const canvas = document.getElementById('tightrope-canvas');
+        const ctx = canvas.getContext('2d');
+        const wind = parseInt(document.getElementById('wind-force').value);
+        const courage = parseInt(document.getElementById('courage-level').value);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw abyss
+        const gradient = ctx.createLinearGradient(0, 250, 0, canvas.height);
+        gradient.addColorStop(0, 'rgba(0,0,0,0)');
+        gradient.addColorStop(1, 'rgba(100,0,0,0.5)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 250, canvas.width, canvas.height - 250);
+
+        // Draw towers
+        ctx.fillStyle = '#444';
+        ctx.fillRect(30, 100, 60, 250);
+        ctx.fillRect(810, 100, 60, 250);
+
+        // Labels
+        ctx.font = 'bold 14px Georgia';
+        ctx.fillStyle = '#ff6b6b';
+        ctx.textAlign = 'center';
+        ctx.fillText('🐒 TIER', 60, 90);
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText('⚡ ÜBERMENSCH', 840, 90);
+
+        // Draw rope
+        ctx.beginPath();
+        ctx.moveTo(90, 200);
+        ctx.lineTo(810, 200);
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Abyss label
+        ctx.font = '12px Georgia';
+        ctx.fillStyle = '#ff4444';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚠️ ABGRUND ⚠️', canvas.width / 2, 320);
+
+        if (!tightropeFallen) {
+            // Wind effect
+            const windEffect = (Math.random() - 0.5) * wind * 0.02;
+            tightropeBalance += windEffect;
+            tightropeBalance *= 0.95; // damping based on courage
+            tightropeBalance = Math.max(-1, Math.min(1, tightropeBalance));
+
+            // Draw walker
+            const walkerY = 200 + tightropeBalance * 50;
+            const walkerLean = tightropeBalance * 30;
+
+            ctx.save();
+            ctx.translate(tightropeX, walkerY);
+            ctx.rotate(walkerLean * Math.PI / 180);
+
+            // Body
+            ctx.beginPath();
+            ctx.arc(0, -25, 10, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffd700';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(0, -15);
+            ctx.lineTo(0, 15);
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Balance pole
+            ctx.beginPath();
+            ctx.moveTo(-30, 0);
+            ctx.lineTo(30, 0);
+            ctx.strokeStyle = '#aaa';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Legs
+            ctx.beginPath();
+            ctx.moveTo(0, 15);
+            ctx.lineTo(-8, 30);
+            ctx.moveTo(0, 15);
+            ctx.lineTo(8, 30);
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.restore();
+
+            // Progress
+            tightropeProgress = ((tightropeX - 100) / 700) * 100;
+            document.getElementById('balance-display').textContent =
+                Math.abs(tightropeBalance) < 0.3 ? '✓ Stabil' :
+                Math.abs(tightropeBalance) < 0.7 ? '⚠️ Wackelig' : '❌ Gefahr!';
+
+            // Check if fallen
+            if (Math.abs(tightropeBalance) > 0.95) {
+                tightropeFallen = true;
+                document.getElementById('tightrope-info').innerHTML = '<strong style="color:#ff4444;">Gefallen!</strong> "Ein gefährliches Hinüber, ein gefährliches Auf-dem-Wege, ein gefährliches Zurückblicken, ein gefährliches Schaudern und Stehenbleiben." – Klicke Neustart!';
+            }
+        } else {
+            ctx.font = '30px serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('💀', tightropeX, 300);
+        }
+
+        // Progress bar
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillRect(100, 20, 700, 15);
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(100, 20, tightropeProgress * 7, 15);
+        ctx.font = '10px Georgia';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Fortschritt: ${tightropeProgress.toFixed(0)}%`, 450, 32);
+    }
+
+    // Mouse interaction for tightrope
+    document.getElementById('tightrope-canvas').addEventListener('mousemove', function(e) {
+        if (tightropeFallen) return;
+        const rect = this.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const courage = parseInt(document.getElementById('courage-level').value);
+
+        // Move walker forward based on mouse X
+        tightropeX = Math.max(100, Math.min(800, mouseX));
+
+        // Balance based on mouse Y relative to rope
+        const mouseY = e.clientY - rect.top;
+        const ropeY = 200;
+        tightropeBalance += (mouseY - ropeY) * 0.001 * (100 - courage) / 100;
+
+        drawTightrope();
+    });
+
+    // ============================================
+    // SECTION 7: Tod Gottes
+    // ============================================
+    function updateGodDeath() {
+        const reaction = document.getElementById('god-death-reaction').value;
+        const crisis = parseInt(document.getElementById('crisis-level').value);
+
+        const scenarios = {
+            nihilism: {
+                meaning: 5, creativity: 10, freedom: 30, despair: 90, growth: 5,
+                desc: 'Nihilismus: "Alles ist gleich, es lohnt sich nichts, Wissen würgt." – Der Wahrsager'
+            },
+            lastman: {
+                meaning: 20, creativity: 5, freedom: 10, despair: 20, growth: 0,
+                desc: 'Letzter Mensch: "Wir haben das Glück erfunden" – und blinzelt. Kein Stern mehr.'
+            },
+            creator: {
+                meaning: 70, creativity: 90, freedom: 80, despair: 30, growth: 75,
+                desc: 'Schaffender: Neue Werte auf neue Tafeln schreiben! "Schätzen ist Schaffen!"'
+            },
+            ubermensch: {
+                meaning: 95, creativity: 100, freedom: 100, despair: 5, growth: 100,
+                desc: 'Übermensch: Der Sinn der Erde! "Tot sind alle Götter: nun wollen wir, daß der Übermensch lebe."'
+            }
+        };
+
+        const s = scenarios[reaction];
+        const crisisFactor = crisis / 100;
+
+        const traces = [{
+            type: 'scatterpolar',
+            r: [
+                s.meaning * (1 - crisisFactor * 0.3),
+                s.creativity * (1 - crisisFactor * 0.2),
+                s.freedom,
+                100 - s.despair * crisisFactor,
+                s.growth * (1 - crisisFactor * 0.4),
+                s.meaning * (1 - crisisFactor * 0.3)
+            ],
+            theta: ['Sinn', 'Schöpferkraft', 'Freiheit', 'Lebensbejahung', 'Wachstum', 'Sinn'],
+            fill: 'toself',
+            fillcolor: reaction === 'ubermensch' ? 'rgba(255,215,0,0.3)' :
+                       reaction === 'creator' ? 'rgba(81,207,102,0.3)' :
+                       reaction === 'nihilism' ? 'rgba(255,68,68,0.3)' : 'rgba(136,136,136,0.3)',
+            line: { color: reaction === 'ubermensch' ? '#ffd700' : reaction === 'creator' ? '#51cf66' : reaction === 'nihilism' ? '#ff6b6b' : '#888' }
+        }];
+
+        Plotly.newPlot('god-death-chart', traces, {
+            polar: {
+                radialaxis: { visible: true, range: [0, 100], color: '#aaa' },
+                angularaxis: { color: '#aaa' },
+                bgcolor: 'rgba(0,0,0,0)'
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#e0e0e0' },
+            title: { text: s.desc, font: { color: '#ffd700', size: 13 } },
+            showlegend: false,
+            margin: { t: 80, b: 30 }
+        }, {responsive: true});
+    }
+
+    // ============================================
+    // SECTION 8: Konzept-Landkarte
+    // ============================================
+    function drawConceptMap() {
+        const nodes = [
+            { name: 'Übermensch', x: 0.5, y: 0.1, color: '#ffd700', size: 30 },
+            { name: 'Ewige Wiederkunft', x: 0.8, y: 0.3, color: '#cc5de8', size: 25 },
+            { name: 'Wille zur Macht', x: 0.2, y: 0.3, color: '#ff6b6b', size: 25 },
+            { name: 'Drei Verwandlungen', x: 0.15, y: 0.6, color: '#8B4513', size: 22 },
+            { name: 'Tod Gottes', x: 0.5, y: 0.45, color: '#888', size: 22 },
+            { name: 'Umwertung der Werte', x: 0.85, y: 0.6, color: '#51cf66', size: 22 },
+            { name: 'Letzter Mensch', x: 0.5, y: 0.85, color: '#555', size: 20 },
+            { name: 'Selbstüberwindung', x: 0.35, y: 0.7, color: '#ff922b', size: 20 },
+            { name: 'Ja-Sagen', x: 0.65, y: 0.7, color: '#20c997', size: 20 },
+            { name: 'Nihilismus', x: 0.3, y: 0.9, color: '#444', size: 18 },
+            { name: 'Schaffender', x: 0.7, y: 0.9, color: '#339af0', size: 18 }
+        ];
+
+        const edges = [
+            [0, 1], [0, 2], [0, 4], [0, 6], [1, 8], [2, 3], [2, 7],
+            [3, 7], [4, 5], [4, 6], [4, 9], [5, 10], [7, 0], [8, 1],
+            [9, 6], [10, 0], [10, 5]
+        ];
+
+        // Edge traces
+        const edgeX = [];
+        const edgeY = [];
+        edges.forEach(([from, to]) => {
+            edgeX.push(nodes[from].x, nodes[to].x, null);
+            edgeY.push(nodes[from].y, nodes[to].y, null);
+        });
+
+        const edgeTrace = {
+            x: edgeX, y: edgeY,
+            mode: 'lines',
+            line: { color: 'rgba(255,215,0,0.2)', width: 1 },
+            hoverinfo: 'none'
+        };
+
+        const nodeTrace = {
+            x: nodes.map(n => n.x),
+            y: nodes.map(n => n.y),
+            mode: 'markers+text',
+            marker: {
+                size: nodes.map(n => n.size),
+                color: nodes.map(n => n.color),
+                line: { color: '#fff', width: 1 }
+            },
+            text: nodes.map(n => n.name),
+            textposition: 'top center',
+            textfont: { color: '#fff', size: 11 },
+            hoverinfo: 'text'
+        };
+
+        Plotly.newPlot('concept-map', [edgeTrace, nodeTrace], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0.2)',
+            font: { color: '#e0e0e0' },
+            xaxis: { visible: false, range: [-0.05, 1.05] },
+            yaxis: { visible: false, range: [-0.05, 1.05], autorange: false },
+            showlegend: false,
+            margin: { t: 20, b: 20, l: 20, r: 20 },
+            annotations: nodes.map(n => ({
+                x: n.x, y: n.y - 0.05,
+                text: '',
+                showarrow: false
+            }))
+        }, {responsive: true});
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    window.addEventListener('load', function() {
+        updateSpiritTransformation();
+        updateUbermensch();
+        updateEternalReturn();
+        drawEternalReturn();
+        updateWillToPower();
+        updateValues();
+        drawTightrope();
+        updateGodDeath();
+        drawConceptMap();
+    });
+
+    // Periodic update for tightrope wind effect
+    setInterval(function() {
+        if (!tightropeFallen) {
+            drawTightrope();
+        }
+    }, 100);
+
+    </script>
+</body>
+</html>
