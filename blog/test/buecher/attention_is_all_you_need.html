@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attention Mechanism – Interaktive Erklärung</title>
+    <title>Attention Mechanismus – Geometrisch & Mathematisch Erklärt</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: #0a0a1a;
@@ -19,7 +17,7 @@
             overflow-x: hidden;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -27,1471 +25,1625 @@
             text-align: center;
             font-size: 2.5em;
             margin: 40px 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         h2 {
             font-size: 1.8em;
             margin: 40px 0 20px;
             color: #667eea;
-            border-left: 4px solid #764ba2;
-            padding-left: 15px;
+            border-bottom: 2px solid #667eea33;
+            padding-bottom: 10px;
         }
         h3 {
             font-size: 1.3em;
-            margin: 20px 0 10px;
-            color: #a0a0ff;
-        }
-        p, .explanation {
-            margin: 15px 0;
-            font-size: 1.05em;
-            color: #c0c0d0;
+            margin: 25px 0 15px;
+            color: #a78bfa;
         }
         .section {
             background: #12122a;
             border-radius: 16px;
             padding: 40px;
-            margin: 40px 0;
+            margin: 30px 0;
             border: 1px solid #2a2a4a;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-        .formula {
+        .math-block {
             background: #1a1a3a;
-            border: 1px solid #3a3a6a;
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 25px;
             margin: 20px 0;
+            border-left: 4px solid #667eea;
+            overflow-x: auto;
             text-align: center;
-            font-size: 1.3em;
-            font-family: 'Courier New', monospace;
-            color: #ffcc00;
+            font-size: 1.2em;
         }
-        .interactive-area {
+        .math-inline {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .plot-container {
             background: #0d0d20;
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             margin: 20px 0;
-            border: 1px solid #2a2a5a;
-        }
-        canvas {
-            display: block;
-            margin: 20px auto;
-            border-radius: 8px;
-            background: #050510;
             border: 1px solid #2a2a4a;
         }
-        .plotly-chart {
-            width: 100%;
-            height: 500px;
+        .canvas-container {
+            text-align: center;
             margin: 20px 0;
         }
-        button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            margin: 5px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        button:active {
-            transform: translateY(0);
+        canvas {
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+            background: #0d0d20;
         }
         .controls {
-            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
             margin: 20px 0;
+            justify-content: center;
         }
-        .slider-container {
+        .controls button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .controls button.active {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+            transform: scale(1.05);
+        }
+        .slider-group {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
         }
-        .slider-container label {
-            min-width: 120px;
-            color: #a0a0d0;
+        .slider-group label {
+            min-width: 200px;
+            color: #a78bfa;
         }
         input[type="range"] {
-            flex: 1;
-            min-width: 200px;
+            width: 300px;
             accent-color: #667eea;
         }
-        .slider-value {
-            min-width: 50px;
-            text-align: center;
-            color: #ffcc00;
-            font-weight: bold;
+        .explanation {
+            background: #1a1a3a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #a78bfa;
+            font-size: 0.95em;
         }
         .step-indicator {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 30px 0;
-            flex-wrap: wrap;
+            gap: 5px;
+            margin: 20px 0;
         }
         .step-dot {
-            width: 40px;
-            height: 40px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: #2a2a4a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
             transition: all 0.3s;
-            cursor: pointer;
         }
         .step-dot.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            transform: scale(1.2);
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            background: #667eea;
+            box-shadow: 0 0 10px #667eea;
         }
-        .matrix-display {
+        .two-col {
             display: grid;
-            gap: 2px;
-            margin: 15px auto;
-            width: fit-content;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
         }
-        .matrix-cell {
-            width: 60px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        .highlight-box {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            border: 1px solid #667eea;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+        @media (max-width: 900px) {
+            .two-col { grid-template-columns: 1fr; }
         }
         .token-display {
             display: flex;
             gap: 10px;
-            justify-content: center;
             flex-wrap: wrap;
-            margin: 20px 0;
+            justify-content: center;
+            margin: 15px 0;
         }
         .token {
-            background: #1a1a4a;
-            border: 2px solid #4a4a8a;
+            padding: 8px 16px;
             border-radius: 8px;
-            padding: 10px 18px;
-            font-weight: bold;
+            background: #2a2a4a;
+            border: 1px solid #4a4a6a;
+            font-weight: 600;
             transition: all 0.3s;
-            cursor: pointer;
         }
-        .token:hover, .token.selected {
+        .token.highlight {
+            background: #667eea33;
             border-color: #667eea;
-            background: #2a2a6a;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 0 10px #667eea44;
         }
-        .arrow {
-            color: #667eea;
-            font-size: 1.5em;
+        .attention-weight {
+            font-size: 0.8em;
+            color: #a78bfa;
+            display: block;
             text-align: center;
+        }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #0a0a1aee;
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            z-index: 1000;
+            border-bottom: 1px solid #2a2a4a;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            justify-content: center;
+        }
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .nav a:hover {
+            background: #667eea22;
+        }
+        .spacer { height: 60px; }
+        .color-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
             margin: 10px 0;
         }
-        .nav-tabs {
+        .legend-item {
             display: flex;
-            gap: 5px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
-        .nav-tab {
-            padding: 10px 20px;
-            background: #1a1a3a;
-            border: 1px solid #3a3a6a;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            transition: all 0.3s;
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
         }
-        .nav-tab.active {
-            background: #2a2a5a;
-            border-bottom-color: #2a2a5a;
+        .interactive-note {
+            text-align: center;
             color: #667eea;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 20px 0;
-        }
-        @media (max-width: 768px) {
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
-            .section {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 1.8em;
-            }
-        }
-        .annotation {
-            font-size: 0.9em;
-            color: #888;
             font-style: italic;
-            margin-top: 5px;
-        }
-        #softmax-canvas, #attention-flow-canvas {
-            width: 100%;
-            max-width: 800px;
-        }
-        .emoji-icon {
-            font-size: 1.5em;
-            margin-right: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧠 Attention Is All You Need</h1>
-        <p style="text-align:center; font-size:1.1em; color:#888;">
-            Interaktive Erklärung des Attention-Mechanismus<br>
-            <small>Basierend auf Vaswani et al., 2017 (arXiv:1706.03762)</small>
-        </p>
 
-        <!-- SECTION 0: Überblick -->
-        <div class="section">
-            <h2><span class="emoji-icon">🗺️</span>Überblick: Wo steht Attention?</h2>
-            <p>Du verstehst bereits:</p>
-            <ul style="margin-left:20px; margin-bottom:15px;">
-                <li><strong>Embeddings</strong> – Wörter als Punkte in einem hochdimensionalen Raum (d<sub>model</sub> = 512), wo Richtungen Bedeutungen kodieren</li>
-                <li><strong>FFNs</strong> – Können beliebige Funktionen durch Stückelung approximieren (Universal Approximation)</li>
-            </ul>
-            <p><strong>Attention ist das fehlende Puzzlestück:</strong> Es ermöglicht jedem Token, Informationen von allen anderen Tokens zu sammeln – gewichtet nach Relevanz. Ohne Attention wäre jedes Token isoliert in seinem eigenen Embedding gefangen.</p>
-            
-            <div class="highlight-box">
-                <h3>Die Kernidee in einem Satz:</h3>
-                <p style="font-size:1.2em; color:#ffcc00; text-align:center;">
-                    "Attention berechnet für jedes Wort eine gewichtete Mischung aller anderen Wörter – <br>
-                    wobei die Gewichte durch Ähnlichkeit (Dot-Product) bestimmt werden."
-                </p>
-            </div>
+<nav class="nav">
+    <a href="#sec1">1. Überblick</a>
+    <a href="#sec2">2. Q, K, V</a>
+    <a href="#sec3">3. Dot-Product</a>
+    <a href="#sec4">4. Scaling</a>
+    <a href="#sec5">5. Softmax</a>
+    <a href="#sec6">6. Gewichtete Summe</a>
+    <a href="#sec7">7. Multi-Head</a>
+    <a href="#sec8">8. Vollständig</a>
+</nav>
 
-            <div id="architecture-overview" class="plotly-chart"></div>
+<div class="spacer"></div>
+
+<div class="container">
+    <h1>🔮 Attention Is All You Need – Geometrisch Erklärt</h1>
+
+    <div class="section" id="sec1">
+        <h2>1. Die Grundidee: Was macht Attention?</h2>
+
+        <div class="explanation">
+            <p><strong>Du verstehst bereits:</strong> Embeddings sind Punkte in hochdimensionalen Räumen, und jede Richtung kann eine Bedeutung kodieren. FFNs können beliebige Funktionen approximieren.</p>
+            <p><strong>Was Attention hinzufügt:</strong> Attention ist der Mechanismus, der es jedem Token erlaubt, <em>Informationen von anderen Tokens zu sammeln</em> – und zwar gewichtet nach Relevanz. Es ist eine <strong>dynamische, inhaltsabhängige Informationsrouting-Funktion</strong>.</p>
         </div>
 
-        <!-- SECTION 1: Query, Key, Value -->
-        <div class="section">
-            <h2><span class="emoji-icon">🔑</span>Schritt 1: Query, Key, Value</h2>
-            
-            <p>Jedes Token-Embedding wird durch drei verschiedene lineare Projektionen in drei Vektoren transformiert:</p>
-            
-            <div class="comparison-grid">
-                <div class="highlight-box">
-                    <h3>🔍 Query (Q) – "Was suche ich?"</h3>
-                    <p>Der Query-Vektor repräsentiert, welche Art von Information dieses Token von anderen Tokens braucht.</p>
-                </div>
-                <div class="highlight-box">
-                    <h3>🗝️ Key (K) – "Was biete ich an?"</h3>
-                    <p>Der Key-Vektor repräsentiert, welche Art von Information dieses Token anderen Tokens anbieten kann.</p>
-                </div>
-            </div>
-            <div class="highlight-box" style="max-width:600px; margin:20px auto;">
-                <h3>💎 Value (V) – "Was ist mein Inhalt?"</h3>
-                <p>Der Value-Vektor enthält die tatsächliche Information, die weitergegeben wird, wenn ein anderes Token "aufmerksam" auf dieses Token ist.</p>
-            </div>
+        <div class="math-block" id="math-main-formula"></div>
 
-            <div class="formula">
-                Q = X · W<sup>Q</sup> &nbsp;&nbsp;|&nbsp;&nbsp; K = X · W<sup>K</sup> &nbsp;&nbsp;|&nbsp;&nbsp; V = X · W<sup>V</sup>
-            </div>
-            <p class="annotation">W<sup>Q</sup>, W<sup>K</sup> ∈ ℝ<sup>d_model × d_k</sup>, W<sup>V</sup> ∈ ℝ<sup>d_model × d_v</sup> sind gelernte Gewichtsmatrizen.</p>
-
-            <div class="interactive-area">
-                <h3>Interaktiv: Wähle ein Token und sieh seine Q, K, V Vektoren</h3>
-                <div class="token-display" id="token-selector">
-                    <div class="token" data-idx="0" onclick="selectToken(0)">Die</div>
-                    <div class="token" data-idx="1" onclick="selectToken(1)">Katze</div>
-                    <div class="token" data-idx="2" onclick="selectToken(2)">sitzt</div>
-                    <div class="token" data-idx="3" onclick="selectToken(3)">auf</div>
-                    <div class="token" data-idx="4" onclick="selectToken(4)">der</div>
-                    <div class="token" data-idx="5" onclick="selectToken(5)">Matte</div>
-                </div>
-                <div id="qkv-chart" class="plotly-chart" style="height:400px;"></div>
-            </div>
+        <div class="explanation">
+            <p>Geometrisch: Jedes Token "fragt" (Query) den Raum ab, welche anderen Tokens (Keys) relevante Informationen (Values) haben. Die Antwort ist eine gewichtete Mischung der Values.</p>
         </div>
 
-        <!-- SECTION 2: Scaled Dot-Product Attention -->
-        <div class="section">
-            <h2><span class="emoji-icon">⚡</span>Schritt 2: Scaled Dot-Product Attention</h2>
-            
-            <p>Die zentrale Formel des Papers:</p>
-            <div class="formula">
-                Attention(Q, K, V) = softmax(Q·K<sup>T</sup> / √d<sub>k</sub>) · V
-            </div>
-
-            <p>Das passiert in 4 Teilschritten:</p>
-
-            <div class="step-indicator" id="attn-steps">
-                <div class="step-dot active" onclick="showAttnStep(1)">1</div>
-                <div class="step-dot" onclick="showAttnStep(2)">2</div>
-                <div class="step-dot" onclick="showAttnStep(3)">3</div>
-                <div class="step-dot" onclick="showAttnStep(4)">4</div>
-            </div>
-
-            <div id="attn-step-1" class="tab-content active">
-                <h3>Schritt 1: Dot-Product (Q · K<sup>T</sup>)</h3>
-                <p>Berechne die Ähnlichkeit zwischen jedem Query und jedem Key durch das Skalarprodukt. Hoher Wert = hohe Ähnlichkeit = "dieses Token ist relevant für mich".</p>
-                <canvas id="dotproduct-canvas" width="700" height="350"></canvas>
-                <p class="annotation">Jede Zelle zeigt: Wie sehr "passt" der Query von Token i zum Key von Token j?</p>
-            </div>
-
-            <div id="attn-step-2" class="tab-content">
-                <h3>Schritt 2: Skalierung (÷ √d<sub>k</sub>)</h3>
-                <p>Warum skalieren? Wenn d<sub>k</sub> groß ist, werden die Dot-Products sehr groß. Große Werte drücken den Softmax in Regionen mit extrem kleinen Gradienten → schlechtes Lernen.</p>
-                <div class="slider-container">
-                    <label>d<sub>k</sub> Dimension:</label>
-                    <input type="range" id="dk-slider" min="4" max="512" value="64" oninput="updateScaling()">
-                    <span class="slider-value" id="dk-value">64</span>
-                </div>
-                <div id="scaling-chart" class="plotly-chart" style="height:350px;"></div>
-                <p class="annotation">Beobachte: Je größer d_k, desto extremer die Werte VOR der Skalierung. Die Skalierung normalisiert das.</p>
-            </div>
-
-            <div id="attn-step-3" class="tab-content">
-                <h3>Schritt 3: Softmax</h3>
-                <p>Softmax wandelt die skalierten Scores in eine Wahrscheinlichkeitsverteilung um (alle Werte zwischen 0 und 1, Summe = 1). Jede Zeile sagt: "Wie viel Aufmerksamkeit schenke ich jedem anderen Token?"</p>
-                <canvas id="softmax-canvas" width="700" height="400"></canvas>
-                <div class="controls">
-                    <button onclick="animateSoftmax()">▶ Softmax animieren</button>
-                    <button onclick="toggleMask()">🎭 Mask ein/aus (Decoder)</button>
-                </div>
-                <p id="mask-info" class="annotation">Mask aus: Encoder Self-Attention (jedes Token sieht alle)</p>
-            </div>
-
-            <div id="attn-step-4" class="tab-content">
-                <h3>Schritt 4: Gewichtete Summe der Values</h3>
-                <p>Die Attention-Gewichte (aus Softmax) werden mit den Value-Vektoren multipliziert. Das Ergebnis: Jedes Token bekommt eine gewichtete Mischung der Informationen aller anderen Tokens.</p>
-                <canvas id="weighted-sum-canvas" width="700" height="400"></canvas>
-                <div class="controls">
-                    <button onclick="animateWeightedSum()">▶ Gewichtete Summe animieren</button>
-                </div>
-            </div>
+        <div class="plot-container">
+            <div id="overview-plot" style="height: 500px;"></div>
         </div>
-
-        <!-- SECTION 3: Multi-Head Attention -->
-        <div class="section">
-            <h2><span class="emoji-icon">👁️‍🗨️</span>Schritt 3: Multi-Head Attention</h2>
-            
-            <p>Statt EINE Attention mit d<sub>model</sub>=512 Dimensionen zu berechnen, teilt das Paper die Dimensionen auf <strong>h=8 Köpfe</strong> auf (je d<sub>k</sub>=64).</p>
-            
-            <div class="formula">
-                MultiHead(Q,K,V) = Concat(head₁, ..., head<sub>h</sub>) · W<sup>O</sup><br>
-                <small>wobei head<sub>i</sub> = Attention(Q·W<sub>i</sub><sup>Q</sup>, K·W<sub>i</sub><sup>K</sup>, V·W<sub>i</sub><sup>V</sup>)</small>
-            </div>
-
-            <p><strong>Warum?</strong> Jeder Kopf kann auf verschiedene Aspekte achten:</p>
-            <ul style="margin-left:20px;">
-                <li>Kopf 1: Syntaktische Beziehungen (Subjekt → Verb)</li>
-                <li>Kopf 2: Anaphora-Auflösung ("its" → "The Law")</li>
-                <li>Kopf 3: Lokale Nachbarschaft</li>
-                <li>Kopf 4: Fernabhängigkeiten ("making...more difficult")</li>
-                <li>...</li>
-            </ul>
-
-            <div class="interactive-area">
-                <h3>Interaktiv: 8 Attention-Köpfe visualisiert</h3>
-                <p>Klicke auf verschiedene Köpfe um zu sehen, worauf sie achten:</p>
-                <div class="controls" id="head-buttons"></div>
-                <div id="multihead-chart" class="plotly-chart" style="height:450px;"></div>
-            </div>
-        </div>
-
-        <!-- SECTION 4: Positional Encoding -->
-        <div class="section">
-            <h2><span class="emoji-icon">📍</span>Schritt 4: Positional Encoding</h2>
-            
-            <p>Attention ist positions-agnostisch – "Die Katze sitzt" und "sitzt Katze Die" wären identisch! Deshalb werden Positionsinformationen über Sinus/Cosinus-Funktionen hinzugefügt:</p>
-            
-            <div class="formula">
-                PE(pos, 2i) = sin(pos / 10000<sup>2i/d_model</sup>)<br>
-                PE(pos, 2i+1) = cos(pos / 10000<sup>2i/d_model</sup>)
-            </div>
-
-            <p>Jede Dimension hat eine andere Frequenz → das Modell kann relative Positionen als lineare Transformation lernen.</p>
-
-            <div id="positional-chart" class="plotly-chart" style="height:400px;"></div>
-            <div class="slider-container">
-                <label>Sequenzlänge:</label>
-                <input type="range" id="seq-len-slider" min="10" max="100" value="50" oninput="updatePositionalEncoding()">
-                <span class="slider-value" id="seq-len-value">50</span>
-            </div>
-        </div>
-
-        <!-- SECTION 5: Vollständiger Durchlauf -->
-        <div class="section">
-            <h2><span class="emoji-icon">🔄</span>Schritt 5: Alles zusammen – Ein Layer</h2>
-            
-            <p>Ein Encoder-Layer besteht aus:</p>
-            <ol style="margin-left:20px; margin-bottom:20px;">
-                <li>Multi-Head Self-Attention + Residual Connection + LayerNorm</li>
-                <li>Position-wise FFN + Residual Connection + LayerNorm</li>
-            </ol>
-            <p>Das wird N=6 mal gestapelt.</p>
-
-            <canvas id="attention-flow-canvas" width="800" height="500"></canvas>
-            <div class="controls">
-                <button onclick="animateFullFlow()">▶ Datenfluss animieren</button>
-                <button onclick="resetFlow()">↺ Reset</button>
-            </div>
-        </div>
-
-        <!-- SECTION 6: Warum Attention? -->
-        <div class="section">
-            <h2><span class="emoji-icon">💡</span>Warum Self-Attention statt RNN/CNN?</h2>
-            
-            <div id="complexity-chart" class="plotly-chart" style="height:400px;"></div>
-            
-            <div class="comparison-grid">
-                <div class="highlight-box">
-                    <h3>Self-Attention</h3>
-                    <ul style="margin-left:15px;">
-                        <li>Komplexität: O(n² · d)</li>
-                        <li>Sequentielle Ops: O(1)</li>
-                        <li>Max. Pfadlänge: O(1) ✨</li>
-                    </ul>
-                </div>
-                <div class="highlight-box">
-                    <h3>Recurrent (RNN)</h3>
-                    <ul style="margin-left:15px;">
-                        <li>Komplexität: O(n · d²)</li>
-                        <li>Sequentielle Ops: O(n) 🐌</li>
-                        <li>Max. Pfadlänge: O(n)</li>
-                    </ul>
-                </div>
-            </div>
-            <p><strong>Kernvorteil:</strong> Jedes Token kann direkt (Pfadlänge 1!) auf jedes andere Token zugreifen. Bei RNNs muss Information durch n Schritte fließen → Langzeitabhängigkeiten gehen verloren.</p>
-        </div>
-
-        <!-- SECTION 7: Live-Demo -->
-        <div class="section">
-            <h2><span class="emoji-icon">🎮</span>Live-Demo: Berechne Attention selbst</h2>
-            
-            <p>Gib einen Satz ein und beobachte die Attention-Gewichte:</p>
-            <div class="interactive-area">
-                <input type="text" id="demo-input" value="Die Katze die auf der Matte saß war schwarz" 
-                       style="width:100%; padding:12px; border-radius:8px; border:1px solid #3a3a6a; background:#1a1a3a; color:#e0e0e0; font-size:1em; margin-bottom:15px;">
-                <div class="controls">
-                    <button onclick="computeAttentionDemo()">🧮 Attention berechnen</button>
-                </div>
-                <div id="demo-heatmap" class="plotly-chart" style="height:500px;"></div>
-            </div>
-        </div>
-
+        <p class="interactive-note">↑ Drehe den 3D-Plot! Die Pfeile zeigen, wie ein Query-Token Informationen von Value-Tokens sammelt.</p>
     </div>
 
-    <script>
-    // ============================================
-    // GLOBAL DATA & UTILITIES
-    // ============================================
-    const tokens = ["Die", "Katze", "sitzt", "auf", "der", "Matte"];
-    const nTokens = tokens.length;
-    const dk = 64;
-    const dModel = 512;
+    <div class="section" id="sec2">
+        <h2>2. Query, Key, Value – Drei Projektionen eines Tokens</h2>
 
-    // Simulated embeddings (simplified to 8D for visualization)
+        <div class="explanation">
+            <p>Jedes Token-Embedding wird durch <strong>drei verschiedene lineare Projektionen</strong> (Matrizen) in drei verschiedene Vektoren transformiert:</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>Query (Q):</strong> "Was suche ich?" – Die Frage, die dieses Token stellt</li>
+                <li><strong>Key (K):</strong> "Was biete ich an?" – Das Label, unter dem dieses Token gefunden werden kann</li>
+                <li><strong>Value (V):</strong> "Was gebe ich weiter?" – Die tatsächliche Information, die weitergegeben wird</li>
+            </ul>
+        </div>
+
+        <div class="math-block" id="math-qkv"></div>
+
+        <div class="two-col">
+            <div>
+                <h3>Geometrische Intuition</h3>
+                <div class="plot-container">
+                    <div id="qkv-plot" style="height: 450px;"></div>
+                </div>
+                <p class="interactive-note">↑ Ein Embedding-Vektor wird in 3 verschiedene Unterräume projiziert</p>
+            </div>
+            <div>
+                <h3>Was passiert hier?</h3>
+                <div class="explanation">
+                    <p>Stell dir vor, du hast ein Wort-Embedding im Raum. Die Matrizen <span class="math-inline" id="math-wq"></span>, <span class="math-inline" id="math-wk"></span>, <span class="math-inline" id="math-wv"></span> sind <strong>Rotationen + Skalierungen</strong> dieses Vektors in verschiedene Unterräume.</p>
+                    <p style="margin-top:10px;">Im Paper: <span class="math-inline" id="math-dims"></span></p>
+                    <p style="margin-top:10px;">Geometrisch: Die Matrix dreht und streckt den 512d-Vektor in einen 64d-Unterraum. Verschiedene Aspekte des Tokens werden in Q, K, V betont.</p>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="projection-canvas" width="400" height="300"></canvas>
+                </div>
+                <p class="interactive-note">↑ Animation: Wie eine lineare Projektion einen Vektor transformiert</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="sec3">
+        <h2>3. Dot-Product: Ähnlichkeit messen</h2>
+
+        <div class="explanation">
+            <p>Der Kern von Attention: Wie ähnlich ist mein Query zu jedem Key? Das Dot-Product (Skalarprodukt) misst genau das – es ist die <strong>projizierte Länge</strong> eines Vektors auf einen anderen, also ein Maß für ihre Ausrichtung im Raum.</p>
+        </div>
+
+        <div class="math-block" id="math-dotprod"></div>
+
+        <div class="two-col">
+            <div>
+                <div class="plot-container">
+                    <div id="dotprod-plot" style="height: 450px;"></div>
+                </div>
+                <p class="interactive-note">↑ Bewege den Slider um den Query-Vektor zu drehen und sieh wie sich das Dot-Product ändert</p>
+            </div>
+            <div>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Query-Winkel: <span id="angle-val">45°</span></label>
+                        <input type="range" id="query-angle" min="0" max="360" value="45" oninput="updateDotProduct()">
+                    </div>
+                </div>
+                <div id="dotprod-results" style="margin-top: 20px;"></div>
+                <div class="explanation" style="margin-top: 20px;">
+                    <p><strong>Geometrisch:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Gleiche Richtung → großes positives Dot-Product (hohe Attention)</li>
+                        <li>Orthogonal (90°) → Dot-Product = 0 (keine Attention)</li>
+                        <li>Entgegengesetzt → negatives Dot-Product (nach Softmax: fast 0)</li>
+                    </ul>
+                    <p style="margin-top:10px;">In 2D: <span class="math-inline" id="math-dot2d"></span></p>
+                    <p>In 64D (wie im Paper): Summe über 64 Komponenten-Produkte</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="sec4">
+        <h2>4. Scaling: Warum durch √d<sub>k</sub> teilen?</h2>
+
+        <div class="math-block" id="math-scaling"></div>
+
+        <div class="explanation">
+            <p>Problem: In hohen Dimensionen werden Dot-Products sehr groß (Varianz = d<sub>k</sub>). Das drückt die Softmax in Sättigungsbereiche mit winzigen Gradienten.</p>
+            <p><strong>Lösung:</strong> Teile durch <span class="math-inline" id="math-sqrtdk"></span> um die Varianz auf 1 zu normalisieren.</p>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <div class="plot-container">
+                    <div id="scaling-plot" style="height: 400px;"></div>
+                </div>
+                <p class="interactive-note">↑ Vergleich: Dot-Products mit und ohne Scaling bei verschiedenen Dimensionen</p>
+            </div>
+            <div>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Dimension d<sub>k</sub>: <span id="dk-val">64</span></label>
+                        <input type="range" id="dk-slider" min="4" max="512" value="64" step="4" oninput="updateScaling()">
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div id="scaling-hist" style="height: 300px;"></div>
+                </div>
+                <p class="interactive-note">↑ Verteilung der Dot-Products: ohne Scaling (breit) vs. mit Scaling (schmal)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="sec5">
+        <h2>5. Softmax: Von Scores zu Wahrscheinlichkeiten</h2>
+
+        <div class="math-block" id="math-softmax"></div>
+
+        <div class="explanation">
+            <p>Softmax wandelt die skalierten Dot-Products in eine Wahrscheinlichkeitsverteilung um. Geometrisch: Es entscheidet, <strong>wie viel Aufmerksamkeit</strong> jeder Key bekommt.</p>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <div class="plot-container">
+                    <div id="softmax-plot" style="height: 400px;"></div>
+                </div>
+                <p class="interactive-note">↑ Softmax-Funktion: Wie Scores zu Gewichten werden</p>
+            </div>
+            <div>
+                <h3>Beispiel: Satz "Die Katze sitzt"</h3>
+                <div class="token-display" id="token-display">
+                    <div class="token highlight">Die<span class="attention-weight">Query</span></div>
+                    <div class="token">Katze<span class="attention-weight" id="w1">0.7</span></div>
+                    <div class="token">sitzt<span class="attention-weight" id="w2">0.2</span></div>
+                    <div class="token">.<span class="attention-weight" id="w3">0.1</span></div>
+                </div>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Temperatur (1/√d<sub>k</sub>): <span id="temp-val">1.0</span></label>
+                        <input type="range" id="temp-slider" min="0.1" max="5" value="1" step="0.1" oninput="updateSoftmax()">
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div id="softmax-bar" style="height: 250px;"></div>
+                </div>
+                <div class="explanation">
+                    <p><strong>Hohe Temperatur</strong> → gleichmäßige Verteilung (alle Tokens gleich wichtig)</p>
+                    <p><strong>Niedrige Temperatur</strong> → spitze Verteilung (ein Token dominiert)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="sec6">
+        <h2>6. Gewichtete Summe der Values: Das Ergebnis</h2>
+
+        <div class="math-block" id="math-weighted-sum"></div>
+
+        <div class="explanation">
+            <p>Der finale Schritt: Die Attention-Gewichte (aus Softmax) werden verwendet, um eine <strong>gewichtete Summe der Value-Vektoren</strong> zu berechnen. Geometrisch: Der Output-Vektor ist ein Punkt im Value-Raum, der zwischen den Values der relevanten Tokens liegt.</p>
+        </div>
+
+        <div class="plot-container">
+            <div id="weighted-sum-plot" style="height: 550px;"></div>
+        </div>
+        <p class="interactive-note">↑ Interaktiv: Ändere die Gewichte und sieh wie sich der Output-Vektor bewegt!</p>
+
+        <div class="controls">
+            <div class="slider-group">
+                <label>Gewicht "Katze": <span id="gw1-val">0.6</span></label>
+                <input type="range" id="gw1" min="0" max="100" value="60" oninput="updateWeightedSum()">
+            </div>
+            <div class="slider-group">
+                <label>Gewicht "sitzt": <span id="gw2-val">0.3</span></label>
+                <input type="range" id="gw2" min="0" max="100" value="30" oninput="updateWeightedSum()">
+            </div>
+            <div class="slider-group">
+                <label>Gewicht "auf": <span id="gw3-val">0.1</span></label>
+                <input type="range" id="gw3" min="0" max="100" value="10" oninput="updateWeightedSum()">
+            </div>
+        </div>
+
+        <div class="explanation">
+            <p><strong>Geometrisch in 2D/3D (abstrahierbar auf 64D):</strong> Der Output ist ein Punkt, der im "Dreieck" (bzw. Simplex) der Value-Vektoren liegt. Die Gewichte bestimmen, wie nah er an welchem Value ist. Bei Gewicht 1.0 für einen Value liegt er genau auf diesem Value. Bei gleichmäßigen Gewichten liegt er im Schwerpunkt.</p>
+        </div>
+    </div>
+
+    <div class="section" id="sec7">
+        <h2>7. Multi-Head Attention: Parallele Perspektiven</h2>
+
+        <div class="math-block" id="math-multihead"></div>
+
+        <div class="explanation">
+            <p>Statt einer einzigen Attention-Berechnung führt das Modell <strong>h = 8 parallele Attention-Berechnungen</strong> durch, jede mit eigenen Projektionsmatrizen. Jeder "Head" kann auf andere Aspekte achten (z.B. syntaktische Beziehungen, semantische Ähnlichkeit, Positionsnähe).</p>
+        </div>
+
+        <div class="plot-container">
+            <div id="multihead-plot" style="height: 550px;"></div>
+        </div>
+        <p class="interactive-note">↑ 8 verschiedene Attention-Heads projizieren in verschiedene Unterräume</p>
+
+        <div class="controls">
+            <button onclick="showHead(0)" class="active">Head 1</button>
+            <button onclick="showHead(1)">Head 2</button>
+            <button onclick="showHead(2)">Head 3</button>
+            <button onclick="showHead(3)">Head 4</button>
+            <button onclick="showHead(4)">Head 5</button>
+            <button onclick="showHead(5)">Head 6</button>
+            <button onclick="showHead(6)">Head 7</button>
+            <button onclick="showHead(7)">Head 8</button>
+        </div>
+
+        <div id="head-explanation" class="explanation">
+            <p><strong>Head 1:</strong> Achtet auf syntaktisch nahestehende Tokens (z.B. Artikel → Nomen)</p>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <h3>Geometrisch: Unterraum-Projektionen</h3>
+                <div class="canvas-container">
+                    <canvas id="multihead-canvas" width="500" height="400"></canvas>
+                </div>
+                <p class="interactive-note">↑ Jeder Head "sieht" den Raum aus einer anderen Perspektive</p>
+            </div>
+            <div>
+                <h3>Concat + Lineare Projektion</h3>
+                <div class="explanation">
+                    <p>Die 8 Outputs (je 64d) werden konkateniert zu einem 512d-Vektor und durch <span class="math-inline" id="math-wo"></span> zurück in den Modell-Raum projiziert.</p>
+                    <p style="margin-top:10px;">Geometrisch: 8 verschiedene "Blickwinkel" auf die Daten werden zu einem einzigen, reichhaltigen Repräsentationsvektor zusammengeführt.</p>
+                </div>
+                <div class="math-block" id="math-concat"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="sec8">
+        <h2>8. Der vollständige Attention-Schritt – Zusammenfassung</h2>
+
+        <div class="explanation">
+            <p>Hier siehst du den gesamten Ablauf für einen Satz. Wähle ein Query-Token und beobachte, wie es Informationen von allen anderen Tokens sammelt.</p>
+        </div>
+
+        <div class="token-display">
+            <div class="token" onclick="selectQueryToken(0)" id="qt0" style="cursor:pointer">Die</div>
+            <div class="token" onclick="selectQueryToken(1)" id="qt1" style="cursor:pointer">Katze</div>
+            <div class="token" onclick="selectQueryToken(2)" id="qt2" style="cursor:pointer">sitzt</div>
+            <div class="token" onclick="selectQueryToken(3)" id="qt3" style="cursor:pointer">auf</div>
+            <div class="token" onclick="selectQueryToken(4)" id="qt4" style="cursor:pointer">der</div>
+            <div class="token" onclick="selectQueryToken(5)" id="qt5" style="cursor:pointer">Matte</div>
+        </div>
+
+        <div class="plot-container">
+            <div id="full-attention-plot" style="height: 500px;"></div>
+        </div>
+
+        <div class="plot-container">
+            <canvas id="attention-matrix-canvas" width="600" height="400"></canvas>
+            <p class="interactive-note">↑ Attention-Matrix: Zeilen = Queries, Spalten = Keys. Hellere Farbe = mehr Attention</p>
+        </div>
+
+        <h3>Zusammenfassung der Formel</h3>
+        <div class="math-block" id="math-final"></div>
+
+        <div class="explanation">
+            <h3>Was du jetzt verstehen solltest:</h3>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Lineare Projektionen</strong> (W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup>) transformieren Embeddings in Query/Key/Value-Räume</li>
+                <li><strong>Dot-Product</strong> misst die Ausrichtung (Ähnlichkeit) zwischen Query und Keys im Raum</li>
+                <li><strong>Scaling</strong> (÷√d<sub>k</sub>) verhindert, dass hohe Dimensionen die Softmax sättigen</li>
+                <li><strong>Softmax</strong> normalisiert zu einer Wahrscheinlichkeitsverteilung</li>
+                <li><strong>Gewichtete Summe</strong> der Values ergibt den Output – geometrisch ein Punkt im Konvex der Values</li>
+                <li><strong>Multi-Head</strong> erlaubt parallele, verschiedene Attention-Muster in Unterräumen</li>
+            </ol>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============ MATH RENDERING ============
+function renderMath() {
+    const formulas = {
+        'math-main-formula': `\\text{Attention}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V`,
+        'math-qkv': `Q = XW^Q, \\quad K = XW^K, \\quad V = XW^V \\\\[8pt]
+            W^Q \\in \\mathbb{R}^{d_{\\text{model}} \\times d_k}, \\quad
+            W^K \\in \\mathbb{R}^{d_{\\text{model}} \\times d_k}, \\quad
+            W^V \\in \\mathbb{R}^{d_{\\text{model}} \\times d_v}`,
+        'math-wq': `W^Q`,
+        'math-wk': `W^K`,
+        'math-wv': `W^V`,
+        'math-dims': `d_{\\text{model}} = 512, \\; d_k = d_v = 64, \\; h = 8`,
+        'math-dotprod': `\\text{score}(q, k) = q \\cdot k = \\sum_{i=1}^{d_k} q_i \\cdot k_i = \\|q\\| \\cdot \\|k\\| \\cdot \\cos\\theta`,
+        'math-dot2d': `q \\cdot k = q_x k_x + q_y k_y`,
+        'math-scaling': `\\text{Scaled Score} = \\frac{q \\cdot k}{\\sqrt{d_k}} \\quad \\text{(Varianz: } d_k \\to 1\\text{)}`,
+        'math-sqrtdk': `\\sqrt{d_k} = \\sqrt{64} = 8`,
+        'math-softmax': `\\alpha_i = \\text{softmax}(s_i) = \\frac{e^{s_i}}{\\sum_j e^{s_j}}, \\quad \\sum_i \\alpha_i = 1`,
+        'math-weighted-sum': `\\text{output} = \\sum_{i=1}^{n} \\alpha_i \\cdot v_i = \\alpha_1 v_1 + \\alpha_2 v_2 + \\cdots + \\alpha_n v_n`,        'math-multihead': `\\text{MultiHead}(Q,K,V) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_h)\\, W^O`,
+        'math-wo': `W^O \\in \\mathbb{R}^{h d_v \\times d_{\\text{model}}}`,
+        'math-concat': `\\text{head}_i = \\text{Attention}(QW_i^Q,\\; KW_i^K,\\; VW_i^V) \\\\[6pt]
+            W_i^Q \\in \\mathbb{R}^{512 \\times 64}, \\quad W_i^K \\in \\mathbb{R}^{512 \\times 64}, \\quad W_i^V \\in \\mathbb{R}^{512 \\times 64}`,
+        'math-final': `\\boxed{\\;\\text{Attention}(Q,K,V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right) V\\;}
+            \\\\[12pt] \\text{MultiHead}(Q,K,V) = \\text{Concat}(\\text{head}_1,\\ldots,\\text{head}_8)\\,W^O
+            \\\\[6pt] \\text{head}_i = \\text{Attention}(QW_i^Q,\\, KW_i^K,\\, VW_i^V)`
+    };
+
+    for (const [id, tex] of Object.entries(formulas)) {
+        const el = document.getElementById(id);
+        if (el) {
+            try {
+                temml.render(tex, el, { displayMode: id.includes('block') || id.includes('main') || id.includes('final') || id.includes('concat') || id.includes('multihead') || id.includes('qkv') || id.includes('scaling') || id.includes('softmax') || id.includes('weighted') });
+            } catch(e) {
+                el.innerHTML = `<code>${tex}</code>`;
+            }
+        }
+    }
+}
+
+// ============ SECTION 1: OVERVIEW 3D PLOT ============
+function createOverviewPlot() {
+    // Token embeddings in 3D (simplified from 512D)
+    const tokens = ['Die', 'Katze', 'sitzt', 'auf', 'der', 'Matte'];
     const embeddings = [
-        [0.2, -0.5, 0.8, 0.1, -0.3, 0.6, -0.2, 0.4],  // Die
-        [0.9, 0.3, -0.1, 0.7, 0.5, -0.4, 0.8, -0.1],   // Katze
-        [-0.3, 0.8, 0.4, -0.6, 0.2, 0.9, -0.5, 0.3],   // sitzt
-        [0.1, -0.2, 0.5, 0.3, -0.7, 0.1, 0.4, -0.6],   // auf
-        [0.3, -0.4, 0.7, 0.2, -0.2, 0.5, -0.1, 0.3],   // der
-        [0.7, 0.6, -0.3, 0.8, 0.4, -0.2, 0.9, 0.1]     // Matte
+        [0.2, 0.8, 0.3],   // Die
+        [0.9, 0.7, 0.8],   // Katze
+        [0.5, 0.2, 0.6],   // sitzt
+        [0.3, 0.4, 0.1],   // auf
+        [0.1, 0.9, 0.2],   // der
+        [0.8, 0.3, 0.9]    // Matte
     ];
 
-    // Simulated Q, K, V matrices (6 tokens × 8 dims)
-    const Q_matrix = embeddings.map(e => e.map(v => v * 0.8 + Math.random() * 0.3 - 0.15));
-    const K_matrix = embeddings.map(e => e.map(v => v * 0.7 + Math.random() * 0.3 - 0.15));
-    const V_matrix = embeddings.map(e => e.map(v => v * 0.9 + Math.random() * 0.2 - 0.1));
+    // Query from "sitzt" (index 2) attending to others
+    const queryIdx = 2;
+    const attentionWeights = [0.05, 0.45, 0.0, 0.1, 0.05, 0.35]; // sitzt attends to Katze and Matte
 
-    // Compute attention scores
-    function dotProduct(a, b) {
-        return a.reduce((sum, val, i) => sum + val * b[i], 0);
-    }
+    const traces = [];
 
-    function computeAttentionScores(Q, K, scale) {
-        const n = Q.length;
-        const scores = [];
-        for (let i = 0; i < n; i++) {
-            scores[i] = [];
-            for (let j = 0; j < n; j++) {
-                scores[i][j] = dotProduct(Q[i], K[j]) / scale;
-            }
-        }
-        return scores;
-    }
+    // Token points
+    traces.push({
+        x: embeddings.map(e => e[0]),
+        y: embeddings.map(e => e[1]),
+        z: embeddings.map(e => e[2]),
+        mode: 'markers+text',
+        type: 'scatter3d',
+        text: tokens,
+        textposition: 'top center',
+        textfont: { size: 12, color: '#e0e0e0' },
+        marker: {
+            size: embeddings.map((_, i) => i === queryIdx ? 14 : 8 + attentionWeights[i] * 20),
+            color: embeddings.map((_, i) => i === queryIdx ? '#ff6b6b' : `rgba(102, 126, 234, ${0.3 + attentionWeights[i]})`),
+            line: { width: 1, color: '#ffffff44' }
+        },
+        name: 'Token Embeddings'
+    });
 
-    function softmax(arr) {
-        const max = Math.max(...arr);
-        const exps = arr.map(v => Math.exp(v - max));
-        const sum = exps.reduce((a, b) => a + b, 0);
-        return exps.map(v => v / sum);
-    }
-
-    function applySoftmax(scores) {
-        return scores.map(row => softmax(row));
-    }
-
-    const rawScores = computeAttentionScores(Q_matrix, K_matrix, Math.sqrt(8));
-    const attnWeights = applySoftmax(rawScores);
-
-    // ============================================
-    // SECTION 0: Architecture Overview
-    // ============================================
-    function drawArchitectureOverview() {
-        const trace = {
-            type: 'sankey',
-            orientation: 'h',
-            node: {
-                pad: 15,
-                thickness: 20,
-                line: { color: '#333', width: 0.5 },
-                label: ['Input\nEmbedding', 'Positional\nEncoding', '+', 'Multi-Head\nAttention', 'Add & Norm', 'Feed\nForward', 'Add & Norm', 'Output'],
-                color: ['#667eea', '#764ba2', '#888', '#ff6b6b', '#4ecdc4', '#45b7d1', '#4ecdc4', '#f7dc6f']
-            },
-            link: {
-                source: [0, 1, 2, 3, 4, 5, 6],
-                target: [2, 2, 3, 4, 5, 6, 7],
-                value: [8, 8, 8, 8, 8, 8, 8],
-                color: ['rgba(102,126,234,0.3)', 'rgba(118,75,162,0.3)', 'rgba(136,136,136,0.3)', 
-                        'rgba(255,107,107,0.3)', 'rgba(78,205,196,0.3)', 'rgba(69,183,209,0.3)', 'rgba(78,205,196,0.3)']
-            }
-        };
-
-        Plotly.newPlot('architecture-overview', [trace], {
-            title: { text: 'Datenfluss durch einen Encoder-Layer', font: { color: '#e0e0e0', size: 16 } },
-            font: { color: '#c0c0d0', size: 11 },
-            paper_bgcolor: '#12122a',
-            plot_bgcolor: '#12122a',
-            height: 300
-        }, {responsive: true});
-    }
-
-    // ============================================
-    // SECTION 1: Q, K, V Visualization
-    // ============================================
-    let selectedTokenIdx = 1;
-
-    function selectToken(idx) {
-        selectedTokenIdx = idx;
-        document.querySelectorAll('.token').forEach((t, i) => {
-            t.classList.toggle('selected', i === idx);
+    // Attention arrows from query to keys
+    for (let i = 0; i < tokens.length; i++) {
+        if (i === queryIdx || attentionWeights[i] < 0.05) continue;
+        const opacity = attentionWeights[i];
+        traces.push({
+            x: [embeddings[queryIdx][0], embeddings[i][0]],
+            y: [embeddings[queryIdx][1], embeddings[i][1]],
+            z: [embeddings[queryIdx][2], embeddings[i][2]],
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { width: attentionWeights[i] * 12, color: `rgba(167, 139, 250, ${opacity})` },
+            showlegend: false,
+            hoverinfo: 'text',
+            hovertext: `"sitzt" → "${tokens[i]}": α = ${attentionWeights[i].toFixed(2)}`
         });
-        drawQKVChart();
     }
 
-    function drawQKVChart() {
-        const idx = selectedTokenIdx;
-        const dims = ['Dim 1', 'Dim 2', 'Dim 3', 'Dim 4', 'Dim 5', 'Dim 6', 'Dim 7', 'Dim 8'];
-        
-        const traceQ = {
-            x: dims,
-            y: Q_matrix[idx],
-            name: 'Query (Q) – "Was suche ich?"',
-            type: 'bar',
-            marker: { color: '#ff6b6b' }
-        };
-        const traceK = {
-            x: dims,
-            y: K_matrix[idx],
-            name: 'Key (K) – "Was biete ich an?"',
-            type: 'bar',
-            marker: { color: '#4ecdc4' }
-        };
-        const traceV = {
-            x: dims,
-            y: V_matrix[idx],
-            name: 'Value (V) – "Mein Inhalt"',
-            type: 'bar',
-            marker: { color: '#f7dc6f' }
-        };
-
-        Plotly.newPlot('qkv-chart', [traceQ, traceK, traceV], {
-            title: { text: `Q, K, V Vektoren für "${tokens[idx]}"`, font: { color: '#e0e0e0', size: 15 } },
-            barmode: 'group',
-            paper_bgcolor: '#0d0d20',
-            plot_bgcolor: '#0d0d20',
-            font: { color: '#c0c0d0' },
-            xaxis: { gridcolor: '#2a2a4a' },
-            yaxis: { gridcolor: '#2a2a4a', title: 'Wert' },
-            legend: { orientation: 'h', y: -0.2 }
-        }, {responsive: true});
+    // Output vector (weighted sum of values)
+    const output = [0, 0, 0];
+    for (let i = 0; i < embeddings.length; i++) {
+        output[0] += attentionWeights[i] * embeddings[i][0];
+        output[1] += attentionWeights[i] * embeddings[i][1];
+        output[2] += attentionWeights[i] * embeddings[i][2];
     }
+    traces.push({
+        x: [output[0]], y: [output[1]], z: [output[2]],
+        mode: 'markers+text',
+        type: 'scatter3d',
+        text: ['Output'],
+        textposition: 'bottom center',
+        textfont: { size: 11, color: '#4ade80' },
+        marker: { size: 12, color: '#4ade80', symbol: 'diamond' },
+        name: 'Attention Output'
+    });
 
-    // ============================================
-    // SECTION 2: Scaled Dot-Product Attention
-    // ============================================
-    function showAttnStep(step) {
-        for (let i = 1; i <= 4; i++) {
-            document.getElementById(`attn-step-${i}`).classList.toggle('active', i === step);
+    Plotly.newPlot('overview-plot', traces, {
+        scene: {
+            xaxis: { title: 'Dim 1 (z.B. "Belebtheit")', color: '#888', gridcolor: '#333' },
+            yaxis: { title: 'Dim 2 (z.B. "Abstraktheit")', color: '#888', gridcolor: '#333' },
+            zaxis: { title: 'Dim 3 (z.B. "Aktion")', color: '#888', gridcolor: '#333' },
+            bgcolor: '#0d0d20'
+        },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        margin: { l: 0, r: 0, t: 30, b: 0 },
+        title: { text: 'Token-Embeddings im Raum – "sitzt" sammelt Information', font: { size: 14 } }
+    }, { responsive: true });
+}
+
+// ============ SECTION 2: QKV PROJECTION PLOT ============
+function createQKVPlot() {
+    // Original embedding
+    const emb = [0.8, 0.6, 0.7];
+
+    // Simulated projections (W^Q, W^K, W^V rotate/scale differently)
+    const q = [0.9, 0.3, 0.2];  // Query projection
+    const k = [0.4, 0.8, 0.5];  // Key projection
+    const v = [0.2, 0.5, 0.9];  // Value projection
+
+    const traces = [
+        // Original embedding
+        {
+            x: [0, emb[0]], y: [0, emb[1]], z: [0, emb[2]],
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: { width: 6, color: '#ffffff' },
+            marker: { size: [3, 8], color: '#ffffff' },
+            name: 'Embedding x'
+        },
+        // Query
+        {
+            x: [0, q[0]], y: [0, q[1]], z: [0, q[2]],
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: { width: 5, color: '#ff6b6b' },
+            marker: { size: [3, 7], color: '#ff6b6b' },
+            name: 'Query = xW^Q'
+        },
+        // Key
+        {
+            x: [0, k[0]], y: [0, k[1]], z: [0, k[2]],
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: { width: 5, color: '#4ecdc4' },
+            marker: { size: [3, 7], color: '#4ecdc4' },
+            name: 'Key = xW^K'
+        },
+        // Value
+        {
+            x: [0, v[0]], y: [0, v[1]], z: [0, v[2]],
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: { width: 5, color: '#ffd93d' },
+            marker: { size: [3, 7], color: '#ffd93d' },
+            name: 'Value = xW^V'
         }
-        document.querySelectorAll('#attn-steps .step-dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === step - 1);
-        });
-        if (step === 1) drawDotProductCanvas();
-        if (step === 2) updateScaling();
-        if (step === 3) drawSoftmaxCanvas();
-        if (step === 4) drawWeightedSumCanvas();
-    }
-
-    // Step 1: Dot Product Canvas
-    function drawDotProductCanvas() {
-        const canvas = document.getElementById('dotproduct-canvas');
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width, h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        const cellSize = 42;
-        const offsetX = 130;
-        const offsetY = 60;
-
-        // Title
-        ctx.fillStyle = '#e0e0e0';
-        ctx.font = 'bold 14px Segoe UI';
-        ctx.fillText('Q · Kᵀ  (Dot-Product Scores)', offsetX + 50, 25);
-
-        // Row/Col labels
-        ctx.font = '12px Segoe UI';
-        ctx.fillStyle = '#a0a0d0';
-        ctx.fillText('← Keys (K)', offsetX + 80, 45);
-        
-        // Draw column headers
-        for (let j = 0; j < nTokens; j++) {
-            ctx.fillStyle = '#4ecdc4';
-            ctx.font = 'bold 11px Segoe UI';
-            ctx.fillText(tokens[j], offsetX + j * cellSize + 5, offsetY - 5);
-        }
-
-        // Draw row headers and cells
-        for (let i = 0; i < nTokens; i++) {
-            ctx.fillStyle = '#ff6b6b';
-            ctx.font = 'bold 11px Segoe UI';
-            ctx.textAlign = 'right';
-            ctx.fillText(tokens[i] + ' (Q)', offsetX - 10, offsetY + i * cellSize + 25);
-            ctx.textAlign = 'left';
-
-            for (let j = 0; j < nTokens; j++) {
-                const score = rawScores[i][j];
-                const normalized = (score + 2) / 4; // normalize to 0-1 range roughly
-                const intensity = Math.max(0, Math.min(1, normalized));
-                
-                // Color based on score
-                const r = Math.floor(102 + intensity * 153);
-                const g = Math.floor(50 + intensity * 76);
-                const b = Math.floor(200 + intensity * 55);
-                
-                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.8)`;
-                ctx.fillRect(offsetX + j * cellSize, offsetY + i * cellSize, cellSize - 2, cellSize - 2);
-                
-                // Score text
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '10px monospace';
-                ctx.fillText(score.toFixed(2), offsetX + j * cellSize + 5, offsetY + i * cellSize + 25);
-            }
-        }
-
-        // Explanation arrow
-        ctx.fillStyle = '#888';
-        ctx.font = '11px Segoe UI';
-        ctx.fillText('Hoher Wert = Query i findet Key j relevant', offsetX, h - 30);
-        ctx.fillText('→ "Katze" achtet stark auf "sitzt" (Subjekt→Verb)', offsetX, h - 12);
-    }
-
-    // Step 2: Scaling visualization
-    function updateScaling() {
-        const dkVal = parseInt(document.getElementById('dk-slider').value);
-        document.getElementById('dk-value').textContent = dkVal;
-        const sqrtDk = Math.sqrt(dkVal);
-
-        // Generate random dot products with variance dk
-        const n = 50;
-        const unscaled = [];
-        const scaled = [];
-        for (let i = 0; i < n; i++) {
-            // Simulate dot product with variance dk
-            let dp = 0;
-            for (let d = 0; d < dkVal; d++) {
-                dp += (Math.random() * 2 - 1) * (Math.random() * 2 - 1);
-            }
-            unscaled.push(dp);
-            scaled.push(dp / sqrtDk);
-        }
-
-        const traceUnscaled = {
-            y: unscaled,
-            type: 'box',
-            name: `Unscaled (Var ≈ ${dkVal})`,
-            marker: { color: '#ff6b6b' },
-            boxpoints: 'all',
-            jitter: 0.3
-        };
-        const traceScaled = {
-            y: scaled,
-            type: 'box',
-            name: `Scaled ÷√${dkVal} (Var ≈ 1)`,
-            marker: { color: '#4ecdc4' },
-            boxpoints: 'all',
-            jitter: 0.3
-        };
-
-        Plotly.newPlot('scaling-chart', [traceUnscaled, traceScaled], {
-            title: { text: `Skalierung: ÷√d_k = ÷√${dkVal} = ÷${sqrtDk.toFixed(2)}`, font: { color: '#e0e0e0', size: 14 } },
-            paper_bgcolor: '#0d0d20',
-            plot_bgcolor: '#0d0d20',
-            font: { color: '#c0c0d0' },
-            yaxis: { gridcolor: '#2a2a4a', title: 'Dot-Product Werte', zeroline: true, zerolinecolor: '#4a4a6a' },
-            xaxis: { gridcolor: '#2a2a4a' },
-            showlegend: true,
-            legend: { orientation: 'h', y: -0.15 }
-        }, {responsive: true});
-    }
-
-    // Step 3: Softmax Canvas
-    let maskEnabled = false;
-    let softmaxAnimating = false;
-
-    function drawSoftmaxCanvas(animProgress = 1.0) {
-        const canvas = document.getElementById('softmax-canvas');
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width, h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        const cellSize = 50;
-        const offsetX = 100;
-        const offsetY = 70;
-
-        // Compute masked or unmasked scores
-        let scores = JSON.parse(JSON.stringify(rawScores));
-        if (maskEnabled) {
-            for (let i = 0; i < nTokens; i++) {
-                for (let j = i + 1; j < nTokens; j++) {
-                    scores[i][j] = -Infinity;
-                }
-            }
-        }
-
-        // Apply softmax with animation interpolation
-        const weights = scores.map(row => {
-            const sm = softmax(row.map(v => v === -Infinity ? -1e9 : v));
-            return sm.map(v => v * animProgress);
-        });
-
-        // Title
-        ctx.fillStyle = '#e0e0e0';
-        ctx.font = 'bold 14px Segoe UI';
-        ctx.fillText(maskEnabled ? 'Masked Softmax (Decoder – kausale Maske)' : 'Softmax (Encoder – alle sichtbar)', offsetX + 30, 25);
-        ctx.fillStyle = '#888';
-        ctx.font = '11px Segoe UI';
-        ctx.fillText('Jede Zeile summiert sich zu 1.0 – Wahrscheinlichkeitsverteilung', offsetX, 45);
-
-        // Column headers
-        for (let j = 0; j < nTokens; j++) {
-            ctx.fillStyle = '#4ecdc4';
-            ctx.font = 'bold 11px Segoe UI';
-            ctx.fillText(tokens[j], offsetX + j * cellSize + 5, offsetY - 8);
-        }
-
-        // Draw matrix
-        for (let i = 0; i < nTokens; i++) {
-            // Row label
-            ctx.fillStyle = '#ff6b6b';
-            ctx.font = 'bold 11px Segoe UI';
-            ctx.textAlign = 'right';
-            ctx.fillText(tokens[i], offsetX - 10, offsetY + i * cellSize + 30);
-            ctx.textAlign = 'left';
-
-            let rowSum = 0;
-            for (let j = 0; j < nTokens; j++) {
-                const weight = weights[i][j];
-                rowSum += weight;
-
-                if (maskEnabled && j > i) {
-                    // Masked cell
-                    ctx.fillStyle = 'rgba(50, 20, 20, 0.8)';
-                    ctx.fillRect(offsetX + j * cellSize, offsetY + i * cellSize, cellSize - 2, cellSize - 2);
-                    ctx.fillStyle = '#ff4444';
-                    ctx.font = '16px Segoe UI';
-                    ctx.fillText('✕', offsetX + j * cellSize + 17, offsetY + i * cellSize + 32);
-                } else {
-                    // Color intensity based on weight
-                    const intensity = Math.min(1, weight);
-                    ctx.fillStyle = `rgba(${Math.floor(102 + intensity * 100)}, ${Math.floor(126 + intensity * 100)}, ${Math.floor(234)}, ${0.3 + intensity * 0.7})`;
-                    ctx.fillRect(offsetX + j * cellSize, offsetY + i * cellSize, cellSize - 2, cellSize - 2);
-                    
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '10px monospace';
-                    ctx.fillText(weight.toFixed(3), offsetX + j * cellSize + 5, offsetY + i * cellSize + 30);
-                }
-            }
-
-            // Row sum
-            ctx.fillStyle = '#f7dc6f';
-            ctx.font = '10px monospace';
-            ctx.fillText(`Σ=${rowSum.toFixed(2)}`, offsetX + nTokens * cellSize + 10, offsetY + i * cellSize + 30);
-        }
-
-        // Legend
-        ctx.fillStyle = '#888';
-        ctx.font = '11px Segoe UI';
-        const legendY = offsetY + nTokens * cellSize + 30;
-        ctx.fillText('🔵 Helle Zelle = hohe Aufmerksamkeit', offsetX, legendY);
-        if (maskEnabled) {
-            ctx.fillText('✕ Maskiert = Token darf nicht in die Zukunft schauen (autoregressive Eigenschaft)', offsetX, legendY + 20);
-        }
-    }
-
-    function animateSoftmax() {
-        if (softmaxAnimating) return;
-        softmaxAnimating = true;
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += 0.03;
-            if (progress >= 1) {
-                progress = 1;
-                clearInterval(interval);
-                softmaxAnimating = false;
-            }
-            drawSoftmaxCanvas(progress);
-        }, 30);
-    }
-
-    function toggleMask() {
-        maskEnabled = !maskEnabled;
-        document.getElementById('mask-info').textContent = maskEnabled 
-            ? 'Mask AN: Decoder Self-Attention (Token sieht nur vorherige + sich selbst)'
-            : 'Mask AUS: Encoder Self-Attention (jedes Token sieht alle)';
-        drawSoftmaxCanvas();
-    }
-
-    // Step 4: Weighted Sum Canvas
-    let weightedSumAnimating = false;
-
-    function drawWeightedSumCanvas(highlightRow = -1, animProgress = 1.0) {
-        const canvas = document.getElementById('weighted-sum-canvas');
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width, h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        const selectedRow = highlightRow >= 0 ? highlightRow : 1; // Default: "Katze"
-
-        ctx.fillStyle = '#e0e0e0';
-        ctx.font = 'bold 14px Segoe UI';
-        ctx.fillText(`Gewichtete Summe für "${tokens[selectedRow]}":`, 20, 25);
-        ctx.fillStyle = '#888';
-        ctx.font = '11px Segoe UI';
-        ctx.fillText('Output = Σ (attention_weight_i × Value_i)', 20, 45);
-
-        const barWidth = 80;
-        const barMaxHeight = 150;
-        const baseY = 280;
-        const startX = 60;
-
-        // Draw each token's contribution
-        for (let j = 0; j < nTokens; j++) {
-            const weight = attnWeights[selectedRow][j];
-            const barHeight = weight * barMaxHeight * animProgress;
-
-            // Bar
-            const hue = (j / nTokens) * 360;
-            ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
-            ctx.fillRect(startX + j * (barWidth + 15), baseY - barHeight, barWidth, barHeight);
-
-            // Token label
-            ctx.fillStyle = '#e0e0e0';
-            ctx.font = 'bold 11px Segoe UI';
-            ctx.textAlign = 'center';
-            ctx.fillText(tokens[j], startX + j * (barWidth + 15) + barWidth / 2, baseY + 20);
-
-            // Weight label
-            ctx.fillStyle = '#f7dc6f';
-            ctx.font = '11px monospace';
-            ctx.fillText((weight * animProgress).toFixed(3), startX + j * (barWidth + 15) + barWidth / 2, baseY - barHeight - 10);
-            ctx.textAlign = 'left';
-        }
-
-        // Result arrow and explanation
-        ctx.fillStyle = '#667eea';
-        ctx.font = 'bold 13px Segoe UI';
-        ctx.fillText('↓', 350, baseY + 50);
-        ctx.fillText(`Output für "${tokens[selectedRow]}" = gewichtete Mischung aller Values`, 100, baseY + 70);
-        
-        ctx.fillStyle = '#888';
-        ctx.font = '11px Segoe UI';
-        ctx.fillText(`→ "${tokens[selectedRow]}" bekommt am meisten Info von Tokens mit hohem Attention-Gewicht`, 60, baseY + 95);
-        ctx.fillText(`→ Das ist KEINE Kopie – es ist eine weiche, differenzierbare Auswahl!`, 60, baseY + 115);
-
-        // Draw the formula visually
-        ctx.fillStyle = '#ffcc00';
-        ctx.font = '12px monospace';
-        let formulaStr = `output = `;
-        for (let j = 0; j < Math.min(3, nTokens); j++) {
-            formulaStr += `${(attnWeights[selectedRow][j]).toFixed(2)}·V(${tokens[j]}) + `;
-        }
-        formulaStr += '...';
-        ctx.fillText(formulaStr, 60, h - 20);
-    }
-
-    function animateWeightedSum() {
-        if (weightedSumAnimating) return;
-        weightedSumAnimating = true;
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += 0.03;
-            if (progress >= 1) {
-                progress = 1;
-                clearInterval(interval);
-                weightedSumAnimating = false;
-            }
-            drawWeightedSumCanvas(1, progress);
-        }, 30);
-    }
-
-    // ============================================
-    // SECTION 3: Multi-Head Attention
-    // ============================================
-    function generateHeadAttention(headIdx) {
-        // Simulate different attention patterns for different heads
-        const patterns = [];
-        for (let i = 0; i < nTokens; i++) {
-            patterns[i] = [];
-            for (let j = 0; j < nTokens; j++) {
-                let score = 0;
-                switch(headIdx) {
-                    case 0: // Syntactic: subject-verb
-                        score = (i === 1 && j === 2) ? 0.7 : (i === 2 && j === 1) ? 0.6 : Math.random() * 0.15;
-                        break;
-                    case 1: // Local/adjacent
-                        score = Math.exp(-Math.abs(i - j) * 1.5);
-                        break;
-                    case 2: // Article-noun
-                        score = ((i === 0 && j === 1) || (i === 4 && j === 5)) ? 0.8 : Math.random() * 0.1;
-                        break;
-                    case 3: // Long-distance
-                        score = (i === 1 && j === 5) ? 0.7 : (i === 5 && j === 1) ? 0.65 : Math.random() * 0.12;
-                        break;
-                    case 4: // Preposition attachment
-                        score = (i === 3 && j === 2) ? 0.6 : (i === 3 && j === 5) ? 0.5 : Math.random() * 0.15;
-                        break;
-                    case 5: // Self-attention (diagonal)
-                        score = (i === j) ? 0.6 : Math.random() * 0.15;
-                        break;
-                    case 6: // Reverse order
-                        score = Math.exp(-Math.abs(i - (nTokens - 1 - j)) * 1.2);
-                        break;
-                    case 7: // Uniform/global
-                        score = 0.15 + Math.random() * 0.05;
-                        break;
-                }
-                patterns[i][j] = score;
-            }
-            // Normalize rows
-            const sum = patterns[i].reduce((a, b) => a + b, 0);
-            patterns[i] = patterns[i].map(v => v / sum);
-        }
-        return patterns;
-    }
-
-    const headDescriptions = [
-        "Kopf 1: Syntaktisch (Subjekt↔Verb)",
-        "Kopf 2: Lokale Nachbarschaft",
-        "Kopf 3: Artikel→Nomen",
-        "Kopf 4: Fernabhängigkeiten (Katze↔Matte)",
-        "Kopf 5: Präposition-Attachment",
-        "Kopf 6: Selbst-Referenz (Diagonal)",
-        "Kopf 7: Rückwärts-Muster",
-        "Kopf 8: Globale/Uniforme Attention"
     ];
 
-    let currentHead = 0;
+    Plotly.newPlot('qkv-plot', traces, {
+        scene: {
+            xaxis: { title: 'Dim 1', color: '#888', gridcolor: '#333', range: [-0.2, 1.2] },
+            yaxis: { title: 'Dim 2', color: '#888', gridcolor: '#333', range: [-0.2, 1.2] },
+            zaxis: { title: 'Dim 3', color: '#888', gridcolor: '#333', range: [-0.2, 1.2] },
+            bgcolor: '#0d0d20',
+            camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+        },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        margin: { l: 0, r: 0, t: 10, b: 0 },
+        legend: { x: 0, y: 1 }
+    }, { responsive: true });
+}
 
-    function initMultiHeadButtons() {
-        const container = document.getElementById('head-buttons');
-        for (let h = 0; h < 8; h++) {
-            const btn = document.createElement('button');
-            btn.textContent = `Kopf ${h + 1}`;
-            btn.onclick = () => { currentHead = h; drawMultiHeadChart(); };
-            btn.style.fontSize = '0.85em';
-            btn.style.padding = '8px 14px';
-            container.appendChild(btn);
-        }
-    }
+// ============ SECTION 2: PROJECTION CANVAS ANIMATION ============
+function animateProjection() {
+    const canvas = document.getElementById('projection-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let angle = 0;
 
-    function drawMultiHeadChart() {
-        const pattern = generateHeadAttention(currentHead);
-        
-        const trace = {
-            z: pattern.map(row => [...row].reverse()),
-            x: tokens,
-            y: [...tokens].reverse(),
-            type: 'heatmap',
-            colorscale: [
-                [0, '#0d0d20'],
-                [0.25, '#1a1a5a'],
-                [0.5, '#667eea'],
-                [0.75, '#a855f7'],
-                [1, '#ffcc00']
-            ],
-            showscale: true,
-            colorbar: { title: { text: 'Gewicht', font: { color: '#c0c0d0' } }, tickfont: { color: '#c0c0d0' } }
-        };
+    function draw() {
+        ctx.fillStyle = '#0d0d20';
+        ctx.fillRect(0, 0, 400, 300);
 
-        Plotly.newPlot('multihead-chart', [trace], {
-            title: { text: headDescriptions[currentHead], font: { color: '#e0e0e0', size: 14 } },
-            paper_bgcolor: '#0d0d20',
-            plot_bgcolor: '#0d0d20',
-            font: { color: '#c0c0d0' },
-            xaxis: { title: 'Key (worauf wird geachtet)', side: 'bottom', tickfont: { size: 12 } },
-            yaxis: { title: 'Query (wer achtet)', tickfont: { size: 12 } },
-            annotations: currentHead === 0 ? [{
-                x: 'sitzt', y: 'Katze',
-                text: '← Subjekt achtet auf Verb',
-                showarrow: true,
-                arrowhead: 2,
-                arrowcolor: '#ffcc00',
-                font: { color: '#ffcc00', size: 11 },
-                ax: 60, ay: -30
-            }] : []
-        }, {responsive: true});
-    }
+        const cx = 200, cy = 150;
 
-    // ============================================
-    // SECTION 4: Positional Encoding
-    // ============================================
-    function updatePositionalEncoding() {
-        const seqLen = parseInt(document.getElementById('seq-len-slider').value);
-        document.getElementById('seq-len-value').textContent = seqLen;
+        // Original vector
+        const origX = 120, origY = -60;
 
-        const dModelVis = 64; // Show 64 dims for visualization
-        const z = [];
-        for (let pos = 0; pos < seqLen; pos++) {
-            z[pos] = [];
-            for (let i = 0; i < dModelVis; i++) {
-                const dimIdx = Math.floor(i / 2);
-                const angle = pos / Math.pow(10000, (2 * dimIdx) / dModelVis);
-                z[pos][i] = i % 2 === 0 ? Math.sin(angle) : Math.cos(angle);
-            }
-        }
+        // Rotation matrix (simulating W^Q)
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const projX = origX * cos - origY * sin;
+        const projY = origX * sin + origY * cos;
 
-        const trace = {
-            z: z,
-            type: 'heatmap',
-            colorscale: 'RdBu',
-            showscale: true,
-            colorbar: { title: { text: 'PE Wert', font: { color: '#c0c0d0' } }, tickfont: { color: '#c0c0d0' } }
-        };
-
-        Plotly.newPlot('positional-chart', [trace], {
-            title: { text: `Positional Encoding (${seqLen} Positionen × ${dModelVis} Dimensionen)`, font: { color: '#e0e0e0', size: 14 } },
-            paper_bgcolor: '#12122a',
-            plot_bgcolor: '#12122a',
-            font: { color: '#c0c0d0' },
-            xaxis: { title: 'Dimension (i)', gridcolor: '#2a2a4a' },
-            yaxis: { title: 'Position (pos)', gridcolor: '#2a2a4a' }
-        }, {responsive: true});
-    }
-
-    // ============================================
-    // SECTION 5: Full Flow Animation
-    // ============================================
-    let flowAnimating = false;
-    let flowStep = 0;
-
-    function drawFlowCanvas(step = 0) {
-        const canvas = document.getElementById('attention-flow-canvas');
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width, h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-
-        // Architecture blocks
-        const blocks = [
-            { x: 50, y: 420, w: 700, h: 50, label: 'Input Embeddings + Positional Encoding', color: '#667eea', step: 0 },
-            { x: 200, y: 330, w: 400, h: 45, label: 'Multi-Head Self-Attention', color: '#ff6b6b', step: 1 },
-            { x: 200, y: 270, w: 400, h: 35, label: 'Add & LayerNorm (Residual)', color: '#4ecdc4', step: 2 },
-            { x: 200, y: 200, w: 400, h: 45, label: 'Feed-Forward Network (FFN)', color: '#45b7d1', step: 3 },
-            { x: 200, y: 140, w: 400, h: 35, label: 'Add & LayerNorm (Residual)', color: '#4ecdc4', step: 4 },
-            { x: 280, y: 70, w: 240, h: 40, label: '→ Nächster Layer (×6)', color: '#f7dc6f', step: 5 }
-        ];
-
-        // Draw connections
-        ctx.strokeStyle = '#3a3a6a';
-        ctx.lineWidth = 2;
-        for (let i = 0; i < blocks.length - 1; i++) {
-            const from = blocks[i];
-            const to = blocks[i + 1];
-            ctx.beginPath();
-            ctx.moveTo(from.x + from.w / 2, from.y);
-            ctx.lineTo(to.x + to.w / 2, to.y + to.h);
-            ctx.stroke();
-        }
-
-        // Residual connections
-        ctx.strokeStyle = '#f7dc6f';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([5, 5]);
-        // Residual 1: Input → Add&Norm 1
+        // Draw axes
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(130, 420);
-        ctx.lineTo(130, 270 + 17);
-        ctx.lineTo(200, 270 + 17);
+        ctx.moveTo(cx - 180, cy); ctx.lineTo(cx + 180, cy);
+        ctx.moveTo(cx, cy - 130); ctx.lineTo(cx, cy + 130);
         ctx.stroke();
-        // Residual 2: After Attn → Add&Norm 2
+
+        // Axis labels
+        ctx.fillStyle = '#666';
+        ctx.font = '11px monospace';
+        ctx.fillText('dim 1', cx + 150, cy + 15);
+        ctx.fillText('dim 2', cx + 5, cy - 120);
+
+        // Original vector
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(650, 270 + 17);
-        ctx.lineTo(680, 270 + 17);
-        ctx.lineTo(680, 140 + 17);
-        ctx.lineTo(600, 140 + 17);
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + origX, cy + origY);
         ctx.stroke();
-        ctx.setLineDash([]);
+        drawArrowhead(ctx, cx, cy, cx + origX, cy + origY, '#ffffff');
 
-        // Draw blocks
-        blocks.forEach((block, i) => {
-            const isActive = i <= step;
-            const alpha = isActive ? 1.0 : 0.3;
-            
-            ctx.fillStyle = isActive ? block.color : '#2a2a4a';
-            ctx.globalAlpha = alpha;
-            ctx.beginPath();
-            ctx.roundRect(block.x, block.y, block.w, block.h, 8);
-            ctx.fill();
-            
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = isActive ? '#ffffff' : '#666';
-            ctx.font = 'bold 13px Segoe UI';
-            ctx.textAlign = 'center';
-            ctx.fillText(block.label, block.x + block.w / 2, block.y + block.h / 2 + 5);
-            ctx.textAlign = 'left';
-        });
-
-        // Animated data ball
-        if (step >= 0 && step < blocks.length) {
-            const block = blocks[step];
-            ctx.beginPath();
-            ctx.arc(block.x + block.w / 2, block.y + block.h / 2, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = '#ffffff';
-            ctx.shadowBlur = 20;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        }
+        // Projected vector
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + projX * 0.8, cy + projY * 0.8);
+        ctx.stroke();
+        drawArrowhead(ctx, cx, cy, cx + projX * 0.8, cy + projY * 0.8, '#ff6b6b');
 
         // Labels
-        ctx.fillStyle = '#888';
-        ctx.font = '11px Segoe UI';
-        ctx.fillText('Residual Connection', 50, 350);
-        ctx.fillText('(Skip Connection)', 50, 365);
-        ctx.fillStyle = '#f7dc6f';
-        ctx.fillText('- - - -', 50, 380);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('x (Embedding)', cx + origX + 5, cy + origY - 5);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText('xW^Q (Query)', cx + projX * 0.8 + 5, cy + projY * 0.8 - 5);
 
-        // Step description
-        const descriptions = [
-            'Tokens werden zu Embeddings + Positionsinformation addiert',
-            'Jedes Token sammelt Info von allen anderen via Attention',
-            'Residual: Original-Input wird zum Attention-Output addiert → stabilisiert Training',
-            'FFN verarbeitet jede Position unabhängig (dein bekanntes Universal Approximation!)',
-            'Wieder Residual Connection → Gradient kann direkt durchfließen',
-            'Das Ganze wird 6× wiederholt – jeder Layer verfeinert die Repräsentationen'
-        ];
-        
-        ctx.fillStyle = '#e0e0e0';
-        ctx.font = '12px Segoe UI';
-        if (step < descriptions.length) {
-            ctx.fillText(`Schritt ${step + 1}: ${descriptions[step]}`, 50, h - 15);
-        }
+        // Matrix info
+        ctx.fillStyle = '#a78bfa';
+        ctx.font = '11px monospace';
+        ctx.fillText(`W^Q rotiert um ${(angle * 180 / Math.PI).toFixed(0)}°`, 10, 280);
+        ctx.fillText('+ skaliert × 0.8', 10, 295);
+
+        angle += 0.008;
+        requestAnimationFrame(draw);
     }
 
-    function animateFullFlow() {
-        if (flowAnimating) return;
-        flowAnimating = true;
-        flowStep = 0;
-        
-        const interval = setInterval(() => {
-            drawFlowCanvas(flowStep);
-            flowStep++;
-            if (flowStep > 5) {
-                clearInterval(interval);
-                flowAnimating = false;
-            }
-        }, 1200);
+    function drawArrowhead(ctx, fromX, fromY, toX, toY, color) {
+        const headLen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - 0.4), toY - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(toX - headLen * Math.cos(angle + 0.4), toY - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
     }
 
-    function resetFlow() {
-        flowAnimating = false;
-        flowStep = 0;
-        drawFlowCanvas(0);
-    }
+    draw();
+}
 
-    // ============================================
-    // SECTION 6: Complexity Comparison
-    // ============================================
-    function drawComplexityChart() {
-        const seqLengths = [];
-        for (let n = 10; n <= 500; n += 10) seqLengths.push(n);
-        
-        const d = 512;
-        const k = 3; // kernel size for CNN
+// ============ SECTION 3: DOT PRODUCT INTERACTIVE ============
+function updateDotProduct() {
+    const angleDeg = parseInt(document.getElementById('query-angle').value);
+    document.getElementById('angle-val').textContent = angleDeg + '°';
+    const angleRad = angleDeg * Math.PI / 180;
 
-        const selfAttn = seqLengths.map(n => n * n * d);
-        const recurrent = seqLengths.map(n => n * d * d);
-        const convolutional = seqLengths.map(n => k * n * d * d);
+    // Query vector (rotatable)
+    const qx = Math.cos(angleRad);
+    const qy = Math.sin(angleRad);
 
-        const traceSA = {
-            x: seqLengths,
-            y: selfAttn.map(v => v / 1e9),
-            name: 'Self-Attention O(n²·d)',
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: '#667eea', width: 3 }
-        };
-        const traceRNN = {
-            x: seqLengths,
-            y: recurrent.map(v => v / 1e9),
-            name: 'Recurrent O(n·d²)',
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: '#ff6b6b', width: 3 }
-        };
-        const traceCNN = {
-            x: seqLengths,
-            y: convolutional.map(v => v / 1e9),
-            name: 'Convolutional O(k·n·d²)',
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: '#4ecdc4', width: 3 }
-        };
+    // Fixed key vectors (representing different tokens)
+    const keys = [
+        { x: 0.9, y: 0.4, label: 'K₁ "Katze"', color: '#4ecdc4' },
+        { x: -0.3, y: 0.95, label: 'K₂ "sitzt"', color: '#ffd93d' },
+        { x: -0.8, y: -0.6, label: 'K₃ "auf"', color: '#ff6b6b' },
+        { x: 0.5, y: -0.85, label: 'K₄ "Matte"', color: '#a78bfa' }
+    ];
 
-        // Crossover point annotation
-        const crossover = Math.round(d); // n = d is where self-attn = recurrent
+    // Normalize keys
+    keys.forEach(k => {
+        const len = Math.sqrt(k.x * k.x + k.y * k.y);
+        k.x /= len; k.y /= len;
+    });
 
-        Plotly.newPlot('complexity-chart', [traceSA, traceRNN, traceCNN], {
-            title: { text: 'Komplexität pro Layer (d=512, k=3)', font: { color: '#e0e0e0', size: 14 } },
-            paper_bgcolor: '#12122a',
-            plot_bgcolor: '#12122a',
-            font: { color: '#c0c0d0' },
-            xaxis: { title: 'Sequenzlänge (n)', gridcolor: '#2a2a4a' },
-            yaxis: { title: 'FLOPs (×10⁹)', gridcolor: '#2a2a4a' },
-            legend: { orientation: 'h', y: -0.2 },
-            shapes: [{
-                type: 'line',
-                x0: crossover, x1: crossover,
-                y0: 0, y1: crossover * crossover * d / 1e9,
-                line: { color: '#f7dc6f', width: 2, dash: 'dash' }
-            }],
-            annotations: [{
-                x: crossover,
-                y: crossover * crossover * d / 1e9 * 0.5,
-                text: `n=d=${d}<br>Crossover`,
-                showarrow: true,
-                arrowhead: 2,
-                arrowcolor: '#f7dc6f',
-                font: { color: '#f7dc6f', size: 11 },
-                ax: 50, ay: -30
-            }]
-        }, {responsive: true});
-    }
+    const traces = [];
 
-    // ============================================
-    // SECTION 7: Live Demo - Attention Heatmap
-    // ============================================
-    function computeAttentionDemo() {
-        const input = document.getElementById('demo-input').value.trim();
-        const demoTokens = input.split(/\s+/);
-        const n = demoTokens.length;
+    // Query vector
+    traces.push({
+        x: [0, qx], y: [0, qy],
+        mode: 'lines+markers',
+        line: { width: 4, color: '#ffffff' },
+        marker: { size: [4, 10], color: '#ffffff' },
+        name: `Query (${angleDeg}°)`
+    });
 
-        if (n < 2) {
-            alert('Bitte mindestens 2 Wörter eingeben!');
-            return;
-        }
+    // Key vectors and projections
+    let resultsHTML = '<div style="font-family: monospace;">';
+    const scores = [];
 
-        // Generate pseudo-embeddings based on character features
-        const dimSize = 32;
-        const embeds = demoTokens.map(token => {
-            const vec = [];
-            for (let d = 0; d < dimSize; d++) {
-                let val = 0;
-                for (let c = 0; c < token.length; c++) {
-                    val += Math.sin(token.charCodeAt(c) * (d + 1) * 0.1) * 0.5;
-                }
-                val /= token.length;
-                // Add some structure: similar words get similar embeddings
-                val += Math.cos(token.length * (d + 1) * 0.3) * 0.3;
-                vec.push(val);
-            }
-            return vec;
+    keys.forEach((k, i) => {
+        // Key vector
+        traces.push({
+            x: [0, k.x], y: [0, k.y],
+            mode: 'lines+markers',
+            line: { width: 3, color: k.color },
+            marker: { size: [3, 8], color: k.color },
+            name: k.label
         });
 
-        // Generate Q, K with learned-like projections
-        const Wq = Array.from({length: dimSize}, (_, i) => 
-            Array.from({length: dimSize}, (_, j) => Math.sin((i + 1) * (j + 1) * 0.15) * 0.5)
-        );
-        const Wk = Array.from({length: dimSize}, (_, i) => 
-            Array.from({length: dimSize}, (_, j) => Math.cos((i + 1) * (j + 1) * 0.12) * 0.5)
-        );
+        // Dot product = projection
+        const dot = qx * k.x + qy * k.y;
+        scores.push(dot);
 
-        // Matrix multiply: Q = embeds * Wq, K = embeds * Wk
-        function matVecMul(mat, vec) {
-            return mat[0].map((_, colIdx) => 
-                vec.reduce((sum, val, rowIdx) => sum + val * mat[rowIdx][colIdx], 0)
-            );
-        }
+        // Projection line (perpendicular drop)
+        const projLen = dot;
+        const projX = projLen * qx;
+        const projY = projLen * qy;
 
-        const Qs = embeds.map(e => matVecMul(Wq, e));
-        const Ks = embeds.map(e => matVecMul(Wk, e));
+        traces.push({
+            x: [k.x, projX], y: [k.y, projY],
+            mode: 'lines',
+            line: { width: 1, color: k.color, dash: 'dot' },
+            showlegend: false
+        });
 
-        // Compute attention scores
-        const scale = Math.sqrt(dimSize);
-        const scores = [];
-        for (let i = 0; i < n; i++) {
-            scores[i] = [];
-            for (let j = 0; j < n; j++) {
-                scores[i][j] = dotProduct(Qs[i], Ks[j]) / scale;
-            }
-        }
-
-        // Apply softmax
-        const weights = applySoftmax(scores);
-
-        // Add some realistic patterns:
-        // Boost attention between articles and nouns, repeated words, etc.
-        for (let i = 0; i < n; i++) {
-            for (let j = 0; j < n; j++) {
-                // Boost self-attention slightly
-                if (i === j) weights[i][j] += 0.1;
-                // Boost adjacent tokens
-                if (Math.abs(i - j) === 1) weights[i][j] += 0.05;
-                // Boost same tokens
-                if (demoTokens[i].toLowerCase() === demoTokens[j].toLowerCase()) weights[i][j] += 0.15;
-            }
-            // Re-normalize
-            const sum = weights[i].reduce((a, b) => a + b, 0);
-            weights[i] = weights[i].map(v => v / sum);
-        }
-
-        // Plot heatmap
-        const trace = {
-            z: weights,
-            x: demoTokens,
-            y: demoTokens,
-            type: 'heatmap',
-            colorscale: [
-                [0, '#0d0d20'],
-                [0.2, '#1a1a5a'],
-                [0.4, '#4a3a8a'],
-                [0.6, '#667eea'],
-                [0.8, '#a855f7'],
-                [1, '#ffcc00']
-            ],
-            showscale: true,
-            colorbar: { 
-                title: { text: 'Attention\nGewicht', font: { color: '#c0c0d0' } }, 
-                tickfont: { color: '#c0c0d0' } 
-            },
-            hoverongaps: false,
-            hovertemplate: 'Query: %{y}<br>Key: %{x}<br>Gewicht: %{z:.4f}<extra></extra>'
-        };
-
-        Plotly.newPlot('demo-heatmap', [trace], {
-            title: { 
-                text: 'Attention-Gewichte (simuliert)', 
-                font: { color: '#e0e0e0', size: 14 } 
-            },
-            paper_bgcolor: '#0d0d20',
-            plot_bgcolor: '#0d0d20',
-            font: { color: '#c0c0d0' },
-            xaxis: { 
-                title: 'Key (worauf wird geachtet)', 
-                tickangle: -45,
-                tickfont: { size: 10 }
-            },
-            yaxis: { 
-                title: 'Query (wer achtet)', 
-                tickfont: { size: 10 },
-                autorange: 'reversed'
-            },
-            margin: { l: 100, b: 100, t: 50 }
-        }, {responsive: true});
-    }
-
-    // ============================================
-    // INITIALIZATION
-    // ============================================
-    function init() {
-        // Draw architecture overview
-        drawArchitectureOverview();
-
-        // Initialize token selector
-        selectToken(1); // Default: "Katze"
-
-        // Draw initial canvases
-        drawDotProductCanvas();
-        updateScaling();
-        drawSoftmaxCanvas();
-        drawWeightedSumCanvas();
-
-        // Multi-head
-        initMultiHeadButtons();
-        drawMultiHeadChart();
-
-        // Positional encoding
-        updatePositionalEncoding();
-
-        // Full flow
-        drawFlowCanvas(0);
-
-        // Complexity
-        drawComplexityChart();
-
-        // Demo
-        computeAttentionDemo();
-    }
-
-    // Polyfill for roundRect if needed
-    if (!CanvasRenderingContext2D.prototype.roundRect) {
-        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-            if (w < 2 * r) r = w / 2;
-            if (h < 2 * r) r = h / 2;
-            this.beginPath();
-            this.moveTo(x + r, y);
-            this.arcTo(x + w, y, x + w, y + h, r);
-            this.arcTo(x + w, y + h, x, y + h, r);
-            this.arcTo(x, y + h, x, y, r);
-            this.arcTo(x, y, x + w, y, r);
-            this.closePath();
-            return this;
-        };
-    }
-
-    // Run on load
-    window.addEventListener('DOMContentLoaded', init);
-    window.addEventListener('resize', () => {
-        // Redraw responsive elements
-        drawArchitectureOverview();
-        drawQKVChart();
-        drawMultiHeadChart();
-        updatePositionalEncoding();
-        drawComplexityChart();
+        // Projection point on query line
+        traces.push({
+            x: [projX], y: [projY],
+            mode: 'markers',
+            marker: { size: 6, color: k.color, symbol: 'x' },
+            showlegend: false
+        });
     });
-    </script>
+
+    // Compute softmax for display
+    const maxScore = Math.max(...scores);
+    const expScores = scores.map(s => Math.exp(s - maxScore));
+    const sumExp = expScores.reduce((a, b) => a + b, 0);
+    const softmaxWeights = expScores.map(e => e / sumExp);
+
+    keys.forEach((k, i) => {
+        resultsHTML += `<div style="color:${k.color}; margin: 8px 0; padding: 8px; background: #1a1a3a; border-radius: 6px;">
+            ${k.label}: dot = <strong>${scores[i].toFixed(3)}</strong> → α = <strong>${softmaxWeights[i].toFixed(3)}</strong>
+        </div>`;
+    });
+    resultsHTML += '</div>';
+    document.getElementById('dotprod-results').innerHTML = resultsHTML;
+
+    // Unit circle
+    const circleX = [], circleY = [];
+    for (let a = 0; a <= 360; a += 2) {
+        circleX.push(Math.cos(a * Math.PI / 180));
+        circleY.push(Math.sin(a * Math.PI / 180));
+    }
+    traces.push({
+        x: circleX, y: circleY,
+        mode: 'lines',
+        line: { width: 1, color: '#333' },
+        showlegend: false
+    });
+
+    Plotly.newPlot('dotprod-plot', traces, {
+        xaxis: { range: [-1.4, 1.4], title: 'Dimension 1', gridcolor: '#222', zerolinecolor: '#444' },
+        yaxis: { range: [-1.4, 1.4], title: 'Dimension 2', gridcolor: '#222', zerolinecolor: '#444', scaleanchor: 'x' },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        margin: { l: 50, r: 20, t: 30, b: 50 },
+        title: { text: 'Dot-Product = Projektion auf Query-Richtung', font: { size: 13 } },
+        legend: { x: 0, y: -0.2, orientation: 'h' }
+    }, { responsive: true });
+}
+
+// ============ SECTION 4: SCALING ============
+function updateScaling() {
+    const dk = parseInt(document.getElementById('dk-slider').value);
+    document.getElementById('dk-val').textContent = dk;
+
+    // Generate random dot products for different dimensions
+    const nSamples = 1000;
+    const unscaled = [];
+    const scaled = [];
+
+    for (let s = 0; s < nSamples; s++) {
+        let dot = 0;
+        for (let i = 0; i < dk; i++) {
+            dot += (Math.random() * 2 - 1) * (Math.random() * 2 - 1);
+        }
+        unscaled.push(dot);
+        scaled.push(dot / Math.sqrt(dk));
+    }
+
+    // Histogram
+    Plotly.newPlot('scaling-hist', [
+        {
+            x: unscaled,
+            type: 'histogram',
+            name: `Unscaled (σ² ≈ ${(dk/3).toFixed(0)})`,
+            marker: { color: '#ff6b6b88' },
+            nbinsx: 40
+        },
+        {
+            x: scaled,
+            type: 'histogram',
+            name: `Scaled ÷√${dk} (σ² ≈ ${(1/3).toFixed(2)})`,
+            marker: { color: '#4ecdc488' },
+            nbinsx: 40
+        }
+    ], {
+        barmode: 'overlay',
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        xaxis: { title: 'Score-Wert', gridcolor: '#222' },
+        yaxis: { title: 'Häufigkeit', gridcolor: '#222' },
+        margin: { l: 50, r: 20, t: 30, b: 50 },
+        legend: { x: 0, y: 1 }
+    }, { responsive: true });
+
+    // Softmax saturation plot
+    const xVals = [];
+    for (let x = -15; x <= 15; x += 0.2) xVals.push(x);
+
+    // Softmax of [x, 0, 0, 0] → first element
+    const softmaxVals = xVals.map(x => {
+        const expX = Math.exp(x);
+        return expX / (expX + 3); // softmax([x, 0, 0, 0])[0]
+    });
+
+    const gradVals = softmaxVals.map(s => s * (1 - s));
+
+    // Mark typical ranges
+    const unscaledRange = Math.sqrt(dk) * 2;
+    const scaledRange = 2;
+
+    Plotly.newPlot('scaling-plot', [
+        {
+            x: xVals, y: softmaxVals,
+            mode: 'lines', name: 'softmax(x)',
+            line: { width: 3, color: '#667eea' }
+        },
+        {
+            x: xVals, y: gradVals,
+            mode: 'lines', name: 'Gradient ∂softmax/∂x',
+            line: { width: 2, color: '#4ade80', dash: 'dash' }
+        },
+        // Unscaled range
+        {
+            x: [-unscaledRange, -unscaledRange, unscaledRange, unscaledRange, -unscaledRange],
+            y: [0, 1, 1, 0, 0],
+            fill: 'toself',
+            fillcolor: 'rgba(255,107,107,0.1)',
+            line: { color: '#ff6b6b', dash: 'dot' },
+            name: `Unscaled Range (d_k=${dk})`
+        },
+        // Scaled range
+        {
+            x: [-scaledRange, -scaledRange, scaledRange, scaledRange, -scaledRange],
+            y: [0, 1, 1, 0, 0],
+            fill: 'toself',
+            fillcolor: 'rgba(78,205,196,0.1)',
+            line: { color: '#4ecdc4', dash: 'dot' },
+            name: 'Scaled Range'
+        }
+    ], {
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        xaxis: { title: 'Score', gridcolor: '#222', zerolinecolor: '#444' },
+        yaxis: { title: 'Wert', gridcolor: '#222', range: [-0.05, 1.05] },
+        margin: { l: 50, r: 20, t: 40, b: 50 },
+        title: { text: 'Softmax-Sättigung: Warum Scaling nötig ist', font: { size: 13 } },
+        legend: { x: 0.02, y: 0.98 }
+    }, { responsive: true });
+}
+
+// ============ SECTION 5: SOFTMAX INTERACTIVE ============
+function updateSoftmax() {
+    const temp = parseFloat(document.getElementById('temp-slider').value);
+    document.getElementById('temp-val').textContent = temp.toFixed(1);
+
+    // Raw scores (before softmax)
+    const rawScores = [2.1, 0.5, -0.3]; // Katze, sitzt, .
+    const scaledScores = rawScores.map(s => s / temp);
+
+    const maxS = Math.max(...scaledScores);
+    const expScores = scaledScores.map(s => Math.exp(s - maxS));
+    const sumExp = expScores.reduce((a, b) => a + b, 0);
+    const weights = expScores.map(e => e / sumExp);
+
+    document.getElementById('w1').textContent = weights[0].toFixed(3);
+    document.getElementById('w2').textContent = weights[1].toFixed(3);
+    document.getElementById('w3').textContent = weights[2].toFixed(3);
+
+    Plotly.newPlot('softmax-bar', [
+        {
+            x: ['Katze', 'sitzt', '.'],
+            y: weights,
+            type: 'bar',
+            marker: {
+                color: weights.map(w => `rgba(102, 126, 234, ${0.3 + w * 0.7})`),
+                line: { color: '#667eea', width: 2 }
+            },
+            text: weights.map(w => w.toFixed(3)),
+            textposition: 'outside',
+            textfont: { color: '#e0e0e0' }
+        }
+    ], {
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        xaxis: { title: 'Key Token' },
+        yaxis: { title: 'Attention Weight α', range: [0, 1.1], gridcolor: '#222' },
+        margin: { l: 50, r: 20, t: 20, b: 50 }
+    }, { responsive: true });
+
+    // Softmax curve
+    const xVals = [];
+    for (let x = -4; x <= 4; x += 0.1) xVals.push(x);
+    const softmaxCurve = xVals.map(x => Math.exp(x / temp) / (Math.exp(x / temp) + Math.exp(0) + Math.exp(-1 / temp)));
+
+    Plotly.newPlot('softmax-plot', [
+        {
+            x: xVals, y: softmaxCurve,
+            mode: 'lines',
+            line: { width: 3, color: '#667eea' },
+            name: 'softmax(x/T) für erstes Element'
+        },
+        {
+            x: rawScores,
+            y: weights,
+            mode: 'markers+text',
+            marker: { size: 12, color: ['#4ecdc4', '#ffd93d', '#ff6b6b'] },
+            text: ['Katze', 'sitzt', '.'],
+            textposition: 'top center',
+            textfont: { size: 11 },
+            name: 'Aktuelle Tokens'
+        }
+    ], {
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        xaxis: { title: 'Raw Score', gridcolor: '#222', zerolinecolor: '#444' },
+        yaxis: { title: 'Attention Weight', gridcolor: '#222', range: [0, 1.05] },
+        margin: { l: 50, r: 20, t: 30, b: 50 },
+        title: { text: `Softmax mit Temperatur T = ${temp.toFixed(1)}`, font: { size: 13 } }
+    }, { responsive: true });
+}
+
+// ============ SECTION 6: WEIGHTED SUM ============
+function updateWeightedSum() {
+    const w1Raw = parseInt(document.getElementById('gw1').value);
+    const w2Raw = parseInt(document.getElementById('gw2').value);
+    const w3Raw = parseInt(document.getElementById('gw3').value);
+    const total = w1Raw + w2Raw + w3Raw || 1;
+    const w1 = w1Raw / total;
+    const w2 = w2Raw / total;
+    const w3 = w3Raw / total;
+
+    document.getElementById('gw1-val').textContent = w1.toFixed(2);
+    document.getElementById('gw2-val').textContent = w2.toFixed(2);
+    document.getElementById('gw3-val').textContent = w3.toFixed(2);
+
+    // Value vectors in 3D
+    const v1 = [0.9, 0.2, 0.3];  // Katze
+    const v2 = [0.2, 0.8, 0.4];  // sitzt
+    const v3 = [0.4, 0.3, 0.9];  // auf
+
+    // Weighted sum
+    const output = [
+        w1 * v1[0] + w2 * v2[0] + w3 * v3[0],
+        w1 * v1[1] + w2 * v2[1] + w3 * v3[1],
+        w1 * v1[2] + w2 * v2[2] + w3 * v3[2]
+    ];
+
+    const traces = [
+        // Value vectors
+        {
+            x: [v1[0]], y: [v1[1]], z: [v1[2]],
+            mode: 'markers+text', type: 'scatter3d',
+            marker: { size: 10, color: '#4ecdc4' },
+            text: [`V₁ "Katze" (α=${w1.toFixed(2)})`],
+            textposition: 'top center',
+            textfont: { size: 10, color: '#4ecdc4' },
+            name: 'V₁ Katze'
+        },
+        {
+            x: [v2[0]], y: [v2[1]], z: [v2[2]],
+            mode: 'markers+text', type: 'scatter3d',
+            marker: { size: 10, color: '#ffd93d' },
+            text: [`V₂ "sitzt" (α=${w2.toFixed(2)})`],
+            textposition: 'top center',
+            textfont: { size: 10, color: '#ffd93d' },
+            name: 'V₂ sitzt'
+        },
+        {
+            x: [v3[0]], y: [v3[1]], z: [v3[2]],
+            mode: 'markers+text', type: 'scatter3d',
+            marker: { size: 10, color: '#ff6b6b' },
+            text: [`V₃ "auf" (α=${w3.toFixed(2)})`],
+            textposition: 'top center',
+            textfont: { size: 10, color: '#ff6b6b' },
+            name: 'V₃ auf'
+        },
+        // Output (weighted sum)
+        {
+            x: [output[0]], y: [output[1]], z: [output[2]],
+            mode: 'markers+text', type: 'scatter3d',
+            marker: { size: 14, color: '#4ade80', symbol: 'diamond' },
+            text: ['Output = Σαᵢvᵢ'],
+            textposition: 'bottom center',
+            textfont: { size: 11, color: '#4ade80' },
+            name: 'Attention Output'
+        },
+        // Lines from values to output (showing contribution)
+        {
+            x: [v1[0], output[0]], y: [v1[1], output[1]], z: [v1[2], output[2]],
+            mode: 'lines', type: 'scatter3d',
+            line: { width: w1 * 10 + 1, color: '#4ecdc488', dash: 'dash' },
+            showlegend: false
+        },
+        {
+            x: [v2[0], output[0]], y: [v2[1], output[1]], z: [v2[2], output[2]],
+            mode: 'lines', type: 'scatter3d',
+            line: { width: w2 * 10 + 1, color: '#ffd93d88', dash: 'dash' },
+            showlegend: false
+        },
+        {
+            x: [v3[0], output[0]], y: [v3[1], output[1]], z: [v3[2], output[2]],
+            mode: 'lines', type: 'scatter3d',
+            line: { width: w3 * 10 + 1, color: '#ff6b6b88', dash: 'dash' },
+            showlegend: false
+        },
+        // Convex hull triangle (the simplex where output can live)
+        {
+            x: [v1[0], v2[0], v3[0], v1[0]],
+            y: [v1[1], v2[1], v3[1], v1[1]],
+            z: [v1[2], v2[2], v3[2], v1[2]],
+            mode: 'lines', type: 'scatter3d',
+            line: { width: 2, color: '#ffffff33' },
+            name: 'Konvexe Hülle (Simplex)'
+        }
+    ];
+
+    // Add mesh for the triangle (convex hull)
+    traces.push({
+        type: 'mesh3d',
+        x: [v1[0], v2[0], v3[0]],
+        y: [v1[1], v2[1], v3[1]],
+        z: [v1[2], v2[2], v3[2]],
+        i: [0], j: [1], k: [2],
+        opacity: 0.15,
+        color: '#667eea',
+        name: 'Mögliche Outputs'
+    });
+
+    Plotly.newPlot('weighted-sum-plot', traces, {
+        scene: {
+            xaxis: { title: 'Dim 1 (z.B. "Subjekt-Bezug")', color: '#888', gridcolor: '#333', range: [0, 1.1] },
+            yaxis: { title: 'Dim 2 (z.B. "Aktion/Verb")', color: '#888', gridcolor: '#333', range: [0, 1.1] },
+            zaxis: { title: 'Dim 3 (z.B. "Ort/Kontext")', color: '#888', gridcolor: '#333', range: [0, 1.1] },
+            bgcolor: '#0d0d20',
+            camera: { eye: { x: 1.8, y: 1.2, z: 1.0 } }
+        },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        margin: { l: 0, r: 0, t: 30, b: 0 },
+        title: { text: 'Gewichtete Summe: Output liegt im Simplex der Values', font: { size: 13 } }
+    }, { responsive: true });
+}
+
+// ============ SECTION 7: MULTI-HEAD ATTENTION ============
+const headColors = ['#ff6b6b', '#4ecdc4', '#ffd93d', '#a78bfa', '#f472b6', '#34d399', '#fb923c', '#60a5fa'];
+const headDescriptions = [
+    'Head 1: Achtet auf syntaktisch nahestehende Tokens (Artikel → Nomen)',
+    'Head 2: Achtet auf das Subjekt des Satzes (wer tut etwas?)',
+    'Head 3: Achtet auf das Verb / die Aktion',
+    'Head 4: Achtet auf Positionsnähe (lokaler Kontext)',
+    'Head 5: Achtet auf semantisch ähnliche Wörter',
+    'Head 6: Achtet auf Koreferenzen (Pronomen → Bezugswort)',
+    'Head 7: Achtet auf Satzstruktur-Grenzen (Kommas, Punkte)',
+    'Head 8: Achtet auf entfernte Abhängigkeiten (long-range)'
+];
+
+// Generate random but plausible head projections
+const headProjections = [];
+for (let h = 0; h < 8; h++) {
+    const angle = (h / 8) * Math.PI * 2;
+    const tilt = (h % 3) * 0.3 - 0.3;
+    headProjections.push({
+        // Simulated 2D projection direction for each head
+        dirX: Math.cos(angle),
+        dirY: Math.sin(angle),
+        dirZ: tilt
+    });
+}
+
+function createMultiHeadPlot(activeHead = 0) {
+    const tokens = ['Die', 'Katze', 'sitzt', 'auf', 'der', 'Matte'];
+    // Base positions in 3D
+    const basePositions = [
+        [0.2, 0.8, 0.3], [0.9, 0.7, 0.8], [0.5, 0.2, 0.6],
+        [0.3, 0.4, 0.1], [0.1, 0.9, 0.2], [0.8, 0.3, 0.9]
+    ];
+
+    // Simulate different projections per head
+    const traces = [];
+
+    // Show all heads as faint, active head as bright
+    for (let h = 0; h < 8; h++) {
+        const proj = headProjections[h];
+        const opacity = h === activeHead ? 1.0 : 0.15;
+        const size = h === activeHead ? 8 : 4;
+
+        // Project tokens differently per head (simulate W_i^Q * x)
+        const projected = basePositions.map(p => [
+            p[0] * Math.cos(h * 0.4) - p[1] * Math.sin(h * 0.4) + h * 0.15,
+            p[1] * Math.cos(h * 0.3) + p[2] * Math.sin(h * 0.3),
+            p[2] * Math.cos(h * 0.5) - p[0] * Math.sin(h * 0.5) + h * 0.1
+        ]);
+
+        traces.push({
+            x: projected.map(p => p[0]),
+            y: projected.map(p => p[1]),
+            z: projected.map(p => p[2]),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            marker: { size: size, color: headColors[h], opacity: opacity },
+            text: h === activeHead ? tokens : tokens.map(() => ''),
+            textposition: 'top center',
+            textfont: { size: 10, color: headColors[h] },
+            name: `Head ${h + 1}`,
+            opacity: opacity
+        });
+
+        // Draw attention lines for active head
+        if (h === activeHead) {
+            // Simulated attention pattern for this head
+            const attentionPatterns = [
+                [0.1, 0.6, 0.1, 0.05, 0.1, 0.05],  // Head 0: Die → Katze
+                [0.05, 0.5, 0.3, 0.05, 0.05, 0.05], // Head 1: subject focus
+                [0.05, 0.1, 0.5, 0.2, 0.05, 0.1],   // Head 2: verb focus
+                [0.3, 0.3, 0.2, 0.1, 0.05, 0.05],   // Head 3: local
+                [0.05, 0.4, 0.05, 0.05, 0.05, 0.4],  // Head 4: semantic
+                [0.1, 0.5, 0.1, 0.1, 0.1, 0.1],     // Head 5: coreference
+                [0.05, 0.05, 0.05, 0.3, 0.05, 0.5],  // Head 6: structure
+                [0.05, 0.1, 0.1, 0.1, 0.1, 0.55]    // Head 7: long-range
+            ];
+
+            const queryIdx = 2; // "sitzt" as query
+            const pattern = attentionPatterns[h];
+
+            for (let i = 0; i < tokens.length; i++) {
+                if (i === queryIdx) continue;
+                if (pattern[i] < 0.1) continue;
+                traces.push({
+                    x: [projected[queryIdx][0], projected[i][0]],
+                    y: [projected[queryIdx][1], projected[i][1]],
+                    z: [projected[queryIdx][2], projected[i][2]],
+                    mode: 'lines',
+                    type: 'scatter3d',
+                    line: { width: pattern[i] * 15, color: headColors[h] },
+                    showlegend: false,
+                    opacity: pattern[i]
+                });
+            }
+        }
+    }
+
+    Plotly.newPlot('multihead-plot', traces, {
+        scene: {
+            xaxis: { title: 'Unterraum Dim 1', color: '#888', gridcolor: '#333' },
+            yaxis: { title: 'Unterraum Dim 2', color: '#888', gridcolor: '#333' },
+            zaxis: { title: 'Unterraum Dim 3', color: '#888', gridcolor: '#333' },
+            bgcolor: '#0d0d20',
+            camera: { eye: { x: 2.0, y: 1.0, z: 1.0 } }
+        },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        margin: { l: 0, r: 0, t: 30, b: 0 },
+        title: { text: `Multi-Head Attention: 8 parallele Unterräume (aktiv: Head ${activeHead + 1})`, font: { size: 13 } }
+    }, { responsive: true });
+}
+
+function showHead(h) {
+    // Update button states
+    document.querySelectorAll('.controls button').forEach((btn, i) => {
+        if (btn.closest('#sec7')) {
+            btn.classList.toggle('active', i === h);
+        }
+    });
+    document.getElementById('head-explanation').innerHTML = `<p><strong>${headDescriptions[h]}</strong></p>`;
+    createMultiHeadPlot(h);
+    drawMultiHeadCanvas(h);
+}
+
+function drawMultiHeadCanvas(activeHead = 0) {
+    const canvas = document.getElementById('multihead-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    ctx.fillStyle = '#0d0d20';
+    ctx.fillRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+    const radius = 140;
+
+    // Draw the full 512d space as outer circle
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 30, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#444';
+    ctx.font = '11px monospace';
+    ctx.fillText('d_model = 512', cx - 40, cy - radius - 40);
+
+    // Draw 8 head subspaces as sectors
+    for (let h = 0; h < 8; h++) {
+        const startAngle = (h / 8) * Math.PI * 2 - Math.PI / 2;
+        const endAngle = ((h + 1) / 8) * Math.PI * 2 - Math.PI / 2;
+        const isActive = h === activeHead;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = isActive ? headColors[h] + '44' : headColors[h] + '11';
+        ctx.fill();
+        ctx.strokeStyle = isActive ? headColors[h] : headColors[h] + '44';
+        ctx.lineWidth = isActive ? 3 : 1;
+        ctx.stroke();
+
+        // Label
+        const midAngle = (startAngle + endAngle) / 2;
+        const labelR = radius * 0.65;
+        ctx.fillStyle = isActive ? headColors[h] : headColors[h] + '88';
+        ctx.font = isActive ? 'bold 12px sans-serif' : '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`H${h + 1}`, cx + Math.cos(midAngle) * labelR, cy + Math.sin(midAngle) * labelR);
+
+        if (isActive) {
+            ctx.font = '9px monospace';
+            ctx.fillText('64d', cx + Math.cos(midAngle) * (labelR + 25), cy + Math.sin(midAngle) * (labelR + 25));
+        }
+    }
+
+    // Center label
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Embedding', cx, cy - 8);
+    ctx.fillText('(geteilt)', cx, cy + 8);
+
+    // Legend
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#a78bfa';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Jeder Head projiziert in eigenen 64d-Unterraum', 10, H - 30);
+    ctx.fillText('8 × 64d = 512d (gleiche Gesamtkosten wie Single-Head)', 10, H - 12);
+}
+
+// ============ SECTION 8: FULL ATTENTION VISUALIZATION ============
+const fullTokens = ['Die', 'Katze', 'sitzt', 'auf', 'der', 'Matte'];
+// Pre-computed attention matrix (simulated but realistic)
+const attentionMatrix = [
+    [0.15, 0.40, 0.10, 0.10, 0.15, 0.10],  // Die attends to...
+    [0.10, 0.25, 0.15, 0.05, 0.05, 0.40],  // Katze attends to...
+    [0.05, 0.45, 0.10, 0.10, 0.05, 0.25],  // sitzt attends to...
+    [0.05, 0.10, 0.30, 0.10, 0.15, 0.30],  // auf attends to...
+    [0.05, 0.10, 0.05, 0.10, 0.15, 0.55],  // der attends to...
+    [0.05, 0.15, 0.20, 0.15, 0.10, 0.35]   // Matte attends to...
+];
+
+let selectedQuery = 2; // "sitzt" by default
+
+function selectQueryToken(idx) {
+    selectedQuery = idx;
+    // Update token highlights
+    for (let i = 0; i < fullTokens.length; i++) {
+        const el = document.getElementById(`qt${i}`);
+        el.classList.toggle('highlight', i === idx);
+    }
+    updateFullAttentionPlot();
+    drawAttentionMatrix();
+}
+
+function updateFullAttentionPlot() {
+    const embeddings3D = [
+        [0.2, 0.8, 0.3], [0.9, 0.7, 0.8], [0.5, 0.2, 0.6],
+        [0.3, 0.4, 0.1], [0.1, 0.9, 0.2], [0.8, 0.3, 0.9]
+    ];
+
+    const weights = attentionMatrix[selectedQuery];
+
+    // Compute output
+    const output = [0, 0, 0];
+    for (let i = 0; i < 6; i++) {
+        output[0] += weights[i] * embeddings3D[i][0];
+        output[1] += weights[i] * embeddings3D[i][1];
+        output[2] += weights[i] * embeddings3D[i][2];
+    }
+
+    const traces = [];
+
+    // All tokens
+    traces.push({
+        x: embeddings3D.map(e => e[0]),
+        y: embeddings3D.map(e => e[1]),
+        z: embeddings3D.map(e => e[2]),
+        mode: 'markers+text',
+        type: 'scatter3d',
+        text: fullTokens.map((t, i) => i === selectedQuery ? `→ ${t} (Query)` : `${t} (α=${weights[i].toFixed(2)})`),
+        textposition: 'top center',
+        textfont: { size: 10, color: embeddings3D.map((_, i) => i === selectedQuery ? '#ff6b6b' : '#e0e0e0') },
+        marker: {
+            size: embeddings3D.map((_, i) => i === selectedQuery ? 14 : 6 + weights[i] * 16),
+            color: embeddings3D.map((_, i) => i === selectedQuery ? '#ff6b6b' : `rgba(102, 126, 234, ${0.3 + weights[i]})`)
+        },
+        name: 'Tokens'
+    });
+
+    // Attention lines
+    for (let i = 0; i < 6; i++) {
+        if (i === selectedQuery) continue;
+        if (weights[i] < 0.05) continue;
+        traces.push({
+            x: [embeddings3D[selectedQuery][0], embeddings3D[i][0]],
+            y: [embeddings3D[selectedQuery][1], embeddings3D[i][1]],
+            z: [embeddings3D[selectedQuery][2], embeddings3D[i][2]],
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { width: weights[i] * 12, color: `rgba(167, 139, 250, ${weights[i]})` },
+            showlegend: false
+        });
+    }
+
+    // Output
+    traces.push({
+        x: [output[0]], y: [output[1]], z: [output[2]],
+        mode: 'markers+text',
+        type: 'scatter3d',
+        marker: { size: 12, color: '#4ade80', symbol: 'diamond' },
+        text: ['Output'],
+        textposition: 'bottom center',
+        textfont: { size: 11, color: '#4ade80' },
+        name: 'Output'
+    });
+
+    Plotly.newPlot('full-attention-plot', traces, {
+        scene: {
+            xaxis: { title: 'Dim 1', color: '#888', gridcolor: '#333' },
+            yaxis: { title: 'Dim 2', color: '#888', gridcolor: '#333' },
+            zaxis: { title: 'Dim 3', color: '#888', gridcolor: '#333' },
+            bgcolor: '#0d0d20',
+            camera: { eye: { x: 1.6, y: 1.4, z: 1.2 } }
+        },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        margin: { l: 0, r: 0, t: 30, b: 0 },
+        title: { text: `Attention von "${fullTokens[selectedQuery]}" zu allen anderen Tokens`, font: { size: 13 } }
+    }, { responsive: true });
+}
+
+function drawAttentionMatrix() {
+    const canvas = document.getElementById('attention-matrix-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    ctx.fillStyle = '#0d0d20';
+    ctx.fillRect(0, 0, W, H);
+
+    const n = fullTokens.length;
+    const cellSize = 45;
+    const offsetX = 120;
+    const offsetY = 80;
+
+    // Title
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Attention-Matrix: softmax(QK^T / √d_k)', W / 2, 25);
+
+    // Column headers (Keys)
+    ctx.font = '12px sans-serif';
+    ctx.fillStyle = '#4ecdc4';
+    ctx.textAlign = 'center';
+    for (let j = 0; j < n; j++) {
+        ctx.fillText(fullTokens[j], offsetX + j * cellSize + cellSize / 2, offsetY - 10);
+    }
+    ctx.fillText('← Keys', offsetX + n * cellSize + 30, offsetY - 10);
+
+    // Row headers (Queries)
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ff6b6b';
+    for (let i = 0; i < n; i++) {
+        ctx.fillText(fullTokens[i], offsetX - 10, offsetY + i * cellSize + cellSize / 2 + 4);
+    }
+    ctx.save();
+    ctx.translate(offsetX - 60, offsetY + n * cellSize / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('Queries ↓', 0, 0);
+    ctx.restore();
+
+    // Draw cells
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            const val = attentionMatrix[i][j];
+            const x = offsetX + j * cellSize;
+            const y = offsetY + i * cellSize;
+
+            // Color intensity
+            const intensity = Math.floor(val * 255);
+            const isSelectedRow = i === selectedQuery;
+
+            if (isSelectedRow) {
+                ctx.fillStyle = `rgba(102, 126, 234, ${val * 0.9 + 0.1})`;
+            } else {
+                ctx.fillStyle = `rgba(80, 80, 120, ${val * 0.7 + 0.1})`;
+            }
+            ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+
+            // Border
+            ctx.strokeStyle = isSelectedRow ? '#667eea44' : '#2a2a4a';
+            ctx.lineWidth = isSelectedRow ? 2 : 1;
+            ctx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+
+            // Value text
+            ctx.fillStyle = val > 0.3 ? '#ffffff' : '#888';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(val.toFixed(2), x + cellSize / 2, y + cellSize / 2);
+        }
+    }
+
+    // Highlight selected row
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(offsetX, offsetY + selectedQuery * cellSize, n * cellSize, cellSize);
+
+    // Legend
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Jede Zeile summiert zu 1.0 (Softmax-Normalisierung)', offsetX, offsetY + n * cellSize + 30);
+    ctx.fillText('Helle Zelle = hohe Attention (Token ist relevant für die Query)', offsetX, offsetY + n * cellSize + 50);
+}
+
+// ============ INITIALIZATION ============
+function init() {
+    // Render all math
+    renderMath();
+
+    // Create all plots
+    createOverviewPlot();
+    createQKVPlot();
+    animateProjection();
+    updateDotProduct();
+    updateScaling();
+    updateSoftmax();
+    updateWeightedSum();
+    createMultiHeadPlot(0);
+    drawMultiHeadCanvas(0);
+    selectQueryToken(2);
+}
+
+// Wait for libraries to load
+window.addEventListener('load', () => {
+    // Small delay to ensure temml is ready
+    setTimeout(init, 500);
+});
+</script>
+
 </body>
 </html>
