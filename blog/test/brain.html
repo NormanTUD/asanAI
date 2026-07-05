@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktiver Gehirn-Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(20, 20, 60, 0.8);
+            border-bottom: 2px solid #4a4aff;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #6a6aff, #ff6aff, #6affff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #aaaadd;
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(15, 15, 50, 0.9);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333366;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: rgba(60, 60, 120, 0.5);
+            border: 1px solid #4a4a8a;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            color: #ccccff;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(100, 100, 200, 0.7);
+            border-color: #8a8aff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(100, 100, 255, 0.3);
+        }
+
+        .section {
+            display: none;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brain-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .brain-svg-container {
+            position: relative;
+            width: 700px;
+            height: 500px;
+            background: rgba(20, 20, 60, 0.6);
+            border-radius: 20px;
+            border: 1px solid #3a3a7a;
+            overflow: hidden;
+        }
+
+        .brain-info-panel {
+            flex: 1;
+            min-width: 350px;
+            max-width: 500px;
+            background: rgba(25, 25, 70, 0.8);
+            border-radius: 20px;
+            border: 1px solid #3a3a7a;
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .brain-info-panel h3 {
+            color: #8a8aff;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #3a3a7a;
+            padding-bottom: 10px;
+        }
+
+        .info-section {
+            margin-bottom: 15px;
+        }
+
+        .info-section h4 {
+            color: #ffaa66;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .info-section p, .info-section ul {
+            color: #ccccee;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .info-section ul {
+            padding-left: 20px;
+        }
+
+        .info-section li {
+            margin-bottom: 5px;
+        }
+
+        .brain-region {
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0.85;
+        }
+
+        .brain-region:hover {
+            opacity: 1;
+            filter: brightness(1.3);
+            stroke-width: 3;
+        }
+
+        .brain-region.selected {
+            opacity: 1;
+            stroke: #ffffff;
+            stroke-width: 3;
+            filter: brightness(1.4) drop-shadow(0 0 10px currentColor);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(25, 25, 70, 0.8);
+            border-radius: 15px;
+            border: 1px solid #3a3a7a;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #6a6aff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(60, 60, 200, 0.2);
+        }
+
+        .card h3 {
+            color: #8a8aff;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #bbbbee;
+            line-height: 1.6;
+        }
+
+        .plot-container {
+            background: rgba(20, 20, 60, 0.6);
+            border-radius: 15px;
+            border: 1px solid #3a3a7a;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(30, 30, 80, 0.6);
+            border-radius: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 0.85em;
+            color: #9999cc;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            accent-color: #6a6aff;
+        }
+
+        select, button {
+            padding: 8px 16px;
+            background: rgba(60, 60, 120, 0.8);
+            border: 1px solid #4a4a8a;
+            border-radius: 8px;
+            color: #ccccff;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: rgba(80, 80, 160, 0.9);
+            border-color: #6a6aff;
+        }
+
+        button.primary {
+            background: rgba(80, 80, 200, 0.8);
+            border-color: #6a6aff;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: rgba(10, 10, 30, 0.8);
+            border-radius: 15px;
+            border: 1px solid #3a3a7a;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+        }
+
+        .measurement-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .measurement-table th, .measurement-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a5a;
+        }
+
+        .measurement-table th {
+            background: rgba(40, 40, 100, 0.6);
+            color: #8a8aff;
+            font-weight: 600;
+        }
+
+        .measurement-table tr:hover {
+            background: rgba(50, 50, 120, 0.3);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(100, 100, 200, 0.3);
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin: 2px;
+            color: #aaaaff;
+        }
+
+        .tag.temporal { background: rgba(255, 150, 50, 0.3); color: #ffaa66; }
+        .tag.spatial { background: rgba(50, 200, 150, 0.3); color: #66ddaa; }
+        .tag.invasive { background: rgba(255, 80, 80, 0.3); color: #ff8888; }
+        .tag.noninvasive { background: rgba(80, 200, 80, 0.3); color: #88dd88; }
+
+        .attractor-explanation {
+            background: rgba(30, 30, 80, 0.6);
+            border-left: 4px solid #ffaa66;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 15px 0;
+        }
+
+        .formula {
+            background: rgba(20, 20, 50, 0.8);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #aaffaa;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .neuron-canvas {
+            width: 100%;
+            height: 400px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(25, 25, 70, 0.6);
+            border-radius: 10px;
+            border-left: 3px solid #6a6aff;
+        }
+
+        .timeline-year {
+            font-weight: bold;
+            color: #ffaa66;
+            min-width: 60px;
+        }
+
+        .interactive-demo {
+            background: rgba(20, 20, 60, 0.8);
+            border-radius: 15px;
+            border: 1px solid #4a4a8a;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .interactive-demo h3 {
+            color: #66ddaa;
+            margin-bottom: 15px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .status-item {
+            padding: 5px 12px;
+            background: rgba(40, 40, 100, 0.6);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .lyapunov-positive { color: #ff6666; }
+        .lyapunov-negative { color: #66ff66; }
+        .lyapunov-zero { color: #ffff66; }
+
+        @media (max-width: 768px) {
+            .brain-svg-container {
+                width: 100%;
+                height: 350px;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-tabs {
+                gap: 5px;
+            }
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+        }
+
+        .scroll-hint {
+            text-align: center;
+            color: #6666aa;
+            font-size: 0.9em;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Interaktiver Gehirn-Explorer</h1>
+        <p>Erforsche die Regionen des Gehirns, ihre Funktionen, Messmethoden und die Dynamik neuronaler Systeme</p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('anatomy')">Anatomie & Funktion</div>
+        <div class="nav-tab" onclick="showSection('measurement')">Messmethoden</div>
+        <div class="nav-tab" onclick="showSection('signals')">Neuronale Signale</div>
+        <div class="nav-tab" onclick="showSection('chaos')">Chaos & Attraktoren</div>
+        <div class="nav-tab" onclick="showSection('networks')">Netzwerk-Dynamik</div>
+        <div class="nav-tab" onclick="showSection('findings')">Forschungsergebnisse</div>
+    </div>
+
+    <!-- SECTION 1: ANATOMY -->
+    <div class="section active" id="section-anatomy">
+        <h2 style="color: #8a8aff; margin-bottom: 20px;">Gehirnregionen interaktiv erkunden</h2>
+        <p style="margin-bottom: 20px; color: #aaaadd;">Klicke auf eine Region im Gehirn, um Details zu erfahren. Die Farben zeigen verschiedene funktionelle Bereiche.</p>
+
+        <div class="brain-container">
+            <div class="brain-svg-container">
+                <svg id="brain-svg" viewBox="0 0 700 500" width="700" height="500">
+                    <!-- Brain outline - sagittal view -->
+                    <defs>
+                        <radialGradient id="brainGlow">
+                            <stop offset="0%" style="stop-color:#2a2a6a;stop-opacity:0.3"/>
+                            <stop offset="100%" style="stop-color:#0a0a2e;stop-opacity:0"/>
+                        </radialGradient>
+                    </defs>
+
+                    <!-- Background glow -->
+                    <ellipse cx="330" cy="250" rx="280" ry="200" fill="url(#brainGlow)"/>
+
+                    <!-- Frontal Lobe -->
+                    <path class="brain-region" id="region-frontal"
+                        d="M 120 200 Q 130 120 200 100 Q 270 80 320 110 Q 340 130 340 180 Q 330 220 300 250 Q 250 280 200 270 Q 150 260 130 230 Z"
+                        fill="#4a7aff" stroke="#6a9aff" stroke-width="1.5"
+                        onclick="selectRegion('frontal')"/>
+
+                    <!-- Parietal Lobe -->
+                    <path class="brain-region" id="region-parietal"
+                        d="M 320 110 Q 380 80 440 100 Q 490 120 500 160 Q 500 200 480 230 Q 440 250 400 250 Q 360 240 340 220 Q 330 180 340 140 Z"
+                        fill="#7a4aff" stroke="#9a6aff" stroke-width="1.5"
+                        onclick="selectRegion('parietal')"/>
+
+                    <!-- Temporal Lobe -->
+                    <path class="brain-region" id="region-temporal"
+                        d="M 150 260 Q 180 270 220 280 Q 280 300 340 290 Q 380 280 400 260 Q 410 290 400 330 Q 370 370 310 380 Q 240 385 180 360 Q 140 340 130 300 Q 130 270 150 260 Z"
+                        fill="#ff6a4a" stroke="#ff8a6a" stroke-width="1.5"
+                        onclick="selectRegion('temporal')"/>
+
+                    <!-- Occipital Lobe -->
+                    <path class="brain-region" id="region-occipital"
+                        d="M 480 230 Q 520 220 550 240 Q 580 270 570 310 Q 550 350 520 360 Q 480 360 450 340 Q 420 310 420 280 Q 440 250 480 230 Z"
+                        fill="#4aff7a" stroke="#6aff9a" stroke-width="1.5"
+                        onclick="selectRegion('occipital')"/>
+
+                    <!-- Cerebellum -->
+                    <path class="brain-region" id="region-cerebellum"
+                        d="M 430 350 Q 470 360 510 370 Q 550 380 560 400 Q 560 430 530 445 Q 490 455 440 450 Q 400 440 380 420 Q 370 395 390 370 Q 410 355 430 350 Z"
+                        fill="#ffaa4a" stroke="#ffcc6a" stroke-width="1.5"
+                        onclick="selectRegion('cerebellum')"/>
+
+                    <!-- Brain Stem -->
+                    <path class="brain-region" id="region-brainstem"
+                        d="M 370 380 Q 380 400 375 430 Q 370 460 360 480 Q 350 490 340 490 Q 330 485 325 470 Q 320 450 325 420 Q 330 390 350 375 Q 360 370 370 380 Z"
+                        fill="#ff4aaa" stroke="#ff6acc" stroke-width="1.5"
+                        onclick="selectRegion('brainstem')"/>
+
+                    <!-- Limbic System (Amygdala/Hippocampus area) -->
+                    <path class="brain-region" id="region-limbic"
+                        d="M 280 250 Q 310 240 340 250 Q 370 265 370 290 Q 360 320 330 330 Q 300 335 270 320 Q 250 300 260 275 Q 265 255 280 250 Z"
+                        fill="#ffff4a" stroke="#ffff8a" stroke-width="1.5"
+                        onclick="selectRegion('limbic')"/>
+
+                    <!-- Thalamus -->
+                    <ellipse class="brain-region" id="region-thalamus"
+                        cx="340" cy="270" rx="30" ry="20"
+                        fill="#4affff" stroke="#8affff" stroke-width="1.5"
+                        onclick="selectRegion('thalamus')"/>
+
+                    <!-- Labels -->
+                    <text x="200" y="170" fill="#aaccff" font-size="13" font-weight="bold" pointer-events="none">Frontallappen</text>
+                    <text x="380" y="160" fill="#ccaaff" font-size="13" font-weight="bold" pointer-events="none">Parietallappen</text>
+                    <text x="230" y="340" fill="#ffccaa" font-size="13" font-weight="bold" pointer-events="none">Temporallappen</text>
+                    <text x="480" y="290" fill="#aaffcc" font-size="13" font-weight="bold" pointer-events="none">Okzipitallappen</text>
+                    <text x="440" y="430" fill="#ffddaa" font-size="12" font-weight="bold" pointer-events="none">Kleinhirn</text>
+                    <text x="310" y="470" fill="#ffaadd" font-size="11" font-weight="bold" pointer-events="none">Hirnstamm</text>
+                    <text x="270" y="300" fill="#ffffaa" font-size="11" font-weight="bold" pointer-events="none">Limbisch</text>
+                    <text x="320" y="260" fill="#aaffff" font-size="10" pointer-events="none">Thalamus</text>
+                </svg>
+            </div>
+
+            <div class="brain-info-panel" id="brain-info">
+                <h3 id="info-title">Wähle eine Gehirnregion</h3>
+                <div id="info-content">
+                    <p style="color: #8888bb; font-style: italic;">Klicke auf eine farbige Region im Gehirn-Diagramm, um detaillierte Informationen zu erhalten.</p>
+                    <br>
+                    <div class="info-section">
+                        <h4>Übersicht der Regionen:</h4>
+                        <ul>
+                            <li><span style="color:#4a7aff;">■</span> Frontallappen - Planung, Entscheidung, Persönlichkeit</li>
+                            <li><span style="color:#7a4aff;">■</span> Parietallappen - Sensorische Integration, Raumwahrnehmung</li>
+                            <li><span style="color:#ff6a4a;">■</span> Temporallappen - Hören, Sprache, Gedächtnis</li>
+                            <li><span style="color:#4aff7a;">■</span> Okzipitallappen - Visuelle Verarbeitung</li>
+                            <li><span style="color:#ffaa4a;">■</span> Kleinhirn - Motorik, Koordination, Lernen</li>
+                            <li><span style="color:#ff4aaa;">■</span> Hirnstamm - Lebenswichtige Funktionen</li>
+                            <li><span style="color:#ffff4a;">■</span> Limbisches System - Emotionen, Gedächtnis</li>
+                            <li><span style="color:#4affff;">■</span> Thalamus - Sensorisches Tor zum Kortex</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: MEASUREMENT -->
+    <div class="section" id="section-measurement">
+        <h2 style="color: #8a8aff; margin-bottom: 20px;">Messmethoden der Neurowissenschaft</h2>
+        <p style="margin-bottom: 20px; color: #aaaadd;">Wie messen wir, was im Gehirn passiert? Jede Methode hat unterschiedliche räumliche und zeitliche Auflösung.</p>
+
+        <div class="plot-container">
+            <div id="resolution-plot" style="width:100%; height:450px;"></div>
+        </div>
+
+        <table class="measurement-table">
+            <thead>
+                <tr>
+                    <th>Methode</th>
+                    <th>Was wird gemessen?</th>
+                    <th>Zeitl. Auflösung</th>
+                    <th>Räuml. Auflösung</th>
+                    <th>Eigenschaften</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>EEG</strong></td>
+                    <td>Elektrische Feldpotentiale an der Kopfhaut</td>
+                    <td>~1 ms</td>
+                    <td>~1-3 cm</td>
+                    <td><span class="tag noninvasive">nicht-invasiv</span><span class="tag temporal">hohe Zeitaufl.</span></td>
+                </tr>
+                <tr>
+                    <td><strong>MEG</strong></td>
+                    <td>Magnetfelder neuronaler Ströme</td>
+                    <td>~1 ms</td>
+                    <td>~2-5 mm</td>
+                    <td><span class="tag noninvasive">nicht-invasiv</span><span class="tag temporal">hohe Zeitaufl.</span></td>
+                </tr>
+                <tr>
+                    <td><strong>fMRI</strong></td>
+                    <td>BOLD-Signal (Blutoxygenierung)</td>
+                    <td>~1-2 s</td>
+                    <td>~1-3 mm</td>
+                    <td><span class="tag noninvasive">nicht-invasiv</span><span class="tag spatial">hohe Raumaufl.</span></td>
+                </tr>
+                <tr>
+                    <td><strong>PET</strong></td>
+                    <td>Metabolische Aktivität (Radiotracer)</td>
+                    <td>~30-60 s</td>
+                    <td>~4-6 mm</td>
+                    <td><span class="tag invasive">Strahlung</span><span class="tag spatial">gute Raumaufl.</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Einzelzell-Ableitung</strong></td>
+                    <td>Aktionspotentiale einzelner Neuronen</td>
+                    <td>~0.1 ms</td>
+                    <td>~10 μm</td>
+                    <td><span class="tag invasive">invasiv</span><span class="tag temporal">höchste Aufl.</span></td>
+                </tr>
+                <tr>
+                    <td><strong>ECoG</strong></td>
+                    <td>Kortikale Feldpotentiale (direkt)</td>
+                    <td>~1 ms</td>
+                    <td>~1 mm</td>
+                    <td><span class="tag invasive">invasiv</span><span class="tag temporal">hohe Zeitaufl.</span><span class="tag spatial">hohe Raumaufl.</span></td>
+                </tr>
+                <tr>
+                    <td><strong>NIRS/fNIRS</strong></td>
+                    <td>Hämoglobin-Oxygenierung (Nahinfrarot)</td>
+                    <td>~100 ms</td>
+                    <td>~1-3 cm</td>
+                    <td><span class="tag noninvasive">nicht-invasiv</span><span class="tag">tragbar</span></td>
+                </tr>
+                <tr>
+                    <td><strong>TMS</strong></td>
+                    <td>Kausale Störung durch Magnetpulse</td>
+                    <td>~1-10 ms</td>
+                    <td>~1-2 cm</td>
+                    <td><span class="tag noninvasive">nicht-invasiv</span><span class="tag">kausal</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="interactive-demo">
+            <h3>Interaktiv: EEG-Signal simulieren</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Verändere die Parameter, um zu sehen, wie verschiedene Gehirnzustände das EEG-Signal beeinflussen.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Alpha (8-13 Hz): <span id="alpha-val">10</span> μV</label>
+                    <input type="range" id="alpha-power" min="0" max="30" value="10" oninput="updateEEG()">
+                </div>
+                <div class="control-group">
+                    <label>Beta (13-30 Hz): <span id="beta-val">5</span> μV</label>
+                    <input type="range" id="beta-power" min="0" max="30" value="5" oninput="updateEEG()">
+                </div>
+                <div class="control-group">
+                    <label>Theta (4-8 Hz): <span id="theta-val">3</span> μV</label>
+                    <input type="range" id="theta-power" min="0" max="30" value="3" oninput="updateEEG()">
+                </div>
+                <div class="control-group">
+                    <label>Delta (0.5-4 Hz): <span id="delta-val">2</span> μV</label>
+                    <input type="range" id="delta-power" min="0" max="30" value="2" oninput="updateEEG()">
+                </div>
+                <div class="control-group">
+                    <label>Gamma (30-100 Hz): <span id="gamma-val">2</span> μV</label>
+                    <input type="range" id="gamma-power" min="0" max="20" value="2" oninput="updateEEG()">
+                </div>
+                <div class="control-group">
+                    <label>Rauschen: <span id="noise-val">3</span> μV</label>
+                    <input type="range" id="noise-power" min="0" max="15" value="3" oninput="updateEEG()">
+                </div>
+                <button onclick="setPreset('awake')">Wach & aufmerksam</button>
+                <button onclick="setPreset('relaxed')">Entspannt (Augen zu)</button>
+                <button onclick="setPreset('sleep')">Tiefschlaf</button>
+                <button onclick="setPreset('rem')">REM-Schlaf</button>
+            </div>
+            <div id="eeg-plot" style="width:100%; height:300px;"></div>
+            <div id="eeg-spectrum" style="width:100%; height:250px;"></div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: SIGNALS -->
+    <div class="section" id="section-signals">
+        <h2 style="color: #8a8aff; margin-bottom: 20px;">Neuronale Signalverarbeitung</h2>
+        <p style="margin-bottom: 20px; color: #aaaadd;">Wie kommunizieren Neuronen? Vom Aktionspotential bis zur synaptischen Übertragung.</p>
+
+        <div class="interactive-demo">
+            <h3>Aktionspotential-Simulation</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Das Hodgkin-Huxley-Modell beschreibt, wie Ionenkanäle das Aktionspotential erzeugen.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Injizierter Strom (I): <span id="current-val">10</span> μA/cm²</label>
+                    <input type="range" id="inject-current" min="0" max="50" value="10" oninput="updateHH()">
+                </div>
+                <div class="control-group">
+                    <label>Na⁺ Leitfähigkeit: <span id="gna-val">120</span> mS/cm²</label>
+                    <input type="range" id="gna" min="0" max="200" value="120" oninput="updateHH()">
+                </div>
+                <div class="control-group">
+                    <label>K⁺ Leitfähigkeit: <span id="gk-val">36</span> mS/cm²</label>
+                    <input type="range" id="gk" min="0" max="100" value="36" oninput="updateHH()">
+                </div>
+                <button class="primary" onclick="runHH()">Simulation starten</button>
+            </div>
+            <div class="formula">
+                C_m · dV/dt = I - g_Na · m³h · (V - E_Na) - g_K · n⁴ · (V - E_K) - g_L · (V - E_L)
+            </div>
+            <div id="hh-plot" style="width:100%; height:350px;"></div>
+            <div id="hh-gates" style="width:100%; height:250px;"></div>
+        </div>
+
+        <div class="interactive-demo">
+            <h3>Synaptische Integration</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Ein Neuron summiert tausende exzitatorische (EPSP) und inhibitorische (IPSP) Eingänge. Erreicht die Summe den Schwellenwert, feuert es.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Exzitatorische Synapsen: <span id="exc-val">5</span></label>
+                    <input type="range" id="exc-syn" min="0" max="20" value="5" oninput="updateSynaptic()">
+                </div>
+                <div class="control-group">
+                    <label>Inhibitorische Synapsen: <span id="inh-val">3</span></label>
+                    <input type="range" id="inh-syn" min="0" max="20" value="3" oninput="updateSynaptic()">
+                </div>
+                <div class="control-group">
+                    <label>Zeitliche Summation (ms): <span id="temporal-val">10</span></label>
+                    <input type="range" id="temporal-window" min="1" max="50" value="10" oninput="updateSynaptic()">
+                </div>
+                <button class="primary" onclick="runSynaptic()">Simulieren</button>
+            </div>
+            <div id="synaptic-plot" style="width:100%; height:300px;"></div>
+            <div class="status-bar" id="spike-status">
+                <div class="status-item">Membranpotential: <span id="vm-display">-65 mV</span></div>
+                <div class="status-item">Schwelle: -55 mV</div>
+                <div class="status-item">Status: <span id="fire-status" style="color:#66ff66;">Ruhend</span></div>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Neurotransmitter</h3>
+                <div class="info-section">
+                    <h4>Glutamat (exzitatorisch)</h4>
+                    <p>Wichtigster erregender Neurotransmitter. Bindet an AMPA- und NMDA-Rezeptoren. NMDA-Rezeptoren sind spannungsabhängig und zentral für Langzeitpotenzierung (LTP) und Lernen.</p>
+                </div>
+                <div class="info-section">
+                    <h4>GABA (inhibitorisch)</h4>
+                    <p>Wichtigster hemmender Neurotransmitter. Öffnet Cl⁻-Kanäle (GABA_A) oder K⁺-Kanäle (GABA_B). Essentiell für Balance und Verhinderung von Übererregung (Epilepsie).</p>
+                </div>
+                <div class="info-section">
+                    <h4>Dopamin (modulatorisch)</h4>
+                    <p>Belohnungssignal und Vorhersagefehler. Mesolimbischer Pfad: Motivation. Nigrostriataler Pfad: Motorik (Parkinson bei Verlust). Mesokortikaler Pfad: Arbeitsgedächtnis.</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Plastizität & Lernen</h3>
+                <div class="info-section">
+                    <h4>Hebb'sche Regel</h4>
+                    <p>"Neurons that fire together, wire together." Gleichzeitige Aktivität stärkt synaptische Verbindungen.</p>
+                    <div class="formula">Δw_ij = η · x_i · x_j</div>
+                </div>
+                <div class="info-section">
+                    <h4>STDP (Spike-Timing-Dependent Plasticity)</h4>
+                    <p>Die genaue zeitliche Reihenfolge der Spikes bestimmt, ob eine Synapse verstärkt (LTP) oder geschwächt (LTD) wird. Prä vor Post → LTP. Post vor Prä → LTD.</p>
+                </div>
+                <div class="info-section">
+                    <h4>Langzeitpotenzierung (LTP)</h4>
+                    <p>Dauerhafte Verstärkung synaptischer Übertragung nach hochfrequenter Stimulation. Basis des deklarativen Gedächtnisses im Hippocampus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: CHAOS & ATTRACTORS -->
+    <div class="section" id="section-chaos">
+        <h2 style="color: #8a8aff; margin-bottom: 20px;">Chaostheorie & Attraktoren im Gehirn</h2>
+        <p style="margin-bottom: 20px; color: #aaaadd;">Das Gehirn ist ein nichtlineares dynamisches System. Chaostheorie hilft uns zu verstehen, wie es zwischen Ordnung und Flexibilität balanciert.</p>
+
+        <div class="attractor-explanation">
+            <h4 style="color: #ffaa66;">Was ist ein Attraktor?</h4>
+            <p>Ein Attraktor ist ein Zustand oder eine Menge von Zuständen, zu denen ein dynamisches System im Laufe der Zeit konvergiert. Im Gehirn repräsentieren Attraktoren stabile Aktivitätsmuster – z.B. Erinnerungen, Wahrnehmungen oder motorische Programme.</p>
+            <br>
+            <h4 style="color: #ffaa66;">Typen von Attraktoren:</h4>
+            <ul style="margin-top:8px; padding-left:20px; color:#ccccee;">
+                <li><strong>Fixpunkt-Attraktor:</strong> System konvergiert zu einem stabilen Punkt (z.B. Ruhezustand eines Neurons)</li>
+                <li><strong>Grenzzyklus:</strong> Periodische Oszillation (z.B. Atemrhythmus, Alpha-Wellen)</li>
+                <li><strong>Torus-Attraktor:</strong> Quasi-periodische Dynamik (mehrere überlagerte Frequenzen)</li>
+                <li><strong>Seltsamer/Chaotischer Attraktor:</strong> Deterministisch aber unvorhersagbar, fraktale Struktur (z.B. kreative Zustände, flexible Kognition)</li>
+            </ul>
+        </div>
+
+        <div class="interactive-demo">
+            <h3>Lorenz-Attraktor (Prototyp chaotischer Dynamik)</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Der Lorenz-Attraktor zeigt, wie deterministische Gleichungen unvorhersagbares Verhalten erzeugen – analog zur neuronalen Dynamik.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>σ (sigma): <span id="sigma-val">10</span></label>
+                    <input type="range" id="lorenz-sigma" min="1" max="30" value="10" step="0.5" oninput="document.getElementById('sigma-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>ρ (rho): <span id="rho-val">28</span></label>
+                    <input type="range" id="lorenz-rho" min="0" max="50" value="28" step="0.5" oninput="document.getElementById('rho-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>β (beta): <span id="beta-val">2.67</span></label>
+                    <input type="range" id="lorenz-beta" min="0.1" max="8" value="2.67" step="0.01" oninput="document.getElementById('beta-val').textContent=this.value">
+                </div>
+                <button class="primary" onclick="runLorenz()">Berechnen & Anzeigen</button>
+            </div>
+            <div class="formula">
+                dx/dt = σ(y - x)  |  dy/dt = x(ρ - z) - y  |  dz/dt = xy - βz
+            </div>
+            <div id="lorenz-plot" style="width:100%; height:500px;"></div>
+        </div>
+
+        <div class="interactive-demo">
+            <h3>Neuronales Chaos: FitzHugh-Nagumo Modell</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Ein vereinfachtes Neuronenmodell, das zeigt, wie Neuronen zwischen periodischem Feuern und chaotischem Verhalten wechseln können.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Stimulus I: <span id="fhn-i-val">0.5</span></label>
+                    <input type="range" id="fhn-i" min="0" max="2" value="0.5" step="0.01" oninput="document.getElementById('fhn-i-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Parameter a: <span id="fhn-a-val">0.7</span></label>
+                    <input type="range" id="fhn-a" min="0" max="1.5" value="0.7" step="0.01" oninput="document.getElementById('fhn-a-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Parameter b: <span id="fhn-b-val">0.8</span></label>
+                    <input type="range" id="fhn-b" min="0" max="1.5" value="0.8" step="0.01" oninput="document.getElementById('fhn-b-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Tau (τ): <span id="fhn-tau-val">12.5</span></label>
+                    <input type="range" id="fhn-tau" min="1" max="30" value="12.5" step="0.5" oninput="document.getElementById('fhn-tau-val').textContent=this.value">
+                </div>
+                <button class="primary" onclick="runFHN()">Simulieren</button>
+            </div>
+            <div class="formula">
+                dv/dt = v - v³/3 - w + I  |  dw/dt = (v + a - bw) / τ
+            </div>
+            <div id="fhn-time-plot" style="width:100%; height:280px;"></div>
+            <div id="fhn-phase-plot" style="width:100%; height:350px;"></div>
+        </div>
+
+        <div class="interactive-demo">
+            <h3>Lyapunov-Exponent: Chaos quantifizieren</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Der Lyapunov-Exponent misst, wie schnell benachbarte Trajektorien auseinanderlaufen. Positiv = Chaos, Negativ = Stabilität, Null = Grenzzyklus.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Logistische Abbildung r: <span id="logistic-r-val">3.5</span></label>
+                    <input type="range" id="logistic-r" min="2.5" max="4.0" value="3.5" step="0.01" oninput="updateLogistic()">
+                </div>
+                <button onclick="animateBifurcation()">Bifurkationsdiagramm animieren</button>
+            </div>
+            <div class="formula">
+                x_{n+1} = r · x_n · (1 - x_n)  |  λ = lim(N→∞) (1/N) Σ ln|f'(x_n)|
+            </div>
+            <div class="status-bar">
+                <div class="status-item">Lyapunov-Exponent: <span id="lyapunov-display">0.00</span></div>
+                <div class="status-item">Regime: <span id="regime-display">-</span></div>
+            </div>
+            <div id="logistic-plot" style="width:100%; height:300px;"></div>
+            <div id="bifurcation-plot" style="width:100%; height:400px;"></div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Chaos im Gehirn: Warum?</h3>
+                <p>Walter Freeman (1990er) zeigte, dass der olfaktorische Kortex chaotische Dynamik nutzt, um schnell zwischen Geruchsmustern zu wechseln. Chaos ermöglicht:</p>
+                <ul style="padding-left:20px; margin-top:10px; color:#bbbbee;">
+                    <li>Schnelle Übergänge zwischen Zuständen</li>
+                    <li>Sensitivität für schwache Signale</li>
+                    <li>Große Repertoire möglicher Muster</li>
+                    <li>Vermeidung von "Steckenbleiben" in einem Zustand</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Kritikalität & "Edge of Chaos"</h3>
+                <p>Das Gehirn operiert nahe einem kritischen Punkt zwischen Ordnung und Chaos. An diesem Punkt sind:</p>
+                <ul style="padding-left:20px; margin-top:10px; color:#bbbbee;">
+                    <li>Informationsverarbeitung maximal</li>
+                    <li>Korrelationslängen maximal (Kommunikation)</li>
+                    <li>Dynamischer Bereich optimal</li>
+                    <li>Potenzgesetz-Verteilungen (Neuronale Lawinen)</li>
+                </ul>
+                <p style="margin-top:10px;">Beggs & Plenz (2003) entdeckten neuronale Lawinen, deren Größenverteilung einem Potenzgesetz folgt – ein Kennzeichen von Kritikalität.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 5: NETWORKS -->
+    <div class="section" id="section-networks">
+        <h2 style="color: #8a8aff; margin-bottom: 20px;">Netzwerk-Dynamik</h2>
+        <p style="margin-bottom: 20px; color: #aaaadd;">Gehirnfunktionen entstehen aus der Interaktion von Netzwerken. Hier kannst du neuronale Netzwerkdynamik simulieren.</p>
+
+        <div class="interactive-demo">
+            <h3>Gekoppelte Oszillatoren: Synchronisation</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Das Kuramoto-Modell zeigt, wie Neuronen-Populationen synchronisieren – ein Schlüsselmechanismus für Aufmerksamkeit und Bewusstsein.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Anzahl Oszillatoren: <span id="n-osc-val">30</span></label>
+                    <input type="range" id="n-oscillators" min="5" max="100" value="30" oninput="document.getElementById('n-osc-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Kopplungsstärke K: <span id="coupling-val">2.0</span></label>
+                    <input type="range" id="coupling-strength" min="0" max="8" value="2" step="0.1" oninput="document.getElementById('coupling-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Frequenz-Streuung: <span id="freq-spread-val">1.0</span></label>
+                    <input type="range" id="freq-spread" min="0.1" max="5" value="1" step="0.1" oninput="document.getElementById('freq-spread-val').textContent=this.value">
+                </div>
+                <button class="primary" onclick="runKuramoto()">Simulation starten</button>
+                <button onclick="stopKuramoto()">Stoppen</button>
+            </div>
+            <div class="formula">
+                dθ_i/dt = ω_i + (K/N) · Σ sin(θ_j - θ_i)  |  Ordnungsparameter: r = |1/N · Σ e^(iθ_j)|
+            </div>
+            <div class="canvas-container">
+                <canvas id="kuramoto-canvas" width="800" height="400"></canvas>
+            </div>
+            <div class="status-bar">
+                <div class="status-item">Ordnungsparameter r: <span id="order-param">0.00</span></div>
+                <div class="status-item">Mittlere Frequenz: <span id="mean-freq">0.00</span> Hz</div>
+                <div class="status-item">Synchronisation: <span id="sync-status">Desynchron</span></div>
+            </div>
+            <div id="kuramoto-order-plot" style="width:100%; height:250px;"></div>
+        </div>
+
+        <div class="interactive-demo">
+            <h3>Neuronales Netzwerk: Integrate-and-Fire</h3>
+            <p style="margin-bottom: 15px; color: #aaaadd;">Beobachte, wie ein Netzwerk von Leaky-Integrate-and-Fire Neuronen spontane Aktivitätsmuster erzeugt.</p>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Neuronen: <span id="nn-count-val">50</span></label>
+                    <input type="range" id="nn-count" min="10" max="100" value="50" oninput="document.getElementById('nn-count-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Verbindungswahrsch.: <span id="conn-prob-val">0.2</span></label>
+                    <input type="range" id="conn-prob" min="0.05" max="0.5" value="0.2" step="0.05" oninput="document.getElementById('conn-prob-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Ext. Input: <span id="ext-input-val">5</span> Hz</label>
+                    <input type="range" id="ext-input" min="0" max="20" value="5" step="0.5" oninput="document.getElementById('ext-input-val').textContent=this.value">
+                </div>
+                <div class="control-group">
+                    <label>Inh. Anteil: <span id="inh-frac-val">0.2</span></label>
+                    <input type="range" id="inh-fraction" min="0" max="0.5" value="0.2" step="0.05" oninput="document.getElementById('inh-frac-val').textContent=this.value">
+                </div>
+                <button class="primary" onclick="runLIF()">Starten</button>
+                <button onclick="stopLIF()">Stoppen</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="raster-canvas" width="800" height="300"></canvas>
+            </div>
+            <div id="firing-rate-plot" style="width:100%; height:200px;"></div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Default Mode Network (DMN)</h3>
+                <p>Aktiv in Ruhe, beim Tagträumen, Selbstreflexion und Zukunftsplanung. Umfasst medialen präfrontalen Kortex, posterioren cingulären Kortex und lateralen Parietalkortex.</p>
+                <p style="margin-top:10px;"><strong>Messung:</strong> fMRI-Resting-State-Konnektivität. Anti-korreliert mit aufgabenpositiven Netzwerken.</p>
+            </div>
+            <div class="card">
+                <h3>Salience Network</h3>
+                <p>Erkennt relevante Reize und schaltet zwischen DMN und exekutivem Netzwerk um. Zentral: Anteriore Insula und dorsaler anteriorer cingulärer Kortex.</p>
+                <p style="margin-top:10px;"><strong>Funktion:</strong> "Schalter" zwischen internem und externem Fokus.</p>
+            </div>
+            <div class="card">
+                <h3>Small-World-Netzwerke</h3>
+                <p>Das Gehirn hat eine Small-World-Topologie: hohe lokale Clusterung UND kurze Pfadlängen. Dies ermöglicht effiziente lokale Verarbeitung und schnelle globale Integration.</p>
+                <div class="formula">σ = (C/C_random) / (L/L_random) > 1</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 6: FINDINGS -->
+    <div class="section" id="section-findings">
+        <h2 style="color: #8a8aff; margin-bottom: 20px;">Wichtige Forschungsergebnisse</h2>
+        <p style="margin-bottom: 20px; color: #aaaadd;">Meilensteine der Neurowissenschaft und was sie uns über das Gehirn verraten.</p>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-year">1952</div>
+                <div>
+                    <strong style="color:#8a8aff;">Hodgkin & Huxley</strong> – Mathematisches Modell des Aktionspotentials am Tintenfisch-Riesenaxon. Zeigten, wie Na⁺ und K⁺ Ionenkanäle das Aktionspotential erzeugen. Nobelpreis 1963.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1966</div>
+                <div>
+                    <strong style="color:#8a8aff;">Hubel & Wiesel</strong> – Entdeckung der Orientierungsselektivität im visuellen Kortex. Neuronen reagieren auf spezifische Kantenorientierungen → hierarchische Merkmalsextraktion.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1971</div>
+                <div>
+                    <strong style="color:#8a8aff;">O'Keefe</strong> – Entdeckung der Ortszellen (Place Cells) im Hippocampus. Neuronen, die nur an bestimmten Orten feuern → kognitive Karte.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1991</div>
+                <div>
+                    <strong style="color:#8a8aff;">Walter Freeman</strong> – Chaotische Dynamik im olfaktorischen System. Zeigte, dass Geruchserkennung über chaotische Attraktoren funktioniert – das Gehirn nutzt Chaos für flexible Mustererkennung.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">1994</div>
+                <div>
+                    <strong style="color:#8a8aff;">Rizzolatti et al.</strong> – Entdeckung der Spiegelneuronen im prämotorischen Kortex von Makaken. Feuern sowohl bei eigener Handlung als auch bei Beobachtung derselben Handlung.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2003</div>
+                <div>
+                    <strong style="color:#8a8aff;">Beggs & Plenz</strong> – Neuronale Lawinen und Kritikalität. Spontane Aktivität in kortikalen Schnitten folgt Potenzgesetzen → Gehirn operiert am kritischen Punkt.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2005</div>
+                <div>
+                    <strong style="color:#8a8aff;">Moser & Moser</strong> – Entdeckung der Gitterzellen (Grid Cells) im entorhinalen Kortex. Hexagonales Feuermuster → metrische Raumrepräsentation. Nobelpreis 2014 (mit O'Keefe).
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2011</div>
+                <div>
+                    <strong style="color:#8a8aff;">Human Connectome Project</strong> – Kartierung der strukturellen und funktionellen Konnektivität des menschlichen Gehirns. Zeigt Small-World-Topologie und Hub-Regionen.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2017</div>
+                <div>
+                    <strong style="color:#8a8aff;">Integrated Information Theory (IIT) 3.0</strong> – Tononi's Theorie quantifiziert Bewusstsein als integrierte Information (Φ). Verbindet Netzwerkstruktur mit subjektiver Erfahrung.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year">2020+</div>
+                <div>
+                    <strong style="color:#8a8aff;">Neuropixels & Großskala-Aufnahmen</strong> – Tausende Neuronen gleichzeitig in wachen, sich verhaltenden Tieren. Zeigen niedrig-dimensionale Mannigfaltigkeiten in hochdimensionalen neuronalen Zustandsräumen.
+                </div>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Systematische Überprüfung: Wie?</h3>
+                <div class="info-section">
+                    <h4>Läsionsstudien</h4>
+                    <p>Schädigung einer Region → Funktionsausfall zeigt, wofür sie nötig ist. Problem: Kompensation, Netzwerkeffekte.</p>
+                </div>
+                <div class="info-section">
+                    <h4>Stimulation (TMS, Optogenetik)</h4>
+                    <p>Kausale Manipulation: Region aktivieren/hemmen und Effekt beobachten. Optogenetik: genetisch gezielte Kontrolle mit Licht.</p>
+                </div>
+                <div class="info-section">
+                    <h4>Doppelte Dissoziation</h4>
+                    <p>Patient A: Region X geschädigt → Funktion 1 gestört, Funktion 2 intakt. Patient B: Region Y geschädigt → Funktion 2 gestört, Funktion 1 intakt. → Funktionen sind unabhängig.</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Moderne Ansätze</h3>
+                <div class="info-section">
+                    <h4>Multivariate Pattern Analysis (MVPA)</h4>
+                    <p>Maschinelles Lernen dekodiert mentale Zustände aus fMRI-Mustern. Zeigt, welche Information WO repräsentiert ist.</p>
+                </div>
+                <div class="info-section">
+                    <h4>Dynamic Causal Modeling (DCM)</h4>
+                    <p>Bayesianische Modellierung kausaler Interaktionen zwischen Regionen. Testet Hypothesen über Netzwerk-Architektur.</p>
+                </div>
+                <div class="info-section">
+                    <h4>Granger-Kausalität & Transfer-Entropie</h4>Granger-Kausalität & Transfer-Entropie</h4>
+                    <p>Informationstheoretische Maße für gerichteten Informationsfluss zwischen Zeitreihen. Zeigt, welche Region welche andere "antreibt".</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+    // ==================== NAVIGATION ====================
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('section-' + sectionId).classList.add('active');
+        event.target.classList.add('active');
+
+        // Initialize plots when section becomes visible
+        if (sectionId === 'measurement') initMeasurementPlots();
+        if (sectionId === 'chaos') initChaosPlots();
+        if (sectionId === 'signals') initSignalPlots();
+    }
+
+    // ==================== BRAIN ANATOMY DATA ====================
+    const brainRegions = {
+        frontal: {
+            name: "Frontallappen (Lobus frontalis)",
+            color: "#4a7aff",
+            functions: [
+                "Exekutive Funktionen: Planung, Entscheidungsfindung, Impulskontrolle",
+                "Arbeitsgedächtnis (dorsolateraler PFC)",
+                "Motorische Kontrolle (primärer Motorkortex, Brodmann Area 4)",
+                "Sprachproduktion (Broca-Areal, BA 44/45)",
+                "Persönlichkeit und Sozialverhalten (orbitofrontaler Kortex)",
+                "Aufmerksamkeitssteuerung (frontales Augenfeld)"
+            ],
+            how: "Der präfrontale Kortex integriert Informationen aus allen sensorischen Modalitäten und dem limbischen System. Er hält Ziele im Arbeitsgedächtnis aktiv (persistente Feueraktivität) und hemmt unangemessene Reaktionen über inhibitorische Verbindungen zu subkortikalen Strukturen.",
+            why: "Ermöglicht zielgerichtetes Verhalten, das über unmittelbare Reiz-Reaktions-Muster hinausgeht. Evolutionär am stärksten beim Menschen entwickelt (~30% des Kortex).",
+            measurement: "fMRI zeigt Aktivierung bei Planungsaufgaben (Tower of London). EEG zeigt frontale Theta-Oszillationen (4-8 Hz) bei kognitiver Kontrolle. TMS über DLPFC stört Arbeitsgedächtnis kausal.",
+            pathology: "Phineas Gage (1848): Eisenstange durch Frontallappen → Persönlichkeitsveränderung. Frontale Demenz: Enthemmung, Apathie. ADHS: Hypoaktivität des PFC."
+        },
+        parietal: {
+            name: "Parietallappen (Lobus parietalis)",
+            color: "#7a4aff",
+            functions: [
+                "Somatosensorische Verarbeitung (primärer somatosensorischer Kortex, S1)",
+                "Räumliche Aufmerksamkeit und Orientierung",
+                "Multisensorische Integration",
+                "Mathematisches Denken (intraparietaler Sulcus)",
+                "Körperschema und Propriozeption",
+                "Visuomotorische Transformation (Greifen, Zeigen)"
+            ],
+            how: "Der posteriore Parietalkortex transformiert sensorische Koordinaten in handlungsrelevante Referenzrahmen. Area 5 und 7 integrieren visuelle, taktile und propriozeptive Information zu einer kohärenten Raumrepräsentation.",
+            why: "Ermöglicht die Interaktion mit der physischen Welt: Wo bin ich? Wo sind Objekte? Wie greife ich danach?",
+            measurement: "fMRI: Aktivierung bei räumlichen Aufgaben, mentaler Rotation. EEG: P300-Komponente bei Aufmerksamkeit. Läsion: Hemispatial Neglect (Vernachlässigung einer Raumhälfte).",
+            pathology: "Neglect-Syndrom (rechts-parietal): Patient ignoriert linke Raumhälfte komplett. Gerstmann-Syndrom: Fingeragnosie, Rechts-Links-Verwechslung, Agraphie, Akalkulie."
+        },
+        temporal: {
+            name: "Temporallappen (Lobus temporalis)",
+            color: "#ff6a4a",
+            functions: [
+                "Auditorische Verarbeitung (primärer auditorischer Kortex, A1)",
+                "Sprachverständnis (Wernicke-Areal, BA 22)",
+                "Objekterkennung (inferotemporaler Kortex)",
+                "Deklaratives Gedächtnis (medialer Temporallappen)",
+                "Emotionale Bewertung (Amygdala-Verbindungen)",
+                "Gesichtserkennung (fusiformer Gyrus)"
+            ],
+            how: "Auditorischer Kortex analysiert Frequenzen tonotopisch. Wernicke-Areal dekodiert phonologische und semantische Strukturen. Der inferotemporale Kortex enthält zunehmend komplexe visuelle Repräsentationen (von Kanten zu Objekten zu Gesichtern).",
+            why: "Ermöglicht Sprachverständnis, Objekterkennung und die Bildung dauerhafter Erinnerungen.",
+            measurement: "fMRI: Fusiformes Gesichtsareal (FFA) reagiert selektiv auf Gesichter. EEG: N170-Komponente für Gesichter. Intrakranielle Ableitungen bei Epilepsie-Patienten zeigen scharfe Frequenz-Tuning-Kurven in A1.",
+            pathology: "Wernicke-Aphasie: Flüssige aber sinnlose Sprache. Prosopagnosie: Unfähigkeit, Gesichter zu erkennen. Temporallappen-Epilepsie: Déjà-vu, Auren, Gedächtnisprobleme."
+        },
+        occipital: {
+            name: "Okzipitallappen (Lobus occipitalis)",
+            color: "#4aff7a",
+            functions: [
+                "Primäre visuelle Verarbeitung (V1, striärer Kortex)",
+                "Farberkennung (V4)",
+                "Bewegungswahrnehmung (V5/MT)",
+                "Formanalyse (V2, V3)",
+                "Dorsaler Pfad: 'Wo/Wie' (→ Parietal)",
+                "Ventraler Pfad: 'Was' (→ Temporal)"
+            ],
+            how: "V1 enthält eine retinotope Karte des Gesichtsfelds. Einfache Zellen reagieren auf orientierte Kanten, komplexe Zellen auf bewegte Kanten. Information fließt hierarchisch: V1→V2→V4 (Farbe/Form) und V1→V3→MT (Bewegung). Feedback-Verbindungen sind ebenso zahlreich wie Feedforward.",
+            why: "Vision ist der dominante Sinn beim Menschen (~30% des Kortex). Hierarchische Verarbeitung extrahiert zunehmend abstrakte Merkmale aus dem Rohbild.",
+            measurement: "Retinotopes Mapping mit fMRI: Wandernder Stimulus kartiert V1-V4. Einzelzell-Ableitungen (Hubel & Wiesel): Orientierungs-Tuning-Kurven. VEP (visuell evozierte Potentiale) im EEG.",
+            pathology: "Kortikale Blindheit: V1-Läsion → Blindheit im kontralateralen Gesichtsfeld (trotz intakter Augen). Blindsight: Unbewusste visuelle Verarbeitung ohne V1. Akinetopsie (MT-Läsion): Unfähigkeit, Bewegung wahrzunehmen."
+        },
+        cerebellum: {
+            name: "Kleinhirn (Cerebellum)",
+            color: "#ffaa4a",
+            functions: [
+                "Feinmotorik und Koordination",
+                "Gleichgewicht und Haltung (Vestibulocerebellum)",
+                "Motorisches Lernen und Timing",
+                "Fehlerkorrektur bei Bewegungen",
+                "Kognitive Funktionen (Cerebrocerebellum)",
+                "Emotionale Regulation"
+            ],
+            how: "Das Kleinhirn enthält mehr Neuronen als der Rest des Gehirns zusammen (~69 Milliarden). Purkinje-Zellen integrieren Inputs von ~200.000 Parallelfasern und einer Kletterfaser. Die Kletterfaser signalisiert Fehler → LTD an aktiven Parallelfaser-Synapsen → Lernen. Es fungiert als Vorwärtsmodell: sagt sensorische Konsequenzen von Bewegungen vorher.",
+            why: "Ermöglicht flüssige, präzise Bewegungen durch Vorhersage und Fehlerkorrektur. Ohne Kleinhirn: Ataxie (unkoordinierte, zittrige Bewegungen).",
+            measurement: "fMRI zeigt Aktivierung bei motorischem Lernen und überraschend auch bei Sprache/Kognition. Läsionsstudien: Dysmetrie (Über-/Unterschießen), Intentionstremor, Dysarthrie.",
+            pathology: "Zerebelläre Ataxie: Gangstörung, Dysmetrie, Nystagmus. Alkohol schädigt Kleinhirn → Koordinationsprobleme. Autismus: Strukturelle Kleinhirn-Anomalien häufig."
+        },
+        brainstem: {
+            name: "Hirnstamm (Truncus cerebri)",
+            color: "#ff4aaa",
+            functions: [
+                "Atemregulation (Medulla oblongata)",
+                "Herzfrequenz und Blutdruck",
+                "Schlaf-Wach-Regulation (Formatio reticularis, Locus coeruleus)",
+                "Hirnnerven III-XII",
+                "Reflexe (Schlucken, Husten, Erbrechen)",
+                "Aufsteigende Aktivierungssysteme (Arousal)"
+            ],
+            how: "Enthält lebenswichtige Zentren in kompakter Form. Die Formatio reticularis ist ein Netzwerk, das Arousal reguliert. Monoaminerge Kerne (Locus coeruleus: Noradrenalin, Raphe: Serotonin, VTA: Dopamin) projizieren diffus ins gesamte Gehirn und modulieren globale Zustände.",
+            why: "Evolutionär ältester Teil – sichert das Überleben durch Kontrolle autonomer Funktionen. Ohne Hirnstamm: Tod.",
+            measurement: "Hirnstamm-Auditorisch-Evozierte Potentiale (BAEP): Testen Hirnstamm-Integrität. fMRI schwierig wegen Bewegungsartefakten und kleiner Strukturen. Klinisch: Hirnstammreflexe zur Hirntod-Diagnostik.",
+            pathology: "Locked-in-Syndrom (Pons-Läsion): Vollständig wach aber komplett gelähmt außer Augenbewegungen. Hirnstamm-Infarkt: Lebensbedrohlich. Schlafapnoe: Atemregulationsstörung."
+        },
+        limbic: {
+            name: "Limbisches System",
+            color: "#ffff4a",
+            functions: [
+                "Emotionsverarbeitung (Amygdala)",
+                "Gedächtniskonsolidierung (Hippocampus)",
+                "Motivation und Belohnung (Nucleus accumbens)",
+                "Angstlernen und -konditionierung",
+                "Räumliche Navigation (Hippocampus)",
+                "Stressreaktion (HPA-Achse über Hypothalamus)"
+            ],
+            how: "Die Amygdala bewertet Reize emotional in ~120ms (schneller als bewusste Wahrnehmung). Der Hippocampus bindet verteilte kortikale Repräsentationen zu episodischen Erinnerungen (Relational Binding). Im Schlaf werden Hippocampus-Erinnerungen durch 'Replay' (Sharp-Wave-Ripples, 80-120 Hz) in den Neokortex transferiert.",
+            why: "Emotionen priorisieren Verhalten und Gedächtnis. Der Hippocampus ermöglicht schnelles Einmal-Lernen (vs. langsames kortikales Lernen).",
+            measurement: "fMRI: Amygdala-Aktivierung bei Angstgesichtern. Intrakranielle EEG bei Epilepsie-Patienten: Ortszellen, Sharp-Wave-Ripples. Cortisol-Messung für Stressachse. Hautleitfähigkeit als Maß für emotionale Erregung.",
+            pathology: "H.M. (Henry Molaison): Bilaterale Hippocampus-Entfernung → Keine neuen Erinnerungen mehr (anterograde Amnesie). PTBS: Amygdala-Hyperaktivität, Hippocampus-Atrophie. Alzheimer beginnt im entorhinalen Kortex/Hippocampus."
+        },
+        thalamus: {
+            name: "Thalamus",
+            color: "#4affff",
+            functions: [
+                "Sensorisches Relay (alle Sinne außer Geruch)",
+                "Aufmerksamkeitsfilterung (Pulvinar)",
+                "Motorisches Relay (VL-Kern ← Kleinhirn/Basalganglien)",
+                "Bewusstseinsregulation",
+                "Thalamokortikale Oszillationen (Schlafspindeln)",
+                "Schmerzverarbeitung (medialer Thalamus)"
+            ],
+            how: "Jeder Thalamus-Kern projiziert zu spezifischen Kortexarealen und erhält Feedback zurück. Im Wachzustand: tonischer Modus (treue Signalweiterleitung). Im Schlaf: Burst-Modus (rhythmische Oszillationen, blockiert sensorischen Input). Der Thalamus ist kein passives Relay sondern aktiver Filter.",
+            why: "Kontrolliert, welche Information den Kortex erreicht. Ermöglicht selektive Aufmerksamkeit und Bewusstseinszustände.",
+            measurement: "fMRI: Thalamische Aktivierung bei Aufmerksamkeitswechsel. EEG: Schlafspindeln (12-14 Hz) werden thalamisch generiert. Stereotaktische Tiefenhirnstimulation bei Tremor (VIM-Kern).",
+            pathology: "Fatale familiäre Insomnie: Thalamus-Degeneration → Schlaflosigkeit → Tod. Thalamischer Infarkt: Sensorischer Verlust, Bewusstseinsstörung. Absence-Epilepsie: Pathologische thalamokortikale Oszillationen (3 Hz Spike-Wave)."
+        }
+    };
+
+    function selectRegion(regionId) {
+        // Remove previous selection
+        document.querySelectorAll('.brain-region').forEach(r => r.classList.remove('selected'));
+        // Add selection
+        document.getElementById('region-' + regionId).classList.add('selected');
+
+        const region = brainRegions[regionId];
+        const infoPanel = document.getElementById('brain-info');
+
+        document.getElementById('info-title').textContent = region.name;
+        document.getElementById('info-title').style.color = region.color;
+
+        let html = '';
+        html += '<div class="info-section"><h4>Funktionen:</h4><ul>';
+        region.functions.forEach(f => html += '<li>' + f + '</li>');
+        html += '</ul></div>';
+        html += '<div class="info-section"><h4>Wie funktioniert es?</h4><p>' + region.how + '</p></div>';
+        html += '<div class="info-section"><h4>Warum?</h4><p>' + region.why + '</p></div>';
+        html += '<div class="info-section"><h4>Messung & Überprüfung:</h4><p>' + region.measurement + '</p></div>';
+        html += '<div class="info-section"><h4>Pathologie (was passiert bei Schädigung):</h4><p>' + region.pathology + '</p></div>';
+
+        document.getElementById('info-content').innerHTML = html;
+    }
+
+    // ==================== MEASUREMENT PLOTS ====================
+    function initMeasurementPlots() {
+        const methods = ['EEG', 'MEG', 'fMRI', 'PET', 'Einzelzell', 'ECoG', 'fNIRS', 'TMS'];
+        const temporal = [0, 0, 3, 4.5, -1, 0, 2, 0]; // log10(ms)
+        const spatial = [1.2, 0.5, 0.2, 0.7, -1.7, 0, 1.2, 1]; // log10(mm)
+
+        const trace = {
+            x: spatial,
+            y: temporal,
+            mode: 'markers+text',
+            type: 'scatter',
+            text: methods,
+            textposition: 'top center',
+            textfont: { color: '#ccccff', size: 12 },
+            marker: {
+                size: 20,
+                color: ['#4a7aff', '#7a4aff', '#ff6a4a', '#ffaa4a', '#ff4aaa', '#4aff7a', '#4affff', '#ffff4a'],
+                line: { width: 2, color: '#ffffff44' }
+            }
+        };
+
+        const layout = {
+            title: { text: 'Räumliche vs. Zeitliche Auflösung der Messmethoden', font: { color: '#ccccff' } },
+            xaxis: {
+                title: 'Räumliche Auflösung (log₁₀ mm)',
+                color: '#aaaacc',
+                gridcolor: '#2a2a5a',
+                zerolinecolor: '#3a3a7a'
+            },
+            yaxis: {
+                title: 'Zeitliche Auflösung (log₁₀ ms)',
+                color: '#aaaacc',
+                gridcolor: '#2a2a5a',
+                zerolinecolor: '#3a3a7a'
+            },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            font: { color: '#ccccff' },
+            annotations: [
+                { x: -1.5, y: -0.5, text: '← Besser (feiner)', showarrow: false, font: { color: '#66ff66', size: 10 } },
+                { x: 1.5, y: 5, text: 'Schlechter (grober) →', showarrow: false, font: { color: '#ff6666', size: 10 } }
+            ]
+        };
+
+        Plotly.newPlot('resolution-plot', [trace], layout, { responsive: true });
+        updateEEG();
+    }
+
+    // ==================== EEG SIMULATION ====================
+    function updateEEG() {
+        const alpha = parseFloat(document.getElementById('alpha-power').value);
+        const beta = parseFloat(document.getElementById('beta-power').value);
+        const theta = parseFloat(document.getElementById('theta-power').value);
+        const delta = parseFloat(document.getElementById('delta-power').value);
+        const gamma = parseFloat(document.getElementById('gamma-power').value);
+        const noise = parseFloat(document.getElementById('noise-power').value);
+
+        document.getElementById('alpha-val').textContent = alpha;
+        document.getElementById('beta-val').textContent = beta;
+        document.getElementById('theta-val').textContent = theta;
+        document.getElementById('delta-val').textContent = delta;
+        document.getElementById('gamma-val').textContent = gamma;
+        document.getElementById('noise-val').textContent = noise;
+
+        const sampleRate = 256;
+        const duration = 4;
+        const n = sampleRate * duration;
+        const t = Array.from({ length: n }, (_, i) => i / sampleRate);
+
+        // Generate EEG signal
+        const signal = t.map(ti => {
+            let s = 0;
+            s += alpha * Math.sin(2 * Math.PI * 10 * ti + Math.random() * 0.5);
+            s += alpha * 0.5 * Math.sin(2 * Math.PI * 11.5 * ti);
+            s += beta * Math.sin(2 * Math.PI * 20 * ti + Math.random() * 0.3);
+            s += beta * 0.4 * Math.sin(2 * Math.PI * 25 * ti);
+            s += theta * Math.sin(2 * Math.PI * 6 * ti + Math.random() * 0.4);
+            s += delta * Math.sin(2 * Math.PI * 2 * ti);
+            s += delta * 0.6 * Math.sin(2 * Math.PI * 1.5 * ti);
+            s += gamma * 0.5 * Math.sin(2 * Math.PI * 40 * ti + Math.random() * 0.8);
+            s += gamma * 0.3 * Math.sin(2 * Math.PI * 60 * ti);
+            s += noise * (Math.random() - 0.5) * 2;
+            return s;
+        });
+
+        // Time domain plot
+        Plotly.newPlot('eeg-plot', [{
+            x: t,
+            y: signal,
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#4aff7a', width: 1 }
+        }], {
+            title: { text: 'EEG-Signal (Zeitbereich)', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Zeit (s)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'Amplitude (μV)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 }
+        }, { responsive: true });
+
+        // Power spectrum (simple FFT approximation)
+        const freqs = Array.from({ length: 60 }, (_, i) => i + 1);
+        const power = freqs.map(f => {
+            let p = noise * 0.5;
+            if (f >= 1 && f <= 4) p += delta * delta * Math.exp(-((f - 2) ** 2) / 2);
+            if (f >= 4 && f <= 8) p += theta * theta * Math.exp(-((f - 6) ** 2) / 3);
+            if (f >= 8 && f <= 13) p += alpha * alpha * Math.exp(-((f - 10) ** 2) / 3);
+            if (f >= 13 && f <= 30) p += beta * beta * Math.exp(-((f - 20) ** 2) / 20);
+            if (f >= 30 && f <= 60) p += gamma * gamma * Math.exp(-((f - 40) ** 2) / 50);
+            return p + Math.random() * 0.5;
+        });
+
+        Plotly.newPlot('eeg-spectrum', [{
+            x: freqs,
+            y: power,
+            type: 'scatter',
+            mode: 'lines',
+            fill: 'tozeroy',
+            line: { color: '#ff6aff', width: 2 },
+            fillcolor: 'rgba(255,106,255,0.2)'
+        }], {
+            title: { text: 'Leistungsspektrum', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Frequenz (Hz)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'Power (μV²/Hz)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 },
+            shapes: [
+                { type: 'rect', x0: 1, x1: 4, y0: 0, y1: Math.max(...power), fillcolor: 'rgba(100,100,255,0.1)', line: { width: 0 } },
+                { type: 'rect', x0: 4, x1: 8, y0: 0, y1: Math.max(...power), fillcolor: 'rgba(255,255,100,0.1)', line: { width: 0 } },
+                { type: 'rect', x0: 8, x1: 13, y0: 0, y1: Math.max(...power), fillcolor: 'rgba(100,255,100,0.1)', line: { width: 0 } },
+                { type: 'rect', x0: 13, x1: 30, y0: 0, y1: Math.max(...power), fillcolor: 'rgba(255,150,50,0.1)', line: { width: 0 } },
+                { type: 'rect', x0: 30, x1: 60, y0: 0, y1: Math.max(...power), fillcolor: 'rgba(255,50,50,0.1)', line: { width: 0 } }
+            ],
+            annotations: [
+                { x: 2.5, y: Math.max(...power) * 0.95, text: 'δ', showarrow: false, font: { color: '#8888ff' } },
+                { x: 6, y: Math.max(...power) * 0.95, text: 'θ', showarrow: false, font: { color: '#ffff88' } },
+                { x: 10.5, y: Math.max(...power) * 0.95, text: 'α', showarrow: false, font: { color: '#88ff88' } },
+                { x: 21, y: Math.max(...power) * 0.95, text: 'β', showarrow: false, font: { color: '#ffaa44' } },
+                { x: 45, y: Math.max(...power) * 0.95, text: 'γ', showarrow: false, font: { color: '#ff6666' } }
+            ]
+        }, { responsive: true });
+    }
+
+    function setPreset(preset) {
+        const presets = {
+            awake: { alpha: 3, beta: 15, theta: 2, delta: 1, gamma: 8, noise: 5 },
+            relaxed: { alpha: 25, beta: 3, theta: 3, delta: 2, gamma: 1, noise: 3 },
+            sleep: { alpha: 1, beta: 1, theta: 5, delta: 25, gamma: 0, noise: 2 },
+            rem: { alpha: 2, beta: 10, theta: 12, delta: 3, gamma: 5, noise: 4 }
+        };
+        const p = presets[preset];
+        document.getElementById('alpha-power').value = p.alpha;
+        document.getElementById('beta-power').value = p.beta;
+        document.getElementById('theta-power').value = p.theta;
+        document.getElementById('delta-power').value = p.delta;
+        document.getElementById('gamma-power').value = p.gamma;
+        document.getElementById('noise-power').value = p.noise;
+        updateEEG();
+    }
+
+    // ==================== HODGKIN-HUXLEY MODEL ====================
+    function initSignalPlots() {
+        runHH();
+    }
+
+    function updateHH() {
+        document.getElementById('current-val').textContent = document.getElementById('inject-current').value;
+        document.getElementById('gna-val').textContent = document.getElementById('gna').value;
+        document.getElementById('gk-val').textContent = document.getElementById('gk').value;
+    }
+
+    function runHH() {
+        const I_ext = parseFloat(document.getElementById('inject-current').value);
+        const g_Na = parseFloat(document.getElementById('gna').value);
+        const g_K = parseFloat(document.getElementById('gk').value);
+        const g_L = 0.3;
+        const E_Na = 50, E_K = -77, E_L = -54.4;
+        const C_m = 1.0;
+
+        const dt = 0.01;
+        const T = 50;
+        const steps = Math.floor(T / dt);
+
+        let V = -65, m = 0.05, h = 0.6, n = 0.32;
+        const time = [], voltage = [], mGate = [], hGate = [], nGate = [];
+
+        for (let i = 0; i < steps; i++) {
+            const t = i * dt;
+            time.push(t);
+            voltage.push(V);
+            mGate.push(m);
+            hGate.push(h);
+            nGate.push(n);
+
+            // Rate functions
+            const alpha_m = 0.1 * (V + 40) / (1 - Math.exp(-(V + 40) / 10));
+            const beta_m = 4 * Math.exp(-(V + 65) / 18);
+            const alpha_h = 0.07 * Math.exp(-(V + 65) / 20);
+            const beta_h = 1 / (1 + Math.exp(-(V + 35) / 10));
+            const alpha_n = 0.01 * (V + 55) / (1 - Math.exp(-(V + 55) / 10));
+            const beta_n = 0.125 * Math.exp(-(V + 65) / 80);
+
+            // Currents
+            const I_Na = g_Na * m * m * m * h * (V - E_Na);
+            const I_K = g_K * n * n * n * n * (V - E_K);
+            const I_L = g_L * (V - E_L);
+
+            // Update
+            V += dt / C_m * (I_ext - I_Na - I_K - I_L);
+            m += dt * (alpha_m * (1 - m) - beta_m * m);
+            h += dt * (alpha_h * (1 - h) - beta_h * h);
+            n += dt * (alpha_n * (1 - n) - beta_n * n);
+        }
+
+        // Downsample for plotting
+        const step = 10;
+        const tPlot = time.filter((_, i) => i % step === 0);
+        const vPlot = voltage.filter((_, i) => i % step === 0);
+        const mPlot = mGate.filter((_, i) => i % step === 0);
+        const hPlot = hGate.filter((_, i) => i % step === 0);
+        const nPlot = nGate.filter((_, i) => i % step === 0);
+
+        Plotly.newPlot('hh-plot', [{
+            x: tPlot, y: vPlot, type: 'scatter', mode: 'lines',
+            line: { color: '#4aff7a', width: 2 },
+            name: 'Membranpotential'
+        }], {
+            title: { text: 'Hodgkin-Huxley: Membranpotential', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Zeit (ms)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'V (mV)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 }
+        }, { responsive: true });
+
+        Plotly.newPlot('hh-gates', [
+            { x: tPlot, y: mPlot, type: 'scatter', mode: 'lines', line: { color: '#ff6a4a', width: 1.5 }, name: 'm (Na⁺ Aktivierung)' },
+            { x: tPlot, y: hPlot, type: 'scatter', mode: 'lines', line: { color: '#4a7aff', width: 1.5 }, name: 'h (Na⁺ Inaktivierung)' },
+            { x: tPlot, y: nPlot, type: 'scatter', mode: 'lines', line: { color: '#ffaa4a', width: 1.5 }, name: 'n (K⁺ Aktivierung)' }
+        ], {
+            title: { text: 'Ionenkanal-Gating-Variablen', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Zeit (ms)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'Öffnungswahrscheinlichkeit', color: '#aaaacc', gridcolor: '#2a2a5a', range: [0, 1] },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 },
+            legend: { font: { color: '#ccccff' } }
+        }, { responsive: true });
+    }
+
+    // ==================== SYNAPTIC INTEGRATION ====================
+    function updateSynaptic() {
+        document.getElementById('exc-val').textContent = document.getElementById('exc-syn').value;
+        document.getElementById('inh-val').textContent = document.getElementById('inh-syn').value;
+        document.getElementById('temporal-val').textContent = document.getElementById('temporal-window').value;
+    }
+
+    function runSynaptic() {
+        const nExc = parseInt(document.getElementById('exc-syn').value);
+        const nInh = parseInt(document.getElementById('inh-syn').value);
+        const tauWindow = parseFloat(document.getElementById('temporal-window').value);
+
+        const dt = 0.1; // ms
+        const T = 100; // ms
+        const steps = Math.floor(T / dt);
+        const tau_m = 20; // membrane time constant
+        const V_rest = -65;
+        const V_thresh = -55;
+        const V_reset = -70;
+        const E_exc = 0;
+        const E_inh = -80;
+        const g_exc_peak = 0.5;
+        const g_inh_peak = 1.0;
+        const tau_syn = 5;
+
+        let V = V_rest;
+        const time = [], voltage = [];
+        let spiked = false;
+
+        // Generate random spike times for inputs
+        const excSpikes = Array.from({ length: nExc }, () => Math.random() * tauWindow + 20);
+        const inhSpikes = Array.from({ length: nInh }, () => Math.random() * tauWindow + 20 + Math.random() * 5);
+
+        for (let i = 0; i < steps; i++) {
+            const t = i * dt;
+            time.push(t);
+
+            // Calculate synaptic conductances
+            let g_exc = 0, g_inh = 0;
+            excSpikes.forEach(ts => {
+                if (t > ts) g_exc += g_exc_peak * Math.exp(-(t - ts) / tau_syn);
+            });
+            inhSpikes.forEach(ts => {
+                if (t > ts) g_inh += g_inh_peak * Math.exp(-(t - ts) / tau_syn);
+            });
+
+            // Leaky integrate
+            const dV = (-(V - V_rest) + g_exc * (E_exc - V) + g_inh * (E_inh - V)) / tau_m;
+            V += dV * dt;
+
+            // Spike check
+            if (V >= V_thresh && !spiked) {
+                V = 30; // spike peak
+                spiked = true;
+            } else if (spiked) {
+                V = V_reset;
+                spiked = false;
+            }
+
+            voltage.push(V);
+        }
+
+        const fired = voltage.some(v => v > 0);
+        document.getElementById('vm-display').textContent = Math.max(...voltage).toFixed(1) + ' mV (peak)';
+        document.getElementById('fire-status').textContent = fired ? 'FEUERT!' : 'Ruhend';
+        document.getElementById('fire-status').style.color = fired ? '#ff6666' : '#66ff66';
+
+        Plotly.newPlot('synaptic-plot', [{
+            x: time, y: voltage, type: 'scatter', mode: 'lines',
+            line: { color: fired ? '#ff6a4a' : '#4aff7a', width: 2 }
+        }], {
+            title: { text: 'Synaptische Integration: Membranpotential', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Zeit (ms)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'V (mV)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 },
+            shapes: [{
+                type: 'line', x0: 0, x1: T, y0: V_thresh, y1: V_thresh,
+                line: { color: '#ffaa4a', width: 1, dash: 'dash' }
+            }],
+            annotations: [{
+                x: T * 0.9, y: V_thresh + 1, text: 'Schwelle', showarrow: false, font: { color: '#ffaa4a', size: 11 }
+            }]
+        }, { responsive: true });
+    }
+
+    // ==================== CHAOS: LORENZ ATTRACTOR ====================
+    function initChaosPlots() {
+        runLorenz();
+        updateLogistic();
+    }
+
+    function runLorenz() {
+        const sigma = parseFloat(document.getElementById('lorenz-sigma').value);
+        const rho = parseFloat(document.getElementById('lorenz-rho').value);
+        const beta = parseFloat(document.getElementById('lorenz-beta').value);
+
+        const dt = 0.005;
+        const steps = 15000;
+        let x = 1, y = 1, z = 1;
+        const xs = [], ys = [], zs = [];
+
+        for (let i = 0; i < steps; i++) {
+            const dx = sigma * (y - x) * dt;
+            const dy = (x * (rho - z) - y) * dt;
+            const dz = (x * y - beta * z) * dt;
+            x += dx; y += dy; z += dz;
+            xs.push(x); ys.push(y); zs.push(z);
+        }
+
+        Plotly.newPlot('lorenz-plot', [{
+            x: xs, y: ys, z: zs,
+            type: 'scatter3d',
+            mode: 'lines',
+            line: {
+                color: zs,
+                colorscale: [
+                    [0, '#4a7aff'], [0.25, '#7a4aff'],
+                    [0.5, '#ff4aaa'], [0.75, '#ffaa4a'], [1, '#ffff4a']
+                ],
+                width: 1.5
+            }
+        }], {
+            title: { text: 'Lorenz-Attraktor (3D)', font: { color: '#ccccff' } },
+            scene: {
+                xaxis: { title: 'X', color: '#aaaacc', gridcolor: '#2a2a5a', backgroundcolor: 'rgba(15,15,45,0.8)' },
+                yaxis: { title: 'Y', color: '#aaaacc', gridcolor: '#2a2a5a', backgroundcolor: 'rgba(15,15,45,0.8)' },
+                zaxis: { title: 'Z', color: '#aaaacc', gridcolor: '#2a2a5a', backgroundcolor: 'rgba(15,15,45,0.8)' },
+                bgcolor: 'rgba(15,15,45,0.8)'
+            },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            margin: { t: 40, b: 10, l: 10, r: 10 }
+        }, { responsive: true });
+    }
+
+    // ==================== FITZHUGH-NAGUMO ====================
+    function runFHN() {
+        const I = parseFloat(document.getElementById('fhn-i').value);
+        const a = parseFloat(document.getElementById('fhn-a').value);
+        const b = parseFloat(document.getElementById('fhn-b').value);
+        const tau = parseFloat(document.getElementById('fhn-tau').value);
+
+        const dt = 0.05;
+        const T = 200;
+        const steps = Math.floor(T / dt);
+        let v = -1.0, w = -0.5;
+        const time = [], vs = [], ws = [];
+
+        for (let i = 0; i < steps; i++) {
+            time.push(i * dt);
+            vs.push(v);
+            ws.push(w);
+
+            const dv = v - v * v * v / 3 - w + I;
+            const dw = (v + a - b * w) / tau;
+            v += dv * dt;
+            w += dw * dt;
+        }
+
+        // Time series
+        Plotly.newPlot('fhn-time-plot', [
+            { x: time, y: vs, type: 'scatter', mode: 'lines', line: { color: '#4aff7a', width: 2 }, name: 'v (Membranpotential)' },
+            { x: time, y: ws, type: 'scatter', mode: 'lines', line: { color: '#ff6a4a', width: 1.5 }, name: 'w (Recovery)' }
+        ], {
+            title: { text: 'FitzHugh-Nagumo: Zeitverlauf', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Zeit', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'Amplitude', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            legend: { font: { color: '#ccccff' } },
+            margin: { t: 40, b: 40 }
+        }, { responsive: true });
+
+        // Phase portrait
+        // Nullclines
+        const vRange = Array.from({ length: 200 }, (_, i) => -3 + i * 6 / 200);
+        const wNull_v = vRange.map(v => v - v * v * v / 3 + I); // dv/dt = 0 → w = v - v³/3 + I
+        const wNull_w = vRange.map(v => (v + a) / b); // dw/dt = 0 → w = (v+a)/b
+
+        Plotly.newPlot('fhn-phase-plot', [
+            { x: vs, y: ws, type: 'scatter', mode: 'lines', line: { color: '#4affff', width: 1.5 }, name: 'Trajektorie' },
+            { x: vRange, y: wNull_v, type: 'scatter', mode: 'lines', line: { color: '#ffaa4a', width: 2, dash: 'dash' }, name: 'v-Nullkline (dv/dt=0)' },
+            { x: vRange, y: wNull_w, type: 'scatter', mode: 'lines', line: { color: '#ff4aaa', width: 2, dash: 'dash' }, name: 'w-Nullkline (dw/dt=0)' }
+        ], {
+            title: { text: 'Phasenporträt', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'v (Membranpotential)', color: '#aaaacc', gridcolor: '#2a2a5a', range: [-3, 3] },
+            yaxis: { title: 'w (Recovery-Variable)', color: '#aaaacc', gridcolor: '#2a2a5a', range: [-2, 4] },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            legend: { font: { color: '#ccccff' } },
+            margin: { t: 40, b: 40 }
+        }, { responsive: true });
+    }
+
+    // ==================== LOGISTIC MAP & BIFURCATION ====================
+    function updateLogistic() {
+        const r = parseFloat(document.getElementById('logistic-r').value);
+        document.getElementById('logistic-r-val').textContent = r.toFixed(2);
+
+        // Iterate logistic map
+        let x = 0.5;
+        const iterates = [x];
+        const transient = 200;
+        const show = 100;
+
+        for (let i = 0; i < transient + show; i++) {
+            x = r * x * (1 - x);
+            if (i >= transient) iterates.push(x);
+        }
+
+        // Lyapunov exponent
+        let lyap = 0;
+        x = 0.5;
+        const N = 1000;
+        for (let i = 0; i < N; i++) {
+            x = r * x * (1 - x);
+            const deriv = Math.abs(r * (1 - 2 * x));
+            if (deriv > 0) lyap += Math.log(deriv);
+        }
+        lyap /= N;
+
+        document.getElementById('lyapunov-display').textContent = lyap.toFixed(4);
+        document.getElementById('lyapunov-display').className = lyap > 0 ? 'lyapunov-positive' : (lyap < -0.01 ? 'lyapunov-negative' : 'lyapunov-zero');
+
+        let regime = '';
+        if (lyap < -0.1) regime = 'Fixpunkt / Periodisch';
+        else if (lyap < 0.01) regime = 'Grenzzyklus / Bifurkation';
+        else regime = 'Chaotisch!';
+        document.getElementById('regime-display').textContent = regime;
+        document.getElementById('regime-display').style.color = lyap > 0 ? '#ff6666' : '#66ff66';
+
+        Plotly.newPlot('logistic-plot', [{
+            x: Array.from({ length: iterates.length }, (_, i) => i),
+            y: iterates,
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { color: '#4aff7a', width: 1.5 },
+            marker: { size: 3, color: '#4affff' }
+        }], {
+            title: { text: `Logistische Abbildung (r = ${r.toFixed(2)})`, font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Iteration n', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'x_n', color: '#aaaacc', gridcolor: '#2a2a5a', range: [0, 1] },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 }
+        }, { responsive: true });
+    }
+
+    function animateBifurcation() {
+        const rValues = [];
+        const xValues = [];
+        const transient = 300;
+        const show = 150;
+
+        for (let r = 2.5; r <= 4.0; r += 0.002) {
+            let x = 0.5;
+            for (let i = 0; i < transient; i++) {
+                x = r * x * (1 - x);
+            }
+            for (let i = 0; i < show; i++) {
+                x = r * x * (1 - x);
+                rValues.push(r);
+                xValues.push(x);
+            }
+        }
+
+        Plotly.newPlot('bifurcation-plot', [{
+            x: rValues,
+            y: xValues,
+            type: 'scatter',
+            mode: 'markers',
+            marker: { size: 0.5, color: '#4affff', opacity: 0.3 }
+        }], {
+            title: { text: 'Bifurkationsdiagramm der logistischen Abbildung', font: { color: '#ccccff', size: 14 } },
+            xaxis: { title: 'Parameter r', color: '#aaaacc', gridcolor: '#2a2a5a' },
+            yaxis: { title: 'Attraktor-Werte x*', color: '#aaaacc', gridcolor: '#2a2a5a', range: [0, 1] },
+            paper_bgcolor: 'rgba(20,20,60,0)',
+            plot_bgcolor: 'rgba(15,15,45,0.8)',
+            margin: { t: 40, b: 40 },
+            annotations: [
+                { x: 3.0, y: 0.95, text: 'Periode 1', showarrow: false, font: { color: '#88ff88', size: 10 } },
+                { x: 3.45, y: 0.95, text: 'P2', showarrow: false, font: { color: '#ffff88', size: 10 } },
+                { x: 3.55, y: 0.95, text: 'P4', showarrow: false, font: { color: '#ffaa44', size: 10 } },
+                { x: 3.7, y: 0.95, text: 'Chaos', showarrow: false, font: { color: '#ff6666', size: 10 } },
+                { x: 3.83, y: 0.95, text: 'P3-Fenster', showarrow: false, font: { color: '#88ff88', size: 10 } }
+            ]
+        }, { responsive: true });
+    }
+
+    // ==================== KURAMOTO MODEL ====================
+    let kuraAnimId = null;
+
+    function runKuramoto() {
+        stopKuramoto();
+        const N = parseInt(document.getElementById('n-oscillators').value);
+        const K = parseFloat(document.getElementById('coupling-strength').value);
+        const spread = parseFloat(document.getElementById('freq-spread').value);
+
+        // Initialize
+        let phases = Array.from({ length: N }, () => Math.random() * 2 * Math.PI);
+        const natFreqs = Array.from({ length: N }, () => (Math.random() - 0.5) * 2 * spread + 5);
+
+        const canvas = document.getElementById('kuramoto-canvas');
+        const ctx = canvas.getContext('2d');
+        const orderHistory = [];
+        const dt = 0.02;
+        let time = 0;
+
+        function step() {
+            // Update phases
+            const newPhases = phases.map((theta_i, i) => {
+                let coupling = 0;
+                for (let j = 0; j < N; j++) {
+                    coupling += Math.sin(phases[j] - theta_i);
+                }
+                coupling *= K / N;
+                return theta_i + (natFreqs[i] + coupling) * dt;
+            });
+            phases = newPhases;
+            time += dt;
+
+            // Order parameter
+            let sumCos = 0, sumSin = 0;
+            phases.forEach(theta => {
+                sumCos += Math.cos(theta);
+                sumSin += Math.sin(theta);
+            });
+            const r = Math.sqrt(sumCos * sumCos + sumSin * sumSin) / N;
+            orderHistory.push({ t: time, r: r });
+
+            // Draw
+            ctx.fillStyle = 'rgba(10, 10, 30, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const radius = 150;
+
+            // Draw unit circle
+            ctx.strokeStyle = '#3a3a7a';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            // Draw oscillators on circle
+            phases.forEach((theta, i) => {
+                const x = cx + radius * Math.cos(theta);
+                const y = cy + radius * Math.sin(theta);
+                const hue = (i / N) * 360;
+                ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            // Draw mean phase (order parameter vector)
+            const meanX = cx + radius * r * (sumCos / N / r || 0);
+            const meanY = cy + radius * r * (sumSin / N / r || 0);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(meanX, meanY);
+            ctx.stroke();
+
+            // Draw r value as filled circle
+            ctx.fillStyle = `rgba(74, 255, 127, ${r})`;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius * r, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Update displays
+            document.getElementById('order-param').textContent = r.toFixed(3);
+            document.getElementById('mean-freq').textContent = (natFreqs.reduce((a, b) => a + b) / N).toFixed(2);
+            document.getElementById('sync-status').textContent = r > 0.7 ? 'Synchron!' : (r > 0.4 ? 'Teilweise' : 'Desynchron');
+            document.getElementById('sync-status').style.color = r > 0.7 ? '#66ff66' : (r > 0.4 ? '#ffff66' : '#ff6666');
+
+            // Update order parameter plot every 50 steps
+            if (orderHistory.length % 50 === 0 && orderHistory.length > 10) {
+                Plotly.newPlot('kuramoto-order-plot', [{
+                    x: orderHistory.map(h => h.t),
+                    y: orderHistory.map(h => h.r),
+                    type: 'scatter', mode: 'lines',
+                    line: { color: '#4aff7a', width: 2 }
+                }], {
+                    title: { text: 'Ordnungsparameter r(t)', font: { color: '#ccccff', size: 13 } },
+                    xaxis: { title: 'Zeit', color: '#aaaacc', gridcolor: '#2a2a5a' },
+                    yaxis: { title: 'r', color: '#aaaacc', gridcolor: '#2a2a5a', range: [0, 1] },
+                    paper_bgcolor: 'rgba(20,20,60,0)',
+                    plot_bgcolor: 'rgba(15,15,45,0.8)',
+                    margin: { t: 35, b: 35 }
+                }, { responsive: true });
+            }
+
+            kuraAnimId = requestAnimationFrame(step);
+        }
+
+        step();
+    }
+
+    function stopKuramoto() {
+        if (kuraAnimId) {
+            cancelAnimationFrame(kuraAnimId);
+            kuraAnimId = null;
+        }
+    }
+
+    // ==================== LIF NETWORK ====================
+    let lifAnimId = null;
+
+    function runLIF() {
+        stopLIF();
+        const N = parseInt(document.getElementById('nn-count').value);
+        const connProb = parseFloat(document.getElementById('conn-prob').value);
+        const extRate = parseFloat(document.getElementById('ext-input').value);
+        const inhFrac = parseFloat(document.getElementById('inh-fraction').value);
+
+        const nInh = Math.floor(N * inhFrac);
+        const nExc = N - nInh;
+
+        // Build connectivity
+        const weights = Array.from({ length: N }, () => Array(N).fill(0));
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                if (i !== j && Math.random() < connProb) {
+                    weights[i][j] = j < nExc ? 0.5 : -1.5; // exc or inh
+                }
+            }
+        }
+
+        // Neuron state
+        let V = Array(N).fill(-65);
+        const V_rest = -65, V_thresh = -55, V_reset = -70;
+        const tau = 20, dt = 0.5;
+        const canvas = document.getElementById('raster-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#0a0a1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let timeStep = 0;
+        const maxTime = 800; // pixels width
+        const rasterData = [];
+        const firingRates = [];
+        let windowSpikes = 0;
+        const windowSize = 20; // ms
+
+        function step() {
+            const spikes = Array(N).fill(false);
+
+            for (let i = 0; i < N; i++) {
+                // External input
+                if (Math.random() < extRate * dt / 1000) {
+                    V[i] += 5;
+                }
+
+                // Synaptic input from previous spikes
+                // (simplified: instant)
+
+                // Leak
+                V[i] += (-(V[i] - V_rest)) / tau * dt;
+
+                // Threshold
+                if (V[i] >= V_thresh) {
+                    spikes[i] = true;
+                    V[i] = V_reset;
+                }
+            }
+
+            // Apply synaptic effects
+            for (let i = 0; i < N; i++) {
+                if (spikes[i]) {
+                    for (let j = 0; j < N; j++) {
+                        V[j] += weights[j][i];
+                    }
+                }
+            }
+
+            // Draw raster
+            const x = timeStep % canvas.width;
+            if (x === 0) {
+                ctx.fillStyle = 'rgba(10, 10, 30, 1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            let spikeCount = 0;
+            for (let i = 0; i < N; i++) {
+                if (spikes[i]) {
+                    const y = (i / N) * canvas.height;
+                    const hue = i < nExc ? 120 : 0; // green for exc, red for inh
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fillRect(x, y, 2, Math.max(2, canvas.height / N - 1));
+                    spikeCount++;
+                }
+            }
+
+            windowSpikes += spikeCount;
+            if (timeStep % windowSize === 0) {
+                firingRates.push(windowSpikes / N / (windowSize * dt / 1000));
+                windowSpikes = 0;
+
+                if (firingRates.length % 20 === 0 && firingRates.length > 5) {
+                    Plotly.newPlot('firing-rate-plot', [{
+                        y: firingRates,
+                        type: 'scatter', mode: 'lines',
+                        line: { color: '#ffaa4a', width: 2 }
+                    }], {
+                        title: { text: 'Populationsfeuerrate', font: { color: '#ccccff', size: 13 } },
+                        xaxis: { title: 'Zeitfenster', color: '#aaaacc', gridcolor: '#2a2a5a' },
+                        yaxis: { title: 'Rate (Hz)', color: '#aaaacc', gridcolor: '#2a2a5a' },
+                        paper_bgcolor: 'rgba(20,20,60,0)',
+                        plot_bgcolor: 'rgba(15,15,45,0.8)',
+                        margin: { t: 35, b: 35 }
+                    }, { responsive: true });
+                }
+            }
+
+            timeStep++;
+            lifAnimId = requestAnimationFrame(step);
+        }
+
+        step();
+    }
+
+    function stopLIF() {
+        if (lifAnimId) {
+            cancelAnimationFrame(lifAnimId);
+            lifAnimId = null;
+        }
+    }
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        // Default: show anatomy section
+        selectRegion('frontal');
+    });
+    </script>
+</body>
+</html>
