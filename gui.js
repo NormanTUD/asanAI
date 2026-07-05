@@ -4569,13 +4569,18 @@ function close_popups() {
 }
 
 function toggle_skip_connection(layer_nr, elem) {
-	var enabled = $(elem).is(":checked");
+    if (layer_nr === null || layer_nr === undefined) {
+        err("[toggle_skip_connection] Could not determine layer number");
+        return;
+    }
 
-	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false };
-	}
+    var enabled = $(elem).is(":checked");
 
-	skip_connection_settings[layer_nr].enabled = enabled;
+    if (!skip_connection_settings[layer_nr]) {
+        skip_connection_settings[layer_nr] = { enabled: false };
+    }
 
-	updated_page(); // await not possible here
+    skip_connection_settings[layer_nr].enabled = enabled;
+
+    updated_page(); // await not possible here
 }

@@ -1076,7 +1076,6 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
                 try {
                     result = apply_skip_connection(input_before_layer, result, skip_info.strength, type, model_structure_idx);
                 } catch (skip_err) {
-                    // If skip connection fails (shape mismatch etc.), just use the layer output
                     var skip_msg = skip_err.message || skip_err;
                     wrn(`[_add_layers_to_model] Skip connection failed at layer ${model_structure_idx}: ${skip_msg}. Continuing without skip.`);
                 }
@@ -1094,12 +1093,14 @@ async function _add_layers_to_model(model_structure, fake_model_structure, model
 
     var new_model = tf.model({inputs: inputLayer, outputs: currentOutput});
 
-    // Hide the InputLayer from model.layers, but keep ALL other layers
-    // (including skip connection layers like skip_proj_*, skip_add_*, skip_scale_*)
-    // so that model.summary() shows them correctly.
+    // Filter out BOTH InputLayer AND internal skip-connection layers
+    // so that model.layers.length matches the GUI layer count
     var allLayers = new_model.layers;
     var visibleLayers = allLayers.filter(function(l) {
-        return l.getClassName() !== "InputLayer";
+        if (l.getClassName() === "InputLayer") return false;
+        var lname = l.name || "";
+        if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) return false;
+        return true;
     });
 
     Object.defineProperty(new_model, "layers", {

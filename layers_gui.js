@@ -607,11 +607,16 @@ function add_skip_connection_option(type, nr) {
 		return "";
 	}
 
+	var checked_attr = "";
+	if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled) {
+		checked_attr = " checked ";
+	}
+
 	var str = "";
 	str += "<tr class='skip_connection_tr'>";
 	str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
 	str += "<td>";
-	str += "<input type='checkbox' class='skip_connection_enabled' id='skip_conn_enabled_" + nr + "' onchange='toggle_skip_connection(" + nr + ", this)' />";
+	str += "<input type='checkbox' class='skip_connection_enabled' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
 	str += "</td>";
 	str += "</tr>";
 
