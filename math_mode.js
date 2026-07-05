@@ -1674,113 +1674,134 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
  * and returns its kernel weights as a LaTeX matrix.
  * If no projection layer is found (identity skip), returns the actual identity matrix.
  *
- * FIXED: Now searches all layers more robustly and handles the case where
- * _allLayers might not exist or layer names might have changed after model recreation.
+ * FIXED: Now properly extracts current (trained) weights from skip projection layers
+ * so that math mode reflects weight updates during training.
  */
 function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
-	// Get all layers including internal ones
-	var all_layers = null;
-	if (model && model._allLayers && Array.isArray(model._allLayers)) {
-		all_layers = model._allLayers;
-	} else if (model && model.layers) {
-		// Fallback: try to get all layers from the model's internal layer list
-		// tf.model stores all layers (including internal) in getLayer() accessible form
-		try {
-			if (model.getConfig && typeof model.getConfig === "function") {
-				// For functional models, layers property might be filtered
-				// Try to access the underlying layer list
-				all_layers = model._layers || model.layers;
-			} else {
-				all_layers = model.layers;
-			}
-		} catch (e) {
-			all_layers = model.layers;
-		}
-	}
+    // Get all layers including internal ones
+    var all_layers = _get_all_model_layers();
 
-	if (!all_layers) {
-		return "W_{\\text{skip}}";
-	}
+    if (!all_layers) {
+        return "W_{\\text{skip}}";
+    }
 
-	var skip_proj_layer = null;
+    var skip_proj_layer = null;
 
-	// Search for the skip projection layer belonging to this gui_layer_idx
-	for (var i = 0; i < all_layers.length; i++) {
-		var lname = all_layers[i].name || "";
-		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
-			skip_proj_layer = all_layers[i];
-			break;
-		}
-	}
+    // Search for the skip projection layer belonging to this gui_layer_idx
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+            skip_proj_layer = all_layers[i];
+            break;
+        }
+    }
 
-	if (!skip_proj_layer) {
-		// Check if there's a skip_add layer (meaning identity skip, no projection needed)
-		var has_add = false;
-		for (var j = 0; j < all_layers.length; j++) {
-			var aname = all_layers[j].name || "";
-			if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, gui_layer_idx)) {
-				has_add = true;
-				break;
-			}
-		}
+    if (!skip_proj_layer) {
+        // Check if there's a skip_add layer (meaning identity skip, no projection needed)
+        var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
 
-		if (has_add) {
-			// Identity skip connection — build real identity matrix from output shape
-			var dim = _get_skip_identity_dimension(layer_idx);
+        if (has_add) {
+            return _build_identity_matrix_latex(layer_idx);
+        }
+        return "W_{\\text{skip}}";
+    }
 
-			if (dim && typeof dim === "number" && dim > 0) {
-				var max_vals = get_max_nr_cols_rows();
-				var display_dim = Math.min(dim, max_vals);
-				var identity_rows = [];
+    // skip_proj_layer IS found — extract its CURRENT kernel weights
+    return _extract_skip_kernel_latex(skip_proj_layer);
+}
 
-				for (var r = 0; r < display_dim; r++) {
-					var row_parts = [];
-					for (var c = 0; c < display_dim; c++) {
-						row_parts.push(r === c ? "1" : "0");
-					}
-					if (dim > max_vals) {
-						row_parts.push("\\cdots");
-					}
-					identity_rows.push(row_parts.join(" & "));
-				}
+/**
+ * Gets all model layers including internal skip-connection layers.
+ */
+function _get_all_model_layers() {
+    if (!model) return null;
 
-				if (dim > max_vals) {
-					var vdots_row = [];
-					for (var vc = 0; vc < display_dim; vc++) {
-						vdots_row.push("\\vdots");
-					}
-					vdots_row.push("\\ddots");
-					identity_rows.push(vdots_row.join(" & "));
-				}
+    if (model._allLayers && Array.isArray(model._allLayers)) {
+        return model._allLayers;
+    }
 
-				return "\\underbrace{\\begin{pmatrix}\n" + identity_rows.join(" \\\\\n") + "\n\\end{pmatrix}}_{I^{" + dim + " \\times " + dim + "}}";
-			}
+    // Fallback: try to access internal layer list
+    try {
+        if (model._layers) return model._layers;
+    } catch (e) {
+        // ignore
+    }
 
-			// Fallback if dimension couldn't be determined
-			return "I";
-		}
-		return "W_{\\text{skip}}";
-	}
+    return model.layers || null;
+}
 
-	// skip_proj_layer IS found — extract its kernel weights
-	try {
-		var kernel_weight = _extract_kernel_from_layer(skip_proj_layer);
+/**
+ * Checks if there's a skip_add layer for the given gui_layer_idx.
+ */
+function _has_skip_add_layer(all_layers, gui_layer_idx) {
+    for (var j = 0; j < all_layers.length; j++) {
+        var aname = all_layers[j].name || "";
+        if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, gui_layer_idx)) {
+            return true;
+        }
+    }
+    return false;
+}
 
-		if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
-			var synced_kernel = array_sync(kernel_weight, true);
-			if (synced_kernel) {
-				synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
-				synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
-				var kernel_shape = get_shape_from_array(synced_kernel);
-				var shape_str = kernel_shape.join(" \\times ");
-				return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
-			}
-		}
-	} catch (e) {
-		dbg("[_get_skip_connection_weight_latex] Error extracting skip weights: " + e);
-	}
+/**
+ * Builds an identity matrix LaTeX string for an identity skip connection.
+ */
+function _build_identity_matrix_latex(layer_idx) {
+    var dim = _get_skip_identity_dimension(layer_idx);
 
-	return "W_{\\text{skip}}";
+    if (dim && typeof dim === "number" && dim > 0) {
+        var max_vals = get_max_nr_cols_rows();
+        var display_dim = Math.min(dim, max_vals);
+        var identity_rows = [];
+
+        for (var r = 0; r < display_dim; r++) {
+            var row_parts = [];
+            for (var c = 0; c < display_dim; c++) {
+                row_parts.push(r === c ? "1" : "0");
+            }
+            if (dim > max_vals) {
+                row_parts.push("\\cdots");
+            }
+            identity_rows.push(row_parts.join(" & "));
+        }
+
+        if (dim > max_vals) {
+            var vdots_row = [];
+            for (var vc = 0; vc < display_dim; vc++) {
+                vdots_row.push("\\vdots");
+            }
+            vdots_row.push("\\ddots");
+            identity_rows.push(vdots_row.join(" & "));
+        }
+
+        return "\\underbrace{\\begin{pmatrix}\n" + identity_rows.join(" \\\\\n") + "\n\\end{pmatrix}}_{I^{" + dim + " \\times " + dim + "}}";
+    }
+
+    return "I";
+}
+
+/**
+ * Extracts the current kernel weights from a skip projection layer and formats as LaTeX.
+ */
+function _extract_skip_kernel_latex(skip_proj_layer) {
+    try {
+        var kernel_weight = _extract_kernel_from_layer(skip_proj_layer);
+
+        if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
+            var synced_kernel = array_sync(kernel_weight, true);
+            if (synced_kernel) {
+                synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
+                synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
+                var kernel_shape = get_shape_from_array(synced_kernel);
+                var shape_str = kernel_shape.join(" \\times ");
+                return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+            }
+        }
+    } catch (e) {
+        dbg("[_extract_skip_kernel_latex] Error extracting skip weights: " + e);
+    }
+
+    return "W_{\\text{skip}}";
 }
 
 /**

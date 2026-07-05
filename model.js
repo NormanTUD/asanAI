@@ -1134,6 +1134,9 @@ function apply_skip_connection(input_tensor, layer_output, strength, layer_type,
 
     var projected_input;
 
+    // Get the initializer config from skip connection settings (if set by user)
+    var skip_initializer_config = _get_skip_initializer_config(layer_idx);
+
     // Check if shapes already match
     if (JSON.stringify(in_shape) === JSON.stringify(out_shape)) {
         // Shapes match, direct addition
@@ -1142,11 +1145,16 @@ function apply_skip_connection(input_tensor, layer_output, strength, layer_type,
         // Same rank but different dimensions - need projection
         if (in_shape.length === 1) {
             // Dense-like: project with a Dense layer
-            var projection = tf.layers.dense({
+            var dense_config = {
                 units: out_shape[0],
                 useBias: false,
+                trainable: true,
                 name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
-            });
+            };
+            if (skip_initializer_config) {
+                dense_config.kernelInitializer = skip_initializer_config;
+            }
+            var projection = tf.layers.dense(dense_config);
             projected_input = projection.apply(input_tensor);
         } else if (in_shape.length === 3) {
             // Conv2D-like: [H, W, C] -> use 1x1 conv with strides to match spatial + channel dims
@@ -1157,21 +1165,24 @@ function apply_skip_connection(input_tensor, layer_output, strength, layer_type,
             var stride_h = Math.max(1, Math.floor(in_shape[0] / target_h));
             var stride_w = Math.max(1, Math.floor(in_shape[1] / target_w));
 
-            var projection_conv = tf.layers.conv2d({
+            var conv2d_config = {
                 filters: target_c,
                 kernelSize: [1, 1],
                 strides: [stride_h, stride_w],
                 padding: "valid",
                 useBias: false,
+                trainable: true,
                 name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
-            });
+            };
+            if (skip_initializer_config) {
+                conv2d_config.kernelInitializer = skip_initializer_config;
+            }
+            var projection_conv = tf.layers.conv2d(conv2d_config);
             projected_input = projection_conv.apply(input_tensor);
 
             // After strided conv, check if spatial dims match exactly
             var proj_shape = projected_input.shape.slice(1);
             if (proj_shape[0] !== target_h || proj_shape[1] !== target_w) {
-                // Use cropping or padding to fix remaining mismatch
-                // For simplicity, if there's still a mismatch, skip the connection
                 throw new Error("Spatial dimension mismatch after projection: got [" + proj_shape.join(",") + "] expected [" + out_shape.join(",") + "]");
             }
         } else if (in_shape.length === 2) {
@@ -1181,14 +1192,19 @@ function apply_skip_connection(input_tensor, layer_output, strength, layer_type,
 
             var stride_s = Math.max(1, Math.floor(in_shape[0] / target_steps));
 
-            var projection_conv1d = tf.layers.conv1d({
+            var conv1d_config = {
                 filters: target_channels,
                 kernelSize: 1,
                 strides: stride_s,
                 padding: "valid",
                 useBias: false,
+                trainable: true,
                 name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
-            });
+            };
+            if (skip_initializer_config) {
+                conv1d_config.kernelInitializer = skip_initializer_config;
+            }
+            var projection_conv1d = tf.layers.conv1d(conv1d_config);
             projected_input = projection_conv1d.apply(input_tensor);
 
             var proj_shape_1d = projected_input.shape.slice(1);
@@ -1210,25 +1226,37 @@ function apply_skip_connection(input_tensor, layer_output, strength, layer_type,
         }).apply([layer_output, projected_input]);
         return added;
     } else {
-        // Scale the skip connection by strength
-        // We use a Lambda-like approach: multiply projected_input by strength
-        var scale_layer = tf.layers.dense({
-            units: out_shape[out_shape.length - 1],
-            useBias: false,
-            trainable: false,
-            kernelInitializer: tf.initializers.constant({value: strength}),
-            name: "skip_scale_" + layer_idx + "_" + uuidv4().substring(0, 8)
-        });
-
-        // For non-1D outputs, we need a different approach
-        // Simpler: just use add and accept strength=1 behavior, or use a custom multiply
-        // Actually, let's use a simpler approach with tf.layers.multiply won't work directly.
-        // Best approach: just do the add. The "strength" is conceptual for the UI.
-        // In practice, the projection weights will learn the appropriate scaling.
+        // For non-unity strength, the projection weights will learn the appropriate scaling.
+        // We just do the add directly — no non-trainable scale layer.
         var added_scaled = tf.layers.add({
             name: "skip_add_" + layer_idx + "_" + uuidv4().substring(0, 8)
         }).apply([layer_output, projected_input]);
         return added_scaled;
+    }
+}
+
+/**
+ * Reads the skip connection initializer setting from skip_connection_settings
+ * for the given layer index. Returns a TF.js initializer object or null.
+ */
+function _get_skip_initializer_config(layer_idx) {
+    if (!skip_connection_settings[layer_idx]) {
+        return null;
+    }
+
+    var initializer_name = skip_connection_settings[layer_idx].initializer;
+    if (!initializer_name || initializer_name === "none") {
+        return null;
+    }
+
+    var initializer_params = skip_connection_settings[layer_idx].initializer_params || {};
+
+    try {
+        var execute_string = "tf.initializers." + initializer_name + "(" + JSON.stringify(initializer_params) + ")";
+        return eval(execute_string);
+    } catch (e) {
+        wrn("[_get_skip_initializer_config] Could not create initializer '" + initializer_name + "': " + e);
+        return null;
     }
 }
 

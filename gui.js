@@ -4577,10 +4577,39 @@ function toggle_skip_connection(layer_nr, elem) {
     var enabled = $(elem).is(":checked");
 
     if (!skip_connection_settings[layer_nr]) {
-        skip_connection_settings[layer_nr] = { enabled: false };
+        skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
     }
 
     skip_connection_settings[layer_nr].enabled = enabled;
 
+    // Show or hide the initializer row
+    var $layer_setting = $(elem).closest(".layer_setting");
+    var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
+
+    if (enabled) {
+        $init_row.show();
+    } else {
+        $init_row.hide();
+    }
+
     updated_page(); // await not possible here
+}
+
+function update_skip_connection_initializer(layer_nr, elem) {
+    if (layer_nr === null || layer_nr === undefined) {
+        err("[update_skip_connection_initializer] Could not determine layer number");
+        return;
+    }
+
+    var val = $(elem).val();
+
+    if (!skip_connection_settings[layer_nr]) {
+        skip_connection_settings[layer_nr] = { enabled: true, initializer: val, initializer_params: {} };
+    }
+
+    skip_connection_settings[layer_nr].initializer = val;
+
+    // For initializers that need params (like seed, mean, stddev), we use defaults.
+    // A more advanced version could show sub-options like the kernel_initializer does.
+    skip_connection_settings[layer_nr].initializer_params = {};
 }

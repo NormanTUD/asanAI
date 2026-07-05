@@ -603,24 +603,44 @@ function add_number_lstm_cells_option(type, nr) {
 }
 
 function add_skip_connection_option(type, nr) {
-	if (skip_connection_excluded_types.includes(type)) {
-		return "";
-	}
+    if (skip_connection_excluded_types.includes(type)) {
+        return "";
+    }
 
-	var checked_attr = "";
-	if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled) {
-		checked_attr = " checked ";
-	}
+    var checked_attr = "";
+    var current_initializer = "glorotUniform";
+    if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled) {
+        checked_attr = " checked ";
+    }
+    if (skip_connection_settings[nr] && skip_connection_settings[nr].initializer) {
+        current_initializer = skip_connection_settings[nr].initializer;
+    }
 
-	var str = "";
-	str += "<tr class='skip_connection_tr'>";
-	str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
-	str += "<td>";
-	str += "<input type='checkbox' class='skip_connection_enabled' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
-	str += "</td>";
-	str += "</tr>";
+    var str = "";
+    str += "<tr class='skip_connection_tr'>";
+    str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
+    str += "<td>";
+    str += "<input type='checkbox' class='skip_connection_enabled' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
+    str += "</td>";
+    str += "</tr>";
 
-	return str;
+    // Initializer selector row (hidden when skip is disabled)
+    var init_display = checked_attr ? "" : "display:none;";
+    str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
+    str += "<td>Skip Initializer:</td>";
+    str += "<td>";
+    str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); updated_page(null, null, this);'>";
+    for (var key in initializers) {
+        if (initializers.hasOwnProperty(key)) {
+            var selected_attr = (key === current_initializer) ? " selected" : "";
+            str += "<option value='" + key + "'" + selected_attr + ">" + initializers[key] + "</option>";
+        }
+    }
+    str += "</select>";
+    str += "</td>";
+    str += "</tr>";
+
+    return str;
 }
 
 async function add_layer(item) {
@@ -1810,12 +1830,16 @@ function rename_tmp_onchange() {
 }
 
 function get_skip_connection_info(layer_nr) {
-	if (!skip_connection_settings[layer_nr]) {
-		return { enabled: false, strength: 0 };
-	}
-	// Strength wird jetzt aus dem Modell gelesen, nicht vom Slider
-	var strength = _compute_skip_strength_from_model(layer_nr);
-	return { enabled: skip_connection_settings[layer_nr].enabled, strength: strength };
+    if (!skip_connection_settings[layer_nr]) {
+        return { enabled: false, strength: 1.0 };
+    }
+
+    var strength = _compute_skip_strength_from_model(layer_nr);
+
+    return {
+        enabled: skip_connection_settings[layer_nr].enabled,
+        strength: strength
+    };
 }
 
 function update_skip_connection_strength(layer_nr, elem) {
