@@ -603,54 +603,56 @@ function add_number_lstm_cells_option(type, nr) {
 }
 
 function add_skip_connection_option(type, nr) {
-    if (skip_connection_excluded_types.includes(type)) {
-        return "";
-    }
+	if (skip_connection_excluded_types.includes(type)) {
+		return "";
+	}
 
-    var checked_attr = "";
-    var current_initializer = "glorotUniform";
+	var checked_attr = "";
+	var current_initializer = "glorotUniform";
 
-    if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled === true) {
-        checked_attr = " checked ";
-    }
-    if (skip_connection_settings[nr] && skip_connection_settings[nr].initializer) {
-        current_initializer = skip_connection_settings[nr].initializer;
-    }
+	/*
+	if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled === true) {
+		checked_attr = " checked ";
+	}
+	*/
+	if (skip_connection_settings[nr] && skip_connection_settings[nr].initializer) {
+		current_initializer = skip_connection_settings[nr].initializer;
+	}
 
-    var str = "";
-    str += "<tr class='skip_connection_tr'>";
-    str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
-    str += "<td>";
-    str += "<input type='checkbox' class='skip_connection_enabled' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
-    str += "</td>";
-    str += "</tr>";
+	var str = "";
+	str += "<tr class='skip_connection_tr'>";
+	str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
+	str += "<td>";
+	str += "<input type='checkbox' class='skip_connection_enabled' " + checked_attr + " onchange='toggle_skip_connection(find_layer_number_by_element(this), this)' />";
+	str += "</td>";
+	str += "</tr>";
 
-    // Initializer selector row (hidden when skip is disabled)
-    var init_display = checked_attr ? "" : "display:none;";
-    str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
-    str += "<td>Skip Initializer:</td>";
-    str += "<td>";
-    str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this);'>";
-    for (var key in initializers) {
-        if (initializers.hasOwnProperty(key)) {
-            var selected_attr = (key === current_initializer) ? " selected" : "";
-            str += "<option value='" + key + "'" + selected_attr + ">" + initializers[key] + "</option>";
-        }
-    }
-    str += "</select>";
-    str += "</td>";
-    str += "</tr>";
+	// Initializer selector row (hidden when skip is disabled)
+	var init_display = checked_attr ? "" : "display:none;";
+	str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
+	str += "<td>Skip Initializer:</td>";
+	str += "<td>";
+	str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this);'>";
+	for (var key in initializers) {
+		if (initializers.hasOwnProperty(key)) {
+			var selected_attr = (key === current_initializer) ? " selected" : "";
+			str += "<option value='" + key + "'" + selected_attr + ">" + initializers[key] + "</option>";
+		}
+	}
+	str += "</select>";
+	str += "</td>";
+	str += "</tr>";
 
-    // Sub-options for the skip initializer (seed, mean, stddev, etc.)
-    // NOTE: We pass NO section_class here because build_advanced_section will
-    // add the class to ALL <tr> elements in the advanced_str (including these).
-    // The section_class is applied by build_advanced_section after this function returns.
-    if (checked_attr) {
-        // Pass null for section_class - build_advanced_section handles it
-        str += _get_skip_initializer_sub_options_html(nr, current_initializer, null);
-    }
+	// Sub-options for the skip initializer (seed, mean, stddev, etc.)
+	// NOTE: We pass NO section_class here because build_advanced_section will
+	// add the class to ALL <tr> elements in the advanced_str (including these).
+	// The section_class is applied by build_advanced_section after this function returns.
+	if (checked_attr) {
+		// Pass null for section_class - build_advanced_section handles it
+		str += _get_skip_initializer_sub_options_html(nr, current_initializer, null);
+	}
 
-    return str;
+	return str;
 }
 
 function _get_skip_initializer_sub_options_html(nr, initializer_name, section_class) {
