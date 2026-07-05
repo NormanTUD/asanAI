@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Warum du auf Lachgas eine Spirale gesehen hast</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0a1a; color: #e0e0e0; line-height: 1.7; }
+.section { padding: 40px 30px; max-width: 1100px; margin: auto; border-bottom: 1px solid #1a1a2e; }
+h1 { color: #f8a; font-size: 2em; margin-bottom: 10px; }
+h2 { color: #8af; margin-bottom: 15px; }
+h3 { color: #afa; margin: 15px 0 8px; }
+.story { background: #111; border-left: 4px solid #f8a; padding: 20px; margin: 20px 0; border-radius: 8px; font-size: 1.1em; }
+.explain { background: #0d1a2d; border-left: 4px solid #8af; padding: 15px; margin: 15px 0; border-radius: 6px; }
+.controls { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin: 15px 0; }
+.controls label { font-size: 14px; color: #aaa; }
+.controls input[type=range] { width: 180px; }
+.controls select { padding: 5px 10px; background: #1a1a2e; color: #fff; border: 1px solid #444; border-radius: 4px; }
+canvas { display: block; margin: 15px auto; border: 1px solid #333; border-radius: 12px; background: #000; }
+.side-by-side { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: flex-start; }
+.side-by-side > div { text-align: center; }
+.arrow { font-size: 3em; color: #f8a; align-self: center; }
+.step-nav { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.step-btn { padding: 10px 18px; background: #1a1a2e; border: 2px solid #333; color: #8af; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.step-btn:hover, .step-btn.active { background: #2a3a5e; border-color: #8af; }
+.step-content { display: none; animation: fadeIn 0.3s; }
+.step-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+#plotly-disp { width: 100%; height: 300px; }
+.neuron-grid { display: inline-block; }
+.analogy { background: #1a0a2a; border: 1px solid #639; padding: 15px; border-radius: 8px; margin: 10px 0; }
+.emoji { font-size: 1.5em; }
+</style>
+</head>
+<body>
+
+<div class="section">
+<h1>🌀 Warum du auf Lachgas eine Spirale gesehen hast</h1>
+<div class="story">
+<p><strong>Deine Erfahrung:</strong> Du hast Lachgas (N₂O) eingeatmet und eine Spirale halluziniert. Das ist kein Zufall – es ist ein direktes Fenster in die Architektur deines Gehirns. Diese Seite erklärt dir visuell und interaktiv, was genau passiert ist.</p>
+</div>
+</div>
+
+<div class="section">
+<h2>Navigiere durch die Erklärung</h2>
+<div class="step-nav">
+<button class="step-btn active" data-step="1">1. Dein Auge → Gehirn</button>
+<button class="step-btn" data-step="2">2. Was ist V1?</button>
+<button class="step-btn" data-step="3">3. Die Log-Abbildung</button>
+<button class="step-btn" data-step="4">4. Neuronen & Muster</button>
+<button class="step-btn" data-step="5">5. Warum Spirale?</button>
+<button class="step-btn" data-step="6">6. Lachgas-Effekt</button>
+<button class="step-btn" data-step="7">7. Spiel damit!</button>
+</div>
+
+<!-- STEP 1 -->
+<div class="step-content active" id="step-1">
+<h2>1. Dein Auge schickt Bilder ans Gehirn</h2>
+<div class="explain">
+<p><span class="emoji">👁️</span> Normalerweise fällt Licht auf deine Netzhaut (Retina). Die Retina wandelt das in elektrische Signale um und schickt sie über den Sehnerv an den <strong>visuellen Cortex</strong> – den Teil deines Gehirns ganz hinten am Kopf.</p>
+<p>Aber: Halluzinationen entstehen <strong>nicht im Auge</strong>. Sie entstehen direkt im Gehirn. Deshalb siehst du sie auch mit geschlossenen Augen.</p>
+</div>
+<canvas id="canvas-eye" width="600" height="250"></canvas>
+<script>
+(function(){
+const c = document.getElementById('canvas-eye');
+const ctx = c.getContext('2d');
+// Draw simple diagram
+ctx.fillStyle = '#0a0a1a';
+ctx.fillRect(0,0,600,250);
+// Eye
+ctx.beginPath(); ctx.ellipse(100, 125, 40, 50, 0, 0, Math.PI*2);
+ctx.strokeStyle = '#8af'; ctx.lineWidth = 2; ctx.stroke();
+ctx.beginPath(); ctx.arc(100, 125, 15, 0, Math.PI*2);
+ctx.fillStyle = '#246'; ctx.fill();
+ctx.beginPath(); ctx.arc(100, 125, 6, 0, Math.PI*2);
+ctx.fillStyle = '#000'; ctx.fill();
+ctx.font = '14px Segoe UI'; ctx.fillStyle = '#aaa';
+ctx.fillText('Auge', 80, 195);
+// Arrow
+ctx.beginPath(); ctx.moveTo(150, 125); ctx.lineTo(250, 125);
+ctx.strokeStyle = '#f8a'; ctx.lineWidth = 3; ctx.stroke();
+ctx.beginPath(); ctx.moveTo(240,115); ctx.lineTo(260,125); ctx.lineTo(240,135); ctx.fillStyle='#f8a'; ctx.fill();
+ctx.fillStyle = '#f8a'; ctx.fillText('Sehnerv', 170, 110);
+// Brain
+ctx.beginPath();
+ctx.ellipse(400, 125, 120, 90, 0, 0, Math.PI*2);
+ctx.strokeStyle = '#afa'; ctx.lineWidth = 2; ctx.stroke();
+// V1 area
+ctx.beginPath();
+ctx.ellipse(480, 130, 35, 40, 0.3, 0, Math.PI*2);
+ctx.fillStyle = 'rgba(255,100,100,0.3)'; ctx.fill();
+ctx.strokeStyle = '#f66'; ctx.stroke();
+ctx.fillStyle = '#afa'; ctx.font = '16px Segoe UI';
+ctx.fillText('Gehirn', 360, 50);
+ctx.fillStyle = '#f66'; ctx.font = '13px Segoe UI';
+ctx.fillText('V1', 472, 135);
+ctx.fillStyle = '#aaa'; ctx.font = '12px Segoe UI';
+ctx.fillText('(visueller Cortex)', 440, 155);
+// X mark on eye
+ctx.fillStyle = '#f88'; ctx.font = '20px Segoe UI';
+ctx.fillText('✗ Halluzination entsteht NICHT hier', 50, 235);
+ctx.fillStyle = '#8f8'; ctx.font = '20px Segoe UI';
+ctx.fillText('✓ HIER entsteht sie!', 380, 235);
+})();
+</script>
+</div>
+
+<!-- STEP 2 -->
+<div class="step-content" id="step-2">
+<h2>2. Was ist V1? (Primärer visueller Cortex)</h2>
+<div class="explain">
+<p><span class="emoji">🧠</span> <strong>V1</strong> ist die erste Station im Gehirn, die visuelle Information verarbeitet. Stell dir V1 als ein <strong>flaches Blatt Papier</strong> vor (ca. 3×5 cm), auf dem eine "Karte" deines Gesichtsfelds liegt.</p>
+<p>V1 besteht aus Millionen von Neuronen (Nervenzellen), die in einem regelmäßigen Muster angeordnet sind. Jeder Punkt auf diesem "Blatt" entspricht einem Punkt in deinem Gesichtsfeld.</p>
+</div>
+<div class="analogy">
+<h3>🗺️ Analogie: V1 ist wie eine Landkarte</h3>
+<p>So wie eine Weltkarte die runde Erde auf ein flaches Blatt projiziert (und dabei verzerrt), projiziert dein Gehirn dein rundes Gesichtsfeld auf das flache V1 – und verzerrt es dabei auch! Die Mitte deines Blickfelds (wo du hinschaust) bekommt VIEL mehr Platz als der Rand.</p>
+</div>
+<canvas id="canvas-v1-explain" width="600" height="300"></canvas>
+<script>
+(function(){
+const c = document.getElementById('canvas-v1-explain');
+const ctx = c.getContext('2d');
+ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,600,300);
+// Left: visual field (circle)
+ctx.beginPath(); ctx.arc(150, 150, 120, 0, Math.PI*2);
+ctx.strokeStyle = '#8af'; ctx.lineWidth = 2; ctx.stroke();
+ctx.fillStyle = '#8af'; ctx.font = '14px Segoe UI';
+ctx.fillText('Dein Gesichtsfeld', 85, 25);
+// Draw concentric circles
+for(let r = 20; r <= 120; r += 30) {
+    ctx.beginPath(); ctx.arc(150, 150, r, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(100,200,255,${0.3+r/300})`; ctx.lineWidth = 1; ctx.stroke();
+}
+// Draw rays
+for(let a = 0; a < Math.PI*2; a += Math.PI/4) {
+    ctx.beginPath(); ctx.moveTo(150,150);
+    ctx.lineTo(150+120*Math.cos(a), 150+120*Math.sin(a));
+    ctx.strokeStyle = 'rgba(255,150,100,0.4)'; ctx.stroke();
+}
+ctx.fillStyle = '#ff0'; ctx.font = '12px Segoe UI';
+ctx.fillText('Mitte (Fovea)', 120, 155);
+// Arrow
+ctx.fillStyle = '#f8a'; ctx.font = '30px Segoe UI';
+ctx.fillText('→', 280, 155);
+ctx.fillStyle = '#aaa'; ctx.font = '11px Segoe UI';
+ctx.fillText('log-polare', 278, 130);
+ctx.fillText('Abbildung', 278, 175);
+// Right: V1 (rectangle)
+ctx.strokeStyle = '#afa'; ctx.lineWidth = 2;
+ctx.strokeRect(350, 40, 220, 220);
+ctx.fillStyle = '#afa'; ctx.font = '14px Segoe UI';
+ctx.fillText('V1 (aufgefaltet)', 400, 30);
+// Horizontal lines (from circles)
+for(let i = 0; i < 5; i++) {
+    let y = 60 + i * 45;
+    ctx.beginPath(); ctx.moveTo(360, y); ctx.lineTo(560, y);
+    ctx.strokeStyle = `rgba(100,200,255,${0.3+i/8})`; ctx.lineWidth = 1; ctx.stroke();
+}
+// Vertical lines (from rays)
+for(let i = 0; i < 6; i++) {
+    let x = 370 + i * 38;
+    ctx.beginPath(); ctx.moveTo(x, 50); ctx.lineTo(x, 250);
+    ctx.strokeStyle = 'rgba(255,150,100,0.4)'; ctx.lineWidth = 1; ctx.stroke();
+}
+ctx.fillStyle = '#8af'; ctx.font = '11px Segoe UI';
+ctx.fillText('Kreise → waagerechte Linien', 370, 275);
+ctx.fillStyle = '#fa8'; ctx.font = '11px Segoe UI';
+ctx.fillText('Strahlen → senkrechte Linien', 370, 292);
+})();
+</script>
+</div>
+
+<!-- STEP 3 -->
+<div class="step-content" id="step-3">
+<h2>3. Die logarithmische Abbildung – der Schlüssel!</h2>
+<div class="explain">
+<p><span class="emoji">🔑</span> <strong>Das ist der wichtigste Punkt:</strong> Die Abbildung von deinem Gesichtsfeld auf V1 ist <em>logarithmisch</em>. Das bedeutet:</p>
+<ul style="margin: 10px 0 10px 20px;">
+<li><strong>Kreise</strong> im Gesichtsfeld → <strong>waagerechte Streifen</strong> in V1</li>
+<li><strong>Strahlen</strong> (vom Zentrum weg) → <strong>senkrechte Streifen</strong> in V1</li>
+<li><strong>Spiralen</strong> im Gesichtsfeld → <strong>schräge Streifen</strong> in V1</li>
+</ul>
+<p>Das heißt umgekehrt: <strong>Wenn in V1 schräge Streifen neuronaler Aktivität entstehen, SIEHST du eine Spirale!</strong></p>
+</div>
+
+<h3>Interaktiv: Wähle ein Muster in V1 und sieh, was du "siehst"</h3>
+<div class="controls">
+<label>Streifenrichtung in V1:</label>
+<select id="pattern-select">
+<option value="horizontal">Waagerecht → du siehst: TUNNEL/RINGE</option>
+<option value="vertical">Senkrecht → du siehst: STRAHLEN/TRICHTER</option>
+<option value="diagonal" selected>Schräg → du siehst: SPIRALE ← DEIN ERLEBNIS!</option>
+</select>
+<label>Streifendichte:</label>
+<input type="range" id="density-slider" min="3" max="15" value="7">
+</div>
+
+<div class="side-by-side">
+<div>
+<h3 style="color:#afa;">V1 (in deinem Gehirn)</h3>
+<canvas id="cv1" width="300" height="300"></canvas>
+<p style="font-size:12px; color:#888;">Streifen = abwechselnd aktive/inaktive Neuronen</p>
+</div>
+<div class="arrow">→</div>
+<div>
+<h3 style="color:#f8a;">Was du "siehst"</h3>
+<canvas id="cvf" width="300" height="300"></canvas>
+<p style="font-size:12px; color:#888;">Inverse log-Abbildung → Gesichtsfeld</p>
+</div>
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step-content" id="step-4">
+<h2>4. Wie entstehen die Streifen? – Neuronen kämpfen gegeneinander</h2>
+<div class="explain">
+<p><span class="emoji">⚡</span> In V1 gibt es zwei Typen von Neuronen:</p>
+<ul style="margin: 10px 0 10px 20px;">
+<li><strong style="color:#4f4;">Erregende Neuronen (Aktivatoren)</strong> – sagen ihren Nachbarn: "Feuer auch!"</li>
+<li><strong style="color:#f44;">Hemmende Neuronen (Inhibitoren)</strong> – sagen weiter entfernten Neuronen: "Halt! Stopp!"</li>
+</ul>
+</div>
+<div class="analogy">
+<h3>🔥 Analogie: Grasfeuer mit schwitzenden Heuschrecken</h3>
+<p>Stell dir ein trockenes Feld vor. Du zündest es an mehreren Stellen an. Normalerweise brennt alles ab. ABER: Heuschrecken fliehen vor dem Feuer und schwitzen dabei – ihr Schweiß macht das Gras um sie herum nass. Ergebnis: Es entstehen <strong>regelmäßige Flecken</strong> von unverbranntem Gras!</p>
+<p>Genauso: Erregende Neuronen "zünden" ihre Nachbarn an, aber hemmende Neuronen "löschen" weiter weg. → Es entstehen <strong>regelmäßige Streifen</strong> von aktiven und inaktiven Neuronen.</p>
+</div>
+<canvas id="canvas-neurons" width="600" height="200"></canvas>
+<script>
+(function(){
+const c = document.getElementById('canvas-neurons');
+const ctx = c.getContext('2d');
+ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,600,200);
+// Draw neurons
+for(let x = 30; x < 580; x += 40) {
+    for(let y = 30; y < 180; y += 40) {
+        let dist = Math.sin(x * 0.03) * 0.5 + 0.5;
+        let active = dist > 0.5;
+        ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI*2);
+        ctx.fillStyle = active ? '#4f4' : '#333';
+        ctx.fill();
+        ctx.strokeStyle = active ? '#8f8' : '#555';
+        ctx.lineWidth = 1; ctx.stroke();
+    }
+}
+ctx.fillStyle = '#fff'; ctx.font = '13px Segoe UI';
+ctx.fillText('Grün = aktiv ("feuert")', 20, 195);
+ctx.fillText('Grau = gehemmt ("still")', 250, 195);
+ctx.fillText('→ Streifen!', 480, 195);
+})();
+</script>
+<div class="explain">
+<p>Dieses Prinzip heißt <strong>Turing-Mechanismus</strong> (nach Alan Turing, 1952). Es erklärt auch Leopardenflecken und Zebrastreifen! Im Gehirn erzeugt es die Streifen in V1, die du als geometrische Muster wahrnimmst.</p>
+</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step-content" id="step-5">
+<h2>5. Warum genau eine Spirale?</h2>
+<div class="explain">
+<p><span class="emoji">🌀</span> Die Richtung der Streifen in V1 bestimmt, was du siehst. Welche Richtung entsteht, hängt von den genauen Verbindungen zwischen den Neuronen ab.</p>
+<p>In V1 sind Neuronen <strong>anisotrop</strong> verbunden – sie verbinden sich bevorzugt mit anderen Neuronen, die die gleiche Orientierung bevorzugen, und zwar <strong>entlang der Richtung dieser Orientierung</strong>. Das begünstigt schräge Streifen → Spiralen!</p>
+</div>
+<canvas id="canvas-why-spiral" width="600" height="300"></canvas>
+<script>
+(function(){
+const c = document.getElementById('canvas-why-spiral');
+const ctx = c.getContext('2d');
+ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,600,300);
+// Three panels
+const panels = [
+    {x:30, label:'Waagerecht', angle:0, result:'Tunnel'},
+    {x:220, label:'Senkrecht', angle:Math.PI/2, result:'Trichter'},
+    {x:410, label:'Schräg (45°)', angle:Math.PI/4, result:'SPIRALE ✓'}
+];
+panels.forEach(p => {
+    ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+    ctx.strokeRect(p.x, 30, 160, 160);
+    // Draw stripes
+    for(let i = -10; i < 20; i++) {
+        ctx.beginPath();
+        let dx = Math.cos(p.angle), dy = Math.sin(p.angle);
+        let ox = p.x + 80 + i * 12 * dy;
+        let oy = 110 - i * 12 * dx;
+        ctx.moveTo(ox - 100*dx, oy - 100*dy);
+        ctx.lineTo(ox + 100*dx, oy + 100*dy);
+        ctx.strokeStyle = i%2===0 ? 'rgba(100,255,100,0.5)' : 'rgba(50,50,50,0.5)';
+        ctx.lineWidth = 5; ctx.stroke();
+    }
+    ctx.save(); ctx.beginPath();
+    ctx.rect(p.x, 30, 160, 160); ctx.clip();
+    ctx.restore();
+    
+    ctx.fillStyle = '#fff'; ctx.font = '12px Segoe UI';
+    ctx.fillText(p.label, p.x + 40, 210);
+    ctx.fillStyle = p.angle === Math.PI/4 ? '#f8a' : '#aaa';
+    ctx.font = p.angle === Math.PI/4 ? 'bold 14px Segoe UI' : '13px Segoe UI';
+    ctx.fillText('→ ' + p.result, p.x + 30, 240);
+});
+ctx.fillStyle = '#f8a'; ctx.font = '14px Segoe UI';
+ctx.fillText('Dein Lachgas-Erlebnis: Die Streifen in deinem V1 waren SCHRÄG → du sahst eine SPIRALE', 30, 280);
+})();
+</script>
+</div>
+
+<!-- STEP 6 -->
+<div class="step-content" id="step-6">
+<h2>6. Was hat Lachgas damit zu tun?</h2>
+<div class="explain">
+<p><span class="emoji">💨</span> <strong>Lachgas (N₂O)</strong> verändert die Balance zwischen Erregung und Hemmung in deinem Gehirn:</p>
+<ul style="margin: 10px 0 10px 20px;">
+<li>Es blockiert <strong>NMDA-Rezeptoren</strong> (eine Art Erregungskanal)</li>
+<li>Es verstärkt <strong>GABA-Rezeptoren</strong> (Hemmung)</li>
+<li>Paradoxerweise kann das die <strong>Gesamterregbarkeit</strong> des Cortex erhöhen (durch Enthemmung von Enthemmung)</li>
+</ul>
+<p>Ergebnis: Der Ruhezustand von V1 wird <strong>instabil</strong>. Spontane Muster wachsen aus dem neuronalen Rauschen heraus – genau wie Turing es beschrieben hat!</p>
+</div>
+
+<h3>Dispersionsrelation: Wann wird V1 instabil?</h3>
+<div class="controls">
+<label>Erregbarkeit μ (Lachgas-Effekt ↑):</label>
+<input type="range" id="mu-slider2" min="50" max="150" value="75" step="1">
+<span id="mu-val2" style="color:#f8a;">0.75</span>
+<span style="margin-left:20px; color:#888;">← Schieb nach rechts = mehr Lachgas-Effekt</span>
+</div>
+<div id="plotly-disp"></div>
+<div class="explain">
+<p><strong>Lies den Graph so:</strong> Die Kurve zeigt, wie schnell ein Muster mit einer bestimmten "Wellenlänge" (x-Achse) wächst. Wenn die Kurve <strong>über die rote Linie (0)</strong> steigt, wird V1 instabil und ein Muster entsteht spontan!</p>
+<p>→ Lachgas schiebt die Kurve nach oben → irgendwann überquert sie die Null-Linie → HALLUZINATION!</p>
+</div>
+</div>
+
+<!-- STEP 7 -->
+<div class="step-content" id="step-7">
+<h2>7. Spiel damit! – Erzeuge deine eigene Halluzination</h2>
+<div class="explain">
+<p>Hier kannst du die Parameter verändern und sehen, wie verschiedene Muster in V1 verschiedene Halluzinationen erzeugen.</p>
+</div>
+<div class="controls">
+<label>Muster in V1:</label>
+<select id="play-pattern">
+<option value="diagonal">Schräge Streifen → Spirale</option>
+<option value="horizontal">Waagerechte Streifen → Tunnel/Ringe</option>
+<option value="vertical">Senkrechte Streifen → Strahlen</option>
+<option value="hex">Hexagonal → Waben</option>
+</select>
+<label>Wellenzahl:</label>
+<input type="range" id="play-q" min="2" max="18" value="8">
+<span id="play-q-val">8</span>
+<label>Drehung:</label>
+<input type="range" id="play-rot" min="0" max="90" value="45">
+<span id="play-rot-val">45°</span>
+</div>
+<div class="side-by-side">
+<div>
+<h3 style="color:#afa;">V1 (Cortex)</h3>
+<canvas id="play-v1" width="320" height="320"></canvas>
+</div>
+<div class="arrow">→</div>
+<div>
+<h3 style="color:#f8a;">Gesichtsfeld (was du siehst)</h3>
+<canvas id="play-vf" width="320" height="320"></canvas>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- HISTORY -->
+<div class="section">
+<h2>📜 Wer hat das herausgefunden?</h2>
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:15px;">
+<div class="explain">
+<h3>1920er – Heinrich Klüver</h3>
+<p>Nahm Meskalin und klassifizierte die Muster in 4 "Formkonstanten": Tunnel, Spiralen, Gitter, Spinnweben.</p>
+</div>
+<div class="explain">
+<h3>1952 – Alan Turing</h3>
+<p>Beschrieb den Aktivator-Inhibitor-Mechanismus für Musterbildung (Leopardenflecken etc.).</p>
+</div>
+<div class="explain">
+<h3>1979 – Ermentrout & Cowan</h3>
+<p>Wendeten Turings Idee auf den visuellen Cortex an. Zeigten: Streifen in V1 = Halluzinationen.</p>
+</div>
+<div class="explain">
+<h3>2001 – Bressloff, Cowan et al.</h3>
+<p>Erweiterten das Modell um Orientierungsselektivität. Erklärten ALLE Klüver-Muster.</p>
+</div>
+<div class="explain">
+<h3>2018 – Goldenfeld</h3>
+<p>Erklärte, warum wir NICHT ständig halluzinieren: Spärliche Verbindungen unterdrücken spontane Muster.</p>
+</div>
+</div>
+</div>
+
+<script>
+// === STEP NAVIGATION ===
+document.querySelectorAll('.step-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.step-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('step-' + btn.dataset.step).classList.add('active');
+    });
+});
+
+// === STEP 3: Pattern visualization ===
+function drawStep3() {
+    const pattern = document.getElementById('pattern-select').value;
+    const q = parseInt(document.getElementById('density-slider').value);
+    
+    const cv1 = document.getElementById('cv1');
+    const cvf = document.getElementById('cvf');
+    const ctx1 = cv1.getContext('2d');
+    const ctx2 = cvf.getContext('2d');
+    const w = cv1.width, h = cv1.height;
+    
+    // V1
+    const img1 = ctx1.createImageData(w, h);
+    for(let py = 0; py < h; py++) {
+        for(let px = 0; px < w; px++) {
+            let x = (px/w)*2*Math.PI, y = (py/h)*2*Math.PI;
+            let val = 0;
+            if(pattern==='horizontal') val = Math.cos(q*y);
+            else if(pattern==='vertical') val = Math.cos(q*x);
+            else val = Math.cos(q*(x+y)/1.414);
+            let c = Math.floor((val+1)*127);
+            let idx = (py*w+px)*4;
+            img1.data[idx] = c<128 ? 0 : (c-128)*2;
+            img1.data[idx+1] = c;
+            img1.data[idx+2] = 255 - c;
+            img1.data[idx+3] = 255;
+        }
+    }
+    ctx1.putImageData(img1, 0, 0);
+    
+    // Visual Field
+    const img2 = ctx2.createImageData(w, h);
+    const cx = w/2, cy = h/2;
+    for(let py = 0; py < h; py++) {
+        for(let px = 0; px < w; px++) {
+            let dx = px - cx, dy = py - cy;
+            let r = Math.sqrt(dx*dx + dy*dy);
+            let theta = Math.atan2(dy, dx);
+            if(r < 3 || r > cx-5) {
+                let idx = (py*w+px)*4;
+                img2.data[idx] = img2.data[idx+1] = img2.data[idx+2] = 5;
+                img2.data[idx+3] = 255;
+                continue;
+            }
+            let cortX = Math.log(r/8)*2.5;
+            let cortY = (theta+Math.PI)/(2*Math.PI)*2*Math.PI;
+            let val = 0;
+            if(pattern==='horizontal') val = Math.cos(q*cortY);
+            else if(pattern==='vertical') val = Math.cos(q*cortX);
+            else val = Math.cos(q*(cortX+cortY)/1.414);
+            let c = Math.floor((val+1)*127);
+            let idx = (py*w+px)*4;
+            img2.data[idx] = c<128 ? 0 : (c-128)*2;
+            img2.data[idx+1] = c;
+            img2.data[idx+2] = 255 - c;
+            img2.data[idx+3] = 255;
+        }
+    }
+    ctx2.putImageData(img2, 0, 0);
+}
+
+document.getElementById('pattern-select').addEventListener('change', drawStep3);
+document.getElementById('density-slider').addEventListener('input', drawStep3);
+drawStep3();
+
+// === STEP 6: Dispersion Relation ===
+function drawDispersion2() {
+    const mu = parseInt(document.getElementById('mu-slider2').value) / 100;
+    document.getElementById('mu-val2').textContent = mu.toFixed(2);
+    
+    const sigma_e = 1.0;
+    const sigma_i = 3.0;
+    const qs = [], lambdas = [];
+    
+    for(let i = 0; i <= 80; i++) {
+        let q = i * 0.1;
+        qs.push(q);
+        let w_hat = Math.exp(-sigma_e*sigma_e*q*q/2) - 0.8*Math.exp(-sigma_i*sigma_i*q*q/2);
+        let lambda = -1 + mu * 5 * w_hat;
+        lambdas.push(lambda);
+    }
+    
+    let maxLambda = Math.max(...lambdas);
+    let maxIdx = lambdas.indexOf(maxLambda);
+    
+    Plotly.newPlot('plotly-disp', [
+        { x: qs, y: lambdas, type:'scatter', mode:'lines', line:{color:'#8af', width:3}, name:'λ(q)' },
+        { x:[0,8], y:[0,0], type:'scatter', mode:'lines', line:{color:'#f44', width:2, dash:'dash'}, name:'Stabilitätsgrenze (λ=0)' }
+    ], {
+        title: { text: maxLambda > 0 ? '⚠️ INSTABIL – Halluzination entsteht!' : '✓ Stabil – keine Halluzination', font:{color: maxLambda > 0 ? '#f88' : '#8f8', size:16} },
+        xaxis: { title:'Wellenzahl q (wie "eng" das Muster ist)', color:'#aaa', gridcolor:'#222' },
+        yaxis: { title:'Wachstumsrate λ (wächst Muster oder nicht?)', color:'#aaa', gridcolor:'#222', range:[-1.5, 0.8] },
+        paper_bgcolor:'#0a0a1a', plot_bgcolor:'#0a0a1a',
+        font:{color:'#ccc'},
+        annotations: [{
+            x: qs[maxIdx], y: maxLambda,
+            text: maxLambda > 0 ? 'Dieses Muster wächst!' : 'Alle Muster unterdrückt',
+            showarrow:true, arrowcolor:'#ff0', font:{color:'#ff0', size:12}
+        }]
+    }, {responsive:true});
+}
+
+document.getElementById('mu-slider2').addEventListener('input', drawDispersion2);
+drawDispersion2();
+
+// === STEP 7: Playground ===
+function drawPlayground() {
+    const pattern = document.getElementById('play-pattern').value;
+    const q = parseInt(document.getElementById('play-q').value);
+    const rot = parseInt(document.getElementById('play-rot').value) * Math.PI / 180;
+    document.getElementById('play-q-val').textContent = q;
+    document.getElementById('play-rot-val').textContent = document.getElementById('play-rot').value + '°';
+    
+    const cv1 = document.getElementById('play-v1');
+    const cvf = document.getElementById('play-vf');
+    const ctx1 = cv1.getContext('2d');
+    const ctx2 = cvf.getContext('2d');
+    const w = cv1.width, h = cv1.height;
+    
+    // V1
+    const img1 = ctx1.createImageData(w, h);
+    for(let py = 0; py < h; py++) {
+        for(let px = 0; px < w; px++) {
+            let x = (px/w)*2*Math.PI;
+            let y = (py/h)*2*Math.PI;
+            let rx = x*Math.cos(rot) + y*Math.sin(rot);
+            let ry = -x*Math.sin(rot) + y*Math.cos(rot);
+            let val = 0;
+            if(pattern==='diagonal') val = Math.cos(q*(rx+ry)/1.414);
+            else if(pattern==='horizontal') val = Math.cos(q*ry);
+            else if(pattern==='vertical') val = Math.cos(q*rx);
+            else if(pattern==='hex') {
+                val = (Math.cos(q*rx) + Math.cos(q*(-0.5*rx+0.866*ry)) + Math.cos(q*(-0.5*rx-0.866*ry)))/3;
+            }
+            let c = Math.floor((val+1)*127);
+            let idx = (py*w+px)*4;
+            img1.data[idx] = c<128 ? 50 : (c-128)*2;
+            img1.data[idx+1] = c;
+            img1.data[idx+2] = 255-c*0.7;
+            img1.data[idx+3] = 255;
+        }
+    }
+    ctx1.putImageData(img1, 0, 0);
+    
+    // Visual Field
+    const img2 = ctx2.createImageData(w, h);
+    const cx = w/2, cy = h/2;
+    for(let py = 0; py < h; py++) {
+        for(let px = 0; px < w; px++) {
+            let dx = px-cx, dy = py-cy;
+            let r = Math.sqrt(dx*dx+dy*dy);
+            let theta = Math.atan2(dy, dx);
+            if(r < 3 || r > cx-5) {
+                let idx = (py*w+px)*4;
+                img2.data[idx] = img2.data[idx+1] = img2.data[idx+2] = 5;
+                img2.data[idx+3] = 255;
+                continue;
+            }
+            let cortX = Math.log(r/8)*2.5;
+            let cortY = (theta+Math.PI)/(2*Math.PI)*2*Math.PI;
+            let rx = cortX*Math.cos(rot) + cortY*Math.sin(rot);
+            let ry = -cortX*Math.sin(rot) + cortY*Math.cos(rot);
+            let val = 0;
+            if(pattern==='diagonal') val = Math.cos(q*(rx+ry)/1.414);
+            else if(pattern==='horizontal') val = Math.cos(q*ry);
+            else if(pattern==='vertical') val = Math.cos(q*rx);
+            else if(pattern==='hex') {
+                val = (Math.cos(q*rx) + Math.cos(q*(-0.5*rx+0.866*ry)) + Math.cos(q*(-0.5*rx-0.866*ry)))/3;
+            }
+            let c = Math.floor((val+1)*127);
+            let idx = (py*w+px)*4;
+            img2.data[idx] = c<128 ? 50 : (c-128)*2;
+            img2.data[idx+1] = c;
+            img2.data[idx+2] = 255-c*0.7;
+            img2.data[idx+3] = 255;
+        }
+    }
+    ctx2.putImageData(img2, 0, 0);
+}
+
+document.getElementById('play-pattern').addEventListener('change', drawPlayground);
+document.getElementById('play-q').addEventListener('input', drawPlayground);
+document.getElementById('play-rot').addEventListener('input', drawPlayground);
+drawPlayground();
+</script>
+
+</body>
+</html>
