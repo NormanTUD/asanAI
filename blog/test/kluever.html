@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Geometrische Visuelle Halluzinationen – Interaktiv</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0a1a; color: #e0e0e0; overflow-x: hidden; }
+h1, h2, h3 { color: #8af; }
+.section { padding: 30px; max-width: 1200px; margin: auto; border-bottom: 1px solid #222; }
+.controls { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin: 15px 0; }
+.controls label { font-size: 14px; }
+.controls input[type=range] { width: 200px; }
+.controls select { padding: 5px; background: #1a1a2e; color: #fff; border: 1px solid #444; }
+canvas { display: block; margin: 15px auto; border: 1px solid #333; border-radius: 8px; }
+.info-box { background: #111; border-left: 4px solid #8af; padding: 15px; margin: 15px 0; border-radius: 4px; font-size: 14px; line-height: 1.6; }
+.timeline { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
+.timeline-item { background: #1a1a2e; border: 1px solid #333; border-radius: 8px; padding: 12px; flex: 1; min-width: 200px; }
+.timeline-item h4 { color: #f8a; margin-bottom: 5px; }
+.tab-container { display: flex; gap: 5px; margin-bottom: 15px; }
+.tab { padding: 10px 20px; background: #1a1a2e; border: 1px solid #333; border-radius: 8px 8px 0 0; cursor: pointer; }
+.tab.active { background: #2a2a4e; border-bottom-color: #2a2a4e; color: #8af; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+#plotly-dispersion { width: 100%; height: 350px; }
+</style>
+</head>
+<body>
+
+<div class="section">
+<h1>🌀 Geometrische Visuelle Halluzinationen</h1>
+<p style="margin-top:10px; color:#aaa;">Interaktive Erklärung: Wie entstehen die Muster, warum sehen wir sie, und wer hat das beschrieben?</p>
+</div>
+
+<!-- SECTION 1: History -->
+<div class="section">
+<h2>📜 Geschichte & Forscher</h2>
+<div class="timeline">
+<div class="timeline-item">
+<h4>1920er – Heinrich Klüver</h4>
+<p>Klassifizierte Halluzinationsmuster unter Meskalin in 4 "Formkonstanten": Tunnel/Trichter, Spiralen, Gitter/Waben, Spinnweben.</p>
+</div>
+<div class="timeline-item">
+<h4>1952 – Alan Turing</h4>
+<p>Beschrieb Musterbildung durch Reaktions-Diffusion (Aktivator-Inhibitor). Erklärt Tierfellmuster – Grundlage für spätere Cortex-Modelle.</p>
+</div>
+<div class="timeline-item">
+<h4>1979 – Ermentrout & Cowan</h4>
+<p>Erstes mathematisches Modell: Neuronale Aktivität in V1 erzeugt periodische Muster durch Turing-Instabilität. Bifurkationstheorie + Gruppentheorie.</p>
+</div>
+<div class="timeline-item">
+<h4>2001 – Bressloff, Cowan, Golubitsky et al.</h4>
+<p>Erweiterten das Modell um Orientierungsselektivität und euklidische Symmetrie (Shift-Twist). Alle Klüver-Formkonstanten erklärt.</p>
+</div>
+<div class="timeline-item">
+<h4>2018 – Goldenfeld (stochastischer Turing)</h4>
+<p>Erklärte, warum wir NICHT ständig halluzinieren: Spärliche inhibitorische Verbindungen unterdrücken spontane Muster. Drogen stören diesen Filter.</p>
+</div>
+</div>
+</div>
+
+<!-- SECTION 2: Retino-Cortical Map -->
+<div class="section">
+<h2>🗺️ Die Retino-Kortikale Abbildung</h2>
+<div class="info-box">
+<p><strong>Kernidee:</strong> Das Gesichtsfeld wird über eine logarithmische Abbildung auf V1 projiziert:<br>
+<code>x = ln(r), y = θ</code><br>
+Kreise → vertikale Linien, Strahlen → horizontale Linien, Spiralen → schräge Linien in V1.<br>
+<strong>Konsequenz:</strong> Streifen neuronaler Aktivität in V1 erscheinen als Spiralen, Tunnel oder Gitter im Gesichtsfeld!</p>
+</div>
+
+<div class="controls">
+<label>Muster in V1: </label>
+<select id="v1-pattern">
+<option value="horizontal">Horizontale Streifen → Trichter/Tunnel</option>
+<option value="vertical">Vertikale Streifen → Ringe</option>
+<option value="diagonal">Diagonale Streifen → Spiralen</option>
+<option value="hexagonal">Hexagonal → Waben/Gitter</option>
+</select>
+<label>Wellenzahl q:</label>
+<input type="range" id="q-slider" min="2" max="20" value="8">
+<span id="q-val">8</span>
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
+<div>
+<h3 style="text-align:center;">V1 (Cortex)</h3>
+<canvas id="canvas-v1" width="350" height="350"></canvas>
+</div>
+<div>
+<h3 style="text-align:center;">Gesichtsfeld (was man "sieht")</h3>
+<canvas id="canvas-vf" width="350" height="350"></canvas>
+</div>
+</div>
+</div>
+
+<!-- SECTION 3: Turing Mechanism -->
+<div class="section">
+<h2>⚡ Turing-Mechanismus im Cortex</h2>
+<div class="info-box">
+<p><strong>Analogie:</strong> Exzitatorische Neuronen = Aktivator (kurzreichweitig), Inhibitorische Neuronen = Inhibitor (langreichweitig).<br>
+Wenn ein Parameter (z.B. Drogeneffekt) den Ruhezustand destabilisiert, wachsen periodische Muster spontan an.<br>
+Die <strong>Dispersionsrelation</strong> λ(q) = -1 + μ·ŵ(q) bestimmt, welche Wellenlänge zuerst instabil wird.</p>
+</div>
+
+<div class="controls">
+<label>Erregbarkeit μ:</label>
+<input type="range" id="mu-slider" min="50" max="150" value="80" step="1">
+<span id="mu-val">0.80</span>
+<label style="margin-left:20px;">Inhibitions-Reichweite:</label>
+<input type="range" id="sigma-slider" min="15" max="50" value="30" step="1">
+<span id="sigma-val">3.0</span>
+</div>
+<div id="plotly-dispersion"></div>
+</div>
+
+<!-- SECTION 4: Pattern Formation Simulation -->
+<div class="section">
+<h2>🧪 Musterbildung live simulieren</h2>
+<div class="info-box">
+<p>Klicke "Start", um zu sehen, wie aus Rauschen ein Muster entsteht (vereinfachtes Wilson-Cowan-Modell auf einem 2D-Gitter).</p>
+</div>
+<div class="controls">
+<button id="sim-start" style="padding:10px 20px; background:#2a6; color:#fff; border:none; border-radius:5px; cursor:pointer;">▶ Start</button>
+<button id="sim-reset" style="padding:10px 20px; background:#a33; color:#fff; border:none; border-radius:5px; cursor:pointer;">↺ Reset</button>
+<label>Geschwindigkeit:</label>
+<input type="range" id="speed-slider" min="1" max="20" value="10">
+</div>
+<canvas id="canvas-sim" width="400" height="400"></canvas>
+</div>
+
+<!-- SECTION 5: Planforms -->
+<div class="section">
+<h2>🔷 Planformen & Formkonstanten</h2>
+<div class="info-box">
+<p><strong>Planformen</strong> sind die stabilen Muster, die bei der Bifurkation entstehen. Sie werden durch die axialen Untergruppen der euklidischen Gruppe E(2) bestimmt.<br>
+Auf quadratischen, rhombischen und hexagonalen Gittern ergeben sich Rollen (Streifen), Quadrate, Hexagone, Dreiecke etc.</p>
+</div>
+
+<div class="tab-container">
+<div class="tab active" data-tab="rolls">Rollen (Streifen)</div>
+<div class="tab" data-tab="squares">Quadrate</div>
+<div class="tab" data-tab="hexagons">Hexagone</div>
+</div>
+
+<div class="tab-content active" id="tab-rolls">
+<canvas id="canvas-rolls" width="300" height="300"></canvas>
+<p>→ Im Gesichtsfeld: <strong>Spiralen, Tunnel, Trichter</strong> (Klüver I, II, IV)</p>
+</div>
+<div class="tab-content" id="tab-squares">
+<canvas id="canvas-squares" width="300" height="300"></canvas>
+<p>→ Im Gesichtsfeld: <strong>Schachbrett-artige Gitter</strong> (Klüver III)</p>
+</div>
+<div class="tab-content" id="tab-hexagons">
+<canvas id="canvas-hexagons" width="300" height="300"></canvas>
+<p>→ Im Gesichtsfeld: <strong>Waben, Dreiecke</strong> (Klüver III)</p>
+</div>
+</div>
+
+<div class="section">
+<h2>📚 Quellen</h2>
+<div class="info-box">
+<ul style="list-style:disc; padding-left:20px; line-height:2;">
+<li>Klüver, H. (1966). <em>Mescal and Mechanisms of Hallucinations</em>. Univ. of Chicago Press.</li>
+<li>Ermentrout, G.B. & Cowan, J.D. (1979). <em>A Mathematical Theory of Visual Hallucination Patterns</em>. Biol. Cybernetics 34, 137–150.</li>
+<li>Bressloff, P.C. et al. (2001). <em>Geometric Visual Hallucinations, Euclidean Symmetry, and the Functional Architecture of Striate Cortex</em>. Phil. Trans. Roy. Soc. B, 356, 299–330.</li>
+<li>Bressloff, P.C. et al. (2002). <em>What Geometric Visual Hallucinations Tell Us about the Visual Cortex</em>. Neural Computation 14, 473–491.</li>
+<li>Ouellette, J. (2018). <em>A Math Theory for Why People Hallucinate</em>. Quanta Magazine.</li>
+<li>Faye, G. (2017). <em>Pattern formation in the visual cortex</em>. CIRM Lecture Notes.</li>
+</ul>
+</div>
+</div>
+
+<script>
+// === RETINO-CORTICAL MAP ===
+const canvasV1 = document.getElementById('canvas-v1');
+const ctxV1 = canvasV1.getContext('2d');
+const canvasVF = document.getElementById('canvas-vf');
+const ctxVF = canvasVF.getContext('2d');
+
+function drawPatterns() {
+    const pattern = document.getElementById('v1-pattern').value;
+    const q = parseInt(document.getElementById('q-slider').value);
+    document.getElementById('q-val').textContent = q;
+    
+    const w = canvasV1.width, h = canvasV1.height;
+    
+    // Draw V1
+    const imgV1 = ctxV1.createImageData(w, h);
+    for (let py = 0; py < h; py++) {
+        for (let px = 0; px < w; px++) {
+            let x = (px / w) * 2 * Math.PI;
+            let y = (py / h) * 2 * Math.PI;
+            let val = 0;
+            if (pattern === 'horizontal') val = Math.cos(q * y);
+            else if (pattern === 'vertical') val = Math.cos(q * x);
+            else if (pattern === 'diagonal') val = Math.cos(q * (x + y) / 1.414);
+            else if (pattern === 'hexagonal') {
+                val = Math.cos(q * x) + Math.cos(q * (-0.5*x + 0.866*y)) + Math.cos(q * (-0.5*x - 0.866*y));
+                val /= 3;
+            }
+            let c = Math.floor((val + 1) * 127);
+            let idx = (py * w + px) * 4;
+            imgV1.data[idx] = c * 0.5;
+            imgV1.data[idx+1] = c;
+            imgV1.data[idx+2] = 255 - c * 0.5;
+            imgV1.data[idx+3] = 255;
+        }
+    }
+    ctxV1.putImageData(imgV1, 0, 0);
+    
+    // Draw Visual Field (inverse log-polar)
+    const imgVF = ctxVF.createImageData(w, h);
+    const cx = w/2, cy = h/2;
+    for (let py = 0; py < h; py++) {
+        for (let px = 0; px < w; px++) {
+            let dx = px - cx, dy = py - cy;
+            let r = Math.sqrt(dx*dx + dy*dy);
+            let theta = Math.atan2(dy, dx);
+            if (r < 5 || r > cx - 5) { 
+                let idx = (py * w + px) * 4;
+                imgVF.data[idx] = imgVF.data[idx+1] = imgVF.data[idx+2] = 10;
+                imgVF.data[idx+3] = 255;
+                continue; 
+            }
+            // cortical coords
+            let cortX = Math.log(r / 10) * 2;
+            let cortY = (theta + Math.PI) / (2 * Math.PI) * 2 * Math.PI;
+            
+            let val = 0;
+            if (pattern === 'horizontal') val = Math.cos(q * cortY);
+            else if (pattern === 'vertical') val = Math.cos(q * cortX);
+            else if (pattern === 'diagonal') val = Math.cos(q * (cortX + cortY) / 1.414);
+            else if (pattern === 'hexagonal') {
+                val = Math.cos(q * cortX) + Math.cos(q * (-0.5*cortX + 0.866*cortY)) + Math.cos(q * (-0.5*cortX - 0.866*cortY));
+                val /= 3;
+            }
+            let c = Math.floor((val + 1) * 127);
+            let idx = (py * w + px) * 4;
+            imgVF.data[idx] = c * 0.5;
+            imgVF.data[idx+1] = c;
+            imgVF.data[idx+2] = 255 - c * 0.5;
+            imgVF.data[idx+3] = 255;
+        }
+    }
+    ctxVF.putImageData(imgVF, 0, 0);
+}
+
+document.getElementById('v1-pattern').addEventListener('change', drawPatterns);
+document.getElementById('q-slider').addEventListener('input', drawPatterns);
+drawPatterns();
+
+// === DISPERSION RELATION ===
+function drawDispersion() {
+    const mu = parseInt(document.getElementById('mu-slider').value) / 100;
+    const sigma_i = parseInt(document.getElementById('sigma-slider').value) / 10;
+    document.getElementById('mu-val').textContent = mu.toFixed(2);
+    document.getElementById('sigma-val').textContent = sigma_i.toFixed(1);
+    
+    const sigma_e = 1.0;
+    const qs = [];
+    const lambdas = [];
+    
+    for (let i = 0; i <= 100; i++) {
+        let q = i * 0.1;
+        qs.push(q);
+        // Mexican hat in Fourier: w_hat(q) = exp(-sigma_e^2 * q^2 / 2) - A * exp(-sigma_i^2 * q^2 / 2)
+        let w_hat = Math.exp(-sigma_e*sigma_e*q*q/2) - 0.8 * Math.exp(-sigma_i*sigma_i*q*q/2);
+        let lambda = -1 + mu * 5 * w_hat;
+        lambdas.push(lambda);
+    }
+    
+    Plotly.newPlot('plotly-dispersion', [
+        { x: qs, y: lambdas, type: 'scatter', mode: 'lines', line: { color: '#8af', width: 3 }, name: 'λ(q)' },
+        { x: [0, 10], y: [0, 0], type: 'scatter', mode: 'lines', line: { color: '#f88', width: 1, dash: 'dash' }, name: 'Stabilitätsgrenze' }
+    ], {
+        title: { text: 'Dispersionsrelation λ(q) = -1 + μ·ŵ(q)', font: { color: '#8af' } },
+        xaxis: { title: 'Wellenzahl q', color: '#aaa', gridcolor: '#222' },
+        yaxis: { title: 'Wachstumsrate λ', color: '#aaa', gridcolor: '#222', range: [-1.5, 1] },
+        paper_bgcolor: '#0a0a1a',
+        plot_bgcolor: '#0a0a1a',
+        font: { color: '#ccc' },
+        annotations: [{
+            x: qs[lambdas.indexOf(Math.max(...lambdas))],
+            y: Math.max(...lambdas),
+            text: Math.max(...lambdas) > 0 ? '⚠️ INSTABIL! Muster wächst!' : 'stabil',
+            showarrow: true, arrowcolor: '#ff0', font: { color: '#ff0' }
+        }]
+    }, { responsive: true });
+}
+
+document.getElementById('mu-slider').addEventListener('input', drawDispersion);
+document.getElementById('sigma-slider').addEventListener('input', drawDispersion);
+drawDispersion();
+
+// === SIMULATION ===
+const canvasSim = document.getElementById('canvas-sim');
+const ctxSim = canvasSim.getContext('2d');
+const N = 100;
+let grid = new Float32Array(N * N);
+let gridNew = new Float32Array(N * N);
+let simRunning = false;
+let simInterval = null;
+
+function initGrid() {
+    for (let i = 0; i < N*N; i++) grid[i] = (Math.random() - 0.5) * 0.1;
+}
+
+function simStep() {
+    const speed = parseInt(document.getElementById('speed-slider').value);
+    for (let s = 0; s < speed; s++) {
+        for (let y = 0; y < N; y++) {
+            for (let x = 0; x < N; x++) {
+                let sum_e = 0, sum_i = 0;
+                // Short-range excitation
+                for (let dy = -2; dy <= 2; dy++) {
+                    for (let dx = -2; dx <= 2; dx++) {
+                        let nx = (x+dx+N)%N, ny = (y+dy+N)%N;
+                        let d = Math.sqrt(dx*dx+dy*dy);
+                        if (d < 2.5) sum_e += grid[ny*N+nx] * Math.exp(-d*d/1.5);
+                    }
+                }
+                // Long-range inhibition
+                for (let dy = -6; dy <= 6; dy++) {
+                    for (let dx = -6; dx <= 6; dx++) {
+                        let nx = (x+dx+N)%N, ny = (y+dy+N)%N;
+                        let d = Math.sqrt(dx*dx+dy*dy);
+                        if (d < 6.5 && d > 1.5) sum_i += grid[ny*N+nx] * Math.exp(-d*d/12);
+                    }
+                }
+                let a = grid[y*N+x];
+                let da = -a + Math.tanh(2.5 * (sum_e * 0.3 - sum_i * 0.15));
+                gridNew[y*N+x] = a + da * 0.1;
+            }
+        }
+        [grid, gridNew] = [gridNew, grid];
+    }
+    drawSim();
+}
+
+function drawSim() {
+    const img = ctxSim.createImageData(canvasSim.width, canvasSim.height);
+    const scale = canvasSim.width / N;
+    for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+            let val = grid[y*N+x];
+            let c = Math.floor((Math.tanh(val*3) + 1) * 127);
+            for (let sy = 0; sy < scale; sy++) {
+                for (let sx = 0; sx < scale; sx++) {
+                    let px = Math.floor(x*scale+sx), py = Math.floor(y*scale+sy);
+                    if (px < canvasSim.width && py < canvasSim.height) {
+                        let idx = (py * canvasSim.width + px) * 4;
+                        img.data[idx] = c < 128 ? 0 : (c-128)*2;
+                        img.data[idx+1] = c;
+                        img.data[idx+2] = c < 128 ? 255-c*2 : 0;
+                        img.data[idx+3] = 255;
+                    }
+                }
+            }
+        }
+    }
+    ctxSim.putImageData(img, 0, 0);
+}
+
+document.getElementById('sim-start').addEventListener('click', () => {
+    if (!simRunning) {
+        simRunning = true;
+        simInterval = setInterval(simStep, 50);
+        document.getElementById('sim-start').textContent = '⏸ Pause';
+    } else {
+        simRunning = false;
+        clearInterval(simInterval);
+        document.getElementById('sim-start').textContent = '▶ Start';
+    }
+});
+
+document.getElementById('sim-reset').addEventListener('click', () => {
+    simRunning = false;
+    clearInterval(simInterval);
+    document.getElementById('sim-start').textContent = '▶ Start';
+    initGrid();
+    drawSim();
+});
+
+initGrid();
+drawSim();
+
+// === PLANFORMS ===
+function drawPlanform(canvasId, type) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const img = ctx.createImageData(w, h);
+    const q = 6;
+    
+    for (let py = 0; py < h; py++) {
+        for (let px = 0; px < w; px++) {
+            let x = (px / w) * 4 * Math.PI;
+            let y = (py / h) * 4 * Math.PI;
+            let val = 0;
+            
+            if (type === 'rolls') {
+                val = Math.cos(q * x);
+            } else if (type === 'squares') {
+                val = Math.cos(q * x) + Math.cos(q * y);
+                val /= 2;
+            } else if (type === 'hexagons') {
+                val = Math.cos(q * x) + Math.cos(q * (-0.5*x + 0.866*y)) + Math.cos(q * (-0.5*x - 0.866*y));
+                val /= 3;
+            }
+            
+            let c = Math.floor((val + 1) * 127);
+            let idx = (py * w + px) * 4;
+            img.data[idx] = 255 - c;
+            img.data[idx+1] = c * 0.7;
+            img.data[idx+2] = c;
+            img.data[idx+3] = 255;
+        }
+    }
+    ctx.putImageData(img, 0, 0);
+}
+
+drawPlanform('canvas-rolls', 'rolls');
+drawPlanform('canvas-squares', 'squares');
+drawPlanform('canvas-hexagons', 'hexagons');
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>
