@@ -1674,15 +1674,38 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
  * Finds the skip projection layer for a given layer_idx in model.layers
  * and returns its kernel weights as a LaTeX matrix.
  * If no projection layer is found (identity skip), returns the actual identity matrix.
+ *
+ * FIXED: Now searches all layers more robustly and handles the case where
+ * _allLayers might not exist or layer names might have changed after model recreation.
  */
 function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
-	if (!model || !model._allLayers || !Array.isArray(model._allLayers)) {
+	// Get all layers including internal ones
+	var all_layers = null;
+	if (model && model._allLayers && Array.isArray(model._allLayers)) {
+		all_layers = model._allLayers;
+	} else if (model && model.layers) {
+		// Fallback: try to get all layers from the model's internal layer list
+		// tf.model stores all layers (including internal) in getLayer() accessible form
+		try {
+			if (model.getConfig && typeof model.getConfig === "function") {
+				// For functional models, layers property might be filtered
+				// Try to access the underlying layer list
+				all_layers = model._layers || model.layers;
+			} else {
+				all_layers = model.layers;
+			}
+		} catch (e) {
+			all_layers = model.layers;
+		}
+	}
+
+	if (!all_layers) {
 		return "W_{\\text{skip}}";
 	}
 
-	var all_layers = model._allLayers;
 	var skip_proj_layer = null;
 
+	// Search for the skip projection layer belonging to this gui_layer_idx
 	for (var i = 0; i < all_layers.length; i++) {
 		var lname = all_layers[i].name || "";
 		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
@@ -1692,6 +1715,7 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 	}
 
 	if (!skip_proj_layer) {
+		// Check if there's a skip_add layer (meaning identity skip, no projection needed)
 		var has_add = false;
 		for (var j = 0; j < all_layers.length; j++) {
 			var aname = all_layers[j].name || "";
@@ -1702,22 +1726,8 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 		}
 
 		if (has_add) {
-			// Determine the dimension from the layer's output shape to build a real identity matrix
-			var dim = null;
-			try {
-				var layer_output_shape = model.layers[layer_idx].outputShape;
-				if (Array.isArray(layer_output_shape)) {
-					// outputShape is like [null, 4] — take the last non-null value
-					for (var si = layer_output_shape.length - 1; si >= 0; si--) {
-						if (layer_output_shape[si] !== null && typeof layer_output_shape[si] === "number") {
-							dim = layer_output_shape[si];
-							break;
-						}
-					}
-				}
-			} catch (e) {
-				dbg("[_get_skip_connection_weight_latex] Could not determine dimension for identity matrix: " + e);
-			}
+			// Identity skip connection — build real identity matrix from output shape
+			var dim = _get_skip_identity_dimension(layer_idx);
 
 			if (dim && typeof dim === "number" && dim > 0) {
 				var max_vals = get_max_nr_cols_rows();
@@ -1727,11 +1737,7 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 				for (var r = 0; r < display_dim; r++) {
 					var row_parts = [];
 					for (var c = 0; c < display_dim; c++) {
-						if (r === c) {
-							row_parts.push("1");
-						} else {
-							row_parts.push("0");
-						}
+						row_parts.push(r === c ? "1" : "0");
 					}
 					if (dim > max_vals) {
 						row_parts.push("\\cdots");
@@ -1759,14 +1765,7 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 
 	// skip_proj_layer IS found — extract its kernel weights
 	try {
-		var kernel_weight = null;
-		for (var k = 0; k < skip_proj_layer.weights.length; k++) {
-			var wname = skip_proj_layer.weights[k].name || "";
-			if (wname.includes("kernel")) {
-				kernel_weight = skip_proj_layer.weights[k].val;
-				break;
-			}
-		}
+		var kernel_weight = _extract_kernel_from_layer(skip_proj_layer);
 
 		if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
 			var synced_kernel = array_sync(kernel_weight, true);
@@ -1783,6 +1782,72 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 	}
 
 	return "W_{\\text{skip}}";
+}
+
+/**
+ * Extract the kernel tensor from a skip projection layer.
+ * Handles Dense, Conv2D, and Conv1D projection layers.
+ * Searches both the .kernel property and the .weights array.
+ */
+function _extract_kernel_from_layer(layer) {
+	if (!layer) return null;
+
+	// Try direct .kernel property first (works for Dense and Conv layers)
+	if (layer.kernel && layer.kernel.val && !tensor_is_disposed(layer.kernel.val)) {
+		return layer.kernel.val;
+	}
+
+	// Fallback: search through weights array
+	if (layer.weights && Array.isArray(layer.weights)) {
+		for (var k = 0; k < layer.weights.length; k++) {
+			var wname = (layer.weights[k].name || "").toLowerCase();
+			if (wname.includes("kernel")) {
+				var val = layer.weights[k].val;
+				if (val && !tensor_is_disposed(val)) {
+					return val;
+				}
+			}
+		}
+	}
+
+	// Last resort: try getWeights()
+	try {
+		if (typeof layer.getWeights === "function") {
+			var weights = layer.getWeights();
+			if (weights && weights.length > 0 && !weights[0].isDisposed) {
+				return weights[0]; // First weight is typically the kernel
+			}
+		}
+	} catch (e) {
+		// Silently fail
+	}
+
+	return null;
+}
+
+/**
+ * Determine the dimension for the identity matrix in an identity skip connection.
+ * Tries multiple approaches to get the output dimension.
+ */
+function _get_skip_identity_dimension(layer_idx) {
+	try {
+		if (!model || !model.layers || !model.layers[layer_idx]) return null;
+
+		var layer_output_shape = model.layers[layer_idx].outputShape;
+		if (Array.isArray(layer_output_shape)) {
+			// outputShape is like [null, 4] or [null, H, W, C]
+			// For identity skip, all dims match, so take the last non-null value
+			for (var si = layer_output_shape.length - 1; si >= 0; si--) {
+				if (layer_output_shape[si] !== null && typeof layer_output_shape[si] === "number") {
+					return layer_output_shape[si];
+				}
+			}
+		}
+	} catch (e) {
+		dbg("[_get_skip_identity_dimension] Could not determine dimension: " + e);
+	}
+
+	return null;
 }
 
 function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
