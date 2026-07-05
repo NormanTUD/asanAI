@@ -1035,88 +1035,88 @@ function add_kernel_and_bias_to_custom_tensors(added_layer, model_uuid) {
 }
 
 async function _add_layers_to_model(model_structure, fake_model_structure, model_uuid) {
-    var inputShape = get_input_shape();
-    var inputLayer = tf.input({shape: inputShape});
+	var inputShape = get_input_shape();
+	var inputLayer = tf.input({shape: inputShape});
 
-    if (!fake_model_structure) {
-        _custom_tensors["" + inputLayer.id] = ["UUID:" + model_uuid, inputLayer, "[model in tf_sequential]"];
-        _clean_custom_tensors();
-    }
+	if (!fake_model_structure) {
+		_custom_tensors["" + inputLayer.id] = ["UUID:" + model_uuid, inputLayer, "[model in tf_sequential]"];
+		_clean_custom_tensors();
+	}
 
-    var currentOutput = inputLayer;
+	var currentOutput = inputLayer;
 
-    for (let model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
-        var type = model_structure[model_structure_idx]["type"];
-        var data = model_structure[model_structure_idx]["data"];
+	for (let model_structure_idx = 0; model_structure_idx < model_structure.length; model_structure_idx++) {
+		var type = model_structure[model_structure_idx]["type"];
+		var data = model_structure[model_structure_idx]["data"];
 
-        data = _check_data(data, type, model_structure_idx);
+		data = _check_data(data, type, model_structure_idx);
 
-        // Remove inputShape from data since the functional API handles it via the input tensor
-        delete data["inputShape"];
+		// Remove inputShape from data since the functional API handles it via the input tensor
+		delete data["inputShape"];
 
-        _set_layer_gui(data, fake_model_structure, model_structure_idx);
+		_set_layer_gui(data, fake_model_structure, model_structure_idx);
 
-        try {
-            var skip_info = get_skip_connection_info(model_structure_idx);
-            var input_before_layer = currentOutput; // Save input before this layer
+		try {
+			var skip_info = get_skip_connection_info(model_structure_idx);
+			var input_before_layer = currentOutput; // Save input before this layer
 
-            var result = await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid);
+			var result = await _add_layer_to_model(type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid);
 
-            if (result === false) {
-                if (!fake_model_structure) {
-                    err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
-                } else {
-                    dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
-                }
-                return null;
-            }
+			if (result === false) {
+				if (!fake_model_structure) {
+					err(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type}`);
+				} else {
+					dbg(`[_add_layers_to_model] ${language[lang]["failed_to_add_layer_type"]} ${type} (${language[lang]["but_ok_because_fake_model"]})`);
+				}
+				return null;
+			}
 
-            // === SKIP CONNECTION LOGIC ===
-            if (skip_info.enabled && !skip_connection_excluded_types.includes(type)) {
-                try {
-                    result = apply_skip_connection(input_before_layer, result, skip_info.strength, type, model_structure_idx);
-                } catch (skip_err) {
-                    var skip_msg = skip_err.message || skip_err;
-                    wrn(`[_add_layers_to_model] Skip connection failed at layer ${model_structure_idx}: ${skip_msg}. Continuing without skip.`);
-                }
-            }
+			// === SKIP CONNECTION LOGIC ===
+			if (skip_info.enabled && !skip_connection_excluded_types.includes(type)) {
+				try {
+					result = apply_skip_connection(input_before_layer, result, skip_info.strength, type, model_structure_idx);
+				} catch (skip_err) {
+					var skip_msg = skip_err.message || skip_err;
+					wrn(`[_add_layers_to_model] Skip connection failed at layer ${model_structure_idx}: ${skip_msg}. Continuing without skip.`);
+				}
+			}
 
-            currentOutput = result;
-        } catch (e) {
-            var msg = "" + e;
-            msg = msg.replace(/^(Error:\s*)+/, "Error: ");
-            layer_warning_container(model_structure_idx, msg);
-            await write_descriptions();
-            throw new Error(e);
-        }
-    }
+			currentOutput = result;
+		} catch (e) {
+			var msg = "" + e;
+			msg = msg.replace(/^(Error:\s*)+/, "Error: ");
+			layer_warning_container(model_structure_idx, msg);
+			await write_descriptions();
+			throw new Error(e);
+		}
+	}
 
-    var new_model = tf.model({inputs: inputLayer, outputs: currentOutput});
+	var new_model = tf.model({inputs: inputLayer, outputs: currentOutput});
 
-    // Filter out BOTH InputLayer AND internal skip-connection layers
-    // so that model.layers.length matches the GUI layer count
-    var allLayers = new_model.layers;
-    var visibleLayers = allLayers.filter(function(l) {
-        if (l.getClassName() === "InputLayer") return false;
-        var lname = l.name || "";
-        if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) return false;
-        return true;
-    });
+	// Filter out BOTH InputLayer AND internal skip-connection layers
+	// so that model.layers.length matches the GUI layer count
+	var allLayers = new_model.layers;
+	var visibleLayers = allLayers.filter(function(l) {
+		if (l.getClassName() === "InputLayer") return false;
+		var lname = l.name || "";
+		if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) return false;
+		return true;
+	});
 
-    Object.defineProperty(new_model, "layers", {
-        get: function() { return visibleLayers; },
-        configurable: true,
-        enumerable: true
-    });
+	Object.defineProperty(new_model, "layers", {
+		get: function() { return visibleLayers; },
+		configurable: true,
+		enumerable: true
+	});
 
-    new_model._allLayers = allLayers;
+	new_model._allLayers = allLayers;
 
-    if (!fake_model_structure) {
-        _custom_tensors["" + new_model.id] = ["UUID:" + model_uuid, new_model, "[model in tf_sequential]"];
-        _clean_custom_tensors();
-    }
+	if (!fake_model_structure) {
+		_custom_tensors["" + new_model.id] = ["UUID:" + model_uuid, new_model, "[model in tf_sequential]"];
+		_clean_custom_tensors();
+	}
 
-    return new_model;
+	return new_model;
 }
 
 /**
