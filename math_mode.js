@@ -1557,91 +1557,117 @@ function get_activation_layer_names() {
 	});
 }
 
+function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors) {
+    if (layer_idx === 0) {
+        return array_to_latex(input_layer, "Input");
+    }
+
+    var prev_idx = layer_idx - 1;
+
+    if (prev_idx >= 0 && prev_idx < layer_data.length) {
+        var prev_data = layer_data[prev_idx];
+
+        if (prev_data.kernel && prev_data.kernel.length) {
+            var prev_kernel = replace_non_numbers_with_matching_latex(
+                JSON.parse(JSON.stringify(prev_data.kernel))
+            );
+            prev_kernel = array_to_fixed(prev_kernel, get_dec_points_math_mode());
+            var kernel_shape = get_shape_from_array(prev_kernel);
+            var shape_str = kernel_shape.join(" \\times ");
+
+            var result_str = "\\underbrace{\\begin{pmatrix}\n";
+            result_str += _format_skip_kernel_rows(prev_kernel);
+            result_str += "\n\\end{pmatrix}}_{h_{" + prev_idx + "}^{" + shape_str + "}}";
+
+            return result_str;
+        }
+    }
+
+    return _get_h(Math.max(0, layer_idx - 1));
+}
+
 function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {
-    // Use gui_layer_idx if provided, otherwise fall back to layer_idx
-    var effective_gui_idx = (gui_layer_idx !== undefined) ? gui_layer_idx : layer_idx;
+	var effective_gui_idx = (gui_layer_idx !== undefined) ? gui_layer_idx : layer_idx;
 
-    var _af = get_layer_activation_function(layer_idx);
+	var _af = get_layer_activation_function(layer_idx);
 
-    var layer_str = "";
+	var layer_str = "";
 
-    if (this_layer_type == "dense") {
-        layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
-    } else if (this_layer_type == "flatten") {
-        layer_str = get_flatten_string(layer_idx);
-    } else if (this_layer_type == "reshape") {
-        layer_str = get_reshape_string(layer_idx);
-    } else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
-        layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
-    } else if (this_layer_type == "batchNormalization") {
-        layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
-    } else if (this_layer_type == "dropout") {
-        layer_str = get_dropout_latex(layer_idx);
-    } else if (this_layer_type == "MultiActivation") {
-        layer_str = get_multiactivation_layer_latex(layer_idx);
-    } else if (this_layer_type == "Snake") {
-        layer_str = get_snake_layer_latex(layer_idx);
-    } else if (this_layer_type == "DebugLayer") {
-        layer_str = get_debug_layer_latex();
-    } else if (this_layer_type == "gaussianDropout") {
-        layer_str = get_gaussian_dropout_latex(layer_idx);
-    } else if (this_layer_type == "alphaDropout") {
-        layer_str = get_alpha_dropout_latex(layer_idx);
-    } else if (this_layer_type == "gaussianNoise") {
-        layer_str = get_gaussian_noise_latex(layer_idx);
-    } else if (this_layer_type == "averagePooling1d") {
-        layer_str = get_average_pooling_1d_latex(layer_idx);
-    } else if (this_layer_type == "averagePooling2d") {
-        layer_str = get_average_pooling_2d_latex(layer_idx);
-    } else if (this_layer_type == "averagePooling3d") {
-        layer_str = get_average_pooling_3d_latex(layer_idx);
-    } else if (this_layer_type == "conv1d") {
-        layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
-    } else if (this_layer_type == "conv2d") {
-        layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
-    } else if (this_layer_type == "conv3d") {
-        layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
-    } else if (this_layer_type == "maxPooling1d") {
-        layer_str = get_max_pooling_1d_latex(layer_idx);
-    } else if (this_layer_type == "maxPooling2d") {
-        layer_str = get_max_pooling_2d_latex(layer_idx);
-    } else if (this_layer_type == "maxPooling3d") {
-        layer_str = get_max_pooling_3d_latex(layer_idx);
-    } else if (this_layer_type == "upSampling2d") {
-        layer_str = get_upsampling2d_latex(layer_idx);
-    } else if (this_layer_type == "separableConv2d") {
-        layer_str = get_seperable_conv2d_latex(layer_idx);
-    } else if (this_layer_type == "depthwiseConv2d") {
-        layer_str = get_depthwise_conv2d_latex(layer_idx);
-    } else if (this_layer_type == "conv2dTranspose") {
-        layer_str = get_conv2d_transpose_latex(layer_idx);
-    } else if (this_layer_type == "layerNormalization") {
-        layer_str = get_layer_normalization_equation(layer_idx);
-    } else {
-        layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
-    }
+	if (this_layer_type == "dense") {
+		layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
+	} else if (this_layer_type == "flatten") {
+		layer_str = get_flatten_string(layer_idx);
+	} else if (this_layer_type == "reshape") {
+		layer_str = get_reshape_string(layer_idx);
+	} else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
+		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
+	} else if (this_layer_type == "batchNormalization") {
+		layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
+	} else if (this_layer_type == "dropout") {
+		layer_str = get_dropout_latex(layer_idx);
+	} else if (this_layer_type == "MultiActivation") {
+		layer_str = get_multiactivation_layer_latex(layer_idx);
+	} else if (this_layer_type == "Snake") {
+		layer_str = get_snake_layer_latex(layer_idx);
+	} else if (this_layer_type == "DebugLayer") {
+		layer_str = get_debug_layer_latex();
+	} else if (this_layer_type == "gaussianDropout") {
+		layer_str = get_gaussian_dropout_latex(layer_idx);
+	} else if (this_layer_type == "alphaDropout") {
+		layer_str = get_alpha_dropout_latex(layer_idx);
+	} else if (this_layer_type == "gaussianNoise") {
+		layer_str = get_gaussian_noise_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling1d") {
+		layer_str = get_average_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling2d") {
+		layer_str = get_average_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling3d") {
+		layer_str = get_average_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "conv1d") {
+		layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
+	} else if (this_layer_type == "conv2d") {
+		layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "conv3d") {
+		layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "maxPooling1d") {
+		layer_str = get_max_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling2d") {
+		layer_str = get_max_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling3d") {
+		layer_str = get_max_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "upSampling2d") {
+		layer_str = get_upsampling2d_latex(layer_idx);
+	} else if (this_layer_type == "separableConv2d") {
+		layer_str = get_seperable_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "depthwiseConv2d") {
+		layer_str = get_depthwise_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "conv2dTranspose") {
+		layer_str = get_conv2d_transpose_latex(layer_idx);
+	} else if (this_layer_type == "layerNormalization") {
+		layer_str = get_layer_normalization_equation(layer_idx);
+	} else {
+		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
+	}
 
-    // If any layer returned an interactive placeholder marker, pass it through
-    // without wrapping with activation function or h = ... prefix
-    if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
-        return layer_str;
-    }
+	if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
+		return layer_str;
+	}
 
-    if (this_layer_type && !this_layer_type.startsWith("conv")) {
-        layer_str = wrap_with_activation_function(layer_idx, layer_str);
-    }
+	if (this_layer_type && !this_layer_type.startsWith("conv")) {
+		layer_str = wrap_with_activation_function(layer_idx, layer_str);
+	}
 
-    // === SKIP CONNECTION ANNOTATION ===
-    var skip_info = get_skip_connection_info(effective_gui_idx);
-    if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
-        var skip_input_str = (layer_idx === 0) ? "x" : _get_h(layer_idx - 1);
-        var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx);
-        layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\cdot " + skip_input_str + "}_{\\text{Skip Connection}}";
-    }
+	// === SKIP CONNECTION ANNOTATION ===
+	var skip_info = get_skip_connection_info(effective_gui_idx);
+	if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+		var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx, effective_gui_idx);
+		var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+		layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
+	}
 
-    layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
+	layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
 
-    return layer_str;
+	return layer_str;
 }
 
 /**
@@ -1649,32 +1675,27 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
  * and returns its kernel weights as a LaTeX matrix.
  * If no projection layer is found (identity skip), returns "I" (identity matrix).
  */
-function _get_skip_connection_weight_latex(layer_idx) {
-    if (!model || !Array.isArray(model.layers)) {
+function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
+    if (!model || !model._allLayers || !Array.isArray(model._allLayers)) {
         return "W_{\\text{skip}}";
     }
 
-    // Search for the skip projection layer that corresponds to this layer_idx
-    // The naming convention is: skip_proj_dense_<gui_layer_idx>_<hash> or skip_proj_conv2d_<gui_layer_idx>_<hash>
+    var all_layers = model._allLayers;
     var skip_proj_layer = null;
 
-    for (var i = 0; i < model.layers.length; i++) {
-        var lname = model.layers[i].name || "";
-        // Match patterns like "skip_proj_dense_4_aaf9fdbe" or "skip_proj_conv2d_2_abcd1234"
-        // We need to check if this projection layer belongs to the current layer_idx
-        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, layer_idx)) {
-            skip_proj_layer = model.layers[i];
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+            skip_proj_layer = all_layers[i];
             break;
         }
     }
 
-    // If no projection layer found, it's an identity skip connection
     if (!skip_proj_layer) {
-        // Check if there's an add layer for this index (meaning identity was used)
         var has_add = false;
-        for (var j = 0; j < model.layers.length; j++) {
-            var aname = model.layers[j].name || "";
-            if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, layer_idx)) {
+        for (var j = 0; j < all_layers.length; j++) {
+            var aname = all_layers[j].name || "";
+            if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, gui_layer_idx)) {
                 has_add = true;
                 break;
             }
@@ -1686,7 +1707,6 @@ function _get_skip_connection_weight_latex(layer_idx) {
         return "W_{\\text{skip}}";
     }
 
-    // Extract the kernel weights from the projection layer
     try {
         var kernel_weight = null;
         for (var k = 0; k < skip_proj_layer.weights.length; k++) {
@@ -1714,16 +1734,29 @@ function _get_skip_connection_weight_latex(layer_idx) {
     return "W_{\\text{skip}}";
 }
 
+function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
+    if (layer_idx === 0) {
+        return array_to_latex(input_layer, "Input");
+    }
+
+    var prev_idx = layer_idx - 1;
+
+    if (layer_data[prev_idx] && layer_data[prev_idx].kernel && layer_data[prev_idx].kernel.length) {
+        return _get_h(prev_idx);
+    }
+
+    return _get_h(prev_idx);
+}
+
 /**
  * Checks if a skip layer name (like "skip_proj_dense_4_aaf9fdbe") belongs to a given layer_idx.
  * The layer_idx is embedded in the name after "skip_proj_dense_" or "skip_proj_conv2d_" or "skip_add_" etc.
  */
-function _skip_proj_belongs_to_layer(layer_name, layer_idx) {
-    // Extract the number from the layer name
-    // Patterns: skip_proj_dense_4_hash, skip_proj_conv2d_4_hash, skip_add_4_hash, skip_scale_4_hash
+function _skip_proj_belongs_to_layer(layer_name, gui_layer_idx) {
     var patterns = [
         /skip_proj_dense_(\d+)_/,
         /skip_proj_conv2d_(\d+)_/,
+        /skip_proj_conv1d_(\d+)_/,
         /skip_add_(\d+)_/,
         /skip_scale_(\d+)_/
     ];
@@ -1732,7 +1765,7 @@ function _skip_proj_belongs_to_layer(layer_name, layer_idx) {
         var match = layer_name.match(patterns[p]);
         if (match) {
             var extracted_idx = parseInt(match[1], 10);
-            return extracted_idx === layer_idx;
+            return extracted_idx === gui_layer_idx;
         }
     }
 
