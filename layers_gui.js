@@ -1926,7 +1926,7 @@ function update_skip_connection_strength(layer_nr, elem) {
 	var val = parseFloat($(elem).val());
 
 	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: true, strength: val };
+		skip_connection_settings[layer_nr] = { enabled: false, strength: val };
 	}
 
 	skip_connection_settings[layer_nr].strength = val;

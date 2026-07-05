@@ -4625,7 +4625,7 @@ function update_skip_connection_initializer(layer_nr, elem) {
     var val = $(elem).val();
 
     if (!skip_connection_settings[layer_nr]) {
-        skip_connection_settings[layer_nr] = { enabled: true, initializer: val, initializer_params: {} };
+        skip_connection_settings[layer_nr] = { enabled: false, initializer: val, initializer_params: {} };
     }
 
     skip_connection_settings[layer_nr].initializer = val;
@@ -4671,7 +4671,7 @@ function update_skip_connection_initializer_param(layer_nr, param_name, elem) {
     }
 
     if (!skip_connection_settings[layer_nr]) {
-        skip_connection_settings[layer_nr] = { enabled: true, initializer: "glorotUniform", initializer_params: {} };
+        skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
     }
 
     if (!skip_connection_settings[layer_nr].initializer_params) {
