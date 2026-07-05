@@ -1240,24 +1240,24 @@ function apply_skip_connection(input_tensor, layer_output, strength, layer_type,
  * for the given layer index. Returns a TF.js initializer object or null.
  */
 function _get_skip_initializer_config(layer_idx) {
-    if (!skip_connection_settings[layer_idx]) {
-        return null;
-    }
+	if (!skip_connection_settings[layer_idx]) {
+		return null;
+	}
 
-    var initializer_name = skip_connection_settings[layer_idx].initializer;
-    if (!initializer_name || initializer_name === "none") {
-        return null;
-    }
+	var initializer_name = skip_connection_settings[layer_idx].initializer;
+	if (!initializer_name || initializer_name === "none") {
+		return null;
+	}
 
-    var initializer_params = skip_connection_settings[layer_idx].initializer_params || {};
+	var initializer_params = skip_connection_settings[layer_idx].initializer_params || {};
 
-    try {
-        var execute_string = "tf.initializers." + initializer_name + "(" + JSON.stringify(initializer_params) + ")";
-        return eval(execute_string);
-    } catch (e) {
-        wrn("[_get_skip_initializer_config] Could not create initializer '" + initializer_name + "': " + e);
-        return null;
-    }
+	try {
+		var execute_string = "tf.initializers." + initializer_name + "(" + JSON.stringify(initializer_params) + ")";
+		return eval(execute_string);
+	} catch (e) {
+		wrn("[_get_skip_initializer_config] Could not create initializer '" + initializer_name + "': " + e);
+		return null;
+	}
 }
 
 async function _add_layer_to_model (type, data, fake_model_structure, model_structure_idx, currentOutput, model_uuid) {
