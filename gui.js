@@ -4632,9 +4632,15 @@ function update_skip_connection_initializer(layer_nr, elem) {
 
     skip_connection_settings[layer_nr].initializer = val;
 
-    // For initializers that need params (like seed, mean, stddev), we use defaults.
-    // A more advanced version could show sub-options like the kernel_initializer does.
-    skip_connection_settings[layer_nr].initializer_params = {};
+    // Setze Default-Parameter basierend auf dem Initializer
+    var default_params = {};
+    if (initializer_options[val] && initializer_options[val].options) {
+        var options = initializer_options[val].options;
+        for (var i = 0; i < options.length; i++) {
+            default_params[options[i]] = _get_skip_initializer_default_value(options[i], layer_nr);
+        }
+    }
+    skip_connection_settings[layer_nr].initializer_params = default_params;
 }
 
 function insert_skip_initializer_options(layer_nr, elem) {
