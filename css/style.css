@@ -2559,3 +2559,7 @@ td.confusion_matrix_tx.cm-zero {
 .ui-tabs .ui-tabs-panel[aria-hidden="true"] {
 	display: none !important;
 }
+
+.math_copier {
+	z-index: 999999;
+}
