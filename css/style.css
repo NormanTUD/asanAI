@@ -404,7 +404,7 @@ ul {
 	background-color: rgba(0, 200, 255, 0.4);
 }
 
-.skip_connection_initializer_tr {
+.skip_connection_initializer_tr, .skip_connection_initializer_option_tr {
 	background-color: rgba(128, 200, 64, 0.4);
 }
 
