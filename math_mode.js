@@ -1673,65 +1673,116 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 /**
  * Finds the skip projection layer for a given layer_idx in model.layers
  * and returns its kernel weights as a LaTeX matrix.
- * If no projection layer is found (identity skip), returns "I" (identity matrix).
+ * If no projection layer is found (identity skip), returns the actual identity matrix.
  */
 function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
-    if (!model || !model._allLayers || !Array.isArray(model._allLayers)) {
-        return "W_{\\text{skip}}";
-    }
+	if (!model || !model._allLayers || !Array.isArray(model._allLayers)) {
+		return "W_{\\text{skip}}";
+	}
 
-    var all_layers = model._allLayers;
-    var skip_proj_layer = null;
+	var all_layers = model._allLayers;
+	var skip_proj_layer = null;
 
-    for (var i = 0; i < all_layers.length; i++) {
-        var lname = all_layers[i].name || "";
-        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
-            skip_proj_layer = all_layers[i];
-            break;
-        }
-    }
+	for (var i = 0; i < all_layers.length; i++) {
+		var lname = all_layers[i].name || "";
+		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+			skip_proj_layer = all_layers[i];
+			break;
+		}
+	}
 
-    if (!skip_proj_layer) {
-        var has_add = false;
-        for (var j = 0; j < all_layers.length; j++) {
-            var aname = all_layers[j].name || "";
-            if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, gui_layer_idx)) {
-                has_add = true;
-                break;
-            }
-        }
+	if (!skip_proj_layer) {
+		var has_add = false;
+		for (var j = 0; j < all_layers.length; j++) {
+			var aname = all_layers[j].name || "";
+			if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, gui_layer_idx)) {
+				has_add = true;
+				break;
+			}
+		}
 
-        if (has_add) {
-            return "I";
-        }
-        return "W_{\\text{skip}}";
-    }
+		if (has_add) {
+			// Determine the dimension from the layer's output shape to build a real identity matrix
+			var dim = null;
+			try {
+				var layer_output_shape = model.layers[layer_idx].outputShape;
+				if (Array.isArray(layer_output_shape)) {
+					// outputShape is like [null, 4] — take the last non-null value
+					for (var si = layer_output_shape.length - 1; si >= 0; si--) {
+						if (layer_output_shape[si] !== null && typeof layer_output_shape[si] === "number") {
+							dim = layer_output_shape[si];
+							break;
+						}
+					}
+				}
+			} catch (e) {
+				dbg("[_get_skip_connection_weight_latex] Could not determine dimension for identity matrix: " + e);
+			}
 
-    try {
-        var kernel_weight = null;
-        for (var k = 0; k < skip_proj_layer.weights.length; k++) {
-            var wname = skip_proj_layer.weights[k].name || "";
-            if (wname.includes("kernel")) {
-                kernel_weight = skip_proj_layer.weights[k].val;
-                break;
-            }
-        }
+			if (dim && typeof dim === "number" && dim > 0) {
+				var max_vals = get_max_nr_cols_rows();
+				var display_dim = Math.min(dim, max_vals);
+				var identity_rows = [];
 
-        if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
-            var synced_kernel = array_sync(kernel_weight, true);
-            if (synced_kernel) {
-                synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
-                synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
-                var kernel_shape = get_shape_from_array(synced_kernel);
-                var shape_str = kernel_shape.join(" \\times ");
-                return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
-            }
-        }
-    } catch (e) {
-        dbg("[_get_skip_connection_weight_latex] Error extracting skip weights: " + e);
-    }
+				for (var r = 0; r < display_dim; r++) {
+					var row_parts = [];
+					for (var c = 0; c < display_dim; c++) {
+						if (r === c) {
+							row_parts.push("1");
+						} else {
+							row_parts.push("0");
+						}
+					}
+					if (dim > max_vals) {
+						row_parts.push("\\cdots");
+					}
+					identity_rows.push(row_parts.join(" & "));
+				}
 
-    return "W_{\\text{skip}}";
+				if (dim > max_vals) {
+					var vdots_row = [];
+					for (var vc = 0; vc < display_dim; vc++) {
+						vdots_row.push("\\vdots");
+					}
+					vdots_row.push("\\ddots");
+					identity_rows.push(vdots_row.join(" & "));
+				}
+
+				return "\\underbrace{\\begin{pmatrix}\n" + identity_rows.join(" \\\\\n") + "\n\\end{pmatrix}}_{I^{" + dim + " \\times " + dim + "}}";
+			}
+
+			// Fallback if dimension couldn't be determined
+			return "I";
+		}
+		return "W_{\\text{skip}}";
+	}
+
+	// skip_proj_layer IS found — extract its kernel weights
+	try {
+		var kernel_weight = null;
+		for (var k = 0; k < skip_proj_layer.weights.length; k++) {
+			var wname = skip_proj_layer.weights[k].name || "";
+			if (wname.includes("kernel")) {
+				kernel_weight = skip_proj_layer.weights[k].val;
+				break;
+			}
+		}
+
+		if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
+			var synced_kernel = array_sync(kernel_weight, true);
+			if (synced_kernel) {
+				synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
+				synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
+				var kernel_shape = get_shape_from_array(synced_kernel);
+				var shape_str = kernel_shape.join(" \\times ");
+				return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+			}
+		}
+	} catch (e) {
+		dbg("[_get_skip_connection_weight_latex] Error extracting skip weights: " + e);
+	}
+
+	return "W_{\\text{skip}}";
 }
 
 function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
