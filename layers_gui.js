@@ -609,6 +609,10 @@ function add_skip_connection_option(type, nr) {
 
     var checked_attr = "";
     var current_initializer = "glorotUniform";
+
+    if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled === true) {
+        checked_attr = " checked ";
+    }
     if (skip_connection_settings[nr] && skip_connection_settings[nr].initializer) {
         current_initializer = skip_connection_settings[nr].initializer;
     }
@@ -626,7 +630,7 @@ function add_skip_connection_option(type, nr) {
     str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
     str += "<td>Skip Initializer:</td>";
     str += "<td>";
-    str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); updated_page(null, null, this);'>";
+    str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this);'>";
     for (var key in initializers) {
         if (initializers.hasOwnProperty(key)) {
             var selected_attr = (key === current_initializer) ? " selected" : "";
@@ -637,7 +641,71 @@ function add_skip_connection_option(type, nr) {
     str += "</td>";
     str += "</tr>";
 
+    // Sub-options for the skip initializer (seed, mean, stddev, etc.)
+    // These get inserted dynamically based on the chosen initializer
+    var init_sub_options = _get_skip_initializer_sub_options_html(nr, current_initializer);
+    if (checked_attr) {
+        str += init_sub_options;
+    }
+
     return str;
+}
+
+function _get_skip_initializer_sub_options_html(nr, initializer_name) {
+    if (!initializer_name || !initializer_options[initializer_name]) {
+        return "";
+    }
+
+    var options = initializer_options[initializer_name]["options"];
+    if (!options || options.length === 0) {
+        return "";
+    }
+
+    var str = "";
+    var current_params = (skip_connection_settings[nr] && skip_connection_settings[nr].initializer_params) || {};
+
+    for (var i = 0; i < options.length; i++) {
+        var opt_name = options[i];
+        var opt_value = (opt_name in current_params) ? current_params[opt_name] : _get_skip_initializer_default_value(opt_name, nr);
+
+        str += "<tr class='skip_connection_initializer_option_tr' style=''>";
+        str += "<td>" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
+        str += "<td>";
+        if (opt_name === "mode") {
+            str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this);'>";
+            for (var mk in mode_modes) {
+                var sel = (mk === ("" + opt_value)) ? " selected" : "";
+                str += "<option value='" + mk + "'" + sel + ">" + mode_modes[mk] + "</option>";
+            }
+            str += "</select>";
+        } else if (opt_name === "distribution") {
+            str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this);'>";
+            for (var dk in distribution_modes) {
+                var sel2 = (dk === ("" + opt_value)) ? " selected" : "";
+                str += "<option value='" + dk + "'" + sel2 + ">" + distribution_modes[dk] + "</option>";
+            }
+            str += "</select>";
+        } else {
+            str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "' type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this);' />";
+        }
+        str += "</td>";
+        str += "</tr>";
+    }
+
+    return str;
+}
+
+function _get_skip_initializer_default_value(opt_name, nr) {
+    if (opt_name === "seed") return get_unique_seed_for_layer(nr);
+    if (opt_name === "mean") return 0;
+    if (opt_name === "stddev") return 0.05;
+    if (opt_name === "value") return 1;
+    if (opt_name === "minval") return -0.05;
+    if (opt_name === "maxval") return 0.05;
+    if (opt_name === "scale") return 1;
+    if (opt_name === "mode") return "fanIn";
+    if (opt_name === "distribution") return "normal";
+    return 1;
 }
 
 async function add_layer(item) {

@@ -4582,17 +4582,28 @@ function toggle_skip_connection(layer_nr, elem) {
 
     skip_connection_settings[layer_nr].enabled = enabled;
 
-    // Show or hide the initializer row
     var $layer_setting = $(elem).closest(".layer_setting");
     var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
+    var $init_option_rows = $layer_setting.find(".skip_connection_initializer_option_tr");
 
     if (enabled) {
         $init_row.show();
+        $init_option_rows.show();
+
+        // If no sub-options exist yet, insert them
+        if ($init_option_rows.length === 0) {
+            var initializer_name = skip_connection_settings[layer_nr].initializer || "glorotUniform";
+            var html = _get_skip_initializer_sub_options_html(layer_nr, initializer_name);
+            if (html) {
+                $(html).insertAfter($init_row);
+            }
+        }
     } else {
         $init_row.hide();
+        $init_option_rows.hide();
     }
 
-    updated_page(); // await not possible here
+    updated_page();
 }
 
 function update_skip_connection_initializer(layer_nr, elem) {
@@ -4612,4 +4623,40 @@ function update_skip_connection_initializer(layer_nr, elem) {
     // For initializers that need params (like seed, mean, stddev), we use defaults.
     // A more advanced version could show sub-options like the kernel_initializer does.
     skip_connection_settings[layer_nr].initializer_params = {};
+}
+
+function insert_skip_initializer_options(layer_nr, elem) {
+    if (layer_nr === null || layer_nr === undefined) return;
+
+    var $layer_setting = $(elem).closest(".layer_setting");
+
+    // Remove old sub-option rows
+    $layer_setting.find(".skip_connection_initializer_option_tr").remove();
+
+    var initializer_name = $(elem).val();
+    var html = _get_skip_initializer_sub_options_html(layer_nr, initializer_name);
+
+    if (html) {
+        var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
+        $(html).insertAfter($init_row);
+    }
+}
+
+function update_skip_connection_initializer_param(layer_nr, param_name, elem) {
+    if (layer_nr === null || layer_nr === undefined) return;
+
+    var val = $(elem).val();
+    if (looks_like_number(val)) {
+        val = parse_float(val);
+    }
+
+    if (!skip_connection_settings[layer_nr]) {
+        skip_connection_settings[layer_nr] = { enabled: true, initializer: "glorotUniform", initializer_params: {} };
+    }
+
+    if (!skip_connection_settings[layer_nr].initializer_params) {
+        skip_connection_settings[layer_nr].initializer_params = {};
+    }
+
+    skip_connection_settings[layer_nr].initializer_params[param_name] = val;
 }

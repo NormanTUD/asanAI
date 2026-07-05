@@ -404,6 +404,10 @@ ul {
 	background-color: rgba(0, 200, 255, 0.4);
 }
 
+.skip_connection_initializer_option_tr {
+	background-color: rgba(128, 200, 64, 0.4);
+}
+
 .bias_regularizer_tr {
 	background-color: rgba(255, 147, 16, 0.4);
 }
