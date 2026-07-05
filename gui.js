@@ -4615,7 +4615,7 @@ function toggle_skip_connection(layer_nr, elem) {
         $init_option_rows.hide();
     }
 
-    updated_page();
+    updated_page(); // await not possible here
 }
 
 function update_skip_connection_initializer(layer_nr, elem) {
