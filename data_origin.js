@@ -305,8 +305,6 @@ async function chose_dataset(no_set_config) {
 	}
 	is_setting_config = false;
 
-	show_overlay("", language[lang]["loading_model"] + "...");
-
 	reset_predict_error();
 	$("#prediction").html("");
 
