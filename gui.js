@@ -610,14 +610,14 @@ function hide_no_conv_stuff() {
 		$(".hide_when_no_image").show();
 		$("[aria-labelledby='activation_atlas_tab_label']").show();
 		$(".hide_when_image").hide();
-		$('[aria-controls="gradient_flow"]').hide();
+		$('[aria-controls="gradient_flow"]').show();
 	} else {
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("[aria-labelledby='activation_atlas_tab_label']").hide();
 		$("#auto_augment").prop("checked", false);
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
-		$('[aria-controls="gradient_flow"]').show();
+		$('[aria-controls="gradient_flow"]').hide();
 	}
 
 	hide_empty_tabs("visualization_ribbon");
