@@ -1558,32 +1558,31 @@ function get_activation_layer_names() {
 }
 
 function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors) {
-    if (layer_idx === 0) {
-        return array_to_latex(input_layer, "Input");
-    }
+	if (layer_idx === 0) {
+		return array_to_latex(input_layer, "Input");
+	}
 
-    var prev_idx = layer_idx - 1;
+	var prev_idx = layer_idx - 1;
 
-    if (prev_idx >= 0 && prev_idx < layer_data.length) {
-        var prev_data = layer_data[prev_idx];
+	if (prev_idx >= 0 && prev_idx < layer_data.length) {
+		var prev_data = layer_data[prev_idx];
 
-        if (prev_data.kernel && prev_data.kernel.length) {
-            var prev_kernel = replace_non_numbers_with_matching_latex(
-                JSON.parse(JSON.stringify(prev_data.kernel))
-            );
-            prev_kernel = array_to_fixed(prev_kernel, get_dec_points_math_mode());
-            var kernel_shape = get_shape_from_array(prev_kernel);
-            var shape_str = kernel_shape.join(" \\times ");
+		if (prev_data.kernel && prev_data.kernel.length) {
+			const prev_kernel_data = JSON.parse(JSON.stringify(prev_data.kernel))
+			var prev_kernel = replace_non_numbers_with_matching_latex(prev_kernel_data);
+			prev_kernel = array_to_fixed(prev_kernel, get_dec_points_math_mode());
+			var kernel_shape = get_shape_from_array(prev_kernel);
+			var shape_str = kernel_shape.join(" \\times ");
 
-            var result_str = "\\underbrace{\\begin{pmatrix}\n";
-            result_str += _format_skip_kernel_rows(prev_kernel);
-            result_str += "\n\\end{pmatrix}}_{h_{" + prev_idx + "}^{" + shape_str + "}}";
+			var result_str = "\\underbrace{\\begin{pmatrix}\n";
+			result_str += _format_skip_kernel_rows(prev_kernel);
+			result_str += "\n\\end{pmatrix}}_{h_{" + prev_idx + "}^{" + shape_str + "}}";
 
-            return result_str;
-        }
-    }
+			return result_str;
+		}
+	}
 
-    return _get_h(Math.max(0, layer_idx - 1));
+	return _get_h(Math.max(0, layer_idx - 1));
 }
 
 function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {
