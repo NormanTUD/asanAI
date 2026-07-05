@@ -1678,36 +1678,36 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
  * so that math mode reflects weight updates during training.
  */
 function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
-    // Get all layers including internal ones
-    var all_layers = _get_all_model_layers();
+	// Get all layers including internal ones
+	var all_layers = _get_all_model_layers();
 
-    if (!all_layers) {
-        return "W_{\\text{skip}}";
-    }
+	if (!all_layers) {
+		return "W_{\\text{skip}}";
+	}
 
-    var skip_proj_layer = null;
+	var skip_proj_layer = null;
 
-    // Search for the skip projection layer belonging to this gui_layer_idx
-    for (var i = 0; i < all_layers.length; i++) {
-        var lname = all_layers[i].name || "";
-        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
-            skip_proj_layer = all_layers[i];
-            break;
-        }
-    }
+	// Search for the skip projection layer belonging to this gui_layer_idx
+	for (var i = 0; i < all_layers.length; i++) {
+		var lname = all_layers[i].name || "";
+		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+			skip_proj_layer = all_layers[i];
+			break;
+		}
+	}
 
-    if (!skip_proj_layer) {
-        // Check if there's a skip_add layer (meaning identity skip, no projection needed)
-        var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
+	if (!skip_proj_layer) {
+		// Check if there's a skip_add layer (meaning identity skip, no projection needed)
+		var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
 
-        if (has_add) {
-            return _build_identity_matrix_latex(layer_idx);
-        }
-        return "W_{\\text{skip}}";
-    }
+		if (has_add) {
+			return _build_identity_matrix_latex(layer_idx);
+		}
+		return "W_{\\text{skip}}";
+	}
 
-    // skip_proj_layer IS found — extract its CURRENT kernel weights
-    return _extract_skip_kernel_latex(skip_proj_layer);
+	// skip_proj_layer IS found — extract its CURRENT kernel weights
+	return _extract_skip_kernel_latex(skip_proj_layer);
 }
 
 /**
