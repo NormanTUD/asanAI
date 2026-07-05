@@ -642,16 +642,18 @@ function add_skip_connection_option(type, nr) {
     str += "</tr>";
 
     // Sub-options for the skip initializer (seed, mean, stddev, etc.)
-    // These get inserted dynamically based on the chosen initializer
-    var init_sub_options = _get_skip_initializer_sub_options_html(nr, current_initializer);
+    // NOTE: We pass NO section_class here because build_advanced_section will
+    // add the class to ALL <tr> elements in the advanced_str (including these).
+    // The section_class is applied by build_advanced_section after this function returns.
     if (checked_attr) {
-        str += init_sub_options;
+        // Pass null for section_class - build_advanced_section handles it
+        str += _get_skip_initializer_sub_options_html(nr, current_initializer, null);
     }
 
     return str;
 }
 
-function _get_skip_initializer_sub_options_html(nr, initializer_name) {
+function _get_skip_initializer_sub_options_html(nr, initializer_name, section_class) {
     if (!initializer_name || !initializer_options[initializer_name]) {
         return "";
     }
@@ -664,11 +666,22 @@ function _get_skip_initializer_sub_options_html(nr, initializer_name) {
     var str = "";
     var current_params = (skip_connection_settings[nr] && skip_connection_settings[nr].initializer_params) || {};
 
+    // Determine display style: hidden if section_class is provided and section is collapsed
+    var display_style = "";
+    if (section_class) {
+        display_style = "display: none;";
+    }
+
     for (var i = 0; i < options.length; i++) {
         var opt_name = options[i];
         var opt_value = (opt_name in current_params) ? current_params[opt_name] : _get_skip_initializer_default_value(opt_name, nr);
 
-        str += "<tr class='skip_connection_initializer_option_tr' style=''>";
+        var class_attr = "skip_connection_initializer_option_tr";
+        if (section_class) {
+            class_attr += " " + section_class;
+        }
+
+        str += "<tr class='" + class_attr + "' style='" + display_style + "'>";
         str += "<td>" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
         str += "<td>";
         if (opt_name === "mode") {
@@ -1923,4 +1936,26 @@ function update_skip_connection_strength(layer_nr, elem) {
 function update_skip_connection_strength_display(layer_nr, elem) {
 	var val = parseFloat($(elem).val());
 	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _get_section_class_from_row
+// Extracts the advanced_options_section_* class from a given row element.
+// Returns the class name string or null if not found.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function _get_section_class_from_row($row) {
+    if (!$row || !$row.length) {
+        return null;
+    }
+
+    var row_classes = ($row.attr("class") || "").split(/\s+/);
+
+    for (var i = 0; i < row_classes.length; i++) {
+        if (row_classes[i].startsWith("advanced_options_section_")) {
+            return row_classes[i];
+        }
+    }
+
+    return null;
 }

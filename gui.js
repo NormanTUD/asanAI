@@ -4590,12 +4590,22 @@ function toggle_skip_connection(layer_nr, elem) {
         $init_row.show();
         $init_option_rows.show();
 
-        // If no sub-options exist yet, insert them
+        // If no sub-options exist yet, insert them with proper advanced section class
         if ($init_option_rows.length === 0) {
             var initializer_name = skip_connection_settings[layer_nr].initializer || "glorotUniform";
-            var html = _get_skip_initializer_sub_options_html(layer_nr, initializer_name);
+
+            // Determine the section_class from the parent row
+            var section_class = _get_section_class_from_row($init_row);
+
+            var html = _get_skip_initializer_sub_options_html(layer_nr, initializer_name, section_class);
             if (html) {
-                $(html).insertAfter($init_row);
+                var $new_rows = $(html);
+                $new_rows.insertAfter($init_row);
+
+                // Apply advanced section state to each new row
+                $new_rows.each(function() {
+                    apply_advanced_section_state_to_row($init_row, $(this));
+                });
             }
         }
     } else {
@@ -4634,11 +4644,21 @@ function insert_skip_initializer_options(layer_nr, elem) {
     $layer_setting.find(".skip_connection_initializer_option_tr").remove();
 
     var initializer_name = $(elem).val();
-    var html = _get_skip_initializer_sub_options_html(layer_nr, initializer_name);
+    var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
+
+    // Determine the section_class from the initializer row
+    var section_class = _get_section_class_from_row($init_row);
+
+    var html = _get_skip_initializer_sub_options_html(layer_nr, initializer_name, section_class);
 
     if (html) {
-        var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
-        $(html).insertAfter($init_row);
+        var $new_rows = $(html);
+        $new_rows.insertAfter($init_row);
+
+        // Apply advanced section state to each new row
+        $new_rows.each(function() {
+            apply_advanced_section_state_to_row($init_row, $(this));
+        });
     }
 }
 
