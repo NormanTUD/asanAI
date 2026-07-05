@@ -609,9 +609,6 @@ function add_skip_connection_option(type, nr) {
 
     var checked_attr = "";
     var current_initializer = "glorotUniform";
-    if (skip_connection_settings[nr] && skip_connection_settings[nr].enabled) {
-        checked_attr = " checked ";
-    }
     if (skip_connection_settings[nr] && skip_connection_settings[nr].initializer) {
         current_initializer = skip_connection_settings[nr].initializer;
     }

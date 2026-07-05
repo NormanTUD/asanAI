@@ -1574,9 +1574,9 @@ function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors) 
 			var kernel_shape = get_shape_from_array(prev_kernel);
 			var shape_str = kernel_shape.join(" \\times ");
 
-			var result_str = "\\underbrace{\\begin{pmatrix}\n";
-			result_str += _format_skip_kernel_rows(prev_kernel);
-			result_str += "\n\\end{pmatrix}}_{h_{" + prev_idx + "}^{" + shape_str + "}}";
+			var result_str = "\\underbrace{";
+			result_str += "h_" + prev_idx;
+			result_str += "}_{\\text{Shape: } " + shape_str + "}";
 
 			return result_str;
 		}
