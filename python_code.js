@@ -118,7 +118,10 @@ function create_python_code (input_shape_is_image_val) {
 
 		python_code += "\n";
 
-		python_code += `if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
+		python_code += `import rich
+from rich.table import Table
+
+if asanai.output_is_simple_image(model) or asanai.output_is_complex_image(model):
     if len(sys.argv) == 1:
         asanai.visualize_webcam(model, height, width, divide_by)
     else:
@@ -126,14 +129,88 @@ function create_python_code (input_shape_is_image_val) {
             filename = sys.argv[a]
             asanai.visualize(model, filename)
 elif asanai.model_is_simple_classification(model):
+    for a in range(1, len(sys.argv)):
+        filename = sys.argv[a]
+        image = asanai.load(filename, height, width, divide_by)
+
+        if image is None:
+            asanai.console.print(f"[bold red]Error:[/] Could not load image: [italic]{filename}[/]")
+            continue
+
+        prediction = model.predict(image, verbose=0)
+
+        for prediction_idx in range(len(prediction)):
+            nr_labels = len(prediction[prediction_idx])
+            if len(labels) < nr_labels:
+                asanai.console.print(
+                    rich.Panel.fit(
+                        f"[bold red]Aborted:[/] Model returned [bold]{nr_labels}[/] labels,\\n"
+                        f"but only [bold]{len(labels)}[/] labels are defined.",
+                        title="Error",
+                        border_style="red"
+                    )
+                )
+                sys.exit(1)
+
+            table = Table(show_lines=True)
+
+            table.add_column("Label", style="cyan", justify="right")
+            table.add_column("Probability/Output", style="magenta", justify="left")
+
+            for nr_idx in range(nr_labels):
+                table.add_row(labels[nr_idx], f"{prediction[prediction_idx][nr_idx]:.4f}")
+
+            asanai.console.print(table)
+
+    # If no command line arguments were given, try to predict the current webcam:
     if len(sys.argv) == 1:
-        asanai.classify_webcam(model, labels, height, width, divide_by)
-    else:
-        for a in range(1, len(sys.argv)):
-            asanai.classify_and_display(model, sys.argv[a], labels, height, width, divide_by)
+        try:
+            import cv2
+
+            cap = cv2.VideoCapture(0)
+
+            while True:
+                # Capture frame-by-frame
+                ret, frame = cap.read()
+
+                if not ret:
+                    import sys
+                    print("Could not load frame from webcam. Is the webcam currently in use?")
+                    sys.exit(1)
+
+                image = asanai.load_frame(frame, height, width, divide_by)
+
+                if image is not None:
+                    predictions = model.predict(image, verbose=0)
+
+                    frame = asanai.annotate_frame(frame, predictions, labels)
+
+                    asanai.print_predictions_line(predictions, labels)
+
+                    if frame is not None:
+                        try:
+                            cv2.imshow('frame', frame)
+                            if cv2.waitKey(1) & 0xFF == ord('q'):
+                                break
+
+                            if cv2.getWindowProperty("frame", cv2.WND_PROP_VISIBLE) < 1:
+                                print("\\nWindow was closed.")
+                                break
+                        except cv2.error:
+                            print("")
+                            sys.exit(1)
+
+            # When everything done, release the capture
+            cap.release()
+            cv2.destroyAllWindows()
+        except KeyboardInterrupt:
+            print("You pressed CTRL-c. Program will end.")
+            sys.exit(0)
 else:
-    x = asanai.load_or_input_model_data(model, 'x.txt')
-    asanai.show_result(model.predict(x))
+    output = model.predict(dummy_input, verbose=0)
+
+    print("Raw Output:")
+    print(output)
 `;
 	} else {
 		python_code += `try:
