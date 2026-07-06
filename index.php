@@ -117,6 +117,7 @@
 		_js("cookies_and_url.js");
 		_js("initializers.js");
 		_js("input_shape.js");
+		_js("clipboard_and_download.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
