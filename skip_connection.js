@@ -133,58 +133,58 @@ function _get_skip_initializer_default_value(opt_name, nr) {
 }
 
 function _get_skip_initializer_sub_options_html(nr, initializer_name, section_class) {
-    if (!initializer_name || !initializer_options[initializer_name]) {
-        return "";
-    }
+	if (!initializer_name || !initializer_options[initializer_name]) {
+		return "";
+	}
 
-    var options = initializer_options[initializer_name]["options"];
-    if (!options || options.length === 0) {
-        return "";
-    }
+	var options = initializer_options[initializer_name]["options"];
+	if (!options || options.length === 0) {
+		return "";
+	}
 
-    var str = "";
-    var current_params = (skip_connection_settings[nr] && skip_connection_settings[nr].initializer_params) || {};
+	var str = "";
+	var current_params = (skip_connection_settings[nr] && skip_connection_settings[nr].initializer_params) || {};
 
-    // Determine display style: hidden if section_class is provided and section is collapsed
-    var display_style = "";
-    if (section_class) {
-        display_style = "display: none;";
-    }
+	// Determine display style: hidden if section_class is provided and section is collapsed
+	var display_style = "";
+	if (section_class) {
+		display_style = "display: none;";
+	}
 
-    for (var i = 0; i < options.length; i++) {
-        var opt_name = options[i];
-        var opt_value = (opt_name in current_params) ? current_params[opt_name] : _get_skip_initializer_default_value(opt_name, nr);
+	for (var i = 0; i < options.length; i++) {
+		var opt_name = options[i];
+		var opt_value = (opt_name in current_params) ? current_params[opt_name] : _get_skip_initializer_default_value(opt_name, nr);
 
-        var class_attr = "skip_connection_initializer_option_tr";
-        if (section_class) {
-            class_attr += " " + section_class;
-        }
+		var class_attr = "skip_connection_initializer_option_tr";
+		if (section_class) {
+			class_attr += " " + section_class;
+		}
 
-        str += "<tr class='" + class_attr + "' style='" + display_style + "'>";
-        str += "<td>" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
-        str += "<td>";
-        if (opt_name === "mode") {
-            str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this);'>";
-            for (var mk in mode_modes) {
-                var sel = (mk === ("" + opt_value)) ? " selected" : "";
-                str += "<option value='" + mk + "'" + sel + ">" + mode_modes[mk] + "</option>";
-            }
-            str += "</select>";
-        } else if (opt_name === "distribution") {
-            str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this);'>";
-            for (var dk in distribution_modes) {
-                var sel2 = (dk === ("" + opt_value)) ? " selected" : "";
-                str += "<option value='" + dk + "'" + sel2 + ">" + distribution_modes[dk] + "</option>";
-            }
-            str += "</select>";
-        } else {
-            str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "' type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this);' />";
-        }
-        str += "</td>";
-        str += "</tr>";
-    }
+		str += "<tr class='" + class_attr + "' style='" + display_style + "'>";
+		str += "<td>" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
+		str += "<td>";
+		if (opt_name === "mode") {
+			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this, null, 1);'>";
+			for (var mk in mode_modes) {
+				var sel = (mk === ("" + opt_value)) ? " selected" : "";
+				str += "<option value='" + mk + "'" + sel + ">" + mode_modes[mk] + "</option>";
+			}
+			str += "</select>";
+		} else if (opt_name === "distribution") {
+			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this, null, 1);'>";
+			for (var dk in distribution_modes) {
+				var sel2 = (dk === ("" + opt_value)) ? " selected" : "";
+				str += "<option value='" + dk + "'" + sel2 + ">" + distribution_modes[dk] + "</option>";
+			}
+			str += "</select>";
+		} else {
+			str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "' type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this, null, 1);' />";
+		}
+		str += "</td>";
+		str += "</tr>";
+	}
 
-    return str;
+	return str;
 }
 
 function add_skip_connection_option(type, nr) {
@@ -217,7 +217,7 @@ function add_skip_connection_option(type, nr) {
 	str += "<tr class='skip_connection_initializer_tr' style='" + init_display + "'>";
 	str += "<td>Skip Initializer:</td>";
 	str += "<td>";
-	str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this);'>";
+	str += "<select class='input_field skip_connection_initializer_select' onchange='update_skip_connection_initializer(find_layer_number_by_element(this), this); insert_skip_initializer_options(find_layer_number_by_element(this), this); updated_page(null, null, this, null, 1);'>";
 	for (var key in initializers) {
 		if (initializers.hasOwnProperty(key)) {
 			var selected_attr = (key === current_initializer) ? " selected" : "";
