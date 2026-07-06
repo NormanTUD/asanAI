@@ -820,3 +820,126 @@ function show_webcam_when_needed_else_hide() {
 		}
 	}
 }
+
+async function get_available_cams () {
+	var webcams = [];
+	var ids = [];
+
+	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
+		for(var device_idx = 0; device_idx < devices.length; device_idx++){
+			var device = devices[device_idx];
+			if (device.kind === "videoinput") {
+				webcams.push(device.label);
+				ids.push(device.deviceId);
+			}
+		}
+	});
+
+	return [webcams, ids];
+}
+
+async function switch_to_next_camera () {
+	webcam_id++;
+	webcam_id = webcam_id % (webcam_modes.length);
+	await get_data_from_webcam(1);
+
+}
+
+async function get_data_from_webcam_if_possible(){
+	if(!cam) {
+		dbg("cam was not defined. Trying to get data from webcam");
+		await get_data_from_webcam();
+	}
+
+	if(!cam) {
+		try {
+			dbg("cam was still not defined. Trying to get data from webcam again");
+			await get_data_from_webcam();
+		} catch (e) {
+			err(e);
+		}
+	} else {
+		dbg("cam is defined, not trying to show it again");
+	}
+}
+
+async function set_custom_webcam_training_data() {
+	close_popups();
+
+	labels = [];
+
+	dbg("Init webcams");
+	await init_webcams();
+
+	if($("#data_origin").val() != "image") {
+		$.when($("#data_origin").val("image").trigger("change")).done(get_data_from_webcam_if_possible);
+	} else {
+		if(!cam) {
+			await get_data_from_webcam();
+		}
+
+		if(!cam) {
+			await show_webcam();
+		}
+
+		show_tab_label("own_images_tab_label", 1);
+	}
+	dbg("Done setting web for custom training data");
+
+	await rename_labels();
+}
+
+function stop_webcam_if_cam() {
+	if (cam) {
+		stop_webcam();
+	}
+}
+
+function _stop_webcam_if_active() {
+	stop_webcam_if_cam();
+}
+
+function getCameraSearchHTML() {
+	var html = `
+<div style="position: relative; width: 150px; height: 150px;">
+  <div style="
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 64px;
+    z-index: 1;
+  ">📷</div>
+  <div style="
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin: -30px 0 0 -30px;
+    animation: orbit 3s linear infinite;
+    z-index: 2;
+  ">
+    <div style="
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 32px;
+      animation: counter-rotate 3s linear infinite;
+    ">🔍</div>
+  </div>
+</div>
+<style>
+@keyframes orbit {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes counter-rotate {
+  0%   { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(-360deg); }
+}
+</style>
+	`;
+	return html;
+}
