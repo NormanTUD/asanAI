@@ -115,6 +115,7 @@
 		_js("labels.js");
 		_js("validation.js");
 		_js("initializers.js");
+		_js("input_shape.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
