@@ -77,3 +77,7 @@ function setOptimizerTooltips() {
 		});
 	});
 }
+
+function get_optimizer() {
+	return $("#optimizer").val();
+}

@@ -111,6 +111,7 @@
 		_js("gradient_flow_heatmap.js");
 		_js("skip_connection.js");
 		_js("optimizer.js");
+		_js("loss_metric.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
