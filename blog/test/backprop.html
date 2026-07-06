@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 Wie lernt eine KI? – 3 Layer Netzwerk</title>
+    <title>🧠 Backpropagation – Schicht für Schicht</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -16,32 +16,28 @@
             align-items: center;
             padding: 20px;
         }
-        h1 { color: #00d4ff; margin-bottom: 5px; font-size: 1.5em; text-align: center; }
+        h1 { color: #00d4ff; margin-bottom: 5px; font-size: 1.4em; text-align: center; }
         .subtitle { color: #aaa; margin-bottom: 15px; font-size: 0.85em; text-align: center; }
-
         canvas {
             border-radius: 16px;
             background: #16213e;
             box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-            margin-bottom: 15px;
-            max-width: 100%;
+            margin-bottom: 12px;
         }
-
         .message {
             background: #0f3460;
             border-radius: 12px;
             padding: 14px 22px;
-            margin-bottom: 14px;
-            font-size: 1.05em;
+            margin-bottom: 12px;
+            font-size: 1em;
             text-align: center;
-            max-width: 700px;
+            max-width: 750px;
             line-height: 1.5;
-            min-height: 55px;
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
         button {
             padding: 14px 32px;
             border: none;
@@ -69,15 +65,12 @@
     </style>
 </head>
 <body>
-    <h1>🧠 Wie lernt eine KI?</h1>
-    <p class="subtitle">3 Schichten mit je 2 Neuronen – Schritt für Schritt</p>
-
-    <canvas id="canvas" width="850" height="480"></canvas>
-
+    <h1>🧠 Backpropagation – Schicht für Schicht</h1>
+    <p class="subtitle">Sieh zu, wie der Fokus von rechts nach links wandert!</p>
+    <canvas id="canvas" width="900" height="550"></canvas>
     <div class="message" id="message">
-        👋 Dieses Netzwerk soll lernen, die richtigen Zahlen auszugeben. Klicke "Nächster Schritt"!
+        👋 Klicke "Nächster Schritt"! Das Netzwerk rechnet erst vorwärts, dann wandert der Fokus rückwärts durch jede Schicht.
     </div>
-
     <div class="buttons">
         <button id="btnNext">▶️ Nächster Schritt</button>
         <button id="btnReset">🔄 Neu starten</button>
@@ -90,115 +83,112 @@
         const msgEl = document.getElementById('message');
         const infoEl = document.getElementById('info');
 
-        // ===== NETWORK: 2 inputs → 2 hidden1 → 2 hidden2 → 2 outputs =====
         const LR = 0.5;
-        const TARGETS = [0.9, 0.1]; // what we want the outputs to be
+        const TARGETS = [0.9, 0.1];
         const INPUTS = [0.6, 0.4];
 
         let net = {};
-        let step = 0; // 0=idle, 1=forward, 2=show error, 3=show gradients, 4=update
+        // Steps: 0=idle, 1=forward, 2=show output error,
+        // 3=gradient layer3, 4=gradient layer2, 5=gradient layer1, 6=update
+        let step = 0;
         let round = 0;
         let lossHistory = [];
+        // Which layer is currently "focused" for gradient display
+        // 3 = output layer, 2 = hidden2, 1 = hidden1, 0 = done
+        let focusLayer = -1;
 
-        function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+        function sigmoid(x) { return 1 / (1 + Math.exp(-Math.max(-10, Math.min(10, x)))); }
         function sigmoidDeriv(out) { return out * (1 - out); }
+        function rand() { return Math.random() * 1.4 - 0.7; }
 
         function initNetwork() {
-            // Weights: w[layer][to][from]
-            // Layer 1: 2 inputs → 2 neurons
             net.w1 = [[rand(), rand()], [rand(), rand()]];
-            net.b1 = [rand() * 0.5, rand() * 0.5];
-            // Layer 2: 2 → 2
+            net.b1 = [rand() * 0.3, rand() * 0.3];
             net.w2 = [[rand(), rand()], [rand(), rand()]];
-            net.b2 = [rand() * 0.5, rand() * 0.5];
-            // Layer 3 (output): 2 → 2
+            net.b2 = [rand() * 0.3, rand() * 0.3];
             net.w3 = [[rand(), rand()], [rand(), rand()]];
-            net.b3 = [rand() * 0.5, rand() * 0.5];
+            net.b3 = [rand() * 0.3, rand() * 0.3];
 
-            // Activations
             net.a0 = INPUTS.slice();
             net.a1 = [0, 0];
             net.a2 = [0, 0];
-            net.a3 = [0, 0]; // output
+            net.a3 = [0, 0];
 
-            // Gradients
+            net.d1 = [0, 0]; // deltas
+            net.d2 = [0, 0];
+            net.d3 = [0, 0];
+
             net.gw1 = [[0,0],[0,0]];
             net.gw2 = [[0,0],[0,0]];
             net.gw3 = [[0,0],[0,0]];
-            net.gb1 = [0,0];
-            net.gb2 = [0,0];
-            net.gb3 = [0,0];
+
+            // "desired" values for each layer (computed during backprop)
+            net.desired1 = [0, 0];
+            net.desired2 = [0, 0];
 
             net.errors = [0, 0];
             net.loss = 0;
         }
 
-        function rand() { return Math.random() * 1.6 - 0.8; }
-
         function forwardPass() {
-            // Layer 1
             for (let i = 0; i < 2; i++) {
                 let sum = net.b1[i];
                 for (let j = 0; j < 2; j++) sum += net.w1[i][j] * net.a0[j];
                 net.a1[i] = sigmoid(sum);
             }
-            // Layer 2
             for (let i = 0; i < 2; i++) {
                 let sum = net.b2[i];
                 for (let j = 0; j < 2; j++) sum += net.w2[i][j] * net.a1[j];
                 net.a2[i] = sigmoid(sum);
             }
-            // Layer 3 (output)
             for (let i = 0; i < 2; i++) {
                 let sum = net.b3[i];
                 for (let j = 0; j < 2; j++) sum += net.w3[i][j] * net.a2[j];
                 net.a3[i] = sigmoid(sum);
             }
-            // Loss
             net.errors = [TARGETS[0] - net.a3[0], TARGETS[1] - net.a3[1]];
             net.loss = 0.5 * (net.errors[0] ** 2 + net.errors[1] ** 2);
         }
 
-        function backprop() {
-            // Output layer deltas
-            let d3 = [0, 0];
+        function backpropLayer3() {
             for (let i = 0; i < 2; i++) {
-                d3[i] = -net.errors[i] * sigmoidDeriv(net.a3[i]);
-            }
-            // Gradients for w3
-            for (let i = 0; i < 2; i++) {
+                net.d3[i] = -net.errors[i] * sigmoidDeriv(net.a3[i]);
                 for (let j = 0; j < 2; j++) {
-                    net.gw3[i][j] = d3[i] * net.a2[j];
+                    net.gw3[i][j] = net.d3[i] * net.a2[j];
                 }
-                net.gb3[i] = d3[i];
             }
+            // Compute what layer 2 "should have been" (desired direction)
+            for (let j = 0; j < 2; j++) {
+                let push = 0;
+                for (let i = 0; i < 2; i++) push += net.d3[i] * net.w3[i][j];
+                net.desired2[j] = net.a2[j] - push * 0.5; // simplified "ideal" direction
+            }
+        }
 
-            // Hidden layer 2 deltas
-            let d2 = [0, 0];
+        function backpropLayer2() {
             for (let i = 0; i < 2; i++) {
                 let err = 0;
-                for (let k = 0; k < 2; k++) err += d3[k] * net.w3[k][i];
-                d2[i] = err * sigmoidDeriv(net.a2[i]);
-            }
-            for (let i = 0; i < 2; i++) {
+                for (let k = 0; k < 2; k++) err += net.d3[k] * net.w3[k][i];
+                net.d2[i] = err * sigmoidDeriv(net.a2[i]);
                 for (let j = 0; j < 2; j++) {
-                    net.gw2[i][j] = d2[i] * net.a1[j];
+                    net.gw2[i][j] = net.d2[i] * net.a1[j];
                 }
-                net.gb2[i] = d2[i];
             }
+            for (let j = 0; j < 2; j++) {
+                let push = 0;
+                for (let i = 0; i < 2; i++) push += net.d2[i] * net.w2[i][j];
+                net.desired1[j] = net.a1[j] - push * 0.5;
+            }
+        }
 
-            // Hidden layer 1 deltas
-            let d1 = [0, 0];
+        function backpropLayer1() {
             for (let i = 0; i < 2; i++) {
                 let err = 0;
-                for (let k = 0; k < 2; k++) err += d2[k] * net.w2[k][i];
-                d1[i] = err * sigmoidDeriv(net.a1[i]);
-            }
-            for (let i = 0; i < 2; i++) {
+                for (let k = 0; k < 2; k++) err += net.d2[k] * net.w2[k][i];
+                net.d1[i] = err * sigmoidDeriv(net.a1[i]);
                 for (let j = 0; j < 2; j++) {
-                    net.gw1[i][j] = d1[i] * net.a0[j];
+                    net.gw1[i][j] = net.d1[i] * net.a0[j];
                 }
-                net.gb1[i] = d1[i];
             }
         }
 
@@ -209,43 +199,54 @@
                     net.w2[i][j] -= LR * net.gw2[i][j];
                     net.w1[i][j] -= LR * net.gw1[i][j];
                 }
-                net.b3[i] -= LR * net.gb3[i];
-                net.b2[i] -= LR * net.gb2[i];
-                net.b1[i] -= LR * net.gb1[i];
+                net.b3[i] -= LR * net.d3[i];
+                net.b2[i] -= LR * net.d2[i];
+                net.b1[i] -= LR * net.d1[i];
             }
         }
 
         // ===== DRAWING =====
+        const layerX = [100, 300, 500, 700];
+        const nodeY = [[180, 380], [160, 400], [160, 400], [180, 380]];
+        const layerNames = ['Eingabe', 'Schicht 1', 'Schicht 2', 'Ausgabe'];
+        const layerColors = ['#00d4ff', '#a855f7', '#a855f7', '#ff6b6b'];
+
+        function getNodePos(layer, idx) {
+            return { x: layerX[layer], y: nodeY[layer][idx] };
+        }
+
+        function isLayerGreyedOut(layer) {
+            // Grey out layers whose gradients are already computed
+            if (step <= 2) return false;
+            if (step === 3 && focusLayer === 3) return layer > 3; // impossible
+            if (step === 4 && focusLayer === 2) return layer === 3;
+            if (step === 5 && focusLayer === 1) return layer >= 2;
+            return false;
+        }
+
+        function isLayerFocused(layer) {
+            if (step === 3) return layer === 3;
+            if (step === 4) return layer === 2;
+            if (step === 5) return layer === 1;
+            return false;
+        }
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Node positions
-            const layers = [
-                [{x: 100, y: 170}, {x: 100, y: 330}],  // Input
-                [{x: 300, y: 150}, {x: 300, y: 350}],  // Hidden 1
-                [{x: 520, y: 150}, {x: 520, y: 350}],  // Hidden 2
-                [{x: 720, y: 170}, {x: 720, y: 330}],  // Output
-            ];
-
-            // Layer labels
-            ctx.font = '12px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#666';
-            ctx.fillText('Eingabe', 100, 420);
-            ctx.fillText('Schicht 1', 300, 420);
-            ctx.fillText('Schicht 2', 520, 420);
-            ctx.fillText('Ausgabe', 720, 420);
 
             // Draw connections
             const weights = [net.w1, net.w2, net.w3];
             const grads = [net.gw1, net.gw2, net.gw3];
 
             for (let l = 0; l < 3; l++) {
+                const greyed = isLayerGreyedOut(l + 1);
+                const focused = isLayerFocused(l + 1);
                 for (let i = 0; i < 2; i++) {
                     for (let j = 0; j < 2; j++) {
                         drawConnection(
-                            layers[l][j], layers[l+1][i],
-                            weights[l][i][j], grads[l][i][j]
+                            getNodePos(l, j), getNodePos(l + 1, i),
+                            weights[l][i][j], grads[l][i][j],
+                            greyed, focused && step >= 3
                         );
                     }
                 }
@@ -253,196 +254,264 @@
 
             // Draw nodes
             const activations = [net.a0, net.a1, net.a2, net.a3];
-            const colors = ['#00d4ff', '#a855f7', '#a855f7', '#ff6b6b'];
-            const labels = [
-                ['In 1', 'In 2'],
-                ['H1-1', 'H1-2'],
-                ['H2-1', 'H2-2'],
-                ['Out 1', 'Out 2']
-            ];
-
             for (let l = 0; l < 4; l++) {
+                const greyed = isLayerGreyedOut(l);
+                const focused = isLayerFocused(l);
                 for (let i = 0; i < 2; i++) {
-                    const val = (step >= 1 || round > 0) ? activations[l][i] : null;
-                    drawNode(layers[l][i], val, labels[l][i], colors[l]);
+                    const val = (step >= 1) ? activations[l][i] : null;
+                    drawNode(getNodePos(l, i), val, l, i, greyed, focused);
                 }
             }
 
-            // Draw targets next to output
-            if (step >= 1 || round > 0) {
-                for (let i = 0; i < 2; i++) {
-                    drawTarget(layers[3][i], net.a3[i], TARGETS[i], i);
-                }
+            // Layer labels
+            for (let l = 0; l < 4; l++) {
+                const greyed = isLayerGreyedOut(l);
+                ctx.fillStyle = greyed ? '#444' : '#888';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(layerNames[l], layerX[l], 460);
             }
 
-            // Draw error arrows (step 2+)
+            // Draw the comparison bars for the focused layer
             if (step >= 2) {
-                for (let i = 0; i < 2; i++) {
-                    drawErrorArrow(layers[3][i], net.errors[i], i);
-                }
+                drawComparisonBars();
             }
 
-            // Draw gradient indicators (step 3)
-            if (step >= 3) {
-                drawGradientOverlay();
+            // Focus indicator
+            if (step >= 3 && step <= 5) {
+                drawFocusHighlight();
             }
 
             // Loss chart
             drawLossChart();
         }
 
-        function drawConnection(from, to, weight, grad) {
+        function drawConnection(from, to, weight, grad, greyed, showGrad) {
             ctx.beginPath();
-            ctx.moveTo(from.x + 28, from.y);
-            ctx.lineTo(to.x - 28, to.y);
+            ctx.moveTo(from.x + 26, from.y);
+            ctx.lineTo(to.x - 26, to.y);
 
-            let color = '#444';
-            let width = 1.5;
-
-            if (step >= 3) {
-                // Color by gradient
-                if (Math.abs(grad) < 0.005) {
-                    color = '#ffd43b55';
-                    width = 1;
-                } else if (grad > 0) {
-                    color = `rgba(255, 107, 107, ${Math.min(Math.abs(grad) * 3, 0.9)})`;
-                    width = Math.min(Math.abs(grad) * 12 + 1, 5);
-                } else {
-                    color = `rgba(81, 207, 102, ${Math.min(Math.abs(grad) * 3, 0.9)})`;
-                    width = Math.min(Math.abs(grad) * 12 + 1, 5);
-                }
-            } else if (step >= 1) {
-                const intensity = Math.min(Math.abs(weight) * 0.8, 0.8);
-                color = weight > 0
-                    ? `rgba(0, 212, 255, ${intensity})`
-                    : `rgba(255, 159, 67, ${intensity})`;
-                width = Math.abs(weight) * 2.5 + 0.5;
+            if (greyed) {
+                ctx.strokeStyle = '#2a2a3e';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                return;
             }
 
-            ctx.strokeStyle = color;
-            ctx.lineWidth = Math.min(width, 5);
+            if (showGrad && Math.abs(grad) > 0.001) {
+                if (grad > 0) {
+                    ctx.strokeStyle = `rgba(255, 80, 80, ${Math.min(Math.abs(grad) * 4, 0.95)})`;
+                } else {
+                    ctx.strokeStyle = `rgba(80, 220, 100, ${Math.min(Math.abs(grad) * 4, 0.95)})`;
+                }
+                ctx.lineWidth = Math.min(Math.abs(grad) * 15 + 1.5, 6);
+            } else if (step >= 1) {
+                const a = Math.min(Math.abs(weight) * 0.7, 0.7);
+                ctx.strokeStyle = weight > 0
+                    ? `rgba(0, 212, 255, ${a})`
+                    : `rgba(255, 159, 67, ${a})`;
+                ctx.lineWidth = Math.abs(weight) * 2 + 0.5;
+            } else {
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+            }
             ctx.stroke();
         }
 
-        function drawNode(pos, value, label, color) {
-            const r = 26;
+        function drawNode(pos, value, layer, idx, greyed, focused) {
+            const r = 24;
+            const color = greyed ? '#444' : layerColors[layer];
 
-            // Glow
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, r + 4, 0, Math.PI * 2);
-            ctx.fillStyle = color + '15';
-            ctx.fill();
+            // Focus glow
+            if (focused) {
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, r + 10, 0, Math.PI * 2);
+                ctx.fillStyle = color + '25';
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, r + 6, 0, Math.PI * 2);
+                ctx.strokeStyle = color + '55';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
 
             // Circle
             ctx.beginPath();
             ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
-            ctx.fillStyle = '#16213e';
+            ctx.fillStyle = greyed ? '#1a1a2e' : '#16213e';
             ctx.strokeStyle = color;
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = greyed ? 1 : 2.5;
             ctx.fill();
             ctx.stroke();
 
             // Value
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 13px monospace';
+            ctx.fillStyle = greyed ? '#555' : '#fff';
+            ctx.font = `bold 12px monospace`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(value !== null ? value.toFixed(2) : '?', pos.x, pos.y);
-
-            // Label
-            ctx.fillStyle = color;
-            ctx.font = '11px sans-serif';
-            ctx.fillText(label, pos.x, pos.y - r - 10);
         }
 
-        function drawTarget(pos, output, target, idx) {
-            const tx = pos.x + 70;
-            const ty = pos.y;
+        function drawComparisonBars() {
+            // Determine which neurons to show bars for
+            let actual, desired, barLabel;
+            let barX = 800;
 
-            // Target box
-            ctx.fillStyle = '#0f3460';
-            ctx.fillRect(tx - 30, ty - 18, 60, 36);
-            ctx.strokeStyle = '#ffd43b';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([4, 3]);
-            ctx.strokeRect(tx - 30, ty - 18, 60, 36);
-            ctx.setLineDash([]);
-
-            ctx.fillStyle = '#ffd43b';
-            ctx.font = 'bold 12px monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(target.toFixed(2), tx, ty - 4);
-
-            ctx.font = '9px sans-serif';
-            ctx.fillText('Ziel', tx, ty + 12);
-        }
-
-        function drawErrorArrow(pos, error, idx) {
-            const startX = pos.x + 30;
-            const endX = pos.x + 55;
-            const y = pos.y;
-
-            // Arrow
-            ctx.beginPath();
-            ctx.moveTo(startX, y);
-            ctx.lineTo(endX - 8, y);
-            ctx.strokeStyle = '#ff6b6b';
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
-
-            // Label above/below
-            const labelY = idx === 0 ? y - 30 : y + 35;
-            ctx.fillStyle = '#ff6b6b';
-            ctx.font = 'bold 12px sans-serif';
-            ctx.textAlign = 'center';
-
-            if (Math.abs(error) < 0.03) {
-                ctx.fillStyle = '#51cf66';
-                ctx.fillText('✓ Passt!', pos.x + 43, labelY);
-            } else if (error > 0) {
-                ctx.fillText('↑ Zu niedrig!', pos.x + 50, labelY);
-            } else {
-                ctx.fillText('↓ Zu hoch!', pos.x + 50, labelY);
+            if (step === 2 || step === 3) {
+                // Output layer: compare with targets
+                actual = net.a3;
+                desired = TARGETS;
+                barLabel = ['Ausgang 1', 'Ausgang 2'];
+                drawBarPair(barX, actual, desired, barLabel, 'Ziel');
+            } else if (step === 4) {
+                // Hidden 2: compare with "desired" from backprop
+                actual = net.a2;
+                desired = net.desired2;
+                barLabel = ['H2-1', 'H2-2'];
+                drawBarPair(barX, actual, desired, barLabel, 'Wäre besser');
+            } else if (step === 5) {
+                // Hidden 1: compare with "desired" from backprop
+                actual = net.a1;
+                desired = net.desired1;
+                barLabel = ['H1-1', 'H1-2'];
+                drawBarPair(barX, actual, desired, barLabel, 'Wäre besser');
             }
         }
 
-        function drawGradientOverlay() {
-            // Legend at top
-            ctx.fillStyle = 'rgba(15, 52, 96, 0.92)';
-            ctx.fillRect(150, 440, 550, 35);
-            ctx.strokeStyle = '#555';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(150, 440, 550, 35);
+        function drawBarPair(startX, actual, desired, labels, desiredLabel) {
+            const barW = 30;
+            const barH = 140;
+            const gap = 70;
 
-            ctx.font = '12px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            for (let i = 0; i < 2; i++) {
+                const bx = startX + i * gap;
+                const by = 130;
 
-            ctx.fillStyle = '#ff6b6b';
-            ctx.fillText('🔴 Rot = muss kleiner werden', 270, 458);
-            ctx.fillStyle = '#51cf66';
-            ctx.fillText('🟢 Grün = muss größer werden', 470, 458);
+                // Background
+                ctx.fillStyle = '#0a0a1a';
+                ctx.fillRect(bx, by, barW, barH);
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(bx, by, barW, barH);
+
+                // Scale marks
+                ctx.fillStyle = '#555';
+                ctx.font = '9px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText('1.0', bx - 3, by + 6);
+                ctx.fillText('0.0', bx - 3, by + barH);
+                ctx.fillText('0.5', bx - 3, by + barH / 2 + 3);
+
+                // Desired line (yellow)
+                const desY = by + barH - (Math.max(0, Math.min(1, desired[i])) * barH);
+                ctx.beginPath();
+                ctx.moveTo(bx - 5, desY);
+                ctx.lineTo(bx + barW + 5, desY);
+                ctx.strokeStyle = '#ffd43b';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Actual bar (filled from bottom)
+                const actH = Math.max(0, Math.min(1, actual[i])) * barH;
+                const diff = actual[i] - desired[i];
+                let barColor;
+                if (Math.abs(diff) < 0.03) barColor = '#51cf66';
+                else if (diff > 0) barColor = '#ff6b6b';
+                else barColor = '#4dabf7';
+
+                ctx.fillStyle = barColor + '88';
+                ctx.fillRect(bx + 3, by + barH - actH, barW - 6, actH);
+
+                // Actual value dot
+                const actY = by + barH - actH;
+                ctx.beginPath();
+                ctx.arc(bx + barW / 2, actY, 6, 0, Math.PI * 2);
+                ctx.fillStyle = barColor;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Arrow showing direction
+                if (Math.abs(diff) >= 0.03) {
+                    const arrowX = bx + barW + 10;
+                    const arrowStartY = actY;
+                    const arrowEndY = desY;
+                    ctx.beginPath();
+                    ctx.moveTo(arrowX, arrowStartY);
+                    ctx.lineTo(arrowX, arrowEndY);
+                    ctx.strokeStyle = '#ffd43b';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Arrowhead
+                    const dir = arrowEndY < arrowStartY ? -1 : 1;
+                    ctx.beginPath();
+                    ctx.moveTo(arrowX, arrowEndY);
+                    ctx.lineTo(arrowX - 4, arrowEndY - dir * 8);
+                    ctx.lineTo(arrowX + 4, arrowEndY - dir * 8);
+                    ctx.closePath();
+                    ctx.fillStyle = '#ffd43b';
+                    ctx.fill();
+                }
+
+                // Label
+                ctx.fillStyle = '#ccc';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(labels[i], bx + barW / 2, by + barH + 18);
+
+                // Status text
+                ctx.font = 'bold 11px sans-serif';
+                if (Math.abs(diff) < 0.03) {
+                    ctx.fillStyle = '#51cf66';
+                    ctx.fillText('✓', bx + barW / 2, by - 10);
+                } else if (diff > 0) {
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.fillText('↓ zu hoch', bx + barW / 2, by - 10);
+                } else {
+                    ctx.fillStyle = '#4dabf7';
+                    ctx.fillText('↑ zu niedrig', bx + barW / 2, by - 10);
+                }
+            }
+
+            // Legend
             ctx.fillStyle = '#ffd43b';
-            ctx.fillText('🟡 = passt', 620, 458);
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`── ${desiredLabel}`, startX + gap / 2 + 15, 310);
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('● Ist-Wert', startX + gap / 2 + 15, 325);
+        }
 
-            // Backward arrow at top
-            ctx.fillStyle = 'rgba(255, 107, 107, 0.12)';
-            ctx.fillRect(130, 15, 600, 28);
-            ctx.fillStyle = '#ff6b6b';
+        function drawFocusHighlight() {
+            let focusX;
+            if (focusLayer === 3) focusX = layerX[3];
+            else if (focusLayer === 2) focusX = layerX[2];
+            else if (focusLayer === 1) focusX = layerX[1];
+            else return;
+
+            // Highlight column
+            ctx.fillStyle = 'rgba(0, 212, 255, 0.04)';
+            ctx.fillRect(focusX - 55, 50, 110, 420);
+            ctx.strokeStyle = '#00d4ff44';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(focusX - 55, 50, 110, 420);
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.fillStyle = '#00d4ff';
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('⬅️ Gradienten fließen rückwärts: "Wer muss sich wie ändern?" ⬅️', 430, 32);
+            ctx.fillText('🔍 FOKUS', focusX, 70);
         }
 
         function drawLossChart() {
             if (lossHistory.length < 1) return;
-
-            const cx = 15, cy = 15, cw = 120, ch = 70;
-            ctx.fillStyle = 'rgba(10, 10, 26, 0.85)';
+            const cx = 15, cy = 15, cw = 130, ch = 65;
+            ctx.fillStyle = 'rgba(10, 10, 26, 0.9)';
             ctx.fillRect(cx, cy, cw, ch);
             ctx.strokeStyle = '#333';
-            ctx.lineWidth = 1;
             ctx.strokeRect(cx, cy, cw, ch);
 
             ctx.fillStyle = '#888';
@@ -452,11 +521,11 @@
             ctx.fillText('📉 Fehler', cx + 5, cy + 4);
 
             if (lossHistory.length > 1) {
-                const maxL = Math.max(...lossHistory, 0.1);
+                const maxL = Math.max(...lossHistory, 0.05);
                 ctx.beginPath();
                 for (let i = 0; i < lossHistory.length; i++) {
-                    const x = cx + 5 + (i / (lossHistory.length - 1)) * (cw - 10);
-                    const y = cy + ch - 5 - (lossHistory[i] / maxL) * (ch - 20);
+                    const x = cx + 8 + (i / (lossHistory.length - 1)) * (cw - 16);
+                    const y = cy + ch - 8 - (lossHistory[i] / maxL) * (ch - 22);
                     if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                 }
                 ctx.strokeStyle = '#ff6b6b';
@@ -467,7 +536,8 @@
             ctx.fillStyle = '#ff6b6b';
             ctx.font = '10px monospace';
             ctx.textAlign = 'left';
-            ctx.fillText(net.loss.toFixed(4), cx + 5, cy + ch - 14);
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('L=' + net.loss.toFixed(4), cx + 5, cy + ch - 2);
         }
 
         // ===== STEP LOGIC =====
@@ -475,47 +545,59 @@
             step++;
 
             if (step === 1) {
-                // Forward pass
                 forwardPass();
                 round++;
                 lossHistory.push(net.loss);
-                msgEl.innerHTML = `🤔 <b>Die KI rechnet...</b> Jedes Neuron nimmt die Werte von links, multipliziert sie mit seinen Gewichten, und gibt ein Ergebnis weiter. Am Ende kommen zwei Zahlen raus.`;
+                focusLayer = -1;
+                msgEl.innerHTML = `🤔 <b>Forward Pass:</b> Die Werte fließen von links nach rechts. Jedes Neuron rechnet: (Eingaben × Gewichte) → Sigmoid → Ausgabe.`;
                 draw();
             } else if (step === 2) {
-                // Show error
-                const e0 = net.errors[0], e1 = net.errors[1];
-                let msg = '📏 <b>Vergleich mit dem Ziel:</b> ';
-                msg += `Oben: ${net.a3[0].toFixed(2)} (Ziel: ${TARGETS[0]}) → `;
-                msg += Math.abs(e0) < 0.03 ? '✅ Passt! ' : (e0 > 0 ? '⬆️ zu niedrig! ' : '⬇️ zu hoch! ');
-                msg += `Unten: ${net.a3[1].toFixed(2)} (Ziel: ${TARGETS[1]}) → `;
-                msg += Math.abs(e1) < 0.03 ? '✅ Passt!' : (e1 > 0 ? '⬆️ zu niedrig!' : '⬇️ zu hoch!');
+                focusLayer = 3;
+                let msg = `📏 <b>Vergleich am Ausgang:</b> `;
+                for (let i = 0; i < 2; i++) {
+                    const d = net.errors[i];
+                    msg += `Neuron ${i+1}: ${net.a3[i].toFixed(2)} `;
+                    msg += Math.abs(d) < 0.03 ? '✅ ' : (d > 0 ? '(zu niedrig↑) ' : '(zu hoch↓) ');
+                }
+                msg += `→ Die Balken rechts zeigen es!`;
                 msgEl.innerHTML = msg;
                 draw();
             } else if (step === 3) {
-                // Backprop – show gradients
-                backprop();
-                msgEl.innerHTML = `📐 <b>Gradient (Wegweiser):</b> Das Netzwerk geht rückwärts durch alle Verbindungen und fragt: "Muss dieses Gewicht größer oder kleiner werden?" Die Farben zeigen die Antwort!`;
+                focusLayer = 3;
+                backpropLayer3();
+                msgEl.innerHTML = `📐 <b>Gradienten Schicht 3 (Ausgang):</b> "Welche Verbindungen zur Ausgabe müssen stärker/schwächer werden?" Rot = zu stark, Grün = zu schwach.`;
                 draw();
             } else if (step === 4) {
-                // Update
+                focusLayer = 2;
+                backpropLayer2();
+                msgEl.innerHTML = `📐 <b>Gradienten Schicht 2:</b> Die Ausgabe-Schicht ist fertig (ausgegraut). Jetzt fragt Schicht 2: "Was hätte ICH anders machen sollen, damit die Ausgabe besser wird?"`;
+                draw();
+            } else if (step === 5) {
+                focusLayer = 1;
+                backpropLayer1();
+                msgEl.innerHTML = `📐 <b>Gradienten Schicht 1:</b> Noch eine Schicht zurück! "Was hätte ICH anders machen sollen?" – Die Kettenregel reicht den Wunsch immer weiter nach hinten.`;
+                draw();
+            } else if (step === 6) {
+                focusLayer = -1;
                 updateWeights();
-                msgEl.innerHTML = `🔧 <b>Angepasst!</b> Alle Gewichte wurden ein Stückchen in die richtige Richtung gedreht. Beim nächsten Mal sollte das Ergebnis besser sein!`;
+                msgEl.innerHTML = `🔧 <b>Alle Gewichte angepasst!</b> Jedes Gewicht wurde ein Stückchen in die richtige Richtung gedreht. Nächste Runde!`;
                 draw();
             } else {
-                // Next round
                 step = 0;
+                focusLayer = -1;
                 nextStep();
             }
 
-            infoEl.textContent = `Runde ${round} | Loss: ${net.loss.toFixed(4)}`;
+            infoEl.textContent = `Runde ${round} | Loss: ${net.loss.toFixed(4)} | Fokus: ${focusLayer > 0 ? 'Schicht ' + focusLayer : '–'}`;
         }
 
         function reset() {
             initNetwork();
             step = 0;
             round = 0;
+            focusLayer = -1;
             lossHistory = [];
-            msgEl.innerHTML = '👋 Neues Netzwerk mit zufälligen Gewichten! Klicke "Nächster Schritt" um zu starten.';
+            msgEl.innerHTML = '👋 Neues Netzwerk! Klicke "Nächster Schritt" um zu starten.';
             infoEl.textContent = '';
             draw();
         }
@@ -523,7 +605,6 @@
         document.getElementById('btnNext').addEventListener('click', nextStep);
         document.getElementById('btnReset').addEventListener('click', reset);
 
-        // Init
         initNetwork();
         draw();
     </script>
