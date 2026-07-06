@@ -109,6 +109,7 @@
 		_js("activation_atlas.js");
 		_js("activation_atlas_tab.js");
 		_js("gradient_flow_heatmap.js");
+		_js("skip_connection.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
