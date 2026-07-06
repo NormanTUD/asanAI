@@ -991,21 +991,6 @@ function show_or_hide_download_with_data() {
 	$("#download_with_data").toggle(show);
 }
 
-async function change_optimizer() {
-	var type = get_optimizer();
-	$(".optimizer_metadata").hide();
-
-	$("#" + type + "_metadata").show();
-
-	await updated_page();
-
-	await get_model_data();
-}
-
-function set_momentum(val) {
-	$("#momentum_" + get_optimizer()).val(val);
-}
-
 function set_validation_split(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not an number but " + typeof(number));
 	val = parse_int(val);
