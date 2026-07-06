@@ -1596,6 +1596,8 @@ function apply_advanced_section_state_to_row($parent_row, $new_row) {
 
 	if (!is_expanded) {
 		$new_row.css("display", "none");
+	} else {
+		$new_row.css("display", "");
 	}
 }
 
