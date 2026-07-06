@@ -1667,62 +1667,89 @@ function _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input
  * Looks for any skip_proj layer that appears shortly after the target layer.
  */
 function _find_skip_proj_by_proximity(all_layers, model_layer_idx, gui_layer_idx) {
-    // Strategy 1: Try all naming patterns with gui_layer_idx
+    // Strategy 1: Try all naming patterns — the number in the name might be
+    // either the gui_layer_idx OR the model layer index
     for (var i = 0; i < all_layers.length; i++) {
         var lname = all_layers[i].name || "";
         if (!lname.includes("skip_proj_")) continue;
         
         // Try extracting any number from the name
-        var match = lname.match(/skip_proj_\w+_(\d+)/);
+        var match = lname.match(/skip_proj_\w+?_(\d+)/);
         if (match) {
             var extracted_idx = parseInt(match[1], 10);
             if (extracted_idx === gui_layer_idx) {
-                return all_layers[i];
+                // Verify it actually has weights
+                var k = _extract_kernel_from_layer(all_layers[i]);
+                if (k && !tensor_is_disposed(k)) {
+                    return all_layers[i];
+                }
             }
         }
     }
-    
-    // Strategy 2: Look for skip_proj layers positioned right after model_layer_idx
-    // In a functional model, the skip_proj layer typically follows the main layer
-    for (var i = 0; i < all_layers.length; i++) {
-        var lname = all_layers[i].name || "";
-        if (!lname.includes("skip_proj_")) continue;
-        
-        // Check if this skip_proj has weights (meaning it's a real projection, not just a placeholder)
-        var kernel = _extract_kernel_from_layer(all_layers[i]);
-        if (kernel && !tensor_is_disposed(kernel)) {
-            // Check if this layer's input connects to our target layer
-            try {
-                var inbound = all_layers[i].inboundNodes;
-                if (inbound && inbound.length > 0) {
-                    var inbound_layers = inbound[0].inboundLayers || [];
-                    if (!Array.isArray(inbound_layers)) inbound_layers = [inbound_layers];
-                    for (var il = 0; il < inbound_layers.length; il++) {
-                        // Find the index of the inbound layer in all_layers
-                        for (var ai = 0; ai < all_layers.length; ai++) {
-                            if (all_layers[ai] === inbound_layers[il]) {
-                                // Count how many "real" (non-skip) layers are before this
-                                var real_count = 0;
-                                for (var rc = 0; rc <= ai; rc++) {
-                                    var rcname = all_layers[rc].name || "";
-                                    if (!rcname.includes("skip_proj_") && !rcname.includes("skip_add_") && !rcname.includes("skip_scale_")) {
-                                        real_count++;
-                                    }
-                                }
-                                // real_count - 1 should be approximately gui_layer_idx
-                                if (Math.abs((real_count - 1) - gui_layer_idx) <= 1) {
-                                    return all_layers[i];
-                                }
+
+    // Strategy 2: Convert gui_layer_idx to model layer index and try that
+    if (model && model.layers) {
+        var gui_count = 0;
+        var target_model_idx = null;
+        for (var mi = 0; mi < model.layers.length; mi++) {
+            var mname = model.layers[mi].name || "";
+            if (mname.includes("skip_proj_") || mname.includes("skip_add_") || mname.includes("skip_scale_")) {
+                continue;
+            }
+            if (gui_count === gui_layer_idx) {
+                target_model_idx = mi;
+                break;
+            }
+            gui_count++;
+        }
+
+        if (target_model_idx !== null) {
+            for (var i = 0; i < all_layers.length; i++) {
+                var lname = all_layers[i].name || "";
+                if (!lname.includes("skip_proj_")) continue;
+                
+                var match = lname.match(/(\d+)/g);
+                if (match) {
+                    for (var m = 0; m < match.length; m++) {
+                        if (parseInt(match[m], 10) === target_model_idx) {
+                            var k = _extract_kernel_from_layer(all_layers[i]);
+                            if (k && !tensor_is_disposed(k)) {
+                                return all_layers[i];
                             }
                         }
                     }
                 }
-            } catch (e) {
-                // Silently continue
             }
         }
     }
-    
+
+    // Strategy 3: If there's only ONE skip_proj layer and ONE skip connection enabled,
+    // just use it
+    var skip_proj_layers = [];
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (lname.includes("skip_proj_")) {
+            var k = _extract_kernel_from_layer(all_layers[i]);
+            if (k && !tensor_is_disposed(k)) {
+                skip_proj_layers.push(all_layers[i]);
+            }
+        }
+    }
+
+    // Count enabled skip connections
+    var enabled_count = 0;
+    var enabled_gui_idx = null;
+    for (var s in skip_connection_settings) {
+        if (skip_connection_settings[s] && skip_connection_settings[s].enabled) {
+            enabled_count++;
+            enabled_gui_idx = parseInt(s, 10);
+        }
+    }
+
+    if (skip_proj_layers.length === 1 && enabled_count === 1 && enabled_gui_idx === gui_layer_idx) {
+        return skip_proj_layers[0];
+    }
+
     return null;
 }
 
@@ -2236,40 +2263,64 @@ function _extract_skip_kernel_latex(skip_proj_layer) {
 /**
  * Extract the kernel tensor from a skip projection layer.
  * Handles Dense, Conv2D, and Conv1D projection layers.
- * Searches both the .kernel property and the .weights array.
+ * Tries multiple approaches to find the kernel weights.
  */
 function _extract_kernel_from_layer(layer) {
 	if (!layer) return null;
 
-	// Try direct .kernel property first (works for Dense and Conv layers)
-	if (layer.kernel && layer.kernel.val && !tensor_is_disposed(layer.kernel.val)) {
-		return layer.kernel.val;
-	}
+	// Approach 1: Direct .kernel property (Dense layers)
+	try {
+		if (layer.kernel && layer.kernel.val) {
+			if (!layer.kernel.val.isDisposed) {
+				return layer.kernel.val;
+			}
+		}
+	} catch (e) {}
 
-	// Fallback: search through weights array
-	if (layer.weights && Array.isArray(layer.weights)) {
-		for (var k = 0; k < layer.weights.length; k++) {
-			var wname = (layer.weights[k].name || "").toLowerCase();
-			if (wname.includes("kernel")) {
-				var val = layer.weights[k].val;
-				if (val && !tensor_is_disposed(val)) {
-					return val;
+	// Approach 2: Search through .weights array by name
+	try {
+		if (layer.weights && Array.isArray(layer.weights)) {
+			for (var k = 0; k < layer.weights.length; k++) {
+				var wname = (layer.weights[k].name || "").toLowerCase();
+				if (wname.includes("kernel")) {
+					var val = layer.weights[k].val;
+					if (val && !val.isDisposed) {
+						return val;
+					}
 				}
 			}
 		}
-	}
+	} catch (e) {}
 
-	// Last resort: try getWeights()
+	// Approach 3: getWeights() — returns actual tensor objects
 	try {
 		if (typeof layer.getWeights === "function") {
 			var weights = layer.getWeights();
-			if (weights && weights.length > 0 && !weights[0].isDisposed) {
-				return weights[0]; // First weight is typically the kernel
+			if (weights && weights.length > 0) {
+				// First weight is typically the kernel
+				if (!weights[0].isDisposed) {
+					return weights[0];
+				}
 			}
 		}
-	} catch (e) {
-		// Silently fail
-	}
+	} catch (e) {}
+
+	// Approach 4: Try trainableWeights
+	try {
+		if (layer.trainableWeights && layer.trainableWeights.length > 0) {
+			var tw = layer.trainableWeights[0];
+			if (tw && tw.val && !tw.val.isDisposed) {
+				return tw.val;
+			}
+			// Some versions use .read()
+			if (tw && typeof tw.read === "function") {
+				var readVal = tw.read();
+				if (readVal && !readVal.isDisposed) {
+					return readVal;
+				}
+			}
+		}
+	} catch (e) {}
 
 	return null;
 }
@@ -2315,24 +2366,59 @@ function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
 
 /**
  * Checks if a skip layer name belongs to a given gui_layer_idx.
- * Supports multiple naming patterns.
+ * 
+ * IMPORTANT: The number in the skip layer name (e.g., skip_proj_dense_3_abc123)
+ * is the model.layers index at creation time, NOT the gui_layer_idx.
+ * We need to convert between the two.
  */
 function _skip_proj_belongs_to_layer(layer_name, gui_layer_idx) {
-    // Pattern 1: skip_proj_dense_4_xxxx, skip_proj_conv2d_4_xxxx, etc.
+    // Extract the number from the layer name
     var patterns = [
         /skip_proj_dense_(\d+)/,
         /skip_proj_conv2d_(\d+)/,
         /skip_proj_conv1d_(\d+)/,
         /skip_add_(\d+)/,
         /skip_scale_(\d+)/,
-        /skip_proj_(\d+)/       // Generic fallback pattern
+        /skip_proj_(\d+)/
     ];
 
+    var extracted_idx = null;
     for (var p = 0; p < patterns.length; p++) {
         var match = layer_name.match(patterns[p]);
         if (match) {
-            var extracted_idx = parseInt(match[1], 10);
-            return extracted_idx === gui_layer_idx;
+            extracted_idx = parseInt(match[1], 10);
+            break;
+        }
+    }
+
+    if (extracted_idx === null) return false;
+
+    // The extracted_idx is the layer_idx used in apply_skip_connection(),
+    // which is the gui_layer_idx (the index among non-skip layers).
+    // This is because in model.js, the skip connection is applied using
+    // the loop counter that skips internal layers.
+    // 
+    // BUT if apply_skip_connection uses the raw model layer index,
+    // we need to map it back. Let's check both:
+    
+    // Direct match (if apply_skip_connection uses gui_layer_idx)
+    if (extracted_idx === gui_layer_idx) return true;
+    
+    // Mapped match (if apply_skip_connection uses model layer index)
+    // Convert gui_layer_idx to model layer index
+    if (model && model.layers) {
+        var gui_count = 0;
+        for (var i = 0; i < model.layers.length; i++) {
+            var lname = model.layers[i].name || "";
+            if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) {
+                continue;
+            }
+            if (gui_count === gui_layer_idx) {
+                // The model layer index for this gui_layer_idx is 'i'
+                if (extracted_idx === i) return true;
+                break;
+            }
+            gui_count++;
         }
     }
 
