@@ -1799,112 +1799,173 @@ function _get_section_class_from_row($row) {
 }
 
 function apply_skip_connection(input_tensor, layer_output, strength, layer_type, layer_idx) {
-	var input_shape = input_tensor.shape; // [null, ...]
-	var output_shape = layer_output.shape; // [null, ...]
+	var input_shape = input_tensor.shape;
+	var output_shape = layer_output.shape;
 
-	// Remove batch dimension for comparison
 	var in_shape = input_shape.slice(1);
 	var out_shape = output_shape.slice(1);
 
 	var projected_input;
 
-	// Get the initializer config from skip connection settings (if set by user)
 	var skip_initializer_config = _get_skip_initializer_config(layer_idx);
 
-	// Check if shapes already match
-	if (JSON.stringify(in_shape) === JSON.stringify(out_shape)) {
-		// Shapes match, direct addition
+	var shapes_match = (JSON.stringify(in_shape) === JSON.stringify(out_shape));
+	var has_custom_initializer = _skip_has_custom_initializer(layer_idx);
+
+	if (shapes_match && !has_custom_initializer) {
+		// Shapes match and no custom initializer — direct identity addition
 		projected_input = input_tensor;
+	} else if (shapes_match && has_custom_initializer) {
+		// Shapes match BUT user set a custom initializer — create projection layer
+		projected_input = _create_skip_projection_same_shape(
+			input_tensor, in_shape, layer_idx, skip_initializer_config
+		);
 	} else if (in_shape.length === out_shape.length) {
-		// Same rank but different dimensions - need projection
-		if (in_shape.length === 1) {
-			// Dense-like: project with a Dense layer
-			var dense_config = {
-				units: out_shape[0],
-				useBias: false,
-				trainable: true,
-				name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
-			};
-			if (skip_initializer_config) {
-				dense_config.kernelInitializer = skip_initializer_config;
-			}
-			var projection = tf.layers.dense(dense_config);
-			projected_input = projection.apply(input_tensor);
-		} else if (in_shape.length === 3) {
-			// Conv2D-like: [H, W, C] -> use 1x1 conv with strides to match spatial + channel dims
-			var target_h = out_shape[0];
-			var target_w = out_shape[1];
-			var target_c = out_shape[2];
-
-			var stride_h = Math.max(1, Math.floor(in_shape[0] / target_h));
-			var stride_w = Math.max(1, Math.floor(in_shape[1] / target_w));
-
-			var conv2d_config = {
-				filters: target_c,
-				kernelSize: [1, 1],
-				strides: [stride_h, stride_w],
-				padding: "valid",
-				useBias: false,
-				trainable: true,
-				name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
-			};
-			if (skip_initializer_config) {
-				conv2d_config.kernelInitializer = skip_initializer_config;
-			}
-			var projection_conv = tf.layers.conv2d(conv2d_config);
-			projected_input = projection_conv.apply(input_tensor);
-
-			// After strided conv, check if spatial dims match exactly
-			var proj_shape = projected_input.shape.slice(1);
-			if (proj_shape[0] !== target_h || proj_shape[1] !== target_w) {
-				throw new Error("Spatial dimension mismatch after projection: got [" + proj_shape.join(",") + "] expected [" + out_shape.join(",") + "]");
-			}
-		} else if (in_shape.length === 2) {
-			// Conv1D-like: [steps, channels]
-			var target_steps = out_shape[0];
-			var target_channels = out_shape[1];
-
-			var stride_s = Math.max(1, Math.floor(in_shape[0] / target_steps));
-
-			var conv1d_config = {
-				filters: target_channels,
-				kernelSize: 1,
-				strides: stride_s,
-				padding: "valid",
-				useBias: false,
-				trainable: true,
-				name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
-			};
-			if (skip_initializer_config) {
-				conv1d_config.kernelInitializer = skip_initializer_config;
-			}
-			var projection_conv1d = tf.layers.conv1d(conv1d_config);
-			projected_input = projection_conv1d.apply(input_tensor);
-
-			var proj_shape_1d = projected_input.shape.slice(1);
-			if (proj_shape_1d[0] !== target_steps) {
-				throw new Error("Temporal dimension mismatch after 1D projection");
-			}
-		} else {
-			throw new Error("Skip connection not supported for rank " + in_shape.length);
-		}
+		projected_input = _create_skip_projection_different_shape(
+			input_tensor, in_shape, out_shape, layer_idx, skip_initializer_config
+		);
 	} else {
-		// Different ranks - cannot apply skip connection
 		throw new Error("Cannot apply skip connection: input rank " + in_shape.length + " != output rank " + out_shape.length);
 	}
 
-	// Apply strength scaling: output = layer_output + strength * projected_input
-	if (strength === 1.0) {
-		var added = tf.layers.add({
-			name: "skip_add_" + layer_idx + "_" + uuidv4().substring(0, 8)
-		}).apply([layer_output, projected_input]);
-		return added;
+	// Apply addition
+	var added = tf.layers.add({
+		name: "skip_add_" + layer_idx + "_" + uuidv4().substring(0, 8)
+	}).apply([layer_output, projected_input]);
+
+	return added;
+}
+
+function _skip_has_custom_initializer(layer_idx) {
+	if (!skip_connection_settings[layer_idx]) {
+		return false;
+	}
+
+	var initializer_name = skip_connection_settings[layer_idx].initializer;
+
+	if (!initializer_name || initializer_name === "glorotUniform") {
+		return false;
+	}
+
+	return true;
+}
+
+function _create_skip_projection_same_shape(input_tensor, in_shape, layer_idx, skip_initializer_config) {
+	if (in_shape.length === 1) {
+		var dense_config = {
+			units: in_shape[0],
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			dense_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection = tf.layers.dense(dense_config);
+		return projection.apply(input_tensor);
+	} else if (in_shape.length === 3) {
+		var conv2d_config = {
+			filters: in_shape[2],
+			kernelSize: [1, 1],
+			strides: [1, 1],
+			padding: "same",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv2d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv = tf.layers.conv2d(conv2d_config);
+		return projection_conv.apply(input_tensor);
+	} else if (in_shape.length === 2) {
+		var conv1d_config = {
+			filters: in_shape[1],
+			kernelSize: 1,
+			strides: 1,
+			padding: "same",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv1d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv1d = tf.layers.conv1d(conv1d_config);
+		return projection_conv1d.apply(input_tensor);
 	} else {
-		// For non-unity strength, the projection weights will learn the appropriate scaling.
-		// We just do the add directly — no non-trainable scale layer.
-		var added_scaled = tf.layers.add({
-			name: "skip_add_" + layer_idx + "_" + uuidv4().substring(0, 8)
-		}).apply([layer_output, projected_input]);
-		return added_scaled;
+		throw new Error("Skip connection with custom initializer not supported for rank " + in_shape.length);
+	}
+}
+
+function _create_skip_projection_different_shape(input_tensor, in_shape, out_shape, layer_idx, skip_initializer_config) {
+	if (in_shape.length === 1) {
+		var dense_config = {
+			units: out_shape[0],
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			dense_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection = tf.layers.dense(dense_config);
+		return projection.apply(input_tensor);
+	} else if (in_shape.length === 3) {
+		var target_h = out_shape[0];
+		var target_w = out_shape[1];
+		var target_c = out_shape[2];
+
+		var stride_h = Math.max(1, Math.floor(in_shape[0] / target_h));
+		var stride_w = Math.max(1, Math.floor(in_shape[1] / target_w));
+
+		var conv2d_config = {
+			filters: target_c,
+			kernelSize: [1, 1],
+			strides: [stride_h, stride_w],
+			padding: "valid",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv2d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv = tf.layers.conv2d(conv2d_config);
+		var projected_input = projection_conv.apply(input_tensor);
+
+		var proj_shape = projected_input.shape.slice(1);
+		if (proj_shape[0] !== target_h || proj_shape[1] !== target_w) {
+			throw new Error("Spatial dimension mismatch after projection: got [" + proj_shape.join(",") + "] expected [" + out_shape.join(",") + "]");
+		}
+		return projected_input;
+	} else if (in_shape.length === 2) {
+		var target_steps = out_shape[0];
+		var target_channels = out_shape[1];
+
+		var stride_s = Math.max(1, Math.floor(in_shape[0] / target_steps));
+
+		var conv1d_config = {
+			filters: target_channels,
+			kernelSize: 1,
+			strides: stride_s,
+			padding: "valid",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv1d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv1d = tf.layers.conv1d(conv1d_config);
+		var projected_input_1d = projection_conv1d.apply(input_tensor);
+
+		var proj_shape_1d = projected_input_1d.shape.slice(1);
+		if (proj_shape_1d[0] !== target_steps) {
+			throw new Error("Temporal dimension mismatch after 1D projection");
+		}
+		return projected_input_1d;
+	} else {
+		throw new Error("Skip connection not supported for rank " + in_shape.length);
 	}
 }
