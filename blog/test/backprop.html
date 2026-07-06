@@ -3,652 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backpropagation visuell erklärt</title>
+    <title>🧠 Wie lernt eine KI?</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background: #1a1a2e;
-            color: #eee;
+            color: #fff;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            color: #00d4ff;
-            font-size: 1.8em;
-        }
-        .subtitle {
-            text-align: center;
-            color: #aaa;
-            margin-bottom: 20px;
-            font-size: 0.95em;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        #btnForward {
-            background: #00d4ff;
-            color: #1a1a2e;
-        }
-        #btnBackprop {
-            background: #ff6b6b;
-            color: #fff;
-        }
-        #btnUpdate {
-            background: #51cf66;
-            color: #1a1a2e;
-        }
-        #btnReset {
-            background: #666;
-            color: #fff;
-        }
-        #btnAutoTrain {
-            background: #ffd43b;
-            color: #1a1a2e;
-        }
+        h1 { color: #00d4ff; margin-bottom: 5px; font-size: 1.6em; }
+        .subtitle { color: #aaa; margin-bottom: 20px; font-size: 0.9em; }
+        
         canvas {
-            display: block;
-            margin: 0 auto;
-            border-radius: 12px;
+            border-radius: 16px;
             background: #16213e;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
         }
-        .info-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .info-box {
-            background: #16213e;
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #333;
-        }
-        .info-box h3 {
-            color: #00d4ff;
-            margin-bottom: 8px;
-            font-size: 0.95em;
-        }
-        .info-box p {
-            font-size: 0.85em;
-            line-height: 1.5;
-            color: #ccc;
-        }
-        .loss-display {
-            text-align: center;
-            margin: 15px 0;
-            font-size: 1.2em;
-        }
-        .loss-display span {
-            color: #ff6b6b;
-            font-weight: bold;
-            font-size: 1.4em;
-        }
-        .epoch-display {
-            color: #51cf66;
-            font-weight: bold;
-        }
-        .explanation {
-            text-align: center;
-            margin: 10px 0;
-            padding: 10px 20px;
+        
+        .message {
             background: #0f3460;
-            border-radius: 8px;
-            font-size: 0.9em;
-            min-height: 50px;
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 16px;
+            font-size: 1.1em;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.5;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .target-display {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 0.95em;
+        
+        button {
+            padding: 16px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            cursor: pointer;
+            font-weight: bold;
+            background: #00d4ff;
+            color: #1a1a2e;
+            transition: all 0.2s;
+            margin: 5px;
         }
-        .target-display strong {
-            color: #ffd43b;
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,212,255,0.3);
         }
-        @media (max-width: 768px) {
-            .info-panel {
-                grid-template-columns: 1fr;
-            }
-            canvas {
-                width: 100% !important;
-                height: auto !important;
-            }
+        #btnReset {
+            background: #555;
+            color: #fff;
+            font-size: 0.9em;
+            padding: 10px 20px;
         }
+        .buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .epoch { color: #51cf66; margin-top: 10px; font-size: 0.9em; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧠 Backpropagation – Visuell Erklärt</h1>
-        <p class="subtitle">Ein echtes Mini-Netzwerk lernt vor deinen Augen. Sieh zu, wie Gradienten entstehen!</p>
-        
-        <div class="target-display">
-            Aufgabe: Input <strong id="inputDisplay">0.5</strong> → Gewünschter Output (Target): <strong id="targetDisplay">0.8</strong>
-            | Epoche: <span class="epoch-display" id="epochDisplay">0</span>
-        </div>
-        
-        <div class="loss-display">
-            Loss (Fehler): <span id="lossDisplay">?</span>
-        </div>
-        
-        <div class="explanation" id="explanation">
-            👆 Klicke "Forward Pass" um zu starten! Das Netzwerk wird eine Vorhersage machen.
-        </div>
-        
-        <div class="controls">
-            <button id="btnForward">1️⃣ Forward Pass</button>
-            <button id="btnBackprop">2️⃣ Backpropagation</button>
-            <button id="btnUpdate">3️⃣ Gewichte anpassen</button>
-            <button id="btnAutoTrain">⚡ Auto-Training (50x)</button>
-            <button id="btnReset">🔄 Reset</button>
-        </div>
-        
-        <canvas id="canvas" width="1100" height="520"></canvas>
-        
-        <div class="info-panel">
-            <div class="info-box">
-                <h3>🔵 Forward Pass</h3>
-                <p>Das Netzwerk berechnet von links nach rechts: Jedes Neuron nimmt seinen Input, multipliziert ihn mit dem Gewicht, addiert den Bias, und wendet die Sigmoid-Funktion an. Am Ende kommt eine Vorhersage raus.</p>
-            </div>
-            <div class="info-box">
-                <h3>🔴 Gradient (Backprop)</h3>
-                <p>Der Gradient sagt jedem Gewicht: "Wenn ich dich ein kleines bisschen erhöhe, wird der Loss größer oder kleiner?" Das ist die Ableitung. Positiver Gradient = Gewicht muss runter. Negativer Gradient = Gewicht muss rauf.</p>
-            </div>
-            <div class="info-box">
-                <h3>🟢 Update</h3>
-                <p>Die Gewichte werden entgegen der Gradientenrichtung angepasst: <code>neues_gewicht = altes - lernrate × gradient</code>. So "rutscht" das Netzwerk den Berg hinunter zum Minimum des Fehlers.</p>
-            </div>
-        </div>
+    <h1>🧠 Wie lernt eine KI?</h1>
+    <p class="subtitle">Klicke "Nächster Schritt" und schau zu!</p>
+    
+    <canvas id="canvas" width="600" height="400"></canvas>
+    
+    <div class="message" id="message">
+        👋 Die KI soll lernen, die richtige Zahl zu erraten. Klicke auf den Knopf!
     </div>
+    
+    <div class="buttons">
+        <button id="btnNext">▶️ Nächster Schritt</button>
+        <button id="btnReset">🔄 Neu starten</button>
+    </div>
+    <p class="epoch" id="epoch"></p>
 
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const msgEl = document.getElementById('message');
+        const epochEl = document.getElementById('epoch');
         
-        // --- Neural Network Definition ---
-        // Simple network: 1 input -> 2 hidden -> 1 output
-        const LEARNING_RATE = 0.5;
+        // Super simple: one neuron, one weight, one bias
+        const TARGET = 0.8;
+        let weight = 0.3;  // starts wrong on purpose
+        let input = 1.0;
+        let output = 0;
+        let gradient = 0;
+        let loss = 0;
+        let step = 0; // 0=predict, 1=show error, 2=show gradient, 3=update
+        let round = 0;
+        const LR = 0.3;
         
-        let network = {
-            input: 0.5,
-            target: 0.8,
-            // Hidden layer (2 neurons)
-            w1: Math.random() * 2 - 1,  // weight input -> hidden1
-            b1: Math.random() * 0.5,
-            w2: Math.random() * 2 - 1,  // weight input -> hidden2
-            b2: Math.random() * 0.5,
-            // Output layer
-            w3: Math.random() * 2 - 1,  // weight hidden1 -> output
-            w4: Math.random() * 2 - 1,  // weight hidden2 -> output
-            b3: Math.random() * 0.5,
-            // Computed values
-            h1_raw: 0, h1: 0,
-            h2_raw: 0, h2: 0,
-            o_raw: 0, output: 0,
-            loss: 0,
-            // Gradients
-            grad_w1: 0, grad_b1: 0,
-            grad_w2: 0, grad_b2: 0,
-            grad_w3: 0, grad_w4: 0, grad_b3: 0,
-            // State
-            phase: 'idle', // idle, forward, backprop, updated
-            epoch: 0
-        };
+        // History for mini chart
+        let lossHistory = [];
         
-        function sigmoid(x) {
-            return 1 / (1 + Math.exp(-x));
+        function predict() {
+            output = weight * input; // simple linear neuron
+            loss = TARGET - output;  // signed error
         }
         
-        function sigmoidDerivative(x) {
-            return x * (1 - x);
-        }
-        
-        function forwardPass() {
-            const n = network;
-            n.h1_raw = n.input * n.w1 + n.b1;
-            n.h1 = sigmoid(n.h1_raw);
-            n.h2_raw = n.input * n.w2 + n.b2;
-            n.h2 = sigmoid(n.h2_raw);
-            n.o_raw = n.h1 * n.w3 + n.h2 * n.w4 + n.b3;
-            n.output = sigmoid(n.o_raw);
-            n.loss = 0.5 * Math.pow(n.target - n.output, 2);
-            n.phase = 'forward';
-            n.epoch++;
-            updateDisplays();
-            draw();
-            document.getElementById('explanation').innerHTML = 
-                `✅ <b>Forward Pass fertig!</b> Das Netzwerk sagt: <b>${n.output.toFixed(4)}</b>. ` +
-                (Math.abs(n.output - n.target) < 0.01 ? 
-                    '🎉 Fast perfekt!' : 
-                    `Target ist ${n.target}. Differenz: ${(n.target - n.output).toFixed(4)}. Jetzt Backprop starten!`);
-        }
-        
-        function backpropagate() {
-            const n = network;
-            if (n.phase !== 'forward') {
-                document.getElementById('explanation').innerHTML = '⚠️ Erst Forward Pass machen!';
-                return;
-            }
-            
-            // Output layer gradients
-            const dLoss_dOutput = -(n.target - n.output); // derivative of 0.5*(target-output)^2
-            const dOutput_dRaw = sigmoidDerivative(n.output);
-            const delta_output = dLoss_dOutput * dOutput_dRaw;
-            
-            n.grad_w3 = delta_output * n.h1;
-            n.grad_w4 = delta_output * n.h2;
-            n.grad_b3 = delta_output;
-            
-            // Hidden layer gradients (chain rule!)
-            const delta_h1 = delta_output * n.w3 * sigmoidDerivative(n.h1);
-            const delta_h2 = delta_output * n.w4 * sigmoidDerivative(n.h2);
-            
-            n.grad_w1 = delta_h1 * n.input;
-            n.grad_b1 = delta_h1;
-            n.grad_w2 = delta_h2 * n.input;
-            n.grad_b2 = delta_h2;
-            
-            n.phase = 'backprop';
-            draw();
-            
-            document.getElementById('explanation').innerHTML = 
-                `🔴 <b>Gradienten berechnet!</b> Jedes Gewicht weiß jetzt, in welche Richtung es sich ändern muss. ` +
-                `z.B. w3 Gradient: ${n.grad_w3.toFixed(4)} → Gewicht muss ${n.grad_w3 > 0 ? 'kleiner' : 'größer'} werden!`;
-        }
-        
-        function updateWeights() {
-            const n = network;
-            if (n.phase !== 'backprop') {
-                document.getElementById('explanation').innerHTML = '⚠️ Erst Backpropagation machen!';
-                return;
-            }
-            
-            n.w1 -= LEARNING_RATE * n.grad_w1;
-            n.b1 -= LEARNING_RATE * n.grad_b1;
-            n.w2 -= LEARNING_RATE * n.grad_w2;
-            n.b2 -= LEARNING_RATE * n.grad_b2;
-            n.w3 -= LEARNING_RATE * n.grad_w3;
-            n.w4 -= LEARNING_RATE * n.grad_w4;
-            n.b3 -= LEARNING_RATE * n.grad_b3;
-            
-            n.phase = 'updated';
-            draw();
-            
-            document.getElementById('explanation').innerHTML = 
-                `🟢 <b>Gewichte angepasst!</b> Alle Gewichte wurden um (Lernrate × Gradient) verschoben. ` +
-                `Starte den nächsten Forward Pass, um zu sehen ob der Loss sinkt!`;
-        }
-        
-        function autoTrain(steps = 50) {
-            let i = 0;
-            function step() {
-                if (i >= steps) {
-                    draw();
-                    document.getElementById('explanation').innerHTML = 
-                        `⚡ <b>Auto-Training fertig!</b> ${steps} Epochen trainiert. Loss: ${network.loss.toFixed(6)}. Output: ${network.output.toFixed(4)} (Target: ${network.target})`;
-                    return;
-                }
-                forwardPass();
-                backpropagate();
-                updateWeights();
-                i++;
-                if (i % 5 === 0 || i === steps) {
-                    draw();
-                    updateDisplays();
-                }
-                setTimeout(step, 60);
-            }
-            step();
-        }
-        
-        function resetNetwork() {
-            network.w1 = Math.random() * 2 - 1;
-            network.b1 = Math.random() * 0.5;
-            network.w2 = Math.random() * 2 - 1;
-            network.b2 = Math.random() * 0.5;
-            network.w3 = Math.random() * 2 - 1;
-            network.w4 = Math.random() * 2 - 1;
-            network.b3 = Math.random() * 0.5;
-            network.h1 = 0; network.h2 = 0; network.output = 0;
-            network.loss = 0;
-            network.grad_w1 = 0; network.grad_w2 = 0;
-            network.grad_w3 = 0; network.grad_w4 = 0;
-            network.grad_b1 = 0; network.grad_b2 = 0; network.grad_b3 = 0;
-            network.phase = 'idle';
-            network.epoch = 0;
-            updateDisplays();
-            draw();
-            document.getElementById('explanation').innerHTML = 
-                '🔄 Netzwerk zurückgesetzt mit neuen zufälligen Gewichten. Starte mit Forward Pass!';
-        }
-        
-        function updateDisplays() {
-            document.getElementById('lossDisplay').textContent = network.loss.toFixed(6);
-            document.getElementById('epochDisplay').textContent = network.epoch;
-            document.getElementById('inputDisplay').textContent = network.input;
-            document.getElementById('targetDisplay').textContent = network.target;
-        }
-        
-        // --- Drawing ---
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const n = network;
             
-            // Node positions
-            const nodes = {
-                input: { x: 100, y: 260 },
-                h1: { x: 400, y: 150 },
-                h2: { x: 400, y: 370 },
-                output: { x: 700, y: 260 },
-                target: { x: 950, y: 260 }
-            };
+            const centerY = 200;
             
-            // Draw connections with gradient colors
-            drawConnection(nodes.input, nodes.h1, n.w1, n.grad_w1, 'w1');
-            drawConnection(nodes.input, nodes.h2, n.w2, n.grad_w2, 'w2');
-            drawConnection(nodes.h1, nodes.output, n.w3, n.grad_w3, 'w3');
-            drawConnection(nodes.h2, nodes.output, n.w4, n.grad_w4, 'w4');
+            // --- Draw Target Zone ---
+            const targetX = 400;
+            const barTop = 60;
+            const barBottom = 340;
+            const barHeight = barBottom - barTop;
             
-            // Draw nodes
-            drawNode(nodes.input, n.input, 'Input', '#00d4ff', null);
-            drawNode(nodes.h1, n.h1, 'Hidden 1', '#a855f7', n.b1);
-            drawNode(nodes.h2, n.h2, 'Hidden 2', '#a855f7', n.b2);
-            drawNode(nodes.output, n.output, 'Output', '#ff6b6b', n.b3);
-            drawTargetNode(nodes.target, n.target, n.output);
-            
-            // Draw comparison arrow
-            if (n.phase === 'forward' || n.phase === 'backprop') {
-                drawComparisonArrow(nodes.output, nodes.target, n.output, n.target);
-            }
-            
-            // Draw gradient flow arrows during backprop
-            if (n.phase === 'backprop') {
-                drawGradientFlow();
-            }
-            
-            // Draw loss curve in corner
-            drawLossIndicator();
-        }
-        
-        function drawConnection(from, to, weight, gradient, label) {
-            const n = network;
-            ctx.beginPath();
-            ctx.moveTo(from.x + 35, from.y);
-            ctx.lineTo(to.x - 35, to.y);
-            
-            let color = '#555';
-            let lineWidth = Math.abs(weight) * 3 + 1;
-            
-            if (n.phase === 'backprop') {
-                // Color by gradient direction
-                if (gradient > 0.01) color = '#ff6b6b'; // needs to decrease
-                else if (gradient < -0.01) color = '#51cf66'; // needs to increase
-                else color = '#ffd43b'; // roughly ok
-                lineWidth = Math.max(2, Math.abs(gradient) * 15 + 2);
-            } else if (n.phase === 'forward' || n.phase === 'updated') {
-                color = weight > 0 ? '#00d4ff' : '#ff9f43';
-                lineWidth = Math.abs(weight) * 3 + 1;
-            }
-            
-            ctx.strokeStyle = color;
-            ctx.lineWidth = Math.min(lineWidth, 8);
-            ctx.stroke();
-            
-            // Weight label
-            const midX = (from.x + to.x) / 2;
-            const midY = (from.y + to.y) / 2;
-            
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 12px monospace';
-            ctx.textAlign = 'center';
-            
-            let labelText = `${label}=${weight.toFixed(3)}`;
-            if (n.phase === 'backprop') {
-                labelText += ` | ∇=${gradient.toFixed(3)}`;
-            }
-            
-            // Background for text
-            const textWidth = ctx.measureText(labelText).width;
-            ctx.fillStyle = 'rgba(22, 33, 62, 0.85)';
-            ctx.fillRect(midX - textWidth/2 - 4, midY - 18, textWidth + 8, 16);
-            
-            ctx.fillStyle = n.phase === 'backprop' ? color : '#ddd';
-            ctx.fillText(labelText, midX, midY - 6);
-        }
-        
-        function drawNode(pos, value, label, color, bias) {
-            const n = network;
-            const radius = 35;
-            
-            // Glow effect
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, radius + 5, 0, Math.PI * 2);
-            ctx.fillStyle = color + '22';
-            ctx.fill();
-            
-            // Main circle
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = '#16213e';
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 3;
-            ctx.fill();
-            ctx.stroke();
-            
-            // Value inside
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 14px monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            if (n.phase !== 'idle') {
-                ctx.fillText(value.toFixed(3), pos.x, pos.y);
-            } else {
-                ctx.fillText('?', pos.x, pos.y);
-            }
-            
-            // Label above
-            ctx.fillStyle = color;
-            ctx.font = '12px sans-serif';
-            ctx.fillText(label, pos.x, pos.y - radius - 12);
-            
-            // Bias below
-            if (bias !== null) {
-                ctx.fillStyle = '#888';
-                ctx.font = '11px monospace';
-                ctx.fillText(`b=${bias.toFixed(3)}`, pos.x, pos.y + radius + 15);
-            }
-        }
-        
-        function drawTargetNode(pos, target, output) {
-            const n = network;
-            const radius = 35;
-            
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = '#16213e';
-            ctx.strokeStyle = '#ffd43b';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([5, 5]);
-            ctx.fill();
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            ctx.fillStyle = '#ffd43b';
-            ctx.font = 'bold 14px monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(target.toFixed(3), pos.x, pos.y);
-            
-            ctx.font = '12px sans-serif';
-            ctx.fillText('Target', pos.x, pos.y - radius - 12);
-            
-            // Show if output is above or below
-            if (n.phase !== 'idle') {
-                const diff = output - target;
-                let statusText, statusColor;
-                if (Math.abs(diff) < 0.01) {
-                    statusText = '✓ Perfekt!';
-                    statusColor = '#51cf66';
-                } else if (diff > 0) {
-                    statusText = `↑ Zu hoch (+${diff.toFixed(3)})`;
-                    statusColor = '#ff6b6b';
-                } else {
-                    statusText = `↓ Zu niedrig (${diff.toFixed(3)})`;
-                    statusColor = '#ff6b6b';
-                }
-                ctx.fillStyle = statusColor;
-                ctx.font = 'bold 12px sans-serif';
-                ctx.fillText(statusText, pos.x, pos.y + radius + 18);
-            }
-        }
-        
-        function drawComparisonArrow(outputPos, targetPos, output, target) {
-            const startX = outputPos.x + 40;
-            const endX = targetPos.x - 40;
-            const y = outputPos.y;
-            
-            // Arrow line
-            ctx.beginPath();
-            ctx.moveTo(startX, y);
-            ctx.lineTo(endX, y);
-            ctx.strokeStyle = '#ffd43b88';
+            // Vertical scale bar
+            ctx.fillStyle = '#222';
+            ctx.fillRect(targetX - 30, barTop, 60, barHeight);
+            ctx.strokeStyle = '#444';
             ctx.lineWidth = 2;
-            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(targetX - 30, barTop, 60, barHeight);
+            
+            // Scale labels
+            ctx.fillStyle = '#888';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('1.0', targetX, barTop - 5);
+            ctx.fillText('0.0', targetX, barBottom + 15);
+            ctx.fillText('0.5', targetX + 35, barTop + barHeight/2 + 4);
+            
+            // Target line (where it SHOULD be)
+            const targetY = barBottom - (TARGET * barHeight);
+            ctx.beginPath();
+            ctx.moveTo(targetX - 40, targetY);
+            ctx.lineTo(targetX + 40, targetY);
+            ctx.strokeStyle = '#ffd43b';
+            ctx.lineWidth = 4;
             ctx.stroke();
-            ctx.setLineDash([]);
             
-            // Difference bar
-            const barY = y + 50;
-            const barWidth = 180;
-            const barX = (startX + endX) / 2 - barWidth / 2;
-            
-            // Background bar
-            ctx.fillStyle = '#333';
-            ctx.fillRect(barX, barY, barWidth, 20);
-            
-            // Output position on bar
-            const outputPosOnBar = barX + output * barWidth;
-            const targetPosOnBar = barX + target * barWidth;
-            
-            // Target marker
+            // Target label
             ctx.fillStyle = '#ffd43b';
-            ctx.fillRect(targetPosOnBar - 2, barY - 5, 4, 30);
-            
-            // Output marker
-            ctx.fillStyle = '#ff6b6b';
-            ctx.beginPath();
-            ctx.arc(outputPosOnBar, barY + 10, 8, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Labels
-            ctx.font = '10px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#ffd43b';
-            ctx.fillText('Target', targetPosOnBar, barY + 35);
-            ctx.fillStyle = '#ff6b6b';
-            ctx.fillText('Output', outputPosOnBar, barY - 10);
-        }
-        
-        function drawGradientFlow() {
-            // Draw backward arrows to show gradient flow
-            ctx.fillStyle = '#ff6b6b';
-            ctx.font = 'bold 13px sans-serif';
-            ctx.textAlign = 'center';
-            
-            // Big backward arrow
-            ctx.fillStyle = 'rgba(255, 107, 107, 0.15)';
-            ctx.beginPath();
-            ctx.moveTo(800, 50);
-            ctx.lineTo(800, 30);
-            ctx.lineTo(150, 30);
-            ctx.lineTo(150, 50);
-            ctx.lineTo(130, 40);
-            ctx.lineTo(150, 30);
-            ctx.fill();
-            
-            ctx.fillStyle = '#ff6b6b';
             ctx.font = 'bold 14px sans-serif';
-            ctx.fillText('← Gradienten fließen rückwärts (Kettenregel) ←', 475, 44);
+            ctx.textAlign = 'left';
+            ctx.fillText(`🎯 Ziel: ${TARGET}`, targetX + 50, targetY + 5);
             
-            // Explanation of gradient meaning
-            ctx.font = '12px sans-serif';
-            ctx.fillStyle = '#ccc';
-            ctx.fillText('🔴 Rot = Gewicht muss kleiner werden | 🟢 Grün = Gewicht muss größer werden | 🟡 Gelb = passt schon', 475, 500);
-        }
-        
-        function drawLossIndicator() {
-            const n = network;
-            if (n.phase === 'idle') return;
+            // Output dot (where the KI guessed)
+            if (step >= 0 && round > 0 || step >= 1) {
+                // Only show output after first prediction
+            }
+            if (step >= 1 || round > 0) {
+                const outputY = barBottom - (output * barHeight);
+                
+                // Draw the output ball
+                ctx.beginPath();
+                ctx.arc(targetX, outputY, 18, 0, Math.PI * 2);
+                const ballColor = Math.abs(loss) < 0.02 ? '#51cf66' : '#ff6b6b';
+                ctx.fillStyle = ballColor;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Output value
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 13px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(output.toFixed(2), targetX, outputY + 5);
+                
+                // Label
+                ctx.fillStyle = ballColor;
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(`KI sagt: ${output.toFixed(2)}`, targetX - 50, outputY + 5);
+                
+                // --- Show Error Arrow (step 2+) ---
+                if (step >= 2) {
+                    // Arrow from output to target
+                    ctx.beginPath();
+                    ctx.moveTo(targetX + 45, outputY);
+                    ctx.lineTo(targetX + 45, targetY);
+                    ctx.strokeStyle = '#ff6b6b';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([6, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // Arrowhead
+                    const arrowDir = targetY < outputY ? -1 : 1;
+                    ctx.beginPath();
+                    ctx.moveTo(targetX + 45, targetY);
+                    ctx.lineTo(targetX + 40, targetY - arrowDir * 10);
+                    ctx.lineTo(targetX + 50, targetY - arrowDir * 10);
+                    ctx.closePath();
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.fill();
+                    
+                    // Error label
+                    const midErrorY = (outputY + targetY) / 2;
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.textAlign = 'left';
+                    const errorText = loss > 0 ? `↑ Zu niedrig! (+${loss.toFixed(2)})` : `↓ Zu hoch! (${loss.toFixed(2)})`;
+                    ctx.fillText(errorText, targetX + 55, midErrorY + 5);
+                }
+                
+                // --- Show Gradient (step 3) ---
+                if (step >= 3) {
+                    // Gradient visualization on the left
+                    ctx.fillStyle = '#0f3460';
+                    ctx.fillRect(30, 280, 250, 100);
+                    ctx.strokeStyle = gradient > 0 ? '#51cf66' : '#ff6b6b';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(30, 280, 250, 100);
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('📐 Gradient (Wegweiser):', 40, 305);
+                    
+                    ctx.font = '12px sans-serif';
+                    ctx.fillStyle = '#ccc';
+                    if (gradient > 0) {
+                        ctx.fillText('→ Gewicht muss GRÖSSER werden!', 40, 330);
+                        ctx.fillStyle = '#51cf66';
+                        ctx.font = 'bold 20px sans-serif';
+                        ctx.fillText('⬆️ Gewicht rauf!', 40, 365);
+                    } else if (gradient < 0) {
+                        ctx.fillText('→ Gewicht muss KLEINER werden!', 40, 330);
+                        ctx.fillStyle = '#ff6b6b';
+                        ctx.font = 'bold 20px sans-serif';
+                        ctx.fillText('⬇️ Gewicht runter!', 40, 365);
+                    } else {
+                        ctx.fillText('→ Passt perfekt! Nichts ändern.', 40, 330);
+                        ctx.fillStyle = '#ffd43b';
+                        ctx.font = 'bold 20px sans-serif';
+                        ctx.fillText('✅ Perfekt!', 40, 365);
+                    }
+                }
+            }
             
-            // Loss meter
-            const meterX = 20;
-            const meterY = 420;
-            const meterW = 60;
-            const meterH = 80;
+            // --- Draw the "brain" (weight) on the left ---
+            ctx.fillStyle = '#0f3460';
+            ctx.fillRect(30, 40, 250, 110);
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(30, 40, 250, 110);
             
-            ctx.fillStyle = 'rgba(22, 33, 62, 0.9)';
-            ctx.fillRect(meterX - 5, meterY - 20, meterW + 10, meterH + 40);
-            ctx.strokeStyle = '#555';
-            ctx.strokeRect(meterX - 5, meterY - 20, meterW + 10, meterH + 40);
-            
-            ctx.fillStyle = '#ff6b6b';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('LOSS', meterX + meterW/2, meterY - 5);
-            
-            // Bar
-            const lossHeight = Math.min(n.loss * 2, 1) * meterH;
-            ctx.fillStyle = '#333';
-            ctx.fillRect(meterX + 10, meterY + 10, meterW - 20, meterH);
-            
-            const gradient = ctx.createLinearGradient(0, meterY + 10 + meterH - lossHeight, 0, meterY + 10 + meterH);
-            gradient.addColorStop(0, '#ff6b6b');
-            gradient.addColorStop(1, '#ff3333');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(meterX + 10, meterY + 10 + meterH - lossHeight, meterW - 20, lossHeight);
+            ctx.fillStyle = '#00d4ff';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('🧠 Gehirn der KI', 45, 68);
             
             ctx.fillStyle = '#fff';
-            ctx.font = '10px monospace';
-            ctx.fillText(n.loss.toFixed(4), meterX + meterW/2, meterY + meterH + 25);
+            ctx.font = '13px sans-serif';
+            ctx.fillText(`Stellschraube (Gewicht): `, 45, 95);
+            ctx.fillStyle = '#00d4ff';
+            ctx.font = 'bold 18px monospace';
+            ctx.fillText(weight.toFixed(3), 45, 125);
+            
+            // Show weight change on step 4
+            if (step >= 4) {
+                ctx.fillStyle = '#51cf66';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillText('✓ Angepasst!', 160, 125);
+            }
+            
+            // --- Mini loss history chart ---
+            if (lossHistory.length > 1) {
+                const chartX = 30;
+                const chartY = 170;
+                const chartW = 250;
+                const chartH = 90;
+                
+                ctx.fillStyle = '#0a0a1a';
+                ctx.fillRect(chartX, chartY, chartW, chartH);
+                ctx.strokeStyle = '#333';
+                ctx.strokeRect(chartX, chartY, chartW, chartH);
+                
+                ctx.fillStyle = '#888';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('📉 Fehler über Zeit:', chartX + 5, chartY + 14);
+                
+                // Draw line
+                ctx.beginPath();
+                const maxLoss = Math.max(...lossHistory.map(l => Math.abs(l)), 0.5);
+                for (let i = 0; i < lossHistory.length; i++) {
+                    const x = chartX + 10 + (i / Math.max(lossHistory.length - 1, 1)) * (chartW - 20);
+                    const y = chartY + chartH - 10 - (Math.abs(lossHistory[i]) / maxLoss) * (chartH - 25);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = '#ff6b6b';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Current dot
+                if (lossHistory.length > 0) {
+                    const lastI = lossHistory.length - 1;
+                    const x = chartX + 10 + (lastI / Math.max(lossHistory.length - 1, 1)) * (chartW - 20);
+                    const y = chartY + chartH - 10 - (Math.abs(lossHistory[lastI]) / maxLoss) * (chartH - 25);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.fill();
+                }
+            }
         }
         
-        // --- Event Listeners ---
-        document.getElementById('btnForward').addEventListener('click', forwardPass);
-        document.getElementById('btnBackprop').addEventListener('click', backpropagate);
-        document.getElementById('btnUpdate').addEventListener('click', updateWeights);
-        document.getElementById('btnAutoTrain').addEventListener('click', () => autoTrain(50));
-        document.getElementById('btnReset').addEventListener('click', resetNetwork);
+        function nextStep() {
+            step++;
+            
+            if (step === 1) {
+                // Predict
+                predict();
+                lossHistory.push(loss);
+                round++;
+                msgEl.innerHTML = `🤔 Die KI dreht an ihrer Stellschraube (Gewicht = ${weight.toFixed(3)}) und rät: <b>${output.toFixed(2)}</b>`;
+                draw();
+            } else if (step === 2) {
+                // Show error
+                if (Math.abs(loss) < 0.02) {
+                    msgEl.innerHTML = `🎉 <b>Fast perfekt!</b> Die KI liegt nur ${Math.abs(loss).toFixed(3)} daneben. Sie hat es gelernt!`;
+                } else if (loss > 0) {
+                    msgEl.innerHTML = `📏 <b>Zu niedrig!</b> Die KI sagt ${output.toFixed(2)}, aber es soll ${TARGET} sein. Sie muss <b>höher</b> raten!`;
+                } else {
+                    msgEl.innerHTML = `📏 <b>Zu hoch!</b> Die KI sagt ${output.toFixed(2)}, aber es soll ${TARGET} sein. Sie muss <b>niedriger</b> raten!`;
+                }
+                draw();
+            } else if (step === 3) {
+                // Show gradient
+                gradient = loss; // In this simple case, gradient direction = error direction
+                if (Math.abs(loss) < 0.02) {
+                    msgEl.innerHTML = `📐 <b>Gradient sagt:</b> "Alles gut, kaum was ändern!" Der Fehler ist winzig.`;
+                } else if (gradient > 0) {
+                    msgEl.innerHTML = `📐 <b>Gradient sagt:</b> "Dreh die Stellschraube HOCH! ⬆️" Dann wird das Ergebnis beim nächsten Mal größer.`;
+                } else {
+                    msgEl.innerHTML = `📐 <b>Gradient sagt:</b> "Dreh die Stellschraube RUNTER! ⬇️" Dann wird das Ergebnis beim nächsten Mal kleiner.`;
+                }
+                draw();
+            } else if (step === 4) {
+                // Update weight
+                weight += LR * gradient;
+                msgEl.innerHTML = `🔧 <b>Angepasst!</b> Neues Gewicht: ${weight.toFixed(3)}. Mal sehen, ob es jetzt besser klappt...`;
+                draw();
+            } else {
+                // Reset for next round
+                step = 0;
+                msgEl.innerHTML = `🔁 <b>Nächste Runde!</b> Die KI versucht es nochmal mit dem neuen Gewicht...`;
+                nextStep(); // auto-trigger prediction
+            }
+            
+            epochEl.textContent = `Runde ${round}`;
+        }
+        
+        document.getElementById('btnNext').addEventListener('click', nextStep);
+        document.getElementById('btnReset').addEventListener('click', () => {
+            weight = Math.random() * 0.5 + 0.1; // random bad start
+            output = 0;
+            gradient = 0;
+            loss = 0;
+            step = 0;
+            round = 0;
+            lossHistory = [];
+            msgEl.innerHTML = '👋 Neues Spiel! Die KI hat ein neues zufälliges Gewicht bekommen. Klicke den Knopf!';
+            epochEl.textContent = '';
+            draw();
+        });
         
         // Initial draw
         draw();
