@@ -114,6 +114,7 @@
 		_js("loss_metric.js");
 		_js("labels.js");
 		_js("validation.js");
+		_js("cookies_and_url.js");
 		_js("initializers.js");
 		_js("input_shape.js");
 		_js("gui.js");
