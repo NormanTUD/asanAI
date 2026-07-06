@@ -1411,101 +1411,494 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 	return "\\text{(The equations for this layer are not yet defined)}";
 }
 
-function model_to_latex() {
-    var layers = model?.layers;
-    var input_shape = get_first_layer_input_shape();
-    if (!input_shape || !layers) { return ""; }
-
-    shown_activation_equations = [];
-
-    var output_shape = model.layers[model.layers.length - 1].outputShape;
-    var default_vars = get_default_vars();
-    var str = "";
-    var layer_data = get_layer_data();
-    var y_layer = get_y_output_shapes(output_shape);
-
-    // When started_training is true, pass prev_layer_data for color diff (red/green).
-    // When false, pass empty array (no color diff — editables are active instead).
-    var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
-
-    var input_layer = get_input_layer(input_shape);
-
-    activation_string = "";
-
-    str += get_loss_equations_string();
-
-    if (get_metric() != get_loss()) {
-        str += get_metric_equations_string();
+/**
+ * Renders the skip connection part for interactive mode.
+ * Shows the skip projection weights as editable values (if a projection layer exists)
+ * or shows the identity matrix (if shapes match).
+ */
+function _render_skip_connection_interactive(container_id, layer_idx, gui_layer_idx, input_layer, layer_data, colors, this_layer_type) {
+    var container = document.getElementById(container_id);
+    if (!container) {
+        console.warn("[_render_skip_connection_interactive] Container not found:", container_id);
+        return;
     }
 
-    var has_any_skip_connection = false;
+    var all_layers = _get_all_model_layers();
+    if (!all_layers) {
+        console.warn("[_render_skip_connection_interactive] _get_all_model_layers() returned null");
+        _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+        return;
+    }
 
-    // Build a mapping from model layer index to GUI layer index,
-    // skipping internal skip-connection layers
-    var gui_layer_idx = 0;
-
-    for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-        var layer_name = model.layers[layer_idx].name || "";
-
-        // Skip internal skip-connection layers entirely
-        if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
-            continue;
+    // Find the skip projection layer for this gui_layer_idx
+    var skip_proj_layer = null;
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+            skip_proj_layer = all_layers[i];
+            break;
         }
+    }
 
-        var this_layer_type = $($(".layer_type")[gui_layer_idx]).val();
-        var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
+    // Fallback: proximity-based search
+    if (!skip_proj_layer) {
+        skip_proj_layer = _find_skip_proj_by_proximity(all_layers, layer_idx, gui_layer_idx);
+    }
 
-        if (gui_layer_idx == 0) {
-            str += "\n<h2>Layers:</h2>\n";
-        }
-
-        // Check if this layer has a skip connection for the legend
-        var skip_info_check = get_skip_connection_info(gui_layer_idx);
-        if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
-            has_any_skip_connection = true;
-        }
-
-        var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
-
-        // --- Generalized interactive marker handling ---
-        var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
-
-        if (interactive_info) {
-            var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
-            str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
-            str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div><br>";
-
-            // Schedule the hybrid render after DOM update
-            (function(cid, li, ld, c, il, yl, itype) {
-                setTimeout(function() {
-                    _dispatch_interactive_inject(itype, cid, li, ld, c, il, yl);
-                }, 0);
-            })(container_id, layer_idx, layer_data, colors, input_layer, y_layer, interactive_info.type);
+    if (skip_proj_layer) {
+        // Check if the layer actually has weights
+        var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+        if (kernel_tensor && !tensor_is_disposed(kernel_tensor)) {
+            _render_skip_projection_editable(container, skip_proj_layer, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
         } else {
-            str += "<div class='temml_me'> " + layer_str + " </div><br>";
+            _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+        }
+    } else {
+        // No projection layer — render identity or static fallback
+        _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+    }
+}
+
+/**
+ * Renders skip projection weights as editable interactive elements.
+ */
+function _render_skip_projection_editable(container, skip_proj_layer, layer_idx, gui_layer_idx, input_layer, layer_data, colors) {
+    var decimals = get_dec_points_math_mode();
+    var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+
+    if (!kernel_tensor || tensor_is_disposed(kernel_tensor)) {
+        _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+        return;
+    }
+
+    var kernel = array_sync(kernel_tensor, true);
+    if (!kernel) {
+        _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+        return;
+    }
+
+    var shape = get_shape_from_array(kernel);
+    var max_rows = Math.min(shape[0] || 1, get_max_nr_cols_rows());
+    var max_cols = Math.min(shape.length > 1 ? shape[1] : 1, get_max_nr_cols_rows());
+
+    // Flatten kernel for registration (handle both 1D and 2D)
+    var is_2d = shape.length >= 2;
+    var all_editables = [];
+
+    // Register editables for skip kernel weights
+    if (is_2d) {
+        for (var i = 0; i < Math.min(kernel.length, max_rows); i++) {
+            for (var j = 0; j < Math.min(kernel[i].length, max_cols); j++) {
+                (function(gi, row, col, sk_layer) {
+                    var eid = "L" + gi + "_skip_kernel_" + row + "_" + col;
+                    math_register_editable(eid,
+                        function() {
+                            var kt = _extract_kernel_from_layer(sk_layer);
+                            if (!kt || tensor_is_disposed(kt)) return 0;
+                            var synced = array_sync(kt, true);
+                            return synced && synced[row] ? synced[row][col] : 0;
+                        },
+                        function(v) {
+                            _math_apply_skip_weight_change(sk_layer, row, col, v);
+                        },
+                        -10, 10,
+                        "Skip kernel[" + row + "][" + col + "]",
+                        { decimals: decimals }
+                    );
+                    all_editables.push({ eid: eid });
+                })(gui_layer_idx, i, j, skip_proj_layer);
+            }
+        }
+    } else {
+        // 1D kernel
+        for (var k = 0; k < Math.min(kernel.length, max_rows); k++) {
+            (function(gi, idx, sk_layer) {
+                var eid = "L" + gi + "_skip_kernel_" + idx;
+                math_register_editable(eid,
+                    function() {
+                        var kt = _extract_kernel_from_layer(sk_layer);
+                        if (!kt || tensor_is_disposed(kt)) return 0;
+                        var synced = array_sync(kt, true);
+                        return synced ? synced[idx] : 0;
+                    },
+                    function(v) {
+                        _math_apply_skip_weight_change_1d(sk_layer, idx, v);
+                    },
+                    -10, 10,
+                    "Skip kernel[" + idx + "]",
+                    { decimals: decimals }
+                );
+                all_editables.push({ eid: eid });
+            })(gui_layer_idx, k, skip_proj_layer);
+        }
+    }
+
+    // Build LaTeX for the skip connection
+    var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+
+    var skip_kernel_latex = "\\underbrace{\\begin{pmatrix}\n";
+
+    if (is_2d) {
+        for (var row = 0; row < max_rows; row++) {
+            var row_parts = [];
+            for (var col = 0; col < max_cols; col++) {
+                var eid = "L" + gui_layer_idx + "_skip_kernel_" + row + "_" + col;
+                var ed = math_find_editable(eid);
+                var val = ed ? ed.get().toFixed(decimals) : "0";
+                row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
+            }
+            if (kernel[row] && kernel[row].length > max_cols) {
+                row_parts.push("\\cdots");
+            }
+            skip_kernel_latex += row_parts.join(" & ");
+            if (row < max_rows - 1) skip_kernel_latex += " \\\\\n";
+        }
+        if (kernel.length > max_rows) {
+            skip_kernel_latex += " \\\\ \\vdots & \\ddots";
+        }
+    } else {
+        var parts_1d = [];
+        for (var ki = 0; ki < max_rows; ki++) {
+            var eid_1d = "L" + gui_layer_idx + "_skip_kernel_" + ki;
+            var ed_1d = math_find_editable(eid_1d);
+            var val_1d = ed_1d ? ed_1d.get().toFixed(decimals) : "0";
+            parts_1d.push("\\textcolor{#53d8fb}{" + val_1d + "}");
+        }
+        if (kernel.length > max_rows) {
+            parts_1d.push("\\vdots");
+        }
+        skip_kernel_latex += parts_1d.join(" \\\\\n");
+    }
+
+    var shape_str = shape.join("\\times");
+    skip_kernel_latex += "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+
+    var full_latex = "+ \\underbrace{" + skip_kernel_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
+
+    el_render_single_latex_with_editables(container, full_latex, all_editables);
+}
+
+/**
+ * Applies a weight change from layer_data back to the actual model weights.
+ * Called when the user edits a kernel or bias value in interactive math mode.
+ */
+function _math_apply_weight_change_from_layer_data(layer_idx, weight_type, new_data) {
+    if (!model || !model.layers || !model.layers[layer_idx]) return;
+
+    try {
+        var layer = model.layers[layer_idx];
+        var current_weights = layer.getWeights();
+
+        if (weight_type === "kernel") {
+            var new_kernel = tf.tensor(new_data);
+            var new_weights = [new_kernel];
+            for (var w = 1; w < current_weights.length; w++) {
+                new_weights.push(current_weights[w]);
+            }
+            layer.setWeights(new_weights);
+            new_kernel.dispose();
+        } else if (weight_type === "bias") {
+            var new_bias = tf.tensor(new_data);
+            var new_weights = [];
+            for (var w = 0; w < current_weights.length - 1; w++) {
+                new_weights.push(current_weights[w]);
+            }
+            new_weights.push(new_bias);
+            layer.setWeights(new_weights);
+            new_bias.dispose();
+        }
+    } catch (e) {
+        console.warn("[_math_apply_weight_change_from_layer_data] Error:", e);
+    }
+}
+
+/**
+ * Fallback: renders skip connection as static (non-editable) LaTeX.
+ */
+function _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors) {
+    var all_layers = _get_all_model_layers();
+    var skip_weight_latex = "W_{\\text{skip}}";
+    
+    if (all_layers) {
+        // Try to find skip projection layer and extract its weights directly
+        var skip_proj_layer = null;
+        for (var i = 0; i < all_layers.length; i++) {
+            var lname = all_layers[i].name || "";
+            if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+                skip_proj_layer = all_layers[i];
+                break;
+            }
+        }
+        
+        if (skip_proj_layer) {
+            skip_weight_latex = _extract_skip_kernel_latex(skip_proj_layer);
+        } else {
+            // Check if it's an identity skip (skip_add exists but no skip_proj)
+            var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
+            if (has_add) {
+                skip_weight_latex = _build_identity_matrix_latex(layer_idx);
+            } else {
+                // No skip_proj and no skip_add found — try matching by proximity
+                // The skip layer might use a different naming convention
+                skip_proj_layer = _find_skip_proj_by_proximity(all_layers, layer_idx, gui_layer_idx);
+                if (skip_proj_layer) {
+                    skip_weight_latex = _extract_skip_kernel_latex(skip_proj_layer);
+                }
+            }
+        }
+    }
+    
+    var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+    var full_latex = "+ \\underbrace{" + skip_weight_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
+
+    container.innerHTML = "";
+    var wrapper = document.createElement("div");
+    wrapper.className = "math-hybrid-rendered";
+    try {
+        wrapper.innerHTML = temml.renderToString(full_latex, { displayMode: true });
+    } catch (err) {
+        wrapper.innerHTML = "<span style='color:#e94560;'>Skip connection render error: " + err.message + "</span>";
+    }
+    container.appendChild(wrapper);
+}
+
+/**
+ * Fallback: Find a skip projection layer by proximity to the given layer_idx in model.layers.
+ * Looks for any skip_proj layer that appears shortly after the target layer.
+ */
+function _find_skip_proj_by_proximity(all_layers, model_layer_idx, gui_layer_idx) {
+    // Strategy 1: Try all naming patterns with gui_layer_idx
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (!lname.includes("skip_proj_")) continue;
+        
+        // Try extracting any number from the name
+        var match = lname.match(/skip_proj_\w+_(\d+)/);
+        if (match) {
+            var extracted_idx = parseInt(match[1], 10);
+            if (extracted_idx === gui_layer_idx) {
+                return all_layers[i];
+            }
+        }
+    }
+    
+    // Strategy 2: Look for skip_proj layers positioned right after model_layer_idx
+    // In a functional model, the skip_proj layer typically follows the main layer
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (!lname.includes("skip_proj_")) continue;
+        
+        // Check if this skip_proj has weights (meaning it's a real projection, not just a placeholder)
+        var kernel = _extract_kernel_from_layer(all_layers[i]);
+        if (kernel && !tensor_is_disposed(kernel)) {
+            // Check if this layer's input connects to our target layer
+            try {
+                var inbound = all_layers[i].inboundNodes;
+                if (inbound && inbound.length > 0) {
+                    var inbound_layers = inbound[0].inboundLayers || [];
+                    if (!Array.isArray(inbound_layers)) inbound_layers = [inbound_layers];
+                    for (var il = 0; il < inbound_layers.length; il++) {
+                        // Find the index of the inbound layer in all_layers
+                        for (var ai = 0; ai < all_layers.length; ai++) {
+                            if (all_layers[ai] === inbound_layers[il]) {
+                                // Count how many "real" (non-skip) layers are before this
+                                var real_count = 0;
+                                for (var rc = 0; rc <= ai; rc++) {
+                                    var rcname = all_layers[rc].name || "";
+                                    if (!rcname.includes("skip_proj_") && !rcname.includes("skip_add_") && !rcname.includes("skip_scale_")) {
+                                        real_count++;
+                                    }
+                                }
+                                // real_count - 1 should be approximately gui_layer_idx
+                                if (Math.abs((real_count - 1) - gui_layer_idx) <= 1) {
+                                    return all_layers[i];
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                // Silently continue
+            }
+        }
+    }
+    
+    return null;
+}
+
+/**
+ * Applies a weight change to a 2D skip projection kernel.
+ */
+function _math_apply_skip_weight_change(skip_proj_layer, row, col, new_value) {
+    if (!skip_proj_layer) return;
+
+    var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+    if (!kernel_tensor || tensor_is_disposed(kernel_tensor)) return;
+
+    var synced = array_sync(kernel_tensor, true);
+    if (!synced || !synced[row]) return;
+
+    synced[row][col] = new_value;
+
+    // Set the new weights back to the layer
+    try {
+        var new_tensor = tf.tensor(synced);
+        var current_weights = skip_proj_layer.getWeights();
+
+        // Replace the kernel (first weight) with the new tensor
+        var new_weights = [new_tensor];
+        for (var w = 1; w < current_weights.length; w++) {
+            new_weights.push(current_weights[w]);
         }
 
-        gui_layer_idx++;
+        skip_proj_layer.setWeights(new_weights);
+
+        // Dispose the temporary tensor
+        new_tensor.dispose();
+    } catch (e) {
+        console.warn("[_math_apply_skip_weight_change] Error setting skip weights:", e);
     }
+}
 
-    // === SKIP CONNECTION EXPLANATION ===
-    if (has_any_skip_connection) {
-        str += "<h3>Skip Connections:</h3>\n";
-        str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
-        str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the input dimensions to the output dimensions if needed. If dimensions already match, the identity is used.</p>\n";
+/**
+ * Applies a weight change to a 1D skip projection kernel.
+ */
+function _math_apply_skip_weight_change_1d(skip_proj_layer, idx, new_value) {
+    if (!skip_proj_layer) return;
+
+    var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+    if (!kernel_tensor || tensor_is_disposed(kernel_tensor)) return;
+
+    var synced = array_sync(kernel_tensor, true);
+    if (!synced) return;
+
+    synced[idx] = new_value;
+
+    try {
+        var new_tensor = tf.tensor(synced);
+        var current_weights = skip_proj_layer.getWeights();
+
+        var new_weights = [new_tensor];
+        for (var w = 1; w < current_weights.length; w++) {
+            new_weights.push(current_weights[w]);
+        }
+
+        skip_proj_layer.setWeights(new_weights);
+        new_tensor.dispose();
+    } catch (e) {
+        console.warn("[_math_apply_skip_weight_change_1d] Error setting skip weights:", e);
     }
+}
 
-    str += get_optimizer_latex_equations();
+function model_to_latex() {
+	var layers = model?.layers;
+	var input_shape = get_first_layer_input_shape();
+	if (!input_shape || !layers) { return ""; }
 
-    prev_layer_data = layer_data;
+	shown_activation_equations = [];
 
-    str = latex_blocks() + "\n" + str;
+	var output_shape = model.layers[model.layers.length - 1].outputShape;
+	var default_vars = get_default_vars();
+	var str = "";
+	var layer_data = get_layer_data();
+	var y_layer = get_y_output_shapes(output_shape);
 
-    if (activation_string && str) {
-        str = "<h2>" + language[lang]["activation_functions"] + ":</h2>" + activation_string + str;
-    }
+	// When started_training is true, pass prev_layer_data for color diff (red/green).
+	// When false, pass empty array (no color diff — editables are active instead).
+	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
 
-    return str;
+	var input_layer = get_input_layer(input_shape);
+
+	activation_string = "";
+
+	str += get_loss_equations_string();
+
+	if (get_metric() != get_loss()) {
+		str += get_metric_equations_string();
+	}
+
+	var has_any_skip_connection = false;
+
+	// Build a mapping from model layer index to GUI layer index,
+	// skipping internal skip-connection layers
+	var gui_layer_idx = 0;
+
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var layer_name = model.layers[layer_idx].name || "";
+
+		// Skip internal skip-connection layers entirely
+		if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+			continue;
+		}
+
+		var this_layer_type = $($(".layer_type")[gui_layer_idx]).val();
+		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
+
+		if (gui_layer_idx == 0) {
+			str += "\n<h2>Layers:</h2>\n";
+		}
+
+		// Check if this layer has a skip connection for the legend
+		var skip_info_check = get_skip_connection_info(gui_layer_idx);
+		if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+			has_any_skip_connection = true;
+		}
+
+		var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
+
+		// --- Generalized interactive marker handling ---
+		var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
+
+		if (interactive_info) {
+			var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
+			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
+			str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div>";
+
+			// Check if skip connection info is encoded in the marker
+			var has_skip_in_marker = layer_str.indexOf("%%SKIP_ENABLED_") !== -1;
+			var skip_container_id = "math_skip_" + interactive_info.type + "_L" + layer_idx;
+
+			if (has_skip_in_marker) {
+				str += "<div id='" + skip_container_id + "' class='math-hybrid-formula math-skip-formula' style='margin:4px 0 8px 0;overflow-x:auto;'></div>";
+			}
+
+			str += "<br>";
+
+			// Schedule the hybrid render after DOM update
+			(function(cid, skip_cid, li, ld, c, il, yl, itype, hasSkip, egi, lt) {
+				setTimeout(function() {
+					_dispatch_interactive_inject(itype, cid, li, ld, c, il, yl);
+					if (hasSkip) {
+						_render_skip_connection_interactive(skip_cid, li, egi, il, ld, c, lt);
+					}
+				}, 0);
+			})(container_id, skip_container_id, layer_idx, layer_data, colors, input_layer, y_layer, interactive_info.type, has_skip_in_marker, gui_layer_idx, this_layer_type);
+		} else {
+			str += "<div class='temml_me'> " + layer_str + " </div><br>";
+		}
+
+
+		gui_layer_idx++;
+	}
+
+	// === SKIP CONNECTION EXPLANATION ===
+	if (has_any_skip_connection) {
+		str += "<h3>Skip Connections:</h3>\n";
+		str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
+		str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the input dimensions to the output dimensions if needed. If dimensions already match, the identity is used.</p>\n";
+	}
+
+	str += get_optimizer_latex_equations();
+
+	prev_layer_data = layer_data;
+
+	str = latex_blocks() + "\n" + str;
+
+	if (activation_string && str) {
+		str = "<h2>" + language[lang]["activation_functions"] + ":</h2>" + activation_string + str;
+	}
+
+	return str;
 }
 
 /**
@@ -1648,7 +2041,14 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
 	}
 
+	// Check for interactive marker
 	if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
+		// Encode skip connection info into the marker so _dispatch_interactive_inject can use it
+		var skip_info = get_skip_connection_info(effective_gui_idx);
+		if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+			// Append skip metadata to the marker string
+			layer_str = layer_str + "%%SKIP_ENABLED_" + effective_gui_idx + "%%";
+		}
 		return layer_str;
 	}
 
@@ -1673,40 +2073,49 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
  * Finds the skip projection layer for a given layer_idx in model.layers
  * and returns its kernel weights as a LaTeX matrix.
  * If no projection layer is found (identity skip), returns the actual identity matrix.
- *
- * FIXED: Now properly extracts current (trained) weights from skip projection layers
- * so that math mode reflects weight updates during training.
  */
 function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
-	var all_layers = _get_all_model_layers();
+    var all_layers = _get_all_model_layers();
 
-	if (!all_layers) {
-		return "W_{\\text{skip}}";
-	}
+    if (!all_layers) {
+        return "W_{\\text{skip}}";
+    }
 
-	var skip_proj_layer = null;
+    var skip_proj_layer = null;
 
-	for (var i = 0; i < all_layers.length; i++) {
-		var lname = all_layers[i].name || "";
-		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
-			skip_proj_layer = all_layers[i];
-			break;
-		}
-	}
+    for (var i = 0; i < all_layers.length; i++) {
+        var lname = all_layers[i].name || "";
+        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+            skip_proj_layer = all_layers[i];
+            break;
+        }
+    }
 
-	if (skip_proj_layer) {
-		// Projection layer found — extract its current kernel weights
-		return _extract_skip_kernel_latex(skip_proj_layer);
-	}
+    // Fallback: try proximity-based search
+    if (!skip_proj_layer) {
+        skip_proj_layer = _find_skip_proj_by_proximity(all_layers, layer_idx, gui_layer_idx);
+    }
 
-	// No projection layer found — check if there's a skip_add (identity skip)
-	var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
+    if (skip_proj_layer) {
+        // Projection layer found — extract its current kernel weights
+        return _extract_skip_kernel_latex(skip_proj_layer);
+    }
 
-	if (has_add) {
-		return _build_identity_matrix_latex(layer_idx);
-	}
+    // No projection layer found — check if there's a skip_add (identity skip)
+    var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
 
-	return "W_{\\text{skip}}";
+    if (has_add) {
+        return _build_identity_matrix_latex(layer_idx);
+    }
+
+    // Last resort: check if the skip connection is enabled but uses identity (same dimensions)
+    // In this case, show the identity matrix based on the layer's output shape
+    var skip_info = get_skip_connection_info(gui_layer_idx);
+    if (skip_info.enabled) {
+        return _build_identity_matrix_latex(layer_idx);
+    }
+
+    return "W_{\\text{skip}}";
 }
 
 /**
@@ -1715,18 +2124,39 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 function _get_all_model_layers() {
     if (!model) return null;
 
-    if (model._allLayers && Array.isArray(model._allLayers)) {
-        return model._allLayers;
-    }
-
-    // Fallback: try to access internal layer list
+    // For functional models, _stateChanges or getLayer() might be needed
+    // Try multiple approaches to get ALL layers including internal ones
+    
+    // Approach 1: model._layers (internal, includes all)
     try {
-        if (model._layers) return model._layers;
-    } catch (e) {
-        // ignore
+        if (model._layers && Array.isArray(model._layers) && model._layers.length > 0) {
+            return model._layers;
+        }
+    } catch (e) {}
+
+    // Approach 2: model.layers (public API - may filter internal layers)
+    if (model.layers && Array.isArray(model.layers) && model.layers.length > 0) {
+        return model.layers;
     }
 
-    return model.layers || null;
+    // Approach 3: iterate through all nodes
+    try {
+        if (model._nodesByDepth) {
+            var all = [];
+            var depths = Object.keys(model._nodesByDepth);
+            for (var d = 0; d < depths.length; d++) {
+                var nodes = model._nodesByDepth[depths[d]];
+                for (var n = 0; n < nodes.length; n++) {
+                    if (nodes[n].outboundLayer && all.indexOf(nodes[n].outboundLayer) === -1) {
+                        all.push(nodes[n].outboundLayer);
+                    }
+                }
+            }
+            if (all.length > 0) return all;
+        }
+    } catch (e) {}
+
+    return null;
 }
 
 /**
@@ -1884,16 +2314,18 @@ function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
 }
 
 /**
- * Checks if a skip layer name (like "skip_proj_dense_4_aaf9fdbe") belongs to a given layer_idx.
- * The layer_idx is embedded in the name after "skip_proj_dense_" or "skip_proj_conv2d_" or "skip_add_" etc.
+ * Checks if a skip layer name belongs to a given gui_layer_idx.
+ * Supports multiple naming patterns.
  */
 function _skip_proj_belongs_to_layer(layer_name, gui_layer_idx) {
+    // Pattern 1: skip_proj_dense_4_xxxx, skip_proj_conv2d_4_xxxx, etc.
     var patterns = [
-        /skip_proj_dense_(\d+)_/,
-        /skip_proj_conv2d_(\d+)_/,
-        /skip_proj_conv1d_(\d+)_/,
-        /skip_add_(\d+)_/,
-        /skip_scale_(\d+)_/
+        /skip_proj_dense_(\d+)/,
+        /skip_proj_conv2d_(\d+)/,
+        /skip_proj_conv1d_(\d+)/,
+        /skip_add_(\d+)/,
+        /skip_scale_(\d+)/,
+        /skip_proj_(\d+)/       // Generic fallback pattern
     ];
 
     for (var p = 0; p < patterns.length; p++) {
