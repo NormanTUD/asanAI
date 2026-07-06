@@ -23,6 +23,9 @@ function update_skip_connection_initializer(layer_nr, elem) {
 		}
 	}
 	skip_connection_settings[layer_nr].initializer_params = default_params;
+
+	// Force model recreation by invalidating the config hash
+	model_config_hash = null;
 }
 
 function insert_skip_initializer_options(layer_nr, elem) {
@@ -69,6 +72,9 @@ function update_skip_connection_initializer_param(layer_nr, param_name, elem) {
 	}
 
 	skip_connection_settings[layer_nr].initializer_params[param_name] = val;
+
+	// Force model recreation by invalidating the config hash
+	model_config_hash = null;
 }
 
 function toggle_skip_connection(layer_nr, elem) {
@@ -84,6 +90,9 @@ function toggle_skip_connection(layer_nr, elem) {
 	}
 
 	skip_connection_settings[layer_nr].enabled = enabled;
+
+	// Force model recreation
+	model_config_hash = null;
 
 	var $layer_setting = $(elem).closest(".layer_setting");
 	var $init_row = $layer_setting.find(".skip_connection_initializer_tr");
@@ -164,21 +173,21 @@ function _get_skip_initializer_sub_options_html(nr, initializer_name, section_cl
 		str += "<td>" + opt_name.charAt(0).toUpperCase() + opt_name.slice(1) + ":</td>";
 		str += "<td>";
 		if (opt_name === "mode") {
-			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this, null, 1);'>";
+			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();'>";
 			for (var mk in mode_modes) {
 				var sel = (mk === ("" + opt_value)) ? " selected" : "";
 				str += "<option value='" + mk + "'" + sel + ">" + mode_modes[mk] + "</option>";
 			}
 			str += "</select>";
 		} else if (opt_name === "distribution") {
-			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this, null, 1);'>";
+			str += "<select class='input_field skip_connection_initializer_param_" + opt_name + "' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();'>";
 			for (var dk in distribution_modes) {
 				var sel2 = (dk === ("" + opt_value)) ? " selected" : "";
 				str += "<option value='" + dk + "'" + sel2 + ">" + distribution_modes[dk] + "</option>";
 			}
 			str += "</select>";
 		} else {
-			str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "' type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page(null, null, this, null, 1);' />";
+			str += "<input class='input_field skip_connection_initializer_param_" + opt_name + "' type='number' value='" + opt_value + "' min='-3.4e+38' max='3.4e+38' onchange='update_skip_connection_initializer_param(find_layer_number_by_element(this), \"" + opt_name + "\", this); updated_page();' />";
 		}
 		str += "</td>";
 		str += "</tr>";
