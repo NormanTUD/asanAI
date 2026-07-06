@@ -118,6 +118,7 @@
 		_js("initializers.js");
 		_js("input_shape.js");
 		_js("clipboard_and_download.js");
+		_js("drawing.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
