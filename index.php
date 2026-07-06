@@ -113,6 +113,7 @@
 		_js("optimizer.js");
 		_js("loss_metric.js");
 		_js("labels.js");
+		_js("validation.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
