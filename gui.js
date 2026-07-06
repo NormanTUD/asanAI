@@ -1001,31 +1001,6 @@ function set_validation_split(val) {
 	//set_get("validation_split", val);
 }
 
-function set_epsilon(val) {
-	$("#epsilon_" + get_optimizer()).val(val);
-}
-
-function set_decay(val) {
-	$("#decay_" + get_optimizer()).val(val);
-}
-
-function set_rho(val) {
-	$("#rho_" + get_optimizer()).val(val);
-}
-
-function set_learning_rate(val) {
-	$("#learningRate_" + get_optimizer()).val(val);
-}
-
-function set_optimizer(val, trigger_change = 1) {
-	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
-	l(language[lang]["set_optimizer_to"] + val);
-	$("#optimizer").val(val);
-	if(trigger_change) {
-		$("#optimizer").trigger("change");
-	}
-}
-
 function set_metric(val, trigger_change = 1) {
 	l(language[lang]["set_metric_to"] + val);
 
@@ -1175,27 +1150,6 @@ function get_element_xpath(element) {
 function reset_photo_gallery() {
 	$("#photoscontainer").hide();
 	document.getElementById("photos").innerHTML = "";
-}
-
-function set_optimizer_special_sgd_rmsprop_from_config(config) {
-	if (["sgd", "rmsprop"].includes(config["optimizer"])) {
-		set_learning_rate(config["learningRate"]);
-	}
-}
-
-function set_optimizer_special_rmsprop_from_config(config) {
-	if (config["optimizer"] == "rmsprop") {
-		l(language[lang]["setting_optimizer_to_rmsprop"]);
-		set_rho(config["rho"]);
-		set_decay(config["decay"]);
-		set_epsilon(config["epsilon"]);
-	}
-}
-
-function set_optimizer_special_momentum_rmsprop_from_config(config) {
-	if (["momentum", "rmsprop"].includes(config["optimizer"])) {
-		set_momentum(config["momentum"]);
-	}
 }
 
 function remove_confusion_matrix () {
@@ -4263,23 +4217,6 @@ async function download_model_and_weights_and_labels () {
 	if($("#data_origin").val() == "image") {
 		await create_and_download_zip();
 	}
-}
-
-function setOptimizerTooltips() {
-	const lang = window.lang;
-
-	optimizer_infos_json.forEach(function(optimizer) {
-		const optimizerName = optimizer.optimizer;
-		const infoText = optimizer.info[lang];
-		const variables = optimizer.variable_info;
-
-		$(`#${optimizerName}_metadata .TRANSLATEME_optimizer`).attr('title', infoText);
-
-		Object.keys(variables).forEach(function(variableName) {
-			const tooltipText = variables[variableName][lang];
-			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);
-		});
-	});
 }
 
 async function saveModelAsSingleZip() {
