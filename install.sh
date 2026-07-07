@@ -43,7 +43,7 @@ mkdir -p $INSTALL_PATH || {
 
 cd $INSTALL_PATH
 
-if [ -d "$INSTALL_PATH/../.git" ]; then
+if [ -d "$INSTALL_PATH/.git" ]; then
 	git pull
 else
 	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git .
