@@ -1928,7 +1928,7 @@
 		       "tda_explain_landscape" => "Die Persistenz-Landschaft zeigt die Top-k persistentesten Merkmale als Balken. H&ouml;here Balken bedeuten signifikantere topologische Strukturen. Dies ist eine stabile Zusammenfassung des Persistenzdiagramms.",
 
 			// Dimensionality River
-			"dimriver_title" => "Dimensionality River",
+			"dimriver_title" => "Dimensionsfluss",
 			"dimriver_subtitle" => "t-SNE-Einbettung pro Layer — beobachte, wie sich Repräsentationen durch das Netzwerk entwickeln",
 			"dimriver_no_data" => "Noch keine Aktivierungsdaten aufgezeichnet. Führe zuerst eine Prediction aus.",
 			"dimriver_no_layers" => "Keine Layer konnten eingebettet werden. Stelle sicher, dass das Modell mindestens einmal ausgeführt wurde.",
