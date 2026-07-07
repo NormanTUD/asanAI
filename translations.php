@@ -1030,6 +1030,24 @@
 			"wa_tooltip_ks_test_desc" => "The Kolmogorov-Smirnov test measures how much the weight distribution deviates from a perfect normal (Gaussian) distribution. Trained weights typically deviate significantly from normal.",
 			"wa_tooltip_weight_distribution_title" => "Weight Distribution",
 			"wa_tooltip_weight_distribution_desc" => "Shows the histogram of all weight values. Untrained weights look like a smooth bell curve. Trained weights develop peaks, asymmetry, and heavy tails.",
+
+			"wa_tooltip_layer_io_input_title" => "Layer Input Distribution",
+			"wa_tooltip_layer_io_input_desc" => "Shows the distribution of input values entering this layer. A healthy input should have reasonable spread without extreme values or excessive zeros.",
+			"wa_tooltip_layer_io_output_title" => "Layer Output Distribution",
+			"wa_tooltip_layer_io_output_desc" => "Shows the distribution of output values leaving this layer. The shape reveals how the layer transforms data — look for dead neurons (all zeros), saturation (values at boundaries), or explosions (extreme values).",
+			"wa_tooltip_magnitude_per_layer_title" => "Output Magnitude per Layer",
+			"wa_tooltip_magnitude_per_layer_desc" => "Shows the combined magnitude (|mean| + std) of each layer's output. Ideally magnitudes should stay relatively stable across layers. A sudden spike indicates exploding activations, while a collapse to zero indicates dying or vanishing activations.",
+			"wa_tooltip_zero_fraction_per_layer_title" => "Zero Fraction per Layer",
+			"wa_tooltip_zero_fraction_per_layer_desc" => "Shows what percentage of each layer's output values are exactly zero. High zero fractions (>80%) indicate dying ReLU neurons that no longer contribute to learning. Some zeros are normal, especially after ReLU activation.",
+			"wa_tooltip_std_per_layer_title" => "Standard Deviation per Layer",
+			"wa_tooltip_std_per_layer_desc" => "Shows the spread (standard deviation) of output values per layer. Very low std means the layer produces nearly constant output (information loss). Very high std may indicate instability. Ideally std stays in a moderate range across layers.",
+			"wa_tooltip_mean_flow_title" => "Mean Flow Across Layers",
+			"wa_tooltip_mean_flow_desc" => "Tracks how the average activation value changes from layer to layer. A healthy network typically shows a smooth flow. Sudden jumps or drops can indicate problematic layers that distort the signal.",
+			"wa_tooltip_skewness_per_layer_title" => "Skewness per Layer",
+			"wa_tooltip_skewness_per_layer_desc" => "Measures the asymmetry of each layer's output distribution. A skewness near 0 means symmetric output. High positive skewness means most values are small with a few large outliers. High negative skewness means the opposite.",
+			"wa_tooltip_kurtosis_per_layer_title" => "Kurtosis per Layer",
+			"wa_tooltip_kurtosis_per_layer_desc" => "Measures how 'peaked' or 'heavy-tailed' each layer's output distribution is compared to a normal distribution. High kurtosis means extreme outliers are present. Negative kurtosis means the distribution is flatter than normal.",
+
 		),
 
 		'de' => array(
@@ -2061,6 +2079,23 @@
 			"wa_tooltip_ks_test_desc" => "Der Kolmogorov-Smirnov-Test misst, wie stark die Gewichtsverteilung von einer perfekten Normalverteilung abweicht. Trainierte Gewichte weichen typischerweise deutlich ab.",
 			"wa_tooltip_weight_distribution_title" => "Gewichtsverteilung",
 			"wa_tooltip_weight_distribution_desc" => "Zeigt das Histogramm aller Gewichtswerte. Untrainierte Gewichte sehen wie eine glatte Glockenkurve aus. Trainierte Gewichte entwickeln Spitzen, Asymmetrie und schwere Ränder.",
+
+			"wa_tooltip_layer_io_input_title" => "Layer-Eingabeverteilung",
+			"wa_tooltip_layer_io_input_desc" => "Zeigt die Verteilung der Eingabewerte, die in diesen Layer fließen. Eine gesunde Eingabe sollte eine angemessene Streuung ohne extreme Werte oder übermäßig viele Nullen aufweisen.",
+			"wa_tooltip_layer_io_output_title" => "Layer-Ausgabeverteilung",
+			"wa_tooltip_layer_io_output_desc" => "Zeigt die Verteilung der Ausgabewerte dieses Layers. Die Form zeigt, wie der Layer die Daten transformiert — achte auf tote Neuronen (alles Null), Sättigung (Werte an Grenzen) oder Explosionen (extreme Werte).",
+			"wa_tooltip_magnitude_per_layer_title" => "Ausgabe-Magnitude pro Layer",
+			"wa_tooltip_magnitude_per_layer_desc" => "Zeigt die kombinierte Magnitude (|Mittelwert| + Std) der Ausgabe jedes Layers. Idealerweise sollten die Magnituden über die Layer hinweg relativ stabil bleiben. Ein plötzlicher Anstieg deutet auf explodierende Aktivierungen hin, ein Zusammenbruch auf Null auf sterbende oder verschwindende Aktivierungen.",
+			"wa_tooltip_zero_fraction_per_layer_title" => "Null-Anteil pro Layer",
+			"wa_tooltip_zero_fraction_per_layer_desc" => "Zeigt, welcher Prozentsatz der Ausgabewerte jedes Layers exakt Null ist. Hohe Null-Anteile (>80%) deuten auf sterbende ReLU-Neuronen hin, die nicht mehr zum Lernen beitragen. Einige Nullen sind normal, besonders nach ReLU-Aktivierung.",
+			"wa_tooltip_std_per_layer_title" => "Standardabweichung pro Layer",
+			"wa_tooltip_std_per_layer_desc" => "Zeigt die Streuung (Standardabweichung) der Ausgabewerte pro Layer. Sehr niedrige Std bedeutet, dass der Layer nahezu konstante Ausgaben produziert (Informationsverlust). Sehr hohe Std kann auf Instabilität hindeuten. Idealerweise bleibt die Std in einem moderaten Bereich.",
+			"wa_tooltip_mean_flow_title" => "Mittelwert-Fluss über Layer",
+			"wa_tooltip_mean_flow_desc" => "Verfolgt, wie sich der durchschnittliche Aktivierungswert von Layer zu Layer verändert. Ein gesundes Netzwerk zeigt typischerweise einen gleichmäßigen Fluss. Plötzliche Sprünge oder Einbrüche können auf problematische Layer hindeuten, die das Signal verzerren.",
+			"wa_tooltip_skewness_per_layer_title" => "Schiefe pro Layer",
+			"wa_tooltip_skewness_per_layer_desc" => "Misst die Asymmetrie der Ausgabeverteilung jedes Layers. Eine Schiefe nahe 0 bedeutet symmetrische Ausgabe. Hohe positive Schiefe bedeutet, dass die meisten Werte klein sind mit wenigen großen Ausreißern. Hohe negative Schiefe bedeutet das Gegenteil.",
+			"wa_tooltip_kurtosis_per_layer_title" => "Kurtosis pro Layer",
+			"wa_tooltip_kurtosis_per_layer_desc" => "Misst, wie 'spitz' oder 'schwerschw√§nzig' die Ausgabeverteilung jedes Layers im Vergleich zur Normalverteilung ist. Hohe Kurtosis bedeutet, dass extreme Ausreißer vorhanden sind. Negative Kurtosis bedeutet, dass die Verteilung flacher als normal ist.",
 		)
 	);
 
