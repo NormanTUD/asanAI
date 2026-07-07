@@ -331,6 +331,7 @@ async function chose_dataset(no_set_config) {
 
 	hide_dataset_when_only_one();
 
+	await wait_for_updated_page_if_page_finished_loading(3);
 	remove_overlay();
 
 	l(language[lang]["ok_chosen_dataset"]);
