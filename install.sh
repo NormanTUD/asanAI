@@ -110,28 +110,11 @@ function install_php {
 		apt-get update
 	fi
 
-	# Installiere PHP - versuche verschiedene Versionen in absteigender Reihenfolge
-	local PHP_INSTALLED=false
-	for PHP_VERSION in 8.5 8.4 8.3 8.2 8.1; do
-		if apt-cache show "libapache2-mod-php${PHP_VERSION}" &>/dev/null; then
-			echo "Installiere PHP ${PHP_VERSION}..."
-			if apt-get install -y --no-install-recommends "libapache2-mod-php${PHP_VERSION}" "php${PHP_VERSION}-common" "php${PHP_VERSION}-cli" "php${PHP_VERSION}-opcache"; then
-				PHP_INSTALLED=true
-				break
-			else
-				echo "Installation von PHP ${PHP_VERSION} fehlgeschlagen, versuche nächste Version..."
-			fi
-		fi
-	done
-
-	# Fallback: Versionsloses Metapaket
-	if [ "$PHP_INSTALLED" = false ]; then
-		echo "Versuche versionsloses libapache2-mod-php Paket..."
-		apt-get install -y --no-install-recommends libapache2-mod-php || {
-			echo "FEHLER: Konnte keine PHP-Version installieren!"
-			exit 10
-		}
-	fi
+	echo "Versuche versionsloses libapache2-mod-php Paket..."
+	apt-get install -y --no-install-recommends libapache2-mod-php php-common php-cli php-opcache || {
+		echo "FEHLER: Konnte keine PHP-Version installieren!"
+		exit 10
+	}
 }
 
 echo "$PASSWORD" > /etc/vvzdbpw
