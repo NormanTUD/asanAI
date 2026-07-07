@@ -41,9 +41,9 @@
                 background: var(--bg-color, #fff);
                 border: 2px solid var(--border-color, #3498db);
                 border-radius: 14px;
-                padding: 20px 24px;
-                max-width: 420px;
-                min-width: 300px;
+		padding: 20px 24px;
+                max-width: 520px;
+                min-width: 400px;
                 box-shadow: 0 12px 40px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.1);
                 opacity: 0;
                 transform: scale(0.9) translateY(10px);
@@ -156,7 +156,7 @@
     var _tooltipVisuals = {
         entropy: function(value, maxValue) {
             var pct = Math.min(1, value / maxValue);
-            var w = 280, h = 70;
+            var w = 380, h = 70;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Draw two distributions: structured (low entropy) vs random (high entropy)
             // Left: structured (peaked)
@@ -178,7 +178,7 @@
         },
 
         sparsity: function(value) {
-            var w = 280, h = 60;
+            var w = 380, h = 60;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Left: low sparsity (all active)
             svg += '<text x="5" y="10" font-size="8" fill="currentColor" opacity="0.5"><tspan class="TRANSLATEME_wa_tooltip_sparsity_low"></tspan></text>';
@@ -204,7 +204,7 @@
         },
 
         svd: function(value) {
-            var w = 280, h = 70;
+            var w = 380, h = 70;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Left: flat SVD (untrained)
             svg += '<text x="5" y="12" font-size="8" fill="currentColor" opacity="0.5"><tspan class="TRANSLATEME_wa_tooltip_svd_flat"></tspan></text>';
@@ -234,7 +234,7 @@
         },
 
         kurtosis: function(value) {
-            var w = 280, h = 70;
+            var w = 380, h = 70;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Left: normal distribution (kurtosis ≈ 0)
             svg += '<text x="5" y="12" font-size="8" fill="currentColor" opacity="0.5"><tspan class="TRANSLATEME_wa_tooltip_kurtosis_zero"></tspan></text>';
@@ -261,7 +261,7 @@
         },
 
         ks_test: function(value) {
-            var w = 280, h = 70;
+            var w = 380, h = 70;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Show CDF comparison: empirical vs theoretical normal
             svg += '<text x="70" y="12" font-size="8" fill="currentColor" opacity="0.5">CDF</text>';
@@ -304,7 +304,7 @@
         },
 
         correlation: function(value) {
-            var w = 280, h = 70;
+            var w = 380, h = 70;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Left: uncorrelated (identity-like matrix)
             svg += '<text x="5" y="10" font-size="8" fill="currentColor" opacity="0.5"><tspan class="TRANSLATEME_wa_tooltip_correlation_low"></tspan></text>';
@@ -331,7 +331,7 @@
         },
 
         weight_distribution: function() {
-            var w = 280, h = 70;
+            var w = 380, h = 70;
             var svg = '<svg width="100%" viewBox="0 0 ' + w + ' ' + h + '" style="display:block;">';
             // Untrained: smooth bell curve
             svg += '<text x="5" y="12" font-size="8" fill="currentColor" opacity="0.5">Untrained</text>';
@@ -411,9 +411,9 @@
         document.body.appendChild(popup);
 
         // Position popup near the click/hover
-        var rect = event.currentTarget.getBoundingClientRect();
-        var popupWidth = 420;
-        var popupHeight = 350;
+	    var rect = event.currentTarget.getBoundingClientRect();
+	    var popupWidth = 520;  // was 420
+	    var popupHeight = 350;
 
         var left = rect.right + 10;
         var top = rect.top + rect.height / 2 - popupHeight / 2;
