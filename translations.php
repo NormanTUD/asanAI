@@ -992,6 +992,39 @@
 		       "gflow_min_norm_label" => "Min Gradient Norm",
 		       "gflow_mean_norm_label" => "Mean Gradient Norm",
 		       "gflow_layer_ratio_label" => "Layer Ratio (max/min)",
+
+			"wa_tooltip_entropy_title" => "Entropy — How structured are the weights?",
+			"wa_tooltip_entropy_desc" => "Entropy measures the randomness/disorder of weight values. Low entropy means the weights have learned specific patterns (structured). High entropy means they look random (untrained).",
+			"wa_tooltip_entropy_low" => "Low = Trained (structured patterns)",
+			"wa_tooltip_entropy_high" => "High = Untrained (random noise)",
+
+			"wa_tooltip_sparsity_title" => "Sparsity — How many weights are near zero?",
+			"wa_tooltip_sparsity_desc" => "Sparsity measures the percentage of weights that are very close to zero. Trained networks often develop sparsity as unimportant connections get pruned toward zero.",
+			"wa_tooltip_sparsity_low" => "Low = Untrained (all weights active)",
+			"wa_tooltip_sparsity_high" => "High = Trained (many pruned connections)",
+
+			"wa_tooltip_svd_title" => "SVD Energy Concentration",
+			"wa_tooltip_svd_desc" => "Singular Value Decomposition shows how the 'energy' (information) is distributed. A steep curve means a few directions dominate — the network has learned specific features.",
+			"wa_tooltip_svd_flat" => "Flat = Untrained (energy spread evenly)",
+			"wa_tooltip_svd_steep" => "Steep = Trained (energy concentrated)",
+
+			"wa_tooltip_kurtosis_title" => "Kurtosis — Heavy tails in the distribution?",
+			"wa_tooltip_kurtosis_desc" => "Kurtosis measures how 'peaked' or 'heavy-tailed' the weight distribution is compared to a normal distribution. Trained networks often develop heavy tails (high kurtosis) as some weights become very large or very small.",
+			"wa_tooltip_kurtosis_zero" => "≈ 0 = Normal distribution (untrained)",
+			"wa_tooltip_kurtosis_high" => "High = Heavy tails (trained)",
+
+			"wa_tooltip_ks_title" => "KS-Test — Deviation from Normal Distribution",
+			"wa_tooltip_ks_desc" => "The Kolmogorov-Smirnov test measures how much the weight distribution deviates from a perfect normal (Gaussian) distribution. Trained weights typically deviate significantly from normal.",
+			"wa_tooltip_ks_low" => "Low D = Close to normal (untrained)",
+			"wa_tooltip_ks_high" => "High D = Far from normal (trained)",
+
+			"wa_tooltip_correlation_title" => "Inter-Filter Correlation",
+			"wa_tooltip_correlation_desc" => "Measures how similar different filters/neurons are to each other. Trained networks develop correlated filters that work together to detect complex patterns.",
+			"wa_tooltip_correlation_low" => "Low = Independent filters (untrained)",
+			"wa_tooltip_correlation_high" => "High = Correlated filters (trained)",
+
+			"wa_tooltip_weight_dist_title" => "Weight Distribution",
+			"wa_tooltip_weight_dist_desc" => "Shows the histogram of all weight values. Untrained weights look like a smooth bell curve. Trained weights develop peaks, asymmetry, and heavy tails.",
 		),
 
 		'de' => array(
@@ -1985,6 +2018,39 @@
 			"gflow_min_norm_label" => "Min. Gradientennorm",
 			"gflow_mean_norm_label" => "Mittlere Gradientennorm",
 			"gflow_layer_ratio_label" => "Layer-Verhältnis (max/min)",
+
+			"wa_tooltip_entropy_title" => "Entropie — Wie strukturiert sind die Gewichte?",
+			"wa_tooltip_entropy_desc" => "Entropie misst die Zufälligkeit/Unordnung der Gewichtswerte. Niedrige Entropie bedeutet, dass die Gewichte spezifische Muster gelernt haben (strukturiert). Hohe Entropie bedeutet, sie sehen zufällig aus (untrainiert).",
+			"wa_tooltip_entropy_low" => "Niedrig = Trainiert (strukturierte Muster)",
+			"wa_tooltip_entropy_high" => "Hoch = Untrainiert (zufälliges Rauschen)",
+
+			"wa_tooltip_sparsity_title" => "Sparsity — Wie viele Gewichte sind nahe Null?",
+			"wa_tooltip_sparsity_desc" => "Sparsity misst den Prozentsatz der Gewichte, die sehr nahe an Null liegen. Trainierte Netzwerke entwickeln oft Sparsity, da unwichtige Verbindungen gegen Null gehen.",
+			"wa_tooltip_sparsity_low" => "Niedrig = Untrainiert (alle Gewichte aktiv)",
+			"wa_tooltip_sparsity_high" => "Hoch = Trainiert (viele beschnittene Verbindungen)",
+
+			"wa_tooltip_svd_title" => "SVD Energiekonzentration",
+			"wa_tooltip_svd_desc" => "Die Singulärwertzerlegung zeigt, wie die 'Energie' (Information) verteilt ist. Eine steile Kurve bedeutet, dass wenige Richtungen dominieren — das Netzwerk hat spezifische Merkmale gelernt.",
+			"wa_tooltip_svd_flat" => "Flach = Untrainiert (Energie gleichmäßig verteilt)",
+			"wa_tooltip_svd_steep" => "Steil = Trainiert (Energie konzentriert)",
+
+			"wa_tooltip_kurtosis_title" => "Kurtosis — Schwere Ränder in der Verteilung?",
+			"wa_tooltip_kurtosis_desc" => "Kurtosis misst, wie 'spitz' oder 'schwerschwänzig' die Gewichtsverteilung im Vergleich zur Normalverteilung ist. Trainierte Netzwerke entwickeln oft schwere Ränder (hohe Kurtosis).",
+			"wa_tooltip_kurtosis_zero" => "≈ 0 = Normalverteilung (untrainiert)",
+			"wa_tooltip_kurtosis_high" => "Hoch = Schwere Ränder (trainiert)",
+
+			"wa_tooltip_ks_title" => "KS-Test — Abweichung von der Normalverteilung",
+			"wa_tooltip_ks_desc" => "Der Kolmogorov-Smirnov-Test misst, wie stark die Gewichtsverteilung von einer perfekten Normalverteilung abweicht. Trainierte Gewichte weichen typischerweise deutlich ab.",
+			"wa_tooltip_ks_low" => "Niedriges D = Nahe an Normal (untrainiert)",
+			"wa_tooltip_ks_high" => "Hohes D = Weit von Normal (trainiert)",
+
+			"wa_tooltip_correlation_title" => "Inter-Filter Korrelation",
+			"wa_tooltip_correlation_desc" => "Misst, wie ähnlich verschiedene Filter/Neuronen zueinander sind. Trainierte Netzwerke entwickeln korrelierte Filter, die zusammenarbeiten, um komplexe Muster zu erkennen.",
+			"wa_tooltip_correlation_low" => "Niedrig = Unabhängige Filter (untrainiert)",
+			"wa_tooltip_correlation_high" => "Hoch = Korrelierte Filter (trainiert)",
+
+			"wa_tooltip_weight_dist_title" => "Gewichtsverteilung",
+			"wa_tooltip_weight_dist_desc" => "Zeigt das Histogramm aller Gewichtswerte. Untrainierte Gewichte sehen wie eine glatte Glockenkurve aus. Trainierte Gewichte entwickeln Spitzen, Asymmetrie und schwere Ränder.",
 		)
 	);
 
