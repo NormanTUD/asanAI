@@ -2230,12 +2230,6 @@ label.buttons_in_custom_images {
 	font-weight: 400;
 }
 
-/* ── Animated shimmer on highest bar ── */
-@keyframes barShimmer {
-	0% { background-position: -60px 0; }
-	100% { background-position: 60px 0; }
-}
-
 .highest_bar::after {
 	content: '';
 	position: absolute;
@@ -2251,7 +2245,6 @@ label.buttons_in_custom_images {
 		transparent 100%
 	);
 	background-size: 60px 100%;
-	animation: barShimmer 2.5s ease-in-out infinite;
 	pointer-events: none;
 }
 
