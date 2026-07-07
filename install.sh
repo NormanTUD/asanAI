@@ -13,8 +13,6 @@ fi
 PASSWORD=${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
-ERRNO=1
-
 run_cmd() {
 	local cmd="$1"
 	shift
@@ -22,10 +20,8 @@ run_cmd() {
 	echo ">> Running: $cmd $*"
 	"$cmd" "$@" || {
 		echo "ERROR: $cmd $* failed"
-		exit "$ERRNO"
+		exit 11
 	}
-
-	ERRNO=$((ERRNO+1))
 }
 
 if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
