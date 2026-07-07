@@ -1025,6 +1025,11 @@
 
 			"wa_tooltip_weight_dist_title" => "Weight Distribution",
 			"wa_tooltip_weight_dist_desc" => "Shows the histogram of all weight values. Untrained weights look like a smooth bell curve. Trained weights develop peaks, asymmetry, and heavy tails.",
+
+			"wa_tooltip_ks_test_title" => "KS-Test — Deviation from Normal Distribution",
+			"wa_tooltip_ks_test_desc" => "The Kolmogorov-Smirnov test measures how much the weight distribution deviates from a perfect normal (Gaussian) distribution. Trained weights typically deviate significantly from normal.",
+			"wa_tooltip_weight_distribution_title" => "Weight Distribution",
+			"wa_tooltip_weight_distribution_desc" => "Shows the histogram of all weight values. Untrained weights look like a smooth bell curve. Trained weights develop peaks, asymmetry, and heavy tails.",
 		),
 
 		'de' => array(
@@ -2051,6 +2056,11 @@
 
 			"wa_tooltip_weight_dist_title" => "Gewichtsverteilung",
 			"wa_tooltip_weight_dist_desc" => "Zeigt das Histogramm aller Gewichtswerte. Untrainierte Gewichte sehen wie eine glatte Glockenkurve aus. Trainierte Gewichte entwickeln Spitzen, Asymmetrie und schwere Ränder.",
+
+			"wa_tooltip_ks_test_title" => "KS-Test — Abweichung von der Normalverteilung",
+			"wa_tooltip_ks_test_desc" => "Der Kolmogorov-Smirnov-Test misst, wie stark die Gewichtsverteilung von einer perfekten Normalverteilung abweicht. Trainierte Gewichte weichen typischerweise deutlich ab.",
+			"wa_tooltip_weight_distribution_title" => "Gewichtsverteilung",
+			"wa_tooltip_weight_distribution_desc" => "Zeigt das Histogramm aller Gewichtswerte. Untrainierte Gewichte sehen wie eine glatte Glockenkurve aus. Trainierte Gewichte entwickeln Spitzen, Asymmetrie und schwere Ränder.",
 		)
 	);
 
