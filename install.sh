@@ -46,7 +46,7 @@ cd $INSTALL_PATH
 if [ -d "$INSTALL_PATH/.git" ]; then
 	git pull
 else
-	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git .
+	git clone --depth 1 https://github.com/NormanTUD/asanAI.git .
 	git config --global user.name "$(hostname)"
 	git config --global user.email "$(hostname)@$(hostname).com"
 	git config pull.rebase false
