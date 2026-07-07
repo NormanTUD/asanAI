@@ -31,7 +31,7 @@ run_cmd() {
 if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
 	run_cmd apt-get update
 	run_cmd apt-get autoremove -y
-	run_cmd apt-get install -y xterm curl git etckeeper wget apt-utils
+	run_cmd apt-get install -y xterm curl git wget apt-utils
 fi
 
 git config --global credential.helper store
