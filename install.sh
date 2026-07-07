@@ -59,8 +59,6 @@ function install_apache {
 }
 
 function install_php {
-	# Prüfe ob PHP bereits funktionsfähig vorhanden ist
-	# (z.B. im offiziellen php:apache Docker-Image, wo PHP aus Quellen kompiliert ist)
 	if php -v &>/dev/null; then
 		local PHP_CURRENT
 		PHP_CURRENT=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null)
