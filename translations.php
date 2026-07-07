@@ -99,7 +99,7 @@
 			'close' => 'Close',
 			'register' => 'Register',
 			'csv' => 'CSV',
-			'math' => 'Math-mode',
+			'math' => 'Math Mode',
 			'smaller' => 'Smaller',
 			'larger' => 'Larger',
 			'reset' => 'Reset',
