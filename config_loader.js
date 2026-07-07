@@ -91,14 +91,11 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	trigger_initializers();
 
-	await wait_for_updated_page_if_page_finished_loading(1);
-
 	show_or_hide_photos_depending_on_if_index(index);
 
 	remove_confusion_matrix();
 
 	if(!keep_overlay) {
-		await wait_for_updated_page_if_page_finished_loading(3);
 		remove_overlay();
 	}
 }
@@ -468,7 +465,6 @@ async function set_weights_if_exists_or_error(config){
 		err(e);
 		l(language[lang]["error_failed_to_load_model_and_or_weights"]);
 
-		await wait_for_updated_page_if_page_finished_loading(3);
 		remove_overlay();
 		return true;
 	}
