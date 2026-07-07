@@ -879,7 +879,7 @@
                 row.style.cursor = "help";
 
                 row.addEventListener("click", function(e) {
-                    _showWaTooltip(type, null, null, e, record, null, null);
+                    _showWaTooltip(type, null, null, e, record, null);
                 });
             })(rows[i]);
         }
