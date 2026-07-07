@@ -48,7 +48,7 @@ if [ -d "$INSTALL_PATH/.git" ]; then
 else
 	git clone --depth 1 https://github.com/NormanTUD/TensorFlowJS-GUI.git .
 	git config --global user.name "$(hostname)"
-	git config --global user.email "kochnorman@rocketmail.com"
+	git config --global user.email "$(hostname)@$(hostname).com"
 	git config pull.rebase false
 fi
 
