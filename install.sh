@@ -10,7 +10,7 @@ if ! command -v apt 2>&1 > /dev/null; then
 	exit 2
 fi
 
-PASSWORD=${RANDOM}_${RANDOM}
+PASSWORD=${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
 ERRNO=1
