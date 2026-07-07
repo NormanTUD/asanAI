@@ -1,6 +1,8 @@
 "use strict";
 
 function show_overlay(text, title="", options={}) {
+	close_popups();
+
 	try {
 		var bg_color = "white";
 		var text_color = "black";
@@ -25,7 +27,7 @@ function show_overlay(text, title="", options={}) {
 		overlay.style.alignItems = "center";
 		overlay.style.justifyContent = "center";
 		overlay.style.userSelect = "none";
-		overlay.style.zIndex = "9999";
+		overlay.style.zIndex = "99999";
 		overlay.style.transition = "opacity 0.25s ease-in";
 		$(overlay).addClass("overlay");
 
