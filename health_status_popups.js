@@ -855,7 +855,7 @@
                             break;
                     }
 
-                    _showWaTooltip(type, value, maxValue, e);
+                    _showWaTooltip(type, value, maxValue, e, null, null);
                 });
             })(rows[i]);
         }
@@ -879,7 +879,7 @@
                 row.style.cursor = "help";
 
                 row.addEventListener("click", function(e) {
-                    _showWaTooltip(type, null, null, e, record, null);
+                    _showWaTooltip(type, null, null, e, record, null, null);
                 });
             })(rows[i]);
         }
