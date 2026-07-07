@@ -134,44 +134,12 @@ function install_php {
 	fi
 }
 
-function install_mariadb {
-	apt-get install -y mariadb-server mariadb-client || {
-		echo "apt install mariadb-server mariadb-client -y failed"
-		exit 10
-	}
-}
-
-function setup_mariadb {
-	local retries=10
-	while [ $retries -gt 0 ]; do
-		if mysqladmin ping &>/dev/null; then
-			break
-		fi
-		echo "Warte auf MariaDB..."
-		sleep 2
-		retries=$((retries - 1))
-	done
-
-	mysql -u root <<-EOF
-	SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$PASSWORD');
-	DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-	DELETE FROM mysql.user WHERE User='';
-	DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
-	FLUSH PRIVILEGES;
-	EOF
-}
-
 echo "$PASSWORD" > /etc/vvzdbpw
 
 if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
 	install_apache
 	install_php
 fi
-
-if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
-	install_mariadb
-fi
-setup_mariadb
 
 a2enmod rewrite
 a2enmod env
