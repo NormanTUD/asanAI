@@ -55,7 +55,7 @@ fi
 cd -
 
 function install_apache {
-	apt-get install -y unzip ca-certificates apt-transport-https lsb-release gnupg apache2
+	apt-get install -y unzip ca-certificates apt-transport-https gnupg apache2
 }
 
 function install_php {
@@ -64,55 +64,14 @@ function install_php {
 	if php -v &>/dev/null; then
 		local PHP_CURRENT
 		PHP_CURRENT=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null)
-		echo "PHP ${PHP_CURRENT} ist bereits installiert (vermutlich aus Source kompiliert)."
-		echo "Überspringe PHP-Paketinstallation."
+		echo "PHP ${PHP_CURRENT} already installed, skipping php installation."
 		return 0
 	fi
 
-	# Ermittle Debian-Codename
-	local CODENAME
-	CODENAME=$(lsb_release -sc 2>/dev/null || echo "")
+	apt-get update
 
-	# Prüfe ob der Codename vom Sury-Repository unterstützt wird.
-	# HINWEIS: trixie (Debian 13) wird NICHT mehr über Sury installiert,
-	# da Debian 13 bereits nativ PHP 8.4 mitbringt und das Sury-Repo
-	# Paketkonflikte mit php8.4-common verursacht.
-	local SUPPORTED_CODENAMES="bullseye bookworm forky"
-	local USE_SURY=false
-
-	if [ -n "$CODENAME" ]; then
-		for supported in $SUPPORTED_CODENAMES; do
-			if [ "$CODENAME" = "$supported" ]; then
-				USE_SURY=true
-				break
-			fi
-		done
-	fi
-
-	if [ "$USE_SURY" = true ]; then
-		echo "Installiere PHP aus dem Sury-Repository für '$CODENAME'..."
-
-		local KEYRING_PATH="/usr/share/keyrings/sury-php.gpg"
-
-		curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o "$KEYRING_PATH" || {
-			curl -fsSL https://packages.sury.org/php/apt.gpg -o "$KEYRING_PATH"
-		}
-		chmod 644 "$KEYRING_PATH"
-
-		cat > /etc/apt/sources.list.d/php-sury.list <<-EOF
-		deb [signed-by=${KEYRING_PATH}] https://packages.sury.org/php/ ${CODENAME} main
-		EOF
-		sed -i 's/^[[:space:]]*//' /etc/apt/sources.list.d/php-sury.list
-
-		apt-get update
-	else
-		echo "Codename '$CODENAME' wird nicht über Sury installiert. Verwende Standard-Repos..."
-		apt-get update
-	fi
-
-	echo "Versuche versionsloses libapache2-mod-php Paket..."
 	apt-get install -y --no-install-recommends libapache2-mod-php php-common php-cli php-opcache || {
-		echo "FEHLER: Konnte keine PHP-Version installieren!"
+		echo "ERROR: Could not install any php-version!"
 		exit 10
 	}
 }
