@@ -3,6 +3,8 @@
 function show_overlay(text, title="", options={}) {
 	close_popups();
 
+	close_math_copiers();
+
 	try {
 		var bg_color = "white";
 		var text_color = "black";

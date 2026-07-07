@@ -2061,6 +2061,7 @@ function create_centered_window_with_text(parameter) {
 	closeButton.style.border = "none";
 	closeButton.style.backgroundColor = "red";
 	closeButton.style.cursor = "pointer";
+	closeButton.classList.add("math_copier_close_button");
 
 	// Create the readonly textarea
 	var textarea = document.createElement("textarea");
@@ -2106,6 +2107,10 @@ function create_centered_window_with_text(parameter) {
 	}
 
         document.addEventListener("keydown", esc_listener);
+}
+
+function close_math_copiers () {
+	$(".math_copier_close_button").click();
 }
 
 function get_last_element_of_class_end_y(name) {
