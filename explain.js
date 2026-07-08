@@ -1093,7 +1093,7 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 
 		try {
 			var current_epoch = epoch + 1;
-			if(current_epoch == 1) {
+			if(!document.getElementById(`${id}_training_data_graph`)) {
 				$(`#${append_to_id}`).html("");
 				$(`<div id='${id}_training_data_graph'></div>`).appendTo($(`#${append_to_id}`));
 			}
