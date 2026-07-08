@@ -23,7 +23,9 @@ var LossLandscape = (function () {
 		lastEligible: false,
 		debugMsg: "Initializing...",
 		plotlyInitialized: false,
-		lastPlotHash: ""
+		lastPlotHash: "",
+		parentElement: null,
+		parentId: null
 	};
 
 	// ============================================================
@@ -59,7 +61,6 @@ var LossLandscape = (function () {
 		if (!t) return null;
 		try {
 			if (t && typeof t === "object" && typeof t.dataSync === "function") {
-				// Check if tensor is disposed
 				if (t.isDisposed) return null;
 				return Array.from(t.dataSync());
 			}
@@ -76,7 +77,6 @@ var LossLandscape = (function () {
 	}
 
 	function _syncData() {
-		// Strategy 1: xy_data_global (set in train.js run_neural_network)
 		if (typeof xy_data_global !== "undefined" && xy_data_global !== null && typeof xy_data_global === "object") {
 			var xT = xy_data_global.x || xy_data_global["x"];
 			var yT = xy_data_global.y || xy_data_global["y"];
@@ -100,7 +100,6 @@ var LossLandscape = (function () {
 			_state.debugMsg = "xy_data_global: " + (typeof xy_data_global === "undefined" ? "undefined" : "null");
 		}
 
-		// Strategy 2: csv_global_x / csv_global_y
 		if (typeof csv_global_x !== "undefined" && csv_global_x && typeof csv_global_y !== "undefined" && csv_global_y) {
 			var cx = _safeExtract(csv_global_x);
 			var cy = _safeExtract(csv_global_y);
@@ -112,7 +111,6 @@ var LossLandscape = (function () {
 			}
 		}
 
-		// Strategy 3: global_x / global_y
 		if (typeof global_x !== "undefined" && global_x && typeof global_y !== "undefined" && global_y) {
 			var gx = _safeExtract(global_x);
 			var gy = _safeExtract(global_y);
@@ -124,7 +122,6 @@ var LossLandscape = (function () {
 			}
 		}
 
-		// Keep using cached data if we have it
 		return _state.cachedX !== null && _state.cachedX.length > 0;
 	}
 
@@ -202,7 +199,7 @@ var LossLandscape = (function () {
 	}
 
 	// ============================================================
-	// PLOTLY RENDERING
+	// PLOTLY RENDERING - SMOOTH UPDATES
 	// ============================================================
 
 	function _ensurePlotly(callback) {
@@ -210,7 +207,6 @@ var LossLandscape = (function () {
 			callback();
 			return;
 		}
-		// Load Plotly if not available
 		var script = document.createElement("script");
 		script.src = "https://cdn.plot.ly/plotly-latest.min.js";
 		script.onload = callback;
@@ -224,24 +220,41 @@ var LossLandscape = (function () {
 		if (typeof Plotly === "undefined") return;
 
 		var plotDiv = _state.plotDiv;
-		if (!plotDiv) return;
+		if (!plotDiv || !plotDiv.parentNode) return;
 
 		var surfaceData = _computeSurfaceData();
 		if (!surfaceData) {
-			// Show debug message
-			plotDiv.innerHTML = "<div style='color:#aaa;text-align:center;padding:40px;font-family:monospace;font-size:12px;'>" +
-				"<p><b>Loss Landscape 3D</b> - Waiting for data</p>" +
-				"<p>" + _state.debugMsg + "</p>" +
-				"<p>cachedX: " + (_state.cachedX ? _state.cachedX.length + " items" : "null") + "</p>" +
-				"<p>cachedY: " + (_state.cachedY ? _state.cachedY.length + " items" : "null") + "</p>" +
-				"</div>";
+			// Only update the info div, not the plot div itself
+			var infoDiv = document.getElementById(_SINGLETON_ID + "_info");
+			if (infoDiv) {
+				infoDiv.style.display = "";
+				infoDiv.innerHTML =
+					"<p><b>Loss Landscape 3D</b> - Waiting for data</p>" +
+					"<p>" + _state.debugMsg + "</p>" +
+					"<p>cachedX: " + (_state.cachedX ? _state.cachedX.length + " items" : "null") + "</p>" +
+					"<p>cachedY: " + (_state.cachedY ? _state.cachedY.length + " items" : "null") + "</p>";
+			}
 			return;
+		}
+
+		// Hide info overlay when we have data
+		var infoDiv = document.getElementById(_SINGLETON_ID + "_info");
+		if (infoDiv) {
+			infoDiv.style.display = "none";
 		}
 
 		// Build hash to avoid unnecessary re-renders
 		var current = _getCurrentWeights();
-		var plotHash = _state.wRange.join(",") + "|" + _state.bRange.join(",") + "|" + _state.history.length;
+		var plotHash = _state.wRange[0].toFixed(4) + "," + _state.wRange[1].toFixed(4) + "|" +
+			_state.bRange[0].toFixed(4) + "," + _state.bRange[1].toFixed(4) + "|" +
+			_state.history.length + "|" +
+			(_state.cachedX ? _state.cachedX.length : 0);
 		if (current) plotHash += "|" + current.w.toFixed(6) + "," + current.b.toFixed(6);
+
+		// Skip render if nothing changed
+		if (plotHash === _state.lastPlotHash && _state.plotlyInitialized) {
+			return;
+		}
 
 		// Surface trace
 		var surfaceTrace = {
@@ -262,15 +275,14 @@ var LossLandscape = (function () {
 			opacity: 0.85,
 			showscale: true,
 			colorbar: {
-				title: "Loss",
-				titleside: "right",
+				title: { text: "Loss (MSE)", side: "right" },
 				thickness: 15,
 				len: 0.6
 			},
 			contours: {
 				z: { show: true, usecolormap: true, highlightcolor: "#fff", project: { z: false } }
 			},
-			hovertemplate: "w: %{x:.4f}<br>b: %{y:.4f}<br>loss: %{z:.6f}<extra></extra>",
+			hovertemplate: "Weight (w): %{x:.4f}<br>Bias (b): %{y:.4f}<br>Loss: %{z:.6f}<extra></extra>",
 			name: "Loss Surface"
 		};
 
@@ -286,7 +298,8 @@ var LossLandscape = (function () {
 				var pt = _state.history[h];
 				pathW.push(pt.w);
 				pathB.push(pt.b);
-				pathLoss.push(_computeLoss(pt.w, pt.b, _state.cachedX, _state.cachedY) + 0.01);
+				var lossVal = _computeLoss(pt.w, pt.b, _state.cachedX, _state.cachedY);
+				pathLoss.push(Math.max(lossVal + 0.01, 1e-6));
 			}
 
 			var pathTrace = {
@@ -298,7 +311,7 @@ var LossLandscape = (function () {
 				line: { color: "#ffffff", width: 4 },
 				marker: { size: 2, color: "#ffffff", opacity: 0.6 },
 				name: "Optimization Path",
-				hovertemplate: "w: %{x:.4f}<br>b: %{y:.4f}<br>loss: %{z:.6f}<extra>Step %{pointNumber}</extra>"
+				hovertemplate: "Weight (w): %{x:.4f}<br>Bias (b): %{y:.4f}<br>Loss: %{z:.6f}<extra>Step %{pointNumber}</extra>"
 			};
 			traces.push(pathTrace);
 
@@ -311,14 +324,15 @@ var LossLandscape = (function () {
 				z: [pathLoss[0]],
 				marker: { size: 8, color: "#2ecc71", symbol: "diamond" },
 				name: "Start",
-				hovertemplate: "START<br>w: %{x:.4f}<br>b: %{y:.4f}<br>loss: %{z:.6f}<extra></extra>"
+				hovertemplate: "START<br>Weight (w): %{x:.4f}<br>Bias (b): %{y:.4f}<br>Loss: %{z:.6f}<extra></extra>"
 			};
 			traces.push(startTrace);
 		}
 
 		// Current position
 		if (current) {
-			var cLoss = _computeLoss(current.w, current.b, _state.cachedX, _state.cachedY) + 0.01;
+			var cLoss = _computeLoss(current.w, current.b, _state.cachedX, _state.cachedY);
+			cLoss = Math.max(cLoss + 0.01, 1e-6);
 			var currentTrace = {
 				type: "scatter3d",
 				mode: "markers",
@@ -327,20 +341,48 @@ var LossLandscape = (function () {
 				z: [cLoss],
 				marker: { size: 10, color: "#e74c3c", symbol: "circle", line: { color: "#fff", width: 2 } },
 				name: "Current (w=" + current.w.toFixed(4) + ", b=" + current.b.toFixed(4) + ")",
-				hovertemplate: "CURRENT<br>w: %{x:.4f}<br>b: %{y:.4f}<br>loss: %{z:.6f}<extra></extra>"
+				hovertemplate: "CURRENT<br>Weight (w): %{x:.4f}<br>Bias (b): %{y:.4f}<br>Loss: %{z:.6f}<extra></extra>"
 			};
 			traces.push(currentTrace);
 		}
 
+		// Compute a safe z-axis range to prevent log(0) issues
+		var zMin = Infinity, zMax = -Infinity;
+		for (var j = 0; j < surfaceData.zVals.length; j++) {
+			for (var i = 0; i < surfaceData.zVals[j].length; i++) {
+				var v = surfaceData.zVals[j][i];
+				if (v > 0 && v < zMin) zMin = v;
+				if (v > zMax) zMax = v;
+			}
+		}
+		if (zMin === Infinity) zMin = 0.001;
+		if (zMax <= zMin) zMax = zMin * 10;
+
 		var layout = {
 			title: {
-				text: "3D Loss Landscape (MSE) | " + (_state.cachedX ? _state.cachedX.length : 0) + " samples | Steps: " + _state.history.length,
+				text: "3D Loss Landscape (MSE) — " + (_state.cachedX ? _state.cachedX.length : 0) + " samples, " + _state.history.length + " steps",
 				font: { size: 13, color: "#aaa" }
 			},
 			scene: {
-				xaxis: { title: "Weight (w)", gridcolor: "rgba(255,255,255,0.1)", color: "#aaa" },
-				yaxis: { title: "Bias (b)", gridcolor: "rgba(255,255,255,0.1)", color: "#aaa" },
-				zaxis: { title: "Loss (MSE)", gridcolor: "rgba(255,255,255,0.1)", color: "#aaa", type: "log" },
+				xaxis: {
+					title: { text: "Weight (w)", font: { size: 12, color: "#ddd" } },
+					gridcolor: "rgba(255,255,255,0.1)",
+					color: "#aaa",
+					tickfont: { size: 10, color: "#999" }
+				},
+				yaxis: {
+					title: { text: "Bias (b)", font: { size: 12, color: "#ddd" } },
+					gridcolor: "rgba(255,255,255,0.1)",
+					color: "#aaa",
+					tickfont: { size: 10, color: "#999" }
+				},
+				zaxis: {
+					title: { text: "Loss (MSE)", font: { size: 12, color: "#ddd" } },
+					gridcolor: "rgba(255,255,255,0.1)",
+					color: "#aaa",
+					tickfont: { size: 10, color: "#999" },
+					rangemode: "tozero"
+				},
 				bgcolor: "#0d0d1a",
 				camera: {
 					eye: { x: 1.5, y: 1.5, z: 1.2 }
@@ -361,13 +403,15 @@ var LossLandscape = (function () {
 			displaylogo: false
 		};
 
-		if (!_state.plotlyInitialized || plotHash !== _state.lastPlotHash) {
-			if (!_state.plotlyInitialized) {
-				Plotly.newPlot(plotDiv, traces, layout, config);
+		// Use Plotly.react for smooth updates (no flicker) after initial plot
+		if (!_state.plotlyInitialized) {
+			Plotly.newPlot(plotDiv, traces, layout, config).then(function () {
 				_state.plotlyInitialized = true;
-			} else {
-				Plotly.react(plotDiv, traces, layout, config);
-			}
+				_state.lastPlotHash = plotHash;
+			});
+		} else {
+			// Plotly.react does a diff-based update — no destroy/recreate
+			Plotly.react(plotDiv, traces, layout, config);
 			_state.lastPlotHash = plotHash;
 		}
 	}
@@ -406,17 +450,29 @@ var LossLandscape = (function () {
 		var eligible = _isEligibleModel();
 
 		if (!eligible) {
+			// Hide but don't destroy — use visibility to avoid layout reflow
 			if (_state.container) {
-				_state.container.style.display = "none";
+				_state.container.style.visibility = "hidden";
+				_state.container.style.position = "absolute";
+				_state.container.style.pointerEvents = "none";
 			}
 			_state.lastEligible = false;
 			return;
 		}
 
+		// Model became eligible (or still is)
+		if (!_state.lastEligible && _state.container) {
+			// Restore visibility smoothly
+			_state.container.style.visibility = "visible";
+			_state.container.style.position = "";
+			_state.container.style.pointerEvents = "";
+		}
 		_state.lastEligible = true;
 
 		if (_state.container) {
-			_state.container.style.display = "";
+			_state.container.style.visibility = "visible";
+			_state.container.style.position = "";
+			_state.container.style.pointerEvents = "";
 		}
 
 		_syncData();
@@ -443,20 +499,22 @@ var LossLandscape = (function () {
 	function _getOrCreateContainer(divOrId) {
 		var existing = document.getElementById(_SINGLETON_ID);
 		if (existing) {
-			_state.container = existing;
-			return existing;
+			existing.parentNode.removeChild(existing);
+			_state.plotlyInitialized = false;
 		}
 
 		var parent = null;
 		if (typeof divOrId === "string" && divOrId !== "") {
 			parent = document.getElementById(divOrId);
+			_state.parentId = divOrId;
 		} else if (divOrId instanceof HTMLElement) {
 			parent = divOrId;
+			_state.parentElement = divOrId;
 		}
 
 		var container = document.createElement("div");
 		container.id = _SINGLETON_ID;
-		container.style.cssText = "margin: 20px 0; padding: 10px; border-radius: 12px; background: #0d0d1a; display: inline-block; min-width: 700px;";
+		container.style.cssText = "margin: 20px 0; padding: 10px; border-radius: 12px; background: #0d0d1a; display: inline-block; min-width: 700px; min-height: 620px;";
 
 		if (parent) {
 			parent.appendChild(container);
@@ -476,10 +534,23 @@ var LossLandscape = (function () {
 		title.textContent = "3D Loss Landscape (1 Dense, 1 neuron, input [1]) — Plotly";
 		container.appendChild(title);
 
+		// Info overlay (shown when waiting for data, hidden otherwise)
+		var infoDiv = document.createElement("div");
+		infoDiv.id = _SINGLETON_ID + "_info";
+		infoDiv.style.cssText = "color:#aaa;text-align:center;padding:40px;font-family:monospace;font-size:12px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;";
+		infoDiv.innerHTML = "<p><b>Loss Landscape 3D</b> - Waiting for data</p>";
+
+		// Plot wrapper with fixed dimensions to prevent reflow
+		var plotWrapper = document.createElement("div");
+		plotWrapper.style.cssText = "position: relative; width: 680px; height: 550px;";
+
 		var plotDiv = document.createElement("div");
 		plotDiv.id = _SINGLETON_ID + "_plot";
 		plotDiv.style.cssText = "width: 680px; height: 550px; border-radius: 8px; overflow: hidden;";
-		container.appendChild(plotDiv);
+
+		plotWrapper.appendChild(plotDiv);
+		plotWrapper.appendChild(infoDiv);
+		container.appendChild(plotWrapper);
 
 		_state.plotDiv = plotDiv;
 		_state.plotlyInitialized = false;
@@ -493,7 +564,7 @@ var LossLandscape = (function () {
 		clearBtn.style.cssText = "padding: 4px 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #ccc; border-radius: 6px; cursor: pointer; font-size: 11px;";
 		clearBtn.onclick = function () {
 			_state.history = [];
-			_state.plotlyInitialized = false;
+			_state.lastPlotHash = "";
 			_tick();
 		};
 		btnRow.appendChild(clearBtn);
@@ -511,6 +582,15 @@ var LossLandscape = (function () {
 			_state.intervalId = null;
 		}
 
+		// Store the parent reference for re-creation
+		if (typeof divOrId === "string") {
+			_state.parentId = divOrId;
+			_state.parentElement = null;
+		} else if (divOrId instanceof HTMLElement) {
+			_state.parentElement = divOrId;
+			_state.parentId = null;
+		}
+
 		var container = _getOrCreateContainer(divOrId);
 		_buildUI(container);
 
@@ -521,11 +601,35 @@ var LossLandscape = (function () {
 
 		_ensurePlotly(function () {
 			_state.active = true;
-			_state.intervalId = setInterval(_tick, 500);
+			_state.intervalId = setInterval(_tick, 600);
 			_tick();
 		});
 
 		return container;
+	}
+
+	function destroy() {
+		if (_state.intervalId) {
+			clearInterval(_state.intervalId);
+			_state.intervalId = null;
+		}
+		_state.active = false;
+
+		if (_state.plotDiv && typeof Plotly !== "undefined") {
+			try { Plotly.purge(_state.plotDiv); } catch (e) {}
+		}
+
+		if (_state.container && _state.container.parentNode) {
+			_state.container.parentNode.removeChild(_state.container);
+		}
+
+		_state.container = null;
+		_state.plotDiv = null;
+		_state.plotlyInitialized = false;
+		_state.lastPlotHash = "";
+		_state.history = [];
+		_state.cachedX = null;
+		_state.cachedY = null;
 	}
 
 	function stop() {
@@ -536,9 +640,20 @@ var LossLandscape = (function () {
 		_state.active = false;
 	}
 
-	function update() { _tick(); }
+	function update() {
+		// If container was destroyed, re-create it in the same parent
+		if (!_state.container || !_state.container.parentNode) {
+			var target = _state.parentId || _state.parentElement || null;
+			if (target) {
+				init(target);
+				return;
+			}
+		}
+		_state.lastPlotHash = ""; // Force a re-render
+		_tick();
+	}
 
-	return { init: init, stop: stop, update: update };
+	return { init: init, stop: stop, update: update, destroy: destroy };
 
 })();
 
