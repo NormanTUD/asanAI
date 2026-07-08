@@ -831,3 +831,5 @@ var LossLandscape = (function () {
 if (typeof window !== "undefined") {
 	window.LossLandscape = LossLandscape;
 }
+
+LossLandscape.init()
