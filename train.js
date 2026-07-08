@@ -591,12 +591,16 @@ async function get_fit_data () {
 			this_plot_data.push(training_logs_epoch[other_key_name]);
 		}
 
-		$("#plotly_epoch_history").parent().show();
-		$("#plotly_epoch_history").show();
-		if(epochNr == 1) {
-			Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
-		} else {
-			Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
+		try {
+			$("#plotly_epoch_history").parent().show();
+			$("#plotly_epoch_history").show();
+			if(epochNr == 1) {
+				Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
+			} else {
+				Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
+			}
+		} catch (e) {
+			err("Error trying to write plotly_epoch_history plot!");
 		}
 
 		await visualize_train();
