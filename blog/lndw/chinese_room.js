@@ -147,9 +147,9 @@ const CRSim = (() => {
 			}
 		});
 
-		// Feedback mit englischer Übersetzung
+		// ✅ NUR bestätigen, dass die Regel befolgt wurde – KEINE Übersetzung!
 		$('#cr-feedback').html(
-			`<span style="color:#27ae60; font-weight:bold;">✅ Richtig!</span> <span style="color:#888; font-size:0.85em;">${r.german}</span>`
+			`<span style="color:#27ae60; font-weight:bold;">✅ Regel befolgt.</span> <span style="color:#888; font-size:0.85em;">Was das bedeutet? Keine Ahnung.</span>`
 		);
 
 		roundState = 'answered';
@@ -272,10 +272,8 @@ const CRSim = (() => {
 	}
 
 	// ── Reveal Translations ──────────────────────────────────────────
-	function revealTranslations() {
-		$('#cr-translations').show();
-		$('#cr-reveal-translations-btn').hide();
-	}
+	$('#cr-translations').show();
+	$('#cr-reveal-translations-btn').hide();
 
 	// ── Start / Activate ──────────────────────────────────────────────
 	function start() {
@@ -294,7 +292,7 @@ const CRSim = (() => {
 	}
 
 	// ── Public API ──────────────────────────────────────────────────
-	return { start, revealTranslations, canGoNext, canGoPrev, next, prev, activate, deactivate, isOnCRSlide };
+	return { start, canGoNext, canGoPrev, next, prev, activate, deactivate, isOnCRSlide };
 })();
 
 function loadPhilosophyModule() {
