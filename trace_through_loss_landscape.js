@@ -733,7 +733,7 @@ var LossLandscape = (function () {
 	// PUBLIC API
 	// ============================================================
 
-	function init(divOrId) {
+	function init_loss_landscape(divOrId) {
 		if (_state.intervalId) {
 			clearInterval(_state.intervalId);
 			_state.intervalId = null;
@@ -816,7 +816,7 @@ var LossLandscape = (function () {
 		if (!_state.container || !_state.container.parentNode) {
 			var target = _state.parentId || _state.parentElement || null;
 			if (target) {
-				init(target);
+				init_loss_landscape(target);
 				return;
 			}
 		}
@@ -824,7 +824,7 @@ var LossLandscape = (function () {
 		_tick();
 	}
 
-	return { init: init, stop: stop, update: update, destroy: destroy };
+	return { init_loss_landscape: init_loss_landscape, stop: stop, update: update, destroy: destroy };
 
 })();
 
