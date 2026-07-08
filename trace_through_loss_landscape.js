@@ -500,7 +500,7 @@ var LossLandscape = (function () {
 			showlegend: true,
 			legend: { x: 0.01, y: 0.99, bgcolor: "rgba(13,13,26,0.8)", font: { size: 10 } },
 			// FIX #4: Prevent Plotly from triggering scroll events on the page
-			dragmode: "orbit"
+			dragmode: "turntable"
 		};
 
 		var config = {
