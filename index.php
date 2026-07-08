@@ -121,6 +121,7 @@
 		_js("clipboard_and_download.js");
 		_js("drawing.js");
 		_js("updated_page.js");
+		_js("trace_through_loss_landscape.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
