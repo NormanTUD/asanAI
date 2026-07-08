@@ -25,7 +25,17 @@ var LossLandscape = (function () {
 		plotlyInitialized: false,
 		lastPlotHash: "",
 		parentElement: null,
-		parentId: null
+		parentId: null,
+		// NEW: track user interaction to defer updates
+		userInteracting: false,
+		interactionTimeout: null,
+		// NEW: preserve camera position across updates
+		lastCamera: null,
+		// NEW: track if container was already built (avoid rebuild)
+		uiBuilt: false,
+		// NEW: use requestAnimationFrame for smoother scheduling
+		rafId: null,
+		pendingUpdate: false
 	};
 
 	// ============================================================
@@ -199,7 +209,98 @@ var LossLandscape = (function () {
 	}
 
 	// ============================================================
-	// PLOTLY RENDERING - SMOOTH UPDATES
+	// CAMERA PRESERVATION - Key fix for smooth interaction
+	// ============================================================
+
+	function _saveCamera() {
+		if (!_state.plotDiv || !_state.plotDiv._fullLayout) return;
+		try {
+			var scene = _state.plotDiv._fullLayout.scene;
+			if (scene && scene._scene && scene._scene.getCamera) {
+				_state.lastCamera = scene._scene.getCamera();
+			} else if (scene && scene.camera) {
+				_state.lastCamera = JSON.parse(JSON.stringify(scene.camera));
+			}
+		} catch (e) {
+			// Camera read failed, keep last known
+		}
+	}
+
+	function _getLayoutWithCamera(baseLayout) {
+		// If we have a saved camera, apply it to prevent reset
+		if (_state.lastCamera) {
+			baseLayout.scene.camera = _state.lastCamera;
+		}
+		return baseLayout;
+	}
+
+	// ============================================================
+	// INTERACTION DETECTION - Defer updates while user is interacting
+	// ============================================================
+
+	function _setupInteractionListeners() {
+		if (!_state.plotDiv) return;
+
+		var plotDiv = _state.plotDiv;
+
+		// Plotly fires these events during 3D interaction
+		plotDiv.addEventListener("mousedown", _onInteractionStart, { passive: true });
+		plotDiv.addEventListener("touchstart", _onInteractionStart, { passive: true });
+		plotDiv.addEventListener("wheel", _onInteractionStart, { passive: true });
+
+		// Listen for plotly relayout events (fired after camera changes)
+		plotDiv.on && plotDiv.on("plotly_relayout", function (eventData) {
+			// Save camera whenever user moves it
+			if (eventData && (eventData["scene.camera"] || eventData["scene.camera.eye"])) {
+				_state.lastCamera = eventData["scene.camera"] || null;
+			}
+			_saveCamera();
+		});
+
+		// Also hook into plotly_relayouting for live camera tracking
+		plotDiv.on && plotDiv.on("plotly_relayouting", function (eventData) {
+			_state.userInteracting = true;
+			_clearInteractionTimeout();
+			_state.interactionTimeout = setTimeout(_onInteractionEnd, 300);
+
+			// Save camera during interaction
+			if (eventData && eventData["scene.camera"]) {
+				_state.lastCamera = eventData["scene.camera"];
+			}
+		});
+	}
+
+	function _onInteractionStart() {
+		_state.userInteracting = true;
+		_clearInteractionTimeout();
+
+		// Save camera state before any potential update
+		_saveCamera();
+
+		// Set a timeout to mark interaction as ended
+		_state.interactionTimeout = setTimeout(_onInteractionEnd, 400);
+	}
+
+	function _onInteractionEnd() {
+		_state.userInteracting = false;
+		_saveCamera();
+
+		// If there was a pending update, do it now
+		if (_state.pendingUpdate) {
+			_state.pendingUpdate = false;
+			_scheduleRender();
+		}
+	}
+
+	function _clearInteractionTimeout() {
+		if (_state.interactionTimeout) {
+			clearTimeout(_state.interactionTimeout);
+			_state.interactionTimeout = null;
+		}
+	}
+
+	// ============================================================
+	// PLOTLY RENDERING - SMOOTH UPDATES (no destroy/recreate)
 	// ============================================================
 
 	function _ensurePlotly(callback) {
@@ -216,15 +317,29 @@ var LossLandscape = (function () {
 		document.head.appendChild(script);
 	}
 
+	function _scheduleRender() {
+		if (_state.rafId) return; // Already scheduled
+		_state.rafId = requestAnimationFrame(function () {
+			_state.rafId = null;
+			_renderPlot();
+		});
+	}
+
 	function _renderPlot() {
 		if (typeof Plotly === "undefined") return;
 
 		var plotDiv = _state.plotDiv;
 		if (!plotDiv || !plotDiv.parentNode) return;
 
+		// FIX #1: If user is currently interacting (dragging/rotating/scrolling),
+		// defer the update to avoid fighting with Plotly's internal handlers
+		if (_state.userInteracting) {
+			_state.pendingUpdate = true;
+			return;
+		}
+
 		var surfaceData = _computeSurfaceData();
 		if (!surfaceData) {
-			// Only update the info div, not the plot div itself
 			var infoDiv = document.getElementById(_SINGLETON_ID + "_info");
 			if (infoDiv) {
 				infoDiv.style.display = "";
@@ -255,6 +370,9 @@ var LossLandscape = (function () {
 		if (plotHash === _state.lastPlotHash && _state.plotlyInitialized) {
 			return;
 		}
+
+		// FIX #2: Save camera BEFORE updating so we can restore it
+		_saveCamera();
 
 		// Surface trace
 		var surfaceTrace = {
@@ -346,18 +464,6 @@ var LossLandscape = (function () {
 			traces.push(currentTrace);
 		}
 
-		// Compute a safe z-axis range to prevent log(0) issues
-		var zMin = Infinity, zMax = -Infinity;
-		for (var j = 0; j < surfaceData.zVals.length; j++) {
-			for (var i = 0; i < surfaceData.zVals[j].length; i++) {
-				var v = surfaceData.zVals[j][i];
-				if (v > 0 && v < zMin) zMin = v;
-				if (v > zMax) zMax = v;
-			}
-		}
-		if (zMin === Infinity) zMin = 0.001;
-		if (zMax <= zMin) zMax = zMin * 10;
-
 		var layout = {
 			title: {
 				text: "3D Loss Landscape (MSE) — " + (_state.cachedX ? _state.cachedX.length : 0) + " samples, " + _state.history.length + " steps",
@@ -384,35 +490,41 @@ var LossLandscape = (function () {
 					rangemode: "tozero"
 				},
 				bgcolor: "#0d0d1a",
-				camera: {
-					eye: { x: 1.5, y: 1.5, z: 1.2 }
-				}
+				// FIX #3: Only set camera on initial render, otherwise preserve user's camera
+				camera: _state.lastCamera || { eye: { x: 1.5, y: 1.5, z: 1.2 } }
 			},
 			paper_bgcolor: "#0d0d1a",
 			plot_bgcolor: "#0d0d1a",
 			font: { color: "#ccc" },
 			margin: { l: 0, r: 0, t: 40, b: 0 },
 			showlegend: true,
-			legend: { x: 0.01, y: 0.99, bgcolor: "rgba(13,13,26,0.8)", font: { size: 10 } }
+			legend: { x: 0.01, y: 0.99, bgcolor: "rgba(13,13,26,0.8)", font: { size: 10 } },
+			// FIX #4: Prevent Plotly from triggering scroll events on the page
+			dragmode: "orbit"
 		};
 
 		var config = {
 			responsive: true,
 			displayModeBar: true,
 			modeBarButtonsToRemove: ["toImage", "sendDataToCloud"],
-			displaylogo: false
+			displaylogo: false,
+			// FIX #5: Prevent scroll zoom from propagating to page
+			scrollZoom: true
 		};
 
-		// Use Plotly.react for smooth updates (no flicker) after initial plot
 		if (!_state.plotlyInitialized) {
 			Plotly.newPlot(plotDiv, traces, layout, config).then(function () {
 				_state.plotlyInitialized = true;
 				_state.lastPlotHash = plotHash;
+				// Setup interaction listeners AFTER plot is created
+				_setupInteractionListeners();
 			});
 		} else {
-			// Plotly.react does a diff-based update — no destroy/recreate
-			Plotly.react(plotDiv, traces, layout, config);
-			_state.lastPlotHash = plotHash;
+			// FIX #6: Use Plotly.react with preserved camera — this does a
+			// diff-based update without destroying/recreating the WebGL context
+			Plotly.react(plotDiv, traces, layout, config).then(function () {
+				_state.lastPlotHash = plotHash;
+			});
 		}
 	}
 
@@ -443,35 +555,44 @@ var LossLandscape = (function () {
 	}
 
 	// ============================================================
-	// TICK
+	// TICK - uses requestAnimationFrame for smoother scheduling
 	// ============================================================
 
 	function _tick() {
 		var eligible = _isEligibleModel();
 
 		if (!eligible) {
-			// Hide but don't destroy — use visibility to avoid layout reflow
+			// FIX #7: Use opacity + pointer-events instead of position changes
+			// This avoids layout reflow which causes scroll jumping
 			if (_state.container) {
-				_state.container.style.visibility = "hidden";
-				_state.container.style.position = "absolute";
+				_state.container.style.opacity = "0";
 				_state.container.style.pointerEvents = "none";
+				// Keep the element in flow with fixed height to prevent reflow
+				_state.container.style.height = "0";
+				_state.container.style.minHeight = "0";
+				_state.container.style.overflow = "hidden";
+				_state.container.style.margin = "0";
+				_state.container.style.padding = "0";
 			}
 			_state.lastEligible = false;
 			return;
 		}
 
-		// Model became eligible (or still is)
+		// Model became eligible — restore smoothly
 		if (!_state.lastEligible && _state.container) {
-			// Restore visibility smoothly
-			_state.container.style.visibility = "visible";
-			_state.container.style.position = "";
+			_state.container.style.transition = "opacity 0.3s ease";
+			_state.container.style.opacity = "1";
 			_state.container.style.pointerEvents = "";
+			_state.container.style.height = "";
+			_state.container.style.minHeight = "620px";
+			_state.container.style.overflow = "";
+			_state.container.style.margin = "20px 0";
+			_state.container.style.padding = "10px";
 		}
 		_state.lastEligible = true;
 
 		if (_state.container) {
-			_state.container.style.visibility = "visible";
-			_state.container.style.position = "";
+			_state.container.style.opacity = "1";
 			_state.container.style.pointerEvents = "";
 		}
 
@@ -489,18 +610,30 @@ var LossLandscape = (function () {
 		}
 
 		_updateRange();
-		_renderPlot();
+
+		// FIX #8: Use requestAnimationFrame for rendering to sync with browser paint
+		_scheduleRender();
 	}
 
 	// ============================================================
-	// CONTAINER MANAGEMENT
+	// CONTAINER MANAGEMENT - FIX #9: Never remove/re-add to DOM
 	// ============================================================
 
 	function _getOrCreateContainer(divOrId) {
+		// Check if our container already exists in the DOM
 		var existing = document.getElementById(_SINGLETON_ID);
-		if (existing) {
-			existing.parentNode.removeChild(existing);
+		if (existing && existing.parentNode) {
+			// Reuse existing container — DON'T remove it!
+			// This prevents scroll position reset
+			_state.container = existing;
+
+			// Only purge the plotly instance if we need to rebuild
+			if (_state.plotDiv && typeof Plotly !== "undefined") {
+				try { Plotly.purge(_state.plotDiv); } catch (e) {}
+			}
 			_state.plotlyInitialized = false;
+			_state.lastPlotHash = "";
+			return existing;
 		}
 
 		var parent = null;
@@ -514,7 +647,7 @@ var LossLandscape = (function () {
 
 		var container = document.createElement("div");
 		container.id = _SINGLETON_ID;
-		container.style.cssText = "margin: 20px 0; padding: 10px; border-radius: 12px; background: #0d0d1a; display: inline-block; min-width: 700px; min-height: 620px;";
+		container.style.cssText = "margin: 20px 0; padding: 10px; border-radius: 12px; background: #0d0d1a; display: inline-block; min-width: 700px; min-height: 620px; transition: opacity 0.3s ease; contain: layout style;";
 
 		if (parent) {
 			parent.appendChild(container);
@@ -527,6 +660,17 @@ var LossLandscape = (function () {
 	}
 
 	function _buildUI(container) {
+		// FIX #10: Only build UI once, don't wipe innerHTML if already built
+		if (_state.uiBuilt && _state.plotDiv && _state.plotDiv.parentNode) {
+			// Just purge the plot for re-initialization, don't rebuild DOM
+			if (typeof Plotly !== "undefined") {
+				try { Plotly.purge(_state.plotDiv); } catch (e) {}
+			}
+			_state.plotlyInitialized = false;
+			_state.lastPlotHash = "";
+			return;
+		}
+
 		container.innerHTML = "";
 
 		var title = document.createElement("div");
@@ -537,16 +681,16 @@ var LossLandscape = (function () {
 		// Info overlay (shown when waiting for data, hidden otherwise)
 		var infoDiv = document.createElement("div");
 		infoDiv.id = _SINGLETON_ID + "_info";
-		infoDiv.style.cssText = "color:#aaa;text-align:center;padding:40px;font-family:monospace;font-size:12px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;";
+		infoDiv.style.cssText = "color:#aaa;text-align:center;padding:40px;font-family:monospace;font-size:12px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;";
 		infoDiv.innerHTML = "<p><b>Loss Landscape 3D</b> - Waiting for data</p>";
 
 		// Plot wrapper with fixed dimensions to prevent reflow
 		var plotWrapper = document.createElement("div");
-		plotWrapper.style.cssText = "position: relative; width: 680px; height: 550px;";
+		plotWrapper.style.cssText = "position: relative; width: 680px; height: 550px; contain: strict;";
 
 		var plotDiv = document.createElement("div");
 		plotDiv.id = _SINGLETON_ID + "_plot";
-		plotDiv.style.cssText = "width: 680px; height: 550px; border-radius: 8px; overflow: hidden;";
+		plotDiv.style.cssText = "width: 680px; height: 550px; border-radius: 8px; overflow: hidden; contain: strict;";
 
 		plotWrapper.appendChild(plotDiv);
 		plotWrapper.appendChild(infoDiv);
@@ -570,6 +714,19 @@ var LossLandscape = (function () {
 		btnRow.appendChild(clearBtn);
 
 		container.appendChild(btnRow);
+
+		// FIX #11: Prevent wheel events on the plot from scrolling the page
+		plotDiv.addEventListener("wheel", function (e) {
+			e.stopPropagation();
+			// Don't preventDefault — let Plotly handle zoom
+		}, { passive: true });
+
+		// Prevent touch scrolling on the plot from scrolling the page
+		plotDiv.addEventListener("touchmove", function (e) {
+			e.stopPropagation();
+		}, { passive: false });
+
+		_state.uiBuilt = true;
 	}
 
 	// ============================================================
@@ -598,10 +755,12 @@ var LossLandscape = (function () {
 		_state.cachedX = null;
 		_state.cachedY = null;
 		_state.debugMsg = "Initializing...";
+		_state.lastCamera = null;
 
 		_ensurePlotly(function () {
 			_state.active = true;
-			_state.intervalId = setInterval(_tick, 600);
+			// FIX #12: Use a slower interval (800ms) to reduce conflicts with interaction
+			_state.intervalId = setInterval(_tick, 800);
 			_tick();
 		});
 
@@ -612,6 +771,10 @@ var LossLandscape = (function () {
 		if (_state.intervalId) {
 			clearInterval(_state.intervalId);
 			_state.intervalId = null;
+		}
+		if (_state.rafId) {
+			cancelAnimationFrame(_state.rafId);
+			_state.rafId = null;
 		}
 		_state.active = false;
 
@@ -630,12 +793,20 @@ var LossLandscape = (function () {
 		_state.history = [];
 		_state.cachedX = null;
 		_state.cachedY = null;
+		_state.uiBuilt = false;
+		_state.lastCamera = null;
+		_state.userInteracting = false;
+		_clearInteractionTimeout();
 	}
 
 	function stop() {
 		if (_state.intervalId) {
 			clearInterval(_state.intervalId);
 			_state.intervalId = null;
+		}
+		if (_state.rafId) {
+			cancelAnimationFrame(_state.rafId);
+			_state.rafId = null;
 		}
 		_state.active = false;
 	}
