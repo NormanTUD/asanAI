@@ -207,8 +207,9 @@ const CRSim = (() => {
 		$('#cr-room').hide();
 		$('#cr-reveal').show();
 
-		$('#cr-translations').hide();
-		$('#cr-reveal-translations-btn').show();
+		$('#cr-translations').show();
+		$('#cr-reveal-translations-btn').hide();
+
 
 		// Chart
 		const chartData = [
@@ -272,8 +273,10 @@ const CRSim = (() => {
 	}
 
 	// ── Reveal Translations ──────────────────────────────────────────
-	$('#cr-translations').show();
-	$('#cr-reveal-translations-btn').hide();
+	function revealTranslations() {
+		$('#cr-translations').show();
+		$('#cr-reveal-translations-btn').hide();
+	}
 
 	// ── Start / Activate ──────────────────────────────────────────────
 	function start() {
@@ -291,8 +294,10 @@ const CRSim = (() => {
 		active = false;
 	}
 
+	revealTranslations();
+
 	// ── Public API ──────────────────────────────────────────────────
-	return { start, canGoNext, canGoPrev, next, prev, activate, deactivate, isOnCRSlide };
+	return { start, revealTranslations, canGoNext, canGoPrev, next, prev, activate, deactivate, isOnCRSlide };
 })();
 
 function loadPhilosophyModule() {
