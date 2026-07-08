@@ -883,6 +883,105 @@
 	</div>
 </div>
 
+<!-- ==================== SLIDE: Chinese Room (Präsentations-Demo) ==================== -->
+<div class="slide" data-title="Chinese Room" data-init="CRSim.start()">
+    <div class="slide-content">
+        <h2>Das Chinese Room Argument (John Searle, 1980)</h2>
+        <p style="color:#475569; margin-bottom:14px; line-height:1.7;">
+            <b>Die Idee:</b> Stell dir vor, du sitzt in einem verschlossenen Raum. 
+            Jemand schiebt dir Zettel mit Symbolen einer Sprache unter der Tür durch, die du nicht verstehst. 
+            Du hast ein Regelbuch, das dir sagt: „Wenn du <i>dieses</i> Zeichen siehst, schreibe <i>jenes</i> zurück." 
+            Von außen sieht es aus, als würdest du die Sprache perfekt beherrschen – aber du hast <b>kein einziges Wort verstanden</b>.
+        </p>
+
+        <!-- Chinese Room Simulator -->
+        <div id="chinese-room-sim" style="max-width:820px; margin:0 auto; font-family:'Segoe UI', system-ui, sans-serif;">
+
+            <!-- Room visual frame -->
+            <div id="cr-room" style="border:3px solid #e2e8f0; border-radius:14px; background:#ffffff; color:#333; padding:1.5em; position:relative; min-height:320px; overflow:hidden;">
+
+                <!-- Round indicator -->
+                <div style="text-align:center; font-size:0.85em; color:#94a3b8; margin-bottom:0.8em;">
+                    Beispiel <span id="cr-round-num" style="font-weight:bold; color:#6366f1;">1</span> von <span id="cr-total-rounds" style="font-weight:bold;">3</span>
+                </div>
+
+                <!-- Incoming message area -->
+                <div style="text-align:center; margin-bottom:1em;">
+                    <div style="font-size:0.75em; color:#94a3b8; margin-bottom:0.3em;">📩 Ein Zettel wird unter der Tür durchgeschoben:</div>
+                    <div id="cr-incoming-msg" style="font-size:2.2em; letter-spacing:0.12em; min-height:1.4em; transition: opacity 0.5s, transform 0.5s; font-weight:bold; color:#1e293b;">
+                    </div>
+                </div>
+
+                <!-- Rulebook -->
+                <div id="cr-rulebook" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:0.8em 1em; margin-bottom:1em;">
+                    <div style="font-size:0.75em; color:#94a3b8; margin-bottom:0.5em;">📖 Dein Regelbuch sagt:</div>
+                    <table style="width:100%; border-collapse:collapse; font-size:1em;">
+                        <thead>
+                            <tr style="color:#94a3b8; font-size:0.75em;">
+                                <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #e2e8f0;">Wenn du siehst…</th>
+                                <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #e2e8f0;">Schreibe zurück…</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cr-rulebook-body"></tbody>
+                    </table>
+                </div>
+
+                <!-- Response options -->
+                <div style="text-align:center;">
+                    <div style="font-size:0.75em; color:#94a3b8; margin-bottom:0.4em;">Wähle deine Antwort:</div>
+                    <div id="cr-options" style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.5em;"></div>
+                </div>
+
+                <!-- Feedback -->
+                <div id="cr-feedback" style="text-align:center; margin-top:0.8em; font-size:1em; min-height:1.4em; transition: opacity 0.4s; line-height:1.5;"></div>
+            </div>
+
+            <!-- Reveal (nach allen 3 Runden) -->
+            <div id="cr-reveal" style="display:none; margin-top:1.2em;">
+
+                <div style="background:#f0fdf4; border:2px solid #86efac; border-radius:12px; padding:1em; text-align:center; margin-bottom:1em;">
+                    <div style="font-size:1.4em; margin-bottom:0.3em;">🧐 Person außerhalb des Raums:</div>
+                    <div style="font-size:1.1em; font-style:italic; color:#166534;">"Unglaublich! Du sprichst perfektes Inuktitut!"</div>
+                </div>
+
+                <div id="cr-chart" style="width:100%; height:240px; margin-bottom:1em;"></div>
+
+                <div style="background:#fffbeb; border:2px solid #fde68a; border-radius:12px; padding:1em; color:#1e293b; line-height:1.7;">
+                    <strong>Die Lektion:</strong> Du hast keine einzige Silbe verstanden. Du hast Formen abgeglichen. Du hast Regeln befolgt.
+                    Genau das macht ein LLM &mdash; es manipuliert Symbole basierend auf
+                    <strong>Syntax</strong> (statistische Muster) ohne jede <strong>Semantik</strong> (Bedeutung).
+                    <br><br>
+                    <em>„Die Person im Raum manipuliert lediglich Symbole nach syntaktischen Regeln, ohne jegliche Semantik (Bedeutung)."</em>
+                    &mdash; John Searle, 1980
+                </div>
+
+                <div style="text-align:center; margin-top:1em;">
+                    <button id="cr-reveal-translations-btn" onclick="CRSim.revealTranslations()"
+                        style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #8b5cf6; background:#faf5ff; color:#6b21a8; border-radius:8px; cursor:pointer;">
+                        🔍 Was habe ich eigentlich gesagt?
+                    </button>
+                </div>
+
+                <div id="cr-translations" style="display:none; margin-top:1em;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.9em; background:#f8fafc; border-radius:10px; overflow:hidden;">
+                        <thead>
+                            <tr style="background:#f1f5f9;">
+                                <th style="text-align:left; padding:0.5em;">Frage (Inuktitut)</th>
+                                <th style="text-align:left; padding:0.5em;">Antwort (Inuktitut)</th>
+                                <th style="text-align:left; padding:0.5em;">Bedeutung (Deutsch)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cr-translation-body"></tbody>
+                    </table>
+                    <p style="text-align:center; color:#94a3b8; font-size:0.8em; margin-top:0.5em;">
+                        Du hattest ein ganzes Gespräch über das Wetter und Wegbeschreibungen &mdash; und du hattest keine Ahnung.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Halluzinationen ==================== -->
 <div class="slide" data-title="Halluzinationen">
     <div class="slide-content">
@@ -1147,6 +1246,7 @@
 <script src="presentation.js"></script>
 <script src="attention_slides.js"></script>
 <script src="knowledge.js"></script>
+<script src="chinese_room.js"></script>
 <script src="interpolation_viz.js"></script>
 
 <script>

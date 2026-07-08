@@ -15,10 +15,10 @@ const Presentation = (() => {
         buildOverview();
     }
 
-	function getFragments(slideIdx) {
-		if (!slides[slideIdx]) return [];
-		return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
-	}
+    function getFragments(slideIdx) {
+        if (!slides[slideIdx]) return [];
+        return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
+    }
 
     function next() {
         const fragments = getFragments(currentSlide);
@@ -115,6 +115,14 @@ const Presentation = (() => {
         if (typeof PredictionViz !== 'undefined') {
             PredictionViz.reset();
         }
+        // *** NEU: CRSim aktivieren/deaktivieren ***
+        if (typeof CRSim !== 'undefined') {
+            if (slides[currentSlide].querySelector('#chinese-room-sim')) {
+                CRSim.start();
+            } else {
+                CRSim.deactivate();
+            }
+        }
 
         updateUI();
         closeOverview();
@@ -176,147 +184,159 @@ const Presentation = (() => {
 })();
 
 // ============================================================
-// KEYBOARD & TOUCH CONTROLS (mit Notebook-Integration + PredictionViz)
+// KEYBOARD & TOUCH CONTROLS (mit Notebook-Integration + PredictionViz + CRSim fix)
 // ============================================================
 document.addEventListener('keydown', (e) => {
-	if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-	switch(e.key) {
-		case 'ArrowRight':
-		case ' ':
-		case 'Enter':
-		case 'PageDown':  // ← Presenter vorwärts-Taste
-			e.preventDefault();
-			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
-				NNStepDemo.next();
-			}
-			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
-				TrainingViz.next();
-			}
-			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
-				AttentionDemo.next();
-			}
-			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
-				PEOrbitViz.next();
-			}
-			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
-				ResidualNotebook.nextLayer();
-			}
-			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
-				EmbeddingAutoDemo.next();
-			}
-			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
-				PredictionViz.next();
-			}
-			else {
-				Presentation.next();
-			}
-			break;
-		case 'ArrowLeft':
-		case 'Backspace':
-		case 'PageUp':    // ← Presenter rückwärts-Taste
-			e.preventDefault();
-			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
-				NNStepDemo.prev();
-			}
-			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
-				TrainingViz.prev();
-			}
-			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
-				AttentionDemo.prev();
-			}
-			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
-				PEOrbitViz.prev();
-			}
-			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
-				ResidualNotebook.prevLayer();
-			}
-			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
-				EmbeddingAutoDemo.prev();
-			}
-			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
-				PredictionViz.prev();
-			}
-			else {
-				Presentation.prev();
-			}
-			break;
-		case 'ArrowUp':
-			e.preventDefault();
-			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
-				NNStepDemo.prev();
-			}
-			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
-				TrainingViz.prev();
-			}
-			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
-				AttentionDemo.prev();
-			}
-			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
-				PEOrbitViz.prev();
-			}
-			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
-				ResidualNotebook.prevLayer();
-			}
-			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
-				EmbeddingAutoDemo.prev();
-			}
-			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
-				PredictionViz.prev();
-			}
-			else {
-				Presentation.prev();
-			}
-			break;
-		case 'ArrowDown':
-			e.preventDefault();
-			if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
-				NNStepDemo.next();
-			}
-			else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
-				TrainingViz.next();
-			}
-			else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
-				AttentionDemo.next();
-			}
-			else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
-				PEOrbitViz.next();
-			}
-			else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
-				ResidualNotebook.nextLayer();
-			}
-			else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
-				EmbeddingAutoDemo.next();
-			}
-			else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
-				PredictionViz.next();
-			}
-			else {
-				Presentation.next();
-			}
-			break;
-		case 'f':
-		case 'F':
-			e.preventDefault();
-			Presentation.toggleFullscreen();
-			break;
-		case 'o':
-		case 'O':
-			e.preventDefault();
-			Presentation.toggleOverview();
-			break;
-		case 'Escape':
-			Presentation.closeOverview();
-			break;
-		case 'Home':
-			e.preventDefault();
-			Presentation.goTo(0);
-			break;
-		case 'End':
-			e.preventDefault();
-			Presentation.goTo(document.querySelectorAll('.slide').length - 1);
-			break;
-	}
+    switch(e.key) {
+        case 'ArrowRight':
+        case ' ':
+        case 'Enter':
+        case 'PageDown':
+            e.preventDefault();
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+                NNStepDemo.next();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+                TrainingViz.next();
+            }
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+                AttentionDemo.next();
+            }
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+                PEOrbitViz.next();
+            }
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+                ResidualNotebook.nextLayer();
+            }
+            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
+                EmbeddingAutoDemo.next();
+            }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+                PredictionViz.next();
+            }
+            else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
+                CRSim.next();
+            }
+            else {
+                Presentation.next();
+            }
+            break;
+        case 'ArrowLeft':
+        case 'Backspace':
+        case 'PageUp':
+            e.preventDefault();
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+                NNStepDemo.prev();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+                TrainingViz.prev();
+            }
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+                AttentionDemo.prev();
+            }
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+                PEOrbitViz.prev();
+            }
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+                ResidualNotebook.prevLayer();
+            }
+            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
+                EmbeddingAutoDemo.prev();
+            }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+                PredictionViz.prev();
+            }
+            else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
+                CRSim.prev();
+            }
+            else {
+                Presentation.prev();
+            }
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
+                NNStepDemo.prev();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
+                TrainingViz.prev();
+            }
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
+                AttentionDemo.prev();
+            }
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
+                PEOrbitViz.prev();
+            }
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
+                ResidualNotebook.prevLayer();
+            }
+            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
+                EmbeddingAutoDemo.prev();
+            }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
+                PredictionViz.prev();
+            }
+            else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
+                CRSim.prev();
+            }
+            else {
+                Presentation.prev();
+            }
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
+                NNStepDemo.next();
+            }
+            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
+                TrainingViz.next();
+            }
+            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
+                AttentionDemo.next();
+            }
+            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
+                PEOrbitViz.next();
+            }
+            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
+                ResidualNotebook.nextLayer();
+            }
+            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
+                EmbeddingAutoDemo.next();
+            }
+            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
+                PredictionViz.next();
+            }
+            else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
+                CRSim.next();
+            }
+            else {
+                Presentation.next();
+            }
+            break;
+        case 'f':
+        case 'F':
+            e.preventDefault();
+            Presentation.toggleFullscreen();
+            break;
+        case 'o':
+        case 'O':
+            e.preventDefault();
+            Presentation.toggleOverview();
+            break;
+        case 'Escape':
+            Presentation.closeOverview();
+            break;
+        case 'Home':
+            e.preventDefault();
+            Presentation.goTo(0);
+            break;
+        case 'End':
+            e.preventDefault();
+            Presentation.goTo(document.querySelectorAll('.slide').length - 1);
+            break;
+    }
 });
 
 // Touch/swipe support
@@ -341,6 +361,8 @@ document.addEventListener('touchend', (e) => {
                 EmbeddingAutoDemo.next();
             } else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
                 PredictionViz.next();
+            } else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
+                CRSim.next();
             } else {
                 Presentation.next();
             }
@@ -354,6 +376,8 @@ document.addEventListener('touchend', (e) => {
                 EmbeddingAutoDemo.prev();
             } else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
                 PredictionViz.prev();
+            } else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
+                CRSim.prev();
             } else {
                 Presentation.prev();
             }
