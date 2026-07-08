@@ -15,9 +15,7 @@
 				<div id="plotly_epoch_history"></div>
 			</div>
 
-			<div style="display: none">
-				<div id="plotly_memory_history"></div>
-			</div>
+			<div id="auto_loss_landscape"></div>
 		</div>
 	</div>
 	<div id="neural_organism"></div>
