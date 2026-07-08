@@ -1045,7 +1045,7 @@ $(document).ready(async function() {
 
 	gradientFlowToSummary();
 
-	LossLandscape.init_loss_landscape("auto_loss_landscape")
+	create_loss_landscape();
 
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });

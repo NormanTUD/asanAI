@@ -435,6 +435,8 @@ async function get_fit_data () {
 	var callbacks = {};
 
 	callbacks["onTrainBegin"] = async function () {
+		create_loss_landscape();
+
 		_math_interactive_mode_before = _math_interactive_mode;
 
 		if(_math_interactive_mode) {
