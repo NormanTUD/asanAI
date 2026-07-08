@@ -7,7 +7,5 @@ seltene daten interpolation, fehlende daten extrapolation
 
 datenumfang ist ne kritische größe, mehr thematisieren (inter extrapolation, datensatz größe ist ne relevante größe, mehr der richtigend daten helfen)
 
-
 todo: 
 - history of ai eigene präsentation
-- show inuktuut chinese room
