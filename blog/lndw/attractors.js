@@ -1163,8 +1163,7 @@ function renderTorusEarth(container) {
 
 // ============================================================
 // STEP 4: 3D-Einzugsbecken als Potentiallandschaft
-// Darstellung wie eine topografische 3D-Oberfläche mit Tälern
-// "Frankreich" und "Hauptstadt" als Becken, "Paris" im Überlappungstal
+// Labels mit Pfeilen NEBEN dem Objekt, Kamera: Drehen + Zoom + Pan
 // ============================================================
 function render3DBasins(container) {
     const setup = safeCanvasSetup(container, '#1a1a2e');
@@ -1174,21 +1173,24 @@ function render3DBasins(container) {
     }
     const { ctx, W, H } = setup;
 
-    // === Landschafts-Parameter ===
-    // Becken (Täler) definiert durch Position und Tiefe
+    // === Becken (Täler) ===
     const basins = [
-        { x: -1.2, y: -0.3, depth: 1.0, radius: 1.3, label: '„Frankreich"', color: '#3b82f6' },
-        { x: 1.2, y: -0.3, depth: 1.0, radius: 1.3, label: '„Hauptstadt"', color: '#ef4444' },
-        { x: 0.0, y: -0.3, depth: 1.4, radius: 0.7, label: '★ „Paris"', color: '#ffd700' },
-        { x: 0.0, y: 1.4, depth: 0.8, radius: 1.0, label: '„Kultur"', color: '#10b981' }
+        { x: -1.3, y: -0.2, depth: 1.0, radius: 1.3, label: '„Frankreich"', sublabel: 'Stabil', color: '#3b82f6' },
+        { x: 1.3, y: -0.2, depth: 1.0, radius: 1.3, label: '„Hauptstadt"', sublabel: 'Stabil', color: '#ef4444' },
+        { x: 0.0, y: -0.2, depth: 1.5, radius: 0.65, label: '★ „Paris"', sublabel: 'Stabil (Überlappung)', color: '#ffd700' },
+        { x: 0.0, y: 1.5, depth: 0.7, radius: 1.0, label: '„Kultur"', sublabel: 'Stabil', color: '#10b981' }
     ];
 
-    // Berechne Höhe an einem Punkt (Potentiallandschaft)
-    // Niedrig = Attraktor (Tal), Hoch = Grenze (Hügel)
-    function getHeight(px, py) {
-        let h = 0.0; // Basishöhe
+    // Instabile Punkte (Sättel zwischen Becken)
+    const unstablePoints = [
+        { x: -0.65, y: -0.2, label: 'Instabil', color: '#f87171' },
+        { x: 0.65, y: -0.2, label: 'Instabil', color: '#f87171' },
+        { x: 0.0, y: 0.6, label: 'Instabil', color: '#f87171' }
+    ];
 
-        // Jedes Becken erzeugt ein Tal (negative Gauss-Glocke)
+    // Höhenfunktion
+    function getHeight(px, py) {
+        let h = 0.0;
         for (let b of basins) {
             const dx = px - b.x;
             const dy = py - b.y;
@@ -1196,17 +1198,13 @@ function render3DBasins(container) {
             const sigma2 = b.radius * b.radius * 0.5;
             h -= b.depth * Math.exp(-dist2 / sigma2);
         }
-
-        // Leichte Wellung für natürlicheres Aussehen
-        h += 0.08 * Math.sin(px * 2.5) * Math.cos(py * 2.5);
-        h += 0.05 * Math.sin(px * 4 + 1) * Math.sin(py * 3 + 2);
-
+        h += 0.06 * Math.sin(px * 2.5) * Math.cos(py * 2.5);
         return h;
     }
 
-    // === 3D-Gitter berechnen ===
-    const gridRes = 60;
-    const terrainRange = 3.0;
+    // === 3D-Gitter ===
+    const gridRes = 55;
+    const terrainRange = 3.2;
     const step = (terrainRange * 2) / gridRes;
     let heightMap = [];
     let minH = Infinity, maxH = -Infinity;
@@ -1223,72 +1221,71 @@ function render3DBasins(container) {
         }
     }
 
-    // === Farbpalette: Höhe → Farbe (wie topografische Karte) ===
-    function heightToColor(h, normalizedH) {
-        // normalizedH: 0 = tiefstes Tal, 1 = höchster Punkt
-        // Farbverlauf: dunkelbraun/orange (tief) → gelb → grün → blaugrün (hoch)
+    // === Farbpalette ===
+    function heightToColor(normalizedH) {
         const stops = [
-            { t: 0.0, r: 120, g: 60, b: 20 },    // Dunkelbraun (tiefste Täler)
-            { t: 0.15, r: 180, g: 100, b: 30 },   // Braun
-            { t: 0.3, r: 220, g: 160, b: 50 },    // Orange/Gold
-            { t: 0.45, r: 240, g: 210, b: 80 },   // Gelb
-            { t: 0.6, r: 180, g: 210, b: 100 },   // Gelbgrün
-            { t: 0.75, r: 100, g: 180, b: 100 },  // Grün
-            { t: 0.9, r: 60, g: 150, b: 120 },    // Blaugrün
-            { t: 1.0, r: 40, g: 120, b: 110 }     // Dunkel Blaugrün
+            { t: 0.0, r: 100, g: 50, b: 10 },
+            { t: 0.15, r: 160, g: 90, b: 25 },
+            { t: 0.3, r: 210, g: 150, b: 45 },
+            { t: 0.45, r: 235, g: 200, b: 70 },
+            { t: 0.6, r: 170, g: 205, b: 90 },
+            { t: 0.75, r: 90, g: 175, b: 95 },
+            { t: 0.9, r: 55, g: 145, b: 115 },
+            { t: 1.0, r: 35, g: 115, b: 105 }
         ];
-
         let lower = stops[0], upper = stops[stops.length - 1];
         for (let i = 0; i < stops.length - 1; i++) {
             if (normalizedH >= stops[i].t && normalizedH <= stops[i + 1].t) {
-                lower = stops[i];
-                upper = stops[i + 1];
-                break;
+                lower = stops[i]; upper = stops[i + 1]; break;
             }
         }
-
         const range = upper.t - lower.t || 1;
         const f = (normalizedH - lower.t) / range;
-        const r = Math.round(lower.r + (upper.r - lower.r) * f);
-        const g = Math.round(lower.g + (upper.g - lower.g) * f);
-        const b = Math.round(lower.b + (upper.b - lower.b) * f);
-        return { r, g, b };
+        return {
+            r: Math.round(lower.r + (upper.r - lower.r) * f),
+            g: Math.round(lower.g + (upper.g - lower.g) * f),
+            b: Math.round(lower.b + (upper.b - lower.b) * f)
+        };
     }
 
-    // === Isometrische 3D-Projektion ===
+    // === Kamera-State ===
+    let camRotY = 0.6;
+    let camTilt = 0.55;
+    let camZoom = 1.0;
+    let camPanX = 0;
+    let camPanY = 0;
+    let targetRotY = 0.6;
+    let targetTilt = 0.55;
+    let targetZoom = 1.0;
+    let targetPanX = 0;
+    let targetPanY = 0;
+
+    const baseScaleX = Math.min(W, H) * 0.065;
+    const baseScaleY = baseScaleX * 0.5;
     const heightScale = Math.min(W, H) * 0.12;
-    const tileScaleX = Math.min(W, H) * 0.065;
-    const tileScaleY = tileScaleX * 0.5;
-    let rotAngle = 0.6; // Betrachtungswinkel
-    let targetRotAngle = 0.6;
-    let tiltAngle = 0.55;
 
     function projectTerrain(px, py, h) {
-        // Rotation um Y-Achse
-        const rx = px * Math.cos(rotAngle) - py * Math.sin(rotAngle);
-        const ry = px * Math.sin(rotAngle) + py * Math.cos(rotAngle);
-
-        // Isometrische Projektion
-        const screenX = W / 2 + rx * tileScaleX;
-        const screenY = H / 2 + ry * tileScaleY - h * heightScale;
-
+        const rx = px * Math.cos(camRotY) - py * Math.sin(camRotY);
+        const ry = px * Math.sin(camRotY) + py * Math.cos(camRotY);
+        const scaleX = baseScaleX * camZoom;
+        const scaleY = baseScaleY * camZoom;
+        const hScale = heightScale * camZoom;
+        const screenX = W / 2 + camPanX + rx * scaleX;
+        const screenY = H / 2 + camPanY + ry * scaleY * camTilt - h * hScale;
         return { sx: screenX, sy: screenY, depth: ry };
     }
 
-    // === Bewegte Kugeln die in die Täler rollen ===
-    const numBalls = 20;
+    // === Kugeln die in Täler rollen ===
+    const numBalls = 18;
     let balls = [];
 
     function spawnBall() {
-        const px = (Math.random() * 2 - 1) * terrainRange * 0.8;
-        const py = (Math.random() * 2 - 1) * terrainRange * 0.8;
+        const px = (Math.random() * 2 - 1) * terrainRange * 0.75;
+        const py = (Math.random() * 2 - 1) * terrainRange * 0.75;
         return {
-            x: px, y: py,
-            vx: 0, vy: 0,
+            x: px, y: py, vx: 0, vy: 0,
             trail: [{ x: px, y: py }],
-            arrived: false,
-            alpha: 1.0,
-            age: 0
+            arrived: false, alpha: 1.0, age: 0
         };
     }
 
@@ -1298,26 +1295,95 @@ function render3DBasins(container) {
         balls.push(b);
     }
 
-    // === Interaktion: Rotation ===
+    // === Interaktion: Drag=Rotate, Shift+Drag=Pan, Scroll=Zoom ===
     let isDragging = false;
-    let lastMouseX = 0;
+    let isPanning = false;
+    let lastMouseX = 0, lastMouseY = 0;
     const canvas = setup.canvas;
 
-    canvas.addEventListener('mousedown', (e) => { isDragging = true; lastMouseX = e.clientX; });
+    canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        isPanning = e.shiftKey || e.button === 1; // Shift oder Mitteltaste = Pan
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
     canvas.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
-        targetRotAngle += (e.clientX - lastMouseX) * 0.005;
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        if (isPanning || e.shiftKey) {
+            targetPanX += dx;
+            targetPanY += dy;
+        } else {
+            targetRotY += dx * 0.005;
+            targetTilt += dy * 0.003;
+            targetTilt = Math.max(0.2, Math.min(1.0, targetTilt));
+        }
         lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
     });
-    canvas.addEventListener('mouseup', () => { isDragging = false; });
-    canvas.addEventListener('mouseleave', () => { isDragging = false; });
-    canvas.addEventListener('touchstart', (e) => { isDragging = true; lastMouseX = e.touches[0].clientX; });
+    canvas.addEventListener('mouseup', () => { isDragging = false; isPanning = false; });
+    canvas.addEventListener('mouseleave', () => { isDragging = false; isPanning = false; });
+
+    // Zoom mit Mausrad
+    canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomDelta = e.deltaY > 0 ? 0.9 : 1.1;
+        targetZoom *= zoomDelta;
+        targetZoom = Math.max(0.4, Math.min(3.0, targetZoom));
+    }, { passive: false });
+
+    // Touch: 1 Finger = Rotate, 2 Finger = Pinch-Zoom + Pan
+    let lastTouchDist = 0;
+    let lastTouchMidX = 0, lastTouchMidY = 0;
+
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true; isPanning = false;
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+            isDragging = false; isPanning = true;
+            const dx = e.touches[1].clientX - e.touches[0].clientX;
+            const dy = e.touches[1].clientY - e.touches[0].clientY;
+            lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+            lastTouchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            lastTouchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        }
+    });
     canvas.addEventListener('touchmove', (e) => {
-        if (!isDragging) return; e.preventDefault();
-        targetRotAngle += (e.touches[0].clientX - lastMouseX) * 0.005;
-        lastMouseX = e.touches[0].clientX;
+        e.preventDefault();
+        if (e.touches.length === 1 && isDragging) {
+            const dx = e.touches[0].clientX - lastMouseX;
+            const dy = e.touches[0].clientY - lastMouseY;
+            targetRotY += dx * 0.005;
+            targetTilt += dy * 0.003;
+            targetTilt = Math.max(0.2, Math.min(1.0, targetTilt));
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+            const dx = e.touches[1].clientX - e.touches[0].clientX;
+            const dy = e.touches[1].clientY - e.touches[0].clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+            // Pinch zoom
+            if (lastTouchDist > 0) {
+                const scale = dist / lastTouchDist;
+                targetZoom *= scale;
+                targetZoom = Math.max(0.4, Math.min(3.0, targetZoom));
+            }
+            // Pan
+            targetPanX += midX - lastTouchMidX;
+            targetPanY += midY - lastTouchMidY;
+
+            lastTouchDist = dist;
+            lastTouchMidX = midX;
+            lastTouchMidY = midY;
+        }
     });
-    canvas.addEventListener('touchend', () => { isDragging = false; });
+    canvas.addEventListener('touchend', () => { isDragging = false; isPanning = false; lastTouchDist = 0; });
 
     // === Animation ===
     animationRunning = true;
@@ -1327,18 +1393,23 @@ function render3DBasins(container) {
         if (!animationRunning) return;
         t++;
 
-        // Auto-Rotation
-        if (!isDragging) targetRotAngle += 0.001;
-        rotAngle += (targetRotAngle - rotAngle) * 0.05;
+        // Auto-Rotation (langsam)
+        if (!isDragging && !isPanning) targetRotY += 0.0008;
+
+        // Smooth camera
+        camRotY += (targetRotY - camRotY) * 0.06;
+        camTilt += (targetTilt - camTilt) * 0.06;
+        camZoom += (targetZoom - camZoom) * 0.08;
+        camPanX += (targetPanX - camPanX) * 0.08;
+        camPanY += (targetPanY - camPanY) * 0.08;
 
         ctx.clearRect(0, 0, W, H);
 
-        // Hintergrund
+        // Hintergrund (hell wie g.png)
         ctx.fillStyle = '#f8f6f0';
         ctx.fillRect(0, 0, W, H);
 
-        // === Terrain zeichnen (von hinten nach vorne) ===
-        // Sammle alle Quads mit Tiefe
+        // === Terrain zeichnen ===
         let quads = [];
         for (let iy = 0; iy < gridRes; iy++) {
             for (let ix = 0; ix < gridRes; ix++) {
@@ -1346,39 +1417,25 @@ function render3DBasins(container) {
                 const p10 = heightMap[iy][ix + 1];
                 const p01 = heightMap[iy + 1][ix];
                 const p11 = heightMap[iy + 1][ix + 1];
-
                 const avgH = (p00.h + p10.h + p01.h + p11.h) / 4;
-                const avgX = (p00.x + p10.x + p01.x + p11.x) / 4;
-                const avgY = (p00.y + p10.y + p01.y + p11.y) / 4;
-
+                const avgX = (p00.x + p10.x) / 2;
+                const avgY = (p00.y + p01.y) / 2;
                 const proj = projectTerrain(avgX, avgY, avgH);
-
-                quads.push({
-                    corners: [p00, p10, p11, p01],
-                    avgH,
-                    depth: proj.depth,
-                    ix, iy
-                });
+                quads.push({ corners: [p00, p10, p11, p01], avgH, depth: proj.depth, ix, iy });
             }
         }
-
-        // Sortiere nach Tiefe (hintere zuerst)
         quads.sort((a, b) => a.depth - b.depth);
 
-        // Zeichne Quads
         const hRange = maxH - minH || 1;
         for (let q of quads) {
-            const corners = q.corners;
-            const projCorners = corners.map(c => projectTerrain(c.x, c.y, c.h));
-
-            // Normalisierte Höhe für Farbe
+            const projCorners = q.corners.map(c => projectTerrain(c.x, c.y, c.h));
             const normalizedH = (q.avgH - minH) / hRange;
-            const col = heightToColor(q.avgH, normalizedH);
+            const col = heightToColor(normalizedH);
 
-            // Einfache Beleuchtung basierend auf Neigung
-            const dx = (corners[1].h - corners[0].h);
-            const dy = (corners[3].h - corners[0].h);
-            const lightFactor = Math.max(0.6, Math.min(1.3, 1.0 + dx * 2 - dy * 1.5));
+            // Beleuchtung
+            const dx = (q.corners[1].h - q.corners[0].h);
+            const dy = (q.corners[3].h - q.corners[0].h);
+            const lightFactor = Math.max(0.55, Math.min(1.35, 1.0 + dx * 2.5 - dy * 1.5));
 
             const r = Math.min(255, Math.round(col.r * lightFactor));
             const g = Math.min(255, Math.round(col.g * lightFactor));
@@ -1392,37 +1449,30 @@ function render3DBasins(container) {
             ctx.closePath();
             ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
             ctx.fill();
-
-            // Subtile Gitterlinien
-            ctx.strokeStyle = `rgba(0, 0, 0, 0.04)`;
+            ctx.strokeStyle = `rgba(0, 0, 0, 0.03)`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
         }
 
-        // === Höhenlinien (Konturen) ===
-        const numContours = 8;
-        for (let c = 0; c < numContours; c++) {
+        // === Höhenlinien ===
+        const numContours = 10;
+        ctx.lineWidth = 0.7;
+        for (let c = 1; c < numContours; c++) {
             const contourH = minH + (c / numContours) * hRange;
-            ctx.strokeStyle = `rgba(0, 0, 0, 0.12)`;
-            ctx.lineWidth = 0.8;
-
+            ctx.strokeStyle = `rgba(0, 0, 0, 0.1)`;
             for (let iy = 0; iy < gridRes; iy++) {
                 for (let ix = 0; ix < gridRes; ix++) {
                     const p0 = heightMap[iy][ix];
                     const p1 = heightMap[iy][ix + 1];
-
-                    // Horizontale Kante: prüfe ob Konturlinie kreuzt
                     if ((p0.h - contourH) * (p1.h - contourH) < 0) {
                         const frac = (contourH - p0.h) / (p1.h - p0.h);
                         const cx1 = p0.x + frac * (p1.x - p0.x);
                         const cy1 = p0.y;
-
-                        // Finde zweiten Kreuzungspunkt in benachbarter Kante
                         const p2 = heightMap[iy + 1] ? heightMap[iy + 1][ix] : null;
                         if (p2 && (p0.h - contourH) * (p2.h - contourH) < 0) {
                             const frac2 = (contourH - p0.h) / (p2.h - p0.h);
                             const cx2 = p0.x;
-                            const cy2 = p0.y + frac2 * (p2.y - p0.y);
+                            const cy2 = p0.y + frac2 * step;
                             const proj1 = projectTerrain(cx1, cy1, contourH);
                             const proj2 = projectTerrain(cx2, cy2, contourH);
                             ctx.beginPath();
@@ -1435,154 +1485,170 @@ function render3DBasins(container) {
             }
         }
 
-        // === Kugeln die in Täler rollen ===
+        // === Kugeln ===
         balls.forEach((ball, idx) => {
             if (ball.arrived) {
-                ball.alpha -= 0.01;
+                ball.alpha -= 0.012;
                 if (ball.alpha <= 0) { balls[idx] = spawnBall(); }
                 return;
             }
-
             ball.age++;
-
-            // Gradient der Höhenfunktion → Kraft bergab
             const eps = 0.05;
             const hHere = getHeight(ball.x, ball.y);
-            const hDx = getHeight(ball.x + eps, ball.y);
-            const hDy = getHeight(ball.x, ball.y + eps);
-            const gradX = -(hDx - hHere) / eps;
-            const gradY = -(hDy - hHere) / eps;
-
-            // Beschleunigung bergab + Dämpfung
-            ball.vx += gradX * 0.003;
-            ball.vy += gradY * 0.003;
-            ball.vx *= 0.96;
-            ball.vy *= 0.96;
-
+            const gradX = -(getHeight(ball.x + eps, ball.y) - hHere) / eps;
+            const gradY = -(getHeight(ball.x, ball.y + eps) - hHere) / eps;
+            ball.vx += gradX * 0.004;
+            ball.vy += gradY * 0.004;
+            ball.vx *= 0.95;
+            ball.vy *= 0.95;
             ball.x += ball.vx;
             ball.y += ball.vy;
-
             ball.trail.push({ x: ball.x, y: ball.y });
-            if (ball.trail.length > 40) ball.trail.shift();
-
-            // Konvergenz-Check
+            if (ball.trail.length > 35) ball.trail.shift();
             const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-            if (speed < 0.001 && ball.age > 50) {
-                ball.arrived = true;
-                ball.alpha = 1.0;
-            }
-
-            // Clamp
+            if (speed < 0.0008 && ball.age > 60) { ball.arrived = true; ball.alpha = 1.0; }
             ball.x = Math.max(-terrainRange, Math.min(terrainRange, ball.x));
             ball.y = Math.max(-terrainRange, Math.min(terrainRange, ball.y));
 
-            // Trail zeichnen
+            // Trail
             if (ball.trail.length > 1) {
                 for (let i = 1; i < ball.trail.length; i++) {
                     const h1 = getHeight(ball.trail[i-1].x, ball.trail[i-1].y);
                     const h2 = getHeight(ball.trail[i].x, ball.trail[i].y);
-                    const p1 = projectTerrain(ball.trail[i-1].x, ball.trail[i-1].y, h1 - 0.02);
-                    const p2 = projectTerrain(ball.trail[i].x, ball.trail[i].y, h2 - 0.02);
-                    const trailAlpha = (i / ball.trail.length) * 0.6 * ball.alpha;
-                    ctx.beginPath();
-                    ctx.moveTo(p1.sx, p1.sy);
-                    ctx.lineTo(p2.sx, p2.sy);
-                    ctx.strokeStyle = `rgba(30, 30, 30, ${trailAlpha})`;
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                    const p1 = projectTerrain(ball.trail[i-1].x, ball.trail[i-1].y, h1 - 0.03);
+                    const p2 = projectTerrain(ball.trail[i].x, ball.trail[i].y, h2 - 0.03);
+                    const trailAlpha = (i / ball.trail.length) * 0.5 * ball.alpha;
+                    ctx.beginPath(); ctx.moveTo(p1.sx, p1.sy); ctx.lineTo(p2.sx, p2.sy);
+                    ctx.strokeStyle = `rgba(20, 20, 20, ${trailAlpha})`;
+                    ctx.lineWidth = 2; ctx.stroke();
                 }
             }
 
-            // Kugel zeichnen
-            const ballH = getHeight(ball.x, ball.y);
-            const ballProj = projectTerrain(ball.x, ball.y, ballH - 0.05);
-            const ballSize = 5;
-
-            // Schatten
-            ctx.beginPath();
-            ctx.ellipse(ballProj.sx + 2, ballProj.sy + 3, ballSize, ballSize * 0.5, 0, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(0, 0, 0, ${0.3 * ball.alpha})`;
-            ctx.fill();
-
             // Kugel
+            const ballH = getHeight(ball.x, ball.y);
+            const bp = projectTerrain(ball.x, ball.y, ballH - 0.05);
             ctx.beginPath();
-            ctx.arc(ballProj.sx, ballProj.sy, ballSize, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(40, 40, 60, ${ball.alpha})`;
+            ctx.ellipse(bp.sx + 2, bp.sy + 3, 4, 2.5, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(0,0,0,${0.25 * ball.alpha})`;
             ctx.fill();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * ball.alpha})`;
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
+            ctx.beginPath(); ctx.arc(bp.sx, bp.sy, 4.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(30, 30, 50, ${ball.alpha})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(255,255,255,${0.6 * ball.alpha})`;
+            ctx.lineWidth = 1.2; ctx.stroke();
         });
 
-        // === Becken-Labels mit Pfeilen ===
-        basins.forEach((basin, idx) => {
-            const bH = getHeight(basin.x, basin.y);
-            const bProj = projectTerrain(basin.x, basin.y, bH);
+        // === LABELS MIT PFEILEN – NEBEN dem Terrain (nicht drauf!) ===
+        // Labels werden am Rand des Canvas platziert und zeigen mit Pfeilen auf die Täler
+        const labelPositions = [
+            { basinIdx: 0, anchorSide: 'left', offsetX: -30, offsetY: -60 },   // Frankreich → links oben
+            { basinIdx: 1, anchorSide: 'right', offsetX: 30, offsetY: -60 },   // Hauptstadt → rechts oben
+            { basinIdx: 2, anchorSide: 'top', offsetX: 0, offsetY: -90 },      // Paris → oben mitte
+            { basinIdx: 3, anchorSide: 'right', offsetX: 40, offsetY: 20 }     // Kultur → rechts
+        ];
 
-            // Pfeil von oben zum Tal
-            const arrowStartY = bProj.sy - 50;
-            const arrowEndY = bProj.sy - 15;
+        labelPositions.forEach(lp => {
+            const basin = basins[lp.basinIdx];
+            const basinH = getHeight(basin.x, basin.y);
+            const basinProj = projectTerrain(basin.x, basin.y, basinH);
 
+            // Label-Position: versetzt vom projizierten Punkt
+            let labelX, labelY;
+            
+            // Berechne Label-Position basierend auf Seite
+            const margin = 25;
+            switch (lp.anchorSide) {
+                case 'left':
+                    labelX = Math.min(basinProj.sx + lp.offsetX, basinProj.sx - 80);
+                    labelX = Math.max(margin + 60, labelX);
+                    labelY = basinProj.sy + lp.offsetY;
+                    break;
+                case 'right':
+                    labelX = Math.max(basinProj.sx + lp.offsetX, basinProj.sx + 80);
+                    labelX = Math.min(W - margin - 60, labelX);
+                    labelY = basinProj.sy + lp.offsetY;
+                    break;
+                case 'top':
+                    labelX = basinProj.sx + lp.offsetX;
+                    labelY = Math.min(basinProj.sy + lp.offsetY, basinProj.sy - 70);
+                    labelY = Math.max(margin + 50, labelY);
+                    break;
+                default:
+                    labelX = basinProj.sx + lp.offsetX;
+                    labelY = basinProj.sy + lp.offsetY;
+            }
+
+            // Clamp
+            labelX = Math.max(70, Math.min(W - 70, labelX));
+            labelY = Math.max(55, Math.min(H - 30, labelY));
+
+            // Pfeil von Label zum Tal
+            const arrowEndX = basinProj.sx;
+            const arrowEndY = basinProj.sy;
+
+            // Pfeil-Linie
             ctx.beginPath();
-            ctx.moveTo(bProj.sx, arrowStartY);
-            ctx.lineTo(bProj.sx, arrowEndY);
+            ctx.moveTo(labelX, labelY + 10);
+            ctx.lineTo(arrowEndX, arrowEndY);
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
             ctx.lineWidth = 2;
             ctx.stroke();
 
             // Pfeilspitze
+            const angle = Math.atan2(arrowEndY - labelY, arrowEndX - labelX);
             ctx.beginPath();
-            ctx.moveTo(bProj.sx, arrowEndY);
-            ctx.lineTo(bProj.sx - 5, arrowEndY - 8);
-            ctx.lineTo(bProj.sx + 5, arrowEndY - 8);
+            ctx.moveTo(arrowEndX, arrowEndY);
+            ctx.lineTo(arrowEndX - 10 * Math.cos(angle - 0.3), arrowEndY - 10 * Math.sin(angle - 0.3));
+            ctx.lineTo(arrowEndX - 10 * Math.cos(angle + 0.3), arrowEndY - 10 * Math.sin(angle + 0.3));
             ctx.closePath();
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
             ctx.fill();
 
-            // Label
+            // Label-Box
             ctx.font = 'bold 12px system-ui';
             const labelText = basin.label;
             const textWidth = ctx.measureText(labelText).width;
+            const boxW = textWidth + 16;
+            const boxH = 36;
+            const boxX = labelX - boxW / 2;
+            const boxY = labelY - boxH / 2 - 5;
 
             // Hintergrund
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
             ctx.beginPath();
-            ctx.roundRect(bProj.sx - textWidth / 2 - 8, arrowStartY - 22, textWidth + 16, 20, 4);
+            ctx.roundRect(boxX, boxY, boxW, boxH, 5);
             ctx.fill();
             ctx.strokeStyle = basin.color;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.stroke();
 
-            // Text
+            // Label-Text
             ctx.fillStyle = basin.color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(labelText, bProj.sx, arrowStartY - 12);
-            ctx.textBaseline = 'alphabetic';
+            ctx.fillText(labelText, labelX, boxY + 13);
 
-            // Stabilitäts-Label
-            const stabilityLabel = idx === 2 ? '(Überlappung)' : 'Stabil';
+            // Sublabel
             ctx.font = '9px system-ui';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.textAlign = 'center';
-            ctx.fillText(stabilityLabel, bProj.sx, arrowStartY - 32);
+            ctx.fillStyle = '#555';
+            ctx.fillText(basin.sublabel, labelX, boxY + 27);
+            ctx.textBaseline = 'alphabetic';
         });
 
-        // === Instabiler Punkt (Sattel zwischen Frankreich und Hauptstadt) ===
-        // Der Hügel zwischen den Becken
-        const saddleX = 0.0;
-        const saddleY = -0.3;
-        const saddleH = getHeight(saddleX, saddleY);
-        // Finde den höchsten Punkt auf der Linie zwischen FR und HS
-        let maxSaddleH = -Infinity;
-        let saddlePx = 0, saddlePy = -0.3;
-        for (let f = 0.2; f < 0.8; f += 0.05) {
-            const sx = basins[0].x + (basins[1].x - basins[0].x) * f;
-            const sy = basins[0].y;
-            const sh = getHeight(sx, sy);
-            // Suche den Sattel (lokales Maximum auf der Verbindungslinie)
-            // Da Paris dazwischen liegt, ist der Sattel eher seitlich
-        }
+        // === Instabile Punkte (Sättel) ===
+        unstablePoints.forEach(up => {
+            const h = getHeight(up.x, up.y);
+            const proj = projectTerrain(up.x, up.y, h);
+
+            // Kleines X-Marker
+            const s = 5;
+            ctx.beginPath();
+            ctx.moveTo(proj.sx - s, proj.sy - s); ctx.lineTo(proj.sx + s, proj.sy + s);
+            ctx.moveTo(proj.sx + s, proj.sy - s); ctx.lineTo(proj.sx - s, proj.sy + s);
+            ctx.strokeStyle = 'rgba(220, 50, 50, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
 
         // === Titel ===
         ctx.font = 'bold 14px system-ui';
@@ -1592,33 +1658,31 @@ function render3DBasins(container) {
 
         ctx.font = '11px system-ui';
         ctx.fillStyle = '#64748b';
-        ctx.fillText('Kugeln rollen bergab in die Täler (Attraktoren). „Paris" liegt im tiefsten Tal der Überlappung.', W / 2, 40);
+        ctx.fillText('Kugeln rollen bergab in Täler (Attraktoren). „Paris" = tiefstes Tal in der Überlappung.', W / 2, 40);
 
-        // === Legende ===
-        const legX = 12, legY = H - 60;
-        ctx.font = '10px system-ui';
+        // === Legende unten links ===
+        const legX = 12, legY = H - 55;
+        ctx.font = '9px system-ui';
         ctx.textAlign = 'left';
         ctx.fillStyle = '#64748b';
-        ctx.fillText('Tief (Attraktor) → Hoch (Grenze)', legX, legY);
-
-        // Farbbalken
-        const barW = 120, barH = 10;
+        ctx.fillText('Tief (Attraktor) ←→ Hoch (Grenze)', legX, legY);
+        const barW = 100, barH = 8;
         const barGrad = ctx.createLinearGradient(legX, 0, legX + barW, 0);
-        barGrad.addColorStop(0, 'rgb(120, 60, 20)');
-        barGrad.addColorStop(0.3, 'rgb(220, 160, 50)');
-        barGrad.addColorStop(0.6, 'rgb(180, 210, 100)');
-        barGrad.addColorStop(1, 'rgb(40, 120, 110)');
+        barGrad.addColorStop(0, 'rgb(100, 50, 10)');
+        barGrad.addColorStop(0.35, 'rgb(210, 150, 45)');
+        barGrad.addColorStop(0.65, 'rgb(170, 205, 90)');
+        barGrad.addColorStop(1, 'rgb(35, 115, 105)');
         ctx.fillStyle = barGrad;
-        ctx.fillRect(legX, legY + 5, barW, barH);
-        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(legX, legY + 5, barW, barH);
+        ctx.fillRect(legX, legY + 4, barW, barH);
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(legX, legY + 4, barW, barH);
 
-        // === Hinweis ===
+        // === Steuerungshinweis ===
         ctx.font = '9px system-ui';
         ctx.fillStyle = 'rgba(0,0,0,0.35)';
         ctx.textAlign = 'center';
-        ctx.fillText('🖱 Ziehen zum Rotieren · Kugeln rollen in das nächste Tal', W / 2, H - 8);
+        ctx.fillText('🖱 Ziehen = Drehen · Shift+Ziehen = Verschieben · Scrollen = Zoom', W / 2, H - 8);
 
         activeAnimation = requestAnimationFrame(draw);
     }
