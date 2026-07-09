@@ -1161,202 +1161,384 @@ function renderTorusEarth(container) {
         draw();
     }
 
-    // ============================================================
-    // STEP 4: 3D-Becken – überlappende, komplexe Becken in 3D
-    // Ersetzt das alte "Paris" und "Mehrdimensional"
-    // ============================================================
-    function render3DBasins(container) {
-        // Nutze Plotly für eine echte 3D-Darstellung
-        const wrapId = 'attractor-canvas-wrap';
-        container.innerHTML = `<div id="${wrapId}" style="position:relative;width:100%;height:480px;overflow:hidden;border-radius:10px;background:#1a1a2e;"></div>`;
+// ============================================================
+// STEP 4: Semantische Becken – "Hauptstadt" ∩ "Frankreich" = Paris
+// Zwei Attraktoren mit überlappenden Einzugsbecken.
+// Punkte, die in BEIDEN Becken liegen, konvergieren zu "Paris".
+// ============================================================
+function render3DBasins(container) {
+    const setup = safeCanvasSetup(container, '#1a1a2e');
+    if (!setup) {
+        retryRender(render3DBasins, container, 150);
+        return;
+    }
+    const { ctx, W, H } = setup;
 
-        const wrap = document.getElementById(wrapId);
-        if (!wrap) return;
+    // === Geometrie der zwei Becken ===
+    const beckenHauptstadt = {
+        cx: W * 0.38,
+        cy: H * 0.48,
+        rx: W * 0.28,
+        ry: H * 0.32,
+        label: 'Becken: Hauptstadt',
+        color: '#3b82f6',
+        hue: 220,
+        items: [
+            { name: 'Berlin', x: W * 0.22, y: H * 0.35 },
+            { name: 'Tokyo', x: W * 0.18, y: H * 0.55 },
+            { name: 'London', x: W * 0.28, y: H * 0.68 },
+            { name: 'Rom', x: W * 0.15, y: H * 0.45 }
+        ]
+    };
 
-        const rect = wrap.getBoundingClientRect();
-        if (rect.width < 50 || rect.height < 50) {
-            retryRender(render3DBasins, container, 150);
-            return;
+    const beckenFrankreich = {
+        cx: W * 0.62,
+        cy: H * 0.48,
+        rx: W * 0.28,
+        ry: H * 0.32,
+        label: 'Becken: Frankreich',
+        color: '#10b981',
+        hue: 160,
+        items: [
+            { name: 'Lyon', x: W * 0.72, y: H * 0.35 },
+            { name: 'Marseille', x: W * 0.78, y: H * 0.55 },
+            { name: 'Bordeaux', x: W * 0.74, y: H * 0.68 },
+            { name: 'Nizza', x: W * 0.82, y: H * 0.45 }
+        ]
+    };
+
+    // Paris liegt in der Schnittmenge
+    const paris = {
+        name: 'Paris',
+        x: W * 0.50,
+        y: H * 0.48,
+        color: '#f59e0b'
+    };
+
+    // === Partikel-System ===
+    // Partikel starten zufällig und werden je nach Position angezogen:
+    // - Nur im Hauptstadt-Becken → zum nächsten "Hauptstadt"-Item
+    // - Nur im Frankreich-Becken → zum nächsten "Frankreich"-Item
+    // - In BEIDEN Becken → zu Paris
+
+    function isInEllipse(px, py, ecx, ecy, erx, ery) {
+        const dx = (px - ecx) / erx;
+        const dy = (py - ecy) / ery;
+        return (dx * dx + dy * dy) <= 1.0;
+    }
+
+    function spawnParticle() {
+        const x = 30 + Math.random() * (W - 60);
+        const y = 60 + Math.random() * (H - 120);
+
+        const inH = isInEllipse(x, y, beckenHauptstadt.cx, beckenHauptstadt.cy, beckenHauptstadt.rx, beckenHauptstadt.ry);
+        const inF = isInEllipse(x, y, beckenFrankreich.cx, beckenFrankreich.cy, beckenFrankreich.rx, beckenFrankreich.ry);
+
+        let target, category;
+        if (inH && inF) {
+            // Schnittmenge → Paris
+            target = paris;
+            category = 'intersection';
+        } else if (inH) {
+            // Nur Hauptstadt-Becken
+            const items = beckenHauptstadt.items;
+            target = items[Math.floor(Math.random() * items.length)];
+            category = 'hauptstadt';
+        } else if (inF) {
+            // Nur Frankreich-Becken
+            const items = beckenFrankreich.items;
+            target = items[Math.floor(Math.random() * items.length)];
+            category = 'frankreich';
+        } else {
+            // Außerhalb – driftet frei, wird aber sanft zum nächsten Beckenrand gezogen
+            target = null;
+            category = 'outside';
         }
 
-        animationRunning = true;
+        return {
+            x, y,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            target,
+            category,
+            trail: [],
+            arrived: false,
+            alpha: 1,
+            age: 0
+        };
+    }
 
-        // Generiere 3D-Becken-Daten: Newton-Fraktal in 3D
-        // Wir berechnen für ein 3D-Gitter, zu welchem Attraktor jeder Punkt konvergiert
-        const resolution = 60;
-        const attractors3D = [
-            { x: 1, y: 0, z: 0, color: 'rgba(59, 130, 246, 0.6)', name: 'A' },
-            { x: -0.5, y: 0.866, z: 0.5, color: 'rgba(16, 185, 129, 0.6)', name: 'B' },
-            { x: -0.5, y: -0.866, z: -0.5, color: 'rgba(245, 158, 11, 0.6)', name: 'C' },
-            { x: 0, y: 0, z: 1.2, color: 'rgba(239, 68, 68, 0.6)', name: 'D' },
-            { x: 0.3, y: 0.5, z: -1.0, color: 'rgba(139, 92, 246, 0.6)', name: 'E' }
-        ];
+    const numParticles = 20;
+    let particles = [];
+    for (let i = 0; i < numParticles; i++) {
+        particles.push(spawnParticle());
+    }
 
-        // Für jede Becken-Farbe sammeln wir Punkte
-        const basinPoints = attractors3D.map(() => ({ x: [], y: [], z: [] }));
+    animationRunning = true;
+    let t = 0;
 
-        // Berechne Beckenzugehörigkeit für Punkte auf einer Kugeloberfläche (mehrere Schalen)
-        const shells = [1.8, 2.2, 2.6];
+    function drawEllipse(ecx, ecy, erx, ery, color, label, alpha) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(ecx, ecy, erx, ery, 0, 0, Math.PI * 2);
+        ctx.fillStyle = color.replace(')', `,${alpha})`).replace('rgb', 'rgba');
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.globalAlpha = 0.8;
+        ctx.stroke();
+        ctx.restore();
 
-        shells.forEach(radius => {
-            const nPhi = resolution;
-            const nTheta = Math.floor(resolution / 2);
+        // Label oben
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.fillText(label, ecx, ecy - ery - 12);
+    }
 
-            for (let iPhi = 0; iPhi < nPhi; iPhi++) {
-                for (let iTheta = 0; iTheta < nTheta; iTheta++) {
-                    const phi = (iPhi / nPhi) * Math.PI * 2;
-                    const theta = (iTheta / nTheta) * Math.PI;
+    function draw() {
+        if (!animationRunning) return;
+        t++;
 
-                    let px = radius * Math.sin(theta) * Math.cos(phi);
-                    let py = radius * Math.sin(theta) * Math.sin(phi);
-                    let pz = radius * Math.cos(theta);
+        ctx.clearRect(0, 0, W, H);
 
-                    // Iteriere: bewege Punkt Richtung nächsten Attraktor mit Twist
-                    let x = px, y = py, z = pz;
-                    for (let iter = 0; iter < 15; iter++) {
-                        let totalFx = 0, totalFy = 0, totalFz = 0;
-                        attractors3D.forEach(a => {
-                            const dx = a.x - x;
-                            const dy = a.y - y;
-                            const dz = a.z - z;
-                            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.01;
-                            const strength = 1.0 / (dist * dist);
-                            // Twist: Rotation um z-Achse proportional zur Distanz
-                            const twistAngle = 0.6 / (dist + 0.5);
-                            const rotDx = dx * Math.cos(twistAngle) - dy * Math.sin(twistAngle);
-                            const rotDy = dx * Math.sin(twistAngle) + dy * Math.cos(twistAngle);
-                            totalFx += rotDx * strength;
-                            totalFy += rotDy * strength;
-                            totalFz += dz * strength;
-                        });
+        // Hintergrund
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+        bgGrad.addColorStop(0, '#1a1a2e');
+        bgGrad.addColorStop(1, '#16213e');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, W, H);
 
-                        const norm = Math.sqrt(totalFx * totalFx + totalFy * totalFy + totalFz * totalFz) || 1;
-                        x += (totalFx / norm) * 0.3;
-                        y += (totalFy / norm) * 0.3;
-                        z += (totalFz / norm) * 0.3;
-                    }
+        // === Becken zeichnen (Ellipsen) ===
+        // Erst Frankreich (rechts), dann Hauptstadt (links), damit Überlappung sichtbar
+        drawEllipse(
+            beckenFrankreich.cx, beckenFrankreich.cy,
+            beckenFrankreich.rx, beckenFrankreich.ry,
+            'rgb(16, 185, 129)', beckenFrankreich.label, 0.08
+        );
+        drawEllipse(
+            beckenHauptstadt.cx, beckenHauptstadt.cy,
+            beckenHauptstadt.rx, beckenHauptstadt.ry,
+            'rgb(59, 130, 246)', beckenHauptstadt.label, 0.08
+        );
 
-                    // Finde nächsten Attraktor
-                    let minDist = Infinity;
-                    let closestIdx = 0;
-                    attractors3D.forEach((a, idx) => {
-                        const dx = a.x - x;
-                        const dy = a.y - y;
-                        const dz = a.z - z;
-                        const dist = dx * dx + dy * dy + dz * dz;
-                        if (dist < minDist) {
-                            minDist = dist;
-                            closestIdx = idx;
-                        }
-                    });
+        // === Schnittmenge hervorheben ===
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(beckenHauptstadt.cx, beckenHauptstadt.cy, beckenHauptstadt.rx, beckenHauptstadt.ry, 0, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.beginPath();
+        ctx.ellipse(beckenFrankreich.cx, beckenFrankreich.cy, beckenFrankreich.rx, beckenFrankreich.ry, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+        ctx.fill();
+        ctx.restore();
 
-                    basinPoints[closestIdx].x.push(px);
-                    basinPoints[closestIdx].y.push(py);
-                    basinPoints[closestIdx].z.push(pz);
+        // Schnittmengen-Label
+        ctx.font = 'bold 11px system-ui';
+        ctx.fillStyle = '#f59e0b';
+        ctx.textAlign = 'center';
+        ctx.fillText('Hauptstadt ∩ Frankreich', W * 0.50, H * 0.28);
+
+        // === Statische Items zeichnen ===
+        beckenHauptstadt.items.forEach(item => {
+            ctx.beginPath();
+            ctx.arc(item.x, item.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.7)';
+            ctx.fill();
+            ctx.font = '10px system-ui';
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.9)';
+            ctx.textAlign = 'center';
+            ctx.fillText(item.name, item.x, item.y - 10);
+        });
+
+        beckenFrankreich.items.forEach(item => {
+            ctx.beginPath();
+            ctx.arc(item.x, item.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.7)';
+            ctx.fill();
+            ctx.font = '10px system-ui';
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+            ctx.textAlign = 'center';
+            ctx.fillText(item.name, item.x, item.y - 10);
+        });
+
+        // === PARIS – pulsierend in der Schnittmenge ===
+        const pulse = 1 + 0.15 * Math.sin(t * 0.05);
+        const parisGlow = ctx.createRadialGradient(paris.x, paris.y, 0, paris.x, paris.y, 25 * pulse);
+        parisGlow.addColorStop(0, 'rgba(245, 158, 11, 0.6)');
+        parisGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
+        ctx.fillStyle = parisGlow;
+        ctx.beginPath();
+        ctx.arc(paris.x, paris.y, 25 * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(paris.x, paris.y, 9 * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.font = 'bold 14px system-ui';
+        ctx.fillStyle = '#f59e0b';
+        ctx.textAlign = 'center';
+        ctx.fillText('★ Paris', paris.x, paris.y - 18);
+
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.8)';
+        ctx.fillText('(Hauptstadt UND Frankreich)', paris.x, paris.y + 22);
+
+        // === Partikel aktualisieren ===
+        particles.forEach((p, idx) => {
+            if (p.arrived) {
+                p.alpha -= 0.012;
+                if (p.alpha <= 0) {
+                    particles[idx] = spawnParticle();
+                }
+                return;
+            }
+
+            p.age++;
+
+            if (p.target) {
+                // Anziehung zum Ziel
+                const dx = p.target.x - p.x;
+                const dy = p.target.y - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                const angle = Math.atan2(dy, dx);
+                const spiralOffset = 0.3 * Math.exp(-dist * 0.008);
+                const pullStrength = 0.08 + 0.15 * (1 - Math.min(dist / 200, 1));
+
+                p.vx += Math.cos(angle + spiralOffset) * pullStrength;
+                p.vy += Math.sin(angle + spiralOffset) * pullStrength;
+
+                p.vx *= 0.94;
+                p.vy *= 0.94;
+
+                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                if (speed > 2.5) {
+                    p.vx *= 2.5 / speed;
+                    p.vy *= 2.5 / speed;
+                }
+
+                if (dist < 8) {
+                    p.arrived = true;
+                    p.alpha = 1;
+                }
+            } else {
+                // Außerhalb: sanftes Driften Richtung nächstem Beckenrand
+                const dxH = beckenHauptstadt.cx - p.x;
+                const dyH = beckenHauptstadt.cy - p.y;
+                const dxF = beckenFrankreich.cx - p.x;
+                const dyF = beckenFrankreich.cy - p.y;
+                const distH = Math.sqrt(dxH * dxH + dyH * dyH);
+                const distF = Math.sqrt(dxF * dxF + dyF * dyF);
+
+                if (distH < distF) {
+                    p.vx += (dxH / distH) * 0.02;
+                    p.vy += (dyH / distH) * 0.02;
+                } else {
+                    p.vx += (dxF / distF) * 0.02;
+                    p.vy += (dyF / distF) * 0.02;
+                }
+
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+
+                // Prüfe ob jetzt in einem Becken
+                const nowInH = isInEllipse(p.x, p.y, beckenHauptstadt.cx, beckenHauptstadt.cy, beckenHauptstadt.rx, beckenHauptstadt.ry);
+                const nowInF = isInEllipse(p.x, p.y, beckenFrankreich.cx, beckenFrankreich.cy, beckenFrankreich.rx, beckenFrankreich.ry);
+
+                if (nowInH && nowInF) {
+                    p.target = paris;
+                    p.category = 'intersection';
+                } else if (nowInH) {
+                    p.target = beckenHauptstadt.items[Math.floor(Math.random() * beckenHauptstadt.items.length)];
+                    p.category = 'hauptstadt';
+                } else if (nowInF) {
+                    p.target = beckenFrankreich.items[Math.floor(Math.random() * beckenFrankreich.items.length)];
+                    p.category = 'frankreich';
                 }
             }
-        });
 
-        // Erstelle Plotly-Traces
-        const colors3D = [
-            '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'
-        ];
-        const traces = [];
+            p.x += p.vx;
+            p.y += p.vy;
 
-        // Becken-Punkte
-        basinPoints.forEach((bp, idx) => {
-            traces.push({
-                type: 'scatter3d',
-                mode: 'markers',
-                x: bp.x,
-                y: bp.y,
-                z: bp.z,
-                marker: {
-                    size: 2.5,
-                    color: colors3D[idx],
-                    opacity: 0.5
-                },
-                name: `Becken ${attractors3D[idx].name}`,
-                hoverinfo: 'name'
-            });
-        });
+            // Clamp
+            p.x = Math.max(10, Math.min(W - 10, p.x));
+            p.y = Math.max(10, Math.min(H - 10, p.y));
 
-        // Attraktor-Punkte (groß)
-        traces.push({
-            type: 'scatter3d',
-            mode: 'markers+text',
-            x: attractors3D.map(a => a.x),
-            y: attractors3D.map(a => a.y),
-            z: attractors3D.map(a => a.z),
-            marker: {
-                size: 10,
-                color: colors3D,
-                symbol: 'diamond',
-                line: { color: '#fff', width: 2 }
-            },
-            text: attractors3D.map(a => `Attraktor ${a.name}`),
-            textposition: 'top center',
-            textfont: { size: 10, color: '#fff' },
-            name: 'Attraktoren',
-            hoverinfo: 'text'
-        });
+            // Trail
+            p.trail.push({ x: p.x, y: p.y });
+            if (p.trail.length > 60) p.trail.shift();
 
-        const layout = {
-            scene: {
-                xaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.1)', zerolinecolor: 'rgba(255,255,255,0.2)', title: '', showticklabels: false, backgroundcolor: '#1a1a2e' },
-                yaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.1)', zerolinecolor: 'rgba(255,255,255,0.2)', title: '', showticklabels: false, backgroundcolor: '#1a1a2e' },
-                zaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.1)', zerolinecolor: 'rgba(255,255,255,0.2)', title: '', showticklabels: false, backgroundcolor: '#1a1a2e' },
-                bgcolor: '#1a1a2e',
-                camera: {
-                    eye: { x: 1.8, y: 1.8, z: 1.2 },
-                    up: { x: 0, y: 0, z: 1 }
-                },
-                aspectmode: 'cube'
-            },
-            paper_bgcolor: '#1a1a2e',
-            plot_bgcolor: '#1a1a2e',
-            margin: { l: 0, r: 0, t: 40, b: 10 },
-            title: {
-                text: '3D-Einzugsbecken – 5 Attraktoren mit fraktalen Grenzen',
-                font: { color: '#e2e8f0', size: 14 }
-            },
-            legend: {
-                font: { color: '#e2e8f0', size: 10 },
-                bgcolor: 'rgba(0,0,0,0.3)',
-                bordercolor: 'rgba(255,255,255,0.1)',
-                borderwidth: 1
-            },
-            showlegend: true
-        };
+            // Farbe je nach Kategorie
+            let pColor;
+            switch (p.category) {
+                case 'intersection': pColor = '#f59e0b'; break;
+                case 'hauptstadt': pColor = '#3b82f6'; break;
+                case 'frankreich': pColor = '#10b981'; break;
+                default: pColor = '#94a3b8'; break;
+            }
 
-        const config = {
-            displayModeBar: false,
-            responsive: true
-        };
-
-        // Plotly rendern
-        if (typeof Plotly !== 'undefined') {
-            Plotly.newPlot(wrapId, traces, layout, config).then(() => {
-                // Auto-Rotation
-                let angle = 0;
-                function rotate() {
-                    if (!animationRunning) return;
-                    angle += 0.005;
-                    const eye = {
-                        x: 2.2 * Math.cos(angle),
-                        y: 2.2 * Math.sin(angle),
-                        z: 1.0 + 0.3 * Math.sin(angle * 0.7)
-                    };
-                    Plotly.relayout(wrapId, { 'scene.camera.eye': eye });
-                    activeAnimation = requestAnimationFrame(rotate);
+            // Trail zeichnen
+            if (p.trail.length > 1) {
+                for (let i = 1; i < p.trail.length; i++) {
+                    const alpha = (i / p.trail.length) * 0.4 * p.alpha;
+                    ctx.beginPath();
+                    ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
+                    ctx.lineTo(p.trail[i].x, p.trail[i].y);
+                    ctx.strokeStyle = pColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
                 }
-                rotate();
-            });
-        } else {
-            // Fallback wenn Plotly nicht geladen
-            wrap.innerHTML = '<div style="padding:40px;text-align:center;color:#e2e8f0;">Plotly nicht geladen – 3D-Visualisierung nicht verfügbar.</div>';
-        }
+            }
+
+            // Partikel zeichnen
+            ctx.globalAlpha = p.alpha;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = pColor;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        });
+
+        // === Titel und Erklärung ===
+        ctx.font = 'bold 14px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'center';
+        ctx.fillText('Überlappende Einzugsbecken – Semantische Schnittmenge', W / 2, 24);
+
+        ctx.font = '11px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Punkte in der Schnittmenge beider Becken konvergieren zu Paris', W / 2, 44);
+
+        // Legende unten
+        const legendY = H - 20;
+        ctx.font = '10px system-ui';
+        ctx.textAlign = 'left';
+
+        ctx.fillStyle = '#3b82f6';
+        ctx.fillRect(W * 0.15, legendY - 8, 10, 10);
+        ctx.fillText('→ Hauptstädte (Berlin, Tokyo, ...)', W * 0.15 + 14, legendY);
+
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(W * 0.48, legendY - 8, 10, 10);
+        ctx.fillText('→ Frankreich (Lyon, Marseille, ...)', W * 0.48 + 14, legendY);
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(W * 0.78, legendY - 8, 10, 10);
+        ctx.fillText('→ Paris (beides!)', W * 0.78 + 14, legendY);
+
+        activeAnimation = requestAnimationFrame(draw);
     }
+    draw();
+}
 
     // ============================================================
     // PUBLIC API
