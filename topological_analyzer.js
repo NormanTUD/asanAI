@@ -1331,7 +1331,7 @@ var TopologicalAnalyzer = (function () {
 		if (_state.config.showActivationTopology) {
 			var layerDataArr = getLayerData();
 			html += '<div class="tda-section">';
-			html += '<h3>🧠 Activation Topology (Layer I/O)</h3>';
+			html += '<h3>💡 Activation Topology (Layer I/O)</h3>';
 
 			if (layerDataArr && layerDataArr.length > 0) {
 				html += '<p style="font-size:0.85em;opacity:0.6;">' + layerDataArr.length + ' layers with recorded activations</p>';
