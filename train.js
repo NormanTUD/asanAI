@@ -554,6 +554,8 @@ async function get_fit_data () {
 		//history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));
 
 		show_or_hide_beginner_or_expert_mode_stuff();
+
+		TopologicalAnalyzer.update();
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {

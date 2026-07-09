@@ -1056,6 +1056,7 @@
 			"loss_landscape_dim_first_two" => "First 2 Parameters",
 			"loss_landscape_clear_path" => "Clear Path",
 			"loss_landscape_steps_label" => "Grid resolution",
+			"topological_data_analysis" => "Topological Data Analysis"
 		),
 
 		'de' => array(
@@ -2113,6 +2114,7 @@
 			"loss_landscape_dim_first_two" => "Erste 2 Parameter",
 			"loss_landscape_clear_path" => "Pfad löschen",
 			"loss_landscape_steps_label" => "Gitterauflösung",
+			"topological_data_analysis" => "Topologische Datenanalyse"
 		)
 	);
 

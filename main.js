@@ -1047,6 +1047,8 @@ $(document).ready(async function() {
 
 	create_loss_landscape();
 
+	TopologicalAnalyzer.init("topological_data_analysis");
+
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
 });
 

@@ -9,6 +9,7 @@
 		<li><a id="dimensionality_river_tab_label" href="#dimensionality_river"><span class="TRANSLATEME_dimensionality_river"></span></a></li>
 		<li><a id="activation_atlas_tab_label" class="hide_when_no_image" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
 		<li><a id="gradient_flow_tab_label" class="hide_when_no_image" href="#gradient_flow"><span class="TRANSLATEME_gradient_flow"></span></a></li>
+		<li><a id="topological_data_analysis_tab_label" class="hide_when_no_image" href="#topological_data_analysis"><span class="TRANSLATEME_topological_data_analysis"></span></a></li>
 		<li><a onclick="WeightAnalysis.weight_analysis_render('weight_analysis');" id="weight_analysis_tab_label" href="#weight_analysis"><span class="TRANSLATEME_weight_analysis"></span></a></li>
 		<!--<li><a href="#loss_landscape_tab" id="loss_landscape_tab_label"><span class="TRANSLATEME_loss_landscape"></span></a></li>-->
 		<li style="display: none"><a href="#layer_input_groups" id="layer_input_groups_label"><span class="TRANSLATEME_layer_input_groups"></span></a></li>
@@ -83,6 +84,8 @@
 	<div id="gradient_flow" class="tab" style="display: none">
 	</div>
 
+	<div id="topological_data_analysis" class="tab" style="display: none">
+	</div>
 
 	<div id="weight_analysis" class="tab">
 		<div class="TRANSLATEME_no_weight_analysis"></div>
