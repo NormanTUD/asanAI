@@ -1047,7 +1047,15 @@
 			"wa_tooltip_skewness_per_layer_desc" => "Measures the asymmetry of each layer's output distribution. A skewness near 0 means symmetric output. High positive skewness means most values are small with a few large outliers. High negative skewness means the opposite.",
 			"wa_tooltip_kurtosis_per_layer_title" => "Kurtosis per Layer",
 			"wa_tooltip_kurtosis_per_layer_desc" => "Measures how 'peaked' or 'heavy-tailed' each layer's output distribution is compared to a normal distribution. High kurtosis means extreme outliers are present. Negative kurtosis means the distribution is flatter than normal.",
-
+			"loss_landscape_3d_simple_title" => "3D Loss Landscape (1 Dense, 1 neuron, input [1]) — Plotly",
+			"loss_landscape_3d_complex_title" => "3D Loss Landscape (Dimensionality Reduction) — Plotly",
+			"loss_landscape_3d_complex_warning" => "⚠️ Note: This is an approximation. The true loss landscape is high-dimensional and has been projected down to 2 directions using dimensionality reduction. The actual optimization trajectory may look very different in the full parameter space.",
+			"loss_landscape_dim_method" => "Projection method",
+			"loss_landscape_dim_pca" => "PCA",
+			"loss_landscape_dim_random" => "Random Orthogonal",
+			"loss_landscape_dim_first_two" => "First 2 Parameters",
+			"loss_landscape_clear_path" => "Clear Path",
+			"loss_landscape_steps_label" => "Grid resolution",
 		),
 
 		'de' => array(
@@ -2096,6 +2104,15 @@
 			"wa_tooltip_skewness_per_layer_desc" => "Misst die Asymmetrie der Ausgabeverteilung jedes Layers. Eine Schiefe nahe 0 bedeutet symmetrische Ausgabe. Hohe positive Schiefe bedeutet, dass die meisten Werte klein sind mit wenigen großen Ausreißern. Hohe negative Schiefe bedeutet das Gegenteil.",
 			"wa_tooltip_kurtosis_per_layer_title" => "Kurtosis pro Layer",
 			"wa_tooltip_kurtosis_per_layer_desc" => "Misst, wie 'spitz' oder 'schwerschw√§nzig' die Ausgabeverteilung jedes Layers im Vergleich zur Normalverteilung ist. Hohe Kurtosis bedeutet, dass extreme Ausreißer vorhanden sind. Negative Kurtosis bedeutet, dass die Verteilung flacher als normal ist.",
+			"loss_landscape_3d_simple_title" => "3D Loss-Landschaft (1 Dense, 1 Neuron, Input [1]) — Plotly",
+			"loss_landscape_3d_complex_title" => "3D Loss-Landschaft (Dimensionsreduktion) — Plotly",
+			"loss_landscape_3d_complex_warning" => "⚠️ Hinweis: Dies ist eine Näherung. Die tatsächliche Loss-Landschaft ist hochdimensional und wurde mittels Dimensionsreduktion auf 2 Richtungen projiziert. Die echte Optimierungstrajektorie kann im vollständigen Parameterraum ganz anders aussehen.",
+			"loss_landscape_dim_method" => "Projektionsmethode",
+			"loss_landscape_dim_pca" => "PCA",
+			"loss_landscape_dim_random" => "Zufällig orthogonal",
+			"loss_landscape_dim_first_two" => "Erste 2 Parameter",
+			"loss_landscape_clear_path" => "Pfad löschen",
+			"loss_landscape_steps_label" => "Gitterauflösung",
 		)
 	);
 
