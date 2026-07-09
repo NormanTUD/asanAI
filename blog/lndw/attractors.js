@@ -1163,7 +1163,8 @@ function renderTorusEarth(container) {
 
 // ============================================================
 // STEP 4: 3D-Einzugsbecken als Potentiallandschaft
-// Labels mit Pfeilen NEBEN dem Objekt, Kamera: Drehen + Zoom + Pan
+// Labels WEIT AUSSERHALB des Plots mit langen Pfeilen
+// Kamera: Drehen + Zoom + Pan
 // ============================================================
 function render3DBasins(container) {
     const setup = safeCanvasSetup(container, '#1a1a2e');
@@ -1181,14 +1182,12 @@ function render3DBasins(container) {
         { x: 0.0, y: 1.5, depth: 0.7, radius: 1.0, label: '„Kultur"', sublabel: 'Stabil', color: '#10b981' }
     ];
 
-    // Instabile Punkte (Sättel zwischen Becken)
     const unstablePoints = [
         { x: -0.65, y: -0.2, label: 'Instabil', color: '#f87171' },
         { x: 0.65, y: -0.2, label: 'Instabil', color: '#f87171' },
         { x: 0.0, y: 0.6, label: 'Instabil', color: '#f87171' }
     ];
 
-    // Höhenfunktion
     function getHeight(px, py) {
         let h = 0.0;
         for (let b of basins) {
@@ -1221,7 +1220,6 @@ function render3DBasins(container) {
         }
     }
 
-    // === Farbpalette ===
     function heightToColor(normalizedH) {
         const stops = [
             { t: 0.0, r: 100, g: 50, b: 10 },
@@ -1260,9 +1258,9 @@ function render3DBasins(container) {
     let targetPanX = 0;
     let targetPanY = 0;
 
-    const baseScaleX = Math.min(W, H) * 0.065;
+    const baseScaleX = Math.min(W, H) * 0.055;
     const baseScaleY = baseScaleX * 0.5;
-    const heightScale = Math.min(W, H) * 0.12;
+    const heightScale = Math.min(W, H) * 0.1;
 
     function projectTerrain(px, py, h) {
         const rx = px * Math.cos(camRotY) - py * Math.sin(camRotY);
@@ -1271,11 +1269,11 @@ function render3DBasins(container) {
         const scaleY = baseScaleY * camZoom;
         const hScale = heightScale * camZoom;
         const screenX = W / 2 + camPanX + rx * scaleX;
-        const screenY = H / 2 + camPanY + ry * scaleY * camTilt - h * hScale;
+        const screenY = H / 2 + camPanY + 30 + ry * scaleY * camTilt - h * hScale;
         return { sx: screenX, sy: screenY, depth: ry };
     }
 
-    // === Kugeln die in Täler rollen ===
+    // === Kugeln ===
     const numBalls = 18;
     let balls = [];
 
@@ -1295,7 +1293,7 @@ function render3DBasins(container) {
         balls.push(b);
     }
 
-    // === Interaktion: Drag=Rotate, Shift+Drag=Pan, Scroll=Zoom ===
+    // === Interaktion ===
     let isDragging = false;
     let isPanning = false;
     let lastMouseX = 0, lastMouseY = 0;
@@ -1303,7 +1301,7 @@ function render3DBasins(container) {
 
     canvas.addEventListener('mousedown', (e) => {
         isDragging = true;
-        isPanning = e.shiftKey || e.button === 1; // Shift oder Mitteltaste = Pan
+        isPanning = e.shiftKey || e.button === 1;
         lastMouseX = e.clientX;
         lastMouseY = e.clientY;
     });
@@ -1325,7 +1323,6 @@ function render3DBasins(container) {
     canvas.addEventListener('mouseup', () => { isDragging = false; isPanning = false; });
     canvas.addEventListener('mouseleave', () => { isDragging = false; isPanning = false; });
 
-    // Zoom mit Mausrad
     canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
         const zoomDelta = e.deltaY > 0 ? 0.9 : 1.1;
@@ -1333,7 +1330,6 @@ function render3DBasins(container) {
         targetZoom = Math.max(0.4, Math.min(3.0, targetZoom));
     }, { passive: false });
 
-    // Touch: 1 Finger = Rotate, 2 Finger = Pinch-Zoom + Pan
     let lastTouchDist = 0;
     let lastTouchMidX = 0, lastTouchMidY = 0;
 
@@ -1367,17 +1363,12 @@ function render3DBasins(container) {
             const dist = Math.sqrt(dx * dx + dy * dy);
             const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
             const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-
-            // Pinch zoom
             if (lastTouchDist > 0) {
-                const scale = dist / lastTouchDist;
-                targetZoom *= scale;
+                targetZoom *= dist / lastTouchDist;
                 targetZoom = Math.max(0.4, Math.min(3.0, targetZoom));
             }
-            // Pan
             targetPanX += midX - lastTouchMidX;
             targetPanY += midY - lastTouchMidY;
-
             lastTouchDist = dist;
             lastTouchMidX = midX;
             lastTouchMidY = midY;
@@ -1389,14 +1380,20 @@ function render3DBasins(container) {
     animationRunning = true;
     let t = 0;
 
+    // Feste Label-Positionen am RAND des Canvas (absolut, nicht relativ zum Terrain)
+    const fixedLabelAnchors = [
+        { basinIdx: 0, x: 55, y: 75 },           // Frankreich → links oben
+        { basinIdx: 1, x: W - 55, y: 75 },       // Hauptstadt → rechts oben
+        { basinIdx: 2, x: W / 2, y: 62 },        // Paris → oben mitte
+        { basinIdx: 3, x: W - 55, y: H - 80 }    // Kultur → rechts unten
+    ];
+
     function draw() {
         if (!animationRunning) return;
         t++;
 
-        // Auto-Rotation (langsam)
         if (!isDragging && !isPanning) targetRotY += 0.0008;
 
-        // Smooth camera
         camRotY += (targetRotY - camRotY) * 0.06;
         camTilt += (targetTilt - camTilt) * 0.06;
         camZoom += (targetZoom - camZoom) * 0.08;
@@ -1404,12 +1401,10 @@ function render3DBasins(container) {
         camPanY += (targetPanY - camPanY) * 0.08;
 
         ctx.clearRect(0, 0, W, H);
-
-        // Hintergrund (hell wie g.png)
         ctx.fillStyle = '#f8f6f0';
         ctx.fillRect(0, 0, W, H);
 
-        // === Terrain zeichnen ===
+        // === Terrain ===
         let quads = [];
         for (let iy = 0; iy < gridRes; iy++) {
             for (let ix = 0; ix < gridRes; ix++) {
@@ -1421,7 +1416,7 @@ function render3DBasins(container) {
                 const avgX = (p00.x + p10.x) / 2;
                 const avgY = (p00.y + p01.y) / 2;
                 const proj = projectTerrain(avgX, avgY, avgH);
-                quads.push({ corners: [p00, p10, p11, p01], avgH, depth: proj.depth, ix, iy });
+                quads.push({ corners: [p00, p10, p11, p01], avgH, depth: proj.depth });
             }
         }
         quads.sort((a, b) => a.depth - b.depth);
@@ -1431,12 +1426,9 @@ function render3DBasins(container) {
             const projCorners = q.corners.map(c => projectTerrain(c.x, c.y, c.h));
             const normalizedH = (q.avgH - minH) / hRange;
             const col = heightToColor(normalizedH);
-
-            // Beleuchtung
             const dx = (q.corners[1].h - q.corners[0].h);
             const dy = (q.corners[3].h - q.corners[0].h);
             const lightFactor = Math.max(0.55, Math.min(1.35, 1.0 + dx * 2.5 - dy * 1.5));
-
             const r = Math.min(255, Math.round(col.r * lightFactor));
             const g = Math.min(255, Math.round(col.g * lightFactor));
             const b = Math.min(255, Math.round(col.b * lightFactor));
@@ -1449,7 +1441,7 @@ function render3DBasins(container) {
             ctx.closePath();
             ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
             ctx.fill();
-            ctx.strokeStyle = `rgba(0, 0, 0, 0.03)`;
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.03)';
             ctx.lineWidth = 0.5;
             ctx.stroke();
         }
@@ -1459,7 +1451,7 @@ function render3DBasins(container) {
         ctx.lineWidth = 0.7;
         for (let c = 1; c < numContours; c++) {
             const contourH = minH + (c / numContours) * hRange;
-            ctx.strokeStyle = `rgba(0, 0, 0, 0.1)`;
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
             for (let iy = 0; iy < gridRes; iy++) {
                 for (let ix = 0; ix < gridRes; ix++) {
                     const p0 = heightMap[iy][ix];
@@ -1510,7 +1502,6 @@ function render3DBasins(container) {
             ball.x = Math.max(-terrainRange, Math.min(terrainRange, ball.x));
             ball.y = Math.max(-terrainRange, Math.min(terrainRange, ball.y));
 
-            // Trail
             if (ball.trail.length > 1) {
                 for (let i = 1; i < ball.trail.length; i++) {
                     const h1 = getHeight(ball.trail[i-1].x, ball.trail[i-1].y);
@@ -1524,7 +1515,6 @@ function render3DBasins(container) {
                 }
             }
 
-            // Kugel
             const ballH = getHeight(ball.x, ball.y);
             const bp = projectTerrain(ball.x, ball.y, ballH - 0.05);
             ctx.beginPath();
@@ -1538,85 +1528,99 @@ function render3DBasins(container) {
             ctx.lineWidth = 1.2; ctx.stroke();
         });
 
-        // === LABELS MIT PFEILEN – NEBEN dem Terrain (nicht drauf!) ===
-        // Labels werden am Rand des Canvas platziert und zeigen mit Pfeilen auf die Täler
-        const labelPositions = [
-            { basinIdx: 0, anchorSide: 'left', offsetX: -30, offsetY: -60 },   // Frankreich → links oben
-            { basinIdx: 1, anchorSide: 'right', offsetX: 30, offsetY: -60 },   // Hauptstadt → rechts oben
-            { basinIdx: 2, anchorSide: 'top', offsetX: 0, offsetY: -90 },      // Paris → oben mitte
-            { basinIdx: 3, anchorSide: 'right', offsetX: 40, offsetY: 20 }     // Kultur → rechts
-        ];
+        // === Instabile Punkte ===
+        unstablePoints.forEach(up => {
+            const h = getHeight(up.x, up.y);
+            const proj = projectTerrain(up.x, up.y, h);
+            const s = 5;
+            ctx.beginPath();
+            ctx.moveTo(proj.sx - s, proj.sy - s); ctx.lineTo(proj.sx + s, proj.sy + s);
+            ctx.moveTo(proj.sx + s, proj.sy - s); ctx.lineTo(proj.sx - s, proj.sy + s);
+            ctx.strokeStyle = 'rgba(220, 50, 50, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
 
-        labelPositions.forEach(lp => {
-            const basin = basins[lp.basinIdx];
+        // === LABELS WEIT AUSSERHALB – feste Positionen am Canvas-Rand ===
+        fixedLabelAnchors.forEach(anchor => {
+            const basin = basins[anchor.basinIdx];
             const basinH = getHeight(basin.x, basin.y);
             const basinProj = projectTerrain(basin.x, basin.y, basinH);
 
-            // Label-Position: versetzt vom projizierten Punkt
-            let labelX, labelY;
-            
-            // Berechne Label-Position basierend auf Seite
-            const margin = 25;
-            switch (lp.anchorSide) {
-                case 'left':
-                    labelX = Math.min(basinProj.sx + lp.offsetX, basinProj.sx - 80);
-                    labelX = Math.max(margin + 60, labelX);
-                    labelY = basinProj.sy + lp.offsetY;
-                    break;
-                case 'right':
-                    labelX = Math.max(basinProj.sx + lp.offsetX, basinProj.sx + 80);
-                    labelX = Math.min(W - margin - 60, labelX);
-                    labelY = basinProj.sy + lp.offsetY;
-                    break;
-                case 'top':
-                    labelX = basinProj.sx + lp.offsetX;
-                    labelY = Math.min(basinProj.sy + lp.offsetY, basinProj.sy - 70);
-                    labelY = Math.max(margin + 50, labelY);
-                    break;
-                default:
-                    labelX = basinProj.sx + lp.offsetX;
-                    labelY = basinProj.sy + lp.offsetY;
-            }
+            const labelX = anchor.x;
+            const labelY = anchor.y;
+            const targetX = basinProj.sx;
+            const targetY = basinProj.sy;
 
-            // Clamp
-            labelX = Math.max(70, Math.min(W - 70, labelX));
-            labelY = Math.max(55, Math.min(H - 30, labelY));
+            // === Langer Pfeil vom Label zum Tal ===
+            // Berechne Punkt auf der Label-Box-Kante (Startpunkt des Pfeils)
+            const angle = Math.atan2(targetY - labelY, targetX - labelX);
 
-            // Pfeil von Label zum Tal
-            const arrowEndX = basinProj.sx;
-            const arrowEndY = basinProj.sy;
+            // Pfeil-Startpunkt: etwas Abstand von der Label-Box
+            const startDist = 25;
+            const arrowStartX = labelX + Math.cos(angle) * startDist;
+            const arrowStartY = labelY + Math.sin(angle) * startDist;
 
-            // Pfeil-Linie
+            // Pfeil-Endpunkt: etwas vor dem Zielpunkt
+            const endDist = 12;
+            const arrowEndX = targetX - Math.cos(angle) * endDist;
+            const arrowEndY = targetY - Math.sin(angle) * endDist;
+
+            // Pfeil-Linie (gestrichelt für Eleganz)
             ctx.beginPath();
-            ctx.moveTo(labelX, labelY + 10);
-            ctx.lineTo(arrowEndX, arrowEndY);
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.lineWidth = 2;
+            ctx.moveTo(arrowStartX, arrowStartY);
+
+            // Leicht gebogener Pfeil (Bezier) für bessere Lesbarkeit
+            const midX = (arrowStartX + arrowEndX) / 2;
+            const midY = (arrowStartY + arrowEndY) / 2;
+            const perpX = -Math.sin(angle) * 15;
+            const perpY = Math.cos(angle) * 15;
+            ctx.quadraticCurveTo(midX + perpX, midY + perpY, arrowEndX, arrowEndY);
+
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.lineWidth = 1.8;
+            ctx.setLineDash([5, 3]);
             ctx.stroke();
+            ctx.setLineDash([]);
 
             // Pfeilspitze
-            const angle = Math.atan2(arrowEndY - labelY, arrowEndX - labelX);
+            const tipAngle = Math.atan2(targetY - midY, targetX - midX);
             ctx.beginPath();
             ctx.moveTo(arrowEndX, arrowEndY);
-            ctx.lineTo(arrowEndX - 10 * Math.cos(angle - 0.3), arrowEndY - 10 * Math.sin(angle - 0.3));
-            ctx.lineTo(arrowEndX - 10 * Math.cos(angle + 0.3), arrowEndY - 10 * Math.sin(angle + 0.3));
+            ctx.lineTo(arrowEndX - 10 * Math.cos(tipAngle - 0.35), arrowEndY - 10 * Math.sin(tipAngle - 0.35));
+            ctx.lineTo(arrowEndX - 10 * Math.cos(tipAngle + 0.35), arrowEndY - 10 * Math.sin(tipAngle + 0.35));
             ctx.closePath();
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
             ctx.fill();
 
-            // Label-Box
+            // Kleiner Punkt am Ziel (im Tal)
+            ctx.beginPath();
+            ctx.arc(targetX, targetY, 4, 0, Math.PI * 2);
+            ctx.fillStyle = basin.color;
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // === Label-Box ===
             ctx.font = 'bold 12px system-ui';
             const labelText = basin.label;
             const textWidth = ctx.measureText(labelText).width;
-            const boxW = textWidth + 16;
-            const boxH = 36;
+            const boxW = textWidth + 18;
+            const boxH = 38;
             const boxX = labelX - boxW / 2;
-            const boxY = labelY - boxH / 2 - 5;
+            const boxY = labelY - boxH / 2;
 
-            // Hintergrund
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+            // Schatten
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
             ctx.beginPath();
-            ctx.roundRect(boxX, boxY, boxW, boxH, 5);
+            ctx.roundRect(boxX + 2, boxY + 2, boxW, boxH, 6);
+            ctx.fill();
+
+            // Box-Hintergrund
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.beginPath();
+            ctx.roundRect(boxX, boxY, boxW, boxH, 6);
             ctx.fill();
             ctx.strokeStyle = basin.color;
             ctx.lineWidth = 2.5;
@@ -1626,28 +1630,13 @@ function render3DBasins(container) {
             ctx.fillStyle = basin.color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(labelText, labelX, boxY + 13);
+            ctx.fillText(labelText, labelX, boxY + 14);
 
             // Sublabel
             ctx.font = '9px system-ui';
-            ctx.fillStyle = '#555';
-            ctx.fillText(basin.sublabel, labelX, boxY + 27);
+            ctx.fillStyle = '#666';
+            ctx.fillText(basin.sublabel, labelX, boxY + 28);
             ctx.textBaseline = 'alphabetic';
-        });
-
-        // === Instabile Punkte (Sättel) ===
-        unstablePoints.forEach(up => {
-            const h = getHeight(up.x, up.y);
-            const proj = projectTerrain(up.x, up.y, h);
-
-            // Kleines X-Marker
-            const s = 5;
-            ctx.beginPath();
-            ctx.moveTo(proj.sx - s, proj.sy - s); ctx.lineTo(proj.sx + s, proj.sy + s);
-            ctx.moveTo(proj.sx + s, proj.sy - s); ctx.lineTo(proj.sx - s, proj.sy + s);
-            ctx.strokeStyle = 'rgba(220, 50, 50, 0.7)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
         });
 
         // === Titel ===
