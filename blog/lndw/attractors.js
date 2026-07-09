@@ -1162,9 +1162,9 @@ function renderTorusEarth(container) {
     }
 
 // ============================================================
-// STEP 4: Semantische Becken – "Hauptstadt" ∩ "Frankreich" = Paris
-// Zwei Attraktoren mit überlappenden Einzugsbecken.
-// Punkte, die in BEIDEN Becken liegen, konvergieren zu "Paris".
+// STEP 4: 3D-Einzugsbecken als Potentiallandschaft
+// Darstellung wie eine topografische 3D-Oberfläche mit Tälern
+// "Frankreich" und "Hauptstadt" als Becken, "Paris" im Überlappungstal
 // ============================================================
 function render3DBasins(container) {
     const setup = safeCanvasSetup(container, '#1a1a2e');
@@ -1174,366 +1174,451 @@ function render3DBasins(container) {
     }
     const { ctx, W, H } = setup;
 
-    // === Geometrie der zwei Becken ===
-    const beckenHauptstadt = {
-        cx: W * 0.38,
-        cy: H * 0.48,
-        rx: W * 0.28,
-        ry: H * 0.32,
-        label: 'Becken: Hauptstadt',
-        color: '#3b82f6',
-        hue: 220,
-        items: [
-            { name: 'Berlin', x: W * 0.22, y: H * 0.35 },
-            { name: 'Tokyo', x: W * 0.18, y: H * 0.55 },
-            { name: 'London', x: W * 0.28, y: H * 0.68 },
-            { name: 'Rom', x: W * 0.15, y: H * 0.45 }
-        ]
-    };
+    // === Landschafts-Parameter ===
+    // Becken (Täler) definiert durch Position und Tiefe
+    const basins = [
+        { x: -1.2, y: -0.3, depth: 1.0, radius: 1.3, label: '„Frankreich"', color: '#3b82f6' },
+        { x: 1.2, y: -0.3, depth: 1.0, radius: 1.3, label: '„Hauptstadt"', color: '#ef4444' },
+        { x: 0.0, y: -0.3, depth: 1.4, radius: 0.7, label: '★ „Paris"', color: '#ffd700' },
+        { x: 0.0, y: 1.4, depth: 0.8, radius: 1.0, label: '„Kultur"', color: '#10b981' }
+    ];
 
-    const beckenFrankreich = {
-        cx: W * 0.62,
-        cy: H * 0.48,
-        rx: W * 0.28,
-        ry: H * 0.32,
-        label: 'Becken: Frankreich',
-        color: '#10b981',
-        hue: 160,
-        items: [
-            { name: 'Lyon', x: W * 0.72, y: H * 0.35 },
-            { name: 'Marseille', x: W * 0.78, y: H * 0.55 },
-            { name: 'Bordeaux', x: W * 0.74, y: H * 0.68 },
-            { name: 'Nizza', x: W * 0.82, y: H * 0.45 }
-        ]
-    };
+    // Berechne Höhe an einem Punkt (Potentiallandschaft)
+    // Niedrig = Attraktor (Tal), Hoch = Grenze (Hügel)
+    function getHeight(px, py) {
+        let h = 0.0; // Basishöhe
 
-    // Paris liegt in der Schnittmenge
-    const paris = {
-        name: 'Paris',
-        x: W * 0.50,
-        y: H * 0.48,
-        color: '#f59e0b'
-    };
-
-    // === Partikel-System ===
-    // Partikel starten zufällig und werden je nach Position angezogen:
-    // - Nur im Hauptstadt-Becken → zum nächsten "Hauptstadt"-Item
-    // - Nur im Frankreich-Becken → zum nächsten "Frankreich"-Item
-    // - In BEIDEN Becken → zu Paris
-
-    function isInEllipse(px, py, ecx, ecy, erx, ery) {
-        const dx = (px - ecx) / erx;
-        const dy = (py - ecy) / ery;
-        return (dx * dx + dy * dy) <= 1.0;
-    }
-
-    function spawnParticle() {
-        const x = 30 + Math.random() * (W - 60);
-        const y = 60 + Math.random() * (H - 120);
-
-        const inH = isInEllipse(x, y, beckenHauptstadt.cx, beckenHauptstadt.cy, beckenHauptstadt.rx, beckenHauptstadt.ry);
-        const inF = isInEllipse(x, y, beckenFrankreich.cx, beckenFrankreich.cy, beckenFrankreich.rx, beckenFrankreich.ry);
-
-        let target, category;
-        if (inH && inF) {
-            // Schnittmenge → Paris
-            target = paris;
-            category = 'intersection';
-        } else if (inH) {
-            // Nur Hauptstadt-Becken
-            const items = beckenHauptstadt.items;
-            target = items[Math.floor(Math.random() * items.length)];
-            category = 'hauptstadt';
-        } else if (inF) {
-            // Nur Frankreich-Becken
-            const items = beckenFrankreich.items;
-            target = items[Math.floor(Math.random() * items.length)];
-            category = 'frankreich';
-        } else {
-            // Außerhalb – driftet frei, wird aber sanft zum nächsten Beckenrand gezogen
-            target = null;
-            category = 'outside';
+        // Jedes Becken erzeugt ein Tal (negative Gauss-Glocke)
+        for (let b of basins) {
+            const dx = px - b.x;
+            const dy = py - b.y;
+            const dist2 = dx * dx + dy * dy;
+            const sigma2 = b.radius * b.radius * 0.5;
+            h -= b.depth * Math.exp(-dist2 / sigma2);
         }
 
+        // Leichte Wellung für natürlicheres Aussehen
+        h += 0.08 * Math.sin(px * 2.5) * Math.cos(py * 2.5);
+        h += 0.05 * Math.sin(px * 4 + 1) * Math.sin(py * 3 + 2);
+
+        return h;
+    }
+
+    // === 3D-Gitter berechnen ===
+    const gridRes = 60;
+    const terrainRange = 3.0;
+    const step = (terrainRange * 2) / gridRes;
+    let heightMap = [];
+    let minH = Infinity, maxH = -Infinity;
+
+    for (let iy = 0; iy <= gridRes; iy++) {
+        heightMap[iy] = [];
+        for (let ix = 0; ix <= gridRes; ix++) {
+            const px = -terrainRange + ix * step;
+            const py = -terrainRange + iy * step;
+            const h = getHeight(px, py);
+            heightMap[iy][ix] = { x: px, y: py, h };
+            if (h < minH) minH = h;
+            if (h > maxH) maxH = h;
+        }
+    }
+
+    // === Farbpalette: Höhe → Farbe (wie topografische Karte) ===
+    function heightToColor(h, normalizedH) {
+        // normalizedH: 0 = tiefstes Tal, 1 = höchster Punkt
+        // Farbverlauf: dunkelbraun/orange (tief) → gelb → grün → blaugrün (hoch)
+        const stops = [
+            { t: 0.0, r: 120, g: 60, b: 20 },    // Dunkelbraun (tiefste Täler)
+            { t: 0.15, r: 180, g: 100, b: 30 },   // Braun
+            { t: 0.3, r: 220, g: 160, b: 50 },    // Orange/Gold
+            { t: 0.45, r: 240, g: 210, b: 80 },   // Gelb
+            { t: 0.6, r: 180, g: 210, b: 100 },   // Gelbgrün
+            { t: 0.75, r: 100, g: 180, b: 100 },  // Grün
+            { t: 0.9, r: 60, g: 150, b: 120 },    // Blaugrün
+            { t: 1.0, r: 40, g: 120, b: 110 }     // Dunkel Blaugrün
+        ];
+
+        let lower = stops[0], upper = stops[stops.length - 1];
+        for (let i = 0; i < stops.length - 1; i++) {
+            if (normalizedH >= stops[i].t && normalizedH <= stops[i + 1].t) {
+                lower = stops[i];
+                upper = stops[i + 1];
+                break;
+            }
+        }
+
+        const range = upper.t - lower.t || 1;
+        const f = (normalizedH - lower.t) / range;
+        const r = Math.round(lower.r + (upper.r - lower.r) * f);
+        const g = Math.round(lower.g + (upper.g - lower.g) * f);
+        const b = Math.round(lower.b + (upper.b - lower.b) * f);
+        return { r, g, b };
+    }
+
+    // === Isometrische 3D-Projektion ===
+    const heightScale = Math.min(W, H) * 0.12;
+    const tileScaleX = Math.min(W, H) * 0.065;
+    const tileScaleY = tileScaleX * 0.5;
+    let rotAngle = 0.6; // Betrachtungswinkel
+    let targetRotAngle = 0.6;
+    let tiltAngle = 0.55;
+
+    function projectTerrain(px, py, h) {
+        // Rotation um Y-Achse
+        const rx = px * Math.cos(rotAngle) - py * Math.sin(rotAngle);
+        const ry = px * Math.sin(rotAngle) + py * Math.cos(rotAngle);
+
+        // Isometrische Projektion
+        const screenX = W / 2 + rx * tileScaleX;
+        const screenY = H / 2 + ry * tileScaleY - h * heightScale;
+
+        return { sx: screenX, sy: screenY, depth: ry };
+    }
+
+    // === Bewegte Kugeln die in die Täler rollen ===
+    const numBalls = 20;
+    let balls = [];
+
+    function spawnBall() {
+        const px = (Math.random() * 2 - 1) * terrainRange * 0.8;
+        const py = (Math.random() * 2 - 1) * terrainRange * 0.8;
         return {
-            x, y,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            target,
-            category,
-            trail: [],
+            x: px, y: py,
+            vx: 0, vy: 0,
+            trail: [{ x: px, y: py }],
             arrived: false,
-            alpha: 1,
+            alpha: 1.0,
             age: 0
         };
     }
 
-    const numParticles = 20;
-    let particles = [];
-    for (let i = 0; i < numParticles; i++) {
-        particles.push(spawnParticle());
+    for (let i = 0; i < numBalls; i++) {
+        const b = spawnBall();
+        b.age = Math.floor(Math.random() * 100);
+        balls.push(b);
     }
 
+    // === Interaktion: Rotation ===
+    let isDragging = false;
+    let lastMouseX = 0;
+    const canvas = setup.canvas;
+
+    canvas.addEventListener('mousedown', (e) => { isDragging = true; lastMouseX = e.clientX; });
+    canvas.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        targetRotAngle += (e.clientX - lastMouseX) * 0.005;
+        lastMouseX = e.clientX;
+    });
+    canvas.addEventListener('mouseup', () => { isDragging = false; });
+    canvas.addEventListener('mouseleave', () => { isDragging = false; });
+    canvas.addEventListener('touchstart', (e) => { isDragging = true; lastMouseX = e.touches[0].clientX; });
+    canvas.addEventListener('touchmove', (e) => {
+        if (!isDragging) return; e.preventDefault();
+        targetRotAngle += (e.touches[0].clientX - lastMouseX) * 0.005;
+        lastMouseX = e.touches[0].clientX;
+    });
+    canvas.addEventListener('touchend', () => { isDragging = false; });
+
+    // === Animation ===
     animationRunning = true;
     let t = 0;
-
-    function drawEllipse(ecx, ecy, erx, ery, color, label, alpha) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(ecx, ecy, erx, ery, 0, 0, Math.PI * 2);
-        ctx.fillStyle = color.replace(')', `,${alpha})`).replace('rgb', 'rgba');
-        ctx.fill();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5;
-        ctx.globalAlpha = 0.8;
-        ctx.stroke();
-        ctx.restore();
-
-        // Label oben
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillStyle = color;
-        ctx.textAlign = 'center';
-        ctx.fillText(label, ecx, ecy - ery - 12);
-    }
 
     function draw() {
         if (!animationRunning) return;
         t++;
 
+        // Auto-Rotation
+        if (!isDragging) targetRotAngle += 0.001;
+        rotAngle += (targetRotAngle - rotAngle) * 0.05;
+
         ctx.clearRect(0, 0, W, H);
 
         // Hintergrund
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-        bgGrad.addColorStop(0, '#1a1a2e');
-        bgGrad.addColorStop(1, '#16213e');
-        ctx.fillStyle = bgGrad;
+        ctx.fillStyle = '#f8f6f0';
         ctx.fillRect(0, 0, W, H);
 
-        // === Becken zeichnen (Ellipsen) ===
-        // Erst Frankreich (rechts), dann Hauptstadt (links), damit Überlappung sichtbar
-        drawEllipse(
-            beckenFrankreich.cx, beckenFrankreich.cy,
-            beckenFrankreich.rx, beckenFrankreich.ry,
-            'rgb(16, 185, 129)', beckenFrankreich.label, 0.08
-        );
-        drawEllipse(
-            beckenHauptstadt.cx, beckenHauptstadt.cy,
-            beckenHauptstadt.rx, beckenHauptstadt.ry,
-            'rgb(59, 130, 246)', beckenHauptstadt.label, 0.08
-        );
+        // === Terrain zeichnen (von hinten nach vorne) ===
+        // Sammle alle Quads mit Tiefe
+        let quads = [];
+        for (let iy = 0; iy < gridRes; iy++) {
+            for (let ix = 0; ix < gridRes; ix++) {
+                const p00 = heightMap[iy][ix];
+                const p10 = heightMap[iy][ix + 1];
+                const p01 = heightMap[iy + 1][ix];
+                const p11 = heightMap[iy + 1][ix + 1];
 
-        // === Schnittmenge hervorheben ===
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(beckenHauptstadt.cx, beckenHauptstadt.cy, beckenHauptstadt.rx, beckenHauptstadt.ry, 0, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.beginPath();
-        ctx.ellipse(beckenFrankreich.cx, beckenFrankreich.cy, beckenFrankreich.rx, beckenFrankreich.ry, 0, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
-        ctx.fill();
-        ctx.restore();
+                const avgH = (p00.h + p10.h + p01.h + p11.h) / 4;
+                const avgX = (p00.x + p10.x + p01.x + p11.x) / 4;
+                const avgY = (p00.y + p10.y + p01.y + p11.y) / 4;
 
-        // Schnittmengen-Label
-        ctx.font = 'bold 11px system-ui';
-        ctx.fillStyle = '#f59e0b';
-        ctx.textAlign = 'center';
-        ctx.fillText('Hauptstadt ∩ Frankreich', W * 0.50, H * 0.28);
+                const proj = projectTerrain(avgX, avgY, avgH);
 
-        // === Statische Items zeichnen ===
-        beckenHauptstadt.items.forEach(item => {
+                quads.push({
+                    corners: [p00, p10, p11, p01],
+                    avgH,
+                    depth: proj.depth,
+                    ix, iy
+                });
+            }
+        }
+
+        // Sortiere nach Tiefe (hintere zuerst)
+        quads.sort((a, b) => a.depth - b.depth);
+
+        // Zeichne Quads
+        const hRange = maxH - minH || 1;
+        for (let q of quads) {
+            const corners = q.corners;
+            const projCorners = corners.map(c => projectTerrain(c.x, c.y, c.h));
+
+            // Normalisierte Höhe für Farbe
+            const normalizedH = (q.avgH - minH) / hRange;
+            const col = heightToColor(q.avgH, normalizedH);
+
+            // Einfache Beleuchtung basierend auf Neigung
+            const dx = (corners[1].h - corners[0].h);
+            const dy = (corners[3].h - corners[0].h);
+            const lightFactor = Math.max(0.6, Math.min(1.3, 1.0 + dx * 2 - dy * 1.5));
+
+            const r = Math.min(255, Math.round(col.r * lightFactor));
+            const g = Math.min(255, Math.round(col.g * lightFactor));
+            const b = Math.min(255, Math.round(col.b * lightFactor));
+
             ctx.beginPath();
-            ctx.arc(item.x, item.y, 5, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(59, 130, 246, 0.7)';
+            ctx.moveTo(projCorners[0].sx, projCorners[0].sy);
+            ctx.lineTo(projCorners[1].sx, projCorners[1].sy);
+            ctx.lineTo(projCorners[2].sx, projCorners[2].sy);
+            ctx.lineTo(projCorners[3].sx, projCorners[3].sy);
+            ctx.closePath();
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
             ctx.fill();
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = 'rgba(59, 130, 246, 0.9)';
-            ctx.textAlign = 'center';
-            ctx.fillText(item.name, item.x, item.y - 10);
-        });
 
-        beckenFrankreich.items.forEach(item => {
-            ctx.beginPath();
-            ctx.arc(item.x, item.y, 5, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(16, 185, 129, 0.7)';
-            ctx.fill();
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
-            ctx.textAlign = 'center';
-            ctx.fillText(item.name, item.x, item.y - 10);
-        });
+            // Subtile Gitterlinien
+            ctx.strokeStyle = `rgba(0, 0, 0, 0.04)`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
 
-        // === PARIS – pulsierend in der Schnittmenge ===
-        const pulse = 1 + 0.15 * Math.sin(t * 0.05);
-        const parisGlow = ctx.createRadialGradient(paris.x, paris.y, 0, paris.x, paris.y, 25 * pulse);
-        parisGlow.addColorStop(0, 'rgba(245, 158, 11, 0.6)');
-        parisGlow.addColorStop(1, 'rgba(245, 158, 11, 0)');
-        ctx.fillStyle = parisGlow;
-        ctx.beginPath();
-        ctx.arc(paris.x, paris.y, 25 * pulse, 0, Math.PI * 2);
-        ctx.fill();
+        // === Höhenlinien (Konturen) ===
+        const numContours = 8;
+        for (let c = 0; c < numContours; c++) {
+            const contourH = minH + (c / numContours) * hRange;
+            ctx.strokeStyle = `rgba(0, 0, 0, 0.12)`;
+            ctx.lineWidth = 0.8;
 
-        ctx.beginPath();
-        ctx.arc(paris.x, paris.y, 9 * pulse, 0, Math.PI * 2);
-        ctx.fillStyle = '#f59e0b';
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
+            for (let iy = 0; iy < gridRes; iy++) {
+                for (let ix = 0; ix < gridRes; ix++) {
+                    const p0 = heightMap[iy][ix];
+                    const p1 = heightMap[iy][ix + 1];
 
-        ctx.font = 'bold 14px system-ui';
-        ctx.fillStyle = '#f59e0b';
-        ctx.textAlign = 'center';
-        ctx.fillText('★ Paris', paris.x, paris.y - 18);
+                    // Horizontale Kante: prüfe ob Konturlinie kreuzt
+                    if ((p0.h - contourH) * (p1.h - contourH) < 0) {
+                        const frac = (contourH - p0.h) / (p1.h - p0.h);
+                        const cx1 = p0.x + frac * (p1.x - p0.x);
+                        const cy1 = p0.y;
 
-        ctx.font = '10px system-ui';
-        ctx.fillStyle = 'rgba(245, 158, 11, 0.8)';
-        ctx.fillText('(Hauptstadt UND Frankreich)', paris.x, paris.y + 22);
-
-        // === Partikel aktualisieren ===
-        particles.forEach((p, idx) => {
-            if (p.arrived) {
-                p.alpha -= 0.012;
-                if (p.alpha <= 0) {
-                    particles[idx] = spawnParticle();
+                        // Finde zweiten Kreuzungspunkt in benachbarter Kante
+                        const p2 = heightMap[iy + 1] ? heightMap[iy + 1][ix] : null;
+                        if (p2 && (p0.h - contourH) * (p2.h - contourH) < 0) {
+                            const frac2 = (contourH - p0.h) / (p2.h - p0.h);
+                            const cx2 = p0.x;
+                            const cy2 = p0.y + frac2 * (p2.y - p0.y);
+                            const proj1 = projectTerrain(cx1, cy1, contourH);
+                            const proj2 = projectTerrain(cx2, cy2, contourH);
+                            ctx.beginPath();
+                            ctx.moveTo(proj1.sx, proj1.sy);
+                            ctx.lineTo(proj2.sx, proj2.sy);
+                            ctx.stroke();
+                        }
+                    }
                 }
+            }
+        }
+
+        // === Kugeln die in Täler rollen ===
+        balls.forEach((ball, idx) => {
+            if (ball.arrived) {
+                ball.alpha -= 0.01;
+                if (ball.alpha <= 0) { balls[idx] = spawnBall(); }
                 return;
             }
 
-            p.age++;
+            ball.age++;
 
-            if (p.target) {
-                // Anziehung zum Ziel
-                const dx = p.target.x - p.x;
-                const dy = p.target.y - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+            // Gradient der Höhenfunktion → Kraft bergab
+            const eps = 0.05;
+            const hHere = getHeight(ball.x, ball.y);
+            const hDx = getHeight(ball.x + eps, ball.y);
+            const hDy = getHeight(ball.x, ball.y + eps);
+            const gradX = -(hDx - hHere) / eps;
+            const gradY = -(hDy - hHere) / eps;
 
-                const angle = Math.atan2(dy, dx);
-                const spiralOffset = 0.3 * Math.exp(-dist * 0.008);
-                const pullStrength = 0.08 + 0.15 * (1 - Math.min(dist / 200, 1));
+            // Beschleunigung bergab + Dämpfung
+            ball.vx += gradX * 0.003;
+            ball.vy += gradY * 0.003;
+            ball.vx *= 0.96;
+            ball.vy *= 0.96;
 
-                p.vx += Math.cos(angle + spiralOffset) * pullStrength;
-                p.vy += Math.sin(angle + spiralOffset) * pullStrength;
+            ball.x += ball.vx;
+            ball.y += ball.vy;
 
-                p.vx *= 0.94;
-                p.vy *= 0.94;
+            ball.trail.push({ x: ball.x, y: ball.y });
+            if (ball.trail.length > 40) ball.trail.shift();
 
-                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (speed > 2.5) {
-                    p.vx *= 2.5 / speed;
-                    p.vy *= 2.5 / speed;
-                }
-
-                if (dist < 8) {
-                    p.arrived = true;
-                    p.alpha = 1;
-                }
-            } else {
-                // Außerhalb: sanftes Driften Richtung nächstem Beckenrand
-                const dxH = beckenHauptstadt.cx - p.x;
-                const dyH = beckenHauptstadt.cy - p.y;
-                const dxF = beckenFrankreich.cx - p.x;
-                const dyF = beckenFrankreich.cy - p.y;
-                const distH = Math.sqrt(dxH * dxH + dyH * dyH);
-                const distF = Math.sqrt(dxF * dxF + dyF * dyF);
-
-                if (distH < distF) {
-                    p.vx += (dxH / distH) * 0.02;
-                    p.vy += (dyH / distH) * 0.02;
-                } else {
-                    p.vx += (dxF / distF) * 0.02;
-                    p.vy += (dyF / distF) * 0.02;
-                }
-
-                p.vx *= 0.98;
-                p.vy *= 0.98;
-
-                // Prüfe ob jetzt in einem Becken
-                const nowInH = isInEllipse(p.x, p.y, beckenHauptstadt.cx, beckenHauptstadt.cy, beckenHauptstadt.rx, beckenHauptstadt.ry);
-                const nowInF = isInEllipse(p.x, p.y, beckenFrankreich.cx, beckenFrankreich.cy, beckenFrankreich.rx, beckenFrankreich.ry);
-
-                if (nowInH && nowInF) {
-                    p.target = paris;
-                    p.category = 'intersection';
-                } else if (nowInH) {
-                    p.target = beckenHauptstadt.items[Math.floor(Math.random() * beckenHauptstadt.items.length)];
-                    p.category = 'hauptstadt';
-                } else if (nowInF) {
-                    p.target = beckenFrankreich.items[Math.floor(Math.random() * beckenFrankreich.items.length)];
-                    p.category = 'frankreich';
-                }
+            // Konvergenz-Check
+            const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            if (speed < 0.001 && ball.age > 50) {
+                ball.arrived = true;
+                ball.alpha = 1.0;
             }
-
-            p.x += p.vx;
-            p.y += p.vy;
 
             // Clamp
-            p.x = Math.max(10, Math.min(W - 10, p.x));
-            p.y = Math.max(10, Math.min(H - 10, p.y));
-
-            // Trail
-            p.trail.push({ x: p.x, y: p.y });
-            if (p.trail.length > 60) p.trail.shift();
-
-            // Farbe je nach Kategorie
-            let pColor;
-            switch (p.category) {
-                case 'intersection': pColor = '#f59e0b'; break;
-                case 'hauptstadt': pColor = '#3b82f6'; break;
-                case 'frankreich': pColor = '#10b981'; break;
-                default: pColor = '#94a3b8'; break;
-            }
+            ball.x = Math.max(-terrainRange, Math.min(terrainRange, ball.x));
+            ball.y = Math.max(-terrainRange, Math.min(terrainRange, ball.y));
 
             // Trail zeichnen
-            if (p.trail.length > 1) {
-                for (let i = 1; i < p.trail.length; i++) {
-                    const alpha = (i / p.trail.length) * 0.4 * p.alpha;
+            if (ball.trail.length > 1) {
+                for (let i = 1; i < ball.trail.length; i++) {
+                    const h1 = getHeight(ball.trail[i-1].x, ball.trail[i-1].y);
+                    const h2 = getHeight(ball.trail[i].x, ball.trail[i].y);
+                    const p1 = projectTerrain(ball.trail[i-1].x, ball.trail[i-1].y, h1 - 0.02);
+                    const p2 = projectTerrain(ball.trail[i].x, ball.trail[i].y, h2 - 0.02);
+                    const trailAlpha = (i / ball.trail.length) * 0.6 * ball.alpha;
                     ctx.beginPath();
-                    ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
-                    ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                    ctx.strokeStyle = pColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                    ctx.moveTo(p1.sx, p1.sy);
+                    ctx.lineTo(p2.sx, p2.sy);
+                    ctx.strokeStyle = `rgba(30, 30, 30, ${trailAlpha})`;
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
             }
 
-            // Partikel zeichnen
-            ctx.globalAlpha = p.alpha;
+            // Kugel zeichnen
+            const ballH = getHeight(ball.x, ball.y);
+            const ballProj = projectTerrain(ball.x, ball.y, ballH - 0.05);
+            const ballSize = 5;
+
+            // Schatten
             ctx.beginPath();
-            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-            ctx.fillStyle = pColor;
+            ctx.ellipse(ballProj.sx + 2, ballProj.sy + 3, ballSize, ballSize * 0.5, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(0, 0, 0, ${0.3 * ball.alpha})`;
             ctx.fill();
-            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+
+            // Kugel
+            ctx.beginPath();
+            ctx.arc(ballProj.sx, ballProj.sy, ballSize, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(40, 40, 60, ${ball.alpha})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * ball.alpha})`;
             ctx.lineWidth = 1.5;
             ctx.stroke();
-            ctx.globalAlpha = 1;
         });
 
-        // === Titel und Erklärung ===
+        // === Becken-Labels mit Pfeilen ===
+        basins.forEach((basin, idx) => {
+            const bH = getHeight(basin.x, basin.y);
+            const bProj = projectTerrain(basin.x, basin.y, bH);
+
+            // Pfeil von oben zum Tal
+            const arrowStartY = bProj.sy - 50;
+            const arrowEndY = bProj.sy - 15;
+
+            ctx.beginPath();
+            ctx.moveTo(bProj.sx, arrowStartY);
+            ctx.lineTo(bProj.sx, arrowEndY);
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Pfeilspitze
+            ctx.beginPath();
+            ctx.moveTo(bProj.sx, arrowEndY);
+            ctx.lineTo(bProj.sx - 5, arrowEndY - 8);
+            ctx.lineTo(bProj.sx + 5, arrowEndY - 8);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fill();
+
+            // Label
+            ctx.font = 'bold 12px system-ui';
+            const labelText = basin.label;
+            const textWidth = ctx.measureText(labelText).width;
+
+            // Hintergrund
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.roundRect(bProj.sx - textWidth / 2 - 8, arrowStartY - 22, textWidth + 16, 20, 4);
+            ctx.fill();
+            ctx.strokeStyle = basin.color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Text
+            ctx.fillStyle = basin.color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(labelText, bProj.sx, arrowStartY - 12);
+            ctx.textBaseline = 'alphabetic';
+
+            // Stabilitäts-Label
+            const stabilityLabel = idx === 2 ? '(Überlappung)' : 'Stabil';
+            ctx.font = '9px system-ui';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.textAlign = 'center';
+            ctx.fillText(stabilityLabel, bProj.sx, arrowStartY - 32);
+        });
+
+        // === Instabiler Punkt (Sattel zwischen Frankreich und Hauptstadt) ===
+        // Der Hügel zwischen den Becken
+        const saddleX = 0.0;
+        const saddleY = -0.3;
+        const saddleH = getHeight(saddleX, saddleY);
+        // Finde den höchsten Punkt auf der Linie zwischen FR und HS
+        let maxSaddleH = -Infinity;
+        let saddlePx = 0, saddlePy = -0.3;
+        for (let f = 0.2; f < 0.8; f += 0.05) {
+            const sx = basins[0].x + (basins[1].x - basins[0].x) * f;
+            const sy = basins[0].y;
+            const sh = getHeight(sx, sy);
+            // Suche den Sattel (lokales Maximum auf der Verbindungslinie)
+            // Da Paris dazwischen liegt, ist der Sattel eher seitlich
+        }
+
+        // === Titel ===
         ctx.font = 'bold 14px system-ui';
-        ctx.fillStyle = '#e2e8f0';
+        ctx.fillStyle = '#1e293b';
         ctx.textAlign = 'center';
-        ctx.fillText('Überlappende Einzugsbecken – Semantische Schnittmenge', W / 2, 24);
+        ctx.fillText('3D-Einzugsbecken – Potentiallandschaft', W / 2, 22);
 
         ctx.font = '11px system-ui';
-        ctx.fillStyle = '#94a3b8';
-        ctx.fillText('Punkte in der Schnittmenge beider Becken konvergieren zu Paris', W / 2, 44);
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('Kugeln rollen bergab in die Täler (Attraktoren). „Paris" liegt im tiefsten Tal der Überlappung.', W / 2, 40);
 
-        // Legende unten
-        const legendY = H - 20;
+        // === Legende ===
+        const legX = 12, legY = H - 60;
         ctx.font = '10px system-ui';
         ctx.textAlign = 'left';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('Tief (Attraktor) → Hoch (Grenze)', legX, legY);
 
-        ctx.fillStyle = '#3b82f6';
-        ctx.fillRect(W * 0.15, legendY - 8, 10, 10);
-        ctx.fillText('→ Hauptstädte (Berlin, Tokyo, ...)', W * 0.15 + 14, legendY);
+        // Farbbalken
+        const barW = 120, barH = 10;
+        const barGrad = ctx.createLinearGradient(legX, 0, legX + barW, 0);
+        barGrad.addColorStop(0, 'rgb(120, 60, 20)');
+        barGrad.addColorStop(0.3, 'rgb(220, 160, 50)');
+        barGrad.addColorStop(0.6, 'rgb(180, 210, 100)');
+        barGrad.addColorStop(1, 'rgb(40, 120, 110)');
+        ctx.fillStyle = barGrad;
+        ctx.fillRect(legX, legY + 5, barW, barH);
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(legX, legY + 5, barW, barH);
 
-        ctx.fillStyle = '#10b981';
-        ctx.fillRect(W * 0.48, legendY - 8, 10, 10);
-        ctx.fillText('→ Frankreich (Lyon, Marseille, ...)', W * 0.48 + 14, legendY);
-
-        ctx.fillStyle = '#f59e0b';
-        ctx.fillRect(W * 0.78, legendY - 8, 10, 10);
-        ctx.fillText('→ Paris (beides!)', W * 0.78 + 14, legendY);
+        // === Hinweis ===
+        ctx.font = '9px system-ui';
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.textAlign = 'center';
+        ctx.fillText('🖱 Ziehen zum Rotieren · Kugeln rollen in das nächste Tal', W / 2, H - 8);
 
         activeAnimation = requestAnimationFrame(draw);
     }
