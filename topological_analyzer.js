@@ -22,40 +22,81 @@ var TopologicalAnalyzer = (function () {
     // SINGLETON STATE
     // ============================================================
 
-    var _state = {
-        container: null,
-        initialized: false,
-        parentId: null,
-        parentElement: null,
-        lastUpdateHash: "",
-        animationFrame: null,
-        config: {
-            maxPoints: 2000,
-            epsilonSteps: 50,
-            maxDimension: 2,
-            colorScheme: "viridis",
-            smoothTransition: true,
-            autoUpdate: false,
-            updateInterval: 3000,
-            persistenceThreshold: 0.01,
-            numLandscapePoints: 100,
-            ripsFiltrationMax: 2.0,
-            showBettiCurves: true,
-            showPersistenceDiagrams: true,
-            showBarcode: true,
-            showPointCloud: true,
-            showWeightTopology: true,
-            showActivationTopology: true,
-            showTrainingDataTopology: true,
-            showDecisionBoundary: true,
-            svgWidth: 400,
-            svgHeight: 250
-        },
-        intervalId: null,
-        styleInjected: false
-    };
+	var _state = {
+		container: null,
+		initialized: false,
+		parentId: null,
+		parentElement: null,
+		lastUpdateHash: "",
+		animationFrame: null,
+		config: {
+			maxPoints: 2000,
+			epsilonSteps: 50,
+			maxDimension: 2,
+			colorScheme: "viridis",
+			smoothTransition: true,
+			autoUpdate: false,
+			updateInterval: 3000,
+			persistenceThreshold: 0.01,
+			numLandscapePoints: 100,
+			ripsFiltrationMax: 2.0,
+			showBettiCurves: true,
+			showPersistenceDiagrams: true,
+			showBarcode: true,
+			showPointCloud: true,
+			showWeightTopology: true,
+			showActivationTopology: true,
+			showTrainingDataTopology: true,
+			showDecisionBoundary: true,
+			svgWidth: 400,
+			svgHeight: 250
+		},
+		intervalId: null,
+		styleInjected: false
+		cachedData: null,        // stores computed data when not visible
+		dataDirty: false,        // flag: new data arrived while hidden
+		observer: null           // IntersectionObserver instance
+	};
 
     var SINGLETON_ID = "tda_analyzer_singleton";
+
+	// ============================================================
+	// VISIBILITY OBSERVER
+	// ============================================================
+
+	function setupVisibilityObserver() {
+		if (_state.observer || !_state.container) return;
+
+		_state.observer = new IntersectionObserver(function (entries) {
+			var entry = entries[0];
+			if (entry.isIntersecting) {
+				// Container is now visible
+				if (_state.dataDirty) {
+					// New data arrived while hidden — render now
+					render();
+					_state.dataDirty = false;
+				}
+			}
+		}, {
+			root: null,         // viewport
+			threshold: 0.05     // trigger when even 5% is visible
+		});
+
+		_state.observer.observe(_state.container);
+	}
+
+	function isContainerVisible() {
+		if (!_state.container) return false;
+		var rect = _state.container.getBoundingClientRect();
+		var viewHeight = window.innerHeight || document.documentElement.clientHeight;
+		var viewWidth = window.innerWidth || document.documentElement.clientWidth;
+		return (
+			rect.top < viewHeight &&
+			rect.bottom > 0 &&
+			rect.left < viewWidth &&
+			rect.right > 0
+		);
+	}
 
     // ============================================================
     // UTILITY: DISTANCE & LINEAR ALGEBRA
@@ -1115,11 +1156,18 @@ var TopologicalAnalyzer = (function () {
     // MAIN RENDER
     // ============================================================
 
-    function render() {
-        if (!_state.container) return;
+	function render() {
+	    if (!_state.container) return;
 
-        injectStyles();
+	    // If not visible, cache the fact that data is dirty and skip rendering
+	    if (!isContainerVisible()) {
+		_state.dataDirty = true;
+		return;  // Don't compute anything — save time
+	    }
 
+	    _state.dataDirty = false;
+
+	    injectStyles();
         var html = "";
         html += "<h2>🔬 Topological Data Analysis</h2>";
         html += '<p style="opacity:0.6;font-size:0.85em;">Persistent homology, Betti numbers, persistence diagrams & landscapes for training data, layer activations, and weights.</p>';
@@ -1502,6 +1550,8 @@ var TopologicalAnalyzer = (function () {
             }, _state.config.updateInterval);
         }
 
+	    setupVisibilityObserver();
+
         return TopologicalAnalyzer;
     }
 
@@ -1523,17 +1573,22 @@ var TopologicalAnalyzer = (function () {
         return TopologicalAnalyzer;
     }
 
-    function destroy() {
-        if (_state.intervalId) {
-            clearInterval(_state.intervalId);
-            _state.intervalId = null;
-        }
-        if (_state.container && _state.container.parentNode) {
-            _state.container.parentNode.removeChild(_state.container);
-        }
-        _state.container = null;
-        _state.initialized = false;
-    }
+	function destroy() {
+		if (_state.intervalId) {
+			clearInterval(_state.intervalId);
+			_state.intervalId = null;
+		}
+		if (_state.observer) {
+			_state.observer.disconnect();
+			_state.observer = null;
+		}
+		if (_state.container && _state.container.parentNode) {
+			_state.container.parentNode.removeChild(_state.container);
+		}
+		_state.container = null;
+		_state.initialized = false;
+		_state.dataDirty = false;
+	}
 
     function getConfig() {
         return JSON.parse(JSON.stringify(_state.config));
