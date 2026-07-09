@@ -11,7 +11,7 @@
 const AttractorViz = (() => {
     let currentStep = 0;
     let subStep = 0;
-    const totalSteps = 5;
+    const totalSteps = 6;
     let activeAnimation = null;
     let animationRunning = false;
     let retryCount = 0;
@@ -122,10 +122,11 @@ function renderStep(step) {
 
     const captions = [
         '<b>Punkt-Attraktor:</b> Punkte bewegen sich frei im Raum. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
-        '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌕 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. <br><b>⚠️ Homotopie-Hinweis:</b> Der Torus rechts zeigt die <i>topologische Struktur</i> (Kreis ∘ Kreis), nicht die exakte räumliche Geometrie. Der Mond kreist <u>nicht</u> über die Pole! Seine Bahn liegt fast in der Ekliptikebene (~5° Neigung). Der Torus bildet nur ab, <i>dass</i> es zwei verschachtelte periodische Bewegungen sind – gleiche Struktur, andere Einbettung im Raum.',
+        '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌏 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. <br><b>⚠️ Homotopie-Hinweis:</b> Der Torus rechts zeigt die <i>topologische Struktur</i> (Kreis × Kreis), nicht die exakte räumliche Geometrie.',
         '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
         '<b>Komplexe Becken:</b> Mehrere Attraktoren mit verschlungenen Einzugsbereichen – je nach Startpunkt landet man in einem anderen Becken.',
-        '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.'
+        '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
+        '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.'
     ];
     const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
@@ -136,7 +137,299 @@ function renderStep(step) {
         case 2: renderLorenz(container); break;
         case 3: renderComplexBasins(container); break;
         case 4: render3DBasins(container); break;
+        case 5: renderSeahorseEmoji(container); break;
     }
+}
+
+// ============================================================
+// STEP 5: Seahorse-Emoji – Stabiler Attraktor als Mischbecken
+// Das Modell kreist endlos um mehrere semantische Becken
+// (horse, sea, fish, coral, dolphin, ocean) ohne je anzukommen.
+// ============================================================
+function renderSeahorseEmoji(container) {
+    const setup = safeCanvasSetup(container, '#0f172a');
+    if (!setup) {
+        retryRender(renderSeahorseEmoji, container, 150);
+        return;
+    }
+    const { ctx, W, H } = setup;
+
+    // Semantische Becken (Attraktoren)
+    const basins = [
+        { x: W * 0.5, y: H * 0.28, label: '🐴 horse', color: '#f59e0b', hue: 35, radius: 55 },
+        { x: W * 0.22, y: H * 0.55, label: '🌊 sea/ocean', color: '#3b82f6', hue: 220, radius: 50 },
+        { x: W * 0.78, y: H * 0.55, label: '🐟 fish', color: '#10b981', hue: 160, radius: 45 },
+        { x: W * 0.35, y: H * 0.8, label: '🪸 coral', color: '#f472b6', hue: 330, radius: 40 },
+        { x: W * 0.65, y: H * 0.8, label: '🐬 dolphin', color: '#8b5cf6', hue: 270, radius: 42 },
+    ];
+
+    // Der "Geist-Attraktor" in der Mitte – das nicht-existente Seahorse-Emoji
+    const ghostX = W * 0.5;
+    const ghostY = H * 0.55;
+
+    // Modell-Partikel: kreist um die Becken
+    let particle = {
+        x: W * 0.5,
+        y: H * 0.45,
+        vx: 1.5,
+        vy: 0.8,
+        trail: [],
+        angle: 0, // Orbit-Winkel um den Geist-Attraktor
+        orbitRadius: Math.min(W, H) * 0.22,
+        orbitSpeed: 0.012,
+        wobble: 0
+    };
+
+    // Token-Ausgabe-Simulation
+    const tokenSequence = ['🐴', 'horse', '🌊', 'sea', '🐟', 'fish', '🪸', 'coral', '🐬', 'dolphin', '🐴', 'unicorn', '🌊', 'ocean', '🐟', 'seahorse?', '🐴', 'horse', '...'];
+    let currentTokenIdx = 0;
+    let tokenTimer = 0;
+    let displayedTokens = [];
+    const maxDisplayedTokens = 8;
+
+    // Starfield
+    const stars = [];
+    for (let i = 0; i < 40; i++) {
+        stars.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            size: 0.3 + Math.random() * 0.8,
+            brightness: 0.15 + Math.random() * 0.3
+        });
+    }
+
+    animationRunning = true;
+    let t = 0;
+
+    function draw() {
+        if (!animationRunning) return;
+        t++;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Background
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+        bgGrad.addColorStop(0, '#0f172a');
+        bgGrad.addColorStop(1, '#1e1b4b');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Stars
+        stars.forEach(s => {
+            const twinkle = s.brightness * (0.6 + 0.4 * Math.sin(t * 0.015 + s.x));
+            ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // === Becken zeichnen ===
+        basins.forEach((basin, idx) => {
+            // Glow
+            const glow = ctx.createRadialGradient(basin.x, basin.y, 0, basin.x, basin.y, basin.radius * 1.5);
+            glow.addColorStop(0, `hsla(${basin.hue}, 70%, 50%, 0.25)`);
+            glow.addColorStop(0.6, `hsla(${basin.hue}, 70%, 50%, 0.08)`);
+            glow.addColorStop(1, 'transparent');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(basin.x, basin.y, basin.radius * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Basin circle
+            ctx.beginPath();
+            ctx.arc(basin.x, basin.y, basin.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `hsla(${basin.hue}, 60%, 60%, 0.5)`;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Pulsing center
+            const pulse = 1 + 0.15 * Math.sin(t * 0.04 + idx * 1.2);
+            ctx.beginPath();
+            ctx.arc(basin.x, basin.y, 8 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = basin.color;
+            ctx.fill();
+
+            // Label
+            ctx.font = 'bold 12px system-ui';
+            ctx.fillStyle = basin.color;
+            ctx.textAlign = 'center';
+            ctx.fillText(basin.label, basin.x, basin.y - basin.radius - 10);
+        });
+
+        // === Geist-Attraktor (das nicht-existente Seahorse-Emoji) ===
+        const ghostPulse = 0.5 + 0.3 * Math.sin(t * 0.03);
+        ctx.beginPath();
+        ctx.arc(ghostX, ghostY, 20, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 100, 100, ${ghostPulse})`;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Ghost label
+        ctx.font = 'bold 11px system-ui';
+        ctx.fillStyle = `rgba(255, 150, 150, ${ghostPulse + 0.2})`;
+        ctx.textAlign = 'center';
+        ctx.fillText('❌ seahorse_emoji', ghostX, ghostY - 28);
+        ctx.font = '9px system-ui';
+        ctx.fillStyle = 'rgba(255, 200, 200, 0.6)';
+        ctx.fillText('(existiert nicht!)', ghostX, ghostY - 16);
+
+        // Fragezeichen im Geist-Zentrum
+        ctx.font = '18px system-ui';
+        ctx.fillStyle = `rgba(255, 100, 100, ${ghostPulse})`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('?', ghostX, ghostY);
+        ctx.textBaseline = 'alphabetic';
+
+        // === Partikel-Orbit: kreist um den Geist-Attraktor, wird von Becken angezogen ===
+        particle.angle += particle.orbitSpeed;
+        particle.wobble += 0.023;
+
+        // Basis-Orbit um den Geist
+        const baseX = ghostX + Math.cos(particle.angle) * particle.orbitRadius;
+        const baseY = ghostY + Math.sin(particle.angle) * particle.orbitRadius * 0.7;
+
+        // Wobble: wird von nahen Becken angezogen
+        let pullX = 0, pullY = 0;
+        basins.forEach(basin => {
+            const dx = basin.x - baseX;
+            const dy = basin.y - baseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const strength = 800 / (dist * dist + 100);
+            pullX += (dx / dist) * strength;
+            pullY += (dy / dist) * strength;
+        });
+
+        // Sanfte Anziehung
+        particle.x += (baseX + pullX * 3 - particle.x) * 0.08;
+        particle.y += (baseY + pullY * 3 - particle.y) * 0.08;
+
+        // Trail
+        particle.trail.push({ x: particle.x, y: particle.y });
+        if (particle.trail.length > 300) particle.trail.shift();
+
+        // Draw trail
+        if (particle.trail.length > 1) {
+            for (let i = 1; i < particle.trail.length; i++) {
+                const alpha = (i / particle.trail.length) * 0.6;
+                const hue = (t * 0.5 + i * 0.8) % 360;
+                ctx.beginPath();
+                ctx.moveTo(particle.trail[i - 1].x, particle.trail[i - 1].y);
+                ctx.lineTo(particle.trail[i].x, particle.trail[i].y);
+                ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha})`;
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+        }
+
+        // Draw particle (das "suchende" Modell)
+        const particleGlow = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, 15);
+        particleGlow.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+        particleGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = particleGlow;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 15, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Label für Partikel
+        ctx.font = 'bold 10px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'center';
+        ctx.fillText('LLM-Zustand', particle.x, particle.y - 16);
+
+        // === Verbindungslinien vom Partikel zu nahen Becken (zeigt Anziehung) ===
+        basins.forEach(basin => {
+            const dx = basin.x - particle.x;
+            const dy = basin.y - particle.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = 200;
+            if (dist < maxDist) {
+                const alpha = (1 - dist / maxDist) * 0.4;
+                ctx.beginPath();
+                ctx.moveTo(particle.x, particle.y);
+                ctx.lineTo(basin.x, basin.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        });
+
+        // === Token-Ausgabe-Simulation (unten) ===
+        tokenTimer++;
+        if (tokenTimer > 35) {
+            tokenTimer = 0;
+            displayedTokens.push(tokenSequence[currentTokenIdx % tokenSequence.length]);
+            currentTokenIdx++;
+            if (displayedTokens.length > maxDisplayedTokens) displayedTokens.shift();
+        }
+
+        // Token-Display-Box
+        const boxY = H - 55;
+        const boxH = 40;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(20, boxY, W - 40, boxH, 8);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(20, boxY, W - 40, boxH, 8);
+        ctx.stroke();
+
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.8)';
+        ctx.textAlign = 'left';
+        ctx.fillText('Modell-Output (kreist endlos):', 30, boxY + 14);
+
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'left';
+        const tokenStr = displayedTokens.join(' → ');
+        ctx.fillText(tokenStr, 30, boxY + 30);
+
+        // Blinkender Cursor
+        if (Math.floor(t / 30) % 2 === 0) {
+            const cursorX = 30 + ctx.measureText(tokenStr).width + 5;
+            ctx.fillStyle = '#6366f1';
+            ctx.fillRect(cursorX, boxY + 18, 2, 16);
+        }
+
+        // === Titel oben ===
+        ctx.font = 'bold 14px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'center';
+        ctx.fillText('🐴 Seahorse-Emoji: Stabiler Attraktor ohne Fixpunkt', W / 2, 22);
+
+        ctx.font = '11px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Das Modell kreist endlos um verwandte Konzepte – es gibt kein Ziel, nur den Orbit.', W / 2, 40);
+
+        // Erklärungstext rechts oben
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = 'rgba(248, 113, 113, 0.9)';
+        ctx.textAlign = 'right';
+        ctx.fillText('Es gibt kein Seahorse-Emoji im Unicode.', W - 20, 62);
+        ctx.fillStyle = 'rgba(200, 200, 200, 0.7)';
+        ctx.fillText('Das Modell sucht es trotzdem – und findet', W - 20, 76);
+        ctx.fillText('nur Nachbarn: horse, fish, ocean, coral...', W - 20, 90);
+
+        activeAnimation = requestAnimationFrame(draw);
+    }
+    draw();
 }
 
     // ============================================================
