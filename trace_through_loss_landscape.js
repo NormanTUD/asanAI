@@ -39,6 +39,48 @@ var LossLandscape = (function () {
 	};
 
 	// ============================================================
+	// THEME SWITCHING basierend auf globaler Variable is_dark_mode
+	// ============================================================
+
+	function _getThemeColors() {
+		var darkMode = (typeof is_dark_mode !== "undefined") ? is_dark_mode : true;
+
+		if (darkMode) {
+			return {
+				bgColor: "#0d0d1a",
+				textColor: "#aaa",
+				axisColor: "#aaa",
+				axisTitle: "#ddd",
+				gridColor: "rgba(255,255,255,0.1)",
+				tickColor: "#999",
+				titleColor: "#aaa",
+				pathColor: "#ffffff",
+				legendBg: "rgba(13,13,26,0.8)",
+				containerBg: "#0d0d1a",
+				btnBorder: "rgba(255,255,255,0.2)",
+				btnBg: "rgba(255,255,255,0.05)",
+				btnColor: "#ccc"
+			};
+		} else {
+			return {
+				bgColor: "#ffffff",
+				textColor: "#444",
+				axisColor: "#444",
+				axisTitle: "#333",
+				gridColor: "rgba(0,0,0,0.1)",
+				tickColor: "#666",
+				titleColor: "#555",
+				pathColor: "#222222",
+				legendBg: "rgba(255,255,255,0.9)",
+				containerBg: "#f5f5f5",
+				btnBorder: "rgba(0,0,0,0.2)",
+				btnBg: "rgba(0,0,0,0.05)",
+				btnColor: "#333"
+			};
+		}
+	}
+
+	// ============================================================
 	// MODEL DETECTION
 	// ============================================================
 
@@ -464,44 +506,50 @@ var LossLandscape = (function () {
 			traces.push(currentTrace);
 		}
 
+		var theme = _getThemeColors();
+
 		var layout = {
 			title: {
-				text: "3D Loss Landscape (MSE) — " + (_state.cachedX ? _state.cachedX.length : 0) + " samples, " + _state.history.length + " steps",
-				font: { size: 13, color: "#aaa" }
+				text: "3D Loss Landscape ...",
+				font: { size: 13, color: theme.titleColor }
 			},
 			scene: {
 				xaxis: {
-					title: { text: "Weight (w)", font: { size: 12, color: "#ddd" } },
-					gridcolor: "rgba(255,255,255,0.1)",
-					color: "#aaa",
-					tickfont: { size: 10, color: "#999" }
+					title: { text: "Weight (w)", font: { size: 12, color: theme.axisColor } },
+					gridcolor: theme.gridColor,
+					color: theme.axisColor,
+					tickfont: { size: 10, color: theme.tickColor }
 				},
 				yaxis: {
-					title: { text: "Bias (b)", font: { size: 12, color: "#ddd" } },
-					gridcolor: "rgba(255,255,255,0.1)",
-					color: "#aaa",
-					tickfont: { size: 10, color: "#999" }
+					title: { text: "Bias (b)", font: { size: 12, color: theme.axisColor } },
+					gridcolor: theme.gridColor,
+					color: theme.axisColor,
+					tickfont: { size: 10, color: theme.tickColor }
 				},
 				zaxis: {
-					title: { text: "Loss (MSE)", font: { size: 12, color: "#ddd" } },
-					gridcolor: "rgba(255,255,255,0.1)",
-					color: "#aaa",
-					tickfont: { size: 10, color: "#999" },
+					title: { text: "Loss (MSE)", font: { size: 12, color: theme.axisColor } },
+					gridcolor: theme.gridColor,
+					color: theme.axisColor,
+					tickfont: { size: 10, color: theme.tickColor },
 					rangemode: "tozero"
 				},
-				bgcolor: "#0d0d1a",
-				// FIX #3: Only set camera on initial render, otherwise preserve user's camera
+				bgcolor: theme.bgColor,
 				camera: _state.lastCamera || { eye: { x: 1.5, y: 1.5, z: 1.2 } }
 			},
-			paper_bgcolor: "#0d0d1a",
-			plot_bgcolor: "#0d0d1a",
-			font: { color: "#ccc" },
+			paper_bgcolor: theme.bgColor,
+			plot_bgcolor: theme.bgColor,
+			font: { color: theme.textColor },
 			margin: { l: 0, r: 0, t: 40, b: 0 },
 			showlegend: true,
-			legend: { x: 0.01, y: 0.99, bgcolor: "rgba(13,13,26,0.8)", font: { size: 10 } },
-			// FIX #4: Prevent Plotly from triggering scroll events on the page
+			legend: { x: 0.01, y: 0.99, bgcolor: theme.legendBg, font: { size: 10 } },
 			dragmode: "turntable"
 		};
+
+		// Pfad-Farbe anpassen
+		if (_state.history.length > 1) {
+			pathTrace.line.color = theme.pathColor;
+			pathTrace.marker.color = theme.pathColor;
+		}
 
 		var config = {
 			responsive: true,
@@ -562,12 +610,9 @@ var LossLandscape = (function () {
 		var eligible = _isEligibleModel();
 
 		if (!eligible) {
-			// FIX #7: Use opacity + pointer-events instead of position changes
-			// This avoids layout reflow which causes scroll jumping
 			if (_state.container) {
 				_state.container.style.opacity = "0";
 				_state.container.style.pointerEvents = "none";
-				// Keep the element in flow with fixed height to prevent reflow
 				_state.container.style.height = "0";
 				_state.container.style.minHeight = "0";
 				_state.container.style.overflow = "hidden";
@@ -596,6 +641,39 @@ var LossLandscape = (function () {
 			_state.container.style.pointerEvents = "";
 		}
 
+		// ============================================================
+		// THEME SWITCH: Detect changes to global is_dark_mode
+		// ============================================================
+		var currentDarkMode = (typeof is_dark_mode !== "undefined") ? is_dark_mode : true;
+		if (_state._lastDarkMode !== currentDarkMode) {
+			_state._lastDarkMode = currentDarkMode;
+			_state.lastPlotHash = ""; // Force re-render on theme change
+
+			// Update container background immediately
+			if (_state.container) {
+				var theme = _getThemeColors();
+				_state.container.style.background = theme.containerBg;
+			}
+
+			// Update button styles
+			var btnRow = _state.container ? _state.container.querySelector("div[style*='display: flex']") : null;
+			if (btnRow) {
+				var buttons = btnRow.querySelectorAll("button");
+				var theme = _getThemeColors();
+				buttons.forEach(function (btn) {
+					btn.style.border = "1px solid " + theme.btnBorder;
+					btn.style.background = theme.btnBg;
+					btn.style.color = theme.btnColor;
+				});
+			}
+
+			// Update title text color
+			if (_state.container && _state.container.firstChild) {
+				var theme = _getThemeColors();
+				_state.container.firstChild.style.color = theme.textColor;
+			}
+		}
+
 		_syncData();
 
 		var current = _getCurrentWeights();
@@ -611,7 +689,7 @@ var LossLandscape = (function () {
 
 		_updateRange();
 
-		// FIX #8: Use requestAnimationFrame for rendering to sync with browser paint
+		// Use requestAnimationFrame for rendering to sync with browser paint
 		_scheduleRender();
 	}
 
