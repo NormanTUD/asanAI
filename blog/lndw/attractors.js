@@ -122,7 +122,7 @@ const AttractorViz = (() => {
 
         const captions = [
             '<b>Punkt-Attraktor:</b> Punkte bewegen sich frei im Raum. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
-            '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌑 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis.',
+            '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌑 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. Das Attraktorbecken besteht aus den gravitativen Attraktoren der Erde und der Sonne.',
             '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
             '<b>Komplexe Becken:</b> Mehrere Attraktoren mit verschlungenen Einzugsbereichen – je nach Startpunkt landet man in einem anderen Becken.',
             '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.'
