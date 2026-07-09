@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇫🇷 FRANKREICH ERLEBEN 🇫🇷</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Dancing+Script:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #0D1B2A;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><text y='28' font-size='28'>🥐</text></svg>"), auto;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Tricolore Header */
+        .tricolore-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            display: flex;
+            z-index: 9999;
+        }
+        .tricolore-bar div {
+            flex: 1;
+            transition: height 0.3s;
+        }
+        .tricolore-bar div:nth-child(1) { background: #002395; }
+        .tricolore-bar div:nth-child(2) { background: #ffffff; }
+        .tricolore-bar div:nth-child(3) { background: #ED2939; }
+        .tricolore-bar:hover div {
+            height: 20px;
+        }
+
+        /* Hero Section - Eiffelturm */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .eiffel-tower {
+            position: relative;
+            width: 200px;
+            height: 500px;
+            cursor: pointer;
+            transition: transform 0.5s, filter 0.5s;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        }
+
+        .eiffel-tower:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 60px rgba(255, 215, 0, 0.8));
+        }
+
+        .eiffel-tower svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .eiffel-sparkle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .sparkle-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: gold;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 3s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* Croissant Rain */
+        .croissant-rain {
+            position: fixed;
+            top: -50px;
+            font-size: 30px;
+            animation: fall linear infinite;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+            }
+        }
+
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Wine Section */
+        .wine-section {
+            background: linear-gradient(135deg, #2d0a0a 0%, #4a0e0e 50%, #722f37 100%);
+        }
+
+        .wine-glass {
+            width: 120px;
+            height: 250px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.5s;
+        }
+
+        .wine-glass:hover {
+            transform: rotate(-20deg);
+        }
+
+        .wine-glass-bowl {
+            width: 100px;
+            height: 100px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 0 0 50% 50%;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+        }
+
+        .wine-liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(180deg, #8B0000, #4a0000);
+            border-radius: 0 0 50% 50%;
+            transition: height 0.5s;
+            animation: wineWave 3s ease-in-out infinite;
+        }
+
+        .wine-glass:hover .wine-liquid {
+            height: 30%;
+        }
+
+        @keyframes wineWave {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(3px); }
+        }
+
+        .wine-stem {
+            width: 6px;
+            height: 80px;
+            background: rgba(255,255,255,0.3);
+            margin: 0 auto;
+        }
+
+        .wine-base {
+            width: 80px;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .wine-bottles {
+            display: flex;
+            gap: 40px;
+            align-items: flex-end;
+        }
+
+        /* Cheese Section */
+        .cheese-section {
+            background: linear-gradient(135deg, #f5e6c8 0%, #e8d5a3 50%, #d4b86a 100%);
+        }
+
+        .cheese-wheel {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #f4d03f, #f0c420, #d4a017);
+            border-radius: 50%;
+            position: relative;
+            cursor: grab;
+            box-shadow: inset 0 -10px 30px rgba(0,0,0,0.2), 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+
+        .cheese-wheel:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .cheese-hole {
+            position: absolute;
+            background: radial-gradient(circle, #c8a415, #b8940f);
+            border-radius: 50%;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .cheese-slice {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 50px solid transparent;
+            border-right: 50px solid transparent;
+            border-bottom: 120px solid #f4d03f;
+            opacity: 0;
+            transition: all 0.5s;
+            transform: translateX(100px);
+        }
+
+        .cheese-wheel.cut .cheese-slice {
+            opacity: 1;
+            transform: translateX(150px) rotate(10deg);
+        }
+
+        /* Beret & Fashion Section */
+        .fashion-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #404040 100%);
+        }
+
+        .mannequin {
+            position: relative;
+            width: 200px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .beret {
+            width: 100px;
+            height: 40px;
+            background: #1a1a1a;
+            border-radius: 50% 50% 0 0;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            border: 3px solid #333;
+        }
+
+        .beret:hover {
+            transform: rotate(-15deg) translateY(-5px);
+        }
+
+        .beret-nub {
+            width: 15px;
+            height: 15px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #333;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.3);
+        }
+
+        /* Lavender Fields */
+        .lavender-section {
+            background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 40%, #9b59b6 60%, #8e44ad 100%);
+            flex-direction: column;
+        }
+
+        .lavender-field {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .lavender-stem {
+            width: 6px;
+            height: 80px;
+            background: #27ae60;
+            position: relative;
+            border-radius: 3px;
+            animation: sway 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: height 0.3s;
+        }
+
+        .lavender-stem:hover {
+            height: 100px;
+        }
+
+        .lavender-flower {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 25px;
+            background: linear-gradient(180deg, #9b59b6, #8e44ad);
+            border-radius: 6px;
+            transition: transform 0.3s;
+        }
+
+        .lavender-stem:hover .lavender-flower {
+            transform: translateX(-50%) scale(1.5);
+            background: linear-gradient(180deg, #a855f7, #7c3aed);
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        /* Accordion / Musik Section */
+        .music-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+        }
+
+        .accordion {
+            width: 300px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .accordion-side {
+            width: 60px;
+            height: 180px;
+            background: linear-gradient(180deg, #c0392b, #e74c3c);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .accordion-button {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .accordion-bellows {
+            display: flex;
+            height: 160px;
+            transition: width 0.3s;
+            width: 100px;
+            overflow: hidden;
+        }
+
+        .accordion-bellows.expanded {
+            width: 200px;
+        }
+
+        .bellows-fold {
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, #2c3e50, #34495e);
+            border-left: 2px solid #1a252f;
+            border-right: 2px solid #1a252f;
+            transition: width 0.3s;
+        }
+
+        /* Musical Notes */
+        .music-note {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0;
+            animation: floatNote 3s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatNote {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(-200px) rotate(30deg) translateX(50px); }
+        }
+
+        /* Baguette Section */
+        .baguette-section {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #D2691E 100%);
+        }
+
+        .baguette {
+            width: 400px;
+            height: 60px;
+            background: linear-gradient(180deg, #daa520, #cd853f, #8b6914);
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .baguette:hover {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        .baguette-score {
+            position: absolute;
+            top: 15px;
+            width: 50px;
+            height: 4px;
+            background: rgba(139, 69, 19, 0.5);
+            border-radius: 2px;
+            transform: rotate(-20deg);
+        }
+
+        .baguette-crumb {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #daa520;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes crumble {
+            0% { opacity: 1; transform: translateY(0) rotate(0); }
+            100% { opacity: 0; transform: translateY(100px) rotate(360deg) translateX(var(--tx)); }
+        }
+
+        /* Parfum Section */
+        .parfum-section {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #f48fb1 100%);
+        }
+
+        .parfum-bottle {
+            width: 80px;
+            height: 150px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .parfum-body {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,215,0,0.1));
+            border: 2px solid rgba(255,215,0,0.5);
+            border-radius: 10px;
+            position: absolute;
+            bottom: 0;
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+        }
+
+        .parfum-liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(180deg, rgba(255,215,0,0.4), rgba(255,165,0,0.6));
+            transition: height 0.5s;
+        }
+
+        .parfum-cap {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffd700, #daa520);
+            margin: 0 auto;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .parfum-spray {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .spray-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        @keyframes spray {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(0); }
+        }
+
+        /* Rooster / Coq Section */
+        .coq-section {
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 70%, #228B22 100%);
+        }
+
+        .coq {
+            font-size: 150px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: coqBob 2s ease-in-out infinite;
+        }
+
+        .coq:hover {
+            transform: scale(1.2);
+        }
+
+        .coq:active {
+            transform: scale(1.5) rotate(10deg);
+        }
+
+        @keyframes coqBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .cocorico {
+            position: absolute;
+            font-size: 60px;
+            opacity: 0;
+            pointer-events: none;
+            animation: cocorico 2s ease-out forwards;
+        }
+
+        @keyframes cocorico {
+            0% { opacity: 1; transform: scale(0.5); }
+            100% { opacity: 0; transform: scale(3) translateY(-50px); }
+        }
+
+        /* Fleur de Lis Pattern */
+        .fleur-section {
+            background: #002395;
+            flex-wrap: wrap;
+        }
+
+        .fleur {
+            font-size: 40px;
+            color: gold;
+            padding: 20px;
+            transition: transform 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        .fleur:hover {
+            transform: rotate(360deg) scale(1.5);
+            color: #fff;
+        }
+
+        /* Macaron Section */
+        .macaron-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #dfe6e9 50%, #ffeaa7 100%);
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 50px;
+        }
+
+        .macaron {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .macaron:hover {
+            transform: translateY(-20px) rotate(10deg);
+        }
+
+        .macaron::after {
+            content: '';
+            position: absolute;
+            top: 35%;
+            left: 5%;
+            width: 90%;
+            height: 30%;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+        }
+
+        .macaron-ruffle {
+            position: absolute;
+            top: 33%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Seine River */
+        .seine-section {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 30%, #0f3460 100%);
+            position: relative;
+        }
+
+        .seine-water {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(180deg, #1a5276, #154360);
+            overflow: hidden;
+        }
+
+        .seine-wave {
+            position: absolute;
+            width: 200%;
+            height: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            animation: wave 4s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .seine-reflection {
+            position: absolute;
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(255,215,0,0.8), rgba(255,215,0,0));
+            animation: reflection 2s ease-in-out infinite;
+        }
+
+        @keyframes reflection {
+            0%, 100% { height: 60px; opacity: 0.8; }
+            50% { height: 80px; opacity: 0.4; }
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            animation: bounce 2s infinite;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-15px); }
+        }
+
+        /* Floating elements */
+        .floating-beret {
+            position: fixed;
+            font-size: 40px;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 9998;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="tricolore-bar">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <div class="scroll-hint">⬇️</div>
+
+    <!-- EIFFEL TOWER HERO -->
+    <section class="hero section" id="eiffel">
+        <div class="stars" id="stars"></div>
+        <div class="eiffel-tower" id="eiffelTower" onclick="sparkleEiffel()">
+            <div class="eiffel-sparkle" id="eiffelSparkle"></div>
+            <svg viewBox="0 0 200 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100 0 L95 30 L105 30 Z" fill="#C5A028"/>
+                <rect x="97" y="30" width="6" height="40" fill="#8B7355"/>
+                <path d="M80 70 L100 30 L120 70 Z" fill="none" stroke="#8B7355" stroke-width="2"/>
+                <path d="M60 150 L100 70 L140 150" fill="none" stroke="#8B7355" stroke-width="3"/>
+                <rect x="55" y="150" width="90" height="8" fill="#8B7355"/>
+                <path d="M40 300 L60 158 L140 158 L160 300" fill="none" stroke="#8B7355" stroke-width="3"/>
+                <rect x="35" y="300" width="130" height="10" fill="#8B7355"/>
+                <path d="M20 480 L40 310 L160 310 L180 480" fill="none" stroke="#8B7355" stroke-width="4"/>
+                <path d="M70 480 L100 380 L130 480" fill="none" stroke="#8B7355" stroke-width="2"/>
+                <!-- Lattice details -->
+                <line x1="70" y1="200" x2="130" y2="200" stroke="#8B7355" stroke-width="1"/>
+                <line x1="65" y1="230" x2="135" y2="230" stroke="#8B7355" stroke-width="1"/>
+                <line x1="60" y1="260" x2="140" y2="260" stroke="#8B7355" stroke-width="1"/>
+                <line x1="50" y1="350" x2="150" y2="350" stroke="#8B7355" stroke-width="1"/>
+                <line x1="45" y1="400" x2="155" y2="400" stroke="#8B7355" stroke-width="1"/>
+                <line x1="35" y1="450" x2="165" y2="450" stroke="#8B7355" stroke-width="1"/>
+                <!-- Cross lattice -->
+                <line x1="60" y1="158" x2="140" y2="300" stroke="#8B7355" stroke-width="0.5" opacity="0.5"/>
+                <line x1="140" y1="158" x2="60" y2="300" stroke="#8B7355" stroke-width="0.5" opacity="0.5"/>
+                <line x1="40" y1="310" x2="160" y2="480" stroke="#8B7355" stroke-width="0.5" opacity="0.5"/>
+                <line x1="160" y1="310" x2="40" y2="480" stroke="#8B7355" stroke-width="0.5" opacity="0.5"/>
+                <!-- Ground -->
+                <ellipse cx="100" cy="485" rx="100" ry="10" fill="rgba(139,115,85,0.3)"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- WINE SECTION -->
+    <section class="wine-section section">
+        <div class="wine-bottles">
+            <div class="wine-glass" onclick="pourWine(this)">
+                <div class="wine-glass-bowl">
+                    <div class="wine-liquid"></div>
+                </div>
+                <div class="wine-stem"></div>
+                <div class="wine-base"></div>
+            </div>
+            <div class="wine-glass" onclick="pourWine(this)">
+                <div class="wine-glass-bowl">
+                    <div class="wine-liquid"></div>
+                </div>
+                <div class="wine-stem"></div>
+                <div class="wine-base"></div>
+            </div>
+            <div class="wine-glass" onclick="pourWine(this)">
+                <div class="wine-glass-bowl">
+                    <div class="wine-liquid"></div>
+                </div>
+                <div class="wine-stem"></div>
+                <div class="wine-base"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHEESE SECTION -->
+    <section class="cheese-section section">
+        <div class="cheese-wheel" id="cheeseWheel" onclick="cutCheese()">
+            <div class="cheese-hole" style="width:25px;height:25px;top:30px;left:50px;"></div>
+            <div class="cheese-hole" style="width:15px;height:15px;top:80px;left:120px;"></div>
+            <div class="cheese-hole" style="width:20px;height:20px;top:130px;left:70px;"></div>
+            <div class="cheese-hole" style="width:12px;height:12px;top:50px;left:130px;"></div>
+            <div class="cheese-hole" style="width:18px;height:18px;top:100px;left:40px;"></div>
+            <div class="cheese-slice"></div>
+        </div>
+    </section>
+
+    <!-- LAVENDER SECTION -->
+    <section class="lavender-section section">
+        <div class="lavender-field" id="lavenderField"></div>
+    </section>
+
+    <!-- MUSIC / ACCORDION SECTION -->
+    <section class="music-section section">
+        <div class="accordion" id="accordion" onclick="playAccordion()">
+            <div class="accordion-side">
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+            </div>
+            <div class="accordion-bellows" id="bellows">
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+                <div class="bellows-fold"></div>
+            </div>
+            <div class="accordion-side">
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+                <div class="accordion-button"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BAGUETTE SECTION -->
+    <section class="baguette-section section">
+        <div class="baguette" id="baguette" onclick="breakBaguette()">
+            <div class="baguette-score" style="left: 50px; top: 18px;"></div>
+            <div class="baguette-score" style="left: 120px; top: 15px;"></div>
+            <div class="baguette-score" style="left: 190px; top: 18px;"></div>
+            <div class="baguette-score" style="left: 260px; top: 15px;"></div>
+            <div class="baguette-score" style="left: 330px; top: 18px;"></div>
+        </div>
+    </section>
+
+    <!-- PARFUM SECTION -->
+    <section class="parfum-section section">
+        <div class="parfum-bottle" id="parfumBottle" onclick="sprayParfum()">
+            <div class="parfum-cap"></div>
+            <div class="parfum-body">
+                <div class="parfum-liquid"></div>
+            </div>
+            <div class="parfum-spray" id="parfumSpray"></div>
+        </div>
+    </section>
+
+    <!-- COQ SECTION -->
+    <section class="coq-section section">
+        <div class="coq" id="coq" onclick="coqCrow()">🐓</div>
+    </section>
+
+    <!-- FLEUR DE LIS SECTION -->
+    <section class="fleur-section section" id="fleurSection"></section>
+
+    <!-- MACARON SECTION -->
+    <section class="macaron-section section" id="macaronSection"></section>
+
+    <!-- SEINE SECTION -->
+    <section class="seine-section section">
+        <div class="seine-water" id="seineWater">
+            <div class="seine-wave" style="top: 0;"></div>
+            <div class="seine-wave" style="top: 40px; animation-delay: -1s;"></div>
+            <div class="seine-wave" style="top: 80px; animation-delay: -2s;"></div>
+        </div>
+    </section>
+
+    <script>
+        // ===== STARS =====
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.width = Math.random() * 3 + 1 + 'px';
+            star.style.height = star.style.width;
+            starsContainer.appendChild(star);
+        }
+
+        // ===== EIFFEL SPARKLE =====
+        function sparkleEiffel() {
+            const sparkleContainer = document.getElementById('eiffelSparkle');
+            for (let i = 0; i < 30; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'sparkle-dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.animationDelay = Math.random() * 2 + 's';
+                sparkleContainer.appendChild(dot);
+            }
+            // Tricolore confetti
+            launchConfetti();
+            setTimeout(() => {
+                sparkleContainer.innerHTML = '';
+            }, 3000);
+        }
+
+        // ===== CONFETTI =====
+        function launchConfetti() {
+            const colors = ['#002395', '#ffffff', '#ED2939'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * 3)];
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = Math.random() * 10 + 5 + 'px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        // ===== WINE =====
+        function pourWine(glass) {
+            const liquid = glass.querySelector('.wine-liquid');
+            const currentHeight = parseInt(liquid.style.height) || 60;
+            if (currentHeight >= 95) {
+                liquid.style.height = '20%';
+            } else {
+                liquid.style.height = (currentHeight + 15) + '%';
+            }
+            // Splash effect
+            glass.style.transform = 'rotate(-20deg)';
+            setTimeout(() => glass.style.transform = '', 300);
+        }
+
+        // ===== CHEESE =====
+        let cheeseCut = false;
+        function cutCheese() {
+            const wheel = document.getElementById('cheeseWheel');
+            cheeseCut = !cheeseCut;
+            if (cheeseCut) {
+                wheel.classList.add('cut');
+                // Stink lines lol
+                for (let i = 0; i < 5; i++) {
+                    const stink = document.createElement('div');
+                    stink.style.cssText = `
+                        position: absolute;
+                        font-size: 30px;
+                        top: ${Math.random() * 100}%;
+                        left: ${Math.random() * 100}%;
+                        animation: floatNote 2s ease-out forwards;
+                        pointer-events: none;
+                    `;
+                    stink.textContent = '💨';
+                    wheel.parentElement.appendChild(stink);
+                    setTimeout(() => stink.remove(), 2000);
+                }
+            } else {
+                wheel.classList.remove('cut');
+            }
+        }
+
+        // ===== LAVENDER =====
+        const lavenderField = document.getElementById('lavenderField');
+        for (let i = 0; i < 80; i++) {
+            const stem = document.createElement('div');
+            stem.className = 'lavender-stem';
+            stem.style.animationDelay = Math.random() * 3 + 's';
+            stem.style.height = (60 + Math.random() * 40) + 'px';
+            const flower = document.createElement('div');
+            flower.className = 'lavender-flower';
+            stem.appendChild(flower);
+            stem.addEventListener('click', () => {
+                // Release scent particles
+                for (let j = 0; j < 5; j++) {
+                    const particle = document.createElement('div');
+                    particle.style.cssText = `
+                        position: absolute;
+                        width: 6px;
+                        height: 6px;
+                        background: rgba(155, 89, 182, 0.6);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        top: ${stem.offsetTop}px;
+                        left: ${stem.offsetLeft}px;
+                        animation: spray 1.5s ease-out forwards;
+                        --sx: ${(Math.random() - 0.5) * 80}px;
+                        --sy: ${-Math.random() * 80}px;
+                    `;
+                    lavenderField.appendChild(particle);
+                    setTimeout(() => particle.remove(), 1500);
+                }
+            });
+            lavenderField.appendChild(stem);
+        }
+
+        // ===== ACCORDION =====
+        let accordionExpanded = false;
+        function playAccordion() {
+            const bellows = document.getElementById('bellows');
+            accordionExpanded = !accordionExpanded;
+            bellows.classList.toggle('expanded');
+
+            // Musical notes
+            const notes = ['🎵', '🎶', '♪', '♫', '🎼'];
+            const section = document.querySelector('.music-section');
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const note = document.createElement('div');
+                    note.className = 'music-note';
+                    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                    note.style.left = Math.random() * 80 + 10 + '%';
+                    note.style.top = Math.random() * 60 + 20 + '%';
+                    section.appendChild(note);
+                    setTimeout(() => note.remove(), 3000);
+                }, i * 200);
+            }
+
+            // Play a French-sounding tone
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.type = 'sine';
+                const frenchNotes = [261.63, 329.63, 392.00, 440.00, 523.25];
+                oscillator.frequency.value = frenchNotes[Math.floor(Math.random() * frenchNotes.length)];
+                gainNode.gain.value = 0.1;
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+                oscillator.stop(audioCtx.currentTime + 0.8);
+            } catch(e) {}
+        }
+
+        // ===== BAGUETTE =====
+        function breakBaguette() {
+            const baguette = document.getElementById('baguette');
+            const rect = baguette.getBoundingClientRect();
+
+            for (let i = 0; i < 15; i++) {
+                const crumb = document.createElement('div');
+                crumb.className = 'baguette-crumb';
+                crumb.style.cssText = `
+                    position: fixed;
+                    left: ${rect.left + Math.random() * rect.width}px;
+                    top: ${rect.top + rect.height / 2}px;
+                    width: ${Math.random() * 10 + 4}px;
+                    height: ${Math.random() * 10 + 4}px;
+                    background: hsl(${35 + Math.random() * 15}, ${70 + Math.random() * 20}%, ${50 + Math.random() * 20}%);
+                    border-radius: ${Math.random() * 50}%;
+                    pointer-events: none;
+                    z-index: 1000;
+                    --tx: ${(Math.random() - 0.5) * 150}px;
+                    animation: crumble 1.5s ease-out forwards;
+                `;
+                document.body.appendChild(crumb);
+                setTimeout(() => crumb.remove(), 1500);
+            }
+
+            baguette.style.transform = 'scale(0.95)';
+            setTimeout(() => baguette.style.transform = '', 200);
+        }
+
+        // ===== PARFUM =====
+        function sprayParfum() {
+            const spray = document.getElementById('parfumSpray');
+            const liquid = document.querySelector('.parfum-liquid');
+            const currentHeight = parseInt(liquid.style.height) || 70;
+            liquid.style.height = Math.max(currentHeight - 5, 10) + '%';
+
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'spray-particle';
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${Math.random() * 6 + 2}px;
+                    height: ${Math.random() * 6 + 2}px;
+                    background: rgba(255, 215, 0, ${Math.random() * 0.5 + 0.3});
+                    border-radius: 50%;
+                    --sx: ${(Math.random() - 0.5) * 120}px;
+                    --sy: ${-Math.random() * 150 - 30}px;
+                    animation: spray 1.5s ease-out forwards;
+                    left: 50%;
+                    top: 0;
+                `;
+                spray.appendChild(particle);
+                setTimeout(() => particle.remove(), 1500);
+            }
+
+            // Pink haze overlay
+            const haze = document.createElement('div');
+            haze.style.cssText = `
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(244, 143, 177, 0.1);
+                pointer-events: none;
+                z-index: 9000;
+                transition: opacity 1s;
+            `;
+            document.body.appendChild(haze);
+            setTimeout(() => { haze.style.opacity = '0'; }, 500);
+            setTimeout(() => haze.remove(), 1500);
+        }
+
+        // ===== COQ =====
+        function coqCrow() {
+            const coq = document.getElementById('coq');
+            const section = document.querySelector('.coq-section');
+
+            // Visual crow
+            const crow = document.createElement('div');
+            crow.className = 'cocorico';
+            crow.textContent = '🌅';
+            crow.style.left = Math.random() * 60 + 20 + '%';
+            crow.style.top = Math.random() * 60 + 20 + '%';
+            section.appendChild(crow);
+            setTimeout(() => crow.remove(), 2000);
+
+            // Sound
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.6);
+            } catch(e) {}
+
+            // Sun flash
+            document.querySelector('.coq-section').style.background = 'linear-gradient(180deg, #FFD700 0%, #FFA500 30%, #98FB98 70%, #228B22 100%)';
+            setTimeout(() => {
+                document.querySelector('.coq-section').style.background = '';
+            }, 500);
+        }
+
+        // ===== FLEUR DE LIS =====
+        const fleurSection = document.getElementById('fleurSection');
+        for (let i = 0; i < 60; i++) {
+            const fleur = document.createElement('div');
+            fleur.className = 'fleur';
+            fleur.textContent = '⚜️';
+            fleur.addEventListener('click', () => {
+                fleur.style.transform = 'rotate(360deg) scale(2)';
+                fleur.style.color = '#fff';
+                setTimeout(() => {
+                    fleur.style.transform = '';
+                    fleur.style.color = '';
+                }, 600);
+            });
+            fleurSection.appendChild(fleur);
+        }
+
+        // ===== MACARONS =====
+        const macaronSection = document.getElementById('macaronSection');
+        const macaronColors = [
+            '#FF69B4', '#98FB98', '#DDA0DD', '#F0E68C',
+            '#87CEEB', '#FFA07A', '#E6E6FA', '#FFB6C1',
+            '#FFDAB9', '#B0E0E6', '#DEB887', '#F5DEB3'
+        ];
+        for (let i = 0; i < 12; i++) {
+            const macaron = document.createElement('div');
+            macaron.className = 'macaron';
+            macaron.style.background = `linear-gradient(180deg, ${macaronColors[i]}, ${macaronColors[i]}dd)`;
+            const ruffle = document.createElement('div');
+            ruffle.className = 'macaron-ruffle';
+            macaron.appendChild(ruffle);
+            macaron.addEventListener('click', () => {
+                macaron.style.transform = 'translateY(-20px) rotate(10deg) scale(1.3)';
+                // Crumble
+                for (let j = 0; j < 8; j++) {
+                    const crumb = document.createElement('div');
+                    crumb.style.cssText = `
+                        position: absolute;
+                        width: 6px;
+                        height: 6px;
+                        background: ${macaronColors[i]};
+                        border-radius: 50%;
+                        pointer-events: none;
+                        left: ${macaron.offsetLeft + 40}px;
+                        top: ${macaron.offsetTop + 40}px;
+                        --tx: ${(Math.random() - 0.5) * 100}px;
+                        animation: crumble 1s ease-out forwards;
+                    `;
+                    macaronSection.appendChild(crumb);
+                    setTimeout(() => crumb.remove(), 1000);
+                }
+                setTimeout(() => macaron.style.transform = '', 500);
+            });
+            macaronSection.appendChild(macaron);
+        }
+
+        // ===== SEINE REFLECTIONS =====
+        const seineWater = document.getElementById('seineWater');
+        for (let i = 0; i < 15; i++) {
+            const reflection = document.createElement('div');
+            reflection.className = 'seine-reflection';
+            reflection.style.left = Math.random() * 100 + '%';
+            reflection.style.top = Math.random() * 60 + '%';
+            reflection.style.animationDelay = Math.random() * 2 + 's';
+            seineWater.appendChild(reflection);
+        }
+
+        // ===== CROISSANT RAIN (on scroll) =====
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (Math.abs(currentScroll - lastScroll) > 100) {
+                lastScroll = currentScroll;
+                const croissant = document.createElement('div');
+                croissant.className = 'croissant-rain';
+                croissant.textContent = ['🥐', '🥖', '🧀', '🍷', '🇫🇷'][Math.floor(Math.random() * 5)];
+                croissant.style.left = Math.random() * 100 + '%';
+                croissant.style.animationDuration = Math.random() * 3 + 2 + 's';
+                document.body.appendChild(croissant);
+                setTimeout(() => croissant.remove(), 5000);
+            }
+        });
+
+        // ===== MOUSE TRAIL (subtle tricolore) =====
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.85) {
+                const trail = document.createElement('div');
+                const colors = ['#002395', '#ffffff', '#ED2939'];
+                trail.style.cssText = `
+                    position: fixed;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                    width: 8px;
+                    height: 8px;
+                    background: ${colors[Math.floor(Math.random() * 3)]};
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transition: all 1s ease-out;
+                    opacity: 0.7;
+                `;
+                document.body.appendChild(trail);
+                setTimeout(() => {
+                    trail.style.opacity = '0';
+                    trail.style.transform = 'scale(0) translateY(-20px)';
+                }, 50);
+                setTimeout(() => trail.remove(), 1100);
+            }
+        });
+
+        // ===== HIDE SCROLL HINT AFTER FIRST SCROLL =====
+        window.addEventListener('scroll', () => {
+            document.querySelector('.scroll-hint').style.opacity = '0';
+        }, { once: true });
+
+        // ===== KEYBOARD EASTER EGG =====
+        let typed = '';
+        document.addEventListener('keydown', (e) => {
+            typed += e.key.toLowerCase();
+            if (typed.includes('france')) {
+                typed = '';
+                document.body.style.transition = 'filter 1s';
+                document.body.style.filter = 'hue-rotate(360deg)';
+                launchConfetti();
+                setTimeout(() => document.body.style.filter = '', 1000);
+            }
+            if (typed.length > 20) typed = typed.slice(-10);
+        });
+
+        // ===== DOUBLE CLICK ANYWHERE FOR BERET =====
+        document.addEventListener('dblclick', (e) => {
+            const beret = document.createElement('div');
+            beret.textContent = '🎨';
+            beret.style.cssText = `
+                position: fixed;
+                left: ${e.clientX - 20}px;
+                top: ${e.clientY - 20}px;
+                font-size: 40px;
+                pointer-events: none;
+                z-index: 9999;
+                animation: floatNote 2s ease-out forwards;
+            `;
+            document.body.appendChild(beret);
+            setTimeout(() => beret.remove(), 2000);
+        });
+    </script>
+</body>
+</html>
