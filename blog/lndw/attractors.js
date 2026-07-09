@@ -415,277 +415,275 @@ const AttractorViz = (() => {
     // ============================================================
     // STEP 1: Torus – Erde/Mond/Sonne + SICHTBARER Torus-Wireframe
     // ============================================================
-    function renderTorusEarth(container) {
-        const setup = safeCanvasSetup(container, '#0a0a2a');
-        if (!setup) {
-            retryRender(renderTorusEarth, container, 150);
-            return;
-        }
-        const { ctx, W, H } = setup;
+	function renderTorusEarth(container) {
+		const setup = safeCanvasSetup(container, '#0a0a2a');
+		if (!setup) {
+			retryRender(renderTorusEarth, container, 150);
+			return;
+		}
+		const { ctx, W, H } = setup;
 
-        const leftCx = W * 0.32, leftCy = H * 0.5;
-        const rightCx = W * 0.72, rightCy = H * 0.5;
+		const leftCx = W * 0.32, leftCy = H * 0.5;
+		const rightCx = W * 0.72, rightCy = H * 0.5;
 
-        const earthOrbitR = Math.min(W * 0.22, H * 0.3);
-        const moonOrbitR = earthOrbitR * 0.25;
-        const earthSpeed = 0.006;
-        const moonSpeed = 0.042;
+		const earthOrbitR = Math.min(W * 0.22, H * 0.3);
+		const moonOrbitR = earthOrbitR * 0.25;
+		const earthSpeed = 0.006;
+		const moonSpeed = 0.042;
 
-        let earthAngle = 0;
-        let moonAngle = 0;
-        let moonTrail = [];
-        const maxTrail = 600;
+		let earthAngle = 0;
+		let moonAngle = 0;
+		let moonTrail = [];
+		const maxTrail = 600;
 
-        // Starfield
-        const stars = [];
-        for (let i = 0; i < 60; i++) {
-            stars.push({
-                x: Math.random() * W,
-                y: Math.random() * H,
-                size: 0.3 + Math.random() * 1.0,
-                brightness: 0.2 + Math.random() * 0.4
-            });
-        }
+		// Starfield
+		const stars = [];
+		for (let i = 0; i < 60; i++) {
+			stars.push({
+				x: Math.random() * W,
+				y: Math.random() * H,
+				size: 0.3 + Math.random() * 1.0,
+				brightness: 0.2 + Math.random() * 0.4
+			});
+		}
 
-        // Torus parameters – GRÖSSER und sichtbarer
-        const torusR = Math.min(W * 0.17, H * 0.22); // Major radius
-        const torusr = torusR * 0.38; // Minor radius – etwas größer
+		// Torus parameters
+		const torusR = Math.min(W * 0.17, H * 0.22);
+		const torusr = torusR * 0.38;
 
-        animationRunning = true;
-        let t = 0;
+		animationRunning = true;
+		let t = 0;
 
-        function drawTorusWireframe(cx, cy, R, r, moonTheta, moonPhi) {
-            const tiltX = 0.5; // Stärkere Neigung für bessere 3D-Sichtbarkeit
-            const tiltZ = t * 0.003;
+		function drawTorusWireframe(cx, cy, R, r, moonTheta, moonPhi) {
+			// STATISCHE Neigung – kein t-abhängiger tiltZ mehr!
+			const tiltX = 0.5;
+			const tiltZ = 0.3; // fester Winkel statt t * 0.003
 
-            function torusTo2D(theta, phi) {
-                const x3d = (R + r * Math.cos(phi)) * Math.cos(theta);
-                const y3d = (R + r * Math.cos(phi)) * Math.sin(theta);
-                const z3d = r * Math.sin(phi);
+			function torusTo2D(theta, phi) {
+				const x3d = (R + r * Math.cos(phi)) * Math.cos(theta);
+				const y3d = (R + r * Math.cos(phi)) * Math.sin(theta);
+				const z3d = r * Math.sin(phi);
 
-                const y2 = y3d * Math.cos(tiltX) - z3d * Math.sin(tiltX);
-                const z2 = y3d * Math.sin(tiltX) + z3d * Math.cos(tiltX);
+				const y2 = y3d * Math.cos(tiltX) - z3d * Math.sin(tiltX);
+				const z2 = y3d * Math.sin(tiltX) + z3d * Math.cos(tiltX);
 
-                const x2 = x3d * Math.cos(tiltZ) - y2 * Math.sin(tiltZ);
-                const yFinal = x3d * Math.sin(tiltZ) + y2 * Math.cos(tiltZ);
+				const x2 = x3d * Math.cos(tiltZ) - y2 * Math.sin(tiltZ);
+				const yFinal = x3d * Math.sin(tiltZ) + y2 * Math.cos(tiltZ);
 
-                return { x: cx + x2, y: cy + yFinal, z: z2 };
-            }
+				return { x: cx + x2, y: cy + yFinal, z: z2 };
+			}
 
-            // Zeichne den Torus mit DEUTLICH höherer Sichtbarkeit
-            // Zuerst: gefüllte Fläche als Hintergrund (leichter Schimmer)
-            ctx.save();
+			ctx.save();
 
-            // Längskreise (um den großen Radius) – die "Ringe"
-            const numLongitudes = 20;
-            for (let j = 0; j < numLongitudes; j++) {
-                const phi = (j / numLongitudes) * Math.PI * 2;
-                ctx.beginPath();
-                for (let i = 0; i <= 64; i++) {
-                    const theta = (i / 64) * Math.PI * 2;
-                    const p = torusTo2D(theta, phi);
-                    if (i === 0) ctx.moveTo(p.x, p.y);
-                    else ctx.lineTo(p.x, p.y);
-                }
-                ctx.strokeStyle = 'rgba(120, 160, 255, 0.35)';
-                ctx.lineWidth = 1.0;
-                ctx.stroke();
-            }
+			// Längskreise (um den großen Radius)
+			const numLongitudes = 20;
+			for (let j = 0; j < numLongitudes; j++) {
+				const phi = (j / numLongitudes) * Math.PI * 2;
+				ctx.beginPath();
+				for (let i = 0; i <= 64; i++) {
+					const theta = (i / 64) * Math.PI * 2;
+					const p = torusTo2D(theta, phi);
+					if (i === 0) ctx.moveTo(p.x, p.y);
+					else ctx.lineTo(p.x, p.y);
+				}
+				ctx.strokeStyle = 'rgba(120, 160, 255, 0.35)';
+				ctx.lineWidth = 1.0;
+				ctx.stroke();
+			}
 
-            // Meridiane (Kreise um den Schlauch) – DEUTLICH sichtbar
-            const numMeridians = 24;
-            for (let i = 0; i < numMeridians; i++) {
-                const theta = (i / numMeridians) * Math.PI * 2;
-                ctx.beginPath();
-                for (let j = 0; j <= 32; j++) {
-                    const phi = (j / 32) * Math.PI * 2;
-                    const p = torusTo2D(theta, phi);
-                    if (j === 0) ctx.moveTo(p.x, p.y);
-                    else ctx.lineTo(p.x, p.y);
-                }
-                ctx.strokeStyle = 'rgba(150, 200, 255, 0.5)';
-                ctx.lineWidth = 1.2;
-                ctx.stroke();
-            }
+			// Meridiane
+			const numMeridians = 24;
+			for (let i = 0; i < numMeridians; i++) {
+				const theta = (i / numMeridians) * Math.PI * 2;
+				ctx.beginPath();
+				for (let j = 0; j <= 32; j++) {
+					const phi = (j / 32) * Math.PI * 2;
+					const p = torusTo2D(theta, phi);
+					if (j === 0) ctx.moveTo(p.x, p.y);
+					else ctx.lineTo(p.x, p.y);
+				}
+				ctx.strokeStyle = 'rgba(150, 200, 255, 0.5)';
+				ctx.lineWidth = 1.2;
+				ctx.stroke();
+			}
 
-            // Highlight: Ein besonders sichtbarer Meridian-Ring (der "aktuelle")
-            const highlightTheta = moonTheta;
-            ctx.beginPath();
-            for (let j = 0; j <= 48; j++) {
-                const phi = (j / 48) * Math.PI * 2;
-                const p = torusTo2D(highlightTheta, phi);
-                if (j === 0) ctx.moveTo(p.x, p.y);
-                else ctx.lineTo(p.x, p.y);
-            }
-            ctx.strokeStyle = 'rgba(255, 200, 50, 0.7)';
-            ctx.lineWidth = 2.0;
-            ctx.stroke();
+			// Highlight-Meridian (aktueller)
+			const highlightTheta = moonTheta;
+			ctx.beginPath();
+			for (let j = 0; j <= 48; j++) {
+				const phi = (j / 48) * Math.PI * 2;
+				const p = torusTo2D(highlightTheta, phi);
+				if (j === 0) ctx.moveTo(p.x, p.y);
+				else ctx.lineTo(p.x, p.y);
+			}
+			ctx.strokeStyle = 'rgba(255, 200, 50, 0.7)';
+			ctx.lineWidth = 2.0;
+			ctx.stroke();
 
-            // Highlight: Ein besonders sichtbarer Längskreis
-            const highlightPhi = moonPhi;
-            ctx.beginPath();
-            for (let i = 0; i <= 64; i++) {
-                const theta = (i / 64) * Math.PI * 2;
-                const p = torusTo2D(theta, highlightPhi);
-                if (i === 0) ctx.moveTo(p.x, p.y);
-                else ctx.lineTo(p.x, p.y);
-            }
-            ctx.strokeStyle = 'rgba(255, 150, 50, 0.5)';
-            ctx.lineWidth = 1.8;
-            ctx.stroke();
+			// Highlight-Längskreis
+			const highlightPhi = moonPhi;
+			ctx.beginPath();
+			for (let i = 0; i <= 64; i++) {
+				const theta = (i / 64) * Math.PI * 2;
+				const p = torusTo2D(theta, highlightPhi);
+				if (i === 0) ctx.moveTo(p.x, p.y);
+				else ctx.lineTo(p.x, p.y);
+			}
+			ctx.strokeStyle = 'rgba(255, 150, 50, 0.5)';
+			ctx.lineWidth = 1.8;
+			ctx.stroke();
 
-            ctx.restore();
+			ctx.restore();
 
-            // Mond-Position auf dem Torus markieren
-            const moonPos = torusTo2D(moonTheta, moonPhi);
-            
-            // Glow um den Mond
-            const moonGlow = ctx.createRadialGradient(moonPos.x, moonPos.y, 0, moonPos.x, moonPos.y, 15);
-            moonGlow.addColorStop(0, 'rgba(255, 215, 0, 0.6)');
-            moonGlow.addColorStop(1, 'rgba(255, 215, 0, 0)');
-            ctx.fillStyle = moonGlow;
-            ctx.beginPath();
-            ctx.arc(moonPos.x, moonPos.y, 15, 0, Math.PI * 2);
-            ctx.fill();
+			// Mond-Position auf dem Torus – als 🌕 Emoji
+			const moonPos = torusTo2D(moonTheta, moonPhi);
 
-            ctx.beginPath();
-            ctx.arc(moonPos.x, moonPos.y, 6, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffd700';
-            ctx.fill();
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+			// Glow um den Mond
+			const moonGlow = ctx.createRadialGradient(moonPos.x, moonPos.y, 0, moonPos.x, moonPos.y, 15);
+			moonGlow.addColorStop(0, 'rgba(255, 215, 0, 0.6)');
+			moonGlow.addColorStop(1, 'rgba(255, 215, 0, 0)');
+			ctx.fillStyle = moonGlow;
+			ctx.beginPath();
+			ctx.arc(moonPos.x, moonPos.y, 15, 0, Math.PI * 2);
+			ctx.fill();
 
-            // Torus-Label
-            ctx.font = 'bold 13px system-ui';
-            ctx.fillStyle = 'rgba(150, 200, 255, 0.9)';
-            ctx.textAlign = 'center';
-            ctx.fillText('Torus-Attraktor', cx, cy + R + torusr + 25);
-            ctx.font = '11px system-ui';
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
-            ctx.fillText('● = Mond-Position', cx, cy + R + torusr + 42);
-        }
+			// Mond als Emoji statt Kreis
+			ctx.font = '14px serif';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillText('🌕', moonPos.x, moonPos.y);
 
-        function draw() {
-            if (!animationRunning) return;
-            t++;
+			// Torus-Label
+			ctx.font = 'bold 13px system-ui';
+			ctx.fillStyle = 'rgba(150, 200, 255, 0.9)';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Torus-Attraktor', cx, cy + R + torusr + 25);
+			ctx.font = '11px system-ui';
+			ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
+			ctx.fillText('🌕 = Mond-Position', cx, cy + R + torusr + 42);
+		}
 
-            ctx.clearRect(0, 0, W, H);
+		function draw() {
+			if (!animationRunning) return;
+			t++;
 
-            // Background gradient
-            const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-            bgGrad.addColorStop(0, '#0a0a2a');
-            bgGrad.addColorStop(1, '#0f0f35');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, W, H);
+			ctx.clearRect(0, 0, W, H);
 
-            // Stars
-            stars.forEach(s => {
-                const twinkle = s.brightness * (0.7 + 0.3 * Math.sin(t * 0.02 + s.x));
-                ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
+			// Background gradient
+			const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+			bgGrad.addColorStop(0, '#0a0a2a');
+			bgGrad.addColorStop(1, '#0f0f35');
+			ctx.fillStyle = bgGrad;
+			ctx.fillRect(0, 0, W, H);
 
-            // Trennlinie
-            ctx.beginPath();
-            ctx.moveTo(W * 0.52, 30);
-            ctx.lineTo(W * 0.52, H - 30);
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
+			// Stars
+			stars.forEach(s => {
+				const twinkle = s.brightness * (0.7 + 0.3 * Math.sin(t * 0.02 + s.x));
+				ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+				ctx.beginPath();
+				ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+				ctx.fill();
+			});
 
-            // === LINKE SEITE: Sonnensystem ===
+			// Trennlinie
+			ctx.beginPath();
+			ctx.moveTo(W * 0.52, 30);
+			ctx.lineTo(W * 0.52, H - 30);
+			ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+			ctx.lineWidth = 1;
+			ctx.stroke();
 
-            // Earth orbit path
-            ctx.beginPath();
-            ctx.ellipse(leftCx, leftCy, earthOrbitR, earthOrbitR * 0.4, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(100,180,255,0.2)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
+			// === LINKE SEITE: Sonnensystem ===
 
-            // Earth position
-            earthAngle += earthSpeed;
-            const earthX = leftCx + Math.cos(earthAngle) * earthOrbitR;
-            const earthY = leftCy + Math.sin(earthAngle) * earthOrbitR * 0.4;
+			// Earth orbit path
+			ctx.beginPath();
+			ctx.ellipse(leftCx, leftCy, earthOrbitR, earthOrbitR * 0.4, 0, 0, Math.PI * 2);
+			ctx.strokeStyle = 'rgba(100,180,255,0.2)';
+			ctx.lineWidth = 1;
+			ctx.stroke();
 
-            // Moon position
-            moonAngle += moonSpeed;
-            const moonX = earthX + Math.cos(moonAngle) * moonOrbitR;
-            const moonY = earthY + Math.sin(moonAngle) * moonOrbitR * 0.55;
+			// Earth position
+			earthAngle += earthSpeed;
+			const earthX = leftCx + Math.cos(earthAngle) * earthOrbitR;
+			const earthY = leftCy + Math.sin(earthAngle) * earthOrbitR * 0.4;
 
-            // Moon trail
-            moonTrail.push({ x: moonX, y: moonY });
-            if (moonTrail.length > maxTrail) moonTrail.shift();
+			// Moon position
+			moonAngle += moonSpeed;
+			const moonX = earthX + Math.cos(moonAngle) * moonOrbitR;
+			const moonY = earthY + Math.sin(moonAngle) * moonOrbitR * 0.55;
 
-            // Draw moon trail
-            if (moonTrail.length > 2) {
-                for (let i = 1; i < moonTrail.length; i++) {
-                    const alpha = (i / moonTrail.length) * 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(moonTrail[i - 1].x, moonTrail[i - 1].y);
-                    ctx.lineTo(moonTrail[i].x, moonTrail[i].y);
-                    ctx.strokeStyle = `rgba(200,200,255,${alpha})`;
-                    ctx.lineWidth = 1.2;
-                    ctx.stroke();
-                }
-            }
+			// Moon trail
+			moonTrail.push({ x: moonX, y: moonY });
+			if (moonTrail.length > maxTrail) moonTrail.shift();
 
-            // Sun glow
-            const sunGlow = ctx.createRadialGradient(leftCx, leftCy, 0, leftCx, leftCy, 30);
-            sunGlow.addColorStop(0, 'rgba(255,220,0,0.5)');
-            sunGlow.addColorStop(1, 'rgba(255,150,0,0)');
-            ctx.fillStyle = sunGlow;
-            ctx.beginPath();
-            ctx.arc(leftCx, leftCy, 30, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.font = '28px serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('☀️', leftCx, leftCy);
+			// Draw moon trail
+			if (moonTrail.length > 2) {
+				for (let i = 1; i < moonTrail.length; i++) {
+					const alpha = (i / moonTrail.length) * 0.5;
+					ctx.beginPath();
+					ctx.moveTo(moonTrail[i - 1].x, moonTrail[i - 1].y);
+					ctx.lineTo(moonTrail[i].x, moonTrail[i].y);
+					ctx.strokeStyle = `rgba(200,200,255,${alpha})`;
+					ctx.lineWidth = 1.2;
+					ctx.stroke();
+				}
+			}
 
-            // Earth
-            ctx.font = '22px serif';
-            ctx.fillText('🌍', earthX, earthY);
+			// Sun glow
+			const sunGlow = ctx.createRadialGradient(leftCx, leftCy, 0, leftCx, leftCy, 30);
+			sunGlow.addColorStop(0, 'rgba(255,220,0,0.5)');
+			sunGlow.addColorStop(1, 'rgba(255,150,0,0)');
+			ctx.fillStyle = sunGlow;
+			ctx.beginPath();
+			ctx.arc(leftCx, leftCy, 30, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.font = '28px serif';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillText('☀️', leftCx, leftCy);
 
-            // Moon orbit around earth
-            ctx.beginPath();
-            ctx.ellipse(earthX, earthY, moonOrbitR, moonOrbitR * 0.55, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(200,200,200,0.2)';
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+			// Earth
+			ctx.font = '22px serif';
+			ctx.fillText('🌍', earthX, earthY);
 
-            // Moon
-            ctx.font = '14px serif';
-            ctx.fillText('🌑', moonX, moonY);
+			// Moon orbit around earth
+			ctx.beginPath();
+			ctx.ellipse(earthX, earthY, moonOrbitR, moonOrbitR * 0.55, 0, 0, Math.PI * 2);
+			ctx.strokeStyle = 'rgba(200,200,200,0.2)';
+			ctx.lineWidth = 0.5;
+			ctx.stroke();
 
-            // Labels
-            ctx.font = '11px system-ui';
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            
-            ctx.textAlign = 'center';
-            ctx.fillText('Sonne', leftCx, leftCy + 28);
-            ctx.fillStyle = 'rgba(100,180,255,0.7)';
-            ctx.fillText('Erde', earthX, earthY + 22);
-            ctx.fillStyle = 'rgba(200,200,200,0.6)';
-            ctx.fillText('Mond', moonX, moonY + 16);
+			// Moon – als 🌕 Vollmond-Emoji
+			ctx.font = '14px serif';
+			ctx.fillText('🌕', moonX, moonY);
 
-            // === RECHTE SEITE: Torus-Wireframe ===
-            drawTorusWireframe(rightCx, rightCy, torusR, torusr, earthAngle, moonAngle);
+			// Labels
+			ctx.font = '11px system-ui';
+			ctx.textBaseline = 'alphabetic';
+			ctx.fillStyle = 'rgba(255,255,255,0.6)';
 
-            // Bottom text
-            ctx.font = '11px system-ui';
-            ctx.fillStyle = 'rgba(255,255,255,0.45)';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillText('Links: Physische Bahnen | Rechts: Abstrakte Torus-Form (Attraktor ist nicht nur ein Punkt!)', W / 2, H - 14);
+			ctx.textAlign = 'center';
+			ctx.fillText('Sonne', leftCx, leftCy + 28);
+			ctx.fillStyle = 'rgba(100,180,255,0.7)';
+			ctx.fillText('Erde', earthX, earthY + 22);
+			ctx.fillStyle = 'rgba(200,200,200,0.6)';
+			ctx.fillText('Mond', moonX, moonY + 16);
 
-            activeAnimation = requestAnimationFrame(draw);
-        }
-        draw();
-    }
+			// === RECHTE SEITE: Torus-Wireframe (STATISCH, nur Mond bewegt sich) ===
+			drawTorusWireframe(rightCx, rightCy, torusR, torusr, earthAngle, moonAngle);
+
+			// Bottom text
+			ctx.font = '11px system-ui';
+			ctx.fillStyle = 'rgba(255,255,255,0.45)';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Links: Physische Bahnen | Rechts: Abstrakte Torus-Form (Attraktor ist nicht nur ein Punkt!)', W / 2, H - 14);
+
+			activeAnimation = requestAnimationFrame(draw);
+		}
+		draw();
+}
 
     // ============================================================
     // STEP 2: Lorenz – bleibt wie er ist (war super)
