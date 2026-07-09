@@ -1,15 +1,13 @@
 // ============================================================
-// ATTRACTOR BASIN VISUALIZATION
-// "Paris" als Attraktor im Becken von "Frankreich" + "Hauptstadt"
+// ATTRACTOR BASIN VISUALIZATION v2
+// Komplett überarbeitet: mehr Animation, 3D, dynamische Systeme
 // ============================================================
 const AttractorViz = (() => {
     let currentStep = 0;
     const totalSteps = 6;
-    let animFrames = [];
     let activeAnimation = null;
-    let plotlyDivs = [];
+    let animationRunning = false;
 
-    // --- Utility ---
     function isOnAttractorSlide() {
         const activeSlide = document.querySelector('.slide.active');
         if (!activeSlide) return false;
@@ -43,54 +41,51 @@ const AttractorViz = (() => {
     function reset() {
         currentStep = 0;
         stopAllAnimations();
-        renderStep(0);
     }
 
     function stopAllAnimations() {
+        animationRunning = false;
         if (activeAnimation) {
             cancelAnimationFrame(activeAnimation);
             activeAnimation = null;
         }
     }
 
-    // --- Step Rendering ---
     function renderStep(step) {
         stopAllAnimations();
         const container = document.getElementById('attractor-viz-container');
         if (!container) return;
 
-        // Update step indicators
         document.querySelectorAll('.attr-indicator').forEach(el => {
             const s = parseInt(el.getAttribute('data-step'));
             el.classList.toggle('active', s === step);
         });
 
-        // Update caption
         const captions = [
-            '<b>Punkt-Attraktor:</b> Ein stabiler Fixpunkt – alle Bahnen in der Nähe werden angezogen.',
-            '<b>Torus-Attraktor:</b> Periodische Systeme kreisen auf einer stabilen Bahn (Limit Cycle).',
-            '<b>Lorenz-Attraktor:</b> Komplexe, chaotische Systeme – deterministisch, aber unvorhersagbar.',
-            '<b>Attraktorbecken:</b> Jeder Attraktor hat einen Einzugsbereich. Überlappende Becken erzeugen Konkurrenz.',
-            '<b>Mehrdimensionale Becken:</b> In hohen Dimensionen ziehen verschiedene Kontexte gleichzeitig.',
-            '<b>"Paris" als Attraktor:</b> Im Einzugsbereich von "Frankreich" UND "Hauptstadt" liegt der Attraktor "Paris".'
+            '<b>Punkt-Attraktor (3D):</b> Ein stabiler Fixpunkt – alle Bahnen spiralen auf verschiedenen Wegen hinein. Das System ist dynamisch: neue Punkte starten immer wieder.',
+            '<b>Torus-Attraktor:</b> ☀️ Sonne im Zentrum, 🌍 Erde kreist darum, 🌙 Mond kreist um die Erde – eine Bahn auf einem Torus (Kreis um einen Kreis).',
+            '<b>Lorenz-Attraktor:</b> Punkte bewegen sich auf der chaotischen Bahn – deterministisch, aber unvorhersagbar. Beobachte, wie sie zwischen den zwei "Flügeln" wechseln.',
+            '<b>Attraktorbecken (3D):</b> Drei Becken im Raum. Punkte spiralen auf komplexen Bahnen zu ihrem jeweiligen Attraktor. In Überlappungszonen herrscht Konkurrenz.',
+            '<b>Mehrdimensionale Becken (3D):</b> Drei Attraktorbecken mit Punkten auf komplexen, spiralförmigen Bahnen – nicht nur gerade Linien, sondern echte Dynamik.',
+            '<b>"Paris" als Attraktor:</b> Der Kontext "Hauptstadt" UND "Frankreich" wird aktiv – beide Becken ziehen gleichzeitig, bis die Punkte bei "Paris" ankommen.'
         ];
         const captionEl = document.getElementById('attractor-caption');
         if (captionEl) captionEl.innerHTML = captions[step];
 
         switch (step) {
-            case 0: renderPointAttractor(container); break;
-            case 1: renderTorusAttractor(container); break;
-            case 2: renderLorenzAttractor(container); break;
-            case 3: renderBasinsOverlapping(container); break;
-            case 4: renderMultiDimBasins(container); break;
-            case 5: renderParisAttractor(container); break;
+            case 0: renderPointAttractor3D(container); break;
+            case 1: renderTorusOrbits(container); break;
+            case 2: renderLorenzAnimated(container); break;
+            case 3: renderBasins3D(container); break;
+            case 4: renderMultiDimBasins3D(container); break;
+            case 5: renderParisInteractive(container); break;
         }
     }
 
     // ============================================================
-    // STEP 0: Punkt-Attraktor (2D, Partikel fallen in Fixpunkt)
+    // STEP 0: 3D Punkt-Attraktor mit spiralförmigen Bahnen (Endlosschleife)
     // ============================================================
-    function renderPointAttractor(container) {
+    function renderPointAttractor3D(container) {
         container.innerHTML = '<div id="attractor-canvas-wrap" style="position:relative;width:100%;height:480px;"><canvas id="attractor-canvas" style="width:100%;height:100%;display:block;border-radius:10px;"></canvas></div>';
         const canvas = document.getElementById('attractor-canvas');
         const rect = canvas.parentElement.getBoundingClientRect();
@@ -100,63 +95,111 @@ const AttractorViz = (() => {
         const ctx = canvas.getContext('2d');
         ctx.scale(dpr, dpr);
         const W = rect.width, H = rect.height;
-
         const cx = W / 2, cy = H / 2;
-        const numParticles = 40;
+
+        const numParticles = 60;
         let particles = [];
-        for (let i = 0; i < numParticles; i++) {
+
+        function spawnParticle() {
             const angle = Math.random() * Math.PI * 2;
-            const r = 100 + Math.random() * 140;
-            particles.push({
+            const r = 150 + Math.random() * 120;
+            const spinDir = Math.random() > 0.5 ? 1 : -1;
+            return {
                 x: cx + Math.cos(angle) * r,
                 y: cy + Math.sin(angle) * r,
-                trail: []
-            });
+                angle: angle,
+                radius: r,
+                spinDir: spinDir,
+                spinSpeed: 0.02 + Math.random() * 0.03,
+                shrinkSpeed: 0.985 + Math.random() * 0.01,
+                trail: [],
+                alpha: 1,
+                arrived: false,
+                z: (Math.random() - 0.5) * 200 // fake depth
+            };
         }
 
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(spawnParticle());
+        }
+
+        animationRunning = true;
+        let t = 0;
+
         function draw() {
+            if (!animationRunning) return;
+            t++;
             ctx.clearRect(0, 0, W, H);
             ctx.fillStyle = '#fafafa';
             ctx.fillRect(0, 0, W, H);
 
-            // Draw basin gradient
-            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 200);
-            grad.addColorStop(0, 'rgba(59,130,246,0.12)');
-            grad.addColorStop(1, 'rgba(59,130,246,0)');
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.arc(cx, cy, 200, 0, Math.PI * 2);
-            ctx.fill();
+            // 3D-ish basin gradient (concentric rings for depth)
+            for (let ring = 5; ring >= 0; ring--) {
+                const rr = 40 + ring * 40;
+                const grad = ctx.createRadialGradient(cx, cy, rr - 30, cx, cy, rr);
+                grad.addColorStop(0, `rgba(59,130,246,${0.03 + ring * 0.015})`);
+                grad.addColorStop(1, 'rgba(59,130,246,0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
-            // Attractor point
+            // "Trichter"-Linien für 3D-Effekt
+            ctx.strokeStyle = 'rgba(59,130,246,0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 12; i++) {
+                const a = (i / 12) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(cx + Math.cos(a) * 240, cy + Math.sin(a) * 240);
+                ctx.lineTo(cx, cy);
+                ctx.stroke();
+            }
+
+            // Attractor point (pulsing)
+            const pulse = 1 + 0.1 * Math.sin(t * 0.05);
             ctx.beginPath();
-            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#3b82f6';
+            ctx.arc(cx, cy, 10 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = '#1e40af';
             ctx.fill();
             ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.stroke();
 
-            // Label
-            ctx.font = 'bold 14px system-ui';
+            ctx.font = 'bold 13px system-ui';
             ctx.fillStyle = '#1e40af';
             ctx.textAlign = 'center';
-            ctx.fillText('Fixpunkt-Attraktor', cx, cy + 28);
+            ctx.fillText('Fixpunkt', cx, cy + 28);
 
-            // Particles
-            let allArrived = true;
-            particles.forEach(p => {
-                const dx = cx - p.x;
-                const dy = cy - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist > 2) {
-                    allArrived = false;
-                    const speed = 0.02 + 0.01 * (dist / 200);
-                    p.x += dx * speed;
-                    p.y += dy * speed;
+            // Sort by z for pseudo-3D
+            particles.sort((a, b) => a.z - b.z);
+
+            particles.forEach((p, idx) => {
+                if (!p.arrived) {
+                    // Spiral inward
+                    p.angle += p.spinDir * p.spinSpeed;
+                    p.radius *= p.shrinkSpeed;
+                    p.z *= 0.99;
+
+                    // Perspective factor
+                    const perspective = 1 + p.z / 400;
+                    p.x = cx + Math.cos(p.angle) * p.radius * perspective;
+                    p.y = cy + Math.sin(p.angle) * p.radius * (0.6 + 0.4 * perspective); // elliptical for 3D
+
+                    p.trail.push({ x: p.x, y: p.y });
+                    if (p.trail.length > 80) p.trail.shift();
+
+                    if (p.radius < 5) {
+                        p.arrived = true;
+                        p.alpha = 1;
+                    }
+                } else {
+                    // Fade out and respawn
+                    p.alpha -= 0.02;
+                    if (p.alpha <= 0) {
+                        particles[idx] = spawnParticle();
+                    }
                 }
-                p.trail.push({ x: p.x, y: p.y });
-                if (p.trail.length > 60) p.trail.shift();
 
                 // Draw trail
                 if (p.trail.length > 1) {
@@ -165,154 +208,171 @@ const AttractorViz = (() => {
                     for (let i = 1; i < p.trail.length; i++) {
                         ctx.lineTo(p.trail[i].x, p.trail[i].y);
                     }
-                    ctx.strokeStyle = 'rgba(59,130,246,0.25)';
+                    ctx.strokeStyle = `rgba(59,130,246,${0.2 * p.alpha})`;
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
                 }
 
-                // Draw particle
+                // Draw particle (size varies with z for depth)
+                const size = 3 + (p.z + 100) / 80;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = '#3b82f6';
+                ctx.arc(p.x, p.y, Math.max(2, size), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(59,130,246,${0.8 * p.alpha})`;
                 ctx.fill();
             });
 
-            if (!allArrived) {
-                activeAnimation = requestAnimationFrame(draw);
-            }
+            activeAnimation = requestAnimationFrame(draw);
         }
         draw();
     }
 
     // ============================================================
-    // STEP 1: Torus-Attraktor (Limit Cycle, Plotly 3D)
+    // STEP 1: Torus – Sonne/Erde/Mond animiert
     // ============================================================
-    function renderTorusAttractor(container) {
-        container.innerHTML = '<div id="attractor-plotly" style="width:100%;height:480px;border-radius:10px;"></div>';
-        const div = document.getElementById('attractor-plotly');
+    function renderTorusOrbits(container) {
+        container.innerHTML = '<div id="attractor-canvas-wrap" style="position:relative;width:100%;height:480px;"><canvas id="attractor-canvas" style="width:100%;height:100%;display:block;border-radius:10px;"></canvas></div>';
+        const canvas = document.getElementById('attractor-canvas');
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        const W = rect.width, H = rect.height;
+        const cx = W / 2, cy = H / 2;
 
-        // Generate torus
-        const R = 3, r = 1;
-        const uSteps = 60, vSteps = 30;
-        const xData = [], yData = [], zData = [];
-        for (let i = 0; i <= uSteps; i++) {
-            const xRow = [], yRow = [], zRow = [];
-            const u = (i / uSteps) * 2 * Math.PI;
-            for (let j = 0; j <= vSteps; j++) {
-                const v = (j / vSteps) * 2 * Math.PI;
-                xRow.push((R + r * Math.cos(v)) * Math.cos(u));
-                yRow.push((R + r * Math.cos(v)) * Math.sin(u));
-                zRow.push(r * Math.sin(v));
+        const earthOrbitR = 160;
+        const moonOrbitR = 40;
+        const earthSpeed = 0.008;
+        const moonSpeed = 0.05;
+
+        let earthAngle = 0;
+        let moonAngle = 0;
+        let earthTrail = [];
+        let moonTrail = [];
+
+        animationRunning = true;
+
+        function draw() {
+            if (!animationRunning) return;
+
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#0a0a2a';
+            ctx.fillRect(0, 0, W, H);
+
+            // Stars
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            for (let i = 0; i < 80; i++) {
+                const sx = ((i * 137.5) % W);
+                const sy = ((i * 97.3 + 50) % H);
+                ctx.fillRect(sx, sy, 1, 1);
             }
-            xData.push(xRow);
-            yData.push(yRow);
-            zData.push(zRow);
-        }
 
-        // Trajectory on torus
-        const trajX = [], trajY = [], trajZ = [];
-        for (let t = 0; t < 500; t++) {
-            const u = t * 0.05;
-            const v = t * 0.13;
-            trajX.push((R + r * Math.cos(v)) * Math.cos(u));
-            trajY.push((R + r * Math.cos(v)) * Math.sin(u));
-            trajZ.push(r * Math.sin(v));
-        }
+            // Earth orbit path
+            ctx.beginPath();
+            ctx.arc(cx, cy, earthOrbitR, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(100,180,255,0.2)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
 
-        const traces = [
-            {
-                type: 'surface',
-                x: xData, y: yData, z: zData,
-                opacity: 0.3,
-                colorscale: [[0, '#bfdbfe'], [1, '#3b82f6']],
-                showscale: false,
-                hoverinfo: 'skip'
-            },
-            {
-                type: 'scatter3d',
-                mode: 'lines',
-                x: trajX, y: trajY, z: trajZ,
-                line: { color: '#ef4444', width: 4 },
-                name: 'Bahn auf dem Torus',
-                hoverinfo: 'skip'
+            // Earth position
+            earthAngle += earthSpeed;
+            const earthX = cx + Math.cos(earthAngle) * earthOrbitR;
+            const earthY = cy + Math.sin(earthAngle) * earthOrbitR * 0.4; // perspective
+
+            // Moon orbit path around earth
+            ctx.beginPath();
+            ctx.arc(earthX, earthY, moonOrbitR, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(200,200,200,0.15)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Moon position
+            moonAngle += moonSpeed;
+            const moonX = earthX + Math.cos(moonAngle) * moonOrbitR;
+            const moonY = earthY + Math.sin(moonAngle) * moonOrbitR * 0.6;
+
+            // Trails
+            earthTrail.push({ x: earthX, y: earthY });
+            if (earthTrail.length > 300) earthTrail.shift();
+            moonTrail.push({ x: moonX, y: moonY });
+            if (moonTrail.length > 300) moonTrail.shift();
+
+            // Draw earth trail
+            if (earthTrail.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(earthTrail[0].x, earthTrail[0].y);
+                for (let i = 1; i < earthTrail.length; i++) {
+                    ctx.lineTo(earthTrail[i].x, earthTrail[i].y);
+                }
+                ctx.strokeStyle = 'rgba(100,180,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
             }
-        ];
 
-        const layout = {
-            margin: { l: 0, r: 0, b: 0, t: 30 },
-            title: { text: 'Torus-Attraktor (periodische Bahn)', font: { size: 14, family: 'system-ui' } },
-            scene: {
-                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
-                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
-                zaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
-                camera: { eye: { x: 1.8, y: 1.2, z: 0.8 } },
-                bgcolor: '#fafafa'
-            },
-            paper_bgcolor: '#fafafa',
-            showlegend: false
-        };
+            // Draw moon trail (this is the torus shape!)
+            if (moonTrail.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(moonTrail[0].x, moonTrail[0].y);
+                for (let i = 1; i < moonTrail.length; i++) {
+                    ctx.lineTo(moonTrail[i].x, moonTrail[i].y);
+                }
+                ctx.strokeStyle = 'rgba(220,220,220,0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
 
-        Plotly.newPlot(div, traces, layout, { displayModeBar: false, responsive: true });
+            // Sun
+            const sunGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
+            sunGrad.addColorStop(0, '#ffdd00');
+            sunGrad.addColorStop(0.6, '#ff9900');
+            sunGrad.addColorStop(1, 'rgba(255,150,0,0)');
+            ctx.fillStyle = sunGrad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.font = '24px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('☀️', cx, cy);
+
+            // Earth
+            ctx.font = '20px serif';
+            ctx.fillText('🌍', earthX, earthY);
+
+            // Moon
+            ctx.font = '14px serif';
+            ctx.fillText('🌙', moonX, moonY);
+
+            // Labels
+            ctx.font = 'bold 12px system-ui';
+            ctx.fillStyle = '#ffdd00';
+            ctx.textAlign = 'center';
+            ctx.fillText('Sonne (Zentrum)', cx, cy + 40);
+            ctx.fillStyle = '#64b5f6';
+            ctx.fillText('Erde (Kreis 1)', earthX, earthY + 22);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText('Mond (Kreis um Kreis = Torus)', moonX, moonY + 18);
+
+            // Explanation
+            ctx.font = '13px system-ui';
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.textAlign = 'center';
+            ctx.fillText('Die Bahn des Mondes ist ein Kreis um einen Kreis → Torus-Attraktor', cx, H - 30);
+
+            activeAnimation = requestAnimationFrame(draw);
+        }
+        draw();
     }
 
     // ============================================================
-    // STEP 2: Lorenz-Attraktor (Plotly 3D)
+    // STEP 2: Lorenz-Attraktor mit animierten Punkten
     // ============================================================
-    function renderLorenzAttractor(container) {
-        container.innerHTML = '<div id="attractor-plotly" style="width:100%;height:480px;border-radius:10px;"></div>';
-        const div = document.getElementById('attractor-plotly');
-
-        // Integrate Lorenz system
-        const sigma = 10, rho = 28, beta = 8 / 3;
-        const dt = 0.005;
-        const steps = 10000;
-        let x = 1, y = 1, z = 1;
-        const xs = [], ys = [], zs = [];
-
-        for (let i = 0; i < steps; i++) {
-            const dx = sigma * (y - x);
-            const dy = x * (rho - z) - y;
-            const dz = x * y - beta * z;
-            x += dx * dt;
-            y += dy * dt;
-            z += dz * dt;
-            xs.push(x);
-            ys.push(y);
-            zs.push(z);
-        }
-
-        // Color by time
-        const colors = xs.map((_, i) => i);
-
-        const trace = {
-            type: 'scatter3d',
-            mode: 'lines',
-            x: xs, y: ys, z: zs,
-            line: { color: colors, colorscale: 'Portland', width: 2 },
-            hoverinfo: 'skip'
-        };
-
-        const layout = {
-            margin: { l: 0, r: 0, b: 0, t: 30 },
-            title: { text: 'Lorenz-Attraktor (chaotisches System)', font: { size: 14, family: 'system-ui' } },
-            scene: {
-                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
-                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
-                zaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
-                camera: { eye: { x: 1.5, y: 1.5, z: 1.0 } },
-                bgcolor: '#fafafa'
-            },
-            paper_bgcolor: '#fafafa',
-            showlegend: false
-        };
-
-        Plotly.newPlot(div, [trace], layout, { displayModeBar: false, responsive: true });
-    }
-
-    // ============================================================
-    // STEP 3: Überlappende Attraktorbecken (Canvas, animiert)
-    // ============================================================
-    function renderBasinsOverlapping(container) {
+    function renderLorenzAnimated(container) {
         container.innerHTML = '<div id="attractor-canvas-wrap" style="position:relative;width:100%;height:480px;"><canvas id="attractor-canvas" style="width:100%;height:100%;display:block;border-radius:10px;"></canvas></div>';
         const canvas = document.getElementById('attractor-canvas');
         const rect = canvas.parentElement.getBoundingClientRect();
@@ -323,189 +383,231 @@ const AttractorViz = (() => {
         ctx.scale(dpr, dpr);
         const W = rect.width, H = rect.height;
 
-        // Three attractors with overlapping basins
-        const attractors = [
-            { x: W * 0.25, y: H * 0.5, color: '#3b82f6', label: 'Berlin', radius: 160 },
-            { x: W * 0.55, y: H * 0.35, color: '#10b981', label: 'Paris', radius: 170 },
-            { x: W * 0.75, y: H * 0.6, color: '#f59e0b', label: 'Madrid', radius: 150 }
-        ];
+        const sigma = 10, rho = 28, beta = 8 / 3;
+        const dt = 0.005;
 
-        // Particles
-        const numParticles = 60;
+        // Pre-compute full path for background
+        let bgPath = [];
+        {
+            let x = 1, y = 1, z = 1;
+            for (let i = 0; i < 8000; i++) {
+                const dx = sigma * (y - x);
+                const dy = x * (rho - z) - y;
+                const dz = x * y - beta * z;
+                x += dx * dt; y += dy * dt; z += dz * dt;
+                bgPath.push({ x, y, z });
+            }
+        }
+
+        // Multiple animated particles
+        const numParticles = 5;
         let particles = [];
         for (let i = 0; i < numParticles; i++) {
-            const px = Math.random() * W;
-            const py = Math.random() * H;
-            // Find nearest attractor
-            let nearest = attractors[0];
-            let minDist = Infinity;
-            attractors.forEach(a => {
-                const d = Math.sqrt((px - a.x) ** 2 + (py - a.y) ** 2);
-                if (d < minDist) { minDist = d; nearest = a; }
-            });
             particles.push({
-                x: px, y: py,
-                target: nearest,
+                x: 1 + (Math.random() - 0.5) * 2,
+                y: 1 + (Math.random() - 0.5) * 2,
+                z: 1 + (Math.random() - 0.5) * 2,
                 trail: [],
-                speed: 0.015 + Math.random() * 0.01
+                color: `hsl(${i * 72}, 80%, 55%)`
             });
         }
 
+        const scale = 5.5;
+        const offsetX = W / 2;
+        const offsetY = H * 0.75;
+
+        function project(x, y, z) {
+            return {
+                px: offsetX + x * scale,
+                py: offsetY - z * scale * 0.55
+            };
+        }
+
+        animationRunning = true;
+        let frame = 0;
+
         function draw() {
+            if (!animationRunning) return;
+            frame++;
+
             ctx.clearRect(0, 0, W, H);
             ctx.fillStyle = '#fafafa';
             ctx.fillRect(0, 0, W, H);
 
-            // Draw basins (overlapping circles)
-            attractors.forEach(a => {
-                const grad = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.radius);
-                grad.addColorStop(0, a.color + '25');
-                grad.addColorStop(0.7, a.color + '10');
-                grad.addColorStop(1, a.color + '00');
-                ctx.fillStyle = grad;
-                ctx.beginPath();
-                ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
-                ctx.fill();
+            // Draw background path (faint)
+            ctx.beginPath();
+            const p0 = project(bgPath[0].x, bgPath[0].y, bgPath[0].z);
+            ctx.moveTo(p0.px, p0.py);
+            for (let i = 1; i < bgPath.length; i += 2) {
+                const p = project(bgPath[i].x, bgPath[i].y, bgPath[i].z);
+                ctx.lineTo(p.px, p.py);
+            }
+            ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
-                // Basin border
-                ctx.beginPath();
-                ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = a.color + '40';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([6, 4]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            });
+            // Advance and draw particles
+            particles.forEach(part => {
+                // Integrate 4 steps per frame for speed
+                for (let s = 0; s < 4; s++) {
+                    const dx = sigma * (part.y - part.x);
+                    const dy = part.x * (rho - part.z) - part.y;
+                    const dz = part.x * part.y - beta * part.z;
+                    part.x += dx * dt;
+                    part.y += dy * dt;
+                    part.z += dz * dt;
+                }
 
-            // Overlap region highlight
-            ctx.font = '11px system-ui';
-            ctx.fillStyle = '#64748b';
-            ctx.textAlign = 'center';
-            ctx.fillText('Überlappende Einzugsbereiche', W * 0.42, H * 0.12);
+                const pp = project(part.x, part.y, part.z);
+                part.trail.push({ px: pp.px, py: pp.py });
+                if (part.trail.length > 200) part.trail.shift();
 
-            // Attractor points
-            attractors.forEach(a => {
+                // Draw trail
+                if (part.trail.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(part.trail[0].px, part.trail[0].py);
+                    for (let i = 1; i < part.trail.length; i++) {
+                        ctx.lineTo(part.trail[i].px, part.trail[i].py);
+                    }
+                    ctx.strokeStyle = part.color;
+                    ctx.lineWidth = 2;
+                    ctx.globalAlpha = 0.6;
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
+                }
+
+                // Draw particle head
                 ctx.beginPath();
-                ctx.arc(a.x, a.y, 10, 0, Math.PI * 2);
-                ctx.fillStyle = a.color;
+                ctx.arc(pp.px, pp.py, 5, 0, Math.PI * 2);
+                ctx.fillStyle = part.color;
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 2;
                 ctx.stroke();
-
-                ctx.font = 'bold 13px system-ui';
-                ctx.fillStyle = a.color;
-                ctx.textAlign = 'center';
-                ctx.fillText(a.label, a.x, a.y + 26);
             });
 
-            // Animate particles
-            let allArrived = true;
-            particles.forEach(p => {
-                const dx = p.target.x - p.x;
-                const dy = p.target.y - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist > 3) {
-                    allArrived = false;
-                    p.x += dx * p.speed;
-                    p.y += dy * p.speed;
-                }
-                p.trail.push({ x: p.x, y: p.y });
-                if (p.trail.length > 40) p.trail.shift();
+            // Title
+            ctx.font = 'bold 14px system-ui';
+            ctx.fillStyle = '#334155';
+            ctx.textAlign = 'center';
+            ctx.fillText('Lorenz-Attraktor – 5 Punkte auf chaotischen Bahnen', W / 2, 24);
 
-                // Trail
-                if (p.trail.length > 1) {
-                    ctx.beginPath();
-                    ctx.moveTo(p.trail[0].x, p.trail[0].y);
-                    for (let i = 1; i < p.trail.length; i++) {
-                        ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                    }
-                    ctx.strokeStyle = p.target.color + '30';
-                    ctx.lineWidth = 1.5;
-                    ctx.stroke();
-                }
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-                ctx.fillStyle = p.target.color + 'aa';
-                ctx.fill();
-            });
-
-            if (!allArrived) {
-                activeAnimation = requestAnimationFrame(draw);
-            }
+            activeAnimation = requestAnimationFrame(draw);
         }
         draw();
     }
 
     // ============================================================
-    // STEP 4: Mehrdimensionale Becken (Plotly 3D, animierte Partikel)
+    // STEP 3: 3D Attraktorbecken mit spiralförmigen Bahnen
     // ============================================================
-    function renderMultiDimBasins(container) {
+    function renderBasins3D(container) {
         container.innerHTML = '<div id="attractor-plotly" style="width:100%;height:480px;border-radius:10px;"></div>';
         const div = document.getElementById('attractor-plotly');
 
-        // 3D basins: multiple attractors in 3D space
-        const attractors3D = [
-            { x: 2, y: 2, z: 2, label: 'Attraktor A', color: '#3b82f6' },
-            { x: -2, y: -2, z: 1, label: 'Attraktor B', color: '#10b981' },
-            { x: 2, y: -2, z: -2, label: 'Attraktor C', color: '#f59e0b' },
-            { x: -2, y: 2, z: -1, label: 'Attraktor D', color: '#ef4444' }
+        const attractors = [
+            { x: 3, y: 3, z: 2, label: 'Berlin', color: '#3b82f6' },
+            { x: -2, y: 2, z: -1, label: 'Paris', color: '#10b981' },
+            { x: 1, y: -3, z: 1, label: 'Madrid', color: '#f59e0b' }
         ];
 
-        // Generate particle trajectories toward attractors
         const traces = [];
 
         // Attractor points
         traces.push({
             type: 'scatter3d',
             mode: 'markers+text',
-            x: attractors3D.map(a => a.x),
-            y: attractors3D.map(a => a.y),
-            z: attractors3D.map(a => a.z),
-            text: attractors3D.map(a => a.label),
+            x: attractors.map(a => a.x),
+            y: attractors.map(a => a.y),
+            z: attractors.map(a => a.z),
+            text: attractors.map(a => a.label),
             textposition: 'top center',
-            marker: { size: 10, color: attractors3D.map(a => a.color), symbol: 'diamond' },
+            textfont: { size: 12, color: attractors.map(a => a.color) },
+            marker: { size: 12, color: attractors.map(a => a.color), symbol: 'diamond' },
             hoverinfo: 'text',
-            name: 'Attraktoren'
+            showlegend: false
         });
 
-        // Particle paths
-        const numPaths = 12;
-        attractors3D.forEach(attr => {
-            for (let p = 0; p < numPaths; p++) {
-                const startX = attr.x + (Math.random() - 0.5) * 6;
-                const startY = attr.y + (Math.random() - 0.5) * 6;
-                const startZ = attr.z + (Math.random() - 0.5) * 6;
+        // Generate spiral paths to each attractor
+        const pathsPerAttractor = 8;
+        attractors.forEach(attr => {
+            for (let p = 0; p < pathsPerAttractor; p++) {
+                const startAngle = Math.random() * Math.PI * 2;
+                const startR = 3 + Math.random() * 3;
+                const startZ = attr.z + (Math.random() - 0.5) * 5;
+                const spinDir = Math.random() > 0.5 ? 1 : -1;
+                const spinSpeed = 0.1 + Math.random() * 0.15;
+                const shrink = 0.93 + Math.random() * 0.04;
+
                 const pathX = [], pathY = [], pathZ = [];
-                let px = startX, py = startY, pz = startZ;
-                for (let t = 0; t < 50; t++) {
-                    pathX.push(px);
-                    pathY.push(py);
-                    pathZ.push(pz);
-                    px += (attr.x - px) * 0.06;
-                    py += (attr.y - py) * 0.06;
-                    pz += (attr.z - pz) * 0.06;
+                let angle = startAngle;
+                let r = startR;
+                let z = startZ;
+
+                for (let t = 0; t < 60; t++) {
+                    pathX.push(attr.x + Math.cos(angle) * r);
+                    pathY.push(attr.y + Math.sin(angle) * r);
+                    pathZ.push(z);
+                    angle += spinDir * spinSpeed;
+                    r *= shrink;
+                    z += (attr.z - z) * 0.08;
                 }
+
                 traces.push({
                     type: 'scatter3d',
                     mode: 'lines',
                     x: pathX, y: pathY, z: pathZ,
-                    line: { color: attr.color, width: 2 },
+                    line: { color: attr.color, width: 3 },
                     opacity: 0.5,
+                    hoverinfo: 'skip',
+                    showlegend: false
+                });
+
+                // Endpoint marker (particle)
+                traces.push({
+                    type: 'scatter3d',
+                    mode: 'markers',
+                    x: [pathX[0]],
+                    y: [pathY[0]],
+                    z: [pathZ[0]],
+                    marker: { size: 4, color: attr.color },
                     hoverinfo: 'skip',
                     showlegend: false
                 });
             }
         });
 
+        // Basin spheres (transparent)
+        attractors.forEach(attr => {
+            const u = [], v = [], w = [];
+            for (let i = 0; i <= 20; i++) {
+                const uRow = [], vRow = [], wRow = [];
+                const phi = (i / 20) * Math.PI;
+                for (let j = 0; j <= 20; j++) {
+                    const theta = (j / 20) * 2 * Math.PI;
+                    const R = 3.5;
+                    uRow.push(attr.x + R * Math.sin(phi) * Math.cos(theta));
+                    vRow.push(attr.y + R * Math.sin(phi) * Math.sin(theta));
+                    wRow.push(attr.z + R * Math.cos(phi));
+                }
+                u.push(uRow); v.push(vRow); w.push(wRow);
+            }
+            traces.push({
+                type: 'surface',
+                x: u, y: v, z: w,
+                opacity: 0.07,
+                colorscale: [[0, attr.color], [1, attr.color]],
+                showscale: false,
+                hoverinfo: 'skip'
+            });
+        });
+
         const layout = {
             margin: { l: 0, r: 0, b: 0, t: 30 },
-            title: { text: 'Mehrdimensionale Attraktorbecken', font: { size: 14, family: 'system-ui' } },
+            title: { text: '3D Attraktorbecken mit Spiralbahnen', font: { size: 14, family: 'system-ui' } },
             scene: {
-                xaxis: { title: 'Dim 1', gridcolor: '#f1f5f9' },
-                yaxis: { title: 'Dim 2', gridcolor: '#f1f5f9' },
-                zaxis: { title: 'Dim 3', gridcolor: '#f1f5f9' },
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                zaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
                 camera: { eye: { x: 2.0, y: 1.5, z: 1.2 } },
                 bgcolor: '#fafafa'
             },
@@ -514,12 +616,169 @@ const AttractorViz = (() => {
         };
 
         Plotly.newPlot(div, traces, layout, { displayModeBar: false, responsive: true });
+
+        // Animate camera rotation
+        animationRunning = true;
+        let camAngle = 0;
+        function rotateCamera() {
+            if (!animationRunning) return;
+            camAngle += 0.005;
+            Plotly.relayout(div, {
+                'scene.camera.eye': {
+                    x: 2.2 * Math.cos(camAngle),
+                    y: 2.2 * Math.sin(camAngle),
+                    z: 1.2
+                }
+            });
+            activeAnimation = requestAnimationFrame(rotateCamera);
+        }
+        rotateCamera();
     }
 
     // ============================================================
-    // STEP 5: "Paris" als Attraktor (Canvas, animiert, show don't tell)
+    // STEP 4: Mehrdimensionale Becken – 3 Attraktoren, komplexe Bahnen
     // ============================================================
-    function renderParisAttractor(container) {
+    function renderMultiDimBasins3D(container) {
+        container.innerHTML = '<div id="attractor-plotly" style="width:100%;height:480px;border-radius:10px;"></div>';
+        const div = document.getElementById('attractor-plotly');
+
+        const attractors = [
+            { x: 4, y: 0, z: 0, label: 'Attraktor A', color: '#3b82f6' },
+            { x: -3, y: 3, z: 2, label: 'Attraktor B', color: '#10b981' },
+            { x: 0, y: -4, z: -2, label: 'Attraktor C', color: '#f59e0b' }
+        ];
+
+        const traces = [];
+
+        // Attractor points
+        traces.push({
+            type: 'scatter3d',
+            mode: 'markers+text',
+            x: attractors.map(a => a.x),
+            y: attractors.map(a => a.y),
+            z: attractors.map(a => a.z),
+            text: attractors.map(a => a.label),
+            textposition: 'top center',
+            textfont: { size: 12, color: attractors.map(a => a.color) },
+            marker: { size: 12, color: attractors.map(a => a.color), symbol: 'diamond' },
+            hoverinfo: 'text',
+            showlegend: false
+        });
+
+        // Generate complex spiral paths to each attractor
+        const pathsPerAttractor = 10;
+        attractors.forEach(attr => {
+            for (let p = 0; p < pathsPerAttractor; p++) {
+                const startAngle = Math.random() * Math.PI * 2;
+                const startElev = (Math.random() - 0.5) * Math.PI;
+                const startR = 4 + Math.random() * 3;
+                const spinDir = Math.random() > 0.5 ? 1 : -1;
+                const spinSpeed = 0.12 + Math.random() * 0.18;
+                const elevOscSpeed = 0.08 + Math.random() * 0.1;
+                const shrink = 0.92 + Math.random() * 0.04;
+
+                const pathX = [], pathY = [], pathZ = [];
+                let angle = startAngle;
+                let elev = startElev;
+                let r = startR;
+
+                for (let t = 0; t < 70; t++) {
+                    // Spiral with elevation oscillation for complex 3D paths
+                    pathX.push(attr.x + Math.cos(angle) * Math.cos(elev) * r);
+                    pathY.push(attr.y + Math.sin(angle) * Math.cos(elev) * r);
+                    pathZ.push(attr.z + Math.sin(elev) * r * 0.6);
+                    angle += spinDir * spinSpeed;
+                    elev += Math.sin(t * elevOscSpeed) * 0.05;
+                    r *= shrink;
+                }
+
+                traces.push({
+                    type: 'scatter3d',
+                    mode: 'lines',
+                    x: pathX, y: pathY, z: pathZ,
+                    line: { color: attr.color, width: 3 },
+                    opacity: 0.5,
+                    hoverinfo: 'skip',
+                    showlegend: false
+                });
+
+                // Particle at start of path
+                traces.push({
+                    type: 'scatter3d',
+                    mode: 'markers',
+                    x: [pathX[0]],
+                    y: [pathY[0]],
+                    z: [pathZ[0]],
+                    marker: { size: 4, color: attr.color },
+                    hoverinfo: 'skip',
+                    showlegend: false
+                });
+            }
+        });
+
+        // Basin spheres (transparent)
+        attractors.forEach(attr => {
+            const u = [], v = [], w = [];
+            for (let i = 0; i <= 16; i++) {
+                const uRow = [], vRow = [], wRow = [];
+                const phi = (i / 16) * Math.PI;
+                for (let j = 0; j <= 16; j++) {
+                    const theta = (j / 16) * 2 * Math.PI;
+                    const R = 4.0;
+                    uRow.push(attr.x + R * Math.sin(phi) * Math.cos(theta));
+                    vRow.push(attr.y + R * Math.sin(phi) * Math.sin(theta));
+                    wRow.push(attr.z + R * Math.cos(phi));
+                }
+                u.push(uRow); v.push(vRow); w.push(wRow);
+            }
+            traces.push({
+                type: 'surface',
+                x: u, y: v, z: w,
+                opacity: 0.06,
+                colorscale: [[0, attr.color], [1, attr.color]],
+                showscale: false,
+                hoverinfo: 'skip'
+            });
+        });
+
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 30 },
+            title: { text: 'Mehrdimensionale Attraktorbecken – komplexe Spiralbahnen', font: { size: 14, family: 'system-ui' } },
+            scene: {
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                zaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                camera: { eye: { x: 2.2, y: 1.8, z: 1.4 } },
+                bgcolor: '#fafafa'
+            },
+            paper_bgcolor: '#fafafa',
+            showlegend: false
+        };
+
+        Plotly.newPlot(div, traces, layout, { displayModeBar: false, responsive: true });
+
+        // Animate camera rotation
+        animationRunning = true;
+        let camAngle = 0;
+        function rotateCamera() {
+            if (!animationRunning) return;
+            camAngle += 0.004;
+            Plotly.relayout(div, {
+                'scene.camera.eye': {
+                    x: 2.5 * Math.cos(camAngle),
+                    y: 2.5 * Math.sin(camAngle),
+                    z: 1.4 + 0.3 * Math.sin(camAngle * 0.7)
+                }
+            });
+            activeAnimation = requestAnimationFrame(rotateCamera);
+        }
+        rotateCamera();
+    }
+
+    // ============================================================
+    // STEP 5: "Paris" – Zwei Becken interagieren, ziehen gemeinsam
+    // ============================================================
+    function renderParisInteractive(container) {
         container.innerHTML = '<div id="attractor-canvas-wrap" style="position:relative;width:100%;height:480px;"><canvas id="attractor-canvas" style="width:100%;height:100%;display:block;border-radius:10px;"></canvas></div>';
         const canvas = document.getElementById('attractor-canvas');
         const rect = canvas.parentElement.getBoundingClientRect();
@@ -530,260 +789,312 @@ const AttractorViz = (() => {
         ctx.scale(dpr, dpr);
         const W = rect.width, H = rect.height;
 
-        // Layout: Two large basins that overlap, Paris at intersection
-        const basinFR = { x: W * 0.35, y: H * 0.5, rx: 200, ry: 180, color: '#3b82f6', label: '"Frankreich"' };
-        const basinHS = { x: W * 0.65, y: H * 0.5, rx: 200, ry: 180, color: '#8b5cf6', label: '"Hauptstadt"' };
-        const parisAttractor = { x: W * 0.5, y: H * 0.48, color: '#ef4444', label: 'Paris' };
+        // Layout: "Die Hauptstadt von Frankreich ist ___"
+        // Two active basins: "Hauptstadt" (left) and "Frankreich" (right)
+        // Both pull toward "Paris" in the center
+        const basinHauptstadt = { x: W * 0.22, y: H * 0.45, rx: 180, ry: 160, color: '#8b5cf6', label: '"Hauptstadt"' };
+        const basinFrankreich = { x: W * 0.78, y: H * 0.45, rx: 180, ry: 160, color: '#3b82f6', label: '"Frankreich"' };
+        const parisTarget = { x: W * 0.5, y: H * 0.52 };
 
-        // Other attractors in basins (not at intersection)
-        const otherAttractors = [
-            { x: W * 0.22, y: H * 0.4, color: '#3b82f6', label: 'Croissant' },
-            { x: W * 0.28, y: H * 0.7, color: '#3b82f6', label: 'Eiffelturm' },
-            { x: W * 0.78, y: H * 0.35, color: '#8b5cf6', label: 'Berlin' },
-            { x: W * 0.8, y: H * 0.65, color: '#8b5cf6', label: 'Tokio' },
+        // Other words in each basin (competitors)
+        const hauptstadtWords = [
+            { x: W * 0.15, y: H * 0.3, label: 'Berlin', strength: 0.3 },
+            { x: W * 0.12, y: H * 0.6, label: 'Tokio', strength: 0.2 },
+            { x: W * 0.28, y: H * 0.7, label: 'London', strength: 0.25 },
+            { x: W * 0.08, y: H * 0.45, label: 'Rom', strength: 0.15 },
+        ];
+        const frankreichWords = [
+            { x: W * 0.85, y: H * 0.3, label: 'Croissant', strength: 0.15 },
+            { x: W * 0.9, y: H * 0.6, label: 'Eiffelturm', strength: 0.2 },
+            { x: W * 0.72, y: H * 0.72, label: 'Lyon', strength: 0.2 },
+            { x: W * 0.88, y: H * 0.45, label: 'Baguette', strength: 0.1 },
         ];
 
-        // Particles that start scattered and converge to Paris (in overlap zone)
-        const numParticles = 35;
+        // Particles: start from the context phrase and get pulled by BOTH basins
+        const numParticles = 50;
         let particles = [];
         for (let i = 0; i < numParticles; i++) {
-            // Start in the overlap region
-            const angle = Math.random() * Math.PI * 2;
-            const r = 80 + Math.random() * 120;
+            // Start from top center (where the "prompt" is)
+            const startX = W * 0.35 + Math.random() * W * 0.3;
+            const startY = H * 0.08 + Math.random() * H * 0.12;
             particles.push({
-                x: parisAttractor.x + Math.cos(angle) * r,
-                y: parisAttractor.y + Math.sin(angle) * r,
+                x: startX,
+                y: startY,
+                vx: 0,
+                vy: 0,
                 trail: [],
-                speed: 0.012 + Math.random() * 0.008,
-                phase: Math.random() * Math.PI * 2
+                phase: Math.random() * Math.PI * 2,
+                arrived: false,
+                alpha: 1
             });
         }
 
-        // Some particles go to other attractors
-        let otherParticles = [];
-        otherAttractors.forEach(attr => {
-            for (let i = 0; i < 6; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const r = 30 + Math.random() * 60;
-                otherParticles.push({
-                    x: attr.x + Math.cos(angle) * r,
-                    y: attr.y + Math.sin(angle) * r,
-                    target: attr,
-                    trail: [],
-                    speed: 0.01 + Math.random() * 0.005
-                });
-            }
-        });
-
+        animationRunning = true;
         let t = 0;
 
         function draw() {
+            if (!animationRunning) return;
             t++;
             ctx.clearRect(0, 0, W, H);
             ctx.fillStyle = '#fafafa';
             ctx.fillRect(0, 0, W, H);
 
-            // Draw basin ellipses
-            // Frankreich basin
+            // Draw prompt text at top
+            ctx.font = 'bold 15px system-ui';
+            ctx.fillStyle = '#334155';
+            ctx.textAlign = 'center';
+            ctx.fillText('"Die Hauptstadt von Frankreich ist ___"', W / 2, 28);
+
+            // Activation indicators
+            const activationPulse = 0.5 + 0.5 * Math.sin(t * 0.04);
+
+            // Draw basin: Hauptstadt
             ctx.save();
             ctx.beginPath();
-            ctx.ellipse(basinFR.x, basinFR.y, basinFR.rx, basinFR.ry, 0, 0, Math.PI * 2);
-            const gradFR = ctx.createRadialGradient(basinFR.x, basinFR.y, 0, basinFR.x, basinFR.y, basinFR.rx);
-            gradFR.addColorStop(0, basinFR.color + '18');
-            gradFR.addColorStop(1, basinFR.color + '05');
-            ctx.fillStyle = gradFR;
+            ctx.ellipse(basinHauptstadt.x, basinHauptstadt.y, basinHauptstadt.rx, basinHauptstadt.ry, 0, 0, Math.PI * 2);
+            const gradH = ctx.createRadialGradient(basinHauptstadt.x, basinHauptstadt.y, 0, basinHauptstadt.x, basinHauptstadt.y, basinHauptstadt.rx);
+            gradH.addColorStop(0, `rgba(139,92,246,${0.12 + 0.06 * activationPulse})`);
+            gradH.addColorStop(1, 'rgba(139,92,246,0.02)');
+            ctx.fillStyle = gradH;
             ctx.fill();
-            ctx.strokeStyle = basinFR.color + '50';
+            ctx.strokeStyle = `rgba(139,92,246,${0.4 + 0.2 * activationPulse})`;
             ctx.lineWidth = 2.5;
             ctx.setLineDash([8, 5]);
             ctx.stroke();
             ctx.setLineDash([]);
             ctx.restore();
 
-            // Hauptstadt basin
+            // Draw basin: Frankreich
             ctx.save();
             ctx.beginPath();
-            ctx.ellipse(basinHS.x, basinHS.y, basinHS.rx, basinHS.ry, 0, 0, Math.PI * 2);
-            const gradHS = ctx.createRadialGradient(basinHS.x, basinHS.y, 0, basinHS.x, basinHS.y, basinHS.rx);
-            gradHS.addColorStop(0, basinHS.color + '18');
-            gradHS.addColorStop(1, basinHS.color + '05');
-            ctx.fillStyle = gradHS;
+            ctx.ellipse(basinFrankreich.x, basinFrankreich.y, basinFrankreich.rx, basinFrankreich.ry, 0, 0, Math.PI * 2);
+            const gradF = ctx.createRadialGradient(basinFrankreich.x, basinFrankreich.y, 0, basinFrankreich.x, basinFrankreich.y, basinFrankreich.rx);
+            gradF.addColorStop(0, `rgba(59,130,246,${0.12 + 0.06 * activationPulse})`);
+            gradF.addColorStop(1, 'rgba(59,130,246,0.02)');
+            ctx.fillStyle = gradF;
             ctx.fill();
-            ctx.strokeStyle = basinHS.color + '50';
+            ctx.strokeStyle = `rgba(59,130,246,${0.4 + 0.2 * activationPulse})`;
             ctx.lineWidth = 2.5;
             ctx.setLineDash([8, 5]);
             ctx.stroke();
             ctx.setLineDash([]);
             ctx.restore();
 
-            // Overlap highlight
+            // Overlap region highlight
             ctx.save();
-            ctx.globalCompositeOperation = 'source-over';
             ctx.beginPath();
-            ctx.ellipse(basinFR.x, basinFR.y, basinFR.rx, basinFR.ry, 0, 0, Math.PI * 2);
+            ctx.ellipse(basinHauptstadt.x, basinHauptstadt.y, basinHauptstadt.rx, basinHauptstadt.ry, 0, 0, Math.PI * 2);
             ctx.clip();
             ctx.beginPath();
-            ctx.ellipse(basinHS.x, basinHS.y, basinHS.rx, basinHS.ry, 0, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.08)';
+            ctx.ellipse(basinFrankreich.x, basinFrankreich.y, basinFrankreich.rx, basinFrankreich.ry, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(239, 68, 68, ${0.06 + 0.04 * activationPulse})`;
             ctx.fill();
             ctx.restore();
 
-            // Basin labels
-            ctx.font = 'bold 16px system-ui';
+            // Basin labels with "AKTIV" indicator
+            ctx.font = 'bold 15px system-ui';
             ctx.textAlign = 'center';
-            ctx.fillStyle = basinFR.color;
-            ctx.fillText(basinFR.label, basinFR.x - 60, H * 0.12);
-            ctx.fillStyle = basinHS.color;
-            ctx.fillText(basinHS.label, basinHS.x + 60, H * 0.12);
-
-            // "Einzugsbereich" labels
+            ctx.fillStyle = basinHauptstadt.color;
+            ctx.fillText(basinHauptstadt.label, basinHauptstadt.x, H * 0.1);
             ctx.font = '11px system-ui';
-            ctx.fillStyle = '#64748b';
-            ctx.fillText('Einzugsbereich', basinFR.x - 60, H * 0.12 + 18);
-            ctx.fillText('Einzugsbereich', basinHS.x + 60, H * 0.12 + 18);
+            ctx.fillStyle = '#10b981';
+            ctx.fillText('⚡ AKTIV', basinHauptstadt.x, H * 0.1 + 16);
 
-            // Other attractors (smaller)
-            otherAttractors.forEach(a => {
+            ctx.font = 'bold 15px system-ui';
+            ctx.fillStyle = basinFrankreich.color;
+            ctx.fillText(basinFrankreich.label, basinFrankreich.x, H * 0.1);
+            ctx.font = '11px system-ui';
+            ctx.fillStyle = '#10b981';
+            ctx.fillText('⚡ AKTIV', basinFrankreich.x, H * 0.1 + 16);
+
+            // Draw competitor words in Hauptstadt basin (faded)
+            hauptstadtWords.forEach(w => {
                 ctx.beginPath();
-                ctx.arc(a.x, a.y, 6, 0, Math.PI * 2);
-                ctx.fillStyle = a.color;
+                ctx.arc(w.x, w.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(139,92,246,0.3)';
                 ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Label
                 ctx.font = '11px system-ui';
-                ctx.fillStyle = a.color;
+                ctx.fillStyle = 'rgba(139,92,246,0.5)';
                 ctx.textAlign = 'center';
-                ctx.fillText(a.label, a.x, a.y + 18);
+                ctx.fillText(w.label, w.x, w.y + 16);
             });
 
-            // Animate other particles to their attractors
-            otherParticles.forEach(p => {
-                const dx = p.target.x - p.x;
-                const dy = p.target.y - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist > 2) {
-                    p.x += dx * p.speed;
-                    p.y += dy * p.speed;
-                }
-                p.trail.push({ x: p.x, y: p.y });
-                if (p.trail.length > 30) p.trail.shift();
-
-                if (p.trail.length > 1) {
-                    ctx.beginPath();
-                    ctx.moveTo(p.trail[0].x, p.trail[0].y);
-                    for (let i = 1; i < p.trail.length; i++) {
-                        ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                    }
-                    ctx.strokeStyle = p.target.color + '25';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-
+            // Draw competitor words in Frankreich basin (faded)
+            frankreichWords.forEach(w => {
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-                ctx.fillStyle = p.target.color + '80';
+                ctx.arc(w.x, w.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(59,130,246,0.3)';
                 ctx.fill();
+                ctx.font = '11px system-ui';
+                ctx.fillStyle = 'rgba(59,130,246,0.5)';
+                ctx.textAlign = 'center';
+                ctx.fillText(w.label, w.x, w.y + 16);
             });
 
-            // Paris attractor (big, pulsing)
-            const pulse = 1 + 0.08 * Math.sin(t * 0.08);
+            // Paris attractor (pulsing, in overlap)
+            const pulse = 1 + 0.1 * Math.sin(t * 0.06);
             ctx.beginPath();
-            ctx.arc(parisAttractor.x, parisAttractor.y, 14 * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = parisAttractor.color;
+            ctx.arc(parisTarget.x, parisTarget.y, 16 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = '#ef4444';
             ctx.fill();
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 3;
             ctx.stroke();
 
-            // Glow around Paris
-            const glowGrad = ctx.createRadialGradient(parisAttractor.x, parisAttractor.y, 10, parisAttractor.x, parisAttractor.y, 50);
-            glowGrad.addColorStop(0, 'rgba(239, 68, 68, 0.15)');
+            // Glow
+            const glowGrad = ctx.createRadialGradient(parisTarget.x, parisTarget.y, 12, parisTarget.x, parisTarget.y, 60);
+            glowGrad.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
             glowGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
             ctx.fillStyle = glowGrad;
             ctx.beginPath();
-            ctx.arc(parisAttractor.x, parisAttractor.y, 50, 0, Math.PI * 2);
+            ctx.arc(parisTarget.x, parisTarget.y, 60, 0, Math.PI * 2);
             ctx.fill();
 
-            // Paris label
             ctx.font = 'bold 18px system-ui';
-            ctx.fillStyle = parisAttractor.color;
+            ctx.fillStyle = '#ef4444';
             ctx.textAlign = 'center';
-            ctx.fillText('Paris', parisAttractor.x, parisAttractor.y + 34);
-
+            ctx.fillText('Paris', parisTarget.x, parisTarget.y + 36);
             ctx.font = '11px system-ui';
             ctx.fillStyle = '#64748b';
-            ctx.fillText('Attraktor im Überlappungsbereich', parisAttractor.x, parisAttractor.y + 52);
+            ctx.fillText('Attraktor im Schnittbereich', parisTarget.x, parisTarget.y + 52);
 
-            // Animate main particles toward Paris
-            let allArrived = true;
-            particles.forEach(p => {
-                const dx = parisAttractor.x - p.x;
-                const dy = parisAttractor.y - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+            // Force arrows from both basins toward Paris (showing the "pull")
+            if (t > 20) {
+                const arrowAlpha = Math.min(0.7, (t - 20) / 50);
+                ctx.globalAlpha = arrowAlpha;
 
-                if (dist > 3) {
-                    allArrived = false;
-                    // Spiral inward slightly
-                    const angle = Math.atan2(dy, dx) + 0.3 * Math.sin(p.phase + t * 0.02);
-                    const pullStrength = p.speed * (1 + 0.5 * (1 - dist / 200));
-                    p.x += Math.cos(angle) * dist * pullStrength;
-                    p.y += Math.sin(angle) * dist * pullStrength;
+                // Animated dashes
+                const dashOffset = t * 0.5;
+
+                // Arrow from Hauptstadt basin center toward Paris
+                ctx.beginPath();
+                ctx.moveTo(basinHauptstadt.x + 40, basinHauptstadt.y);
+                ctx.quadraticCurveTo(W * 0.35, H * 0.42, parisTarget.x - 25, parisTarget.y - 10);
+                ctx.strokeStyle = basinHauptstadt.color;
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 6]);
+                ctx.lineDashOffset = -dashOffset;
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.lineDashOffset = 0;
+
+                // Arrowhead
+                ctx.beginPath();
+                ctx.moveTo(parisTarget.x - 25, parisTarget.y - 10);
+                ctx.lineTo(parisTarget.x - 35, parisTarget.y - 18);
+                ctx.lineTo(parisTarget.x - 30, parisTarget.y - 4);
+                ctx.fillStyle = basinHauptstadt.color;
+                ctx.fill();
+
+                // Arrow from Frankreich basin center toward Paris
+                ctx.beginPath();
+                ctx.moveTo(basinFrankreich.x - 40, basinFrankreich.y);
+                ctx.quadraticCurveTo(W * 0.65, H * 0.42, parisTarget.x + 25, parisTarget.y - 10);
+                ctx.strokeStyle = basinFrankreich.color;
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 6]);
+                ctx.lineDashOffset = -dashOffset;
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.lineDashOffset = 0;
+
+                // Arrowhead
+                ctx.beginPath();
+                ctx.moveTo(parisTarget.x + 25, parisTarget.y - 10);
+                ctx.lineTo(parisTarget.x + 35, parisTarget.y - 18);
+                ctx.lineTo(parisTarget.x + 30, parisTarget.y - 4);
+                ctx.fillStyle = basinFrankreich.color;
+                ctx.fill();
+
+                // Labels on arrows
+                ctx.font = 'bold 11px system-ui';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = basinHauptstadt.color;
+                ctx.fillText('zieht →', W * 0.33, H * 0.36);
+                ctx.fillStyle = basinFrankreich.color;
+                ctx.fillText('← zieht', W * 0.67, H * 0.36);
+
+                ctx.globalAlpha = 1;
+            }
+
+            // Animate particles: pulled by BOTH basins toward Paris
+            particles.forEach((p, idx) => {
+                if (p.arrived) {
+                    p.alpha -= 0.008;
+                    if (p.alpha <= 0) {
+                        // Respawn
+                        p.x = W * 0.35 + Math.random() * W * 0.3;
+                        p.y = H * 0.08 + Math.random() * H * 0.12;
+                        p.vx = 0;
+                        p.vy = 0;
+                        p.trail = [];
+                        p.arrived = false;
+                        p.alpha = 1;
+                    }
+                    return;
                 }
-                p.trail.push({ x: p.x, y: p.y });
-                if (p.trail.length > 50) p.trail.shift();
 
-                // Trail
+                // Force from Hauptstadt basin toward Paris
+                const dxH = parisTarget.x - p.x;
+                const dyH = parisTarget.y - p.y;
+                const distH = Math.sqrt(dxH * dxH + dyH * dyH);
+
+                // Force from Frankreich basin toward Paris
+                const dxF = parisTarget.x - p.x;
+                const dyF = parisTarget.y - p.y;
+
+                // Combined pull with spiral component
+                const spiralAngle = Math.atan2(dyH, dxH) + 0.4 * Math.sin(p.phase + t * 0.015);
+                const pullStrength = 0.0004 * (1 + 200 / (distH + 50));
+
+                p.vx += Math.cos(spiralAngle) * distH * pullStrength;
+                p.vy += Math.sin(spiralAngle) * distH * pullStrength;
+
+                // Damping
+                p.vx *= 0.96;
+                p.vy *= 0.96;
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                p.trail.push({ x: p.x, y: p.y });
+                if (p.trail.length > 60) p.trail.shift();
+
+                if (distH < 18) {
+                    p.arrived = true;
+                }
+
+                // Draw trail
                 if (p.trail.length > 1) {
                     ctx.beginPath();
                     ctx.moveTo(p.trail[0].x, p.trail[0].y);
                     for (let i = 1; i < p.trail.length; i++) {
                         ctx.lineTo(p.trail[i].x, p.trail[i].y);
                     }
-                    ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
+                    // Color gradient: purple near Hauptstadt side, blue near Frankreich side
+                    const xRatio = (p.x - W * 0.2) / (W * 0.6);
+                    const r = Math.round(139 * (1 - xRatio) + 59 * xRatio);
+                    const g = Math.round(92 * (1 - xRatio) + 130 * xRatio);
+                    const b = Math.round(246);
+                    ctx.strokeStyle = `rgba(${r},${g},${b},${0.25 * p.alpha})`;
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
                 }
 
+                // Draw particle
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
-                ctx.fillStyle = '#ef4444cc';
+                ctx.fillStyle = `rgba(239,68,68,${0.7 * p.alpha})`;
                 ctx.fill();
             });
 
-            // "Kontext"-Pfeile von Basins to Paris
-            if (t > 30) {
-                const arrowAlpha = Math.min(0.6, (t - 30) / 60);
-                ctx.globalAlpha = arrowAlpha;
+            // Explanation text at bottom
+            ctx.font = '12px system-ui';
+            ctx.fillStyle = '#64748b';
+            ctx.textAlign = 'center';
+            ctx.fillText('Beide Kontexte ("Hauptstadt" + "Frankreich") sind gleichzeitig aktiv und ziehen den Zustand zu "Paris"', W / 2, H - 16);
 
-                // Arrow from "Frankreich" label area toward Paris
-                ctx.beginPath();
-                ctx.moveTo(basinFR.x - 60, H * 0.18);
-                ctx.quadraticCurveTo(basinFR.x, H * 0.3, parisAttractor.x - 20, parisAttractor.y - 20);
-                ctx.strokeStyle = basinFR.color;
-                ctx.lineWidth = 2.5;
-                ctx.setLineDash([6, 4]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-
-                // Arrow from "Hauptstadt" label area toward Paris
-                ctx.beginPath();
-                ctx.moveTo(basinHS.x + 60, H * 0.18);
-                ctx.quadraticCurveTo(basinHS.x, H * 0.3, parisAttractor.x + 20, parisAttractor.y - 20);
-                ctx.strokeStyle = basinHS.color;
-                ctx.lineWidth = 2.5;
-                ctx.setLineDash([6, 4]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-
-                ctx.globalAlpha = 1;
-            }
-
-            if (!allArrived || t < 200) {
-                activeAnimation = requestAnimationFrame(draw);
-            }
+            activeAnimation = requestAnimationFrame(draw);
         }
         draw();
     }
