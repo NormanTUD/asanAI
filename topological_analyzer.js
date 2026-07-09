@@ -1624,3 +1624,7 @@ var TopologicalAnalyzer = (function () {
 	return TopologicalAnalyzer;
 
 })();
+
+function create_topological_analyzer () {
+	TopologicalAnalyzer.init("topological_data_analysis");
+}
