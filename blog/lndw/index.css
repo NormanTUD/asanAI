@@ -601,3 +601,22 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	padding-left: 5px;
 	padding-right: 5px;
 }
+
+.attr-indicator {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.attr-indicator.active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}

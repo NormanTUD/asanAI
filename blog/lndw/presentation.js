@@ -124,6 +124,15 @@ const Presentation = (() => {
             }
         }
 
+	// *** NEU: AttractorViz reset ***
+        if (typeof AttractorViz !== 'undefined') {
+            if (slides[currentSlide].getAttribute('data-title') === 'Attraktoren') {
+                AttractorViz.init();
+            } else {
+                AttractorViz.reset();
+            }
+        }
+
         updateUI();
         closeOverview();
         triggerSlideInit(currentSlide);
@@ -219,6 +228,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
                 CRSim.next();
             }
+            else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoNext()) {
+                AttractorViz.next();
+            }
             else {
                 Presentation.next();
             }
@@ -251,6 +263,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
                 CRSim.prev();
             }
+            else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoPrev()) {
+                AttractorViz.prev();
+            }
             else {
                 Presentation.prev();
             }
@@ -281,6 +296,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
                 CRSim.prev();
             }
+            else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoPrev()) {
+                AttractorViz.prev();
+            }
             else {
                 Presentation.prev();
             }
@@ -310,6 +328,9 @@ document.addEventListener('keydown', (e) => {
             }
             else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
                 CRSim.next();
+            }
+            else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoNext()) {
+                AttractorViz.next();
             }
             else {
                 Presentation.next();
@@ -363,6 +384,8 @@ document.addEventListener('touchend', (e) => {
                 PredictionViz.next();
             } else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
                 CRSim.next();
+            } else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoNext()) {
+                AttractorViz.next();
             } else {
                 Presentation.next();
             }
@@ -378,6 +401,8 @@ document.addEventListener('touchend', (e) => {
                 PredictionViz.prev();
             } else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
                 CRSim.prev();
+            } else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoPrev()) {
+                AttractorViz.prev();
             } else {
                 Presentation.prev();
             }

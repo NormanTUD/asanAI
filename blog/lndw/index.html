@@ -576,33 +576,28 @@
     </div>
 </div>
 
-<!-- ==================== FOLIE: Wie wird Wissen gespeichert? ==================== -->
-<div class="slide" data-title="Wissen im Netz">
+<!-- ==================== FOLIE: Attraktoren ==================== -->
+<div class="slide" data-title="Attraktoren">
     <div class="slide-content">
-        <h2>Wie "weiß” das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
-	<p>Es gibt <b>keine Tabelle</b> und <b>keine Zelle</b> mit diesem Fakt. Das Wissen steckt <b>verteilt</b> in den Gewichten.</p>
-        <div class="fragment demo-box" style="min-height:auto; padding:20px;">
+        <h2>Wie "weiß" das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
+        <p>Nicht als Tabelle, sondern als <b>Attraktor</b>: ein stabiler Zustand, in den das System unweigerlich hineingezogen wird.</p>
 
-            <!-- Step Indicator (updates automatically) -->
-            <div id="knowledge-step-indicator" style="display:flex; gap:8px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;">
-                <span class="know-indicator active" data-step="0">1. Embedding-Richtung</span>
-                <span class="know-indicator" data-step="1">2. Attention sammelt Kontext</span>
-                <span class="know-indicator" data-step="2">3. FFN-Neuronen werden stark aktiviert</span>
-                <span class="know-indicator" data-step="3">4. Gesamtbild</span>
+        <div class="demo-box" style="min-height:auto; padding:20px;">
+            <!-- Step Indicators -->
+            <div style="display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;">
+                <span class="attr-indicator active" data-step="0">1. Punkt-Attraktor</span>
+                <span class="attr-indicator" data-step="1">2. Torus</span>
+                <span class="attr-indicator" data-step="2">3. Lorenz</span>
+                <span class="attr-indicator" data-step="3">4. Becken</span>
+                <span class="attr-indicator" data-step="4">5. Mehrdimensional</span>
+                <span class="attr-indicator" data-step="5">6. "Paris"</span>
             </div>
 
             <!-- Visualization Container -->
-            <div id="knowledge-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto;">
-                <canvas id="knowledge-canvas" style="width:100%; height:480px; display:block; border-radius:10px; border:1px solid #e2e8f0; background:#fafafa;"></canvas>
-            </div>
+            <div id="attractor-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto; min-height:480px;"></div>
 
-            <!-- Explanation -->
-            <div id="knowledge-explanation" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
-
-		<!-- Hidden fragments that trigger step changes -->
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="1" style="display:none;"></div>
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="2" style="display:none;"></div>
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="3" style="display:none;"></div>
+            <!-- Caption -->
+            <div id="attractor-caption" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
         </div>
     </div>
 </div>
@@ -1301,7 +1296,7 @@
 <script src="philosophy.js"></script>
 <script src="presentation.js"></script>
 <script src="attention_slides.js"></script>
-<script src="knowledge.js"></script>
+<script src="attractors.js"></script>
 <script src="chinese_room.js"></script>
 <script src="interpolation_viz.js"></script>
 
