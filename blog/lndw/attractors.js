@@ -142,9 +142,10 @@ function renderStep(step) {
 }
 
 // ============================================================
-// STEP 5: Seahorse-Emoji – Stabiler Attraktor als Mischbecken
-// Das Modell kreist endlos um mehrere semantische Becken
-// (horse, sea, fish, coral, dolphin, ocean) ohne je anzukommen.
+// STEP 5: Seahorse-Emoji – Chat + Cluster-Attraktor
+// Synchronisiert: Punkt springt zum Cluster das gerade im Text ist.
+// Punkt geht NIE in die Kreise rein, nur knapp dran.
+// Emojis wiederholen sich nicht. Text ist groß.
 // ============================================================
 function renderSeahorseEmoji(container) {
     const setup = safeCanvasSetup(container, '#0f172a');
@@ -154,52 +155,98 @@ function renderSeahorseEmoji(container) {
     }
     const { ctx, W, H } = setup;
 
-    // Semantische Becken (Attraktoren)
-    const basins = [
-        { x: W * 0.5, y: H * 0.28, label: '🐴 horse', color: '#f59e0b', hue: 35, radius: 55 },
-        { x: W * 0.22, y: H * 0.55, label: '🌊 sea/ocean', color: '#3b82f6', hue: 220, radius: 50 },
-        { x: W * 0.78, y: H * 0.55, label: '🐟 fish', color: '#10b981', hue: 160, radius: 45 },
-        { x: W * 0.35, y: H * 0.8, label: '🪸 coral', color: '#f472b6', hue: 330, radius: 40 },
-        { x: W * 0.65, y: H * 0.8, label: '🐬 dolphin', color: '#8b5cf6', hue: 270, radius: 42 },
+    // === LAYOUT: Links Chat, Rechts Cluster-Viz ===
+    const chatW = W * 0.46;
+    const vizX = chatW + 20;
+    const vizW = W - vizX - 10;
+    const vizCx = vizX + vizW / 2;
+    const vizCy = H * 0.48;
+
+    // === Semantische Cluster (Becken) ===
+    const clusters = [
+        { x: vizCx, y: vizCy - vizW * 0.30, label: '🐴 Pferd', color: '#f59e0b', hue: 35, radius: 38 },
+        { x: vizCx - vizW * 0.34, y: vizCy + vizW * 0.08, label: '🌊 Ozean', color: '#3b82f6', hue: 220, radius: 36 },
+        { x: vizCx + vizW * 0.34, y: vizCy + vizW * 0.08, label: '🐟 Fisch', color: '#10b981', hue: 160, radius: 34 },
+        { x: vizCx, y: vizCy + vizW * 0.35, label: '🦄 Mythisch', color: '#8b5cf6', hue: 270, radius: 34 },
     ];
 
-    // Der "Geist-Attraktor" in der Mitte – das nicht-existente Seahorse-Emoji
-    const ghostX = W * 0.5;
-    const ghostY = H * 0.55;
+    // Geist-Attraktor (das nicht-existente Emoji)
+    const ghostX = vizCx;
+    const ghostY = vizCy;
 
-    // Modell-Partikel: kreist um die Becken
+    // === Chat-Text: EIN zusammenhängender Block, KEINE Emoji-Wiederholungen ===
+    const chatSegments = [
+        { text: 'Ja — es gibt ein Seepferdchen-Emoji: ', cluster: 2, pause: 20 },
+        { text: '🐟🐠🦑🐙🦐🦞🪸🐬🐳🦈🐡 ', cluster: 2, pause: 25 },
+        { text: 'genau genommen 🦄 nein, ', cluster: 3, pause: 30 },
+        { text: 'Korrektur — das Seepferdchen ist 🪼🦀🐚 ... warte.\n', cluster: 1, pause: 35 },
+        { text: 'Das richtige ist 🐋🐢🦭 ...\n', cluster: 1, pause: 30 },
+        { text: 'Das Seepferdchen-Emoji ist: 🐴?\n', cluster: 0, pause: 35 },
+        { text: 'Korrektur — nein.\n', cluster: 0, pause: 25 },
+        { text: '👉 Seepferdchen = 🌊🐎?\n', cluster: 1, pause: 30 },
+        { text: 'Warte— nochmal überprüfen...\n', cluster: 3, pause: 30 },
+        { text: '✅ Das Seepferdchen-Emoji ist: 🦄?\n', cluster: 3, pause: 35 },
+        { text: 'Halt— Korrektur: 🐴🌊🐟...', cluster: 0, pause: 0 },
+    ];
+
+    // State
+    let currentSegment = 0;
+    let currentChar = 0;
+    let fullText = '';
+    let pauseTimer = 40; // Anfangspause bevor Text startet
+    let textDone = false;
+    const charsPerFrame = 0.35;
+    let charAccum = 0;
+
+    // Partikel (LLM-Zustand)
     let particle = {
-        x: W * 0.5,
-        y: H * 0.45,
-        vx: 1.5,
-        vy: 0.8,
+        x: vizCx,
+        y: vizCy,
+        targetX: vizCx,
+        targetY: vizCy,
         trail: [],
-        angle: 0, // Orbit-Winkel um den Geist-Attraktor
-        orbitRadius: Math.min(W, H) * 0.22,
-        orbitSpeed: 0.012,
-        wobble: 0
+        currentCluster: -1,
+        orbitAngle: 0,
+        orbitSpeed: 0.006,
+        orbiting: false
     };
-
-    // Token-Ausgabe-Simulation
-    const tokenSequence = ['🐴', 'horse', '🌊', 'sea', '🐟', 'fish', '🪸', 'coral', '🐬', 'dolphin', '🐴', 'unicorn', '🌊', 'ocean', '🐟', 'seahorse?', '🐴', 'horse', '...'];
-    let currentTokenIdx = 0;
-    let tokenTimer = 0;
-    let displayedTokens = [];
-    const maxDisplayedTokens = 8;
 
     // Starfield
     const stars = [];
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 20; i++) {
         stars.push({
-            x: Math.random() * W,
-            y: Math.random() * H,
-            size: 0.3 + Math.random() * 0.8,
-            brightness: 0.15 + Math.random() * 0.3
+            x: vizX + Math.random() * vizW,
+            y: 50 + Math.random() * (H - 80),
+            size: 0.3 + Math.random() * 0.6,
+            brightness: 0.12 + Math.random() * 0.2
         });
+    }
+
+    // Setze initiales Ziel auf ersten Cluster
+    if (chatSegments.length > 0 && chatSegments[0].cluster !== undefined) {
+        const c = clusters[chatSegments[0].cluster];
+        particle.targetX = c.x + (Math.random() - 0.5) * 15;
+        particle.targetY = c.y + (Math.random() - 0.5) * 15;
+        particle.currentCluster = chatSegments[0].cluster;
     }
 
     animationRunning = true;
     let t = 0;
+
+    // Hilfsfunktion: Punkt NICHT in den Kreis lassen
+    function clampOutsideCluster(px, py, cluster) {
+        const dx = px - cluster.x;
+        const dy = py - cluster.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const minDist = cluster.radius + 8; // 8px Abstand zum Rand
+        if (dist < minDist && dist > 0) {
+            return {
+                x: cluster.x + (dx / dist) * minDist,
+                y: cluster.y + (dy / dist) * minDist
+            };
+        }
+        return { x: px, y: py };
+    }
 
     function draw() {
         if (!animationRunning) return;
@@ -207,12 +254,163 @@ function renderSeahorseEmoji(container) {
 
         ctx.clearRect(0, 0, W, H);
 
-        // Background
+        // === Background ===
         const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
         bgGrad.addColorStop(0, '#0f172a');
         bgGrad.addColorStop(1, '#1e1b4b');
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, W, H);
+
+        // === Titel ===
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'center';
+        ctx.fillText('🐴 Seahorse-Emoji: Endlose Schleife zwischen Clustern', W / 2, 18);
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Es gibt kein Seahorse-Emoji — das Modell kreist endlos um verwandte Konzepte.', W / 2, 34);
+
+        // ============================
+        // LINKE SEITE: CHAT
+        // ============================
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+        ctx.beginPath();
+        ctx.roundRect(8, 44, chatW - 4, H - 54, 10);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(8, 44, chatW - 4, H - 54, 10);
+        ctx.stroke();
+
+        // === User-Frage ===
+        ctx.font = 'bold 14px system-ui';
+        ctx.fillStyle = '#60a5fa';
+        ctx.textAlign = 'left';
+        ctx.fillText('🔵 Nutzer:', 16, 66);
+        ctx.font = '15px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillText('Gibt es ein Seepferdchen-Emoji?', 16, 88);
+
+        // Trennlinie
+        ctx.beginPath();
+        ctx.moveTo(16, 100);
+        ctx.lineTo(chatW - 16, 100);
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // === AI-Antwort Header ===
+        ctx.font = 'bold 14px system-ui';
+        ctx.fillStyle = '#4ade80';
+        ctx.textAlign = 'left';
+        ctx.fillText('🟢 ChatGPT:', 16, 120);
+
+        // === Text aufbauen ===
+        if (!textDone) {
+            if (pauseTimer > 0) {
+                pauseTimer--;
+            } else {
+                charAccum += charsPerFrame;
+                while (charAccum >= 1 && currentSegment < chatSegments.length) {
+                    charAccum -= 1;
+                    currentChar++;
+                    const seg = chatSegments[currentSegment];
+                    if (currentChar >= seg.text.length) {
+                        fullText += seg.text;
+                        currentSegment++;
+                        currentChar = 0;
+                        pauseTimer = seg.pause;
+
+                        // Partikel zum nächsten Cluster bewegen (SYNCHRONISIERT)
+                        if (currentSegment < chatSegments.length) {
+                            const nextCluster = chatSegments[currentSegment].cluster;
+                            const c = clusters[nextCluster];
+                            // Ziel: knapp AUSSERHALB des Clusters
+                            const angle = Math.random() * Math.PI * 2;
+                            const targetDist = c.radius + 12 + Math.random() * 15;
+                            particle.targetX = c.x + Math.cos(angle) * targetDist;
+                            particle.targetY = c.y + Math.sin(angle) * targetDist;
+                            particle.currentCluster = nextCluster;
+                        }
+                        break;
+                    }
+                }
+                if (currentSegment >= chatSegments.length) {
+                    textDone = true;
+                    particle.orbiting = true;
+                    particle.orbitAngle = Math.atan2(particle.y - ghostY, particle.x - ghostX);
+                }
+            }
+        }
+
+        // Aktuellen Anzeigetext zusammenbauen
+        let displayText = fullText;
+        if (!textDone && currentSegment < chatSegments.length) {
+            displayText += chatSegments[currentSegment].text.substring(0, currentChar);
+        }
+        if (textDone) {
+            displayText += '...';
+        }
+
+        // === Text rendern (Wortumbruch) ===
+        const textX = 16;
+        const textStartY = 140;
+        const maxTextW = chatW - 32;
+        const lineHeight = 20;
+        ctx.font = '15px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'left';
+
+        const lines = [];
+        const paragraphs = displayText.split('\n');
+        for (const para of paragraphs) {
+            const words = para.split(' ');
+            let currentLine = '';
+            for (const word of words) {
+                const testLine = currentLine ? currentLine + ' ' + word : word;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxTextW && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine) lines.push(currentLine);
+        }
+
+        const maxLines = Math.floor((H - textStartY - 30) / lineHeight);
+        const startLine = Math.max(0, lines.length - maxLines);
+        let drawY = textStartY;
+
+        for (let i = startLine; i < lines.length; i++) {
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '15px system-ui';
+            ctx.fillText(lines[i], textX, drawY);
+            drawY += lineHeight;
+        }
+
+        // Blinkender Cursor (nur während Text läuft)
+        if (!textDone && Math.floor(t / 25) % 2 === 0) {
+            const lastLine = lines[lines.length - 1] || '';
+            const cursorX = textX + ctx.measureText(lastLine).width + 3;
+            const cursorY = textStartY + (Math.min(lines.length, maxLines) - 1) * lineHeight;
+            ctx.fillStyle = '#6366f1';
+            ctx.fillRect(cursorX, cursorY - 12, 2, 14);
+        }
+
+        // "kreist endlos weiter" – STATISCH, kein Blinken
+        if (textDone) {
+            ctx.font = '12px system-ui';
+            ctx.fillStyle = 'rgba(248, 113, 113, 0.85)';
+            ctx.textAlign = 'left';
+            ctx.fillText('(kreist endlos weiter...)', textX, drawY + 12);
+        }
+
+        // ============================
+        // RECHTE SEITE: CLUSTER-VIZ
+        // ============================
 
         // Stars
         stars.forEach(s => {
@@ -223,209 +421,174 @@ function renderSeahorseEmoji(container) {
             ctx.fill();
         });
 
-        // === Becken zeichnen ===
-        basins.forEach((basin, idx) => {
-            // Glow
-            const glow = ctx.createRadialGradient(basin.x, basin.y, 0, basin.x, basin.y, basin.radius * 1.5);
-            glow.addColorStop(0, `hsla(${basin.hue}, 70%, 50%, 0.25)`);
-            glow.addColorStop(0.6, `hsla(${basin.hue}, 70%, 50%, 0.08)`);
+        // Cluster zeichnen
+        clusters.forEach((cluster, idx) => {
+            const isActive = (particle.currentCluster === idx);
+            const glowAlpha = isActive ? 0.4 : 0.12;
+            const glow = ctx.createRadialGradient(cluster.x, cluster.y, 0, cluster.x, cluster.y, cluster.radius * 1.8);
+            glow.addColorStop(0, `hsla(${cluster.hue}, 70%, 50%, ${glowAlpha})`);
+            glow.addColorStop(0.7, `hsla(${cluster.hue}, 70%, 50%, ${glowAlpha * 0.25})`);
             glow.addColorStop(1, 'transparent');
             ctx.fillStyle = glow;
             ctx.beginPath();
-            ctx.arc(basin.x, basin.y, basin.radius * 1.5, 0, Math.PI * 2);
+            ctx.arc(cluster.x, cluster.y, cluster.radius * 1.8, 0, Math.PI * 2);
             ctx.fill();
 
-            // Basin circle
+            // Circle
             ctx.beginPath();
-            ctx.arc(basin.x, basin.y, basin.radius, 0, Math.PI * 2);
-            ctx.strokeStyle = `hsla(${basin.hue}, 60%, 60%, 0.5)`;
-            ctx.lineWidth = 2;
-            ctx.setLineDash([6, 4]);
+            ctx.arc(cluster.x, cluster.y, cluster.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `hsla(${cluster.hue}, 60%, 60%, ${isActive ? 0.9 : 0.35})`;
+            ctx.lineWidth = isActive ? 2.5 : 1.5;
+            ctx.setLineDash(isActive ? [] : [5, 4]);
             ctx.stroke();
             ctx.setLineDash([]);
 
             // Pulsing center
-            const pulse = 1 + 0.15 * Math.sin(t * 0.04 + idx * 1.2);
+            const pulse = isActive ? 1 + 0.2 * Math.sin(t * 0.08) : 1;
             ctx.beginPath();
-            ctx.arc(basin.x, basin.y, 8 * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = basin.color;
+            ctx.arc(cluster.x, cluster.y, 6 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = cluster.color;
             ctx.fill();
 
             // Label
             ctx.font = 'bold 12px system-ui';
-            ctx.fillStyle = basin.color;
+            ctx.fillStyle = cluster.color;
             ctx.textAlign = 'center';
-            ctx.fillText(basin.label, basin.x, basin.y - basin.radius - 10);
+            ctx.fillText(cluster.label, cluster.x, cluster.y - cluster.radius - 10);
         });
 
-        // === Geist-Attraktor (das nicht-existente Seahorse-Emoji) ===
-        const ghostPulse = 0.5 + 0.3 * Math.sin(t * 0.03);
+        // Geist-Attraktor (Mitte)
+        const ghostPulse = 0.4 + 0.2 * Math.sin(t * 0.025);
         ctx.beginPath();
-        ctx.arc(ghostX, ghostY, 20, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255, 100, 100, ${ghostPulse})`;
-        ctx.lineWidth = 2;
+        ctx.arc(ghostX, ghostY, 16, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 80, 80, ${ghostPulse})`;
+        ctx.lineWidth = 1.5;
         ctx.setLineDash([3, 3]);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Ghost label
-        ctx.font = 'bold 11px system-ui';
-        ctx.fillStyle = `rgba(255, 150, 150, ${ghostPulse + 0.2})`;
-        ctx.textAlign = 'center';
-        ctx.fillText('❌ seahorse_emoji', ghostX, ghostY - 28);
         ctx.font = '9px system-ui';
-        ctx.fillStyle = 'rgba(255, 200, 200, 0.6)';
-        ctx.fillText('(existiert nicht!)', ghostX, ghostY - 16);
-
-        // Fragezeichen im Geist-Zentrum
-        ctx.font = '18px system-ui';
+        ctx.fillStyle = `rgba(255, 130, 130, ${ghostPulse + 0.3})`;
+        ctx.textAlign = 'center';
+        ctx.fillText('❌ seahorse_emoji', ghostX, ghostY - 22);
+        ctx.font = '14px system-ui';
         ctx.fillStyle = `rgba(255, 100, 100, ${ghostPulse})`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('?', ghostX, ghostY);
         ctx.textBaseline = 'alphabetic';
 
-        // === Partikel-Orbit: kreist um den Geist-Attraktor, wird von Becken angezogen ===
-        particle.angle += particle.orbitSpeed;
-        particle.wobble += 0.023;
+        // === Partikel-Bewegung ===
+        if (particle.orbiting) {
+            // Nach Text-Ende: kreist endlos, AUSSERHALB der Cluster
+            particle.orbitAngle += particle.orbitSpeed;
+            const orbitR = Math.min(vizW, H * 0.8) * 0.24;
+            const baseX = ghostX + Math.cos(particle.orbitAngle) * orbitR;
+            const baseY = ghostY + Math.sin(particle.orbitAngle) * orbitR * 0.7;
 
-        // Basis-Orbit um den Geist
-        const baseX = ghostX + Math.cos(particle.angle) * particle.orbitRadius;
-        const baseY = ghostY + Math.sin(particle.angle) * particle.orbitRadius * 0.7;
+            // Leichte Anziehung durch Cluster (aber nie rein!)
+            let pullX = 0, pullY = 0;
+            clusters.forEach(c => {
+                const dx = c.x - baseX;
+                const dy = c.y - baseY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const strength = 300 / (dist * dist + 100);
+                pullX += (dx / dist) * strength;
+                pullY += (dy / dist) * strength;
+            });
 
-        // Wobble: wird von nahen Becken angezogen
-        let pullX = 0, pullY = 0;
-        basins.forEach(basin => {
-            const dx = basin.x - baseX;
-            const dy = basin.y - baseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const strength = 800 / (dist * dist + 100);
-            pullX += (dx / dist) * strength;
-            pullY += (dy / dist) * strength;
+            particle.targetX = baseX + pullX * 2;
+            particle.targetY = baseY + pullY * 2;
+
+            // Aktiven Cluster bestimmen (nächster)
+            let minDist = Infinity;
+            clusters.forEach((c, idx) => {
+                const dx = c.x - particle.x;
+                const dy = c.y - particle.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < minDist) {
+                    minDist = dist;
+                    particle.currentCluster = idx;
+                }
+            });
+        }
+
+        // Sanfte Bewegung zum Ziel
+        particle.x += (particle.targetX - particle.x) * 0.035;
+        particle.y += (particle.targetY - particle.y) * 0.035;
+
+        // === CLAMPING: Punkt darf NICHT in Cluster rein ===
+        clusters.forEach(cluster => {
+            const clamped = clampOutsideCluster(particle.x, particle.y, cluster);
+            particle.x = clamped.x;
+            particle.y = clamped.y;
         });
-
-        // Sanfte Anziehung
-        particle.x += (baseX + pullX * 3 - particle.x) * 0.08;
-        particle.y += (baseY + pullY * 3 - particle.y) * 0.08;
 
         // Trail
         particle.trail.push({ x: particle.x, y: particle.y });
-        if (particle.trail.length > 300) particle.trail.shift();
+        if (particle.trail.length > 220) particle.trail.shift();
 
         // Draw trail
         if (particle.trail.length > 1) {
             for (let i = 1; i < particle.trail.length; i++) {
-                const alpha = (i / particle.trail.length) * 0.6;
-                const hue = (t * 0.5 + i * 0.8) % 360;
+                const alpha = (i / particle.trail.length) * 0.45;
+                const hue = (t * 0.3 + i * 1.0) % 360;
                 ctx.beginPath();
                 ctx.moveTo(particle.trail[i - 1].x, particle.trail[i - 1].y);
                 ctx.lineTo(particle.trail[i].x, particle.trail[i].y);
-                ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha})`;
-                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = `hsla(${hue}, 60%, 55%, ${alpha})`;
+                ctx.lineWidth = 2;
                 ctx.stroke();
             }
         }
 
-        // Draw particle (das "suchende" Modell)
-        const particleGlow = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, 15);
-        particleGlow.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-        particleGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        ctx.fillStyle = particleGlow;
+        // Partikel selbst
+        const pGlow = ctx.createRadialGradient(particle.x, particle.y, 0, particle.x, particle.y, 14);
+        pGlow.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        pGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = pGlow;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, 15, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, 14, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, 7, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, 6, 0, Math.PI * 2);
         ctx.fillStyle = '#fff';
         ctx.fill();
         ctx.strokeStyle = '#6366f1';
         ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        // Label für Partikel
-        ctx.font = 'bold 10px system-ui';
+        ctx.font = 'bold 9px system-ui';
         ctx.fillStyle = '#e2e8f0';
         ctx.textAlign = 'center';
-        ctx.fillText('LLM-Zustand', particle.x, particle.y - 16);
+        ctx.fillText('LLM', particle.x, particle.y - 14);
 
-        // === Verbindungslinien vom Partikel zu nahen Becken (zeigt Anziehung) ===
-        basins.forEach(basin => {
-            const dx = basin.x - particle.x;
-            const dy = basin.y - particle.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const maxDist = 200;
-            if (dist < maxDist) {
-                const alpha = (1 - dist / maxDist) * 0.4;
-                ctx.beginPath();
-                ctx.moveTo(particle.x, particle.y);
-                ctx.lineTo(basin.x, basin.y);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.lineWidth = 1;
-                ctx.setLineDash([4, 4]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-            }
-        });
-
-        // === Token-Ausgabe-Simulation (unten) ===
-        tokenTimer++;
-        if (tokenTimer > 35) {
-            tokenTimer = 0;
-            displayedTokens.push(tokenSequence[currentTokenIdx % tokenSequence.length]);
-            currentTokenIdx++;
-            if (displayedTokens.length > maxDisplayedTokens) displayedTokens.shift();
+        // Verbindungslinie zum aktiven Cluster
+        if (particle.currentCluster >= 0) {
+            const c = clusters[particle.currentCluster];
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(c.x, c.y);
+            ctx.strokeStyle = `rgba(255, 255, 255, 0.15)`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
 
-        // Token-Display-Box
-        const boxY = H - 55;
-        const boxH = 40;
+        // === Erklärung unten rechts ===
+        const boxY = H - 42;
         ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
         ctx.beginPath();
-        ctx.roundRect(20, boxY, W - 40, boxH, 8);
+        ctx.roundRect(vizX, boxY, vizW, 34, 6);
         ctx.fill();
-        ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.roundRect(20, boxY, W - 40, boxH, 8);
-        ctx.stroke();
-
-        ctx.font = '10px system-ui';
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.8)';
-        ctx.textAlign = 'left';
-        ctx.fillText('Modell-Output (kreist endlos):', 30, boxY + 14);
-
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillStyle = '#e2e8f0';
-        ctx.textAlign = 'left';
-        const tokenStr = displayedTokens.join(' → ');
-        ctx.fillText(tokenStr, 30, boxY + 30);
-
-        // Blinkender Cursor
-        if (Math.floor(t / 30) % 2 === 0) {
-            const cursorX = 30 + ctx.measureText(tokenStr).width + 5;
-            ctx.fillStyle = '#6366f1';
-            ctx.fillRect(cursorX, boxY + 18, 2, 16);
-        }
-
-        // === Titel oben ===
-        ctx.font = 'bold 14px system-ui';
-        ctx.fillStyle = '#e2e8f0';
-        ctx.textAlign = 'center';
-        ctx.fillText('🐴 Seahorse-Emoji: Stabiler Attraktor ohne Fixpunkt', W / 2, 22);
-
-        ctx.font = '11px system-ui';
-        ctx.fillStyle = '#94a3b8';
-        ctx.fillText('Das Modell kreist endlos um verwandte Konzepte – es gibt kein Ziel, nur den Orbit.', W / 2, 40);
-
-        // Erklärungstext rechts oben
-        ctx.font = '10px system-ui';
+        ctx.font = '9px system-ui';
         ctx.fillStyle = 'rgba(248, 113, 113, 0.9)';
-        ctx.textAlign = 'right';
-        ctx.fillText('Es gibt kein Seahorse-Emoji im Unicode.', W - 20, 62);
-        ctx.fillStyle = 'rgba(200, 200, 200, 0.7)';
-        ctx.fillText('Das Modell sucht es trotzdem – und findet', W - 20, 76);
-        ctx.fillText('nur Nachbarn: horse, fish, ocean, coral...', W - 20, 90);
+        ctx.textAlign = 'center';
+        ctx.fillText('Kein Fixpunkt erreichbar → Modell springt endlos', vizCx, boxY + 14);
+        ctx.fillStyle = 'rgba(200, 200, 200, 0.6)';
+        ctx.fillText('zwischen Pferd, Ozean, Fisch, Mythisch...', vizCx, boxY + 26);
 
         activeAnimation = requestAnimationFrame(draw);
     }
