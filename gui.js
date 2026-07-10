@@ -285,8 +285,8 @@ function hide_no_conv_stuff() {
 		$(".hide_when_image").show();
 	}
 
-	$('[aria-controls="gradient_flow"]').show();
-	$('[aria-controls="topological_data_analysis"]').show();
+	$('[aria-controls="gradient_flow"]').children().show();
+	$('[aria-controls="topological_data_analysis"]').children().show();
 
 	hide_empty_tabs("visualization_ribbon");
 
