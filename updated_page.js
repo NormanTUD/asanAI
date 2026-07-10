@@ -79,7 +79,9 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 
 	await plot_model_plot(true);
 
-	TopologicalAnalyzer.update();
+	if($("#tda_analyzer_singleton").length) {
+		TopologicalAnalyzer.update();
+	}
 }
 
 var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {
