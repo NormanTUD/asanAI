@@ -278,6 +278,7 @@ function hide_no_conv_stuff() {
 		$("[aria-labelledby='activation_atlas_tab_label']").show();
 		$(".hide_when_image").hide();
 		$('[aria-controls="gradient_flow"]').show();
+		$('[aria-controls="topological_data_analysis"]').show();
 	} else {
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("[aria-labelledby='activation_atlas_tab_label']").hide();
@@ -285,6 +286,7 @@ function hide_no_conv_stuff() {
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
 		$('[aria-controls="gradient_flow"]').hide();
+		$('[aria-controls="topological_data_analysis"]').hide();
 	}
 
 	hide_empty_tabs("visualization_ribbon");
