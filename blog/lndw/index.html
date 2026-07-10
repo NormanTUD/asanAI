@@ -602,6 +602,49 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Layer als Zeitschritte ==================== -->
+<div class="slide" data-title="Layer = Zeitschritte">
+    <div class="slide-content">
+        <h2>Die Zeitdimension im Transformer = die Layer</h2>
+        <p>Im Punkt-Attraktor bewegt sich ein Punkt über die <b>Zeit</b> zum Fixpunkt. Im Transformer bewegt sich der Vektor über die <b>Layer</b> zum richtigen Token.</p>
+
+        <div style="display:flex; align-items:stretch; justify-content:center; gap:40px; margin:30px 0; flex-wrap:wrap;">
+            <!-- Linke Seite: Dynamisches System -->
+            <div style="flex:1; min-width:280px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
+                <div style="font-weight:bold; color:#1e40af; margin-bottom:12px; text-align:center;">🌀 Dynamisches System</div>
+                <div style="font-family:monospace; line-height:2.2; color:#1e3a5f; text-align:center;">
+                    t₁ → Zustand₁<br>
+                    t₂ → Zustand₂<br>
+                    t₃ → Zustand₃<br>
+                    ⋮<br>
+                    t<sub>∞</sub> → <b style="color:#1e40af;">Fixpunkt (Attraktor)</b>
+                </div>
+            </div>
+
+            <!-- Mitte: Gleichheitszeichen -->
+            <div style="display:flex; align-items:center; font-size:2em; color:#94a3b8;">≈</div>
+
+            <!-- Rechte Seite: Transformer -->
+            <div style="flex:1; min-width:280px; padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff;">
+                <div style="font-weight:bold; color:#6b21a8; margin-bottom:12px; text-align:center;">🤖 Transformer</div>
+                <div style="font-family:monospace; line-height:2.2; color:#581c87; text-align:center;">
+                    Layer 1 → Vektor₁<br>
+                    Layer 2 → Vektor₂<br>
+                    Layer 3 → Vektor₃<br>
+                    ⋮<br>
+                    Layer N → <b style="color:#6b21a8;">Vorhersage ("Paris")</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:18px;">
+            <strong>Die Analogie:</strong> Jeder Layer ist ein <b>Zeitschritt</b>. Der Residual Stream ist die <b>Trajektorie</b>.
+            Das Modell "fällt" über ~100 Layer in das Becken des richtigen Tokens – genau wie ein Punkt über die Zeit in einen Attraktor fällt.<br><br>
+            <span style="color:#64748b;">⚠️ Es ist <b>nicht identisch</b> – jeder Layer hat andere Gewichte (nicht-autonomes System), und es gibt keinen echten Grenzwert. Aber es <b>verhält sich so</b>: Layer für Layer konvergiert der Vektor zur Antwort.</span>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE 15: Vorhersage ==================== -->
 <div class="slide" data-title="Die Vorhersage">
     <div class="slide-content">
