@@ -1485,11 +1485,6 @@ var TopologicalAnalyzer = (function () {
 
 		html += '</div>'; // end tda-section
 
-		// ============================================================
-		// FOOTER
-		// ============================================================
-		html += '<p style="opacity:0.4;font-size:0.75em;text-align:center;margin-top:20px;">TopologicalAnalyzer v1.0 — Persistent Homology, Betti Numbers, Persistence Diagrams & Landscapes</p>';
-
 		// Set HTML with smooth transition
 		if (_state.config.smoothTransition && _state.container.innerHTML !== "") {
 			_state.container.style.transition = "opacity 0.2s ease";
