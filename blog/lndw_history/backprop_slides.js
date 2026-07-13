@@ -543,19 +543,56 @@ const BPSlides = (() => {
     // TEMML RENDERING for math-display elements
     // ═══════════════════════════════════════════════════════════════
 
-    function renderTemml() {
-        if (typeof temml === 'undefined') return;
-        document.querySelectorAll('.math-display[data-temml]').forEach(el => {
-            if (el.dataset.rendered) return;
+function renderTemml() {
+    if (typeof temml === 'undefined') return;
+
+    // 1. Bestehend: Display-Formeln (data-temml)
+    document.querySelectorAll('.math-display[data-temml]').forEach(el => {
+        if (el.dataset.rendered) return;
+        try {
+            const tex = el.dataset.temml.replace(/^\$\$/, '').replace(/\$\$$/, '');
+            temml.render(tex, el, { displayMode: true });
+            el.dataset.rendered = 'true';
+        } catch (e) {
+            el.textContent = el.dataset.temml;
+        }
+    });
+
+    // 2. NEU: Inline-Formeln $...$ in Textknoten
+    const walker = document.createTreeWalker(
+        document.getElementById('presentation'),
+        NodeFilter.SHOW_TEXT,
+        null
+    );
+
+    const nodesToReplace = [];
+    while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (/\$[^$]+\$/.test(node.textContent) && !node.parentElement.closest('.math-display, [data-rendered-inline]')) {
+            nodesToReplace.push(node);
+        }
+    }
+
+    nodesToReplace.forEach(node => {
+        const parent = node.parentElement;
+        const html = node.textContent.replace(/\$([^$]+)\$/g, (match, tex) => {
             try {
-                const tex = el.dataset.temml.replace(/^\$\$/, '').replace(/\$\$$/, '');
-                temml.render(tex, el, { displayMode: true });
-                el.dataset.rendered = 'true';
+                const span = document.createElement('span');
+                temml.render(tex, span, { displayMode: false });
+                return span.innerHTML;
             } catch (e) {
-                el.textContent = el.dataset.temml;
+                return match;
             }
         });
-    }
+
+        if (html !== node.textContent) {
+            const wrapper = document.createElement('span');
+            wrapper.setAttribute('data-rendered-inline', 'true');
+            wrapper.innerHTML = html;
+            parent.replaceChild(wrapper, node);
+        }
+    });
+}
 
     // ═══════════════════════════════════════════════════════════════
     // INITIALIZATION — called when slides become visible
