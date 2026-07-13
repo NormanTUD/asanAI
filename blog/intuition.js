@@ -919,6 +919,7 @@ const ResidualStreamViz = {
 		const ctx = this.ctx;
 		const dy = yBase + 5;
 		const role = this.layerRoles[l];
+		const maxTextWidth = this.W - descColX - 40;
 
 		ctx.globalAlpha = 1;
 		ctx.textAlign = 'left';
@@ -929,7 +930,7 @@ const ResidualStreamViz = {
 		ctx.fillText('Attention:', descColX, dy + 5);
 		ctx.font = '14px system-ui';
 		ctx.fillStyle = '#475569';
-		ctx.fillText(role.attnDesc, descColX, dy + 25);
+		this.drawWrappedText(role.attnDesc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
 
 		// FFN Text
 		ctx.font = 'bold 15px system-ui';
@@ -937,13 +938,45 @@ const ResidualStreamViz = {
 		ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
 		ctx.font = '14px system-ui';
 		ctx.fillStyle = '#475569';
-		ctx.fillText(role.ffnDesc, descColX, dy + 80);
+		this.drawWrappedText(role.ffnDesc, descColX, dy + 80, '14px system-ui', '#475569', maxTextWidth, 18);
 
 		// Example Text
 		ctx.font = 'bold 14px monospace';
 		ctx.fillStyle = '#10b981';
 		ctx.fillText('Example:', descColX, dy + 115);
-		this.drawMultiline(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', 18);
+		this.drawWrappedText(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', maxTextWidth - 5, 18);
+	},
+
+	drawWrappedText: function(text, x, y, font, color, maxWidth, lineH) {
+		const ctx = this.ctx;
+		ctx.font = font;
+		ctx.fillStyle = color;
+		ctx.textAlign = 'left';
+		ctx.textBaseline = 'top';
+
+		// First split on explicit \n, then word-wrap each segment
+		const paragraphs = text.split('\n');
+		let lineNum = 0;
+
+		paragraphs.forEach(paragraph => {
+			const words = paragraph.split(' ');
+			let line = '';
+
+			words.forEach(word => {
+				const testLine = line ? line + ' ' + word : word;
+				if (ctx.measureText(testLine).width > maxWidth && line) {
+					ctx.fillText(line, x, y + lineNum * (lineH || 18));
+					line = word;
+					lineNum++;
+				} else {
+					line = testLine;
+				}
+			});
+			if (line) {
+				ctx.fillText(line, x, y + lineNum * (lineH || 18));
+				lineNum++;
+			}
+		});
 	},
 
 	drawHeaders: function() {
