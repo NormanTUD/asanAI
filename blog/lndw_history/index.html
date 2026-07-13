@@ -578,24 +578,6 @@
     </div>
 </div>
 
-<!-- SLIDE: Interaktiver Gradient-Slider -->
-<div class="slide" data-title="Gradient Explorer">
-    <div class="slide-content">
-        <div style="display:flex; gap:20px; align-items:center; margin:16px 0; flex-wrap:wrap;">
-            <div>
-                <label style="font-weight:bold; color:#334155;">Netztiefe:</label>
-                <input type="range" id="bp-depth-slider" min="2" max="100" value="20" style="width:200px; vertical-align:middle;"
-                       oninput="document.getElementById('bp-depth-val').textContent = this.value; BPSlides.updateGradientPlot();">
-                <b id="bp-depth-val">20</b> Schichten
-            </div>
-        </div>
-        <div id="bp-gradient-plot" style="width:100%; height:320px; border-radius:12px; border:1px solid #e2e8f0;"></div>
-        <div class="key-insight fragment">
-            <strong>Beobachtung:</strong> Ab ~30 Schichten ist das Plain-Network-Signal praktisch Null. Das ResNet behält es stabil. Das ist der Grund, warum moderne Netze hunderte Schichten haben können.
-        </div>
-    </div>
-</div>
-
 <!-- SLIDE: Geschichte – Zeitstrahl der Neuronalen Netze -->
 <div class="slide" data-title="Geschichte: Neuronale Netze">
     <div class="slide-content">

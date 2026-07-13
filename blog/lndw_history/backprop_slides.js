@@ -997,60 +997,6 @@ function drawGDViz() {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // GRADIENT COMPARISON PLOT (Plain vs ResNet)
-    // ═══════════════════════════════════════════════════════════════
-
-    function updateGradientPlot() {
-        const depthEl = document.getElementById('bp-depth-slider');
-        if (!depthEl) return;
-        const depth = parseInt(depthEl.value);
-
-        let plainGradients = [];
-        let resGradients = [];
-        let labels = [];
-
-        let gPlain = 1.0;
-        let gRes = 1.0;
-
-        for (let i = 0; i <= depth; i++) {
-            labels.push(`L${i}`);
-            plainGradients.push(gPlain);
-            resGradients.push(gRes);
-            gPlain *= 0.88;
-            gRes = (gRes * 0.88) + 0.11;
-            if (gRes > 1.0) gRes = 1.0;
-        }
-
-        const trace1 = {
-            x: labels, y: plainGradients,
-            name: 'Plain Network (multiplikativ)',
-            type: 'scatter', fill: 'tozeroy',
-            line: { color: '#ef4444', width: 3 }
-        };
-        const trace2 = {
-            x: labels, y: resGradients,
-            name: 'ResNet (additiv, +1)',
-            type: 'scatter', fill: 'tozeroy',
-            line: { color: '#3b82f6', width: 3 }
-        };
-
-        const layout = {
-            margin: { t: 10, b: 40, l: 50, r: 20 },
-            yaxis: { title: 'Gradient-Stärke', range: [0, 1.1], gridcolor: '#f1f5f9' },
-            xaxis: { title: 'Netztiefe (Schichten)', gridcolor: '#f1f5f9' },
-            legend: { orientation: 'h', y: -0.2 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(255,255,255,0.95)',
-            autosize: true
-        };
-
-        const plotDiv = document.getElementById('bp-gradient-plot');
-        if (plotDiv && typeof Plotly !== 'undefined') {
-            Plotly.newPlot(plotDiv, [trace1, trace2], layout, { displayModeBar: false, responsive: true });
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // RESNET GRADIENT COMPARISON (for the Signal slide)
     // ═══════════════════════════════════════════════════════════════
 
@@ -1248,7 +1194,6 @@ function drawGDViz() {
             initResnetComparison();
             initNNTimeline();
             initResnetArchDiagram();
-            updateGradientPlot();
         }, 300);
     }
 
@@ -1269,7 +1214,6 @@ function drawGDViz() {
     return {
         initAll,
         cleanup,
-        updateGradientPlot,
         initLossLandscape,
         initResnetComparison,
         initNNTimeline,
@@ -1327,8 +1271,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => BPSlides.updateVanishViz(), 100);
         } else if (title.includes('Residual Networks')) {
             setTimeout(() => BPSlides.initResnetConcept(), 100);
-        } else if (title.includes('Gradient Explorer')) {
-            setTimeout(() => BPSlides.updateGradientPlot(), 100);
         } else if (title.includes('Signal: Plain vs ResNet')) {
             setTimeout(() => BPSlides.initResnetComparison(), 100);
         } else if (title.includes('Geschichte: Neuronale Netze')) {
