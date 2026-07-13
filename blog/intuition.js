@@ -784,15 +784,133 @@ const ResidualStreamViz = {
 		};
 	},
 
-	drawLayerBackground: function(l, { yBase, isCurrent }) {
+	drawLayerBackground: function(l, { yBase, isCurrent, descColX }) {
 		if (!isCurrent) return;
-		this.ctx.fillStyle = '#f8fafc';
-		this.ctx.beginPath();
-		this.ctx.roundRect(25, yBase - 10, this.W - 25, this.rowH - 5, 12);
-		this.ctx.fill();
-		this.ctx.strokeStyle = '#3b82f6';
-		this.ctx.lineWidth = 2;
-		this.ctx.stroke();
+		const ctx = this.ctx;
+		const role = this.layerRoles[l];
+		const maxTextWidth = this.W - descColX - 40;
+
+		// Calculate how tall the metadata text will be
+		let metaHeight = 0;
+		if (l >= 1) {
+			// Attention: header + wrapped text
+			metaHeight += 25; // "Attention:" header + gap
+			metaHeight += this.measureWrappedHeight(role.attnDesc, '14px system-ui', maxTextWidth, 18);
+			metaHeight += 15; // gap
+
+			// FFN: header + wrapped text
+			metaHeight += 25;
+			metaHeight += this.measureWrappedHeight(role.ffnDesc, '14px system-ui', maxTextWidth, 18);
+			metaHeight += 15;
+
+			// Example: header + wrapped text
+			metaHeight += 20;
+			metaHeight += this.measureWrappedHeight(role.example, 'bold 14px monospace', maxTextWidth - 5, 18);
+			metaHeight += 10;
+		}
+
+		const minH = this.rowH - 5;
+		const boxH = Math.max(minH, metaHeight + 30);
+
+		ctx.fillStyle = '#f8fafc';
+		ctx.beginPath();
+		ctx.roundRect(25, yBase - 10, this.W - 50, boxH, 12);
+		ctx.fill();
+		ctx.strokeStyle = '#3b82f6';
+		ctx.lineWidth = 2;
+		ctx.stroke();
+	},
+
+	measureWrappedHeight: function(text, font, maxWidth, lineH) {
+		if (!text) return 0;
+		const ctx = this.ctx;
+		ctx.font = font;
+
+		const paragraphs = text.split('\n');
+		let lineNum = 0;
+
+		paragraphs.forEach(paragraph => {
+			const words = paragraph.split(' ');
+			let line = '';
+
+			words.forEach(word => {
+				const testLine = line ? line + ' ' + word : word;
+				if (ctx.measureText(testLine).width > maxWidth && line) {
+					line = word;
+					lineNum++;
+				} else {
+					line = testLine;
+				}
+			});
+			if (line) lineNum++;
+		});
+
+		return lineNum * (lineH || 18);
+	},
+
+	drawMetadata: function(l, { yBase, descColX, isCurrent }) {
+		if (!isCurrent) return;
+		const ctx = this.ctx;
+		const dy = yBase + 5;
+		const role = this.layerRoles[l];
+		const maxTextWidth = this.W - descColX - 40;
+
+		ctx.globalAlpha = 1;
+		ctx.textAlign = 'left';
+
+		// Attention Text
+		ctx.font = 'bold 15px system-ui';
+		ctx.fillStyle = '#8b5cf6';
+		ctx.fillText('Attention:', descColX, dy + 5);
+		ctx.font = '14px system-ui';
+		ctx.fillStyle = '#475569';
+		this.drawWrappedText(role.attnDesc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
+
+		// FFN Text
+		ctx.font = 'bold 15px system-ui';
+		ctx.fillStyle = '#d97706';
+		ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
+		ctx.font = '14px system-ui';
+		ctx.fillStyle = '#475569';
+		this.drawWrappedText(role.ffnDesc, descColX, dy + 80, '14px system-ui', '#475569', maxTextWidth, 18);
+
+		// Example Text
+		ctx.font = 'bold 14px monospace';
+		ctx.fillStyle = '#10b981';
+		ctx.fillText('Example:', descColX, dy + 115);
+		this.drawWrappedText(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', maxTextWidth - 5, 18);
+	},
+
+	drawWrappedText: function(text, x, y, font, color, maxWidth, lineH) {
+		if (!text) return;
+		const ctx = this.ctx;
+		ctx.font = font;
+		ctx.fillStyle = color;
+		ctx.textAlign = 'left';
+		ctx.textBaseline = 'top';
+
+		const paragraphs = text.split('\n');
+		let lineNum = 0;
+
+		paragraphs.forEach(paragraph => {
+			const words = paragraph.split(' ');
+			let line = '';
+
+			words.forEach(word => {
+				const testLine = line ? line + ' ' + word : word;
+				if (ctx.measureText(testLine).width > maxWidth && line) {
+					ctx.fillText(line, x, y + lineNum * (lineH || 18));
+					line = word;
+					lineNum++;
+				} else {
+					line = testLine;
+				}
+			});
+			if (line) {
+				ctx.fillText(line, x, y + lineNum * (lineH || 18));
+				lineNum++;
+			}
+		});
 	},
 
 	drawStream: function(l, { yBase, streamX, cellW, cellH, isCurrent, alpha }) {
@@ -912,71 +1030,6 @@ const ResidualStreamViz = {
 			ctx.fill();
 		});
 		ctx.globalAlpha = 1;
-	},
-
-	drawMetadata: function(l, { yBase, descColX, isCurrent }) {
-		if (!isCurrent) return;
-		const ctx = this.ctx;
-		const dy = yBase + 5;
-		const role = this.layerRoles[l];
-		const maxTextWidth = this.W - descColX - 40;
-
-		ctx.globalAlpha = 1;
-		ctx.textAlign = 'left';
-
-		// Attention Text
-		ctx.font = 'bold 15px system-ui';
-		ctx.fillStyle = '#8b5cf6';
-		ctx.fillText('Attention:', descColX, dy + 5);
-		ctx.font = '14px system-ui';
-		ctx.fillStyle = '#475569';
-		this.drawWrappedText(role.attnDesc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
-
-		// FFN Text
-		ctx.font = 'bold 15px system-ui';
-		ctx.fillStyle = '#d97706';
-		ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
-		ctx.font = '14px system-ui';
-		ctx.fillStyle = '#475569';
-		this.drawWrappedText(role.ffnDesc, descColX, dy + 80, '14px system-ui', '#475569', maxTextWidth, 18);
-
-		// Example Text
-		ctx.font = 'bold 14px monospace';
-		ctx.fillStyle = '#10b981';
-		ctx.fillText('Example:', descColX, dy + 115);
-		this.drawWrappedText(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', maxTextWidth - 5, 18);
-	},
-
-	drawWrappedText: function(text, x, y, font, color, maxWidth, lineH) {
-		const ctx = this.ctx;
-		ctx.font = font;
-		ctx.fillStyle = color;
-		ctx.textAlign = 'left';
-		ctx.textBaseline = 'top';
-
-		// First split on explicit \n, then word-wrap each segment
-		const paragraphs = text.split('\n');
-		let lineNum = 0;
-
-		paragraphs.forEach(paragraph => {
-			const words = paragraph.split(' ');
-			let line = '';
-
-			words.forEach(word => {
-				const testLine = line ? line + ' ' + word : word;
-				if (ctx.measureText(testLine).width > maxWidth && line) {
-					ctx.fillText(line, x, y + lineNum * (lineH || 18));
-					line = word;
-					lineNum++;
-				} else {
-					line = testLine;
-				}
-			});
-			if (line) {
-				ctx.fillText(line, x, y + lineNum * (lineH || 18));
-				lineNum++;
-			}
-		});
 	},
 
 	drawHeaders: function() {
