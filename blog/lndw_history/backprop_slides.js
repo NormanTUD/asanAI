@@ -63,64 +63,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // ACTIVATION FUNCTION MINI-PLOTS
-    // ═══════════════════════════════════════════════════════════════
-
-    function initActivationViz() {
-        const container = document.getElementById('bp-activation-viz');
-        if (!container) return;
-
-        const functions = [
-            { name: 'ReLU', fn: x => Math.max(0, x), color: '#3b82f6' },
-            { name: 'Sigmoid', fn: x => 1 / (1 + Math.exp(-x)), color: '#10b981' },
-            { name: 'Tanh', fn: x => Math.tanh(x), color: '#6366f1' }
-        ];
-
-        let html = '';
-        functions.forEach(f => {
-            html += `<div style="flex:1; min-width:150px; max-width:220px;">
-                <canvas id="bp-act-${f.name}" width="200" height="140" style="width:100%; height:auto; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
-                <div style="text-align:center; font-weight:bold; font-size:0.85em; color:${f.color}; margin-top:4px;">${f.name}</div>
-            </div>`;
-        });
-        container.innerHTML = html;
-
-        functions.forEach(f => {
-            const canvas = document.getElementById(`bp-act-${f.name}`);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const W = canvas.width, H = canvas.height;
-
-            // Axes
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2);
-            ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H);
-            ctx.stroke();
-
-            // Function curve
-            ctx.beginPath();
-            ctx.strokeStyle = f.color;
-            ctx.lineWidth = 3;
-            for (let px = 0; px < W; px++) {
-                const x = (px / W) * 8 - 4;
-                const y = f.fn(x);
-                const py = H - ((y + 1.2) / 2.4) * H;
-                if (px === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.stroke();
-
-            // Labels
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '9px system-ui';
-            ctx.fillText('-4', 2, H / 2 - 4);
-            ctx.fillText('4', W - 14, H / 2 - 4);
-        });
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD/BACKWARD FLOW ANIMATION
     // ═══════════════════════════════════════════════════════════════
 
@@ -416,16 +358,6 @@ const BPSlides = (() => {
         ctx.fillText(`∇ = ${grad.toFixed(4)}`, padding + 290, 20);
         ctx.fillStyle = '#6366f1';
         ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
-    }
-
-    function stepGD() {
-        const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
-        const grad = gradLoss1D(gdState.x);
-        gdState.x -= lr * grad;
-        gdState.x = Math.max(-2, Math.min(5, gdState.x));
-        gdState.history.push(gdState.x);
-        if (gdState.history.length > 50) gdState.history.shift();
-        drawGDViz();
     }
 
     function autoGD() {
@@ -1052,61 +984,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // ACTIVATION FUNCTION MINI-PLOTS
-    // ═══════════════════════════════════════════════════════════════
-
-    function initActivationViz() {
-        const container = document.getElementById('bp-activation-viz');
-        if (!container) return;
-
-        const functions = [
-            { name: 'ReLU', fn: x => Math.max(0, x), color: '#3b82f6' },
-            { name: 'Sigmoid', fn: x => 1 / (1 + Math.exp(-x)), color: '#10b981' },
-            { name: 'Tanh', fn: x => Math.tanh(x), color: '#6366f1' }
-        ];
-
-        let html = '';
-        functions.forEach(f => {
-            html += `<div style="flex:1; min-width:150px; max-width:220px;">
-                <canvas id="bp-act-${f.name}" width="200" height="140" style="width:100%; height:auto; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
-                <div style="text-align:center; font-weight:bold; font-size:0.85em; color:${f.color}; margin-top:4px;">${f.name}</div>
-            </div>`;
-        });
-        container.innerHTML = html;
-
-        functions.forEach(f => {
-            const canvas = document.getElementById(`bp-act-${f.name}`);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const W = canvas.width, H = canvas.height;
-
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2);
-            ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.strokeStyle = f.color;
-            ctx.lineWidth = 3;
-            for (let px = 0; px < W; px++) {
-                const x = (px / W) * 8 - 4;
-                const y = f.fn(x);
-                const py = H - ((y + 1.2) / 2.4) * H;
-                if (px === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.stroke();
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '9px system-ui';
-            ctx.fillText('-4', 2, H / 2 - 4);
-            ctx.fillText('4', W - 14, H / 2 - 4);
-        });
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD/BACKWARD FLOW ANIMATION
     // ═══════════════════════════════════════════════════════════════
 
@@ -1237,11 +1114,6 @@ const BPSlides = (() => {
     function chainRemoveLayer() {
         if (chainLayers.length <= 2) return;
         chainLayers.pop();
-        drawChainViz();
-    }
-
-    function chainReset() {
-        chainLayers = [0.9, 0.85, 0.9, 0.1];
         drawChainViz();
     }
 
@@ -1388,16 +1260,6 @@ const BPSlides = (() => {
         ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
     }
 
-    function stepGD() {
-        const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
-        const grad = gradLoss1D(gdState.x);
-        gdState.x -= lr * grad;
-        gdState.x = Math.max(-2, Math.min(5, gdState.x));
-        gdState.history.push(gdState.x);
-        if (gdState.history.length > 50) gdState.history.shift();
-        drawGDViz();
-    }
-
     function autoGD() {
         if (gdState.running) {
             gdState.running = false;
@@ -1489,61 +1351,6 @@ const BPSlides = (() => {
 
         html += '</svg>';
         container.innerHTML = html;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // ACTIVATION FUNCTION MINI-PLOTS
-    // ═══════════════════════════════════════════════════════════════
-
-    function initActivationViz() {
-        const container = document.getElementById('bp-activation-viz');
-        if (!container) return;
-
-        const functions = [
-            { name: 'ReLU', fn: x => Math.max(0, x), color: '#3b82f6' },
-            { name: 'Sigmoid', fn: x => 1 / (1 + Math.exp(-x)), color: '#10b981' },
-            { name: 'Tanh', fn: x => Math.tanh(x), color: '#6366f1' }
-        ];
-
-        let html = '';
-        functions.forEach(f => {
-            html += `<div style="flex:1; min-width:150px; max-width:220px;">
-                <canvas id="bp-act-${f.name}" width="200" height="140" style="width:100%; height:auto; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
-                <div style="text-align:center; font-weight:bold; font-size:0.85em; color:${f.color}; margin-top:4px;">${f.name}</div>
-            </div>`;
-        });
-        container.innerHTML = html;
-
-        functions.forEach(f => {
-            const canvas = document.getElementById(`bp-act-${f.name}`);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const W = canvas.width, H = canvas.height;
-
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2);
-            ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.strokeStyle = f.color;
-            ctx.lineWidth = 3;
-            for (let px = 0; px < W; px++) {
-                const x = (px / W) * 8 - 4;
-                const y = f.fn(x);
-                const py = H - ((y + 1.2) / 2.4) * H;
-                if (px === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.stroke();
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '9px system-ui';
-            ctx.fillText('-4', 2, H / 2 - 4);
-            ctx.fillText('4', W - 14, H / 2 - 4);
-        });
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -1773,11 +1580,6 @@ const BPSlides = (() => {
         drawChainViz();
     }
 
-    function chainReset() {
-        chainLayers = [0.9, 0.85, 0.9, 0.1];
-        drawChainViz();
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // WEIGHT UPDATE / GRADIENT DESCENT 2D VISUALIZATION
     // ═══════════════════════════════════════════════════════════════
@@ -1913,16 +1715,6 @@ const BPSlides = (() => {
         ctx.fillText(`∇ = ${grad.toFixed(4)}`, padding + 290, 20);
         ctx.fillStyle = '#6366f1';
         ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
-    }
-
-    function stepGD() {
-        const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
-        const grad = gradLoss1D(gdState.x);
-        gdState.x -= lr * grad;
-        gdState.x = Math.max(-2, Math.min(5, gdState.x));
-        gdState.history.push(gdState.x);
-        if (gdState.history.length > 50) gdState.history.shift();
-        drawGDViz();
     }
 
     function autoGD() {
