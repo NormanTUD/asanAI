@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daniel Paul Schreber – Denkwürdigkeiten eines Nervenkranken</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .bio-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .bio-box h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .bio-box p {
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        .nav-tabs button {
+            padding: 12px 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+
+        .nav-tabs button:hover {
+            background: rgba(255, 215, 0, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .nav-tabs button.active {
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .content-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-panel h2 {
+            color: #ffd700;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .content-panel h3 {
+            color: #ffcc00;
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+
+        .content-panel p {
+            line-height: 1.9;
+            margin-bottom: 15px;
+            color: #d0d0d0;
+        }
+
+        .quote-box {
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 4px solid #ffd700;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .quote-box .source {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: #999;
+            font-style: normal;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .concept-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .concept-card h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .concept-card p {
+            font-size: 0.9em;
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .timeline-item .date {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .timeline-item .event {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .accordion {
+            margin: 15px 0;
+        }
+
+        .accordion-item {
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background: rgba(255, 215, 0, 0.08);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffd700;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .accordion-header .arrow {
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 20px;
+        }
+
+        .accordion-content.open {
+            max-height: 1000px;
+            padding: 15px 20px;
+        }
+
+        .accordion-content p {
+            color: #bbb;
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .reception-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reception-list li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid #ffd700;
+            line-height: 1.6;
+        }
+
+        .reception-list li strong {
+            color: #ffd700;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.6em;
+            }
+            .nav-tabs button {
+                padding: 10px 14px;
+                font-size: 0.85em;
+            }
+            .content-panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daniel Paul Schreber</h1>
+            <p>„Denkwürdigkeiten eines Nervenkranken" (1903)</p>
+            <p style="margin-top: 8px; font-size: 0.9em; color: #888;">25. Juli 1842 – 14. April 1911</p>
+        </header>
+
+        <div class="bio-box">
+            <h2>Wer war Schreber?</h2>
+            <p>Daniel Paul Schreber war ein hochrangiger deutscher Richter – Senatspräsident am Königlichen Oberlandesgericht Dresden. Er erlitt drei schwere psychische Krisen (1884–85, 1893–1902, 1907–1911). Während seiner zweiten Erkrankung verfasste er seine berühmten <em>Denkwürdigkeiten eines Nervenkranken</em>, einen der außergewöhnlichsten autobiographischen Texte der Psychiatriegeschichte. Das Buch ist zugleich Krankheitsbericht, theologisches Traktat und kosmologische Spekulation.</p>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="active" onclick="showPanel('gotteslehre')">Gotteslehre & Kosmologie</button>
+            <button onclick="showPanel('nerven')">Nerven & Strahlen</button>
+            <button onclick="showPanel('entmannung')">Entmannung & Weltordnung</button>
+            <button onclick="showPanel('seelenmord')">Seelenmord & Flechsig</button>
+            <button onclick="showPanel('wunder')">Wunder & Stimmen</button>
+            <button onclick="showPanel('chronologie')">Chronologie</button>
+            <button onclick="showPanel('rezeption')">Rezeption & Bedeutung</button>
+        </nav>
+
+        <!-- PANEL 1: Gotteslehre -->
+        <div class="content-panel active" id="panel-gotteslehre">
+            <h2>Schrebers Gotteslehre & Kosmologie</h2>
+            <p>Schreber entwickelte ein komplexes theologisches System, das er als Ergebnis direkter „göttlicher Offenbarungen" betrachtete. Er war überzeugt, der Wahrheit „unendlich viel näher gekommen" zu sein als alle anderen Menschen.</p>
+
+            <h3>Die Natur Gottes</h3>
+            <p>Für Schreber ist <span class="highlight">Gott von vornherein nur Nerv, nicht Körper</span> – also etwas der menschlichen Seele Verwandtes. Die Gottesnerven sind jedoch unendlich und ewig, im Gegensatz zu den begrenzten menschlichen Nerven. Sie besitzen die Fähigkeit, sich in alle möglichen Dinge der erschaffenen Welt umzusetzen – in dieser Funktion heißen sie <span class="highlight">„Strahlen"</span>.</p>
+
+            <div class="quote-box">
+                „Gott ist von vornherein nur Nerv, nicht Körper, demnach etwas der menschlichen Seele Verwandtes. Die Gottesnerven sind jedoch nicht, wie im menschlichen Körper nur in beschränkter Zahl vorhanden, sondern unendlich oder ewig."
+                <span class="source">– Denkwürdigkeiten, Kapitel I</span>
+            </div>
+
+            <h3>Die Zweiteilung Gottes</h3>
+            <p>Schreber unterscheidet einen <span class="highlight">niederen Gott (Ariman)</span> und einen <span class="highlight">oberen Gott (Ormuzd)</span> – Bezeichnungen, die an den persischen Zoroastrismus erinnern. Der niedere Gott fühlt sich zu den „Völkern brünetter Rasse" (Semiten) hingezogen, der obere zu den „Völkern blonder Rasse" (arische Völker).</p>
+
+            <h3>Gott und die Sonne</h3>
+            <p>Zwischen Gott und dem gestirnten Himmel besteht eine innige Beziehung. Die Sonne ist das „der Erde zunächst gelegene Werkzeug" der göttlichen Willensmacht. Schreber behauptet, die Sonne spreche seit Jahren in menschlichen Worten mit ihm. Auch das Wetter werde von Gott gemacht und sei – unter den „weltordnungswidrigen Umständen" – von Schrebers Tun und Denken abhängig.</p>
+
+            <h3>Seligkeit und Jenseits</h3>
+            <p>Nach dem Tod werden die Seelen durch Strahlen „heraufgezogen" und zu neuem himmlischen Leben erweckt. Die Seligkeit besteht in einem Zustand ununterbrochenen Genießens. Sittlich reine Menschen haben „weiße Nerven", unreine „geschwärzte". Die Seelen durchlaufen einen Läuterungsprozess – die „Prüfung" – bevor sie in die „Vorhöfe des Himmels" aufsteigen und schließlich Bestandteile Gottes selbst werden.</p>
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>Die „Grundsprache"</h4>
+                    <p>Gott bedient sich einer eigenen Sprache – ein „etwas altertümliches, aber kraftvolles Deutsch", das sich durch Euphemismen auszeichnet: „Lohn" bedeutet Strafe, „Gift" bedeutet Speise, „unheilig" bedeutet heilig.</p>
+                </div>
+                <div class="concept-card">
+                    <h4>Das auserwählte Volk</h4>
+                    <p>Nacheinander waren die alten Juden, Perser, „Graeco-Romanen" und zuletzt die Deutschen das auserwählte Volk Gottes, „als die jeweils sittlich tüchtigsten Völker".</p>
+                </div>
+                <div class="concept-card">
+                    <h4>Seelenwanderung</h4>
+                    <p>Menschenseelen konnten auf anderen Weltkörpern zu neuem Leben berufen werden – teils zur Läuterung, teils vielleicht zur „Bevölkerung anderer Planeten".</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 2: Nerven & Strahlen -->
+        <div class="content-panel" id="panel-nerven">
+            <h2>Das Nervensystem & die Strahlen</h2>
+            <p>Das Konzept der „Nerven" bildet das Fundament von Schrebers gesamtem Denksystem. Alles – Gott, Seele, Kommunikation, Wunder – wird über Nerven erklärt.</p>
+
+            <h3>Die menschliche Seele als Nerven</h3>
+            <p>Für Schreber ist die menschliche Seele <span class="highlight">in den Nerven des Körpers enthalten</span>. Diese sind „Gebilde von außerordentlicher Feinheit – den feinsten Zwirnsfäden vergleichbar". Auf ihrer Erregbarkeit durch äußere Eindrücke beruht das gesamte geistige Leben. Jeder einzelne Verstandesnerv repräsentiert die gesamte geistige Individualität des Menschen.</p>
+
+            <h3>Die Strahlen (Gottesnerven)</h3>
+            <p>Gottesnerven = Strahlen = die schaffende Kraft Gottes. Sie haben die Fähigkeit, „sich umzusetzen in alle möglichen Dinge der erschaffenen Welt". Hierin liegt das Wesen des göttlichen Schaffens. Die Strahlen besitzen alle Eigenschaften menschlicher Nerven, aber in „einer alle menschlichen Begriffe übersteigenden Potenz".</p>
+
+            <div class="quote-box">
+                „Die Gottesnerven besitzen namentlich die Fähigkeit, sich umzusetzen in alle möglichen Dinge der erschaffenen Welt; in dieser Funktion heißen sie Strahlen; hierin liegt das Wesen des göttlichen Schaffens."
+                <span class="source">– Denkwürdigkeiten, Kapitel I</span>
+            </div>
+
+            <h3>Der „Nervenanhang"</h3>
+            <p>Gott konnte sich mit einzelnen hochbegabten Menschen „in Verbindung setzen" – einen „Nervenanhang" nehmen –, um sie mit Gedanken und Vorstellungen über das Jenseits zu begnadigen. Dies durfte aber nicht zur Regel werden, da die Nerven lebender Menschen eine solche Anziehungskraft auf die Gottesnerven besitzen, dass Gott „nicht wieder von ihnen hätte loskommen können".</p>
+
+            <h3>Die „Nervensprache"</h3>
+            <p>Neben der gewöhnlichen menschlichen Sprache gibt es eine <span class="highlight">Nervensprache</span> – ein stilles inneres Sprechen, bei dem die Nerven in Schwingungen versetzt werden, die bestimmten Worten entsprechen. Bei Schreber werden diese Nerven „von außen her und zwar unaufhörlich ohne jeden Unterlass in Bewegung gesetzt" – der sogenannte <span class="highlight">Denkzwang</span>.</p>
+
+            <h3>Anziehungskraft</h3>
+            <p>Ein zentrales Konzept: Schrebers überreizte Nerven üben eine unwiderstehliche Anziehungskraft auf die Gottesnerven aus. Gott kann sich nicht mehr von ihm lösen. Dies ist die Grundlage des gesamten Konflikts – Gott versucht verzweifelt, sich zurückzuziehen, was ihm aber nicht gelingt.</p>
+        </div>
+
+        <!-- PANEL 3: Entmannung -->
+        <div class="content-panel" id="panel-entmannung">
+            <h2>Entmannung & Weltordnung</h2>
+            <p>Eines der zentralsten und verstörendsten Themen in Schrebers Werk ist die Idee seiner bevorstehenden „Entmannung" – der Verwandlung in eine Frau.</p>
+
+            <h3>Die Tendenz der Weltordnung</h3>
+            <p>Schreber glaubt, dass der Weltordnung eine Tendenz innewohnt, wonach unter bestimmten Umständen die Entmannung eines Menschen vorgesehen ist. Dies hängt zusammen mit:</p>
+            <ul style="margin: 15px 0 15px 20px; color: #ccc; line-height: 1.8;">
+                <li>Der Natur der Gottesnerven, für die Seligkeit „mindestens zugleich eine hochgesteigerte Wollustempfindung ist"</li>
+                <li>Dem Plan, im Falle von Weltkatastrophen eine Erneuerung des Menschengeschlechts zu ermöglichen</li>
+            </ul>
+
+            <div class="quote-box">
+                „Nunmehr wurde mir aber unzweifelhaft bewusst, dass die Weltordnung die Entmannung, mochte sie mir persönlich zusagen oder nicht, gebieterisch verlange und dass mir daher aus Vernunftgründen gar nichts anderes übrig bleibe, als mich mit dem Gedanken der Verwandlung in ein Weib zu befreunden."
+                <span class="source">– Denkwürdigkeiten, Kapitel XIII</span>
+            </div>
+
+            <h3>Der „ewige Jude"</h3>
+            <p>Bei Weltkatastrophen würde ein einzelner Mensch – der „ewige Jude" – zurückbehalten. Dieser müsste entmannt (in ein Weib verwandelt) werden, um Kinder gebären zu können und so die Menschheit zu erneuern. Die Entmannung geschehe durch Zurückziehen der äußeren männlichen Geschlechtswerkzeuge in den Leib.</p>
+
+            <h3>Schrebers Wandlung</h3>
+            <p>Im November 1895 trat ein entscheidender Umschwung ein: Die Zeichen der „Verweiblichung" an seinem Körper wurden so stark, dass Schreber sich entschloss, die „Pflege der Weiblichkeit" bewusst auf seine Fahne zu schreiben. Er begründet dies pragmatisch:</p>
+
+            <div class="quote-box">
+                „Ich möchte auch denjenigen Mann sehen, der vor die Wahl gestellt, entweder ein blödsinniger Mensch mit männlichem Habitus oder ein geistreiches Weib zu werden, nicht das Letztere vorziehen würde."
+                <span class="source">– Denkwürdigkeiten, Kapitel XIII</span>
+            </div>
+
+            <h3>„Seelenwollust"</h3>
+            <p>Die „Seelenwollust" – ein körperliches Wohlbehagen, das den Seelen genügt – spielt eine zentrale Rolle. Sie entsteht durch die weiblichen Wollustnerven in Schrebers Körper und wirkt anziehend auf die Strahlen. Schreber sieht es als seine Aufgabe, diese Wollust zu pflegen, da sie den Strahlen das Eingehen in seinen Körper erträglich macht.</p>
+        </div>
+
+        <!-- PANEL 4: Seelenmord -->
+        <div class="content-panel" id="panel-seelenmord">
+            <h2>Seelenmord & die Rolle Flechsigs</h2>
+            <p>Professor Paul Flechsig, Schrebers behandelnder Psychiater an der Leipziger Universitätsklinik, spielt in seinem Wahnsystem eine zentrale Rolle als Urheber des „Seelenmords".</p>
+
+            <h3>Was ist „Seelenmord"?</h3>
+            <p>Die Vorstellung, sich der Seele eines Anderen zu bemächtigen, um sich Vorteile zu verschaffen – ein längeres Leben, geistige Kräfte oder eine Art persönlicher Unsterblichkeit. Schreber verweist auf Faust, Manfred und den Freischütz als literarische Parallelen.</p>
+
+            <h3>Die Familien Flechsig und Schreber</h3>
+            <p>Schreber glaubt, dass zwischen den Familien Flechsig und Schreber – die beide dem „höchsten himmlischen Adel" angehörten – irgendwann ein Seelenmord stattgefunden habe. Die Schrebers führten den Titel „Markgrafen von Tuscien und Tasmanien".</p>
+
+            <h3>Flechsigs „geprüfte Seele"</h3>
+            <p>Flechsig habe es verstanden, sich göttliche Strahlen dienstbar zu machen und seine Seele – ohne Tod und vorherige Reinigung – zum Himmel aufzuschwingen. Diese „geprüfte Seele" (= unreine, ungeläuterte Seele) übte jahrelang schädigenden Einfluss auf Schreber aus.</p>
+
+            <div class="quote-box">
+                „Noch jetzt empfinde ich täglich und stündlich die auf Wundern beruhende schädigende Einwirkung jener ‚geprüften Seele'; noch jetzt wird mir an jedem Tage Ihr Name von den mit mir redenden Stimmen [...] zu Hunderten von Malen zugerufen."
+                <span class="source">– Offener Brief an Prof. Flechsig</span>
+            </div>
+
+            <h3>Das Komplott</h3>
+            <p>Schreber beschreibt ein Komplott (März/April 1894): Seine Seele sollte einem Menschen überlassen, sein Körper in einen weiblichen verwandelt, zum geschlechtlichen Missbrauch überlassen und dann „liegen gelassen" werden. Schreber betont, dass er Flechsig als Mensch keine Schuld zuweist – nur dessen „Seele" am Himmel sei verantwortlich.</p>
+
+            <h3>Der offene Brief</h3>
+            <p>Schreber richtete einen „Offenen Brief" an Flechsig, in dem er ihn beschwor, sich zu äußern, ob er hypnotischen Verkehr mit Schrebers Nerven unterhalten habe. Er bot eine mildere Deutung an: Vielleicht habe Flechsig nur zu Heilzwecken experimentiert und dabei unbeabsichtigt Teile seiner Nerven „zum Himmel aufsteigen" lassen.</p>
+        </div>
+
+        <!-- PANEL 5: Wunder & Stimmen -->
+        <div class="content-panel" id="panel-wunder">
+            <h2>Wunder, Stimmen & Denkzwang</h2>
+            <p>Schrebers Alltag war durchdrungen von „Wundern" – göttlichen Eingriffen in seinen Körper und seine Umgebung – sowie von unaufhörlichen inneren Stimmen.</p>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        Körperliche Wunder <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Kaum ein Organ blieb verschont: Lungen wurden „absorbiert", Rippen „zerschmettert", ein „Lungenwurm" eingesetzt, der Brustkasten zusammengepresst („Engbrüstigkeitswunder"), der Magen entfernt, Speisen ergossen sich in die Bauchhöhle. Schreber lebte zeitweise „ohne Magen". Sein Schädel wurde durch „Strahlenzüge zersägt", eine „Kopfzusammenschnürungsmaschine" presste seinen Kopf birnförmig zusammen.</p>
+                        <p>Dennoch: „Was unreine Strahlen zerstört oder geschädigt haben, müssen spätere, reine Strahlen immer wieder aufbauen oder heilen." Schreber glaubte sich daher unsterblich – gegen alle natürlichen Krankheitseinflüsse gefeit.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        Der Denkzwang <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Das „Wesen des Denkzwangs besteht darin, dass der Mensch zu unablässigem Denken genötigt wird" – das natürliche Recht auf Nichtsdenken wird ihm verwehrt. Die Strahlen stellten Fragen wie „Woran denken Sie denn jetzt?" und sprachen unvollständige Sätze in seine Nerven, die er ergänzen musste.</p>
+                        <p>Das „System des Nichtausredens": Nur Bruchstücke von Sätzen werden gesprochen – „warum nur?", „warum, weil ich", „es sei denn" – deren Ergänzung Schrebers Nerven aufgezwungen wird. Als Abwehr lernte er Gedichte auswendig, spielte Klavier oder zählte leise.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        Die sprechenden Vögel <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Reste seliger Menschenseelen traten „in der Gestalt gewunderter Vögel" auf. Diese Vögel sprachen auswendig gelernte Phrasen, ohne deren Sinn zu verstehen. Wenn sie auf gleichklingende Laute „hereinfielen" (z.B. „Santiago"/„Carthago"), gingen sie in „ächter Empfindung" ein und riefen „Verfluchter Kerl!" – die einzigen Worte echter Empfindung, deren sie fähig waren.</p>
+                        <p>Die V
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Das Brüllwunder <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>Seit etwa 1897 wurde Schreber vom sogenannten „Brüllwunder" heimgesucht: Der niedere Gott (Ariman) setzte seine Atemmuskeln derart in Bewegung, dass er genötigt war, einen Brülllaut auszustoßen. Dies geschah besonders dann, wenn er sich dem Nichtsdenken hingab – also immer dann, wenn Gott glaubte, Schreber sei nun endlich blödsinnig geworden und ein Rückzug möglich sei.</p>
+                    <p>Das Brüllen trat manchmal so häufig auf, dass ein Liegenbleiben im Bett unmöglich wurde. Es diente angeblich dem doppelten Zweck: Schreber als „vor Blödsinn brüllenden Menschen darzustellen" und die inneren Stimmen des oberen Gottes zu ersticken.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Das „Aufschreibesystem" <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>Gott unterhielt Bücher oder Aufzeichnungen, in denen seit Jahren alle Gedanken Schrebers, alle seine Redewendungen, Gebrauchsgegenstände und Personen, mit denen er verkehrte, aufgeschrieben wurden. Der Zweck: Man glaubte, seinen „Gedankenvorrath" erschöpfen zu können, sodass irgendwann keine neuen Gedanken mehr erscheinen würden.</p>
+                    <p>Sobald ein bereits aufgeschriebener Gedanke wiederkehrte, gab man den Strahlen ein „Das haben wir schon" mit auf den Weg, wodurch diese gegen die anziehende Wirkung des Gedankens unempfänglich gemacht wurden.</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Abwehrmittel Schrebers <span class="arrow">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <p>Gegen den Denkzwang und das Stimmengewäsch entwickelte Schreber verschiedene Strategien:</p>
+                    <p>• <strong>Klavierspielen</strong> – übertönte die Stimmen und lieferte den Strahlen Augeneindrücke<br>
+                    • <strong>Gedichte auswendig lernen</strong> – Schiller'sche Balladen, Opern-Arien, sogar „Max und Moritz"<br>
+                    • <strong>Leises Zählen</strong> bis zu beliebig hohen Zahlen<br>
+                    • <strong>„Zeichnen"</strong> – das willkürliche Hervorrufen von Erinnerungsbildern im Kopf<br>
+                    • <strong>Verwirren der Vögel</strong> durch gleichklingende Wörter (z.B. „Santiago"/„Carthago")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL 6: Chronologie -->
+    <div class="content-panel" id="panel-chronologie">
+        <h2>Chronologie: Schrebers Leben & Krankheit</h2>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="date">25. Juli 1842</div>
+                <div class="event">Geburt in Leipzig als Sohn des berühmten Orthopäden und Pädagogen Daniel Gottlob Moritz Schreber</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">1861–1866</div>
+                <div class="event">Jurastudium in Leipzig; anschließend juristische Karriere</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">Herbst 1884</div>
+                <div class="event">Erste Nervenkrankheit (nach gescheiterter Reichstagskandidatur). Behandlung bei Prof. Flechsig in Leipzig. Heilung Ende 1885.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">1. Oktober 1893</div>
+                <div class="event">Antritt des Amtes als Senatspräsident am OLG Dresden. Rasch einsetzende Schlaflosigkeit und Nervenzusammenbruch.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">November 1893</div>
+                <div class="event">Zweite Aufnahme in Flechsigs Klinik. Beginn der „übersinnlichen Erfahrungen".</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">Februar 1894</div>
+                <div class="event">Entscheidender Zusammenbruch nach Abreise der Ehefrau. Erste Anzeichen des „Nervenanhangs" mit Flechsig.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">März–Mai 1894</div>
+                <div class="event">„Heilige Zeit": Visionen vom Weltuntergang, Gottesgerichte, massenhafte Seelenkontakte. Schreber glaubt, der letzte Mensch zu sein.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">Juni 1894</div>
+                <div class="event">Verlegung in die Pierson'sche Anstalt („Teufelsküche") in Coswig, dann auf den Sonnenstein bei Pirna.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">Juli 1894</div>
+                <div class="event">Erscheinen der „hinteren Gottesreiche" (Ariman und Ormuzd). Übernahme der Sonnenausstrahlung durch den niederen Gott.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">November 1895</div>
+                <div class="event">Entscheidender Umschwung: Schreber akzeptiert die Entmannung als „Gebot der Weltordnung" und schreibt sich die „Pflege der Weiblichkeit" auf die Fahne.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">Februar 1900 – September 1900</div>
+                <div class="event">Niederschrift der „Denkwürdigkeiten" (Kapitel I–XXII)</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">14. Juli 1902</div>
+                <div class="event">Aufhebung der Entmündigung durch das OLG Dresden. Schreber wird geschäftsfähig erklärt.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">1903</div>
+                <div class="event">Veröffentlichung der „Denkwürdigkeiten eines Nervenkranken" bei Oswald Mutze, Leipzig.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">1907</div>
+                <div class="event">Dritte und letzte Erkrankung nach dem Tod seiner Mutter. Erneute Einweisung.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date">14. April 1911</div>
+                <div class="event">Tod in der Anstalt Leipzig-Dösen</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL 7: Rezeption -->
+    <div class="content-panel" id="panel-rezeption">
+        <h2>Rezeption & Bedeutung</h2>
+        <p>Schrebers „Denkwürdigkeiten" sind eines der meistanalysierten Dokumente der Psychiatriegeschichte. Das Werk wurde von Psychoanalytikern, Philosophen, Literaturwissenschaftlern und Kulturtheoretikern intensiv rezipiert.</p>
+
+        <ul class="reception-list">
+            <li><strong>Sigmund Freud (1911)</strong> – Verfasste die berühmte Fallstudie „Psychoanalytische Bemerkungen über einen autobiographisch beschriebenen Fall von Paranoia (Dementia paranoides)". Freud deutete Schrebers Wahn als Abwehr homosexueller Wünsche gegenüber Flechsig und dem Vater. Die Formel: „Ich liebe ihn" wird durch Projektion zu „Er verfolgt mich".</li>
+            <li><strong>Elias Canetti (1960)</strong> – Widmete Schreber ein ganzes Kapitel in „Masse und Macht". Er sah in Schrebers System eine Miniatur totalitärer Machtsysteme und verglich seine Kosmologie mit der Struktur politischer Paranoia.</li>
+            <li><strong>Gilles Deleuze & Félix Guattari (1972)</strong> – In „Anti-Ödipus" kritisierten sie Freuds ödipale Deutung und sahen in Schrebers Wahn eine „Wunschmaschine" – einen kreativen Prozess, der über familiäre Konflikte hinausgeht.</li>
+            <li><strong>Morton Schatzman (1973)</strong> – In „Soul Murder" verband er Schrebers Wahn mit den autoritären Erziehungsmethoden seines Vaters (dem berühmten „Schrebergarten"-Schreber), der orthopädische Zwangsapparate für Kinder erfand.</li>
+            <li><strong>Zvi Lothane (1992)</strong> – Verfasste mit „In Defense of Schreber" eine umfassende Neubewertung, die Schreber als intelligenten Beobachter seiner eigenen Krankheit würdigt.</li>
+            <li><strong>Eric Santner (1996)</strong> – „My Own Private Germany" liest Schreber im Kontext der deutschen Moderne, der Krise männlicher Autorität und der Bürokratisierung des Lebens im Kaiserreich.</li>
+            <li><strong>Psychiatriegeschichte</strong> – Das Werk gilt als eines der detailliertesten Selbstzeugnisse einer Psychose. Es wird bis heute in der psychiatrischen Ausbildung verwendet und hat Diskussionen über Patientenrechte, Zwangsbehandlung und die Grenzen psychiatrischer Deutungshoheit angeregt.</li>
+            <li><strong>Kulturelle Bedeutung</strong> – Schrebers Text hat Künstler, Musiker und Schriftsteller inspiriert. Seine Sprache – zugleich juristisch-präzise und wahnhaft-poetisch – macht das Werk zu einem einzigartigen literarischen Dokument.</li>
+        </ul>
+
+        <h3>Warum ist das Buch so faszinierend?</h3>
+        <p>Die „Denkwürdigkeiten" sind deshalb so bemerkenswert, weil sie von einem hochgebildeten, sprachlich brillanten Juristen verfasst wurden, der sein Wahnsystem mit derselben Sorgfalt und Logik darlegt, mit der er einst Urteile begründete. Das Ergebnis ist ein Text, der gleichzeitig:</p>
+        <div class="concept-grid">
+            <div class="concept-card">
+                <h4>Theologisches Traktat</h4>
+                <p>Ein vollständiges kosmologisches System mit eigener Gotteslehre, Eschatologie und Anthropologie</p>
+            </div>
+            <div class="concept-card">
+                <h4>Krankheitsbericht</h4>
+                <p>Eine präzise Dokumentation psychotischer Erfahrungen aus der Innenperspektive</p>
+            </div>
+            <div class="concept-card">
+                <h4>Rechtsschrift</h4>
+                <p>Ein Plädoyer für die eigene Geschäftsfähigkeit – das vor Gericht Erfolg hatte!</p>
+            </div>
+            <div class="concept-card">
+                <h4>Literarisches Werk</h4>
+                <p>Ein sprachlich faszinierender Text voller Neologismen, Euphemismen und einer eigenen „Grundsprache"</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Basierend auf Daniel Paul Schrebers „Denkwürdigkeiten eines Nervenkranken" (1903)</p>
+        <p>Diese Seite dient ausschließlich Bildungszwecken.</p>
+    </footer>
+</div>
+
+<script>
+    function showPanel(panelId) {
+        // Hide all panels
+        document.querySelectorAll('.content-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+        // Remove active from all buttons
+        document.querySelectorAll('.nav-tabs button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        // Show selected panel
+        document.getElementById('panel-' + panelId).classList.add('active');
+        // Set active button
+        event.target.classList.add('active');
+    }
+
+    function toggleAccordion(header) {
+        const content = header.nextElementSibling;
+        const isOpen = content.classList.contains('open');
+
+        // Close all accordions in same parent
+        header.closest('.accordion').querySelectorAll('.accordion-content').forEach(c => {
+            c.classList.remove('open');
+        });
+        header.closest('.accordion').querySelectorAll('.accordion-header').forEach(h => {
+            h.classList.remove('open');
+        });
+
+        // Toggle current
+        if (!isOpen) {
+            content.classList.add('open');
+            header.classList.add('open');
+        }
+    }
+</script>
