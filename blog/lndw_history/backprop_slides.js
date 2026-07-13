@@ -12,57 +12,6 @@ const BPSlides = (() => {
     let landscapePaused = false;
 
     // ═══════════════════════════════════════════════════════════════
-    // FORWARD-VIZ: Animiertes Netz-Diagramm
-    // ═══════════════════════════════════════════════════════════════
-
-    function initForwardViz() {
-        const container = document.getElementById('bp-forward-viz');
-        if (!container) return;
-
-        const layers = [
-            { name: 'Input', neurons: 3, color: '#64748b' },
-            { name: 'Hidden 1', neurons: 4, color: '#3b82f6' },
-            { name: 'Hidden 2', neurons: 4, color: '#6366f1' },
-            { name: 'Output', neurons: 2, color: '#10b981' }
-        ];
-
-        let html = '<svg width="100%" height="200" viewBox="0 0 700 200" style="max-width:700px;">';
-
-        const layerX = [80, 250, 420, 600];
-
-        // Draw connections
-        for (let l = 0; l < layers.length - 1; l++) {
-            const curr = layers[l], next = layers[l + 1];
-            const currY = Array.from({ length: curr.neurons }, (_, i) => 100 - ((curr.neurons - 1) * 22) + i * 44);
-            const nextY = Array.from({ length: next.neurons }, (_, i) => 100 - ((next.neurons - 1) * 22) + i * 44);
-            for (const cy of currY) {
-                for (const ny of nextY) {
-                    html += `<line x1="${layerX[l]}" y1="${cy}" x2="${layerX[l + 1]}" y2="${ny}" stroke="#cbd5e1" stroke-width="1" opacity="0.5"/>`;
-                }
-            }
-        }
-
-        // Draw neurons
-        for (let l = 0; l < layers.length; l++) {
-            const layer = layers[l];
-            const positions = Array.from({ length: layer.neurons }, (_, i) => 100 - ((layer.neurons - 1) * 22) + i * 44);
-            for (const y of positions) {
-                html += `<circle cx="${layerX[l]}" cy="${y}" r="14" fill="white" stroke="${layer.color}" stroke-width="2.5"/>`;
-            }
-            html += `<text x="${layerX[l]}" y="195" text-anchor="middle" font-size="11" fill="${layer.color}" font-weight="bold">${layer.name}</text>`;
-        }
-
-        // Arrows between layers
-        for (let l = 0; l < layers.length - 1; l++) {
-            const midX = (layerX[l] + layerX[l + 1]) / 2;
-            html += `<text x="${midX}" y="16" text-anchor="middle" font-size="10" fill="#94a3b8">W×x + b → σ</text>`;
-        }
-
-        html += '</svg>';
-        container.innerHTML = html;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD/BACKWARD FLOW ANIMATION
     // ═══════════════════════════════════════════════════════════════
 
@@ -185,13 +134,6 @@ const BPSlides = (() => {
             flowState.raf = requestAnimationFrame(step);
         }
         step();
-    }
-
-    function resetFlow() {
-        if (flowState.raf) cancelAnimationFrame(flowState.raf);
-        flowState.phase = 'idle';
-        flowState.t = 0;
-        if (flowState.draw) flowState.draw();
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -368,14 +310,6 @@ const BPSlides = (() => {
         gdState.x = 3.5;
         gdState.history = [3.5];
         drawGDViz();
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // LOSS LANDSCAPE – Speed-Control, Pause, Respawn
-    // ═══════════════════════════════════════════════════════════════
-
-    function respawnBall() {
-        lossLandscapeRespawnRequested = true;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -738,109 +672,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // NEURAL NET TIMELINE
-    // ═══════════════════════════════════════════════════════════════
-
-    function initNNTimeline() {
-        const div = document.getElementById('bp-nn-timeline');
-        if (!div || typeof Plotly === 'undefined') return;
-
-        const events = [
-            { year: 1943, label: 'McCulloch-Pitts Neuron', color: '#ef4444' },
-            { year: 1958, label: 'Perceptron (Rosenblatt)', color: '#ef4444' },
-            { year: 1969, label: 'XOR-Problem (Minsky)', color: '#94a3b8' },
-            { year: 1970, label: 'Autodiff (Linnainmaa)', color: '#f59e0b' },
-            { year: 1986, label: 'Backpropagation (Rumelhart)', color: '#22c55e' },
-            { year: 1991, label: 'Vanishing Gradient (Hochreiter)', color: '#ef4444' },
-            { year: 1997, label: 'LSTM (Hochreiter & Schmidhuber)', color: '#22c55e' },
-            { year: 1998, label: 'LeNet-5 (LeCun)', color: '#3b82f6' },
-            { year: 2012, label: 'AlexNet / GPU-Revolution', color: '#22c55e' },
-            { year: 2015, label: 'ResNet (He et al.)', color: '#3b82f6' },
-            { year: 2017, label: 'Transformer (Vaswani et al.)', color: '#3b82f6' },
-            { year: 2022, label: 'ChatGPT', color: '#6366f1' }
-        ];
-
-        const trace = {
-            x: events.map(e => e.year),
-            y: events.map(() => 1),
-            mode: 'markers+text',
-            marker: {
-                size: 14,
-                color: events.map(e => e.color),
-                line: { width: 2, color: '#fff' }
-            },
-            text: events.map(e => e.label),
-            textposition: events.map((_, i) => i % 2 === 0 ? 'top center' : 'bottom center'),
-            textfont: { size: 9 },
-            hovertext: events.map(e => `${e.year}: ${e.label}`),
-            hoverinfo: 'text',
-            type: 'scatter'
-        };
-
-        Plotly.newPlot(div, [trace], {
-            xaxis: { title: 'Jahr', range: [1938, 2027], gridcolor: '#f1f5f9' },
-            yaxis: { visible: false, range: [0.3, 1.7] },
-            showlegend: false,
-            margin: { t: 20, b: 50, l: 20, r: 20 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(255,255,255,0.95)',
-            shapes: [{
-                type: 'line',
-                x0: 1940, x1: 2025,
-                y0: 1, y1: 1,
-                line: { color: '#e2e8f0', width: 2 }
-            }]
-        }, { displayModeBar: false, responsive: true });
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // FORWARD-VIZ: Animiertes Netz-Diagramm
-    // ═══════════════════════════════════════════════════════════════
-
-    function initForwardViz() {
-        const container = document.getElementById('bp-forward-viz');
-        if (!container) return;
-
-        const layers = [
-            { name: 'Input', neurons: 3, color: '#64748b' },
-            { name: 'Hidden 1', neurons: 4, color: '#3b82f6' },
-            { name: 'Hidden 2', neurons: 4, color: '#6366f1' },
-            { name: 'Output', neurons: 2, color: '#10b981' }
-        ];
-
-        let html = '<svg width="100%" height="200" viewBox="0 0 700 200" style="max-width:700px;">';
-        const layerX = [80, 250, 420, 600];
-
-        for (let l = 0; l < layers.length - 1; l++) {
-            const curr = layers[l], next = layers[l + 1];
-            const currY = Array.from({ length: curr.neurons }, (_, i) => 100 - ((curr.neurons - 1) * 22) + i * 44);
-            const nextY = Array.from({ length: next.neurons }, (_, i) => 100 - ((next.neurons - 1) * 22) + i * 44);
-            for (const cy of currY) {
-                for (const ny of nextY) {
-                    html += `<line x1="${layerX[l]}" y1="${cy}" x2="${layerX[l + 1]}" y2="${ny}" stroke="#cbd5e1" stroke-width="1" opacity="0.5"/>`;
-                }
-            }
-        }
-
-        for (let l = 0; l < layers.length; l++) {
-            const layer = layers[l];
-            const positions = Array.from({ length: layer.neurons }, (_, i) => 100 - ((layer.neurons - 1) * 22) + i * 44);
-            for (const y of positions) {
-                html += `<circle cx="${layerX[l]}" cy="${y}" r="14" fill="white" stroke="${layer.color}" stroke-width="2.5"/>`;
-            }
-            html += `<text x="${layerX[l]}" y="195" text-anchor="middle" font-size="11" fill="${layer.color}" font-weight="bold">${layer.name}</text>`;
-        }
-
-        for (let l = 0; l < layers.length - 1; l++) {
-            const midX = (layerX[l] + layerX[l + 1]) / 2;
-            html += `<text x="${midX}" y="16" text-anchor="middle" font-size="10" fill="#94a3b8">W×x + b → σ</text>`;
-        }
-
-        html += '</svg>';
-        container.innerHTML = html;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD/BACKWARD FLOW ANIMATION
     // ═══════════════════════════════════════════════════════════════
 
@@ -856,21 +687,9 @@ const BPSlides = (() => {
         step();
     }
 
-    function resetFlow() {
-        if (flowState.raf) cancelAnimationFrame(flowState.raf);
-        flowState.t = 0;
-        if (flowState.draw) flowState.draw();
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // CHAIN RULE VISUALIZATION
     // ═══════════════════════════════════════════════════════════════
-
-    function chainAddLayer() {
-        if (chainLayers.length >= 12) return;
-        chainLayers.push(0.7 + Math.random() * 0.25);
-        drawChainViz();
-    }
 
     function chainRemoveLayer() {
         if (chainLayers.length <= 2) return;
@@ -1050,61 +869,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // LOSS LANDSCAPE – Speed-Control, Pause, Respawn
-    // ═══════════════════════════════════════════════════════════════
-
-    function respawnBall() {
-        lossLandscapeRespawnRequested = true;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // FORWARD-VIZ: Animiertes Netz-Diagramm
-    // ═══════════════════════════════════════════════════════════════
-
-    function initForwardViz() {
-        const container = document.getElementById('bp-forward-viz');
-        if (!container) return;
-
-        const layers = [
-            { name: 'Input', neurons: 3, color: '#64748b' },
-            { name: 'Hidden 1', neurons: 4, color: '#3b82f6' },
-            { name: 'Hidden 2', neurons: 4, color: '#6366f1' },
-            { name: 'Output', neurons: 2, color: '#10b981' }
-        ];
-
-        let html = '<svg width="100%" height="200" viewBox="0 0 700 200" style="max-width:700px;">';
-        const layerX = [80, 250, 420, 600];
-
-        for (let l = 0; l < layers.length - 1; l++) {
-            const curr = layers[l], next = layers[l + 1];
-            const currY = Array.from({ length: curr.neurons }, (_, i) => 100 - ((curr.neurons - 1) * 22) + i * 44);
-            const nextY = Array.from({ length: next.neurons }, (_, i) => 100 - ((next.neurons - 1) * 22) + i * 44);
-            for (const cy of currY) {
-                for (const ny of nextY) {
-                    html += `<line x1="${layerX[l]}" y1="${cy}" x2="${layerX[l + 1]}" y2="${ny}" stroke="#cbd5e1" stroke-width="1" opacity="0.5"/>`;
-                }
-            }
-        }
-
-        for (let l = 0; l < layers.length; l++) {
-            const layer = layers[l];
-            const positions = Array.from({ length: layer.neurons }, (_, i) => 100 - ((layer.neurons - 1) * 22) + i * 44);
-            for (const y of positions) {
-                html += `<circle cx="${layerX[l]}" cy="${y}" r="14" fill="white" stroke="${layer.color}" stroke-width="2.5"/>`;
-            }
-            html += `<text x="${layerX[l]}" y="195" text-anchor="middle" font-size="11" fill="${layer.color}" font-weight="bold">${layer.name}</text>`;
-        }
-
-        for (let l = 0; l < layers.length - 1; l++) {
-            const midX = (layerX[l] + layerX[l + 1]) / 2;
-            html += `<text x="${midX}" y="16" text-anchor="middle" font-size="10" fill="#94a3b8">W×x + b → σ</text>`;
-        }
-
-        html += '</svg>';
-        container.innerHTML = html;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD/BACKWARD FLOW ANIMATION
     // ═══════════════════════════════════════════════════════════════
 
@@ -1211,12 +975,6 @@ const BPSlides = (() => {
         step();
     }
 
-    function resetFlow() {
-        if (flowState.raf) cancelAnimationFrame(flowState.raf);
-        flowState.t = 0;
-        if (flowState.draw) flowState.draw();
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // CHAIN RULE VISUALIZATION
     // ═══════════════════════════════════════════════════════════════
@@ -1305,12 +1063,6 @@ const BPSlides = (() => {
             const emoji = isVanishing ? '💀' : product < 0.1 ? '⚠️' : '✅';
             resultEl.innerHTML = `${emoji} Gesamtgradient: <span style="color:${isVanishing ? '#ef4444' : '#10b981'}">${product.toExponential(3)}</span> (${n} Schichten)`;
         }
-    }
-
-    function chainAddLayer() {
-        if (chainLayers.length >= 12) return;
-        chainLayers.push(0.7 + Math.random() * 0.25);
-        drawChainViz();
     }
 
     function chainRemoveLayer() {
@@ -1489,10 +1241,6 @@ const BPSlides = (() => {
     // ═══════════════════════════════════════════════════════════════
 
     let lossLandscapeRespawnRequested = false;
-
-    function respawnBall() {
-        lossLandscapeRespawnRequested = true;
-    }
 
     // ═══════════════════════════════════════════════════════════════
     // FORWARD-VIZ: Animiertes Netz-Diagramm
