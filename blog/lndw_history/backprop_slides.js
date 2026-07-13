@@ -492,18 +492,6 @@ const BPSlides = (() => {
             trail: [], arrived: false, restartTimer: 0
         };
 
-        function doRespawnBall() {
-            const angle = Math.random() * Math.PI * 2;
-            const r = 1.5 + Math.random() * 1.0;
-            ball.x = Math.cos(angle) * r;
-            ball.y = Math.sin(angle) * r;
-            ball.vx = 0;
-            ball.vy = 0;
-            ball.trail = [];
-            ball.arrived = false;
-            ball.restartTimer = 0;
-        }
-
         // === Mouse interaction ===
         let isDragging = false;
         let lastMX = 0, lastMY = 0;
