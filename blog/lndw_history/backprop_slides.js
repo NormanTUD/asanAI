@@ -554,66 +554,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // RESNET CONCEPT DIAGRAM (SVG)
-    // ═══════════════════════════════════════════════════════════════
-
-    function initResnetConcept() {
-        const container = document.getElementById('bp-resnet-concept');
-        if (!container) return;
-
-        const W = container.clientWidth || 600;
-        const H = 250;
-
-        let svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
-        <defs>
-            <marker id="bp-arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
-            </marker>
-            <marker id="bp-arr-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
-            </marker>
-        </defs>`;
-
-        const cx = W / 2;
-
-        // Input
-        svg += `<rect x="${cx - 200}" y="100" width="80" height="50" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>`;
-        svg += `<text x="${cx - 160}" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#334155">x</text>`;
-
-        // F(x) block
-        svg += `<rect x="${cx - 60}" y="100" width="120" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5"/>`;
-        svg += `<text x="${cx}" y="122" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e40af">F(x)</text>`;
-        svg += `<text x="${cx}" y="140" text-anchor="middle" font-size="10" fill="#64748b">Conv → BN → ReLU</text>`;
-
-        // + circle
-        svg += `<circle cx="${cx + 130}" cy="125" r="18" fill="#dcfce7" stroke="#10b981" stroke-width="2.5"/>`;
-        svg += `<text x="${cx + 130}" y="131" text-anchor="middle" font-size="20" font-weight="bold" fill="#166534">+</text>`;
-
-        // Output
-        svg += `<rect x="${cx + 170}" y="100" width="80" height="50" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>`;
-        svg += `<text x="${cx + 210}" y="125" text-anchor="middle" font-size="12" font-weight="bold" fill="#166534">F(x) + x</text>`;
-        svg += `<text x="${cx + 210}" y="142" text-anchor="middle" font-size="10" fill="#64748b">= y</text>`;
-
-        // Arrows: x → F(x)
-        svg += `<line x1="${cx - 120}" y1="125" x2="${cx - 62}" y2="125" stroke="#94a3b8" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        // F(x) → +
-        svg += `<line x1="${cx + 60}" y1="125" x2="${cx + 110}" y2="125" stroke="#3b82f6" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        // + → output
-        svg += `<line x1="${cx + 148}" y1="125" x2="${cx + 168}" y2="125" stroke="#10b981" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-
-        // Skip connection
-        svg += `<path d="M ${cx - 160} 100 Q ${cx - 160} 50, ${cx - 20} 50 Q ${cx + 100} 50, ${cx + 130} 107" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#bp-arr-gold)"/>`;
-        svg += `<text x="${cx - 20}" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">Identity Shortcut (x)</text>`;
-
-        // Labels below
-        svg += `<text x="${cx}" y="185" text-anchor="middle" font-size="11" fill="#64748b">Das Netz lernt nur die Abweichung F(x) = H(x) − x</text>`;
-        svg += `<text x="${cx}" y="205" text-anchor="middle" font-size="11" fill="#64748b">Wenn F(x) ≈ 0, dann y ≈ x (Identity-Funktion)</text>`;
-
-        svg += `</svg>`;
-        container.innerHTML = svg;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // 3D LOSS LANDSCAPE – Überarbeitet (schneller, schöner, mit Controls)
     // ═══════════════════════════════════════════════════════════════
 
@@ -1144,57 +1084,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // RESNET CONCEPT DIAGRAM (SVG for the "Residual Networks Intro" slide)
-    // ═══════════════════════════════════════════════════════════════
-
-    function initResnetConcept() {
-        const container = document.getElementById('bp-resnet-concept');
-        if (!container) return;
-
-        const W = container.clientWidth || 600;
-        const H = 250;
-
-        let svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
-        <defs>
-            <marker id="bp-arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
-            </marker>
-            <marker id="bp-arr-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
-            </marker>
-        </defs>`;
-
-        const cx = W / 2;
-
-        svg += `<rect x="${cx - 200}" y="100" width="80" height="50" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>`;
-        svg += `<text x="${cx - 160}" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#334155">x</text>`;
-
-        svg += `<rect x="${cx - 60}" y="100" width="120" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5"/>`;
-        svg += `<text x="${cx}" y="122" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e40af">F(x)</text>`;
-        svg += `<text x="${cx}" y="140" text-anchor="middle" font-size="10" fill="#64748b">Conv → BN → ReLU</text>`;
-
-        svg += `<circle cx="${cx + 130}" cy="125" r="18" fill="#dcfce7" stroke="#10b981" stroke-width="2.5"/>`;
-        svg += `<text x="${cx + 130}" y="131" text-anchor="middle" font-size="20" font-weight="bold" fill="#166534">+</text>`;
-
-        svg += `<rect x="${cx + 170}" y="100" width="80" height="50" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>`;
-        svg += `<text x="${cx + 210}" y="125" text-anchor="middle" font-size="12" font-weight="bold" fill="#166534">F(x) + x</text>`;
-        svg += `<text x="${cx + 210}" y="142" text-anchor="middle" font-size="10" fill="#64748b">= y</text>`;
-
-        svg += `<line x1="${cx - 120}" y1="125" x2="${cx - 62}" y2="125" stroke="#94a3b8" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        svg += `<line x1="${cx + 60}" y1="125" x2="${cx + 110}" y2="125" stroke="#3b82f6" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        svg += `<line x1="${cx + 148}" y1="125" x2="${cx + 168}" y2="125" stroke="#10b981" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-
-        svg += `<path d="M ${cx - 160} 100 Q ${cx - 160} 50, ${cx - 20} 50 Q ${cx + 100} 50, ${cx + 130} 107" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#bp-arr-gold)"/>`;
-        svg += `<text x="${cx - 20}" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">Identity Shortcut (x)</text>`;
-
-        svg += `<text x="${cx}" y="185" text-anchor="middle" font-size="11" fill="#64748b">Das Netz lernt nur die Abweichung F(x) = H(x) − x</text>`;
-        svg += `<text x="${cx}" y="205" text-anchor="middle" font-size="11" fill="#64748b">Wenn F(x) ≈ 0, dann y ≈ x (Identity-Funktion)</text>`;
-
-        svg += `</svg>`;
-        container.innerHTML = svg;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD-VIZ: Animiertes Netz-Diagramm
     // ═══════════════════════════════════════════════════════════════
 
@@ -1711,57 +1600,6 @@ const BPSlides = (() => {
 
     function setBallSpeed(val) {
         ballSpeedMultiplier = parseInt(val) / 10;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // RESNET CONCEPT DIAGRAM (SVG)
-    // ═══════════════════════════════════════════════════════════════
-
-    function initResnetConcept() {
-        const container = document.getElementById('bp-resnet-concept');
-        if (!container) return;
-
-        const W = container.clientWidth || 600;
-        const H = 250;
-
-        let svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
-        <defs>
-            <marker id="bp-arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
-            </marker>
-            <marker id="bp-arr-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
-            </marker>
-        </defs>`;
-
-        const cx = W / 2;
-
-        svg += `<rect x="${cx - 200}" y="100" width="80" height="50" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>`;
-        svg += `<text x="${cx - 160}" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#334155">x</text>`;
-
-        svg += `<rect x="${cx - 60}" y="100" width="120" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5"/>`;
-        svg += `<text x="${cx}" y="122" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e40af">F(x)</text>`;
-        svg += `<text x="${cx}" y="140" text-anchor="middle" font-size="10" fill="#64748b">Conv → BN → ReLU</text>`;
-
-        svg += `<circle cx="${cx + 130}" cy="125" r="18" fill="#dcfce7" stroke="#10b981" stroke-width="2.5"/>`;
-        svg += `<text x="${cx + 130}" y="131" text-anchor="middle" font-size="20" font-weight="bold" fill="#166534">+</text>`;
-
-        svg += `<rect x="${cx + 170}" y="100" width="80" height="50" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>`;
-        svg += `<text x="${cx + 210}" y="125" text-anchor="middle" font-size="12" font-weight="bold" fill="#166534">F(x) + x</text>`;
-        svg += `<text x="${cx + 210}" y="142" text-anchor="middle" font-size="10" fill="#64748b">= y</text>`;
-
-        svg += `<line x1="${cx - 120}" y1="125" x2="${cx - 62}" y2="125" stroke="#94a3b8" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        svg += `<line x1="${cx + 60}" y1="125" x2="${cx + 110}" y2="125" stroke="#3b82f6" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        svg += `<line x1="${cx + 148}" y1="125" x2="${cx + 168}" y2="125" stroke="#10b981" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-
-        svg += `<path d="M ${cx - 160} 100 Q ${cx - 160} 50, ${cx - 20} 50 Q ${cx + 100} 50, ${cx + 130} 107" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#bp-arr-gold)"/>`;
-        svg += `<text x="${cx - 20}" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">Identity Shortcut (x)</text>`;
-
-        svg += `<text x="${cx}" y="185" text-anchor="middle" font-size="11" fill="#64748b">Das Netz lernt nur die Abweichung F(x) = H(x) − x</text>`;
-        svg += `<text x="${cx}" y="205" text-anchor="middle" font-size="11" fill="#64748b">Wenn F(x) ≈ 0, dann y ≈ x (Identity-Funktion)</text>`;
-
-        svg += `</svg>`;
-        container.innerHTML = svg;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -2370,57 +2208,6 @@ const BPSlides = (() => {
 
     function setBallSpeed(val) {
         ballSpeedMultiplier = parseInt(val) / 10;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // RESNET CONCEPT DIAGRAM (SVG)
-    // ═══════════════════════════════════════════════════════════════
-
-    function initResnetConcept() {
-        const container = document.getElementById('bp-resnet-concept');
-        if (!container) return;
-
-        const W = container.clientWidth || 600;
-        const H = 250;
-
-        let svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;">
-        <defs>
-            <marker id="bp-arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
-            </marker>
-            <marker id="bp-arr-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
-            </marker>
-        </defs>`;
-
-        const cx = W / 2;
-
-        svg += `<rect x="${cx - 200}" y="100" width="80" height="50" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>`;
-        svg += `<text x="${cx - 160}" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#334155">x</text>`;
-
-        svg += `<rect x="${cx - 60}" y="100" width="120" height="50" rx="10" fill="#eff6ff" stroke="#3b82f6" stroke-width="2.5"/>`;
-        svg += `<text x="${cx}" y="122" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e40af">F(x)</text>`;
-        svg += `<text x="${cx}" y="140" text-anchor="middle" font-size="10" fill="#64748b">Conv → BN → ReLU</text>`;
-
-        svg += `<circle cx="${cx + 130}" cy="125" r="18" fill="#dcfce7" stroke="#10b981" stroke-width="2.5"/>`;
-        svg += `<text x="${cx + 130}" y="131" text-anchor="middle" font-size="20" font-weight="bold" fill="#166534">+</text>`;
-
-        svg += `<rect x="${cx + 170}" y="100" width="80" height="50" rx="10" fill="#f0fdf4" stroke="#10b981" stroke-width="2"/>`;
-        svg += `<text x="${cx + 210}" y="125" text-anchor="middle" font-size="12" font-weight="bold" fill="#166534">F(x) + x</text>`;
-        svg += `<text x="${cx + 210}" y="142" text-anchor="middle" font-size="10" fill="#64748b">= y</text>`;
-
-        svg += `<line x1="${cx - 120}" y1="125" x2="${cx - 62}" y2="125" stroke="#94a3b8" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        svg += `<line x1="${cx + 60}" y1="125" x2="${cx + 110}" y2="125" stroke="#3b82f6" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-        svg += `<line x1="${cx + 148}" y1="125" x2="${cx + 168}" y2="125" stroke="#10b981" stroke-width="2" marker-end="url(#bp-arr2)"/>`;
-
-        svg += `<path d="M ${cx - 160} 100 Q ${cx - 160} 50, ${cx - 20} 50 Q ${cx + 100} 50, ${cx + 130} 107" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#bp-arr-gold)"/>`;
-        svg += `<text x="${cx - 20}" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#f59e0b">Identity Shortcut (x)</text>`;
-
-        svg += `<text x="${cx}" y="185" text-anchor="middle" font-size="11" fill="#64748b">Das Netz lernt nur die Abweichung F(x) = H(x) − x</text>`;
-        svg += `<text x="${cx}" y="205" text-anchor="middle" font-size="11" fill="#64748b">Wenn F(x) ≈ 0, dann y ≈ x (Identity-Funktion)</text>`;
-
-        svg += `</svg>`;
-        container.innerHTML = svg;
     }
 
     // ═══════════════════════════════════════════════════════════════
