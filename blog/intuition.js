@@ -518,25 +518,25 @@ const ResidualStreamViz = {
 			short: 'Raw embeddings',
 			attnDesc: '',
 			ffnDesc: '',
-			example: 'Each token is an isolated vector — "cat" ≠ animal yet, just ID #9001.'
+			example: 'Each token is an isolated vector ‚Äî\n"cat" ‚â† animal yet, just ID #9001.'
 		},
 		{
 			short: 'Local syntax & word roles',
-			attnDesc: '"cat" attends to "The" → learns it\'s a definite noun phrase',
-			ffnDesc: 'Activates part-of-speech features: "cat"→noun, "sat"→verb',
-			example: '"The cat" groups into a noun phrase; "sat" tagged as past-tense verb.'
+			attnDesc: '"cat" attends to "The" ‚Üí learns it\'s a definite noun phrase',
+			ffnDesc: 'Activates part-of-speech features: "cat"‚Üínoun, "sat"‚Üíverb',
+			example: '"The cat" groups into a noun phrase;\n"sat" tagged as past-tense verb.'
 		},
 		{
 			short: 'Clause structure & relationships',
-			attnDesc: '"sat" attends to "cat" → identifies subject-verb link',
+			attnDesc: '"sat" attends to "cat" ‚Üí identifies subject-verb link',
 			ffnDesc: 'Encodes who-did-what: agent="cat", action="sat", prep="on"',
-			example: '"cat" is the one sitting; "on" opens a prepositional phrase → expects a location next.'
+			example: '"cat" is the one sitting;\n"on" opens a prepositional phrase ‚Üí\nexpects a location next.'
 		},
 		{
 			short: 'Next-token prediction',
-			attnDesc: '"on" attends to "cat sat" → gathers full context for prediction',
+			attnDesc: '"on" attends to "cat sat" ‚Üí gathers full context for prediction',
 			ffnDesc: 'Boosts location nouns: "the" "a" "mat" "floor" rise; suppresses verbs',
-			example: 'on → predicts "the" (42%), "a" (18%), "mat" (7%), ...'
+			example: 'on ‚Üí predicts "the" (42%),\n"a" (18%), "mat" (7%), ...'
 		},
 	],
 
@@ -943,7 +943,7 @@ const ResidualStreamViz = {
 		ctx.font = 'bold 14px monospace';
 		ctx.fillStyle = '#10b981';
 		ctx.fillText('Example:', descColX, dy + 115);
-		ctx.fillText(role.example, descColX + 5, dy + 135);
+		this.drawMultiline(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', 18);
 	},
 
 	drawHeaders: function() {
