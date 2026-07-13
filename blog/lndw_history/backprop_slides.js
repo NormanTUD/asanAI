@@ -169,24 +169,6 @@ const BPSlides = (() => {
         drawBase();
     }
 
-    function animateForward() {
-        if (flowState.raf) cancelAnimationFrame(flowState.raf);
-        flowState.phase = 'forward';
-        flowState.t = 0;
-
-        function step() {
-            flowState.t += 0.012;
-            if (flowState.t >= 1) {
-                flowState.drawSignal(1, 'forward', '#10b981');
-                flowState.phase = 'idle';
-                return;
-            }
-            flowState.drawSignal(flowState.t, 'forward', '#10b981');
-            flowState.raf = requestAnimationFrame(step);
-        }
-        step();
-    }
-
     function animateBackward() {
         if (flowState.raf) cancelAnimationFrame(flowState.raf);
         flowState.phase = 'backward';
@@ -394,16 +376,6 @@ const BPSlides = (() => {
 
     function respawnBall() {
         lossLandscapeRespawnRequested = true;
-    }
-
-    function toggleLandscapePause() {
-        landscapePaused = !landscapePaused;
-        const infoEl = document.getElementById('bp-loss-info');
-        if (infoEl) infoEl.textContent = landscapePaused ? '⏸ Pausiert' : '';
-    }
-
-    function setBallSpeed(val) {
-        ballSpeedMultiplier = parseInt(val) / 10;
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -732,60 +704,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // GRADIENT COMPARISON PLOT (Plain vs ResNet)
-    // ═══════════════════════════════════════════════════════════════
-
-    function updateGradientPlot() {
-        const depthEl = document.getElementById('bp-depth-slider');
-        if (!depthEl) return;
-        const depth = parseInt(depthEl.value);
-
-        let plainGradients = [];
-        let resGradients = [];
-        let labels = [];
-
-        let gPlain = 1.0;
-        let gRes = 1.0;
-
-        for (let i = 0; i <= depth; i++) {
-            labels.push(`L${i}`);
-            plainGradients.push(gPlain);
-            resGradients.push(gRes);
-            gPlain *= 0.88;
-            gRes = (gRes * 0.88) + 0.11;
-            if (gRes > 1.0) gRes = 1.0;
-        }
-
-        const trace1 = {
-            x: labels, y: plainGradients,
-            name: 'Plain Network (multiplikativ)',
-            type: 'scatter', fill: 'tozeroy',
-            line: { color: '#ef4444', width: 3 }
-        };
-        const trace2 = {
-            x: labels, y: resGradients,
-            name: 'ResNet (additiv, +1)',
-            type: 'scatter', fill: 'tozeroy',
-            line: { color: '#3b82f6', width: 3 }
-        };
-
-        const layout = {
-            margin: { t: 10, b: 40, l: 50, r: 20 },
-            yaxis: { title: 'Gradient-Stärke', range: [0, 1.1], gridcolor: '#f1f5f9' },
-            xaxis: { title: 'Netztiefe (Schichten)', gridcolor: '#f1f5f9' },
-            legend: { orientation: 'h', y: -0.2 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(255,255,255,0.95)',
-            autosize: true
-        };
-
-        const plotDiv = document.getElementById('bp-gradient-plot');
-        if (plotDiv && typeof Plotly !== 'undefined') {
-            Plotly.newPlot(plotDiv, [trace1, trace2], layout, { displayModeBar: false, responsive: true });
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // RESNET GRADIENT COMPARISON (for the Signal slide)
     // ═══════════════════════════════════════════════════════════════
 
@@ -876,55 +794,6 @@ const BPSlides = (() => {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // RESNET ARCHITECTURE DIAGRAM (SVG in the architecture slide)
-    // ═══════════════════════════════════════════════════════════════
-
-    function initResnetArchDiagram() {
-        const container = document.getElementById('resnet-architecture-viz');
-        if (!container) return;
-
-        const W = container.clientWidth || 700;
-        const H = 170;
-
-        let svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible">
-        <defs>
-            <marker id="bp-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
-            </marker>
-        </defs>`;
-
-        const nodes = [
-            { x: 60, y: 85, label: 'x', color: '#64748b' },
-            { x: 200, y: 85, label: 'Conv', color: '#3b82f6' },
-            { x: 320, y: 85, label: 'BN+ReLU', color: '#10b981' },
-            { x: 440, y: 85, label: 'Conv', color: '#3b82f6' },
-            { x: 580, y: 85, label: 'F(x)+x', color: '#6366f1' },
-            { x: 660, y: 85, label: 'ReLU', color: '#10b981' }
-        ];
-
-        // Main path arrows
-        for (let i = 0; i < nodes.length - 1; i++) {
-            svg += `<line x1="${nodes[i].x + 30}" y1="${nodes[i].y}" x2="${nodes[i + 1].x - 30}" y2="${nodes[i + 1].y}" stroke="#94a3b8" stroke-width="2" marker-end="url(#bp-arrow)"/>`;
-        }
-
-        // Skip connection arc
-        svg += `<path d="M ${nodes[0].x} ${nodes[0].y - 25} Q ${(nodes[0].x + nodes[4].x) / 2} ${nodes[0].y - 70} ${nodes[4].x} ${nodes[4].y - 25}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,3" marker-end="url(#bp-arrow)"/>`;
-        svg += `<text x="${(nodes[0].x + nodes[4].x) / 2}" y="${nodes[0].y - 72}" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="bold">Identity Shortcut (x)</text>`;
-
-        // + symbol at F(x)+x
-        svg += `<text x="${nodes[4].x - 40}" y="${nodes[4].y - 10}" font-size="18" fill="#6366f1" font-weight="bold">+</text>`;
-
-        // Nodes
-        nodes.forEach(n => {
-            svg += `<rect x="${n.x - 28}" y="${n.y - 18}" width="56" height="36" rx="8" fill="white" stroke="${n.color}" stroke-width="2"/>`;
-            svg += `<text x="${n.x}" y="${n.y + 5}" text-anchor="middle" font-size="11" fill="${n.color}" font-weight="bold">${n.label}</text>`;
-        });
-
-        svg += `</svg>`;
-        container.innerHTML = svg;
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // FORWARD-VIZ: Animiertes Netz-Diagramm
     // ═══════════════════════════════════════════════════════════════
 
@@ -975,18 +844,6 @@ const BPSlides = (() => {
     // FORWARD/BACKWARD FLOW ANIMATION
     // ═══════════════════════════════════════════════════════════════
 
-    function animateForward() {
-        if (flowState.raf) cancelAnimationFrame(flowState.raf);
-        flowState.t = 0;
-        function step() {
-            flowState.t += 0.012;
-            if (flowState.t >= 1) { flowState.drawSignal(1, 'forward', '#10b981'); return; }
-            flowState.drawSignal(flowState.t, 'forward', '#10b981');
-            flowState.raf = requestAnimationFrame(step);
-        }
-        step();
-    }
-
     function animateBackward() {
         if (flowState.raf) cancelAnimationFrame(flowState.raf);
         flowState.t = 0;
@@ -1008,90 +865,6 @@ const BPSlides = (() => {
     // ═══════════════════════════════════════════════════════════════
     // CHAIN RULE VISUALIZATION
     // ═══════════════════════════════════════════════════════════════
-
-    function drawChainViz() {
-        const canvas = document.getElementById('bp-chain-canvas');
-        if (!canvas) return;
-        const container = canvas.parentElement;
-        const rect = container.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = rect.width * dpr;
-        canvas.height = 280 * dpr;
-        canvas.style.height = '280px';
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
-        const W = rect.width, H = 280;
-
-        ctx.clearRect(0, 0, W, H);
-        ctx.fillStyle = '#f8fafc';
-        ctx.fillRect(0, 0, W, H);
-
-        const n = chainLayers.length;
-        const boxW = Math.min(80, (W - 60) / (n + 1));
-        const gap = (W - boxW * (n + 1)) / (n + 2);
-        let product = 1;
-
-        for (let i = 0; i < n; i++) {
-            const x = gap + i * (boxW + gap);
-            const y = H / 2 - 30;
-            const val = chainLayers[i];
-            product *= val;
-
-            const hue = val > 0.5 ? 120 : val > 0.2 ? 40 : 0;
-            const sat = 70;
-            const light = 85 - val * 30;
-
-            ctx.fillStyle = `hsl(${hue}, ${sat}%, ${light}%)`;
-            ctx.strokeStyle = `hsl(${hue}, ${sat}%, ${light - 20}%)`;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.roundRect(x, y, boxW, 60, 8);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#1e293b';
-            ctx.font = 'bold 11px system-ui';
-            ctx.textAlign = 'center';
-            ctx.fillText(`Layer ${i + 1}`, x + boxW / 2, y + 22);
-            ctx.font = '13px system-ui';
-            ctx.fillText(`∂ = ${val.toFixed(2)}`, x + boxW / 2, y + 42);
-
-            if (i < n - 1) {
-                const arrowX = x + boxW + gap / 2;
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = 'bold 16px system-ui';
-                ctx.fillText('×', arrowX, H / 2 + 2);
-            }
-        }
-
-        const resX = gap + n * (boxW + gap);
-        const resY = H / 2 - 30;
-        const isVanishing = product < 0.01;
-        ctx.fillStyle = isVanishing ? '#fee2e2' : '#dcfce7';
-        ctx.strokeStyle = isVanishing ? '#ef4444' : '#10b981';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.roundRect(resX, resY, boxW + 10, 60, 8);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = isVanishing ? '#991b1b' : '#166534';
-        ctx.font = 'bold 11px system-ui';
-        ctx.textAlign = 'center';
-        ctx.fillText('Gradient', resX + (boxW + 10) / 2, resY + 22);
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillText(product.toExponential(2), resX + (boxW + 10) / 2, resY + 42);
-
-        ctx.fillStyle = '#64748b';
-        ctx.font = 'bold 18px system-ui';
-        ctx.fillText('=', resX - gap / 2, H / 2 + 2);
-
-        const resultEl = document.getElementById('bp-chain-result');
-        if (resultEl) {
-            const emoji = isVanishing ? '💀' : product < 0.1 ? '⚠️' : '✅';
-            resultEl.innerHTML = `${emoji} Gesamtgradient: <span style="color:${isVanishing ? '#ef4444' : '#10b981'}">${product.toExponential(3)}</span> (${n} Schichten)`;
-        }
-    }
 
     function chainAddLayer() {
         if (chainLayers.length >= 12) return;
@@ -1284,16 +1057,6 @@ const BPSlides = (() => {
         lossLandscapeRespawnRequested = true;
     }
 
-    function toggleLandscapePause() {
-        landscapePaused = !landscapePaused;
-        const infoEl = document.getElementById('bp-loss-info');
-        if (infoEl) infoEl.textContent = landscapePaused ? '⏸ Pausiert' : '';
-    }
-
-    function setBallSpeed(val) {
-        ballSpeedMultiplier = parseInt(val) / 10;
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // FORWARD-VIZ: Animiertes Netz-Diagramm
     // ═══════════════════════════════════════════════════════════════
@@ -1434,18 +1197,6 @@ const BPSlides = (() => {
         flowState.draw = drawBase;
         flowState.drawSignal = drawSignal;
         drawBase();
-    }
-
-    function animateForward() {
-        if (flowState.raf) cancelAnimationFrame(flowState.raf);
-        flowState.t = 0;
-        function step() {
-            flowState.t += 0.012;
-            if (flowState.t >= 1) { flowState.drawSignal(1, 'forward', '#10b981'); return; }
-            flowState.drawSignal(flowState.t, 'forward', '#10b981');
-            flowState.raf = requestAnimationFrame(step);
-        }
-        step();
     }
 
     function animateBackward() {
@@ -1741,16 +1492,6 @@ const BPSlides = (() => {
 
     function respawnBall() {
         lossLandscapeRespawnRequested = true;
-    }
-
-    function toggleLandscapePause() {
-        landscapePaused = !landscapePaused;
-        const infoEl = document.getElementById('bp-loss-info');
-        if (infoEl) infoEl.textContent = landscapePaused ? '⏸ Pausiert' : '';
-    }
-
-    function setBallSpeed(val) {
-        ballSpeedMultiplier = parseInt(val) / 10;
     }
 
     // ═══════════════════════════════════════════════════════════════
