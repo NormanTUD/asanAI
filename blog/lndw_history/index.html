@@ -367,6 +367,313 @@
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- NEUE FOLIEN: Backpropagation, Residual Networks, Geschichte   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<!-- SLIDE: Backprop Intro -->
+<div class="slide" data-title="Backpropagation – Überblick">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Backpropagation</span>
+        <h2>Wie lernt ein neuronales Netz?</h2>
+        <p>Ein neuronales Netz besteht aus Schichten (<b>Layers</b>). Jede Schicht führt eine einfache Operation aus:</p>
+        <div class="formula-box fragment">
+            <p style="font-size:0.9em; color:#64748b; margin-bottom:8px;">Dense Layer (vollverbundene Schicht):</p>
+            <div class="math-display" data-temml="$$\text{dense}(\mathbf{x}) = A \cdot \mathbf{x} + \mathbf{b}$$"></div>
+            <p style="font-size:0.85em; color:#475569; margin-top:8px;">$A$ = Gewichtsmatrix, $\mathbf{b}$ = Bias-Vektor</p>
+        </div>
+        <p class="fragment">Danach kommt eine <b>Aktivierungsfunktion</b> (z.B. ReLU, Sigmoid), die Nicht-Linearität einführt:</p>
+        <div class="formula-box fragment">
+            <div class="math-display" data-temml="$$\text{output} = \sigma(A \cdot \mathbf{x} + \mathbf{b})$$"></div>
+        </div>
+        <div class="key-insight fragment">
+            <strong>Kernidee:</strong> Backpropagation berechnet, wie stark jedes Gewicht zum Fehler beigetragen hat – und passt es dann an, um den Fehler zu reduzieren.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Forward & Backward Pass -->
+<div class="slide" data-title="Forward & Backward Pass">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Backpropagation</span>
+        <h2>Zwei Phasen des Lernens</h2>
+        <div class="two-col">
+            <div class="fragment">
+                <h3 style="color:#10b981;">① Forward Pass</h3>
+                <p>Daten fließen <b>vorwärts</b> durch das Netz:</p>
+                <div class="formula-box" style="font-size:0.9em;">
+                    <div class="math-display" data-temml="$$\mathbf{h} = \sigma(W_1 \mathbf{x} + \mathbf{b}_1)$$"></div>
+                    <div class="math-display" data-temml="$$\hat{y} = \sigma(W_2 \mathbf{h} + \mathbf{b}_2)$$"></div>
+                </div>
+                <p style="font-size:0.9em;">Ergebnis: eine Vorhersage $\hat{y}$</p>
+            </div>
+            <div class="fragment">
+                <h3 style="color:#ef4444;">② Backward Pass</h3>
+                <p>Der Fehler fließt <b>rückwärts</b>:</p>
+                <div class="formula-box" style="font-size:0.9em;">
+                    <div class="math-display" data-temml="$$E = \frac{1}{2}(t - \hat{y})^2$$"></div>
+                    <div class="math-display" data-temml="$$\frac{\partial E}{\partial w} = \delta \cdot \text{input}$$"></div>
+                </div>
+                <p style="font-size:0.9em;">Jedes Gewicht wird anteilig korrigiert.</p>
+            </div>
+        </div>
+        <div class="key-insight fragment">
+            <strong>Die Kettenregel:</strong> Der Fehler wird Schicht für Schicht zurückgereicht – wie eine Kette von Verantwortlichkeiten.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Chain Rule visualisiert -->
+<div class="slide" data-title="Die Kettenregel">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Backpropagation</span>
+        <h2>Die Kettenregel – Herzstück von Backprop</h2>
+        <p>In einem Netz mit $L$ Schichten berechnen wir den Gradienten durch <b>Multiplikation</b>:</p>
+        <div class="formula-box fragment">
+            <div class="math-display" data-temml="$$\frac{\partial E}{\partial x_0} = \frac{\partial E}{\partial x_L} \cdot \frac{\partial x_L}{\partial x_{L-1}} \cdot \frac{\partial x_{L-1}}{\partial x_{L-2}} \cdots \frac{\partial x_1}{\partial x_0}$$"></div>
+        </div>
+        <p class="fragment">Jeder Faktor ist die <b>lokale Ableitung</b> einer Schicht. Das Produkt ergibt den Gesamteinfluss.</p>
+        <div class="signal-flow fragment">
+            <div class="signal-block gradient-good">Layer 1<br><small>∂ = 0.9</small></div>
+            <span class="signal-arrow">×</span>
+            <div class="signal-block gradient-good">Layer 2<br><small>∂ = 0.85</small></div>
+            <span class="signal-arrow">×</span>
+            <div class="signal-block gradient-good">Layer 3<br><small>∂ = 0.9</small></div>
+            <span class="signal-arrow">×</span>
+            <div class="signal-block gradient-bad">Layer 4<br><small>∂ = 0.1</small></div>
+            <span class="signal-arrow">=</span>
+            <div class="signal-block gradient-bad">Gradient<br><small>≈ 0.069</small></div>
+        </div>
+        <div class="key-insight fragment">
+            <strong>Problem:</strong> Wenn viele Faktoren < 1 sind, wird das Produkt exponentiell klein → <b>Vanishing Gradient!</b>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Weight Update -->
+<div class="slide" data-title="Gewichts-Update">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Backpropagation</span>
+        <h2>Das Gewichts-Update</h2>
+        <p>Nachdem wir den Gradienten berechnet haben, aktualisieren wir jedes Gewicht:</p>
+        <div class="formula-box fragment">
+            <div class="math-display" data-temml="$$w_{\text{neu}} = w_{\text{alt}} - \eta \cdot \frac{\partial E}{\partial w}$$"></div>
+            <p style="font-size:0.85em; color:#475569; margin-top:8px;">$\eta$ = Lernrate (wie groß der Schritt ist)</p>
+        </div>
+        <p class="fragment">Das ist wie ein <b>Ball, der einen Hügel hinunterrollt</b>:</p>
+        <ul class="fragment">
+            <li>Der <b>Gradient</b> zeigt die Richtung des steilsten Abstiegs</li>
+            <li>Die <b>Lernrate</b> bestimmt die Schrittgröße</li>
+            <li>Das <b>Minimum</b> der Loss-Landschaft ist das Ziel</li>
+        </ul>
+        <div class="key-insight fragment">
+            <strong>Gradient Descent:</strong> Wir folgen dem Gefälle der Fehlerlandschaft, bis wir ein Tal (Minimum) erreichen.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: 3D Loss Landscape -->
+<div class="slide" data-title="3D Loss Landscape">
+    <div class="slide-content" style="padding-bottom:20px;">
+        <span class="era-badge era-neural">Backpropagation</span>
+        <h2>Die Loss-Landschaft – Interaktiv</h2>
+        <p style="font-size:0.95em; color:#475569;">Der Ball rollt durch die Fehlerlandschaft und sucht das Minimum. <b>Ziehen</b> = Drehen, <b>Scroll</b> = Zoom.</p>
+        <div id="bp-loss-landscape" style="width:100%; height:420px; border-radius:12px; border:1px solid #e2e8f0; background:#1a1a2e; margin-top:10px; position:relative; overflow:hidden;">
+            <canvas id="bp-loss-canvas" style="width:100%; height:100%; display:block;"></canvas>
+        </div>
+        <p class="fragment" style="text-align:center; font-size:0.85em; color:#94a3b8; margin-top:8px;">Die Landschaft zeigt $E(w_1, w_2)$ – den Fehler als Funktion zweier Gewichte. Der Ball folgt dem negativen Gradienten.</p>
+    </div>
+</div>
+
+<!-- SLIDE: Vanishing Gradient Problem -->
+<div class="slide" data-title="Vanishing Gradient">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Das Problem</span>
+        <h2>Das Vanishing Gradient Problem</h2>
+        <p>In einem <b>tiefen Netz</b> (viele Schichten) verschwindet das Fehlersignal exponentiell:</p>
+        <div class="formula-box fragment">
+            <p style="color:#ef4444; font-weight:bold;">Plain Network (ohne Skip-Connections):</p>
+            <div class="math-display" data-temml="$$0.9 \times 0.9 \times 0.9 \times \cdots \times 0.9 = 0.9^{50} \approx 0.005$$"></div>
+            <p style="font-size:0.85em; color:#991b1b;">→ Gradient fast Null! Frühe Schichten lernen nichts mehr.</p>
+        </div>
+        <p class="fragment">Das wurde erstmals von <b>Sepp Hochreiter</b> (1991) mathematisch beschrieben.</p>
+        <p class="fragment">Ergebnis: Tiefe Netze (> 20 Schichten) waren <b>jahrelang nicht trainierbar</b>.</p>
+        <div class="key-insight fragment">
+            <strong>Die Lösung?</strong> Residual Networks (ResNets) – eine elegante Idee, die 2015 alles veränderte.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Residual Networks Intro -->
+<div class="slide" data-title="Residual Networks">
+    <div class="slide-content">
+        <span class="era-badge era-modern">ResNet (2015)</span>
+        <h2>Residual Networks – Die Lösung</h2>
+        <p>Statt die gesamte Transformation $H(x)$ zu lernen, lernt das Netz nur die <b>Abweichung</b> (Residuum):</p>
+        <div class="formula-box fragment">
+            <div class="math-display" data-temml="$$y = F(x) + x$$"></div>
+            <p style="font-size:0.85em; color:#475569;">$F(x)$ = gelerntes Residuum, $x$ = Identity Shortcut (Skip Connection)</p>
+        </div>
+        <p class="fragment">Der Gradient dieser Verbindung ist:</p>
+        <div class="formula-box fragment">
+            <div class="math-display" data-temml="$$\frac{\partial y}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{1}$$"></div>
+        </div>
+        <div class="key-insight fragment">
+            <strong>Die +1 ist der Schlüssel!</strong> Selbst wenn $\frac{\partial F}{\partial x} \approx 0$ (Gewichte sehr klein), fließt das Gradient-Signal <b>ungehindert</b> durch die Identity-Verbindung.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Signal-Vergleich Plain vs ResNet -->
+<div class="slide" data-title="Signal: Plain vs ResNet">
+    <div class="slide-content">
+        <span class="era-badge era-modern">ResNet</span>
+        <h2>Gradient-Signal: Plain vs. ResNet</h2>
+        <div class="signal-flow fragment">
+            <div class="signal-block gradient-bad" style="min-width:120px;">Plain Net<br><small>Multiplikativ</small></div>
+            <span class="signal-arrow">→</span>
+            <div style="font-size:0.85em; max-width:300px; text-align:center;">
+                <div class="math-display" data-temml="$$0.9^{50} \approx 0.005$$"></div>
+                <small style="color:#991b1b;">Signal verschwindet!</small>
+            </div>
+        </div>
+        <div class="signal-flow fragment" style="margin-top:20px;">
+            <div class="signal-block gradient-res" style="min-width:120px;">ResNet<br><small>Additiv (+1)</small></div>
+            <span class="signal-arrow">→</span>
+            <div style="font-size:0.85em; max-width:300px; text-align:center;">
+                <div class="math-display" data-temml="$$\text{Gradient} \geq 1 \text{ (immer)}$$"></div>
+                <small style="color:#166534;">Signal bleibt erhalten!</small>
+            </div>
+        </div>
+        <div id="resnet-gradient-comparison" style="width:100%; height:280px; border-radius:12px; border:1px solid #e2e8f0; margin-top:16px;" class="fragment"></div>
+        <p class="fragment" style="text-align:center; font-size:0.85em; color:#64748b;">Nutze den Slider um die Netztiefe zu ändern und den Effekt zu sehen.</p>
+    </div>
+</div>
+
+<!-- SLIDE: ResNet Architektur-Diagramm -->
+<div class="slide" data-title="ResNet Architektur">
+    <div class="slide-content">
+        <span class="era-badge era-modern">ResNet</span>
+        <h2>Der Residual Block – Architektur</h2>
+        <div id="resnet-architecture-viz" style="width:100%; height:180px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; margin:16px 0;"></div>
+        <div class="two-col fragment">
+            <div>
+                <h3 style="font-size:1.1em;">Wenn Dimensionen passen:</h3>
+                <div class="formula-box" style="font-size:0.9em;">
+                    <div class="math-display" data-temml="$$y = F(x) + x$$"></div>
+                </div>
+                <p style="font-size:0.85em;">Einfache Addition – kein zusätzlicher Parameter nötig.</p>
+            </div>
+            <div>
+                <h3 style="font-size:1.1em;">Wenn Dimensionen nicht passen:</h3>
+                <div class="formula-box" style="font-size:0.9em;">
+                    <div class="math-display" data-temml="$$y = F(x) + W_s \cdot x$$"></div>
+                </div>
+                <p style="font-size:0.85em;">$W_s$ = 1×1 Convolution zur Dimensionsanpassung.</p>
+            </div>
+        </div>
+        <div class="key-insight fragment">
+            <strong>Ergebnis:</strong> ResNet ermöglichte Netze mit <b>152+ Schichten</b> – vorher waren 20 das Maximum. Es gewann ImageNet 2015 mit großem Abstand.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Interaktiver Gradient-Slider -->
+<div class="slide" data-title="Gradient Explorer">
+    <div class="slide-content">
+        <span class="era-badge era-modern">Interaktiv</span>
+        <h2>Gradient Explorer – Probier es aus!</h2>
+        <div style="display:flex; gap:20px; align-items:center; margin:16px 0; flex-wrap:wrap;">
+            <div>
+                <label style="font-weight:bold; color:#334155;">Netztiefe:</label>
+                <input type="range" id="bp-depth-slider" min="2" max="100" value="20" style="width:200px; vertical-align:middle;"
+                       oninput="document.getElementById('bp-depth-val').textContent = this.value; BPSlides.updateGradientPlot();">
+                <b id="bp-depth-val">20</b> Schichten
+            </div>
+        </div>
+        <div id="bp-gradient-plot" style="width:100%; height:320px; border-radius:12px; border:1px solid #e2e8f0;"></div>
+        <div class="key-insight fragment">
+            <strong>Beobachtung:</strong> Ab ~30 Schichten ist das Plain-Network-Signal praktisch Null. Das ResNet behält es stabil. Das ist der Grund, warum moderne Netze hunderte Schichten haben können.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Geschichte – Zeitstrahl der Neuronalen Netze -->
+<div class="slide" data-title="Geschichte: Neuronale Netze">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Technische Geschichte</span>
+        <h2>Meilensteine der Neuronalen Netze</h2>
+        <div id="bp-nn-timeline" style="width:100%; height:380px; border-radius:12px; border:1px solid #e2e8f0;"></div>
+        <div class="fragment" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:12px;">
+            <span style="padding:4px 12px; background:#fee2e2; border-radius:20px; font-size:0.8em; border:1px solid #fecaca;">🧊 AI Winter</span>
+            <span style="padding:4px 12px; background:#dcfce7; border-radius:20px; font-size:0.8em; border:1px solid #86efac;">🔥 Durchbruch</span>
+            <span style="padding:4px 12px; background:#dbeafe; border-radius:20px; font-size:0.8em; border:1px solid #bfdbfe;">🏗️ Architektur</span>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Von Perceptron zu Transformer -->
+<div class="slide" data-title="Perceptron → Transformer">
+    <div class="slide-content">
+        <span class="era-badge era-neural">Technische Geschichte</span>
+        <h2>Der Weg: Perceptron → Transformer</h2>
+        <div class="timeline-card fragment">
+            <span class="timeline-year">1958</span>
+            <div class="timeline-title">Perceptron (Rosenblatt)</div>
+            <div class="timeline-desc">
+                <div class="math-display" data-temml="$$f(\mathbf{x}) = A\mathbf{x} + \mathbf{b}$$"></div>
+                Nur lineare Trennung möglich. Kein Backprop.
+            </div>
+        </div>
+        <div class="timeline-card fragment">
+            <span class="timeline-year">1986</span>
+            <div class="timeline-title">Backpropagation (Rumelhart et al.)</div>
+            <div class="timeline-desc">
+                <div class="math-display" data-temml="$$w_{\text{neu}} = w - \eta \cdot \frac{\partial E}{\partial w}$$"></div>
+                Ermöglicht Training von Multi-Layer-Netzen. XOR gelöst!
+            </div>
+        </div>
+        <div class="timeline-card fragment">
+            <span class="timeline-year">1997</span>
+            <div class="timeline-title">LSTM (Hochreiter & Schmidhuber)</div>
+            <div class="timeline-desc">Gated Residual Connections lösen Vanishing Gradient für Sequenzen.</div>
+        </div>
+        <div class="timeline-card fragment">
+            <span class="timeline-year">2015</span>
+            <div class="timeline-title">ResNet (He et al.)</div>
+            <div class="timeline-desc">
+                <div class="math-display" data-temml="$$y = F(x) + x$$"></div>
+                152 Schichten trainierbar. Identity Shortcut.
+            </div>
+        </div>
+        <div class="timeline-card fragment">
+            <span class="timeline-year">2017</span>
+            <div class="timeline-title">Transformer (Vaswani et al.)</div>
+            <div class="timeline-desc">Self-Attention + Residual Connections. Grundlage aller modernen LLMs.</div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE: Die gemeinsame Idee -->
+<div class="slide" data-title="Die gemeinsame Idee">
+    <div class="slide-content" style="text-align:center;">
+        <span class="era-badge era-modern">Zusammenfassung</span>
+        <h2>Eine Idee durchzieht alles</h2>
+        <div class="formula-box fragment" style="max-width:700px; margin:30px auto;">
+            <p style="font-size:1.1em; font-weight:bold; color:#1e40af; margin-bottom:12px;">LSTM (1997) → Highway Net (2015) → ResNet (2015) → Transformer (2017)</p>
+            <div class="math-display" data-temml="$$\text{output} = F(\text{input}) + \text{input}$$"></div>
+            <p style="font-size:0.9em; color:#475569; margin-top:12px;">Residual Connections = Gradient Superhighway</p>
+        </div>
+        <p class="fragment" style="font-size:1.2em; color:#334155; max-width:700px; margin:0 auto;">
+            Die Idee der <b>additiven Skip-Connection</b> ist das verbindende Prinzip von LSTM über ResNet bis zum Transformer.
+        </p>
+        <div class="quote-box fragment" style="max-width:600px; margin:20px auto;">
+            "Constant error flow through residual connections"
+            <span class="quote-author">— Hochreiter (1991), He et al. (2015), Vaswani et al. (2017)</span>
+        </div>
+    </div>
+</div>
+
 <!-- SLIDE 15: Deep Blue -->
 <div class="slide" data-title="Deep Blue">
     <div class="slide-content">
@@ -523,5 +830,6 @@
 <!-- ============ SCRIPTS ============ -->
 <script src="history_presentation.js"></script>
 <script src="history.js"></script>
+<script src="backprop_slides.js"></script>
 </body>
 </html>
