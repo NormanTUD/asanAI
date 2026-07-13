@@ -535,21 +535,6 @@
     </div>
 </div>
 
-<!-- SLIDE: Signal-Vergleich Plain vs ResNet -->
-<div class="slide" data-title="Signal: Plain vs ResNet">
-    <div class="slide-content">
-        <span class="era-badge era-modern">ResNet</span>
-        <h2>Gradient-Signal: Plain vs. ResNet</h2>
-        <div id="resnet-gradient-comparison" style="width:100%; height:320px; border-radius:12px; border:1px solid #e2e8f0; margin-top:16px;"></div>
-        <div style="display:flex; gap:12px; justify-content:center; margin-top:12px; align-items:center; flex-wrap:wrap;">
-            <label style="font-weight:bold; color:#334155;">Netztiefe:</label>
-            <input type="range" id="bp-resnet-depth" min="5" max="100" value="50" style="width:200px;"
-                   oninput="document.getElementById('bp-resnet-depth-val').textContent=this.value; BPSlides.initResnetComparison(parseInt(this.value))">
-            <span id="bp-resnet-depth-val" style="font-weight:bold;">50</span> Schichten
-        </div>
-    </div>
-</div>
-
 <!-- SLIDE: ResNet Architektur-Diagramm -->
 <div class="slide" data-title="ResNet Architektur">
     <div class="slide-content">

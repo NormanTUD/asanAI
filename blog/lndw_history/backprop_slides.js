@@ -997,40 +997,6 @@ function drawGDViz() {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // RESNET GRADIENT COMPARISON (for the Signal slide)
-    // ═══════════════════════════════════════════════════════════════
-
-    function initResnetComparison(customDepth) {
-        const div = document.getElementById('resnet-gradient-comparison');
-        if (!div || typeof Plotly === 'undefined') return;
-
-        const depth = customDepth || parseInt(document.getElementById('bp-resnet-depth')?.value || 50);
-        let plain = [], res = [], labels = [];
-        let gP = 1.0, gR = 1.0;
-
-        for (let i = 0; i <= depth; i++) {
-            labels.push(i);
-            plain.push(gP);
-            res.push(gR);
-            gP *= 0.88;
-            gR = (gR * 0.88) + 0.11;
-            if (gR > 1.0) gR = 1.0;
-        }
-
-        Plotly.newPlot(div, [
-            { x: labels, y: plain, name: 'Plain Net', line: { color: '#ef4444', width: 2 }, type: 'scatter' },
-            { x: labels, y: res, name: 'ResNet', line: { color: '#3b82f6', width: 2 }, type: 'scatter' }
-        ], {
-            margin: { t: 10, b: 35, l: 45, r: 10 },
-            yaxis: { title: 'Gradient', range: [0, 1.1] },
-            xaxis: { title: 'Schicht' },
-            legend: { orientation: 'h', y: -0.25 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(255,255,255,0.95)'
-        }, { displayModeBar: false, responsive: true });
-    }
-
-    // ═══════════════════════════════════════════════════════════════
     // NEURAL NET TIMELINE
     // ═══════════════════════════════════════════════════════════════
 
@@ -1191,7 +1157,6 @@ function drawGDViz() {
             updateVanishViz();
             initResnetConcept();
             initLossLandscape();
-            initResnetComparison();
             initNNTimeline();
             initResnetArchDiagram();
         }, 300);
@@ -1215,7 +1180,6 @@ function drawGDViz() {
         initAll,
         cleanup,
         initLossLandscape,
-        initResnetComparison,
         initNNTimeline,
         initResnetArchDiagram,
         renderTemml,
@@ -1271,8 +1235,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => BPSlides.updateVanishViz(), 100);
         } else if (title.includes('Residual Networks')) {
             setTimeout(() => BPSlides.initResnetConcept(), 100);
-        } else if (title.includes('Signal: Plain vs ResNet')) {
-            setTimeout(() => BPSlides.initResnetComparison(), 100);
         } else if (title.includes('Geschichte: Neuronale Netze')) {
             setTimeout(() => BPSlides.initNNTimeline(), 100);
         } else if (title.includes('ResNet Architektur')) {
