@@ -48,26 +48,6 @@ const BPSlides = (() => {
         return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
     }
 
-    function autoGD() {
-        if (gdState.running) {
-            gdState.running = false;
-            if (gdState.raf) cancelAnimationFrame(gdState.raf);
-            return;
-        }
-        gdState.running = true;
-        let count = 0;
-        function step() {
-            if (!gdState.running || count > 200) {
-                gdState.running = false;
-                return;
-            }
-            stepGD();
-            count++;
-            gdState.raf = requestAnimationFrame(step);
-        }
-        step();
-    }
-
     function resetGD() {
         gdState.running = false;
         if (gdState.raf) cancelAnimationFrame(gdState.raf);
@@ -474,26 +454,6 @@ const BPSlides = (() => {
         return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
     }
 
-    function autoGD() {
-        if (gdState.running) {
-            gdState.running = false;
-            if (gdState.raf) cancelAnimationFrame(gdState.raf);
-            return;
-        }
-        gdState.running = true;
-        let count = 0;
-        function step() {
-            if (!gdState.running || count > 200) {
-                gdState.running = false;
-                return;
-            }
-            stepGD();
-            count++;
-            gdState.raf = requestAnimationFrame(step);
-        }
-        step();
-    }
-
     function resetGD() {
         gdState.running = false;
         if (gdState.raf) cancelAnimationFrame(gdState.raf);
@@ -621,26 +581,6 @@ const BPSlides = (() => {
     function gradLoss1D(x) {
         const eps = 0.001;
         return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
-    }
-
-    function autoGD() {
-        if (gdState.running) {
-            gdState.running = false;
-            if (gdState.raf) cancelAnimationFrame(gdState.raf);
-            return;
-        }
-        gdState.running = true;
-        let count = 0;
-        function step() {
-            if (!gdState.running || count > 200) {
-                gdState.running = false;
-                return;
-            }
-            stepGD();
-            count++;
-            gdState.raf = requestAnimationFrame(step);
-        }
-        step();
     }
 
     function resetGD() {
