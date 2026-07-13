@@ -418,13 +418,6 @@ const BPSlides = (() => {
         ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
     }
 
-    function updateLRViz() {
-        const val = document.getElementById('bp-lr-slider')?.value || 10;
-        const el = document.getElementById('bp-lr-val');
-        if (el) el.textContent = (val / 100).toFixed(2);
-        drawGDViz();
-    }
-
     function stepGD() {
         const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
         const grad = gradLoss1D(gdState.x);
@@ -1395,13 +1388,6 @@ const BPSlides = (() => {
         ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
     }
 
-    function updateLRViz() {
-        const val = document.getElementById('bp-lr-slider')?.value || 10;
-        const el = document.getElementById('bp-lr-val');
-        if (el) el.textContent = (val / 100).toFixed(2);
-        drawGDViz();
-    }
-
     function stepGD() {
         const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
         const grad = gradLoss1D(gdState.x);
@@ -1927,13 +1913,6 @@ const BPSlides = (() => {
         ctx.fillText(`∇ = ${grad.toFixed(4)}`, padding + 290, 20);
         ctx.fillStyle = '#6366f1';
         ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
-    }
-
-    function updateLRViz() {
-        const val = document.getElementById('bp-lr-slider')?.value || 10;
-        const el = document.getElementById('bp-lr-val');
-        if (el) el.textContent = (val / 100).toFixed(2);
-        drawGDViz();
     }
 
     function stepGD() {
