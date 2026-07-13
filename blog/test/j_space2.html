@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J-Space & Jacobian Lens – Interaktive Erklärung</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: #58a6ff; }
+h2 { font-size: 1.3rem; margin: 2rem 0 0.8rem; color: #79c0ff; border-bottom: 1px solid #30363d; padding-bottom: 0.3rem; }
+h3 { font-size: 1.1rem; margin: 1.2rem 0 0.5rem; color: #a5d6ff; }
+p, li { margin-bottom: 0.6rem; }
+.math-block { 
+  background: #161b22; 
+  border: 1px solid #30363d; 
+  border-radius: 8px; 
+  padding: 1rem 1.5rem; 
+  margin: 1rem 0; 
+  overflow-x: auto;
+  text-align: center;
+}
+.section {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+.interactive-box {
+  background: #1c2128;
+  border: 1px solid #388bfd44;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+canvas {
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  display: block;
+  margin: 0.5rem auto;
+  background: #0d1117;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin: 0.8rem 0;
+}
+.controls label {
+  font-size: 0.85rem;
+  color: #8b949e;
+}
+.controls input[type="range"] {
+  width: 150px;
+  accent-color: #58a6ff;
+}
+.controls select, .controls button {
+  background: #21262d;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.controls button:hover { background: #30363d; }
+.controls button.active { background: #388bfd; border-color: #58a6ff; }
+.step-indicator {
+  display: inline-block;
+  background: #388bfd33;
+  color: #58a6ff;
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  text-align: center;
+  line-height: 28px;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+.note {
+  background: #1c2128;
+  border-left: 3px solid #f0883e;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  border-radius: 0 6px 6px 0;
+}
+.plotly-container { width: 100%; min-height: 350px; }
+.token-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+.token {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+.token.highlight { background: #388bfd33; border-color: #58a6ff; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+.fade-text { color: #8b949e; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<h1>🧠 Die Jacobian Lens & der J-Space</h1>
+<p class="fade-text">Interaktive Erklärung: Wie man die „Gedanken" eines Sprachmodells abliest</p>
+
+<!-- ===== SECTION 1: GRUNDIDEE ===== -->
+<div class="section">
+<h2><span class="step-indicator">1</span> Die Grundidee</h2>
+<p>Ein Transformer verarbeitet Text als Sequenz von Vektoren (den <em>Residual Stream</em>). An jeder Schicht wird dieser Vektor angereichert. Die <strong>Jacobian Lens</strong> beantwortet die Frage:</p>
+<p style="text-align:center; font-size:1.1rem; color:#58a6ff; margin:1rem 0;">
+„Welche Wörter ist diese Aktivierung <em>bereit zu verbalisieren</em>?"
+</p>
+
+<div class="math-block" id="math-basic"></div>
+
+<p>Die Idee: Wir messen, wie eine kleine Störung in Schicht ℓ sich <em>im Durchschnitt über viele Kontexte</em> auf die finale Ausgabe auswirkt. Das Mitteln ist der Schlüssel – es filtert kontextspezifische Nutzung heraus und behält nur die <strong>allgemeine Disposition zur Verbalisierung</strong>.</p>
+</div>
+
+<!-- ===== SECTION 2: DIE JACOBIAN-MATRIX ===== -->
+<div class="section">
+<h2><span class="step-indicator">2</span> Die gemittelte Jacobian-Matrix</h2>
+
+<div class="math-block" id="math-jacobian"></div>
+
+<p>Das ist eine <strong>d<sub>model</sub> × d<sub>model</sub></strong> Matrix pro Schicht. Sie beschreibt die durchschnittliche lineare Abbildung von Schicht ℓ zur finalen Schicht.</p>
+
+<div class="interactive-box">
+<h3>🎮 Interaktiv: Was die Jacobian-Matrix tut</h3>
+<p class="fade-text">Bewege den Punkt im Aktivierungsraum (links) und sieh, wie er durch J<sub>ℓ</sub> in den finalen Raum abgebildet wird (rechts).</p>
+<div class="grid-2">
+  <div>
+    <canvas id="canvas-input" width="400" height="300"></canvas>
+    <p class="fade-text" style="text-align:center">Aktivierung h<sub>ℓ</sub> (Schicht ℓ)</p>
+  </div>
+  <div>
+    <canvas id="canvas-output" width="400" height="300"></canvas>
+    <p class="fade-text" style="text-align:center">J<sub>ℓ</sub> · h<sub>ℓ</sub> (projiziert in finalen Raum)</p>
+  </div>
+</div>
+<div class="controls">
+  <label>J-Matrix Rotation: <input type="range" id="j-rotation" min="0" max="360" value="30"></label>
+  <label>J-Matrix Skalierung: <input type="range" id="j-scale" min="20" max="200" value="100"></label>
+</div>
+</div>
+</div>
+
+<!-- ===== SECTION 3: ABLESEN ===== -->
+<div class="section">
+<h2><span class="step-indicator">3</span> Gedanken ablesen: Die Lens-Formel</h2>
+
+<div class="math-block" id="math-lens"></div>
+
+<p>Die Schritte:</p>
+<ol style="padding-left:1.5rem;">
+  <li><strong>J<sub>ℓ</sub> · h<sub>ℓ</sub></strong> – Aktivierung in den „output-nahen" Raum projizieren</li>
+  <li><strong>norm(…)</strong> – Normalisieren (RMSNorm)</li>
+  <li><strong>W<sub>U</sub> · …</strong> – Unembedding: Score für jedes Token im Vokabular</li>
+  <li><strong>softmax(…)</strong> – Wahrscheinlichkeiten</li>
+  <li><strong>Top-k ablesen</strong> – Das sind die „Gedanken"</li>
+</ol>
+
+<div class="interactive-box">
+<h3>🎮 Interaktiv: Lens-Pipeline Schritt für Schritt</h3>
+<p class="fade-text">Klicke durch die Schritte und sieh, wie aus einem Vektor eine Token-Rangliste wird.</p>
+<div class="controls">
+  <button id="btn-step-0" class="active" onclick="setStep(0)">h<sub>ℓ</sub></button>
+  <button id="btn-step-1" onclick="setStep(1)">J·h</button>
+  <button id="btn-step-2" onclick="setStep(2)">norm</button>
+  <button id="btn-step-3" onclick="setStep(3)">W<sub>U</sub>·norm</button>
+  <button id="btn-step-4" onclick="setStep(4)">softmax → Top-k</button>
+</div>
+<canvas id="canvas-pipeline" width="800" height="280"></canvas>
+<div id="pipeline-description" class="fade-text" style="min-height:2rem; margin-top:0.5rem;"></div>
+</div>
+</div>
+
+<!-- ===== SECTION 4: J-SPACE ===== -->
+<div class="section">
+<h2><span class="step-indicator">4</span> Der J-Space: Sparse Subframe</h2>
+
+<div class="math-block" id="math-jspace"></div>
+
+<p>Der J-Space ist <strong>nicht</strong> ein linearer Unterraum, sondern eine <em>Vereinigung von Kegeln</em>. Jeder Punkt im J-Space ist eine <strong>sparse, nicht-negative</strong> Linearkombination von höchstens k ≈ 25 J-Lens-Vektoren.</p>
+
+<div class="interactive-box">
+<h3>🎮 Interaktiv: Sparse Zerlegung</h3>
+<p class="fade-text">Sieh, wie eine Aktivierung als sparse Kombination von J-Lens-Vektoren approximiert wird. Nur wenige Vektoren sind aktiv (≈ 25 von ~100k).</p>
+<div class="controls">
+  <label>Sparsity k: <input type="range" id="sparsity-k" min="1" max="15" value="5" oninput="updateSparse()"></label>
+  <span id="sparsity-label" style="color:#58a6ff; font-weight:bold;">k=5</span>
+  <button onclick="randomizeActivation()">🎲 Neue Aktivierung</button>
+</div>
+<canvas id="canvas-sparse" width="800" height="300"></canvas>
+<div id="sparse-info" class="fade-text"></div>
+</div>
+
+<div class="note">
+<strong>Deine Frage beantwortet:</strong> Die J-Lens-Vektoren definieren kontextunabhängige Richtungen. Die konkreten Aktivierungen h<sub>ℓ</sub> sind kontextabhängig. Man wendet die feste Lens auf die variable Aktivierung an → kontextspezifische Gedanken aus kontextunabhängigen Koordinaten.
+</div>
+</div>
+
+<!-- ===== SECTION 5: SCHICHTEN ===== -->
+<div class="section">
+<h2><span class="step-indicator">5</span> Wo lebt der Workspace?</h2>
+<p>Der J-Space hat nur in einem <strong>mittleren Band von Schichten</strong> (ca. L38–L92 bei Sonnet 4.5) workspace-artige Eigenschaften:</p>
+
+<div id="plotly-layers" class="plotly-container"></div>
+
+<div class="grid-2">
+<div>
+<h3>Frühe Schichten (0–38)</h3>
+<p class="fade-text">„Sensorisch" – Parsing, lokaler Kontext. J-Lens zeigt Rauschen.</p>
+</div>
+<div>
+<h3>Mittlere Schichten (38–92)</h3>
+<p class="fade-text">„Workspace" – Abstrakte Konzepte, Zwischenschritte, Reasoning.</p>
+</div>
+</div>
+<div class="grid-2">
+<div>
+<h3>Späte Schichten (92–100)</h3>
+<p class="fade-text">„Motor" – Nächstes Token wird festgelegt.</p>
+</div>
+<div>
+<h3>Kapazität</h3>
+<p class="fade-text">~25 Konzepte gleichzeitig aktiv, <10% der Aktivierungsvarianz.</p>
+</div>
+</div>
+</div>
+
+<!-- ===== SECTION 6: BEISPIEL ===== -->
+<div class="section">
+<h2><span class="step-indicator">6</span> Beispiel: Multihop Reasoning</h2>
+<p>Prompt: <code>"The color of the planet fourth from the sun is"</code></p>
+
+<div class="interactive-box">
+<h3>🎮 Interaktiv: Gedanken über Schichten verfolgen</h3>
+<p class="fade-text">Bewege den Schicht-Slider und sieh, welche Konzepte in welcher Reihenfolge auftauchen.</p>
+<div class="controls">
+  <label>Schicht: <input type="range" id="layer-slider" min="0" max="100" value="50" oninput="updateMultihop()"></label>
+  <span id="layer-label" style="color:#58a6ff; font-weight:bold;">L50</span>
+</div>
+<div id="multihop-display" style="min-height: 120px;"></div>
+</div>
+
+<div id="plotly-multihop" class="plotly-container"></div>
+</div>
+
+<!-- ===== SECTION 7: ZUSAMMENFASSUNG ===== -->
+<div class="section">
+<h2><span class="step-indicator">7</span> Zusammenfassung: Wie extrahiert man Gedanken?</h2>
+
+<table style="width:100%; border-collapse:collapse; margin:1rem 0;">
+<tr style="border-bottom:1px solid #30363d;">
+  <th style="text-align:left; padding:0.5rem; color:#58a6ff;">Schritt</th>
+  <th style="text-align:left; padding:0.5rem; color:#58a6ff;">Was passiert</th>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:0.5rem;">1. Einmalig</td>
+  <td style="padding:0.5rem;">J<sub>ℓ</sub> berechnen (gemittelte Jacobian über 1000 Prompts)</td>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:0.5rem;">2. Pro Prompt</td>
+  <td style="padding:0.5rem;">Aktivierung h<sub>ℓ</sub> an Position t, Schicht ℓ nehmen</td>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:0.5rem;">3. Projizieren</td>
+  <td style="padding:0.5rem;">J<sub>ℓ</sub> · h<sub>ℓ</sub> → in den output-nahen Raum</td>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:0.5rem;">4. Scores</td>
+  <td style="padding:0.5rem;">W<sub>U</sub> · norm(J<sub>ℓ</sub> · h<sub>ℓ</sub>) → Score pro Token</td>
+</tr>
+<tr>
+  <td style="padding:0.5rem;">5. Ablesen</td>
+  <td style="padding:0.5rem;">Top-k Tokens = die „Gedanken" an dieser Stelle</td>
+</tr>
+</table>
+
+<div class="note">
+<strong>Der Unterschied zur Logit Lens:</strong> Die Logit Lens setzt J<sub>ℓ</sub> = I (Identität). Das funktioniert nur in späten Schichten. Die J-Lens korrigiert für die geometrischen Veränderungen zwischen den Schichten und liefert daher in früheren Schichten interpretierbare Ergebnisse.
+</div>
+
+<div class="note">
+<strong>Warum das funktioniert, obwohl Punkte „wegabstrahiert" sind:</strong><br>
+Die gemittelte Jacobian definiert die <em>Richtungen</em> (kontextunabhängig). Die Aktivierung h<sub>ℓ</sub> liefert die <em>Koordinaten</em> (kontextabhängig). Zusammen: „In diesem Kontext ist das Modell gerade disponiert, dieses Konzept zu verbalisieren."
+</div>
+</div>
+
+<script>
+// ===== RENDER MATH =====
+function renderMath() {
+  const mathBasic = `\\text{lens}(h_\\ell) = \\text{softmax}\\bigl(W_U \\cdot \\text{norm}(J_\\ell \\cdot h_\\ell)\\bigr)`;
+  
+  const mathJacobian = `J_\\ell = \\mathbb{E}_{\\,t,\\,t' \\geq t,\\,\\text{prompt}} \\left[ \\frac{\\partial h_{\\text{final},t'}}{\\partial h_{\\ell,t}} \\right]`;
+  
+  const mathLens = `\\underbrace{h_\\ell}_{\\text{Aktivierung}} \\xrightarrow{J_\\ell} \\underbrace{J_\\ell h_\\ell}_{\\text{projiziert}} \\xrightarrow{\\text{norm}} \\xrightarrow{W_U} \\underbrace{\\text{scores}}_{\\text{pro Token}} \\xrightarrow{\\text{top-}k} \\text{Gedanken}`;
+  
+  const mathJspace = `\\mathcal{F} = \\bigcup_{|S|=k} \\text{cone}\\{v_i : i \\in S\\}, \\quad k \\leq 25`;
+
+  document.getElementById('math-basic').innerHTML = temml.renderToString(mathBasic, {displayMode: true});
+  document.getElementById('math-jacobian').innerHTML = temml.renderToString(mathJacobian, {displayMode: true});
+  document.getElementById('math-lens').innerHTML = temml.renderToString(mathLens, {displayMode: true});
+  document.getElementById('math-jspace').innerHTML = temml.renderToString(mathJspace, {displayMode: true});
+}
+
+// ===== CANVAS: JACOBIAN TRANSFORM =====
+let inputPoint = {x: 0.5, y: 0.3};
+let dragging = false;
+
+function drawJacobianDemo() {
+  const canvasIn = document.getElementById('canvas-input');
+  const canvasOut = document.getElementById('canvas-output');
+  const ctxIn = canvasIn.getContext('2d');
+  const ctxOut = canvasOut.getContext('2d');
+  
+  const rot = parseFloat(document.getElementById('j-rotation').value) * Math.PI / 180;
+  const scale = parseFloat(document.getElementById('j-scale').value) / 100;
+  
+  // J matrix (2D demo)
+  const J = [
+    [scale * Math.cos(rot), -scale * Math.sin(rot) * 0.7],
+    [scale * Math.sin(rot) * 1.3, scale * Math.cos(rot) * 0.8]
+  ];
+  
+  // Clear
+  ctxIn.clearRect(0, 0, 400, 300);
+  ctxOut.clearRect(0, 0, 400, 300);
+  
+  // Draw grid on input
+  ctxIn.strokeStyle = '#21262d';
+  ctxIn.lineWidth = 1;
+  for (let i = 0; i <= 8; i++) {
+    ctxIn.beginPath(); ctxIn.moveTo(i*50, 0); ctxIn.lineTo(i*50, 300); ctxIn.stroke();
+    ctxIn.beginPath(); ctxIn.moveTo(0, i*37.5); ctxIn.lineTo(400, i*37.5); ctxIn.stroke();
+  }
+  
+  // Draw transformed grid on output
+  ctxOut.strokeStyle = '#30363d';
+  ctxOut.lineWidth = 1;
+  for (let i = -4; i <= 12; i++) {
+    ctxOut.beginPath();
+    for (let j = 0; j <= 20; j++) {
+      let x = (i * 50 - 200) / 200;
+      let y = (j * 15 - 150) / 150;
+      let tx = J[0][0] * x + J[0][1] * y;
+      let ty = J[1][0] * x + J[1][1] * y;
+      let px = 200 + tx * 120;
+      let py = 150 + ty * 120;
+      if (j === 0) ctxOut.moveTo(px, py); else ctxOut.lineTo(px, py);
+    }
+    ctxOut.stroke();
+  }
+  for (let j = -4; j <= 12; j++) {
+    ctxOut.beginPath();
+    for (let i = 0; i <= 20; i++) {
+      let x = (i * 20 - 200) / 200;
+      let y = (j * 37.5 - 150) / 150;
+      let tx = J[0][0] * x + J[0][1] * y;
+      let ty = J[1][0] * x + J[1][1] * y;
+      let px = 200 + tx * 120;
+      let py = 150 + ty * 120;
+      if (i === 0) ctxOut.moveTo(px, py); else ctxOut.lineTo(px, py);
+    }
+    ctxOut.stroke();
+  }
+  
+  // Draw some J-lens vectors on output (token directions)
+  const tokenDirs = [
+    {name: 'Mars', angle: 0.3}, {name: 'red', angle: 1.2}, 
+    {name: 'color', angle: 2.1}, {name: 'planet', angle: 3.5},
+    {name: 'sun', angle: 4.8}
+  ];
+  tokenDirs.forEach(t => {
+    let dx = Math.cos(t.angle) * 80;
+    let dy = Math.sin(t.angle) * 80;
+    ctxOut.strokeStyle = '#8b949e44';
+    ctxOut.lineWidth = 1;
+    ctxOut.setLineDash([4,4]);
+    ctxOut.beginPath(); ctxOut.moveTo(200, 150); ctxOut.lineTo(200+dx, 150+dy); ctxOut.stroke();
+    ctxOut.setLineDash([]);
+    ctxOut.fillStyle = '#8b949e';
+    ctxOut.font = '11px monospace';
+    ctxOut.fillText(t.name, 200+dx*1.1-10, 150+dy*1.1+4);
+  });
+  
+  // Input point
+  let px = inputPoint.x * 400;
+  let py = inputPoint.y * 300;
+  ctxIn.fillStyle = '#58a6ff';
+  ctxIn.beginPath(); ctxIn.arc(px, py, 8, 0, Math.PI*2); ctxIn.fill();
+  ctxIn.fillStyle = '#e6edf3';
+  ctxIn.font = '12px sans-serif';
+  ctxIn.fillText('h_ℓ', px + 12, py - 5);
+  
+  // Transform point
+  let nx = (inputPoint.x - 0.5) * 2;
+  let ny = (inputPoint.y - 0.5) * 2;
+  let ox = J[0][0] * nx + J[0][1] * ny;
+  let oy = J[1][0] * nx + J[1][1] * ny;
+  let opx = 200 + ox * 120;
+  let opy = 150 + oy * 120;
+  
+  ctxOut.fillStyle = '#f0883e';
+  ctxOut.beginPath(); ctxOut.arc(opx, opy, 8, 0, Math.PI*2); ctxOut.fill();
+  ctxOut.fillStyle = '#e6edf3';
+  ctxOut.font = '12px sans-serif';
+  ctxOut.fillText('J·h_ℓ', opx + 12, opy - 5);
+  
+  // Show which token direction is closest
+  let bestToken = '';
+  let bestDot = -Infinity;
+  tokenDirs.forEach(t => {
+    let tdx = Math.cos(t.angle);
+    let tdy = Math.sin(t.angle);
+    let len = Math.sqrt(ox*ox + oy*oy) || 1;
+    let dot = (ox/len) * tdx + (oy/len) * tdy;
+    if (dot > bestDot) { bestDot = dot; bestToken = t.name; }
+  });
+  
+  ctxOut.fillStyle = '#3fb950';
+  ctxOut.font = 'bold 14px sans-serif';
+  ctxOut.fillText('Nächstes Token: ' + bestToken, 10, 25);
+}
+
+const canvasInput = document.getElementById('canvas-input');
+canvasInput.addEventListener('mousedown', e => { dragging = true; updateInputPoint(e); });
+canvasInput.addEventListener('mousemove', e => { if (dragging) updateInputPoint(e); });
+canvasInput.addEventListener('mouseup', () => dragging = false);
+canvasInput.addEventListener('mouseleave', () => dragging = false);
+
+function updateInputPoint(e) {
+  const rect = canvasInput.getBoundingClientRect();
+  inputPoint.x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  inputPoint.y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+  drawJacobianDemo();
+}
+
+document.getElementById('j-rotation').addEventListener('input', drawJacobianDemo);
+document.getElementById('j-scale').addEventListener('input', drawJacobianDemo);
+
+// ===== PIPELINE VISUALIZATION =====
+let currentStep = 0;
+const stepDescriptions = [
+  'h_ℓ: Der rohe Aktivierungsvektor an Schicht ℓ, Position t. Ein hochdimensionaler Vektor (z.B. 12288 Dimensionen).',
+  'J_ℓ · h_ℓ: Die gemittelte Jacobian-Matrix projiziert die Aktivierung in den „output-nahen" Raum. Korrigiert für geometrische Veränderungen zwischen den Schichten.',
+  'norm(J_ℓ · h_ℓ): RMS-Normalisierung. Bringt den Vektor auf eine einheitliche Skala.',
+  'W_U · norm(…): Die Unembedding-Matrix erzeugt einen Score für jedes Token im Vokabular (~100k Scores).',
+  'softmax → Top-k: Die höchsten Scores werden zu den „Gedanken". Z.B. Mars, red, color bei einem Multihop-Prompt.'
+];
+
+function setStep(s) {
+  currentStep = s;
+  document.querySelectorAll('.controls button[id^="btn-step"]').forEach((b,i) => {
+    b.classList.toggle('active', i === s);
+  });
+  document.getElementById('pipeline-description').textContent = stepDescriptions[s];
+  drawPipeline();
+}
+
+function drawPipeline() {
+  const canvas = document.getElementById('canvas-pipeline');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 800, 280);
+  
+  const stages = [
+    {x: 60, label: 'h_ℓ', color: '#58a6ff'},
+    {x: 220, label: 'J·h', color: '#f0883e'},
+    {x: 370, label: 'norm', color: '#a371f7'},
+    {x: 530, label: 'W_U·…', color: '#3fb950'},
+    {x: 690, label: 'Top-k', color: '#f85149'}
+  ];
+  
+  const radius = 40; // Halbe Breite der Boxen
+  
+  // 1. Pfeile zwischen den Stufen zeichnen
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < stages.length - 1; i++) {
+    ctx.beginPath();
+    ctx.moveTo(stages[i].x + radius + 5, 140);
+    ctx.lineTo(stages[i+1].x - radius - 5, 140);
+    ctx.stroke();
+    
+    // Pfeilspitze
+    ctx.beginPath();
+    ctx.moveTo(stages[i+1].x - radius - 10, 135);
+    ctx.lineTo(stages[i+1].x - radius - 5, 140);
+    ctx.lineTo(stages[i+1].x - radius - 10, 145);
+    ctx.stroke();
+  }
+  
+  // 2. Die einzelnen Boxen (Schritte) zeichnen
+  stages.forEach((s, i) => {
+    const alpha = i <= currentStep ? 1.0 : 0.3;
+    ctx.globalAlpha = alpha;
+    
+    // Hintergrund & Rahmen der Box
+    ctx.fillStyle = i <= currentStep ? s.color + '22' : '#21262d';
+    ctx.strokeStyle = i === currentStep ? s.color : '#30363d';
+    ctx.lineWidth = i === currentStep ? 3 : 1.5;
+    
+    ctx.beginPath();
+    ctx.roundRect(s.x - radius, 140 - 25, radius * 2, 50, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    // Textbeschriftung
+    ctx.fillStyle = i <= currentStep ? s.color : '#8b949e';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.label, s.x, 144);
+  });
+  
+  // Alpha-Wert für nachfolgende Canvas-Operationen zurücksetzen
+  ctx.globalAlpha = 1.0;
+  
+  // ===== Vektor-Visualisierung für den aktuellen Schritt =====
+  ctx.textAlign = 'left';
+  const vizY = 40;
+  
+  if (currentStep === 0) {
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('h_ℓ = [0.3, -0.7, 1.2, 0.1, -0.4, 0.8, ...]', 20, vizY);
+    drawBars(ctx, 20, vizY + 10, [0.3, -0.7, 1.2, 0.1, -0.4, 0.8, 0.5, -0.2, 0.9, -0.1, 0.6, -0.3], '#58a6ff');
+  } else if (currentStep === 1) {
+    ctx.fillStyle = '#f0883e';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('J_ℓ · h_ℓ = [1.1, 0.2, -0.5, 0.9, 0.3, ...]', 20, vizY);
+    drawBars(ctx, 20, vizY + 10, [1.1, 0.2, -0.5, 0.9, 0.3, -0.1, 0.7, 0.4, -0.3, 0.8, 0.1, -0.6], '#f0883e');
+  } else if (currentStep === 2) {
+    ctx.fillStyle = '#a371f7';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('norm(J·h) = [0.45, 0.08, -0.20, 0.37, ...]', 20, vizY);
+    drawBars(ctx, 20, vizY + 10, [0.45, 0.08, -0.20, 0.37, 0.12, -0.04, 0.29, 0.16, -0.12, 0.33, 0.04, -0.25], '#a371f7');
+  } else if (currentStep === 3) {
+    ctx.fillStyle = '#3fb950';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Scores: Mars=4.2, red=3.8, planet=2.1, blue=0.3, ...', 20, vizY);
+    drawBars(ctx, 20, vizY + 10, [4.2, 3.8, 2.1, 1.5, 0.3, 0.1, -0.5, -1.2, -1.8, -2.1, -2.5, -3.0], '#3fb950');
+  } else if (currentStep === 4) {
+    ctx.fillStyle = '#f85149';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Top-k: ① Mars  ② red  ③ planet  ④ color  ⑤ sun', 20, vizY);
+    
+    const tokens = ['Mars', 'red', 'planet', 'color', 'sun'];
+    const probs = [0.35, 0.28, 0.15, 0.12, 0.10];
+    tokens.forEach((t, i) => {
+      let tx = 30 + i * 140;
+      let ty = vizY + 20;
+      ctx.fillStyle = '#f85149' + Math.round((1 - i*0.15) * 255).toString(16).padStart(2,'0');
+      ctx.fillRect(tx, ty, 120, 30);
+      ctx.fillStyle = '#e6edf3';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText(`${t} (${(probs[i]*100).toFixed(0)}%)`, tx + 5, ty + 20);
+    });
+  }
+}
+
+function drawBars(ctx, x, y, values, color) {
+  const barW = 12;
+  const barGap = 3;
+  const maxH = 35;
+  const maxVal = Math.max(...values.map(Math.abs));
+  values.forEach((v, i) => {
+    let bx = x + i * (barW + barGap);
+    let h = (v / maxVal) * maxH;
+    ctx.fillStyle = v >= 0 ? color : color + '88';
+    if (h >= 0) {
+      ctx.fillRect(bx, y + maxH - h, barW, h);
+    } else {
+      ctx.fillRect(bx, y + maxH, barW, -h);
+    }
+  });
+}
+
+// ===== SPARSE DECOMPOSITION =====
+let sparseActivation = [];
+let sparseVectors = [];
+const numVectors = 30;
+
+function initSparse() {
+  // Generate random J-lens vectors
+  sparseVectors = [];
+  const tokenNames = ['Mars','red','color','planet','sun','orbit','space','star','dust','gas',
+    'iron','rock','cold','hot','big','small','fast','slow','old','new',
+    'blue','green','dark','light','fire','ice','wind','rain','cloud','sky'];
+  for (let i = 0; i < numVectors; i++) {
+    sparseVectors.push({
+      name: tokenNames[i],
+      angle: (i / numVectors) * Math.PI * 2,
+      color: `hsl(${(i/numVectors)*360}, 70%, 60%)`
+    });
+  }
+  randomizeActivation();
+}
+
+function randomizeActivation() {
+  sparseActivation = [];
+  for (let i = 0; i < numVectors; i++) {
+    sparseActivation.push(Math.random() * Math.random() * 2);
+  }
+  updateSparse();
+}
+
+function updateSparse() {
+  const k = parseInt(document.getElementById('sparsity-k').value);
+  document.getElementById('sparsity-label').textContent = `k=${k}`;
+  
+  const canvas = document.getElementById('canvas-sparse');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 800, 300);
+  
+  // Sort by activation strength
+  let indexed = sparseActivation.map((v, i) => ({val: v, idx: i}));
+  indexed.sort((a, b) => b.val - a.val);
+  
+  // Draw all vectors as thin lines
+  const cx = 200, cy = 150;
+  sparseVectors.forEach((v, i) => {
+    let len = sparseActivation[i] * 60;
+    let dx = Math.cos(v.angle) * len;
+    let dy = Math.sin(v.angle) * len;
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + dx, cy + dy);
+    ctx.stroke();
+  });
+  
+  // Highlight top-k
+  let topK = indexed.slice(0, k);
+  let approxX = 0, approxY = 0;
+  
+  topK.forEach(item => {
+    let v = sparseVectors[item.idx];
+    let len = item.val * 60;
+    let dx = Math.cos(v.angle) * len;
+    let dy = Math.sin(v.angle) * len;
+    approxX += dx;
+    approxY += dy;
+    
+    ctx.strokeStyle = v.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + dx, cy + dy);
+    ctx.stroke();
+    
+    // Label
+    ctx.fillStyle = v.color;
+    ctx.font = '10px monospace';
+    ctx.fillText(v.name, cx + dx + 5, cy + dy);
+  });
+  
+  // Draw approximation point
+  ctx.fillStyle = '#f0883e';
+  ctx.beginPath();
+  ctx.arc(cx + approxX, cy + approxY, 6, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('≈ h_ℓ (approx)', cx + approxX + 10, cy + approxY - 5);
+  
+  // Draw true activation
+  let trueX = 0, trueY = 0;
+  sparseActivation.forEach((val, i) => {
+    trueX += Math.cos(sparseVectors[i].angle) * val * 60;
+    trueY += Math.sin(sparseVectors[i].angle) * val * 60;
+  });
+  ctx.fillStyle = '#58a6ff';
+  ctx.beginPath();
+  ctx.arc(cx + trueX, cy + trueY, 6, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('h_ℓ (true)', cx + trueX + 10, cy + trueY + 15);
+  
+  // Draw bar chart on the right
+  const barX = 430;
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('Koeffizienten (sortiert):', barX, 20);
+  
+  topK.forEach((item, i) => {
+    let v = sparseVectors[item.idx];
+    let y = 35 + i * 22;
+    let barLen = item.val * 80;
+    
+    ctx.fillStyle = v.color;
+    ctx.fillRect(barX + 70, y, barLen, 16);
+    
+    ctx.fillStyle = '#e6edf3';
+    ctx.font = '10px monospace';
+    ctx.fillText(v.name, barX, y + 12);
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText(item.val.toFixed(2), barX + 75 + barLen, y + 12);
+  });
+  
+  // Info
+  let totalVar = sparseActivation.reduce((s, v) => s + v*v, 0);
+  let topVar = topK.reduce((s, item) => s + item.val*item.val, 0);
+  let fve = (topVar / totalVar * 100).toFixed(1);
+  document.getElementById('sparse-info').textContent = 
+    `J-Space Komponente: ${k} von ${numVectors} Vektoren aktiv → erklärt ${fve}% der Varianz. Der Rest (${(100-fve).toFixed(1)}%) liegt außerhalb des J-Space.`;
+}
+
+// ===== PLOTLY: LAYER PROPERTIES =====
+function plotLayers() {
+  const layers = Array.from({length: 25}, (_, i) => i * 4);
+  
+  // Simulated kurtosis
+  const kurtosis = layers.map(l => {
+    if (l < 35) return 0.5 + Math.random() * 0.5;
+    if (l < 40) return 2 + (l-35) * 1.5;
+    if (l < 90) return 12 + Math.sin(l*0.1) * 3;
+    return 8 - (l-90) * 0.5;
+  });
+  
+  // Simulated next-token accuracy
+  const accuracy = layers.map(l => {
+    if (l < 35) return 0.02 + Math.random() * 0.02;
+    if (l < 60) return 0.05 + (l-35) * 0.005;
+    if (l < 90) return 0.15 + (l-60) * 0.02;
+    return 0.7 + (l-90) * 0.03;
+  });
+  
+  const trace1 = {
+    x: layers, y: kurtosis,
+    type: 'scatter', mode: 'lines+markers',
+    name: 'Kurtosis (Nicht-Zufälligkeit)',
+    line: {color: '#58a6ff', width: 2},
+    marker: {size: 4}
+  };
+  
+  const trace2 = {
+    x: layers, y: accuracy.map(v => v * 20),
+    type: 'scatter', mode: 'lines+markers',
+    name: 'Next-Token Accuracy (×20)',
+    line: {color: '#3fb950', width: 2},
+    marker: {size: 4},
+    yaxis: 'y2'
+  };
+  
+  const layout = {
+    paper_bgcolor: '#161b22',
+    plot_bgcolor: '#0d1117',
+    font: {color: '#e6edf3', size: 11},
+    margin: {t: 40, b: 50, l: 60, r: 60},
+    title: {text: 'J-Space Eigenschaften über Schichten', font: {size: 14}},
+    xaxis: {title: 'Schicht (reindexiert 0–100)', gridcolor: '#21262d'},
+    yaxis: {title: 'Kurtosis', gridcolor: '#21262d'},
+    yaxis2: {title: 'Accuracy ×20', overlaying: 'y', side: 'right', gridcolor: '#21262d'},
+    shapes: [
+      {type: 'rect', x0: 38, x1: 92, y0: 0, y1: 20, fillcolor: '#388bfd11', line: {width: 0}},
+    ],
+    annotations: [
+      {x: 20, y: 18, text: 'Sensorisch', showarrow: false, font: {color: '#8b949e', size: 10}},
+      {x: 65, y: 18, text: '← Workspace →', showarrow: false, font: {color: '#58a6ff', size: 12}},
+      {x: 96, y: 18, text: 'Motor', showarrow: false, font: {color: '#8b949e', size: 10}},
+    ],
+    legend: {x: 0.02, y: 0.98, bgcolor: '#161b2288'}
+  };
+  
+  Plotly.newPlot('plotly-layers', [trace1, trace2], layout, {responsive: true});
+}
+
+// ===== MULTIHOP EXAMPLE =====
+function updateMultihop() {
+  const layer = parseInt(document.getElementById('layer-slider').value);
+  document.getElementById('layer-label').textContent = `L${layer}`;
+  
+  const display = document.getElementById('multihop-display');
+  
+  let concepts = [];
+  if (layer < 35) {
+    concepts = [{name: '(Rauschen)', score: 0.1, color: '#8b949e'}];
+  } else if (layer < 50) {
+    concepts = [
+      {name: 'color', score: 0.7, color: '#a371f7'},
+      {name: 'planet', score: 0.5, color: '#79c0ff'},
+      {name: 'sun', score: 0.3, color: '#f0883e'}
+    ];
+  } else if (layer < 70) {
+    concepts = [
+      {name: 'Mars', score: 0.85, color: '#f85149'},
+      {name: 'color', score: 0.4, color: '#a371f7'},
+      {name: 'fourth', score: 0.3, color: '#79c0ff'}
+    ];
+  } else if (layer < 88) {
+    concepts = [
+      {name: 'Mars', score: 0.6, color: '#f85149'},
+      {name: 'red', score: 0.75, color: '#f85149'},
+      {name: 'color', score: 0.2, color: '#a371f7'}
+    ];
+  } else {
+    concepts = [
+      {name: 'red', score: 0.95, color: '#f85149'},
+      {name: 'Mars', score: 0.3, color: '#f85149'}
+    ];
+  }
+  
+  let zone = layer < 35 ? 'Sensorisch' : layer < 92 ? 'Workspace' : 'Motor';
+  let zoneColor = layer < 35 ? '#8b949e' : layer < 92 ? '#58a6ff' : '#3fb950';
+  
+  let html = `<div style="margin-bottom:0.5rem;">
+    <span style="color:${zoneColor}; font-weight:bold;">Zone: ${zone}</span>
+    <span class="fade-text" style="margin-left:1rem;">Schicht ${layer}</span>
+  </div>`;
+  html += '<div style="display:flex; gap:1rem; flex-wrap:wrap;">';
+  concepts.forEach(c => {
+    let barWidth = Math.round(c.score * 200);
+    html += `<div style="min-width:150px;">
+      <div style="font-family:monospace; color:${c.color}; font-weight:bold;">${c.name}</div>
+      <div style="background:#21262d; border-radius:4px; height:20px; width:200px; position:relative; margin-top:4px;">
+        <div style="background:${c.color}44; border:1px solid ${c.color}; border-radius:4px; height:100%; width:${barWidth}px;"></div>
+        <span style="position:absolute; right:5px; top:2px; font-size:11px; color:#8b949e;">${(c.score*100).toFixed(0)}%</span>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  
+  if (layer >= 35 && layer < 92) {
+    html += `<div class="fade-text" style="margin-top:0.8rem;">
+      💡 ${layer < 55 ? 'Früher Workspace: Aufgabe erkannt (color), Kontext identifiziert' : 
+           layer < 75 ? 'Mittlerer Workspace: Zwischenschritt berechnet (Mars = 4. Planet)' :
+           'Später Workspace: Antwort abgeleitet (Mars → red)'}
+    </div>`;
+  }
+  
+  display.innerHTML = html;
+}
+
+// ===== PLOTLY: MULTIHOP TRACE =====
+function plotMultihop() {
+  const layers = Array.from({length: 50}, (_, i) => i * 2);
+  
+  const colorRank = layers.map(l => {
+    if (l < 35) return 10000;
+    if (l < 45) return 50 - (l-35)*3;
+    if (l < 60) return 20 + Math.random()*10;
+    return 100 + l*2;
+  });
+  
+  const marsRank = layers.map(l => {
+    if (l < 35) return 10000;
+    if (l < 50) return 100 - (l-35)*5;
+    if (l < 75) return 3 - (l-50)*0.05;
+    return 5 + (l-75)*2;
+  });
+  
+  const redRank = layers.map(l => {
+    if (l < 50) return 10000;
+    if (l < 70) return 200 - (l-50)*8;
+    if (l < 85) return 10 - (l-70)*0.5;
+    return 1;
+  });
+  
+  const traces = [
+    {x: layers, y: colorRank, name: '"color"', line: {color: '#a371f7', width: 2.5}, mode: 'lines'},
+    {x: layers, y: marsRank, name: '"Mars"', line: {color: '#f0883e', width: 2.5}, mode: 'lines'},
+    {x: layers, y: redRank, name: '"red"', line: {color: '#f85149', width: 2.5}, mode: 'lines'}
+  ];
+  
+  const layout = {
+    paper_bgcolor: '#161b22',
+    plot_bgcolor: '#0d1117',
+    font: {color: '#e6edf3', size: 11},
+    margin: {t: 40, b: 50, l: 60, r: 30},
+    title: {text: 'J-Lens Rang über Schichten: "The color of the planet fourth from the sun is"', font: {size: 13}},
+    xaxis: {title: 'Schicht', gridcolor: '#21262d'},
+    yaxis: {title: 'Rang (log, niedriger = stärker)', type: 'log', autorange: 'reversed', gridcolor: '#21262d'},
+    shapes: [
+      {type: 'rect', x0: 38, x1: 92, y0: 0.5, y1: 15000, fillcolor: '#388bfd08', line: {width: 0}},
+    ],
+    legend: {x: 0.7, y: 0.98, bgcolor: '#161b2288'}
+  };
+  
+  Plotly.newPlot('plotly-multihop', traces, layout, {responsive: true});
+}
+
+// ===== INIT =====
+window.addEventListener('load', () => {
+  renderMath();
+  drawJacobianDemo();
+  setStep(0);
+  initSparse();
+  plotLayers();
+  updateMultihop();
+  plotMultihop();
+});
+</script>
+</body>
+</html>
