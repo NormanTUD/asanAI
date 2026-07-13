@@ -543,7 +543,7 @@ const ResidualStreamViz = {
 	// Layout
 	W: 900,
 	H: 0,
-	rowH: 170,
+	rowH: 220,
 	topPad: 62,
 
 	init: function () {
