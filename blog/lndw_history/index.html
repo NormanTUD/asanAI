@@ -703,6 +703,63 @@
     </div>
 </div>
 
+<!-- SLIDE: Warum GPU? Was hat das mit Gamern zu tun? -->
+<div class="slide" data-title="Warum GPU?">
+    <div class="slide-content">
+        <span class="era-badge era-modern">Die Hardware-Revolution</span>
+        <h2>Warum GPU? Was hat das mit Gamern zu tun?</h2>
+
+        <p>Um ein 3D-Spiel flüssig darzustellen, muss die Grafikkarte <b>Millionen von Pixeln gleichzeitig</b> berechnen. Jeder Pixel braucht eine Matrixmultiplikation (Position, Licht, Farbe).</p>
+
+        <div class="fragment" style="display:flex; gap:20px; margin:24px 0; flex-wrap:wrap; justify-content:center; align-items:stretch;">
+            <div style="flex:1; min-width:260px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
+                <div style="font-size:2.5em; text-align:center;">🎮</div>
+                <h3 style="text-align:center; color:#1e40af; margin:8px 0;">Gaming-GPU</h3>
+                <p style="font-size:0.95em; color:#334155; text-align:center;">Berechne für <b>2 Millionen Pixel</b> gleichzeitig:<br>
+                <code>Farbe = Licht × Oberfläche × Position</code></p>
+                <p style="font-size:0.85em; color:#64748b; text-align:center; margin-top:8px;">→ Tausende simple Kerne, alle machen <b>dasselbe</b> parallel</p>
+            </div>
+            <div style="flex:0 0 60px; display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:2.5em; color:#6366f1;">=</span>
+            </div>
+            <div style="flex:1; min-width:260px; padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff;">
+                <div style="font-size:2.5em; text-align:center;">🧠</div>
+                <h3 style="text-align:center; color:#6b21a8; margin:8px 0;">KI-Training</h3>
+                <p style="font-size:0.95em; color:#334155; text-align:center;">Berechne für <b>Milliarden Gewichte</b> gleichzeitig:<br>
+                <code>Neuron = Gewicht × Input + Bias</code></p>
+                <p style="font-size:0.85em; color:#64748b; text-align:center; margin-top:8px;">→ Exakt dieselbe Mathematik: <b>Matrixmultiplikation</b></p>
+            </div>
+        </div>
+
+        <div class="fragment" style="background:#fefce8; border:2px solid #fde68a; border-radius:14px; padding:20px; margin:16px 0;">
+            <h3 style="color:#92400e; margin-bottom:10px;">🎯 Die Pointe</h3>
+            <p style="font-size:1.05em; color:#78350f; margin:0;">Die Gaming-Industrie hat <b>Milliarden Dollar</b> in GPU-Entwicklung investiert, damit Call of Duty flüssig läuft. KI-Forscher haben diese Hardware dann einfach <b>zweckentfremdet</b> – weil die Mathe identisch ist.</p>
+        </div>
+
+        <div class="fragment" style="display:flex; gap:16px; margin:20px 0; flex-wrap:wrap; justify-content:center;">
+            <div style="padding:14px 20px; background:#fff; border-radius:12px; border:1px solid #e2e8f0; text-align:center; min-width:180px;">
+                <div style="font-weight:bold; color:#1e293b;">CPU</div>
+                <div style="font-size:0.9em; color:#64748b;">4–16 starke Kerne</div>
+                <div style="font-size:0.85em; color:#94a3b8;">Wie 8 Professoren</div>
+            </div>
+            <div style="padding:14px 20px; background:#fff; border-radius:12px; border:1px solid #e2e8f0; text-align:center; min-width:180px;">
+                <div style="font-weight:bold; color:#1e293b;">GPU</div>
+                <div style="font-size:0.9em; color:#64748b;">10.000+ simple Kerne</div>
+                <div style="font-size:0.85em; color:#94a3b8;">Wie 10.000 Grundschüler</div>
+            </div>
+            <div style="padding:14px 20px; background:#fff; border-radius:12px; border:1px solid #e2e8f0; text-align:center; min-width:180px;">
+                <div style="font-weight:bold; color:#1e293b;">Aufgabe: 10.000× addieren</div>
+                <div style="font-size:0.9em; color:#64748b;">CPU: nacheinander 🐢</div>
+                <div style="font-size:0.85em; color:#10b981; font-weight:bold;">GPU: alle gleichzeitig 🚀</div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment">
+            <strong>Ohne Gamer keine KI.</strong> Die R&D-Budgets von NVIDIA wurden durch Spieler finanziert. Erst 2007 (CUDA) konnten Forscher GPUs für Nicht-Grafik-Aufgaben nutzen. 2012 bewies AlexNet, dass GPUs Deep Learning 50–100× schneller machen. Der Rest ist Geschichte.
+        </div>
+    </div>
+</div>
+
 <!-- SLIDE 18: Transformer -->
 <div class="slide" data-title="Attention Is All You Need">
     <div class="slide-content">
