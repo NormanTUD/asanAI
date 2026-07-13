@@ -380,129 +380,133 @@ const BPSlides = (() => {
         return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
     }
 
-    function drawGDViz() {
-        const canvas = document.getElementById('bp-update-canvas');
-        if (!canvas) return;
-        const container = canvas.parentElement;
-        const rect = container.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = rect.width * dpr;
-        canvas.height = 320 * dpr;
-        canvas.style.height = '320px';
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
-        const W = rect.width, H = 320;
+function drawGDViz() {
+    const canvas = document.getElementById('bp-update-canvas');
+    if (!canvas) return;
+    const container = canvas.parentElement;
+    const rect = container.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = 320 * dpr;
+    canvas.style.height = '320px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = 320;
 
-        ctx.clearRect(0, 0, W, H);
-        const bg = ctx.createLinearGradient(0, 0, 0, H);
-        bg.addColorStop(0, '#f8fafc');
-        bg.addColorStop(1, '#f1f5f9');
-        ctx.fillStyle = bg;
-        ctx.fillRect(0, 0, W, H);
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#f8fafc');
+    bg.addColorStop(1, '#f1f5f9');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
 
-        const xMin = -2, xMax = 5;
-        const padding = 40;
-        const plotW = W - 2 * padding;
-        const plotH = H - 80;
+    const xMin = -2, xMax = 5;
+    const padding = 40;
+    const plotW = W - 2 * padding;
+    const plotH = H - 80;
 
-        let yMin = Infinity, yMax = -Infinity;
-        for (let px = 0; px < plotW; px++) {
-            const x = xMin + (px / plotW) * (xMax - xMin);
-            const y = loss1D(x);
-            if (y < yMin) yMin = y;
-            if (y > yMax) yMax = y;
-        }
-        yMin -= 0.5; yMax += 0.5;
-
-        function toScreen(x, y) {
-            return {
-                sx: padding + ((x - xMin) / (xMax - xMin)) * plotW,
-                sy: padding + (1 - (y - yMin) / (yMax - yMin)) * plotH
-            };
-        }
-
-        ctx.strokeStyle = '#e2e8f0';
-        ctx.lineWidth = 1;
-        for (let gx = Math.ceil(xMin); gx <= Math.floor(xMax); gx++) {
-            const { sx } = toScreen(gx, 0);
-            ctx.beginPath(); ctx.moveTo(sx, padding); ctx.lineTo(sx, padding + plotH); ctx.stroke();
-            ctx.fillStyle = '#94a3b8'; ctx.font = '10px system-ui'; ctx.textAlign = 'center';
-            ctx.fillText(gx.toString(), sx, padding + plotH + 14);
-        }
-
-        ctx.beginPath();
-        ctx.strokeStyle = '#6366f1';
-        ctx.lineWidth = 3;
-        for (let px = 0; px < plotW; px++) {
-            const x = xMin + (px / plotW) * (xMax - xMin);
-            const y = loss1D(x);
-            const { sx, sy } = toScreen(x, y);
-            if (px === 0) ctx.moveTo(sx, sy);
-            else ctx.lineTo(sx, sy);
-        }
-        ctx.stroke();
-
-        const lastX = xMin + ((plotW - 1) / plotW) * (xMax - xMin);
-        const { sx: lastSx } = toScreen(lastX, loss1D(lastX));
-        ctx.lineTo(lastSx, padding + plotH);
-        const { sx: firstSx } = toScreen(xMin, 0);
-        ctx.lineTo(firstSx, padding + plotH);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(99, 102, 241, 0.05)';
-        ctx.fill();
-
-        if (gdState.history.length > 1) {
-            for (let i = 1; i < gdState.history.length; i++) {
-                const p0 = toScreen(gdState.history[i - 1], loss1D(gdState.history[i - 1]));
-                const p1 = toScreen(gdState.history[i], loss1D(gdState.history[i]));
-                ctx.beginPath();
-                ctx.moveTo(p0.sx, p0.sy);
-                ctx.lineTo(p1.sx, p1.sy);
-                ctx.strokeStyle = `rgba(239, 68, 68, ${0.3 + 0.7 * (i / gdState.history.length)})`;
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-        }
-
-        const { sx: bx, sy: by } = toScreen(gdState.x, loss1D(gdState.x));
-        const grad = gradLoss1D(gdState.x);
-        const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
-        const arrowLen = Math.min(80, Math.abs(grad * lr) * 60);
-        const arrowDir = grad > 0 ? -1 : 1;
-
-        ctx.beginPath();
-        ctx.moveTo(bx, by);
-        ctx.lineTo(bx + arrowDir * arrowLen, by);
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(bx + arrowDir * arrowLen, by);
-        ctx.lineTo(bx + arrowDir * (arrowLen - 8), by - 5);
-        ctx.lineTo(bx + arrowDir * (arrowLen - 8), by + 5);
-        ctx.closePath();
-        ctx.fillStyle = '#ef4444';
-        ctx.fill();
-
-        const glow = ctx.createRadialGradient(bx, by, 0, bx, by, 18);
-        glow.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
-        glow.addColorStop(1, 'rgba(59, 130, 246, 0)');
-        ctx.fillStyle = glow;
-        ctx.beginPath(); ctx.arc(bx, by, 18, 0, Math.PI * 2); ctx.fill();
-
-        ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2);
-        ctx.fillStyle = '#3b82f6'; ctx.fill();
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-
-        ctx.fillStyle = '#334155';
-        ctx.font = 'bold 12px system-ui';
-        ctx.textAlign = 'left';
-        ctx.fillText(`w = ${gdState.x.toFixed(3)}`, padding, 20);
-        ctx.fillText(`Loss = ${loss1D(gdState.x).toFixed(4)}`, padding + 130, 20);
-        ctx.fillText(`∇ = ${grad.toFixed(4)}`, padding + 290, 20);
-        ctx.fillStyle = '#6366f1';
-        ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
+    let yMin = Infinity, yMax = -Infinity;
+    for (let px = 0; px < plotW; px++) {
+        const x = xMin + (px / plotW) * (xMax - xMin);
+        const y = loss1D(x);
+        if (y < yMin) yMin = y;
+        if (y > yMax) yMax = y;
     }
+    yMin -= 0.5; yMax += 0.5;
+
+    function toScreen(x, y) {
+        return {
+            sx: padding + ((x - xMin) / (xMax - xMin)) * plotW,
+            sy: padding + (1 - (y - yMin) / (yMax - yMin)) * plotH
+        };
+    }
+
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    for (let gx = Math.ceil(xMin); gx <= Math.floor(xMax); gx++) {
+        const { sx } = toScreen(gx, 0);
+        ctx.beginPath(); ctx.moveTo(sx, padding); ctx.lineTo(sx, padding + plotH); ctx.stroke();
+        ctx.fillStyle = '#94a3b8'; ctx.font = '10px system-ui'; ctx.textAlign = 'center';
+        ctx.fillText(gx.toString(), sx, padding + plotH + 14);
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 3;
+    for (let px = 0; px < plotW; px++) {
+        const x = xMin + (px / plotW) * (xMax - xMin);
+        const y = loss1D(x);
+        const { sx, sy } = toScreen(x, y);
+        if (px === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
+
+    const lastX = xMin + ((plotW - 1) / plotW) * (xMax - xMin);
+    const { sx: lastSx } = toScreen(lastX, loss1D(lastX));
+    ctx.lineTo(lastSx, padding + plotH);
+    const { sx: firstSx } = toScreen(xMin, 0);
+    ctx.lineTo(firstSx, padding + plotH);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(99, 102, 241, 0.05)';
+    ctx.fill();
+
+    if (gdState.history.length > 1) {
+        for (let i = 1; i < gdState.history.length; i++) {
+            const p0 = toScreen(gdState.history[i - 1], loss1D(gdState.history[i - 1]));
+            const p1 = toScreen(gdState.history[i], loss1D(gdState.history[i]));
+            ctx.beginPath();
+            ctx.moveTo(p0.sx, p0.sy);
+            ctx.lineTo(p1.sx, p1.sy);
+            ctx.strokeStyle = `rgba(239, 68, 68, ${0.3 + 0.7 * (i / gdState.history.length)})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+    }
+
+    const { sx: bx, sy: by } = toScreen(gdState.x, loss1D(gdState.x));
+
+    // Fix: Nicht-finite Werte abfangen bevor createRadialGradient aufgerufen wird
+    if (!isFinite(bx) || !isFinite(by)) return;
+
+    const grad = gradLoss1D(gdState.x);
+    const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
+    const arrowLen = Math.min(80, Math.abs(grad * lr) * 60);
+    const arrowDir = grad > 0 ? -1 : 1;
+
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(bx + arrowDir * arrowLen, by);
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(bx + arrowDir * arrowLen, by);
+    ctx.lineTo(bx + arrowDir * (arrowLen - 8), by - 5);
+    ctx.lineTo(bx + arrowDir * (arrowLen - 8), by + 5);
+    ctx.closePath();
+    ctx.fillStyle = '#ef4444';
+    ctx.fill();
+
+    const glow = ctx.createRadialGradient(bx, by, 0, bx, by, 18);
+    glow.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+    glow.addColorStop(1, 'rgba(59, 130, 246, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(bx, by, 18, 0, Math.PI * 2); ctx.fill();
+
+    ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2);
+    ctx.fillStyle = '#3b82f6'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.fillStyle = '#334155';
+    ctx.font = 'bold 12px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText(`w = ${gdState.x.toFixed(3)}`, padding, 20);
+    ctx.fillText(`Loss = ${loss1D(gdState.x).toFixed(4)}`, padding + 130, 20);
+    ctx.fillText(`∇ = ${grad.toFixed(4)}`, padding + 290, 20);
+    ctx.fillStyle = '#6366f1';
+    ctx.fillText(`η = ${lr.toFixed(2)}`, padding + 420, 20);
+}
 
     function updateLRViz() {
         const val = document.getElementById('bp-lr-slider')?.value || 10;
@@ -511,15 +515,17 @@ const BPSlides = (() => {
         drawGDViz();
     }
 
-    function stepGD() {
-        const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
-        const grad = gradLoss1D(gdState.x);
-        gdState.x -= lr * grad;
-        gdState.x = Math.max(-2, Math.min(5, gdState.x));
-        gdState.history.push(gdState.x);
-        if (gdState.history.length > 50) gdState.history.shift();
-        drawGDViz();
-    }
+	function stepGD() {
+		const lr = parseFloat(document.getElementById('bp-lr-slider')?.value || 10) / 100;
+		const grad = gradLoss1D(gdState.x);
+		if (!isFinite(grad)) return; // Fix: nicht-finite Gradienten abfangen
+		gdState.x -= lr * grad;
+		gdState.x = Math.max(-2, Math.min(5, gdState.x));
+		if (!isFinite(gdState.x)) { gdState.x = 3.5; } // Fix: Fallback bei NaN/Infinity
+		gdState.history.push(gdState.x);
+		if (gdState.history.length > 50) gdState.history.shift();
+		drawGDViz();
+	}
 
     function autoGD() {
         if (gdState.running) {
