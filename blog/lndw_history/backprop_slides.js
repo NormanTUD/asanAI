@@ -25,34 +25,6 @@ const BPSlides = (() => {
         return 0.5 * (x - 1) * (x - 1) + 0.3 * Math.sin(x * 2) + 0.1 * (x + 1) * (x + 1) * 0.05;
     }
 
-    function gradLoss1D(x) {
-        const eps = 0.001;
-        return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // CHAIN RULE VISUALIZATION
-    // ═══════════════════════════════════════════════════════════════
-
-    function chainRemoveLayer() {
-        if (chainLayers.length <= 2) return;
-        chainLayers.pop();
-        drawChainViz();
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // WEIGHT UPDATE / GRADIENT DESCENT 2D VISUALIZATION
-    // ═══════════════════════════════════════════════════════════════
-
-    function loss1D(x) {
-        return 0.5 * (x - 1) * (x - 1) + 0.3 * Math.sin(x * 2) + 0.1 * (x + 1) * (x + 1) * 0.05;
-    }
-
-    function gradLoss1D(x) {
-        const eps = 0.001;
-        return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // CHAIN RULE VISUALIZATION
     // ═══════════════════════════════════════════════════════════════
@@ -141,19 +113,6 @@ const BPSlides = (() => {
             const emoji = isVanishing ? '💀' : product < 0.1 ? '⚠️' : '✅';
             resultEl.innerHTML = `${emoji} Gesamtgradient: <span style="color:${isVanishing ? '#ef4444' : '#10b981'}">${product.toExponential(3)}</span> (${n} Schichten)`;
         }
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // WEIGHT UPDATE / GRADIENT DESCENT 2D VISUALIZATION
-    // ═══════════════════════════════════════════════════════════════
-
-    function loss1D(x) {
-        return 0.5 * (x - 1) * (x - 1) + 0.3 * Math.sin(x * 2) + 0.1 * (x + 1) * (x + 1) * 0.05;
-    }
-
-    function gradLoss1D(x) {
-        const eps = 0.001;
-        return (loss1D(x + eps) - loss1D(x - eps)) / (2 * eps);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -415,10 +374,6 @@ const BPSlides = (() => {
     // ═══════════════════════════════════════════════════════════════
 
     let gdState = { x: 3.5, history: [3.5], running: false, raf: null };
-
-    function loss1D(x) {
-        return 0.5 * (x - 1) * (x - 1) + 0.3 * Math.sin(x * 2) + 0.1 * (x + 1) * (x + 1) * 0.05;
-    }
 
     function gradLoss1D(x) {
         const eps = 0.001;
