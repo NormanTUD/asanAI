@@ -1060,33 +1060,339 @@ var TopologicalAnalyzer = (function () {
 	// TOPOLOGICAL SUMMARY TABLE
 	// ============================================================
 
+// ============================================================
+// TDA TOOLTIP SYSTEM
+// ============================================================
+
+var _tooltipEl = null;
+var _tooltipTimeout = null;
+
+function getTooltipKey(labelText) {
+	var keyMap = {
+		"β₀ (components)": "tda_tooltip_betti0_components",
+		"β₁ (loops)": "tda_tooltip_betti1_loops",
+		"Total Persistence H₀": "tda_tooltip_total_persistence_h0",
+		"Total Persistence H₁": "tda_tooltip_total_persistence_h1",
+		"Max Persistence H₀": "tda_tooltip_max_persistence_h0",
+		"Max Persistence H₁": "tda_tooltip_max_persistence_h1",
+		"Persistence Entropy H₀": "tda_tooltip_persistence_entropy_h0",
+		"Persistence Entropy H₁": "tda_tooltip_persistence_entropy_h1",
+		"Final β₀": "tda_tooltip_final_betti0",
+		"Final β₁": "tda_tooltip_final_betti1",
+		// German variants
+		"β₀ (Komponenten)": "tda_tooltip_betti0_components",
+		"β₁ (Schleifen)": "tda_tooltip_betti1_loops",
+		"Gesamtpersistenz H₀": "tda_tooltip_total_persistence_h0",
+		"Gesamtpersistenz H₁": "tda_tooltip_total_persistence_h1",
+		"Max. Persistenz H₀": "tda_tooltip_max_persistence_h0",
+		"Max. Persistenz H₁": "tda_tooltip_max_persistence_h1",
+		"Persistenz-Entropie H₀": "tda_tooltip_persistence_entropy_h0",
+		"Persistenz-Entropie H₁": "tda_tooltip_persistence_entropy_h1",
+		"Finales β₀": "tda_tooltip_final_betti0",
+		"Finales β₁": "tda_tooltip_final_betti1"
+	};
+
+	// Normalize encoded characters
+	var normalized = labelText
+		.replace(/Œ≤‚ÇÄ/g, "β₀")
+		.replace(/Œ≤‚ÇÅ/g, "β₁")
+		.replace(/H‚ÇÄ/g, "H₀")
+		.replace(/H‚ÇÅ/g, "H₁");
+
+	return keyMap[normalized] || keyMap[labelText] || null;
+}
+
+function getChartTooltipKey(titleText) {
+	if (!titleText) return null;
+	var lower = titleText.toLowerCase();
+	if (lower.indexOf("persistence diagram") !== -1 || lower.indexOf("persistenzdiagramm") !== -1) {
+		return "tda_tooltip_persistence_diagram";
+	}
+	if (lower.indexOf("betti curve") !== -1 || lower.indexOf("betti-kurve") !== -1) {
+		return "tda_tooltip_betti_curves";
+	}
+	if (lower.indexOf("barcode") !== -1) {
+		return "tda_tooltip_barcode";
+	}
+	if (lower.indexOf("point cloud") !== -1 || lower.indexOf("punktwolke") !== -1) {
+		return "tda_tooltip_point_cloud";
+	}
+	if (lower.indexOf("weight distribution") !== -1 || lower.indexOf("gewichtsverteilung") !== -1) {
+		return "tda_tooltip_weight_distribution";
+	}
+	if (lower.indexOf("input betti") !== -1 || lower.indexOf("eingabe-betti") !== -1) {
+		return "tda_tooltip_input_betti";
+	}
+	return null;
+}
+
+function getTooltipContent(key) {
+	if (!key) return null;
+	try {
+		if (typeof language !== "undefined" && typeof lang !== "undefined" && language[lang] && language[lang][key]) {
+			return language[lang][key];
+		}
+	} catch (e) {}
+	return null;
+}
+
+function createTooltipElement() {
+	if (_tooltipEl) return _tooltipEl;
+
+	_tooltipEl = document.createElement("div");
+	_tooltipEl.id = "tda_tooltip_popup";
+	_tooltipEl.style.cssText = [
+		"position: fixed",
+		"z-index: 999999",
+		"max-width: 360px",
+		"padding: 14px 18px",
+		"border-radius: 12px",
+		"background: rgba(20, 20, 40, 0.97)",
+		"color: #e0e0e0",
+		"font-size: 12px",
+		"line-height: 1.6",
+		"box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2)",
+		"border: 1px solid rgba(100,100,255,0.15)",
+		"pointer-events: none",
+		"opacity: 0",
+		"transition: opacity 0.2s ease, transform 0.2s ease",
+		"transform: translateY(5px)",
+		"display: none",
+		"backdrop-filter: blur(8px)",
+		"overflow-y: auto",
+		"max-height: 80vh"
+	].join(";");
+
+	document.body.appendChild(_tooltipEl);
+	return _tooltipEl;
+}
+
+function showTooltip(event, content) {
+	if (!content) return;
+
+	var tooltip = createTooltipElement();
+	tooltip.innerHTML = content;
+	tooltip.style.display = "block";
+
+	// Position calculation
+	var x = event.clientX + 15;
+	var y = event.clientY + 15;
+	var tooltipRect = tooltip.getBoundingClientRect();
+	var viewW = window.innerWidth;
+	var viewH = window.innerHeight;
+
+	// Prevent overflow right
+	if (x + 370 > viewW) {
+		x = event.clientX - 375;
+		if (x < 10) x = 10;
+	}
+	// Prevent overflow bottom
+	if (y + tooltipRect.height > viewH - 20) {
+		y = Math.max(10, viewH - tooltipRect.height - 20);
+	}
+
+	tooltip.style.left = x + "px";
+	tooltip.style.top = y + "px";
+
+	// Animate in
+	requestAnimationFrame(function () {
+		tooltip.style.opacity = "1";
+		tooltip.style.transform = "translateY(0)";
+	});
+}
+
+function hideTooltip() {
+	if (_tooltipEl) {
+		_tooltipEl.style.opacity = "0";
+		_tooltipEl.style.transform = "translateY(5px)";
+		setTimeout(function () {
+			if (_tooltipEl) _tooltipEl.style.display = "none";
+		}, 200);
+	}
+}
+
+function attachTooltipListeners(container) {
+	if (!container) return;
+
+	// Attach to summary table rows
+	var tooltipTargets = container.querySelectorAll("[data-tda-tooltip]");
+	for (var i = 0; i < tooltipTargets.length; i++) {
+		(function (el) {
+			el.addEventListener("mouseenter", function (e) {
+				var key = el.getAttribute("data-tda-tooltip");
+				var content = getTooltipContent(key);
+				if (content) {
+					if (_tooltipTimeout) clearTimeout(_tooltipTimeout);
+					_tooltipTimeout = setTimeout(function () {
+						showTooltip(e, content);
+					}, 300);
+				}
+			});
+			el.addEventListener("mousemove", function (e) {
+				if (_tooltipEl && _tooltipEl.style.opacity === "1") {
+					var x = e.clientX + 15;
+					var y = e.clientY + 15;
+					if (x + 370 > window.innerWidth) x = e.clientX - 375;
+					if (x < 10) x = 10;
+					_tooltipEl.style.left = x + "px";
+					_tooltipEl.style.top = y + "px";
+				}
+			});
+			el.addEventListener("mouseleave", function () {
+				if (_tooltipTimeout) clearTimeout(_tooltipTimeout);
+				hideTooltip();
+			});
+		})(tooltipTargets[i]);
+	}
+
+	// Attach to chart titles (SVG text elements with class tda-chart-title)
+	var chartContainers = container.querySelectorAll("[data-tda-chart-tooltip]");
+	for (var i = 0; i < chartContainers.length; i++) {
+		(function (el) {
+			el.addEventListener("mouseenter", function (e) {
+				var key = el.getAttribute("data-tda-chart-tooltip");
+				var content = getTooltipContent(key);
+				if (content) {
+					if (_tooltipTimeout) clearTimeout(_tooltipTimeout);
+					_tooltipTimeout = setTimeout(function () {
+						showTooltip(e, content);
+					}, 300);
+				}
+			});
+			el.addEventListener("mousemove", function (e) {
+				if (_tooltipEl && _tooltipEl.style.opacity === "1") {
+					var x = e.clientX + 15;
+					var y = e.clientY + 15;
+					if (x + 370 > window.innerWidth) x = e.clientX - 375;
+					if (x < 10) x = 10;
+					_tooltipEl.style.left = x + "px";
+					_tooltipEl.style.top = y + "px";
+				}
+			});
+			el.addEventListener("mouseleave", function () {
+				if (_tooltipTimeout) clearTimeout(_tooltipTimeout);
+				hideTooltip();
+			});
+		})(chartContainers[i]);
+	}
+
+}
+
+	// ============================================================
+	// TOPOLOGICAL SUMMARY TABLE (with tooltip data attributes)
+	// ============================================================
+
 	function renderSummaryTable(summary, title) {
 		if (!summary) return "";
+
+		var currentLang = (typeof lang !== "undefined") ? lang : "en";
+		var isDE = (currentLang === "de");
 
 		var html = '<div style="margin:8px 0;">';
 		if (title) html += '<div style="font-weight:bold;font-size:12px;margin-bottom:4px;opacity:0.8;">' + title + '</div>';
 		html += '<table style="font-size:11px;border-collapse:collapse;width:100%;">';
 
-		var rows = [
-			["β₀ (components)", summary.numComponentsH0],
-			["β₁ (loops)", summary.numLoopsH1],
-			["Total Persistence H₀", summary.totalPersistenceH0.toFixed(4)],
-			["Total Persistence H₁", summary.totalPersistenceH1.toFixed(4)],
-			["Max Persistence H₀", summary.maxPersistenceH0.toFixed(4)],
-			["Max Persistence H₁", summary.maxPersistenceH1.toFixed(4)],
-			["Persistence Entropy H₀", summary.persistenceEntropyH0.toFixed(4)],
-			["Persistence Entropy H₁", summary.persistenceEntropyH1.toFixed(4)],
-			["Final β₀", summary.finalBetti0],
-			["Final β₁", summary.finalBetti1]
+		var rows = isDE ? [
+			["β₀ (Komponenten)", summary.numComponentsH0, "tda_tooltip_betti0_components"],
+			["β₁ (Schleifen)", summary.numLoopsH1, "tda_tooltip_betti1_loops"],
+			["Gesamtpersistenz H₀", summary.totalPersistenceH0.toFixed(4), "tda_tooltip_total_persistence_h0"],
+			["Gesamtpersistenz H₁", summary.totalPersistenceH1.toFixed(4), "tda_tooltip_total_persistence_h1"],
+			["Max. Persistenz H₀", summary.maxPersistenceH0.toFixed(4), "tda_tooltip_max_persistence_h0"],
+			["Max. Persistenz H₁", summary.maxPersistenceH1.toFixed(4), "tda_tooltip_max_persistence_h1"],
+			["Persistenz-Entropie H₀", summary.persistenceEntropyH0.toFixed(4), "tda_tooltip_persistence_entropy_h0"],
+			["Persistenz-Entropie H₁", summary.persistenceEntropyH1.toFixed(4), "tda_tooltip_persistence_entropy_h1"],
+			["Finales β₀", summary.finalBetti0, "tda_tooltip_final_betti0"],
+			["Finales β₁", summary.finalBetti1, "tda_tooltip_final_betti1"]
+		] : [
+			["β₀ (components)", summary.numComponentsH0, "tda_tooltip_betti0_components"],
+			["β₁ (loops)", summary.numLoopsH1, "tda_tooltip_betti1_loops"],
+			["Total Persistence H₀", summary.totalPersistenceH0.toFixed(4), "tda_tooltip_total_persistence_h0"],
+			["Total Persistence H₁", summary.totalPersistenceH1.toFixed(4), "tda_tooltip_total_persistence_h1"],
+			["Max Persistence H₀", summary.maxPersistenceH0.toFixed(4), "tda_tooltip_max_persistence_h0"],
+			["Max Persistence H₁", summary.maxPersistenceH1.toFixed(4), "tda_tooltip_max_persistence_h1"],
+			["Persistence Entropy H₀", summary.persistenceEntropyH0.toFixed(4), "tda_tooltip_persistence_entropy_h0"],
+			["Persistence Entropy H₁", summary.persistenceEntropyH1.toFixed(4), "tda_tooltip_persistence_entropy_h1"],
+			["Final β₀", summary.finalBetti0, "tda_tooltip_final_betti0"],
+			["Final β₁", summary.finalBetti1, "tda_tooltip_final_betti1"]
 		];
 
 		for (var i = 0; i < rows.length; i++) {
-			html += '<tr><td style="padding:2px 8px 2px 0;opacity:0.6;">' + rows[i][0] + '</td><td style="padding:2px 0;text-align:right;font-family:monospace;">' + rows[i][1] + '</td></tr>';
+			var tooltipAttr = rows[i][2] ? ' data-tda-tooltip="' + rows[i][2] + '"' : '';
+			html += '<tr' + tooltipAttr + ' style="cursor:help;transition:background 0.15s;"'
+				+ ' onmouseenter="this.style.background=\'rgba(52,152,219,0.08)\'"'
+				+ ' onmouseleave="this.style.background=\'transparent\'">'
+				+ '<td style="padding:3px 8px 3px 0;opacity:0.7;border-bottom:1px solid rgba(128,128,128,0.08);">'
+				+ '<span style="border-bottom:1px dotted rgba(128,128,128,0.4);">' + rows[i][0] + '</span>'
+				+ ' <span style="font-size:9px;opacity:0.4;">ⓘ</span>'
+				+ '</td>'
+				+ '<td style="padding:3px 0;text-align:right;font-family:monospace;border-bottom:1px solid rgba(128,128,128,0.08);">'
+				+ rows[i][1]
+				+ '</td></tr>';
 		}
 
 		html += '</table></div>';
 		return html;
 	}
+
+	// ============================================================
+	// CHART WRAPPER WITH TOOLTIP (wraps SVG charts)
+	// ============================================================
+
+	function wrapChartWithTooltip(svgHtml, chartTitle) {
+		var tooltipKey = getChartTooltipKey(chartTitle);
+		if (!tooltipKey) return svgHtml;
+
+		return '<div data-tda-chart-tooltip="' + tooltipKey + '" style="cursor:help;position:relative;">'
+			+ svgHtml
+			+ '<div style="position:absolute;top:4px;right:8px;font-size:10px;opacity:0.35;pointer-events:none;">ⓘ</div>'
+			+ '</div>';
+	}
+
+	// ============================================================
+	// MODIFIED renderPersistenceDiagram (with tooltip wrapper)
+	// ============================================================
+
+	function renderPersistenceDiagramWithTooltip(pairs, width, height, title, colorH0, colorH1) {
+		var svg = renderPersistenceDiagram(pairs, width, height, title, colorH0, colorH1);
+		return wrapChartWithTooltip(svg, title);
+	}
+
+	// ============================================================
+	// MODIFIED renderBettiCurves (with tooltip wrapper)
+	// ============================================================
+
+	function renderBettiCurvesWithTooltip(bettiCurve0, bettiCurve1, epsilonValues, width, height, title) {
+		var svg = renderBettiCurves(bettiCurve0, bettiCurve1, epsilonValues, width, height, title);
+		return wrapChartWithTooltip(svg, title);
+	}
+
+	// ============================================================
+	// MODIFIED renderBarcode (with tooltip wrapper)
+	// ============================================================
+
+	function renderBarcodeWithTooltip(h0Pairs, h1Pairs, width, height, title) {
+		var svg = renderBarcode(h0Pairs, h1Pairs, width, height, title);
+		return wrapChartWithTooltip(svg, title);
+	}
+
+	// ============================================================
+	// MODIFIED renderPointCloudSVG (with tooltip wrapper)
+	// ============================================================
+
+	function renderPointCloudSVGWithTooltip(points, width, height, title) {
+		var svg = renderPointCloudSVG(points, width, height, title);
+		return wrapChartWithTooltip(svg, title);
+	}
+
+	// ============================================================
+	// MODIFIED renderWeightHistogramSVG (with tooltip wrapper)
+	// ============================================================
+
+	function renderWeightHistogramSVGWithTooltip(histogram, width, height, title) {
+		var svg = renderWeightHistogramSVG(histogram, width, height, title);
+		return wrapChartWithTooltip(svg, title);
+	}
+
 
 	// ============================================================
 	// STYLE INJECTION
@@ -1485,16 +1791,19 @@ var TopologicalAnalyzer = (function () {
 
 		html += '</div>'; // end tda-section
 
-		// Set HTML with smooth transition
 		if (_state.config.smoothTransition && _state.container.innerHTML !== "") {
 			_state.container.style.transition = "opacity 0.2s ease";
 			_state.container.style.opacity = "0.7";
 			setTimeout(function () {
 				_state.container.innerHTML = html;
 				_state.container.style.opacity = "1";
+				// Attach tooltip listeners after DOM is updated
+				attachTooltipListeners(_state.container);
 			}, 100);
 		} else {
 			_state.container.innerHTML = html;
+			// Attach tooltip listeners after DOM is updated
+			attachTooltipListeners(_state.container);
 		}
 	}
 
@@ -1603,6 +1912,10 @@ var TopologicalAnalyzer = (function () {
 		destroy: destroy,
 		getConfig: getConfig,
 		setConfig: setConfig,
+		// Tooltip system
+		showTooltip: showTooltip,
+		hideTooltip: hideTooltip,
+		attachTooltipListeners: attachTooltipListeners,
 		// Expose internals for advanced usage
 		computeRipsPersistence: computeRipsPersistence,
 		analyzeWeightTopology: analyzeWeightTopology,
