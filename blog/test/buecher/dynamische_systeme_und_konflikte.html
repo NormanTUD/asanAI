@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamische Systeme & Konflikte – Interaktive Visualisierung</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; font-size: 2em; margin: 30px 0; color: #58a6ff; }
+        h2 { color: #79c0ff; margin: 20px 0 10px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+        h3 { color: #d2a8ff; margin: 15px 0 8px; }
+        .section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 800px) { .concept-grid { grid-template-columns: 1fr; } }
+        .concept-card {
+            background: #1c2128;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        canvas {
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+            padding: 12px;
+            background: #1c2128;
+            border-radius: 8px;
+        }
+        .controls label { font-size: 0.9em; color: #8b949e; }
+        input[type="range"] {
+            width: 180px;
+            accent-color: #58a6ff;
+        }
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        button:hover { background: #2ea043; }
+        button.reset { background: #da3633; }
+        button.reset:hover { background: #f85149; }
+        .math-block {
+            background: #1c2128;
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 1.1em;
+            overflow-x: auto;
+        }
+        .info-text {
+            color: #8b949e;
+            font-size: 0.9em;
+            margin: 8px 0;
+            font-style: italic;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .plotly-chart { width: 100%; min-height: 400px; }
+        .tab-container { margin: 15px 0; }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 0;
+        }
+        .tab {
+            padding: 8px 16px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+        .tab.active { background: #1c2128; color: #e6edf3; border-color: #58a6ff; }
+        .tab-content {
+            display: none;
+            background: #1c2128;
+            border: 1px solid #30363d;
+            border-radius: 0 8px 8px 8px;
+            padding: 20px;
+        }
+        .tab-content.active { display: block; }
+        .highlight { color: #ffa657; font-weight: 600; }
+        .positive { color: #3fb950; }
+        .negative { color: #f85149; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🌀 Dynamische Systeme & Konflikte</h1>
+    <p style="text-align:center; color:#8b949e; margin-bottom:30px;">
+        Interaktive Visualisierung der Kernkonzepte aus "Attracted to Conflict" (Vallacher et al., 2013)
+    </p>
+
+    <!-- SECTION 1: ATTRACTOR LANDSCAPE -->
+    <div class="section">
+        <h2>1. Attraktor-Landschaft</h2>
+        <p>Ein <span class="highlight">Attraktor</span> ist ein Zustand, zu dem ein System über die Zeit konvergiert. 
+        Die "Kugel" rollt immer ins Tal – selbst nach Störungen kehrt sie zurück.</p>
+        
+        <div class="math-block" id="math-attractor"></div>
+        
+        <div class="controls">
+            <label>Tiefe Attraktor A: <span id="depthA-val">3</span></label>
+            <input type="range" id="depthA" min="1" max="8" value="3" step="0.5">
+            <label>Tiefe Attraktor B: <span id="depthB-val">5</span></label>
+            <input type="range" id="depthB" min="1" max="8" value="5" step="0.5">
+            <label>Breite A: <span id="widthA-val">3</span></label>
+            <input type="range" id="widthA" min="1" max="5" value="3" step="0.5">
+            <label>Breite B: <span id="widthB-val">2</span></label>
+            <input type="range" id="widthB" min="1" max="5" value="2" step="0.5">
+            <button onclick="dropBall()">🎱 Kugel fallen lassen</button>
+            <button class="reset" onclick="resetBall()">Reset</button>
+        </div>
+        
+        <canvas id="attractorCanvas" width="700" height="350"></canvas>
+        
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#58a6ff"></div> Attraktor A (positiv)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f85149"></div> Attraktor B (negativ/Konflikt)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffa657"></div> Systemzustand (Kugel)</div>
+        </div>
+        
+        <p class="info-text">→ Tiefe = Stärke des Attraktors (schwerer zu entkommen). Breite = Basin of Attraction (Bereich der Anfangszustände, die dorthin konvergieren).</p>
+    </div>
+
+    <!-- SECTION 2: FEEDBACK LOOPS -->
+    <div class="section">
+        <h2>2. Feedback-Schleifen & Selbstorganisation</h2>
+        <p><span class="positive">Verstärkende Feedback-Schleifen</span> amplifizieren den aktuellen Zustand. 
+        <span class="negative">Hemmende Feedback-Schleifen</span> bremsen und regulieren. 
+        Gesunde Selbstregulation braucht eine <span class="highlight">Balance</span> beider.</p>
+        
+        <div class="controls">
+            <label>Verstärkend: <span id="reinforce-val">0.7</span></label>
+            <input type="range" id="reinforce" min="0" max="1" value="0.7" step="0.05">
+            <label>Hemmend: <span id="inhibit-val">0.5</span></label>
+            <input type="range" id="inhibit" min="0" max="1" value="0.5" step="0.05">
+            <button onclick="startFeedback()">▶ Simulation starten</button>
+            <button class="reset" onclick="stopFeedback()">⏹ Stop</button>
+        </div>
+        
+        <canvas id="feedbackCanvas" width="700" height="300"></canvas>
+        
+        <p class="info-text">→ Wenn verstärkende Loops dominieren → Polarisierung (Intraktabilität). 
+        Wenn hemmende Loops dominieren → kein stabiler Zustand möglich. Balance → gesunde Selbstregulation.</p>
+    </div>
+
+    <!-- SECTION 3: COOPERATION VS COMPETITION -->
+    <div class="section">
+        <h2>3. Kooperation vs. Kompetition – Dynamisches Modell</h2>
+        <p>Zwei Gruppen interagieren. Ihr emotionaler Zustand entwickelt sich über die Zeit basierend auf:</p>
+        
+        <div class="math-block" id="math-coop"></div>
+        
+        <div class="controls">
+            <label>Gruppe X:</label>
+            <select id="stratX">
+                <option value="coop">Kooperativ</option>
+                <option value="comp">Kompetitiv</option>
+            </select>
+            <label>Gruppe Y:</label>
+            <select id="stratY">
+                <option value="coop">Kooperativ</option>
+                <option value="comp" selected>Kompetitiv</option>
+            </select>
+            <label>Kopplungsstärke: <span id="coupling-val">1.5</span></label>
+            <input type="range" id="coupling" min="0.2" max="3" value="1.5" step="0.1">
+            <button onclick="runCoopModel()">▶ Simulieren</button>
+        </div>
+        
+        <div id="coopPlot" class="plotly-chart"></div>
+        
+        <p class="info-text">→ Kooperativ-Kooperativ: beide konvergieren positiv. Kompetitiv-Kompetitiv: einer positiv, einer negativ. 
+        Kooperativ-Kompetitiv: Oszillation! Eine Gruppe allein kann durch Strategiewechsel beide Dynamiken ändern.</p>
+    </div>
+
+    <!-- SECTION 4: ESCALATION -->
+    <div class="section">
+        <h2>4. Eskalation: Linear vs. Nichtlinear (Katastrophe)</h2>
+        <p>Ob Konflikte <span class="positive">proportional</span> oder <span class="negative">katastrophal</span> eskalieren, 
+        hängt von der <span class="highlight">Komplexität</span> des Systems ab.</p>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchEscTab(0)">Hohe Komplexität (linear)</div>
+                <div class="tab" onclick="switchEscTab(1)">Niedrige Komplexität (nichtlinear)</div>
+            </div>
+            <div class="tab-content active" id="escTab0">
+                <canvas id="linearEscCanvas" width="650" height="280"></canvas>
+                <p class="info-text">→ Viele unabhängige Elemente. Provokation → proportionale Reaktion. Tit-for-tat.</p>
+            </div>
+            <div class="tab-content" id="escTab1">
+                <canvas id="nonlinearEscCanvas" width="650" height="280"></canvas>
+                <p class="info-text">→ Stark vernetzte Elemente. Lange Resistenz, dann plötzlicher Umschlag. Hysterese: Rückkehr braucht mehr Deeskalation als die Eskalation brauchte!</p>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <label>Provokationslevel: <span id="provocation-val">0</span></label>
+            <input type="range" id="provocation" min="0" max="100" value="0" step="1" oninput="updateEscalation()">
+            <label>Richtung:</label>
+            <select id="escDirection" onchange="updateEscalation()">
+                <option value="up">Eskalierend ↑</option>
+                <option value="down">Deeskalierend ↓</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- SECTION 5: PERVASIVENESS / SPREAD -->
+    <div class="section">
+        <h2>5. Ausbreitung von Konflikten (Crude Law Simulation)</h2>
+        <p>Deutschs <span class="highlight">Crude Law of Social Relations</span>: Kompetitive Verhaltensweisen erzeugen kompetitive Orientierungen, 
+        die wiederum kompetitives Verhalten verstärken. Konflikte breiten sich aus und werden selbsterhaltend.</p>
+        
+        <div class="controls">
+            <label>Reproduktionsrate: <span id="repro-val">0.3</span></label>
+            <input type="range" id="repro" min="0.1" max="0.8" value="0.3" step="0.05">
+            <label>Zerfallsrate: <span id="decay-val">0.1</span></label>
+            <input type="range" id="decay" min="0.01" max="0.4" value="0.1" step="0.01">
+            <label>Diffusion: <span id="diffusion-val">0.2</span></label>
+            <input type="range" id="diffusion" min="0" max="0.5" value="0.2" step="0.05">
+            <button onclick="startSpread()">▶ Starten</button>
+            <button class="reset" onclick="stopSpread()">⏹ Stop</button>
+            <button onclick="resetSpread()">🔄 Reset</button>
+        </div>
+        
+        <canvas id="spreadCanvas" width="500" height="500"></canvas>
+        
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#0d1117"></div> Neutral</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffa657"></div> Kompetitives Verhalten</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f85149"></div> Kompetitive Orientierung (chronisch)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fff; border:2px solid #58a6ff"></div> Kompetitive Interdependenz (Quelle)</div>
+        </div>
+        
+        <p class="info-text">→ Weiße Punkte = Orte mit Ressourcenkonflikt. Dort wächst kompetitives Verhalten exponentiell, 
+        breitet sich aus und erzeugt chronische Orientierungen. Selbst nach Entfernung der Ursache reinstalliert sich der Konflikt!</p>
+    </div>
+
+    <!-- SECTION 6: TRANSFORMATION -->
+    <div class="section">
+        <h2>6. Transformation: Wie Konflikte aufgelöst werden</h2>
+        <p>Drei Strategien zur Veränderung der Attraktor-Landschaft:</p>
+        
+        <div class="concept-grid">
+            <div class="concept-card">
+                <h3>🔨 Attraktor-Dekonstruktion</h3>
+                <p>Feedback-Schleifen aufbrechen. Elemente isolieren. Lewins "Unfreeze → Move → Refreeze".</p>
+                <canvas id="deconstructCanvas" width="300" height="180"></canvas>
+                <button onclick="animateDeconstruct()" style="margin-top:8px">Dekonstruieren</button>
+            </div>
+            <div class="concept-card">
+                <h3>🌱 Latente Attraktoren aktivieren</h3>
+                <p>Unsichtbare positive Zustände existieren oft bereits. Kleine Gesten können sie manifest machen.</p>
+                <canvas id="latentCanvas" width="300" height="180"></canvas>
+                <button onclick="animateLatent()" style="margin-top:8px">Latenten Attraktor zeigen</button>
+            </div>
+        </div>
+        
+        <div class="concept-card" style="margin-top:15px">
+            <h3>⚡ Bifurkation: Kontrollparameter ändern</h3>
+            <p>Bestimmte Faktoren (Kontrollparameter) können die <em>Anzahl und Art</em> der Attraktoren qualitativ verändern.</p>
+            <div class="controls">
+                <label>Kontrollparameter μ: <span id="bifur-val">-2</span></label>
+                <input type="range" id="bifur" min="-3" max="3" value="-2" step="0.1" oninput="updateBifurcation()">
+            </div>
+            <div id="bifurPlot" class="plotly-chart" style="min-height:300px"></div>
+        </div>
+    </div>
+
+    <!-- SECTION 7: SUSTAINABLE PEACE -->
+    <div class="section">
+        <h2>7. Nachhaltige Friedensdynamik</h2>
+        <p>Frieden ist kein statischer Zustand, sondern ein <span class="highlight">dynamischer Prozess</span>. 
+        Nachhaltiger Frieden erfordert:</p>
+        
+        <div id="peacePlot" class="plotly-chart"></div>
+        
+        <div class="controls">
+            <label>Positivitäts-Ratio: <span id="posratio-val">3.5</span></label>
+            <input type="range" id="posratio" min="0.5" max="6" value="3.5" step="0.25" oninput="updatePeace()">
+            <label>Komplexität: <span id="complexity-val">0.6</span></label>
+            <input type="range" id="complexity" min="0.1" max="1" value="0.6" step="0.05" oninput="updatePeace()">
+            <label>Adaptivität: <span id="adaptivity-val">0.5</span></label>
+            <input type="range" id="adaptivity" min="0" max="1" value="0.5" step="0.05" oninput="updatePeace()">
+        </div>
+        
+        <p class="info-text">→ Ratio Positivität:Negativität von ~3:1 bis 5:1 fördert gesunde Dynamik. 
+        Hohe Komplexität + Adaptivität = Resilienz gegen Rückfall in destruktive Muster.</p>
+    </div>
+
+</div>
+
+<script>
+// ============ MATH RENDERING ============
+document.addEventListener('DOMContentLoaded', () => {
+    temml.render("V(x) = -a_1 e^{-(x-\\mu_1)^2 / 2\\sigma_1^2} - a_2 e^{-(x-\\mu_2)^2 / 2\\sigma_2^2}", 
+        document.getElementById('math-attractor'));
+    temml.render("\\frac{dx}{dt} = m_x x + b_x + c_x f_x(y), \\quad \\frac{dy}{dt} = m_y y + b_y + c_y f_y(x)", 
+        document.getElementById('math-coop'));
+});
+
+// ============ 1. ATTRACTOR LANDSCAPE ============
+let ballX = 350, ballVx = 0, ballAnimId = null;
+const aC = document.getElementById('attractorCanvas');
+const aCtx = aC.getContext('2d');
+
+function landscape(x) {
+    const dA = parseFloat(document.getElementById('depthA').value);
+    const dB = parseFloat(document.getElementById('depthB').value);
+    const wA = parseFloat(document.getElementById('widthA').value);
+    const wB = parseFloat(document.getElementById('widthB').value);
+    const cx = x / aC.width;
+    const gaussA = dA * Math.exp(-Math.pow((cx - 0.3) * 10 / wA, 2));
+    const gaussB = dB * Math.exp(-Math.pow((cx - 0.72) * 10 / wB, 2));
+    return 200 - (gaussA + gaussB) * 25;
+}
+
+function drawAttractor() {
+    aCtx.clearRect(0, 0, aC.width, aC.height);
+    // Draw landscape
+    aCtx.beginPath();
+    aCtx.moveTo(0, aC.height);
+    for (let x = 0; x <= aC.width; x++) {
+        aCtx.lineTo(x, landscape(x));
+    }
+    aCtx.lineTo(aC.width, aC.height);
+    aCtx.closePath();
+    const grad = aCtx.createLinearGradient(0, 0, aC.width, 0);
+    grad.addColorStop(0, '#1a3a5c');
+    grad.addColorStop(0.3, '#1a4a6c');
+    grad.addColorStop(0.7, '#4a1a1a');
+    grad.addColorStop(1, '#3a1a1a');
+    aCtx.fillStyle = grad;
+    aCtx.fill();
+    // Labels
+    aCtx.fillStyle = '#58a6ff';
+    aCtx.font = '14px sans-serif';
+    aCtx.fillText('A (positiv)', aC.width * 0.25, landscape(aC.width * 0.3) + 30);
+    aCtx.fillStyle = '#f85149';
+    aCtx.fillText('B (Konflikt)', aC.width * 0.65, landscape(aC.width * 0.72) + 30);
+    // Ball
+    aCtx.beginPath();
+    aCtx.arc(ballX, landscape(ballX) - 12, 10, 0, Math.PI * 2);
+    aCtx.fillStyle = '#ffa657';
+    aCtx.fill();
+    aCtx.strokeStyle = '#fff';
+    aCtx.lineWidth = 2;
+    aCtx.stroke();
+}
+
+function dropBall() {
+    if (ballAnimId) cancelAnimationFrame(ballAnimId);
+    ballX = 100 + Math.random() * 500;
+    ballVx = (Math.random() - 0.5) * 3;
+    animateBall();
+}
+
+function resetBall() {
+    if (ballAnimId) cancelAnimationFrame(ballAnimId);
+    ballX = 350; ballVx = 0;
+    drawAttractor();
+}
+
+function animateBall() {
+    const dx = 2;
+    const slope = (landscape(ballX + dx) - landscape(ballX - dx)) / (2 * dx);
+    ballVx += slope * 0.08;
+    ballVx *= 0.96; // friction
+    ballX += ballVx;
+    ballX = Math.max(10, Math.min(aC.width - 10, ballX));
+    drawAttractor();
+    if (Math.abs(ballVx) > 0.01) {
+        ballAnimId = requestAnimationFrame(animateBall);
+    }
+}
+
+// Slider updates
+['depthA','depthB','widthA','widthB'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+        document.getElementById(id + '-val').textContent = e.target.value;
+        drawAttractor();
+    });
+});
+drawAttractor();
+
+// ============ 2. FEEDBACK LOOPS ============
+const fC = document.getElementById('feedbackCanvas');
+const fCtx = fC.getContext('2d');
+let feedbackData = [], feedbackRunning = false, feedbackId = null;
+
+function startFeedback() {
+    feedbackRunning = true;
+    feedbackData = [0.1];
+    animateFeedback();
+}
+
+function stopFeedback() {
+    feedbackRunning = false;
+    if (feedbackId) cancelAnimationFrame(feedbackId);
+}
+
+function animateFeedback() {
+    if (!feedbackRunning) return;
+    const r = parseFloat(document.getElementById('reinforce').value);
+    const h = parseFloat(document.getElementById('inhibit').value);
+    const last = feedbackData[feedbackData.length - 1];
+    const noise = (Math.random() - 0.5) * 0.1;
+    const next = last + r * last * (1 - Math.abs(last)) - h * last * Math.abs(last) + noise;
+    feedbackData.push(Math.max(-1, Math.min(1, next)));
+    if (feedbackData.length > 300) feedbackData.shift();
+    drawFeedback();
+    feedbackId = requestAnimationFrame(animateFeedback);
+}
+
+function drawFeedback() {
+    fCtx.clearRect(0, 0, fC.width, fC.height);
+    fCtx.strokeStyle = '#30363d';
+    fCtx.beginPath();
+    fCtx.moveTo(0, fC.height / 2);
+    fCtx.lineTo(fC.width, fC.height / 2);
+    fCtx.stroke();
+    // Labels
+    fCtx.fillStyle = '#3fb950';
+    fCtx.font = '11px sans-serif';
+    fCtx.fillText('+1 (positiv)', 5, 15);
+    fCtx.fillStyle = '#f85149';
+    fCtx.fillText('-1 (negativ)', 5, fC.height - 5);
+    // Data
+    if (feedbackData.length < 2) return;
+    fCtx.beginPath();
+    fCtx.strokeStyle = '#58a6ff';
+    fCtx.lineWidth = 2;
+    for (let i = 0; i < feedbackData.length; i++) {
+        const x = (i / 300) * fC.width;
+        const y = fC.height / 2 - feedbackData[i] * (fC.height / 2 - 20);
+        if (i === 0) fCtx.moveTo(x, y); else fCtx.lineTo(x, y);
+    }
+    fCtx.stroke();
+}
+
+['reinforce','inhibit'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+        document.getElementById(id + '-val').textContent = e.target.value;
+    });
+});
+drawFeedback();
+
+// ============ 3. COOPERATION MODEL ============
+function runCoopModel() {
+    const stratX = document.getElementById('stratX').value;
+    const stratY = document.getElementById('stratY').value;
+    const c = parseFloat(document.getElementById('coupling').value);
+    
+    let x = 0.2, y = -0.1;
+    const dt = 0.05, steps = 400;
+    const xs = [], ys = [], ts = [];
+    
+    for (let i = 0; i < steps; i++) {
+        ts.push(i * dt);
+        xs.push(x);
+        ys.push(y);
+        
+        const fx = stratX === 'coop' ? Math.tanh(c * y) : -Math.tanh(c * y);
+        const fy = stratY === 'coop' ? Math.tanh(c * x) : -Math.tanh(c * x);
+        
+        const dx = -0.5 * x + 0.1 + fx;
+        const dy = -0.5 * y - 0.1 + fy;
+        
+        x += dx * dt;
+        y += dy * dt;
+        x = Math.max(-1, Math.min(1, x));
+        y = Math.max(-1, Math.min(1, y));
+    }
+    
+    Plotly.newPlot('coopPlot', [
+        { x: ts, y: xs, name: 'Gruppe X', line: { color: '#58a6ff', width: 2 } },
+        { x: ts, y: ys, name: 'Gruppe Y', line: { color: '#f85149', width: 2 } }
+    ], {
+        paper_bgcolor: '#161b22', plot_bgcolor: '#0d1117',
+        font: { color: '#e6edf3' },
+        xaxis: { title: 'Zeit', gridcolor: '#21262d' },
+        yaxis: { title: 'Emotionaler Zustand', range: [-1.1, 1.1], gridcolor: '#21262d',
+            zeroline: true, zerolinecolor: '#30363d' },
+        margin: { t: 30 },
+        legend: { x: 0.7, y: 0.95 }
+    }, { responsive: true });
+}
+
+document.getElementById('coupling').addEventListener('input', e => {
+    document.getElementById('coupling-val').textContent = e.target.value;
+});
+runCoopModel();
+
+// ============ 4. ESCALATION ============
+function switchEscTab(idx) {
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+    document.querySelectorAll('.tab-content').forEach((t, i) => t.classList.toggle('active', i === idx));
+    updateEscalation();
+}
+
+let escHistory = { up: 0, down: 100 };
+
+function updateEscalation() {
+    
+    const prov = parseInt(document.getElementById('provocation').value);
+    const dir = document.getElementById('escDirection').value;
+    document.getElementById('provocation-val').textContent = prov;
+    
+    // Linear escalation canvas
+    const lC = document.getElementById('linearEscCanvas');
+    const lCtx = lC.getContext('2d');
+    lCtx.clearRect(0, 0, lC.width, lC.height);
+    
+    // Draw axes
+    lCtx.strokeStyle = '#30363d';
+    lCtx.beginPath();
+    lCtx.moveTo(50, 20);
+    lCtx.lineTo(50, lC.height - 30);
+    lCtx.lineTo(lC.width - 20, lC.height - 30);
+    lCtx.stroke();
+    lCtx.fillStyle = '#8b949e';
+    lCtx.font = '11px sans-serif';
+    lCtx.fillText('Reaktion', 5, 15);
+    lCtx.fillText('Provokation', lC.width - 80, lC.height - 10);
+    
+    // Linear response
+    const linearY = lC.height - 30 - (prov / 100) * (lC.height - 60);
+    lCtx.beginPath();
+    lCtx.strokeStyle = '#3fb950';
+    lCtx.lineWidth = 2;
+    lCtx.moveTo(50, lC.height - 30);
+    lCtx.lineTo(50 + (prov / 100) * (lC.width - 80), linearY);
+    lCtx.stroke();
+    // Current point
+    lCtx.beginPath();
+    lCtx.arc(50 + (prov / 100) * (lC.width - 80), linearY, 6, 0, Math.PI * 2);
+    lCtx.fillStyle = '#3fb950';
+    lCtx.fill();
+    
+    // Nonlinear escalation canvas
+    const nC = document.getElementById('nonlinearEscCanvas');
+    const nCtx = nC.getContext('2d');
+    nCtx.clearRect(0, 0, nC.width, nC.height);
+    
+    // Draw axes
+    nCtx.strokeStyle = '#30363d';
+    nCtx.beginPath();
+    nCtx.moveTo(50, 20);
+    nCtx.lineTo(50, nC.height - 30);
+    nCtx.lineTo(nC.width - 20, nC.height - 30);
+    nCtx.stroke();
+    nCtx.fillStyle = '#8b949e';
+    nCtx.font = '11px sans-serif';
+    nCtx.fillText('Reaktion', 5, 15);
+    nCtx.fillText('Provokation', nC.width - 80, nC.height - 10);
+    
+    // Nonlinear (catastrophe) response with hysteresis
+    const threshold_up = 65;
+    const threshold_down = 35;
+    const threshold = dir === 'up' ? threshold_up : threshold_down;
+    let nlResponse;
+    if (dir === 'up') {
+        nlResponse = prov < threshold ? prov * 0.15 : 15 + (prov - threshold) * (85 / (100 - threshold));
+    } else {
+        nlResponse = prov > threshold ? 15 + (prov - threshold) * (85 / (100 - threshold)) : prov * 0.15;
+    }
+    nlResponse = Math.min(100, Math.max(0, nlResponse));
+    
+    // Draw the S-curve path
+    nCtx.beginPath();
+    nCtx.strokeStyle = '#f8514955';
+    nCtx.lineWidth = 1;
+    for (let p = 0; p <= 100; p++) {
+        let r;
+        if (dir === 'up') {
+            r = p < threshold ? p * 0.15 : 15 + (p - threshold) * (85 / (100 - threshold));
+        } else {
+            r = p > threshold ? 15 + (p - threshold) * (85 / (100 - threshold)) : p * 0.15;
+        }
+        r = Math.min(100, Math.max(0, r));
+        const px = 50 + (p / 100) * (nC.width - 80);
+        const py = nC.height - 30 - (r / 100) * (nC.height - 60);
+        if (p === 0) nCtx.moveTo(px, py); else nCtx.lineTo(px, py);
+    }
+    nCtx.stroke();
+    
+    // Threshold line
+    nCtx.setLineDash([5, 5]);
+    nCtx.strokeStyle = '#ffa65777';
+    nCtx.beginPath();
+    const tx = 50 + (threshold / 100) * (nC.width - 80);
+    nCtx.moveTo(tx, 20);
+    nCtx.lineTo(tx, nC.height - 30);
+    nCtx.stroke();
+    nCtx.setLineDash([]);
+    nCtx.fillStyle = '#ffa657';
+    nCtx.fillText(dir === 'up' ? '↑ Schwelle' : '↓ Schwelle', tx + 5, 35);
+    
+    // Hysteresis label
+    if (dir === 'up') {
+        nCtx.fillStyle = '#8b949e';
+        nCtx.fillText('Hysterese: Deeskalation braucht', nC.width - 250, nC.height - 50);
+        nCtx.fillText('mehr als Eskalation!', nC.width - 250, nC.height - 36);
+    }
+    
+    // Current point
+    const nlX = 50 + (prov / 100) * (nC.width - 80);
+    const nlY = nC.height - 30 - (nlResponse / 100) * (nC.height - 60);
+    nCtx.beginPath();
+    nCtx.arc(nlX, nlY, 6, 0, Math.PI * 2);
+    nCtx.fillStyle = '#f85149';
+    nCtx.fill();
+}
+updateEscalation();
+
+// ============ 5. SPREAD / CRUDE LAW ============
+const sC = document.getElementById('spreadCanvas');
+const sCtx = sC.getContext('2d');
+const gridSize = 50;
+let grid = [], orientations = [], sources = [];
+let spreadRunning = false, spreadId = null;
+
+function initGrid() {
+    grid = [];
+    orientations = [];
+    sources = [];
+    for (let i = 0; i < gridSize; i++) {
+        grid[i] = [];
+        orientations[i] = [];
+        for (let j = 0; j < gridSize; j++) {
+            grid[i][j] = Math.random() * 0.1;
+            orientations[i][j] = 0;
+        }
+    }
+    // Place sources of competitive interdependence
+    for (let s = 0; s < 5; s++) {
+        sources.push({ x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize) });
+    }
+}
+
+function resetSpread() {
+    stopSpread();
+    initGrid();
+    drawSpread();
+}
+
+function startSpread() {
+    spreadRunning = true;
+    stepSpread();
+}
+
+function stopSpread() {
+    spreadRunning = false;
+    if (spreadId) cancelAnimationFrame(spreadId);
+}
+
+function stepSpread() {
+    if (!spreadRunning) return;
+    const repro = parseFloat(document.getElementById('repro').value);
+    const decay = parseFloat(document.getElementById('decay').value);
+    const diff = parseFloat(document.getElementById('diffusion').value);
+    
+    const newGrid = grid.map(row => [...row]);
+    
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            // Check if source
+            const isSource = sources.some(s => s.x === i && s.y === j);
+            const boost = isSource ? 2 : 1;
+            const orientBoost = 1 + orientations[i][j] * 2;
+            
+            // Reproduction
+            newGrid[i][j] += grid[i][j] * repro * boost * orientBoost * (Math.random() * 0.5 + 0.75);
+            // Decay
+            newGrid[i][j] -= grid[i][j] * decay;
+            // Diffusion from neighbors
+            const neighbors = [[i-1,j],[i+1,j],[i,j-1],[i,j+1]];
+            for (const [ni, nj] of neighbors) {
+                if (ni >= 0 && ni < gridSize && nj >= 0 && nj < gridSize) {
+                    newGrid[i][j] += grid[ni][nj] * diff * 0.25;
+                }
+            }
+            // Clamp
+            newGrid[i][j] = Math.max(0, Math.min(5, newGrid[i][j]));
+            // Create orientations from high behavior
+            if (newGrid[i][j] > 2) {
+                orientations[i][j] = Math.min(1, orientations[i][j] + 0.01);
+            } else {
+                orientations[i][j] = Math.max(0, orientations[i][j] - 0.002);
+            }
+        }
+    }
+    grid = newGrid;
+    drawSpread();
+    spreadId = requestAnimationFrame(stepSpread);
+}
+
+function drawSpread() {
+    const cellSize = sC.width / gridSize;
+    sCtx.clearRect(0, 0, sC.width, sC.height);
+    
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            const val = Math.min(1, grid[i][j] / 3);
+            const orient = orientations[i][j];
+            
+            if (orient > 0.3) {
+                // Red for chronic orientation
+                const r = Math.floor(100 + orient * 148);
+                sCtx.fillStyle = `rgb(${r}, ${Math.floor(30 - orient * 20)}, ${Math.floor(30 - orient * 20)})`;
+            } else if (val > 0.05) {
+                // Orange for competitive behavior
+                const r = Math.floor(50 + val * 205);
+                const g = Math.floor(30 + val * 136);
+                sCtx.fillStyle = `rgb(${r}, ${g}, 30)`;
+            } else {
+                sCtx.fillStyle = '#0d1117';
+            }
+            sCtx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+        }
+    }
+    
+    // Draw sources
+    for (const s of sources) {
+        sCtx.beginPath();
+        sCtx.arc(s.x * cellSize + cellSize/2, s.y * cellSize + cellSize/2, cellSize * 0.8, 0, Math.PI * 2);
+        sCtx.fillStyle = '#ffffff';
+        sCtx.fill();
+        sCtx.strokeStyle = '#58a6ff';
+        sCtx.lineWidth = 2;
+        sCtx.stroke();
+    }
+}
+
+['repro','decay','diffusion'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+        document.getElementById(id + '-val').textContent = e.target.value;
+    });
+});
+initGrid();
+drawSpread();
+
+// ============ 6. TRANSFORMATION ============
+// Deconstruct animation
+const dcC = document.getElementById('deconstructCanvas');
+const dcCtx = dcC.getContext('2d');
+let deconstructPhase = 0;
+
+function drawDeconstruct() {
+    dcCtx.clearRect(0, 0, dcC.width, dcC.height);
+    const cx = dcC.width / 2, cy = dcC.height / 2;
+    const numElements = 8;
+    const spread = deconstructPhase * 30;
+    
+    for (let i = 0; i < numElements; i++) {
+        const angle = (i / numElements) * Math.PI * 2;
+        const r = 30 + spread;
+        const x = cx + Math.cos(angle) * r;
+        const y = cy + Math.sin(angle) * r;
+        
+        dcCtx.beginPath();
+        dcCtx.arc(x, y, 10, 0, Math.PI * 2);
+        dcCtx.fillStyle = deconstructPhase < 1 ? '#f85149' : (deconstructPhase < 2 ? '#ffa657' : '#3fb950');
+        dcCtx.fill();
+        
+        // Draw connections (weaken with phase)
+        if (deconstructPhase < 2) {
+            const opacity = Math.max(0, 1 - deconstructPhase * 0.6);
+            dcCtx.strokeStyle = `rgba(248, 81, 73, ${opacity})`;
+            dcCtx.lineWidth = 1;
+            const nextI = (i + 1) % numElements;
+            const nx = cx + Math.cos((nextI / numElements) * Math.PI * 2) * r;
+            const ny = cy + Math.sin((nextI / numElements) * Math.PI * 2) * r;
+            dcCtx.beginPath();
+            dcCtx.moveTo(x, y);
+            dcCtx.lineTo(nx, ny);
+            dcCtx.stroke();
+        }
+    }
+    
+    // Label
+    dcCtx.fillStyle = '#8b949e';
+    dcCtx.font = '11px sans-serif';
+    const labels = ['Starker negativer Attraktor', 'Feedback-Loops aufbrechen...', 'Neue Konfiguration!'];
+    dcCtx.fillText(labels[Math.min(2, Math.floor(deconstructPhase))], 10, dcC.height - 10);
+}
+
+function animateDeconstruct() {
+    deconstructPhase = 0;
+    const anim = () => {
+        deconstructPhase += 0.03;
+        drawDeconstruct();
+        if (deconstructPhase < 3) requestAnimationFrame(anim);
+    };
+    anim();
+}
+drawDeconstruct();
+
+// Latent attractor animation
+const laC = document.getElementById('latentCanvas');
+const laCtx = laC.getContext('2d');
+let latentPhase = 0;
+
+function drawLatent() {
+    laCtx.clearRect(0, 0, laC.width, laC.height);
+    // Draw landscape
+    laCtx.beginPath();
+    for (let x = 0; x <= laC.width; x++) {
+        const cx = x / laC.width;
+        let y = 120;
+        y -= 40 * Math.exp(-Math.pow((cx - 0.3) * 6, 2)); // negative attractor
+        const latentDepth = latentPhase * 35;
+        y -= latentDepth * Math.exp(-Math.pow((cx - 0.75) * 6, 2)); // latent positive
+        if (x === 0) laCtx.moveTo(x, y); else laCtx.lineTo(x, y);
+    }
+    laCtx.lineTo(laC.width, laC.height);
+    laCtx.lineTo(0, laC.height);
+    laCtx.closePath();
+    const grad = laCtx.createLinearGradient(0, 0, laC.width, 0);
+    grad.addColorStop(0, '#3a1a1a');
+    grad.addColorStop(0.5, '#1a2a3a');
+    grad.addColorStop(1, '#1a3a2a');
+    laCtx.fillStyle = grad;
+    laCtx.fill();
+    
+    // Labels
+    laCtx.fillStyle = '#f85149';
+    laCtx.font = '10px sans-serif';
+    laCtx.fillText('Manifest (negativ)', 15, 60);
+    if (latentPhase > 0.3) {
+        laCtx.fillStyle = `rgba(63, 185, 80, ${latentPhase})`;
+        laCtx.fillText('Latent → Manifest! (positiv)', laC.width * 0.55, 60);
+    }
+}
+
+function animateLatent() {
+    latentPhase = 0;
+    const anim = () => {
+        latentPhase += 0.015;
+        drawLatent();
+        if (latentPhase < 1) requestAnimationFrame(anim);
+    };
+    anim();
+}
+drawLatent();
+
+// Bifurcation diagram
+function updateBifurcation() {
+    const mu = parseFloat(document.getElementById('bifur').value);
+    document.getElementById('bifur-val').textContent = mu.toFixed(1);
+    
+    // Pitchfork bifurcation: dx/dt = mu*x - x^3
+    // Fixed points: x=0 always, x=±sqrt(mu) for mu>0
+    const xRange = Array.from({length: 200}, (_, i) => -3 + i * 6 / 199);
+    const potential = xRange.map(x => -(mu * x * x / 2) + (x * x * x * x / 4));
+    
+    // Find attractors
+    const attractors = [0];
+    const attractorStability = [mu < 0 ? 'stable' : 'unstable'];
+    if (mu > 0) {
+        attractors.push(Math.sqrt(mu), -Math.sqrt(mu));
+        attractorStability.push('stable', 'stable');
+    }
+    
+    const traces = [{
+        x: xRange,
+        y: potential,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Potential V(x)',
+        line: { color: '#58a6ff', width: 2 }
+    }];
+    
+    // Mark attractors
+    attractors.forEach((a, i) => {
+        const v = -(mu * a * a / 2) + (a * a * a * a / 4);
+        traces.push({
+            x: [a], y: [v],
+            type: 'scatter',
+            mode: 'markers',
+            name: attractorStability[i] === 'stable' ? 'Stabiler Attraktor' : 'Instabil',
+            marker: {
+                size: 12,
+                color: attractorStability[i] === 'stable' ? '#3fb950' : '#f85149',
+                symbol: attractorStability[i] === 'stable' ? 'circle' : 'x'
+            }
+        });
+    });
+    
+    Plotly.newPlot('bifurPlot', traces, {
+        paper_bgcolor: '#1c2128', plot_bgcolor: '#0d1117',
+        font: { color: '#e6edf3', size: 11 },
+        xaxis: { title: 'Systemzustand x', gridcolor: '#21262d', zeroline: true, zerolinecolor: '#30363d' },
+        yaxis: { title: 'Potential V(x)', gridcolor: '#21262d' },
+        margin: { t: 30, b: 50 },
+        legend: { x: 0.6, y: 0.95 },
+        annotations: [{
+            x: 0, y: 0, xref: 'paper', yref: 'paper',
+            text: mu < 0 ? '1 stabiler Attraktor' : '2 stabile Attraktoren (Bifurkation!)',
+            showarrow: false,
+            font: { color: mu < 0 ? '#3fb950' : '#ffa657', size: 13 }
+        }]
+    }, { responsive: true });
+}
+updateBifurcation();
+
+// ============ 7. PEACE DYNAMICS ============
+function updatePeace() {
+    const ratio = parseFloat(document.getElementById('posratio').value);
+    const complexity = parseFloat(document.getElementById('complexity').value);
+    const adaptivity = parseFloat(document.getElementById('adaptivity').value);
+    
+    document.getElementById('posratio-val').textContent = ratio.toFixed(1);
+    document.getElementById('complexity-val').textContent = complexity.toFixed(2);
+    document.getElementById('adaptivity-val').textContent = adaptivity.toFixed(2);
+    
+    // Simulate peace dynamics
+    const steps = 300;
+    const dt = 0.1;
+    let state = 0.2;
+    const states = [], times = [];
+    
+    for (let i = 0; i < steps; i++) {
+        times.push(i * dt);
+        states.push(state);
+        
+        // Positive attractor strength depends on ratio and complexity
+        const posStrength = (ratio / 5) * complexity;
+        // Negative attractor (conflict) - weakened by adaptivity
+        const negStrength = (1 / ratio) * (1 - adaptivity * 0.5);
+        // Noise - reduced by complexity
+        const noise = (1 - complexity * 0.7) * (Math.random() - 0.5) * 0.3;
+        
+        const dx = posStrength * (1 - state) - negStrength * (1 + state) + noise;
+        state += dx * dt;
+        state = Math.max(-1, Math.min(1, state));
+    }
+    
+    // Determine sustainability
+    const lastQuarter = states.slice(-75);
+    const avgState = lastQuarter.reduce((a, b) => a + b, 0) / lastQuarter.length;
+    const variance = lastQuarter.reduce((a, b) => a + (b - avgState) ** 2, 0) / lastQuarter.length;
+    const sustainable = avgState > 0.3 && variance < 0.05;
+    
+    Plotly.newPlot('peacePlot', [
+        {
+            x: times, y: states,
+            type: 'scatter', mode: 'lines',
+            name: 'Friedensdynamik',
+            line: { color: sustainable ? '#3fb950' : '#ffa657', width: 2 }
+        },
+        {
+            x: [0, times[times.length-1]], y: [0, 0],
+            type: 'scatter', mode: 'lines',
+            name: 'Neutral',
+            line: { color: '#30363d', dash: 'dash', width: 1 }
+        }
+    ], {
+        paper_bgcolor: '#161b22', plot_bgcolor: '#0d1117',
+        font: { color: '#e6edf3' },
+        xaxis: { title: 'Zeit', gridcolor: '#21262d' },
+        yaxis: { title: 'Zustand (−1=Krieg, +1=Frieden)', range: [-1.1, 1.1], gridcolor: '#21262d' },
+        margin: { t: 40 },
+        title: { text: sustainable ? '✅ Nachhaltiger Frieden' : '⚠️ Fragiler/Instabiler Zustand', font: { size: 14 } },
+        legend: { x: 0.7, y: 0.1 }
+    }, { responsive: true });
+}
+updatePeace();
+
+</script>
+</body>
+</html>
