@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Explainer: Geometric Structure of Layer Updates</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid #4a3f8a;
+        }
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(90deg, #7dd3fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p { color: #a0a0c0; font-size: 1.1em; }
+        .nav {
+            position: sticky;
+            top: 0;
+            background: #12122a;
+            padding: 12px 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+        .nav button {
+            padding: 8px 16px;
+            border: 1px solid #4a3f8a;
+            background: transparent;
+            color: #c4b5fd;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .nav button:hover, .nav button.active {
+            background: #4a3f8a;
+            color: white;
+        }
+        .section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section.active { display: block; }
+        .section h2 {
+            font-size: 1.6em;
+            color: #c4b5fd;
+            margin-bottom: 15px;
+        }
+        .section h3 {
+            font-size: 1.2em;
+            color: #7dd3fc;
+            margin: 20px 0 10px;
+        }
+        .explanation {
+            background: #1a1a3e;
+            border-left: 4px solid #7dd3fc;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+        .canvas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        canvas {
+            background: #12122a;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .controls {
+            background: #1a1a3e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        .controls label {
+            color: #a0a0c0;
+            font-size: 0.9em;
+        }
+        .controls input[type="range"] {
+            width: 150px;
+            accent-color: #7dd3fc;
+        }
+        .controls select, .controls button {
+            padding: 6px 12px;
+            background: #2d1b69;
+            border: 1px solid #4a3f8a;
+            color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .controls button:hover { background: #4a3f8a; }
+        .plotly-chart {
+            width: 100%;
+            min-height: 400px;
+            margin: 15px 0;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: #fbbf24;
+        }
+        .key-insight {
+            background: linear-gradient(135deg, #1e3a5f, #1a1a3e);
+            border: 1px solid #7dd3fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .key-insight::before {
+            content: "💡 Key Insight: ";
+            font-weight: bold;
+            color: #7dd3fc;
+        }
+        .metric-card {
+            background: #1a1a3e;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-card .value {
+            font-size: 2em;
+            color: #7dd3fc;
+            font-weight: bold;
+        }
+        .metric-card .label {
+            color: #a0a0c0;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .equation-box {
+            background: #0d0d20;
+            border: 1px solid #4a3f8a;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 15px 0;
+            font-family: 'Times New Roman', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Geometric Structure of Layer Updates in Deep Language Models</h1>
+        <p>An interactive visual exploration of the paper by Jun-Sik Yoo (2026)</p>
+    </div>
+
+    <div class="nav">
+        <button class="active" onclick="showSection('overview')">Overview</button>
+        <button onclick="showSection('decomposition')">Decomposition</button>
+        <button onclick="showSection('geometry')">Geometry</button>
+        <button onclick="showSection('alignment')">Alignment</button>
+        <button onclick="showSection('functional')">Functional Impact</button>
+        <button onclick="showSection('subspace')">Subspace Projection</button>
+        <button onclick="showSection('architectures')">Architectures</button>
+        <button onclick="showSection('regimes')">Regimes & Trade-offs</button>
+    </div>
+
+    <!-- SECTION 1: Overview -->
+    <div class="section active" id="overview">
+        <h2>What Does This Paper Study?</h2>
+        <div class="explanation">
+            Deep language models (like GPT, Pythia, Mamba) transform token representations layer by layer. 
+            This paper asks: <strong>How do representations change from one layer to the next?</strong> 
+            Instead of asking "what information is stored," it asks about the <em>geometry</em> of the transformation itself.
+        </div>
+
+        <h3>The Core Idea</h3>
+        <div class="equation-box">
+            <span class="math">h<sub>ℓ+1</sub> = T(h<sub>ℓ</sub>) + r(h<sub>ℓ</sub>)</span>
+        </div>
+        <div class="explanation">
+            Each layer update is decomposed into:<br>
+            • <strong>T(h<sub>ℓ</sub>)</strong> — A "tokenwise" component (acts on each token independently)<br>
+            • <strong>r(h<sub>ℓ</sub>)</strong> — A "residual" component (everything else: cross-token interactions, etc.)
+        </div>
+
+        <div class="key-insight">
+            The full layer update is almost perfectly aligned with the tokenwise component. 
+            The residual is geometrically distinct — and it's where the functionally important computation lives.
+        </div>
+
+        <h3>Interactive Overview</h3>
+        <div class="canvas-container">
+            <canvas id="overviewCanvas" width="700" height="400"></canvas>
+        </div>
+        <div class="controls">
+            <label>Layer depth: <span id="layerVal">3</span></label>
+            <input type="range" id="layerSlider" min="0" max="5" value="3" oninput="updateOverview()">
+            <label>Residual magnitude: <span id="residualVal">0.3</span></label>
+            <input type="range" id="residualSlider" min="0" max="100" value="30" oninput="updateOverview()">
+            <button onclick="animateOverview()">▶ Animate</button>
+        </div>
+    </div>
+
+    <!-- SECTION 2: Decomposition -->
+    <div class="section" id="decomposition">
+        <h2>The Decomposition: Tokenwise + Residual</h2>
+        <div class="explanation">
+            The paper fits a <strong>local, input-conditioned tokenwise map</strong> to approximate each layer's transformation.
+            For each token representation <span class="math">x<sub>i</sub></span>, the tokenwise map is:
+        </div>
+        <div class="equation-box">
+            <span class="math">T(x<sub>i</sub>) = A(x<sub>i</sub>) · x<sub>i</sub></span>
+        </div>
+        <div class="explanation">
+            Where <span class="math">A(x<sub>i</sub>)</span> is a matrix that depends on the input — making it globally nonlinear 
+            but locally linear. The residual is then: <span class="math">r = h<sub>ℓ+1</sub> - T(h<sub>ℓ</sub>)</span>
+        </div>
+
+        <h3>Try Different Function Classes</h3>
+        <div class="controls">
+            <label>Function Class:</label>
+            <select id="funcClass" onchange="updateDecomposition()">
+                <option value="diagonal">Diagonal PSD</option>
+                <option value="lowrank" selected>Low-Rank (r=64)</option>
+                <option value="orthogonal">Orthogonal/Unitary</option>
+                <option value="mlp">MLP (nonlinear)</option>
+            </select>
+            <label>Rank (for low-rank): <span id="rankVal">64</span></label>
+            <input type="range" id="rankSlider" min="4" max="128" value="64" step="4" oninput="updateDecomposition()">
+            <label>Neighborhood k: <span id="kVal">64</span></label>
+            <input type="range" id="kSlider" min="16" max="256" value="64" step="8" oninput="updateDecomposition()">
+        </div>
+        <div class="canvas-container">
+            <canvas id="decompCanvas" width="600" height="400"></canvas>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#7dd3fc"></div> Original vector (h<sub>ℓ</sub>)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div> Full update (h<sub>ℓ+1</sub>)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Tokenwise T(h<sub>ℓ</sub>)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div> Residual r</div>
+        </div>
+        <div id="decompPlotly" class="plotly-chart"></div>
+    </div>
+
+    <!-- SECTION 3: Geometry -->
+    <div class="section" id="geometry">
+        <h2>Geometric Structure: Angles and Alignment</h2>
+        <div class="explanation">
+            The key geometric finding: the full update Δ<sub>full</sub> is nearly parallel to the tokenwise update Δ<sub>tok</sub>,
+            while the residual r points in a very different direction. This is measured using cosine similarity and angular deviation.
+        </div>
+
+        <h3>Interactive Vector Geometry</h3>
+        <div class="controls">
+            <label>Tokenwise alignment: <span id="tokAlignVal">0.95</span></label>
+            <input type="range" id="tokAlignSlider" min="50" max="100" value="95" oninput="updateGeometry()">
+            <label>Residual magnitude: <span id="resGeoVal">0.2</span></label>
+            <input type="range" id="resGeoSlider" min="5" max="80" value="20" oninput="updateGeometry()">
+            <button onclick="randomizeGeometry()">🎲 Randomize</button>
+        </div>
+        <div class="canvas-container">
+            <canvas id="geometryCanvas" width="600" height="500"></canvas>
+        </div>
+
+        <h3>Angular Distribution (Paper Figure 3 Recreation)</h3>
+        <div id="anglePlotly" class="plotly-chart"></div>
+
+        <div class="key-insight">
+            The full update typically deviates less than 10° from the tokenwise direction, 
+            while the residual often exceeds 60° — confirming it's geometrically distinct, not just a small correction.
+        </div>
+    </div>
+
+    <!-- SECTION 4: Alignment -->
+    <div class="section" id="alignment">
+        <h2>Alignment: Full Update vs. Tokenwise vs. Residual</h2>
+        <div class="explanation">
+            The paper measures alignment using absolute cosine similarity: 
+            <span class="math">Align(v, u) = |v<sup>⊤</sup>u| / (‖v‖ · ‖u‖)</span>.
+            This quantifies how much two vectors point in the same direction.
+        </div>
+
+        <h3>Interactive Alignment Comparison</h3>
+        <div class="controls">
+            <label>Number of tokens:</label>
+            <input type="range" id="nTokens" min="20" max="200" value="100" oninput="updateAlignment()">
+            <label>Model complexity:</label>
+            <select id="modelComplexity" onchange="updateAlignment()">
+                <option value="simple">Simple (DistilGPT2-like)</option>
+                <option value="medium" selected>Medium (Pythia-410M-like)</option>
+                <option value="complex">Complex (Pythia-1.4B-like)</option>
+            </select>
+            <button onclick="updateAlignment()">🔄 Regenerate</button>
+        </div>
+        <div id="alignmentPlotly" class="plotly-chart"></div>
+
+        <div class="grid-2">
+            <div class="metric-card">
+                <div class="value" id="fullAlignMetric">0.97</div>
+                <div class="label">Mean Full↔Tokenwise Alignment</div>
+            </div>
+            <div class="metric-card">
+                <div class="value" id="resAlignMetric">0.35</div>
+                <div class="label">Mean Residual↔Tokenwise Alignment</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 5: Functional Impact -->
+    <div class="section" id="functional">
+        <h2>Functional Consequences: Residual Predicts Output Change</h2>
+        <div class="explanation">
+            The paper's most striking finding: when the tokenwise approximation is poor (large residual), 
+            the model's output changes significantly. This is measured by KL divergence between original and 
+            perturbed output distributions, correlated with approximation error.
+        </div>
+
+        <h3>Error vs. Output Perturbation</h3>
+        <div class="controls">
+            <label>Model:</label>
+            <select id="funcModel" onchange="updateFunctional()">
+                <option value="pythia70m">Pythia-70M (ρ=0.906)</option>
+                <option value="pythia410m">Pythia-410M (ρ=0.837)</option>
+                <option value="pythia1b" selected>Pythia-1B (ρ=0.804)</option>
+                <option value="pythia14b">Pythia-1.4B (ρ=0.883)</option>
+                <option value="distilgpt2">DistilGPT2 (ρ=0.321)</option>
+                <option value="mamba130m">Mamba-130M (ρ=0.605)</option>
+                <option value="mamba370m">Mamba-370M (ρ=0.865)</option>
+            </select>
+            <label>Noise level:</label>
+            <input type="range" id="noiseSlider" min="0" max="50" value="15" oninput="updateFunctional()">
+            <button onclick="updateFunctional()">🔄 Regenerate</button>
+        </div>
+        <div id="functionalPlotly" class="plotly-chart"></div>
+
+        <div class="grid-2">
+            <div class="metric-card">
+                <div class="value" id="spearmanMetric">0.804</div>
+                <div class="label">Spearman ρ (Error↔Output)</div>
+            </div>
+            <div class="metric-card">
+                <div class="value" id="meanKLMetric">0.45</div>
+                <div class="label">Mean KL Divergence</div>
+            </div>
+        </div>
+
+        <h3>Layerwise Correlation (Paper Figure 2c Recreation)</h3>
+        <div id="layerwisePlotly" class="plotly-chart"></div>
+    </div>
+
+    <!-- SECTION 6: Subspace Projection -->
+    <div class="section" id="subspace">
+        <h2>Subspace Projection: Where Does the Update Live?</h2>
+        <div class="explanation">
+            The paper computes how much of each vector's energy falls within the top-k singular vectors of the local map.
+            The full update lives in a low-dimensional subspace; the residual does not.
+        </div>
+        <div class="equation-box">
+            <span class="math">Projection fraction = ‖U<sub>k</sub><sup>⊤</sup>v‖² / ‖v‖²</span>
+        </div>
+
+        <h3>Interactive Subspace Visualization</h3>
+        <div class="controls">
+            <label>Top-k singular vectors: <span id="topKVal">4</span></label>
+            <input type="range" id="topKSlider" min="1" max="16" value="4" oninput="updateSubspace()">
+            <label>Dimensionality (d): <span id="dimVal">64</span></label>
+            <input type="range" id="dimSlider" min="16" max="256" value="64" step="16" oninput="updateSubspace()">
+        </div>
+        <div id="subspacePlotly" class="plotly-chart"></div>
+
+        <div class="canvas-container">
+            <canvas id="subspaceCanvas" width="500" height="500"></canvas>
+        </div>
+        <div class="key-insight">
+            Even with just 1-8 singular vectors (out of hundreds of dimensions), the full and tokenwise updates 
+            are well-captured. The residual requires many more dimensions — it's spread across the space.
+        </div>
+    </div>
+
+    <!-- SECTION 7: Architectures -->
+    <div class="section" id="architectures">
+        <h2>Architecture Comparison: Transformers vs. State-Space Models</h2>
+        <div class="explanation">
+            A key contribution: these findings hold across architectures. Both Transformer models (Pythia, DistilGPT2) 
+            and state-space models (Mamba) show the same geometric separation — even though Mamba has no attention mechanism.
+        </div>
+
+        <h3>Cross-Architecture Comparison</h3>
+        <div id="archPlotly" class="plotly-chart"></div>
+
+        <h3>Model Size Effects</h3>
+        <div id="sizePlotly" class="plotly-chart"></div>
+
+        <div class="key-insight">
+            The geometric structure is not specific to attention-based architectures. 
+            It emerges from the learned representation dynamics, not from architectural design choices.
+        </div>
+    </div>
+
+    <!-- SECTION 8: Regimes -->
+    <div class="section" id="regimes">
+        <h2>Regimes & Trade-offs</h2>
+        <div class="explanation">
+            The paper identifies distinct regimes: in <strong>low-error</strong> regimes, linear maps work great and 
+            show strong error↔output correlation. In <strong>high-error</strong> regimes, linear maps fail but MLPs 
+            partially recover. This reveals a fundamental trade-off between expressivity and interpretability.
+        </div>
+
+        <h3>Function Class Comparison Across Regimes</h3>
+        <div id="regimePlotly" class="plotly-chart"></div>
+
+        <h3>Sensitivity Analysis</h3>
+        <div class="controls">
+            <label>Sweep type:</label>
+            <select id="sweepType" onchange="updateSensitivity()">
+                <option value="rank">Rank sweep</option>
+                <option value="neighborhood">Neighborhood (k) sweep</option>
+            </select>
+        </div>
+        <div id="sensitivityPlotly" class="plotly-chart"></div>
+
+        <div class="key-insight">
+            More expressive function classes reduce the residual but may weaken the interpretable relationship 
+            between residual magnitude and functional importance. The "sweet spot" depends on the regime.
+        </div>
+    </div>
+
+    <script>
+    // ==================== NAVIGATION ====================
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+        
+        // Trigger initial renders
+        setTimeout(() => {
+            if (id === 'decomposition') updateDecomposition();
+            if (id === 'geometry') { updateGeometry(); renderAngleDistribution(); }
+            if (id === 'alignment') updateAlignment();
+            if (id === 'functional') { updateFunctional(); renderLayerwise(); }
+            if (id === 'subspace') updateSubspace();
+            if (id === 'architectures') { renderArchComparison(); renderSizeEffects(); }
+            if (id === 'regimes') { renderRegimes(); updateSensitivity(); }
+        }, 50);
+    }
+
+    // ==================== UTILITY FUNCTIONS ====================
+    function randn() {
+        let u = 0, v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    }
+
+    function dot(a, b) { return a.reduce((s, v, i) => s + v * b[i], 0); }
+    function norm(a) { return Math.sqrt(dot(a, a)); }
+    function scale(a, s) { return a.map(v => v * s); }
+    function add(a, b) { return a.map((v, i) => v + b[i]); }
+    function sub(a, b) { return a.map((v, i) => v - b[i]); }
+    function cosine(a, b) { return Math.abs(dot(a, b)) / (norm(a) * norm(b) + 1e-10); }
+    function angleDeg(a, b) { return Math.acos(Math.min(1, cosine(a, b))) * 180 / Math.PI; }
+
+    function spearman(x, y) {
+        const n = x.length;
+        const rankX = getRanks(x);
+        const rankY = getRanks(y);
+        let d2 = 0;
+        for (let i = 0; i < n; i++) d2 += (rankX[i] - rankY[i]) ** 2;
+        return 1 - (6 * d2) / (n * (n * n - 1));
+    }
+
+    function getRanks(arr) {
+        const indexed = arr.map((v, i) => ({v, i}));
+        indexed.sort((a, b) => a.v - b.v);
+        const ranks = new Array(arr.length);
+        indexed.forEach((item, rank) => ranks[item.i] = rank + 1);
+        return ranks;
+    }
+
+    // ==================== SECTION 1: OVERVIEW ====================
+    let overviewAnimating = false;
+
+    function updateOverview() {
+        const layer = parseInt(document.getElementById('layerSlider').value);
+        const residualMag = parseInt(document.getElementById('residualSlider').value) / 100;
+        document.getElementById('layerVal').textContent = layer;
+        document.getElementById('residualVal').textContent = residualMag.toFixed(2);
+        drawOverview(layer, residualMag);
+    }
+
+    function drawOverview(layer, residualMag) {
+        const canvas = document.getElementById('overviewCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Draw layer representation
+        ctx.fillStyle = '#1a1a3e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Title
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Layer ${layer} → Layer ${layer + 1}`, cx, 30);
+
+        // Draw the token representation as a point
+        const originX = cx - 150;
+        const originY = cy + 50;
+
+        // h_l point
+        ctx.beginPath();
+        ctx.arc(originX, originY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#7dd3fc';
+        ctx.fill();
+        ctx.fillStyle = '#7dd3fc';
+        ctx.font = '13px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText('h_ℓ', originX - 25, originY + 25);
+
+        // Tokenwise direction
+        const tokAngle = -0.4 - layer * 0.1;
+        const tokLen = 200;
+        const tokEndX = originX + tokLen * Math.cos(tokAngle);
+        const tokEndY = originY + tokLen * Math.sin(tokAngle);
+
+        // Residual direction (perpendicular-ish)
+        const resAngle = tokAngle - Math.PI / 2 + (Math.random() - 0.5) * 0.3;
+        const resLen = residualMag * 150;
+        const resEndX = tokEndX + resLen * Math.cos(resAngle);
+        const resEndY = tokEndY + resLen * Math.sin(resAngle);
+
+        // Draw tokenwise arrow
+        drawArrow(ctx, originX, originY, tokEndX, tokEndY, '#fbbf24', 3);
+        ctx.fillStyle = '#fbbf24';
+        ctx.textAlign = 'center';
+        ctx.fillText('T(h_ℓ) - tokenwise', (originX + tokEndX) / 2, (originY + tokEndY) / 2 - 15);
+
+        // Draw residual arrow
+        drawArrow(ctx, tokEndX, tokEndY, resEndX, resEndY, '#f87171', 2);
+        ctx.fillStyle = '#f87171';
+        ctx.fillText('r - residual', (tokEndX + resEndX) / 2 + 30, (tokEndY + resEndY) / 2);
+
+        // Draw full update arrow
+        drawArrow(ctx, originX, originY, resEndX, resEndY, '#4ade80', 2, [5, 5]);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('Δ_full (actual update)', (originX + resEndX) / 2 - 60, (originY + resEndY) / 2 + 25);
+
+        // h_l+1 point
+        ctx.beginPath();
+        ctx.arc(resEndX, resEndY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#4ade80';
+        ctx.fill();
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('h_ℓ₊₁', resEndX + 15, resEndY + 5);
+
+        // Draw angle arc
+        const angleSize = 40;
+        ctx.beginPath();
+        const fullAngle = Math.atan2(resEndY - originY, resEndX - originX);
+        ctx.arc(originX, originY, angleSize, Math.min(tokAngle, fullAngle), Math.max(tokAngle, fullAngle));
+        ctx.strokeStyle = '#c4b5fd';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Info box
+        const angle = Math.atan2(resLen * Math.sin(resAngle - tokAngle), tokLen) * 180 / Math.PI;
+        ctx.fillStyle = '#1a1a3e';
+        ctx.fillRect(10, canvas.height - 80, 300, 70);
+        ctx.strokeStyle = '#4a3f8a';
+        ctx.strokeRect(10, canvas.height - 80, 300, 70);
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Angular deviation: ${Math.abs(angle).toFixed(1)}°`, 20, canvas.height - 65);
+        ctx.fillText(`Residual magnitude: ${(residualMag * 100).toFixed(0)}%`, 20, canvas.height - 45);
+        ctx.fillText(`Alignment (full↔tok): ${(1 - residualMag * 0.15).toFixed(3)}`, 20, canvas.height - 25);
+    }
+
+    function drawArrow(ctx, x1, y1, x2, y2, color, width, dash) {
+        ctx.beginPath();
+        ctx.setLineDash(dash || []);
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Arrowhead
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const headLen = 12;
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    function animateOverview() {
+        if (overviewAnimating) return;
+        overviewAnimating = true;
+        let t = 0;
+        const interval = setInterval(() => {
+            t += 0.02;
+            const val = Math.sin(t * Math.PI) * 50 + 50;
+            document.getElementById('residualSlider').value = val;
+            document.getElementById('residualVal').textContent = (val / 100).toFixed(2);
+            drawOverview(parseInt(document.getElementById('layerSlider').value), val / 100);
+            if (t >= 2) { clearInterval(interval); overviewAnimating = false; }
+        }, 30);
+    }
+
+    // Initial draw
+    updateOverview();
+
+    // ==================== SECTION 2: DECOMPOSITION ====================
+    function updateDecomposition() {
+        const funcClass = document.getElementById('funcClass').value;
+        const rank = parseInt(document.getElementById('rankSlider').value);
+        const k = parseInt(document.getElementById('kSlider').value);
+        document.getElementById('rankVal').textContent = rank;
+        document.getElementById('kVal').textContent = k;
+
+        drawDecompositionCanvas(funcClass, rank, k);
+        plotDecompositionChart(funcClass, rank, k);
+    }
+
+    function drawDecompositionCanvas(funcClass, rank, k) {
+        const canvas = document.getElementById('decompCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#12122a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Generate synthetic tokens in 2D
+        const nTokens = 30;
+        const tokens = [];
+        for (let i = 0; i < nTokens; i++) {
+            const angle = (i / nTokens) * Math.PI * 2;
+            const r = 80 + randn() * 20;
+            tokens.push({
+                x: cx + r * Math.cos(angle),
+                y: cy + r * Math.sin(angle)
+            });
+        }
+
+        // Compute "updates" based on function class
+        let errorScale;
+        switch (funcClass) {
+            case 'diagonal': errorScale = 0.4; break;
+            case 'lowrank': errorScale = 0.2 * (64 / rank); break;
+            case 'orthogonal': errorScale = 0.35; break;
+            case 'mlp': errorScale = 0.15; break;
+        }
+        errorScale = Math.min(errorScale, 1.0);
+
+        tokens.forEach((tok, i) => {
+            // Tokenwise direction
+            const tokAngle = Math.atan2(tok.y - cy, tok.x - cx) + 0.3;
+            const tokLen = 40;
+            const tokEndX = tok.x + tokLen * Math.cos(tokAngle);
+            const tokEndY = tok.y + tokLen * Math.sin(tokAngle);
+
+            // Residual
+            const resAngle = tokAngle + (Math.PI / 2) * (0.5 + Math.random() * 0.5) * (Math.random() > 0.5 ? 1 : -1);
+            const resLen = errorScale * 25 * (0.5 + Math.random());
+            const fullEndX = tokEndX + resLen * Math.cos(resAngle);
+            const fullEndY = tokEndY + resLen * Math.sin(resAngle);
+
+            // Draw token
+            ctx.beginPath();
+            ctx.arc(tok.x, tok.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#7dd3fc';
+            ctx.fill();
+
+            // Draw tokenwise arrow
+            ctx.beginPath();
+            ctx.moveTo(tok.x, tok.y);
+            ctx.lineTo(tokEndX, tokEndY);
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw residual arrow
+            ctx.beginPath();
+            ctx.moveTo(tokEndX, tokEndY);
+            ctx.lineTo(fullEndX, fullEndY);
+            ctx.strokeStyle = 'rgba(248, 113, 113, 0.7)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw full update (dashed)
+            ctx.beginPath();
+            ctx.setLineDash([3, 3]);
+            ctx.moveTo(tok.x, tok.y);
+            ctx.lineTo(fullEndX, fullEndY);
+            ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        // Info
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '13px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Function class: ${funcClass} | Rank: ${rank} | k: ${k}`, 15, 25);
+        ctx.fillText(`Approx. error scale: ${errorScale.toFixed(2)}`, 15, 45);
+    }
+
+    function plotDecompositionChart(funcClass, rank, k) {
+        // Generate error distribution for different function classes
+        const n = 200;
+        const errors = { diagonal: [], lowrank: [], orthogonal: [], mlp: [] };
+
+        for (let i = 0; i < n; i++) {
+            errors.diagonal.push(Math.abs(randn() * 0.35 + 0.4));
+            errors.lowrank.push(Math.abs(randn() * 0.15 + 0.18 * (64 / rank)));
+            errors.orthogonal.push(Math.abs(randn() * 0.25 + 0.35));
+            errors.mlp.push(Math.abs(randn() * 0.12 + 0.15));
+        }
+
+        const traces = [
+            { y: errors[funcClass], type: 'violin', name: funcClass, fillcolor: 'rgba(125, 211, 252, 0.5)', line: { color: '#7dd3fc' } }
+        ];
+
+        // Add comparison
+        Object.keys(errors).forEach(cls => {
+            if (cls !== funcClass) {
+                traces.push({
+                    y: errors[cls], type: 'violin', name: cls,
+                    fillcolor: 'rgba(160, 160, 192, 0.2)', line: { color: '#666' }
+                });
+            }
+        });
+
+        Plotly.newPlot('decompPlotly', traces, {
+            title: { text: 'Relative Error Distribution by Function Class', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            yaxis: { title: 'Relative Error', gridcolor: '#333' },
+            xaxis: { gridcolor: '#333' }
+        }, { responsive: true });
+    }
+
+    // ==================== SECTION 3: GEOMETRY ====================
+    function updateGeometry() {
+        const tokAlign = parseInt(document.getElementById('tokAlignSlider').value) / 100;
+        const resMag = parseInt(document.getElementById('resGeoSlider').value) / 100;
+        document.getElementById('tokAlignVal').textContent = tokAlign.toFixed(2);
+        document.getElementById('resGeoVal').textContent = resMag.toFixed(2);
+        drawGeometryCanvas(tokAlign, resMag);
+    }
+
+    function randomizeGeometry() {
+        document.getElementById('tokAlignSlider').value = 70 + Math.random() * 30;
+        document.getElementById('resGeoSlider').value = 10 + Math.random() * 60;
+        updateGeometry();
+    }
+
+    function drawGeometryCanvas(tokAlign, resMag) {
+        const canvas = document.getElementById('geometryCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#12122a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2 + 50;
+
+        // Origin
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Origin (h_ℓ)', cx, cy + 20);
+
+        // Tokenwise direction (reference)
+        const tokAngle = -Math.PI / 4;
+        const tokLen = 200;
+        const tokEndX = cx + tokLen * Math.cos(tokAngle);
+        const tokEndY = cy + tokLen * Math.sin(tokAngle);
+
+        drawArrow(ctx, cx, cy, tokEndX, tokEndY, '#fbbf24', 3);
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '13px Segoe UI';
+        ctx.fillText('Δ_tok (tokenwise)', tokEndX + 10, tokEndY - 10);
+
+        // Full update (close to tokenwise)
+        const fullDeviation = Math.acos(tokAlign);
+        const fullAngle = tokAngle + fullDeviation * (Math.random() > 0.5 ? 1 : -1);
+        const fullLen = tokLen * (0.9 + Math.random() * 0.2);
+        const fullEndX = cx + fullLen * Math.cos(fullAngle);
+        const fullEndY = cy + fullLen * Math.sin(fullAngle);
+
+        drawArrow(ctx, cx, cy, fullEndX, fullEndY, '#4ade80', 2.5);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('Δ_full (actual)', fullEndX + 10, fullEndY + 15);
+
+        // Residual (from tokenwise end to full end)
+        const resEndX = fullEndX;
+        const resEndY = fullEndY;
+        drawArrow(ctx, tokEndX, tokEndY, resEndX, resEndY, '#f87171', 2);
+        ctx.fillStyle = '#f87171';
+        ctx.fillText('r (residual)', (tokEndX + resEndX) / 2 + 30, (tokEndY + resEndY) / 2);
+
+        // Draw angle arc between tok and full
+        const arcRadius = 60;
+        ctx.beginPath();
+        const startAngle = Math.min(tokAngle, fullAngle);
+        const endAngle = Math.max(tokAngle, fullAngle);
+        ctx.arc(cx, cy, arcRadius, startAngle, endAngle);
+        ctx.strokeStyle = '#c4b5fd';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Angle label
+        const midAngle = (tokAngle + fullAngle) / 2;
+        const labelX = cx + (arcRadius + 15) * Math.cos(midAngle);
+        const labelY = cy + (arcRadius + 15) * Math.sin(midAngle);
+        ctx.fillStyle = '#c4b5fd';
+        ctx.font = '14px Segoe UI';
+        ctx.fillText(`${(fullDeviation * 180 / Math.PI).toFixed(1)}°`, labelX, labelY);
+
+        // Metrics box
+        ctx.fillStyle = '#1a1a3e';
+        ctx.fillRect(10, 10, 250, 100);
+        ctx.strokeStyle = '#4a3f8a';
+        ctx.strokeRect(10, 10, 250, 100);
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Cosine(full, tok): ${tokAlign.toFixed(3)}`, 20, 35);
+        ctx.fillText(`Angular deviation: ${(fullDeviation * 180 / Math.PI).toFixed(1)}°`, 20, 55);
+        ctx.fillText(`Residual magnitude: ${resMag.toFixed(2)}`, 20, 75);
+        ctx.fillText(`Residual angle to tok: ~${(60 + resMag * 30).toFixed(0)}°`, 20, 95);
+    }
+
+    function renderAngleDistribution() {
+        // Simulate angular distributions matching paper Figure 3
+        const n = 500;
+        const fullAngles = [];
+        const residualAngles = [];
+
+        for (let i = 0; i < n; i++) {
+            // Full update: tightly clustered near 0°
+            fullAngles.push(Math.abs(randn() * 4 + 3));
+            // Residual: broadly distributed, often > 60°
+            residualAngles.push(Math.abs(randn() * 18 + 55));
+        }
+
+        const traces = [
+            {
+                x: fullAngles, type: 'histogram', name: 'Full update',
+                opacity: 0.7, marker: { color: '#4ade80' },
+                xbins: { start: 0, end: 90, size: 3 }
+            },
+            {
+                x: residualAngles, type: 'histogram', name: 'Residual',
+                opacity: 0.7, marker: { color: '#f87171' },
+                xbins: { start: 0, end: 90, size: 3 }
+            }
+        ];
+
+        Plotly.newPlot('anglePlotly', traces, {
+            title: { text: 'Angular Deviation from Tokenwise Direction (Paper Fig. 3b)', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { title: 'Angle to tokenwise update (degrees)', gridcolor: '#333', range: [0, 90] },
+            yaxis: { title: 'Count', gridcolor: '#333' },
+            barmode: 'overlay',
+            legend: { x: 0.7, y: 0.95 }
+        }, { responsive: true });
+    }
+
+    // ==================== SECTION 4: ALIGNMENT ====================
+    function updateAlignment() {
+        const nTokens = parseInt(document.getElementById('nTokens').value);
+        const complexity = document.getElementById('modelComplexity').value;
+
+        let alignMean, alignStd, resAlignMean, resAlignStd;
+        switch (complexity) {
+            case 'simple': alignMean = 0.92; alignStd = 0.05; resAlignMean = 0.45; resAlignStd = 0.2; break;
+            case 'medium': alignMean = 0.97; alignStd = 0.02; resAlignMean = 0.30; resAlignStd = 0.15; break;
+            case 'complex': alignMean = 0.99; alignStd = 0.01; resAlignMean = 0.20; resAlignStd = 0.12; break;
+        }
+
+        const fullAlignments = [];
+        const resAlignments = [];
+        for (let i = 0; i < nTokens; i++) {
+            fullAlignments.push(Math.min(1, Math.max(0, alignMean + randn() * alignStd)));
+            resAlignments.push(Math.min(1, Math.max(0, resAlignMean + randn() * resAlignStd)));
+        }
+
+        document.getElementById('fullAlignMetric').textContent = (fullAlignments.reduce((a, b) => a + b) / nTokens).toFixed(3);
+        document.getElementById('resAlignMetric').textContent = (resAlignments.reduce((a, b) => a + b) / nTokens).toFixed(3);
+
+        const traces = [
+            {
+                y: fullAlignments, type: 'box', name: 'Full↔Tokenwise',
+                marker: { color: '#4ade80' }, boxmean: true
+            },
+            {
+                y: resAlignments, type: 'box', name: 'Residual↔Tokenwise',
+                marker: { color: '#f87171' }, boxmean: true
+            }
+        ];
+
+        Plotly.newPlot('alignmentPlotly', traces, {
+            title: { text: 'Alignment Distribution (Absolute Cosine Similarity)', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            yaxis: { title: 'Absolute Cosine Similarity', gridcolor: '#333', range: [0, 1] },
+            xaxis: { gridcolor: '#333' }
+        }, { responsive: true });
+    }
+
+    // ==================== SECTION 5: FUNCTIONAL IMPACT ====================
+    function updateFunctional() {
+        const model = document.getElementById('funcModel').value;
+        const noise = parseInt(document.getElementById('noiseSlider').value) / 100;
+
+        const correlations = {
+            pythia70m: 0.906, pythia410m: 0.837, pythia1b: 0.804,
+            pythia14b: 0.883, distilgpt2: 0.321, mamba130m: 0.605, mamba370m: 0.865
+        };
+
+        const rho = correlations[model];
+        const n = 300;
+        const errors = [];
+        const kls = [];
+
+        for (let i = 0; i < n; i++) {
+            const err = Math.abs(randn() * 0.25 + 0.3);
+            errors.push(err);
+            // Generate correlated KL values
+            const klBase = err * rho * 2 + randn() * (1 - rho) * 0.5 + noise * randn() * 0.3;
+            kls.push(Math.max(0, klBase));
+        }
+
+        const computedRho = spearman(errors, kls);
+        document.getElementById('spearmanMetric').textContent = computedRho.toFixed(3);
+        document.getElementById('meanKLMetric').textContent = (kls.reduce((a, b) => a + b) / n).toFixed(3);
+
+        const trace = {
+            x: errors, y: kls, mode: 'markers', type: 'scatter',
+            marker: { color: '#7dd3fc', size: 4, opacity: 0.6 },
+            name: 'Tokens'
+        };
+
+        // Trend line
+        const sortedPairs = errors.map((e, i) => ({ e, k: kls[i] })).sort((a, b) => a.e - b.e);
+        const windowSize = 30;
+        const trendX = [], trendY = [];
+        for (let i = windowSize; i < sortedPairs.length - windowSize; i += 10) {
+            const window = sortedPairs.slice(i - windowSize, i + windowSize);
+            trendX.push(window.reduce((s, p) => s + p.e, 0) / window.length);
+            trendY.push(window.reduce((s, p) => s + p.k, 0) / window.length);
+        }
+
+        const trendTrace = {
+            x: trendX, y: trendY, mode: 'lines', type: 'scatter',
+            line: { color: '#fbbf24', width: 3 }, name: 'Trend'
+        };
+
+        Plotly.newPlot('functionalPlotly', [trace, trendTrace], {
+            title: { text: `Error vs Output Perturbation (${model}, ρ=${computedRho.toFixed(3)})`, font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { title: 'Residual Error (RelErr)', gridcolor: '#333' },
+            yaxis: { title: 'Output Deviation (KL)', gridcolor: '#333' },
+            legend: { x: 0.05, y: 0.95 }
+        }, { responsive: true });
+    }
+
+    function renderLayerwise() {
+        // Simulate layerwise correlation (Paper Figure 2c)
+        const models = {
+            'Pythia-70M': { layers: 6, baseRho: 0.9 },
+            'Pythia-410M': { layers: 24, baseRho: 0.85 },
+            'Pythia-1B': { layers: 16, baseRho: 0.8 },
+            'Mamba-370M': { layers: 24, baseRho: 0.87 }
+        };
+
+        const traces = [];
+        Object.entries(models).forEach(([name, cfg]) => {
+            const x = [], y = [];
+            for (let l = 0; l < cfg.layers; l++) {
+                x.push(l);
+                // Correlation varies by layer - dips in middle
+                const layerFrac = l / cfg.layers;
+                const dip = Math.exp(-((layerFrac - 0.5) ** 2) / 0.1) * 0.15;
+                y.push(cfg.baseRho - dip + randn() * 0.03);
+            }
+            traces.push({ x, y, mode: 'lines+markers', name, line: { width: 2 } });
+        });
+
+        Plotly.newPlot('layerwisePlotly', traces, {
+            title: { text: 'Layerwise Spearman ρ (Error↔Output) — Paper Fig. 2c', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { title: 'Layer', gridcolor: '#333' },
+            yaxis: { title: 'Spearman ρ', gridcolor: '#333', range: [0.5, 1.0] },
+            legend: { x: 0.7, y: 0.3 }
+        }, { responsive: true });
+    }
+
+    // ==================== SECTION 6: SUBSPACE PROJECTION ====================
+    function updateSubspace() {
+        const topK = parseInt(document.getElementById('topKSlider').value);
+        const dim = parseInt(document.getElementById('dimSlider').value);
+        document.getElementById('topKVal').textContent = topK;
+        document.getElementById('dimVal').textContent = dim;
+
+        plotSubspaceChart(topK, dim);
+        drawSubspaceCanvas(topK, dim);
+    }
+
+    function plotSubspaceChart(topK, dim) {
+        // Simulate projection fractions matching Paper Figure 4
+        const kValues = [1, 2, 4, 8, 16];
+        const fullProj = kValues.map(k => Math.min(1, 0.6 + 0.35 * (1 - Math.exp(-k / 3))));
+        const tokProj = kValues.map(k => Math.min(1, 0.7 + 0.28 * (1 - Math.exp(-k / 2))));
+        const resProj = kValues.map(k => Math.min(0.5, 0.05 + 0.08 * k / dim * 16));
+
+        const traces = [
+            { x: kValues, y: fullProj, mode: 'lines+markers', name: 'Full update', line: { color: '#4ade80', width: 3 } },
+            { x: kValues, y: tokProj, mode: 'lines+markers', name: 'Tokenwise', line: { color: '#fbbf24', width: 3 } },
+            { x: kValues, y: resProj, mode: 'lines+markers', name: 'Residual', line: { color: '#f87171', width: 3 } }
+        ];
+
+        // Highlight selected k
+        traces.push({
+            x: [topK], y: [Math.min(1, 0.6 + 0.35 * (1 - Math.exp(-topK / 3)))],
+            mode: 'markers', marker: { size: 15, color: '#4ade80', symbol: 'star' },
+            name: `Selected k=${topK}`, showlegend: false
+        });
+
+        Plotly.newPlot('subspacePlotly', traces, {
+            title: { text: `Projection onto Top-k Singular Vectors (d=${dim})`, font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { title: 'Number of singular vectors (k)', gridcolor: '#333', type: 'log' },
+            yaxis: { title: 'Projection fraction', gridcolor: '#333', range: [0, 1.05] },
+            legend: { x: 0.6, y: 0.3 }
+        }, { responsive: true });
+    }
+
+    function drawSubspaceCanvas(topK, dim) {
+        const canvas = document.getElementById('subspaceCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#12122a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Draw the subspace as an ellipse
+        const subspaceWidth = 180;
+        const subspaceHeight = 40 + topK * 10;
+
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, subspaceWidth, subspaceHeight, -0.3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.1)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Top-${topK} subspace`, cx, cy + subspaceHeight + 20);
+
+        // Draw vectors
+        // Full update - mostly inside subspace
+        const fullAngle = -0.3 + (1 - Math.min(1, 0.6 + 0.35 * (1 - Math.exp(-topK / 3)))) * 0.8;
+        const fullLen = 150;
+        drawArrow(ctx, cx, cy, cx + fullLen * Math.cos(fullAngle), cy + fullLen * Math.sin(fullAngle), '#4ade80', 2.5);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('Full update', cx + fullLen * Math.cos(fullAngle) + 10, cy + fullLen * Math.sin(fullAngle) - 10);
+
+        // Tokenwise - inside subspace
+        const tokAngle = -0.3;
+        drawArrow(ctx, cx, cy, cx + fullLen * Math.cos(tokAngle), cy + fullLen * Math.sin(tokAngle), '#fbbf24', 2.5);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('Tokenwise', cx + fullLen * Math.cos(tokAngle) + 10, cy + fullLen * Math.sin(tokAngle) + 15);
+
+        // Residual - mostly outside subspace
+        const resAngle = -0.3 + Math.PI / 2 + randn() * 0.3;
+        const resLen = 100;
+        drawArrow(ctx, cx, cy, cx + resLen * Math.cos(resAngle), cy + resLen * Math.sin(resAngle), '#f87171', 2.5);
+        ctx.fillStyle = '#f87171';
+        ctx.fillText('Residual', cx + resLen * Math.cos(resAngle) + 10, cy + resLen * Math.sin(resAngle));
+
+        // Info
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '11px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Dimension d = ${dim}`, 10, 20);
+        ctx.fillText(`Subspace rank k = ${topK}`, 10, 38);
+        ctx.fillText(`Full proj: ${(Math.min(1, 0.6 + 0.35 * (1 - Math.exp(-topK / 3))) * 100).toFixed(0)}%`, 10, 56);
+        ctx.fillText(`Residual proj: ${(Math.min(0.5, 0.05 + 0.08 * topK / dim * 16) * 100).toFixed(0)}%`, 10, 74);
+    }
+
+    // ==================== SECTION 7: ARCHITECTURES ====================
+    function renderArchComparison() {
+        const models = ['DistilGPT2', 'Pythia-70M', 'Pythia-410M', 'Pythia-1B', 'Pythia-1.4B', 'Mamba-130M', 'Mamba-370M'];
+        const spearmanVals = [0.321, 0.906, 0.837, 0.804, 0.883, 0.605, 0.865];
+        const colors = models.map(m => m.includes('Mamba') ? '#f87171' : m.includes('Pythia') ? '#7dd3fc' : '#fbbf24');
+
+        const trace = {
+            x: models,
+            y: spearmanVals,
+            type: 'bar',
+            marker: { color: colors },
+            text: spearmanVals.map(v => v.toFixed(3)),
+            textposition: 'outside'
+        };
+
+        Plotly.newPlot('archPlotly', [trace], {
+            title: { text: 'Mean Spearman ρ (Error↔Output) Across Architectures', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { gridcolor: '#333' },
+            yaxis: { title: 'Spearman ρ', gridcolor: '#333', range: [0, 1.1] },
+            annotations: [{
+                x: 'DistilGPT2', y: 0.321,
+                text: 'Weak (simple model)',
+                showarrow: true, arrowhead: 2,
+                ax: 0, ay: -40,
+                font: { color: '#fbbf24', size: 11 }
+            }, {
+                x: 'Pythia-70M', y: 0.906,
+                text: 'Strong!',
+                showarrow: true, arrowhead: 2,
+                ax: 0, ay: -40,
+                font: { color: '#4ade80', size: 11 }
+            }]
+        }, { responsive: true });
+    }
+
+    function renderSizeEffects() {
+        // Model size vs correlation
+        const sizes = [0.07, 0.13, 0.37, 0.41, 1.0, 1.4]; // in billions
+        const names = ['Pythia-70M', 'Mamba-130M', 'Mamba-370M', 'Pythia-410M', 'Pythia-1B', 'Pythia-1.4B'];
+        const rhos = [0.906, 0.605, 0.865, 0.837, 0.804, 0.883];
+        const relErrs = [0.18, 0.25, 0.20, 0.22, 0.30, 0.28];
+
+        const trace1 = {
+            x: sizes, y: rhos, mode: 'markers+text', type: 'scatter',
+            text: names, textposition: 'top center',
+            marker: { size: 12, color: sizes, colorscale: 'Viridis', showscale: true, colorbar: { title: 'Size (B)' } },
+            name: 'Spearman ρ'
+        };
+
+        const trace2 = {
+            x: sizes, y: relErrs, mode: 'markers+text', type: 'scatter',
+            text: names, textposition: 'bottom center',
+            marker: { size: 10, color: '#f87171', symbol: 'diamond' },
+            name: 'Mean RelErr',
+            yaxis: 'y2'
+        };
+
+        Plotly.newPlot('sizePlotly', [trace1, trace2], {
+            title: { text: 'Model Size vs. Correlation Strength & Error', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { title: 'Model Size (Billions)', gridcolor: '#333', type: 'log' },
+            yaxis: { title: 'Spearman ρ', gridcolor: '#333', range: [0.4, 1.0], side: 'left' },
+            yaxis2: { title: 'Mean RelErr', gridcolor: '#333', range: [0, 0.5], overlaying: 'y', side: 'right' },
+            legend: { x: 0.05, y: 0.3 }
+        }, { responsive: true });
+    }
+
+    // ==================== SECTION 8: REGIMES ====================
+    function renderRegimes() {
+        // Recreate Table 2 as a grouped bar chart
+        const regimes = ['Low', 'Mid', 'High', 'Overall'];
+        const linRelErr = [0.18, 0.43, 0.62, 0.41];
+        const mlpRelErr = [0.26, 0.46, 0.57, 0.43];
+        const linRho = [0.80, 0.59, 0.06, 0.82];
+        const mlpRho = [0.62, 0.56, 0.53, 0.73];
+
+        const traces = [
+            { x: regimes, y: linRho, name: 'Linear ρ', type: 'bar', marker: { color: '#7dd3fc' } },
+            { x: regimes, y: mlpRho, name: 'MLP ρ', type: 'bar', marker: { color: '#c4b5fd' } },
+            { x: regimes, y: linRelErr, name: 'Linear RelErr', type: 'bar', marker: { color: 'rgba(125,211,252,0.3)', line: { color: '#7dd3fc', width: 2 } } },
+            { x: regimes, y: mlpRelErr, name: 'MLP RelErr', type: 'bar', marker: { color: 'rgba(196,181,253,0.3)', line: { color: '#c4b5fd', width: 2 } } }
+        ];
+
+        Plotly.newPlot('regimePlotly', traces, {
+            title: { text: 'Linear vs MLP Across Regimes (Table 2)', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#0a0a1a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#a0a0c0' },
+            xaxis: { title: 'Regime', gridcolor: '#333' },
+            yaxis: { title: 'Value', gridcolor: '#333' },
+            barmode: 'group',
+            legend: { x: 0.7, y: 0.95 }
+        }, { responsive: true });
+    }
+
+    function updateSensitivity() {
+        const sweepType = document.getElementById('sweepType').value;
+
+        if (sweepType === 'rank') {
+            const ranks = [4, 8, 16, 32, 64];
+            const relErrs = [0.18, 0.14, 0.11, 0.08, 0.06];
+            const relErrsStd = [0.03, 0.025, 0.02, 0.015, 0.01];
+
+            const trace = {
+                x: ranks, y: relErrs, mode: 'lines+markers', type: 'scatter',
+                error_y: { type: 'data', array: relErrsStd, visible: true, color: '#7dd3fc' },
+                line: { color: '#7dd3fc', width: 3 },
+                marker: { size: 10 },
+                name: 'RelErr'
+            };
+
+            Plotly.newPlot('sensitivityPlotly', [trace], {
+                title: { text: 'Rank Sweep: RelErr vs Rank (Pythia-70M, L=5, k=64) — Paper Fig. 5 Right', font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0a0a1a',
+                plot_bgcolor: '#12122a',
+                font: { color: '#a0a0c0' },
+                xaxis: { title: 'Rank r', gridcolor: '#333' },
+                yaxis: { title: 'RelErr', gridcolor: '#333', range: [0, 0.25] }
+            }, { responsive: true });
+        } else {
+            const ks = [32, 48, 64, 96, 128, 192, 256];
+            const relErrs = [0.16, 0.10, 0.08, 0.065, 0.055, 0.05, 0.048];
+            const relErrsStd = [0.04, 0.025, 0.02, 0.015, 0.012, 0.01, 0.009];
+
+            const trace = {
+                x: ks, y: relErrs, mode: 'lines+markers', type: 'scatter',
+                error_y: { type: 'data', array: relErrsStd, visible: true, color: '#4ade80' },
+                line: { color: '#4ade80', width: 3 },
+                marker: { size: 10 },
+                name: 'RelErr'
+            };
+
+            Plotly.newPlot('sensitivityPlotly', [trace], {
+                title: { text: 'Neighborhood Sweep: RelErr vs k (Pythia-70M, L=5, r=64) — Paper Fig. 5 Left', font: { color: '#e0e0e0' } },
+                paper_bgcolor: '#0a0a1a',
+                plot_bgcolor: '#12122a',
+                font: { color: '#a0a0c0' },
+                xaxis: { title: 'Neighborhood size k', gridcolor: '#333' },
+                yaxis: { title: 'RelErr', gridcolor: '#333', range: [0, 0.25] }
+            }, { responsive: true });
+        }
+    }
+
+    // ==================== INITIAL RENDERS ====================
+    // Trigger initial section renders on load
+    window.addEventListener('load', () => {
+        updateOverview();
+    });
+    </script>
+</body>
+</html>
