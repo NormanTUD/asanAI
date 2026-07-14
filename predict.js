@@ -1052,6 +1052,8 @@ async function predict(item) {
 
 	await force_restart_fcnn();
 
+	TopologicalAnalyzer.update();
+
 	return str;
 }
 
