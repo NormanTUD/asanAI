@@ -1368,7 +1368,6 @@ function drawSummaryPlot() {
 // ============================================================
 function init() {
     renderMath();
-    drawThreeValues();
     renderSwapViz();
     renderInsertViz();
     drawTree();
@@ -1378,13 +1377,11 @@ function init() {
     drawSwapCanvas();
     drawBialgebraCanvas();
     drawSummaryPlot();
-    showStructure('camera');
 }
 
 window.addEventListener('load', init);
 window.addEventListener('resize', () => {
     drawSummaryPlot();
-    showStructure('camera');
 });
 </script>
 </body>
