@@ -890,12 +890,12 @@
         
         // Simplified world regions with proof systems
         const regions = [
-            { x: 180, y: 120, label: 'UK', system: 'HOL / Isabelle', color: '#667eea', r: 25 },
-            { x: 220, y: 140, label: 'France', system: 'Coq', color: '#f093fb', r: 25 },
-            { x: 260, y: 120, label: 'Germany', system: 'Isabelle', color: '#4caf50', r: 25 },
-            { x: 310, y: 110, label: 'Poland', system: 'Mizar', color: '#ff9800', r: 25 },
-            { x: 580, y: 160, label: 'USA', system: 'HOL Light / ACL2', color: '#667eea', r: 30 },
-            { x: 350, y: 100, label: 'Netherlands', system: 'Automath (historical)', color: '#aaa', r: 20 },
+            { x: 180, y: 120, label: 'UK', system: 'HOL / Isabelle', color: [102, 126, 234], r: 25 },
+            { x: 220, y: 140, label: 'France', system: 'Coq', color: [240, 147, 251], r: 25 },
+            { x: 260, y: 120, label: 'Germany', system: 'Isabelle', color: [76, 175, 80], r: 25 },
+            { x: 310, y: 110, label: 'Poland', system: 'Mizar', color: [255, 152, 0], r: 25 },
+            { x: 580, y: 160, label: 'USA', system: 'HOL Light / ACL2', color: [102, 126, 234], r: 30 },
+            { x: 350, y: 100, label: 'Netherlands', system: 'Automath (historical)', color: [170, 170, 170], r: 20 },
         ];
         
         // Draw connections
@@ -912,10 +912,13 @@
         
         // Draw regions
         regions.forEach(region => {
+            const [r, g, b] = region.color;
+            const hexColor = `rgb(${r}, ${g}, ${b})`;
+            
             // Glow
             const gradient = ctx.createRadialGradient(region.x, region.y, 0, region.x, region.y, region.r * 2);
-            gradient.addColorStop(0, region.color + '60');
-            gradient.addColorStop(1, 'transparent');
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.38)`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
             ctx.fillStyle = gradient;
             ctx.beginPath();
             ctx.arc(region.x, region.y, region.r * 2, 0, Math.PI * 2);
@@ -924,7 +927,7 @@
             // Dot
             ctx.beginPath();
             ctx.arc(region.x, region.y, region.r / 3, 0, Math.PI * 2);
-            ctx.fillStyle = region.color;
+            ctx.fillStyle = hexColor;
             ctx.fill();
             
             // Label
@@ -933,7 +936,7 @@
             ctx.textAlign = 'center';
             ctx.fillText(region.label, region.x, region.y - 20);
             ctx.font = '11px Georgia';
-            ctx.fillStyle = region.color;
+            ctx.fillStyle = hexColor;
             ctx.fillText(region.system, region.x, region.y + 25);
         });
         
