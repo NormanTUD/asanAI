@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen & die Kunst der Motorradwartung – Interaktiv</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .section {
+            min-height: 100vh;
+            padding: 60px 40px;
+            border-bottom: 1px solid #333;
+            position: relative;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #f0a500;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            border-left: 4px solid #f0a500;
+            padding-left: 15px;
+        }
+        h3 {
+            font-size: 1.2em;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        p, .desc {
+            font-size: 1.05em;
+            line-height: 1.7;
+            max-width: 800px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            align-items: center;
+        }
+        .controls label {
+            color: #f0a500;
+            font-size: 0.95em;
+        }
+        input[type="range"] {
+            width: 200px;
+            accent-color: #f0a500;
+        }
+        button {
+            background: #f0a500;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ffcc00;
+            transform: scale(1.05);
+        }
+        .flex-row {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        .flex-col {
+            flex: 1;
+            min-width: 300px;
+        }
+        .insight-box {
+            background: #16213e;
+            border: 1px solid #f0a500;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #f0a500;
+            opacity: 0;
+            transition: opacity 0.8s;
+        }
+        .insight-box.visible {
+            opacity: 1;
+        }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 46, 0.95);
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            overflow-x: auto;
+            border-bottom: 2px solid #f0a500;
+        }
+        .nav a {
+            color: #f0a500;
+            text-decoration: none;
+            font-size: 0.85em;
+            white-space: nowrap;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: #f0a500;
+            color: #1a1a2e;
+        }
+        #plotly-quality { width: 100%; height: 500px; }
+        #plotly-hypothesis { width: 100%; height: 450px; }
+        .meter {
+            width: 100%;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .meter-fill {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s, background 0.5s;
+        }
+        .sandbox-area {
+            background: #0f0f23;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .draggable-item {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: grab;
+            font-size: 0.9em;
+            user-select: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .draggable-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(240, 165, 0, 0.5);
+        }
+        .drop-zone {
+            min-height: 80px;
+            border: 2px dashed #555;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .drop-zone.hover {
+            border-color: #f0a500;
+            background: rgba(240, 165, 0, 0.05);
+        }
+        .drop-zone h4 {
+            color: #888;
+            margin-bottom: 10px;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="#intro">Start</a>
+    <a href="#classic-romantic">Klassisch/Romantisch</a>
+    <a href="#knife">Das Messer</a>
+    <a href="#quality-event">Quality Event</a>
+    <a href="#gumption">Gumption</a>
+    <a href="#stuckness">Stuckness</a>
+    <a href="#peace">Seelenfrieden</a>
+    <a href="#hypothesis">Hypothesen</a>
+</nav>
+
+<!-- INTRO -->
+<section class="section" id="intro" style="padding-top: 80px;">
+    <h1>Zen und die Kunst der Motorradwartung</h1>
+    <p class="subtitle">Eine interaktive Erkundung der Kernideen von Robert M. Pirsig</p>
+    <p style="text-align:center; max-width: 700px; margin: 0 auto 30px;">
+        Dieses Buch handelt von <strong>Quality</strong> – der Qualität, die allem zugrunde liegt. 
+        Es fragt: Wie verbinden wir rationales Denken mit dem Gefühl für das Gute? 
+        Spiele mit den Konzepten unten, um es zu verstehen.
+    </p>
+    <canvas id="roadCanvas" width="900" height="400"></canvas>
+    <p style="text-align:center; color:#888; font-size:0.9em;">
+        ↑ Bewege die Maus über die Straße. Die Art wie du fährst zeigt den Unterschied zwischen 
+        „ankommen wollen" und „gut unterwegs sein".
+    </p>
+    <div class="insight-box" id="road-insight">
+        „Wir wollen gute Zeit machen, aber für uns wird das mit Betonung auf ‚gut' gemessen, 
+        nicht auf ‚Zeit' – und wenn man diese Betonung verschiebt, ändert sich der ganze Ansatz."
+    </div>
+</section>
+
+<!-- CLASSIC vs ROMANTIC -->
+<section class="section" id="classic-romantic">
+    <h2>Klassisch vs. Romantisch</h2>
+    <p>
+        Pirsig teilt die Welt in zwei Sichtweisen: Die <strong>klassische</strong> sieht die 
+        zugrundeliegende Form (Funktion, Struktur, Analyse). Die <strong>romantische</strong> 
+        sieht die unmittelbare Erscheinung (Gefühl, Ästhetik, Intuition).
+    </p>
+    <p>Ziehe die Begriffe in die passende Kategorie:</p>
+    
+    <div class="sandbox-area">
+        <div id="items-pool">
+            <span class="draggable-item" draggable="true" data-cat="classic" style="background:#2196F3;color:#fff;">Schaltplan</span>
+            <span class="draggable-item" draggable="true" data-cat="romantic" style="background:#E91E63;color:#fff;">Sonnenuntergang</span>
+            <span class="draggable-item" draggable="true" data-cat="classic" style="background:#2196F3;color:#fff;">Hierarchie</span>
+            <span class="draggable-item" draggable="true" data-cat="romantic" style="background:#E91E63;color:#fff;">Motorradfahren im Wind</span>
+            <span class="draggable-item" draggable="true" data-cat="classic" style="background:#2196F3;color:#fff;">Ursache & Wirkung</span>
+            <span class="draggable-item" draggable="true" data-cat="romantic" style="background:#E91E63;color:#fff;">Musik hören</span>
+            <span class="draggable-item" draggable="true" data-cat="classic" style="background:#2196F3;color:#fff;">Ventilspiel messen</span>
+            <span class="draggable-item" draggable="true" data-cat="romantic" style="background:#E91E63;color:#fff;">„Es fühlt sich richtig an"</span>
+            <span class="draggable-item" draggable="true" data-cat="both" style="background:#f0a500;color:#1a1a2e;">Quality / Qualität</span>
+        </div>
+        <div class="flex-row" style="margin-top:20px;">
+            <div class="flex-col">
+                <div class="drop-zone" id="drop-classic" data-accept="classic">
+                    <h4>🔧 Klassisch (Underlying Form)</h4>
+                </div>
+            </div>
+            <div class="flex-col">
+                <div class="drop-zone" id="drop-romantic" data-accept="romantic">
+                    <h4>🎨 Romantisch (Immediate Appearance)</h4>
+                </div>
+            </div>
+        </div>
+        <div class="drop-zone" id="drop-both" data-accept="both" style="border-color:#f0a500;">
+            <h4 style="color:#f0a500;">⚡ Vereinigt beide – wohin gehört Quality?</h4>
+        </div>
+    </div>
+    <div class="insight-box" id="cr-insight">
+        Quality ist weder klassisch noch romantisch – es ist die Quelle von beidem. 
+        Es ist der Punkt, an dem Subjekt und Objekt sich treffen, bevor die Trennung stattfindet.
+    </div>
+</section>
+
+<!-- THE KNIFE -->
+<section class="section" id="knife">
+    <h2>Das analytische Messer</h2>
+    <p>
+        Analyse ist wie ein Messer, das die Realität in Teile schneidet. Jeder Schnitt erzeugt 
+        Kategorien – aber die Kategorien sind <em>nicht</em> die Realität selbst. 
+        Sie sind Entscheidungen darüber, wie wir schneiden.
+    </p>
+    <p>Klicke auf die Sandfläche, um sie zu teilen. Beobachte, wie jeder Schnitt neue Kategorien erzeugt:</p>
+    <canvas id="knifeCanvas" width="900" height="450"></canvas>
+    <div class="controls">
+        <button id="resetKnife">Zurücksetzen</button>
+        <span style="color:#888; font-size:0.9em;">Klicke um zu schneiden. Jeder Schnitt ist eine Entscheidung.</span>
+    </div>
+    <div class="insight-box" id="knife-insight">
+        „Wir nehmen eine Handvoll Sand aus der endlosen Landschaft des Bewusstseins und nennen 
+        diese Handvoll Sand die Welt." – Jede Klassifikation ist eine menschliche Erfindung, 
+        kein Naturgesetz.
+    </div>
+</section>
+
+<!-- QUALITY EVENT -->
+<section class="section" id="quality-event">
+    <h2>Das Quality-Event</h2>
+    <p>
+        Quality ist kein Ding. Es ist ein <strong>Ereignis</strong> – der Moment, in dem 
+        Bewusstsein entsteht, bevor Subjekt und Objekt getrennt werden. 
+        Es ist die „Schneide der Gegenwart".
+    </p>
+    <div id="plotly-quality"></div>
+    <div class="controls">
+        <label>Zeitverzögerung der Intellektualisierung:</label>
+        <input type="range" id="lagSlider" min="1" max="50" value="15">
+        <span id="lagValue" style="color:#f0a500;">15ms</span>
+    </div>
+    <p class="desc">
+        Der gelbe Blitz ist der Moment reiner Quality – <em>bevor</em> du es in Worte fassen kannst. 
+        Die blaue Linie ist deine intellektuelle Verarbeitung, die immer hinterherhinkt. 
+        Verändere die Verzögerung und beobachte: Je schneller du intellektualisierst, 
+        desto mehr verpasst du.
+    </p>
+    <div class="insight-box visible">
+        „Die Vergangenheit existiert nur in unseren Erinnerungen, die Zukunft nur in unseren Plänen. 
+        Die Gegenwart ist unsere einzige Realität." – Quality ist diese vor-intellektuelle Gegenwart.
+    </div>
+</section>
+
+<!-- GUMPTION -->
+<section class="section" id="gumption">
+    <h2>Gumption – Der Treibstoff</h2>
+    <p>
+        „Gumption" ist die psychische Energie, die alles am Laufen hält. Ohne sie ist keine 
+        Reparatur möglich. Mit ihr ist keine Reparatur unmöglich. Pirsig identifiziert 
+        „Gumption Traps" – Fallen, die diese Energie rauben.
+    </p>
+    
+    <div class="sandbox-area">
+        <h3>Dein Gumption-Reservoir:</h3>
+        <div class="meter">
+            <div class="meter-fill" id="gumptionMeter" style="width:80%; background: linear-gradient(90deg, #4CAF50, #8BC34A);"></div>
+        </div>
+        <p id="gumptionLabel" style="text-align:center; color:#4CAF50; font-weight:bold;">80% – Voller Tatendrang!</p>
+        
+        <h3 style="margin-top:20px;">Simuliere eine Motorrad-Reparatur:</h3>
+        <div class="controls" style="flex-wrap:wrap;">
+            <button onclick="gumptionEvent('good')">✅ Geduldig beobachten</button>
+            <button onclick="gumptionEvent('good')">✅ Pause machen</button>
+            <button onclick="gumptionEvent('good')">✅ Notizen schreiben</button>
+            <button onclick="gumptionEvent('bad')" style="background:#e74c3c;color:#fff;">❌ Schraube abreißen</button>
+            <button onclick="gumptionEvent('bad')" style="background:#e74c3c;color:#fff;">❌ Falsches Teil bestellt</button>
+            <button onclick="gumptionEvent('bad')" style="background:#e74c3c;color:#fff;">❌ Ego: „Ich weiß es besser"</button>
+            <button onclick="gumptionEvent('bad')" style="background:#e74c3c;color:#fff;">❌ Ungeduld: Schneller arbeiten</button>
+            <button onclick="gumptionEvent('good')">✅ Stuckness akzeptieren</button>
+            <button onclick="gumptionEvent('good')">✅ Anfängergeist bewahren</button>
+        </div>
+        <div id="gumption-log" style="margin-top:15px; font-size:0.9em; color:#888; max-height:150px; overflow-y:auto;"></div>
+    </div>
+    <div class="insight-box visible">
+        „Wenn dein Geist wirklich, zutiefst feststeckt, dann bist du vielleicht viel besser dran, 
+        als wenn er voller Ideen wäre." – Stuckness ist der psychische Vorläufer allen echten Verstehens.
+    </div>
+</section>
+
+<!-- STUCKNESS -->
+<section class="section" id="stuckness">
+    <h2>Stuckness & der Wert des Feststeckens</h2>
+    <p>
+        Traditionelle Wissenschaft sagt: „Beobachte objektiv." Aber welche Fakten beobachtest du? 
+        Es gibt unendlich viele. Die <strong>Auswahl</strong> geschieht durch Quality – 
+        durch ein Gefühl dafür, was wichtig ist.
+    </p>
+    <canvas id="stuckCanvas" width="900" height="400"></canvas>
+    <div class="controls">
+        <button id="stuckReset">Neue Schraube</button>
+        <span id="stuckStatus" style="color:#f0a500;">Klicke auf verschiedene Stellen der Schraube. Beobachte genau.</span>
+    </div>
+    <div id="stuckFindings" style="margin-top:10px;"></div>
+    <div class="insight-box" id="stuck-insight">
+        Wenn du lange genug bei einer festsitzenden Schraube verweilst, hört sie auf, 
+        ein typisches Objekt einer Klasse zu sein. Sie wird einzigartig. Du siehst nicht mehr 
+        „eine Schraube" – du siehst Funktionen, Beziehungen, Möglichkeiten.
+    </div>
+</section>
+
+<!-- PEACE OF MIND -->
+<section class="section" id="peace">
+    <h2>Seelenfrieden & Handwerk</h2>
+    <p>
+        „Seelenfrieden ist keine Oberflächlichkeit bei technischer Arbeit. Er ist das Ganze." 
+        Der Handwerker folgt keiner starren Anleitung – Material und Gedanken verändern sich 
+        gemeinsam, bis der Geist ruht im selben Moment, in dem das Material stimmt.
+    </p>
+    <canvas id="peaceCanvas" width="900" height="400"></canvas>
+    <div class="controls">
+        <label>Deine innere Ruhe:</label>
+        <input type="range" id="peaceSlider" min="0" max="100" value="50">
+        <span id="peaceLabel" style="color:#f0a500;">50%</span>
+    </div>
+    <p class="desc">
+        Bewege den Regler. Bei niedriger innerer Ruhe wird die Linie zittrig und unregelmäßig – 
+        die Arbeit wird schlecht. Bei hoher Ruhe entsteht eine fließende, harmonische Bewegung – 
+        das ist der Zustand, in dem Subjekt und Objekt eins werden.
+    </p>
+    <div class="insight-box visible">
+        „Der richtige Ort, um die Welt zu verbessern, ist zuerst im eigenen Herzen und Kopf 
+        und in den eigenen Händen, und dann von dort nach außen zu arbeiten."
+    </div>
+</section>
+
+<!-- HYPOTHESIS EXPLOSION -->
+<section class="section" id="hypothesis">
+    <h2>Die Explosion der Hypothesen</h2>
+    <p>
+        Phædrus entdeckte: „Die Anzahl rationaler Hypothesen, die ein Phänomen erklären können, 
+        ist unendlich." Je mehr Wissenschaft betrieben wird, desto mehr Hypothesen entstehen – 
+        nicht weniger. Wissenschaft entfernt sich von der einen Wahrheit, statt sich ihr zu nähern.
+    </p>
+    <div id="plotly-hypothesis"></div>
+    <div class="controls">
+        <button id="addExperiment">🔬 Experiment durchführen</button>
+        <button id="resetHypothesis">Zurücksetzen</button>
+        <span id="hypoCount" style="color:#f0a500;">Hypothesen: 3</span>
+    </div>
+    <div class="insight-box visible">
+        „Statt eine Wahrheit aus einer Vielzahl auszuwählen, vermehrt man die Vielzahl. 
+        Was das logisch bedeutet: Wenn man sich durch Anwendung wissenschaftlicher Methode 
+        auf unveränderliche Wahrheit zubewegt, bewegt man sich tatsächlich von ihr weg!"
+    </div>
+</section>
+
+<!-- FINAL -->
+<section class="section" id="final" style="text-align:center; min-height:50vh;">
+    <h2 style="border:none; text-align:center;">Das Motorrad, das du wirklich reparierst...</h2>
+    <p style="font-size:1.3em; color:#f0a500; max-width:600px; margin:30px auto;">
+        „Das echte Motorrad, an dem du arbeitest, ist ein Motorrad namens ‚du selbst'. 
+        Die Maschine, die ‚da draußen' zu sein scheint, und die Person, die ‚hier drinnen' 
+        zu sein scheint, sind nicht zwei getrennte Dinge. Sie wachsen gemeinsam auf Quality zu 
+        – oder fallen gemeinsam davon ab."
+    </p>
+</section>
+
+<script>
+// ============ ROAD CANVAS (Intro) ============
+(function() {
+    const canvas = document.getElementById('roadCanvas');
+    const ctx = canvas.getContext('2d');
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+    let trail = [];
+    let speed = 0;
+    let lastTime = Date.now();
+    let lastX = mouseX;
+    
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const newX = e.clientX - rect.left;
+        mouseX = newX;
+        mouseY = e.clientY - rect.top;
+        const now = Date.now();
+        const dt = now - lastTime;
+        if (dt > 0) {
+            speed = Math.abs(newX - lastX) / dt * 10;
+        }
+        lastTime = now;
+        lastX = newX;
+    });
+    
+    function drawRoad() {
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw landscape
+        ctx.fillStyle = '#2d5016';
+        ctx.beginPath();
+        ctx.moveTo(0, 300);
+        for (let x = 0; x < canvas.width; x += 5) {
+            ctx.lineTo(x, 280 + Math.sin(x * 0.01 + Date.now() * 0.0005) * 20 + Math.sin(x * 0.03) * 10);
+        }
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.fill();
+        
+        // Road
+        ctx.fillStyle = '#333';
+        ctx.fillRect(0, 320, canvas.width, 80);
+        
+        // Center line
+        for (let x = (Date.now() * 0.1) % 40 - 40; x < canvas.width; x += 40) {
+            ctx.fillStyle = '#f0a500';
+            ctx.fillRect(x, 358, 20, 4);
+        }
+        
+        // Trail
+        trail.push({ x: mouseX, y: 360, time: Date.now() });
+        trail = trail.filter(p => Date.now() - p.time < 3000);
+        
+        if (trail.length > 1) {
+            ctx.beginPath();
+            ctx.strokeStyle = speed > 5 ? '#e74c3c' : '#4CAF50';
+            ctx.lineWidth = 3;
+            ctx.moveTo(trail[0].x, trail[0].y);
+            for (let i = 1; i < trail.length; i++) {
+                ctx.lineTo(trail[i].x, trail[i].y);
+            }
+            ctx.stroke();
+        }
+        
+        // Motorcycle dot
+        ctx.beginPath();
+        ctx.arc(mouseX, 360, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#f0a500';
+        ctx.fill();
+        
+        // Speed indicator
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px Georgia';
+        ctx.fillText(`Geschwindigkeit: ${speed.toFixed(1)}`, 20, 30);
+        ctx.fillText(speed > 5 ? '⚡ Hektisch – du verpasst die Landschaft' : '🌿 Ruhig – du bist im Moment', 20, 50);
+        
+        // Sky
+        ctx.fillStyle = '#f0a50033';
+        ctx.beginPath();
+        ctx.arc(750, 80, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        if (speed < 3 && trail.length > 20) {
+            document.getElementById('road-insight').classList.add('visible');
+        }
+        
+        requestAnimationFrame(drawRoad);
+    }
+    drawRoad();
+})();
+
+// ============ DRAG & DROP (Classic/Romantic) ============
+(function() {
+    const items = document.querySelectorAll('.draggable-item');
+    const zones = document.querySelectorAll('.drop-zone');
+    let draggedItem = null;
+    
+    items.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            draggedItem = item;
+            item.style.opacity = '0.5';
+        });
+        item.addEventListener('dragend', () => {
+            draggedItem.style.opacity = '1';
+            draggedItem = null;
+            zones.forEach(z => z.classList.remove('hover'));
+        });
+    });
+    
+    zones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zone.classList.add('hover');
+        });
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('hover');
+        });
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('hover');
+            if (draggedItem) {
+                const cat = draggedItem.dataset.cat;
+                const accept = zone.dataset.accept;
+                zone.appendChild(draggedItem);
+                
+                if (cat === 'both') {
+                    if (accept === 'both') {
+                        document.getElementById('cr-insight').classList.add('visible');
+                        draggedItem.style.boxShadow = '0 0 20px #f0a500';
+                    } else {
+                        draggedItem.style.boxShadow = '0 0 20px #e74c3c';
+                        setTimeout(() => { draggedItem.style.boxShadow = ''; }, 1000);
+                    }
+                } else if (cat === accept || accept === 'both') {
+                    draggedItem.style.boxShadow = '0 0 10px #4CAF50';
+                } else {
+                    draggedItem.style.boxShadow = '0 0 10px #e74c3c';
+                    setTimeout(() => { draggedItem.style.boxShadow = ''; }, 1000);
+                }
+            }
+        });
+    });
+})();
+
+// ============ KNIFE CANVAS ============
+(function() {
+    const canvas = document.getElementById('knifeCanvas');
+    const ctx = canvas.getContext('2d');
+    let cuts = [];
+    let particles = [];
+    const colors = ['#e6c88a', '#d4a853', '#c9953c', '#b8862b', '#a67720', '#8B7355', '#D2B48C', '#C4A35A'];
+    
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < 2000; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 3 + 1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                region: 0
+            });
+        }
+    }
+    initParticles();
+    
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        cuts.push({ x, y, angle: Math.random() * Math.PI });
+        assignRegions();
+        
+        if (cuts.length >= 3) {
+            document.getElementById('knife-insight').classList.add('visible');
+        }
+    });
+    
+    function assignRegions() {
+        particles.forEach(p => {
+            let region = 0;
+            cuts.forEach((cut, i) => {
+                const dx = p.x - cut.x;
+                const dy = p.y - cut.y;
+                const side = dx * Math.sin(cut.angle) + dy * Math.cos(cut.angle);
+                if (side > 0) region += (1 << i);
+            });
+            p.region = region;
+        });
+    }
+    
+    const regionColors = [
+        '#e6c88a', '#8B4513', '#D2691E', '#CD853F', '#DEB887',
+        '#F4A460', '#D2B48C', '#BC8F8F', '#C4A35A', '#A0522D',
+        '#b8860b', '#daa520', '#f0e68c', '#bdb76b', '#556b2f', '#6b8e23'
+    ];
+    
+    function drawKnife() {
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw particles colored by region
+        particles.forEach(p => {
+            ctx.fillStyle = regionColors[p.region % regionColors.length];
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        
+        // Draw cut lines
+        cuts.forEach(cut => {
+            ctx.strokeStyle = '#f0a50088';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const len = 1000;
+            ctx.moveTo(cut.x - len * Math.cos(cut.angle), cut.y - len * Math.sin(cut.angle));
+            ctx.lineTo(cut.x + len * Math.cos(cut.angle), cut.y + len * Math.sin(cut.angle));
+            ctx.stroke();
+        });
+        
+        // Label
+        ctx.fillStyle = '#f0a500';
+        ctx.font = '16px Georgia';
+        ctx.fillText(`Schnitte: ${cuts.length} → Kategorien: ${Math.min(Math.pow(2, cuts.length), 16)}`, 20, 30);
+        ctx.fillStyle = '#888';
+        ctx.font = '13px Georgia';
+        ctx.fillText('Jeder Schnitt ist eine Entscheidung darüber, wie du die Realität aufteilst.', 20, 55);
+        
+        requestAnimationFrame(drawKnife);
+    }
+    drawKnife();
+    
+    document.getElementById('resetKnife').addEventListener('click', () => {
+        cuts = [];
+        assignRegions();
+    });
+})();
+
+// ============ QUALITY EVENT (Plotly) ============
+(function() {
+    let lag = 15;
+    const lagSlider = document.getElementById('lagSlider');
+    const lagValue = document.getElementById('lagValue');
+    
+    function generateData() {
+        const n = 200;
+        const qualityEvents = [];
+        const intellectResponse = [];
+        const time = [];
+        
+        for (let i = 0; i < n; i++) {
+            time.push(i);
+            // Quality events: sharp spikes (pre-intellectual awareness)
+            const spike = Math.random() > 0.92 ? Math.random() * 80 + 20 : Math.random() * 5;
+            qualityEvents.push(spike);
+        }
+        
+        // Intellectual response lags behind
+        for (let i = 0; i < n; i++) {
+            let sum = 0;
+            let count = 0;
+            for (let j = Math.max(0, i - lag); j < i; j++) {
+                sum += qualityEvents[j];
+                count++;
+            }
+            intellectResponse.push(count > 0 ? sum / count * 0.7 : 0);
+        }
+        
+        return { time, qualityEvents, intellectResponse };
+    }
+    
+    function plotQuality() {
+        const { time, qualityEvents, intellectResponse } = generateData();
+        
+        const trace1 = {
+            x: time,
+            y: qualityEvents,
+            type: 'scatter',
+            mode: 'lines',
+            name: '⚡ Quality-Event (vor-intellektuell)',
+            line: { color: '#f0a500', width: 1.5 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(240,165,0,0.1)'
+        };
+        
+        const trace2 = {
+            x: time,
+            y: intellectResponse,
+            type: 'scatter',
+            mode: 'lines',
+            name: '🧠 Intellektuelle Verarbeitung (verzögert)',
+            line: { color: '#2196F3', width: 2.5 }
+        };
+        
+        const layout = {
+            title: { text: 'Quality passiert VOR dem Denken', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#1a1a2e',
+            plot_bgcolor: '#0f0f23',
+            font: { color: '#aaa' },
+            xaxis: { title: 'Zeit →', gridcolor: '#333', color: '#aaa' },
+            yaxis: { title: 'Intensität', gridcolor: '#333', color: '#aaa' },
+            legend: { x: 0.02, y: 0.98 },
+            margin: { t: 50 }
+        };
+        
+        Plotly.newPlot('plotly-quality', [trace1, trace2], layout, { responsive: true });
+    }
+    
+    plotQuality();
+    
+    lagSlider.addEventListener('input', () => {
+        lag = parseInt(lagSlider.value);
+        lagValue.textContent = lag + 'ms';
+        plotQuality();
+    });
+})();
+
+// ============ GUMPTION METER ============
+let gumption = 80;
+const gumptionLog = document.getElementById('gumption-log');
+
+function gumptionEvent(type) {
+    const goodMessages = [
+        '🌿 Du nimmst dir Zeit. Gumption steigt.',
+        '☕ Pause wirkt Wunder. Klarheit kehrt zurück.',
+        '📝 Aufschreiben ordnet die Gedanken.',
+        '🧘 Du akzeptierst das Nicht-Wissen. Das öffnet Türen.',
+        '👶 Anfängergeist: Du siehst die Schraube zum ersten Mal.'
+    ];
+    const badMessages = [
+        '💥 KNACK! Die Schraube ist abgerissen. Frustration!',
+        '📦 Falsches Teil. Zwei Wochen warten. Motivation sinkt.',
+        '😤 Ego sagt: "Ich brauche keine Anleitung!" – Fehler folgt.',
+        '⏩ Zu schnell! Gewinde überdrehen. Alles nochmal.',
+    ];
+    
+    if (type === 'good') {
+        gumption = Math.min(100, gumption + Math.random() * 10 + 5);
+        const msg = goodMessages[Math.floor(Math.random() * goodMessages.length)];
+        gumptionLog.innerHTML = `<div style="color:#4CAF50;">${msg}</div>` + gumptionLog.innerHTML;
+    } else {
+        gumption = Math.max(0, gumption - Math.random() * 20 - 10);
+        const msg = badMessages[Math.floor(Math.random() * badMessages.length)];
+        gumptionLog.innerHTML = `<div style="color:#e74c3c;">${msg}</div>` + gumptionLog.innerHTML;
+    }
+    
+    const meter = document.getElementById('gumptionMeter');
+    const label = document.getElementById('gumptionLabel');
+    meter.style.width = gumption + '%';
+    
+    if (gumption > 60) {
+        meter.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+        label.style.color = '#4CAF50';
+        label.textContent = Math.round(gumption) + '% – Voller Tatendrang!';
+    } else if (gumption > 30) {
+        meter.style.background = 'linear-gradient(90deg, #FF9800, #FFC107)';
+        label.style.color = '#FF9800';
+        label.textContent = Math.round(gumption) + '% – Vorsicht, Gumption sinkt...';
+    } else {
+        meter.style.background = 'linear-gradient(90deg, #e74c3c, #FF5722)';
+        label.style.color = '#e74c3c';
+        label.textContent = Math.round(gumption) + '% – STOP! Mach eine Pause. Jetzt.';
+    }
+}
+
+// ============ STUCKNESS CANVAS ============
+(function() {
+    const canvas = document.getElementById('stuckCanvas');
+    const ctx = canvas.getContext('2d');
+    let observations = [];
+    let clickCount = 0;
+    
+    function drawScrew() {
+        ctx.fillStyle = '#0f0f23';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        // Screw head
+        ctx.beginPath();
+        ctx.arc(cx, cy, 80, 0, Math.PI * 2);
+        ctx.fillStyle = '#555';
+        ctx.fill();
+        ctx.strokeStyle = '#777';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Slot (damaged)
+        ctx.fillStyle = '#333';
+        ctx.fillRect(cx - 50, cy - 5, 100, 10);
+        
+        // Rust spots
+        ctx.fillStyle = '#8B4513';
+        ctx.beginPath(); ctx.arc(cx + 30, cy - 30, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx - 40, cy + 20, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(cx + 10, cy + 40, 6, 0, Math.PI * 2); ctx.fill();
+        
+        // Scratches
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx - 60, cy - 40); ctx.lineTo(cx - 20, cy - 50); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + 20, cy + 30); ctx.lineTo(cx + 55, cy + 45); ctx.stroke();
+        
+        // Observation markers
+        observations.forEach((obs, i) => {
+            ctx.beginPath();
+            ctx.arc(obs.x, obs.y, 12, 0, Math.PI * 2);
+            ctx.strokeStyle = '#f0a500';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#f0a500';
+            ctx.font = '10px Georgia';
+            ctx.fillText(i + 1, obs.x - 3, obs.y + 3);
+        });
+        
+        // Instructions
+        ctx.fillStyle = '#888';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Klicke auf verschiedene Stellen. Beobachte genau.', 20, 30);
+        ctx.fillText(`Beobachtungen: ${observations.length}`, 20, 55);
+        
+        if (observations.length >= 5) {
+            ctx.fillStyle = '#f0a500';
+            ctx.font = '15px Georgia';
+            ctx.fillText('→ Die Schraube ist nicht mehr "eine Schraube". Sie ist einzigartig geworden.', 20, canvas.height - 20);
+            document.getElementById('stuck-insight').classList.add('visible');
+        }
+    }
+    
+    const findings = [
+        'Der Schlitz ist beschädigt – ein normaler Schraubendreher greift nicht mehr.',
+        'Rost an der Oberfläche – vielleicht sitzt sie durch Korrosion fest?',
+        'Kratzer von einem früheren Versuch – jemand hat schon daran gearbeitet.',
+        'Die Umgebung zeigt Ölspuren – vielleicht hilft Kriechöl?',
+        'Der Kopf ist leicht erhöht – sie ist nicht ganz eingedreht. Linksgewinde?',
+        'Das Material fühlt sich weich an – Aluminium? Vorsicht beim Drehen!',
+        'Wärmeeinwirkung sichtbar – thermische Ausdehnung könnte helfen.',
+        'Die Schraube hat eine Funktion: Sie hält den Seitendeckel. Was ist dahinter?'
+    ];
+    
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        observations.push({ x, y });
+        clickCount++;
+        
+        const findingsDiv = document.getElementById('stuckFindings');
+        const finding = findings[Math.min(clickCount - 1, findings.length - 1)];
+        findingsDiv.innerHTML += `<div style="color:#f0a500; margin:5px 0; font-size:0.9em;">🔍 ${finding}</div>`;
+        
+        drawScrew();
+    });
+    
+    document.getElementById('stuckReset').addEventListener('click', () => {
+        observations = [];
+        clickCount = 0;
+        document.getElementById('stuckFindings').innerHTML = '';
+        document.getElementById('stuck-insight').classList.remove('visible');
+        drawScrew();
+    });
+    
+    drawScrew();
+})();
+
+// ============ PEACE OF MIND CANVAS ============
+(function() {
+    const canvas = document.getElementById('peaceCanvas');
+    const ctx = canvas.getContext('2d');
+    const slider = document.getElementById('peaceSlider');
+    const label = document.getElementById('peaceLabel');
+    let peace = 50;
+    let t = 0;
+    
+    slider.addEventListener('input', () => {
+        peace = parseInt(slider.value);
+        label.textContent = peace + '%';
+    });
+    
+    function drawPeace() {
+        ctx.fillStyle = 'rgba(15, 15, 35, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const chaos = (100 - peace) / 100;
+        const y = canvas.height / 2;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = `hsl(${120 * peace / 100}, 70%, 50%)`;
+        ctx.lineWidth = 2 - chaos;
+        
+        for (let x = 0; x < canvas.width; x++) {
+            const baseWave = Math.sin((x + t) * 0.02) * 50;
+            const harmony = Math.sin((x + t) * 0.005) * 30 * (peace / 100);
+            const noise = (Math.random() - 0.5) * chaos * 150;
+            const jitter = Math.sin((x + t * 3) * 0.1) * chaos * 40;
+            
+            const py = y + baseWave + harmony + noise + jitter;
+            
+            if (x === 0) ctx.moveTo(x, py);
+            else ctx.lineTo(x, py);
+        }
+        ctx.stroke();
+        
+        // Labels
+        ctx.fillStyle = '#888';
+        ctx.font = '13px Georgia';
+        if (peace < 30) {
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillText('⚠ Unruhe – die Arbeit wird schlecht, Fehler häufen sich', 20, 30);
+        } else if (peace < 60) {
+            ctx.fillStyle = '#FF9800';
+            ctx.fillText('~ Weder gut noch schlecht – noch nicht im Flow', 20, 30);
+        } else {
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('✓ Seelenfrieden – Material und Gedanken werden eins', 20, 30);
+        }
+        
+        t += 2;
+        requestAnimationFrame(drawPeace);
+    }
+    drawPeace();
+})();
+
+// ============ HYPOTHESIS EXPLOSION (Plotly) ============
+(function() {
+    let experiments = 0;
+    let    hypotheses = [3];
+    let expLabels = [0];
+    
+    function plotHypothesis() {
+        const trace = {
+            x: expLabels,
+            y: hypotheses,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Anzahl Hypothesen',
+            line: { color: '#f0a500', width: 3 },
+            marker: { size: 8, color: '#f0a500' }
+        };
+        
+        const layout = {
+            title: { text: 'Je mehr Experimente, desto MEHR Hypothesen', font: { color: '#e0e0e0' } },
+            paper_bgcolor: '#1a1a2e',
+            plot_bgcolor: '#0f0f23',
+            font: { color: '#aaa' },
+            xaxis: { title: 'Anzahl Experimente', gridcolor: '#333', color: '#aaa' },
+            yaxis: { title: 'Anzahl Hypothesen', gridcolor: '#333', color: '#aaa' },
+            margin: { t: 50 },
+            annotations: experiments > 3 ? [{
+                x: expLabels[expLabels.length - 1],
+                y: hypotheses[hypotheses.length - 1],
+                text: 'Wissenschaft entfernt sich\nvon der "einen Wahrheit"!',
+                showarrow: true,
+                arrowhead: 2,
+                arrowcolor: '#e74c3c',
+                font: { color: '#e74c3c', size: 12 }
+            }] : []
+        };
+        
+        Plotly.newPlot('plotly-hypothesis', [trace], layout, { responsive: true });
+    }
+    
+    plotHypothesis();
+    
+    document.getElementById('addExperiment').addEventListener('click', () => {
+        experiments++;
+        const lastH = hypotheses[hypotheses.length - 1];
+        const newH = lastH + Math.floor(Math.random() * 4) + 2;
+        hypotheses.push(newH);
+        expLabels.push(experiments);
+        document.getElementById('hypoCount').textContent = `Hypothesen: ${newH}`;
+        plotHypothesis();
+    });
+    
+    document.getElementById('resetHypothesis').addEventListener('click', () => {
+        experiments = 0;
+        hypotheses = [3];
+        expLabels = [0];
+        document.getElementById('hypoCount').textContent = 'Hypothesen: 3';
+        plotHypothesis();
+    });
+})();
+</script>
+
+</body>
+</html>
