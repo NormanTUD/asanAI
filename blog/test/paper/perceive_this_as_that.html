@@ -1,0 +1,2530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceive This as That — Interactive Visual Explainer</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin: 20px 0 10px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 { font-size: 1.2em; color: #9b8ec4; margin: 15px 0 8px; }
+        .section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .key-idea {
+            background: linear-gradient(135deg, #1a1a3e, #2a1a4e);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        canvas {
+            display: block;
+            margin: 15px auto;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .interactive-area {
+            background: #0d0d20;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        button.active {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        .math-block {
+            background: #1a1a3e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .perception-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+        .perception-table th, .perception-table td {
+            border: 1px solid #333;
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .perception-table th {
+            background: #1a1a4a;
+            color: #9b8ec4;
+        }
+        .perception-table td { background: #0d0d20; }
+        .val-t { color: #4caf50; font-weight: bold; }
+        .val-f { color: #f44336; font-weight: bold; }
+        .val-u { color: #ff9800; font-weight: bold; }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        input[type="range"] {
+            flex: 1;
+            accent-color: #667eea;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dashed #667eea;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #1a1a4a;
+            color: #e0e0e0;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            border: 1px solid #667eea;
+        }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 15px 0;
+        }
+        .nav-tabs button { font-size: 12px; padding: 8px 14px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .flow-box {
+            background: linear-gradient(135deg, #1a1a4a, #2a2a5a);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .flow-arrow {
+            font-size: 24px;
+            color: #667eea;
+        }
+        #morphism-canvas, #pullback-canvas, #factorization-canvas {
+            background: #0a0a1a;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .highlight { color: #f093fb; font-weight: bold; }
+        p { margin: 8px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Perceive This as That</h1>
+        <p style="text-align:center; color:#9b8ec4; margin-bottom:30px;">
+            An interactive visual guide to analogies, artificial perception & category theory<br>
+            <em>Based on Arzi-Gonczarowski (1999)</em>
+        </p>
+
+        <!-- SECTION 1: Core Idea -->
+        <div class="section">
+            <h2>1. The Big Picture</h2>
+            <div class="key-idea">
+                <strong>Core Thesis:</strong> Analogies, metaphors, and other cognitive transitions can be formalized 
+                using <em>category theory</em> — a branch of mathematics that studies structure-preserving mappings between objects.
+            </div>
+            <p>The paper builds a <span class="highlight">Category of Artificial Perceptions (Prc)</span> where:</p>
+            <div class="flow-diagram">
+                <div class="flow-box">
+                    <strong>Objects</strong><br>Perceptions
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>Arrows</strong><br>P-morphisms<br>(cognitive transitions)
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>Constructs</strong><br>Products, Pullbacks,<br>Factorizations
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: What is a Perception? -->
+        <div class="section">
+            <h2>2. What is a Perception?</h2>
+            <div class="math-block" id="math-perception-def"></div>
+            <p>A perception is a triple consisting of:</p>
+            <div class="grid-2">
+                <div class="interactive-area">
+                    <h3>Components</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>🌍 <strong>E</strong> — World elements (things in the environment)</li>
+                        <li>🧠 <strong>I</strong> — Connotations (internal representations)</li>
+                        <li>🔗 <strong>ρ</strong> — Perception predicate (3-valued link)</li>
+                    </ul>
+                    <div class="math-block" id="math-predicate"></div>
+                </div>
+                <div class="interactive-area">
+                    <h3>The Three Values</h3>
+                    <canvas id="three-val-canvas" width="300" height="200"></canvas>
+                    <div class="legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div> t (true/has)</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#f44336"></div> f (false/lacks)</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#ff9800"></div> u (undefined)</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Interactive Perception Builder</h3>
+            <div class="interactive-area">
+                <p>Click cells to cycle through values (t → f → u → t):</p>
+                <table class="perception-table" id="custom-perception">
+                    <thead>
+                        <tr>
+                            <th>E \ I</th>
+                            <th>Connotation α</th>
+                            <th>Connotation β</th>
+                            <th>Connotation γ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>w₁</th>
+                            <td class="val-t" onclick="cycleVal(this)">t</td>
+                            <td class="val-f" onclick="cycleVal(this)">f</td>
+                            <td class="val-u" onclick="cycleVal(this)">u</td>
+                        </tr>
+                        <tr>
+                            <th>w₂</th>
+                            <td class="val-f" onclick="cycleVal(this)">f</td>
+                            <td class="val-t" onclick="cycleVal(this)">t</td>
+                            <td class="val-t" onclick="cycleVal(this)">t</td>
+                        </tr>
+                        <tr>
+                            <th>w₃</th>
+                            <td class="val-u" onclick="cycleVal(this)">u</td>
+                            <td class="val-u" onclick="cycleVal(this)">u</td>
+                            <td class="val-f" onclick="cycleVal(this)">f</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Camera-Eye Analogy -->
+        <div class="section">
+            <h2>3. The Camera–Eye Analogy</h2>
+            <p>The paper's central example: a camera and an eye are analogous optical systems.</p>
+            
+            <div class="interactive-area">
+                <h3>Perception Matrices</h3>
+                <div class="nav-tabs">
+                    <button class="active" onclick="showTab('cam-tab', this)">Camera P<sub>Cam</sub></button>
+                    <button onclick="showTab('eye-tab', this)">Eye P<sub>Eye</sub></button>
+                    <button onclick="showTab('both-tab', this)">Side by Side</button>
+                </div>
+                
+                <div id="cam-tab" class="tab-content active">
+                    <table class="perception-table">
+                        <thead><tr><th>E<sub>Cam</sub> \ I</th><th>Regulate light</th><th>Light sensitive</th><th>Adjust focus</th><th>Refract</th><th>Dynamic change</th><th>Control other</th></tr></thead>
+                        <tbody>
+                            <tr><th>outside actions</th><td class="val-t">t</td><td class="val-u">u</td><td class="val-t">t</td><td class="val-u">u</td><td class="val-t">t</td><td class="val-t">t</td></tr>
+                            <tr><th>shutter</th><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-t">t</td></tr>
+                            <tr><th>aperture</th><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-f">f</td></tr>
+                            <tr><th>film</th><td class="val-f">f</td><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td></tr>
+                            <tr><th>camera lens</th><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td></tr>
+                            <tr><th>lens-film dist.</th><td class="val-f">f</td><td class="val-u">u</td><td class="val-t">t</td><td class="val-u">u</td><td class="val-t">t</td><td class="val-f">f</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="eye-tab" class="tab-content">
+                    <table class="perception-table">
+                        <thead><tr><th>E<sub>Eye</sub> \ I</th><th>Regulate light</th><th>Light sensitive</th><th>Adjust focus</th><th>Refract</th><th>Dynamic change</th><th>Control other</th></tr></thead>
+                        <tbody>
+                            <tr><th>brain stem reflexes</th><td class="val-t">t</td><td class="val-u">u</td><td class="val-t">t</td><td class="val-u">u</td><td class="val-t">t</td><td class="val-t">t</td></tr>
+                            <tr><th>iris</th><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-t">t</td></tr>
+                            <tr><th>pupil</th><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-f">f</td></tr>
+                            <tr><th>retina</th><td class="val-f">f</td><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td></tr>
+                            <tr><th>cornea</th><td class="val-f">f</td><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-f">f</td><td class="val-f">f</td></tr>
+                            <tr><th>eye lens+muscle</th><td class="val-f">f</td><td class="val-f">f</td><td class="val-t">t</td><td class="val-t">t</td><td class="val-t">t</td><td class="val-f">f</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="both-tab" class="tab-content">
+                    <div id="heatmap-plot" style="width:100%;height:400px;"></div>
+                </div>
+            </div>
+
+            <div class="interactive-area">
+                <h3>The P-Morphism (Analogy Arrow)</h3>
+                <p>The mapping <strong>h : P<sub>Cam</sub> → P<sub>Eye</sub></strong> preserves structure ("no-blur" condition):</p>
+                <canvas id="morphism-canvas" width="900" height="350"></canvas>
+                <div class="key-idea">
+                    <strong>No-blur condition:</strong> Whenever ρ₁(w, ι) ≠ u, then ρ₂(h(w), h(ι)) = ρ₁(w, ι).<br>
+                    Defined values are preserved; only undefined values may change.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: Types of P-morphisms -->
+        <div class="section">
+            <h2>4. Types of Cognitive Transitions</h2>
+            <canvas id="types-canvas" width="900" height="300"></canvas>
+            <div class="grid-2">
+                <div class="interactive-area">
+                    <h3>Interpretive (Prc<sub>E</sub>)</h3>
+                    <p>Same environment, different connotations.<br>
+                    <em>Example: Two people perceive the same bookstore differently.</em></p>
+                </div>
+                <div class="interactive-area">
+                    <h3>Literal-Analogical (Prc<sub>I</sub>)</h3>
+                    <p>Same connotations, different environments.<br>
+                    <em>Example: Camera → Eye (same functional properties, different parts).</em></p>
+                </div>
+            </div>
+            <div class="interactive-area" style="margin-top:15px;">
+                <h3>Pure Improvement</h3>
+                <p>Same E, same I, but ρ becomes more defined (u → t or u → f).<br>
+                <em>Example: Peeking at a magazine cover to check if it's the December issue.</em></p>
+            </div>
+        </div>
+
+        <!-- SECTION 5: Factorization = Metaphors -->
+        <div class="section">
+            <h2>5. Metaphors as Factorizations of Analogies</h2>
+            <div class="key-idea">
+                <strong>Key Insight:</strong> Every analogy (p-morphism) can be <em>factored</em> into two steps — 
+                producing an intermediate <span class="highlight">metaphorical perception</span>.
+            </div>
+            
+            <canvas id="factorization-canvas" width="900" height="400"></canvas>
+            
+            <div class="nav-tabs">
+                <button class="active" onclick="showTab('ie-factor', this)">I-E Factorization</button>
+                <button onclick="showTab('ei-factor', this)">E-I Factorization</button>
+            </div>
+            
+            <div id="ie-factor" class="tab-content active">
+                <div class="flow-diagram">
+                    <div class="flow-box">P₁<br><small>E₁, I₁</small></div>
+                    <div class="flow-arrow">→<br><small>h<sub>I-first</sub></small></div>
+                    <div class="flow-box" style="border-color:#f093fb;">P<sup>I-metaphors</sup><br><small>E₁, h(I₁)</small></div>
+                    <div class="flow-arrow">→<br><small>h<sub>E-last</sub></small></div>
+                    <div class="flow-box">P₂<br><small>E₂, I₂</small></div>
+                </div>
+                <p>First change connotations (interpretation), then change environment (analogy).<br>
+                Result: <em>"Perceive camera parts with eye-terminology"</em> — e.g., calling the aperture a "pupil".</p>
+            </div>
+            
+            <div id="ei-factor" class="tab-content">
+                <div class="flow-diagram">
+                    <div class="flow-box">P₁<br><small>E₁, I₁</small></div>
+                    <div class="flow-arrow">→<br><small>h<sub>E-first</sub></small></div>
+                    <div class="flow-box" style="border-color:#f093fb;">P<sup>E-metaphors</sup><br><small>h(E₁), I₁</small></div>
+                    <div class="flow-arrow">→<br><small>h<sub>I-last</sub></small></div>
+                    <div class="flow-box">P₂<br><small>E₂, I₂</small></div>
+                </div>
+                <p>First change environment (analogy), then change connotations (interpretation).<br>
+                Result: <em>"Perceive eye parts with camera-terminology"</em> — e.g., calling the retina a "film".</p>
+            </div>
+            
+            <div class="key-idea" style="margin-top:15px;">
+                <strong>Circumscription of Metaphors:</strong> The factorization is "minimally unblurred" — 
+                metaphors cannot become arbitrarily far-fetched. The formalism rigorously bounds how far a metaphor can be carried.
+            </div>
+        </div>
+
+        <!-- SECTION 6: Structural Alignment -->
+        <div class="section">
+            <h2>6. Structural Alignment & Monotonicity</h2>
+            <p>Good analogies preserve not just individual features but <em>structural relationships</em> between them.</p>
+            
+            <div class="grid-2">
+                <div class="interactive-area">
+                    <h3>Subjacency (on E)</h3>
+                    <div class="math-block" id="math-subjacency"></div>
+                    <p><em>x is subjacent to y</em> means: every connotation x has, y also has.</p>
+                </div>
+                <div class="interactive-area">
+                    <h3>Subsumption (on I)</h3>
+                    <div class="math-block" id="math-subsumption"></div>
+                    <p><em>ι subsumes κ</em> means: every w-element with ι also has κ.</p>
+                </div>
+            </div>
+            
+            <div class="interactive-area">
+                <h3>Interactive: Explore Structure in Camera & Eye</h3>
+                <div id="structure-plot" style="width:100%;height:400px;"></div>
+                <div class="nav-tabs">
+                    <button class="active" onclick="showStructure('camera')">Camera Subjacency</button>
+                    <button onclick="showStructure('eye')">Eye Subjacency</button>
+                    <button onclick="showStructure('connotation')">Connotation Subsumption</button>
+                </div>
+            </div>
+            
+            <div class="key-idea">
+                <strong>Monotone p-morphism:</strong> Preserves both subjacency and subsumption orderings. 
+                The camera-eye analogy is <em>not</em> fully monotone — it "slips" at the lens-film distance ↔ eye lens mapping, 
+                precisely where the analogy breaks down (different focusing mechanisms).
+            </div>
+        </div>
+
+        <!-- SECTION 7: Pullbacks -->
+        <div class="section">
+            <h2>7. Pullbacks: Abstracting a Superordinate Schema</h2>
+            <div class="key-idea">
+                <strong>Key Idea:</strong> Given two analogous perceptions, we can construct a <em>superordinate perception</em> 
+                (abstract schema) that captures their common essence while blurring away differences.
+            </div>
+            
+            <canvas id="pullback-canvas" width="900" height="400"></canvas>
+            
+            <div class="interactive-area">
+                <h3>The Process</h3>
+                <div class="flow-diagram">
+                    <div class="flow-box">P<sub>Cam</sub></div>
+                    <div class="flow-arrow">←<br><small>g₁</small></div>
+                    <div class="flow-box" style="border-color:#4caf50; background:linear-gradient(135deg,#1a3a1a,#2a4a2a);">
+                        P<sub>Cam</sub> ⊔ P<sub>Eye</sub><br><small>"Image Generating System"</small>
+                    </div>
+                    <div class="flow-arrow">→<br><small>g₂</small></div>
+                    <div class="flow-box">P<sub>Eye</sub></div>
+                </div>
+                
+                <p><strong>Step 1:</strong> Form the product P<sub>Cam</sub> × P<sub>Eye</sub> (match everything with everything)</p>
+                <p><strong>Step 2:</strong> Select only pairs that feature "perceptible connaturalness" (the pullback/equalizer)</p>
+                <p><strong>Result:</strong> An abstract "image generating system" with components like (shutter, iris), (film, retina), etc.</p>
+            </div>
+            
+            <div class="interactive-area">
+                <h3>Interactive: Superordinate Perception</h3>
+                <p>Toggle which pairs to include in the abstract schema:</p>
+                <div id="pullback-controls"></div>
+                <div id="pullback-result"></div>
+            </div>
+            
+            <div class="key-idea">
+                <strong>Theorem 25:</strong> The projection l-analogies from the superordinate perception are always <em>monotone</em>. 
+                The abstraction process removes exactly the problematic structure that couldn't be aligned.
+            </div>
+        </div>
+
+        <!-- SECTION 8: Summary Diagram -->
+        <div class="section">
+            <h2>8. The Unified Theory — Everything Connected</h2>
+            <div id="summary-plot" style="width:100%;height:500px;"></div>
+            <div class="key-idea">
+                <strong>Unification:</strong> The same categorical primitives (E, I, ρ, p-morphisms) formalize:
+                <ul style="margin-top:8px; padding-left:20px;">
+                    <li>Analogies (literal-analogical p-morphisms)</li>
+                    <li>Interpretations (interpretive p-morphisms)</li>
+                    <li>Metaphors (factorizations of analogies)</li>
+                    <li>Generalizations (pullback constructions)</li>
+                    <li>Classification & organization (Boolean perceptions)</li>
+                    <li>Creative design (natural transformations)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Render math expressions
+        function renderMath() {
+            const mathDefs = {
+                'math-perception-def': 'P = \\langle E, I, \\rho \\rangle \\quad \\text{where } E \\cap I = \\emptyset',
+                'math-predicate': '\\rho : E \\times I \\to \\{t, f, u\\}',
+                'math-subjacency': 'x \\sqsubseteq y \\iff \\forall \\iota \\in I: \\rho(x,\\iota)=t \\Rightarrow \\rho(y,\\iota)=t \\text{ and } \\rho(y,\\iota)=f \\Rightarrow \\rho(x,\\iota)=f',
+                'math-subsumption': '\\iota \\sqsubseteq \\kappa \\iff \\forall w \\in E: \\rho(w,\\iota)=t \\Rightarrow \\rho(w,\\kappa)=t \\text{ and } \\rho(w,\\kappa)=f \\Rightarrow \\rho(w,\\iota)=f'
+            };
+            for (const [id, tex] of Object.entries(mathDefs)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerHTML = temml.renderToString(tex, { displayMode: true });
+                }
+            }
+        }
+
+        // Three-value canvas
+        function drawThreeValues() {
+            const canvas = document.getElementById('three-val-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            
+            const vals = [
+                { label: 't (true)', color: '#4caf50', desc: 'w HAS ι', x: 50 },
+                { label: 'f (false)', color: '#f44336', desc: 'w LACKS ι', x: 150 },
+                { label: 'u (undef)', color: '#ff9800', desc: 'unknown', x: 250 }
+            ];
+            
+            vals.forEach(v => {
+                ctx.fillStyle = v.color;
+                ctx.beginPath();
+                ctx.arc(v.x, 60, 30, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v.label, v.x, 65);
+                
+                ctx.fillStyle = '#aaa';
+                ctx.font = '12px sans-serif';
+                ctx.fillText(v.desc, v.x, 110);
+            });
+            
+            // Draw example
+            ctx.fillStyle = '#667eea';
+            ctx.font = '13px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Example: ρ(film, light_sensitive) = t', 30, 160);
+            ctx.fillText('Example: ρ(film, regulate_light) = f', 30, 180);
+            ctx.fillText('Example: ρ(lens-film dist, refract) = u', 30, 200);
+        }
+
+        // Cycle perception table values
+        function cycleVal(cell) {
+            const cycle = { 't': 'f', 'f': 'u', 'u': 't' };
+            const classes = { 't': 'val-t', 'f': 'val-f', 'u': 'val-u' };
+            const current = cell.textContent;
+            const next = cycle[current];
+            cell.textContent = next;
+            cell.className = classes[next];
+        }
+
+        // Tab switching
+        function showTab(tabId, btn) {
+            const parent = btn.parentElement;
+            const section = parent.parentElement;
+            
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            section.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            if (tabId === 'both-tab') drawHeatmap();
+        }
+
+        // Heatmap comparison
+        function drawHeatmap() {
+            const connotations = ['Regulate light', 'Light sensitive', 'Adjust focus', 'Refract', 'Dynamic change', 'Control other'];
+            const camElements = ['outside actions', 'shutter', 'aperture', 'film', 'camera lens', 'lens-film dist.'];
+            const eyeElements = ['brain stem reflexes', 'iris', 'pupil', 'retina', 'cornea', 'eye lens+muscle'];
+            
+            // t=1, f=-1, u=0
+            const camData = [
+                [1, 0, 1, 0, 1, 1],
+                [1, -1, -1, -1, 1, 1],
+                [1, -1, -1, -1, 1, -1],
+                [-1, 1, -1, -1, -1, -1],
+                [-1, -1, -1, 1, -1, -1],
+                [-1, 0, 1, 0, 1, -1]
+            ];
+            const eyeData = [
+                [1, 0, 1, 0, 1, 1],
+                [1, -1, -1, -1, 1, 1],
+                [1, -1, -1, -1, 1, -1],
+                [-1, 1, -1, -1, -1, -1],
+                [-1, -1, -1, 1, -1, -1],
+                [-1, -1, 1, 1, 1, -1]
+            ];
+            
+            const trace1 = {
+                z: camData,
+                x: connotations,
+                y: camElements,
+                type: 'heatmap',
+                colorscale: [[-1, '#f44336'], [0, '#ff9800'], [1, '#4caf50']],
+                zmin: -1, zmax: 1,
+                xaxis: 'x1', yaxis: 'y1',
+                showscale: false,
+                name: 'Camera'
+            };
+            
+            const trace2 = {
+                z: eyeData,
+                x: connotations,
+                y: eyeElements,
+                type: 'heatmap',
+                colorscale: [[-1, '#f44336'], [0, '#ff9800'], [1, '#4caf50']],
+                zmin: -1, zmax: 1,
+                xaxis: 'x2', yaxis: 'y2',
+                showscale: false,
+                name: 'Eye'
+            };
+            
+            const layout = {
+                grid: { rows: 1, columns: 2, pattern: 'independent' },
+                annotations: [
+                    { text: 'P_Cam', x: 0.2, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { size: 16, color: '#667eea' } },
+                    { text: 'P_Eye', x: 0.8, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { size: 16, color: '#667eea' } }
+                ],
+                paper_bgcolor: '#0d0d20',
+                plot_bgcolor: '#0d0d20',
+                font: { color: '#e0e0e0', size: 10 },
+                margin: { t: 50, b: 80, l: 120, r: 20 }
+            };
+            
+            Plotly.newPlot('heatmap-plot', [trace1, trace2], layout, { responsive: true });
+        }
+
+        // Morphism canvas - Camera to Eye mapping
+        function drawMorphismCanvas() {
+            const canvas = document.getElementById('morphism-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            
+            const camParts = ['outside actions', 'shutter', 'aperture', 'film', 'camera lens', 'lens-film dist.'];
+            const eyeParts = ['brain stem reflexes', 'iris', 'pupil', 'retina', 'cornea', 'eye lens+muscle'];
+            const colors = ['#667eea', '#f093fb', '#4caf50', '#ff9800', '#00bcd4', '#f44336'];
+            
+            const leftX = 120, rightX = w - 120;
+            const startY = 40, gap = 50;
+            
+            // Title
+            ctx.fillStyle = '#9b8ec4';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('h : P_Cam → P_Eye', w / 2, 25);
+            
+            camParts.forEach((part, i) => {
+                const y = startY + i * gap;
+                
+                // Left box (Camera)
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(20, y - 12, 200, 28, 6);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(part, 120, y + 5);
+                
+                // Right box (Eye)
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = colors[i];
+                ctx.beginPath();
+                ctx.roundRect(w - 220, y - 12, 200, 28, 6);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e0e0e0';
+                ctx.fillText(eyeParts[i], w - 120, y + 5);
+                
+                // Arrow
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 3]);
+                ctx.beginPath();
+                ctx.moveTo(220, y);
+                ctx.lineTo(w - 220, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Arrowhead
+                ctx.fillStyle = colors[i];
+                ctx.beginPath();
+                ctx.moveTo(w - 220, y);
+                ctx.lineTo(w - 230, y - 5);
+                ctx.lineTo(w - 230, y + 5);
+                ctx.closePath();
+                ctx.fill();
+            });
+            
+            // Highlight non-rigid mapping
+            ctx.fillStyle = '#f44336';
+            ctx.font = 'italic 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚠ Not rigid: u→f (light sensitive), u→t (refract)', w / 2, h - 20);
+            
+            // Labels
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('E_Cam', 120, h - 5);
+            ctx.fillText('E_Eye', w - 120, h - 5);
+        }
+
+        // Types of p-morphisms canvas
+        function drawTypesCanvas() {
+            const canvas = document.getElementById('types-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            
+            const sections = [
+                { x: 50, label: 'Prc_E (Interpretive)', desc: 'Same E, different I', color: '#667eea', icon: '🧠' },
+                { x: 350, label: 'Prc_I (L-Analogy)', desc: 'Same I, different E', color: '#f093fb', icon: '🌍' },
+                { x: 650, label: 'Pure Improvement', desc: 'Same E, same I, less u', color: '#4caf50', icon: '🔍' }
+            ];
+            
+            sections.forEach(s => {
+                // Box
+                ctx.fillStyle = '#12122a';
+                ctx.strokeStyle = s.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(s.x, 30, 220, 220, 12);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Icon
+                ctx.font = '36px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(s.icon, s.x + 110, 80);
+                
+                // Label
+                ctx.fillStyle = s.color;
+                ctx.font = 'bold 13px sans-serif';
+                ctx.fillText(s.label, s.x + 110, 115);
+                
+                // Description
+                ctx.fillStyle = '#aaa';
+                ctx.font = '12px sans-serif';
+                ctx.fillText(s.desc, s.x + 110, 140);
+                
+                // Mini diagram
+                ctx.strokeStyle = s.color;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 2]);
+                
+                if (s.icon === '🧠') {
+                    // Same E, different I
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fillRect(s.x + 40, 165, 60, 20);
+                    ctx.fillRect(s.x + 120, 165, 60, 20);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px sans-serif';
+                    ctx.fillText('I₁', s.x + 70, 179);
+                    ctx.fillText('I₂', s.x + 150, 179);
+                    ctx.fillStyle = '#ff9800';
+                    ctx.fillRect(s.x + 80, 200, 60, 20);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillText('E (same)', s.x + 110, 214);
+                } else if (s.icon === '🌍') {
+                    ctx.fillStyle = '#ff9800';
+                    ctx.fillRect(s.x + 40, 165, 60, 20);
+                    ctx.fillRect(s.x + 120, 165, 60, 20);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px sans-serif';
+                    ctx.fillText('E₁', s.x + 70, 179);
+                    ctx.fillText('E₂', s.x + 150, 179);
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fillRect(s.x + 80, 200, 60, 20);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillText('I (same)', s.x + 110, 214);
+                } else {
+                    ctx.fillStyle = '#ff9800';
+                    ctx.fillRect(s.x + 50, 165, 50, 20);
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fillRect(s.x + 120, 165, 50, 20);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px sans-serif';
+                    ctx.fillText('u→t/f', s.x + 75, 179);
+                    ctx.fillText('defined', s.x + 145, 179);
+                    ctx.beginPath();
+                    ctx.moveTo(s.x + 100, 175);
+                    ctx.lineTo(s.x + 120, 175);
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
+            });
+        }
+
+        // Factorization canvas
+        function drawFactorizationCanvas() {
+            const canvas = document.getElementById('factorization-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            
+            // I-E factorization (top)
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('I-E Factorization (change connotations first)', w / 2, 25);
+            
+            // Boxes
+            const boxes = [
+                { x: 80, y: 70, w: 160, h: 60, label: 'P₁ = ⟨E₁, I₁, ρ₁⟩', sub: 'Camera', color: '#667eea' },
+                { x: 370, y: 70, w: 180, h: 60, label: 'P^{I-met} = ⟨E₁, h(I₁), ρ⟩', sub: '"Camera with eye-terms"', color: '#f093fb' },
+                { x: 680, y: 70, w: 160, h: 60, label: 'P₂ = ⟨E₂, I₂, ρ₂⟩', sub: 'Eye', color: '#667eea' }
+            ];
+            
+            boxes.forEach(b => {
+                ctx.fillStyle = '#12122a';
+                ctx.strokeStyle = b.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(b.x, b.y, b.w, b.h, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(b.label, b.x + b.w / 2, b.y + 25);
+                ctx.fillStyle = '#9b8ec4';
+                ctx.font = 'italic 11px sans-serif';
+                ctx.fillText(b.sub, b.x + b.w / 2, b.y + 45);
+            });
+            
+            // Arrows top
+            drawArrow(ctx, 240, 100, 370, 100, '#4caf50', 'h_I-first');
+            drawArrow(ctx, 550, 100, 680, 100, '#ff9800', 'h_E-last');
+            
+            // E-I factorization (bottom)
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('E-I Factorization (change environment first)', w / 2, 195);
+            
+            const boxes2 = [
+                { x: 80, y: 220, w: 160, h: 60, label: 'P₁ = ⟨E₁, I₁, ρ₁⟩', sub: 'Camera', color: '#667eea' },
+                { x: 370, y: 220, w: 180, h: 60, label: 'P^{E-met} = ⟨h(E₁), I₁, ρ⟩', sub: '"Eye parts with cam-terms"', color: '#f093fb' },
+                { x: 680, y: 220, w: 160, h: 60, label: 'P₂ = ⟨E₂, I₂, ρ₂⟩', sub: 'Eye', color: '#667eea' }
+            ];
+            
+            boxes2.forEach(b => {
+                ctx.fillStyle = '#12122a';
+                ctx.strokeStyle = b.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(b.x, b.y, b.w, b.h, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(b.label, b.x + b.w / 2, b.y + 25);
+                ctx.fillStyle = '#9b8ec4';
+                ctx.font = 'italic 11px sans-serif';
+                ctx.fillText(b.sub, b.x + b.w / 2, b.y + 45);
+            });
+            
+            // Arrows bottom
+            drawArrow(ctx, 240, 250, 370, 250, '#ff9800', 'h_E-first');
+            drawArrow(ctx, 550, 250, 680, 250, '#4caf50', 'h_I-last');
+            
+            // Direct arrow
+            ctx.strokeStyle = '#f44336';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(160, 130);
+            ctx.quadraticCurveTo(450, 180, 760, 130);
+            ctx.stroke();
+            ctx.moveTo(160, 220);
+            ctx.quadraticCurveTo(450, 170, 760, 220);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.fillStyle = '#f44336';
+            ctx.font = 'italic 11px sans-serif';
+            ctx.fillText('direct h (full analogy)', w / 2, 170);
+            
+            // Key insight
+            ctx.fillStyle = '#4caf50';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Metaphorical ρ is "minimally unblurred" — circumscribes how far the metaphor can be carried', w / 2, h - 30);
+        }
+
+        function drawArrow(ctx, x1, y1, x2, y2, color, label) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            
+            // Arrowhead
+            const angle = Math.atan2(y2 - y1, x2 - x1);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - 10 * Math.cos(angle - 0.3), y2 - 10 * Math.sin(angle - 0.3));
+            ctx.lineTo(x2 - 10 * Math.cos(angle + 0.3), y2 - 10 * Math.sin(angle + 0.3));
+            ctx.closePath();
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = color;
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, (x1 + x2) / 2, y1 - 10);
+        }
+
+        // Pullback canvas
+        function drawPullbackCanvas() {
+            const canvas = document.getElementById('pullback-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            
+            const cx = w / 2, cy = h / 2;
+            
+            // Pullback diagram
+            const nodes = [
+                { x: cx, y: 60, label: 'P_Cam ⊔ P_Eye', sub: '(Superordinate)', color: '#4caf50' },
+                { x: cx - 250, y: 250, label: 'P_Cam', sub: '(Camera)', color: '#667eea' },
+                { x: cx + 250, y: 250, label: 'P_Eye', sub: '(Eye)', color: '#667eea' },
+                { x: cx, y: 350, label: 'Q', sub: '(trivial target)', color: '#555' },
+                { x: cx - 350, y: 60, label: 'Any P', sub: '(universal property)', color: '#ff9800' }
+            ];
+            
+            nodes.forEach(n => {
+                ctx.fillStyle = '#12122a';
+                ctx.strokeStyle = n.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(n.x - 70, n.y - 20, 140, 50, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(n.label, n.x, n.y + 5);
+                ctx.fillStyle = '#9b8ec4';
+                ctx.font = 'italic 10px sans-serif';
+                ctx.fillText(n.sub, n.x, n.y + 22);
+            });
+            
+            // Arrows
+            drawArrow(ctx, cx - 50, 80, cx - 220, 230, '#4caf50', 'g₁ (monotone)');
+            drawArrow(ctx, cx + 50, 80, cx + 220, 230, '#4caf50', 'g₂ (monotone)');
+            drawArrow(ctx, cx - 200, 270, cx - 30, 330, '#667eea', 'f₁');
+            drawArrow(ctx, cx + 200, 270, cx + 30, 330, '#667eea', 'f₂');
+            
+            // Universal property arrow (dashed)
+            ctx.strokeStyle = '#ff9800';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 3]);
+            ctx.beginPath();
+            ctx.moveTo(cx - 280, 60);
+            ctx.lineTo(cx - 70, 60);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ff9800';
+            ctx.beginPath();
+            ctx.moveTo(cx - 70, 60);
+            ctx.lineTo(cx - 80, 55);
+            ctx.lineTo(cx - 80, 65);
+            ctx.closePath();
+            ctx.fill();
+            ctx.font = '10px sans-serif';
+            ctx.fillText('∃! δ', cx - 175, 52);
+        }
+
+        // Structure plot
+        function showStructure(type) {
+            let data, layout;
+            
+            if (type === 'camera') {
+                data = [{
+                    type: 'scatter',
+                    mode: 'markers+text',
+                    x: [2, 1, 1.5, 3, 3, 2],
+                    y: [4, 3, 2, 2, 1, 1],
+                    text: ['outside actions', 'shutter', 'aperture', 'lens-film dist', 'film', 'camera lens'],
+                    textposition: 'right',
+                    marker: { size: 14, color: '#667eea' },
+                    textfont: { color: '#e0e0e0', size: 11 }
+                }];
+                // Add edges for subjacency
+                const edges = [
+                    { from: [1.5, 2], to: [1, 3] },  // aperture ⊑ shutter
+                    { from: [1, 3], to: [2, 4] },     // shutter ⊑ outside actions
+                    { from: [3, 2], to: [2, 4] },     // lens-film dist ⊑ outside actions
+                ];
+                edges.forEach(e => {
+                    data.push({
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: [e.from[0], e.to[0]],
+                        y: [e.from[1], e.to[1]],
+                        line: { color: '#4caf50', width: 2 },
+                        showlegend: false
+                    });
+                });
+                layout = { title: { text: 'Camera: Subjacency (⊑) on E', font: { color: '#667eea' } } };
+            } else if (type === 'eye') {
+                data = [{
+                    type: 'scatter',
+                    mode: 'markers+text',
+                    x: [2, 1, 1.5, 3, 3, 2],
+                    y: [4, 3, 2, 2, 1, 1],
+                    text: ['brain stem reflexes', 'iris', 'pupil', 'eye lens+muscle', 'retina', 'cornea'],
+                    textposition: 'right',
+                    marker: { size: 14, color: '#f093fb' },
+                    textfont: { color: '#e0e0e0', size: 11 }
+                }];
+                const edges = [
+                    { from: [1.5, 2], to: [1, 3] },
+                    { from: [1, 3], to: [2, 4] },
+                ];
+                edges.forEach(e => {
+                    data.push({
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: [e.from[0], e.to[0]],
+                        y: [e.from[1], e.to[1]],
+                        line: { color: '#4caf50', width: 2 },
+                        showlegend: false
+                    });
+                });
+                // Non-monotone edge
+                data.push({
+                    type: 'scatter',
+                    mode: 'lines',
+                    x: [3, 2],
+                    y: [2, 4],
+                    line: { color: '#f44336', width: 2, dash: 'dash' },
+                    showlegend: false
+                });
+                layout = { title: { text: 'Eye: Subjacency — ⚠ eye lens ⋢ brain stem (non-monotone!)', font: { color: '#f093fb' } } };
+            } else {
+                data = [{
+                    type: 'scatter',
+                    mode: 'markers+text',
+                    x: [3, 1, 2, 4, 3, 5],
+                    y: [4, 2, 2, 2, 1, 1],
+                    text: ['dynamic change', 'regulate light', 'adjust focus', 'control other', 'light sensitive', 'refract'],
+                    textposition: 'top',
+                    marker: { size: 14, color: '#ff9800' },
+                    textfont: { color: '#e0e0e0', size: 11 }
+                }];
+                const edges = [
+                    { from: [1, 2], to: [3, 4] },
+                    { from: [2, 2], to: [3, 4] },
+                    { from: [4, 2], to: [3, 4] },
+                ];
+                edges.forEach(e => {
+                    data.push({
+                        type: 'scatter',
+                        mode: 'lines',
+                        x: [e.from[0], e.to[0]],
+                        y: [e.from[1], e.to[1]],
+                        line: { color: '#4caf50', width: 2 },
+                        showlegend: false
+                    });
+                });
+                layout = { title: { text: 'Connotation Subsumption (shared by Camera & Eye)', font: { color: '#ff9800' } } };
+            }
+            
+            layout = {
+                ...layout,
+                paper_bgcolor: '#0d0d20',
+                plot_bgcolor: '#0d0d20',
+                font: { color: '#e0e0e0' },
+                showlegend: false,
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false },
+                margin: { t: 50, b: 30, l: 30, r: 30 }
+            };
+            
+            Plotly.newPlot('structure-plot', data, layout, { responsive: true });
+        }
+
+        // Pullback interactive controls
+        function setupPullbackControls() {
+            const pairs = [
+                { cam: 'outside actions', eye: 'brain stem reflexes', valid: true },
+                { cam: 'shutter', eye: 'iris', valid: true },
+                { cam: 'aperture', eye: 'pupil', valid: true },
+                { cam: 'film', eye: 'retina', valid: true },
+                { cam: 'camera lens', eye: 'cornea', valid: true },
+                { cam: 'lens-film dist.', eye: 'eye lens+muscle', valid: true }
+            ];
+            
+            const container = document.getElementById('pullback-controls');
+            container.innerHTML = '';
+            
+            pairs.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'display:inline-block; margin:5px;';
+                const btn = document.createElement('button');
+                btn.textContent = `(${p.cam}, ${p.eye})`;
+                btn.className = p.valid ? 'active' : '';
+                btn.style.fontSize = '11px';
+                btn
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting with Bialgebras and Distributive Laws — Interactive Explainer</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin: 20px 0 10px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 { font-size: 1.2em; color: #9b8ec4; margin: 15px 0 8px; }
+        .section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .key-idea {
+            background: linear-gradient(135deg, #1a1a3e, #2a1a4e);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        canvas { display: block; margin: 15px auto; border-radius: 8px; }
+        .interactive-area {
+            background: #0d0d20;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        button.active {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        .math-block {
+            background: #1a1a3e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .flow-box {
+            background: linear-gradient(135deg, #1a1a4a, #2a2a5a);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .flow-arrow { font-size: 24px; color: #667eea; }
+        .highlight { color: #f093fb; font-weight: bold; }
+        p { margin: 8px 0; }
+        .nav-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin: 15px 0; }
+        .nav-tabs button { font-size: 12px; padding: 8px 14px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .sort-viz {
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 200px;
+            padding: 10px;
+            justify-content: center;
+        }
+        .sort-bar {
+            width: 30px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s, background 0.3s;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            padding-bottom: 4px;
+        }
+        .sort-bar.active-bar { background: linear-gradient(to top, #f093fb, #f5576c); }
+        .sort-bar.sorted { background: linear-gradient(to top, #4caf50, #66bb6a); }
+        .code-block {
+            background: #0a0a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre;
+            color: #b0b0d0;
+        }
+        .legend {
+            display: flex; gap: 15px; justify-content: center;
+            margin: 10px 0; flex-wrap: wrap; font-size: 13px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .slider-container { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+        input[type="range"] { flex: 1; accent-color: #667eea; }
+        .duality-table {
+            width: 100%; border-collapse: collapse; margin: 15px 0;
+        }
+        .duality-table th, .duality-table td {
+            border: 1px solid #333; padding: 10px; text-align: center;
+        }
+        .duality-table th { background: #1a1a4a; color: #9b8ec4; }
+        .duality-table td { background: #0d0d20; }
+        #swap-canvas, #bialgebra-canvas, #tree-canvas { background: #0a0a1a; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Sorting with Bialgebras & Distributive Laws</h1>
+    <p style="text-align:center; color:#9b8ec4; margin-bottom:30px;">
+        An interactive visual guide to the categorical structure of sorting algorithms<br>
+        <em>Based on Hinze, James, Harper, Wu & Magalhães (WGP'12)</em>
+    </p>
+
+    <!-- SECTION 1: Big Picture -->
+    <div class="section">
+        <h2>1. The Big Picture</h2>
+        <div class="key-idea">
+            <strong>Core Thesis:</strong> Sorting algorithms come in <span class="highlight">dual pairs</span>. 
+            Using <em>bialgebras</em> and <em>distributive laws</em> from category theory, we can formalize this duality 
+            and derive one algorithm from another <strong>for free</strong>.
+        </div>
+        <div class="flow-diagram">
+            <div class="flow-box"><strong>Fold</strong><br><small>consumes structure</small></div>
+            <div class="flow-arrow">⟷</div>
+            <div class="flow-box"><strong>Unfold</strong><br><small>produces structure</small></div>
+        </div>
+        <div class="flow-diagram">
+            <div class="flow-box"><strong>Insertion Sort</strong><br><small>fold (insert)</small></div>
+            <div class="flow-arrow">dual</div>
+            <div class="flow-box"><strong>Selection Sort</strong><br><small>unfold (select)</small></div>
+        </div>
+        <div class="math-block" id="math-fold-type"></div>
+        <div class="math-block" id="math-unfold-type"></div>
+    </div>
+
+    <!-- SECTION 2: Folds & Unfolds -->
+    <div class="section">
+        <h2>2. Folds & Unfolds — The Building Blocks</h2>
+        <div class="grid-2">
+            <div class="interactive-area">
+                <h3>Fold (Catamorphism)</h3>
+                <p>Consumes a data structure by replacing constructors with operations.</p>
+                <div class="math-block" id="math-fold-def"></div>
+                <canvas id="fold-canvas" width="400" height="250"></canvas>
+            </div>
+            <div class="interactive-area">
+                <h3>Unfold (Anamorphism)</h3>
+                <p>Produces a data structure from a seed value using a coalgebra.</p>
+                <div class="math-block" id="math-unfold-def"></div>
+                <canvas id="unfold-canvas" width="400" height="250"></canvas>
+            </div>
+        </div>
+        <div class="key-idea">
+            <strong>Key Insight:</strong> A sorting algorithm goes from <code>µList → νList̄</code> — 
+            consuming an unsorted list and producing a sorted one. This can be done as a 
+            <em>fold of an unfold</em> or an <em>unfold of a fold</em>.
+        </div>
+        <div class="math-block" id="math-sort-type"></div>
+    </div>
+
+    <!-- SECTION 3: The Swap -->
+    <div class="section">
+        <h2>3. The Swap — Computational Essence</h2>
+        <div class="key-idea">
+            <strong>Key Discovery:</strong> The "essence" of bubble sort and naïve insertion sort is a single 
+            natural transformation called <span class="highlight">swap</span> — it swaps two adjacent elements if they're out of order.
+        </div>
+        <div class="math-block" id="math-swap-type"></div>
+        
+        <div class="interactive-area">
+            <h3>Interactive: Watch swap in action</h3>
+            <p>Click "Step" to see one swap operation, or "Run" to sort completely:</p>
+            <div id="swap-viz" class="sort-viz"></div>
+            <div style="text-align:center; margin-top:10px;">
+                <button onclick="resetSwap()">Reset</button>
+                <button onclick="stepSwap()">Step</button>
+                <button onclick="runSwap()">Run</button>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#f093fb"></div> Comparing</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div> Sorted</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#667eea"></div> Unsorted</div>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>The swap function (Haskell)</h3>
+            <div class="code-block">swap :: List (List̄ x) → List̄ (List x)
+swap Nil              = Nil
+swap (Cons a Nil)     = Cons a Nil
+swap (Cons a (Cons b x))
+  | a ≤ b    = Cons a (Cons b x)   -- already in order
+  | otherwise = Cons b (Cons a x)   -- swap!</div>
+        </div>
+
+        <canvas id="swap-canvas" width="900" height="300"></canvas>
+        <p style="text-align:center; font-size:13px; color:#9b8ec4;">
+            The same <code>swap</code> gives rise to both bubble sort (unfold ∘ fold) and naïve insertion sort (fold ∘ unfold)
+        </p>
+    </div>
+
+    <!-- SECTION 4: Bialgebras & Duality -->
+    <div class="section">
+        <h2>4. Bialgebras — Two Sides of the Same Coin</h2>
+        <div class="key-idea">
+            A <span class="highlight">swap-bialgebra</span> is a triple ⟨X, a, c⟩ where <em>a</em> is an algebra, 
+            <em>c</em> is a coalgebra, and they are related by the distributive law <code>swap</code>:
+        </div>
+        <div class="math-block" id="math-bialgebra-law"></div>
+        
+        <canvas id="bialgebra-canvas" width="900" height="350"></canvas>
+        
+        <div class="interactive-area">
+            <h3>The Duality Diagram</h3>
+            <table class="duality-table">
+                <thead>
+                    <tr><th>Concept</th><th>One Side</th><th>Dual Side</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Recursion scheme</td><td>Fold (catamorphism)</td><td>Unfold (anamorphism)</td></tr>
+                    <tr><td>Data view</td><td>µF (least fixpoint)</td><td>νF (greatest fixpoint)</td></tr>
+                    <tr><td>Structure</td><td>Algebra (F A → A)</td><td>Coalgebra (A → F A)</td></tr>
+                    <tr><td>Bialgebra</td><td>Initial</td><td>Final</td></tr>
+                    <tr><td>Sorting (swap)</td><td>Naïve Insertion Sort</td><td>Bubble Sort</td></tr>
+                    <tr><td>Sorting (swop)</td><td>Insertion Sort</td><td>Selection Sort</td></tr>
+                    <tr><td>Trees (sprout)</td><td>Tree Sort (grow')</td><td>Quick Sort (grow)</td></tr>
+                    <tr><td>Heaps (pile)</td><td>Heap Sort</td><td>Mingle Sort</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="key-idea">
+            <strong>Theorem:</strong> <code>bubbleSort = naïveInsertSort</code>. They are the unique arrow 
+            from the initial to the final swap-bialgebra — just described differently!
+        </div>
+    </div>
+
+    <!-- SECTION 5: Para & Apomorphisms -->
+    <div class="section">
+        <h2>5. Para- & Apomorphisms — Efficiency Upgrade</h2>
+        <p>Plain folds/unfolds can't stop early or peek at remaining input. We need richer schemes:</p>
+        <div class="grid-2">
+            <div class="interactive-area">
+                <h3>Paramorphism</h3>
+                <p>Like a fold, but the algebra also sees the <em>remainder of the input</em> (like an as-pattern).</p>
+                <div class="math-block" id="math-para-type"></div>
+                <p><strong>Used for:</strong> Selection sort (select the minimum while keeping the rest)</p>
+            </div>
+            <div class="interactive-area">
+                <h3>Apomorphism</h3>
+                <p>Like an unfold, but can <em>stop early</em> — signal "I'm done, use this result directly".</p>
+                <div class="math-block" id="math-apo-type"></div>
+                <p><strong>Used for:</strong> Insertion sort (stop once element is in place)</p>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Insertion Sort with Early Stopping</h3>
+            <p>Watch how apomorphism-based insertion stops as soon as the element is placed correctly:</p>
+            <div id="insert-viz" class="sort-viz"></div>
+            <div style="text-align:center; margin-top:10px;">
+                <button onclick="resetInsert()">Reset</button>
+                <button onclick="stepInsert()">Step</button>
+                <button onclick="runInsert()">Run All</button>
+            </div>
+            <p id="insert-status" style="text-align:center; color:#9b8ec4; margin-top:8px;"></p>
+        </div>
+
+        <div class="math-block" id="math-swop-type"></div>
+        <p style="text-align:center; font-size:13px; color:#9b8ec4;">
+            <code>swop</code> is the enriched version of <code>swap</code> — "swap and stop"
+        </p>
+    </div>
+
+    <!-- SECTION 6: Tree Sorts -->
+    <div class="section">
+        <h2>6. Quicksort & Treesort — Two-Phase Algorithms</h2>
+        <div class="key-idea">
+            To beat O(n²), we use an <strong>intermediate data structure</strong> (binary search tree). 
+            The algorithm becomes two phases: build the tree, then flatten it.
+        </div>
+        
+        <div class="flow-diagram">
+            <div class="flow-box"><strong>µList</strong><br><small>unsorted list</small></div>
+            <div class="flow-arrow">→ grow</div>
+            <div class="flow-box" style="border-color:#4caf50;"><strong>SearchTree</strong><br><small>intermediate</small></div>
+            <div class="flow-arrow">→ flatten</div>
+            <div class="flow-box"><strong>νList̄</strong><br><small>sorted list</small></div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Build a Search Tree</h3>
+            <p>Click "Insert" to add elements one by one into the search tree:</p>
+            <canvas id="tree-canvas" width="900" height="300"></canvas>
+            <div style="text-align:center; margin-top:10px;">
+                <button onclick="resetTree()">Reset</button>
+                <button onclick="insertTree()">Insert Next</button>
+                <button onclick="buildFullTree()">Build All</button>
+                <button onclick="flattenTree()">Flatten (In-order)</button>
+            </div>
+            <p id="tree-status" style="text-align:center; color:#9b8ec4; margin-top:8px;"></p>
+        </div>
+
+        <div class="grid-2">
+            <div class="interactive-area">
+                <h3>Quicksort</h3>
+                <p><strong>Phase 1:</strong> Partition around pivots (unfold of fold)<br>
+                <strong>Phase 2:</strong> Append partitions together (fold of apo)</p>
+                <div class="code-block">quickSort = flatten · downcast · grow
+grow  = unfold (para pivot)
+flatten = fold (apo glue)</div>
+            </div>
+            <div class="interactive-area">
+                <h3>Treesort</h3>
+                <p><strong>Phase 1:</strong> Insert elements into tree (fold of apo)<br>
+                <strong>Phase 2:</strong> Extract elements in order (unfold of para)</p>
+                <div class="code-block">treeSort = flatten' · downcast · grow'
+grow'   = fold (apo treeIns)
+flatten' = unfold (para shear)</div>
+            </div>
+        </div>
+
+        <div class="key-idea">
+            <strong>Natural transformation <code>sprout</code></strong> captures the essence of both: 
+            pivot (for quicksort) and treeIns (for treesort) are derived from the same <code>sprout</code>!
+        </div>
+    </div>
+
+    <!-- SECTION 7: Heapsort -->
+    <div class="section">
+        <h2>7. Heapsort — Input-Insensitive Sorting</h2>
+        <div class="key-idea">
+            Quicksort/treesort degrade to O(n²) on bad inputs because search trees can become unbalanced. 
+            <strong>Heaps</strong> use a vertical (partial) ordering — guaranteeing O(n log n) always.
+        </div>
+
+        <div class="flow-diagram">
+            <div class="flow-box"><strong>µList</strong><br><small>unsorted</small></div>
+            <div class="flow-arrow">→ heapInsert</div>
+            <div class="flow-box" style="border-color:#ff9800;"><strong>Heap</strong><br><small>(Braun tree)</small></div>
+            <div class="flow-arrow">→ deleteMin</div>
+            <div class="flow-box"><strong>νList̄</strong><br><small>sorted</small></div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Heap Operations</h3>
+            <canvas id="heap-canvas" width="900" height="280"></canvas>
+            <div style="text-align:center; margin-top:10px;">
+                <button onclick="resetHeap()">Reset</button>
+                <button onclick="heapInsertStep()">Insert Next</button>
+                <button onclick="heapBuildAll()">Build Heap</button>
+                <button onclick="heapExtract()">Extract Min</button>
+            </div>
+            <p id="heap-status" style="text-align:center; color:#9b8ec4; margin-top:8px;"></p>
+        </div>
+
+        <div class="interactive-area">
+            <h3>The <code>pile</code> natural transformation</h3>
+            <div class="code-block">pile :: List (x × Heap x) → Heap (x + List x)
+pile Nil = ε
+pile (Cons a (t ε)) = (t▪) ⟨a⟩ (t▪)
+pile (Cons a (t (l ⟨b⟩ r)))
+  | a ≤ b = (▸(Cons b r)) ⟨a⟩ (l▪)   -- swap left/right
+  | otherwise = (▸(Cons a r)) ⟨b⟩ (l▪)   -- (Braun trick)</div>
+            <p><strong>Key choice:</strong> Always add to right, then swap left↔right → builds a balanced Braun tree!</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="interactive-area">
+                <h3>Heapsort</h3>
+                <div class="code-block">heapSort = unfold deleteMin
+         · downcast
+         · fold heapInsert</div>
+                <p>Build heap by insertion, extract by repeated deleteMin.</p>
+            </div>
+            <div class="interactive-area">
+                <h3>Minglesort (dual)</h3>
+                <div class="code-block">mingleSort = fold (apo blend)
+           · downcast
+           · unfold (fold divvy)</div>
+                <p>Divide list into balanced parts + min, then merge back. Like mergesort!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 8: Summary -->
+    <div class="section">
+        <h2>8. The Complete Picture</h2>
+        <div id="summary-plot" style="width:100%; height:500px;"></div>
+        
+        <div class="key-idea">
+            <strong>The Recipe:</strong>
+            <ol style="margin-top:8px; padding-left:20px;">
+                <li>Choose an intermediate data structure (List, Tree, Heap)</li>
+                <li>Define a <em>natural transformation</em> (swap, swop, sprout, pile, wither, sift)</li>
+                <li>Derive algebra + coalgebra from it</li>
+                <li>Get <strong>two dual sorting algorithms for free!</strong></li>
+            </ol>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Algorithm Complexity Summary</h3>
+            <table class="duality-table">
+                <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Dual Of</th></tr></thead>
+                <tbody>
+                    <tr><td>Bubble Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>Naïve Insertion</td></tr>
+                    <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>Selection Sort</td></tr>
+                    <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>Insertion Sort</td></tr>
+                    <tr><td>Quicksort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>Treesort</td></tr>
+                    <tr><td>Treesort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>Quicksort</td></tr>
+                    <tr><td>Heapsort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Minglesort</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// MATH RENDERING
+// ============================================================
+function renderMath() {
+    const mathBlocks = {
+        'math-fold-type': '\\text{fold} : (F\\,a \\to a) \\to \\mu F \\to a \\quad \\text{(consumes structure)}',
+        'math-unfold-type': '\\text{unfold} : (a \\to F\\,a) \\to a \\to \\nu F \\quad \\text{(produces structure)}',
+        'math-swap-type': '\\text{swap} : \\text{List}\\,(\\overline{\\text{List}}\\,x) \\to \\overline{\\text{List}}\\,(\\text{List}\\,x) \\quad \\text{(natural in } x\\text{)}',
+        'math-fold-def': '\\text{fold}\\; f = f \\cdot \\text{map}\\,(\\text{fold}\\; f) \\cdot \\text{in}^\\circ',
+        'math-unfold-def': '\\text{unfold}\\; f = \\text{out}^\\circ \\cdot \\text{map}\\,(\\text{unfold}\\; f) \\cdot f',
+        'math-sort-type': '\\text{sort} : \\mu\\text{List} \\to \\nu\\overline{\\text{List}}',
+        'math-bialgebra-law': 'c \\cdot a = \\text{map}\\;a \\cdot \\text{swap} \\cdot \\text{map}\\;c',
+        'math-para-type': '\\text{para} : (F\\,(\\mu F \\times a) \\to a) \\to \\mu F \\to a',
+        'math-apo-type': '\\text{apo} : (a \\to F\\,(\\nu F + a)) \\to a \\to \\nu F',
+        'math-swop-type': '\\text{swop} : \\text{List}\\,(x \\times \\overline{\\text{List}}\\,x) \\to \\overline{\\text{List}}\\,(x + \\text{List}\\,x)'
+    };
+    for (const [id, tex] of Object.entries(mathBlocks)) {
+        const el = document.getElementById(id);
+        if (el) {
+            try {
+                el.innerHTML = temml.renderToString(tex, { displayMode: true });
+            } catch(e) {
+                el.innerHTML = `<code>${tex}</code>`;
+            }
+        }
+    }
+}
+
+// ============================================================
+// SWAP VISUALIZATION (Bubble Sort)
+// ============================================================
+let swapArr = [7, 3, 9, 1, 5, 8, 2, 6, 4];
+let swapOriginal = [...swapArr];
+let swapI = 0, swapJ = 0, swapPass = 0;
+let swapSorted = 0;
+let swapRunning = false;
+
+function renderSwapViz() {
+    const container = document.getElementById('swap-viz');
+    container.innerHTML = '';
+    const max = Math.max(...swapArr);
+    swapArr.forEach((val, idx) => {
+        const bar = document.createElement('div');
+        bar.className = 'sort-bar';
+        if (idx >= swapArr.length - swapSorted) bar.className += ' sorted';
+        else if (idx === swapJ || idx === swapJ + 1) bar.className += ' active-bar';
+        bar.style.height = (val / max * 170) + 'px';
+        bar.textContent = val;
+        container.appendChild(bar);
+    });
+}
+
+function resetSwap() {
+    swapArr = [...swapOriginal];
+    swapI = 0; swapJ = 0; swapPass = 0; swapSorted = 0;
+    swapRunning = false;
+    renderSwapViz();
+}
+
+function stepSwap() {
+    if (swapSorted >= swapArr.length - 1) return;
+    if (swapJ >= swapArr.length - 1 - swapPass) {
+        swapPass++;
+        swapSorted++;
+        swapJ = 0;
+        renderSwapViz();
+        return;
+    }
+    if (swapArr[swapJ] > swapArr[swapJ + 1]) {
+        [swapArr[swapJ], swapArr[swapJ + 1]] = [swapArr[swapJ + 1], swapArr[swapJ]];
+    }
+    swapJ++;
+    renderSwapViz();
+}
+
+function runSwap() {
+    if (swapRunning) return;
+    swapRunning = true;
+    const interval = setInterval(() => {
+        if (swapSorted >= swapArr.length - 1) {
+            swapRunning = false;
+            clearInterval(interval);
+            return;
+        }
+        stepSwap();
+    }, 150);
+}
+
+// ============================================================
+// INSERTION SORT VISUALIZATION
+// ============================================================
+let insertArr = [7, 3, 9, 1, 5, 8, 2, 6, 4];
+let insertOriginal = [...insertArr];
+let insertPhase = 1; // which element we're inserting
+let insertPos = 0;   // current position being compared
+let insertRunning = false;
+
+function renderInsertViz() {
+    const container = document.getElementById('insert-viz');
+    container.innerHTML = '';
+    const max = Math.max(...insertArr);
+    insertArr.forEach((val, idx) => {
+        const bar = document.createElement('div');
+        bar.className = 'sort-bar';
+        if (idx < insertPhase && idx !== insertPos) bar.className += ' sorted';
+        else if (idx === insertPos || idx === insertPos - 1) bar.className += ' active-bar';
+        bar.style.height = (val / max * 170) + 'px';
+        bar.textContent = val;
+        container.appendChild(bar);
+    });
+    document.getElementById('insert-status').textContent = 
+        `Inserting element ${insertPhase} of ${insertArr.length - 1}`;
+}
+
+function resetInsert() {
+    insertArr = [...insertOriginal];
+    insertPhase = 1;
+    insertPos = 1;
+    insertRunning = false;
+    renderInsertViz();
+    document.getElementById('insert-status').textContent = '';
+}
+
+function stepInsert() {
+    if (insertPhase >= insertArr.length) {
+        document.getElementById('insert-status').textContent = 'Done! Array is sorted.';
+        return;
+    }
+    if (insertPos > 0 && insertArr[insertPos - 1] > insertArr[insertPos]) {
+        [insertArr[insertPos - 1], insertArr[insertPos]] = [insertArr[insertPos], insertArr[insertPos - 1]];
+        insertPos--;
+    } else {
+        // Early stop! (apomorphism behavior)
+        document.getElementById('insert-status').textContent = 
+            `Element placed! (early stop — apomorphism). Moving to next.`;
+        insertPhase++;
+        insertPos = insertPhase;
+    }
+    renderInsertViz();
+}
+
+function runInsert() {
+    if (insertRunning) return;
+    insertRunning = true;
+    const interval = setInterval(() => {
+        if (insertPhase >= insertArr.length) {
+            insertRunning = false;
+            clearInterval(interval);
+            document.getElementById('insert-status').textContent = 'Done! Array is sorted.';
+            return;
+        }
+        stepInsert();
+    }, 120);
+}
+
+// ============================================================
+// TREE VISUALIZATION
+// ============================================================
+let treeData = null;
+let treeElements = [5, 3, 8, 1, 4, 7, 9, 2, 6];
+let treeInsertIdx = 0;
+let flattenResult = [];
+
+function treeInsertNode(node, val) {
+    if (node === null) return { val: val, left: null, right: null };
+    if (val <= node.val) {
+        node.left = treeInsertNode(node.left, val);
+    } else {
+        node.right = treeInsertNode(node.right, val);
+    }
+    return node;
+}
+
+function drawTree() {
+    const canvas = document.getElementById('tree-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (!treeData) {
+        ctx.fillStyle = '#9b8ec4';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Empty tree — click "Insert Next" to begin', canvas.width / 2, 150);
+        ctx.fillStyle = '#667eea';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`Elements to insert: [${treeElements.slice(treeInsertIdx).join(', ')}]`, canvas.width / 2, 180);
+        return;
+    }
+    
+    function drawNode(node, x, y, spread) {
+        if (!node) return;
+        
+        // Draw edges first
+        if (node.left) {
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - spread, y + 60);
+            ctx.stroke();
+            drawNode(node.left, x - spread, y + 60, spread * 0.55);
+        }
+        if (node.right) {
+            ctx.strokeStyle = '#f093fb';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + spread, y + 60);
+            ctx.stroke();
+            drawNode(node.right, x + spread, y + 60, spread * 0.55);
+        }
+        
+        // Draw node
+        ctx.fillStyle = '#1a1a4a';
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.val, x, y);
+    }
+    
+    drawNode(treeData, canvas.width / 2, 35, 180);
+    
+    ctx.fillStyle = '#667eea';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    const remaining = treeElements.slice(treeInsertIdx);
+    ctx.fillText(`Remaining: [${remaining.join(', ')}]`, canvas.width / 2, canvas.height - 20);
+    
+    if (flattenResult.length > 0) {
+        ctx.fillStyle = '#4caf50';
+        ctx.fillText(`Flattened (in-order): [${flattenResult.join(', ')}]`, canvas.width / 2, canvas.height - 40);
+    }
+}
+
+function resetTree() {
+    treeData = null;
+    treeInsertIdx = 0;
+    flattenResult = [];
+    document.getElementById('tree-status').textContent = '';
+    drawTree();
+}
+
+function insertTree() {
+    if (treeInsertIdx >= treeElements.length) {
+        document.getElementById('tree-status').textContent = 'All elements inserted!';
+        return;
+    }
+    const val = treeElements[treeInsertIdx];
+    treeData = treeInsertNode(treeData, val);
+    treeInsertIdx++;
+    document.getElementById('tree-status').textContent = `Inserted ${val}`;
+    flattenResult = [];
+    drawTree();
+}
+
+function buildFullTree() {
+    while (treeInsertIdx < treeElements.length) {
+        treeData = treeInsertNode(treeData, treeElements[treeInsertIdx]);
+        treeInsertIdx++;
+    }
+    document.getElementById('tree-status').textContent = 'Full search tree built!';
+    flattenResult = [];
+    drawTree();
+}
+
+function flattenTree() {
+    if (!treeData) {
+        document.getElementById('tree-status').textContent = 'Build a tree first!';
+        return;
+    }
+    flattenResult = [];
+    function inOrder(node) {
+        if (!node) return;
+        inOrder(node.left);
+        flattenResult.push(node.val);
+        inOrder(node.right);
+    }
+    inOrder(treeData);
+    document.getElementById('tree-status').textContent = `Sorted! In-order traversal yields sorted list.`;
+    drawTree();
+}
+
+// ============================================================
+// HEAP VISUALIZATION
+// ============================================================
+let heapArr = [];
+let heapElements = [7, 3, 9, 1, 5, 8, 2, 6, 4];
+let heapInsertIdx = 0;
+let heapExtracted = [];
+
+function heapBubbleUp(arr, i) {
+    while (i > 0) {
+        const parent = Math.floor((i - 1) / 2);
+        if (arr[parent] > arr[i]) {
+            [arr[parent], arr[i]] = [arr[i], arr[parent]];
+            i = parent;
+        } else break;
+    }
+}
+
+function heapBubbleDown(arr, i) {
+    const n = arr.length;
+    while (true) {
+        let smallest = i;
+        const left = 2 * i + 1;
+        const right = 2 * i + 2;
+        if (left < n && arr[left] < arr[smallest]) smallest = left;
+        if (right < n && arr[right] < arr[smallest]) smallest = right;
+        if (smallest !== i) {
+            [arr[i], arr[smallest]] = [arr[smallest], arr[i]];
+            i = smallest;
+        } else break;
+    }
+}
+
+function drawHeap() {
+    const canvas = document.getElementById('heap-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (heapArr.length === 0) {
+        ctx.fillStyle = '#9b8ec4';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Empty heap — click "Insert Next" to begin', canvas.width / 2, 140);
+        ctx.fillStyle = '#667eea';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`Elements to insert: [${heapElements.slice(heapInsertIdx).join(', ')}]`, canvas.width / 2, 170);
+        return;
+    }
+    
+    const levels = Math.floor(Math.log2(heapArr.length)) + 1;
+    
+    for (let i = 0; i < heapArr.length; i++) {
+        const level = Math.floor(Math.log2(i + 1));
+        const posInLevel = i - (Math.pow(2, level) - 1);
+        const nodesInLevel = Math.pow(2, level);
+        const xSpacing = canvas.width / (nodesInLevel + 1);
+        const x = xSpacing * (posInLevel + 1);
+        const y = 35 + level * 55;
+        
+        // Draw edge to parent
+        if (i > 0) {
+            const parentIdx = Math.floor((i - 1) / 2);
+            const parentLevel = Math.floor(Math.log2(parentIdx + 1));
+            const parentPosInLevel = parentIdx - (Math.pow(2, parentLevel) - 1);
+            const parentNodesInLevel = Math.pow(2, parentLevel);
+            const parentXSpacing = canvas.width / (parentNodesInLevel + 1);
+            const parentX = parentXSpacing * (parentPosInLevel + 1);
+            const parentY = 35 + parentLevel * 55;
+            
+            ctx.strokeStyle = '#ff9800';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(parentX, parentY + 16);
+            ctx.lineTo(x, y - 16);
+            ctx.stroke();
+        }
+        
+        // Draw node
+        ctx.fillStyle = i === 0 ? '#2a4a2a' : '#1a1a4a';
+        ctx.strokeStyle = i === 0 ? '#4caf50' : '#ff9800';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(heapArr[i], x, y);
+    }
+    
+    // Show extracted elements
+    if (heapExtracted.length > 0) {
+        ctx.fillStyle = '#4caf50';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText(`Extracted (sorted): [${heapExtracted.join(', ')}]`, canvas.width / 2, canvas.height - 10);
+    }
+    
+    const remaining = heapElements.slice(heapInsertIdx);
+    if (remaining.length > 0) {
+        ctx.fillStyle = '#667eea';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText(`Remaining to insert: [${remaining.join(', ')}]`, canvas.width / 2, canvas.height - 30);
+    }
+}
+
+function resetHeap() {
+    heapArr = [];
+    heapInsertIdx = 0;
+    heapExtracted = [];
+    document.getElementById('heap-status').textContent = '';
+    drawHeap();
+}
+
+function heapInsertStep() {
+    if (heapInsertIdx >= heapElements.length) {
+        document.getElementById('heap-status').textContent = 'All elements inserted!';
+        return;
+    }
+    const val = heapElements[heapInsertIdx];
+    heapArr.push(val);
+    heapBubbleUp(heapArr, heapArr.length - 1);
+    heapInsertIdx++;
+    document.getElementById('heap-status').textContent = `Inserted ${val}, heap property maintained (min at root: ${heapArr[0]})`;
+    drawHeap();
+}
+
+function heapBuildAll() {
+    while (heapInsertIdx < heapElements.length) {
+        heapArr.push(heapElements[heapInsertIdx]);
+        heapBubbleUp(heapArr, heapArr.length - 1);
+        heapInsertIdx++;
+    }
+    document.getElementById('heap-status').textContent = `Heap built! Min element: ${heapArr[0]}`;
+    drawHeap();
+}
+
+function heapExtract() {
+    if (heapArr.length === 0) {
+        document.getElementById('heap-status').textContent = 'Heap is empty! Sorting complete.';
+        return;
+    }
+    const min = heapArr[0];
+    heapArr[0] = heapArr[heapArr.length - 1];
+    heapArr.pop();
+    heapBubbleDown(heapArr, 0);
+    heapExtracted.push(min);
+    document.getElementById('heap-status').textContent = `Extracted min: ${min}. Remaining heap size: ${heapArr.length}`;
+    drawHeap();
+}
+
+// ============================================================
+// FOLD/UNFOLD CANVASES
+// ============================================================
+function drawFoldCanvas() {
+    const canvas = document.getElementById('fold-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw list being consumed
+    const items = ['3', '1', '4', '1', '5'];
+    let x = 30;
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    
+    items.forEach((item, i) => {
+        ctx.fillStyle = `rgba(102, 126, 234, ${1 - i * 0.15})`;
+        ctx.fillRect(x, 30, 35, 30);
+        ctx.fillStyle = '#fff';
+        ctx.fillText(item, x + 17, 50);
+        
+        // Arrow down
+        ctx.fillStyle = '#4caf50';
+        ctx.beginPath();
+        ctx.moveTo(x + 17, 65);
+        ctx.lineTo(x + 12, 75);
+        ctx.lineTo(x + 22, 75);
+        ctx.closePath();
+        ctx.fill();
+        
+        x += 55;
+    });
+    
+    // Algebra box
+    ctx.fillStyle = '#2a1a4e';
+    ctx.strokeStyle = '#f093fb';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(80, 90, 200, 40, 8);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#f093fb';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('algebra: F a → a', 180, 115);
+    
+    // Result
+    ctx.fillStyle = '#4caf50';
+    ctx.beginPath();
+    ctx.roundRect(140, 155, 80, 35, 8);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('result: a', 180, 177);
+    
+    // Arrow
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(180, 130);
+    ctx.lineTo(180, 155);
+    ctx.stroke();
+    ctx.fillStyle = '#4caf50';
+    ctx.beginPath();
+    ctx.moveTo(180, 155);
+    ctx.lineTo(175, 148);
+    ctx.lineTo(185, 148);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Label
+    ctx.fillStyle = '#9b8ec4';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('µF → a', 300, 200);
+    ctx.fillText('Consumes structure', 300, 218);
+    ctx.fillText('(catamorphism)', 300, 236);
+}
+
+function drawUnfoldCanvas() {
+    const canvas = document.getElementById('unfold-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Seed
+    ctx.fillStyle = '#ff9800';
+    ctx.beginPath();
+    ctx.roundRect(160, 20, 80, 35, 8);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('seed: a', 200, 42);
+    
+    // Arrow down
+    ctx.strokeStyle = '#ff9800';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(200, 55);
+    ctx.lineTo(200, 80);
+    ctx.stroke();
+    ctx.fillStyle = '#ff9800';
+    ctx.beginPath();
+    ctx.moveTo(200, 80);
+    ctx.lineTo(195, 73);
+    ctx.lineTo(205, 73);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Coalgebra box
+    ctx.fillStyle = '#1a3a1a';
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(80, 85, 200, 40, 8);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#4caf50';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('coalgebra: a → F a', 180, 110);
+    
+    // Produced list
+    const items = ['1', '1', '3', '4', '5'];
+    let x = 30;
+    items.forEach((item, i) => {
+        ctx.fillStyle = `rgba(76, 175, 80, ${1 - i * 0.15})`;
+        ctx.fillRect(x, 155, 35, 30);
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(item, x + 17, 175);
+        x += 55;
+    });
+    
+    // Arrow
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(180, 125);
+    ctx.lineTo(180, 155);
+    ctx.stroke();
+    
+    // Label
+    ctx.fillStyle = '#9b8ec4';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('a → νF', 300, 200);
+    ctx.fillText('Produces structure', 300, 218);
+    ctx.fillText('(anamorphism)', 300, 236);
+}
+
+// ============================================================
+// SWAP CANVAS (showing the natural transformation)
+// ============================================================
+function drawSwapCanvas() {
+    const canvas = document.getElementById('swap-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Left side: List (List̄ x)
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('List (List̄ x)', 200, 25);
+    
+    // Show Cons a (Cons b x) where a > b
+    ctx.fillStyle = '#1a1a4a';
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(100, 40, 200, 100, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Cons 5 (Cons 3 x)', 200, 70);
+    ctx.fillStyle = '#f44336';
+    ctx.font = 'italic 12px sans-serif';
+    ctx.fillText('5 > 3 → out of order!', 200, 95);
+    ctx.fillStyle = '#ff9800';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('swap needed', 200, 120);
+    
+    // Arrow
+    ctx.strokeStyle = '#f093fb';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(320, 90);
+    ctx.lineTo(420, 90);
+    ctx.stroke();
+    ctx.fillStyle = '#f093fb';
+    ctx.beginPath();
+    ctx.moveTo(420, 90);
+    ctx.lineTo(410, 85);
+    ctx.lineTo(410, 95);
+    ctx.closePath();
+    ctx.fill();
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('swap', 370, 80);
+    
+    // Right side: List̄ (List x)
+    ctx.fillStyle = '#4caf50';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('List̄ (List x)', 600, 25);
+    
+    ctx.fillStyle = '#1a1a4a';
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(500, 40, 200, 100, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Cons 3 (Cons 5 x)', 600, 70);
+    ctx.fillStyle = '#4caf50';
+    ctx.font = 'italic 12px sans-serif';
+    ctx.fillText('3 ≤ 5 → in order!', 600, 95);
+    ctx.fillStyle = '#4caf50';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('minimum bubbled up', 600, 120);
+    
+    // Bottom explanation
+    ctx.fillStyle = '#9b8ec4';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('The same swap gives rise to:', canvas.width / 2, 180);
+    
+    ctx.fillStyle = '#667eea';
+    ctx.fillText('• Bubble Sort = unfold (fold (map in · swap))', canvas.width / 2, 210);
+    ctx.fillStyle = '#f093fb';
+    ctx.fillText('• Naïve Insertion Sort = fold (unfold (swap · map out))', canvas.width / 2, 235);
+    
+    ctx.fillStyle = '#ff9800';
+    ctx.font = 'italic 12px sans-serif';
+    ctx.fillText('These are EQUAL — unique arrow from initial to final swap-bialgebra!', canvas.width / 2, 270);
+}
+
+// ============================================================
+// BIALGEBRA CANVAS
+// ============================================================
+function drawBialgebraCanvas() {
+    const canvas = document.getElementById('bialgebra-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const cx = canvas.width / 2;
+    
+    // Title
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Bialgebra Diagram: c · a = map a · swap · map c', cx, 25);
+    
+    // Draw the commutative diagram
+    const nodes = [
+        { x: cx - 200, y: 80, label: 'List X' },
+        { x: cx + 200, y: 80, label: 'List (List̄ X)' },
+        { x: cx + 200, y: 200, label: 'List̄ (List X)' },
+        { x: cx - 200, y: 200, label: 'List̄ X' },
+        { x: cx, y: 140, label: 'X' }
+    ];
+    
+    nodes.forEach(n => {
+        ctx.fillStyle = '#1a1a4a';
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(n.x - 55, n.y - 15, 110, 30, 6);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(n.label, n.x, n.y);
+    });
+    
+    // Arrows
+    function arrow(x1, y1, x2, y2, label, color) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 10 * Math.cos(angle - 0.3), y2 - 10 * Math.sin(angle - 0.3));
+        ctx.lineTo(x2 - 10 * Math.cos(angle + 0.3), y2 - 10 * Math.sin(angle + 0.3));
+        ctx.closePath();
+        ctx.fill();
+        // Label
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        ctx.fillStyle = color;
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(label, mx, my - 5);
+    }
+    
+    // Top: List X → List (List̄ X) via map c
+    arrow(cx - 145, 80, cx + 145, 80, 'map c', '#ff9800');
+    // Right: List (List̄ X) → List̄ (List X) via swap
+    arrow(cx + 200, 95, cx + 200, 185, 'swap', '#f093fb');
+    // Bottom: List̄ (List X) → List̄ X via map a
+    arrow(cx + 145, 200, cx - 145, 200, 'map a', '#4caf50');
+    // Left: List X → X via a (algebra)
+    arrow(cx - 200, 95, cx - 30, 130, 'a', '#667eea');
+    // Center: X → List̄ X via c (coalgebra)
+    arrow(cx + 10, 155, cx - 170, 195, 'c', '#667eea');
+    
+    // Dashed: direct c · a path
+    ctx.strokeStyle = '#f44336';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cx - 200, 95);
+    ctx.lineTo(cx - 200, 185);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#f44336';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('c · a', cx - 210, 140);
+    
+    // Bottom text
+    ctx.fillStyle = '#9b8ec4';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText('The bialgebra law ensures the two paths around the diagram are equal', cx, 260);
+    ctx.fillStyle = '#ff9800';
+    ctx.font = 'italic 12px sans-serif';
+    ctx.fillText('Initial bialgebra: ⟨µList, in, fold(map in · swap)⟩    Final bialgebra: ⟨νList̄, unfold(swap · map out), out⟩', cx, 290);
+    ctx.fillStyle = '#4caf50';
+    ctx.fillText('Unique arrow from initial to final = bubbleSort = naïveInsertSort', cx, 320);
+}
+
+// ============================================================
+// SUMMARY PLOT
+// ============================================================
+function drawSummaryPlot() {
+    const nodes = [
+        { id: 'fold', label: 'Fold\n(catamorphism)', x: 0, y: 2, color: '#667eea' },
+        { id: 'unfold', label: 'Unfold\n(anamorphism)', x: 2, y: 2, color: '#667eea' },
+        { id: 'para', label: 'Para\n(paramorphism)', x: 0, y: 1, color: '#9b8ec4' },
+        { id: 'apo', label: 'Apo\n(apomorphism)', x: 2, y: 1, color: '#9b8ec4' },
+        { id: 'swap', label: 'swap', x: 1, y: 3, color: '#f093fb' },
+        { id: 'swop', label: 'swop', x: 1, y: 1.5, color: '#f093fb' },
+        { id: 'sprout', label: 'sprout', x: 3.5, y: 1.5, color: '#f093fb' },
+        { id: 'pile', label: 'pile', x: 5, y: 1.5, color: '#f093fb' },
+        { id: 'bubble', label: 'Bubble Sort', x: 0, y: 4, color: '#f44336' },
+        { id: 'naive', label: 'Naïve Insert', x: 2, y: 4, color: '#f44336' },
+        { id: 'insert', label: 'Insertion Sort', x: 0, y: 0, color: '#4caf50' },
+        { id: 'select', label: 'Selection Sort', x: 2, y: 0, color: '#4caf50' },
+        { id: 'quick', label: 'Quicksort', x: 3.5, y: 0, color: '#ff9800' },
+        { id: 'tree', label: 'Treesort', x: 3.5, y: 3, color: '#ff9800' },
+        { id: 'heap', label: 'Heapsort', x: 5, y: 0, color: '#00bcd4' },
+        { id: 'mingle', label: 'Minglesort', x: 5, y: 3, color: '#00bcd4' }
+    ];
+
+    const edges = [
+        { from: 'swap', to: 'bubble', label: 'unfold∘fold' },
+        { from: 'swap', to: 'naive', label: 'fold∘unfold' },
+        { from: 'swop', to: 'insert', label: 'fold∘apo' },
+        { from: 'swop', to: 'select', label: 'unfold∘para' },
+        { from: 'sprout', to: 'quick', label: 'unfold∘para + fold∘apo' },
+        { from: 'sprout', to: 'tree', label: 'fold∘apo + unfold∘para' },
+        { from: 'pile', to: 'heap', label: 'fold∘apo + unfold∘para' },
+        { from: 'pile', to: 'mingle', label: 'unfold∘fold + fold∘apo' },
+        { from: 'bubble', to: 'naive', label: '= (dual)', style: 'dash' },
+        { from: 'insert', to: 'select', label: 'dual', style: 'dash' },
+        { from: 'quick', to: 'tree', label: 'dual', style: 'dash' },
+        { from: 'heap', to: 'mingle', label: 'dual', style: 'dash' }
+    ];
+
+    // Build plotly traces
+    const nodeTrace = {
+        type: 'scatter',
+        mode: 'markers+text',
+        x: nodes.map(n => n.x),
+        y: nodes.map(n => n.y),
+        text: nodes.map(n => n.label),
+        textposition: 'top center',
+        marker: {
+            size: 18,
+            color: nodes.map(n => n.color)
+        },
+        textfont: { color: '#e0e0e0', size: 10 },
+        hoverinfo: 'text'
+    };
+
+    const edgeTraces = edges.map(e => {
+        const fromNode = nodes.find(n => n.id === e.from);
+        const toNode = nodes.find(n => n.id === e.to);
+        return {
+            type: 'scatter',
+            mode: 'lines',
+            x: [fromNode.x, toNode.x],
+            y: [fromNode.y, toNode.y],
+            line: {
+                color: e.style === 'dash' ? '#f44336' : '#555',
+                width: e.style === 'dash' ? 1.5 : 1,
+                dash: e.style === 'dash' ? 'dash' : 'solid'
+            },
+            hoverinfo: 'none',
+            showlegend: false
+        };
+    });
+
+    const layout = {
+        title: { text: 'Map of Sorting Algorithms & Their Relationships', font: { color: '#667eea', size: 16 } },
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#e0e0e0' },
+        showlegend: false,
+        xaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [-0.5, 6] },
+        yaxis: { showgrid: false, zeroline: false, showticklabels: false, range: [-0.5, 4.5] },
+        margin: { t: 50, b: 30, l: 30, r: 30 },
+        annotations: edges.filter(e => e.label).map(e => {
+            const fromNode = nodes.find(n => n.id === e.from);
+            const toNode = nodes.find(n => n.id === e.to);
+            return {
+                x: (fromNode.x + toNode.x) / 2,
+                y: (fromNode.y + toNode.y) / 2,
+                text: e.label,
+                showarrow: false,
+                font: { size: 8, color: e.style === 'dash' ? '#f44336' : '#9b8ec4' }
+            };
+        })
+    };
+
+    Plotly.newPlot('summary-plot', [...edgeTraces, nodeTrace], layout, { responsive: true });
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+    renderMath();
+    drawThreeValues();
+    renderSwapViz();
+    renderInsertViz();
+    drawTree();
+    drawHeap();
+    drawFoldCanvas();
+    drawUnfoldCanvas();
+    drawSwapCanvas();
+    drawBialgebraCanvas();
+    drawSummaryPlot();
+    showStructure('camera');
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+    drawSummaryPlot();
+    showStructure('camera');
+});
+</script>
+</body>
+</html>
