@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting with Bialgebras & Distributive Laws - Interactive Explainer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.2em;
+            margin: 15px 0 10px;
+            color: #9b8ec4;
+        }
+        .section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .math-block {
+            background: #1a1a3a;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 12px 0;
+            text-align: center;
+            border-left: 3px solid #667eea;
+            overflow-x: auto;
+        }
+        .interactive-area {
+            background: #0d0d20;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #333;
+        }
+        canvas {
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+            background: #080818;
+            border: 1px solid #2a2a4a;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:active { transform: translateY(0); }
+        button.active {
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+            outline: 2px solid #fff;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+            align-items: center;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .explanation {
+            font-size: 0.95em;
+            line-height: 1.7;
+            color: #bbb;
+            margin: 10px 0;
+        }
+        .highlight {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .dual-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        @media (max-width: 768px) {
+            .dual-panel { grid-template-columns: 1fr; }
+        }
+        .panel {
+            background: #1a1a3a;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #333;
+        }
+        .panel.left { border-top: 3px solid #4ecdc4; }
+        .panel.right { border-top: 3px solid #ff6b6b; }
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin: 3px;
+        }
+        .tag-fold { background: #4ecdc420; color: #4ecdc4; border: 1px solid #4ecdc4; }
+        .tag-unfold { background: #ff6b6b20; color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .tag-dual { background: #ffd93d20; color: #ffd93d; border: 1px solid #ffd93d; }
+        .arrow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+        .arrow-diagram .arrow {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+        .node-box {
+            background: #2a2a5a;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #667eea;
+        }
+        .step-indicator {
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            margin: 5px 0;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .nav-tabs button {
+            background: #1a1a3a;
+            border: 1px solid #333;
+            padding: 8px 16px;
+            font-size: 0.85em;
+        }
+        .nav-tabs button.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            outline: none;
+        }
+        .plotly-chart {
+            width: 100%;
+            height: 350px;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 5px 10px;
+            font-size: 0.85em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .toc {
+            background: #1a1a3a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            transition: color 0.2s;
+        }
+        .toc a:hover { color: #9b8ec4; }
+        .swap-viz {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+            min-height: 60px;
+        }
+        .swap-cell {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.4s ease;
+        }
+        .tree-svg {
+            display: block;
+            margin: 10px auto;
+        }
+        .info-box {
+            background: #667eea15;
+            border: 1px solid #667eea40;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Sorting with Bialgebras & Distributive Laws</h1>
+    <p style="text-align:center; color:#888; margin-bottom:20px;">
+        An interactive visual guide to the paper by Hinze, James, Harper, Wu & Magalhães (WGP'12)
+    </p>
+
+    <div class="toc">
+        <h3>Contents</h3>
+        <a href="#sec-bigpicture">1. The Big Picture</a>
+        <a href="#sec-folds-unfolds">2. Folds & Unfolds (Catamorphisms & Anamorphisms)</a>
+        <a href="#sec-swap">3. The Swap: Distributive Law</a>
+        <a href="#sec-bubble-insert">4. Bubble Sort ↔ Naïve Insertion Sort (Duality)</a>
+        <a href="#sec-para-apo">5. Paramorphisms & Apomorphisms</a>
+        <a href="#sec-insert-select">6. Insertion Sort ↔ Selection Sort</a>
+        <a href="#sec-trees">7. Quicksort ↔ Treesort</a>
+        <a href="#sec-heap">8. Heapsort & Minglesort</a>
+        <a href="#sec-summary">9. Summary: The Sorting Zoo</a>
+    </div>
+
+    <!-- SECTION 1: BIG PICTURE -->
+    <div class="section" id="sec-bigpicture">
+        <h2>1. The Big Picture</h2>
+        <p class="explanation">
+            This paper reveals a hidden <span class="highlight">duality</span> among sorting algorithms.
+            The key insight: every sorting algorithm has a <em>dual</em> that you get "for free" by flipping the construction.
+        </p>
+        <div class="interactive-area">
+            <canvas id="bigPictureCanvas" width="900" height="400"></canvas>
+        </div>
+        <p class="explanation">
+            The paper distills each sorting algorithm down to a single <span class="highlight">natural transformation</span> — 
+            a one-step operation that captures the "computational essence." From this, two dual algorithms emerge:
+            one as a <span class="tag tag-fold">fold of unfold</span> and one as an <span class="tag tag-unfold">unfold of fold</span>.
+        </p>
+    </div>
+
+    <!-- SECTION 2: FOLDS & UNFOLDS -->
+    <div class="section" id="sec-folds-unfolds">
+        <h2>2. Folds & Unfolds</h2>
+        <p class="explanation">
+            <strong>Fold (Catamorphism):</strong> Consumes a data structure by replacing constructors with operations.<br>
+            <strong>Unfold (Anamorphism):</strong> Produces a data structure from a seed value.
+        </p>
+        <div class="math-block" id="math-fold-type"></div>
+        <div class="math-block" id="math-unfold-type"></div>
+        
+        <div class="interactive-area">
+            <h3>Interactive: Watch Fold & Unfold in Action</h3>
+            <div class="controls">
+                <button onclick="animateFold()">▶ Animate Fold (consume list)</button>
+                <button onclick="animateUnfold()">▶ Animate Unfold (produce list)</button>
+                <button onclick="resetFoldUnfold()">↺ Reset</button>
+            </div>
+            <canvas id="foldUnfoldCanvas" width="900" height="300"></canvas>
+            <p class="step-indicator" id="foldUnfoldStatus">Click a button to see the animation</p>
+        </div>
+
+        <div class="info-box">
+            <strong>Key property:</strong> The running time of a fold is proportional to the <em>input</em> size; 
+            the running time of an unfold is proportional to the <em>output</em> size.
+            When we nest them (fold of unfold, or unfold of fold), we get quadratic time.
+        </div>
+    </div>
+
+    <!-- SECTION 3: SWAP -->
+    <div class="section" id="sec-swap">
+        <h2>3. The Swap: Distributive Law</h2>
+        <p class="explanation">
+            The <span class="highlight">swap</span> function is the "computational essence" of bubble sort and naïve insertion sort.
+            It compares two adjacent elements and swaps them if out of order.
+        </p>
+        <div class="math-block" id="math-swap-type"></div>
+        
+        <div class="interactive-area">
+            <h3>Interactive: Step through Swap Operations</h3>
+            <div class="controls">
+                <span style="color:#aaa;">Input array:</span>
+                <button onclick="setSwapInput([5,3,8,1,4,7,2,6])">[ 5,3,8,1,4,7,2,6 ]</button>
+                <button onclick="setSwapInput([8,7,6,5,4,3,2,1])">[ 8,7,6,5,4,3,2,1 ]</button>
+                <button onclick="setSwapInput([1,2,3,4,5,6,7,8])">[ 1,2,3,4,5,6,7,8 ]</button>
+                <button onclick="randomSwapInput()">Random</button>
+            </div>
+            <div class="swap-viz" id="swapViz"></div>
+            <div class="controls">
+                <button onclick="swapStep()">Step →</button>
+                <button onclick="swapAutoPlay()">Auto-play ▶</button>
+                <button onclick="swapReset()">Reset ↺</button>
+            </div>
+            <p class="step-indicator" id="swapStatus">Showing swap operations one at a time</p>
+            <canvas id="swapCanvas" width="900" height="200"></canvas>
+        </div>
+
+        <p class="explanation">
+            <strong>As a distributive law:</strong> <code>swap</code> distributes the "head of a list" over the "head of a sorted list."
+            It's <em>natural</em> in its type parameter — meaning it works uniformly regardless of what the rest of the list contains.
+        </p>
+    </div>
+
+    <!-- SECTION 4: BUBBLE vs NAIVE INSERT -->
+    <div class="section" id="sec-bubble-insert">
+        <h2>4. Bubble Sort ↔ Naïve Insertion Sort</h2>
+        <p class="explanation">
+            Both algorithms use the <em>same</em> swap operation. The difference is how they're assembled:
+        </p>
+        
+        <div class="dual-panel">
+            <div class="panel left">
+                <h3>Bubble Sort <span class="tag tag-unfold">unfold(fold swap)</span></h3>
+                <div class="math-block" id="math-bubble"></div>
+                <p class="explanation">
+                    Repeatedly <em>folds</em> the list to bubble the minimum to the front, 
+                    then <em>unfolds</em> by peeling off that minimum.
+                </p>
+            </div>
+            <div class="panel right">
+                <h3>Naïve Insert Sort <span class="tag tag-fold">fold(unfold swap)</span></h3>
+                <div class="math-block" id="math-naive-insert"></div>
+                <p class="explanation">
+                    <em>Folds</em> over the input, at each step <em>unfolding</em> to insert the element 
+                    into the correct position in the sorted output.
+                </p>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Side-by-Side Comparison</h3>
+            <div class="controls">
+                <button onclick="startDualSort()">▶ Run Both</button>
+                <button onclick="stepDualSort()">Step →</button>
+                <button onclick="resetDualSort()">↺ Reset</button>
+                <div class="slider-container">
+                    <span>Speed:</span>
+                    <input type="range" id="dualSpeed" min="100" max="1500" value="600">
+                </div>
+            </div>
+            <canvas id="dualSortCanvas" width="900" height="400"></canvas>
+            <p class="step-indicator" id="dualSortStatus">These are the SAME algorithm viewed from two perspectives</p>
+        </div>
+
+        <div class="info-box">
+            <strong>The Duality:</strong> By the theory of bialgebras, <code>bubbleSort = naïveInsertSort</code>. 
+            They are the unique arrow from the initial to the final swap-bialgebra. 
+            Two descriptions of the same computation!
+        </div>
+    </div>
+
+    <!-- SECTION 5: PARA & APO -->
+    <div class="section" id="sec-para-apo">
+        <h2>5. Paramorphisms & Apomorphisms</h2>
+        <p class="explanation">
+            To get <em>efficient</em> sorting, we need recursion schemes that can "see more" or "stop early."
+        </p>
+        
+        <div class="dual-panel">
+            <div class="panel left">
+                <h3>Paramorphism <span class="tag tag-fold">enhanced fold</span></h3>
+                <div class="math-block" id="math-para"></div>
+                <p class="explanation">
+                    Like a fold, but the algebra also sees the <strong>remainder of the input</strong> 
+                    (not just the accumulated result). Think: Haskell's <code>@</code>-pattern.
+                </p>
+            </div>
+            <div class="panel right">
+                <h3>Apomorphism <span class="tag tag-unfold">enhanced unfold</span></h3>
+                <div class="math-block" id="math-apo"></div>
+                <p class="explanation">
+                    Like an unfold, but the coalgebra can signal <strong>STOP</strong> — 
+                    "I'm done, use this value directly without further recursion."
+                </p>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Apomorphism Early Termination</h3>
+            <p class="explanation">Watch how insertion with an apomorphism stops early when the element is in place:</p>
+            <div class="controls">
+                <span style="color:#aaa;">Insert value:</span>
+                <input type="range" id="insertVal" min="1" max="20" value="5" oninput="updateInsertDemo()">
+                <span id="insertValLabel" style="color:#667eea; font-weight:bold;">5</span>
+                <span style="color:#aaa; margin-left:15px;">into sorted list [2, 4, 7, 9, 12, 15, 18]</span>
+            </div>
+            <canvas id="apoCanvas" width="900" height="200"></canvas>
+            <p class="step-indicator" id="apoStatus">The apomorphism stops as soon as the element is placed correctly</p>
+        </div>
+    </div>
+
+    <!-- SECTION 6: INSERT & SELECT -->
+    <div class="section" id="sec-insert-select">
+        <h2>6. Insertion Sort ↔ Selection Sort</h2>
+        <p class="explanation">
+            Using <code>swop</code> (swap + stop), we get the <em>true</em> insertion and selection sorts.
+            These are more efficient than the naïve versions because they can terminate early.
+        </p>
+
+        <div class="dual-panel">
+            <div class="panel left">
+                <h3>Insertion Sort <span class="tag tag-fold">fold(apo swop)</span></h3>
+                <p class="explanation">
+                    Folds over input; each step uses an <em>apomorphism</em> to insert into sorted list.
+                    <strong>Stops early</strong> once element is placed. Best case: O(n).
+                </p>
+            </div>
+            <div class="panel right">
+                <h3>Selection Sort <span class="tag tag-unfold">unfold(para swop)</span></h3>
+                <p class="explanation">
+                    Unfolds output; each step uses a <em>paramorphism</em> to select minimum.
+                    Uses remainder of input (not just result so far). Always O(n²).
+                </p>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Insertion vs Selection Sort</h3>
+            <div class="controls">
+                <button onclick="runInsertionSort()">▶ Insertion Sort</button>
+                <button onclick="runSelectionSort()">▶ Selection Sort</button>
+                <button onclick="resetInsSelSort()">↺ Reset</button>
+                <button onclick="randomInsSelInput()">New Random Input</button>
+            </div>
+            <canvas id="insSelCanvas" width="900" height="350"></canvas>
+            <p class="step-indicator" id="insSelStatus">Watch the comparison counts — insertion sort can be faster on nearly-sorted input</p>
+        </div>
+    </div>
+
+    <!-- SECTION 7: QUICKSORT & TREESORT -->
+    <div class="section" id="sec-trees">
+        <h2>7. Quicksort ↔ Treesort</h2>
+        <p class="explanation">
+            To break the O(n²) barrier, we introduce an <span class="highlight">intermediate data structure</span>: binary search trees.
+            The algorithm becomes two phases: <strong>build</strong> the tree, then <strong>flatten</strong> it.
+        </p>
+
+        <div class="arrow-diagram">
+            <div class="node-box">µList (input)</div>
+            <div class="arrow">→</div>
+            <div class="node-box">SearchTree</div>
+            <div class="arrow">→</div>
+            <div class="node-box">νList (sorted output)</div>
+        </div>
+
+        <div class="dual-panel">
+            <div class="panel left">
+                <h3>Quicksort</h3>
+                <p class="explanation">
+                    <strong>Phase 1 (grow):</strong> Recursively partition list around pivot → builds tree top-down<br>
+                    <strong>Phase 2 (flatten):</strong> Append sublists together (in-order traversal)
+                </p>
+                <div class="math-block" id="math-quicksort"></div>
+            </div>
+            <div class="panel right">
+                <h3>Treesort</h3>
+                <p class="explanation">
+                    <strong>Phase 1 (grow'):</strong> Insert elements one-by-one into search tree → builds tree bottom-up<br>
+                    <strong>Phase 2 (flatten'):</strong> Extract elements in order
+                </p>
+                <div class="math-block" id="math-treesort"></div>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Watch Tree Construction</h3>
+            <div class="controls">
+                <button onclick="runQuicksortViz()">▶ Quicksort (partition)</button>
+                <button onclick="runTreesortViz()">▶ Treesort (insert)</button>
+                <button onclick="resetTreeViz()">↺ Reset</button>
+                <button onclick="randomTreeInput()">New Input</button>
+            </div>
+            <canvas id="treeCanvas" width="900" height="450"></canvas>
+            <p class="step-indicator" id="treeStatus">Both produce the same search tree — just built differently!</p>
+        </div>
+
+        <div class="info-box">
+            <strong>Natural transformation <code>sprout</code>:</strong> Maintains the search tree property when inserting.
+            Quicksort's <code>pivot</code> and treesort's <code>treeIns</code> are both derived from it — dual to each other.
+            Average case: O(n log n). Worst case: O(n²) due to unbalanced trees.
+        </div>
+    </div>
+
+    <!-- SECTION 8: HEAPSORT -->
+    <div class="section" id="sec-heap">
+        <h2>8. Heapsort & Minglesort</h2>
+        <p class="explanation">
+            To guarantee O(n log n), we use a <span class="highlight">heap</span> (vertically ordered tree) instead of a search tree.
+            The heap's partial ordering gives flexibility in arrangement, avoiding worst-case unbalanced trees.
+        </p>
+
+        <div class="arrow-diagram">
+            <div class="node-box">µList (input)</div>
+            <div class="arrow">→</div>
+            <div class="node-box">Heap (Braun tree)</div>
+            <div class="arrow">→</div>
+            <div class="node-box">νList (sorted output)</div>
+        </div>
+
+        <div class="dual-panel">
+            <div class="panel left">
+                <h3>Heapsort</h3>
+                <p class="explanation">
+                    <strong>Phase 1:</strong> Build heap by repeated insertion (fold of apo)<br>
+                    <strong>Phase 2:</strong> Repeatedly extract minimum (unfold of para = deleteMin)
+                </p>
+            </div>
+            <div class="panel right">
+                <h3>Minglesort <span class="tag tag-dual">dual</span></h3>
+                <p class="explanation">
+                    <strong>Phase 1:</strong> Build heap by repeated selection of minimum (unfold of fold = divvy)<br>
+                    <strong>Phase 2:</strong> Merge sublists together (fold of apo = blend)
+                </p>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Interactive: Heap Construction (Braun Tree)</h3>
+            <div class="controls">
+                <button onclick="heapInsertStep()">Insert Next →</button>
+                <button onclick="heapAutoPlay()">Auto-play ▶</button>
+                <button onclick="resetHeap()">↺ Reset</button>
+                <button onclick="randomHeapInput()">New Input</button>
+            </div>
+            <canvas id="heapCanvas" width="900" height="400"></canvas>
+            <p class="step-indicator" id="heapStatus">Elements are inserted with the "pile" strategy: always add right, then swap children</p>
+        </div>
+
+        <div class="interactive-area">
+            <h3>Complexity Comparison</h3>
+            <div id="complexityPlot" class="plotly-chart"></div>
+            <div style="display:flex; flex-wrap:wrap; justify-content:center;">
+                <span class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span>Bubble/Naïve Insert O(n²)</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#ffd93d"></span>Insert/Select O(n²) worst</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#4ecdc4"></span>Quick/Tree O(n log n) avg</span>
+                <span class="legend-item"><span class="legend-dot" style="background:#667eea"></span>Heapsort O(n log n) guaranteed</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 9: SUMMARY -->
+    <div class="section" id="sec-summary">
+        <h2>9. Summary: The Sorting Zoo</h2>
+        <p class="explanation">
+            Every sorting algorithm in this paper is characterized by a <span class="highlight">natural transformation</span> 
+            (the one-step essence) and a <span class="highlight">recursion scheme</span> (how to apply it repeatedly).
+            Duality gives us algorithms for free!
+        </p>
+
+        <div class="interactive-area">
+            <canvas id="summaryCanvas" width="900" height="500"></canvas>
+        </div>
+
+        <div class="info-box">
+            <h3>Key Takeaways</h3>
+            <ul style="margin-left:20px; line-height:2;">
+                <li><strong>Distributive law (swap/swop/sprout/pile/wither/sift):</strong> The one-step computational essence</li>
+                <li><strong>Bialgebra:</strong> An algebra + coalgebra on the same carrier, related by the distributive law</li>
+                <li><strong>Initial bialgebra → unfold of fold;</strong> Final bialgebra → fold of unfold</li>
+                <li><strong>Duality:</strong> Fold ↔ Unfold, Paramorphism ↔ Apomorphism, Insertion ↔ Selection</li>
+                <li><strong>Intermediate structures:</strong> Lists → Trees → Heaps give progressively better guarantees</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+// MATH RENDERING
+// ============================================================
+function renderMath() {
+    const mathBlocks = {
+        'math-fold-type': '\\text{fold} : (F\\,a \\to a) \\to \\mu F \\to a \\quad \\text{(consumes structure)}',
+        'math-unfold-type': '\\text{unfold} : (a \\to F\\,a) \\to a \\to \\nu F \\quad \\text{(produces structure)}',
+        'math-swap-type': '\\text{swap} : \\text{List}\\,(\\overline{\\text{List}}\\,x) \\to \\overline{\\text{List}}\\,(\\text{List}\\,x) \\quad \\text{(distributive law)}',
+        'math-bubble': '\\text{bubbleSort} = \\text{unfold}\\,(\\text{fold}\\,(\\text{map in} \\cdot \\text{swap}))',
+        'math-naive-insert': '\\text{naïveInsertSort} = \\text{fold}\\,(\\text{unfold}\\,(\\text{swap} \\cdot \\text{map out}))',
+        'math-para': '\\text{para} : (F\\,(\\mu F \\times a) \\to a) \\to \\mu F \\to a',
+        'math-apo': '\\text{apo} : (a \\to F\\,(\\nu F + a)) \\to a \\to \\nu F',
+        'math-quicksort': '\\text{quickSort} = \\text{flatten} \\cdot \\text{downcast} \\cdot \\text{grow}',
+        'math-treesort': '\\text{treeSort} = \\text{flatten}\\prime \\cdot \\text{downcast} \\cdot \\text{grow}\\prime'
+    };
+    for (const [id, tex] of Object.entries(mathBlocks)) {
+        const el = document.getElementById(id);
+        if (el) {
+            try { temml.render(tex, el, { displayMode: true }); }
+            catch(e) { el.innerHTML = `<code>${tex}</code>`; }
+        }
+    }
+}
+
+// ============================================================
+// BIG PICTURE CANVAS
+// ============================================================
+function drawBigPicture() {
+    const canvas = document.getElementById('bigPictureCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Title
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('The Sorting Algorithm Duality Map', canvas.width/2, 30);
+
+    // Draw the central concept
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+
+    // Natural transformation in center
+    drawRoundedRect(ctx, cx - 80, cy - 25, 160, 50, 12, '#667eea30', '#667eea');
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Natural Transformation', cx, cy - 5);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('(one-step essence)', cx, cy + 15);
+
+    // Left side: fold of unfold
+    const lx = 150, ly = cy;
+    drawRoundedRect(ctx, lx - 70, ly - 25, 140, 50, 12, '#4ecdc420', '#4ecdc4');
+    ctx.fillStyle = '#4ecdc4';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('fold (unfold ...)', lx, ly - 5);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('or fold (apo ...)', lx, ly + 15);
+
+    // Right side: unfold of fold
+    const rx = canvas.width - 150, ry = cy;
+    drawRoundedRect(ctx, rx - 70, ry - 25, 140, 50, 12, '#ff6b6b20', '#ff6b6b');
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('unfold (fold ...)', rx, ry - 5);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('or unfold (para ...)', rx, ry + 15);
+
+    // Arrows from center to sides
+    drawArrow(ctx, cx - 85, cy, lx + 75, ly, '#4ecdc4');
+    drawArrow(ctx, cx + 85, cy, rx - 75, ry, '#ff6b6b');
+
+    // Algorithm pairs
+    const pairs = [
+        { name1: 'Naïve Insert', name2: 'Bubble Sort', nt: 'swap', y: 100 },
+        { name1: 'Insertion Sort', name2: 'Selection Sort', nt: 'swop', y: 180 },
+        { name1: 'Treesort', name2: 'Quicksort', nt: 'sprout/wither', y: 260 },
+        { name1: 'Heapsort', name2: 'Minglesort', nt: 'pile/sift', y: 340 }
+    ];
+
+    pairs.forEach((p, i) => {
+        const alpha = 0.6 + 0.1 * i;
+        // Left algorithm
+        ctx.fillStyle = '#4ecdc4';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'right';
+        ctx.fillText(p.name1, lx + 50, p.y);
+
+        // Right algorithm
+        ctx.fillStyle = '#ff6b6b';
+        ctx.textAlign = 'left';
+        ctx.fillText(p.name2, rx - 50, p.y);
+
+        // Center NT
+        ctx.fillStyle = '#667eea';
+        ctx.textAlign = 'center';
+        ctx.font = 'italic 11px Segoe UI';
+        ctx.fillText(p.nt, cx, p.y);
+
+        // Duality arrow
+        ctx.strokeStyle = '#ffffff20';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(lx + 55, p.y - 4);
+        ctx.lineTo(rx - 55, p.y - 4);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // "= (dual)" label
+        ctx.fillStyle = '#ffd93d';
+        ctx.font = '10px Segoe UI';
+        ctx.fillText('⟵ dual ⟶', cx, p.y + 12);
+    });
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); }
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color) {
+    const headLen = 10;
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+    ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+    ctx.closePath();
+    ctx.fill();
+}
+
+// ============================================================
+// FOLD / UNFOLD ANIMATION
+// ============================================================
+let foldUnfoldState = { mode: null, step: 0, data: [3, 1, 4, 1, 5, 9], result: 0, animId: null };
+
+function animateFold() {
+    foldUnfoldState.mode = 'fold';
+    foldUnfoldState.step = 0;
+    foldUnfoldState.result = 0;
+    foldUnfoldState.data = [3, 1, 4, 1, 5, 9];
+    animateFoldStep();
+}
+
+function animateFoldStep() {
+    if (foldUnfoldState.step > foldUnfoldState.data.length) return;
+    drawFoldUnfold();
+    foldUnfoldState.step++;
+    if (foldUnfoldState.step <= foldUnfoldState.data.length) {
+        foldUnfoldState.animId = setTimeout(animateFoldStep, 700);
+    }
+}
+
+function animateUnfold() {
+    foldUnfoldState.mode = 'unfold';
+    foldUnfoldState.step = 0;
+    foldUnfoldState.data = [];
+    foldUnfoldState.seed = 20;
+    animateUnfoldStep();
+}
+
+function animateUnfoldStep() {
+    if (foldUnfoldState.step > 6) return;
+    drawFoldUnfold();
+    foldUnfoldState.step++;
+    if (foldUnfoldState.step <= 6) {
+        foldUnfoldState.animId = setTimeout(animateUnfoldStep, 700);
+    }
+}
+
+function resetFoldUnfold() {
+    clearTimeout(foldUnfoldState.animId);
+    foldUnfoldState.mode = null;
+    foldUnfoldState.step = 0;
+    const canvas = document.getElementById('foldUnfoldCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#555';
+    ctx.font = '14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Click a button to see fold or unfold in action', canvas.width/2, canvas.height/2);
+    document.getElementById('foldUnfoldStatus').textContent = 'Click a button to see the animation';
+}
+
+function drawFoldUnfold() {
+    const canvas = document.getElementById('foldUnfoldCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (foldUnfoldState.mode === 'fold') {
+        const data = foldUnfoldState.data;
+        const step = foldUnfoldState.step;
+        let sum = 0;
+        for (let i = data.length - 1; i >= data.length - step; i--) {
+            if (i >= 0) sum += data[i];
+        }
+
+        ctx.fillStyle = '#4ecdc4';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Fold (catamorphism): foldr (+) 0 [3,1,4,1,5,9]', canvas.width/2, 25);
+
+        // Draw list cells
+        const startX = 100;
+        const cellW = 60;
+        for (let i = 0; i < data.length; i++) {
+            const consumed = i >= data.length - step;
+            const x = startX + i * (cellW + 10);
+            const y = 80;
+            ctx.fillStyle = consumed ? '#4ecdc440' : '#4ecdc4';
+            drawRoundedRect(ctx, x, y, cellW, 40, 6, consumed ? '#4ecdc415' : '#4ecdc430', consumed ? '#4ecdc450' : '#4ecdc4');
+            ctx.fillStyle = consumed ? '#4ecdc460' : '#fff';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(data[i], x + cellW/2, y + 25);
+            if (consumed) {
+                ctx.strokeStyle = '#ff6b6b80';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x + 5, y + 5);
+                ctx.lineTo(x + cellW - 5, y + 35);
+                ctx.stroke();
+            }
+        }
+
+        // Draw accumulator
+        const accX = canvas.width - 200;
+        const accY = 160;
+        drawRoundedRect(ctx, accX, accY, 120, 50, 10, '#667eea30', '#667eea');
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 20px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(sum, accX + 60, accY + 32);
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px Segoe UI';
+        ctx.fillText('accumulator', accX + 60, accY + 48);
+
+        // Arrow
+        ctx.fillStyle = '#667eea';
+        ctx.font = '13px Segoe UI';
+        ctx.fillText(`Step ${step}/${data.length}: consuming from right`, canvas.width/2, 250);
+
+        document.getElementById('foldUnfoldStatus').textContent =
+            step === data.length ? `Done! Result = ${sum}` : `Processing element ${data[data.length - step]}...`;
+    }
+    else if (foldUnfoldState.mode === 'unfold') {
+        const step = foldUnfoldState.step;
+        // Unfold: produce list from seed by halving
+        let seed = 20;
+        let produced = [];
+        let s = seed;
+        for (let i = 0; i < step; i++) {
+            produced.push(s % 7);
+            s = Math.floor(s * 3 + 1) % 20;
+        }
+
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Unfold (anamorphism): produce list from seed', canvas.width/2, 25);
+
+        // Draw seed
+        const seedX = 80;
+        drawRoundedRect(ctx, seedX, 80, 100, 40, 6, '#ff6b6b30', '#ff6b6b');
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(`seed: ${s}`, seedX + 50, 105);
+
+        // Draw produced cells
+        const startX = 250;
+        const cellW = 55;
+        for (let i = 0; i < produced.length; i++) {
+            const x = startX + i * (cellW + 10);
+            const y = 80;
+            drawRoundedRect(ctx, x, y, cellW, 40, 6, '#4ecdc430', '#4ecdc4');
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(produced[i], x + cellW/2, y + 25);
+        }
+
+        // Arrow from seed to list
+        if (produced.length > 0) {
+            drawArrow(ctx, seedX + 100, 100, startX - 10, 100, '#ffd93d');
+        }
+
+        ctx.fillStyle = '#667eea';
+        ctx.font = '13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Step ${step}/6: producing elements from seed`, canvas.width/2, 200);
+
+        document.getElementById('foldUnfoldStatus').textContent =
+            step >= 6 ? 'Done! List fully produced.' : `Producing element ${step + 1}...`;
+    }
+}
+
+// ============================================================
+// SWAP VISUALIZATION
+// ============================================================
+let swapState = {
+    input: [5, 3, 8, 1, 4, 7, 2, 6],
+    current: [],
+    pass: 0,
+    pos: 0,
+    sorted: 0,
+    autoId: null,
+    comparisons: 0
+};
+
+function setSwapInput(arr) {
+    swapState.input = [...arr];
+    swapReset();
+}
+
+function randomSwapInput() {
+    const arr = [];
+    for (let i = 0; i < 8; i++) arr.push(Math.floor(Math.random() * 20) + 1);
+    setSwapInput(arr);
+}
+
+function swapReset() {
+    clearInterval(swapState.autoId);
+    swapState.current = [...swapState.input];
+    swapState.pass = 0;
+    swapState.pos = 0;
+    swapState.sorted = 0;
+    swapState.comparisons = 0;
+    drawSwap();
+}
+
+function swapStep() {
+    const arr = swapState.current;
+    const n = arr.length;
+    if (swapState.sorted >= n - 1) {
+        document.getElementById('swapStatus').textContent = 'Fully sorted!';
+        return;
+    }
+
+    const i = swapState.pos;
+    if (i < n - 1 - swapState.sorted) {
+        swapState.comparisons++;
+        if (arr[i] > arr[i + 1]) {
+            [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+        }
+        swapState.pos++;
+    } else {
+        swapState.sorted++;
+        swapState.pass++;
+        swapState.pos = 0;
+    }
+    drawSwap();
+}
+
+function swapAutoPlay() {
+    clearInterval(swapState.autoId);
+    swapState.autoId = setInterval(() => {
+        if (swapState.sorted >= swapState.current.length - 1) {
+            clearInterval(swapState.autoId);
+            return;
+        }
+        swapStep();
+    }, 200);
+}
+
+function drawSwap() {
+    const canvas = document.getElementById('swapCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const arr = swapState.current;
+    const n = arr.length;
+    const barW = 60;
+    const gap = 15;
+    const startX = (canvas.width - n * (barW + gap)) / 2;
+    const maxVal = Math.max(...arr, ...swapState.input);
+
+    for (let i = 0; i < n; i++) {
+        const x = startX + i * (barW + gap);
+        const barH = (arr[i] / maxVal) * 140;
+        const y = 180 - barH;
+
+        let color = '#667eea';
+        if (i >= n - swapState.sorted) color = '#4ecdc4'; // sorted
+        else if (i === swapState.pos || i === swapState.pos + 1) color = '#ffd93d'; // comparing
+
+        ctx.fillStyle = color;
+        drawRoundedRect(ctx, x, y, barW, barH, 4, color, null);
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(arr[i], x + barW/2, y - 8);
+    }
+
+    // Comparison indicator
+    if (swapState.pos < n - 1 - swapState.sorted && swapState.sorted < n - 1) {
+        const x1 = startX + swapState.pos * (barW + gap) + barW/2;
+        const x2 = startX + (swapState.pos + 1) * (barW + gap) + barW/2;
+        ctx.strokeStyle = '#ffd93d';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x1, 15);
+        ctx.lineTo(x1, 8);
+        ctx.lineTo(x2, 8);
+        ctx.lineTo(x2, 15);
+        ctx.stroke();
+        ctx.fillStyle = '#ffd93d';
+        ctx.font = '11px Segoe UI';
+        ctx.fillText('compare & swap?', (x1 + x2)/2, 5);
+    }
+
+    document.getElementById('swapStatus').textContent =
+        `Pass ${swapState.pass + 1}, Position ${swapState.pos} | Comparisons: ${swapState.comparisons} | Sorted: ${swapState.sorted} elements`;
+
+    // Also update the visual swap cells
+    const vizEl = document.getElementById('swapViz');
+    vizEl.innerHTML = '';
+    const colors = ['#667eea', '#764ba2', '#4ecdc4', '#ff6b6b', '#ffd93d', '#45b7d1', '#96ceb4', '#ff8a65'];
+    arr.forEach((v, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'swap-cell';
+        cell.style.background = i >= n - swapState.sorted ? '#4ecdc430' : colors[i % colors.length] + '30';
+        cell.style.border = `2px solid ${i >= n - swapState.sorted ? '#4ecdc4' : colors[i % colors.length]}`;
+        cell.style.color = i >= n - swapState.sorted ? '#4ecdc4' : colors[i % colors.length];
+        cell.textContent = v;
+        vizEl.appendChild(cell);
+    });
+}
+
+// ============================================================
+// DUAL SORT (BUBBLE vs NAIVE INSERT) VISUALIZATION
+// ============================================================
+let dualState = {
+    input: [5, 2, 8, 1, 6, 3, 7, 4],
+    bubble: { arr: [], sorted: [], step: 0, pass: 0, pos: 0 },
+    insert: { sorted: [], remaining: [], step: 0 },
+    animId: null,
+    running: false
+};
+
+function resetDualSort() {
+    clearInterval(dualState.animId);
+    dualState.running = false;
+    dualState.bubble = { arr: [...dualState.input], sorted: [], step: 0, pass: 0, pos: 0 };
+    dualState.insert = { sorted: [], remaining: [...dualState.input], step: 0 };
+    drawDualSort();
+    document.getElementById('dualSortStatus').textContent = 'These are the SAME algorithm viewed from two perspectives';
+}
+
+function startDualSort() {
+    resetDualSort();
+    dualState.running = true;
+    const speed = parseInt(document.getElementById('dualSpeed').value);
+    dualState.animId = setInterval(() => {
+        stepDualSort();
+        if (!dualState.running) clearInterval(dualState.animId);
+    }, speed);
+}
+
+function stepDualSort() {
+    // Bubble sort step
+    const b = dualState.bubble;
+    if (b.arr.length > 0) {
+        if (b.pos < b.arr.length - 1) {
+            if (b.arr[b.pos] > b.arr[b.pos + 1]) {
+                [b.arr[b.pos], b.arr[b.pos + 1]] = [b.arr[b.pos + 1], b.arr[b.pos]];
+            }
+            b.pos++;
+        } else {
+            // End of pass: last element is the max, but for bubble sort producing sorted from front
+            // Actually bubble sort bubbles minimum to front
+            // Let's do it correctly: bubble minimum to position 0
+            // Re-implement: each pass bubbles from right to left
+            b.sorted.push(b.arr.shift());
+            b.pos = 0;
+            b.pass++;
+            if (b.arr.length === 0) {
+                // done
+            }
+        }
+        b.step++;
+    }
+
+    // Insertion sort step
+    const ins = dualState.insert;
+    if (ins.remaining.length > 0) {
+        const elem = ins.remaining.shift();
+        // Insert into sorted position
+        let placed = false;
+        for (let i = 0; i < ins.sorted.length; i++) {
+            if (elem <= ins.sorted[i]) {
+                ins.sorted.splice(i, 0, elem);
+                placed = true;
+                break;
+            }
+        }
+        if (!placed) ins.sorted.push(elem);
+        ins.step++;
+    }
+
+    if (b.arr.length === 0 && ins.remaining.length === 0) {
+        dualState.running = false;
+        document.getElementById('dualSortStatus').textContent = 'Both finished! Same result (they are equal by the bialgebra theorem)';
+    }
+
+    drawDualSort();
+}
+
+function drawDualSort() {
+    const canvas = document.getElementById('dualSortCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const midY = canvas.height / 2;
+
+    // Bubble sort (top half)
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Bubble Sort: unfold(fold swap)', 20, 25);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Repeatedly bubble minimum to front, then peel it off', 20, 42);
+
+    const b = dualState.bubble;
+    const bStartX = 50;
+    const cellW = 45;
+
+    // Sorted portion
+    ctx.fillStyle = '#4ecdc480';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (b.sorted.length > 0) ctx.fillText('sorted output', bStartX + b.sorted.length * 25, 55);
+    b.sorted.forEach((v, i) => {
+        const x = bStartX + i * (cellW + 5);
+        drawRoundedRect(ctx, x, 65, cellW, 35, 5, '#4ecdc420', '#4ecdc4');
+        ctx.fillStyle = '#4ecdc4';
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, x + cellW/2, 87);
+    });
+
+    // Unsorted portion
+    const bUnsortedStart = bStartX + b.sorted.length * (cellW + 5) + 20;
+    b.arr.forEach((v, i) => {
+        const x = bUnsortedStart + i * (cellW + 5);
+        let color = '#667eea';
+        if (i === b.pos || i === b.pos + 1) color = '#ffd93d';
+        drawRoundedRect(ctx, x, 65, cellW, 35, 5, color + '20', color);
+        ctx.fillStyle = color;
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, x + cellW/2, 87);
+    });
+
+    // Divider
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(0, midY);
+    ctx.lineTo(canvas.width, midY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Insertion sort (bottom half)
+    ctx.fillStyle = '#4ecdc4';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Naïve Insertion Sort: fold(unfold swap)', 20, midY + 25);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Take each element and insert into growing sorted list', 20, midY + 42);
+
+    const ins = dualState.insert;
+
+    // Remaining
+    ctx.fillStyle = '#88888880';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (ins.remaining.length > 0) ctx.fillText('remaining input', bStartX + ins.remaining.length * 25, midY + 55);
+    ins.remaining.forEach((v, i) => {
+        const x = bStartX + i * (cellW + 5);
+        drawRoundedRect(ctx, x, midY + 65, cellW, 35, 5, '#66666620', '#666');
+        ctx.fillStyle = '#999';
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, x + cellW/2, midY + 87);
+    });
+
+    // Sorted
+    const insStart = bStartX + Math.max(ins.remaining.length, 1) * (cellW + 5) + 20;
+    ins.sorted.forEach((v, i) => {
+        const x = insStart + i * (cellW + 5);
+        drawRoundedRect(ctx, x, midY + 65, cellW, 35, 5, '#4ecdc420', '#4ecdc4');
+        ctx.fillStyle = '#4ecdc4';
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, x + cellW/2, midY + 87);
+    });
+
+    // Equality note
+    ctx.fillStyle = '#ffd93d';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('= (by bialgebra uniqueness)', canvas.width/2, midY - 10);
+}
+
+// ============================================================
+// APOMORPHISM DEMO
+// ============================================================
+function updateInsertDemo() {
+    const val = parseInt(document.getElementById('insertVal').value);
+    document.getElementById('insertValLabel').textContent = val;
+    drawApoDemo(val);
+}
+
+function drawApoDemo(val) {
+    const canvas = document.getElementById('apoCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const sorted = [2, 4, 7, 9, 12, 15, 18];
+    const cellW = 55;
+    const startX = (canvas.width - (sorted.length + 1) * (cellW + 8)) / 2;
+    const y = 60;
+
+    // Find insertion point
+    let insertIdx = sorted.length;
+    for (let i = 0; i < sorted.length; i++) {
+        if (val <= sorted[i]) { insertIdx = i; break; }
+    }
+
+    // Draw sorted list with insertion point highlighted
+    for (let i = 0; i < sorted.length; i++) {
+        const x = startX + i * (cellW + 8);
+        const isBeforeInsert = i < insertIdx;
+        const color = isBeforeInsert ? '#4ecdc4' : '#667eea';
+        drawRoundedRect(ctx, x, y, cellW, 40, 6, color + '20', color);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(sorted[i], x + cellW/2, y + 25);
+
+        // Show comparison arrows for elements checked
+        if (i < insertIdx) {
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = '10px Segoe UI';
+            ctx.fillText('✓', x + cellW/2, y + 55);
+        } else if (i === insertIdx) {
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = '10px Segoe UI';
+            ctx.fillText('STOP', x + cellW/2, y + 55);
+        }
+    }
+
+    // Draw the inserted element
+    const insertX = startX + insertIdx * (cellW + 8);
+    // Shift remaining elements to make room
+    drawRoundedRect(ctx, insertX, y - 50, cellW, 40, 6, '#ffd93d30', '#ffd93d');
+    ctx.fillStyle = '#ffd93d';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(val, insertX + cellW/2, y - 25);
+
+    // Arrow pointing down
+    drawArrow(ctx, insertX + cellW/2, y - 8, insertX + cellW/2, y - 2, '#ffd93d');
+
+    // Status
+    const comparisons = insertIdx < sorted.length ? insertIdx + 1 : insertIdx;
+    document.getElementById('apoStatus').textContent =
+        `Apomorphism made ${comparisons} comparison(s) then STOPPED. ` +
+        `Without early termination (naïve unfold), it would scan all ${sorted.length} elements.`;
+}
+
+// ============================================================
+// INSERTION SORT vs SELECTION SORT
+// ============================================================
+let insSelState = {
+    input: [6, 2, 8, 1, 5, 3, 7, 4],
+    insertionSorted: [],
+    insertionRemaining: [],
+    selectionSorted: [],
+    selectionRemaining: [],
+    insertionComparisons: 0,
+    selectionComparisons: 0,
+    insertionDone: false,
+    selectionDone: false,
+    animId: null
+};
+
+function resetInsSelSort() {
+    clearInterval(insSelState.animId);
+    insSelState.insertionSorted = [];
+    insSelState.insertionRemaining = [...insSelState.input];
+    insSelState.selectionSorted = [];
+    insSelState.selectionRemaining = [...insSelState.input];
+    insSelState.insertionComparisons = 0;
+    insSelState.selectionComparisons = 0;
+    insSelState.insertionDone = false;
+    insSelState.selectionDone = false;
+    drawInsSel();
+}
+
+function randomInsSelInput() {
+    const arr = [];
+    for (let i = 0; i < 8; i++) arr.push(Math.floor(Math.random() * 20) + 1);
+    insSelState.input = arr;
+    resetInsSelSort();
+}
+
+function runInsertionSort() {
+    resetInsSelSort();
+    insSelState.animId = setInterval(() => {
+        if (insSelState.insertionRemaining.length === 0) {
+            insSelState.insertionDone = true;
+            clearInterval(insSelState.animId);
+            return;
+        }
+        const elem = insSelState.insertionRemaining.shift();
+        // Insert with early termination (apomorphism behavior)
+        let placed = false;
+        for (let i = 0; i < insSelState.insertionSorted.length; i++) {
+            insSelState.insertionComparisons++;
+            if (elem <= insSelState.insertionSorted[i]) {
+                insSelState.insertionSorted.splice(i, 0, elem);
+                placed = true;
+                break; // EARLY TERMINATION (apomorphism!)
+            }
+        }
+        if (!placed) {
+            if (insSelState.insertionSorted.length > 0) insSelState.insertionComparisons++;
+            insSelState.insertionSorted.push(elem);
+        }
+        drawInsSel();
+    }, 500);
+}
+
+function runSelectionSort() {
+    resetInsSelSort();
+    insSelState.animId = setInterval(() => {
+        if (insSelState.selectionRemaining.length === 0) {
+            insSelState.selectionDone = true;
+            clearInterval(insSelState.animId);
+            return;
+        }
+        // Selection: find minimum (paramorphism - sees whole remaining list)
+        let minIdx = 0;
+        for (let i = 1; i < insSelState.selectionRemaining.length; i++) {
+            insSelState.selectionComparisons++;
+            if (insSelState.selectionRemaining[i] < insSelState.selectionRemaining[minIdx]) {
+                minIdx = i;
+            }
+        }
+        const minVal = insSelState.selectionRemaining.splice(minIdx, 1)[0];
+        insSelState.selectionSorted.push(minVal);
+        drawInsSel();
+    }, 500);
+}
+
+function drawInsSel() {
+    const canvas = document.getElementById('insSelCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const midY = canvas.height / 2;
+    const cellW = 40;
+    const gap = 6;
+
+    // Insertion Sort (top)
+    ctx.fillStyle = '#4ecdc4';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Insertion Sort: fold(apo swop) — comparisons: ' + insSelState.insertionComparisons, 20, 20);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Inserts each element with early termination (apomorphism stops when placed)', 20, 37);
+
+    // Draw insertion remaining
+    let x = 30;
+    ctx.fillStyle = '#666';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (insSelState.insertionRemaining.length > 0) ctx.fillText('remaining', x + insSelState.insertionRemaining.length * (cellW + gap) / 2, 50);
+    insSelState.insertionRemaining.forEach((v, i) => {
+        const cx = x + i * (cellW + gap);
+        drawRoundedRect(ctx, cx, 55, cellW, 32, 4, '#66666620', '#666');
+        ctx.fillStyle = '#aaa';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, cx + cellW/2, 76);
+    });
+
+    // Draw insertion sorted
+    const insStartX = 30 + Math.max(insSelState.insertionRemaining.length, 0) * (cellW + gap) + 40;
+    ctx.fillStyle = '#4ecdc480';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (insSelState.insertionSorted.length > 0) ctx.fillText('sorted (built by insertion)', insStartX + insSelState.insertionSorted.length * (cellW + gap) / 2, 50);
+    insSelState.insertionSorted.forEach((v, i) => {
+        const cx = insStartX + i * (cellW + gap);
+        drawRoundedRect(ctx, cx, 55, cellW, 32, 4, '#4ecdc420', '#4ecdc4');
+        ctx.fillStyle = '#4ecdc4';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, cx + cellW/2, 76);
+    });
+
+    // Divider
+    ctx.strokeStyle = '#333';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(0, midY);
+    ctx.lineTo(canvas.width, midY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Selection Sort (bottom)
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Selection Sort: unfold(para swop) — comparisons: ' + insSelState.selectionComparisons, 20, midY + 20);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Selects minimum each time (paramorphism sees whole remaining list)', 20, midY + 37);
+
+    // Draw selection remaining
+    x = 30;
+    ctx.fillStyle = '#666';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (insSelState.selectionRemaining.length > 0) ctx.fillText('remaining', x + insSelState.selectionRemaining.length * (cellW + gap) / 2, midY + 50);
+    insSelState.selectionRemaining.forEach((v, i) => {
+        const cx = x + i * (cellW + gap);
+        drawRoundedRect(ctx, cx, midY + 55, cellW, 32, 4, '#66666620', '#666');
+        ctx.fillStyle = '#aaa';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, cx + cellW/2, midY + 76);
+    });
+
+    // Draw selection sorted
+    const selStartX = 30 + Math.max(insSelState.selectionRemaining.length, 0) * (cellW + gap) + 40;
+    ctx.fillStyle = '#ff6b6b80';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    if (insSelState.selectionSorted.length > 0) ctx.fillText('sorted (built by selection)', selStartX + insSelState.selectionSorted.length * (cellW + gap) / 2, midY + 50);
+    insSelState.selectionSorted.forEach((v, i) => {
+        const cx = selStartX + i * (cellW + gap);
+        drawRoundedRect(ctx, cx, midY + 55, cellW, 32, 4, '#ff6b6b20', '#ff6b6b');
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(v, cx + cellW/2, midY + 76);
+    });
+
+    // Status
+    document.getElementById('insSelStatus').textContent =
+        `Insertion: ${insSelState.insertionComparisons} comparisons | Selection: ${insSelState.selectionComparisons} comparisons` +
+        (insSelState.insertionDone ? ' | Insertion DONE' : '') +
+        (insSelState.selectionDone ? ' | Selection DONE' : '');
+}
+
+// ============================================================
+// TREE VISUALIZATION (QUICKSORT / TREESORT)
+// ============================================================
+let treeState = {
+    input: [5, 3, 8, 1, 6, 4, 7, 2],
+    tree: null,
+    steps: [],
+    currentStep: 0,
+    mode: null, // 'quick' or 'tree'
+    animId: null
+};
+
+function randomTreeInput() {
+    const arr = [];
+    for (let i = 0; i < 8; i++) arr.push(Math.floor(Math.random() * 15) + 1);
+    treeState.input = arr;
+    resetTreeViz();
+}
+
+function resetTreeViz() {
+    clearInterval(treeState.animId);
+    treeState.tree = null;
+    treeState.steps = [];
+    treeState.currentStep = 0;
+    treeState.mode = null;
+    drawTree();
+}
+
+// BST insert
+function bstInsert(tree, val) {
+    if (!tree) return { val: val, left: null, right: null };
+    if (val <= tree.val) {
+        return { val: tree.val, left: bstInsert(tree.left, val), right: tree.right };
+    } else {
+        return { val: tree.val, left: tree.left, right: bstInsert(tree.right, val) };
+    }
+}
+
+// Build tree step by step for treesort (insert one by one)
+function runTreesortViz() {
+    resetTreeViz();
+    treeState.mode = 'tree';
+    treeState.tree = null;
+    let stepIdx = 0;
+    treeState.animId = setInterval(() => {
+        if (stepIdx >= treeState.input.length) {
+            clearInterval(treeState.animId);
+            document.getElementById('treeStatus').textContent = 'Treesort: tree built by repeated insertion (fold of apo). Now flatten in-order for sorted output.';
+            return;
+        }
+        treeState.tree = bstInsert(treeState.tree, treeState.input[stepIdx]);
+        treeState.currentStep = stepIdx + 1;
+        stepIdx++;
+        drawTree();
+        document.getElementById('treeStatus').textContent = `Treesort: inserted ${stepIdx}/${treeState.input.length} elements (grow' = fold(apo treeIns))`;
+    }, 600);
+}
+
+// Build tree for quicksort (partition approach - top down)
+function runQuicksortViz() {
+    resetTreeViz();
+    treeState.mode = 'quick';
+    // For visualization, we'll build the same BST but show it as partitioning
+    // Quicksort picks last element as pivot, partitions rest
+    function buildQuickTree(arr) {
+        if (arr.length === 0) return null;
+        const pivot = arr[arr.length - 1];
+        const left = arr.slice(0, -1).filter(x => x <= pivot);
+        const right = arr.slice(0, -1).filter(x => x > pivot);
+        return { val: pivot, left: buildQuickTree(left), right: buildQuickTree(right) };
+    }
+
+    // Animate level by level
+    const fullTree = buildQuickTree(treeState.input);
+    treeState.tree = null;
+
+    // BFS to get levels
+    function getLevels(tree) {
+        if (!tree) return [];
+        const levels = [];
+        const queue = [{ node: tree, depth: 0 }];
+        while (queue.length > 0) {
+            const { node, depth } = queue.shift();
+            if (!levels[depth]) levels[depth] = [];
+            levels[depth].push(node.val);
+            if (node.left) queue.push({ node: node.left, depth: depth + 1 });
+            if (node.right) queue.push({ node: node.right, depth: depth + 1 });
+        }
+        return levels;
+    }
+
+    // Animate by inserting nodes level by level
+    const levels = getLevels(fullTree);
+    let levelIdx = 0;
+    let built = null;
+
+    function addLevel() {
+        if (levelIdx >= levels.length) {
+            clearInterval(treeState.animId);
+            document.getElementById('treeStatus').textContent = 'Quicksort: tree built by recursive partitioning (unfold of para). Same tree, different construction order!';
+            return;
+        }
+        // Add all nodes at this level
+        for (const v of levels[levelIdx]) {
+            built = bstInsert(built, v);
+        }
+        treeState.tree = built;
+        treeState.currentStep = levelIdx + 1;
+        levelIdx++;
+        drawTree();
+        document.getElementById('treeStatus').textContent = `Quicksort: partitioning level ${levelIdx} (grow = unfold(para pivot))`;
+    }
+
+    treeState.animId = setInterval(addLevel, 800);
+}
+
+function drawTree() {
+    const canvas = document.getElementById('treeCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Title
+    ctx.fillStyle = treeState.mode === 'quick' ? '#ff6b6b' : (treeState.mode === 'tree' ? '#4ecdc4' : '#667eea');
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    const title = treeState.mode === 'quick' ? 'Quicksort: partition around pivot (top-down, unfold of para)' :
+                  treeState.mode === 'tree' ? 'Treesort: insert into BST (bottom-up, fold of apo)' :
+                  'Click a button to visualize tree construction';
+    ctx.fillText(title, canvas.width/2, 25);
+
+    // Draw input array
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Input: [' + treeState.input.join(', ') + ']', 20, 50);
+
+    if (!treeState.tree) {
+        ctx.fillStyle = '#555';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Empty tree', canvas.width/2, 200);
+        return;
+    }
+
+    // Draw the BST
+    function drawNode(node, x, y, spread) {
+        if (!node) return;
+
+        const childY = y + 65;
+        const childSpread = spread * 0.55;
+
+        // Draw edges first
+        if (node.left) {
+            ctx.strokeStyle = '#4ecdc460';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 15);
+            ctx.lineTo(x - spread, childY - 15);
+            ctx.stroke();
+            drawNode(node.left, x - spread, childY, childSpread);
+        }
+        if (node.right) {
+            ctx.strokeStyle = '#ff6b6b60';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 15);
+            ctx.lineTo(x + spread, childY - 15);
+            ctx.stroke();
+            drawNode(node.right, x + spread, childY, childSpread);
+        }
+
+        // Draw node
+        ctx.beginPath();
+        ctx.arc(x, y, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#1a1a3a';
+        ctx.fill();
+        ctx.strokeStyle = treeState.mode === 'quick' ? '#ff6b6b' : '#4ecdc4';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.val, x, y);
+        ctx.textBaseline = 'alphabetic';
+    }
+
+    drawNode(treeState.tree, canvas.width / 2, 100, 180);
+
+    // Draw in-order traversal result
+    function inOrder(node) {
+        if (!node) return [];
+        return [...inOrder(node.left), node.val, ...inOrder(node.right)];
+    }
+    const sorted = inOrder(treeState.tree);
+    ctx.fillStyle = '#ffd93d';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('In-order traversal (sorted output): [' + sorted.join(', ') + ']', canvas.width/2, canvas.height - 20);
+}
+
+// ============================================================
+// HEAP VISUALIZATION
+// ============================================================
+let heapState = {
+    input: [5, 3, 8, 1, 6, 4, 7, 2],
+    heap: [], // array representation
+    insertIdx: 0,
+    animId: null
+};
+
+function randomHeapInput() {
+    const arr = [];
+    for (let i = 0; i < 8; i++) arr.push(Math.floor(Math.random() * 15) + 1);
+    heapState.input = arr;
+    resetHeap();
+}
+
+function resetHeap() {
+    clearInterval(heapState.animId);
+    heapState.heap = [];
+    heapState.insertIdx = 0;
+    drawHeap();
+}
+
+function heapInsertStep() {
+    if (heapState.insertIdx >= heapState.input.length) {
+        document.getElementById('heapStatus').textContent = 'Heap fully built!';
+        return;
+    }
+    const val = heapState.input[heapState.insertIdx];
+    heapState.heap.push(val);
+    // Bubble up (sift up)
+    let i = heapState.heap.length - 1;
+    while (i > 0) {
+        const parent = Math.floor((i - 1) / 2);
+        if (heapState.heap[i] < heapState.heap[parent]) {
+            [heapState.heap[i], heapState.heap[parent]] = [heapState.heap[parent], heapState.heap[i]];
+            i = parent;
+        } else {
+            break;
+        }
+    }
+    heapState.insertIdx++;
+    drawHeap();
+    document.getElementById('heapStatus').textContent =
+        `Inserted ${heapState.insertIdx}/${heapState.input.length}: value ${val} (heap property maintained by sifting up)`;
+}
+
+function heapAutoPlay() {
+    clearInterval(heapState.animId);
+    heapState.animId = setInterval(() => {
+        if (heapState.insertIdx >= heapState.input.length) {
+            clearInterval(heapState.animId);
+            document.getElementById('heapStatus').textContent = 'Heap fully built! Min-heap property: parent ≤ children';
+            return;
+        }
+        heapInsertStep();
+    }, 600);
+}
+
+function drawHeap() {
+    const canvas = document.getElementById('heapCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Min-Heap (Braun tree structure)', canvas.width/2, 25);
+
+    // Draw input
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'left';
+    let inputStr = 'Input: [';
+    heapState.input.forEach((v, i) => {
+        if (i < heapState.insertIdx) inputStr += `̶${v}̶`;
+        else inputStr += `${v}`;
+        if (i < heapState.input.length - 1) inputStr += ', ';
+    });
+    inputStr += ']';
+    ctx.fillText('Input: [' + heapState.input.map((v, i) => i < heapState.insertIdx ? `(${v})` : v).join(', ') + ']', 20, 50);
+
+    if (heapState.heap.length === 0) {
+        ctx.fillStyle = '#555';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Empty heap — click "Insert Next" to begin', canvas.width/2, 200);
+        return;
+    }
+
+    // Draw heap as tree
+    function drawHeapNode(idx, x, y, spread) {
+        if (idx >= heapState.heap.length) return;
+
+        const leftIdx = 2 * idx + 1;
+        const rightIdx = 2 * idx + 2;
+        const childY = y + 60;
+        const childSpread = spread * 0.5;
+
+        // Draw edges
+        if (leftIdx < heapState.heap.length) {
+            ctx.strokeStyle = '#667eea40';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 15);
+            ctx.lineTo(x - spread, childY - 15);
+            ctx.stroke();
+            drawHeapNode(leftIdx, x - spread, childY, childSpread);
+        }
+        if (rightIdx < heapState.heap.length) {
+            ctx.strokeStyle = '#667eea40';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 15);
+            ctx.lineTo(x + spread, childY - 15);
+            ctx.stroke();
+            drawHeapNode(rightIdx, x + spread, childY, childSpread);
+        }
+
+        // Draw node
+        const isNew = idx === heapState.heap.length - 1;
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = isNew ? '#ffd93d20' : '#1a1a3a';
+        ctx.fill();
+        ctx.strokeStyle = isNew ? '#ffd93d' : '#667eea';
+        ctx.lineWidth = isNew ? 3 : 2;
+        ctx.stroke();
+
+        ctx.fillStyle = isNew ? '#ffd93d' : '#fff';
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(heapState.heap[idx], x, y);
+        ctx.textBaseline = 'alphabetic';
+    }
+
+    drawHeapNode(0, canvas.width / 2, 100, 180);
+
+    // Show heap array
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Heap array: [' + heapState.heap.join(', ') + ']', canvas.width/2, canvas.height - 20);
+}
+
+// ============================================================
+// COMPLEXITY PLOT (Plotly)
+// ============================================================
+function drawComplexityPlot() {
+    const n = [];
+    const quadratic = [];
+    const nlogn = [];
+    const nlogn_worst = [];
+    const linear = [];
+
+    for (let i = 1; i <= 100; i++) {
+        n.push(i);
+        quadratic.push(i * i);
+        nlogn.push(i * Math.log2(i + 1));
+        nlogn_worst.push(i * i); // worst case for quicksort
+        linear.push(i);
+    }
+
+    const traces = [
+        {
+            x: n, y: quadratic, name: 'Bubble/Naïve Insert O(n²)',
+            line: { color: '#ff6b6b', width: 2 }, type: 'scatter'
+        },
+        {
+            x: n, y: quadratic, name: 'Insert/Select O(n²) worst',
+            line: { color: '#ffd93d', width: 2, dash: 'dash' }, type: 'scatter'
+        },
+        {
+            x: n, y: nlogn, name: 'Quick/Tree/Heap O(n log n)',
+            line: { color: '#4ecdc4', width: 3 }, type: 'scatter'
+        },
+        {
+            x: n, y: linear, name: 'Insertion Sort O(n) best case',
+            line: { color: '#667eea', width: 2, dash: 'dot' }, type: 'scatter'
+        }
+    ];
+
+    const layout = {
+        paper_bgcolor: '#0d0d20',
+        plot_bgcolor: '#0d0d20',
+        font: { color: '#aaa', family: 'Segoe UI' },
+        title: { text: 'Sorting Algorithm Complexity Comparison', font: { color: '#e0e0e0', size: 14 } },
+        xaxis: { title: 'Input size (n)', gridcolor: '#222', zerolinecolor: '#333' },
+        yaxis: { title: 'Operations', gridcolor: '#222', zerolinecolor: '#333' },
+        legend: { x: 0.02, y: 0.98, bgcolor: '#12122a80' },
+        margin: { t: 40, b: 50, l: 60, r: 20 }
+    };
+
+    Plotly.newPlot('complexityPlot', traces, layout, { responsive: true });
+}
+
+// ============================================================
+// SUMMARY CANVAS
+// ============================================================
+function drawSummary() {
+    const canvas = document.getElementById('summaryCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('The Sorting Algorithm Family Tree', canvas.width/2, 30);
+
+    const algorithms = [
+        { name: 'Naïve Insert', dual: 'Bubble Sort', nt: 'swap', scheme: 'fold(unfold) / unfold(fold)', complexity: 'O(n²)', color: '#ff6b6b', y: 80 },
+        { name: 'Insertion Sort', dual: 'Selection Sort', nt: 'swop', scheme: 'fold(apo) / unfold(para)', complexity: 'O(n²) worst, O(n) best', color: '#ffd93d', y: 160 },
+        { name: 'Treesort', dual: 'Quicksort', nt: 'sprout/wither', scheme: 'fold(apo)+unfold(para)', complexity: 'O(n log n) avg', color: '#4ecdc4', y: 240 },
+        { name: 'Heapsort', dual: 'Minglesort', nt: 'pile/sift', scheme: 'fold(apo)+unfold(para)', complexity: 'O(n log n) guaranteed', color: '#667eea', y: 320 },
+    ];
+
+    const leftX = 180;
+    const rightX = canvas.width - 180;
+    const centerX = canvas.width / 2;
+
+    // Column headers
+    ctx.fillStyle = '#4ecdc4';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('fold (apo/unfold ...)', leftX, 55);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('unfold (para/fold ...)', rightX, 55);
+    ctx.fillStyle = '#667eea';
+    ctx.fillText('natural transformation', centerX, 55);
+
+    algorithms.forEach((algo) => {
+        const y = algo.y;
+
+        // Left algorithm
+        drawRoundedRect(ctx, leftX - 80, y - 15, 160, 35, 6, '#4ecdc415', '#4ecdc4');
+        ctx.fillStyle = '#4ecdc4';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(algo.name, leftX, y + 5);
+
+        // Right algorithm (dual)
+        drawRoundedRect(ctx, rightX - 80, y - 15, 160, 35, 6, '#ff6b6b15', '#ff6b6b');
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(algo.dual, rightX, y + 5);
+
+        // Center: natural transformation
+        drawRoundedRect(ctx, centerX - 50, y - 12, 100, 28, 6, algo.color + '20', algo.color);
+        ctx.fillStyle = algo.color;
+        ctx.font = 'bold 11px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(algo.nt, centerX, y + 5);
+
+        // Duality arrows
+        ctx.strokeStyle = '#ffffff20';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(leftX + 85, y);
+        ctx.lineTo(centerX - 55, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(centerX + 55, y);
+        ctx.lineTo(rightX - 85, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Complexity label
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(algo.complexity, centerX, y + 20);
+    });
+
+    // Draw progression arrow on the left
+    ctx.strokeStyle = '#4ecdc440';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(30, 90);
+    ctx.lineTo(30, 340);
+    ctx.stroke();
+    drawArrow(ctx, 30, 90, 30, 340, '#4ecdc440');
+    ctx.fillStyle = '#4ecdc4';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.translate(15, 220);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('More efficient →', 0, 0);
+    ctx.restore();
+
+    // Key insight box
+    drawRoundedRect(ctx, 200, 380, 500, 60, 8, '#667eea10', '#667eea40');
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Key Insight: Each natural transformation yields TWO dual algorithms.', canvas.width/2, 405);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('fold(apo/unfold nt) = unfold(para/fold nt) — by bialgebra uniqueness', canvas.width/2, 425);
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+    renderMath();
+    drawBigPicture();
+    resetFoldUnfold();
+    swapReset();
+    resetDualSort();
+    updateInsertDemo();
+    resetInsSelSort();
+    resetTreeViz();
+    resetHeap();
+    drawComplexityPlot();
+    drawSummary();
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+    drawComplexityPlot();
+});
+</script>
+</body>
+</html>
