@@ -99,7 +99,6 @@ const Presentation = (() => {
         if (typeof AttentionDemo !== 'undefined') {
             AttentionDemo.reset();
         }
-        // *** NEU: Embedding Auto-Demo ***
         if (typeof EmbeddingAutoDemo !== 'undefined') {
             if (EmbeddingAutoDemo.isOnEmbeddingSlide()) {
                 EmbeddingAutoDemo.activate();
@@ -107,15 +106,12 @@ const Presentation = (() => {
                 EmbeddingAutoDemo.reset();
             }
         }
-        // *** NEU: NN Step Demo reset ***
         if (typeof NNStepDemo !== 'undefined') {
             NNStepDemo.reset();
         }
-        // *** NEU: PredictionViz reset ***
         if (typeof PredictionViz !== 'undefined') {
             PredictionViz.reset();
         }
-        // *** NEU: CRSim aktivieren/deaktivieren ***
         if (typeof CRSim !== 'undefined') {
             if (slides[currentSlide].querySelector('#chinese-room-sim')) {
                 CRSim.start();
@@ -124,12 +120,21 @@ const Presentation = (() => {
             }
         }
 
-	// *** NEU: AttractorViz reset ***
+        // AttractorViz
         if (typeof AttractorViz !== 'undefined') {
             if (slides[currentSlide].getAttribute('data-title') === 'Attraktoren') {
-                AttractorViz.init();
+                setTimeout(() => AttractorViz.init(), 80);
             } else {
                 AttractorViz.reset();
+            }
+        }
+
+        // JSpaceViz
+        if (typeof JSpaceViz !== 'undefined') {
+            if (slides[currentSlide].getAttribute('data-title') === 'J-Space') {
+                setTimeout(() => JSpaceViz.init(), 80);
+            } else {
+                JSpaceViz.reset();
             }
         }
 
@@ -193,7 +198,7 @@ const Presentation = (() => {
 })();
 
 // ============================================================
-// KEYBOARD & TOUCH CONTROLS (mit Notebook-Integration + PredictionViz + CRSim fix)
+// KEYBOARD & TOUCH CONTROLS
 // ============================================================
 document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -203,6 +208,7 @@ document.addEventListener('keydown', (e) => {
         case ' ':
         case 'Enter':
         case 'PageDown':
+        case 'ArrowDown':
             e.preventDefault();
             if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
                 NNStepDemo.next();
@@ -212,6 +218,9 @@ document.addEventListener('keydown', (e) => {
             }
             else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
                 AttentionDemo.next();
+            }
+            else if (typeof JSpaceViz !== 'undefined' && JSpaceViz.canGoNext()) {
+                JSpaceViz.next();
             }
             else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
                 PEOrbitViz.next();
@@ -238,38 +247,6 @@ document.addEventListener('keydown', (e) => {
         case 'ArrowLeft':
         case 'Backspace':
         case 'PageUp':
-            e.preventDefault();
-            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
-                NNStepDemo.prev();
-            }
-            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoPrev()) {
-                TrainingViz.prev();
-            }
-            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
-                AttentionDemo.prev();
-            }
-            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
-                PEOrbitViz.prev();
-            }
-            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
-                ResidualNotebook.prevLayer();
-            }
-            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
-                EmbeddingAutoDemo.prev();
-            }
-            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoPrev()) {
-                PredictionViz.prev();
-            }
-            else if (typeof CRSim !== 'undefined' && CRSim.canGoPrev()) {
-                CRSim.prev();
-            }
-            else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoPrev()) {
-                AttractorViz.prev();
-            }
-            else {
-                Presentation.prev();
-            }
-            break;
         case 'ArrowUp':
             e.preventDefault();
             if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
@@ -281,6 +258,9 @@ document.addEventListener('keydown', (e) => {
             else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoPrev()) {
                 AttentionDemo.prev();
             }
+            else if (typeof JSpaceViz !== 'undefined' && JSpaceViz.canGoPrev()) {
+                JSpaceViz.prev();
+            }
             else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoPrev()) {
                 PEOrbitViz.prev();
             }
@@ -301,39 +281,6 @@ document.addEventListener('keydown', (e) => {
             }
             else {
                 Presentation.prev();
-            }
-            break;
-        case 'ArrowDown':
-            e.preventDefault();
-            if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
-                NNStepDemo.next();
-            }
-            else if (typeof TrainingViz !== 'undefined' && TrainingViz.canGoNext()) {
-                TrainingViz.next();
-            }
-            else if (typeof AttentionDemo !== 'undefined' && AttentionDemo.canGoNext()) {
-                AttentionDemo.next();
-            }
-            else if (typeof PEOrbitViz !== 'undefined' && PEOrbitViz.isOnPEOrbitSlide() && PEOrbitViz.canGoNext()) {
-                PEOrbitViz.next();
-            }
-            else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
-                ResidualNotebook.nextLayer();
-            }
-            else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
-                EmbeddingAutoDemo.next();
-            }
-            else if (typeof PredictionViz !== 'undefined' && PredictionViz.canGoNext()) {
-                PredictionViz.next();
-            }
-            else if (typeof CRSim !== 'undefined' && CRSim.canGoNext()) {
-                CRSim.next();
-            }
-            else if (typeof AttractorViz !== 'undefined' && AttractorViz.canGoNext()) {
-                AttractorViz.next();
-            }
-            else {
-                Presentation.next();
             }
             break;
         case 'f':
@@ -376,6 +323,8 @@ document.addEventListener('touchend', (e) => {
             // Swipe left = next
             if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoNext()) {
                 NNStepDemo.next();
+            } else if (typeof JSpaceViz !== 'undefined' && JSpaceViz.canGoNext()) {
+                JSpaceViz.next();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoNext()) {
                 ResidualNotebook.nextLayer();
             } else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoNext()) {
@@ -393,6 +342,8 @@ document.addEventListener('touchend', (e) => {
             // Swipe right = prev
             if (typeof NNStepDemo !== 'undefined' && NNStepDemo.canGoPrev()) {
                 NNStepDemo.prev();
+            } else if (typeof JSpaceViz !== 'undefined' && JSpaceViz.canGoPrev()) {
+                JSpaceViz.prev();
             } else if (typeof ResidualNotebook !== 'undefined' && ResidualNotebook.isOnNotebookSlide() && ResidualNotebook.canGoPrev()) {
                 ResidualNotebook.prevLayer();
             } else if (typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.canGoPrev()) {
