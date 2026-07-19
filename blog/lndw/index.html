@@ -137,7 +137,7 @@
 		Neuronale Netze können Funktionen approximieren. Das heißt: sie verhalten sich <i>ähnlich genug</i>, um nützlich zu sein.
         </div>
 
-        <div class="key-insight fragment">
+        <div class="fragment">
 		Manchmal weiß man nicht, wie man eine Funktion bauen kann, hat aber viele Beispiele, was Eingaben sind und was rauskommen kann. Dann kann der Computer eine Funktion finden, mit der das möglichst gut geht.
         </div>
 
@@ -146,16 +146,43 @@
         </div>
 
         <div class="key-insight fragment">
-		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer löst tausende bis Millionen davon.
+		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer löst Milliarden davon gleichzeitig.
+        </div>
+
+        <div class="fragment formula-box">
+		<div class="math-display">$$
+			\begin{pmatrix}
+			w_1 \\
+			w_2 \\
+			w_3 \\
+			\vdots
+			\end{pmatrix} \cdot \begin{pmatrix}
+			x_1 \\
+			x_2 \\
+			x_3 \\
+			\vdots
+			\end{pmatrix} + 
+			\begin{pmatrix}
+			b_1 \\
+			b_2 \\
+			b_3 \\
+			\vdots
+			\end{pmatrix}
+
+			\\ \Downarrow \\
+
+			\begin{aligned}
+			w_1 \cdot x_1 &+ b_1 \\
+			w_2 \cdot x_2 &+ b_2 \\
+			w_3 \cdot x_3 &+ b_3 \\
+			&\ \vdots
+			\end{aligned}
+		$$</div>
         </div>
 
         <div class="fragment formula-box">
 		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
         </div>
-
-	<center class="fragment">
-		<img src="dense.png" />
-	</center>
 
         <div class="key-insight fragment">
             <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau durch Stückelung in lineare Segmente approximieren!
@@ -197,7 +224,13 @@
     </div>
 </div>
 
+<div class="slide" data-title="Neuronales Netz Intro">
+    <div class="slide-content">
+        <h2>Was sind Neuronale Netzwerk?</h2>
 
+	<img src="dense.png" />
+    </div>
+</div>
 
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
 <div class="slide" data-title="Muster in der Wirklichkeit">
