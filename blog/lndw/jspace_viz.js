@@ -96,7 +96,7 @@ const JSpaceViz = (() => {
             '<b>Gedankenschritte als Zwischenergebnisse:</b> Wenn du "3²−2" rechnest, siehst du die Schritte: "9… dann 7". Wenn du fragst "Wie viele Beine hat das Tier, das Netze spinnt?" denkst du: "Spinne… 8". Diese Zwischenschritte sind das, was im Workspace auftaucht.',
             '<b>Was ist ein Jacobian?</b> Ein Jacobian misst, wie stark sich ein Ausgabewert ändert, wenn man einen Eingabewert leicht verändert. Visuell: Er zeigt, wie ein Raum <i>verzerrt</i> wird – wo er gestreckt, gestaucht oder gedreht wird. Die J-Lens nutzt genau das.',
             '<b>J-Lens am realen Beispiel:</b> Claude wird gefragt: "Das Tier das Netze spinnt hat wie viele Beine?" – Die J-Lens zeigt, welche Konzepte im Workspace aktiv sind: "spider", "eight", "legs". Das Modell "denkt" diese Worte, bevor es antwortet.',
-            '<b>Stilles Denken:</b> Mit dem J-Space können LLM Erkenntnisse "zwischenspeichern", die sie nicht aussprechen, damit damit still denken und komplexere Probleme lösen. Dieser J-Space hat sich dynamisch von selbst entwickelt und wurde <i>NICHT</i> vorgegeben als Struktur.'
+            '<b>Stilles Denken:</b> Mit dem J-Space können LLM Erkenntnisse "zwischenspeichern", die sie nicht aussprechen, damit damit still denken und komplexere Probleme lösen. Dieser J-Space hat sich dynamisch von selbst entwickelt und wurde <i>NICHT</i> vorgegeben als Struktur. Der Optimierungsalgorithmus hat ihn gefunden, weil er <i>nützlich</i> ist.'
         ];
         const captionEl = document.getElementById('jspace-caption');
         if (captionEl) captionEl.innerHTML = captions[step] || '';
