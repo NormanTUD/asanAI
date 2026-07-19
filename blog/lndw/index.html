@@ -146,10 +146,10 @@
         </div>
 
         <div class="fragment">
-		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer löst Milliarden davon gleichzeitig.
+		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer kann Milliarden davon gleichzeitig berechnen.
         </div>
 
-        <div class="fragment formula-box">
+        <div class="fragment">
 		<div class="math-display">$$
 			\begin{pmatrix}
 			w_1 \\
@@ -168,9 +168,13 @@
 			b_3 \\
 			\vdots
 			\end{pmatrix}
-
+		$$</div>
+        </div>
+        <div class="fragment">
+		<div class="math-display">$$
 			\\ \Downarrow \\
-
+		$$</div>
+		<div class="math-display">$$
 			\begin{aligned}
 			w_1 \cdot x_1 &+ b_1 \\
 			w_2 \cdot x_2 &+ b_2 \\
