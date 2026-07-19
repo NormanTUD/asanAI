@@ -620,3 +620,81 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     border-color: #3b82f6;
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
+
+/* ============ HALLUCINATION WORD BUBBLES ============ */
+.halluc-word {
+    position: relative;
+    display: inline-block;
+    font-weight: bold;
+    color: #dc2626;
+    cursor: default;
+    transition: all 0.3s ease;
+}
+
+.halluc-word.active {
+    background: #fef2f2;
+    border-radius: 4px;
+    padding: 0 4px;
+    border-bottom: 2px dashed #f87171;
+}
+
+.halluc-bubble {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: #1e293b;
+    color: #f8fafc;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.75em;
+    font-weight: normal;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 100;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.halluc-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1e293b;
+}
+
+.halluc-bubble .candidate {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0;
+    line-height: 1.5;
+}
+
+.halluc-bubble .candidate-name {
+    color: #e2e8f0;
+}
+
+.halluc-bubble .candidate-prob {
+    color: #94a3b8;
+    font-family: monospace;
+}
+
+.halluc-bubble .candidate:first-child {
+    color: #fbbf24;
+    font-weight: bold;
+}
+
+.halluc-bubble .candidate:first-child .candidate-name {
+    color: #fbbf24;
+}
+
+.halluc-word.active .halluc-bubble {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+}

@@ -130,6 +130,37 @@ const FragmentActions = {
             if (typeof resetDualManifold === 'function') resetDualManifold();
         },
     },
+
+	// In FragmentActions hinzufügen:
+	'show-halluc-bubbles': {
+	    forward: () => {
+		document.querySelectorAll('.halluc-word').forEach((word, i) => {
+		    setTimeout(() => {
+			word.classList.add('active');
+			// Bubble erstellen falls noch nicht vorhanden
+			if (!word.querySelector('.halluc-bubble')) {
+			    const candidates = word.getAttribute('data-candidates').split('|');
+			    const bubble = document.createElement('div');
+			    bubble.className = 'halluc-bubble';
+			    candidates.forEach(c => {
+				const [name, prob] = c.trim().split(/\s+(?=[\d.]+$)/);
+				const row = document.createElement('div');
+				row.className = 'candidate';
+				row.innerHTML = `<span class="candidate-name">${name}</span><span class="candidate-prob">${prob}</span>`;
+				bubble.appendChild(row);
+			    });
+			    word.appendChild(bubble);
+			}
+		    }, i * 200); // Gestaffelt einblenden
+		});
+	    },
+	    backward: () => {
+		document.querySelectorAll('.halluc-word').forEach(word => {
+		    word.classList.remove('active');
+		});
+	    },
+	},
+
 };
 
 // ────────────────────────────────────────────────────────────

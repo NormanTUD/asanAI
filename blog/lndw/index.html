@@ -1095,9 +1095,9 @@
     <div class="slide-content">
         <h2>Halluzinationen: Wenn das LLM "lügt"</h2>
 
-        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
-            <!-- Beispiel 1: Mango -->
-            <div style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
+        <div style="max-width:700px; margin:0 auto;">
+            <!-- Chat-Beispiel: Mango -->
+            <div style="padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
                 <div class="chat-container">
                     <div class="message user">
                         <div class="message-avatar">🔵</div>
@@ -1110,104 +1110,30 @@
                         <div class="message-avatar">🟢</div>
                         <div class="message-bubble">
                             <div class="message-label">ChatGPT</div>
-                            Ja, das geht! In der <b>Mango-Manufaktur in Lindow in Brandenburg</b> werden seit 2009 erfolgreich Mangos angebaut. 🥭
+                            Ja, das geht! In der
+                            <span class="halluc-word" data-candidates="Mango-Manufaktur 0.08|Tropenfrucht-Farm 0.05|Obstplantage 0.04|Gewächshaus-Projekt 0.03">Mango-Manufaktur</span>
+                            in
+                            <span class="halluc-word" data-candidates="Lindow 0.12|Werder 0.09|Beelitz 0.07|Potsdam 0.05">Lindow</span>
+                            in
+                            <span class="halluc-word" data-candidates="Brandenburg 0.61|Sachsen 0.09|Thüringen 0.05|Bayern 0.04">Brandenburg</span>
+                            werden seit
+                            <span class="halluc-word" data-candidates="2009 0.14|2008 0.12|2010 0.11|2012 0.08">2009</span>
+                            erfolgreich Mangos angebaut. 🥭
                         </div>
                     </div>
-                    <div class="message-label">Realität</div>
-                    ❌ Diese "Mango-Manufaktur" existiert nicht. Frei erfunden.
                 </div>
+
+                <!-- Erklärung -->
                 <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
                     <b>Was passiert ist:</b> Das Modell wusste nichts, aber statt zu schweigen, hat es etwas erzeugt, das <b>plausibel klingt</b>: ein Ortsname, ein Bundesland, eine Jahreszahl.
                 </div>
 
-		    <div class="fragment math-display" style="padding-top: 50px;">
-			    \text{"Ja, in der }
-				\underbrace{\text{Mango-Manufaktur}}_{\substack{
-				    \text{Mango-Manufaktur} \quad 0.08 \\
-				    \text{Tropenfrucht-Farm} \quad 0.05 \\
-				    \text{Obstplantage} \quad 0.04 \\
-				    \vdots
-				}}
-				\text{ in }
-				\underbrace{\text{Lindow}}_{\substack{
-				    \text{Lindow} \quad 0.12 \\
-				    \text{Werder} \quad 0.09 \\
-				    \text{Beelitz} \quad 0.07 \\
-				    \vdots
-				}}
-				\text{ in }
-				\underbrace{\text{Brandenburg}}_{\substack{
-				    \text{Brandenburg} \quad 0.61 \\
-				    \text{Sachsen} \quad 0.09 \\
-				    \text{Thüringen} \quad 0.05 \\
-				    \vdots
-				}}
-				\text{ werden seit }
-				\underbrace{2009}_{\substack{
-				    \text{2009} \quad 0.14 \\
-				    \text{2008} \quad 0.12 \\
-				    \text{2010} \quad 0.11 \\
-				    \text{2012} \quad 0.08 \\
-				    \vdots
-				}}
-				\text{ erfolgreich Mangos angebaut."}
-		    </div>
-            </div>
+                <!-- Fragment: Sprechblasen aktivieren -->
+                <div class="fragment" data-fragment-action="show-halluc-bubbles"></div>
 
-            <!-- Beispiel 2: Quantenphysik -->
-            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
-                <div class="chat-container">
-                    <div class="message user">
-                        <div class="message-avatar">🔵</div>
-                        <div class="message-bubble">
-                            <div class="message-label">User</div>
-                            Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.
-                        </div>
-                    </div>
-                    <div class="message ki">
-                        <div class="message-avatar">🟢</div>
-                        <div class="message-bubble">
-                            <div class="message-label">LLM</div>
-                            <ol>
-                                <li>"Quantenwelten" (2008)</li>
-                                <li>"Die Ordnung der Teilchen" (2012)</li>
-                                <li>"Verschränkung und Realität" (2015)</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="message-label">Realität</div>
-                    ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
-                </div>
-                <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
-                    <b>Was passiert ist:</b> Das Modell kennt das Muster "Autor + Fachgebiet → Buchtitel mit Jahreszahl" und erzeugt etwas, das <b>aussieht</b> wie eine echte Antwort.
-                </div>
-		    <div class="fragment math-display" style="padding-top: 50px;">
-			    \text{"}
-				\underbrace{\text{Quanten}}_{\substack{
-				    \text{Quanten} \quad 0.31 \\
-				    \text{Teilchen} \quad 0.14 \\
-				    \text{Atom} \quad 0.08 \\
-				    \text{Wellen} \quad 0.06 \\
-				    \vdots
-				}}
-				\underbrace{\text{welten}}_{\substack{
-				    \text{welten} \quad 0.22 \\
-				    \text{mechanik} \quad 0.19 \\
-				    \text{physik} \quad 0.15 \\
-				    \text{theorie} \quad 0.12 \\
-				    \vdots
-				}}
-				\text{" (}
-				\underbrace{2008}_{\substack{
-				    \text{2008} \quad 0.11 \\
-				    \text{2006} \quad 0.10 \\
-				    \text{2010} \quad 0.09 \\
-				    \text{2007} \quad 0.08 \\
-				    \vdots
-				}}
-				\text{)}
-
-                    </div>
+                <p class="fragment" style="margin-top:12px; text-align:center; color:#64748b; font-size:0.9em;">
+                    ↑ Die hervorgehobenen Wörter zeigen, welche Alternativen das Modell hätte wählen können. Keines davon ist "richtig" — alles ist nur statistisch plausibel.
+                </p>
             </div>
         </div>
     </div>
