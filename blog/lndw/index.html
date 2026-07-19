@@ -127,27 +127,90 @@
     </div>
 </div>
 
+
+<!-- ==================== SLIDE: Neural Net Intro ==================== -->
+<div class="slide" data-title="Neuronales Netz Intro">
+    <div class="slide-content">
+        <h2>Was sind Neuronale Netzwerk?</h2>
+
+        <div class="key-insight fragment">
+		Neuronale Netze können Funktionen approximieren. Das heißt: sie verhalten sich <i>ähnlich genug</i>, um nützlich zu sein.
+        </div>
+
+        <div class="key-insight fragment">
+		Manchmal weiß man nicht, wie man eine Funktion bauen kann, hat aber viele Beispiele, was Eingaben sind und was rauskommen kann. Dann kann der Computer eine Funktion finden, mit der das möglichst gut geht.
+        </div>
+
+        <div class="formula-box">
+		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
+        </div>
+
+        <div class="key-insight fragment">
+		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer löst tausende bis Millionen davon.
+        </div>
+
+        <div class="fragment formula-box">
+		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
+        </div>
+
+	<center class="fragment">
+		<img src="dense.png" />
+	</center>
+
+        <div class="key-insight fragment">
+            <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau durch Stückelung in lineare Segmente approximieren!
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
+<div class="slide" data-title="Stückelung">
+    <div class="slide-content">
+        <h2>Funktionsapproximation durch Stückelung</h2>
+        <div class="demo-box">
+            <p>Ein Neuronales kann (mit genug Neuronen) jede stetige Funktion beliebig genau approximieren</p>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+                <label style="font-weight:bold;">Zielfunktion:</label>
+                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
+                    <option value="sin">sin(x)</option>
+                    <option value="quadratic">x²</option>
+                    <option value="abs">|x|</option>
+                    <option value="step">Treppenfunktion</option>
+                    <option value="custom">Wellenform</option>
+                </select>
+                <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
+                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
+                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
+            </div>
+            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+            <br>
+            <center>
+                <div id="nn-bottom-images" style="display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: opacity 0.5s ease;">
+                    <img height="100" class="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto;">
+                    <div style="font-size: 24px; color: #333;">→</div>
+                    <img height="100" class="sunrise-bg-img" src="nansen.jpg" alt="Nansen" style="width: auto;">
+                    <div style="font-size: 24px; color: #333;">→</div>
+                    <img height="100" class="sunrise-bg-img" src="transformer.png" alt="LLM Beschreibung" style="width: auto;">
+                </div>
+            </center>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
 <div class="slide" data-title="Muster in der Wirklichkeit">
     <div class="slide-content">
         <h2>Wichtig ist: Texte haben Pattern</h2>
 	<p style="margin-bottom:10px;">.</p>
 
-        <pre class="fragment" style="font-family: Times New Roman">
-		         riverrun, past Eve and Adam's, from swerve of shore to bend
-		    of bay, brings us by a commodius vicus of recirculation back to
-		    Howth Castle and Environs.
-        </pre>
         <div class="fragment">
-		Die Charaktere mischen alle möglichen Sprachen, es wirkt oft so als würden einander träumen, aber ich habe es nicht verstanden.
-	</div>
+		Texte haben Pattern in sich selbst drin, die ganz offensichtlich sind, sowas wie dass nach dem Subjekt ein Verb kommt, 
 
-        <div class="fragment">
-		Aber auch hier sind die Muster in der Sprache durch die Umgebung beeinflusst.
-	</div>
+		Und sie haben komplexere und unerwartete Pattern, wie Zipfs Gesetz, das sagt, dass das zweithäufigste Wort im Text halb so oft kommt wie das Häufigste, und das dritthäufigste halb so oft wie das zweihäufigste usw.
 
-        <div class="fragment" style="font-size: 2em;">
-		¯\_(ツ)_/¯
+		Pattern kann die Maschine lernen
 	</div>
     </div>
 </div>
@@ -539,66 +602,6 @@
 
         </div>
     </div>
-
-<!-- ==================== SLIDE: Neural Net Intro ==================== -->
-<div class="slide" data-title="Neuronales Netz Intro">
-    <div class="slide-content">
-        <h2>Was ist das Feed-Forward-Netzwerk?</h2>
-        <div class="formula-box">
-		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
-        </div>
-
-        <div class="key-insight fragment">
-		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer löst tausende bis Millionen davon.
-        </div>
-
-        <div class="fragment formula-box">
-		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
-        </div>
-
-	<center class="fragment">
-		<img src="dense.png" />
-	</center>
-
-        <div class="key-insight fragment">
-            <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau durch Stückelung in lineare Segmente approximieren!
-        </div>
-    </div>
-</div>
-
-<!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
-<div class="slide" data-title="Stückelung">
-    <div class="slide-content">
-        <h2>Funktionsapproximation durch Stückelung</h2>
-        <div class="demo-box">
-            <p>Ein Feed-Forward-Netzwerk kann (mit genug Neuronen) jede stetige Funktion beliebig genau approximieren</p>
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-weight:bold;">Zielfunktion:</label>
-                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
-                    <option value="sin">sin(x)</option>
-                    <option value="quadratic">x²</option>
-                    <option value="abs">|x|</option>
-                    <option value="step">Treppenfunktion</option>
-                    <option value="custom">Wellenform</option>
-                </select>
-                <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
-                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
-                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
-            </div>
-            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-            <br>
-            <center>
-                <div id="nn-bottom-images" style="display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: opacity 0.5s ease;">
-                    <img height="100" class="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto;">
-                    <div style="font-size: 24px; color: #333;">→</div>
-                    <img height="100" class="sunrise-bg-img" src="nansen.jpg" alt="Nansen" style="width: auto;">
-                    <div style="font-size: 24px; color: #333;">→</div>
-                    <img height="100" class="sunrise-bg-img" src="transformer.png" alt="LLM Beschreibung" style="width: auto;">
-                </div>
-            </center>
-        </div>
-    </div>
-</div>
 
 <!-- ==================== FOLIE: Attraktoren ==================== -->
 <div class="slide" data-title="Attraktoren">
