@@ -338,7 +338,7 @@ function print_dynamic_title($tag = "title") {
 	$base_name = pathinfo($script_filename, PATHINFO_FILENAME);
 
 	// Read the content of index.php
-	$index_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'index.php';
+	$index_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'index_full.php';
 	$index_content = @file_get_contents($index_path);
 
 	if ($index_content) {
@@ -357,7 +357,7 @@ function print_dynamic_title($tag = "title") {
 	}
 }
 
-function get_ai_course_labels($indexFile = 'index.php') {
+function get_ai_course_labels($indexFile = 'index_full.php') {
 	$labelsMap = [];
 	$content = file_get_contents($indexFile);
 
