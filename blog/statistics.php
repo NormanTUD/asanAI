@@ -125,11 +125,11 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 <div class="md">
 #### The Astronomical Origin: Hunting Ceres
 
-On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
+On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809}, in his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 </div>
 
 <figure>
-    <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
+    <img style="width: 100%" src="ceres_path.png" alt="The apparent path of Ceres in the Night Sky" />
     <figcaption class="md">\citealternativetitle{cerespath}</figcaption>
 </figure>
 
@@ -1185,7 +1185,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## The Chain Rule: Kolmogorov's Logic
 
-        Formalized by **\citeauthor{kolgomorov1933}** in *\citetitle{kolgomorov1933}* (\citeyear{kolgomorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
         In an LLM, the probability of the sentence "The cat sat" is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$

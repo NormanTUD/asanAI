@@ -2026,7 +2026,7 @@ window.bibData = {
 		author: "Solomon Kullback, Richard Leibler",
 		year: 1951
 	},
-	"kolgomorov1933": {
+	"kolmogorov1933": {
 		author: "Andrey Kolmogorov",
 		title: "Foundations of the theory of probability",
 		url: "https://www.york.ac.uk/depts/maths/histstat/kolmogorov_foundations.pdf",
