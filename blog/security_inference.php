@@ -49,3 +49,5 @@ $$
 </div>
 
 <div id="seclab-injection-demo"></div>
+
+<div id="seclab-quant-demo"></div>

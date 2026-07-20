@@ -57,4 +57,4 @@ Train a small **student** model to mimic the outputs of a large **teacher** mode
 | Distillation | Deploy smaller model | One-time training cost |
 </div>
 
-<div id="seclab-quant-demo"></div>
+

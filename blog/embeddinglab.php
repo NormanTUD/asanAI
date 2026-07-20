@@ -28,7 +28,7 @@ In the architecture of a Transformer, a word possesses no intrinsic "soul" or st
 
 <div class="optional md" data-headline="The History of Manifolds">
 
-The concept of a **manifold** originates from the German word **Mannigfaltigkeit**, coined by **Bernhard Riemann** in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} ("On the Hypotheses Which Lie at the Foundations of Geometry"). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauss himself in the audience.
+The concept of a **manifold** is rooted in the German word **Mannigfaltigkeit**, which **Bernhard Riemann** formalized in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} ("On the Hypotheses Which Lie at the Foundations of Geometry"). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauss himself in the audience.
 
 **The Problem Riemann Was Trying to Solve**:
 
