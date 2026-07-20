@@ -33,13 +33,6 @@
 				font-family: sans-serif;
 				background-color: #f3f3f3;
 			}
-			#contents > h1 { cursor: pointer; user-select: none; }
-			#contents > h1::before { content: '\25B6 '; font-size: 0.6em; vertical-align: middle; transition: transform 0.2s; display: inline-block; }
-			#contents > h1.collapsed::before { transform: rotate(-90deg); }
-			#contents > h1.collapsed + * { display: none; }
-			.section-toggle-bar { display: inline-flex; gap: 8px; margin: 8px 0 16px 0; }
-			.section-toggle-bar button { background: #e8e8e8; border: 1px solid #ccc; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.85em; }
-			.section-toggle-bar button:hover { background: #d0d0d0; }
 			/* Lightbox */
 			.lightbox-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
 			.lightbox-overlay.active { display: flex; }
@@ -304,10 +297,6 @@
 		<div id="training_data"></div>
 		<img src="_gui/logo_small.png" />
 		<div id="toc"></div>
-		<div class="section-toggle-bar">
-			<button onclick="expandAllSections()">Expand All</button>
-			<button onclick="collapseAllSections()">Collapse All</button>
-		</div>
 		<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img"></div>
 		<div id="contents">
 			<h1>General outline</h1>
@@ -522,6 +511,35 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			For more categories, you'd add another entry to that column vector, like \( [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] \), all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
 <br>
+			<div class="interactive-demo" id="onehot_demo">
+				<label>Interactive One-Hot-Encoding: </label>
+				<select id="onehot_select" onchange="updateOneHot()">
+					<option value="0">Cat</option>
+					<option value="1">Dog</option>
+					<option value="2">Human</option>
+				</select>
+				<div class="result-display" id="onehot_result"></div>
+			</div>
+			<script>
+			function updateOneHot() {
+				var idx = parseInt(document.getElementById('onehot_select').value);
+				var labels = ['Cat', 'Dog', 'Human'];
+				var colors = ['#e57373', '#64b5f6', '#81c784'];
+				var vec = [0, 0, 0];
+				vec[idx] = 1;
+				var tex = '\\text{One-Hot}(' + labels[idx] + ') = ';
+				tex += '\\begin{pmatrix} ';
+				for (var i = 0; i < vec.length; i++) {
+					var c = i === idx ? colors[i] : '#999';
+					tex += '\\color{' + c + '}{' + vec[i] + '}';
+					if (i < vec.length - 1) tex += ' \\\\ ';
+				}
+				tex += ' \\end{pmatrix}';
+				document.getElementById('onehot_result').innerHTML = '\\[ ' + tex + ' \\]';
+				if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([document.getElementById('onehot_result')]);
+			}
+			updateOneHot();
+			</script>
 			<h3>Layers</h3>
 			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger function.
 <br>
@@ -734,6 +752,46 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
 <br>
+			<div class="interactive-demo" id="dense_demo">
+				<label>Interactive Dense Layer (input size 2, output size 1):</label>
+				<div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888;">Input</div>
+						<input class="grid-cell" id="dense_x0" type="number" value="1" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+						<input class="grid-cell" id="dense_x1" type="number" value="2" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+					</div>
+					<div style="font-size:1.5em; color:#666;">&times;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888;">Kernel</div>
+						<input class="grid-cell" id="dense_w0" type="number" value="0.5" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+						<input class="grid-cell" id="dense_w1" type="number" value="-0.3" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+					</div>
+					<div style="font-size:1.5em; color:#666;">+</div>
+					<div>
+						<div style="font-size:0.8em; color:#888;">Bias</div>
+						<input class="grid-cell" id="dense_b" type="number" value="0.1" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+					</div>
+					<div style="font-size:1.5em; color:#666;">=</div>
+					<div>
+						<div style="font-size:0.8em; color:#888;">Output</div>
+						<div class="result-display" id="dense_output" style="margin:0; padding:6px 12px; font-size:1.2em; min-width:60px; text-align:center;"></div>
+					</div>
+				</div>
+			</div>
+			<script>
+			function computeDense() {
+				var x0 = parseFloat(document.getElementById('dense_x0').value) || 0;
+				var x1 = parseFloat(document.getElementById('dense_x1').value) || 0;
+				var w0 = parseFloat(document.getElementById('dense_w0').value) || 0;
+				var w1 = parseFloat(document.getElementById('dense_w1').value) || 0;
+				var b  = parseFloat(document.getElementById('dense_b').value)  || 0;
+				var y = x0 * w0 + x1 * w1 + b;
+				var el = document.getElementById('dense_output');
+				el.textContent = y.toFixed(4);
+				el.style.background = y > 0 ? '#e8f5e9' : y < 0 ? '#ffebee' : '#f5f5f5';
+			}
+			computeDense();
+			</script>
 			<h3>Flatten</h3>
 			Flatten has no options. It creates a simple vector of any matrix.
 <br>
@@ -747,6 +805,65 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}\right) = \left[0 \quad 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \right]
 			$$
 <br>
+			<div class="interactive-demo" id="flatten_demo">
+				<label>Interactive Flatten: </label>
+				<button onclick="animateFlatten()">Animate</button>
+				<div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input (3x3)</div>
+						<div class="editable-grid" id="flatten_input_grid" style="grid-template-columns:repeat(3,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output (1x9)</div>
+						<div class="editable-grid" id="flatten_output_grid" style="grid-template-columns:repeat(9,36px);"></div>
+					</div>
+				</div>
+			</div>
+			<script>
+			function initFlattenDemo() {
+				var values = [0,1,2,3,4,5,6,7,8];
+				var inputGrid = document.getElementById('flatten_input_grid');
+				var outputGrid = document.getElementById('flatten_output_grid');
+				if (!inputGrid || !outputGrid) return;
+				inputGrid.innerHTML = '';
+				outputGrid.innerHTML = '';
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'fc_in_' + i;
+					cell.textContent = v;
+					cell.style.background = 'hsl(' + (i * 40) + ', 70%, 85%)';
+					inputGrid.appendChild(cell);
+				});
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'fc_out_' + i;
+					cell.style.width = '36px';
+					cell.style.background = '#eee';
+					cell.textContent = '';
+					outputGrid.appendChild(cell);
+				});
+			}
+			function animateFlatten() {
+				initFlattenDemo();
+				var colors = [];
+				for (var i = 0; i < 9; i++) colors.push('hsl(' + (i * 40) + ', 70%, 85%)');
+				var idx = 0;
+				function step() {
+					if (idx >= 9) return;
+					var inCell = document.getElementById('fc_in_' + idx);
+					var outCell = document.getElementById('fc_out_' + idx);
+					if (inCell) { inCell.style.background = '#fff3e0'; inCell.style.border = '2px solid #ff9800'; }
+					if (outCell) { outCell.textContent = idx; outCell.style.background = colors[idx]; outCell.classList.add('flatten-cell-animate'); }
+					idx++;
+					setTimeout(step, 250);
+				}
+				step();
+			}
+			initFlattenDemo();
+			</script>
 			<h3>Dropout</h3>
 			<div id="dropout_example"></div>
 <br>
@@ -799,6 +916,73 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
 <br>
+			<div class="interactive-demo" id="reshape_demo">
+				<label>Interactive Reshape (6 elements): Target shape </label>
+				<select id="reshape_select" onchange="animateReshape()">
+					<option value="2,3">[2, 3]</option>
+					<option value="3,2" selected>[3, 2]</option>
+					<option value="1,6">[1, 6]</option>
+					<option value="6,1">[6, 1]</option>
+				</select>
+				<button onclick="animateReshape()">Reshape</button>
+				<div class="reshape-container" style="margin-top:10px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input [2, 3]</div>
+						<div class="editable-grid" id="reshape_input_grid" style="grid-template-columns:repeat(3,48px);"></div>
+					</div>
+					<div class="reshape-arrow" id="reshape_arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;" id="reshape_out_label">Output [3, 2]</div>
+						<div class="editable-grid" id="reshape_output_grid"></div>
+					</div>
+				</div>
+			</div>
+			<script>
+			function initReshapeDemo() {
+				var values = [1,2,3,4,5,6];
+				var inputGrid = document.getElementById('reshape_input_grid');
+				inputGrid.innerHTML = '';
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'rc_in_' + i;
+					cell.textContent = v;
+					cell.style.background = 'hsl(' + (i * 60) + ', 65%, 85%)';
+					inputGrid.appendChild(cell);
+				});
+				animateReshape();
+			}
+			function animateReshape() {
+				var values = [1,2,3,4,5,6];
+				var shapeStr = document.getElementById('reshape_select').value;
+				var shape = shapeStr.split(',').map(Number);
+				var cols = shape[1];
+				var outGrid = document.getElementById('reshape_output_grid');
+				var outLabel = document.getElementById('reshape_out_label');
+				outLabel.textContent = 'Output [' + shapeStr + ']';
+				outGrid.style.gridTemplateColumns = 'repeat(' + cols + ', 48px)';
+				outGrid.innerHTML = '';
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'rc_out_' + i;
+					cell.textContent = '';
+					cell.style.background = '#eee';
+					outGrid.appendChild(cell);
+				});
+				for (var i = 0; i < 6; i++) {
+					(function(idx) {
+						setTimeout(function() {
+							var inCell = document.getElementById('rc_in_' + idx);
+							var outCell = document.getElementById('rc_out_' + idx);
+							if (inCell) { inCell.style.background = '#fff3e0'; inCell.style.border = '2px solid #ff9800'; }
+							if (outCell) { outCell.textContent = values[idx]; outCell.style.background = 'hsl(' + (idx * 60) + ', 65%, 85%)'; }
+						}, idx * 200);
+					})(i);
+				}
+			}
+			initReshapeDemo();
+			</script>
 			<h2>Activation Layer Types</h2>
 			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a separate layer.
 			<h2>Convolutional Layers</h2>
@@ -862,6 +1046,108 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
 <br>
+			<div class="interactive-demo" id="conv_slide_demo">
+				<label>Interactive Convolution Sliding Window:</label>
+				<div class="step-controls">
+					<button onclick="convStep()">Step</button>
+					<button onclick="convPlay()">Play</button>
+					<button onclick="convReset()">Reset</button>
+					<span class="step-label" id="conv_step_label">Step 0 / 9</span>
+				</div>
+				<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input 4x4</div>
+						<div class="editable-grid" id="conv_input_grid" style="grid-template-columns:repeat(4,48px);"></div>
+					</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Kernel 2x2</div>
+						<div class="editable-grid" id="conv_kernel_grid" style="grid-template-columns:repeat(2,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output 3x3</div>
+						<div class="editable-grid" id="conv_output_grid" style="grid-template-columns:repeat(3,48px);"></div>
+					</div>
+				</div>
+				<div class="result-display" id="conv_computation" style="font-size:0.9em; margin-top:8px;"></div>
+			</div>
+			<script>
+			var _convData = {
+				input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]],
+				kernel: [[1,-1],[0,2]],
+				output: [[0,0,0],[0,0,0],[0,0,0]],
+				step: 0, total: 9, playing: false, timer: null
+			};
+			function initConvDemo() {
+				var d = _convData;
+				var ig = document.getElementById('conv_input_grid');
+				var kg = document.getElementById('conv_kernel_grid');
+				var og = document.getElementById('conv_output_grid');
+				if (!ig || !kg || !og) return;
+				ig.innerHTML = ''; kg.innerHTML = ''; og.innerHTML = '';
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = 'cig_'+r+'_'+c;
+					cell.textContent = d.input[r][c]; ig.appendChild(cell);
+				}
+				for (var r = 0; r < 2; r++) for (var c = 0; c < 2; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = 'ckg_'+r+'_'+c;
+					cell.textContent = d.kernel[r][c]; cell.style.background='#e3f2fd'; kg.appendChild(cell);
+				}
+				for (var r = 0; r < 3; r++) for (var c = 0; c < 3; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = 'cog_'+r+'_'+c;
+					cell.textContent = ''; cell.style.background='#eee'; og.appendChild(cell);
+				}
+				d.step = 0; d.output = [[0,0,0],[0,0,0],[0,0,0]];
+				document.getElementById('conv_step_label').textContent = 'Step 0 / 9';
+				document.getElementById('conv_computation').textContent = 'Press Step or Play to begin';
+			}
+			function convHighlight(step) {
+				var d = _convData;
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var el = document.getElementById('cig_'+r+'_'+c);
+					if (el) { el.style.background = '#fafafa'; el.style.border = '1px solid #ccc'; }
+				}
+				var or2 = Math.floor(step / 3), oc = step % 3;
+				for (var kr = 0; kr < 2; kr++) for (var kc = 0; kc < 2; kc++) {
+					var el = document.getElementById('cig_'+(or2+kr)+'_'+(oc+kc));
+					if (el) { el.style.background = '#fff3e0'; el.style.border = '2px solid #ff9800'; }
+				}
+				var sum = 0, parts = [];
+				for (var kr = 0; kr < 2; kr++) for (var kc = 0; kc < 2; kc++) {
+					var v = d.input[or2+kr][oc+kc];
+					var k = d.kernel[kr][kc];
+					sum += v * k;
+					parts.push(v + '\u00d7' + k);
+				}
+				d.output[or2][oc] = sum;
+				var el = document.getElementById('cog_'+or2+'_'+oc);
+				if (el) { el.textContent = sum; el.style.background = '#c8e6c9'; el.style.border = '2px solid #4caf50'; }
+				document.getElementById('conv_computation').textContent = parts.join(' + ') + ' = ' + sum;
+				document.getElementById('conv_step_label').textContent = 'Step ' + (step+1) + ' / 9';
+			}
+			function convStep() {
+				if (_convData.step >= 9) { convReset(); return; }
+				convHighlight(_convData.step);
+				_convData.step++;
+			}
+			function convPlay() {
+				if (_convData.playing) return;
+				_convData.playing = true;
+				_convData.timer = setInterval(function() {
+					if (_convData.step >= 9) { clearInterval(_convData.timer); _convData.playing = false; return; }
+					convStep();
+				}, 500);
+			}
+			function convReset() {
+				if (_convData.timer) clearInterval(_convData.timer);
+				_convData.playing = false;
+				initConvDemo();
+			}
+			initConvDemo();
+			</script>
 			<h3>conv2dTranspose</h3>
 			<div id="conv2dTranspose_example"></div>
 			A 2D transposed convolutional layer, also known as a deconvolutional layer, is a type of layer used in deep neural networks for upsampling the feature maps. It is the inverse operation of a 2D convolutional layer, and it is used to increase the spatial resolution of the feature maps.
@@ -936,7 +1222,99 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 <br>
-<br>
+			<div class="interactive-demo" id="avgpool_slide_demo">
+				<label>Average Pooling Sliding Window (Pool: 2x2, Stride: 2):</label>
+				<div class="step-controls">
+					<button onclick="poolStep('avg')">Step</button>
+					<button onclick="poolPlay('avg')">Play</button>
+					<button onclick="poolReset('avg')">Reset</button>
+					<span class="step-label" id="avg_pool_step_label">Step 0 / 4</span>
+				</div>
+				<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input 4x4</div>
+						<div class="editable-grid" id="avgpool_input_grid" style="grid-template-columns:repeat(4,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output 2x2</div>
+						<div class="editable-grid" id="avgpool_output_grid" style="grid-template-columns:repeat(2,48px);"></div>
+					</div>
+				</div>
+				<div class="result-display" id="avgpool_computation" style="font-size:0.9em; margin-top:8px;"></div>
+			</div>
+			<script>
+			var _poolStates = {
+				avg: { input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
+					colors: ['#ffcdd2','#bbdefb','#ffe0b2','#c8e6c9'] },
+				max: { input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
+					colors: ['#ffcdd2','#bbdefb','#ffe0b2','#c8e6c9'] }
+			};
+			function initPoolDemo(type) {
+				var d = _poolStates[type];
+				var ig = document.getElementById(type+'pool_input_grid');
+				var og = document.getElementById(type+'pool_output_grid');
+				if (!ig || !og) return;
+				ig.innerHTML = ''; og.innerHTML = '';
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = type+'pig_'+r+'_'+c;
+					cell.textContent = d.input[r][c]; ig.appendChild(cell);
+				}
+				for (var r = 0; r < 2; r++) for (var c = 0; c < 2; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = type+'pog_'+r+'_'+c;
+					cell.textContent = ''; cell.style.background='#eee'; og.appendChild(cell);
+				}
+				d.step = 0;
+				document.getElementById(type+'_pool_step_label').textContent = 'Step 0 / 4';
+				document.getElementById(type+'pool_computation').textContent = 'Press Step or Play to begin';
+			}
+			function poolHighlight(type, step) {
+				var d = _poolStates[type];
+				var or2 = Math.floor(step / 2), oc = step % 2;
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var el = document.getElementById(type+'pig_'+r+'_'+c);
+					if (el) { el.style.background = '#fafafa'; el.style.border = '1px solid #ccc'; }
+				}
+				var vals = [], parts = [];
+				for (var kr = 0; kr < 2; kr++) for (var kc = 0; kc < 2; kc++) {
+					var v = d.input[or2*2+kr][oc*2+kc];
+					vals.push(v);
+					parts.push(v);
+					var el = document.getElementById(type+'pig_'+(or2*2+kr)+'_'+(oc*2+kc));
+					if (el) { el.style.background = d.colors[step]; el.style.border = '2px solid #ff9800'; }
+				}
+				var result = type === 'avg' ? (vals.reduce(function(a,b){return a+b;},0)/4) : Math.max.apply(null, vals);
+				var el = document.getElementById(type+'pog_'+or2+'_'+oc);
+				if (el) { el.textContent = result; el.style.background = d.colors[step]; el.style.border = '2px solid #4caf50'; }
+				var op = type === 'avg' ? '(' + parts.join('+') + ')/4' : 'max(' + parts.join(',') + ')';
+				document.getElementById(type+'pool_computation').textContent = op + ' = ' + result;
+				document.getElementById(type+'_pool_step_label').textContent = 'Step ' + (step+1) + ' / 4';
+			}
+			function poolStep(type) {
+				var d = _poolStates[type];
+				if (d.step >= 4) { poolReset(type); return; }
+				poolHighlight(type, d.step);
+				d.step++;
+			}
+			function poolPlay(type) {
+				var d = _poolStates[type];
+				if (d.playing) return;
+				d.playing = true;
+				d.timer = setInterval(function() {
+					if (d.step >= 4) { clearInterval(d.timer); d.playing = false; return; }
+					poolStep(type);
+				}, 600);
+			}
+			function poolReset(type) {
+				var d = _poolStates[type];
+				if (d.timer) clearInterval(d.timer);
+				d.playing = false;
+				initPoolDemo(type);
+			}
+			initPoolDemo('avg');
+			</script>
 			<h3>maxPooling (maxPooling1d, maxPooling2d)</h3>
 			<div id="maxPooling2d_example"></div>
 <br>
@@ -956,6 +1334,30 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 <br>
+			<div class="interactive-demo" id="maxpool_slide_demo">
+				<label>Max Pooling Sliding Window (Pool: 2x2, Stride: 2):</label>
+				<div class="step-controls">
+					<button onclick="poolStep('max')">Step</button>
+					<button onclick="poolPlay('max')">Play</button>
+					<button onclick="poolReset('max')">Reset</button>
+					<span class="step-label" id="max_pool_step_label">Step 0 / 4</span>
+				</div>
+				<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input 4x4</div>
+						<div class="editable-grid" id="maxpool_input_grid" style="grid-template-columns:repeat(4,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output 2x2</div>
+						<div class="editable-grid" id="maxpool_output_grid" style="grid-template-columns:repeat(2,48px);"></div>
+					</div>
+				</div>
+				<div class="result-display" id="maxpool_computation" style="font-size:0.9em; margin-top:8px;"></div>
+			</div>
+			<script>
+			initPoolDemo('max');
+			</script>
 			<h2>Dropout and noise layers</h2>
 			<h3>alphaDropout</h3>
 			<div id="alphaDropout_example"></div>
@@ -1913,35 +2315,43 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
 
+			<div>
+				<label for="selu_lambda">\( \lambda \) = </label>
+				<input type="number" id="selu_lambda_num" value="1.0507" step="0.01" min="0" max="3" style="width:80px;" oninput="syncSELU()">
+				<input type="range" id="selu_lambda_slider" min="0" max="3" step="0.01" value="1.0507" oninput="syncSELU()">
+				<label for="selu_alpha" style="margin-left:12px;">\( \alpha \) = </label>
+				<input type="number" id="selu_alpha_num" value="1.67326" step="0.01" min="0" max="5" style="width:80px;" oninput="syncSELU()">
+				<input type="range" id="selu_alpha_slider" min="0" max="5" step="0.01" value="1.67326" oninput="syncSELU()">
+			</div>
 			<div id="selu_from_minus_100_to_100"></div>
 			<script>
-				var lambda = 1.0507;
-				var alpha = 1.67326;
-
-				function selu(x) {
-					return x >= 0 ? lambda * x : lambda * (alpha * (Math.exp(x) - 1));
-				}
-
-				var selu_trace = {
-					x: [],
-					y: [],
-					type: 'scatter'
-				};
-
-				for (var i = -100; i <= 100; i++) {
-					selu_trace.x.push(i);
-					selu_trace.y.push(selu(i));
-				}
-
-				var data = [selu_trace];
-
+			function syncSELU() {
+				var lam = parseFloat(document.getElementById('selu_lambda_num').value) || 1.0507;
+				var alf = parseFloat(document.getElementById('selu_alpha_num').value) || 1.67326;
+				document.getElementById('selu_lambda_slider').value = lam;
+				document.getElementById('selu_alpha_slider').value = alf;
+				plotSELU(lam, alf);
+			}
+			function plotSELU(lambda, alpha) {
+				function selu(x) { return x >= 0 ? lambda * x : lambda * (alpha * (Math.exp(x) - 1)); }
+				var x_values = [];
+				for (var i = -100; i <= 100; i++) x_values.push(i);
+				var y_values = x_values.map(function(x) { return selu(x); });
+				var trace = { x: x_values, y: y_values, type: 'scatter' };
 				var layout = {
 					paper_bgcolor: 'rgba(0,0,0,0)',
 					plot_bgcolor: 'rgba(0,0,0,0)',
-					title: 'SELU Activation'
+					title: 'SELU Activation (\u03bb=' + lambda.toFixed(3) + ', \u03b1=' + alpha.toFixed(3) + ')'
 				};
-
-				Plotly.newPlot('selu_from_minus_100_to_100', data, layout);
+				Plotly.react('selu_from_minus_100_to_100', [trace], layout);
+			}
+			document.addEventListener('DOMContentLoaded', function() {
+				document.getElementById('selu_lambda_num').addEventListener('input', function(){ document.getElementById('selu_lambda_slider').value = this.value; syncSELU(); });
+				document.getElementById('selu_alpha_num').addEventListener('input', function(){ document.getElementById('selu_alpha_slider').value = this.value; syncSELU(); });
+				document.getElementById('selu_lambda_slider').addEventListener('input', function(){ document.getElementById('selu_lambda_num').value = this.value; syncSELU(); });
+				document.getElementById('selu_alpha_slider').addEventListener('input', function(){ document.getElementById('selu_alpha_num').value = this.value; syncSELU(); });
+				syncSELU();
+			});
 			</script>
 
 <br>
@@ -2025,7 +2435,42 @@ The target shape can be specified by providing a tuple of integers which defines
 			<br>
 			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
 
-			<br>
+			<div class="interactive-demo" id="softmax_demo">
+				<label>Interactive SoftMax Calculator:</label>
+				<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+					<input class="grid-cell" id="sm_v0" type="number" value="2" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x1">
+					<input class="grid-cell" id="sm_v1" type="number" value="1" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x2">
+					<input class="grid-cell" id="sm_v2" type="number" value="0.1" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x3">
+					<input class="grid-cell" id="sm_v3" type="number" value="0.5" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x4">
+					<input class="grid-cell" id="sm_v4" type="number" value="-1" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x5">
+				</div>
+				<div id="softmax_bars" style="margin-top:10px;"></div>
+			</div>
+			<script>
+			function computeSoftMax() {
+				var vals = [];
+				var colors = ['#e57373','#64b5f6','#81c784','#ffb74d','#ba68c8'];
+				var labels = ['x₁','x₂','x₃','x₄','x₅'];
+				for (var i = 0; i < 5; i++) {
+					vals.push(parseFloat(document.getElementById('sm_v'+i).value) || 0);
+				}
+				var maxV = Math.max.apply(null, vals);
+				var exps = vals.map(function(v) { return Math.exp(v - maxV); });
+				var sum = exps.reduce(function(a,b){return a+b;}, 0);
+				var probs = exps.map(function(e) { return e / sum; });
+				var html = '';
+				for (var i = 0; i < 5; i++) {
+					var pct = (probs[i] * 100).toFixed(1);
+					html += '<div class="softmax-bar-container">';
+					html += '<span class="softmax-bar-label">' + labels[i] + ' = ' + vals[i].toFixed(2) + '</span>';
+					html += '<div style="background:#eee; border-radius:3px; flex:1; height:18px; overflow:hidden;">';
+					html += '<div class="softmax-bar" style="width:' + pct + '%; background:' + colors[i] + ';"></div></div>';
+					html += '<span class="softmax-bar-value">' + pct + '%</span></div>';
+				}
+				document.getElementById('softmax_bars').innerHTML = html;
+			}
+			computeSoftMax();
+			</script>
 			<h2>tanh</h2>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
 			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
@@ -2082,34 +2527,36 @@ The target shape can be specified by providing a tuple of integers which defines
 			<br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value.
 
+			<div>
+				<label for="leakyrelu_alpha_slider">Set \( \alpha \) for LeakyReLU: \( \alpha \) = </label>
+				<input type="number" id="leakyrelu_alpha_num" value="0.01" step="0.01" min="0" max="1" style="width:80px;" oninput="syncLeakyAlpha(this.value)">
+				<input type="range" id="leakyrelu_alpha_slider" min="0" max="1" step="0.005" value="0.01" oninput="syncLeakyAlpha(this.value)">
+			</div>
 			<div id="leakyrelu_from_minus_100_to_100"></div>
 			<script>
-				var alpha = 0.01;
-
-				function leakyrelu(x) {
-					return x >= 0 ? x : alpha * x;
-				}
-
-				var leakyrelu_trace = {
-					x: [],
-					y: [],
-					type: 'scatter'
-				};
-
-				for (var i = -100; i <= 100; i++) {
-					leakyrelu_trace.x.push(i);
-					leakyrelu_trace.y.push(leakyrelu(i));
-				}
-
-				var data = [leakyrelu_trace];
-
+			function syncLeakyAlpha(v) {
+				var val = parseFloat(v);
+				if (isNaN(val)) val = 0.01;
+				document.getElementById('leakyrelu_alpha_num').value = val;
+				document.getElementById('leakyrelu_alpha_slider').value = val;
+				plotLeakyReLU(val);
+			}
+			function plotLeakyReLU(alpha) {
+				function leakyrelu(x) { return x >= 0 ? x : alpha * x; }
+				var x_values = [];
+				for (var i = -100; i <= 100; i++) x_values.push(i);
+				var y_values = x_values.map(function(x) { return leakyrelu(x); });
+				var trace = { x: x_values, y: y_values, type: 'scatter' };
 				var layout = {
 					paper_bgcolor: 'rgba(0,0,0,0)',
 					plot_bgcolor: 'rgba(0,0,0,0)',
-					title: 'LeakyReLU Activation: f(x) = x if x ≥ 0, α·x otherwise (α = 0.01)'
+					title: 'LeakyReLU Activation: f(x) = x if x \u2265 0, \u03b1\u00b7x otherwise (\u03b1 = ' + alpha + ')'
 				};
-
-				Plotly.newPlot('leakyrelu_from_minus_100_to_100', data, layout);
+				Plotly.react('leakyrelu_from_minus_100_to_100', [trace], layout);
+			}
+			document.addEventListener('DOMContentLoaded', function() {
+				syncLeakyAlpha(0.01);
+			});
 			</script>
 
 			<h2>Snake</h2>

@@ -226,6 +226,7 @@ function add_table (layer_type, config, onchange, uuid) {
 	var this_layer_options = layer_options[layer_type]["options"];
 	var rows = []; // Use an array for cleaner string building
 	var on_change = "eval_base64(\"" + onchange + "\", \"" + uuid + "\")";
+	var events = "onchange='" + on_change + "' oninput='" + on_change + "'";
 
 	for (var layer_option_idx = 0; layer_option_idx < this_layer_options.length; layer_option_idx++) {
 		var layer_option = this_layer_options[layer_option_idx];
@@ -255,17 +256,17 @@ function add_table (layer_type, config, onchange, uuid) {
 		if(["strides", "pool_size", "size", "kernel_size", "dilation_rate"].some(s => layer_option.includes(s))) {
 			let val = config[label] || config[layer_option];
 			if(Array.isArray(val)) val = val.join(",");
-			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='text' value='" + val + "' />";
+			input_html = "<input " + events + " class='gui_option " + label + "' type='text' value='" + val + "' />";
 
 		} else if(["dropout_rate", "stddev", "rate", "depth_multiplier"].some(s => layer_option.includes(s))) {
 			let val = config.rate || config.stddev || config.depthMultiplier || 0.5;
-			input_html = "<input onchange='" + on_change + "' class='gui_option " + (layer_option === "dropout_rate" ? "rate" : layer_option) + "' type='number' min=0 step='0.05' max=1 value='" + val + "' />";
+			input_html = "<input " + events + " class='gui_option " + (layer_option === "dropout_rate" ? "rate" : layer_option) + "' type='number' min=0 step='0.05' max=1 value='" + val + "' />";
 
 		} else if(layer_option.endsWith("filters")) {
-			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='number' min=1 step=1 value='" + config.filters + "' />";
+			input_html = "<input " + events + " class='gui_option " + label + "' type='number' min=1 step=1 value='" + config.filters + "' />";
 
 		} else if(layer_option.endsWith("use_bias")) {
-			input_html = "<input onchange='" + on_change + "' class='gui_option " + label + "' type='checkbox' " + (config.useBias ? "checked" : "") + " />";
+			input_html = "<input " + events + " class='gui_option " + label + "' type='checkbox' " + (config.useBias ? "checked" : "") + " />";
 
 		} else if(["activation", "interpolation", "padding", "initializer"].some(s => layer_option.endsWith(s))) {
 			let options_map = { activation: activations, interpolation: interpolation, constraint: constraints, padding: padding_options, initializer: initializer_options };
@@ -274,7 +275,7 @@ function add_table (layer_type, config, onchange, uuid) {
 			delete options_map["initializer"]["orthogonal"];
 			delete options_map["initializer"]["constant"];
 
-			input_html = "<select onchange='" + on_change + "' class='gui_option " + label + "'>";
+			input_html = "<select " + events + " class='gui_option " + label + "'>";
 			Object.keys(options_map[key]).forEach(opt => {
 				if(key === "initializer" && opt === "identity") return;
 				let selected = (config[label] == opt || config[layer_option] == opt) ? "selected" : "";
@@ -289,7 +290,7 @@ function add_table (layer_type, config, onchange, uuid) {
 	}
 
 	if(layer_type.includes("ropout") || layer_type.includes("oise")) {
-		rows.push("<tr><td>is_training</td><td><input type='checkbox' onchange='" + on_change + "' id='" + uuid + "_is_training' checked='checked' /></td></tr>");
+		rows.push("<tr><td>is_training</td><td><input type='checkbox' " + events + " id='" + uuid + "_is_training' checked='checked' /></td></tr>");
 	}
 
 	$("#" + uuid + "_layer_gui").html(rows.join(''));
@@ -354,12 +355,16 @@ function add_html_for_layer_types (layer_type) {
 async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid) {
 	tf.engine().startScope();
 
-	var img_element = $("#" + img_element_id)[0]; // Direkt auf das DOM-Element zugreifen
+	var img_element = $("#" + img_element_id)[0];
 	if (!img_element) return;
+
+	// Show loading indicator
+	var shapesEl = document.getElementById(uuid + "_shapes");
+	if (shapesEl) shapesEl.innerHTML = '<span style="color:#888; font-style:italic;">Processing...</span>';
 
 	if (!img_element.complete || img_element.naturalWidth === 0) {
 		img_element.onload = function() {
-			simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid); // await not possible here
+			simulate_layer_on_image(img_element_id, internal_canvas_div_id, out_canvas_div_id, layer_type, uuid);
 		};
 		return;
 	}
@@ -398,7 +403,6 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			$("#" + uuid + "_error").html("");
 			$("#" + uuid + "_shapes").html(`\\( \\text{Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
 
-			// FIX: MathJax Typeset nur für diesen Bereich triggern
 			if (window.MathJax && MathJax.typesetPromise) {
 				MathJax.typesetPromise([document.getElementById(uuid + "_shapes")]).catch((err) => console.log(err));
 			}
@@ -407,7 +411,7 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 				var _tensor = tensor(result);
 				_tensor = _tensor.transpose([3, 1, 2, 0]);
 
-				var internal_canvas_div = $("#" + internal_canvas_div_id).html("");
+				$("#" + internal_canvas_div_id).html("");
 				var out_canvas_div = $("#" + out_canvas_div_id).html("");
 
 				if(layer && layer.kernel && layer.kernel.val) {
@@ -428,19 +432,20 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 					}
 				}
 
-				// Output Visualisierung
+				// Output visualization with fade-in
 				var min = tf.min(_tensor);
 				var max = tf.max(_tensor);
-				var normalized = tf.div(tf.sub(_tensor, min), tf.sub(max, min).add(1e-5)); // 1e-5 verhindert div by zero
+				var normalized = tf.div(tf.sub(_tensor, min), tf.sub(max, min).add(1e-5));
 				var norm_data = array_sync(normalized);
 
+				out_canvas_div.html("");
 				for (var t_idx = 0; t_idx < _tensor.shape[0]; t_idx++) {
 					let id = uuidv4();
-					// Höhe auf 100px (wie Input), Breite auf auto
-					$("<canvas class='out_images' id='" + id + "'></canvas>").appendTo(out_canvas_div);
+					$("<canvas class='out_images' id='" + id + "' style='opacity:0; transition:opacity 0.3s;'></canvas>").appendTo(out_canvas_div);
 					const elem = document.getElementById(id);
-					console.log($(elem).parent());
 					await toPixels(tensor(norm_data[t_idx]), elem);
+					// Fade in after rendering
+					requestAnimationFrame(function() { elem.style.opacity = '1'; });
 				}
 			}
 		}
@@ -453,6 +458,127 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 }
 
 toc();
+
+// ─── Lightbox ───────────────────────────────────────────────────────────────
+function openLightbox(src) {
+	var overlay = document.getElementById('lightbox');
+	var img = document.getElementById('lightbox-img');
+	if (!overlay || !img) return;
+	img.src = src;
+	overlay.classList.add('active');
+}
+function closeLightbox() {
+	var overlay = document.getElementById('lightbox');
+	if (overlay) overlay.classList.remove('active');
+}
+document.addEventListener('keydown', function(e) {
+	if (e.key === 'Escape') closeLightbox();
+});
+function initLightbox() {
+	document.querySelectorAll('#contents img').forEach(function(img) {
+		if (img.closest('.layer-visual-container') || img.closest('.interactive-demo')) return;
+		img.style.cursor = 'zoom-in';
+		img.addEventListener('click', function(e) {
+			e.stopPropagation();
+			openLightbox(this.src);
+		});
+	});
+}
+
+// ─── TOC Scroll-Spy ─────────────────────────────────────────────────────────
+function initScrollSpy() {
+	var tocLinks = document.querySelectorAll('#toc a');
+	if (!tocLinks.length) return;
+	var headings = [];
+	tocLinks.forEach(function(link) {
+		var name = link.getAttribute('href');
+		if (name && name.startsWith('#')) {
+			var anchor = document.querySelector("a[name='" + name.substring(1) + "']");
+			if (anchor) headings.push({ el: anchor.parentElement || anchor, link: link });
+		}
+	});
+	if (!headings.length) return;
+	function onScroll() {
+		var scrollY = window.scrollY + 60;
+		var current = headings[0];
+		for (var i = 0; i < headings.length; i++) {
+			if (headings[i].el.offsetTop <= scrollY) current = headings[i];
+		}
+		tocLinks.forEach(function(l) { l.style.background = ''; l.style.borderRadius = ''; l.style.padding = ''; });
+		if (current) {
+			current.link.style.background = '#e3f2fd';
+			current.link.style.borderRadius = '3px';
+			current.link.style.padding = '2px 6px';
+		}
+	}
+	var ticking = false;
+	window.addEventListener('scroll', function() {
+		if (!ticking) { requestAnimationFrame(function() { onScroll(); ticking = false; }); ticking = true; }
+	});
+	onScroll();
+}
+
+// ─── Layer Simulation: Re-randomize & Reset ─────────────────────────────────
+function addLayerSimButtons(uuid, layer_type, onchange_code) {
+	var container = document.getElementById(uuid + '_layer_gui');
+	if (!container) return;
+	var btnRow = document.createElement('div');
+	btnRow.style.cssText = 'display:flex; gap:8px; margin-top:8px;';
+	
+	var rerandBtn = document.createElement('button');
+	rerandBtn.textContent = 'Re-randomize';
+	rerandBtn.style.cssText = 'background:#7e57c2; color:#fff; border:none; border-radius:4px; padding:5px 12px; cursor:pointer; font-size:0.85em;';
+	rerandBtn.addEventListener('click', function() { eval_base64(onchange_code, uuid); });
+	btnRow.appendChild(rerandBtn);
+	
+	var resetBtn = document.createElement('button');
+	resetBtn.textContent = 'Reset to defaults';
+	resetBtn.style.cssText = 'background:#78909c; color:#fff; border:none; border-radius:4px; padding:5px 12px; cursor:pointer; font-size:0.85em;';
+	resetBtn.addEventListener('click', function() {
+		var defaultCfg = window["default_config_" + layer_type] || {};
+		var guiOpts = container.querySelectorAll('.gui_option');
+		guiOpts.forEach(function(opt) {
+			var classes = opt.className.split(/\s+/);
+			var key = classes.find(function(c) { return c !== 'gui_option'; });
+			if (!key) return;
+			var val = defaultCfg[key];
+			if (val === undefined) return;
+			if (opt.type === 'checkbox') {
+				opt.checked = !!val;
+			} else if (opt.tagName === 'SELECT') {
+				opt.value = val;
+			} else {
+				opt.value = Array.isArray(val) ? val.join(',') : val;
+			}
+		});
+		eval_base64(onchange_code, uuid);
+	});
+	btnRow.appendChild(resetBtn);
+	container.parentNode.insertBefore(btnRow, container.nextSibling);
+}
+
+// Wrap existing add_html_for_layer_types to inject buttons
+var _orig_add_html = typeof add_html_for_layer_types === 'function' ? add_html_for_layer_types : null;
+var _orig_add_table = typeof add_table === 'function' ? add_table : null;
+
+// Patch add_table to add buttons after it runs
+var _last_layer_type = '';
+var _last_onchange = '';
+var _last_uuid = '';
+var _orig_add_table_fn = add_table;
+add_table = function(layer_type, config, onchange, uuid) {
+	_orig_add_table_fn(layer_type, config, onchange, uuid);
+	_last_layer_type = layer_type;
+	_last_onchange = onchange;
+	_last_uuid = uuid;
+	setTimeout(function() { addLayerSimButtons(uuid, layer_type, onchange); }, 50);
+};
+
+// ─── Init All ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+	initLightbox();
+	initScrollSpy();
+});
 
 function lazy_load_layer_html(layer_type) {
 	const targetId = layer_type + "_example";
