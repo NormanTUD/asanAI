@@ -1944,7 +1944,7 @@ function decille(arr, percentage) {
 }
 
 async function reset_data () {
-	if(!xy_data_global === null) {
+	if(xy_data_global !== null && typeof xy_data_global !== "undefined") {
 		if(Object.keys(xy_data_global).includes("x")) {
 			await dispose(xy_data_global["x"]);
 		}

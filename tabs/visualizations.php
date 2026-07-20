@@ -11,6 +11,7 @@
 		<li><a id="gradient_flow_tab_label" class="hide_when_no_image" href="#gradient_flow"><span class="TRANSLATEME_gradient_flow"></span></a></li>
 		<li><a id="topological_data_analysis_tab_label" class="hide_when_no_image" href="#topological_data_analysis"><span class="TRANSLATEME_topological_data_analysis"></span></a></li>
 		<li><a onclick="WeightAnalysis.weight_analysis_render('weight_analysis');" id="weight_analysis_tab_label" href="#weight_analysis"><span class="TRANSLATEME_weight_analysis"></span></a></li>
+		<li><a onclick="DecisionExplorer.render('decision_explorer');" id="decision_explorer_tab_label" href="#decision_explorer"><span class="TRANSLATEME_dex_tab_label"></span></a></li>
 		<!--<li><a href="#loss_landscape_tab" id="loss_landscape_tab_label"><span class="TRANSLATEME_loss_landscape"></span></a></li>-->
 		<li style="display: none"><a href="#layer_input_groups" id="layer_input_groups_label"><span class="TRANSLATEME_layer_input_groups"></span></a></li>
 	</ul>
@@ -89,6 +90,9 @@
 
 	<div id="weight_analysis" class="tab">
 		<div class="TRANSLATEME_no_weight_analysis"></div>
+	</div>
+
+	<div id="decision_explorer" class="tab">
 	</div>
 
 	<div id="loss_landscape_tab" class="tab">

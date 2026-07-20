@@ -210,6 +210,14 @@ async function train_neural_network() {
 		if (scopeStarted) {
 			try {
 				if (tf.engine().state.activeScope !== null) {
+					if (typeof xy_data_global !== "undefined" && xy_data_global) {
+						if (xy_data_global.x && typeof xy_data_global.x.isDisposed !== "undefined" && !xy_data_global.x.isDisposed) {
+							tf.keep(xy_data_global.x);
+						}
+						if (xy_data_global.y && typeof xy_data_global.y.isDisposed !== "undefined" && !xy_data_global.y.isDisposed) {
+							tf.keep(xy_data_global.y);
+						}
+					}
 					tf.engine().endScope();
 				}
 			} catch (e) {
