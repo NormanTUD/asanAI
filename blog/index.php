@@ -27,7 +27,6 @@
 <!-- PART I -->
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-accent)">
-		<span class="course-part-number">I</span>
 		<h2>Foundations</h2>
 		<p>Where we came from, what language is, and the mathematical bedrock beneath AI.</p>
 	</div>
@@ -63,7 +62,6 @@
 <!-- PART II -->
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-coral)">
-		<span class="course-part-number">II</span>
 		<h2>How Neural Networks Learn</h2>
 		<p>The learning algorithm step by step, from loss functions to live training.</p>
 	</div>
@@ -114,7 +112,6 @@
 <!-- PART III -->
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-emerald)">
-		<span class="course-part-number">III</span>
 		<h2>Deep Learning &amp; Vision</h2>
 		<p>Stacking layers, seeing images, and the engineering that makes depth possible.</p>
 	</div>
@@ -150,7 +147,6 @@
 <!-- PART IV -->
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-sky)">
-		<span class="course-part-number">IV</span>
 		<h2>The Transformer Revolution</h2>
 		<p>The architecture that changed everything, attention, embeddings, and the circuits inside.</p>
 	</div>
@@ -201,7 +197,6 @@
 <!-- PART V -->
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-rose)">
-		<span class="course-part-number">V</span>
 		<h2>Making AI Useful</h2>
 		<p>Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.</p>
 	</div>
@@ -257,7 +252,6 @@
 <!-- PART VI -->
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-text-secondary)">
-		<span class="course-part-number">VI</span>
 		<h2>Bigger Questions</h2>
 		<p>Philosophy, ethics, and the open problems at the frontier of AI.</p>
 	</div>
