@@ -3156,12 +3156,13 @@ img {
 	gap: 1rem;
 }
 
+#contents a.course-tile,
 .course-tile {
 	background: var(--mn-surface);
 	border: 1px solid var(--mn-border);
 	border-radius: var(--mn-radius-md);
 	padding: 1.2rem 1.3rem;
-	text-decoration: none;
+	text-decoration: none !important;
 	color: inherit;
 	transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
 	display: flex;
