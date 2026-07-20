@@ -19,7 +19,7 @@ Here, you can see how a small network tries to learn a pattern.
 * **Weights (Live)**: These are the actual numerical values inside the first layer of the network.
 * **Activation Patterns**: These heatmaps show how data flows through the specific "gates" (ReLU or Sigmoid) you've defined.
 
-Since the network weights are randomly initialized, you may need to **reset** the model and restart training a few times to get decent results.
+Since the network weights are randomly initialized, you may need to *reset* the model and restart training a few times to get decent results.
 </div>
 
 <div class="lab-dashboard">

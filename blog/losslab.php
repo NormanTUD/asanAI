@@ -12,7 +12,7 @@ color: coral
 <div class="md">
 In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.
 
-A Loss Function is a mathematical way of measuring "how wrong" the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number as small as possible.
+A Loss Function is a mathematical way of measuring *"how wrong"* the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number *as small as possible*.
 
 ## Regression: Mean Squared Error (MSE)
 
@@ -51,7 +51,7 @@ When an AI has to choose between categories (like "Cat" vs "Dog"), it doesn't ju
 * If the AI is $99\%$ sure it's a cat (and it is), the loss is almost $0$.
 * If the AI is only $1\%$ sure it's a cat, the loss becomes **extremely high**.
 
-The math uses a logarithm ($-\ln(P)$), which creates a steep "wall" as confidence approaches zero. This forces the AI to be very "uncomfortable" when it is wrong.
+The math uses a *logarithm* ($-\ln(P)$), which creates a steep "wall" as confidence approaches zero. This forces the AI to be very "uncomfortable" when it is wrong.
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
