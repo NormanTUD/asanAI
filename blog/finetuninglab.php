@@ -49,7 +49,7 @@ This is a special case of *transfer learning*, in which a neural network system,
 
 <div class="md">
 ## Reinforcement Learning from Human Feedback
-Modern systems also use RLHF (Reinforcement Learning from Human Feedback). That is, the user is able to vote whether a solution was good or not, and this is used in further training the model the next time it is trained. It's the same with coding examples, where the code produces some error, the user copy-pastes it, and the LLM again tries to work it out. Those results are then used in the next training to make the generated code less error-prone. This is also the reason why chatGPT sometimes produces two answers, and lets you chose which one you like better: this is used to train the LLM further into the direction of the better answer.
+Modern systems also use RLHF (Reinforcement Learning from Human Feedback). That is, the user is able to vote whether a solution was good or not, and this is used in further training the model the next time it is trained. It's the same with coding examples, where the code produces some error, the user copy-pastes it, and the LLM again tries to work it out. Those results are then used in the next training to make the generated code less error-prone. This is also the reason why chatGPT sometimes produces two answers, and lets you choose which one you like better: this is used to train the LLM further into the direction of the better answer.
 
 ## The Digital Library of Babel: Scaling into Intelligence
 
