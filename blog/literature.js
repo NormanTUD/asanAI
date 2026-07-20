@@ -3095,16 +3095,6 @@ window.bibData = {
 		author: "Josh A. Goldstein, Girish Sastry, Micah Musser, Renee DiResta, Matthew Gentzel, Andrew Lohn",
 		year: 2023
 	},
-	"bender2021stochastic": {
-		url: "https://dl.acm.org/doi/10.1145/3442188.3445922",
-		title: "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big? 🦜",
-		author: "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell",
-		year: 2021
-	},
-
-
-
-
 	"mikolov2013exploiting": {
 		title: "Exploiting Similarities among Languages for Machine Translation",
 		author: "Tomas Mikolov, Quoc V. Le, Ilya Sutskever",

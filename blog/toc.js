@@ -1,4 +1,8 @@
 function toc() {
+	if (window.location.pathname.endsWith("index.php") || window.location.pathname.endsWith("/blog/") || window.location.pathname.endsWith("/blog")) {
+		return;
+	}
+
 	updateLoadingStatus("Building Table of Contents...");
 
 	var tocDiv = document.getElementById("toc");
