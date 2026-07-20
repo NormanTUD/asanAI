@@ -393,7 +393,7 @@ function parse_course_metadata() {
 	foreach ($modules as $file) {
 		$name = basename($file, ".php");
 		$base_dir = basename(__DIR__);
-		if ($name === "index" || $name === "index_full" || $name === "functions" || $name === "asanai_blog_proxy" || $name === "graph") continue;
+		if ($name === "index" || $name === "index_full" || $name === "functions" || $name === "asanai_blog_proxy" || $name === "graph" || $name === "intro") continue;
 
 		$content = file_get_contents($file);
 		$pattern = '/<!--\s*\n?\s*COURSE_METADATA:\s*\n((?:.*\n)*?)\s*-->/';
