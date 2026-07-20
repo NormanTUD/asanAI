@@ -165,6 +165,22 @@ async function get_network_type_result_by_array (layer_type, _array, config, exp
 	return [res, layer, input_shape, output_shape];
 }
 
+function looks_like_number(item) {
+	if(Number.isNaN(item)) {
+		return false;
+	}
+
+	if(typeof(item) == "number") {
+		return true;
+	}
+
+	if (/^[+-]?(?:(?:\d+(?:\.\d+)?))$/.test(item)) {
+		return true;
+	}
+
+	return false;
+}
+
 function get_element (item) {
 	if($(item).is(":checkbox")) {
 		return $(item).is(":checked");
