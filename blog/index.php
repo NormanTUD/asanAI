@@ -32,11 +32,6 @@
 		<p>Where we came from, what language is, and the mathematical bedrock beneath AI.</p>
 	</div>
 	<div class="course-tiles">
-		<a href="intro" class="course-tile" style="--tile-accent: var(--mn-accent)">
-			<div class="course-tile-icon">&#9758;</div>
-			<h3>Beyond the Black Box</h3>
-			<p>What this course is, how to use it, and why understanding AI matters more than ever.</p>
-		</a>
 		<a href="intuition" class="course-tile" style="--tile-accent: var(--mn-accent)">
 			<div class="course-tile-icon">&#128161;</div>
 			<h3>An Intuition for LLMs</h3>
