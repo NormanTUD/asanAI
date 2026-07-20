@@ -89,9 +89,6 @@ AI models often exhibit "sycophancy," a tendency to agree with the user even whe
 ### Logic Gaps vs. Statistical Patterns
 There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversibility Curse**. Researchers have observed that while an AI might know that "Person A is the mother of Person B," it cannot automatically infer that "Person B is the child of Person A" if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
 
-### Technical Constraints: Top-P Sampling and Logit Bias
-Beyond Temperature, other parameters help narrow the window for hallucinations. **Top-P Sampling** (or Nucleus Sampling) instructs the AI to only consider a subset of words whose cumulative probability reaches a certain threshold (e.g., 90%). This effectively cuts off the "long tail" of nonsensical words before the temperature is even applied. Additionally, **Logit Bias** can be used to artificially increase or decrease the probability of specific tokens, allowing developers to steer the AI away from problematic terms or toward verified ones.
-
 ### The Black Box of Interpretability
 A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron "fired" to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.
 
