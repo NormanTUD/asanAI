@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Circuits Inside LLMs
+description: Mechanistic interpretability, induction heads, direct paths, and the residual stream.
+icon: &#128268;
+part: 4
+order: 25
+color: sky
+-->
 
 <div class="md">
 When we peer inside a Transformer, we don't find a single monolithic algorithm. Instead, we find **circuits**: small subnetworks of attention heads and MLP neurons that collaborate to perform specific, interpretable computations. This is the central finding of \cite[Mechanistic Interpretability]{elhage2021mathematical}, a research program that reverse-engineers neural networks the way an electrical engineer reverse-engineers a circuit board.

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Automatic Differentiation
+description: How machines compute gradients at scale, the chain rule, forward and reverse mode.
+icon: &#9881;
+part: 2
+order: 8
+color: coral
+-->
 
 <div class="md">
 At the heart of every modern neural network lies a deceptively simple question: *"How much did each weight contribute to the error?"* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.

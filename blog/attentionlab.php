@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Attention: The Semantic Tug-of-War
+description: How Transformers overcome RNN signal decay, direct access across any distance.
+icon: &#128269;
+part: 4
+order: 21
+color: sky
+-->
 
 <div class="md">
 ## Long Distance Dependencies

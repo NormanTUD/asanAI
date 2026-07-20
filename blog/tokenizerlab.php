@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Tokenization
+description: How words become numbers, word-level, N-gram, and subword methods compared.
+icon: &#9000;
+part: 4
+order: 19
+color: sky
+-->
 
 <div class="md">
 Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.

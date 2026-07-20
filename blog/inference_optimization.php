@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Inference Optimization
+description: Training costs millions; serving costs millions per day. Quantization, KV-cache, and distillation.
+icon: &#9889;
+part: 5
+order: 34
+color: rose
+-->
 
 <div class="md">
 Training a model costs millions of dollars, but **serving** it costs millions *per day*. Inference optimization makes LLMs practical to deploy.

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Differentiation
+description: The derivative: one of the most important ideas in all of mathematics, from secant to tangent.
+icon: &#128208;
+part: 2
+order: 7
+color: coral
+-->
 
 <div class="md">
 The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: The History of Language
+description: From Sanskrit to LLMs, how millions of years of linguistic evolution led to digital minds.
+icon: &#128483;
+part: 1
+order: 4
+color: accent
+-->
 
 <div class="md">
 The intelligence of a modern Large Language Model (LLM) is the digital climax of a multi-million-year trajectory. To understand how a machine "speaks," we must trace the path from the biological re-engineering of the primate throat to the ancient mathematical formalization of grammar.

@@ -1,5 +1,13 @@
 <?php include_once("functions.php"); ?>
-
+<!--
+COURSE_METADATA:
+title: Brief History of AI
+description: From stone tools to computation, the shifting currents that merged into modern AI.
+icon: &#128220;
+part: 1
+order: 2
+color: accent
+-->
 <!--
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html
 TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks

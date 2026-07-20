@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Semantic Search & Vector Databases
+description: Finding needles in haystacks, BM25, dense vectors, hybrid search, and ANN.
+icon: &#128279;
+part: 5
+order: 31
+color: rose
+-->
 
 <div class="md">
 In the RAG chapter, we saw that a user's query is embedded into a vector and compared against stored document vectors using cosine similarity. In the web search chapter, we saw that retrieved pages are chunked and re-ranked before being fed to the LLM. But we glossed over a critical question: **how do you search through millions or billions of vectors in under 50 milliseconds?**

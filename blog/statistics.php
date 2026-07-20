@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Statistics
+description: AI is applied statistics. Distributions, probability, and the mathematical backbone of learning.
+icon: &#128200;
+part: 1
+order: 5
+color: accent
+-->
 
 <div class="md">
 Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below are the background stories of some mathematical frameworks, originating from all kinds of research, for example, playing games, and mapping the heavens, that now enables machines to learn from the chaos of data.

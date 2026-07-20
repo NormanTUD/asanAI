@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Backpropagation
+description: The 1986 algorithm that made deep learning possible, forward pass, backward pass, weight updates.
+icon: &#8634;
+part: 2
+order: 9
+color: coral
+-->
 
 <div class="md">
 Backpropagation, introduced to the field of AI in \citeyear{rumelhart1986}, is a method to improve a neural network by systematically adjusting its weights and biases based on the error it makes. It uses two main steps:

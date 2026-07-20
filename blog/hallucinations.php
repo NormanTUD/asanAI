@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Hallucinations & Dangers
+description: Why AI lies, how pattern completion goes wrong, and using AI safely.
+icon: &#9888;
+part: 5
+order: 28
+color: rose
+-->
 
 <div class="md">
 ## The Problem: Why AI Lies to You

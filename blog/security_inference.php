@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Security & Adversarial Attacks
+description: Prompt injection, jailbreaking, data poisoning, and the defenses against them.
+icon: &#128274;
+part: 5
+order: 33
+color: rose
+-->
 
 <div class="md">
 LLMs are powerful but **fragile under adversarial pressure**. Unlike traditional software where bugs are deterministic, LLM vulnerabilities are *probabilistic*, an attacker crafts inputs that shift the model's output distribution toward harmful behavior.

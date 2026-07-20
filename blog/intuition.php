@@ -1,5 +1,13 @@
 <?php include_once("functions.php"); ?>
-
+<!--
+COURSE_METADATA:
+title: An Intuition for LLMs
+description: Large Language Models are next-word prediction machines. See the autoregressive loop in action.
+icon: &#128161;
+part: 1
+order: 1
+color: accent
+-->
 <!--
 TODO:
 

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Convolutions: How Computers See
+description: Sliding kernels, edge detection, and the CNN revolution, with interactive filters.
+icon: &#128065;
+part: 3
+order: 14
+color: emerald
+-->
 <div class="md">
 ## Historical Context
 

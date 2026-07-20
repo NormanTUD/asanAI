@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Basic Math Concepts
+description: Functions, variables, and parameters, the classical programming vs. neural network mindset.
+icon: &#128290;
+part: 1
+order: 3
+color: accent
+-->
 
 <div class="md">
 ## Programming

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Loss: Teaching through Failure
+description: How models know they're wrong, MSE, cross-entropy, and the mathematics of measuring error.
+icon: &#127919;
+part: 2
+order: 6
+color: coral
+-->
 
 <div class="md">
 In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.

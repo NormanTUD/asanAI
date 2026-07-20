@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Context Windows & Memory
+description: What LLMs can hold in mind, from GPT-2's 1K to Gemini's 1M+ tokens.
+icon: &#128196;
+part: 5
+order: 32
+color: rose
+-->
 
 <div class="md">
 Every time you send a message to an LLM, the model doesn't "remember" your previous conversations from some internal database. It doesn't have a persistent memory like a human brain. Instead, it reads **everything**, the system prompt, the conversation history, any retrieved documents, as a single, flat sequence of tokens. This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.

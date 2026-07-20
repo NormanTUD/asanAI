@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: The Optimizer
+description: Navigating the loss landscape, SGD, Momentum, and Adam compared interactively.
+icon: &#127757;
+part: 2
+order: 10
+color: coral
+-->
 <div class="md">
 In machine learning, a model learns by adjusting its internal settings, called **Weights** and **Biases**, to minimize a **Loss Function**, which is a mathematical measure of how wrong the model's predictions are.
 

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Embeddings: Geometry of Meaning
+description: Words as vectors in space, from Wittgenstein to Riemannian manifolds.
+icon: &#127758;
+part: 4
+order: 20
+color: sky
+-->
 
 <div class="smart-quote" data-cite="wittgenstein1953investigations">
   The meaning of a word is its use in the language.

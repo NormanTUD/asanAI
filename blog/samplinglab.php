@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Temperature & Sampling
+description: How the model picks the next word, Top-k sampling, temperature, and creative randomness.
+icon: &#127922;
+part: 4
+order: 23
+color: sky
+-->
 
 <div class="md">
 In natural language, there are often many ways to express the same thing, and different humans (or even the same human when asked repeatedly) may answer differently each time. The ideas here were first described in \citeyear{boltzmannlearning}.

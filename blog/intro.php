@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: From Stone Age Tools to ChatGPT: Beyond the Black Box
+description: The big picture: what this course is about and how it connects human history to modern AI.
+icon: &#127758;
+part: 0
+order: 0
+color: accent
+-->
 
 <div class="md">
 While most modern discussions about Artificial Intelligence focus on its current capabilities or its potential to replace human labor, this text takes a different approach. We are not just interested in what AI can do today. We are interested in the **intellectual history** and the specific technicalities that made these systems possible. 

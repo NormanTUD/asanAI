@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Philosophy & Ethics
+description: The Turing Test, the Vector Grounding Problem, Mary's Room, sentience, and what it means to think.
+icon: &#128218;
+part: 6
+order: 36
+color: text-secondary
+-->
 
 <div class="md">
 ## The Turing Test: Performance vs. Presence

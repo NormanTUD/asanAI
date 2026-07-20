@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: ResNets & Vanishing Gradients
+description: Why plain networks fail at depth, and the elegant residual shortcut that fixed everything.
+icon: &#128739;
+part: 3
+order: 17
+color: emerald
+-->
 
 <div class="md">
 

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: How Transformers Execute Algorithms
+description: Grokking: when networks stop memorizing and start discovering the Discrete Fourier Transform.
+icon: &#128295;
+part: 4
+order: 26
+color: sky
+-->
 
 <div class="md">
 When we train a neural network on a simple task like modular addition, something remarkable happens. The network doesn't just memorize the answers, it *discovers* an algorithm. Specifically, it learns to use the **Discrete Fourier Transform** to convert addition into wave interference, as described by \cite[Nanda et al., 2023]{nanda2023grokking}.

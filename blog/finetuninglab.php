@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Fine-Tuning & RLHF
+description: From internet scrape to human alignment, instruction pairs, reward models, and scaling laws.
+icon: &#127912;
+part: 5
+order: 27
+color: rose
+-->
 
 <div class="md">
 The neural network first reads the raw web (left) to gain general intelligence. We then feed it curated "Instruction & Answer" pairs (right) so it learns to speak to users effectively.

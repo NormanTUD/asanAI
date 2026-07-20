@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Deep Learning
+description: From linear units to deep architectures, function composition and the Universal Approximation Theorem.
+icon: &#127961;
+part: 3
+order: 15
+color: emerald
+-->
 
 <div class="md">
 ## From Linear Units to Deep Architectures

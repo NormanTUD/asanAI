@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Prompt Engineering
+description: The practical craft of talking to LLMs, roles, delimiters, and canonicalization.
+icon: &#9999;
+part: 5
+order: 35
+color: rose
+-->
 
 <div class="md">
 ## Foundational Structure

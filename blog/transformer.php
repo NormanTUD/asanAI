@@ -1,4 +1,14 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: The Transformer Architecture
+description: A deep interactive dive, configure heads, layers, and dimensions, then watch it compute.
+icon: &#129516;
+part: 4
+order: 24
+color: sky
+featured: true
+-->
 
 <script src="llm_river.js"></script>
 <script src="stickybar_transformer.js"></script>

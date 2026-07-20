@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Activation Functions
+description: The neural decision makers, why without non-linearity, a network collapses to nothing.
+icon: &#9889;
+part: 2
+order: 12
+color: coral
+-->
 
 <div class="md">
 ## The Necessity of Activation Functions
