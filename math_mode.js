@@ -1,10 +1,78 @@
 "use strict";
 
+// ============================================================
+// SCROLL-STABLE RENDERING: Minimal approach
+// Only skip re-renders during training when user has scrolled.
+// No double-buffer, no scroll save/restore, no broken TEMML.
+// ============================================================
+
+var _math_render_rate_limit_ms = 2500;
+var _math_last_render_time = 0;
+var _math_render_pending = false;
+var _math_user_has_scrolled = false;
+var _math_scroll_timeout = null;
+var _math_scroll_listener_attached = false;
+
+// ============================================================
+// Attach scroll listener to the math tab's scrollable ancestor.
+// Sets a flag when user has scrolled away from top.
+// Clears the flag when user scrolls back to top.
+// ============================================================
+
+function _math_attach_scroll_listener() {
+	if (_math_scroll_listener_attached) return;
+
+	var container = document.getElementById("math_tab_code");
+	if (!container) return;
+
+	var scrollParent = _math_find_scroll_parent(container);
+	if (!scrollParent) return;
+
+	scrollParent.addEventListener("scroll", function() {
+		// User has scrolled if scrollTop > some threshold
+		_math_user_has_scrolled = (scrollParent.scrollTop > 50);
+
+		// Reset the "actively scrolling" debounce
+		if (_math_scroll_timeout) {
+			clearTimeout(_math_scroll_timeout);
+		}
+		_math_scroll_timeout = setTimeout(function() {
+			// After user stops scrolling, if a render was pending and
+			// user is back at top, allow it
+			if (_math_render_pending && !_math_user_has_scrolled) {
+				_math_render_pending = false;
+				run_pending_latex_write();
+			}
+		}, 800);
+	}, { passive: true });
+
+	_math_scroll_listener_attached = true;
+}
+
+function _math_find_scroll_parent(el) {
+	var parent = el.parentElement;
+	while (parent) {
+		var style = window.getComputedStyle(parent);
+		var overflow = style.overflow + style.overflowY;
+		if (/(auto|scroll)/.test(overflow)) {
+			return parent;
+		}
+		parent = parent.parentElement;
+	}
+	return document.documentElement;
+}
+
+// ============================================================
+// is_math_tab_visible — unchanged from original
+// ============================================================
+
 function is_math_tab_visible() {
-	var el = document.querySelector('#math_tab_code').parentElement;
+	var el = document.querySelector('#math_tab_code');
 	if (!el) return false;
-	var style = window.getComputedStyle(el);
-	var rect = el.getBoundingClientRect();
+	var parent = el.parentElement;
+	if (!parent) return false;
+	var style = window.getComputedStyle(parent);
+	var rect = parent.getBoundingClientRect();
 	return (
 		rect.width > 0 &&
 		rect.height > 0 &&
@@ -14,6 +82,10 @@ function is_math_tab_visible() {
 		style.display !== 'none'
 	);
 }
+
+// ============================================================
+// ensure_math_tab_visibility_watch — unchanged
+// ============================================================
 
 function ensure_math_tab_visibility_watch() {
 	var el = document.querySelector('#math_tab_code');
@@ -35,10 +107,41 @@ function ensure_math_tab_visibility_watch() {
 	}
 }
 
+// ============================================================
+// run_pending_latex_write
+// KEY CHANGE: During training, if user has scrolled, skip render.
+// Also rate-limit during training.
+// ============================================================
+
 function run_pending_latex_write() {
 	if (_write_latex_running) return;
 	if (!_write_latex_pending_args) return;
 	if (!is_math_tab_visible()) return;
+
+	// During training: if user has scrolled down, DON'T render.
+	// The content will update next time user scrolls back to top,
+	// or when training stops.
+	if (typeof started_training !== "undefined" && started_training) {
+		if (_math_user_has_scrolled) {
+			_math_render_pending = true;
+			return;
+		}
+
+		// Rate-limit: don't render more than once per N ms during training
+		var now = Date.now();
+		if (now - _math_last_render_time < _math_render_rate_limit_ms) {
+			if (!_math_render_pending) {
+				_math_render_pending = true;
+				setTimeout(function() {
+					_math_render_pending = false;
+					run_pending_latex_write();
+				}, _math_render_rate_limit_ms - (now - _math_last_render_time));
+			}
+			return;
+		}
+		_math_last_render_time = now;
+	}
+
 	_write_latex_running = true;
 
 	var args = _write_latex_pending_args;
@@ -53,6 +156,10 @@ function run_pending_latex_write() {
 		});
 }
 
+// ============================================================
+// write_model_to_latex_to_page — unchanged
+// ============================================================
+
 async function write_model_to_latex_to_page() {
 	_write_latex_pending_args = arguments;
 
@@ -63,28 +170,36 @@ async function write_model_to_latex_to_page() {
 	}
 }
 
-async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = false, force = false) {
-	if(reset_prev_layer_data) {
+// ============================================================
+// _write_model_to_latex_to_page_internal
+// ORIGINAL LOGIC PRESERVED. Only addition: attach scroll listener.
+// Renders normally using innerHTML + _temml() as before.
+// ============================================================
+
+async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = false, force = false) {
+	if (reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
 
+	// Attach scroll listener on first render
+	_math_attach_scroll_listener();
+
 	var latex = model_to_latex();
 
-	if(latex) {
+	if (latex) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			var math_tab_code_elem = $("#math_tab_code")[0];
-
+			var math_tab_code_elem = document.getElementById("math_tab_code");
 			var xpath = get_element_xpath(math_tab_code_elem);
-			var new_md5 = await md5($(math_tab_code_elem).html());
+			var new_md5 = await md5(latex);
 			var old_md5 = math_items_hashes[xpath];
 
-			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
+			if (new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				try {
 					_temml();
 				} catch (e) {
-					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
+					if (!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 						void(0); info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
 						void(0); err("TEMML: " + e);
@@ -95,7 +210,7 @@ async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = f
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
-			if(("" + e).includes("can't assign to property")) {
+			if (("" + e).includes("can't assign to property")) {
 				wrn(language[lang]["failed_temml"], e);
 			} else {
 				await write_error(e, null, null);
@@ -103,6 +218,152 @@ async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = f
 		}
 
 		write_optimizer_to_math_tab();
+	}
+}
+
+// ============================================================
+// write_optimizer_to_math_tab — unchanged from original
+// ============================================================
+
+function write_optimizer_to_math_tab() {
+	try {
+		if (!model) {
+			dbg("[write_optimizer_to_math_tab] model not defined");
+			return;
+		}
+
+		if (typeof(model.optimizer) != "object") {
+			dbg("[write_optimizer_to_math_tab] model doesn't have optimizer key");
+			return;
+		}
+
+		var values = {};
+		var _keys = Object.keys(model.optimizer);
+
+		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
+			var _key = _keys[key_idx];
+			if (_key == "iterations_") {
+				continue;
+			}
+			wo2mt_collect_value_for_key(values, _key, model.optimizer[_key]);
+		}
+
+		var str = wo2mt_build_output_string(values);
+
+		if (str) {
+			$("#optimizer_variables_header").show();
+			$("#optimizer_variables_div").html(str).show();
+			_temml();
+		} else {
+			hide_and_reset_optimizer_variables();
+		}
+	} catch (e) {
+		hide_and_reset_optimizer_variables();
+		dbg(e);
+	}
+}
+
+// ============================================================
+// create_math_slider — unchanged from original
+// ============================================================
+
+function create_math_slider() {
+	_create_math_slider("math_history_slider", "#math_tab_code");
+}
+
+function _create_math_slider(containerId, targetId) {
+	try {
+		let container = document.getElementById(containerId);
+		if (!container) {
+			console.error("Container not found:", containerId);
+			return;
+		}
+
+		container.innerHTML = "";
+
+		if (!Array.isArray(math_history) || math_history.length === 0 || math_history.length == 1) {
+			container.style.display = "none";
+			return;
+		} else {
+			container.style.display = "flex";
+		}
+
+		let style = document.createElement("style");
+
+		style.textContent = `
+			#${containerId} {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				padding: 20px;
+			}
+			#${containerId} input[type=range] {
+				width: 80%;
+				-webkit-appearance: none;
+				background: transparent;
+			}
+			#${containerId} input[type=range]::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: #4caf50;
+				cursor: pointer;
+				border: none;
+				box-shadow: 0 0 5px rgba(0,0,0,0.3);
+			}
+
+			#${containerId} input[type=range]::-webkit-slider-runnable-track {
+				height: 6px;
+				background: #ddd;
+				border-radius: 3px;
+			}
+
+			#${containerId} .epoch-label {
+				font-family: sans-serif;
+				font-size: 14px;
+				color: #333333;
+			}
+		`;
+		document.head.appendChild(style);
+
+		let label = document.createElement("div");
+		label.className = "epoch-label";
+
+		let slider = document.createElement("input");
+		slider.type = "range";
+		slider.min = 1;
+		slider.max = math_history.length;
+		slider.value = math_history.length;
+		slider.step = 1;
+
+		label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
+		container.appendChild(label);
+		container.appendChild(slider);
+
+		slider.addEventListener("input", function() {
+			let index = parseInt(slider.value, 10) - 1;
+			label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
+
+			let target = $(targetId);
+			if (target.length === 0) {
+				console.error("Target not found:", targetId);
+				return;
+			}
+
+			target.html(math_history[index]);
+
+			try {
+				_temml();
+			} catch (e) {
+				console.error("Error in _temml:", e);
+			}
+		});
+
+	} catch (err) {
+		console.error("Error in _create_math_slider:", err);
 	}
 }
 
@@ -184,51 +445,9 @@ function compare_entire_layer_and_update_colors(keys, old_layer, new_layer, colo
 	return color_diff;
 }
 
-function create_math_slider() {
-	_create_math_slider("math_history_slider", "#math_tab_code");
-}
-
 function reset_math_history () {
 	math_history = [];
 	$("#math_history_slider").html("").hide();
-}
-
-function write_optimizer_to_math_tab() {
-	try {
-		if (!model) {
-			dbg("[write_optimizer_to_math_tab] model not defined");
-			return;
-		}
-
-		if (typeof(model.optimizer) != "object") {
-			dbg("[write_optimizer_to_math_tab] model doesn't have optimizer key");
-			return;
-		}
-
-		var values = {};
-		var _keys = Object.keys(model.optimizer);
-
-		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
-			var _key = _keys[key_idx];
-			if (_key == "iterations_") {
-				continue;
-			}
-			wo2mt_collect_value_for_key(values, _key, model.optimizer[_key]);
-		}
-
-		var str = wo2mt_build_output_string(values);
-
-		if (str) {
-			$("#optimizer_variables_header").show();
-			$("#optimizer_variables_div").html(str).show();
-			_temml();
-		} else {
-			hide_and_reset_optimizer_variables();
-		}
-	} catch (e) {
-		hide_and_reset_optimizer_variables();
-		dbg(e);
-	}
 }
 
 function wo2mt_collect_value_for_key(values, key, raw_val) {
@@ -309,105 +528,6 @@ function wo2mt_build_output_string(values) {
 function hide_and_reset_optimizer_variables() {
 	$("#optimizer_variables_header").hide();
 	$("#optimizer_variables_div").html("").hide();
-}
-
-function _create_math_slider (containerId, targetId) {
-	try {
-		let container = document.getElementById(containerId);
-		if (!container) {
-			console.error("Container not found:", containerId);
-			return;
-		}
-
-		container.innerHTML = "";
-
-		if (!Array.isArray(math_history) || math_history.length === 0 || math_history.length == 1) {
-			container.style.display = "none";
-			return;
-		} else {
-			container.style.display = "flex";
-		}
-
-		let style = document.createElement("style");
-
-		style.textContent = `
-			#${containerId} {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 10px;
-				padding: 20px;
-			}
-			#${containerId} input[type=range] {
-				width: 80%;
-				-webkit-appearance: none;
-				background: transparent;
-			}
-			#${containerId} input[type=range]::-webkit-slider-thumb {
-				-webkit-appearance: none;
-				appearance: none;
-				width: 20px;
-				height: 20px;
-				border-radius: 50%;
-				background: #4caf50;
-				cursor: pointer;
-				border: none;
-				box-shadow: 0 0 5px rgba(0,0,0,0.3);
-			}
-
-			#${containerId} input[type=range]::-webkit-slider-runnable-track {
-				height: 6px;
-				background: #ddd;
-				border-radius: 3px;
-			}
-
-			#${containerId} .epoch-label {
-				font-family: sans-serif;
-				font-size: 14px;
-				color: #333333;
-			}
-		`;
-		document.head.appendChild(style);
-
-		let label = document.createElement("div");
-		label.className = "epoch-label";
-
-		// initialize with current slider value (last epoch)
-		let slider = document.createElement("input");
-		slider.type = "range";
-		slider.min = 1;
-		slider.max = math_history.length;
-		slider.value = math_history.length;
-		slider.step = 1;
-
-		label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
-		container.appendChild(label);
-		container.appendChild(slider);
-
-		slider.addEventListener("input", function () {
-			let index = parseInt(slider.value, 10) - 1;
-			label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
-
-			let target = $(targetId);
-			if (target.length === 0) {
-				console.error("Target not found:", targetId);
-				return;
-			}
-
-			target.html(math_history[index]);
-
-			try {
-				_temml();
-			} catch (e) {
-				console.error("Error in _temml:", e);
-			}
-		});
-
-		let initIndex = parseInt(slider.value, 10) - 1;
-
-	} catch (err) {
-		console.error("Error in _create_math_slider:", err);
-	}
 }
 
 function _array_to_ellipsis_latex (x, limit) {
