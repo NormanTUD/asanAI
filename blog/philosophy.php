@@ -40,9 +40,9 @@ In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a poi
 
 ### Mary's Room: The Qualitative Gap
 
-The "Knowledge Argument" or \citealternativetitle{jackson1982epiphenomenal} posits a super intelligent scientist who, from birth on, was in a room where everything is kept in gray colors in dim light, so she never saw any color. But being a super smart scientist, she knows every physical fact about color, wavelengths, retinal response, and so on, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
+The "Knowledge Argument" or \citealternativetitle{jackson1982epiphenomenal} posits a super intelligent scientist who, from birth on, was in a black-and-white room, so she never saw any color. But being a super smart scientist, she knows every physical fact about color, wavelengths, retinal response, and so on, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
 
-If so, the world cannot be physical alone. There must be something else, that is, *subjective experience*. Philosophers call this *Qualia*, which means the subjective experience of things from the subjective perspective. This qualia may or may not be result from the physical world, but it isn't simply the same, therefore, there must be more than the purely physical world, the thought-experiment suggests.
+If so, the world cannot be physical alone. There must be something else, that is, *subjective experience*. Philosophers call this *Qualia*, which means the subjective experience of things from the subjective perspective. This qualia may or may not result from the physical world, but it isn't simply the same, therefore, there must be more than the purely physical world, the thought-experiment suggests.
 
 In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data and all the occurrences it has seen it in:
 * **LLM Knowledge:** "Red is the perception of light with a wavelength of approximately $700\text{ nm}$", "an apple is red", "red is 'rot' in German and 'rouge' in French", "the stem of the Cyrtostachys-Renda-Palm is red", and so on and so forth, but:
@@ -239,7 +239,7 @@ Now, imagine a **Large Language Model** placed in that same meadow. If we were t
 * No scent of flowers, because it has no olfactory sensors.
 * No buzzing of bees, because it has no microphone.
 
-The AI's bubble is filled exclusively with **statistical relationships between tokens**, that is, for the AI, it's bubble *is* the Embedding Space and nothing else. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
+The AI's bubble is filled exclusively with **statistical relationships between tokens**, that is, for the AI, its bubble *is* the Embedding Space and nothing else. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
 
 By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
 
@@ -464,7 +464,7 @@ While Large Language Models (LLMs) are often discussed as abstract mathematical 
 
 Training a state-of-the-art LLM is a one-time, resource-intensive event where billions of parameters are optimized over weeks across thousands of GPUs.
 
-- **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million Dollar in compute time. Successors like GPT-4 have likely crossed the 100 million Dollar threshold when including total development costs.
+- **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million dollars in compute time. Successors like GPT-4 have likely crossed the 100 million Dollar threshold when including total development costs.
 - **Carbon Footprint:** \citeauthorlastnameand{strubell2019energy} (\citeyear{strubell2019energy}) were among the first to quantify the environmental impact, noting that training a large model with extensive hyperparameter search can emit over **280 tons of CO₂**. More recent models have even higher emissions: GPT-3's training emitted approximately 552–588 tons of CO₂, and GPT-4's training is estimated at over 5,000 tons.
 - **Water Consumption:** Data centers require vast amounts of fresh water for cooling. Training GPT-3 in Microsoft's U.S. data centers consumed about \cite[**700,000 liters**]{watergpt3} of clean freshwater for on-site cooling. Including off-site water use (e.g., electricity generation), the total can exceed 5 million liters.
 
@@ -725,7 +725,7 @@ This result is a precise empirical instantiation of several philosophical limits
 The philosophical upshot is stark: authentic human data, messy, embodied, grounded in the territory rather than the map, remains an irreplaceable anchor. The dream of recursive AI self-improvement without external grounding remains bounded by the same architectural limits (feedforward inference, absent metacognition, the softmax bottleneck) that constrain everything else these systems do. The model is, and remains, locked inside Mary's Room, and no amount of self-generated synthetic color-descriptions will substitute for actually *seeing* red.
 </div>
 
-<div class="optional md" data-headline="Theories of Consciousness: RPT, IIT, ET, GWT, C0–C1–C2, PP">
+<div class="optional md" data-headline="Theories of Consciousness: RPT, IIT, HOT, GWT, C0–C1–C2, PP">
 
 ### Global Workspace Theory (GWT)
 
