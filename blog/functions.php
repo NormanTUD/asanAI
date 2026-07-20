@@ -456,7 +456,7 @@ function get_string_of_file_or_die($file) {
 if(!server_php_self_ends_with_index_php()) {
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
