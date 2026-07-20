@@ -3188,5 +3188,11 @@ window.bibData = {
 		year: 1892,
 		title: "Über Sinn und Bedeutung",
 		url: "https://archive.org/details/frege_sinn_und_bedeutung"
+	},
+	"li2022othello": {
+		author: "Kenneth Li, Aspen K. Hopkins, David Bau, Fernanda Viégas, Hanspeter Pfister, Martin Wattenberg",
+		year: 2022,
+		title: "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task",
+		url: "https://arxiv.org/abs/2210.13382"
 	}
 };
