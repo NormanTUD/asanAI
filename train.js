@@ -48,7 +48,10 @@ function show_multi_run_run_chart(run) {
 	}
 
 	if (traces.length) {
-		Plotly.newPlot(chartId, traces, get_plotly_layout(language[lang]["epochs"], "Loss"));
+		var layout = get_plotly_layout(language[lang]["epochs"], "Loss");
+		layout.height = 450;
+		layout.autosize = true;
+		Plotly.newPlot(chartId, traces, layout, { responsive: true });
 	}
 
 	restore_multi_run_weights(run);
