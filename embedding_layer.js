@@ -77,9 +77,14 @@ class SimpleAttention extends tf.layers.Layer {
         return tf.tidy(() => {
             const input = inputs instanceof Array ? inputs[0] : inputs;
             // input shape: [batch, seq_len, inputDim]
-            const Q = tf.einsum('bij,jk->bik', input, this.Wq.read());
-            const K = tf.einsum('bij,jk->bik', input, this.Wk.read());
-            const V = tf.einsum('bij,jk->bik', input, this.Wv.read());
+            const batchSize = input.shape[0];
+            const seqLen = input.shape[1];
+            const inputDim = input.shape[2];
+            // Reshape to 2D for matMul: [batch * seq_len, inputDim]
+            const flat = input.reshape([-1, inputDim]);
+            const Q = tf.matMul(flat, this.Wq.read()).reshape([batchSize, seqLen, this.units]);
+            const K = tf.matMul(flat, this.Wk.read()).reshape([batchSize, seqLen, this.units]);
+            const V = tf.matMul(flat, this.Wv.read()).reshape([batchSize, seqLen, this.units]);
 
             const dk = Math.sqrt(this.units);
             // scores: [batch, seq_len, seq_len]
