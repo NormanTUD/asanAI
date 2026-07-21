@@ -1595,7 +1595,6 @@ function show_multi_run_statistics(results) {
 	html += '<table class="multi_run_stats_table">';
 	html += '<tr><th></th>';
 	html += '<th><span class="TRANSLATEME_mean"></span></th>';
-	html += '<th><span class="TRANSLATEME_std_dev"></span></th>';
 	html += '<th><span class="TRANSLATEME_min"></span></th>';
 	html += '<th><span class="TRANSLATEME_max"></span></th>';
 	html += '<th><span class="TRANSLATEME_coefficient_of_variation"></span></th>';
@@ -1605,7 +1604,6 @@ function show_multi_run_statistics(results) {
 
 	html += '<tr><td><strong><span class="TRANSLATEME_loss"></span></strong></td>';
 	html += '<td>' + lossStats.mean.toFixed(4) + '</td>';
-	html += '<td>' + lossStats.std.toFixed(4) + '</td>';
 	html += '<td>' + lossStats.min.toFixed(4) + '</td>';
 	html += '<td>' + lossStats.max.toFixed(4) + '</td>';
 	html += '<td>' + lossStats.cv.toFixed(1) + '%</td>';
@@ -1617,7 +1615,6 @@ function show_multi_run_statistics(results) {
 		var valLossStats = calculate_stats(valLosses);
 		html += '<tr><td><strong>Val Loss</strong></td>';
 		html += '<td>' + valLossStats.mean.toFixed(4) + '</td>';
-		html += '<td>' + valLossStats.std.toFixed(4) + '</td>';
 		html += '<td>' + valLossStats.min.toFixed(4) + '</td>';
 		html += '<td>' + valLossStats.max.toFixed(4) + '</td>';
 		html += '<td>' + valLossStats.cv.toFixed(1) + '%</td>';
@@ -1630,7 +1627,6 @@ function show_multi_run_statistics(results) {
 		var accStats = calculate_stats(accs);
 		html += '<tr><td><strong><span class="TRANSLATEME_accuracy"></span></strong></td>';
 		html += '<td>' + (accStats.mean * 100).toFixed(1) + '%</td>';
-		html += '<td>' + (accStats.std * 100).toFixed(1) + '%</td>';
 		html += '<td>' + (accStats.min * 100).toFixed(1) + '%</td>';
 		html += '<td>' + (accStats.max * 100).toFixed(1) + '%</td>';
 		html += '<td>' + accStats.cv.toFixed(1) + '%</td>';
@@ -1655,6 +1651,10 @@ function show_multi_run_statistics(results) {
 	html += '<div class="noise_level ' + noiseClass + '">';
 	html += '<strong><span class="TRANSLATEME_noise_level"></span>:</strong> <span class="TRANSLATEME_' + noiseClass + '"></span>';
 	html += '</div>';
+
+	if (losses.length >= 6) {
+		html += '<div id="multi_run_boxplot" style="margin: 12px 0;"></div>';
+	}
 
 	html += '<h4><span class="TRANSLATEME_number_of_runs"></span></h4>';
 	html += '<table class="multi_run_stats_table multi_run_detail">';
@@ -1718,6 +1718,47 @@ function show_multi_run_statistics(results) {
 	$("#multi_run_stats").html(html).show();
 	update_translations();
 
+	if (losses.length >= 6) {
+		var boxTraces = [];
+
+		boxTraces.push({
+			y: losses,
+			type: "box",
+			name: language[lang]["loss"],
+			boxpoints: "all",
+			jitter: 0.3,
+			pointpos: -1.5
+		});
+
+		if (valLosses.length >= 6) {
+			boxTraces.push({
+				y: valLosses,
+				type: "box",
+				name: "Val Loss",
+				boxpoints: "all",
+				jitter: 0.3,
+				pointpos: 1.5
+			});
+		}
+
+		var boxLayout = {
+			paper_bgcolor: "rgba(0, 0, 0, 0)",
+			plot_bgcolor: "rgba(0, 0, 0, 0)",
+			font: { family: "Arial, Helvetica, sans-serif", size: 14, color: "#7f7f7f" },
+			margin: { l: 60, r: 30, b: 40, t: 30 },
+			yaxis: {
+				title: { text: language[lang]["loss"], font: { size: 14, color: "#7f7f7f" } },
+				showline: false,
+				showgrid: true,
+				gridcolor: "#ccc"
+			},
+			showlegend: false,
+			height: 300
+		};
+
+		Plotly.newPlot("multi_run_boxplot", boxTraces, boxLayout, { responsive: true });
+	}
+
 	current_multi_run = lastRun;
 
 	$(".multi_run_tab").on("click", function() {
@@ -1778,10 +1819,16 @@ async function multi_train_neural_network(num_runs) {
 
 		try {
 			if (run > 1) {
-				l("[multi-train] run " + run + ": recreating model with fresh weights");
-				model = null;
-				await create_model_or_throw();
-				l("[multi-train] run " + run + ": new model created, layers=" + (model?.layers?.length || 0));
+				l("[multi-train] run " + run + ": reinitializing weights with fresh random values");
+				model.layers.forEach(function(layer) {
+					var currentWeights = layer.getWeights();
+					if (currentWeights.length === 0) return;
+					var newWeights = currentWeights.map(function(w) {
+						return tf.initializers.glorotUniform().apply(w.shape);
+					});
+					layer.setWeights(newWeights);
+				});
+				l("[multi-train] run " + run + ": weights reinitialized, layers=" + (model?.layers?.length || 0));
 			}
 
 			await set_input_shape_from_xs(x_and_y);

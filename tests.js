@@ -3754,23 +3754,21 @@ async function test_multi_run_training() {
 	test_equal("multi_run_stats has data rows", dataRows.length >= 2, true);
 
 	var lossCells = dataRows[1].querySelectorAll("td");
-	if(lossCells.length < 5) {
-		console.error("[test_multi_run_training] loss row has " + lossCells.length + " cells, expected at least 5 (label, mean, std, min, max)");
+	if(lossCells.length < 4) {
+		console.error("[test_multi_run_training] loss row has " + lossCells.length + " cells, expected at least 4 (label, mean, min, max)");
 		return false;
 	}
 
 	var lossMean = parseFloat(lossCells[1].textContent);
-	var lossStd = parseFloat(lossCells[2].textContent);
-	var lossMin = parseFloat(lossCells[3].textContent);
-	var lossMax = parseFloat(lossCells[4].textContent);
+	var lossMin = parseFloat(lossCells[2].textContent);
+	var lossMax = parseFloat(lossCells[3].textContent);
 
-	if(isNaN(lossMean) || isNaN(lossStd) || isNaN(lossMin) || isNaN(lossMax)) {
-		console.error("[test_multi_run_training] stats contain NaN values: mean=" + lossMean + " std=" + lossStd + " min=" + lossMin + " max=" + lossMax);
+	if(isNaN(lossMean) || isNaN(lossMin) || isNaN(lossMax)) {
+		console.error("[test_multi_run_training] stats contain NaN values: mean=" + lossMean + " min=" + lossMin + " max=" + lossMax);
 		return false;
 	}
 
 	test_equal("loss mean is finite", isNaN(lossMean), false);
-	test_equal("loss std is finite", isNaN(lossStd), false);
 	test_equal("loss min <= mean", lossMin <= lossMean, true);
 	test_equal("loss max >= mean", lossMax >= lossMean, true);
 	test_equal("loss min <= loss max", lossMin <= lossMax, true);
