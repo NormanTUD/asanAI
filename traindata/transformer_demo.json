@@ -38,6 +38,7 @@
 		"the dog ran on \u2192 the",
 		"the dog ran on the \u2192 field"
 	],
+	"skip_connections": [1, 2, 3, 4, 5, 6],
 	"model_structure": [
 		{
 			"type": "AsanEmbedding",
