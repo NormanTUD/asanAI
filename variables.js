@@ -994,7 +994,7 @@ var initializer_options = {
 		]
 	},
 	"leCunNormal": {
-		"description": "It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(1 / fanIn) where fanIn is the number of input units in the weight tensor.", // TODO References
+		"description": "It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(1 / fanIn) where fanIn is the number of input units in the weight tensor. References: Klambauer et al., 2017, 'Self-Normalizing Neural Networks', NeurIPS 2018.",
 		"options": [
 			"seed"
 		]
@@ -1010,7 +1010,7 @@ var initializer_options = {
 		"options": []
 	},
 	"orthogonal": {
-		"description": "Initializer that generates a random orthogonal matrix.", // TODO References
+		"description": "Initializer that generates a random orthogonal matrix. References: Saxe, McClelland & Ganguli, 2014, 'Exact solutions to the nonlinear dynamics of learning in deep linear neural networks', ICLR 2014.",
 		"options": [
 			"gain", "seed"
 		]
