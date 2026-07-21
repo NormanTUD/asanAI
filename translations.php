@@ -1,6 +1,7 @@
 <?php
 $GLOBALS['translations'] = array(
 	'en' => array(
+		"embedding_description" => "This layer turns positive integers (indexes) into dense vectors of fixed size. It is commonly used for processing discrete categorical data, such as words in text processing.",
 		"no_valid_numbers_found" => "No valid numbers found.",
 		"no_y" => "No Y",
 		"predicted_category" => "Predicted category",
@@ -1233,6 +1234,7 @@ $GLOBALS['translations'] = array(
 	),
 
 	'de' => array(
+		"embedding_description" => "Diese Schicht wandelt positive Ganzzahlen (Indizes) in dichte Vektoren fester Größe um. Sie wird häufig verwendet, um diskrete kategoriale Daten wie z. B. Wörter bei der Textverarbeitung zu verarbeiten.",
 		"no_valid_numbers_found" => "Keine validen Zahlen gefunden.",
 		"no_y" => "Kein Y",
 		"predicted_category" => "Vorhergesagte Kategorie",
