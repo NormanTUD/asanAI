@@ -1369,6 +1369,17 @@ async function _print_predictions_text() {
 		return;
 	}
 
+	var config_url = "traindata/" + $("#dataset").val() + ".json";
+	var config = await get_cached_json(config_url);
+	var vocab = (config && config.vocab) ? config.vocab : null;
+	var vocab_inv = null;
+	if(vocab) {
+		vocab_inv = {};
+		for(var id in vocab) {
+			vocab_inv[parseInt(id)] = vocab[id];
+		}
+	}
+
 	for (var example_predict_data_idx = 0; example_predict_data_idx < example_predict_data.length; example_predict_data_idx++) {
 		var _tensor = tensor(example_predict_data[example_predict_data_idx]);
 		warn_if_tensor_is_disposed(_tensor);
@@ -1386,20 +1397,32 @@ async function _print_predictions_text() {
 
 					res = await safe_execute("_print_predictions_text -> _predict", () => __predict(_tensor), false, false);
 
-					await safe_execute("_print_predictions_text -> async", async () => {
-						network_name = create_network_name();
-						latex_input = await _arbitrary_array_to_latex(example_predict_data[example_predict_data_idx]);
-						if (res) {
-							const res_array = tidy(() => array_sync(res));
-							latex_output = await _arbitrary_array_to_latex(res_array);
-						}
-					});
+					if(vocab_inv && res) {
+						await safe_execute("_print_predictions_text -> vocab_decode", async () => {
+							var input_tokens = example_predict_data[example_predict_data_idx];
+							var input_words = input_tokens.map(function(t) { return vocab_inv[t] || "?"; }).join(" ");
+							var res_array = tidy(() => array_sync(res));
+							var probs = Array.isArray(res_array[0]) ? res_array[0] : res_array;
+							var predicted_id = probs.indexOf(Math.max.apply(null, probs));
+							var predicted_word = vocab_inv[predicted_id] || "?";
+							html_contents += "<div style='margin-bottom: 6px;'>" + input_words + " <b>&rarr;</b> <b>" + predicted_word + "</b></div>";
+						});
+					} else {
+						await safe_execute("_print_predictions_text -> async", async () => {
+							network_name = create_network_name();
+							latex_input = await _arbitrary_array_to_latex(example_predict_data[example_predict_data_idx]);
+							if (res) {
+								const res_array = tidy(() => array_sync(res));
+								latex_output = await _arbitrary_array_to_latex(res_array);
+							}
+						});
 
-					await safe_execute("_print_predictions_text -> temml", () => {
-						if(latex_output) {
-							html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
-						}
-					});
+						await safe_execute("_print_predictions_text -> temml", () => {
+							if(latex_output) {
+								html_contents += `<span class='temml_me'>\\mathrm{${network_name}}\\left(${latex_input}\\right) = ${latex_output}</span><br>`;
+							}
+						});
+					}
 
 					count++;
 				} catch (e) {

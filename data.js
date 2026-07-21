@@ -768,13 +768,38 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 		var x_print_string = _tensor_print_to_string(x);
 		var y_print_string = _tensor_print_to_string(y);
 
-		var x_latex = array_to_latex(array_sync(x), "Input");
-		var y_latex = array_to_latex(array_sync(y), "Output");
+		var config_url = "traindata/" + $("#dataset").val() + ".json";
+		var config = await get_cached_json(config_url);
 
-		var network_name = $("#model_dataset").val().toUpperCase();
+		if(config && config.text_display && config.vocab) {
+			var vocab = config.vocab;
+			var html = "<div style='padding: 10px;'>";
+			html += "<table class='table_border_1px' style='border-collapse: collapse;'>";
+			html += "<tr><th style='padding: 4px 12px;'>Context</th><th style='padding: 4px 12px;'></th><th style='padding: 4px 12px;'>Next Word</th></tr>";
+			for(var i = 0; i < config.text_display.length; i++) {
+				var parts = config.text_display[i].split(" \u2192 ");
+				if(parts.length == 2) {
+					html += "<tr><td style='padding: 4px 12px;'>" + parts[0] + "</td><td style='padding: 4px 12px;'>\u2192</td><td style='padding: 4px 12px;'><b>" + parts[1] + "</b></td></tr>";
+				}
+			}
+			html += "</table>";
+			html += "<br><b>Vocabulary:</b> ";
+			var vocab_entries = [];
+			for(var id in vocab) {
+				vocab_entries.push(id + " = " + vocab[id]);
+			}
+			html += vocab_entries.join(", ");
+			html += "</div>";
+			$("#xy_display_data").html(html).show();
+		} else {
+			var x_latex = array_to_latex(array_sync(x), "Input");
+			var y_latex = array_to_latex(array_sync(y), "Output");
 
-		$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
-		_temml();
+			var network_name = $("#model_dataset").val().toUpperCase();
+
+			$("#xy_display_data").html(`<div class='temml_me'>\\text{Neural Network}_{\\text{${network_name}}}\\left(${x_latex}\\right) = ${y_latex}</div>`).show();
+			_temml();
+		}
 	} catch (e) {
 		let errorContent;
 

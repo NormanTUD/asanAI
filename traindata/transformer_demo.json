@@ -1,20 +1,44 @@
 {
-	"name": "Sequence Sorting (Transformer)",
-	"loss": "meanSquaredError",
-	"metric": "mse",
+	"name": "Next Word Prediction (Transformer)",
+	"loss": "sparseCategoricalCrossentropy",
+	"metric": "sparseCategoricalAccuracy",
 	"optimizer": "adam",
-	"learningRate": 0.005,
+	"learningRate": 0.01,
 	"epochs": 300,
-	"batchSize": 10,
+	"batchSize": 5,
 	"validationSplit": 0,
-	"input_shape": "[6]",
-	"output_shape": "[1]",
+	"input_shape": "[3]",
+	"output_shape": "[10]",
 	"trainable_data": ["transformer_demo"],
+	"vocab": {
+		"0": "the",
+		"1": "cat",
+		"2": "dog",
+		"3": "sat",
+		"4": "ran",
+		"5": "on",
+		"6": "mat",
+		"7": "field",
+		"8": "and",
+		"9": "a"
+	},
+	"text_display": [
+		"the cat sat \u2192 on",
+		"cat sat on \u2192 a",
+		"sat on a \u2192 mat",
+		"the dog ran \u2192 on",
+		"dog ran on \u2192 a",
+		"ran on a \u2192 field",
+		"the cat ran \u2192 on",
+		"cat ran on \u2192 a",
+		"the dog sat \u2192 on",
+		"dog sat on \u2192 a"
+	],
 	"model_structure": [
 		{
 			"type": "AsanEmbedding",
 			"data": {
-				"inputDim": 5,
+				"inputDim": 10,
 				"outputDim": 8
 			}
 		},
@@ -31,8 +55,8 @@
 		{
 			"type": "dense",
 			"data": {
-				"units": 1,
-				"activation": "sigmoid"
+				"units": 10,
+				"activation": "softmax"
 			}
 		}
 	]
