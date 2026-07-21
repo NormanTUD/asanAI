@@ -22,17 +22,21 @@
 		"8": "and",
 		"9": "a"
 	},
+	"sentences": [
+		"the cat sat on the mat",
+		"the dog ran on the field"
+	],
 	"text_display": [
+		"the \u2192 cat",
+		"the cat \u2192 sat",
 		"the cat sat \u2192 on",
-		"cat sat on \u2192 a",
-		"sat on a \u2192 mat",
+		"the cat sat on \u2192 the",
+		"the cat sat on the \u2192 mat",
+		"the \u2192 dog",
+		"the dog \u2192 ran",
 		"the dog ran \u2192 on",
-		"dog ran on \u2192 a",
-		"ran on a \u2192 field",
-		"the cat ran \u2192 on",
-		"cat ran on \u2192 a",
-		"the dog sat \u2192 on",
-		"dog sat on \u2192 a"
+		"the dog ran on \u2192 the",
+		"the dog ran on the \u2192 field"
 	],
 	"model_structure": [
 		{
