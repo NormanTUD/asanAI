@@ -246,6 +246,7 @@ module.exports = {
 		"training_history": "writable",
 		"training_history_counter": "writable",
 		"last_model_fingerprint": "writable",
+		"_last_multi_run_results": "writable",
 		"taint_privacy": "writable",
 		"uuidv4": "readonly",
 		"sprintf": "readonly",

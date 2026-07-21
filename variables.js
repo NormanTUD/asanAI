@@ -177,6 +177,7 @@ var started_training = false;
 var training_history = [];
 var training_history_counter = 0;
 var last_model_fingerprint = null;
+var _last_multi_run_results = null;
 
 var x_file = null;
 var y_file = null;

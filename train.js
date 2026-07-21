@@ -236,7 +236,7 @@ function get_model_fingerprint() {
 	}
 }
 
-function save_training_history(epochData, batchData) {
+function save_training_history(epochData, batchData, multiRunResults) {
 	training_history_counter++;
 	training_history.push({
 		label: "#" + training_history_counter,
@@ -246,7 +246,8 @@ function save_training_history(epochData, batchData) {
 		loss: (epochData["loss"] && epochData["loss"]["y"] && epochData["loss"]["y"].length)
 			? epochData["loss"]["y"][epochData["loss"]["y"].length - 1]
 			: null,
-		fingerprint: last_model_fingerprint
+		fingerprint: last_model_fingerprint,
+		multiRunResults: multiRunResults || null
 	});
 	render_training_history_tabs();
 }
@@ -264,6 +265,12 @@ function show_training_history_run(idx, showBatch) {
 
 	var entry = training_history[idx];
 	if (!entry) return;
+
+	if (entry.multiRunResults) {
+		show_multi_run_statistics(entry.multiRunResults);
+	} else {
+		$("#multi_run_stats").html("").hide();
+	}
 
 	var data = showBatch ? entry.batchData : entry.epochData;
 	var traces = [];
@@ -465,7 +472,8 @@ async function _train_neural_network () {
 		}
 
 		if (training_logs_epoch["loss"] && training_logs_epoch["loss"]["x"] && training_logs_epoch["loss"]["x"].length > 0) {
-			save_training_history(training_logs_epoch, training_logs_batch);
+			save_training_history(training_logs_epoch, training_logs_batch, _last_multi_run_results);
+			_last_multi_run_results = null;
 		}
 
 		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
@@ -2018,6 +2026,7 @@ async function multi_train_neural_network(num_runs) {
 
 	l("[multi-train] All " + num_runs + " runs completed. Results: " + results.length);
 
+	_last_multi_run_results = results;
 	show_multi_run_statistics(results);
 
 	show_input_shape_repaired_message(false);
