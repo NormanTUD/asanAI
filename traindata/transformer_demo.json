@@ -53,14 +53,41 @@
 			}
 		},
 		{
-			"type": "flatten",
-			"data": {}
+			"type": "dense",
+			"data": {
+				"units": 8,
+				"activation": "relu"
+			}
 		},
 		{
 			"type": "dense",
 			"data": {
-				"units": 10,
-				"activation": "softmax"
+				"units": 8
+			}
+		},
+		{
+			"type": "SimpleAttention",
+			"data": {
+				"units": 8
+			}
+		},
+		{
+			"type": "dense",
+			"data": {
+				"units": 8,
+				"activation": "relu"
+			}
+		},
+		{
+			"type": "dense",
+			"data": {
+				"units": 8
+			}
+		},
+		{
+			"type": "Unembedding",
+			"data": {
+				"vocabSize": 10
 			}
 		}
 	]
