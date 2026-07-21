@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Statistics
+description: AI is applied statistics. Distributions, probability, and the mathematical backbone of learning.
+icon: &#128200;
+part: 1
+order: 5
+color: accent
+-->
 
 <div class="md">
 Artificial Intelligence is often described as "Applied Statistics." At its core, every decision an AI makes is a sophisticated calculation of likelihoods. Below are the background stories of some mathematical frameworks, originating from all kinds of research, for example, playing games, and mapping the heavens, that now enables machines to learn from the chaos of data.
@@ -116,11 +125,11 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 <div class="md">
 #### The Astronomical Origin: Hunting Ceres
 
-On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
+On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809}, in his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 </div>
 
 <figure>
-    <img style="width: 100%" src="ceres_path.png" alt="The apparant path of Ceres in the Night Sky" />
+    <img style="width: 100%" src="ceres_path.png" alt="The apparent path of Ceres in the Night Sky" />
     <figcaption class="md">\citealternativetitle{cerespath}</figcaption>
 </figure>
 
@@ -592,7 +601,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 <div class="statlab-section">
     <div class="md">
         ### The Poisson Distribution: The Law of Rare Events
-        In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson} (section 41-42), where he derived a limit for the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
+        In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson}, a broad work on judicial probability that included (in sections 41-42) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
         It became famous as the **"Law of Small Numbers"** after \citeauthor{gesetzderkleinenzahlen} used it to model the likelihood of Prussian soldiers getting killed by their own horse's kicks (p. 23f, §12), events that are rare but occur at a constant average rate $\lambda$.
 
@@ -621,7 +630,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 <div class="md">
 ## Pearson's Biological Link: The Father-Son Study
 
-In 1801, \citeauthor{gauss1809} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Pearson collected heights from over 1,000 fathers and their adult sons to answer a fundamental question: *How much does one variable actually tell us about another?*
+In 1801, \citeauthor{gauss1809} used the "Normal Distribution" to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Building on data originally collected by \citeauthor{galton}, who measured heights from over 1,000 fathers and their adult sons, Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
 
 **The "Scale" Problem:** Pearson noticed that while a father's height clearly influenced his son's, the raw data was messy. If you measured the father in inches and the son in centimeters, the **Covariance** (the shared direction) would change purely because of the units. 
 
@@ -1176,7 +1185,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## The Chain Rule: Kolmogorov's Logic
 
-        Formalized by **\citeauthor{kolgomorov1933}** in *\citetitle{kolgomorov1933}* (\citeyear{kolgomorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
         In an LLM, the probability of the sentence "The cat sat" is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$

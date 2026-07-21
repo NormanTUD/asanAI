@@ -134,6 +134,34 @@ async function update_translations(force=0) {
 		wd = 1;
 	}
 
+	$("[data-tr-title]").each(function() {
+		var key = $(this).attr("data-tr-title");
+		if(language[lang] && language[lang][key]) {
+			$(this).attr("title", language[lang][key]);
+		}
+	});
+
+	$("[data-tr-alt]").each(function() {
+		var key = $(this).attr("data-tr-alt");
+		if(language[lang] && language[lang][key]) {
+			$(this).attr("alt", language[lang][key]);
+		}
+	});
+
+	$("[data-tr-placeholder]").each(function() {
+		var key = $(this).attr("data-tr-placeholder");
+		if(language[lang] && language[lang][key]) {
+			$(this).attr("placeholder", language[lang][key]);
+		}
+	});
+
+	$("[data-tr-option]").each(function() {
+		var key = $(this).attr("data-tr-option");
+		if(language[lang] && language[lang][key]) {
+			$(this).text(language[lang][key]);
+		}
+	});
+
 	if (typeof show_visual_explanations === 'function') {
 		await show_visual_explanations(wd);
 	}

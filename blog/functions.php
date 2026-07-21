@@ -338,7 +338,7 @@ function print_dynamic_title($tag = "title") {
 	$base_name = pathinfo($script_filename, PATHINFO_FILENAME);
 
 	// Read the content of index.php
-	$index_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'index.php';
+	$index_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'index_full.php';
 	$index_content = @file_get_contents($index_path);
 
 	if ($index_content) {
@@ -357,7 +357,7 @@ function print_dynamic_title($tag = "title") {
 	}
 }
 
-function get_ai_course_labels($indexFile = 'index.php') {
+function get_ai_course_labels($indexFile = 'index_full.php') {
 	$labelsMap = [];
 	$content = file_get_contents($indexFile);
 
@@ -386,6 +386,61 @@ function get_ai_course_labels($indexFile = 'index.php') {
 	return $labelsMap;
 }
 
+function parse_course_metadata() {
+	$modules = glob("*.php");
+	$results = [];
+
+	foreach ($modules as $file) {
+		$name = basename($file, ".php");
+		$base_dir = basename(__DIR__);
+		if ($name === "index" || $name === "index_full" || $name === "functions" || $name === "asanai_blog_proxy" || $name === "graph" || $name === "intro") continue;
+
+		$content = file_get_contents($file);
+		$pattern = '/<!--\s*\n?\s*COURSE_METADATA:\s*\n((?:.*\n)*?)\s*-->/';
+		if (!preg_match($pattern, $content, $matches)) continue;
+
+		$metaRaw = $matches[1];
+		$meta = [];
+		foreach (explode("\n", $metaRaw) as $line) {
+			$line = trim($line);
+			if (preg_match('/^(\w+):\s*(.+)$/', $line, $m)) {
+				$key = $m[1];
+				$meta[$key] = trim($m[2]);
+			}
+		}
+
+		if (isset($meta['title']) && isset($meta['part'])) {
+			$meta['slug'] = $name;
+			$meta['part'] = (int)$meta['part'];
+			$meta['order'] = isset($meta['order']) ? (int)$meta['order'] : 999;
+			$meta['featured'] = isset($meta['featured']) && $meta['featured'] === 'true';
+			$meta['url'] = ($base_dir === 'blog') ? $name : "blog/$name";
+			$results[] = $meta;
+		}
+	}
+
+	usort($results, fn($a, $b) => $a['order'] <=> $b['order']);
+
+	$grouped = [];
+	foreach ($results as $m) {
+		$grouped[$m['part']][] = $m;
+	}
+
+	return $grouped;
+}
+
+function render_course_tile($m) {
+	$classes = 'course-tile';
+	if ($m['featured']) $classes .= ' course-tile-featured';
+	$iconHtml = $m['icon'] ?? '&#128193;';
+	$descHtml = $m['description'] ?? '';
+	echo '<a href="' . htmlspecialchars($m['url']) . '" class="' . $classes . '" style="--tile-accent: var(--mn-' . htmlspecialchars($m['color']) . ')">';
+	echo '<div class="course-tile-icon">' . $iconHtml . '</div>';
+	echo '<h3>' . htmlspecialchars($m['title']) . '</h3>';
+	echo '<p>' . $descHtml . '</p>';
+	echo '</a>';
+}
+
 function get_string_of_file_or_die($file) {
 	if(!file_exists($file)) {
 		die(">$file< does not exist.");
@@ -401,7 +456,7 @@ function get_string_of_file_or_die($file) {
 if(!server_php_self_ends_with_index_php()) {
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">

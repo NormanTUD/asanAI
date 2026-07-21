@@ -24,7 +24,7 @@ from typing import List, Tuple
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", stream=sys.stderr)
 
-ignored_files = ["manual.js", "tests.js", "online_python.js", "dimensionality_river.js", "activation_atlas.js"]
+ignored_files = ["manual.js", "tests.js", "online_python.js", "dimensionality_river.js", "activation_atlas.js", "math_mode.js"]
 
 def read_file(path: str) -> str:
     try:

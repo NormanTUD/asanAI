@@ -1,6 +1,10 @@
 "use strict";
 
 function show_overlay(text, title="", options={}) {
+	close_popups();
+
+	close_math_copiers();
+
 	try {
 		var bg_color = "white";
 		var text_color = "black";
@@ -25,7 +29,7 @@ function show_overlay(text, title="", options={}) {
 		overlay.style.alignItems = "center";
 		overlay.style.justifyContent = "center";
 		overlay.style.userSelect = "none";
-		overlay.style.zIndex = "9999";
+		overlay.style.zIndex = "99999";
 		overlay.style.transition = "opacity 0.25s ease-in";
 		$(overlay).addClass("overlay");
 
@@ -50,6 +54,7 @@ function show_overlay(text, title="", options={}) {
 		// Title
 		if (title) {
 			var hElement = document.createElement("h1");
+			hElement.className = "overlay-title";
 			hElement.innerHTML = title;
 			hElement.style.fontFamily = "Arial, sans-serif";
 			hElement.style.fontSize = "28px";
@@ -133,6 +138,15 @@ function update_overlay_text(overlay, newText) {
 	var textEl = overlay.querySelector(".overlay-text");
 	if (textEl) {
 		textEl.innerHTML = newText;
+	}
+}
+
+function update_overlay_title(overlay, newTitle) {
+	if (!overlay) return;
+
+	var titleEl = overlay.querySelector(".overlay-title");
+	if (titleEl) {
+		titleEl.innerHTML = newTitle;
 	}
 }
 

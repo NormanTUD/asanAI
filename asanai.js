@@ -6278,6 +6278,8 @@ class asanAI {
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 			asanai_this.#set_document_title(asanai_this.#original_title);
 
+			await asanai_this.visualize_train();
+
 			$("#tiny_graph").hide();
 
 			$("#network_has_seen_msg").hide();
@@ -10562,8 +10564,8 @@ if len(sys.argv) == 1:
 		} else {
 			Swal.fire({
 				icon: "error",
-				title: "Oops [2]...",
-				text: "You cannot remove the last remaining layer of your this.#model.",
+				title: language[lang]["oops"],
+				text: language[lang]["cannot_remove_last_layer"],
 			});
 		}
 
@@ -12857,7 +12859,7 @@ if len(sys.argv) == 1:
 				if(mode == "beginner") {
 					Swal.fire({
 						icon: "error",
-						title: "Oops [4]...",
+						title: language[lang]["oops"],
 						text: "" + e
 					});
 				} else {

@@ -1,5 +1,13 @@
 <?php include_once("functions.php"); ?>
-
+<!--
+COURSE_METADATA:
+title: Brief History of AI
+description: From stone tools to computation, the shifting currents that merged into modern AI.
+icon: &#128220;
+part: 1
+order: 2
+color: accent
+-->
 <!--
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html
 TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
@@ -235,7 +243,7 @@ Of course, Llull could not foresee modern AI systems. He was just the first one 
 
 A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found \cite[here]{artandlogicofllull}.
 
-Medieval scholar Ramon Llull had quite an interesting life, and has done many things. The first novel in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person to ever damned as heretic by one pope (Gregor XI.), \cite[yet blessed by a later one]{arsmagnavolvelle} (Pius IX.).
+Medieval scholar Ramon Llull had quite an interesting life, and has done many things. One of the earliest novels in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person whose works were condemned as heretical by one pope (Gregor XI.), \cite[yet whose legacy was later honored by another]{arsmagnavolvelle} (Pius IX.).
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1685calculus} work \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
@@ -461,7 +469,7 @@ These early neural networks were extremely limited by today's standards, but the
 
 #### The Hype (1958)
 
-When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundingly accurate.
+When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. Most of Rosenblatts predictions were surpringly accurate.
 
 Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 

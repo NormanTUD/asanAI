@@ -1,4 +1,14 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: The Transformer Architecture
+description: A deep interactive dive, configure heads, layers, and dimensions, then watch it compute.
+icon: &#129516;
+part: 4
+order: 24
+color: sky
+featured: true
+-->
 
 <script src="llm_river.js"></script>
 <script src="stickybar_transformer.js"></script>
@@ -30,7 +40,7 @@ https://arxiv.org/html/2505.11611v1
 		<label style="font-weight: bold;">Attention Heads ($h$): </label>
 		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-	    <b>Dependency:</b> Must be a multiple of Heads.<br>
+	    <b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br>
             <b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel "viewpoints." If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
         </p>
 		<input type="range" id="transformer-heads" min="1" max="8" value="3"
@@ -177,7 +187,7 @@ These functions were chosen because they create unique, continuous patterns for 
 
 The key to how the FFN learns from positional encodings lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity allows the FFN to infer relative positions by learning simple transformations that map positional relationships to meaningful patterns. Over multiple layers, the FFN entangles positional and semantic information, enabling the model to reason about sequence structure and relationships effectively. This process ensures that the model can generalize to unseen sequences and maintain positional understanding even when tokens are shifted or reordered.
 
-This is required because the network looks at all words simultaneously, instead of after another. Since the matrix can be permutated and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
+This is required because the network looks at all words simultaneously, instead of after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
 
 <div class="md" id="ifscalfactornotone" style="display: none">
@@ -246,7 +256,7 @@ This is also important for **prompt engineering**:
 
 ### The **Single-Head Attention**
 
-The job of of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. In real transformers, it rarely is *that* interpretable, though.
+The job of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. In real transformers, it rarely is *that* interpretable, though.
 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
@@ -271,7 +281,7 @@ After the heads process the sequence, they are **concatenated** and multiplied b
 </div>
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
-$$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0})) \cdot W^O$$
+$$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
 
 <div class="md">
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
@@ -357,7 +367,7 @@ During each step of inference:
    hidden state without re-calculating the past.
 
 This reduces the computational complexity of the projection phase from
-linear to $\mathcal{O}(T)$ relative to sequence length $T$.
+quadratic to $\mathcal{O}(T)$ relative to sequence length $T$.
 
 ## The Feed-Forward Network
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token's representation. In this sense, it functions as the model's primary per-token computational stage, complementing attention's role in information routing and aggregation.
@@ -393,7 +403,7 @@ h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
 \end{aligned}
 $$
 
-As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
+As $h$ progresses from $h_0$ to $h_{N}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
 </div>
 
 <div id="ffn-equations-container"></div>
@@ -534,7 +544,7 @@ Temperature controls the **sharpness** of the probability distribution by scalin
 
 $$P(w) = \text{softmax}\!\left(\frac{\text{logit}_w}{T}\right) = \frac{e^{\,\text{logit}_w \,/\, T}}{\displaystyle\sum_{w'} e^{\,\text{logit}_{w'} \,/\, T}}$$
 
-Dividing by $T$ rescales the logit differences. When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic). When $T > 1$, the differences are *compressed*, making the distribution flatter (more random). At $T = 1$, is behaves as the standard SoftMax.
+Dividing by $T$ rescales the logit differences. When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic). When $T > 1$, the differences are *compressed*, making the distribution flatter (more random). At $T = 1$, it behaves as the standard SoftMax.
 
 | Temperature | Effect | Behavior |
 |---|---|---|

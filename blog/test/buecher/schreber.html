@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schreber: Denkwürdigkeiten eines Nervenkranken</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        h1 {
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        h2 {
+            font-size: 1.3em;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #aaa;
+            font-weight: 300;
+        }
+        .subtitle {
+            font-size: 0.9em;
+            color: #888;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        canvas {
+            border-radius: 12px;
+            touch-action: none;
+            max-width: 100%;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover, button.active {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .info-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            max-width: 360px;
+            font-size: 0.85em;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            padding: 8px 15px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-dot.active {
+            background: #fff;
+            transform: scale(1.3);
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+        }
+        #section0 { background: linear-gradient(135deg, #0a0a1a, #1a0a2a); }
+        #section1 { background: linear-gradient(135deg, #0a1a1a, #0a0a2a); }
+        #section2 { background: linear-gradient(135deg, #1a0a0a, #2a0a1a); }
+        #section3 { background: linear-gradient(135deg, #0a0a1a, #0a1a2a); }
+        #section4 { background: linear-gradient(135deg, #1a1a0a, #0a1a1a); }
+        #section5 { background: linear-gradient(135deg, #0a0a2a, #1a0a1a); }
+    </style>
+</head>
+<body>
+
+<div class="nav" id="nav"></div>
+
+<!-- SECTION 0: Intro -->
+<div class="section" id="section0">
+    <h1>Denkwürdigkeiten eines Nervenkranken</h1>
+    <h2>Daniel Paul Schreber, 1903</h2>
+    <p class="subtitle">Tippe/klicke auf die Leinwand, um das Nervensystem zu erkunden</p>
+    <canvas id="canvas0" width="340" height="400"></canvas>
+    <div class="info-box">
+        Ein Richter beschreibt seine Erfahrungen in der Psychiatrie — und entwickelt ein komplexes System über Gott, Nerven und die Weltordnung.
+    </div>
+</div>
+
+<!-- SECTION 1: Nerven & Gott -->
+<div class="section" id="section1">
+    <h2>Gott = Nerven = Strahlen</h2>
+    <canvas id="canvas1" width="340" height="380"></canvas>
+    <div class="controls">
+        <button onclick="toggleGodMode('ariman')">Ariman (unterer Gott)</button>
+        <button onclick="toggleGodMode('ormuzd')">Ormuzd (oberer Gott)</button>
+    </div>
+    <div class="info-box" id="info1">
+        Schreber glaubt: Gott besteht aus Nerven ("Strahlen"), die alles erschaffen. Die menschliche Seele ist ebenfalls Nerven. Nach dem Tod steigen reine Nerven zu Gott auf.
+    </div>
+</div>
+
+<!-- SECTION 2: Seelenmord & Krise -->
+<div class="section" id="section2">
+    <h2>Die Krise: "Seelenmord"</h2>
+    <canvas id="canvas2" width="340" height="380"></canvas>
+    <div class="controls">
+        <button onclick="triggerCrisis()">Krise auslösen</button>
+        <button onclick="resetCrisis()">Zurücksetzen</button>
+    </div>
+    <div class="info-box">
+        Schreber glaubt, sein Arzt Prof. Flechsig habe einen "Seelenmord" begangen — sich Gottes Nerven angeeignet. Dies habe die Weltordnung zerrissen.
+    </div>
+</div>
+
+<!-- SECTION 3: Stimmen & Denkzwang -->
+<div class="section" id="section3">
+    <h2>Stimmen & Denkzwang</h2>
+    <canvas id="canvas3" width="340" height="380"></canvas>
+    <div class="slider-container">
+        <span style="font-size:0.8em">Langsam</span>
+        <input type="range" id="voiceSpeed" min="1" max="10" value="5" oninput="updateVoiceSpeed(this.value)">
+        <span style="font-size:0.8em">Schnell</span>
+    </div>
+    <div class="info-box">
+        Unaufhörliche Stimmen sprechen in seine Nerven. Sie stellen sinnlose Fragen ("Warum nur?"), reden nicht aus, und zwingen ihn zum Denken — ohne Pause, Tag und Nacht.
+    </div>
+</div>
+
+<!-- SECTION 4: Entmannung & Wollust -->
+<div class="section" id="section4">
+    <h2>Verwandlung & "Seelenwollust"</h2>
+    <canvas id="canvas4" width="340" height="380"></canvas>
+    <div class="controls">
+        <button onclick="toggleTransform()">Verwandlung zeigen</button>
+    </div>
+    <div class="info-box">
+        Schreber glaubt, die Weltordnung verlange seine Verwandlung in eine Frau — zur Neuerschaffung der Menschheit. "Wollustnerven" durchziehen seinen Körper.
+    </div>
+</div>
+
+<!-- SECTION 5: Weltordnung -->
+<div class="section" id="section5">
+    <h2>Die Weltordnung siegt</h2>
+    <canvas id="canvas5" width="340" height="380"></canvas>
+    <div class="controls">
+        <button onclick="animateOrder()">Ordnung wiederherstellen</button>
+    </div>
+    <div class="info-box">
+        Trotz allem: Schreber sieht sich als Sieger. Die Weltordnung trage "die Heilmittel für die ihr geschlagenen Wunden in sich selbst." Er wird entlassen und gewinnt seinen Prozess.
+    </div>
+</div>
+
+<script>
+// Navigation
+const sections = document.querySelectorAll('.section');
+const nav = document.getElementById('nav');
+sections.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.onclick = () => sections[i].scrollIntoView({behavior:'smooth'});
+    nav.appendChild(dot);
+});
+const dots = document.querySelectorAll('.nav-dot');
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(e.isIntersecting) {
+            const idx = [...sections].indexOf(e.target);
+            dots.forEach((d,i) => d.classList.toggle('active', i===idx));
+        }
+    });
+}, {threshold: 0.5});
+sections.forEach(s => observer.observe(s));
+
+// === CANVAS 0: Nervous System Intro ===
+(function(){
+    const c = document.getElementById('canvas0');
+    const ctx = c.getContext('2d');
+    let neurons = [];
+    let mouseX = c.width/2, mouseY = c.height/2;
+    
+    for(let i=0; i<60; i++){
+        neurons.push({
+            x: Math.random()*c.width,
+            y: Math.random()*c.height,
+            vx: (Math.random()-0.5)*0.5,
+            vy: (Math.random()-0.5)*0.5,
+            r: Math.random()*3+1,
+            pulse: Math.random()*Math.PI*2
+        });
+    }
+    
+    c.addEventListener('pointermove', e => {
+        const rect = c.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+    c.addEventListener('click', e => {
+        const rect = c.getBoundingClientRect();
+        for(let i=0;i<5;i++){
+            neurons.push({
+                x: e.clientX-rect.left + (Math.random()-0.5)*30,
+                y: e.clientY-rect.top + (Math.random()-0.5)*30,
+                vx: (Math.random()-0.5)*2,
+                vy: (Math.random()-0.5)*2,
+                r: Math.random()*3+1,
+                pulse: 0
+            });
+        }
+        if(neurons.length > 120) neurons.splice(0, 5);
+    });
+    
+    function draw(){
+        ctx.fillStyle = 'rgba(10,10,26,0.15)';
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        neurons.forEach((n,i) => {
+            n.pulse += 0.03;
+            n.x += n.vx;
+            n.y += n.vy;
+            if(n.x<0||n.x>c.width) n.vx*=-1;
+            if(n.y<0||n.y>c.height) n.vy*=-1;
+            
+            const dx = mouseX - n.x;
+            const dy = mouseY - n.y;
+            const dist = Math.sqrt(dx*dx+dy*dy);
+            if(dist < 120){
+                n.vx += dx*0.0003;
+                n.vy += dy*0.0003;
+            }
+            
+            const glow = Math.sin(n.pulse)*0.5+0.5;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r + glow*2, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(180,200,255,${0.4+glow*0.4})`;
+            ctx.fill();
+            
+            for(let j=i+1; j<neurons.length; j++){
+                const dx2 = neurons[j].x-n.x;
+                const dy2 = neurons[j].y-n.y;
+                const d = Math.sqrt(dx2*dx2+dy2*dy2);
+                if(d < 70){
+                    ctx.beginPath();
+                    ctx.moveTo(n.x, n.y);
+                    ctx.lineTo(neurons[j].x, neurons[j].y);
+                    ctx.strokeStyle = `rgba(100,150,255,${(1-d/70)*0.3})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 1: God as Rays ===
+let godMode = 'ariman';
+function toggleGodMode(mode){ godMode = mode; }
+
+(function(){
+    const c = document.getElementById('canvas1');
+    const ctx = c.getContext('2d');
+    let t = 0;
+    
+    function draw(){
+        t += 0.02;
+        ctx.fillStyle = 'rgba(10,20,30,0.1)';
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        const cx = c.width/2, cy = c.height/2;
+        const color1 = godMode==='ariman' ? [200,100,50] : [50,100,200];
+        const color2 = godMode==='ariman' ? [255,200,0] : [200,220,255];
+        
+        // God center
+        ctx.beginPath();
+        ctx.arc(cx, 60, 25+Math.sin(t)*5, 0, Math.PI*2);
+        const grad = ctx.createRadialGradient(cx,60,0,cx,60,40);
+        grad.addColorStop(0, `rgba(${color2[0]},${color2[1]},${color2[2]},0.8)`);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        
+        // Human soul at bottom
+        ctx.beginPath();
+        ctx.arc(cx, c.height-60, 15, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(200,200,255,0.6)';
+        ctx.fill();
+        
+        // Rays (Strahlen) connecting
+        for(let i=0; i<12; i++){
+            const angle = (i/12)*Math.PI*2 + t*0.3;
+            const rayX = cx + Math.cos(angle)*80;
+            const progress = (Math.sin(t+i)*0.5+0.5);
+            const rayY = 60 + progress*(c.height-120);
+            
+            ctx.beginPath();
+            ctx.moveTo(cx, 60);
+            ctx.quadraticCurveTo(rayX, rayY*0.5, cx + Math.sin(t+i)*20, rayY);
+            ctx.strokeStyle = `rgba(${color1[0]},${color1[1]},${color1[2]},${0.2+progress*0.3})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(cx + Math.sin(t+i)*20, rayY, 2, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(${color2[0]},${color2[1]},${color2[2]},${0.5+progress*0.5})`;
+            ctx.fill();
+        }
+        
+        // Labels
+        ctx.font = '11px sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.textAlign = 'center';
+        ctx.fillText(godMode==='ariman'?'ARIMAN (unterer Gott)':'ORMUZD (oberer Gott)', cx, 20);
+        ctx.fillText('Menschliche Seele', cx, c.height-25);
+        ctx.fillText('← Strahlen/Nerven →', cx, c.height/2);
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 2: Crisis / Seelenmord ===
+let crisisActive = false;
+function triggerCrisis(){ crisisActive = true; }
+function resetCrisis(){ crisisActive = false; }
+
+(function(){
+    const c = document.getElementById('canvas2');
+    const ctx = c.getContext('2d');
+    let t = 0;
+    let cracks = [];
+    
+    function draw(){
+        t += 0.02;
+        ctx.fillStyle = crisisActive ? 'rgba(30,5,5,0.1)' : 'rgba(20,10,10,0.1)';
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        const cx = c.width/2, cy = c.height/2;
+        
+        if(!crisisActive){
+            // Peaceful order
+            for(let i=0; i<8; i++){
+                const angle = (i/8)*Math.PI*2 + t*0.2;
+                const r = 100 + Math.sin(t+i)*10;
+                ctx.beginPath();
+                ctx.arc(cx+Math.cos(angle)*r, cy+Math.sin(angle)*r, 8, 0, Math.PI*2);
+                ctx.fillStyle = `hsla(${i*45},60%,70%,0.5)`;
+                ctx.fill();
+            }
+            ctx.beginPath();
+            ctx.arc(cx, cy, 20, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(255,255,200,0.6)';
+            ctx.fill();
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.textAlign = 'center';
+            ctx.fillText('"Wundervoller Aufbau"', cx, cy+50);
+        } else {
+            // Crisis!
+            if(Math.random()<0.1){
+                cracks.push({
+                    x: cx + (Math.random()-0.5)*200,
+                    y: cy + (Math.random()-0.5)*200,
+                    angle: Math.random()*Math.PI*2,
+                    len: Math.random()*60+20,
+                    life: 1
+                });
+            }
+            
+            cracks.forEach((cr,i) => {
+                cr.life -= 0.005;
+                if(cr.life <= 0){ cracks.splice(i,1); return; }
+                ctx.beginPath();
+                ctx.moveTo(cr.x, cr.y);
+                ctx.lineTo(cr.x+Math.cos(cr.angle)*cr.len, cr.y+Math.sin(cr.angle)*cr.len);
+                ctx.strokeStyle = `rgba(255,50,50,${cr.life})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            
+            // Flechsig soul stealing
+            const fx = cx + Math.sin(t*2)*80;
+            const fy = cy + Math.cos(t*1.5)*60;
+            ctx.beginPath();
+            ctx.arc(fx, fy, 12, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(150,0,0,${0.5+Math.sin(t*3)*0.3})`;
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(cx, cy, 15+Math.sin(t*4)*5, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(255,200,100,0.4)';
+            ctx.fill();
+            
+            // Connection line
+            ctx.beginPath();
+            ctx.moveTo(cx,cy);
+            ctx.lineTo(fx,fy);
+            ctx.strokeStyle = `rgba(255,0,0,${0.3+Math.sin(t*5)*0.2})`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4,4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#ff6666';
+            ctx.textAlign = 'center';
+            ctx.fillText('Flechsig', fx, fy-18);
+            ctx.fillStyle = '#ffcc66';
+            ctx.fillText('Schreber', cx, cy-22);
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('"Seelenmord"', cx, c.height-30);
+        }
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 3: Voices / Denkzwang ===
+let voiceSpeed = 5;
+function updateVoiceSpeed(v){ voiceSpeed = parseInt(v); }
+
+(function(){
+    const c = document.getElementById('canvas3');
+    const ctx = c.getContext('2d');
+    let t = 0;
+    const phrases = [
+        "Warum nur?", "Warum, weil ich...", "Es sei denn...",
+        "Fand Aufnahme", "Das hammirschon", "Nun will ich mich...",
+        "Weil ich dumm bin", "Warum sch...Sie nicht?",
+        "Wenn nur meine...", "Sie sollen nämlich..."
+    ];
+    let activePhrase = 0;
+    let charIndex = 0;
+    let particles = [];
+    
+    function draw(){
+        t += 0.02;
+        ctx.fillStyle = 'rgba(10,10,30,0.12)';
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        const cx = c.width/2, cy = c.height/2;
+        
+        // Head outline
+        ctx.beginPath();
+        ctx.ellipse(cx, cy-20, 50, 65, 0, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(100,150,200,0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Incoming voice streams
+        const numStreams = 5;
+        for(let i=0; i<numStreams; i++){
+            const angle = (i/numStreams)*Math.PI - Math.PI/2 + Math.sin(t+i)*0.2;
+            const startX = cx + Math.cos(angle)*180;
+            const startY = cy-20 + Math.sin(angle)*180;
+            
+            for(let j=0; j<8; j++){
+                const progress = ((t*voiceSpeed*0.1 + j*0.12) % 1);
+                const px = startX + (cx-startX)*progress;
+                const py = startY + (cy-20-startY)*progress;
+                ctx.beginPath();
+                ctx.arc(px, py, 2-progress, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(200,100,255,${(1-progress)*0.7})`;
+                ctx.fill();
+            }
+        }
+        
+        // Current phrase typing effect
+        charIndex += voiceSpeed * 0.02;
+        if(charIndex >= phrases[activePhrase].length + 20){
+            charIndex = 0;
+            activePhrase = (activePhrase+1) % phrases.length;
+        }
+        
+        const displayText = phrases[activePhrase].substring(0, Math.floor(charIndex));
+        ctx.font = '14px monospace';
+        ctx.fillStyle = `rgba(255,200,100,${0.6+Math.sin(t*3)*0.3})`;
+        ctx.textAlign = 'center';
+        ctx.fillText(displayText, cx, c.height-50);
+        
+        // Pressure visualization inside head
+        const pressure = Math.sin(t*voiceSpeed*0.3)*0.5+0.5;
+        const grad = ctx.createRadialGradient(cx,cy-20,0,cx,cy-20,50);
+        grad.addColorStop(0, `rgba(255,100,100,${pressure*0.3})`);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        // Label
+        ctx.font = '10px sans-serif';
+        ctx.fillStyle = '#888';
+        ctx.fillText('Denkzwang: Nerven werden in Schwingung versetzt', cx, 25);
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 4: Transformation ===
+let transformActive = false;
+function toggleTransform(){ transformActive = !transformActive; }
+
+(function(){
+    const c = document.getElementById('canvas4');
+    const ctx = c.getContext('2d');
+    let t = 0;
+    let morphProgress = 0;
+    
+    function draw(){
+        t += 0.02;
+        ctx.fillStyle = 'rgba(20,20,10,0.1)';
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        if(transformActive && morphProgress < 1) morphProgress += 0.005;
+        if(!transformActive && morphProgress > 0) morphProgress -= 0.005;
+        morphProgress = Math.max(0, Math.min(1, morphProgress));
+        
+        const cx = c.width/2, cy = c.height/2;
+        
+        // Body silhouette morphing
+        ctx.beginPath();
+        const shoulderW = 40 - morphProgress*10;
+        const hipW = 25 + morphProgress*15;
+        const waistW = 25 - morphProgress*5;
+        const bustY = cy - 40;
+        
+        // Simple body shape
+        ctx.moveTo(cx, cy-90); // head top
+        ctx.quadraticCurveTo(cx+20, cy-80, cx+15, cy-60); // head
+        ctx.lineTo(cx+shoulderW, cy-40); // shoulder
+        ctx.quadraticCurveTo(cx+shoulderW+5, bustY+20, cx+waistW, cy); // torso
+        ctx.quadraticCurveTo(cx+hipW, cy+30, cx+hipW-5, cy+80); // hip
+        ctx.lineTo(cx+10, cy+140); // leg
+        ctx.lineTo(cx-10, cy+140);
+        ctx.lineTo(cx-hipW+5, cy+80);
+        ctx.quadraticCurveTo(cx-hipW, cy+30, cx-waistW, cy);
+        ctx.quadraticCurveTo(cx-shoulderW-5, bustY+20, cx-shoulderW, cy-40);
+        ctx.lineTo(cx-15, cy-60);
+        ctx.quadraticCurveTo(cx-20, cy-80, cx, cy-90);
+        
+        const bodyGrad = ctx.createLinearGradient(cx-50,0,cx+50,0);
+        const hue = 220 + morphProgress*100;
+        bodyGrad.addColorStop(0, `hsla(${hue},40%,40%,0.4)`);
+        bodyGrad.addColorStop(0.5, `hsla(${hue},50%,60%,0.5)`);
+        bodyGrad.addColorStop(1, `hsla(${hue},40%,40%,0.4)`);
+        ctx.fillStyle = bodyGrad;
+        ctx.fill();
+        
+        // Wollustnerven (pleasure nerves) spreading
+        if(morphProgress > 0){
+            for(let i=0; i<30; i++){
+                const ny = cy - 80 + (i/30)*220;
+                const spread = Math.sin(ny*0.05+t)*10 + 15*morphProgress;
+                const nx = cx + Math.sin(i*0.7+t)*spread;
+                ctx.beginPath();
+                ctx.arc(nx, ny, 1.5*morphProgress, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,150,200,${morphProgress*0.6*Math.sin(t+i)})`;
+                ctx.fill();
+            }
+        }
+        
+        // Rays coming in
+        for(let i=0; i<6; i++){
+            const angle = t*0.5 + i*Math.PI/3;
+            const rx = cx + Math.cos(angle)*160;
+            const ry = cy + Math.sin(angle)*120;
+            ctx.beginPath();
+            ctx.moveTo(rx,ry);
+            ctx.lineTo(cx + Math.cos(angle)*30, cy + Math.sin(angle)*30);
+            ctx.strokeStyle = `rgba(255,200,100,${0.1+morphProgress*0.2})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+        
+        ctx.font = '10px sans-serif';
+        ctx.fillStyle = '#aaa';
+        ctx.textAlign = 'center';
+        ctx.fillText(morphProgress > 0.5 ? '"Seelenwollust" durchzieht den Körper' : 'Tippe um die Verwandlung zu sehen', cx, c.height-20);
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 5: World Order Restored ===
+let orderAnimating = false;
+function animateOrder(){ orderAnimating = true; setTimeout(()=>orderAnimating=false, 5000); }
+
+(function(){
+    const c = document.getElementById('canvas5');
+    const ctx = c.getContext('2d');
+    let t = 0;
+    let orderProgress = 0;
+    let stars = [];
+    for(let i=0;
+i<80;i++){
+        stars.push({
+            x: Math.random()*c.width,
+            y: Math.random()*c.height,
+            r: Math.random()*2+0.5,
+            twinkle: Math.random()*Math.PI*2
+        });
+    }
+    
+    let orbitParticles = [];
+    for(let i=0; i<20; i++){
+        orbitParticles.push({
+            angle: (i/20)*Math.PI*2,
+            radius: 80+Math.random()*40,
+            speed: 0.005+Math.random()*0.01,
+            size: Math.random()*3+1
+        });
+    }
+    
+    function draw(){
+        t += 0.02;
+        ctx.fillStyle = 'rgba(10,10,30,0.08)';
+        ctx.fillRect(0,0,c.width,c.height);
+        
+        const cx = c.width/2, cy = c.height/2;
+        
+        if(orderAnimating) orderProgress = Math.min(1, orderProgress + 0.008);
+        
+        // Stars
+        stars.forEach(s => {
+            s.twinkle += 0.02;
+            const brightness = 0.3 + Math.sin(s.twinkle)*0.3 + orderProgress*0.3;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+            ctx.fillStyle = `rgba(255,255,255,${brightness})`;
+            ctx.fill();
+        });
+        
+        // Central figure (Schreber)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 20+orderProgress*5, 0, Math.PI*2);
+        const centerGrad = ctx.createRadialGradient(cx,cy,0,cx,cy,30);
+        centerGrad.addColorStop(0, `rgba(255,220,150,${0.5+orderProgress*0.4})`);
+        centerGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = centerGrad;
+        ctx.fill();
+        
+        // Orbiting particles (Weltordnung)
+        orbitParticles.forEach((p,i) => {
+            p.angle += p.speed * (1 + orderProgress);
+            const chaos = orderAnimating ? 0 : Math.sin(t+i)*20;
+            const r = p.radius * (orderAnimating ? 1 : (0.7+Math.sin(t*0.5+i)*0.3));
+            const px = cx + Math.cos(p.angle)*(r+chaos);
+            const py = cy + Math.sin(p.angle)*(r+chaos*0.5);
+            
+            ctx.beginPath();
+            ctx.arc(px, py, p.size*(1+orderProgress*0.5), 0, Math.PI*2);
+            const hue = orderAnimating ? (120+i*10) : (0+i*15);
+            ctx.fillStyle = `hsla(${hue},70%,60%,${0.4+orderProgress*0.4})`;
+            ctx.fill();
+            
+            // Connection lines when ordered
+            if(orderProgress > 0.3){
+                ctx.beginPath();
+                ctx.moveTo(cx,cy);
+                ctx.lineTo(px,py);
+                ctx.strokeStyle = `rgba(100,200,150,${(orderProgress-0.3)*0.3})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        });
+        
+        // Outer ring of order
+        if(orderProgress > 0){
+            ctx.beginPath();
+            ctx.arc(cx, cy, 130*orderProgress, 0, Math.PI*2);
+            ctx.strokeStyle = `rgba(200,255,200,${orderProgress*0.4})`;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        
+        // Text
+        ctx.font = '10px sans-serif';
+        ctx.fillStyle = `rgba(200,255,200,${0.5+orderProgress*0.5})`;
+        ctx.textAlign = 'center';
+        if(orderProgress > 0.5){
+            ctx.fillText('"Die Weltordnung trägt die Heilmittel', cx, c.height-40);
+            ctx.fillText('für die ihr geschlagenen Wunden in sich selbst."', cx, c.height-25);
+        } else {
+            ctx.fillText('Die Weltordnung siegt am Ende', cx, c.height-30);
+        }
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
+
+</body>
+</html>

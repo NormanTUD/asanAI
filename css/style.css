@@ -404,6 +404,10 @@ ul {
 	background-color: rgba(0, 200, 255, 0.4);
 }
 
+.skip_connection_initializer_tr, .skip_connection_initializer_option_tr {
+	background-color: rgba(128, 200, 64, 0.4);
+}
+
 .bias_regularizer_tr {
 	background-color: rgba(255, 147, 16, 0.4);
 }
@@ -740,6 +744,188 @@ button:disabled:hover {
 .stop_training {
 	background-color: #ff9696;
 	color: black;
+}
+
+.multi_run_stats_container {
+	margin: 15px 0;
+	padding: 15px;
+	background: rgba(0,0,0,0.05);
+	border-radius: 8px;
+}
+
+.multi_run_stats_container h3 {
+	margin-top: 0;
+}
+
+.multi_run_stats_table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 10px 0;
+}
+
+.multi_run_stats_table th,
+.multi_run_stats_table td {
+	border: 1px solid #999;
+	padding: 6px 10px;
+	text-align: center;
+}
+
+.multi_run_stats_table th {
+	background: rgba(0,0,0,0.1);
+	font-weight: bold;
+}
+
+.multi_run_stats_table.best_run_row td {
+	background: rgba(0,128,0,0.1);
+}
+
+.multi_run_stats_table.worst_run_row td {
+	background: rgba(255,0,0,0.1);
+}
+
+.noise_level {
+	margin: 10px 0;
+	padding: 8px 12px;
+	border-radius: 4px;
+}
+
+.noise_level.noise_high {
+	background: rgba(255,0,0,0.15);
+	border-left: 3px solid #e74c3c;
+}
+
+.noise_level.noise_medium {
+	background: rgba(255,165,0,0.15);
+	border-left: 3px solid #f39c12;
+}
+
+.noise_level.noise_low {
+	background: rgba(0,128,0,0.15);
+	border-left: 3px solid #2ecc71;
+}
+
+.multi_run_tabs {
+	display: flex;
+	gap: 6px;
+	margin: 12px 0 8px 0;
+	flex-wrap: wrap;
+}
+
+.multi_run_tab {
+	padding: 6px 14px;
+	border: 1px solid #999;
+	border-radius: 4px;
+	background: rgba(0,0,0,0.05);
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.multi_run_tab:hover {
+	background: rgba(0,0,0,0.1);
+}
+
+.multi_run_tab_active {
+	background: rgba(52,152,219,0.2);
+	border-color: #3498db;
+	font-weight: bold;
+}
+
+.multi_run_chart_area {
+	margin: 8px 0;
+}
+
+.training_history_collapsible_header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	padding: 6px 10px;
+	margin: 12px 0 4px 0;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: rgba(0,0,0,0.03);
+	font-size: 13px;
+	user-select: none;
+}
+
+.training_history_collapsible_header:hover {
+	background: rgba(0,0,0,0.07);
+}
+
+.training_history_collapsible_icon {
+	font-size: 10px;
+	transition: transform 0.2s;
+	display: inline-block;
+}
+
+.training_history_collapsible_icon.collapsed {
+	transform: rotate(-90deg);
+}
+
+.training_history_collapsible_body {
+	overflow: hidden;
+	transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.training_history_collapsible_body.collapsed {
+	max-height: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.training_history_tabs {
+	display: flex;
+	gap: 6px;
+	margin: 12px 0 8px 0;
+	flex-wrap: wrap;
+}
+
+.training_history_tab {
+	padding: 6px 14px;
+	border: 1px solid #999;
+	border-radius: 4px;
+	background: rgba(0,0,0,0.05);
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.training_history_tab:hover {
+	background: rgba(0,0,0,0.1);
+}
+
+.training_history_tab_active {
+	background: rgba(46,204,113,0.2);
+	border-color: #2ecc71;
+	font-weight: bold;
+}
+
+.training_history_chart_area {
+	margin: 8px 0;
+}
+
+.training_history_loss_toggle {
+	display: flex;
+	gap: 4px;
+	margin-bottom: 8px;
+}
+
+.training_history_toggle_btn {
+	padding: 3px 10px;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	background: rgba(0,0,0,0.03);
+	cursor: pointer;
+	font-size: 12px;
+}
+
+.training_history_toggle_btn:hover {
+	background: rgba(0,0,0,0.08);
+}
+
+.training_history_toggle_btn.active {
+	background: rgba(46,204,113,0.15);
+	border-color: #2ecc71;
+	font-weight: bold;
 }
 
 .ribbon-group {
@@ -1355,10 +1541,29 @@ input, select {
 	font-variant-numeric: oldstyle-nums;
 }
 
+.loading_bg {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	width: 100vw;
+	pointer-events: none;
+	user-select: none;
+	flex-direction: column;
+	background: linear-gradient(160deg, #e8f0fe 0%, #ffffff 40%, #f0f4ff 70%, #e3ecfb 100%);
+	background-size: 200% 200%;
+	animation: gradient_shift 8s ease-in-out infinite alternate;
+}
+
+@keyframes gradient_shift {
+	0% { background-position: 0% 0%; }
+	100% { background-position: 100% 100%; }
+}
+
 .spinner {
 	will-change: transform;
-	border: 8px solid rgba(0, 0, 0, 0.1); /* Light mode spinner color */
-	border-left: 8px solid #3498db; /* Spinner color */
+	border: 8px solid rgba(0, 0, 0, 0.1);
+	border-left: 8px solid #3498db;
 	border-radius: 50%;
 	width: 50px;
 	height: 50px;
@@ -1368,6 +1573,58 @@ input, select {
 @keyframes spin {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
+}
+
+#load_msg_steps {
+	display: flex;
+	flex-direction: row;
+	gap: 0.8vw;
+	margin-top: 3vh;
+	align-items: center;
+}
+
+#load_msg {
+	margin-top: 1.5vh;
+	text-align: center;
+	max-width: 80vw;
+	font-size: 2.5vw;
+	opacity: 0.85;
+	letter-spacing: 0.02em;
+}
+
+.load_step_dot {
+	display: inline-block;
+	width: 0.6vw;
+	height: 0.6vw;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
+
+.load_step_pending .load_step_dot {
+	background-color: rgba(0, 0, 0, 0.12);
+}
+
+.load_step_done .load_step_dot {
+	background-color: #3498db;
+	animation: step_pop 0.3s ease;
+}
+
+.load_step_current .load_step_dot {
+	background-color: #2ecc71;
+	width: 0.8vw;
+	height: 0.8vw;
+	animation: step_pulse 1s ease-in-out infinite;
+}
+
+@keyframes step_pop {
+	0% { transform: scale(0.5); opacity: 0.5; }
+	50% { transform: scale(1.3); }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes step_pulse {
+	0%, 100% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.4); opacity: 0.7; }
 }
 
 .undo_redo_button {
@@ -2226,12 +2483,6 @@ label.buttons_in_custom_images {
 	font-weight: 400;
 }
 
-/* ── Animated shimmer on highest bar ── */
-@keyframes barShimmer {
-	0% { background-position: -60px 0; }
-	100% { background-position: 60px 0; }
-}
-
 .highest_bar::after {
 	content: '';
 	position: absolute;
@@ -2247,7 +2498,6 @@ label.buttons_in_custom_images {
 		transparent 100%
 	);
 	background-size: 60px 100%;
-	animation: barShimmer 2.5s ease-in-out infinite;
 	pointer-events: none;
 }
 
@@ -2558,4 +2808,8 @@ td.confusion_matrix_tx.cm-zero {
 
 .ui-tabs .ui-tabs-panel[aria-hidden="true"] {
 	display: none !important;
+}
+
+.math_copier {
+	z-index: 999999;
 }

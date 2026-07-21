@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Smallest Neural Network
+description: The simplest AI: y = ax + b. A single neuron, linear regression, and the birth of learning.
+icon: &#10024;
+part: 2
+order: 11
+color: coral
+-->
 
 <div class="minimalneuron-page">
 

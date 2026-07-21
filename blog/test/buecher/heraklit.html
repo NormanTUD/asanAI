@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heraklit Interaktiv – Die Fragmente erleben</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #0a0a1a; color: #e8e0d0; overflow-x: hidden; }
+        
+        /* Fire Canvas Background */
+        #fireCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
+        
+        /* Navigation */
+        .nav { position: fixed; top: 0; width: 100%; background: rgba(10,10,26,0.95); padding: 15px 30px; z-index: 100; display: flex; gap: 15px; overflow-x: auto; border-bottom: 2px solid #ff6b35; }
+        .nav-btn { background: none; border: 1px solid #ff6b35; color: #ff6b35; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: all 0.3s; font-size: 14px; }
+        .nav-btn:hover, .nav-btn.active { background: #ff6b35; color: #0a0a1a; }
+        
+        /* Sections */
+        .section { display: none; min-height: 100vh; padding: 80px 30px 30px; max-width: 900px; margin: 0 auto; }
+        .section.active { display: block; }
+        
+        h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 10px; text-align: center; }
+        h2 { font-size: 1.8em; color: #ffaa35; margin: 20px 0 15px; }
+        h3 { color: #ff6b35; margin: 15px 0 10px; }
+        p { line-height: 1.8; margin-bottom: 15px; font-size: 1.1em; }
+        .subtitle { text-align: center; color: #888; font-style: italic; margin-bottom: 40px; }
+        
+        /* Interactive Cards */
+        .card { background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.3); border-radius: 12px; padding: 25px; margin: 20px 0; transition: all 0.3s; cursor: pointer; }
+        .card:hover { transform: translateY(-3px); border-color: #ff6b35; box-shadow: 0 10px 30px rgba(255,107,53,0.2); }
+        .card.revealed .card-answer { display: block; }
+        .card-answer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,107,53,0.3); color: #ccc; }
+        .card-hint { color: #ff6b35; font-size: 0.85em; margin-top: 8px; }
+        
+        /* River Animation */
+        #riverCanvas { width: 100%; height: 200px; border-radius: 12px; margin: 20px 0; cursor: pointer; }
+        
+        /* Opposites Game */
+        .opposites-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin: 20px 0; }
+        .opp-item { background: rgba(255,107,53,0.1); padding: 15px; border-radius: 8px; text-align: center; font-size: 1.2em; transition: all 0.5s; }
+        .opp-arrow { color: #ff6b35; font-size: 1.5em; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+        
+        /* Quiz */
+        .quiz-option { display: block; width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,107,53,0.3); padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; text-align: left; color: #e8e0d0; font-size: 1em; transition: all 0.3s; }
+        .quiz-option:hover { border-color: #ff6b35; }
+        .quiz-option.correct { background: rgba(0,200,100,0.2); border-color: #00c864; }
+        .quiz-option.wrong { background: rgba(255,50,50,0.2); border-color: #ff3232; }
+        .quiz-feedback { margin-top: 15px; padding: 15px; border-radius: 8px; display: none; }
+        
+        /* Progress */
+        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 20px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #ff6b35, #ffaa35); border-radius: 3px; transition: width 0.5s; }
+        
+        /* Score */
+        .score-display { position: fixed; top: 70px; right: 20px; background: rgba(10,10,26,0.9); border: 1px solid #ffaa35; padding: 10px 20px; border-radius: 20px; font-size: 0.9em; z-index: 99; }
+        .score-display span { color: #ffaa35; font-weight: bold; }
+        
+        /* Flame meter */
+        .flame-meter { display: flex; gap: 5px; margin: 10px 0; }
+        .flame { font-size: 1.5em; opacity: 0.2; transition: opacity 0.3s; }
+        .flame.lit { opacity: 1; }
+        
+        /* Slider */
+        .slider-container { margin: 20px 0; }
+        .slider { width: 100%; -webkit-appearance: none; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #0066ff, #ff6b35); outline: none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #ffaa35; cursor: pointer; }
+        .slider-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.9em; color: #888; }
+        .slider-result { text-align: center; margin-top: 15px; font-size: 1.2em; min-height: 60px; }
+        
+        /* Breathing exercise */
+        .breath-circle { width: 150px; height: 150px; border-radius: 50%; border: 3px solid #ff6b35; margin: 30px auto; display: flex; align-items: center; justify-content: center; font-size: 1.2em; transition: all 4s ease-in-out; }
+        .breath-circle.expand { transform: scale(1.5); border-color: #ffaa35; }
+        
+        /* Timeline */
+        .timeline { position: relative; padding-left: 30px; border-left: 2px solid #ff6b35; }
+        .timeline-item { margin: 25px 0; position: relative; }
+        .timeline-item::before { content: '🔥'; position: absolute; left: -40px; top: 0; }
+        
+        /* Tooltip */
+        .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted #ff6b35; cursor: help; }
+        .tooltip .tooltiptext { visibility: hidden; background: #1a1a2e; color: #e8e0d0; padding: 10px; border-radius: 6px; position: absolute; z-index: 10; bottom: 125%; left: 50%; transform: translateX(-50%); width: 250px; font-size: 0.85em; border: 1px solid #ff6b35; }
+        .tooltip:hover .tooltiptext { visibility: visible; }
+        
+        .highlight { color: #ff6b35; font-weight: bold; }
+        .quote { font-style: italic; border-left: 3px solid #ff6b35; padding-left: 15px; margin: 15px 0; color: #ccc; }
+        
+        button.action-btn { background: linear-gradient(135deg, #ff6b35, #ffaa35); border: none; color: #0a0a1a; padding: 12px 24px; border-radius: 25px; font-size: 1em; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        button.action-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+<canvas id="fireCanvas"></canvas>
+
+<div class="score-display">🔥 Erkenntnis: <span id="score">0</span></div>
+
+<nav class="nav">
+    <button class="nav-btn active" onclick="showSection('intro')">🏠 Start</button>
+    <button class="nav-btn" onclick="showSection('fluss')">🌊 Fluss</button>
+    <button class="nav-btn" onclick="showSection('gegensaetze')">⚡ Gegensätze</button>
+    <button class="nav-btn" onclick="showSection('feuer')">🔥 Feuer</button>
+    <button class="nav-btn" onclick="showSection('logos')">🧠 Logos</button>
+    <button class="nav-btn" onclick="showSection('alltag')">💡 Alltag</button>
+    <button class="nav-btn" onclick="showSection('quiz')">🎮 Quiz</button>
+</nav>
+
+<!-- INTRO -->
+<div class="section active" id="intro">
+    <h1>🔥 Heraklit</h1>
+    <p class="subtitle">Der dunkle Philosoph aus Ephesos (~535–475 v.Chr.)</p>
+    
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>👆 Klick mich – Wer war Heraklit?</h3>
+        <p class="card-hint">Tippe zum Enthüllen</p>
+        <div class="card-answer">
+            <p>Heraklit war ein griechischer Philosoph, der in Rätseln sprach. Man nannte ihn „den Dunklen", weil seine Sprüche so geheimnisvoll waren. Er beobachtete die Welt und erkannte: <strong>Alles fließt, alles wandelt sich, und Gegensätze gehören zusammen.</strong></p>
+            <p>Seine Fragmente – nur Bruchstücke sind erhalten – lesen sich wie Tweets aus der Antike: kurz, provokant, tiefgründig.</p>
+        </div>
+    </div>
+
+    <h2>Die 5 Kernideen</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <h3>1. Alles fließt (Panta Rhei)</h3>
+            <p>Nichts bleibt, wie es ist. Du bist heute nicht derselbe Mensch wie gestern.</p>
+        </div>
+        <div class="timeline-item">
+            <h3>2. Einheit der Gegensätze</h3>
+            <p>Gut & Böse, Tag & Nacht, Leben & Tod – sie brauchen einander.</p>
+        </div>
+        <div class="timeline-item">
+            <h3>3. Das ewige Feuer</h3>
+            <p>Die Welt ist ein lebendiger Prozess – wie ein Feuer, das nie erlischt.</p>
+        </div>
+        <div class="timeline-item">
+            <h3>4. Der Logos (Weltvernunft)</h3>
+            <p>Es gibt ein universelles Gesetz, das alles durchdringt – die meisten verschlafen es.</p>
+        </div>
+        <div class="timeline-item">
+            <h3>5. Wach auf!</h3>
+            <p>Die meisten Menschen leben wie Schlafwandler. Heraklit ruft: Denk selbst!</p>
+        </div>
+    </div>
+    
+    <p style="text-align:center; margin-top:30px;"><button class="action-btn" onclick="showSection('fluss')">Beginne die Reise →</button></p>
+</div>
+
+<!-- FLUSS -->
+<div class="section" id="fluss">
+    <h1>🌊 Alles fließt</h1>
+    <p class="quote">„Wer in dieselben Fluten hinabsteigt, dem strömt stets anderes Wasser zu."</p>
+    <p class="quote">„Man kann nicht zweimal in denselben Fluß steigen."</p>
+    
+    <p>Klicke auf den Fluss – beobachte, wie sich alles verändert:</p>
+    <canvas id="riverCanvas"></canvas>
+    <p id="riverMessage" style="text-align:center; color:#ffaa35; min-height:30px;"></p>
+    
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(10)">
+        <h3>🤔 Was bedeutet das für DICH?</h3>
+        <p class="card-hint">Klick zum Nachdenken</p>
+        <div class="card-answer">
+            <p><strong>Alltagsbeispiel:</strong> Du streitest dich mit jemandem. Am nächsten Tag bist du ein anderer Mensch – neue Gedanken, neue Gefühle. Der andere auch. Der „Streit von gestern" existiert nur noch in eurer Erinnerung.</p>
+            <p><strong>Erkenntnis:</strong> Veränderung ist nicht das Problem – sie ist die Natur der Realität. Wer das akzeptiert, leidet weniger am Festhalten.</p>
+            <p><strong>Modern gesagt:</strong> Deine Zellen erneuern sich, deine Gedanken wechseln, deine Beziehungen wandeln sich. Du bist ein Prozess, kein Ding.</p>
+        </div>
+    </div>
+
+    <h3>🎮 Experiment: Der Identitäts-Slider</h3>
+    <p>Wie sehr bist du noch die Person von vor 5 Jahren?</p>
+    <div class="slider-container">
+        <input type="range" class="slider" id="identitySlider" min="0" max="100" value="50" oninput="updateIdentity(this.value)">
+        <div class="slider-labels"><span>Komplett anders</span><span>Exakt gleich</span></div>
+    </div>
+    <div class="slider-result" id="identityResult">
+        <p>Heraklit würde sagen: Beides stimmt gleichzeitig. „Wir sind es und sind es nicht."</p>
+    </div>
+    
+    <p style="text-align:center; margin-top:30px;"><button class="action-btn" onclick="showSection('gegensaetze')">Weiter: Gegensätze →</button></p>
+</div>
+
+<!-- GEGENSÄTZE -->
+<div class="section" id="gegensaetze">
+    <h1>⚡ Einheit der Gegensätze</h1>
+    <p class="quote">„Das auseinander Strebende vereinigt sich und aus den verschiedenen Tönen entsteht die schönste Harmonie und alles entsteht durch den Streit."</p>
+    
+    <p>Heraklits radikalste Idee: <span class="highlight">Gegensätze sind nicht Feinde – sie sind Partner.</span> Ohne das eine gibt es das andere nicht.</p>
+
+    <h3>Klicke auf die Paare – entdecke ihre Einheit:</h3>
+    <div id="opposites-container"></div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(10)">
+        <h3>🎯 Der Bogen und die Leier (Fragment 51)</h3>
+        <p class="card-hint">Heraklits Lieblingsmetapher – klick!</p>
+        <div class="card-answer">
+            <p class="quote">„Sie verstehen nicht, wie es auseinanderstrebend ineinander geht: gegenstrebige Vereinigung wie beim Bogen und der Leier."</p>
+            <p><strong>Der Bogen:</strong> Die Sehne zieht nach innen, die Arme drücken nach außen. Nur durch diese SPANNUNG funktioniert er. Nimm die Spannung weg → kein Bogen mehr.</p>
+            <p><strong>Die Leier:</strong> Die Saite wird gespannt zwischen zwei Kräften. Nur durch diese Spannung entsteht Musik.</p>
+            <p><strong>Dein Leben:</strong> Deine inneren Konflikte, die Spannung zwischen Wollen und Müssen, zwischen Freiheit und Verantwortung – das IST dein Leben. Ohne Spannung: keine Musik.</p>
+        </div>
+    </div>
+
+    <h3>🎮 Gegensatz-Spiel: Was fehlt?</h3>
+    <div id="oppositeGame"></div>
+    
+    <p style="text-align:center; margin-top:30px;"><button class="action-btn" onclick="showSection('feuer')">Weiter: Das Feuer →</button></p>
+</div>
+
+<!-- FEUER -->
+<div class="section" id="feuer">
+    <h1>🔥 Das ewige Feuer</h1>
+    <p class="quote">„Diese Weltordnung hat kein Gott und kein Mensch geschaffen, sondern sie war immerdar und ist und wird sein ewig lebendiges Feuer, nach Maßen erglimmend und nach Maßen erlöschend."</p>
+    
+    <p>Für Heraklit ist die Welt kein <em>Ding</em>, sondern ein <em>Prozess</em> – wie ein Feuer, das ständig brennt, sich wandelt, aber nie aufhört.</p>
+
+    <h3>🕯️ Entzünde dein Verständnis – Klicke die Flammen:</h3>
+    <div class="flame-meter" id="flameMeter">
+        <span class="flame" onclick="lightFlame(0)">🔥</span>
+        <span class="flame" onclick="lightFlame(1)">🔥</span>
+        <span class="flame" onclick="lightFlame(2)">🔥</span>
+        <span class="flame" onclick="lightFlame(3)">🔥</span>
+        <span class="flame" onclick="lightFlame(4)">🔥</span>
+    </div>
+    <div id="flameInsight"></div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(10)">
+        <h3>🌍 Der Kreislauf der Elemente</h3>
+        <p class="card-hint">Fragment 76 & 31 – klick!</p>
+        <div class="card-answer">
+            <p class="quote">„Feuer lebt der Erde Tod und Luft des Feuers Tod; Wasser lebt der Luft Tod und Erde den des Wassers."</p>
+            <p><strong>Übersetzt:</strong> Alles verwandelt sich ineinander. Feuer → Luft → Wasser → Erde → und zurück. Nichts geht verloren, alles transformiert sich.</p>
+            <p><strong>Modern:</strong> Das ist im Grunde der Energieerhaltungssatz! Energie wird nicht vernichtet, nur umgewandelt. Heraklit hat das 2500 Jahre vor der Physik intuitiv erfasst.</p>
+            <p><strong>Dein Körper:</strong> Die Atome in dir waren einmal Sterne, dann Erde, dann Pflanze, dann du. Nach dir werden sie wieder etwas anderes. Du bist ein Moment im ewigen Feuer.</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(10)">
+        <h3>💰 Gold-Metapher (Fragment 90)</h3>
+        <p class="card-hint">Wirtschaft à la Heraklit</p>
+        <div class="card-answer">
+            <p class="quote">„Umsatz findet wechselweise statt des Alls gegen das Feuer und des Feuers gegen das All, wie des Goldes gegen Waren und der Waren gegen Gold."</p>
+            <p><strong>Genial:</strong> Heraklit vergleicht den kosmischen Wandel mit dem Geldkreislauf! Gold wird zu Waren, Waren werden zu Gold – der Wert bleibt, die Form ändert sich.</p>
+            <p><strong>Heute:</strong> Denk an Kryptowährung, Energie, Information – alles fließt, alles tauscht sich um. Die Welt ist ein einziger großer Austauschprozess.</p>
+        </div>
+    </div>
+    
+    <p style="text-align:center; margin-top:30px;"><button class="action-btn" onclick="showSection('logos')">Weiter: Der Logos →</button></p>
+</div>
+
+<!-- LOGOS -->
+<div class="section" id="logos">
+    <h1>🧠 Der Logos</h1>
+    <p class="quote">„Für dies Wort [Weltgesetz] aber, ob es gleich ewig ist, gewinnen die Menschen kein Verständnis, weder ehe sie es vernommen noch sobald sie es vernommen."</p>
+    
+    <p><span class="highlight">Logos</span> = Wort, Vernunft, Gesetz, Ordnung. Für Heraklit ist es das universelle Prinzip, das ALLES durchdringt und ordnet. Und das Verrückte: Es ist überall – aber fast niemand sieht es.</p>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(10)">
+        <h3>😴 Die Schlafenden (Fragmente 1, 2, 34, 72, 73)</h3>
+        <p class="card-hint">Heraklits härteste Kritik</p>
+        <div class="card-answer">
+            <p class="quote">„Die meisten leben so, als ob sie eine eigene Einsicht hätten."</p>
+            <p class="quote">„Sie sind wie Taube. Anwesend sind sie abwesend."</p>
+            <p class="quote">„Man soll nicht handeln und reden wie Schlafende."</p>
+            <p><strong>Heraklits Diagnose:</strong> Die meisten Menschen leben in ihrer eigenen Blase. Sie hören die Wahrheit, aber verstehen sie nicht. Sie sehen die Welt, aber erkennen die Muster nicht.</p>
+            <p><strong>Heute:</strong> Scrollst du durch Social Media und merkst nicht, wie die Zeit vergeht? Reagierst du automatisch, ohne nachzudenken? Lebst du nach Gewohnheit statt nach Einsicht? → Du bist einer der „Schlafenden".</p>
+            <p><strong>Heraklits Lösung:</strong> „Gemeinsam ist allen das Denken" (Fr. 113) – Wach auf! Denke selbst! Erkenne das Gemeinsame hinter dem Chaos!</p>
+        </div>
+    </div>
+
+    <h3>🧘 Übung: 30 Sekunden Logos-Meditation</h3>
+    <p>Atme mit dem Kreis. Beobachte: Einatmen und Ausatmen sind Gegensätze – und doch eins.</p>
+    <div class="breath-circle" id="breathCircle" onclick="startBreathing()">Klick mich</div>
+    <p id="breathText" style="text-align:center; color:#888;"></p>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(10)">
+        <h3>👑 Weisheit vs. Wissen (Fragmente 40, 108, 112)</h3>
+        <p class="card-hint">Was ist der Unterschied?</p>
+        <div class="card-answer">
+            <p class="quote">„Vielwisserei lehrt nicht Verstand haben."</p>
+            <p class="quote">„Die Weisheit besteht darin, die Wahrheit zu sagen und nach der Natur zu handeln, auf sie hinhörend."</p>
+            <p><strong>Heraklit vs. Google:</strong> Du kannst alles googeln – aber verstehst du deshalb die Welt? Wissen ≠ Weisheit. Weisheit ist: die EINE Ordnung hinter den vielen Fakten erkennen.</p>
+            <p><strong>Praktisch:</strong> Weniger konsumieren, mehr reflektieren. Nicht 100 Bücher lesen, sondern eines wirklich verstehen.</p>
+        </div>
+    </div>
+    
+    <p style="text-align:center; margin-top:30px;"><button class="action-btn" onclick="showSection('alltag')">Weiter: Für deinen Alltag →</button></p>
+</div>
+
+<!-- ALLTAG -->
+<div class="section" id="alltag">
+    <h1>💡 Heraklit für deinen Alltag</h1>
+    <p class="subtitle">Antike Weisheit, modern angewandt</p>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>😤 Wenn du wütend bist</h3>
+        <div class="card-answer">
+            <p class="quote">„Mit dem Herzen zu kämpfen ist hart. Denn jeden seiner Wünsche erkauft man um seine Seele." (Fr. 85)</p>
+            <p><strong>Tipp:</strong> Wut ist Energie. Heraklit sagt nicht „unterdrücke sie" – er sagt: sie hat einen Preis. Frag dich: Ist mir dieser Kampf meine innere Ruhe wert?</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>😰 Wenn alles schiefläuft</h3>
+        <div class="card-answer">
+            <p class="quote">„Krankheit macht die Gesundheit angenehm, Übel das Gute, Hunger den Überfluß, Mühe die Ruhe." (Fr. 111)</p>
+            <p><strong>Tipp:</strong> Ohne Dunkelheit kein Licht. Dein Schmerz jetzt ist der Kontrast, der das Gute später erst spürbar macht. Das ist kein billiger Trost – es ist die Struktur der Realität.</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>🤷 Wenn du dich verloren fühlst</h3>
+        <div class="card-answer">
+            <p class="quote">„Ich habe mich selbst gesucht." (Fr. 101)</p>
+            <p class="quote">„Der Seele Grenzen kannst du nicht ausfinden, und ob du jegliche Straße abschrittest; so tiefen Grund hat sie." (Fr. 45)</p>
+            <p><strong>Tipp:</strong> Du bist tiefer als du denkst. Die Suche nach dir selbst ist endlos – und das ist okay. Der Weg IST das Ziel. Heraklit hat sich selbst gesucht, nicht gefunden – und genau das war seine Weisheit.</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>🍺 Wenn du Kontrolle verlierst</h3>
+        <div class="card-answer">
+            <p class="quote">„Hat sich ein Mann betrunken, wird er von einem unerwachsenen Knaben geführt. Er taumelt und merkt nicht, wohin er geht; denn seine Seele ist feucht." (Fr. 117)</p>
+            <p class="quote">„Trockner Glast: weiseste und beste Seele." (Fr. 118)</p>
+            <p><strong>Tipp:</strong> Klarheit = trockene Seele. Alles was dich benebelt (Alkohol, Ablenkung, Selbstbetrug) macht deine Seele „feucht". Klarheit ist eine Entscheidung.</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>🌅 Wenn du Angst vor Veränderung hast</h3>
+        <div class="card-answer">
+            <p class="quote">„Die Natur liebt es sich zu verstecken." (Fr. 123)</p>
+            <p class="quote">„Das Kalte wird warm, Warmes kalt, Nasses trocken, Dürres feucht." (Fr. 126)</p>
+            <p><strong>Tipp:</strong> Veränderung ist nicht der Feind – sie ist die Natur selbst. Alles schlägt um. Dein Winter wird Frühling. Deine Angst wird Mut. Nicht weil du es erzwingst, sondern weil das die Natur der Dinge ist.</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>🎭 Wenn andere dich nicht verstehen</h3>
+        <div class="card-answer">
+            <p class="quote">„Einer gilt mir zehntausend, falls er der Beste ist." (Fr. 49)</p>
+            <p class="quote">„Die meisten schlecht und nur wenige gut." (Fr. 104)</p>
+            <p><strong>Tipp:</strong> Heraklit war ein Einzelgänger und stolz darauf. Qualität > Quantität. Du brauchst nicht alle zu überzeugen. Ein Mensch, der dich wirklich versteht, wiegt zehntausend auf.</p>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('revealed'); addScore(5)">
+        <h3>🎲 Wenn das Leben absurd erscheint</h3>
+        <div class="card-answer">
+            <p class="quote">„Die Zeit ist ein Knabe, der spielt, hin und her die Brettsteine setzt: Knabenregiment!" (Fr. 52)</p>
+            <p class="quote">„Die schönste Weltordnung ist wie ein aufs geratewohl hingeschütteter Kehrichthaufen." (Fr. 124)</p>
+            <p><strong>Tipp:</strong> Das Universum spielt. Es hat keinen „Plan" im menschlichen Sinne – es ist kreatives Chaos. Nimm dich nicht zu ernst. Spiel mit. Die schönste Ordnung sieht von außen wie Zufall aus.</p>
+        </div>
+    </div>
+    
+    <p style="text-align:center; margin-top:30px;"><button class="action-btn" onclick="showSection('quiz')">Teste dein Wissen →</button></p>
+</div>
+
+<!-- QUIZ -->
+<div class="section" id="quiz">
+    <h1>🎮 Heraklit-Quiz</h1>
+    <p class="subtitle">Teste, ob du wach bist – oder noch schläfst!</p>
+    
+    <div class="progress-bar"><div class="progress-fill" id="quizProgress" style="width:0%"></div></div>
+    <div id="quizContainer"></div>
+    <div id="quizEnd" style="display:none; text-align:center;">
+        <h2>🔥 Ergebnis</h2>
+        <p id="quizResult"></p>
+        <button class="action-btn" onclick="resetQuiz()">Nochmal spielen</button>
+    </div>
+</div>
+
+<script>
+// === NAVIGATION ===
+let score = 0;
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function addScore(pts) {
+    score += pts;
+    document.getElementById('score').textContent = score;
+}
+
+// === FIRE CANVAS ===
+const fireCanvas = document.getElementById('fireCanvas');
+const fCtx = fireCanvas.getContext('2d');
+fireCanvas.width = window.innerWidth;
+fireCanvas.height = window.innerHeight;
+
+let particles = [];
+function createFireParticle() {
+    return {
+        x: Math.random() * fireCanvas.width,
+        y: fireCanvas.height + 10,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -(Math.random() * 3 + 1),
+        life: 1,
+        size: Math.random() * 3 + 1
+    };
+}
+
+function animateFire() {
+    fCtx.clearRect(0, 0, fireCanvas.width, fireCanvas.height);
+    if (particles.length < 50) particles.push(createFireParticle());
+    particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.008;
+        if (p.life <= 0) { particles.splice(i, 1); return; }
+        fCtx.beginPath();
+        fCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        fCtx.fillStyle = `rgba(255, ${Math.floor(107 * p.life)}, 35, ${p.life * 0.5})`;
+        fCtx.fill();
+    });
+    requestAnimationFrame(animateFire);
+}
+animateFire();
+
+// === RIVER CANVAS ===
+const riverCanvas = document.getElementById('riverCanvas');
+const rCtx = riverCanvas.getContext('2d');
+riverCanvas.width = 860;
+riverCanvas.height = 200;
+let riverOffset = 0;
+let riverMessages = [
+    "Du bist gerade in den Fluss gestiegen...",
+    "Aber das Wasser ist schon ein anderes.",
+    "Und du bist auch nicht mehr derselbe.",
+    "Panta Rhei – Alles fließt.",
+    "Nichts bleibt. Und das ist gut so."
+];
+let riverMsgIndex = 0;
+
+function drawRiver() {
+    rCtx.clearRect(0, 0, 860, 200);
+    riverOffset += 0.5;
+    for (let i = 0; i < 860; i += 20) {
+        let y = 100 + Math.sin((i + riverOffset) * 0.03) * 30;
+        let alpha = 0.3 + Math.sin((i + riverOffset) * 0.02) * 0.2;
+        rCtx.beginPath();
+        rCtx.arc(i, y, 8, 0, Math.PI * 2);
+        rCtx.fillStyle = `rgba(100, 150, 255, ${alpha})`;
+        rCtx.fill();
+    }
+    requestAnimationFrame(drawRiver);
+}
+drawRiver();
+
+riverCanvas.addEventListener('click', () => {
+    document.getElementById('riverMessage').textContent = riverMessages[riverMsgIndex % riverMessages.length];
+    riverMsgIndex++;
+    addScore(3);
+});
+
+// === IDENTITY SLIDER ===
+function updateIdentity(val) {
+    const results = [
+        "Du fühlst dich komplett verwandelt. Heraklit nickt: 'Natürlich. Du bist ein Fluss.'",
+        "Etwas ist geblieben, vieles hat sich gewandelt. Die Spannung zwischen Beständigkeit und Wandel – das bist DU.",
+        "Du fühlst dich gleich? Heraklit fragt: 'Bist du sicher? Oder erkennst du den Wandel nur nicht?'"
+    ];
+    let idx = val < 33 ? 0 : val < 66 ? 1 : 2;
+    document.getElementById('identityResult').innerHTML = `<p style="color:#ffaa35">${results[idx]}</p><p style="color:#888; font-size:0.9em;">Fragment 49a: „Wir sind es und sind es nicht."</p>`;
+}
+
+// === OPPOSITES ===
+const opposites = [
+    { left: "Tag ☀️", right: "Nacht 🌙", insight: "Ohne Dunkelheit wüsstest du nicht, was Licht ist. Sie definieren einander." },
+    { left: "Leben 🌱", right: "Tod 💀", insight: "Fragment 62: 'Unsterbliche sterblich, Sterbliche unsterblich: sie leben gegenseitig ihren Tod.'" },
+    { left: "Krieg ⚔️", right: "Frieden 🕊️", insight: "Fragment 53: 'Krieg ist aller Dinge Vater.' Ohne Konflikt keine Entwicklung." },
+    { left: "Hunger 😫", right: "Sättigung 😋", insight: "Fragment 111: 'Hunger macht den Überfluß angenehm.' Kontrast erzeugt Wert." },
+    { left: "Aufstieg ⬆️", right: "Abstieg ⬇️", insight: "Fragment 60: 'Der Weg auf und ab ist ein und derselbe.' Perspektive ist alles." }
+];
+
+const oppContainer = document.getElementById('opposites-container');
+opposites.forEach((opp, i) => {
+    let div = document.createElement('div');
+    div.className = 'card';
+    div.onclick = function() { this.classList.toggle('revealed'); addScore(5); };
+    div.innerHTML = `
+        <div class="opposites-grid">
+            <div class="opp-item">${opp.left}</div>
+            <div class="opp-arrow">⟷</div>
+            <div class="opp-item">${opp.right}</div>
+        </div>
+        <p class="card-hint">Klick für die Erkenntnis</p>
+        <div class="card-answer"><p>${opp.insight}</p></div>
+    `;
+    oppContainer.appendChild(div);
+});
+
+// === OPPOSITE GAME ===
+const gameData = [
+    { word: "Krankheit", answer: "Gesundheit" },
+    { word: "Schlaf", answer: "Wachen" },
+    { word: "Kälte", answer: "Wärme" },
+    { word: "Trockenheit", answer: "Feuchtigkeit" }
+];
+const gameContainer = document.getElementById('oppositeGame');
+gameData.forEach((item, i) => {
+    let div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `<h3>${item.word} → ???</h3><input type="text" placeholder="Gegensatz eingeben..." style="background:rgba(255,255,255,0.1);border:1px solid #ff6b35;padding:10px;border-radius:8px;color:#e8e0d0;width:100%;margin-top:10px;" onkeyup="checkOpposite(this,'${item.answer}',${i})"><p id="oppResult${i}" style="margin-top:10px;"></p>`;
+    gameContainer.appendChild(div);
+});
+
+function checkOpposite(input, answer, idx) {
+    if (input.value.toLowerCase().trim() === answer.toLowerCase()) {
+        document.getElementById('oppResult' + idx).innerHTML = '✅ Richtig! Heraklit sagt: Ohne das eine gibt es das andere nicht.';
+        document.getElementById('oppResult' + idx).style.color = '#00c864';
+        addScore(10);
+        input.disabled = true;
+    }
+}
+
+// === FLAME METER ===
+const flameInsights = [
+    "🔥 Stufe 1: Feuer zerstört – aber es reinigt auch. Waldbrände ermöglichen neues Wachstum.",
+    "🔥 Stufe 2: Feuer verwandelt – Holz wird zu Asche, Asche wird zu Erde, Erde nährt neues Leben.",
+    "🔥 Stufe 3: Feuer ist lebendig – es 'atmet', es 'isst', es 'stirbt'. Wie du.",
+    "🔥 Stufe 4: Die Welt IST Feuer – ein ewiger Prozess der Verwandlung. Kein Anfang, kein Ende.",
+    "🔥 Stufe 5: DU bist Feuer – dein Stoffwechsel ist buchstäblich kontrolliertes Brennen. Deine Körperwärme ist dein inneres Feuer."
+];
+
+function lightFlame(idx) {
+    const flames = document.querySelectorAll('#flameMeter .flame');
+    for (let i = 0; i <= idx; i++) flames[i].classList.add('lit');
+    document.getElementById('flameInsight').innerHTML = `<p style="margin-top:15px;color:#ffaa35;">${flameInsights[idx]}</p>`;
+    addScore(5);
+}
+
+// === BREATHING ===
+let breathing = false;
+function startBreathing() {
+    if (breathing) return;
+    breathing = true;
+    const circle = document.getElementById('breathCircle');
+    const text = document.getElementById('breathText');
+    let count = 0;
+    const phases = ['Einatmen...', 'Halten...', 'Ausatmen...', 'Halten...'];
+    
+    function breathCycle() {
+        if (count >= 8) {
+            circle.textContent = '✓ Fertig';
+            circle.classList.remove('expand');
+            text.textContent = 'Heraklit: Einatmen & Ausatmen – Gegensätze, die eins sind. Du hast gerade den Logos erlebt.';
+            breathing = false;
+            addScore(15);
+            return;
+        }
+        let phase = count % 4;
+        text.textContent = phases[phase];
+        if (phase === 0) circle.classList.add('expand');
+        if (phase === 2) circle.classList.remove('expand');
+        circle.textContent = phases[phase];
+        count++;
+        setTimeout(breathCycle, 2000);
+    }
+    breathCycle();
+}
+
+// === QUIZ ===
+const quizQuestions = [
+    {
+        q: "Was bedeutet 'Panta Rhei'?",
+        options: ["Alles ist Feuer", "Alles fließt", "Alles ist eins", "Alles ist Krieg"],
+        correct: 1,
+        explanation: "Panta Rhei = Alles fließt. Heraklits berühmteste Erkenntnis: Nichts bleibt, wie es ist."
+    },
+    {
+        q: "Was ist der 'Logos' bei Heraklit?",
+        options: ["Ein Buch", "Ein Gott", "Das universelle Weltgesetz/Vernunft", "Eine Rechenart"],
+        correct: 2,
+        explanation: "Der Logos ist das universelle Gesetz, das alles durchdringt – die Weltvernunft, die alles ordnet."
+    },
+    {
+        q: "Was symbolisiert das Feuer bei Heraklit?",
+        options: ["Zerstörung", "Den ewigen Wandlungsprozess der Welt", "Die Hölle", "Die Sonne"],
+        correct: 1,
+        explanation: "Das Feuer steht für den ewigen Prozess: immer brennend, immer sich wandelnd, nie aufhörend."
+    },
+    {
+        q: "Was meint Heraklit mit 'Einheit der Gegensätze'?",
+        options: ["Gut und Böse sind gleich", "Gegensätze brauchen einander und bilden zusammen die Realität", "Man soll keine Meinung haben", "Alles ist relativ"],
+        correct: 1,
+        explanation: "Gegensätze sind Partner, nicht Feinde. Ohne Tag kein Nacht, ohne Krankheit keine Gesundheit."
+    },
+    {
+        q: "Was kritisiert Heraklit an den meisten Menschen?",
+        options: ["Sie sind zu arm", "Sie leben wie Schlafwandler und denken nicht selbst", "Sie beten zu viel", "Sie reisen zu wenig"],
+        correct: 1,
+        explanation: "Heraklit nennt die meisten 'Schlafende' – sie sehen die Wahrheit, erkennen sie aber nicht."
+    },
+    {
+        q: "Was bedeutet Fragment 60: 'Der Weg auf und ab ist ein und derselbe'?",
+        options: ["Berge sind flach", "Perspektive bestimmt, ob etwas Aufstieg oder Abstieg ist – der Weg selbst ist identisch", "Man soll nicht wandern", "Alles ist langweilig"],
+        correct: 1,
+        explanation: "Der gleiche Weg kann Aufstieg oder Abstieg sein – es kommt auf die Perspektive an. Die Realität selbst ist neutral."
+    },
+    {
+        q: "Was vergleicht Heraklit mit dem Bogen und der Leier?",
+        options: ["Musik und Krieg", "Die Spannung der Gegensätze, die erst Funktion/Harmonie erzeugt", "Sport und Kunst", "Männer und Frauen"],
+        correct: 1,
+        explanation: "Nur durch Spannung (gegenstrebige Kräfte) funktioniert der Bogen und klingt die Leier. So auch das Leben."
+    }
+];
+
+let currentQuestion = 0;
+let quizScore = 0;
+
+function renderQuiz() {
+    const container = document.getElementById('quizContainer');
+    if (currentQuestion >= quizQuestions.length) {
+        container.style.display = 'none';
+        document.getElementById('quizEnd').style.display = 'block';
+        let percent = Math.round((quizScore / quizQuestions.length) * 100);
+        let msg = percent >= 80 ? "🔥 Du bist WACH! Heraklit wäre stolz." :
+                  percent >= 50 ? "💡 Auf dem Weg zur Erkenntnis. Lies nochmal die Abschnitte!" :
+                  "😴 Du schläfst noch... Heraklit würde sagen: 'Anwesend bist du abwesend.'";
+        document.getElementById('quizResult').innerHTML = `<p style="font-size:1.5em;">${quizScore}/${quizQuestions.length} richtig (${percent}%)</p><p style="margin-top:15px;">${msg}</p>`;
+        return;
+    }
+    let q = quizQuestions[currentQuestion];
+    document.getElementById('quizProgress').style.width = ((currentQuestion / quizQuestions.length) * 100) + '%';
+    container.innerHTML = `
+        <h3 style="margin:20px 0;">Frage ${currentQuestion + 1}/${quizQuestions.length}</h3>
+        <p style="font-size:1.2em; margin-bottom:20px;">${q.q}</p>
+        ${q.options.map((opt, i) => `<button class="quiz-option" onclick="answerQuiz(${i})">${opt}</button>`).join('')}
+        <div class="quiz-feedback" id="quizFeedback"></div>
+    `;
+}
+
+function answerQuiz(idx) {
+    let q = quizQuestions[currentQuestion];
+    let buttons = document.querySelectorAll('.quiz-option');
+    buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === q.correct) b.classList.add('correct');
+        if (i === idx && idx !== q.correct) b.classList.add('wrong');
+    });
+    let feedback = document.getElementById('quizFeedback');
+    feedback.style.display = 'block';
+    if (idx === q.correct) {
+        quizScore++;
+        addScore(15);
+        feedback.innerHTML = `<p style="color:#00c864;">✅ Richtig!</p><p>${q.explanation}</p>`;
+        feedback.style.background = 'rgba(0,200,100,0.1)';
+    } else {
+        feedback.innerHTML = `<p style="color:#ff3232;">❌ Nicht ganz.</p><p>${q.explanation}</p>`;
+        feedback.style.background = 'rgba(255,50,50,0.1)';
+    }
+    setTimeout(() => { currentQuestion++; renderQuiz(); }, 3000);
+}
+
+function resetQuiz() {
+    currentQuestion = 0;
+    quizScore = 0;
+    document.getElementById('quizEnd').style.display = 'none';
+    document.getElementById('quizContainer').style.display = 'block';
+    renderQuiz();
+}
+
+renderQuiz();
+
+// === WINDOW RESIZE ===
+window.addEventListener('resize', () => {
+    fireCanvas.width = window.innerWidth;
+    fireCanvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>

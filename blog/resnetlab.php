@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: ResNets & Vanishing Gradients
+description: Why plain networks fail at depth, and the elegant residual shortcut that fixed everything.
+icon: &#128739;
+part: 3
+order: 17
+color: emerald
+-->
 
 <div class="md">
 
@@ -23,7 +32,7 @@ This was first mathematically accurately described by \citeauthor{hochreiter1991
 
 ## The Residual Solution
 
-ResNet (short for *Residual Network*, first described by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}') changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the difference) $F(x) := H(x) - x$. The original mapping is reconstructed as:
+ResNet (short for *Residual Network*, first described by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}') changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$. The original mapping is reconstructed as:
 
 $$ y = F(x, \{W_i\}) + x $$
 
@@ -35,7 +44,7 @@ Where:
 
 $$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{1} $$
 
-The **$+1$** term is the magic. It ensures that the gradient can flow directly from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
+The **$+1$** term is the magic. It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
 
 ## Handling Dimension Mismatches ($1 \times 1$ Convs)
 

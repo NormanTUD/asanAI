@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>McCulloch & Pitts (1943) – Interaktiv Erleben</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a1a;color:#e0e0e0;overflow-x:hidden}
+canvas{display:block}
+.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative}
+h1{font-size:2.5rem;background:linear-gradient(135deg,#00f0ff,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:1rem}
+h2{font-size:1.6rem;color:#00f0ff;margin-bottom:1rem;text-align:center}
+p,.info{max-width:700px;line-height:1.7;text-align:center;margin-bottom:1rem;font-size:1rem}
+.btn{background:linear-gradient(135deg,#8b5cf6,#00f0ff);border:none;color:#fff;padding:.8rem 2rem;border-radius:2rem;font-size:1rem;cursor:pointer;margin:.5rem;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(0,240,255,.4)}
+.nav{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:100;background:rgba(10,10,26,.9);padding:.5rem 1rem;border-radius:2rem;border:1px solid #333}
+.nav .dot{width:12px;height:12px;border-radius:50%;background:#333;cursor:pointer;transition:background .3s}
+.nav .dot.active{background:#00f0ff}
+.hidden{display:none}
+#neuronCanvas{border-radius:1rem;border:1px solid #222;margin:1rem 0}
+.sandbox{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin:1rem 0}
+.neuron-box{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.2rem;cursor:pointer;transition:all .3s;border:3px solid #444;user-select:none}
+.neuron-box.fire{background:#00f0ff;color:#0a0a1a;border-color:#00f0ff;box-shadow:0 0 30px #00f0ff}
+.neuron-box.rest{background:#1a1a2e;color:#666;border-color:#333}
+.neuron-box.inhibit{background:#ff4444;color:#fff;border-color:#ff4444;box-shadow:0 0 20px #ff4444}
+.slider-container{display:flex;flex-direction:column;align-items:center;gap:.5rem;margin:1rem}
+input[type=range]{width:250px;accent-color:#00f0ff}
+.gate-demo{display:flex;align-items:center;gap:1rem;margin:1rem;padding:1rem;background:#1a1a2e;border-radius:1rem;border:1px solid #333}
+.gate-input{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;transition:all .3s}
+.gate-output{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.3rem;transition:all .3s}
+.arrow{font-size:1.5rem;color:#666}
+.truth-table{border-collapse:collapse;margin:1rem auto;font-size:.9rem}
+.truth-table td,.truth-table th{padding:.4rem .8rem;border:1px solid #333;text-align:center}
+.truth-table th{background:#1a1a2e;color:#00f0ff}
+.truth-table .highlight{background:#8b5cf622}
+.timeline{display:flex;align-items:center;gap:.3rem;margin:1rem 0;padding:1rem;background:#1a1a2e;border-radius:1rem;overflow-x:auto;max-width:90vw}
+.time-step{display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:.5rem;border-radius:.5rem;min-width:50px;transition:background .3s}
+.time-step.current{background:#8b5cf633}
+.time-dot{width:20px;height:20px;border-radius:50%;transition:all .3s}
+.score-bar{position:fixed;top:1rem;right:1rem;background:rgba(10,10,26,.9);padding:.5rem 1rem;border-radius:1rem;border:1px solid #333;font-size:.9rem;z-index:100}
+.insight-card{background:linear-gradient(135deg,#1a1a2e,#2a1a3e);border:1px solid #8b5cf6;border-radius:1rem;padding:1.5rem;max-width:600px;margin:1rem auto;text-align:left}
+.insight-card h3{color:#8b5cf6;margin-bottom:.5rem}
+.progress-ring{width:120px;height:120px;position:relative;margin:1rem auto}
+.progress-ring svg{transform:rotate(-90deg)}
+.progress-ring circle{fill:none;stroke-width:8}
+.progress-ring .bg{stroke:#222}
+.progress-ring .fg{stroke:#00f0ff;stroke-linecap:round;transition:stroke-dashoffset .5s}
+.progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.5rem;font-weight:bold;color:#00f0ff}
+.memory-game{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;max-width:400px;margin:1rem auto}
+.mem-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:#1a1a2e;border:2px solid #333;border-radius:.5rem;cursor:pointer;font-size:.8rem;padding:.3rem;text-align:center;transition:all .3s}
+.mem-cell.revealed{border-color:#00f0ff;background:#0a1a2e}
+.mem-cell.matched{border-color:#4ade80;background:#0a2a1e}
+.feedback{padding:.5rem 1rem;border-radius:.5rem;margin:.5rem;font-weight:bold;animation:fadeIn .3s}
+.feedback.correct{background:#4ade8033;color:#4ade80}
+.feedback.wrong{background:#ff444433;color:#ff4444}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.pulse{animation:pulse 1s infinite}
+</style>
+</head>
+<body>
+
+<div class="score-bar" id="scoreBar">⚡ Erkenntnisse: <span id="score">0</span>/7</div>
+
+<div class="nav" id="nav"></div>
+
+<!-- SCREEN 0: Intro -->
+<div class="screen" id="s0">
+<h1>🧠 McCulloch & Pitts (1943)</h1>
+<p><em>"A Logical Calculus of the Ideas Immanent in Nervous Activity"</em></p>
+<p>Das Paper, das die Grundlage für <strong>künstliche neuronale Netze</strong> legte. Zwei Genies zeigten: <strong>Neuronen sind logische Schalter.</strong> Das Gehirn ist eine Rechenmaschine aus Ja/Nein-Entscheidungen.</p>
+<div class="insight-card">
+<h3>🎯 Was du hier lernst:</h3>
+<p>1. Neuronen feuern "alles oder nichts" – wie binäre Bits<br>
+2. Neuronale Netze = logische Schaltungen (AND, OR, NOT)<br>
+3. Schwellenwerte bestimmen, wann ein Neuron feuert<br>
+4. Inhibition (Hemmung) kann alles stoppen<br>
+5. Schleifen erzeugen Gedächtnis<br>
+6. Jedes logische Programm ist als Netz baubar<br>
+7. Neuronale Netze ≈ Turing-Maschinen</p>
+</div>
+<button class="btn" onclick="goTo(1)">Los geht's →</button>
+</div>
+
+<!-- SCREEN 1: All-or-None -->
+<div class="screen hidden" id="s1">
+<h2>⚡ Erkenntnis 1: Alles oder Nichts</h2>
+<p>Ein Neuron feuert entweder <strong>ganz</strong> oder <strong>gar nicht</strong>. Es gibt kein "ein bisschen feuern". Genau wie ein Bit: 0 oder 1.</p>
+<p><strong>Klicke auf das Neuron!</strong> Ziehe den Reiz-Slider über den Schwellenwert.</p>
+<div class="slider-container">
+<label>Eingehender Reiz: <span id="stimVal">0</span></label>
+<input type="range" id="stimSlider" min="0" max="10" value="0" oninput="updateNeuron1()">
+<label>Schwellenwert: <span id="threshVal">5</span></label>
+<input type="range" id="threshSlider" min="1" max="9" value="5" oninput="updateNeuron1()">
+</div>
+<div class="sandbox">
+<div class="neuron-box rest" id="neuron1">c₁</div>
+</div>
+<p id="neuron1Msg" style="color:#888">Reiz unter Schwelle → Stille</p>
+<button class="btn" onclick="unlock(1);goTo(2)">Verstanden! Weiter →</button>
+</div>
+
+<!-- SCREEN 2: Logic Gates -->
+<div class="screen hidden" id="s2">
+<h2>🔌 Erkenntnis 2: Neuronen = Logik-Gatter</h2>
+<p>McCulloch & Pitts zeigten: Mit Neuronen kann man <strong>AND, OR, NOT</strong> bauen – die Grundbausteine jedes Computers!</p>
+<p><strong>Klicke die Inputs, um sie zu toggeln. Beobachte den Output!</strong></p>
+
+<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2rem">
+<!-- AND Gate -->
+<div>
+<h3 style="text-align:center;color:#4ade80">AND (Schwelle=2)</h3>
+<div class="gate-demo">
+<div class="gate-input rest" id="andA" onclick="toggleGate('and','A')" style="border:2px solid #4ade80">A:0</div>
+<div class="gate-input rest" id="andB" onclick="toggleGate('and','B')" style="border:2px solid #4ade80">B:0</div>
+<span class="arrow">→</span>
+<div class="gate-output rest" id="andOut" style="border:3px solid #4ade80">0</div>
+</div>
+</div>
+<!-- OR Gate -->
+<div>
+<h3 style="text-align:center;color:#f59e0b">OR (Schwelle=1)</h3>
+<div class="gate-demo">
+<div class="gate-input rest" id="orA" onclick="toggleGate('or','A')" style="border:2px solid #f59e0b">A:0</div>
+<div class="gate-input rest" id="orB" onclick="toggleGate('or','B')" style="border:2px solid #f59e0b">B:0</div>
+<span class="arrow">→</span>
+<div class="gate-output rest" id="orOut" style="border:3px solid #f59e0b">0</div>
+</div>
+</div>
+<!-- NOT Gate -->
+<div>
+<h3 style="text-align:center;color:#ff4444">AND-NOT (Inhibition)</h3>
+<div class="gate-demo">
+<div class="gate-input rest" id="notA" onclick="toggleGate('not','A')" style="border:2px solid #4ade80">A:0</div>
+<div class="gate-input rest" id="notB" onclick="toggleGate('not','B')" style="border:2px solid #ff4444">B:0</div>
+<span class="arrow">→</span>
+<div class="gate-output rest" id="notOut" style="border:3px solid #ff4444">0</div>
+</div>
+<p style="font-size:.8rem;color:#888">A feuert, B hemmt</p>
+</div>
+</div>
+
+<button class="btn" onclick="unlock(2);goTo(3)">Verstanden! Weiter →</button>
+</div>
+
+<!-- SCREEN 3: Build a Net -->
+<div class="screen hidden" id="s3">
+<h2>🏗️ Erkenntnis 3: Netze bauen</h2>
+<p>Das Geniale: Man kann <strong>jede logische Funktion</strong> als neuronales Netz bauen! McCulloch & Pitts bewiesen: Für jeden logischen Ausdruck gibt es ein Netz, das ihn berechnet.</p>
+<p><strong>Challenge:</strong> Baue ein Netz, das "Hitze bei kurzem Kältereiz" simuliert!<br>
+<em>(Aus dem Paper: Kurzer Kältereiz → Wärmegefühl. Langer Kältereiz → nur Kälte.)</em></p>
+<canvas id="netCanvas" width="600" height="300"></canvas>
+<div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
+<button class="btn" onclick="simHeat('short')">❄️ Kurzer Kältereiz</button>
+<button class="btn" onclick="simHeat('long')">🧊 Langer Kältereiz</button>
+<button class="btn" onclick="simHeat('reset')">🔄 Reset</button>
+</div>
+<p id="heatMsg" style="font-size:1.2rem;margin-top:1rem">Drücke einen Button!</p>
+<button class="btn" onclick="unlock(3);goTo(4)" style="margin-top:1rem">Weiter →</button>
+</div>
+
+<!-- SCREEN 4: Inhibition -->
+<div class="screen hidden" id="s4">
+<h2>🚫 Erkenntnis 4: Inhibition ist absolut</h2>
+<p>Eine <strong>einzige hemmende Synapse</strong> kann ein Neuron komplett blockieren – egal wie viele erregende Signale ankommen. Das ist wie ein Veto-Recht!</p>
+<p><strong>Experiment:</strong> Versuche das Neuron zu feuern, während Inhibition aktiv ist!</p>
+<div class="sandbox">
+<div class="neuron-box rest" id="exA" onclick="toggleEx('A')">+1</div>
+<div class="neuron-box rest" id="exB" onclick="toggleEx('B')">+1</div>
+<div class="neuron-box rest" id="exC" onclick="toggleEx('C')">+1</div>
+<div class="neuron-box inhibit" id="inhib" onclick="toggleInhib()" style="font-size:.8rem">🚫<br>INH</div>
+</div>
+<div class="arrow" style="font-size:2rem;margin:1rem">↓</div>
+<div class="sandbox">
+<div class="neuron-box rest" id="targetNeuron" style="width:100px;height:100px;font-size:1.5rem">OUT</div>
+</div>
+<p id="inhibMsg" style="color:#888">Schwelle = 2. Klicke Inputs und Inhibition!</p>
+<button class="btn" onclick="unlock(4);goTo(5)">Verstanden! Weiter →</button>
+</div>
+
+<!-- SCREEN 5: Circles = Memory -->
+<div class="screen hidden" id="s5">
+<h2>🔄 Erkenntnis 5: Schleifen = Gedächtnis</h2>
+<p>Wenn Neuronen in <strong>Kreisen</strong> verbunden sind, kann Aktivität endlos zirkulieren. Das erzeugt <strong>Gedächtnis</strong> – Bezug auf vergangene Ereignisse!</p>
+<p><strong>Starte die Schleife und beobachte!</strong></p>
+<div class="timeline" id="circuitTimeline"></div>
+<div style="display:flex;gap:1rem;justify-content:center">
+<button class="btn" onclick="startCircuit()">▶️ Schleife starten</button>
+<button class="btn" onclick="stopCircuit()">⏹️ Stoppen</button>
+<button class="btn" onclick="inhibCircuit()">🚫 Inhibieren</button>
+</div>
+<p id="circuitMsg" style="margin-top:1rem">Die Schleife kann Information über die Zeit speichern!</p>
+<div class="insight-card" style="margin-top:1rem">
+<h3>💡 Theorem 7 aus dem Paper:</h3>
+<p>"Veränderbare Synapsen können durch Schleifen ersetzt werden" – Lernen ist äquivalent zu kreisförmiger Aktivität!</p>
+</div>
+<button class="btn" onclick="unlock(5);goTo(6)">Weiter →</button>
+</div>
+
+<!-- SCREEN 6: Turing Equivalence -->
+<div class="screen hidden" id="s6">
+<h2>🖥️ Erkenntnis 6+7: Netze = Computer</h2>
+<p>McCulloch & Pitts bewiesen: Ein neuronales Netz mit einem Band (Speicher) kann <strong>alles berechnen, was eine Turing-Maschine kann</strong> – und umgekehrt!</p>
+<p><strong>Ordne die Konzepte richtig zu!</strong></p>
+<div class="memory-game" id="matchGame"></div>
+<p id="matchMsg" style="margin-top:1rem"></p>
+<button class="btn" onclick="unlock(6);unlock(7);goTo(7)" id="finalBtn" style="display:none">Zum Finale →</button>
+</div>
+
+<!-- SCREEN 7: Summary -->
+<div class="screen hidden" id="s7">
+<h2>🎓 Zusammenfassung</h2>
+<div class="progress-ring">
+<svg width="120" height="120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" id="progressCircle" cx="60" cy="60" r="52" stroke-dasharray="327" stroke-dashoffset="327"/></svg>
+<div class="progress-text" id="progressText">0%</div>
+</div>
+<div class="insight-card">
+<h3>Die 7 Kernerkenntnisse von McCulloch & Pitts (1943):</h3>
+<p>
+<strong>1.</strong> Neuronen sind binär (alles-oder-nichts) → Propositionallogik anwendbar<br>
+<strong>2.</strong> Neuronale Netze realisieren logische Gatter (AND, OR, NOT)<br>
+<strong>3.</strong> Jeder logische Ausdruck ist als Netz baubar (Theorem 2)<br>
+<strong>4.</strong> Inhibition hat absolutes Veto-Recht<br>
+<strong>5.</strong> Kreisförmige Netze erzeugen Gedächtnis & Zeitbezug<br>
+<strong>6.</strong> Lernen ≈ Schleifen (Theorem 7)<br>
+<strong>7.</strong> Neuronale Netze ≈ Turing-Maschinen (Berechenbarkeitsäquivalenz)
+</p>
+</div>
+<div class="insight-card">
+<h3>🌍 Warum das wichtig ist:</h3>
+<p>Dieses Paper von 1943 ist die <strong>Geburtsurkunde der KI</strong>. Es zeigte erstmals mathematisch, dass biologische Neuronen logisch modellierbar sind – und legte damit den Grundstein für alles von Perceptrons bis zu GPT.</p>
+</div>
+<button class="btn" onclick="goTo(0)">🔄 Nochmal von vorn</button>
+</div>
+
+<script>
+// Navigation
+const totalScreens=8;let currentScreen=0;const unlocked=new Set();let score=0;
+function goTo(n){document.querySelectorAll('.screen').forEach((s,i)=>{s.classList.toggle('hidden',i!==n)});currentScreen=n;updateNav()}
+function updateNav(){const nav=document.getElementById('nav');nav.innerHTML='';for(let i=0;i<totalScreens;i++){const d=document.createElement('div');d.className='dot'+(i===currentScreen?' active':'');d.onclick=()=>goTo(i);nav.appendChild(d)}}
+function unlock(n){if(!unlocked.has(n)){unlocked.add(n);score=unlocked.size;document.getElementById('score').textContent=score;if(currentScreen===7)updateProgress()}}
+updateNav();
+
+// Screen 1: All-or-None
+function updateNeuron1(){const stim=+document.getElementById('stimSlider').value;const thresh=+document.getElementById('threshSlider').value;document.getElementById('stimVal').textContent=stim;document.getElementById('threshVal').textContent=thresh;const n=document.getElementById('neuron1');const msg=document.getElementById('neuron1Msg');if(stim>=thresh){n.className='neuron-box fire';msg.textContent='🔥 FEUERT! Reiz ('+stim+') ≥ Schwelle ('+thresh+')';msg.style.color='#00f0ff'}else{n.className='neuron-box rest';msg.textContent='💤 Stille. Reiz ('+stim+') < Schwelle ('+thresh+')';msg.style.color='#888'}}
+
+// Screen 2: Logic Gates
+const gateState={and:{A:0,B:0},or:{A:0,B:0},not:{A:0,B:0}};
+function toggleGate(gate,input){gateState[gate][input]=1-gateState[gate][input];updateGates()}
+function updateGates(){const{and,or,not}=gateState;
+document.getElementById('andA').textContent='A:'+and.A;document.getElementById('andA').style.background=and.A?'#4ade80':'#1a1a2e';
+document.getElementById('andB').textContent='B:'+and.B;document.getElementById('andB').style.background=and.B?'#4ade80':'#1a1a2e';
+const andR=and.A&&and.B?1:0;document.getElementById('andOut').textContent=andR;document.getElementById('andOut').style.background=andR?'#4ade80':'#1a1a2e';
+document.getElementById('orA').textContent='A:'+or.A;document.getElementById('orA').style.background=or.A?'#f59e0b':'#1a1a2e';
+document.getElementById('orB').textContent='B:'+or.B;document.getElementById('orB').style.background=or.B?'#f59e0b':'#1a1a2e';
+const orR=or.A||or.B?1:0;document.getElementById('orOut').textContent=orR;document.getElementById('orOut').style.background=orR?'#f59e0b':'#1a1a2e';
+document.getElementById('notA').textContent='A:'+not.A;document.getElementById('notA').style.background=not.A?'#4ade80':'#1a1a2e';
+document.getElementById('notB').textContent='B:'+not.B;document.getElementById('notB').style.background=not.B?'#ff4444':'#1a1a2e';
+const notR=(not.A&&!not.B)?1:0;document.getElementById('notOut').textContent=notR;document.getElementById('notOut').style.background=notR?'#8b5cf6':'#1a1a2e'}
+
+// Screen 3: Heat Illusion Net
+function drawNet(ctx,state){ctx.clearRect(0,0,600,300);ctx.font='14px sans-serif';ctx.textAlign='center';
+const nodes=[{x:80,y:80,label:'Kälte-R',id:'cold'},{x:80,y:220,label:'Wärme-R',id:'heat'},{x:300,y:80,label:'c₅ (Delay)',id:'delay'},{x:300,y:220,label:'c₆ (AND)',id:'and'},{x:500,y:80,label:'Wärme!',id:'heatOut'},{x:500,y:220,label:'Kälte!',id:'coldOut'}];
+const edges=[{from:0,to:2,type:'e'},{from:0,to:3,type:'e'},{from:2,to:4,type:'e'},{from:2,to:3,type:'i'},{from:0,to:5,type:'e'},{from:3,to:5,type:'e'}];
+edges.forEach(e=>{const f=nodes[e.from],t=nodes[e.to];ctx.beginPath();ctx.moveTo(f.x+30,f.y);ctx.lineTo(t.x-30,t.y);ctx.strokeStyle=e.type==='i'?'#ff4444':'#4ade80';ctx.lineWidth=2;ctx.stroke();
+const mx=(f.x+t.x)/2,my=(f.y+t.y)/2;ctx.fillStyle=e.type==='i'?'#ff4444':'#4ade80';ctx.fillText(e.type==='i'?'−':'+',mx,my-8)});
+nodes.forEach((n,i)=>{const active=state&&state[n.id];ctx.beginPath();ctx.arc(n.x,n.y,25,0,Math.PI*2);ctx.fillStyle=active?'#00f0ff':'#1a1a2e';ctx.strokeStyle=active?'#00f0ff':'#444';ctx.lineWidth=2;ctx.fill();ctx.stroke();ctx.fillStyle=active?'#0a0a1a':'#ccc';ctx.fillText(n.label,n.x,n.y+5)})}
+const netCanvas=document.getElementById('netCanvas');const netCtx=netCanvas.getContext('2d');drawNet(netCtx,null);
+function simHeat(type){const msg=document.getElementById('heatMsg');if(type==='reset'){drawNet(netCtx,null);msg.textContent='Drücke einen Button!';msg.style.color='#888';return}
+if(type==='short'){const steps=[{cold:1,delay:0,and:0,heatOut:0,coldOut:0},{cold:0,delay:1,and:0,heatOut:0,coldOut:0},{cold:0,delay:0,and:0,heatOut:1,coldOut:0}];let i=0;const iv=setInterval(()=>{if(i>=steps.length){clearInterval(iv);msg.textContent='🔥 Wärmegefühl! (Kurzer Kältereiz → Wärme-Illusion)';msg.style.color='#ff8c00';return}drawNet(netCtx,steps[i]);i++},800)}
+if(type==='long'){const steps=[{cold:1,delay:0,and:0,heatOut:0,coldOut:0},{cold:1,delay:1,and:1,heatOut:0,coldOut:1},{cold:1,delay:1,and:1,heatOut:0,coldOut:1}];let i=0;const iv=setInterval(()=>{if(i>=steps.length){clearInterval(iv);msg.textContent='🧊 Nur Kälte! (Langer Reiz → Inhibition blockiert Wärme)';msg.style.color='#00bfff';return}drawNet(netCtx,steps[i]);i++},800)}}
+
+// Screen 4: Inhibition
+const exState={A:0,B:0,C:0,inh:1};
+function toggleEx(id){exState[id]=1-exState[id];updateInhib()}
+function toggleInhib(){exState.inh=1-exState.inh;updateInhib()}
+function updateInhib(){['A','B','C'].forEach(k=>{const el=document.getElementById('ex'+k);el.className='neuron-box '+(exState[k]?'fire':'rest')});
+const iEl=document.getElementById('inhib');iEl.className='neuron-box '+(exState.inh?'inhibit':'rest');iEl.innerHTML=exState.inh?'🚫<br>INH':'✓<br>OFF';
+const sum=exState.A+exState.B+exState.C;const fires=!exState.inh&&sum>=2;
+const t=document.getElementById('targetNeuron');t.className='neuron-box '+(fires?'fire':'rest');
+const msg=document.getElementById('inhibMsg');
+if(exState.inh&&sum>=2)msg.textContent='❌ '+sum+' Inputs aktiv, aber Inhibition blockiert ALLES!';
+else if(fires)msg.textContent='🔥 Feuert! '+sum+' ≥ Schwelle 2, keine Inhibition';
+else if(!exState.inh&&sum<2)msg.textContent='💤 Nur '+sum+' Input(s), brauche 2';
+else msg.textContent='Schwelle = 2. Klicke Inputs und Inhibition!'}
+
+// Screen 5: Circuit/Memory
+let circuitInterval=null;let circuitStep=0;let circuitActive=false;
+function renderCircuit(){const tl=document.getElementById('circuitTimeline');tl.innerHTML='';const neurons=['c₁','c₂','c₃','c₄'];
+for(let i=0;i<neurons.length;i++){
+const ts=document.createElement('div');ts.className='time-step'+(circuitStep%4===i?' current':'');
+const dot=document.createElement('div');dot.className='time-dot';
+dot.style.background=(circuitActive&&circuitStep%4===i)?'#00f0ff':'#333';
+ts.appendChild(dot);
+const lbl=document.createElement('span');lbl.style.fontSize='.7rem';lbl.style.color='#888';lbl.textContent=neurons[i];
+ts.appendChild(lbl);tl.appendChild(ts)}
+// Show history
+for(let h=0;h<Math.min(circuitStep,12);h++){const ts=document.createElement('div');ts.className='time-step';
+const dot=document.createElement('div');dot.className='time-dot';
+dot.style.background=(circuitActive)?'#8b5cf644':'#222';dot.style.width='10px';dot.style.height='10px';
+ts.appendChild(dot);tl.appendChild(ts)}}
+function startCircuit(){if(circuitInterval)return;circuitActive=true;circuitStep=0;
+circuitInterval=setInterval(()=>{circuitStep++;renderCircuit();
+document.getElementById('circuitMsg').textContent='⚡ Schritt '+circuitStep+': Signal zirkuliert! Neuron c'+(circuitStep%4+1)+' feuert.'},500)}
+function stopCircuit(){clearInterval(circuitInterval);circuitInterval=null;circuitActive=false;
+document.getElementById('circuitMsg').textContent='⏹️ Schleife gestoppt bei Schritt '+circuitStep+'. Information ging verloren!'}
+function inhibCircuit(){clearInterval(circuitInterval);circuitInterval=null;circuitActive=false;circuitStep=0;renderCircuit();
+document.getElementById('circuitMsg').textContent='🚫 Inhibition! Schleife gelöscht – Gedächtnis vergessen.'}
+renderCircuit();
+
+// Screen 6: Matching Game
+const matchPairs=[
+{a:'Neuron feuert',b:'Proposition (wahr)'},
+{a:'Schwellenwert',b:'Logisches AND'},
+{a:'Inhibition',b:'Logisches NOT'},
+{a:'Kreisförmiges Netz',b:'Gedächtnis/Speicher'},
+{a:'Netz + Band',b:'Turing-Maschine'},
+{a:'Synaptische Verzögerung',b:'Taktgeber/Clock'}
+];
+let matchState={selected:null,matched:0,cells:[]};
+function initMatch(){const game=document.getElementById('matchGame');game.innerHTML='';game.style.gridTemplateColumns='repeat(3,1fr)';
+const items=[];matchPairs.forEach((p,i)=>{items.push({text:p.a,pairId:i,side:'a'});items.push({text:p.b,pairId:i,side:'b'})});
+// Shuffle
+for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]]}
+matchState.cells=items;matchState.matched=0;matchState.selected=null;
+items.forEach((item,idx)=>{const cell=document.createElement('div');cell.className='mem-cell';cell.textContent=item.text;cell.dataset.idx=idx;
+cell.onclick=()=>selectMatch(idx);game.appendChild(cell)})}
+function selectMatch(idx){const cells=document.querySelectorAll('.mem-cell');const item=matchState.cells[idx];
+if(cells[idx].classList.contains('matched'))return;
+if(matchState.selected===null){matchState.selected=idx;cells[idx].classList.add('revealed')}
+else if(matchState.selected===idx){cells[idx].classList.remove('revealed');matchState.selected=null}
+else{const prev=matchState.cells[matchState.selected];
+if(prev.pairId===item.pairId&&prev.side!==item.side){
+cells[idx].classList.add('matched');cells[matchState.selected].classList.add('matched');
+matchState.matched++;matchState.selected=null;
+document.getElementById('matchMsg').innerHTML='<span class="feedback correct">✓ Richtig! '+matchPairs[prev.pairId].a+' ↔ '+matchPairs[prev.pairId].b+'</span>';
+if(matchState.matched===matchPairs.length){document.getElementById('finalBtn').style.display='inline-block';
+document.getElementById('matchMsg').innerHTML+='<br><span class="feedback correct">🎉 Alle gefunden!</span>'}}
+else{cells[idx].classList.add('revealed');
+setTimeout(()=>{cells[idx].classList.remove('revealed');cells[matchState.selected].classList.remove('revealed');matchState.selected=null},800);
+document.getElementById('matchMsg').innerHTML='<span class="feedback wrong">✗ Nope! Versuch nochmal.</span>'}
+if(matchState.selected!==null&&prev.pairId!==item.pairId){const s=matchState.selected;
+setTimeout(()=>{cells[s].classList.remove('revealed')},800);matchState.selected=null}}}
+initMatch();
+
+// Screen 7: Progress
+function updateProgress(){const pct=Math.round((score/7)*100);const circle=document.getElementById('progressCircle');
+const offset=327-(327*pct/100);circle.style.strokeDashoffset=offset;
+document.getElementById('progressText').textContent=pct+'%'}
+// Init
+updateInhib();
+</script>
+</body>
+</html>

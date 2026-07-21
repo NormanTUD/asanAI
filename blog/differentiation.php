@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Differentiation
+description: The derivative: one of the most important ideas in all of mathematics, from secant to tangent.
+icon: &#128208;
+part: 2
+order: 7
+color: coral
+-->
 
 <div class="md">
 The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*
@@ -11,7 +20,7 @@ This question puzzled mathematicians for centuries, and its resolution gave birt
 <div class="optional md" data-headline="A Brief History: Who Invented Derivatives?">
 The development of calculus is one of the most famous (and contentious) stories in the history of science. Two towering figures independently developed the core ideas in the late 17th century.
 
-**Isaac Newton** (1642–1727) developed his "method of fluxions" around 1665–1666, motivated by problems in physics, he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.
+**Isaac Newton** (1643–1727) developed his "method of fluxions" around 1665–1666, motivated by problems in physics, he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.
 
 **Gottfried Wilhelm Leibniz** (1646–1716), working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation. His notation, the $\frac{dy}{dx}$ that we still use today, was published in \citeyear{leibniz1684nova} in his paper \citetitle{leibniz1684nova}. Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical. As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.
 

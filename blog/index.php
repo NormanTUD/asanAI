@@ -14,54 +14,43 @@
 	<div id="loader-checklist" aria-hidden="true"></div>
 </div>
 
-<!--
-	TODO: Mathe I, II, III, Statistics I, II, depending on where you are, to lower the amount of it at once
--->
-
 <div id="contents" style="display: none">
-<?php
-	#incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 
-	incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro");
-	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
-	incl("Brief History of AI", "history");
-	incl("Basic math concepts", "math");
-	incl("The History of Language: From Sanskrit to LLMs", "language");
-	incl("Statistics: A useful helper in AI", "statistics");
-	incl("Loss: Teaching through Failure", "losslab");
-	incl('Differentiation: The Mathematics of Change', "differentiation");
-	incl('Automatic Differentiation: How Machines Learn', "autodiff");
-	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
-	incl("The Optimizer: Navigating the Loss Landscape", "optimizerlab");
-	incl("Smallest possible neural network", "minimalneuron");
-	incl("Activation Functions: The Neural Decision Makers", "activationlab");
-	incl("Live Training of a Neural Network", "traininglab");
-	incl("Convolutions: How a Computer Learns to See", "visionlab");
-	incl("Deep Learning", "deeplearninglab");
-	incl("Over- and underfitting", "overandunderfittinglab");
-	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
-	incl("Understanding Layer Normalization", "normalizationlab");
-	incl("Tokenization: How Words become Numbers", "tokenizerlab");
-	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
-	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
-	incl("Positional Embeddings", "positionalembeddingslab");
-	incl("Temperature & Sampling", "samplinglab");
-	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
-	incl("Circuits Inside Large Language Models", "circuits");
-	incl("How Transformers Execute Algorithms", "algorithms");
-	#incl("Topology and the Geometry of Thought", "topology");
-	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
-	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
-	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
-	incl("How LLMs Search the Web: Behind the Scenes", "websearch");
-	incl("Semantic Search & Vector Databases: Finding Needles in Haystacks", "vectorsearch");
-	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
-	incl("Security & Adversarial Attacks", "security_inference");
-	incl("Inference Optimization", "inference_optimization");
-	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
-	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
-	incl("Appendix", "appendix");
+<div class="course-hero">
+	<h1>From Stone Age Tools to ChatGPT</h1>
+</div>
+
+<?php incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro"); ?>
+
+<div class="course-overview">
+
+<?php
+$partTitles = [
+	1 => ['title' => 'Foundations', 'desc' => 'Where we came from, what language is, and the mathematical bedrock beneath AI.'],
+	2 => ['title' => 'How Neural Networks Learn', 'desc' => 'The learning algorithm step by step, from loss functions to live training.'],
+	3 => ['title' => 'Deep Learning & Vision', 'desc' => 'Stacking layers, seeing images, and the engineering that makes depth possible.'],
+	4 => ['title' => 'The Transformer Revolution', 'desc' => 'The architecture that changed everything, attention, embeddings, and the circuits inside.'],
+	5 => ['title' => 'Making AI Useful', 'desc' => 'Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.'],
+	6 => ['title' => 'Bigger Questions', 'desc' => 'Philosophy, ethics, and the open problems at the frontier of AI.'],
+];
+
+$parts = parse_course_metadata();
+
+foreach ($parts as $partNum => $modules):
 ?>
+<div class="course-part">
+	<div class="course-part-header" style="--part-color: var(--mn-<?php echo htmlspecialchars($modules[0]['color']); ?>)">
+		<h2><?php echo htmlspecialchars($partTitles[$partNum]['title']); ?></h2>
+		<p><?php echo $partTitles[$partNum]['desc']; ?></p>
+	</div>
+	<div class="course-tiles">
+		<?php foreach ($modules as $m) render_course_tile($m); ?>
+	</div>
+</div>
+<?php endforeach; ?>
+
+</div>
+
 </div>
 </body>
 </html>

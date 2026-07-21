@@ -53,7 +53,7 @@
             <div class="fragment" style="text-align:center; padding:20px 28px; background:#eff6ff; border:2px solid #bfdbfe; border-radius:14px; min-width:180px;">
                 <div style="margin-bottom:8px;">📝</div>
                 <div style="font-weight:bold; color:#1e40af;">Texte</div>
-                <div style="color:#475569; margin-top:6px;">Manche Texte versuchen, die Wirklichkeit<br>in Sprache einzufangen.</div>
+		<div style="color:#475569; margin-top:6px;">Texte enthalten Pattern. Menschengeschriebenen Texte zeigen Muster.<br> Manche davon zeigen sich nur in den Texten (<i>Finnegans Wake</i>).<br>Andere sind in der Natur selbst</div>
             </div>
             <div class="fragment" style="color:#94a3b8;">→</div>
             <div class="fragment" style="text-align:center; padding:20px 28px; background:#faf5ff; border:2px solid #e9d5ff; border-radius:14px; min-width:180px;">
@@ -96,44 +96,223 @@
 	</div>
 
         <div class="fragment" style="margin-top:12px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; color:#92400e; max-width:900px; margin-left:auto; margin-right:auto;">
-            <b>Der Zusammenhang:</b> In Texten steht „Um Mitternacht steht die Sonne nur 10° über dem Horizont” und „Mittags erreicht sie fast 40°”.
+            <b>Der Zusammenhang:</b> In Texten steht "Um Mitternacht steht die Sonne nur 10° über dem Horizont” und "Mittags erreicht sie fast 40°”.
             Implizit steckt darin die modellhafte Vorstellung einer Sinusfunktion, solche Muster kann ein Modell aus Textzusammenhängen lernen.
         </div>
     </div>
 </div>
 
-<!-- ==================== SLIDE: Was wir von LLM wollen ==================== -->
-<div class="slide" data-title="Was wir von LLM wollen">
+<!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
+<div class="slide" data-title="Muster in der Wirklichkeit">
     <div class="slide-content">
-        <h2>Was wir von LLM wollen</h2>
+        <h2>Aber auch "Quatsch" hat Muster</h2>
+	<p style="margin-bottom:10px;">Selbst, wenn man versucht, unverständlichen <i>Nonsens</i> zu schreiben, wie experimentelle Autoren wie James Joyce, scheinen Muster durch. Sein <i>Finnegans&nbsp;Wake</i> wirkt wie Englisch, aber es ist kein Englisch. Er enthält aber viele Muster des Englischen, die losgelöst sind von Tatsachen <i>in</i> der Welt.</p>
 
-        <div style="max-width:800px; margin:20px auto; padding:24px 30px; background:linear-gradient(135deg, #eff6ff, #f0fdf4); border-radius:16px; border:2px solid #bfdbfe; line-height:1.7; color:#1e293b; text-align:center;">
-            Ein System, das uns <b>in unserer Sprache</b>, so wie wir denken,<br>
-            eine <b>vereinfachte Abbildung der Welt</b> zugänglich macht.<br>
-            <span style="color:#64748b; ">Nicht perfekt. Aber brauchbar.</span>
+        <pre class="fragment" style="font-family: Times New Roman">
+		         riverrun, past Eve and Adam's, from swerve of shore to bend
+		    of bay, brings us by a commodius vicus of recirculation back to
+		    Howth Castle and Environs.
+        </pre>
+
+        <div class="fragment">
+		Die Charaktere mischen alle möglichen Sprachen, es wirkt oft so als würden einander träumen, aber ich habe es nicht verstanden.
+	</div>
+
+        <div class="fragment" style="font-size: 2em;">
+		¯\_(ツ)_/¯
+	</div>
+
+        <div class="fragment">
+		Aber auch hier sind die Muster in der Sprache durch die Umgebung beeinflusst.
+	</div>
+    </div>
+</div>
+
+
+<!-- ==================== SLIDE: Neural Net Intro ==================== -->
+<div class="slide" data-title="Neuronales Netz Intro">
+    <div class="slide-content">
+        <h2>Was sind Neuronale Netzwerk?</h2>
+
+        <div>
+		Neuronale Netze können Funktionen approximieren. Das heißt: sie verhalten sich <i>ähnlich genug</i>, um nützlich zu sein.
         </div>
 
-        <div class="fragment" style="display:flex; align-items:center; justify-content:center; gap:12px; margin:24px 0; flex-wrap:wrap;">
-            <div style="text-align:center; padding:14px 18px; background:#f0fdf4; border-radius:10px; border:1px solid #86efac; min-width:140px;">
-                <div style="">🌍</div>
-                <div style="font-weight:bold; color:#065f46;">Wirklichkeit<br>hat Muster</div>
-            </div>
-            <div style="color:#94a3b8;">→</div>
-            <div style="text-align:center; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; min-width:140px;">
-                <div style="">📝</div>
-                <div style="font-weight:bold; color:#1e40af;">Manche Texte spiegeln<br>diese Muster</div>
-            </div>
-            <div style="color:#94a3b8;">→</div>
-            <div style="text-align:center; padding:14px 18px; background:#faf5ff; border-radius:10px; border:1px solid #e9d5ff; min-width:140px;">
-                <div style="">🤖</div>
-                <div style="font-weight:bold; color:#6b21a8;">LLM lernen<br>diese Muster</div>
-            </div>
-            <div style="color:#94a3b8;">→</div>
-            <div style="text-align:center; padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; min-width:140px;">
-                <div style="">💬</div>
-		<div style="font-weight:bold; color:#92400e;">Geben sie in unserer<br> Sprache zurück</div>
-            </div>
+        <div class="fragment">
+		Manchmal weiß man nicht, wie man eine Funktion bauen kann, hat aber viele Beispiele, was Eingaben sind und was rauskommen kann. Dann kann der Computer eine Funktion finden, mit der das möglichst gut geht.
         </div>
+
+        <div class="fragment formula-box">
+		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
+        </div>
+
+        <div class="fragment">
+		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer kann Milliarden davon gleichzeitig berechnen.
+        </div>
+
+        <div class="fragment">
+		<div class="math-display">$$
+			\begin{pmatrix}
+			w_1 \\
+			w_2 \\
+			w_3 \\
+			\vdots
+			\end{pmatrix} \cdot \begin{pmatrix}
+			x_1 \\
+			x_2 \\
+			x_3 \\
+			\vdots
+			\end{pmatrix} + 
+			\begin{pmatrix}
+			b_1 \\
+			b_2 \\
+			b_3 \\
+			\vdots
+			\end{pmatrix}
+		$$</div>
+        </div>
+        <div class="fragment">
+		<div class="math-display">$$
+			\\ \Downarrow \\
+		$$</div>
+		<div class="math-display">$$
+			\begin{aligned}
+			w_1 \cdot x_1 &+ b_1 \\
+			w_2 \cdot x_2 &+ b_2 \\
+			w_3 \cdot x_3 &+ b_3 \\
+			&\ \vdots
+			\end{aligned}
+		$$</div>
+        </div>
+
+        <div class="fragment formula-box">
+		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
+        </div>
+
+        <div class="key-insight fragment">
+            <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau durch Stückelung in lineare Segmente approximieren!
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
+<div class="slide" data-title="Stückelung">
+    <div class="slide-content">
+        <h2>Funktionsapproximation durch Stückelung</h2>
+        <div class="demo-box">
+            <p>Ein Neuronales kann (mit genug Neuronen) jede stetige Funktion beliebig genau approximieren</p>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+                <label style="font-weight:bold;">Zielfunktion:</label>
+                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
+                    <option value="sin">sin(x)</option>
+                    <option value="quadratic">x²</option>
+                    <option value="abs">|x|</option>
+                    <option value="step">Treppenfunktion</option>
+                    <option value="custom">Wellenform</option>
+                </select>
+                <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
+                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
+                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
+            </div>
+            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+            <br>
+            <center>
+                <div id="nn-bottom-images" style="display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: opacity 0.5s ease;">
+                    <img height="100" class="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto;">
+                    <div style="font-size: 24px; color: #333;">→</div>
+                    <img height="100" class="sunrise-bg-img" src="nansen.jpg" alt="Nansen" style="width: auto;">
+                    <div style="font-size: 24px; color: #333;">→</div>
+                    <img height="100" class="sunrise-bg-img" src="transformer.png" alt="LLM Beschreibung" style="width: auto;">
+                </div>
+            </center>
+        </div>
+    </div>
+</div>
+
+<div class="slide" data-title="Neuronales Netz Geschichte">
+    <div class="slide-content">
+        <h2>Das erste künstliche Neuronale Netz</h2>
+
+        <div class="key-insight fragment">
+		Frank Rosenblatt vorm ersten künstlichen Neuronalen Netz (Perceptron). Es konnte Buchstaben klassifizieren und einige weitere solche Aufgaben.
+	</div>
+
+	<center>
+	<img style="max-width: 600px;" class="fragment" src="../FrankRosenblattWiringPerceptron.jpg" />
+	</center>
+
+	<center>
+	<img style="max-width: 600px;" class="fragment" src="../perceptron2.jpg" />
+	</center>
+    </div>
+</div>
+
+<div class="slide" data-title="Deep Learning">
+    <div class="slide-content">
+        <h2>Deep Learning</h2>
+
+        <div class="key-insight fragment">
+		Beim <b>Deep Learning</b> schaltet man viele dieser Dense Layer hintereinander
+	</div>
+
+	<center>
+	<img class="fragment" src="dense.png" />
+	</center>
+
+        <div class="fragment">
+		Die ersten Layer übernehmen normalerweise die einfachsten Aufgaben, die späteren können auf den Ergebnissen der vorherigen aufbauen.
+	</div>
+
+        <div class="fragment">
+		Beispiel: Gesichtserkennung. Die frühesten Layer achten nur auf lokale Verläufe, aus denen sich dann immer komplexere Strukturen zusammenbauen, die er erkennen kann.
+	</div>
+
+	<center>
+	<img class="fragment" src="first_layers_vs_last_layers.png" />
+	</center>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
+<div class="slide" data-title="Muster in der Wirklichkeit">
+    <div class="slide-content">
+        <h2>Wichtig ist: Texte haben Pattern; Maschinen können Patterns lernen</h2>
+	<p style="margin-bottom:10px;">.</p>
+
+        <div class="fragment">
+		Texte haben Pattern in sich selbst drin, die ganz offensichtlich sind, sowas wie dass nach dem Subjekt ein Verb kommt, 
+	</div>
+
+        <div class="fragment">
+		Und sie haben komplexere und unerwartete Pattern, wie Zipfs Gesetz, das sagt, dass das zweithäufigste Wort im Text halb so oft kommt wie das Häufigste, und das dritthäufigste halb so oft wie das zweihäufigste usw.
+	</div>
+
+        <div class="key-insight fragment">
+		Pattern kann die Maschine lernen.
+	</div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
+<div class="slide" data-title="Die Datenmenge">
+    <div class="slide-content">
+        <h2>Die Datenmenge.</h2>
+
+	<div class="fragment">
+		Die Datenmenge, die man dafür braucht, ist für sowas wie ein LLM gigantisch.
+	</div>
+
+	<div class="fragment">
+		LLM brauchen dafür Daten wie <b>Wikipedia</b> oder <b>Common Crawl</b> oder <b>Reddit</b> oder oder oder, damit man Modelle bauen kann, die sich so verhalten, wie Menschen.
+	</div>
+
+	<div class="fragment">
+		Diese Datenmenge gibt es erst seit einigen Jahren, der sogenannten <b>Zettabyte-Ära</b> (seit ca. 2016), in der die jährlich übertragene Datenmenge im Internet ein Zettabyte überstieg.
+	</div>
+
+	<div class="fragment">
+		Ohne wäre es nicht möglich gewesen, LLMs heutiger Art zu trainieren, weil sie einfach so viele Daten brauchten.
+	</div>
     </div>
 </div>
 
@@ -148,8 +327,8 @@
                 <div style="padding:14px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca; margin-bottom:12px;">
                     <div style="font-weight:bold; color:#991b1b; margin-bottom:6px;">⚠️ Fehlerquellen</div>
                     <ul style="color:#7f1d1d; line-height:1.9; margin-left:16px; padding:0;">
-                        <li><b>Lügen & Fehler</b>: „Die Erde ist flach"</li>
-                        <li><b>Mehrdeutigkeiten</b>: „Bank" = ?</li>
+                        <li><b>Lügen & Fehler</b>: "Die Erde ist flach"</li>
+                        <li><b>Mehrdeutigkeiten</b>: "Bank" = ?</li>
                         <li><b>Widersprüche & Lücken</b></li>
                     </ul>
                 </div>
@@ -165,8 +344,8 @@
                 <div class="fragment" style="padding:14px; background:#f0fdf4; border-radius:12px; border:1px solid #86efac;">
                     <div style="font-weight:bold; color:#166534; margin-bottom:6px;">✓ Masse schlägt Rauschen</div>
                     <p style="color:#334155; margin:0; line-height:1.6;">
-                        „Hamburg" + „Elbe" → <b>8420×</b><br>
-                        „Hamburg" + „Spree" → <b>45×</b><br>
+                        "Hamburg" + "Elbe" → <b>8420×</b><br>
+                        "Hamburg" + "Spree" → <b>45×</b><br>
                         → Häufigkeit filtert Fehler (hoffentlich) heraus.
                     </p>
                 </div>
@@ -179,37 +358,11 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Was wir von LLM wollen ==================== -->
-<div class="slide" data-title="Datengrenzen">
-    <div class="slide-content">
-        <h2>Die Grenzen von Daten</h2>
-
-        <div>
-		LLM haben viel gesehen, aber egal wie viel sie gesehen haben, es gibt immer Lücken. Es gibt zwei Arten, wie Lücken aufgefüllt werden können:
-
-		<ul>
-			<li>Interpolation</li>
-			<li>Extrapolation</li>
-		</ul>
-        </div>
-
-        <div class="fragment" style="margin-top:16px;">
-            <div id="interpolation-extrapolation-viz" style="width:100%; height:320px; background:#fff; border-radius:12px; border:1px solid #e2e8f0;"></div>
-        </div>
-
-        <div class="fragment">
-		Das LLM weiß nicht, ob seine Aussagen auf realen Daten basieren, oder es inter- oder extrapoliert!
-        </div>
-    </div>
-</div>
-
-
-
 <!-- ==================== SLIDE: Transformer-Architektur (vereinfacht) ==================== -->
 <div class="slide" data-title="Transformer-Architektur">
     <div class="slide-content">
         <h2>Die Transformer-Architektur</h2>
-        <p>Eine vereinfachte Version des Architektur-Diagramms aus dem Paper „Attention Is All You Need". Im Kern sind es nur ein paar Bausteine, die sich wiederholen.</p>
+        <p>Eine vereinfachte Version des Architektur-Diagramms aus dem Paper "Attention Is All You Need". Im Kern sind es nur ein paar Bausteine, die sich wiederholen.</p>
 
         <!-- Vereinfachtes Architektur-Diagramm: von oben nach unten -->
         <div id="transformer-diagram" style="display:flex; flex-direction:column; align-items:center; gap:0; margin:24px auto; max-width:420px; position:relative;">
@@ -267,7 +420,7 @@
                     <!-- Feed Forward -->
                     <div style="padding:12px 20px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; text-align:center; margin-top:6px;">
                         <div style="font-weight:bold; color:#92400e;">Feed-Forward-Netzwerk</div>
-                        <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Wissen abfragen</div>
+                        <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Ein Neuronales Netz</div>
                     </div>
 
                     <!-- Residual Add -->
@@ -386,13 +539,13 @@
                 </div>
 
                 <div class="fragment" style="padding:18px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; text-align:center; flex:1;">
-                    <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💬 „TheNitromeFan" → 182</div>
+                    <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💬 "TheNitromeFan" → 182</div>
                     <img src="thenitromefan.jpg" alt="Glitch Token Chat-Beispiel" style="max-width:100%; max-height:280px; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
                     <p style="color:#581c87; margin-top:12px; line-height:1.6; text-align:left;">
 			Reddit-User, der in r/counting nur <b>Zahlen</b> gepostet hat.<br>
 			Das Token kam fast nur <b>neben Zahlen</b> vor (Zähl-Threads).<br>
 			→ Das Modell assoziiert es vage mit Zahlen<br>
-			→ Gibt z.B. „182" aus statt den Namen zu wiederholen.
+			→ Gibt z.B. "182" aus statt den Namen zu wiederholen.
                     </p>
                 </div>
             </div>
@@ -428,7 +581,7 @@
         <!-- Fragments to control animation via arrow keys -->
         <div class="fragment" data-fragment-action="manifold-align" style="display:none;"></div>
         <p class="fragment">
-		Das bekommt man quasi „for free”, wenn man die Embeddings hat, einfach durch ihre Struktur. Dafür wurde die Transformer-Architektur auch erfunden: für Übersetzungen.
+		Das bekommt man quasi "for free”, wenn man die Embeddings hat, einfach durch ihre Struktur. Dafür wurde die Transformer-Architektur auch erfunden: für Übersetzungen.
 	</p>
     </div>
 </div>
@@ -457,7 +610,7 @@
 <div class="slide" data-title="Positional Embedding">
 	<div class="slide-content">
 		<h2>Positional Embedding</h2>
-		<p>„Der Hund beißt den Mann” ≠ „Der Mann beißt den Hund”: gleiche Wörter, aber andere Reihenfolge und ganz andere Bedeutung!</p>
+		<p>"Der Hund beißt den Mann” ≠ "Der Mann beißt den Hund”: gleiche Wörter, aber andere Reihenfolge und ganz andere Bedeutung!</p>
 		<p class="fragment">Die Reihenfolge ist wichtig: sie wird <b>in</b> die Tokens selbst durch <b>Positional Embedding</b> kodiert, so dass jeder <i>positionally embedded</i> Tokenvektor beinhaltet, <b>was es bedeutet</b> und <b>wo es steht</b>.</p>
 	</div>
 </div>
@@ -495,8 +648,8 @@
     <div class="slide" data-title="Attention">
         <div class="slide-content">
             <h2>Attention</h2>
-            <p>„Welche anderen Wörter sind für <b>dieses</b> Token wichtig?”</p>
-	    <p class="fragment"><b>Beispiel:</b> „Ich bringe mein <b>Geld</b> auf die <b>Bank</b>”, worauf bezieht sich „<b>Bank</b>”, eine Parkbank oder die Bank zu der man Geld bringt?</p>
+            <p>"Welche anderen Tokens sind für <b>dieses</b> Token wichtig?”</p>
+	    <p class="fragment"><b>Beispiel:</b> "Ich bringe mein <b>Geld</b> auf die <b>Bank</b>”, worauf bezieht sich "<b>Bank</b>”, eine Parkbank oder die Bank zu der man Geld bringt?</p>
 		<div class="fragment" style="margin-top:16px;">
 		    <div id="attention-sentence-display" style="text-align:center; padding:14px 20px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:12px; font-size:1.2em; color:#1e293b; font-weight:500; min-height:48px; display:flex; align-items:center; justify-content:center;">
 			Ich bringe mein <b style="color:#3b82f6;">Geld</b> auf die <b style="color:#3b82f6;">Bank</b>.
@@ -505,105 +658,74 @@
 		</div>
 
 		<div class="key-insight fragment" style="margin-top:14px;">
-			Statt nur auf einen Aspekt zu achten, packt man mehrere <b>Attention Heads</b> zusammen. Einer achtet darauf, worauf sich „sie" oder „er" bezieht. Ein anderer erkennt, dass „nicht schlecht" zusammengehört. Ein dritter führt getrennte Tokens wie „Königs" und „kind" zu ihrer gemeinsamen Bedeutung „Königskind" zusammen. Und wieder ein anderer verbindet weit entfernte Stellen: wenn auf Seite 1 steht „Der Detektiv heißt Müller" und auf Seite 30 jemand fragt „Wer hat den Fall gelöst?", wird das „Wer" mit „Müller" in Verbindung gebracht. <b>Attention</b> beachtet immer <b>alle</b> Tokens!
+			Statt nur auf einen Aspekt zu achten, packt man mehrere <b>Attention Heads</b> zusammen. Einer achtet darauf, worauf sich "sie" oder "er" bezieht. Ein anderer erkennt, dass "nicht schlecht" zusammengehört. Ein dritter führt getrennte Tokens wie "Königs" und "kind" zu ihrer gemeinsamen Bedeutung "Königskind" zusammen. Und wieder ein anderer verbindet weit entfernte Stellen: wenn auf Seite 1 steht "Der Detektiv heißt Müller" und auf Seite 30 jemand fragt "Wer hat den Fall gelöst?", wird das "Wer" mit "Müller" in Verbindung gebracht. <b>Attention</b> beachtet immer <b>alle</b> Tokens!
 		</div>
 
 
 	    <div class="fragment" style="margin-top:16px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
-		    <strong>⚠️ Hinweis:</strong> Das hier ist eine <b>starke Vereinfachung</b>. In Wirklichkeit ist Attention deutlich komplizierter. Es gibt Query-, Key- und Value-Vektoren und mehr. Aber für die <b>Intuition</b> reicht es: Attention beantwortet die Frage „Welche anderen Wörter im Satz sind für dieses Wort gerade relevant?"
+		    <strong>⚠️ Hinweis:</strong> Das hier ist eine <b>starke Vereinfachung</b>. In Wirklichkeit ist Attention deutlich komplizierter. Es gibt Query-, Key- und Value-Vektoren und mehr. Aber für die <b>Intuition</b> reicht es: Attention beantwortet die Frage "Welche anderen Tokens im Satz sind für dieses Token gerade relevant?"
 		</div>
 
         </div>
     </div>
 
-<!-- ==================== SLIDE: Neural Net Intro ==================== -->
-<div class="slide" data-title="Neuronales Netz Intro">
+<!-- ==================== FOLIE: Attraktoren ==================== -->
+<div class="slide" data-title="Attraktoren">
     <div class="slide-content">
-        <h2>Was ist das Feed-Forward-Netzwerk?</h2>
-        <div class="formula-box">
-		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
-        </div>
+        <h2>Wie "weiß" das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
+	<p>Ich lass das LLM vervollständigen: <i>Die Hauptstadt von Paris ist</i>.</p>
+	<p class="fragment">Er soll das nächste Wort sagen. Wie kommt er auf <b>Paris</b>?</p>
+	<p class="fragment">Völlig geklärt ist die Frage noch nicht, aber es gibt es einige interessante Ansätze.</p>
 
-        <div class="key-insight fragment">
-		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer löst tausende bis Millionen davon.
-        </div>
-
-        <div class="fragment formula-box">
-		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
-        </div>
-
-	<center class="fragment">
-		<img src="dense.png" />
-	</center>
-
-        <div class="key-insight fragment">
-            <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau durch Stückelung in lineare Segmente approximieren!
-        </div>
-    </div>
-</div>
-
-<!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
-<div class="slide" data-title="Stückelung">
-    <div class="slide-content">
-        <h2>Funktionsapproximation durch Stückelung</h2>
-        <div class="demo-box">
-            <p>Ein Feed-Forward-Netzwerk kann (mit genug Neuronen) jede stetige Funktion beliebig genau approximieren</p>
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-weight:bold;">Zielfunktion:</label>
-                <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
-                    <option value="sin">sin(x)</option>
-                    <option value="quadratic">x²</option>
-                    <option value="abs">|x|</option>
-                    <option value="step">Treppenfunktion</option>
-                    <option value="custom">Wellenform</option>
-                </select>
-                <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
-                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
-                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
-            </div>
-            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-            <br>
-            <center>
-                <div id="nn-bottom-images" style="display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: opacity 0.5s ease;">
-                    <img height="100" class="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto;">
-                    <div style="font-size: 24px; color: #333;">→</div>
-                    <img height="100" class="sunrise-bg-img" src="nansen.jpg" alt="Nansen" style="width: auto;">
-                    <div style="font-size: 24px; color: #333;">→</div>
-                    <img height="100" class="sunrise-bg-img" src="transformer.png" alt="LLM Beschreibung" style="width: auto;">
-                </div>
-            </center>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== FOLIE: Wie wird Wissen gespeichert? ==================== -->
-<div class="slide" data-title="Wissen im Netz">
-    <div class="slide-content">
-        <h2>Wie „weiß” das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
-	<p>Es gibt <b>keine Tabelle</b> und <b>keine Zelle</b> mit diesem Fakt. Das Wissen steckt <b>verteilt</b> in den Gewichten.</p>
         <div class="fragment demo-box" style="min-height:auto; padding:20px;">
-
-            <!-- Step Indicator (updates automatically) -->
-            <div id="knowledge-step-indicator" style="display:flex; gap:8px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;">
-                <span class="know-indicator active" data-step="0">1. Embedding-Richtung</span>
-                <span class="know-indicator" data-step="1">2. Attention sammelt Kontext</span>
-                <span class="know-indicator" data-step="2">3. FFN-Neuronen werden stark aktiviert</span>
-                <span class="know-indicator" data-step="3">4. Gesamtbild</span>
+            <!-- Step Indicators -->
+            <div style="display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;">
+                <span class="attr-indicator active" data-step="0">1. Punkt-Attraktor</span>
+                <span class="attr-indicator" data-step="1">2. Torus</span>
+                <span class="attr-indicator" data-step="2">3. Lorenz</span>
+                <span class="attr-indicator" data-step="3">4. Becken</span>
+                <span class="attr-indicator" data-step="4">5. Mehrdimensional</span>
+		<span class="attr-indicator" data-step="5">6. 🐴 Seahorse-Emoji</span>
             </div>
 
             <!-- Visualization Container -->
-            <div id="knowledge-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto;">
-                <canvas id="knowledge-canvas" style="width:100%; height:480px; display:block; border-radius:10px; border:1px solid #e2e8f0; background:#fafafa;"></canvas>
+            <div id="attractor-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto; min-height:480px;"></div>
+
+            <!-- Caption -->
+            <div id="attractor-caption" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: J-Space (überarbeitet) ==================== -->
+<div class="slide" data-title="J-Space">
+    <div class="slide-content">
+        <h2>Der J-Space: Ein "Global Workspace" im Modell</h2>
+        <p>Wie kommt es, dass ein LLM seine eigenen Zwischenschritte "sehen" kann – und was hat das mit Bewusstsein zu tun?</p>
+
+        <div class="demo-box" style="min-height:auto; padding:20px;">
+            <!-- Step Indicators -->
+            <div style="display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;">
+                <span class="attr-indicator active" data-jstep="0">1. Gehirn-Module</span>
+                <span class="attr-indicator" data-jstep="1">2. Global Workspace</span>
+                <span class="attr-indicator" data-jstep="2">3. Gedankenschritte</span>
+                <span class="attr-indicator" data-jstep="3">4. Was ist ein Jacobian?</span>
+                <span class="attr-indicator" data-jstep="4">5. J-Lens am Beispiel</span>
+                <span class="attr-indicator" data-jstep="5">6. Stilles Denken</span>
             </div>
 
-            <!-- Explanation -->
-            <div id="knowledge-explanation" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
+            <!-- Visualization Container -->
+            <div id="jspace-viz-container" style="position:relative; width:100%; max-width:900px; margin:0 auto; min-height:480px;"></div>
 
-		<!-- Hidden fragments that trigger step changes -->
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="1" style="display:none;"></div>
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="2" style="display:none;"></div>
-		<div class="fragment" data-fragment-action="knowledge-step" data-knowledge-step="3" style="display:none;"></div>
+            <!-- Caption -->
+            <div id="jspace-caption" style="margin-top:14px; padding:14px 18px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; color:#1e40af; text-align:center; line-height:1.6;"></div>
         </div>
+
+		<div class="key-insight fragment" style="margin-top:14px;">
+			Die Existenz eines globalen Workspaces heißt nicht, dass das LLM bewusst wäre.<br>
+			Keiner weiß, was Bewusstsein genau ist, und wie es funktioniert.<br>
+			Die <i>Global Workspace Theory</i> ist nur ein Modell unter vielen.
+		</div>
     </div>
 </div>
 
@@ -642,7 +764,7 @@
             <div class="fragment" style="margin-top:14px; padding:12px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.7;">
                 <strong>⚠️ Kreativ ist nicht immer gut!</strong><br>
                 Bei <b>Gedichten</b> oder <b>Geschichten</b>? Ja, da ist Kreativität erwünscht.<br>
-                Aber <b>„kreative Buchführung"</b> ist nichts Gutes.<br>
+                Aber <b>"kreative Buchführung"</b> ist nichts Gutes.<br>
                 <span style="font-size:0.9em; color:#78350f;">Für Fakten, Berechnungen oder rechtliche Texte will man niedrige Temperatur = wenig Kreativität.</span>
             </div>
     </div>
@@ -719,7 +841,7 @@
 					<li><b>Umfang:</b> 1.5 Billionen (<span class="math-inline">$1{,}5 \times 10^{13}$</span>) Tokens. 
 						<br>Vergleich: Vom Urknall vor ~14 Mrd. Jahren bis heute sind es ~<span class="math-inline">$5 \times 10^{12}$</span> Tage.</li>
 					<li><b>Ziel:</b> Lerne sehr häufige <b>Muster</b></li>
-					<li><b>Ergebnis:</b> Das Netz „weiß" faktisch alles, was in den Texten steht</li>
+					<li><b>Ergebnis:</b> Das Netz "weiß" faktisch alles, was in den Texten steht</li>
 				</ul>
 			</div>
 
@@ -747,16 +869,20 @@
 					<div style="font-weight:bold; color:#166534; margin-bottom:6px;">Phase 3: RLHF, Reinforcement Learning from Human Feedback</div>
 					<p style="color:#14532d; line-height:1.7; margin:0;">
 					Nach dem Fine-Tuning gibt es oft noch eine <b>dritte Phase</b>: Menschen bewerten verschiedene Antworten des Modells
-					(„Antwort A ist besser als B"). Daraus lernt das Modell, welcher Stil bevorzugt wird, höflich, vorsichtig, hilfreich.
+					("Antwort A ist besser als B"). Daraus lernt das Modell, welcher Stil bevorzugt wird, höflich, vorsichtig, hilfreich.
 					</p>
 				</div>
 			</div>
 		</div>
 
 		<div class="key-insight fragment">
-			<strong>Die Kernidee:</strong> Nach Phase 1 hat das Modell das Wissen, aber es „redet" nicht mit dir.
+			<strong>Die Kernidee:</strong> Nach Phase 1 hat das Modell das Wissen, aber es "redet" nicht mit dir.
 			Phase 2 bringt ihm bei, <b>wie ein Gespräch aussieht</b>: Frage → Antwort.
-			Die Antworten „erfindet" es nicht neu, es weiß sie bereits aus den Milliarden Texten.
+			Die Antworten "erfindet" es nicht neu, es weiß sie bereits aus den Milliarden Texten.
+		</div>
+
+		<div class="key-insight fragment">
+			<strong>Das Modell lernt nicht stetig dazu:</strong> damit das Modell dazu lernt, muss man es neu trainieren. Es gibt <i>In-Context-Learning</i>, wo im gleichen Chat eine Info "gelernt" wird, aber neu gelernte Informationen aus einem Chat stehen <b>nicht</b> automatisch für alle zur Verfügung. Dafür muss man neu- (oder weiter) trainieren.
 		</div>
 	</div>
 </div>
@@ -770,7 +896,7 @@
 			<!-- Links: Training -->
 			<div style="flex:1; min-width:280px; padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
 				<div style="display:grid; grid-template-columns:auto 1fr; gap:8px 14px; color:#7f1d1d; line-height:1.8;">
-					<span style="font-weight:bold;">Kosten:</span>
+					<span style="font-weight:bold;">Kosten, chatGPT4 zu trainieren:</span>
 					<span>US $370.000.000</span>
 					<span style="font-weight:bold;">Rechenaufwand:</span>
 					<span>3.8 ExaFLOP (3.8e26 FLOP, 380 Septillionen Operationen pro Sekunde)</span>
@@ -823,7 +949,7 @@
 		</div>
 
 		<div class="key-insight fragment" style="margin-top:16px;">
-			<strong>Fazit:</strong> LLM und KI sind nicht „kostenlos", sie verbraucht <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
+			<strong>Fazit:</strong> LLM und KI sind nicht "kostenlos", sie verbraucht <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
 		</div>
 	</div>
 </div>
@@ -831,7 +957,7 @@
 <!-- ==================== SLIDE: Warum Large? ==================== -->
 <div class="slide" data-title="Warum Large?">
     <div class="slide-content">
-        <h2>Warum „Large"?</h2>
+        <h2>Warum "Large"?</h2>
 
         <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
             <div style="flex:1; min-width:250px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe; text-align:center;">
@@ -872,7 +998,7 @@
 				<div class="fragment" style="padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; margin:16px 0;">
 					<strong style="color:#92400e;">🗺️ Das Vector Grounding Problem:</strong><br>
 					<span style="color:#78350f;">
-						Für das LLM ist „Schmerz” nur ein Wort in der Nähe von „Verletzung” oder „Krankheit”,
+						Für das LLM ist "Schmerz” nur ein Wort in der Nähe von "Verletzung” oder "Krankheit”,
 						aber sie hat nie etwas <b>gesehen</b>, <b>gefühlt</b> oder <b>erlitten</b>.<br>
 						Ihre Vektoren sind Beziehungen zwischen <b>Wörtern</b>, nicht zwischen Wörtern und <b>Welt</b>.
 					</span>
@@ -883,14 +1009,106 @@
 	</div>
 </div>
 
+<!-- ==================== SLIDE: Chinese Room (Präsentations-Demo) ==================== -->
+<div class="slide" data-title="Chinese Room" data-init="CRSim.start()">
+    <div class="slide-content">
+        <h2>Das Chinese Room Argument (John Searle, 1980)</h2>
+        <p style="color:#475569; margin-bottom:14px; line-height:1.7;">
+            <b>Die Idee:</b> Stell dir vor, du sitzt in einem verschlossenen Raum. 
+            Jemand schiebt dir Zettel mit Symbolen einer Sprache unter der Tür durch, die du nicht verstehst. 
+            Du hast ein Regelbuch, das dir sagt: "Wenn du <i>diese</i> Zeichenkette siehst, schreibe <i>jenes</i> zurück."
+            Von außen sieht es aus, als würdest du die Sprache perfekt beherrschen, aber du hast <b>kein einziges Wort verstanden</b>.
+        </p>
+
+        <!-- Chinese Room Simulator -->
+        <div id="chinese-room-sim" style="max-width:820px; margin:0 auto; font-family:'Segoe UI', system-ui, sans-serif;">
+
+            <!-- Room visual frame -->
+            <div id="cr-room" style="border:3px solid #e2e8f0; border-radius:14px; background:#ffffff; color:#333; padding:1.5em; position:relative; min-height:320px; overflow:hidden;">
+
+                <!-- Round indicator -->
+                <div style="text-align:center; font-size:0.85em; color:#94a3b8; margin-bottom:0.8em;">
+                    Beispiel <span id="cr-round-num" style="font-weight:bold; color:#6366f1;">1</span> von <span id="cr-total-rounds" style="font-weight:bold;">3</span>
+                </div>
+
+                <!-- Incoming message area -->
+                <div style="text-align:center; margin-bottom:1em;">
+                    <div style="font-size:0.75em; color:#94a3b8; margin-bottom:0.3em;">📩 Ein Zettel wird unter der Tür durchgeschoben:</div>
+                    <div id="cr-incoming-msg" style="font-size:2.2em; letter-spacing:0.12em; min-height:1.4em; transition: opacity 0.5s, transform 0.5s; font-weight:bold; color:#1e293b;">
+                    </div>
+                </div>
+
+                <!-- Rulebook -->
+                <div id="cr-rulebook" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:0.8em 1em; margin-bottom:1em;">
+                    <div style="font-size:0.75em; color:#94a3b8; margin-bottom:0.5em;">📖 Dein Regelbuch sagt:</div>
+                    <table style="width:100%; border-collapse:collapse; font-size:1em;">
+                        <thead>
+                            <tr style="color:#94a3b8; font-size:0.75em;">
+                                <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #e2e8f0;">Wenn du siehst…</th>
+                                <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #e2e8f0;">Schreibe zurück…</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cr-rulebook-body"></tbody>
+                    </table>
+                </div>
+
+                <!-- Response options -->
+                <div style="text-align:center;">
+                    <div style="font-size:0.75em; color:#94a3b8; margin-bottom:0.4em;">Wähle deine Antwort:</div>
+                    <div id="cr-options" style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.5em;"></div>
+                </div>
+
+                <!-- Feedback -->
+                <div id="cr-feedback" style="text-align:center; margin-top:0.8em; font-size:1em; min-height:1.4em; transition: opacity 0.4s; line-height:1.5;"></div>
+            </div>
+
+            <!-- Reveal (nach allen 3 Runden) -->
+            <div id="cr-reveal" style="display:none; margin-top:1.2em;">
+
+                <div style="background:#f0fdf4; border:2px solid #86efac; border-radius:12px; padding:1em; text-align:center; margin-bottom:1em;">
+                    <div style="font-size:1.4em; margin-bottom:0.3em;">🧐 Person außerhalb des Raums:</div>
+                    <div style="font-size:1.1em; font-style:italic; color:#166534;">"Unglaublich! Du sprichst perfektes Inuktitut!"</div>
+                </div>
+
+                <div id="cr-chart" style="width:100%; height:240px; margin-bottom:1em;"></div>
+
+                <div style="background:#fffbeb; border:2px solid #fde68a; border-radius:12px; padding:1em; color:#1e293b; line-height:1.7;">
+                    <strong>Die Lektion:</strong> Du hast keine einzige Silbe verstanden. Du hast Formen abgeglichen. Du hast Regeln befolgt.
+                    Genau das macht ein LLM: es manipuliert Symbole basierend auf
+                    <strong>Syntax</strong> (statistische Muster) ohne jede <strong>Semantik</strong> (Bedeutung).
+                    <br><br>
+                    <em>"Die Person im Raum manipuliert lediglich Symbole nach syntaktischen Regeln, ohne jegliche Semantik (Bedeutung)."</em>
+                    — John Searle, 1980
+                </div>
+
+                <div id="cr-translations" style="margin-top:1em;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.9em; background:#f8fafc; border-radius:10px; overflow:hidden;">
+                        <thead>
+                            <tr style="background:#f1f5f9;">
+                                <th style="text-align:left; padding:0.5em;">Frage (Inuktitut)</th>
+                                <th style="text-align:left; padding:0.5em;">Antwort (Inuktitut)</th>
+                                <th style="text-align:left; padding:0.5em;">Bedeutung (Deutsch)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cr-translation-body"></tbody>
+                    </table>
+                    <p style="text-align:center; color:#94a3b8; font-size:0.8em; margin-top:0.5em;">
+                        Du hattest ein ganzes Gespräch über das Wetter und Wegbeschreibungen, und du hattest keine Ahnung.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Halluzinationen ==================== -->
 <div class="slide" data-title="Halluzinationen">
     <div class="slide-content">
-        <h2>Halluzinationen: Wenn das LLM „lügt"</h2>
+        <h2>Halluzinationen: Wenn das LLM "lügt"</h2>
 
-        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
-            <!-- Beispiel 1: Mango -->
-            <div style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
+        <div style="max-width:700px; margin:0 auto;">
+            <!-- Chat-Beispiel: Mango -->
+            <div style="padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
                 <div class="chat-container">
                     <div class="message user">
                         <div class="message-avatar">🔵</div>
@@ -903,65 +1121,103 @@
                         <div class="message-avatar">🟢</div>
                         <div class="message-bubble">
                             <div class="message-label">ChatGPT</div>
-                            Ja, das geht! In der <b>Mango-Manufaktur in Lindow in Brandenburg</b> werden seit 2009 erfolgreich Mangos angebaut. 🥭
+                            Ja, das geht! In der
+                            <span class="halluc-word" data-candidates="Mango-Manufaktur 0.08|Tropenfrucht-Farm 0.05|Obstplantage 0.04|Gewächshaus-Projekt 0.03">Mango-Manufaktur</span>
+                            in
+                            <span class="halluc-word" data-candidates="Lindow 0.12|Werder 0.09|Beelitz 0.07|Potsdam 0.05">Lindow</span>
+                            in
+                            <span class="halluc-word" data-candidates="Brandenburg 0.61|Sachsen 0.09|Thüringen 0.05|Bayern 0.04">Brandenburg</span>
+                            werden seit
+                            <span class="halluc-word" data-candidates="2009 0.14|2008 0.12|2010 0.11|2012 0.08">2009</span>
+                            erfolgreich Mangos angebaut. 🥭
                         </div>
                     </div>
-                    <div class="message-label">Realität</div>
-                    ❌ Diese „Mango-Manufaktur" existiert nicht. Frei erfunden.
                 </div>
+
+                <!-- Erklärung -->
                 <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
                     <b>Was passiert ist:</b> Das Modell wusste nichts, aber statt zu schweigen, hat es etwas erzeugt, das <b>plausibel klingt</b>: ein Ortsname, ein Bundesland, eine Jahreszahl.
                 </div>
-            </div>
 
-            <!-- Beispiel 2: Quantenphysik -->
-            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#f8fafc; border-radius:14px; border:2px solid #e2e8f0;">
-                <div class="chat-container">
-                    <div class="message user">
-                        <div class="message-avatar">🔵</div>
-                        <div class="message-bubble">
-                            <div class="message-label">User</div>
-                            Nenne mir drei Bücher von Heinrich Müller über Quantenphysik.
-                        </div>
-                    </div>
-                    <div class="message ki">
-                        <div class="message-avatar">🟢</div>
-                        <div class="message-bubble">
-                            <div class="message-label">LLM</div>
-                            <ol>
-                                <li>„Quantenwelten" (2008)</li>
-                                <li>„Die Ordnung der Teilchen" (2012)</li>
-                                <li>„Verschränkung und Realität" (2015)</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="message-label">Realität</div>
-                    ❌ Keines dieser Bücher existiert. Der Autor auch nicht.
-                </div>
-                <div style="margin-top:16px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; color:#1e40af; line-height:1.6;">
-                    <b>Was passiert ist:</b> Das Modell kennt das Muster „Autor + Fachgebiet → Buchtitel mit Jahreszahl" und erzeugt etwas, das <b>aussieht</b> wie eine echte Antwort.
-                </div>
+                <!-- Fragment: Sprechblasen aktivieren -->
+                <div class="fragment" data-fragment-action="show-halluc-bubbles"></div>
+
+                <p class="fragment" style="margin-top:12px; text-align:center; color:#64748b; font-size:0.9em;">
+                    ↑ Die hervorgehobenen Wörter zeigen, welche Alternativen das Modell hätte wählen können. Keines davon ist "richtig" — alles ist nur statistisch plausibel.
+                </p>
             </div>
         </div>
+    </div>
+</div>
 
+<div class="slide" data-title="Halluzinationen">
+    <div class="slide-content">
+        <h2>Halluzinationen: Wenn das LLM "lügt"</h2>
         <!-- Warum passiert das? -->
         <div class="fragment" style="padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-top:16px;">
             <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">🎯 Warum passiert das?</div>
             <ul style="color:#7f1d1d; line-height:2.0; margin-left:16px; padding:0;">
-		    <li>Das Modell <b>muss</b> immer ein nächstes <b>Token</b> ausgeben; es hat <b>keinen „Ich weiß es nicht"-Knopf</b></li>
-                <li>Es hat <b>keinen Überprüfungsmechanismus</b>, der fragt: „Stimmt das eigentlich?"</li>
+		<li>Das Modell <b>muss</b> immer ein nächstes <b>Token</b> ausgeben; es hat <b>keinen "Ich weiß es nicht"-Knopf</b></li>
+		    <ul style="color:#7f1d1d; line-height:2.0; margin-left:16px; padding:0;">
+			<li>Das Problem: wenn man weiß, wo die Lücke ist und er "Ich weiß es nicht" antworten sollte, will man sie gleich mit schließen, so dass er das Richtige antwortet. Daher kann das Modell gar nicht lernen, wie es reagiert, wenn es etwas nicht weiß.</li>
+		    </ul>
+                <li>Es hat <b>keinen Überprüfungsmechanismus</b>, der fragt: "Stimmt das eigentlich?"</li>
+		    <ul>
+			    <li>Ganz moderne Modelle sind da <i>etwas</i> weiter, aber das grundlegende Problem bleibt bestehen.</li>
+		    </ul>
                 <li>Wenn es zu einem Thema wenig weiß, <b>füllt es die Lücke mit etwas Plausiblem</b></li>
             </ul>
         </div>
 
         <!-- Bullshitting nach Frankfurt -->
         <div class="fragment" style="padding:20px; background:#faf5ff; border-radius:14px; border:2px solid #e9d5ff; margin-top:16px;">
-            <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💩 Nicht Lügen, sondern „Bullshitting" (Harry Frankfurt, 2005)</div>
+            <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💩 Nicht Lügen, sondern "Bullshitting" (Harry Frankfurt, 2005)</div>
             <p style="color:#581c87; line-height:1.8; margin:0;">
                 Ein <b>Lügner</b> kennt die Wahrheit und versucht bewusst, dich davon wegzuführen, er hat eine <b>Relation zur Wirklichkeit</b>.<br>
                 Ein <b>Bullshitter</b> hingegen kümmert sich überhaupt nicht darum, ob etwas wahr oder falsch ist, die Wahrheit ist ihm <b>schlicht egal</b>.<br><br>
-                Ein LLM <b>kann nicht lügen</b>, denn es kennt keine Wahrheit. Aber es kann <b>bullshitten</b>: Es produziert Aussagen ohne jede Rücksicht darauf, ob sie stimmen, weil es gar keinen Begriff von „stimmen" hat.
+                Ein LLM <b>kann nicht lügen</b>, denn es kennt keine Wahrheit. Aber es kann <b>bullshitten</b>: Es produziert Aussagen ohne jede Rücksicht darauf, ob sie stimmen, weil es gar keinen Begriff von "stimmen" hat.
             </p>
+        </div>
+    </div>
+</div>
+
+<div class="slide" data-title="Der ELIZA-Effekt">
+    <div class="slide-content">
+        <h2>Der ELIZA-Effekt: Warum wir auf Maschinen "reinfallen"</h2>
+        
+        <div style="display:flex; gap:24px; margin:20px 0; flex-wrap:wrap; align-items:stretch;">
+            <div style="flex:1; min-width:300px; padding:20px; background:#eff6ff; border-radius:14px; border:2px solid #bfdbfe;">
+                <div style="font-weight:bold; color:#1e40af; margin-bottom:10px;">🤖 Was war ELIZA?</div>
+                <p style="color:#1e3a5f; line-height:1.8; margin:0;">
+                    1966 schrieb Joseph Weizenbaum ein simples Programm: <b>ELIZA</b>.<br>
+                    Es tat so, als wäre es ein Therapeut.<br><br>
+                    <b>Nutzer:</b> "Ich bin traurig."<br>
+                    <b>ELIZA:</b> "Warum sind Sie traurig?"<br><br>
+                    Das ist <b>alles</b>, was es konnte: Schlüsselwörter erkennen und als Frage zurückgeben.
+                </p>
+            </div>
+            <div class="fragment" style="flex:1; min-width:300px; padding:20px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
+                <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">😲 Was passierte?</div>
+                <p style="color:#7f1d1d; line-height:1.8; margin:0;">
+                    Menschen <b>vertrauten</b> dem Programm ihre tiefsten Probleme an.<br>
+                    Weizenbaums eigene Sekretärin bat ihn, den Raum zu verlassen, damit sie "privat" mit ELIZA sprechen konnte.<br><br>
+                    Weizenbaum war <b>schockiert</b>: "Ich hatte nicht erkannt, dass bereits eine extrem kurze Exposition gegenüber einem relativ simplen Computerprogramm mächtiges wahnhaftes Denken in ganz normalen Menschen auslösen kann."
+                </p>
+            </div>
+        </div>
+
+        <div class="fragment" style="margin-top:18px; padding:16px 20px; background:#fffbeb; border-radius:12px; border:2px solid #fde68a;">
+            <div style="font-weight:bold; color:#92400e; margin-bottom:8px;">💡 Der ELIZA-Effekt heute</div>
+            <p style="color:#78350f; line-height:1.7; margin:0;">
+                Wenn schon ein Programm von 1966 mit simplen Textmustern Menschen täuschen konnte –<br>
+                wie viel stärker ist dieser Effekt bei ChatGPT, das <b>flüssig</b>, <b>witzig</b> und <b>empathisch</b> klingt?<br><br>
+                <b>Wir projizieren Verständnis auf die Maschine, weil Sprache für uns = Denken ist.</b><br>
+                Aber die Maschine denkt nicht. Sie spiegelt nur unsere eigenen Muster zurück.
+            </p>
+        </div>
+
+        <div class="key-insight fragment">
+            <strong>Merke:</strong> Wir sehen ein "Gegenüber" in der KI, weil Sprache das Medium ist, mit dem Menschen ihr Innenleben teilen. Wenn eine Maschine Sprache meistert, bauen wir einen Spiegel – und verwechseln unser eigenes Spiegelbild mit dem Geist der Maschine.
         </div>
     </div>
 </div>
@@ -990,7 +1246,7 @@
                     <div style="margin-top:10px; padding:10px; background:#fff5f5; border-radius:8px; border:1px dashed #fca5a5;">
                         <p style="color:#991b1b; margin:0; line-height:1.6;">
                             <b>Beispiel:</b> DeepSeek (China) weigert sich, über das Tiananmen-Massaker 1989 zu sprechen,
-                            nicht weil es das nicht „wüsste", sondern weil die Trainingsdaten <b>politisch gefiltert</b> wurden.
+                            nicht weil es das nicht "wüsste", sondern weil die Trainingsdaten <b>politisch gefiltert</b> wurden.
                         </p>
                     </div>
                 </div>
@@ -1002,7 +1258,7 @@
                     <div style="font-weight:bold; color:#0c4a6e; margin-bottom:8px;">🔍 Das Blackbox-Problem</div>
                     <p style="color:#164e63; line-height:1.7; margin:0 0 12px;">
                         Wissen ist <b>verteilt über Milliarden Gewichte</b> gespeichert, nicht in lesbaren Zellen oder Tabellen.
-                        Es gibt keinen „Ort", an dem ein Bias sitzt.
+                        Es gibt keinen "Ort", an dem ein Bias sitzt.
                     </p>
                     <div style="text-align:center; margin:12px 0;">
                         <div style="display:inline-block; padding:12px 20px; background:#e0f2fe; border-radius:10px; border:1px solid #7dd3fc;">
@@ -1018,7 +1274,7 @@
                         → Es ist <b>extrem schwer</b>, ohne Zugang zu den Trainingsdaten, dem Code und enormer Rechenleistung nachträglich herauszufinden, welche Biases ein Modell hat.
                     </p>
                     <p style="color:#475569; line-height:1.6; margin-top:10px; font-style:italic;">
-                        Niemand kann ein fertiges Modell „durchlesen" und sagen: „Hier steckt der politische Bias."
+                        Niemand kann ein fertiges Modell "durchlesen" und sagen: "Hier steckt der politische Bias."
                     </p>
                 </div>
             </div>
@@ -1035,14 +1291,14 @@
 <div class="slide" data-title="Was LLMs nicht können">
     <div class="slide-content">
         <h2>Was LLM nicht können, und vielleicht nie können wird</h2>
-        <p>LLMs sind beeindruckend, aber es gibt fundamentale Grenzen, die nicht einfach durch „mehr Daten" verschwinden.</p>
+        <p>LLMs sind beeindruckend, aber es gibt fundamentale Grenzen, die nicht einfach durch "mehr Daten" verschwinden.</p>
 
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin:20px 0;">
             <div style="padding:16px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca; text-align:center;">
                 <div style="margin-bottom:6px;">🪞</div>
                 <div style="font-weight:bold; color:#991b1b; margin-bottom:6px;">Echtes Verstehen</div>
                 <p style="color:#7f1d1d; margin:0; line-height:1.5;">
-                    Ein LLM manipuliert Symbole nach Mustern, aber „versteht" es, wie Rot aussieht? Wie Kaffee riecht? Nein, dafür bräuchte es Grounding.
+                    Ein LLM manipuliert Symbole nach Mustern, aber "versteht" es, wie Rot aussieht? Wie Kaffee riecht? Nein, dafür bräuchte es Grounding.
                 </p>
             </div>
             <div class="fragment" style="padding:16px; background:#fffbeb; border-radius:12px; border:1px solid #fde68a; text-align:center;">
@@ -1059,13 +1315,6 @@
 		Sie kann Mitgefühl simulieren, aber da ist kein <b>Subjekt</b>, das wahrnimmt.
 		</p>
 	    </div>
-	    <div class="fragment" style="padding:16px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; text-align:center;">
-		    <div style="margin-bottom:6px;">⏳</div>
-		    <div style="font-weight:bold; color:#334155; margin-bottom:6px;">Langfristiges Lernen</div>
-		    <p style="color:#475569; margin:0; line-height:1.5;">
-		    Nach dem Training ist das Modell „eingefroren". Es lernt nicht (ohne neues Training) aus Gesprächen für neue Gespräche dazu.
-                </p>
-            </div>
         </div>
 
         <div class="fragment" style="margin-top:14px; padding:14px 20px; background:linear-gradient(135deg, #f0f9ff, #faf5ff); border-radius:12px; border:2px solid #e2e8f0;">
@@ -1073,8 +1322,7 @@
                 <div style="">🤔</div>
                 <div style="flex:1; min-width:250px;">
                     <p style="color:#334155; margin:0; line-height:1.7;">
-                        <b>Die offene Frage:</b> Sind das Grenzen der <b>aktuellen Architektur</b>, oder Grenzen, die <b>jede</b> Maschine hat,
-                        die keinen Körper und keine Sinne besitzt? Darüber streiten Philosophen, Kognitionswissenschaftler und KI-Forscher bis heute.
+                        <b>Die offene Frage:</b> Sind das Grenzen der <b>aktuellen Architektur</b>, oder Grenzen <b>jeder</b> Maschine? Darüber streiten Philosophen, Kognitionswissenschaftler und KI-Forscher.
                     </p>
                 </div>
             </div>
@@ -1146,7 +1394,9 @@
 <script src="philosophy.js"></script>
 <script src="presentation.js"></script>
 <script src="attention_slides.js"></script>
-<script src="knowledge.js"></script>
+<script src="attractors.js"></script>
+<script src="jspace_viz.js"></script>
+<script src="chinese_room.js"></script>
 <script src="interpolation_viz.js"></script>
 
 <script>

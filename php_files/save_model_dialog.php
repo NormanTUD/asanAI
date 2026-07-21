@@ -4,9 +4,9 @@
 			<button class="save_button" onclick="save_model();download_weights_json();"><span class="TRANSLATEME_download"></span></button>
 
 			<div style="display: none" class="show_when_logged_in">
-				<h1>Save to DB</h1>
+				<h1><span class="TRANSLATEME_save_to_db"></span></h1>
 				<span id="save_model_msg" style="display: none"></span><br>
-				<input id="network_name" onkeyup="has_network_name(this)" placeholder="Network name"><br>
+				<input id="network_name" onkeyup="has_network_name(this)" data-tr-placeholder="network_name"><br>
 				<span class="TRANSLATEME_public"></span>: <input id="is_public" type="checkbox"><br>
 			</div>
 		</div>

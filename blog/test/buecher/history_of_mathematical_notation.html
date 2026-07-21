@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Geheime Geschichte der Mathe-Symbole</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Georgia', serif; background: #1a1a2e; color: #eee; overflow-x: hidden; }
+canvas { display: block; position: fixed; top: 0; left: 0; z-index: -1; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+h1 { text-align: center; font-size: 2.2em; margin: 40px 0 10px; background: linear-gradient(90deg, #f7971e, #ffd200); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.subtitle { text-align: center; color: #aaa; margin-bottom: 40px; font-style: italic; }
+.timeline { position: relative; padding: 20px 0; }
+.timeline::before { content: ''; position: absolute; left: 50%; width: 3px; height: 100%; background: linear-gradient(to bottom, #f7971e, #ffd200, #f7971e); transform: translateX(-50%); }
+.era { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 25px; margin: 30px 0; cursor: pointer; transition: all 0.3s; position: relative; }
+.era:hover { background: rgba(255,255,255,0.1); transform: scale(1.02); box-shadow: 0 0 20px rgba(247,151,30,0.3); }
+.era h2 { color: #ffd200; margin-bottom: 10px; font-size: 1.3em; }
+.era .date { color: #f7971e; font-size: 0.85em; font-weight: bold; }
+.era p { line-height: 1.6; margin-top: 8px; }
+.hidden-content { display: none; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid #ffd200; }
+.hidden-content.show { display: block; animation: fadeIn 0.4s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Interactive Playground */
+.playground { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 30px; margin: 40px 0; border: 1px solid rgba(255,255,255,0.15); }
+.playground h2 { color: #ffd200; text-align: center; margin-bottom: 20px; }
+.symbol-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin: 20px 0; }
+.symbol-card { background: rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; }
+.symbol-card:hover { border-color: #ffd200; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(247,151,30,0.2); }
+.symbol-card .symbol { font-size: 2.5em; margin-bottom: 5px; }
+.symbol-card .label { font-size: 0.75em; color: #aaa; }
+.symbol-card.active { border-color: #f7971e; background: rgba(247,151,30,0.1); }
+.info-panel { min-height: 100px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 20px; margin-top: 20px; transition: all 0.3s; }
+
+/* Evolution Game */
+.evolution-game { background: linear-gradient(135deg, rgba(26,26,46,0.9), rgba(44,44,84,0.9)); border-radius: 16px; padding: 30px; margin: 40px 0; border: 1px solid rgba(255,215,0,0.2); }
+.evolution-game h2 { color: #ffd200; text-align: center; }
+.evo-challenge { margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; }
+.evo-options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; justify-content: center; }
+.evo-btn { padding: 12px 20px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #eee; border-radius: 8px; cursor: pointer; font-size: 1em; transition: all 0.2s; }
+.evo-btn:hover { border-color: #ffd200; background: rgba(255,215,0,0.1); }
+.evo-btn.correct { border-color: #4caf50; background: rgba(76,175,80,0.2); color: #4caf50; }
+.evo-btn.wrong { border-color: #f44336; background: rgba(244,67,54,0.2); color: #f44336; }
+.score { text-align: center; font-size: 1.5em; color: #ffd200; margin: 15px 0; }
+.feedback { text-align: center; min-height: 60px; padding: 15px; margin-top: 15px; border-radius: 8px; font-size: 0.95em; line-height: 1.5; }
+
+/* Drag & Drop */
+.drag-area { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 60px; padding: 15px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 10px; margin: 15px 0; }
+.drag-item { padding: 10px 18px; background: rgba(247,151,30,0.2); border: 1px solid #f7971e; border-radius: 6px; cursor: grab; font-size: 1.1em; user-select: none; }
+.drop-zone { min-width: 80px; min-height: 50px; border: 2px dashed rgba(255,215,0,0.4); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; margin: 5px; padding: 5px 10px; }
+.drop-zone.filled { border-style: solid; background: rgba(76,175,80,0.1); }
+
+/* Insights Section */
+.insight-box { background: linear-gradient(135deg, rgba(247,151,30,0.1), rgba(255,210,0,0.05)); border: 1px solid rgba(255,215,0,0.3); border-radius: 12px; padding: 20px; margin: 25px 0; }
+.insight-box h3 { color: #ffd200; margin-bottom: 10px; }
+.insight-box p { line-height: 1.7; color: #ccc; }
+.insight-box .key { color: #f7971e; font-weight: bold; }
+
+.progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 30px 0 10px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #f7971e, #ffd200); border-radius: 3px; transition: width 0.5s; }
+.progress-text { text-align: center; color: #aaa; font-size: 0.85em; }
+
+footer { text-align: center; padding: 40px; color: #555; font-size: 0.8em; }
+@media (max-width: 600px) { h1 { font-size: 1.5em; } .symbol-grid { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="container">
+<h1>🔢 Die Geheime Geschichte der Mathe-Symbole</h1>
+<p class="subtitle">Wie +, −, ×, ÷ und = die Welt veränderten — interaktiv erleben</p>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+<p class="progress-text" id="progressText">Entdeckungsfortschritt: 0/5 Stationen erkundet</p>
+
+<!-- STATION 1: Symbol Explorer -->
+<div class="playground" id="station1">
+<h2>🧪 Station 1: Symbol-Labor</h2>
+<p style="text-align:center; color:#aaa; margin-bottom:15px;">Klicke auf ein Symbol und entdecke seine überraschende Geschichte</p>
+<div class="symbol-grid">
+<div class="symbol-card" onclick="showSymbolInfo('plus')"><div class="symbol">+</div><div class="label">Plus</div></div>
+<div class="symbol-card" onclick="showSymbolInfo('minus')"><div class="symbol">−</div><div class="label">Minus</div></div>
+<div class="symbol-card" onclick="showSymbolInfo('mult')"><div class="symbol">×</div><div class="label">Mal</div></div>
+<div class="symbol-card" onclick="showSymbolInfo('div')"><div class="symbol">÷</div><div class="label">Geteilt</div></div>
+<div class="symbol-card" onclick="showSymbolInfo('equals')"><div class="symbol">=</div><div class="label">Gleich</div></div>
+<div class="symbol-card" onclick="showSymbolInfo('zero')"><div class="symbol">0</div><div class="label">Null</div></div>
+</div>
+<div class="info-panel" id="infoPanel">
+<p style="color:#888; text-align:center;">👆 Wähle ein Symbol, um seine Geschichte zu entdecken</p>
+</div>
+</div>
+
+<!-- STATION 2: Timeline Chaos -->
+<div class="playground" id="station2">
+<h2>⏳ Station 2: Zeitreise — Ordne die Erfindungen!</h2>
+<p style="text-align:center; color:#aaa; margin-bottom:15px;">Ziehe die Symbole in die richtige chronologische Reihenfolge</p>
+<div class="drag-area" id="dragSource">
+<div class="drag-item" draggable="true" data-order="3" id="d1">× (1631)</div>
+<div class="drag-item" draggable="true" data-order="1" id="d2">Hindu-Ziffern (~500)</div>
+<div class="drag-item" draggable="true" data-order="4" id="d3">= von Descartes (1637)</div>
+<div class="drag-item" draggable="true" data-order="2" id="d4">+ und − (1489)</div>
+<div class="drag-item" draggable="true" data-order="5" id="d5">÷ (1659)</div>
+</div>
+<div style="display:flex; justify-content:center; gap:5px; flex-wrap:wrap; margin:15px 0;">
+<div class="drop-zone" data-pos="1">1.</div>
+<div class="drop-zone" data-pos="2">2.</div>
+<div class="drop-zone" data-pos="3">3.</div>
+<div class="drop-zone" data-pos="4">4.</div>
+<div class="drop-zone" data-pos="5">5.</div>
+</div>
+<button onclick="checkTimeline()" class="evo-btn" style="display:block; margin:15px auto;">✓ Prüfen</button>
+<div class="feedback" id="timelineFeedback"></div>
+</div>
+
+<!-- STATION 3: Evolution Game -->
+<div class="evolution-game" id="station3">
+<h2>🎮 Station 3: Wer hat's erfunden?</h2>
+<p style="text-align:center; color:#aaa;">Teste dein Wissen — lerne durch Spielen!</p>
+<div class="score">Punkte: <span id="score">0</span>/5</div>
+<div class="evo-challenge" id="challenge"></div>
+<div class="feedback" id="gameFeedback"></div>
+<button onclick="nextQuestion()" class="evo-btn" id="nextBtn" style="display:none; margin:15px auto;">Nächste Frage →</button>
+</div>
+
+<!-- STATION 4: Key Insights -->
+<div class="playground" id="station4">
+<h2>💡 Station 4: Die 5 großen Erkenntnisse</h2>
+<p style="text-align:center; color:#aaa; margin-bottom:20px;">Klicke auf jede Erkenntnis, um sie aufzudecken</p>
+
+<div class="era" onclick="toggleInsight(this)">
+<h2>1. Notation ist MACHT</h2>
+<div class="hidden-content">
+<p>Die Römer konnten mit ihren Zahlen (I, V, X, L, C, D, M) kaum rechnen. Erst das <span style="color:#ffd200">Stellenwertsystem</span> der Inder (mit der Null!) machte echte Mathematik möglich. Laplace nannte es "eine der nützlichsten Erfindungen" — so einfach, dass wir ihre Genialität kaum noch sehen.</p>
+<p style="margin-top:10px; color:#f7971e;">→ Schlechte Notation VERHINDERT Fortschritt. Gute Notation ERMÖGLICHT ihn.</p>
+</div>
+</div>
+
+<div class="era" onclick="toggleInsight(this)">
+<h2>2. Symbole kämpfen gegeneinander</h2>
+<div class="hidden-content">
+<p>Das <span style="color:#ffd200">+</span> und <span style="color:#ffd200">−</span> (Deutschland, ~1489) kämpften über 130 Jahre gegen die italienischen Zeichen <span style="color:#f7971e">p</span> und <span style="color:#f7971e">m</span>. Erst um 1630 gewannen + und − endgültig — außer in Spanien, wo p/m länger überlebte.</p>
+<p style="margin-top:10px; color:#f7971e;">→ Ohne internationale Koordination dauert Vereinheitlichung Jahrhunderte!</p>
+</div>
+</div>
+
+<div class="era" onclick="toggleInsight(this)">
+<h2>3. Genies scheitern an schlechter Notation</h2>
+<div class="hidden-content">
+<p>Die Griechen benutzten 27 Buchstaben als Zahlzeichen — eine enorme Gedächtnisbelastung! Cajori schreibt: Das System war <span style="color:#ffd200">"ein Hindernis statt eine Hilfe"</span>. Ohne den Abakus wären die Griechen in der Arithmetik noch weiter zurückgeblieben.</p>
+<p style="margin-top:10px; color:#f7971e;">→ Archimedes und Apollonius verpassten Entdeckungen wegen ihrer Notation!</p>
+</div>
+</div>
+
+<div class="era" onclick="toggleInsight(this)">
+<h2>4. Das Gleichheitszeichen = brauchte 100+ Jahre</h2>
+<div class="hidden-content">
+<p>Robert Recorde erfand <span style="color:#ffd200">=</span> im Jahr 1557 mit der Begründung: <em>"Nichts kann gleicher sein als zwei parallele Linien."</em> Trotzdem verwendeten Descartes und andere noch jahrzehntelang ∝ oder andere Zeichen. Erst im 18. Jahrhundert setzte sich = durch.</p>
+<p style="margin-top:10px; color:#f7971e;">→ Selbst brillante Ideen brauchen Generationen zur Durchsetzung.</p>
+</div>
+</div>
+
+<div class="era" onclick="toggleInsight(this)">
+<h2>5. Die Null veränderte alles</h2>
+<div class="hidden-content">
+<p>Drei Kulturen erfanden den <span style="color:#ffd200">Stellenwert</span> unabhängig: Babylonier (Basis 60), Maya (Basis 20), Inder (Basis 10). Nur die Maya und die Inder hatten ein echtes Null-Symbol. Die babylonische Mathematik litt jahrhundertelang unter der fehlenden Null.</p>
+<p style="margin-top:10px; color:#f7971e;">→ Die "einfachste" Idee (eine Zahl für "nichts") war die revolutionärste.</p>
+</div>
+</div>
+</div>
+
+<!-- STATION 5: Build Your Own -->
+<div class="playground" id="station5">
+<h2>🏗️ Station 5: Erfinde dein eigenes Symbol!</h2>
+<p style="text-align:center; color:#aaa; margin-bottom:15px;">Die Geschichte zeigt: Jeder kann Notation verbessern. Was würdest DU erfinden?</p>
+<div style="text-align:center;">
+<canvas id="drawCanvas" width="300" height="200" style="background:rgba(0,0,0,0.4); border-radius:10px; border:1px solid rgba(255,255,255,0.2); cursor:crosshair;"></canvas>
+<br>
+<button onclick="clearDraw()" class="evo-btn" style="margin-top:10px;">🗑️ Löschen</button>
+<button onclick="saveDraw()" class="evo-btn" style="margin-top:10px;">💾 Mein Symbol!</button>
+</div>
+<p id="drawMessage" style="text-align:center; margin-top:15px; color:#aaa;"></p>
+
+<div class="insight-box" style="margin-top:25px;">
+<h3>Was Cajori uns lehrt:</h3>
+<p>"Die Erfolge und Misserfolge der Vergangenheit werden zu einer schnelleren Lösung der Notationsprobleme der Gegenwart beitragen."</p>
+<p style="margin-top:10px;">Gute Notation ist: <span class="key">kurz</span>, <span class="key">eindeutig</span>, <span class="key">leicht zu schreiben</span>, <span class="key">suggestiv</span> (sie zeigt, was sie meint), und <span class="key">erweiterbar</span>.</p>
+</div>
+</div>
+
+<footer>
+Basierend auf Florian Cajori, "A History of Mathematical Notations" (1928/29) — Interaktiv aufbereitet
+</footer>
+</div>
+
+<script>
+// Background Canvas Animation
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const symbols = ['+','−','×','÷','=','0','1','2','π','√','∑','∞','∫','≈'];
+let particles = [];
+for(let i=0; i<40; i++){
+  particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:symbols[Math.floor(Math.random()*symbols.length)], speed:0.2+Math.random()*0.5, opacity:0.05+Math.random()*0.1, size:14+Math.random()*20});
+}
+function animateBg(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.font=p.size+'px Georgia';
+    ctx.fillStyle=`rgba(247,151,30,${p.opacity})`;
+    ctx.fillText(p.s,p.x,p.y);
+    p.y+=p.speed;
+    if(p.y>canvas.height+30){p.y=-30;p.x=Math.random()*canvas.width;}
+  });
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+window.addEventListener('resize',()=>{canvas.width=innerWidth;canvas.height=innerHeight;});
+
+// Progress Tracking
+let stationsVisited = new Set();
+function updateProgress(station){
+  stationsVisited.add(station);
+  const pct = (stationsVisited.size/5)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressText').textContent=`Entdeckungsfortschritt: ${stationsVisited.size}/5 Stationen erkundet`;
+}
+
+// Station 1: Symbol Info
+const symbolData = {
+  plus: {title:'+ (Plus)', text:'<b>Erstmals gedruckt:</b> 1489 in Leipzig, von Johann Widman. Ursprung wahrscheinlich aus der lateinischen Handschrift-Abkürzung für "et" (und). In Italien verwendete man stattdessen "p" (für più). Der Kampf zwischen + und p dauerte über 130 Jahre!', color:'#4caf50'},
+  minus: {title:'− (Minus)', text:'<b>Erstmals gedruckt:</b> 1489, ebenfalls bei Widman. Möglicherweise ein Kaufmannssymbol für Untergewicht bei Fässern. Kurios: In Deutschland/Holland gab es jahrhundertelang die Variante ÷ (mit Punkten) als Minus-Zeichen!', color:'#f44336'},
+  mult: {title:'× (Multiplikation)', text:'<b>Erfinder:</b> William Oughtred, 1631 in England. Das Andreaskreuz war vorher schon in anderem Kontext üblich (Bruchrechnung, Proportionen). Leibniz mochte × nicht (Verwechslung mit x!) und schlug 1698 den Punkt · vor.', color:'#2196f3'},
+  div: {title:'÷ (Division)', text:'<b>Erfinder:</b> Johann Heinrich Rahn, Zürich 1659. Ironischerweise wurde es in der Schweiz NIE populär! Nur England und die USA übernahmen es. Kontinentaleuropa nutzt : (von Leibniz, 1684). Ein perfektes Beispiel für "politische Grenzen" in der Mathematik.', color:'#9c27b0'},
+  equals: {title:'= (Gleichheitszeichen)', text:'<b>Erfinder:</b> Robert Recorde, 1557 in England. Seine Begründung: "Noe 2 thynges can be moare equalle" als zwei parallele Linien. Descartes verwendete stattdessen ∝ (1637). Es dauerte über 100 Jahre, bis = sich durchsetzte!', color:'#ff9800'},
+  zero: {title:'0 (Null)', text:'<b>Drei unabhängige Erfindungen:</b> Babylonier (~200 v.Chr., aber nur als Platzhalter), Maya (~1. Jh. n.Chr., volles System!), Inder (~7. Jh. n.Chr.). Die Maya waren FRÜHER als die Inder! Erst die Kombination von Null + Stellenwert + Basis 10 revolutionierte die Welt.', color:'#00bcd4'}
+};
+function showSymbolInfo(key){
+  updateProgress('s1');
+  document.querySelectorAll('.symbol-card').forEach(c=>c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const d=symbolData[key];
+  document.getElementById('infoPanel').innerHTML=`<h3 style="color:${d.color};margin-bottom:10px;">${d.title}</h3><p style="line-height:1.7;">${d.text}</p>`;
+}
+
+// Station 2: Drag & Drop Timeline
+let draggedItem = null;
+document.querySelectorAll('.drag-item').forEach(item=>{
+  item.addEventListener('dragstart',e=>{draggedItem=e.target;e.target.style.opacity='0.5';});
+  item.addEventListener('dragend',e=>{e.target.style.opacity='1';});
+});
+document.querySelectorAll('.drop-zone').forEach(zone=>{
+  zone.addEventListener('dragover',e=>e.preventDefault());
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();
+    if(zone.children.length===0||zone.textContent.match(/^\d\.$/)){
+      zone.textContent='';
+      zone.appendChild(draggedItem);
+      zone.classList.add('filled');
+      updateProgress('s2');
+    }
+  });
+});
+function checkTimeline(){
+  updateProgress('s2');
+  let correct=0;
+  document.querySelectorAll('.drop-zone').forEach(zone=>{
+    const pos=zone.dataset.pos;
+    const child=zone.querySelector('.drag-item');
+    if(child && child.dataset.order===pos){correct++;zone.style.borderColor='#4caf50';}
+    else if(child){zone.style.borderColor='#f44336';}
+  });
+  const fb=document.getElementById('timelineFeedback');
+  if(correct===5) fb.innerHTML='<span style="color:#4caf50;">🎉 Perfekt! Die richtige Reihenfolge: Hindu-Ziffern → + und − → × → Descartes\' = → ÷</span>';
+  else fb.innerHTML=`<span style="color:#ff9800;">${correct}/5 richtig. Tipp: Die indischen Ziffern kamen zuerst (ca. 500 n.Chr.), ÷ zuletzt (1659).</span>`;
+}
+
+// Station 3: Quiz Game
+const questions = [
+  {q:"Welches Volk erfand das Stellenwertsystem ZUERST?", opts:["Inder","Babylonier","Maya","Ägypter"], correct:1, explain:"Die Babylonier nutzten schon ~2000 v.Chr. ein Stellenwertsystem (Basis 60)! Allerdings ohne echte Null."},
+  {q:"Warum mochte Leibniz das × nicht?", opts:["Zu groß","Verwechslung mit x","Zu viele Striche","War schon vergeben"], correct:1, explain:"Leibniz schrieb 1698: 'Ich mag × nicht, da es leicht mit x verwechselt wird.' Er schlug den Punkt (·) vor."},
+  {q:"Wie schrieben die Ägypter 'Addition'?", opts:["Mit einem +","Beine, die vorwärts gehen","Ein Auge","Gar nicht"], correct:1, explain:"Im Papyrus Rhind (ca. 1650 v.Chr.) zeigen vorwärts gehende Beine Addition, rückwärts gehende Subtraktion!"},
+  {q:"Wer führte Buchstaben als allgemeine Zahlen ein (a, b, c...)?", opts:["Descartes","Newton","Vieta","Euler"], correct:2, explain:"François Viète (1591) war der Erste, der systematisch Konsonanten für bekannte und Vokale für unbekannte Größen verwendete."},
+  {q:"Das ÷ Zeichen wird verwendet in...", opts:["Der ganzen Welt","Nur Europa","Nur englischsprachigen Ländern","Nur Deutschland"], correct:2, explain:"÷ ist fast ausschließlich in GB und den USA üblich! Europa nutzt : (Leibniz). Kaum ein Symbol respektiert politische Grenzen so streng."}
+];
+let currentQ=0, score=0;
+function loadQuestion(){
+  if(currentQ>=questions.length){
+    document.getElementById('challenge').innerHTML=`<p style="text-align:center;font-size:1.3em;color:#ffd200;">🏆 Spiel beendet! ${score}/5 Punkte</p><p style="text-align:center;margin-top:10px;">Du hast entdeckt, dass mathematische Symbole eine wilde, politische und überraschende Geschichte haben!</p>`;
+    document.getElementById('nextBtn').style.display='none';
+    return;
+  }
+  const q=questions[currentQ];
+  let html=`<p style="font-size:1.1em;margin-bottom:15px;"><b>Frage ${currentQ+1}:</b> ${q.q}</p><div class="evo-options">`;
+  q.opts.forEach((o,i)=>{html+=`<button class="evo-btn" onclick="answer(${i})">${o}</button>`;});
+  html+='</div>';
+  document.getElementById('challenge').innerHTML=html;
+  document.getElementById('gameFeedback').innerHTML='';
+  document.getElementById('nextBtn').style.display='none';
+}
+function answer(idx){
+  updateProgress('s3');
+  const q=questions[currentQ];
+  const btns=document.querySelectorAll('.evo-options .evo-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.correct) b.classList.add('correct');
+    if(i===idx && idx!==q.correct) b.classList.add('wrong');
+  });
+  if(idx===q.correct) score++;
+  document.getElementById('score').textContent=score;
+  document.getElementById('gameFeedback').innerHTML=`<div style="background:rgba(0,0,0,0.3);padding:15px;border-radius:8px;"><b style="color:${idx===q.correct?'#4caf50':'#f44336'}">${idx===q.correct?'✓ Richtig!':'✗ Nicht ganz.'}</b><br><br>${q.explain}</div>`;
+  document.getElementById('nextBtn').style.display='block';
+}
+function nextQuestion(){currentQ++;loadQuestion();}
+loadQuestion();
+
+// Station 4: Toggle Insights
+function toggleInsight(el){
+  updateProgress('s4');
+  const content=el.querySelector('.hidden-content');
+  content.classList.toggle('show');
+}
+
+// Station 5: Drawing Canvas
+const dc=document.getElementById('drawCanvas');
+const dctx=dc.getContext('2d');
+let drawing=false;
+dctx.strokeStyle='#ffd200';
+dctx.lineWidth=2;
+dctx.lineCap='round';
+dc.addEventListener('mousedown',e=>{drawing=true;dctx.beginPath();dctx.moveTo(e.offsetX,e.offsetY);});
+dc.addEventListener('mousemove',e=>{if(!drawing)return;dctx.lineTo(e.offsetX,e.offsetY);dctx.stroke();});
+dc.addEventListener('mouseup',()=>{drawing=false;updateProgress('s5');});
+dc.addEventListener('mouseleave',()=>{drawing=false;});
+// Touch support
+dc.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const t=e.touches[0];const r=dc.getBoundingClientRect();dctx.beginPath();dctx.moveTo(t.clientX-r.left,t.clientY-r.top);});
+dc.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0];const r=dc.getBoundingClientRect();dctx.lineTo(t.clientX-r.left,t.clientY-r.top);dctx.stroke();});
+dc.addEventListener('touchend',()=>{drawing=false;updateProgress('s5');});
+
+function clearDraw(){dctx.clearRect(0,0,dc.width,dc.height);document.getElementById('drawMessage').textContent='';}
+function saveDraw(){
+  updateProgress('s5');
+  const messages=[
+    '🎉 Großartig! Cajori wäre stolz. Dein Symbol könnte die nächste Revolution auslösen!',
+    '✨ Genial! Denk dran: Das = Zeichen brauchte 100 Jahre zur Durchsetzung. Geduld!',
+    '🔥 Fantastisch! Wer weiß — vielleicht sehen wir dein Symbol in 50 Jahren in Lehrbüchern.',
+    '💡 Kreativ! Die besten Symbole sind kurz, eindeutig und suggestiv. Wie ist deins?'
+  ];
+  document.getElementById('drawMessage').textContent=messages[Math.floor(Math.random()*messages.length)];
+}
+</script>
+</body>
+</html>

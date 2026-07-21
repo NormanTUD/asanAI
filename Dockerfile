@@ -11,10 +11,9 @@ RUN apt-get update && \
         xterm \
         curl \
         git \
-        etckeeper \
         wget \
     && rm -rf /var/lib/apt/lists/*
-RUN apt install ca-certificates apt-transport-https apache2 xterm curl git etckeeper wget -y
+RUN apt install ca-certificates apt-transport-https apache2 xterm curl git wget -y
 
 COPY install.sh /var/www/html/install.sh
 RUN bash /var/www/html/install.sh

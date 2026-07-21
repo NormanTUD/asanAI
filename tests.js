@@ -3109,6 +3109,208 @@ async function new_tiny_tests() {
 	test_equal("requires_auto_one_hot null xy_data", requires_auto_one_hot(false, null), false);
 	test_equal("requires_auto_one_hot has_custom_data", requires_auto_one_hot(true, {y: [1,2]}), false);
 
+	// --- predict.js: find_max_index ---
+	test_equal("find_max_index([1,3,2])", find_max_index([1,3,2]), 1);
+	test_equal("find_max_index([5,4,3,2,1])", find_max_index([5,4,3,2,1]), 0);
+	test_equal("find_max_index([1,2,5])", find_max_index([1,2,5]), 2);
+	test_equal("find_max_index([-5,-1,-3])", find_max_index([-5,-1,-3]), 1);
+	test_equal("find_max_index single element", find_max_index([42]), 0);
+
+	// --- predict.js: find_max_value ---
+	test_equal("find_max_value([1,3,2])", find_max_value([1,3,2]), 3);
+	test_equal("find_max_value([-5,-1,-3])", find_max_value([-5,-1,-3]), -1);
+	test_equal("find_max_value([10])", find_max_value([10]), 10);
+
+	// --- predict.js: _format_probability_text ---
+	test_equal("_format_probability_text(0.5)", _format_probability_text(0.5), "50.00%");
+	test_equal("_format_probability_text(1)", _format_probability_text(1), "100.00%");
+	test_equal("_format_probability_text(0)", _format_probability_text(0), "0.00%");
+	test_equal("_format_probability_text(null)", _format_probability_text(null), "");
+	test_equal("_format_probability_text(undefined)", _format_probability_text(undefined), "");
+	test_equal("_format_probability_text(0.1234)", _format_probability_text(0.1234), "12.34%");
+
+	// --- predict.js: _format_raw_value ---
+	test_equal("_format_raw_value(0.5)", _format_raw_value(0.5), "0.500000");
+	test_equal("_format_raw_value(1)", _format_raw_value(1), "1.000000");
+	test_equal("_format_raw_value(null)", _format_raw_value(null), "");
+	test_equal("_format_raw_value(undefined)", _format_raw_value(undefined), "");
+	test_equal("_format_raw_value(3.14159)", _format_raw_value(3.14159), "3.141590");
+
+	// --- my_temml.js: _reshape_flat_to_matrix ---
+	test_equal("_reshape_flat_to_matrix 2x3", JSON.stringify(_reshape_flat_to_matrix([1,2,3,4,5,6], [2,3])), "[[1,2,3],[4,5,6]]");
+	test_equal("_reshape_flat_to_matrix 1x3", JSON.stringify(_reshape_flat_to_matrix([7,8,9], [1,3])), "[[7,8,9]]");
+	test_equal("_reshape_flat_to_matrix 3x1", JSON.stringify(_reshape_flat_to_matrix([1,2,3], [3,1])), "[[1],[2],[3]]");
+	test_equal("_reshape_flat_to_matrix 1x1", JSON.stringify(_reshape_flat_to_matrix([42], [1,1])), "[[42]]");
+
+	// --- health_status.js: _erfApprox ---
+	test_equal("_erfApprox(0) ~ 0", Math.abs(_erfApprox(0)) < 1e-6, true);
+	test_equal("_erfApprox(1) ~ 0.8427", Math.abs(_erfApprox(1) - 0.8427007929) < 0.001, true);
+	test_equal("_erfApprox(-1) = -erfApprox(1)", Math.abs(_erfApprox(-1) + _erfApprox(1)) < 1e-6, true);
+	test_equal("_erfApprox large positive ~ 1", _erfApprox(5) > 0.999, true);
+	test_equal("_erfApprox large negative ~ -1", _erfApprox(-5) < -0.999, true);
+
+	// --- feature_maps.js: _determinant_3x3 ---
+	test_equal("_determinant_3x3 identity", _determinant_3x3([[1,0,0],[0,1,0],[0,0,1]]), 1);
+	test_equal("_determinant_3x3 [[2,0,0],[0,3,0],[0,0,4]]", _determinant_3x3([[2,0,0],[0,3,0],[0,0,4]]), 24);
+	test_equal("_determinant_3x3 singular", _determinant_3x3([[1,2,3],[4,5,6],[7,8,9]]), 0);
+	test_equal("_determinant_3x3 [[1,2,3],[0,1,4],[5,6,0]]", _determinant_3x3([[1,2,3],[0,1,4],[5,6,0]]), 1);
+
+	// --- feature_maps.js: _normalize_correlation_matrix ---
+	test_equal("_normalize_correlation_matrix identity", JSON.stringify(_normalize_correlation_matrix([[1,0,0],[0,1,0],[0,0,1]])), "[[1,0,0],[0,1,0],[0,0,1]]");
+	var normTest = _normalize_correlation_matrix([[3,0,0],[0,4,0],[0,0,5]]);
+	test_equal("_normalize_correlation_matrix cols are unit length", Math.abs(Math.sqrt(normTest[0][0]*normTest[0][0]+normTest[1][0]*normTest[1][0]+normTest[2][0]*normTest[2][0]) - 1) < 1e-10, true);
+
+	// --- train.js: calculate_stats ---
+	var cs1 = calculate_stats([1,2,3,4,5]);
+	test_equal("calculate_stats mean", cs1.mean, 3);
+	test_equal("calculate_stats min", cs1.min, 1);
+	test_equal("calculate_stats max", cs1.max, 5);
+	test_equal("calculate_stats n", cs1.n, 5);
+	test_equal("calculate_stats std ~ 1.414", Math.abs(cs1.std - Math.sqrt(2)) < 1e-6, true);
+	test_equal("calculate_stats cv > 0", cs1.cv > 0, true);
+
+	var cs2 = calculate_stats([5,5,5,5]);
+	test_equal("calculate_stats identical values std=0", cs2.std, 0);
+	test_equal("calculate_stats identical values cv=0", cs2.cv, 0);
+
+	// --- train.js: model_shape_to_string ---
+	test_equal("model_shape_to_string [null,10]", model_shape_to_string([null,10]), "[null, 10]");
+	test_equal("model_shape_to_string [1,2,3]", model_shape_to_string([1,2,3]), "[1, 2, 3]");
+	test_equal("model_shape_to_string [null,28,28,3]", model_shape_to_string([null,28,28,3]), "[null, 28, 28, 3]");
+
+	// --- layers_gui.js: is_basic_option ---
+	test_equal("is_basic_option 'activation'", is_basic_option("activation"), true);
+	test_equal("is_basic_option 'units'", is_basic_option("units"), true);
+	test_equal("is_basic_option 'filters'", is_basic_option("filters"), true);
+	test_equal("is_basic_option 'kernel_size'", is_basic_option("kernel_size"), true);
+	test_equal("is_basic_option 'pool_size'", is_basic_option("pool_size"), true);
+	test_equal("is_basic_option 'dropout_rate'", is_basic_option("dropout_rate"), true);
+	test_equal("is_basic_option 'something_else'", is_basic_option("something_else"), false);
+	test_equal("is_basic_option ''", is_basic_option(""), false);
+
+	// --- layers_gui.js: findInitializerElement ---
+	test_equal("findInitializerElement finds initializer", findInitializerElement(["foo", "kernel_initializer_glorot", "bar"]), "kernel_initializer_glorot");
+	test_equal("findInitializerElement finds first", findInitializerElement(["bias_initializer_zeros", "kernel_initializer_glorot"]), "bias_initializer_zeros");
+	test_equal("findInitializerElement null when none", findInitializerElement(["foo", "bar", "baz"]), null);
+	test_equal("findInitializerElement empty array", findInitializerElement([]), null);
+
+	// --- explain.js: get_empty_default_trace ---
+	var trace = get_empty_default_trace("myTrace");
+	test_equal("get_empty_default_trace name", trace.name, "myTrace");
+	test_equal("get_empty_default_trace type", trace.type, "scatter");
+	test_equal("get_empty_default_trace x empty", JSON.stringify(trace.x), "[]");
+	test_equal("get_empty_default_trace y empty", JSON.stringify(trace.y), "[]");
+
+	// --- fcnn.js: _determine_shape_type ---
+	test_equal("_determine_shape_type conv2d", _determine_shape_type("conv2d"), "rectangle_conv2d");
+	test_equal("_determine_shape_type Conv2DTranspose", _determine_shape_type("Conv2DTranspose"), "rectangle_conv2d");
+	test_equal("_determine_shape_type flatten", _determine_shape_type("flatten"), "rectangle_flatten");
+	test_equal("_determine_shape_type Flatten", _determine_shape_type("Flatten"), "rectangle_flatten");
+	test_equal("_determine_shape_type dense", _determine_shape_type("dense"), "circle");
+	test_equal("_determine_shape_type maxPooling2d", _determine_shape_type("maxPooling2d"), "circle");
+	test_equal("_determine_shape_type layernormalization", _determine_shape_type("LayerNormalization"), "layernorm");
+
+	// --- fcnn.js: _format_number ---
+	test_equal("_format_number null", _format_number(null), "N/A");
+	test_equal("_format_number undefined", _format_number(undefined), "N/A");
+	test_equal("_format_number 0", _format_number(0), "0");
+	test_equal("_format_number 1.23456789", _format_number(1.23456789), "1.234568");
+	test_equal("_format_number 42", _format_number(42), "42");
+	test_equal("_format_number Infinity", _format_number(Infinity), "Infinity");
+	test_equal("_format_number -Infinity", _format_number(-Infinity), "-Infinity");
+	test_equal("_format_number NaN", _format_number(NaN), "NaN");
+	test_equal("_format_number 0.00005", _format_number(0.00005), "5.0000e-5");
+
+	// --- fcnn.js: _get_layer_name ---
+	test_equal("_get_layer_name output layer", _get_layer_name(2, 3, "dense"), "Output Layer");
+	test_equal("_get_layer_name first layer", _get_layer_name(0, 3, "dense"), "dense 0");
+	test_equal("_get_layer_name middle layer", _get_layer_name(1, 3, "conv2d"), "conv2d 1");
+
+	// --- fcnn.js: _point_in_region circle ---
+	test_equal("_point_in_region circle center", _point_in_region(5, 5, {shape: "circle", x: 5, y: 5, radius: 10}), true);
+	test_equal("_point_in_region circle outside", _point_in_region(100, 100, {shape: "circle", x: 5, y: 5, radius: 10}), false);
+	test_equal("_point_in_region circle edge", _point_in_region(15, 5, {shape: "circle", x: 5, y: 5, radius: 10}), true);
+
+	// --- fcnn.js: _point_in_region rectangle ---
+	test_equal("_point_in_region rect inside", _point_in_region(3, 3, {shape: "rect", x: 0, y: 0, w: 10, h: 10}), true);
+	test_equal("_point_in_region rect outside", _point_in_region(15, 3, {shape: "rect", x: 0, y: 0, w: 10, h: 10}), false);
+
+	// --- fcnn.js: _compute_histogram_bins ---
+	var hBins = _compute_histogram_bins([1,2,3,4,5], {min: 1, max: 5}, 5);
+	test_equal("_compute_histogram_bins length", hBins.length, 5);
+	test_equal("_compute_histogram_bins sum", hBins.reduce((a,b) => a+b, 0), 5);
+
+	// --- fcnn.js: _compute_stats ---
+	var fcs = _compute_stats([1,2,3,4,5]);
+	test_equal("fcnn _compute_stats min", fcs.min, 1);
+	test_equal("fcnn _compute_stats max", fcs.max, 5);
+	test_equal("fcnn _compute_stats avg", fcs.avg, 3);
+	test_equal("fcnn _compute_stats count", fcs.count, 5);
+	test_equal("fcnn _compute_stats null on empty", _compute_stats(null), null);
+	test_equal("fcnn _compute_stats null on []", _compute_stats([]), null);
+
+	// --- fcnn.js: _compute_vertical_spacing ---
+	test_equal("_compute_vertical_spacing small count", _compute_vertical_spacing(5, 20, 800), 20);
+	test_equal("_compute_vertical_spacing large count", _compute_vertical_spacing(100, 20, 800), 8);
+	test_equal("_compute_vertical_spacing single neuron", _compute_vertical_spacing(1, 20, 800), 20);
+
+	// --- loss_landscape.js: compute_dot ---
+	test_equal("compute_dot [1,2,3].[4,5,6]", compute_dot([1,2,3],[4,5,6]), 32);
+	test_equal("compute_dot [1,0,0].[0,1,0]", compute_dot([1,0,0],[0,1,0]), 0);
+	test_equal("compute_dot zeros", compute_dot([0,0],[0,0]), 0);
+	test_equal("compute_dot mismatched lengths", compute_dot([1,2],[1]), 0);
+
+	// --- loss_landscape.js: subtract_mul ---
+	test_equal("subtract_mul basic", JSON.stringify(subtract_mul([10,20],[1,2],3)), "[7,14]");
+	test_equal("subtract_mul scalar=0", JSON.stringify(subtract_mul([10,20],[1,2],0)), "[10,20]");
+	test_equal("subtract_mul mismatched", JSON.stringify(subtract_mul([1,2],[1],[3])), "[1,2]");
+
+	// --- loss_landscape.js: vector_norm ---
+	test_equal("vector_norm [3,4]", vector_norm([3,4]), 5);
+	test_equal("vector_norm [0,0,0]", vector_norm([0,0,0]), 0);
+	test_equal("vector_norm [1]", vector_norm([1]), 1);
+
+	// --- loss_landscape.js: normalize_vector ---
+	var nv1 = normalize_vector([3,4]);
+	test_equal("normalize_vector [3,4] norm=1", Math.abs(vector_norm(nv1) - 1) < 1e-10, true);
+	test_equal("normalize_vector [3,4] values correct", Math.abs(nv1[0] - 0.6) < 1e-10, true);
+	test_equal("normalize_vector [0,0,0] unchanged", JSON.stringify(normalize_vector([0,0,0])), "[0,0,0]");
+	test_equal("normalize_vector non-array", JSON.stringify(normalize_vector(null)), "[]");
+
+	// --- loss_landscape.js: scalarMulVec ---
+	test_equal("scalarMulVec basic", JSON.stringify(scalarMulVec(3, [1,2,3])), "[3,6,9]");
+	test_equal("scalarMulVec zero scalar", JSON.stringify(scalarMulVec(0, [1,2,3])), "[0,0,0]");
+
+	// --- loss_landscape.js: isShapeArray ---
+	test_equal("isShapeArray valid", isShapeArray([null, 28, 28, 3]), true);
+	test_equal("isShapeArray all numbers", isShapeArray([1, 2, 3]), true);
+	test_equal("isShapeArray empty", isShapeArray([]), true);
+	test_equal("isShapeArray null", isShapeArray(null), false);
+	test_equal("isShapeArray with negative", isShapeArray([-1, 2]), false);
+	test_equal("isShapeArray with float", isShapeArray([1.5, 2]), false);
+	test_equal("isShapeArray with string", isShapeArray(["a"]), false);
+
+	// --- loss_landscape.js: formatTime ---
+	test_equal("formatTime 0", formatTime(0), "00:00");
+	test_equal("formatTime 65", formatTime(65), "01:05");
+	test_equal("formatTime 3661", formatTime(3661), "01:01:01");
+	test_equal("formatTime 3600", formatTime(3600), "01:00:00");
+	test_equal("formatTime negative", formatTime(-5), "...");
+	test_equal("formatTime NaN", formatTime(NaN), "...");
+	test_equal("formatTime string", formatTime("abc"), "...");
+
+	// --- gui.js: get_key_from_path ---
+	test_equal("get_key_from_path simple", get_key_from_path({a:{b:42}}, ["a","b"]), 42);
+	test_equal("get_key_from_path empty keypath", get_key_from_path({a:1}, []), {a:1});
+	test_equal("get_key_from_path missing key", get_key_from_path({a:{b:42}}, ["a","x"]), null);
+	test_equal("get_key_from_path deep", get_key_from_path({a:{b:{c:7}}}, ["a","b","c"]), 7);
+
+	// --- layer_descriptions.js: collapse_into_segments ---
+	test_equal("collapse_into_segments empty", JSON.stringify(collapse_into_segments([])), "[]");
+	test_equal("collapse_into_segments same values", JSON.stringify(collapse_into_segments(["a","a","a"])), '[{"a":[0,1,2]}]');
+	test_equal("collapse_into_segments alternating", JSON.stringify(collapse_into_segments(["a","b","a"])), '[{"a":[0]},{"b":[1]},{"a":[2]}]');
+	test_equal("collapse_into_segments mixed", JSON.stringify(collapse_into_segments(["x","x","y","y","z"])), '[{"x":[0,1]},{"y":[2,3]},{"z":[4]}]');
+
 	return true;
 }
 
@@ -3700,6 +3902,113 @@ async function test_health_status() {
 	return true;
 }
 
+async function test_multi_run_training() {
+	log_test("Test Multi-Run Training");
+
+	const wanted_epochs = 3;
+	const wanted_runs = 3;
+
+	await set_dataset_and_wait("and_xor");
+	await set_model_dataset("and");
+	await _set_initializers();
+
+	await set_epochs(wanted_epochs);
+
+	set_mode_to_expert();
+	$("#number_of_runs").val(wanted_runs).trigger("change");
+
+	const ret = await train_neural_network();
+
+	$("#beginner").click();
+	set_mode();
+	$("#number_of_runs").val(1).trigger("change");
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		console.error("[test_multi_run_training] ret object is invalid");
+		return false;
+	}
+
+	var statsEl = document.getElementById("multi_run_stats");
+	if(!statsEl) {
+		console.error("[test_multi_run_training] #multi_run_stats element does not exist");
+		return false;
+	}
+
+	var statsHtml = statsEl.innerHTML;
+	if(!statsHtml || statsHtml.trim().length === 0) {
+		console.error("[test_multi_run_training] #multi_run_stats is empty");
+		return false;
+	}
+
+	var statsTable = statsEl.querySelector(".multi_run_stats_table");
+	if(!statsTable) {
+		console.error("[test_multi_run_training] .multi_run_stats_table not found");
+		return false;
+	}
+
+	var dataRows = statsTable.querySelectorAll("tr");
+	if(dataRows.length < 2) {
+		console.error("[test_multi_run_training] stats table has " + dataRows.length + " rows, expected at least 2 (header + loss)");
+		return false;
+	}
+
+	test_equal("multi_run_stats table exists", true, true);
+	test_equal("multi_run_stats has data rows", dataRows.length >= 2, true);
+
+	var lossCells = dataRows[1].querySelectorAll("td");
+	if(lossCells.length < 4) {
+		console.error("[test_multi_run_training] loss row has " + lossCells.length + " cells, expected at least 4 (label, mean, min, max)");
+		return false;
+	}
+
+	var lossMean = parseFloat(lossCells[1].textContent);
+	var lossMin = parseFloat(lossCells[2].textContent);
+	var lossMax = parseFloat(lossCells[3].textContent);
+
+	if(isNaN(lossMean) || isNaN(lossMin) || isNaN(lossMax)) {
+		console.error("[test_multi_run_training] stats contain NaN values: mean=" + lossMean + " min=" + lossMin + " max=" + lossMax);
+		return false;
+	}
+
+	test_equal("loss mean is finite", isNaN(lossMean), false);
+	test_equal("loss min <= mean", lossMin <= lossMean, true);
+	test_equal("loss max >= mean", lossMax >= lossMean, true);
+	test_equal("loss min <= loss max", lossMin <= lossMax, true);
+
+	var runTabs = statsEl.querySelectorAll(".multi_run_tab");
+	test_equal("run tabs count", runTabs.length, wanted_runs);
+
+	var activeTabs = statsEl.querySelectorAll(".multi_run_tab_active");
+	test_equal("one active tab", activeTabs.length, 1);
+
+	var chartAreas = statsEl.querySelectorAll(".multi_run_chart_area");
+	test_equal("chart areas count", chartAreas.length, wanted_runs);
+
+	var visibleCharts = statsEl.querySelectorAll(".multi_run_chart_area[style*='block']");
+	test_equal("one visible chart", visibleCharts.length, 1);
+
+	var multiRunDataKeys = Object.keys(multi_run_data).filter(function(k) { return multi_run_data[k] && multi_run_data[k].weights; });
+	test_equal("multi_run_data has saved weights", multiRunDataKeys.length, wanted_runs);
+
+	var hasPlotData = Object.keys(multi_run_data).filter(function(k) { return multi_run_data[k] && multi_run_data[k].plotData; });
+	test_equal("multi_run_data has plot data", hasPlotData.length, wanted_runs);
+
+	var savedWeights0 = multi_run_data[1].weights;
+	restore_multi_run_weights(1);
+	var currentWeights1 = model.layers[0].getWeights()[0].arraySync();
+	test_equal("restore_multi_run_weights restores weights", true, JSON.stringify(currentWeights1) === JSON.stringify(savedWeights0[0][0]));
+
+	show_multi_run_run_chart(2);
+	test_equal("show_multi_run_run_chart sets current_multi_run", current_multi_run, 2);
+	test_equal("chart 2 is active", $(".multi_run_tab[data-run=2]").hasClass("multi_run_tab_active"), true);
+	test_equal("chart 1 is hidden", $("#multi_run_chart_1").is(":visible"), false);
+
+	show_multi_run_run_chart(wanted_runs);
+	test_equal("chart " + wanted_runs + " is active after selecting it", $(".multi_run_tab[data-run=" + wanted_runs + "]").hasClass("multi_run_tab_active"), true);
+
+	return true;
+}
+
 async function test_weight_analysis() {
 	log_test("Test weight analysis");
 
@@ -4165,6 +4474,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_dimensionality_river()", await test_dimensionality_river(), true);
 		//test_equal("test_health_status()", await test_health_status(), true);
 		test_equal("test_weight_analysis()", await test_weight_analysis(), true);
+		test_equal("test_multi_run_training()", await test_multi_run_training(), true);
 
 		test_no_new_errors_or_warnings();
 

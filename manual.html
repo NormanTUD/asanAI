@@ -28,10 +28,53 @@
 		<script src='debug.js'></script>
 		<script src="libs/md5.umd.min.js"></script>
 		<style>
+			html { scroll-behavior: smooth; scroll-padding-top: 20px; }
 			body {
 				font-family: sans-serif;
 				background-color: #f3f3f3;
 			}
+			#contents {
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 20px 40px;
+				line-height: 1.6;
+			}
+			/* Lightbox */
+			.lightbox-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
+			.lightbox-overlay.active { display: flex; }
+			.lightbox-overlay img { max-width: 92vw; max-height: 92vh; border-radius: 6px; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+			/* Interactive demo boxes */
+			.interactive-demo { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin: 14px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+			.interactive-demo label { font-weight: 600; font-size: 0.9em; }
+			.interactive-demo input[type=range] { width: 200px; vertical-align: middle; }
+			.interactive-demo .result-display { font-family: monospace; font-size: 1.1em; margin: 8px 0; padding: 8px; background: #f8f8f8; border-radius: 4px; }
+			.interactive-demo button { background: #4a90d9; color: #fff; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-size: 0.9em; }
+			.interactive-demo button:hover { background: #357abd; }
+			.interactive-demo .editable-grid { display: inline-grid; gap: 2px; margin: 8px 0; }
+			.interactive-demo .grid-cell { width: 48px; height: 36px; border: 1px solid #ccc; text-align: center; font-family: monospace; font-size: 0.85em; background: #fafafa; }
+			.interactive-demo .grid-cell.highlight { background: #ffe082; transition: background 0.3s; }
+			.interactive-demo .grid-cell.active { background: #a5d6a7; transition: background 0.3s; }
+			/* Step animation controls */
+			.step-controls { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+			.step-controls button { background: #5c6bc0; color: #fff; border: none; border-radius: 4px; padding: 5px 12px; cursor: pointer; }
+			.step-controls button:hover { background: #3f51b5; }
+			.step-controls .step-label { font-family: monospace; font-size: 0.9em; color: #555; }
+			/* Percentage bar */
+			.softmax-bar { height: 18px; border-radius: 3px; transition: width 0.25s ease; min-width: 2px; }
+			.softmax-bar-container { display: flex; align-items: center; gap: 6px; margin: 2px 0; }
+			.softmax-bar-label { font-family: monospace; font-size: 0.85em; min-width: 60px; }
+			.softmax-bar-value { font-family: monospace; font-size: 0.85em; min-width: 55px; text-align: right; }
+			/* Reshape animation */
+			.reshape-container { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+			.reshape-arrow { font-size: 1.8em; color: #666; }
+			/* Layer sim UX */
+			.layer-sim-loading { display: none; font-size: 0.85em; color: #888; font-style: italic; margin: 4px 0; }
+			.layer-sim-loading.active { display: block; }
+			.out_images { transition: opacity 0.15s; }
+			/* Flatten cell animation */
+			.flatten-order { font-size: 0.7em; font-weight: bold; color: #fff; }
+			@keyframes flattenPulse { 0%{transform:scale(1.1)} 100%{transform:scale(1)} }
+			.flatten-cell-animate { animation: flattenPulse 0.2s ease; }
 
 			.layer-visual-container {
 				display: flex;
@@ -258,8 +301,9 @@
 			};
 		</script>
 		<div id="training_data"></div>
-		<img src="_gui/logo_small.png" />
+		<div style="max-width:900px; margin:0 auto;"><img src="_gui/logo_small.png" /></div>
 		<div id="toc"></div>
+		<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img"></div>
 		<div id="contents">
 			<h1>General outline</h1>
 			asanAI offers a simple way of creating sequential neural networks and train them on your own data, from within the browser. It allows you to visualize a lot of different intermediate steps. You can, when done training, also <a href="#Export">export</a> the trained model to Python and HTML/JS.
@@ -339,14 +383,14 @@ x_1, x_2, x_3, y_1, y_2, y_3
 </pre>
 			<img src="manual/own_csv_2.png" />
 <br>
-			The the header-to-training-data-section you can specify which columns (defined by their title in the very first line) should belong to the Input and which ones should belong to the output. After specifying this, on the right, a preview of how the tensors will look like like.
+			In the header-to-training-data-section you can specify which columns (defined by their title in the very first line) should belong to the Input and which ones should belong to the output. After specifying this, on the right, a preview of how the tensors will look like like.
 <br>
 			The input and output shapes are changed automatically according to the data type and the constructed network.
 <br>
 			There are also some options at the top:
 			<ul>
 				<li><b>Auto-adjust last layer's number of neurons?</b> This sets the number of output neurons depending on the number of values set to "Y".</li>
-				<li><b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 0.</li>
+				<li><b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 1.</li>
 				<li><b>Shuffle data before doing validation split (recommended)?</b> TensorFlow usually takes the last n% of the input data as Validation Split (if enabled). This way, if the data is ordered, you may miss some categories of data in the training data, because it got shifted to the Validation dataset automatically. This can be counteracted by shuffling the data randomly before the validation split is taken out of the dataset. The correlation between an input and an output stays the same after shuffling.</li>
 				<li><b>Auto One-Hot-encode Y (disables "divide by")?</b> Automatically One-Hot-Encodes if the Y-data has only one column and is a string. Then, it autogenerates labels too.</li>
 				<li><b>Auto loss/metric?</b> Set loss and metric automatically depending on how the data is structured (for classification problems it takes <a href="#categoricalCrossentropy">Categorical Crossentropy</a> and <a href="#meanSquaredError">Mean Squared Error</a> for anything else.</li>
@@ -465,7 +509,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
 <br>
-			The description of the size of a tensor is called a shape. A two-by-two-Matrix would have the shape \( [3, 3] \). The image above would have the shape \( [3, 3, 3] \), because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
+			The description of the size of a tensor is called a shape. 			A two-by-two-Matrix would have the shape \( [2, 2] \). The image above would have the shape \( [3, 3, 3] \), because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
 <br>
 			<h3>One-Hot-Encoding</h3>
 			One-Hot-Encoding is used to symbolize percentages of values of categories. For example, if you want to differentiate between cat and dog, the output vector
@@ -473,6 +517,36 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			For more categories, you'd add another entry to that column vector, like \( [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] \), all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
 <br>
+			<div class="interactive-demo" id="onehot_demo">
+				<label>Interactive One-Hot-Encoding: </label>
+				<select id="onehot_select" onchange="updateOneHot()">
+					<option value="0">Cat</option>
+					<option value="1">Dog</option>
+					<option value="2">Human</option>
+				</select>
+				<div class="result-display">$$\text{Order: }\left[\text{Cat}, \text{Dog}, \text{Human}\right]$$</div>
+				<div class="result-display" id="onehot_result"></div>
+			</div>
+			<script>
+			function updateOneHot() {
+				var idx = parseInt(document.getElementById('onehot_select').value);
+				var labels = ['Cat', 'Dog', 'Human'];
+				var colors = ['#e57373', '#64b5f6', '#81c784'];
+				var vec = [0, 0, 0];
+				vec[idx] = 1;
+				var tex = '\\text{One-Hot}(\\text{' + labels[idx] + '}) = ';
+				tex += '\\begin{pmatrix} ';
+				for (var i = 0; i < vec.length; i++) {
+					var c = i === idx ? colors[i] : '#999';
+					tex += '\\color{' + c + '}{' + vec[i] + '}';
+					if (i < vec.length - 1) tex += ' \\\\ ';
+				}
+				tex += ' \\end{pmatrix}';
+				document.getElementById('onehot_result').innerHTML = '\\[ ' + tex + ' \\]';
+				if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([document.getElementById('onehot_result')]);
+			}
+			updateOneHot();
+			</script>
 			<h3>Layers</h3>
 			Layers act as nested functions. Each layer is a function by itself, and with layers, you put them together into one larger function.
 <br>
@@ -480,7 +554,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			$$ \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) $$
 <br>
-			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be designed with asanAI.
+			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be used with asanAI.
 <br>
 			<h3>What do functions have to do with neural networks?</h3>
 			A mathematical function assigns values from one set to values from another.
@@ -545,10 +619,10 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			$$ 
 				f\left(
 					\begin{pmatrix}
-						x_3 \\
-						x_4 \\
-						x_4 
-					\end{pmatrix}
+					x_3 \\
+					x_4 \\
+					x_5 
+				\end{pmatrix}
 				\right) = \begin{pmatrix}
 					y_3 \\
 					y_4 \\
@@ -566,7 +640,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Then, the network would learn "cat" in the first batch and be punished for what it has learnt previously in the next batch, where there are only dogs. 
 <br>
-			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, so the likelyhood of one batch containing only one type of image is drastically reduced.
+			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, 			so the likelihood of one batch containing only one type of image is drastically reduced.
 <br>
 			<h4>How the computer calculates derivatives of very complex functions</h4>
 <br>
@@ -594,7 +668,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			$$ \frac{0.00400002}{0.0001} = 40.0002 $$
 <br>
-			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by chosing a smaller \(h\).
+			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by choosing a smaller \(h\).
 <br>
 			<h3>Predicting</h3>
 			Predicting with a simple sequential neural network works by passing input data through the layers of the network in order, starting from the input layer and ending at the output layer.
@@ -685,6 +759,46 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}}_{\mathrm{Bias}}
 			$$
 <br>
+			<div class="interactive-demo" id="dense_demo">
+				<label>Interactive Dense Layer (input size 2, output size 1):</label>
+				<div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888;">Input</div>
+						<input class="grid-cell" id="dense_x0" type="number" value="1" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+						<input class="grid-cell" id="dense_x1" type="number" value="2" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+					</div>
+					<div style="font-size:1.5em; color:#666;">&times;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888;">Kernel</div>
+						<input class="grid-cell" id="dense_w0" type="number" value="0.5" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+						<input class="grid-cell" id="dense_w1" type="number" value="-0.3" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+					</div>
+					<div style="font-size:1.5em; color:#666;">+</div>
+					<div>
+						<div style="font-size:0.8em; color:#888;">Bias</div>
+						<input class="grid-cell" id="dense_b" type="number" value="0.1" step="0.1" style="width:56px; margin:2px;" oninput="computeDense()">
+					</div>
+					<div style="font-size:1.5em; color:#666;">=</div>
+					<div>
+						<div style="font-size:0.8em; color:#888;">Output</div>
+						<div class="result-display" id="dense_output" style="margin:0; padding:6px 12px; font-size:1.2em; min-width:60px; text-align:center;"></div>
+					</div>
+				</div>
+			</div>
+			<script>
+			function computeDense() {
+				var x0 = parseFloat(document.getElementById('dense_x0').value) || 0;
+				var x1 = parseFloat(document.getElementById('dense_x1').value) || 0;
+				var w0 = parseFloat(document.getElementById('dense_w0').value) || 0;
+				var w1 = parseFloat(document.getElementById('dense_w1').value) || 0;
+				var b  = parseFloat(document.getElementById('dense_b').value)  || 0;
+				var y = x0 * w0 + x1 * w1 + b;
+				var el = document.getElementById('dense_output');
+				el.textContent = y.toFixed(4);
+				el.style.background = y > 0 ? '#e8f5e9' : y < 0 ? '#ffebee' : '#f5f5f5';
+			}
+			computeDense();
+			</script>
 			<h3>Flatten</h3>
 			Flatten has no options. It creates a simple vector of any matrix.
 <br>
@@ -698,11 +812,70 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}\right) = \left[0 \quad 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \right]
 			$$
 <br>
+			<div class="interactive-demo" id="flatten_demo">
+				<label>Interactive Flatten: </label>
+				<button onclick="animateFlatten()">Animate</button>
+				<div style="display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input (3x3)</div>
+						<div class="editable-grid" id="flatten_input_grid" style="grid-template-columns:repeat(3,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output (1x9)</div>
+						<div class="editable-grid" id="flatten_output_grid" style="grid-template-columns:repeat(9,36px);"></div>
+					</div>
+				</div>
+			</div>
+			<script>
+			function initFlattenDemo() {
+				var values = [0,1,2,3,4,5,6,7,8];
+				var inputGrid = document.getElementById('flatten_input_grid');
+				var outputGrid = document.getElementById('flatten_output_grid');
+				if (!inputGrid || !outputGrid) return;
+				inputGrid.innerHTML = '';
+				outputGrid.innerHTML = '';
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'fc_in_' + i;
+					cell.textContent = v;
+					cell.style.background = 'hsl(' + (i * 40) + ', 70%, 85%)';
+					inputGrid.appendChild(cell);
+				});
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'fc_out_' + i;
+					cell.style.width = '36px';
+					cell.style.background = '#eee';
+					cell.textContent = '';
+					outputGrid.appendChild(cell);
+				});
+			}
+			function animateFlatten() {
+				initFlattenDemo();
+				var colors = [];
+				for (var i = 0; i < 9; i++) colors.push('hsl(' + (i * 40) + ', 70%, 85%)');
+				var idx = 0;
+				function step() {
+					if (idx >= 9) return;
+					var inCell = document.getElementById('fc_in_' + idx);
+					var outCell = document.getElementById('fc_out_' + idx);
+					if (inCell) { inCell.style.background = '#fff3e0'; inCell.style.border = '2px solid #ff9800'; }
+					if (outCell) { outCell.textContent = idx; outCell.style.background = colors[idx]; outCell.classList.add('flatten-cell-animate'); }
+					idx++;
+					setTimeout(step, 250);
+				}
+				step();
+			}
+			initFlattenDemo();
+			</script>
 			<h3>Dropout</h3>
 			<div id="dropout_example"></div>
 <br>
 <br>
-			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
+			The dropout layer sets random values to 0 with a probability given in the Dropout-Rate-option.
 <br>
 			$$
 				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
@@ -732,7 +905,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			<h3>Reshape</h3>
 <br>
-			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
+			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arrangement.
 <br>
 			$$
 				\begin{pmatrix}
@@ -750,6 +923,73 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
 <br>
+			<div class="interactive-demo" id="reshape_demo">
+				<label>Interactive Reshape (6 elements): Target shape </label>
+				<select id="reshape_select" onchange="animateReshape()">
+					<option value="2,3">[2, 3]</option>
+					<option value="3,2" selected>[3, 2]</option>
+					<option value="1,6">[1, 6]</option>
+					<option value="6,1">[6, 1]</option>
+				</select>
+				<button onclick="animateReshape()">Reshape</button>
+				<div class="reshape-container" style="margin-top:10px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input [2, 3]</div>
+						<div class="editable-grid" id="reshape_input_grid" style="grid-template-columns:repeat(3,48px);"></div>
+					</div>
+					<div class="reshape-arrow" id="reshape_arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;" id="reshape_out_label">Output [3, 2]</div>
+						<div class="editable-grid" id="reshape_output_grid"></div>
+					</div>
+				</div>
+			</div>
+			<script>
+			function initReshapeDemo() {
+				var values = [1,2,3,4,5,6];
+				var inputGrid = document.getElementById('reshape_input_grid');
+				inputGrid.innerHTML = '';
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'rc_in_' + i;
+					cell.textContent = v;
+					cell.style.background = 'hsl(' + (i * 60) + ', 65%, 85%)';
+					inputGrid.appendChild(cell);
+				});
+				animateReshape();
+			}
+			function animateReshape() {
+				var values = [1,2,3,4,5,6];
+				var shapeStr = document.getElementById('reshape_select').value;
+				var shape = shapeStr.split(',').map(Number);
+				var cols = shape[1];
+				var outGrid = document.getElementById('reshape_output_grid');
+				var outLabel = document.getElementById('reshape_out_label');
+				outLabel.textContent = 'Output [' + shapeStr + ']';
+				outGrid.style.gridTemplateColumns = 'repeat(' + cols + ', 48px)';
+				outGrid.innerHTML = '';
+				values.forEach(function(v, i) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell';
+					cell.id = 'rc_out_' + i;
+					cell.textContent = '';
+					cell.style.background = '#eee';
+					outGrid.appendChild(cell);
+				});
+				for (var i = 0; i < 6; i++) {
+					(function(idx) {
+						setTimeout(function() {
+							var inCell = document.getElementById('rc_in_' + idx);
+							var outCell = document.getElementById('rc_out_' + idx);
+							if (inCell) { inCell.style.background = '#fff3e0'; inCell.style.border = '2px solid #ff9800'; }
+							if (outCell) { outCell.textContent = values[idx]; outCell.style.background = 'hsl(' + (idx * 60) + ', 65%, 85%)'; }
+						}, idx * 200);
+					})(i);
+				}
+			}
+			initReshapeDemo();
+			</script>
 			<h2>Activation Layer Types</h2>
 			See <a href="#Activation_Functions">Activation Functions</a>. The Activation Layer Types just do the same as the activation functions, but in a separate layer.
 			<h2>Convolutional Layers</h2>
@@ -813,6 +1053,108 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
 <br>
+			<div class="interactive-demo" id="conv_slide_demo">
+				<label>Interactive Convolution Sliding Window:</label>
+				<div class="step-controls">
+					<button onclick="convStep()">Step</button>
+					<button onclick="convPlay()">Play</button>
+					<button onclick="convReset()">Reset</button>
+					<span class="step-label" id="conv_step_label">Step 0 / 9</span>
+				</div>
+				<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input 4x4</div>
+						<div class="editable-grid" id="conv_input_grid" style="grid-template-columns:repeat(4,48px);"></div>
+					</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Kernel 2x2</div>
+						<div class="editable-grid" id="conv_kernel_grid" style="grid-template-columns:repeat(2,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output 3x3</div>
+						<div class="editable-grid" id="conv_output_grid" style="grid-template-columns:repeat(3,48px);"></div>
+					</div>
+				</div>
+				<div class="result-display" id="conv_computation" style="font-size:0.9em; margin-top:8px;"></div>
+			</div>
+			<script>
+			var _convData = {
+				input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]],
+				kernel: [[1,-1],[0,2]],
+				output: [[0,0,0],[0,0,0],[0,0,0]],
+				step: 0, total: 9, playing: false, timer: null
+			};
+			function initConvDemo() {
+				var d = _convData;
+				var ig = document.getElementById('conv_input_grid');
+				var kg = document.getElementById('conv_kernel_grid');
+				var og = document.getElementById('conv_output_grid');
+				if (!ig || !kg || !og) return;
+				ig.innerHTML = ''; kg.innerHTML = ''; og.innerHTML = '';
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = 'cig_'+r+'_'+c;
+					cell.textContent = d.input[r][c]; ig.appendChild(cell);
+				}
+				for (var r = 0; r < 2; r++) for (var c = 0; c < 2; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = 'ckg_'+r+'_'+c;
+					cell.textContent = d.kernel[r][c]; cell.style.background='#e3f2fd'; kg.appendChild(cell);
+				}
+				for (var r = 0; r < 3; r++) for (var c = 0; c < 3; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = 'cog_'+r+'_'+c;
+					cell.textContent = ''; cell.style.background='#eee'; og.appendChild(cell);
+				}
+				d.step = 0; d.output = [[0,0,0],[0,0,0],[0,0,0]];
+				document.getElementById('conv_step_label').textContent = 'Step 0 / 9';
+				document.getElementById('conv_computation').textContent = 'Press Step or Play to begin';
+			}
+			function convHighlight(step) {
+				var d = _convData;
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var el = document.getElementById('cig_'+r+'_'+c);
+					if (el) { el.style.background = '#fafafa'; el.style.border = '1px solid #ccc'; }
+				}
+				var or2 = Math.floor(step / 3), oc = step % 3;
+				for (var kr = 0; kr < 2; kr++) for (var kc = 0; kc < 2; kc++) {
+					var el = document.getElementById('cig_'+(or2+kr)+'_'+(oc+kc));
+					if (el) { el.style.background = '#fff3e0'; el.style.border = '2px solid #ff9800'; }
+				}
+				var sum = 0, parts = [];
+				for (var kr = 0; kr < 2; kr++) for (var kc = 0; kc < 2; kc++) {
+					var v = d.input[or2+kr][oc+kc];
+					var k = d.kernel[kr][kc];
+					sum += v * k;
+					parts.push(v + '\u00d7' + k);
+				}
+				d.output[or2][oc] = sum;
+				var el = document.getElementById('cog_'+or2+'_'+oc);
+				if (el) { el.textContent = sum; el.style.background = '#c8e6c9'; el.style.border = '2px solid #4caf50'; }
+				document.getElementById('conv_computation').textContent = parts.join(' + ') + ' = ' + sum;
+				document.getElementById('conv_step_label').textContent = 'Step ' + (step+1) + ' / 9';
+			}
+			function convStep() {
+				if (_convData.step >= 9) { convReset(); return; }
+				convHighlight(_convData.step);
+				_convData.step++;
+			}
+			function convPlay() {
+				if (_convData.playing) return;
+				_convData.playing = true;
+				_convData.timer = setInterval(function() {
+					if (_convData.step >= 9) { clearInterval(_convData.timer); _convData.playing = false; return; }
+					convStep();
+				}, 500);
+			}
+			function convReset() {
+				if (_convData.timer) clearInterval(_convData.timer);
+				_convData.playing = false;
+				initConvDemo();
+			}
+			initConvDemo();
+			</script>
 			<h3>conv2dTranspose</h3>
 			<div id="conv2dTranspose_example"></div>
 			A 2D transposed convolutional layer, also known as a deconvolutional layer, is a type of layer used in deep neural networks for upsampling the feature maps. It is the inverse operation of a 2D convolutional layer, and it is used to increase the spatial resolution of the feature maps.
@@ -887,7 +1229,99 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 <br>
-<br>
+			<div class="interactive-demo" id="avgpool_slide_demo">
+				<label>Average Pooling Sliding Window (Pool: 2x2, Stride: 2):</label>
+				<div class="step-controls">
+					<button onclick="poolStep('avg')">Step</button>
+					<button onclick="poolPlay('avg')">Play</button>
+					<button onclick="poolReset('avg')">Reset</button>
+					<span class="step-label" id="avg_pool_step_label">Step 0 / 4</span>
+				</div>
+				<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input 4x4</div>
+						<div class="editable-grid" id="avgpool_input_grid" style="grid-template-columns:repeat(4,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output 2x2</div>
+						<div class="editable-grid" id="avgpool_output_grid" style="grid-template-columns:repeat(2,48px);"></div>
+					</div>
+				</div>
+				<div class="result-display" id="avgpool_computation" style="font-size:0.9em; margin-top:8px;"></div>
+			</div>
+			<script>
+			var _poolStates = {
+				avg: { input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
+					colors: ['#ffcdd2','#bbdefb','#ffe0b2','#c8e6c9'] },
+				max: { input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
+					colors: ['#ffcdd2','#bbdefb','#ffe0b2','#c8e6c9'] }
+			};
+			function initPoolDemo(type) {
+				var d = _poolStates[type];
+				var ig = document.getElementById(type+'pool_input_grid');
+				var og = document.getElementById(type+'pool_output_grid');
+				if (!ig || !og) return;
+				ig.innerHTML = ''; og.innerHTML = '';
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = type+'pig_'+r+'_'+c;
+					cell.textContent = d.input[r][c]; ig.appendChild(cell);
+				}
+				for (var r = 0; r < 2; r++) for (var c = 0; c < 2; c++) {
+					var cell = document.createElement('div');
+					cell.className = 'grid-cell'; cell.id = type+'pog_'+r+'_'+c;
+					cell.textContent = ''; cell.style.background='#eee'; og.appendChild(cell);
+				}
+				d.step = 0;
+				document.getElementById(type+'_pool_step_label').textContent = 'Step 0 / 4';
+				document.getElementById(type+'pool_computation').textContent = 'Press Step or Play to begin';
+			}
+			function poolHighlight(type, step) {
+				var d = _poolStates[type];
+				var or2 = Math.floor(step / 2), oc = step % 2;
+				for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+					var el = document.getElementById(type+'pig_'+r+'_'+c);
+					if (el) { el.style.background = '#fafafa'; el.style.border = '1px solid #ccc'; }
+				}
+				var vals = [], parts = [];
+				for (var kr = 0; kr < 2; kr++) for (var kc = 0; kc < 2; kc++) {
+					var v = d.input[or2*2+kr][oc*2+kc];
+					vals.push(v);
+					parts.push(v);
+					var el = document.getElementById(type+'pig_'+(or2*2+kr)+'_'+(oc*2+kc));
+					if (el) { el.style.background = d.colors[step]; el.style.border = '2px solid #ff9800'; }
+				}
+				var result = type === 'avg' ? (vals.reduce(function(a,b){return a+b;},0)/4) : Math.max.apply(null, vals);
+				var el = document.getElementById(type+'pog_'+or2+'_'+oc);
+				if (el) { el.textContent = result; el.style.background = d.colors[step]; el.style.border = '2px solid #4caf50'; }
+				var op = type === 'avg' ? '(' + parts.join('+') + ')/4' : 'max(' + parts.join(',') + ')';
+				document.getElementById(type+'pool_computation').textContent = op + ' = ' + result;
+				document.getElementById(type+'_pool_step_label').textContent = 'Step ' + (step+1) + ' / 4';
+			}
+			function poolStep(type) {
+				var d = _poolStates[type];
+				if (d.step >= 4) { poolReset(type); return; }
+				poolHighlight(type, d.step);
+				d.step++;
+			}
+			function poolPlay(type) {
+				var d = _poolStates[type];
+				if (d.playing) return;
+				d.playing = true;
+				d.timer = setInterval(function() {
+					if (d.step >= 4) { clearInterval(d.timer); d.playing = false; return; }
+					poolStep(type);
+				}, 600);
+			}
+			function poolReset(type) {
+				var d = _poolStates[type];
+				if (d.timer) clearInterval(d.timer);
+				d.playing = false;
+				initPoolDemo(type);
+			}
+			initPoolDemo('avg');
+			</script>
 			<h3>maxPooling (maxPooling1d, maxPooling2d)</h3>
 			<div id="maxPooling2d_example"></div>
 <br>
@@ -907,6 +1341,30 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				\end{pmatrix}
 			$$
 <br>
+			<div class="interactive-demo" id="maxpool_slide_demo">
+				<label>Max Pooling Sliding Window (Pool: 2x2, Stride: 2):</label>
+				<div class="step-controls">
+					<button onclick="poolStep('max')">Step</button>
+					<button onclick="poolPlay('max')">Play</button>
+					<button onclick="poolReset('max')">Reset</button>
+					<span class="step-label" id="max_pool_step_label">Step 0 / 4</span>
+				</div>
+				<div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-top:8px;">
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Input 4x4</div>
+						<div class="editable-grid" id="maxpool_input_grid" style="grid-template-columns:repeat(4,48px);"></div>
+					</div>
+					<div class="reshape-arrow">&rarr;</div>
+					<div>
+						<div style="font-size:0.8em; color:#888; margin-bottom:4px;">Output 2x2</div>
+						<div class="editable-grid" id="maxpool_output_grid" style="grid-template-columns:repeat(2,48px);"></div>
+					</div>
+				</div>
+				<div class="result-display" id="maxpool_computation" style="font-size:0.9em; margin-top:8px;"></div>
+			</div>
+			<script>
+			initPoolDemo('max');
+			</script>
 			<h2>Dropout and noise layers</h2>
 			<h3>alphaDropout</h3>
 			<div id="alphaDropout_example"></div>
@@ -1052,7 +1510,7 @@ It's important to note that these are general guidelines, and the best initializ
 			<h4>glorotUniform</h4>
 			Glorot uniform initializer, also known as Xavier uniform initializer, is an initialization method that uses a uniform distribution with a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m))] to initialize the weights of neural network layers, where n is the number of input neurons and m is the number of output neurons. It is named after the researcher who proposed it, Xavier Glorot, and is commonly used in deep learning models such as multi-layer perceptrons (MLPs) and feedforward neural networks (FFNs). It can help improve the performance of these types of neural networks by ensuring that the activations of neurons are well-conditioned and that gradients during backpropagation are neither too big nor too small.
 
-			This initialization method is designed to be used with neural networks that have sigmoid or tanh activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m)] which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid or tanh activation function.
+			This initialization method is designed to be used with neural networks that have sigmoid or tanh activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m))] which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid or tanh activation function.
 <br>
 			<h4>constant</h4>
 
@@ -1078,7 +1536,7 @@ This initialization method can be useful when the user wants to initialize the w
 			$$
 <br>
 			<h4>glorotNormal</h4>
-			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
+			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with sigmoid or tanh activation functions.
 <br>
 			<h4>heNormal</h4>
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
@@ -1144,7 +1602,7 @@ In general, it is recommended to avoid using the zero initializer and instead us
 
 It's important to keep in mind that the zero initialization is not always the best choice, and it depends on the architecture of the model, the dataset used and the optimizer and problem you're trying to solve.
 
-			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>zeros</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
 			$$
 			\left(\underbrace{\begin{pmatrix}
@@ -1275,7 +1733,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			0.01
 			\end{pmatrix}
 			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
-			Imagine the was really category 2. Then, the network already does a prettys good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
+			Imagine the image was really category 2. Then, the network already does a pretty good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
 <br>
 			We don't want to punish the network for that then, of course. 
 <br>
@@ -1390,7 +1848,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h3>meanAbsoluteError</h3>
 			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
 <br>
-			The meanAbsoluteError calculcates the absolute difference for each set of values from the ground truth and the predicted value, and
+			The meanAbsoluteError calculates the absolute difference for each set of values from the ground truth and the predicted value, and
 			averages over them.
 <br>
 			If the ground truth is \( \begin{pmatrix}
@@ -1864,35 +2322,43 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
 
+			<div>
+				<label for="selu_lambda">\( \lambda \) = </label>
+				<input type="number" id="selu_lambda_num" value="1.0507" step="0.01" min="0" max="3" style="width:80px;" oninput="syncSELU()">
+				<input type="range" id="selu_lambda_slider" min="0" max="3" step="0.01" value="1.0507" oninput="syncSELU()">
+				<label for="selu_alpha" style="margin-left:12px;">\( \alpha \) = </label>
+				<input type="number" id="selu_alpha_num" value="1.67326" step="0.01" min="0" max="5" style="width:80px;" oninput="syncSELU()">
+				<input type="range" id="selu_alpha_slider" min="0" max="5" step="0.01" value="1.67326" oninput="syncSELU()">
+			</div>
 			<div id="selu_from_minus_100_to_100"></div>
 			<script>
-				var lambda = 1.0507;
-				var alpha = 1.67326;
-
-				function selu(x) {
-					return x >= 0 ? lambda * x : lambda * (alpha * (Math.exp(x) - 1));
-				}
-
-				var selu_trace = {
-					x: [],
-					y: [],
-					type: 'scatter'
-				};
-
-				for (var i = -100; i <= 100; i++) {
-					selu_trace.x.push(i);
-					selu_trace.y.push(selu(i));
-				}
-
-				var data = [selu_trace];
-
+			function syncSELU() {
+				var lam = parseFloat(document.getElementById('selu_lambda_num').value) || 1.0507;
+				var alf = parseFloat(document.getElementById('selu_alpha_num').value) || 1.67326;
+				document.getElementById('selu_lambda_slider').value = lam;
+				document.getElementById('selu_alpha_slider').value = alf;
+				plotSELU(lam, alf);
+			}
+			function plotSELU(lambda, alpha) {
+				function selu(x) { return x >= 0 ? lambda * x : lambda * (alpha * (Math.exp(x) - 1)); }
+				var x_values = [];
+				for (var i = -100; i <= 100; i++) x_values.push(i);
+				var y_values = x_values.map(function(x) { return selu(x); });
+				var trace = { x: x_values, y: y_values, type: 'scatter' };
 				var layout = {
 					paper_bgcolor: 'rgba(0,0,0,0)',
 					plot_bgcolor: 'rgba(0,0,0,0)',
-					title: 'SELU Activation'
+					title: 'SELU Activation (\u03bb=' + lambda.toFixed(3) + ', \u03b1=' + alpha.toFixed(3) + ')'
 				};
-
-				Plotly.newPlot('selu_from_minus_100_to_100', data, layout);
+				Plotly.react('selu_from_minus_100_to_100', [trace], layout);
+			}
+			document.addEventListener('DOMContentLoaded', function() {
+				document.getElementById('selu_lambda_num').addEventListener('input', function(){ document.getElementById('selu_lambda_slider').value = this.value; syncSELU(); });
+				document.getElementById('selu_alpha_num').addEventListener('input', function(){ document.getElementById('selu_alpha_slider').value = this.value; syncSELU(); });
+				document.getElementById('selu_lambda_slider').addEventListener('input', function(){ document.getElementById('selu_lambda_num').value = this.value; syncSELU(); });
+				document.getElementById('selu_alpha_slider').addEventListener('input', function(){ document.getElementById('selu_alpha_num').value = this.value; syncSELU(); });
+				syncSELU();
+			});
 			</script>
 
 <br>
@@ -1974,9 +2440,44 @@ The target shape can be specified by providing a tuple of integers which defines
 			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 			<br>
-			SoftMax can be used if you want a percentage of how certain the network is in it's prediction. This is especially useful for the last layer in a classification network.
+			SoftMax can be used if you want a percentage of how certain the network is in its prediction. This is especially useful for the last layer in a classification network.
 
-			<br>
+			<div class="interactive-demo" id="softmax_demo">
+				<label>Interactive SoftMax Calculator:</label>
+				<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+					<input class="grid-cell" id="sm_v0" type="number" value="2" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x1">
+					<input class="grid-cell" id="sm_v1" type="number" value="1" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x2">
+					<input class="grid-cell" id="sm_v2" type="number" value="0.1" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x3">
+					<input class="grid-cell" id="sm_v3" type="number" value="0.5" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x4">
+					<input class="grid-cell" id="sm_v4" type="number" value="-1" step="0.1" style="width:60px;" oninput="computeSoftMax()" placeholder="x5">
+				</div>
+				<div id="softmax_bars" style="margin-top:10px;"></div>
+			</div>
+			<script>
+			function computeSoftMax() {
+				var vals = [];
+				var colors = ['#e57373','#64b5f6','#81c784','#ffb74d','#ba68c8'];
+				var labels = ['x₁','x₂','x₃','x₄','x₅'];
+				for (var i = 0; i < 5; i++) {
+					vals.push(parseFloat(document.getElementById('sm_v'+i).value) || 0);
+				}
+				var maxV = Math.max.apply(null, vals);
+				var exps = vals.map(function(v) { return Math.exp(v - maxV); });
+				var sum = exps.reduce(function(a,b){return a+b;}, 0);
+				var probs = exps.map(function(e) { return e / sum; });
+				var html = '';
+				for (var i = 0; i < 5; i++) {
+					var pct = (probs[i] * 100).toFixed(1);
+					html += '<div class="softmax-bar-container">';
+					html += '<span class="softmax-bar-label">' + labels[i] + ' = ' + vals[i].toFixed(2) + '</span>';
+					html += '<div style="background:#eee; border-radius:3px; flex:1; height:18px; overflow:hidden;">';
+					html += '<div class="softmax-bar" style="width:' + pct + '%; background:' + colors[i] + ';"></div></div>';
+					html += '<span class="softmax-bar-value">' + pct + '%</span></div>';
+				}
+				document.getElementById('softmax_bars').innerHTML = html;
+			}
+			computeSoftMax();
+			</script>
 			<h2>tanh</h2>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
 			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
@@ -2033,34 +2534,36 @@ The target shape can be specified by providing a tuple of integers which defines
 			<br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value.
 
+			<div>
+				<label for="leakyrelu_alpha_slider">Set \( \alpha \) for LeakyReLU: \( \alpha \) = </label>
+				<input type="number" id="leakyrelu_alpha_num" value="0.01" step="0.01" min="0" max="1" style="width:80px;" oninput="syncLeakyAlpha(this.value)">
+				<input type="range" id="leakyrelu_alpha_slider" min="0" max="1" step="0.005" value="0.01" oninput="syncLeakyAlpha(this.value)">
+			</div>
 			<div id="leakyrelu_from_minus_100_to_100"></div>
 			<script>
-				var alpha = 0.01;
-
-				function leakyrelu(x) {
-					return x >= 0 ? x : alpha * x;
-				}
-
-				var leakyrelu_trace = {
-					x: [],
-					y: [],
-					type: 'scatter'
-				};
-
-				for (var i = -100; i <= 100; i++) {
-					leakyrelu_trace.x.push(i);
-					leakyrelu_trace.y.push(leakyrelu(i));
-				}
-
-				var data = [leakyrelu_trace];
-
+			function syncLeakyAlpha(v) {
+				var val = parseFloat(v);
+				if (isNaN(val)) val = 0.01;
+				document.getElementById('leakyrelu_alpha_num').value = val;
+				document.getElementById('leakyrelu_alpha_slider').value = val;
+				plotLeakyReLU(val);
+			}
+			function plotLeakyReLU(alpha) {
+				function leakyrelu(x) { return x >= 0 ? x : alpha * x; }
+				var x_values = [];
+				for (var i = -100; i <= 100; i++) x_values.push(i);
+				var y_values = x_values.map(function(x) { return leakyrelu(x); });
+				var trace = { x: x_values, y: y_values, type: 'scatter' };
 				var layout = {
 					paper_bgcolor: 'rgba(0,0,0,0)',
 					plot_bgcolor: 'rgba(0,0,0,0)',
-					title: 'LeakyReLU Activation: f(x) = x if x ≥ 0, α·x otherwise (α = 0.01)'
+					title: 'LeakyReLU Activation: f(x) = x if x \u2265 0, \u03b1\u00b7x otherwise (\u03b1 = ' + alpha + ')'
 				};
-
-				Plotly.newPlot('leakyrelu_from_minus_100_to_100', data, layout);
+				Plotly.react('leakyrelu_from_minus_100_to_100', [trace], layout);
+			}
+			document.addEventListener('DOMContentLoaded', function() {
+				syncLeakyAlpha(0.01);
+			});
 			</script>
 
 			<h2>Snake</h2>
@@ -2200,7 +2703,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Choosing the right optimizer depends on the specific task and the characteristics of the data and model. For example, Adam is a good optimizer for handling large datasets, while Adagrad is good for sparse data and RMSprop is good for dealing with noisy data.
 			In general, optimizers help the machine learning model to converge to a better solution by fine-tuning the parameters of the model, which in turn leads to better performance.
 
-			<h2>How to chose an optimizer</h2>
+			<h2>How to choose an optimizer</h2>
 
 			Choosing the appropriate optimizer for a neural network depends on various characteristics of the data and the model, such as the complexity of the model, the size of the dataset, the nature of the problem, the desired training speed and the desired accuracy. Here are some general guidelines for selecting an optimizer based on the characteristics of the data and the problem:<br>
 
@@ -2305,7 +2808,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			Augmentation is currently only available for images.
 <br>
-			If you have a network that looks like images (i.e., input shape is like \( [\text{int}, \text{int}, 3] \), and you have chosen <a href="#Expert-mode">Expert Mode</a>, you can easily add augment your data by ticking the augment checkbox in the Home menu.
+			If you have a network that looks like images (i.e., input shape is like \( [\text{int}, \text{int}, 3] \), and you have chosen <a href="#Expert-mode">Expert Mode</a>, 			you can easily augment your data by ticking the augment checkbox in the Home menu.
 <br>
 			<img src="manual/augment.png">
 <br>
@@ -2323,7 +2826,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<img src="manual/rotate1.png"><img src="manual/rotate2.png"><img src="manual/rotate3.png"><img src="manual/rotate4.png"><img src="manual/rotate5.png">
 <br>
-			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., a full rotation (360&deg;) is splitted into <i>Number of rotations?</i> steps.
+			If chosen, the image will be rotated <i>Number of rotations?</i> times. I.e., 			a full rotation (360&deg;) is split into <i>Number of rotations?</i> steps.
 <br>
 			This is useful if you want to detect objects from all kinds of angles.
 			<h2>Invert images?</h2>
@@ -2400,7 +2903,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It also <a href="#Auto-Input-Shape">automatically generates the input shape</a>, depending on the data you give it.
 <br>
-			Also, it disables layer options that would break the neural network or it's shapes.
+			Also, it disables layer options that would break the neural network or its shapes.
 			<h2>Expert-mode</h2>
 			The Expert-mode allows the user to set all settings possible. You can even set network stuff that breaks the network, if you want.
 <br>
@@ -2498,7 +3001,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			For images, for example, you can then run your neural network after enabling the virtual environment (contained in the <tt>asanaienv</tt> folder) like this:
 <br>
-			<tt>python3 script.py image1.jpg image2.jpg</tt>. It will predict the categores for each image
+			<tt>python3 script.py image1.jpg image2.jpg</tt>. It will predict the categories for each image
 <br>
 			You can do whatever you like with this code, this includes including it in your program (that does not have to be released), or re-license it under any license you wish. It is under WTFPL therefore.
 			<h2>Export to HTML</h2>
@@ -2532,7 +3035,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Please contact norman.koch@tu-dresden.de if you have any questions.
 
 			<h1>Credits</h1>
-			Some parts of this documentation were created by OpenAIs ChatGPT.
+			Some parts of this documentation were created by different LLM systems.
 		</div>
 		<script src="manual.js"></script>
 	</body>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Process & Reality – Interaktiv Erleben</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0a0a1a;color:#e0e0e0;overflow-x:hidden}
+canvas#bg{position:fixed;top:0;left:0;z-index:0;pointer-events:none}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:20px}
+h1{text-align:center;font-size:2.2em;background:linear-gradient(90deg,#6ee7b7,#3b82f6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:30px 0 10px}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:30px;font-size:1.1em}
+.card{background:rgba(30,30,60,0.85);border:1px solid rgba(100,100,200,0.3);border-radius:16px;padding:24px;margin:20px 0;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-3px);border-color:#6ee7b7;box-shadow:0 8px 30px rgba(110,231,183,0.15)}
+.card h2{font-size:1.3em;color:#6ee7b7;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.card p{color:#cbd5e1;line-height:1.6;font-size:0.95em}
+.card .emoji{font-size:1.5em}
+.hidden{display:none;margin-top:15px;padding:15px;background:rgba(0,0,0,0.3);border-radius:10px;border-left:3px solid #a78bfa}
+.hidden.show{display:block;animation:fadeIn 0.4s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.progress-bar{width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin:30px 0 10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#6ee7b7,#3b82f6);border-radius:3px;transition:width 0.5s}
+.score{text-align:center;color:#6ee7b7;font-size:1.1em;margin-bottom:20px}
+.quiz-section{background:rgba(30,30,60,0.9);border-radius:16px;padding:30px;margin:30px 0;border:1px solid rgba(167,139,250,0.4)}
+.quiz-section h2{color:#a78bfa;margin-bottom:15px}
+.quiz-btn{display:block;width:100%;padding:12px 20px;margin:8px 0;background:rgba(60,60,100,0.6);border:1px solid rgba(100,100,200,0.3);border-radius:10px;color:#e0e0e0;font-size:1em;cursor:pointer;transition:all 0.2s;text-align:left}
+.quiz-btn:hover{background:rgba(110,231,183,0.15);border-color:#6ee7b7}
+.quiz-btn.correct{background:rgba(110,231,183,0.3);border-color:#6ee7b7;color:#6ee7b7}
+.quiz-btn.wrong{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#ef4444}
+.feedback{margin-top:12px;padding:10px;border-radius:8px;font-size:0.9em}
+.sim-container{background:rgba(20,20,50,0.9);border-radius:16px;padding:20px;margin:20px 0;border:1px solid rgba(59,130,246,0.4)}
+.sim-container h3{color:#3b82f6;margin-bottom:10px}
+canvas.sim{width:100%;height:200px;border-radius:10px;background:#0f0f2a;display:block}
+.controls{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.controls button{padding:8px 16px;border-radius:8px;border:1px solid #3b82f6;background:rgba(59,130,246,0.15);color:#93c5fd;cursor:pointer;font-size:0.9em;transition:all 0.2s}
+.controls button:hover{background:rgba(59,130,246,0.3)}
+.timeline{position:relative;padding:20px 0 20px 30px;border-left:2px solid rgba(110,231,183,0.3);margin:20px 0}
+.timeline-item{position:relative;margin:20px 0;padding-left:20px}
+.timeline-item::before{content:'';position:absolute;left:-36px;top:5px;width:12px;height:12px;border-radius:50%;background:#6ee7b7;border:2px solid #0a0a1a}
+.timeline-item h4{color:#6ee7b7;font-size:1em}
+.timeline-item p{color:#94a3b8;font-size:0.9em;margin-top:4px}
+.tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.75em;margin:2px;background:rgba(167,139,250,0.2);color:#c4b5fd}
+footer{text-align:center;padding:40px 20px;color:#475569;font-size:0.85em}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="container">
+<h1>🌊 Process & Reality</h1>
+<p class="subtitle">A.N. Whiteheads Meisterwerk – interaktiv entdecken</p>
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+<div class="score" id="score">Erkenntnisse entdeckt: 0 / 8</div>
+
+<!-- CARD 1 -->
+<div class="card" onclick="toggle('c1')">
+<h2><span class="emoji">🧬</span> Die Welt besteht aus Erfahrungen, nicht aus Dingen</h2>
+<p>Klicke, um Whiteheads radikalste Idee zu verstehen...</p>
+<div class="hidden" id="c1">
+<p><strong>Kernidee:</strong> Die Grundbausteine der Realität sind keine toten Materieteilchen, sondern „actual entities" – winzige Tropfen von Erfahrung. Jedes Atom, jeder Moment ist ein Akt des Erlebens.</p>
+<p style="margin-top:10px"><span class="tag">Actual Entity</span><span class="tag">Erfahrung</span><span class="tag">Anti-Materialismus</span></p>
+<p style="margin-top:10px;color:#a78bfa">💡 Stell dir vor: Selbst ein Elektron „fühlt" seine Umgebung – nicht bewusst, aber es reagiert, nimmt auf, wird beeinflusst.</p>
+</div>
+</div>
+
+<!-- CARD 2 -->
+<div class="card" onclick="toggle('c2')">
+<h2><span class="emoji">🔄</span> Prozess statt Substanz</h2>
+<p>Warum nichts „ist", sondern alles „wird"...</p>
+<div class="hidden" id="c2">
+<p><strong>Kernidee:</strong> Es gibt keine unveränderlichen Substanzen. Alles ist Werden (Process). „Wie etwas wird, bestimmt was es ist." Das ist das Prinzip des Prozesses.</p>
+<p style="margin-top:10px;color:#a78bfa">💡 Du bist nicht dieselbe Person wie vor 5 Minuten. Jeder Moment ist eine neue „actual occasion" – du wirst ständig neu erschaffen aus deiner Vergangenheit.</p>
+<p style="margin-top:10px"><span class="tag">Concrescence</span><span class="tag">Werden</span><span class="tag">Kein statisches Sein</span></p>
+</div>
+</div>
+
+<!-- CARD 3 -->
+<div class="card" onclick="toggle('c3')">
+<h2><span class="emoji">🕸️</span> Alles hängt mit allem zusammen</h2>
+<p>Das Prinzip der Relativität...</p>
+<div class="hidden" id="c3">
+<p><strong>Kernidee:</strong> Jede Entität ist ein Potential für jedes Werden. Nichts existiert isoliert. Die Welt ist ein Netz gegenseitiger „Prehensionen" (Erfassungen).</p>
+<p style="margin-top:10px;color:#a78bfa">💡 Wenn du einen Freund triffst, bist du buchstäblich Teil seiner nächsten Erfahrung – und er Teil deiner. Ihr „prehendiert" euch gegenseitig.</p>
+<p style="margin-top:10px"><span class="tag">Prehension</span><span class="tag">Relativität</span><span class="tag">Solidarität des Universums</span></p>
+</div>
+</div>
+
+<!-- SIMULATION -->
+<div class="sim-container">
+<h3>🎮 Simulation: Concrescence – Wie eine Erfahrung entsteht</h3>
+<p style="color:#94a3b8;font-size:0.9em;margin-bottom:10px">Beobachte, wie viele Daten (Punkte) zu EINER einheitlichen Erfahrung verschmelzen:</p>
+<canvas class="sim" id="simCanvas"></canvas>
+<div class="controls">
+<button onclick="startSim()">▶ Concrescence starten</button>
+<button onclick="resetSim()">↺ Reset</button>
+<button onclick="addData()">+ Mehr Daten</button>
+</div>
+</div>
+
+<!-- CARD 4 -->
+<div class="card" onclick="toggle('c4')">
+<h2><span class="emoji">🎯</span> Jede Erfahrung hat ein Ziel</h2>
+<p>Subjective Aim – die innere Teleologie...</p>
+<div class="hidden" id="c4">
+<p><strong>Kernidee:</strong> Jede actual entity hat ein „subjective aim" – ein inneres Ziel, das ihren Prozess leitet. Es gibt finale Kausalität (Zweckursache) neben effizienter Kausalität.</p>
+<p style="margin-top:10px;color:#a78bfa">💡 Selbst auf der einfachsten Ebene „strebt" die Natur nach Intensität der Erfahrung. Kreativität ist kein Zufall – sie hat Richtung.</p>
+<p style="margin-top:10px"><span class="tag">Subjective Aim</span><span class="tag">Teleologie</span><span class="tag">Causa Sui</span></p>
+</div>
+</div>
+
+<!-- CARD 5 -->
+<div class="card" onclick="toggle('c5')">
+<h2><span class="emoji">♾️</span> Ewige Objekte – Die Formen der Möglichkeit</h2>
+<p>Platons Ideen, neu gedacht...</p>
+<div class="hidden" id="c5">
+<p><strong>Kernidee:</strong> „Eternal Objects" sind reine Potentiale – wie Farben, Formen, mathematische Strukturen. Sie sind zeitlos und warten darauf, in konkreten Erfahrungen realisiert zu werden.</p>
+<p style="margin-top:10px;color:#a78bfa">💡 „Rot" existiert als Möglichkeit, auch wenn gerade nichts rot ist. Wenn du eine rote Rose siehst, „ingrediert" das ewige Objekt Rot in deine aktuelle Erfahrung.</p>
+<p style="margin-top:10px"><span class="tag">Eternal Objects</span><span class="tag">Potentialität</span><span class="tag">Ingression</span></p>
+</div>
+</div>
+
+<!-- CARD 6 -->
+<div class="card" onclick="toggle('c6')">
+<h2><span class="emoji">⚡</span> Kreativität – Das Ultimative Prinzip</h2>
+<p>Warum es überhaupt Neues gibt...</p>
+<div class="hidden" id="c6">
+<p><strong>Kernidee:</strong> „Creativity" ist das universellste Prinzip: Die Vielen werden Eins, und das Universum wird um Eins vermehrt. Es ist der Motor des Werdens – weder Gott noch Materie, sondern das Prinzip der Neuheit selbst.</p>
+<p style="margin-top:10px;color:#a78bfa">💡 „The many become one, and are increased by one." – Jeder neue Moment vereinigt alles Vergangene und fügt etwas Neues hinzu.</p>
+<p style="margin-top:10px"><span class="tag">Creativity</span><span class="tag">Novelty</span><span class="tag">The Ultimate</span></p>
+</div>
+</div>
+
+<!-- CARD 7 -->
+<div class="card" onclick="toggle('c7')">
+<h2><span class="emoji">🌀</span> Gott in der Prozessphilosophie</h2>
+<p>Weder Herrscher noch Uhrmacher...</p>
+<div class="hidden" id="c7">
+<p><strong>Kernidee:</strong> Gott hat eine „primordiale Natur" (die Ordnung aller Möglichkeiten) und eine „consequent nature" (er nimmt die Welt in sich auf). Er ist kein allmächtiger Herrscher, sondern der „Poet der Welt" – er lockt, zwingt nicht.</p>
+<p style="margin-top:10px;color:#a78bfa">💡 Gott bietet jeder Erfahrung ihr bestmögliches Ziel an – aber die Entscheidung liegt bei der Entität selbst. Freiheit ist real.</p>
+<p style="margin-top:10px"><span class="tag">Dipolare Theologie</span><span class="tag">Lure for Feeling</span><span class="tag">Freiheit</span></p>
+</div>
+</div>
+
+<!-- CARD 8 -->
+<div class="card" onclick="toggle('c8')">
+<h2><span class="emoji">💀</span> Objektive Unsterblichkeit</h2>
+<p>Wie die Vergangenheit ewig lebt...</p>
+<div class="hidden" id="c8">
+<p><strong>Kernidee:</strong> Actual entities „vergehen" – aber sie sterben nicht wirklich. Sie werden zu objektiven Daten für alle zukünftigen Erfahrungen. Die Vergangenheit ist unsterblich als Einfluss auf die Zukunft.</p>
+<p style="margin-top:10px;color:#a78bfa">💡 Lockes Phrase: Zeit ist „perpetual perishing." Aber jedes Vergehen ist zugleich ein Geschenk an die Zukunft. Du bist die Summe aller vergangenen Momente.</p>
+<p style="margin-top:10px"><span class="tag">Objective Immortality</span><span class="tag">Perpetual Perishing</span><span class="tag">Transition</span></p>
+</div>
+</div>
+
+<!-- TIMELINE -->
+<h2 style="color:#6ee7b7;margin-top:40px;text-align:center">📜 Whiteheads Philosophie-Stammbaum</h2>
+<div class="timeline">
+<div class="timeline-item"><h4>Platon</h4><p>Ewige Formen, Teilhabe, Timaeus als Kosmologie</p></div>
+<div class="timeline-item"><h4>Aristoteles</h4><p>Substanz, finale Ursachen, Werden (genesis)</p></div>
+<div class="timeline-item"><h4>Descartes</h4><p>Subjektivität als Ausgangspunkt, res vera</p></div>
+<div class="timeline-item"><h4>Locke</h4><p>Ideen, Macht (power), „perpetual perishing"</p></div>
+<div class="timeline-item"><h4>Hume</h4><p>Prozess, Kritik der Substanz, Impressionen</p></div>
+<div class="timeline-item"><h4>Kant</h4><p>Erfahrung als Konstruktion – aber falsch herum!</p></div>
+<div class="timeline-item"><h4>Whitehead</h4><p>Synthese: Prozess + Erfahrung + Kreativität + Gott</p></div>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz-section">
+<h2>🧠 Quick-Quiz: Hast du's verstanden?</h2>
+<p style="color:#94a3b8;margin-bottom:15px" id="quizQ">Was ist laut Whitehead der fundamentalste Baustein der Realität?</p>
+<button class="quiz-btn" onclick="checkQuiz(this,false)">A) Atome / Materie</button>
+<button class="quiz-btn" onclick="checkQuiz(this,true)">B) Actual Entities (Erfahrungstropfen)</button>
+<button class="quiz-btn" onclick="checkQuiz(this,false)">C) Mathematische Gleichungen</button>
+<button class="quiz-btn" onclick="checkQuiz(this,false)">D) Bewusstsein / Geist</button>
+<div class="feedback" id="quizFeedback"></div>
+</div>
+
+<div class="quiz-section">
+<h2>🧠 Quiz 2</h2>
+<p style="color:#94a3b8;margin-bottom:15px">Was bedeutet „The many become one, and are increased by one"?</p>
+<button class="quiz-btn" onclick="checkQuiz(this,false)">A) Gott erschafft die Welt aus dem Nichts</button>
+<button class="quiz-btn" onclick="checkQuiz(this,false)">B) Alles ist letztlich Eins (Monismus)</button>
+<button class="quiz-btn" onclick="checkQuiz(this,true)">C) Jede neue Erfahrung vereinigt die Vielen und fügt Neues hinzu</button>
+<button class="quiz-btn" onclick="checkQuiz(this,false)">D) Die Mathematik ist die Grundlage der Realität</button>
+<div class="feedback" id="quizFeedback2"></div>
+</div>
+
+<footer>
+<p>Basierend auf: A.N. Whitehead, <em>Process and Reality</em> (1929) – Corrected Edition, Griffin & Sherburne</p>
+<p style="margin-top:5px">„The safest general characterization of the European philosophical tradition is that it consists of a series of footnotes to Plato."</p>
+</footer>
+</div>
+
+<script>
+// Background particle canvas
+const bg=document.getElementById('bg');const ctx=bg.getContext('2d');
+let w,h;function resize(){w=bg.width=window.innerWidth;h=bg.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+let particles=[];for(let i=0;i<60;i++)particles.push({x:Math.random()*2000,y:Math.random()*2000,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*2+1});
+function drawBg(){ctx.clearRect(0,0,w,h);ctx.fillStyle='rgba(110,231,183,0.4)';
+particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=w;if(p.x>w)p.x=0;if(p.y<0)p.y=h;if(p.y>h)p.y=0;
+ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});
+// connections
+ctx.strokeStyle='rgba(110,231,183,0.07)';ctx.lineWidth=1;
+for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){
+let dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);
+if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke()}}
+requestAnimationFrame(drawBg)}drawBg();
+
+// Card toggle & scoring
+let discovered=new Set();
+function toggle(id){const el=document.getElementById(id);el.classList.toggle('show');
+if(el.classList.contains('show')&&!discovered.has(id)){discovered.add(id);updateScore()}}
+function updateScore(){const n=discovered.size;document.getElementById('score').textContent=`Erkenntnisse entdeckt: ${n} / 8`;
+document.getElementById('progress').style.width=`${(n/8)*100}%`}
+
+// Quiz
+function checkQuiz(btn,correct){const parent=btn.parentElement;const btns=parent.querySelectorAll('.quiz-btn');
+btns.forEach(b=>{b.disabled=true;b.style.pointerEvents='none'});
+if(correct){btn.classList.add('correct');const fb=parent.querySelector('.feedback');fb.style.color='#6ee7b7';fb.textContent='✓ Richtig! Whitehead sieht die Welt als Netz von Erfahrungsakten.'}
+else{btn.classList.add('wrong');const fb=parent.querySelector('.feedback');fb.style.color='#ef4444';fb.textContent='✗ Nicht ganz – denk an "drops of experience"!'}}
+
+// Concrescence Simulation
+const simC=document.getElementById('simCanvas');const sCtx=simC.getContext('2d');
+let simW,simH;function resizeSim(){simW=simC.width=simC.offsetWidth;simH=simC.height=200}
+resizeSim();window.addEventListener('resize',resizeSim);
+let dots=[];let simRunning=false;let centerX,centerY;
+function initDots(){dots=[];for(let i=0;i<15;i++)dots.push({x:Math.random()*simW,y:Math.random()*simH,vx:0,vy:0,color:`hsl(${Math.random()*360},70%,60%)`,r:4+Math.random()*3})}
+initDots();drawSim();
+function addData(){for(let i=0;i<5;i++)dots.push({x:Math.random()*simW,y:Math.random()*simH,vx:0,vy:0,color:`hsl(${Math.random()*360},70%,60%)`,r:4+Math.random()*3})}
+function startSim(){simRunning=true;centerX=simW/2;centerY=simH/2;animSim()}
+function resetSim(){simRunning=false;initDots();drawSim()}
+function animSim(){if(!simRunning)return;
+let allClose=true;
+dots.forEach(d=>{let dx=centerX-d.x,dy=centerY-d.y,dist=Math.sqrt(dx*dx+dy*dy);
+if(dist>5){allClose=false;d.vx+=dx*0.008;d.vy+=dy*0.008;d.vx*=0.95;d.vy*=0.95;d.x+=d.vx;d.y+=d.vy}});
+drawSim();
+if(allClose){sCtx.fillStyle='#6ee7b7';sCtx.font='bold 16px sans-serif';sCtx.textAlign='center';
+sCtx.fillText('✓ SATISFACTION – Einheit erreicht!',simW/2,simH-15);simRunning=false;return}
+requestAnimationFrame(animSim)}
+function drawSim(){sCtx.clearRect(0,0,simW,simH);
+// draw center target
+sCtx.beginPath();sCtx.arc(simW/2,simH/2,20,0,Math.PI*2);sCtx.strokeStyle='rgba(110,231,183,0.3)';sCtx.lineWidth=2;sCtx.stroke();
+sCtx.font='10px sans-serif';sCtx.fillStyle='#6ee7b7';sCtx.textAlign='center';sCtx.fillText('Satisfaction',simW/2,simH/2+35);
+dots.forEach(d=>{sCtx.beginPath();sCtx.arc(d.x,d.y,d.r,0,Math.PI*2);sCtx.fillStyle=d.color;sCtx.fill()})}
+</script>
+</body>
+</html>

@@ -952,15 +952,15 @@ function renderLayerIOStats(divTarget) {
 			}
 		}
 
-		// Stats grid
+		// Stats grid with data-wa-indicator for tooltip popups
 		html += "<div class='lio_stats_grid'>";
 		if (inputStats) {
-			html += "<div class='lio_stats_box'><h4><span class='TRANSLATEME_layer_io_input'></span></h4>";
+			html += "<div class='lio_stats_box' data-wa-indicator='layer_io_input' data-layer-index='" + i + "'><h4><span class='TRANSLATEME_layer_io_input'></span> <span style='font-size:0.9em; opacity:0.5;'>ℹ️</span></h4>";
 			html += _statsTable(inputStats);
 			html += "</div>";
 		}
 		if (outputStats) {
-			html += "<div class='lio_stats_box'><h4><span class='TRANSLATEME_layer_io_output'></span></h4>";
+			html += "<div class='lio_stats_box' data-wa-indicator='layer_io_output' data-layer-index='" + i + "'><h4><span class='TRANSLATEME_layer_io_output'></span> <span style='font-size:0.9em; opacity:0.5;'>ℹ️</span></h4>";
 			html += _statsTable(outputStats);
 			html += "</div>";
 		}
@@ -1002,6 +1002,11 @@ function renderLayerIOStats(divTarget) {
 		html += "</div>"; // end card
 	}
 
+	// ============================================================
+	// AGGREGATE INDICATORS WITH TOOLTIP POPUPS (NEW)
+	// ============================================================
+	html += _renderAggregateIndicators(latestRecord);
+
 	// Config issues detection
 	html += _renderConfigIssues(latestRecord);
 
@@ -1020,10 +1025,56 @@ function renderLayerIOStats(divTarget) {
 		}
 	} catch (e) { }
 
+	// ============================================================
+	// ATTACH TOOLTIP POPUPS TO INDICATOR ROWS (NEW)
+	// ============================================================
+	try {
+		var indicatorContainer = document.getElementById("lio_aggregate_indicators");
+		if (indicatorContainer && typeof attachWaTooltips === "function") {
+			var allOutputs = [];
+			for (var i = 0; i < latestRecord.layers.length; i++) {
+				if (latestRecord.layers[i].output) {
+					for (var j = 0; j < latestRecord.layers[i].output.length; j++) {
+						allOutputs.push(latestRecord.layers[i].output[j]);
+					}
+				}
+			}
+			var indicators = _computeAggregateIndicators(allOutputs, latestRecord);
+			attachWaTooltips(indicatorContainer, {
+				entropy: indicators.entropy,
+				entropyMax: indicators.entropyMax,
+				sparsity: indicators.sparsity,
+				svd: indicators.svd,
+				kurtosis: indicators.kurtosis,
+				ks: indicators.ks,
+				correlation: indicators.correlation
+			});
+		}
+	} catch (e) { }
+
+	// ============================================================
+	// ATTACH TOOLTIP POPUPS TO AGGREGATE PLOTS
+	// ============================================================
+	try {
+		var plotContainer = document.getElementById("lio_aggregate_plots");
+		if (plotContainer && typeof attachWaTooltipsToPlots === "function") {
+			attachWaTooltipsToPlots(plotContainer, latestRecord);
+		}
+	} catch (e) { }
+
+	// ============================================================
+	// ATTACH TOOLTIP POPUPS TO PER-LAYER IO STATS BOXES
+	// ============================================================
+	try {
+		if (typeof attachWaTooltipsToLayerStats === "function") {
+			attachWaTooltipsToLayerStats(container, latestRecord);
+		}
+	} catch (e) { }
+
 	// Update translations
 	try {
 		if (typeof update_translations === "function") {
-			update_translations(); // await not possible
+			update_translations();
 		}
 	} catch (e) { }
 
@@ -1031,41 +1082,245 @@ function renderLayerIOStats(divTarget) {
 }
 
 // ============================================================
-// HEALTH SCORE
+// HEALTH SCORE (updated with tooltip integration)
 // ============================================================
 
 function _renderHealthScore(record) {
-	var totalLayers = record.layers.length;
-	var criticalCount = 0, warningCount = 0, infoCount = 0;
+    var totalLayers = record.layers.length;
+    var criticalCount = 0, warningCount = 0, infoCount = 0;
 
-	for (var i = 0; i < totalLayers; i++) {
-		var warnings = _detectWarnings(record.layers[i]);
-		for (var w = 0; w < warnings.length; w++) {
-			if (warnings[w].severity === "critical") criticalCount++;
-			else if (warnings[w].severity === "warning") warningCount++;
-			else if (warnings[w].severity === "info") infoCount++;
-		}
-	}
+    for (var i = 0; i < totalLayers; i++) {
+        var warnings = _detectWarnings(record.layers[i]);
+        for (var w = 0; w < warnings.length; w++) {
+            if (warnings[w].severity === "critical") criticalCount++;
+            else if (warnings[w].severity === "warning") warningCount++;
+            else if (warnings[w].severity === "info") infoCount++;
+        }
+    }
 
-	var score = 100;
-	score -= criticalCount * 25;
-	score -= warningCount * 10;
-	score -= infoCount * 3;
-	score = Math.max(0, Math.min(100, score));
+    var score = 100;
+    score -= criticalCount * 25;
+    score -= warningCount * 10;
+    score -= infoCount * 3;
+    score = Math.max(0, Math.min(100, score));
 
-	var scoreColor = score >= 80 ? "#2ecc71" : score >= 50 ? "#f39c12" : "#e74c3c";
+    var scoreColor = score >= 80 ? "#2ecc71" : score >= 50 ? "#f39c12" : "#e74c3c";
 
-	var html = "<div style='margin-bottom: 16px;'>";
-	html += "<strong><span class='TRANSLATEME_layer_io_health_score'></span>: " + score + "/100</strong>";
-	html += "<div class='lio_score_bar'>";
-	html += "<div class='lio_score_fill' style='width: " + score + "%; background: " + scoreColor + ";'></div>";
-	html += "</div>";
-	html += "<small style='opacity:0.6;'>" + criticalCount + " <span class='TRANSLATEME_layer_io_critical_issues'></span>, " +
-		warningCount + " <span class='TRANSLATEME_layer_io_warnings_label'></span>, " +
-		infoCount + " <span class='TRANSLATEME_layer_io_info_label'></span></small>";
-	html += "</div>";
+    var html = "<div style='margin-bottom: 16px;'>";
+    html += "<strong><span class='TRANSLATEME_layer_io_health_score'></span>: " + score + "/100</strong>";
+    html += "<div class='lio_score_bar'>";
+    html += "<div class='lio_score_fill' style='width: " + score + "%; background: " + scoreColor + ";'></div>";
+    html += "</div>";
+    html += "<small style='opacity:0.6;'>" + criticalCount + " <span class='TRANSLATEME_layer_io_critical_issues'></span>, " +
+        warningCount + " <span class='TRANSLATEME_layer_io_warnings_label'></span>, " +
+        infoCount + " <span class='TRANSLATEME_layer_io_info_label'></span></small>";
+    html += "</div>";
 
-	return html;
+    return html;
+}
+
+// ============================================================
+// AGGREGATE INDICATORS WITH TOOLTIP POPUPS
+// ============================================================
+
+function _renderAggregateIndicators(record) {
+    var allOutputs = [];
+    for (var i = 0; i < record.layers.length; i++) {
+        if (record.layers[i].output) {
+            for (var j = 0; j < record.layers[i].output.length; j++) {
+                allOutputs.push(record.layers[i].output[j]);
+            }
+        }
+    }
+
+    if (allOutputs.length === 0) return "";
+
+    var indicators = _computeAggregateIndicators(allOutputs, record);
+
+    var html = "<div class='lio_aggregate' id='lio_aggregate_indicators'>";
+    html += "<h3><span class='TRANSLATEME_wa_overall_indicators'></span></h3>";
+
+    html += waIndicatorRowHTML("entropy", "wa_indicator_entropy",
+        "H=" + indicators.entropy.toFixed(3) + " / " + indicators.entropyMax.toFixed(3));
+
+    html += waIndicatorRowHTML("sparsity", "wa_indicator_sparsity",
+        (indicators.sparsity * 100).toFixed(1) + "% near-zero");
+
+    html += waIndicatorRowHTML("svd", "wa_indicator_svd",
+        "Steepness: " + indicators.svd.toFixed(3));
+
+    html += waIndicatorRowHTML("kurtosis", "wa_indicator_kurtosis",
+        "k=" + indicators.kurtosis.toFixed(3));
+
+    html += waIndicatorRowHTML("ks_test", "wa_indicator_ks_test",
+        "D=" + indicators.ks.toFixed(4));
+
+    html += waIndicatorRowHTML("correlation", "wa_indicator_correlation",
+        "r=" + indicators.correlation.toFixed(4));
+
+    html += waIndicatorRowHTML("weight_distribution", "wa_weight_distribution", "");
+
+    html += "</div>";
+
+    return html;
+}
+
+function _computeAggregateIndicators(allOutputs, record) {
+    var stats = _computeStats(allOutputs);
+    var n = allOutputs.length;
+
+    // Entropy
+    var histogram = _computeHistogram(allOutputs, 256);
+    var entropy = 0;
+    var entropyMax = 0;
+    if (histogram && histogram.counts) {
+        var total = 0;
+        for (var i = 0; i < histogram.counts.length; i++) {
+            total += histogram.counts[i];
+        }
+        entropyMax = Math.log2(histogram.counts.length);
+        for (var i = 0; i < histogram.counts.length; i++) {
+            if (histogram.counts[i] > 0) {
+                var p = histogram.counts[i] / total;
+                entropy -= p * Math.log2(p);
+            }
+        }
+    }
+
+    // Sparsity
+    var nearZeroCount = 0;
+    var threshold = 0.01;
+    for (var i = 0; i < allOutputs.length; i++) {
+        if (Math.abs(allOutputs[i]) < threshold) nearZeroCount++;
+    }
+    var sparsity = allOutputs.length > 0 ? nearZeroCount / allOutputs.length : 0;
+
+    // SVD steepness (approximation via sorted variance)
+    var svdSteepness = _computeSvdSteepness(record);
+
+    // Kurtosis
+    var kurtosis = stats ? stats.kurtosis : 0;
+
+    // KS-Test approximation
+    var ksD = _computeKsTest(allOutputs, stats);
+
+    // Inter-filter correlation
+    var correlation = _computeInterFilterCorrelation(record);
+
+    return {
+        entropy: entropy,
+        entropyMax: entropyMax,
+        sparsity: sparsity,
+        svd: svdSteepness,
+        kurtosis: kurtosis,
+        ks: ksD,
+        correlation: correlation
+    };
+}
+
+function _computeSvdSteepness(record) {
+    if (!record.layers || record.layers.length < 2) return 0;
+
+    var variances = [];
+    for (var i = 0; i < record.layers.length; i++) {
+        var s = _computeStats(record.layers[i].output);
+        if (s && s.std > 0) {
+            variances.push(s.std * s.std);
+        }
+    }
+
+    if (variances.length < 2) return 0;
+
+    variances.sort(function(a, b) { return b - a; });
+    var totalVar = 0;
+    for (var i = 0; i < variances.length; i++) totalVar += variances[i];
+
+    if (totalVar === 0) return 0;
+
+    // Steepness = how much the first component dominates
+    var topRatio = variances[0] / totalVar;
+    var steepness = topRatio - (1 / variances.length);
+    return Math.max(0, Math.min(1, steepness));
+}
+
+function _computeKsTest(arr, stats) {
+    if (!arr || arr.length === 0 || !stats || stats.std === 0) return 0;
+
+    var sorted = [];
+    for (var i = 0; i < arr.length; i++) {
+        if (!isNaN(arr[i]) && isFinite(arr[i])) sorted.push(arr[i]);
+    }
+    sorted.sort(function(a, b) { return a - b; });
+
+    var n = sorted.length;
+    if (n === 0) return 0;
+
+    var maxD = 0;
+    for (var i = 0; i < n; i++) {
+        var empiricalCDF = (i + 1) / n;
+        var z = (sorted[i] - stats.mean) / stats.std;
+        var theoreticalCDF = 0.5 * (1 + _erfApprox(z / Math.sqrt(2)));
+        var d = Math.abs(empiricalCDF - theoreticalCDF);
+        if (d > maxD) maxD = d;
+    }
+
+    return maxD;
+}
+
+function _erfApprox(x) {
+    var a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+    var a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+    var sign = x < 0 ? -1 : 1;
+    x = Math.abs(x);
+    var t = 1.0 / (1.0 + p * x);
+    var y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+    return sign * y;
+}
+
+function _computeInterFilterCorrelation(record) {
+    if (!record.layers || record.layers.length < 2) return 0;
+
+    var layerMeans = [];
+    for (var i = 0; i < record.layers.length; i++) {
+        var s = _computeStats(record.layers[i].output);
+        if (s) layerMeans.push(s.mean);
+    }
+
+    if (layerMeans.length < 2) return 0;
+
+    // Compute average pairwise correlation between adjacent layers
+    var totalCorr = 0;
+    var pairs = 0;
+
+    for (var i = 0; i < record.layers.length - 1; i++) {
+        var a = record.layers[i].output;
+        var b = record.layers[i + 1].output;
+        if (!a || !b) continue;
+
+        var minLen = Math.min(a.length, b.length, 500);
+        var sumA = 0, sumB = 0, sumAB = 0, sumA2 = 0, sumB2 = 0;
+
+        for (var j = 0; j < minLen; j++) {
+            sumA += a[j];
+            sumB += b[j];
+            sumAB += a[j] * b[j];
+            sumA2 += a[j] * a[j];
+            sumB2 += b[j] * b[j];
+        }
+
+        var meanA = sumA / minLen;
+        var meanB = sumB / minLen;
+        var num = sumAB / minLen - meanA * meanB;
+        var denA = Math.sqrt(sumA2 / minLen - meanA * meanA);
+        var denB = Math.sqrt(sumB2 / minLen - meanB * meanB);
+
+        if (denA > 1e-10 && denB > 1e-10) {
+            totalCorr += Math.abs(num / (denA * denB));
+            pairs++;
+        }
+    }
+
+    return pairs > 0 ? totalCorr / pairs : 0;
 }
 
 // ============================================================
@@ -1420,7 +1675,7 @@ function _histogramSVG(histogram, warnings) {
 // ============================================================
 
 function _renderAggregateSection(record) {
-	var html = "<div class='lio_aggregate'>";
+	var html = "<div class='lio_aggregate' id='lio_aggregate_plots'>";
 	html += "<h3><span class='TRANSLATEME_layer_io_health_check'></span></h3>";
 
 	var dyingLayers = [], explodingLayers = [], saturatedLayers = [], nanLayers = [];
@@ -1450,42 +1705,42 @@ function _renderAggregateSection(record) {
 		if (vanishingLayers.length > 0) html += "<div class='lio_warn'>\uD83D\uDEA0 <span class='TRANSLATEME_layer_io_vanishing'></span>: " + vanishingLayers.join(", ") + "</div>";
 	}
 
-	// Multi-plot section
+	// Multi-plot section with data-wa-indicator attributes for tooltip popups
 	html += "<div class='lio_multi_plot'>";
 
 	// Plot 1: Magnitude per layer
-	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_magnitude_per_layer'></span></div>";
+	html += "<div data-wa-indicator='magnitude_per_layer' class='wa_indicator_row'><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_magnitude_per_layer'></span> <span style='font-size:0.75em; opacity:0.5;'>ℹ️</span></div>";
 	html += _barChartSVG(record, function (s) { return Math.abs(s.mean) + s.std; }, function (s) {
 		return s.zeroFraction > 0.8 ? "#e74c3c" : s.std < 1e-6 ? "#f39c12" : "#2ecc71";
 	});
 	html += "</div>";
 
 	// Plot 2: Zero fraction per layer
-	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_zero_fraction_per_layer'></span></div>";
+	html += "<div data-wa-indicator='zero_fraction_per_layer' class='wa_indicator_row'><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_zero_fraction_per_layer'></span> <span style='font-size:0.75em; opacity:0.5;'>ℹ️</span></div>";
 	html += _barChartSVG(record, function (s) { return s.zeroFraction; }, function (s) {
 		return s.zeroFraction > 0.8 ? "#e74c3c" : s.zeroFraction > 0.5 ? "#f39c12" : "#2ecc71";
 	});
 	html += "</div>";
 
 	// Plot 3: Std per layer
-	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_std_per_layer'></span></div>";
+	html += "<div data-wa-indicator='std_per_layer' class='wa_indicator_row'><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_std_per_layer'></span> <span style='font-size:0.75em; opacity:0.5;'>ℹ️</span></div>";
 	html += _barChartSVG(record, function (s) { return s.std; }, function (s) {
 		return s.std < 1e-6 ? "#e74c3c" : s.std > 100 ? "#f39c12" : "#3498db";
 	});
 	html += "</div>";
 
 	// Plot 4: Mean flow
-	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_mean_flow'></span></div>";
+	html += "<div data-wa-indicator='mean_flow' class='wa_indicator_row'><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_mean_flow'></span> <span style='font-size:0.75em; opacity:0.5;'>ℹ️</span></div>";
 	html += _lineChartSVG(record, function (s) { return s.mean; }, "#00d4ff");
 	html += "</div>";
 
 	// Plot 5: Skewness per layer
-	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_skewness_per_layer'></span></div>";
+	html += "<div data-wa-indicator='skewness_per_layer' class='wa_indicator_row'><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_skewness_per_layer'></span> <span style='font-size:0.75em; opacity:0.5;'>ℹ️</span></div>";
 	html += _lineChartSVG(record, function (s) { return s.skewness || 0; }, "#9b59b6");
 	html += "</div>";
 
 	// Plot 6: Kurtosis per layer
-	html += "<div><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_kurtosis_per_layer'></span></div>";
+	html += "<div data-wa-indicator='kurtosis_per_layer' class='wa_indicator_row'><div class='lio_plot_label'><span class='TRANSLATEME_layer_io_kurtosis_per_layer'></span> <span style='font-size:0.75em; opacity:0.5;'>ℹ️</span></div>";
 	html += _lineChartSVG(record, function (s) { return s.kurtosis || 0; }, "#e67e22");
 	html += "</div>";
 

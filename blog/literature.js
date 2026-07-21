@@ -353,7 +353,7 @@ window.bibData = {
 		url: "https://mathigon.org/timeline/fibonacci"
 	},
 	"brahmagupta628": {
-		title: "Brāhmasphuṭasiddhānta",
+		title: "ब्राह्मस्फुटसिद्धान्त (Brāhmasphuṭasiddhānta)",
 		author: "Brahmagupta",
 		year: 628,
 		url: "https://archive.org/details/Brahmasphutasiddhanta"
@@ -2026,7 +2026,7 @@ window.bibData = {
 		author: "Solomon Kullback, Richard Leibler",
 		year: 1951
 	},
-	"kolgomorov1933": {
+	"kolmogorov1933": {
 		author: "Andrey Kolmogorov",
 		title: "Foundations of the theory of probability",
 		url: "https://www.york.ac.uk/depts/maths/histstat/kolmogorov_foundations.pdf",
@@ -3095,16 +3095,6 @@ window.bibData = {
 		author: "Josh A. Goldstein, Girish Sastry, Micah Musser, Renee DiResta, Matthew Gentzel, Andrew Lohn",
 		year: 2023
 	},
-	"bender2021stochastic": {
-		url: "https://dl.acm.org/doi/10.1145/3442188.3445922",
-		title: "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big? 🦜",
-		author: "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell",
-		year: 2021
-	},
-
-
-
-
 	"mikolov2013exploiting": {
 		title: "Exploiting Similarities among Languages for Machine Translation",
 		author: "Tomas Mikolov, Quoc V. Le, Ilya Sutskever",
@@ -3198,5 +3188,11 @@ window.bibData = {
 		year: 1892,
 		title: "Über Sinn und Bedeutung",
 		url: "https://archive.org/details/frege_sinn_und_bedeutung"
+	},
+	"li2022othello": {
+		author: "Kenneth Li, Aspen K. Hopkins, David Bau, Fernanda Viégas, Hanspeter Pfister, Martin Wattenberg",
+		year: 2022,
+		title: "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task",
+		url: "https://arxiv.org/abs/2210.13382"
 	}
 };

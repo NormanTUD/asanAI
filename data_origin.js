@@ -321,8 +321,6 @@ async function chose_dataset(no_set_config) {
 	}
 	is_setting_config = false;
 
-	show_overlay("", language[lang]["loading_model"] + "...");
-
 	reset_predict_error();
 	$("#prediction").html("");
 
@@ -349,6 +347,7 @@ async function chose_dataset(no_set_config) {
 
 	hide_dataset_when_only_one();
 
+	await wait_for_updated_page_if_page_finished_loading(3);
 	remove_overlay();
 
 	l(language[lang]["ok_chosen_dataset"]);
@@ -365,17 +364,17 @@ var handle_x_file = async function (evt) {
 
 	if (!_heuristic_layer_possibility_check(layer_0_val, _is, 0)) {
 		Swal.fire({
-			title: "X-Data and first layer have incompatible shape-requirements. Set to Dense for all layers?",
+			title: language[lang]["xdata_incompatible_shape"],
 			showDenyButton: true,
 			showCancelButton: false,
-			confirmButtonText: "Yes",
-			denyButtonText: "No",
+			confirmButtonText: language[lang]["yes"],
+			denyButtonText: language[lang]["no"],
 		}).then((result) => {
 			if (result.isConfirmed) {
 				$(".layer_type").val("dense").trigger("change");
-				Swal.fire("Set all layers to dense", "", "success");
+				Swal.fire(language[lang]["set_all_layers_dense"], "", "success");
 			} else if (result.isDenied) {
-				Swal.fire("The model may not work as expected", "", "warning");
+				Swal.fire(language[lang]["model_may_not_work"], "", "warning");
 			}
 		});
 	}

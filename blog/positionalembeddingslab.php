@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Positional Embeddings
+description: Why order matters, sine, cosine, and how Transformers know which token came first.
+icon: &#128255;
+part: 4
+order: 22
+color: sky
+-->
 
 <div class="smart-quote" data-cite="vaswani2017attention" data-page=6>
 Since our model contains no recurrence and no convolution, in order for the model to make use of the

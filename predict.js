@@ -215,7 +215,7 @@ function load_file (event) {
 }
 
 function show_predict_spinner(target_selector) {
-	$(target_selector).html("<span class='predict-spinner'>⏳ Predicting...</span>");
+	$(target_selector).html("<span class='predict-spinner'>⏳ " + language[lang]["predicting"] + "</span>");
 }
 
 function hide_predict_spinner(target_selector) {
@@ -1051,6 +1051,8 @@ async function predict(item) {
 	await dispose(predict_data);
 
 	await force_restart_fcnn();
+
+	TopologicalAnalyzer.update();
 
 	return str;
 }
@@ -1903,7 +1905,13 @@ function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 /* This function checks to see if the shape of the tensor matches the input layer shape of the model. */
 
 function tensor_shape_matches_model (_tensor, m = model) {
-	if(!m || typeof(m) == "object" && !Object.keys(m).includes("layers") && Object.keys(m.layers).includes(0)) {
+	try {
+		if(!m || typeof(m) == "object" && !Object.keys(m).includes("layers") && Object.keys(m.layers).includes(0)) {
+			model_is_ok();
+			return false;
+		}
+	} catch (err) {
+		dbg(err);
 		model_is_ok();
 		return false;
 	}

@@ -1,7 +1,16 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Layer Normalization
+description: Keeping activations stable, the math behind GPT's pre-norm architecture.
+icon: &#9878;
+part: 3
+order: 18
+color: emerald
+-->
 
 <div class="md">
-Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016layernorm} (in their paper '\citetitle{ba2016layernorm}'), ensures that the inputs to each layer have a consistent mean and variance. This prevents "internal covariate shift" and allows for much higher learning rates and faster convergence.
+Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016layernorm} (in their paper '\citetitle{ba2016layernorm}'), ensures that the inputs to each layer have a consistent mean and variance. This prevents *"internal covariate shift"* and allows for much higher learning rates and faster convergence.
 
 ## The Mathematical Process
 For a specific layer input vector $x$ with $d$ dimensions, the normalization follows these four steps:
@@ -25,7 +34,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 
 ## Usage in Other Model Types
 * **RNNs / LSTMs:** LN is the preferred normalization for Recurrent Neural Networks because it can be applied to each time step independently, whereas Batch Norm struggles with the temporal dependency.
-* **Computer Vision (ViT):** While standard CNNs use Batch Norm, **Vision Transformers (ViTs)** use Layer Normalization to treat image patches like tokens in a sequence.
+* **Computer Vision (ViT):** While standard CNNs use Batch Norm, **Vision Transformers (ViTs)** use Layer Normalization to treat image patches like *tokens in a sequence*.
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->

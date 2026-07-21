@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Der Leib – Hermann Schmitz interaktiv</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        h1 { font-size: 1.8em; text-align: center; margin-bottom: 10px; color: #fff; }
+        h2 { font-size: 1.3em; text-align: center; margin-bottom: 15px; color: #aaccff; }
+        p { font-size: 0.95em; max-width: 600px; text-align: center; line-height: 1.5; margin: 8px auto; opacity: 0.85; }
+        canvas { border-radius: 12px; touch-action: none; max-width: 100%; }
+        .nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; justify-content: center; gap: 8px;
+            padding: 12px; background: rgba(10,10,26,0.95);
+            z-index: 100; flex-wrap: wrap;
+        }
+        .nav button {
+            background: #1a1a3a; border: 1px solid #334; color: #aaccff;
+            padding: 8px 14px; border-radius: 20px; font-size: 0.75em;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .nav button:hover, .nav button.active { background: #2a3a6a; border-color: #5577cc; }
+        .hint {
+            position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(50,70,120,0.8); padding: 8px 16px; border-radius: 20px;
+            font-size: 0.8em; white-space: nowrap; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
+        .hidden { display: none !important; }
+        .legend { font-size: 0.75em; opacity: 0.6; margin-top: 8px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<!-- Section 1: Engung & Weitung -->
+<div class="section" id="s1">
+    <h1>Der Leib</h1>
+    <h2>Engung & Weitung</h2>
+    <p>Der Leib lebt zwischen Enge und Weite. Tippe/klicke um Engung zu erzeugen – loslassen für Weitung.</p>
+    <canvas id="c1" width="350" height="350"></canvas>
+    <div class="hint">👆 Halten = Engung, Loslassen = Weitung</div>
+    <div class="legend">Schmitz: Der vitale Antrieb ist Spannung gegen Schwellung</div>
+</div>
+
+<!-- Section 2: Leibesinseln -->
+<div class="section hidden" id="s2">
+    <h2>Leibesinseln</h2>
+    <p>Der Leib ist kein stetiges Ganzes, sondern ein Gewoge verschwommener Inseln. Tippe um Inseln zu erzeugen.</p>
+    <canvas id="c2" width="350" height="500"></canvas>
+    <div class="hint">👆 Tippe auf den Körper-Umriss</div>
+    <div class="legend">Inseln bilden sich und schwinden – ohne Flächen und Ränder</div>
+</div>
+
+<!-- Section 3: Leibliche Richtung -->
+<div class="section hidden" id="s3">
+    <h2>Leibliche Richtung</h2>
+    <p>Der Blick, das Ausatmen – unumkehrbare Richtungen aus der Enge in die Weite. Ziehe eine Richtung.</p>
+    <canvas id="c3" width="350" height="350"></canvas>
+    <div class="hint">👆 Ziehe vom Zentrum nach außen</div>
+    <div class="legend">Leibliche Richtung vermittelt zwischen Enge und Weite</div>
+</div>
+
+<!-- Section 4: Einleibung -->
+<div class="section hidden" id="s4">
+    <h2>Leibliche Kommunikation</h2>
+    <p>Einleibung: Zwei Leiber verbinden sich durch gemeinsamen vitalen Antrieb. Bewege die Kreise zueinander.</p>
+    <canvas id="c4" width="350" height="350"></canvas>
+    <div class="hint">👆 Ziehe einen Kreis zum anderen</div>
+    <div class="legend">Antagonistische Einleibung: gemeinsamer vitaler Antrieb</div>
+</div>
+
+<!-- Section 5: Protopathisch / Epikritisch -->
+<div class="section hidden" id="s5">
+    <h2>Protopathisch ↔ Epikritisch</h2>
+    <p>Dumpf-verschwimmend vs. spitz-scharf. Schiebe den Regler um die Tendenz zu ändern.</p>
+    <canvas id="c5" width="350" height="350"></canvas>
+    <input type="range" id="peSlider" min="0" max="100" value="50" style="width:80%;max-width:300px;margin-top:15px;">
+    <div class="legend">Links = protopathisch (weich, dunkel) | Rechts = epikritisch (spitz, hell)</div>
+</div>
+
+<nav class="nav">
+    <button onclick="show(1)" class="active">Engung/Weitung</button>
+    <button onclick="show(2)">Leibesinseln</button>
+    <button onclick="show(3)">Richtung</button>
+    <button onclick="show(4)">Einleibung</button>
+    <button onclick="show(5)">Proto/Epi</button>
+</nav>
+
+<script>
+// Navigation
+function show(n) {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+    document.getElementById('s'+n).classList.remove('hidden');
+    document.querySelectorAll('.nav button').forEach((b,i) => b.classList.toggle('active', i===n-1));
+}
+
+// === CANVAS 1: Engung & Weitung ===
+(function(){
+    const c = document.getElementById('c1');
+    const ctx = c.getContext('2d');
+    let pressing = false;
+    let eng = 0; // 0=neutral, 1=full engung
+    let particles = [];
+    
+    for(let i=0;i<60;i++) particles.push({a:Math.random()*Math.PI*2, r:80+Math.random()*60, v:Math.random()*0.02-0.01});
+    
+    c.addEventListener('pointerdown', ()=> pressing=true);
+    c.addEventListener('pointerup', ()=> pressing=false);
+    c.addEventListener('pointerleave', ()=> pressing=false);
+    
+    function draw(){
+        eng += (pressing ? 1 : 0 - eng) * 0.05;
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0,0,350,350);
+        
+        const cx=175, cy=175;
+        const baseR = 60 + (1-eng)*80;
+        
+        // Glow
+        const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,baseR*1.5);
+        grad.addColorStop(0, `rgba(100,150,255,${0.3-eng*0.2})`);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,350,350);
+        
+        // Core
+        ctx.beginPath();
+        ctx.arc(cx,cy,baseR*0.3+eng*20, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,${200-eng*150},${200-eng*180},${0.6+eng*0.4})`;
+        ctx.fill();
+        
+        // Particles
+        particles.forEach(p => {
+            p.a += p.v + (pressing?0.03:-0.005);
+            const r = p.r * (pressing ? 0.4 : 1);
+            const x = cx + Math.cos(p.a)*r;
+            const y = cy + Math.sin(p.a)*r;
+            ctx.beginPath();
+            ctx.arc(x,y, pressing?2:4, 0, Math.PI*2);
+            ctx.fillStyle = pressing ? `rgba(255,100,80,0.8)` : `rgba(100,200,255,0.6)`;
+            ctx.fill();
+        });
+        
+        // Label
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(pressing ? '← ENGUNG →' : '← WEITUNG →', cx, 330);
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 2: Leibesinseln ===
+(function(){
+    const c = document.getElementById('c2');
+    const ctx = c.getContext('2d');
+    let islands = [];
+    
+    c.addEventListener('pointerdown', (e)=>{
+        const rect = c.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (c.width/rect.width);
+        const y = (e.clientY - rect.top) * (c.height/rect.height);
+        islands.push({x,y,r:15+Math.random()*25, life:1, pulse:Math.random()*Math.PI*2});
+    });
+    
+    function draw(){
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0,0,350,500);
+        
+        // Body outline
+        ctx.beginPath();
+        ctx.ellipse(175,130,40,50,0,0,Math.PI*2);
+        ctx.moveTo(175,180);
+        ctx.ellipse(175,280,50,100,0,0,Math.PI*2);
+        ctx.moveTo(125,200); ctx.lineTo(80,320);
+        ctx.moveTo(225,200); ctx.lineTo(270,320);
+        ctx.moveTo(150,380); ctx.lineTo(140,480);
+        ctx.moveTo(200,380); ctx.lineTo(210,480);
+        ctx.strokeStyle = 'rgba(100,150,200,0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Islands
+        islands.forEach((isl,idx) => {
+            isl.pulse += 0.05;
+            isl.life -= 0.002;
+            if(isl.life <= 0) { islands.splice(idx,1); return; }
+            const r = isl.r * (0.8 + Math.sin(isl.pulse)*0.2);
+            const grad = ctx.createRadialGradient(isl.x,isl.y,0,isl.x,isl.y,r);
+            grad.addColorStop(0, `rgba(200,100,255,${isl.life*0.7})`);
+            grad.addColorStop(0.6, `rgba(100,50,200,${isl.life*0.3})`);
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(isl.x,isl.y,r,0,Math.PI*2);
+            ctx.fill();
+        });
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 3: Leibliche Richtung ===
+(function(){
+    const c = document.getElementById('c3');
+    const ctx = c.getContext('2d');
+    let rays = [];
+    let dragging = false;
+    let dragEnd = {x:175,y:175};
+    
+    c.addEventListener('pointerdown', ()=>{ dragging=true; });
+    c.addEventListener('pointermove', (e)=>{
+        if(!dragging) return;
+        const rect = c.getBoundingClientRect();
+        dragEnd.x = (e.clientX - rect.left)*(c.width/rect.width);
+        dragEnd.y = (e.clientY - rect.top)*(c.height/rect.height);
+    });
+    c.addEventListener('pointerup', ()=>{
+        if(dragging){
+            const dx=dragEnd.x-175, dy=dragEnd.y-175;
+            const a = Math.atan2(dy,dx);
+            rays.push({a, life:1, speed:2+Math.random()*3});
+        }
+        dragging=false;
+    });
+    
+    function draw(){
+        ctx.fillStyle = 'rgba(10,10,26,0.15)';
+        ctx.fillRect(0,0,350,350);
+        
+        const cx=175,cy=175;
+        
+        // Center (Enge)
+        ctx.beginPath();
+        ctx.arc(cx,cy,15,0,Math.PI*2);
+        ctx.fillStyle = 'rgba(255,150,100,0.8)';
+        ctx.fill();
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Enge',cx,cy+30);
+        ctx.fillText('→ Weite',cx+100,cy);
+        
+        // Rays
+        rays.forEach((r,i) => {
+            r.life -= 0.008;
+            if(r.life<=0){rays.splice(i,1);return;}
+            const dist = (1-r.life)*170;
+            const x = cx + Math.cos(r.a)*dist;
+            const y = cy + Math.sin(r.a)*dist;
+            ctx.beginPath();
+            ctx.moveTo(cx+Math.cos(r.a)*20, cy+Math.sin(r.a)*20);
+            ctx.lineTo(x,y);
+            ctx.strokeStyle = `rgba(100,200,255,${r.life})`;
+            ctx.lineWidth = 3*r.life;
+            ctx.stroke();
+            // Arrow head
+            ctx.beginPath();
+            ctx.arc(x,y,4*r.life,0,Math.PI*2);
+            ctx.fillStyle = `rgba(150,220,255,${r.life})`;
+            ctx.fill();
+        });
+        
+        // Drag preview
+        if(dragging){
+            ctx.beginPath();
+            ctx.moveTo(cx,cy);
+            ctx.lineTo(dragEnd.x,dragEnd.y);
+            ctx.strokeStyle = 'rgba(255,255,100,0.5)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5,5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 4: Einleibung ===
+(function(){
+    const c = document.getElementById('c4');
+    const ctx = c.getContext('2d');
+    let a = {x:100,y:175,vx:0,vy:0};
+    let b = {x:250,y:175,vx:0,vy:0};
+    let draggingObj = null;
+    let connection = 0;
+    
+    c.addEventListener('pointerdown',(e)=>{
+        const rect = c.getBoundingClientRect();
+        const mx = (e.clientX-rect.left)*(c.width/rect.width);
+        const my = (e.clientY-rect.top)*(c.height/rect.height);
+        const da = Math.hypot(mx-a.x,my-a.y);
+        const db = Math.hypot(mx-b.x,my-b.y);
+        if(da<40) draggingObj=a;
+        else if(db<40) draggingObj=b;
+    });
+    c.addEventListener('pointermove',(e)=>{
+        if(!draggingObj) return;
+        const rect = c.getBoundingClientRect();
+        draggingObj.x = (e.clientX-rect.left)*(c.width/rect.width);
+        draggingObj.y = (e.clientY-rect.top)*(c.height/rect.height);
+    });
+    c.addEventListener('pointerup',()=>draggingObj=null);
+    c.addEventListener('pointerleave',()=>draggingObj=null);
+    
+    function draw(){
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0,0,350,350);
+        
+        const dist = Math.hypot(a.x-b.x, a.y-b.y);
+        connection = Math.max(0, 1 - dist/200);
+        
+        // Connection field
+        if(connection > 0.1){
+            const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+            const grad = ctx.createRadialGradient(mx,my,0,mx,my,dist/2);
+            grad.addColorStop(0, `rgba(255,200,100,${connection*0.4})`);
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,350,350);
+            
+            // Pulse lines
+            const t = Date.now()*0.003;
+            for(let i=0;i<5;i++){
+                const f = (t+i*0.2)%1;
+                const px = a.x + (b.x-a.x)*f;
+                const py = a.y + (b.y-a.y)*f;
+                ctx.beginPath();
+                ctx.arc(px,py,3+connection*5,0,Math.PI*2);
+                ctx.fillStyle = `rgba(255,220,100,${(1-f)*connection})`;
+                ctx.fill();
+            }
+        }
+        
+        // Bodies
+        [a,b].forEach((obj,i)=>{
+            const pulse = Math.sin(Date.now()*0.003+i*Math.PI)*3*connection;
+            ctx.beginPath();
+            ctx.arc(obj.x,obj.y,25+pulse,0,Math.PI*2);
+            ctx.fillStyle = i===0 ? `rgba(100,150,255,0.7)` : `rgba(255,100,150,0.7)`;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.stroke();
+        });
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Einleibung: ${Math.round(connection*100)}%`, 175, 330);
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// === CANVAS 5: Protopathisch / Epikritisch ===
+(function(){
+    const c = document.getElementById('c5');
+    const ctx = c.getContext('2d');
+    const slider = document.getElementById('peSlider');
+    let particles = [];
+    for(let i=0;i<80;i++) particles.push({x:Math.random()*350,y:Math.random()*350,vx:0,vy:0,s:3+Math.random()*5});
+    
+    function draw(){
+        const val = slider.value / 100; // 0=proto, 1=epi
+        ctx.fillStyle = `rgba(${10+val*20},${10-val*5},${26-val*15},0.2)`;
+        ctx.fillRect(0,0,350,350);
+        
+        particles.forEach(p => {
+            // Proto: soft, drifting, large. Epi: sharp, fast, small
+            const speed = 0.3 + val*2;
+            p.vx += (Math.random()-0.5)*speed;
+            p.vy += (Math.random()-0.5)*speed;
+            p.vx *= 0.95 - val*0.1;
+            p.vy *= 0.95 - val*0.1;
+            p.x += p.vx;
+            p.y += p.vy;
+            if(p.x<0)p.x=350; if(p.x>350)p.x=0;
+            if(p.y<0)p.y=350; if(p.y>350)p.y=0;
+            
+            const size = p.s * (1.5 - val);
+            
+            if(val < 0.5){
+                // Protopathisch: soft blobs
+                const grad = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,size);
+                grad.addColorStop(0, `rgba(80,50,150,${0.6-val})`);
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(p.x,p.y,size,0,Math.PI*2);
+                ctx.fill();
+            } else {
+                // Epikritisch: sharp points
+                ctx.fillStyle = `rgba(255,255,200,${val})`;
+                ctx.fillRect(p.x-1, p.y-1, 2, 2);
+                if(Math.random()>0.95){
+                    ctx.beginPath();
+                    ctx.moveTo(p.x,p.y);
+                    ctx.lineTo(p.x+p.vx*5,p.y+p.vy*5);
+                    ctx.strokeStyle = `rgba(255,255,150,${val*0.5})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        });
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(val<0.4?'Protopathisch: dumpf, weich, verschwimmend':val>0.6?'Epikritisch: spitz, scharf, hell':'Übergang', 175, 25);
+        
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Basic Math Concepts
+description: Functions, variables, and parameters, the classical programming vs. neural network mindset.
+icon: &#128290;
+part: 1
+order: 3
+color: accent
+-->
 
 <div class="md">
 ## Programming
@@ -22,7 +31,7 @@ According to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 381), the na
 <div class="md">
 The line with <tt>print</tt> then prints out this value to the command line.
 
-You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating its values.
+You can also use more variables, like the next example uses $ y $, which, in turn, uses the value of $ x $ to print $ 3 $ after calculating its values.
 </div>
 
 <pre><code class="language-python">x = 1 + 1 # x = 2
@@ -92,7 +101,7 @@ print(result) # The result is then printed
 
 
 <div class="md">
-Of course, we can also parameterize this function: $y = f(x, y) = ax + by$. You can also play around with how this changes the results of this function in the next plot:
+Of course, we can also parameterize this function: $f(x, y) = ax + by$. You can also play around with how this changes the results of this function in the next plot:
 </div>
 
 <div style="margin-bottom: 10px;">
@@ -482,7 +491,7 @@ Think of Tensors like a ladder of complexity:
 A **Scalar** is just one single number. 
 Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
 
-$$s \in \left\{1, 2, 3, 4, 5, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
+$$s \in \left\{0, 1, 2, 3, 4, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
 
 ### The Vector (rank 1)
 A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
@@ -521,7 +530,7 @@ $$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} =
 
 ### The Matrix (rank 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
-A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", "255" means white and everything inbetween are different shades of gray.
+A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", $255$ means white and everything inbetween are different shades of gray.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
 </div>

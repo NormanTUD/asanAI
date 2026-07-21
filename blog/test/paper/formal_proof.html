@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Proof - Interactive Visual Explainer</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 40px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin: 30px 0 15px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            color: #a0a0ff;
+        }
+        .section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .interactive-box {
+            background: #1a1a3a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #3a3a5a;
+        }
+        canvas {
+            display: block;
+            margin: 15px auto;
+            border-radius: 8px;
+            border: 1px solid #3a3a5a;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn.active {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        .slider-container {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .slider-container label {
+            min-width: 150px;
+            color: #a0a0c0;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #3a3a5a;
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        .math-display {
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0a0a1a;
+            border-radius: 8px;
+            font-size: 1.2em;
+            overflow-x: auto;
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding: 15px;
+            background: #1a1a3a;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .timeline-item:hover {
+            background: #222250;
+            transform: translateX(5px);
+        }
+        .timeline-year {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 60px;
+            font-size: 1.1em;
+        }
+        .timeline-content {
+            margin-left: 15px;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison-card {
+            background: #1a1a3a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #3a3a5a;
+        }
+        .comparison-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .comparison-card.formal h4 {
+            color: #f093fb;
+        }
+        .stat-bar {
+            height: 30px;
+            background: #0a0a1a;
+            border-radius: 15px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .stat-fill {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .tooltip {
+            position: absolute;
+            background: #222250;
+            color: #e0e0e0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 100;
+            border: 1px solid #667eea;
+            max-width: 250px;
+        }
+        .node-graph {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        .info-bubble {
+            display: inline-block;
+            background: #2a2a5a;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin: 3px;
+            font-size: 13px;
+            color: #c0c0ff;
+        }
+        .proof-step {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background: #1a1a3a;
+            border-left: 3px solid #444;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .proof-step.active {
+            border-left-color: #667eea;
+            background: #222250;
+        }
+        .proof-step.verified {
+            border-left-color: #4caf50;
+        }
+        #kernelCanvas {
+            background: #0a0a1a;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 8px 16px;
+            background: #1a1a3a;
+            border: 1px solid #3a3a5a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            color: #a0a0c0;
+        }
+        .tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .flow-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formal Proof: An Interactive Visual Guide</h1>
+        <p style="text-align:center; color:#a0a0c0; margin-bottom:30px;">
+            Based on Thomas C. Hales' paper (Notices of the AMS, 2008)
+        </p>
+
+        <!-- Section 1: The Problem with Bugs -->
+        <div class="section" id="sec-bugs">
+            <h2>🐛 The Problem: Software Bugs Are Everywhere</h2>
+            <p style="margin-bottom:15px;">A programmer introduces ~1.5 bugs per line while typing. About 1 bug per 100 lines ships to market undetected.</p>
+            
+            <div class="interactive-box">
+                <h3>Bug Density Simulator</h3>
+                <div class="slider-container">
+                    <label>Lines of Code:</label>
+                    <input type="range" id="linesSlider" min="100" max="100000" value="5000" step="100">
+                    <span id="linesValue">5,000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Bug Rate (per 100 lines):</label>
+                    <input type="range" id="bugRateSlider" min="0.01" max="5" value="1" step="0.01">
+                    <span id="bugRateValue">1.00</span>
+                </div>
+                <div id="bugChart" style="width:100%;height:300px;"></div>
+                <p style="margin-top:10px; color:#a0a0c0; font-size:13px;">
+                    Compare: Linux has ~283 million lines of code. HOL Light's kernel is &lt;500 lines.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: Traditional vs Formal Proof -->
+        <div class="section" id="sec-comparison">
+            <h2>📐 Traditional Proof vs. Formal Proof</h2>
+            
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>Traditional Proof</h4>
+                    <ul style="list-style:none; line-height:2;">
+                        <li>✍️ Written for human understanding</li>
+                        <li>⏭️ Routine steps omitted</li>
+                        <li>🧠 Relies on reader's context</li>
+                        <li>🎨 Uses intuitive arguments</li>
+                        <li>⚠️ Susceptible to logical gaps</li>
+                    </ul>
+                </div>
+                <div class="comparison-card formal">
+                    <h4>Formal Proof</h4>
+                    <ul style="list-style:none; line-height:2;">
+                        <li>🖥️ Written for machine verification</li>
+                        <li>✅ Every inference checked</li>
+                        <li>📋 All assumptions explicit</li>
+                        <li>🔗 Traced back to axioms</li>
+                        <li>🛡️ Extremely reliable</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>Interactive Example: Proving 1 + 1 = 2</h3>
+                <div class="math-display" id="math-1plus1"></div>
+                <div id="proofSteps">
+                    <div class="proof-step" data-step="0" onclick="highlightStep(0)">
+                        <strong>Step 1:</strong> Define 1 as the successor of 0: <span class="step-math" id="step0-math"></span>
+                    </div>
+                    <div class="proof-step" data-step="1" onclick="highlightStep(1)">
+                        <strong>Step 2:</strong> Define 2 as the successor of 1: <span class="step-math" id="step1-math"></span>
+                    </div>
+                    <div class="proof-step" data-step="2" onclick="highlightStep(2)">
+                        <strong>Step 3:</strong> Apply recursive definition of addition: <span class="step-math" id="step2-math"></span>
+                    </div>
+                    <div class="proof-step" data-step="3" onclick="highlightStep(3)">
+                        <strong>Step 4:</strong> Apply recursion again: <span class="step-math" id="step3-math"></span>
+                    </div>
+                    <div class="proof-step" data-step="4" onclick="highlightStep(4)">
+                        <strong>Step 5:</strong> Conclude: <span class="step-math" id="step4-math"></span>
+                    </div>
+                </div>
+                <button class="btn" onclick="animateProof()">▶ Animate Proof</button>
+                <button class="btn" onclick="resetProof()">↺ Reset</button>
+            </div>
+        </div>
+
+        <!-- Section 3: HOL Light System -->
+        <div class="section" id="sec-hol">
+            <h2>⚙️ The HOL Light System</h2>
+            <p style="margin-bottom:15px;">HOL Light is a foundational system for formal proofs based on Higher Order Logic with a tiny, verifiable kernel.</p>
+            
+            <div class="interactive-box">
+                <h3>System Architecture</h3>
+                <canvas id="kernelCanvas" width="800" height="450"></canvas>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#667eea;"></div> Kernel (~500 lines)</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#f093fb;"></div> Verified Libraries</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#4caf50;"></div> User Contributions</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#ff9800;"></div> Decision Procedures</div>
+                </div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>The Five Components</h3>
+                <div class="tab-container">
+                    <div class="tab active" onclick="showTab('types')">Types</div>
+                    <div class="tab" onclick="showTab('terms')">Terms</div>
+                    <div class="tab" onclick="showTab('theorems')">Theorems</div>
+                    <div class="tab" onclick="showTab('inference')">Inference Rules</div>
+                    <div class="tab" onclick="showTab('axioms')">Axioms</div>
+                </div>
+                
+                <div class="tab-content active" id="tab-types">
+                    <p>Types prevent nonsensical operations (like taking the union of cosine and <em>e</em>).</p>
+                    <div class="math-display" id="math-types"></div>
+                    <p style="margin-top:10px;">Only two primitive types: <span class="info-bubble">:bool</span> <span class="info-bubble">:ind</span></p>
+                    <p>New types formed with type variables joined by arrows, e.g., <span class="info-bubble">:bool→A</span></p>
+                </div>
+                <div class="tab-content" id="tab-terms">
+                    <p>Terms are built using Church's λ-calculus notation:</p>
+                    <div class="math-display" id="math-lambda"></div>
+                    <p style="margin-top:10px;">Built from: <span class="info-bubble">Variables</span> <span class="info-bubble">Constants</span> <span class="info-bubble">Abstraction (λx.t)</span> <span class="info-bubble">Application f(x)</span></p>
+                    <p style="margin-top:5px;">Only two primitive constants: <span class="info-bubble">= (equality)</span> <span class="info-bubble">ε (choice)</span></p>
+                </div>
+                <div class="tab-content" id="tab-theorems">
+                    <p>A theorem is a sequent — assumptions leading to a conclusion:</p>
+                    <div class="math-display" id="math-sequent"></div>
+                    <p style="margin-top:10px;">Theorems can ONLY be created through inference rules, definitions, or axioms. The type system enforces this.</p>
+                </div>
+                <div class="tab-content" id="tab-inference">
+                    <p>10 inference rules form the logical engine. Click to explore:</p>
+                    <div id="inferenceRules"></div>
+                </div>
+                <div class="tab-content" id="tab-axioms">
+                    <p>Only THREE mathematical axioms are needed:</p>
+                    <div style="margin:10px 0;">
+                        <div class="proof-step" style="border-left-color:#667eea;">
+                            <strong>Extensionality:</strong> Every function is determined by its input-output relation.
+                            <div class="math-display" id="math-ext"></div>
+                        </div>
+                        <div class="proof-step" style="border-left-color:#f093fb;">
+                            <strong>Infinity:</strong> There exists a one-to-one function that is not onto.
+                            <div class="math-display" id="math-inf"></div>
+                        </div>
+                        <div class="proof-step" style="border-left-color:#4caf50;">
+                            <strong>Choice:</strong> The Hilbert choice operator selects a satisfying element.
+                            <div class="math-display" id="math-choice"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Soundness & Trust -->
+        <div class="section" id="sec-soundness">
+            <h2>🛡️ Soundness: Why We Can Trust It</h2>
+            
+            <div class="interactive-box">
+                <h3>Error Probability with Cross-Verification</h3>
+                <p style="margin-bottom:10px;">When proofs are exported between independent systems, failure probability drops as p<sup>n</sup>:</p>
+                <div class="slider-container">
+                    <label>Individual failure rate (p):</label>
+                    <input type="range" id="failRateSlider" min="-8" max="-2" value="-4" step="0.1">
+                    <span id="failRateValue">10⁻⁴</span>
+                </div>
+                <div class="slider-container">
+                    <label>Number of systems (n):</label>
+                    <input type="range" id="numSystemsSlider" min="1" max="6" value="2" step="1">
+                    <span id="numSystemsValue">2</span>
+                </div>
+                <div id="soundnessChart" style="width:100%;height:300px;"></div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>Reliability Comparison</h3>
+                <div id="reliabilityBars">
+                    <div style="margin:10px 0;">
+                        <span style="color:#a0a0c0;">Typical Software (1 bug/100 lines)</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width:90%; background:linear-gradient(90deg, #f5576c, #ff9800);">~90% bug-free sections</div>
+                        </div>
+                    </div>
+                    <div style="margin:10px 0;">
+                        <span style="color:#a0a0c0;">Space Shuttle Software (&lt;1 bug/10,000 lines)</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width:99%; background:linear-gradient(90deg, #ff9800, #4caf50);">99.99%</div>
+                        </div>
+                    </div>
+                    <div style="margin:10px 0;">
+                        <span style="color:#a0a0c0;">HOL Light Kernel (~500 lines, decades of scrutiny)</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width:99.9%; background:linear-gradient(90deg, #4caf50, #667eea);">~99.9999%+</div>
+                        </div>
+                    </div>
+                    <div style="margin:10px 0;">
+                        <span style="color:#a0a0c0;">Cross-verified formal proof</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width:100%; background:linear-gradient(90deg, #667eea, #764ba2);">≈ certainty</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Timeline of Formal Proofs -->
+        <div class="section" id="sec-timeline">
+            <h2>📅 Milestones in Formal Proof</h2>
+            
+            <div class="interactive-box">
+                <h3>Historical Timeline (click to expand)</h3>
+                <div class="timeline">
+                    <div class="timeline-item" onclick="toggleDetail(this)">
+                        <span class="timeline-year">1954</span>
+                        <div class="timeline-content">
+                            <strong>First Computer Proof</strong> — M. Davis proves sum of two even numbers is even on "Johniac"
+                            <div class="detail" style="display:none; margin-top:8px; color:#a0a0c0; font-size:13px;">
+                                Programmed the Presburger algorithm for additive arithmetic at the Institute for Advanced Study.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="toggleDetail(this)">
+                        <span class="timeline-year">1956</span>
+                        <div class="timeline-content">
+                            <strong>Principia Mathematica Automated</strong> — Wang's procedure generates proofs of every theorem in predicate calculus
+                            <div class="detail" style="display:none; margin-top:8px; color:#a0a0c0; font-size:13px;">
+                                By end of 1959, automation of Russell and Whitehead's work was substantially complete.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="toggleDetail(this)">
+                        <span class="timeline-year">1968</span>
+                        <div class="timeline-content">
+                            <strong>Automath</strong> — N.G. de Bruijn designs first program to check general mathematical proofs
+                            <div class="detail" style="display:none; margin-top:8px; color:#a0a0c0; font-size:13px;">
+                                Eventually checked every proposition in Landau's primer on Dedekind cuts.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="toggleDetail(this)">
+                        <span class="timeline-year">1996</span>
+                        <div class="timeline-content">
+                            <strong>Robbins Conjecture</strong> — Fully automated proof by EQP (8 days of computation)
+                            <div class="detail" style="display:none; margin-top:8px; color:#a0a0c0; font-size:13px;">
+                                No human assistance, no specialized algorithms. Just type the problem and wait.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="toggleDetail(this)">
+                        <span class="timeline-year">2004</span>
+                        <div class="timeline-content">
+                            <strong>Four-Color Theorem</strong> — Gonthier's formal proof in Coq
+                            <div class="detail" style="display:none; margin-top:8px; color:#a0a0c0; font-size:13px;">
+                                One of the most meticulously verified proofs in history. Based on Robertson et al.'s proof.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item" onclick="toggleDetail(this)">
+                        <span class="timeline-year">2008</span>
+                        <div class="timeline-content">
+                            <strong>Prime Number Theorem</strong> — Both elementary and analytic proofs formalized
+                            <div class="detail" style="display:none; margin-top:8px; color:#a0a0c0; font-size:13px;">
+                                Harrison formalized the analytic proof in HOL Light; Avigad et al. did the Selberg-Erdős proof in Isabelle.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>Proof Systems Around the World</h3>
+                <canvas id="mapCanvas" width="800" height="350"></canvas>
+                <p style="text-align:center; color:#a0a0c0; font-size:13px; margin-top:10px;">
+                    Hover over regions to see preferred proof systems
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 6: The Formalization Process -->
+        <div class="section" id="sec-process">
+            <h2>🔄 The Formalization Pipeline</h2>
+            
+            <div class="interactive-box">
+                <h3>From Traditional to Formal Proof</h3>
+                <canvas id="pipelineCanvas" width="800" height="250"></canvas>
+                <p style="text-align:center; margin-top:10px; color:#a0a0c0;">Click each stage to learn more</p>
+                <div id="pipelineDetail" style="margin-top:15px; padding:15px; background:#0a0a1a; border-radius:8px; min-height:60px;">
+                    <em style="color:#666;">Click a stage above to see details...</em>
+                </div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>The de Bruijn Factor</h3>
+                <p style="margin-bottom:10px;">The ratio of formal proof length to traditional proof length is remarkably stable:</p>
+                <div id="debruijnChart" style="width:100%;height:300px;"></div>
+                <p style="margin-top:10px; color:#a0a0c0; font-size:13px;">
+                    Standard benchmark: ~1 week per page of textbook math → formal proof. Cost: ~$150/page outsourced.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 7: Flyspeck Project -->
+        <div class="section" id="sec-flyspeck">
+            <h2>🔬 Flyspeck: The Kepler Conjecture</h2>
+            <p style="margin-bottom:15px;">The Kepler conjecture states that no packing of congruent balls in 3D can exceed the density of the face-centered cubic packing (the cannonball arrangement).</p>
+            
+            <div class="interactive-box">
+                <h3>Sphere Packing Visualization</h3>
+                <canvas id="sphereCanvas" width="800" height="400"></canvas>
+                <div class="slider-container">
+                    <label>Rotation:</label>
+                    <input type="range" id="rotationSlider" min="0" max="360" value="30" step="1">
+                    <span id="rotationValue">30°</span>
+                </div>
+                <div style="margin-top:10px;">
+                    <span class="info-bubble">Density ≈ π/(3√2) ≈ 74.05%</span>
+                    <span class="info-bubble">~20 work-years to formalize</span>
+                    <span class="info-bubble">300 pages + 40,000 lines of code</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 8: The QED Vision -->
+        <div class="section" id="sec-qed">
+            <h2>🌟 The QED Vision</h2>
+            <p style="margin-bottom:15px;">The Q.E.D. manifesto envisions a vast library of all significant mathematical results preserved as formal proofs — "the sequencing of a mathematical genome."</p>
+            
+            <div class="interactive-box">
+                <h3>Scale of the Challenge</h3>
+                <div id="qedChart" style="width:100%;height:350px;"></div>
+            </div>
+
+            <div class="interactive-box">
+                <h3>Automation Spectrum</h3>
+                <canvas id="automationCanvas" width="800" height="200"></canvas>
+                <p style="text-align:center; margin-top:10px; color:#a0a0c0; font-size:13px;">
+                    Current fully automated proofs are at the level of undergraduate homework exercises
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    // ============ MATH RENDERING ============
+    function renderMath() {
+        const mathElements = {
+            'math-1plus1': '1 + 1 = 1 + S(0) = S(1 + 0) = S(1) = 2',
+            'step0-math': '1 = S(0)',
+            'step1-math': '2 = S(1)',
+            'step2-math': '1 + S(0) = S(1 + 0)',
+            'step3-math': 'S(1 + 0) = S(1)',
+            'step4-math': 'S(1) = 2 \\; \\therefore \\; 1 + 1 = 2',
+            'math-types': '\\text{:bool},\\quad \\text{:ind},\\quad \\text{:bool} \\to A,\\quad \\text{:(bool} \\to A) \\to (\\text{ind} \\to B)',
+            'math-lambda': '\\lambda x.\\, f(x) \\quad \\text{represents the function } x \\mapsto f(x)',
+            'math-sequent': '\\{p_1, \\ldots, p_k\\} \\vdash q',
+            'math-ext': '\\forall f.\\; (\\lambda x.\\, f\\,x) = f',
+            'math-inf': '\\exists f\\!:\\!\\text{ind}\\to\\text{ind}.\\; (\\text{ONE\\_ONE}\\, f) \\wedge \\neg(\\text{ONTO}\\, f)',
+            'math-choice': '\\forall P\\, x.\\; P\\,x \\Rightarrow P(\\varepsilon\\, P)'
+        };
+        
+        for (const [id, tex] of Object.entries(mathElements)) {
+            const el = document.getElementById(id);
+            if (el) {
+                try {
+                    temml.render(tex, el, { displayMode: id.startsWith('math-') });
+                } catch(e) {
+                    el.innerHTML = `<code>${tex}</code>`;
+                }
+            }
+        }
+    }
+
+    // ============ BUG DENSITY CHART ============
+    function updateBugChart() {
+        const lines = parseInt(document.getElementById('linesSlider').value);
+        const bugRate = parseFloat(document.getElementById('bugRateSlider').value);
+        document.getElementById('linesValue').textContent = lines.toLocaleString();
+        document.getElementById('bugRateValue').textContent = bugRate.toFixed(2);
+        
+        const expectedBugs = Math.round(lines * bugRate / 100);
+        
+        const systems = ['Your Code', 'HOL Light Kernel\n(~500 lines)', 'Linux\n(283M lines)', 'Space Shuttle\nSoftware'];
+        const systemLines = [lines, 500, 283000000, 420000];
+        const systemRates = [bugRate, 0.01, 1, 0.01];
+        const bugs = systemRates.map((r, i) => Math.round(systemLines[i] * r / 100));
+        
+        const colors = ['#667eea', '#4caf50', '#f5576c', '#ff9800'];
+        
+        Plotly.newPlot('bugChart', [{
+            x: systems,
+            y: bugs,
+            type: 'bar',
+            marker: { color: colors },
+            text: bugs.map(b => b.toLocaleString() + ' bugs'),
+            textposition: 'outside'
+        }], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#a0a0c0' },
+            yaxis: { 
+                type: 'log', 
+                title: 'Expected Bugs (log scale)',
+                gridcolor: '#2a2a4a'
+            },
+            xaxis: { gridcolor: '#2a2a4a' },
+            margin: { t: 30, b: 80 }
+        }, { responsive: true });
+    }
+
+    // ============ PROOF ANIMATION ============
+    let proofAnimating = false;
+    function highlightStep(step) {
+        document.querySelectorAll('.proof-step').forEach((el, i) => {
+            el.classList.toggle('active', i === step);
+            if (i <= step) el.classList.add('verified');
+        });
+    }
+    
+    function animateProof() {
+        if (proofAnimating) return;
+        proofAnimating = true;
+        resetProof();
+        let step = 0;
+        const interval = setInterval(() => {
+            highlightStep(step);
+            step++;
+            if (step >= 5) {
+                clearInterval(interval);
+                proofAnimating = false;
+            }
+        }, 800);
+    }
+    
+    function resetProof() {
+        document.querySelectorAll('.proof-step').forEach(el => {
+            el.classList.remove('active', 'verified');
+        });
+    }
+
+    // ============ KERNEL ARCHITECTURE CANVAS ============
+    function drawKernelArchitecture() {
+        const canvas = document.getElementById('kernelCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        
+        ctx.clearRect(0, 0, W, H);
+        
+        // Draw concentric layers
+        const layers = [
+            { r: 60, color: '#667eea', label: 'Kernel\n~500 lines', labelColor: '#fff' },
+            { r: 130, color: '#764ba2', label: 'Inference Rules\n& Definitions', labelColor: '#e0e0e0' },
+            { r: 200, color: '#f093fb', label: 'Verified Libraries\n(100,000+ lines)', labelColor: '#1a1a3a' },
+            { r: 280, color: '#4caf50', label: 'User Contributions\n& Decision Procedures', labelColor: '#1a1a3a' },
+        ];
+        
+        const cx = W / 2, cy = H / 2;
+        
+        for (let i = layers.length - 1; i >= 0; i--) {
+            const layer = layers[i];
+            ctx.beginPath();
+            ctx.arc(cx, cy, layer.r, 0, Math.PI * 2);
+            ctx.fillStyle = layer.color + '40';
+            ctx.fill();
+            ctx.strokeStyle = layer.color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        // Labels
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        layers.forEach((layer, i) => {
+            ctx.fillStyle = layer.labelColor;
+            ctx.font = i === 0 ? 'bold 14px Georgia' : '12px Georgia';
+            const lines = layer.label.split('\n');
+            const yOffset = i === 0 ? cy : cy - layer.r + (i === 1 ? 25 : 20);
+            lines.forEach((line, j) => {
+                ctx.fillText(line, cx, yOffset + j * 16);
+            });
+        });
+        
+        // Draw arrows showing trust flow
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 5]);
+        
+        // Arrow from kernel outward
+        for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+            ctx.beginPath();
+            ctx.moveTo(cx + 65 * Math.cos(angle), cy + 65 * Math.sin(angle));
+            ctx.lineTo(cx + 120 * Math.cos(angle), cy + 120 * Math.sin(angle));
+            ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        
+        // Side annotations
+        ctx.font = '11px Georgia';
+        ctx.fillStyle = '#a0a0c0';
+        ctx.textAlign = 'left';
+        ctx.fillText('• Type system prevents rogue code', W - 250, 30);
+        ctx.fillText('• All theorems must pass through kernel', W - 250, 50);
+        ctx.fillText('• Public source code, scrutinized by logicians', W - 250, 70);
+        ctx.fillText('• ~3-5 bugs found over 15-20 years', W - 250, 90);
+    }
+
+    // ============ TABS ============
+    function showTab(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById('tab-' + tabName).classList.add('active');
+    }
+
+    // ============ INFERENCE RULES ============
+    function buildInferenceRules() {
+        const rules = [
+            { name: 'Reflexivity', desc: 'Equality is reflexive', formula: '⊢ a = a' },
+            { name: 'β-reduction', desc: 'Function application', formula: '⊢ (λx. a)x = a' },
+            { name: 'Transitivity', desc: 'Equality is transitive', formula: 'Γ⊢a=b; Δ⊢b=c → Γ∪Δ⊢a=c' },
+            { name: 'Assume', desc: 'Assume p, conclude p', formula: 'p⊢p' },
+            { name: 'Congruence', desc: 'Equal functions on equals', formula: 'Γ⊢f=g; Δ⊢a=b → Γ∪Δ⊢f(a)=g(b)' },
+            { name: 'Modus Ponens', desc: 'Equality-based MP', formula: 'Γ⊢p; Δ⊢p=q → Γ∪Δ⊢q' },
+            { name: 'Abstraction', desc: 'Equal terms → equal functions', formula: 'Γ⊢a=b → Γ⊢λx.a = λx.b' },
+            { name: 'Antisymmetry', desc: 'Mutual implication → equality', formula: 'Γ⊢p; Δ⊢q → (Γ\\q)∪(Δ\\p)⊢p=q' },
+            { name: 'Type Substitution', desc: 'Substitute types for type variables', formula: 'σ(Γ⊢p) is a theorem' },
+            { name: 'Term Substitution', desc: 'Substitute terms for variables', formula: 'θ(Γ⊢p) is a theorem' },
+        ];
+        
+        const container = document.getElementById('inferenceRules');
+        rules.forEach((rule, i) => {
+            const div = document.createElement('div');
+            div.className = 'proof-step';
+            div.innerHTML = `<strong>${rule.name}:</strong> ${rule.desc}<br><code style="color:#667eea; font-size:12px;">${rule.formula}</code>`;
+            div.onclick = () => {
+                container.querySelectorAll('.proof-step').forEach(el => el.classList.remove('active'));
+                div.classList.add('active');
+            };
+            container.appendChild(div);
+        });
+    }
+
+    // ============ SOUNDNESS CHART ============
+    function updateSoundnessChart() {
+        const logP = parseFloat(document.getElementById('failRateSlider').value);
+        const n = parseInt(document.getElementById('numSystemsSlider').value);
+        const p = Math.pow(10, logP);
+        
+        document.getElementById('failRateValue').textContent = `10^${logP.toFixed(1)}`;
+        document.getElementById('numSystemsValue').textContent = n;
+        
+        const systems = [];
+        const probs = [];
+        const colors = [];
+        
+        for (let i = 1; i <= 6; i++) {
+            systems.push(`${i} system${i > 1 ? 's' : ''}`);
+            probs.push(Math.pow(p, i));
+            colors.push(i === n ? '#f093fb' : '#667eea');
+        }
+        
+        Plotly.newPlot('soundnessChart', [{
+            x: systems,
+            y: probs,
+            type: 'bar',
+            marker: { color: colors },
+            text: probs.map(p => p.toExponential(2)),
+            textposition: 'outside'
+        }], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#a0a0c0' },
+            yaxis: { 
+                type: 'log', 
+                title: 'Failure Probability',
+                gridcolor: '#2a2a4a'
+            },
+            xaxis: { title: 'Cross-verified across N systems', gridcolor: '#2a2a4a' },
+            margin: { t: 30, b: 60 },
+            annotations: [{
+                x: systems[n-1],
+                y: Math.pow(p, n),
+                text: `p^${n} = ${Math.pow(p, n).toExponential(2)}`,
+                showarrow: true,
+                arrowcolor: '#f093fb',
+                font: { color: '#f093fb' }
+            }]
+        }, { responsive: true });
+    }
+
+    // ============ TIMELINE TOGGLE ============
+    function toggleDetail(el) {
+        const detail = el.querySelector('.detail');
+        if (detail) {
+            detail.style.display = detail.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    // ============ MAP CANVAS ============
+    function drawMap() {
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0, 0, W, H);
+        
+        // Simplified world regions with proof systems
+        const regions = [
+            { x: 180, y: 120, label: 'UK', system: 'HOL / Isabelle', color: [102, 126, 234], r: 25 },
+            { x: 220, y: 140, label: 'France', system: 'Coq', color: [240, 147, 251], r: 25 },
+            { x: 260, y: 120, label: 'Germany', system: 'Isabelle', color: [76, 175, 80], r: 25 },
+            { x: 310, y: 110, label: 'Poland', system: 'Mizar', color: [255, 152, 0], r: 25 },
+            { x: 580, y: 160, label: 'USA', system: 'HOL Light / ACL2', color: [102, 126, 234], r: 30 },
+            { x: 350, y: 100, label: 'Netherlands', system: 'Automath (historical)', color: [170, 170, 170], r: 20 },
+        ];
+        
+        // Draw connections
+        ctx.strokeStyle = '#2a2a4a';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < regions.length; i++) {
+            for (let j = i + 1; j < regions.length; j++) {
+                ctx.beginPath();
+                ctx.moveTo(regions[i].x, regions[i].y);
+                ctx.lineTo(regions[j].x, regions[j].y);
+                ctx.stroke();
+            }
+        }
+        
+        // Draw regions
+        regions.forEach(region => {
+            const [r, g, b] = region.color;
+            const hexColor = `rgb(${r}, ${g}, ${b})`;
+            
+            // Glow
+            const gradient = ctx.createRadialGradient(region.x, region.y, 0, region.x, region.y, region.r * 2);
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.38)`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(region.x, region.y, region.r * 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Dot
+            ctx.beginPath();
+            ctx.arc(region.x, region.y, region.r / 3, 0, Math.PI * 2);
+            ctx.fillStyle = hexColor;
+            ctx.fill();
+            
+            // Label
+            ctx.font = 'bold 12px Georgia';
+            ctx.fillStyle = '#e0e0e0';
+            ctx.textAlign = 'center';
+            ctx.fillText(region.label, region.x, region.y - 20);
+            ctx.font = '11px Georgia';
+            ctx.fillStyle = hexColor;
+            ctx.fillText(region.system, region.x, region.y + 25);
+        });
+        
+        // Title
+        ctx.font = '11px Georgia';
+        ctx.fillStyle = '#666';
+        ctx.textAlign = 'left';
+        ctx.fillText('Geographic preferences in proof assistants (as noted by Hales)', 20, H - 15);
+    }
+
+    // ============ PIPELINE CANVAS ============
+    function drawPipeline() {
+        const canvas = document.getElementById('pipelineCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        
+        ctx.clearRect(0, 0, W, H);
+        
+        const stages = [
+            { label: 'Traditional\nProof', color: '#667eea', x: 80 },
+            { label: 'Expanded\nProof', color: '#764ba2', x: 240 },
+            { label: 'Computer\nScript', color: '#f093fb', x: 400 },
+            { label: 'Inference\nGeneration', color: '#ff9800', x: 560 },
+            { label: 'Verified\nTheorem', color: '#4caf50', x: 720 },
+        ];
+        
+        const cy = H / 2;
+        const boxW = 120, boxH = 70;
+        
+        // Draw arrows
+        ctx.strokeStyle = '#3a3a5a';
+        ctx.lineWidth = 2;
+        stages.forEach((stage, i) => {
+            if (i < stages.length - 1) {
+                ctx.beginPath();
+                ctx.moveTo(stage.x + boxW/2 + 5, cy);
+                ctx.lineTo(stages[i+1].x - boxW/2 - 5, cy);
+                ctx.stroke();
+                
+                // Arrowhead
+                const ax = stages[i+1].x - boxW/2 - 5;
+                ctx.beginPath();
+                ctx.moveTo(ax, cy);
+                ctx.lineTo(ax - 10, cy - 6);
+                ctx.lineTo(ax - 10, cy + 6);
+                ctx.closePath();
+                ctx.fillStyle = '#3a3a5a';
+                ctx.fill();
+            }
+        });
+        
+        // Draw boxes
+        stages.forEach((stage, i) => {
+            const x = stage.x - boxW/2;
+            const y = cy - boxH/2;
+            
+            ctx.fillStyle = stage.color + '30';
+            ctx.strokeStyle = stage.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x, y, boxW, boxH, 10);
+            ctx.fill();
+            ctx.stroke();
+            
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '12px Georgia';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const lines = stage.label.split('\n');
+            lines.forEach((line, j) => {
+                ctx.fillText(line, stage.x, cy + (j - (lines.length-1)/2) * 16);
+            });
+        });
+        
+        // Make clickable
+        canvas.onclick = function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) * (W / rect.width);
+            
+            const details = [
+                'Start with a traditional mathematical proof written for human understanding. Routine steps are omitted, context is assumed.',
+                'Rewrite in greatly expanded form: all assumptions explicit, all cases treated in full. Pictures replaced by careful argument.',
+                'Prepare a computer script that will generate all logical inferences. This is the main human labor (~1 week per page).',
+                'The script generates inferences checked by the kernel. Decision procedures handle routine tasks automatically.',
+                'The theorem is verified — every step traced back to axioms. Stored in a library for future use by anyone.'
+            ];
+            
+            stages.forEach((stage, i) => {
+                if (Math.abs(mx - stage.x) < boxW/2) {
+                    document.getElementById('pipelineDetail').innerHTML = 
+                        `<strong style="color:${stage.color}">${stage.label.replace('\n', ' ')}:</strong> ${details[i]}`;
+                }
+            });
+        };
+    }
+
+    // ============ DE BRUIJN FACTOR CHART ============
+    function drawDeBruijnChart() {
+        const proofs = [
+            'Fundamental Thm\nof Calculus',
+            'Quadratic\nReciprocity',
+            'Four-Color\nTheorem',
+            'Prime Number\nTheorem',
+            'Jordan Curve\nTheorem'
+        ];
+        const factors = [4, 3.5, 4.2, 3.8, 4.5]; // Approximate de Bruijn factors
+        const pages = [5, 8, 50, 30, 15]; // Approximate traditional proof pages
+        
+        Plotly.newPlot('debruijnChart', [
+            {
+                x: proofs,
+                y: factors,
+                type: 'bar',
+                name: 'de Bruijn Factor',
+                marker: { color: '#667eea' },
+                yaxis: 'y'
+            },
+            {
+                x: proofs,
+                y: pages,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Traditional Proof Pages',
+                marker: { color: '#f093fb', size: 10 },
+                line: { color: '#f093fb' },
+                yaxis: 'y2'
+            }
+        ], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#a0a0c0' },
+            yaxis: { 
+                title: 'de Bruijn Factor (formal/traditional ratio)',
+                gridcolor: '#2a2a4a',
+                range: [0, 6]
+            },
+            yaxis2: {
+                title: 'Traditional Proof Pages',
+                overlaying: 'y',
+                side: 'right',
+                gridcolor: '#2a2a4a22'
+            },
+            xaxis: { gridcolor: '#2a2a4a' },
+            margin: { t: 30, b: 80 },
+            legend: { x: 0.5, y: 1.1, orientation: 'h', xanchor: 'center' },
+            annotations: [{
+                x: 0.5, y: -0.25,
+                xref: 'paper', yref: 'paper',
+                text: 'The de Bruijn factor is remarkably stable (~4x) across different proofs',
+                showarrow: false,
+                font: { color: '#666', size: 11 }
+            }]
+        }, { responsive: true });
+    }
+
+    // ============ SPHERE PACKING CANVAS ============
+    function drawSpherePacking() {
+        const canvas = document.getElementById('sphereCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const rotation = parseFloat(document.getElementById('rotationSlider').value) * Math.PI / 180;
+        
+        document.getElementById('rotationValue').textContent = 
+            Math.round(rotation * 180 / Math.PI) + '°';
+        
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0, 0, W, H);
+        
+        const cx = W / 2, cy = H / 2;
+        const r = 35; // sphere radius
+        
+        // Generate FCC packing positions
+        const spheres = [];
+        for (let layer = -1; layer <= 1; layer++) {
+            for (let i = -3; i <= 3; i++) {
+                for (let j = -2; j <= 2; j++) {
+                    let x = i * 2 * r + (layer % 2 !== 0 ? r : 0);
+                    let y = j * 2 * r * 0.866 + (layer % 2 !== 0 ? r * 0.577 : 0);
+                    let z = layer * r * 1.633;
+                    
+                    // Apply rotation
+                    const cosR = Math.cos(rotation);
+                    const sinR = Math.sin(rotation);
+                    const rx = x * cosR - z * sinR;
+                    const rz = x * sinR + z * cosR;
+                    
+                    spheres.push({ x: rx, y: y, z: rz });
+                }
+            }
+        }
+        
+        // Sort by z for painter's algorithm
+        spheres.sort((a, b) => a.z - b.z);
+        
+        // Draw spheres
+        spheres.forEach(sphere => {
+            const screenX = cx + sphere.x;
+            const screenY = cy + sphere.y - sphere.z * 0.3;
+            const depth = (sphere.z + 100) / 200;
+            const displayR = r * (0.7 + depth * 0.3);
+            
+            if (screenX < -50 || screenX > W + 50 || screenY < -50 || screenY > H + 50) return;
+            
+            const gradient = ctx.createRadialGradient(
+                screenX - displayR * 0.3, screenY - displayR * 0.3, displayR * 0.1,
+                screenX, screenY, displayR
+            );
+            
+            const alpha = 0.4 + depth * 0.5;
+            gradient.addColorStop(0, `rgba(150, 180, 255, ${alpha})`);
+            gradient.addColorStop(0.7, `rgba(80, 100, 200, ${alpha * 0.7})`);
+            gradient.addColorStop(1, `rgba(30, 40, 100, ${alpha * 0.4})`);
+            
+            ctx.beginPath();
+            ctx.arc(screenX, screenY, displayR, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(100, 126, 234, ${alpha * 0.5})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        });
+        
+        // Density annotation
+        ctx.font = 'bold 16px Georgia';
+        ctx.fillStyle = '#667eea';
+        ctx.textAlign = 'left';
+        ctx.fillText('π/(3√2) ≈ 74.05% density', 20, 30);
+        ctx.font = '12px Georgia';
+        ctx.fillStyle = '#a0a0c0';
+        ctx.fillText('Face-centered cubic packing (Kepler Conjecture)', 20, 50);
+    }
+
+    // ============ QED CHART ============
+    function drawQEDChart() {
+        const categories = [
+            'Formalized\n(as of 2008)',
+            'Core Math\n(~100K pages)',
+            'Research Math\n(millions of pages)',
+            'All Published\nMath'
+        ];
+        const values = [500, 100000, 5000000, 50000000]; // approximate pages
+        const formalized = [500, 500, 500, 500];
+        
+        Plotly.newPlot('qedChart', [
+            {
+                x: categories,
+                y: values,
+                type: 'bar',
+                name: 'Total Pages',
+                marker: { color: '#3a3a5a' }
+            },
+            {
+                x: categories,
+                y: formalized,
+                type: 'bar',
+                name: 'Formalized (~500 pages)',
+                marker: { color: '#667eea' }
+            }
+        ], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#a0a0c0' },
+            yaxis: { 
+                type: 'log',
+                title: 'Pages (log scale)',
+                gridcolor: '#2a2a4a'
+            },
+            xaxis: { gridcolor: '#2a2a4a' },
+            barmode: 'overlay',
+            margin: { t: 30, b: 80 },
+            legend: { x: 0.5, y: 1.1, orientation: 'h', xanchor: 'center' },
+            annotations: [{
+                x: 0.5, y: -0.2,
+                xref: 'paper', yref: 'paper',
+                text: 'At ~$150/page and 1 week/page, formalizing 100K pages = ~2000 work-years',
+                showarrow: false,
+                font: { color: '#666', size: 11 }
+            }]
+        }, { responsive: true });
+    }
+
+    // ============ AUTOMATION SPECTRUM CANVAS ============
+    function drawAutomationSpectrum() {
+        const canvas = document.getElementById('automationCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        
+        ctx.clearRect(0, 0, W, H);
+        
+        // Draw spectrum bar
+        const barY = 80, barH = 40;
+        const gradient = ctx.createLinearGradient(50, 0, W - 50, 0);
+        gradient.addColorStop(0, '#4caf50');
+        gradient.addColorStop(0.3, '#ff9800');
+        gradient.addColorStop(0.6, '#f5576c');
+        gradient.addColorStop(1, '#9c27b0');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.roundRect(50, barY, W - 100, barH, 20);
+        ctx.fill();
+        
+        // Markers
+        const markers = [
+            { pos: 0.05, label: '1+1=2', y: barY - 10 },
+            { pos: 0.15, label: 'Tautologies', y: barY - 10 },
+            { pos: 0.25, label: 'Robbins\nConjecture', y: barY - 20 },
+            { pos: 0.35, label: 'Undergrad\nHomework', y: barY + barH + 25 },
+            { pos: 0.55, label: 'Prime Number\nTheorem', y: barY - 20 },
+            { pos: 0.75, label: 'Kepler\nConjecture', y: barY + barH + 25 },
+            { pos: 0.95, label: 'Riemann\nHypothesis', y: barY - 20 },
+        ];
+        
+        // Current automation boundary
+        const boundaryX = 50 + (W - 100) * 0.35;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(boundaryX, barY - 30);
+        ctx.lineTo(boundaryX, barY + barH + 10);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.font = 'bold 11px Georgia';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText('← Fully Automated →', boundaryX, barY - 35);
+        ctx.fillText('← Requires Human Guidance →', boundaryX + 200, barY + barH + 55);
+        
+        // Draw markers
+        markers.forEach(marker => {
+            const x = 50 + (W - 100) * marker.pos;
+            
+            ctx.beginPath();
+            ctx.arc(x, barY + barH / 2, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            
+            ctx.font = '10px Georgia';
+            ctx.fillStyle = '#c0c0e0';
+            ctx.textAlign = 'center';
+            const lines = marker.label.split('\n');
+            lines.forEach((line, j) => {
+                ctx.fillText(line, x, marker.y + j * 12);
+            });
+        });
+    }
+
+    // ============ INITIALIZATION ============
+    function init() {
+        renderMath();
+        updateBugChart();
+        drawKernelArchitecture();
+        buildInferenceRules();
+        updateSoundnessChart();
+        drawMap();
+        drawPipeline();
+        drawDeBruijnChart();
+        drawSpherePacking();
+        drawQEDChart();
+        drawAutomationSpectrum();
+        
+        // Event listeners
+        document.getElementById('linesSlider').addEventListener('input', updateBugChart);
+        document.getElementById('bugRateSlider').addEventListener('input', updateBugChart);
+        document.getElementById('failRateSlider').addEventListener('input', updateSoundnessChart);
+        document.getElementById('numSystemsSlider').addEventListener('input', updateSoundnessChart);
+        document.getElementById('rotationSlider').addEventListener('input', drawSpherePacking);
+    }
+
+    // Wait for DOM and libraries to load
+    window.addEventListener('load', init);
+    </script>
+</body>
+</html>

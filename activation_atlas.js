@@ -1184,7 +1184,6 @@ var ActivationAtlas = (function () {
 		// Header
 		var header = document.createElement("div");
 		header.className = "atlas_header";
-		header.innerHTML = "<span class='atlas_title_text'>Activation Atlas</span>";
 
 		var controls = document.createElement("div");
 		controls.className = "atlas_controls";
@@ -1462,7 +1461,6 @@ var ActivationAtlas = (function () {
 			".atlas_fade_in { animation: atlas_fadeIn 0.4s ease-out; }",
 			".atlas_wrapper { padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }",
 			".atlas_header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }",
-			".atlas_title_text { font-size: 1.2em; font-weight: 700; color: #ffffff; }",
 			".atlas_btn { border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.06); border-radius: 8px; padding: 6px 14px; cursor: pointer; font-size: 0.9em; transition: all 0.25s ease; backdrop-filter: blur(4px); }",
 			".atlas_btn:hover { background: rgba(128,128,128,0.18); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }",
 			".atlas_btn:active { transform: translateY(0); }",
@@ -1519,7 +1517,6 @@ var ActivationAtlas = (function () {
 		// Header
 		var header = document.createElement("div");
 		header.className = "atlas_header";
-		header.innerHTML = "<span class='atlas_title_text'>Activation Atlas</span>";
 
 		var controls = document.createElement("div");
 		controls.className = "atlas_controls";

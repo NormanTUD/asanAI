@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Retrieval-Augmented Generation
+description: Giving LLMs a search engine, chunking, embedding, and the RAG pipeline.
+icon: &#128270;
+part: 5
+order: 29
+color: rose
+-->
 
 <div class="smart-quote" data-cite="alankayfuture">
 The best way to predict the future is to invent it.

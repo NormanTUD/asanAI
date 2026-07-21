@@ -1,15 +1,24 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Semantic Search & Vector Databases
+description: Finding needles in haystacks, BM25, dense vectors, hybrid search, and ANN.
+icon: &#128279;
+part: 5
+order: 31
+color: rose
+-->
 
 <div class="md">
 In the RAG chapter, we saw that a user's query is embedded into a vector and compared against stored document vectors using cosine similarity. In the web search chapter, we saw that retrieved pages are chunked and re-ranked before being fed to the LLM. But we glossed over a critical question: **how do you search through millions or billions of vectors in under 50 milliseconds?**
 
-The answer is **vector databases**, specialized systems built from the ground up for high-dimensional similarity search. They are the invisible engine behind every RAG pipeline, every semantic search bar, and every recommendation system you've ever used.
+The answer is **vector databases**, specialized systems built from the ground up for *high-dimensional similarity search*. They are the invisible engine behind every RAG pipeline, every semantic search bar, and every recommendation system you've ever used.
 
 $$
 \text{Query} \;\xrightarrow{\text{embed}}\; \vec{q} \in \mathbb{R}^{768} \;\xrightarrow{\text{ANN search}}\; \text{Top-}K\text{ nearest vectors} \;\xrightarrow{\text{return docs}}\; \text{Relevant passages}
 $$
 
-**Key insight:** Vector databases don't find the *exact* nearest neighbors. They find *approximate* nearest neighbors, trading a tiny amount of accuracy for enormous speed gains. This is the engineering trick that makes RAG possible at scale.
+**Key insight:** Vector databases don't find the *exact* nearest neighbors. They find *approximate* nearest neighbors, trading a tiny amount of accuracy for *enormous* speed gains. This is the engineering trick that makes RAG possible at scale.
 </div>
 
 <div id="vslab-pipeline-diagram"></div>

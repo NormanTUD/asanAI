@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Appendix
+description: Grokking, sine & cosine, Taylor series, and the group structure of positional embeddings.
+icon: &#128214;
+part: 6
+order: 37
+color: text-secondary
+-->
 
 <div class="md">
 ## Training

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hauptstadt von Frankreich</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001f4d 0%, #003380 50%, #ce1126 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .flag-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .flag-bg div {
+            flex: 1;
+        }
+
+        .flag-blue { background: #002395; }
+        .flag-white { background: #ffffff; }
+        .flag-red { background: #ED2939; }
+
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+        }
+
+        /* Map Section */
+        .map-section {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .map-container svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .paris-dot {
+            fill: #ED2939;
+            transition: r 0.3s ease;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { r: 8; opacity: 1; }
+            50% { r: 12; opacity: 0.7; }
+        }
+
+        .paris-label {
+            font-size: 14px;
+            font-weight: bold;
+            fill: #002395;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .paris-dot:hover ~ .paris-label,
+        .paris-label.show {
+            opacity: 1;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #002395;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Drag & Drop */
+        .drag-section {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .drag-section h2 {
+            text-align: center;
+            color: #002395;
+            margin-bottom: 15px;
+        }
+
+        .drag-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .drop-zone {
+            width: 220px;
+            height: 80px;
+            border: 3px dashed #002395;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            color: #666;
+            transition: all 0.3s;
+            background: #f0f4ff;
+        }
+
+        .drop-zone.hover {
+            border-color: #ED2939;
+            background: #fff0f0;
+            transform: scale(1.05);
+        }
+
+        .drop-zone.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            border-style: solid;
+        }
+
+        .drop-zone.wrong {
+            border-color: #dc3545;
+            background: #f8d7da;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .draggable-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .draggable {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #002395, #003380);
+            color: white;
+            border-radius: 10px;
+            cursor: grab;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .draggable:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,35,149,0.4);
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .draggable.placed {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Eiffel Tower Builder */
+        .tower-section {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .tower-section h2 {
+            text-align: center;
+            color: #002395;
+            margin-bottom: 15px;
+        }
+
+        .tower-canvas {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #90EE90 70%, #90EE90 100%);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .tower-slider-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .tower-slider-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .tower-slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(to right, #002395, #ED2939);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .tower-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #FFD700;
+            border-radius: 50%;
+            border: 3px solid #333;
+            cursor: pointer;
+        }
+
+        .eiffel-tower {
+            position: absolute;
+            bottom: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.3s ease;
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .quiz-section h2 {
+            text-align: center;
+            color: #002395;
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .quiz-btn {
+            padding: 15px;
+            border: 3px solid #002395;
+            background: white;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .quiz-btn:hover {
+            background: #002395;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .quiz-btn.correct-answer {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+            animation: correctPop 0.5s ease;
+        }
+
+        .quiz-btn.wrong-answer {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        @keyframes correctPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .quiz-result {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        /* Connection Lines */
+        .connect-section {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .connect-section h2 {
+            text-align: center;
+            color: #002395;
+            margin-bottom: 15px;
+        }
+
+        .connect-game {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .connect-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .connect-item {
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .connect-left .connect-item {
+            background: #002395;
+            color: white;
+        }
+
+        .connect-right .connect-item {
+            background: #ED2939;
+            color: white;
+        }
+
+        .connect-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .connect-item.selected {
+            outline: 3px solid #FFD700;
+            transform: scale(1.1);
+        }
+
+        .connect-item.matched {
+            background: #28a745 !important;
+            pointer-events: none;
+        }
+
+        .connect-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connect-line {
+            stroke: #FFD700;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 5;
+            animation: dash 1s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -10; }
+        }
+
+        /* Reveal Section */
+        .reveal-section {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .reveal-section h2 {
+            color: #002395;
+            margin-bottom: 15px;
+        }
+
+        .scratch-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .scratch-answer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #002395, #ffffff, #ED2939);
+            font-size: 3em;
+            font-weight: bold;
+            color: #002395;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .scratch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .scratch-hint {
+            margin-top: 10px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Fireworks */
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: fireworkExplode 1s ease-out forwards;
+        }
+
+        @keyframes fireworkExplode {
+            0% { transform: translate(0, 0); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)); opacity: 0; }
+        }
+
+        /* Score */
+        .score-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            font-weight: bold;
+        }
+
+        .score-stars {
+            font-size: 1.5em;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #002395, #FFD700, #ED2939);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Floating elements */
+        .floating-element {
+            position: fixed;
+            font-size: 2em;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .main-container { gap: 20px; }
+            .card { padding: 15px; }
+            .quiz-options { grid-template-columns: 1fr; }
+        }
+
+        .spacer {
+            height: 60px;
+        }
+
+        /* Night mode toggle */
+        .night-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            background: #FFD700;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .night-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        body.night {
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #2d0a0a 100%);
+        }
+
+        body.night .tower-canvas {
+            background: linear-gradient(to bottom, #1a1a3e 0%, #1a1a3e 70%, #0a3a0a 70%, #0a3a0a 100%);
+        }
+
+        .stars {
+            display: none;
+        }
+
+        body.night .stars {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="flag-bg">
+        <div class="flag-blue"></div>
+        <div class="flag-white"></div>
+        <div class="flag-red"></div>
+    </div>
+
+    <!-- Floating decorative elements -->
+    <div class="floating-element" style="top:10%; left:5%;">🥐</div>
+    <div class="floating-element" style="top:30%; right:8%; animation-delay: 1s;">🗼</div>
+    <div class="floating-element" style="top:60%; left:3%; animation-delay: 2s;">🇫🇷</div>
+    <div class="floating-element" style="top:80%; right:5%; animation-delay: 3s;">🧀</div>
+    <div class="floating-element" style="top:50%; left:8%; animation-delay: 4s;">🍷</div>
+
+    <!-- Score Bar -->
+    <div class="score-bar">
+        <span>⭐ Punkte: <span id="score">0</span>/5</span>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="score-stars" id="stars"></span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <h1>🇫🇷 Hauptstadt von Frankreich 🗼</h1>
+
+    <div class="main-container">
+
+        <!-- Interactive Map -->
+        <div class="card map-section">
+            <div class="map-container" id="mapContainer">
+                <div class="tooltip" id="mapTooltip">⭐ PARIS - Hauptstadt! ⭐</div>
+                <svg viewBox="0 0 400 400" id="franceSvg">
+                    <!-- Simplified France outline -->
+                    <path d="M180 50 L220 45 L270 60 L310 80 L340 120 L360 160 L350 200 L370 240 L350 280 L320 310 L280 340 L240 360 L200 370 L160 360 L120 340 L80 300 L60 260 L50 220 L55 180 L70 140 L100 100 L140 70 Z" 
+                          fill="#002395" stroke="#001a6e" stroke-width="3" opacity="0.8"
+                          id="franceShape"/>
+                    <!-- Cities (wrong ones) -->
+                    <circle cx="280" cy="240" r="5" fill="#aaa" class="city-dot" data-city="Lyon"/>
+                    <circle cx="140" cy="300" r="5" fill="#aaa" class="city-dot" data-city="Toulouse"/>
+                    <circle cx="320" cy="150" r="5" fill="#aaa" class="city-dot" data-city="Strasbourg"/>
+                    <circle cx="120" cy="200" r="5" fill="#aaa" class="city-dot" data-city="Nantes"/>
+                    <circle cx="250" cy="330" r="5" fill="#aaa" class="city-dot" data-city="Marseille"/>
+                    <!-- Paris -->
+                    <circle cx="210" cy="130" r="8" class="paris-dot" id="parisDot"/>
+                    <text x="210" y="110" text-anchor="middle" class="paris-label" id="parisLabel">⭐ PARIS ⭐</text>
+                    <!-- Crown/Star indicator -->
+                    <text x="210" y="155" text-anchor="middle" font-size="16" opacity="0.8">👑</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Eiffel Tower Slider -->
+        <div class="card tower-section">
+            <h2>🗼 Baue den Eiffelturm</h2>
+            <div class="tower-canvas" id="towerCanvas">
+                <div class="stars" id="starsContainer"></div>
+                <svg class="eiffel-tower" id="eiffelSvg" width="120" height="0" viewBox="0 0 120 300">
+                    <!-- Eiffel Tower SVG -->
+                    <polygon points="60,0 55,30 65,30" fill="#4a4a4a"/>
+                    <rect x="58" y="0" width="4" height="15" fill="#666"/>
+                    <polygon points="40,30 80,30 85,60 35,60" fill="#5a5a5a"/>
+                    <rect x="35" y="60" width="50" height="8" fill="#4a4a4a"/>
+                    <polygon points="30,68 90,68 100,150 20,150" fill="#5a5a5a"/>
+                    <rect x="55" y="75" width="10" height="15" fill="#87CEEB" opacity="0.7"/>
+                    <rect x="20" y="150" width="80" height="10" fill="#4a4a4a"/>
+                    <polygon points="15,160 105,160 120,290 0,290" fill="#5a5a5a"/>
+                    <!-- Arch -->
+                    <path d="M35 250 Q60 220 85 250" fill="none" stroke="#87CEEB" stroke-width="2" opacity="0.5"/>
+                    <rect x="45" y="180" width="8" height="12" fill="#87CEEB" opacity="0.5"/>
+                    <rect x="67" y="180" width="8" height="12" fill="#87CEEB" opacity="0.5"/>
+                    <rect x="45" y="210" width="8" height="12" fill="#87CEEB" opacity="0.5"/>
+                    <rect x="67" y="210" width="8" height="12" fill="#87CEEB" opacity="0.5"/>
+                    <!-- Base -->
+                    <polygon points="0,290 25,290 20,300 -5,300" fill="#4a4a4a"/>
+                    <polygon points="95,290 120,290 125,300 90,300" fill="#4a4a4a"/>
+                </svg>
+            </div>
+            <div class="tower-slider-container">
+                <label>🏗️ Ziehe um den Turm zu bauen:</label>
+                <input type="range" min="0" max="100" value="0" class="tower-slider" id="towerSlider">
+            </div>
+        </div>
+
+        <!-- Drag & Drop -->
+        <div class="card drag-section">
+            <h2>🎯 Ziehe die richtige Hauptstadt</h2>
+            <div class="drag-area">
+                <div style="text-align:center; font-size: 1.2em; color: #333;">
+                    <strong>Frankreich</strong> 🇫🇷 → Hauptstadt:
+                </div>
+                <div class="drop-zone" id="dropZone">Hierher ziehen!</div>
+                <div class="draggable-items" id="draggableItems">
+                    <div class="draggable" draggable="true" data-city="Berlin">🇩🇪 Berlin</div>
+                    <div class="draggable" draggable="true" data-city="Paris">🇫🇷 Paris</div>
+                    <div class="draggable" draggable="true" data-city="Madrid">🇪🇸 Madrid</div>
+                    <div class="draggable" draggable="true" data-city="Rom">🇮🇹 Rom</div>
+                    <div class="draggable" draggable="true" data-city="London">🇬🇧 London</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <div class="card quiz-section">
+            <h2>❓ Quiz: Was ist die Hauptstadt?</h2>
+            <div class="quiz-options">
+                <button class="quiz-btn" data-answer="wrong" onclick="checkQuiz(this)">🏛️ Marseille</button>
+                <button class="quiz-btn" data-answer="correct" onclick="checkQuiz(this)">🗼 Paris</button>
+                <button class="quiz-btn" data-answer="wrong" onclick="checkQuiz(this)">🍷 Lyon</button>
+                <button class="quiz-btn" data-answer="wrong" onclick="checkQuiz(this)">🏖️ Nizza</button>
+            </div>
+            <div class="quiz-result" id="quizResult"></div>
+        </div>
+
+        <!-- Connection Game -->
+        <div class="card connect-section">
+            <h2>🔗 Verbinde Land & Hauptstadt</h2>
+            <div class="connect-game" id="connectGame">
+                <svg class="connect-svg" id="connectSvg"></svg>
+                <div class="connect-column connect-left">
+                    <div class="connect-item" data-pair="france" onclick="selectConnect(this, 'left')">🇫🇷 Frankreich</div>
+                    <div class="connect-item" data-pair="germany" onclick="selectConnect(this, 'left')">🇩🇪 Deutschland</div>
+                    <div class="connect-item" data-pair="spain" onclick="selectConnect(this, 'left')">🇪🇸 Spanien</div>
+                </div>
+                <div class="connect-column connect-right">
+                    <div class="connect-item" data-pair="spain" onclick="selectConnect(this, 'right')">Madrid</div>
+                    <div class="connect-item" data-pair="france" onclick="selectConnect(this, 'right')">Paris</div>
+                    <div class="connect-item" data-pair="germany" onclick="selectConnect(this, 'right')">Berlin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scratch to Reveal -->
+        <div class="card reveal-section">
+            <h2>🎨 Kratze die Antwort frei!</h2>
+            <div class="scratch-container" id="scratchContainer">
+                <div class="scratch-answer">🗼 PARIS 🗼</div>
+                <canvas class="scratch-overlay" id="scratchCanvas" width="300" height="200"></canvas>
+            </div>
+            <p class="scratch-hint">Mit der Maus über die Fläche fahren ✨</p>
+        </div>
+
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Night Mode Toggle -->
+    <button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙</button>
+
+    <script>
+        // Score system
+        let score = 0;
+        let achievements = new Set();
+
+        function addScore(id) {
+            if (!achievements.has(id)) {
+                achievements.add(id);
+                score++;
+                document.getElementById('score').textContent = score;
+                document.getElementById('progressFill').style.width = (score / 5 * 100) + '%';
+                updateStars();
+                if (score >= 5) celebrate();
+                createFirework(window.innerWidth / 2, window.innerHeight / 2);
+            }
+        }
+
+        function updateStars() {
+            const starsEl = document.getElementById('stars');
+            starsEl.textContent = '⭐'.repeat(score) + '☆'.repeat(5 - score);
+        }
+        updateStars();
+
+        // Map interaction
+        const parisDot = document.getElementById('parisDot');
+        const parisLabel = document.getElementById('parisLabel');
+        const mapTooltip = document.getElementById('mapTooltip');
+        const mapContainer = document.getElementById('mapContainer');
+
+        parisDot.addEventListener('click', function() {
+            parisLabel.classList.add('show');
+            addScore('map');
+        });
+
+        mapContainer.addEventListener('mousemove', function(e) {
+            const rect = mapContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Check if near Paris dot
+            const svgRect = document.getElementById('franceSvg').getBoundingClientRect();
+            const parisX = (210 / 400) * svgRect.width + svgRect.left - rect.left;
+            const parisY = (130 / 400) * svgRect.height + svgRect.top - rect.top;
+            
+            const dist = Math.sqrt(Math.pow(x - parisX, 2) + Math.pow(y - parisY, 2));
+            
+            if (dist < 30) {
+                mapTooltip.style.left = (x + 15) + 'px';
+                mapTooltip.style.top = (y - 40) + 'px';
+                mapTooltip.classList.add('visible');
+            } else {
+                mapTooltip.classList.remove('visible');
+            }
+        });
+
+        // Eiffel Tower Slider
+        const towerSlider = document.getElementById('towerSlider');
+        const eiffelSvg = document.getElementById('eiffelSvg');
+
+        towerSlider.addEventListener('input', function() {
+            const val = this.value;
+            const height = (val / 100) * 300;
+            eiffelSvg.style.height = height + 'px';
+            
+            if (val >= 100) {
+                addScore('tower');
+            }
+        });
+
+        // Drag & Drop
+        const draggables = document.querySelectorAll('.draggable');
+        const dropZone = document.getElementById('dropZone');
+
+        draggables.forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', this.dataset.city);
+                this.style.opacity = '0.5';
+            });
+
+            item.addEventListener('dragend', function() {
+                this.style.opacity = '1';
+            });
+
+            // Touch support
+            item.addEventListener('touchstart', function(e) {
+                this.classList.add('dragging');
+            });
+
+            item.addEventListener('touchend', function(e) {
+                this.classList.remove('dragging');
+                const touch = e.changedTouches[0];
+                const dropRect = dropZone.getBoundingClientRect();
+                if (touch.clientX >= dropRect.left && touch.clientX <= dropRect.right &&
+                    touch.clientY >= dropRect.top && touch.clientY <= dropRect.bottom) {
+                    handleDrop(this.dataset.city, this);
+                }
+            });
+        });
+
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('hover');
+        });
+
+        dropZone.addEventListener('dragleave', function() {
+            this.classList.remove('hover');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('hover');
+            const city = e.dataTransfer.getData('text/plain');
+            const draggedEl = document.querySelector(`.draggable[data-city="${city}"]`);
+            handleDrop(city, draggedEl);
+        });
+
+        function handleDrop(city, element) {
+            if (city === 'Paris') {
+                dropZone.textContent = '🗼 Paris ✅';
+                dropZone.classList.add('correct');
+                element.classList.add('placed');
+                addScore('drag');
+            } else {
+                dropZone.classList.add('wrong');
+                setTimeout(() => dropZone.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Quiz
+        function checkQuiz(btn) {
+            const buttons = document.querySelectorAll('.quiz-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (btn.dataset.answer === 'correct') {
+                btn.classList.add('correct-answer');
+                document.getElementById('quizResult').innerHTML = '🎉 Richtig! Paris ist die Hauptstadt! 🗼';
+                document.getElementById('quizResult').style.color = '#28a745';
+                addScore('quiz');
+            } else {
+                btn.classList.add('wrong-answer');
+                document.querySelector('[data-answer="correct"]').classList.add('correct-answer');
+                document.getElementById('quizResult').innerHTML = '❌ Falsch! Es ist Paris!';
+                document.getElementById('quizResult').style.color = '#dc3545';
+            }
+        }
+
+        // Connection Game
+        let selectedLeft = null;
+        let selectedRight = null;
+        let matchedPairs = 0;
+
+        function selectConnect(el, side) {
+            if (el.classList.contains('matched')) return;
+
+            if (side === 'left') {
+                if (selectedLeft) selectedLeft.classList.remove('selected');
+                selectedLeft = el;
+                el.classList.add('selected');
+            } else {
+                if (selectedRight) selectedRight.classList.remove('selected');
+                selectedRight = el;
+                el.classList.add('selected');
+            }
+
+            if (selectedLeft && selectedRight) {
+                checkConnection();
+            }
+        }
+
+        function checkConnection() {
+            if (selectedLeft.dataset.pair === selectedRight.dataset.pair) {
+                selectedLeft.classList.add('matched');
+                selectedRight.classList.add('matched');
+                selectedLeft.classList.remove('selected');
+                selectedRight.classList.remove('selected');
+                matchedPairs++;
+
+                if (selectedLeft.dataset.pair === 'france') {
+                    addScore('connect');
+                }
+
+                drawLine(selectedLeft, selectedRight);
+                selectedLeft = null;
+                selectedRight = null;
+            } else {
+                selectedLeft.classList.remove('selected');
+                selectedRight.classList.remove('selected');
+                selectedLeft = null;
+                selectedRight = null;
+            }
+        }
+
+        function drawLine(el1, el2) {
+            const svg = document.getElementById('connectSvg');
+            const game = document.getElementById('connectGame');
+            const gameRect = game.getBoundingClientRect();
+
+            const rect1 = el1.getBoundingClientRect();
+            const rect2 = el2.getBoundingClientRect();
+
+            const x1 = rect1.right - gameRect.left;
+            const y1 = rect1.top + rect1.height / 2 - gameRect.top;
+            const x2 = rect2.left - gameRect.left;
+            const y2 = rect2.top + rect2.height / 2 - gameRect.top;
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.classList.add('connect-line');
+            svg.appendChild(line);
+        }
+
+        // Scratch Canvas
+        const scratchCanvas = document.getElementById('scratchCanvas');
+        const scratchCtx = scratchCanvas.getContext('2d');
+        let isScratching = false;
+        let scratchPercent = 0;
+
+        // Fill scratch overlay
+        scratchCtx.fillStyle = '#333';
+        scratchCtx.fillRect(0, 0, 300, 200);
+        scratchCtx.fillStyle = '#fff';
+        scratchCtx.font = 'bold 20px sans-serif';
+        scratchCtx.textAlign = 'center';
+        scratchCtx.fillText('🎁 Hier kratzen! 🎁', 150, 105);
+
+        scratchCanvas.addEventListener('mousedown', () => isScratching = true);
+        scratchCanvas.addEventListener('mouseup', () => isScratching = false);
+        scratchCanvas.addEventListener('mouseleave', () => isScratching = false);
+
+        scratchCanvas.addEventListener('mousemove', function(e) {
+            if (!isScratching) return;
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            scratch(x, y);
+        });
+
+        // Touch support for scratch
+        scratchCanvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            isScratching = true;
+        });
+        scratchCanvas.addEventListener('touchend', () => isScratching = false);
+        scratchCanvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            if (!isScratching) return;
+            const rect = this.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            scratch(x, y);
+        });
+
+        function scratch(x, y) {
+            scratchCtx.globalCompositeOperation = 'destination-out';
+            scratchCtx.beginPath();
+            scratchCtx.arc(x, y, 20, 0, Math.PI * 2);
+            scratchCtx.fill();
+
+            // Check scratch percentage
+            const imageData = scratchCtx.getImageData(0, 0, 300, 200);
+            let transparent = 0;
+            for (let i = 3; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] === 0) transparent++;
+            }
+            scratchPercent = transparent / (300 * 200) * 100;
+
+            if (scratchPercent > 50) {
+                addScore('scratch');
+            }
+        }
+
+        // Fireworks
+        function createFirework(x, y) {
+            const container = document.createElement('div');
+            container.className = 'firework';
+            container.style.left = x + 'px';
+            container.style.top = y + 'px';
+            document.body.appendChild(container);
+
+            const colors = ['#002395', '#ED2939', '#FFD700', '#fff', '#28a745'];
+
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                const angle = (Math.PI * 2 / 20) * i;
+                const distance = 50 + Math.random() * 50;
+                particle.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(particle);
+            }
+
+            setTimeout(() => container.remove(), 1000);
+        }
+
+        // Celebration
+        function celebrate() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    createFirework(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight
+                    );
+                }, i * 200);
+            }
+        }
+
+        // Night mode
+        function toggleNight() {
+            document.body.classList.toggle('night');
+            const btn = document.getElementById('nightToggle');
+            btn.textContent = document.body.classList.contains('night') ? '☀️' : '🌙';
+        }
+
+        // Generate stars for night mode
+        const starsContainer = document.getElementById('starsContainer');
+        for (let i = 0; i < 30; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+    </script>
+</body>
+</html>

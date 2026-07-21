@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visuelle Wissenslandkarte - Schlüsselkonzepte</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1a1a3e 0%, #0d0d2b 100%);
+            border-bottom: 2px solid #333;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p { color: #888; font-size: 1.1em; }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #333;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            border: 1px solid #444;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            background: #1a1a2e;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+        }
+        .section {
+            display: none;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .chart-title {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #00d4ff;
+            border-left: 4px solid #00d4ff;
+            padding-left: 15px;
+        }
+        .chart-desc {
+            color: #999;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        .insight-box {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1a1a3e 100%);
+            border: 1px solid #2a5a8a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .insight-box h3 { color: #4ecdc4; margin-bottom: 10px; }
+        .insight-box p { color: #bbb; line-height: 1.7; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .concept-card {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+        .concept-card h4 { color: #ff6b6b; margin-bottom: 10px; }
+        .concept-card p { color: #999; font-size: 0.9em; line-height: 1.6; }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 25px;
+            border-left: 2px solid #444;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+        .timeline-item .year { color: #667eea; font-weight: bold; font-size: 1.1em; }
+        .timeline-item .desc { color: #999; margin-top: 5px; }
+        #d3-network { width: 100%; height: 600px; }
+        .legend-item { display: inline-flex; align-items: center; margin-right: 15px; margin-bottom: 8px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧠 Wissenslandkarte der Schlüsselkonzepte</h1>
+        <p>Interaktive Visualisierung der fundamentalen Ideen aus 17 Schlüsseldokumenten der Wissenschaftsgeschichte</p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('overview')">🌐 Überblick</div>
+        <div class="nav-tab" onclick="showSection('timeline')">📅 Zeitachse</div>
+        <div class="nav-tab" onclick="showSection('consciousness')">🧠 Bewusstsein</div>
+        <div class="nav-tab" onclick="showSection('computation')">💻 Computation</div>
+        <div class="nav-tab" onclick="showSection('learning')">📚 Lernen & NLP</div>
+        <div class="nav-tab" onclick="showSection('probability')">📊 Wahrscheinlichkeit</div>
+        <div class="nav-tab" onclick="showSection('geometry')">📐 Geometrie & Raum</div>
+        <div class="nav-tab" onclick="showSection('truth')">⚖️ Wahrheit & Bullshit</div>
+        <div class="nav-tab" onclick="showSection('network')">🕸️ Konzeptnetzwerk</div>
+        <div class="nav-tab" onclick="showSection('patterns')">🔮 Meta-Muster</div>
+    </div>
+
+    <!-- OVERVIEW SECTION -->
+    <div class="section active" id="overview">
+        <div class="chart-container">
+            <div class="chart-title">Die Große Landkarte: Wie alles zusammenhängt</div>
+            <div class="chart-desc">Jedes Dokument repräsentiert einen Meilenstein menschlichen Denkens. Diese Visualisierung zeigt die thematischen Cluster und ihre Verbindungen.</div>
+            <div id="overview-chart" style="width:100%;height:700px;"></div>
+        </div>
+        <div class="grid-3">
+            <div class="concept-card">
+                <h4>🧬 Kernthese 1: Bewusstsein ist funktional</h4>
+                <p>Baars (1988) identifiziert 9+ Funktionen des Bewusstseins: Definition, Lernen, Debugging, Rekrutierung, Priorisierung, Entscheidung, Analogie, Metakognition, Selbstprogrammierung. Bewusstsein ist kein Epiphänomen.</p>
+            </div>
+            <div class="concept-card">
+                <h4>⚡ Kernthese 2: Exponentielle Skalierung</h4>
+                <p>Moore (1965) erkannte: Komplexität verdoppelt sich jährlich. Dieses Muster der exponentiellen Skalierung durchzieht alle Technologiefelder und ermöglicht die anderen Durchbrüche.</p>
+            </div>
+            <div class="concept-card">
+                <h4>🎯 Kernthese 3: Repräsentation ist alles</h4>
+                <p>Von McCulloch-Pitts (1943) über Bengio (2003) bis Mikolov (2013): Die Art, wie Information repräsentiert wird, bestimmt, was damit getan werden kann.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMELINE SECTION -->
+    <div class="section" id="timeline">
+        <div class="chart-container">
+            <div class="chart-title">Zeitliche Evolution der Ideen</div>
+            <div class="chart-desc">Von Bayes' Wahrscheinlichkeitstheorie (1763) bis zu modernen neuronalen Netzen – eine 250-jährige Reise des Denkens.</div>
+            <div id="timeline-chart" style="width:100%;height:500px;"></div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Ideenfluss zwischen Disziplinen</div>
+            <div id="sankey-chart" style="width:100%;height:500px;"></div>
+        </div>
+    </div>
+
+    <!-- CONSCIOUSNESS SECTION -->
+    <div class="section" id="consciousness">
+        <div class="chart-container">
+            <div class="chart-title">Die 9 Funktionen des Bewusstseins (Baars, 1988)</div>
+            <div class="chart-desc">Das Global Workspace Modell: Bewusstsein als "Scheinwerfer" der das gesamte kognitive System koordiniert. Jede Funktion ist ein Aspekt dieses globalen Broadcast-Systems.</div>
+            <div id="consciousness-radar" style="width:100%;height:550px;"></div>
+        </div>
+        <div class="insight-box">
+            <h3>💡 Schlüsselerkenntnis: Der Trade-off zwischen Organisation und Flexibilität</h3>
+            <p>Die fundamentalste Funktion des Bewusstseins ist die Optimierung des Trade-offs zwischen organisierten (automatischen) Antworten für bekannte Situationen und flexiblen Antworten für neue Situationen. Das Gehirn hat zwei Betriebsmodi: einen parallelen (unbewussten) und einen seriellen (bewussten, kapazitätsbegrenzten) Modus. Die Kapazitätsbegrenzung ist kein Bug – sie ist ein Feature, das globales Broadcasting ermöglicht.</p>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Bewusstsein vs. Unbewusstes: Dual-Process Architektur</div>
+            <div id="consciousness-flow" style="width:100%;height:400px;"></div>
+        </div>
+    </div>
+
+    <!-- COMPUTATION SECTION -->
+    <div class="section" id="computation">
+        <div class="chart-container">
+            <div class="chart-title">Die Computational Theory of Mind: Von McCulloch-Pitts zu modernen Netzen</div>
+            <div class="chart-desc">1943 zeigten McCulloch & Pitts, dass Neuronen logische Operationen ausführen können. Dies war der Beginn der Idee, dass Gehirne Computer sind – eine Idee, die bis heute kontrovers diskutiert wird.</div>
+            <div id="computation-tree" style="width:100%;height:600px;"></div>
+        </div>
+        <div class="grid-2">
+            <div class="insight-box">
+                <h3>🔑 McCulloch-Pitts (1943): Die zwei Moves</h3>
+                <p><strong>Move 1:</strong> Vereinfachung der Neuronen so dass propositionale Logik auf neurale Events abgebildet werden kann.<br>
+                <strong>Move 2:</strong> Annahme dass einzelne neurale Pulse propositionalen Inhalt haben, der mentale Prozesse direkt erklärt.<br><br>
+                Beide Moves sind heute umstritten, aber die Grundidee – dass Gehirne Berechnungen durchführen – wurde zum dominanten Paradigma.</p>
+            </div>
+            <div class="insight-box">
+                <h3>⚠️ Moores Gesetz (1965): Exponentielle Ermöglichung</h3>
+                <p>Die Verdopplung der Komponenten pro Chip alle ~2 Jahre machte erst möglich, was McCulloch-Pitts theoretisch vorhergesagt hatten. Ohne exponentielle Hardware-Skalierung wären neuronale Netze Theorie geblieben. Die Kosten pro Komponente fallen, während die Komplexität steigt – ein sich selbst verstärkender Kreislauf.</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Moores Gesetz: Exponentielle Skalierung</div>
+            <div id="moore-chart" style="width:100%;height:400px;"></div>
+        </div>
+    </div>
+
+    <!-- LEARNING SECTION -->
+    <div class="section" id="learning">
+        <div class="chart-container">
+            <div class="chart-title">Evolution des maschinellen Lernens: Von Perceptrons zu Word2Vec</div>
+            <div class="chart-desc">Die zentrale Erkenntnis: Distributed Representations (verteilte Darstellungen) lösen den "Fluch der Dimensionalität". Ähnliche Wörter haben ähnliche Vektoren → Generalisierung wird möglich.</div>
+            <div id="learning-evolution" style="width:100%;height:500px;"></div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Word2Vec: Semantische Arithmetik im Vektorraum</div>
+            <div class="chart-desc">König - Mann + Frau ≈ Königin. Diese lineare Struktur zeigt, dass neuronale Netze implizit semantische Beziehungen als geometrische Relationen lernen.</div>
+            <div id="word2vec-chart" style="width:100%;height:500px;"></div>
+        </div>
+        <div class="grid-2">
+            <div class="insight-box">
+                <h3>📖 Bengio (2003): Der Durchbruch</h3>
+                <p><strong>Problem:</strong> Sprachmodelle leiden unter dem Fluch der Dimensionalität – jede neue Wortkombination ist "unbekannt".<br>
+                <strong>Lösung:</strong> Lerne verteilte Wort-Feature-Vektoren. Ähnliche Wörter → ähnliche Vektoren → ein Trainingsbeispiel informiert über exponentiell viele ähnliche Sätze.<br>
+                <strong>Ergebnis:</strong> 24% bessere Perplexität als n-gram Modelle.</p>
+            </div>
+            <div class="insight-box">
+                <h3>🚀 Seq2Seq (Sutskever 2014): Ende-zu-Ende Lernen</h3>
+                <p><strong>Trick 1:</strong> Umkehrung der Quellsätze → viele kurzfristige Abhängigkeiten → einfachere Optimierung.<br>
+                <strong>Trick 2:</strong> Tiefe LSTMs (4 Schichten) → jede Schicht reduziert Perplexität um ~10%.<br>
+                <strong>Ergebnis:</strong> Erstes reines neuronales System das phrase-basierte SMT auf großem MT-Task schlägt (34.8 vs 33.3 BLEU).</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Wake-Sleep Algorithmus (Hinton 1995): Generative Modelle</div>
+            <div class="chart-desc">Das Gehirn als generatives Modell: Bottom-up "Erkennung" + Top-down "Generierung". Im Wachzustand lernen generative Gewichte, im Schlaf lernen Erkennungsgewichte.</div>
+            <div id="wakesleep-chart" style="width:100%;height:450px;"></div>
+        </div>
+    </div>
+
+    <!-- PROBABILITY SECTION -->
+    <div class="section" id="probability">
+        <div class="chart-container">
+            <div class="chart-title">Bayes' Theorem (1763): Die Grundlage allen induktiven Denkens</div>
+            <div class="chart-desc">Bayes löste das inverse Wahrscheinlichkeitsproblem: Gegeben Beobachtungen, was können wir über die zugrundeliegende Wahrscheinlichkeit schließen? Dies ist die Basis für alles maschinelle Lernen.</div>
+            <div id="bayes-chart" style="width:100%;height:500px;"></div>
+        </div>
+        <div class="insight-box">
+            <h3>🎲 Die fundamentale Frage von Bayes</h3>
+            <p><strong>Problem:</strong> Ein Ereignis ist p-mal eingetreten und q-mal nicht eingetreten. Was ist die Wahrscheinlichkeit, dass die wahre Erfolgsrate zwischen zwei gegebenen Werten liegt?<br><br>
+            <strong>Metapher:</strong> Stell dir einen Tisch vor, auf den eine Kugel W geworfen wird (bestimmt die unbekannte Wahrscheinlichkeit). Dann wird Kugel O n-mal geworfen. Aus den Ergebnissen schließen wir auf die Position von W.<br><br>
+            <strong>Erkenntnis:</strong> Je mehr Beobachtungen, desto enger wird unser Konfidenzintervall – aber absolute Sicherheit ist nie erreichbar. Nach einer Million Sonnenaufgängen ist die Wahrscheinlichkeit eines weiteren hoch, aber nie 1.</p>
+        </div>
+    </div>
+
+    <!-- GEOMETRY SECTION -->
+    <div class="section" id="geometry">
+        <div class="chart-container">
+            <div class="chart-title">Riemanns Revolution (1854): Raum ist nicht notwendig euklidisch</div>
+            <div class="chart-desc">Riemann zeigte: Die Geometrie des Raums ist eine empirische Frage, keine logische Notwendigkeit. Raum kann gekrümmt sein – eine Idee die Einstein 60 Jahre später zur Allgemeinen Relativitätstheorie führte.</div>
+            <div id="riemann-chart" style="width:100%;height:500px;"></div>
+        </div>
+        <div class="grid-2">
+            <div class="insight-box">
+                <h3>🌀 Schlüsselkonzepte Riemanns</h3>
+                <p><strong>Mannigfaltigkeit:</strong> Ein n-dimensionaler Raum, in dem Position durch n Zahlen bestimmt wird.<br>
+                <strong>Metrik:</strong> ds² = Σ gᵢⱼ dxⁱ dxʲ – die Abstände hängen vom Ort ab!<br>
+                <strong>Krümmung:</strong> Misst die Abweichung von "Flachheit" – kann an jedem Punkt anders sein.<br>
+                <strong>Unbegrenzt ≠ Unendlich:</strong> Ein Raum kann endlich sein ohne Grenzen zu haben (wie eine Kugeloberfläche).</p>
+            </div>
+            <div class="insight-box">
+                <h3>🔗 Verbindung zu ML: Mannigfaltigkeiten überall</h3>
+                <p>Word2Vec-Vektoren leben auf einer Mannigfaltigkeit im hochdimensionalen Raum. Die "Krümmung" dieser Mannigfaltigkeit bestimmt, wie gut Analogien funktionieren. Riemanns Ideen sind die mathematische Grundlage für:<br>
+                • Embedding-Räume in NLP<br>
+                • Latente Räume in VAEs<br>
+                • Die Geometrie von Optimierungslandschaften<br>
+                • Information Geometry (Fisher-Metrik)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRUTH SECTION -->
+    <div class="section" id="truth">
+        <div class="chart-container">
+            <div class="chart-title">Frankfurts Taxonomie: Wahrheit, Lüge und Bullshit</div>
+            <div class="chart-desc">Frankfurt (2005) argumentiert: Bullshit ist gefährlicher als Lügen, weil der Bullshitter die Wahrheit nicht einmal als relevant betrachtet. Der Lügner respektiert die Wahrheit (indem er sie vermeidet), der Bullshitter ignoriert sie.</div>
+            <div id="truth-chart" style="width:100%;height:500px;"></div>
+        </div>
+        <div class="insight-box">
+            <h3>⚖️ Warum das für KI relevant ist</h3>
+            <p>Sprachmodelle sind strukturell Bullshit-Maschinen im Sinne Frankfurts: Sie haben keine Beziehung zur Wahrheit, sondern produzieren Text der "passt". Die Frage ist nicht ob der Output wahr oder falsch ist, sondern ob das System überhaupt eine Beziehung zur Wahrheit hat. Dies verbindet sich mit Sparck Jones' (2004) Kritik an Language Models: Das generative Modell hat keine echte "Absicht" – es ist eine statistische Maschine die Muster reproduziert.</p>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Sparck Jones' Kritik: Ist das generative Modell rational?</div>
+            <div id="lm-critique" style="width:100%;height:400px;"></div>
+        </div>
+    </div>
+
+    <!-- NETWORK SECTION -->
+    <div class="section" id="network">
+        <div class="chart-container">
+            <div class="chart-title">Konzeptnetzwerk: Wie die Ideen zusammenhängen</div>
+            <div class="chart-desc">Jeder Knoten ist ein Schlüsselkonzept, jede Kante eine intellektuelle Verbindung. Die Farben zeigen thematische Cluster.</div>
+            <div id="d3-network"></div>
+        </div>
+    </div>
+
+    <!-- META-PATTERNS SECTION -->
+    <div class="section" id="patterns">
+        <div class="chart-container">
+            <div class="chart-title">Die 7 Meta-Muster die alles durchziehen</div>
+            <div class="chart-desc">Über alle Dokumente hinweg wiederholen sich bestimmte abstrakte Muster. Diese sind die tiefsten Erkenntnisse.</div>
+            <div id="patterns-chart" style="width:100%;height:600px;"></div>
+        </div>
+        <div class="grid-2">
+            <div class="concept-card">
+                <h4>1. 🔄 Dualität: Zwei Modi überall</h4>
+                <p>Bewusst/Unbewusst (Baars) • Generativ/Erkennend (Hinton) • Exploration/Exploitation • Flexibilität/Effizienz • Analog/Digital • Lokal/Global</p>
+            </div>
+            <div class="concept-card">
+                <h4>2. 📈 Exponentielle Skalierung</h4>
+                <p>Moore's Law • Kombinatorische Explosion (Lighthill) • Fluch der Dimensionalität (Bengio) • Exponentielle Verbesserung durch mehr Daten</p>
+            </div>
+            <div class="concept-card">
+                <h4>3. 🗺️ Repräsentation bestimmt Fähigkeit</h4>
+                <p>Distributed Representations (Bengio/Mikolov) • Neurale Codes (McCulloch-Pitts) • Mannigfaltigkeiten (Riemann) • Propositionale Inhalte (Baars)</p>
+            </div>
+            <div class="concept-card">
+                <h4>4. 🌊 Lokales Lernen → Globale Ordnung</h4>
+                <p>Stochastischer Gradient (Bottou) • Hebbsches Lernen • Wake-Sleep • Bayes'sche Updates • Emergenz aus lokalen Regeln</p>
+            </div>
+            <div class="concept-card">
+                <h4>5. 🎯 Kontext bestimmt Bedeutung</h4>
+                <p>Global Workspace (Baars) • Skip-gram Kontext (Mikolov) • Semantische Kontrolle (Winograd/Sparck Jones) • Mannigfaltigkeits-Nachbarschaft (Riemann)</p>
+            </div>
+            <div class="concept-card">
+                <h4>6. ⚡ Vereinfachung ermöglicht Erkenntnis</h4>
+                <p>McCulloch-Pitts Idealisierung • Rashevskys Methode • Moores Vorhersage • Negative Sampling (Mikolov) • Bayes' Postulat der Gleichverteilung</p>
+            </div>
+            <div class="concept-card">
+                <h4>7. 🔮 Die Grenze des Berechenbaren</h4>
+                <p>Church-Turing These • Lighthill's Warnung • Bostrom's Superintelligenz • Frankfurts Bullshit-Problem • Riemanns "empirische Geometrie"</p>
+            </div>
+            <div class="concept-card">
+                <h4>🧩 Das übergreifende Muster</h4>
+                <p><strong>Alle Dokumente handeln letztlich von derselben Frage:</strong> Wie entsteht aus einfachen lokalen Operationen (Neuronen, Bits, Wahrscheinlichkeiten, Wörtern) globale Bedeutung und Intelligenz? Die Antwort ist immer: durch die richtige Architektur der Verbindungen.</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Dartmouth 1956 → Heute: Der Traum und die Realität</div>
+            <div class="chart-desc">McCarthy et al. glaubten 1955, dass "ein signifikanter Fortschritt" in einem Sommer möglich sei. 70 Jahre später haben wir vieles erreicht – aber die fundamentalen Probleme (Abstraktion, Kreativität, Verständnis) bleiben.</div>
+            <div id="dartmouth-chart" style="width:100%;height:400px;"></div>
+        </div>
+    </div>
+
+    <script>
+    // Navigation
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+        // Trigger chart resize
+        window.dispatchEvent(new Event('resize'));
+    }
+
+    // OVERVIEW CHART - ECharts Graph
+    var overviewChart = echarts.init(document.getElementById('overview-chart'));
+    overviewChart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}' },
+        legend: { data: ['Bewusstsein & Kognition', 'Computation & KI', 'Mathematik & Statistik', 'Sprache & Bedeutung', 'Philosophie & Ethik'],
+                  textStyle: { color: '#999' }, bottom: 10 },
+        series: [{
+            type: 'graph',
+            layout: 'force',
+            roam: true,
+            draggable: true,
+            force: { repulsion: 300, gravity: 0.1, edgeLength: [100, 250] },
+            categories: [
+                { name: 'Bewusstsein & Kognition' },
+                { name: 'Computation & KI' },
+                { name: 'Mathematik & Statistik' },
+                { name: 'Sprache & Bedeutung' },
+                { name: 'Philosophie & Ethik' }
+            ],
+            data: [
+                { name: 'Baars 1988\nBewusstseinsfunktionen', category: 0, symbolSize: 50, itemStyle: { color: '#ff6b6b' } },
+                { name: 'McCulloch-Pitts 1943\nLogischer Kalkül', category: 1, symbolSize: 55, itemStyle: { color: '#4ecdc4' } },
+                { name: 'Moore 1965\nExponentielles Wachstum', category: 1, symbolSize: 45, itemStyle: { color: '#45b7d1' } },
+                { name: 'Dartmouth 1956\nKI-Gründung', category: 1, symbolSize: 50, itemStyle: { color: '#96ceb4' } },
+                { name: 'Bayes 1763\nInverse Wahrscheinlichkeit', category: 2, symbolSize: 55, itemStyle: { color: '#667eea' } },
+                { name: 'Riemann 1854\nMannigfaltigkeiten', category: 2, symbolSize: 50, itemStyle: { color: '#764ba2' } },
+                { name: 'Bengio 2003\nNeural Language Model', category: 3, symbolSize: 55, itemStyle: { color: '#f093fb' } },
+                { name: 'Mikolov 2013\nWord2Vec', category: 3, symbolSize: 50, itemStyle: { color: '#c471ed' } },
+                { name: 'Sutskever 2014\nSeq2Seq', category: 3, symbolSize: 45, itemStyle: { color: '#a855f7' } },
+                { name: 'Hinton 1995\nWake-Sleep', category: 1, symbolSize: 50, itemStyle: { color: '#06d6a0' } },
+                { name: 'Bottou 1991\nStochastic Gradient', category: 2, symbolSize: 45, itemStyle: { color: '#118ab2' } },
+                { name: 'Lighthill 1973\nAI-Kritik', category: 4, symbolSize: 40, itemStyle: { color: '#ef476f' } },
+                { name: 'Frankfurt 2005\nOn Bullshit', category: 4, symbolSize: 40, itemStyle: { color: '#ffd166' } },
+                { name: 'Sparck Jones 2004\nLM-Kritik', category: 3, symbolSize: 40, itemStyle: { color: '#e76f51' } },
+                { name: 'Bostrom\nSuperintelligenz', category: 4, symbolSize: 45, itemStyle: { color: '#d62828' } },
+                { name: 'Berlucchi 2006\nNobel Neuroscience', category: 0, symbolSize: 35, itemStyle: { color: '#ff9f1c' } },
+                { name: 'Piccinini 2004\nComputational Mind', category: 0, symbolSize: 45, itemStyle: { color: '#e07a5f' } },
+                { name: 'NYT 1958\nPerceptron', category: 1, symbolSize: 35, itemStyle: { color: '#81b29a' } }
+            ],
+            links: [
+                { source: 'McCulloch-Pitts 1943\nLogischer Kalkül', target: 'Dartmouth 1956\nKI-Gründung' },
+                { source: 'McCulloch-Pitts 1943\nLogischer Kalkül', target: 'Piccinini 2004\nComputational Mind' },
+                { source: 'McCulloch-Pitts 1943\nLogischer Kalkül', target: 'Moore 1965\nExponentielles Wachstum' },
+                { source: 'Dartmouth 1956\nKI-Gründung', target: 'Lighthill 1973\nAI-Kritik' },
+                { source: 'Dartmouth 1956\nKI-Gründung', target: 'Bostrom\nSuperintelligenz' },
+                { source: 'Bayes 1763\nInverse Wahrscheinlichkeit', target: 'Bottou 1991\nStochastic Gradient' },
+                { source: 'Bayes 1763\nInverse Wahrscheinlichkeit', target: 'Bengio 2003\nNeural Language Model' },
+                { source: 'Bengio 2003\nNeural Language Model', target: 'Mikolov 2013\nWord2Vec' },
+                { source: 'Bengio 2003\nNeural Language Model', target: 'Sutskever 2014\nSeq2Seq' },
+                { source: 'Mikolov 2013\nWord2Vec', target: 'Sutskever 2014\nSeq2Seq' },
+                { source: 'Hinton 1995\nWake-Sleep', target: 'Bengio 2003\nNeural Language Model' },
+                { source: 'Bottou 1991\nStochastic Gradient', target: 'Bengio 2003\nNeural Language Model' },
+                { source: 'Bottou 1991\nStochastic Gradient', target: 'Mikolov 2013\nWord2Vec' },
+                { source: 'Baars 1988\nBewusstseinsfunktionen', target: 'Piccinini 2004\nComputational Mind' },
+                { source: 'Baars 1988\nBewusstseinsfunktionen', target: 'Berlucchi 2006\nNobel Neuroscience' },
+                { source: 'Riemann 1854\nMannigfaltigkeiten', target: 'Mikolov 2013\nWord2Vec' },
+                { source: 'Riemann 1854\nMannigfaltigkeiten', target: 'Bengio 2003\nNeural Language Model' },
+                { source: 'Frankfurt 2005\nOn Bullshit', target: 'Sparck Jones 2004\nLM-Kritik' },
+                { source: 'Sparck Jones 2004\nLM-Kritik', target: 'Bengio 2003\nNeural Language Model' },
+                { source: 'Moore 1965\nExponentielles Wachstum', target: 'Sutskever 2014\nSeq2Seq' },
+                { source: 'Lighthill 1973\nAI-Kritik', target: 'Bostrom\nSuperintelligenz' },
+                { source: 'NYT 1958\nPerceptron', target: 'Bengio 2003\nNeural Language Model' },
+                { source: 'Berlucchi 2006\nNobel Neuroscience', target: 'Hinton 1995\nWake-Sleep' },
+                { source: 'Piccinini 2004\nComputational Mind', target: 'Baars 1988\nBewusstseinsfunktionen' }
+            ],
+            lineStyle: { color: '#555', curveness: 0.3, opacity: 0.6 },
+            label: { show: true, fontSize: 10, color: '#ccc' }
+        }]
+    });
+
+    // TIMELINE CHART
+    var timelineChart = echarts.init(document.getElementById('timeline-chart'));
+    timelineChart.setOption({
+        tooltip: { trigger: 'item' },
+        xAxis: { type: 'value', min: 1750, max: 2020, name: 'Jahr', axisLabel: { color: '#999' }, axisLine: { lineStyle: { color: '#444' } } },
+        yAxis: { type: 'category', data: ['Mathematik', 'Neurowissenschaft', 'KI/ML', 'Sprache/NLP', 'Philosophie'], axisLabel: { color: '#999' }, axisLine: { lineStyle: { color: '#444' } } },
+        series: [{
+            type: 'scatter',
+            symbolSize: 20,
+            data: [
+                { value: [1763, 'Mathematik'], name: 'Bayes' },
+                { value: [1854, 'Mathematik'], name: 'Riemann' },
+                { value: [1943, 'Neurowissenschaft'], name: 'McCulloch-Pitts' },
+                { value: [1956, 'KI/ML'], name: 'Dartmouth' },
+                { value: [1958, 'KI/ML'], name: 'Perceptron NYT' },
+                { value: [1965, 'KI/ML'], name: 'Moore' },
+                { value: [1973, 'Philosophie'], name: 'Lighthill' },
+                { value: [1988, 'Neurowissenschaft'], name: 'Baars' },
+                { value: [1991, 'KI/ML'], name: 'Bottou' },
+                { value: [1995, 'KI/ML'], name: 'Hinton' },
+                { value: [2003, 'Sprache/NLP'], name: 'Bengio' },
+                { value: [2004, 'Sprache/NLP'], name: 'Sparck Jones' },
+                { value: [2004, 'Neurowissenschaft'], name: 'Piccinini' },
+                { value: [2005, 'Philosophie'], name: 'Frankfurt' },
+                { value: [2006, 'Neurowissenschaft'], name: 'Berlucchi' },
+                { value: [2013, 'Sprache/NLP'], name: 'Mikolov' },
+                { value: [2014, 'Sprache/NLP'], name: 'Sutskever' }
+            ],
+            itemStyle: { color: function(params) {
+                var colors = {'Mathematik':'#667eea','Neurowissenschaft':'#ff6b6b','KI/ML':'#4ecdc4','Sprache/NLP':'#f093fb','Philosophie':'#ffd166'};
+                return colors[params.value[1]] || '#fff';
+            }},
+            label: { show: true, formatter: '{@[2]}', position: 'right', color: '#ccc', fontSize: 10 }
+        }]
+    });
+
+    // SANKEY CHART
+    var sankeyChart = echarts.init(document.getElementById('sankey-chart'));
+    sankeyChart.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'sankey',
+            layout: 'none',
+            emphasis: { focus: 'adjacency' },
+            nodeAlign: 'left',
+            data: [
+                { name: 'Logik (1943)' }, { name: 'Wahrscheinlichkeit (1763)' },
+                { name: 'Geometrie (1854)' }, { name: 'Hardware (1965)' },
+                { name: 'KI-Vision (1956)' }, { name: 'Neuronale Netze' },
+                { name: 'Statist. Lernen' }, { name: 'Sprachmodelle' },
+                { name: 'Deep Learning' }, { name: 'Seq2Seq/Transformer' }
+            ],
+            links: [
+                { source: 'Logik (1943)', target: 'KI-Vision (1956)', value: 5 },
+                { source: 'Logik (1943)', target: 'Neuronale Netze', value: 8 },
+                { source: 'Wahrscheinlichkeit (1763)', target: 'Statist. Lernen', value: 8 },
+                { source: 'Geometrie (1854)', target: 'Deep Learning', value: 4 },
+                { source: 'Hardware (1965)', target: 'Deep Learning', value: 7 },
+                { source: 'KI-Vision (1956)', target: 'Neuronale Netze', value: 4 },
+                { source: 'Neuronale Netze', target: 'Statist. Lernen', value: 6 },
+                { source: 'Statist. Lernen', target: 'Sprachmodelle', value: 7 },
+                { source: 'Neuronale Netze', target: 'Deep Learning', value: 5 },
+                { source: 'Sprachmodelle', target: 'Deep Learning', value: 6 },
+                { source: 'Deep Learning', target: 'Seq2Seq/Transformer', value: 9 },
+                { source: 'Hardware (1965)', target: 'Seq2Seq/Transformer', value: 3 }
+            ],
+            lineStyle: { color: 'gradient', curveness: 0.5 },
+            label: { color: '#eee' },
+            itemStyle: { borderWidth: 1, borderColor: '#333' }
+        }]
+    });
+
+    // CONSCIOUSNESS RADAR
+    var consciousnessRadar = echarts.init(document.getElementById('consciousness-radar'));
+    consciousnessRadar.setOption({
+        tooltip: {},
+        legend: { data: ['Bewusstsein', 'Unbewusstes'], textStyle: { color: '#999' } },
+        radar: {
+            indicator: [
+                { name: 'Definition &\nKontext', max: 10 },
+                { name: 'Lernen &\nAdaption', max: 10 },
+                { name: 'Debugging &\nFlagging', max: 10 },
+                { name: 'Rekrutierung &\nKontrolle', max: 10 },
+                { name: 'Priorisierung', max: 10 },
+                { name: 'Entscheidung', max: 10 },
+                { name: 'Analogie-\nbildung', max: 10 },
+                { name: 'Metakognition', max: 10 },
+                { name: 'Auto-\nprogrammierung', max: 10 }
+            ],
+            axisName: { color: '#ccc' },
+            splitLine: { lineStyle: { color: '#333' } },
+            splitArea: { areaStyle: { color: ['rgba(102,126,234,0.05)', 'rgba(102,126,234,0.1)'] } }
+        },
+        series: [{
+            type: 'radar',
+            data: [
+                { value: [9, 9, 8, 7, 8, 9, 9, 10, 8], name: 'Bewusstsein', areaStyle: { color: 'rgba(255,107,107,0.3)' }, lineStyle: { color: '#ff6b6b' } },
+                { value: [3, 4, 2, 8, 3, 2, 3, 1, 2], name: 'Unbewusstes', areaStyle: { color: 'rgba(78,205,196,0.3)' }, lineStyle: { color: '#4ecdc4' } }
+            ]
+        }]
+    });
+
+    // CONSCIOUSNESS FLOW
+    var consciousnessFlow = echarts.init(document.getElementById('consciousness-flow'));
+    consciousnessFlow.setOption({
+        tooltip: {},
+        series: [{
+            type: 'sankey',
+            data: [
+                { name: 'Sensorischer Input' }, { name: 'Unbewusste Verarbeitung' },
+                { name: 'Global Workspace' }, { name: 'Bewusste Erfahrung' },
+                { name: 'Automatische Antwort' }, { name: 'Flexible Antwort' },
+                { name: 'Kontext-Systeme' }, { name: 'Ziel-Systeme' }
+            ],
+            links: [
+                { source: 'Sensorischer Input', target: 'Unbewusste Verarbeitung', value: 10 },
+                { source: 'Unbewusste Verarbeitung', target: 'Global Workspace', value: 4 },
+                { source: 'Unbewusste Verarbeitung', target: 'Automatische Antwort', value: 6 },
+                { source: 'Global Workspace', target: 'Bewusste Erfahrung', value: 4 },
+                { source: 'Bewusste Erfahrung', target: 'Flexible Antwort', value: 3 },
+                { source: 'Bewusste Erfahrung', target: 'Kontext-Systeme', value: 2 },
+                { source: 'Kontext-Systeme', target: 'Ziel-Systeme', value: 2 },
+                { source: 'Ziel-Systeme', target: 'Global Workspace', value: 1 }
+            ],
+            lineStyle: { color: 'gradient', curveness: 0.5 },
+            label: { color: '#eee' }
+        }]
+    });
+
+    // COMPUTATION TREE
+    var computationTree = echarts.init(document.getElementById('computation-tree'));
+    computationTree.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'tree',
+            data: [{
+                name: 'Computational\nTheory of Mind',
+                children: [
+                    { name: 'McCulloch-Pitts\n(1943)', children: [
+                        { name: 'Neuron = \nLogisches Gate' },
+                        { name: 'All-or-None\n→ Proposition' },
+                        { name: 'Netz = \nTuring-Maschine\n(mit Tape)' }
+                    ]},
+                    { name: 'Turing\n(1936)', children: [
+                        { name: 'Berechenbarkeit' },
+                        { name: 'Church-Turing\nThese' }
+                    ]},
+                    { name: 'Moderne\nNeuronale Netze', children: [
+                        { name: 'Backpropagation\n(1986)' },
+                        { name: 'LSTM\n(1997)' },
+                        { name: 'Transformer\n(2017)' }
+                    ]}
+                ]
+            }],
+            top: '5%', bottom: '5%', left: '10%', right: '10%',
+            symbolSize: 12,
+            label: { color: '#ccc', fontSize: 11 },
+            lineStyle: { color: '#555' },
+            leaves: { label: { color: '#999' } }
+        }]
+    });
+
+    // MOORE CHART
+    var mooreChart = echarts.init(document.getElementById('moore-chart'));
+    var years = [];
+    var components = [];
+    for (var y = 1965; y <= 2020; y += 5) {
+        years.push(y);
+        components.push(Math.pow(2, (y - 1965) / 2));
+    }
+    mooreChart.setOption({
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: years, axisLabel: { color: '#999' }, axisLine: { lineStyle: { color: '#444' } } },
+        yAxis: { type: 'log', name: 'Komponenten/Chip', axisLabel: { color: '#999' }, axisLine: { lineStyle: { color: '#444' } }, splitLine: { lineStyle: { color: '#333' } } },
+        series: [{
+            type: 'line',
+            data: components,
+            smooth: true,
+            lineStyle: { color: '#4ecdc4', width: 3 },
+            areaStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(78,205,196,0.4)' }, { offset: 1, color: 'rgba(78,205,196,0)' }] } },
+            itemStyle: { color: '#4ecdc4' }
+        }]
+    });
+
+    // LEARNING EVOLUTION
+    var learningEvolution = echarts.init(document.getElementById('learning-evolution'));
+    learningEvolution.setOption({
+        tooltip: { trigger: 'item' },
+        xAxis: { type: 'value', min: 1955, max: 2020, axisLabel: { color: '#999' }, axisLine: { lineStyle: { color: '#444' } } },
+        yAxis: { type: 'value', name: 'Modell-Kapazität (log)', axisLabel: { color: '#999' }, axisLine: { lineStyle: { color: '#444' } }, splitLine: { lineStyle: { color: '#333' } } },
+        series: [{
+            type: 'scatter',
+            symbolSize: function(val) { return val[2] * 3; },
+            data: [
+                [1958, 1, 8, 'Perceptron'],
+                [1986, 3, 10, 'Backprop'],
+                [1991, 4, 8, 'SGD (Bottou)'],
+                [1995, 5, 10, 'Wake-Sleep'],
+                [1997, 6, 9, 'LSTM'],
+                [2003, 7, 12, 'Neural LM (Bengio)'],
+                [2013, 8, 12, 'Word2Vec'],
+                [2014, 9, 11, 'Seq2Seq'],
+                [2017, 10, 14, 'Transformer']
+            ],
+            itemStyle: { color: '#f093fb' },
+            label: { show: true, formatter: function(p) { return p.data[3]; }, position: 'top', color: '#ccc', fontSize: 10 }
+        }, {
+            type: 'line',
+            data: [[1958,1],[1986,3],[1991,4],[1995,5],[1997,6],[2003,7],[2013,8],[2014,9],[2017,10]],
+            smooth: true,
+            lineStyle: { color: '#667eea', type: 'dashed' },
+            symbol: 'none'
+        }]
+    });
+
+    // WORD2VEC CHART - Plotly
+    Plotly.newPlot('word2vec-chart', [{
+        type: 'scatter3d',
+        mode: 'markers+text',
+        x: [1, 2, 1.5, 2.5, 3, 4, 3.5, 4.5, 0.5, 1.5],
+        y: [1, 1.5, 3, 3.5, 1, 1.5, 3, 3.5, 2, 2],
+        z: [1, 1, 1, 1, 2, 2, 2, 2, 1.5, 1.5],
+        text: ['Mann', 'König', 'Frau', 'Königin', 'Paris', 'Frankreich', 'Berlin', 'Deutschland', 'Hund', 'Katze'],
+        textposition: 'top center',
+        marker: { size: 8, color: ['#ff6b6b','#ffd166','#ff6b6b','#ffd166','#4ecdc4','#4ecdc4','#667eea','#667eea','#f093fb','#f093fb'] },
+        textfont: { color: '#ccc', size: 11 }
+    }, {
+        type: 'scatter3d',
+        mode: 'lines',
+        x: [1, 2, null, 1.5, 2.5, null, 1, 1.5, null, 2, 2.5],
+        y: [1, 1.5, null, 3, 3.5, null, 1, 3, null, 1.5, 3.5],
+        z: [1, 1, null, 1, 1, null, 1, 1, null, 1, 1],
+        line: { color: '#667eea', width: 2 },
+        showlegend: false
+    }], {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        scene: {
+            xaxis: { showgrid: true, gridcolor: '#333', color: '#999' },
+            yaxis: { showgrid: true, gridcolor: '#333', color: '#999' },
+            zaxis: { showgrid: true, gridcolor: '#333', color: '#999' },
+            bgcolor: 'rgba(0,0,0,0)'
+        },
+        font: { color: '#ccc' },
+        margin: { l: 0, r: 0, t: 30, b: 0 },
+        title: { text: 'König - Mann + Frau ≈ Königin', font: { color: '#ccc', size: 14 } }
+    }, { responsive: true });
+
+    // WAKE-SLEEP CHART
+    var wakesleepChart = echarts.init(document.getElementById('wakesleep-chart'));
+    wakesleepChart.setOption({
+        tooltip: {},
+        series: [{
+            type: 'graph',
+            layout: 'none',
+            roam: true,
+            label: { show: true, color: '#ccc', fontSize: 11 },
+            data: [
+                { name: 'Input Layer', x: 300, y: 400, symbolSize: 60, itemStyle: { color: '#4ecdc4' } },
+                { name: 'Hidden 1', x: 300, y: 280, symbolSize: 50, itemStyle: { color: '#667eea' } },
+                { name: 'Hidden 2', x: 300, y: 160, symbolSize: 40, itemStyle: { color: '#764ba2' } },
+                { name: 'Top Layer', x: 300, y: 60, symbolSize: 35, itemStyle: { color: '#ff6b6b' } },
+                { name: 'WAKE:\nBottom-Up\n(Recognition)', x: 100, y: 230, symbolSize: 5, itemStyle: { color: 'transparent' } },
+                { name: 'SLEEP:\nTop-Down\n(Generative)', x: 500, y: 230, symbolSize: 5, itemStyle: { color: 'transparent' } }
+            ],
+            links: [
+                { source: 'Input Layer', target: 'Hidden 1', lineStyle: { color: '#4ecdc4', width: 3 } },
+                { source: 'Hidden 1', target: 'Hidden 2', lineStyle: { color: '#667eea', width: 3 } },
+                { source: 'Hidden 2', target: 'Top Layer', lineStyle: { color: '#764ba2', width: 3 } }
+            ]
+        }]
+    });
+
+    // BAYES CHART - Plotly
+    var xBayes = [];
+    var yPrior = [];
+    var yPosterior1 = [];
+    var yPosterior10 = [];
+    var yPosterior100 = [];
+    for (var i = 0; i <= 100; i++) {
+        var p = i / 100;
+        xBayes.push(p);
+        yPrior.push(1);
+        // Beta distributions approximation
+        yPosterior1.push(Math.pow(p, 1) * Math.pow(1-p, 0) * 2);
+        yPosterior10.push(Math.pow(p, 7) * Math.pow(1-p, 3) * 1320);
+        yPosterior100.push(Math.pow(p, 70) * Math.pow(1-p, 30) * 1e10);
+    }
+    // Normalize
+    var max10 = Math.max(...yPosterior10);
+    var max100 = Math.max(...yPosterior100);
+    yPosterior10 = yPosterior10.map(v => v / max10 * 5);
+    yPosterior100 = yPosterior100.map(v => v / max100 * 8);
+
+    Plotly.newPlot('bayes-chart', [
+        { x: xBayes, y: yPrior, name: 'Prior (Unwissenheit)', line: { color: '#ffd166', dash: 'dash' } },
+        { x: xBayes, y: yPosterior1, name: 'Nach 1 Erfolg', line: { color: '#4ecdc4' } },
+        { x: xBayes, y: yPosterior10, name: 'Nach 7/10 Erfolgen', line: { color: '#667eea' } },
+        { x: xBayes, y: yPosterior100, name: 'Nach 70/100 Erfolgen', line: { color: '#ff6b6b' } }
+    ], {
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        xaxis: { title: 'Wahrscheinlichkeit p', color: '#999', gridcolor: '#333' },
+        yaxis: { title: 'Posterior-Dichte', color: '#999', gridcolor: '#333' },
+        font: { color: '#ccc' },
+        legend: { x: 0, y: 1 },
+        title: { text: 'Bayessche Aktualisierung: Vom Nichtwissen zur Gewissheit', font: { color: '#ccc' } }
+    }, { responsive: true });
+
+    // RIEMANN CHART - Plotly 3D Surface
+    var size = 30;
+    var xR = [], yR = [], zFlat = [], zCurved = [];
+    for (var i = 0; i < size; i++) {
+        xR.push([]);  yR.push([]); zFlat.push([]); zCurved.push([]);
+        for (var j = 0; j < size; j++) {
+            var u = (i - size/2) / 5;
+            var v = (j - size/2) / 5;
+            xR[i].push(u);
+            yR[i].push(v);
+            zFlat[i].push(0);
+            zCurved[i].push(Math.sin(Math.sqrt(u*u + v*v)) * 0.8);
+        }
+    }
+    Plotly.newPlot('riemann-chart', [
+        { type: 'surface', x: xR, y: yR, z: zFlat, colorscale: [[0,'#1a1a2e'],[1,'#667eea']], opacity: 0.5, showscale: false, name: 'Flacher Raum (Euklid)' },
+        { type: 'surface', x: xR, y: yR, z: zCurved, colorscale: [[0,'#1a1a2e'],[1,'#ff6b6b']], opacity: 0.7, showscale: false, name: 'Gekrümmter Raum (Riemann)' }
+    ], {
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        scene: { xaxis: { gridcolor: '#333', color: '#999' }, yaxis: { gridcolor: '#333', color: '#999' }, zaxis: { gridcolor: '#333', color: '#999' }, bgcolor: 'rgba(0,0,0,0)' },
+        font: { color: '#ccc' },
+        title: { text: 'Flacher vs. Gekrümmter Raum: Riemanns Revolution', font: { color: '#ccc' } },
+        margin: { l: 0, r: 0, t: 50, b: 0 }
+    }, { responsive: true });
+
+    // TRUTH CHART
+    var truthChart = echarts.init(document.getElementById('truth-chart'));
+    truthChart.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'graph',
+            layout: 'none',
+            roam: true,
+            label: { show: true, fontSize: 12, color: '#fff' },
+            data: [
+                { name: 'WAHRHEIT', x: 300, y: 50, symbolSize: 70, itemStyle: { color: '#4ecdc4' } },
+                { name: 'LÜGNER', x: 100, y: 200, symbolSize: 60, itemStyle: { color: '#667eea' } },
+                { name: 'BULLSHITTER', x: 500, y: 200, symbolSize: 60, itemStyle: { color: '#ff6b6b' } },
+                { name: 'Beziehung\nzur Wahrheit:\nRESPEKT', x: 100, y: 350, symbolSize: 45, itemStyle: { color: '#45b7d1' } },
+                { name: 'Beziehung\nzur Wahrheit:\nIGNORANZ', x: 500, y: 350, symbolSize: 45, itemStyle: { color: '#e76f51' } },
+                { name: 'Absicht:\nTäuschen über\nFakten', x: 100, y: 120, symbolSize: 35, itemStyle: { color: '#96ceb4' } },
+                { name: 'Absicht:\nTäuschen über\neigene Haltung', x: 500, y: 120, symbolSize: 35, itemStyle: { color: '#ffd166' } },
+                { name: 'SPRACHMODELL\n(LM)', x: 300, y: 350, symbolSize: 55, itemStyle: { color: '#f093fb' } }
+            ],
+            links: [
+                { source: 'WAHRHEIT', target: 'LÜGNER', lineStyle: { color: '#4ecdc4', width: 2 }, label: { show: true, formatter: 'kennt & vermeidet', color: '#999' } },
+                { source: 'WAHRHEIT', target: 'BULLSHITTER', lineStyle: { color: '#ff6b6b', width: 2, type: 'dashed' }, label: { show: true, formatter: 'irrelevant', color: '#999' } },
+                { source: 'LÜGNER', target: 'Beziehung\nzur Wahrheit:\nRESPEKT', lineStyle: { color: '#667eea' } },
+                { source: 'BULLSHITTER', target: 'Beziehung\nzur Wahrheit:\nIGNORANZ', lineStyle: { color: '#ff6b6b' } },
+                { source: 'LÜGNER', target: 'Absicht:\nTäuschen über\nFakten', lineStyle: { color: '#667eea' } },
+                { source: 'BULLSHITTER', target: 'Absicht:\nTäuschen über\neigene Haltung', lineStyle: { color: '#ff6b6b' } },
+                { source: 'SPRACHMODELL\n(LM)', target: 'Beziehung\nzur Wahrheit:\nIGNORANZ', lineStyle: { color: '#f093fb', type: 'dashed' } }
+            ]
+        }]
+    });
+
+    // LM CRITIQUE CHART
+    var lmCritique = echarts.init(document.getElementById('lm-critique'));
+    lmCritique.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'funnel',
+            left: '10%', right: '10%', top: '10%', bottom: '10%',
+            min: 0, max: 100,
+            sort: 'descending',
+            gap: 5,
+            label: { show: true, position: 'inside', color: '#fff', fontSize: 12 },
+            data: [
+                { value: 100, name: 'Trainings-Daten\n(Oberflächen-Statistik)', itemStyle: { color: '#667eea' } },
+                { value: 80, name: 'Wahrscheinlichkeits-\nverteilungen', itemStyle: { color: '#764ba2' } },
+                { value: 60, name: 'Muster-Reproduktion\n(kein Verständnis)', itemStyle: { color: '#f093fb' } },
+                { value: 40, name: 'Generierung\n(keine Intention)', itemStyle: { color: '#ff6b6b' } },
+                { value: 20, name: 'Output\n(Bullshit im Sinne Frankfurts?)', itemStyle: { color: '#ffd166' } }
+            ]
+        }]
+    });
+
+    // D3 NETWORK
+    function createD3Network() {
+        var container = document.getElementById('d3-network');
+        var width = container.clientWidth || 900;
+        var height = 600;
+
+        d3.select('#d3-network').selectAll('*').remove();
+
+        var svg = d3.select('#d3-network')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+
+        var nodes = [
+            { id: 'Bewusstsein', group: 1, size: 20 },
+            { id: 'Global Workspace', group: 1, size: 18 },
+            { id: 'Unbewusstes', group: 1, size: 16 },
+            { id: 'Neuronale Netze', group: 2, size: 20 },
+            { id: 'McCulloch-Pitts', group: 2, size: 16 },
+            { id: 'Backpropagation', group: 2, size: 14 },
+            { id: 'LSTM', group: 2, size: 15 },
+            { id: 'Transformer', group: 2, size: 18 },
+            { id: 'Wahrscheinlichkeit', group: 3, size: 18 },
+            { id: 'Bayes Theorem', group: 3, size: 16 },
+            { id: 'SGD', group: 3, size: 14 },
+            { id: 'Sprache', group: 4, size: 20 },
+            { id: 'Word Embeddings', group: 4, size: 16 },
+            { id: 'Seq2Seq', group: 4, size: 15 },
+            { id: 'Generative Modelle', group: 4, size: 14 },
+            { id: 'Geometrie', group: 5, size: 16 },
+            { id: 'Mannigfaltigkeit', group: 5, size: 14 },
+            { id: 'Krümmung', group: 5, size: 12 },
+            { id: 'Wahrheit', group: 6, size: 16 },
+            { id: 'Bullshit', group: 6, size: 14 },
+            { id: 'Superintelligenz', group: 6, size: 15 },
+            { id: 'Exponentielle\nSkalierung', group: 2, size: 16 },
+            { id: 'Repräsentation', group: 4, size: 18 }
+        ];
+
+        var links = [
+            { source: 'Bewusstsein', target: 'Global Workspace', value: 5 },
+            { source: 'Bewusstsein', target: 'Unbewusstes', value: 4 },
+            { source: 'Global Workspace', target: 'Neuronale Netze', value: 3 },
+            { source: 'McCulloch-Pitts', target: 'Neuronale Netze', value: 5 },
+            { source: 'Neuronale Netze', target: 'Backpropagation', value: 4 },
+            { source: 'Neuronale Netze', target: 'LSTM', value: 4 },
+            { source: 'LSTM', target: 'Transformer', value: 5 },
+            { source: 'LSTM', target: 'Seq2Seq', value: 5 },
+            { source: 'Wahrscheinlichkeit', target: 'Bayes Theorem', value: 5 },
+            { source: 'Wahrscheinlichkeit', target: 'SGD', value: 3 },
+            { source: 'SGD', target: 'Neuronale Netze', value: 4 },
+            { source: 'Sprache', target: 'Word Embeddings', value: 5 },
+            { source: 'Sprache', target: 'Seq2Seq', value: 4 },
+            { source: 'Sprache', target: 'Generative Modelle', value: 3 },
+            { source: 'Word Embeddings', target: 'Repräsentation', value: 5 },
+            { source: 'Geometrie', target: 'Mannigfaltigkeit', value: 5 },
+            { source: 'Mannigfaltigkeit', target: 'Krümmung', value: 4 },
+            { source: 'Mannigfaltigkeit', target: 'Word Embeddings', value: 3 },
+            { source: 'Wahrheit', target: 'Bullshit', value: 4 },
+            { source: 'Bullshit', target: 'Generative Modelle', value: 3 },
+            { source: 'Superintelligenz', target: 'Neuronale Netze', value: 3 },
+            { source: 'Exponentielle\nSkalierung', target: 'Neuronale Netze', value: 4 },
+            { source: 'Exponentielle\nSkalierung', target: 'Transformer', value: 3 },
+            { source: 'Repräsentation', target: 'Neuronale Netze', value: 4 },
+            { source: 'Bayes Theorem', target: 'Sprache', value: 3 },
+            { source: 'Generative Modelle', target: 'Wahrheit', value: 2 }
+        ];
+
+        var colors = { 1: '#ff6b6b', 2: '#4ecdc4', 3: '#667eea', 4: '#f093fb', 5: '#764ba2', 6: '#ffd166' };
+
+        var simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(links).id(d => d.id).distance(80))
+            .force('charge', d3.forceManyBody().strength(-200))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(d => d.size + 10));
+
+        var link = svg.append('g')
+            .selectAll('line')
+            .data(links)
+            .enter().append('line')
+            .attr('stroke', '#444')
+            .attr('stroke-opacity', 0.6)
+            .attr('stroke-width', d => Math.sqrt(d.value));
+
+        var node = svg.append('g')
+            .selectAll('circle')
+            .data(nodes)
+            .enter().append('circle')
+            .attr('r', d => d.size)
+            .attr('fill', d => colors[d.group])
+            .attr('stroke', '#222')
+            .attr('stroke-width', 1.5)
+            .call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended));
+
+        var label = svg.append('g')
+            .selectAll('text')
+            .data(nodes)
+            .enter().append('text')
+            .text(d => d.id)
+            .attr('font-size', 9)
+            .attr('fill', '#ccc')
+            .attr('text-anchor', 'middle')
+            .attr('dy', d => d.size + 12);
+
+        simulation.on('tick', () => {
+            link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+            node.attr('cx', d => d.x).attr('cy', d => d.y);
+            label.attr('x', d => d.x).attr('y', d => d.y);
+        });
+
+        function dragstarted(event) { if (!event.active) simulation.alphaTarget(0.3).restart(); event.subject.fx = event.subject.x; event.subject.fy = event.subject.y; }
+        function dragged(event) { event.subject.fx = event.x; event.subject.fy = event.y; }
+        function dragended(event) { if (!event.active) simulation.alphaTarget(0); event.subject.fx = null; event.subject.fy = null; }
+    }
+
+    // Wait for section to be visible before creating D3
+    setTimeout(createD3Network, 500);
+
+    // PATTERNS CHART
+    var patternsChart = echarts.init(document.getElementById('patterns-chart'));
+    patternsChart.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+            type: 'sunburst',
+            data: [{
+                name: 'Meta-Muster',
+                children: [
+                    { name: 'Dualität', value: 15, children: [
+                        { name: 'Bewusst/\nUnbewusst', value: 5 },
+                        { name: 'Generativ/\nErkennend', value: 5 },
+                        { name: 'Flexibel/\nEffizient', value: 5 }
+                    ]},
+                    { name: 'Exponentielle\nSkalierung', value: 12, children: [
+                        { name: "Moore's Law", value: 4 },
+                        { name: 'Kombinatorische\nExplosion', value: 4 },
+                        { name: 'Fluch der\nDimensionalität', value: 4 }
+                    ]},
+                    { name: 'Repräsentation', value: 14, children: [
+                        { name: 'Distributed\nRepresentations', value: 5 },
+                        { name: 'Neurale\nCodes', value: 5 },
+                        { name: 'Mannig-\nfaltigkeiten', value: 4 }
+                    ]},
+                    { name: 'Lokales Lernen\n→ Globale Ordnung', value: 12, children: [
+                        { name: 'SGD', value: 4 },
+                        { name: 'Wake-Sleep', value: 4 },
+                        { name: 'Bayes\nUpdates', value: 4 }
+                    ]},
+                    { name: 'Kontext =\nBedeutung', value: 13, children: [
+                        { name: 'Global\nWorkspace', value: 5 },
+                        { name: 'Skip-gram', value: 4 },
+                        { name: 'Semantische\nKontrolle', value: 4 }
+                    ]},
+                    { name: 'Vereinfachung\n→ Erkenntnis', value: 10, children: [
+                        { name: 'McCulloch-Pitts\nIdealisierung', value: 4 },
+                        { name: 'Negative\nSampling', value: 3 },
+                        { name: 'Bayes\nPostulat', value: 3 }
+                    ]},
+                    { name: 'Grenzen der\nBerechenbarkeit', value: 10, children: [
+                        { name: 'Church-Turing', value: 3 },
+                        { name: 'Lighthill\nWarnung', value: 4 },
+                        { name: 'Bullshit-\nProblem', value: 3 }
+                    ]}
+                ]
+            }],
+            radius: ['10%', '90%'],
+            label: { fontSize: 9, color: '#ccc' },
+            itemStyle: { borderColor: '#1a1a2e', borderWidth: 2 },
+            levels: [
+                { r0: '10%', r: '25%', itemStyle: { color: '#1a1a3e' }, label: { fontSize: 14 } },
+                { r0: '25%', r: '55%', label: { fontSize: 11 } },
+                { r0: '55%', r: '90%', label: { fontSize: 9 } }
+            ]
+        }]
+    });
+
+    // DARTMOUTH CHART
+    var dartmouthChart = echarts.init(document.getElementById('dartmouth-chart'));
+    dartmouthChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['Erwartung (1956)', 'Realität'], textStyle: { color: '#999' } },
+        xAxis: { type: 'category', data: ['Sprache', 'Abstraktion', 'Kreativität', 'Selbst-\nverbesserung', 'Problem-\nlösung', 'Neuronale\nNetze', 'Berechenbarkeit'], axisLabel: { color: '#999', rotate: 30 }, axisLine: { lineStyle: { color: '#444' } } },
+        yAxis: { type: 'value', max: 100, name: 'Fortschritt %', axisLabel: { color: '#999' }, splitLine: { lineStyle: { color: '#333' } } },
+        series: [
+            { name: 'Erwartung (1956)', type: 'bar', data: [90, 85, 80, 90, 85, 70, 95], itemStyle: { color: 'rgba(102,126,234,0.3)' }, barWidth: '30%' },
+            { name: 'Realität', type: 'bar', data: [65, 40, 20, 30, 55, 75, 60], itemStyle: { color: '#ff6b6b' }, barWidth: '30%' }
+        ]
+    });
+
+    // Resize handler
+    window.addEventListener('resize', function() {
+        overviewChart.resize();
+        timelineChart.resize();
+        sankeyChart.resize();
+        consciousnessRadar.resize();
+        consciousnessFlow.resize();
+        computationTree.resize();
+        mooreChart.resize();
+        learningEvolution.resize();
+        wakesleepChart.resize();
+        truthChart.resize();
+        lmCritique.resize();
+        patternsChart.resize();
+        dartmouthChart.resize();
+    });
+    </script>
+</body>
+</html>

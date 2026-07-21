@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Nonlinear Workbook - Interactive Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 2px solid #4a3f8a;
+        }
+        .header h1 { font-size: 2.2rem; color: #a8b4ff; margin-bottom: 0.5rem; }
+        .header p { color: #8890b0; font-size: 1.1rem; }
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #111128;
+            border-bottom: 1px solid #2a2a4a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #4a3f8a;
+            background: #1a1a3e;
+            color: #a8b4ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .nav button:hover, .nav button.active {
+            background: #3d2d8a;
+            border-color: #7a6fd0;
+            color: #fff;
+        }
+        .section {
+            display: none;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section.active { display: block; }
+        .section h2 {
+            color: #a8b4ff;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #2a2a4a;
+            padding-bottom: 0.5rem;
+        }
+        .section h3 { color: #8890b0; margin: 1rem 0 0.5rem; }
+        .concept-box {
+            background: #151530;
+            border: 1px solid #2a2a5a;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .math-display {
+            background: #0d0d20;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 0.5rem 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #12122a;
+            border-radius: 8px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .control-group label {
+            font-size: 0.85rem;
+            color: #8890b0;
+        }
+        .control-group input[type="range"] {
+            width: 180px;
+            accent-color: #6a5fd0;
+        }
+        .control-group input[type="number"] {
+            width: 80px;
+            background: #1a1a3e;
+            border: 1px solid #3a3a6a;
+            color: #e0e0e0;
+            padding: 0.3rem;
+            border-radius: 4px;
+        }
+        .control-group select {
+            background: #1a1a3e;
+            border: 1px solid #3a3a6a;
+            color: #e0e0e0;
+            padding: 0.3rem;
+            border-radius: 4px;
+        }
+        .value-display {
+            color: #a8b4ff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        button.action-btn {
+            padding: 0.5rem 1.2rem;
+            background: #3d2d8a;
+            border: 1px solid #6a5fd0;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button.action-btn:hover {
+            background: #5a4aaa;
+        }
+        .plot-container {
+            width: 100%;
+            min-height: 400px;
+            margin: 1rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        canvas {
+            border: 1px solid #2a2a5a;
+            border-radius: 8px;
+            display: block;
+            margin: 1rem auto;
+            background: #0a0a15;
+        }
+        .info-text {
+            color: #8890b0;
+            font-size: 0.95rem;
+            margin: 0.5rem 0;
+        }
+        .highlight { color: #ffb347; }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+        }
+        .status-bar {
+            background: #0d0d20;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #6a9fd0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🌀 The Nonlinear Workbook — Interactive Explorer</h1>
+    <p>Chaos, Fractals, Neural Networks, Cellular Automata & more — visualized</p>
+</div>
+
+<div class="nav">
+    <button class="active" onclick="showSection('logistic')">Logistic Map</button>
+    <button onclick="showSection('bifurcation')">Bifurcation</button>
+    <button onclick="showSection('liapunov')">Liapunov Exponent</button>
+    <button onclick="showSection('henon')">Hénon Map</button>
+    <button onclick="showSection('lorenz')">Lorenz System</button>
+    <button onclick="showSection('fractals')">Fractals</button>
+    <button onclick="showSection('cellular')">Cellular Automata</button>
+    <button onclick="showSection('hopfield')">Neural Networks</button>
+</div>
+
+<!-- SECTION 1: Logistic Map -->
+<div class="section active" id="sec-logistic">
+    <h2>1. The Logistic Map</h2>
+    <div class="concept-box">
+        <p>The logistic map is the most fundamental example of how simple nonlinear maps can produce chaos. It is a one-dimensional map:</p>
+        <div class="math-display" id="math-logistic"></div>
+        <p class="info-text">Starting from an initial value <span class="highlight">x₀ ∈ [0,1]</span>, iterating produces a trajectory. For <span class="highlight">r = 4</span>, the map is fully chaotic with Liapunov exponent λ = ln 2.</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>Parameter r: <span class="value-display" id="r-val">3.9</span></label>
+            <input type="range" id="r-slider" min="1" max="4" step="0.01" value="3.9" oninput="updateLogistic()">
+        </div>
+        <div class="control-group">
+            <label>Initial x₀: <span class="value-display" id="x0-val">0.2</span></label>
+            <input type="range" id="x0-slider" min="0.01" max="0.99" step="0.01" value="0.2" oninput="updateLogistic()">
+        </div>
+        <div class="control-group">
+            <label>Iterations:</label>
+            <input type="number" id="iter-count" value="100" min="10" max="500" onchange="updateLogistic()">
+        </div>
+    </div>
+    
+    <div class="two-col">
+        <div>
+            <h3>Time Series x(t)</h3>
+            <div class="plot-container" id="logistic-time"></div>
+        </div>
+        <div>
+            <h3>Cobweb Diagram</h3>
+            <div class="plot-container" id="logistic-cobweb"></div>
+        </div>
+    </div>
+    
+    <div class="status-bar" id="logistic-status">Fixed points: x* = 0, x* = 1 - 1/r</div>
+</div>
+
+<!-- SECTION 2: Bifurcation Diagram -->
+<div class="section" id="sec-bifurcation">
+    <h2>2. Bifurcation Diagram</h2>
+    <div class="concept-box">
+        <p>As the parameter <span class="highlight">r</span> increases from 1 to 4, the logistic map undergoes a period-doubling cascade leading to chaos. The Feigenbaum constant δ ≈ 4.669 characterizes the rate at which bifurcations accumulate.</p>
+        <div class="math-display" id="math-bifurcation"></div>
+        <p class="info-text">For r ∈ [2,3): stable fixed point. At r = 3: first bifurcation. Period doubling: 2→4→8→...→chaos at r∞ ≈ 3.5699...</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>r min: <span class="value-display" id="rmin-val">2.5</span></label>
+            <input type="range" id="rmin-slider" min="1" max="3.5" step="0.1" value="2.5" oninput="updateBifurcation()">
+        </div>
+        <div class="control-group">
+            <label>r max: <span class="value-display" id="rmax-val">4.0</span></label>
+            <input type="range" id="rmax-slider" min="3" max="4" step="0.05" value="4.0" oninput="updateBifurcation()">
+        </div>
+        <div class="control-group">
+            <label>Resolution:</label>
+            <select id="bif-res" onchange="updateBifurcation()">
+                <option value="500">Low</option>
+                <option value="1000" selected>Medium</option>
+                <option value="2000">High</option>
+            </select>
+        </div>
+        <button class="action-btn" onclick="updateBifurcation()">Regenerate</button>
+    </div>
+    
+    <div class="plot-container" id="bifurcation-plot"></div>
+</div>
+
+<!-- SECTION 3: Liapunov Exponent -->
+<div class="section" id="sec-liapunov">
+    <h2>3. Liapunov Exponent</h2>
+    <div class="concept-box">
+        <p>The Liapunov exponent quantifies sensitive dependence on initial conditions — the hallmark of chaos. For the logistic map:</p>
+        <div class="math-display" id="math-liapunov"></div>
+        <p class="info-text"><span class="highlight">λ > 0</span>: chaotic (nearby trajectories diverge exponentially). <span class="highlight">λ < 0</span>: periodic/stable. <span class="highlight">λ = 0</span>: bifurcation point.</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>Show two nearby trajectories</label>
+            <input type="range" id="liap-r" min="2.5" max="4" step="0.01" value="3.9" oninput="updateLiapunov()">
+            <span class="value-display" id="liap-r-val">r = 3.9</span>
+        </div>
+        <div class="control-group">
+            <label>Separation ε:</label>
+            <input type="range" id="liap-eps" min="-6" max="-2" step="0.5" value="-4" oninput="updateLiapunov()">
+            <span class="value-display" id="liap-eps-val">ε = 0.0001</span>
+        </div>
+    </div>
+    
+    <div class="two-col">
+        <div>
+            <h3>Divergence of Nearby Trajectories</h3>
+            <div class="plot-container" id="liapunov-diverge"></div>
+        </div>
+        <div>
+            <h3>λ(r) for Logistic Map</h3>
+            <div class="plot-container" id="liapunov-spectrum"></div>
+        </div>
+    </div>
+    <div class="status-bar" id="liap-status">λ ≈ 0.693 (ln 2) for r = 4</div>
+</div>
+
+<!-- SECTION 4: Hénon Map -->
+<div class="section" id="sec-henon">
+    <h2>4. Hénon Map (2D Chaos)</h2>
+    <div class="concept-box">
+        <p>The Hénon map extends chaos to two dimensions. It is the most studied 2D map with a strange attractor:</p>
+        <div class="math-display" id="math-henon"></div>
+        <p class="info-text">For a = 1.4, b = 0.3: strange attractor with fractal dimension ≈ 1.26. The map is invertible (b ≠ 0) and dissipative (|b| < 1).</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>a: <span class="value-display" id="henon-a-val">1.4</span></label>
+            <input type="range" id="henon-a" min="0.5" max="1.5" step="0.01" value="1.4" oninput="updateHenon()">
+        </div>
+        <div class="control-group">
+            <label>b: <span class="value-display" id="henon-b-val">0.3</span></label>
+            <input type="range" id="henon-b" min="0" max="0.5" step="0.01" value="0.3" oninput="updateHenon()">
+        </div>
+        <div class="control-group">
+            <label>Points:</label>
+            <input type="number" id="henon-pts" value="10000" min="1000" max="50000" step="1000">
+        </div>
+        <button class="action-btn" onclick="updateHenon()">Draw Attractor</button>
+    </div>
+    
+    <div class="plot-container" id="henon-plot"></div>
+    <div class="status-bar" id="henon-status">Strange attractor — fractal structure visible at all scales</div>
+</div>
+
+<!-- SECTION 5: Lorenz System -->
+<div class="section" id="sec-lorenz">
+    <h2>5. Lorenz System (Continuous Chaos)</h2>
+    <div class="concept-box">
+        <p>The Lorenz system is the most famous dissipative system with chaotic behavior, arising from fluid convection:</p>
+        <div class="math-display" id="math-lorenz"></div>
+        <p class="info-text">For σ=10, r=28, b=8/3: the butterfly attractor. Sensitive dependence on initial conditions was first discovered here by Edward Lorenz in 1963.</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>σ: <span class="value-display" id="lor-sigma-val">10</span></label>
+            <input type="range" id="lor-sigma" min="1" max="30" step="0.5" value="10" oninput="updateLorenz()">
+        </div>
+        <div class="control-group">
+            <label>r: <span class="value-display" id="lor-r-val">28</span></label>
+            <input type="range" id="lor-r" min="0" max="50" step="0.5" value="28" oninput="updateLorenz()">
+        </div>
+        <div class="control-group">
+            <label>b: <span class="value-display" id="lor-b-val">2.67</span></label>
+            <input type="range" id="lor-b" min="0.5" max="5" step="0.1" value="2.67" oninput="updateLorenz()">
+        </div>
+        <button class="action-btn" onclick="updateLorenz()">Integrate</button>
+    </div>
+    
+    <div class="plot-container" id="lorenz-plot"></div>
+</div>
+
+<!-- SECTION 6: Fractals -->
+<div class="section" id="sec-fractals">
+    <h2>6. Fractals</h2>
+    <div class="concept-box">
+        <p>Fractals are self-similar structures with non-integer dimension. Key examples include the Mandelbrot set, Julia sets, and iterated function systems (IFS).</p>
+        <div class="math-display" id="math-fractal"></div>
+        <p class="info-text">The Mandelbrot set M = {c ∈ ℂ : the orbit of 0 under z → z² + c does not escape to ∞}. Click on the canvas to zoom in!</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>Fractal Type:</label>
+            <select id="fractal-type" onchange="drawFractal()">
+                <option value="mandelbrot">Mandelbrot Set</option>
+                <option value="julia">Julia Set</option>
+                <option value="sierpinski">Sierpinski Triangle</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>Max iterations: <span class="value-display" id="frac-iter-val">64</span></label>
+            <input type="range" id="frac-iter" min="16" max="256" step="16" value="64" oninput="drawFractal()">
+        </div>
+        <div class="control-group" id="julia-params" style="display:none;">
+            <label>c_real: <span class="value-display" id="julia-cr-val">-0.7</span></label>
+            <input type="range" id="julia-cr" min="-2" max="2" step="0.01" value="-0.7" oninput="drawFractal()">
+            <label>c_imag: <span class="value-display" id="julia-ci-val">0.27</span></label>
+            <input type="range" id="julia-ci" min="-2" max="2" step="0.01" value="0.27" oninput="drawFractal()">
+        </div>
+        <button class="action-btn" onclick="resetFractalView()">Reset View</button>
+    </div>
+    
+    <canvas id="fractal-canvas" width="700" height="500"></canvas>
+</div>
+
+<!-- SECTION 7: Cellular Automata -->
+<div class="section" id="sec-cellular">
+    <h2>7. Cellular Automata</h2>
+    <div class="concept-box">
+        <p>Cellular automata are discrete dynamical systems on a lattice. Each cell updates based on its neighbors according to a fixed rule.</p>
+        <div class="math-display" id="math-cellular"></div>
+        <p class="info-text">For 1D elementary CA with k=2, r=1: 256 possible rules. Rule 90 (XOR of neighbors) produces the Sierpinski triangle. Rule 30 produces apparent randomness.</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>Rule (0-255): <span class="value-display" id="ca-rule-val">90</span></label>
+            <input type="range" id="ca-rule" min="0" max="255" step="1" value="90" oninput="updateCA()">
+        </div>
+        <div class="control-group">
+            <label>Initial Condition:</label>
+            <select id="ca-init" onchange="updateCA()">
+                <option value="single">Single Cell</option>
+                <option value="random">Random</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>Steps: <span class="value-display" id="ca-steps-val">100</span></label>
+            <input type="range" id="ca-steps" min="20" max="200" step="10" value="100" oninput="updateCA()">
+        </div>
+    </div>
+    
+    <canvas id="ca-canvas" width="700" height="400"></canvas>
+    <div class="status-bar" id="ca-status">Rule 90: a(t+1) = a(i-1,t) XOR a(i+1,t)</div>
+</div>
+
+<!-- SECTION 8: Neural Networks (Hopfield) -->
+<div class="section" id="sec-hopfield">
+    <h2>8. Hopfield Neural Network</h2>
+    <div class="concept-box">
+        <p>The Hopfield network stores patterns as attractors of a dynamical system. The energy function decreases monotonically:</p>
+        <div class="math-display" id="math-hopfield"></div>
+        <p class="info-text">Patterns are stored via Hebb's rule: W = Σ xₖxₖᵀ. The network converges to the nearest stored pattern (content-addressable memory). Click cells to flip bits and watch convergence!</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>Grid Size:</label>
+            <select id="hop-size" onchange="initHopfield()">
+                <option value="5">5×5</option>
+                <option value="7" selected>7×7</option>
+                <option value="10">10×10</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>Pattern:</label>
+            <select id="hop-pattern" onchange="setHopfieldPattern()">
+                <option value="X">Letter X</option>
+                <option value="T">Letter T</option>
+                <option value="L">Letter L</option>
+            </select>
+        </div>
+        <button class="action-btn" onclick="storePattern()">Store Pattern</button>
+        <button class="action-btn" onclick="addNoise()">Add Noise (30%)</button>
+        <button class="action-btn" onclick="runHopfield()">Run Network</button>
+        <button class="action-btn" onclick="resetHopfield()">Reset</button>
+    </div>
+    
+    <div class="two-col">
+        <div>
+            <h3>Network State (click to flip)</h3>
+            <canvas id="hopfield-canvas" width="350" height="350"></canvas>
+        </div>
+        <div>
+            <h3>Energy over Time</h3>
+            <div class="plot-container" id="hopfield-energy"></div>
+        </div>
+    </div>
+    <div class="status-bar" id="hop-status">Store a pattern, add noise, then run the network to see recall</div>
+</div>
+
+<script>
+// ===== NAVIGATION =====
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// ===== RENDER MATH =====
+function renderMath() {
+    const mathDefs = {
+        'math-logistic': 'x_{t+1} = r\\,x_t(1 - x_t), \\quad x_0 \\in [0,1],\\; r \\in [0,4]',
+        'math-bifurcation': '\\text{Period doubling: } r_n \\to r_\\infty \\approx 3.5699\\ldots, \\quad \\delta = \\lim_{n\\to\\infty}\\frac{r_n - r_{n-1}}{r_{n+1} - r_n} \\approx 4.669',
+        'math-liapunov': '\\lambda(x_0) = \\lim_{T\\to\\infty} \\frac{1}{T} \\ln\\left|\\frac{y_T}{y_0}\\right| = \\lim_{T\\to\\infty} \\frac{1}{T} \\sum_{t=0}^{T-1} \\ln\\left|f\'(x_t)\\right|',
+        'math-henon': '\\begin{aligned} x_{t+1} &= 1 + y_t - a\\,x_t^2 \\\\ y_{t+1} &= b\\,x_t \\end{aligned}',
+        'math-lorenz': '\\frac{du_1}{dt} = \\sigma(u_2 - u_1),\\quad \\frac{du_2}{dt} = ru_1 - u_1 u_3 - u_2,\\quad \\frac{du_3}{dt} = u_1 u_2 - bu_3',
+        'math-fractal': 'z_{t+1} = z_t^2 + c, \\quad z_0 = 0, \\quad c \\in \\mathbb{C}',
+        'math-cellular': 'a_i(t+1) = f\\bigl(a_{i-1}(t),\\, a_i(t),\\, a_{i+1}(t)\\bigr), \\quad a_i \\in \\{0,1\\}',
+        'math-hopfield': 'E(\\mathbf{s}) = -\\frac{1}{2}\\mathbf{s}^T W \\mathbf{s}, \\quad s_i(t+1) = \\operatorname{sign}\\!\\left(\\sum_j W_{ij}\\,s_j(t)\\right)'
+    };
+    for (const [id, tex] of Object.entries(mathDefs)) {
+        const el = document.getElementById(id);
+        if (el) temml.render(tex, el, {displayMode: true});
+    }
+}
+
+// ===== LOGISTIC MAP =====
+function updateLogistic() {
+    const r = parseFloat(document.getElementById('r-slider').value);
+    const x0 = parseFloat(document.getElementById('x0-slider').value);
+    const T = parseInt(document.getElementById('iter-count').value);
+    
+    document.getElementById('r-val').textContent = r.toFixed(2);
+    document.getElementById('x0-val').textContent = x0.toFixed(2);
+    
+    // Generate trajectory
+    let xs = [x0], ts = [0];
+    let x = x0;
+    for (let t = 1; t <= T; t++) {
+        x = r * x * (1 - x);
+        xs.push(x);
+        ts.push(t);
+    }
+    
+    // Time series plot
+    Plotly.newPlot('logistic-time', [{
+        x: ts, y: xs, type: 'scatter', mode: 'lines',
+        line: {color: '#6a9fd0', width: 1.5}
+    }], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 't', gridcolor: '#1a1a3a'},
+        yaxis: {title: 'x(t)', range: [0, 1], gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 50, r: 20}
+    }, {responsive: true});
+    
+    // Cobweb diagram
+    let xf = Array.from({length: 100}, (_, i) => i / 99);
+    let yf = xf.map(v => r * v * (1 - v));
+    
+    let cobX = [x0], cobY = [0];
+    x = x0;
+    for (let t = 0; t < Math.min(50, T); t++) {
+        let xn = r * x * (1 - x);
+        cobX.push(x, xn); cobY.push(xn, xn);
+        x = xn;
+    }
+    
+    Plotly.newPlot('logistic-cobweb', [
+        {x: xf, y: yf, type: 'scatter', mode: 'lines', name: 'f(x)=rx(1-x)', line: {color: '#ffb347', width: 2}},
+        {x: [0, 1], y: [0, 1], type: 'scatter', mode: 'lines', name: 'y=x', line: {color: '#666', dash: 'dash'}},
+        {x: cobX, y: cobY, type: 'scatter', mode: 'lines', name: 'Cobweb', line: {color: '#6a9fd0', width: 1}}
+    ], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 'x', range: [0, 1], gridcolor: '#1a1a3a'},
+        yaxis: {title: 'y', range: [0, 1], gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 50, r: 20},
+        showlegend: true,
+        legend: {x: 0.6, y: 0.95, bgcolor: 'rgba(0,0,0,0.5)'}
+    }, {responsive: true});
+    
+    // Status
+    let fp = 1 - 1/r;
+    document.getElementById('logistic-status').textContent = 
+        `r = ${r.toFixed(2)} | Fixed point: x* = ${fp.toFixed(4)} | f'(x*) = ${(r*(1-2*fp)).toFixed(3)}`;
+}
+
+// ===== BIFURCATION DIAGRAM =====
+function updateBifurcation() {
+    const rmin = parseFloat(document.getElementById('rmin-slider').value);
+    const rmax = parseFloat(document.getElementById('rmax-slider').value);
+    const res = parseInt(document.getElementById('bif-res').value);
+    
+    document.getElementById('rmin-val').textContent = rmin.toFixed(1);
+    document.getElementById('rmax-val').textContent = rmax.toFixed(1);
+    
+    let rVals = [], xVals = [];
+    const dr = (rmax - rmin) / res;
+    
+    for (let ri = 0; ri < res; ri++) {
+        let r = rmin + ri * dr;
+        let x = 0.5;
+        // Transient
+        for (let t = 0; t < 200; t++) x = r * x * (1 - x);
+        // Collect
+        for (let t = 0; t < 100; t++) {
+            x = r * x * (1 - x);
+            rVals.push(r);
+            xVals.push(x);
+        }
+    }
+    
+    Plotly.newPlot('bifurcation-plot', [{
+        x: rVals, y: xVals, type: 'scattergl', mode: 'markers',
+        marker: {color: '#6a9fd0', size: 0.5, opacity: 0.3}
+    }], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 'r (bifurcation parameter)', gridcolor: '#1a1a3a'},
+        yaxis: {title: 'x (attractor)', range: [0, 1], gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 50, r: 20}
+    }, {responsive: true});
+}
+
+// ===== LIAPUNOV EXPONENT =====
+function updateLiapunov() {
+    const r = parseFloat(document.getElementById('liap-r').value);
+    const epsExp = parseFloat(document.getElementById('liap-eps').value);
+    const eps = Math.pow(10, epsExp);
+    
+    document.getElementById('liap-r-val').textContent = `r = ${r.toFixed(2)}`;
+    document.getElementById('liap-eps-val').textContent = `ε = ${eps.toExponential(1)}`;
+    
+    // Two nearby trajectories
+    let x1 = 0.4, x2 = 0.4 + eps;
+    let ts = [], d1s = [], d2s = [];
+    for (let t = 0; t < 50; t++) {
+        ts.push(t);
+        d1s.push(x1);
+        d2s.push(x2);
+        x1 = r * x1 * (1 - x1);
+        x2 = r * x2 * (1 - x2);
+    }
+    
+    Plotly.newPlot('liapunov-diverge', [
+        {x: ts, y: d1s, type: 'scatter', mode: 'lines', name: 'x₁(t)', line: {color: '#6a9fd0'}},
+        {x: ts, y: d2s, type: 'scatter', mode: 'lines', name: 'x₂(t)', line: {color: '#ffb347'}}
+    ], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 't', gridcolor: '#1a1a3a'},
+        yaxis: {title: 'x(t)', gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 50, r: 20},
+        legend: {x: 0.7, y: 0.95, bgcolor: 'rgba(0,0,0,0.5)'}
+    }, {responsive: true});
+    
+    // Liapunov spectrum
+    let rVals = [], lambdaVals = [];
+    for (let ri = 2.5; ri <= 4.0; ri += 0.005) {
+        let x = 0.5, sum = 0;
+        for (let t = 0; t < 100; t++) x = ri * x * (1 - x); // transient
+        for (let t = 0; t < 1000; t++) {
+            x = ri * x * (1 - x);
+            let deriv = Math.abs(ri * (1 - 2 * x));
+            if (deriv > 0) sum += Math.log(deriv);
+        }
+        rVals.push(ri);
+        lambdaVals.push(sum / 1000);
+    }
+    
+    Plotly.newPlot('liapunov-spectrum', [
+        {x: rVals, y: lambdaVals, type: 'scatter', mode: 'lines', line: {color: '#6a9fd0', width: 1}},
+        {x: [2.5, 4], y: [0, 0], type: 'scatter', mode: 'lines', line: {color: '#ff4444', dash: 'dash'}, name: 'λ=0'}
+    ], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 'r', gridcolor: '#1a1a3a'},
+        yaxis: {title: 'λ(r)', gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 50, r: 20},
+        showlegend: false
+    }, {responsive: true});
+    
+    // Compute lambda for current r
+    let xc = 0.5, sumL = 0;
+    for (let t = 0; t < 200; t++) xc = r * xc * (1 - xc);
+    for (let t = 0; t < 5000; t++) {
+        xc = r * xc * (1 - xc);
+        let d = Math.abs(r * (1 - 2 * xc));
+        if (d > 0) sumL += Math.log(d);
+    }
+    let lambda = sumL / 5000;
+    document.getElementById('liap-status').textContent = 
+        `λ(r=${r.toFixed(2)}) ≈ ${lambda.toFixed(4)} | ${lambda > 0 ? '🔴 CHAOTIC' : '🟢 PERIODIC/STABLE'}`;
+}
+
+// ===== HÉNON MAP =====
+function updateHenon() {
+    const a = parseFloat(document.getElementById('henon-a').value);
+    const b = parseFloat(document.getElementById('henon-b').value);
+    const pts = parseInt(document.getElementById('henon-pts').value);
+    
+    document.getElementById('henon-a-val').textContent = a.toFixed(2);
+    document.getElementById('henon-b-val').textContent = b.toFixed(2);
+    
+    let xs = [], ys = [];
+    let x = 0.1, y = 0.3;
+    
+    // Transient
+    for (let t = 0; t < 500; t++) {
+        let xn = 1 + y - a * x * x;
+        let yn = b * x;
+        x = xn; y = yn;
+        if (Math.abs(x) > 10) { x = 0.1; y = 0.3; }
+    }
+    
+    for (let t = 0; t < pts; t++) {
+        let xn = 1 + y - a * x * x;
+        let yn = b * x;
+        x = xn; y = yn;
+        if (Math.abs(x) < 10) {
+            xs.push(x);
+            ys.push(y);
+        } else {
+            x = 0.1; y = 0.3;
+        }
+    }
+    
+    Plotly.newPlot('henon-plot', [{
+        x: xs, y: ys, type: 'scattergl', mode: 'markers',
+        marker: {color: '#ffb347', size: 1, opacity: 0.5}
+    }], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 'x', gridcolor: '#1a1a3a'},
+        yaxis: {title: 'y', gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 50, r: 20}
+    }, {responsive: true});
+    
+    document.getElementById('henon-status').textContent = 
+        `a = ${a.toFixed(2)}, b = ${b.toFixed(2)} | ${pts} points plotted | Jacobian det = ${b.toFixed(2)} (dissipative)`;
+}
+
+// ===== LORENZ SYSTEM =====
+function updateLorenz() {
+    const sigma = parseFloat(document.getElementById('lor-sigma').value);
+    const r = parseFloat(document.getElementById('lor-r').value);
+    const b = parseFloat(document.getElementById('lor-b').value);
+    
+    document.getElementById('lor-sigma-val').textContent = sigma.toFixed(1);
+    document.getElementById('lor-r-val').textContent = r.toFixed(1);
+    document.getElementById('lor-b-val').textContent = b.toFixed(2);
+    
+    // RK4 integration
+    const dt = 0.01, steps = 10000;
+    let x = 1, y = 1, z = 1;
+    let xs = [], ys = [], zs = [];
+    
+    for (let i = 0; i < steps; i++) {
+        let dx1 = sigma * (y - x);
+        let dy1 = r * x - y - x * z;
+        let dz1 = x * y - b * z;
+        
+        let x2 = x + 0.5*dt*dx1, y2 = y + 0.5*dt*dy1, z2 = z + 0.5*dt*dz1;
+        let dx2 = sigma * (y2 - x2);
+        let dy2 = r * x2 - y2 - x2 * z2;
+        let dz2 = x2 * y2 - b * z2;
+        
+        let x3 = x + 0.5*dt*dx2, y3 = y + 0.5*dt*dy2, z3 = z + 0.5*dt*dz2;
+        let dx3 = sigma * (y3 - x3);
+        let dy3 = r * x3 - y3 - x3 * z3;
+        let dz3 = x3 * y3 - b * z3;
+        
+        let x4 = x + dt*dx3, y4 = y + dt*dy3, z4 = z + dt*dz3;
+        let dx4 = sigma * (y4 - x4);
+        let dy4 = r * x4 - y4 - x4 * z4;
+        let dz4 = x4 * y4 - b * z4;
+        
+        x += dt/6 * (dx1 + 2*dx2 + 2*dx3 + dx4);
+        y += dt/6 * (dy1 + 2*dy2 + 2*dy3 + dy4);
+        z += dt/6 * (dz1 + 2*dz2 + 2*dz3 + dz4);
+        
+        if (i > 200) { xs.push(x); ys.push(y); zs.push(z); }
+    }
+    
+    Plotly.newPlot('lorenz-plot', [{
+        x: xs, y: ys, z: zs, type: 'scatter3d', mode: 'lines',
+        line: {color: zs, colorscale: 'Portland', width: 1.5},
+        opacity: 0.8
+    }], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        scene: {
+            xaxis: {title: 'u₁', gridcolor: '#1a1a3a', backgroundcolor: '#0d0d20'},
+            yaxis: {title: 'u₂', gridcolor: '#1a1a3a', backgroundcolor: '#0d0d20'},
+            zaxis: {title: 'u₃', gridcolor: '#1a1a3a', backgroundcolor: '#0d0d20'},
+            bgcolor: '#0d0d20'
+        },
+        margin: {t: 20, b: 20, l: 20, r: 20}
+    }, {responsive: true});
+}
+
+// ===== FRACTALS =====
+let fractalView = {xmin: -2.5, xmax: 1, ymin: -1.25, ymax: 1.25};
+
+function resetFractalView() {
+    fractalView = {xmin: -2.5, xmax: 1, ymin: -1.25, ymax: 1.25};
+    drawFractal();
+}
+
+function drawFractal() {
+    const type = document.getElementById('fractal-type').value;
+    const maxIter = parseInt(document.getElementById('frac-iter').value);
+    document.getElementById('frac-iter-val').textContent = maxIter;
+    
+    const juliaParams = document.getElementById('julia-params');
+    juliaParams.style.display = type === 'julia' ? 'flex' : 'none';
+    
+    const canvas = document.getElementById('fractal-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    
+    if (type === 'sierpinski') {
+        drawSierpinski(ctx, w, h);
+        return;
+    }
+    
+    const cr = parseFloat(document.getElementById('julia-cr').value);
+    const ci = parseFloat(document.getElementById('julia-ci').value);
+    document.getElementById('julia-cr-val').textContent = cr.toFixed(2);
+    document.getElementById('julia-ci-val').textContent = ci.toFixed(2);
+    
+    const imgData = ctx.createImageData(w, h);
+    
+    for (let px = 0; px < w; px++) {
+        for (let py = 0; py < h; py++) {
+            let x0 = fractalView.xmin + (fractalView.xmax - fractalView.xmin) * px / w;
+            let y0 = fractalView.ymin + (fractalView.ymax - fractalView.ymin) * py / h;
+            
+            let x, y, cx, cy;
+            if (type === 'mandelbrot') {
+                x = 0; y = 0; cx = x0; cy = y0;
+            } else {
+                x = x0; y = y0; cx = cr; cy = ci;
+            }
+            
+            let iter = 0;
+            while (x*x + y*y <= 4 && iter < maxIter) {
+                let xn = x*x - y*y + cx;
+                y = 2*x*y + cy;
+                x = xn;
+                iter++;
+            }
+            
+            const idx = (py * w + px) * 4;
+            if (iter === maxIter) {
+                imgData.data[idx] = 0;
+                imgData.data[idx+1] = 0;
+                imgData.data[idx+2] = 0;
+            } else {
+                let t = iter / maxIter;
+                imgData.data[idx] = Math.floor(9 * (1-t) * t * t * t * 255);
+                imgData.data[idx+1] = Math.floor(15 * (1-t) * (1-t) * t * t * 255);
+                imgData.data[idx+2] = Math.floor(8.5 * (1-t) * (1-t) * (1-t) * t * 255);
+            }
+            imgData.data[idx+3] = 255;
+        }
+    }
+    ctx.putImageData(imgData, 0, 0);
+}
+
+function drawSierpinski(ctx, w, h) {
+    ctx.fillStyle = '#0a0a15';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Chaos game
+    let x = Math.random(), y = Math.random();
+    const vertices = [[0.5, 0.05], [0.05, 0.95], [0.95, 0.95]];
+    
+    ctx.fillStyle = '#6a9fd0';
+    for (let i = 0; i < 50000; i++) {
+        const v = vertices[Math.floor(Math.random() * 3)];
+        x = (x + v[0]) / 2;
+        y = (y + v[1]) / 2;
+        if (i > 10) {
+            ctx.fillRect(x * w, y * h, 1, 1);
+        }
+    }
+}
+
+// Fractal zoom on click
+document.getElementById('fractal-canvas').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const w = this.width, h = this.height;
+    
+    const cx = fractalView.xmin + (fractalView.xmax - fractalView.xmin) * px / w;
+    const cy = fractalView.ymin + (fractalView.ymax - fractalView.ymin) * py / h;
+    
+    const zoomFactor = 0.3;
+    const dx = (fractalView.xmax - fractalView.xmin) * zoomFactor / 2;
+    const dy = (fractalView.ymax - fractalView.ymin) * zoomFactor / 2;
+    
+    fractalView = {xmin: cx - dx, xmax: cx + dx, ymin: cy - dy, ymax: cy + dy};
+    drawFractal();
+});
+
+// ===== CELLULAR AUTOMATA =====
+function updateCA() {
+    const rule = parseInt(document.getElementById('ca-rule').value);
+    const init = document.getElementById('ca-init').value;
+    const steps = parseInt(document.getElementById('ca-steps').value);
+    
+    document.getElementById('ca-rule-val').textContent = rule;
+    document.getElementById('ca-steps-val').textContent = steps;
+    
+    const canvas = document.getElementById('ca-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#0a0a15';
+    ctx.fillRect(0, 0, w, h);
+    
+    const N = w;
+    let cells = new Uint8Array(N);
+    
+    if (init === 'single') {
+        cells[Math.floor(N/2)] = 1;
+    } else {
+        for (let i = 0; i < N; i++) cells[i] = Math.random() > 0.5 ? 1 : 0;
+    }
+    
+    const cellH = Math.floor(h / steps);
+    
+    // Rule lookup
+    const ruleBits = [];
+    for (let i = 0; i < 8; i++) ruleBits.push((rule >> i) & 1);
+    
+    for (let t = 0; t < steps; t++) {
+        // Draw current row
+        for (let i = 0; i < N; i++) {
+            if (cells[i]) {
+                ctx.fillStyle = `hsl(${220 + t * 0.5}, 70%, ${50 + t * 0.2}%)`;
+                ctx.fillRect(i, t * cellH, 1, cellH);
+            }
+        }
+        
+        // Update
+        let newCells = new Uint8Array(N);
+        for (let i = 0; i < N; i++) {
+            const left = cells[(i - 1 + N) % N];
+            const center = cells[i];
+            const right = cells[(i + 1) % N];
+            const idx = (left << 2) | (center << 1) | right;
+            newCells[i] = ruleBits[idx];
+        }
+        cells = newCells;
+    }
+    
+    // Status
+    const rulebin = rule.toString(2).padStart(8, '0');
+    document.getElementById('ca-status').textContent = 
+        `Rule ${rule} (binary: ${rulebin}) | ${N} cells, ${steps} steps`;
+}
+
+// ===== HOPFIELD NETWORK =====
+let hopState = [], hopWeights = [], hopPatterns = [], hopSize = 7;
+let hopEnergyHistory = [];
+
+function initHopfield() {
+    hopSize = parseInt(document.getElementById('hop-size').value);
+    const N = hopSize * hopSize;
+    hopState = new Array(N).fill(-1);
+    hopWeights = Array.from({length: N}, () => new Array(N).fill(0));
+    hopPatterns = [];
+    hopEnergyHistory = [];
+    drawHopfield();
+    document.getElementById('hop-status').textContent = `Grid: ${hopSize}×${hopSize} = ${N} neurons | No patterns stored`;
+}
+
+function getPattern(letter) {
+    const N = hopSize * hopSize;
+    let p = new Array(N).fill(-1);
+    
+    if (letter === 'X') {
+        for (let i = 0; i < hopSize; i++) {
+            p[i * hopSize + i] = 1;
+            p[i * hopSize + (hopSize - 1 - i)] = 1;
+        }
+    } else if (letter === 'T') {
+        for (let j = 0; j < hopSize; j++) p[j] = 1; // top row
+        for (let i = 0; i < hopSize; i++) p[i * hopSize + Math.floor(hopSize/2)] = 1; // middle col
+    } else if (letter === 'L') {
+        for (let i = 0; i < hopSize; i++) p[i * hopSize] = 1; // left col
+        for (let j = 0; j < hopSize; j++) p[(hopSize-1) * hopSize + j] = 1; // bottom row
+    }
+    return p;
+}
+
+function setHopfieldPattern() {
+    const letter = document.getElementById('hop-pattern').value;
+    hopState = getPattern(letter);
+    drawHopfield();
+}
+
+function storePattern() {
+    const pattern = [...hopState];
+    hopPatterns.push(pattern);
+    const N = hopSize * hopSize;
+    
+    // Recalculate weights using Hebb's rule
+    hopWeights = Array.from({length: N}, () => new Array(N).fill(0));
+    for (let p of hopPatterns) {
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                if (i !== j) hopWeights[i][j] += p[i] * p[j];
+            }
+        }
+    }
+    
+    document.getElementById('hop-status').textContent = 
+        `${hopPatterns.length} pattern(s) stored | Energy: ${computeEnergy().toFixed(1)}`;
+}
+
+function addNoise() {
+    const N = hopSize * hopSize;
+    const noiseLevel = 0.3;
+    for (let i = 0; i < N; i++) {
+        if (Math.random() < noiseLevel) hopState[i] *= -1;
+    }
+    drawHopfield();
+    document.getElementById('hop-status').textContent = 
+        `30% noise added | Energy: ${computeEnergy().toFixed(1)} | Run network to recall`;
+}
+
+function computeEnergy() {
+    const N = hopSize * hopSize;
+    let E = 0;
+    for (let i = 0; i < N; i++)
+        for (let j = 0; j < N; j++)
+            E -= hopWeights[i][j] * hopState[i] * hopState[j];
+    return E / 2;
+}
+
+function runHopfield() {
+    const N = hopSize * hopSize;
+    hopEnergyHistory = [computeEnergy()];
+    
+    let changed = true, iter = 0;
+    while (changed && iter < 100) {
+        changed = false;
+        // Asynchronous update (random order)
+        let order = Array.from({length: N}, (_, i) => i);
+        for (let k = N - 1; k > 0; k--) {
+            let j = Math.floor(Math.random() * (k + 1));
+            [order[k], order[j]] = [order[j], order[k]];
+        }
+        
+        for (let idx of order) {
+            let h = 0;
+            for (let j = 0; j < N; j++) h += hopWeights[idx][j] * hopState[j];
+            let newState = h >= 0 ? 1 : -1;
+            if (newState !== hopState[idx]) {
+                hopState[idx] = newState;
+                changed = true;
+            }
+        }
+        iter++;
+        hopEnergyHistory.push(computeEnergy());
+    }
+    
+    drawHopfield();
+    
+    // Plot energy
+    Plotly.newPlot('hopfield-energy', [{
+        x: Array.from({length: hopEnergyHistory.length}, (_, i) => i),
+        y: hopEnergyHistory,
+        type: 'scatter', mode: 'lines+markers',
+        line: {color: '#ffb347'}, marker: {size: 4}
+    }], {
+        paper_bgcolor: '#0a0a1a', plot_bgcolor: '#0d0d20',
+        font: {color: '#8890b0'},
+        xaxis: {title: 'Iteration', gridcolor: '#1a1a3a'},
+        yaxis: {title: 'E(s)', gridcolor: '#1a1a3a'},
+        margin: {t: 20, b: 40, l: 60, r: 20}
+    }, {responsive: true});
+    
+    document.getElementById('hop-status').textContent = 
+        `Converged in ${iter} iterations | Final energy: ${computeEnergy().toFixed(1)}`;
+}
+
+function resetHopfield() {
+    const N = hopSize * hopSize;
+    hopState = new Array(N).fill(-1);
+    drawHopfield();
+}
+
+function drawHopfield() {
+    const canvas = document.getElementById('hopfield-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#0a0a15';
+    ctx.fillRect(0, 0, w, h);
+    
+    const cellW = w / hopSize;
+    const cellH = h / hopSize;
+    
+    for (let i = 0; i < hopSize; i++) {
+        for (let j = 0; j < hopSize; j++) {
+            const idx = i * hopSize + j;
+            ctx.fillStyle = hopState[idx] === 1 ? '#6a9fd0' : '#1a1a3a';
+            ctx.fillRect(j * cellW + 1, i * cellH + 1, cellW - 2, cellH - 2);
+        }
+    }
+}
+
+// Hopfield canvas click handler
+document.getElementById('hopfield-canvas').addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const cellW = this.width / hopSize;
+    const cellH = this.height / hopSize;
+    const j = Math.floor(px / cellW);
+    const i = Math.floor(py / cellH);
+    const idx = i * hopSize + j;
+    if (idx >= 0 && idx < hopSize * hopSize) {
+        hopState[idx] *= -1;
+        drawHopfield();
+    }
+});
+
+// ===== INITIALIZATION =====
+window.onload = function() {
+    renderMath();
+    updateLogistic();
+    initHopfield();
+    
+    // Delayed inits for non-visible sections
+    setTimeout(() => {
+        updateBifurcation();
+        updateLiapunov();
+        updateHenon();
+        updateLorenz();
+        drawFractal();
+        updateCA();
+    }, 500);
+};
+</script>
+
+</body>
+</html>

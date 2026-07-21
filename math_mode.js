@@ -1,10 +1,78 @@
 "use strict";
 
+// ============================================================
+// SCROLL-STABLE RENDERING: Minimal approach
+// Only skip re-renders during training when user has scrolled.
+// No double-buffer, no scroll save/restore, no broken TEMML.
+// ============================================================
+
+var _math_render_rate_limit_ms = 2500;
+var _math_last_render_time = 0;
+var _math_render_pending = false;
+var _math_user_has_scrolled = false;
+var _math_scroll_timeout = null;
+var _math_scroll_listener_attached = false;
+
+// ============================================================
+// Attach scroll listener to the math tab's scrollable ancestor.
+// Sets a flag when user has scrolled away from top.
+// Clears the flag when user scrolls back to top.
+// ============================================================
+
+function _math_attach_scroll_listener() {
+	if (_math_scroll_listener_attached) return;
+
+	var container = document.getElementById("math_tab_code");
+	if (!container) return;
+
+	var scrollParent = _math_find_scroll_parent(container);
+	if (!scrollParent) return;
+
+	scrollParent.addEventListener("scroll", function() {
+		// User has scrolled if scrollTop > some threshold
+		_math_user_has_scrolled = (scrollParent.scrollTop > 50);
+
+		// Reset the "actively scrolling" debounce
+		if (_math_scroll_timeout) {
+			clearTimeout(_math_scroll_timeout);
+		}
+		_math_scroll_timeout = setTimeout(function() {
+			// After user stops scrolling, if a render was pending and
+			// user is back at top, allow it
+			if (_math_render_pending && !_math_user_has_scrolled) {
+				_math_render_pending = false;
+				run_pending_latex_write();
+			}
+		}, 800);
+	}, { passive: true });
+
+	_math_scroll_listener_attached = true;
+}
+
+function _math_find_scroll_parent(el) {
+	var parent = el.parentElement;
+	while (parent) {
+		var style = window.getComputedStyle(parent);
+		var overflow = style.overflow + style.overflowY;
+		if (/(auto|scroll)/.test(overflow)) {
+			return parent;
+		}
+		parent = parent.parentElement;
+	}
+	return document.documentElement;
+}
+
+// ============================================================
+// is_math_tab_visible — unchanged from original
+// ============================================================
+
 function is_math_tab_visible() {
-	var el = document.querySelector('#math_tab_code').parentElement;
+	var el = document.querySelector('#math_tab_code');
 	if (!el) return false;
-	var style = window.getComputedStyle(el);
-	var rect = el.getBoundingClientRect();
+	var parent = el.parentElement;
+	if (!parent) return false;
+	var style = window.getComputedStyle(parent);
+	var rect = parent.getBoundingClientRect();
 	return (
 		rect.width > 0 &&
 		rect.height > 0 &&
@@ -14,6 +82,10 @@ function is_math_tab_visible() {
 		style.display !== 'none'
 	);
 }
+
+// ============================================================
+// ensure_math_tab_visibility_watch — unchanged
+// ============================================================
 
 function ensure_math_tab_visibility_watch() {
 	var el = document.querySelector('#math_tab_code');
@@ -35,10 +107,41 @@ function ensure_math_tab_visibility_watch() {
 	}
 }
 
+// ============================================================
+// run_pending_latex_write
+// KEY CHANGE: During training, if user has scrolled, skip render.
+// Also rate-limit during training.
+// ============================================================
+
 function run_pending_latex_write() {
 	if (_write_latex_running) return;
 	if (!_write_latex_pending_args) return;
 	if (!is_math_tab_visible()) return;
+
+	// During training: if user has scrolled down, DON'T render.
+	// The content will update next time user scrolls back to top,
+	// or when training stops.
+	if (typeof started_training !== "undefined" && started_training) {
+		if (_math_user_has_scrolled) {
+			_math_render_pending = true;
+			return;
+		}
+
+		// Rate-limit: don't render more than once per N ms during training
+		var now = Date.now();
+		if (now - _math_last_render_time < _math_render_rate_limit_ms) {
+			if (!_math_render_pending) {
+				_math_render_pending = true;
+				setTimeout(function() {
+					_math_render_pending = false;
+					run_pending_latex_write();
+				}, _math_render_rate_limit_ms - (now - _math_last_render_time));
+			}
+			return;
+		}
+		_math_last_render_time = now;
+	}
+
 	_write_latex_running = true;
 
 	var args = _write_latex_pending_args;
@@ -53,6 +156,10 @@ function run_pending_latex_write() {
 		});
 }
 
+// ============================================================
+// write_model_to_latex_to_page — unchanged
+// ============================================================
+
 async function write_model_to_latex_to_page() {
 	_write_latex_pending_args = arguments;
 
@@ -63,28 +170,36 @@ async function write_model_to_latex_to_page() {
 	}
 }
 
-async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = false, force = false) {
-	if(reset_prev_layer_data) {
+// ============================================================
+// _write_model_to_latex_to_page_internal
+// ORIGINAL LOGIC PRESERVED. Only addition: attach scroll listener.
+// Renders normally using innerHTML + _temml() as before.
+// ============================================================
+
+async function _write_model_to_latex_to_page_internal(reset_prev_layer_data = false, force = false) {
+	if (reset_prev_layer_data) {
 		prev_layer_data = [];
 	}
 
+	// Attach scroll listener on first render
+	_math_attach_scroll_listener();
+
 	var latex = model_to_latex();
 
-	if(latex) {
+	if (latex) {
 		$("#math_tab_code").html(latex);
 
 		try {
-			var math_tab_code_elem = $("#math_tab_code")[0];
-
+			var math_tab_code_elem = document.getElementById("math_tab_code");
 			var xpath = get_element_xpath(math_tab_code_elem);
-			var new_md5 = await md5($(math_tab_code_elem).html());
+			var new_md5 = await md5(latex);
 			var old_md5 = math_items_hashes[xpath];
 
-			if(new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
+			if (new_md5 != old_md5 || force || !is_hidden_or_has_hidden_parent($("#math_tab_code"))) {
 				try {
 					_temml();
 				} catch (e) {
-					if(!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
+					if (!("" + e).includes("assign to property") || ("" + e).includes("s.body[0] is undefined")) {
 						void(0); info("" + e);
 					} else if (("" + e).includes("too many function arguments")) {
 						void(0); err("TEMML: " + e);
@@ -95,7 +210,7 @@ async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = f
 				math_items_hashes[xpath] = new_md5;
 			}
 		} catch (e) {
-			if(("" + e).includes("can't assign to property")) {
+			if (("" + e).includes("can't assign to property")) {
 				wrn(language[lang]["failed_temml"], e);
 			} else {
 				await write_error(e, null, null);
@@ -103,6 +218,152 @@ async function _write_model_to_latex_to_page_internal (reset_prev_layer_data = f
 		}
 
 		write_optimizer_to_math_tab();
+	}
+}
+
+// ============================================================
+// write_optimizer_to_math_tab — unchanged from original
+// ============================================================
+
+function write_optimizer_to_math_tab() {
+	try {
+		if (!model) {
+			dbg("[write_optimizer_to_math_tab] model not defined");
+			return;
+		}
+
+		if (typeof(model.optimizer) != "object") {
+			dbg("[write_optimizer_to_math_tab] model doesn't have optimizer key");
+			return;
+		}
+
+		var values = {};
+		var _keys = Object.keys(model.optimizer);
+
+		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
+			var _key = _keys[key_idx];
+			if (_key == "iterations_") {
+				continue;
+			}
+			wo2mt_collect_value_for_key(values, _key, model.optimizer[_key]);
+		}
+
+		var str = wo2mt_build_output_string(values);
+
+		if (str) {
+			$("#optimizer_variables_header").show();
+			$("#optimizer_variables_div").html(str).show();
+			_temml();
+		} else {
+			hide_and_reset_optimizer_variables();
+		}
+	} catch (e) {
+		hide_and_reset_optimizer_variables();
+		dbg(e);
+	}
+}
+
+// ============================================================
+// create_math_slider — unchanged from original
+// ============================================================
+
+function create_math_slider() {
+	_create_math_slider("math_history_slider", "#math_tab_code");
+}
+
+function _create_math_slider(containerId, targetId) {
+	try {
+		let container = document.getElementById(containerId);
+		if (!container) {
+			console.error("Container not found:", containerId);
+			return;
+		}
+
+		container.innerHTML = "";
+
+		if (!Array.isArray(math_history) || math_history.length === 0 || math_history.length == 1) {
+			container.style.display = "none";
+			return;
+		} else {
+			container.style.display = "flex";
+		}
+
+		let style = document.createElement("style");
+
+		style.textContent = `
+			#${containerId} {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				padding: 20px;
+			}
+			#${containerId} input[type=range] {
+				width: 80%;
+				-webkit-appearance: none;
+				background: transparent;
+			}
+			#${containerId} input[type=range]::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				background: #4caf50;
+				cursor: pointer;
+				border: none;
+				box-shadow: 0 0 5px rgba(0,0,0,0.3);
+			}
+
+			#${containerId} input[type=range]::-webkit-slider-runnable-track {
+				height: 6px;
+				background: #ddd;
+				border-radius: 3px;
+			}
+
+			#${containerId} .epoch-label {
+				font-family: sans-serif;
+				font-size: 14px;
+				color: #333333;
+			}
+		`;
+		document.head.appendChild(style);
+
+		let label = document.createElement("div");
+		label.className = "epoch-label";
+
+		let slider = document.createElement("input");
+		slider.type = "range";
+		slider.min = 1;
+		slider.max = math_history.length;
+		slider.value = math_history.length;
+		slider.step = 1;
+
+		label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
+		container.appendChild(label);
+		container.appendChild(slider);
+
+		slider.addEventListener("input", function() {
+			let index = parseInt(slider.value, 10) - 1;
+			label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
+
+			let target = $(targetId);
+			if (target.length === 0) {
+				console.error("Target not found:", targetId);
+				return;
+			}
+
+			target.html(math_history[index]);
+
+			try {
+				_temml();
+			} catch (e) {
+				console.error("Error in _temml:", e);
+			}
+		});
+
+	} catch (err) {
+		console.error("Error in _create_math_slider:", err);
 	}
 }
 
@@ -184,51 +445,9 @@ function compare_entire_layer_and_update_colors(keys, old_layer, new_layer, colo
 	return color_diff;
 }
 
-function create_math_slider() {
-	_create_math_slider("math_history_slider", "#math_tab_code");
-}
-
 function reset_math_history () {
 	math_history = [];
 	$("#math_history_slider").html("").hide();
-}
-
-function write_optimizer_to_math_tab() {
-	try {
-		if (!model) {
-			dbg("[write_optimizer_to_math_tab] model not defined");
-			return;
-		}
-
-		if (typeof(model.optimizer) != "object") {
-			dbg("[write_optimizer_to_math_tab] model doesn't have optimizer key");
-			return;
-		}
-
-		var values = {};
-		var _keys = Object.keys(model.optimizer);
-
-		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
-			var _key = _keys[key_idx];
-			if (_key == "iterations_") {
-				continue;
-			}
-			wo2mt_collect_value_for_key(values, _key, model.optimizer[_key]);
-		}
-
-		var str = wo2mt_build_output_string(values);
-
-		if (str) {
-			$("#optimizer_variables_header").show();
-			$("#optimizer_variables_div").html(str).show();
-			_temml();
-		} else {
-			hide_and_reset_optimizer_variables();
-		}
-	} catch (e) {
-		hide_and_reset_optimizer_variables();
-		dbg(e);
-	}
 }
 
 function wo2mt_collect_value_for_key(values, key, raw_val) {
@@ -309,105 +528,6 @@ function wo2mt_build_output_string(values) {
 function hide_and_reset_optimizer_variables() {
 	$("#optimizer_variables_header").hide();
 	$("#optimizer_variables_div").html("").hide();
-}
-
-function _create_math_slider (containerId, targetId) {
-	try {
-		let container = document.getElementById(containerId);
-		if (!container) {
-			console.error("Container not found:", containerId);
-			return;
-		}
-
-		container.innerHTML = "";
-
-		if (!Array.isArray(math_history) || math_history.length === 0 || math_history.length == 1) {
-			container.style.display = "none";
-			return;
-		} else {
-			container.style.display = "flex";
-		}
-
-		let style = document.createElement("style");
-
-		style.textContent = `
-			#${containerId} {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				gap: 10px;
-				padding: 20px;
-			}
-			#${containerId} input[type=range] {
-				width: 80%;
-				-webkit-appearance: none;
-				background: transparent;
-			}
-			#${containerId} input[type=range]::-webkit-slider-thumb {
-				-webkit-appearance: none;
-				appearance: none;
-				width: 20px;
-				height: 20px;
-				border-radius: 50%;
-				background: #4caf50;
-				cursor: pointer;
-				border: none;
-				box-shadow: 0 0 5px rgba(0,0,0,0.3);
-			}
-
-			#${containerId} input[type=range]::-webkit-slider-runnable-track {
-				height: 6px;
-				background: #ddd;
-				border-radius: 3px;
-			}
-
-			#${containerId} .epoch-label {
-				font-family: sans-serif;
-				font-size: 14px;
-				color: #333333;
-			}
-		`;
-		document.head.appendChild(style);
-
-		let label = document.createElement("div");
-		label.className = "epoch-label";
-
-		// initialize with current slider value (last epoch)
-		let slider = document.createElement("input");
-		slider.type = "range";
-		slider.min = 1;
-		slider.max = math_history.length;
-		slider.value = math_history.length;
-		slider.step = 1;
-
-		label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
-		container.appendChild(label);
-		container.appendChild(slider);
-
-		slider.addEventListener("input", function () {
-			let index = parseInt(slider.value, 10) - 1;
-			label.textContent = "Epoch: " + slider.value + " / " + math_history.length;
-
-			let target = $(targetId);
-			if (target.length === 0) {
-				console.error("Target not found:", targetId);
-				return;
-			}
-
-			target.html(math_history[index]);
-
-			try {
-				_temml();
-			} catch (e) {
-				console.error("Error in _temml:", e);
-			}
-		});
-
-		let initIndex = parseInt(slider.value, 10) - 1;
-
-	} catch (err) {
-		console.error("Error in _create_math_slider:", err);
-	}
 }
 
 function _array_to_ellipsis_latex (x, limit) {
@@ -832,46 +952,46 @@ function populate_layer_weight(this_layer_weights, possible_weight_names, layer_
 }
 
 function get_layer_data() {
-    var layer_data = [];
+	var layer_data = [];
 
-    var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel", "snakeAlpha", "aSin", "aElu", "aSnake", "aRelu"];
+	var possible_weight_names = ["kernel", "alpha", "bias", "beta", "gamma", "moving_mean", "moving_variance", "depthwise_kernel", "pointwise_kernel", "snakeAlpha", "aSin", "aElu", "aSnake", "aRelu"];
 
-    for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-        var layer_name = model.layers[layer_idx].name || "";
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var layer_name = model.layers[layer_idx].name || "";
 
-        // Skip internal skip-connection layers
-        if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
-            continue;
-        }
+		// Skip internal skip-connection layers
+		if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+			continue;
+		}
 
-        var this_layer_weights = {};
+		var this_layer_weights = {};
 
-        for (var n = 0; n < possible_weight_names.length; n++) {
-            this_layer_weights[possible_weight_names[n]] = [];
-        }
+		for (var n = 0; n < possible_weight_names.length; n++) {
+			this_layer_weights[possible_weight_names[n]] = [];
+		}
 
-        try {
-            if ("weights" in model.layers[layer_idx]) {
-                for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
-                    this_layer_weights = populate_layer_weight(this_layer_weights, possible_weight_names, layer_idx, k);
-                }
-            }
-        } catch (e) {
-            if (("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
-                dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
-            } else {
-                err("" + e);
+		try {
+			if ("weights" in model.layers[layer_idx]) {
+				for (var k = 0; k < model.layers[layer_idx].weights.length; k++) {
+					this_layer_weights = populate_layer_weight(this_layer_weights, possible_weight_names, layer_idx, k);
+				}
+			}
+		} catch (e) {
+			if (("" + e).includes("Tensor is disposed") || ("" + e).includes("object null is not iterable")) {
+				dbg("Model was disposed during get_layer_data(). This is probably because the model was recompiled during this.");
+			} else {
+				err("" + e);
 
-                if (e && e.stack) {
-                    err("Full stack:\n" + e.stack);
-                }
-            }
-        }
+				if (e && e.stack) {
+					err("Full stack:\n" + e.stack);
+				}
+			}
+		}
 
-        layer_data.push(this_layer_weights);
-    }
+		layer_data.push(this_layer_weights);
+	}
 
-    return layer_data;
+	return layer_data;
 }
 
 function replace_non_numbers_with_matching_latex (ar) {
@@ -1055,21 +1175,21 @@ function get_default_vars() {
 		"g": {
 			"name": "Gradient estimate"
 		},
-			"nabla_operator": {
-				"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
-				"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
-			},
-			"theta": {
-				"name": "Weights"
-			},
-			"eta": {
-				"name": "Learning rate",
-				"origin": "learningRate_OPTIMIZERNAME"
-			},
-			"epsilon": {
-				"name": "Epsilon",
-				"origin": "epsilon_OPTIMIZERNAME"
-			}
+		"nabla_operator": {
+			"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
+			"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
+		},
+		"theta": {
+			"name": "Weights"
+		},
+		"eta": {
+			"name": "Learning rate",
+			"origin": "learningRate_OPTIMIZERNAME"
+		},
+		"epsilon": {
+			"name": "Epsilon",
+			"origin": "epsilon_OPTIMIZERNAME"
+		}
 	};
 }
 
@@ -1411,101 +1531,521 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 	return "\\text{(The equations for this layer are not yet defined)}";
 }
 
+/**
+ * Renders the skip connection part for interactive mode.
+ * Shows the skip projection weights as editable values (if a projection layer exists)
+ * or shows the identity matrix (if shapes match).
+ */
+function _render_skip_connection_interactive(container_id, layer_idx, gui_layer_idx, input_layer, layer_data, colors, this_layer_type) {
+	var container = document.getElementById(container_id);
+	if (!container) {
+		console.warn("[_render_skip_connection_interactive] Container not found:", container_id);
+		return;
+	}
+
+	var all_layers = _get_all_model_layers();
+	if (!all_layers) {
+		console.warn("[_render_skip_connection_interactive] _get_all_model_layers() returned null");
+		_render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+		return;
+	}
+
+	// Find the skip projection layer for this gui_layer_idx
+	var skip_proj_layer = null;
+	for (var i = 0; i < all_layers.length; i++) {
+		var lname = all_layers[i].name || "";
+		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+			skip_proj_layer = all_layers[i];
+			break;
+		}
+	}
+
+	// Fallback: proximity-based search
+	if (!skip_proj_layer) {
+		skip_proj_layer = _find_skip_proj_by_proximity(all_layers, layer_idx, gui_layer_idx);
+	}
+
+	if (skip_proj_layer) {
+		// Check if the layer actually has weights
+		var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+		if (kernel_tensor && !tensor_is_disposed(kernel_tensor)) {
+			_render_skip_projection_editable(container, skip_proj_layer, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+		} else {
+			_render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+		}
+	} else {
+		// No projection layer — render identity or static fallback
+		_render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+	}
+}
+
+/**
+ * Renders skip projection weights as editable interactive elements.
+ */
+function _render_skip_projection_editable(container, skip_proj_layer, layer_idx, gui_layer_idx, input_layer, layer_data, colors) {
+	var decimals = get_dec_points_math_mode();
+	var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+
+	if (!kernel_tensor || tensor_is_disposed(kernel_tensor)) {
+		_render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+		return;
+	}
+
+	var kernel = array_sync(kernel_tensor, true);
+	if (!kernel) {
+		_render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors);
+		return;
+	}
+
+	var shape = get_shape_from_array(kernel);
+	var max_rows = Math.min(shape[0] || 1, get_max_nr_cols_rows());
+	var max_cols = Math.min(shape.length > 1 ? shape[1] : 1, get_max_nr_cols_rows());
+
+	// Flatten kernel for registration (handle both 1D and 2D)
+	var is_2d = shape.length >= 2;
+	var all_editables = [];
+
+	// Register editables for skip kernel weights
+	if (is_2d) {
+		for (var i = 0; i < Math.min(kernel.length, max_rows); i++) {
+			for (var j = 0; j < Math.min(kernel[i].length, max_cols); j++) {
+				(function(gi, row, col, sk_layer) {
+					var eid = "L" + gi + "_skip_kernel_" + row + "_" + col;
+					const fn = function() {
+						var kt = _extract_kernel_from_layer(sk_layer);
+						if (!kt || tensor_is_disposed(kt)) return 0;
+						var synced = array_sync(kt, true);
+						return synced && synced[row] ? synced[row][col] : 0;
+					}
+
+					const fn2 = function(v) {
+						_math_apply_skip_weight_change(sk_layer, row, col, v);
+					}
+
+					const conf = { decimals: decimals };
+
+					math_register_editable(eid, fn, fn2, -10, 10, "Skip kernel[" + row + "][" + col + "]", conf);
+					all_editables.push({ eid: eid });
+				})(gui_layer_idx, i, j, skip_proj_layer);
+			}
+		}
+	} else {
+		// 1D kernel
+		for (var k = 0; k < Math.min(kernel.length, max_rows); k++) {
+			(function(gi, idx, sk_layer) {
+				var eid = "L" + gi + "_skip_kernel_" + idx;
+				const fn = function() {
+					var kt = _extract_kernel_from_layer(sk_layer);
+					if (!kt || tensor_is_disposed(kt)) return 0;
+					var synced = array_sync(kt, true);
+					return synced ? synced[idx] : 0;
+				}
+
+				const fn2 = function(v) {
+					_math_apply_skip_weight_change_1d(sk_layer, idx, v);
+				}
+
+				const conf = { decimals: decimals };
+
+				math_register_editable(eid, fn, fn2, -10, 10, "Skip kernel[" + idx + "]", conf);
+				all_editables.push({ eid: eid });
+			})(gui_layer_idx, k, skip_proj_layer);
+		}
+	}
+
+	// Build LaTeX for the skip connection
+	var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+
+	var skip_kernel_latex = "\\underbrace{\\begin{pmatrix}\n";
+
+	if (is_2d) {
+		for (var row = 0; row < max_rows; row++) {
+			var row_parts = [];
+			for (var col = 0; col < max_cols; col++) {
+				var eid = "L" + gui_layer_idx + "_skip_kernel_" + row + "_" + col;
+				var ed = math_find_editable(eid);
+				var val = ed ? ed.get().toFixed(decimals) : "0";
+				row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
+			}
+			if (kernel[row] && kernel[row].length > max_cols) {
+				row_parts.push("\\cdots");
+			}
+			skip_kernel_latex += row_parts.join(" & ");
+			if (row < max_rows - 1) skip_kernel_latex += " \\\\\n";
+		}
+		if (kernel.length > max_rows) {
+			skip_kernel_latex += " \\\\ \\vdots & \\ddots";
+		}
+	} else {
+		var parts_1d = [];
+		for (var ki = 0; ki < max_rows; ki++) {
+			var eid_1d = "L" + gui_layer_idx + "_skip_kernel_" + ki;
+			var ed_1d = math_find_editable(eid_1d);
+			var val_1d = ed_1d ? ed_1d.get().toFixed(decimals) : "0";
+			parts_1d.push("\\textcolor{#53d8fb}{" + val_1d + "}");
+		}
+		if (kernel.length > max_rows) {
+			parts_1d.push("\\vdots");
+		}
+		skip_kernel_latex += parts_1d.join(" \\\\\n");
+	}
+
+	var shape_str = shape.join("\\times");
+	skip_kernel_latex += "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+
+	var full_latex = "+ \\underbrace{" + skip_kernel_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
+
+	el_render_single_latex_with_editables(container, full_latex, all_editables);
+}
+
+/**
+ * Applies a weight change from layer_data back to the actual model weights.
+ * Called when the user edits a kernel or bias value in interactive math mode.
+ */
+function _math_apply_weight_change_from_layer_data(layer_idx, weight_type, new_data) {
+	if (!model || !model.layers || !model.layers[layer_idx]) return;
+
+	try {
+		var layer = model.layers[layer_idx];
+		var current_weights = layer.getWeights();
+
+		if (weight_type === "kernel") {
+			var new_kernel = tf.tensor(new_data);
+			var new_weights = [new_kernel];
+			for (var w = 1; w < current_weights.length; w++) {
+				new_weights.push(current_weights[w]);
+			}
+			layer.setWeights(new_weights);
+			new_kernel.dispose();
+		} else if (weight_type === "bias") {
+			var new_bias = tf.tensor(new_data);
+			var new_weights = [];
+			for (var w = 0; w < current_weights.length - 1; w++) {
+				new_weights.push(current_weights[w]);
+			}
+			new_weights.push(new_bias);
+			layer.setWeights(new_weights);
+			new_bias.dispose();
+		}
+	} catch (e) {
+		console.warn("[_math_apply_weight_change_from_layer_data] Error:", e);
+	}
+}
+
+/**
+ * Fallback: renders skip connection as static (non-editable) LaTeX.
+ */
+function _render_skip_static_fallback(container, layer_idx, gui_layer_idx, input_layer, layer_data, colors) {
+	var all_layers = _get_all_model_layers();
+	var skip_weight_latex = "W_{\\text{skip}}";
+
+	if (all_layers) {
+		// Try to find skip projection layer and extract its weights directly
+		var skip_proj_layer = null;
+		for (var i = 0; i < all_layers.length; i++) {
+			var lname = all_layers[i].name || "";
+			if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+				skip_proj_layer = all_layers[i];
+				break;
+			}
+		}
+
+		if (skip_proj_layer) {
+			skip_weight_latex = _extract_skip_kernel_latex(skip_proj_layer);
+		} else {
+			// Check if it's an identity skip (skip_add exists but no skip_proj)
+			var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
+			if (has_add) {
+				skip_weight_latex = _build_identity_matrix_latex(layer_idx);
+			} else {
+				// No skip_proj and no skip_add found — try matching by proximity
+				// The skip layer might use a different naming convention
+				skip_proj_layer = _find_skip_proj_by_proximity(all_layers, layer_idx, gui_layer_idx);
+				if (skip_proj_layer) {
+					skip_weight_latex = _extract_skip_kernel_latex(skip_proj_layer);
+				}
+			}
+		}
+	}
+
+	var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+	var full_latex = "+ \\underbrace{" + skip_weight_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
+
+	container.innerHTML = "";
+	var wrapper = document.createElement("div");
+	wrapper.className = "math-hybrid-rendered";
+	try {
+		wrapper.innerHTML = temml.renderToString(full_latex, { displayMode: true });
+	} catch (err) {
+		wrapper.innerHTML = "<span style='color:#e94560;'>Skip connection render error: " + err.message + "</span>";
+	}
+	container.appendChild(wrapper);
+}
+
+/**
+ * Fallback: Find a skip projection layer by proximity to the given layer_idx in model.layers.
+ * Looks for any skip_proj layer that appears shortly after the target layer.
+ */
+function _find_skip_proj_by_proximity(all_layers, model_layer_idx, gui_layer_idx) {
+	// Strategy 1: Try all naming patterns — the number in the name might be
+	// either the gui_layer_idx OR the model layer index
+	for (var i = 0; i < all_layers.length; i++) {
+		var lname = all_layers[i].name || "";
+		if (!lname.includes("skip_proj_")) continue;
+
+		// Try extracting any number from the name
+		var match = lname.match(/skip_proj_\w+?_(\d+)/);
+		if (match) {
+			var extracted_idx = parseInt(match[1], 10);
+			if (extracted_idx === gui_layer_idx) {
+				// Verify it actually has weights
+				var k = _extract_kernel_from_layer(all_layers[i]);
+				if (k && !tensor_is_disposed(k)) {
+					return all_layers[i];
+				}
+			}
+		}
+	}
+
+	// Strategy 2: Convert gui_layer_idx to model layer index and try that
+	if (model && model.layers) {
+		var gui_count = 0;
+		var target_model_idx = null;
+		for (var mi = 0; mi < model.layers.length; mi++) {
+			var mname = model.layers[mi].name || "";
+			if (mname.includes("skip_proj_") || mname.includes("skip_add_") || mname.includes("skip_scale_")) {
+				continue;
+			}
+			if (gui_count === gui_layer_idx) {
+				target_model_idx = mi;
+				break;
+			}
+			gui_count++;
+		}
+
+		if (target_model_idx !== null) {
+			for (var i = 0; i < all_layers.length; i++) {
+				var lname = all_layers[i].name || "";
+				if (!lname.includes("skip_proj_")) continue;
+
+				var match = lname.match(/(\d+)/g);
+				if (match) {
+					for (var m = 0; m < match.length; m++) {
+						if (parseInt(match[m], 10) === target_model_idx) {
+							var k = _extract_kernel_from_layer(all_layers[i]);
+							if (k && !tensor_is_disposed(k)) {
+								return all_layers[i];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Strategy 3: If there's only ONE skip_proj layer and ONE skip connection enabled,
+	// just use it
+	var skip_proj_layers = [];
+	for (var i = 0; i < all_layers.length; i++) {
+		var lname = all_layers[i].name || "";
+		if (lname.includes("skip_proj_")) {
+			var k = _extract_kernel_from_layer(all_layers[i]);
+			if (k && !tensor_is_disposed(k)) {
+				skip_proj_layers.push(all_layers[i]);
+			}
+		}
+	}
+
+	// Count enabled skip connections
+	var enabled_count = 0;
+	var enabled_gui_idx = null;
+	for (var s in skip_connection_settings) {
+		if (skip_connection_settings[s] && skip_connection_settings[s].enabled) {
+			enabled_count++;
+			enabled_gui_idx = parseInt(s, 10);
+		}
+	}
+
+	if (skip_proj_layers.length === 1 && enabled_count === 1 && enabled_gui_idx === gui_layer_idx) {
+		return skip_proj_layers[0];
+	}
+
+	return null;
+}
+
+/**
+ * Applies a weight change to a 2D skip projection kernel.
+ */
+function _math_apply_skip_weight_change(skip_proj_layer, row, col, new_value) {
+	if (!skip_proj_layer) return;
+
+	var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+	if (!kernel_tensor || tensor_is_disposed(kernel_tensor)) return;
+
+	var synced = array_sync(kernel_tensor, true);
+	if (!synced || !synced[row]) return;
+
+	synced[row][col] = new_value;
+
+	// Set the new weights back to the layer
+	try {
+		var new_tensor = tf.tensor(synced);
+		var current_weights = skip_proj_layer.getWeights();
+
+		// Replace the kernel (first weight) with the new tensor
+		var new_weights = [new_tensor];
+		for (var w = 1; w < current_weights.length; w++) {
+			new_weights.push(current_weights[w]);
+		}
+
+		skip_proj_layer.setWeights(new_weights);
+
+		// Dispose the temporary tensor
+		new_tensor.dispose();
+	} catch (e) {
+		console.warn("[_math_apply_skip_weight_change] Error setting skip weights:", e);
+	}
+}
+
+/**
+ * Applies a weight change to a 1D skip projection kernel.
+ */
+function _math_apply_skip_weight_change_1d(skip_proj_layer, idx, new_value) {
+	if (!skip_proj_layer) return;
+
+	var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
+	if (!kernel_tensor || tensor_is_disposed(kernel_tensor)) return;
+
+	var synced = array_sync(kernel_tensor, true);
+	if (!synced) return;
+
+	synced[idx] = new_value;
+
+	try {
+		var new_tensor = tf.tensor(synced);
+		var current_weights = skip_proj_layer.getWeights();
+
+		var new_weights = [new_tensor];
+		for (var w = 1; w < current_weights.length; w++) {
+			new_weights.push(current_weights[w]);
+		}
+
+		skip_proj_layer.setWeights(new_weights);
+		new_tensor.dispose();
+	} catch (e) {
+		console.warn("[_math_apply_skip_weight_change_1d] Error setting skip weights:", e);
+	}
+}
+
 function model_to_latex() {
-    var layers = model?.layers;
-    var input_shape = get_first_layer_input_shape();
-    if (!input_shape || !layers) { return ""; }
+	var layers = model?.layers;
+	var input_shape = get_first_layer_input_shape();
+	if (!input_shape || !layers) { return ""; }
 
-    shown_activation_equations = [];
+	shown_activation_equations = [];
 
-    var output_shape = model.layers[model.layers.length - 1].outputShape;
-    var default_vars = get_default_vars();
-    var str = "";
-    var layer_data = get_layer_data();
-    var y_layer = get_y_output_shapes(output_shape);
+	var output_shape = model.layers[model.layers.length - 1].outputShape;
+	var default_vars = get_default_vars();
+	var str = "";
+	var layer_data = get_layer_data();
+	var y_layer = get_y_output_shapes(output_shape);
 
-    // When started_training is true, pass prev_layer_data for color diff (red/green).
-    // When false, pass empty array (no color diff — editables are active instead).
-    var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
+	// When started_training is true, pass prev_layer_data for color diff (red/green).
+	// When false, pass empty array (no color diff — editables are active instead).
+	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
 
-    var input_layer = get_input_layer(input_shape);
+	var input_layer = get_input_layer(input_shape);
 
-    activation_string = "";
+	activation_string = "";
 
-    str += get_loss_equations_string();
+	str += get_loss_equations_string();
 
-    if (get_metric() != get_loss()) {
-        str += get_metric_equations_string();
-    }
+	if (get_metric() != get_loss()) {
+		str += get_metric_equations_string();
+	}
 
-    var has_any_skip_connection = false;
+	var has_any_skip_connection = false;
 
-    // Build a mapping from model layer index to GUI layer index,
-    // skipping internal skip-connection layers
-    var gui_layer_idx = 0;
+	// Build a mapping from model layer index to GUI layer index,
+	// skipping internal skip-connection layers
+	var gui_layer_idx = 0;
 
-    for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-        var layer_name = model.layers[layer_idx].name || "";
+	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+		var layer_name = model.layers[layer_idx].name || "";
 
-        // Skip internal skip-connection layers entirely
-        if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
-            continue;
-        }
+		// Skip internal skip-connection layers entirely
+		if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+			continue;
+		}
 
-        var this_layer_type = $($(".layer_type")[gui_layer_idx]).val();
-        var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
+		var this_layer_type = $($(".layer_type")[gui_layer_idx]).val();
+		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
-        if (gui_layer_idx == 0) {
-            str += "\n<h2>Layers:</h2>\n";
-        }
+		if (gui_layer_idx == 0) {
+			str += "\n<h2>Layers:</h2>\n";
+		}
 
-        // Check if this layer has a skip connection for the legend
-        var skip_info_check = get_skip_connection_info(gui_layer_idx);
-        if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
-            has_any_skip_connection = true;
-        }
+		// Check if this layer has a skip connection for the legend
+		var skip_info_check = get_skip_connection_info(gui_layer_idx);
+		if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+			has_any_skip_connection = true;
+		}
 
-        var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
+		var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
 
-        // --- Generalized interactive marker handling ---
-        var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
+		// --- Generalized interactive marker handling ---
+		var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
 
-        if (interactive_info) {
-            var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
-            str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
-            str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div><br>";
+		if (interactive_info) {
+			var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
+			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
+			str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div>";
 
-            // Schedule the hybrid render after DOM update
-            (function(cid, li, ld, c, il, yl, itype) {
-                setTimeout(function() {
-                    _dispatch_interactive_inject(itype, cid, li, ld, c, il, yl);
-                }, 0);
-            })(container_id, layer_idx, layer_data, colors, input_layer, y_layer, interactive_info.type);
-        } else {
-            str += "<div class='temml_me'> " + layer_str + " </div><br>";
-        }
+			// Check if skip connection info is encoded in the marker
+			var has_skip_in_marker = layer_str.indexOf("%%SKIP_ENABLED_") !== -1;
+			var skip_container_id = "math_skip_" + interactive_info.type + "_L" + layer_idx;
 
-        gui_layer_idx++;
-    }
+			if (has_skip_in_marker) {
+				str += "<div id='" + skip_container_id + "' class='math-hybrid-formula math-skip-formula' style='margin:4px 0 8px 0;overflow-x:auto;'></div>";
+			}
 
-    // === SKIP CONNECTION EXPLANATION ===
-    if (has_any_skip_connection) {
-        str += "<h3>Skip Connections:</h3>\n";
-        str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
-        str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the input dimensions to the output dimensions if needed. If dimensions already match, the identity is used.</p>\n";
-    }
+			str += "<br>";
 
-    str += get_optimizer_latex_equations();
+			// Schedule the hybrid render after DOM update
+			(function(cid, skip_cid, li, ld, c, il, yl, itype, hasSkip, egi, lt) {
+				setTimeout(function() {
+					_dispatch_interactive_inject(itype, cid, li, ld, c, il, yl);
+					if (hasSkip) {
+						_render_skip_connection_interactive(skip_cid, li, egi, il, ld, c, lt);
+					}
+				}, 0);
+			})(container_id, skip_container_id, layer_idx, layer_data, colors, input_layer, y_layer, interactive_info.type, has_skip_in_marker, gui_layer_idx, this_layer_type);
+		} else {
+			str += "<div class='temml_me'> " + layer_str + " </div><br>";
+		}
 
-    prev_layer_data = layer_data;
 
-    str = latex_blocks() + "\n" + str;
+		gui_layer_idx++;
+	}
 
-    if (activation_string && str) {
-        str = "<h2>" + language[lang]["activation_functions"] + ":</h2>" + activation_string + str;
-    }
+	// === SKIP CONNECTION EXPLANATION ===
+	if (has_any_skip_connection) {
+		str += "<h3>Skip Connections:</h3>\n";
+		str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
+		str += "<p>Where <span class='temml_me'>W_{\\text{skip}}</span> is a learned projection matrix (Dense or 1×1 Conv) that matches the input dimensions to the output dimensions if needed. If dimensions already match, the identity is used.</p>\n";
+	}
 
-    return str;
+	str += get_optimizer_latex_equations();
+
+	prev_layer_data = layer_data;
+
+	str = latex_blocks() + "\n" + str;
+
+	if (activation_string && str) {
+		str = "<h2>" + language[lang]["activation_functions"] + ":</h2>" + activation_string + str;
+	}
+
+	return str;
 }
 
 /**
@@ -1513,18 +2053,18 @@ function model_to_latex() {
  * Returns { type: "dense", layer_idx: 3 } or null if no marker found.
  */
 function _detect_interactive_marker(layer_str, layer_idx) {
-    var marker_prefix = "%%INTERACTIVE_";
-    var marker_suffix = "_" + layer_idx + "%%";
+	var marker_prefix = "%%INTERACTIVE_";
+	var marker_suffix = "_" + layer_idx + "%%";
 
-    var start = layer_str.indexOf(marker_prefix);
-    if (start === -1) return null;
+	var start = layer_str.indexOf(marker_prefix);
+	if (start === -1) return null;
 
-    var after_prefix = layer_str.substring(start + marker_prefix.length);
-    var end = after_prefix.indexOf(marker_suffix);
-    if (end === -1) return null;
+	var after_prefix = layer_str.substring(start + marker_prefix.length);
+	var end = after_prefix.indexOf(marker_suffix);
+	if (end === -1) return null;
 
-    var type_name = after_prefix.substring(0, end).toLowerCase();
-    return { type: type_name, layer_idx: layer_idx };
+	var type_name = after_prefix.substring(0, end).toLowerCase();
+	return { type: type_name, layer_idx: layer_idx };
 }
 
 /**
@@ -1532,23 +2072,23 @@ function _detect_interactive_marker(layer_str, layer_idx) {
  * Add new layer types here as they become interactive.
  */
 function _dispatch_interactive_inject(type, container_id, layer_idx, layer_data, colors, input_layer, y_layer) {
-    var handlers = {
-        "dense": function() {
-            _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors, input_layer);
-        },
-        "batchnorm": function() {
-            _inject_hybrid_batchnorm_direct(container_id, layer_idx, layer_data, colors, y_layer);
-        },
-        "conv2d": function() {
-            _inject_hybrid_conv2d_direct(container_id, layer_idx, layer_data, colors, input_layer);
-        }
-    };
+	var handlers = {
+		"dense": function() {
+			_inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors, input_layer);
+		},
+		"batchnorm": function() {
+			_inject_hybrid_batchnorm_direct(container_id, layer_idx, layer_data, colors, y_layer);
+		},
+		"conv2d": function() {
+			_inject_hybrid_conv2d_direct(container_id, layer_idx, layer_data, colors, input_layer);
+		}
+	};
 
-    if (handlers[type]) {
-        handlers[type]();
-    } else {
-        console.warn("[_dispatch_interactive_inject] No handler for interactive type:", type);
-    }
+	if (handlers[type]) {
+		handlers[type]();
+	} else {
+		console.warn("[_dispatch_interactive_inject] No handler for interactive type:", type);
+	}
 }
 
 function get_activation_layer_names() {
@@ -1557,186 +2097,452 @@ function get_activation_layer_names() {
 	});
 }
 
+function _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors) {
+	if (layer_idx === 0) {
+		return array_to_latex(input_layer, "Input");
+	}
+
+	var prev_idx = layer_idx - 1;
+
+	if (prev_idx >= 0 && prev_idx < layer_data.length) {
+		var prev_data = layer_data[prev_idx];
+
+		if (prev_data.kernel && prev_data.kernel.length) {
+			const prev_kernel_data = JSON.parse(JSON.stringify(prev_data.kernel))
+			var prev_kernel = replace_non_numbers_with_matching_latex(prev_kernel_data);
+			prev_kernel = array_to_fixed(prev_kernel, get_dec_points_math_mode());
+			var kernel_shape = get_shape_from_array(prev_kernel);
+			var shape_str = kernel_shape.join(" \\times ");
+
+			var result_str = "\\underbrace{";
+			result_str += "h_" + prev_idx;
+			result_str += "}_{\\text{Shape: } " + shape_str + "}";
+
+			return result_str;
+		}
+	}
+
+	return _get_h(Math.max(0, layer_idx - 1));
+}
+
 function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx) {
-    // Use gui_layer_idx if provided, otherwise fall back to layer_idx
-    var effective_gui_idx = (gui_layer_idx !== undefined) ? gui_layer_idx : layer_idx;
+	var effective_gui_idx = (gui_layer_idx !== undefined) ? gui_layer_idx : layer_idx;
 
-    var _af = get_layer_activation_function(layer_idx);
+	var _af = get_layer_activation_function(layer_idx);
 
-    var layer_str = "";
+	var layer_str = "";
 
-    if (this_layer_type == "dense") {
-        layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
-    } else if (this_layer_type == "flatten") {
-        layer_str = get_flatten_string(layer_idx);
-    } else if (this_layer_type == "reshape") {
-        layer_str = get_reshape_string(layer_idx);
-    } else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
-        layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
-    } else if (this_layer_type == "batchNormalization") {
-        layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
-    } else if (this_layer_type == "dropout") {
-        layer_str = get_dropout_latex(layer_idx);
-    } else if (this_layer_type == "MultiActivation") {
-        layer_str = get_multiactivation_layer_latex(layer_idx);
-    } else if (this_layer_type == "Snake") {
-        layer_str = get_snake_layer_latex(layer_idx);
-    } else if (this_layer_type == "DebugLayer") {
-        layer_str = get_debug_layer_latex();
-    } else if (this_layer_type == "gaussianDropout") {
-        layer_str = get_gaussian_dropout_latex(layer_idx);
-    } else if (this_layer_type == "alphaDropout") {
-        layer_str = get_alpha_dropout_latex(layer_idx);
-    } else if (this_layer_type == "gaussianNoise") {
-        layer_str = get_gaussian_noise_latex(layer_idx);
-    } else if (this_layer_type == "averagePooling1d") {
-        layer_str = get_average_pooling_1d_latex(layer_idx);
-    } else if (this_layer_type == "averagePooling2d") {
-        layer_str = get_average_pooling_2d_latex(layer_idx);
-    } else if (this_layer_type == "averagePooling3d") {
-        layer_str = get_average_pooling_3d_latex(layer_idx);
-    } else if (this_layer_type == "conv1d") {
-        layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
-    } else if (this_layer_type == "conv2d") {
-        layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
-    } else if (this_layer_type == "conv3d") {
-        layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
-    } else if (this_layer_type == "maxPooling1d") {
-        layer_str = get_max_pooling_1d_latex(layer_idx);
-    } else if (this_layer_type == "maxPooling2d") {
-        layer_str = get_max_pooling_2d_latex(layer_idx);
-    } else if (this_layer_type == "maxPooling3d") {
-        layer_str = get_max_pooling_3d_latex(layer_idx);
-    } else if (this_layer_type == "upSampling2d") {
-        layer_str = get_upsampling2d_latex(layer_idx);
-    } else if (this_layer_type == "separableConv2d") {
-        layer_str = get_seperable_conv2d_latex(layer_idx);
-    } else if (this_layer_type == "depthwiseConv2d") {
-        layer_str = get_depthwise_conv2d_latex(layer_idx);
-    } else if (this_layer_type == "conv2dTranspose") {
-        layer_str = get_conv2d_transpose_latex(layer_idx);
-    } else if (this_layer_type == "layerNormalization") {
-        layer_str = get_layer_normalization_equation(layer_idx);
-    } else {
-        layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
-    }
+	if (this_layer_type == "dense") {
+		layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
+	} else if (this_layer_type == "flatten") {
+		layer_str = get_flatten_string(layer_idx);
+	} else if (this_layer_type == "reshape") {
+		layer_str = get_reshape_string(layer_idx);
+	} else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
+		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
+	} else if (this_layer_type == "batchNormalization") {
+		layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
+	} else if (this_layer_type == "dropout") {
+		layer_str = get_dropout_latex(layer_idx);
+	} else if (this_layer_type == "MultiActivation") {
+		layer_str = get_multiactivation_layer_latex(layer_idx);
+	} else if (this_layer_type == "Snake") {
+		layer_str = get_snake_layer_latex(layer_idx);
+	} else if (this_layer_type == "DebugLayer") {
+		layer_str = get_debug_layer_latex();
+	} else if (this_layer_type == "gaussianDropout") {
+		layer_str = get_gaussian_dropout_latex(layer_idx);
+	} else if (this_layer_type == "alphaDropout") {
+		layer_str = get_alpha_dropout_latex(layer_idx);
+	} else if (this_layer_type == "gaussianNoise") {
+		layer_str = get_gaussian_noise_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling1d") {
+		layer_str = get_average_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling2d") {
+		layer_str = get_average_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "averagePooling3d") {
+		layer_str = get_average_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "conv1d") {
+		layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
+	} else if (this_layer_type == "conv2d") {
+		layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "conv3d") {
+		layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
+	} else if (this_layer_type == "maxPooling1d") {
+		layer_str = get_max_pooling_1d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling2d") {
+		layer_str = get_max_pooling_2d_latex(layer_idx);
+	} else if (this_layer_type == "maxPooling3d") {
+		layer_str = get_max_pooling_3d_latex(layer_idx);
+	} else if (this_layer_type == "upSampling2d") {
+		layer_str = get_upsampling2d_latex(layer_idx);
+	} else if (this_layer_type == "separableConv2d") {
+		layer_str = get_seperable_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "depthwiseConv2d") {
+		layer_str = get_depthwise_conv2d_latex(layer_idx);
+	} else if (this_layer_type == "conv2dTranspose") {
+		layer_str = get_conv2d_transpose_latex(layer_idx);
+	} else if (this_layer_type == "layerNormalization") {
+		layer_str = get_layer_normalization_equation(layer_idx);
+	} else {
+		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
+	}
 
-    // If any layer returned an interactive placeholder marker, pass it through
-    // without wrapping with activation function or h = ... prefix
-    if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
-        return layer_str;
-    }
+	// Check for interactive marker
+	if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
+		// Encode skip connection info into the marker so _dispatch_interactive_inject can use it
+		var skip_info = get_skip_connection_info(effective_gui_idx);
+		if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+			// Append skip metadata to the marker string
+			layer_str = layer_str + "%%SKIP_ENABLED_" + effective_gui_idx + "%%";
+		}
+		return layer_str;
+	}
 
-    if (this_layer_type && !this_layer_type.startsWith("conv")) {
-        layer_str = wrap_with_activation_function(layer_idx, layer_str);
-    }
+	if (this_layer_type && !this_layer_type.startsWith("conv")) {
+		layer_str = wrap_with_activation_function(layer_idx, layer_str);
+	}
 
-    // === SKIP CONNECTION ANNOTATION ===
-    var skip_info = get_skip_connection_info(effective_gui_idx);
-    if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
-        var skip_input_str = (layer_idx === 0) ? "x" : _get_h(layer_idx - 1);
-        var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx);
-        layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\cdot " + skip_input_str + "}_{\\text{Skip Connection}}";
-    }
+	// === SKIP CONNECTION ANNOTATION ===
+	var skip_info = get_skip_connection_info(effective_gui_idx);
+	if (skip_info.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
+		var skip_weight_latex = _get_skip_connection_weight_latex(layer_idx, effective_gui_idx);
+		var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
+		layer_str = layer_str + " + \\underbrace{" + skip_weight_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
+	}
 
-    layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
+	layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
 
-    return layer_str;
+	return layer_str;
 }
 
 /**
  * Finds the skip projection layer for a given layer_idx in model.layers
  * and returns its kernel weights as a LaTeX matrix.
- * If no projection layer is found (identity skip), returns "I" (identity matrix).
+ * If no projection layer is found (identity skip), returns the actual identity matrix.
  */
-function _get_skip_connection_weight_latex(layer_idx) {
-    if (!model || !Array.isArray(model.layers)) {
-        return "W_{\\text{skip}}";
-    }
+function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
+	var all_layers = _get_all_model_layers();
 
-    // Search for the skip projection layer that corresponds to this layer_idx
-    // The naming convention is: skip_proj_dense_<gui_layer_idx>_<hash> or skip_proj_conv2d_<gui_layer_idx>_<hash>
-    var skip_proj_layer = null;
+	if (!all_layers) {
+		return "W_{\\text{skip}}";
+	}
 
-    for (var i = 0; i < model.layers.length; i++) {
-        var lname = model.layers[i].name || "";
-        // Match patterns like "skip_proj_dense_4_aaf9fdbe" or "skip_proj_conv2d_2_abcd1234"
-        // We need to check if this projection layer belongs to the current layer_idx
-        if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, layer_idx)) {
-            skip_proj_layer = model.layers[i];
-            break;
-        }
-    }
+	var skip_proj_layer = null;
 
-    // If no projection layer found, it's an identity skip connection
-    if (!skip_proj_layer) {
-        // Check if there's an add layer for this index (meaning identity was used)
-        var has_add = false;
-        for (var j = 0; j < model.layers.length; j++) {
-            var aname = model.layers[j].name || "";
-            if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, layer_idx)) {
-                has_add = true;
-                break;
-            }
-        }
+	for (var i = 0; i < all_layers.length; i++) {
+		var lname = all_layers[i].name || "";
+		if (lname.includes("skip_proj_") && _skip_proj_belongs_to_layer(lname, gui_layer_idx)) {
+			skip_proj_layer = all_layers[i];
+			break;
+		}
+	}
 
-        if (has_add) {
-            return "I";
-        }
-        return "W_{\\text{skip}}";
-    }
+	// Fallback: try proximity-based search
+	if (!skip_proj_layer) {
+		skip_proj_layer = _find_skip_proj_by_proximity(all_layers, layer_idx, gui_layer_idx);
+	}
 
-    // Extract the kernel weights from the projection layer
-    try {
-        var kernel_weight = null;
-        for (var k = 0; k < skip_proj_layer.weights.length; k++) {
-            var wname = skip_proj_layer.weights[k].name || "";
-            if (wname.includes("kernel")) {
-                kernel_weight = skip_proj_layer.weights[k].val;
-                break;
-            }
-        }
+	if (skip_proj_layer) {
+		// Projection layer found — extract its current kernel weights
+		return _extract_skip_kernel_latex(skip_proj_layer);
+	}
 
-        if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
-            var synced_kernel = array_sync(kernel_weight, true);
-            if (synced_kernel) {
-                synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
-                synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
-                var kernel_shape = get_shape_from_array(synced_kernel);
-                var shape_str = kernel_shape.join(" \\times ");
-                return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
-            }
-        }
-    } catch (e) {
-        dbg("[_get_skip_connection_weight_latex] Error extracting skip weights: " + e);
-    }
+	// No projection layer found — check if there's a skip_add (identity skip)
+	var has_add = _has_skip_add_layer(all_layers, gui_layer_idx);
 
-    return "W_{\\text{skip}}";
+	if (has_add) {
+		return _build_identity_matrix_latex(layer_idx);
+	}
+
+	// Last resort: check if the skip connection is enabled but uses identity (same dimensions)
+	// In this case, show the identity matrix based on the layer's output shape
+	var skip_info = get_skip_connection_info(gui_layer_idx);
+	if (skip_info.enabled) {
+		return _build_identity_matrix_latex(layer_idx);
+	}
+
+	return "W_{\\text{skip}}";
 }
 
 /**
- * Checks if a skip layer name (like "skip_proj_dense_4_aaf9fdbe") belongs to a given layer_idx.
- * The layer_idx is embedded in the name after "skip_proj_dense_" or "skip_proj_conv2d_" or "skip_add_" etc.
+ * Gets all model layers including internal skip-connection layers.
  */
-function _skip_proj_belongs_to_layer(layer_name, layer_idx) {
-    // Extract the number from the layer name
-    // Patterns: skip_proj_dense_4_hash, skip_proj_conv2d_4_hash, skip_add_4_hash, skip_scale_4_hash
-    var patterns = [
-        /skip_proj_dense_(\d+)_/,
-        /skip_proj_conv2d_(\d+)_/,
-        /skip_add_(\d+)_/,
-        /skip_scale_(\d+)_/
-    ];
+function _get_all_model_layers() {
+	if (!model) return null;
 
-    for (var p = 0; p < patterns.length; p++) {
-        var match = layer_name.match(patterns[p]);
-        if (match) {
-            var extracted_idx = parseInt(match[1], 10);
-            return extracted_idx === layer_idx;
-        }
-    }
+	// For functional models, _stateChanges or getLayer() might be needed
+	// Try multiple approaches to get ALL layers including internal ones
 
-    return false;
+	// Approach 1: model._layers (internal, includes all)
+	try {
+		if (model._layers && Array.isArray(model._layers) && model._layers.length > 0) {
+			return model._layers;
+		}
+	} catch (e) {}
+
+	// Approach 2: model.layers (public API - may filter internal layers)
+	if (model.layers && Array.isArray(model.layers) && model.layers.length > 0) {
+		return model.layers;
+	}
+
+	// Approach 3: iterate through all nodes
+	try {
+		if (model._nodesByDepth) {
+			var all = [];
+			var depths = Object.keys(model._nodesByDepth);
+			for (var d = 0; d < depths.length; d++) {
+				var nodes = model._nodesByDepth[depths[d]];
+				for (var n = 0; n < nodes.length; n++) {
+					if (nodes[n].outboundLayer && all.indexOf(nodes[n].outboundLayer) === -1) {
+						all.push(nodes[n].outboundLayer);
+					}
+				}
+			}
+			if (all.length > 0) return all;
+		}
+	} catch (e) {}
+
+	return null;
+}
+
+/**
+ * Checks if there's a skip_add layer for the given gui_layer_idx.
+ */
+function _has_skip_add_layer(all_layers, gui_layer_idx) {
+	for (var j = 0; j < all_layers.length; j++) {
+		var aname = all_layers[j].name || "";
+		if (aname.includes("skip_add_") && _skip_proj_belongs_to_layer(aname, gui_layer_idx)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Builds an identity matrix LaTeX string for an identity skip connection.
+ */
+function _build_identity_matrix_latex(layer_idx) {
+	var dim = _get_skip_identity_dimension(layer_idx);
+
+	if (dim && typeof dim === "number" && dim > 0) {
+		var max_vals = get_max_nr_cols_rows();
+		var display_dim = Math.min(dim, max_vals);
+		var identity_rows = [];
+
+		for (var r = 0; r < display_dim; r++) {
+			var row_parts = [];
+			for (var c = 0; c < display_dim; c++) {
+				row_parts.push(r === c ? "1" : "0");
+			}
+			if (dim > max_vals) {
+				row_parts.push("\\cdots");
+			}
+			identity_rows.push(row_parts.join(" & "));
+		}
+
+		if (dim > max_vals) {
+			var vdots_row = [];
+			for (var vc = 0; vc < display_dim; vc++) {
+				vdots_row.push("\\vdots");
+			}
+			vdots_row.push("\\ddots");
+			identity_rows.push(vdots_row.join(" & "));
+		}
+
+		return "\\underbrace{\\begin{pmatrix}\n" + identity_rows.join(" \\\\\n") + "\n\\end{pmatrix}}_{I^{" + dim + " \\times " + dim + "}}";
+	}
+
+	return "I";
+}
+
+/**
+ * Extracts the current kernel weights from a skip projection layer and formats as LaTeX.
+ */
+function _extract_skip_kernel_latex(skip_proj_layer) {
+	try {
+		var kernel_weight = _extract_kernel_from_layer(skip_proj_layer);
+
+		if (kernel_weight && !tensor_is_disposed(kernel_weight)) {
+			var synced_kernel = array_sync(kernel_weight, true);
+			if (synced_kernel) {
+				synced_kernel = replace_non_numbers_with_matching_latex(synced_kernel);
+				synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
+				var kernel_shape = get_shape_from_array(synced_kernel);
+				var shape_str = kernel_shape.join(" \\times ");
+				return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+			}
+		}
+	} catch (e) {
+		dbg("[_extract_skip_kernel_latex] Error extracting skip weights: " + e);
+	}
+
+	return "W_{\\text{skip}}";
+}
+
+/**
+ * Extract the kernel tensor from a skip projection layer.
+ * Handles Dense, Conv2D, and Conv1D projection layers.
+ * Tries multiple approaches to find the kernel weights.
+ */
+function _extract_kernel_from_layer(layer) {
+	if (!layer) return null;
+
+	// Approach 1: Direct .kernel property (Dense layers)
+	try {
+		if (layer.kernel && layer.kernel.val) {
+			if (!layer.kernel.val.isDisposed) {
+				return layer.kernel.val;
+			}
+		}
+	} catch (e) {}
+
+	// Approach 2: Search through .weights array by name
+	try {
+		if (layer.weights && Array.isArray(layer.weights)) {
+			for (var k = 0; k < layer.weights.length; k++) {
+				var wname = (layer.weights[k].name || "").toLowerCase();
+				if (wname.includes("kernel")) {
+					var val = layer.weights[k].val;
+					if (val && !val.isDisposed) {
+						return val;
+					}
+				}
+			}
+		}
+	} catch (e) {}
+
+	// Approach 3: getWeights() — returns actual tensor objects
+	try {
+		if (typeof layer.getWeights === "function") {
+			var weights = layer.getWeights();
+			if (weights && weights.length > 0) {
+				// First weight is typically the kernel
+				if (!weights[0].isDisposed) {
+					return weights[0];
+				}
+			}
+		}
+	} catch (e) {}
+
+	// Approach 4: Try trainableWeights
+	try {
+		if (layer.trainableWeights && layer.trainableWeights.length > 0) {
+			var tw = layer.trainableWeights[0];
+			if (tw && tw.val && !tw.val.isDisposed) {
+				return tw.val;
+			}
+			// Some versions use .read()
+			if (tw && typeof tw.read === "function") {
+				var readVal = tw.read();
+				if (readVal && !readVal.isDisposed) {
+					return readVal;
+				}
+			}
+		}
+	} catch (e) {}
+
+	return null;
+}
+
+/**
+ * Determine the dimension for the identity matrix in an identity skip connection.
+ * Tries multiple approaches to get the output dimension.
+ */
+function _get_skip_identity_dimension(layer_idx) {
+	try {
+		if (!model || !model.layers || !model.layers[layer_idx]) return null;
+
+		var layer_output_shape = model.layers[layer_idx].outputShape;
+		if (Array.isArray(layer_output_shape)) {
+			// outputShape is like [null, 4] or [null, H, W, C]
+			// For identity skip, all dims match, so take the last non-null value
+			for (var si = layer_output_shape.length - 1; si >= 0; si--) {
+				if (layer_output_shape[si] !== null && typeof layer_output_shape[si] === "number") {
+					return layer_output_shape[si];
+				}
+			}
+		}
+	} catch (e) {
+		dbg("[_get_skip_identity_dimension] Could not determine dimension: " + e);
+	}
+
+	return null;
+}
+
+function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
+	if (layer_idx === 0) {
+		return array_to_latex(input_layer, "Input");
+	}
+
+	var prev_idx = layer_idx - 1;
+
+	if (layer_data[prev_idx] && layer_data[prev_idx].kernel && layer_data[prev_idx].kernel.length) {
+		return _get_h(prev_idx);
+	}
+
+	return _get_h(prev_idx);
+}
+
+/**
+ * Checks if a skip layer name belongs to a given gui_layer_idx.
+ * 
+ * IMPORTANT: The number in the skip layer name (e.g., skip_proj_dense_3_abc123)
+ * is the model.layers index at creation time, NOT the gui_layer_idx.
+ * We need to convert between the two.
+ */
+function _skip_proj_belongs_to_layer(layer_name, gui_layer_idx) {
+	// Extract the number from the layer name
+	var patterns = [
+		/skip_proj_dense_(\d+)/,
+		/skip_proj_conv2d_(\d+)/,
+		/skip_proj_conv1d_(\d+)/,
+		/skip_add_(\d+)/,
+		/skip_scale_(\d+)/,
+		/skip_proj_(\d+)/
+	];
+
+	var extracted_idx = null;
+	for (var p = 0; p < patterns.length; p++) {
+		var match = layer_name.match(patterns[p]);
+		if (match) {
+			extracted_idx = parseInt(match[1], 10);
+			break;
+		}
+	}
+
+	if (extracted_idx === null) return false;
+
+	// The extracted_idx is the layer_idx used in apply_skip_connection(),
+	// which is the gui_layer_idx (the index among non-skip layers).
+	// This is because in model.js, the skip connection is applied using
+	// the loop counter that skips internal layers.
+	// 
+	// BUT if apply_skip_connection uses the raw model layer index,
+	// we need to map it back. Let's check both:
+
+	// Direct match (if apply_skip_connection uses gui_layer_idx)
+	if (extracted_idx === gui_layer_idx) return true;
+
+	// Mapped match (if apply_skip_connection uses model layer index)
+	// Convert gui_layer_idx to model layer index
+	if (model && model.layers) {
+		var gui_count = 0;
+		for (var i = 0; i < model.layers.length; i++) {
+			var lname = model.layers[i].name || "";
+			if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) {
+				continue;
+			}
+			if (gui_count === gui_layer_idx) {
+				// The model layer index for this gui_layer_idx is 'i'
+				if (extracted_idx === i) return true;
+				break;
+			}
+			gui_count++;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -1744,45 +2550,45 @@ function _skip_proj_belongs_to_layer(layer_name, layer_idx) {
  * Respects max_nr_cols_rows for truncation.
  */
 function _format_skip_kernel_rows(kernel) {
-    var max_vals = get_max_nr_cols_rows();
-    var shape = get_shape_from_array(kernel);
+	var max_vals = get_max_nr_cols_rows();
+	var shape = get_shape_from_array(kernel);
 
-    if (shape.length === 1) {
-        // 1D kernel (e.g., for 1x1 conv or single-dim projection)
-        var truncated = kernel.slice(0, max_vals);
-        var row_str = truncated.join(" & ");
-        if (kernel.length > max_vals) {
-            row_str += " & \\cdots";
-        }
-        return row_str;
-    }
+	if (shape.length === 1) {
+		// 1D kernel (e.g., for 1x1 conv or single-dim projection)
+		var truncated = kernel.slice(0, max_vals);
+		var row_str = truncated.join(" & ");
+		if (kernel.length > max_vals) {
+			row_str += " & \\cdots";
+		}
+		return row_str;
+	}
 
-    // 2D kernel
-    var rows = [];
-    var num_rows = Math.min(kernel.length, max_vals);
-    var num_cols = kernel[0] ? Math.min(kernel[0].length, max_vals) : 0;
+	// 2D kernel
+	var rows = [];
+	var num_rows = Math.min(kernel.length, max_vals);
+	var num_cols = kernel[0] ? Math.min(kernel[0].length, max_vals) : 0;
 
-    for (var i = 0; i < num_rows; i++) {
-        var row = kernel[i].slice(0, num_cols);
-        var row_str = row.join(" & ");
-        if (kernel[i].length > num_cols) {
-            row_str += " & \\cdots";
-        }
-        rows.push(row_str);
-    }
+	for (var i = 0; i < num_rows; i++) {
+		var row = kernel[i].slice(0, num_cols);
+		var row_str = row.join(" & ");
+		if (kernel[i].length > num_cols) {
+			row_str += " & \\cdots";
+		}
+		rows.push(row_str);
+	}
 
-    if (kernel.length > max_vals) {
-        var vdots_row = [];
-        for (var c = 0; c < num_cols; c++) {
-            vdots_row.push("\\vdots");
-        }
-        if (kernel[0] && kernel[0].length > num_cols) {
-            vdots_row.push("\\ddots");
-        }
-        rows.push(vdots_row.join(" & "));
-    }
+	if (kernel.length > max_vals) {
+		var vdots_row = [];
+		for (var c = 0; c < num_cols; c++) {
+			vdots_row.push("\\vdots");
+		}
+		if (kernel[0] && kernel[0].length > num_cols) {
+			vdots_row.push("\\ddots");
+		}
+		rows.push(vdots_row.join(" & "));
+	}
 
-    return rows.join(" \\\\\n");
+	return rows.join(" \\\\\n");
 }
 
 function get_alpha_dropout_latex (layer_idx) {
@@ -2061,93 +2867,93 @@ function show_could_not_get_msg (name) {
 }
 
 function get_conv2d_latex(layer_idx, _af, layer_has_bias) {
-    if (!_math_interactive_mode) {
-        return _get_conv2d_latex_static(layer_idx, _af, layer_has_bias);
-    }
+	if (!_math_interactive_mode) {
+		return _get_conv2d_latex_static(layer_idx, _af, layer_has_bias);
+	}
 
-    // Return a special marker that model_to_latex will detect
-    return "%%INTERACTIVE_CONV2D_" + layer_idx + "%%";
+	// Return a special marker that model_to_latex will detect
+	return "%%INTERACTIVE_CONV2D_" + layer_idx + "%%";
 }
 
 // Rename the original to _get_conv2d_latex_static
 function _get_conv2d_latex_static(layer_idx, _af, layer_has_bias) {
-    var str = "";
-    str += "\\begin{matrix}";
-    str += add_activation_function_to_latex(_af, "begin");
-    str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+	var str = "";
+	str += "\\begin{matrix}";
+	str += add_activation_function_to_latex(_af, "begin");
+	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
-    var layer_bias_string = "";
+	var layer_bias_string = "";
 
-    if (layer_has_bias) {
-        str += " + \\text{bias}(k)";
-        var bias_val = "";
-        try {
-            bias_val = null;
+	if (layer_has_bias) {
+		str += " + \\text{bias}(k)";
+		var bias_val = "";
+		try {
+			bias_val = null;
 
-            if (
-                model &&
-                Array.isArray(model.layers) &&
-                model.layers[layer_idx] &&
-                model.layers[layer_idx].bias &&
-                typeof model.layers[layer_idx].bias.val !== "undefined" &&
-                !model.layers[layer_idx].bias.disposed
-            ) {
-                bias_val = model.layers[layer_idx].bias.val;
-            }
+			if (
+				model &&
+				Array.isArray(model.layers) &&
+				model.layers[layer_idx] &&
+				model.layers[layer_idx].bias &&
+				typeof model.layers[layer_idx].bias.val !== "undefined" &&
+				!model.layers[layer_idx].bias.disposed
+			) {
+				bias_val = model.layers[layer_idx].bias.val;
+			}
 
-            if (bias_val) {
-                let synced_bias = tidy(() => { return array_sync(bias_val, true); });
-                if (synced_bias) {
-                    var bias_shape = get_shape_from_array(synced_bias);
-                    layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
-                }
-            } else {
-                show_could_not_get_msg("bias");
-            }
-        } catch (e) {
-            show_could_not_get_msg("bias");
-        }
-    }
+			if (bias_val) {
+				let synced_bias = tidy(() => { return array_sync(bias_val, true); });
+				if (synced_bias) {
+					var bias_shape = get_shape_from_array(synced_bias);
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
+				}
+			} else {
+				show_could_not_get_msg("bias");
+			}
+		} catch (e) {
+			show_could_not_get_msg("bias");
+		}
+	}
 
-    str += add_activation_function_to_latex(_af, "end");
+	str += add_activation_function_to_latex(_af, "end");
 
-    str += " \\\\";
+	str += " \\\\";
 
-    try {
-        var this_kernel_val = null;
-        if (
-            model &&
-            Array.isArray(model.layers) &&
-            model.layers[layer_idx] &&
-            model.layers[layer_idx].kernel &&
-            typeof model.layers[layer_idx].kernel.val !== "undefined" &&
-            !model.layers[layer_idx].kernel.disposed
-        ) {
-            this_kernel_val = model.layers[layer_idx].kernel.val;
-        }
+	try {
+		var this_kernel_val = null;
+		if (
+			model &&
+			Array.isArray(model.layers) &&
+			model.layers[layer_idx] &&
+			model.layers[layer_idx].kernel &&
+			typeof model.layers[layer_idx].kernel.val !== "undefined" &&
+			!model.layers[layer_idx].kernel.disposed
+		) {
+			this_kernel_val = model.layers[layer_idx].kernel.val;
+		}
 
-        if (this_kernel_val) {
-            let synced_kernel = array_sync(this_kernel_val, true);
-            if (synced_kernel) {
-                var kernel_shape = get_shape_from_array(synced_kernel);
-                str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel);
-            } else {
-                show_could_not_get_msg("kernel");
-            }
-        } else {
-            show_could_not_get_msg("kernel");
-        }
-    } catch (e) {
-        show_could_not_get_msg("kernel");
-    }
+		if (this_kernel_val) {
+			let synced_kernel = array_sync(this_kernel_val, true);
+			if (synced_kernel) {
+				var kernel_shape = get_shape_from_array(synced_kernel);
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel);
+			} else {
+				show_could_not_get_msg("kernel");
+			}
+		} else {
+			show_could_not_get_msg("kernel");
+		}
+	} catch (e) {
+		show_could_not_get_msg("kernel");
+	}
 
-    if (layer_bias_string) {
-        str += ` \\\\ \n${layer_bias_string}`;
-    }
+	if (layer_bias_string) {
+		str += ` \\\\ \n${layer_bias_string}`;
+	}
 
-    str += "\\end{matrix}";
+	str += "\\end{matrix}";
 
-    return str;
+	return str;
 }
 
 function get_upsampling2d_latex(layer_idx) {
@@ -2266,42 +3072,42 @@ function wrap_with_activation_function (layer_idx, layer_str) {
 }
 
 function get_dense_latex(layer_idx, layer_data, colors, input_layer) {
-    if (!_math_interactive_mode) {
-        return _get_dense_latex_static(layer_idx, layer_data, colors, input_layer);
-    }
+	if (!_math_interactive_mode) {
+		return _get_dense_latex_static(layer_idx, layer_data, colors, input_layer);
+	}
 
-    // Return a special marker that model_to_latex will detect
-    return "%%INTERACTIVE_DENSE_" + layer_idx + "%%";
+	// Return a special marker that model_to_latex will detect
+	return "%%INTERACTIVE_DENSE_" + layer_idx + "%%";
 }
 
 // Rename the original to _get_dense_latex_static
 function _get_dense_latex_static(layer_idx, layer_data, colors, input_layer) {
-    var str = "";
-    try {
-        var this_layer_data_kernel = layer_data[layer_idx].kernel;
-        if (this_layer_data_kernel.length) {
-            var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
-            this_layer_data_kernel = replace_non_numbers_with_matching_latex(this_layer_data_kernel);
-            var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
-            var right_side = get_right_side(layer_idx, input_layer);
-            str += a_times_b(first_part, right_side);
-            try {
-                if (layer_data[layer_idx] && "bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
-                    str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
-                }
-            } catch (e) {
-                err(e);
-            }
-        } else {
-            return "\\text{" + language[lang]["invalid_layer_settings_cannot_render"] + "}";
-        }
-    } catch (e) {
-        wrn("Caught error " + e);
-        if (e && e.stack) {
-            err("Full stack:\n" + e.stack);
-        }
-    }
-    return str;
+	var str = "";
+	try {
+		var this_layer_data_kernel = layer_data[layer_idx].kernel;
+		if (this_layer_data_kernel.length) {
+			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
+			this_layer_data_kernel = replace_non_numbers_with_matching_latex(this_layer_data_kernel);
+			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
+			var right_side = get_right_side(layer_idx, input_layer);
+			str += a_times_b(first_part, right_side);
+			try {
+				if (layer_data[layer_idx] && "bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
+					str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
+				}
+			} catch (e) {
+				err(e);
+			}
+		} else {
+			return "\\text{" + language[lang]["invalid_layer_settings_cannot_render"] + "}";
+		}
+	} catch (e) {
+		wrn("Caught error " + e);
+		if (e && e.stack) {
+			err("Full stack:\n" + e.stack);
+		}
+	}
+	return str;
 }
 
 function get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data) {
@@ -2632,150 +3438,150 @@ function fmt_shape(shape) {
 }
 
 function latex_blocks() {
-    if (!model || !Array.isArray(model?.layers)) {
-        return "\\text{No model or no layers}";
-    }
+	if (!model || !Array.isArray(model?.layers)) {
+		return "\\text{No model or no layers}";
+	}
 
-    const blocks = model.layers
-        .filter(layer => {
-            // Skip internal skip-connection layers
-            var lname = layer.name || "";
-            if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) {
-                return false;
-            }
-            return true;
-        })
-        .map(layer => {
-            if (!layer) {
-                return "\\text{Invalid layer}";
-            }
+	const blocks = model.layers
+		.filter(layer => {
+			// Skip internal skip-connection layers
+			var lname = layer.name || "";
+			if (lname.includes("skip_proj_") || lname.includes("skip_add_") || lname.includes("skip_scale_")) {
+				return false;
+			}
+			return true;
+		})
+		.map(layer => {
+			if (!layer) {
+				return "\\text{Invalid layer}";
+			}
 
-            const io = extract_layer_io(layer) || {};
+			const io = extract_layer_io(layer) || {};
 
-            const top = `\\text{Input: } ${fmt_shape(io.input)}`;
-            const bottom = `\\text{Output: } ${fmt_shape(io.output)}`;
+			const top = `\\text{Input: } ${fmt_shape(io.input)}`;
+			const bottom = `\\text{Output: } ${fmt_shape(io.output)}`;
 
-            const matrix = `
+			const matrix = `
 \\begin{matrix}
-        ${top} \\\\
-        ${bottom}
+	${top} \\\\
+	${bottom}
 \\end{matrix}
     `.trim();
 
-            var lname = typeof layer.name === "string" ? layer.name : "layer";
+			var lname = typeof layer.name === "string" ? layer.name : "layer";
 
-            // Escape underscores for LaTeX to prevent "double subscript" errors
-            lname = lname.replace(/_/g, "\\_");
+			// Escape underscores for LaTeX to prevent "double subscript" errors
+			lname = lname.replace(/_/g, "\\_");
 
-            return `
+			return `
 \\underbrace{
-        ${matrix}
+	${matrix}
 }_{\\mathrm{${lname}}}
     `.trim();
-        });
+		});
 
-    if (blocks.length === 0) {
-        return "\\text{No layers found}";
-    }
+	if (blocks.length === 0) {
+		return "\\text{No layers found}";
+	}
 
-    const str = "<h2>Model-Shapes:</h2>\n<span class='temml_me'>" + blocks.join(" \\rightarrow ") + "</span>";
+	const str = "<h2>Model-Shapes:</h2>\n<span class='temml_me'>" + blocks.join(" \\rightarrow ") + "</span>";
 
-    return str;
+	return str;
 }
 
 function _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors, input_layer) {
-    var container = document.getElementById(container_id);
-    if (!container) return;
+	var container = document.getElementById(container_id);
+	if (!container) return;
 
-    var kernel = layer_data[layer_idx].kernel;
-    var bias = layer_data[layer_idx].bias;
-    var decimals = get_dec_points_math_mode();
-    var max_rows = Math.min(kernel.length, get_max_nr_cols_rows());
-    var max_cols = Math.min(kernel[0] ? kernel[0].length : 1, get_max_nr_cols_rows());
+	var kernel = layer_data[layer_idx].kernel;
+	var bias = layer_data[layer_idx].bias;
+	var decimals = get_dec_points_math_mode();
+	var max_rows = Math.min(kernel.length, get_max_nr_cols_rows());
+	var max_cols = Math.min(kernel[0] ? kernel[0].length : 1, get_max_nr_cols_rows());
 
-    // Register editables
-    for (var i = 0; i < kernel.length; i++) {
-        for (var j = 0; j < kernel[i].length; j++) {
-            (function(li, row, col) {
-                var eid = "L" + li + "_kernel_" + row + "_" + col;
-                if (!math_find_editable(eid)) {
-                    math_register_editable(eid, function() { return layer_data[li].kernel[row][col]; }, function(v) { layer_data[li].kernel[row][col] = v; _math_apply_weight_change_from_layer_data(li, "kernel", layer_data[li].kernel); }, -10, 10, "Layer " + li + " kernel[" + row + "][" + col + "]", { decimals: decimals });
-                }
-            })(layer_idx, i, j);
-        }
-    }
+	// Register editables
+	for (var i = 0; i < kernel.length; i++) {
+		for (var j = 0; j < kernel[i].length; j++) {
+			(function(li, row, col) {
+				var eid = "L" + li + "_kernel_" + row + "_" + col;
+				if (!math_find_editable(eid)) {
+					math_register_editable(eid, function() { return layer_data[li].kernel[row][col]; }, function(v) { layer_data[li].kernel[row][col] = v; _math_apply_weight_change_from_layer_data(li, "kernel", layer_data[li].kernel); }, -10, 10, "Layer " + li + " kernel[" + row + "][" + col + "]", { decimals: decimals });
+				}
+			})(layer_idx, i, j);
+		}
+	}
 
-    if (bias && bias.length) {
-        for (var b = 0; b < bias.length; b++) {
-            (function(li, idx) {
-                var eid = "L" + li + "_bias_" + idx;
-                if (!math_find_editable(eid)) {
-                    math_register_editable(eid, function() { return layer_data[li].bias[idx]; }, function(v) { layer_data[li].bias[idx] = v; _math_apply_weight_change_from_layer_data(li, "bias", layer_data[li].bias); }, -10, 10, "Layer " + li + " bias[" + idx + "]", { decimals: decimals });
-                }
-            })(layer_idx, b);
-        }
-    }
+	if (bias && bias.length) {
+		for (var b = 0; b < bias.length; b++) {
+			(function(li, idx) {
+				var eid = "L" + li + "_bias_" + idx;
+				if (!math_find_editable(eid)) {
+					math_register_editable(eid, function() { return layer_data[li].bias[idx]; }, function(v) { layer_data[li].bias[idx] = v; _math_apply_weight_change_from_layer_data(li, "bias", layer_data[li].bias); }, -10, 10, "Layer " + li + " bias[" + idx + "]", { decimals: decimals });
+				}
+			})(layer_idx, b);
+		}
+	}
 
-    // Build tokens with COMPLETE LaTeX fragments
-    var tokens = [];
+	// Build tokens with COMPLETE LaTeX fragments
+	var tokens = [];
 
-    // Build the entire kernel matrix as one LaTeX string with colored numbers
-    var kernel_latex = "\\underbrace{\\begin{pmatrix}\n";
-    var kernel_editables = [];
+	// Build the entire kernel matrix as one LaTeX string with colored numbers
+	var kernel_latex = "\\underbrace{\\begin{pmatrix}\n";
+	var kernel_editables = [];
 
-    for (var row = 0; row < max_rows; row++) {
-        var row_parts = [];
-        for (var col = 0; col < max_cols; col++) {
-            var eid = "L" + layer_idx + "_kernel_" + row + "_" + col;
-            var ed = math_find_editable(eid);
-            var val = ed ? ed.get().toFixed(decimals) : "0";
-            row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
-            kernel_editables.push({ eid: eid, value: val, label: "w" + row + "," + col });
-        }
-        if (kernel[row] && kernel[row].length > max_cols) {
-            row_parts.push("\\cdots");
-        }
-        kernel_latex += row_parts.join(" & ");
-        if (row < max_rows - 1) kernel_latex += " \\\\\n";
-    }
-    if (kernel.length > max_rows) {
-        kernel_latex += " \\\\ \\vdots & \\ddots";
-    }
-    kernel_latex += "\n\\end{pmatrix}}_{\\text{Weights}^{" + array_size(kernel).join("\\times") + "}}";
+	for (var row = 0; row < max_rows; row++) {
+		var row_parts = [];
+		for (var col = 0; col < max_cols; col++) {
+			var eid = "L" + layer_idx + "_kernel_" + row + "_" + col;
+			var ed = math_find_editable(eid);
+			var val = ed ? ed.get().toFixed(decimals) : "0";
+			row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
+			kernel_editables.push({ eid: eid, value: val, label: "w" + row + "," + col });
+		}
+		if (kernel[row] && kernel[row].length > max_cols) {
+			row_parts.push("\\cdots");
+		}
+		kernel_latex += row_parts.join(" & ");
+		if (row < max_rows - 1) kernel_latex += " \\\\\n";
+	}
+	if (kernel.length > max_rows) {
+		kernel_latex += " \\\\ \\vdots & \\ddots";
+	}
+	kernel_latex += "\n\\end{pmatrix}}_{\\text{Weights}^{" + array_size(kernel).join("\\times") + "}}";
 
-    // Right side (input or previous layer)
-    var right_side;
-    if (layer_idx === 0) {
-        right_side = array_to_latex(input_layer, "Input");
-    } else {
-        right_side = _get_h(Math.max(0, layer_idx - 1));
-    }
+	// Right side (input or previous layer)
+	var right_side;
+	if (layer_idx === 0) {
+		right_side = array_to_latex(input_layer, "Input");
+	} else {
+		right_side = _get_h(Math.max(0, layer_idx - 1));
+	}
 
-    var full_latex = kernel_latex + " \\times " + right_side;
-    var all_editables = kernel_editables.slice();
+	var full_latex = kernel_latex + " \\times " + right_side;
+	var all_editables = kernel_editables.slice();
 
-    // Bias
-    if (bias && bias.length) {
-        var bias_latex = " + \\underbrace{\\begin{pmatrix}\n";
-        var max_bias = Math.min(bias.length, get_max_nr_cols_rows());
-        var bias_parts = [];
-        for (var bi = 0; bi < max_bias; bi++) {
-            var beid = "L" + layer_idx + "_bias_" + bi;
-            var bed = math_find_editable(beid);
-            var bval = bed ? bed.get().toFixed(decimals) : "0";
-            bias_parts.push("\\textcolor{#53d8fb}{" + bval + "}");
-            all_editables.push({ eid: beid, value: bval, label: "b" + bi });
-        }
-        if (bias.length > max_bias) {
-            bias_parts.push("\\vdots");
-        }
-        bias_latex += bias_parts.join(" \\\\\n");
-        bias_latex += "\n\\end{pmatrix}}_{\\text{Bias}}";
-        full_latex += bias_latex;
-    }
+	// Bias
+	if (bias && bias.length) {
+		var bias_latex = " + \\underbrace{\\begin{pmatrix}\n";
+		var max_bias = Math.min(bias.length, get_max_nr_cols_rows());
+		var bias_parts = [];
+		for (var bi = 0; bi < max_bias; bi++) {
+			var beid = "L" + layer_idx + "_bias_" + bi;
+			var bed = math_find_editable(beid);
+			var bval = bed ? bed.get().toFixed(decimals) : "0";
+			bias_parts.push("\\textcolor{#53d8fb}{" + bval + "}");
+			all_editables.push({ eid: beid, value: bval, label: "b" + bi });
+		}
+		if (bias.length > max_bias) {
+			bias_parts.push("\\vdots");
+		}
+		bias_latex += bias_parts.join(" \\\\\n");
+		bias_latex += "\n\\end{pmatrix}}_{\\text{Bias}}";
+		full_latex += bias_latex;
+	}
 
-    // Render as one complete LaTeX string, then replace colored numbers with editables
-    el_render_single_latex_with_editables(container, full_latex, all_editables);
+	// Render as one complete LaTeX string, then replace colored numbers with editables
+	el_render_single_latex_with_editables(container, full_latex, all_editables);
 }
 
 /**
@@ -2783,74 +3589,74 @@ function _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors,
  * colored numbers interactive.
  */
 function el_render_single_latex_with_editables(container, latex, editables) {
-    container.innerHTML = "";
+	container.innerHTML = "";
 
-    var wrapper = document.createElement("div");
-    wrapper.className = "math-hybrid-rendered";
+	var wrapper = document.createElement("div");
+	wrapper.className = "math-hybrid-rendered";
 
-    try {
-        wrapper.innerHTML = temml.renderToString(latex, { displayMode: true });
-    } catch (err) {
-        console.error("[el_render_single_latex_with_editables] Temml error:", err);
-        wrapper.innerHTML = "<span style='color:#e94560;font-size:0.85em;'>ParseError: " + 
-            err.message + "</span><br><code style='font-size:0.7em;color:#888;'>" + 
-            latex.substring(0, 200) + "...</code>";
-        container.appendChild(wrapper);
-        return;
-    }
+	try {
+		wrapper.innerHTML = temml.renderToString(latex, { displayMode: true });
+	} catch (err) {
+		console.error("[el_render_single_latex_with_editables] Temml error:", err);
+		wrapper.innerHTML = "<span style='color:#e94560;font-size:0.85em;'>ParseError: " + 
+			err.message + "</span><br><code style='font-size:0.7em;color:#888;'>" + 
+			latex.substring(0, 200) + "...</code>";
+		container.appendChild(wrapper);
+		return;
+	}
 
-    container.appendChild(wrapper);
+	container.appendChild(wrapper);
 
-    // Post-process: find colored spans and make them interactive
-    _replace_colored_spans_with_editables(wrapper, editables);
+	// Post-process: find colored spans and make them interactive
+	_replace_colored_spans_with_editables(wrapper, editables);
 }
 
 async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
-    if(!(
-        input_shape_is_image(is_from_webcam) &&
-        $("#show_grad_cam").is(":checked") &&
-        !started_training &&
-        (await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
-    ) {
-        return;
-    }
+	if(!(
+		input_shape_is_image(is_from_webcam) &&
+		$("#show_grad_cam").is(":checked") &&
+		!started_training &&
+		(await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
+	) {
+		return;
+	}
 
-    warn_if_tensor_is_disposed(predictions_tensor);
-    var strongest_category = get_index_of_highest_category(predictions_tensor);
+	warn_if_tensor_is_disposed(predictions_tensor);
+	var strongest_category = get_index_of_highest_category(predictions_tensor);
 
-    var original_disable_layer_debuggers = disable_layer_debuggers;
-    disable_layer_debuggers = 1;
-    var heatmap = await grad_class_activation_map(model, predict_data, strongest_category);
-    disable_layer_debuggers = original_disable_layer_debuggers;
+	var original_disable_layer_debuggers = disable_layer_debuggers;
+	disable_layer_debuggers = 1;
+	var heatmap = await grad_class_activation_map(model, predict_data, strongest_category);
+	disable_layer_debuggers = original_disable_layer_debuggers;
 
-    if(heatmap) {
-        var canvas = $("#grad_cam_heatmap")[0];
-        var img = array_sync(heatmap)[0];
+	if(heatmap) {
+		var canvas = $("#grad_cam_heatmap")[0];
+		var img = array_sync(heatmap)[0];
 
-        var max_height_width = Math.max(150, Math.min(width, Math.floor(window.innerWidth / 5)));
+		var max_height_width = Math.max(150, Math.min(width, Math.floor(window.innerWidth / 5)));
 
-        var shape = get_shape_from_array(img);
-        if(shape.length != 3) {
-            $("#grad_cam_heatmap").hide();
-        } else {
-            var _height = shape[0];
-            var _width = shape[1];
+		var shape = get_shape_from_array(img);
+		if(shape.length != 3) {
+			$("#grad_cam_heatmap").hide();
+		} else {
+			var _height = shape[0];
+			var _width = shape[1];
 
-            var largest = Math.max(_height, _width);
+			var largest = Math.max(_height, _width);
 
-            var pxsz = 1;
+			var pxsz = 1;
 
-            while ((pxsz * largest) < max_height_width) {
-                pxsz += 1;
-            }
+			while ((pxsz * largest) < max_height_width) {
+				pxsz += 1;
+			}
 
-            scaleNestedArray(img);
-            var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
-            $("#grad_cam_heatmap").show();
-        }
-    } else {
-        $("#grad_cam_heatmap").hide();
-    }
+			scaleNestedArray(img);
+			var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
+			$("#grad_cam_heatmap").show();
+		}
+	} else {
+		$("#grad_cam_heatmap").hide();
+	}
 
-    await dispose(heatmap);
+	await dispose(heatmap);
 }

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weinherstellung Interaktiv – Theorie & Praxis</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
+            color: #f0e6ff;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin: 20px 0;
+            background: linear-gradient(90deg, #ff6b9d, #c44dff, #6b9dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: clamp(1.1rem, 3vw, 1.6rem);
+            margin: 20px 0 10px;
+            color: #c44dff;
+            border-bottom: 2px solid #c44dff33;
+            padding-bottom: 5px;
+        }
+        h3 { font-size: 1.1rem; color: #ff6b9d; margin: 15px 0 8px; }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(196,77,255,0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            backdrop-filter: blur(10px);
+        }
+        .card:hover { border-color: rgba(196,77,255,0.5); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        label { display: block; margin: 8px 0 4px; font-size: 0.9rem; color: #b8a0d4; }
+        input[type="range"] {
+            width: 100%; height: 6px; border-radius: 3px;
+            background: #3d2066; outline: none; -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px;
+            border-radius: 50%; background: #c44dff; cursor: pointer;
+        }
+        input[type="number"], select {
+            width: 100%; padding: 8px 12px; border-radius: 8px;
+            border: 1px solid #5a3d7a; background: #2d1b4e; color: #f0e6ff;
+            font-size: 1rem;
+        }
+        .output {
+            background: rgba(196,77,255,0.1); border-radius: 8px;
+            padding: 12px; margin: 10px 0; font-size: 0.95rem;
+            border-left: 3px solid #c44dff;
+        }
+        .output strong { color: #ff6b9d; }
+        .info-box {
+            background: rgba(107,157,255,0.1); border-radius: 8px;
+            padding: 12px; margin: 10px 0; font-size: 0.85rem;
+            border-left: 3px solid #6b9dff; color: #a8c8ff;
+        }
+        .warning-box {
+            background: rgba(255,107,157,0.1); border-radius: 8px;
+            padding: 12px; margin: 10px 0; font-size: 0.85rem;
+            border-left: 3px solid #ff6b9d; color: #ffb8d4;
+        }
+        .btn {
+            background: linear-gradient(135deg, #c44dff, #6b9dff);
+            border: none; color: white; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-size: 1rem;
+            margin: 5px; transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn:active { transform: scale(0.95); }
+        canvas { width: 100% !important; height: auto !important; border-radius: 8px; }
+        .plotly-chart { width: 100%; min-height: 300px; border-radius: 8px; }
+        .step-indicator {
+            display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0;
+        }
+        .step {
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem;
+            background: #3d2066; border: 1px solid #5a3d7a;
+        }
+        .step.active { background: #c44dff; border-color: #c44dff; }
+        .tab-container { display: flex; flex-wrap: wrap; gap: 5px; margin: 15px 0; }
+        .tab {
+            padding: 8px 16px; border-radius: 8px 8px 0 0; cursor: pointer;
+            background: #2d1b4e; border: 1px solid #5a3d7a; border-bottom: none;
+            font-size: 0.9rem; color: #b8a0d4; transition: all 0.3s;
+        }
+        .tab.active { background: #c44dff; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .citation { font-size: 0.75rem; color: #8a6baa; font-style: italic; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.85rem; }
+        th, td { padding: 8px; border: 1px solid #5a3d7a; text-align: center; }
+        th { background: #3d2066; color: #c44dff; }
+        @media (max-width: 600px) {
+            .card { padding: 12px; }
+            .grid { grid-template-columns: 1fr; }
+            .tab { padding: 6px 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🍇 Weinherstellung Interaktiv</h1>
+    <p style="text-align:center; color:#b8a0d4; margin-bottom:20px;">
+        Lerne die Wissenschaft und Praxis der Weinherstellung – von der Traube bis zur Flasche.
+    </p>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-container">
+        <div class="tab active" onclick="showTab('overview')">Übersicht</div>
+        <div class="tab" onclick="showTab('oechsle')">Mostgewicht & Zucker</div>
+        <div class="tab" onclick="showTab('acid')">Säure & pH</div>
+        <div class="tab" onclick="showTab('fermentation')">Gärung</div>
+        <div class="tab" onclick="showTab('so2')">SO₂ & Schwefelung</div>
+        <div class="tab" onclick="showTab('alcohol')">Alkohol & Promille</div>
+        <div class="tab" onclick="showTab('process')">Prozessübersicht</div>
+    </div>
+
+    <!-- TAB: Overview -->
+    <div id="tab-overview" class="tab-content active">
+        <div class="card">
+            <h2>🍷 Der Weinherstellungsprozess</h2>
+            <p>Wein entsteht durch alkoholische Gärung von Traubenmost. Hefepilze wandeln Zucker (Glucose) in Ethanol und CO₂ um.</p>
+            <div class="info-box">
+                <strong>Chemische Gleichung:</strong><br>
+                C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂ (exotherm)<br>
+                <span class="citation">Quelle: wine.pdf – Prinzip der alkoholischen Gärung</span>
+            </div>
+            <canvas id="processCanvas" width="800" height="400"></canvas>
+            <div class="step-indicator">
+                <div class="step active">1. Keltern</div>
+                <div class="step">2. Most prüfen</div>
+                <div class="step">3. Korrigieren</div>
+                <div class="step">4. Gärung</div>
+                <div class="step">5. Klärung</div>
+                <div class="step">6. Abfüllung</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Rotwein vs. Weißwein</h3>
+                <p><strong>Rotwein:</strong> Maische wird vergoren (Saft + Schalen + Kerne). Farbe kommt aus den Schalen. Gärtemperatur: ~20°C.</p>
+                <p><strong>Weißwein:</strong> Nur der Most (Saft) wird vergoren. Gärtemperatur: ~15°C.</p>
+                <div class="citation">Quellen: Wein Herstellung.pdf, wine.pdf, The-Home-Winemakers-Manual.pdf Kap. 1</div>
+            </div>
+            <div class="card">
+                <h3>Wichtige Messwerte</h3>
+                <table>
+                    <tr><th>Parameter</th><th>Weißwein</th><th>Rotwein</th></tr>
+                    <tr><td>Mostgewicht</td><td>80–85 °Oe</td><td>90–100 °Oe</td></tr>
+                    <tr><td>Säure</td><td>7–9 g/L</td><td>≤7 g/L</td></tr>
+                    <tr><td>Gärtemperatur</td><td>15°C</td><td>20°C</td></tr>
+                </table>
+                <div class="citation">Quelle: Wein Herstellung.pdf – Abschnitt B</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: Oechsle & Sugar -->
+    <div id="tab-oechsle" class="tab-content">
+        <div class="card">
+            <h2>⚖️ Mostgewicht (°Oechsle) & Zuckergehalt</h2>
+            <div class="info-box">
+                Grad Oechsle misst die Dichte des Mostes im Vergleich zu Wasser bei 20°C.<br>
+                Formel: <strong>n = 1000 × (ρ_Most – ρ_Wasser)</strong><br>
+                Aus dem Mostgewicht kann man den späteren Alkoholgehalt abschätzen.<br>
+                <span class="citation">Quelle: wine.pdf – Grad Oechsle Definition</span>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <label for="oechsle">Mostgewicht (°Oe): <span id="oechsleVal">80</span></label>
+                    <input type="range" id="oechsle" min="50" max="130" value="80" oninput="updateOechsle()">
+
+                    <label for="wineType">Weintyp:</label>
+                    <select id="wineType" onchange="updateOechsle()">
+                        <option value="white">Weißwein (Ziel: 80–85 °Oe)</option>
+                        <option value="red">Rotwein (Ziel: 90–100 °Oe)</option>
+                    </select>
+
+                    <label for="mostVolume">Mostmenge (Liter): <span id="mostVolVal">100</span></label>
+                    <input type="range" id="mostVolume" min="5" max="500" value="100" oninput="updateOechsle()">
+                </div>
+                <div>
+                    <div class="output" id="oechsleOutput"></div>
+                    <div class="output" id="sugarCorrection"></div>
+                </div>
+            </div>
+
+            <h3>Zuckeraufbesserung (Chaptalisierung)</h3>
+            <div class="info-box">
+                Pro fehlendes °Oe werden <strong>2,6 g Zucker pro Liter</strong> Most zugegeben.<br>
+                <span class="citation">Quelle: Wein Herstellung.pdf – Abschnitt C</span>
+            </div>
+            <div id="sugarChart" class="plotly-chart"></div>
+        </div>
+    </div>
+
+    <!-- TAB: Acid & pH -->
+    <div id="tab-acid" class="tab-content">
+        <div class="card">
+            <h2>🧪 Säuregehalt & pH-Wert</h2>
+            <div class="info-box">
+                Die Gesamtsäure bestimmt den sauren Geschmack des Weins. Der pH-Wert beeinflusst Farbe, Stabilität und SO₂-Wirksamkeit.<br>
+                Weinsäure ist die stärkste Weinsäure (~2,7× stärker als Apfelsäure).<br>
+                <span class="citation">Quellen: The-Home-Winemakers-Manual.pdf Kap. 5 & 6</span>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <label for="currentAcid">Aktuelle Säure (g/L): <span id="acidVal">5.0</span></label>
+                    <input type="range" id="currentAcid" min="3" max="15" step="0.5" value="5" oninput="updateAcid()">
+
+                    <label for="targetAcid">Zielsäure (g/L): <span id="targetAcidVal">7.0</span></label>
+                    <input type="range" id="targetAcid" min="5" max="10" step="0.5" value="7" oninput="updateAcid()">
+
+                    <label for="acidVolume">Mostmenge (Liter):</label>
+                    <input type="number" id="acidVolume" value="100" min="1" max="10000" onchange="updateAcid()">
+
+                    <label for="acidDirection">Korrekturrichtung:</label>
+                    <select id="acidDirection" onchange="updateAcid()">
+                        <option value="up">Aufsäuern (Zitronensäure)</option>
+                        <option value="down">Entsäuern (Weinkalk)</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="output" id="acidOutput"></div>
+                    <div class="warning-box" id="acidWarning" style="display:none;"></div>
+                </div>
+            </div>
+
+            <h3>pH-Wert und seine Auswirkungen</h3>
+            <div id="phChart" class="plotly-chart"></div>
+            <div class="info-box">
+                <strong>Niedrige pH-Werte (3.0–3.4):</strong> Mehr Farbe, bessere Stabilität, weniger Bakterien, SO₂ wirksamer.<br>
+                <strong>Hohe pH-Werte (3.6–4.0):</strong> Weniger Farbe, mehr Bakterien, mehr SO₂ nötig.<br>
+                <span class="citation">Quelle: The-Home-Winemakers-Manual.pdf Kap. 6, Tabelle 5</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: Fermentation -->
+    <div id="tab-fermentation" class="tab-content">
+        <div class="card">
+            <h2>🫧 Alkoholische Gärung</h2>
+            <div class="info-box">
+                Hefe (Saccharomyces cerevisiae) wandelt Glucose und Fructose in Ethanol und CO₂ um.<br>
+                Hefepilze sterben bei ~15–18 Vol% Alkohol ab.<br>
+                <span class="citation">Quellen: wine.pdf, Look Inside Beginners Guide.pdf Kap. 6</span>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <label for="startBrix">Start-Brix (Zuckergehalt): <span id="brixVal">23</span></label>
+                    <input type="range" id="startBrix" min="16" max="30" step="0.5" value="23" oninput="updateFermentation()">
+
+                    <label for="fermTemp">Gärtemperatur (°C): <span id="tempVal">20</span></label>
+                    <input type="range" id="fermTemp" min="10" max="35" value="20" oninput="updateFermentation()">
+
+                    <label for="fermDays">Gärdauer (Tage): <span id="daysVal">14</span></label>
+                    <input type="range" id="fermDays" min="3" max="60" value="14" oninput="updateFermentation()">
+                </div>
+                <div>
+                    <div class="output" id="fermOutput"></div>
+                </div>
+            </div>
+
+            <h3>Gärverlauf-Simulation</h3>
+            <div id="fermChart" class="plotly-chart"></div>
+
+            <h3>Farbextraktion bei Rotwein (Hautkontaktzeit)</h3>
+            <div id="extractionChart" class="plotly-chart"></div>
+            <div class="info-box">
+                >90% der Farbe wird in den ersten 4 Tagen extrahiert. Tannine steigen über 30 Tage weiter an.<br>
+                <span class="citation">Quelle: The-Home-Winemakers-Manual.pdf Kap. 14, Tabelle 12</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: SO2 -->
+    <div id="tab-so2" class="tab-content">
+        <div class="card">
+            <h2>🛡️ Schwefeldioxid (SO₂) – Schutz des Weins</h2>
+            <div class="info-box">
+                SO₂ schützt vor Oxidation, hemmt Bakterien und Wildhefen, und bindet Acetaldehyd.<br>
+                Nur die <strong>molekulare Form</strong> ist antimikrobiell wirksam. Deren Anteil hängt stark vom pH ab.<br>
+                <span class="citation">Quellen: The-Home-Winemakers-Manual.pdf Kap. 6 & 7, Look Inside Beginners Guide.pdf Kap. 5</span>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <label for="winePH">Wein-pH: <span id="phVal2">3.4</span></label>
+                    <input type="range" id="winePH" min="2.9" max="4.2" step="0.05" value="3.4" oninput="updateSO2()">
+
+                    <label for="freeSO2">Freies SO₂ (mg/L): <span id="so2Val">30</span></label>
+                    <input type="range" id="freeSO2" min="0" max="150" value="30" oninput="updateSO2()">
+
+                    <label for="so2Target">Ziel: Molekulares SO₂ (mg/L):</label>
+                    <select id="so2Target" onchange="updateSO2()">
+                        <option value="0.5">0.5 mg/L (Rotwein-Minimum)</option>
+                        <option value="0.8" selected>0.8 mg/L (Weißwein-Standard)</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="output" id="so2Output"></div>
+                </div>
+            </div>
+
+            <h3>Benötigtes freies SO₂ nach pH-Wert</h3>
+            <div id="so2Chart" class="plotly-chart"></div>
+
+            <h3>Kaliumdisulfit-Rechner</h3>
+            <div class="grid">
+                <div>
+                    <label for="kmsVolume">Weinmenge (Liter):</label>
+                    <input type="number" id="kmsVolume" value="100" min="1" max="10000" onchange="updateKMS()">
+                    <label for="kmsTarget">Gewünschte SO₂-Zugabe (mg/L):</label>
+                    <input type="number" id="kmsTarget" value="50" min="5" max="200" onchange="updateKMS()">
+                </div>
+                <div>
+                    <div class="output" id="kmsOutput"></div>
+                    <div class="info-box">
+                        10 g Kaliumdisulfit ergeben in 100 L Wein ca. 50 mg/L freie schweflige Säure.<br>
+                        Vor Flaschenfüllung: min. 50 mg/L freie schweflige Säure erforderlich.<br>
+                        <span class="citation">Quelle: Wein Herstellung.pdf – Abschnitt E</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: Alcohol & Promille -->
+    <div id="tab-alcohol" class="tab-content">
+        <div class="card">
+            <h2>🍺 Alkoholgehalt & Blutalkohol</h2>
+            <div class="info-box">
+                Ethanol (C₂H₅OH) – der trinkbare Alkohol. Siedetemperatur 78°C, gut wasserlöslich.<br>
+                Vollständige Verbrennung: C₂H₅OH + 3 O₂ → 2 CO₂ + 3 H₂O<br>
+                <span class="citation">Quelle: wine.pdf – Steckbrief Ethanol</span>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <h3>Promille-Rechner</h3>
+                    <label for="bodyWeight">Körpergewicht (kg):</label>
+                    <input type="number" id="bodyWeight" value="75" min="30" max="200" onchange="updatePromille()">
+                    <label for="gender">Geschlecht:</label>
+                    <select id="gender" onchange="updatePromille()">
+                        <option value="m">Mann (Faktor 0.7)</option>
+                        <option value="f">Frau (Faktor 0.6)</option>
+                    </select>
+                    <label for="drinkType">Getränk:</label>
+                    <select id="drinkType" onchange="updatePromille()">
+                        <option value="beer_small">Kleines Bier (0.33L, 4.5%)</option>
+                        <option value="beer_large">Großes Bier (0.5L, 4.5%)</option>
+                        <option value="wine" selected>Wein (0.1L, 11%)</option>
+                        <option value="whisky">Whisky (0.02L, 42%)</option>
+                    </select>
+                    <label for="drinkCount">Anzahl Gläser: <span id="drinkCountVal">2</span></label>
+                    <input type="range" id="drinkCount" min="1" max="15" value="2" oninput="updatePromille()">
+                </div>
+                <div>
+                    <div class="output" id="promilleOutput"></div>
+                    <div id="promilleEffect"></div>
+                </div>
+            </div>
+
+            <h3>Alkoholwirkung nach Promille</h3>
+            <div id="promilleChart" class="plotly-chart"></div>
+
+            <div class="warning-box">
+                <strong>⚠️ Gesundheitshinweis:</strong> Alkohol zerstört Nervenzellen, besonders im Gehirn. 
+                Langfristig drohen Leber-, Herz-Kreislauf-Erkrankungen und Sucht. 
+                Die tödliche Dosis für ein Kleinkind liegt bei nur 7–17 g reinem Alkohol (~1 Glas).<br>
+                <span class="citation">Quelle: wine.pdf – Physiologische Wirkung</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: Process Overview -->
+    <div id="tab-process" class="tab-content">
+        <div class="card">
+            <h2>📋 Vollständiger Prozess – Schritt für Schritt</h2>
+
+            <h3>Benötigte Materialien (pro 100 L Most)</h3>
+            <table>
+                <tr><th>Material</th><th>Menge</th><th>Zweck</th></tr>
+                <tr><td>Reinzuchthefe</td><td>15 g</td><td>Kontrollierte Gärung</td></tr>
+                <tr><td>Hefenährpräparat</td><td>15 g</td><td>Nährstoffe für Hefe</td></tr>
+                <tr><td>Kaliumdisulfit</td><td>~30 g (gesamt)</td><td>Schutz vor Bakterien/Oxidation</td></tr>
+                <tr><td>Pectinase</td><td>10 g/100kg</td><td>Bessere Saftausbeute</td></tr>
+                <tr><td>Bentonit</td><td>300 g</td><td>Eiweißentfernung (Schönung)</td></tr>
+            </table>
+            <div class="citation">Quelle: Wein Herstellung.pdf – Materialliste</div>
+
+            <h3>Prozessablauf Rotwein</h3>
+            <canvas id="processFlowCanvas" width="800" height="500"></canvas>
+
+            <h3>Zeitplan</h3>
+            <div id="timelineChart" class="plotly-chart"></div>
+
+            <h3>Wichtige Temperaturen</h3>
+            <table>
+                <tr><th>Vorgang</th><th>Temperatur</th></tr>
+                <tr><td>Weißwein-Gärung</td><td>15°C (ideal)</td></tr>
+                <tr><td>Rotwein-Gärung</td><td>20°C (ideal)</td></tr>
+                <tr><td>Korkenwässerung</td><td>max. 30°C</td></tr>
+                <tr><td>Hefen sterben ab</td><td>>35°C (94°F)</td></tr>
+                <tr><td>Kaltstabilisierung</td><td>~-3°C (27°F)</td></tr>
+            </table>
+            <div class="citation">Quellen: Wein Herstellung.pdf, The-Home-Winemakers-Manual.pdf Kap. 14</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Tab Navigation
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
+    // Trigger resize for plotly
+    window.dispatchEvent(new Event('resize'));
+}
+
+// ===== OECHSLE CALCULATOR =====
+function updateOechsle() {
+    const oe = parseFloat(document.getElementById('oechsle').value);
+    const type = document.getElementById('wineType').value;
+    const vol = parseFloat(document.getElementById('mostVolume').value);
+
+    document.getElementById('oechsleVal').textContent = oe;
+    document.getElementById('mostVolVal').textContent = vol;
+
+    // Approximate alcohol from Oechsle (rough: °Oe / 7.5 ≈ %vol)
+    const approxAlcohol = (oe / 7.5).toFixed(1);
+    // Sugar content approx: °Oe * 2.5 g/L (rough)
+    const sugarGL = (oe * 2.5).toFixed(0);
+
+    const target = type === 'white' ? 85 : 90;
+    const deficit = Math.max(0, target - oe);
+    const sugarNeeded = (deficit * 2.6 * vol / 1000).toFixed(1);
+    const sugarPerL = (deficit * 2.6).toFixed(1);
+
+    let status = '';
+    if (type === 'white') {
+        if (oe >= 80 && oe <= 85) status = '✅ Ideal für Weißwein';
+        else if (oe < 80) status = '⚠️ Zu niedrig – Aufbesserung nötig';
+        else status = '⚡ Hoch – ergibt kräftigeren Wein';
+    } else {
+        if (oe >= 90 && oe <= 100) status = '✅ Ideal für Rotwein';
+        else if (oe < 90) status = '⚠️ Zu niedrig – Aufbesserung nötig';
+        else status = '⚡ Sehr hoch – Spätlese/Auslese-Qualität';
+    }
+
+    document.getElementById('oechsleOutput').innerHTML = `
+        <strong>Mostgewicht:</strong> ${oe} °Oe<br>
+        <strong>Geschätzter Zuckergehalt:</strong> ~${sugarGL} g/L<br>
+        <strong>Geschätzter Alkoholgehalt:</strong> ~${approxAlcohol} Vol%<br>
+        <strong>Status:</strong> ${status}
+    `;
+
+    if (deficit > 0) {
+        document.getElementById('sugarCorrection').innerHTML = `
+            <strong>Aufbesserung nötig:</strong><br>
+            Fehlende °Oe: ${deficit}<br>
+            Zucker pro Liter: ${sugarPerL} g/L<br>
+            <strong>Gesamte Zuckermenge für ${vol} L: ${sugarNeeded} kg</strong><br>
+            <span class="citation">Formel: Fehlende °Oe × 2,6 g/L × Mostmenge (Quelle: Wein Herstellung.pdf – Abschnitt C)</span>
+        `;
+    } else {
+        document.getElementById('sugarCorrection').innerHTML = `
+            <strong>✅ Keine Aufbesserung nötig.</strong> Mostgewicht liegt im oder über dem Zielbereich.
+        `;
+    }
+
+    // Plotly chart: Sugar needed vs Oechsle
+    const oeValues = [];
+    const sugarValues = [];
+    const targetOe = type === 'white' ? 85 : 90;
+    for (let o = 50; o <= 130; o += 2) {
+        oeValues.push(o);
+        const def = Math.max(0, targetOe - o);
+        sugarValues.push((def * 2.6 * vol / 1000));
+    }
+
+    Plotly.newPlot('sugarChart', [{
+        x: oeValues, y: sugarValues, type: 'scatter', mode: 'lines+markers',
+        name: 'Zucker (kg)', line: { color: '#c44dff', width: 3 },
+        marker: { size: 4 }
+    }], {
+        title: `Benötigter Zucker für ${vol} L Most (Ziel: ${targetOe} °Oe)`,
+        xaxis: { title: 'Mostgewicht (°Oe)', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { title: 'Zucker (kg)', color: '#b8a0d4', gridcolor: '#3d2066' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' },
+        shapes: [{
+            type: 'line', x0: oe, x1: oe, y0: 0, y1: Math.max(...sugarValues),
+            line: { color: '#ff6b9d', width: 2, dash: 'dash' }
+        }]
+    }, { responsive: true });
+}
+
+// ===== ACID CALCULATOR =====
+function updateAcid() {
+    const current = parseFloat(document.getElementById('currentAcid').value);
+    const target = parseFloat(document.getElementById('targetAcid').value);
+    const vol = parseFloat(document.getElementById('acidVolume').value);
+    const direction = document.getElementById('acidDirection').value;
+
+    document.getElementById('acidVal').textContent = current.toFixed(1);
+    document.getElementById('targetAcidVal').textContent = target.toFixed(1);
+
+    let output = '';
+    let warning = '';
+
+    if (direction === 'up') {
+        const diff = Math.max(0, target - current);
+        const citricNeeded = diff * vol; // 1g Zitronensäure pro Liter pro fehlendes g/L
+        output = `
+            <strong>Aufsäuern mit Zitronensäure:</strong><br>
+            Differenz: ${diff.toFixed(1)} g/L<br>
+            <strong>Benötigte Zitronensäure: ${citricNeeded.toFixed(0)} g für ${vol} L</strong><br>
+            <span class="citation">Regel: 1 fehlendes g/L Säure = 1 g Zitronensäure pro Liter (Quelle: Wein Herstellung.pdf – Abschnitt C)</span>
+        `;
+    } else {
+        const diff = Math.max(0, current - target);
+        const limeNeeded = diff * 0.7 * vol; // 0.7g Weinkalk pro Liter pro g/L
+        output = `
+            <strong>Entsäuern mit Weinkalk:</strong><br>
+            Differenz: ${diff.toFixed(1)} g/L<br>
+            <strong>Benötigter Weinkalk: ${limeNeeded.toFixed(0)} g für ${vol} L</strong><br>
+            <span class="citation">Regel: 0,7 g Weinkalk pro Liter pro 1 g/L Entsäuerung (Quelle: Wein Herstellung.pdf – Abschnitt C)</span>
+        `;
+        if (target < 5) {
+            warning = '⚠️ Entsäuerung mit Weinkalk nur bis 5 g/L Gesamtsäure möglich! Darunter sind Spezialverfahren nötig.';
+        }
+    }
+
+    document.getElementById('acidOutput').innerHTML = output;
+    const warningEl = document.getElementById('acidWarning');
+    if (warning) { warningEl.style.display = 'block'; warningEl.innerHTML = warning; }
+    else { warningEl.style.display = 'none'; }
+
+    // pH Chart
+    const phValues = [2.9, 3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2];
+    const so2Needed = [8, 13, 16, 21, 26, 32, 40, 50, 63, 79, 99, 125, 157, 198];
+    const bacterialGrowth = phValues.map(p => Math.pow(10, (p - 3.0) * 2));
+    const colorIntensity = phValues.map(p => 100 - (p - 2.9) * 60);
+
+    Plotly.newPlot('phChart', [
+        { x: phValues, y: so2Needed, name: 'Benötigtes freies SO₂ (mg/L)', type: 'scatter', yaxis: 'y', line: { color: '#c44dff' } },
+        { x: phValues, y: colorIntensity, name: 'Farbintensität (%)', type: 'scatter', yaxis: 'y2', line: { color: '#ff6b9d' } }
+    ], {
+        title: 'pH-Wert: Auswirkungen auf SO₂-Bedarf und Farbe',
+        xaxis: { title: 'pH-Wert', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { title: 'Freies SO₂ (mg/L)', color: '#c44dff', gridcolor: '#3d2066' },
+        yaxis2: { title: 'Farbintensität (%)', overlaying: 'y', side: 'right', color: '#ff6b9d' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' }, legend: { x: 0, y: 1.15, orientation: 'h' }
+    }, { responsive: true });
+}
+
+// ===== FERMENTATION SIMULATOR =====
+function updateFermentation() {
+    const startBrix = parseFloat(document.getElementById('startBrix').value);
+    const temp = parseFloat(document.getElementById('fermTemp').value);
+    const days = parseInt(document.getElementById('fermDays').value);
+
+    document.getElementById('brixVal').textContent = startBrix;
+    document.getElementById('tempVal').textContent = temp;
+    document.getElementById('daysVal').textContent = days;
+
+    // Approximate alcohol from Brix: Brix * 0.55 ≈ %ABV
+    const potentialAlcohol = (startBrix * 0.55).toFixed(1);
+    // Fermentation speed factor based on temperature
+    const speedFactor = temp < 15 ? 0.5 : temp < 20 ? 0.8 : temp < 25 ? 1.0 : temp < 30 ? 1.2 : 0.9;
+    const estimatedDays = Math.round(startBrix / (1.5 * speedFactor));
+
+    let tempAdvice = '';
+    if (temp < 12) tempAdvice = '❄️ Sehr kalt – Gärung extrem langsam oder gestoppt';
+    else if (temp < 16) tempAdvice = '🧊 Kühl – ideal für aromatische Weißweine';
+    else if (temp < 22) tempAdvice = '✅ Optimal für die meisten Weine';
+    else if (temp < 30) tempAdvice = '🔥 Warm – schnelle Gärung, weniger Aromen';
+    else tempAdvice = '⚠️ GEFAHR: Hefe stirbt bei >35°C ab!';
+
+    document.getElementById('fermOutput').innerHTML = `
+        <strong>Start-Brix:</strong> ${startBrix}° → <strong>Potentieller Alkohol:</strong> ~${potentialAlcohol} Vol%<br>
+        <strong>Temperatur:</strong> ${temp}°C – ${tempAdvice}<br>
+        <strong>Geschätzte Gärdauer:</strong> ~${estimatedDays} Tage<br>
+        <span class="citation">Quellen: Look Inside Beginners Guide.pdf Kap. 6, The-Home-Winemakers-Manual.pdf Kap. 14</span>
+    `;
+
+    // Fermentation curve
+    const dayArr = [];
+    const brixArr = [];
+    const alcoholArr = [];
+    for (let d = 0; d <= days; d++) {
+        dayArr.push(d);
+        // Sigmoid-like fermentation curve
+        const progress = 1 / (1 + Math.exp(-(d - estimatedDays * 0.5) * (4 / estimatedDays)));
+        const currentBrix = startBrix * (1 - progress);
+        brixArr.push(Math.max(-2, currentBrix));
+        alcoholArr.push(progress * startBrix * 0.55);
+    }
+
+    Plotly.newPlot('fermChart', [
+        { x: dayArr, y: brixArr, name: 'Brix (Zucker)', type: 'scatter', line: { color: '#6b9dff', width: 3 } },
+        { x: dayArr, y: alcoholArr, name: 'Alkohol (Vol%)', type: 'scatter', yaxis: 'y2', line: { color: '#ff6b9d', width: 3 } }
+    ], {
+        title: `Gärverlauf-Simulation (${temp}°C)`,
+        xaxis: { title: 'Tage', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { title: 'Brix', color: '#6b9dff', gridcolor: '#3d2066' },
+        yaxis2: { title: 'Alkohol (Vol%)', overlaying: 'y', side: 'right', color: '#ff6b9d' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' }, legend: { x: 0, y: 1.15, orientation: 'h' }
+    }, { responsive: true });
+
+    // Color extraction chart
+    const extractDays = [0, 1, 2, 3, 4, 6, 8, 10, 15, 20, 30];
+    const colorExtract = [0, 0.5, 0.9, 1.3, 1.5, 1.5, 1.6, 1.4, 1.3, 1.2, 1.2];
+    const tanninExtract = [0, 0.8, 1.8, 2.0, 2.5, 2.6, 3.2, 3.4, 3.6, 3.7, 3.8];
+
+    Plotly.newPlot('extractionChart', [
+        { x: extractDays, y: colorExtract, name: 'Farbintensität', type: 'scatter', line: { color: '#ff6b9d', width: 3 } },
+        { x: extractDays, y: tanninExtract, name: 'Tannin (g/L)', type: 'scatter', line: { color: '#c44dff', width: 3 } }
+    ], {
+        title: 'Farb- & Tanninextraktion bei Rotwein (Cabernet Sauvignon)',
+        xaxis: { title: 'Hautkontakt (Tage)', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { title: 'Intensität / Konzentration', color: '#b8a0d4', gridcolor: '#3d2066' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' }, legend: { x: 0, y: 1.15, orientation: 'h' }
+    }, { responsive: true });
+}
+
+// ===== SO2 CALCULATOR =====
+function updateSO2() {
+    const pH = parseFloat(document.getElementById('winePH').value);
+    const freeSO2 = parseFloat(document.getElementById('freeSO2').value);
+    const targetMol = parseFloat(document.getElementById('so2Target').value);
+
+    document.getElementById('phVal2').textContent = pH.toFixed(2);
+    document.getElementById('so2Val').textContent = freeSO2;
+
+    // Calculate molecular SO2 percentage based on pH
+    // Approximate: % molecular = 100 / (1 + 10^(pH - 1.81))
+    const pctMolecular = 100 / (1 + Math.pow(10, pH - 1.81));
+    const molecularSO2 = (freeSO2 * pctMolecular / 100).toFixed(3);
+    const neededFreeSO2 = (targetMol / (pctMolecular / 100)).toFixed(1);
+
+    let status = '';
+    if (parseFloat(molecularSO2) >= targetMol) status = '✅ Ausreichend geschützt';
+    else status = '⚠️ Unzureichend – mehr SO₂ nötig!';
+
+    document.getElementById('so2Output').innerHTML = `
+        <strong>pH:</strong> ${pH.toFixed(2)}<br>
+        <strong>Freies SO₂:</strong> ${freeSO2} mg/L<br>
+        <strong>% als molekulares SO₂:</strong> ${pctMolecular.toFixed(2)}%<br>
+        <strong>Molekulares SO₂:</strong> ${molecularSO2} mg/L ${status}<br>
+        <strong>Benötigtes freies SO₂ für ${targetMol} mg/L molekular:</strong> ${neededFreeSO2} mg/L<br>
+        <span class="citation">Quellen: The-Home-Winemakers-Manual.pdf Kap. 6 & 7, Tabellen 7–9</span>
+    `;
+
+    // SO2 chart
+    const phArr = [];
+    const so2Arr05 = [];
+    const so2Arr08 = [];
+    for (let p = 2.9; p <= 4.2; p += 0.1) {
+        phArr.push(p.toFixed(1));
+        const pct = 100 / (1 + Math.pow(10, p - 1.81));
+        so2Arr05.push((0.5 / (pct / 100)).toFixed(1));
+        so2Arr08.push((0.8 / (pct / 100)).toFixed(1));
+    }
+
+    Plotly.newPlot('so2Chart', [
+        { x: phArr, y: so2Arr05, name: '0.5 mg/L molekular (Rotwein)', type: 'scatter', line: { color: '#ff6b9d', width: 3 } },
+        { x: phArr, y: so2Arr08, name: '0.8 mg/L molekular (Weißwein)', type: 'scatter', line: { color: '#6b9dff', width: 3 } },
+        { x: [pH.toFixed(1)], y: [freeSO2], name: 'Aktueller Wein', type: 'scatter', mode: 'markers', marker: { size: 14, color: '#c44dff', symbol: 'star' } }
+    ], {
+        title: 'Benötigtes freies SO₂ nach pH-Wert',
+        xaxis: { title: 'pH', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { title: 'Freies SO₂ (mg/L)', color: '#b8a0d4', gridcolor: '#3d2066', range: [0, 200] },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' }, legend: { x: 0, y: 1.2, orientation: 'h' }
+    }, { responsive: true });
+}
+
+function updateKMS() {
+    const vol = parseFloat(document.getElementById('kmsVolume').value);
+    const target = parseFloat(document.getElementById('kmsTarget').value);
+
+    // 10g KMS in 100L = 50 mg/L freie schweflige Säure
+    // So: grams = (target / 50) * 10 * (vol / 100)
+    const gramsKMS = (target / 50) * 10 * (vol / 100);
+
+    document.getElementById('kmsOutput').innerHTML = `
+        <strong>Kaliumdisulfit-Zugabe:</strong><br>
+        Für ${target} mg/L SO₂ in ${vol} L Wein:<br>
+        <strong>${gramsKMS.toFixed(1)} g Kaliumdisulfit</strong><br>
+        <span class="citation">Regel: 10 g KMS in 100 L = 50 mg/L (Quelle: Wein Herstellung.pdf – Abschnitt E)</span>
+    `;
+}
+
+// ===== PROMILLE CALCULATOR =====
+function updatePromille() {
+    const weight = parseFloat(document.getElementById('bodyWeight').value);
+    const gender = document.getElementById('gender').value;
+    const drinkType = document.getElementById('drinkType').value;
+    const count = parseInt(document.getElementById('drinkCount').value);
+
+    document.getElementById('drinkCountVal').textContent = count;
+
+    const factor = gender === 'm' ? 0.7 : 0.6;
+    const bodyFluid = weight * factor;
+
+    // Drink definitions: [volume_mL, vol%]
+    const drinks = {
+        'beer_small': [330, 4.5, 'Kleines Bier'],
+        'beer_large': [500, 4.5, 'Großes Bier'],
+        'wine': [100, 11, 'Wein'],
+        'whisky': [20, 42, 'Whisky']
+    };
+
+    const [vol_ml, volPct, drinkName] = drinks[drinkType];
+    const alcoholML = vol_ml * volPct / 100;
+    const alcoholG = alcoholML * 0.8; // Dichte Ethanol ≈ 0.8 g/mL
+    const totalAlcoholG = alcoholG * count;
+    const promille = (totalAlcoholG / bodyFluid).toFixed(2);
+
+    // Abbauzeit
+    const abbauStunden = (promille / 0.15).toFixed(1);
+
+    let effect = '';
+    const p = parseFloat(promille);
+    if (p < 0.3) effect = '😊 Kaum spürbar';
+    else if (p < 0.5) effect = '🗣️ Redseligkeit, Wärmegefühl';
+    else if (p < 0.8) effect = '⚡ Störungen der Hirnströme';
+    else if (p < 1.0) effect = '🚫 Koordinationsprobleme – FAHRVERBOT';
+    else if (p < 1.5) effect = '🥴 Rauschzustand, Enthemmung';
+    else if (p < 2.0) effect = '😵 Verlust der Selbstkontrolle';
+    else if (p < 3.0) effect = '🆘 Orientierungslosigkeit, Angstzustände';
+    else if (p < 4.0) effect = '💀 Erinnerungslücken, Herz-Kreislauf-Störungen';
+    else effect = '☠️ LEBENSGEFAHR: Narkose, Atemstillstand möglich!';
+
+    document.getElementById('promilleOutput').innerHTML = `
+        <strong>${count}× ${drinkName}:</strong><br>
+        Reiner Alkohol: ${totalAlcoholG.toFixed(1)} g<br>
+        Körperflüssigkeit: ${bodyFluid.toFixed(0)} mL<br>
+        <strong style="font-size:1.3em;">≈ ${promille} ‰</strong><br>
+        Abbauzeit: ~${abbauStunden} Stunden (bei 0,15‰/h)<br>
+        <span class="citation">Formel: ‰ = Alkoholmenge(g) ÷ (Körpergewicht × ${factor}) (Quelle: wine.pdf)</span>
+    `;
+
+    document.getElementById('promilleEffect').innerHTML = `<div class="output"><strong>Wirkung:</strong> ${effect}</div>`;
+
+    // Promille chart
+    const glasses = [];
+    const promilleValues = [];
+    for (let g = 1; g <= 15; g++) {
+        glasses.push(g);
+        promilleValues.push(((alcoholG * g) / bodyFluid).toFixed(2));
+    }
+
+    Plotly.newPlot('promilleChart', [
+        { x: glasses, y: promilleValues, type: 'scatter', mode: 'lines+markers',
+          name: `${drinkName} (${weight}kg, ${gender === 'm' ? 'Mann' : 'Frau'})`,
+          line: { color: '#c44dff', width: 3 } },
+        { x: [0, 15], y: [0.5, 0.5], type: 'scatter', mode: 'lines', name: 'Promillegrenze (0,5‰)',
+          line: { color: '#ff6b9d', width: 2, dash: 'dash' } },
+        { x: [0, 15], y: [4, 4], type: 'scatter', mode: 'lines', name: 'Lebensgefahr (4‰)',
+          line: { color: '#ff0000', width: 2, dash: 'dot' } }
+    ], {
+        title: 'Blutalkohol nach Anzahl Gläser',
+        xaxis: { title: 'Anzahl Gläser', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { title: 'Promille (‰)', color: '#b8a0d4', gridcolor: '#3d2066' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' }, legend: { x: 0, y: 1.2, orientation: 'h' }
+    }, { responsive: true });
+}
+
+// ===== PROCESS CANVAS =====
+function drawProcessCanvas() {
+    const canvas = document.getElementById('processCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const steps = [
+        { x: 60, label: '🍇 Trauben', sub: 'Ernte' },
+        { x: 170, label: '⚙️ Keltern', sub: 'Mahlen+Pressen' },
+        { x: 290, label: '🔬 Prüfen', sub: '°Oe, Säure' },
+        { x: 410, label: '⚗️ Korrigieren', sub: 'Zucker/Säure' },
+        { x: 530, label: '🫧 Gärung', sub: 'Hefe+15-20°C' },
+        { x: 640, label: '🧹 Klärung', sub: 'Bentonit' },
+        { x: 740, label: '🍾 Abfüllung', sub: 'SO₂+Korken' }
+    ];
+
+    ctx.strokeStyle = '#c44dff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(steps[0].x, h / 2);
+    for (let i = 1; i < steps.length; i++) {
+        ctx.lineTo(steps[i].x, h / 2);
+    }
+    ctx.stroke();
+
+    steps.forEach((s, i) => {
+        // Circle
+        ctx.beginPath();
+        ctx.arc(s.x, h / 2, 25, 0, Math.PI * 2);
+        ctx.fillStyle = i === 4 ? '#ff6b9d' : '#3d2066';
+        ctx.fill();
+        ctx.strokeStyle = '#c44dff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Number
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(i + 1, s.x, h / 2 + 5);
+
+        // Label
+        ctx.fillStyle = '#f0e6ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText(s.label, s.x, h / 2 - 40);
+
+        // Sub
+        ctx.fillStyle = '#b8a0d4';
+        ctx.font = '11px sans-serif';
+        ctx.fillText(s.sub, s.x, h / 2 + 50);
+    });
+}
+
+// ===== PROCESS FLOW CANVAS =====
+function drawProcessFlowCanvas() {
+    const canvas = document.getElementById('processFlowCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const steps = [
+        { y: 40, text: '1. Entrappen & Mahlen + 10g Pectinase/100kg + 10g KMS/100kg', color: '#6b9dff' },
+        { y: 90, text: '2. Maische 5h stehen lassen (abgedeckt)', color: '#6b9dff' },
+        { y: 140, text: '3. Mostgewicht & Säure messen', color: '#c44dff' },
+        { y: 190, text: '4. Korrektur: Zucker (2,6g/L/°Oe), Weinkalk/Zitronensäure', color: '#c44dff' },
+        { y: 240, text: '5. Hefe (15g/100L) + Hefenahrung (15g/100L) zugeben', color: '#ff6b9d' },
+        { y: 290, text: '6. 3 Tage Maischegärung bei 20°C (öfter umrühren!)', color: '#ff6b9d' },
+        { y: 340, text: '7. Abpressen + 10g KMS/100L zugeben', color: '#6b9dff' },
+        { y: 390, text: '8. Gärung im Fass mit Gärglocke abschließen', color: '#ff6b9d' },
+        { y: 440, text: '9. Nach 3-4 Wochen: Abstich, Schönung, Abfüllung', color: '#c44dff' }
+    ];
+
+    steps.forEach((s, i) => {
+        ctx.fillStyle = s.color + '33';
+        ctx.fillRect(30, s.y - 15, w - 60, 35);
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(30, s.y - 15, w - 60, 35);
+
+        ctx.fillStyle = '#f0e6ff';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(s.text, 45, s.y + 5);
+
+        if (i < steps.length - 1) {
+            ctx.beginPath();
+            ctx.moveTo(w / 2, s.y + 20);
+            ctx.lineTo(w / 2, s.y + 35);
+            ctx.strokeStyle = '#5a3d7a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(w / 2 - 5, s.y + 30);
+            ctx.lineTo(w / 2, s.y + 35);
+            ctx.lineTo(w / 2 + 5, s.y + 30);
+            ctx.fillStyle = '#5a3d7a';
+            ctx.fill();
+        }
+    });
+}
+
+// ===== TIMELINE CHART =====
+function drawTimeline() {
+    const tasks = ['Keltern', 'Gärung', 'Abstich 1', 'Ruhezeit', 'Schönung', 'Abstich 2', 'Flaschenfüllung'];
+    const starts = [0, 0, 21, 28, 49, 57, 65];
+    const durations = [1, 21, 1, 21, 8, 1, 1];
+
+    const data = tasks.map((task, i) => ({
+        type: 'bar', orientation: 'h', y: [task], x: [durations[i]],
+        base: [starts[i]], name: task,
+        marker: { color: ['#6b9dff', '#c44dff', '#ff6b9d', '#6b9dff', '#c44dff', '#ff6b9d', '#6b9dff', '#c44dff', '#ff6b9d'][i] }
+    }));
+
+    Plotly.newPlot('timelineChart', data, {
+        title: 'Zeitplan Weinherstellung (Tage nach Keltern)',
+        xaxis: { title: 'Tage', color: '#b8a0d4', gridcolor: '#3d2066' },
+        yaxis: { color: '#b8a0d4', gridcolor: '#3d2066' },
+        barmode: 'overlay',
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#b8a0d4' }, showlegend: false
+    }, { responsive: true });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function() {
+    updateOechsle();
+    updateAcid();
+    updateFermentation();
+    updateSO2();
+    updateKMS();
+    updatePromille();
+    drawProcessCanvas();
+    drawProcessFlowCanvas();
+    drawTimeline();
+});
+
+// Redraw canvases on resize
+window.addEventListener('resize', function() {
+    drawProcessCanvas();
+    drawProcessFlowCanvas();
+});
+</script>
+</body>
+</html>

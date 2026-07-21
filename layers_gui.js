@@ -129,19 +129,6 @@ function build_eval_option_html(item, type, nr) {
 	return "";
 }
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// build_skip_connection_html
-// Appends skip connection option if applicable
-// ─────────────────────────────────────────────────────────────────────────────
-
-function build_skip_connection_html(type, nr) {
-	if (skip_connection_excluded_types.includes(type)) {
-		return "";
-	}
-	return add_skip_connection_option(type, nr);
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // collapse_advanced_section
 // Animates the advanced section closed and rotates the arrow icon
@@ -228,14 +215,14 @@ async function show_layers(number) {
 		layers_container_str +=
 			"<li class='ui-sortable-handle'><span class='layer_start_marker'></span><div class='container layer layer_setting glass_box'>" +
 			"<div style='display:none' class='warning_container'><span style='color: yellow'>&#9888;</span><span class='warning_layer'></span></div>" +
-				remove +
-				add +
-				"<span class='layer_nr_desc'></span>" +
-				"<span class='layer_identifier'></span>" +
-				"<table class='configtable'>" +
-					option_for_layer(layer_idx) +
-				"</table>" +
-				"</div>" +
+			remove +
+			add +
+			"<span class='layer_nr_desc'></span>" +
+			"<span class='layer_identifier'></span>" +
+			"<table class='configtable'>" +
+			option_for_layer(layer_idx) +
+			"</table>" +
+			"</div>" +
 			"<span class='layer_end_marker'></span>" +
 			"</li>"
 		;
@@ -454,7 +441,6 @@ function insert_activation_option_trs(layer_nr, option_type) {
 	// (no need to hide them behind advanced toggle)
 }
 
-
 async function insert_activation_options(layer_nr) {
 	// TODO NOT YET USED
 	assert(typeof(layer_nr) == "number", "layer_nr must be of the type of number but is: " + typeof(layer_nr));
@@ -602,22 +588,6 @@ function add_number_lstm_cells_option(type, nr) {
 	var res = get_tr_str_for_layer_table("LSTM Cells", "number_lstm_cells", "number", data, nr, null, null);
 
 	return res;
-}
-
-function add_skip_connection_option(type, nr) {
-	if (skip_connection_excluded_types.includes(type)) {
-		return "";
-	}
-
-	var str = "";
-	str += "<tr class='skip_connection_tr'>";
-	str += "<td><span class='TRANSLATEME_skip_connection'>Skip Connection</span>:</td>";
-	str += "<td>";
-	str += "<input type='checkbox' class='skip_connection_enabled' id='skip_conn_enabled_" + nr + "' onchange='toggle_skip_connection(" + nr + ", this)' />";
-	str += "</td>";
-	str += "</tr>";
-
-	return str;
 }
 
 async function add_layer(item) {
@@ -1628,6 +1598,8 @@ function apply_advanced_section_state_to_row($parent_row, $new_row) {
 
 	if (!is_expanded) {
 		$new_row.css("display", "none");
+	} else {
+		$new_row.css("display", "");
 	}
 }
 
@@ -1806,29 +1778,196 @@ function rename_tmp_onchange() {
 	enforce_all_advanced_section_visibility();
 }
 
-function get_skip_connection_info(layer_nr) {
-	if (!skip_connection_settings[layer_nr]) {
-		return { enabled: false, strength: 0 };
-	}
-	// Strength wird jetzt aus dem Modell gelesen, nicht vom Slider
-	var strength = _compute_skip_strength_from_model(layer_nr);
-	return { enabled: skip_connection_settings[layer_nr].enabled, strength: strength };
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// _get_section_class_from_row
+// Extracts the advanced_options_section_* class from a given row element.
+// Returns the class name string or null if not found.
+// ─────────────────────────────────────────────────────────────────────────────
 
-function update_skip_connection_strength(layer_nr, elem) {
-	var val = parseFloat($(elem).val());
-
-	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: true, strength: val };
+function _get_section_class_from_row($row) {
+	if (!$row || !$row.length) {
+		return null;
 	}
 
-	skip_connection_settings[layer_nr].strength = val;
-	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
+	var row_classes = ($row.attr("class") || "").split(/\s+/);
 
-	updated_page(); // await not possible here
+	for (var i = 0; i < row_classes.length; i++) {
+		if (row_classes[i].startsWith("advanced_options_section_")) {
+			return row_classes[i];
+		}
+	}
+
+	return null;
 }
 
-function update_skip_connection_strength_display(layer_nr, elem) {
-	var val = parseFloat($(elem).val());
-	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
+function apply_skip_connection(input_tensor, layer_output, strength, layer_type, layer_idx) {
+	var input_shape = input_tensor.shape;
+	var output_shape = layer_output.shape;
+
+	var in_shape = input_shape.slice(1);
+	var out_shape = output_shape.slice(1);
+
+	var projected_input;
+
+	var skip_initializer_config = _get_skip_initializer_config(layer_idx);
+
+	var shapes_match = (JSON.stringify(in_shape) === JSON.stringify(out_shape));
+	var has_custom_initializer = _skip_has_custom_initializer(layer_idx);
+
+	if (shapes_match && !has_custom_initializer) {
+		// Shapes match and no custom initializer — direct identity addition
+		projected_input = input_tensor;
+	} else if (shapes_match && has_custom_initializer) {
+		// Shapes match BUT user set a custom initializer — create projection layer
+		projected_input = _create_skip_projection_same_shape(
+			input_tensor, in_shape, layer_idx, skip_initializer_config
+		);
+	} else if (in_shape.length === out_shape.length) {
+		projected_input = _create_skip_projection_different_shape(
+			input_tensor, in_shape, out_shape, layer_idx, skip_initializer_config
+		);
+	} else {
+		throw new Error("Cannot apply skip connection: input rank " + in_shape.length + " != output rank " + out_shape.length);
+	}
+
+	// Apply addition
+	var added = tf.layers.add({
+		name: "skip_add_" + layer_idx + "_" + uuidv4().substring(0, 8)
+	}).apply([layer_output, projected_input]);
+
+	return added;
+}
+
+function _skip_has_custom_initializer(layer_idx) {
+	if (!skip_connection_settings[layer_idx]) {
+		return false;
+	}
+
+	var initializer_name = skip_connection_settings[layer_idx].initializer;
+
+	if (!initializer_name || initializer_name === "glorotUniform") {
+		return false;
+	}
+
+	return true;
+}
+
+function _create_skip_projection_same_shape(input_tensor, in_shape, layer_idx, skip_initializer_config) {
+	if (in_shape.length === 1) {
+		var dense_config = {
+			units: in_shape[0],
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			dense_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection = tf.layers.dense(dense_config);
+		return projection.apply(input_tensor);
+	} else if (in_shape.length === 3) {
+		var conv2d_config = {
+			filters: in_shape[2],
+			kernelSize: [1, 1],
+			strides: [1, 1],
+			padding: "same",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv2d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv = tf.layers.conv2d(conv2d_config);
+		return projection_conv.apply(input_tensor);
+	} else if (in_shape.length === 2) {
+		var conv1d_config = {
+			filters: in_shape[1],
+			kernelSize: 1,
+			strides: 1,
+			padding: "same",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv1d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv1d = tf.layers.conv1d(conv1d_config);
+		return projection_conv1d.apply(input_tensor);
+	} else {
+		throw new Error("Skip connection with custom initializer not supported for rank " + in_shape.length);
+	}
+}
+
+function _create_skip_projection_different_shape(input_tensor, in_shape, out_shape, layer_idx, skip_initializer_config) {
+	if (in_shape.length === 1) {
+		var dense_config = {
+			units: out_shape[0],
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_dense_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			dense_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection = tf.layers.dense(dense_config);
+		return projection.apply(input_tensor);
+	} else if (in_shape.length === 3) {
+		var target_h = out_shape[0];
+		var target_w = out_shape[1];
+		var target_c = out_shape[2];
+
+		var stride_h = Math.max(1, Math.floor(in_shape[0] / target_h));
+		var stride_w = Math.max(1, Math.floor(in_shape[1] / target_w));
+
+		var conv2d_config = {
+			filters: target_c,
+			kernelSize: [1, 1],
+			strides: [stride_h, stride_w],
+			padding: "valid",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv2d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv2d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv = tf.layers.conv2d(conv2d_config);
+		var projected_input = projection_conv.apply(input_tensor);
+
+		var proj_shape = projected_input.shape.slice(1);
+		if (proj_shape[0] !== target_h || proj_shape[1] !== target_w) {
+			throw new Error("Spatial dimension mismatch after projection: got [" + proj_shape.join(",") + "] expected [" + out_shape.join(",") + "]");
+		}
+		return projected_input;
+	} else if (in_shape.length === 2) {
+		var target_steps = out_shape[0];
+		var target_channels = out_shape[1];
+
+		var stride_s = Math.max(1, Math.floor(in_shape[0] / target_steps));
+
+		var conv1d_config = {
+			filters: target_channels,
+			kernelSize: 1,
+			strides: stride_s,
+			padding: "valid",
+			useBias: false,
+			trainable: true,
+			name: "skip_proj_conv1d_" + layer_idx + "_" + uuidv4().substring(0, 8)
+		};
+		if (skip_initializer_config) {
+			conv1d_config.kernelInitializer = skip_initializer_config;
+		}
+		var projection_conv1d = tf.layers.conv1d(conv1d_config);
+		var projected_input_1d = projection_conv1d.apply(input_tensor);
+
+		var proj_shape_1d = projected_input_1d.shape.slice(1);
+		if (proj_shape_1d[0] !== target_steps) {
+			throw new Error("Temporal dimension mismatch after 1D projection");
+		}
+		return projected_input_1d;
+	} else {
+		throw new Error("Skip connection not supported for rank " + in_shape.length);
+	}
 }

@@ -1752,13 +1752,13 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 
 async function gui_compute_color_correlation() {
 	var $status = $("#color_correlation_status");
-	$status.html("Computing color statistics from training data...");
+	$status.html(language[lang]["computing_color_statistics"]);
 
 	try {
 		var trainingImages = await _get_training_image_tensors();
 
 		if (!trainingImages || trainingImages.length === 0) {
-			$status.html('<span style="color:orange">No training images available. Using ImageNet defaults.</span>');
+			$status.html('<span style="color:orange">' + language[lang]["no_training_images_using_imagenet"] + '</span>');
 			reset_color_correlation_to_defaults();
 			return;
 		}
@@ -1773,15 +1773,15 @@ async function gui_compute_color_correlation() {
 		}
 
 		if (success) {
-			$status.html('<span style="color:green">✓ Color correlation computed from your training data.</span>');
+			$status.html('<span style="color:green">' + language[lang]["color_correlation_computed"] + '</span>');
 			$("#use_user_color_correlation").prop("checked", true);
 		} else {
-			$status.html('<span style="color:orange">⚠ Computation failed. Using ImageNet defaults.</span>');
+			$status.html('<span style="color:orange">' + language[lang]["color_computation_failed"] + '</span>');
 			$("#use_user_color_correlation").prop("checked", false);
 		}
 	} catch (e) {
 		console.error("gui_compute_color_correlation error:", e);
-		$status.html('<span style="color:red">✗ Error: ' + (e.message || e) + '. Using ImageNet defaults.</span>');
+		$status.html('<span style="color:red">' + language[lang]["color_computation_error"].replace("{error}", (e.message || e)) + '</span>');
 		reset_color_correlation_to_defaults();
 	}
 }
@@ -1838,7 +1838,7 @@ async function _get_training_image_tensors() {
 function gui_reset_color_correlation() {
 	reset_color_correlation_to_defaults();
 	$("#use_user_color_correlation").prop("checked", false);
-	$("#color_correlation_status").html("Using ImageNet defaults.");
+	$("#color_correlation_status").html(language[lang]["using_imagenet_defaults"]);
 }
 
 // ============================================================================

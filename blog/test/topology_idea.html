@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attraktoren in LLMs – Interaktive Visualisierung</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(180deg, #1a1a3e 0%, #0a0a1a 100%);
+        }
+        .header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #64b5f6, #ce93d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #888;
+            font-size: 1.1em;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            background: #1a1a3e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: #2a2a5e;
+            border-color: #64b5f6;
+            color: #64b5f6;
+        }
+        .section {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section.active {
+            display: block;
+        }
+        .card {
+            background: #12122a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #64b5f6;
+            margin-bottom: 12px;
+            font-size: 1.4em;
+        }
+        .card h3 {
+            color: #ce93d8;
+            margin-bottom: 8px;
+            margin-top: 16px;
+        }
+        .card p {
+            line-height: 1.7;
+            color: #bbb;
+            margin-bottom: 10px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .canvas-container {
+            position: relative;
+            background: #0a0a1a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 500px;
+        }
+        .controls {
+            padding: 16px;
+            background: #1a1a2e;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+        .slider-group {
+            margin-bottom: 12px;
+        }
+        .slider-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        .slider-group input[type="range"] {
+            width: 100%;
+            accent-color: #64b5f6;
+        }
+        .slider-value {
+            color: #64b5f6;
+            font-weight: bold;
+            float: right;
+        }
+        .plotly-chart {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .legend-box {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .key-insight {
+            background: linear-gradient(135deg, #1a2a4a, #2a1a4a);
+            border-left: 4px solid #64b5f6;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .key-insight strong {
+            color: #64b5f6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a4a;
+        }
+        th {
+            background: #1a1a3e;
+            color: #64b5f6;
+        }
+        tr:hover {
+            background: #1a1a2e;
+        }
+        .btn {
+            padding: 8px 16px;
+            background: #2a2a5e;
+            border: 1px solid #64b5f6;
+            color: #64b5f6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 4px;
+        }
+        .btn:hover {
+            background: #64b5f6;
+            color: #0a0a1a;
+        }
+        .btn.active {
+            background: #64b5f6;
+            color: #0a0a1a;
+        }
+        .equation {
+            background: #1a1a2e;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #ce93d8;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .flow-box {
+            padding: 12px 18px;
+            background: #1a1a3e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .flow-arrow {
+            color: #64b5f6;
+            font-size: 1.5em;
+        }
+        .highlight {
+            color: #64b5f6;
+        }
+        .highlight-purple {
+            color: #ce93d8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🌀 Attraktoren in Large Language Models</h1>
+    <p>Eine topologische Perspektive auf die algorithmischen Strukturen im Residual Stream von Transformern</p>
+</div>
+
+<div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('intro')">Überblick</div>
+    <div class="nav-tab" onclick="showSection('attractors')">Attraktor-Dynamik</div>
+    <div class="nav-tab" onclick="showSection('layers')">Layer-Progression</div>
+    <div class="nav-tab" onclick="showSection('composition')">Komposition</div>
+    <div class="nav-tab" onclick="showSection('topology')">Topologie (TDA)</div>
+    <div class="nav-tab" onclick="showSection('implications')">Implikationen</div>
+</div>
+
+<!-- SECTION 1: INTRO -->
+<div class="section active" id="sec-intro">
+    <div class="card">
+        <h2>Kernthese</h2>
+        <p>Der Aktivierungsraum eines LLMs – insbesondere der <strong class="highlight">Residual Stream</strong> – weist <strong class="highlight-purple">attraktordynamische Strukturen</strong> auf, die sich topologisch beschreiben, analysieren und potenziell gezielt konstruieren lassen.</p>
+        
+        <div class="flow-diagram">
+            <div class="flow-box">Token<br>Embedding</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Layer 1<br><small>fixe Attraktoren</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Layer 2-N<br><small>dynamische Attraktoren</small></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Output<br><small>Konvergenz</small></div>
+        </div>
+
+        <div class="key-insight">
+            <strong>Ziel:</strong> Wenn wir die topologischen Strukturen verstehen, die Algorithmen in LLMs implementieren, können wir sie gezielt editieren und konstruieren – analog zum Programmieren.
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>Analogie: Dynamisches System</h3>
+            <table>
+                <tr><th>Dynamisches System</th><th>Transformer</th></tr>
+                <tr><td>Zustandsraum</td><td>Residual Stream (ℝ<sup>d</sup>)</td></tr>
+                <tr><td>Zeitschritt</td><td>Layer-Durchgang</td></tr>
+                <tr><td>Abbildung f(x)</td><td>Attn(x) + MLP(x)</td></tr>
+                <tr><td>Attraktor</td><td>Semantische Konvergenzregion</td></tr>
+                <tr><td>Basin of Attraction</td><td>Menge ähnlicher Prompts → gleiche Antwort</td></tr>
+                <tr><td>Bifurkation</td><td>Kontextabhängige Bedeutungsänderung</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h3>Warum nicht nur Circuits?</h3>
+            <p><strong>Circuits</strong> (à la Neel Nanda) funktionieren für kleine Modelle mit isolierten Aufgaben.</p>
+            <p><strong>Problem bei echten LLMs:</strong></p>
+            <ul style="padding-left: 20px; color: #bbb; line-height: 2;">
+                <li>Polysemantizität: Features teilen Dimensionen</li>
+                <li>Verteilte Speicherung (FFT-artig)</li>
+                <li>Strukturen sind ineinander <em>verwunden</em></li>
+                <li>Emergenz in späteren Layern</li>
+            </ul>
+            <p style="margin-top: 12px;"><strong class="highlight">→ Topologische Beschreibung akzeptiert die Verwundung als Struktur</strong></p>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 2: ATTRACTOR DYNAMICS -->
+<div class="section" id="sec-attractors">
+    <div class="card">
+        <h2>Attraktor-Dynamik im Residual Stream</h2>
+        <p>Interaktive Simulation: Beobachte, wie verschiedene Token-Embeddings durch die Layer-Dynamik zu semantischen Attraktoren gezogen werden.</p>
+    </div>
+    
+    <div class="grid-2">
+        <div class="card">
+            <div class="canvas-container">
+                <canvas id="attractorCanvas" width="700" height="500"></canvas>
+            </div>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>Attraktor-Stärke ("Hauptstadt"): <span class="slider-value" id="val-strength">0.7</span></label>
+                    <input type="range" id="slider-strength" min="0" max="100" value="70" oninput="updateAttractors()">
+                </div>
+                <div class="slider-group">
+                    <label>Kontext-Einfluss ("Frankreich"): <span class="slider-value" id="val-context">0.5</span></label>
+                    <input type="range" id="slider-context" min="0" max="100" value="50" oninput="updateAttractors()">
+                </div>
+                <div class="slider-group">
+                    <label>Rauschen (Ambiguität): <span class="slider-value" id="val-noise">0.2</span></label>
+                    <input type="range" id="slider-noise" min="0" max="100" value="20" oninput="updateAttractors()">
+                </div>
+                <div style="margin-top: 12px;">
+                    <button class="btn" onclick="resetAttractors()">Reset</button>
+                    <button class="btn" onclick="toggleTrails()">Trajektorien ein/aus</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Was du siehst</h3>
+            <p>Jeder <strong style="color: #4fc3f7;">blaue Punkt</strong> ist ein Token-Zustand im Residual Stream (projiziert auf 2D).</p>
+            <p>Die <strong style="color: #f06292;">roten Zentren</strong> sind Attraktoren – semantische Regionen, die Tokens "anziehen".</p>
+            <p>Die <strong style="color: #fff176;">gelben Linien</strong> zeigen die Trajektorien durch die Layer.</p>
+            
+            <div class="key-insight">
+                <strong>Beobachte:</strong> Erhöhe die Attraktor-Stärke → Tokens konvergieren schneller. Erhöhe das Rauschen → manche Tokens fallen in das "falsche" Basin (= Halluzination).
+            </div>
+
+            <h3>Formale Beschreibung</h3>
+            <div class="equation">
+                x<sub>l+1</sub> = x<sub>l</sub> + Attn<sub>l</sub>(x<sub>l</sub>) + MLP<sub>l</sub>(x<sub>l</sub>)
+            </div>
+            <p>Jeder Layer addiert einen Vektor auf den Residual Stream. Die Summe dieser Additionen erzeugt eine Trajektorie, die zu Attraktoren konvergiert.</p>
+            
+            <div class="legend-box">
+                <div class="legend-item"><div class="legend-dot" style="background: #4fc3f7;"></div> Token-Zustände</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #f06292;"></div> Attraktoren</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #fff176;"></div> Trajektorien</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #81c784;"></div> Basin-Grenzen</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION 3: LAYER PROGRESSION -->
+<div class="section" id="sec-layers">
+    <div class="card">
+        <h2>Layer-Progression: Von fixen zu dynamischen Attraktoren</h2>
+        <p>Visualisierung, wie sich die Attraktor-Landschaft über die Layer-Tiefe verändert.</p>
+    </div>
+
+    <div class="card">
+        <div class="controls" style="margin-bottom: 16px;">
+            <div class="slider-group">
+                <label>Layer-Tiefe: <span class="slider-value" id="val-layer">1</span> / 32</label>
+                <input type="range" id="slider-layer" min="1" max="32" value="1" oninput="updateLayerViz()">
+            </div>
+            <div style="margin-top: 8px;">
+                <button class="btn" onclick="animateLayers()">▶ Animieren</button>
+                <button class="btn" onclick="stopAnimation()">⏹ Stop</button>
+            </div>
+        </div>
+        <div class="plotly-chart" id="layerPlot"></div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>Frühe Layer (1-8): Fixe Attraktoren</h3>
+            <ul style="padding-left: 20px; color: #bbb; line-height: 2;">
+                <li>Nahe am Embedding-Space</li>
+                <li>Stabile, eingebrannte Cluster</li>
+                <li>Syntaktische/lexikalische Muster</li>
+                <li>Topologisch einfach (Punkt-Attraktoren)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Späte Layer (24-32): Dynamische Attraktoren</h3>
+            <ul style="padding-left: 20px; color: #bbb; line-height: 2;">
+                <li>Kontextabhängig erzeugt</li>
+                <li>Komplexe, verwundene Strukturen</li>
+                <li>Semantische/algorithmische Muster</li>
+                <li>Topologisch komplex (Zyklen, Tori)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Hypothese: Topologische Komplexität über Layer</h3>
+        <div class="plotly-chart" id="bettiPlot"></div>
+        <p style="margin-top: 12px;">Die Betti-Zahlen (topologische Invarianten) steigen in mittleren Layern an und stabilisieren sich in späten Layern – die Strukturen werden komplexer, bevor sie zur Ausgabe konvergieren.</p>
+    </div>
+</div>
+
+<!-- SECTION 4: COMPOSITION -->
+<div class="section" id="sec-composition">
+    <div class="card">
+        <h2>Kompositionelle Attraktor-Interaktion</h2>
+        <p>Wie einzelne semantische Attraktoren interagieren und neue, komplexere Basins erzeugen.</p>
+    </div>
+
+    <div class="card">
+        <div style="margin-bottom: 16px;">
+            <button class="btn" id="btn-single" onclick="setCompositionMode('single')">Einzelner Attraktor</button>
+            <button class="btn" id="btn-two" onclick="setCompositionMode('two')">Zwei Attraktoren</button>
+            <button class="btn" id="btn-composed" onclick="setCompositionMode('composed')">Komposition → neues Basin</button>
+        </div>
+        <div class="canvas-container">
+            <canvas id="compositionCanvas" width="900" height="500"></canvas>
+        </div>
+        <div class="controls">
+            <div class="slider-group">
+                <label>Interaktionsstärke: <span class="slider-value" id="val-interaction">0.0</span></label>
+                <input type="range" id="slider-interaction" min="0" max="100" value="0" oninput="updateComposition()">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Beispiel: "Die Hauptstadt von Frankreich ist ___"</h3>
+        <div class="flow-diagram">
+            <div class="flow-box" style="border-color: #4fc3f7;">
+                "Hauptstadt"<br><small>→ Attraktor: Hauptstädte</small>
+            </div>
+            <div class="flow-arrow">⊗</div>
+            <div class="flow-box" style="border-color: #ce93d8;">
+                "Frankreich"<br><small>→ Attraktor: Frankreich-Kontext</small>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="border-color: #81c784; background: #1a2a1a;">
+                Neues Basin<br><small>→ "Paris"</small>
+            </div>
+        </div>
+        
+        <div class="key-insight">
+            <strong>Kernidee:</strong> Die Komposition ist <em>nicht</em> bloße Vektoraddition. Die Nicht-Linearitäten (Attention, MLP-Aktivierungen) erzeugen ein qualitativ neues Basin, das topologisch komplexer sein kann als seine Bestandteile.
+        </div>
+
+        <h3>Lineare Superposition vs. Topologische Komposition</h3>
+        <table>
+            <tr><th>Aspekt</th><th>Lineare Hypothese</th><th>Topologische Hypothese</th></tr>
+            <tr><td>Kombination</td><td>Vektoraddition</td><td>Emergentes Basin</td></tr>
+            <tr><td>Struktur</td><td>Subspace-Schnitt</td><td>Neue Mannigfaltigkeit</td></tr>
+            <tr><td>Vorhersage</td><td>Immer interpolierbar</td><td>Phasenübergänge möglich</td></tr>
+            <tr><td>Fehlerfall</td><td>Gradueller Fehler</td><td>Sprunghafter Basin-Wechsel (Halluzination)</td></tr>
+            <tr><td>Editierbarkeit</td><td>Einfach (linear)</td><td>Komplex (topologisch)</td></tr>
+        </table>
+    </div>
+</div>
+
+<!-- SECTION 5: TOPOLOGY -->
+<div class="section" id="sec-topology">
+    <div class="card">
+        <h2>Topologische Datenanalyse (TDA) auf Aktivierungen</h2>
+        <p>Wie Persistent Homology die nicht-trivialen Strukturen im Residual Stream sichtbar machen kann.</p>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>Persistence Diagram (simuliert)</h3>
+            <div class="plotly-chart" id="persistencePlot"></div>
+        </div>
+        <div class="card">
+            <h3>Interpretation</h3>
+            <p><strong>Persistent Homology</strong> misst topologische Features über verschiedene Skalen:</p>
+            <table>
+                <tr><th>Betti-Zahl</th><th>Bedeutung</th><th>Im LLM</th></tr>
+                <tr><td>β₀</td><td>Zusammenhängende Komponenten</td><td>Diskrete semantische Cluster</td></tr>
+                <tr><td>β₁</td><td>Schleifen / Zyklen</td><td>Zyklische Konzepte (Zeit, Analogien)</td></tr>
+                <tr><td>β₂</td><td>Hohlräume / Tori</td><td>Interagierende zyklische Dimensionen</td></tr>
+            </table>
+            
+            <div class="key-insight" style="margin-top: 16px;">
+                <strong>Vorhersage:</strong> Ein Torus (β₁ ≥ 2 oder β₂ ≥ 1) entsteht, wenn zwei unabhängige zyklische Dimensionen interagieren – z.B. "Wochentag" × "Tageszeit" oder "Land" × "Eigenschaftstyp".
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Simulierte Attraktor-Topologien</h3>
+        <div style="margin-bottom: 12px;">
+            <button class="btn" onclick="showTopology('point')">Punkt-Attraktor (β₀=1)</button>
+            <button class="btn" onclick="showTopology('cycle')">Zyklus (β₁=1)</button>
+            <button class="btn" onclick="showTopology('torus')">Torus (β₁=2, β₂=1)</button>
+            <button class="btn" onclick="showTopology('strange')">Strange Attractor</button>
+        </div>
+        <div class="plotly-chart" id="topologyPlot"></div>
+    </div>
+</div>
+
+<!-- SECTION 6: IMPLICATIONS -->
+<div class="section" id="sec-implications">
+    <div class="card">
+        <h2>Implikationen: LLMs programmierbar machen</h2>
+        <p>Wenn die These stimmt, eröffnet sich ein Weg zu systematisch konstruierbaren neuronalen Netzen.</p>
+    </div>
+
+    <div class="card">
+        <h3>Die Vision: Topologische Programmierung</h3>
+        <div class="flow-diagram">
+            <div class="flow-box" style="border-color: #81c784;">
+                Gewünschtes<br>Verhalten
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="border-color: #64b5f6;">
+                Topologische<br>Spezifikation
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="border-color: #ce93d8;">
+                Attraktor-<br>Konstruktion
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box" style="border-color: #fff176;">
+                Gewichts-<br>Synthese
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h3>Forschungsroadmap</h3>
+            <table>
+                <tr><th>Phase</th><th>Ziel</th><th>Methode</th></tr>
+                <tr><td>1</td><td>Strukturen finden</td><td>TDA auf Residual Stream Aktivierungen</td></tr>
+                <tr><td>2</td><td>Kausalität zeigen</td><td>Topologische Strukturen zerstören → Verhaltensänderung</td></tr>
+                <tr><td>3</td><td>Modularität testen</td><td>Einzelne Strukturen editieren ohne Kollateralschäden</td></tr>
+                <tr><td>4</td><td>Komposition zeigen</td><td>Strukturen kombinieren → vorhersagbares Ergebnis</td></tr>
+                <tr><td>5</td><td>Synthese</td><td>Gewünschte Topologie → Gewichte berechnen</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h3>Offene Fragen</h3>
+            <ul style="padding-left: 20px; color: #bbb; line-height: 2.2;">
+                <li>Ist die Rückabbildung (Topologie → Gewichte) berechenbar?</li>
+                <li>Sind verwundene Strukturen modular editierbar?</li>
+                <li>Skaliert TDA auf d=4096+ Dimensionen?</li>
+                <li>Wo genau versagt die lineare Approximation?</li>
+                <li>Gibt es "topologische Universalien" über Modelle hinweg?</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Vergleich mit existierenden Ansätzen</h3>
+        <table>
+            <tr><th>Ansatz</th><th>Stärke</th><th>Schwäche</th><th>Topologischer Ansatz ergänzt</th></tr>
+            <tr><td>Circuits (Neel Nanda)</td><td>Kausal, mechanistisch</td><td>Skaliert nicht</td><td>Globale Struktur statt lokale Schaltkreise</td></tr>
+            <tr><td>SAEs</td><td>Entpackt Superposition</td><td>Wahl der Dictionary-Größe</td><td>Akzeptiert Verwundung als Struktur</td></tr>
+            <tr><td>Linear Probes</td><td>Einfach, schnell</td><td>Nur lineare Features</td><td>Nicht-lineare, globale Topologie</td></tr>
+            <tr><td>Steering Vectors</td><td>Direkt editierbar</td><td>Nur Richtungen</td><td>Komplexere Editier-Operationen</td></tr>
+        </table>
+    </div>
+</div>
+
+<script>
+// ============ NAVIGATION ============
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('sec-' + name).classList.add('active');
+    event.target.classList.add('active');
+    
+    // Initialize visualizations when section becomes visible
+    if (name === 'layers') initLayerViz();
+    if (name === 'topology') initTopologyViz();
+    if (name === 'attractors') initAttractorViz();
+    if (name === 'composition') initCompositionViz();
+}
+
+// ============ ATTRACTOR VISUALIZATION ============
+let attractorCtx, attractorAnimId;
+let particles = [];
+let attractors = [];
+let showTrails = true;
+
+function initAttractorViz() {
+    const canvas = document.getElementById('attractorCanvas');
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = 500 * 2;
+    attractorCtx = canvas.getContext('2d');
+    attractorCtx.scale(2, 2);
+    
+    // Initialize attractors
+    attractors = [
+        { x: canvas.width * 0.3, y: canvas.height * 0.3, label: "Hauptstädte", color: '#f06292', radius: 60 },
+        { x: canvas.width * 0.7, y: canvas.height * 0.3, label: "Länder", color: '#ce93d8', radius: 60 },
+        { x: canvas.width * 0.5, y: canvas.height * 0.7, label: "Paris", color: '#81c784', radius: 40 },
+        { x: canvas.width * 0.2, y: canvas.height * 0.7, label: "Berlin", color: '#fff176', radius: 30 },
+    ];
+    
+    // Initialize particles
+    particles = [];
+    for (let i = 0; i < 60; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: 0,
+            vy: 0,
+            trail: [],
+            targetAttractor: Math.floor(Math.random() * attractors.length)
+        });
+    }
+    
+    if (attractorAnimId) cancelAnimationFrame(attractorAnimId);
+    animateAttractors();
+}
+
+function updateAttractors() {
+    document.getElementById('val-strength').textContent = (document.getElementById('slider-strength').value / 100).toFixed(2);
+    document.getElementById('val-context').textContent = (document.getElementById('slider-context').value / 100).toFixed(2);
+    document.getElementById('val-noise').textContent = (document.getElementById('slider-noise').value / 100).toFixed(2);
+}
+
+function animateAttractors() {
+    const canvas = document.getElementById('attractorCanvas');
+    const ctx = attractorCtx;
+    const strength = document.getElementById('slider-strength').value / 100;
+    const context = document.getElementById('slider-context').value / 100;
+    const noise = document.getElementById('slider-noise').value / 100;
+    
+    // Clear with fade effect
+    ctx.fillStyle = 'rgba(10, 10, 26, 0.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw basin boundaries
+    ctx.strokeStyle = 'rgba(129, 199, 132, 0.2)';
+    ctx.setLineDash([5, 10]);
+    attractors.forEach(a => {
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.radius * 3, 0, Math.PI * 2);
+        ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    
+    // Update and draw particles
+    particles.forEach(p => {
+        // Find nearest attractor based on context
+        let target = attractors[p.targetAttractor];
+        
+        // Apply attractor force
+        let dx = target.x - p.x;
+        let dy = target.y - p.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist > 1) {
+            p.vx += (dx / dist) * strength * 2;
+            p.vy += (dy / dist) * strength * 2;
+        }
+        
+        // Context influence - pull toward composed attractor
+        if (context > 0.3) {
+            let composedTarget = attractors[2]; // "Paris" as composed attractor
+            let cdx = composedTarget.x - p.x;
+            let cdy = composedTarget.y - p.y;
+            let cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+            if (cdist > 1) {
+                p.vx += (cdx / cdist) * context * 1.5;
+                p.vy += (cdy / cdist) * context * 1.5;
+            }
+        }
+        
+        // Add noise
+        p.vx += (Math.random() - 0.5) * noise * 4;
+        p.vy += (Math.random() - 0.5) * noise * 4;
+        
+        // Damping
+        p.vx *= 0.92;
+        p.vy *= 0.92;
+        
+        // Update position
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Boundary check
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -0.5;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -0.5;
+        p.x = Math.max(0, Math.min(canvas.width, p.x));
+        p.y = Math.max(0, Math.min(canvas.height, p.y));
+        
+        // Store trail
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 50) p.trail.shift();
+        
+        // Draw trail
+        if (showTrails && p.trail.length > 2) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 241, 118, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.moveTo(p.trail[0].x, p.trail[0].y);
+            for (let i = 1; i < p.trail.length; i++) {
+                ctx.lineTo(p.trail[i].x, p.trail[i].y);
+            }
+            ctx.stroke();
+        }
+        
+        // Draw particle
+        ctx.beginPath();
+        ctx.fillStyle = '#4fc3f7';
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    
+    // Draw attractors
+    attractors.forEach(a => {
+        // Glow effect
+        let gradient = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.radius);
+        gradient.addColorStop(0, a.color + '88');
+        gradient.addColorStop(1, a.color + '00');
+        ctx.beginPath();
+        ctx.fillStyle = gradient;
+        ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Center dot
+        ctx.beginPath();
+        ctx.fillStyle = a.color;
+        ctx.arc(a.x, a.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Label
+        ctx.fillStyle = '#fff';
+        ctx.font = '22px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(a.label, a.x, a.y - a.radius - 10);
+    });
+    
+    attractorAnimId = requestAnimationFrame(animateAttractors);
+}
+
+function resetAttractors() {
+    const canvas = document.getElementById('attractorCanvas');
+    particles.forEach(p => {
+        p.x = Math.random() * canvas.width;
+        p.y = Math.random() * canvas.height;
+        p.vx = 0;
+        p.vy = 0;
+        p.trail = [];
+    });
+}
+
+function toggleTrails() {
+    showTrails = !showTrails;
+}
+
+// ============ LAYER PROGRESSION VISUALIZATION ============
+let layerAnimInterval;
+
+function initLayerViz() {
+    updateLayerViz();
+    initBettiPlot();
+}
+
+function updateLayerViz() {
+    const layer = parseInt(document.getElementById('slider-layer').value);
+    document.getElementById('val-layer').textContent = layer;
+    
+    // Generate data based on layer depth
+    const numPoints = 200;
+    const numClusters = Math.min(3 + Math.floor(layer / 5), 8);
+    const spread = Math.max(0.5, 3 - layer * 0.08);
+    const complexity = layer / 32;
+    
+    let traces = [];
+    const colors = ['#4fc3f7', '#f06292', '#81c784', '#fff176', '#ce93d8', '#ffab91', '#80deea', '#a5d6a7'];
+    
+    for (let c = 0; c < numClusters; c++) {
+        let x = [], y = [], z = [];
+        const cx = Math.cos(c * Math.PI * 2 / numClusters) * (2 + complexity * 2);
+        const cy = Math.sin(c * Math.PI * 2 / numClusters) * (2 + complexity * 2);
+        const cz = Math.sin(c * Math.PI / numClusters) * complexity * 3;
+        
+        for (let i = 0; i < numPoints / numClusters; i++) {
+            // Add topological complexity in later layers
+            let theta = Math.random() * Math.PI * 2;
+            let phi = Math.random() * Math.PI * 2;
+            
+            if (layer > 16 && c < 3) {
+                // Create toroidal structure in later layers
+                let R = 1.5;
+                let r = 0.5 * spread;
+                x.push(cx + (R + r * Math.cos(theta)) * Math.cos(phi));
+                y.push(cy + (R + r * Math.cos(theta)) * Math.sin(phi));
+                z.push(cz + r * Math.sin(theta));
+            } else {
+                x.push(cx + (Math.random() - 0.5) * spread * 2);
+                y.push(cy + (Math.random() - 0.5) * spread * 2);
+                z.push(cz + (Math.random() - 0.5) * spread * 2);
+            }
+        }
+        
+        traces.push({
+            x: x, y: y, z: z,
+            mode: 'markers',
+            type: 'scatter3d',
+            marker: { size: 3, color: colors[c % colors.length], opacity: 0.7 },
+            name: `Cluster ${c + 1}`
+        });
+    }
+    
+    const layout = {
+        paper_bgcolor: '#12122a',
+        plot_bgcolor: '#12122a',
+        scene: {
+            xaxis: { gridcolor: '#2a2a4a', zerolinecolor: '#2a2a4a', color: '#888' },
+            yaxis: { gridcolor: '#2a2a4a', zerolinecolor: '#2a2a4a', color: '#888' },
+            zaxis: { gridcolor: '#2a2a4a', zerolinecolor: '#2a2a4a', color: '#888' },
+            bgcolor: '#0a0a1a'
+        },
+        font: { color: '#888' },
+        title: { text: `Layer ${layer}/32 – Residual Stream Aktivierungen`, font: { color: '#64b5f6' } },
+        showlegend: true,
+        legend: { font: { color: '#888' } },
+        margin: { l: 0, r: 0, t: 40, b: 0 }
+    };
+    
+    Plotly.newPlot('layerPlot', traces, layout, { responsive: true });
+}
+
+function animateLayers() {
+    let layer = 1;
+    stopAnimation();
+    layerAnimInterval = setInterval(() => {
+        layer++;
+        if (layer > 32) layer = 1;
+        document.getElementById('slider-layer').value = layer;
+        updateLayerViz();
+    }, 400);
+}
+
+function stopAnimation() {
+    if (layerAnimInterval) clearInterval(layerAnimInterval);
+}
+
+function initBettiPlot() {
+    const layers = Array.from({ length: 32 }, (_, i) => i + 1);
+    
+    // Simulated Betti numbers over layers
+    const beta0 = layers.map(l => Math.max(1, 8 - Math.floor(l / 4))); // Components decrease
+    const beta1 = layers.map(l => Math.max(0, Math.floor(Math.sin(l / 10 * Math.PI) * 4 + (l > 10 ? 2 : 0)))); // Cycles emerge
+    const beta2 = layers.map(l => Math.max(0, Math.floor((l - 16) / 6))); // Tori in late layers
+    
+    const traces = [
+        { x: layers, y: beta0, name: 'β₀ (Komponenten)', line: { color: '#4fc3f7', width: 3 } },
+        { x: layers, y: beta1, name: 'β₁ (Zyklen)', line: { color: '#f06292', width: 3 } },
+        { x: layers, y: beta2, name: 'β₂ (Hohlräume/Tori)', line: { color: '#ce93d8', width: 3 } }
+    ];
+    
+    const layout = {
+        paper_bgcolor: '#12122a',
+        plot_bgcolor: '#0a0a1a',
+        xaxis: { title: 'Layer', gridcolor: '#2a2a4a', color: '#888' },
+        yaxis: { title: 'Betti-Zahl', gridcolor: '#2a2a4a', color: '#888' },
+        font: { color: '#888' },
+        title: { text: 'Hypothetische Betti-Zahlen über Layer-Tiefe', font: { color: '#64b5f6', size: 14 } },
+        legend: { font: { color: '#888' } },
+        margin: { t: 40 }
+    };
+    
+    Plotly.newPlot('bettiPlot', traces, layout, { responsive: true });
+}
+
+// ============ COMPOSITION VISUALIZATION ============
+let compositionCtx, compositionAnimId;
+let compMode = 'single';
+let compParticles = [];
+
+function initCompositionViz() {
+    const canvas = document.getElementById('compositionCanvas');
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = 500 * 2;
+    compositionCtx = canvas.getContext('2d');
+    compositionCtx.scale(2, 2);
+    
+    compParticles = [];
+    for (let i = 0; i < 80; i++) {
+        compParticles.push({
+            x: Math.random() * canvas.width / 2,
+            y: Math.random() * canvas.height / 2,
+            vx: 0,
+            vy: 0,
+            trail: []
+        });
+    }
+    
+    if (compositionAnimId) cancelAnimationFrame(compositionAnimId);
+    setCompositionMode('single');
+    animateComposition();
+}
+
+function setCompositionMode(mode) {
+    compMode = mode;
+    document.querySelectorAll('#sec-composition .btn').forEach(b => b.classList.remove('active'));
+    if (mode === 'single') document.getElementById('btn-single').classList.add('active');
+    if (mode === 'two') document.getElementById('btn-two').classList.add('active');
+    if (mode === 'composed') document.getElementById('btn-composed').classList.add('active');
+    
+    // Reset particles
+    const canvas = document.getElementById('compositionCanvas');
+    compParticles.forEach(p => {
+        p.x = Math.random() * canvas.width / 2;
+        p.y = Math.random() * canvas.height / 2;
+        p.vx = 0;
+        p.vy = 0;
+        p.trail = [];
+    });
+}
+
+function updateComposition() {
+    document.getElementById('val-interaction').textContent = (document.getElementById('slider-interaction').value / 100).toFixed(2);
+}
+
+function animateComposition() {
+    const canvas = document.getElementById('compositionCanvas');
+    const ctx = compositionCtx;
+    const w = canvas.width / 2;
+    const h = canvas.height / 2;
+    const interaction = document.getElementById('slider-interaction').value / 100;
+    
+    ctx.fillStyle = 'rgba(10, 10, 26, 0.12)';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Define attractors based on mode
+    let activeAttractors = [];
+    
+    if (compMode === 'single') {
+        activeAttractors = [
+            { x: w * 0.5, y: h * 0.5, strength: 1, color: '#4fc3f7', label: '"Hauptstadt"', radius: 80 }
+        ];
+    } else if (compMode === 'two') {
+        activeAttractors = [
+            { x: w * 0.35, y: h * 0.4, strength: 0.7, color: '#4fc3f7', label: '"Hauptstadt"', radius: 60 },
+            { x: w * 0.65, y: h * 0.6, strength: 0.7, color: '#ce93d8', label: '"Frankreich"', radius: 60 }
+        ];
+    } else if (compMode === 'composed') {
+        activeAttractors = [
+            { x: w * 0.3, y: h * 0.3, strength: 0.3, color: '#4fc3f7', label: '"Hauptstadt"', radius: 40 },
+            { x: w * 0.7, y: h * 0.3, strength: 0.3, color: '#ce93d8', label: '"Frankreich"', radius: 40 },
+            { x: w * 0.5, y: h * 0.65, strength: 1.2, color: '#81c784', label: '"Paris" (emergent)', radius: 70 }
+        ];
+    }
+    
+    // Update particles
+    compParticles.forEach(p => {
+        activeAttractors.forEach(a => {
+            let dx = a.x - p.x;
+            let dy = a.y - p.y;
+            let dist = Math.sqrt(dx * dx + dy * dy) + 1;
+            let force = a.strength * (1 + interaction) / (dist * 0.05);
+            force = Math.min(force, 3);
+            p.vx += (dx / dist) * force * 0.3;
+            p.vy += (dy / dist) * force * 0.3;
+        });
+        
+        // Non-linear interaction between attractors (creates warped basins)
+        if (compMode === 'composed' && interaction > 0.3) {
+            let angle = Math.atan2(p.y - h * 0.5, p.x - w * 0.5);
+            p.vx += Math.cos(angle + Math.PI / 2) * interaction * 0.5;
+            p.vy += Math.sin(angle + Math.PI / 2) * interaction * 0.5;
+        }
+        
+        // Noise
+        p.vx += (Math.random() - 0.5) * 0.5;
+        p.vy += (Math.random() - 0.5) * 0.5;
+        
+        // Damping
+        p.vx *= 0.9;
+        p.vy *= 0.9;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // Bounds
+        p.x = Math.max(10, Math.min(w - 10, p.x));
+        p.y = Math.max(10, Math.min(h - 10, p.y));
+        
+        // Trail
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 30) p.trail.shift();
+        
+        // Draw trail
+        if (p.trail.length > 2) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            ctx.moveTo(p.trail[0].x, p.trail[0].y);
+            for (let i = 1; i < p.trail.length; i++) {
+                ctx.lineTo(p.trail[i].x, p.trail[i].y);
+            }
+            ctx.stroke();
+        }
+        
+        // Draw particle
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(79, 195, 247, 0.8)';
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    
+    // Draw attractors
+    activeAttractors.forEach(a => {
+        let gradient = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, a.radius);
+        gradient.addColorStop(0, a.color + '44');
+        gradient.addColorStop(1, a.color + '00');
+        ctx.beginPath();
+        ctx.fillStyle = gradient;
+        ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.fillStyle = a.color;
+        ctx.arc(a.x, a.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(a.label, a.x, a.y - a.radius - 8);
+    });
+    
+    compositionAnimId = requestAnimationFrame(animateComposition);
+}
+
+// ============ TOPOLOGY VISUALIZATION ============
+function initTopologyViz() {
+    showTopology('point');
+    initPersistencePlot();
+}
+
+function showTopology(type) {
+    let traces = [];
+    
+    if (type === 'point') {
+        // Point attractor - cluster of points converging
+        let x = [], y = [], z = [];
+        for (let i = 0; i < 300; i++) {
+            let r = Math.random() * 2;
+            let theta = Math.random() * Math.PI * 2;
+            let phi = Math.random() * Math.PI;
+            x.push(r * Math.sin(phi) * Math.cos(theta));
+            y.push(r * Math.sin(phi) * Math.sin(theta));
+            z.push(r * Math.cos(phi));
+        }
+        traces.push({
+            x, y, z, mode: 'markers', type: 'scatter3d',
+            marker: { size: 2, color: x.map((_, i) => Math.sqrt(x[i]**2 + y[i]**2 + z[i]**2)), colorscale: 'Viridis', opacity: 0.8 },
+            name: 'Punkt-Attraktor (β₀=1)'
+        });
+    } else if (type === 'cycle') {
+        // Cycle - points on a circle with noise
+        let x = [], y = [], z = [];
+        for (let i = 0; i < 400; i++) {
+            let theta = Math.random() * Math.PI * 2;
+            let noise = 0.2;
+            x.push(3 * Math.cos(theta) + (Math.random() - 0.5) * noise);
+            y.push(3 * Math.sin(theta) + (Math.random() - 0.5) * noise);
+            z.push((Math.random() - 0.5) * noise);
+        }
+        traces.push({
+            x, y, z, mode: 'markers', type: 'scatter3d',
+            marker: { size: 2, color: x.map((_, i) => Math.atan2(y[i], x[i])), colorscale: 'HSV', opacity: 0.8 },
+            name: 'Zyklus (β₁=1)'
+        });
+    } else if (type === 'torus') {
+        // Torus
+        let x = [], y = [], z = [];
+        let R = 3, r = 1;
+        for (let i = 0; i < 800; i++) {
+            let theta = Math.random() * Math.PI * 2;
+            let phi = Math.random() * Math.PI * 2;
+            let noise = 0.1;
+            x.push((R + r * Math.cos(theta)) * Math.cos(phi) + (Math.random() - 0.5) * noise);
+            y.push((R + r * Math.cos(theta)) * Math.sin(phi) + (Math.random() - 0.5) * noise);
+            z.push(r * Math.sin(theta) + (Math.random() - 0.5) * noise);
+        }
+        traces.push({
+            x, y, z, mode: 'markers', type: 'scatter3d',
+            marker: { size: 2, color: z, colorscale: 'Portland', opacity: 0.7 },
+            name: 'Torus (β₁=2, β₂=1)'
+        });
+    } else if (type === 'strange') {
+        // Lorenz-like strange attractor
+        let x = [0.1], y = [0], z = [0];
+        let sigma = 10, rho = 28, beta = 8/3;
+        let dt = 0.005;
+        for (let i = 0; i < 5000; i++) {
+            let lx = x[x.length-1], ly = y[y.length-1], lz = z[z.length-1];
+            x.push(lx + sigma * (ly - lx) * dt);
+            y.push(ly + (lx * (rho - lz) - ly) * dt);
+            z.push(lz + (lx * ly - beta * lz) * dt);
+        }
+        traces.push({
+            x, y, z, mode: 'lines', type: 'scatter3d',
+            line: { width: 1.5, color: z, colorscale: 'Hot' },
+            name: 'Strange Attractor'
+        });
+    }
+    
+    const layout = {
+        paper_bgcolor: '#12122a',
+        plot_bgcolor: '#12122a',
+        scene: {
+            xaxis: { gridcolor: '#2a2a4a', zerolinecolor: '#2a2a4a', color: '#888', title: '' },
+            yaxis: { gridcolor: '#2a2a4a', zerolinecolor: '#2a2a4a', color: '#888', title: '' },
+            zaxis: { gridcolor: '#2a2a4a', zerolinecolor: '#2a2a4a', color: '#888', title: '' },
+            bgcolor: '#0a0a1a',
+            camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+        },
+        font: { color: '#888' },
+        title: { text: `Topologische Struktur: ${type === 'point' ? 'Punkt-Attraktor' : type === 'cycle' ? 'Zyklus' : type === 'torus' ? 'Torus' : 'Strange Attractor'}`, font: { color: '#64b5f6', size: 14 } },
+        showlegend: true,
+        legend: { font: { color: '#888' } },
+        margin: { l: 0, r: 0, t: 40, b: 0 }
+    };
+    
+    Plotly.newPlot('topologyPlot', traces, layout, { responsive: true });
+}
+
+function initPersistencePlot() {
+    // Simulated persistence diagram
+    let birth = [], death = [], colors = [], texts = [];
+    
+    // H0 features (components that merge)
+    for (let i = 0; i < 15; i++) {
+        let b = Math.random() * 0.3;
+        let d = b + Math.random() * 0.5 + 0.1;
+        birth.push(b);
+        death.push(d);
+        colors.push('#4fc3f7');
+        texts.push('H₀');
+    }
+    // One persistent H0 (the main component)
+    birth.push(0);
+    death.push(3);
+    colors.push('#4fc3f7');
+    texts.push('H₀ (persistent)');
+    
+    // H1 features (cycles)
+    for (let i = 0; i < 6; i++) {
+        let b = 0.3 + Math.random() * 0.5;
+        let d = b + Math.random() * 0.8 + 0.2;
+        birth.push(b);
+        death.push(d);
+        colors.push('#f06292');
+        texts.push('H₁');
+    }
+    // Persistent H1 features
+    birth.push(0.4);
+    death.push(2.8);
+    colors.push('#f06292');
+    texts.push('H₁ (persistent cycle)');
+    birth.push(0.5);
+    death.push(2.5);
+    colors.push('#f06292');
+    texts.push('H₁ (persistent cycle)');
+    
+    // H2 features (cavities)
+    birth.push(0.8);
+    death.push(2.2);
+    colors.push('#ce93d8');
+    texts.push('H₂ (torus cavity)');
+    
+    const traces = [
+        {
+            x: birth,
+            y: death,
+            mode: 'markers',
+            type: 'scatter',
+            marker: { size: 10, color: colors, opacity: 0.8 },
+            text: texts,
+            hovertemplate: '%{text}<br>Birth: %{x:.2f}<br>Death: %{y:.2f}<extra></extra>'
+        },
+        {
+            x: [0, 3],
+            y: [0, 3],
+            mode: 'lines',
+            type: 'scatter',
+            line: { color: '#444', dash: 'dash', width: 1 },
+            showlegend: false,
+            hoverinfo: 'skip'
+        }
+    ];
+    
+    const layout = {
+        paper_bgcolor: '#12122a',
+        plot_bgcolor: '#0a0a1a',
+        xaxis: { title: 'Birth (Skala)', gridcolor: '#2a2a4a', color: '#888', range: [0, 3.2] },
+        yaxis: { title: 'Death (Skala)', gridcolor: '#2a2a4a', color: '#888', range: [0, 3.2] },
+        font: { color: '#888' },
+        title: { text: 'Persistence Diagram (simuliert)', font: { color: '#64b5f6', size: 14 } },
+        showlegend: false,
+        margin: { t: 40 },
+        annotations: [
+            { x: 0.2, y: 2.9, text: '● H₀ (Komponenten)', showarrow: false, font: { color: '#4fc3f7', size: 12 } },
+            { x: 0.2, y: 2.7, text: '● H₁ (Zyklen)', showarrow: false, font: { color: '#f06292', size: 12 } },
+            { x: 0.2, y: 2.5, text: '● H₂ (Hohlräume)', showarrow: false, font: { color: '#ce93d8', size: 12 } }
+        ]
+    };
+    
+    Plotly.newPlot('persistencePlot', traces, layout, { responsive: true });
+}
+
+// ============ INITIALIZATION ============
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize the first visible section
+    setTimeout(() => {
+        initAttractorViz();
+    }, 100);
+});
+
+// Auto-init attractor viz since it's the default visible section after clicking
+setTimeout(() => {
+    if (document.getElementById('attractorCanvas')) {
+        initAttractorViz();
+    }
+}, 500);
+</script>
+
+</body>
+</html>

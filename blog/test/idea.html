@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>LLM Transformer Visualisierung – Attraktoren & Embedding-Raum</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px 10px;
+            background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+            border-bottom: 1px solid #333;
+        }
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p { color: #888; font-size: 0.95em; max-width: 800px; margin: 0 auto; }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .panel {
+            background: #12122a;
+            border: 1px solid #2a2a5a;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+        .panel h2 {
+            font-size: 1.1em;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #2a2a5a;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        #embedding-space { width: 100%; height: 500px; }
+        #attractor-plot { width: 100%; height: 500px; }
+        #context-canvas { width: 100%; height: 400px; background: #0a0a1a; border-radius: 8px; }
+        #unembedding-canvas { width: 100%; height: 300px; background: #0a0a1a; border-radius: 8px; }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .controls button {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #2a2a5a, #1a1a3e);
+            border: 1px solid #4a4a8a;
+            color: #00d4ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+        .controls button:hover {
+            background: linear-gradient(135deg, #3a3a7a, #2a2a5a);
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        .controls button.active {
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            color: white;
+            border-color: transparent;
+        }
+        .info-box {
+            background: #1a1a3e;
+            border-left: 3px solid #7b2ff7;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 0.8em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .slider-container label {
+            font-size: 0.85em;
+            color: #aaa;
+            min-width: 120px;
+        }
+        .slider-container input[type="range"] {
+            flex: 1;
+            accent-color: #00d4ff;
+        }
+        .slider-container span {
+            font-size: 0.85em;
+            color: #00d4ff;
+            min-width: 30px;
+        }
+        @media (max-width: 1000px) {
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🧠 LLM Transformer – Attraktoren & Bedeutungsraum</h1>
+    <p>Visualisierung: Wie Bedeutung als Punkt im Raum entsteht, Layer-Attraktoren Tokens anziehen, 
+    und der letzte Vektor des letzten Layers die gesamte Kontextbedeutung enthält.</p>
+</div>
+
+<div class="container">
+
+    <!-- Panel 1: Embedding Space -->
+    <div class="panel">
+        <h2>📍 Bedeutung als Punkt im Raum (Embedding Space)</h2>
+        <div class="info-box">
+            Jedes Token wird als Punkt im hochdimensionalen Raum dargestellt. 
+            Ähnliche Bedeutungen liegen nahe beieinander. Hier: 2D-Projektion.
+        </div>
+        <div class="controls">
+            <button onclick="showEmbeddingDE()" class="active" id="btn-de">🇩🇪 Deutsch</button>
+            <button onclick="showEmbeddingEN()" id="btn-en">🇬🇧 English</button>
+            <button onclick="showBothLanguages()" id="btn-both">🌐 Beide</button>
+        </div>
+        <div id="embedding-space"></div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Tokens (DE)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ecdc4"></div> Tokens (EN)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d; width:14px; height:14px;"></div> Konvergenz-Attraktor</div>
+        </div>
+    </div>
+
+    <!-- Panel 2: Layer Attractors -->
+    <div class="panel">
+        <h2>🌀 Layer-Attraktoren (Basin of Attraction)</h2>
+        <div class="info-box">
+            Frühe Layer: fixierte Attraktoren (Syntax, POS). Mittlere Layer: semantische Attraktoren 
+            (z.B. "Hauptstadt von X"). Späte Layer: dynamische, kontextabhängige Attraktoren.
+        </div>
+        <div class="slider-container">
+            <label>Aktiver Layer:</label>
+            <input type="range" id="layer-slider" min="0" max="11" value="6" oninput="updateLayerView(this.value)">
+            <span id="layer-num">6</span>
+        </div>
+        <div id="attractor-plot"></div>
+    </div>
+
+    <!-- Panel 3: Context Accumulation (Canvas) -->
+    <div class="panel full-width">
+        <h2>⏱️ Kontext-Akkumulation – "Die Uhr die sich verlängert"</h2>
+        <div class="info-box">
+            Jeder neue Token erweitert den Kontext-Frame. Der letzte Vektor des letzten Layers 
+            enthält die gemischte Gesamtbedeutung. Wie eine Uhr, die sich mit jedem Frame verlängert.
+            <br><strong>Partielle Hemmung:</strong> Attention maskiert vergangene Tokens selektiv.
+        </div>
+        <div class="controls">
+            <button onclick="startContextAnimation()" id="btn-start">▶ Animation starten</button>
+            <button onclick="resetContextAnimation()">⟲ Reset</button>
+            <button onclick="stepContext()">⏭ Nächster Token</button>
+        </div>
+        <canvas id="context-canvas" width="1500" height="400"></canvas>
+    </div>
+
+    <!-- Panel 4: Unembedding / Next Token Prediction -->
+    <div class="panel full-width">
+        <h2>🎯 Unembedding – Nächster Token via Nearest Point</h2>
+        <div class="info-box">
+            Der letzte Vektor wird gegen alle Token-Embeddings verglichen. 
+            Der nächste Punkt im Raum = höchste Wahrscheinlichkeit für den nächsten Token.
+            <br><strong>Beispiel:</strong> "Die Hauptstadt von Frankreich ist" → Attraktor zieht Richtung "Paris"
+        </div>
+        <canvas id="unembedding-canvas" width="1500" height="300"></canvas>
+    </div>
+
+</div>
+
+<script>
+// ============================================
+// DATA & CONFIGURATION
+// ============================================
+
+const tokensDE = [
+    { word: "die", x: -2.1, y: 0.3, type: "article" },
+    { word: "hauptstadt", x: 1.5, y: 2.8, type: "noun" },
+    { word: "von", x: -1.8, y: 0.8, type: "prep" },
+    { word: "frankreich", x: 3.2, y: 3.5, type: "noun" },
+    { word: "ist", x: -0.5, y: -0.2, type: "verb" },
+    { word: "paris", x: 3.8, y: 3.9, type: "noun" },
+    { word: "deutschland", x: 2.8, y: 3.1, type: "noun" },
+    { word: "berlin", x: 3.3, y: 3.4, type: "noun" },
+    { word: "stadt", x: 1.8, y: 2.5, type: "noun" },
+    { word: "land", x: 2.5, y: 2.9, type: "noun" },
+];
+
+const tokensEN = [
+    { word: "the", x: -2.0, y: 0.4, type: "article" },
+    { word: "capital", x: 1.6, y: 2.7, type: "noun" },
+    { word: "of", x: -1.7, y: 0.9, type: "prep" },
+    { word: "france", x: 3.1, y: 3.6, type: "noun" },
+    { word: "is", x: -0.4, y: -0.1, type: "verb" },
+    { word: "paris", x: 3.8, y: 3.9, type: "noun" },
+    { word: "germany", x: 2.9, y: 3.0, type: "noun" },
+    { word: "berlin", x: 3.3, y: 3.4, type: "noun" },
+    { word: "city", x: 1.9, y: 2.4, type: "noun" },
+    { word: "country", x: 2.6, y: 2.8, type: "noun" },
+];
+
+const attractors = [
+    { name: "CAPITAL_OF", x: 3.5, y: 3.7, layer_start: 4, layer_end: 8, strength: 2.5 },
+    { name: "ARTICLE", x: -2.0, y: 0.35, layer_start: 0, layer_end: 3, strength: 1.5 },
+    { name: "PREPOSITION", x: -1.75, y: 0.85, layer_start: 0, layer_end: 3, strength: 1.2 },
+    { name: "COUNTRY", x: 3.0, y: 3.3, layer_start: 3, layer_end: 7, strength: 2.0 },
+    { name: "VERB_COPULA", x: -0.45, y: -0.15, layer_start: 1, layer_end: 4, strength: 1.3 },
+    { name: "NEXT_TOKEN", x: 3.8, y: 3.9, layer_start: 9, layer_end: 11, strength: 3.0 },
+];
+
+const contextSequence = ["Die", "Hauptstadt", "von", "Frankreich", "ist", "→ Paris"];
+let contextStep = 0;
+let animationRunning = false;
+
+// ============================================
+// EMBEDDING SPACE (Plotly)
+// ============================================
+
+function createEmbeddingPlot(tokens, color, name) {
+    return {
+        x: tokens.map(t => t.x),
+        y: tokens.map(t => t.y),
+        text: tokens.map(t => t.word),
+        mode: 'markers+text',
+        type: 'scatter',
+        name: name,
+        textposition: 'top center',
+        textfont: { size: 11, color: color },
+        marker: {
+            size: 12,
+            color: color,
+            opacity: 0.8,
+            line: { width: 1, color: 'white' }
+        }
+    };
+}
+
+function getAttractorTrace() {
+    return {
+        x: [3.5],
+        y: [3.7],
+        text: ['CAPITAL_OF ⭐'],
+        mode: 'markers+text',
+        type: 'scatter',
+        name: 'Attraktor',
+        textposition: 'bottom center',
+        textfont: { size: 10, color: '#ffd93d' },
+        marker: {
+            size: 20,
+            color: '#ffd93d',
+            symbol: 'star',
+            opacity: 0.9,
+            line: { width: 2, color: '#ff6b6b' }
+        }
+    };
+}
+
+const plotLayout = {
+    paper_bgcolor: '#0a0a1a',
+    plot_bgcolor: '#12122a',
+    font: { color: '#e0e0e0' },
+    showlegend: false,
+    xaxis: { title: 'Dimension 1', gridcolor: '#2a2a5a', zerolinecolor: '#3a3a7a' },
+    yaxis: { title: 'Dimension 2', gridcolor: '#2a2a5a', zerolinecolor: '#3a3a7a' },
+    margin: { t: 20, b: 50, l: 50, r: 20 }
+};
+
+function showEmbeddingDE() {
+    document.getElementById('btn-de').classList.add('active');
+    document.getElementById('btn-en').classList.remove('active');
+    document.getElementById('btn-both').classList.remove('active');
+    Plotly.react('embedding-space', [createEmbeddingPlot(tokensDE, '#ff6b6b', 'DE'), getAttractorTrace()], plotLayout);
+}
+
+function showEmbeddingEN() {
+    document.getElementById('btn-en').classList.add('active');
+    document.getElementById('btn-de').classList.remove('active');
+    document.getElementById('btn-both').classList.remove('active');
+    Plotly.react('embedding-space', [createEmbeddingPlot(tokensEN, '#4ecdc4', 'EN'), getAttractorTrace()], plotLayout);
+}
+
+function showBothLanguages() {
+    document.getElementById('btn-both').classList.add('active');
+    document.getElementById('btn-de').classList.remove('active');
+    document.getElementById('btn-en').classList.remove('active');
+    
+    // Draw connection lines between same-meaning words
+    const lines = [];
+    for (let i = 0; i < tokensDE.length; i++) {
+        lines.push({
+            x: [tokensDE[i].x, tokensEN[i].x],
+            y: [tokensDE[i].y, tokensEN[i].y],
+            mode: 'lines',
+            type: 'scatter',
+            line: { color: 'rgba(255,255,255,0.15)', width: 1, dash: 'dot' },
+            showlegend: false,
+            hoverinfo: 'skip'
+        });
+    }
+    
+    Plotly.react('embedding-space', [
+        ...lines,
+        createEmbeddingPlot(tokensDE, '#ff6b6b', 'DE'),
+        createEmbeddingPlot(tokensEN, '#4ecdc4', 'EN'),
+        getAttractorTrace()
+    ], plotLayout);
+}
+
+// ============================================
+// LAYER ATTRACTOR VIEW (Plotly)
+// ============================================
+
+function updateLayerView(layerNum) {
+    document.getElementById('layer-num').textContent = layerNum;
+    
+    const activeAttractors = attractors.filter(a => layerNum >= a.layer_start && layerNum <= a.layer_end);
+    
+    // Token positions shift toward attractors based on layer
+    const shiftedTokens = tokensDE.map(t => {
+        let sx = t.x, sy = t.y;
+        activeAttractors.forEach(a => {
+            const dx = a.x - t.x;
+            const dy = a.y - t.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < a.strength) {
+                const pull = (layerNum / 11) * (1 - dist / a.strength) * 0.5;
+                sx += dx * pull;
+                sy += dy * pull;
+            }
+        });
+        return { ...t, x: sx, y: sy };
+    });
+    
+    const tokenTrace = {
+        x: shiftedTokens.map(t => t.x),
+        y: shiftedTokens.map(t => t.y),
+        text: shiftedTokens.map(t => t.word),
+        mode: 'markers+text',
+        type: 'scatter',
+        name: 'Tokens',
+        textposition: 'top center',
+        textfont: { size: 11, color: '#ff6b6b' },
+        marker: { size: 10, color: '#ff6b6b', opacity: 0.8 }
+    };
+    
+    // Attractor basins as circles
+    const attractorTraces = activeAttractors.map(a => {
+        const theta = Array.from({length: 50}, (_, i) => i * 2 * Math.PI / 49);
+        const dynamism = layerNum > 6 ? 0.3 + Math.sin(Date.now()/1000) * 0.1 : 0;
+        const radius = a.strength * (0.3 + layerNum/20) + dynamism;
+        return {
+            x: theta.map(t => a.x + radius * Math.cos(t)),
+            y: theta.map(t => a.y + radius * Math.sin(t)),
+            mode: 'lines',
+            type: 'scatter',
+            name: a.name,
+            line: { 
+                color: layerNum <= 3 ? 'rgba(100,200,255,0.4)' : 
+                       layerNum <= 7 ? 'rgba(123,47,247,0.5)' : 'rgba(255,107,107,0.6)',
+                width: 2,
+                dash: layerNum > 6 ? 'dash' : 'solid'
+            },
+            fill: 'toself',
+            fillcolor: layerNum <= 3 ? 'rgba(100,200,255,0.05)' : 
+                       layerNum <= 7 ? 'rgba(123,47,247,0.08)' : 'rgba(255,107,107,0.08)'
+        };
+    });
+    
+    // Attractor centers
+    const centerTrace = {
+        x: activeAttractors.map(a => a.x),
+        y: activeAttractors.map(a => a.y),
+        text: activeAttractors.map(a => a.name),
+        mode: 'markers+text',
+        type: 'scatter',
+        name: 'Attraktoren',
+        textposition: 'bottom center',
+        textfont: { size: 9, color: '#ffd93d' },
+        marker: { size: 14, color: '#ffd93d', symbol: 'diamond', opacity: 0.9 }
+    };
+    
+    const layerLayout = {
+        ...plotLayout,
+        title: {
+            text: `Layer ${layerNum}/11 – ${layerNum <= 3 ? '🔒 Fixierte Attraktoren (Syntax)' : layerNum <= 7 ? '🌀 Semantische Attraktoren' : '⚡ Dynamische Attraktoren (Kontext)'}`,
+            font: { size: 13, color: '#aaa' }
+        }
+    };
+    
+    Plotly.react('attractor-plot', [...attractorTraces, tokenTrace, centerTrace], layerLayout);
+}
+
+// ============================================
+// CONTEXT ACCUMULATION (Canvas)
+// ============================================
+
+function drawContextCanvas() {
+    const canvas = document.getElementById('context-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = canvas.offsetHeight * 2;
+    ctx.scale(2, 2);
+    
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    
+    ctx.fillStyle = '#0a0a1a';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Draw the "clock" / extending frame
+    const frameWidth = w - 80;
+    const tokenWidth = frameWidth / contextSequence.length;
+    
+    // Title
+    ctx.fillStyle = '#888';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('Kontext-Frame (wächst mit jedem Token):', 20, 25);
+    
+    // Draw frames
+    for (let i = 0; i < contextSequence.length; i++) {
+        const x = 40 + i * tokenWidth;
+        const filled = i < contextStep;
+        const current = i === contextStep - 1;
+        
+        // Frame box
+        ctx.strokeStyle = filled ? (current ? '#00d4ff' : '#4a4a8a') : '#2a2a3a';
+        ctx.lineWidth = current ? 2 : 1;
+        ctx.fillStyle = filled ? 'rgba(0, 212, 255, 0.05)' : 'rgba(20, 20, 40, 0.5)';
+        
+        ctx.beginPath();
+        ctx.roundRect(x, 40, tokenWidth - 5, 50, 5);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Token text
+        ctx.fillStyle = filled ? '#00d4ff' : '#444';
+        ctx.font = filled ? 'bold 13px Segoe UI' : '13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(contextSequence[i], x + tokenWidth/2 - 2, 70);
+        
+        // Attention weights (partial inhibition)
+        if (filled && contextStep > 1) {
+            const attWeight = current ? 1.0 : (0.3 + 0.7 * (i / (contextStep-1)));
+            const barHeight = attWeight * 30;
+            ctx.fillStyle = `rgba(123, 47, 247, ${attWeight * 0.7})`;
+            ctx.fillRect(x + tokenWidth/2 - 8, 100 - barHeight + 10, 16, barHeight);
+            ctx.fillStyle = '#aaa';
+            ctx.font = '9px Segoe UI';
+            ctx.fillText(attWeight.toFixed(1), x + tokenWidth/2 - 2, 120);
+        }
+    }
+    
+    ctx.textAlign = 'left';
+    
+    // Draw the "mixing" visualization
+    if (contextStep > 0) {
+        ctx.fillStyle = '#7b2ff7';
+        ctx.font = '11px Segoe UI';
+        ctx.fillText('Attention-Gewichte (partielle Hemmung):', 40, 135);
+        
+        // Final mixed vector representation
+        const mixY = 160;
+        ctx.fillStyle = '#888';
+        ctx.font = '12px Segoe UI';
+        ctx.fillText('Letzter Vektor (gemischte Gesamtbedeutung):', 40, mixY);
+        
+        // Draw vector as colored bar
+        const vecWidth = Math.min(contextStep * 80, frameWidth - 40);
+        const gradient = ctx.createLinearGradient(40, 0, 40 + vecWidth, 0);
+        gradient.addColorStop(0, '#ff6b6b');
+        gradient.addColorStop(0.5, '#7b2ff7');
+        gradient.addColorStop(1, '#00d4ff');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.roundRect(40, mixY + 10, vecWidth, 25, 5);
+        ctx.fill();
+        
+        // Vector values
+        ctx.fillStyle = 'white';
+        ctx.font = '10px monospace';
+        const fakeVec = Array.from({length: contextStep}, () => (Math.random() * 2 - 1).toFixed(2));
+        ctx.fillText(`[${fakeVec.join(', ')} ...]`, 45, mixY + 27);
+        
+        // Arrow to next token prediction
+        if (contextStep >= 5) {
+            const arrowY = mixY + 55;
+            ctx.strokeStyle = '#ffd93d';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]);
+            ctx.beginPath();
+            ctx.moveTo(40 + vecWidth/2, mixY + 40);
+            ctx.lineTo(40 + vecWidth/2, arrowY + 10);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Prediction
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('→ Nächster Token: "Paris" (nearest point)', 40 + vecWidth/2, arrowY + 30);
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('(Cosine Similarity: 0.94)', 40 + vecWidth/2, arrowY + 48);
+            ctx.textAlign = 'left';
+        }
+    }
+    
+    // Draw clock metaphor
+    const clockX = w - 80;
+    const clockY = 70;
+    const clockR = 35;
+    
+    ctx.strokeStyle = '#4a4a8a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(clockX, clockY, clockR, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Clock hand extends with context
+    const angle = -Math.PI/2 + (contextStep / contextSequence.length) * Math.PI * 2;
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(clockX, clockY);
+    ctx.lineTo(clockX + Math.cos(angle) * clockR * 0.8, clockY + Math.sin(angle) * clockR * 0.8);
+    ctx.stroke();
+    
+    ctx.fillStyle = '#00d4ff';
+    ctx.font = '9px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Frame ${contextStep}/${contextSequence.length}`, clockX, clockY + clockR + 15);
+    ctx.textAlign = 'left';
+}
+
+function stepContext() {
+    if (contextStep < contextSequence.length) {
+        contextStep++;
+        drawContextCanvas();
+    }
+}
+
+function startContextAnimation() {
+    if (animationRunning) return;
+    animationRunning = true;
+    contextStep = 0;
+    
+    const interval = setInterval(() => {
+        contextStep++;
+        drawContextCanvas();
+        if (contextStep >= contextSequence.length) {
+            clearInterval(interval);
+            animationRunning = false;
+        }
+    }, 800);
+}
+
+function resetContextAnimation() {
+    animationRunning = false;
+    contextStep = 0;
+    drawContextCanvas();
+}
+
+// ============================================
+// UNEMBEDDING VISUALIZATION (Canvas)
+// ============================================
+
+function drawUnembeddingCanvas() {
+    const canvas = document.getElementById('unembedding-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = canvas.offsetHeight * 2;
+    ctx.scale(2, 2);
+    
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    
+    ctx.fillStyle = '#0a0a1a';
+    ctx.fillRect(0, 0, w, h);
+    
+    // The "meaning point" (accumulated context vector)
+    const centerX = w * 0.5;
+    const centerY = h * 0.45;
+    
+    // Candidate tokens with distances
+    const candidates = [
+        { word: "Paris", dist: 0.06, angle: -0.3 },
+        { word: "Lyon", dist: 0.35, angle: 0.8 },
+        { word: "Berlin", dist: 0.52, angle: -1.2 },
+        { word: "Frankreich", dist: 0.61, angle: 2.1 },
+        { word: "Stadt", dist: 0.45, angle: 1.5 },
+        { word: "Europa", dist: 0.58, angle: -2.5 },
+        { word: "ist", dist: 0.89, angle: 3.0 },
+        { word: "die", dist: 0.95, angle: 2.7 },
+    ];
+    
+    // Draw title
+    ctx.fillStyle = '#888';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('Unembedding: Letzter Vektor → Nearest Point im Vokabular-Raum', 20, 20);
+    
+    // Draw the accumulated meaning point (center)
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 12, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0, 212, 255, 0.3)';
+    ctx.fill();
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.fillStyle = '#00d4ff';
+    ctx.font = 'bold 10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Kontext-', centerX, centerY - 2);
+    ctx.fillText('Vektor', centerX, centerY + 10);
+    
+    // Draw candidate tokens
+    candidates.forEach((c, i) => {
+        const radius = 60 + c.dist * 280;
+        const tx = centerX + Math.cos(c.angle) * radius;
+        const ty = centerY + Math.sin(c.angle) * radius;
+        
+        // Connection line
+        const opacity = Math.max(0.1, 1 - c.dist);
+        ctx.strokeStyle = `rgba(255, 217, 61, ${opacity})`;
+        ctx.lineWidth = Math.max(0.5, (1 - c.dist) * 3);
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(tx, ty);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Token circle
+        const tokenRadius = Math.max(8, (1 - c.dist) * 22);
+        ctx.beginPath();
+        ctx.arc(tx, ty, tokenRadius, 0, Math.PI * 2);
+        ctx.fillStyle = i === 0 ? 'rgba(255, 107, 107, 0.4)' : 'rgba(74, 74, 138, 0.3)';
+        ctx.fill();
+        ctx.strokeStyle = i === 0 ? '#ff6b6b' : '#4a4a8a';
+        ctx.lineWidth = i === 0 ? 2 : 1;
+        ctx.stroke();
+        
+        // Token label
+        ctx.fillStyle = i === 0 ? '#ff6b6b' : '#aaa';
+        ctx.font = i === 0 ? 'bold 12px Segoe UI' : '11px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(c.word, tx, ty + tokenRadius + 14);
+        
+        // Distance label
+        ctx.fillStyle = '#666';
+        ctx.font = '9px monospace';
+        ctx.fillText(`d=${c.dist.toFixed(2)}`, tx, ty + tokenRadius + 26);
+    });
+    
+    // Highlight winner
+    const winnerX = centerX + Math.cos(candidates[0].angle) * (60 + candidates[0].dist * 280);
+    const winnerY = centerY + Math.sin(candidates[0].angle) * (60 + candidates[0].dist * 280);
+    
+    // Glow effect on winner
+    ctx.beginPath();
+    ctx.arc(winnerX, winnerY, 28, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([4, 2]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Probability bar at bottom
+    const barY = h - 45;
+    ctx.fillStyle = '#888';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Softmax-Wahrscheinlichkeiten:', 20, barY - 10);
+    
+    const probs = [
+        { word: "Paris", p: 0.82 },
+        { word: "Lyon", p: 0.06 },
+        { word: "Berlin", p: 0.04 },
+        { word: "Stadt", p: 0.03 },
+        { word: "Europa", p: 0.02 },
+        { word: "andere", p: 0.03 },
+    ];
+    
+    let barX = 20;
+    probs.forEach(p => {
+        const barW = p.p * (w - 60);
+        ctx.fillStyle = p.word === "Paris" ? 'rgba(255, 107, 107, 0.7)' : 'rgba(74, 74, 138, 0.5)';
+        ctx.fillRect(barX, barY, barW - 2, 20);
+        
+        if (barW > 30) {
+            ctx.fillStyle = 'white';
+            ctx.font = '9px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${p.word} (${(p.p*100).toFixed(0)}%)`, barX + barW/2, barY + 13);
+        }
+        barX += barW;
+    });
+    
+    ctx.textAlign = 'left';
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+window.addEventListener('load', () => {
+    showEmbeddingDE();
+    updateLayerView(6);
+    drawContextCanvas();
+    drawUnembeddingCanvas();
+    
+    // Animate layer attractors for late layers
+    setInterval(() => {
+        const slider = document.getElementById('layer-slider');
+        if (parseInt(slider.value) > 6) {
+            updateLayerView(slider.value);
+        }
+    }, 2000);
+});
+
+window.addEventListener('resize', () => {
+    drawContextCanvas();
+    drawUnembeddingCanvas();
+});
+</script>
+
+</body>
+</html>

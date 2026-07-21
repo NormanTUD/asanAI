@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attention – Geometrisch Verstehen</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0b0b1e;
+            color: #ddd;
+            line-height: 1.75;
+        }
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: #0b0b1eee;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2a2a4a;
+            z-index: 9999;
+            display: flex; gap: 8px; padding: 10px 20px;
+            overflow-x: auto; justify-content: center;
+        }
+        .nav a {
+            color: #7c8cf8; text-decoration: none;
+            padding: 6px 14px; border-radius: 6px;
+            font-size: 0.85em; white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .nav a:hover { background: #7c8cf822; }
+        .spacer { height: 60px; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+        h1 {
+            text-align: center; font-size: 2.4em; margin: 30px 0 10px;
+            background: linear-gradient(135deg, #7c8cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { text-align: center; color: #888; margin-bottom: 40px; font-size: 1.05em; }
+        h2 {
+            font-size: 1.7em; margin: 50px 0 15px; color: #7c8cf8;
+            border-bottom: 2px solid #7c8cf833; padding-bottom: 8px;
+        }
+        h3 { font-size: 1.2em; margin: 20px 0 10px; color: #c084fc; }
+        .section {
+            background: #111128; border-radius: 16px; padding: 35px;
+            margin: 30px 0; border: 1px solid #252550;
+            box-shadow: 0 10px 40px #00000055;
+        }
+        .math-block {
+            background: #181838; border-radius: 10px; padding: 22px;
+            margin: 18px 0; border-left: 4px solid #7c8cf8;
+            text-align: center; font-size: 1.15em; overflow-x: auto;
+        }
+        .math-inline { display: inline-block; vertical-align: middle; }
+        .explanation {
+            background: #181838; border-radius: 10px; padding: 18px;
+            margin: 15px 0; border-left: 4px solid #c084fc;
+        }
+        .explanation p { margin: 6px 0; }
+        .plot-box {
+            background: #0a0a1a; border-radius: 12px; padding: 12px;
+            margin: 18px 0; border: 1px solid #252550;
+        }
+        canvas {
+            display: block; margin: 0 auto;
+            border-radius: 10px; background: #0a0a1a;
+            border: 1px solid #252550;
+        }
+        .two-col {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;
+        }
+        @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+        .controls {
+            display: flex; flex-wrap: wrap; gap: 12px;
+            margin: 15px 0; justify-content: center; align-items: center;
+        }
+        .controls button {
+            padding: 10px 20px; border: none; border-radius: 8px;
+            background: linear-gradient(135deg, #7c8cf8, #c084fc);
+            color: #fff; font-size: 0.95em; cursor: pointer;
+            font-weight: 600; transition: all 0.2s;
+        }
+        .controls button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px #7c8cf855; }
+        .controls button.active { box-shadow: 0 0 16px #7c8cf888; transform: scale(1.05); }
+        .slider-group {
+            display: flex; align-items: center; gap: 10px; margin: 8px 0;
+        }
+        .slider-group label { min-width: 180px; color: #c084fc; font-size: 0.9em; }
+        input[type="range"] { width: 250px; accent-color: #7c8cf8; }
+        .note {
+            text-align: center; color: #7c8cf8; font-style: italic;
+            margin: 8px 0; font-size: 0.88em;
+        }
+        .token-row {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            justify-content: center; margin: 12px 0;
+        }
+        .token {
+            padding: 8px 16px; border-radius: 8px;
+            background: #252550; border: 1px solid #3a3a6a;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .token.active {
+            background: #7c8cf833; border-color: #7c8cf8;
+            box-shadow: 0 0 12px #7c8cf844;
+        }
+        .token .weight {
+            display: block; font-size: 0.75em; color: #c084fc;
+            text-align: center; margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="#s1">1. Kernidee</a>
+    <a href="#s2">2. Unterräume</a>
+    <a href="#s3">3. Q·K Ähnlichkeit</a>
+    <a href="#s4">4. Softmax</a>
+    <a href="#s5">5. Gewichtete Summe</a>
+    <a href="#s6">6. Multi-Head</a>
+    <a href="#s7">7. Gesamtbild</a>
+</nav>
+<div class="spacer"></div>
+
+<div class="container">
+<h1>Attention – Geometrisch Verstanden</h1>
+<p class="subtitle">Basierend auf "Attention Is All You Need" (Vaswani et al., 2017) – visuell & mathematisch</p>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s1">
+<h2>1. Die Kernidee – Was tut Attention geometrisch?</h2>
+
+<div class="explanation">
+<p><strong>Was du schon weißt:</strong> Embeddings sind Punkte in einem hochdimensionalen Raum. Jede Richtung kann eine Bedeutung tragen (männlich↔weiblich, konkret↔abstrakt, etc.). FFNs können beliebige Funktionen approximieren.</p>
+<p><strong>Was Attention hinzufügt:</strong> Attention erlaubt jedem Token, <em>gezielt Information von anderen Tokens einzusammeln</em>. Es ist ein <strong>inhaltsabhängiges Routing</strong>: "Wen frage ich, und was bekomme ich zurück?"</p>
+</div>
+
+<div class="math-block" id="m-main"></div>
+
+<div class="explanation">
+<p><strong>Geometrisch in einem Satz:</strong> Jedes Token schickt eine "Frage" (Query) in den Raum. Alle anderen Tokens haben "Schilder" (Keys). Je ähnlicher die Richtung von Query und Key, desto mehr "Information" (Value) fließt zurück. Das Ergebnis ist eine gewichtete Mischung der Values – ein neuer Punkt im Raum.</p>
+</div>
+
+<div class="plot-box">
+    <canvas id="c-overview" width="900" height="500"></canvas>
+</div>
+<p class="note">↑ 2D-Vereinfachung: "sitzt" (rot) fragt den Raum ab. Dicke Linien = hohe Attention. Der grüne Diamant ist der Output.</p>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s2">
+<h2>2. Unterräume herausschneiden – W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup></h2>
+
+<div class="explanation">
+<p>Der 512-dimensionale Embedding-Raum enthält ALLES über ein Wort: Syntax, Semantik, Position, Kontext. Attention braucht aber <strong>spezialisierte Sichten</strong>:</p>
+<ul style="margin: 8px 0 8px 20px;">
+<li><strong>Query-Raum (64d):</strong> "Was suche ich?" – z.B. "Ich bin ein Verb und suche mein Subjekt"</li>
+<li><strong>Key-Raum (64d):</strong> "Was biete ich an?" – z.B. "Ich bin ein Nomen und könnte ein Subjekt sein"</li>
+<li><strong>Value-Raum (64d):</strong> "Was gebe ich weiter?" – z.B. "Meine semantische Information: belebt, weiblich, Tier"</li>
+</ul>
+<p>Die Matrizen W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup> <strong>schneiden schräge Unterräume</strong> aus dem vollen 512d-Raum heraus.</p>
+</div>
+
+<div class="math-block" id="m-qkv"></div>
+
+<div class="two-col">
+<div>
+    <h3>Geometrisch: Schräge Projektion</h3>
+    <div class="plot-box">
+        <canvas id="c-subspace" width="550" height="450"></canvas>
+    </div>
+    <p class="note">↑ Der volle Raum (grau) wird durch W<sup>Q</sup> auf einen schrägen Unterraum (rot) projiziert. Verschiedene Aspekte werden betont.</p>
+</div>
+<div>
+    <h3>Warum schräg?</h3>
+    <div class="explanation">
+        <p>Stell dir den 512d-Raum vor. Darin gibt es Richtungen wie:</p>
+        <ul style="margin: 8px 0 8px 20px;">
+            <li>Achse 1–10: Syntax-Info (Wortart, Kasus...)</li>
+            <li>Achse 11–50: Semantik (Bedeutung)</li>
+            <li>Achse 51–80: Position im Satz</li>
+            <li>... usw.</li>
+        </ul>
+        <p>W<sup>Q</sup> könnte z.B. hauptsächlich die Syntax-Achsen extrahieren (um zu fragen: "Wer passt syntaktisch zu mir?"), während W<sup>V</sup> die Semantik-Achsen extrahiert (um zu antworten: "Hier ist meine Bedeutung").</p>
+        <p style="margin-top:10px;">In 2D/3D sieht das so aus: Der Unterraum liegt <strong>schräg</strong> im Oberraum – er ist keine achsenparallele Scheibe, sondern eine beliebig orientierte Ebene.</p>
+    </div>
+    <div class="math-block" id="m-dims"></div>
+</div>
+</div>
+
+<div class="controls">
+    <div class="slider-group">
+        <label>Unterraum-Winkel: <span id="subspace-angle-val">30°</span></label>
+        <input type="range" id="subspace-angle" min="0" max="90" value="30" oninput="drawSubspace()">
+    </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s3">
+<h2>3. Q · K – Ähnlichkeit im Unterraum messen</h2>
+
+<div class="explanation">
+<p>Nachdem Query und Key in ihren gemeinsamen Unterraum projiziert wurden, misst das <strong>Skalarprodukt</strong> (Dot-Product), wie gut sie zueinander passen. Geometrisch: Es ist die <strong>projizierte Länge</strong> des einen Vektors auf den anderen.</p>
+</div>
+
+<div class="math-block" id="m-dot"></div>
+
+<div class="two-col">
+<div>
+    <div class="plot-box">
+        <canvas id="c-dotprod" width="520" height="450"></canvas>
+    </div>
+    <p class="note">↑ Drehe den Query (weiß). Das Dot-Product mit jedem Key ist die Projektion auf die Query-Richtung.</p>
+</div>
+<div>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Query-Richtung: <span id="q-angle-val">40°</span></label>
+            <input type="range" id="q-angle" min="0" max="360" value="40" oninput="drawDotProduct()">
+        </div>
+    </div>
+    <div id="dot-results"></div>
+    <div class="explanation" style="margin-top:15px;">
+        <p><strong>Intuition:</strong></p>
+        <ul style="margin-left:18px;">
+            <li>Query und Key zeigen in <em>gleiche Richtung</em> → großes positives Dot-Product → hohe Attention</li>
+            <li>Senkrecht (90°) → Dot-Product ≈ 0 → keine Attention</li>
+            <li>Entgegengesetzt → negativ → nach Softmax fast 0</li>
+        </ul>
+        <p style="margin-top:10px;">In 64 Dimensionen: <span class="math-inline" id="m-dot64"></span></p>
+        <p>Aber das Prinzip ist identisch – es misst die <strong>Ausrichtung</strong> der Vektoren.</p>
+    </div>
+    <div class="explanation">
+        <p><strong>Warum durch √d<sub>k</sub> teilen?</strong> In 64 Dimensionen hat das Dot-Product eine Varianz von ~64. Das drückt Softmax in Sättigung (Gradient ≈ 0). Division durch √64 = 8 normalisiert die Varianz auf ~1.</p>
+    </div>
+    <div class="math-block" id="m-scale"></div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s4">
+<h2>4. Softmax – Von Scores zu Gewichten</h2>
+
+<div class="math-block" id="m-softmax"></div>
+
+<div class="explanation">
+<p>Softmax verwandelt die skalierten Scores in eine <strong>Wahrscheinlichkeitsverteilung</strong>: Alle Gewichte sind positiv und summieren zu 1. Geometrisch bestimmt es, <strong>wie viel Prozent</strong> der Information von jedem Token fließt.</p>
+</div>
+
+<div class="two-col">
+<div>
+    <div class="plot-box">
+        <canvas id="c-softmax" width="520" height="380"></canvas>
+    </div>
+    <p class="note">↑ Balkendiagramm: Attention-Gewichte für Query "sitzt" auf alle Keys</p>
+</div>
+<div>
+    <div class="controls">
+        <div class="slider-group">
+            <label>Schärfe (1/Temperatur): <span id="sharp-val">1.0</span></label>
+            <input type="range" id="sharpness" min="0.2" max="4" value="1" step="0.1" oninput="drawSoftmax()">
+        </div>
+    </div>
+    <div class="explanation">
+        <p><strong>Niedrige Schärfe</strong> (hohe Temperatur): Gleichmäßige Verteilung – alle Tokens gleich wichtig.</p>
+        <p><strong>Hohe Schärfe</strong> (niedrige Temperatur): Ein Token dominiert – fast wie ein harter Lookup.</p>
+        <p style="margin-top:10px;">Im Paper: Die Schärfe wird durch √d<sub>k</sub> kontrolliert. Ohne Scaling wäre die effektive Temperatur zu niedrig (zu spitz) in hohen Dimensionen.</p>
+    </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s5">
+<h2>5. Gewichtete Summe – Der Output als Punkt im Raum</h2>
+
+<div class="math-block" id="m-wsum"></div>
+
+<div class="explanation">
+<p>Der Output ist eine <strong>konvexe Kombination</strong> der Value-Vektoren. Geometrisch: Der Output-Punkt liegt <strong>innerhalb des Simplex</strong> (Dreieck/Tetraeder/...) der Values. Die Gewichte bestimmen, wo genau.</p>
+</div>
+
+<div class="plot-box">
+    <canvas id="c-weighted" width="900" height="500"></canvas>
+</div>
+<p class="note">↑ Bewege die Gewichte! Der grüne Output-Punkt wandert im Dreieck der Values.</p>
+
+<div class="controls">
+    <div class="slider-group">
+        <label>α₁ "Katze": <span id="wa-val">0.55</span></label>
+        <input type="range" id="wa" min="0" max="100" value="55" oninput="drawWeighted()">
+    </div>
+    <div class="slider-group">
+        <label>α₂ "sitzt": <span id="wb-val">0.25</span></label>
+        <input type="range" id="wb" min="0" max="100" value="25" oninput="drawWeighted()">
+    </div>
+    <div class="slider-group">
+        <label>α₃ "Matte": <span id="wc-val">0.20</span></label>
+        <input type="range" id="wc" min="0" max="100" value="20" oninput="drawWeighted()">
+    </div>
+</div>
+
+<div class="explanation">
+<p><strong>Schlüssel-Einsicht:</strong> Attention kann den Output-Punkt <em>nur innerhalb der konvexen Hülle</em> der Values platzieren. Es kann keine "neue" Information erfinden – es kann nur bestehende Information <strong>mischen</strong>. Die FFN-Schicht danach kann dann nichtlinear transformieren.</p>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s6">
+<h2>6. Multi-Head – Parallele Perspektiven auf den Raum</h2>
+
+<div class="math-block" id="m-mh"></div>
+
+<div class="explanation">
+<p>Statt EINEN 512d-Unterraum zu nutzen, schneidet das Modell <strong>8 verschiedene 64d-Unterräume</strong> heraus – jeder mit eigenen W<sup>Q</sup>, W<sup>K</sup>, W<sup>V</sup>. Jeder Head kann auf <strong>andere Aspekte</strong> achten:</p>
+<ul style="margin: 8px 0 8px 20px;">
+<li>Head 1: "Wer ist mein syntaktisches Subjekt?"</li>
+<li>Head 2: "Welches Wort ist semantisch ähnlich?"</li>
+<li>Head 3: "Was steht direkt neben mir?"</li>
+<li>Head 4: "Wo ist das Verb zu diesem Nomen?"</li>
+<li>... etc.</li>
+</ul>
+</div>
+
+<div class="plot-box">
+    <canvas id="c-multihead" width="900" height="520"></canvas>
+</div>
+<p class="note">↑ 8 Heads schneiden verschiedene schräge Ebenen aus dem Gesamtraum. Jeder sieht andere Beziehungen.</p>
+
+<div class="controls">
+    <button class="active" onclick="selectHead(0)">Head 1: Syntax</button>
+    <button onclick="selectHead(1)">Head 2: Semantik</button>
+    <button onclick="selectHead(2)">Head 3: Lokal</button>
+    <button onclick="selectHead(3)">Head 4: Verb↔Nomen</button>
+    <button onclick="selectHead(4)">Head 5: Referenz</button>
+    <button onclick="selectHead(5)">Head 6: Position</button>
+    <button onclick="selectHead(6)">Head 7: Negation</button>
+    <button onclick="selectHead(7)">Head 8: Long-Range</button>
+</div>
+<div id="head-info" class="explanation">
+    <p><strong>Head 1 (Syntax):</strong> Projiziert in einen Unterraum, in dem syntaktische Rollen betont werden. "Die" attended stark zu "Katze" (Artikel→Nomen).</p>
+</div>
+
+<div class="explanation">
+<p><strong>Concat + W<sup>O</sup>:</strong> Die 8 Outputs (je 64d) werden konkateniert (→ 512d) und durch eine letzte Matrix W<sup>O</sup> zurück in den Modellraum projiziert. So fließen alle Perspektiven zusammen.</p>
+</div>
+<div class="math-block" id="m-concat"></div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="s7">
+<h2>7. Das Gesamtbild – Warum funktioniert das so gut?</h2>
+
+<div class="explanation">
+<p><strong>Die geometrische Essenz von Attention in 4 Schritten:</strong></p>
+<ol style="margin: 10px 0 10px 20px;">
+<li><strong>Unterräume herausschneiden:</strong> W<sup>Q</sup>, W<sup>K</sup> projizieren in einen gemeinsamen "Vergleichsraum". Nur die relevanten Aspekte werden verglichen.</li>
+<li><strong>Ähnlichkeit messen:</strong> Im Vergleichsraum zeigt das Dot-Product, welche Tokens zueinander passen (gleiche Richtung = relevant).</li>
+<li><strong>Gewichte normalisieren:</strong> Softmax macht daraus eine Verteilung – "wie viel Prozent von jedem?"</li>
+<li><strong>Information mischen:</strong> Die Values (aus einem ANDEREN Unterraum!) werden gewichtet gemischt → neuer Punkt im Raum.</li>
+</ol>
+</div>
+
+<div class="plot-box">
+    <canvas id="c-full" width="900" height="600"></canvas>
+</div>
+<p class="note">↑ Klicke auf ein Token um es als Query zu wählen. Beobachte den gesamten Attention-Fluss.</p>
+
+<div class="token-row" id="full-tokens"></div>
+
+<div class="math-block" id="m-final"></div>
+
+<div class="explanation">
+<h3>Warum ist das so mächtig?</h3>
+<p><strong>1. Inhaltsabhängiges Routing:</strong> Anders als CNNs (feste Nachbarschaft) oder RNNs (sequentiell) kann Attention <em>jedes</em> Token mit <em>jedem</em> anderen verbinden – und die Stärke hängt vom <em>Inhalt</em> ab.</p>
+<p><strong>2. Parallele Perspektiven:</strong> 8 Heads = 8 verschiedene "Fragen" gleichzeitig. Ein Head findet das Subjekt, ein anderer den Kontext, ein dritter die Negation.</p>
+<p><strong>3. O(1) Pfadlänge:</strong> Information fließt in EINEM Schritt von jedem Token zu jedem anderen. Kein sequentielles Durchreichen wie bei RNNs.</p>
+<p><strong>4. Lernbare Unterräume:</strong> Die W-Matrizen werden gelernt. Das Modell entscheidet selbst, welche Aspekte es vergleichen will und welche Information es weitergibt.</p>
+</div>
+
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// MATH RENDERING
+// ══════════════════════════════════════════════════════════════════
+function renderAllMath() {
+    const formulas = {
+        'm-main': '\\text{Attention}(Q,K,V) = \\text{softmax}\\!\\left(\\frac{QK^{\\!T}}{\\sqrt{d_k}}\\right)\\!V',
+        'm-qkv': 'Q = XW^Q,\\quad K = XW^K,\\quad V = XW^V \\\\[6pt] W^Q, W^K \\in \\mathbb{R}^{512 \\times 64},\\quad W^V \\in \\mathbb{R}^{512 \\times 64}',
+        'm-dims': 'd_{\\text{model}} = 512,\\quad d_k = d_v = 64,\\quad h = 8 \\text{ Heads}',
+        'm-dot': '\\text{score}(q,k) = q \\cdot k = \\|q\\|\\,\\|k\\|\\cos\\theta = \\sum_{i=1}^{d_k} q_i\\, k_i',
+        'm-dot64': '\\text{score} = \\sum_{i=1}^{64} q_i \\cdot k_i',
+        'm-scale': '\\text{scaled score} = \\frac{q \\cdot k}{\\sqrt{d_k}} = \\frac{q \\cdot k}{8}',
+        'm-softmax': '\\alpha_i = \\frac{e^{s_i}}{\\sum_j e^{s_j}},\\qquad \\sum_i \\alpha_i = 1,\\quad \\alpha_i \\geq 0',
+        'm-wsum': '\\text{output} = \\sum_{i=1}^{n} \\alpha_i \\cdot v_i \\;\\in\\; \\text{conv}(v_1,\\ldots,v_n)',
+        'm-mh': '\\text{MultiHead}(Q,K,V) = \\text{Concat}(\\text{head}_1,\\ldots,\\text{head}_8)\\,W^O \\\\[6pt] \\text{head}_i = \\text{Attention}(QW_i^Q,\\; KW_i^K,\\; VW_i^V)',
+        'm-concat': 'W^O \\in \\mathbb{R}^{(8 \\cdot 64) \\times 512} = \\mathbb{R}^{512 \\times 512}',
+        'm-final': '\\boxed{\\;\\text{Attention}(Q,K,V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V\\;} \\\\[10pt] \\text{MultiHead} = \\text{Concat}(\\text{head}_1,\\ldots,\\text{head}_8)\\,W^O'
+    };
+    for (const [id, tex] of Object.entries(formulas)) {
+        const el = document.getElementById(id);
+        if (el) {
+            try { temml.render(tex, el, {displayMode: true}); }
+            catch(e) { el.innerHTML = '<code>' + tex + '</code>'; }
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// UTILITY
+// ══════════════════════════════════════════════════════════════════
+function arrow(ctx, x1, y1, x2, y2, color, width) {
+    const headLen = 8 + width * 2;
+    const dx = x2 - x1, dy = y2 - y1;
+    const angle = Math.atan2(dy, dx);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle - 0.35), y2 - headLen * Math.sin(angle - 0.35));
+    ctx.lineTo(x2 - headLen * Math.cos(angle + 0.35), y2 - headLen * Math.sin(angle + 0.35));
+    ctx.closePath();
+    ctx.fill();
+}
+
+function softmax(scores) {
+    const max = Math.max(...scores);
+    const exps = scores.map(s => Math.exp(s - max));
+    const sum = exps.reduce((a, b) => a + b, 0);
+    return exps.map(e => e / sum);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 1: OVERVIEW
+// ══════════════════════════════════════════════════════════════════
+const tokens = ['Die', 'Katze', 'sitzt', 'auf', 'der', 'Matte'];
+const tokenPositions = [
+    {x: 150, y: 120}, // Die
+    {x: 350, y: 80},  // Katze
+    {x: 500, y: 250}, // sitzt (Query)
+    {x: 650, y: 380}, // auf
+    {x: 200, y: 400}, // der
+    {x: 750, y: 130}  // Matte
+];
+const tokenColors = ['#aaa', '#4ecdc4', '#ff6b6b', '#aaa', '#aaa', '#ffd93d'];
+
+function drawOverview() {
+    const c = document.getElementById('c-overview');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background grid
+    ctx.strokeStyle = '#1a1a3a';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    // Axis labels
+    ctx.fillStyle = '#555';
+    ctx.font = '12px monospace';
+    ctx.fillText('← abstrakt — konkret →', W/2 - 80, H - 10);
+    ctx.save();
+    ctx.translate(12, H/2 + 60);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('← passiv — aktiv →', 0, 0);
+    ctx.restore();
+
+    // Attention weights from "sitzt" (index 2) to all others
+    const attWeights = [0.05, 0.45, 0.0, 0.10, 0.05, 0.35];
+    const queryIdx = 2;
+
+    // Draw attention lines
+    for (let i = 0; i < tokens.length; i++) {
+        if (i === queryIdx || attWeights[i] < 0.03) continue;
+        const alpha = attWeights[i];
+        ctx.strokeStyle = `rgba(167, 139, 250, ${alpha})`;
+        ctx.lineWidth = alpha * 8;
+        ctx.beginPath();
+        ctx.moveTo(tokenPositions[queryIdx].x, tokenPositions[queryIdx].y);
+        ctx.lineTo(tokenPositions[i].x, tokenPositions[i].y);
+        ctx.stroke();
+
+        // Weight label on line
+        const mx = (tokenPositions[queryIdx].x + tokenPositions[i].x) / 2;
+        const my = (tokenPositions[queryIdx].y + tokenPositions[i].y) / 2;
+        ctx.fillStyle = '#c084fc';
+        ctx.font = '11px monospace';
+        ctx.fillText(`α=${alpha.toFixed(2)}`, mx + 5, my - 5);
+    }
+
+    // Compute output point (weighted sum)
+    let outX = 0, outY = 0;
+    for (let i = 0; i < tokens.length; i++) {
+        outX += attWeights[i] * tokenPositions[i].x;
+        outY += attWeights[i] * tokenPositions[i].y;
+    }
+
+    // Draw output point
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath();
+    ctx.moveTo(outX, outY - 10);
+    ctx.lineTo(outX + 9, outY + 6);
+    ctx.lineTo(outX - 9, outY + 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#4ade80';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('Output', outX + 12, outY + 4);
+
+    // Draw token dots
+    for (let i = 0; i < tokens.length; i++) {
+        const p = tokenPositions[i];
+        const r = i === queryIdx ? 16 : 10;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = tokenColors[i] + (i === queryIdx ? '' : '99');
+        ctx.fill();
+        ctx.strokeStyle = i === queryIdx ? '#ff6b6b' : '#555';
+        ctx.lineWidth = i === queryIdx ? 3 : 1;
+        ctx.stroke();
+
+        ctx.fillStyle = '#eee';
+        ctx.font = i === queryIdx ? 'bold 14px sans-serif' : '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(tokens[i], p.x, p.y - r - 8);
+        if (i === queryIdx) {
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = '10px monospace';
+            ctx.fillText('(Query)', p.x, p.y + r + 14);
+        }
+        ctx.textAlign = 'left';
+    }
+
+    // Legend
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Dicke Linie = hohe Attention | ◆ = gewichteter Output', 20, 20);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 2: SUBSPACE PROJECTION
+// ══════════════════════════════════════════════════════════════════
+function drawSubspace() {
+    const c = document.getElementById('c-subspace');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const angleDeg = parseInt(document.getElementById('subspace-angle').value);
+    document.getElementById('subspace-angle-val').textContent = angleDeg + '°';
+    const angleRad = angleDeg * Math.PI / 180;
+
+    const cx = W / 2, cy = H / 2;
+
+    // Draw full space axes (gray)
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    // Axis 1: "Syntax" (horizontal)
+    ctx.beginPath(); ctx.moveTo(40, cy); ctx.lineTo(W - 40, cy); ctx.stroke();
+    // Axis 2: "Semantik" (vertical)
+    ctx.beginPath(); ctx.moveTo(cx, 40); ctx.lineTo(cx, H - 40); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#555';
+    ctx.font = '11px monospace';
+    ctx.fillText('Syntax (Wortart, Kasus...)', W - 180, cy + 16);
+    ctx.fillText('Semantik (Bedeutung)', cx + 8, 50);
+
+    // Draw the subspace (rotated red line/plane)
+    const subLen = 200;
+    const sx1 = cx - subLen * Math.cos(angleRad);
+    const sy1 = cy + subLen * Math.sin(angleRad);
+    const sx2 = cx + subLen * Math.cos(angleRad);
+    const sy2 = cy - subLen * Math.sin(angleRad);
+
+    // Subspace "band" (to show it's a plane seen edge-on)
+    ctx.strokeStyle = '#ff6b6b88';
+    ctx.lineWidth = 18;
+    ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(sx2, sy2); ctx.stroke();
+
+    // Subspace line
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(sx2, sy2); ctx.stroke();
+
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('Query-Unterraum (W^Q)', sx2 + 5, sy2 - 5);
+    ctx.font = '10px monospace';
+    ctx.fillText(`Winkel: ${angleDeg}° zum Syntax-Axis`, sx2 + 5, sy2 + 12);
+
+    // Example token vectors in full space
+    const tokVecs = [
+        {x: 80, y: -40, label: '"Katze"', col: '#4ecdc4'},
+        {x: 30, y: -90, label: '"sitzt"', col: '#ffd93d'},
+        {x: -60, y: -20, label: '"auf"', col: '#a78bfa'},
+    ];
+
+    for (const tv of tokVecs) {
+        // Draw full vector
+        const vx = cx + tv.x, vy = cy + tv.y;
+        arrow(ctx, cx, cy, vx, vy, tv.col + '88', 2);
+        ctx.fillStyle = tv.col;
+        ctx.font = '11px sans-serif';
+        ctx.fillText(tv.label, vx + 5, vy - 5);
+
+        // Project onto subspace
+        const cos = Math.cos(angleRad), sin = Math.sin(angleRad);
+        // Subspace direction vector (unit)
+        const dirX = cos, dirY = -sin;
+        // Dot product to find projection length
+        const dot = tv.x * dirX + tv.y * dirY;
+        const projX = cx + dot * dirX;
+        const projY = cy + dot * dirY;
+
+        // Dashed line from point to projection
+        ctx.strokeStyle = tv.col + '55';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(vx, vy); ctx.lineTo(projX, projY); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Projected point
+        ctx.beginPath();
+        ctx.arc(projX, projY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = tv.col;
+        ctx.fill();
+    }
+
+    // Info text
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('W^Q projiziert 512d → 64d Unterraum (hier: 2d → 1d)', cx, H - 15);
+    ctx.fillText('Der Winkel bestimmt, WELCHE Aspekte betont werden', cx, H - 35);
+    ctx.textAlign = 'left';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 3: DOT PRODUCT
+// ══════════════════════════════════════════════════════════════════
+const keyVecs = [
+    {angle: 30, label: 'K "Katze"', col: '#4ecdc4'},
+    {angle: 110, label: 'K "auf"', col: '#a78bfa'},
+    {angle: 200, label: 'K "der"', col: '#888'},
+    {angle: 310, label: 'K "Matte"', col: '#ffd93d'},
+];
+
+function drawDotProduct() {
+    const c = document.getElementById('c-dotprod');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+    const R = 160;
+
+    const qAngleDeg = parseInt(document.getElementById('q-angle').value);
+    document.getElementById('q-angle-val').textContent = qAngleDeg + '°';
+    const qRad = qAngleDeg * Math.PI / 180;
+    const qx = Math.cos(qRad), qy = -Math.sin(qRad); // flip y for canvas
+
+    // Draw unit circle
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Draw axes
+    ctx.strokeStyle = '#1a1a3a';
+    ctx.beginPath(); ctx.moveTo(40, cy); ctx.lineTo(W - 40, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 40); ctx.lineTo(cx, H - 40); ctx.stroke();
+
+    ctx.fillStyle = '#444';
+    ctx.font = '10px monospace';
+    ctx.fillText('"sucht Subjekt"', W - 110, cy + 14);
+    ctx.fillText('"sucht Ort"', cx + 5, 50);
+
+    // Draw query
+    arrow(ctx, cx, cy, cx + qx * R, cy + qy * R, '#ffffff', 3);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText('Query', cx + qx * R + 8, cy + qy * R - 8);
+
+    // Draw keys and compute dot products
+    let resultsHTML = '<div style="font-family:monospace; font-size:0.9em;">';
+    const scores = [];
+
+    for (const kv of keyVecs) {
+        const kRad = kv.angle * Math.PI / 180;
+        const kx = Math.cos(kRad), ky = -Math.sin(kRad);
+
+        // Draw key vector
+        arrow(ctx, cx, cy, cx + kx * R, cy + ky * R, kv.col, 2);
+        ctx.fillStyle = kv.col;
+        ctx.font = '11px sans-serif';
+        ctx.fillText(kv.label, cx + kx * R + 8, cy + ky * R + 4);
+
+        // Compute dot product
+        const dot = qx * kx + (-qy) * (-ky); // in math coords
+        scores.push(dot);
+
+        // Draw projection onto query direction
+        const projLen = dot * R;
+        const projX = cx + qx * projLen;
+        const projY = cy + qy * projLen;
+
+        ctx.strokeStyle = kv.col + '55';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 3]);
+        ctx.beginPath();
+        ctx.moveTo(cx + kx * R, cy + ky * R);
+        ctx.lineTo(projX, projY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Projection marker
+        ctx.beginPath();
+        ctx.arc(projX, projY, 4, 0, Math.PI * 2);
+        ctx.fillStyle = kv.col;
+        ctx.fill();
+    }
+
+    // Softmax
+    const sm = softmax(scores);
+    for (let i = 0; i < keyVecs.length; i++) {
+        resultsHTML += `<div style="color:${keyVecs[i].col}; margin:5px 0; padding:6px 10px; background:#181838; border-radius:6px;">
+            ${keyVecs[i].label}: dot=${scores[i].toFixed(3)} → α=${sm[i].toFixed(3)}</div>`;
+    }
+    resultsHTML += '</div>';
+    document.getElementById('dot-results').innerHTML = resultsHTML;
+
+    // Legend
+    ctx.fillStyle = '#666';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Projektion auf Query-Richtung = Dot-Product = Ähnlichkeit', cx, H - 10);
+    ctx.textAlign = 'left';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 4: SOFTMAX BARS
+// ══════════════════════════════════════════════════════════════════
+function drawSoftmax() {
+    const c = document.getElementById('c-softmax');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const sharpness = parseFloat(document.getElementById('sharpness').value);
+    document.getElementById('sharp-val').textContent = sharpness.toFixed(1);
+
+    // Raw scores (simulated)
+    const rawScores = [2.5, 1.0, 0.3, -0.5, -0.2, 1.8]; // for each token
+    const scaledScores = rawScores.map(s => s * sharpness);
+    const weights = softmax(scaledScores);
+
+    const barW = 60, gap = 20;
+    const startX = (W - tokens.length * (barW + gap)) / 2;
+    const barMaxH = 260;
+    const baseY = H - 60;
+
+    // Axis
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(startX - 10, baseY); ctx.lineTo(W - startX + 10, baseY); ctx.stroke();
+
+    // Bars
+    for (let i = 0; i < tokens.length; i++) {
+        const x = startX + i * (barW + gap);
+        const barH = weights[i] * barMaxH;
+
+        // Bar gradient
+        const grad = ctx.createLinearGradient(x, baseY - barH, x, baseY);
+        grad.addColorStop(0, '#7c8cf8');
+        grad.addColorStop(1, '#c084fc');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x, baseY - barH, barW, barH);
+
+        // Border
+        ctx.strokeStyle = '#7c8cf8';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, baseY - barH, barW, barH);
+
+        // Token label
+        ctx.fillStyle = '#ddd';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(tokens[i], x + barW / 2, baseY + 18);
+
+        // Weight value
+        ctx.fillStyle = '#c084fc';
+        ctx.font = '11px monospace';
+        ctx.fillText(weights[i].toFixed(3), x + barW / 2, baseY - barH - 8);
+    }
+
+    // Title
+    ctx.fillStyle = '#888';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Attention-Gewichte (Schärfe = ${sharpness.toFixed(1)})`, W / 2, 20);
+    ctx.fillText('Alle Balken summieren zu 1.0', W / 2, 38);
+    ctx.textAlign = 'left';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 5: WEIGHTED SUM (CONVEX COMBINATION)
+// ══════════════════════════════════════════════════════════════════
+const valuePoints = [
+    {x: 200, y: 100, label: 'V "Katze"', col: '#4ecdc4', desc: 'belebt, Tier, weiblich'},
+    {x: 700, y: 150, label: 'V "sitzt"', col: '#ffd93d', desc: 'Aktion, statisch, Verb'},
+    {x: 450, y: 420, label: 'V "Matte"', col: '#a78bfa', desc: 'Objekt, Ort, unbelebt'},
+];
+
+function drawWeighted() {
+    const c = document.getElementById('c-weighted');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Get weights from sliders and normalize
+    let wa = parseInt(document.getElementById('wa').value);
+    let wb = parseInt(document.getElementById('wb').value);
+    let wc = parseInt(document.getElementById('wc').value);
+    const total = wa + wb + wc || 1;
+    wa /= total; wb /= total; wc /= total;
+    document.getElementById('wa-val').textContent = wa.toFixed(2);
+    document.getElementById('wb-val').textContent = wb.toFixed(2);
+    document.getElementById('wc-val').textContent = wc.toFixed(2);
+
+    const weights = [wa, wb, wc];
+
+    // Draw the convex hull (triangle)
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#7c8cf811';
+    ctx.beginPath();
+    ctx.moveTo(valuePoints[0].x, valuePoints[0].y);
+    ctx.lineTo(valuePoints[1].x, valuePoints[1].y);
+    ctx.lineTo(valuePoints[2].x, valuePoints[2].y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Label: "Konvexe Hülle"
+    ctx.fillStyle = '#444';
+    ctx.font = '10px monospace';
+    ctx.fillText('Konvexe Hülle der Values', 380, 300);
+    ctx.fillText('(Output kann NUR hier liegen)', 380, 315);
+
+    // Axis hints
+    ctx.fillStyle = '#333';
+    ctx.font = '10px monospace';
+    ctx.fillText('← belebt — unbelebt →', 20, H - 10);
+    ctx.save();
+    ctx.translate(12, H / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('← statisch — aktiv →', 0, 0);
+    ctx.restore();
+
+    // Compute output
+    let outX = 0, outY = 0;
+    for (let i = 0; i < 3; i++) {
+        outX += weights[i] * valuePoints[i].x;
+        outY += weights[i] * valuePoints[i].y;
+    }
+
+    // Draw lines from values to output (thickness = weight)
+    for (let i = 0; i < 3; i++) {
+        ctx.strokeStyle = valuePoints[i].col + '88';
+        ctx.lineWidth = weights[i] * 8 + 0.5;
+        ctx.beginPath();
+        ctx.moveTo(valuePoints[i].x, valuePoints[i].y);
+        ctx.lineTo(outX, outY);
+        ctx.stroke();
+    }
+
+    // Draw value points
+    for (let i = 0; i < 3; i++) {
+        const vp = valuePoints[i];
+        ctx.beginPath();
+        ctx.arc(vp.x, vp.y, 12, 0, Math.PI * 2);
+        ctx.fillStyle = vp.col;
+        ctx.fill();
+        ctx.strokeStyle = '#fff3';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = vp.col;
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(vp.label, vp.x + 16, vp.y - 10);
+        ctx.font = '10px monospace';
+        ctx.fillStyle = vp.col + 'aa';
+        ctx.fillText(vp.desc, vp.x + 16, vp.y + 6);
+        ctx.fillText(`α = ${weights[i].toFixed(2)}`, vp.x + 16, vp.y + 20);
+    }
+
+    // Draw output point
+    ctx.beginPath();
+    ctx.arc(outX, outY, 10, 0, Math.PI * 2);
+    ctx.fillStyle = '#4ade80';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#4ade80';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('Output = Σ αᵢ · vᵢ', outX + 14, outY - 4);
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#4ade80aa';
+    ctx.fillText(`(${outX.toFixed(0)}, ${outY.toFixed(0)})`, outX + 14, outY + 12);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 6: MULTI-HEAD
+// ══════════════════════════════════════════════════════════════════
+const headInfos = [
+    {name: 'Syntax', desc: '"Die" → "Katze" (Artikel findet sein Nomen)', angle: 15, col: '#ff6b6b'},
+    {name: 'Semantik', desc: '"Katze" → "Matte" (semantisch verwandt: Tier+Ort)', angle: 55, col: '#4ecdc4'},
+    {name: 'Lokal', desc: 'Jedes Token → direkter Nachbar (Fenster=1)', angle: 90, col: '#ffd93d'},
+    {name: 'Verb↔Nomen', desc: '"sitzt" → "Katze" (Verb findet sein Subjekt)', angle: 130, col: '#a78bfa'},
+    {name: 'Referenz', desc: '"der" → "Matte" (Artikel findet Bezugswort)', angle: 170, col: '#f472b6'},
+    {name: 'Position', desc: 'Attention-Peak auf Position i±2', angle: 210, col: '#34d399'},
+    {name: 'Negation', desc: 'Sucht Negationswörter (nicht, kein, nie)', angle: 250, col: '#fb923c'},
+    {name: 'Long-Range', desc: '"Matte" → "Katze" (entfernte Abhängigkeit)', angle: 300, col: '#60a5fa'},
+];
+
+let activeHead = 0;
+
+function selectHead(h) {
+    activeHead = h;
+    document.querySelectorAll('#s6 .controls button').forEach((btn, i) => {
+        btn.classList.toggle('active', i === h);
+    });
+    document.getElementById('head-info').innerHTML = `<p><strong>Head ${h+1} (${headInfos[h].name}):</strong> ${headInfos[h].desc}</p>`;
+    drawMultiHead();
+}
+
+function drawMultiHead() {
+    const c = document.getElementById('c-multihead');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+
+    // Draw the full 512d space as a big circle
+    ctx.strokeStyle = '#2a2a4a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 220, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#333';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('d_model = 512', cx, cy - 230);
+
+    // Draw 8 heads as wedges
+    for (let h = 0; h < 8; h++) {
+        const startAngle = (h / 8) * Math.PI * 2 - Math.PI / 2;
+        const endAngle = ((h + 1) / 8) * Math.PI * 2 - Math.PI / 2;
+        const isActive = h === activeHead;
+
+        // Wedge
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, isActive ? 210 : 190, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = isActive ? headInfos[h].col + '44' : headInfos[h].col + '11';
+        ctx.fill();
+        ctx.strokeStyle = isActive ? headInfos[h].col : headInfos[h].col + '44';
+        ctx.lineWidth = isActive ? 3 : 1;
+        ctx.stroke();
+
+        // Label
+        const midAngle = (startAngle + endAngle) / 2;
+        const labelR = isActive ? 160 : 140;
+        ctx.fillStyle = isActive ? headInfos[h].col : headInfos[h].col + '88';
+        ctx.font = isActive ? 'bold 12px sans-serif' : '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`H${h + 1}`, cx + Math.cos(midAngle) * labelR, cy + Math.sin(midAngle) * labelR);
+
+        if (isActive) {
+            ctx.font = '9px monospace';
+            ctx.fillText(headInfos[h].name, cx + Math.cos(midAngle) * (labelR - 25), cy + Math.sin(midAngle) * (labelR - 25));
+            ctx.fillText('64d', cx + Math.cos(midAngle) * (labelR + 25), cy + Math.sin(midAngle) * (labelR + 25));
+        }
+    }
+
+    // Inside: show the active head's "view"
+    // Draw some token dots in the active head's subspace orientation
+    const headAngle = headInfos[activeHead].angle * Math.PI / 180;
+    const col = headInfos[activeHead].col;
+
+    // Simulated tokens in this head's subspace
+    const headTokens = [
+        {name: 'Die', r: 30, a: 0.2},
+        {name: 'Katze', r: 55, a: 1.0},
+        {name: 'sitzt', r: 45, a: 2.2},
+        {name: 'auf', r: 35, a: 3.3},
+        {name: 'der', r: 25, a: 4.1},
+        {name: 'Matte', r: 60, a: 5.0},
+    ];
+
+    for (const ht of headTokens) {
+        const angle = headAngle + ht.a * 0.5;
+        const px = cx + Math.cos(angle) * ht.r;
+        const py = cy + Math.sin(angle) * ht.r;
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.fillStyle = col + 'cc';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(ht.name, px + 6, py + 2);
+    }
+
+    // Center info
+    ctx.fillStyle = '#eee';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('d_model = 512', cx, cy + 8);
+    ctx.fillText('(alle Heads zusammen)', cx, cy + 22);
+    ctx.textAlign = 'left';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CANVAS 7: FULL PIPELINE
+// ══════════════════════════════════════════════════════════════════
+const fullSentence = ['Die', 'Katze', 'sitzt', 'auf', 'der', 'Matte'];
+const fullPositions = [
+    {x: 100, y: 150}, {x: 250, y: 90}, {x: 430, y: 200},
+    {x: 580, y: 350}, {x: 150, y: 380}, {x: 720, y: 130}
+];
+const fullColors = ['#888', '#4ecdc4', '#ff6b6b', '#a78bfa', '#888', '#ffd93d'];
+
+// Simulated attention matrix (row = query, col = key)
+const attMatrix = [
+    [0.10, 0.50, 0.10, 0.05, 0.15, 0.10], // Die → Katze
+    [0.05, 0.15, 0.35, 0.05, 0.05, 0.35], // Katze → sitzt, Matte
+    [0.05, 0.50, 0.10, 0.10, 0.05, 0.20], // sitzt → Katze, Matte
+    [0.05, 0.10, 0.25, 0.10, 0.10, 0.40], // auf → Matte, sitzt
+    [0.05, 0.05, 0.05, 0.10, 0.10, 0.65], // der → Matte
+    [0.05, 0.30, 0.20, 0.15, 0.05, 0.25], // Matte → Katze, sitzt
+];
+
+let fullQueryIdx = 2;
+
+function selectFullToken(idx) {
+    fullQueryIdx = idx;
+    drawFull();
+    // Update token row highlights
+    document.querySelectorAll('#full-tokens .token').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+    });
+}
+
+function drawFull() {
+    const c = document.getElementById('c-full');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const weights = attMatrix[fullQueryIdx];
+
+    // Background grid
+    ctx.strokeStyle = '#1a1a3a';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    // Axis labels
+    ctx.fillStyle = '#444';
+    ctx.font = '11px monospace';
+    ctx.fillText('← abstrakt — konkret →', W/2 - 80, H - 8);
+    ctx.save();
+    ctx.translate(10, H/2 + 50);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('← passiv — aktiv →', 0, 0);
+    ctx.restore();
+
+    // Draw attention lines from query to all others
+    for (let i = 0; i < fullSentence.length; i++) {
+        if (i === fullQueryIdx || weights[i] < 0.04) continue;
+        const alpha = weights[i];
+        ctx.strokeStyle = `rgba(167, 139, 250, ${alpha * 1.2})`;
+        ctx.lineWidth = alpha * 10;
+        ctx.beginPath();
+        ctx.moveTo(fullPositions[fullQueryIdx].x, fullPositions[fullQueryIdx].y);
+        ctx.lineTo(fullPositions[i].x, fullPositions[i].y);
+        ctx.stroke();
+
+        // Weight label
+        const mx = (fullPositions[fullQueryIdx].x + fullPositions[i].x) / 2;
+        const my = (fullPositions[fullQueryIdx].y + fullPositions[i].y) / 2;
+        ctx.fillStyle = '#c084fc';
+        ctx.font = '10px monospace';
+        ctx.fillText(`${(alpha*100).toFixed(0)}%`, mx + 5, my - 5);
+    }
+
+    // Compute output
+    let outX = 0, outY = 0;
+    for (let i = 0; i < fullSentence.length; i++) {
+        outX += weights[i] * fullPositions[i].x;
+        outY += weights[i] * fullPositions[i].y;
+    }
+
+    // Draw output
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath();
+    ctx.moveTo(outX, outY - 12);
+    ctx.lineTo(outX + 10, outY + 7);
+    ctx.lineTo(outX - 10, outY + 7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#4ade80';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('Output', outX + 14, outY + 4);
+
+    // Draw token dots
+    for (let i = 0; i < fullSentence.length; i++) {
+        const p = fullPositions[i];
+        const isQuery = i === fullQueryIdx;
+        const r = isQuery ? 18 : 10;
+
+        // Glow for query
+        if (isQuery) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 28, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff6b6b22';
+            ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = isQuery ? '#ff6b6b' : fullColors[i];
+        ctx.fill();
+        ctx.strokeStyle = isQuery ? '#fff' : '#555';
+        ctx.lineWidth = isQuery ? 2 : 1;
+        ctx.stroke();
+
+        ctx.fillStyle = '#eee';
+        ctx.font = isQuery ? 'bold 14px sans-serif' : '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(fullSentence[i], p.x, p.y - r - 8);
+        if (isQuery) {
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = '10px monospace';
+            ctx.fillText('(Query)', p.x, p.y + r + 14);
+        }
+        ctx.textAlign = 'left';
+    }
+
+    // Info box
+    ctx.fillStyle = '#181838';
+    ctx.fillRect(10, 10, 260, 60);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 260, 60);
+    ctx.fillStyle = '#ddd';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(`Query: "${fullSentence[fullQueryIdx]}"`, 20, 30);
+    ctx.fillStyle = '#888';
+    ctx.font = '10px monospace';
+    ctx.fillText(`Stärkste Attention: "${fullSentence[weights.indexOf(Math.max(...weights))]}"`, 20, 48);
+    ctx.fillText(`(${(Math.max(...weights)*100).toFixed(0)}%)`, 20, 62);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BUILD TOKEN ROW FOR SECTION 7
+// ══════════════════════════════════════════════════════════════════
+function buildFullTokenRow() {
+    const container = document.getElementById('full-tokens');
+    if (!container) return;
+    container.innerHTML = '';
+    fullSentence.forEach((tok, i) => {
+        const div = document.createElement('div');
+        div.className = 'token' + (i === fullQueryIdx ? ' active' : '');
+        div.textContent = tok;
+        div.onclick = () => selectFullToken(i);
+        div.style.cursor = 'pointer';
+        container.appendChild(div);
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ══════════════════════════════════════════════════════════════════
+function init() {
+    renderAllMath();
+    drawOverview();
+    drawSubspace();
+    drawDotProduct();
+    drawSoftmax();
+    drawWeighted();
+    drawMultiHead();
+    buildFullTokenRow();
+    drawFull();
+}
+
+window.addEventListener('load', () => {
+    setTimeout(init, 300);
+});
+</script>
+
+</body>
+</html>

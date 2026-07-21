@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐸 Was das Froschauge dem Froschgehirn erzählt</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #0a1628; color: #e0e0e0; overflow-x: hidden; }
+        
+        .scene { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; position: relative; }
+        
+        #intro { background: linear-gradient(180deg, #0a1628 0%, #1a3a2a 100%); }
+        #pond-scene { background: linear-gradient(180deg, #1a3a2a 0%, #0d2818 100%); }
+        #detectors { background: linear-gradient(180deg, #0d2818 0%, #1a2a4a 100%); }
+        #playground { background: linear-gradient(180deg, #1a2a4a 0%, #2a1a3a 100%); }
+        #quiz { background: linear-gradient(180deg, #2a1a3a 0%, #0a1628 100%); }
+        #conclusion { background: linear-gradient(180deg, #0a1628 0%, #1a3a2a 100%); }
+        
+        h1 { font-size: 2.5em; text-align: center; color: #7fdb7f; text-shadow: 0 0 20px #3a8a3a; margin-bottom: 20px; }
+        h2 { font-size: 1.8em; color: #7fdb7f; margin-bottom: 15px; text-align: center; }
+        h3 { font-size: 1.3em; color: #a0d0a0; margin-bottom: 10px; }
+        
+        p { line-height: 1.7; max-width: 700px; margin: 10px auto; font-size: 1.05em; }
+        
+        .frog-emoji { font-size: 4em; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(127,219,127,0.3); border-radius: 16px; padding: 25px; margin: 15px; max-width: 600px; width: 100%; backdrop-filter: blur(5px); transition: all 0.3s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(127,219,127,0.2); }
+        
+        .detector-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; width: 100%; padding: 20px; }
+        
+        .detector-card { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 25px; cursor: pointer; transition: all 0.4s; border: 2px solid transparent; position: relative; overflow: hidden; }
+        .detector-card:hover { transform: scale(1.03); }
+        .detector-card.active { border-color: #7fdb7f; box-shadow: 0 0 30px rgba(127,219,127,0.3); }
+        .detector-card .icon { font-size: 3em; margin-bottom: 10px; }
+        .detector-card .details { max-height: 0; overflow: hidden; transition: max-height 0.5s; }
+        .detector-card.active .details { max-height: 500px; }
+        
+        /* Canvas Playground */
+        #frog-canvas { border: 2px solid #7fdb7f; border-radius: 12px; background: #1a1a2e; cursor: crosshair; display: block; margin: 20px auto; }
+        
+        .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 15px 0; }
+        .btn { padding: 10px 20px; border: 1px solid #7fdb7f; background: rgba(127,219,127,0.1); color: #7fdb7f; border-radius: 8px; cursor: pointer; font-size: 0.95em; transition: all 0.3s; }
+        .btn:hover { background: rgba(127,219,127,0.3); transform: scale(1.05); }
+        .btn.active { background: rgba(127,219,127,0.4); box-shadow: 0 0 15px rgba(127,219,127,0.3); }
+        
+        .response-bar { height: 30px; background: rgba(0,0,0,0.5); border-radius: 8px; margin: 5px 0; overflow: hidden; position: relative; }
+        .response-fill { height: 100%; border-radius: 8px; transition: width 0.3s; display: flex; align-items: center; padding-left: 10px; font-size: 0.8em; font-weight: bold; }
+        
+        .quiz-option { padding: 15px 25px; margin: 8px 0; border: 1px solid rgba(127,219,127,0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s; max-width: 600px; width: 100%; }
+        .quiz-option:hover { background: rgba(127,219,127,0.1); }
+        .quiz-option.correct { background: rgba(0,200,0,0.3); border-color: #0f0; }
+        .quiz-option.wrong { background: rgba(200,0,0,0.3); border-color: #f00; }
+        
+        .score-display { font-size: 1.5em; color: #7fdb7f; text-align: center; margin: 20px; }
+        
+        .timeline { position: relative; max-width: 700px; width: 100%; margin: 30px auto; }
+        .timeline::before { content: ''; position: absolute; left: 50%; width: 3px; height: 100%; background: #7fdb7f; transform: translateX(-50%); }
+        .timeline-item { padding: 15px; margin: 20px 0; position: relative; width: 45%; background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px solid rgba(127,219,127,0.2); }
+        .timeline-item:nth-child(odd) { margin-left: 5%; }
+        .timeline-item:nth-child(even) { margin-left: 50%; }
+        
+        .nav-dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
+        .nav-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(127,219,127,0.3); margin: 8px 0; cursor: pointer; transition: all 0.3s; }
+        .nav-dot.active { background: #7fdb7f; box-shadow: 0 0 10px #7fdb7f; }
+        
+        .insight-counter { position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 20px; border: 1px solid #7fdb7f; z-index: 100; font-size: 0.9em; }
+        
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        
+        .highlight { color: #7fdb7f; font-weight: bold; }
+        
+        .analogy-box { background: linear-gradient(135deg, rgba(127,219,127,0.1), rgba(100,150,255,0.1)); border-left: 4px solid #7fdb7f; padding: 20px; border-radius: 0 12px 12px 0; margin: 20px 0; max-width: 600px; }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .detector-grid { grid-template-columns: 1fr; }
+            .timeline-item { width: 80%; margin-left: 10% !important; }
+            .timeline::before { left: 10%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="insight-counter" id="insightCounter">🧠 Erkenntnisse: <span id="insightCount">0</span>/10</div>
+
+<div class="nav-dots" id="navDots">
+    <div class="nav-dot active" onclick="scrollToScene('intro')"></div>
+    <div class="nav-dot" onclick="scrollToScene('pond-scene')"></div>
+    <div class="nav-dot" onclick="scrollToScene('detectors')"></div>
+    <div class="nav-dot" onclick="scrollToScene('playground')"></div>
+    <div class="nav-dot" onclick="scrollToScene('quiz')"></div>
+    <div class="nav-dot" onclick="scrollToScene('conclusion')"></div>
+</div>
+
+<!-- SCENE 1: INTRO -->
+<div class="scene" id="intro">
+    <div class="frog-emoji">🐸</div>
+    <h1>Was das Froschauge dem Froschgehirn erzählt</h1>
+    <p style="text-align:center; color:#a0d0a0; font-style:italic;">Lettvin, Maturana, McCulloch & Pitts (1959) – Ein Meilenstein der Neurowissenschaft</p>
+    
+    <div class="card fade-in">
+        <h3>🎯 Die große Frage</h3>
+        <p>Was passiert zwischen dem Licht, das ins Auge fällt, und dem, was das Gehirn "versteht"? Ist das Auge nur eine Kamera – oder schon ein <span class="highlight">intelligenter Interpreter</span>?</p>
+    </div>
+    
+    <div class="card fade-in">
+        <h3>💡 Die revolutionäre Antwort</h3>
+        <p>Das Auge ist <strong>keine Kamera</strong>. Es sendet dem Gehirn keine Pixel-Kopie der Welt. Stattdessen spricht es in einer <span class="highlight">bereits hochorganisierten Sprache</span> – es erkennt Muster, Bewegung und Bedeutung, bevor das Gehirn überhaupt involviert ist.</p>
+    </div>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <button class="btn" onclick="scrollToScene('pond-scene'); unlockInsight(1)">Weiter: Warum ein Frosch? ⬇️</button>
+    </div>
+</div>
+
+<!-- SCENE 2: THE FROG -->
+<div class="scene" id="pond-scene">
+    <h2>🌿 Warum ausgerechnet ein Frosch?</h2>
+    
+    <div class="card fade-in">
+        <h3>Das perfekte Versuchstier</h3>
+        <p>Der Frosch hat ein <span class="highlight">einfaches visuelles System</span>: Nur eine Verbindung vom Auge zum Gehirn (Retina → Colliculus), keine Augenbewegungen beim Jagen, und eine gleichmäßige Retina ohne Fovea.</p>
+    </div>
+
+    <div class="analogy-box fade-in">
+        <h3>🎮 Frosch-Fakten (klick zum Aufdecken!)</h3>
+        <div id="frog-facts">
+            <div class="quiz-option" onclick="revealFact(this, 'Ein Frosch verhungert inmitten von Futter – wenn es sich nicht bewegt!')">❓ Was passiert, wenn man einen Frosch mit totem Futter umgibt?</div>
+            <div class="quiz-option" onclick="revealFact(this, 'Nur Größe und Bewegung! Er schnappt nach allem, was insektengroß ist und sich bewegt.')">❓ Woran erkennt ein Frosch sein Futter?</div>
+            <div class="quiz-option" onclick="revealFact(this, 'Er springt dorthin, wo es dunkler ist – mehr Strategie braucht er nicht.')">❓ Wie flieht ein Frosch vor Feinden?</div>
+        </div>
+    </div>
+
+    <div class="card fade-in">
+        <h3>📊 Zahlen der Frosch-Retina</h3>
+        <p>~1 Million Rezeptoren (Stäbchen & Zapfen)<br>
+        ~2-3 Millionen Verbindungsneuronen<br>
+        ~500.000 Ganglienzellen (deren Axone = Sehnerv)<br><br>
+        <span class="highlight">Jede Ganglienzelle empfängt von tausenden Rezeptoren!</span> Das ist keine 1:1-Übertragung – das ist Berechnung.</p>
+    </div>
+    
+    <button class="btn" onclick="scrollToScene('detectors'); unlockInsight(2)" style="margin-top:20px">Weiter: Die 4 Detektoren ⬇️</button>
+</div>
+
+<!-- SCENE 3: THE FOUR DETECTORS -->
+<div class="scene" id="detectors">
+    <h2>👁️ Die 4 Kanäle des Froschauges</h2>
+    <p style="text-align:center; margin-bottom:20px;">Klicke auf jeden Detektor, um mehr zu erfahren!</p>
+    
+    <div class="detector-grid">
+        <div class="detector-card" onclick="toggleDetector(this, 3)">
+            <div class="icon">🔲</div>
+            <h3>1. Kontrast-Detektor</h3>
+            <p><em>"Sustained Contrast Detection"</em></p>
+            <div class="details">
+                <hr style="border-color: rgba(127,219,127,0.3); margin: 10px 0;">
+                <p><strong>Was er tut:</strong> Erkennt scharfe Kanten – egal ob heller oder dunkler als der Hintergrund. Feuert dauerhaft, solange die Kante da ist.</p>
+                <p><strong>Besonderheit:</strong> Hat ein "Gedächtnis"! Merkt sich Kontraste sogar im Dunkeln für über eine Minute.</p>
+                <p><strong>Faser:</strong> Unmyelinisiert, langsam (20-50 cm/s)</p>
+                <p><strong>Feld:</strong> Kleinstes (~2° Durchmesser)</p>
+                <p style="color:#7fdb7f;">💡 = "Wo sind die Grenzen der Dinge?"</p>
+            </div>
+        </div>
+        
+        <div class="detector-card" onclick="toggleDetector(this, 4)">
+            <div class="icon">🪲</div>
+            <h3>2. Konvexitäts-Detektor</h3>
+            <p><em>"Bug Perceiver" – der Käfer-Erkenner!</em></p>
+            <div class="details">
+                <hr style="border-color: rgba(127,219,127,0.3); margin: 10px 0;">
+                <p><strong>Was er tut:</strong> Reagiert auf kleine, dunkle, konvexe (gewölbte) Objekte die sich bewegen oder stoppen.</p>
+                <p><strong>Besonderheiten:</strong></p>
+                <ul style="padding-left:20px; margin:10px 0;">
+                    <li>Ignoriert gerade Kanten komplett</li>
+                    <li>Reagiert stärker auf ruckartige Bewegung</li>
+                    <li>Wird durch kurze Verdunkelung "gelöscht" (erased)</li>
+                    <li>Erkennt Objekte < 3 Bogenminuten!</li>
+                    <li>Ignoriert bewegte Hintergründe</li>
+                </ul>
+                <p><strong>Faser:</strong> Unmyelinisiert</p>
+                <p style="color:#7fdb7f;">💡 = "Ist da ein Insekt, das ich fressen kann?"</p>
+            </div>
+        </div>
+        
+        <div class="detector-card" onclick="toggleDetector(this, 5)">
+            <div class="icon">➡️</div>
+            <h3>3. Bewegungskanten-Detektor</h3>
+            <p><em>"Moving Edge Detection"</em></p>
+            <div class="details">
+                <hr style="border-color: rgba(127,219,127,0.3); margin: 10px 0;">
+                <p><strong>Was er tut:</strong> Reagiert auf JEDE sich bewegende Kante – hell oder dunkel, groß oder klein. Aber NUR bei Bewegung!</p>
+                <p><strong>Besonderheit:</strong> Frequenz steigt mit Geschwindigkeit des Objekts. Reagiert auf Vorder- und Hinterkante separat.</p>
+                <p><strong>Faser:</strong> Myelinisiert (~2 m/s)</p>
+                <p><strong>Feld:</strong> ~12° Durchmesser</p>
+                <p style="color:#7fdb7f;">💡 = "Bewegt sich etwas? Wie schnell?"</p>
+            </div>
+        </div>
+        
+        <div class="detector-card" onclick="toggleDetector(this, 6)">
+            <div class="icon">🌑</div>
+            <h3>4. Verdunkelungs-Detektor</h3>
+            <p><em>"Net Dimming Detection"</em></p>
+            <div class="details">
+                <hr style="border-color: rgba(127,219,127,0.3); margin: 10px 0;">
+                <p><strong>Was er tut:</strong> Feuert bei plötzlicher Verdunkelung – lang und rhythmisch. Wird stärker je dunkler es wird!</p>
+                <p><strong>Besonderheit:</strong> Alle Fasern feuern synchron (!) – erzeugt Oszillationen im Gehirn (~18/s, dann 3-5/s).</p>
+                <p><strong>Faser:</strong> Myelinisiert, schnellste (10 m/s)</p>
+                <p><strong>Feld:</strong> Größtes (~15° Durchmesser)</p>
+                <p style="color:#7fdb7f;">💡 = "Schatten! Gefahr! Raubtier von oben?"</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card fade-in" style="margin-top: 20px;">
+        <h3>🧬 Schlüsselerkenntnis</h3>
+        <p>Alle 4 Operationen sind <span class="highlight">unabhängig von der allgemeinen Beleuchtung</span>! Ob hell oder dunkel – der Frosch sieht dasselbe. Die Retina normalisiert automatisch.</p>
+    </div>
+    
+    <button class="btn" onclick="scrollToScene('playground'); unlockInsight(7)" style="margin-top:20px">Weiter: Interaktiver Spielplatz ⬇️</button>
+</div>
+
+<!-- SCENE 4: INTERACTIVE PLAYGROUND -->
+<div class="scene" id="playground">
+    <h2>🎮 Sieh die Welt wie ein Frosch!</h2>
+    <p style="text-align:center;">Bewege die Maus über das Canvas. Wähle einen Detektor und beobachte, wie er reagiert.</p>
+    
+    <div class="controls">
+        <button class="btn active" id="btn-contrast" onclick="setDetector('contrast')">🔲 Kontrast</button>
+        <button class="btn" id="btn-convexity" onclick="setDetector('convexity')">🪲 Konvexität</button>
+        <button class="btn" id="btn-motion" onclick="setDetector('motion')">➡️ Bewegung</button>
+        <button class="btn" id="btn-dimming" onclick="setDetector('dimming')">🌑 Verdunkelung</button>
+    </div>
+    
+    <canvas id="frog-canvas" width="600" height="400"></canvas>
+    
+    <div style="max-width: 600px; width: 100%; margin: 0 auto;">
+        <p style="font-size:0.9em; text-align:center;" id="detector-hint">🔲 Kontrast-Detektor: Bewege ein Objekt mit scharfer Kante ins Feld – es feuert dauerhaft!</p>
+        
+        <div style="margin-top: 15px;">
+            <label>Neuronale Aktivität:</label>
+            <div class="response-bar">
+                <div class="response-fill" id="activity-bar" style="width: 0%; background: linear-gradient(90deg, #2a5a2a, #7fdb7f);">
+                    <span id="activity-text"></span>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;">
+            <label>Spike-Frequenz:</label>
+            <div class="response-bar">
+                <div class="response-fill" id="spike-bar" style="width: 0%; background: linear-gradient(90deg, #2a2a5a, #7f7fdb);">
+                    <span id="spike-text"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls" style="margin-top: 20px;">
+        <button class="btn" onclick="toggleLight()">💡 Licht AN/AUS</button>
+        <button class="btn" onclick="spawnBug()">🪲 Käfer spawnen</button>
+        <button class="btn" onclick="moveBackground()">🌿 Hintergrund bewegen</button>
+    </div>
+    
+    <button class="btn" onclick="scrollToScene('quiz'); unlockInsight(8)" style="margin-top:30px">Weiter: Quiz ⬇️</button>
+</div>
+
+<!-- SCENE 5: QUIZ -->
+<div class="scene" id="quiz">
+    <h2>🧠 Teste dein Wissen!</h2>
+    <div class="score-display">Punkte: <span id="score">0</span>/5</div>
+    
+    <div id="quiz-container">
+        <div class="card" id="q1">
+            <h3>Frage 1/5</h3>
+            <p>Was passiert, wenn ein Frosch von unbewegtem Futter umgeben ist?</p>
+            <div class="quiz-option" onclick="checkAnswer(this, true, 1)">Er verhungert – er sieht nur Bewegung</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 1)">Er frisst normal weiter</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 1)">Er riecht das Futter stattdessen</div>
+        </div>
+        
+        <div class="card" id="q2" style="display:none;">
+            <h3>Frage 2/5</h3>
+            <p>Welcher Detektor wird "Bug Perceiver" genannt?</p>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Kontrast-Detektor</div>
+            <div class="quiz-option" onclick="checkAnswer(this, true, 2)">Konvexitäts-Detektor</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Bewegungskanten-Detektor</div>
+        </div>
+        
+        <div class="card" id="q3" style="display:none;">
+            <h3>Frage 3/5</h3>
+            <p>Was ist die revolutionäre Haupterkenntnis des Papers?</p>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Das Auge sendet ein Pixelbild ans Gehirn</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Frösche sehen nur schwarz-weiß</div>
+            <div class="quiz-option" onclick="checkAnswer(this, true, 3)">Das Auge spricht bereits in einer interpretierten Sprache zum Gehirn</div>
+        </div>
+        
+        <div class="card" id="q4" style="display:none;">
+            <h3>Frage 4/5</h3>
+            <p>Was passiert mit durchtrennten Sehnerv-Fasern beim Frosch?</p>
+            <div class="quiz-option" onclick="checkAnswer(this, true, 4)">Sie wachsen exakt zu ihren ursprünglichen Positionen zurück</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 4)">Sie verbinden sich zufällig neu</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 4)">Sie regenerieren nicht</div>
+        </div>
+        
+        <div class="card" id="q5" style="display:none;">
+            <h3>Frage 5/5</h3>
+            <p>Wie viele parallele "Karten" der Retina gibt es im Frosch-Tectum?</p>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 5)">2 – eine für hell, eine für dunkel</div>
+            <div class="quiz-option" onclick="checkAnswer(this, true, 5)">4 – eine pro Detektor-Typ, übereinander geschichtet</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false, 5)">1 – alles gemischt</div>
+        </div>
+    </div>
+    
+    <button class="btn" onclick="scrollToScene('conclusion'); unlockInsight(9)" style="margin-top:30px" id="to-conclusion">Weiter: Fazit ⬇️</button>
+</div>
+
+<!-- SCENE 6: CONCLUSION -->
+<div class="scene" id="conclusion">
+    <h2>🌟 Die großen Takeaways</h2>
+    
+    <div class="card fade-in">
+        <h3>1. 👁️ Das Auge ist ein Computer, keine Kamera</h3>
+        <p>Die Retina führt bereits komplexe Berechnungen durch. Sie sendet dem Gehirn nicht "Pixel", sondern <span class="highlight">bedeutungsvolle Abstraktionen</span>: Kanten, Bewegung, kleine konvexe Objekte, Verdunkelung.</p>
+    </div>
+    
+    <div class="card fade-in">
+        <h3>2. 🧬 Wahrnehmung beginnt am Sensor</h3>
+        <p>Die Grenze zwischen "Sehen" und "Verstehen" ist nicht im Gehirn – sie beginnt bereits im Auge. <span class="highlight">Perception, not sensation.</span></p>
+    </div>
+    
+    <div class="card fade-in">
+        <h3>3. 🎯 Evolution baut spezialisierte Filter</h3>
+        <p>Jeder der 4 Kanäle ist perfekt auf das Überleben des Frosches abgestimmt: Beute finden (Konvexität), Feinde erkennen (Verdunkelung), Orientierung (Kontrast, Bewegung).</p>
+    </div>
+    
+    <div class="card fade-in">
+        <h3>4. 🔄 Selbstreparatur mit Präzision</h3>
+        <p>Durchtrennte Nervenfasern wachsen exakt zu ihren ursprünglichen Zielen zurück – in der richtigen Schicht, am richtigen Ort. Die Verdrahtung ist <span class="highlight">genetisch determiniert</span>, nicht zufällig.</p>
+    </div>
+    
+    <div class="card fade-in">
+        <h3>5. 🤖 Relevanz für KI & Computer Vision</h3>
+        <p>Dieses Paper von 1959 legte Grundsteine für moderne Konzepte: Feature Detection, Convolutional Neural Networks, Edge Detection – alles inspiriert von der Erkenntnis, dass biologische Systeme <span class="highlight">nicht rohe Daten, sondern Features</span> weiterleiten.</p>
+    </div>
+    
+    <div class="analogy-box fade-in" style="margin-top: 30px;">
+        <h3>🐸 Die Metapher der Autoren</h3>
+        <p><em>"Stell dir einen Mann vor, der die Wolken beobachtet und einem Wetterdienst berichtet. Er benutzt einen Code. Er beobachtet zwar eine Lichtverteilung – aber lokale Lichtvariationen sind nicht die Begriffe, in denen er spricht, noch die, in denen er am besten verstanden wird."</em></p>
+        <p style="margin-top:10px;">So ist das Froschauge: Es beobachtet Licht, aber es <strong>spricht</strong> in Bedeutungen.</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+        <div class="frog-emoji">🐸</div>
+        <p style="color: #7fdb7f; font-size: 1.2em; font-style: italic;">"The eye speaks to the brain in a language already highly organized and interpreted."</p>
+        <p style="font-size: 0.9em; color: #888; margin-top: 20px;">— Lettvin, Maturana, McCulloch & Pitts, 1959</p>
+        <button class="btn" onclick="unlockInsight(10); alert('🎉 Glückwunsch! Du hast alle 10 Erkenntnisse freigeschaltet! Du verstehst jetzt, was das Froschauge dem Froschgehirn erzählt.'
+)">🔄 Von vorne erleben</button>
+    </div>
+</div>
+
+<script>
+// ===== GLOBAL STATE =====
+let insights = new Set();
+let score = 0;
+let currentDetector = 'contrast';
+let lightOn = true;
+let bugs = [];
+let bgMoving = false;
+let mouseX = 300, mouseY = 200;
+let lastMouseX = 300, lastMouseY = 200;
+let animFrame;
+
+// ===== INSIGHT TRACKER =====
+function unlockInsight(id) {
+    if (!insights.has(id)) {
+        insights.add(id);
+        document.getElementById('insightCount').textContent = insights.size;
+        document.getElementById('insightCounter').style.animation = 'none';
+        setTimeout(() => {
+            document.getElementById('insightCounter').style.animation = 'pulse 0.5s';
+        }, 10);
+    }
+}
+
+// ===== NAVIGATION =====
+function scrollToScene(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Update nav dots on scroll
+const scenes = ['intro', 'pond-scene', 'detectors', 'playground', 'quiz', 'conclusion'];
+window.addEventListener('scroll', () => {
+    const dots = document.querySelectorAll('.nav-dot');
+    let current = 0;
+    scenes.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el.getBoundingClientRect().top < window.innerHeight / 2) current = i;
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+});
+
+// ===== FADE IN OBSERVER =====
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.2 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ===== FROG FACTS =====
+function revealFact(el, answer) {
+    el.innerHTML = '✅ ' + answer;
+    el.style.borderColor = '#7fdb7f';
+    el.style.background = 'rgba(127,219,127,0.1)';
+    el.onclick = null;
+    unlockInsight(2);
+}
+
+// ===== DETECTOR CARDS =====
+function toggleDetector(card, insightId) {
+    const wasActive = card.classList.contains('active');
+    document.querySelectorAll('.detector-card').forEach(c => c.classList.remove('active'));
+    if (!wasActive) {
+        card.classList.add('active');
+        unlockInsight(insightId);
+    }
+}
+
+// ===== CANVAS PLAYGROUND =====
+const canvas = document.getElementById('frog-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    const maxW = Math.min(600, window.innerWidth - 40);
+    canvas.width = maxW;
+    canvas.height = maxW * 0.66;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+    mouseX = e.touches[0].clientX - rect.left;
+    mouseY = e.touches[0].clientY - rect.top;
+});
+
+function setDetector(type) {
+    currentDetector = type;
+    document.querySelectorAll('.controls .btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + type).classList.add('active');
+    const hints = {
+        contrast: '🔲 Kontrast-Detektor: Scharfe Kanten werden erkannt – bewege Objekte mit klaren Grenzen!',
+        convexity: '🪲 Konvexitäts-Detektor: Kleine, dunkle, runde Objekte lösen Alarm aus – spawn einen Käfer!',
+        motion: '➡️ Bewegungs-Detektor: Nur BEWEGUNG zählt! Bewege die Maus schnell über das Canvas.',
+        dimming: '🌑 Verdunkelungs-Detektor: Schalte das Licht aus und beobachte die Reaktion!'
+    };
+    document.getElementById('detector-hint').textContent = hints[type];
+}
+
+function toggleLight() {
+    lightOn = !lightOn;
+    unlockInsight(7);
+}
+
+function spawnBug() {
+    bugs.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 3,
+        vy: (Math.random() - 0.5) * 3,
+        size: 5 + Math.random() * 5,
+        jerkTimer: 0,
+        life: 300
+    });
+    unlockInsight(8);
+}
+
+function moveBackground() {
+    bgMoving = !bgMoving;
+}
+
+let bgOffset = 0;
+let time = 0;
+
+function drawScene() {
+    time++;
+    const w = canvas.width, h = canvas.height;
+    
+    // Background
+    const baseBright = lightOn ? 40 : 5;
+    ctx.fillStyle = `rgb(${baseBright}, ${baseBright + 10}, ${baseBright + 5})`;
+    ctx.fillRect(0, 0, w, h);
+    
+    // Background pattern (grass/dots)
+    if (bgMoving) bgOffset += 0.5;
+    ctx.fillStyle = `rgba(60, 100, 60, ${lightOn ? 0.3 : 0.05})`;
+    for (let i = 0; i < 40; i++) {
+        const bx = ((i * 37 + bgOffset) % (w + 40)) - 20;
+        const by = (i * 23) % h;
+        ctx.beginPath();
+        ctx.arc(bx, by, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Draw bugs
+    bugs = bugs.filter(b => b.life > 0);
+    bugs.forEach(b => {
+        b.life--;
+        b.jerkTimer++;
+        if (b.jerkTimer > 20 + Math.random() * 40) {
+            b.vx = (Math.random() - 0.5) * 4;
+            b.vy = (Math.random() - 0.5) * 4;
+            b.jerkTimer = 0;
+        }
+        b.x += b.vx;
+        b.y += b.vy;
+        if (b.x < 0 || b.x > w) b.vx *= -1;
+        if (b.y < 0 || b.y > h) b.vy *= -1;
+        
+        ctx.fillStyle = lightOn ? '#1a1a1a' : '#0a0a0a';
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    
+    // Mouse cursor object (dark disk)
+    if (lightOn || currentDetector === 'dimming') {
+        ctx.fillStyle = lightOn ? '#111' : '#030303';
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 12, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Sharp edge highlight
+        ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    // Calculate neural response
+    let activity = 0;
+    let spikeFreq = 0;
+    const speed = Math.sqrt((mouseX - lastMouseX) ** 2 + (mouseY - lastMouseY) ** 2);
+    
+    switch (currentDetector) {
+        case 'contrast':
+            // Responds to sharp edges, sustained
+            activity = lightOn ? 60 + Math.sin(time * 0.1) * 10 : 5;
+            spikeFreq = lightOn ? 40 + Math.random() * 20 : 0;
+            if (!lightOn) { activity = 3; spikeFreq = 0; }
+            break;
+        case 'convexity':
+            // Responds to small dark convex moving objects
+            let bugNear = bugs.some(b => {
+                const d = Math.sqrt((b.x - w/2)**2 + (b.y - h/2)**2);
+                return d < 100 && (Math.abs(b.vx) > 0.5 || Math.abs(b.vy) > 0.5);
+            });
+            activity = bugNear ? 80 + Math.random() * 15 : (speed > 2 ? 30 : 5);
+            spikeFreq = bugNear ? 70 : (speed > 2 ? 20 : 2);
+            if (!lightOn) { activity = 0; spikeFreq = 0; } // erased by darkness!
+            if (bgMoving && !bugNear) { activity *= 0.1; spikeFreq *= 0.1; } // ignores bg
+            break;
+        case 'motion':
+            // Only responds to movement, frequency = speed
+            activity = Math.min(95, speed * 5);
+            spikeFreq = Math.min(90, speed * 4);
+            if (!lightOn) { activity *= 0.8; spikeFreq *= 0.8; }
+            break;
+        case 'dimming':
+            // Responds to darkness
+            if (!lightOn) {
+                activity = 85 + Math.sin(time * 0.3) * 10;
+                spikeFreq = 70 + Math.sin(time * 0.18) * 15; // oscillation!
+            } else {
+                activity = 0;
+                spikeFreq = 0;
+            }
+            break;
+    }
+    
+    // Update bars
+    const actBar = document.getElementById('activity-bar');
+    const spikeBar = document.getElementById('spike-bar');
+    actBar.style.width = activity + '%';
+    spikeBar.style.width = spikeFreq + '%';
+    document.getElementById('activity-text').textContent = activity > 10 ? Math.round(activity) + '%' : '';
+    document.getElementById('spike-text').textContent = spikeFreq > 10 ? Math.round(spikeFreq) + ' Hz' : '';
+    
+    // Draw receptive field indicator
+    const fieldSizes = { contrast: 30, convexity: 50, motion: 80, dimming: 100 };
+    const fieldR = fieldSizes[currentDetector];
+    ctx.strokeStyle = `rgba(127, 219, 127, ${0.3 + Math.sin(time * 0.05) * 0.1})`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.arc(w / 2, h / 2, fieldR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Label
+    ctx.fillStyle = 'rgba(127, 219, 127, 0.7)';
+    ctx.font = '11px monospace';
+    ctx.fillText('Rezeptives Feld (' + currentDetector + ')', w/2 - 60, h/2 + fieldR + 15);
+    
+    // Spike visualization
+    if (activity > 20) {
+        const numSpikes = Math.floor(activity / 15);
+        for (let i = 0; i < numSpikes; i++) {
+            if (Math.random() < 0.3) {
+                const sx = w - 30 + Math.random() * 20;
+                const sy = Math.random() * h;
+                ctx.fillStyle = `rgba(127, 219, 127, ${0.5 + Math.random() * 0.5})`;
+                ctx.fillRect(sx, sy, 2, 8);
+            }
+        }
+        // Spike train at bottom
+        ctx.strokeStyle = '#7fdb7f';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, h - 20);
+        for (let x = 0; x < w; x += 3) {
+            const spike = Math.random() < activity / 300;
+            ctx.lineTo(x, spike ? h - 35 : h - 20);
+        }
+        ctx.stroke();
+    }
+    
+    // Dimming overlay
+    if (!lightOn) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#7fdb7f';
+        ctx.font = '14px Georgia';
+        ctx.fillText('🌑 DUNKEL', w/2 - 40, 25);
+    }
+    
+    animFrame = requestAnimationFrame(drawScene);
+}
+drawScene();
+
+// ===== QUIZ =====
+let currentQ = 1;
+function checkAnswer(el, correct, qNum) {
+    if (el.classList.contains('correct') || el.classList.contains('wrong')) return;
+    
+    const parent = document.getElementById('q' + qNum);
+    const options = parent.querySelectorAll('.quiz-option');
+    
+    options.forEach(opt => {
+        opt.onclick = null;
+        opt.style.cursor = 'default';
+    });
+    
+    if (correct) {
+        el.classList.add('correct');
+        score++;
+        document.getElementById('score').textContent = score;
+        unlockInsight(9);
+    } else {
+        el.classList.add('wrong');
+        options.forEach(opt => {
+            if (opt !== el && !opt.classList.contains('wrong')) {
+                // Find correct one (hacky but works for this)
+            }
+        });
+    }
+    
+    // Show next question
+    setTimeout(() => {
+        if (qNum < 5) {
+            document.getElementById('q' + (qNum + 1)).style.display = 'block';
+            document.getElementById('q' + (qNum + 1)).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            // Quiz complete
+            const msg = score >= 4 ? '🎉 Exzellent! Du denkst wie ein Neurowissenschaftler!' :
+                        score >= 3 ? '👍 Gut! Du verstehst die Grundlagen.' :
+                        '🐸 Scrolle nochmal hoch und lies die Detektor-Karten!';
+            const result = document.createElement('div');
+            result.className = 'card';
+            result.innerHTML = `<h3>Ergebnis: ${score}/5</h3><p>${msg}</p>`;
+            document.getElementById('quiz-container').appendChild(result);
+            unlockInsight(10);
+        }
+    }, 1000);
+}
+
+// ===== PULSE ANIMATION FOR COUNTER =====
+const style = document.createElement('style');
+style.textContent = `@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); border-color: #fff; } 100% { transform: scale(1); } }`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

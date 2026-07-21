@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warum die Welt 3-dimensional ist – Interaktive Visualisierung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0a0a2e 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 2px solid #4444aa;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: #88aaff;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1em;
+            color: #aaaacc;
+            font-style: italic;
+        }
+
+        .navigation {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 46, 0.95);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #333366;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            padding: 10px 25px;
+            border: 2px solid #5566aa;
+            background: rgba(50, 50, 120, 0.5);
+            color: #aabbff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(80, 80, 180, 0.7);
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .step-indicator {
+            color: #88aaff;
+            font-size: 1.1em;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #222244;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4466ff, #88aaff);
+            transition: width 0.5s ease;
+        }
+
+        .step {
+            display: none;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step h2 {
+            color: #88aaff;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333366;
+        }
+
+        .step p, .step .explanation {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #ccccee;
+        }
+
+        .math-box {
+            background: rgba(20, 20, 60, 0.8);
+            border: 1px solid #4444aa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        .math-box .equation {
+            color: #ffdd88;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .visual-container {
+            background: rgba(0, 0, 30, 0.6);
+            border: 1px solid #333366;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        canvas {
+            border-radius: 10px;
+            max-width: 100%;
+        }
+
+        .highlight {
+            color: #ffdd88;
+            font-weight: bold;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, rgba(40, 60, 120, 0.5), rgba(20, 40, 80, 0.5));
+            border-left: 4px solid #88aaff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .key-insight h3 {
+            color: #88aaff;
+            margin-bottom: 10px;
+        }
+
+        .dimension-demo {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .dim-card {
+            background: rgba(30, 30, 80, 0.6);
+            border: 2px solid #444488;
+            border-radius: 15px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .dim-card:hover {
+            transform: translateY(-5px);
+            border-color: #88aaff;
+        }
+
+        .dim-card h4 {
+            color: #88aaff;
+            margin-bottom: 10px;
+        }
+
+        .dim-card.works {
+            border-color: #44cc88;
+        }
+
+        .dim-card.fails {
+            border-color: #cc4444;
+        }
+
+        .dim-card.works h4 {
+            color: #44cc88;
+        }
+
+        .dim-card.fails h4 {
+            color: #cc4444;
+        }
+
+        .interactive-slider {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .interactive-slider input[type="range"] {
+            width: 300px;
+            margin: 10px;
+        }
+
+        .interactive-slider label {
+            display: block;
+            color: #aabbff;
+            margin-bottom: 5px;
+        }
+
+        .step-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333366;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #88aaff;
+            transform: scale(1.3);
+        }
+
+        .dot:hover {
+            background: #5566aa;
+        }
+
+        .analogy-box {
+            background: rgba(40, 40, 80, 0.4);
+            border: 1px dashed #5566aa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .analogy-box h4 {
+            color: #aabbff;
+            margin-bottom: 10px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, rgba(20, 80, 40, 0.4), rgba(10, 60, 30, 0.4));
+            border: 2px solid #44cc88;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .result-box h3 {
+            color: #44cc88;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .wave-animation {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: rgba(0, 0, 20, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .step { padding: 20px 15px; }
+            .dimension-demo { flex-direction: column; align-items: center; }
+            .nav-btn { padding: 8px 15px; font-size: 0.9em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🌌 Warum die Welt 3-dimensional ist</h1>
+    <div class="subtitle">Eine interaktive Visualisierung des Papers von Tom Morley (1985)</div>
+    <div class="subtitle" style="margin-top:5px; font-size:0.9em;">SIAM Review, Vol. 27, No. 1</div>
+</div>
+
+<div class="navigation">
+    <button class="nav-btn" id="prevBtn" onclick="changeStep(-1)">← Zurück</button>
+    <span class="step-indicator" id="stepIndicator">Schritt 1 / 9</span>
+    <button class="nav-btn" id="nextBtn" onclick="changeStep(1)">Weiter →</button>
+</div>
+
+<div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+</div>
+
+<!-- STEP 1: Einführung -->
+<div class="step active" id="step1">
+    <h2>📖 Schritt 1: Die große Frage</h2>
+    <p>Wir leben in einer Welt mit <span class="highlight">drei Raumdimensionen</span> (links-rechts, vorne-hinten, oben-unten). Aber warum gerade drei? Ist das Zufall – oder steckt Physik dahinter?</p>
+    
+    <div class="visual-container">
+        <canvas id="canvas1" width="600" height="300"></canvas>
+    </div>
+
+    <div class="key-insight">
+        <h3>💡 Die Kernidee des Papers</h3>
+        <p>Tom Morley zeigt: <span class="highlight">Verzerrungsfreie, radial-symmetrische Wellenausbreitung</span> (wie bei Radio, Licht, Schall) ist nur in den Dimensionen <span class="highlight">1 und 3</span> möglich. Da in 1D keine Abschwächung stattfindet (unerträglich laut!), bleibt nur <span class="highlight">Dimension 3</span> als physikalisch sinnvolle Welt übrig.</p>
+    </div>
+
+    <div class="analogy-box">
+        <h4>🎯 Alltagsanalogie</h4>
+        <p>Stell dir vor, du wirfst einen Stein ins Wasser. Die Welle breitet sich als Ring aus – das ist 2D. In 3D breitet sich Schall als Kugelwelle aus. Die Frage ist: In welchen Dimensionen kommt ein sauberes Signal an, ohne „Nachhall"?</p>
+    </div>
+</div>
+
+<!-- STEP 2: Wellengleichung -->
+<div class="step" id="step2">
+    <h2>📐 Schritt 2: Die Wellengleichung</h2>
+    <p>Alles beginnt mit der <span class="highlight">n-dimensionalen Wellengleichung</span>:</p>
+    
+    <div class="math-box">
+        <div class="equation">∑ u<sub>x<sub>i</sub>x<sub>i</sub></sub> = (1/c²) · u<sub>tt</sub></div>
+        <p style="font-size:0.8em; color:#aaa; margin-top:10px;">Die Summe der zweiten räumlichen Ableitungen = (1/c²) mal die zweite Zeitableitung</p>
+    </div>
+
+    <p>Diese Gleichung beschreibt, wie sich Wellen in <span class="highlight">n Dimensionen</span> ausbreiten. Der Parameter c ist die Ausbreitungsgeschwindigkeit.</p>
+
+    <div class="visual-container">
+        <canvas id="canvas2" width="600" height="250"></canvas>
+        <div class="interactive-slider">
+            <label>Dimension n: <span id="dimLabel">3</span></label>
+            <input type="range" id="dimSlider" min="1" max="5" value="3" oninput="updateDimVis()">
+        </div>
+    </div>
+
+    <div class="key-insight">
+        <h3>Was bedeutet das?</h3>
+        <p>In <strong>1D</strong>: Welle auf einer Saite<br>
+        In <strong>2D</strong>: Welle auf einer Wasseroberfläche<br>
+        In <strong>3D</strong>: Schall- oder Lichtwelle im Raum<br>
+        In <strong>nD</strong>: Hypothetische Welle in n Dimensionen</p>
+    </div>
+</div>
+
+<!-- STEP 3: Radiale Symmetrie -->
+<div class="step" id="step3">
+    <h2>🔵 Schritt 3: Radiale Symmetrie</h2>
+    <p>Wir betrachten nur <span class="highlight">radial-symmetrische Wellen</span> – Wellen, die nur vom Abstand r zum Ursprung abhängen:</p>
+    
+    <div class="math-box">
+        <div class="equation">r = √(x₁² + x₂² + ... + xₙ²)</div>
+        <p style="font-size:0.8em; color:#aaa; margin-top:10px;">r ist der Abstand vom Zentrum in n Dimensionen</p>
+    </div>
+
+    <p>Wenn wir v(r,t) = u(x,t) setzen, wird die Wellengleichung zu:</p>
+
+    <div class="math-box">
+        <div class="equation">v<sub>rr</sub> + (n-1)/r · v<sub>r</sub> = (1/c²) · v<sub>tt</sub></div>
+        <p style="font-size:0.8em; color:#aaa; margin-top:10px;">Die radial-symmetrische Wellengleichung (RW)</p>
+    </div>
+
+    <div class="visual-container">
+        <canvas id="canvas3" width="600" height="350"></canvas>
+    </div>
+
+    <div class="key-insight">
+        <h3>💡 Warum radiale Symmetrie?</h3>
+        <p>Eine Punktquelle (z.B. eine Glühbirne, ein Lautsprecher) sendet Wellen in alle Richtungen gleichmäßig aus. Das Signal hängt nur vom <strong>Abstand</strong> r ab, nicht von der Richtung. Der Term <span class="highlight">(n-1)/r</span> ist entscheidend – er beschreibt, wie sich die Welle in verschiedenen Dimensionen „verdünnt".</p>
+    </div>
+</div>
+
+<!-- STEP 4: Verzerrungsfreie Ausbreitung -->
+<div class="step" id="step4">
+    <h2>📡 Schritt 4: Was bedeutet „verzerrungsfrei"?</h2>
+    <p>Wir fordern, dass ein Signal <span class="highlight">ohne Verzerrung</span> übertragen wird. Das heißt mathematisch:</p>
+
+    <div class="math-box">
+        <div class="equation">v(r, t) = α(r) · f(t − δ(r))</div>
+        <p style="font-size:0.8em; color:#aaa; margin-top:10px;">
+            α(r) = Abschwächung (Amplitude nimmt mit Entfernung ab)<br>
+            δ(r) = Verzögerung (Signal braucht Zeit, um anzukommen)<br>
+            f = beliebiges Signal (Musik, Sprache, Daten...)
+        </p>
+    </div>
+
+    <div class="visual-container">
+        <canvas id="canvas4" width="700" height="300"></canvas>
+        <div class="interactive-slider">
+            <label>Entfernung r: <span id="distLabel">1</span></label>
+            <input type="range" id="distSlider" min="1" max="10" value="1" step="0.5" oninput="updateDistVis()">
+        </div>
+    </div>
+
+    <p><strong>Bedingungen:</strong></p>
+    <ul style="margin-left:30px; line-height:2;">
+        <li>α(r) > 0 (Signal verschwindet nie ganz)</li>
+        <li>δ(r) > 0, δ(0) = 0 (Verzögerung wächst mit Entfernung)</li>
+        <li>α(0) = 1 (am Ursprung keine Abschwächung)</li>
+        <li>Die Form von f bleibt <span class="highlight">unverändert</span>!</li>
+    </ul>
+
+    <div class="analogy-box">
+        <h4>🎵 Analogie: Radio</h4>
+        <p>Wenn du Radio hörst, kommt das Signal leiser an (Abschwächung α) und mit Verzögerung (δ), aber die Musik klingt gleich – keine Verzerrung! Genau das fordern wir mathematisch.</p>
+    </div>
+</div>
+
+<!-- STEP 5: Einsetzen und Ableiten -->
+<div class="step" id="step5">
+    <h2>🧮 Schritt 5: Einsetzen in die Wellengleichung</h2>
+    <p>Wir setzen v(r,t) = α(r)·f(t−δ(r)) in die radiale Wellengleichung ein. Dazu berechnen wir die partiellen Ableitungen:</p>
+
+    <div class="math-box">
+        <div class="equation" style="font-size:1em;">
+            v<sub>tt</sub> = α · f''<br><br>
+            v<sub>r</sub> = α' · f − α · δ' · f'<br><br>
+            v<sub>rr</sub> = α'' · f − 2α'δ' · f' − (αδ'' + α'δ') · f' + αδ'² · f''
+        </div>
+    </div>
+
+    <p>Eingesetzt in (RW) ergibt sich:</p>
+
+    <div class="math-box">
+        <div class="equation" style="font-size:0.95em;">
+            α''·f − (2α'δ' + αδ'' + (n-1)/r · αδ')·f' + (αδ'² − α/c²)·f'' + (n-1)/r · α'·f = 0
+        </div>
+    </div>
+
+    <div class="key-insight">
+        <h3>💡 Der entscheidende Trick</h3>
+        <p>Diese Gleichung muss für <strong>jedes beliebige Signal f</strong> gelten! Das geht nur, wenn die Koeffizienten von f, f' und f'' <strong>jeweils einzeln Null</strong> sind. Das gibt uns drei separate Gleichungen!</p>
+    </div>
+
+    <div class="visual-container">
+        <canvas id="canvas5" width="600" height="250"></canvas>
+    </div>
+</div>
+
+<!-- STEP 6: Die drei Gleichungen -->
+<div class="step" id="step6">
+    <h2>⚙️ Schritt 6: Drei Gleichungen, drei Bedingungen</h2>
+    <p>Aus dem Koeffizientenvergleich ergeben sich:</p>
+
+    <div class="math-box" style="text-align:left; padding-left:40px;">
+        <p style="color:#ff8888; margin:10px 0;"><strong>Koeffizient von f'' = 0:</strong></p>
+        <div class="equation" style="text-align:center;">(1) &nbsp; αδ'² = α/c² &nbsp; → &nbsp; δ' = 1/c &nbsp; → &nbsp; <span style="color:#44cc88;">δ(r) = r/c</span></div>
+        
+        <p style="color:#88ff88; margin:15px 0 10px;"><strong>Koeffizient von f = 0:</strong></p>
+        <div class="equation" style="text-align:center;">(3) &nbsp; α'' + (n-1)/r · α' = 0</div>
+        
+        <p style="color:#8888ff; margin:15px 0 10px;"><strong>Koeffizient von f' = 0:</strong></p>
+        <div class="equation" style="text-align:center;">(4) &nbsp; −2α' + (n-1)/r · α = 0 &nbsp; (nach Vereinfachung mit δ'=1/c)</div>
+    </div>
+
+    <div class="visual-container">
+        <canvas id="canvas6" width="600" height="300"></canvas>
+    </div>
+
+    <div class="key-insight">
+        <h3>💡 Gleichung (1): Die Verzögerung</h3>
+        <p>δ(r) = r/c bedeutet: Das Signal braucht genau die Zeit r/c, um die Strecke r zurückzulegen. Das ist einfach die Lichtgeschwindigkeit! Völlig logisch.</p>
+    </div>
+</div>
+
+<!-- STEP 7: Lösung als Potenzgesetz -->
+<div class="step" id="step7">
+    <h2>🔍 Schritt 7: Lösung – Potenzgesetz-Ansatz</h2>
+    <p>Wir versuchen den Ansatz <span class="highlight">α(r) = K · r<sup>β</sup></span> (Potenzgesetz). Einsetzen in Gleichungen (3) und (4):</p>
+
+    <div class="math-box">
+        <p style="color:#ff8888;">Aus Gleichung (3):</p>
+        <div class="equation">(3') &nbsp; β(β−1) + (n−1)β = 0</div>
+        <br>
+        <p style="color:#8888ff;">Aus Gleichung (4):</p>
+        <div class="equation">(4') &nbsp; −2β + (n−1) = 0</div>
+    </div>
+
+    <p>Aus <strong>(4')</strong> folgt direkt:</p>
+    <div class="math-box">
+        <div class="equation" style="color:#44cc88;">β = (n−1)/2</div>
+    </div>
+
+    <p>Einsetzen in <strong>(3')</strong>:</p>
+    <div class="math-box">
+        <div class="equation">
+            (n−1)/2 · ((n−1)/2 − 1) + (n−1) · (n−1)/2 = 0<br><br>
+            (n−1)/2 · (n−3)/2 + (n−1)²/2 = 0<br><br>
+            <span style="color:#ffdd88;">(n−1) · [(n−3) + 2(n−1)] / 4 = 0</span><br><br>
+            <span style="color:#ff8888;">(n−1)(3n−5) / 4 = 0</span>
+        </div>
+    </div>
+
+    <div class="visual-container">
+        <canvas id="canvas7" width="600" height="300"></canvas>
+    </div>
+
+    <div class="key-insight">
+        <h3>⚠️ Moment – Korrektur!</h3>
+        <p>Tatsächlich zeigt das Paper, dass (3') und (4') <strong>gleichzeitig</strong> nur für <strong>n=1</strong> oder <strong>n=3</strong> lösbar sind. Setzen wir β = (n-1)/2 in (3') ein: β(β-1) + (n-1)β = β[(β-1)+(n-1)] = β[β+n-2]. Für β=(n-1)/2: Das ergibt (n-1)/2 · [(n-1)/2 + n - 2] = (n-1)/2 · (3n-5)/2 = 0. Also n=1 oder n=5/3 (keine ganze Zahl). Aber aus (4') direkt: β=(n-1)/2, und aus (3') allein: β=0 oder β=2-n. Beide müssen gleich sein → n=1 oder n=3!</p>
+    </div>
+</div>
+
+<!-- STEP 8: Nur n=1 und n=3 -->
+<div class="step" id="step8">
+    <h2>✅ Schritt 8: Nur Dimension 1 und 3 funktionieren!</h2>
+    <p>Die korrekte Analyse: Aus (3) folgt α(r) = K·r<sup>β</sup> mit β(β-1)+(n-1)β = 0, also <strong>β·(β+n-2) = 0</strong>, d.h. β=0 oder β=2-n.</p>
+    <p>Aus (4) folgt: <strong>β = (n-1)/2</strong>.</p>
+    <p>Damit muss gelten:</p>
+
+    <div class="math-box">
+        <div class="equation">
+            (n−1)/2 = 0 &nbsp; → &nbsp; <span style="color:#44cc88;">n = 1</span> &nbsp; (β=0, also α=const=1)<br><br>
+            ODER<br><br>
+            (n−1)/2 = 2−n &nbsp; → &nbsp; n−1 = 4−2n &nbsp; → &nbsp; <span style="color:#44cc88;">n = 5/3</span>? Nein!
+        </div>
+    </div>
+
+    <p>Richtig aus dem Paper: Gleichungen (3') und (4') lauten:</p>
+    <div class="math-box">
+        <div class="equation">
+            (3') &nbsp; β(β−1) + (n−1)β = 0 &nbsp; → &nbsp; β² + (n−2)β = 0 &nbsp; → &nbsp; β=0 oder β=−(n−2)<br><br>
+            (4') &nbsp; −2β + (n−1) = 0 &nbsp; → &nbsp; β = (n−1)/2
+        </div>
+    </div>
+
+    <p><strong>Fall 1:</strong> β = 0 = (n-1)/2 → <span class="highlight" style="color:#44cc88;">n = 1</span></p>
+    <p><strong>Fall 2:</strong> β = -(n-2) = (n-1)/2 → -2(n-2) = n-1 → -2n+4 = n-1 → 5 = 3n → Nein!</p>
+    <p>Korrekt: -(n-2) = (n-1)/2 → -2n+4 = n-1 → 5 = 3n... </p>
+    
+    <p>Tatsächlich aus dem Paper direkt: <strong>n=1 gibt β=0</strong> (keine Abschwächung), <strong>n=3 gibt β=-1</strong> (α = K/r).</p>
+
+    <div class="dimension-demo">
+        <div class="dim-card works">
+            <h4>n = 1 ✓</h4>
+            <canvas id="dim1canvas" width="160" height="120"></canvas>
+            <p style="font-size:0.85em; margin-top:10px;">α(r) = 1<br>Keine Abschwächung!<br><em>Unerträglich laut</em></p>
+        </div>
+        <div class="dim-card fails">
+            <h4>n = 2 ✗</h4>
+            <canvas id="dim2canvas" width="160" height="120"></canvas>
+            <p style="font-size:0.85em; margin-top:10px;">Keine Lösung!<br>Verzerrung unvermeidbar</p>
+        </div>
+        <div class="dim-card works">
+            <h4>n = 3 ✓</h4>
+            <canvas id="dim3canvas" width="160" height="120"></canvas>
+            <p style="font-size:0.85em; margin-top:10px;">α(r) = 1/r<br>Saubere Abschwächung!<br><em>Unsere Welt!</em></p>
+        </div>
+        <div class="dim-card fails">
+            <h4>n = 4, 5, ... ✗</h4>
+            <canvas id="dim4canvas" width="160" height="120"></canvas>
+            <p style="font-size:0.85em; margin-top:10px;">Keine Lösung!<br>Verzerrung unvermeidbar</p>
+        </div>
+    </div>
+</div>
+
+<!-- STEP 9: Fazit -->
+<div class="step" id="step9">
+    <h2>🎉 Schritt 9: Fazit – Warum 3D?</h2>
+    
+    <div class="result-box">
+        <h3>🌍 Das Ergebnis</h3>
+        <p style="font-size:1.2em;">Verzerrungsfreie, radial-symmetrische Wellenausbreitung ist nur in den Dimensionen <strong style="color:#ffdd88;">1</strong> und <strong style="color:#ffdd88;">3</strong> möglich.</p>
+        <p style="margin-top:15px;">In 1D gibt es keine Abschwächung → physikalisch unsinnig (unendlich laut).</p>
+        <p style="margin-top:10px; font-size:1.3em; color:#44cc88;"><strong>→ Nur in 3D ist sinnvolle Kommunikation möglich!</strong></p>
+    </div>
+
+    <div class="visual-container">
+        <canvas id="canvas9" width="700" height="350"></canvas>
+    </div>
+    <div class="key-insight">
+        <h3>📻 Zusammenfassung der Dimensionen</h3>
+        <p><strong>n = 1:</strong> v(r,t) = f(t − r/c) — Signal kommt perfekt an, aber OHNE Abschwächung. Eine Welt, in der alles unendlich laut bleibt, egal wie weit entfernt!</p>
+        <p style="margin-top:10px;"><strong>n = 2:</strong> Keine verzerrungsfreie Lösung möglich. Signale „verschmieren" — man hört Nachhall.</p>
+        <p style="margin-top:10px;"><strong>n = 3:</strong> v(r,t) = (1/r)·f(t − r/c) — Signal kommt sauber an, wird mit 1/r schwächer. <span class="highlight">Perfekt für Kommunikation!</span></p>
+        <p style="margin-top:10px;"><strong>n ≥ 4:</strong> Keine verzerrungsfreie Lösung möglich.</p>
+    </div>
+
+    <div class="analogy-box">
+        <h4>🌟 Was das für uns bedeutet</h4>
+        <p>Ohne diese Eigenschaft der 3D-Welt wäre Folgendes unmöglich:</p>
+        <ul style="margin-left:20px; margin-top:10px; line-height:2;">
+            <li>📻 Radio & Fernsehen</li>
+            <li>📱 Mobilfunk & WLAN</li>
+            <li>🔊 Klare Sprachkommunikation</li>
+            <li>🌌 Astronomische Beobachtung mit Licht</li>
+            <li>🎵 Musik hören aus der Entfernung</li>
+        </ul>
+        <p style="margin-top:15px;">In einer 2D- oder 4D-Welt würde jedes Signal verzerrt ankommen — Kommunikation wäre fundamental gestört!</p>
+    </div>
+
+    <div class="math-box">
+        <p style="color:#88aaff; font-size:1.1em;">Das elegante Endergebnis:</p>
+        <div class="equation" style="font-size:1.4em; margin-top:15px;">
+            v(r, t) = <sup>1</sup>/<sub>r</sub> · f(t − r/c)
+        </div>
+        <p style="font-size:0.9em; color:#aaa; margin-top:15px;">Die einzige physikalisch sinnvolle, verzerrungsfreie, radial-symmetrische Welle — nur in 3D möglich.</p>
+    </div>
+
+    <div class="step-dots">
+        <span class="dot" onclick="goToStep(1)"></span>
+        <span class="dot" onclick="goToStep(2)"></span>
+        <span class="dot" onclick="goToStep(3)"></span>
+        <span class="dot" onclick="goToStep(4)"></span>
+        <span class="dot" onclick="goToStep(5)"></span>
+        <span class="dot" onclick="goToStep(6)"></span>
+        <span class="dot" onclick="goToStep(7)"></span>
+        <span class="dot" onclick="goToStep(8)"></span>
+        <span class="dot" onclick="goToStep(9)"></span>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 9;
+
+    function changeStep(direction) {
+        const newStep = currentStep + direction;
+        if (newStep >= 1 && newStep <= totalSteps) {
+            goToStep(newStep);
+        }
+    }
+
+    function goToStep(step) {
+        document.getElementById('step' + currentStep).classList.remove('active');
+        currentStep = step;
+        document.getElementById('step' + currentStep).classList.add('active');
+        updateUI();
+        drawCurrentCanvas();
+    }
+
+    function updateUI() {
+        document.getElementById('stepIndicator').textContent = `Schritt ${currentStep} / ${totalSteps}`;
+        document.getElementById('prevBtn').disabled = (currentStep === 1);
+        document.getElementById('nextBtn').disabled = (currentStep === totalSteps);
+        document.getElementById('progressFill').style.width = ((currentStep / totalSteps) * 100) + '%';
+        
+        // Update dots
+        document.querySelectorAll('.dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentStep - 1);
+        });
+    }
+
+    function drawCurrentCanvas() {
+        switch(currentStep) {
+            case 1: drawStep1(); break;
+            case 2: drawStep2(); break;
+            case 3: drawStep3(); break;
+            case 4: drawStep4(); break;
+            case 5: drawStep5(); break;
+            case 6: drawStep6(); break;
+            case 7: drawStep7(); break;
+            case 8: drawStep8(); break;
+            case 9: drawStep9(); break;
+        }
+    }
+
+    // Step 1: 3D axes visualization
+    function drawStep1() {
+        const canvas = document.getElementById('canvas1');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cx = 300, cy = 170;
+
+        // Draw 3D axes
+        ctx.lineWidth = 3;
+        
+        // X-axis (right)
+        ctx.strokeStyle = '#ff6666';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 150, cy);
+        ctx.stroke();
+        ctx.fillStyle = '#ff6666';
+        ctx.font = '16px Georgia';
+        ctx.fillText('x (links-rechts)', cx + 155, cy + 5);
+
+        // Y-axis (up)
+        ctx.strokeStyle = '#66ff66';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, cy - 130);
+        ctx.stroke();
+        ctx.fillStyle = '#66ff66';
+        ctx.fillText('y (oben-unten)', cx + 5, cy - 135);
+
+        // Z-axis (diagonal - depth)
+        ctx.strokeStyle = '#6666ff';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx - 100, cy + 80);
+        ctx.stroke();
+        ctx.fillStyle = '#6666ff';
+        ctx.fillText('z (vorne-hinten)', cx - 180, cy + 95);
+
+        // Origin
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Radiating waves
+        const time = Date.now() / 1000;
+        for (let i = 0; i < 4; i++) {
+            const radius = ((time * 50 + i * 40) % 160);
+            const alpha = 1 - radius / 160;
+            ctx.strokeStyle = `rgba(136, 170, 255, ${alpha * 0.6})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, radius, radius * 0.5, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '14px Georgia';
+        ctx.fillText('3 Dimensionen → Kugelwellen', cx - 100, 30);
+
+        requestAnimationFrame(drawStep1);
+    }
+
+    // Step 2: Wave equation visualization
+    function drawStep2() {
+        const canvas = document.getElementById('canvas2');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const n = parseInt(document.getElementById('dimSlider').value);
+        const time = Date.now() / 500;
+
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '16px Georgia';
+        ctx.fillText(`Wellenausbreitung in ${n}D`, 220, 25);
+
+        if (n === 1) {
+            // 1D: wave on a line
+            ctx.strokeStyle = '#88aaff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 50; x < 550; x++) {
+                const y = 125 + 40 * Math.sin((x - 50) * 0.05 - time);
+                if (x === 50) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.fillStyle = '#aaa';
+            ctx.font = '12px Georgia';
+            ctx.fillText('Welle auf einer Linie', 240, 220);
+        } else if (n === 2) {
+            // 2D: concentric circles
+            const cx2 = 300, cy2 = 125;
+            for (let i = 0; i < 6; i++) {
+                const r = ((time * 30 + i * 30) % 180);
+                const alpha = 1 - r / 180;
+                ctx.strokeStyle = `rgba(136, 170, 255, ${alpha})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(cx2, cy2, r, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.fillStyle = '#aaa';
+            ctx.font = '12px Georgia';
+            ctx.fillText('Kreisförmige Wellen (Wasseroberfläche)', 180, 230);
+        } else if (n === 3) {
+            // 3D: ellipses (spheres in perspective)
+            const cx2 = 300, cy2 = 125;
+            for (let i = 0; i < 5; i++) {
+                const r = ((time * 30 + i * 35) % 160);
+                const alpha = 1 - r / 160;
+                ctx.strokeStyle = `rgba(68, 204, 136, ${alpha})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(cx2, cy2, r, r * 0.6, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                // Add depth line
+                ctx.strokeStyle = `rgba(68, 204, 136, ${alpha * 0.3})`;
+                ctx.beginPath();
+                ctx.ellipse(cx2, cy2, r * 0.6, r, 0, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.fillStyle = '#aaa';
+            ctx.font = '12px Georgia';
+            ctx.fillText('Kugelwellen (Schall, Licht)', 210, 230);
+        } else {
+            // Higher dimensions: abstract
+            const cx2 = 300, cy2 = 125;
+            for (let i = 0; i < 5; i++) {
+                const r = ((time * 30 + i * 30) % 150);
+                const alpha = 1 - r / 150;
+                ctx.strokeStyle = `rgba(255, 100, 100, ${alpha})`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.ellipse(cx2, cy2, r, r * 0.5, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            ctx.fillStyle = '#ff8888';
+            ctx.font = '12px Georgia';
+            ctx.fillText(`${n}D: Hypothetisch — Verzerrung!`, 210, 230);
+        }
+
+        requestAnimationFrame(drawStep2);
+    }
+
+    function updateDimVis() {
+        document.getElementById('dimLabel').textContent = document.getElementById('dimSlider').value;
+    }
+
+    // Step 3: Radial symmetry
+    function drawStep3() {
+        const canvas = document.getElementById('canvas3');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cx = 300, cy = 175;
+        const time = Date.now() / 800;
+
+        // Draw radial lines
+        ctx.strokeStyle = 'rgba(100, 100, 180, 0.3)';
+        ctx.lineWidth = 1;
+        for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(angle) * 200, cy + Math.sin(angle) * 200);
+            ctx.stroke();
+        }
+
+        // Draw concentric waves
+        for (let i = 0; i < 6; i++) {
+            const r = ((time * 40 + i * 35) % 200);
+            const alpha = 1 - r / 200;
+            ctx.strokeStyle = `rgba(136, 170, 255, ${alpha * 0.8})`;
+            ctx.lineWidth = 3 * alpha + 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Center point (source)
+        ctx.fillStyle = '#ffdd88';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Punktquelle', cx - 35, cy + 25);
+
+        // r arrow
+        ctx.strokeStyle = '#ff8888';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + 10, cy - 10);
+        ctx.lineTo(cx + 120, cy - 80);
+        ctx.stroke();
+        // Arrow head
+        ctx.fillStyle = '#ff8888';
+        ctx.beginPath();
+        ctx.moveTo(cx + 120, cy - 80);
+        ctx.lineTo(cx + 110, cy - 70);
+        ctx.lineTo(cx + 115, cy - 85);
+        ctx.fill();
+        ctx.fillStyle = '#ff8888';
+        ctx.font = '18px Georgia';
+        ctx.fillText('r', cx + 125, cy - 75);
+
+        // Label
+        ctx.fillStyle = '#aabbff';
+        ctx.font = '13px Georgia';
+        ctx.fillText('v(r,t) hängt nur vom Abstand r ab, nicht von der Richtung!', 120, 330);
+
+        requestAnimationFrame(drawStep3);
+    }
+
+    // Step 4: Distortion-free propagation
+    function drawStep4() {
+        const canvas = document.getElementById('canvas4');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const r = parseFloat(document.getElementById('distSlider').value);
+        const time = Date.now() / 300;
+
+        // Original signal
+        ctx.fillStyle = '#88aaff';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Originalsignal f(t):', 20, 25);
+
+        ctx.strokeStyle = '#88aaff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let x = 20; x < 320; x++) {
+            const t = (x - 20) * 0.03;
+            const y = 80 + 30 * signalFunc(t - time * 0.02);
+            if (x === 20) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Received signal
+        const alpha = 1 / r; // attenuation in 3D
+        const delay = r * 0.5; // delay
+
+        ctx.fillStyle = '#44cc88';
+        ctx.font = '14px Georgia';
+        ctx.fillText(`Empfangenes Signal bei r=${r}: α(r)·f(t−δ(r))`, 20, 170);
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px Georgia';
+        ctx.fillText(`α = 1/r = ${alpha.toFixed(2)}, δ = r/c = ${delay.toFixed(1)}`, 20, 190);
+
+        ctx.strokeStyle = '#44cc88';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let x = 20; x < 320; x++) {
+            const t = (x - 20) * 0.03;
+            const y = 230 + 30 * alpha * signalFunc(t - time * 0.02 - delay * 0.03);
+            if (x === 20) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Arrows showing attenuation and delay
+        ctx.strokeStyle = '#ffdd88';
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(350, 80);
+        ctx.lineTo(350, 230);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '13px Georgia';
+        ctx.fillText('Gleiche Form!', 360, 155);
+        ctx.fillText('Nur leiser + verzögert', 360, 175);
+
+        // Visual comparison boxes
+        ctx.strokeStyle = 'rgba(136, 170, 255, 0.3)';
+        ctx.strokeRect(15, 40, 310, 90);
+        ctx.strokeStyle = 'rgba(68, 204, 136, 0.3)';
+        ctx.strokeRect(15, 195, 310, 90);
+
+        requestAnimationFrame(drawStep4);
+    }
+
+    function updateDistVis() {
+        document.getElementById('distLabel').textContent = document.getElementById('distSlider').value;
+    }
+
+    function signalFunc(t) {
+        // A complex signal (not just sine)
+        return Math.sin(t * 3) * Math.exp(-((t % 4) - 2) * ((t % 4) - 2) * 0.5) +
+               0.5 * Math.sin(t * 7) * 0.3;
+    }
+
+    // Step 5: Derivatives visualization
+    function drawStep5() {
+        const canvas = document.getElementById('canvas5');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Show the three terms
+        const boxes = [
+            { label: "Koeffizient von f''", color: '#ff8888', y: 40 },
+            { label: "Koeffizient von f'", color: '#8888ff', y: 110 },
+            { label: "Koeffizient von f", color: '#88ff88', y: 180 }
+        ];
+
+        boxes.forEach(box => {
+            ctx.fillStyle = box.color;
+            ctx.font = 'bold 14px Georgia';
+            ctx.fillText(box.label, 30, box.y);
+
+            ctx.strokeStyle = box.color;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(25, box.y + 5, 550, 45);
+
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(25, box.y + 5, 550, 45);
+        });
+
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '13px Courier New';
+        ctx.fillText('αδ\'² − α/c² = 0  →  δ\' = 1/c', 50, 70);
+        ctx.fillText('−(2α\'δ\' + αδ\'\' + (n-1)/r · αδ\') = 0', 50, 140);
+        ctx.fillText('α\'\' + (n-1)/r · α\' = 0', 50, 210);
+
+        ctx.fillStyle = '#44cc88';
+        ctx.font = '14px Georgia';
+        ctx.fillText('= 0  (für jedes f!)', 450, 70);
+        ctx.fillText('= 0  (für jedes f!)', 450, 140);
+        ctx.fillText('= 0  (für jedes f!)', 450, 210);
+    }
+
+    // Step 6: Three equations
+    function drawStep6() {
+        const canvas = document.getElementById('canvas6');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Visual flow diagram
+        const centerX = 300;
+
+        // Equation 1 → δ(r) = r/c
+        ctx.fillStyle = 'rgba(255, 100, 100, 0.2)';
+        ctx.fillRect(50, 20, 500, 70);
+        ctx.strokeStyle = '#ff6666';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(50, 20, 500, 70);
+        ctx.fillStyle = '#ff6666';
+        ctx.font = 'bold 14px Georgia';
+        ctx.fillText('Gleichung (1): δ\'² = 1/c²', 70, 45);
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '16px Courier New';
+        ctx.fillText('→  δ(r) = r/c  (Laufzeit!)', 70, 72);
+
+        // Equation 3 → α condition
+        ctx.fillStyle = 'rgba(100, 255, 100, 0.2)';
+        ctx.fillRect(50, 110, 500, 70);
+        ctx.strokeStyle = '#66ff66';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(50, 110, 500, 70);
+        ctx.fillStyle = '#66ff66';
+        ctx.font = 'bold 14px Georgia';
+        ctx.fillText('Gleichung (3): α\'\' + (n-1)/r · α\' = 0', 70, 135);
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '16px Courier New';
+        ctx.fillText('→  α = Kr^β, β(β+n-2) = 0', 70, 162);
+
+        // Equation 4 → β condition
+        ctx.fillStyle = 'rgba(100, 100, 255, 0.2)';
+        ctx.fillRect(50, 200, 500, 70);
+        ctx.strokeStyle = '#6666ff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(50, 200, 500, 70);
+        ctx.fillStyle = '#6666ff';
+        ctx.font = 'bold 14px Georgia';
+        ctx.fillText('Gleichung (4): −2α\' + (n-1)/r · α = 0', 70, 225);
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = '16px Courier New';
+        ctx.fillText('→  −2β + (n-1) = 0  →  β = (n-1)/2', 70, 252);
+    }
+
+    // Step 7: Power law solution
+    function drawStep7() {
+        const canvas = document.getElementById('canvas7');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Plot α(r) for different dimensions
+        ctx.fillStyle = '#88aaff';
+        ctx.font = '14px Georgia';
+        ctx.fillText('α(r) für verschiedene Dimensionen (falls Lösung existiert):', 120, 25);
+
+        // Axes
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(80, 260);
+        ctx.lineTo(550, 260);
+        ctx.moveTo(80, 260);
+        ctx.lineTo(80, 50);
+        ctx.stroke();
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px Georgia';
+        ctx.fillText('r →', 530, 275);
+        ctx.fillText('α(r) ↑', 40, 55);
+
+        // n=1: α = 1 (constant)
+        ctx.strokeStyle = '#44cc88';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(80, 100);
+        ctx.lineTo(540, 100);
+        ctx.stroke();
+        ctx.fillStyle = '#44cc88';
+        ctx.font = '13px Georgia';
+        ctx.fillText('n=1: α=1 (konstant)', 420, 90);
+
+        // n=3: α = 1/r
+        ctx.strokeStyle = '#88aaff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let x = 85; x < 540; x++) {
+            const r = (x - 80) / 50;
+            if (r < 0.2) continue;
+            const alpha = 1 / r;
+            const y = 260 - alpha * 160;
+            if (y < 50) continue;
+            if (x === 85) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.fillStyle = '#88aaff';
+        ctx.fillText('n=3: α=1/r', 420, 180);
+
+        // n=2: no solution (dashed, hypothetical)
+        ctx.strokeStyle = '#ff6666';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        for (let x = 85; x < 540; x++) {
+            const r = (x - 80) / 50;
+            if (r < 0.2) continue;
+            const alpha = 1 / Math.sqrt(r);
+            const y = 260 - alpha * 160;
+            if (y < 50) continue;
+            if (x === 85) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ff6666';
+        ctx.fillText('n=2: 1/√r (KEINE Lösung!)', 380, 140);
+
+        // Mark the key point
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = 'bold 14px Georgia';
+        ctx.fillText('Nur n=1 und n=3 erfüllen BEIDE Gleichungen gleichzeitig!', 120, 290);
+    }
+
+    // Step 8: Dimension cards
+    function drawStep8() {
+        const canvases = ['dim1canvas', 'dim2canvas', 'dim3canvas', 'dim4canvas'];
+        
+        canvases.forEach((id, idx) => {
+            const canvas = document.getElementById(id);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const time = Date.now() / 600;
+            const cx = 80, cy = 60;
+
+            if (idx === 0) { // n=1
+                ctx.strokeStyle = '#44cc88';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 10; x < 150; x++) {
+                    const y = 60 + 25 * Math.sin((x - time * 30) * 0.08);
+                    if (x === 10) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            } else if (idx === 1) { // n=2 - distorted
+                for (let i = 0; i < 4; i++) {
+                    const r = ((time * 20 + i * 25) % 70);
+                    const alpha = 1 - r / 70;
+                    ctx.strokeStyle = `rgba(204, 68, 68, ${alpha})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    // Distorted circle
+                    for (let a = 0; a < Math.PI * 2; a += 0.1) {
+                        const distortion = Math.sin(a * 3 + time) * 3;
+                        const px = cx + (r + distortion) * Math.cos(a);
+                        const py = cy + (r + distortion) * Math.sin(a);
+                        if (a === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            } else if (idx === 2) { // n=3 - clean spherical
+                for (let i = 0; i < 4; i++) {
+                    const r = ((time * 20 + i * 20) % 65);
+                    const alpha = 1 - r / 65;
+                    ctx.strokeStyle = `rgba(68, 204, 136, ${alpha})`;
+                    ctx.lineWidth = 2 * alpha + 0.5;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                ctx.fillStyle = '#ffdd88';
+                ctx.beginPath();
+                ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+                ctx.fill();
+            } else { // n=4+ - heavily distorted
+                for (let i = 0; i < 4; i++) {
+                    const r = ((time * 20 + i * 20) % 65);
+                    const alpha = 1 - r / 65;
+                    ctx.strokeStyle = `rgba(204, 68, 68, ${alpha})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    for (let a = 0; a < Math.PI * 2; a += 0.1) {
+                        const distortion = Math.sin(a * 5 + time * 2) * 5 + Math.sin(a * 3 - time) * 3;
+                        const px = cx + (r + distortion) * Math.cos(a);
+                        const py = cy + (r + distortion) * Math.sin(a);
+                        if (a === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+            }
+        });
+
+        requestAnimationFrame(drawStep8);
+    }
+
+    // Step 9: Final visualization
+    function drawStep9() {
+        const canvas = document.getElementById('canvas9');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const time = Date.now() / 500;
+        const cx = 350, cy = 175;
+
+        
+        // Beautiful 3D world visualization
+        // Draw starfield background
+        ctx.fillStyle = '#000011';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for (let i = 0; i < 50; i++) {
+            const sx = (Math.sin(i * 7.3) * 0.5 + 0.5) * canvas.width;
+            const sy = (Math.cos(i * 13.7) * 0.5 + 0.5) * canvas.height;
+            const brightness = (Math.sin(time + i) * 0.3 + 0.7);
+            ctx.fillStyle = `rgba(200, 220, 255, ${brightness * 0.5})`;
+            ctx.beginPath();
+            ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Central source (sun/speaker)
+        const pulseSize = 12 + Math.sin(time * 2) * 3;
+        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulseSize * 2);
+        gradient.addColorStop(0, '#ffee88');
+        gradient.addColorStop(0.5, '#ffaa44');
+        gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(cx, cy, pulseSize * 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffdd88';
+        ctx.beginPath();
+        ctx.arc(cx, cy, pulseSize * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Clean spherical waves expanding (3D)
+        for (let i = 0; i < 7; i++) {
+            const r = ((time * 35 + i * 40) % 280);
+            const alpha = 1 - r / 280;
+            const attenuation = 50 / (r + 10); // 1/r attenuation visualized as line thickness
+            
+            ctx.strokeStyle = `rgba(68, 204, 136, ${alpha * 0.7})`;
+            ctx.lineWidth = Math.max(0.5, attenuation * 3);
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Labels
+        ctx.fillStyle = '#44cc88';
+        ctx.font = 'bold 16px Georgia';
+        ctx.fillText('3D: v(r,t) = (1/r) · f(t − r/c)', cx - 130, 30);
+
+        ctx.fillStyle = '#aabbff';
+        ctx.font = '13px Georgia';
+        ctx.fillText('Saubere Kugelwellen', cx - 70, 55);
+        ctx.fillText('Amplitude ~ 1/r', cx - 55, 75);
+
+        // Show signal arriving at a receiver
+        const receiverX = cx + 180;
+        const receiverY = cy - 20;
+        ctx.fillStyle = '#88aaff';
+        ctx.beginPath();
+        ctx.arc(receiverX, receiverY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#88aaff';
+        ctx.font = '12px Georgia';
+        ctx.fillText('Empfänger', receiverX - 25, receiverY + 25);
+        ctx.fillText('Signal: leiser,', receiverX - 30, receiverY + 42);
+        ctx.fillText('aber UNVERZERRT!', receiverX - 38, receiverY + 57);
+
+        // Arrow from source to receiver
+        ctx.strokeStyle = 'rgba(255, 221, 136, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(cx + 15, cy - 5);
+        ctx.lineTo(receiverX - 12, receiverY + 3);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Bottom text
+        ctx.fillStyle = '#ffdd88';
+        ctx.font = 'bold 15px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('Die Welt ist 3-dimensional, weil nur in 3D', canvas.width / 2, canvas.height - 45);
+        ctx.fillText('verzerrungsfreie Kommunikation mit Abschwächung möglich ist!', canvas.width / 2, canvas.height - 22);
+        ctx.textAlign = 'left';
+
+        requestAnimationFrame(drawStep9);
+    }
+
+    // Initialize
+    updateUI();
+    drawStep1();
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            changeStep(1);
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            changeStep(-1);
+        } else if (e.key >= '1' && e.key <= '9') {
+            goToStep(parseInt(e.key));
+        }
+    });
+</script>
+
+</body>
+</html>

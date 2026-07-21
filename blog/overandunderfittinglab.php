@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Over- and Underfitting
+description: The delicate balance, when a model learns the pattern vs. when it memorizes the noise.
+icon: &#127922;
+part: 3
+order: 16
+color: emerald
+-->
 
 <!--
 TODO https://stats.stackexchange.com/questions/499109/who-invented-the-concept-of-over-fitting

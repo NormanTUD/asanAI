@@ -103,6 +103,7 @@
 		_js("popups.js");
 		_js("overlay.js");
 		_js("health_status.js");
+		_js("health_status_popups.js");
 		_js("weight_analysis.js");
 		_js("tda.js");
 		_js("dimensionality_river.js");
@@ -111,6 +112,19 @@
 		_js("gradient_flow_heatmap.js");
 		_js("embedding_layer.js");
 		_js("embedding_gui.js");
+		_js("skip_connection.js");
+		_js("optimizer.js");
+		_js("loss_metric.js");
+		_js("labels.js");
+		_js("validation.js");
+		_js("cookies_and_url.js");
+		_js("initializers.js");
+		_js("input_shape.js");
+		_js("clipboard_and_download.js");
+		_js("drawing.js");
+		_js("updated_page.js");
+		_js("trace_through_loss_landscape.js");
+		_js("topological_analyzer.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");

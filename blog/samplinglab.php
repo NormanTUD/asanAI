@@ -1,9 +1,18 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Temperature & Sampling
+description: How the model picks the next word, Top-k sampling, temperature, and creative randomness.
+icon: &#127922;
+part: 4
+order: 23
+color: sky
+-->
 
 <div class="md">
 In natural language, there are often many ways to express the same thing, and different humans (or even the same human when asked repeatedly) may answer differently each time. The ideas here were first described in \citeyear{boltzmannlearning}.
 
-To make the interaction feel more humane, there's something called Top-$k$-Sampling. Since you get a probability distribution of most probable words instead of just the most probable one (the probability being the cosine angle to the vector position the calculation points to), you can choose out of a selection of different words that are probable next. This used to not only select the most probable next word, but random chose any of the top $n$ most probable words and it's why an LLM may reply with different words to the same question, even on the same model. 
+To make the interaction feel more humane, there's something called *Top-$k$-Sampling*. Since you get a probability distribution of most probable words instead of just the most probable one (the probability being the cosine angle to the vector position the calculation points to), you can choose out of a selection of different words that are probable next. This used to not only select the most probable next word, but *randomly chose any of the top $n$ most probable words* and it's why an LLM may reply with different words to the same question, even on the same model. 
 
 This is also used to allow the model to be more creative. Letting it only chose the most likely word next, it will be very much like the training data. Choosing from the top 20 words, for example, may make it feel more creative.
 

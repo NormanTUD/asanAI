@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Automatic Differentiation
+description: How machines compute gradients at scale, the chain rule, forward and reverse mode.
+icon: &#9881;
+part: 2
+order: 8
+color: coral
+-->
 
 <div class="md">
 At the heart of every modern neural network lies a deceptively simple question: *"How much did each weight contribute to the error?"* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.
@@ -255,7 +264,7 @@ Both frameworks produce mathematically identical gradients. The choice is primar
 
 ## Building a Minimal Autograd Engine
 
-To truly understand tape-based Autodifferentiation, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
+To truly understand tape-based Automatic Differentiation, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
 </div>
 
 <pre><code class="language-python"><?php print get_string_of_file_or_die("py/autodiff/custom.py"); ?></code></pre>
@@ -265,7 +274,7 @@ This minimal engine implements the exact same algorithm that PyTorch and TensorF
 
 ## The Vanishing and Exploding Gradient Problem
 
-One critical consequence of tape-based Autodifferentiation in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
+One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
 
 When the chain rule is applied through many layers, the gradient is a product of many local derivatives:
 

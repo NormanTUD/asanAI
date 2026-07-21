@@ -12,160 +12,6 @@ function unmark_start_stop_training() {
 	el.classList.remove('mark_red_and_blink');
 }
 
-function set_loss_and_metric (loss, metric) {
-	if(!metric) {
-		metric = loss;
-		if(metric == "binaryCrossentropy") {
-			metric = "categoricalCrossentropy";
-		}
-	}
-
-	set_loss(loss);
-	set_metric(metric);
-}
-
-async function set_labels (arr, force_allow_empty=0) {
-	if(!arr) {
-		err(language[lang]["arr_is_undefined_or_false"]);
-		return;
-	}
-
-	if(!Array.isArray(arr)) {
-		err(language[lang]["arr_is_not_an_array"]);
-		return;
-	}
-
-	if(arr.length == 0 && !force_allow_empty) {
-		wrn(language[lang]["arr_is_an_array_but_empty"]);
-		return;
-	}
-
-	if(get_shape_from_array(arr).length != 1 && !force_allow_empty) {
-		err(language[lang]["arr_is_an_array_but_multidimensional_it_needs_to_be_one_dimensional"]);
-		return;
-	}
-
-	if(!model) {
-		if(finished_loading) {
-			dbg("set_labels: something may be wrong: " + language[lang]["model_is_not_defined"]);
-		} else {
-			dbg("set_labels: " + language[lang]["model_is_not_defined"]);
-		}
-		return;
-	}
-
-	for (var arr_idx = 0; arr_idx < arr.length; arr_idx++) {
-		if(typeof(arr[arr_idx]) != "string") {
-			err(`typeof(arr[${arr_idx}]) is not a string but ${typeof(arr[arr_idx])}. Cannot continue. All values must be strings.`);
-			return;
-		}
-	}
-
-	var old_array_string = JSON.stringify(labels);
-	var new_array_string = JSON.stringify(arr);
-
-	labels = arr;
-	dbg(`${language[lang]["set_labels"]} = [${arr.join(", ")}]`);
-
-	var nr_of_layer = model?.layers?.length;
-	if(!nr_of_layer) {
-		return null;
-	}
-
-	var last_layer_nr = nr_of_layer - 1;
-	var last_layer = model?.layers[last_layer_nr];
-	if(!last_layer) {
-		dbg("Could not get last layer");
-		return;
-	}
-	var last_layer_type = get_last_layer_classname();
-
-	var mos = last_layer.getOutputAt(0).shape;
-	var last_layer_activation = last_layer.getConfig()["activation"];
-
-	if(mos[0] === null && mos.length == 2 && last_layer_activation == "softmax" && last_layer_type == "Dense") {
-		var model_number_output_categories = mos[1];
-		var new_number_output_neurons = arr.length;
-
-		if(new_number_output_neurons && model_number_output_categories != new_number_output_neurons && !is_setting_config) {
-			dbg(`set_item_value(${last_layer_nr}, "units", ${new_number_output_neurons})`);
-			set_item_value(last_layer_nr, "units", new_number_output_neurons);
-
-			await repredict();
-		} else {
-			var msg = "";
-
-			if(!new_number_output_neurons) {
-				msg += language[lang]["new_number_of_output_neurons_is_zero_or_undefined"] + ". ";
-			}
-
-			if(is_setting_config) {
-				msg += language[lang]["do_not_change_neurons_while_is_setting_config_is_true"] + ". ";
-			}
-
-			if(model_number_output_categories == new_number_output_neurons) {
-				msg += language[lang]["new_number_of_output_neurons_matches_the_number_already_in_the_model"] + ". ";
-			}
-
-			dbg(msg);
-		}
-	} else {
-		dbg(language[lang]["cannot_autoset_layer_errors"] + " " + _get_debug_msg_for_set_labels(mos, last_layer_activation, last_layer_type));
-
-		return;
-	}
-}
-
-function _get_debug_msg_for_set_labels (mos, last_layer_activation, last_layer_type) {
-	var msg = "";
-	if(mos[0] !== null) {
-		msg += language[lang]["batch_dimension_in_output_shape_must_be_null"] + ". ";
-	}
-
-	if(mos.length != 2) {
-		msg += language[lang]["output_shape_length_must_be_two"] + ". ";
-	}
-
-	if(last_layer_activation != "softmax") {
-		msg += language[lang]["last_layer_must_have_softmax_to_autoset_layers"] + ". ";
-	}
-
-	if (last_layer_type != "Dense") {
-		msg += language[lang]["last_layer_must_be_of_type_dense"] + ". ";
-	}
-
-	return msg;
-}
-
-async function load_labels_from_json_string (json) {
-	var struct;
-
-	try {
-		struct = JSON.parse(json);
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		if(("" + e).includes("SyntaxError")) {
-			err(language[lang]["the_uploaded_labels_json_isnt_valid"]);
-			return;
-		} else {
-			throw new Error(e);
-		}
-	}
-
-	await set_labels(struct);
-}
-
-function download_labels_json () {
-	download("labels.json", JSON.stringify(labels));
-}
-
-async function reset_labels () {
-	await set_labels([], 1);
-}
-
 function enable_train() {
 	if(!is_custom_data_and_has_custom_data()) {
 		return;
@@ -197,53 +43,6 @@ function get_key_from_path(_array, keypath) {
 	}
 
 	return tmp;
-}
-
-function get_full_shape_without_batch(file) {
-	typeassert(file, string, "file");
-
-	if (file === null) {
-		return null;
-	}
-
-	var input_shape_line = file?.split("\n")[0];
-	if(!input_shape_line) {
-		err("input_shape_line was empty or undefined");
-		return [];
-	}
-	var shape_match = /^#\s*shape\s*:?\s*\((.*)\)$/.exec(input_shape_line);
-
-	assert(shape_match !== null, "shape_match is null");
-
-	//shape_match[0] = null;
-
-	var res = eval("[" + shape_match[1] + "]");
-
-	res[0] = null;
-
-	return res;
-}
-
-function get_shape_from_file(file) {
-	typeassert(file, string, "file");
-
-	if (file === null) {
-		return null;
-	}
-
-	var input_shape_line = file?.split("\n")[0];
-	if(!input_shape_line) {
-		err("input_shape_line was empty or undefined");
-	}
-	var shape_match = /^#\s*shape\s*:?\s*\(\d+,?\s*(.*)\)$/.exec(input_shape_line);
-
-	assert(shape_match !== null, "shape_match is null");
-
-	if (1 in shape_match) {
-		return shape_match[1];
-	}
-
-	return null;
 }
 
 async function md5 (content) {
@@ -299,12 +98,6 @@ async function get_current_status_hash(use_weights=1) {
 	return new_status_hash;
 }
 
-function is_numeric(str) {
-	if (typeof str != "string") return false;
-	if (str == "") return false;
-	return !isNaN(str) && !isNaN(parse_float(str));
-}
-
 function set_last_layer_activation_function (activation_function) {
 	assert(Object.keys(activations).includes(activation_function), "activation function " + activation_function + " is invalid. Must be one of these: " + Object.keys(activations).join(", "));
 
@@ -358,41 +151,6 @@ async function get_cached_json(url) {
 	}
 }
 
-function copy_to_clipboard(text) {
-	var dummy = document.createElement("textarea");
-	document.body.appendChild(dummy);
-	dummy.value = text;
-	dummy.select();
-	document.execCommand("copy");
-	document.body.removeChild(dummy);
-}
-
-function show_clipboard_feedback() {
-	var feedback = $('<div>📋</div>');
-	feedback.css({
-		position: 'fixed',
-		top: last_mouse_y + 'px',
-		left: last_mouse_x + 'px',
-		transform: 'translate(-50%, -50%)',
-		fontSize: '1.5em',
-		opacity: 0,
-		zIndex: 9999,
-		pointerEvents: 'none',
-		transition: 'opacity 0.2s ease-in-out, transform 0.3s ease-out'
-	});
-	$('body').append(feedback);
-	setTimeout(() => feedback.css('opacity', 1), 0);
-	setTimeout(() => feedback.css('opacity', 0), 300);
-	setTimeout(() => feedback.remove(), 600);
-}
-
-function copy_id_to_clipboard(idname) {
-	var serialized = $("#" + idname).text();
-	copy_to_clipboard(serialized);
-
-	show_clipboard_feedback();
-}
-
 function enable_disable_grad_cam() {
 	if ($("#show_grad_cam").is(":checked")) {
 		$("#grad_cam_heatmap").show();
@@ -435,97 +193,6 @@ function change_kernel_pixel_size() {
 
 function change_pixel_size() {
 	pixel_size = parse_int($("#pixel_size").val());
-}
-
-async function change_height() {
-	await change_width_or_height("height", 0);
-}
-
-async function change_width() {
-	await change_width_or_height("width", 1);
-}
-
-function change_output_and_example_image_size() {
-	if($("#width").val() == "" || $("#height").val() == "") {
-		return;
-	}
-
-	$("#output").width($("#width").val());
-	$("#output").height($("#height").val());
-}
-
-async function change_width_or_height(name, inputshape_index) {
-	var is_valid_name = ["width", "height"].includes(name);
-
-	if(!is_valid_name) {
-		err(`${name} is neither 'width' nor 'height'`);
-		return;
-	}
-
-	var value = $("#" + name).val();
-
-	if(!("" + value).length) {
-		err("[change_width_or_height] value is not defined");
-		return;
-	}
-
-	if(!looks_like_number(value)) {
-		err(`[change_width_or_height] Value "${value}" does not look like a number`);
-		return;
-	}
-
-	value = parse_int(value);
-
-	assert(typeof(value) == "number", `${value} is not a number, but ${typeof(value)}`);
-
-	if(value == eval(name)) {
-		return;
-	}
-
-	var t_start = Date.now();
-	l(language[lang]["changing"] + " " + language[lang][name] + "...");
-
-	var inputShape = get_input_shape();
-	inputShape[inputshape_index] = value;
-	await set_input_shape("[" + inputShape.join(", ") + "]");
-	eval(name + " = " + value);
-	layer_structure_cache = null;
-	try {
-		model = await create_model(model, undefined);
-		is_setting_config = false;
-
-	} catch (e) {
-		var last_good = get_last_good_input_shape_as_string();
-		l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
-		await set_input_shape(last_good, 1);
-
-		var new_size = get_input_shape_as_string().replace("[", "").replace("]", "").split(", ")[inputshape_index];
-
-		$("#" + name).val(new_size).trigger("change");
-	}
-
-	await updated_page();
-	change_output_and_example_image_size();
-
-	await restart_webcams();
-
-	var t_end = Date.now();
-
-	var used_time = ((t_end - t_start) / 1000).toFixed(5);
-
-	model_is_trained = false;
-	var hrt = human_readable_time(used_time);
-
-	if(hrt) {
-		l(language[lang]["done_changing"] + " " + language[lang][name] + ", " + language[lang]["took"] + " " + hrt + " (" + used_time + ")");
-	}
-
-	log("Changed width or height");
-}
-
-function generateOnesString(inputString) {
-	typeassert(inputString, string, "inputString");
-	return (inputString.toLowerCase().match(/\d+/g) || []).map(number => "1,".repeat(parse_int(number))).join("").replace(/,$/, "");
 }
 
 function get_data_origin() {
@@ -618,27 +285,12 @@ function hide_no_conv_stuff() {
 		$(".hide_when_image").show();
 	}
 
+	$('[aria-controls="gradient_flow"]').children().show();
+	$('[aria-controls="topological_data_analysis"]').children().show();
+
 	hide_empty_tabs("visualization_ribbon");
 
 	return any_conv_visualizations;
-}
-
-function get_shape_from_array(a) {
-	if (!Array.isArray(a)) {
-		throw new TypeError(`Not an array: ${typeof a}`);
-	}
-
-	const dim = [];
-	let current = a;
-	while (true) {
-		dim.push(current.length);
-		const first = current[0];
-		if (!Array.isArray(first)) {
-			break;
-		}
-		current = first;
-	}
-	return dim;
 }
 
 function _has_any_warning () {
@@ -665,84 +317,6 @@ function _has_any_warning () {
 	return false;
 }
 
-function stop_webcam_if_cam() {
-	if (cam) {
-		stop_webcam();
-	}
-}
-
-var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {
-	if (_has_any_warning()) {
-		return false;
-	}
-
-	rename_tmp_onchange();
-
-	_update_bias_initializer_visibility();
-
-	await _compile_model_or_throw();
-
-	await _update_python_and_restart_graph(no_graph_restart);
-
-	_reset_prev_layer_data();
-
-	await identify_layers_or_error();
-
-	_invalidate_layer_structure_cache();
-
-	enable_start_training_custom_tensors();
-
-	var wait_for_latex_model = await _maybe_write_latex(no_update_initializers);
-
-	await last_shape_layer_warning();
-
-	check_low_filter_warning();
-
-	hide_no_conv_stuff();
-
-	_stop_webcam_if_active();
-
-	await _write_descriptions_safe();
-
-	allow_training();
-
-	_maybe_show_prediction(no_prediction);
-
-	await wait_for_latex_model;
-
-	await _maybe_predict_handdrawn();
-
-	show_or_hide_beginner_or_expert_mode_stuff();
-
-	allow_editable_labels(); // await not useful here
-
-	await _maybe_update_initializers(no_update_initializers);
-
-	return true;
-};
-
-async function _compile_model_or_throw() {
-	try {
-		await compile_model();
-	} catch (e) {
-		if (Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		log(e);
-		log(language[lang]["there_was_an_error_compiling_the_model"] + ": " + e);
-		throw new Error(e);
-	}
-}
-
-async function _update_python_and_restart_graph(no_graph_restart) {
-	var redo_graph = await update_python_code(1);
-
-	if (model && redo_graph && !no_graph_restart) {
-		await restart_fcnn(1);
-	}
-}
-
 function _reset_prev_layer_data() {
 	prev_layer_data = [];
 }
@@ -756,10 +330,6 @@ async function _maybe_write_latex(no_update_initializers) {
 		return await write_model_to_latex_to_page();
 	}
 	return Promise.resolve(1);
-}
-
-function _stop_webcam_if_active() {
-	stop_webcam_if_cam();
 }
 
 async function _write_descriptions_safe() {
@@ -820,129 +390,6 @@ function show_or_hide_beginner_or_expert_mode_stuff() {
 	}
 }
 
-async function updated_page(no_graph_restart=null, disable_auto_enable_valid_layer_types=null, item=null, no_prediction=null, no_update_initializers=null) {
-	if(!finished_loading) {
-		return;
-	}
-
-	var updated_page_uuid = uuidv4();
-
-	var functionName = "updated_page"; // Specify the function name
-
-	var last_good = get_last_good_input_shape_as_string();
-
-	try {
-		waiting_updated_page_uuids.push(updated_page_uuid);
-
-		while (waiting_updated_page_uuids && waiting_updated_page_uuids.length && waiting_updated_page_uuids[0] != updated_page_uuid) {
-			await delay(10);
-		}
-
-		var ret = await updated_page_internal(no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers);
-
-		var index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
-
-		if (index !== -1) {
-			waiting_updated_page_uuids.splice(index, 1);
-		} else {
-			wrn("Could not find index of " + updated_page_uuid);
-		}
-	} catch (e) {
-		var original_e = e;
-		let index = waiting_updated_page_uuids.indexOf(updated_page_uuid);
-
-		if (index !== -1) {
-			waiting_updated_page_uuids.splice(index, 1);
-		} else {
-			err("Could not find index of " + updated_page_uuid);
-		}
-
-		await handle_page_update_error(e, last_good, original_e);
-
-		return false;
-	}
-
-	if(!ret) {
-		if(finished_loading) {
-			//wrn("updated_page failed");
-
-			if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-				l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
-				await set_input_shape(last_good, 1);
-			}
-		}
-	}
-
-	try {
-		_temml();
-	} catch (e) {
-		wrn(e);
-	}
-
-	last_updated_page = Date.now();
-
-	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-
-	show_or_hide_download_with_data();
-
-	await restart_fcnn();
-
-	await write_optimizer_to_math_tab();
-
-	create_weight_surfaces();
-
-	await plot_model_plot();
-
-	await write_descriptions(1);
-
-	history_of_weights_for_loss_landscape = [];
-
-	await plot_model_plot(true);
-}
-
-async function handle_page_update_error(e, last_good, original_e) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
-
-	if(("" + e).includes("There are zeroes in the output shape") || ("" + e).includes("Negative dimension size caused")) {
-		l(language[lang]["input_size_too_small_restoring_last_known_good_config"] + " " + last_good);
-		if(last_good && last_good != "[]" && last_good != get_input_shape_as_string()) {
-			await set_input_shape(last_good, 1);
-		}
-	} else if(("" + e).includes("Cannot read properties of undefined (reading 'predict')") || ("" + e).includes("Cannot read properties of undefined")) {
-		if (e instanceof Error) {
-			wrn("[updated_page] " + e.message + "\n" + e.stack);
-		} else {
-			wrn("[updated_page] " + JSON.stringify(e));
-		}
-	} else if(("" + e).includes("out of memory")) {
-		await write_error("" + e, null, null);
-	} else if(("" + e).includes("model.layers[i]")) {
-		dbg("[updated_page] model.layers[i] is undefined");
-	} else if (("" + e).includes("model.layers is undefined")) {
-		dbg("[updated_page] model.layers is undefined");
-	} else if (("" + e).includes("model is undefined")) {
-		dbg("[updated_page] model is undefined");
-	} else if (("" + e).includes("model.input is undefined")) {
-		dbg("[updated_page] model.input is undefined");
-	} else if (("" + e).includes("Inputs to DepthwiseConv2D should have rank")) {
-		dbg("[updated_page] " + e);
-	} else if (("" + e).includes("targetShape is undefined")) {
-		dbg("[updated_page] " + e);
-	} else if (("" + e).includes("code is undefined")) {
-		dbg("[updated_page] This error may happen when the whole DOM is deleted: " + e);
-	} else if (("" + e).includes("fcnn is undefined")) {
-		dbg("[updated_page] This error may happen when you did not include d3 or three.js: " + e);
-	} else if (("" + e).includes("e is null")) {
-		dbg("[updated_page] This error may happen when switching models: " + e);
-	} else {
-		err("" + e);
-		err("Stack:", original_e.stack);
-		throw new Error("" + e);
-	}
-}
-
 function show_or_hide_download_with_data() {
 	let show = true;
 	let messages = [];
@@ -989,21 +436,6 @@ function show_or_hide_download_with_data() {
 	$("#download_with_data").toggle(show);
 }
 
-async function change_optimizer() {
-	var type = get_optimizer();
-	$(".optimizer_metadata").hide();
-
-	$("#" + type + "_metadata").show();
-
-	await updated_page();
-
-	await get_model_data();
-}
-
-function set_momentum(val) {
-	$("#momentum_" + get_optimizer()).val(val);
-}
-
 function set_validation_split(val) {
 	assert(typeof(val) == "number" || is_numeric(val), val + " is not an number but " + typeof(number));
 	val = parse_int(val);
@@ -1012,77 +444,6 @@ function set_validation_split(val) {
 	$("#validationSplit").val(val);
 
 	//set_get("validation_split", val);
-}
-
-function set_epsilon(val) {
-	$("#epsilon_" + get_optimizer()).val(val);
-}
-
-function set_decay(val) {
-	$("#decay_" + get_optimizer()).val(val);
-}
-
-function set_rho(val) {
-	$("#rho_" + get_optimizer()).val(val);
-}
-
-function set_learning_rate(val) {
-	$("#learningRate_" + get_optimizer()).val(val);
-}
-
-function set_optimizer(val, trigger_change = 1) {
-	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
-	l(language[lang]["set_optimizer_to"] + val);
-	$("#optimizer").val(val);
-	if(trigger_change) {
-		$("#optimizer").trigger("change");
-	}
-}
-
-function set_metric(val, trigger_change = 1) {
-	l(language[lang]["set_metric_to"] + val);
-
-	if(Object.keys(metric_shortnames).includes(val)) {
-		val = metric_shortnames[val];
-	}
-
-	assert(metrics.includes(val), metric + " is not a valid metric. It must be in " + metrics.join(", "));
-	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
-
-	if(get_metric() != val) {
-		$("#metric").val(val);
-		if(trigger_change) {
-			$("#metric").trigger("change");
-		}
-	}
-}
-
-function get_metric() {
-	return $("#metric").val();
-}
-
-function get_loss() {
-	return $("#loss").val();
-}
-
-function get_optimizer() {
-	return $("#optimizer").val();
-}
-
-function set_loss(val, trigger_change = 1) {
-	l(language[lang]["set_loss_to"] + val);
-
-	assert(losses.includes(val), loss + " is not a valid loss. It must be in " + losses.join(", "));
-	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
-
-	const $loss = $("#loss");
-
-	if(get_loss() != val) {
-		$loss.val(val);
-		if(trigger_change) {
-			$loss.trigger("change");
-		}
-	}
 }
 
 function get_epochs() {
@@ -1190,58 +551,14 @@ function reset_photo_gallery() {
 	document.getElementById("photos").innerHTML = "";
 }
 
-function set_optimizer_special_sgd_rmsprop_from_config(config) {
-	if (["sgd", "rmsprop"].includes(config["optimizer"])) {
-		set_learning_rate(config["learningRate"]);
-	}
-}
-
-function set_optimizer_special_rmsprop_from_config(config) {
-	if (config["optimizer"] == "rmsprop") {
-		l(language[lang]["setting_optimizer_to_rmsprop"]);
-		set_rho(config["rho"]);
-		set_decay(config["decay"]);
-		set_epsilon(config["epsilon"]);
-	}
-}
-
-function set_optimizer_special_momentum_rmsprop_from_config(config) {
-	if (["momentum", "rmsprop"].includes(config["optimizer"])) {
-		set_momentum(config["momentum"]);
-	}
-}
-
 function remove_confusion_matrix () {
 	$("#confusion_matrix").remove();
-}
-
-async function wait_for_updated_page_if_page_finished_loading (x) {
-	if(finished_loading) {
-		await wait_for_updated_page(x);
-	}
-}
-
-async function update_page_and_show_time() {
-	l(language[lang]["updating_page"]);
-	var start_t = Date.now();
-	await updated_page(null, null, null, 1);
-	var end_t = Date.now();
-	var runtime = (end_t - start_t) / 1000;
-	var hrt = human_readable_time(runtime);
-	if(hrt) {
-		l(language[lang]["page_update_took"] + " " + hrt);
-	}
 }
 
 async function dispose_if_exists(element) {
 	if(element) {
 		await dispose(element);
 	}
-}
-
-function trigger_initializers () {
-	$(".kernel_initializer").trigger("change");
-	$(".bias_initializer").trigger("change");
 }
 
 function show_or_hide_photos_depending_on_if_index(index) {
@@ -1258,21 +575,6 @@ function show_or_hide_photos_depending_on_if_index(index) {
 			$("#photos").hide();
 			$("#xy_display_data").show();
 			$("#own_embedding_tab").hide();
-		}
-	}
-}
-
-async function wait_for_updated_page(seconds) {
-	let waited = 0;
-	while (waiting_updated_page_uuids.length) {
-		if (waited % 2000 === 0 && waited > 0) {
-			dbg("Still waiting for updated page... waited " + (waited / 1000) + " seconds so far");
-		}
-		await delay(10);
-		waited += 10;
-		if (waited >= seconds * 1000) {
-			dbg("Timeout reached after " + seconds + " seconds, stopping wait");
-			break;
 		}
 	}
 }
@@ -1335,72 +637,6 @@ async function clean_gui() {
 	await write_descriptions();
 }
 
-async function set_input_shape(val, force=0) {
-	assert(typeof(val) == "string", "set_input_shape(" + val + "), val is not string, but " + typeof(val));
-
-	if(force && input_shape_is_image()) {
-		var new_input_shape = val;
-		new_input_shape = new_input_shape.replace("[", "").replace("]", "").split(", ");
-
-		if(new_input_shape.length == 4 && new_input_shape[0] == 1) {
-			new_input_shape.shift();
-		}
-
-		var new_height = new_input_shape[0];
-		var new_width = new_input_shape[1];
-
-		if(height != new_height) {
-			$("#height").val(new_height).trigger("change");
-		}
-
-		if(width != new_width) {
-			$("#width").val(new_width).trigger("change");
-		}
-	}
-
-	$("#inputShape").val(val);
-
-	await write_descriptions();
-
-	var res = get_input_shape();
-
-	return res;
-}
-
-function get_input_shape_with_batch_size() {
-	var shape = get_input_shape();
-	shape.unshift(parse_int($("#batchSize").val()));
-	var res = shape;
-	return res;
-}
-
-function get_input_shape() {
-	var code = $("#inputShape").val();
-	if (!code.startsWith("[")) {
-		code = "[" + code + "]";
-	}
-	var match = code.match(/^\s*\[\s*(?:(?:\s*\d+\s*,\s*)*\d+)?\s*\]\s*$/);
-	if(match) {
-		var res = eval(code);
-		return res;
-	} else {
-		if(model && typeof(model?.input?.shape) == "object") {
-			return model?.input?.shape.filter(n => n);
-		} else {
-			return [];
-		}
-	}
-}
-
-async function change_metrics() {
-	var new_metric = get_metric();
-
-	l(language[lang]["changed_metrics"]);
-	$("#metric_equation").html("");
-
-	await updated_page(1);
-}
-
 function change_favicon(path) {
 	assert(typeof(path) == "string", "Path for change_favicon(" + path + ") is not a string, but " + typeof(path));
 
@@ -1438,32 +674,6 @@ async function enable_everything() {
 	await highlight_code();
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
-}
-
-async function set_all_kernel_initializers() {
-	var chosen_value = $("#set_all_kernel_initializers").val();
-	l(language[lang]["setting_all_kernel_initializers_to"] + " " + chosen_value);
-	var initializer_keys = Object.keys(initializers);
-	if (initializer_keys.includes(chosen_value)) {
-		$(".kernel_initializer").val(chosen_value).trigger("change");
-	}
-
-	$("#set_all_kernel_initializers").val("none");
-
-	await updated_page();
-}
-
-async function set_all_bias_initializers() {
-	var chosen_value = $("#set_all_bias_initializers").val();
-	l(language[lang]["setting_all_bias_initializers_to"] + " " + chosen_value);
-	var initializer_keys = Object.keys(initializers);
-	if (initializer_keys.includes(chosen_value)) {
-		$(".bias_initializer").val(chosen_value).trigger("change");
-	}
-
-	$("#set_all_bias_initializers").val("none");
-
-	await updated_page();
 }
 
 async function set_all_activation_functions_except_last_layer() {
@@ -1687,53 +897,6 @@ function is_hidden_or_has_hidden_parent(element) {
 	return false;
 }
 
-async function set_height(new_val) {
-	if(!looks_like_number(new_val)) {
-		err(`set_height(${new_val}) does not look like a number`);
-		return;
-	}
-
-	if (!Number.isInteger(Number(new_val))) {
-		err(`set_height(${new_val}) is not an integer`);
-		return;
-	}
-
-	$("#height").val(new_val);
-	await change_height();
-}
-
-async function set_width(new_val) {
-	if(!looks_like_number(new_val)) {
-		err(`set_width(${new_val}) does not look like a number`);
-		return;
-	}
-
-	if (!Number.isInteger(Number(new_val))) {
-		err(`set_width(${new_val}) is not an integer`);
-		return;
-	}
-
-	$("#width").val(new_val);
-	await change_width();
-}
-
-async function update_input_shape() {
-	await set_input_shape("[" + get_input_shape().join() + "]");
-	layer_structure_cache = null;
-	await updated_page();
-	if(input_shape_is_image()) {
-		var this_shape = get_input_shape();
-		$("#width").val(this_shape[1]);
-		$("#height").val(this_shape[0]);
-		await change_width();
-		await change_height();
-	}
-
-	await highlight_code();
-
-	await predict_own_data_and_repredict();
-}
-
 function auto_adjust_number_of_neurons(n) {
 	if ($("#auto_adjust_number_of_neurons").is(":checked")) {
 		var last_layer_type = $($(".layer_type")[$(".layer_type").length - 1]).val();
@@ -1752,24 +915,6 @@ function auto_adjust_number_of_neurons(n) {
 	}
 }
 
-function set_loss_and_metric_if_not_already_set(val) {
-	if(get_loss() != val) {
-		set_loss(val, 1);
-	}
-
-	if(get_metric() != val) {
-		set_metric(val, 1);
-	}
-}
-
-function set_is_classification () {
-	if(get_loss() == "categoricalCrossentropy") {
-		is_classification = true;
-	} else {
-		is_classification = false;
-	}
-}
-
 async function last_shape_layer_warning() {
 	if ($("#data_origin").val() == "image") {
 		if (!model) {
@@ -1783,7 +928,7 @@ async function last_shape_layer_warning() {
 		} else {
 			if (model.outputShape.length != 4) {
 				var n = $(".own_image_label").length;
-				$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is neither 2 (for classification) nor 4 (for segmentation). Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
+				$("#last_layer_shape_warning").html("<h3>" + language[lang]["last_layer_shape_warning"].replace("{n}", n) + "</h3>");
 			} else {
 				$("#last_layer_shape_warning").html("");
 
@@ -1884,7 +1029,7 @@ async function write_error(e, fn, hide_swal) {
 		if(!hide_swal) {
 			Swal.fire({
 				icon: "error",
-				title: "Oops [5]...",
+				title: language[lang]["oops"],
 				html: msg
 			});
 		} else {
@@ -1893,7 +1038,7 @@ async function write_error(e, fn, hide_swal) {
 
 		await send_bug_report();
 	} else {
-		$("#error").html("No error found, but something went wrong").show().parent().hide();
+		$("#error").html(language[lang]["no_error_something_wrong"]).show().parent().hide();
 	}
 
 	if(typeof(fn) == "function") {
@@ -1955,47 +1100,6 @@ function set_this_option_or_error (this_option) {
 	} else {
 		err("ERROR in ", this_option);
 	}
-}
-
-function looks_like_number(item) {
-	if(Number.isNaN(item)) {
-		return false;
-	}
-
-	if(typeof(item) == "number") {
-		return true;
-	}
-
-	if (/^[+-]?(?:(?:\d+(?:\.\d+)?))$/.test(item)) {
-		return true;
-	}
-
-	return false;
-}
-
-async function set_default_input_shape() {
-	if (!changed_data_source) {
-		return;
-	}
-
-	var default_config = await _get_configuration();
-
-	if (default_config) {
-		try {
-			var default_input_shape = default_config["input_shape"];
-
-			await set_input_shape(default_input_shape);
-
-			await compile_model();
-
-			await identify_layers();
-
-			await write_descriptions();
-		} catch (e) {
-			log(e);
-		}
-	}
-
 }
 
 function allow_training() {
@@ -2268,468 +1372,6 @@ function show_tab_label(label, click=0) {
 	update_translations(); // await not possible
 }
 
-function getDimFromString(input) {
-	if (typeof input !== "string") {
-		throw new TypeError("getDimFromString expects a string.");
-	}
-
-	var regex = /(\d+)[dD]/g;
-	var match = regex.exec(input);
-
-	if (match && match[1] !== undefined) {
-		var parsed = parseInt(match[1], 10);
-		if (Number.isNaN(parsed)) {
-			throw new Error("Error at parsing the input number.");
-		}
-		return parsed;
-	}
-
-	return null;
-}
-
-function safeGetDim(input) {
-	try {
-		return getDimFromString(input);
-	} catch (err) {
-		if (typeof console !== "undefined" && typeof console.error === "function") {
-			console.error("safeGetDim: error:", err && err.message ? err.message : err);
-		}
-		return null;
-	}
-}
-
-function parse_target_shape_value(value) {
-	try {
-		if (typeof value !== "string" || value.trim() === "") {
-			return null;
-		}
-
-		var parts = value.split(/\s*,\s*/).filter(Boolean);
-		var int_values = [];
-
-		for (var i = 0; i < parts.length; i++) {
-			var parsed = parseInt(parts[i], 10);
-			if (isNaN(parsed) || parsed.toString() !== parts[i].replace(/^0+(?!$)/, "")) {
-				return null;
-			}
-			int_values.push(parsed);
-		}
-
-		if (int_values.length === 0) {
-			return null;
-		}
-
-		return int_values;
-	} catch (err) {
-		console.error("Error in parse_target_shape_value:", err);
-		return null;
-	}
-}
-
-function get_model_input_product(layer_idx) {
-	try {
-		if (typeof model === "undefined" || !model.layers || !model.layers[layer_idx]) {
-			return null;
-		}
-
-		var layer = model.layers[layer_idx];
-		if (!layer.getInputAt) {
-			return null;
-		}
-
-		var shape = layer.getInputAt(0).shape;
-		if (!Array.isArray(shape)) {
-			return null;
-		}
-
-		var shape_values = shape.filter(function (v) {
-			return typeof v === "number" && !isNaN(v);
-		});
-
-		if (shape_values.length === 0) {
-			return null;
-		}
-
-		var product = shape_values.reduce(function (a, b) {
-			return a * b;
-		}, 1);
-
-		return product;
-	} catch (err) {
-		console.error("Error in get_model_input_product for layer", layer_idx, err);
-		return null;
-	}
-}
-
-function validate_target_shape(layer_idx, input_element, default_bg_color) {
-	var err_msg_base = "Target shape must be a comma-separated list of integers (e.g. 40,40,3).";
-	var this_target_shape_val = input_element.val();
-	var parsed_shape = parse_target_shape_value(this_target_shape_val);
-
-	if (parsed_shape === null) {
-		input_element.css("background-color", "red");
-		layer_warning_container(layer_idx, err_msg_base);
-		return false;
-	}
-
-	var target_product = parsed_shape.reduce(function (a, b) {
-		return a * b;
-	}, 1);
-
-	var expected_product = get_model_input_product(layer_idx);
-
-	if (expected_product !== null && target_product !== expected_product) {
-		var err_msg_product = "Target shape product (" + target_product + 
-			") does not match model input shape product (" + 
-			expected_product + ")";
-		input_element.css("background-color", "red");
-		layer_warning_container(layer_idx, err_msg_product);
-		return false;
-	}
-
-	input_element.css("background-color", default_bg_color);
-	remove_layer_warning(layer_idx, err_msg_base);
-	remove_layer_warning(layer_idx, "Target shape product");
-	return true;
-}
-
-function check_all_target_shapes() {
-	var missing_values = 0;
-	var default_bg_color = $("input").css("background-color");
-	var all_layer_settings = $(".layer_setting");
-
-	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		try {
-			var this_layer = $(all_layer_settings[layer_idx]);
-			if (!this_layer.length) {
-				continue;
-			}
-
-			var this_target_shape = this_layer.find(".target_shape");
-			if (!this_target_shape.length) {
-				continue;
-			}
-
-			var valid = validate_target_shape(layer_idx, this_target_shape, default_bg_color);
-			if (!valid) {
-				missing_values++;
-			}
-		} catch (err) {
-			console.error("Error in check_all_target_shapes() for layer", layer_idx, err);
-		}
-	}
-
-	return missing_values;
-}
-
-function check_all_sizes() {
-	return check_all_comma_seperated("size", "Sizes");
-}
-
-function check_all_dilation_rates() {
-	return check_all_comma_seperated("dilation_rate", "Dilation Rate");
-}
-
-function check_all_kinds_of_inputs () {
-	var ret = 0;
-
-	ret += check_all_dilation_rates();
-
-	ret += check_all_sizes();
-
-	ret += check_all_target_shapes();
-
-	ret += check_if_val_is_integer("strides_x", "Strides-X");
-	ret += check_if_val_is_integer("strides_y", "Strides-Y");
-	ret += check_if_val_is_integer("strides_z", "Strides-Z");
-
-	ret += check_if_val_is_integer("kernel_size_x", "Kernel-Size-X");
-	ret += check_if_val_is_integer("kernel_size_y", "Kernel-Size-Y");
-	ret += check_if_val_is_integer("kernel_size_z", "Kernel-Size-Z");
-
-	ret += check_if_val_is_integer("pool_size_x", "Pool-Size-X");
-	ret += check_if_val_is_integer("pool_size_y", "Pool-Size-Y");
-	ret += check_if_val_is_integer("pool_size_z", "Pool-Size-Z");
-
-	ret += check_if_val_is_integer("filters", "Filter");
-
-	ret += check_if_val_is_integer("units", "Units");
-
-	ret += check_if_val_is_integer("axis", "Axis");
-
-	ret += check_if_val_is_float_or_integer("kernel_regularizer_l1", "Kernel-Regularizer-L1");
-	ret += check_if_val_is_float_or_integer("kernel_regularizer_l2", "Kernel-Regularizer-L2");
-
-	ret += check_if_val_is_float_or_integer("bias_regularizer_l1", "Bias-Regularizer-L1");
-	ret += check_if_val_is_float_or_integer("bias_regularizer_l2", "Bias-Regularizer-L2");
-
-	ret += check_if_val_is_float_or_integer("dropout_rate", "Dropout-Rate");
-	ret += check_if_val_is_float_or_integer("dropout", "Dropout-Rate");
-
-	ret += check_if_val_is_float_or_integer("alpha", "Alpha");
-	ret += check_if_val_is_float_or_integer("max_value", "Max-Value");
-	ret += check_if_val_is_float_or_integer("theta", "Theta");
-	ret += check_if_val_is_float_or_integer("epsilon", "Epsilon");
-	ret += check_if_val_is_float_or_integer("stddev", "Standard-Deviation");
-	ret += check_if_val_is_float_or_integer("dropout_seed", "Dropout-Seed");
-
-	return ret;
-}
-
-function isIntegerLike(value) {
-	try {
-		if (Number.isInteger(value)) {
-			return true;
-		}
-
-		if (typeof value === 'string') {
-			if (value.trim() !== value || value === '') {
-				return false;
-			}
-
-			if (/^[+-]?\d+$/.test(value)) {
-				var num = Number(value);
-				if (Number.isInteger(num)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	} catch (err) {
-		console.error('Error in isIntegerLike:', err);
-		return false;
-	}
-}
-
-function check_if_val_is_integer (classname, name) {
-	var layer_types = get_layer_type_array();
-
-	var missing_values = 0;
-
-	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = $("input").css("background-color");
-
-	const all_layer_settings = $(".layer_setting");
-
-	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
-
-		if (this_element.length) {
-			var this_dilation_rate_val = this_element.val();
-			var this_layer_type = layer_types[layer_idx];
-
-			var this_val = this_element.val();
-
-			const err_msg = `${name} is not an integer`;
-
-			if(!isIntegerLike(this_val)) {
-				this_element.css("background-color", "red");
-				missing_values++;
-				layer_warning_container(layer_idx, err_msg);
-			} else {
-				this_element.css("background-color", default_bg_color);
-				remove_layer_warning(layer_idx, err_msg);
-			}
-		}
-	}
-
-	return missing_values;
-}
-
-function check_if_val_is_float_or_integer (classname, name) {
-	var layer_types = get_layer_type_array();
-
-	var missing_values = 0;
-
-	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = $("input").css("background-color");
-
-	const all_layer_settings = $(".layer_setting");
-
-	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
-
-		if (this_element.length) {
-			var this_dilation_rate_val = this_element.val();
-			var this_layer_type = layer_types[layer_idx];
-
-			var this_val = this_element.val();
-
-			const err_msg = `${name} is not an integer`;
-
-			if(!looks_like_number(this_val)) {
-				this_element.css("background-color", "red");
-				missing_values++;
-				layer_warning_container(layer_idx, err_msg);
-			} else {
-				this_element.css("background-color", default_bg_color);
-				remove_layer_warning(layer_idx, err_msg);
-			}
-		}
-	}
-
-	return missing_values;
-}
-
-function check_all_comma_seperated(classname, name) {
-	var layer_types = get_layer_type_array();
-
-	var missing_values = 0;
-
-	var example_input = document.querySelector('input, select, textarea');
-	var default_bg_color = $("input").css("background-color");
-
-	const all_layer_settings = $(".layer_setting");
-
-	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-		var this_element = $(all_layer_settings[layer_idx]).find("." + classname);
-
-		if (this_element.length) {
-			var this_dilation_rate_val = this_element.val();
-			var this_layer_type = layer_types[layer_idx];
-
-			var number_of_required_values = safeGetDim(this_layer_type);
-
-			if (!number_of_required_values) {
-				continue;
-			}
-
-			var err_msg = `${name} is expected to be a comma-separated list of ${number_of_required_values} integers, but it is not`;
-
-			var value_count = this_dilation_rate_val?.split(/\s*,\s*/)?.length;
-
-			if(value_count) {
-				if (value_count !== number_of_required_values) {
-					this_element.css("background-color", "red");
-					missing_values++;
-					layer_warning_container(layer_idx, err_msg);
-				} else {
-					this_element.css("background-color", default_bg_color);
-					remove_layer_warning(layer_idx, err_msg);
-				}
-			} else {
-				err(`value_count was empty`);
-			}
-		}
-	}
-
-	return missing_values;
-}
-
-function check_number_values() {
-	var all_fields = document.querySelectorAll('input[type="number"]:not(.no_red_bg_when_empty)');
-
-	var default_bg_color = $("input").css("background-color");
-
-	var missing_values = 0;
-
-	for (var i = 0; i < all_fields.length; i++) {
-		var field = all_fields[i];
-		var val = field.value;
-
-		if (val !== "" && !is_numeric(val)) {
-			if (!field.classList.contains("no_red_on_error")) {
-				field.style.backgroundColor = "red";
-			}
-			missing_values++;
-		} else if (val !== "") {
-			val = parse_float(val);
-			field.style.backgroundColor = default_bg_color;
-
-			var max_attr = field.getAttribute("max");
-			var min_attr = field.getAttribute("min");
-
-			if (max_attr !== null) {
-				var max = parse_float(max_attr);
-				if (!isNaN(max) && val > max) {
-					field.value = max;
-					field.dispatchEvent(new Event("change"));
-				}
-			}
-
-			if (min_attr !== null) {
-				var min = parse_float(min_attr);
-				if (!isNaN(min) && val < min) {
-					field.value = min;
-					field.dispatchEvent(new Event("change"));
-				}
-			}
-		} else { // val === ""
-			if (!field.classList.contains("no_red_on_error")) {
-				field.style.backgroundColor = "red";
-			}
-		}
-	}
-
-	if ($data_origin === null) {
-		$data_origin = document.getElementById("data_origin");
-	}
-
-	if ($data_origin && $data_origin.value === "image") {
-		if (model && Object.keys(model).includes("_callHook") && model?.input?.shape?.length === 4 && model?.input?.shape[3] === 3) {
-			var currently_existing_custom_images = get_custom_elements_from_webcam_page();
-			if (currently_existing_custom_images.length === 0) {
-				has_missing_values++;
-			}
-		}
-	}
-
-	if(!any_trainable_checked()) {
-		missing_values += 1;
-	}
-
-	missing_values += check_all_kinds_of_inputs();
-
-	if(get_data_origin() == "csv" && csv_has_unparsable_values) {
-		missing_values++;
-	}
-
-	if (missing_values) {
-		has_missing_values = true;
-		disable_train();
-	} else {
-		has_missing_values = false;
-		if (!shown_has_zero_data) {
-			enable_train();
-		}
-	}
-}
-
-function set_cookie(name, value, days = 365) {
-	var expires = "";
-	if (days) {
-		var date = new Date();
-		date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-		expires = "; expires=" + date.toUTCString();
-	}
-
-	// Set SameSite and secure attributes
-	var cookieOptions = "; SameSite=None; secure";
-
-	document.cookie = name + "=" + (value || "") + expires + "; path=/" + cookieOptions;
-}
-
-function get_cookie(name) {
-	var nameEQ = name + "=";
-	var ca = document?.cookie?.split(";");
-
-	if(!ca) {
-		return null;
-	}
-
-	for(var ca_idx = 0; ca_idx < ca.length; ca_idx++) {
-		var c = ca[ca_idx];
-		while (c.charAt(0)==" ") c = c.substring(1,c.length);
-		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-	}
-	return null;
-}
-
-function delete_cookie(name) {
-	document.cookie = name +"=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-}
-
 function copy_options () {
 	var selects = $(".copy_options");
 	for (var select_idx = 0; select_idx < selects.length; select_idx ++) {
@@ -2857,78 +1499,10 @@ async function set_custom_image_training () {
 	await rename_labels();
 }
 
-async function get_data_from_webcam_if_possible(){
-	if(!cam) {
-		dbg("cam was not defined. Trying to get data from webcam");
-		await get_data_from_webcam();
-	}
-
-	if(!cam) {
-		try {
-			dbg("cam was still not defined. Trying to get data from webcam again");
-			await get_data_from_webcam();
-		} catch (e) {
-			err(e);
-		}
-	} else {
-		dbg("cam is defined, not trying to show it again");
-	}
-}
-
-async function set_custom_webcam_training_data() {
-	close_popups();
-
-	labels = [];
-
-	dbg("Init webcams");
-	await init_webcams();
-
-	if($("#data_origin").val() != "image") {
-		$.when($("#data_origin").val("image").trigger("change")).done(get_data_from_webcam_if_possible);
-	} else {
-		if(!cam) {
-			await get_data_from_webcam();
-		}
-
-		if(!cam) {
-			await show_webcam();
-		}
-
-		show_tab_label("own_images_tab_label", 1);
-	}
-	dbg("Done setting web for custom training data");
-
-	await rename_labels();
-}
-
 async function toggle_layers() {
 	$(".left_side").toggle();
 
 	await write_descriptions(1);
-}
-
-async function get_available_cams () {
-	var webcams = [];
-	var ids = [];
-
-	await navigator.mediaDevices.enumerateDevices().then(function (devices) {
-		for(var device_idx = 0; device_idx < devices.length; device_idx++){
-			var device = devices[device_idx];
-			if (device.kind === "videoinput") {
-				webcams.push(device.label);
-				ids.push(device.deviceId);
-			}
-		}
-	});
-
-	return [webcams, ids];
-}
-
-async function switch_to_next_camera () {
-	webcam_id++;
-	webcam_id = webcam_id % (webcam_modes.length);
-	await get_data_from_webcam(1);
-
 }
 
 async function highlight_code () {
@@ -2964,51 +1538,6 @@ async function highlight_code () {
 		console.error("highlight_code_fast failed:", err);
 		return false;
 	}
-}
-
-function getCameraSearchHTML() {
-	var html = `
-<div style="position: relative; width: 150px; height: 150px;">
-  <div style="
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 64px;
-    z-index: 1;
-  ">📷</div>
-  <div style="
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60px;
-    height: 60px;
-    margin: -30px 0 0 -30px;
-    animation: orbit 3s linear infinite;
-    z-index: 2;
-  ">
-    <div style="
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 32px;
-      animation: counter-rotate 3s linear infinite;
-    ">🔍</div>
-  </div>
-</div>
-<style>
-@keyframes orbit {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-@keyframes counter-rotate {
-  0%   { transform: translateX(-50%) rotate(0deg); }
-  100% { transform: translateX(-50%) rotate(-360deg); }
-}
-</style>
-	`;
-	return html;
 }
 
 function show_hide_augment_tab () {
@@ -3054,89 +1583,6 @@ function get_last_layer_activation_function() {
 	return activation ? activation.value : null;
 }
 
-function dataURLToBlob(dataURL) {
-	try {
-		var parts = dataURL?.split(";base64,");
-
-		if(!parts) {
-			err(`dataURLToBlob: dataURL was none or undefined`);
-			return;
-		}
-
-		var contentType = parts[0].split(":")[1];
-		var raw = window.atob(parts[1]);
-		var rawLength = raw.length;
-		var uInt8Array = new Uint8Array(rawLength);
-
-		for (var rawLength_idx = 0; rawLength_idx < rawLength; ++rawLength_idx) {
-			uInt8Array[rawLength_idx] = raw.charCodeAt(rawLength_idx);
-		}
-
-		return new Blob([uInt8Array], { type: contentType });
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-}
-
-function downloadNetworkZip(blob) {
-	try {
-		var url = URL.createObjectURL(blob);
-		var link = document.createElement("a");
-		link.href = url;
-		link.download = "network.zip";
-		link.textContent = "Download zip file";
-
-		link.click();
-
-		URL.revokeObjectURL(url);
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-}
-
-function clear_attrament (idname) {
-	if(!atrament_data) {
-		wrn("[clear_attrament] atrament_data not defined");
-		return;
-	}
-
-	if(idname === null) {
-		wrn(language[lang]["idname_is_null_returning"]);
-		return;
-	}
-
-	if(idname === undefined) {
-		wrn(language[lang]["idname_is_undefined_returning"]);
-		return;
-	}
-
-	if(!Object.keys(atrament_data).includes(idname)) {
-		wrn(`clear_attrament("${idname}"): idname = "${idname}" (type: ${typeof(idname)})not found`);
-		return;
-	}
-
-	try {
-		atrament_data[idname]["atrament"].context.fillStyle = "#ffffff";
-		atrament_data[idname]["atrament"].context.fillRect(
-			0,
-			0,
-			atrament_data[idname]["atrament"].canvas.width,
-			atrament_data[idname]["atrament"].canvas.height
-		);
-	} catch (e) {
-		err(e);
-	}
-
-}
-
 function invert_elements_in_dark_mode () {
         is_dark_mode = $("#theme_choser").val() == "darkmode" ? true : false;
 
@@ -3161,113 +1607,6 @@ function invert_elements_in_dark_mode () {
 
                 create_weight_surfaces(1);
         }
-}
-
-function green_marker (element) {
-	$(element).parent().parent().find(".green_icon").removeClass("green_icon");
-	$(element).addClass("green_icon");
-}
-
-function atrament_set_brush (t, idname) {
-	atrament_data[idname]['atrament'].mode = 'brush';
-	$(t).parent().find('.pen_size_slider').show();
-	$(t).parent().find('.jscolor').show();
-	green_marker(t);
-	hide_colorpicker_for_eraser(idname);
-}
-
-function atrament_set_fill(t, idname) {
-	atrament_data[idname]['atrament'].mode = 'fill';
-	$(t).parent().find('.pen_size_slider').hide();
-	$(t).parent().find('.jscolor').show();
-	green_marker(t);
-	hide_colorpicker_for_eraser(idname);
-}
-
-function setup_atrament_data(idname, customfunc) {
-	atrament_data[idname] = {};
-
-	// Drawings code
-	// first, we need to set up the canvas
-	atrament_data[idname]["canvas"] = document.getElementById(idname);
-	atrament_data[idname]["canvas"] .style.cursor = "cell";
-	// instantiate Atrament
-	atrament_data[idname]["atrament"] = new Atrament(
-		atrament_data[idname]["canvas"], {
-			width: atrament_data[idname]["canvas"].offsetWidth,
-			height: atrament_data[idname]["canvas"].offsetHeight
-		}
-	);
-
-	var ctx = atrament_data[idname]["canvas"] .getContext("2d");
-	ctx.fillStyle = "white";
-	ctx.fillRect(0, 0, atrament_data[idname]["canvas"].width, atrament_data[idname]["canvas"].height);
-
-	// a little helper tool for logging events
-	var logElement = document.getElementById("events");
-
-	atrament_data[idname]["atrament"].addEventListener("clean", () => {
-		taint_privacy();
-
-		if(customfunc) {
-			eval(customfunc);
-		}
-	});
-
-	atrament_data[idname]["atrament"].addEventListener("fillstart", ({ x, y }) => {
-		taint_privacy();
-
-		atrament_data[idname]["canvas"].style.cursor = "wait";
-		if(customfunc) {
-			eval(customfunc);
-		}
-	});
-
-	atrament_data[idname]["atrament"].addEventListener("fillend", () => {
-		taint_privacy();
-
-		atrament_data[idname]["canvas"].style.cursor = "cell";
-		if(customfunc) {
-			eval(customfunc);
-		}
-	});
-
-	atrament_data[idname]["atrament"].addEventListener("strokeend", async () => {
-		taint_privacy();
-
-		if(customfunc) {
-			try {
-				eval(customfunc);
-			} catch (e) {
-				wrn("[get_drawing_board_on_page] Cannot run custom atrament function, probably because the model was undefined: " + e);
-				console.trace();
-			}
-		}
-	});
-
-	atrament_data[idname]["atrament"].adaptiveStroke = true;
-	atrament_data[idname]["colorpicker"] = new jscolor($("#" + idname + "_colorpicker")[0], {format:"rgb"});
-	atrament_data[idname]["atrament"].weight = 20;
-}
-
-function chose_nearest_color_picker (e) {
-	var $e = $(e);
-
-	if(!$e.length) {
-		err("Cannot find element e: " + e);
-		return;
-	}
-
-	var input = $(e).parent().find("input");
-
-	if(!input.length) {
-		err(language[lang]["could_not_find_input"]);
-		return;
-	}
-
-	var id = $(input)[0].id.replace(/_colorpicker$/, "");
-
-	atrament_data[id].colorpicker.show();
 }
 
 async function onclick_math_mode (t, e) {
@@ -3385,21 +1724,6 @@ function get_img_blob(img) {
 	});
 }
 
-function save_file (name, type, data) {
-	if (data !== null && navigator.msSaveBlob) {
-		return navigator.msSaveBlob(new Blob([data], { type: type }), name);
-	}
-
-	var a = $("<a style='display: none;'/>");
-	var url = window.URL.createObjectURL(new Blob([data], {type: type}));
-	a.attr("href", url);
-	a.attr("download", name);
-	$("body").append(a);
-	a[0].click();
-	window.URL.revokeObjectURL(url);
-	a.remove();
-}
-
 function show_bars_instead_of_numbers () {
 	if(get_last_layer_activation_function() == "softmax") {
 		if($("#show_bars_instead_of_numbers").is(":checked")) {
@@ -3408,86 +1732,6 @@ function show_bars_instead_of_numbers () {
 	}
 
 	return false;
-}
-
-async function update_label_by_nr (t, nr) {
-	var name = $(t).val();
-
-	var t_xpath = get_element_xpath(t);
-
-	labels[nr] = name;
-
-	$(".label_element").each((i, x) => {
-		if(1 || get_element_xpath(x) != t_xpath) {
-			var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
-
-			if(label_index == nr) {
-				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
-					$(x).find("input").val(name);
-				} else {
-					$(x).html(`<input class='label_input_element' type='text' value='${name}' onchange='update_label_by_nr(${label_index}, $(this).val())' />`);
-				}
-			}
-		}
-	});
-
-	$($(".own_image_label")[nr]).val(name);
-
-	await update_python_code(1);
-}
-
-async function allow_editable_labels () {
-	if(editable_labels_queued) {
-		return;
-	}
-
-	editable_labels_queued = true;
-
-	while (started_training) {
-		await delay(200);
-	}
-
-	$(".label_element").each((i, x) => {
-		var label_index = parse_int($(x).parent().parent().find(".label_element").index(x)) % labels.length;
-
-		if(!labels.length) {
-			return;
-		}
-
-		try {
-			var tmp_label = labels[label_index];
-			if(tmp_label === undefined) {
-				wrn("[allow_editable_labels] tmp_label undefined");
-				return;
-			}
-
-			if(label_index === undefined) {
-				let tmp_label = $(x).text();
-				$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-				return;
-			}
-
-			tmp_label = tmp_label.replaceAll(/'/g, "");
-			if(tmp_label) {
-				if($(x).children().length && $(x).children()[0].nodeName == "INPUT") {
-					$(x).find("input").val(tmp_label);
-				} else {
-					$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-				}
-			} else {
-				tmp_label = $(x).text();
-				$(x).html(`<input id="${uuidv4()}" class='label_input_element' type='text' value='${tmp_label}' onchange='update_label_by_nr(this, ${label_index})' />`);
-			}
-		} catch (e) {
-			if(("" + e).includes("tmp_label.replaceAll is not a function")) {
-				wrn("[allow_editable_labels] This may be the case if you have data from a CSV. If this is the case, this warning can most likely be ignored.");
-			} else {
-				err(e);
-			}
-		}
-	});
-
-	editable_labels_queued = false;
 }
 
 function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode () {
@@ -3524,21 +1768,35 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 
 }
 
-function hide_colorpicker_for_eraser (idname) {
-	try {
-		var box = $(atrament_data[idname].canvas).parent();
+var load_msg_step = 0;
+var load_msg_total_steps = 0;
 
-		if(atrament_data[idname]["atrament"].mode == "erase") {
-			box.find(".colorpicker_elements").css("visibility", "hidden");
-		} else {
-			box.find(".colorpicker_elements").css("visibility", "visible");
-		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
+function load_msg_set_steps(total) {
+	load_msg_step = 0;
+	load_msg_total_steps = total;
+}
 
-		assert(false, e);
+function load_msg_advance(msg) {
+	load_msg_step++;
+
+	var steps_el = $("#load_msg_steps");
+	if (!steps_el.length) return;
+
+	var html = "";
+
+	for (var i = 1; i <= load_msg_total_steps; i++) {
+		var cls = "load_step_pending";
+		if (i < load_msg_step) cls = "load_step_done";
+		else if (i === load_msg_step) cls = "load_step_current";
+
+		html += '<div class="' + cls + '"><span class="load_step_dot"></span></div>';
+	}
+
+	steps_el.html(html);
+
+	var msg_el = $("#load_msg");
+	if (msg_el.length) {
+		msg_el.html(msg);
 	}
 }
 
@@ -3558,7 +1816,7 @@ function load_msg(swal_msg_format) {
 		const overlay_options = {
 			spinner: true,
 			progress: !!swal_msg_format["progress"],
-			cancelable: swal_msg_format["cancelable"] !== false, // cancelable by default
+			cancelable: swal_msg_format["cancelable"] !== false,
 			onCancel: swal_msg_format["onCancel"] || null
 		};
 
@@ -3577,159 +1835,6 @@ function load_msg(swal_msg_format) {
 	}
 
 	return _overlay;
-}
-
-function show_proper_set_all_initializer (required) {
-	try {
-		$(".set_all_initializers_tr").hide();
-
-		for (var req_idx = 0; req_idx < required.length; req_idx++) {
-			var val_key = required[req_idx];
-			$(".set_all_initializers_" + val_key).show();
-		}
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-}
-
-function set_required_seeds (required, type, kernel_or_bias, trigger=0) {
-	assert(typeof(type) == "string", "type is not string");
-
-	var values = get_initializer_set_all_values(required);
-
-	assert(typeof(values) == "object", "values is not an object");
-
-	for (var req_idx = 0; req_idx < required.length; req_idx++) {
-		var val_key = required[req_idx];
-
-		if(!val_key) {
-			log("val_key not defined or false START");
-			log("required", required);
-			log("type", type);
-			log("values", values);
-			log("kernel_or_bias", kernel_or_bias);
-			err("val_key not defined or false END");
-
-			continue;
-		}
-
-		if(!Object.keys(values).includes(val_key)) {
-			err(`${val_key} is required but not defined at all`);
-			continue;
-		}
-
-		var val = values[val_key];
-		//log("val", val);
-
-		if(Object.keys(values).includes(val_key)) {
-			var item_selector = "." + kernel_or_bias + val_key;
-			//log("item_selector", item_selector);
-			var ui_elements = $(item_selector);
-			if(ui_elements.length >= 1) {
-				try {
-					var element = ui_elements.val(val).trigger("change");
-					if(trigger) {
-						element.trigger("change");
-					}
-				} catch (e) {
-					if(Object.keys(e).includes("message")) {
-						e = e.message;
-					}
-
-					if(("" + e).includes("SyntaxError: illegal character")) {
-						err("[set_required_seeds] " + e);
-					} else {
-						throw new Error(e);
-					}
-				}
-			} else if(finished_loading) {
-				err("ui_elements contains no elements. Selector: "  + item_selector);
-			}
-		} else {
-			err(`[set_required_seeds] ${val_key} is required but not properly defined`);
-		}
-	}
-}
-
-function get_initializer_set_all_values (required) {
-	var values = [];
-	assert(typeof(values) == "object", "values is not an object");
-
-	try {
-		required.forEach((element) => {
-			var selector = "#set_all_initializers_value_" + element;
-			var elements = $(selector);
-			if(elements.length) {
-				var value = elements.val();
-				if(value) {
-					values[element] = value;
-				} else {
-					err(language[lang]["value_is_empty"]);
-				}
-			} else {
-				err("Nothing found for selector " + selector);
-			}
-		});
-
-		//assert(Object.keys(values).length == required.length, "some values are missing: " + Object.keys(values).length + " !=" + required.length);
-
-		return values;
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-}
-
-function change_all_initializers (kernel_bias=["kernel_initializer_", "bias_initializer_"]) {
-	var type = $("#change_initializers_selector").val();
-	assert(typeof(type) == "string", "type is not string");
-
-	try {
-		kernel_bias.forEach((kernel_or_bias) => {
-			var required = [];
-			var error_occurred = false;
-			if(["glorotUniform", "glorotNormal", "heNormal", "heUniform", "leCunUniform", "leCunNormal"].includes(type)) {
-				required = ["seed"];
-			} else if(type == "randomUniform") {
-				required = ["seed", "maxval", "minval"];
-			} else if(type == "varianceScaling") {
-				required = ["seed", "distribution", "mode", "scale"];
-			} else if(type == "randomNormal" || type == "truncatedNormal") {
-				required = ["seed", "stddev", "mean"];
-			} else if(type == "constant") {
-				required = ["value"];
-			} else if(type == "ones" || type == "zeros") {
-				// do nothing, the trigger is enough
-			} else {
-				err("Unknown initializer type: " + type);
-				error_occurred = true;
-			}
-
-			show_proper_set_all_initializer(required);
-
-			if(!error_occurred) {
-				try {
-					set_required_seeds(required, type, kernel_or_bias);
-				} catch (e) {
-					l(language[lang]["error"] + ": " + e);
-				}
-			}
-		});
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-
 }
 
 function is_tablet () {
@@ -3769,39 +1874,6 @@ function get_cursor_or_none (cursorname) {
 	}
 
 	return cursorname;
-}
-
-function label_debugger_icon_ok() {
-	try {
-		let icon = $("#label_debugger_icon");
-
-		if (!model_meta || is_setting_config) {
-			return icon.html("").hide();
-		}
-
-		if (model_meta.last_layer_activation !== "softmax") {
-			return icon.html("").hide();
-		}
-
-		if (labels.length) {
-			return icon.html("").hide();
-		}
-
-		let is_dense_softmax =
-			Array.isArray(model_meta.last_layer_shape) &&
-			model_meta.last_layer_shape.length === 2 &&
-			typeof model_meta.last_layer_name === "string" &&
-			model_meta.last_layer_name.startsWith("dense");
-
-		if (is_dense_softmax) {
-			icon.html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
-		} else {
-			icon.html("").hide();
-		}
-	} catch (e) {
-		err(e?.message || e);
-		$("#label_debugger_icon").html("").hide();
-	}
 }
 
 function model_is_ok () {
@@ -3956,60 +2028,6 @@ function ribbon_shower_hack () {
 	}
 }
 
-function clone_canvas(oldCanvas) {
-	try {
-		//create a new canvas
-		var newCanvas = document.createElement("canvas");
-		var context = newCanvas.getContext("2d");
-
-		//set dimensions
-		newCanvas.width = oldCanvas.width;
-		newCanvas.height = oldCanvas.height;
-
-		//apply the old canvas to the new one
-		context.drawImage(oldCanvas, 0, 0);
-
-		//return the new canvas
-		return newCanvas;
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-}
-
-// Function to get the value of a query parameter from the URL
-function get_get(paramName, _default) {
-	var urlParams = new URLSearchParams(window.location.search);
-	var res = urlParams.get(paramName);
-	if(res !== null && res !== "") {
-		return res;
-	}
-
-	return _default;
-}
-
-//log(get_get("epochs", 10), get_get("BLA", "abc"));
-
-// Function to set or update a query parameter in the URL
-function set_get(paramName, paramValue) {
-	var urlParams = new URLSearchParams(window.location.search);
-	urlParams.set(paramName, paramValue);
-
-	// Update the URL with the new parameter
-	var newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
-
-	try {
-		history.replaceState(null, "", newUrl); // Update the URL without reloading the page
-	} catch (error) {
-		// Handle error: Log and warn about the error
-		wrn("[set_get] Error updating URL:", error);
-		// You can add more intelligent handling here if needed
-	}
-}
-
 function jump_to_interesting_tab () {
 	return $("#jump_to_interesting_tab").is(":checked") ? 1 : 0;
 }
@@ -4071,6 +2089,7 @@ function create_centered_window_with_text(parameter) {
 	windowDiv.style.border = "1px solid #ccc";
 	windowDiv.style.padding = "10px";
 	windowDiv.style.boxShadow = "0px 0px 10px rgba(0, 0, 0, 0.2)";
+	windowDiv.style.zIndex = 999999;
 	windowDiv.classList.add("math_copier");
 
 	// Create the "x" button
@@ -4082,6 +2101,7 @@ function create_centered_window_with_text(parameter) {
 	closeButton.style.border = "none";
 	closeButton.style.backgroundColor = "red";
 	closeButton.style.cursor = "pointer";
+	closeButton.classList.add("math_copier_close_button");
 
 	// Create the readonly textarea
 	var textarea = document.createElement("textarea");
@@ -4127,6 +2147,10 @@ function create_centered_window_with_text(parameter) {
 	}
 
         document.addEventListener("keydown", esc_listener);
+}
+
+function close_math_copiers () {
+	$(".math_copier_close_button").click();
 }
 
 function get_last_element_of_class_end_y(name) {
@@ -4275,183 +2299,6 @@ function get_layer_classname_by_nr(layer_idx) {
 	}
 }
 
-async function download_model_and_weights_and_labels () {
-	await wait_for_updated_page(3);
-	await save_model();
-	await download_labels_json();
-	await download_weights_json();
-	if($("#data_origin").val() == "image") {
-		await create_and_download_zip();
-	}
-}
-
-function setOptimizerTooltips() {
-	const lang = window.lang;
-
-	optimizer_infos_json.forEach(function(optimizer) {
-		const optimizerName = optimizer.optimizer;
-		const infoText = optimizer.info[lang];
-		const variables = optimizer.variable_info;
-
-		$(`#${optimizerName}_metadata .TRANSLATEME_optimizer`).attr('title', infoText);
-
-		Object.keys(variables).forEach(function(variableName) {
-			const tooltipText = variables[variableName][lang];
-			$(`#${optimizerName}_metadata .TRANSLATEME_${variableName}`).attr('title', tooltipText);
-		});
-	});
-}
-
-async function saveModelAsSingleZip() {
-	const modelArtifacts = await model.save({
-		async save(artifacts) {
-			try {
-				const modelJson = {
-					modelTopology: artifacts.modelTopology,
-					format: artifacts.format,
-					generatedBy: artifacts.generatedBy,
-					convertedBy: artifacts.convertedBy || null,
-					weightsManifest: [{
-						paths: ["model.weights.bin"],
-						weights: artifacts.weightSpecs
-					}]
-				};
-
-				const files = [
-					{
-						name: "model.json",
-						data: new TextEncoder().encode(JSON.stringify(modelJson, null, 2)),
-					},
-					{
-						name: "model.weights.bin",
-						data: new Uint8Array(artifacts.weightData),
-					}
-				];
-
-				const zipBlob = createSimpleZip(files);
-				const url = URL.createObjectURL(zipBlob);
-
-				const a = document.createElement("a");
-				a.href = url;
-				a.download = "model.zip";
-				document.body.appendChild(a);
-				a.click();
-				a.remove();
-				URL.revokeObjectURL(url);
-
-				return {
-					modelArtifactsInfo: {
-						dateSaved: new Date(),
-						modelTopologyType: "JSON",
-						modelTopologyBytes: files[0].data.length,
-						weightDataBytes: files[1].data.length
-					}
-				};
-			} catch (_err) {
-				err("Error at saving:", _err);
-				throw _err;
-			}
-		}
-	});
-}
-
-function createSimpleZip(files) {
-	const chunks = [];
-	const centralDirectory = [];
-	let offset = 0;
-
-	for (let files_idx = 0; files_idx < files.length; files_idx++) {
-		const file = files[files_idx];
-		const fileNameBytes = new TextEncoder().encode(file.name);
-		const data = file.data;
-		const crc32 = computeCRC32(data);
-
-		const localHeader = new Uint8Array(30 + fileNameBytes.length);
-		localHeader.set([0x50, 0x4B, 0x03, 0x04], 0);           // Local file header signature
-		localHeader.set([0x14, 0x00], 4);                       // Version needed to extract
-		localHeader.set([0x00, 0x00], 6);                       // General purpose bit flag
-		localHeader.set([0x00, 0x00], 8);                       // Compression method: 0 = store
-		localHeader.set([0x00, 0x00, 0x00, 0x00], 10);          // File time/date (optional)
-		localHeader.set(uint32le(crc32), 14);                   // CRC-32
-		localHeader.set(uint32le(data.length), 18);             // Compressed size
-		localHeader.set(uint32le(data.length), 22);             // Uncompressed size
-		localHeader.set(uint16le(fileNameBytes.length), 26);    // File name length
-		localHeader.set([0x00, 0x00], 28);                      // Extra field length
-		localHeader.set(fileNameBytes, 30);                     // File name
-
-		chunks.push(localHeader, data);
-
-		const centralHeader = new Uint8Array(46 + fileNameBytes.length);
-		centralHeader.set([0x50, 0x4B, 0x01, 0x02], 0);         // Central dir signature
-		centralHeader.set([0x14, 0x00, 0x14, 0x00], 4);         // Version made by / needed
-		centralHeader.set([0x00, 0x00], 8);                     // General purpose bit flag
-		centralHeader.set([0x00, 0x00], 10);                    // Compression
-		centralHeader.set([0x00, 0x00, 0x00, 0x00], 12);        // File time/date
-		centralHeader.set(uint32le(crc32), 16);                 // CRC
-		centralHeader.set(uint32le(data.length), 20);           // Compressed size
-		centralHeader.set(uint32le(data.length), 24);           // Uncompressed size
-		centralHeader.set(uint16le(fileNameBytes.length), 28);  // File name length
-		centralHeader.set([0x00, 0x00], 30);                    // Extra field length
-		centralHeader.set([0x00, 0x00], 32);                    // File comment length
-		centralHeader.set([0x00, 0x00], 34);                    // Disk number start
-		centralHeader.set([0x00, 0x00], 36);                    // Internal file attributes
-		centralHeader.set([0x00, 0x00, 0x00, 0x00], 38);        // External file attributes
-		centralHeader.set(uint32le(offset), 42);                // Offset of local header
-		centralHeader.set(fileNameBytes, 46);                   // File name
-
-		offset += localHeader.length + data.length;
-		centralDirectory.push(centralHeader);
-	}
-
-	const centralDirStart = offset;
-	for (let cd_idx = 0; cd_idx < centralDirectory.length; cd_idx++) {
-		chunks.push(centralDirectory[cd_idx]);
-		offset += centralDirectory[cd_idx].length;
-	}
-
-	const endRecord = new Uint8Array(22);
-	endRecord.set([0x50, 0x4B, 0x05, 0x06], 0);               // EOCD signature
-	endRecord.set([0x00, 0x00], 4);                           // Disk number
-	endRecord.set([0x00, 0x00], 6);                           // Disk where central dir starts
-	endRecord.set(uint16le(files.length), 8);                // Number of entries on disk
-	endRecord.set(uint16le(files.length), 10);               // Total number of entries
-	endRecord.set(uint32le(offset - centralDirStart), 12);   // Size of central directory
-	endRecord.set(uint32le(centralDirStart), 16);            // Offset of start of central dir
-	endRecord.set([0x00, 0x00], 20);                          // Comment length
-
-	chunks.push(endRecord);
-
-	return new Blob(chunks, { type: "application/zip" });
-}
-
-function uint16le(n) {
-    return [n & 0xff, (n >> 8) & 0xff];
-}
-
-function uint32le(n) {
-    return [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >> 24) & 0xff];
-}
-
-function computeCRC32(data) {
-	let crc = 0xffffffff;
-	for (let idx = 0; idx < data.length; idx++) {
-		crc = (crc >>> 8) ^ CRC32_TABLE[(crc ^ data[idx]) & 0xff];
-	}
-	return (crc ^ 0xffffffff) >>> 0;
-}
-
-var CRC32_TABLE = (function () {
-	const table = new Uint32Array(256);
-	for (let idx = 0; idx < 256; idx++) {
-		let c = idx;
-		for (let j = 0; j < 8; j++) {
-			c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-		}
-		table[idx] = c >>> 0;
-	}
-	return table;
-})();
-
 function reset_tiny_graph(hide=0) {
 	if(hide) {
 		$("#tiny_graph").html("").hide();
@@ -4573,16 +2420,4 @@ function close_popups() {
 	close_popup('save_model_dialog');
 	close_popup('upload_dialog');
 	close_popup('sources_popup');
-}
-
-function toggle_skip_connection(layer_nr, elem) {
-	var enabled = $(elem).is(":checked");
-
-	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false };
-	}
-
-	skip_connection_settings[layer_nr].enabled = enabled;
-
-	updated_page(); // await not possible here
 }

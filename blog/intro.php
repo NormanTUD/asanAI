@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: From Stone Age Tools to ChatGPT: Beyond the Black Box
+description: The big picture: what this course is about and how it connects human history to modern AI.
+icon: &#127758;
+part: 0
+order: 0
+color: accent
+-->
 
 <div class="md">
 While most modern discussions about Artificial Intelligence focus on its current capabilities or its potential to replace human labor, this text takes a different approach. We are not just interested in what AI can do today. We are interested in the **intellectual history** and the specific technicalities that made these systems possible. 
@@ -15,7 +24,7 @@ To understand a Neural Network is to understand a tapestry of ideas that often s
 
 We will try to overcome the "\citetitle{twocultures}-Problem", i.e. that the sciences and the humanities have become split into two distinct worlds, unable to communicate or understand the methods and values of the other. We believe that reality is One, and different sciences are different ways of looking at the same world and as such, we need both ways of looking at it.
 
-## Your Interactive Playground
+## An Interactive Playground
 
 This site is not a book to be read passively. It is designed as a playground for exploration.
 
@@ -23,7 +32,6 @@ This site is not a book to be read passively. It is designed as a playground for
 * **Navigating Complexity:** At times, the mathematics will get heavy. You do not need to master every equation on the first pass. If a technical section feels overwhelming, skip it, play with the interactive models, and return to the theory once you have built an intuitive feel for how the numbers move.
 * **Not every topic may be of interest to you**: Use the *table of contents* to navigate, you can skip all sections that are of no interest to you.
 * **The Starting Point:** We assume no prior knowledge beyond basic English and the knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. 
-* **This is not a complete history of Artificial Intelligence:** It is a history of the path that actually led to Large Language Models and the context of the inventions that lead to them. It is only one possible outcome of all these ideas and inventions.
 
 ## What You Will Achieve
 

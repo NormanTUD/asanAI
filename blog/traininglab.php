@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Live Training Lab
+description: Watch a neural network learn in real time, decision boundaries, weights, and activations.
+icon: &#127918;
+part: 2
+order: 13
+color: coral
+-->
 
 <div class="md">
 In the previous sections, we learned about **Tensors** (the data containers) and **Activation Functions** (the decision gates). Now, we combine them into a **Model**.
@@ -10,7 +19,7 @@ Here, you can see how a small network tries to learn a pattern.
 * **Weights (Live)**: These are the actual numerical values inside the first layer of the network.
 * **Activation Patterns**: These heatmaps show how data flows through the specific "gates" (ReLU or Sigmoid) you've defined.
 
-Since the network weights are randomly initialized, you may need to **reset** the model and restart training a few times to get decent results.
+Since the network weights are randomly initialized, you may need to *reset* the model and restart training a few times to get decent results.
 </div>
 
 <div class="lab-dashboard">
