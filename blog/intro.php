@@ -24,7 +24,7 @@ To understand a Neural Network is to understand a tapestry of ideas that often s
 
 We will try to overcome the "\citetitle{twocultures}-Problem", i.e. that the sciences and the humanities have become split into two distinct worlds, unable to communicate or understand the methods and values of the other. We believe that reality is One, and different sciences are different ways of looking at the same world and as such, we need both ways of looking at it.
 
-## Your Interactive Playground
+## An Interactive Playground
 
 This site is not a book to be read passively. It is designed as a playground for exploration.
 
