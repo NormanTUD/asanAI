@@ -344,7 +344,14 @@ function show_or_hide_hide_delete_category() {
 }
 
 async function create_and_download_zip () {
-	var res = await create_zip_with_custom_images().then(save_custom_images_file);
+	var spinner = `<div class="spinner"></div> `;
+	var zip_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["exporting_custom_images"]}...</span>`);
+
+	try {
+		var res = await create_zip_with_custom_images().then(save_custom_images_file);
+	} finally {
+		remove_overlay();
+	}
 
 	return res;
 }
@@ -366,7 +373,15 @@ async function import_zip_and_replace_categories(inputElement) {
 	inputEl.setAttribute("hidden", "true");
 	inputEl.classList.add("force-hidden-input");
 
-	labelEl.innerHTML = '<span class="zip-spinner"></span> Importing...';
+	var spinner = `<div class="spinner"></div> `;
+	var import_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["importing_custom_images"]}...</span>`);
+
+	function import_update_step(step_msg) {
+		l(step_msg);
+		if (import_overlay) {
+			update_overlay_title(import_overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+		}
+	}
 
 	try {
 		var zipReader = new zip.ZipReader(new zip.BlobReader(file));
@@ -376,11 +391,13 @@ async function import_zip_and_replace_categories(inputElement) {
 			err("Zip file is empty or could not be read.");
 			await zipReader.close();
 			restore_zip_upload_button(labelEl, inputEl);
+			remove_overlay();
 			return;
 		}
 
 		var categories = {};
 
+		import_update_step(language[lang]["importing_custom_images"]);
 		for (var i = 0; i < entries.length; i++) {
 			var entry = entries[i];
 			if (entry.directory) continue;
@@ -405,14 +422,22 @@ async function import_zip_and_replace_categories(inputElement) {
 		if (category_labels.length === 0) {
 			err("No valid image categories found in zip.");
 			restore_zip_upload_button(labelEl, inputEl);
+			remove_overlay();
 			return;
 		}
 
+		import_update_step(language[lang]["importing_custom_images"]);
 		await click_on_new_category_or_delete_category_until_number_is_right(category_labels.length);
 		await delay(500);
 
 		var label_inputs = $(".own_image_label");
 		var image_containers = $(".own_images");
+
+		var total_images = 0;
+		for (var ci = 0; ci < category_labels.length; ci++) {
+			total_images += categories[category_labels[ci]].length;
+		}
+		var images_loaded = 0;
 
 		for (var c = 0; c < category_labels.length; c++) {
 			var this_label = category_labels[c];
@@ -424,6 +449,11 @@ async function import_zip_and_replace_categories(inputElement) {
 			for (var img_idx = 0; img_idx < images.length; img_idx++) {
 				var img_data = images[img_idx];
 				var dataUrl = await blob_to_data_url(img_data.blob);
+
+				images_loaded++;
+				if (images_loaded % 5 === 0 || images_loaded === total_images) {
+					import_update_step(language[lang]["importing_custom_images"] + " (" + images_loaded + "/" + total_images + ")");
+				}
 
 				var img_id = img_data.filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_") || uuidv4();
 
@@ -441,6 +471,7 @@ async function import_zip_and_replace_categories(inputElement) {
 		err("Error importing zip: " + (e.message || e));
 	}
 
+	remove_overlay();
 	restore_zip_upload_button(labelEl, inputEl);
 }
 

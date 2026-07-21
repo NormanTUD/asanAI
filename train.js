@@ -454,12 +454,22 @@ async function _train_neural_network () {
 	restart_fcnn(); // await not possible i think
 
 	if(started_training) {
-		show_overlay(language[lang]["stopped_training"] + " &mdash; " + language[lang]["this_may_take_a_while"] + "...");
+		var spinner = `<div class="spinner"></div> `;
+		var stop_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["preparing_stop_training"]}</span>`);
 
+		function stop_update_step(step_msg) {
+			l(step_msg);
+			if (stop_overlay) {
+				update_overlay_title(stop_overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+			}
+		}
+
+		stop_update_step(language[lang]["preparing_stop_training"]);
 		disable_gradcam_during_training_if_internal_states();
 
 		stop_downloading_data = true;
 
+		stop_update_step(language[lang]["stopping_training"]);
 		set_model_stop_training();
 
 		set_document_title(original_title);
@@ -1496,11 +1506,21 @@ function warn_if_not_tensors(x, y) {
 
 async function fit_model(x_and_y) {
 	try {
+		var spinner = `<div class="spinner"></div> `;
+		var fit_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["preparing_for_training"]}...</span>`);
+
+		function fit_update_step(step_msg) {
+			l(step_msg);
+			if (fit_overlay) {
+				update_overlay_title(fit_overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+			}
+		}
+
+		fit_update_step(language[lang]["preparing_for_training"]);
 		const fit_data = await _get_fit_data(x_and_y);
 
-		// Ensure TF.js backend is ready before compilation and training
+		fit_update_step(language[lang]["compiling_model"]);
 		await tf.ready();
-
 		await compile_model();
 
 		// Verify model is valid after compilation
@@ -1515,6 +1535,7 @@ async function fit_model(x_and_y) {
 
 		warn_if_not_tensors(x, y);
 
+		fit_update_step(language[lang]["converting_data_to_tensors"]);
 		// Convert to tensors if they aren't already, ensuring they are
 		// bound to the current active backend
 		if (!is_tensor(x)) {
@@ -1529,9 +1550,13 @@ async function fit_model(x_and_y) {
 
 		dbg(`Starting model-fit. Shapes: [${x_shape.join(", ")}] -> [${y_shape.join(", ")}]`);
 
+		fit_update_step(language[lang]["validating_model_shapes"]);
 		validate_model_io_shapes(x_shape, y_shape);
 
 		await wait_for_updated_page(2);
+
+		remove_overlay();
+		fit_overlay = null;
 
 		const h = await model.fit(x, y, fit_data);
 
@@ -1571,12 +1596,26 @@ async function run_neural_network (recursive=0) {
 		return;
 	}
 
+	var spinner = `<div class="spinner"></div> `;
+	var overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["preparing_gui"]}...</span>`);
+
+	function update_step(step_msg) {
+		l(step_msg);
+		if (overlay) {
+			update_overlay_title(overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+		}
+	}
+
 	await prepare_gui_for_training();
 
 	_set_apply_to_original_apply();
 
+	update_step(language[lang]["checking_signal_flow"]);
 	await check_signal_flow();
 
+	remove_overlay();
+	overlay = null;
+	l(language[lang]["getting_data"]);
 	var x_and_y = await get_x_and_y_or_die_in_case_of_error();
 
 	if(x_and_y === false) {
@@ -1620,6 +1659,8 @@ async function run_neural_network (recursive=0) {
 		show_input_shape_repaired_message(repaired);
 		await enable_everything();
 		hide_training_progress_bar();
+	} else {
+		remove_overlay();
 	}
 
 	x_and_y = await reset_stuff_after_training(x_and_y);
@@ -1945,10 +1986,25 @@ async function multi_train_neural_network(num_runs) {
 		return null;
 	}
 
+	var spinner = `<div class="spinner"></div> `;
+	var multi_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["preparing_gui"]}...</span>`);
+
+	function multi_update_step(step_msg) {
+		l(step_msg);
+		if (multi_overlay) {
+			update_overlay_title(multi_overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+		}
+	}
+
 	await prepare_gui_for_training();
 	_set_apply_to_original_apply();
+
+	multi_update_step(language[lang]["checking_signal_flow"]);
 	await check_signal_flow();
 
+	remove_overlay();
+	multi_overlay = null;
+	l(language[lang]["getting_data"]);
 	var x_and_y = await get_x_and_y_or_die_in_case_of_error();
 
 	if (x_and_y === false) {
@@ -1973,6 +2029,8 @@ async function multi_train_neural_network(num_runs) {
 
 	for (var run = 1; run <= num_runs; run++) {
 		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");
+
+		multi_update_step(language[lang]["run_x_of_y"] + " " + run + "/" + num_runs);
 
 		multi_run_data[run] = { weights: null, plotData: null };
 
@@ -2037,6 +2095,8 @@ async function multi_train_neural_network(num_runs) {
 
 			l("[multi-train] run " + run + ": starting model.fit, epochs=" + fit_data.epochs + ", batchSize=" + fit_data.batchSize);
 			await wait_for_updated_page(2);
+
+			remove_overlay();
 
 			const h = await model.fit(x_and_y.x, x_and_y.y, fit_data);
 
