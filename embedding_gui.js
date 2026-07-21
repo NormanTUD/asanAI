@@ -46,6 +46,7 @@ layer_options["Unembedding"] = {
 if (typeof layer_options_defaults !== "undefined") {
     layer_options_defaults["input_dim"] = 100;
     layer_options_defaults["output_dim"] = 32;
+    layer_options_defaults["vocabSize"] = 100;
 }
 
 // === Register in js_names_to_python_names ===
@@ -53,13 +54,16 @@ if (typeof layer_options_defaults !== "undefined") {
 if (typeof js_names_to_python_names !== "undefined") {
     js_names_to_python_names["inputDim"] = "input_dim";
     js_names_to_python_names["outputDim"] = "output_dim";
+    js_names_to_python_names["vocabSize"] = "vocab_size";
     js_names_to_python_names["AsanEmbedding"] = "AsanEmbedding";
     js_names_to_python_names["SimpleAttention"] = "SimpleAttention";
+    js_names_to_python_names["Unembedding"] = "Unembedding";
 }
 
 if (typeof python_names_to_js_names !== "undefined") {
     python_names_to_js_names["input_dim"] = "inputDim";
     python_names_to_js_names["output_dim"] = "outputDim";
+    python_names_to_js_names["vocab_size"] = "vocabSize";
 }
 
 // === Update layer_names array ===
@@ -71,6 +75,9 @@ if (typeof layer_names !== "undefined") {
     if (!layer_names.includes("SimpleAttention")) {
         layer_names.push("SimpleAttention");
     }
+    if (!layer_names.includes("Unembedding")) {
+        layer_names.push("Unembedding");
+    }
 }
 
 // === valid_layer_options registration ===
@@ -78,6 +85,7 @@ if (typeof layer_names !== "undefined") {
 if (typeof valid_layer_options !== "undefined") {
     valid_layer_options["AsanEmbedding"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputDim", "inputLength", "inputShape", "maskZero", "name", "outputDim", "trainable", "weights"];
     valid_layer_options["SimpleAttention"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "units", "weights"];
+    valid_layer_options["Unembedding"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "vocabSize", "weights"];
 }
 
 // === Embedding data inspection utility ===
