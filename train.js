@@ -1722,22 +1722,24 @@ function show_multi_run_statistics(results) {
 		var boxTraces = [];
 
 		boxTraces.push({
-			y: losses,
+			x: losses,
 			type: "box",
 			name: language[lang]["loss"],
 			boxpoints: "all",
 			jitter: 0.3,
-			pointpos: -1.5
+			pointpos: -1.5,
+			orientation: "h"
 		});
 
 		if (valLosses.length >= 6) {
 			boxTraces.push({
-				y: valLosses,
+				x: valLosses,
 				type: "box",
 				name: "Val Loss",
 				boxpoints: "all",
 				jitter: 0.3,
-				pointpos: 1.5
+				pointpos: 1.5,
+				orientation: "h"
 			});
 		}
 
@@ -1745,15 +1747,15 @@ function show_multi_run_statistics(results) {
 			paper_bgcolor: "rgba(0, 0, 0, 0)",
 			plot_bgcolor: "rgba(0, 0, 0, 0)",
 			font: { family: "Arial, Helvetica, sans-serif", size: 14, color: "#7f7f7f" },
-			margin: { l: 60, r: 30, b: 40, t: 30 },
-			yaxis: {
+			margin: { l: 70, r: 30, b: 40, t: 30 },
+			xaxis: {
 				title: { text: language[lang]["loss"], font: { size: 14, color: "#7f7f7f" } },
 				showline: false,
 				showgrid: true,
 				gridcolor: "#ccc"
 			},
 			showlegend: false,
-			height: 300
+			height: 100 + (valLosses.length >= 6 ? 80 : 0)
 		};
 
 		Plotly.newPlot("multi_run_boxplot", boxTraces, boxLayout, { responsive: true });
