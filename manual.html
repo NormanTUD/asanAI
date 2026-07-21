@@ -384,7 +384,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			There are also some options at the top:
 			<ul>
 				<li><b>Auto-adjust last layer's number of neurons?</b> This sets the number of output neurons depending on the number of values set to "Y".</li>
-				<li><b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 0.</li>
+				<li><b>Auto-set last layer's activation to linear when any Y-values are smaller than 0 or greater than 1?</b> This sets the activation function of the last layer to Linear automatically when at least one of the output data values are smaller than 0 or larger than 1.</li>
 				<li><b>Shuffle data before doing validation split (recommended)?</b> TensorFlow usually takes the last n% of the input data as Validation Split (if enabled). This way, if the data is ordered, you may miss some categories of data in the training data, because it got shifted to the Validation dataset automatically. This can be counteracted by shuffling the data randomly before the validation split is taken out of the dataset. The correlation between an input and an output stays the same after shuffling.</li>
 				<li><b>Auto One-Hot-encode Y (disables "divide by")?</b> Automatically One-Hot-Encodes if the Y-data has only one column and is a string. Then, it autogenerates labels too.</li>
 				<li><b>Auto loss/metric?</b> Set loss and metric automatically depending on how the data is structured (for classification problems it takes <a href="#categoricalCrossentropy">Categorical Crossentropy</a> and <a href="#meanSquaredError">Mean Squared Error</a> for anything else.</li>
@@ -1503,7 +1503,7 @@ It's important to note that these are general guidelines, and the best initializ
 			<h4>glorotUniform</h4>
 			Glorot uniform initializer, also known as Xavier uniform initializer, is an initialization method that uses a uniform distribution with a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m))] to initialize the weights of neural network layers, where n is the number of input neurons and m is the number of output neurons. It is named after the researcher who proposed it, Xavier Glorot, and is commonly used in deep learning models such as multi-layer perceptrons (MLPs) and feedforward neural networks (FFNs). It can help improve the performance of these types of neural networks by ensuring that the activations of neurons are well-conditioned and that gradients during backpropagation are neither too big nor too small.
 
-			This initialization method is designed to be used with neural networks that have sigmoid or tanh activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m)] which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid or tanh activation function.
+			This initialization method is designed to be used with neural networks that have sigmoid or tanh activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / (n+m)), sqrt(6 / (n+m))] which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid or tanh activation function.
 <br>
 			<h4>constant</h4>
 
@@ -1529,7 +1529,7 @@ This initialization method can be useful when the user wants to initialize the w
 			$$
 <br>
 			<h4>glorotNormal</h4>
-			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with rectified linear units (ReLU) activation functions.
+			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with sigmoid or tanh activation functions.
 <br>
 			<h4>heNormal</h4>
 			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
