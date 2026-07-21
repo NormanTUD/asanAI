@@ -20,6 +20,12 @@
 			</div>
 			<div class="hide_when_image">
 				<div id="predict_own">
+					<div id="predict_text_input_wrapper" style="display: none; margin-bottom: 10px;">
+						<label><b>Enter text:</b></label><br>
+						<input type="text" id="predict_text_input" style="width: 80%; padding: 6px; font-size: 14px;" placeholder="e.g. the cat sat" onkeyup="if(event.key==='Enter')predict_from_text_input()">
+						<button onclick="predict_from_text_input()" style="padding: 6px 12px;">Predict next word</button>
+						<div id="predict_text_result" style="margin-top: 8px; font-size: 14px;"></div>
+					</div>
 					<textarea id="predict_own_data" style="width: 100%; height: 200px" onkeyup="predict_own_data_and_repredict()"></textarea>
 					<br>
 
@@ -70,4 +76,3 @@
 	<div id="layer_visualizations_tab" style="display: none" class="tab">
 	</div>
 </div>
-
