@@ -85,7 +85,7 @@ if (typeof layer_names !== "undefined") {
 if (typeof valid_layer_options !== "undefined") {
     valid_layer_options["AsanEmbedding"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputDim", "inputLength", "inputShape", "maskZero", "name", "outputDim", "trainable", "weights"];
     valid_layer_options["SimpleAttention"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "units", "weights"];
-    valid_layer_options["Unembedding"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "vocab_size", "weights"];
+    valid_layer_options["Unembedding"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "vocabSize", "weights"];
 }
 
 // === Embedding data inspection utility ===
