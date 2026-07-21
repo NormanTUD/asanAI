@@ -341,7 +341,7 @@ async function _train_neural_network () {
 			l("[multi-train] Dispatching to multi_train_neural_network with " + num_runs + " runs");
 			ret = await multi_train_neural_network(num_runs);
 		} else {
-			l("[multi-train] Dispatching to run_neural_network (single run)");
+			l("[multi-train] Dispatching to run_neural_network (single run)"); // await not required here
 			ret = await run_neural_network();
 		}
 
