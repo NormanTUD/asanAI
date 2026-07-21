@@ -1341,7 +1341,6 @@ var metrics = [
 	"precision",
 	"categoricalCrossentropy",
 	"sparseCategoricalCrossentropy",
-	"sparseCategoricalAccuracy",
 	"meanSquaredError",
 	"meanAbsoluteError",
 	"meanAbsolutePercentageError",

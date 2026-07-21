@@ -1,7 +1,7 @@
 {
 	"name": "Next Word Prediction (Transformer)",
 	"loss": "sparseCategoricalCrossentropy",
-	"metric": "sparseCategoricalAccuracy",
+	"metric": "sparseCategoricalCrossentropy",
 	"optimizer": "adam",
 	"learningRate": 0.01,
 	"epochs": 300,
