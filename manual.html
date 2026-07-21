@@ -33,6 +33,12 @@
 				font-family: sans-serif;
 				background-color: #f3f3f3;
 			}
+			#contents {
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 20px 40px;
+				line-height: 1.6;
+			}
 			/* Lightbox */
 			.lightbox-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
 			.lightbox-overlay.active { display: flex; }
@@ -295,7 +301,7 @@
 			};
 		</script>
 		<div id="training_data"></div>
-		<img src="_gui/logo_small.png" />
+		<div style="max-width:900px; margin:0 auto;"><img src="_gui/logo_small.png" /></div>
 		<div id="toc"></div>
 		<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()"><img id="lightbox-img"></div>
 		<div id="contents">
