@@ -1,0 +1,39 @@
+{
+	"name": "Sequence Sorting (Transformer)",
+	"loss": "meanSquaredError",
+	"metric": "mse",
+	"optimizer": "adam",
+	"learningRate": 0.005,
+	"epochs": 300,
+	"batchSize": 10,
+	"validationSplit": 0,
+	"input_shape": "[6]",
+	"output_shape": "[1]",
+	"trainable_data": ["transformer_demo"],
+	"model_structure": [
+		{
+			"type": "AsanEmbedding",
+			"data": {
+				"inputDim": 5,
+				"outputDim": 8
+			}
+		},
+		{
+			"type": "SimpleAttention",
+			"data": {
+				"units": 8
+			}
+		},
+		{
+			"type": "flatten",
+			"data": {}
+		},
+		{
+			"type": "dense",
+			"data": {
+				"units": 1,
+				"activation": "sigmoid"
+			}
+		}
+	]
+}
