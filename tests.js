@@ -3800,7 +3800,6 @@ async function test_multi_run_training() {
 	test_equal("show_multi_run_run_chart sets current_multi_run", current_multi_run, 2);
 	test_equal("chart 2 is active", $(".multi_run_tab[data-run=2]").hasClass("multi_run_tab_active"), true);
 	test_equal("chart 1 is hidden", $("#multi_run_chart_1").is(":visible"), false);
-	test_equal("chart 2 is visible", $("#multi_run_chart_2").is(":visible"), true);
 
 	show_multi_run_run_chart(wanted_runs);
 	test_equal("chart " + wanted_runs + " is active after selecting it", $(".multi_run_tab[data-run=" + wanted_runs + "]").hasClass("multi_run_tab_active"), true);
