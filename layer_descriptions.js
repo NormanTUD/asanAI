@@ -313,6 +313,14 @@ function get_group_layers_groups (list_activation_layers, batch_or_layer_normali
 			"name": "<span class='TRANSLATEME_feature_extraction_and_overfitting_prevention'></span>"
 		},
 		{
+			"re": "((?:AsanEmbedding;?)+)",
+			"name": "<span class='TRANSLATEME_assembled_embedding'></span>"
+		},
+		{
+			"re": "((?:SimpleAttention;?)+)",
+			"name": "<span class='TRANSLATEME_self_attention_mechanism'></span>"
+		},
+		{
 			"re": "((?:dense;?)+;?(?:dropout)?(?:dense;?)*)",
 			"name": "<span class='TRANSLATEME_classification'></span>"
 		},
