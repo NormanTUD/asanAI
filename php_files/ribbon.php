@@ -109,7 +109,8 @@
 				<table>
 					<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" name="Epochs" id="epochs" value="30" min="1" step="10" style="width: 40px;"></td></tr>
 					<tr><td><span class="TRANSLATEME_batch_size"></span></td><td><input type="number" name="Batch-Size" id="batchSize" value="10" min="1" step="5" style="width: 40px;"></td></tr>
-					<tr><td><span class="TRANSLATEME_valsplit"></span>&nbsp;%</td><td><input type="number" name="Validation-Split" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
+				<tr><td><span class="TRANSLATEME_valsplit"></span>&nbsp;%</td><td><input type="number" name="Validation-Split" min="0" max="99" step="5" value="20" style="width: 40px;" id="validationSplit"></td></tr>
+					<tr class="expert_mode_only"><td><span class="TRANSLATEME_number_of_runs"></span></td><td><input type="number" id="number_of_runs" value="1" min="1" max="50" step="1" style="width: 40px;"></td></tr>
 				</table>
 				<div class="ribbon-group-title"><span class="TRANSLATEME_hyperparameters"></span></div>
 			</div>

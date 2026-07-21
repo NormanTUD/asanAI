@@ -746,6 +746,64 @@ button:disabled:hover {
 	color: black;
 }
 
+.multi_run_stats_container {
+	margin: 15px 0;
+	padding: 15px;
+	background: rgba(0,0,0,0.05);
+	border-radius: 8px;
+}
+
+.multi_run_stats_container h3 {
+	margin-top: 0;
+}
+
+.multi_run_stats_table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 10px 0;
+}
+
+.multi_run_stats_table th,
+.multi_run_stats_table td {
+	border: 1px solid #999;
+	padding: 6px 10px;
+	text-align: center;
+}
+
+.multi_run_stats_table th {
+	background: rgba(0,0,0,0.1);
+	font-weight: bold;
+}
+
+.multi_run_stats_table.best_run_row td {
+	background: rgba(0,128,0,0.1);
+}
+
+.multi_run_stats_table.worst_run_row td {
+	background: rgba(255,0,0,0.1);
+}
+
+.noise_level {
+	margin: 10px 0;
+	padding: 8px 12px;
+	border-radius: 4px;
+}
+
+.noise_level.noise_high {
+	background: rgba(255,0,0,0.15);
+	border-left: 3px solid #e74c3c;
+}
+
+.noise_level.noise_medium {
+	background: rgba(255,165,0,0.15);
+	border-left: 3px solid #f39c12;
+}
+
+.noise_level.noise_low {
+	background: rgba(0,128,0,0.15);
+	border-left: 3px solid #2ecc71;
+}
+
 .ribbon-group {
 	margin: 0px;
 	padding: 0px;

@@ -3700,6 +3700,84 @@ async function test_health_status() {
 	return true;
 }
 
+async function test_multi_run_training() {
+	log_test("Test Multi-Run Training");
+
+	const wanted_epochs = 3;
+	const wanted_runs = 3;
+
+	await set_dataset_and_wait("and_xor");
+	await set_model_dataset("and");
+	await _set_initializers();
+
+	await set_epochs(wanted_epochs);
+
+	set_mode_to_expert();
+	$("#number_of_runs").val(wanted_runs).trigger("change");
+
+	const ret = await train_neural_network();
+
+	$("#beginner").click();
+	set_mode();
+	$("#number_of_runs").val(1).trigger("change");
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		console.error("[test_multi_run_training] ret object is invalid");
+		return false;
+	}
+
+	var statsEl = document.getElementById("multi_run_stats");
+	if(!statsEl) {
+		console.error("[test_multi_run_training] #multi_run_stats element does not exist");
+		return false;
+	}
+
+	var statsHtml = statsEl.innerHTML;
+	if(!statsHtml || statsHtml.trim().length === 0) {
+		console.error("[test_multi_run_training] #multi_run_stats is empty");
+		return false;
+	}
+
+	var statsTable = statsEl.querySelector(".multi_run_stats_table");
+	if(!statsTable) {
+		console.error("[test_multi_run_training] .multi_run_stats_table not found");
+		return false;
+	}
+
+	var dataRows = statsTable.querySelectorAll("tr");
+	if(dataRows.length < 2) {
+		console.error("[test_multi_run_training] stats table has " + dataRows.length + " rows, expected at least 2 (header + loss)");
+		return false;
+	}
+
+	test_equal("multi_run_stats table exists", true, true);
+	test_equal("multi_run_stats has data rows", dataRows.length >= 2, true);
+
+	var lossCells = dataRows[1].querySelectorAll("td");
+	if(lossCells.length < 5) {
+		console.error("[test_multi_run_training] loss row has " + lossCells.length + " cells, expected at least 5 (label, mean, std, min, max)");
+		return false;
+	}
+
+	var lossMean = parseFloat(lossCells[1].textContent);
+	var lossStd = parseFloat(lossCells[2].textContent);
+	var lossMin = parseFloat(lossCells[3].textContent);
+	var lossMax = parseFloat(lossCells[4].textContent);
+
+	if(isNaN(lossMean) || isNaN(lossStd) || isNaN(lossMin) || isNaN(lossMax)) {
+		console.error("[test_multi_run_training] stats contain NaN values: mean=" + lossMean + " std=" + lossStd + " min=" + lossMin + " max=" + lossMax);
+		return false;
+	}
+
+	test_equal("loss mean is finite", isNaN(lossMean), false);
+	test_equal("loss std is finite", isNaN(lossStd), false);
+	test_equal("loss min <= mean", lossMin <= lossMean, true);
+	test_equal("loss max >= mean", lossMax >= lossMean, true);
+	test_equal("loss min <= loss max", lossMin <= lossMax, true);
+
+	return true;
+}
+
 async function test_weight_analysis() {
 	log_test("Test weight analysis");
 
@@ -4165,6 +4243,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_dimensionality_river()", await test_dimensionality_river(), true);
 		//test_equal("test_health_status()", await test_health_status(), true);
 		test_equal("test_weight_analysis()", await test_weight_analysis(), true);
+		test_equal("test_multi_run_training()", await test_multi_run_training(), true);
 
 		test_no_new_errors_or_warnings();
 

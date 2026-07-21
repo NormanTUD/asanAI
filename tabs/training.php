@@ -18,6 +18,7 @@
 			<div id="auto_loss_landscape"></div>
 		</div>
 	</div>
+	<div id="multi_run_stats"></div>
 	<div id="neural_organism"></div>
 	<div id="confusion_matrix_training"></div>
 </div>

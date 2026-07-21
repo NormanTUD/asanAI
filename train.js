@@ -277,7 +277,15 @@ async function _train_neural_network () {
 		$("#percentage").html("");
 		$("#percentage").hide();
 
-		ret = await run_neural_network();
+		var num_runs = get_number_of_runs();
+		l("[multi-train] num_runs=" + num_runs + ", mode=" + get_mode() + ", #number_of_runs raw=" + $("#number_of_runs").val());
+		if (num_runs > 1 && get_mode() === "expert") {
+			l("[multi-train] Dispatching to multi_train_neural_network with " + num_runs + " runs");
+			ret = await multi_train_neural_network(num_runs);
+		} else {
+			l("[multi-train] Dispatching to run_neural_network (single run)");
+			ret = await run_neural_network();
+		}
 
 		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
 
@@ -1390,6 +1398,368 @@ async function run_neural_network (recursive=0) {
 		await enable_everything();
 		hide_training_progress_bar();
 	}
+
+	x_and_y = await reset_stuff_after_training(x_and_y);
+
+	return ret;
+}
+
+function get_number_of_runs() {
+	var mode = get_mode();
+	l("[get_number_of_runs] mode=" + mode);
+	if (mode !== "expert") {
+		l("[get_number_of_runs] Not expert mode, returning 1");
+		return 1;
+	}
+	var raw = $("#number_of_runs").val();
+	var val = parse_int(raw);
+	l("[get_number_of_runs] raw=" + raw + ", parsed=" + val);
+	if (isNaN(val) || val < 1) val = 1;
+	if (val > 50) val = 50;
+	l("[get_number_of_runs] returning " + val);
+	return val;
+}
+
+function get_minimal_callbacks() {
+	return {
+		onTrainBegin: async function() {
+			current_epoch = 0;
+			this_training_start_time = Date.now();
+		},
+		onBatchBegin: async function() {
+			if (!started_training) {
+				model.stopTraining = true;
+			}
+		},
+		onEpochBegin: async function() {
+			confusion_matrix_and_grid_cache = {};
+			current_epoch++;
+			var max_number_epochs = get_epochs();
+			var current_time = Date.now();
+			var epoch_time = (current_time - this_training_start_time) / current_epoch;
+			var epochs_left = max_number_epochs - current_epoch;
+			var seconds_left = parse_int(Math.ceil((epochs_left * epoch_time) / 1000) / 5) * 5;
+			var time_estimate = human_readable_time(seconds_left);
+
+			show_training_progress_bar();
+			set_document_title("[" + current_epoch + "/" + max_number_epochs + ", " + time_estimate + "] asanAI");
+
+			var percentage = parse_int((current_epoch / max_number_epochs) * 100);
+			$("#training_progressbar>div").css("width", percentage + "%");
+		},
+		onBatchEnd: async function(batch, logs) {
+			current_loss_value = logs.loss;
+		},
+		onEpochEnd: async function(batch, logs) {
+			var epochNr = 1;
+			var loss = logs["loss"];
+			if(training_logs_epoch["loss"]["x"].length) {
+				epochNr = Math.max(...training_logs_epoch["loss"]["x"]) + 1;
+			}
+			training_logs_epoch["loss"]["x"].push(epochNr);
+			training_logs_epoch["loss"]["y"].push(loss);
+
+			var other_key_name = "val_loss";
+			var this_plot_data = [training_logs_epoch["loss"]];
+
+			if(Object.keys(logs).includes(other_key_name)) {
+				if(epochNr == 1 || !Object.keys(training_logs_epoch).includes(other_key_name)) {
+					training_logs_epoch[other_key_name] = {
+						"x": [],
+						"y": [],
+						"type": get_scatter_type(),
+						"mode": get_plotly_type(),
+						"name": "val_loss"
+					};
+				}
+
+				training_logs_epoch[other_key_name]["x"].push(epochNr);
+				training_logs_epoch[other_key_name]["y"].push(logs[other_key_name]);
+				training_logs_epoch[other_key_name]["mode"] = get_plotly_type();
+				training_logs_epoch[other_key_name]["name"] = other_key_name;
+
+				this_plot_data.push(training_logs_epoch[other_key_name]);
+			}
+
+			try {
+				$("#plotly_epoch_history").parent().show();
+				$("#plotly_epoch_history").show();
+				if(epochNr == 1) {
+					Plotly.newPlot('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
+				} else {
+					Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
+				}
+			} catch (e) {}
+
+			current_loss_value = logs.loss;
+		},
+		onTrainEnd: async function() {}
+	};
+}
+
+function calculate_stats(values) {
+	var n = values.length;
+	var sum = values.reduce((a, b) => a + b, 0);
+	var mean = sum / n;
+	var variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+	var std = Math.sqrt(variance);
+	var min = Math.min(...values);
+	var max = Math.max(...values);
+	var cv = mean !== 0 ? (std / Math.abs(mean)) * 100 : 0;
+	return { mean: mean, std: std, min: min, max: max, cv: cv, n: n };
+}
+
+function show_multi_run_statistics(results) {
+	var losses = results.map(function(r) {
+		var lastIdx = r.history.loss.length - 1;
+		return r.history.loss[lastIdx];
+	});
+
+	var valLosses = results.map(function(r) {
+		if (!r.history.val_loss) return null;
+		var lastIdx = r.history.val_loss.length - 1;
+		return r.history.val_loss[lastIdx];
+	}).filter(function(v) { return v !== null; });
+
+	var accs = results.map(function(r) {
+		if (!r.history.acc && !r.history.accuracy) return null;
+		var key = r.history.acc ? "acc" : "accuracy";
+		var lastIdx = r.history[key].length - 1;
+		return r.history[key][lastIdx];
+	}).filter(function(v) { return v !== null; });
+
+	var html = '<div class="multi_run_stats_container">';
+	html += '<h3><span class="TRANSLATEME_multi_run_statistics"></span></h3>';
+	html += '<p><span class="TRANSLATEME_noise_analysis_intro"></span></p>';
+
+	var lossStats = calculate_stats(losses);
+
+	html += '<table class="multi_run_stats_table">';
+	html += '<tr><th></th>';
+	html += '<th><span class="TRANSLATEME_mean"></span></th>';
+	html += '<th><span class="TRANSLATEME_std_dev"></span></th>';
+	html += '<th><span class="TRANSLATEME_min"></span></th>';
+	html += '<th><span class="TRANSLATEME_max"></span></th>';
+	html += '<th><span class="TRANSLATEME_coefficient_of_variation"></span></th>';
+	html += '<th><span class="TRANSLATEME_best_run"></span></th>';
+	html += '<th><span class="TRANSLATEME_worst_run"></span></th>';
+	html += '</tr>';
+
+	html += '<tr><td><strong><span class="TRANSLATEME_loss"></span></strong></td>';
+	html += '<td>' + lossStats.mean.toFixed(4) + '</td>';
+	html += '<td>' + lossStats.std.toFixed(4) + '</td>';
+	html += '<td>' + lossStats.min.toFixed(4) + '</td>';
+	html += '<td>' + lossStats.max.toFixed(4) + '</td>';
+	html += '<td>' + lossStats.cv.toFixed(1) + '%</td>';
+	html += '<td>#' + (losses.indexOf(lossStats.min) + 1) + '</td>';
+	html += '<td>#' + (losses.indexOf(lossStats.max) + 1) + '</td>';
+	html += '</tr>';
+
+	if (valLosses.length > 0) {
+		var valLossStats = calculate_stats(valLosses);
+		html += '<tr><td><strong>Val Loss</strong></td>';
+		html += '<td>' + valLossStats.mean.toFixed(4) + '</td>';
+		html += '<td>' + valLossStats.std.toFixed(4) + '</td>';
+		html += '<td>' + valLossStats.min.toFixed(4) + '</td>';
+		html += '<td>' + valLossStats.max.toFixed(4) + '</td>';
+		html += '<td>' + valLossStats.cv.toFixed(1) + '%</td>';
+		html += '<td>#' + (valLosses.indexOf(valLossStats.min) + 1) + '</td>';
+		html += '<td>#' + (valLosses.indexOf(valLossStats.max) + 1) + '</td>';
+		html += '</tr>';
+	}
+
+	if (accs.length > 0) {
+		var accStats = calculate_stats(accs);
+		html += '<tr><td><strong><span class="TRANSLATEME_accuracy"></span></strong></td>';
+		html += '<td>' + (accStats.mean * 100).toFixed(1) + '%</td>';
+		html += '<td>' + (accStats.std * 100).toFixed(1) + '%</td>';
+		html += '<td>' + (accStats.min * 100).toFixed(1) + '%</td>';
+		html += '<td>' + (accStats.max * 100).toFixed(1) + '%</td>';
+		html += '<td>' + accStats.cv.toFixed(1) + '%</td>';
+		html += '<td>#' + (accs.indexOf(accStats.max) + 1) + '</td>';
+		html += '<td>#' + (accs.indexOf(accStats.min) + 1) + '</td>';
+		html += '</tr>';
+	}
+
+	html += '</table>';
+
+	var noiseThresholdHigh = 20;
+	var noiseThresholdMedium = 5;
+	var noiseClass;
+	if (lossStats.cv > noiseThresholdHigh) {
+		noiseClass = "noise_high";
+	} else if (lossStats.cv > noiseThresholdMedium) {
+		noiseClass = "noise_medium";
+	} else {
+		noiseClass = "noise_low";
+	}
+
+	html += '<div class="noise_level ' + noiseClass + '">';
+	html += '<strong><span class="TRANSLATEME_noise_level"></span>:</strong> <span class="TRANSLATEME_' + noiseClass + '"></span>';
+	html += '</div>';
+
+	html += '<h4><span class="TRANSLATEME_number_of_runs"></span></h4>';
+	html += '<table class="multi_run_stats_table multi_run_detail">';
+	html += '<tr><th><span class="TRANSLATEME_run"></span></th><th><span class="TRANSLATEME_loss"></span></th>';
+	if (valLosses.length > 0) {
+		html += '<th>Val Loss</th>';
+	}
+	if (accs.length > 0) {
+		html += '<th><span class="TRANSLATEME_accuracy"></span></th>';
+	}
+	html += '</tr>';
+
+	var minLoss = Math.min(...losses);
+	var maxLoss = Math.max(...losses);
+
+	results.forEach(function(r, i) {
+		var lastLoss = r.history.loss[r.history.loss.length - 1];
+		var rowClass = "";
+		if (lastLoss === minLoss) rowClass = "best_run_row";
+		else if (lastLoss === maxLoss) rowClass = "worst_run_row";
+
+		html += '<tr class="' + rowClass + '">';
+		html += '<td>' + (i + 1) + '</td>';
+		html += '<td>' + lastLoss.toFixed(4) + '</td>';
+		if (valLosses.length > 0 && r.history.val_loss) {
+			var lastValLoss = r.history.val_loss[r.history.val_loss.length - 1];
+			html += '<td>' + lastValLoss.toFixed(4) + '</td>';
+		}
+		if (accs.length > 0) {
+			var key = r.history.acc ? "acc" : "accuracy";
+			if (r.history[key]) {
+				var lastAcc = r.history[key][r.history[key].length - 1];
+				html += '<td>' + (lastAcc * 100).toFixed(1) + '%</td>';
+			} else {
+				html += '<td>-</td>';
+			}
+		}
+		html += '</tr>';
+	});
+
+	html += '</table></div>';
+
+	$("#multi_run_stats").html(html).show();
+	update_translations();
+}
+
+async function multi_train_neural_network(num_runs) {
+	var ret = null;
+
+	if (!model) {
+		err("[multi_train_neural_network] " + language[lang]["no_model_defined"]);
+		return null;
+	}
+
+	if (!model?.layers?.length) {
+		err("[multi_train_neural_network] " + language[lang]["no_layers"]);
+		return null;
+	}
+
+	await prepare_gui_for_training();
+	_set_apply_to_original_apply();
+	await check_signal_flow();
+
+	var x_and_y = await get_x_and_y_or_die_in_case_of_error();
+
+	if (x_and_y === false) {
+		err("multi_train_neural_network: Error trying to get x_and_y, it was false");
+	}
+
+	await show_tab_label("training_tab_label", jump_to_interesting_tab());
+
+	if (!x_and_y) {
+		err("[multi_train_neural_network] " + language[lang]["could_not_get_xs_and_xy"]);
+		return null;
+	}
+
+	var results = [];
+	var epochs = get_epochs();
+	var batchSize = get_batch_size();
+	var validationSplit = parse_int($("#validationSplit").val()) / 100;
+	var shuffle = $("#shuffle_before_each_epoch").is(":checked");
+
+	for (var run = 1; run <= num_runs; run++) {
+		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");
+
+		training_logs_epoch = get_empty_plotly("Loss");
+		training_logs_batch = get_empty_plotly("Loss");
+		last_batch_plot_time = false;
+
+		try {
+			if (run > 1) {
+				l("[multi-train] run " + run + ": recreating model with fresh weights");
+				model = null;
+				await create_model_or_throw();
+				l("[multi-train] run " + run + ": new model created, layers=" + (model?.layers?.length || 0));
+			}
+
+			await set_input_shape_from_xs(x_and_y);
+			prepare_site_for_training();
+			await go_to_training_tab_label();
+
+			["x", "y"].forEach(function(tensor_name) {
+				if (!is_tensor(x_and_y[tensor_name])) {
+					if (Array.isArray(x_and_y[tensor_name])) {
+						x_and_y[tensor_name] = tensor(x_and_y[tensor_name]);
+					} else {
+						err("multi_train_neural_network: " + tensor_name + " is not a tensor, nor is it an array.", x_and_y[tensor_name]);
+					}
+				}
+			});
+
+			xy_data_global = x_and_y;
+
+			var fit_data;
+			if (run < num_runs) {
+				l("[multi-train] run " + run + ": building minimal fit_data (intermediate run)");
+				fit_data = {
+					validationSplit: validationSplit,
+					batchSize: batchSize,
+					epochs: epochs,
+					shuffle: shuffle,
+					verbose: 0,
+					callbacks: get_minimal_callbacks(),
+					yieldEvery: "batch"
+				};
+				await compile_model();
+			} else {
+				l("[multi-train] run " + run + ": building full fit_data (last run)");
+				await add_layer_debuggers();
+				fit_data = await get_fit_data();
+				await compile_model();
+			}
+
+			if (!fit_data) {
+				err("[multi_train_neural_network] fit_data is false for run " + run);
+				continue;
+			}
+
+			l("[multi-train] run " + run + ": starting model.fit, epochs=" + fit_data.epochs + ", batchSize=" + fit_data.batchSize);
+			await wait_for_updated_page(2);
+
+			const h = await model.fit(x_and_y.x, x_and_y.y, fit_data);
+
+			l("[multi-train] run " + run + ": model.fit completed, final loss=" + (h.history.loss ? h.history.loss[h.history.loss.length - 1] : "N/A"));
+			assert(typeof h === "object", "history object is not of type object");
+			model_is_trained = true;
+			reset_predict_container_after_training();
+
+			results.push({ run: run, history: h.history });
+
+			ret = h;
+		} catch (e) {
+			err("[multi-train] Training failed on run " + run + ":", e);
+		}
+	}
+
+	l("[multi-train] All " + num_runs + " runs completed. Results: " + results.length);
+
+	show_multi_run_statistics(results);
+
+	show_input_shape_repaired_message(false);
+	await enable_everything();
+	hide_training_progress_bar();
 
 	x_and_y = await reset_stuff_after_training(x_and_y);
 
