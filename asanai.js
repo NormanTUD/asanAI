@@ -117,6 +117,8 @@ class asanAI {
 	#last_batch_plot_time = null;
 	#math_tab_code_div = null;
 	#layers_gui_div_name = null;
+	#model_fingerprint = null;
+	#model_fingerprint_unchanged = false;
 
 	#debug = false;
 
@@ -6059,7 +6061,9 @@ class asanAI {
 		var asanai_this = this;
 
 		callbacks["onTrainBegin"] = async function () {
-			asanai_this.reset_training_logs();
+			if (!asanai_this.#model_fingerprint_unchanged) {
+				asanai_this.reset_training_logs();
+			}
 
 			var $plotly_div = $("");
 
@@ -6070,7 +6074,9 @@ class asanAI {
 			if($plotly_div.length == 0) {
 				asanai_this.wrn(`[onTrainBegin] Plotly div could not be found`);
 			} else {
-				$plotly_div.html(`<div id="plotly_batch_history"></div><div id="plotly_time_per_batch"></div><div id="plotly_epoch_history"></div>`)
+				if (!asanai_this.#model_fingerprint_unchanged) {
+					$plotly_div.html(`<div id="plotly_batch_history"></div><div id="plotly_time_per_batch"></div><div id="plotly_epoch_history"></div>`)
+				}
 			}
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
@@ -6694,12 +6700,15 @@ class asanAI {
 					return;
 				} else {
 					this.#plotly_div = _plotly_data["div"];
-					args["callbacks"] = this.#_get_callbacks();
 				}
 			} else {
 				this.err(`_plotly_data is defined but does not include div-option`);
 			}
 		}
+
+		var new_fingerprint = this.#get_model_fingerprint();
+		this.#model_fingerprint_unchanged = (this.#model_fingerprint && new_fingerprint && new_fingerprint === this.#model_fingerprint);
+		this.#model_fingerprint = new_fingerprint;
 
 		args["callbacks"] = this.#_get_callbacks(_callbacks);
 
@@ -6956,6 +6965,19 @@ class asanAI {
 		this.write_tensors_info("__status__bar__memory_debuger");
 
 		return $element;
+	}
+
+	#get_model_fingerprint () {
+		try {
+			if (!this.#model || !this.#model.layers) return null;
+			var structure = this.#model.layers.map(function(layer) {
+				return layer.getClassName();
+			});
+			var input_shape = this.#model.input ? this.#model.input.shape : null;
+			return JSON.stringify({ layers: structure, inputShape: input_shape });
+		} catch (e) {
+			return null;
+		}
 	}
 
 	#get_plotly_layout (name="") {

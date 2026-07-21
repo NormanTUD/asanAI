@@ -486,6 +486,8 @@ async function _train_neural_network () {
 		await gui_in_training();
 
 		var new_fingerprint = get_model_fingerprint();
+		_model_fingerprint_unchanged = (last_model_fingerprint && new_fingerprint && new_fingerprint === last_model_fingerprint);
+
 		if (last_model_fingerprint && new_fingerprint && new_fingerprint !== last_model_fingerprint) {
 			training_history = [];
 			training_history_counter = 0;
@@ -493,8 +495,10 @@ async function _train_neural_network () {
 		}
 		last_model_fingerprint = new_fingerprint;
 
-		training_logs_batch = get_empty_plotly("Loss");
-		training_logs_epoch = get_empty_plotly("Loss");
+		if (!_model_fingerprint_unchanged) {
+			training_logs_batch = get_empty_plotly("Loss");
+			training_logs_epoch = get_empty_plotly("Loss");
+		}
 
 		last_batch_time = 0;
 
@@ -2147,7 +2151,9 @@ async function reset_stuff_after_training (x_and_y) {
 }
 
 function prepare_site_for_training() {
-	_clear_plotly_epoch_history();
+	if (!_model_fingerprint_unchanged) {
+		_clear_plotly_epoch_history();
+	}
 }
 
 async function set_input_shape_from_xs(x_and_y) {
