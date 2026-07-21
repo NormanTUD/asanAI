@@ -914,6 +914,8 @@ async function get_fit_data () {
 		set_document_title(original_title);
 		await restart_fcnn();
 
+		await visualize_train();
+
 		reset_tiny_graph(1);
 		$("#network_has_seen_msg").hide();
 

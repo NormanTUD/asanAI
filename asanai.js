@@ -6278,6 +6278,8 @@ class asanAI {
 			await asanai_this.#write_model_to_latex_to_page(1, 1, asanai_this);
 			asanai_this.#set_document_title(asanai_this.#original_title);
 
+			await asanai_this.visualize_train();
+
 			$("#tiny_graph").hide();
 
 			$("#network_has_seen_msg").hide();
