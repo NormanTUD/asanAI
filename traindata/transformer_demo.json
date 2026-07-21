@@ -4,11 +4,11 @@
 	"metric": "sparseCategoricalCrossentropy",
 	"optimizer": "adam",
 	"learningRate": 0.01,
-	"epochs": 300,
-	"batchSize": 5,
+	"epochs": 500,
+	"batchSize": 6,
 	"validationSplit": 0,
 	"input_shape": "[3]",
-	"output_shape": "[10]",
+	"output_shape": "[20]",
 	"trainable_data": ["transformer_demo"],
 	"vocab": {
 		"0": "the",
@@ -20,30 +20,72 @@
 		"6": "mat",
 		"7": "field",
 		"8": "and",
-		"9": "a"
+		"9": "a",
+		"10": "bird",
+		"11": "sang",
+		"12": "tree",
+		"13": "played",
+		"14": "with",
+		"15": "sun",
+		"16": "shone",
+		"17": "river",
+		"18": "flowed",
+		"19": "hill"
 	},
 	"sentences": [
 		"the cat sat on the mat",
-		"the dog ran on the field"
+		"the dog ran on the field",
+		"the bird sang on the tree",
+		"a cat played with the dog",
+		"the sun shone on the field",
+		"the river flowed on the hill",
+		"a dog played on the mat",
+		"the bird sat on the hill"
 	],
 	"text_display": [
-		"the \u2192 cat",
-		"the cat \u2192 sat",
 		"the cat sat \u2192 on",
-		"the cat sat on \u2192 the",
-		"the cat sat on the \u2192 mat",
-		"the \u2192 dog",
-		"the dog \u2192 ran",
+		"cat sat on \u2192 the",
+		"sat on the \u2192 mat",
 		"the dog ran \u2192 on",
-		"the dog ran on \u2192 the",
-		"the dog ran on the \u2192 field"
+		"dog ran on \u2192 the",
+		"ran on the \u2192 field",
+		"the bird sang \u2192 on",
+		"bird sang on \u2192 the",
+		"sang on the \u2192 tree",
+		"a cat played \u2192 with",
+		"cat played with \u2192 the",
+		"played with the \u2192 dog",
+		"the sun shone \u2192 on",
+		"sun shone on \u2192 the",
+		"shone on the \u2192 field",
+		"the river flowed \u2192 on",
+		"river flowed on \u2192 the",
+		"flowed on the \u2192 hill",
+		"a dog played \u2192 on",
+		"dog played on \u2192 the",
+		"played on the \u2192 mat",
+		"the bird sat \u2192 on",
+		"bird sat on \u2192 the",
+		"sat on the \u2192 hill",
+		"the bird ran \u2192 on",
+		"bird ran on \u2192 the",
+		"the cat sang \u2192 on",
+		"cat sang on \u2192 the",
+		"a dog ran \u2192 on",
+		"a cat sat \u2192 on",
+		"the sun sat \u2192 on",
+		"sun sat on \u2192 the",
+		"the dog sang \u2192 on",
+		"dog sang on \u2192 the",
+		"a bird played \u2192 with",
+		"bird played with \u2192 the"
 	],
 	"skip_connections": [1, 2, 3, 4, 5, 6],
 	"model_structure": [
 		{
 			"type": "AsanEmbedding",
 			"data": {
-				"inputDim": 10,
+				"inputDim": 20,
 				"outputDim": 8
 			}
 		},
@@ -88,7 +130,7 @@
 		{
 			"type": "Unembedding",
 			"data": {
-				"vocabSize": 10
+				"vocabSize": 20
 			}
 		}
 	]
