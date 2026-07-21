@@ -1,4 +1,4 @@
-# shape: (10, 1)
+# shape: (36, 1)
 5.0
 # New slice
 0.0
@@ -15,6 +15,58 @@
 # New slice
 0.0
 # New slice
+12.0
+# New slice
+14.0
+# New slice
+0.0
+# New slice
+2.0
+# New slice
 5.0
+# New slice
+0.0
+# New slice
+7.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+19.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+6.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+19.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+5.0
+# New slice
+5.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+5.0
+# New slice
+0.0
+# New slice
+14.0
 # New slice
 0.0
