@@ -204,9 +204,9 @@
 					<label for="expert">&#9760;&#65039; <span class="TRANSLATEME_expert"></span></label>
 				</fieldset>
 			<span class="TRANSLATEME_theme_label"></span> <select id="theme_choser" class="show_data" onchange="theme_choser()">
-				<option value="lightmode"><span class="TRANSLATEME_light_mode"></span></option>
-				<option value="darkmode"><span class="TRANSLATEME_dark_mode"></span></option>
-				<option value="naturalmode"><span class="TRANSLATEME_natural_mode"></span></option>
+				<option value="lightmode">Light Mode</option>
+				<option value="darkmode">Dark Mode</option>
+				<option value="naturalmode">Natural Mode</option>
 			</select>
 				<span class="expert_mode_only">
 					<hr>
