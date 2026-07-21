@@ -377,7 +377,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 </pre>
 			<img src="manual/own_csv_2.png" />
 <br>
-			The the header-to-training-data-section you can specify which columns (defined by their title in the very first line) should belong to the Input and which ones should belong to the output. After specifying this, on the right, a preview of how the tensors will look like like.
+			In the header-to-training-data-section you can specify which columns (defined by their title in the very first line) should belong to the Input and which ones should belong to the output. After specifying this, on the right, a preview of how the tensors will look like like.
 <br>
 			The input and output shapes are changed automatically according to the data type and the constructed network.
 <br>
@@ -633,7 +633,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Then, the network would learn "cat" in the first batch and be punished for what it has learnt previously in the next batch, where there are only dogs. 
 <br>
-			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, so the likelyhood of one batch containing only one type of image is drastically reduced.
+			It's recommended that in each batch, if possible, there are data from many different categories, so the network doesn't <a href="#Overfitting">overfit</a> in each batch. Therefore, the data is shuffled by default, 			so the likelihood of one batch containing only one type of image is drastically reduced.
 <br>
 			<h4>How the computer calculates derivatives of very complex functions</h4>
 <br>
@@ -661,7 +661,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			$$ \frac{0.00400002}{0.0001} = 40.0002 $$
 <br>
-			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by chosing a smaller \(h\).
+			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by choosing a smaller \(h\).
 <br>
 			<h3>Predicting</h3>
 			Predicting with a simple sequential neural network works by passing input data through the layers of the network in order, starting from the input layer and ending at the output layer.
@@ -868,7 +868,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<div id="dropout_example"></div>
 <br>
 <br>
-			The dropout layer sets random values to 0 which a probability given in the Dropout-Rate-option.
+			The dropout layer sets random values to 0 with a probability given in the Dropout-Rate-option.
 <br>
 			$$
 				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
@@ -898,7 +898,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			<h3>Reshape</h3>
 <br>
-			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arragement.
+			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arrangement.
 <br>
 			$$
 				\begin{pmatrix}
