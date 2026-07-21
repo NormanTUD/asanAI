@@ -834,6 +834,61 @@ button:disabled:hover {
 	margin: 8px 0;
 }
 
+.training_history_tabs {
+	display: flex;
+	gap: 6px;
+	margin: 12px 0 8px 0;
+	flex-wrap: wrap;
+}
+
+.training_history_tab {
+	padding: 6px 14px;
+	border: 1px solid #999;
+	border-radius: 4px;
+	background: rgba(0,0,0,0.05);
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.training_history_tab:hover {
+	background: rgba(0,0,0,0.1);
+}
+
+.training_history_tab_active {
+	background: rgba(46,204,113,0.2);
+	border-color: #2ecc71;
+	font-weight: bold;
+}
+
+.training_history_chart_area {
+	margin: 8px 0;
+}
+
+.training_history_loss_toggle {
+	display: flex;
+	gap: 4px;
+	margin-bottom: 8px;
+}
+
+.training_history_toggle_btn {
+	padding: 3px 10px;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	background: rgba(0,0,0,0.03);
+	cursor: pointer;
+	font-size: 12px;
+}
+
+.training_history_toggle_btn:hover {
+	background: rgba(0,0,0,0.08);
+}
+
+.training_history_toggle_btn.active {
+	background: rgba(46,204,113,0.15);
+	border-color: #2ecc71;
+	font-weight: bold;
+}
+
 .ribbon-group {
 	margin: 0px;
 	padding: 0px;

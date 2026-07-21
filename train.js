@@ -219,6 +219,117 @@ function get_empty_plotly(name) {
 	return obj;
 }
 
+function get_model_fingerprint() {
+	try {
+		var structure = [];
+		var num_of_layers = $(".layer_setting").length;
+		for (var i = 0; i < num_of_layers; i++) {
+			var type = $($($(".layer_setting")[i]).find(".layer_type")).val();
+			if (typeof type !== "undefined" && type) {
+				structure.push(type);
+			}
+		}
+		var input_shape = get_input_shape();
+		return JSON.stringify({ layers: structure, inputShape: input_shape });
+	} catch (e) {
+		return null;
+	}
+}
+
+function save_training_history(epochData, batchData) {
+	training_history_counter++;
+	training_history.push({
+		label: "#" + training_history_counter,
+		epochData: JSON.parse(JSON.stringify(epochData)),
+		batchData: JSON.parse(JSON.stringify(batchData)),
+		timestamp: Date.now(),
+		loss: (epochData["loss"] && epochData["loss"]["y"] && epochData["loss"]["y"].length)
+			? epochData["loss"]["y"][epochData["loss"]["y"].length - 1]
+			: null,
+		fingerprint: last_model_fingerprint
+	});
+	render_training_history_tabs();
+}
+
+function show_training_history_run(idx, showBatch) {
+	$(".training_history_tab").removeClass("training_history_tab_active");
+	$(".training_history_tab[data-idx=" + idx + "]").addClass("training_history_tab_active");
+
+	$(".training_history_chart_area").hide();
+	var chartId = "training_history_chart_" + idx;
+	var chartEl = document.getElementById(chartId);
+	if (chartEl) {
+		$(chartEl).show();
+	}
+
+	var entry = training_history[idx];
+	if (!entry) return;
+
+	var data = showBatch ? entry.batchData : entry.epochData;
+	var traces = [];
+	Object.keys(data).forEach(function(key) {
+		if (data[key].x && data[key].x.length) {
+			traces.push(JSON.parse(JSON.stringify(data[key])));
+		}
+	});
+
+	if (!traces.length) return;
+
+	var xLabel = showBatch ? "Batch" : (typeof language !== "undefined" && language[lang] ? language[lang]["epochs"] : "Epochs");
+	var chartContainer = document.getElementById(chartId);
+	if (!chartContainer) return;
+
+	try {
+		Plotly.newPlot(chartId, traces, get_plotly_layout(xLabel, "Loss"), { responsive: true });
+	} catch (e) {
+		err("Error rendering training history chart:", e);
+	}
+}
+
+function render_training_history_tabs() {
+	if (training_history.length === 0) {
+		$("#training_history_tabs").html("").hide();
+		return;
+	}
+
+	var html = '<div class="training_history_tabs">';
+	training_history.forEach(function(entry, i) {
+		var activeClass = i === training_history.length - 1 ? " training_history_tab_active" : "";
+		var lossStr = entry.loss !== null ? entry.loss.toFixed(4) : "?";
+		html += '<button class="training_history_tab' + activeClass + '" data-idx="' + i + '">' + entry.label + ' (loss=' + lossStr + ')</button>';
+	});
+	html += '</div>';
+
+	html += '<div class="training_history_loss_toggle">';
+	html += '<button class="training_history_toggle_btn active" data-mode="epoch">Epoch</button>';
+	html += '<button class="training_history_toggle_btn" data-mode="batch">Batch</button>';
+	html += '</div>';
+
+	training_history.forEach(function(entry, i) {
+		var display = i === training_history.length - 1 ? "block" : "none";
+		html += '<div id="training_history_chart_' + i + '" class="training_history_chart_area" style="display:' + display + ';"></div>';
+	});
+
+	$("#training_history_tabs").html(html).show();
+
+	$(".training_history_tab").on("click", function() {
+		var idx = parseInt($(this).data("idx"));
+		var activeMode = $(".training_history_toggle_btn.active").data("mode");
+		show_training_history_run(idx, activeMode === "batch");
+	});
+
+	$(".training_history_toggle_btn").on("click", function() {
+		$(".training_history_toggle_btn").removeClass("active");
+		$(this).addClass("active");
+		var showBatch = $(this).data("mode") === "batch";
+		var activeIdx = parseInt($(".training_history_tab_active").data("idx"));
+		show_training_history_run(activeIdx, showBatch);
+	});
+
+	var lastIdx = training_history.length - 1;
+	show_training_history_run(lastIdx, false);
+}
+
 async function incrementAndReset() {
     const $el = $('input').filter('.input_data.units, .input_data.filters').first();
     if ($el.length === 0) return;
@@ -323,6 +434,14 @@ async function _train_neural_network () {
 		last_training_time = Date.now();
 		await gui_in_training();
 
+		var new_fingerprint = get_model_fingerprint();
+		if (last_model_fingerprint && new_fingerprint && new_fingerprint !== last_model_fingerprint) {
+			training_history = [];
+			training_history_counter = 0;
+			render_training_history_tabs();
+		}
+		last_model_fingerprint = new_fingerprint;
+
 		training_logs_batch = get_empty_plotly("Loss");
 		training_logs_epoch = get_empty_plotly("Loss");
 
@@ -343,6 +462,10 @@ async function _train_neural_network () {
 		} else {
 			l("[multi-train] Dispatching to run_neural_network (single run)"); // await not required here
 			ret = await run_neural_network();
+		}
+
+		if (training_logs_epoch["loss"] && training_logs_epoch["loss"]["x"] && training_logs_epoch["loss"]["x"].length > 0) {
+			save_training_history(training_logs_epoch, training_logs_batch);
 		}
 
 		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
