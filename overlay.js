@@ -54,6 +54,7 @@ function show_overlay(text, title="", options={}) {
 		// Title
 		if (title) {
 			var hElement = document.createElement("h1");
+			hElement.className = "overlay-title";
 			hElement.innerHTML = title;
 			hElement.style.fontFamily = "Arial, sans-serif";
 			hElement.style.fontSize = "28px";
@@ -137,6 +138,15 @@ function update_overlay_text(overlay, newText) {
 	var textEl = overlay.querySelector(".overlay-text");
 	if (textEl) {
 		textEl.innerHTML = newText;
+	}
+}
+
+function update_overlay_title(overlay, newTitle) {
+	if (!overlay) return;
+
+	var titleEl = overlay.querySelector(".overlay-title");
+	if (titleEl) {
+		titleEl.innerHTML = newTitle;
 	}
 }
 

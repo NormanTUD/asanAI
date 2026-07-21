@@ -15,11 +15,20 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	l(msg);
 
+	var overlay = null;
 	if (!finished_loading) {
 		load_msg_advance(msg + "...");
 	} else {
 		var spinner = `<div class="spinner"></div> `;
-		var overlay = load_msg({"title": `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${msg}...</span>`});
+		overlay = load_msg({"title": `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${msg}...</span>`, "html": msg});
+	}
+
+	function update_step(step_msg) {
+		l(step_msg);
+		if (overlay) {
+			var spinner = `<div class="spinner"></div> `;
+			update_overlay_title(overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+		}
 	}
 
 	var original_disabling_saving_status = disabling_saving_status;
@@ -29,13 +38,16 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	is_setting_config = true;
 
+	update_step(language[lang]["loading_configuration"]);
 	var config = await _get_configuration(index);
 
 	disable_show_python_and_create_model = true;
 
 	if (config) {
+		update_step(language[lang]["setting_model_parameters"]);
 		await set_stuff_from_predefined_config(index, config);
 
+		update_step(language[lang]["reading_layer_architecture"]);
 		var keras_layers = await get_number_of_layers_and_keras_layers(config);
 
 		if(keras_layers === false) {
@@ -48,6 +60,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 		}
 
 		if (config["input_shape"]) {
+			update_step(language[lang]["setting_input_shape"]);
 			await set_input_shape(config["input_shape"]);
 		} else {
 			if(!set_is_from_config_or_return(config)) {
@@ -57,13 +70,14 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 		await set_width_and_height_from_first_layer_if_image(keras_layers);
 
+		update_step(language[lang]["applying_layer_settings"]);
 		keras_layers = await apply_keras_layers_to_ui_from_config(config, keras_layers);
 	}
 
 	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
 
-	l(language[lang]["creating_model"]);
+	update_step(language[lang]["creating_model"]);
 
 	await dispose_if_exists(global_model_data);
 
@@ -71,16 +85,17 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	model = await create_model(model, undefined);
 
-	l(language[lang]["compiling_model"]);
+	update_step(language[lang]["compiling_model"]);
 	await compile_model();
 
+	update_step(language[lang]["loading_weights"]);
 	if(await set_weights_if_exists_or_error(config)) {
 		return;
 	}
 
 	disable_all_non_selected_layer_types();
 
-	dbg("[set_config] " + language[lang]["getting_labels"]);
+	update_step(language[lang]["loading_labels"]);
 	await get_label_data();
 
 	is_setting_config = false;
