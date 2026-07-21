@@ -2525,18 +2525,22 @@ async function predict_from_text_input() {
 		html += "<b>Predicted next word:</b> <span style='font-size: 16px; color: #2563eb;'><b>" + (vocab_inv[max_idx] || "?") + "</b></span>";
 		html += "<br><br><b>Probabilities:</b><br>";
 		html += "<table style='border-collapse: collapse; margin-top: 4px;'>";
+		var sorted_probs = [];
 		for(var i = 0; i < probs.length; i++) {
-			if(probs[i] > 0.01) {
-				var bar_width = Math.round(probs[i] * 100);
-				var is_max = (i === max_idx);
-				var bg = is_max ? "#2563eb" : "#60a5fa";
-				html += "<tr>";
-				html += "<td style='padding: 2px 8px 2px 0; font-weight: " + (is_max ? "bold" : "normal") + ";'>" + (vocab_inv[i] || "?") + "</td>";
-				html += "<td style='padding: 2px 0; width: 120px;'><div style='background: #e5e7eb; border-radius: 3px; height: 14px; position: relative;'>";
-				html += "<div style='background: " + bg + "; border-radius: 3px; height: 14px; width: " + bar_width + "%;'></div></div></td>";
-				html += "<td style='padding: 2px 0 2px 8px; font-size: 12px; color: #666; min-width: 50px; text-align: right;'>" + (probs[i] * 100).toFixed(1) + "%</td>";
-				html += "</tr>";
-			}
+			sorted_probs.push({ idx: i, prob: probs[i] });
+		}
+		sorted_probs.sort(function(a, b) { return b.prob - a.prob; });
+		for(var s = 0; s < sorted_probs.length; s++) {
+			var i = sorted_probs[s].idx;
+			var bar_width = Math.round(probs[i] * 100);
+			var is_max = (i === max_idx);
+			var bg = is_max ? "#2563eb" : "#60a5fa";
+			html += "<tr>";
+			html += "<td style='padding: 2px 8px 2px 0; font-weight: " + (is_max ? "bold" : "normal") + ";'>" + (vocab_inv[i] || "?") + "</td>";
+			html += "<td style='padding: 2px 0; width: 120px;'><div style='background: #e5e7eb; border-radius: 3px; height: 14px; position: relative;'>";
+			html += "<div style='background: " + bg + "; border-radius: 3px; height: 14px; width: " + bar_width + "%;'></div></div></td>";
+			html += "<td style='padding: 2px 0 2px 8px; font-size: 12px; color: #666; min-width: 50px; text-align: right;'>" + (probs[i] * 100).toFixed(1) + "%</td>";
+			html += "</tr>";
 		}
 		html += "</table>";
 		await dispose(input_tensor, res);
