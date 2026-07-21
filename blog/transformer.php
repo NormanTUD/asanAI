@@ -303,6 +303,18 @@ The association between *Query* and *Key* and concrete tokens is only true in th
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding).
 </div>
 
+<div class="optional md" data-headline="Gradient Clipping: The Immune System of Training">
+Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode. A single pathological training example can produce a gradient so large that it destroys all learned weights in one step — the **exploding gradient** problem.
+
+Gradient clipping is the complementary defense: it caps the magnitude of gradients so that no single update can change the model by more than a fixed amount. Mathematically, if the gradient vector $\mathbf{g}$ has elements larger than a threshold $\tau$, each element is rescaled:
+
+$$g_i' = \begin{cases} g_i & \text{if } |g_i| \leq \tau \\ \tau \cdot \text{sign}(g_i) & \text{if } |g_i| > \tau \end{cases}$$
+
+In this implementation, gradients are clipped to the range $[-1, 1]$. This is the numerical equivalent of an immune system: the body allows gradual adaptation (learning) but violently rejects sudden massive changes. Without clipping, one bad sentence in the training data could corrupt the entire model. With it, the damage is bounded.
+
+However, like an immune system, it is imperfect — it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
+</div>
+
 <div class="optional md" data-headline="What the heads actually react to">
 In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
 
