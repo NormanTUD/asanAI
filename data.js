@@ -483,7 +483,6 @@ function reset_percentage_div_if_not_skip_real_image_download(percentage_div, sk
 }
 
 function add_tensor_as_image_to_photos (_tensor) {
-	// TODO
 	assert(typeof(_tensor) == "object", "_tensor must be an object");
 	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
 	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");

@@ -2078,8 +2078,9 @@ class asanAI {
 		};
 	}
 
-	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) { // TODO: max neurons
+	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) {
 		this.#hide_fcnn_text = hide_text;
+		this.#max_neurons_fcnn = max_neurons;
 		if(!divname) {
 			this.err("[draw_fcnn] Cannot continue draw_fcnn without a divname");
 			return;
@@ -4345,7 +4346,6 @@ class asanAI {
 				var red, green, blue;
 
 				if(black_and_white) {
-					//red = green = blue = this.#parse_int(colors[j][i]); // TODO
 					red = green = blue = parseInt(colors[j][i]);
 				} else {
 					red = this.#parse_int(colors[j][i][0]);
@@ -5055,8 +5055,8 @@ class asanAI {
 	}
 
 	#last_layer_is_softmax () {
-		// TODO
-		var _last_layer_is_softmax = this.#model.layers[this.#model.layers.length - 1].activation
+		var _last_layer_is_softmax = this.#model.layers[this.#model.layers.length - 1].activation;
+		return _last_layer_is_softmax;
 	}
 
 	enable_show_bars() {

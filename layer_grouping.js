@@ -1,7 +1,5 @@
 "use strict";
 
-// TODO!
-
 async function plot_training_data_to_neurons(div_name="#layer_input_groups", max_method="sum", max_neurons=32){
 	dbg("Starting plot_training_data_to_neurons");
 
