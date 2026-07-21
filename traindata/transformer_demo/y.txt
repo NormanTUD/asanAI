@@ -1,20 +1,20 @@
 # shape: (10, 1)
 5.0
 # New slice
-9.0
+0.0
 # New slice
 6.0
 # New slice
 5.0
 # New slice
-9.0
+0.0
 # New slice
 7.0
 # New slice
 5.0
 # New slice
-9.0
+0.0
 # New slice
 5.0
 # New slice
-9.0
+0.0
