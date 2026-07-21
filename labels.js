@@ -245,7 +245,7 @@ function label_debugger_icon_ok() {
 			model_meta.last_layer_name.startsWith("dense");
 
 		if (is_dense_softmax) {
-			icon.html("<span style='background-color: orange; color: black;'>[No labels]</span>").show();
+			icon.html("<span style='background-color: orange; color: black;'>" + language[lang]["no_labels"] + "</span>").show();
 		} else {
 			icon.html("").hide();
 		}

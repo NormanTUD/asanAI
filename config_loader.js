@@ -444,8 +444,8 @@ async function error_if_keras_layers_not_defined(keras_layers) {
 
 		Swal.fire({
 			icon: "error",
-			title: "Oops [1]...",
-			text: "Error loading the model"
+			title: language[lang]["oops"],
+			text: language[lang]["error_loading_model"]
 		});
 		await write_descriptions();
 		return true;

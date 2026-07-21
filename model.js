@@ -168,7 +168,7 @@ async function _create_model () {
 			if(mode == "beginner") {
 				Swal.fire({
 					icon: "error",
-					title: "Oops [4]...",
+					title: language[lang]["oops"],
 					text: "" + e
 				});
 			} else {
@@ -1889,7 +1889,7 @@ async function set_weights_from_string (_string, no_warning, no_error, m=model) 
 		if(("" + e).includes("JSON.parse:")) {
 			Swal.fire({
 				icon: "error",
-				title: "Oops...",
+				title: language[lang]["oops"],
 				text: language[lang]["weights_json_was_not_valid"]
 			});
 			err("" + e);

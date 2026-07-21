@@ -922,7 +922,7 @@ async function last_shape_layer_warning() {
 		} else {
 			if (model.outputShape.length != 4) {
 				var n = $(".own_image_label").length;
-				$("#last_layer_shape_warning").html("<h3>The last layer's output shape's length is neither 2 (for classification) nor 4 (for segmentation). Please add a flatten-layer somewhere before the output layer (which has to be Dense) to allow classification into " + n + " categories. Training will not be possible otherwise.</h3>");
+				$("#last_layer_shape_warning").html("<h3>" + language[lang]["last_layer_shape_warning"].replace("{n}", n) + "</h3>");
 			} else {
 				$("#last_layer_shape_warning").html("");
 
@@ -1023,7 +1023,7 @@ async function write_error(e, fn, hide_swal) {
 		if(!hide_swal) {
 			Swal.fire({
 				icon: "error",
-				title: "Oops [5]...",
+				title: language[lang]["oops"],
 				html: msg
 			});
 		} else {
@@ -1032,7 +1032,7 @@ async function write_error(e, fn, hide_swal) {
 
 		await send_bug_report();
 	} else {
-		$("#error").html("No error found, but something went wrong").show().parent().hide();
+		$("#error").html(language[lang]["no_error_something_wrong"]).show().parent().hide();
 	}
 
 	if(typeof(fn) == "function") {

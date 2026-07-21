@@ -62,7 +62,7 @@
 							<span class="TRANSLATEME_function_with_explanation"></span>
 						</td>
 						<td>
-							<input type="text" id="csv_custom_fn" value="2*(x + 1)" placeholder="Function (only x and y variables allowed)" />
+							<input type="text" id="csv_custom_fn" value="2*(x + 1)" data-tr-placeholder="function_placeholder" />
 						</td>
 					</tr>
 					<tr class="expert_mode_only">

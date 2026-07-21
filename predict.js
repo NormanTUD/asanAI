@@ -215,7 +215,7 @@ function load_file (event) {
 }
 
 function show_predict_spinner(target_selector) {
-	$(target_selector).html("<span class='predict-spinner'>⏳ Predicting...</span>");
+	$(target_selector).html("<span class='predict-spinner'>⏳ " + language[lang]["predicting"] + "</span>");
 }
 
 function hide_predict_spinner(target_selector) {

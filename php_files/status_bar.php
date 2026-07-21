@@ -4,14 +4,14 @@
 	<span id="status_bar_log"></span>
 
 	<span id="data_loading_progress_bar" style="display: none">
-		| Loading data:
+		| <span class="TRANSLATEME_loading_data_label"></span>
 		<span id="data_progressbar">
 			<div></div>
 		</span>
 	</span>
 
 	<span id="training_progress_bar" style="display: none">
-		| Training:
+		| <span class="TRANSLATEME_training_label"></span>
 		<span id="training_progressbar">
 			<div></div>
 		</span>

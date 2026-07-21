@@ -484,14 +484,14 @@ function upload_custom_images_function (evt) {
 			if (("" + e).includes("Corrupted zip")) {
 				Swal.fire({
 					icon: "error",
-					title: "Oops...",
+					title: language[lang]["oops"],
 					text: language[lang]["the_zip_file_you_uploaded_seems_to_be_corrupt_or_partially_uploaded"]
 				});
 				return;
 			} else if (("" + e).includes("is this a zip file")) {
 				Swal.fire({
 					icon: "error",
-					title: "Oops...",
+					title: language[lang]["oops"],
 					text: language[lang]["it_seems_like_uploading_the_file_has_failed"] + "..."
 				});
 				return;

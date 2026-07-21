@@ -1,11 +1,11 @@
 <div id="ribbon" style="overflow: hidden;">
 	<ul id="tablist">
-		<li><span class="symbol_button" title="Hide Ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
-		<li><span class="symbol_button" title="Download model" style="cursor: pointer" onclick="download_model_and_weights_and_labels()"><img class="ribbon_icon" alt="Save Model" src="_gui/icons/floppy.svg" /></span></li>
-		<li><span class="symbol_button" title="Upload model" id="upload_file_dialog" onclick="open_upload_dialog()" style="cursor: pointer"><img class="ribbon_icon" alt="Open saved models" src="_gui/icons/folder.svg" /></span></li>
-		<li><span id="custom_webcam_training_data_small" title="Start webcam for acquiring custom images" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" alt="Get data from webcam" src="_gui/camera.svg" /></span></li>
-		<li><span id="custom_image_training_data_small" title="Set custom images for training" style="display: none" class="only_when_webcam enabled_symbol input_shape_is_image symbol_button" onclick="set_custom_image_training()"><img class="ribbon_icon" alt="Get data from photos" src="_gui/icons/photos.svg" /></span></li>
-		<li><span class="symbol_button" title="Help" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();"><img class="ribbon_icon" alt="Open help page" src="_gui/icons/help.svg" /></span></li>
+		<li><span class="symbol_button" data-tr-title="hide_ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
+		<li><span class="symbol_button" data-tr-title="download_model" style="cursor: pointer" onclick="download_model_and_weights_and_labels()"><img class="ribbon_icon" data-tr-alt="download_model" src="_gui/icons/floppy.svg" /></span></li>
+		<li><span class="symbol_button" data-tr-title="upload_model" id="upload_file_dialog" onclick="open_upload_dialog()" style="cursor: pointer"><img class="ribbon_icon" data-tr-alt="open_saved_models" src="_gui/icons/folder.svg" /></span></li>
+		<li><span id="custom_webcam_training_data_small" data-tr-title="start_webcam_custom_images" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" data-tr-alt="get_data_from_webcam" src="_gui/camera.svg" /></span></li>
+		<li><span id="custom_image_training_data_small" data-tr-title="set_custom_images_training" style="display: none" class="only_when_webcam enabled_symbol input_shape_is_image symbol_button" onclick="set_custom_image_training()"><img class="ribbon_icon" data-tr-alt="get_data_from_photos" src="_gui/icons/photos.svg" /></span></li>
+		<li><span class="symbol_button" data-tr-title="help_label" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();"><img class="ribbon_icon" data-tr-alt="open_help_page" src="_gui/icons/help.svg" /></span></li>
 		<li><span id="tiny_graph" style="display:none"></span></li>
 	</ul>
 
@@ -77,7 +77,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Shapes</td>
+						<td><span class="TRANSLATEME_shapes"></span></td>
 						<td>
 							<input type="text" value="" style="width: 80px;" onchange="update_input_shape()" readonly id="inputShape"></input>
 							&rarr;
@@ -86,7 +86,7 @@
 					</tr>
 					<tr>
 						<td colspan=2>
-							Auto-Input-Shape?
+							<span class="TRANSLATEME_auto_input_shape"></span>
 							<input type="checkbox" value=1 <?php print array_key_exists("no_auto_input_shape", $_GET) ? "" : "checked"; ?> onchange="allow_edit_input_shape()" id="auto_input_shape" />
 						</td>
 					</tr>
@@ -101,7 +101,7 @@
 			<div class="ribbon-toolbar" style="width:100px">
 				<input type="number" id="number_of_layers" value="2" min="1" step="1" style="width: 85%">
 			</div>
-			<div class="ribbon-group-title">Layers</div>
+			<div class="ribbon-group-title"><span class="TRANSLATEME_layers"></span></div>
 		</div>
 
 		<div class="ribbon-group">
@@ -158,7 +158,7 @@
 					</tr>
 					<tr>
 						<td>
-							<span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> Autotab?
+							<span class="symbol_button"><img height=16 src="_gui/icons/graph.svg" /></span> <span class="TRANSLATEME_autotab"></span>
 						</td>
 						<td>
 							<input class="show_data" type="checkbox" value="1" id="jump_to_interesting_tab" checked>
@@ -203,11 +203,11 @@
 ?>>
 					<label for="expert">&#9760;&#65039; <span class="TRANSLATEME_expert"></span></label>
 				</fieldset>
-				Theme: <select id="theme_choser" class="show_data" onchange="theme_choser()">
-					<option value="lightmode">Light Mode</option>
-					<option value="darkmode">Dark Mode</option>
-					<option value="naturalmode">Natural</option>
-				</select>
+			<span class="TRANSLATEME_theme_label"></span> <select id="theme_choser" class="show_data" onchange="theme_choser()">
+				<option value="lightmode"><span class="TRANSLATEME_light_mode"></span></option>
+				<option value="darkmode"><span class="TRANSLATEME_dark_mode"></span></option>
+				<option value="naturalmode"><span class="TRANSLATEME_natural_mode"></span></option>
+			</select>
 				<span class="expert_mode_only">
 					<hr>
 					<fieldset style="border-width: 0px" id="backend_chooser"> 
@@ -219,7 +219,7 @@
 					</fieldset>
 				</span>
 			</div>
-			<div class="ribbon-group-title">GUI-Mode/Style<span class="expert_mode_only">/TF-Backend</span></div>
+			<div class="ribbon-group-title"><span class="TRANSLATEME_gui_mode_style"></span><span class="expert_mode_only"><span class="TRANSLATEME_tf_backend"></span></span></div>
 		</div>
 
 		<div class="only_when_multiple_webcams" style="display: none">
@@ -232,7 +232,7 @@
 
 					<br>
 				</div>
-				<div class="ribbon-group-title">Webcam options</div>
+				<div class="ribbon-group-title"><span class="TRANSLATEME_webcam_options"></span></div>
 			</div>
 		</div>
 
@@ -251,7 +251,7 @@
 							<td><input type="checkbox" value="1" onchange="tf_debug();" id="enable_tf_debug"></td>
 						</tr>
 						<tr>
-							<td>Resize method?</td>
+							<td><span class="TRANSLATEME_resize_method"></span></td>
 							<td>
 								<select id="default_resize_method">
 									<option value="nearestNeighbor" selected>nearestNeighbor</option>
@@ -261,7 +261,7 @@
 						</tr>
 					</table>
 				</div>
-				<div class="ribbon-group-title">Weights/Shuffle/Resize</div>
+				<div class="ribbon-group-title"><span class="TRANSLATEME_weights_shuffle_resize"></span></div>
 			</div>
 
 			<div class="ribbon-group-sep"></div>
@@ -328,25 +328,19 @@
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_mean" style="display: none">
-										<td>
-											Mean:
-										</td>
+									<td><span class="TRANSLATEME_mean_label"></span></td>
 										<td>
 											<input class="set_all_initializers_input" id="set_all_initializers_value_mean" onchange="change_all_initializers()" value="1" />
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_value" style="display: none">
-										<td>
-											Value:
-										</td>
+									<td><span class="TRANSLATEME_value_label"></span></td>
 										<td>
 											<input type="number" step="1" class="set_all_initializers_input" id="set_all_initializers_value_value" onchange="change_all_initializers()" value="1" />
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_distribution" style="display: none">
-										<td>
-											Distribution:
-										</td>
+									<td><span class="TRANSLATEME_distribution_label"></span></td>
 										<td>
 											<select class="set_all_initializers_input" id="set_all_initializers_value_distribution" onchange="change_all_initializers()">
 												<option value="normal">normal</option>
@@ -356,9 +350,7 @@
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_mode" style="display: none">
-										<td>
-											Mode:
-										</td>
+									<td><span class="TRANSLATEME_mode_label"></span></td>
 										<td>
 											<select class="set_all_initializers_input" id="set_all_initializers_value_mode" onchange="change_all_initializers()">
 												<option value="fanIn">fanIn</option>
@@ -368,41 +360,31 @@
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_scale" style="display: none">
-										<td>
-											Scale:
-										</td>
+									<td><span class="TRANSLATEME_scale_label"></span></td>
 										<td>
 											<input class="set_all_initializers_input" id="set_all_initializers_value_scale" onchange="change_all_initializers()" value="1" type="number" step="1" />
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_maxval" style="display: none">
-										<td>
-											Maxval:
-										</td>
+									<td><span class="TRANSLATEME_maxval_label"></span></td>
 										<td>
 											<input class="set_all_initializers_input" id="set_all_initializers_value_maxval" onchange="change_all_initializers()" value="1" type="number" step="1" />
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_minval" style="display: none">
-										<td>
-											Minval:
-										</td>
+									<td><span class="TRANSLATEME_minval_label"></span></td>
 										<td>
 											<input class="set_all_initializers_input" id="set_all_initializers_value_minval" onchange="change_all_initializers()" value="-1" type="number" step="1" />
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_stddev" style="display: none">
-										<td>
-											Stddev:
-										</td>
+									<td><span class="TRANSLATEME_stddev_label"></span></td>
 										<td>
 											<input class="set_all_initializers_input" id="set_all_initializers_value_stddev" onchange="change_all_initializers()" value="1" type="number" step="1" />
 										</td>
 									</tr>
 									<tr class="set_all_initializers_tr set_all_initializers_seed" style="display: none">
-										<td>
-											Seed:
-										</td>
+									<td><span class="TRANSLATEME_seed_label"></span></td>
 										<td>
 											<input class="set_all_initializers_input" id="set_all_initializers_value_seed" onchange="change_all_initializers()" value="1" type="number" step="1" />
 										</td>
@@ -445,7 +427,7 @@
 						<td><input type="checkbox" value=1 id="augment_invert_images"></td>
 					</tr>
 					<tr>
-						<td>Flip left/right?</td>
+						<td><span class="TRANSLATEME_flip_left_right"></span></td>
 						<td><input type="checkbox" value=1 id="augment_flip_left_right"></td>
 					</tr>
 				</table>
@@ -498,7 +480,7 @@
 					</table>
 				</div>
 			</div>
-			<div class="ribbon-group-title">FCNN/AlexNet, Batch-Plot</div>
+			<div class="ribbon-group-title"><span class="TRANSLATEME_fcnn_batch_plot"></span></div>
 		</div>
 
 		<div class="ribbon-group-sep"></div>
@@ -559,7 +541,7 @@
 			</div>
 			<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 			<button class="expert_mode_only" onclick="confirmAndRunTests();"><span class="TRANSLATEME_run_tests"></span></button>
-			<div class="ribbon-group-title">Log</div>
+			<div class="ribbon-group-title"><span class="TRANSLATEME_log_label"></span></div>
 		</div>
 
 	</div>
@@ -568,8 +550,8 @@
 		<div class="ribbon-group" style="width: auto;">                                                                    
 			<div class="ribbon-toolbar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">                                                                               
 				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button>
-				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank");'>Paper</button>
-				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");'>Code</button>
+				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank");'><span class="TRANSLATEME_paper"></span></button>
+				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");'><span class="TRANSLATEME_code_label"></span></button>
 				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
 			</div>                                                                                                     
 		</div>                                                                                                             
