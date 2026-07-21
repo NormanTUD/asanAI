@@ -527,7 +527,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 				var colors = ['#e57373', '#64b5f6', '#81c784'];
 				var vec = [0, 0, 0];
 				vec[idx] = 1;
-				var tex = '\\text{One-Hot}(' + labels[idx] + ') = ';
+				var tex = '\\text{One-Hot}(\\text{' + labels[idx] + '}) = ';
 				tex += '\\begin{pmatrix} ';
 				for (var i = 0; i < vec.length; i++) {
 					var c = i === idx ? colors[i] : '#999';
