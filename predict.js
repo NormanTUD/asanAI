@@ -2524,13 +2524,21 @@ async function predict_from_text_input() {
 
 		html += "<b>Predicted next word:</b> <span style='font-size: 16px; color: #2563eb;'><b>" + (vocab_inv[max_idx] || "?") + "</b></span>";
 		html += "<br><br><b>Probabilities:</b><br>";
-		var prob_entries = [];
+		html += "<table style='border-collapse: collapse; margin-top: 4px;'>";
 		for(var i = 0; i < probs.length; i++) {
 			if(probs[i] > 0.01) {
-				prob_entries.push("<span style='display: inline-block; width: 40px;'>" + (vocab_inv[i] || "?") + "</span>: " + (probs[i] * 100).toFixed(1) + "%");
+				var bar_width = Math.round(probs[i] * 100);
+				var is_max = (i === max_idx);
+				var bg = is_max ? "#2563eb" : "#60a5fa";
+				html += "<tr>";
+				html += "<td style='padding: 2px 8px 2px 0; font-weight: " + (is_max ? "bold" : "normal") + ";'>" + (vocab_inv[i] || "?") + "</td>";
+				html += "<td style='padding: 2px 0; width: 120px;'><div style='background: #e5e7eb; border-radius: 3px; height: 14px; position: relative;'>";
+				html += "<div style='background: " + bg + "; border-radius: 3px; height: 14px; width: " + bar_width + "%;'></div></div></td>";
+				html += "<td style='padding: 2px 0 2px 8px; font-size: 12px; color: #666; min-width: 50px; text-align: right;'>" + (probs[i] * 100).toFixed(1) + "%</td>";
+				html += "</tr>";
 			}
 		}
-		html += prob_entries.join("&nbsp;&nbsp;");
+		html += "</table>";
 		await dispose(input_tensor, res);
 	}
 
