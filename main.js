@@ -933,29 +933,44 @@ function register_resize_observers() {
 }
 
 $(document).ready(async function() {
+	var LM = language[lang];
+
 	check_all_tabs();
 
 	if(!check_if_lang()) {
 		return;
 	}
 
+	load_msg_set_steps(11);
+
+	load_msg_advance(LM["loading_step_backend"] || "Setting up backend...");
 	await try_to_set_backend();
 
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
+	load_msg_advance(LM["loading_step_losses"] || "Initializing losses & metrics...");
 	init_losses_and_metrics();
 
 	show_login_stuff_when_session_id_is_set();
 
+	load_msg_advance(LM["loading_step_tabs"] || "Initializing tabs...");
 	init_tabs();
+
+	load_msg_advance(LM["loading_step_options"] || "Initializing layer options...");
 	init_set_all_options();
+
+	load_msg_advance(LM["loading_step_categories"] || "Initializing datasets...");
 	init_categories();
 
+	load_msg_advance(LM["loading_step_page"] || "Building page contents...");
 	await init_page_contents();
+
+	load_msg_advance(LM["loading_step_preview"] || "Loading image previews...");
 	await force_download_image_preview_data();
 
 	set_upload_functions_onchange_handlers();
 
+	load_msg_advance(LM["loading_step_data"] || "Loading training data...");
 	await change_data_origin();
 
 	window.onresize = on_resize;
@@ -991,14 +1006,17 @@ $(document).ready(async function() {
 
 	allow_editable_labels(); // await not useful here
 
+	load_msg_advance(LM["loading_step_predict"] || "Generating initial prediction...");
 	await show_prediction(0, 1);
 
 	await predict_handdrawn_if_applicable();
 
 	change_all_initializers();
 
+	load_msg_advance(LM["loading_step_descriptions"] || "Writing layer descriptions...");
 	await write_descriptions(1);
 
+	load_msg_advance(LM["loading_step_ready"] || "Almost ready...");
 	show_website_and_hide_loader();
 
 	await restart_fcnn(1);

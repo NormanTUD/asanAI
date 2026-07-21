@@ -1556,6 +1556,48 @@ input, select {
 	100% { transform: rotate(360deg); }
 }
 
+#load_msg_steps {
+	flex-direction: row !important;
+	gap: 0.6vw !important;
+	margin-top: 2.5vh !important;
+	align-items: center;
+}
+
+.load_step_dot {
+	display: inline-block;
+	width: 0.6vw;
+	height: 0.6vw;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
+
+.load_step_pending .load_step_dot {
+	background-color: rgba(0, 0, 0, 0.15);
+}
+
+.load_step_done .load_step_dot {
+	background-color: #3498db;
+	animation: step_pop 0.3s ease;
+}
+
+.load_step_current .load_step_dot {
+	background-color: #2ecc71;
+	width: 0.8vw;
+	height: 0.8vw;
+	animation: step_pulse 1s ease-in-out infinite;
+}
+
+@keyframes step_pop {
+	0% { transform: scale(0.5); opacity: 0.5; }
+	50% { transform: scale(1.3); }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes step_pulse {
+	0%, 100% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.4); opacity: 0.7; }
+}
+
 .undo_redo_button {
 	display: none;
 }

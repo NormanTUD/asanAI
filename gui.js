@@ -1761,6 +1761,38 @@ function disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode 
 
 }
 
+var load_msg_step = 0;
+var load_msg_total_steps = 0;
+
+function load_msg_set_steps(total) {
+	load_msg_step = 0;
+	load_msg_total_steps = total;
+}
+
+function load_msg_advance(msg) {
+	load_msg_step++;
+
+	var steps_el = $("#load_msg_steps");
+	if (!steps_el.length) return;
+
+	var html = "";
+
+	for (var i = 1; i <= load_msg_total_steps; i++) {
+		var cls = "load_step_pending";
+		if (i < load_msg_step) cls = "load_step_done";
+		else if (i === load_msg_step) cls = "load_step_current";
+
+		html += '<div class="' + cls + '"><span class="load_step_dot"></span></div>';
+	}
+
+	steps_el.html(html);
+
+	var msg_el = $("#load_msg");
+	if (msg_el.length) {
+		msg_el.html("<span style='font-size: 2.5vw; opacity: 0.85;'>" + msg + "</span>");
+	}
+}
+
 function load_msg(swal_msg_format) {
 	remove_overlay();
 
@@ -1777,7 +1809,7 @@ function load_msg(swal_msg_format) {
 		const overlay_options = {
 			spinner: true,
 			progress: !!swal_msg_format["progress"],
-			cancelable: swal_msg_format["cancelable"] !== false, // cancelable by default
+			cancelable: swal_msg_format["cancelable"] !== false,
 			onCancel: swal_msg_format["onCancel"] || null
 		};
 
