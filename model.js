@@ -689,9 +689,9 @@ function is_valid_parameter (keyname, value, layer) {
 	assert(typeof(layer) == "number", layer + " is not a number but " + typeof(layer));
 
 	if(
-		(["units", "filters", "beta"].includes(keyname) && typeof(value) == "number") ||
+		(["units", "filters", "beta", "inputDim", "outputDim", "inputLength"].includes(keyname) && typeof(value) == "number") ||
 		(["pointwiseRegularizer", "depthwiseRegularizer", "kernelRegularizer", "biasRegularizer", "activityRegularizer", "kernelInitializer", "biasInitializer", "gammaInitializer", "gammaRegularizer", "betaInitializer", "depthwiseInitializer", "pointwiseInitializer", "betaRegularizer", "gammaRegularizer"].includes(keyname) && (typeof(value) == "object") || ["zeros", "ones"].includes(value)) ||
-		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards"].includes(keyname) && typeof(value) == "boolean") ||
+		(["unitForgetBias", "center", "scale", "unroll", "trainable", "useBias", "stateful", "returnSequences", "returnState", "goBackwards", "maskZero"].includes(keyname) && typeof(value) == "boolean") ||
 		(["name", "betaConstraint", "gammaConstraint"].includes(keyname) && typeof(value) == "string") ||
 		(["recurrentInitializer", "depthwiseInitializer", "pointwiseInitializer", "movingMeanInitializer", "movingVarianceInitializer", "betaInitializer", "gammaInitializer"].includes(keyname) && ["constant", "glorotNormal", "glorotUniform", "heNormal", "heUniform", "identity", "leCunNormal", "leCunUniform", "ones", "orthogonal", "randomNormal", "randomUniform", "truncatedNormal", "varianceScaling", "zeros", "string", "l1", "l2", "l1l2"].includes(value)) ||
 		(keyname == "dtype" && ["float32", "int32", "bool", "complex64", "string"].includes(value)) ||
