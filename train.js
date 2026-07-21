@@ -905,6 +905,10 @@ async function get_fit_data () {
 
 		gradientFlow.onEpochBoundary();
 		gradientFlowToSummary();
+
+		if($("#predict_text_input_wrapper").is(":visible") && $("#predict_text_input").val().trim()) {
+			predict_from_text_input();
+		}
 	};
 
 	callbacks["onTrainEnd"] = async function () {
