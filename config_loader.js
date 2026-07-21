@@ -107,6 +107,10 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	show_or_hide_photos_depending_on_if_index(index);
 
+	if(typeof update_predict_text_input_visibility === "function") {
+		update_predict_text_input_visibility();
+	}
+
 	remove_confusion_matrix();
 
 	if(!keep_overlay) {
