@@ -2442,3 +2442,120 @@ function _predict_table_row(label, w, max_i, probability, predictions_idx) {
 
 	return str;
 }
+
+async function predict_from_text_input() {
+	var input_text = $("#predict_text_input").val().trim();
+	if(!input_text) {
+		$("#predict_text_result").html("<span style='color: #999;'>Type some words above and press Enter or click Predict.</span>");
+		return;
+	}
+
+	var config_url = "traindata/" + $("#dataset").val() + ".json";
+	var config = await get_cached_json(config_url);
+
+	if(!config || !config.vocab) {
+		$("#predict_text_result").html("No vocabulary found in config.");
+		return;
+	}
+
+	var vocab = config.vocab;
+	var input_shape = model && model.layers && model.layers[0] ? model.layers[0].input.shape : null;
+	var context_length = input_shape ? input_shape[input_shape.length - 1] : 3;
+
+	var words = input_text.toLowerCase().split(/\s+/).filter(function(w) { return w.length > 0; });
+
+	var token_ids = [];
+	var unknown_words = [];
+	for(var i = 0; i < words.length; i++) {
+		var found = false;
+		for(var id in vocab) {
+			if(vocab[id] === words[i]) {
+				token_ids.push(parseInt(id));
+				found = true;
+				break;
+			}
+		}
+		if(!found) {
+			unknown_words.push(words[i]);
+		}
+	}
+
+	if(unknown_words.length > 0) {
+		$("#predict_text_result").html("<span style='color: red;'>Unknown word" + (unknown_words.length > 1 ? "s" : "") + ": '" + unknown_words.join("', '") + "'.<br>Vocabulary: " + Object.values(vocab).join(", ") + "</span>");
+		return;
+	}
+
+	if(token_ids.length === 0) {
+		$("#predict_text_result").html("<span style='color: red;'>No valid words entered.</span>");
+		return;
+	}
+
+	if(token_ids.length < context_length) {
+		while(token_ids.length < context_length) {
+			token_ids.unshift(0);
+		}
+	} else if(token_ids.length > context_length) {
+		token_ids = token_ids.slice(token_ids.length - context_length);
+	}
+
+	if(!model) {
+		$("#predict_text_result").html("Model not ready.");
+		return;
+	}
+
+	var input_tensor = tensor([token_ids]);
+	var res = await __predict(input_tensor);
+
+	var vocab_inv = {};
+	for(var id in vocab) {
+		vocab_inv[parseInt(id)] = vocab[id];
+	}
+
+	var html = "<div style='margin-top: 4px;'>";
+	var display_words = words.slice(words.length - context_length);
+	html += "<b>Input:</b> <i>" + display_words.join(" ") + "</i> &nbsp; tokens [" + token_ids.join(", ") + "]<br>";
+
+	if(res) {
+		var res_array = tidy(() => array_sync(res));
+		var probs = Array.isArray(res_array[0]) ? res_array[0] : res_array;
+		var max_idx = 0;
+		for(var i = 1; i < probs.length; i++) {
+			if(probs[i] > probs[max_idx]) max_idx = i;
+		}
+
+		html += "<b>Predicted next word:</b> <span style='font-size: 16px; color: #2563eb;'><b>" + (vocab_inv[max_idx] || "?") + "</b></span>";
+		html += "<br><br><b>Probabilities:</b><br>";
+		var prob_entries = [];
+		for(var i = 0; i < probs.length; i++) {
+			if(probs[i] > 0.01) {
+				prob_entries.push("<span style='display: inline-block; width: 40px;'>" + (vocab_inv[i] || "?") + "</span>: " + (probs[i] * 100).toFixed(1) + "%");
+			}
+		}
+		html += prob_entries.join("&nbsp;&nbsp;");
+		await dispose(input_tensor, res);
+	}
+
+	html += "</div>";
+	$("#predict_text_result").html(html);
+}
+
+function update_predict_text_input_visibility() {
+	var config_url = "traindata/" + $("#dataset").val() + ".json";
+	get_cached_json(config_url).then(function(config) {
+		if(config && config.vocab) {
+			$("#predict_text_input_wrapper").show();
+			$("#predict_own_data").hide();
+			var context_length = 3;
+			if(model && model.layers && model.layers[0]) {
+				var is = model.layers[0].input.shape;
+				if(is && is.length > 1) context_length = is[is.length - 1];
+			}
+			var vocab_words = Object.values(config.vocab).join(", ");
+			$("#predict_text_input").attr("placeholder", "e.g. " + vocab_words.split(", ").slice(0, context_length).join(" "));
+			$("#predict_text_result").html("<span style='color: #999;'>Type " + context_length + " words and press Enter.</span>");
+		} else {
+			$("#predict_text_input_wrapper").hide();
+			$("#predict_own_data").show();
+		}
+	});
+}
