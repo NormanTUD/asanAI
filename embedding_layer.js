@@ -111,3 +111,70 @@ class SimpleAttention extends tf.layers.Layer {
     }
 }
 tf.serialization.registerClass(SimpleAttention);
+
+/**
+ * Unembedding Layer for asanAI.
+ * Takes [batch, seq_len, hidden_dim] and projects the LAST token's
+ * hidden state back to vocabulary size via a learned weight matrix + softmax.
+ * This is the inverse of AsanEmbedding: hidden space → vocabulary logits.
+ */
+class Unembedding extends tf.layers.Layer {
+    constructor(config) {
+        super(config);
+        this.vocabSize = config.vocabSize || 10;
+    }
+
+    build(inputShape) {
+        const hiddenDim = inputShape[inputShape.length - 1];
+        this.kernel = this.addWeight(
+            'kernel',
+            [hiddenDim, this.vocabSize],
+            'float32',
+            tf.initializers.glorotUniform({})
+        );
+        this.bias = this.addWeight(
+            'bias',
+            [this.vocabSize],
+            'float32',
+            tf.initializers.zeros({})
+        );
+    }
+
+    call(inputs, kwargs) {
+        return tf.tidy(() => {
+            const input = inputs instanceof Array ? inputs[0] : inputs;
+            // input shape: [batch, seq_len, hidden_dim]
+            const batchSize = input.shape[0];
+            const seqLen = input.shape[1];
+            const hiddenDim = input.shape[2];
+
+            // Take the LAST token's hidden state: [batch, hidden_dim]
+            const lastToken = input.slice(
+                [0, seqLen - 1, 0],
+                [batchSize, 1, hiddenDim]
+            ).reshape([batchSize, hiddenDim]);
+
+            // Project to vocab: [batch, vocab_size]
+            const logits = tf.add(tf.matMul(lastToken, this.kernel.read()), this.bias.read());
+
+            return tf.softmax(logits);
+        });
+    }
+
+    computeOutputShape(inputShape) {
+        return [inputShape[0], this.vocabSize];
+    }
+
+    getConfig() {
+        const config = super.getConfig();
+        Object.assign(config, {
+            vocabSize: this.vocabSize
+        });
+        return config;
+    }
+
+    static get className() {
+        return 'Unembedding';
+    }
+}
+tf.serialization.registerClass(Unembedding);
