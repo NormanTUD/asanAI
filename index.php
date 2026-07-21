@@ -123,7 +123,6 @@
 		_js("updated_page.js");
 		_js("trace_through_loss_landscape.js");
 		_js("topological_analyzer.js");
-		_js("decision_explorer.js");
 		_js("gui.js");
 		_js("summary.js");
 		_js("custom_images.js");
