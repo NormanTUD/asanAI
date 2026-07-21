@@ -1595,7 +1595,7 @@ In general, it is recommended to avoid using the zero initializer and instead us
 
 It's important to keep in mind that the zero initialization is not always the best choice, and it depends on the architecture of the model, the dataset used and the optimizer and problem you're trying to solve.
 
-			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>zeros</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
 			$$
 			\left(\underbrace{\begin{pmatrix}
