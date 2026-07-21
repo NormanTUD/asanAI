@@ -1487,6 +1487,10 @@ function validate_model_io_shapes(x_shape, y_shape) {
 		const model_dim = output_shape[i];
 
 		if (model_dim !== null && y_dim !== model_dim) {
+			var current_loss = typeof get_loss === "function" ? get_loss() : "";
+			if(current_loss.includes("sparse") && i === output_shape.length - 1 && y_dim === 1) {
+				continue;
+			}
 			err(`Output dimension ${i} mismatch: y has ${y_dim}, model expects ${model_dim}.`);
 			return false;
 		}
