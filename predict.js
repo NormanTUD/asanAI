@@ -2512,8 +2512,7 @@ async function predict_from_text_input() {
 	}
 
 	var html = "<div style='margin-top: 4px;'>";
-	var display_words = words.slice(words.length - context_length);
-	html += "<b>Input:</b> <i>" + display_words.join(" ") + "</i> &nbsp; tokens [" + token_ids.join(", ") + "]<br>";
+	html += "<b>Input:</b> <i>" + words.join(" ") + "</i><br>";
 
 	if(res) {
 		var res_array = tidy(() => array_sync(res));
