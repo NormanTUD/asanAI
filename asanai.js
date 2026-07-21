@@ -507,7 +507,13 @@ class asanAI {
 		"GaussianNoise": "gaussianNoise",
 		"gaussianNoise": "GaussianNoise",
 		"gaussianDropout": "GaussianDropout",
-		"GaussianDropout": "gaussianDropout"
+		"GaussianDropout": "gaussianDropout",
+		"inputDim": "input_dim",
+		"outputDim": "output_dim",
+		"vocabSize": "vocab_size",
+		"AsanEmbedding": "AsanEmbedding",
+		"SimpleAttention": "SimpleAttention",
+		"Unembedding": "Unembedding"
 	};
 
 	#layer_options = {
