@@ -1597,7 +1597,6 @@ function show_multi_run_statistics(results) {
 	html += '<th><span class="TRANSLATEME_mean"></span></th>';
 	html += '<th><span class="TRANSLATEME_min"></span></th>';
 	html += '<th><span class="TRANSLATEME_max"></span></th>';
-	html += '<th><span class="TRANSLATEME_coefficient_of_variation"></span></th>';
 	html += '<th><span class="TRANSLATEME_best_run"></span></th>';
 	html += '<th><span class="TRANSLATEME_worst_run"></span></th>';
 	html += '</tr>';
@@ -1606,7 +1605,6 @@ function show_multi_run_statistics(results) {
 	html += '<td>' + lossStats.mean.toFixed(4) + '</td>';
 	html += '<td>' + lossStats.min.toFixed(4) + '</td>';
 	html += '<td>' + lossStats.max.toFixed(4) + '</td>';
-	html += '<td>' + lossStats.cv.toFixed(1) + '%</td>';
 	html += '<td>#' + (losses.indexOf(lossStats.min) + 1) + '</td>';
 	html += '<td>#' + (losses.indexOf(lossStats.max) + 1) + '</td>';
 	html += '</tr>';
@@ -1617,7 +1615,6 @@ function show_multi_run_statistics(results) {
 		html += '<td>' + valLossStats.mean.toFixed(4) + '</td>';
 		html += '<td>' + valLossStats.min.toFixed(4) + '</td>';
 		html += '<td>' + valLossStats.max.toFixed(4) + '</td>';
-		html += '<td>' + valLossStats.cv.toFixed(1) + '%</td>';
 		html += '<td>#' + (valLosses.indexOf(valLossStats.min) + 1) + '</td>';
 		html += '<td>#' + (valLosses.indexOf(valLossStats.max) + 1) + '</td>';
 		html += '</tr>';
@@ -1629,7 +1626,6 @@ function show_multi_run_statistics(results) {
 		html += '<td>' + (accStats.mean * 100).toFixed(1) + '%</td>';
 		html += '<td>' + (accStats.min * 100).toFixed(1) + '%</td>';
 		html += '<td>' + (accStats.max * 100).toFixed(1) + '%</td>';
-		html += '<td>' + accStats.cv.toFixed(1) + '%</td>';
 		html += '<td>#' + (accs.indexOf(accStats.max) + 1) + '</td>';
 		html += '<td>#' + (accs.indexOf(accStats.min) + 1) + '</td>';
 		html += '</tr>';
