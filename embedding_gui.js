@@ -32,7 +32,7 @@ layer_options["SimpleAttention"] = {
 layer_options["Unembedding"] = {
     "description": `<span class="TRANSLATEME_unembedding_description">Unembedding Layer: Projects the last token's hidden state back to vocabulary size via a learned weight matrix + softmax. This is the inverse of the embedding layer, used as the final output layer for next-word prediction models.</span>`,
     "options": [
-        "vocabSize",
+        "vocab_size",
         "trainable"
     ],
     "category": "Embedding",

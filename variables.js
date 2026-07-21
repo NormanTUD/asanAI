@@ -1496,7 +1496,8 @@ var general_options = {
 	"depthwise_regularizer_l2": `"l2", "depthwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 
 	"input_dim": `"Input Dim (Vocab Size)", "input_dim", "number", { "min": 1, "max": 100000, "step": 1, "value": 100 }, nr`,
-	"output_dim": `"Output Dim (Embedding Size)", "output_dim", "number", { "min": 1, "max": 4096, "step": 1, "value": 32 }, nr`
+	"output_dim": `"Output Dim (Embedding Size)", "output_dim", "number", { "min": 1, "max": 4096, "step": 1, "value": 32 }, nr`,
+	"vocab_size": `"Vocab Size", "vocab_size", "number", { "min": 1, "max": 100000, "step": 1, "value": 100 }, nr`
 
 };
 
