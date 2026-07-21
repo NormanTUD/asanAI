@@ -1,6 +1,8 @@
 <?php
 $GLOBALS['translations'] = array(
 	'en' => array(
+		"residual_stream_description" => "The residual stream acts as the primary communication highway in a Transformer architecture, carrying information across layers and allowing skip connections that enable efficient gradient flow during training.",
+		"attention_description" => "The attention mechanism allows the model to dynamically focus on different parts of the input sequence, weighting the importance of relationships between tokens regardless of their distance.",
 		"embedding_description" => "This layer turns positive integers (indexes) into dense vectors of fixed size. It is commonly used for processing discrete categorical data, such as words in text processing.",
 		"no_valid_numbers_found" => "No valid numbers found.",
 		"no_y" => "No Y",
@@ -1234,6 +1236,8 @@ $GLOBALS['translations'] = array(
 	),
 
 	'de' => array(
+		"residual_stream_description" => "Der Residual Stream dient als zentrale Kommunikationsachse in der Transformer-Architektur. Er leitet Informationen über mehrere Schichten hinweg weiter und ermöglicht Skip-Connections für einen effizienten Gradientenfluss beim Training.",
+		"attention_description" => "Der Attention-Mechanismus ermöglicht es dem Modell, sich dynamisch auf verschiedene Teile der Eingabesequenz zu konzentrieren und die Relevanz der Beziehungen zwischen einzelnen Tokens unabhängig von deren Abstand zu gewichten.",
 		"embedding_description" => "Diese Schicht wandelt positive Ganzzahlen (Indizes) in dichte Vektoren fester Größe um. Sie wird häufig verwendet, um diskrete kategoriale Daten wie z. B. Wörter bei der Textverarbeitung zu verarbeiten.",
 		"no_valid_numbers_found" => "Keine validen Zahlen gefunden.",
 		"no_y" => "Kein Y",
