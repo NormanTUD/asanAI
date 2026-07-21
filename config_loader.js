@@ -272,6 +272,20 @@ async function apply_keras_layers_to_ui_from_config(config, keras_layers) {
 		populate_layer_settings_from_config(config);
 	}
 
+	if (config["skip_connections"] && Array.isArray(config["skip_connections"])) {
+		for (var sc_idx = 0; sc_idx < config["skip_connections"].length; sc_idx++) {
+			var layer_nr = config["skip_connections"][sc_idx];
+			if (!skip_connection_settings[layer_nr]) {
+				skip_connection_settings[layer_nr] = { enabled: false, initializer: "glorotUniform", initializer_params: {} };
+			}
+			skip_connection_settings[layer_nr].enabled = true;
+			var $checkbox = $($(".layer_setting")[layer_nr]).find(".skip_connection_enabled");
+			if ($checkbox.length) {
+				$checkbox.prop("checked", true).trigger("change");
+			}
+		}
+	}
+
 	return keras_layers;
 }
 
