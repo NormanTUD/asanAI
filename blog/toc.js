@@ -25,15 +25,15 @@ function toc() {
 	// 1. Setup Styles
 	var s = document.createElement("style");
 	s.textContent = `
-	#toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 14px 18px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; line-height: 1.4; }
-	#toc ul { list-style: none; padding-left: 15px; margin: 4px 0; }
-	#toc a { text-decoration: none; color: #0044aa; font-size: 0.94em; cursor: pointer; }
+	#toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; line-height: 1.3; column-count: 2; column-gap: 20px; }
+	#toc ul { list-style: none; padding-left: 12px; margin: 2px 0; }
+	#toc a { text-decoration: none; color: #0044aa; font-size: 0.85em; cursor: pointer; }
 	#toc a:hover { text-decoration: underline; color: #cc3300; }
 	#toc ul ul { display: none; } 
 	#toc li.expanded > ul { display: block; } 
-	.toggle-icon { display: inline-block; width: 14px; cursor: pointer; color: #888; font-size: 0.8em; user-select: none; visibility: hidden; }
+	.toggle-icon { display: inline-block; width: 12px; cursor: pointer; color: #888; font-size: 0.75em; user-select: none; visibility: hidden; }
 	.has-children > .toggle-icon { visibility: visible; }
-	.toc-item { margin: 4px 0; }
+	.toc-item { margin: 1px 0; break-inside: avoid; }
     `;
 	document.head.appendChild(s);
 

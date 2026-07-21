@@ -353,7 +353,7 @@ window.bibData = {
 		url: "https://mathigon.org/timeline/fibonacci"
 	},
 	"brahmagupta628": {
-		title: "Brāhmasphuṭasiddhānta",
+		title: "ब्राह्मस्फुटसिद्धान्त (Brāhmasphuṭasiddhānta)",
 		author: "Brahmagupta",
 		year: 628,
 		url: "https://archive.org/details/Brahmasphutasiddhanta"
