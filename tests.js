@@ -3775,6 +3775,38 @@ async function test_multi_run_training() {
 	test_equal("loss max >= mean", lossMax >= lossMean, true);
 	test_equal("loss min <= loss max", lossMin <= lossMax, true);
 
+	var runTabs = statsEl.querySelectorAll(".multi_run_tab");
+	test_equal("run tabs count", runTabs.length, wanted_runs);
+
+	var activeTabs = statsEl.querySelectorAll(".multi_run_tab_active");
+	test_equal("one active tab", activeTabs.length, 1);
+
+	var chartAreas = statsEl.querySelectorAll(".multi_run_chart_area");
+	test_equal("chart areas count", chartAreas.length, wanted_runs);
+
+	var visibleCharts = statsEl.querySelectorAll(".multi_run_chart_area[style*='block']");
+	test_equal("one visible chart", visibleCharts.length, 1);
+
+	var multiRunDataKeys = Object.keys(multi_run_data).filter(function(k) { return multi_run_data[k] && multi_run_data[k].weights; });
+	test_equal("multi_run_data has saved weights", multiRunDataKeys.length, wanted_runs);
+
+	var hasPlotData = Object.keys(multi_run_data).filter(function(k) { return multi_run_data[k] && multi_run_data[k].plotData; });
+	test_equal("multi_run_data has plot data", hasPlotData.length, wanted_runs);
+
+	var savedWeights0 = multi_run_data[1].weights;
+	restore_multi_run_weights(1);
+	var currentWeights1 = model.layers[0].getWeights()[0].arraySync();
+	test_equal("restore_multi_run_weights restores weights", true, JSON.stringify(currentWeights1) === JSON.stringify(savedWeights0[0][0]));
+
+	show_multi_run_run_chart(2);
+	test_equal("show_multi_run_run_chart sets current_multi_run", current_multi_run, 2);
+	test_equal("chart 2 is active", $(".multi_run_tab[data-run=2]").hasClass("multi_run_tab_active"), true);
+	test_equal("chart 1 is hidden", $("#multi_run_chart_1").is(":visible"), false);
+	test_equal("chart 2 is visible", $("#multi_run_chart_2").is(":visible"), true);
+
+	show_multi_run_run_chart(wanted_runs);
+	test_equal("chart " + wanted_runs + " is active after selecting it", $(".multi_run_tab[data-run=" + wanted_runs + "]").hasClass("multi_run_tab_active"), true);
+
 	return true;
 }
 

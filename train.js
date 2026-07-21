@@ -1,5 +1,60 @@
 "use strict";
 
+var multi_run_data = {};
+var current_multi_run = 0;
+
+function save_multi_run_weights(run) {
+	if (!model) return;
+	multi_run_data[run].weights = model.layers.map(function(layer) {
+		return layer.getWeights().map(function(w) {
+			return w.arraySync();
+		});
+	});
+}
+
+function restore_multi_run_weights(run) {
+	if (!model || !multi_run_data[run] || !multi_run_data[run].weights) return false;
+	model.layers.forEach(function(layer, li) {
+		var saved = multi_run_data[run].weights[li];
+		if (saved) {
+			layer.setWeights(saved.map(function(arr) {
+				return tf.tensor(arr);
+			}));
+		}
+	});
+	return true;
+}
+
+function show_multi_run_run_chart(run) {
+	if (!multi_run_data[run] || !multi_run_data[run].plotData) return;
+	current_multi_run = run;
+
+	var plotData = multi_run_data[run].plotData;
+	var traces = [];
+	Object.keys(plotData).forEach(function(key) {
+		if (plotData[key].x && plotData[key].x.length) {
+			traces.push(JSON.parse(JSON.stringify(plotData[key])));
+		}
+	});
+
+	$(".multi_run_tab").removeClass("multi_run_tab_active");
+	$(".multi_run_tab[data-run=" + run + "]").addClass("multi_run_tab_active");
+
+	$(".multi_run_chart_area").hide();
+	var chartId = "multi_run_chart_" + run;
+	var chartEl = document.getElementById(chartId);
+	if (chartEl) {
+		$(chartEl).show();
+	}
+
+	if (traces.length) {
+		Plotly.newPlot(chartId, traces, get_plotly_layout(language[lang]["epochs"], "Loss"));
+	}
+
+	restore_multi_run_weights(run);
+	l("[multi-run] Restored weights and chart for run " + run);
+}
+
 async function check_signal_flow() {
 	if (!model || !model.layers || !model.layers.length) {
 		wrn("[check_signal_flow] No model available.");
@@ -1637,10 +1692,37 @@ function show_multi_run_statistics(results) {
 		html += '</tr>';
 	});
 
-	html += '</table></div>';
+	html += '</table>';
+
+	var lastRun = results.length;
+	html += '<div class="multi_run_tabs">';
+	results.forEach(function(r, i) {
+		var runNr = i + 1;
+		var activeClass = runNr === lastRun ? " multi_run_tab_active" : "";
+		var lossVal = r.history.loss[r.history.loss.length - 1].toFixed(4);
+		html += '<button class="multi_run_tab' + activeClass + '" data-run="' + runNr + '">#' + runNr + ' (' + lossVal + ')</button>';
+	});
+	html += '</div>';
+
+	results.forEach(function(r, i) {
+		var runNr = i + 1;
+		var display = runNr === lastRun ? "block" : "none";
+		html += '<div id="multi_run_chart_' + runNr + '" class="multi_run_chart_area" style="display:' + display + ';"></div>';
+	});
+
+	html += '</div>';
 
 	$("#multi_run_stats").html(html).show();
 	update_translations();
+
+	current_multi_run = lastRun;
+
+	$(".multi_run_tab").on("click", function() {
+		var run = parseInt($(this).data("run"));
+		show_multi_run_run_chart(run);
+	});
+
+	show_multi_run_run_chart(lastRun);
 }
 
 async function multi_train_neural_network(num_runs) {
@@ -1679,8 +1761,13 @@ async function multi_train_neural_network(num_runs) {
 	var validationSplit = parse_int($("#validationSplit").val()) / 100;
 	var shuffle = $("#shuffle_before_each_epoch").is(":checked");
 
+	multi_run_data = {};
+	current_multi_run = 0;
+
 	for (var run = 1; run <= num_runs; run++) {
 		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");
+
+		multi_run_data[run] = { weights: null, plotData: null };
 
 		training_logs_epoch = get_empty_plotly("Loss");
 		training_logs_batch = get_empty_plotly("Loss");
@@ -1744,6 +1831,11 @@ async function multi_train_neural_network(num_runs) {
 			assert(typeof h === "object", "history object is not of type object");
 			model_is_trained = true;
 			reset_predict_container_after_training();
+
+			save_multi_run_weights(run);
+
+			multi_run_data[run].plotData = JSON.parse(JSON.stringify(training_logs_epoch));
+			l("[multi-train] run " + run + ": saved weights and plot data");
 
 			results.push({ run: run, history: h.history });
 

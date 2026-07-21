@@ -804,6 +804,37 @@ button:disabled:hover {
 	border-left: 3px solid #2ecc71;
 }
 
+.multi_run_tabs {
+	display: flex;
+	gap: 6px;
+	margin: 12px 0 8px 0;
+	flex-wrap: wrap;
+}
+
+.multi_run_tab {
+	padding: 6px 14px;
+	border: 1px solid #999;
+	border-radius: 4px;
+	background: rgba(0,0,0,0.05);
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.multi_run_tab:hover {
+	background: rgba(0,0,0,0.1);
+}
+
+.multi_run_tab_active {
+	background: rgba(52,152,219,0.2);
+	border-color: #3498db;
+	font-weight: bold;
+}
+
+.multi_run_chart_area {
+	margin: 8px 0;
+	min-height: 200px;
+}
+
 .ribbon-group {
 	margin: 0px;
 	padding: 0px;
