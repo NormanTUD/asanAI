@@ -284,8 +284,7 @@ var js_names_to_python_names = {
 	"inputDim": `input_dim`,
 	"outputDim": `output_dim`,
 	"AsanEmbedding": `AsanEmbedding`,
-	"SimpleAttention": `SimpleAttention`,
-	"ResidualStream": `ResidualStream`
+	"SimpleAttention": `SimpleAttention`
 };
 
 var python_names_to_js_names = {};

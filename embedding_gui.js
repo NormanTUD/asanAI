@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * GUI integration for Embedding, Attention, and ResidualStream layers.
+ * GUI integration for Embedding and Attention layers.
  * This file registers the layers in layer_options and provides
  * the necessary helper functions.
  */
@@ -29,14 +29,7 @@ layer_options["SimpleAttention"] = {
     "custom": 1
 };
 
-layer_options["ResidualStream"] = {
-    "description": `<span class="TRANSLATEME_residual_stream_description">Residual Stream: Adds a skip connection from the input of this layer to its output (identity). Useful after Attention or Dense layers to preserve information flow.</span>`,
-    "options": [
-        "trainable"
-    ],
-    "category": "Embedding",
-    "custom": 1
-};
+
 
 // === Register layer_options_defaults for new options ===
 
@@ -52,7 +45,6 @@ if (typeof js_names_to_python_names !== "undefined") {
     js_names_to_python_names["outputDim"] = "output_dim";
     js_names_to_python_names["AsanEmbedding"] = "AsanEmbedding";
     js_names_to_python_names["SimpleAttention"] = "SimpleAttention";
-    js_names_to_python_names["ResidualStream"] = "ResidualStream";
 }
 
 if (typeof python_names_to_js_names !== "undefined") {
@@ -69,9 +61,6 @@ if (typeof layer_names !== "undefined") {
     if (!layer_names.includes("SimpleAttention")) {
         layer_names.push("SimpleAttention");
     }
-    if (!layer_names.includes("ResidualStream")) {
-        layer_names.push("ResidualStream");
-    }
 }
 
 // === valid_layer_options registration ===
@@ -79,7 +68,6 @@ if (typeof layer_names !== "undefined") {
 if (typeof valid_layer_options !== "undefined") {
     valid_layer_options["AsanEmbedding"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputDim", "inputLength", "inputShape", "maskZero", "name", "outputDim", "trainable", "weights"];
     valid_layer_options["SimpleAttention"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "units", "weights"];
-    valid_layer_options["ResidualStream"] = ["args", "batchInputShape", "batchSize", "dtype", "inputDType", "inputShape", "name", "trainable", "weights"];
 }
 
 // === Embedding data inspection utility ===
