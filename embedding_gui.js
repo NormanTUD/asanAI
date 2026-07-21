@@ -46,7 +46,7 @@ layer_options["Unembedding"] = {
 if (typeof layer_options_defaults !== "undefined") {
     layer_options_defaults["input_dim"] = 100;
     layer_options_defaults["output_dim"] = 32;
-    layer_options_defaults["vocabSize"] = 100;
+    layer_options_defaults["vocab_size"] = 100;
 }
 
 // === Register in js_names_to_python_names ===
