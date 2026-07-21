@@ -1789,7 +1789,7 @@ function load_msg_advance(msg) {
 
 	var msg_el = $("#load_msg");
 	if (msg_el.length) {
-		msg_el.html("<span style='font-size: 2.5vw; opacity: 0.85;'>" + msg + "</span>");
+		msg_el.html(msg);
 	}
 }
 

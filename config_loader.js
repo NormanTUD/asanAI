@@ -15,13 +15,12 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	l(msg);
 
-	var spinner = "";
-
-	if(finished_loading) {
-		spinner = `<div class="spinner"></div> `;
+	if (!finished_loading) {
+		load_msg_advance(msg + "...");
+	} else {
+		var spinner = `<div class="spinner"></div> `;
+		var overlay = load_msg({"title": `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${msg}...</span>`});
 	}
-
-	var overlay = load_msg({"title": `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${msg}...</span>`});
 
 	var original_disabling_saving_status = disabling_saving_status;
 	disabling_saving_status = true;

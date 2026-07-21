@@ -1541,10 +1541,29 @@ input, select {
 	font-variant-numeric: oldstyle-nums;
 }
 
+.loading_bg {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	width: 100vw;
+	pointer-events: none;
+	user-select: none;
+	flex-direction: column;
+	background: linear-gradient(160deg, #e8f0fe 0%, #ffffff 40%, #f0f4ff 70%, #e3ecfb 100%);
+	background-size: 200% 200%;
+	animation: gradient_shift 8s ease-in-out infinite alternate;
+}
+
+@keyframes gradient_shift {
+	0% { background-position: 0% 0%; }
+	100% { background-position: 100% 100%; }
+}
+
 .spinner {
 	will-change: transform;
-	border: 8px solid rgba(0, 0, 0, 0.1); /* Light mode spinner color */
-	border-left: 8px solid #3498db; /* Spinner color */
+	border: 8px solid rgba(0, 0, 0, 0.1);
+	border-left: 8px solid #3498db;
 	border-radius: 50%;
 	width: 50px;
 	height: 50px;
@@ -1557,10 +1576,20 @@ input, select {
 }
 
 #load_msg_steps {
-	flex-direction: row !important;
-	gap: 0.6vw !important;
-	margin-top: 2.5vh !important;
+	display: flex;
+	flex-direction: row;
+	gap: 0.8vw;
+	margin-top: 3vh;
 	align-items: center;
+}
+
+#load_msg {
+	margin-top: 1.5vh;
+	text-align: center;
+	max-width: 80vw;
+	font-size: 2.5vw;
+	opacity: 0.85;
+	letter-spacing: 0.02em;
 }
 
 .load_step_dot {
@@ -1572,7 +1601,7 @@ input, select {
 }
 
 .load_step_pending .load_step_dot {
-	background-color: rgba(0, 0, 0, 0.15);
+	background-color: rgba(0, 0, 0, 0.12);
 }
 
 .load_step_done .load_step_dot {
