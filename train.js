@@ -293,13 +293,40 @@ function show_training_history_run(idx, showBatch) {
 	}
 }
 
+function toggle_training_history_collapsible() {
+	var $header = $("#training_history_tabs .training_history_collapsible_header");
+	var $body = $("#training_history_tabs .training_history_collapsible_body");
+	var $icon = $header.find(".training_history_collapsible_icon");
+	var isCollapsed = $body.hasClass("collapsed");
+
+	if (isCollapsed) {
+		$body.removeClass("collapsed").css("max-height", $body[0].scrollHeight + "px").css("opacity", "1");
+		$icon.removeClass("collapsed");
+		$header.data("expanded", true);
+	} else {
+		$body.addClass("collapsed").css("max-height", "0").css("opacity", "0");
+		$icon.addClass("collapsed");
+		$header.data("expanded", false);
+	}
+}
+
 function render_training_history_tabs() {
 	if (training_history.length === 0) {
 		$("#training_history_tabs").html("").hide();
 		return;
 	}
 
-	var html = '<div class="training_history_tabs">';
+	var wasExpanded = $("#training_history_tabs .training_history_collapsible_header").data("expanded");
+
+	var html = '<div class="training_history_collapsible_header" onclick="toggle_training_history_collapsible()" data-expanded="false">';
+	html += '<span class="training_history_collapsible_icon collapsed">&#9660;</span>';
+	html += '<span class="TRANSLATEME_training_history"></span>';
+	html += '<span style="opacity:0.5; font-size:12px;"> (' + training_history.length + ')</span>';
+	html += '</div>';
+
+	html += '<div class="training_history_collapsible_body collapsed">';
+
+	html += '<div class="training_history_tabs">';
 	training_history.forEach(function(entry, i) {
 		var activeClass = i === training_history.length - 1 ? " training_history_tab_active" : "";
 		var lossStr = entry.loss !== null ? entry.loss.toFixed(4) : "?";
@@ -316,6 +343,8 @@ function render_training_history_tabs() {
 		var display = i === training_history.length - 1 ? "block" : "none";
 		html += '<div id="training_history_chart_' + i + '" class="training_history_chart_area" style="display:' + display + ';"></div>';
 	});
+
+	html += '</div>';
 
 	$("#training_history_tabs").html(html).show();
 
@@ -335,6 +364,11 @@ function render_training_history_tabs() {
 
 	var lastIdx = training_history.length - 1;
 	show_training_history_run(lastIdx, false);
+
+	if (wasExpanded) {
+		$("#training_history_tabs .training_history_collapsible_header").data("expanded", false);
+		toggle_training_history_collapsible();
+	}
 }
 
 async function incrementAndReset() {

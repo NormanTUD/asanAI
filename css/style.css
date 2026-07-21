@@ -834,6 +834,45 @@ button:disabled:hover {
 	margin: 8px 0;
 }
 
+.training_history_collapsible_header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	padding: 6px 10px;
+	margin: 12px 0 4px 0;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background: rgba(0,0,0,0.03);
+	font-size: 13px;
+	user-select: none;
+}
+
+.training_history_collapsible_header:hover {
+	background: rgba(0,0,0,0.07);
+}
+
+.training_history_collapsible_icon {
+	font-size: 10px;
+	transition: transform 0.2s;
+	display: inline-block;
+}
+
+.training_history_collapsible_icon.collapsed {
+	transform: rotate(-90deg);
+}
+
+.training_history_collapsible_body {
+	overflow: hidden;
+	transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.training_history_collapsible_body.collapsed {
+	max-height: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+
 .training_history_tabs {
 	display: flex;
 	gap: 6px;
