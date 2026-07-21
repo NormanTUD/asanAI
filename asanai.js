@@ -192,7 +192,7 @@ class asanAI {
 			]
 		},
 		"leCunNormal": {
-			"description": "It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(1 / fanIn) where fanIn is the number of input units in the weight tensor.", // TODO References
+			"description": "It draws samples from a truncated normal distribution centered on 0 with stddev = sqrt(1 / fanIn) where fanIn is the number of input units in the weight tensor. References: Klambauer et al., 2017, 'Self-Normalizing Neural Networks', NeurIPS 2018.",
 			"options": [
 				"seed"
 			]
@@ -208,7 +208,7 @@ class asanAI {
 			"options": []
 		},
 		"orthogonal": {
-			"description": "Initializer that generates a random orthogonal matrix.", // TODO References
+			"description": "Initializer that generates a random orthogonal matrix. References: Saxe, McClelland & Ganguli, 2014, 'Exact solutions to the nonlinear dynamics of learning in deep linear neural networks', ICLR 2014.",
 			"options": [
 				"gain", "seed"
 			]
@@ -2078,9 +2078,8 @@ class asanAI {
 		};
 	}
 
-	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) {
+	draw_fcnn (divname=this.#fcnn_div_name, max_neurons=32, hide_text=this.#hide_fcnn_text) { // TODO: max neurons
 		this.#hide_fcnn_text = hide_text;
-		this.#max_neurons_fcnn = max_neurons;
 		if(!divname) {
 			this.err("[draw_fcnn] Cannot continue draw_fcnn without a divname");
 			return;
@@ -5055,8 +5054,8 @@ class asanAI {
 	}
 
 	#last_layer_is_softmax () {
+		// TODO
 		var _last_layer_is_softmax = this.#model.layers[this.#model.layers.length - 1].activation;
-		return _last_layer_is_softmax;
 	}
 
 	enable_show_bars() {
