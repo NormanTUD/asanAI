@@ -2834,7 +2834,8 @@ function parseCD(parser) {
     parsedRows.push(parser.parseExpression(false, "\\\\"));
     parser.gullet.endGroup();
     parser.gullet.beginGroup();
-    const next = parser.fetch().text;
+    const _fetchedToken = parser.fetch();
+    const next = (_fetchedToken && typeof _fetchedToken.text === "string") ? _fetchedToken.text : "";
     if (next === "&" || next === "\\\\") {
       parser.consume();
     } else if (next === "\\end") {
