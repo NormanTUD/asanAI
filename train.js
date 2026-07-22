@@ -2469,39 +2469,77 @@ function _draw_grid_dividers_on_ctx(ctx, numCategories, margin, colWidth, scaleW
 
 function _draw_grid_images_on_ctx(ctx, images, categories, probabilities, counters, margin, graphHeight, colWidth, scaleWidth) {
 	var maxProb = 1;
-	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]);
+	var modelWidth = (model && model.input && model.input.shape && model.input.shape[1]) ? model.input.shape[1] : 28;
+	var modelHeight = (model && model.input && model.input.shape && model.input.shape[2]) ? model.input.shape[2] : 28;
+	var targetSize = Math.min(modelWidth, modelHeight);
 
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
 		var image = images[image_idx];
 		var category = categories[image_idx];
 		var probability = probabilities[image_idx];
 
+		if (!image || category === undefined || category === null || !isFinite(category)) {
+			continue;
+		}
+
+		if (probability === undefined || probability === null || !isFinite(probability)) {
+			probability = 0;
+		}
+
 		if (counters.real_canvas_img_counter[category] > 0) {
-			targetSize = colWidth / counters.real_canvas_img_counter[category];
-			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize);
+			var computedSize = colWidth / counters.real_canvas_img_counter[category];
+			targetSize = Math.min(modelWidth, modelHeight, computedSize);
+		}
+
+		if (!isFinite(targetSize) || targetSize <= 0) {
+			targetSize = 28;
 		}
 
 		var colLeft = scaleWidth + category * colWidth;
+		if (!isFinite(colLeft)) {
+			colLeft = scaleWidth || 0;
+		}
+
 		var xPos = margin;
-		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
+		var yPos = margin + graphHeight - (probability / maxProb) * graphHeight;
+		if (!isFinite(yPos)) {
+			yPos = margin;
+		}
 
-		var scale = targetSize / Math.max(image.width, image.height);
-		var w = image.width * scale;
-		var h = image.height * scale;
+		var imgW = image.width || targetSize;
+		var imgH = image.height || targetSize;
+		var scale = targetSize / Math.max(imgW, imgH, 1);
+		var w = imgW * scale;
+		var h = imgH * scale;
 
-		var imageX = (colLeft + xPos - (model?.input?.shape[2] || 0) / 2);
-		imageX += counters.canvas_img_counter[category] * targetSize;
+		if (!isFinite(w) || w <= 0) w = targetSize;
+		if (!isFinite(h) || h <= 0) h = targetSize;
 
-		if (imageX < colLeft || isNaN(imageX)) {
+		var halfModelHeight = modelHeight / 2;
+		var counterOffset = (counters.canvas_img_counter[category] || 0) * targetSize;
+
+		var imageX = colLeft + xPos - halfModelHeight + counterOffset;
+
+		if (!isFinite(imageX) || imageX < colLeft) {
 			imageX = colLeft;
 		}
 
-		imageX = parse_int(imageX);
+		var imageY = yPos - h / 2;
+		if (!isFinite(imageY)) {
+			imageY = margin;
+		}
 
-		var imageY = parse_int(yPos - h / 2);
-		ctx.drawImage(image, imageX, imageY, w, h);
+		imageX = Math.round(imageX);
+		imageY = Math.round(imageY);
 
-		counters.canvas_img_counter[category]++;
+		try {
+			ctx.drawImage(image, imageX, imageY, w, h);
+		} catch (e) {
+			// Skip images that can't be drawn (e.g., broken/not-loaded)
+			dbg("[_draw_grid_images_on_ctx] drawImage failed for image_idx=" + image_idx + ": " + e);
+		}
+
+		counters.canvas_img_counter[category] = (counters.canvas_img_counter[category] || 0) + 1;
 	}
 }
 
