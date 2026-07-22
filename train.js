@@ -2492,7 +2492,7 @@ function _draw_grid_images_on_ctx(ctx, images, categories, probabilities, counte
 		var imageX = (colLeft + xPos - (model?.input?.shape[2] || 0) / 2);
 		imageX += counters.canvas_img_counter[category] * targetSize;
 
-		if (imageX < colLeft) {
+		if (imageX < colLeft || isNaN(imageX)) {
 			imageX = colLeft;
 		}
 
