@@ -1353,11 +1353,10 @@ function _viz_bends_detect_bend_points(layerData, xs, combinedY, xMin, xMax, has
 					const pPre = prevPre[l][j];
 					const cPre = currPre[l][j];
 
-					if (pPre * cPre < 0) {
-						const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
-						const bendX = (x - scanStep) + t * scanStep;
-						bendResults.push({ x: bendX, layer: l, neuron: j });
-					}
+				if (pPre * cPre >= 0) continue;
+				const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
+				const bendX = (x - scanStep) + t * scanStep;
+				bendResults.push({ x: bendX, layer: l, neuron: j });
 				}
 			}
 
