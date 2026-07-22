@@ -712,6 +712,73 @@ function hide_layer_visualization_header_if_unused (layer) {
 
 }
 
+function _add_layer_debugger_hook (layer_idx) {
+	if(get_methods(model?.layers[layer_idx]).includes("original_apply_real")) {
+		model.layers[layer_idx].apply = model.layers[layer_idx].original_apply_real;
+	}
+
+	model.layers[layer_idx].original_apply_real = model.layers[layer_idx].apply;
+
+	var code = `model.layers[${layer_idx}].apply = function (inputs, kwargs) {
+		if (${layer_idx} == 0) {
+			layer_states_saved = {}
+		}
+
+		var output = model?.layers[${layer_idx}]?.original_apply_real(inputs, kwargs);
+
+		var shown_layer_debuggers = false;
+
+		if(!disable_layer_debuggers) {
+			if($("#show_layer_data").is(":checked")) {
+				$("#layer_visualizations_tab").show();
+				draw_internal_states(${layer_idx}, inputs, output);
+				shown_layer_debuggers = true;
+			}
+		}
+
+		if(!shown_layer_debuggers) {
+			$("#layer_visualizations_tab").hide();
+		}
+
+		const synced_output = array_sync(output);
+
+		const synced_input = array_sync(inputs[0]);
+
+		var this_layer_data = {
+			input: synced_input,
+			output: synced_output,
+			model_uuid: model.uuid
+		};
+
+		layer_states_saved["${layer_idx}"] = this_layer_data;
+
+		if(started_training) {
+			if(!Object.keys(neuron_outputs).includes("${layer_idx}")) {
+				neuron_outputs["${layer_idx}"] = {input: [], output: []};
+			}
+
+			neuron_outputs["${layer_idx}"]["input"].push(synced_input);
+			neuron_outputs["${layer_idx}"]["output"].push(synced_output);
+		}
+
+		return output;
+	}`;
+
+	try {
+		eval(code);
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
+
+		if(("" + e).includes("already disposed")) {
+			wrn("" + e);
+		} else {
+			throw new Error("" + e);
+		}
+	}
+}
+
 async function add_layer_debuggers () {
 	$("#datalayers").html("");
 
@@ -746,70 +813,7 @@ async function add_layer_debuggers () {
 		}
 
 		for (var layer_idx = 0; layer_idx < nr_of_layer; layer_idx++) {
-			if(get_methods(model?.layers[layer_idx]).includes("original_apply_real")) {
-				model.layers[layer_idx].apply = model.layers[layer_idx].original_apply_real;
-			}
-
-			model.layers[layer_idx].original_apply_real = model.layers[layer_idx].apply;
-
-			var code = `model.layers[${layer_idx}].apply = function (inputs, kwargs) {
-				if (${layer_idx} == 0) {
-					layer_states_saved = {}
-				}
-
-				var output = model?.layers[${layer_idx}]?.original_apply_real(inputs, kwargs);
-
-				var shown_layer_debuggers = false;
-
-				if(!disable_layer_debuggers) {
-					if($("#show_layer_data").is(":checked")) {
-						$("#layer_visualizations_tab").show();
-						draw_internal_states(${layer_idx}, inputs, output);
-						shown_layer_debuggers = true;
-					}
-				}
-
-				if(!shown_layer_debuggers) {
-					$("#layer_visualizations_tab").hide();
-				}
-
-				const synced_output = array_sync(output);
-
-				const synced_input = array_sync(inputs[0]);
-
-				var this_layer_data = {
-					input: synced_input,
-					output: synced_output,
-					model_uuid: model.uuid
-				};
-
-				layer_states_saved["${layer_idx}"] = this_layer_data;
-
-				if(started_training) {
-					if(!Object.keys(neuron_outputs).includes("${layer_idx}")) {
-						neuron_outputs["${layer_idx}"] = {input: [], output: []};
-					}
-
-					neuron_outputs["${layer_idx}"]["input"].push(synced_input);
-					neuron_outputs["${layer_idx}"]["output"].push(synced_output);
-				}
-
-				return output;
-			}`;
-
-			try {
-				eval(code);
-			} catch (e) {
-				if(Object.keys(e).includes("message")) {
-					e = e.message;
-				}
-
-				if(("" + e).includes("already disposed")) {
-					wrn("" + e);
-				} else {
-					throw new Error("" + e);
-				}
-			}
+			_add_layer_debugger_hook(layer_idx);
 		}
 	} catch (e) {
 		err(e);

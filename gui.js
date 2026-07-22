@@ -1869,27 +1869,12 @@ function get_cursor_or_none (cursorname) {
 	return cursorname;
 }
 
-function model_is_ok () {
-	if(!model_is_ok_icon || !finished_loading) {
-		return;
-	}
-
+function _model_is_ok_check_status () {
 	var green = "<img src='_gui/green.svg' height=12 />";
 	var red = "<img src='_gui/red.svg' height=12 />";
 	var orange = "<img src='_gui/orange.svg' height=12 />";
 
 	var color = green;
-
-	if(!lang) {
-		err("lang is not defined! Something is seriously wrong here...");
-		return;
-	}
-
-	if(!language) {
-		err("language is not defined! Something is seriously wrong here...");
-		return;
-	}
-
 	var msg = language[lang]["model_is_ok"];
 
 	try {
@@ -1925,10 +1910,10 @@ function model_is_ok () {
 		err("model_is_ok: " + msg);
 	}
 
-	var _content = `${color}`;
+	return {color: color, msg: msg, green: green, red: red, orange: orange};
+}
 
-	_content = add_symbols_to_model_is_ok_content(_content, color, green);
-
+function _model_is_ok_alignment_check (_content, green) {
 	var last_description_end_y = parse_int(get_last_description_of_layers_end_y());
 	var last_layer_setting_end_y = parse_int(get_last_layer_setting_end_y());
 
@@ -1941,6 +1926,37 @@ function model_is_ok () {
 			write_descriptions(); // await not possible
 		}
 	}
+
+	return _content;
+}
+
+function model_is_ok () {
+	if(!model_is_ok_icon || !finished_loading) {
+		return;
+	}
+
+	if(!lang) {
+		err("lang is not defined! Something is seriously wrong here...");
+		return;
+	}
+
+	if(!language) {
+		err("language is not defined! Something is seriously wrong here...");
+		return;
+	}
+
+	var status = _model_is_ok_check_status();
+	var color = status.color;
+	var msg = status.msg;
+	var green = status.green;
+	var red = status.red;
+	var orange = status.orange;
+
+	var _content = `${color}`;
+
+	_content = add_symbols_to_model_is_ok_content(_content, color, green);
+
+	_content = _model_is_ok_alignment_check(_content, green);
 
 	if(last_model_ok_status != _content) {
 		if(color == red) {

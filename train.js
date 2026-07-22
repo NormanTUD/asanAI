@@ -437,6 +437,96 @@ async function train_neural_network() {
 	}
 }
 
+async function _train_neural_network_stop () {
+	var spinner = `<div class="spinner"></div> `;
+	var stop_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["preparing_stop_training"]}</span>`);
+
+	function stop_update_step(step_msg) {
+		l(step_msg);
+		if (stop_overlay) {
+			update_overlay_title(stop_overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
+		}
+	}
+
+	stop_update_step(language[lang]["preparing_stop_training"]);
+	disable_gradcam_during_training_if_internal_states();
+
+	stop_downloading_data = true;
+
+	stop_update_step(language[lang]["stopping_training"]);
+	set_model_stop_training();
+
+	set_document_title(original_title);
+	await gui_not_in_training();
+	remove_overlay();
+	l(language[lang]["stopped_training"]);
+}
+
+async function _train_neural_network_start () {
+	l(language[lang]["started_training"]);
+
+	stop_downloading_data = false;
+
+	$("#show_grad_cam").prop("disabled", false);
+	last_training_time = Date.now();
+	await gui_in_training();
+
+	var new_fingerprint = get_model_fingerprint();
+	_model_fingerprint_unchanged = (last_model_fingerprint && new_fingerprint && new_fingerprint === last_model_fingerprint);
+
+	if (last_model_fingerprint && new_fingerprint && new_fingerprint !== last_model_fingerprint) {
+		training_history = [];
+		training_history_counter = 0;
+		render_training_history_tabs();
+	}
+	last_model_fingerprint = new_fingerprint;
+
+	if (!_model_fingerprint_unchanged) {
+		training_logs_batch = get_empty_plotly("Loss");
+		training_logs_epoch = get_empty_plotly("Loss");
+	}
+
+	last_batch_time = 0;
+
+	training_memory_history = get_empty_training_memory_history_plotly();
+
+	reset_gui_before_training();
+
+	$("#percentage").html("");
+	$("#percentage").hide();
+
+	var num_runs = get_number_of_runs();
+	l("[multi-train] num_runs=" + num_runs + ", mode=" + get_mode() + ", #number_of_runs raw=" + $("#number_of_runs").val());
+	if (num_runs > 1 && get_mode() === "expert") {
+		l("[multi-train] Dispatching to multi_train_neural_network with " + num_runs + " runs");
+		var ret = await multi_train_neural_network(num_runs);
+	} else {
+		l("[multi-train] Dispatching to run_neural_network (single run)"); // await not required here
+		var ret = await run_neural_network();
+	}
+
+	if (training_logs_epoch["loss"] && training_logs_epoch["loss"]["x"] && training_logs_epoch["loss"]["x"].length > 0) {
+		save_training_history(training_logs_epoch, training_logs_batch, _last_multi_run_results);
+		_last_multi_run_results = null;
+	}
+
+	await show_tab_label("predict_tab_label", jump_to_interesting_tab());
+
+	if(got_images_from_webcam) {
+		if(cam && !cam.isClosed) {
+			await show_webcam();
+		}
+
+		await show_webcam();
+	}
+
+	await enable_everything();
+
+	await show_prediction(0, 0);
+
+	return ret;
+}
+
 async function _train_neural_network () {
 	var ret = null;
 
@@ -454,89 +544,9 @@ async function _train_neural_network () {
 	restart_fcnn(); // await not possible i think
 
 	if(started_training) {
-		var spinner = `<div class="spinner"></div> `;
-		var stop_overlay = show_overlay("", `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${language[lang]["preparing_stop_training"]}</span>`);
-
-		function stop_update_step(step_msg) {
-			l(step_msg);
-			if (stop_overlay) {
-				update_overlay_title(stop_overlay, `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${step_msg}...</span>`);
-			}
-		}
-
-		stop_update_step(language[lang]["preparing_stop_training"]);
-		disable_gradcam_during_training_if_internal_states();
-
-		stop_downloading_data = true;
-
-		stop_update_step(language[lang]["stopping_training"]);
-		set_model_stop_training();
-
-		set_document_title(original_title);
-		await gui_not_in_training();
-		remove_overlay();
-		l(language[lang]["stopped_training"]);
+		await _train_neural_network_stop();
 	} else {
-		l(language[lang]["started_training"]);
-
-		stop_downloading_data = false;
-
-		$("#show_grad_cam").prop("disabled", false);
-		last_training_time = Date.now();
-		await gui_in_training();
-
-		var new_fingerprint = get_model_fingerprint();
-		_model_fingerprint_unchanged = (last_model_fingerprint && new_fingerprint && new_fingerprint === last_model_fingerprint);
-
-		if (last_model_fingerprint && new_fingerprint && new_fingerprint !== last_model_fingerprint) {
-			training_history = [];
-			training_history_counter = 0;
-			render_training_history_tabs();
-		}
-		last_model_fingerprint = new_fingerprint;
-
-		if (!_model_fingerprint_unchanged) {
-			training_logs_batch = get_empty_plotly("Loss");
-			training_logs_epoch = get_empty_plotly("Loss");
-		}
-
-		last_batch_time = 0;
-
-		training_memory_history = get_empty_training_memory_history_plotly();
-
-		reset_gui_before_training();
-
-		$("#percentage").html("");
-		$("#percentage").hide();
-
-		var num_runs = get_number_of_runs();
-		l("[multi-train] num_runs=" + num_runs + ", mode=" + get_mode() + ", #number_of_runs raw=" + $("#number_of_runs").val());
-		if (num_runs > 1 && get_mode() === "expert") {
-			l("[multi-train] Dispatching to multi_train_neural_network with " + num_runs + " runs");
-			ret = await multi_train_neural_network(num_runs);
-		} else {
-			l("[multi-train] Dispatching to run_neural_network (single run)"); // await not required here
-			ret = await run_neural_network();
-		}
-
-		if (training_logs_epoch["loss"] && training_logs_epoch["loss"]["x"] && training_logs_epoch["loss"]["x"].length > 0) {
-			save_training_history(training_logs_epoch, training_logs_batch, _last_multi_run_results);
-			_last_multi_run_results = null;
-		}
-
-		await show_tab_label("predict_tab_label", jump_to_interesting_tab());
-
-		if(got_images_from_webcam) {
-			if(cam && !cam.isClosed) {
-				await show_webcam();
-			}
-
-			await show_webcam();
-		}
-
-		await enable_everything();
-
-		await show_prediction(0, 0);
+		ret = await _train_neural_network_start();
 	}
 
 	await write_descriptions();
@@ -2689,15 +2699,7 @@ function get_max_nr_of_images_in_grid() {
 	return Number.isInteger(v) && v > 0 ? v : 50;
 }
 
-async function get_category_overview (image_elements) {
-	var total_wrong = 0;
-	var probabilities = [];
-	var total_correct = 0;
-	var categories = [];
-	var category_overview = {};
-
-	const _max = get_max_nr_of_images_in_grid();
-
+function _get_category_overview_collect_tensors (image_elements, _max) {
 	var tensors_to_predict = [];
 	var tensor_image_indices = [];
 
@@ -2720,6 +2722,10 @@ async function get_category_overview (image_elements) {
 		tensor_image_indices.push(image_idx);
 	}
 
+	return {tensors: tensors_to_predict, indices: tensor_image_indices};
+}
+
+function _get_category_overview_batch_predict (tensors_to_predict, tensor_image_indices) {
 	var batch_predictions = {};
 
 	if(tensors_to_predict.length > 0) {
@@ -2735,6 +2741,21 @@ async function get_category_overview (image_elements) {
 			batch_predictions[tensor_image_indices[i]] = batchResData[i];
 		}
 	}
+
+	return batch_predictions;
+}
+
+async function get_category_overview (image_elements) {
+	var total_wrong = 0;
+	var probabilities = [];
+	var total_correct = 0;
+	var categories = [];
+	var category_overview = {};
+
+	const _max = get_max_nr_of_images_in_grid();
+
+	var collected = _get_category_overview_collect_tensors(image_elements, _max);
+	var batch_predictions = _get_category_overview_batch_predict(collected.tensors, collected.indices);
 
 	for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 		var image_element = image_elements[image_idx];

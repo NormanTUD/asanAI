@@ -2020,15 +2020,9 @@ async function predict_handdrawn() {
 	}
 }
 
-async function _predict_handdrawn_internal () {
-	// Pre-populate placeholder so container is correctly sized from the start
-	var $hp = $("#handdrawn_predictions");
-	if ($hp.length && $hp.is(":empty")) {
-		$hp.html(_get_placeholder_prediction_table());
-	}
-
+function _predict_handdrawn_validate () {
 	if(has_zero_output_shape || !input_shape_is_image() || is_setting_config || !finished_loading) {
-		return;
+		return true;
 	}
 
 	if(!model) {
@@ -2041,23 +2035,25 @@ async function _predict_handdrawn_internal () {
 		}
 		sketcher_warning++;
 
-		return;
+		return true;
 	}
 
 	if (!atrament_data || !atrament_data.sketcher || !atrament_data.sketcher.canvas) {
 		err("Cannot predict handdrawn. Sketcher was not found.");
-		return;
+		return true;
 	}
 
 	predict_handdrawn_counter++;
 
 	if(predict_handdrawn_counter == 1) {
 		dbg("One less predict Handdrawn during loading");
-		return;
+		return true;
 	}
 
-	show_predict_spinner("#handdrawn_predictions");
+	return false;
+}
 
+async function _predict_handdrawn_fetch_canvas_tensor () {
 	var predict_data;
 	try {
 		predict_data = tidy(() => {
@@ -2072,13 +2068,33 @@ async function _predict_handdrawn_internal () {
 		hide_predict_spinner("#handdrawn_predictions");
 		await write_error("" + e, null, null);
 		await dispose(predict_data);
-		return;
+		return null;
 	}
 
 	if(!predict_data) {
 		hide_predict_spinner("#handdrawn_predictions");
 		await dispose(predict_data);
 		err("[predict_handdrawn] No predict data");
+		return null;
+	}
+
+	return predict_data;
+}
+
+async function _predict_handdrawn_internal () {
+	var $hp = $("#handdrawn_predictions");
+	if ($hp.length && $hp.is(":empty")) {
+		$hp.html(_get_placeholder_prediction_table());
+	}
+
+	if(_predict_handdrawn_validate()) {
+		return;
+	}
+
+	show_predict_spinner("#handdrawn_predictions");
+
+	var predict_data = await _predict_handdrawn_fetch_canvas_tensor();
+	if(!predict_data) {
 		return;
 	}
 

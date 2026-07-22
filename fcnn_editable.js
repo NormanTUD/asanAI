@@ -1148,6 +1148,65 @@ function _fcnn_edit_trigger_update() {
 // HELPER: Find the actual dense layer index for a given FCNN layer_idx
 // ============================================================
 
+function _fcnn_edit_check_layer_bias(layer, expected_units) {
+    if (!layer) return null;
+
+    var w = null;
+    try { w = layer.getWeights(); } catch(e) {}
+
+    if (w && w.length >= 2) {
+        try {
+            var biasShape = w[1].shape;
+            var biasSize = biasShape[biasShape.length - 1];
+            if (biasSize === expected_units) {
+                return true;
+            }
+            if (biasSize >= expected_units) {
+                return true;
+            }
+        } catch(e) {
+            return true;
+        }
+        return true;
+    }
+
+    try {
+        if (layer.weights && layer.weights.length >= 2) {
+            var biasWeight = layer.weights[1];
+            if (biasWeight && (biasWeight.val || typeof biasWeight.read === 'function')) {
+                return true;
+            }
+        }
+    } catch(e) {}
+
+    return null;
+}
+
+function _fcnn_edit_scan_adjacent_layers(actual_idx, expected_units) {
+    for (var offset = -2; offset <= 2; offset++) {
+        if (offset === 0) continue;
+        var tryIdx = actual_idx + offset;
+        if (tryIdx < 0 || tryIdx >= model.layers.length) continue;
+
+        var tryLayer = model.layers[tryIdx];
+        if (!tryLayer) continue;
+
+        var tw = null;
+        try { tw = tryLayer.getWeights(); } catch(e) { continue; }
+        if (!tw || tw.length < 2) continue;
+
+        try {
+            var biasShape = tw[1].shape;
+            var biasSize = biasShape[biasShape.length - 1];
+            if (biasSize === expected_units) {
+                return tryIdx;
+            }
+        } catch(e) {}
+    }
+
+    return null;
+}
+
 function _fcnn_edit_find_dense_layer_for_neuron(fcnn_layer_idx) {
     try {
         if (typeof model === 'undefined' || !model || !model.layers) return null;
@@ -1168,15 +1227,12 @@ function _fcnn_edit_find_dense_layer_for_neuron(fcnn_layer_idx) {
         var actual_idx = meta.nr;
         if (actual_idx < 0 || actual_idx >= model.layers.length) return null;
 
-        // Input layer (index 0 in FCNN visualization) typically has no bias
         if (fcnn_layer_idx === 0) {
-            // Check if this layer itself has bias (unusual for input but possible)
             var layer = model.layers[actual_idx];
             if (layer) {
                 var w = null;
                 try { w = layer.getWeights(); } catch(e) {}
                 if (w && w.length >= 2) {
-                    // Verify bias size matches expected units
                     try {
                         var biasShape = w[1].shape;
                         var biasSize = biasShape[biasShape.length - 1];
@@ -1189,69 +1245,12 @@ function _fcnn_edit_find_dense_layer_for_neuron(fcnn_layer_idx) {
             return null;
         }
 
-        // For non-input layers, check the layer at actual_idx
         var layer = model.layers[actual_idx];
-        if (!layer) return null;
-
-        // Check if this layer has weights with bias
-        var w = null;
-        try { w = layer.getWeights(); } catch(e) {}
-        
-        if (w && w.length >= 2) {
-            // Verify bias size matches expected neuron count
-            try {
-                var biasShape = w[1].shape;
-                var biasSize = biasShape[biasShape.length - 1];
-                var expected = units[fcnn_layer_idx];
-                if (biasSize === expected) {
-                    return actual_idx;
-                }
-                // If sizes don't match exactly, still return if it's close
-                // (could be due to visualization truncation)
-                if (biasSize >= expected) {
-                    return actual_idx;
-                }
-            } catch(e) {
-                // Shape check failed but layer has 2+ weight tensors — likely valid
-                return actual_idx;
-            }
+        if (_fcnn_edit_check_layer_bias(layer, units[fcnn_layer_idx])) {
             return actual_idx;
         }
 
-        // Layer doesn't have bias — check via layer.weights property
-        try {
-            if (layer.weights && layer.weights.length >= 2) {
-                var biasWeight = layer.weights[1];
-                if (biasWeight && (biasWeight.val || typeof biasWeight.read === 'function')) {
-                    return actual_idx;
-                }
-            }
-        } catch(e) {}
-
-        // Fallback: scan adjacent layers for matching bias size
-        var expected_units = units[fcnn_layer_idx];
-        for (var offset = -2; offset <= 2; offset++) {
-            if (offset === 0) continue;
-            var tryIdx = actual_idx + offset;
-            if (tryIdx < 0 || tryIdx >= model.layers.length) continue;
-
-            var tryLayer = model.layers[tryIdx];
-            if (!tryLayer) continue;
-
-            var tw = null;
-            try { tw = tryLayer.getWeights(); } catch(e) { continue; }
-            if (!tw || tw.length < 2) continue;
-
-            try {
-                var biasShape = tw[1].shape;
-                var biasSize = biasShape[biasShape.length - 1];
-                if (biasSize === expected_units) {
-                    return tryIdx;
-                }
-            } catch(e) {}
-        }
-
-        return null;
+        return _fcnn_edit_scan_adjacent_layers(actual_idx, units[fcnn_layer_idx]);
     } catch (e) {
         console.warn("[fcnn_edit] Error finding dense layer:", e);
         return null;
