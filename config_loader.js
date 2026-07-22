@@ -17,7 +17,7 @@ async function set_config(index=undefined, keep_overlay=false) {
 
 	var overlay = null;
 	if (!finished_loading) {
-		load_msg_advance(msg + "...");
+		load_msg_advance(msg);
 	} else {
 		var spinner = `<div class="spinner"></div> `;
 		overlay = load_msg({"title": `<span style="display:flex; align-items:center; gap:0.5ch">${spinner}${msg}...</span>`, "html": msg});
