@@ -719,6 +719,17 @@ async function get_fit_data () {
 		this_training_start_time = Date.now();
 		$(".training_performance_tabs").show();
 
+		set_tiny_graph_training_info({
+			start_time: this_training_start_time,
+			total_epochs: get_epochs(),
+			batch_size: get_batch_size(),
+			validation_split: parse_int($("#validationSplit").val()) / 100,
+			dataset_name: $("#dataset").val() || "",
+			model_info: model ? (model.layers ? model.layers.length + " layers" : "") : "",
+			current_run: 1,
+			num_runs: parse_int($("#number_of_runs").val()) || 1
+		});
+
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 		$("#network_has_seen_msg").hide();
@@ -888,8 +899,15 @@ async function get_fit_data () {
 			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, parse_int(0.9 * th));
 			reset_tiny_graph();
 			$("#tiny_graph").append(plotCanvas).show();
+			set_tiny_graph_training_info({
+				current_epoch: epochNr,
+				loss_values: training_logs_epoch["loss"].y.slice(),
+				val_loss_values: vl ? vl.slice() : []
+			});
+			update_tiny_graph_tooltip();
 		} else {
 			reset_tiny_graph(1);
+			clear_tiny_graph_tooltip();
 		}
 		$("#network_has_seen_msg").show();
 
@@ -935,6 +953,7 @@ async function get_fit_data () {
 		await visualize_train();
 
 		reset_tiny_graph(1);
+		clear_tiny_graph_tooltip();
 		$("#network_has_seen_msg").hide();
 
 		await confusion_matrix_to_page();

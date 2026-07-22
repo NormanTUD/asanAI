@@ -6083,6 +6083,17 @@ class asanAI {
 			asanai_this.#current_epoch = 0;
 			asanai_this.#this_training_start_time = Date.now();
 
+			set_tiny_graph_training_info({
+				start_time: asanai_this.#this_training_start_time,
+				total_epochs: asanai_this.#max_epoch,
+				batch_size: asanai_this.#batch_size,
+				validation_split: asanai_this.#validation_split,
+				dataset_name: asanai_this.#dataset_name || "",
+				model_info: asanai_this.#model ? (asanai_this.#model.layers ? asanai_this.#model.layers.length + " layers" : "") : "",
+				current_run: asanai_this.#current_run || 1,
+				num_runs: asanai_this.#number_of_runs || 1
+			});
+
 			await asanai_this.visualize_train();
 			await asanai_this.#confusion_matrix_to_page();
 

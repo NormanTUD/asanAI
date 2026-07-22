@@ -6,7 +6,7 @@
 		<li><span id="custom_webcam_training_data_small" data-tr-title="start_webcam_custom_images" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" data-tr-alt="get_data_from_webcam" src="_gui/camera.svg" /></span></li>
 		<li><span id="custom_image_training_data_small" data-tr-title="set_custom_images_training" style="display: none" class="only_when_webcam enabled_symbol input_shape_is_image symbol_button" onclick="set_custom_image_training()"><img class="ribbon_icon" data-tr-alt="get_data_from_photos" src="_gui/icons/photos.svg" /></span></li>
 		<li><span class="symbol_button" data-tr-title="help_label" style="cursor: help" id="manual_page_link" onclick="window.open('manual.html', '_blank').focus();"><img class="ribbon_icon" data-tr-alt="open_help_page" src="_gui/icons/help.svg" /></span></li>
-		<li><span id="tiny_graph" style="display:none"></span></li>
+		<li id="tiny_graph_li"><span id="tiny_graph" style="display:none"></span></li>
 	</ul>
 
 

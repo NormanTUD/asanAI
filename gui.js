@@ -2317,6 +2317,109 @@ function reset_tiny_graph(hide=0) {
 	}
 }
 
+function format_number(n) {
+	if(n === null || n === undefined) return "—";
+	if(typeof n === "number") {
+		if(Math.abs(n) < 0.001 || Math.abs(n) > 1e6) return n.toExponential(4);
+		return n.toFixed(6);
+	}
+	return String(n);
+}
+
+function format_duration(ms) {
+	if(!ms || ms < 0) return "—";
+	var s = Math.floor(ms / 1000);
+	var m = Math.floor(s / 60);
+	var h = Math.floor(m / 60);
+	s = s % 60;
+	m = m % 60;
+	if(h > 0) return h + "h " + m + "m " + s + "s";
+	if(m > 0) return m + "m " + s + "s";
+	return s + "s";
+}
+
+var _tiny_graph_training_info = {};
+
+function set_tiny_graph_training_info(info) {
+	_tiny_graph_training_info = Object.assign(_tiny_graph_training_info, info);
+}
+
+function update_tiny_graph_tooltip() {
+	var t = _tiny_graph_training_info;
+	var loss_vals = t.loss_values || [];
+	var val_loss_vals = t.val_loss_values || [];
+
+	var current_loss = loss_vals.length ? loss_vals[loss_vals.length - 1] : null;
+	var best_loss = loss_vals.length ? Math.min(...loss_vals) : null;
+	var current_val_loss = val_loss_vals.length ? val_loss_vals[val_loss_vals.length - 1] : null;
+	var best_val_loss = val_loss_vals.length ? Math.min(...val_loss_vals) : null;
+
+	var elapsed = t.start_time ? Date.now() - t.start_time : null;
+	var epoch_time = (elapsed && t.current_epoch > 0) ? elapsed / t.current_epoch : null;
+	var epochs_left = (t.total_epochs && t.current_epoch) ? t.total_epochs - t.current_epoch : null;
+	var eta = (epoch_time && epochs_left) ? epoch_time * epochs_left : null;
+
+	var loss_class = "tg_value";
+	if(loss_vals.length >= 2) {
+		var prev = loss_vals[loss_vals.length - 2];
+		if(current_loss < prev) loss_class = "tg_value tg_good";
+		else if(current_loss > prev * 1.1) loss_class = "tg_value tg_bad";
+		else loss_class = "tg_value tg_warn";
+	}
+
+	var html = "";
+	html += "<div><span class='tg_label'>Epoch:</span> <span class='tg_value'>" + (t.current_epoch || "—") + " / " + (t.total_epochs || "—") + "</span></div>";
+	html += "<div class='tg_separator'></div>";
+	html += "<div><span class='tg_label'>Loss:</span> <span class='" + loss_class + "'>" + format_number(current_loss) + "</span></div>";
+	if(best_loss !== null) {
+		html += "<div><span class='tg_label'>Best Loss:</span> <span class='tg_value tg_good'>" + format_number(best_loss) + "</span></div>";
+	}
+	if(current_val_loss !== null) {
+		html += "<div><span class='tg_label'>Val Loss:</span> <span class='tg_value'>" + format_number(current_val_loss) + "</span></div>";
+	}
+	if(best_val_loss !== null) {
+		html += "<div><span class='tg_label'>Best Val:</span> <span class='tg_value tg_good'>" + format_number(best_val_loss) + "</span></div>";
+	}
+	if(t.batch_size) {
+		html += "<div class='tg_separator'></div>";
+		html += "<div><span class='tg_label'>Batch Size:</span> <span class='tg_value'>" + t.batch_size + "</span></div>";
+	}
+	if(t.validation_split !== undefined && t.validation_split !== null) {
+		html += "<div><span class='tg_label'>Val Split:</span> <span class='tg_value'>" + parse_int(t.validation_split * 100) + "%</span></div>";
+	}
+	if(t.dataset_name) {
+		html += "<div class='tg_separator'></div>";
+		html += "<div><span class='tg_label'>Dataset:</span> <span class='tg_value'>" + t.dataset_name + "</span></div>";
+	}
+	if(t.model_info) {
+		html += "<div><span class='tg_label'>Model:</span> <span class='tg_value'>" + t.model_info + "</span></div>";
+	}
+	if(elapsed) {
+		html += "<div class='tg_separator'></div>";
+		html += "<div><span class='tg_label'>Elapsed:</span> <span class='tg_value'>" + format_duration(elapsed) + "</span></div>";
+	}
+	if(eta) {
+		html += "<div><span class='tg_label'>ETA:</span> <span class='tg_value'>" + format_duration(eta) + "</span></div>";
+	}
+	if(t.num_runs > 1) {
+		html += "<div class='tg_separator'></div>";
+		html += "<div><span class='tg_label'>Run:</span> <span class='tg_value'>" + (t.current_run || 1) + " / " + t.num_runs + "</span></div>";
+	}
+
+	var $tg = $("#tiny_graph");
+	var $old = $tg.find(".tiny_graph_tooltip_box");
+	if($old.length) {
+		$old.html(html);
+	} else {
+		$tg.append('<span class="tiny_graph_tooltip_box">' + html + '</span>');
+	}
+}
+
+function clear_tiny_graph_tooltip() {
+	_tiny_graph_training_info = {};
+	$("#tiny_graph .tiny_graph_tooltip_box").remove();
+}
+
 function hide_training_progress_bar () {
 	$("#training_progress_bar").hide();
 }

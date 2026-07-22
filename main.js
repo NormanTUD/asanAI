@@ -166,6 +166,8 @@ function init_tabs () {
 		}
 	});
 
+	$("#tiny_graph_li").appendTo(tablist);
+
 	$("#ribbon").tabs(tabs_settings);
 	$("#right_side").tabs(tabs_settings);
 	$("#visualization_tab").tabs(tabs_settings);

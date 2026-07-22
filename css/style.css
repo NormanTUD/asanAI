@@ -2805,3 +2805,55 @@ td.confusion_matrix_tx.cm-zero {
 .math_copier {
 	z-index: 999999;
 }
+
+#tiny_graph {
+	vertical-align: middle;
+}
+
+#tiny_graph:hover .tiny_graph_tooltip_box {
+	display: block;
+}
+
+.tiny_graph_tooltip_box {
+	display: none;
+	position: absolute;
+	top: 100%;
+	right: 0;
+	margin-top: 4px;
+	background: rgba(30, 30, 30, 0.95);
+	color: #eee;
+	padding: 8px 12px;
+	border-radius: 6px;
+	font-size: 12px;
+	line-height: 1.5;
+	white-space: nowrap;
+	z-index: 999999;
+	pointer-events: none;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.tiny_graph_tooltip_box .tg_label {
+	color: #999;
+}
+
+.tiny_graph_tooltip_box .tg_value {
+	color: #fff;
+	font-weight: bold;
+}
+
+.tiny_graph_tooltip_box .tg_separator {
+	border-top: 1px solid rgba(255,255,255,0.15);
+	margin: 4px 0;
+}
+
+.tiny_graph_tooltip_box .tg_good {
+	color: #2ecc71;
+}
+
+.tiny_graph_tooltip_box .tg_warn {
+	color: #f39c12;
+}
+
+.tiny_graph_tooltip_box .tg_bad {
+	color: #e74c3c;
+}
