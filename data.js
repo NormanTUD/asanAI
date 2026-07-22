@@ -2611,7 +2611,7 @@ async function get_table_data_from_images(imgs) {
 	}
 
 	if(!num_items) {
-		wrn("[confusion_matrix] Could not get any items!");
+		dbg("[confusion_matrix] Could not get any items!");
 		return "";
 	}
 
