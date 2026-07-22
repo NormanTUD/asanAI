@@ -843,17 +843,17 @@ function show_and_append_layer_divs (layer_div, layer) {
 
 function show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer) {
 	if(!canvas_input) {
-		err(`[show_intermediate_representations] canvas_input was empty`);
+		dbg(`[show_intermediate_representations] canvas_input was empty`);
 		return;
 	}
 
 	if(!canvas_kernel) {
-		err(`[show_intermediate_representations] canvas_kernel was empty`);
+		dbg(`[show_intermediate_representations] canvas_kernel was empty`);
 		return;
 	}
 
 	if(!canvas_output) {
-		err(`[show_intermediate_representations] canvas_output was empty`);
+		dbg(`[show_intermediate_representations] canvas_output was empty`);
 		return;
 	}
 
