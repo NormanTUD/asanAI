@@ -2889,13 +2889,7 @@ async function test_math_editable_system() {
 	return true;
 }
 
-async function new_tiny_tests() {
-	// ============================================================
-	// MISSING TESTS - Add these to the run_super_quick_tests function
-	// and/or as standalone test functions
-	// ============================================================
-
-	// --- data.js: parse_csv_file ---
+function _tiny_tests_data_js() {
 	test_equal("parse_csv_file basic", JSON.stringify(parse_csv_file("a,b,c\n1,2,3\n4,5,6\n").data), '[[1,2,3],[4,5,6]]');
 	test_equal("parse_csv_file header", JSON.stringify(parse_csv_file("a,b,c\n1,2,3\n").head), '["a","b","c"]');
 	test_equal("parse_csv_file empty", JSON.stringify(parse_csv_file("a,b\n").data), '[]');
@@ -2903,7 +2897,6 @@ async function new_tiny_tests() {
 	test_equal("parse_csv_file mismatched columns excluded", parse_csv_file("a,b\n1,2\n1,2,3\n").data.length, 1);
 	test_equal("parse_csv_file with tab separator", JSON.stringify(parse_csv_file("a\tb\n1\t2\n").head), '["a\\tb"]');
 
-	// --- data.js: parse_line ---
 	test_equal("parse_line basic comma", JSON.stringify(parse_line("1,2,3", ",")), '[1,2,3]');
 	test_equal("parse_line with strings", JSON.stringify(parse_line("hello,world", ",")), '["hello","world"]');
 	test_equal("parse_line empty string", JSON.stringify(parse_line("", ",")), '[]');
@@ -2911,95 +2904,88 @@ async function new_tiny_tests() {
 	test_equal("parse_line float values", JSON.stringify(parse_line("1.5,2.7", ",")), '[1.5,2.7]');
 	test_equal("parse_line negative values", JSON.stringify(parse_line("-1,-2.5", ",")), '[-1,-2.5]');
 
-	// --- data.js: parse_dtype ---
 	test_equal("parse_dtype integer", parse_dtype("42"), 42);
 	test_equal("parse_dtype negative integer", parse_dtype("-5"), -5);
 	test_equal("parse_dtype float", parse_dtype("3.14"), 3.14);
 	test_equal("parse_dtype string", parse_dtype("hello"), "hello");
 
-	// --- data.js: degrees_to_radians ---
 	test_equal("degrees_to_radians(0)", degrees_to_radians(0), 0);
 	test_equal("degrees_to_radians(180)", Math.abs(degrees_to_radians(180) - Math.PI) < 1e-10, true);
 	test_equal("degrees_to_radians(90)", Math.abs(degrees_to_radians(90) - Math.PI/2) < 1e-10, true);
 	test_equal("degrees_to_radians(360)", Math.abs(degrees_to_radians(360) - 2*Math.PI) < 1e-10, true);
 
-	// --- data.js: shuffle ---
 	test_equal("shuffle preserves length", shuffle([1,2,3,4,5]).length, 5);
 	test_equal("shuffle preserves elements", shuffle([1,2,3]).sort().join(","), "1,2,3");
 
-	// --- data.js: findDuplicates ---
 	test_equal("findDuplicates no dupes", JSON.stringify(findDuplicates([1,2,3])), '[]');
 	test_equal("findDuplicates with dupes", JSON.stringify(findDuplicates([1,2,2,3])), '[2]');
 	test_equal("findDuplicates multiple dupes", findDuplicates([1,1,2,2,3]).length, 2);
 	test_equal("findDuplicates empty", JSON.stringify(findDuplicates([])), '[]');
 
-	// --- data.js: onlyUnique ---
 	test_equal("onlyUnique filters", [1,2,2,3,3,3].filter(onlyUnique).length, 3);
 
-	// --- data.js: median ---
 	test_equal("median odd array", median([5,1,3]), 3);
 	test_equal("median even array", median([1,2,3,4]), 2.5);
 	test_equal("median single element", median([7]), 7);
 
-	// --- data.js: decille edge cases ---
 	test_equal("decille empty array", decille([], 0.5), 0);
 	test_equal("decille NaN percentage", decille([1,2,3], NaN), 0);
 	test_equal("decille null percentage", decille([1,2,3], null), 0);
 	test_equal("decille 0 percentage", decille([1,2,3,4,5], 0), 1);
 
-	// --- data.js: x_y_warning ---
 	test_equal("x_y_warning null input", x_y_warning(null).length > 0, true);
 	test_equal("x_y_warning missing x", x_y_warning({y: [1]}).includes("X-data"), true);
 	test_equal("x_y_warning missing y", x_y_warning({x: [1]}).includes("Y-data"), true);
 	test_equal("x_y_warning null x", x_y_warning({x: null, y: [1]}).includes("null"), true);
 	test_equal("x_y_warning null y", x_y_warning({x: [1], y: null}).includes("null"), true);
 
-	// --- data.js: isolateEval ---
 	test_equal("isolateEval basic math", isolateEval("2 + 2"), 4);
 	test_equal("isolateEval string", isolateEval("'hello'"), "hello");
 	test_equal("isolateEval array", JSON.stringify(isolateEval("[1,2,3]")), "[1,2,3]");
 
-	// --- data.js: flatten ---
 	test_equal("flatten nested", JSON.stringify(flatten([1,[2,[3,[4]]]])), "[1,2,3,4]");
 	test_equal("flatten already flat", JSON.stringify(flatten([1,2,3])), "[1,2,3]");
 	test_equal("flatten empty", JSON.stringify(flatten([])), "[]");
 	test_equal("flatten deep nesting", JSON.stringify(flatten([[[[1]]]])), "[1]");
+}
 
-	// --- explain.js: normalize_to_rgb_min_max ---
+function _tiny_tests_explain_js() {
 	test_equal("normalize_to_rgb_min_max middle", normalize_to_rgb_min_max(5, 0, 10), 127);
 	test_equal("normalize_to_rgb_min_max min", normalize_to_rgb_min_max(0, 0, 10), 0);
 	test_equal("normalize_to_rgb_min_max max", normalize_to_rgb_min_max(10, 0, 10), 255);
 	test_equal("normalize_to_rgb_min_max same min max", normalize_to_rgb_min_max(5, 5, 5), 0);
 	test_equal("normalize_to_rgb_min_max non-number max", normalize_to_rgb_min_max(5, "a", "b"), 5);
 
-	// --- explain.js: get_dim ---
 	test_equal("get_dim null", get_dim(null), 0);
 	test_equal("get_dim 1d", JSON.stringify(get_dim([1,2,3])), "[3]");
 	test_equal("get_dim 2d", JSON.stringify(get_dim([[1,2],[3,4]])), "[2,2]");
 	test_equal("get_dim 3d", JSON.stringify(get_dim([[[1,2],[3,4]]])), "[1,2,2]");
 
-	// --- explain.js: shape_looks_like_image_data ---
 	test_equal("shape_looks_like_image_data [28,28,3]", shape_looks_like_image_data([28,28,3]), "simple");
 	test_equal("shape_looks_like_image_data [28,28,32]", shape_looks_like_image_data([28,28,32]), "filter");
 	test_equal("shape_looks_like_image_data [3,3,3,32]", shape_looks_like_image_data([3,3,3,32]), "kernel");
 	test_equal("shape_looks_like_image_data [100]", shape_looks_like_image_data([100]), "unknown");
 	test_equal("shape_looks_like_image_data null", shape_looks_like_image_data(null), "unknown");
 
-	// --- explain.js: explain_error_msg ---
 	test_equal("explain_error_msg null", explain_error_msg(null), "");
 	test_equal("explain_error_msg empty string", explain_error_msg(""), "");
 
-	// --- explain.js: array_to_html ---
 	test_equal("array_to_html simple", array_to_html([1,2,3]), "1<br>2<br>3<br>");
 	test_equal("array_to_html nested", array_to_html([[1,2],[3,4]]).includes("1 2"), true);
 
-	// --- model.js: get_key_name_camel_case ---
+	var trace = get_empty_default_trace("myTrace");
+	test_equal("get_empty_default_trace name", trace.name, "myTrace");
+	test_equal("get_empty_default_trace type", trace.type, "scatter");
+	test_equal("get_empty_default_trace x empty", JSON.stringify(trace.x), "[]");
+	test_equal("get_empty_default_trace y empty", JSON.stringify(trace.y), "[]");
+}
+
+function _tiny_tests_model_js() {
 	test_equal("get_key_name_camel_case simple", get_key_name_camel_case("kernel_initializer"), "kernelInitializer");
 	test_equal("get_key_name_camel_case no underscore", get_key_name_camel_case("kernel"), "kernel");
 	test_equal("get_key_name_camel_case multiple", get_key_name_camel_case("a_b_c"), "aBC");
 	test_equal("get_key_name_camel_case empty", get_key_name_camel_case(""), "");
 
-	// --- model.js: isCommaSeparatedIntegers ---
 	test_equal("isCommaSeparatedIntegers valid", isCommaSeparatedIntegers("1,2,3"), true);
 	test_equal("isCommaSeparatedIntegers single", isCommaSeparatedIntegers("5"), true);
 	test_equal("isCommaSeparatedIntegers with spaces", isCommaSeparatedIntegers("1, 2, 3"), true);
@@ -3008,120 +2994,71 @@ async function new_tiny_tests() {
 	test_equal("isCommaSeparatedIntegers non-string", isCommaSeparatedIntegers(123), false);
 	test_equal("isCommaSeparatedIntegers float", isCommaSeparatedIntegers("1.5,2"), false);
 
-	// --- model.js: is_number_array ---
 	test_equal("is_number_array valid", is_number_array([1,2,3]), true);
 	test_equal("is_number_array with string", is_number_array([1,"a",3]), false);
 	test_equal("is_number_array empty", is_number_array([]), true);
 	test_equal("is_number_array non-array", is_number_array("hello"), false);
 
-	// --- model.js: remove_empty ---
 	test_equal("remove_empty removes nulls", JSON.stringify(remove_empty({a: 1, b: null, c: 3})), '{"a":1,"c":3}');
 	test_equal("remove_empty keeps zeros", JSON.stringify(remove_empty({a: 0, b: 1})), '{"a":0,"b":1}');
+}
 
-	// --- math_mode.js: replaceNaNsRecursive ---
+function _tiny_tests_math_mode_js() {
 	test_equal("replaceNaNsRecursive with NaN", replaceNaNsRecursive(NaN), "\\text{NaN}");
 	test_equal("replaceNaNsRecursive normal", replaceNaNsRecursive(5), 5);
 	test_equal("replaceNaNsRecursive nested", JSON.stringify(replaceNaNsRecursive([1, NaN, 3])), '[1,"\\\\text{NaN}",3]');
 
-	// --- math_mode.js: replaceInfinityRecursive ---
 	test_equal("replaceInfinityRecursive pos", replaceInfinityRecursive(Infinity), "\\infty");
 	test_equal("replaceInfinityRecursive neg", replaceInfinityRecursive(-Infinity), "-\\infty");
 	test_equal("replaceInfinityRecursive normal", replaceInfinityRecursive(5), 5);
 
-	// --- math_mode.js: replaceScientificNotationRecursive ---
 	test_equal("replaceScientificNotationRecursive normal", replaceScientificNotationRecursive(5), 5);
 	test_equal("replaceScientificNotationRecursive sci notation", typeof replaceScientificNotationRecursive(1e-7), "string");
 
-	// --- math_mode.js: array_to_fixed ---
 	test_equal("array_to_fixed 0 decimals", JSON.stringify(array_to_fixed([1.5, 2.7], 0)), '[1.5,2.7]');
 
-	// --- math_mode.js: a_times_b ---
 	test_equal("a_times_b", a_times_b("A", "B"), "A \\times B");
+}
 
-	// --- functions.php related: contains_null_values (conceptual test) ---
-	// These would be PHP tests but demonstrate the pattern:
-
-	// --- base_wrappers.js: is_tensor ---
-	test_equal("is_tensor null", is_tensor(null), false);
-	test_equal("is_tensor undefined", is_tensor(undefined), false);
-	test_equal("is_tensor array", is_tensor([1,2,3]), false);
-	test_equal("is_tensor string", is_tensor("hello"), false);
-	var test_t = tensor([1,2,3]);
-	test_equal("is_tensor real tensor", is_tensor(test_t), true);
-	await dispose(test_t);
-
-	// --- base_wrappers.js: tensor_is_disposed ---
-	var test_t2 = tensor([1,2]);
-	test_equal("tensor_is_disposed live tensor", tensor_is_disposed(test_t2), false);
-	await dispose(test_t2);
-
-	// --- base_wrappers.js: array_sync_if_tensor ---
-	test_equal("array_sync_if_tensor array passthrough", JSON.stringify(array_sync_if_tensor([1,2,3])), "[1,2,3]");
-	var test_t3 = tensor([4,5,6]);
-	test_equal("array_sync_if_tensor tensor", JSON.stringify(array_sync_if_tensor(test_t3)), "[4,5,6]");
-	await dispose(test_t3);
-
-	// --- base_wrappers.js: convert_to_tensor_if_not ---
-	var test_t4 = tensor([1]);
-	test_equal("convert_to_tensor_if_not tensor passthrough", is_tensor(convert_to_tensor_if_not(test_t4)), true);
-	await dispose(test_t4);
-	var test_t5 = convert_to_tensor_if_not([7,8,9]);
-	test_equal("convert_to_tensor_if_not array converts", is_tensor(test_t5), true);
-	test_equal("convert_to_tensor_if_not array values", JSON.stringify(array_sync(test_t5)), "[7,8,9]");
-	await dispose(test_t5);
-
-	// --- predict.js: extract_error_message ---
-	test_equal("extract_error_message with message", extract_error_message({message: "test"}), "test");
-	test_equal("extract_error_message string", extract_error_message("raw error"), "raw error");
-	test_equal("extract_error_message number", extract_error_message(42), "42");
-
-	// --- predict.js: scaleNestedArray edge cases ---
-	var arr_single = [[42]];
-	scaleNestedArray(arr_single);
-	// When min==max, result is NaN (already tested above, but good to confirm)
-	test_equal("scaleNestedArray single value NaN", isNaN(arr_single[0][0]), true);
-
-	// --- gui.js: is_numeric ---
+function _tiny_tests_gui_js() {
 	test_equal("is_numeric '3.14'", is_numeric("3.14"), true);
 	test_equal("is_numeric '0'", is_numeric("0"), true);
 	test_equal("is_numeric '-5'", is_numeric("-5"), true);
 	test_equal("is_numeric 'abc'", is_numeric("abc"), false);
 	test_equal("is_numeric ''", is_numeric(""), false);
-	test_equal("is_numeric number type", is_numeric(5), false); // only strings
+	test_equal("is_numeric number type", is_numeric(5), false);
 
-	// --- gui.js: get_python_name / get_js_name round-trip ---
 	test_equal("get_js_name('kernel_size')", get_js_name("kernel_size"), "kernelSize");
 	test_equal("get_python_name('kernelSize')", get_python_name("kernelSize"), "kernel_size");
 	test_equal("get_js_name boolean true", get_js_name(true), "true");
 	test_equal("get_js_name boolean false", get_js_name(false), "false");
 	test_equal("get_python_name boolean true", get_python_name(true), "True");
 
-	// --- data.js: get_or_insert_label ---
-	var old_labels_backup = JSON.parse(JSON.stringify(labels));
-	labels = ["cat", "dog"];
-	test_equal("get_or_insert_label existing", get_or_insert_label("cat"), 0);
-	test_equal("get_or_insert_label existing 2", get_or_insert_label("dog"), 1);
-	test_equal("get_or_insert_label new", get_or_insert_label("bird"), 2);
-	test_equal("get_or_insert_label new added", labels.includes("bird"), true);
-	labels = old_labels_backup;
+	test_equal("get_key_from_path simple", get_key_from_path({a:{b:42}}, ["a","b"]), 42);
+	test_equal("get_key_from_path empty keypath", get_key_from_path({a:1}, []), {a:1});
+	test_equal("get_key_from_path missing key", get_key_from_path({a:{b:42}}, ["a","x"]), null);
+	test_equal("get_key_from_path deep", get_key_from_path({a:{b:{c:7}}}, ["a","b","c"]), 7);
+}
 
-	// --- data.js: requires_auto_one_hot ---
-	test_equal("requires_auto_one_hot null xy_data", requires_auto_one_hot(false, null), false);
-	test_equal("requires_auto_one_hot has_custom_data", requires_auto_one_hot(true, {y: [1,2]}), false);
+function _tiny_tests_predict_js() {
+	test_equal("extract_error_message with message", extract_error_message({message: "test"}), "test");
+	test_equal("extract_error_message string", extract_error_message("raw error"), "raw error");
+	test_equal("extract_error_message number", extract_error_message(42), "42");
 
-	// --- predict.js: find_max_index ---
+	var arr_single = [[42]];
+	scaleNestedArray(arr_single);
+	test_equal("scaleNestedArray single value NaN", isNaN(arr_single[0][0]), true);
+
 	test_equal("find_max_index([1,3,2])", find_max_index([1,3,2]), 1);
 	test_equal("find_max_index([5,4,3,2,1])", find_max_index([5,4,3,2,1]), 0);
 	test_equal("find_max_index([1,2,5])", find_max_index([1,2,5]), 2);
 	test_equal("find_max_index([-5,-1,-3])", find_max_index([-5,-1,-3]), 1);
 	test_equal("find_max_index single element", find_max_index([42]), 0);
 
-	// --- predict.js: find_max_value ---
 	test_equal("find_max_value([1,3,2])", find_max_value([1,3,2]), 3);
 	test_equal("find_max_value([-5,-1,-3])", find_max_value([-5,-1,-3]), -1);
 	test_equal("find_max_value([10])", find_max_value([10]), 10);
 
-	// --- predict.js: _format_probability_text ---
 	test_equal("_format_probability_text(0.5)", _format_probability_text(0.5), "50.00%");
 	test_equal("_format_probability_text(1)", _format_probability_text(1), "100.00%");
 	test_equal("_format_probability_text(0)", _format_probability_text(0), "0.00%");
@@ -3129,38 +3066,81 @@ async function new_tiny_tests() {
 	test_equal("_format_probability_text(undefined)", _format_probability_text(undefined), "");
 	test_equal("_format_probability_text(0.1234)", _format_probability_text(0.1234), "12.34%");
 
-	// --- predict.js: _format_raw_value ---
 	test_equal("_format_raw_value(0.5)", _format_raw_value(0.5), "0.500000");
 	test_equal("_format_raw_value(1)", _format_raw_value(1), "1.000000");
 	test_equal("_format_raw_value(null)", _format_raw_value(null), "");
 	test_equal("_format_raw_value(undefined)", _format_raw_value(undefined), "");
 	test_equal("_format_raw_value(3.14159)", _format_raw_value(3.14159), "3.141590");
+}
 
-	// --- my_temml.js: _reshape_flat_to_matrix ---
+function _tiny_tests_fcnn_js() {
+	test_equal("_determine_shape_type conv2d", _determine_shape_type("conv2d"), "rectangle_conv2d");
+	test_equal("_determine_shape_type Conv2DTranspose", _determine_shape_type("Conv2DTranspose"), "rectangle_conv2d");
+	test_equal("_determine_shape_type flatten", _determine_shape_type("flatten"), "rectangle_flatten");
+	test_equal("_determine_shape_type Flatten", _determine_shape_type("Flatten"), "rectangle_flatten");
+	test_equal("_determine_shape_type dense", _determine_shape_type("dense"), "circle");
+	test_equal("_determine_shape_type maxPooling2d", _determine_shape_type("maxPooling2d"), "circle");
+	test_equal("_determine_shape_type layernormalization", _determine_shape_type("LayerNormalization"), "layernorm");
+
+	test_equal("_format_number null", _format_number(null), "N/A");
+	test_equal("_format_number undefined", _format_number(undefined), "N/A");
+	test_equal("_format_number 0", _format_number(0), "0");
+	test_equal("_format_number 1.23456789", _format_number(1.23456789), "1.234568");
+	test_equal("_format_number 42", _format_number(42), "42");
+	test_equal("_format_number Infinity", _format_number(Infinity), "Infinity");
+	test_equal("_format_number -Infinity", _format_number(-Infinity), "-Infinity");
+	test_equal("_format_number NaN", _format_number(NaN), "NaN");
+	test_equal("_format_number 0.00005", _format_number(0.00005), "5.0000e-5");
+
+	test_equal("_get_layer_name output layer", _get_layer_name(2, 3, "dense"), "Output Layer");
+	test_equal("_get_layer_name first layer", _get_layer_name(0, 3, "dense"), "dense 0");
+	test_equal("_get_layer_name middle layer", _get_layer_name(1, 3, "conv2d"), "conv2d 1");
+
+	test_equal("_point_in_region circle center", _point_in_region(5, 5, {shape: "circle", x: 5, y: 5, radius: 10}), true);
+	test_equal("_point_in_region circle outside", _point_in_region(100, 100, {shape: "circle", x: 5, y: 5, radius: 10}), false);
+	test_equal("_point_in_region circle edge", _point_in_region(15, 5, {shape: "circle", x: 5, y: 5, radius: 10}), true);
+
+	test_equal("_point_in_region rect inside", _point_in_region(3, 3, {shape: "rect", x: 0, y: 0, w: 10, h: 10}), true);
+	test_equal("_point_in_region rect outside", _point_in_region(15, 3, {shape: "rect", x: 0, y: 0, w: 10, h: 10}), false);
+
+	var hBins = _compute_histogram_bins([1,2,3,4,5], {min: 1, max: 5}, 5);
+	test_equal("_compute_histogram_bins length", hBins.length, 5);
+	test_equal("_compute_histogram_bins sum", hBins.reduce((a,b) => a+b, 0), 5);
+
+	var fcs = _compute_stats([1,2,3,4,5]);
+	test_equal("fcnn _compute_stats min", fcs.min, 1);
+	test_equal("fcnn _compute_stats max", fcs.max, 5);
+	test_equal("fcnn _compute_stats avg", fcs.avg, 3);
+	test_equal("fcnn _compute_stats count", fcs.count, 5);
+	test_equal("fcnn _compute_stats null on empty", _compute_stats(null), null);
+	test_equal("fcnn _compute_stats null on []", _compute_stats([]), null);
+
+	test_equal("_compute_vertical_spacing small count", _compute_vertical_spacing(5, 20, 800), 20);
+	test_equal("_compute_vertical_spacing large count", _compute_vertical_spacing(100, 20, 800), 8);
+	test_equal("_compute_vertical_spacing single neuron", _compute_vertical_spacing(1, 20, 800), 20);
+}
+
+function _tiny_tests_misc() {
 	test_equal("_reshape_flat_to_matrix 2x3", JSON.stringify(_reshape_flat_to_matrix([1,2,3,4,5,6], [2,3])), "[[1,2,3],[4,5,6]]");
 	test_equal("_reshape_flat_to_matrix 1x3", JSON.stringify(_reshape_flat_to_matrix([7,8,9], [1,3])), "[[7,8,9]]");
 	test_equal("_reshape_flat_to_matrix 3x1", JSON.stringify(_reshape_flat_to_matrix([1,2,3], [3,1])), "[[1],[2],[3]]");
 	test_equal("_reshape_flat_to_matrix 1x1", JSON.stringify(_reshape_flat_to_matrix([42], [1,1])), "[[42]]");
 
-	// --- health_status.js: _erfApprox ---
 	test_equal("_erfApprox(0) ~ 0", Math.abs(_erfApprox(0)) < 1e-6, true);
 	test_equal("_erfApprox(1) ~ 0.8427", Math.abs(_erfApprox(1) - 0.8427007929) < 0.001, true);
 	test_equal("_erfApprox(-1) = -erfApprox(1)", Math.abs(_erfApprox(-1) + _erfApprox(1)) < 1e-6, true);
 	test_equal("_erfApprox large positive ~ 1", _erfApprox(5) > 0.999, true);
 	test_equal("_erfApprox large negative ~ -1", _erfApprox(-5) < -0.999, true);
 
-	// --- feature_maps.js: _determinant_3x3 ---
 	test_equal("_determinant_3x3 identity", _determinant_3x3([[1,0,0],[0,1,0],[0,0,1]]), 1);
 	test_equal("_determinant_3x3 [[2,0,0],[0,3,0],[0,0,4]]", _determinant_3x3([[2,0,0],[0,3,0],[0,0,4]]), 24);
 	test_equal("_determinant_3x3 singular", _determinant_3x3([[1,2,3],[4,5,6],[7,8,9]]), 0);
 	test_equal("_determinant_3x3 [[1,2,3],[0,1,4],[5,6,0]]", _determinant_3x3([[1,2,3],[0,1,4],[5,6,0]]), 1);
 
-	// --- feature_maps.js: _normalize_correlation_matrix ---
 	test_equal("_normalize_correlation_matrix identity", JSON.stringify(_normalize_correlation_matrix([[1,0,0],[0,1,0],[0,0,1]])), "[[1,0,0],[0,1,0],[0,0,1]]");
 	var normTest = _normalize_correlation_matrix([[3,0,0],[0,4,0],[0,0,5]]);
 	test_equal("_normalize_correlation_matrix cols are unit length", Math.abs(Math.sqrt(normTest[0][0]*normTest[0][0]+normTest[1][0]*normTest[1][0]+normTest[2][0]*normTest[2][0]) - 1) < 1e-10, true);
 
-	// --- train.js: calculate_stats ---
 	var cs1 = calculate_stats([1,2,3,4,5]);
 	test_equal("calculate_stats mean", cs1.mean, 3);
 	test_equal("calculate_stats min", cs1.min, 1);
@@ -3173,12 +3153,10 @@ async function new_tiny_tests() {
 	test_equal("calculate_stats identical values std=0", cs2.std, 0);
 	test_equal("calculate_stats identical values cv=0", cs2.cv, 0);
 
-	// --- train.js: model_shape_to_string ---
 	test_equal("model_shape_to_string [null,10]", model_shape_to_string([null,10]), "[null, 10]");
 	test_equal("model_shape_to_string [1,2,3]", model_shape_to_string([1,2,3]), "[1, 2, 3]");
 	test_equal("model_shape_to_string [null,28,28,3]", model_shape_to_string([null,28,28,3]), "[null, 28, 28, 3]");
 
-	// --- layers_gui.js: is_basic_option ---
 	test_equal("is_basic_option 'activation'", is_basic_option("activation"), true);
 	test_equal("is_basic_option 'units'", is_basic_option("units"), true);
 	test_equal("is_basic_option 'filters'", is_basic_option("filters"), true);
@@ -3188,100 +3166,33 @@ async function new_tiny_tests() {
 	test_equal("is_basic_option 'something_else'", is_basic_option("something_else"), false);
 	test_equal("is_basic_option ''", is_basic_option(""), false);
 
-	// --- layers_gui.js: findInitializerElement ---
 	test_equal("findInitializerElement finds initializer", findInitializerElement(["foo", "kernel_initializer_glorot", "bar"]), "kernel_initializer_glorot");
 	test_equal("findInitializerElement finds first", findInitializerElement(["bias_initializer_zeros", "kernel_initializer_glorot"]), "bias_initializer_zeros");
 	test_equal("findInitializerElement null when none", findInitializerElement(["foo", "bar", "baz"]), null);
 	test_equal("findInitializerElement empty array", findInitializerElement([]), null);
 
-	// --- explain.js: get_empty_default_trace ---
-	var trace = get_empty_default_trace("myTrace");
-	test_equal("get_empty_default_trace name", trace.name, "myTrace");
-	test_equal("get_empty_default_trace type", trace.type, "scatter");
-	test_equal("get_empty_default_trace x empty", JSON.stringify(trace.x), "[]");
-	test_equal("get_empty_default_trace y empty", JSON.stringify(trace.y), "[]");
-
-	// --- fcnn.js: _determine_shape_type ---
-	test_equal("_determine_shape_type conv2d", _determine_shape_type("conv2d"), "rectangle_conv2d");
-	test_equal("_determine_shape_type Conv2DTranspose", _determine_shape_type("Conv2DTranspose"), "rectangle_conv2d");
-	test_equal("_determine_shape_type flatten", _determine_shape_type("flatten"), "rectangle_flatten");
-	test_equal("_determine_shape_type Flatten", _determine_shape_type("Flatten"), "rectangle_flatten");
-	test_equal("_determine_shape_type dense", _determine_shape_type("dense"), "circle");
-	test_equal("_determine_shape_type maxPooling2d", _determine_shape_type("maxPooling2d"), "circle");
-	test_equal("_determine_shape_type layernormalization", _determine_shape_type("LayerNormalization"), "layernorm");
-
-	// --- fcnn.js: _format_number ---
-	test_equal("_format_number null", _format_number(null), "N/A");
-	test_equal("_format_number undefined", _format_number(undefined), "N/A");
-	test_equal("_format_number 0", _format_number(0), "0");
-	test_equal("_format_number 1.23456789", _format_number(1.23456789), "1.234568");
-	test_equal("_format_number 42", _format_number(42), "42");
-	test_equal("_format_number Infinity", _format_number(Infinity), "Infinity");
-	test_equal("_format_number -Infinity", _format_number(-Infinity), "-Infinity");
-	test_equal("_format_number NaN", _format_number(NaN), "NaN");
-	test_equal("_format_number 0.00005", _format_number(0.00005), "5.0000e-5");
-
-	// --- fcnn.js: _get_layer_name ---
-	test_equal("_get_layer_name output layer", _get_layer_name(2, 3, "dense"), "Output Layer");
-	test_equal("_get_layer_name first layer", _get_layer_name(0, 3, "dense"), "dense 0");
-	test_equal("_get_layer_name middle layer", _get_layer_name(1, 3, "conv2d"), "conv2d 1");
-
-	// --- fcnn.js: _point_in_region circle ---
-	test_equal("_point_in_region circle center", _point_in_region(5, 5, {shape: "circle", x: 5, y: 5, radius: 10}), true);
-	test_equal("_point_in_region circle outside", _point_in_region(100, 100, {shape: "circle", x: 5, y: 5, radius: 10}), false);
-	test_equal("_point_in_region circle edge", _point_in_region(15, 5, {shape: "circle", x: 5, y: 5, radius: 10}), true);
-
-	// --- fcnn.js: _point_in_region rectangle ---
-	test_equal("_point_in_region rect inside", _point_in_region(3, 3, {shape: "rect", x: 0, y: 0, w: 10, h: 10}), true);
-	test_equal("_point_in_region rect outside", _point_in_region(15, 3, {shape: "rect", x: 0, y: 0, w: 10, h: 10}), false);
-
-	// --- fcnn.js: _compute_histogram_bins ---
-	var hBins = _compute_histogram_bins([1,2,3,4,5], {min: 1, max: 5}, 5);
-	test_equal("_compute_histogram_bins length", hBins.length, 5);
-	test_equal("_compute_histogram_bins sum", hBins.reduce((a,b) => a+b, 0), 5);
-
-	// --- fcnn.js: _compute_stats ---
-	var fcs = _compute_stats([1,2,3,4,5]);
-	test_equal("fcnn _compute_stats min", fcs.min, 1);
-	test_equal("fcnn _compute_stats max", fcs.max, 5);
-	test_equal("fcnn _compute_stats avg", fcs.avg, 3);
-	test_equal("fcnn _compute_stats count", fcs.count, 5);
-	test_equal("fcnn _compute_stats null on empty", _compute_stats(null), null);
-	test_equal("fcnn _compute_stats null on []", _compute_stats([]), null);
-
-	// --- fcnn.js: _compute_vertical_spacing ---
-	test_equal("_compute_vertical_spacing small count", _compute_vertical_spacing(5, 20, 800), 20);
-	test_equal("_compute_vertical_spacing large count", _compute_vertical_spacing(100, 20, 800), 8);
-	test_equal("_compute_vertical_spacing single neuron", _compute_vertical_spacing(1, 20, 800), 20);
-
-	// --- loss_landscape.js: compute_dot ---
 	test_equal("compute_dot [1,2,3].[4,5,6]", compute_dot([1,2,3],[4,5,6]), 32);
 	test_equal("compute_dot [1,0,0].[0,1,0]", compute_dot([1,0,0],[0,1,0]), 0);
 	test_equal("compute_dot zeros", compute_dot([0,0],[0,0]), 0);
 	test_equal("compute_dot mismatched lengths", compute_dot([1,2],[1]), 0);
 
-	// --- loss_landscape.js: subtract_mul ---
 	test_equal("subtract_mul basic", JSON.stringify(subtract_mul([10,20],[1,2],3)), "[7,14]");
 	test_equal("subtract_mul scalar=0", JSON.stringify(subtract_mul([10,20],[1,2],0)), "[10,20]");
 	test_equal("subtract_mul mismatched", JSON.stringify(subtract_mul([1,2],[1],[3])), "[1,2]");
 
-	// --- loss_landscape.js: vector_norm ---
 	test_equal("vector_norm [3,4]", vector_norm([3,4]), 5);
 	test_equal("vector_norm [0,0,0]", vector_norm([0,0,0]), 0);
 	test_equal("vector_norm [1]", vector_norm([1]), 1);
 
-	// --- loss_landscape.js: normalize_vector ---
 	var nv1 = normalize_vector([3,4]);
 	test_equal("normalize_vector [3,4] norm=1", Math.abs(vector_norm(nv1) - 1) < 1e-10, true);
 	test_equal("normalize_vector [3,4] values correct", Math.abs(nv1[0] - 0.6) < 1e-10, true);
 	test_equal("normalize_vector [0,0,0] unchanged", JSON.stringify(normalize_vector([0,0,0])), "[0,0,0]");
 	test_equal("normalize_vector non-array", JSON.stringify(normalize_vector(null)), "[]");
 
-	// --- loss_landscape.js: scalarMulVec ---
 	test_equal("scalarMulVec basic", JSON.stringify(scalarMulVec(3, [1,2,3])), "[3,6,9]");
 	test_equal("scalarMulVec zero scalar", JSON.stringify(scalarMulVec(0, [1,2,3])), "[0,0,0]");
 
-	// --- loss_landscape.js: isShapeArray ---
 	test_equal("isShapeArray valid", isShapeArray([null, 28, 28, 3]), true);
 	test_equal("isShapeArray all numbers", isShapeArray([1, 2, 3]), true);
 	test_equal("isShapeArray empty", isShapeArray([]), true);
@@ -3290,7 +3201,6 @@ async function new_tiny_tests() {
 	test_equal("isShapeArray with float", isShapeArray([1.5, 2]), false);
 	test_equal("isShapeArray with string", isShapeArray(["a"]), false);
 
-	// --- loss_landscape.js: formatTime ---
 	test_equal("formatTime 0", formatTime(0), "00:00");
 	test_equal("formatTime 65", formatTime(65), "01:05");
 	test_equal("formatTime 3661", formatTime(3661), "01:01:01");
@@ -3299,17 +3209,63 @@ async function new_tiny_tests() {
 	test_equal("formatTime NaN", formatTime(NaN), "...");
 	test_equal("formatTime string", formatTime("abc"), "...");
 
-	// --- gui.js: get_key_from_path ---
-	test_equal("get_key_from_path simple", get_key_from_path({a:{b:42}}, ["a","b"]), 42);
-	test_equal("get_key_from_path empty keypath", get_key_from_path({a:1}, []), {a:1});
-	test_equal("get_key_from_path missing key", get_key_from_path({a:{b:42}}, ["a","x"]), null);
-	test_equal("get_key_from_path deep", get_key_from_path({a:{b:{c:7}}}, ["a","b","c"]), 7);
-
-	// --- layer_descriptions.js: collapse_into_segments ---
 	test_equal("collapse_into_segments empty", JSON.stringify(collapse_into_segments([])), "[]");
 	test_equal("collapse_into_segments same values", JSON.stringify(collapse_into_segments(["a","a","a"])), '[{"a":[0,1,2]}]');
 	test_equal("collapse_into_segments alternating", JSON.stringify(collapse_into_segments(["a","b","a"])), '[{"a":[0]},{"b":[1]},{"a":[2]}]');
 	test_equal("collapse_into_segments mixed", JSON.stringify(collapse_into_segments(["x","x","y","y","z"])), '[{"x":[0,1]},{"y":[2,3]},{"z":[4]}]');
+}
+
+function _tiny_tests_base_wrappers_async() {
+	var old_labels_backup;
+	return (async function() {
+		test_equal("is_tensor null", is_tensor(null), false);
+		test_equal("is_tensor undefined", is_tensor(undefined), false);
+		test_equal("is_tensor array", is_tensor([1,2,3]), false);
+		test_equal("is_tensor string", is_tensor("hello"), false);
+		var test_t = tensor([1,2,3]);
+		test_equal("is_tensor real tensor", is_tensor(test_t), true);
+		await dispose(test_t);
+
+		var test_t2 = tensor([1,2]);
+		test_equal("tensor_is_disposed live tensor", tensor_is_disposed(test_t2), false);
+		await dispose(test_t2);
+
+		test_equal("array_sync_if_tensor array passthrough", JSON.stringify(array_sync_if_tensor([1,2,3])), "[1,2,3]");
+		var test_t3 = tensor([4,5,6]);
+		test_equal("array_sync_if_tensor tensor", JSON.stringify(array_sync_if_tensor(test_t3)), "[4,5,6]");
+		await dispose(test_t3);
+
+		var test_t4 = tensor([1]);
+		test_equal("convert_to_tensor_if_not tensor passthrough", is_tensor(convert_to_tensor_if_not(test_t4)), true);
+		await dispose(test_t4);
+		var test_t5 = convert_to_tensor_if_not([7,8,9]);
+		test_equal("convert_to_tensor_if_not array converts", is_tensor(test_t5), true);
+		test_equal("convert_to_tensor_if_not array values", JSON.stringify(array_sync(test_t5)), "[7,8,9]");
+		await dispose(test_t5);
+
+		old_labels_backup = JSON.parse(JSON.stringify(labels));
+		labels = ["cat", "dog"];
+		test_equal("get_or_insert_label existing", get_or_insert_label("cat"), 0);
+		test_equal("get_or_insert_label existing 2", get_or_insert_label("dog"), 1);
+		test_equal("get_or_insert_label new", get_or_insert_label("bird"), 2);
+		test_equal("get_or_insert_label new added", labels.includes("bird"), true);
+		labels = old_labels_backup;
+
+		test_equal("requires_auto_one_hot null xy_data", requires_auto_one_hot(false, null), false);
+		test_equal("requires_auto_one_hot has_custom_data", requires_auto_one_hot(true, {y: [1,2]}), false);
+	})();
+}
+
+async function new_tiny_tests() {
+	_tiny_tests_data_js();
+	_tiny_tests_explain_js();
+	_tiny_tests_model_js();
+	_tiny_tests_math_mode_js();
+	_tiny_tests_gui_js();
+	_tiny_tests_predict_js();
+	_tiny_tests_fcnn_js();
+	_tiny_tests_misc();
+	await _tiny_tests_base_wrappers_async();
 
 	return true;
 }
