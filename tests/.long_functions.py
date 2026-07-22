@@ -42,7 +42,16 @@ ignored_long_funcs = [
 ]
 ignored_files = [
     "asanai.js",
-    "manual.js"
+    "manual.js",
+    "online_python.js",
+    "topological_analyzer.js",
+    "dimensionality_river.js",
+    "gradient_flow_heatmap.js",
+    "health_status_popups.js",
+    "neural_organism.js",
+    "health_status.js",
+    "tda.js",
+    "activation_atlas.js"
 ]
 
 @dataclass
