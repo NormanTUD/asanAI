@@ -58,6 +58,7 @@ ignored_files = [
     "weight_analysis.js",
     "trace_through_loss_landscape.js",
     "weight_surfaces.js",
+    "online_python_code_completion.js"
 ]
 
 @dataclass
