@@ -303,8 +303,6 @@ async function init_page_contents (chosen_dataset=false) {
 
 		rename_tmp_onchange();
 
-		await updated_page();
-
 		disabling_saving_status = false;
 		skip_predictions = false;
 
@@ -408,8 +406,6 @@ async function set_backend() {
 	}
 
 	await setBackend(backend);
-
-	await delay(2000);
 }
 
 function show_login_stuff_when_session_id_is_set() {
