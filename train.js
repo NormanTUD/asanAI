@@ -390,6 +390,7 @@ async function retrain_neural_network() {
 	training_logs_epoch = get_empty_plotly("Loss");
 	training_logs_batch = get_empty_plotly("Loss");
 	_clear_plotly_epoch_history();
+	_clear_plotly_batch_history();
 	last_batch_plot_time = false;
 
 	await incrementAndReset();
@@ -816,6 +817,14 @@ async function get_fit_data () {
 		if(!last_batch_plot_time || (Date.now() - last_batch_plot_time) > (parse_int($("#min_time_between_batch_plots").val()) * 1000)) { // Only plot every min_time_between_batch_plots seconds
 			const plot_func = (batchNr === 1) ? Plotly.newPlot : Plotly.update;
 
+			try {
+				$("#plotly_batch_history").parent().show();
+				$("#plotly_batch_history").show();
+				plot_func('plotly_batch_history', this_plot_data, get_plotly_layout(language[lang]["batches"], "Loss"));
+			} catch (e) {
+				err("Error trying to write plotly_batch_history plot!");
+			}
+
 			last_batch_plot_time = Date.now();
 		}
 
@@ -823,9 +832,10 @@ async function get_fit_data () {
 			if($("#predict_own_data").val()) {
 				await predict($("#predict_own_data").val());
 			}
-			await show_prediction(0, 1);
 			if(input_shape_is_image()) {
 				await repredict();
+			} else {
+				await show_prediction(0, 1);
 			}
 		}
 
@@ -1241,6 +1251,11 @@ function model_shape_to_string (model_shape) {
 function _clear_plotly_epoch_history () {
 	$("#plotly_epoch_history").parent().hide();
 	$("#plotly_epoch_history").html("");
+}
+
+function _clear_plotly_batch_history () {
+	$("#plotly_batch_history").parent().hide();
+	$("#plotly_batch_history").html("");
 }
 
 async function _get_fit_data (x_and_y) {
@@ -2222,6 +2237,7 @@ async function reset_stuff_after_training (x_and_y) {
 function prepare_site_for_training() {
 	if (!_model_fingerprint_unchanged) {
 		_clear_plotly_epoch_history();
+		_clear_plotly_batch_history();
 	}
 }
 

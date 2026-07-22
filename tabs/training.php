@@ -13,6 +13,10 @@
 
 			<div id="training_history_tabs" style="display: none"></div>
 
+			<div id="plotly_batch_history_div" style="display: none">
+				<div id="plotly_batch_history"></div>
+			</div>
+
 			<div id="plotly_epoch_history_div" style="display: none">
 				<div id="plotly_epoch_history"></div>
 			</div>

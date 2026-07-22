@@ -325,8 +325,13 @@ async function predict_demo (item, nr, tried_again = 0) {
 		return;
 	}
 
-	while ((is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading)) {
+	while ((is_hidden_or_has_hidden_parent($("#predict_tab")) && finished_loading && !started_training)) {
 		await delay(200);
+	}
+
+	if (started_training && is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+		dbg("[predict_tab] Predict-Tab ist versteckt während Training - breche predict_demo ab");
+		return;
 	}
 
 	var new_tensor_img;
