@@ -1945,8 +1945,9 @@ function _render_multi_run_boxplot(losses, valLosses) {
 		name: language[lang]["loss"],
 		boxpoints: "all",
 		jitter: 0.3,
-		pointpos: -1.5,
-		orientation: "h"
+		pointpos: -0.6,
+		orientation: "h",
+		cliponaxis: false
 	});
 
 	if (valLosses.length >= 6) {
@@ -1956,8 +1957,9 @@ function _render_multi_run_boxplot(losses, valLosses) {
 			name: "Val Loss",
 			boxpoints: "all",
 			jitter: 0.3,
-			pointpos: 1.5,
-			orientation: "h"
+			pointpos: 0.6,
+			orientation: "h",
+			cliponaxis: false
 		});
 	}
 
@@ -1972,6 +1974,7 @@ function _render_multi_run_boxplot(losses, valLosses) {
 			gridcolor: "#ccc"
 		},
 		showlegend: false,
+		hoverlabel: { textangle: 0 },
 		height: 200 + (valLosses.length >= 6 ? 100 : 0)
 	};
 
