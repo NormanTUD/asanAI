@@ -706,7 +706,7 @@ async function get_fit_data () {
 		$("#network_has_seen_msg").hide();
 
 		await visualize_train();
-		await confusion_matrix_to_page(); // async not possible
+		await confusion_matrix_to_page();
 
 		confusion_matrix_and_grid_cache = {};
 
@@ -875,7 +875,7 @@ async function get_fit_data () {
 		}
 		$("#network_has_seen_msg").show();
 
-		confusion_matrix_to_page(); // async not possible
+		await confusion_matrix_to_page();
 
 		confusion_matrix_and_grid_cache = {};
 
@@ -919,7 +919,7 @@ async function get_fit_data () {
 		reset_tiny_graph(1);
 		$("#network_has_seen_msg").hide();
 
-		confusion_matrix_to_page(); // async not possible
+		await confusion_matrix_to_page();
 
 		confusion_matrix_and_grid_cache = {};
 

@@ -6084,7 +6084,7 @@ class asanAI {
 			asanai_this.#this_training_start_time = Date.now();
 
 			await asanai_this.visualize_train();
-			await asanai_this.#confusion_matrix_to_page(); // async not possible
+			await asanai_this.#confusion_matrix_to_page();
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
@@ -6264,7 +6264,7 @@ class asanAI {
 			}
 			$("#network_has_seen_msg").show();
 
-			asanai_this.#confusion_matrix_to_page(); // async not possible
+			await asanai_this.#confusion_matrix_to_page();
 
 			asanai_this.#confusion_matrix_and_grid_cache = {};
 
@@ -6289,7 +6289,7 @@ class asanAI {
 
 			$("#network_has_seen_msg").hide();
 
-			asanai_this.#confusion_matrix_to_page(); // async not possible
+			await asanai_this.#confusion_matrix_to_page();
 
 			//await reset_data();
 

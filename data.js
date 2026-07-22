@@ -2510,6 +2510,8 @@ async function get_table_data_from_images(imgs) {
 
 	var table_data = {};
 
+	var all_predictions = {};
+
 	var uncached_indices = [];
 	var uncached_tensors = [];
 
@@ -2518,6 +2520,7 @@ async function get_table_data_from_images(imgs) {
 		var image_element_xpath = get_element_xpath(image_element);
 
 		if(confusion_matrix_and_grid_cache[image_element_xpath]) {
+			all_predictions[image_element_xpath] = confusion_matrix_and_grid_cache[image_element_xpath];
 			continue;
 		}
 
@@ -2552,7 +2555,7 @@ async function get_table_data_from_images(imgs) {
 			var batch_predictions = tidy(() => {
 				const pd = model.predict(batch_tensor);
 				var _res = array_sync(pd);
-				dispose(pd); // await not possible here
+				dispose(pd);
 				return _res;
 			});
 
@@ -2561,6 +2564,7 @@ async function get_table_data_from_images(imgs) {
 				var el = imgs[idx];
 				var xpath = get_element_xpath(el);
 				confusion_matrix_and_grid_cache[xpath] = batch_predictions[i];
+				all_predictions[xpath] = batch_predictions[i];
 			}
 		} catch (e) {
 			await handle_get_confusion_matrix_table_from_images_error(e, batch_tensor, null);
@@ -2577,7 +2581,7 @@ async function get_table_data_from_images(imgs) {
 		var image_element = imgs[img_idx];
 		var image_element_xpath = get_element_xpath(image_element);
 
-		var predicted_tensor = confusion_matrix_and_grid_cache[image_element_xpath];
+		var predicted_tensor = all_predictions[image_element_xpath];
 
 		if(!predicted_tensor) {
 			dbg("[confusion_matrix] Could not get predicted_tensor");
