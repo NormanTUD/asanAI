@@ -1201,7 +1201,7 @@ button, select, input, textarea, checkbox, .large_button {
 
 #canvas_grid_visualization {
 	pointer-events: none;
-	display: block ruby;
+	display: block;
 	z-index: 999999;
 }
 

@@ -3,6 +3,7 @@
 var multi_run_data = {};
 var current_multi_run = 0;
 var _grid_visualization_height = 0;
+var _last_grid_canvas_data_url = null;
 
 function save_multi_run_weights(run) {
 	if (!model) return;
@@ -2366,54 +2367,70 @@ async function reset_on_error () {
 	link.href = "favicon.ico";
 }
 
-function get_canvasses(numCategories, _height) {
-	var canvasses = [];
+function _draw_grid_scale_on_ctx(ctx, scaleWidth, _height, margin) {
+	ctx.font = "12px Arial";
+	if (is_dark_mode) {
+		ctx.fillStyle = "#ffffff";
+		ctx.strokeStyle = "#ffffff";
+	} else {
+		ctx.fillStyle = "#000000";
+		ctx.strokeStyle = "#000000";
+	}
+	ctx.textAlign = "right";
 
-	for (let numCategories_idx = 0; numCategories_idx < numCategories; numCategories_idx++) {
-		var canvas = document.createElement("canvas");
-		var relationScale = 1;
-		var pw = parse_int($("#training_tab").width() * relationScale);
-		var w = parse_int(pw / (numCategories + 1));
+	var graphHeight = _height - margin * 2 - 50;
+	var scaleTop = margin;
+	var scaleBottom = scaleTop + graphHeight;
 
-		canvas.width = w;
-		canvas.height = _height;
+	ctx.beginPath();
+	ctx.moveTo(scaleWidth - 5, scaleTop);
+	ctx.lineTo(scaleWidth - 5, scaleBottom);
+	ctx.stroke();
 
-		var ctx = canvas.getContext("2d");
+	var numTicks = 10;
+	for (var tick = 0; tick <= numTicks; tick++) {
+		var value = tick * 10;
+		var yPos = scaleBottom - (value / 100) * graphHeight;
 
-		ctx.fillStyle = "rgba(255, 255, 255, 0)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.beginPath();
+		ctx.moveTo(scaleWidth - 10, yPos);
+		ctx.lineTo(scaleWidth - 5, yPos);
+		ctx.stroke();
 
-		ctx.font = "14px Arial";
-		if(is_dark_mode) {
-			ctx.fillStyle = "#ffffff";
-		} else {
-			ctx.fillStyle = "#000000";
-		}
-		ctx.textAlign = "right";
-
-		canvasses.push(canvas);
+		ctx.fillText(value.toString(), scaleWidth - 12, yPos + 4);
 	}
 
-	return canvasses;
+	ctx.save();
+	ctx.translate(12, scaleTop + graphHeight / 2);
+	ctx.rotate(-Math.PI / 2);
+	ctx.textAlign = "center";
+	ctx.fillText(language[lang]["certainty"] + " in %", 0, 0);
+	ctx.restore();
 }
 
-function draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin) {
+function _draw_grid_category_labels_on_ctx(ctx, numCategories, category_overview, margin, colWidth, scaleWidth, _height) {
+	ctx.font = "14px Arial";
+	if (is_dark_mode) {
+		ctx.fillStyle = "#ffffff";
+	} else {
+		ctx.fillStyle = "#000000";
+	}
+
 	for (let canvasIndex = 0; canvasIndex < numCategories; canvasIndex++) {
-		var canvas = canvasses[canvasIndex];
-		var ctx = canvas.getContext("2d");
+		var colCenterX = scaleWidth + canvasIndex * colWidth + colWidth / 2;
 
 		ctx.textAlign = "center";
 		var label = labels[canvasIndex];
 		var _text = label;
-		ctx.fillText(_text, canvas.width / 2, canvas.height - margin - 30);
+		ctx.fillText(_text, colCenterX, _height - margin - 30);
 
-		if(!category_overview) {
+		if (!category_overview) {
 			dbg("[draw_images_in_grid] category_overview was empty");
 			continue;
 		}
 
 		var __key = labels[canvasIndex % labels.length];
-		if(!Object.keys(category_overview).includes(__key)) {
+		if (!Object.keys(category_overview).includes(__key)) {
 			if (__key == "fire") { __key = language[lang]["fire"]; }
 			else if (__key == "mandatory") { __key = language[lang]["mandatory"]; }
 			else if (__key == "prohibition") { __key = language[lang]["prohibition"]; }
@@ -2421,69 +2438,69 @@ function draw_category_to_training_visualization(canvasses, numCategories, categ
 			else if (__key == "warning") { __key = language[lang]["warning"]; }
 		}
 
-		if(!Object.keys(category_overview).includes(__key)) {
-			//dbg("[draw_images_in_grid] category_overview did not contain key " + __key);
+		if (!Object.keys(category_overview).includes(__key)) {
 			continue;
 		}
 
 		var _d = category_overview[__key];
-
 		var _acc_text = `${_d["correct"]} ${language[lang]["of"]} ${_d["total"]} ${language[lang]["correct"]} (${_d["percentage_correct"]}%)`;
-
-		ctx.fillText(_acc_text, canvas.width / 2, canvas.height - margin);
+		ctx.fillText(_acc_text, colCenterX, _height - margin);
 	}
 }
 
-function _draw_grid_scale_canvas(_height, margin) {
-	var scaleWidth = 40;
-	var scaleCanvas = document.createElement("canvas");
-	scaleCanvas.width = scaleWidth;
-	scaleCanvas.height = _height;
-	var scaleCtx = scaleCanvas.getContext("2d");
-
-	scaleCtx.fillStyle = "rgba(255, 255, 255, 0)";
-	scaleCtx.fillRect(0, 0, scaleCanvas.width, scaleCanvas.height);
-
-	scaleCtx.font = "12px Arial";
+function _draw_grid_dividers_on_ctx(ctx, numCategories, margin, colWidth, scaleWidth, _height) {
 	if (is_dark_mode) {
-		scaleCtx.fillStyle = "#ffffff";
-		scaleCtx.strokeStyle = "#ffffff";
+		ctx.strokeStyle = "#ffffff";
 	} else {
-		scaleCtx.fillStyle = "#000000";
-		scaleCtx.strokeStyle = "#000000";
+		ctx.strokeStyle = "#000000";
 	}
-	scaleCtx.textAlign = "right";
+	ctx.lineWidth = 1;
 
-	var graphHeight = _height - margin * 2 - 50;
-	var scaleTop = margin;
-	var scaleBottom = scaleTop + graphHeight;
-
-	scaleCtx.beginPath();
-	scaleCtx.moveTo(scaleWidth - 5, scaleTop);
-	scaleCtx.lineTo(scaleWidth - 5, scaleBottom);
-	scaleCtx.stroke();
-
-	var numTicks = 10;
-	for (var tick = 0; tick <= numTicks; tick++) {
-		var value = tick * 10;
-		var yPos = scaleBottom - (value / 100) * graphHeight;
-
-		scaleCtx.beginPath();
-		scaleCtx.moveTo(scaleWidth - 10, yPos);
-		scaleCtx.lineTo(scaleWidth - 5, yPos);
-		scaleCtx.stroke();
-
-		scaleCtx.fillText(value.toString(), scaleWidth - 12, yPos + 4);
+	for (let i = 1; i < numCategories; i++) {
+		var x = scaleWidth + i * colWidth;
+		ctx.beginPath();
+		ctx.moveTo(x, margin);
+		ctx.lineTo(x, _height - margin - 50);
+		ctx.stroke();
 	}
+}
 
-	scaleCtx.save();
-	scaleCtx.translate(12, scaleTop + graphHeight / 2);
-	scaleCtx.rotate(-Math.PI / 2);
-	scaleCtx.textAlign = "center";
-	scaleCtx.fillText(language[lang]["certainty"] + " in %", 0, 0);
-	scaleCtx.restore();
+function _draw_grid_images_on_ctx(ctx, images, categories, probabilities, counters, margin, graphHeight, colWidth, scaleWidth) {
+	var maxProb = 1;
+	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]);
 
-	return scaleCanvas;
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		var image = images[image_idx];
+		var category = categories[image_idx];
+		var probability = probabilities[image_idx];
+
+		if (counters.real_canvas_img_counter[category] > 0) {
+			targetSize = colWidth / counters.real_canvas_img_counter[category];
+			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize);
+		}
+
+		var colLeft = scaleWidth + category * colWidth;
+		var xPos = margin;
+		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
+
+		var scale = targetSize / Math.max(image.width, image.height);
+		var w = image.width * scale;
+		var h = image.height * scale;
+
+		var imageX = colLeft + xPos - model?.input?.shape[2] / 2;
+		imageX += counters.canvas_img_counter[category] * targetSize;
+
+		if (imageX < colLeft) {
+			imageX = colLeft;
+		}
+
+		imageX = parse_int(imageX);
+
+		var imageY = parse_int(yPos - h / 2);
+		ctx.drawImage(image, imageX, imageY, w, h);
+
+		counters.canvas_img_counter[category]++;
+	}
 }
 
 function _draw_grid_init_counters(images, categories) {
@@ -2504,48 +2521,29 @@ function _draw_grid_init_counters(images, categories) {
 	return { canvas_img_counter: canvas_img_counter, real_canvas_img_counter: real_canvas_img_counter };
 }
 
-function _draw_grid_images(images, categories, probabilities, canvasses, counters, margin, graphHeight) {
-	var maxProb = 1;
-	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]);
+function _restore_last_grid_render() {
+	if (!_last_grid_canvas_data_url) return false;
 
-	for (let image_idx = 0; image_idx < images.length; image_idx++) {
-		var image = images[image_idx];
-		var category = categories[image_idx];
-		var probability = probabilities[image_idx];
-
-		if (counters.real_canvas_img_counter[category] > 0) {
-			var canvas_width = canvasses[0].width;
-			targetSize = canvas_width / counters.real_canvas_img_counter[category];
-			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize);
+	var $container = $("#canvas_grid_visualization");
+	var img = new Image();
+	img.onload = function() {
+		var currentHeight = $container.outerHeight();
+		if (currentHeight > 0) {
+			$container.css("min-height", currentHeight + "px");
 		}
-
-		var xPos = margin * 1;
-		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
-
-		var canvasIndex = category;
-		var canvas = canvasses[canvasIndex];
-		if (canvas) {
-			var ctx = canvas.getContext("2d");
-
-			var scale = targetSize / Math.max(image.width, image.height);
-			var w = image.width * scale;
-			var h = image.height * scale;
-
-			var imageX = xPos - model?.input?.shape[2] / 2;
-			imageX += counters.canvas_img_counter[category] * targetSize;
-
-			if (imageX < 0) {
-				imageX = 0;
-			}
-
-			imageX = parse_int(imageX);
-
-			var imageY = parse_int(yPos - h / 2);
-			ctx.drawImage(image, imageX, imageY, w, h);
-
-			counters.canvas_img_counter[category]++;
-		}
-	}
+		$container.html("");
+		var displayCanvas = document.createElement("canvas");
+		displayCanvas.width = img.width;
+		displayCanvas.height = img.height;
+		var displayCtx = displayCanvas.getContext("2d");
+		displayCtx.drawImage(img, 0, 0);
+		$(displayCanvas).appendTo($container);
+		requestAnimationFrame(function() {
+			$container.css("min-height", "");
+		});
+	};
+	img.src = _last_grid_canvas_data_url;
+	return true;
 }
 
 function draw_images_in_grid(images, categories, probabilities, category_overview) {
@@ -2567,38 +2565,43 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	}
 	_grid_visualization_height = _height;
 
-	var scaleCanvas = _draw_grid_scale_canvas(_height, margin);
-	$(scaleCanvas).appendTo($container);
+	var scaleWidth = 40;
+	var relationScale = 1;
+	var pw = parse_int($("#training_tab").width() * relationScale);
+	var totalWidth = pw;
+	var colWidth = parse_int((totalWidth - scaleWidth) / numCategories);
 
-	var canvasses = get_canvasses(numCategories, _height);
+	var canvas = document.createElement("canvas");
+	canvas.width = totalWidth;
+	canvas.height = _height;
+
+	var ctx = canvas.getContext("2d");
+	ctx.fillStyle = "rgba(255, 255, 255, 0)";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	_draw_grid_scale_on_ctx(ctx, scaleWidth, _height, margin);
+
 	var graphHeight = _height - margin * 2 - 50;
 
-	draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
+	_draw_grid_dividers_on_ctx(ctx, numCategories, margin, colWidth, scaleWidth, _height);
+
+	_draw_grid_category_labels_on_ctx(ctx, numCategories, category_overview, margin, colWidth, scaleWidth, _height);
 
 	var counters = _draw_grid_init_counters(images, categories);
 
-	_draw_grid_images(images, categories, probabilities, canvasses, counters, margin, graphHeight);
+	_draw_grid_images_on_ctx(ctx, images, categories, probabilities, counters, margin, graphHeight, colWidth, scaleWidth);
 
-	append_grid_image_to_dom(numCategories, canvasses, _height);
+	$(canvas).appendTo($container);
+
+	try {
+		_last_grid_canvas_data_url = canvas.toDataURL("image/png");
+	} catch (e) {
+		wrn("[draw_images_in_grid] Could not cache canvas: " + e);
+	}
 
 	requestAnimationFrame(function () {
 		$container.css("min-height", "");
 	});
-}
-
-function append_grid_image_to_dom(numCategories, canvasses, _height) {
-	for (let numCategories_idx  = 0; numCategories_idx  < numCategories; numCategories_idx++) {
-		var canvas = canvasses[numCategories_idx];
-		if(canvas) {
-			var containerId = "#canvas_grid_visualization";
-			$(canvas).appendTo($(containerId));
-			if ((numCategories_idx + 1) < numCategories) {
-				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
-			}
-		} else {
-			wrn("[draw_images_in_grid] Canvas could not be appended!");
-		}
-	}
 }
 
 function extractCategoryFromURL(_url, image_element) {
@@ -2703,19 +2706,19 @@ async function visualize_train () {
 
 	if(!is_classification) {
 		log_once(language[lang]["train_visualization_only_works_for_classification_problems"]);
-		$("#canvas_grid_visualization").html("");
+		_restore_last_grid_render();
 		return;
 	}
 
 	if(!input_shape_is_image()) {
 		log_once(language[lang]["train_visualization_only_works_for_images"]);
-		$("#canvas_grid_visualization").html("");
+		_restore_last_grid_render();
 		return;
 	}
 
 	if(get_last_layer_activation_function() != "softmax") {
 		log_once(language[lang]["train_visualization_only_works_when_last_layer_is_softmax"]);
-		$("#canvas_grid_visualization").html("");
+		_restore_last_grid_render();
 		return;
 	}
 
@@ -2729,7 +2732,7 @@ async function visualize_train () {
 	$("#plotly_epoch_history").show();
 
 	if(!labels.length) {
-		$("#canvas_grid_visualization").html("");
+		_restore_last_grid_render();
 
 		await nextFrame();
 
@@ -2740,6 +2743,7 @@ async function visualize_train () {
 
 	if(image_elements.length == 0) {
 		err("[visualize_train] Could not find image_elements");
+		_restore_last_grid_render();
 		return;
 	}
 
@@ -2942,16 +2946,7 @@ async function render_grid_or_hide(imgs, categories, probabilities, category_ove
 		if (!categories.length) dbg("render_grid_or_hide: categories empty");
 		if (!probabilities.length) dbg("render_grid_or_hide: probabilities empty");
 
-		// Lock height before clearing to prevent scroll jump
-		var $container = $("#canvas_grid_visualization");
-		var currentHeight = $container.outerHeight();
-		if (currentHeight > 0) {
-			$container.css("min-height", currentHeight + "px");
-		}
-		$container.html("");
-		requestAnimationFrame(function () {
-			$container.css("min-height", "");
-		});
+		_restore_last_grid_render();
 		return;
 	}
 

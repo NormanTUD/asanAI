@@ -71,6 +71,7 @@ async function change_data_origin() {
 	}
 
 	$("#canvas_grid_visualization").html("");
+	_last_grid_canvas_data_url = null;
 }
 
 async function new_origin_is_default(show_images_per_category) {
