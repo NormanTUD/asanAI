@@ -2,6 +2,7 @@
 
 var multi_run_data = {};
 var current_multi_run = 0;
+var _grid_visualization_height = 0;
 
 function save_multi_run_weights(run) {
 	if (!model) return;
@@ -405,6 +406,7 @@ async function train_neural_network() {
 	}
 
 	$("#canvas_grid_visualization").html("");
+	_grid_visualization_height = 0;
 
 	// Ensure backend is ready before starting any scoped operations
 	await tf.ready();
@@ -2538,10 +2540,11 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	var numCategories = labels.length;
 	var margin = 10;
 
-	var _height = $container.height();
+	var _height = _grid_visualization_height || $container.height();
 	if (!_height) {
 		_height = 460;
 	}
+	_grid_visualization_height = _height;
 
 	var scaleCanvas = _draw_grid_scale_canvas(_height, margin);
 	$(scaleCanvas).appendTo($container);
