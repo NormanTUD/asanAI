@@ -1,10 +1,15 @@
 "use strict";
 
+function _label_input_td(label, label_index) {
+	var safe_label = label ? ("" + label).replaceAll(/'/g, "") : "";
+	return `<td class='label_element'><input class='label_input_element' type='text' value='${safe_label}' onchange='update_label_by_nr(this, ${label_index})'></td>`;
+}
+
 function _get_placeholder_prediction_table() {
 	if (labels.length === 0) return "";
 	var html = "<table class='predict_table'><tbody>";
 	for (var i = 0; i < labels.length; i++) {
-		html += "<tr><td class='label_element'>" + labels[i] + "</td><td>" + _create_bar_html(0, false, 0) + "</td></tr>";
+		html += "<tr>" + _label_input_td(labels[i], i) + "<td>" + _create_bar_html(0, false, 0) + "</td></tr>";
 	}
 	html += "</tbody></table>";
 	return html;
@@ -1660,7 +1665,7 @@ async function _get_example_string_image(examples, count, full_dir) {
 	if (labels.length > 0) {
 		placeholder_table = "<table class='predict_table'><tbody>";
 		for (var lbl_idx = 0; lbl_idx < labels.length; lbl_idx++) {
-			placeholder_table += "<tr><td class='label_element'>" + labels[lbl_idx] + "</td><td>" + _create_bar_html(0, false, 0) + "</td></tr>";
+			placeholder_table += "<tr>" + _label_input_td(labels[lbl_idx], lbl_idx) + "<td>" + _create_bar_html(0, false, 0) + "</td></tr>";
 		}
 		placeholder_table += "</tbody></table>";
 	}
@@ -2058,7 +2063,7 @@ function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 			content = prob_text;
 		}
 
-		str += `<tr><td class='label_element'>${label}</td><td>${content}</td></tr>`;
+		str += `<tr>${_label_input_td(label, predictions_idx % labels.length)}<td>${content}</td></tr>`;
 
 		return str;
 	} catch (e) {
@@ -2122,10 +2127,10 @@ function draw_bars_or_numbers(predictions_idx, predictions, max) {
 
 		if (show_bars_instead_of_numbers()) {
 			var bar = _create_bar_html(w, isHighest, val);
-			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar}</td>` : `<td>${bar}</td>`;
+			cell_content = label ? _label_input_td(label, predictions_idx % labels.length) + `<td>${bar}</td>` : `<td>${bar}</td>`;
 		} else {
 			let value_text = isHighest ? `<b class='best_result'>${predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
-			cell_content = label ? `<td class='label_element'>${label}</td><td>${value_text}</td>` : `<td>${value_text}</td>`;
+			cell_content = label ? _label_input_td(label, predictions_idx % labels.length) + `<td>${value_text}</td>` : `<td>${value_text}</td>`;
 		}
 
 		html = `<tr>${cell_content}</tr>`;
@@ -2589,11 +2594,11 @@ function _predict_table_row(label, w, max_i, probability, predictions_idx) {
 	if (show_bars_instead_of_numbers()) {
 		var isHighest = predictions_idx == max_i && get_show_green();
 		var bar = _create_bar_html(w, isHighest, probability);
-		str = `<tr><td class='label_element'>${label}</td><td>${bar}</td></tr>`;
+		str = `<tr>${_label_input_td(label, predictions_idx % labels.length)}<td>${bar}</td></tr>`;
 	} else {
-		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
+		str = `<tr>${_label_input_td(label, predictions_idx % labels.length)}<td>${probability}</td></tr>`;
 		if (predictions_idx == max_i && get_show_green()) {
-			str = `<tr><td class='label_element'>${label}</td><td><b class='best_result label_input_element'>${probability}</b></td></tr>`;
+			str = `<tr>${_label_input_td(label, predictions_idx % labels.length)}<td><b class='best_result label_input_element'>${probability}</b></td></tr>`;
 		}
 	}
 

@@ -5072,6 +5072,8 @@ class asanAI {
 		var label = this.#labels[i % this.#labels.length];
 		var val = predictions[i];
 		var w = Math.floor(val * this.#bar_width);
+		var safe_label = label ? ("" + label).replaceAll(/'/g, "") : "";
+		var input_td = (label, label_attrs) => `<td ${label_attrs}><input class='label_input_element' type='text' value='${safe_label}' onchange='${this.#asanai_object_name}.update_label_by_nr(this, ${i})'></td>`;
 
 		var html = "";
 
@@ -5090,9 +5092,9 @@ class asanAI {
 		if(this.#show_bars_instead_of_numbers) {
 			if(label) {
 				if(val == max) {
-					html =`<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.#max_bar_color}; margin-wtop: 2px; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
+					html =`<tr>${input_td(label, label_element)}<td><span ${bar_style}><span style='${highest_bar_css} background-color: ${this.#max_bar_color}; margin-wtop: 2px; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
 				} else {
-					html = `<tr><td ${label_element}>${label}</td><td><span ${bar_style}><span style='margin-top: 2px; background-color: ${this.#default_bar_color}; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
+					html = `<tr>${input_td(label, label_element)}<td><span ${bar_style}><span style='margin-top: 2px; background-color: ${this.#default_bar_color}; width: ${w}px; display: block; height: 4px'></span></span></td></tr>`;
 				}
 			} else {
 				if(val == max) {
@@ -5104,9 +5106,9 @@ class asanAI {
 		} else {
 			if(label) {
 				if(val == max) {
-					html = `<tr><td><b ${label_element_best_result}>${label}</td><td>${val}</b></td></tr>\n`;
+					html = `<tr>${input_td(label, label_element_best_result)}<td>${val}</td></tr>\n`;
 				} else {
-					html = `<tr><td class='label_element'>${label}</td><td>${val}</td></tr>\n`;
+					html = `<tr>${input_td(label, label_element)}<td>${val}</td></tr>\n`;
 				}
 			} else {
 				if(val == max) {
