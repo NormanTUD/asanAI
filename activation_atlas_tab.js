@@ -7,14 +7,6 @@
 // Hooks into the ActivationAtlas module (activation_atlas.js).
 // ============================================================
 
-var _atlasTabState = {
-	isRunning: false,
-	startTime: null,
-	progressInterval: null,
-	completionCheck: null,
-	lastProgress: 0
-};
-
 /**
  * Update the progress bar and time estimate
  */
