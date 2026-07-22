@@ -2489,7 +2489,7 @@ function _draw_grid_images_on_ctx(ctx, images, categories, probabilities, counte
 		var w = image.width * scale;
 		var h = image.height * scale;
 
-		var imageX = colLeft + xPos - model?.input?.shape[2] / 2;
+		var imageX = (colLeft + xPos - (model?.input?.shape[2] || 0) / 2);
 		imageX += counters.canvas_img_counter[category] * targetSize;
 
 		if (imageX < colLeft) {
