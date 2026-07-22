@@ -247,25 +247,13 @@ async function recreate_model_if_needed (new_model_config_hash) {
 	}
 }
 
-async function compile_model(recursion_level=0) {
-	l(language[lang]["compiling_model"]);
-
-	if(recursion_level > 3) {
-		err(language[lang]["recursion_level_for_compile_model_too_high"]);
-		return;
-	}
-
-	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
-
-	var new_model_config_hash = await get_model_config_hash();
-	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
-
-	if(!model) {
-		if(finished_loading) {
+async function _compile_model_ensure_exists() {
+	if (!model) {
+		if (finished_loading) {
 			dbg("compile_model: " + language[lang]["model_not_given"]);
 		}
 
-		if(global_model_data) {
+		if (global_model_data) {
 			var model_data_tensors = find_tensors_with_is_disposed_internal(global_model_data);
 			for (var tensor_idx = 0; tensor_idx  < model_data_tensors.length; tensor_idx++) {
 				await dispose(model_data_tensors[tensor_idx]);
@@ -274,16 +262,9 @@ async function compile_model(recursion_level=0) {
 
 		await create_model_or_throw();
 	}
+}
 
-	// --- Determine if the config (layer structure/settings) actually changed ---
-	var config_changed = (model_config_hash != new_model_config_hash);
-
-	// --- Save/restore weights logic ---
-	// ONLY save weights if:
-	//   1. The config has NOT changed (no structural change by the user)
-	//   2. We are NOT currently training (training updates weights via backprop;
-	//      saving/restoring here would overwrite those updates and cause
-	//      loss/weights to appear frozen)
+async function _compile_model_save_restore_weights(config_changed, new_model_config_hash) {
 	var saved_weights_json = null;
 	if (!config_changed && !started_training && model && model.layers && model.layers.length) {
 		saved_weights_json = await get_weights_as_json(model);
@@ -291,17 +272,14 @@ async function compile_model(recursion_level=0) {
 
 	await recreate_model_if_needed(new_model_config_hash);
 
-	// --- Restore weights only if we saved them above (i.e. not during training) ---
 	if (saved_weights_json && !started_training && model && model.layers && model.layers.length) {
 		try {
 			var current_weights_json = await get_weights_as_json(model);
-			// Only restore if shapes match (model structure didn't actually change)
 			if (current_weights_json && saved_weights_json &&
 				JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
 				JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
 				await set_weights_from_json_object(saved_weights_json, true, true, model);
 			} else {
-				// Shapes DON'T match → model structure actually changed → clear editables
 				math_clear_editables();
 			}
 		} catch (e) {
@@ -310,13 +288,14 @@ async function compile_model(recursion_level=0) {
 	}
 
 	if (config_changed) {
-		// Config changed → new initializers applied → clear editables so they re-sync
 		math_clear_editables();
 	}
+}
 
+async function _compile_model_do_compile(new_model_config_hash) {
 	if(!model) {
 		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
-		return;
+		return false;
 	}
 
 	while (create_model_queue.length || !model) {
@@ -329,7 +308,7 @@ async function compile_model(recursion_level=0) {
 
 	if (typeof model.compile !== "function") {
 		dbg("model has no compile() method");
-		return;
+		return false;
 	}
 
 	try {
@@ -348,27 +327,43 @@ async function compile_model(recursion_level=0) {
 			pyodideOnModelChanged();
 			pyodideEditorStop();
 		}
-
-		// Do NOT clear editables here unconditionally.
-		// Only cleared above when model structure actually changed.
 	} catch (e) {
-		var ret = await handle_model_compile_error(e, recursion_level);
+		return e;
+	}
 
-		if(ret === true) {
-			return;
-		}
+	return true;
+}
 
-		if(ret !== false) {
-			return ret;
-		}
+async function compile_model(recursion_level=0) {
+	l(language[lang]["compiling_model"]);
+
+	if(recursion_level > 3) {
+		err(language[lang]["recursion_level_for_compile_model_too_high"]);
+		return;
+	}
+
+	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
+
+	var new_model_config_hash = await get_model_config_hash();
+	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
+
+	var config_changed = (model_config_hash != new_model_config_hash);
+
+	await _compile_model_ensure_exists();
+	await _compile_model_save_restore_weights(config_changed);
+
+	var compile_result = await _compile_model_do_compile(new_model_config_hash);
+
+	if (compile_result === false) return;
+	if (compile_result !== true) {
+		var ret = await handle_model_compile_error(compile_result, recursion_level);
+		if(ret === true) return;
+		if(ret !== false) return ret;
 	}
 
 	reset_background_color_for_all_layers();
-
 	try_to_set_output_shape_from_model();
-
 	write_model_summary_wait();
-
 	await plot_model_plot(true);
 }
 

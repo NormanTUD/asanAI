@@ -928,13 +928,11 @@ function register_resize_observers() {
 	show_layer_description_when_layer_is_visible();
 }
 
-$(document).ready(async function() {
-	var LM = language[lang];
-
+async function _init_app_backend_and_ui(LM) {
 	check_all_tabs();
 
 	if(!check_if_lang()) {
-		return;
+		return false;
 	}
 
 	load_msg_set_steps(11);
@@ -965,46 +963,37 @@ $(document).ready(async function() {
 	await force_download_image_preview_data();
 
 	set_upload_functions_onchange_handlers();
+	return true;
+}
 
+async function _init_app_data_and_handlers(LM) {
 	load_msg_advance(LM["loading_step_data"] || "Loading training data...");
 	await change_data_origin();
 
 	window.onresize = on_resize;
-
 	set_auto_intervals();
-
 	allow_edit_input_shape();
-
 	copy_options();
 	copy_values();
-
 	show_hide_augment_tab();
-
 	set_values_from_url();
-
 	set_theme_from_cookie();
 
 	const predict_handdrawn_canvas = $("#predict_handdrawn_canvas");
-
 	get_drawing_board_on_page(predict_handdrawn_canvas, "sketcher", "predict_handdrawn();", null, null);
-
 	set_optimizer_metadata_input_change();
-
 	alter_text_webcam_series();
-
 	set_webgl_backend();
 
 	void(0); l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
-
 	invert_elements_in_dark_mode();
-
 	click_on_graphs = 0;
+	allow_editable_labels();
+}
 
-	allow_editable_labels(); // await not useful here
-
+async function _init_app_finalization(LM) {
 	load_msg_advance(LM["loading_step_predict"] || "Generating initial prediction...");
 	await show_prediction(0, 1);
-
 	await predict_handdrawn_if_applicable();
 
 	change_all_initializers();
@@ -1016,25 +1005,17 @@ $(document).ready(async function() {
 	show_website_and_hide_loader();
 
 	await restart_fcnn(1);
-
 	temml_or_catch();
-
 	set_model_and_label_debugger();
-
 	show_default_tab_labels();
-
 	await change_optimizer();
-
 	add_error_event_listener();
-
 	show_snow_when_applicable();
 
 	finished_loading = true;
 
 	await updated_page();
-
 	autoset_dark_theme_if_user_prefers_it();
-
 	setOptimizerTooltips();
 
 	document.getElementById('navbar1').addEventListener('click', function(event) {
@@ -1044,26 +1025,28 @@ $(document).ready(async function() {
 	await checkAndRunTests();
 
 	var __loading_time = show_long_loading_time_message();
-
 	show_user_agent_debug_if_applicable();
-
 	create_styled_upload_buttons();
-
 	register_resize_observers();
 
 	WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
-
 	dimensionalityRiver("dimensionality_river");
-
 	activationAtlas("activation_atlas");
-
 	gradientFlowToSummary();
-
 	create_loss_landscape();
-
 	create_topological_analyzer();
 
 	dbg(`${language[lang]["loading_the_site_took"]} ${__loading_time}`);
+}
+
+$(document).ready(async function() {
+	var LM = language[lang];
+
+	var ok = await _init_app_backend_and_ui(LM);
+	if (!ok) return;
+
+	await _init_app_data_and_handlers(LM);
+	await _init_app_finalization(LM);
 });
 
 window.addEventListener('pageshow', function(event) {

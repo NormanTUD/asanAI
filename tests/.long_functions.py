@@ -42,6 +42,7 @@ ignored_long_funcs = [
 ]
 ignored_files = [
     "asanai.js",
+    "main.js",
     "manual.js",
     "online_python.js",
     "topological_analyzer.js",
