@@ -58,6 +58,7 @@ ignored_files = [
     "activation_atlas_tab.js",
     "weight_analysis.js",
     "trace_through_loss_landscape.js",
+    "debug.js",
     "weight_surfaces.js",
     "online_python_code_completion.js"
 ]
