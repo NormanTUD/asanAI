@@ -97,16 +97,7 @@ function _fcnn_edit_build_popup_html(is_dark) {
     ].join("\n");
 }
 
-function _fcnn_edit_wire_popup_events(pop) {
-    var weightNum = document.getElementById("fcnn_edit_weight_num");
-    var weightSlider = document.getElementById("fcnn_edit_weight_slider");
-    var biasNum = document.getElementById("fcnn_edit_bias_num");
-    var biasSlider = document.getElementById("fcnn_edit_bias_slider");
-    var fromIdx = document.getElementById("fcnn_edit_from_idx");
-    var toIdx = document.getElementById("fcnn_edit_to_idx");
-    var resetBtn = document.getElementById("fcnn_edit_reset");
-    var closeBtn = document.getElementById("fcnn_edit_close");
-
+function _fcnn_edit_wire_weight_events(weightNum, weightSlider) {
     function _onWeightNumChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_is_training()) return;
@@ -135,7 +126,9 @@ function _fcnn_edit_wire_popup_events(pop) {
     }
     weightSlider.addEventListener("input", _onWeightSliderChange);
     weightSlider.addEventListener("change", _onWeightSliderChange);
+}
 
+function _fcnn_edit_wire_bias_events(biasNum, biasSlider) {
     function _onBiasNumChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_is_training()) return;
@@ -164,7 +157,9 @@ function _fcnn_edit_wire_popup_events(pop) {
     }
     biasSlider.addEventListener("input", _onBiasSliderChange);
     biasSlider.addEventListener("change", _onBiasSliderChange);
+}
 
+function _fcnn_edit_wire_index_events(fromIdx, toIdx, weightNum, weightSlider) {
     function _onIndexChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_active.type !== "weight") return;
@@ -214,7 +209,9 @@ function _fcnn_edit_wire_popup_events(pop) {
     toIdx.addEventListener("input", _onIndexChange);
     toIdx.addEventListener("change", _onIndexChange);
     toIdx.addEventListener("keydown", function(e) { if (e.key === "Enter") { e.preventDefault(); _onIndexChange(); } });
+}
 
+function _fcnn_edit_wire_dismiss_events(pop, resetBtn, closeBtn) {
     resetBtn.addEventListener("click", function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -222,12 +219,16 @@ function _fcnn_edit_wire_popup_events(pop) {
         if (_fcnn_edit_is_training()) return;
 
         if (_fcnn_edit_active.type === "weight" && _fcnn_edit_initial_value.weight !== undefined) {
+            var weightNum = document.getElementById("fcnn_edit_weight_num");
+            var weightSlider = document.getElementById("fcnn_edit_weight_slider");
             var wv = _fcnn_edit_initial_value.weight;
             weightNum.value = wv.toFixed(6);
             weightSlider.value = wv;
             _fcnn_edit_apply_value(wv);
         }
         if ((_fcnn_edit_active.type === "neuron_bias" || _fcnn_edit_active.type === "neuron_full") && _fcnn_edit_initial_value.bias !== undefined) {
+            var biasNum = document.getElementById("fcnn_edit_bias_num");
+            var biasSlider = document.getElementById("fcnn_edit_bias_slider");
             var bv = _fcnn_edit_initial_value.bias;
             biasNum.value = bv.toFixed(6);
             biasSlider.value = bv;
@@ -268,6 +269,22 @@ function _fcnn_edit_wire_popup_events(pop) {
     pop.addEventListener("wheel", function(e) {
         e.stopPropagation();
     }, { passive: true });
+}
+
+function _fcnn_edit_wire_popup_events(pop) {
+    var weightNum = document.getElementById("fcnn_edit_weight_num");
+    var weightSlider = document.getElementById("fcnn_edit_weight_slider");
+    var biasNum = document.getElementById("fcnn_edit_bias_num");
+    var biasSlider = document.getElementById("fcnn_edit_bias_slider");
+    var fromIdx = document.getElementById("fcnn_edit_from_idx");
+    var toIdx = document.getElementById("fcnn_edit_to_idx");
+    var resetBtn = document.getElementById("fcnn_edit_reset");
+    var closeBtn = document.getElementById("fcnn_edit_close");
+
+    _fcnn_edit_wire_weight_events(weightNum, weightSlider);
+    _fcnn_edit_wire_bias_events(biasNum, biasSlider);
+    _fcnn_edit_wire_index_events(fromIdx, toIdx, weightNum, weightSlider);
+    _fcnn_edit_wire_dismiss_events(pop, resetBtn, closeBtn);
 }
 
 function _fcnn_edit_ensure_popup() {

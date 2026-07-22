@@ -8,55 +8,59 @@ var ModelPlotter = (() => {
 	const get_state = id => _state[id] || {};
 	const set_state = (id, obj) => _state[id] = obj;
 
+	function check_and_reset_shape(div_id, plot_div, shape_key) {
+		if (window.__ModelPlotterMeta.last_shapes && window.__ModelPlotterMeta.last_shapes !== shape_key) {
+			reset_for_shape_change(div_id, plot_div);
+		}
+		window.__ModelPlotterMeta.last_shapes = shape_key;
+	}
+
+	function should_skip_update(div_id, state, force) {
+		const current_weights = get_weights_as_string?.() || "";
+		if (!force && state.last_weights === current_weights) return true;
+		set_state(div_id, { ...state, last_weights: current_weights });
+		return false;
+	}
+
+	function setup_controls_and_fields(div_id, plot_div, state, cases, update_fn) {
+		const controls = ensure_controls(div_id, plot_div);
+		controls.style.display = 'flex';
+		const msg = ensure_message_box(controls);
+		plot_div.style.display = 'none';
+		const fields = ensure_inputs(div_id, controls, state, cases, update_fn);
+		state.fields = fields;
+		state.controls = controls;
+		return { controls, msg, fields };
+	}
+
 	async function plot(div_id = 'plotly_predict', force = false) {
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return;
 
 		const state = get_state(div_id);
 
-		// Wenn kein Modell da ist: Alles weg.
 		if (!has_valid_model_shape()) {
 			return total_hide(div_id, plot_div);
 		}
 
 		const in_shape = model?.input?.shape?.slice(1);
 		const out_shape = model?.output?.shape?.slice(1);
-		const shape_key = JSON.stringify({ in_shape, out_shape });
-		
-		if (window.__ModelPlotterMeta.last_shapes && window.__ModelPlotterMeta.last_shapes !== shape_key) {
-			reset_for_shape_change(div_id, plot_div);
-		}
-		window.__ModelPlotterMeta.last_shapes = shape_key;
+		check_and_reset_shape(div_id, plot_div, JSON.stringify({ in_shape, out_shape }));
 
-		const current_weights = get_weights_as_string?.() || "";
-		if (!force && state.last_weights === current_weights)
-			return; 
-
-		set_state(div_id, { ...state, last_weights: current_weights });
+		if (should_skip_update(div_id, state, force)) return;
 
 		const { fallA, fallB1, fallB2 } = detect_case();
 		if (!fallA && !fallB1 && !fallB2) {
 			return total_hide(div_id, plot_div);
 		}
 
-		// Controls sicherstellen und sichtbar machen
-		const controls = ensure_controls(div_id, plot_div);
-		controls.style.display = 'flex'; 
-
-		const msg = ensure_message_box(controls);
-		
-		// Plot-Div initial versteckt halten
-		plot_div.style.display = 'none';
-
+		const cases = { fallA, fallB1, fallB2 };
 		const update_fn = async () =>
-			await update_plot(plot_div, div_id, msg, state.fields || [], { fallA, fallB1, fallB2 });
-		
+			await update_plot(plot_div, div_id, state.msg, state.fields || [], cases);
 		state.update_plot = update_fn;
 
-		const fields = ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }, update_fn);
-		state.fields = fields;
-		state.controls = controls;
-
+		const { msg, fields } = setup_controls_and_fields(div_id, plot_div, state, cases, update_fn);
+		state.msg = msg;
 		set_state(div_id, state);
 
 		await state.update_plot();
@@ -149,34 +153,40 @@ var ModelPlotter = (() => {
 		return fields;
 	}
 
+	async function run_case_prediction(msg, div_id, vals, cases) {
+		const { x_min, x_max, step } = extract_vals(div_id, vals);
+		if (x_min >= x_max || step <= 0 || step >= (x_max - x_min)) {
+			msg.textContent = 'Check X range and Step.';
+			return null;
+		}
+
+		if (cases.fallA) return caseA_batched(x_min, x_max, step);
+
+		if (cases.fallB1) {
+			const { y_min, y_max } = extract_vals(div_id, vals);
+			if (y_min >= y_max) {
+				msg.textContent = 'Y min < Y max required.';
+				return null;
+			}
+			return caseB1_batched(x_min, x_max, y_min, y_max, step);
+		}
+
+		if (cases.fallB2) return caseB2_batched(x_min, x_max, step);
+		return [];
+	}
+
 	async function update_plot(plot_div, div_id, msg, fields, cases) {
 		msg.textContent = '';
 		const vals = Object.fromEntries(fields.map(f => [f.id, parseFloat(f.value)]));
-		
-		// Validierung: Wenn Felder leer oder NaN, nur den Plot verstecken
+
 		if (fields.length === 0 || fields.some(f => f.value === "") || Object.values(vals).some(isNaN)) {
 			return hide_only_plot(plot_div);
 		}
 
-		const { x_min, x_max, step } = extract_vals(div_id, vals);
-		if (x_min >= x_max || step <= 0 || step >= (x_max - x_min)) {
-			msg.textContent = 'Check X range and Step.';
-			return hide_only_plot(plot_div);
-		}
-
-		let data = [];
 		try {
-			if (cases.fallA) data = await caseA_batched(x_min, x_max, step);
-			else if (cases.fallB1) {
-				const { y_min, y_max } = extract_vals(div_id, vals);
-				if (y_min >= y_max) {
-					msg.textContent = 'Y min < Y max required.';
-					return hide_only_plot(plot_div);
-				}
-				data = await caseB1_batched(x_min, x_max, y_min, y_max, step);
-			} else if (cases.fallB2) data = await caseB2_batched(x_min, x_max, step);
+			const data = await run_case_prediction(msg, div_id, vals, cases);
+			if (data === null) return hide_only_plot(plot_div);
 
-			// Erst hier wird das Div sichtbar!
 			plot_div.style.display = 'block';
 			const layout = base_layout(plot_div);
 			await plot_preserve_camera(plot_div, data, layout, {}, div_id);

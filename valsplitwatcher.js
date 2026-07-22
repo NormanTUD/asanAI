@@ -93,12 +93,7 @@
       timerBarEl = null;
     }
 
-    function showPopup() {
-      closePopup();
-
-      var splitEl = document.getElementById("validationSplit");
-      if (!splitEl) return;
-
+    function create_popup_dom() {
       var popup = document.createElement("div");
       popup.setAttribute("id", "validationSplitGuardPopup");
       popup.style.cssText =
@@ -137,13 +132,23 @@
       popup.addEventListener("mouseenter", pauseTimer);
       popup.addEventListener("mouseleave", resumeTimer);
 
+      return popup;
+    }
+
+    function showPopup() {
+      closePopup();
+
+      var splitEl = document.getElementById("validationSplit");
+      if (!splitEl) return;
+
+      var popup = create_popup_dom();
       document.body.appendChild(popup);
       currentPopup = popup;
 
       positionPopup();
 
       if (typeof update_translations === "function") {
-        update_translations(); // await not possible here
+        update_translations();
       }
 
       startTimerBar();
@@ -172,6 +177,44 @@
       }
     }
 
+    function setup_split_guard_listeners(splitEl, maxFilesEl) {
+      listen(maxFilesEl, "blur", function () {
+        manualOverride = false;
+        check();
+      });
+      listen(maxFilesEl, "change", function () {
+        manualOverride = false;
+        check();
+      });
+
+      listen(splitEl, "input", function () {
+        manualOverride = true;
+        closePopup();
+      });
+      listen(splitEl, "change", function () {
+        manualOverride = true;
+        closePopup();
+      });
+
+      listen(document, "keydown", function (e) {
+        if (e.key === "Escape" || e.key === "Esc") {
+          closePopup();
+        }
+      });
+
+      listen(window, "resize", positionPopup);
+      listen(window, "scroll", positionPopup);
+
+      var parent = splitEl.parentElement;
+      while (parent && parent !== document.body) {
+        var overflow = getComputedStyle(parent).overflow;
+        if (overflow === "auto" || overflow === "scroll" || overflow === "overlay") {
+          listen(parent, "scroll", positionPopup);
+        }
+        parent = parent.parentElement;
+      }
+    }
+
     var splitEl = document.getElementById("validationSplit");
     var maxFilesEl = document.getElementById("max_number_of_files_per_category");
 
@@ -180,42 +223,7 @@
       return;
     }
 
-    listen(maxFilesEl, "blur", function () {
-      manualOverride = false;
-      check();
-    });
-    listen(maxFilesEl, "change", function () {
-      manualOverride = false;
-      check();
-    });
-
-    listen(splitEl, "input", function () {
-      manualOverride = true;
-      closePopup();
-    });
-    listen(splitEl, "change", function () {
-      manualOverride = true;
-      closePopup();
-    });
-
-    listen(document, "keydown", function (e) {
-      if (e.key === "Escape" || e.key === "Esc") {
-        closePopup();
-      }
-    });
-
-    listen(window, "resize", positionPopup);
-    listen(window, "scroll", positionPopup);
-
-    var parent = splitEl.parentElement;
-    while (parent && parent !== document.body) {
-      var overflow = getComputedStyle(parent).overflow;
-      if (overflow === "auto" || overflow === "scroll" || overflow === "overlay") {
-        listen(parent, "scroll", positionPopup);
-      }
-      parent = parent.parentElement;
-    }
-
+    setup_split_guard_listeners(splitEl, maxFilesEl);
     check();
   }
 

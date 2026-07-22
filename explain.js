@@ -874,20 +874,139 @@ function show_intermediate_representations(canvas_input, canvas_output, canvas_k
 	return [input, kernel, output];
 }
 
+function _ensure_layer_data_divs() {
+	if($(".layer_data").length != get_number_of_layers()) {
+		var inner_html = "";
+		for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+			inner_html += "<div class='layer_data'></div>";
+		}
+		$("#layer_visualizations_tab").html(inner_html);
+	}
+}
+
+function _extract_kernel_data_for_layer(layer) {
+	var kernel_data = [];
+	if(Object.keys(model?.layers[layer]).includes("kernel")) {
+		if(model?.layers[layer]?.kernel?.val?.shape?.length == 4) {
+			var ks_x = 0;
+			var ks_y = 1;
+			var number_filters = 2;
+			var filters = 3;
+			kernel_data = tidy(() => {
+				return array_sync(tf_transpose(model?.layers[layer]?.kernel?.val, [filters, ks_x, ks_y, number_filters]));
+			});
+		} else if(model?.layers[layer]?.kernel?.val?.shape?.length == 2) {
+			kernel_data = tidy(() => {
+				return array_sync(model?.layers[layer]?.kernel?.val);
+			});
+		}
+	}
+	return kernel_data;
+}
+
+function _compute_dense_kernel_stats(kernel_data) {
+	var all_vals = [];
+	var k_original_height = kernel_data.length;
+	var k_original_width = kernel_data[0].length;
+	for(var ki = 0; ki < k_original_height; ki++) {
+		for(var kj = 0; kj < k_original_width; kj++) {
+			all_vals.push(kernel_data[ki][kj]);
+		}
+	}
+	var k_mean = 0;
+	for(var vi = 0; vi < all_vals.length; vi++) {
+		k_mean += all_vals[vi];
+	}
+	k_mean /= all_vals.length;
+	var k_variance = 0;
+	for(var vi = 0; vi < all_vals.length; vi++) {
+		k_variance += (all_vals[vi] - k_mean) * (all_vals[vi] - k_mean);
+	}
+	k_variance /= all_vals.length;
+	var k_std = Math.sqrt(k_variance);
+	var k_clip = Math.max(k_std * 2, 1e-7);
+	return { k_original_height: k_original_height, k_original_width: k_original_width, k_clip: k_clip };
+}
+
+function _dense_kernel_color_for_value(raw_val, k_clip) {
+	var normalized = raw_val / k_clip;
+	normalized = Math.max(-1, Math.min(1, normalized));
+	var r, g, b;
+	if(normalized < 0) {
+		var t = 1 + normalized;
+		r = Math.round(20 + 235 * t);
+		g = Math.round(60 + 195 * t);
+		b = Math.round(220 + 35 * t);
+	} else {
+		var t = normalized;
+		r = 255;
+		g = Math.round(255 - 210 * t);
+		b = Math.round(255 - 230 * t);
+	}
+	return { r: r, g: g, b: b };
+}
+
+function _draw_dense_kernel_fallback(kernel_data, kernel, layer) {
+	var stats = _compute_dense_kernel_stats(kernel_data);
+	var k_original_height = stats.k_original_height;
+	var k_original_width = stats.k_original_width;
+	var k_clip = stats.k_clip;
+
+	var k_width = k_original_height;
+	var k_height = k_original_width;
+	var k_pixel_size = Math.max(1, Math.min(12, Math.floor(400 / Math.max(k_height, k_width))));
+	if(k_pixel_size * k_width < 80) {
+		k_pixel_size = Math.max(1, Math.ceil(80 / k_width));
+	}
+
+	var kernel_canvas = document.createElement("canvas");
+	kernel_canvas.width = k_width * k_pixel_size;
+	kernel_canvas.height = k_height * k_pixel_size;
+	var k_ctx = kernel_canvas.getContext("2d");
+
+	var tmpCanvas = document.createElement("canvas");
+	tmpCanvas.width = k_width;
+	tmpCanvas.height = k_height;
+	var tmpCtx = tmpCanvas.getContext("2d");
+	var imgData = tmpCtx.createImageData(k_width, k_height);
+
+	for(var kj = 0; kj < k_original_width; kj++) {
+		for(var ki = 0; ki < k_original_height; ki++) {
+			var raw_val = kernel_data[ki][kj];
+			var color = _dense_kernel_color_for_value(raw_val, k_clip);
+			var idx = (kj * k_width + ki) * 4;
+			imgData.data[idx] = color.r;
+			imgData.data[idx + 1] = color.g;
+			imgData.data[idx + 2] = color.b;
+			imgData.data[idx + 3] = 255;
+		}
+	}
+
+	tmpCtx.putImageData(imgData, 0, 0);
+	k_ctx.imageSmoothingEnabled = false;
+	k_ctx.drawImage(tmpCanvas, 0, 0, kernel_canvas.width, kernel_canvas.height);
+
+	kernel.append(kernel_canvas).show();
+	return [];
+}
+
+function _dispatch_layer_viz(canvas_input, canvas_output, canvas_kernel, input, kernel, output, equations, output_data, layer) {
+	if(canvas_output.length && canvas_input.length) {
+		show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer);
+	} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
+		visualize_layer_canvases_simple(canvas_input, canvas_kernel, canvas_output, input, kernel, output, layer);
+	} else {
+		show_layer_state_or_data(canvas_input, canvas_output, output_data, input, output, equations, layer);
+	}
+}
+
 function draw_internal_states (layer, inputs, applied) {
 	typeassert(layer, int, "layer");
 	typeassert(inputs, array, "inputs");
 
 	var number_of_items_in_this_batch = inputs[0].shape[0];
 
-	if($(".layer_data").length != get_number_of_layers()) {
-		var inner_html = "";
-		for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
-			inner_html += "<div class='layer_data'></div>";
-		}
-
-		$("#layer_visualizations_tab").html(inner_html);
-	}
+	_ensure_layer_data_divs();
 
 	for (var batchnr = 0; batchnr < number_of_items_in_this_batch; batchnr++) {
 		var input_data = array_sync(inputs[0])[batchnr];
@@ -909,126 +1028,17 @@ function draw_internal_states (layer, inputs, applied) {
 
 		show_layer_visualization_tab();
 
-		var kernel_data = [];
-
-		if(Object.keys(model?.layers[layer]).includes("kernel")) {
-			if(model?.layers[layer]?.kernel?.val?.shape?.length == 4) {
-				var ks_x = 0;
-				var ks_y = 1;
-				var number_filters = 2;
-				var filters = 3;
-
-				kernel_data = tidy(() => {
-					return array_sync(tf_transpose(model?.layers[layer]?.kernel?.val, [filters, ks_x, ks_y, number_filters]));
-				});
-			} else if(model?.layers[layer]?.kernel?.val?.shape?.length == 2) {
-				kernel_data = tidy(() => {
-					return array_sync(model?.layers[layer]?.kernel?.val);
-				});
-			}
-		}
+		var kernel_data = _extract_kernel_data_for_layer(layer);
 
 		var canvas_input = draw_image_if_possible(layer, "input", input_data, 1);
 		var canvas_kernel = draw_image_if_possible(layer, "kernel", kernel_data, 1);
 		var canvas_output = draw_image_if_possible(layer, "output", output_data, 1);
 
-		// Fallback für Dense-Layer: Gewichtungsmatrix bunt visualisieren (transponiert)
 		if(!canvas_kernel && kernel_data.length && model?.layers[layer]?.kernel?.val?.shape?.length == 2) {
-			// Transponiert: Breite = input_units, Höhe = output_units
-			var k_original_height = kernel_data.length;        // input_units
-			var k_original_width = kernel_data[0].length;      // output_units
-
-			var k_width = k_original_height;   // input_units -> Breite
-			var k_height = k_original_width;   // output_units -> Höhe
-
-			var k_pixel_size = Math.max(1, Math.min(12, Math.floor(400 / Math.max(k_height, k_width))));
-			// Mindestgröße damit man was sieht
-			if(k_pixel_size * k_width < 80) {
-				k_pixel_size = Math.max(1, Math.ceil(80 / k_width));
-			}
-
-			var kernel_canvas = document.createElement("canvas");
-			kernel_canvas.width = k_width * k_pixel_size;
-			kernel_canvas.height = k_height * k_pixel_size;
-
-			var k_ctx = kernel_canvas.getContext("2d");
-
-			// Alle Werte sammeln
-			var all_vals = [];
-			for(var ki = 0; ki < k_original_height; ki++) {
-				for(var kj = 0; kj < k_original_width; kj++) {
-					all_vals.push(kernel_data[ki][kj]);
-				}
-			}
-
-			// Standardabweichung berechnen
-			var k_mean = 0;
-			for(var vi = 0; vi < all_vals.length; vi++) {
-				k_mean += all_vals[vi];
-			}
-			k_mean /= all_vals.length;
-
-			var k_variance = 0;
-			for(var vi = 0; vi < all_vals.length; vi++) {
-				k_variance += (all_vals[vi] - k_mean) * (all_vals[vi] - k_mean);
-			}
-			k_variance /= all_vals.length;
-			var k_std = Math.sqrt(k_variance);
-
-			// Symmetrisches Clipping um 0: ±2*std
-			var k_clip = Math.max(k_std * 2, 1e-7);
-
-			// Pixel zeichnen (transponiert + divergierende Farbskala)
-			var tmpCanvas = document.createElement("canvas");
-			tmpCanvas.width = k_width;
-			tmpCanvas.height = k_height;
-			var tmpCtx = tmpCanvas.getContext("2d");
-			var imgData = tmpCtx.createImageData(k_width, k_height);
-
-			for(var kj = 0; kj < k_original_width; kj++) {       // output neuron -> Zeile im Bild
-				for(var ki = 0; ki < k_original_height; ki++) {   // input neuron -> Spalte im Bild
-					var raw_val = kernel_data[ki][kj];
-					// Auf [-1, 1] normalisieren (symmetrisch um 0)
-					var normalized = raw_val / k_clip;
-					normalized = Math.max(-1, Math.min(1, normalized));
-
-					// Divergierende Farbskala: blau (-1) -> weiß (0) -> rot (+1)
-					var r, g, b;
-					if(normalized < 0) {
-						var t = 1 + normalized; // 0 bei -1, 1 bei 0
-						r = Math.round(20 + 235 * t);
-						g = Math.round(60 + 195 * t);
-						b = Math.round(220 + 35 * t);
-					} else {
-						var t = normalized;
-						r = 255;
-						g = Math.round(255 - 210 * t);
-						b = Math.round(255 - 230 * t);
-					}
-
-					var idx = (kj * k_width + ki) * 4;
-					imgData.data[idx] = r;
-					imgData.data[idx + 1] = g;
-					imgData.data[idx + 2] = b;
-					imgData.data[idx + 3] = 255;
-				}
-			}
-
-			tmpCtx.putImageData(imgData, 0, 0);
-			k_ctx.imageSmoothingEnabled = false;
-			k_ctx.drawImage(tmpCanvas, 0, 0, kernel_canvas.width, kernel_canvas.height);
-
-			kernel.append(kernel_canvas).show();
-			canvas_kernel = [];
+			_draw_dense_kernel_fallback(kernel_data, kernel, layer);
 		}
 
-		if(canvas_output.length && canvas_input.length) {
-			[input, kernel, output] = show_intermediate_representations(canvas_input, canvas_output, canvas_kernel, input, kernel, output, layer);
-		} else if (canvas_output.length && canvas_input.nodeName == "CANVAS") {
-			[input, kernel, output] = visualize_layer_canvases_simple(canvas_input, canvas_kernel, canvas_output, input, kernel, output, layer);
-		} else {
-			[input, output, equations] = show_layer_state_or_data(canvas_input, canvas_output, output_data, input, output, equations, layer);
-		}
+		_dispatch_layer_viz(canvas_input, canvas_output, canvas_kernel, input, kernel, output, equations, output_data, layer);
 	}
 
 	if(number_of_items_in_this_batch) {
