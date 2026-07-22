@@ -7,12 +7,6 @@
 // Hooks into the ActivationAtlas module (activation_atlas.js).
 // ============================================================
 
-/**
- * Update the progress bar and time estimate
- */
-/**
- * Finish the atlas generation (done, stopped, or error)
- */
 // ============================================================
 // INJECT STYLES FOR THE TAB UI
 // ============================================================
