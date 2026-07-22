@@ -2316,8 +2316,6 @@ async function _predict_handdrawn_internal () {
 		return;
 	}
 
-	show_predict_spinner("#handdrawn_predictions");
-
 	var predict_data = await _predict_handdrawn_fetch_canvas_tensor();
 	if(!predict_data) {
 		return;
