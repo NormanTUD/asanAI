@@ -1222,29 +1222,66 @@ function array_to_html(_array) {
 	return m;
 }
 
-async function visualizeModelBends() {
-	const targetDiv = document.getElementById("bend_graph");
+function _viz_bends_apply_activation(val, name) {
+	switch (name.toLowerCase()) {
+		case 'relu': return Math.max(0, val);
+		case 'sigmoid': return 1 / (1 + Math.exp(-val));
+		case 'tanh': return Math.tanh(val);
+		case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
+		case 'elu': return val >= 0 ? val : Math.exp(val) - 1;
+		case 'softplus': return Math.log(1 + Math.exp(val));
+		default: return val;
+	}
+}
 
-	// --- Validation ---
-	if (typeof model === 'undefined' || !model || !model.layers || model.layers.length < 2) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
+function _viz_bends_is_bend_activation(name) {
+	const n = name.toLowerCase();
+	return n === 'relu' || n === 'leakyrelu';
+}
+
+function _viz_bends_forward_pass(layerData, x) {
+	let currentInput = [x];
+	for (let l = 0; l < layerData.length; l++) {
+		const { kernel, bias, units, inputDim, actName } = layerData[l];
+		const output = new Array(units);
+		for (let j = 0; j < units; j++) {
+			let sum = bias[j];
+			for (let i = 0; i < inputDim; i++) {
+				sum += currentInput[i] * kernel[i * units + j];
+			}
+			output[j] = _viz_bends_apply_activation(sum, actName);
+		}
+		currentInput = output;
+	}
+	return currentInput[0];
+}
+
+function _viz_bends_get_pre_activations(layerData, x) {
+	let currentInput = [x];
+	const allPre = [];
+
+	for (let l = 0; l < layerData.length; l++) {
+		const { kernel, bias, units, inputDim, actName } = layerData[l];
+		const preAct = new Array(units);
+		const postAct = new Array(units);
+
+		for (let j = 0; j < units; j++) {
+			let sum = bias[j];
+			for (let i = 0; i < inputDim; i++) {
+				sum += currentInput[i] * kernel[i * units + j];
+			}
+			preAct[j] = sum;
+			postAct[j] = _viz_bends_apply_activation(sum, actName);
+		}
+
+		allPre.push(preAct);
+		currentInput = postAct;
 	}
 
-	const firstLayer = model.layers[0];
-	const inputShape = firstLayer.batchInputShape;
-	if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+	return allPre;
+}
 
-	const lastLayer = model.layers[model.layers.length - 1];
-	if (lastLayer.units !== 1) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
-
-	// --- Extract all layer weights ---
+async function _viz_bends_extract_layer_data(model) {
 	const layerData = [];
 	for (let l = 0; l < model.layers.length; l++) {
 		const layer = model.layers[l];
@@ -1260,101 +1297,10 @@ async function visualizeModelBends() {
 
 		layerData.push({ kernel, bias, units, inputDim, actName });
 	}
+	return layerData;
+}
 
-	if (layerData.length < 2) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
-
-	// --- Activation functions ---
-	function applyActivation(val, name) {
-		switch (name.toLowerCase()) {
-			case 'relu': return Math.max(0, val);
-			case 'sigmoid': return 1 / (1 + Math.exp(-val));
-			case 'tanh': return Math.tanh(val);
-			case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
-			case 'elu': return val >= 0 ? val : Math.exp(val) - 1;
-			case 'softplus': return Math.log(1 + Math.exp(val));
-			default: return val;
-		}
-	}
-
-	// --- Check if any layer has a bend-producing activation ---
-	function isBendActivation(name) {
-		const n = name.toLowerCase();
-		return n === 'relu' || n === 'leakyrelu';
-	}
-
-	const hasBendActivations = layerData.some(ld => isBendActivation(ld.actName));
-
-	// --- Forward pass for a single scalar input x ---
-	function forwardPass(x) {
-		let currentInput = [x];
-		for (let l = 0; l < layerData.length; l++) {
-			const { kernel, bias, units, inputDim, actName } = layerData[l];
-			const output = new Array(units);
-			for (let j = 0; j < units; j++) {
-				let sum = bias[j];
-				for (let i = 0; i < inputDim; i++) {
-					sum += currentInput[i] * kernel[i * units + j];
-				}
-				output[j] = applyActivation(sum, actName);
-			}
-			currentInput = output;
-		}
-		return currentInput[0];
-	}
-
-	// --- Detailed forward pass returning pre-activations per layer ---
-	function getPreActivations(x) {
-		let currentInput = [x];
-		const allPre = [];
-
-		for (let l = 0; l < layerData.length; l++) {
-			const { kernel, bias, units, inputDim, actName } = layerData[l];
-			const preAct = new Array(units);
-			const postAct = new Array(units);
-
-			for (let j = 0; j < units; j++) {
-				let sum = bias[j];
-				for (let i = 0; i < inputDim; i++) {
-					sum += currentInput[i] * kernel[i * units + j];
-				}
-				preAct[j] = sum;
-				postAct[j] = applyActivation(sum, actName);
-			}
-
-			allPre.push(preAct);
-			currentInput = postAct;
-		}
-
-		return allPre;
-	}
-
-	// ============================================================
-	// --- Determine X range from xy_data_global if available ---
-	// ============================================================
-	let dataXMin = null;
-	let dataXMax = null;
-	let dataPoints = null;
-
-	if (typeof xy_data_global !== 'undefined' && xy_data_global &&
-		xy_data_global.latex_array_x && xy_data_global.latex_array_x.length > 0) {
-
-		const rawXs = xy_data_global.latex_array_x.map(arr => arr[0]);
-		const rawYs = xy_data_global.latex_array_y
-			? xy_data_global.latex_array_y.map(arr => arr[0])
-			: null;
-
-		dataXMin = Math.min(...rawXs);
-		dataXMax = Math.max(...rawXs);
-
-		if (rawYs) {
-			dataPoints = { xs: rawXs, ys: rawYs };
-		}
-	}
-
-	// --- Compute x-range ---
+function _viz_bends_compute_x_range(layerData, dataXMin, dataXMax) {
 	let xMin, xMax;
 
 	if (dataXMin !== null && dataXMax !== null) {
@@ -1384,41 +1330,30 @@ async function visualizeModelBends() {
 		}
 	}
 
-	// --- Generate plot points ---
-	const numPoints = 800;
-	const xs = [];
-	for (let i = 0; i < numPoints; i++) {
-		xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
-	}
+	return { xMin, xMax };
+}
 
-	// --- Compute model output for all x ---
-	const combinedY = xs.map(x => forwardPass(x));
-
-	// ============================================================
-	// --- Find bend points AFTER final range is set ---
-	// ============================================================
+function _viz_bends_detect_bend_points(layerData, xs, combinedY, xMin, xMax, hasBendActivations) {
 	let bendResults = [];
 
 	if (hasBendActivations) {
-		// Dense scan for sign changes in pre-activations
 		const scanResolution = 5000;
 		const scanStep = (xMax - xMin) / scanResolution;
 
-		let prevPre = getPreActivations(xMin);
+		let prevPre = _viz_bends_get_pre_activations(layerData, xMin);
 
 		for (let i = 1; i <= scanResolution; i++) {
 			const x = xMin + scanStep * i;
-			const currPre = getPreActivations(x);
+			const currPre = _viz_bends_get_pre_activations(layerData, x);
 
 			for (let l = 0; l < layerData.length; l++) {
-				if (!isBendActivation(layerData[l].actName)) continue;
+				if (!_viz_bends_is_bend_activation(layerData[l].actName)) continue;
 
 				for (let j = 0; j < layerData[l].units; j++) {
 					const pPre = prevPre[l][j];
 					const cPre = currPre[l][j];
 
 					if (pPre * cPre < 0) {
-						// Linear interpolation for zero crossing
 						const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
 						const bendX = (x - scanStep) + t * scanStep;
 						bendResults.push({ x: bendX, layer: l, neuron: j });
@@ -1429,7 +1364,6 @@ async function visualizeModelBends() {
 			prevPre = currPre;
 		}
 
-		// Deduplicate close bends
 		bendResults.sort((a, b) => a.x - b.x);
 		const deduped = [];
 		for (const bp of bendResults) {
@@ -1441,22 +1375,16 @@ async function visualizeModelBends() {
 		bendResults = deduped;
 	}
 
-	// --- Also detect bends via second derivative (works for ALL activations) ---
-	// This catches bends even for tanh/sigmoid where there's no hard kink
-	// but a rapid change in curvature
-	const curvatureBends = [];
 	if (!hasBendActivations) {
-		// For smooth activations, find inflection-like points via slope changes
 		const slopes = [];
 		for (let i = 0; i < xs.length - 1; i++) {
 			slopes.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
 		}
-		// Second derivative
+		const curvatureBends = [];
 		for (let i = 0; i < slopes.length - 1; i++) {
 			const d2 = Math.abs(slopes[i + 1] - slopes[i]);
 			curvatureBends.push({ idx: i + 1, curvature: d2 });
 		}
-		// Find peaks in curvature
 		curvatureBends.sort((a, b) => b.curvature - a.curvature);
 		const threshold = curvatureBends.length > 0 ? curvatureBends[0].curvature * 0.1 : 0;
 		for (const cb of curvatureBends.slice(0, 20)) {
@@ -1468,7 +1396,6 @@ async function visualizeModelBends() {
 				});
 			}
 		}
-		// Deduplicate again
 		bendResults.sort((a, b) => a.x - b.x);
 		const deduped2 = [];
 		for (const bp of bendResults) {
@@ -1480,19 +1407,20 @@ async function visualizeModelBends() {
 		bendResults = deduped2;
 	}
 
-	// --- HSL to RGB ---
-	function hslToRgb(h, s, l) {
-		s /= 100; l /= 100;
-		const k = n => (n + h / 30) % 12;
-		const a = s * Math.min(l, 1 - l);
-		const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-		return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
-	}
+	return bendResults;
+}
 
-	// --- Build traces ---
+function _viz_bends_hsl_to_rgb(h, s, l) {
+	s /= 100; l /= 100;
+	const k = n => (n + h / 30) % 12;
+	const a = s * Math.min(l, 1 - l);
+	const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+	return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
+}
+
+function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResults) {
 	const traces = [];
 
-	// --- Training data scatter ---
 	if (dataPoints) {
 		traces.push({
 			x: dataPoints.xs,
@@ -1509,7 +1437,6 @@ async function visualizeModelBends() {
 		});
 	}
 
-	// --- Per-neuron contribution traces ---
 	if (layerData.length === 2) {
 		const layer1 = layerData[0];
 		const layer2 = layerData[1];
@@ -1521,11 +1448,11 @@ async function visualizeModelBends() {
 
 			const ys = xs.map(x => {
 				const preAct = w1 * x + b1;
-				const postAct = applyActivation(preAct, layer1.actName);
+				const postAct = _viz_bends_apply_activation(preAct, layer1.actName);
 				return postAct * w2;
 			});
 
-			const color = hslToRgb((j * 360 / layer1.units) % 360, 70, 55);
+			const color = _viz_bends_hsl_to_rgb((j * 360 / layer1.units) % 360, 70, 55);
 
 			traces.push({
 				x: xs,
@@ -1541,12 +1468,11 @@ async function visualizeModelBends() {
 			const numNeurons = layerData[l].units;
 			for (let j = 0; j < numNeurons; j++) {
 				const ys = xs.map(x => {
-					const pre = getPreActivations(x);
-					// We need post-activations, compute them
-					return applyActivation(pre[l][j], layerData[l].actName);
+					const pre = _viz_bends_get_pre_activations(layerData, x);
+					return _viz_bends_apply_activation(pre[l][j], layerData[l].actName);
 				});
 
-				const color = hslToRgb(
+				const color = _viz_bends_hsl_to_rgb(
 					((l * 137 + j * 360 / numNeurons) % 360), 60, 50
 				);
 
@@ -1564,7 +1490,6 @@ async function visualizeModelBends() {
 		}
 	}
 
-	// --- Combined model output ---
 	traces.push({
 		x: xs,
 		y: combinedY,
@@ -1573,10 +1498,9 @@ async function visualizeModelBends() {
 		line: { color: 'cyan', width: 4 },
 	});
 
-	// --- Bend point markers ---
 	if (bendResults.length > 0) {
 		const bendXs = bendResults.map(b => b.x);
-		const bendYs = bendXs.map(bx => forwardPass(bx));
+		const bendYs = bendXs.map(bx => _viz_bends_forward_pass(layerData, bx));
 		const bendLabels = bendResults.map(b =>
 			b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
 		);
@@ -1597,7 +1521,6 @@ async function visualizeModelBends() {
 		});
 	}
 
-	// --- Slope trace ---
 	const slopeY = [];
 	for (let i = 0; i < xs.length - 1; i++) {
 		slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
@@ -1614,8 +1537,11 @@ async function visualizeModelBends() {
 		visible: 'legendonly',
 	});
 
-	// --- Layout ---
-	const layout = {
+	return traces;
+}
+
+function _viz_bends_layout() {
+	return {
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)',
 		font: {
@@ -1650,8 +1576,72 @@ async function visualizeModelBends() {
 		},
 		showlegend: true,
 	};
+}
 
-	// --- Render ---
+async function visualizeModelBends() {
+	const targetDiv = document.getElementById("bend_graph");
+
+	if (typeof model === 'undefined' || !model || !model.layers || model.layers.length < 2) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
+
+	const firstLayer = model.layers[0];
+	const inputShape = firstLayer.batchInputShape;
+	if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
+
+	const lastLayer = model.layers[model.layers.length - 1];
+	if (lastLayer.units !== 1) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
+
+	const layerData = await _viz_bends_extract_layer_data(model);
+	if (layerData.length < 2) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
+
+	const hasBendActivations = layerData.some(ld => _viz_bends_is_bend_activation(ld.actName));
+
+	let dataXMin = null;
+	let dataXMax = null;
+	let dataPoints = null;
+
+	if (typeof xy_data_global !== 'undefined' && xy_data_global &&
+		xy_data_global.latex_array_x && xy_data_global.latex_array_x.length > 0) {
+
+		const rawXs = xy_data_global.latex_array_x.map(arr => arr[0]);
+		const rawYs = xy_data_global.latex_array_y
+			? xy_data_global.latex_array_y.map(arr => arr[0])
+			: null;
+
+		dataXMin = Math.min(...rawXs);
+		dataXMax = Math.max(...rawXs);
+
+		if (rawYs) {
+			dataPoints = { xs: rawXs, ys: rawYs };
+		}
+	}
+
+	const { xMin, xMax } = _viz_bends_compute_x_range(layerData, dataXMin, dataXMax);
+
+	const numPoints = 800;
+	const xs = [];
+	for (let i = 0; i < numPoints; i++) {
+		xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
+	}
+
+	const combinedY = xs.map(x => _viz_bends_forward_pass(layerData, x));
+
+	const bendResults = _viz_bends_detect_bend_points(layerData, xs, combinedY, xMin, xMax, hasBendActivations);
+
+	const traces = _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResults);
+	const layout = _viz_bends_layout();
+
 	let plotDiv;
 	if (targetDiv) {
 		plotDiv = targetDiv;

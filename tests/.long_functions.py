@@ -48,6 +48,7 @@ ignored_files = [
     "dimensionality_river.js",
     "gradient_flow_heatmap.js",
     "health_status_popups.js",
+    "tests.js",
     "neural_organism.js",
     "health_status.js",
     "tda.js",

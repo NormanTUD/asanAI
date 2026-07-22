@@ -1745,30 +1745,12 @@ function calculate_stats(values) {
 	return { mean: mean, std: std, min: min, max: max, cv: cv, n: n };
 }
 
-function show_multi_run_statistics(results) {
-	var losses = results.map(function(r) {
-		var lastIdx = r.history.loss.length - 1;
-		return r.history.loss[lastIdx];
-	});
-
-	var valLosses = results.map(function(r) {
-		if (!r.history.val_loss) return null;
-		var lastIdx = r.history.val_loss.length - 1;
-		return r.history.val_loss[lastIdx];
-	}).filter(function(v) { return v !== null; });
-
-	var accs = results.map(function(r) {
-		if (!r.history.acc && !r.history.accuracy) return null;
-		var key = r.history.acc ? "acc" : "accuracy";
-		var lastIdx = r.history[key].length - 1;
-		return r.history[key][lastIdx];
-	}).filter(function(v) { return v !== null; });
+function _build_multi_run_stats_html(results, losses, valLosses, accs) {
+	var lossStats = calculate_stats(losses);
 
 	var html = '<div class="multi_run_stats_container">';
 	html += '<h3><span class="TRANSLATEME_multi_run_statistics"></span></h3>';
 	html += '<p><span class="TRANSLATEME_noise_analysis_intro"></span></p>';
-
-	var lossStats = calculate_stats(losses);
 
 	html += '<table class="multi_run_stats_table">';
 	html += '<tr><th></th>';
@@ -1888,61 +1870,88 @@ function show_multi_run_statistics(results) {
 	});
 
 	html += '</div>';
+	return html;
+}
+
+function _render_multi_run_boxplot(losses, valLosses) {
+	var boxTraces = [];
+
+	boxTraces.push({
+		x: losses,
+		type: "box",
+		name: language[lang]["loss"],
+		boxpoints: "all",
+		jitter: 0.3,
+		pointpos: -1.5,
+		orientation: "h"
+	});
+
+	if (valLosses.length >= 6) {
+		boxTraces.push({
+			x: valLosses,
+			type: "box",
+			name: "Val Loss",
+			boxpoints: "all",
+			jitter: 0.3,
+			pointpos: 1.5,
+			orientation: "h"
+		});
+	}
+
+	var boxLayout = {
+		paper_bgcolor: "rgba(0, 0, 0, 0)",
+		plot_bgcolor: "rgba(0, 0, 0, 0)",
+		font: { family: "Arial, Helvetica, sans-serif", size: 14, color: "#7f7f7f" },
+		margin: { l: 70, r: 30, b: 40, t: 30 },
+		xaxis: {
+			title: { text: language[lang]["loss"], font: { size: 14, color: "#7f7f7f" } },
+			showline: false,
+			showgrid: true,
+			gridcolor: "#ccc"
+		},
+		showlegend: false,
+		height: 100 + (valLosses.length >= 6 ? 80 : 0)
+	};
+
+	Plotly.newPlot("multi_run_boxplot", boxTraces, boxLayout, { responsive: true });
+}
+
+function show_multi_run_statistics(results) {
+	var losses = results.map(function(r) {
+		var lastIdx = r.history.loss.length - 1;
+		return r.history.loss[lastIdx];
+	});
+
+	var valLosses = results.map(function(r) {
+		if (!r.history.val_loss) return null;
+		var lastIdx = r.history.val_loss.length - 1;
+		return r.history.val_loss[lastIdx];
+	}).filter(function(v) { return v !== null; });
+
+	var accs = results.map(function(r) {
+		if (!r.history.acc && !r.history.accuracy) return null;
+		var key = r.history.acc ? "acc" : "accuracy";
+		var lastIdx = r.history[key].length - 1;
+		return r.history[key][lastIdx];
+	}).filter(function(v) { return v !== null; });
+
+	var html = _build_multi_run_stats_html(results, losses, valLosses, accs);
 
 	$("#multi_run_stats").html(html).show();
 	update_translations();
 
 	if (losses.length >= 6) {
-		var boxTraces = [];
-
-		boxTraces.push({
-			x: losses,
-			type: "box",
-			name: language[lang]["loss"],
-			boxpoints: "all",
-			jitter: 0.3,
-			pointpos: -1.5,
-			orientation: "h"
-		});
-
-		if (valLosses.length >= 6) {
-			boxTraces.push({
-				x: valLosses,
-				type: "box",
-				name: "Val Loss",
-				boxpoints: "all",
-				jitter: 0.3,
-				pointpos: 1.5,
-				orientation: "h"
-			});
-		}
-
-		var boxLayout = {
-			paper_bgcolor: "rgba(0, 0, 0, 0)",
-			plot_bgcolor: "rgba(0, 0, 0, 0)",
-			font: { family: "Arial, Helvetica, sans-serif", size: 14, color: "#7f7f7f" },
-			margin: { l: 70, r: 30, b: 40, t: 30 },
-			xaxis: {
-				title: { text: language[lang]["loss"], font: { size: 14, color: "#7f7f7f" } },
-				showline: false,
-				showgrid: true,
-				gridcolor: "#ccc"
-			},
-			showlegend: false,
-			height: 100 + (valLosses.length >= 6 ? 80 : 0)
-		};
-
-		Plotly.newPlot("multi_run_boxplot", boxTraces, boxLayout, { responsive: true });
+		_render_multi_run_boxplot(losses, valLosses);
 	}
 
-	current_multi_run = lastRun;
+	current_multi_run = results.length;
 
 	$(".multi_run_tab").on("click", function() {
 		var run = parseInt($(this).data("run"));
 		show_multi_run_run_chart(run);
 	});
 
-	show_multi_run_run_chart(lastRun);
+	show_multi_run_run_chart(current_multi_run);
 }
 
 async function multi_train_neural_network(num_runs) {

@@ -13,46 +13,8 @@ var _fcnn_edit_initial_value = null;
 // POPUP CREATION
 // ============================================================
 
-function _fcnn_edit_ensure_popup() {
-    // If popup exists and is in DOM, reuse it
-    if (_fcnn_edit_popup_el && document.body.contains(_fcnn_edit_popup_el)) {
-        return _fcnn_edit_popup_el;
-    }
-
-    // Remove any orphaned popup
-    var existing = document.getElementById("fcnn_edit_popup");
-    if (existing) {
-        try { existing.parentNode.removeChild(existing); } catch(e) {}
-    }
-
-    var is_dark = false;
-    try { is_dark = (typeof is_dark_mode !== 'undefined' && !!is_dark_mode); } catch(e) {}
-
-    var pop = document.createElement("div");
-    pop.id = "fcnn_edit_popup";
-    pop.setAttribute("data-fcnn-edit", "true");
-    pop.style.cssText = [
-        "position: fixed",
-        "z-index: 1000000",
-        "background: " + (is_dark ? 'rgba(25,25,35,0.98)' : 'rgba(255,255,255,0.99)'),
-        "color: " + (is_dark ? '#e0e0e0' : '#222'),
-        "border: 2px solid " + (is_dark ? '#6080cc' : '#3366cc'),
-        "border-radius: 10px",
-        "padding: 14px 18px",
-        "font-family: 'Segoe UI', Arial, sans-serif",
-        "font-size: 13px",
-        "min-width: 280px",
-        "max-width: 420px",
-        "box-shadow: 0 8px 32px rgba(0,0,0,0.3)",
-        "display: none",
-        "opacity: 0",
-        "transition: opacity 0.15s ease",
-        "user-select: none",
-        "-webkit-user-select: none",
-        "overflow: visible"
-    ].join(";");
-
-    pop.innerHTML = [
+function _fcnn_edit_build_popup_html(is_dark) {
+    return [
         '<div id="fcnn_edit_title" style="font-weight:bold;font-size:14px;margin-bottom:8px;"></div>',
         '<div id="fcnn_edit_info" style="font-size:11px;opacity:0.7;margin-bottom:10px;word-break:break-word;"></div>',
         
@@ -133,11 +95,9 @@ function _fcnn_edit_ensure_popup() {
         '  ">✕ Close</button>',
         '</div>'
     ].join("\n");
+}
 
-    document.body.appendChild(pop);
-    _fcnn_edit_popup_el = pop;
-
-    // ===== Wire up ALL events with maximum resilience =====
+function _fcnn_edit_wire_popup_events(pop) {
     var weightNum = document.getElementById("fcnn_edit_weight_num");
     var weightSlider = document.getElementById("fcnn_edit_weight_slider");
     var biasNum = document.getElementById("fcnn_edit_bias_num");
@@ -147,7 +107,6 @@ function _fcnn_edit_ensure_popup() {
     var resetBtn = document.getElementById("fcnn_edit_reset");
     var closeBtn = document.getElementById("fcnn_edit_close");
 
-    // --- Weight number input ---
     function _onWeightNumChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_is_training()) return;
@@ -155,7 +114,6 @@ function _fcnn_edit_ensure_popup() {
         if (!isFinite(v)) return;
         var sMin = parseFloat(weightSlider.min);
         var sMax = parseFloat(weightSlider.max);
-        // Auto-expand slider range if value exceeds it
         if (v < sMin) { weightSlider.min = (v * 1.5).toString(); }
         if (v > sMax) { weightSlider.max = (v * 1.5).toString(); }
         weightSlider.value = v;
@@ -167,7 +125,6 @@ function _fcnn_edit_ensure_popup() {
         if (e.key === "Enter") { e.preventDefault(); _onWeightNumChange(); }
     });
 
-    // --- Weight slider ---
     function _onWeightSliderChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_is_training()) return;
@@ -179,7 +136,6 @@ function _fcnn_edit_ensure_popup() {
     weightSlider.addEventListener("input", _onWeightSliderChange);
     weightSlider.addEventListener("change", _onWeightSliderChange);
 
-    // --- Bias number input ---
     function _onBiasNumChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_is_training()) return;
@@ -198,7 +154,6 @@ function _fcnn_edit_ensure_popup() {
         if (e.key === "Enter") { e.preventDefault(); _onBiasNumChange(); }
     });
 
-    // --- Bias slider ---
     function _onBiasSliderChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_is_training()) return;
@@ -210,7 +165,6 @@ function _fcnn_edit_ensure_popup() {
     biasSlider.addEventListener("input", _onBiasSliderChange);
     biasSlider.addEventListener("change", _onBiasSliderChange);
 
-    // --- From/To index change (re-lookup weight) ---
     function _onIndexChange() {
         if (!_fcnn_edit_active) return;
         if (_fcnn_edit_active.type !== "weight") return;
@@ -222,7 +176,6 @@ function _fcnn_edit_ensure_popup() {
         if (fi < 0) { fi = 0; fromIdx.value = "0"; }
         if (ti < 0) { ti = 0; toIdx.value = "0"; }
 
-        // Clamp to matrix bounds
         var shape = _fcnn_edit_active._weight_shape;
         if (shape && shape.length >= 2) {
             var rows = shape[shape.length - 2];
@@ -235,7 +188,6 @@ function _fcnn_edit_ensure_popup() {
             _fcnn_edit_active.to_idx = ti;
             _fcnn_edit_active.weight_flat_idx = newFlatIdx;
 
-            // Read the new weight value
             var newVal = _fcnn_edit_read_weight_at(_fcnn_edit_active, newFlatIdx);
             if (newVal !== null) {
                 weightNum.value = newVal.toFixed(6);
@@ -246,7 +198,6 @@ function _fcnn_edit_ensure_popup() {
                 weightSlider.value = newVal;
                 _fcnn_edit_initial_value.weight = newVal;
                 
-                // Update info text
                 var infoEl = document.getElementById("fcnn_edit_info");
                 if (infoEl) {
                     infoEl.innerHTML = 
@@ -264,7 +215,6 @@ function _fcnn_edit_ensure_popup() {
     toIdx.addEventListener("change", _onIndexChange);
     toIdx.addEventListener("keydown", function(e) { if (e.key === "Enter") { e.preventDefault(); _onIndexChange(); } });
 
-    // --- Reset button ---
     resetBtn.addEventListener("click", function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -285,14 +235,12 @@ function _fcnn_edit_ensure_popup() {
         }
     });
 
-    // --- Close button ---
     closeBtn.addEventListener("click", function(e) {
         e.preventDefault();
         e.stopPropagation();
         _fcnn_edit_close_popup();
     });
 
-    // --- Outside click (with delay to prevent immediate close) ---
     var _popup_just_opened = false;
     pop._setJustOpened = function() {
         _popup_just_opened = true;
@@ -304,13 +252,11 @@ function _fcnn_edit_ensure_popup() {
         if (_fcnn_edit_popup_el.style.display === "none") return;
         if (_popup_just_opened) return;
         if (_fcnn_edit_popup_el.contains(e.target)) return;
-        // Don't close if clicking on the canvas (let click handler manage)
         var canvas = document.getElementById("fcnn_canvas");
         if (canvas && canvas.contains(e.target)) return;
         _fcnn_edit_close_popup();
     }, true);
 
-    // --- Escape key to close ---
     document.addEventListener("keydown", function(e) {
         if (e.key === "Escape" || e.keyCode === 27) {
             if (_fcnn_edit_popup_el && _fcnn_edit_popup_el.style.display !== "none") {
@@ -319,10 +265,54 @@ function _fcnn_edit_ensure_popup() {
         }
     });
 
-    // --- Prevent scroll-through on popup ---
     pop.addEventListener("wheel", function(e) {
         e.stopPropagation();
     }, { passive: true });
+}
+
+function _fcnn_edit_ensure_popup() {
+    if (_fcnn_edit_popup_el && document.body.contains(_fcnn_edit_popup_el)) {
+        return _fcnn_edit_popup_el;
+    }
+
+    var existing = document.getElementById("fcnn_edit_popup");
+    if (existing) {
+        try { existing.parentNode.removeChild(existing); } catch(e) {}
+    }
+
+    var is_dark = false;
+    try { is_dark = (typeof is_dark_mode !== 'undefined' && !!is_dark_mode); } catch(e) {}
+
+    var pop = document.createElement("div");
+    pop.id = "fcnn_edit_popup";
+    pop.setAttribute("data-fcnn-edit", "true");
+    pop.style.cssText = [
+        "position: fixed",
+        "z-index: 1000000",
+        "background: " + (is_dark ? 'rgba(25,25,35,0.98)' : 'rgba(255,255,255,0.99)'),
+        "color: " + (is_dark ? '#e0e0e0' : '#222'),
+        "border: 2px solid " + (is_dark ? '#6080cc' : '#3366cc'),
+        "border-radius: 10px",
+        "padding: 14px 18px",
+        "font-family: 'Segoe UI', Arial, sans-serif",
+        "font-size: 13px",
+        "min-width: 280px",
+        "max-width: 420px",
+        "box-shadow: 0 8px 32px rgba(0,0,0,0.3)",
+        "display: none",
+        "opacity: 0",
+        "transition: opacity 0.15s ease",
+        "user-select: none",
+        "-webkit-user-select: none",
+        "overflow: visible"
+    ].join(";");
+
+    pop.innerHTML = _fcnn_edit_build_popup_html(is_dark);
+
+    document.body.appendChild(pop);
+    _fcnn_edit_popup_el = pop;
+
+    _fcnn_edit_wire_popup_events(pop);
 
     return pop;
 }
