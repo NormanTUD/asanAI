@@ -2415,6 +2415,22 @@ function update_tiny_graph_tooltip() {
 	}
 }
 
+$(document).on("mouseenter", "#tiny_graph", function() {
+	var $box = $(this).find(".tiny_graph_tooltip_box");
+	if($box.length) {
+		var rect = this.getBoundingClientRect();
+		var boxW = $box.outerWidth();
+		var boxH = $box.outerHeight();
+		var left = rect.right - boxW;
+		var top = rect.bottom + 4;
+		if(left < 4) left = 4;
+		if(top + boxH > window.innerHeight - 4) {
+			top = rect.top - boxH - 4;
+		}
+		$box.css({ top: top + "px", left: left + "px" });
+	}
+});
+
 function clear_tiny_graph_tooltip() {
 	_tiny_graph_training_info = {};
 	$("#tiny_graph .tiny_graph_tooltip_box").remove();
