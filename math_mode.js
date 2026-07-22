@@ -1582,6 +1582,94 @@ function _render_skip_connection_interactive(container_id, layer_idx, gui_layer_
 /**
  * Renders skip projection weights as editable interactive elements.
  */
+function _register_skip_kernel_editables_2d(kernel, gui_layer_idx, skip_proj_layer, decimals, max_rows, max_cols) {
+	var all_editables = [];
+	for (var i = 0; i < Math.min(kernel.length, max_rows); i++) {
+		for (var j = 0; j < Math.min(kernel[i].length, max_cols); j++) {
+			(function(gi, row, col, sk_layer) {
+				var eid = "L" + gi + "_skip_kernel_" + row + "_" + col;
+				const fn = function() {
+					var kt = _extract_kernel_from_layer(sk_layer);
+					if (!kt || tensor_is_disposed(kt)) return 0;
+					var synced = array_sync(kt, true);
+					return synced && synced[row] ? synced[row][col] : 0;
+				}
+				const fn2 = function(v) {
+					_math_apply_skip_weight_change(sk_layer, row, col, v);
+				}
+				const conf = { decimals: decimals };
+				math_register_editable(eid, fn, fn2, -10, 10, "Skip kernel[" + row + "][" + col + "]", conf);
+				all_editables.push({ eid: eid });
+			})(gui_layer_idx, i, j, skip_proj_layer);
+		}
+	}
+	return all_editables;
+}
+
+function _register_skip_kernel_editables_1d(kernel, gui_layer_idx, skip_proj_layer, decimals, max_rows) {
+	var all_editables = [];
+	for (var k = 0; k < Math.min(kernel.length, max_rows); k++) {
+		(function(gi, idx, sk_layer) {
+			var eid = "L" + gi + "_skip_kernel_" + idx;
+			const fn = function() {
+				var kt = _extract_kernel_from_layer(sk_layer);
+				if (!kt || tensor_is_disposed(kt)) return 0;
+				var synced = array_sync(kt, true);
+				return synced ? synced[idx] : 0;
+			}
+			const fn2 = function(v) {
+				_math_apply_skip_weight_change_1d(sk_layer, idx, v);
+			}
+			const conf = { decimals: decimals };
+			math_register_editable(eid, fn, fn2, -10, 10, "Skip kernel[" + idx + "]", conf);
+			all_editables.push({ eid: eid });
+		})(gui_layer_idx, k, skip_proj_layer);
+	}
+	return all_editables;
+}
+
+function _build_skip_kernel_latex(kernel, gui_layer_idx, max_rows, max_cols, decimals, is_2d) {
+	var latex = "\\underbrace{\\begin{pmatrix}\n";
+
+	if (is_2d) {
+		for (var row = 0; row < max_rows; row++) {
+			var row_parts = [];
+			for (var col = 0; col < max_cols; col++) {
+				var eid = "L" + gui_layer_idx + "_skip_kernel_" + row + "_" + col;
+				var ed = math_find_editable(eid);
+				var val = ed ? ed.get().toFixed(decimals) : "0";
+				row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
+			}
+			if (kernel[row] && kernel[row].length > max_cols) {
+				row_parts.push("\\cdots");
+			}
+			latex += row_parts.join(" & ");
+			if (row < max_rows - 1) latex += " \\\\\n";
+		}
+		if (kernel.length > max_rows) {
+			latex += " \\\\ \\vdots & \\ddots";
+		}
+	} else {
+		var parts_1d = [];
+		for (var ki = 0; ki < max_rows; ki++) {
+			var eid_1d = "L" + gui_layer_idx + "_skip_kernel_" + ki;
+			var ed_1d = math_find_editable(eid_1d);
+			var val_1d = ed_1d ? ed_1d.get().toFixed(decimals) : "0";
+			parts_1d.push("\\textcolor{#53d8fb}{" + val_1d + "}");
+		}
+		if (kernel.length > max_rows) {
+			parts_1d.push("\\vdots");
+		}
+		latex += parts_1d.join(" \\\\\n");
+	}
+
+	var shape = get_shape_from_array(kernel);
+	var shape_str = shape.join("\\times");
+	latex += "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+
+	return latex;
+}
+
 function _render_skip_projection_editable(container, skip_proj_layer, layer_idx, gui_layer_idx, input_layer, layer_data, colors) {
 	var decimals = get_dec_points_math_mode();
 	var kernel_tensor = _extract_kernel_from_layer(skip_proj_layer);
@@ -1600,99 +1688,14 @@ function _render_skip_projection_editable(container, skip_proj_layer, layer_idx,
 	var shape = get_shape_from_array(kernel);
 	var max_rows = Math.min(shape[0] || 1, get_max_nr_cols_rows());
 	var max_cols = Math.min(shape.length > 1 ? shape[1] : 1, get_max_nr_cols_rows());
-
-	// Flatten kernel for registration (handle both 1D and 2D)
 	var is_2d = shape.length >= 2;
-	var all_editables = [];
 
-	// Register editables for skip kernel weights
-	if (is_2d) {
-		for (var i = 0; i < Math.min(kernel.length, max_rows); i++) {
-			for (var j = 0; j < Math.min(kernel[i].length, max_cols); j++) {
-				(function(gi, row, col, sk_layer) {
-					var eid = "L" + gi + "_skip_kernel_" + row + "_" + col;
-					const fn = function() {
-						var kt = _extract_kernel_from_layer(sk_layer);
-						if (!kt || tensor_is_disposed(kt)) return 0;
-						var synced = array_sync(kt, true);
-						return synced && synced[row] ? synced[row][col] : 0;
-					}
+	var all_editables = is_2d
+		? _register_skip_kernel_editables_2d(kernel, gui_layer_idx, skip_proj_layer, decimals, max_rows, max_cols)
+		: _register_skip_kernel_editables_1d(kernel, gui_layer_idx, skip_proj_layer, decimals, max_rows);
 
-					const fn2 = function(v) {
-						_math_apply_skip_weight_change(sk_layer, row, col, v);
-					}
-
-					const conf = { decimals: decimals };
-
-					math_register_editable(eid, fn, fn2, -10, 10, "Skip kernel[" + row + "][" + col + "]", conf);
-					all_editables.push({ eid: eid });
-				})(gui_layer_idx, i, j, skip_proj_layer);
-			}
-		}
-	} else {
-		// 1D kernel
-		for (var k = 0; k < Math.min(kernel.length, max_rows); k++) {
-			(function(gi, idx, sk_layer) {
-				var eid = "L" + gi + "_skip_kernel_" + idx;
-				const fn = function() {
-					var kt = _extract_kernel_from_layer(sk_layer);
-					if (!kt || tensor_is_disposed(kt)) return 0;
-					var synced = array_sync(kt, true);
-					return synced ? synced[idx] : 0;
-				}
-
-				const fn2 = function(v) {
-					_math_apply_skip_weight_change_1d(sk_layer, idx, v);
-				}
-
-				const conf = { decimals: decimals };
-
-				math_register_editable(eid, fn, fn2, -10, 10, "Skip kernel[" + idx + "]", conf);
-				all_editables.push({ eid: eid });
-			})(gui_layer_idx, k, skip_proj_layer);
-		}
-	}
-
-	// Build LaTeX for the skip connection
 	var skip_input_latex = _get_skip_input_full_latex(layer_idx, input_layer, layer_data, colors);
-
-	var skip_kernel_latex = "\\underbrace{\\begin{pmatrix}\n";
-
-	if (is_2d) {
-		for (var row = 0; row < max_rows; row++) {
-			var row_parts = [];
-			for (var col = 0; col < max_cols; col++) {
-				var eid = "L" + gui_layer_idx + "_skip_kernel_" + row + "_" + col;
-				var ed = math_find_editable(eid);
-				var val = ed ? ed.get().toFixed(decimals) : "0";
-				row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
-			}
-			if (kernel[row] && kernel[row].length > max_cols) {
-				row_parts.push("\\cdots");
-			}
-			skip_kernel_latex += row_parts.join(" & ");
-			if (row < max_rows - 1) skip_kernel_latex += " \\\\\n";
-		}
-		if (kernel.length > max_rows) {
-			skip_kernel_latex += " \\\\ \\vdots & \\ddots";
-		}
-	} else {
-		var parts_1d = [];
-		for (var ki = 0; ki < max_rows; ki++) {
-			var eid_1d = "L" + gui_layer_idx + "_skip_kernel_" + ki;
-			var ed_1d = math_find_editable(eid_1d);
-			var val_1d = ed_1d ? ed_1d.get().toFixed(decimals) : "0";
-			parts_1d.push("\\textcolor{#53d8fb}{" + val_1d + "}");
-		}
-		if (kernel.length > max_rows) {
-			parts_1d.push("\\vdots");
-		}
-		skip_kernel_latex += parts_1d.join(" \\\\\n");
-	}
-
-	var shape_str = shape.join("\\times");
-	skip_kernel_latex += "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
-
+	var skip_kernel_latex = _build_skip_kernel_latex(kernel, gui_layer_idx, max_rows, max_cols, decimals, is_2d);
 	var full_latex = "+ \\underbrace{" + skip_kernel_latex + " \\times " + skip_input_latex + "}_{\\text{Skip Connection}}";
 
 	el_render_single_latex_with_editables(container, full_latex, all_editables);
