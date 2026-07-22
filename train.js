@@ -386,6 +386,11 @@ async function incrementAndReset() {
 }
 
 async function retrain_neural_network() {
+	training_logs_epoch = get_empty_plotly("Loss");
+	training_logs_batch = get_empty_plotly("Loss");
+	_clear_plotly_epoch_history();
+	last_batch_plot_time = false;
+
 	await incrementAndReset();
 
 	await train_neural_network();
