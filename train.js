@@ -2137,7 +2137,6 @@ async function multi_train_neural_network(num_runs) {
 
 	for (var run = 1; run <= num_runs; run++) {
 		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");
-		multi_update_step(language[lang]["run_x_of_y"] + " " + run + "/" + num_runs);
 		multi_run_data[run] = { weights: null, plotData: null };
 		training_logs_epoch = get_empty_plotly("Loss");
 		training_logs_batch = get_empty_plotly("Loss");
