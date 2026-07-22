@@ -553,6 +553,7 @@ function reset_photo_gallery() {
 
 function remove_confusion_matrix () {
 	$("#confusion_matrix").remove();
+	$("#confusion_matrix_training").html("");
 }
 
 async function dispose_if_exists(element) {
