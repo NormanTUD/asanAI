@@ -6270,8 +6270,15 @@ class asanAI {
 				var plotCanvas = asanai_this.create_tiny_plot(asanai_this.#training_logs_epoch["loss"].x, asanai_this.#training_logs_epoch["loss"].y, vl, th * 2, asanai_this.#parse_int(0.9 * th));
 				$("#tiny_graph").html("");
 				$("#tiny_graph").append(plotCanvas).show();
+				set_tiny_graph_training_info({
+					current_epoch: epochNr,
+					loss_values: asanai_this.#training_logs_epoch["loss"].y.slice(),
+					val_loss_values: vl ? vl.slice() : []
+				});
+				update_tiny_graph_tooltip();
 			} else {
 				$("#tiny_graph").html("").hide();
+				clear_tiny_graph_tooltip();
 			}
 			$("#network_has_seen_msg").show();
 
