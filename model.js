@@ -1348,8 +1348,6 @@ async function create_model (old_model = model, fake_model_structure = undefined
 	current_layer_status_hash = await get_current_layer_container_status_hash();
 
 	if(!fake_model_structure) {
-		dbg("[create_model] " + language[lang]["model_compiled_successfully"]);
-
 		if(currently_predicting_webcam) {
 			currently_predicting_webcam = false;
 
