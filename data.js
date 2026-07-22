@@ -2510,56 +2510,77 @@ async function get_table_data_from_images(imgs) {
 
 	var table_data = {};
 
+	var uncached_indices = [];
+	var uncached_tensors = [];
+
 	for (var img_idx = 0; img_idx < imgs.length; img_idx++) {
+		var image_element = imgs[img_idx];
+		var image_element_xpath = get_element_xpath(image_element);
+
+		if(confusion_matrix_and_grid_cache[image_element_xpath]) {
+			continue;
+		}
+
+		var img_tensor = tidy(() => {
+			try {
+				var res = cached_load_resized_image(image_element);
+				return res;
+			} catch (e) {
+				err(e);
+				return null;
+			}
+		});
+
+		if(img_tensor === null) {
+			wrn("[confusion_matrix] Could not load image from pixels from this element:", image_element);
+			await dispose(img_tensor);
+			continue;
+		}
+
+		uncached_indices.push(img_idx);
+		uncached_tensors.push(img_tensor);
+	}
+
+	if(uncached_tensors.length > 0) {
+		var batch_tensor = null;
+
+		try {
+			batch_tensor = tidy(() => {
+				return tf.concat(uncached_tensors, 0);
+			});
+
+			var batch_predictions = tidy(() => {
+				const pd = model.predict(batch_tensor);
+				var _res = array_sync(pd);
+				dispose(pd);
+				return _res;
+			});
+
+			for(var i = 0; i < uncached_indices.length; i++) {
+				var idx = uncached_indices[i];
+				var el = imgs[idx];
+				var xpath = get_element_xpath(el);
+				confusion_matrix_and_grid_cache[xpath] = batch_predictions[i];
+			}
+		} catch (e) {
+			await handle_get_confusion_matrix_table_from_images_error(e, batch_tensor, null);
+		}
+
+		await dispose(batch_tensor);
+
+		for(var i = 0; i < uncached_tensors.length; i++) {
+			await dispose(uncached_tensors[i]);
+		}
+	}
+
+	for(var img_idx = 0; img_idx < imgs.length; img_idx++) {
 		var image_element = imgs[img_idx];
 		var image_element_xpath = get_element_xpath(image_element);
 
 		var predicted_tensor = confusion_matrix_and_grid_cache[image_element_xpath];
 
 		if(!predicted_tensor) {
-			var img_tensor = tidy(() => {
-				try {
-					var res = cached_load_resized_image(image_element);
-					return res;
-				} catch (e) {
-					err(e);
-					return null;
-				}
-			});
-
-			if(img_tensor === null) {
-				wrn("[confusion_matrix] Could not load image from pixels from this element:", image_element);
-				await dispose(img_tensor);
-				continue;
-			}
-
-			try {
-				predicted_tensor = tidy(() => {
-					const pd = model.predict(img_tensor);
-					var _res = array_sync(pd)[0];
-					dispose(predicted_tensor); // await not possible
-					return _res;
-				});
-
-				confusion_matrix_and_grid_cache[image_element_xpath] = predicted_tensor;
-			} catch (e) {
-				await handle_get_confusion_matrix_table_from_images_error(e, img_tensor, predicted_tensor);
-
-				continue;
-			}
-		}
-
-		if(!predicted_tensor) {
-			err("[confusion_matrix] Could not get predicted_tensor");
-			continue;
-		}
-
-		if(!predicted_tensor) {
-			dbg(language[lang]["predictions_tensor_was_empty"]);
-
-			await dispose(img_tensor);
-			await dispose(predicted_tensor);
-
+			dbg("[confusion_matrix] Could not get predicted_tensor");
 			continue;
 		}
 
@@ -2585,9 +2606,6 @@ async function get_table_data_from_images(imgs) {
 		} else {
 			table_data[correct_category][predicted_category] = 1;
 		}
-
-		await dispose(img_tensor);
-		await dispose(predicted_tensor);
 
 		num_items++;
 	}
