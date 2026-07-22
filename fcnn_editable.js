@@ -1206,6 +1206,19 @@ function _fcnn_edit_scan_adjacent_layers(actual_idx, expected_units) {
     return null;
 }
 
+function _fcnn_edit_layer_has_bias_of_size(layer, expected_size) {
+    var w = null;
+    try { w = layer.getWeights(); } catch(e) { return false; }
+    if (!w || w.length < 2) return false;
+    try {
+        var biasShape = w[1].shape;
+        var biasSize = biasShape[biasShape.length - 1];
+        return biasSize === expected_size;
+    } catch(e) {
+        return false;
+    }
+}
+
 function _fcnn_edit_find_dense_layer_for_neuron(fcnn_layer_idx) {
     try {
         if (typeof model === 'undefined' || !model || !model.layers) return null;
@@ -1228,18 +1241,8 @@ function _fcnn_edit_find_dense_layer_for_neuron(fcnn_layer_idx) {
 
         if (fcnn_layer_idx === 0) {
             var layer = model.layers[actual_idx];
-            if (layer) {
-                var w = null;
-                try { w = layer.getWeights(); } catch(e) {}
-                if (w && w.length >= 2) {
-                    try {
-                        var biasShape = w[1].shape;
-                        var biasSize = biasShape[biasShape.length - 1];
-                        if (biasSize === units[fcnn_layer_idx]) {
-                            return actual_idx;
-                        }
-                    } catch(e) {}
-                }
+            if (layer && _fcnn_edit_layer_has_bias_of_size(layer, units[fcnn_layer_idx])) {
+                return actual_idx;
             }
             return null;
         }
