@@ -39,6 +39,7 @@ ignored_long_funcs = [
     "_inject_tooltip_styles",
     "get_optimizer_equations",
     "get_fit_data",
+    "<anonymous>",
     "run_super_quick_tests"
 ]
 ignored_files = [
