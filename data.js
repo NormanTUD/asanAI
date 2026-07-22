@@ -2506,10 +2506,7 @@ async function handle_get_confusion_matrix_table_from_images_error(e, img_tensor
 }
 
 async function get_table_data_from_images(imgs) {
-	var num_items = 0;
-
 	var table_data = {};
-
 	var all_predictions = {};
 
 	var uncached_indices = [];
@@ -2555,7 +2552,7 @@ async function get_table_data_from_images(imgs) {
 			var batch_predictions = tidy(() => {
 				const pd = model.predict(batch_tensor);
 				var _res = array_sync(pd);
-				dispose(pd); // await not possible here
+				dispose(pd);
 				return _res;
 			});
 
@@ -2576,6 +2573,12 @@ async function get_table_data_from_images(imgs) {
 			await dispose(uncached_tensors[i]);
 		}
 	}
+
+	return _collect_confusion_table_data(imgs, all_predictions, table_data);
+}
+
+function _collect_confusion_table_data(imgs, all_predictions, table_data) {
+	var num_items = 0;
 
 	for(var img_idx = 0; img_idx < imgs.length; img_idx++) {
 		var image_element = imgs[img_idx];

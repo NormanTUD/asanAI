@@ -166,19 +166,8 @@ function write_model_summary_wait() {
 // ============================================================
 // BUILD TABLE (with features 2, 8, 9)
 // ============================================================
-function build_model_summary_table() {
-	if (!model) {
-		console.error("build_model_summary_table: no model provided");
-		return "<div style=\"color:red\">No model provided</div>";
-	}
-
-	var total_params = 0;
-	var trainable_params = 0;
-	var non_trainable_params = 0;
-
+function _collect_layer_data(layers) {
 	var layer_data = [];
-	var layers = [];
-	try { layers = model.layers || []; } catch (e) { layers = []; }
 	var max_params = 0;
 
 	for (var li = 0; li < layers.length; li++) {
@@ -211,10 +200,6 @@ function build_model_summary_table() {
 			params = _safe_count_params(fallback_weights);
 		}
 
-		total_params += params;
-		trainable_params += trainable_count;
-		non_trainable_params += non_trainable_count;
-
 		if (params > max_params) max_params = params;
 
 		var layer_type = "";
@@ -233,49 +218,69 @@ function build_model_summary_table() {
 		});
 	}
 
-	// Build rows
+	return { layer_data, max_params };
+}
+
+function _build_summary_row(ld, ri, max_params) {
+	var bar_width = max_params > 0 ? Math.round((ld.params / max_params) * 100) : 0;
+	var param_bar_html = "";
+	if (ld.params > 0) {
+		param_bar_html = "<div class=\"param-bar-container\" style=\"" +
+			"width:100%; background:" + SUMMARY_CONFIG.param_bar_bg + "; " +
+			"border-radius:3px; height:" + SUMMARY_CONFIG.param_bar_height + "; " +
+			"margin-top:3px; overflow:hidden;\">" +
+			"<div class=\"param-bar-fill\" style=\"" +
+			"width:" + bar_width + "%; height:100%; " +
+			"background:" + SUMMARY_CONFIG.param_bar_color + "; " +
+			"border-radius:3px; transition:width 0.3s ease;\"></div></div>";
+	}
+
+	var layer_name_cell = "<td class=\"summary-layer-name\" data-layer-index=\"" + ri + "\">" +
+		"<span class=\"st-layer-name-text\">" + _escape_html(ld.name) + "</span> " +
+		"<span class=\"st-layer-type-badge\">" + _escape_html(ld.layer_type) + "</span></td>";
+
+	return "<tr>" +
+		layer_name_cell +
+		"<td>" + _escape_html(_format_shape(ld.input_shape)) + "</td>" +
+		"<td>" + _escape_html(_format_shape(ld.output_shape)) + "</td>" +
+		"<td style=\"min-width:100px;\">" +
+			"<span class=\"param-count\">" + ld.params.toLocaleString() + "</span>" +
+			param_bar_html +
+		"</td>" +
+		"</tr>";
+}
+
+function build_model_summary_table() {
+	if (!model) {
+		console.error("build_model_summary_table: no model provided");
+		return "<div style=\"color:red\">No model provided</div>";
+	}
+
+	var layers = [];
+	try { layers = model.layers || []; } catch (e) { layers = []; }
+
+	var collected = _collect_layer_data(layers);
+	var layer_data = collected.layer_data;
+	var max_params = collected.max_params;
+
+	var total_params = 0;
+	var trainable_params = 0;
+	var non_trainable_params = 0;
+	for (var i = 0; i < layer_data.length; i++) {
+		total_params += layer_data[i].params;
+		trainable_params += layer_data[i].trainable_count;
+		non_trainable_params += layer_data[i].non_trainable_count;
+	}
+
 	var rows = [];
 	for (var ri = 0; ri < layer_data.length; ri++) {
-		var ld = layer_data[ri];
-
-		// Feature 2: Parameter bar
-		var bar_width = max_params > 0 ? Math.round((ld.params / max_params) * 100) : 0;
-		var param_bar_html = "";
-		if (ld.params > 0) {
-			param_bar_html = "<div class=\"param-bar-container\" style=\"" +
-				"width:100%; background:" + SUMMARY_CONFIG.param_bar_bg + "; " +
-				"border-radius:3px; height:" + SUMMARY_CONFIG.param_bar_height + "; " +
-				"margin-top:3px; overflow:hidden;\">" +
-				"<div class=\"param-bar-fill\" style=\"" +
-				"width:" + bar_width + "%; height:100%; " +
-				"background:" + SUMMARY_CONFIG.param_bar_color + "; " +
-				"border-radius:3px; transition:width 0.3s ease;\"></div></div>";
-		}
-
-		// Feature 8: Tooltip via floating DOM element (no ugly title attr)
-		var layer_name_cell = "<td class=\"summary-layer-name\" data-layer-index=\"" + ri + "\">" +
-			"<span class=\"st-layer-name-text\">" + _escape_html(ld.name) + "</span> " +
-			"<span class=\"st-layer-type-badge\">" + _escape_html(ld.layer_type) + "</span></td>";
-
-
-		var row_html = "<tr>" +
-			layer_name_cell +
-			"<td>" + _escape_html(_format_shape(ld.input_shape)) + "</td>" +
-			"<td>" + _escape_html(_format_shape(ld.output_shape)) + "</td>" +
-			"<td style=\"min-width:100px;\">" +
-				"<span class=\"param-count\">" + ld.params.toLocaleString() + "</span>" +
-				param_bar_html +
-			"</td>" +
-			"</tr>";
-
-		rows.push(row_html);
+		rows.push(_build_summary_row(layer_data[ri], ri, max_params));
 	}
 
 	rows.push("<tr class=\"summary_totals\"><td colspan=\"5\">Total params: " + total_params.toLocaleString() + "</td></tr>");
 	rows.push("<tr class=\"summary_totals\"><td colspan=\"5\">Trainable params: " + trainable_params.toLocaleString() + "</td></tr>");
 	rows.push("<tr class=\"summary_totals\"><td colspan=\"5\">Non-trainable params: " + non_trainable_params.toLocaleString() + "</td></tr>");
 
-	// Store globally for chart and export
 	window._summary_layer_data = layer_data;
 	window._summary_totals = { total: total_params, trainable: trainable_params, non_trainable: non_trainable_params };
 

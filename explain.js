@@ -1421,78 +1421,133 @@ function _viz_bends_hsl_to_rgb(h, s, l) {
 	return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
 }
 
-function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResults) {
-	const traces = [];
+function _viz_bends_trace_data_points(dataPoints) {
+	return {
+		x: dataPoints.xs,
+		y: dataPoints.ys,
+		mode: 'markers',
+		name: 'Training Data',
+		marker: {
+			color: 'rgba(255, 255, 255, 0.8)',
+			size: 7,
+			symbol: 'circle',
+			line: { color: 'rgba(100, 100, 255, 0.9)', width: 1.5 }
+		},
+		hovertemplate: 'x: %{x}<br>y: %{y}<extra>Data</extra>',
+	};
+}
 
-	if (dataPoints) {
+function _viz_bends_traces_2layer(xs, layerData) {
+	const traces = [];
+	const layer1 = layerData[0];
+	const layer2 = layerData[1];
+
+	for (let j = 0; j < layer1.units; j++) {
+		const w1 = layer1.kernel[j];
+		const b1 = layer1.bias[j];
+		const w2 = layer2.kernel[j];
+
+		const ys = xs.map(x => {
+			const preAct = w1 * x + b1;
+			const postAct = _viz_bends_apply_activation(preAct, layer1.actName);
+			return postAct * w2;
+		});
+
+		const h = (j * 360 / layer1.units) % 360;
+		const color = _viz_bends_hsl_to_rgb(h, 70, 55);
+
 		traces.push({
-			x: dataPoints.xs,
-			y: dataPoints.ys,
-			mode: 'markers',
-			name: 'Training Data',
-			marker: {
-				color: 'rgba(255, 255, 255, 0.8)',
-				size: 7,
-				symbol: 'circle',
-				line: { color: 'rgba(100, 100, 255, 0.9)', width: 1.5 }
-			},
-			hovertemplate: 'x: %{x}<br>y: %{y}<extra>Data</extra>',
+			x: xs,
+			y: ys,
+			mode: 'lines',
+			name: `N${j+1} (w₁=${w1.toFixed(2)}, b=${b1.toFixed(2)}, w₂=${w2.toFixed(2)})`,
+			line: { color, width: 1.5, dash: 'dot' },
+			opacity: 0.6,
 		});
 	}
+	return traces;
+}
 
-	if (layerData.length === 2) {
-		const layer1 = layerData[0];
-		const layer2 = layerData[1];
-
-		for (let j = 0; j < layer1.units; j++) {
-			const w1 = layer1.kernel[j];
-			const b1 = layer1.bias[j];
-			const w2 = layer2.kernel[j];
-
+function _viz_bends_traces_multilayer(xs, layerData) {
+	const traces = [];
+	for (let l = 0; l < layerData.length - 1; l++) {
+		const numNeurons = layerData[l].units;
+		for (let j = 0; j < numNeurons; j++) {
 			const ys = xs.map(x => {
-				const preAct = w1 * x + b1;
-				const postAct = _viz_bends_apply_activation(preAct, layer1.actName);
-				return postAct * w2;
+				const pre = _viz_bends_get_pre_activations(layerData, x);
+				return _viz_bends_apply_activation(pre[l][j], layerData[l].actName);
 			});
 
-			const h = (j * 360 / layer1.units) % 360;
-
-			const color = _viz_bends_hsl_to_rgb(h, 70, 55);
+			const h = ((l * 137 + j * 360 / numNeurons) % 360);
+			const color = _viz_bends_hsl_to_rgb(h, 60, 50);
 
 			traces.push({
 				x: xs,
 				y: ys,
 				mode: 'lines',
-				name: `N${j+1} (w₁=${w1.toFixed(2)}, b=${b1.toFixed(2)}, w₂=${w2.toFixed(2)})`,
-				line: { color, width: 1.5, dash: 'dot' },
-				opacity: 0.6,
+				name: `L${l+1} N${j+1}`,
+				line: { color, width: 1, dash: 'dot' },
+				opacity: 0.4,
+				legendgroup: `layer${l}`,
+				visible: 'legendonly',
 			});
 		}
+	}
+	return traces;
+}
+
+function _viz_bends_trace_bend_points(xs, layerData, bendResults) {
+	const bendXs = bendResults.map(b => b.x);
+	const bendYs = bendXs.map(bx => _viz_bends_forward_pass(layerData, bx));
+	const bendLabels = bendResults.map(b =>
+		b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
+	);
+
+	return {
+		x: bendXs,
+		y: bendYs,
+		mode: 'markers',
+		name: `Bend Points (${bendResults.length})`,
+		marker: {
+			color: 'rgba(255, 50, 50, 0.9)',
+			size: 11,
+			symbol: 'diamond',
+			line: { color: 'white', width: 2 }
+		},
+		text: bendLabels,
+		hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
+	};
+}
+
+function _viz_bends_trace_slope(xs, combinedY) {
+	const slopeY = [];
+	for (let i = 0; i < xs.length - 1; i++) {
+		slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
+	}
+	slopeY.push(slopeY[slopeY.length - 1]);
+
+	return {
+		x: xs,
+		y: slopeY,
+		mode: 'lines',
+		name: 'Slope (dy/dx)',
+		line: { color: 'rgba(255, 165, 0, 0.7)', width: 2, dash: 'dash' },
+		yaxis: 'y2',
+		visible: 'legendonly',
+	};
+}
+
+function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResults) {
+	const traces = [];
+
+	if (dataPoints) {
+		traces.push(_viz_bends_trace_data_points(dataPoints));
+	}
+
+	if (layerData.length === 2) {
+		traces.push(..._viz_bends_traces_2layer(xs, layerData));
 	} else {
-		for (let l = 0; l < layerData.length - 1; l++) {
-			const numNeurons = layerData[l].units;
-			for (let j = 0; j < numNeurons; j++) {
-				const ys = xs.map(x => {
-					const pre = _viz_bends_get_pre_activations(layerData, x);
-					return _viz_bends_apply_activation(pre[l][j], layerData[l].actName);
-				});
-
-				const h = ((l * 137 + j * 360 / numNeurons) % 360);
-
-				const color = _viz_bends_hsl_to_rgb(h, 60, 50);
-
-				traces.push({
-					x: xs,
-					y: ys,
-					mode: 'lines',
-					name: `L${l+1} N${j+1}`,
-					line: { color, width: 1, dash: 'dot' },
-					opacity: 0.4,
-					legendgroup: `layer${l}`,
-					visible: 'legendonly',
-				});
-			}
-		}
+		traces.push(..._viz_bends_traces_multilayer(xs, layerData));
 	}
 
 	traces.push({
@@ -1504,43 +1559,10 @@ function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResul
 	});
 
 	if (bendResults.length > 0) {
-		const bendXs = bendResults.map(b => b.x);
-		const bendYs = bendXs.map(bx => _viz_bends_forward_pass(layerData, bx));
-		const bendLabels = bendResults.map(b =>
-			b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
-		);
-
-		traces.push({
-			x: bendXs,
-			y: bendYs,
-			mode: 'markers',
-			name: `Bend Points (${bendResults.length})`,
-			marker: {
-				color: 'rgba(255, 50, 50, 0.9)',
-				size: 11,
-				symbol: 'diamond',
-				line: { color: 'white', width: 2 }
-			},
-			text: bendLabels,
-			hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
-		});
+		traces.push(_viz_bends_trace_bend_points(xs, layerData, bendResults));
 	}
 
-	const slopeY = [];
-	for (let i = 0; i < xs.length - 1; i++) {
-		slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
-	}
-	slopeY.push(slopeY[slopeY.length - 1]);
-
-	traces.push({
-		x: xs,
-		y: slopeY,
-		mode: 'lines',
-		name: 'Slope (dy/dx)',
-		line: { color: 'rgba(255, 165, 0, 0.7)', width: 2, dash: 'dash' },
-		yaxis: 'y2',
-		visible: 'legendonly',
-	});
+	traces.push(_viz_bends_trace_slope(xs, combinedY));
 
 	return traces;
 }
