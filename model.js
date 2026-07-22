@@ -350,7 +350,7 @@ async function compile_model(recursion_level=0) {
 	var config_changed = (model_config_hash != new_model_config_hash);
 
 	await _compile_model_ensure_exists();
-	await _compile_model_save_restore_weights(config_changed);
+	await _compile_model_save_restore_weights(config_changed, new_model_config_hash);
 
 	var compile_result = await _compile_model_do_compile(new_model_config_hash);
 
