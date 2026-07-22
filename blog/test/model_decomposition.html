@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On the Criteria To Be Used in Decomposing Systems into Modules - Visual Explanation</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            text-align: center;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .author {
+            margin-top: 1rem;
+            color: #64748b;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: #6366f1;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #a78bfa;
+            border-left: 4px solid #6366f1;
+            padding-left: 1rem;
+        }
+
+        .card {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .benefit-card {
+            background: rgba(30, 30, 50, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .benefit-card:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .benefit-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-card h3 {
+            color: #818cf8;
+            margin-bottom: 0.5rem;
+        }
+
+        .interactive-container {
+            background: rgba(20, 20, 35, 0.9);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .kwic-demo {
+            margin: 2rem 0;
+        }
+
+        .kwic-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(15, 15, 30, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .kwic-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .kwic-output {
+            background: rgba(10, 10, 20, 0.9);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+
+        .kwic-output .shift {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .kwic-output .shift:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .kwic-output .keyword {
+            color: #a78bfa;
+            font-weight: bold;
+        }
+
+        .module-diagram {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin: 2rem 0;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.2rem;
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn:hover {
+            border-color: #6366f1;
+            color: #e0e0e0;
+        }
+
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+            color: #fff;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .comparison-table th {
+            color: #a78bfa;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .impact-good {
+            color: #4ade80;
+        }
+
+        .impact-bad {
+            color: #f87171;
+        }
+
+        .principle-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .principle-list li {
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.8rem;
+            background: rgba(30, 30, 50, 0.5);
+            border-left: 3px solid #6366f1;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s;
+        }
+
+        .principle-list li:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-left-color: #a78bfa;
+            transform: translateX(5px);
+        }
+
+        .principle-list li strong {
+            color: #818cf8;
+        }
+
+        canvas {
+            border-radius: 8px;
+        }
+
+        #hierarchyCanvas {
+            width: 100%;
+            height: 400px;
+            background: rgba(10, 10, 20, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 8px;
+        }
+
+        .change-simulator {
+            margin: 1.5rem 0;
+        }
+
+        .change-btn {
+            padding: 0.5rem 1rem;
+            margin: 0.3rem;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 6px;
+            color: #c4b5fd;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .change-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: #6366f1;
+        }
+
+        .change-btn.active-change {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        .modules-visual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .module-col h4 {
+            text-align: center;
+            color: #818cf8;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .module-box {
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            transition: all 0.4s;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(30, 30, 50, 0.6);
+        }
+
+        .module-box.affected {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        .module-box.safe {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: #4ade80;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.4); }
+        }
+
+        .equation-block {
+            background: rgba(20, 20, 40, 0.8);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot:hover,
+        .nav-dot.active {
+            background: #6366f1;
+            transform: scale(1.3);
+        }
+
+        .plotly-chart {
+            width: 100%;
+            height: 450px;
+            margin: 1.5rem 0;
+        }
+
+        .highlight {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.05));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .key-insight::before {
+            content: '💡';
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            font-size: 1.5rem;
+            background: #0a0a0f;
+            padding: 0 0.5rem;
+        }
+
+        .key-insight p {
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .modules-visual {
+                grid-template-columns: 1fr;
+            }
+            .nav-dots {
+                display: none;
+            }
+            section {
+                padding: 2rem 1rem;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-dots" id="navDots"></div>
+
+    <!-- Hero Section -->
+    <div class="hero" id="sec-hero">
+        <h1>On the Criteria To Be Used in<br>Decomposing Systems into Modules</h1>
+        <p class="subtitle">A visual exploration of D.L. Parnas's foundational 1972 paper on software modularity and information hiding</p>
+        <p class="author">D.L. Parnas — Carnegie-Mellon University, 1972</p>
+        <div class="scroll-indicator" onclick="document.getElementById('sec-problem').scrollIntoView({behavior:'smooth'})">⌄</div>
+    </div>
+
+    <!-- The Problem -->
+    <section id="sec-problem" class="fade-in">
+        <h2 class="section-title">The Core Question</h2>
+        <div class="card">
+            <p style="font-size: 1.2rem; color: #c4b5fd; margin-bottom: 1rem;">
+                Everyone agrees that modular programming is good. But <strong>how</strong> should you divide a system into modules?
+            </p>
+            <p>
+                Parnas observed that while programmers universally agreed on the <em>benefits</em> of modularity, 
+                almost nothing was said about the <strong class="highlight">criteria</strong> for deciding where to draw the boundaries between modules.
+                The conventional wisdom was simply: "follow the flowchart."
+            </p>
+        </div>
+
+        <h3 style="color: #818cf8; margin: 2rem 0 1rem;">Expected Benefits of Modular Programming</h3>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon">👥</div>
+                <h3>Managerial</h3>
+                <p>Separate groups work on each module with little need for communication, shortening development time.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🔄</div>
+                <h3>Flexibility</h3>
+                <p>Drastic changes to one module should not require changes to others.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🧠</div>
+                <h3>Comprehensibility</h3>
+                <p>It should be possible to study the system one module at a time.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- KWIC Example -->
+    <section id="sec-kwic" class="fade-in">
+        <h2 class="section-title">The KWIC Index Example</h2>
+        <div class="card">
+            <p>Parnas uses a <strong class="highlight">KWIC (Key Word In Context)</strong> index system as his running example. 
+            Try it below — enter some lines of text and see all circular shifts sorted alphabetically:</p>
+            
+            <div class="kwic-demo">
+                <input type="text" class="kwic-input" id="kwicInput" 
+                    placeholder="Enter lines separated by semicolons, e.g.: The Quick Brown Fox; Jumps Over Lazy Dog"
+                    value="Software Engineering; Information Hiding; Modular Design">
+                <button class="change-btn" onclick="generateKWIC()" style="margin-bottom: 1rem; padding: 0.7rem 1.5rem; font-size: 1rem;">
+                    Generate KWIC Index
+                </button>
+                <div class="kwic-output" id="kwicOutput"></div>
+            </div>
+        </div>
+
+        <div class="key-insight">
+            <p>The KWIC system is small enough to understand completely, yet complex enough to illustrate 
+            why <strong>different decomposition criteria lead to fundamentally different designs</strong> — 
+            even when the final running program might be identical.</p>
+        </div>
+    </section>
+
+    <!-- Two Decompositions -->
+    <section id="sec-decomp" class="fade-in">
+        <h2 class="section-title">Two Decompositions Compared</h2>
+        
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="showDecomp('flowchart')">Decomposition 1: Flowchart-Based</button>
+            <button class="tab-btn" onclick="showDecomp('infohiding')">Decomposition 2: Information Hiding</button>
+        </div>
+
+        <div id="decompContent">
+            <div id="decomp-flowchart" class="card">
+                <h3 style="color: #f87171; margin-bottom: 1rem;">❌ Conventional: Based on Processing Steps</h3>
+                <p style="margin-bottom: 1rem;">Each module corresponds to a <strong>step in the flowchart</strong>. Modules share data structures and formats.</p>
+                <div id="flowchartDiagram"></div>
+            </div>
+            <div id="decomp-infohiding" class="card" style="display:none;">
+                <h3 style="color: #4ade80; margin-bottom: 1rem;">✓ Unconventional: Based on Information Hiding</h3>
+                <p style="margin-bottom: 1rem;">Each module <strong>hides a design decision</strong> behind an abstract interface. Modules communicate through function calls, not shared data.</p>
+                <div id="infohidingDiagram"></div>
+            </div>
+        </div>
+
+        <div class="interactive-container" style="margin-top: 2rem;">
+            <h3 style="color: #a78bfa; margin-bottom: 1rem;">🔬 Change Impact Simulator</h3>
+            <p style="margin-bottom: 1rem; color: #94a3b8;">Click a design change below to see which modules are affected in each decomposition:</p>
+            
+            <div class="change-simulator">
+                <button class="change-btn" onclick="simulateChange(0)">Change Input Format</button>
+                <button class="change-btn" onclick="simulateChange(1)">Change Storage (not all in core)</button>
+                <button class="change-btn" onclick="simulateChange(2)">Change Character Packing</button>
+                <button class="change-btn" onclick="simulateChange(3)">Store Shifts vs. Index Them</button>
+                <button class="change-btn" onclick="simulateChange(4)">Change Alphabetization Strategy</button>
+            </div>
+
+            <div class="modules-visual">
+                <div class="module-col">
+                    <h4>Decomposition 1 (Flowchart)</h4>
+                    <div class="module-box" id="d1-input">Input</div>
+                    <div class="module-box" id="d1-shift">Circular Shift</div>
+                    <div class="module-box" id="d1-alpha">Alphabetizer</div>
+                    <div class="module-box" id="d1-output">Output</div>
+                    <div class="module-box" id="d1-master">Master Control</div>
+                </div>
+                <div class="module-col">
+                    <h4>Decomposition 2 (Info Hiding)</h4>
+                    <div class="module-box" id="d2-line">Line Storage</div>
+                    <div class="module-box" id="d2-input">Input</div>
+                    <div class="module-box" id="d2-shift">Circular Shifter</div>
+                    <div class="module-box" id="d2-alpha">Alphabetizer</div>
+                    <div class="module-box" id="d2-output">Output</div>
+                    <div class="module-box" id="d2-master">Master Control</div>
+                </div>
+            </div>
+            <p id="changeDescription" style="margin-top: 1rem; color: #94a3b8; font-style: italic; text-align: center;"></p>
+        </div>
+    </section>
+
+    <!-- Change Impact Chart -->
+    <section id="sec-impact" class="fade-in">
+        <h2 class="section-title">Change Impact Analysis</h2>
+        <div class="card">
+            <p>This chart quantifies the key advantage of information hiding: when design decisions change, 
+            far fewer modules are affected.</p>
+            <div id="impactChart" class="plotly-chart"></div>
+        </div>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Design Change</th>
+                    <th>Decomp 1 (Flowchart)</th>
+                    <th>Decomp 2 (Info Hiding)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Input format changes</td>
+                    <td class="impact-bad">1 module affected</td>
+                    <td class="impact-good">1 module affected</td>
+                </tr>
+                <tr>
+                    <td>Storage decision changes</td>
+                    <td class="impact-bad">ALL modules affected</td>
+                    <td class="impact-good">1 module affected</td>
+                </tr>
+                <tr>
+                    <td>Character packing changes</td>
+                    <td class="impact-bad">ALL modules affected</td>
+                    <td class="impact-good">1 module affected</td>
+                </tr>
+                <tr>
+                    <td>Shift representation changes</td>
+                    <td class="impact-bad">3 modules affected</td>
+                    <td class="impact-good">1 module affected</td>
+                </tr>
+                <tr>
+                    <td>Alphabetization strategy changes</td>
+                    <td class="impact-bad">2 modules affected</td>
+                    <td class="impact-good">1 module affected</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Information Hiding Principle -->
+    <section id="sec-principle" class="fade-in">
+        <h2 class="section-title">The Information Hiding Principle</h2>
+        <div class="card">
+            <div class="equation-block">
+                <span id="eq1"></span>
+            </div>
+            <p style="margin-top: 1rem;">
+                The key criterion: <strong class="highlight">Every module hides a design decision that is likely to change.</strong>
+                The module's interface reveals as little as possible about its inner workings.
+            </p>
+        </div>
+
+        <div class="key-insight">
+            <p><strong>The fundamental insight:</strong> It is almost always incorrect to begin decomposition based on a flowchart. 
+            Instead, begin with a list of <em>difficult design decisions</em> or <em>decisions likely to change</em>. 
+            Each module is then designed to hide such a decision from the others.</p>
+        </div>
+
+        <h3 style="color: #818cf8; margin: 2rem 0 1rem;">What Should Be Hidden?</h3>
+        <ul class="principle-list">
+            <li><strong>Data structures & access procedures</strong> — Internal linkings, storage formats, and modification procedures belong to a single module.</li>
+            <li><strong>Calling sequences</strong> — The sequence of instructions to call a routine and the routine itself are part of the same module.</li>
+            <li><strong>Control block formats</strong> — Formats used in queues and scheduling should be hidden within a control block module.</li>
+            <li><strong>Character codes & orderings</strong> — Alphabetic orderings and encoding schemes should be encapsulated.</li>
+            <li><strong>Processing sequences</strong> — The order in which items are processed should be hidden within a single module.</li>
+        </ul>
+    </section>
+
+    <!-- Hierarchy -->
+    <section id="sec-hierarchy" class="fade-in">
+        <h2 class="section-title">Hierarchical Structure</h2>
+        <div class="card">
+            <p>The information-hiding decomposition naturally produces a <strong class="highlight">hierarchical structure</strong> 
+            (in the sense of Dijkstra's "THE" system). The "uses" relation forms a partial ordering.</p>
+            <canvas id="hierarchyCanvas" width="900" height="400"></canvas>
+            <p style="margin-top: 1rem; color: #94a3b8; font-size: 0.9rem; text-align: center;">
+                Hover over modules to see their dependencies. Lower levels can be reused independently.
+            </p>
+        </div>
+
+        <div class="key-insight">
+            <p><strong>Two independent properties:</strong> Hierarchical structure and clean decomposition are both desirable 
+            but <em>independent</em> properties. You could have a hierarchy with bad decomposition (shared design decisions in interfaces), 
+            or good decomposition without a strict hierarchy.</p>
+        </div>
+
+        <div class="card">
+            <h3 style="color: #818cf8; margin-bottom: 1rem;">Benefits of Hierarchy</h3>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="icon">🧱</div>
+                    <h3>Simplification</h3>
+                    <p>Higher levels are simplified because they use services of lower levels.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="icon">✂️</div>
+                    <h3>Pruning</h3>
+                    <p>Upper levels can be cut off, leaving a usable product (e.g., Line Storage can serve other applications).</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="icon">🔁</div>
+                    <h3>Reuse</h3>
+                    <p>Lower modules can be the foundation for entirely different systems built on the same trunk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coupling vs Cohesion Visualization -->
+    <section id="sec-coupling" class="fade-in">
+        <h2 class="section-title">Coupling Visualization</h2>
+        <div class="card">
+            <p>The two decompositions differ dramatically in <strong>inter-module coupling</strong>. 
+            Decomposition 1 has complex, format-dependent interfaces. Decomposition 2 has simple, abstract interfaces.</p>
+            <div id="couplingChart" class="plotly-chart"></div>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section id="sec-conclusion" class="fade-in">
+        <h2 class="section-title">Key Takeaways</h2>
+        <div class="card" style="border-color: rgba(168, 85, 247, 0.3);">
+            <div style="display: grid; gap: 1.5rem;">
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <span style="font-size: 1.5rem; color: #f87171;">✗</span>
+                    <div>
+                        <strong style="color: #f87171;">DON'T:</strong> Decompose based on a flowchart (processing steps as modules).
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <span style="font-size: 1.5rem; color: #4ade80;">✓</span>
+                    <div>
+                        <strong style="color: #4ade80;">DO:</strong> Begin with a list of difficult design decisions or decisions likely to change. Each module hides one such decision.
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <span style="font-size: 1.5rem; color: #a78bfa;">🔄</span>
+                    <div>
+                        <strong style="color: #a78bfa;">REUSE:</strong> A good decomposition based on information hiding produces modules that carry over from one project to another — 
+                        as demonstrated by Parnas's compiler/interpreter example where the same decomposition served both.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 2rem; text-align: center;">
+            <p style="font-size: 1.1rem; color: #c4b5fd; font-style: italic;">
+                "Since, in most cases, design decisions transcend time of execution, modules will not correspond to steps in the processing."
+            </p>
+            <p style="color: #64748b; margin-top: 0.5rem;">— D.L. Parnas, 1972</p>
+        </div>
+    </section>
+
+    <!-- Timeline / Legacy -->
+    <section id="sec-legacy" class="fade-in">
+        <h2 class="section-title">Legacy & Modern Relevance</h2>
+        <div class="card">
+            <p>This 1972 paper laid the groundwork for nearly every modern software design principle:</p>
+            <div id="legacyChart" class="plotly-chart"></div>
+        </div>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon">📦</div>
+                <h3>OOP Encapsulation</h3>
+                <p>Classes hide implementation details behind public interfaces — directly from information hiding.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🏗️</div>
+                <h3>Microservices</h3>
+                <p>Each service hides a business capability behind an API — the same principle at system scale.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🔌</div>
+                <h3>APIs & SDKs</h3>
+                <p>Abstract interfaces that hide implementation — exactly what Parnas prescribed.</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🧪</div>
+                <h3>SOLID Principles</h3>
+                <p>Single Responsibility, Open/Closed, Interface Segregation — all echo information hiding.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 3rem; color: #64748b; border-top: 1px solid rgba(99, 102, 241, 0.1);">
+        <p>Interactive visualization of "On the Criteria To Be Used in Decomposing Systems into Modules" by D.L. Parnas (1972)</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">Communications of the ACM, Volume 15, Number 12</p>
+    </footer>
+
+    <script>
+        // ============ NAVIGATION DOTS ============
+        const sections = ['sec-hero', 'sec-problem', 'sec-kwic', 'sec-decomp', 'sec-impact', 'sec-principle', 'sec-hierarchy', 'sec-coupling', 'sec-conclusion', 'sec-legacy'];
+        const navDots = document.getElementById('navDots');
+        sections.forEach((id, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.title = id.replace('sec-', '').replace('-', ' ');
+            dot.onclick = () => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            navDots.appendChild(dot);
+        });
+
+        // ============ SCROLL ANIMATIONS ============
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Active nav dot
+        const dotObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = sections.indexOf(entry.target.id);
+                    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+                        d.classList.toggle('active', i === idx);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) dotObserver.observe(el);
+        });
+
+        // ============ KWIC INDEX DEMO ============
+        function generateKWIC() {
+            const input = document.getElementById('kwicInput').value;
+            const lines = input.split(';').map(l => l.trim()).filter(l => l.length > 0);
+            const shifts = [];
+
+            lines.forEach(line => {
+                const words = line.split(/\s+/);
+                for (let i = 0; i < words.length; i++) {
+                    const shifted = [...words.slice(i), ...words.slice(0, i)].join(' ');
+                    shifts.push({ text: shifted, keyword: words[i] });
+                }
+            });
+
+            shifts.sort((a, b) => a.text.toLowerCase().localeCompare(b.text.toLowerCase()));
+
+            const output = document.getElementById('kwicOutput');
+            output.innerHTML = shifts.map(s => {
+                const idx = s.text.toLowerCase().indexOf(s.keyword.toLowerCase());
+                const before = s.text.slice(0, idx);
+                const kw = s.text.slice(idx, idx + s.keyword.length);
+                const after = s.text.slice(idx + s.keyword.length);
+                return `<div class="shift">${before}<span class="keyword">${kw}</span>${after}</div>`;
+            }).join('');
+        }
+
+        generateKWIC();
+
+        // ============ DECOMPOSITION TABS ============
+        function showDecomp(type) {
+            document.getElementById('decomp-flowchart').style.display = type === 'flowchart' ? 'block' : 'none';
+            document.getElementById('decomp-infohiding').style.display = type === 'infohiding' ? 'block' : 'none';
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(type === 'flowchart' ? 'flowchart' : 'information'));
+            });
+        }
+
+        // ============ CHANGE IMPACT SIMULATOR ============
+        const changeData = [
+            {
+                name: "Input Format Change",
+                desc: "The format of input data changes (e.g., from one delimiter to another).",
+                d1: ['d1-input'],
+                d2: ['d2-input']
+            },
+            {
+                name: "Storage Decision Change",
+                desc: "Lines no longer all stored in core memory — perhaps on disk or distributed.",
+                d1: ['d1-input', 'd1-shift', 'd1-alpha', 'd1-output', 'd1-master'],
+                d2: ['d2-line']
+            },
+            {
+                name: "Character Packing Change",
+                desc: "Characters no longer packed 4-per-word; maybe 1-per-word or different encoding.",
+                d1: ['d1-input', 'd1-shift', 'd1-alpha', 'd1-output', 'd1-master'],
+                d2: ['d2-line']
+            },
+            {
+                name: "Shift Representation Change",
+                desc: "Instead of storing an index of shifts, compute them on-the-fly when requested.",
+                d1: ['d1-shift', 'd1-alpha', 'd1-output'],
+                d2: ['d2-shift']
+            },
+            {
+                name: "Alphabetization Strategy Change",
+                desc: "Instead of sorting all at once, use incremental/lazy alphabetization.",
+                d1: ['d1-alpha', 'd1-output'],
+                d2: ['d2-alpha']
+            }
+        ];
+
+        function simulateChange(idx) {
+            // Reset all
+            document.querySelectorAll('.module-box').forEach(el => {
+                el.classList.remove('affected', 'safe');
+            });
+            document.querySelectorAll('.change-btn').forEach(btn => btn.classList.remove('active-change'));
+
+            const change = changeData[idx];
+            const allD1 = ['d1-input', 'd1-shift', 'd1-alpha', 'd1-output', 'd1-master'];
+            const allD2 = ['d2-line', 'd2-input', 'd2-shift', 'd2-alpha', 'd2-output', 'd2-master'];
+
+            allD1.forEach(id => {
+                const el = document.getElementById(id);
+                if (change.d1.includes(id)) el.classList.add('affected');
+                else el.classList.add('safe');
+            });
+
+            allD2.forEach(id => {
+                const el = document.getElementById(id);
+                if (change.d2.includes(id)) el.classList.add('affected');
+                else el.classList.add('safe');
+            });
+
+            document.getElementById('changeDescription').textContent = change.desc;
+            
+            // Highlight the clicked button
+            const buttons = document.querySelectorAll('.change-simulator .change-btn');
+            buttons[idx].classList.add('active-change');
+        }
+
+        // ============ IMPACT CHART (Plotly) ============
+        function renderImpactChart() {
+            const changes = ['Input Format', 'Storage Decision', 'Char Packing', 'Shift Representation', 'Alphabetization'];
+            const d1Impact = [1, 5, 5, 3, 2];
+            const d2Impact = [1, 1, 1, 1, 1];
+
+            const trace1 = {
+                x: changes,
+                y: d1Impact,
+                name: 'Decomposition 1 (Flowchart)',
+                type: 'bar',
+                marker: { color: 'rgba(248, 113, 113, 0.7)', line: { color: '#f87171', width: 1 } }
+            };
+
+            const trace2 = {
+                x: changes,
+                y: d2Impact,
+                name: 'Decomposition 2 (Info Hiding)',
+                type: 'bar',
+                marker: { color: 'rgba(74, 222, 128, 0.7)', line: { color: '#4ade80', width: 1 } }
+            };
+
+            const layout = {
+                title: { text: 'Modules Affected per Design Change', font: { color: '#e0e0e0', size: 16 } },
+                barmode: 'group',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(10,10,20,0.5)',
+                font: { color: '#94a3b8' },
+                xaxis: { gridcolor: 'rgba(99,102,241,0.1)' },
+                yaxis: { title: 'Modules Affected', gridcolor: 'rgba(99,102,241,0.1)', dtick: 1 },
+                legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' },
+                margin: { t: 80 }
+            };
+
+            Plotly.newPlot('impactChart', [trace1, trace2], layout, { responsive: true });
+        }
+
+        // ============ COUPLING CHART (Plotly) ============
+        function renderCouplingChart() {
+            // Sankey diagram showing inter-module dependencies
+            const trace = {
+                type: 'sankey',
+                orientation: 'h',
+                node: {
+                    pad: 15,
+                    thickness: 20,
+                    line: { color: 'rgba(99,102,241,0.5)', width: 0.5 },
+                    label: [
+                        // Decomp 1 (0-4)
+                        'D1: Input', 'D1: Circular Shift', 'D1: Alphabetizer', 'D1: Output', 'D1: Shared Data Format',
+                        // Decomp 2 (5-10)
+                        'D2: Line Storage', 'D2: Input', 'D2: Circular Shifter', 'D2: Alphabetizer', 'D2: Output', 'D2: Abstract Interface'
+                    ],
+                    color: [
+                        '#f87171', '#f87171', '#f87171', '#f87171', '#fbbf24',
+                        '#4ade80', '#4ade80', '#4ade80', '#4ade80', '#4ade80', '#818cf8'
+                    ]
+                },
+                link: {
+                    source: [0, 1, 2, 3, 0, 1, 2, 3, 6, 7, 8, 9],
+                    target: [4, 4, 4, 4, 1, 2, 3, 3, 10, 10, 10, 10],
+                    value:  [3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1],
+                    color: [
+                        'rgba(248,113,113,0.3)', 'rgba(248,113,113,0.3)', 'rgba(248,113,113,0.3)', 'rgba(248,113,113,0.3)',
+                        'rgba(248,113,113,0.15)', 'rgba(248,113,113,0.15)', 'rgba(248,113,113,0.15)', 'rgba(248,113,113,0.15)',
+                        'rgba(74,222,128,0.3)', 'rgba(74,222,128,0.3)', 'rgba(74,222,128,0.3)', 'rgba(74,222,128,0.3)'
+                    ]
+                }
+            };
+
+            const layout = {
+                title: { text: 'Module Coupling: Shared Data vs Abstract Interfaces', font: { color: '#e0e0e0', size: 16 } },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(10,10,20,0.5)',
+                font: { color: '#94a3b8', size: 11 },
+                margin: { t: 60 }
+            };
+
+            Plotly.newPlot('couplingChart', [trace], layout, { responsive: true });
+        }
+
+        // ============ LEGACY CHART ============
+        function renderLegacyChart() {
+            const concepts = [
+                'Information Hiding (1972)',
+                'Abstract Data Types (1974)',
+                'Object-Oriented Programming (1980s)',
+                'Design Patterns (1994)',
+                'SOLID Principles (2000s)',
+                'Microservices (2010s)',
+                'Clean Architecture (2017)'
+            ];
+            const years = [1972, 1974, 1983, 1994, 2003, 2012, 2017];
+            const influence = [10, 8, 9, 7, 8, 9, 8];
+
+            const trace = {
+                x: years,
+                y: influence,
+                text: concepts,
+                mode: 'lines+markers+text',
+                textposition: 'top center',
+                textfont: { color: '#c4b5fd', size: 10 },
+                line: { color: '#6366f1', width: 3, shape: 'spline' },
+                marker: { color: '#a78bfa', size: 12, line: { color: '#6366f1', width: 2 } },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(99,102,241,0.05)'
+            };
+
+            const layout = {
+                title: { text: 'Influence Timeline: From Information Hiding to Modern Architecture', font: { color: '#e0e0e0', size: 14 } },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(10,10,20,0.5)',
+                font: { color: '#94a3b8' },
+                xaxis: { title: 'Year', gridcolor: 'rgba(99,102,241,0.1)', dtick: 5 },
+                yaxis: { title: 'Conceptual Impact', gridcolor: 'rgba(99,102,241,0.1)', range: [0, 12], showticklabels: false },
+                margin: { t: 60 },
+                showlegend: false
+            };
+
+            Plotly.newPlot('legacyChart', [trace], layout, { responsive: true });
+        }
+
+        // ============ HIERARCHY CANVAS ============
+        function drawHierarchy() {
+            const canvas = document.getElementById('hierarchyCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = canvas.offsetHeight * 2;
+            ctx.scale(2, 2);
+
+            const w = canvas.offsetWidth;
+            const h = canvas.offsetHeight;
+
+            const modules = [
+                { name: 'Master Control', x: w / 2, y: 50, level: 4, color: '#a78bfa', deps: [1, 2, 3, 4] },
+                { name: 'Output', x: w * 0.3, y: 140, level: 3, color: '#818cf8', deps: [2, 3] },
+                { name: 'Alphabetizer', x: w * 0.7, y: 140, level: 3, color: '#818cf8', deps: [3] },
+                { name: 'Circular Shifter', x: w * 0.5, y: 230, level: 2, color: '#6366f1', deps: [4] },
+                { name: 'Input', x: w * 0.2, y: 230, level: 2, color: '#6366f1', deps: [5] },
+                { name: 'Line Storage', x: w * 0.5, y: 320, level: 1, color: '#4f46e5', deps: [6] },
+                { name: 'Symbol Table', x: w * 0.5, y: 380, level: 0, color: '#3730a3', deps: [] }
+            ];
+
+            let hoveredModule = -1;
+
+            function draw() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Draw level labels
+                ctx.font = '11px Georgia';
+                ctx.fillStyle = '#4a5568';
+                ctx.textAlign = 'left';
+                const levels = [
+                    { y: 380, label: 'Level 0' },
+                    { y: 320, label: 'Level 1' },
+                    { y: 230, label: 'Level 2' },
+                    { y: 140, label: 'Level 3' },
+                    { y: 50, label: 'Level 4' }
+                ];
+                levels.forEach(l => {
+                    ctx.fillText(l.label, 10, l.y + 4);
+                    ctx.strokeStyle = 'rgba(99,102,241,0.05)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(70, l.y);
+                    ctx.lineTo(w - 20, l.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+
+                // Draw connections
+                modules.forEach((mod, i) => {
+                    mod.deps.forEach(depIdx => {
+                        const dep = modules[depIdx];
+                        const isHighlighted = hoveredModule === i || hoveredModule === depIdx;
+                        ctx.strokeStyle = isHighlighted ? 'rgba(167, 139, 250, 0.8)' : 'rgba(99, 102, 241, 0.2)';
+                        ctx.lineWidth = isHighlighted ? 2 : 1;
+                        ctx.beginPath();
+                        ctx.moveTo(mod.x, mod.y + 15);
+                        ctx.quadraticCurveTo((mod.x + dep.x) / 2, (mod.y + dep.y) / 2, dep.x, dep.y - 15);
+                        ctx.stroke();
+
+                        // Arrow
+                        if (isHighlighted) {
+                            const angle = Math.atan2(dep.y - 15 - (mod.y + dep.y) / 2, dep.x - (mod.x + dep.x) / 2);
+                            ctx.fillStyle = 'rgba(167, 139, 250, 0.8)';
+                            ctx.beginPath();
+                            ctx.moveTo(dep.x, dep.y - 15);
+                            ctx.lineTo(dep.x - 8 * Math.cos(angle - 0.3), dep.y - 15 - 8 * Math.sin(angle - 0.3));
+                            ctx.lineTo(dep.x - 8 * Math.cos(angle + 0.3), dep.y - 15 - 8 * Math.sin(angle + 0.3));
+                            ctx.fill();
+                        }
+                    });
+                });
+
+                // Draw modules
+                modules.forEach((mod, i) => {
+                    const isHovered = hoveredModule === i;
+                    const radius = isHovered ? 55 : 50;
+
+                    ctx.fillStyle = isHovered ? 'rgba(99, 102, 241, 0.2)' : 'rgba(30, 30, 50, 0.8)';
+                    ctx.strokeStyle = mod.color;
+                    ctx.lineWidth = isHovered ? 2 : 1;
+
+                    // Rounded rect
+                    const rx = mod.x - radius;
+                    const ry = mod.y - 15;
+                    const rw = radius * 2;
+                    const rh = 30;
+                    const r = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(rx + r, ry);
+                    ctx.lineTo(rx + rw - r, ry);
+                    ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + r);
+                    ctx.lineTo(rx + rw, ry + rh - r);
+                    ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - r, ry + rh);
+                    ctx.lineTo(rx + r, ry + rh);
+                    ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - r);
+                    ctx.lineTo(rx, ry + r);
+                    ctx.quadraticCurveTo(rx, ry, rx + r, ry);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle = isHovered ? '#fff' : '#e0e0e0';
+                    ctx.font = isHovered ? 'bold 12px Georgia' : '12px Georgia';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(mod.name, mod.x, mod.y + 5);
+                });
+            }
+
+            draw();
+
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+
+                hoveredModule = -1;
+                modules.forEach((mod, i) => {
+                    if (Math.abs(mx - mod.x) < 50 && Math.abs(my - mod.y) < 15) {
+                        hoveredModule = i;
+                    }
+                });
+                draw();
+                canvas.style.cursor = hoveredModule >= 0 ? 'pointer' : 'default';
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                hoveredModule = -1;
+                draw();
+            });
+        }
+
+        // ============ EQUATION RENDERING ============
+        function renderEquations() {
+            const eq1El = document.getElementById('eq1');
+            if (eq1El) {
+                temml.render(
+                    String.raw`\text{Module}_i = \text{Hide}(\text{Design Decision}_i) \quad \Rightarrow \quad \text{Interface}_i \text{ reveals } \min(\text{information})`,
+                    eq1El,
+                    { displayMode: true }
+                );
+            }
+        }
+
+        // ============ INIT ============
+        window.addEventListener('load', () => {
+            renderImpactChart();
+            renderCouplingChart();
+            renderLegacyChart();
+            drawHierarchy();
+            renderEquations();
+        });
+
+        window.addEventListener('resize', () => {
+            drawHierarchy();
+        });
+    </script>
+</body>
+</html>
