@@ -505,7 +505,7 @@ async function predict_demo_batch(items, indices) {
 
 	hide_unused_layer_visualization_headers();
 	change_output_and_example_image_size();
-	allow_editable_labels();
+	await allow_editable_labels();
 
 	await nextFrame();
 }
