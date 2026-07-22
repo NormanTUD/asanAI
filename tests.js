@@ -3605,6 +3605,116 @@ async function test_dimensionality_river() {
 	return true;
 }
 
+function _test_health_status_validate(container, expectedCards, latestRecord) {
+	if (container.innerHTML.length === 0) {
+		err("test_health_status: renderLayerIOStats produced empty content");
+		return false;
+	}
+
+	var layerCards = $(container).find(".lio_card");
+	if (!layerCards.length) {
+		err("test_health_status: No .lio_card elements found after rendering");
+		return false;
+	}
+	if (layerCards.length !== expectedCards) {
+		err(`test_health_status: Expected ${expectedCards} .lio_card elements, got ${layerCards.length}`);
+		return false;
+	}
+
+	if (!$(container).find(".lio_score_bar").length) {
+		err("test_health_status: .lio_score_bar not found");
+		return false;
+	}
+	if (!$(container).find(".lio_score_fill").length) {
+		err("test_health_status: .lio_score_fill not found");
+		return false;
+	}
+	if (!$(container).find(".lio_stats_grid").length) {
+		err("test_health_status: .lio_stats_grid not found in any card");
+		return false;
+	}
+	if (!$(container).find(".lio_plot_section svg").length) {
+		err("test_health_status: No histogram SVGs found in .lio_plot_section");
+		return false;
+	}
+	if (!$(container).find(".lio_aggregate").length) {
+		err("test_health_status: .lio_aggregate section not found");
+		return false;
+	}
+	if (!$(container).find(".lio_multi_plot").length) {
+		err("test_health_status: .lio_multi_plot not found in aggregate section");
+		return false;
+	}
+
+	var allHeadersValid = true;
+	layerCards.each(function (i, card) {
+		if (!$(card).find(".lio_header").length) {
+			err("test_health_status: .lio_header missing in card " + i);
+			allHeadersValid = false;
+		}
+		if (!$(card).find(".lio_status_badge").length) {
+			err("test_health_status: .lio_status_badge missing in card " + i);
+			allHeadersValid = false;
+		}
+	});
+	if (!allHeadersValid) return false;
+
+	var firstLayerOutput = latestRecord.layers[0].output;
+	var stats = _computeStats(firstLayerOutput);
+	if (!stats) {
+		err("test_health_status: _computeStats returned null for first layer output");
+		return false;
+	}
+	if (typeof stats.mean !== "number" || isNaN(stats.mean)) {
+		err("test_health_status: _computeStats mean is not a valid number");
+		return false;
+	}
+	if (typeof stats.std !== "number" || isNaN(stats.std)) {
+		err("test_health_status: _computeStats std is not a valid number");
+		return false;
+	}
+	if (stats.count !== firstLayerOutput.length) {
+		err(`test_health_status: _computeStats count (${stats.count}) doesn't match output length (${firstLayerOutput.length})`);
+		return false;
+	}
+
+	var warnings = _detectWarnings(latestRecord.layers[0]);
+	if (!Array.isArray(warnings)) {
+		err("test_health_status: _detectWarnings did not return an array");
+		return false;
+	}
+
+	var histogram = _computeHistogram(firstLayerOutput, 40);
+	if (!histogram) {
+		err("test_health_status: _computeHistogram returned null");
+		return false;
+	}
+	if (!histogram.counts || !histogram.binEdges) {
+		err("test_health_status: _computeHistogram missing counts or binEdges");
+		return false;
+	}
+	if (histogram.counts.length !== 40) {
+		err(`test_health_status: _computeHistogram expected 40 bins, got ${histogram.counts.length}`);
+		return false;
+	}
+
+	var percentiles = _computePercentiles(firstLayerOutput);
+	if (!percentiles) {
+		err("test_health_status: _computePercentiles returned null");
+		return false;
+	}
+	if (percentiles.p50 === undefined || percentiles.p25 === undefined || percentiles.p75 === undefined) {
+		err("test_health_status: _computePercentiles missing expected percentile keys");
+		return false;
+	}
+	if (percentiles.p25 > percentiles.p50 || percentiles.p50 > percentiles.p75) {
+		err("test_health_status: Percentiles are not in correct order (p25 <= p50 <= p75)");
+		return false;
+	}
+
+	return true;
+}
+
 async function test_health_status() {
 	log_test("Test health status");
 
@@ -3612,17 +3722,13 @@ async function test_health_status() {
 	await delay(3000);
 
 	$("#max_number_of_files_per_category").val(1).trigger("change");
-
 	$("#jump_to_interesting_tab").prop("checked", false);
-
 	$("#visualization_tab_label").click();
-
 	$("#health_status_tab_label").click();
 
 	await delay(1000);
 
 	const wanted_epochs = 2;
-
 	set_epochs(wanted_epochs);
 
 	await delay(3000);
@@ -3648,26 +3754,21 @@ async function test_health_status() {
 		err("test_health_status: .train_neural_network_button not found");
 		return false;
 	}
-
 	if ($(".train_neural_network_button").prop("disabled")) {
 		err("test_health_status: .train_neural_network_button is disabled");
 		return false;
 	}
-
 	if (!$(".layer_setting").length) {
 		err("test_health_status: No .layer_setting elements found");
 		return false;
 	}
-
 	if (!$(".layer_type").length) {
 		err("test_health_status: No .layer_type elements found");
 		return false;
 	}
 
-	// Enable auto-recording before training
 	layerIOStats.enabled = true;
 	layerIOStats.records = [];
-
 	try {
 		enableAutoRecord();
 	} catch (e) {
@@ -3675,7 +3776,6 @@ async function test_health_status() {
 	}
 
 	const ret = await train_neural_network();
-
 	if (!is_valid_ret_object(ret, wanted_epochs)) {
 		err("test_health_status: Training did not complete successfully");
 		return false;
@@ -3683,21 +3783,16 @@ async function test_health_status() {
 
 	await delay(5000);
 
-	// Verify that layer I/O records were captured during training
 	if (layerIOStats.records.length === 0) {
 		err("test_health_status: No layer I/O records were captured during training");
 		return false;
 	}
-
-	// Verify the health status tab container exists
 	if (!$("#health_status").length) {
 		err("test_health_status: #health_status not found");
 		return false;
 	}
 
-	// Render the health status into the tab
 	var container = renderLayerIOStats("health_status");
-
 	if (!container) {
 		err("test_health_status: renderLayerIOStats returned null");
 		return false;
@@ -3705,146 +3800,9 @@ async function test_health_status() {
 
 	await delay(3000);
 
-	// Verify that the container has content rendered
-	if (container.innerHTML.length === 0) {
-		err("test_health_status: renderLayerIOStats produced empty content");
-		return false;
-	}
-
-	// Verify that layer cards were rendered (one per layer)
-	var layerCards = $(container).find(".lio_card");
-	if (!layerCards.length) {
-		err("test_health_status: No .lio_card elements found after rendering");
-		return false;
-	}
-
 	var latestRecord = layerIOStats.records[layerIOStats.records.length - 1];
-	var expectedCards = latestRecord.layers.length;
+	if (!_test_health_status_validate(container, latestRecord.layers.length, latestRecord)) return false;
 
-	if (layerCards.length !== expectedCards) {
-		err(`test_health_status: Expected ${expectedCards} .lio_card elements, got ${layerCards.length}`);
-		return false;
-	}
-
-	// Verify the health score bar is rendered
-	if (!$(container).find(".lio_score_bar").length) {
-		err("test_health_status: .lio_score_bar not found");
-		return false;
-	}
-
-	if (!$(container).find(".lio_score_fill").length) {
-		err("test_health_status: .lio_score_fill not found");
-		return false;
-	}
-
-	// Verify stats grids are rendered within cards
-	if (!$(container).find(".lio_stats_grid").length) {
-		err("test_health_status: .lio_stats_grid not found in any card");
-		return false;
-	}
-
-	// Verify histograms are rendered (SVG elements)
-	if (!$(container).find(".lio_plot_section svg").length) {
-		err("test_health_status: No histogram SVGs found in .lio_plot_section");
-		return false;
-	}
-
-	// Verify the aggregate section is rendered
-	if (!$(container).find(".lio_aggregate").length) {
-		err("test_health_status: .lio_aggregate section not found");
-		return false;
-	}
-
-	// Verify multi-plot section exists within aggregate
-	if (!$(container).find(".lio_multi_plot").length) {
-		err("test_health_status: .lio_multi_plot not found in aggregate section");
-		return false;
-	}
-
-	// Verify that each card has a header with layer name and type
-	var allHeadersValid = true;
-	layerCards.each(function (i, card) {
-		if (!$(card).find(".lio_header").length) {
-			err("test_health_status: .lio_header missing in card " + i);
-			allHeadersValid = false;
-		}
-		if (!$(card).find(".lio_status_badge").length) {
-			err("test_health_status: .lio_status_badge missing in card " + i);
-			allHeadersValid = false;
-		}
-	});
-
-	if (!allHeadersValid) {
-		return false;
-	}
-
-	// Verify _computeStats works correctly on recorded data
-	var firstLayerOutput = latestRecord.layers[0].output;
-	var stats = _computeStats(firstLayerOutput);
-
-	if (!stats) {
-		err("test_health_status: _computeStats returned null for first layer output");
-		return false;
-	}
-
-	if (typeof stats.mean !== "number" || isNaN(stats.mean)) {
-		err("test_health_status: _computeStats mean is not a valid number");
-		return false;
-	}
-
-	if (typeof stats.std !== "number" || isNaN(stats.std)) {
-		err("test_health_status: _computeStats std is not a valid number");
-		return false;
-	}
-
-	if (stats.count !== firstLayerOutput.length) {
-		err(`test_health_status: _computeStats count (${stats.count}) doesn't match output length (${firstLayerOutput.length})`);
-		return false;
-	}
-
-	// Verify _detectWarnings returns an array
-	var warnings = _detectWarnings(latestRecord.layers[0]);
-	if (!Array.isArray(warnings)) {
-		err("test_health_status: _detectWarnings did not return an array");
-		return false;
-	}
-
-	// Verify _computeHistogram works
-	var histogram = _computeHistogram(firstLayerOutput, 40);
-	if (!histogram) {
-		err("test_health_status: _computeHistogram returned null");
-		return false;
-	}
-
-	if (!histogram.counts || !histogram.binEdges) {
-		err("test_health_status: _computeHistogram missing counts or binEdges");
-		return false;
-	}
-
-	if (histogram.counts.length !== 40) {
-		err(`test_health_status: _computeHistogram expected 40 bins, got ${histogram.counts.length}`);
-		return false;
-	}
-
-	// Verify _computePercentiles works
-	var percentiles = _computePercentiles(firstLayerOutput);
-	if (!percentiles) {
-		err("test_health_status: _computePercentiles returned null");
-		return false;
-	}
-
-	if (percentiles.p50 === undefined || percentiles.p25 === undefined || percentiles.p75 === undefined) {
-		err("test_health_status: _computePercentiles missing expected percentile keys");
-		return false;
-	}
-
-	// Verify percentile ordering is correct
-	if (percentiles.p25 > percentiles.p50 || percentiles.p50 > percentiles.p75) {
-		err("test_health_status: Percentiles are not in correct order (p25 <= p50 <= p75)");
-		return false;
-	}
-
-	// Test that re-rendering doesn't crash (idempotency)
 	var container2 = renderLayerIOStats("health_status");
 	if (!container2 || container2.innerHTML.length === 0) {
 		err("test_health_status: Re-rendering produced empty content");
@@ -3852,7 +3810,6 @@ async function test_health_status() {
 	}
 
 	await test_if_python_code_is_valid();
-
 	test_no_new_errors_or_warnings();
 
 	return true;
@@ -3965,6 +3922,214 @@ async function test_multi_run_training() {
 	return true;
 }
 
+function _test_weight_analysis_validate(container, preTrainResult, postTrainResult, postTrainScore, preTrainScore) {
+	if (!container.innerHTML.length) {
+		err("test_weight_analysis: weight_analysis_render produced empty content");
+		return false;
+	}
+	if (!$(container).find(".wa_container").length) {
+		err("test_weight_analysis: .wa_container not found after rendering");
+		return false;
+	}
+	if (!$(container).find("svg").length) {
+		err("test_weight_analysis: No SVG elements found (score gauge missing)");
+		return false;
+	}
+	if (!$(container).find(".wa_message").length) {
+		err("test_weight_analysis: .wa_message not found");
+		return false;
+	}
+
+	var layerCards = $(container).find(".wa_layer_card");
+	if (!layerCards.length) {
+		err("test_weight_analysis: No .wa_layer_card elements found after rendering");
+		return false;
+	}
+
+	var allCardsValid = true;
+	layerCards.each(function (i, card) {
+		if (!$(card).find(".wa_layer_header").length) {
+			err("test_weight_analysis: .wa_layer_header missing in card " + i);
+			allCardsValid = false;
+		}
+		if (!$(card).find(".wa_layer_name").length) {
+			err("test_weight_analysis: .wa_layer_name missing in card " + i);
+			allCardsValid = false;
+		}
+		if (!$(card).find(".wa_layer_score").length) {
+			err("test_weight_analysis: .wa_layer_score missing in card " + i);
+			allCardsValid = false;
+		}
+		if (!$(card).find(".wa_indicators").length) {
+			err("test_weight_analysis: .wa_indicators missing in card " + i);
+			allCardsValid = false;
+		}
+	});
+	if (!allCardsValid) return false;
+
+	if (!$(container).find(".wa_comparison").length) {
+		err("test_weight_analysis: .wa_comparison section not found");
+		return false;
+	}
+	if (!$(container).find(".wa_section").length) {
+		err("test_weight_analysis: .wa_section (global visualizations) not found");
+		return false;
+	}
+
+	if (postTrainScore < preTrainScore) {
+		err("test_weight_analysis: post-train score (" + postTrainScore + ") is less than pre-train score (" + preTrainScore + ")");
+		return false;
+	}
+
+	var deadNeurons = WeightAnalysis.detectDeadNeurons(model);
+	if (!Array.isArray(deadNeurons)) {
+		err("test_weight_analysis: detectDeadNeurons did not return an array");
+		return false;
+	}
+
+	var complexity = WeightAnalysis.analyzeComplexity(model);
+	if (!complexity) {
+		err("test_weight_analysis: analyzeComplexity returned null");
+		return false;
+	}
+	if (typeof complexity.totalParams !== "number" || complexity.totalParams <= 0) {
+		err("test_weight_analysis: analyzeComplexity totalParams invalid");
+		return false;
+	}
+	if (typeof complexity.layerCount !== "number" || complexity.layerCount <= 0) {
+		err("test_weight_analysis: analyzeComplexity layerCount invalid");
+		return false;
+	}
+	if (typeof complexity.memoryMB !== "number" || complexity.memoryMB <= 0) {
+		err("test_weight_analysis: analyzeComplexity memoryMB invalid");
+		return false;
+	}
+
+	WeightAnalysis.snapshotInitialWeights(model);
+	var drift = WeightAnalysis.computeWeightDrift(model);
+	if (!drift) {
+		err("test_weight_analysis: computeWeightDrift returned null after snapshot");
+		return false;
+	}
+	if (!Array.isArray(drift) || drift.length === 0) {
+		err("test_weight_analysis: computeWeightDrift returned empty array");
+		return false;
+	}
+	for (var i = 0; i < drift.length; i++) {
+		if (typeof drift[i].l2Distance !== "number") {
+			err("test_weight_analysis: drift[" + i + "].l2Distance is not a number");
+			return false;
+		}
+		if (typeof drift[i].relativeChange !== "number") {
+			err("test_weight_analysis: drift[" + i + "].relativeChange is not a number");
+			return false;
+		}
+		if (drift[i].l2Distance > 1e-6) {
+			err("test_weight_analysis: drift[" + i + "].l2Distance should be ~0 immediately after snapshot, got: " + drift[i].l2Distance);
+			return false;
+		}
+	}
+
+	WeightAnalysis.weight_analysis_render(container);
+	return true;
+}
+
+function _test_weight_analysis_validate_post_train(postTrainResult) {
+	if (!postTrainResult) {
+		err("test_weight_analysis: analyzeModel returned null on trained model");
+		return false;
+	}
+	if (typeof postTrainResult.score !== "number") {
+		err("test_weight_analysis: post-train score is not a number");
+		return false;
+	}
+	if (postTrainResult.score < 0 || postTrainResult.score > 100) {
+		err("test_weight_analysis: post-train score out of range [0,100], got: " + postTrainResult.score);
+		return false;
+	}
+	if (typeof postTrainResult.confidence !== "number") {
+		err("test_weight_analysis: confidence is not a number");
+		return false;
+	}
+	if (postTrainResult.confidence < 0 || postTrainResult.confidence > 100) {
+		err("test_weight_analysis: confidence out of range [0,100], got: " + postTrainResult.confidence);
+		return false;
+	}
+	if (!postTrainResult.messageKey || typeof postTrainResult.messageKey !== "string") {
+		err("test_weight_analysis: messageKey is missing or not a string");
+		return false;
+	}
+	if (typeof postTrainResult.biasScore !== "number") {
+		err("test_weight_analysis: biasScore is not a number");
+		return false;
+	}
+	if (typeof postTrainResult.totalParams !== "number" || postTrainResult.totalParams <= 0) {
+		err("test_weight_analysis: totalParams is invalid, got: " + postTrainResult.totalParams);
+		return false;
+	}
+
+	for (var i = 0; i < postTrainResult.layers.length; i++) {
+		var layer = postTrainResult.layers[i];
+		if (!layer.name || typeof layer.name !== "string") {
+			err("test_weight_analysis: layer " + i + " has invalid name");
+			return false;
+		}
+		if (!layer.shape || !Array.isArray(layer.shape)) {
+			err("test_weight_analysis: layer " + i + " has invalid shape");
+			return false;
+		}
+		if (typeof layer.paramCount !== "number" || layer.paramCount <= 0) {
+			err("test_weight_analysis: layer " + i + " has invalid paramCount");
+			return false;
+		}
+		if (typeof layer.score !== "number" || layer.score < 0 || layer.score > 100) {
+			err("test_weight_analysis: layer " + i + " score out of range, got: " + layer.score);
+			return false;
+		}
+		if (!layer.stats) {
+			err("test_weight_analysis: layer " + i + " has no stats");
+			return false;
+		}
+		if (typeof layer.stats.mean !== "number" || isNaN(layer.stats.mean)) {
+			err("test_weight_analysis: layer " + i + " stats.mean is invalid");
+			return false;
+		}
+		if (typeof layer.stats.std !== "number" || isNaN(layer.stats.std)) {
+			err("test_weight_analysis: layer " + i + " stats.std is invalid");
+			return false;
+		}
+		if (!layer.indicators) {
+			err("test_weight_analysis: layer " + i + " has no indicators");
+			return false;
+		}
+		var requiredIndicators = ["entropy", "sparsity", "svd", "kurtosis", "ksTest", "correlation", "initDeviation"];
+		for (var j = 0; j < requiredIndicators.length; j++) {
+			if (!layer.indicators[requiredIndicators[j]]) {
+				err("test_weight_analysis: layer " + i + " missing indicator: " + requiredIndicators[j]);
+				return false;
+			}
+			if (typeof layer.indicators[requiredIndicators[j]].score !== "number") {
+				err("test_weight_analysis: layer " + i + " indicator " + requiredIndicators[j] + " has no numeric score");
+				return false;
+			}
+		}
+		if (!layer.histogram) {
+			err("test_weight_analysis: layer " + i + " has no histogram");
+			return false;
+		}
+		if (!layer.histogram.counts || !layer.histogram.binEdges) {
+			err("test_weight_analysis: layer " + i + " histogram missing counts or binEdges");
+			return false;
+		}
+		if (typeof layer.l2Norm !== "number" || isNaN(layer.l2Norm)) {
+			err("test_weight_analysis: layer " + i + " l2Norm is invalid");
+			return false;
+		}
+	}
+
+	return true;
+}
+
 async function test_weight_analysis() {
 	log_test("Test weight analysis");
 
@@ -3972,17 +4137,13 @@ async function test_weight_analysis() {
 	await delay(3000);
 
 	$("#max_number_of_files_per_category").val(1).trigger("change");
-
 	$("#jump_to_interesting_tab").prop("checked", false);
-
 	$("#visualization_tab_label").click();
-
 	$("#weight_analysis_tab_label").click();
 
 	await delay(1000);
 
 	const wanted_epochs = 2;
-
 	set_epochs(wanted_epochs);
 
 	await delay(3000);
@@ -4008,51 +4169,40 @@ async function test_weight_analysis() {
 		err("test_weight_analysis: .train_neural_network_button not found");
 		return false;
 	}
-
 	if ($(".train_neural_network_button").prop("disabled")) {
 		err("test_weight_analysis: .train_neural_network_button is disabled");
 		return false;
 	}
-
 	if (!$(".layer_setting").length) {
 		err("test_weight_analysis: No .layer_setting elements found");
 		return false;
 	}
-
 	if (!$(".layer_type").length) {
 		err("test_weight_analysis: No .layer_type elements found");
 		return false;
 	}
 
-	// Verify the model exists before training
 	if (typeof model === "undefined" || !model || !model.getWeights) {
 		err("test_weight_analysis: No model available before training");
 		return false;
 	}
 
-	// Run analysis on untrained model first
 	var preTrainResult = WeightAnalysis.analyzeModel(model);
-
 	if (!preTrainResult) {
 		err("test_weight_analysis: analyzeModel returned null on untrained model");
 		return false;
 	}
-
 	if (typeof preTrainResult.score !== "number") {
 		err("test_weight_analysis: pre-train score is not a number");
 		return false;
 	}
-
 	if (preTrainResult.layers.length === 0) {
 		err("test_weight_analysis: pre-train result has no layers");
 		return false;
 	}
-
 	var preTrainScore = preTrainResult.score;
 
-	// Train the model
 	const ret = await train_neural_network();
-
 	if (!is_valid_ret_object(ret, wanted_epochs)) {
 		err("test_weight_analysis: Training did not complete successfully");
 		return false;
@@ -4060,280 +4210,31 @@ async function test_weight_analysis() {
 
 	await delay(5000);
 
-	// Verify the weight analysis tab container exists
 	if (!$("#weight_analysis").length) {
 		err("test_weight_analysis: #weight_analysis not found");
 		return false;
 	}
 
-	// Render the weight analysis into the tab
 	var container = document.getElementById("weight_analysis");
 	WeightAnalysis.weight_analysis_render(container);
-
 	await delay(3000);
 
-	// Verify that the container has content rendered
-	if (container.innerHTML.length === 0) {
-		err("test_weight_analysis: weight_analysis_render produced empty content");
-		return false;
-	}
-
-	// Verify the main container class exists
-	if (!$(container).find(".wa_container").length) {
-		err("test_weight_analysis: .wa_container not found after rendering");
-		return false;
-	}
-
-	// Verify the score gauge is rendered (SVG with score)
-	if (!$(container).find("svg").length) {
-		err("test_weight_analysis: No SVG elements found (score gauge missing)");
-		return false;
-	}
-
-	// Verify the message is rendered
-	if (!$(container).find(".wa_message").length) {
-		err("test_weight_analysis: .wa_message not found");
-		return false;
-	}
-
-	// Verify layer cards are rendered
-	var layerCards = $(container).find(".wa_layer_card");
-	if (!layerCards.length) {
-		err("test_weight_analysis: No .wa_layer_card elements found after rendering");
-		return false;
-	}
-
-	// Verify each layer card has required elements
-	var allCardsValid = true;
-	layerCards.each(function (i, card) {
-		if (!$(card).find(".wa_layer_header").length) {
-			err("test_weight_analysis: .wa_layer_header missing in card " + i);
-			allCardsValid = false;
-		}
-		if (!$(card).find(".wa_layer_name").length) {
-			err("test_weight_analysis: .wa_layer_name missing in card " + i);
-			allCardsValid = false;
-		}
-		if (!$(card).find(".wa_layer_score").length) {
-			err("test_weight_analysis: .wa_layer_score missing in card " + i);
-			allCardsValid = false;
-		}
-		if (!$(card).find(".wa_indicators").length) {
-			err("test_weight_analysis: .wa_indicators missing in card " + i);
-			allCardsValid = false;
-		}
-	});
-
-	if (!allCardsValid) {
-		return false;
-	}
-
-	// Verify the overall indicators section is rendered
-	if (!$(container).find(".wa_comparison").length) {
-		err("test_weight_analysis: .wa_comparison section not found");
-		return false;
-	}
-
-	// Verify the global visualizations section is rendered
-	if (!$(container).find(".wa_section").length) {
-		err("test_weight_analysis: .wa_section (global visualizations) not found");
-		return false;
-	}
-
-	// Run analysis on trained model
 	var postTrainResult = WeightAnalysis.analyzeModel(model);
+	if (!_test_weight_analysis_validate_post_train(postTrainResult)) return false;
 
-	if (!postTrainResult) {
-		err("test_weight_analysis: analyzeModel returned null on trained model");
-		return false;
-	}
-
-	if (typeof postTrainResult.score !== "number") {
-		err("test_weight_analysis: post-train score is not a number");
-		return false;
-	}
-
-	if (postTrainResult.score < 0 || postTrainResult.score > 100) {
-		err("test_weight_analysis: post-train score out of range [0,100], got: " + postTrainResult.score);
-		return false;
-	}
-
-	if (typeof postTrainResult.confidence !== "number") {
-		err("test_weight_analysis: confidence is not a number");
-		return false;
-	}
-
-	if (postTrainResult.confidence < 0 || postTrainResult.confidence > 100) {
-		err("test_weight_analysis: confidence out of range [0,100], got: " + postTrainResult.confidence);
-		return false;
-	}
-
-	if (!postTrainResult.messageKey || typeof postTrainResult.messageKey !== "string") {
-		err("test_weight_analysis: messageKey is missing or not a string");
-		return false;
-	}
-
-	if (typeof postTrainResult.biasScore !== "number") {
-		err("test_weight_analysis: biasScore is not a number");
-		return false;
-	}
-
-	if (typeof postTrainResult.totalParams !== "number" || postTrainResult.totalParams <= 0) {
-		err("test_weight_analysis: totalParams is invalid, got: " + postTrainResult.totalParams);
-		return false;
-	}
-
-	// Verify per-layer results have expected structure
-	for (var i = 0; i < postTrainResult.layers.length; i++) {
-		var layer = postTrainResult.layers[i];
-
-		if (!layer.name || typeof layer.name !== "string") {
-			err("test_weight_analysis: layer " + i + " has invalid name");
-			return false;
-		}
-
-		if (!layer.shape || !Array.isArray(layer.shape)) {
-			err("test_weight_analysis: layer " + i + " has invalid shape");
-			return false;
-		}
-
-		if (typeof layer.paramCount !== "number" || layer.paramCount <= 0) {
-			err("test_weight_analysis: layer " + i + " has invalid paramCount");
-			return false;
-		}
-
-		if (typeof layer.score !== "number" || layer.score < 0 || layer.score > 100) {
-			err("test_weight_analysis: layer " + i + " score out of range, got: " + layer.score);
-			return false;
-		}
-
-		if (!layer.stats) {
-			err("test_weight_analysis: layer " + i + " has no stats");
-			return false;
-		}
-
-		if (typeof layer.stats.mean !== "number" || isNaN(layer.stats.mean)) {
-			err("test_weight_analysis: layer " + i + " stats.mean is invalid");
-			return false;
-		}
-
-		if (typeof layer.stats.std !== "number" || isNaN(layer.stats.std)) {
-			err("test_weight_analysis: layer " + i + " stats.std is invalid");
-			return false;
-		}
-
-		if (!layer.indicators) {
-			err("test_weight_analysis: layer " + i + " has no indicators");
-			return false;
-		}
-
-		// Verify all indicator keys exist
-		var requiredIndicators = ["entropy", "sparsity", "svd", "kurtosis", "ksTest", "correlation", "initDeviation"];
-		for (var j = 0; j < requiredIndicators.length; j++) {
-			if (!layer.indicators[requiredIndicators[j]]) {
-				err("test_weight_analysis: layer " + i + " missing indicator: " + requiredIndicators[j]);
-				return false;
-			}
-			if (typeof layer.indicators[requiredIndicators[j]].score !== "number") {
-				err("test_weight_analysis: layer " + i + " indicator " + requiredIndicators[j] + " has no numeric score");
-				return false;
-			}
-		}
-
-		if (!layer.histogram) {
-			err("test_weight_analysis: layer " + i + " has no histogram");
-			return false;
-		}
-
-		if (!layer.histogram.counts || !layer.histogram.binEdges) {
-			err("test_weight_analysis: layer " + i + " histogram missing counts or binEdges");
-			return false;
-		}
-
-		if (typeof layer.l2Norm !== "number" || isNaN(layer.l2Norm)) {
-			err("test_weight_analysis: layer " + i + " l2Norm is invalid");
-			return false;
-		}
-	}
-
-	// Verify that the trained model score is >= pre-train score
-	// (training should increase the "trained" signal)
 	var postTrainScore = postTrainResult.score;
-	if (postTrainScore < preTrainScore) {
-		err("test_weight_analysis: post-train score (" + postTrainScore + ") is less than pre-train score (" + preTrainScore + ")");
-		return false;
-	}
+	if (!_test_weight_analysis_validate(container, preTrainResult, postTrainResult, postTrainScore, preTrainScore)) return false;
 
-	// Test detectDeadNeurons returns an array
-	var deadNeurons = WeightAnalysis.detectDeadNeurons(model);
-	if (!Array.isArray(deadNeurons)) {
-		err("test_weight_analysis: detectDeadNeurons did not return an array");
-		return false;
-	}
-
-	// Test analyzeComplexity returns valid structure
-	var complexity = WeightAnalysis.analyzeComplexity(model);
-	if (!complexity) {
-		err("test_weight_analysis: analyzeComplexity returned null");
-		return false;
-	}
-
-	if (typeof complexity.totalParams !== "number" || complexity.totalParams <= 0) {
-		err("test_weight_analysis: analyzeComplexity totalParams invalid");
-		return false;
-	}
-
-	if (typeof complexity.layerCount !== "number" || complexity.layerCount <= 0) {
-		err("test_weight_analysis: analyzeComplexity layerCount invalid");
-		return false;
-	}
-
-	if (typeof complexity.memoryMB !== "number" || complexity.memoryMB <= 0) {
-		err("test_weight_analysis: analyzeComplexity memoryMB invalid");
-		return false;
-	}
-
-	// Test snapshotInitialWeights and computeWeightDrift
-	WeightAnalysis.snapshotInitialWeights(model);
-
-	var drift = WeightAnalysis.computeWeightDrift(model);
-	if (!drift) {
-		err("test_weight_analysis: computeWeightDrift returned null after snapshot");
-		return false;
-	}
-
-	if (!Array.isArray(drift) || drift.length === 0) {
-		err("test_weight_analysis: computeWeightDrift returned empty array");
-		return false;
-	}
-
-	// Since we just snapshotted the current weights, drift should be 0
-	for (var i = 0; i < drift.length; i++) {
-		if (typeof drift[i].l2Distance !== "number") {
-			err("test_weight_analysis: drift[" + i + "].l2Distance is not a number");
-			return false;
-		}
-		if (typeof drift[i].relativeChange !== "number") {
-			err("test_weight_analysis: drift[" + i + "].relativeChange is not a number");
-			return false;
-		}
-		if (drift[i].l2Distance > 1e-6) {
-			err("test_weight_analysis: drift[" + i + "].l2Distance should be ~0 immediately after snapshot, got: " + drift[i].l2Distance);
-			return false;
-		}
-	}
-
-	// Test that re-rendering doesn't crash (idempotency)
-	WeightAnalysis.weight_analysis_render(container);
 	await delay(1000);
 
+	WeightAnalysis.weight_analysis_render(container);
+	await delay(1000);
 	if (container.innerHTML.length === 0) {
 		err("test_weight_analysis: Re-rendering produced empty content");
 		return false;
 	}
 
 	await test_if_python_code_is_valid();
-
 	test_no_new_errors_or_warnings();
 
 	return true;
