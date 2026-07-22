@@ -1455,7 +1455,9 @@ function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResul
 				return postAct * w2;
 			});
 
-			const color = _viz_bends_hsl_to_rgb((j * 360 / layer1.units) % 360, 70, 55);
+			const h = (j * 360 / layer1.units) % 360;
+
+			const color = _viz_bends_hsl_to_rgb(h, 70, 55);
 
 			traces.push({
 				x: xs,
@@ -1475,9 +1477,9 @@ function _viz_bends_build_traces(xs, combinedY, dataPoints, layerData, bendResul
 					return _viz_bends_apply_activation(pre[l][j], layerData[l].actName);
 				});
 
-				const color = _viz_bends_hsl_to_rgb(
-					((l * 137 + j * 360 / numNeurons) % 360), 60, 50
-				);
+				const h = ((l * 137 + j * 360 / numNeurons) % 360);
+
+				const color = _viz_bends_hsl_to_rgb(h, 60, 50);
 
 				traces.push({
 					x: xs,
