@@ -1570,6 +1570,39 @@ async function handle_internal_predict_text_error(e, _tensor, res) {
 	return false;
 }
 
+async function _wait_for_new_images(example_predictions) {
+	var new_imgs = example_predictions.find('.example_images');
+	var load_promises = [];
+	var new_img_data = [];
+
+	for(var i = 0; i < new_imgs.length; i++) {
+		var img = new_imgs[i];
+		new_img_data.push({img: img, idx: i});
+
+		if(!img.complete || img.naturalHeight === 0) {
+			var p = new Promise((resolve) => {
+				img.onload = resolve;
+				img.onerror = resolve;
+			});
+			load_promises.push(p);
+		}
+	}
+
+	if(load_promises.length) {
+		await Promise.all(load_promises);
+	}
+
+	var loaded = [];
+	for(var i = 0; i < new_img_data.length; i++) {
+		var data = new_img_data[i];
+		if(data.img.complete && data.img.naturalHeight !== 0) {
+			loaded.push({img: data.img, idx: data.idx});
+		}
+	}
+
+	return loaded;
+}
+
 async function _print_example_predictions () {
 	if(!input_shape_is_image()) {
 		return false;
@@ -1583,52 +1616,27 @@ async function _print_example_predictions () {
 
 	var data_from_url = await get_cached_json(dataset_url);
 
-	if(data_from_url) {
-		if(Object.keys(data_from_url).includes("example")) {
-			var examples = data_from_url["example"];
+	if(data_from_url && Object.keys(data_from_url).includes("example")) {
+		var examples = data_from_url["example"];
 
-			if(examples) {
-				var [str, count, existing_items, existing_indices] = await _get_example_string_image(examples, 0, full_dir);
+		if(examples) {
+			var [str, count, existing_items, existing_indices] = await _get_example_string_image(examples, 0, full_dir);
 
-				var all_items = existing_items.slice();
-				var all_indices = existing_indices.slice();
+			var all_items = existing_items.slice();
+			var all_indices = existing_indices.slice();
 
-				if(str) {
-					example_predictions.html(str);
+			if(str) {
+				example_predictions.html(str);
 
-					var new_imgs = example_predictions.find('.example_images');
-					var load_promises = [];
-					var new_img_data = [];
-
-					for(var i = 0; i < new_imgs.length; i++) {
-						var img = new_imgs[i];
-						new_img_data.push({img: img, idx: i});
-
-						if(!img.complete || img.naturalHeight === 0) {
-							var p = new Promise((resolve) => {
-								img.onload = resolve;
-								img.onerror = resolve;
-							});
-							load_promises.push(p);
-						}
-					}
-
-					if(load_promises.length) {
-						await Promise.all(load_promises);
-					}
-
-					for(var i = 0; i < new_img_data.length; i++) {
-						var data = new_img_data[i];
-						if(data.img.complete && data.img.naturalHeight !== 0) {
-							all_items.push(data.img);
-							all_indices.push(data.idx);
-						}
-					}
+				var loaded = await _wait_for_new_images(example_predictions);
+				for(var i = 0; i < loaded.length; i++) {
+					all_items.push(loaded[i].img);
+					all_indices.push(loaded[i].idx);
 				}
+			}
 
-				if(all_items.length) {
-					await predict_demo_batch(all_items, all_indices);
-				}
+			if(all_items.length) {
+				await predict_demo_batch(all_items, all_indices);
 			}
 		}
 	}
