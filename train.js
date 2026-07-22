@@ -405,8 +405,9 @@ async function train_neural_network() {
 		return null;
 	}
 
-	$("#canvas_grid_visualization").html("");
-	_grid_visualization_height = 0;
+	if (!started_training && !$("#canvas_grid_visualization").children().length) {
+		_grid_visualization_height = 0;
+	}
 
 	// Ensure backend is ready before starting any scoped operations
 	await tf.ready();
