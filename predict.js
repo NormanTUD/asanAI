@@ -220,7 +220,7 @@ function load_file (event) {
 }
 
 function show_predict_spinner(target_selector) {
-	$(target_selector).html("<span class='predict-spinner'>⏳ " + language[lang]["predicting"] + "</span>");
+	$(target_selector).prepend("<span class='predict-spinner'>⏳ " + language[lang]["predicting"] + "</span>");
 }
 
 function hide_predict_spinner(target_selector) {
@@ -1863,8 +1863,8 @@ async function _predict_webcam_render (predictions, predictions_tensor, webcam_p
 		webcam_prediction.append(str);
 	} else {
 		if(predictions.length) {
-			webcam_prediction.html("");
 			if(model.outputShape.length == 4) {
+				webcam_prediction.html("");
 				var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
 				var pxsz = compute_pixel_size(largest);
 
@@ -1946,7 +1946,7 @@ async function predict_webcam () {
 		var predictions = array_sync(predictions_tensor);
 
 		var webcam_prediction = $("#webcam_prediction");
-		webcam_prediction.html("").show();
+		webcam_prediction.show();
 
 		await _predict_webcam_render(predictions, predictions_tensor, webcam_prediction);
 
@@ -2021,6 +2021,51 @@ async function _webcam_predict_text (webcam_prediction, predictions) {
 
 async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	try {
+		var existing_table = webcam_prediction.find("table.predict_table");
+
+		if (existing_table.length && existing_table.find("tr").length == predictions.length) {
+			existing_table.find("tr").each(function(idx) {
+				var tr = $(this);
+				if (idx >= predictions.length) return;
+
+				var probability = predictions[idx];
+				var isHighest = idx == max_i;
+
+				if (show_bars_instead_of_numbers()) {
+					var w = Math.floor(probability * 50);
+					var pctText = _format_probability_text(probability);
+					var rawText = _format_raw_value(probability);
+					var fillClass = _get_bar_fill_classes(isHighest);
+
+					var bar_outer = tr.find(".bar");
+					if (bar_outer.length) {
+						bar_outer.attr("title", rawText);
+						bar_outer.attr("data-value", pctText);
+						bar_outer.attr("data-raw", rawText);
+						var bar_inner = bar_outer.children("span").first();
+						bar_inner.attr("class", fillClass);
+						bar_inner.css("width", w + "px");
+						var tooltip = bar_outer.find(".bar-tooltip-pct");
+						if (tooltip.length) tooltip.text(pctText);
+					}
+				} else {
+					var second_td = tr.find("td").eq(1);
+					if (second_td.length) {
+						let prob_text = (probability * 50);
+						if (get_last_layer_activation_function() == "softmax") {
+							prob_text += "%";
+						}
+						if (isHighest) {
+							second_td.html(`<b class='best_result'>${prob_text}</b>`);
+						} else {
+							second_td.html(prob_text);
+						}
+					}
+				}
+			});
+			return;
+		}
+
 		var str = "<table class='predict_table'>";
 
 		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
