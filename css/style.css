@@ -2652,23 +2652,15 @@ body:not(.darkmode) .bar-tooltip-raw {
 }
 
 #photos {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, 40px);
-	grid-auto-rows: 40px;
-	gap: 2px;
-
-	/* Prevent layout recalculation per image */
 	contain: layout style paint;
 	content-visibility: auto;
-	contain-intrinsic-size: 400px;
+	contain-intrinsic-size: 400px 400px;
 
-	/* Use fixed dimensions to avoid reflow */
 	height: 95%;
 	min-height: 400px;
 	overflow-y: auto;
 	display: block;
 
-	/* Opt out of subpixel rendering recalculations */
 	will-change: transform;
 }
 

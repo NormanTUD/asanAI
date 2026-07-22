@@ -482,30 +482,7 @@ function reset_percentage_div_if_not_skip_real_image_download(percentage_div, sk
 	}
 }
 
-function add_tensor_as_image_to_photos (_tensor) {
-	assert(typeof(_tensor) == "object", "_tensor must be an object");
-	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
-	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");
-
-	if(_tensor.shape.length == 4) {
-		if(_tensor.shape[0] == 1) {
-			_tensor = tensor(array_sync(_tensor)[0]);
-		} else {
-			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
-				var this_tensor = tensor(array_sync(_tensor)[tensor_idx]);
-				add_tensor_as_image_to_photos(this_tensor);
-			}
-
-			return;
-		}
-	}
-
-	var uuid = uuidv4();
-	var id = "augmented_photo_" + uuid;
-	//log("image-element-id: ", id);
-	$("#photos").append("<canvas id='" + id + "'></canvas>");
-	//log("toPixels(_tensor, $('#" + id + "')");
-
+function _render_tensor_to_canvas(_tensor, canvas) {
 	var min_value = 0;
 	var max_value = 0;
 
@@ -530,11 +507,44 @@ function add_tensor_as_image_to_photos (_tensor) {
 	}
 
 	try {
-		toPixels(_tensor, $("#" + id)[0]);
+		toPixels(_tensor, canvas);
 	} catch (e) {
 		void(0); log("Shape:", _tensor.shape);
 		_tensor.print();
 	}
+}
+
+function add_tensor_as_image_to_photos (_tensor) {
+	assert(typeof(_tensor) == "object", "_tensor must be an object");
+	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
+	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");
+
+	if(_tensor.shape.length == 4) {
+		if(_tensor.shape[0] == 1) {
+			_tensor = tensor(array_sync(_tensor)[0]);
+		} else {
+			const photos = document.getElementById("photos");
+			const frag = document.createDocumentFragment();
+			const sync_data = array_sync(_tensor);
+			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
+				var this_tensor = tensor(sync_data[tensor_idx]);
+				var canvas = document.createElement("canvas");
+				canvas.id = "augmented_photo_" + uuidv4();
+				_render_tensor_to_canvas(this_tensor, canvas);
+				frag.appendChild(canvas);
+			}
+			photos.appendChild(frag);
+			return;
+		}
+	}
+
+	var uuid = uuidv4();
+	var id = "augmented_photo_" + uuid;
+	canvas = document.createElement("canvas");
+	canvas.id = id;
+	document.getElementById("photos").appendChild(canvas);
+
+	_render_tensor_to_canvas(_tensor, canvas);
 
 }
 
@@ -817,12 +827,16 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 function show_data_after_loading(xy_data, x, divide_by) {
 	if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
 		$("#photos").show();
+		const photos = document.getElementById("photos");
+		const frag = document.createDocumentFragment();
 		for (var xy_data_idx = 0; xy_data_idx < xy_data.x.shape[0]; xy_data_idx++) {
-			$("#photos").append("<canvas id='custom_training_data_img_" + xy_data_idx + "'></canvas>");
-			const canvas = $("#custom_training_data_img_" + xy_data_idx)[0];
+			const canvas = document.createElement("canvas");
+			canvas.id = "custom_training_data_img_" + xy_data_idx;
 			const colors = x[xy_data_idx];
 			draw_grid(canvas, 1, colors, null, null, null, null, "");
+			frag.appendChild(canvas);
 		}
+		photos.appendChild(frag);
 	}
 }
 
