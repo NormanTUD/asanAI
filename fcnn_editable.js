@@ -433,6 +433,98 @@ function _fcnn_edit_open_neuron(region, mouseX, mouseY) {
 // OPEN POPUP FOR WEIGHT (connection editing)
 // ============================================================
 
+function _fcnn_edit_convert_mouse_to_canvas(region, mouseX, mouseY) {
+    var canvas = document.getElementById("fcnn_canvas");
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    return {
+        canvasMouseX: (mouseX - rect.left) * scaleX,
+        canvasMouseY: (mouseY - rect.top) * scaleY
+    };
+}
+
+function _fcnn_edit_map_to_neuron_indices(region, canvasMouseX, canvasMouseY, from_neurons, to_neurons) {
+    var relY = 0.5;
+    var relX = 0.5;
+    if (region.h > 0) {
+        relY = (canvasMouseY - region.y) / region.h;
+        relY = Math.max(0, Math.min(1, relY));
+    }
+    if (region.w > 0) {
+        relX = (canvasMouseX - region.x) / region.w;
+        relX = Math.max(0, Math.min(1, relX));
+    }
+
+    var from_idx = Math.min(from_neurons - 1, Math.max(0, Math.round(relY * (from_neurons - 1))));
+    var to_idx = Math.min(to_neurons - 1, Math.max(0, Math.round(relY * (to_neurons - 1))));
+    return { from_idx: from_idx, to_idx: to_idx };
+}
+
+function _fcnn_edit_lookup_weight(weightInfo, from_idx, to_idx) {
+    var shape = weightInfo.shape;
+    var cols = shape[shape.length - 1];
+    var rows = shape[shape.length - 2];
+    var fi = Math.min(from_idx, rows - 1);
+    var ti = Math.min(to_idx, cols - 1);
+    fi = Math.max(0, fi);
+    ti = Math.max(0, ti);
+    var weight_flat_idx = fi * cols + ti;
+
+    if (weight_flat_idx < 0 || weight_flat_idx >= weightInfo.data.length) {
+        console.warn("[fcnn_edit] Weight index out of bounds:", weight_flat_idx, "of", weightInfo.data.length);
+        weight_flat_idx = 0;
+        fi = 0;
+        ti = 0;
+    }
+
+    var weightValue = weightInfo.data[weight_flat_idx];
+    if (!isFinite(weightValue)) weightValue = 0;
+
+    return { fi: fi, ti: ti, weight_flat_idx: weight_flat_idx, weightValue: weightValue, shape: shape, rows: rows, cols: cols };
+}
+
+function _fcnn_edit_configure_weight_popup(weightInfo, lookup, from_layer, to_layer, meta_infos) {
+    document.getElementById("fcnn_edit_title").textContent = "🔗 Weight [Layer " + from_layer + " → " + to_layer + "]";
+    document.getElementById("fcnn_edit_info").innerHTML =
+        "From neuron <b>" + lookup.fi + "</b> → To neuron <b>" + lookup.ti + "</b><br>" +
+        "Flat index: " + lookup.weight_flat_idx + " of " + weightInfo.data.length + "<br>" +
+        "Weight matrix shape: [" + lookup.rows + " × " + lookup.cols + "]";
+
+    document.getElementById("fcnn_edit_weight_section").style.display = "block";
+    document.getElementById("fcnn_edit_bias_section").style.display = "none";
+    document.getElementById("fcnn_edit_indices_section").style.display = "block";
+
+    var weightNum = document.getElementById("fcnn_edit_weight_num");
+    var weightSlider = document.getElementById("fcnn_edit_weight_slider");
+    var weightRangeInfo = document.getElementById("fcnn_edit_weight_range_info");
+    var fromIdxInput = document.getElementById("fcnn_edit_from_idx");
+    var toIdxInput = document.getElementById("fcnn_edit_to_idx");
+
+    weightNum.value = lookup.weightValue.toFixed(6);
+
+    var range = Math.max(
+        Math.abs(weightInfo.max) * 1.5,
+        Math.abs(weightInfo.min) * 1.5,
+        Math.abs(lookup.weightValue) * 3,
+        2
+    );
+    weightSlider.min = (-range).toString();
+    weightSlider.max = range.toString();
+    weightSlider.step = (range * 2 / 2000).toString();
+    weightSlider.value = lookup.weightValue;
+
+    if (weightRangeInfo) {
+        weightRangeInfo.innerHTML = "<span>" + (-range).toFixed(2) + "</span><span>" + range.toFixed(2) + "</span>";
+    }
+
+    fromIdxInput.value = lookup.fi.toString();
+    fromIdxInput.max = (lookup.rows - 1).toString();
+    toIdxInput.value = lookup.ti.toString();
+    toIdxInput.max = (lookup.cols - 1).toString();
+}
+
 function _fcnn_edit_open_weight(region, mouseX, mouseY) {
     if (_fcnn_edit_is_training()) {
         console.warn("[fcnn_edit] Cannot edit while training is in progress.");
@@ -450,15 +542,12 @@ function _fcnn_edit_open_weight(region, mouseX, mouseY) {
     var from_neurons = region.from_neurons;
     var to_neurons = region.to_neurons;
 
-    // Get weight info
     var fcnn_data = null;
     try { fcnn_data = get_fcnn_data(); } catch(e) {}
     if (!fcnn_data) {
         console.warn("[fcnn_edit] Cannot get FCNN data.");
         return;
     }
-    var names = fcnn_data[0];
-    var units = fcnn_data[1];
     var meta_infos = fcnn_data[2];
 
     var weightInfo = null;
@@ -468,120 +557,28 @@ function _fcnn_edit_open_weight(region, mouseX, mouseY) {
         return;
     }
 
-    // Convert mouse position to canvas coordinates
-    var canvas = document.getElementById("fcnn_canvas");
-    if (!canvas) {
+    var coords = _fcnn_edit_convert_mouse_to_canvas(region, mouseX, mouseY);
+    if (!coords) {
         console.warn("[fcnn_edit] Canvas not found.");
         return;
     }
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var canvasMouseX = (mouseX - rect.left) * scaleX;
-    var canvasMouseY = (mouseY - rect.top) * scaleY;
 
-    // Determine which neuron pair is closest to the click
-    var relY = 0.5;
-    var relX = 0.5;
-    if (region.h > 0) {
-        relY = (canvasMouseY - region.y) / region.h;
-        relY = Math.max(0, Math.min(1, relY));
-    }
-    if (region.w > 0) {
-        relX = (canvasMouseX - region.x) / region.w;
-        relX = Math.max(0, Math.min(1, relX));
-    }
-
-    // Map to neuron indices using position heuristics
-    var from_idx, to_idx;
-    if (relX < 0.35) {
-        // Near the "from" side
-        from_idx = Math.min(from_neurons - 1, Math.max(0, Math.round(relY * (from_neurons - 1))));
-        to_idx = Math.min(to_neurons - 1, Math.max(0, Math.round(relY * (to_neurons - 1))));
-    } else if (relX > 0.65) {
-        // Near the "to" side
-        from_idx = Math.min(from_neurons - 1, Math.max(0, Math.round(relY * (from_neurons - 1))));
-        to_idx = Math.min(to_neurons - 1, Math.max(0, Math.round(relY * (to_neurons - 1))));
-    } else {
-        // Middle — use Y for both
-        from_idx = Math.min(from_neurons - 1, Math.max(0, Math.round(relY * (from_neurons - 1))));
-        to_idx = Math.min(to_neurons - 1, Math.max(0, Math.round(relY * (to_neurons - 1))));
-    }
-
-    // Get the weight value
-    var shape = weightInfo.shape;
-    var cols = shape[shape.length - 1];
-    var rows = shape[shape.length - 2];
-    var fi = Math.min(from_idx, rows - 1);
-    var ti = Math.min(to_idx, cols - 1);
-    fi = Math.max(0, fi);
-    ti = Math.max(0, ti);
-    var weight_flat_idx = fi * cols + ti;
-
-    if (weight_flat_idx < 0 || weight_flat_idx >= weightInfo.data.length) {
-        console.warn("[fcnn_edit] Weight index out of bounds:", weight_flat_idx, "of", weightInfo.data.length);
-        // Fallback to index 0
-        weight_flat_idx = 0;
-        fi = 0;
-        ti = 0;
-    }
-
-    var weightValue = weightInfo.data[weight_flat_idx];
-    if (!isFinite(weightValue)) weightValue = 0;
+    var indices = _fcnn_edit_map_to_neuron_indices(region, coords.canvasMouseX, coords.canvasMouseY, from_neurons, to_neurons);
+    var lookup = _fcnn_edit_lookup_weight(weightInfo, indices.from_idx, indices.to_idx);
 
     _fcnn_edit_active = {
         type: "weight",
         from_layer: from_layer,
         to_layer: to_layer,
-        from_idx: fi,
-        to_idx: ti,
-        weight_flat_idx: weight_flat_idx,
+        from_idx: lookup.fi,
+        to_idx: lookup.ti,
+        weight_flat_idx: lookup.weight_flat_idx,
         meta_infos: meta_infos,
-        _weight_shape: shape
+        _weight_shape: lookup.shape
     };
-    _fcnn_edit_initial_value = { weight: weightValue };
+    _fcnn_edit_initial_value = { weight: lookup.weightValue };
 
-    // Configure popup
-    document.getElementById("fcnn_edit_title").textContent = "🔗 Weight [Layer " + from_layer + " → " + to_layer + "]";
-    document.getElementById("fcnn_edit_info").innerHTML =
-        "From neuron <b>" + fi + "</b> → To neuron <b>" + ti + "</b><br>" +
-        "Flat index: " + weight_flat_idx + " of " + weightInfo.data.length + "<br>" +
-        "Weight matrix shape: [" + rows + " × " + cols + "]";
-
-    // Show weight section and indices section, hide bias section
-    document.getElementById("fcnn_edit_weight_section").style.display = "block";
-    document.getElementById("fcnn_edit_bias_section").style.display = "none";
-    document.getElementById("fcnn_edit_indices_section").style.display = "block";
-
-    var weightNum = document.getElementById("fcnn_edit_weight_num");
-    var weightSlider = document.getElementById("fcnn_edit_weight_slider");
-    var weightRangeInfo = document.getElementById("fcnn_edit_weight_range_info");
-    var fromIdxInput = document.getElementById("fcnn_edit_from_idx");
-    var toIdxInput = document.getElementById("fcnn_edit_to_idx");
-
-    weightNum.value = weightValue.toFixed(6);
-
-    // Dynamic slider range based on weight distribution
-    var range = Math.max(
-        Math.abs(weightInfo.max) * 1.5,
-        Math.abs(weightInfo.min) * 1.5,
-        Math.abs(weightValue) * 3,
-        2
-    );
-    weightSlider.min = (-range).toString();
-    weightSlider.max = range.toString();
-    weightSlider.step = (range * 2 / 2000).toString();
-    weightSlider.value = weightValue;
-
-    if (weightRangeInfo) {
-        weightRangeInfo.innerHTML = "<span>" + (-range).toFixed(2) + "</span><span>" + range.toFixed(2) + "</span>";
-    }
-
-    // Set index inputs
-    fromIdxInput.value = fi.toString();
-    fromIdxInput.max = (rows - 1).toString();
-    toIdxInput.value = ti.toString();
-    toIdxInput.max = (cols - 1).toString();
+    _fcnn_edit_configure_weight_popup(weightInfo, lookup, from_layer, to_layer, meta_infos);
 
     _fcnn_edit_show_popup(pop, mouseX, mouseY);
     if (pop._setJustOpened) pop._setJustOpened();

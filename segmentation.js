@@ -86,67 +86,37 @@ function _update_layer_position(canvas_element) {
     }
 }
 
-function add_canvas_layer(canvas, transparency) {
-    assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency): canvas is not an object");
-    assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas, transparency): transparency is not a number");
-
-    var canvas_id = canvas.id;
-    var layer_id = canvas_id + "_layer";
-
-    // Get the parent own_image_span
-    var $parent = $(canvas).closest(".own_image_span");
-    if (!$parent.length) {
-        $parent = $(canvas).parent();
-    }
-
-    // Ensure the parent has position:relative so absolute children position correctly
-    $parent.css({
-        "position": "relative",
-        "display": "inline-block"
-    });
-
-    // Get the actual rendered dimensions of the source image/canvas
-    var el_width = canvas.width || $(canvas).width() || 150;
-    var el_height = canvas.height || $(canvas).height() || 150;
-
-    // Create a new canvas element for the drawing layer
+function _create_drawing_layer_canvas(canvas, layer_id, el_width, el_height, transparency) {
     var layer = document.createElement("canvas");
     layer.id = layer_id;
-    // Set the actual canvas buffer size to match the image exactly
     layer.width = el_width;
     layer.height = el_height;
-    // Position it exactly over the source image
     layer.style.position = "absolute";
     layer.style.left = canvas.offsetLeft + "px";
     layer.style.top = canvas.offsetTop + "px";
-    // CSS display size must match the buffer size for correct drawing coordinates
     layer.style.width = el_width + "px";
     layer.style.height = el_height + "px";
     layer.style.backgroundColor = "white";
     layer.style.opacity = transparency;
     layer.style.zIndex = "10";
     layer.style.cursor = "crosshair";
-
-    // Insert the layer canvas directly after the source image, inside the same parent
     $(canvas).after(layer);
+    return layer;
+}
 
-    // Create a new Atrament instance for the layer
-    // IMPORTANT: pass explicit width/height matching the canvas buffer size
+function _init_layer_atrament(layer, layer_id, el_width, el_height) {
     atrament_data[layer_id] = {};
     atrament_data[layer_id]["atrament"] = new Atrament(layer, {
         width: el_width,
         height: el_height
     });
-
-    // Disable adaptive stroke - this causes the "line" instead of "circle" issue
     atrament_data[layer_id]["atrament"].adaptiveStroke = false;
     atrament_data[layer_id]["atrament"].weight = 20;
     atrament_data[layer_id]["atrament"].mode = "draw";
-
     clear_attrament(layer_id);
+}
 
-    // Create a controls container OUTSIDE the positioned parent
-    // so it doesn't affect the parent's width or overlap positioning
+function _create_layer_controls(layer_id, el_width, layer, transparency) {
     var controls_container = document.createElement("div");
     controls_container.id = `${layer_id}_controls`;
     controls_container.className = "segmentation_layer_controls";
@@ -156,11 +126,9 @@ function add_canvas_layer(canvas, transparency) {
     controls_container.style.marginBottom = "8px";
     controls_container.style.maxWidth = el_width + "px";
 
-    // Color picker
     var color_picker_code = `<input type="text" name="value" id='${layer_id}_colorpicker' class="show_data jscolor" style="width: 50px;" value="#000000" onchange="atrament_data['${layer_id}']['atrament'].color='#'+this.value;" />`;
     $(controls_container).append(color_picker_code);
 
-    // Transparency slider
     var transparency_label = document.createElement("span");
     transparency_label.textContent = " Opacity: ";
     transparency_label.style.fontSize = "11px";
@@ -180,7 +148,6 @@ function add_canvas_layer(canvas, transparency) {
     });
     $(controls_container).append(transparency_slider);
 
-    // Pen size slider
     var pensize_label = document.createElement("span");
     pensize_label.textContent = " Pen: ";
     pensize_label.style.fontSize = "11px";
@@ -201,7 +168,6 @@ function add_canvas_layer(canvas, transparency) {
     });
     $(controls_container).append(pensize_slider);
 
-    // Clear button for this layer
     var clear_btn = document.createElement("button");
     clear_btn.textContent = "Clear";
     clear_btn.style.fontSize = "11px";
@@ -212,15 +178,39 @@ function add_canvas_layer(canvas, transparency) {
     });
     $(controls_container).append(clear_btn);
 
-    // Insert controls AFTER the parent span (not inside it)
-    // This prevents the controls from making the span wider
+    return controls_container;
+}
+
+function add_canvas_layer(canvas, transparency) {
+    assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency): canvas is not an object");
+    assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas, transparency): transparency is not a number");
+
+    var canvas_id = canvas.id;
+    var layer_id = canvas_id + "_layer";
+
+    var $parent = $(canvas).closest(".own_image_span");
+    if (!$parent.length) {
+        $parent = $(canvas).parent();
+    }
+
+    $parent.css({
+        "position": "relative",
+        "display": "inline-block"
+    });
+
+    var el_width = canvas.width || $(canvas).width() || 150;
+    var el_height = canvas.height || $(canvas).height() || 150;
+
+    var layer = _create_drawing_layer_canvas(canvas, layer_id, el_width, el_height, transparency);
+
+    _init_layer_atrament(layer, layer_id, el_width, el_height);
+
+    var controls_container = _create_layer_controls(layer_id, el_width, layer, transparency);
     $parent.after(controls_container);
 
-    // Initialize jscolor for this specific color picker
     try {
         atrament_data[layer_id]["colorpicker"] = new jscolor($("#" + layer_id + "_colorpicker")[0], {format: "rgb"});
     } catch(e) {
-        // jscolor may not be available
         wrn("[add_canvas_layer] Could not initialize jscolor: " + e);
     }
 }

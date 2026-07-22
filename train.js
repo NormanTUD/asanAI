@@ -1964,9 +1964,7 @@ function show_multi_run_statistics(results) {
 	show_multi_run_run_chart(current_multi_run);
 }
 
-async function multi_train_neural_network(num_runs) {
-	var ret = null;
-
+async function _multi_train_validate(num_runs) {
 	if (!model) {
 		err("[multi_train_neural_network] " + language[lang]["no_model_defined"]);
 		return null;
@@ -1979,7 +1977,6 @@ async function multi_train_neural_network(num_runs) {
 
 	await prepare_gui_for_training();
 	_set_apply_to_original_apply();
-
 	await check_signal_flow();
 
 	l(language[lang]["getting_data"]);
@@ -1996,6 +1993,111 @@ async function multi_train_neural_network(num_runs) {
 		return null;
 	}
 
+	return x_and_y;
+}
+
+function _multi_train_reinit_weights() {
+	l("[multi-train] reinitializing weights with fresh random values");
+	model.layers.forEach(function(layer) {
+		var currentWeights = layer.getWeights();
+		if (currentWeights.length === 0) return;
+		var newWeights = currentWeights.map(function(w) {
+			return tf.initializers.glorotUniform().apply(w.shape);
+		});
+		layer.setWeights(newWeights);
+	});
+	l("[multi-train] weights reinitialized, layers=" + (model?.layers?.length || 0));
+}
+
+async function _multi_train_prepare_tensors(x_and_y) {
+	["x", "y"].forEach(function(tensor_name) {
+		if (!is_tensor(x_and_y[tensor_name])) {
+			if (Array.isArray(x_and_y[tensor_name])) {
+				x_and_y[tensor_name] = tensor(x_and_y[tensor_name]);
+			} else {
+				err("multi_train_neural_network: " + tensor_name + " is not a tensor, nor is it an array.", x_and_y[tensor_name]);
+			}
+		}
+	});
+	xy_data_global = x_and_y;
+}
+
+async function _multi_train_build_fit_data(run, num_runs, epochs, batchSize, validationSplit, shuffle) {
+	var fit_data;
+	if (run < num_runs) {
+		l("[multi-train] run " + run + ": building minimal fit_data (intermediate run)");
+		fit_data = {
+			validationSplit: validationSplit,
+			batchSize: batchSize,
+			epochs: epochs,
+			shuffle: shuffle,
+			verbose: 0,
+			callbacks: get_minimal_callbacks(),
+			yieldEvery: "batch"
+		};
+		await compile_model();
+	} else {
+		l("[multi-train] run " + run + ": building full fit_data (last run)");
+		await add_layer_debuggers();
+		fit_data = await get_fit_data();
+		await compile_model();
+	}
+	return fit_data;
+}
+
+async function _multi_train_single_run(run, num_runs, x_and_y, epochs, batchSize, validationSplit, shuffle) {
+	await set_input_shape_from_xs(x_and_y);
+	prepare_site_for_training();
+	await go_to_training_tab_label();
+
+	await _multi_train_prepare_tensors(x_and_y);
+
+	var fit_data = await _multi_train_build_fit_data(run, num_runs, epochs, batchSize, validationSplit, shuffle);
+
+	if (!fit_data) {
+		err("[multi_train_neural_network] fit_data is false for run " + run);
+		return null;
+	}
+
+	l("[multi-train] run " + run + ": starting model.fit, epochs=" + fit_data.epochs + ", batchSize=" + fit_data.batchSize);
+	await wait_for_updated_page(2);
+
+	remove_overlay();
+
+	const h = await model.fit(x_and_y.x, x_and_y.y, fit_data);
+
+	l("[multi-train] run " + run + ": model.fit completed, final loss=" + (h.history.loss ? h.history.loss[h.history.loss.length - 1] : "N/A"));
+	assert(typeof h === "object", "history object is not of type object");
+	model_is_trained = true;
+	reset_predict_container_after_training();
+
+	save_multi_run_weights(run);
+
+	multi_run_data[run].plotData = JSON.parse(JSON.stringify(training_logs_epoch));
+	l("[multi-train] run " + run + ": saved weights and plot data");
+
+	return h;
+}
+
+async function _multi_train_finalize(results, x_and_y) {
+	l("[multi-train] All runs completed. Results: " + results.length);
+
+	_last_multi_run_results = results;
+	show_multi_run_statistics(results);
+
+	show_input_shape_repaired_message(false);
+	await enable_everything();
+	hide_training_progress_bar();
+
+	x_and_y = await reset_stuff_after_training(x_and_y);
+}
+
+async function multi_train_neural_network(num_runs) {
+	var ret = null;
+
+	var x_and_y = await _multi_train_validate(num_runs);
+	if (x_and_y === null) return null;
+
 	var results = [];
 	var epochs = get_epochs();
 	var batchSize = get_batch_size();
@@ -2007,105 +2109,29 @@ async function multi_train_neural_network(num_runs) {
 
 	for (var run = 1; run <= num_runs; run++) {
 		l("[multi-train] === Starting run " + run + "/" + num_runs + " ===");
-
 		multi_update_step(language[lang]["run_x_of_y"] + " " + run + "/" + num_runs);
-
 		multi_run_data[run] = { weights: null, plotData: null };
-
 		training_logs_epoch = get_empty_plotly("Loss");
 		training_logs_batch = get_empty_plotly("Loss");
 		last_batch_plot_time = false;
 
 		try {
 			if (run > 1) {
-				l("[multi-train] run " + run + ": reinitializing weights with fresh random values");
-				model.layers.forEach(function(layer) {
-					var currentWeights = layer.getWeights();
-					if (currentWeights.length === 0) return;
-					var newWeights = currentWeights.map(function(w) {
-						return tf.initializers.glorotUniform().apply(w.shape);
-					});
-					layer.setWeights(newWeights);
-				});
-				l("[multi-train] run " + run + ": weights reinitialized, layers=" + (model?.layers?.length || 0));
+				_multi_train_reinit_weights();
 			}
 
-			await set_input_shape_from_xs(x_and_y);
-			prepare_site_for_training();
-			await go_to_training_tab_label();
+			var h = await _multi_train_single_run(run, num_runs, x_and_y, epochs, batchSize, validationSplit, shuffle);
 
-			["x", "y"].forEach(function(tensor_name) {
-				if (!is_tensor(x_and_y[tensor_name])) {
-					if (Array.isArray(x_and_y[tensor_name])) {
-						x_and_y[tensor_name] = tensor(x_and_y[tensor_name]);
-					} else {
-						err("multi_train_neural_network: " + tensor_name + " is not a tensor, nor is it an array.", x_and_y[tensor_name]);
-					}
-				}
-			});
-
-			xy_data_global = x_and_y;
-
-			var fit_data;
-			if (run < num_runs) {
-				l("[multi-train] run " + run + ": building minimal fit_data (intermediate run)");
-				fit_data = {
-					validationSplit: validationSplit,
-					batchSize: batchSize,
-					epochs: epochs,
-					shuffle: shuffle,
-					verbose: 0,
-					callbacks: get_minimal_callbacks(),
-					yieldEvery: "batch"
-				};
-				await compile_model();
-			} else {
-				l("[multi-train] run " + run + ": building full fit_data (last run)");
-				await add_layer_debuggers();
-				fit_data = await get_fit_data();
-				await compile_model();
+			if (h) {
+				results.push({ run: run, history: h.history });
+				ret = h;
 			}
-
-			if (!fit_data) {
-				err("[multi_train_neural_network] fit_data is false for run " + run);
-				continue;
-			}
-
-			l("[multi-train] run " + run + ": starting model.fit, epochs=" + fit_data.epochs + ", batchSize=" + fit_data.batchSize);
-			await wait_for_updated_page(2);
-
-			remove_overlay();
-
-			const h = await model.fit(x_and_y.x, x_and_y.y, fit_data);
-
-			l("[multi-train] run " + run + ": model.fit completed, final loss=" + (h.history.loss ? h.history.loss[h.history.loss.length - 1] : "N/A"));
-			assert(typeof h === "object", "history object is not of type object");
-			model_is_trained = true;
-			reset_predict_container_after_training();
-
-			save_multi_run_weights(run);
-
-			multi_run_data[run].plotData = JSON.parse(JSON.stringify(training_logs_epoch));
-			l("[multi-train] run " + run + ": saved weights and plot data");
-
-			results.push({ run: run, history: h.history });
-
-			ret = h;
 		} catch (e) {
 			err("[multi-train] Training failed on run " + run + ":", e);
 		}
 	}
 
-	l("[multi-train] All " + num_runs + " runs completed. Results: " + results.length);
-
-	_last_multi_run_results = results;
-	show_multi_run_statistics(results);
-
-	show_input_shape_repaired_message(false);
-	await enable_everything();
-	hide_training_progress_bar();
-
-	x_and_y = await reset_stuff_after_training(x_and_y);
+	await _multi_train_finalize(results, x_and_y);
 
 	return ret;
 }
