@@ -2019,49 +2019,60 @@ async function _webcam_predict_text (webcam_prediction, predictions) {
 	}
 }
 
+function _update_webcam_bar(tr, probability, isHighest) {
+	var w = Math.floor(probability * 50);
+	var pctText = _format_probability_text(probability);
+	var rawText = _format_raw_value(probability);
+	var fillClass = _get_bar_fill_classes(isHighest);
+
+	var bar_outer = tr.find(".bar");
+	if (!bar_outer.length) return;
+
+	bar_outer.attr("title", rawText);
+	bar_outer.attr("data-value", pctText);
+	bar_outer.attr("data-raw", rawText);
+	var bar_inner = bar_outer.children("span").first();
+	bar_inner.attr("class", fillClass);
+	bar_inner.css("width", w + "px");
+	var tooltip = bar_outer.find(".bar-tooltip-pct");
+	if (tooltip.length) tooltip.text(pctText);
+}
+
+function _update_webcam_text(tr, probability, isHighest) {
+	var second_td = tr.find("td").eq(1);
+	if (!second_td.length) return;
+
+	let prob_text = (probability * 50);
+	if (get_last_layer_activation_function() == "softmax") {
+		prob_text += "%";
+	}
+	if (isHighest) {
+		second_td.html(`<b class='best_result'>${prob_text}</b>`);
+	} else {
+		second_td.html(prob_text);
+	}
+}
+
+function _update_webcam_row(tr, idx, predictions, max_i) {
+	if (idx >= predictions.length) return;
+
+	var probability = predictions[idx];
+	var isHighest = idx == max_i;
+
+	if (show_bars_instead_of_numbers()) {
+		_update_webcam_bar(tr, probability, isHighest);
+	} else {
+		_update_webcam_text(tr, probability, isHighest);
+	}
+}
+
 async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	try {
 		var existing_table = webcam_prediction.find("table.predict_table");
 
 		if (existing_table.length && existing_table.find("tr").length == predictions.length) {
 			existing_table.find("tr").each(function(idx) {
-				var tr = $(this);
-				if (idx >= predictions.length) return;
-
-				var probability = predictions[idx];
-				var isHighest = idx == max_i;
-
-				if (show_bars_instead_of_numbers()) {
-					var w = Math.floor(probability * 50);
-					var pctText = _format_probability_text(probability);
-					var rawText = _format_raw_value(probability);
-					var fillClass = _get_bar_fill_classes(isHighest);
-
-					var bar_outer = tr.find(".bar");
-					if (bar_outer.length) {
-						bar_outer.attr("title", rawText);
-						bar_outer.attr("data-value", pctText);
-						bar_outer.attr("data-raw", rawText);
-						var bar_inner = bar_outer.children("span").first();
-						bar_inner.attr("class", fillClass);
-						bar_inner.css("width", w + "px");
-						var tooltip = bar_outer.find(".bar-tooltip-pct");
-						if (tooltip.length) tooltip.text(pctText);
-					}
-				} else {
-					var second_td = tr.find("td").eq(1);
-					if (second_td.length) {
-						let prob_text = (probability * 50);
-						if (get_last_layer_activation_function() == "softmax") {
-							prob_text += "%";
-						}
-						if (isHighest) {
-							second_td.html(`<b class='best_result'>${prob_text}</b>`);
-						} else {
-							second_td.html(prob_text);
-						}
-					}
-				}
+				_update_webcam_row($(this), idx, predictions, max_i);
 			});
 			return;
 		}
