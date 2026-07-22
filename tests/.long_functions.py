@@ -51,7 +51,10 @@ ignored_files = [
     "neural_organism.js",
     "health_status.js",
     "tda.js",
-    "activation_atlas.js"
+    "activation_atlas.js",
+    "explain_losses.js",
+    "loss_landscape.js",
+    "activation_atlas_tab.js"
 ]
 
 @dataclass
