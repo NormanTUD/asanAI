@@ -1755,21 +1755,9 @@ function calculate_stats(values) {
 	return { mean: mean, std: std, min: min, max: max, cv: cv, n: n };
 }
 
-function _build_multi_run_stats_html(results, losses, valLosses, accs) {
+function _build_stats_summary_rows(losses, valLosses, accs) {
+	var html = '';
 	var lossStats = calculate_stats(losses);
-
-	var html = '<div class="multi_run_stats_container">';
-	html += '<h3><span class="TRANSLATEME_multi_run_statistics"></span></h3>';
-	html += '<p><span class="TRANSLATEME_noise_analysis_intro"></span></p>';
-
-	html += '<table class="multi_run_stats_table">';
-	html += '<tr><th></th>';
-	html += '<th><span class="TRANSLATEME_mean"></span></th>';
-	html += '<th><span class="TRANSLATEME_min"></span></th>';
-	html += '<th><span class="TRANSLATEME_max"></span></th>';
-	html += '<th><span class="TRANSLATEME_best_run"></span></th>';
-	html += '<th><span class="TRANSLATEME_worst_run"></span></th>';
-	html += '</tr>';
 
 	html += '<tr><td><strong><span class="TRANSLATEME_loss"></span></strong></td>';
 	html += '<td>' + lossStats.mean.toFixed(4) + '</td>';
@@ -1801,8 +1789,10 @@ function _build_multi_run_stats_html(results, losses, valLosses, accs) {
 		html += '</tr>';
 	}
 
-	html += '</table>';
+	return html;
+}
 
+function _build_stats_noise_section(lossStats) {
 	var noiseThresholdHigh = 20;
 	var noiseThresholdMedium = 5;
 	var noiseClass;
@@ -1814,13 +1804,16 @@ function _build_multi_run_stats_html(results, losses, valLosses, accs) {
 		noiseClass = "noise_low";
 	}
 
-	html += '<div class="noise_level ' + noiseClass + '">';
+	var html = '<div class="noise_level ' + noiseClass + '">';
 	html += '<strong><span class="TRANSLATEME_noise_level"></span>:</strong> <span class="TRANSLATEME_' + noiseClass + '"></span>';
 	html += '</div>';
+	return html;
+}
 
-	if (losses.length >= 6) {
-		html += '<div id="multi_run_boxplot" style="margin: 12px 0;"></div>';
-	}
+function _build_stats_detail_rows(results, losses, valLosses, accs) {
+	var html = '';
+	var minLoss = Math.min(...losses);
+	var maxLoss = Math.max(...losses);
 
 	html += '<h4><span class="TRANSLATEME_number_of_runs"></span></h4>';
 	html += '<table class="multi_run_stats_table multi_run_detail">';
@@ -1832,9 +1825,6 @@ function _build_multi_run_stats_html(results, losses, valLosses, accs) {
 		html += '<th><span class="TRANSLATEME_accuracy"></span></th>';
 	}
 	html += '</tr>';
-
-	var minLoss = Math.min(...losses);
-	var maxLoss = Math.max(...losses);
 
 	results.forEach(function(r, i) {
 		var lastLoss = r.history.loss[r.history.loss.length - 1];
@@ -1862,8 +1852,13 @@ function _build_multi_run_stats_html(results, losses, valLosses, accs) {
 	});
 
 	html += '</table>';
+	return html;
+}
 
+function _build_stats_tabs_and_charts(results) {
+	var html = '';
 	var lastRun = results.length;
+
 	html += '<div class="multi_run_tabs">';
 	results.forEach(function(r, i) {
 		var runNr = i + 1;
@@ -1878,6 +1873,39 @@ function _build_multi_run_stats_html(results, losses, valLosses, accs) {
 		var display = runNr === lastRun ? "block" : "none";
 		html += '<div id="multi_run_chart_' + runNr + '" class="multi_run_chart_area" style="display:' + display + ';"></div>';
 	});
+
+	return html;
+}
+
+function _build_multi_run_stats_html(results, losses, valLosses, accs) {
+	var lossStats = calculate_stats(losses);
+
+	var html = '<div class="multi_run_stats_container">';
+	html += '<h3><span class="TRANSLATEME_multi_run_statistics"></span></h3>';
+	html += '<p><span class="TRANSLATEME_noise_analysis_intro"></span></p>';
+
+	html += '<table class="multi_run_stats_table">';
+	html += '<tr><th></th>';
+	html += '<th><span class="TRANSLATEME_mean"></span></th>';
+	html += '<th><span class="TRANSLATEME_min"></span></th>';
+	html += '<th><span class="TRANSLATEME_max"></span></th>';
+	html += '<th><span class="TRANSLATEME_best_run"></span></th>';
+	html += '<th><span class="TRANSLATEME_worst_run"></span></th>';
+	html += '</tr>';
+
+	html += _build_stats_summary_rows(losses, valLosses, accs);
+
+	html += '</table>';
+
+	html += _build_stats_noise_section(lossStats);
+
+	if (losses.length >= 6) {
+		html += '<div id="multi_run_boxplot" style="margin: 12px 0;"></div>';
+	}
+
+	html += _build_stats_detail_rows(results, losses, valLosses, accs);
+
+	html += _build_stats_tabs_and_charts(results);
 
 	html += '</div>';
 	return html;
@@ -2362,31 +2390,8 @@ function draw_category_to_training_visualization(canvasses, numCategories, categ
 	}
 }
 
-function draw_images_in_grid(images, categories, probabilities, category_overview) {
-	var $container = $("#canvas_grid_visualization");
-
-	// === FIX: Prevent scroll jump by keeping container height stable ===
-	// Before clearing, lock the container to its current rendered height.
-	// This prevents layout collapse which causes the browser to scroll up.
-	var currentHeight = $container.outerHeight();
-	if (currentHeight > 0) {
-		$container.css("min-height", currentHeight + "px");
-	}
-
-	$container.html("");
-
-	var numCategories = labels.length;
-
-	var margin = 10;
+function _draw_grid_scale_canvas(_height, margin) {
 	var scaleWidth = 40;
-
-	var _height = $container.height();
-
-	if (!_height) {
-		_height = 460;
-	}
-
-	// Create a scale canvas on the left
 	var scaleCanvas = document.createElement("canvas");
 	scaleCanvas.width = scaleWidth;
 	scaleCanvas.height = _height;
@@ -2434,15 +2439,10 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	scaleCtx.fillText(language[lang]["certainty"] + " in %", 0, 0);
 	scaleCtx.restore();
 
-	$(scaleCanvas).appendTo($container);
+	return scaleCanvas;
+}
 
-	var canvasses = get_canvasses(numCategories, _height);
-
-	var graphWidth = canvasses[0].width - margin * 2;
-	var maxProb = 1;
-
-	draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
-
+function _draw_grid_init_counters(images, categories) {
 	var canvas_img_counter = {};
 	var real_canvas_img_counter = [];
 
@@ -2457,6 +2457,11 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 		real_canvas_img_counter[category]++;
 	}
 
+	return { canvas_img_counter: canvas_img_counter, real_canvas_img_counter: real_canvas_img_counter };
+}
+
+function _draw_grid_images(images, categories, probabilities, canvasses, counters, margin, graphHeight) {
+	var maxProb = 1;
 	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]);
 
 	for (let image_idx = 0; image_idx < images.length; image_idx++) {
@@ -2464,9 +2469,9 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 		var category = categories[image_idx];
 		var probability = probabilities[image_idx];
 
-		if (real_canvas_img_counter[category] > 0) {
+		if (counters.real_canvas_img_counter[category] > 0) {
 			var canvas_width = canvasses[0].width;
-			targetSize = canvas_width / real_canvas_img_counter[category];
+			targetSize = canvas_width / counters.real_canvas_img_counter[category];
 			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize);
 		}
 
@@ -2483,7 +2488,7 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 			var h = image.height * scale;
 
 			var imageX = xPos - model?.input?.shape[2] / 2;
-			imageX += canvas_img_counter[category] * targetSize;
+			imageX += counters.canvas_img_counter[category] * targetSize;
 
 			if (imageX < 0) {
 				imageX = 0;
@@ -2494,15 +2499,43 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 			var imageY = parse_int(yPos - h / 2);
 			ctx.drawImage(image, imageX, imageY, w, h);
 
-			canvas_img_counter[category]++;
+			counters.canvas_img_counter[category]++;
 		}
 	}
+}
+
+function draw_images_in_grid(images, categories, probabilities, category_overview) {
+	var $container = $("#canvas_grid_visualization");
+
+	var currentHeight = $container.outerHeight();
+	if (currentHeight > 0) {
+		$container.css("min-height", currentHeight + "px");
+	}
+
+	$container.html("");
+
+	var numCategories = labels.length;
+	var margin = 10;
+
+	var _height = $container.height();
+	if (!_height) {
+		_height = 460;
+	}
+
+	var scaleCanvas = _draw_grid_scale_canvas(_height, margin);
+	$(scaleCanvas).appendTo($container);
+
+	var canvasses = get_canvasses(numCategories, _height);
+	var graphHeight = _height - margin * 2 - 50;
+
+	draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
+
+	var counters = _draw_grid_init_counters(images, categories);
+
+	_draw_grid_images(images, categories, probabilities, canvasses, counters, margin, graphHeight);
 
 	append_grid_image_to_dom(numCategories, canvasses, _height);
 
-	// === FIX: After content is inserted, release the min-height lock ===
-	// Use requestAnimationFrame to ensure the new content is rendered first,
-	// then remove the artificial min-height so the container can size naturally.
 	requestAnimationFrame(function () {
 		$container.css("min-height", "");
 	});
