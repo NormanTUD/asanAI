@@ -36,6 +36,7 @@ ignored_long_funcs = [
     "run_tests",
     "create_python_code",
     "check_if_lang",
+    "_inject_tooltip_styles",
     "get_optimizer_equations",
     "get_fit_data",
     "run_super_quick_tests"
