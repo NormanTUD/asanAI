@@ -344,8 +344,6 @@ async function compile_model(recursion_level=0) {
 		model.compile(compile_data);
 		model_config_hash = new_model_config_hash;
 
-		enableAutoRecord();
-
 		if (typeof pyodideOnModelChanged === "function") {
 			pyodideOnModelChanged();
 			pyodideEditorStop();

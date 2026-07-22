@@ -7,7 +7,7 @@
 var layerIOStats = {
 	records: [],
 	maxRecords: 50,
-	enabled: true,
+	enabled: false,
 	_isRecording: false,
 	_multiModel: null,
 	_outputMeta: null,
@@ -189,6 +189,17 @@ function enableAutoRecord() {
 	layerIOStats._lastPatchedModel = model;
 
 	dbg("[layerIO] Auto-record patched on model successfully.");
+}
+
+function toggleAutoRecord() {
+	layerIOStats.enabled = !layerIOStats.enabled;
+	if (layerIOStats.enabled) {
+		enableAutoRecord();
+	}
+	dbg("[layerIO] Auto-record " + (layerIOStats.enabled ? "enabled" : "disabled") + ".");
+	if (layerIOStats._container && document.body.contains(layerIOStats._container)) {
+		renderLayerIOStats(layerIOStats._container);
+	}
 }
 
 // ============================================================
@@ -876,12 +887,49 @@ function renderLayerIOStats(divTarget) {
 		border-radius: 3px;
 		transition: width 0.5s ease;
 	    }
+	    .lio_toggle_btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 14px;
+		border: 2px solid var(--border-color, #bbb);
+		border-radius: 8px;
+		background: rgba(128,128,128,0.06);
+		cursor: pointer;
+		font-size: 0.85em;
+		transition: background 0.2s, border-color 0.2s;
+		margin-bottom: 14px;
+	    }
+	    .lio_toggle_btn:hover {
+		background: rgba(128,128,128,0.12);
+	    }
+	    .lio_toggle_btn.lio_toggle_on {
+		border-color: #2ecc71;
+		background: rgba(46,204,113,0.08);
+	    }
+	    .lio_toggle_dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: #e74c3c;
+		transition: background 0.2s;
+	    }
+	    .lio_toggle_btn.lio_toggle_on .lio_toggle_dot {
+		background: #2ecc71;
+	    }
 	`;
 		document.head.appendChild(style);
 	}
 
 	if (layerIOStats.records.length === 0) {
-		container.innerHTML = "<p style='opacity:0.6;'><span class='TRANSLATEME_layer_io_no_data'></span></p>";
+		var toggleClass = layerIOStats.enabled ? " lio_toggle_on" : "";
+		var toggleLabelKey = layerIOStats.enabled ? "layer_io_recording_active" : "layer_io_recording_inactive";
+		container.innerHTML =
+			"<button class='lio_toggle_btn" + toggleClass + "' onclick='toggleAutoRecord()'>" +
+			"<span class='lio_toggle_dot'></span>" +
+			"<span class='TRANSLATEME_" + toggleLabelKey + "'></span>" +
+			"</button>" +
+			"<p style='opacity:0.6;'><span class='TRANSLATEME_layer_io_no_data'></span></p>";
 		return container;
 	}
 
@@ -889,6 +937,14 @@ function renderLayerIOStats(divTarget) {
 	var html = "";
 
 	html += "<h2><span class='TRANSLATEME_layer_io_title'></span></h2>";
+
+	var toggleClass = layerIOStats.enabled ? " lio_toggle_on" : "";
+	var toggleLabelKey = layerIOStats.enabled ? "layer_io_recording_active" : "layer_io_recording_inactive";
+	html += "<button class='lio_toggle_btn" + toggleClass + "' onclick='toggleAutoRecord()'>" +
+		"<span class='lio_toggle_dot'></span>" +
+		"<span class='TRANSLATEME_" + toggleLabelKey + "'></span>" +
+		"</button>";
+
 	html += "<p class='lio_subtitle'><span class='TRANSLATEME_layer_io_record'></span> #" + layerIOStats.records.length +
 		" | " + new Date(latestRecord.timestamp).toLocaleTimeString() +
 		" | <span class='TRANSLATEME_layer_io_total'></span>: " + layerIOStats.records.length + "</p>";
