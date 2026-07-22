@@ -54,7 +54,10 @@ ignored_files = [
     "activation_atlas.js",
     "explain_losses.js",
     "loss_landscape.js",
-    "activation_atlas_tab.js"
+    "activation_atlas_tab.js",
+    "weight_analysis.js",
+    "trace_through_loss_landscape.js",
+    "weight_surfaces.js",
 ]
 
 @dataclass
