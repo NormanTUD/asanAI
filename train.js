@@ -1553,7 +1553,24 @@ async function fit_model(x_and_y) {
 
 		await wait_for_updated_page(2);
 
-		const h = await model.fit(x, y, fit_data);
+		let h;
+		try {
+			h = await model.fit(x, y, fit_data);
+		} catch (fitErr) {
+			if (("" + fitErr).includes("backend") && ("" + fitErr).includes("undefined")) {
+				wrn("[fit_model] Backend became invalid during fit, retrying once after reinitializing:", fitErr.message);
+				await tf.ready();
+				await compile_model();
+				if (!model || !model.optimizer) {
+					throw fitErr;
+				}
+				const x_retry = is_tensor(x) && !x.isDisposed ? x : tf.tensor(Array.isArray(x_and_y["x"]) ? x_and_y["x"] : array_sync(x_and_y["x"]));
+				const y_retry = is_tensor(y) && !y.isDisposed ? y : tf.tensor(Array.isArray(x_and_y["y"]) ? x_and_y["y"] : array_sync(x_and_y["y"]));
+				h = await model.fit(x_retry, y_retry, fit_data);
+			} else {
+				throw fitErr;
+			}
+		}
 
 		await nextFrame();
 		l(language[lang]["finished_training"]);
