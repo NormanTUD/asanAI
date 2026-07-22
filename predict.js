@@ -942,6 +942,83 @@ async function predict_own_data_and_repredict () {
 	await repredict();
 }
 
+async function _predict_validate_and_get_data(item, pred_tab) {
+	var is_image_prediction = input_shape_is_image();
+
+	var predict_data = await get_predict_data(is_image_prediction, null, item);
+
+	if(predict_data === false) {
+		hide_predict_spinner("#" + pred_tab);
+		return {aborted: true};
+	}
+
+	if (should_abort_predict(predict_data)) {
+		dbg("[predict] predict_data is already disposed!");
+		hide_predict_spinner("#" + pred_tab);
+		return {aborted: true};
+	}
+
+	var predict_data_error_string_or_false = await get_predict_data_error_string_or_false(predict_data);
+
+	if (predict_data_error_string_or_false !== false) {
+		hide_predict_spinner("#" + pred_tab);
+		return {aborted: true, error: predict_data_error_string_or_false};
+	}
+
+	if (!is_image_prediction) {
+		predict_data = divide_predict_data_by_divide_by(predict_data);
+	}
+
+	if(check_predict_data_and_model(predict_data)) {
+		hide_predict_spinner("#" + pred_tab);
+		return {aborted: true};
+	}
+
+	var mi = model?.input?.shape;
+	if(!mi) {
+		err(language[lang]["cannot_get_model_input_shape"]);
+		hide_predict_spinner("#" + pred_tab);
+		return {aborted: true};
+	}
+	mi[0] = 1;
+
+	return {aborted: false, predict_data: predict_data, mi: mi, is_image_prediction: is_image_prediction};
+}
+
+async function _predict_run_prediction(predict_data, mi, pred_tab) {
+	var predictions_tensor = null;
+	reset_predict_error();
+
+	try {
+		if(predict_data["isDisposedInternal"]) {
+			dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+			hide_predict_spinner("#" + pred_tab);
+			return {aborted: true};
+		}
+
+		var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
+		var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
+
+		predict_data = await prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
+
+		if(predict_data["isDisposedInternal"]) {
+			dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
+			hide_predict_spinner("#" + pred_tab);
+			return {aborted: true};
+		}
+
+		predictions_tensor = await __predict(predict_data);
+	} catch (e) {
+		report_prediction_shape_mismatch(mi, predict_data, e);
+		hide_predict_spinner("#" + pred_tab);
+		return {aborted: true};
+	}
+
+	warn_if_tensor_is_disposed(predictions_tensor);
+
+	return {aborted: false, predictions_tensor: predictions_tensor, predict_data: predict_data};
+}
+
 async function predict(item) {
 	const pred_tab = "prediction";
 
@@ -957,75 +1034,22 @@ async function predict(item) {
 	var has_html = false;
 
 	try {
-		var is_image_prediction = input_shape_is_image();
+		var validated = await _predict_validate_and_get_data(item, pred_tab);
+		if(validated.aborted) {
+			return validated.error || undefined;
+		}
 
-		predict_data = await get_predict_data(is_image_prediction, predict_data, item);
+		predict_data = validated.predict_data;
+		var mi = validated.mi;
+		var is_image_prediction = validated.is_image_prediction;
 
-		if(predict_data === false) {
-			hide_predict_spinner("#" + pred_tab);
+		var pred_result = await _predict_run_prediction(predict_data, mi, pred_tab);
+		if(pred_result.aborted) {
 			return;
 		}
 
-		if (should_abort_predict(predict_data)) {
-			dbg("[predict] predict_data is already disposed!");
-			hide_predict_spinner("#" + pred_tab);
-			return;
-		}
-
-		var predict_data_error_string_or_false = await get_predict_data_error_string_or_false(predict_data);
-
-		if (predict_data_error_string_or_false !== false) {
-			hide_predict_spinner("#" + pred_tab);
-			return predict_data_error_string_or_false;
-		}
-
-		if (!is_image_prediction) {
-			predict_data = divide_predict_data_by_divide_by(predict_data);
-		}
-
-		if(check_predict_data_and_model(predict_data)) {
-			hide_predict_spinner("#" + pred_tab);
-			return;
-		}
-
-		var mi = model?.input?.shape;
-		if(!mi) {
-			err(language[lang]["cannot_get_model_input_shape"]);
-			hide_predict_spinner("#" + pred_tab);
-			return;
-		}
-		mi[0] = 1;
-
-		var predictions_tensor = null;
-		reset_predict_error();
-
-		try {
-			if(predict_data["isDisposedInternal"]) {
-				dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
-				hide_predict_spinner("#" + pred_tab);
-				return;
-			}
-
-			var prod_pred_shape = number_of_elements_in_tensor_shape(predict_data.shape);
-			var prod_mod_shape = number_of_elements_in_tensor_shape(mi);
-
-			predict_data = await prepare_predict_data(mi, predict_data, prod_pred_shape, prod_mod_shape);
-
-			if(predict_data["isDisposedInternal"]) {
-				dbg(`[predict] ${language[lang]["predict_data_is_already_disposed"]}!`);
-				hide_predict_spinner("#" + pred_tab);
-				return;
-			}
-
-			predictions_tensor = await __predict(predict_data);
-		} catch (e) {
-			report_prediction_shape_mismatch(mi, predict_data, e);
-			ok = 0;
-			hide_predict_spinner("#" + pred_tab);
-			return;
-		}
-
-		warn_if_tensor_is_disposed(predictions_tensor);
+		var predictions_tensor = pred_result.predictions_tensor;
+		predict_data = pred_result.predict_data;
 
 		await draw_heatmap(predictions_tensor, predict_data);
 
@@ -1682,24 +1706,56 @@ async function handle_predict_webcam_error (e, predictions_tensor, predict_data)
 	await dispose(predictions_tensor, predict_data);
 }
 
+function _predict_webcam_validate () {
+	if(currently_predicting_webcam) {
+		dbg(language[lang]["already_predicting_exiting_webcam"]);
+		return true;
+	}
+
+	if(!cam) {
+		return true;
+	}
+
+	if(is_hidden_or_has_hidden_parent($("#webcam")) && is_hidden_or_has_hidden_parent("#fcnn_canvas")) {
+		return true;
+	}
+
+	return false;
+}
+
+async function _predict_webcam_render (predictions, predictions_tensor, webcam_prediction) {
+	if(!input_shape_is_image() && labels.length == 0) {
+		var str = "[" + predictions.join(", ") + "]";
+		webcam_prediction.append(str);
+	} else {
+		if(predictions.length) {
+			webcam_prediction.html("");
+			if(model.outputShape.length == 4) {
+				var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
+				var pxsz = compute_pixel_size(largest);
+
+				if(predictions_tensor.shape[3] == 3) {
+					draw_rgb(predictions_tensor, predictions, pxsz, webcam_prediction);
+				} else {
+					draw_multi_channel(predictions_tensor, webcam_prediction, pxsz);
+				}
+			} else {
+				await _webcam_predict_text(webcam_prediction, predictions[0]);
+			}
+		} else {
+			dbg("[predict_webcam] predictions is empty for predict_webcam");
+		}
+	}
+}
+
 async function predict_webcam () {
 	try {
-		if(currently_predicting_webcam) {
-			dbg(language[lang]["already_predicting_exiting_webcam"]);
+		if(_predict_webcam_validate()) {
+			currently_predicting_webcam = false;
 			return;
 		}
 
 		currently_predicting_webcam = true;
-
-		if(!cam) {
-			currently_predicting_webcam = false;
-			return;
-		}
-
-		if(is_hidden_or_has_hidden_parent($("#webcam")) && is_hidden_or_has_hidden_parent("#fcnn_canvas")) {
-			currently_predicting_webcam = false;
-			return;
-		}
 
 		var webcam_image = await cam.capture();
 
@@ -1758,28 +1814,7 @@ async function predict_webcam () {
 		var webcam_prediction = $("#webcam_prediction");
 		webcam_prediction.html("").show();
 
-		if(!input_shape_is_image() && labels.length == 0) {
-			var str = "[" + predictions.join(", ") + "]";
-			webcam_prediction.append(str);
-		} else {
-			if(predictions.length) {
-				webcam_prediction.html("");
-				if(model.outputShape.length == 4) {
-					var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
-					var pxsz = compute_pixel_size(largest);
-
-					if(predictions_tensor.shape[3] == 3) {
-						draw_rgb(predictions_tensor, predictions, pxsz, webcam_prediction);
-					} else {
-						draw_multi_channel(predictions_tensor, webcam_prediction, pxsz);
-					}
-				} else {
-					await _webcam_predict_text(webcam_prediction, predictions[0]);
-				}
-			} else {
-				dbg("[predict_webcam] predictions is empty for predict_webcam");
-			}
-		}
+		await _predict_webcam_render(predictions, predictions_tensor, webcam_prediction);
 
 		hide_predict_spinner("#webcam_prediction");
 

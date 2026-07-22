@@ -759,26 +759,83 @@ function _fcnn_edit_close_popup() {
 // APPLY VALUE CHANGES TO MODEL (the core - like math_editable set())
 // ============================================================
 
+function _fcnn_edit_validate_tensor_access(from_layer) {
+    try {
+        var meta_infos = _fcnn_edit_active.meta_infos;
+        var meta = meta_infos[from_layer + 1];
+        var layer = model.layers[meta.nr];
+        var testWeights = layer.getWeights();
+        if (!testWeights || testWeights.length === 0) return null;
+        testWeights[0].dataSync();
+        return {meta_infos: meta_infos, meta: meta, layer: layer};
+    } catch(e) {
+        log("[fcnn_edit] Skipping weight update - model tensors temporarily unavailable.");
+        return null;
+    }
+}
+
+function _fcnn_edit_apply_value_via_weights(layer, weight_flat_idx, newValue) {
+    var currentWeights = null;
+    try { currentWeights = layer.getWeights(); } catch(e) {}
+
+    if (currentWeights && currentWeights.length > 0) {
+        var kernelTensor = currentWeights[0];
+        var kernelData = null;
+
+        try {
+            kernelData = Array.from(kernelTensor.dataSync());
+        } catch(e) {
+            try {
+                kernelData = Array.from(kernelTensor.arraySync().flat(Infinity));
+            } catch(e2) {
+                console.warn("[fcnn_edit] Cannot read kernel data");
+                return true;
+            }
+        }
+
+        if (weight_flat_idx >= kernelData.length) {
+            console.warn("[fcnn_edit] Index out of bounds:", weight_flat_idx, ">=", kernelData.length);
+            return true;
+        }
+
+        kernelData[weight_flat_idx] = newValue;
+
+        var newWeightTensors = [];
+        try {
+            var newKernel = tf.tensor(kernelData, kernelTensor.shape);
+            newWeightTensors.push(newKernel);
+
+            for (var i = 1; i < currentWeights.length; i++) {
+                newWeightTensors.push(currentWeights[i]);
+            }
+
+            layer.setWeights(newWeightTensors);
+
+            newKernel.dispose();
+        } catch(setErr) {
+            console.warn("[fcnn_edit] setWeights failed, trying direct approach:", setErr.message);
+            if (newWeightTensors.length > 0 && newWeightTensors[0] && typeof newWeightTensors[0].dispose === 'function') {
+                try { newWeightTensors[0].dispose(); } catch(e) {}
+            }
+
+            _fcnn_edit_apply_value_direct(layer, weight_flat_idx, newValue);
+            return true;
+        }
+
+        _fcnn_edit_trigger_update();
+        return true;
+    }
+
+    return false;
+}
+
 function _fcnn_edit_apply_value(newValue) {
     if (!_fcnn_edit_active) return;
     if (_fcnn_edit_active.type !== "weight") return;
     if (!isFinite(newValue)) return;
 
-    // Check if model tensors are still valid (model may have been recreated)
-    try {
-        var meta_infos = _fcnn_edit_active.meta_infos;
-        var from_layer = _fcnn_edit_active.from_layer;
-        var meta = meta_infos[from_layer + 1];
-        var layer = model.layers[meta.nr];
-        var testWeights = layer.getWeights();
-        if (!testWeights || testWeights.length === 0) return; // silent return
-        testWeights[0].dataSync();
-    } catch(e) {
-        // Model was recreated - DON'T close popup, just skip this update.
-        // The model will stabilize and next slider event will work.
-        log("[fcnn_edit] Skipping weight update - model tensors temporarily unavailable.");
-        return;  // <--- Einfach return, NICHT close!
-    }
+    var validated = _fcnn_edit_validate_tensor_access(_fcnn_edit_active.from_layer);
+    if (!validated) return;
 
     try {
         var meta_infos = _fcnn_edit_active.meta_infos;
@@ -790,7 +847,6 @@ function _fcnn_edit_apply_value(newValue) {
             return;
         }
 
-        // Get the actual model layer (weights belong to the receiving layer)
         var meta = meta_infos[from_layer + 1];
         if (!meta) { console.warn("[fcnn_edit] No meta for layer", from_layer + 1); return; }
 
@@ -805,67 +861,10 @@ function _fcnn_edit_apply_value(newValue) {
         var layer = model.layers[actual_layer_idx];
         if (!layer) { console.warn("[fcnn_edit] Layer not found:", actual_layer_idx); return; }
 
-        // Method 1: Use getWeights/setWeights (safest across TF.js versions)
-        var currentWeights = null;
-        try { currentWeights = layer.getWeights(); } catch(e) {}
-        
-        if (currentWeights && currentWeights.length > 0) {
-            var kernelTensor = currentWeights[0];
-            var kernelData = null;
-            
-            // Get mutable copy of kernel data
-            try {
-                kernelData = Array.from(kernelTensor.dataSync());
-            } catch(e) {
-                try {
-                    kernelData = Array.from(kernelTensor.arraySync().flat(Infinity));
-                } catch(e2) {
-                    console.warn("[fcnn_edit] Cannot read kernel data");
-                    return;
-                }
-            }
-
-            if (weight_flat_idx >= kernelData.length) {
-                console.warn("[fcnn_edit] Index out of bounds:", weight_flat_idx, ">=", kernelData.length);
-                return;
-            }
-
-            kernelData[weight_flat_idx] = newValue;
-
-            // Build new weights array
-            var newWeightTensors = [];
-            try {
-                var newKernel = tf.tensor(kernelData, kernelTensor.shape);
-                newWeightTensors.push(newKernel);
-
-                for (var i = 1; i < currentWeights.length; i++) {
-                    newWeightTensors.push(currentWeights[i]);
-                }
-
-                // Set weights — TF.js internally clones the data
-                layer.setWeights(newWeightTensors);
-
-                // Only dispose the new kernel we created (not the ones from getWeights
-                // which TF.js may still reference internally in some versions)
-                newKernel.dispose();
-            } catch(setErr) {
-                console.warn("[fcnn_edit] setWeights failed, trying direct approach:", setErr.message);
-                // Dispose our new kernel if it was created
-                if (newWeightTensors.length > 0 && newWeightTensors[0] && typeof newWeightTensors[0].dispose === 'function') {
-                    try { newWeightTensors[0].dispose(); } catch(e) {}
-                }
-                
-                // Method 2: Direct .val assignment (works in some TF.js builds)
-                _fcnn_edit_apply_value_direct(layer, weight_flat_idx, newValue);
-                return;
-            }
-
-            // Trigger live update
-            _fcnn_edit_trigger_update();
+        if (_fcnn_edit_apply_value_via_weights(layer, weight_flat_idx, newValue)) {
             return;
         }
 
-        // Method 2 fallback: Direct tensor manipulation
         _fcnn_edit_apply_value_direct(layer, weight_flat_idx, newValue);
 
     } catch (e) {

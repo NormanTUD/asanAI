@@ -1937,43 +1937,14 @@ function _math_apply_skip_weight_change_1d(skip_proj_layer, idx, new_value) {
 	}
 }
 
-function model_to_latex() {
-	var layers = model?.layers;
-	var input_shape = get_first_layer_input_shape();
-	if (!input_shape || !layers) { return ""; }
-
-	shown_activation_equations = [];
-
-	var output_shape = model.layers[model.layers.length - 1].outputShape;
-	var default_vars = get_default_vars();
+function _model_to_latex_build_layers (layer_data, colors, y_layer, input_layer) {
 	var str = "";
-	var layer_data = get_layer_data();
-	var y_layer = get_y_output_shapes(output_shape);
-
-	// When started_training is true, pass prev_layer_data for color diff (red/green).
-	// When false, pass empty array (no color diff — editables are active instead).
-	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
-
-	var input_layer = get_input_layer(input_shape);
-
-	activation_string = "";
-
-	str += get_loss_equations_string();
-
-	if (get_metric() != get_loss()) {
-		str += get_metric_equations_string();
-	}
-
 	var has_any_skip_connection = false;
-
-	// Build a mapping from model layer index to GUI layer index,
-	// skipping internal skip-connection layers
 	var gui_layer_idx = 0;
 
 	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
 		var layer_name = model.layers[layer_idx].name || "";
 
-		// Skip internal skip-connection layers entirely
 		if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
 			continue;
 		}
@@ -1985,7 +1956,6 @@ function model_to_latex() {
 			str += "\n<h2>Layers:</h2>\n";
 		}
 
-		// Check if this layer has a skip connection for the legend
 		var skip_info_check = get_skip_connection_info(gui_layer_idx);
 		if (skip_info_check.enabled && !skip_connection_excluded_types.includes(this_layer_type)) {
 			has_any_skip_connection = true;
@@ -1993,7 +1963,6 @@ function model_to_latex() {
 
 		var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias, gui_layer_idx);
 
-		// --- Generalized interactive marker handling ---
 		var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
 
 		if (interactive_info) {
@@ -2001,7 +1970,6 @@ function model_to_latex() {
 			str += "<div class='temml_me'> \\text{Layer " + gui_layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
 			str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div>";
 
-			// Check if skip connection info is encoded in the marker
 			var has_skip_in_marker = layer_str.indexOf("%%SKIP_ENABLED_") !== -1;
 			var skip_container_id = "math_skip_" + interactive_info.type + "_L" + layer_idx;
 
@@ -2011,7 +1979,6 @@ function model_to_latex() {
 
 			str += "<br>";
 
-			// Schedule the hybrid render after DOM update
 			(function(cid, skip_cid, li, ld, c, il, yl, itype, hasSkip, egi, lt) {
 				setTimeout(function() {
 					_dispatch_interactive_inject(itype, cid, li, ld, c, il, yl);
@@ -2028,7 +1995,10 @@ function model_to_latex() {
 		gui_layer_idx++;
 	}
 
-	// === SKIP CONNECTION EXPLANATION ===
+	return {str: str, has_any_skip_connection: has_any_skip_connection};
+}
+
+function _model_to_latex_finalize (str, has_any_skip_connection) {
 	if (has_any_skip_connection) {
 		str += "<h3>Skip Connections:</h3>\n";
 		str += "<div class='temml_me'>\\text{Skip Connection: } h_i = f(h_{i-1}) + W_{\\text{skip}} \\cdot h_{i-1}</div><br>\n";
@@ -2037,13 +2007,46 @@ function model_to_latex() {
 
 	str += get_optimizer_latex_equations();
 
-	prev_layer_data = layer_data;
-
 	str = latex_blocks() + "\n" + str;
 
 	if (activation_string && str) {
 		str = "<h2>" + language[lang]["activation_functions"] + ":</h2>" + activation_string + str;
 	}
+
+	return str;
+}
+
+function model_to_latex() {
+	var layers = model?.layers;
+	var input_shape = get_first_layer_input_shape();
+	if (!input_shape || !layers) { return ""; }
+
+	shown_activation_equations = [];
+
+	var output_shape = model.layers[model.layers.length - 1].outputShape;
+	var default_vars = get_default_vars();
+	var str = "";
+	var layer_data = get_layer_data();
+	var y_layer = get_y_output_shapes(output_shape);
+
+	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
+
+	var input_layer = get_input_layer(input_shape);
+
+	activation_string = "";
+
+	str += get_loss_equations_string();
+
+	if (get_metric() != get_loss()) {
+		str += get_metric_equations_string();
+	}
+
+	var built = _model_to_latex_build_layers(layer_data, colors, y_layer, input_layer);
+	str += built.str;
+
+	prev_layer_data = layer_data;
+
+	str = _model_to_latex_finalize(str, built.has_any_skip_connection);
 
 	return str;
 }

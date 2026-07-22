@@ -1,5 +1,65 @@
 "use strict";
 
+async function _set_config_apply_settings (config, index, update_step) {
+	if (!config) return null;
+
+	update_step(language[lang]["setting_model_parameters"]);
+	await set_stuff_from_predefined_config(index, config);
+
+	update_step(language[lang]["reading_layer_architecture"]);
+	var keras_layers = await get_number_of_layers_and_keras_layers(config);
+
+	if(keras_layers === false) {
+		err("set_config: keras_layers from get_number_of_layers_and_keras_layers was empty");
+		return null;
+	}
+
+	if(keras_layers === false) {
+		return null;
+	}
+
+	if (config["input_shape"]) {
+		update_step(language[lang]["setting_input_shape"]);
+		await set_input_shape(config["input_shape"]);
+	} else {
+		if(!set_is_from_config_or_return(config)) {
+			return null;
+		}
+	}
+
+	await set_width_and_height_from_first_layer_if_image(keras_layers);
+
+	update_step(language[lang]["applying_layer_settings"]);
+	keras_layers = await apply_keras_layers_to_ui_from_config(config, keras_layers);
+
+	return keras_layers;
+}
+
+async function _set_config_finalize (update_step, config) {
+	update_step(language[lang]["creating_model"]);
+
+	await dispose_if_exists(global_model_data);
+
+	await get_model_data();
+
+	model = await create_model(model, undefined);
+
+	update_step(language[lang]["compiling_model"]);
+	await compile_model();
+
+	update_step(language[lang]["loading_weights"]);
+	if(await set_weights_if_exists_or_error(config)) {
+		return true;
+	}
+
+	disable_all_non_selected_layer_types();
+
+	update_step(language[lang]["loading_labels"]);
+	await get_label_data();
+
+	return false;
+}
+
 async function set_config(index=undefined, keep_overlay=false) {
 	assert(["string", "undefined"].includes(typeof(index)), "Index must be either string or undefined, but is " + typeof(index) + " (" + index + ")");
 
@@ -44,59 +104,18 @@ async function set_config(index=undefined, keep_overlay=false) {
 	disable_show_python_and_create_model = true;
 
 	if (config) {
-		update_step(language[lang]["setting_model_parameters"]);
-		await set_stuff_from_predefined_config(index, config);
-
-		update_step(language[lang]["reading_layer_architecture"]);
-		var keras_layers = await get_number_of_layers_and_keras_layers(config);
-
-		if(keras_layers === false) {
-			err("set_config: keras_layers from get_number_of_layers_and_keras_layers was empty");
+		var result = await _set_config_apply_settings(config, index, update_step);
+		if(result === null) {
 			return;
 		}
-
-		if(keras_layers === false) {
-			return;
-		}
-
-		if (config["input_shape"]) {
-			update_step(language[lang]["setting_input_shape"]);
-			await set_input_shape(config["input_shape"]);
-		} else {
-			if(!set_is_from_config_or_return(config)) {
-				return;
-			}
-		}
-
-		await set_width_and_height_from_first_layer_if_image(keras_layers);
-
-		update_step(language[lang]["applying_layer_settings"]);
-		keras_layers = await apply_keras_layers_to_ui_from_config(config, keras_layers);
 	}
 
 	disabling_saving_status = original_disabling_saving_status;
 	disable_show_python_and_create_model = false;
 
-	update_step(language[lang]["creating_model"]);
-
-	await dispose_if_exists(global_model_data);
-
-	await get_model_data();
-
-	model = await create_model(model, undefined);
-
-	update_step(language[lang]["compiling_model"]);
-	await compile_model();
-
-	update_step(language[lang]["loading_weights"]);
-	if(await set_weights_if_exists_or_error(config)) {
+	if(await _set_config_finalize(update_step, config)) {
 		return;
 	}
-
-	disable_all_non_selected_layer_types();
-
-	update_step(language[lang]["loading_labels"]);
-	await get_label_data();
 
 	is_setting_config = false;
 
