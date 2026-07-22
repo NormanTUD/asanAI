@@ -48,6 +48,8 @@ ignored_files = [
     "online_python.js",
     "topological_analyzer.js",
     "dimensionality_river.js",
+    "faster_canvas_functions.js",
+    "valsplitwatcher.js",
     "gradient_flow_heatmap.js",
     "health_status_popups.js",
     "tests.js",
