@@ -1067,65 +1067,6 @@ var TopologicalAnalyzer = (function () {
 var _tooltipEl = null;
 var _tooltipTimeout = null;
 
-function getTooltipKey(labelText) {
-	var keyMap = {
-		"β₀ (components)": "tda_tooltip_betti0_components",
-		"β₁ (loops)": "tda_tooltip_betti1_loops",
-		"Total Persistence H₀": "tda_tooltip_total_persistence_h0",
-		"Total Persistence H₁": "tda_tooltip_total_persistence_h1",
-		"Max Persistence H₀": "tda_tooltip_max_persistence_h0",
-		"Max Persistence H₁": "tda_tooltip_max_persistence_h1",
-		"Persistence Entropy H₀": "tda_tooltip_persistence_entropy_h0",
-		"Persistence Entropy H₁": "tda_tooltip_persistence_entropy_h1",
-		"Final β₀": "tda_tooltip_final_betti0",
-		"Final β₁": "tda_tooltip_final_betti1",
-		// German variants
-		"β₀ (Komponenten)": "tda_tooltip_betti0_components",
-		"β₁ (Schleifen)": "tda_tooltip_betti1_loops",
-		"Gesamtpersistenz H₀": "tda_tooltip_total_persistence_h0",
-		"Gesamtpersistenz H₁": "tda_tooltip_total_persistence_h1",
-		"Max. Persistenz H₀": "tda_tooltip_max_persistence_h0",
-		"Max. Persistenz H₁": "tda_tooltip_max_persistence_h1",
-		"Persistenz-Entropie H₀": "tda_tooltip_persistence_entropy_h0",
-		"Persistenz-Entropie H₁": "tda_tooltip_persistence_entropy_h1",
-		"Finales β₀": "tda_tooltip_final_betti0",
-		"Finales β₁": "tda_tooltip_final_betti1"
-	};
-
-	// Normalize encoded characters
-	var normalized = labelText
-		.replace(/Œ≤‚ÇÄ/g, "β₀")
-		.replace(/Œ≤‚ÇÅ/g, "β₁")
-		.replace(/H‚ÇÄ/g, "H₀")
-		.replace(/H‚ÇÅ/g, "H₁");
-
-	return keyMap[normalized] || keyMap[labelText] || null;
-}
-
-function getChartTooltipKey(titleText) {
-	if (!titleText) return null;
-	var lower = titleText.toLowerCase();
-	if (lower.indexOf("persistence diagram") !== -1 || lower.indexOf("persistenzdiagramm") !== -1) {
-		return "tda_tooltip_persistence_diagram";
-	}
-	if (lower.indexOf("betti curve") !== -1 || lower.indexOf("betti-kurve") !== -1) {
-		return "tda_tooltip_betti_curves";
-	}
-	if (lower.indexOf("barcode") !== -1) {
-		return "tda_tooltip_barcode";
-	}
-	if (lower.indexOf("point cloud") !== -1 || lower.indexOf("punktwolke") !== -1) {
-		return "tda_tooltip_point_cloud";
-	}
-	if (lower.indexOf("weight distribution") !== -1 || lower.indexOf("gewichtsverteilung") !== -1) {
-		return "tda_tooltip_weight_distribution";
-	}
-	if (lower.indexOf("input betti") !== -1 || lower.indexOf("eingabe-betti") !== -1) {
-		return "tda_tooltip_input_betti";
-	}
-	return null;
-}
-
 function getTooltipContent(key) {
 	if (!key) return null;
 	try {
@@ -1337,62 +1278,6 @@ function attachTooltipListeners(container) {
 	// ============================================================
 	// CHART WRAPPER WITH TOOLTIP (wraps SVG charts)
 	// ============================================================
-
-	function wrapChartWithTooltip(svgHtml, chartTitle) {
-		var tooltipKey = getChartTooltipKey(chartTitle);
-		if (!tooltipKey) return svgHtml;
-
-		return '<div data-tda-chart-tooltip="' + tooltipKey + '" style="cursor:help;position:relative;">'
-			+ svgHtml
-			+ '<div style="position:absolute;top:4px;right:8px;font-size:10px;opacity:0.35;pointer-events:none;">ⓘ</div>'
-			+ '</div>';
-	}
-
-	// ============================================================
-	// MODIFIED renderPersistenceDiagram (with tooltip wrapper)
-	// ============================================================
-
-	function renderPersistenceDiagramWithTooltip(pairs, width, height, title, colorH0, colorH1) {
-		var svg = renderPersistenceDiagram(pairs, width, height, title, colorH0, colorH1);
-		return wrapChartWithTooltip(svg, title);
-	}
-
-	// ============================================================
-	// MODIFIED renderBettiCurves (with tooltip wrapper)
-	// ============================================================
-
-	function renderBettiCurvesWithTooltip(bettiCurve0, bettiCurve1, epsilonValues, width, height, title) {
-		var svg = renderBettiCurves(bettiCurve0, bettiCurve1, epsilonValues, width, height, title);
-		return wrapChartWithTooltip(svg, title);
-	}
-
-	// ============================================================
-	// MODIFIED renderBarcode (with tooltip wrapper)
-	// ============================================================
-
-	function renderBarcodeWithTooltip(h0Pairs, h1Pairs, width, height, title) {
-		var svg = renderBarcode(h0Pairs, h1Pairs, width, height, title);
-		return wrapChartWithTooltip(svg, title);
-	}
-
-	// ============================================================
-	// MODIFIED renderPointCloudSVG (with tooltip wrapper)
-	// ============================================================
-
-	function renderPointCloudSVGWithTooltip(points, width, height, title) {
-		var svg = renderPointCloudSVG(points, width, height, title);
-		return wrapChartWithTooltip(svg, title);
-	}
-
-	// ============================================================
-	// MODIFIED renderWeightHistogramSVG (with tooltip wrapper)
-	// ============================================================
-
-	function renderWeightHistogramSVGWithTooltip(histogram, width, height, title) {
-		var svg = renderWeightHistogramSVG(histogram, width, height, title);
-		return wrapChartWithTooltip(svg, title);
-	}
-
 
 	// ============================================================
 	// STYLE INJECTION

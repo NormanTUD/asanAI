@@ -124,23 +124,6 @@ function show_overlay(text, title="", options={}) {
 	}
 }
 
-function update_overlay_progress(overlay, value) {
-	// value should be between 0 and 100
-	if (!overlay || !overlay._progressBar) return;
-
-	value = Math.max(0, Math.min(100, value));
-	overlay._progressBar.style.width = value + "%";
-}
-
-function update_overlay_text(overlay, newText) {
-	if (!overlay) return;
-
-	var textEl = overlay.querySelector(".overlay-text");
-	if (textEl) {
-		textEl.innerHTML = newText;
-	}
-}
-
 function update_overlay_title(overlay, newTitle) {
 	if (!overlay) return;
 

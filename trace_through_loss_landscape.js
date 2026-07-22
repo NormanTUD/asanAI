@@ -268,14 +268,6 @@ var LossLandscape = (function () {
 		}
 	}
 
-	function _getLayoutWithCamera(baseLayout) {
-		// If we have a saved camera, apply it to prevent reset
-		if (_state.lastCamera) {
-			baseLayout.scene.camera = _state.lastCamera;
-		}
-		return baseLayout;
-	}
-
 	// ============================================================
 	// INTERACTION DETECTION - Defer updates while user is interacting
 	// ============================================================

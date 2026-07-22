@@ -1197,27 +1197,6 @@ async function handle_add_to_layer_model_catch (fake_model_structure, e, model_s
 	}
 }
 
-function throw_if_shape_contains_0_or_has_multihead(new_model) {
-	if(new_model && new_model.layers) {
-		var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(0).shape;
-		if(new_output_shape) {
-			throw_if_output_shape_contains_0(new_output_shape);
-			throw_if_has_multihead_output(new_model);
-		}
-	}
-}
-
-function throw_if_has_multihead_output (new_model) {
-	try {
-		var new_output_shape = new_model.layers[new_model.layers.length - 1].getOutputAt(1);
-		throw new Error(`Layer has more than one output head!`);
-	} catch (e) {
-		if(("" + e).includes("Has Multi-Output")) {
-			throw new Error(e);
-		}
-	}
-}
-
 function throw_if_output_shape_contains_0(new_output_shape) {
 	for (let j in new_output_shape) {
 		if(new_output_shape[j] === 0) {

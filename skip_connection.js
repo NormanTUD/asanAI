@@ -262,24 +262,6 @@ function get_skip_connection_info(layer_nr) {
     };
 }
 
-function update_skip_connection_strength(layer_nr, elem) {
-	var val = parseFloat($(elem).val());
-
-	if (!skip_connection_settings[layer_nr]) {
-		skip_connection_settings[layer_nr] = { enabled: false, strength: val };
-	}
-
-	skip_connection_settings[layer_nr].strength = val;
-	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
-
-	updated_page(); // await not possible here
-}
-
-function update_skip_connection_strength_display(layer_nr, elem) {
-	var val = parseFloat($(elem).val());
-	$("#skip_conn_strength_val_" + layer_nr).text(val.toFixed(2));
-}
-
 function build_skip_connection_html(type, nr) {
 	if (skip_connection_excluded_types.includes(type)) {
 		return "";

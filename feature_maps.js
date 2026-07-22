@@ -1786,18 +1786,6 @@ async function gui_compute_color_correlation() {
 	}
 }
 
-function gui_toggle_user_color_correlation(checkbox) {
-	USE_USER_COLOR_CORRELATION = checkbox.checked;
-	// Invalidate cached matrices so they're recomputed on next use
-	COLOR_DECORRELATION_MATRIX = null;
-
-	if (checkbox.checked && !USER_COLOR_CORRELATION_MATRIX) {
-		console.warn("No user color correlation matrix computed yet. Will use ImageNet defaults until computed.");
-		USE_USER_COLOR_CORRELATION = false;
-		checkbox.checked = false;
-	}
-}
-
 async function _get_training_image_tensors() {
 	// Attempt to get images from the application's training data store
 	// This adapts to the specific application's data loading mechanism
@@ -1833,12 +1821,6 @@ async function _get_training_image_tensors() {
 	}
 
 	return null;
-}
-
-function gui_reset_color_correlation() {
-	reset_color_correlation_to_defaults();
-	$("#use_user_color_correlation").prop("checked", false);
-	$("#color_correlation_status").html(language[lang]["using_imagenet_defaults"]);
 }
 
 // ============================================================================

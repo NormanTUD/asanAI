@@ -2476,20 +2476,6 @@ function _get_skip_identity_dimension(layer_idx) {
 	return null;
 }
 
-function _get_skip_input_latex(layer_idx, input_layer, layer_data, colors) {
-	if (layer_idx === 0) {
-		return array_to_latex(input_layer, "Input");
-	}
-
-	var prev_idx = layer_idx - 1;
-
-	if (layer_data[prev_idx] && layer_data[prev_idx].kernel && layer_data[prev_idx].kernel.length) {
-		return _get_h(prev_idx);
-	}
-
-	return _get_h(prev_idx);
-}
-
 /**
  * Checks if a skip layer name belongs to a given gui_layer_idx.
  * 
@@ -3424,10 +3410,6 @@ function extract_layer_io(layer) {
 	}
 
 	return { input, output };
-}
-
-function fmt_value(v) {
-	return v === null ? "\\text{null}" : v;
 }
 
 function fmt_shape(shape) {

@@ -1119,19 +1119,6 @@ var DimensionalityRiver = (function () {
 		return "Class " + labelIdx;
 	}
 
-	function _getPredictedLabel(sampleIdx) {
-		try {
-			if (_state.cachedActivations && _state.cachedActivations.predictedLabels) {
-				var predIdx = _state.cachedActivations.predictedLabels[sampleIdx];
-				if (typeof labels !== "undefined" && labels[predIdx]) {
-					return labels[predIdx];
-				}
-				return "Class " + predIdx;
-			}
-		} catch (e) {}
-		return "";
-	}
-
 	function _positionTooltip(point, svg, tooltip) {
 		try {
 			var wrapperRect = svg.parentElement.getBoundingClientRect();
@@ -1511,23 +1498,6 @@ var DimensionalityRiver = (function () {
 			];
 		} catch (e) {}
 		return imgs;
-	}
-
-	function _imageToDataURL(imgElement, maxSize) {
-		maxSize = maxSize || 64;
-		try {
-			var canvas = document.createElement("canvas");
-			var w = imgElement.naturalWidth || imgElement.width || maxSize;
-			var h = imgElement.naturalHeight || imgElement.height || maxSize;
-			var scale = Math.min(maxSize / w, maxSize / h, 1);
-			canvas.width = Math.round(w * scale);
-			canvas.height = Math.round(h * scale);
-			var ctx = canvas.getContext("2d");
-			ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
-			return canvas.toDataURL("image/png");
-		} catch (e) {
-			return null;
-		}
 	}
 
 	function _triggerTranslations() {

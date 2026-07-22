@@ -222,14 +222,6 @@ function hide_predict_spinner(target_selector) {
 	$(target_selector).find(".predict-spinner").remove();
 }
 
-function match_error(e, handlers, fallback) {
-	var msg = "" + e;
-	for (var [pattern, handler] of handlers) {
-		if (msg.includes(pattern)) return handler(msg);
-	}
-	return fallback ? fallback(msg) : null;
-}
-
 function compute_pixel_size(largest_dim, max_size = 150) {
 	var max_hw = Math.min(max_size, Math.floor(window.innerWidth / 5));
 	var pxsz = Math.max(1, Math.floor(max_hw / largest_dim));
