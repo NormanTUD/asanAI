@@ -2555,7 +2555,7 @@ async function get_table_data_from_images(imgs) {
 			var batch_predictions = tidy(() => {
 				const pd = model.predict(batch_tensor);
 				var _res = array_sync(pd);
-				dispose(pd);
+				dispose(pd); // await not possible here
 				return _res;
 			});
 
