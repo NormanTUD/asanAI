@@ -988,7 +988,7 @@ async function _init_app_data_and_handlers(LM) {
 	void(0); l(`Git-Hash: ${git_hash}, TFJS-Version: ${tf.version["tfjs-core"]}`);
 	invert_elements_in_dark_mode();
 	click_on_graphs = 0;
-	allow_editable_labels();
+	await allow_editable_labels();
 }
 
 async function _init_app_finalization(LM) {

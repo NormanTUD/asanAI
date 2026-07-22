@@ -284,7 +284,7 @@ async function _pp_run_case_prediction(msg, div_id, vals, cases) {
 		return null;
 	}
 
-	if (cases.fallA) return _pp_caseA_batched(x_min, x_max, step);
+	if (cases.fallA) return await _pp_caseA_batched(x_min, x_max, step);
 
 	if (cases.fallB1) {
 		const { y_min, y_max } = _pp_extract_vals(div_id, vals);
@@ -292,10 +292,10 @@ async function _pp_run_case_prediction(msg, div_id, vals, cases) {
 			msg.textContent = 'Y min < Y max required.';
 			return null;
 		}
-		return _pp_caseB1_batched(x_min, x_max, y_min, y_max, step);
+		return await _pp_caseB1_batched(x_min, x_max, y_min, y_max, step);
 	}
 
-	if (cases.fallB2) return _pp_caseB2_batched(x_min, x_max, step);
+	if (cases.fallB2) return await _pp_caseB2_batched(x_min, x_max, step);
 	return [];
 }
 
