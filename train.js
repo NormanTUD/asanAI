@@ -1967,7 +1967,6 @@ function _render_multi_run_boxplot(losses, valLosses) {
 		font: { family: "Arial, Helvetica, sans-serif", size: 14, color: "#7f7f7f" },
 		margin: { l: 70, r: 30, b: 40, t: 30 },
 		xaxis: {
-			title: { text: language[lang]["loss"], font: { size: 14, color: "#7f7f7f" } },
 			showline: false,
 			showgrid: true,
 			gridcolor: "#ccc"
