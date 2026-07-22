@@ -419,6 +419,97 @@ async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
 	await nextFrame();
 }
 
+async function predict_demo_batch(items, indices) {
+	if(!items.length || !model) return;
+	if(has_zero_output_shape) return;
+	if(model.outputShape.length != 2) {
+		for(var i = 0; i < items.length; i++) {
+			await predict_demo(items[i], indices[i]);
+		}
+		return;
+	}
+
+	try {
+		if(labels.length == 0) {
+			await get_label_data();
+		}
+	} catch (e) {
+		return;
+	}
+
+	var input_tensors = [];
+	var valid_indices = [];
+
+	for(var i = 0; i < items.length; i++) {
+		var item = items[i];
+
+		if(!set_item_natural_width(item)) continue;
+		if(item.width == 0) continue;
+
+		var tensor_img = await _get_tensor_img(item);
+
+		if(!tensor_img) continue;
+
+		if(!tensor_shape_matches_model(tensor_img)) {
+			await dispose(tensor_img);
+			continue;
+		}
+
+		input_tensors.push(tensor_img);
+		valid_indices.push(indices[i]);
+	}
+
+	if(!input_tensors.length) return;
+
+	await wait_for_backend_hack();
+
+	if(!model) {
+		for(var t of input_tensors) await dispose(t);
+		return;
+	}
+
+	var batch_tensor = null;
+	var batch_predictions = null;
+
+	try {
+		batch_tensor = tf.concat(input_tensors, 0);
+		batch_predictions = await __predict(batch_tensor);
+	} catch (e) {
+		await dispose(batch_tensor);
+		for(var t of input_tensors) await dispose(t);
+
+		for(var i = 0; i < items.length; i++) {
+			await predict_demo(items[i], indices[i]);
+		}
+		return;
+	}
+
+	if(!batch_predictions) {
+		await dispose(batch_tensor);
+		for(var t of input_tensors) await dispose(t);
+		return;
+	}
+
+	var all_preds = array_sync(batch_predictions);
+
+	for(var i = 0; i < input_tensors.length; i++) {
+		var pred_tensor = tensor(all_preds[i]);
+		await _predict_result(pred_tensor, valid_indices[i], 0);
+		await draw_heatmap(pred_tensor, input_tensors[i]);
+		await dispose(pred_tensor);
+	}
+
+	await dispose(batch_tensor, batch_predictions);
+
+	for(var t of input_tensors) await dispose(t);
+
+	hide_unused_layer_visualization_headers();
+	change_output_and_example_image_size();
+	allow_editable_labels();
+
+	await nextFrame();
+}
+
 async function _run_predict_and_show (tensor_img, nr) {
 	try {
 		if(tensor_img.isDisposedInternal) {
@@ -1497,11 +1588,46 @@ async function _print_example_predictions () {
 			var examples = data_from_url["example"];
 
 			if(examples) {
-				var str = "";
-				[str, count] = await _get_example_string_image(examples, count, full_dir);
+				var [str, count, existing_items, existing_indices] = await _get_example_string_image(examples, 0, full_dir);
+
+				var all_items = existing_items.slice();
+				var all_indices = existing_indices.slice();
 
 				if(str) {
 					example_predictions.html(str);
+
+					var new_imgs = example_predictions.find('.example_images');
+					var load_promises = [];
+					var new_img_data = [];
+
+					for(var i = 0; i < new_imgs.length; i++) {
+						var img = new_imgs[i];
+						new_img_data.push({img: img, idx: i});
+
+						if(!img.complete || img.naturalHeight === 0) {
+							var p = new Promise((resolve) => {
+								img.onload = resolve;
+								img.onerror = resolve;
+							});
+							load_promises.push(p);
+						}
+					}
+
+					if(load_promises.length) {
+						await Promise.all(load_promises);
+					}
+
+					for(var i = 0; i < new_img_data.length; i++) {
+						var data = new_img_data[i];
+						if(data.img.complete && data.img.naturalHeight !== 0) {
+							all_items.push(data.img);
+							all_indices.push(data.idx);
+						}
+					}
+				}
+
+				if(all_items.length) {
+					await predict_demo_batch(all_items, all_indices);
 				}
 			}
 		}
@@ -1532,6 +1658,9 @@ async function _get_example_string_image(examples, count, full_dir) {
 	}
 
 	var str = "";
+	var existing_items = [];
+	var existing_indices = [];
+
 	for (var examples_idx = 0; examples_idx < examples.length; examples_idx++) {
 		count++;
 		var img_url = full_dir + "/" + examples[examples_idx];
@@ -1545,7 +1674,8 @@ async function _get_example_string_image(examples, count, full_dir) {
 				}
 
 				if ($(img).is(":visible")) {
-					await predict_demo(img, examples_idx);
+					existing_items.push(img);
+					existing_indices.push(examples_idx);
 				}
 			} catch (e) {
 				log(language[lang]["predict_demo_failed_error"], e);
@@ -1556,7 +1686,6 @@ async function _get_example_string_image(examples, count, full_dir) {
 					<img src='${img_url}'
 						alt="Example Image"
 						class='example_images'
-						onload='predict_demo(this, ${examples_idx})'
 						onclick='predict_demo(this, ${examples_idx})' />
 					<br>
 					<div class='predict_demo_result'>${placeholder_table}</div>
@@ -1564,7 +1693,7 @@ async function _get_example_string_image(examples, count, full_dir) {
 		}
 	}
 
-	return [str, count];
+	return [str, count, existing_items, existing_indices];
 }
 
 function get_index_of_highest_category (predictions_tensor) {
