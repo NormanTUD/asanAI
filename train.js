@@ -2689,6 +2689,44 @@ async function get_category_overview (image_elements) {
 
 	const _max = get_max_nr_of_images_in_grid();
 
+	var tensors_to_predict = [];
+	var tensor_image_indices = [];
+
+	for (var image_idx = 0; image_idx < image_elements.length && image_idx <= _max; image_idx++) {
+		var image_element = image_elements[image_idx];
+
+		if(!image_element) {
+			wrn("[visualize_train] image_element not defined!", image_element);
+			continue;
+		}
+
+		var img_tensor = get_img_tensor_or_null_and_error(image_element);
+
+		if(img_tensor === null) {
+			wrn("[visualize_train] Could not load image from pixels from this element:", image_element);
+			continue;
+		}
+
+		tensors_to_predict.push(img_tensor);
+		tensor_image_indices.push(image_idx);
+	}
+
+	var batch_predictions = {};
+
+	if(tensors_to_predict.length > 0) {
+		var batchTensor = tf.concat(tensors_to_predict, 0);
+		var batchRes = tidy(() => {
+			return model.predict(batchTensor);
+		});
+		var batchResData = array_sync(batchRes);
+		batchTensor.dispose();
+		batchRes.dispose();
+
+		for(var i = 0; i < tensor_image_indices.length; i++) {
+			batch_predictions[tensor_image_indices[i]] = batchResData[i];
+		}
+	}
+
 	for (var image_idx = 0; image_idx < image_elements.length; image_idx++) {
 		var image_element = image_elements[image_idx];
 
@@ -2696,38 +2734,12 @@ async function get_category_overview (image_elements) {
 		var this_predicted_array = [];
 		var src = get_src_or_error(image_element);
 
-		if(image_idx <= _max) {
-			var res_array;
+		if(image_idx <= _max && batch_predictions.hasOwnProperty(image_idx)) {
+			this_predicted_array = batch_predictions[image_idx];
 
-			if(!image_element) {
-				tf.engine().endScope();
-				wrn("[visualize_train] image_element not defined!", image_element);
-				continue;
-			}
+			assert(Array.isArray(this_predicted_array), `this_predicted_array is not an array, but ${typeof(this_predicted_array)}, ${JSON.stringify(this_predicted_array)}`);
 
-			var img_tensor = get_img_tensor_or_null_and_error(image_element);
-
-			if(img_tensor === null) {
-				wrn("[visualize_train] Could not load image from pixels from this element:", image_element);
-				continue;
-			}
-
-			try {
-				var res = tidy(() => {
-					return model.predict(img_tensor);
-				});
-
-				res_array = array_sync(res)[0];
-				await dispose(res);
-
-				assert(Array.isArray(res_array), `res_array is not an array, but ${typeof(res_array)}, ${JSON.stringify(res_array)}`);
-
-				this_predicted_array = res_array;
-
-				[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities);
-			} catch (e) {
-				dbg(`visualize_train: Error ${e}`);
-			}
+			[categories, probabilities] = add_to_predictions_and_categories(this_predicted_array, image_element_xpath, categories, probabilities);
 		}
 
 		try {
