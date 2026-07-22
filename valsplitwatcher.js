@@ -177,6 +177,17 @@
       }
     }
 
+    function listen_ancestor_scroll(splitEl) {
+      var parent = splitEl.parentElement;
+      while (parent && parent !== document.body) {
+        var overflow = getComputedStyle(parent).overflow;
+        if (overflow === "auto" || overflow === "scroll" || overflow === "overlay") {
+          listen(parent, "scroll", positionPopup);
+        }
+        parent = parent.parentElement;
+      }
+    }
+
     function setup_split_guard_listeners(splitEl, maxFilesEl) {
       listen(maxFilesEl, "blur", function () {
         manualOverride = false;
@@ -205,14 +216,7 @@
       listen(window, "resize", positionPopup);
       listen(window, "scroll", positionPopup);
 
-      var parent = splitEl.parentElement;
-      while (parent && parent !== document.body) {
-        var overflow = getComputedStyle(parent).overflow;
-        if (overflow === "auto" || overflow === "scroll" || overflow === "overlay") {
-          listen(parent, "scroll", positionPopup);
-        }
-        parent = parent.parentElement;
-      }
+      listen_ancestor_scroll(splitEl);
     }
 
     var splitEl = document.getElementById("validationSplit");

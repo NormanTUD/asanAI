@@ -122,6 +122,27 @@ var ModelPlotter = (() => {
 		return msg;
 	}
 
+	function create_or_get_input(div_id, key, controls, msg, update_fn) {
+		const id = div_id + '_' + key;
+		let input = document.getElementById(id);
+		if (input) return input;
+
+		const wrap = document.createElement('div');
+		wrap.style.cssText = 'display:inline-flex;align-items:center;margin:4px 6px 4px 0';
+		const l = document.createElement('label');
+		l.textContent = key.replace('_', ' ') + ':';
+		l.style.marginRight = '6px';
+		input = document.createElement('input');
+		Object.assign(input, { type: 'number', id });
+		input.style.width = '60px';
+		input.addEventListener('input', debounce(update_fn, 300));
+		input.classList.add('no_red_on_error');
+		input.classList.add('show_data');
+		wrap.append(l, input);
+		controls.insertBefore(wrap, msg);
+		return input;
+	}
+
 	function ensure_inputs(div_id, controls, state, cases, update_fn) {
 		const sets = { A: ['x_min','x_max','step'], B1:['x_min','x_max','y_min','y_max','step'], B2:['x_min','x_max','step'] };
 		const keys = cases.fallA ? sets.A : cases.fallB1 ? sets.B1 : sets.B2;
@@ -130,23 +151,8 @@ var ModelPlotter = (() => {
 		let msg = ensure_message_box(controls);
 
 		for (const key of keys) {
+			const input = create_or_get_input(div_id, key, controls, msg, update_fn);
 			const id = div_id + '_' + key;
-			let input = document.getElementById(id);
-			if (!input) {
-				const wrap = document.createElement('div');
-				wrap.style.cssText = 'display:inline-flex;align-items:center;margin:4px 6px 4px 0';
-				const l = document.createElement('label');
-				l.textContent = key.replace('_', ' ') + ':';
-				l.style.marginRight = '6px';
-				input = document.createElement('input');
-				Object.assign(input, { type: 'number', id });
-				input.style.width = '60px';
-				input.addEventListener('input', debounce(update_fn, 300));
-				input.classList.add('no_red_on_error');
-				input.classList.add('show_data');
-				wrap.append(l, input);
-				controls.insertBefore(wrap, msg);
-			}
 			if (old_vals[id] && !isNaN(old_vals[id])) input.value = old_vals[id];
 			fields.push(input);
 		}
@@ -238,34 +244,45 @@ var ModelPlotter = (() => {
 		return r;
 	};
 
-	async function plot_preserve_camera(dom, data, layout = {}, config = {}, key = 'default') {
-		if (!dom) return;
-		const is3D = data.some(d => ['surface','heatmap','scatter3d'].includes(d.type));
-		layout.uirevision = key;
-
+	function save_camera_state(dom, key) {
 		if (dom._fullLayout?.scene?._scene?.getCamera) {
 			try {
 				const cam = dom._fullLayout.scene._scene.getCamera();
 				if (cam) cameras.set(key, cam);
 			} catch {}
 		}
+	}
 
+	function apply_cached_camera(layout, key, is3D) {
+		if (!is3D) return;
 		const cachedCam = cameras.get(key);
-		if (is3D && cachedCam) {
+		if (cachedCam) {
 			layout.scene = layout.scene || {};
 			layout.scene.camera = cachedCam;
 		}
+	}
+
+	function attach_camera_listener(dom, key) {
+		if (dom.__camera_listener) return;
+		dom.on?.('plotly_relayout', () => {
+			const cam = dom._fullLayout?.scene?._scene?.getCamera?.();
+			if (cam) cameras.set(key, cam);
+		});
+		dom.__camera_listener = true;
+	}
+
+	async function plot_preserve_camera(dom, data, layout = {}, config = {}, key = 'default') {
+		if (!dom) return;
+		const is3D = data.some(d => ['surface','heatmap','scatter3d'].includes(d.type));
+		layout.uirevision = key;
+
+		save_camera_state(dom, key);
+		apply_cached_camera(layout, key, is3D);
 
 		try { await Plotly.react(dom, data, layout, config); }
 		catch(e) { console.error('Plotly.react failed', e); }
 
-		if (is3D && !dom.__camera_listener) {
-			dom.on?.('plotly_relayout', () => {
-				const cam = dom._fullLayout?.scene?._scene?.getCamera?.();
-				if (cam) cameras.set(key, cam);
-			});
-			dom.__camera_listener = true;
-		}
+		if (is3D) attach_camera_listener(dom, key);
 	}
 
 	function base_layout(plot_div) {

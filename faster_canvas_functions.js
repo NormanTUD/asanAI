@@ -18,34 +18,51 @@
 			].join("|");
 		}
 
+		function flush_fill_groups() {
+			for (const [key, group] of fill_groups) {
+				const props = group.__style;
+				real_ctx.save();
+				Object.assign(real_ctx, props);
+				try { real_ctx.fill(group.path); } catch(e){}
+				real_ctx.restore();
+			}
+			fill_groups.clear();
+		}
+
+		function flush_stroke_groups() {
+			for (const [key, group] of stroke_groups) {
+				const props = group.__style;
+				real_ctx.save();
+				Object.assign(real_ctx, props);
+				try { real_ctx.stroke(group.path); } catch(e){}
+				real_ctx.restore();
+			}
+			stroke_groups.clear();
+		}
+
 		function schedule_flush() {
 			if (flush_scheduled) return;
 			flush_scheduled = true;
 			requestAnimationFrame(() => {
 				flush_scheduled = false;
-
-				if (fill_groups.size) {
-					for (const [key, group] of fill_groups) {
-						const props = group.__style;
-						real_ctx.save();
-						Object.assign(real_ctx, props);
-						try { real_ctx.fill(group.path); } catch(e){}
-						real_ctx.restore();
-					}
-					fill_groups.clear();
-				}
-
-				if (stroke_groups.size) {
-					for (const [key, group] of stroke_groups) {
-						const props = group.__style;
-						real_ctx.save();
-						Object.assign(real_ctx, props);
-						try { real_ctx.stroke(group.path); } catch(e){}
-						real_ctx.restore();
-					}
-					stroke_groups.clear();
-				}
+				if (fill_groups.size) flush_fill_groups();
+				if (stroke_groups.size) flush_stroke_groups();
 			});
+		}
+
+		function capture_fill_style(ctx) {
+			return { fillStyle: ctx.fillStyle, globalAlpha: ctx.globalAlpha };
+		}
+
+		function capture_stroke_style(ctx) {
+			return {
+				strokeStyle: ctx.strokeStyle,
+				lineWidth: ctx.lineWidth,
+				globalAlpha: ctx.globalAlpha,
+				lineCap: ctx.lineCap,
+				lineJoin: ctx.lineJoin,
+				miterLimit: ctx.miterLimit
+			};
 		}
 
 		function push_group(ctx, isFill) {
@@ -60,17 +77,7 @@
 				p.addPath(current_path);
 				groups.set(key, {
 					path: p,
-					__style: isFill ? {
-						fillStyle: ctx.fillStyle,
-						globalAlpha: ctx.globalAlpha
-					} : {
-						strokeStyle: ctx.strokeStyle,
-						lineWidth: ctx.lineWidth,
-						globalAlpha: ctx.globalAlpha,
-						lineCap: ctx.lineCap,
-						lineJoin: ctx.lineJoin,
-						miterLimit: ctx.miterLimit
-					}
+					__style: isFill ? capture_fill_style(ctx) : capture_stroke_style(ctx)
 				});
 			}
 
@@ -78,12 +85,21 @@
 			schedule_flush();
 		}
 
+		const PATH_METHODS = ["moveTo","lineTo","rect","arc","ellipse","bezierCurveTo","quadraticCurveTo","arcTo"];
+
+		function proxy_rect(target, x, y, w, h, isFill) {
+			try {
+				current_path.rect(x, y, w, h);
+				push_group(target, isFill);
+			} catch(e) {
+				try { return isFill ? target.fillRect(x,y,w,h) : target.strokeRect(x,y,w,h); } catch(e2){}
+			}
+			return target;
+		}
+
 		const proxy = new Proxy(real_ctx, {
 			get(target, prop) {
-				if ([
-					"moveTo","lineTo","rect","arc","ellipse",
-					"bezierCurveTo","quadraticCurveTo","arcTo"
-				].includes(prop)) {
+				if (PATH_METHODS.includes(prop)) {
 					return function(...args){
 						try { current_path[prop](...args); } catch(e){}
 						return target;
@@ -105,27 +121,11 @@
 				}
 
 				if (prop === "strokeRect") {
-					return function(x,y,w,h) {
-						try {
-							current_path.rect(x,y,w,h);
-							push_group(target, false);
-						} catch(e) {
-							try { return target.strokeRect(x,y,w,h); } catch(e2){}
-						}
-						return target;
-					};
+					return function(x,y,w,h) { return proxy_rect(target, x, y, w, h, false); };
 				}
 
 				if (prop === "fillRect") {
-					return function(x,y,w,h) {
-						try {
-							current_path.rect(x,y,w,h);
-							push_group(target, true);
-						} catch(e) {
-							try { return target.fillRect(x,y,w,h); } catch(e2){}
-						}
-						return target;
-					};
+					return function(x,y,w,h) { return proxy_rect(target, x, y, w, h, true); };
 				}
 
 				if (prop === "stroke") {
@@ -135,7 +135,6 @@
 					};
 				}
 
-				// ⭐ NEW: Intercept fill() to preserve colors
 				if (prop === "fill") {
 					return function(){
 						push_group(target, true);
