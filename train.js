@@ -4,6 +4,8 @@ var multi_run_data = {};
 var current_multi_run = 0;
 var _grid_visualization_height = 0;
 var _last_grid_canvas_data_url = null;
+var _last_grid_draw_params = null;
+var _grid_resize_timeout = null;
 
 function save_multi_run_weights(run) {
 	if (!model) return;
@@ -2535,6 +2537,7 @@ function _restore_last_grid_render() {
 		var displayCanvas = document.createElement("canvas");
 		displayCanvas.width = img.width;
 		displayCanvas.height = img.height;
+		displayCanvas.style.width = "100%";
 		var displayCtx = displayCanvas.getContext("2d");
 		displayCtx.drawImage(img, 0, 0);
 		$(displayCanvas).appendTo($container);
@@ -2547,6 +2550,8 @@ function _restore_last_grid_render() {
 }
 
 function draw_images_in_grid(images, categories, probabilities, category_overview) {
+	_last_grid_draw_params = { images, categories, probabilities, category_overview };
+
 	var $container = $("#canvas_grid_visualization");
 
 	var currentHeight = $container.outerHeight();
@@ -2574,6 +2579,7 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	var canvas = document.createElement("canvas");
 	canvas.width = totalWidth;
 	canvas.height = _height;
+	canvas.style.width = "100%";
 
 	var ctx = canvas.getContext("2d");
 	ctx.fillStyle = "rgba(255, 255, 255, 0)";
@@ -2599,8 +2605,25 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 		wrn("[draw_images_in_grid] Could not cache canvas: " + e);
 	}
 
+	_setup_grid_resize_listener();
+
 	requestAnimationFrame(function () {
 		$container.css("min-height", "");
+	});
+}
+
+function _setup_grid_resize_listener() {
+	if (_grid_resize_timeout !== null) return;
+
+	$(window).on("resize.grid_viz", function() {
+		if (_grid_resize_timeout !== null) clearTimeout(_grid_resize_timeout);
+		_grid_resize_timeout = setTimeout(function() {
+			_grid_resize_timeout = null;
+			if (_last_grid_draw_params) {
+				var p = _last_grid_draw_params;
+				draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
+			}
+		}, 200);
 	});
 }
 
