@@ -360,6 +360,65 @@ function save_custom_images_file (blob, filename="custom_images.zip") {
 	save_file(filename, "data:application/zip", blob);
 }
 
+async function _extract_categories_from_zip(zipReader) {
+	var entries = await zipReader.getEntries();
+	var categories = {};
+
+	for (var i = 0; i < entries.length; i++) {
+		var entry = entries[i];
+		if (entry.directory) continue;
+
+		var path_parts = entry.filename.split("/");
+		if (path_parts.length < 2) continue;
+
+		var cat_label = path_parts[0];
+		var filename = path_parts.slice(1).join("/");
+
+		if (!filename.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg)$/i)) continue;
+
+		var blob = await entry.getData(new zip.BlobWriter("image/png"));
+
+		if (!categories[cat_label]) categories[cat_label] = [];
+		categories[cat_label].push({ filename: filename, blob: blob });
+	}
+
+	return categories;
+}
+
+async function _load_images_into_ui(category_labels, categories, import_update_step) {
+	var label_inputs = $(".own_image_label");
+	var image_containers = $(".own_images");
+
+	var total_images = 0;
+	for (var ci = 0; ci < category_labels.length; ci++) {
+		total_images += categories[category_labels[ci]].length;
+	}
+	var images_loaded = 0;
+
+	for (var c = 0; c < category_labels.length; c++) {
+		var this_label = category_labels[c];
+
+		$(label_inputs[c]).val(this_label);
+		$(image_containers[c]).empty();
+
+		var images = categories[this_label];
+		for (var img_idx = 0; img_idx < images.length; img_idx++) {
+			var img_data = images[img_idx];
+			var dataUrl = await blob_to_data_url(img_data.blob);
+
+			images_loaded++;
+			if (images_loaded % 5 === 0 || images_loaded === total_images) {
+				import_update_step(language[lang]["importing_custom_images"] + " (" + images_loaded + "/" + total_images + ")");
+			}
+
+			var img_id = img_data.filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_") || uuidv4();
+
+			var html = '<span class="own_image_span"><img height="90" id="' + img_id + '_image" src="' + dataUrl + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
+			$(image_containers[c]).append(html);
+		}
+	}
+}
+
 async function import_zip_and_replace_categories(inputElement) {
 	var file = inputElement.files[0];
 	if (!file) return;
@@ -385,38 +444,7 @@ async function import_zip_and_replace_categories(inputElement) {
 
 	try {
 		var zipReader = new zip.ZipReader(new zip.BlobReader(file));
-		var entries = await zipReader.getEntries();
-
-		if (!entries || entries.length === 0) {
-			err("Zip file is empty or could not be read.");
-			await zipReader.close();
-			restore_zip_upload_button(labelEl, inputEl);
-			remove_overlay();
-			return;
-		}
-
-		var categories = {};
-
-		import_update_step(language[lang]["importing_custom_images"]);
-		for (var i = 0; i < entries.length; i++) {
-			var entry = entries[i];
-			if (entry.directory) continue;
-
-			var path_parts = entry.filename.split("/");
-			if (path_parts.length < 2) continue;
-
-			var cat_label = path_parts[0];
-			var filename = path_parts.slice(1).join("/");
-
-			if (!filename.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg)$/i)) continue;
-
-			var blob = await entry.getData(new zip.BlobWriter("image/png"));
-
-			if (!categories[cat_label]) categories[cat_label] = [];
-			categories[cat_label].push({ filename: filename, blob: blob });
-		}
-
-		await zipReader.close();
+		var categories = await _extract_categories_from_zip(zipReader);
 
 		var category_labels = Object.keys(categories);
 		if (category_labels.length === 0) {
@@ -426,41 +454,13 @@ async function import_zip_and_replace_categories(inputElement) {
 			return;
 		}
 
+		await zipReader.close();
+
 		import_update_step(language[lang]["importing_custom_images"]);
 		await click_on_new_category_or_delete_category_until_number_is_right(category_labels.length);
 		await delay(500);
 
-		var label_inputs = $(".own_image_label");
-		var image_containers = $(".own_images");
-
-		var total_images = 0;
-		for (var ci = 0; ci < category_labels.length; ci++) {
-			total_images += categories[category_labels[ci]].length;
-		}
-		var images_loaded = 0;
-
-		for (var c = 0; c < category_labels.length; c++) {
-			var this_label = category_labels[c];
-
-			$(label_inputs[c]).val(this_label);
-			$(image_containers[c]).empty();
-
-			var images = categories[this_label];
-			for (var img_idx = 0; img_idx < images.length; img_idx++) {
-				var img_data = images[img_idx];
-				var dataUrl = await blob_to_data_url(img_data.blob);
-
-				images_loaded++;
-				if (images_loaded % 5 === 0 || images_loaded === total_images) {
-					import_update_step(language[lang]["importing_custom_images"] + " (" + images_loaded + "/" + total_images + ")");
-				}
-
-				var img_id = img_data.filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_") || uuidv4();
-
-				var html = '<span class="own_image_span"><img height="90" id="' + img_id + '_image" src="' + dataUrl + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
-				$(image_containers[c]).append(html);
-			}
-		}
+		await _load_images_into_ui(category_labels, categories, import_update_step);
 
 		update_image_counters();
 		await rename_labels();
