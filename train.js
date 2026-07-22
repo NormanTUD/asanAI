@@ -1925,7 +1925,7 @@ function _build_multi_run_stats_html(results, losses, valLosses, accs) {
 	html += _build_stats_noise_section(lossStats);
 
 	if (losses.length >= 6) {
-		html += '<div id="multi_run_boxplot" style="margin: 12px 0;"></div>';
+		html += '<div id="multi_run_boxplot" style="margin: 12px 0; overflow: visible;"></div>';
 	}
 
 	html += _build_stats_detail_rows(results, losses, valLosses, accs);
@@ -1973,7 +1973,7 @@ function _render_multi_run_boxplot(losses, valLosses) {
 			gridcolor: "#ccc"
 		},
 		showlegend: false,
-		height: 100 + (valLosses.length >= 6 ? 80 : 0)
+		height: 200 + (valLosses.length >= 6 ? 100 : 0)
 	};
 
 	Plotly.newPlot("multi_run_boxplot", boxTraces, boxLayout, { responsive: true });
