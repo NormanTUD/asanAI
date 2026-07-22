@@ -6297,6 +6297,7 @@ class asanAI {
 			await asanai_this.visualize_train();
 
 			$("#tiny_graph").hide();
+			clear_tiny_graph_tooltip();
 
 			$("#network_has_seen_msg").hide();
 
