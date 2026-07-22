@@ -2816,10 +2816,7 @@ td.confusion_matrix_tx.cm-zero {
 
 .tiny_graph_tooltip_box {
 	display: none;
-	position: absolute;
-	top: 100%;
-	right: 0;
-	margin-top: 4px;
+	position: fixed;
 	background: rgba(30, 30, 30, 0.95);
 	color: #eee;
 	padding: 8px 12px;
