@@ -1442,7 +1442,7 @@ function attachTooltipListeners(container) {
 				html += renderSummaryTable(summary, "Topological Summary (Training Data)");
 
 			} else {
-				html += '<div class="tda-no-data">No training data available. Load data via xy_data_global or start training.</div>';
+				html += '<div class="tda-no-data">No training data available. Start training.</div>';
 			}
 
 			html += '</div>'; // end tda-section
