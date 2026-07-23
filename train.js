@@ -147,7 +147,8 @@ async function check_signal_flow() {
 			"   1. Use 'leakyReLU' or 'elu' instead of 'relu'\n" +
 			"   2. Use 'heNormal' kernel initializer\n" +
 			"   3. Increase the number of filters\n" +
-			"   4. Lower the learning rate"
+			"   4. Lower the learning rate\n" +
+			"   5. Check bias initializer to be larger than 0"
 		);
 	}
 }
