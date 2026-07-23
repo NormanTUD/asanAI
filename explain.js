@@ -1198,25 +1198,25 @@ async function get_live_tracking_on_batch_end (global_model_name, max_epoch, x_d
 function get_layout_for_real_vs_predicted_function() {
 	return {
 		paper_bgcolor: "rgba(0, 0, 0, 0)",
-			plot_bgcolor: "rgba(0, 0, 0, 0)",
-			gridcolor: "#7c7c7c",
-			font: {
-				family: "Arial, Helvetica, sans-serif",
-					size: 18,
-					color: "#7f7f7f"
-			},
-			title: "Real function vs. predicted function",
-			yaxis: {
-				title: "predicted vs. real data",
-					side: "left",
-					showgrid: false
-			},
-			xaxis: {
-				title: "x",
-					side: "bottom",
-					showgrid: false
-			},
-			renderer: "webgl"
+		plot_bgcolor: "rgba(0, 0, 0, 0)",
+		gridcolor: "#7c7c7c",
+		font: {
+			family: "Arial, Helvetica, sans-serif",
+			size: 18,
+			color: "#7f7f7f"
+		},
+		title: "Real function vs. predicted function",
+		yaxis: {
+			title: "Output (y)",
+			side: "left",
+			showgrid: false
+		},
+		xaxis: {
+			title: "Input (x)",
+			side: "bottom",
+			showgrid: false
+		},
+		renderer: "webgl"
 	};
 }
 
