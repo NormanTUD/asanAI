@@ -1580,7 +1580,7 @@ var ActivationAtlas = (function () {
 		var ctx = _state.ctx;
 		ctx.fillStyle = "#0d0d1a";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = "rgba(255,255,255,0.15)";
+		ctx.fillStyle = "#ffffff";
 		ctx.font = "16px -apple-system, BlinkMacSystemFont, sans-serif";
 		ctx.textAlign = "center";
 		ctx.fillText("Click \"Start\" to generate the activation atlas", canvas.width / 2, canvas.height / 2);
