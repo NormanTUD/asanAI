@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os, re, sys
 
-ignored_files = ["asanai.js", "manual.js", "python_code.js", "activation_atlas.js", "trace_through_loss_landscape.js", "topological_analyzer.js"]
+ignored_files = ["asanai.js", "manual.js", "python_code.js", "activation_atlas.js", "trace_through_loss_landscape.js", "topological_analyzer.js", "optimizer_info.js"]
 ignored_file_funcs = [
     "main.js:fire",
     "gui.js:fire",
