@@ -250,22 +250,42 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			const right = document.querySelector("#right_side");
 			const width = right ? right.clientWidth * opts.container_width_pct : 640;
 			wrapper.style.cssText = `
-				width: ${width}px;
-				margin-bottom: 20px;
-				box-sizing: border-box;
-				visibility: hidden;
-				border-radius: 10px;
-				box-shadow: ${_dark()
-					? '0 2px 16px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.06)'
-					: '0 2px 12px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1)'};
-				overflow: hidden;
-				background: ${_dark() ? 'rgba(22,22,35,0.6)' : 'rgba(255,255,255,0.7)'};
-				backdrop-filter: blur(4px);
-			`;
+    width: ${width}px;
+    height: 560px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: ${_dark()
+		    ? '0 2px 16px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.06)'
+		    : '0 2px 12px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1)'};
+    overflow: hidden;
+    background: ${_dark() ? 'rgba(22,22,35,0.6)' : 'rgba(255,255,255,0.7)'};
+    backdrop-filter: blur(4px);
+`;
+
+			const spinnerPlaceholder = document.createElement('div');
+			spinnerPlaceholder.className = 'plot-spinner-placeholder';
+			spinnerPlaceholder.style.cssText = `
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+`;
+			spinnerPlaceholder.innerHTML = `<div class="spinner"></div>`;
+			wrapper.appendChild(spinnerPlaceholder);
 
 			const plotDiv = document.createElement('div');
 			plotDiv.style.width = '100%';
 			plotDiv.style.height = '560px';
+			plotDiv.style.opacity = '0';
+			plotDiv.style.position = 'relative';
+			plotDiv.style.zIndex = '2';
 			plotDiv.__lastCamera = null;
 			plotDiv.dataset.plotKey = safeKey;
 
@@ -297,7 +317,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		layout.font.color = c.font;
 		layout.font.family = layout.font.family || 'Inter, system-ui, sans-serif';
 
-		// Refined config defaults
 		config = Object.assign({
 			responsive: true,
 			displayModeBar: true,
@@ -368,7 +387,13 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			dom.__plotly_camera_listeners_attached = true;
 		}
 
-		if (dom.parentNode) dom.parentNode.style.visibility = 'visible';
+		if (dom.parentNode) {
+			dom.parentNode.style.visibility = 'visible';
+			dom.style.opacity = '1';
+			const spinner = dom.parentNode.querySelector('.plot-spinner-placeholder');
+			if (spinner) spinner.remove();
+		}
+
 		try { safe_plotly_resize(dom); } catch (e) {}
 	}
 
@@ -645,14 +670,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	const parent = ensure_container(container_or_id);
 
-	var spinnerWrapper = null;
-
-	if ($("#weight_surfaces_content").html() == "") {
-		spinnerWrapper = document.createElement('div');
-		spinnerWrapper.innerHTML = `<center><div class="spinner"></div></center>`;
-		parent.appendChild(spinnerWrapper);
-	}
-
 	let container = parent.querySelector('#tfjs_weights_container');
 	if (!container) {
 		container = document.createElement('div');
@@ -760,12 +777,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 	} catch (e) {
 		console.error("visualize_model_weights error:", e);
 		show_message_in_container(container, '❌ Error visualizing weights: ' + e.message);
-	} finally {
-		try {
-			if (spinnerWrapper && spinnerWrapper.parentNode) {
-				spinnerWrapper.parentNode.removeChild(spinnerWrapper);
-			}
-		} catch (e) {}
 	}
 };
 
