@@ -694,15 +694,24 @@ var LossLandscape = (function () {
 		var existing = document.getElementById(_SINGLETON_ID);
 		if (existing && existing.parentNode) {
 			// Reuse existing container — DON'T remove it!
-			// This prevents scroll position reset
 			_state.container = existing;
 
-			// Only purge the plotly instance if we need to rebuild
-			if (_state.plotDiv && typeof Plotly !== "undefined") {
-				try { Plotly.purge(_state.plotDiv); } catch (e) {}
+			// Nur Plotly purgen wenn das Modell sich geändert hat
+			var modelUnchanged = (typeof _model_fingerprint_unchanged !== "undefined") && _model_fingerprint_unchanged;
+
+			if (!modelUnchanged) {
+				if (_state.plotDiv && typeof Plotly !== "undefined") {
+					try { Plotly.purge(_state.plotDiv); } catch (e) {}
+				}
+				_state.plotlyInitialized = false;
+				_state.lastPlotHash = "";
+			} else {
+				// Modell gleich → Plot-Hash invalidieren damit Surface neu berechnet wird
+				// (Daten könnten sich geändert haben), aber plotlyInitialized bleibt true
+				// damit Plotly.react() statt newPlot() verwendet wird (smoother)
+				_state.lastPlotHash = "";
 			}
-			_state.plotlyInitialized = false;
-			_state.lastPlotHash = "";
+
 			return existing;
 		}
 
@@ -730,9 +739,17 @@ var LossLandscape = (function () {
 	}
 
 	function _buildUI(container) {
-		// FIX #10: Only build UI once, don't wipe innerHTML if already built
-		if (_state.uiBuilt && _state.plotDiv && _state.plotDiv.parentNode) {
-			// Just purge the plot for re-initialization, don't rebuild DOM
+		var modelUnchanged = (typeof _model_fingerprint_unchanged !== "undefined") && _model_fingerprint_unchanged;
+
+		// Wenn UI schon gebaut und Modell gleich → nichts tun (Plot bleibt intakt)
+		if (_state.uiBuilt && _state.plotDiv && _state.plotDiv.parentNode && modelUnchanged) {
+			// Plot bleibt komplett erhalten, nur Hash invalidieren für Surface-Update
+			_state.lastPlotHash = "";
+			return;
+		}
+
+		// Wenn UI schon gebaut aber Modell geändert → nur Plotly purgen, DOM behalten
+		if (_state.uiBuilt && _state.plotDiv && _state.plotDiv.parentNode && !modelUnchanged) {
 			if (typeof Plotly !== "undefined") {
 				try { Plotly.purge(_state.plotDiv); } catch (e) {}
 			}
@@ -741,10 +758,13 @@ var LossLandscape = (function () {
 			return;
 		}
 
+		// Erstmaliger Aufbau
 		container.innerHTML = "";
 
+		var theme = _getThemeColors();
+
 		var title = document.createElement("div");
-		title.style.cssText = "color: #aaa; font-size: 12px; margin-bottom: 6px; font-family: sans-serif;";
+		title.style.cssText = "color: " + theme.textColor + "; font-size: 12px; margin-bottom: 6px; font-family: sans-serif;";
 		title.textContent = "3D Loss Landscape (1 Dense, 1 neuron, input [1]) — Plotly";
 		container.appendChild(title);
 
@@ -775,7 +795,7 @@ var LossLandscape = (function () {
 
 		var clearBtn = document.createElement("button");
 		clearBtn.textContent = "Clear Path";
-		clearBtn.style.cssText = "padding: 4px 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #ccc; border-radius: 6px; cursor: pointer; font-size: 11px;";
+		clearBtn.style.cssText = "padding: 4px 12px; border: 1px solid " + theme.btnBorder + "; background: " + theme.btnBg + "; color: " + theme.btnColor + "; border-radius: 6px; cursor: pointer; font-size: 11px;";
 		clearBtn.onclick = function () {
 			_state.history = [];
 			_state.lastPlotHash = "";
@@ -785,10 +805,9 @@ var LossLandscape = (function () {
 
 		container.appendChild(btnRow);
 
-		// FIX #11: Prevent wheel events on the plot from scrolling the page
+		// Prevent wheel events on the plot from scrolling the page
 		plotDiv.addEventListener("wheel", function (e) {
 			e.stopPropagation();
-			// Don't preventDefault — let Plotly handle zoom
 		}, { passive: true });
 
 		// Prevent touch scrolling on the plot from scrolling the page
@@ -821,15 +840,25 @@ var LossLandscape = (function () {
 		var container = _getOrCreateContainer(divOrId);
 		_buildUI(container);
 
-		_state.history = [];
-		_state.cachedX = null;
-		_state.cachedY = null;
-		_state.debugMsg = "Initializing...";
-		_state.lastCamera = null;
+		// === Nur History resetten wenn Modell sich geändert hat ===
+		var modelUnchanged = (typeof _model_fingerprint_unchanged !== "undefined") && _model_fingerprint_unchanged;
+
+		if (!modelUnchanged) {
+			// Modell hat sich geändert → alles zurücksetzen
+			_state.history = [];
+			_state.cachedX = null;
+			_state.cachedY = null;
+			_state.debugMsg = "Initializing (new model)...";
+			_state.lastCamera = null;
+		} else {
+			// Modell ist gleich → History und Camera beibehalten
+			_state.debugMsg = "Continuing from previous run (" + _state.history.length + " points)...";
+			// cachedX/cachedY bleiben erhalten — werden beim nächsten _syncData() ohnehin aktualisiert
+			// lastCamera bleibt erhalten für nahtlose Kameraposition
+		}
 
 		_ensurePlotly(function () {
 			_state.active = true;
-			// FIX #12: Use a slower interval (800ms) to reduce conflicts with interaction
 			_state.intervalId = setInterval(_tick, 800);
 			_tick();
 		});
