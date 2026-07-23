@@ -142,11 +142,13 @@ async function check_signal_flow() {
 	sampleInput.dispose();
 
 	if (allDead) {
-		wrn("⚠️ SUGGESTION: Your network has dead layers. Try:");
-		wrn("   1. Use 'leakyReLU' or 'elu' instead of 'relu'");
-		wrn("   2. Use 'heNormal' kernel initializer");
-		wrn("   3. Increase the number of filters (currently only 4)");
-		wrn("   4. Lower the learning rate");
+		wrn(
+			"⚠ SUGGESTION: Your network has dead layers. Try:\n" +
+			"   1. Use 'leakyReLU' or 'elu' instead of 'relu'\n" +
+			"   2. Use 'heNormal' kernel initializer\n" +
+			"   3. Increase the number of filters\n" +
+			"   4. Lower the learning rate"
+		);
 	}
 }
 
