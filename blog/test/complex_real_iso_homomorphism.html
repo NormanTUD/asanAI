@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ℝ vs. ℂ – Homomorph, aber nicht Isomorph</title>
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
-    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -627,23 +627,25 @@
                 'math-iso-def': '\\varphi: A \\xrightarrow{\\sim} B \\text{ bijektiv und } \\varphi(a \\star b) = \\varphi(a) \\star \\varphi(b)',
                 'math-embedding': '\\varphi: \\mathbb{R} \\hookrightarrow \\mathbb{C}, \\quad \\varphi(r) = r + 0 \\cdot i \\quad \\text{(injektiv, aber NICHT surjektiv)}',
                 'math-x2plus1': 'x^2 + 1 = 0 \\quad \\Longrightarrow \\quad x = \\pm i \\in \\mathbb{C} \\quad \\text{aber} \\quad \\nexists\\, x \\in \\mathbb{R}',
-                'math-contradiction': '\\text{Annahme: } \\varphi: \\mathbb{C} \\xrightarrow{\\sim} \\mathbb{R} \\implies \\varphi(i)^2 = \\varphi(i^2) = \\varphi(-1) = -1 \\implies \\text{Widerspruch!}',
+                'math-contradiction': '\\text{Annahme: } \\varphi: \\mathbb{C} \\xrightarrow{\\sim} \\mathbb{R} \\Rightarrow \\varphi(i)^2 = \\varphi(i^2) = \\varphi(-1) = -1 \\Rightarrow \\text{Widerspruch!}',
                 'math-unity': '\\zeta_n = e^{2\\pi i / n} = \\cos\\!\\left(\\frac{2\\pi}{n}\\right) + i\\sin\\!\\left(\\frac{2\\pi}{n}\\right), \\quad \\zeta_n^{\\,n} = 1',
                 'math-unity-formula': '\\omega_k = e^{2\\pi i k/n}, \\quad k = 0, 1, \\ldots, n-1',
-                'math-order': '\\forall a \\in \\mathbb{R}: a^2 \\geq 0 \\quad \\text{aber} \\quad i^2 = -1 < 0 \\;\\text{???}',                'math-final': '\\boxed{\\mathbb{R} \\hookrightarrow \\mathbb{C} \\text{ (Homo)} \\quad \\text{aber} \\quad \\mathbb{R} \\not\\cong \\mathbb{C} \\text{ (kein Iso)}}'
+                'math-order': '\\forall a \\in \\mathbb{R}: a^2 \\geq 0 \\quad \\text{aber} \\quad i^2 = -1 < 0 \\;\\text{???}',
+                'math-final': '\\boxed{\\mathbb{R} \\hookrightarrow \\mathbb{C} \\text{ (Homo)} \\quad \\text{aber} \\quad \\mathbb{R} \\not\\cong \\mathbb{C} \\text{ (kein Iso)}}'
             };
 
             for (const [id, tex] of Object.entries(mathElements)) {
                 const el = document.getElementById(id);
                 if (el) {
                     try {
-                        temml.render(tex, el, { displayMode: true });
+                        katex.render(tex, el, { displayMode: true, throwOnError: false });
                     } catch (e) {
                         el.innerHTML = `<code>${tex}</code>`;
                     }
                 }
             }
         }
+
 
         // ============ TAB SWITCHING ============
         function switchTab(tabId) {
@@ -1160,9 +1162,30 @@
 
         // ============ INITIALIZATION ============
         document.addEventListener('DOMContentLoaded', () => {
-            renderMath();
-            testHomomorphism();
+            // KaTeX lädt mit defer, also kurz warten
+            setTimeout(() => {
+                renderMath();
+                testHomomorphism();
+            }, 100);
         });
+
+        // Auch beim Tab-Wechsel: Plot sofort rendern wenn sichtbar
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            // Plots mit kleinem Delay rendern (DOM muss sichtbar sein für Plotly)
+            setTimeout(() => {
+                if (tabId === 'tab2') updateEmbeddingPlot();
+                if (tabId === 'tab3') plotParabolaAndRoots();
+                if (tabId === 'tab4') drawUnityRoots();
+                if (tabId === 'tab5') plotNumberLine();
+                if (tabId === 'tab6') plotSummary();
+            }, 50);
+        }
+
     </script>
 </body>
 </html>
