@@ -636,6 +636,10 @@ function is_auto_augment() {
 }
 
 async function resize_augment_invert_flip_left_right_rotate (image_idx, unresized_image, this_img, x, y) {
+	if (stop_downloading_data || !started_training) {
+		return [null, null];
+	}
+
 	var resized_image = resize_image(unresized_image, [height, width]);
 
 	if(resized_image === null) {
@@ -977,6 +981,9 @@ async function get_x_and_y () {
 	}
 
 	if(!check_xy_for_x_and_y(xy_data)) {
+		if (stop_downloading_data || !started_training) {
+			return null;
+		}
 		wrn(`check_xy_for_x_and_y failed`);
 	}
 
@@ -1038,6 +1045,11 @@ async function get_default_data() {
 		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
 
 		[x, y] = await load_and_augment_images_and_y(this_data, x, y);
+
+		if (stop_downloading_data || !started_training) {
+			await dispose_images(images);
+			return;
+		}
 
 		await set_global_x_y_and_dispose_images(x, y, images);
 	} else {
@@ -1151,6 +1163,11 @@ async function load_and_augment_images_and_y(this_data, x, y) {
 	x = await get_x_ones_from_image_input_shape();
 
 	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
+		if (stop_downloading_data || !started_training) {
+			log_once_internal("stop_augment", "Stopped data augmentation: training was cancelled");
+			return [null, null, null];
+		}
+
 		const this_img = this_data[image_idx];
 		const unresized_image = this_img["item"];
 
