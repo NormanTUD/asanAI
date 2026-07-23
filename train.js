@@ -1093,32 +1093,14 @@ async function get_x_and_y_or_die_in_case_of_error (recursive=0) {
 		x_and_y = await get_x_and_y();
 		l(language[lang]["got_data"]);
 	} catch (e) {
-		if (!started_training && !stop_downloading_data) {
-			l("[get_x_and_y_or_die_in_case_of_error] Training was cancelled, silently aborting");
-			favicon_default();
-			await write_descriptions();
-			reset_start_stop_training_buttons();
-			await update_translations();
-			return false;
-		}
-
 		if(Object.keys(e).includes("message")) {
 			e = e.message;
 		}
 
-		if(("" + e).includes("n is undefined") && recursive == 0 && started_training && !stop_downloading_data) {
+		if(("" + e).includes("n is undefined") && recursive == 0) {
 			wrn("[get_x_and_y_or_die_in_case_of_error] Error '" + e + "'. Trying to get xs and ys again...");
 			return await get_x_and_y_or_die_in_case_of_error(recursive + 1);
 		} else {
-			if (stop_downloading_data || !started_training) {
-				l("[get_x_and_y_or_die_in_case_of_error] Training was cancelled during error handling, silently aborting");
-				favicon_default();
-				await write_descriptions();
-				reset_start_stop_training_buttons();
-				await update_translations();
-				return false;
-			}
-
 			var explanation = explain_error_msg("" + e);
 
 			if(explanation) {
