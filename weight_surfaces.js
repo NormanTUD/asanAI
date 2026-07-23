@@ -136,8 +136,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
-
-
 	function to_float_matrix(arr2d) {
 		if (!Array.isArray(arr2d)) return null;
 		const m = arr2d.length;
@@ -388,12 +386,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	// ─── Main Render Logic ──────────────────────────────────────────────────────
 
-	// ─── Render Helpers (split from render_weight_array) ────────────────────────
-
-
-
-
-
 	async function _render_3d_slice(parent, arr, shape, title, baseKey, sliceIndex) {
 		const c = _colors();
 		const slice = arr.map(r => r.map(col => col[sliceIndex]));
@@ -461,10 +453,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			await _render_4d_slice(parent, arr, shape, title, baseKey, j);
 		}
 	}
-
-
-
-
 
 	async function _render_5d(parent, arr, shape, title, baseKey) {
 		const [kx, ky, kz, in_ch, out_ch] = shape;
