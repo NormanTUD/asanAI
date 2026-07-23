@@ -136,18 +136,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
-	function reshape_flat_array(data, shape) {
-		if (!shape || shape.length === 0) return data[0];
-		const out = [];
-		const stride = shape.slice(1).reduce((a, b) => a * b, 1);
-		for (let i = 0; i < shape[0]; i++) {
-			const start = i * stride;
-			const slice = data.slice(start, start + stride);
-			if (shape.length === 1) out.push(...slice);
-			else out.push(reshape_flat_array(slice, shape.slice(1)));
-		}
-		return out;
-	}
+
 
 	function to_float_matrix(arr2d) {
 		if (!Array.isArray(arr2d)) return null;
@@ -401,115 +390,9 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	// ─── Render Helpers (split from render_weight_array) ────────────────────────
 
-	function _render_1d(parent, arr, shape, title, baseKey) {
-		const c = _colors();
-		const values = shape.length === 0 ? [arr] : arr;
-		const n = values.length;
-		const indices = Array.from({ length: n }, (_, i) => i);
 
-		const minV = Math.min(...values);
-		const maxV = Math.max(...values);
-		const range = maxV - minV || 1;
-		const normed = values.map(v => (v - minV) / range);
 
-		const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-		const layout = _base_layout(title, false);
-		layout.xaxis.title.text = shape.length === 0 ? '' : 'Neuron / Parameter Index';
-		layout.yaxis.title.text = 'Weight Value';
-		layout.shapes = [{
-			type: 'line', x0: 0, x1: n - 1, y0: 0, y1: 0,
-			line: { color: c.axis_line, width: 1.5, dash: 'dot' }
-		}];
 
-		return _plot_preserve_camera(plotDiv, [{
-			x: indices,
-			y: values,
-			type: 'scatter',
-			mode: n > 200 ? 'markers' : 'markers+lines',
-			marker: {
-				size: n > 500 ? 4 : n > 100 ? 6 : 9,
-				color: normed,
-				colorscale: 'Viridis',
-				showscale: n > 1,
-				colorbar: n > 1 ? {
-					title: { text: 'Value', side: 'right', font: { size: 10, color: c.font } },
-					thickness: 12, len: 0.6, tickfont: { size: 9, color: c.tick }
-				} : undefined,
-				line: { width: 0.5, color: c.marker_line },
-				opacity: 0.88
-			},
-			line: { width: 1.2, color: _dark() ? 'rgba(120,180,255,0.3)' : 'rgba(60,60,180,0.2)' },
-			hovertemplate: 'Index: %{x}<br>Value: %{y:.6f}<extra></extra>'
-		}], layout, {}, plotDiv.dataset.plotKey);
-	}
-
-	function _render_2d_heatmap(parent, arr, shape, title, baseKey) {
-		const c = _colors();
-		const k2d = baseKey + "_heat";
-		const plotDiv2d = create_plot_div(parent, title + " (Heatmap)", k2d);
-		const layout = _base_layout(title + ' — Weight Matrix Heatmap', false);
-		layout.xaxis.title.text = 'Output Neuron';
-		layout.yaxis.title.text = 'Input Neuron';
-
-		const zData = to_float_matrix(arr);
-		const flatVals = zData.flat();
-		const absMax = Math.max(Math.abs(Math.min(...flatVals)), Math.abs(Math.max(...flatVals))) || 1;
-
-		return _plot_preserve_camera(plotDiv2d, [{
-			z: zData,
-			type: 'heatmap',
-			colorscale: _dark()
-				? [[0, '#0d0887'], [0.25, '#7201a8'], [0.5, '#bd3786'], [0.75, '#ed7953'], [1, '#fdca26']]
-				: 'RdBu',
-			reversescale: !_dark(),
-			zmid: _dark() ? undefined : 0,
-			zmin: _dark() ? undefined : -absMax,
-			zmax: _dark() ? undefined : absMax,
-			hoverongaps: false,
-			hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
-			colorbar: {
-				title: { text: 'Weight', side: 'right', font: { size: 11, color: c.font } },
-				thickness: 14, tickfont: { size: 9, color: c.tick }, outlinewidth: 0
-			}
-		}], layout, {}, plotDiv2d.dataset.plotKey);
-	}
-
-	function _render_2d_surface(parent, arr, shape, title, baseKey) {
-		const c = _colors();
-		const k3d = baseKey + "_surf";
-		const plotDiv3d = create_plot_div(parent, title + " (3D Surface)", k3d);
-		const layout3d = _base_layout(title + ' — Weight Surface', true);
-		layout3d.scene = _scene('Output Neuron', 'Input Neuron', 'Weight Value');
-
-		const zData = to_float_matrix(arr);
-
-		return _plot_preserve_camera(plotDiv3d, [{
-			z: zData,
-			type: 'surface',
-			colorscale: 'Viridis',
-			lighting: { ambient: 0.6, diffuse: 0.7, specular: 0.3, roughness: 0.5, fresnel: 0.3 },
-			lightposition: { x: 1000, y: 1000, z: 2000 },
-			contours: {
-				z: { show: true, usecolormap: true, highlightcolor: _dark() ? '#ffffff' : '#333333', project: { z: true } }
-			},
-			hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
-			colorbar: {
-				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
-				thickness: 12, tickfont: { size: 9, color: c.tick }
-			}
-		}], layout3d, {}, plotDiv3d.dataset.plotKey);
-	}
-
-	async function _render_2d(parent, arr, shape, title, baseKey) {
-		const [h, w] = shape;
-		if (h < 1 || w < 1) return;
-
-		await _render_2d_heatmap(parent, arr, shape, title, baseKey);
-
-		if (h >= 3 && w >= 3 && opts.plot3d) {
-			await _render_2d_surface(parent, arr, shape, title, baseKey);
-		}
-	}
 
 	async function _render_3d_slice(parent, arr, shape, title, baseKey, sliceIndex) {
 		const c = _colors();
@@ -579,55 +462,9 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
-	function _build_5d_volume_data(arr, shape, ic, oc) {
-		const [kx, ky, kz] = shape;
-		const volume = arr.map(x => x.map(y => y.map(z => z[ic][oc])));
-		const x = [], y = [], z = [], value = [];
 
-		for (let i = 0; i < kx; i++) {
-			for (let j = 0; j < ky; j++) {
-				for (let k = 0; k < kz; k++) {
-					x.push(i);
-					y.push(j);
-					z.push(k);
-					value.push(volume[i][j][k]);
-				}
-			}
-		}
-		return { x, y, z, value };
-	}
 
-	async function _render_5d_volume(parent, arr, shape, title, baseKey, ic, oc) {
-		const c = _colors();
-		const [kx, ky, kz] = shape;
-		const { x, y, z, value } = _build_5d_volume_data(arr, shape, ic, oc);
 
-		const key = baseKey + "_5d_" + ic + "_" + oc;
-		const volTitle = `${title} — 3D Volume (Out=${oc}, In=${ic}) [${kx}×${ky}×${kz}]`;
-		const plotDiv = create_plot_div(parent, volTitle, key);
-		const layout = _base_layout(volTitle, true);
-		layout.scene = _scene('Kernel X', 'Kernel Y', 'Kernel Z');
-		layout.scene.aspectmode = 'cube';
-
-		const vMin = Math.min(...value);
-		const vMax = Math.max(...value);
-
-		await _plot_preserve_camera(plotDiv, [{
-			type: 'isosurface',
-			x, y, z, value,
-			colorscale: 'Viridis',
-			isomin: vMin + (vMax - vMin) * 0.1,
-			isomax: vMax - (vMax - vMin) * 0.1,
-			surface: { show: true, count: 5, fill: 0.7 },
-			caps: { x: { show: false }, y: { show: false }, z: { show: false } },
-			opacity: 0.6,
-			hovertemplate: 'X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Value: %{value:.6f}<extra></extra>',
-			colorbar: {
-				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
-				thickness: 12, tickfont: { size: 9, color: c.tick }
-			}
-		}], layout, {}, plotDiv.dataset.plotKey);
-	}
 
 	async function _render_5d(parent, arr, shape, title, baseKey) {
 		const [kx, ky, kz, in_ch, out_ch] = shape;
@@ -644,25 +481,391 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	// ─── Main Render Logic ──────────────────────────────────────────────────────
 
+	// ─── Safe min/max that doesn't use spread operator ──────────────────────────
+
+	function safe_min(arr) {
+		if (!arr || arr.length === 0) return 0;
+		let min = arr[0];
+		for (let i = 1; i < arr.length; i++) {
+			if (arr[i] < min) min = arr[i];
+		}
+		return min;
+	}
+
+	function safe_max(arr) {
+		if (!arr || arr.length === 0) return 0;
+		let max = arr[0];
+		for (let i = 1; i < arr.length; i++) {
+			if (arr[i] > max) max = arr[i];
+		}
+		return max;
+	}
+
+	// ─── Safe flat that uses iteration instead of recursion ─────────────────────
+
+	function safe_flat(arr, depth = 1) {
+		const result = [];
+		const stack = [{ arr: arr, depth: depth }];
+
+		while (stack.length > 0) {
+			const { arr: current, depth: d } = stack.pop();
+			for (let i = 0; i < current.length; i++) {
+				if (Array.isArray(current[i]) && d > 0) {
+					stack.push({ arr: current[i], depth: d - 1 });
+				} else {
+					result.push(current[i]);
+				}
+			}
+		}
+		return result;
+	}
+
+	// ─── Iterative reshape (replaces recursive reshape_flat_array) ──────────────
+
+	function reshape_flat_array(data, shape) {
+		if (!shape || shape.length === 0) return data[0];
+		if (shape.length === 1) return data.slice(0, shape[0]);
+
+		// Guard against excessive rank
+		if (shape.length > 10) {
+			console.warn('reshape_flat_array: shape rank too high (' + shape.length + '), truncating to rank 5');
+			shape = shape.slice(0, 5);
+		}
+
+		// Iterative approach: build from innermost dimension outward
+		let current = Array.from(data);
+
+		// Work from the innermost dimension to the outermost
+		for (let dim = shape.length - 1; dim >= 1; dim--) {
+			const size = shape[dim];
+			const grouped = [];
+			for (let i = 0; i < current.length; i += size) {
+				grouped.push(current.slice(i, i + size));
+			}
+			current = grouped;
+		}
+
+		return current;
+	}
+
+	// ─── Fixed _render_1d ───────────────────────────────────────────────────────
+
+	function _render_1d(parent, arr, shape, title, baseKey) {
+		const c = _colors();
+		const values = shape.length === 0 ? [arr] : arr;
+		const n = values.length;
+
+		// Guard: cap the number of rendered points to prevent performance issues
+		const MAX_1D_POINTS = 50000;
+		let renderValues = values;
+		let renderIndices;
+
+		if (n > MAX_1D_POINTS) {
+			// Downsample evenly
+			const step = Math.ceil(n / MAX_1D_POINTS);
+			renderValues = [];
+			renderIndices = [];
+			for (let i = 0; i < n; i += step) {
+				renderValues.push(values[i]);
+				renderIndices.push(i);
+			}
+		} else {
+			renderIndices = Array.from({ length: n }, (_, i) => i);
+		}
+
+		// Use safe iterative min/max instead of spread operator
+		const minV = safe_min(renderValues);
+		const maxV = safe_max(renderValues);
+		const range = maxV - minV || 1;
+		const normed = renderValues.map(v => (v - minV) / range);
+
+		const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
+		const layout = _base_layout(title, false);
+		layout.xaxis.title.text = shape.length === 0 ? '' : 'Neuron / Parameter Index';
+		layout.yaxis.title.text = 'Weight Value';
+		layout.shapes = [{
+			type: 'line', x0: 0, x1: n - 1, y0: 0, y1: 0,
+			line: { color: c.axis_line, width: 1.5, dash: 'dot' }
+		}];
+
+		const numPoints = renderValues.length;
+
+		return _plot_preserve_camera(plotDiv, [{
+			x: renderIndices,
+			y: renderValues,
+			type: 'scatter',
+			mode: numPoints > 200 ? 'markers' : 'markers+lines',
+			marker: {
+				size: numPoints > 500 ? 4 : numPoints > 100 ? 6 : 9,
+				color: normed,
+				colorscale: 'Viridis',
+				showscale: numPoints > 1,
+				colorbar: numPoints > 1 ? {
+					title: { text: 'Value', side: 'right', font: { size: 10, color: c.font } },
+					thickness: 12, len: 0.6, tickfont: { size: 9, color: c.tick }
+				} : undefined,
+				line: { width: 0.5, color: c.marker_line },
+				opacity: 0.88
+			},
+			line: { width: 1.2, color: _dark() ? 'rgba(120,180,255,0.3)' : 'rgba(60,60,180,0.2)' },
+			hovertemplate: 'Index: %{x}<br>Value: %{y:.6f}<extra></extra>'
+		}], layout, {}, plotDiv.dataset.plotKey);
+	}
+
+	// ─── Fixed _render_2d_heatmap ───────────────────────────────────────────────
+
+	function _render_2d_heatmap(parent, arr, shape, title, baseKey) {
+		const c = _colors();
+		const k2d = baseKey + "_heat";
+		const plotDiv2d = create_plot_div(parent, title + " (Heatmap)", k2d);
+		const layout = _base_layout(title + ' — Weight Matrix Heatmap', false);
+		layout.xaxis.title.text = 'Output Neuron';
+		layout.yaxis.title.text = 'Input Neuron';
+
+		let zData = to_float_matrix(arr);
+
+		if (!zData || zData.length === 0) {
+			show_message_in_container(parent, `⚠ "${title}": empty matrix, skipping heatmap.`);
+			return Promise.resolve();
+		}
+
+		// Guard: downsample if matrix is too large for rendering
+		const MAX_HEATMAP_DIM = 2048;
+		const [h, w] = [zData.length, zData[0] ? zData[0].length : 0];
+
+		if (h > MAX_HEATMAP_DIM || w > MAX_HEATMAP_DIM) {
+			const stepH = Math.ceil(h / MAX_HEATMAP_DIM);
+			const stepW = Math.ceil(w / MAX_HEATMAP_DIM);
+			const downsampled = [];
+			for (let i = 0; i < h; i += stepH) {
+				const row = [];
+				for (let j = 0; j < w; j += stepW) {
+					row.push(zData[i][j]);
+				}
+				downsampled.push(row);
+			}
+			zData = downsampled;
+		}
+
+		// Use safe iterative flat + min/max instead of spread operator
+		const flatVals = safe_flat(zData, 1);
+		const minVal = safe_min(flatVals);
+		const maxVal = safe_max(flatVals);
+		const absMax = Math.max(Math.abs(minVal), Math.abs(maxVal)) || 1;
+
+		return _plot_preserve_camera(plotDiv2d, [{
+			z: zData,
+			type: 'heatmap',
+			colorscale: _dark()
+			? [[0, '#0d0887'], [0.25, '#7201a8'], [0.5, '#bd3786'], [0.75, '#ed7953'], [1, '#fdca26']]
+			: 'RdBu',
+			reversescale: !_dark(),
+			zmid: _dark() ? undefined : 0,
+			zmin: _dark() ? undefined : -absMax,
+			zmax: _dark() ? undefined : absMax,
+			hoverongaps: false,
+			hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 11, color: c.font } },
+				thickness: 14, tickfont: { size: 9, color: c.tick }, outlinewidth: 0
+			}
+		}], layout, {}, plotDiv2d.dataset.plotKey);
+	}
+
+	// ─── Fixed _render_2d_surface ───────────────────────────────────────────────
+
+	function _render_2d_surface(parent, arr, shape, title, baseKey) {
+		const c = _colors();
+		const k3d = baseKey + "_surf";
+		const plotDiv3d = create_plot_div(parent, title + " (3D Surface)", k3d);
+		const layout3d = _base_layout(title + ' — Weight Surface', true);
+		layout3d.scene = _scene('Output Neuron', 'Input Neuron', 'Weight Value');
+
+		let zData = to_float_matrix(arr);
+
+		if (!zData || zData.length === 0) {
+			return Promise.resolve();
+		}
+
+		// Guard: downsample for 3D surfaces (even more aggressive since surfaces are heavier)
+		const MAX_SURFACE_DIM = 512;
+		const [h, w] = [zData.length, zData[0] ? zData[0].length : 0];
+
+		if (h > MAX_SURFACE_DIM || w > MAX_SURFACE_DIM) {
+			const stepH = Math.ceil(h / MAX_SURFACE_DIM);
+			const stepW = Math.ceil(w / MAX_SURFACE_DIM);
+			const downsampled = [];
+			for (let i = 0; i < h; i += stepH) {
+				const row = [];
+				for (let j = 0; j < w; j += stepW) {
+					row.push(zData[i][j]);
+				}
+				downsampled.push(row);
+			}
+			zData = downsampled;
+		}
+
+		return _plot_preserve_camera(plotDiv3d, [{
+			z: zData,
+			type: 'surface',
+			colorscale: 'Viridis',
+			lighting: { ambient: 0.6, diffuse: 0.7, specular: 0.3, roughness: 0.5, fresnel: 0.3 },
+			lightposition: { x: 1000, y: 1000, z: 2000 },
+			contours: {
+				z: { show: true, usecolormap: true, highlightcolor: _dark() ? '#ffffff' : '#333333', project: { z: true } }
+			},
+			hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+				thickness: 12, tickfont: { size: 9, color: c.tick }
+			}
+		}], layout3d, {}, plotDiv3d.dataset.plotKey);
+	}
+
+	// ─── Fixed _render_2d ───────────────────────────────────────────────────────
+
+	async function _render_2d(parent, arr, shape, title, baseKey) {
+		const [h, w] = shape;
+		if (h < 1 || w < 1) return;
+
+		// Guard: skip rendering if total elements exceed a sane limit
+		const MAX_TOTAL_ELEMENTS = 25_000_000; // 25M
+		if (h * w > MAX_TOTAL_ELEMENTS) {
+			show_message_in_container(parent, 
+				`⚠ "${title}": matrix too large (${h}×${w} = ${(h*w).toLocaleString()} elements). Showing downsampled version.`);
+		}
+
+		await _render_2d_heatmap(parent, arr, shape, title, baseKey);
+
+		if (h >= 3 && w >= 3 && opts.plot3d) {
+			await _render_2d_surface(parent, arr, shape, title, baseKey);
+		}
+	}
+
+	// ─── Fixed _build_5d_volume_data ────────────────────────────────────────────
+
+	function _build_5d_volume_data(arr, shape, ic, oc) {
+		const [kx, ky, kz] = shape;
+		const x = [], y = [], z = [], value = [];
+
+		// Guard: cap volume size to prevent stack/memory issues
+		const MAX_VOLUME_ELEMENTS = 500_000;
+		if (kx * ky * kz > MAX_VOLUME_ELEMENTS) {
+			console.warn(`_build_5d_volume_data: volume too large (${kx}×${ky}×${kz}), sampling.`);
+			const step = Math.ceil(Math.cbrt((kx * ky * kz) / MAX_VOLUME_ELEMENTS));
+			for (let i = 0; i < kx; i += step) {
+				for (let j = 0; j < ky; j += step) {
+					for (let k = 0; k < kz; k += step) {
+						x.push(i);
+						y.push(j);
+						z.push(k);
+						value.push(arr[i][j][k][ic][oc]);
+					}
+				}
+			}
+			return { x, y, z, value };
+		}
+
+		for (let i = 0; i < kx; i++) {
+			for (let j = 0; j < ky; j++) {
+				for (let k = 0; k < kz; k++) {
+					x.push(i);
+					y.push(j);
+					z.push(k);
+					value.push(arr[i][j][k][ic][oc]);
+				}
+			}
+		}
+		return { x, y, z, value };
+	}
+
+	// ─── Fixed _render_5d_volume ────────────────────────────────────────────────
+
+	async function _render_5d_volume(parent, arr, shape, title, baseKey, ic, oc) {
+		const c = _colors();
+		const [kx, ky, kz] = shape;
+		const { x, y, z, value } = _build_5d_volume_data(arr, shape, ic, oc);
+
+		if (value.length === 0) return;
+
+		const key = baseKey + "_5d_" + ic + "_" + oc;
+		const volTitle = `${title} — 3D Volume (Out=${oc}, In=${ic}) [${kx}×${ky}×${kz}]`;
+		const plotDiv = create_plot_div(parent, volTitle, key);
+		const layout = _base_layout(volTitle, true);
+		layout.scene = _scene('Kernel X', 'Kernel Y', 'Kernel Z');
+		layout.scene.aspectmode = 'cube';
+
+		// Use safe min/max
+		const vMin = safe_min(value);
+		const vMax = safe_max(value);
+		const vRange = vMax - vMin || 1;
+
+		await _plot_preserve_camera(plotDiv, [{
+			type: 'isosurface',
+			x, y, z, value,
+			colorscale: 'Viridis',
+			isomin: vMin + vRange * 0.1,
+			isomax: vMax - vRange * 0.1,
+			surface: { show: true, count: 5, fill: 0.7 },
+			caps: { x: { show: false }, y: { show: false }, z: { show: false } },
+			opacity: 0.6,
+			hovertemplate: 'X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Value: %{value:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+				thickness: 12, tickfont: { size: 9, color: c.tick }
+			}
+		}], layout, {}, plotDiv.dataset.plotKey);
+	}
+
+	// ─── Fixed render_weight_array with total element guard ─────────────────────
+
 	async function render_weight_array(parent, arr, title, shape, layerType) {
 		if (!arr || !shape || !finished_loading) return;
+
+		// Guard: reject tensors with rank > 5
 		if (shape.length > 5) {
 			show_message_in_container(parent, `Skipping "${title}": rank ${shape.length} too high (max 5)`);
 			return;
 		}
 
+		// Guard: reject shapes with any zero or negative dimension
+		if (shape.some(d => d <= 0)) {
+			show_message_in_container(parent, `Skipping "${title}": invalid shape [${shape.join('×')}]`);
+			return;
+		}
+
+		// Guard: total element count sanity check
+		const totalElements = shape.reduce((a, b) => a * b, 1);
+		const MAX_ELEMENTS = 100_000_000; // 100M
+		if (totalElements > MAX_ELEMENTS) {
+			show_message_in_container(parent, 
+				`⚠ "${title}": tensor too large (${totalElements.toLocaleString()} elements). Skipping visualization.`);
+			return;
+		}
+
 		const baseKey = (title || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
 
-		if (shape.length <= 1) {
-			await _render_1d(parent, arr, shape, title, baseKey);
-		} else if (shape.length === 2) {
-			await _render_2d(parent, arr, shape, title, baseKey);
-		} else if (shape.length === 3) {
-			await _render_3d(parent, arr, shape, title, baseKey);
-		} else if (shape.length === 4) {
-			await _render_4d(parent, arr, shape, title, baseKey);
-		} else if (shape.length === 5) {
-			await _render_5d(parent, arr, shape, title, baseKey);
+		try {
+			if (shape.length <= 1) {
+				await _render_1d(parent, arr, shape, title, baseKey);
+			} else if (shape.length === 2) {
+				await _render_2d(parent, arr, shape, title, baseKey);
+			} else if (shape.length === 3) {
+				await _render_3d(parent, arr, shape, title, baseKey);
+			} else if (shape.length === 4) {
+				await _render_4d(parent, arr, shape, title, baseKey);
+			} else if (shape.length === 5) {
+				await _render_5d(parent, arr, shape, title, baseKey);
+			}
+		} catch (e) {
+			// Catch any remaining stack overflow at the top level
+			if (e instanceof RangeError && e.message.includes('call stack')) {
+				console.warn(`render_weight_array: stack overflow for "${title}" [${shape.join('×')}], skipping.`);
+				show_message_in_container(parent, 
+					`⚠ "${title}": too complex to render (stack overflow). Consider reducing layer size.`);
+			} else {
+				throw e;
+			}
 		}
 	}
 
