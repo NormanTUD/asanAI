@@ -719,8 +719,8 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		// Guard: skip rendering if total elements exceed a sane limit
 		const MAX_TOTAL_ELEMENTS = 25_000_000; // 25M
 		if (h * w > MAX_TOTAL_ELEMENTS) {
-			show_message_in_container(parent, 
-				`⚠ "${title}": matrix too large (${h}×${w} = ${(h*w).toLocaleString()} elements). Showing downsampled version.`);
+			const container_msg = `⚠ "${title}": matrix too large (${h}×${w} = ${(h*w).toLocaleString()} elements). Showing downsampled version.`
+			show_message_in_container(parent, container_msg);
 		}
 
 		await _render_2d_heatmap(parent, arr, shape, title, baseKey);
@@ -826,8 +826,8 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		const totalElements = shape.reduce((a, b) => a * b, 1);
 		const MAX_ELEMENTS = 100_000_000; // 100M
 		if (totalElements > MAX_ELEMENTS) {
-			show_message_in_container(parent, 
-				`⚠ "${title}": tensor too large (${totalElements.toLocaleString()} elements). Skipping visualization.`);
+			const container_msg = `⚠ "${title}": tensor too large (${totalElements.toLocaleString()} elements). Skipping visualization.`;
+			show_message_in_container(parent, container_msg);
 			return;
 		}
 
@@ -849,8 +849,8 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			// Catch any remaining stack overflow at the top level
 			if (e instanceof RangeError && e.message.includes('call stack')) {
 				console.warn(`render_weight_array: stack overflow for "${title}" [${shape.join('×')}], skipping.`);
-				show_message_in_container(parent, 
-					`⚠ "${title}": too complex to render (stack overflow). Consider reducing layer size.`);
+				const container_msg = `⚠ "${title}": too complex to render (stack overflow). Consider reducing layer size.`;
+				show_message_in_container(parent, container_msg);
 			} else {
 				throw e;
 			}
