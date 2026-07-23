@@ -2366,7 +2366,7 @@
 			"help_label" => "Hilfe",
 			"open_help_page" => "Hilfeseite öffnen",
 			"shapes" => "Formen",
-			"auto_input_shape" => "Auto-Eingabe-Form?",
+			"auto_input_shape" => "Auto-Input-Shape?",
 			"layers" => "Schichten",
 			"autotab" => "Autotab?",
 			"theme_label" => "Thema:",
