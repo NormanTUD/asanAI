@@ -82,6 +82,7 @@ function info (...args) {
 	};
 
 	_full_debug_log.push(struct);
+	_appendToLog("INF", args);
 }
 
 function err (...args) {
@@ -117,6 +118,7 @@ function err (...args) {
 	l_if_needed(args);
 
 	num_errs++;
+	_appendToLog("ERR", args);
 }
 
 function wrn (...args) {
@@ -152,6 +154,7 @@ function wrn (...args) {
 	l_if_needed(args);
 
 	num_wrns++;
+	_appendToLog("WRN", args);
 }
 
 var last_dbg_msg = "";
@@ -161,9 +164,9 @@ function dbg(...args) {
 	if (function_name) function_name = `[${function_name}] `; else function_name = "";
 
 	var msg = args.map(a => `${a}`).join(" ");
-	
+
 	var is_debug = checkCurrentUrlParams();
-	
+
 	if (!is_debug && msg === last_dbg_msg) return;
 	last_dbg_msg = msg;
 
@@ -182,6 +185,7 @@ function dbg(...args) {
 	l_if_needed(args);
 
 	_full_debug_log.push(struct);
+	_appendToLog("DBG", args);
 }
 
 function l_if_needed (args) {
@@ -221,6 +225,21 @@ function log_less (...args) {
 	_full_debug_log.push(struct);
 }
 
+function _getTimestamp() {
+	const now = new Date();
+	const pad = (n, len = 2) => String(n).padStart(len, '0');
+	return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
+		`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.${pad(now.getMilliseconds(), 3)}`;
+}
+
+function _appendToLog(level, args) {
+	const timestamp = _getTimestamp();
+	const message = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : `${a}`)).join(' ');
+	$('#log').val(function(i, text) {
+		return text + `[${timestamp}] [${level}] ${message}\n`;
+	});
+}
+
 function log (...args) {
 	args.forEach(arg => console.log(arg));
 	args.forEach((arg) => {
@@ -245,6 +264,7 @@ function log (...args) {
 	};
 
 	_full_debug_log.push(struct);
+	_appendToLog("LOG", args);
 }
 
 function header_error (msg) {
