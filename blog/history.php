@@ -301,7 +301,7 @@ I was too lazy to calculate by hand.
 
 <figure>
     <img style="width: 100%" src="zuse.jpg" alt="Zuses Z1" />
-    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic turing complete (even though that concept wasn't invented yet) programmable Computer, created in 1937</figcaption>
+    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic programmable Computer, created in around 1937</figcaption>
 </figure>
 
 \citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world's first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
