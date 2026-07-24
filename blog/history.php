@@ -428,7 +428,7 @@ Around the same time, **Arthur Samuel** at IBM developed a **checker-playing pro
 
 Building on the Logic Theorist, Newell and Simon released the **General Problem Solver (GPS)** in 1959, designed to mimic the problem-solving protocols of the human brain through "means-ends analysis" \cite{newell1957gps}. GPS could solve a range of well-defined tasks, from proving logical theorems to solving puzzles, by recursively decomposing the difference between the current state and the goal state into subgoals. While limited to "toy" problems, GPS embodied the "thinking humanly" approach and remained influential for decades.
 
-## The Beginning of Modern Artificial Neural Networks
+## The Beginning of Artificial Neural Networks
 
 <figure>
 	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
