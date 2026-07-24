@@ -36,13 +36,13 @@ The operation can be split as well. The following equations are equal to the one
 $$h = \sigma\left({W_1 \mathbf{x} + \mathbf{b}_1}\right)$$
 
 **Layer 2 (Output Layer)**:
-$$\text{Result} = \sigma\left({W_2 \mathbf{h} + \mathbf{b}}_2\right)$$
+$$\text{Result} = \sigma\left(W_2 \mathbf{h} + \mathbf{b}_2\right)$$
 
 Or, as a commuting diagram:
 
 <center>
 <?php
-	include("layer_commutating_diagram.html");
+	include("layer_commuting_diagram.html");
 ?>
 </center>
 </div>
