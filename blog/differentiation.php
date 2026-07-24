@@ -279,7 +279,7 @@ $$\nabla f = \begin{pmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{
 
 The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.
 
-The symbol $\partial$ for partial derivatives was introduced by \citeauthor{legendre1805} in \citetitle{legendre1805} (\citeyear{legendre1805}).
+The symbol $\partial$ for partial derivatives was introduced by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}).
 </div>
 
 <!-- ─── Interactive: Gradient on a 3D Surface ─── -->
