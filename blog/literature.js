@@ -3322,5 +3322,29 @@ window.bibData = {
 		year: 1998,
 		title: "Statistical Learning Theory",
 		url: "https://www.wiley.com/en-us/Statistical+Learning+Theory-p-9780471030034"
+	},
+	"kishtablet": {
+		url: "https://en.wikipedia.org/w/index.php?title=Kish_tablet&oldid=1266979182",
+		title: "Kish tablet - Wikipedia, The Free Encyclopedia",
+		author: "Wikipedia contributors",
+		year: 2026
+	},
+	"vincasymbols": {
+		url: "https://en.wikipedia.org/w/index.php?title=Vin%C4%8Da_symbols&oldid=1269501393",
+		title: "Vinča symbols - Wikipedia, The Free Encyclopedia",
+		author: "Wikipedia contributors",
+		year: 2026
+	},
+	"prehistoriccounting": {
+		url: "https://en.wikipedia.org/w/index.php?title=Tally_marks&oldid=1283999001",
+		title: "Tally marks - Wikipedia, The Free Encyclopedia",
+		author: "Wikipedia contributors",
+		year: 2026
+	},
+	"ancientnumeralsystems": {
+		url: "https://en.wikipedia.org/w/index.php?title=History_of_ancient_numeral_systems&oldid=1261588819",
+		title: "History of ancient numeral systems - Wikipedia, The Free Encyclopedia",
+		author: "Wikipedia contributors",
+		year: 2026
 	}
 };
