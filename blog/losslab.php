@@ -16,11 +16,9 @@ A Loss Function is a mathematical way of measuring *"how wrong"* the AI is. If t
 
 ## Regression: Mean Squared Error (MSE)
 
-The most common tool here is **Mean Squared Error (MSE)**. It was first published by \citeauthor{legendre1805} in \citeyear{legendre1805} (for fitting celestial orbits) and independently developed by \citeauthor{gauss1809} in \citeyear{gauss1809} (§ 179, 213). We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it.
+When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**. The most common tool here is **Mean Squared Error (MSE)**, first published by \citeauthor{legendre1805} in \citeyear{legendre1805} (for fitting celestial orbits) and independently developed by \citeauthor{gauss1809} in \citeyear{gauss1809} (§ 179, 213).
 
-When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**.
-
-The most common tool here is **Mean Squared Error**. We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it. Squaring is important because:
+We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it. Squaring is important because:
 1. It makes all errors **positive** (you can't have "negative" wrongness).
 2. It **punishes large mistakes** much harder than small ones.
 
