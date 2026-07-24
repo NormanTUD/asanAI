@@ -463,6 +463,20 @@ Rosenblatt's \cite[Mark I Perceptron]{perceptronresults} (p. 136) achieved up to
 
 While this system shared the structural logic of a modern neural network, it functioned strictly as a **linear transducer** by executing the affine transformation $f(x) = Ax + b$. Although it utilized tensors for weights ($A$) and biases ($b$), it lacked the **non-linear activation functions** and **backpropagation** required to be classified as a modern "Dense" network. Without non-linearity, any attempt at adding "depth" was mathematically redundant, as multiple linear layers simply collapse into a single equivalent matrix multiplication; furthermore, the system lacked the modern ecosystem of loss functions, regularization, and gradient-based optimization that allows for automated learning.
 
+### The Hidden Connection: Hebb's Rule and the Perceptron Learning Rule
+
+The Perceptron learning rule $\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}$ is not a fundamentally new idea, it is Hebb's rule made precise by adding an error signal.
+
+Hebb's rule states: "Neurons that fire together, wire together." The weight between two neurons increases when they activate simultaneously. This is an unsupervised, purely correlation-based rule, it strengthens connections regardless of whether the result is correct or not.
+
+Rosenblatt's Perceptron learning rule takes the same biological intuition but adds a critical component: **error correction**. When the output matches the target, $\Delta w = 0$, no change occurs, just as Hebb would predict (the firing pattern is consistent, so no adjustment is needed). But when there is an error, the weight changes in proportion to the input, scaled by the learning rate $\eta$:
+
+$$\Delta w = \eta \cdot (\underbrace{\text{target} - \text{output}}_{\text{error signal}}) \cdot \underbrace{\text{input}}_{\text{Hebb term}}$$
+
+The "aha-moment": Rosenblatt didn't invent a new biological principle, he gave Hebb's intuitive idea a mathematical error-correction mechanism. The Perceptron is what happens when you take Hebb's "fire together, wire together" and ask: "but what if the answer is wrong?" The error signal is the teacher that tells Hebb's rule when to stop wiring.
+
+This connection foreshadows a deeper pattern in deep learning: nearly every major advance can be understood as taking a simple, intuitive principle (correlation, smoothness, sparsity) and making it differentiable. Hebb's correlation becomes the Perceptron; the smoothness prior becomes weight decay; sparsity becomes ReLU.
+
 These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules. This is called *connectionist approach*, instead of the *symbolic approach*. In the *symbol approach*, like the *Rechenmaschine* by Leibniz, the rules are all set from the beginning on. In connectionist approaches, the rules are not set by humans, but trained on by data. Modern LLMs are connectionist rather than symbolic.
 
 ### The Perceptron and the First AI Winter
@@ -1106,7 +1120,7 @@ The theoretical underpinning traces to \cite[*Principia Mathematica*]{russell191
 
 The concept of arrays has deep roots in mathematics, particularly in **matrices** and **vectors** from linear algebra. Mathematicians like **Arthur Cayley** (\citeyear{cayleymemoirmatrices}) formalized matrix algebra, providing the theoretical underpinning for what would later become the array data structure in computing.
 
-At its core, an array is an ordered, indexed collection of elements stored in contiguous memory. The concept mirrors ancient tools for structured counting — from tally bones with sequential notches (~35,000 BCE) to the Salamis Tablet (c. 300 BC), which mapped abstract numbers to physical grid coordinates, essentially functioning as a two-dimensional array.
+At its core, an array is an ordered, indexed collection of elements stored in contiguous memory. The concept mirrors ancient tools for structured counting, from tally bones with sequential notches (~35,000 BCE) to the Salamis Tablet (c. 300 BC), which mapped abstract numbers to physical grid coordinates, essentially functioning as a two-dimensional array.
 
 ### Arrays in Early Computing
 
@@ -1118,7 +1132,7 @@ The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with n
 
 ### Why Arrays Matter
 
-Arrays map directly to how computer memory works — sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
+Arrays map directly to how computer memory works, sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
 
 $$\text{address}(A[i]) = \text{base\_address} + i \times \text{element\_size}$$
 
@@ -1133,7 +1147,7 @@ Python, created by Guido van Rossum in 1991, is an interpreted, dynamically-type
 
 ### The Solution
 
-**NumPy** (Numerical Python) was created by **Travis Oliphant** in 2005 by unifying two earlier projects: `Numeric` (1995, Jim Hugunin) and `Numarray` (2001, Space Telescope Science Institute). NumPy introduced the `ndarray` — a homogeneous, fixed-type, n-dimensional array stored in contiguous memory, with operations implemented in C and Fortran.
+**NumPy** (Numerical Python) was created by **Travis Oliphant** in 2005 by unifying two earlier projects: `Numeric` (1995, Jim Hugunin) and `Numarray` (2001, Space Telescope Science Institute). NumPy introduced the `ndarray`, a homogeneous, fixed-type, n-dimensional array stored in contiguous memory, with operations implemented in C and Fortran.
 
 
 ### Key Capabilities
