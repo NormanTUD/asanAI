@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McCarthy & Hayes 1969 – Interaktive Visualisierung</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a3e, #2d1b69);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid #6c63ff;
+        }
+        .header h1 {
+            font-size: 2em;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #aaa;
+            font-size: 1.1em;
+        }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            background: #111128;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+        .nav-tab {
+            padding: 10px 18px;
+            background: #1e1e3f;
+            border: 1px solid #444;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: #6c63ff;
+            border-color: #6c63ff;
+            color: #fff;
+        }
+        .section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card {
+            background: #1a1a3e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .card h2 {
+            color: #6c63ff;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .card h3 {
+            color: #ff6b9d;
+            margin: 15px 0 10px;
+        }
+        .card p, .card li {
+            line-height: 1.7;
+            color: #ccc;
+        }
+        .card ul { padding-left: 20px; }
+        .card li { margin: 5px 0; }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #0d0d2b;
+        }
+        .plot-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+        .interactive-demo {
+            background: #12122e;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #6c63ff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #5a52d5; transform: scale(1.05); }
+        .btn.secondary { background: #ff6b9d; }
+        .btn.secondary:hover { background: #e55a8a; }
+        .highlight {
+            background: #2d1b69;
+            border-left: 4px solid #6c63ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .formula {
+            background: #0d0d2b;
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            color: #7bed9f;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .automaton-svg {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: block;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            margin: 5px 10px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .slider-container {
+            margin: 15px 0;
+        }
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #6c63ff;
+        }
+        .state-display {
+            font-family: monospace;
+            font-size: 1.2em;
+            color: #7bed9f;
+            padding: 10px;
+            background: #0d0d2b;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #6c63ff;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 15px 20px;
+            margin: 10px 0;
+            width: 45%;
+            background: #1a1a3e;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .timeline-item:nth-child(odd) { margin-left: 5%; }
+        .timeline-item:nth-child(even) { margin-left: 50%; }
+        .concept-map {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+        }
+        .concept-node {
+            padding: 12px 20px;
+            background: #1e1e3f;
+            border: 2px solid #6c63ff;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .concept-node:hover {
+            background: #6c63ff;
+            transform: scale(1.1);
+        }
+        .concept-node.epistemological { border-color: #ff6b9d; }
+        .concept-node.heuristic { border-color: #ffd93d; }
+        .concept-node.formal { border-color: #7bed9f; }
+        #automaton-canvas { cursor: pointer; }
+        .tooltip {
+            position: fixed;
+            background: #2d1b69;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 300px;
+            display: none;
+            border: 1px solid #6c63ff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip"></div>
+
+<div class="header">
+    <h1>🧠 McCarthy & Hayes (1969)</h1>
+    <p>"Some Philosophical Problems from the Standpoint of Artificial Intelligence"</p>
+    <p style="margin-top:10px; color:#6c63ff;">Interaktive Visualisierung der Kernkonzepte</p>
+</div>
+
+<div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('overview')">📋 Überblick</div>
+    <div class="nav-tab" onclick="showSection('epistemology')">🔍 Epistemologie vs. Heuristik</div>
+    <div class="nav-tab" onclick="showSection('automata')">⚙️ Automaten-Modell</div>
+    <div class="nav-tab" onclick="showSection('can')">💪 Der Begriff "can"</div>
+    <div class="nav-tab" onclick="showSection('situations')">🌍 Situationskalkül</div>
+    <div class="nav-tab" onclick="showSection('frame')">🖼️ Frame-Problem</div>
+    <div class="nav-tab" onclick="showSection('knowledge')">📚 Wissen & Modallogik</div>
+    <div class="nav-tab" onclick="showSection('legacy')">🏛️ Vermächtnis</div>
+</div>
+
+<!-- SECTION: OVERVIEW -->
+<div class="section active" id="sec-overview">
+    <div class="card">
+        <h2>Worum geht es?</h2>
+        <p>McCarthy und Hayes stellen 1969 die fundamentale Frage: <strong>Was muss ein Computer über die Welt wissen, um intelligent handeln zu können?</strong></p>
+        <div class="highlight">
+            <p>💡 <strong>Kernthese:</strong> Um eine echte KI zu bauen, muss man philosophische Probleme lösen – insbesondere: Wie repräsentiert man Wissen über die Welt so, dass ein Programm daraus schlussfolgern und handeln kann?</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Die Struktur des Papers</h2>
+        <div id="paper-structure-plot" class="plot-container"></div>
+    </div>
+
+    <div class="card">
+        <h2>Konzept-Landkarte</h2>
+        <p>Klicke auf ein Konzept für mehr Details:</p>
+        <div class="concept-map">
+            <div class="concept-node epistemological" onclick="showConceptDetail('rep')">Repräsentation der Welt</div>
+            <div class="concept-node epistemological" onclick="showConceptDetail('meta')">Metaphysische Adäquatheit</div>
+            <div class="concept-node epistemological" onclick="showConceptDetail('epist')">Epistemologische Adäquatheit</div>
+            <div class="concept-node heuristic" onclick="showConceptDetail('heur')">Heuristische Adäquatheit</div>
+            <div class="concept-node formal" onclick="showConceptDetail('sit')">Situationskalkül</div>
+            <div class="concept-node formal" onclick="showConceptDetail('flu')">Fluenten</div>
+            <div class="concept-node formal" onclick="showConceptDetail('act')">Aktionen & Strategien</div>
+            <div class="concept-node" onclick="showConceptDetail('can')">Begriff "can"</div>
+            <div class="concept-node" onclick="showConceptDetail('cause')">Kausalität</div>
+            <div class="concept-node" onclick="showConceptDetail('frame')">Frame-Problem</div>
+            <div class="concept-node" onclick="showConceptDetail('know')">Wissen & Belief</div>
+        </div>
+        <div id="concept-detail" class="highlight" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- SECTION: EPISTEMOLOGY -->
+<div class="section" id="sec-epistemology">
+    <div class="card">
+        <h2>Die zwei Teile der Intelligenz</h2>
+        <p>McCarthy & Hayes teilen Intelligenz in zwei fundamentale Komponenten:</p>
+        <div class="grid-2">
+            <div class="interactive-demo">
+                <h3>🔍 Epistemologischer Teil</h3>
+                <p>Die <strong>Repräsentation</strong> der Welt in einer Form, aus der die Lösung von Problemen <em>folgt</em>.</p>
+                <ul>
+                    <li>Welche Fakten kennen wir?</li>
+                    <li>Wie drücken wir sie aus?</li>
+                    <li>Was ist eine adäquate Darstellung?</li>
+                </ul>
+                <p style="margin-top:10px; color:#ff6b9d;"><strong>→ Fokus dieses Papers!</strong></p>
+            </div>
+            <div class="interactive-demo">
+                <h3>⚡ Heuristischer Teil</h3>
+                <p>Der <strong>Mechanismus</strong>, der auf Basis der Information Probleme löst und entscheidet, was zu tun ist.</p>
+                <ul>
+                    <li>Suchstrategien</li>
+                    <li>Beweisverfahren</li>
+                    <li>Entscheidungsfindung</li>
+                </ul>
+                <p style="margin-top:10px; color:#aaa;">(Nicht Fokus dieses Papers)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Drei Stufen der Adäquatheit</h2>
+        <div id="adequacy-plot" class="plot-container"></div>
+        <div class="highlight">
+            <p><strong>Metaphysisch adäquat:</strong> Die Welt <em>könnte</em> diese Form haben (z.B. Partikel, Quantenmechanik, Automaten)</p>
+            <p><strong>Epistemologisch adäquat:</strong> Man kann die Fakten, die man <em>tatsächlich hat</em>, darin ausdrücken (z.B. "John ist zu Hause")</p>
+            <p><strong>Heuristisch adäquat:</strong> Die Denkprozesse zur Problemlösung sind darin ausdrückbar</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Das "Reasoning Program" (RP)</h2>
+        <canvas id="rp-canvas" width="800" height="400"></canvas>
+        <p>Das RP ist ein Programm, das:</p>
+        <ul>
+            <li>Die Welt durch Sätze in formaler Logik repräsentiert</li>
+            <li>Strategien durch Deduktion findet</li>
+            <li>Beweist, dass eine Strategie ein Ziel erreicht</li>
+            <li>Die bewiesene Strategie dann ausführt</li>
+        </ul>
+    </div>
+</div>
+
+<!-- SECTION: AUTOMATA -->
+<div class="section" id="sec-automata">
+    <div class="card">
+        <h2>Die Welt als System interagierender Automaten</h2>
+        <p>McCarthy & Hayes modellieren die Welt als ein System von <strong>diskreten endlichen Automaten</strong>, die über Signale miteinander kommunizieren.</p>
+        <canvas id="automaton-canvas" width="800" height="500"></canvas>
+        <div style="text-align:center; margin-top:10px;">
+            <button class="btn" onclick="stepAutomaton()">⏭️ Nächster Zeitschritt</button>
+            <button class="btn secondary" onclick="resetAutomaton()">🔄 Reset</button>
+        </div>
+        <div class="state-display" id="automaton-state">
+            t = 0 | a₁ = 0, a₂ = 0, a₃ = 0
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Formale Definition</h2>
+        <div class="formula">
+            a₁(t+1) = A₁(a₁(t), s₂(t))  — Zustand von Automat 1 hängt ab von eigenem Zustand + Signal von Automat 2<br>
+            a₂(t+1) = A₂(a₂(t), s₁(t), s₃(t))  — Zustand von Automat 2 hängt ab von eigenem Zustand + Signalen von 1 und 3<br><br>
+            s₁(t) = S₁(a₁(t))  — Signal von Automat 1 wird durch seinen Zustand bestimmt<br>
+            s₂(t) = S₂(a₂(t))  — Signal von Automat 2 wird durch seinen Zustand bestimmt
+        </div>
+        <p><strong>Interpretation:</strong> Alles ist deterministisch. Kennt man die Anfangszustände und Eingaben, ist die gesamte Zukunft bestimmt.</p>
+    </div>
+
+    <div class="card">
+        <h2>Warum Automaten? – Stärken und Schwächen</h2>
+        <div id="automata-pros-cons" class="plot-container"></div>
+    </div>
+</div>
+
+<!-- SECTION: CAN -->
+<div class="section" id="sec-can">
+    <div class="card">
+        <h2>Was bedeutet "können" (can)?</h2>
+        <p>Eine der zentralen Fragen: Wie definiert man formal, was ein Agent <em>tun kann</em>, obwohl er ein deterministisches System ist?</p>
+        <div class="highlight">
+            <p>💡 <strong>Idee:</strong> Man "trennt" den Agenten vom System und fragt: Welche Zustände könnte das System erreichen, wenn der Agent <em>beliebige</em> Ausgaben produzieren könnte?</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Interaktive Demo: can(p, π, s)</h2>
+        <canvas id="can-canvas" width="800" height="450"></canvas>
+        <div style="text-align:center; margin:15px 0;">
+            <button class="btn" onclick="toggleCanMode('connected')">🔗 Verbunden (was passiert)</button>
+            <button class="btn secondary" onclick="toggleCanMode('disconnected')">✂️ Getrennt (was p kann)</button>
+        </div>
+        <div class="state-display" id="can-state">
+            Modus: Verbunden — Automat 1 folgt seinen normalen Regeln
+        </div>
+        <div class="highlight">
+            <p><strong>Beispiel aus dem Paper (Figure 2):</strong></p>
+            <ul>
+                <li>Automat 2 wird <em>nie</em> in Zustand 1 sein (im normalen Betrieb)</li>
+                <li>Automat 1 <em>kann</em> Automat 2 in Zustand 1 bringen (wenn man ihn "befreit")</li>
+                <li>Automat 3 <em>kann nicht</em> Automat 2 in Zustand 1 bringen</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Verschiedene Ebenen von "can"</h2>
+        <div id="can-levels-plot" class="plot-container"></div>
+        <p>McCarthy & Hayes zeigen, dass es nicht <em>ein</em> "can" gibt, sondern viele Ebenen – je nachdem, wo man die "Trennung" ansetzt:</p>
+        <div class="formula">
+            Gelenke → kann durch Loch passen? (aber auch: kann über Gebäude springen?!)<br>
+            Muskeln → realistischere physische Grenzen<br>
+            Nerven → kann Einrad fahren (wenn Nerven richtig feuern)<br>
+            "Willensorgan" → kann nicht Geheimtelefonnummer wählen (weil unbekannt)
+        </div>
+    </div>
+</div>
+
+<!-- SECTION: SITUATIONS -->
+<div class="section" id="sec-situations">
+    <div class="card">
+        <h2>Der Situationskalkül</h2>
+        <p>Das Herzstück des Formalismus: Die Welt wird durch <strong>Situationen</strong> beschrieben, und Aktionen transformieren eine Situation in eine andere.</p>
+        <canvas id="situation-canvas" width="800" height="400"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Fluenten – Funktionen auf Situationen</h2>
+        <p>Ein <strong>Fluent</strong> ist eine Funktion, die einer Situation einen Wert zuordnet:</p>
+        <div class="formula">
+            raining(x, s) — "Es regnet am Ort x in Situation s"<br>
+            at(p, x, s) — "Person p ist am Ort x in Situation s"<br>
+            has(Monkey, Bananas, s) — "Der Affe hat die Bananen in Situation s"<br>
+            time(s) — "Die Zeit in Situation s"
+        </div>
+        <div id="fluent-plot" class="plot-container"></div>
+    </div>
+
+    <div class="card">
+        <h2>result(p, σ, s) – Aktionen verändern die Welt</h2>
+        <div class="highlight">
+            <p><strong>result(p, σ, s)</strong> = die Situation, die entsteht, wenn Person p die Aktion σ in Situation s ausführt.</p>
+        </div>
+        <div class="formula">
+            has(p, k, s) ∧ fits(k, safe) ∧ at(p, safe, s)<br>
+            → open(safe, result(p, opens(safe, k), s))<br><br>
+            "Wenn p einen Schlüssel k hat, der zum Safe passt, und p beim Safe ist,<br>
+             dann ist der Safe offen in der Situation, die aus dem Öffnen resultiert."
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Strategien als Programme</h2>
+        <p>McCarthy & Hayes beschreiben Strategien als ALGOL-ähnliche Programme:</p>
+        <div class="interactive-demo">
+            <h3>🐒 Das Affen-Bananen-Problem</h3>
+            <div class="formula">
+begin<br>
+&nbsp;&nbsp;move(Box, Under-Bananas);<br>
+&nbsp;&nbsp;climb(Box);<br>
+&nbsp;&nbsp;reach-for(Bananas)<br>
+end;
+            </div>
+            <canvas id="monkey-canvas" width="800" height="300"></canvas>
+            <div style="text-align:center;">
+                <button class="btn" onclick="monkeyStep()">▶️ Nächster Schritt</button>
+                <button class="btn secondary" onclick="monkeyReset()">🔄 Reset</button>
+            </div>
+            <div class="state-display" id="monkey-state">Schritt 0: Affe steht links, Box ist in der Mitte, Bananen hängen rechts oben</div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION: FRAME PROBLEM -->
+<div class="section" id="sec-frame">
+    <div class="card">
+        <h2>Das Frame-Problem</h2>
+        <p>Eines der berühmtesten Probleme der KI, erstmals hier formuliert!</p>
+        <div class="highlight">
+            <p>🎯 <strong>Problem:</strong> Wenn man eine Aktion beschreibt, muss man auch sagen, was sich <em>nicht</em> ändert. Bei n Aktionen und m Fluenten braucht man potenziell n×m Aussagen!</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Visualisierung: Explosion der Frame-Axiome</h2>
+        <div id="frame-plot" class="plot-container"></div>
+        <div class="slider-container">
+            <label>Anzahl Aktionen: <span id="action-count">5</span></label>
+            <input type="range" min="1" max="20" value="5" oninput="updateFramePlot(this.value)">
+        </div>
+        <div class="slider-container">
+            <label>Anzahl Fluenten: <span id="fluent-count">10</span></label>
+            <input type="range" min="1" max="50" value="10" oninput="updateFramePlot(null, this.value)">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Das Telefon-Beispiel</h2>
+        <p>Wenn p die Telefonnummer von q nachschlägt und dann anruft:</p>
+        <div class="formula">
+            Aktion: lookup(q, Phone-book)<br>
+            Danach: p kennt q's Nummer ✓<br><br>
+            ABER: Hat p immer noch sein Telefon? 🤔<br>
+            Ist q immer noch zu Hause? 🤔<br><br>
+            → Man muss EXPLIZIT sagen: "Nachschlagen ändert nicht, ob man ein Telefon hat"
+        </div>
+        <canvas id="frame-demo-canvas" width="800" height="300"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Lösungsansätze</h2>
+        <div class="grid-2">
+            <div class="interactive-demo">
+                <h3>1. Frame-Deklarationen</h3>
+                <p>Bestimmte Fluenten werden an einen "Frame" gebunden. Nur explizit geänderte Fluenten ändern sich.</p>
+                <div class="formula">location(p) := tryfor(y, x)</div>
+            </div>
+            <div class="interactive-demo">
+                <h3>2. "normally" Operator</h3>
+                <p>Einführung von Default-Reasoning:</p>
+                <div class="formula">normally(in-conversation(p,q, result(p, dials(...), s)))</div>
+                <p>→ "Normalerweise funktioniert es, es sei denn, etwas spricht dagegen"</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION: KNOWLEDGE -->
+<div class="section" id="sec-knowledge">
+    <div class="card">
+        <h2>Wissen, Glauben und Modallogik</h2>
+        <p>Wie formalisiert man, dass jemand etwas <em>weiß</em> oder <em>glaubt</em>?</p>
+    </div>
+
+    <div class="card">
+        <h2>Mögliche-Welten-Semantik</h2>
+        <canvas id="worlds-canvas" width="800" height="450"></canvas>
+        <div style="text-align:center; margin:10px;">
+            <button class="btn" onclick="addWorld()">🌍 Welt hinzufügen</button>
+            <button class="btn secondary" onclick="resetWorlds()">🔄 Reset</button>
+        </div>
+        <div class="highlight">
+            <p><strong>Kripke-Semantik:</strong> Eine Aussage ist <em>notwendig wahr</em> (□p), wenn sie in <em>allen erreichbaren möglichen Welten</em> wahr ist.</p>
+            <p><strong>Wissen:</strong> Person a <em>weiß</em> p (K_a p), wenn p in allen Welten wahr ist, die mit a's Wissen kompatibel sind.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Das Kombinationsschloss-Problem</h2>
+        <p>Ein Schlüsselbeispiel für den Unterschied zwischen Fähigkeit und Wissen:</p>
+        <div class="formula">
+            at(p, safe, s) ∧ csafe(safe)<br>
+            → open(safe, result(p, opens2(safe, combination(safe)), s))<br><br>
+            ABER: p muss die Kombination KENNEN!<br><br>
+            idea-of-combination(p, safe, s) = combination(safe)<br>
+            ↑ DAS drückt aus, dass p die Kombination kennt
+        </div>
+        <div class="interactive-demo">
+            <h3>🔐 Interaktiv: Weiß der Agent die Kombination?</h3>
+            <div style="text-align:center;">
+                <p>Echte Kombination: <strong>34125</strong></p>
+                <p>Agent's Idee: <input type="text" id="combo-input" value="" placeholder="?????" style="background:#0d0d2b; color:#7bed9f; border:1px solid #555; padding:5px; border-radius:4px; width:80px; text-align:center;"></p>
+                <button class="btn" onclick="checkCombo()">🔓 Versuche zu öffnen</button>
+            </div>
+            <div class="state-display" id="combo-result">Gib eine Kombination ein...</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Referentielle Transparenz vs. Opazität</h2>
+        <div id="opacity-plot" class="plot-container"></div>
+        <div class="highlight">
+            <p><strong>Problem:</strong> "George IV fragte sich, ob der Autor der Waverley-Romane Walter Scott war."</p>
+            <p>Walter Scott IST der Autor der Waverley-Romane. Aber daraus folgt NICHT: "George IV fragte sich, ob Walter Scott Walter Scott war."</p>
+            <p>→ In <em>opaken Kontexten</em> (Glauben, Wissen, Fragen) darf man Gleiches NICHT einfach ersetzen!</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Referentielle Transparenz vs. Opazität – Interaktiv</h2>
+        <div class="interactive-demo">
+            <h3>🔄 Substitutionstest</h3>
+            <p>Gegeben: <code>phone-number(John) = 3217580</code></p>
+            <div class="grid-2">
+                <div>
+                    <h3 style="color:#7bed9f;">✅ Transparenter Kontext</h3>
+                    <div class="formula">
+                        dial(3217580) = dial(phone-number(John))<br>
+                        → Substitution erlaubt!
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color:#ff6b9d;">❌ Opaker Kontext</h3>
+                    <div class="formula">
+                        idea-of(p, 3217580) = 3217580<br>
+                        ↛ idea-of(p, phone-number(John)) = phone-number(John)<br>
+                        → p weiß vielleicht NICHT, dass Johns Nummer 3217580 ist!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Hintikkas Wissenslogik im Situationskalkül</h2>
+        <p>McCarthy & Hayes übersetzen Hintikkas Modallogik des Wissens in den Situationskalkül:</p>
+        <div class="formula">
+            shrug(p, s₁, s₂) — "Wenn p in Situation s₂ ist, könnte er auch in s₁ sein (soweit er weiß)"<br><br>
+            K_p(q) ≡ ∀t. shrug(p, t, s) → q(t)<br>
+            "p weiß q" ≡ "q ist wahr in allen Situationen, die p nicht ausschließen kann"<br><br>
+            Axiome:<br>
+            K1: ∀s.∀p. shrug(p, s, s)  — Reflexivität (die echte Welt ist immer kompatibel)<br>
+            K2: ∀p.∀s.∀t.∀r. (shrug(p,t,s) ∧ shrug(p,r,t)) → shrug(p,r,s)  — Transitivität
+        </div>
+        <canvas id="shrug-canvas" width="800" height="350"></canvas>
+    </div>
+</div>
+
+<!-- SECTION: LEGACY -->
+<div class="section" id="sec-legacy">
+    <div class="card">
+        <h2>Vermächtnis & Einfluss</h2>
+        <p>Dieses Paper von 1969 hat die KI-Forschung für Jahrzehnte geprägt:</p>
+        <div id="legacy-plot" class="plot-container"></div>
+    </div>
+
+    <div class="card">
+        <h2>Was wurde daraus?</h2>
+        <div class="grid-2">
+            <div class="interactive-demo">
+                <h3>✅ Gelöst / Weiterentwickelt</h3>
+                <ul>
+                    <li><strong>Situationskalkül</strong> → Standardformalismus der KI (Reiter, Levesque)</li>
+                    <li><strong>Frame-Problem</strong> → Default-Logik, Circumscription (McCarthy 1980)</li>
+                    <li><strong>Wissenslogik</strong> → Epistemic Logic in Multi-Agenten-Systemen</li>
+                    <li><strong>Strategien als Programme</strong> → GOLOG, Planungssprachen</li>
+                    <li><strong>Kausalität</strong> → Pearl's Causal Models (2000er)</li>
+                </ul>
+            </div>
+            <div class="interactive-demo">
+                <h3>⏳ Immer noch offen</h3>
+                <ul>
+                    <li><strong>Epistemologische Adäquatheit</strong> → Wie repräsentiert man Common Sense vollständig?</li>
+                    <li><strong>Qualifikationsproblem</strong> → Unendlich viele Ausnahmen</li>
+                    <li><strong>Referentielle Opazität</strong> → Kein vollständig befriedigender Formalismus</li>
+                    <li><strong>Parallele Prozesse</strong> → Formale Verifikation bleibt schwer</li>
+                    <li><strong>"normally" Operator</strong> → Non-monotones Schließen ist komplex</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Relevanz für heutige KI (LLMs, etc.)</h2>
+        <div class="highlight">
+            <p>🤖 <strong>Ironie der Geschichte:</strong> Moderne LLMs wie GPT-4 oder Claude lösen viele der hier beschriebenen Probleme <em>ohne</em> den formalen Apparat – durch statistische Muster. Aber sie haben dafür <em>neue</em> Probleme (Halluzinationen, fehlende Garantien), die McCarthy & Hayes' Ansatz vermeiden würde.</p>
+        </div>
+        <div id="comparison-plot" class="plot-container"></div>
+    </div>
+
+    <div class="card">
+        <h2>Zusammenfassung in einem Satz</h2>
+        <div class="highlight" style="font-size:1.2em; text-align:center;">
+            <p>🎯 Um eine KI zu bauen, die <em>wirklich</em> intelligent handelt, muss man formal definieren, was die Welt ist, was man wissen kann, was man tun kann, und was sich ändert (und was nicht), wenn man handelt.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// Navigation
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Concept Detail
+function showConceptDetail(concept) {
+    const details = {
+        'rep': '<strong>Repräsentation der Welt:</strong> Die Welt muss in einer Form dargestellt werden, aus der Schlussfolgerungen gezogen werden können. McCarthy & Hayes schlagen formale Logik als Hauptrepräsentation vor.',
+        'meta': '<strong>Metaphysische Adäquatheit:</strong> Die Welt KÖNNTE diese Form haben. Z.B. "Die Welt besteht aus Partikeln" oder "Die Welt ist ein System von Automaten". Nützlich für allgemeine Theorien.',
+        'epist': '<strong>Epistemologische Adäquatheit:</strong> Man kann die Fakten, die man TATSÄCHLICH HAT, darin ausdrücken. Z.B. "John ist zu Hause" – das geht nicht in einer Partikel-Repräsentation!',
+        'heur': '<strong>Heuristische Adäquatheit:</strong> Die Denkprozesse selbst sind darin ausdrückbar. Die schwierigste Stufe – hier geht es darum, WIE man denkt, nicht nur WAS man weiß.',
+        'sit': '<strong>Situationskalkül:</strong> Eine Situation s ist der komplette Zustand des Universums zu einem Zeitpunkt. Aktionen transformieren Situationen: result(p, σ, s) = neue Situation.',
+        'flu': '<strong>Fluenten:</strong> Funktionen auf Situationen. raining(x, s) = "es regnet am Ort x in Situation s". Fluenten können sich von Situation zu Situation ändern.',
+        'act': '<strong>Aktionen & Strategien:</strong> Aktionen sind atomar (go, open, dial). Strategien sind Programme aus Aktionen – mit Schleifen, Bedingungen, Variablen.',
+        'can': '<strong>Begriff "can":</strong> Was ein Agent tun KANN, definiert durch "Trennung" vom System. Verschiedene Ebenen je nach Trennungspunkt (Gelenke, Muskeln, Nerven, Wille).',
+        'cause': '<strong>Kausalität:</strong> p verursacht π, wenn das Ändern von p\'s Output π verhindern würde. Das Automaten-Modell formalisiert den Common-Sense-Begriff von Ursache.',
+        'frame': '<strong>Frame-Problem:</strong> Wenn man eine Aktion beschreibt, muss man auch sagen, was sich NICHT ändert. Bei n Aktionen × m Fluenten explodiert die Anzahl der nötigen Aussagen.',
+        'know': '<strong>Wissen & Belief:</strong> Formalisiert über "mögliche Welten" (Kripke/Hintikka). p weiß q ≡ q ist wahr in allen Welten, die p nicht ausschließen kann.'
+    };
+    const el = document.getElementById('concept-detail');
+    el.innerHTML = details[concept] || '';
+    el.style.display = 'block';
+}
+
+// Paper Structure Plot
+Plotly.newPlot('paper-structure-plot', [{
+    type: 'treemap',
+    labels: ['Paper', 'Teil 1: Philosophie', 'Teil 2: Formalismus', 'Teil 3: Offene Probleme', 'Teil 4: Literatur',
+             'Warum KI Philosophie braucht', 'Automaten & "can"', 'Kausalität & Counterfactuals',
+             'Situationen', 'Fluenten', 'Aktionen', 'Strategien', 'Wissen & Fähigkeit',
+             'Frame-Problem', 'Formale Literaturen', 'normally-Operator', 'Wahrscheinlichkeiten',
+             'Modallogik', 'Wissenslogik', 'Zeitlogik', 'Handlungslogik'],
+    parents: ['', 'Paper', 'Paper', 'Paper', 'Paper',
+              'Teil 1: Philosophie', 'Teil 1: Philosophie', 'Teil 1: Philosophie',
+              'Teil 2: Formalismus', 'Teil 2: Formalismus', 'Teil 2: Formalismus', 'Teil 2: Formalismus', 'Teil 2: Formalismus',
+              'Teil 3: Offene Probleme', 'Teil 3: Offene Probleme', 'Teil 3: Offene Probleme', 'Teil 3: Offene Probleme',
+              'Teil 4: Literatur', 'Teil 4: Literatur', 'Teil 4: Literatur', 'Teil 4: Literatur'],
+    values: [0, 0, 0, 0, 0, 3, 4, 3, 2, 2, 2, 3, 3, 3, 2, 2, 1, 2, 2, 2, 2],
+    textinfo: 'label',
+    marker: { colors: ['#1a1a3e', '#2d1b69', '#6c63ff', '#ff6b9d', '#ffd93d',
+                       '#3d2b7a', '#3d2b7a', '#3d2b7a',
+                       '#5a52d5', '#5a52d5', '#5a52d5', '#5a52d5', '#5a52d5',
+                       '#e55a8a', '#e55a8a', '#e55a8a', '#e55a8a',
+                       '#d4a017', '#d4a017', '#d4a017', '#d4a017'] }
+}], {
+    margin: { t: 10, b: 10, l: 10, r: 10 },
+    paper_bgcolor: '#1a1a3e',
+    font: { color: '#fff' },
+    height: 400
+}, {responsive: true});
+
+// Adequacy Plot
+Plotly.newPlot('adequacy-plot', [{
+    type: 'funnel',
+    y: ['Metaphysisch adäquat', 'Epistemologisch adäquat', 'Heuristisch adäquat'],
+    x: [100, 60, 30],
+    textinfo: 'label+percent initial',
+    marker: { color: ['#6c63ff', '#ff6b9d', '#ffd93d'] },
+    connector: { line: { color: '#444' } }
+}], {
+    margin: { t: 30, b: 30 },
+    paper_bgcolor: '#1a1a3e',
+    plot_bgcolor: '#1a1a3e',
+    font: { color: '#ccc' },
+    height: 250,
+    annotations: [{
+        x: 0.5, y: -0.15, xref: 'paper', yref: 'paper',
+        text: '← Schwieriger zu erreichen | Leichter zu erreichen →',
+        showarrow: false, font: { color: '#888' }
+    }]
+}, {responsive: true});
+
+// RP Canvas
+function drawRP() {
+    const canvas = document.getElementById('rp-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 400);
+
+    // Background
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 400);
+
+    // RP Box
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 3;
+    ctx.fillStyle = '#1a1a3e';
+    ctx.beginPath();
+    ctx.roundRect(250, 80, 300, 240, 15);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Reasoning Program (RP)', 400, 115);
+
+    // Internal components
+    const components = [
+        { y: 145, label: '📝 Sätze in formaler Logik', color: '#7bed9f' },
+        { y: 180, label: '🔍 Deduktionsmechanismus', color: '#ffd93d' },
+        { y: 215, label: '🎯 Ziele & Subziele', color: '#ff6b9d' },
+        { y: 250, label: '📋 Strategien & Beweise', color: '#6c63ff' },
+        { y: 285, label: '⚡ Ausführung', color: '#ff9f43' }
+    ];
+    ctx.font = '14px Segoe UI';
+    components.forEach(c => {
+        ctx.fillStyle = c.color;
+        ctx.fillText(c.label, 400, c.y);
+    });
+
+    // World
+    ctx.beginPath();
+    ctx.arc(100, 200, 60, 0, Math.PI * 2);
+    ctx.fillStyle = '#1e3a1e';
+    ctx.fill();
+    ctx.strokeStyle = '#7bed9f';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#7bed9f';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.fillText('🌍 Welt', 100, 205);
+
+    // Output/Action
+    ctx.beginPath();
+    ctx.arc(700, 200, 60, 0, Math.PI * 2);
+    ctx.fillStyle = '#3a1e1e';
+    ctx.fill();
+    ctx.strokeStyle = '#ff6b9d';
+    ctx.stroke();
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('⚡ Aktion', 700, 205);
+
+    // Arrows
+    ctx.strokeStyle = '#7bed9f';
+    ctx.lineWidth = 2;
+    drawArrow(ctx, 160, 180, 245, 150);
+    ctx.strokeStyle = '#ff6b9d';
+    drawArrow(ctx, 555, 250, 640, 200);
+
+    // Labels
+    ctx.fillStyle = '#7bed9f';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('Wahrnehmung', 190, 150);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('Handlung', 610, 260);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2) {
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 10 * Math.cos(angle - 0.4), y2 - 10 * Math.sin(angle - 0.4));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 10 * Math.cos(angle + 0.4), y2 - 10 * Math.sin(angle + 0.4));
+    ctx.stroke();
+}
+
+drawRP();
+
+// Automaton Simulation
+let autoState = { a1: 0, a2: 0, a3: 0, t: 0 };
+
+function drawAutomaton() {
+    const canvas = document.getElementById('automaton-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 500);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 500);
+
+    const automata = [
+        { x: 200, y: 150, label: 'Automat 1', state: autoState.a1, color: '#6c63ff' },
+        { x: 400, y: 300, label: 'Automat 2', state: autoState.a2, color: '#ff6b9d' },
+        { x: 600, y: 150, label: 'Automat 3', state: autoState.a3, color: '#ffd93d' }
+    ];
+
+    // Draw connections
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    // 1 -> 2
+    drawArrow(ctx, 240, 180, 370, 280);
+    // 2 -> 1
+    drawArrow(ctx, 370, 270, 230, 175);
+    // 3 -> 2
+    drawArrow(ctx, 560, 180, 430, 280);
+    ctx.setLineDash([]);
+
+    // Signal labels
+    ctx.fillStyle = '#888';
+    ctx.font = '12px monospace';
+    ctx.fillText('s₁=' + (autoState.a1 === 0 ? '2' : '1'), 280, 220);
+    ctx.fillText('s₂=1', 280, 240);
+    ctx.fillText('s₃=' + (autoState.a3 === 0 ? '0' : '1'), 520, 220);
+
+    // Draw automata
+    automata.forEach(a => {
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 50, 0, Math.PI * 2);
+        ctx.fillStyle = a.color + '33';
+        ctx.fill();
+        ctx.strokeStyle = a.color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(a.label, a.x, a.y - 10);
+        ctx.font = 'bold 24px monospace';
+        ctx.fillStyle = a.color;
+        ctx.fillText(a.state.toString(), a.x, a.y + 25);
+    });
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.fillText('System S (aus Figure 2 des Papers)', 400, 30);
+
+    // Equations
+    ctx.fillStyle = '#aaa';
+    ctx.font = '13px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('a₁(t+1) = a₁(t) + s₂(t)', 50, 400);
+    ctx.fillText('a₂(t+1) = a₂(t) + s₁(t) + 2·s₃(t)', 50, 425);
+    ctx.fillText('a₃(t+1) = if a₃(t)=0 then 0 else a₃(t)+1', 50, 450);
+    ctx.fillText('s₁(t) = if a₁(t)=0 then 2 else 1', 450, 400);
+    ctx.fillText('s₂(t) = 1', 450, 425);
+    ctx.fillText('s₃(t) = if a₃(t)=0 then 0 else 1', 450, 450);
+}
+
+function stepAutomaton() {
+    const s1 = autoState.a1 === 0 ? 2 : 1;
+    const s2 = 1;
+    const s3 = autoState.a3 === 0 ? 0 : 1;
+
+    const newA1 = autoState.a1 + s2;
+    const newA2 = autoState.a2 + s1 + 2 * s3;
+    const newA3 = autoState.a3 === 0 ? 0 : autoState.a3 + 1;
+
+    autoState.a1 = newA1;
+    autoState.a2 = newA2;
+    autoState.a3 = newA3;
+    autoState.t++;
+
+    drawAutomaton();
+    document.getElementById('automaton-state').textContent =
+        `t = ${autoState.t} | a₁ = ${autoState.a1}, a₂ = ${autoState.a2}, a₃ = ${autoState.a3} | s₁=${s1}, s₂=${s2}, s₃=${s3}`;
+}
+
+function resetAutomaton() {
+    autoState = { a1: 0, a2: 0, a3: 0, t: 0 };
+    drawAutomaton();
+    document.getElementById('automaton-state').textContent = 't = 0 | a₁ = 0, a₂ = 0, a₃ = 0';
+}
+
+drawAutomaton();
+
+// Automata Pros/Cons
+Plotly.newPlot('automata-pros-cons', [{
+    type: 'table',
+    header: {
+        values: [['<b>✅ Stärken</b>'], ['<b>❌ Schwächen</b>']],
+        fill: { color: ['#1a4a1a', '#4a1a1a'] },
+        font: { color: '#fff', size: 14 },
+        align: 'center'
+    },
+    cells: {
+        values: [
+            ['Deterministisch & klar', 'Formalisiert Kausalität', 'Erklärt "can"', 'Erklärt Counterfactuals', 'Objektive Zerlegung'],
+            ['Zu viele Zustände (2^10^10)', 'Geometrie schwer darstellbar', 'Fixe Verbindungen unrealistisch', 'Epistemologisch inadäquat', 'Wissen nicht als Zustandsliste']
+        ],
+        fill: { color: ['#0d2b0d', '#2b0d0d'] },
+        font: { color: '#ccc', size: 13 },
+        align: 'center',
+        height: 35
+    }
+}], {
+    margin: { t: 10, b: 10, l: 10, r: 10 },
+    paper_bgcolor: '#1a1a3e',
+    height: 250
+}, {responsive: true});
+
+// CAN visualization
+let canMode = 'connected';
+
+function drawCan() {
+    const canvas = document.getElementById('can-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 450);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 450);
+
+    const disconnected = canMode === 'disconnected';
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(disconnected ? 'System S₁ (Automat 1 "befreit")' : 'System S (normal verbunden)', 400, 30);
+
+    // Automat 1
+    ctx.beginPath();
+    ctx.arc(200, 200, 60, 0, Math.PI * 2);
+    ctx.fillStyle = disconnected ? '#6c63ff44' : '#6c63ff22';
+    ctx.fill();
+    ctx.strokeStyle = disconnected ? '#ff9f43' : '#6c63ff';
+    ctx.lineWidth = disconnected ? 4 : 2;
+    ctx.setLineDash(disconnected ? [8, 4] : []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.fillText('Automat 1', 200, 190);
+    ctx.fillText(disconnected ? '(FREI!)' : '(gebunden)', 200, 215);
+
+    // Automat 2
+    ctx.beginPath();
+    ctx.arc(500, 200, 60, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff6b9d22';
+    ctx.fill();
+    ctx.strokeStyle = '#ff6b9d';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.fillText('Automat 2', 500, 195);
+    ctx.fillText('Ziel: Zustand 1', 500, 215);
+
+    // Automat 3
+    ctx.beginPath();
+    ctx.arc(500, 380, 50, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffd93d22';
+    ctx.fill();
+    ctx.strokeStyle = '#ffd93d';
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.fillText('Automat 3', 500, 385);
+
+    // Connection 1->2
+    ctx.strokeStyle = disconnected ? '#ff9f43' : '#444';
+    ctx.lineWidth = 2;
+    ctx.setLineDash(disconnected ? [5, 5] : []);
+    drawArrow(ctx, 260, 190, 435, 190);
+    ctx.setLineDash([]);
+
+    if (disconnected) {
+        // External input arrow
+        ctx.strokeStyle = '#ff9f43';
+        ctx.lineWidth = 3;
+        drawArrow(ctx, 50, 190, 135, 190);
+        ctx.fillStyle = '#ff9f43';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.fillText('Externe', 90, 170);
+        ctx.fillText('Eingabe', 90, 155);
+
+        // Show that state 1 is reachable
+        ctx.fillStyle = '#7bed9f';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.fillText('→ Zustand 1 ERREICHBAR!', 500, 270);
+        ctx.font = '13px Segoe UI';
+        ctx.fillText('(sende s₁=1 im ersten Schritt)', 500, 295);
+    } else {
+        ctx.fillStyle = '#ff6b9d';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.fillText('→ Zustand 1 NICHT erreichbar!', 500, 270);
+        ctx.font = '13px Segoe UI';
+        ctx.fillText('(s₁ ist immer 2, da a₁ startet bei 0→wird 1→bleibt ≠0)', 500, 295);
+        ctx.fillText('(also a₂ bekommt immer gerade Zahlen addiert)', 400, 315);
+    }
+
+    // Connection 2->1
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    drawArrow(ctx, 440, 210, 265, 210);
+    ctx.setLineDash([]);
+
+    // Connection 3->2
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 1;
+    drawArrow(ctx, 500, 330, 500, 265);
+
+    // Legend
+    ctx.fillStyle = '#aaa';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('can(1, "a₂=1", s₀) = TRUE  — Automat 1 KANN a₂ in Zustand 1 bringen', 50, 420);
+    ctx.fillText('can(3, "a₂=1", s₀) = FALSE — Automat 3 KANN NICHT (s₃ ist immer 0, da a₃ startet bei 0)', 50, 440);
+}
+
+function toggleCanMode(mode) {
+    canMode = mode;
+    drawCan();
+    document.getElementById('can-state').textContent =
+        mode === 'connected'
+            ? 'Modus: Verbunden — Automat 1 folgt seinen normalen Regeln (Output durch Zustand bestimmt)'
+            : 'Modus: Getrennt — Automat 1 kann BELIEBIGE Outputs senden (= was er "kann")';
+}
+
+drawCan();
+
+// Can Levels Plot
+Plotly.newPlot('can-levels-plot', [{
+    type: 'bar',
+    y: ['Gelenke', 'Muskeln', 'Nerven', '"Willensorgan"', 'Tatsächliches Verhalten'],
+    x: [95, 70, 50, 30, 10],
+    orientation: 'h',
+    marker: {
+        color: ['#6c63ff', '#ff6b9d', '#ffd93d', '#7bed9f', '#ff9f43']
+    },
+    text: ['Kann durch Loch passen, aber auch über Gebäude springen!', 
+           'Realistischere physische Grenzen', 
+           'Kann Einrad fahren (wenn Nerven richtig feuern)',
+           'Kann nicht geheime Nummer wählen (weil unbekannt)',
+           'Nur was tatsächlich passiert (trivial)'],
+    textposition: 'inside',
+    hoverinfo: 'text'
+}], {
+    title: { text: 'Ebenen von "can" – je tiefer der Schnitt, desto weniger "kann" man', font: { color: '#fff', size: 14 } },
+    xaxis: { title: '% der theoretisch möglichen Aktionen, die als "kann" gelten', color: '#ccc', gridcolor: '#333' },
+    yaxis: { color: '#ccc' },
+    margin: { l: 150, r: 20, t: 50, b: 50 },
+    paper_bgcolor: '#1a1a3e',
+    plot_bgcolor: '#12122e',
+    font: { color: '#ccc' },
+    height: 300
+}, {responsive: true});
+
+// Situation Calculus Canvas
+function drawSituationCalc() {
+    const canvas = document.getElementById('situation-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 400);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 400);
+
+    // Draw situations as circles connected by arrows
+    const situations = [
+        { x: 100, y: 200, label: 's₀', desc: 'Anfang' },
+        { x: 300, y: 120, label: 's₁', desc: 'result(p, σ₁, s₀)' },
+        { x: 300, y: 280, label: 's₂', desc: 'result(p, σ₂, s₀)' },
+        { x: 550, y: 120, label: 's₃', desc: 'result(p, σ₃, s₁)' },
+        { x: 550, y: 280, label: 's₄', desc: 'result(p, σ₄, s₂)' },
+        { x: 700, y: 200, label: 's_goal', desc: 'Ziel erreicht!' }
+    ];
+
+    // Draw arrows
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2;
+    const arrows = [[0,1],[0,2],[1,3],[2,4],[3,5],[4,5]];
+    const actionLabels = ['σ₁: go(left)', 'σ₂: go(right)', 'σ₃: climb', 'σ₄: push', 'reach', 'reach'];
+    
+    arrows.forEach((a, i) => {
+        const from = situations[a[0]];
+        const to = situations[a[1]];
+        ctx.strokeStyle = i === 0 || i === 2 || i === 4 ? '#7bed9f' : '#ff6b9d';
+        drawArrow(ctx, from.x + 30, from.y, to.x - 30, to.y);
+        // Label
+        ctx.fillStyle = '#888';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(actionLabels[i], (from.x + to.x) / 2, (from.y + to.y) / 2 - 15);
+    });
+
+    // Draw situation nodes
+    situations.forEach((s, i) => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 30, 0, Math.PI * 2);
+        ctx.fillStyle = i === 5 ? '#1a4a1a' : '#1a1a3e';
+        ctx.fill();
+        ctx.strokeStyle = i === 5 ? '#7bed9f' : '#6c63ff';
+        ctx.lineWidth = i === 0 || i === 5 ? 3 : 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(s.label, s.x, s.y + 5);
+
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Segoe UI';
+        ctx.fillText(s.desc, s.x, s.y + 45);
+    });
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Situationskalkül: Aktionen transformieren Situationen', 400, 30);
+
+    // Legend
+    ctx.fillStyle = '#7bed9f';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('🟢 Erfolgreicher Pfad', 50, 370);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('🔴 Alternativer Pfad', 250, 370);
+    ctx.fillStyle = '#aaa';
+    ctx.fillText('result(p, σ, s) = die Situation, die entsteht wenn p die Aktion σ in s ausführt', 400, 370);
+}
+drawSituationCalc();
+
+// Fluent Plot
+const fluent_situations = ['s₀', 's₁', 's₂', 's₃', 's₄', 's₅'];
+Plotly.newPlot('fluent-plot', [
+    {
+        x: fluent_situations,
+        y: [0, 0, 3, 3, 3, 5],
+        name: 'at(Monkey, x)',
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { size: 10 },
+        line: { color: '#6c63ff' }
+    },
+    {
+        x: fluent_situations,
+        y: [2, 2, 2, 3, 3, 3],
+        name: 'at(Box, x)',
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { size: 10 },
+        line: { color: '#ffd93d' }
+    },
+    {
+        x: fluent_situations,
+        y: [0, 0, 0, 0, 0, 1],
+        name: 'has(Monkey, Bananas)',
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { size: 10 },
+        line: { color: '#7bed9f' }
+    },
+    {
+        x: fluent_situations,
+        y: [5, 5, 5, 5, 5, 5],
+        name: 'at(Bananas, x)',
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: { size: 10 },
+        line: { color: '#ff6b9d', dash: 'dot' }
+    }
+], {
+    title: { text: 'Fluenten ändern sich über Situationen hinweg (Affen-Bananen-Problem)', font: { color: '#fff', size: 13 } },
+    xaxis: { title: 'Situation', color: '#ccc', gridcolor: '#333' },
+    yaxis: { title: 'Wert / Position', color: '#ccc', gridcolor: '#333' },
+    paper_bgcolor: '#1a1a3e',
+    plot_bgcolor: '#12122e',
+    font: { color: '#ccc' },
+    legend: { x: 0, y: -0.3, orientation: 'h' },
+    height: 350,
+    margin: { t: 50, b: 80 }
+}, {responsive: true});
+
+// Monkey-Banana Animation
+let monkeyState = 0;
+function drawMonkey() {
+    const canvas = document.getElementById('monkey-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 300);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 300);
+
+    // Floor
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 250);
+    ctx.lineTo(800, 250);
+    ctx.stroke();
+
+    // Bananas (always at x=600, y=80)
+    ctx.font = '30px serif';
+    ctx.fillText('🍌', 585, 90);
+
+    // Ceiling hook
+    ctx.strokeStyle = '#666';
+    ctx.beginPath();
+    ctx.moveTo(600, 0);
+    ctx.lineTo(600, 60);
+    ctx.stroke();
+
+    // Box and Monkey positions based on state
+    let boxX, monkeyX, monkeyY, msg;
+    switch(monkeyState) {
+        case 0:
+            boxX = 300; monkeyX = 100; monkeyY = 220;
+            msg = 'Schritt 0: Affe steht links, Box ist in der Mitte, Bananen hängen rechts oben';
+            break;
+        case 1:
+            boxX = 600; monkeyX = 600; monkeyY = 220;
+            msg = 'Schritt 1: move(Box, Under-Bananas) — Affe schiebt Box unter die Bananen';
+            break;
+        case 2:
+            boxX = 600; monkeyX = 600; monkeyY = 170;
+            msg = 'Schritt 2: climb(Box) — Affe klettert auf die Box';
+            break;
+        case 3:
+            boxX = 600; monkeyX = 600; monkeyY = 130;
+            msg = 'Schritt 3: reach-for(Bananas) — Affe greift nach Bananen → ERFOLG! 🎉';
+            break;
+        default:
+            boxX = 300; monkeyX = 100; monkeyY = 220;
+            msg = 'Fertig! Klicke Reset.';
+    }
+
+    // Draw box
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(boxX - 30, 210, 60, 40);
+    ctx.strokeStyle = '#A0522D';
+    ctx.strokeRect(boxX - 30, 210, 60, 40);
+
+    // Draw monkey
+    ctx.font = '40px serif';
+    ctx.fillText('🐒', monkeyX - 20, monkeyY);
+
+    // Success indicator
+    if (monkeyState >= 3) {
+        ctx.fillStyle = '#7bed9f';
+        ctx.font = 'bold 20px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('✅ has(Monkey, Bananas, s₃) = TRUE', 400, 30);
+        ctx.textAlign = 'left';
+    }
+
+    document.getElementById('monkey-state').textContent = msg;
+}
+
+function monkeyStep() {
+    if (monkeyState < 3) monkeyState++;
+    drawMonkey();
+}
+
+function monkeyReset() {
+    monkeyState = 0;
+    drawMonkey();
+}
+
+drawMonkey();
+
+// Frame Problem Plot
+let numActions = 5;
+let numFluents = 10;
+
+function updateFramePlot(a, f) {
+    if (a !== null && a !== undefined) { numActions = parseInt(a); document.getElementById('action-count').textContent = a; }
+    if (f !== null && f !== undefined) { numFluents = parseInt(f); document.getElementById('fluent-count').textContent = f; }
+
+    const actions = Array.from({length: 20}, (_, i) => i + 1);
+    const withFrame = actions.map(a => a * 2); // ~2 Axiome pro Aktion (nur was sich ändert)
+    const withoutFrame = actions.map(a => a * numFluents); // n*m Axiome
+
+    Plotly.react('frame-plot', [
+        {
+            x: actions,
+            y: withoutFrame,
+            name: 'Ohne Lösung: n × m Frame-Axiome',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { color: '#ff6b9d', width: 3 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(255,107,157,0.1)'
+        },
+        {
+            x: actions,
+            y: withFrame,
+            name: 'Mit Frame-Deklarationen: ~2n Axiome',
+            type: 'scatter',
+            mode: 'lines+markers',
+            line: { color: '#7bed9f', width: 3 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(123,237,159,0.1)'
+        },
+        {
+            x: [numActions],
+            y: [numActions * numFluents],
+            name: `Aktuell: ${numActions}×${numFluents} = ${numActions * numFluents} Axiome!`,
+            type: 'scatter',
+            mode: 'markers',
+            marker: { size: 15, color: '#ffd93d', symbol: 'star' }
+        }
+    ], {
+        title: { text: `Frame-Problem: ${numActions} Aktionen × ${numFluents} Fluenten = ${numActions * numFluents} nötige Aussagen!`, font: { color: '#fff', size: 13 } },
+        xaxis: { title: 'Anzahl Aktionen', color: '#ccc', gridcolor: '#333' },
+        yaxis: { title: 'Anzahl benötigter Axiome', color: '#ccc', gridcolor: '#333' },
+        paper_bgcolor: '#1a1a3e',
+        plot_bgcolor: '#12122e',
+        font: { color: '#ccc' },
+        legend: { x: 0, y: 1.15, orientation: 'h' },
+        height: 350,
+        margin: { t: 60, b: 50 }
+    }, {responsive: true});
+}
+updateFramePlot(5, 10);
+
+// Frame Demo Canvas
+function drawFrameDemo() {
+    const canvas = document.getElementById('frame-demo-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 300);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 300);
+
+    // Before action
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('VOR lookup(q, Phone-book)', 200, 30);
+    ctx.fillText('NACH lookup(q, Phone-book)', 600, 30);
+
+    // State before
+    const before = ['has(p, Phone-book) ✓', 'has(p, Telephone) ✓', 'at(q, home(q)) ✓', 'knows(p, phone#(q)) ✗'];
+    const after = ['has(p, Phone-book) ✓', 'has(p, Telephone) ???', 'at(q, home(q)) ???', 'knows(p, phone#(q)) ✓'];
+
+    ctx.font = '13px monospace';
+    before.forEach((item, i) => {
+        ctx.fillStyle = item.includes('✗') ? '#ff6b9d' : '#7bed9f';
+        ctx.fillText(item, 200, 70 + i * 35);
+    });
+
+    after.forEach((item, i) => {
+        ctx.fillStyle = item.includes('???') ? '#ffd93d' : '#7bed9f';
+        ctx.fillText(item, 600, 70 + i * 35);
+    });
+
+    // Arrow
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 3;
+    drawArrow(ctx, 350, 130, 450, 130);
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('lookup()', 400, 115);
+
+    // Problem highlight
+    ctx.fillStyle = '#ffd93d';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('⚠️ FRAME-PROBLEM: Woher wissen wir, dass sich', 600, 220);
+    ctx.fillText('has(p, Telephone) und at(q, home(q)) NICHT geändert haben?', 600, 245);
+    ctx.fillText('→ Wir brauchen EXPLIZITE Aussagen darüber!', 600, 270);
+}
+drawFrameDemo();
+
+// Worlds Canvas (Knowledge/Modal Logic)
+let worlds = [
+    { x: 400, y: 225, label: 'w₀ (real)', real: true },
+    { x: 200, y: 150, label: 'w₁', real: false },
+    { x: 600, y: 150, label: 'w₂', real: false },
+    { x: 250, y: 320, label: 'w₃', real: false }
+];
+
+function drawWorlds() {
+    const canvas = document.getElementById('worlds-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 450);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 450);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Mögliche-Welten-Semantik: shrug(p, s₁, s₂)', 400, 25);
+
+    // Draw accessibility relations (lines between worlds)
+    ctx.strokeStyle = '#6c63ff44';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    for (let i = 0; i < worlds.length; i++) {
+        for (let j = i + 1; j < worlds.length; j++) {
+            if (worlds[i].real || worlds[j].real) {
+                ctx.beginPath();
+                ctx.moveTo(worlds[i].x, worlds[i].y);
+                ctx.lineTo(worlds[j].x, worlds[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+    ctx.setLineDash([]);
+
+    // Draw worlds
+    worlds.forEach((w, i) => {
+        ctx.beginPath();
+        ctx.arc(w.x, w.y, 35, 0, Math.PI * 2);
+        ctx.fillStyle = w.real ? '#1a4a1a' : '#1a1a3e';
+        ctx.fill();
+        ctx.strokeStyle = w.real ? '#7bed9f' : '#6c63ff';
+        ctx.lineWidth = w.real ? 3 : 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(w.label, w.x, w.y + 4);
+
+        // Show p value in each world
+        const pTrue = w.real || i % 2 === 0;
+        ctx.fillStyle = pTrue ? '#7bed9f' : '#ff6b9d';
+        ctx.font = '11px monospace';
+        ctx.fillText(pTrue ? 'p=T' : 'p=F', w.x, w.y + 55);
+    });
+
+    // Legend
+    ctx.fillStyle = '#aaa';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('K_a(p) = wahr ⟺ p ist wahr in ALLEN erreichbaren Welten', 50, 420);
+    ctx.fillText('Hier: p ist NICHT in allen Welten wahr → Agent weiß p NICHT', 50, 440);
+
+    // shrug label
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('shrug(a, w₁, w₀)', 300, 175);
+    ctx.fillText('shrug(a, w₂, w₀)', 500, 175);
+}
+
+function addWorld() {
+    const x = 100 + Math.random() * 600;
+    const y = 80 + Math.random() * 300;
+    const idx = worlds.length;
+    worlds.push({ x, y, label: `w${idx}`, real: false });
+    drawWorlds();
+}
+
+function resetWorlds() {
+    worlds = [
+        { x: 400, y: 225, label: 'w₀ (real)', real: true },
+        { x: 200, y: 150, label: 'w₁', real: false },
+        { x: 600, y: 150, label: 'w₂', real: false },
+        { x: 250, y: 320, label: 'w₃', real: false }
+    ];
+    drawWorlds();
+}
+
+drawWorlds();
+
+// Combination Lock Demo
+function checkCombo() {
+    const input = document.getElementById('combo-input').value;
+    const result = document.getElementById('combo-result');
+    if (input === '34125') {
+        result.textContent = '✅ OFFEN! idea-of-combination(p, safe, s) = combination(safe) = 34125 → Der Agent WEISS die Kombination!';
+        result.style.color = '#7bed9f';
+    } else if (input === '') {
+        result.textContent = 'Gib eine Kombination ein...';
+        result.style.color = '#ccc';
+    } else {
+        result.textContent = `❌ GESCHLOSSEN! idea-of-combination(p, safe, s) = ${input} ≠ 34125 = combination(safe) → Agent weiß die Kombination NICHT!`;
+        result.style.color = '#ff6b9d';
+    }
+}
+
+// Opacity Plot
+Plotly.newPlot('opacity-plot', [{
+    type: 'table',
+    header: {
+        values: [['<b>Kontext</b>'], ['<b>Substitution erlaubt?</b>'], ['<b>Beispiel</b>']],
+        fill: { color: '#1a1a3e' },
+        font: { color: '#fff', size: 13 },
+        align: 'center'
+    },
+    cells: {
+        values: [
+            ['Extensional (normal)', 'Intensional (opak): Wissen', 'Intensional (opak): Glauben', 'Intensional (opak): Fragen'],
+            ['✅ JA', '❌ NEIN', '❌ NEIN', '❌ NEIN'],
+            ['dial(3217580) = dial(phone#(John))', 'knows(p, 3217580) ↛ knows(p, phone#(John))', 'believes(p, Morgenstern=Morgenstern) ↛ believes(p, Morgenstern=Abendstern)', 'wonders(George IV, Scott=Scott) ↛ wonders(George IV, author=Scott)']
+        ],
+        fill: { color: [['#12122e', '#2b0d0d', '#2b0d0d', '#2b0d0d']] },
+        font: { color: '#ccc', size: 12 },
+        align: 'center',
+        height: 40
+    }
+}], {
+    margin: { t: 10, b: 10, l: 10, r: 10 },
+    paper_bgcolor: '#1a1a3e',
+    height: 220
+}, {responsive: true});
+
+// Shrug Canvas
+function drawShrug() {
+    const canvas = document.getElementById('shrug-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 350);
+    ctx.fillStyle = '#0d0d2b';
+    ctx.fillRect(0, 0, 800, 350);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('shrug(p, s₁, s₂): "Wenn p in s₂ ist, könnte er auch in s₁ sein (soweit er weiß)"', 400, 25);
+
+    // Real situation
+    ctx.beginPath();
+    ctx.arc(400, 180, 45, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a4a1a';
+    ctx.fill();
+    ctx.strokeStyle = '#7bed9f';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.fillText('s₂ (real)', 400, 175);
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#7bed9f';
+    ctx.fillText('phone#(John)=3217580', 400, 195);
+
+    // Alternative 1
+    ctx.beginPath();
+    ctx.arc(150, 180, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a1a3e';
+    ctx.fill();
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('s₁', 150, 175);
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('phone#(John)=5551234', 150, 195);
+
+    // Alternative 2
+    ctx.beginPath();
+    ctx.arc(650, 180, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a1a3e';
+    ctx.fill();
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('s₃', 650, 175);
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('phone#(John)=9998877', 650, 195);
+
+    // Arrows
+    ctx.strokeStyle = '#6c63ff';
+    ctx.setLineDash([5, 5]);
+    drawArrow(ctx, 355, 175, 195, 175);
+    drawArrow(ctx, 445, 175, 605, 175);
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('shrug(p, s₁, s₂)', 275, 155);
+    ctx.fillText('shrug(p, s₃, s₂)', 525, 155);
+
+    // Conclusion
+    ctx.fillStyle = '#ffd93d';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('→ p weiß Johns Nummer NICHT, weil phone#(John) in den Alternativen verschieden ist', 400, 280);
+    ctx.fillStyle = '#aaa';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('K_p("phone#(John)=3217580") = FALSE, weil ∃t: shrug(p,t,s₂) ∧ phone#(John,t)≠3217580', 400, 310);
+    ctx.fillText('Nach lookup(): alle Alternativen haben phone#(John)=3217580 → K_p("phone#(John)=3217580") = TRUE', 400, 335);
+}
+drawShrug();
+
+// Legacy Plot
+Plotly.newPlot('legacy-plot', [{
+    type: 'scatter',
+    mode: 'markers+text',
+    x: [1969, 1977, 1980, 1986, 1991, 1995, 2000, 2009, 2020],
+    y: [1, 2, 3, 4, 3.5, 4.5, 5, 4, 6],
+    text: ['McCarthy & Hayes<br>Situationskalkül', 'Reiter: Closed World<br>Assumption', 'McCarthy:<br>Circumscription', 'Hanks & McDermott:<br>Yale Shooting Problem', 'Reiter: Situation<br>Calculus (modern)', 'Thielscher:<br>Fluent Calculus', 'Pearl: Causality<br>(Structural Models)', 'Levesque et al.:<br>GOLOG', 'LLMs: Statistischer<br>Ansatz dominiert'],
+    textposition: 'top center',
+    marker: {
+        size: [20, 12, 15, 12, 15, 12, 15, 12, 18],
+        color: ['#6c63ff', '#ff6b9d', '#ffd93d', '#ff9f43', '#7bed9f', '#6c63ff', '#ff6b9d', '#ffd93d', '#ff9f43']
+    },
+    textfont: { size: 10, color: '#ccc' }
+}], {
+    title: { text: 'Zeitlinie: Einfluss des Papers', font: { color: '#fff', size: 14 } },
+    xaxis: { title: 'Jahr', color: '#ccc', gridcolor: '#333', range: [1965, 2025] },
+    yaxis: { title: 'Einfluss / Aktivität', color: '#ccc', gridcolor: '#333', showticklabels: false },
+    paper_bgcolor: '#1a1a3e',
+    plot_bgcolor: '#12122e',
+    font: { color: '#ccc' },
+    height: 400,
+    margin: { t: 50, b: 50 },
+    showlegend: false
+}, {responsive: true});
+
+// Comparison Plot (Formal vs. Statistical AI)
+Plotly.newPlot('comparison-plot', [
+    {
+        type: 'scatterpolar',
+        r: [9, 3, 9, 8, 4, 7, 9],
+        theta: ['Garantien/Beweise', 'Skalierbarkeit', 'Transparenz', 'Kausalverständnis', 'Flexibilität', 'Wissensrepräsentation', 'Garantien/Beweise'],
+        name: 'McCarthy & Hayes (Formaler Ansatz)',        fill: 'toself',
+        fillcolor: 'rgba(108,99,255,0.2)',
+        line: { color: '#6c63ff' }
+    },
+    {
+        type: 'scatterpolar',
+        r: [2, 9, 2, 4, 9, 5, 2],
+        theta: ['Garantien/Beweise', 'Skalierbarkeit', 'Transparenz', 'Kausalverständnis', 'Flexibilität', 'Wissensrepräsentation', 'Garantien/Beweise'],
+        name: 'Moderne LLMs (Statistischer Ansatz)',
+        fill: 'toself',
+        fillcolor: 'rgba(255,107,157,0.2)',
+        line: { color: '#ff6b9d' }
+    }
+], {
+    polar: {
+        radialaxis: { visible: true, range: [0, 10], color: '#ccc', gridcolor: '#333' },
+        bgcolor: '#12122e',
+        angularaxis: { color: '#ccc' }
+    },
+    title: { text: 'Formaler Ansatz (McCarthy) vs. Statistischer Ansatz (LLMs)', font: { color: '#fff', size: 14 } },
+    paper_bgcolor: '#1a1a3e',
+    font: { color: '#ccc' },
+    legend: { x: 0.3, y: -0.2, orientation: 'h' },
+    height: 450,
+    margin: { t: 60, b: 80 }
+}, {responsive: true});
+
+// Resize handler
+window.addEventListener('resize', () => {
+    drawRP();
+    drawAutomaton();
+    drawCan();
+    drawSituationCalc();
+    drawMonkey();
+    drawFrameDemo();
+    drawWorlds();
+    drawShrug();
+});
+
+// Initial draw calls that might have been missed
+setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
+}, 500);
+
+</script>
+</body>
+</html>
