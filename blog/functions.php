@@ -4,7 +4,7 @@ $GLOBALS["debug_mode"] = false;
 
 /**
  * Renders a group of tabs where only one can be active at a time.
- * * @param array  $tabs     Associative array: ["Tab Title" => "HTML Content"]
+  * @param  array  $tabs     Associative array: ["Tab Title" => "HTML Content"]
  * @param string $groupId  A unique string for this group (to prevent interference with others)
  */
 function render_gem_tabs($tabs, $groupId = 'tabgroup') {
@@ -128,7 +128,7 @@ function incl($headline, $base_name) {
 	js($js_file, $headline);
 
 	if (!file_exists($php_file)) {
-		die("Kritischer Fehler: PHP-Datei '$php_file' für Sektion '$headline' fehlt!");
+		die("Error: PHP file '$php_file' for section '$headline' is missing!");
 	}
 
 	$allOpen = isset($_GET['showall']);
@@ -146,7 +146,6 @@ function load_base_js () {
 	css("Temml-Local.min");
 	js("start");
 	css("prism-tomorrow.min.css");
-	css("Temml-Local");
 	css("style");
 	js("echarts.min");
 	js("echarts-gl.min.js");
