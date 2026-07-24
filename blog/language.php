@@ -196,7 +196,6 @@ abjad.
 
 ### The Phoenician Alphabet (c. 1050 BCE)
 
-
 <figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
 	<img style="width: 100%; height: auto; display: block;" src="history_of_a.png" alt="History of the letter A, from ox over alpha to A" />
     <figcaption class="md">\cite[History of the letter A, from Ox to A]{history_of_a}</figcaption>
