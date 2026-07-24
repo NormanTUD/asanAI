@@ -189,6 +189,26 @@ Understanding circuits is not merely an academic exercise. It has direct implica
 4. **Scalable oversight:** As models grow larger, we need automated tools to verify their behavior. Circuit-level analysis provides a path toward formal verification of neural network properties.
 
 The field of mechanistic interpretability is still young, but it represents our best current hope for moving beyond "black box" AI toward systems we can genuinely understand and trust.
+
+## The FFN as a Soft Hash Table
+
+The Feed-Forward Network in a Transformer layer has a precise computational analogy: it is a **soft hash table**. The FFN computes:
+
+$$\text{FFN}(x) = \text{ReLU}(x W_1 + b_1) W_2 + b_2$$
+
+The rows of $W_1$ are **keys** (address patterns). The dot product $x W_1$ computes the match score between the input $x$ and every key. ReLU zeroes out non-matching keys. The columns of $W_2$ are **values** (the information retrieved when a key matches). The output is a weighted sum of values, weighted by match strength.
+
+This is exactly a soft hash table: instead of exact-match lookup (hard hashing), the FFN performs **approximate-match retrieval** where multiple keys can partially match and their values are blended. The "hash function" is the learned projection $W_1$, and the "hash table entries" are the rows/columns of $W_1$ and $W_2$.
+
+The "aha-moment": the FFN doesn't "compute" in the traditional sense — it **retrieves**. Each FFN layer is a soft associative memory with $d_{\text{ff}}$ slots (typically $4 \times d_{\text{model}}$, so ~3,072 to ~16,384 slots per layer). Across 96 layers, a large Transformer has access to roughly a million memory slots. When the model "knows" that Paris is the capital of France, that fact is stored as a key-value pair in one or more FFN layers: the key activates when the input pattern matches "capital of France," and the value pushes the residual stream toward the "Paris" direction. This is why knowledge editing (changing a single fact in a trained model) is possible: you just need to find and modify the relevant key-value pair in the FFN.
+
+## The Transformer as a Message-Passing System
+
+There is a deep connection between Transformers and Graph Neural Networks (GNNs). In a GNN, nodes pass messages to neighbors along edges. In self-attention, every token is a node on a **complete graph** — every token can attend to every other token. The attention weights are learned, dynamic **edge weights**. The causal mask simply prunes this complete graph into a directed acyclic graph where edges only flow backward in time.
+
+The "aha-moment": a Transformer layer is a single step of **message-passing** on a fully connected graph where the edge weights are computed on-the-fly from the data itself. This reframes the quadratic cost $\mathcal{O}(n^2)$ not as a bug of the architecture but as the price of assuming every token might be relevant to every other token. Sparse attention methods (Longformer, BigBird) are literally **graph sparsification** — replacing the complete graph with a sparse one (local windows + random edges + global nodes), trading off expressiveness for efficiency.
+
+This also explains why Transformers generalize so well: by starting with a complete graph and learning which edges matter, they can discover any dependency structure, whereas RNNs are constrained to a chain graph and CNNs to a grid graph.
 </div>
 
 <div id="summary-container"></div>
