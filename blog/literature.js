@@ -444,6 +444,18 @@ window.bibData = {
 		year: 2023,
 		url: "https://arxiv.org/abs/2301.05217"
 	},
+	"power2022grokking": {
+		title: "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
+		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
+		year: 2022,
+		url: "https://arxiv.org/abs/2201.02177"
+	},
+	"belrose2023tunedlens": {
+		title: "Eliciting Latent Predictions from Transformers with the Tuned Lens",
+		author: "Nora Belrose, Igor Ostrovsky, Lev McKinney, Zach Furman, Logan Smith, Danny Halawi, Stella Biderman, Jacob Steinhardt",
+		year: 2023,
+		url: "https://arxiv.org/abs/2303.08112"
+	},
 	"shannon1937switching": {
 		title: "A Symbolic Analysis of Relay and Switching Circuits",
 		author: "Claude Elwood Shannon",

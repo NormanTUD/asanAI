@@ -1327,6 +1327,321 @@
     }
 
     // ============================================================
+    // SECTION 7: LOGIT LENS
+    // ============================================================
+
+    function initLogitLens() {
+        const container = document.getElementById('logit-lens-container');
+        if (!container) return;
+
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f5f0ff', borderRadius: '8px', margin: '20px 0'}}, container);
+        createElement('h3', {textContent: '👁️ Interactive: The Logit Lens', style: {marginTop: 0}}, section);
+        createElement('p', {innerHTML: 'This visualization simulates how a Transformer\'s prediction evolves layer by layer. <strong>Each layer</strong> decodes its residual stream into vocabulary probabilities. Early layers are diffuse and uncertain; later layers converge on the final answer. Drag the slider to see the prediction sharpen.'}, section);
+
+        const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
+        const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
+        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '400px'}}, controlRow);
+
+        const numLayers = 12;
+        const vocab = ['Paris', 'London', 'Berlin', 'Madrid', 'Rome', 'Vienna'];
+        const correctIdx = 0;
+
+        let currentLayer = numLayers - 1;
+
+        createSlider(sliderPanel, 'Layer', 0, numLayers - 1, numLayers - 1, 1, (v) => {
+            currentLayer = Math.round(v);
+            draw();
+        });
+
+        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: '#fff', borderRadius: '8px', fontSize: '13px', lineHeight: '1.5'}}, sliderPanel);
+
+        const canvas = createCanvas(canvasPanel, 500, 300);
+        const ctx = canvas.getContext('2d');
+
+        function generateLayerProbs(layer) {
+            const t = layer / (numLayers - 1);
+            const raw = vocab.map((_, i) => {
+                const signal = i === correctIdx ? 10 * t : 2 * (1 - t) + 0.5 * Math.random();
+                const noise = 0.5 * (1 - t) * Math.random();
+                return signal + noise;
+            });
+            return softmax(raw);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const probs = generateLayerProbs(currentLayer);
+            const barWidth = 50;
+            const startX = 60;
+            const startY = 40;
+            const barHeight = 180;
+            const gap = 65;
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText(`Layer ${currentLayer} Predictions`, startX, 25);
+
+            vocab.forEach((token, i) => {
+                const x = startX + i * gap;
+                const prob = probs[i];
+                const h = prob * barHeight;
+
+                ctx.fillStyle = i === correctIdx ? '#4a90d9' : '#ccc';
+                ctx.fillRect(x, startY + barHeight - h, barWidth, h);
+
+                ctx.strokeStyle = i === correctIdx ? '#2563eb' : '#999';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, startY + barHeight - h, barWidth, h);
+
+                ctx.fillStyle = '#333';
+                ctx.font = '11px monospace';
+                ctx.fillText((prob * 100).toFixed(1) + '%', x, startY + barHeight + 15);
+
+                ctx.save();
+                ctx.translate(x + barWidth / 2 + 5, startY + barHeight / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillStyle = i === correctIdx ? '#2563eb' : '#666';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillText(token, 0, 0);
+                ctx.restore();
+            });
+
+            const confidence = probs[correctIdx];
+            const entropy = -probs.reduce((s, p) => s + (p > 0 ? p * Math.log(p) : 0), 0);
+            const maxEntropy = Math.log(vocab.length);
+
+            infoPanel.innerHTML = `
+                <strong>Reading the Mind of the Model:</strong><br>
+                • Layer ${currentLayer}: confidence in correct answer "${vocab[correctIdx]}" is <strong>${(confidence * 100).toFixed(1)}%</strong><br>
+                • Prediction entropy: ${entropy.toFixed(2)} / ${maxEntropy.toFixed(2)} (${(entropy / maxEntropy * 100).toFixed(0)}% of maximum)<br>
+                • ${currentLayer < 3 ? '🟢 Early layer — barely above random, model is "thinking"' :
+                   currentLayer < 6 ? '🟡 Middle layer — semantic neighborhood forming, narrowing down' :
+                   currentLayer < 9 ? '🟠 Late-middle — one candidate clearly leading' :
+                   '🔴 Final layer — prediction nearly locked in!'}<br>
+                <hr style="margin:5px 0">
+                <em>The tuned lens \cite{belrose2023tunedlens} refines this by training a small affine probe per layer, giving a clearer picture of the model's intermediate "thoughts."</em>
+            `;
+        }
+
+        draw();
+    }
+
+    // ============================================================
+    // SECTION 8: GROKKING VISUALIZATION
+    // ============================================================
+
+    function initGrokking() {
+        const container = document.getElementById('grokking-container');
+        if (!container) return;
+
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f0faf0', borderRadius: '8px', margin: '20px 0'}}, container);
+        createElement('h3', {textContent: '🧩 Interactive: Grokking Modular Addition', style: {marginTop: 0}}, section);
+        createElement('p', {innerHTML: 'This simulates how a small Transformer learns modular addition $a + b \\bmod 13$. <strong>Drag the training progress slider</strong> to watch the network transition from memorization to generalization. The clock visualization shows the learned Fourier features — when they align, the model "grokked" the algorithm.'}, section);
+
+        const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
+        const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
+        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '450px'}}, controlRow);
+
+        const modulus = 13;
+        const totalSteps = 100;
+
+        let progress = totalSteps - 1;
+
+        createSlider(sliderPanel, 'Training Progress', 0, totalSteps - 1, totalSteps - 1, 1, (v) => {
+            progress = Math.round(v);
+            draw();
+        });
+
+        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: '#fff', borderRadius: '8px', fontSize: '13px', lineHeight: '1.6'}}, sliderPanel);
+
+        const canvas = createCanvas(canvasPanel, 500, 380);
+        const ctx = canvas.getContext('2d');
+
+        function simulateTrainAccuracy(step) {
+            if (step < 20) return 0.95 + 0.05 * Math.random();
+            if (step < 40) return 0.98 + 0.02 * Math.random();
+            if (step < 55) return 0.99 + 0.01 * Math.random();
+            const s = (step - 55) / 20;
+            const jump = 1 / (1 + Math.exp(-8 * (s - 0.4)));
+            return 0.99 + 0.01 * jump;
+        }
+
+        function simulateTestAccuracy(step) {
+            if (step < 20) return 0.05 + 0.05 * Math.random();
+            if (step < 30) return 0.08 + 0.05 * Math.random();
+            if (step < 50) return 0.12 + 0.08 * Math.random();
+            if (step < 60) return 0.15 + 0.05 * Math.random();
+            const s = (step - 60) / 25;
+            const jump = 1 / (1 + Math.exp(-10 * (s - 0.5)));
+            return 0.15 + 0.85 * jump;
+        }
+
+        function computeFourierCoherence(step) {
+            if (step < 30) return 0.05 + 0.05 * Math.random();
+            if (step < 50) return 0.1 + 0.1 * (step - 30) / 20;
+            if (step < 65) return 0.2 + 0.3 * (step - 50) / 15;
+            const s = (step - 65) / 20;
+            return 0.5 + 0.5 * (1 / (1 + Math.exp(-6 * (s - 0.5))));
+        }
+
+        function getPhase(step) {
+            if (step < 40) return {name: 'Memorization', color: '#e74c3c', desc: 'Network stores individual pairs — no structure yet'};
+            if (step < 65) return {name: 'Circuit Formation', color: '#f39c12', desc: 'Fourier algorithm crystallizing in the weights'};
+            return {name: 'Cleanup', color: '#27ae60', desc: 'Memorization pruned away — only the generalizing circuit remains'};
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const leftMargin = 50;
+            const topMargin = 30;
+            const chartWidth = 300;
+            const chartHeight = 150;
+
+            // Draw accuracy chart (train vs test)
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('Accuracy vs Training Step', leftMargin, topMargin + 12);
+
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(leftMargin, topMargin + 20, chartWidth, chartHeight);
+
+            // Axis labels
+            ctx.fillStyle = '#999';
+            ctx.font = '9px sans-serif';
+            ctx.fillText('0%', leftMargin - 20, topMargin + chartHeight + 15);
+            ctx.fillText('50%', leftMargin - 20, topMargin + chartHeight / 2 + 5);
+            ctx.fillText('100%', leftMargin - 22, topMargin + 25);
+            ctx.fillText('Training Step', leftMargin + chartWidth / 2 - 25, topMargin + chartHeight + 30);
+
+            // Plot train accuracy
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let s = 0; s < totalSteps; s++) {
+                const x = leftMargin + (s / totalSteps) * chartWidth;
+                const y = topMargin + 20 + chartHeight - simulateTrainAccuracy(s) * chartHeight;
+                s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Plot test accuracy
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let s = 0; s < totalSteps; s++) {
+                const x = leftMargin + (s / totalSteps) * chartWidth;
+                const y = topMargin + 20 + chartHeight - simulateTestAccuracy(s) * chartHeight;
+                s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Legend
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Train Accuracy', leftMargin + 10, topMargin + 40);
+            ctx.fillStyle = '#27ae60';
+            ctx.fillText('Test Accuracy', leftMargin + 10, topMargin + 55);
+
+            // Draw progress marker
+            const px = leftMargin + (progress / totalSteps) * chartWidth;
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(px, topMargin + 20);
+            ctx.lineTo(px, topMargin + 20 + chartHeight);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw circle (clock) representation
+            const cx = 430;
+            const cy = 120;
+            const radius = 70;
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('Grokked Representation', cx - 55, 25);
+
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            const coherence = computeFourierCoherence(progress);
+
+            for (let i = 0; i < modulus; i++) {
+                const angle = (i / modulus) * Math.PI * 2 - Math.PI / 2;
+                const x = cx + Math.cos(angle) * radius;
+                const y = cy + Math.sin(angle) * radius;
+
+                const dotSize = coherence > 0.5 ? 4 + coherence * 4 : 3;
+
+                ctx.fillStyle = `hsla(${(i / modulus) * 360}, 80%, ${coherence > 0.3 ? 50 : 70}%, ${0.3 + coherence * 0.7})`;
+                ctx.beginPath();
+                ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = coherence > 0.4 ? '#333' : '#999';
+                ctx.font = '9px monospace';
+                ctx.fillText(i, x + 8, y + 3);
+            }
+
+            // Draw connecting arcs showing Fourier structure (when coherence is high)
+            if (coherence > 0.4) {
+                ctx.strokeStyle = `rgba(39, 174, 96, ${(coherence - 0.4) * 1.5})`;
+                ctx.lineWidth = 1 + coherence * 2;
+                for (let i = 0; i < modulus; i++) {
+                    const a1 = (i / modulus) * Math.PI * 2 - Math.PI / 2;
+                    const a2 = ((i + 3) / modulus) * Math.PI * 2 - Math.PI / 2; // third harmonics
+                    ctx.beginPath();
+                    ctx.moveTo(cx + Math.cos(a1) * radius, cy + Math.sin(a1) * radius);
+                    ctx.lineTo(cx + Math.cos(a2) * radius, cy + Math.sin(a2) * radius);
+                    ctx.stroke();
+                }
+            }
+
+            // Phase indicator
+            const phase = getPhase(progress);
+            ctx.fillStyle = phase.color;
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('● ' + phase.name, cx - 50, cy + radius + 30);
+
+            // Fourier coherence bar
+            const barY = cy + radius + 55;
+            ctx.fillStyle = '#333';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Fourier structure', cx - 60, barY + 10);
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cx + 10, barY, 100, 12);
+            ctx.fillStyle = '#27ae60';
+            ctx.fillRect(cx + 11, barY + 1, coherence * 98, 10);
+
+            // Info panel update
+            const trainAcc = simulateTrainAccuracy(progress) * 100;
+            const testAcc = simulateTestAccuracy(progress) * 100;
+            const phaseObj = getPhase(progress);
+
+            infoPanel.innerHTML = `
+                <strong>Training Progress: ${Math.round(progress / totalSteps * 100)}%</strong><br>
+                <span style="color:#e74c3c">● Train Accuracy:</span> ${trainAcc.toFixed(1)}%
+                <span style="color:#27ae60">● Test Accuracy:</span> ${testAcc.toFixed(1)}%<br>
+                <strong>Phase:</strong> <span style="color:${phaseObj.color}">${phaseObj.name}</span> — ${phaseObj.desc}<br>
+                <strong>Fourier Coherence:</strong> ${(coherence * 100).toFixed(0)}%
+                ${coherence > 0.5 ? ' 🎯 The network has discovered the Fourier algorithm!' : coherence > 0.2 ? ' ⏳ Structure is forming...' : ' ❌ No structure yet'}
+                <hr style="margin:5px 0">
+                <em>The model first memorizes (high train, low test), then <strong>grokks</strong> (both high) as the Fourier circuit overtakes memorization \cite{nanda2023grokking}.</em>
+            `;
+        }
+
+        draw();
+    }
+
+    // ============================================================
     // INITIALIZATION
     // ============================================================
 
@@ -1346,6 +1661,8 @@
         initSuperposition();
         initComposition();
         initPatching();
+        initLogitLens();
+        initGrokking();
     }
 
     init();

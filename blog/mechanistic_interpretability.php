@@ -176,6 +176,18 @@ A large $\Delta_C$ means component $C$ is critical for the task.
 <div id="patching-container"></div>
 
 <div class="md">
+## The Logit Lens: Watching Predictions Form Layer by Layer
+
+One powerful tool for peering inside a Transformer is the \cite[**logit lens**]{belrose2023tunedlens}. The idea is beautifully simple: at every layer, take the hidden state of the residual stream and decode it into vocabulary probabilities by applying the unembedding matrix $W_U$. This lets us watch how the model's prediction evolves as it passes through the network — the proverbial "thinking process" laid out layer by layer.
+
+$$\text{logits}^{(\ell)} = W_U \cdot x^{(\ell)}$$
+
+Early layers typically produce diffuse, uncertain predictions. Middle layers begin to converge on the correct semantic neighborhood. Late layers make the final sharp distinction. The \cite[tuned lens]{belrose2023tunedlens} refines this by training a small affine probe for each layer (rather than reusing $W_U$ directly), producing more faithful and less biased decodings. This technique has revealed that models often "change their mind" at specific layers, and that the trajectory of latent predictions can be used to detect malicious inputs.
+</div>
+
+<div id="logit-lens-container"></div>
+
+<div class="md">
 ## The Bigger Picture: From Circuits to Alignment
 
 Understanding circuits is not merely an academic exercise. It has direct implications for AI safety and alignment:
@@ -225,6 +237,25 @@ This progression mirrors how human reading comprehension works: first identify t
 ### The Double Helix: Information Separation Through Depth
 
 A \citeyear{lu2023doublehelix} paper \citep{lu2023doublehelix} peered deeper into this layer progression by disentangling the different types of information carried in the residual stream. The authors distinguished four layers of information — positional, syntactic, semantic, and contextual — and showed that through the deep layers, positional information separates from semantic content along a helix-shaped path in the embedding space. On the encoder side, the conceptual dimensions naturally organize into Part-of-Speech clusters; on the decoder side, bigram patterns predict the grammatical role of the next token. This work challenges the common practice of simply adding positional encoding to the semantic embedding at the input, suggesting instead a Linear-and-Add approach that may lead to better separation of concerns across layers.
+
+## Grokking: When Memorization Turns into Understanding
+
+The phenomenon of \cite[**grokking**]{power2022grokking} occurs when a neural network trains on a small algorithmic dataset, first memorizes the training examples perfectly, then suddenly — well past the point of overfitting — generalizes to the test set. It is as if the network spends most of training simply memorizing answers, then has an "aha moment" where it discovers the underlying rule.
+
+\citeauthor{nanda2023grokking} reverse-engineered this process in a small Transformer trained on modular addition ($a + b \bmod p$). They discovered that the network learns a Fourier-based algorithm: it converts inputs to their discrete Fourier components, multiplies them (which corresponds to addition in the frequency domain), and converts back. This is exactly how you would add numbers on a clock: rotating around a circle by the sum of two angles.
+
+Crucially, they identified three distinct phases of training:
+1. **Memorization:** The network stores individual input-output pairs in its weights without learning the structure
+2. **Circuit formation:** A Fourier-based algorithm gradually crystallizes in the weights, first as weak signals
+3. **Cleanup:** The memorization circuitry is pruned away, leaving only the generalizing algorithm
+
+The "aha moment" of grokking is not a sudden leap — it is the moment when the cleanup phase overtakes memorization, and the generalizing circuit becomes the dominant contributor to the output. Progress measures such as Fourier coefficient entropy and weight norm can track this hidden process continuously, revealing that algorithmic understanding grows smoothly long before it appears in the test accuracy.
+</div>
+
+<div id="grokking-container"></div>
+
+<div class="md">
+## Summary: Opening the Black Box
 </div>
 
 <div id="summary-container"></div>
