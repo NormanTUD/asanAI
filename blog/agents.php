@@ -343,8 +343,6 @@ significantly. Adding sub-step: research green vs. grey hydrogen.]
 $$
 \text{Attempt}_1 \;\rightarrow\; \text{Evaluate (fail)} \;\rightarrow\; \text{Reflect} \;\rightarrow\; \text{Store reflection} \;\rightarrow\; \text{Attempt}_2 \text{ (with reflection in context)}
 $$
-
-This is analogous to how humans learn from experience, not by retraining their neurons, but by remembering "last time I tried X, it failed because Y."
 </div>
 
 <div class="md">
