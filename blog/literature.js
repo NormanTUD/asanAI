@@ -3408,5 +3408,47 @@ window.bibData = {
 		author: "Xinran Zhao, Boyuan Zheng, Chenglei Si, Haofei Yu, Ken Ziyu Liu, Runlong Zhou, Ruochen Li, Tong Chen, Xiang Li, Yiming Zhang, Tongshuang Wu",
 		year: 2025,
 		alternativetitle: "Ramón Llull's Thinking Machine for Automated Ideation"
+	},
+	"arora2017gan": {
+		url: "https://arxiv.org/abs/1703.00573",
+		title: "Generalization and Equilibrium in Generative Adversarial Nets (GANs)",
+		author: "Sanjeev Arora, Rong Ge, Yingyu Liang, Tengyu Ma, Yi Zhang",
+		year: 2017,
+		alternativetitle: "GAN Generalization"
+	},
+	"hewitt2019structural": {
+		url: "https://aclanthology.org/N19-1419/",
+		title: "A Structural Probe for Finding Syntax in Word Representations",
+		author: "John Hewitt, Christopher D. Manning",
+		year: 2019,
+		alternativetitle: "Structural Probe"
+	},
+	"marks2023geometry": {
+		url: "https://arxiv.org/abs/2310.06824",
+		title: "The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets",
+		author: "Samuel Marks, Max Tegmark",
+		year: 2023,
+		alternativetitle: "Geometry of Truth"
+	},
+	"zou2023representation": {
+		url: "https://arxiv.org/abs/2310.01405",
+		title: "Representation Engineering: A Top-Down Approach to AI Transparency",
+		author: "Andy Zou, Long Phan, Sarah Chen, James Campbell, Phillip Guo, Richard Ren, Alexander Pan, Xuwang Yin, Mantas Mazeika, Ann-Kathrin Dombrowski, Shashwat Goel, Nathaniel Li, Michael J. Byun, Zifan Wang, Alex Mallen, Steven Basart, Sanmi Koyejo, Dawn Song, Matt Fredrikson, J. Zico Kolter, Dan Hendrycks",
+		year: 2023,
+		alternativetitle: "RepE"
+	},
+	"meng2022memit": {
+		url: "https://arxiv.org/abs/2210.07229",
+		title: "Mass Editing Memory in a Transformer",
+		author: "Kevin Meng, Arnab Sen Sharma, Alex Andonian, Yonatan Belinkov, David Bau",
+		year: 2022,
+		alternativetitle: "MEMIT"
+	},
+	"rumelhart1986pdp": {
+		url: "https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf",
+		title: "Parallel Distributed Processing: Explorations in the Microstructure of Cognition, Chapter 8: Distributed Representations",
+		author: "David E. Rumelhart, Geoffrey E. Hinton, James L. McClelland",
+		year: 1986,
+		alternativetitle: "PDP Chapter 8"
 	}
 };
