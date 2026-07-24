@@ -3368,6 +3368,7 @@ window.bibData = {
 	"history_of_a": {
 		url: "https://de.wikipedia.org/wiki/A",
 		year: 2026,
+		author: "Wikipedia contributors",
 		title: "A | Wikipedia"
 	},
 	"toosi2021history": {
