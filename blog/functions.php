@@ -234,15 +234,7 @@ function load_base_js () {
 }
 
 function server_php_self_ends_with_index_php() {
-	if (!isset($_SERVER)) {
-		return false;
-	}
-
-	if (!is_array($_SERVER)) {
-		return false;
-	}
-
-	if (!array_key_exists('PHP_SELF', $_SERVER)) {
+	if (!isset($_SERVER) || !is_array($_SERVER) || !array_key_exists('PHP_SELF', $_SERVER)) {
 		return false;
 	}
 
@@ -252,18 +244,18 @@ function server_php_self_ends_with_index_php() {
 		return false;
 	}
 
-	$suffix = 'index_full.php';
-	$suffix_length = strlen($suffix);
+	$suffixes = ['index.php', 'index_full.php'];
 
-	if ($suffix_length === 0) {
-		return false;
+	foreach ($suffixes as $suffix) {
+		$suffix_length = strlen($suffix);
+		if ($suffix_length > 0 && strlen($php_self) >= $suffix_length) {
+			if (substr($php_self, -$suffix_length) === $suffix) {
+				return true;
+			}
+		}
 	}
 
-	if (strlen($php_self) < $suffix_length) {
-		return false;
-	}
-
-	return substr($php_self, -$suffix_length) === $suffix;
+	return false;
 }
 
 function call_js_if_matching_file_exists() {
