@@ -98,10 +98,10 @@ $$
 
 For a 70B parameter model with 128K context:
 $$
-2 \times 80 \times 64 \times 128 \times 128{,}000 \times 2 \text{ bytes} \approx 167 \text{ GB}
+2 \times 80 \times 64 \times 128 \times 128{,}000 \times 2 \text{ bytes} \approx 335 \text{ GB}
 $$
 
-This is why long-context inference requires enormous GPU memory, the KV cache alone can exceed the model weights.
+This is why long-context inference requires enormous GPU memory; the KV cache alone can exceed the model weights.
 
 ### 2. Flash Attention: Taming the Quadratic Beast
 
@@ -326,10 +326,10 @@ Every token the model has ever seen in the current session lives in the **KV cac
 
 | Context used | KV Cache (70B model) | Effect |
 |-------------|---------------------|--------|
-| 4K tokens | ~5 GB | Fast, cheap |
-| 32K tokens | ~42 GB | Moderate cost |
-| 128K tokens | ~167 GB | Expensive, slower |
-| 1M tokens | ~1.3 TB | Requires multi-GPU, very expensive |
+| 4K tokens | ~10 GB | Fast, cheap |
+| 32K tokens | ~84 GB | Moderate cost |
+| 128K tokens | ~335 GB | Expensive, slower |
+| 1M tokens | ~2.6 TB | Requires multi-GPU, very expensive |
 
 This is why **longer conversations cost more**, both in money (API pricing is per-token) and in latency (more KV cache = slower generation). It's also why providers set context limits: the memory cost is real and physical.
 
