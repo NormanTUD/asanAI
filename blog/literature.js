@@ -3365,6 +3365,11 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2026
 	},
+	"history_of_a": {
+		url: "https://de.wikipedia.org/wiki/A",
+		year: 2026,
+		title: "A | Wikipedia"
+	},
 	"toosi2021history": {
 		url: "https://ar5iv.labs.arxiv.org/html/2109.01517",
 		title: "A brief history of AI: how to prevent another winter (a critical review)",
