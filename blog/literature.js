@@ -1,4 +1,9 @@
 window.bibData = {
+	"wikipedia_a": {
+		url: "https://en.wikipedia.org/wiki/A",
+		title: "A — Wikipedia",
+		year: 2026
+	},
 	"ramsauer2021hopfield": {
 		url: "https://arxiv.org/abs/2402.13725v1",
 		year: 2024,
