@@ -162,8 +162,20 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card intuition">
 <span class="label label-int">Kernidee</span>
-<p><strong>Eine Garbe ist ein System lokaler Daten, die sich konsistent zusammenkleben lassen.</strong></p>
-<p style="margin-top:10px">Stell dir vor: Du hast auf jedem Stadtteil einer Stadt eine Temperaturkarte. Eine <em>Garbe</em> sagt: Wenn die Karten auf den Überlappungen übereinstimmen, gibt es genau eine globale Temperaturkarte.</p>
+<p><strong>Garbe = lokale Daten, die sich konsistent verkleben lassen.</strong><br>
+<span style="color:var(--text-dim)">Stadtteil-Temperaturkarten, die auf Überlappungen übereinstimmen → genau eine globale Karte.</span></p>
+</div>
+
+<div class="interactive-area">
+<h3>🎮 Interaktiv: Offene vs. Abgeschlossene Mengen</h3>
+<canvas id="openSetCanvas" width="700" height="200"></canvas>
+<div class="controls">
+  <label>Linke Grenze: <input type="range" id="openLeft" min="10" max="50" value="30"></label>
+  <label>Rechte Grenze: <input type="range" id="openRight" min="50" max="90" value="70"></label>
+  <button id="btnOpen" class="active-btn" onclick="toggleOpenType('open')">Offen (a,b)</button>
+  <button id="btnClosed" onclick="toggleOpenType('closed')">Abgeschlossen [a,b]</button>
+</div>
+<div id="openSetInfo" class="card" style="margin-top:10px; font-size:0.9em"></div>
 </div>
 
 <div class="flow">
@@ -178,24 +190,12 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="grid-2">
 <div class="card">
-<h3>📐 Formaler Rahmen – Schritt für Schritt</h3>
+<h3>📐 Formaler Rahmen</h3>
 <div class="math-block" id="math-functor"></div>
 
-<p><strong>1. "Offene Menge" – was bedeutet das?</strong>
-Eine <em>offene Menge</em> ist eine Region, die ihren Rand nicht enthält. Auf dem Zahlenstrahl ℝ sind offene Intervalle (a,b) das einfachste Beispiel: jeder Punkt im Inneren hat links und rechts noch Platz, bevor die Grenze kommt. Offene Mengen sind die Grundbausteine der Topologie – sie sagen uns, was "lokal" oder "in der Nähe" bedeutet. Wenn wir von "lokalen Daten" sprechen, meinen wir: Daten auf einer offenen Menge.</p>
+<p><span class="tooltip">Offene Mengen<span class="tooltiptext">Regionen ohne Rand; z.B. Intervalle (a,b) auf ℝ. Definiert, was "lokal" bedeutet.</span></span> sind die Grundbausteine der Topologie. Eine <span class="tooltip">Prägarbe<span class="tooltiptext">Ordnet jeder offenen Menge U Daten ℱ(U) zu, z.B. stetige Funktionen auf U.</span></span> ℱ ordnet jeder offenen Menge U Daten ℱ(U) zu (dem <span class="tooltip">Schnitt<span class="tooltiptext">Ein Element von ℱ(U); vorstellbar als Funktion oder Datensatz auf der Region U.</span></span> über U) und jeder <span class="tooltip">Inklusion<span class="tooltiptext">Einbettung V ⊆ U einer kleineren in eine größere Menge.</span></span> V ⊆ U eine <span class="tooltip">Restriktionsabbildung<span class="tooltiptext">Schränkt Daten von der großen auf die kleine Menge ein. Bei Funktionen: Definitionsbereich verkleinern.</span></span> ℱ(U) → ℱ(V).</p>
 
-<p><strong>2. Die Zuordnung: Region → Daten</strong>
-ℱ ordnet jeder offenen Menge U einen Datenwert ℱ(U) zu. Konkretes Beispiel: ℱ(U) = Menge aller stetigen Funktionen f: U → ℝ. Die Elemente von ℱ(U) heißen "Schnitte über U".</p>
-
-<p><strong>3. "Kontravariant" – die Pfeile drehen sich um</strong>
-Wenn V ⊆ U (V ist eine kleinere Region), können wir Daten von U auf V <em>einschränken</em>. Bei Funktionen: schränke den Definitionsbereich ein. Das ergibt eine Abbildung ℱ(U) → ℱ(V).<br>
-<span style="display:block;text-align:center;margin:6px 0;color:var(--accent);font-size:1em">Inklusion V ↪ U  →  Restriktion ℱ(U) → ℱ(V)</span>
-Die Pfeilrichtung <em>kehrt sich um</em> – genau das heißt "kontravariant". Ein "kovarianter" Funktor würde ℱ(V) → ℱ(U) liefern, aber das wäre hier sinnlos (woher sollen die Daten auf der größeren Menge kommen?).</p>
-
-<p><strong>4. "In eine Kategorie" – welche Struktur haben die Daten?</strong>
-Die Zielkategorie 𝒞 legt fest, welche Struktur ℱ(U) hat: Mengen (nur Ansammlung von Schnitten), abelsche Gruppen (man kann addieren), Vektorräume (man kann addieren und skalieren), Ringe (man kann multiplizieren). Für stetige Funktionen ℝ→ℝ sind die ℱ(U) reelle Vektorräume.</p>
-
-<p><strong>Zusammenfassung:</strong> Eine Prägarbe ist eine Vorschrift, die (a) jeder offenen Menge U ein Objekt ℱ(U) zuordnet, und (b) jeder Inklusion V ⊆ U eine Restriktionsabbildung ℱ(U) → ℱ(V) – in die Gegenrichtung. Das ist die Essenz von "kontravarianter Funktor von offenen Mengen in eine Kategorie".</p>
+<p>Die Pfeilrichtung kehrt sich um (Inklusion V→U wird zu Restriktion ℱ(U)→ℱ(V)) – das heißt <span class="tooltip">kontravariant<span class="tooltiptext">Ein Funktor, der Pfeile umdreht: aus V⊂U wird ℱ(U)→ℱ(V) statt ℱ(V)→ℱ(U).</span></span>. Die <span class="tooltip">Zielkategorie 𝒞<span class="tooltiptext">Legt die Struktur der ℱ(U) fest: Mengen, abelsche Gruppen, Vektorräume, Ringe, ...</span></span> bestimmt, ob ℱ(U) nur eine Menge oder mit Addition (Gruppe), Skalierung (Vektorraum) oder Multiplikation (Ring) ausgestattet ist.</p>
 </div>
 <div class="card ai">
 <span class="label label-ai">KI-Anwendung</span>
@@ -355,17 +355,16 @@ Die Zielkategorie 𝒞 legt fest, welche Struktur ℱ(U) hat: Mengen (nur Ansamm
 <span class="label label-def">Definition</span>
 <h3>Halm einer (Prä)garbe</h3>
 <div class="math-block" id="math-stalk-def"></div>
-<p>Der Halm <span class="math-inline" id="m-stalk-Fx"></span> ist der <strong>direkte Limes</strong> (gefilterter Kolimes) über alle offenen Umgebungen von <span class="math-inline" id="m-stalk-x"></span>.</p>
-<p style="margin-top:10px">Ein Element des Halms heißt <strong>Keim</strong> (germ): Es ist ein Paar <span class="math-inline" id="m-germ"></span>, wobei zwei Paare äquivalent sind, wenn die Schnitte auf einer kleineren Umgebung übereinstimmen.</p>
+<p><span class="tooltip">Halm ℱ<sub>x</sub><span class="tooltiptext">"Unendlich lokaler" Wert einer Garbe am Punkt x. Enthält alle Information aus beliebig kleinen Umgebungen von x.</span></span> = direkter Limes über Umgebungen von x. Elemente heißen <span class="tooltip">Keime<span class="tooltiptext">Äquivalenzklasse von Schnitten, die in einer kleinen Umgebung von x übereinstimmen.</span></span>: (U,s) ∼ (V,t) wenn s und t auf einer kleineren Umgebung W ⊆ U∩V gleich sind.</p>
 </div>
 
 <div class="card intuition">
 <span class="label label-int">Intuition</span>
-<p><strong>Der Halm = "unendlich lokale" Information am Punkt x.</strong></p>
-<p>Denke an den Keim einer Funktion: Zwei Funktionen haben denselben Keim bei x, wenn sie in einer (beliebig kleinen) Umgebung von x übereinstimmen. Der Halm vergisst alles außer dem "infinitesimalen Verhalten" bei x.</p>
-<div style="text-align:center; margin:15px 0; font-size:1.3em">
-  <span style="color:var(--accent2)">Globaler Schnitt</span> → 
-  <span style="color:var(--accent)">Lokaler Schnitt</span> → 
+<p><strong>Halm = infinitesimale Info am Punkt x.</strong><br>
+<span style="color:var(--text-dim)">Zwei Funktionen haben denselben Keim bei x, wenn sie auf einer (beliebig kleinen) Umgebung übereinstimmen. Der Halm vergisst alles außer dem lokalen Verhalten bei x.</span></p>
+<div style="text-align:center; margin:15px 0; font-size:1.2em">
+  <span style="color:var(--accent2)">Global</span> → 
+  <span style="color:var(--accent)">Lokal</span> → 
   <span style="color:var(--accent3)">Keim (Halm)</span>
 </div>
 </div>
@@ -497,6 +496,16 @@ Die Zielkategorie 𝒞 legt fest, welche Struktur ℱ(U) hat: Mengen (nur Ansamm
 <p><strong>Kern:</strong> <span class="math-inline" id="m-ker"></span> – ist automatisch eine Garbe!</p>
 <p><strong>Bild:</strong> <span class="math-inline" id="m-im"></span> – nur Prägarbe, muss garbifiziert werden!</p>
 <p><strong>Kokern:</strong> <span class="math-inline" id="m-coker"></span> – nur Prägarbe, muss garbifiziert werden!</p>
+</div>
+
+<div class="interactive-area">
+<h3>🎮 Interaktiv: Kern, Bild, Kokern</h3>
+<p style="color:var(--text-dim)">Spiele mit der Abbildung x ↦ k·x auf ℤ/8ℤ und beobachte Kern (rot), Bild (grün), Kokern (lila):</p>
+<canvas id="kernelCanvas" width="700" height="350"></canvas>
+<div class="controls">
+  <label>Multiplikator k: <input type="range" id="kernelMultiplier" min="1" max="7" value="2"></label>
+</div>
+<div id="kernelInfo" class="card" style="margin-top:10px"></div>
 </div>
 
 <div class="card intuition">
@@ -965,6 +974,107 @@ function drawConceptGraph() {
   }, { responsive: true, displayModeBar: false });
 }
 drawConceptGraph();
+
+// ===== OPEN SET CANVAS =====
+let openType = 'open';
+function toggleOpenType(type) {
+  openType = type;
+  document.getElementById('btnOpen').classList.toggle('active-btn', type === 'open');
+  document.getElementById('btnClosed').classList.toggle('active-btn', type === 'closed');
+  drawOpenSet();
+}
+function drawOpenSet() {
+  const canvas = document.getElementById('openSetCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const left = parseInt(document.getElementById('openLeft').value);
+  const right = parseInt(document.getElementById('openRight').value);
+  const cy = H / 2;
+  ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(20, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
+  ctx.fillStyle = 'rgba(88,166,255,0.12)';
+  ctx.fillRect(left, cy - 25, right - left, 50);
+  ctx.strokeStyle = 'rgba(88,166,255,0.3)'; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(left, cy - 25); ctx.lineTo(left, cy + 25);
+  ctx.moveTo(right, cy - 25); ctx.lineTo(right, cy + 25); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#8b949e'; ctx.font = '13px sans-serif';
+  ctx.fillText('a', left - 5, cy - 30); ctx.fillText('b', right - 5, cy - 30);
+  if (openType === 'open') {
+    ctx.strokeStyle = '#f78166'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(left, cy, 10, 0, 2 * Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.arc(right, cy, 10, 0, 2 * Math.PI); ctx.stroke();
+  } else {
+    ctx.fillStyle = '#7ee787';
+    ctx.beginPath(); ctx.arc(left, cy, 10, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(right, cy, 10, 0, 2 * Math.PI); ctx.fill();
+  }
+  const info = document.getElementById('openSetInfo');
+  info.innerHTML = openType === 'open'
+    ? '<strong>Offen (a,b):</strong> Endpunkte geh\u00F6ren <em>nicht</em> zur Menge. Um jeden Punkt gibts ein kleines Intervall, das noch drin liegt.'
+    : '<strong>Abgeschlossen [a,b]:</strong> Endpunkte geh\u00F6ren <em>dazu</em>. Am Randpunkt a liegt kein Intervall mehr ganz in [a,b] (nach links gehts nicht).';
+}
+document.getElementById('openLeft').addEventListener('input', drawOpenSet);
+document.getElementById('openRight').addEventListener('input', drawOpenSet);
+drawOpenSet();
+
+// ===== KERNEL/IMAGE/COKERNEL CANVAS =====
+function drawKernelCokernel() {
+  const canvas = document.getElementById('kernelCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const k = parseInt(document.getElementById('kernelMultiplier').value);
+  const n = 8;
+  const elA = Array.from({length: n}, (_, i) => i);
+  const elB = Array.from({length: n}, (_, i) => i);
+  const map = elA.map(x => (k * x) % n);
+  const startX = 150, endX = 550, ySpacing = 37, startY = 25;
+  // column headers
+  ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('A = ℤ/8ℤ', startX - 35, startY - 10);
+  ctx.fillStyle = '#7ee787';
+  ctx.fillText('B = ℤ/8ℤ', endX - 35, startY - 10);
+  // draw elements and arrows
+  elA.forEach((x, i) => {
+    const yA = startY + i * ySpacing;
+    const yB = startY + map[x] * ySpacing;
+    ctx.strokeStyle = 'rgba(48,54,61,0.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(startX + 10, yA); ctx.lineTo(endX - 10, yB); ctx.stroke();
+    const inKernel = map[x] === 0;
+    ctx.fillStyle = inKernel ? '#f78166' : '#58a6ff';
+    ctx.beginPath(); ctx.arc(startX, yA, 9, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = inKernel ? '#f78166' : '#8b949e'; ctx.font = '11px sans-serif';
+    ctx.fillText(x, startX + 15, yA + 4);
+    if (inKernel) { ctx.fillStyle = '#f78166'; ctx.font = '10px sans-serif'; ctx.fillText('Kern', startX + 30, yA + 4); }
+  });
+  elB.forEach((y, i) => {
+    const yPos = startY + i * ySpacing;
+    const inImage = map.includes(y);
+    let color = '#30363d';
+    if (y === 0) color = '#8b949e';
+    else if (inImage) color = '#7ee787';
+    else color = '#d2a8ff';
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(endX, yPos, 9, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = color === '#30363d' ? '#8b949e' : color; ctx.font = '11px sans-serif';
+    ctx.fillText(y, endX + 15, yPos + 4);
+    if (y === 0) { ctx.fillStyle = '#8b949e'; ctx.font = '10px sans-serif'; ctx.fillText('0', endX + 30, yPos + 4); }
+    else if (inImage) { ctx.fillStyle = '#7ee787'; ctx.font = '10px sans-serif'; ctx.fillText('Bild', endX + 30, yPos + 4); }
+    else { ctx.fillStyle = '#d2a8ff'; ctx.font = '10px sans-serif'; ctx.fillText('Kokern', endX + 30, yPos + 4); }
+  });
+  // mapping info
+  const kernelEls = elA.filter(x => map[x] === 0);
+  const imageEls = [...new Set(map.filter(x => x !== 0))];
+  const cokerEls = elB.filter(y => !map.includes(y) && y !== 0);
+  const info = document.getElementById('kernelInfo');
+  info.innerHTML = `<strong>φ(x) = ${k}·x mod 8</strong><br>
+    Kern = { ${kernelEls.join(', ')} } (rot, wird auf 0 abgebildet)<br>
+    Bild = { ${imageEls.join(', ')} } (grün, wird getroffen)<br>
+    Kokern = B / Bild = { ${cokerEls.join(', ')} } + 0 (lila, fehlt im Bild)`;
+}
+document.getElementById('kernelMultiplier').addEventListener('input', drawKernelCokernel);
+drawKernelCokernel();
 
 // ===== BOUNDED FUNCTIONS CANVAS =====
 function drawBounded() {
