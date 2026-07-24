@@ -221,6 +221,10 @@ Attention patterns change systematically as information flows through the layers
 - **Late layers** become more **diffuse or task-specific**: attention concentrates on tokens that are relevant to the final prediction, often forming complex, distributed patterns that are harder to interpret. In autoregressive models, the final token's attention often becomes a "summary" of the entire context, pulling information from across the sequence for the final prediction.
 
 This progression mirrors how human reading comprehension works: first identify the words, then parse the syntax, then build a semantic representation, then make a prediction. The model does not need to be explicitly structured this way — this hierarchy emerges purely from the training objective.
+
+### The Double Helix: Information Separation Through Depth
+
+A \citeyear{lu2023doublehelix} paper \citep{lu2023doublehelix} peered deeper into this layer progression by disentangling the different types of information carried in the residual stream. The authors distinguished four layers of information — positional, syntactic, semantic, and contextual — and showed that through the deep layers, positional information separates from semantic content along a helix-shaped path in the embedding space. On the encoder side, the conceptual dimensions naturally organize into Part-of-Speech clusters; on the decoder side, bigram patterns predict the grammatical role of the next token. This work challenges the common practice of simply adding positional encoding to the semantic embedding at the input, suggesting instead a Linear-and-Add approach that may lead to better separation of concerns across layers.
 </div>
 
 <div id="summary-container"></div>

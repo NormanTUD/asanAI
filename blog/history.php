@@ -245,6 +245,8 @@ A complete guide on how to use the Llullian **Volvelle** as intended by Llull ca
 
 Medieval scholar Ramon Llull had quite an interesting life, and has done many things. One of the earliest novels in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person whose works were condemned as heretical by one pope (Gregor XI.), \cite[yet whose legacy was later honored by another]{arsmagnavolvelle} (Pius IX.).
 
+Eight centuries later, a \citeyear{zhao2025thinkingmachine} paper \citep{zhao2025thinkingmachine} directly reconstructed Llull's thinking machine for the age of large language models. By mining three compositional axes — Theme, Domain, and Method — from conference papers and combining them via templates inspired by Llull's combinatorial wheels, the authors built a pipeline that generates diverse, grounded research ideas automatically. This modern incarnation demonstrates that Llull's fundamental insight — that new knowledge can be produced through systematic symbolic recombination — remains productive even in the era of deep learning.
+
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1686calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1686calculus} work \citetitle{leibniz1686calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 ### Gottfried Wilhelm Leibniz 

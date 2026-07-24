@@ -3377,5 +3377,18 @@ window.bibData = {
 		author: "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahmim",
 		year: 2021,
 		alternativetitle: "A Brief History of AI"
+	},
+	"lu2023doublehelix": {
+		url: "https://arxiv.org/abs/2306.13817",
+		title: "The Double Helix inside the NLP Transformer",
+		author: "Jason H.J. Lu, Qingzhen Guo",
+		year: 2023
+	},
+	"zhao2025thinkingmachine": {
+		url: "https://arxiv.org/abs/2508.19200",
+		title: "The Ramón Llull's Thinking Machine for Automated Ideation",
+		author: "Xinran Zhao, Boyuan Zheng, Chenglei Si, Haofei Yu, Ken Ziyu Liu, Runlong Zhou, Ruochen Li, Tong Chen, Xiang Li, Yiming Zhang, Tongshuang Wu",
+		year: 2025,
+		alternativetitle: "Ramón Llull's Thinking Machine for Automated Ideation"
 	}
 };
