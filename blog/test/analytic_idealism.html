@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytischer Idealismus – Interaktive Erklärung</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+            padding: 2rem;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #7b68ee, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .hero p { font-size: 1.2rem; max-width: 700px; opacity: 0.8; line-height: 1.6; }
+        
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        .section h2 {
+            font-size: 2rem;
+            color: #7b68ee;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #00bcd4;
+            padding-left: 1rem;
+        }
+        .section p, .section li {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(123,104,238,0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2rem 0;
+        }
+        canvas {
+            border-radius: 12px;
+            background: #0d0d2b;
+            border: 1px solid rgba(123,104,238,0.3);
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .controls button {
+            padding: 0.6rem 1.4rem;
+            border: 1px solid #7b68ee;
+            background: transparent;
+            color: #7b68ee;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .controls button:hover, .controls button.active {
+            background: #7b68ee;
+            color: #fff;
+        }
+        .controls input[type="range"] {
+            width: 200px;
+            accent-color: #7b68ee;
+        }
+        .plotly-chart { width: 100%; margin: 2rem 0; }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        @media (max-width: 768px) {
+            .comparison { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+        }
+        .comparison .card h3 {
+            color: #00bcd4;
+            margin-bottom: 0.8rem;
+        }
+        .math-block {
+            background: rgba(0,188,212,0.05);
+            border: 1px solid rgba(0,188,212,0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid #7b68ee;
+            margin: 2rem 0;
+        }
+        .timeline-item {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.55rem;
+            top: 0.3rem;
+            width: 12px;
+            height: 12px;
+            background: #7b68ee;
+            border-radius: 50%;
+        }
+        .timeline-item h4 { color: #00bcd4; margin-bottom: 0.3rem; }
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10,10,26,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(123,104,238,0.2);
+        }
+        .nav a {
+            color: #7b68ee;
+            text-decoration: none;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        .nav a:hover { color: #00bcd4; }
+        .label { 
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+        .label-idealism { background: rgba(123,104,238,0.2); color: #7b68ee; }
+        .label-physicalism { background: rgba(244,67,54,0.2); color: #f44336; }
+        .label-panpsychism { background: rgba(255,152,0,0.2); color: #ff9800; }
+        #scrollIndicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #7b68ee;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 999;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        #scrollIndicator:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="#intro">Überblick</a>
+    <a href="#problem">Das Problem</a>
+    <a href="#ontology">Die Ontologie</a>
+    <a href="#dissociation">Dissoziation</a>
+    <a href="#perception">Wahrnehmung</a>
+    <a href="#evidence">Evidenz</a>
+    <a href="#comparison">Vergleich</a>
+</nav>
+
+<div id="scrollIndicator" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- HERO -->
+<section class="hero" id="intro">
+    <h1>Analytischer Idealismus</h1>
+    <p>Eine Ontologie, in der <strong>phänomenales Bewusstsein</strong> das einzige Fundament der Realität ist. 
+    Alles andere – Materie, Raum, Zeit – sind Muster der Selbsterregung dieses universellen Bewusstseins.</p>
+    <p style="margin-top:1rem; opacity:0.6; font-size:0.9rem;">Basierend auf der Dissertation von Dr. Bernardo Kastrup, Radboud Universität Nijmegen (2019)</p>
+    <div style="margin-top:3rem; font-size:2rem; opacity:0.4;">↓ Scroll nach unten</div>
+</section>
+
+<!-- DAS PROBLEM -->
+<section class="section" id="problem">
+    <h2>1. Das Problem: Warum brauchen wir eine neue Ontologie?</h2>
+    
+    <div class="card">
+        <p><strong>Der Mainstream-Physikalismus</strong> behauptet: Bewusstsein entsteht aus Materie. Aber er kann nicht erklären, 
+        <em>warum</em> es sich anfühlt, etwas zu erleben – das sogenannte <strong>"Hard Problem of Consciousness"</strong>.</p>
+    </div>
+
+    <div class="math-block">
+        <p>Das Hard Problem formal:</p>
+        <p>\(\text{Physische Parameter} \not\Rightarrow \text{Qualitative Erfahrung (Qualia)}\)</p>
+        <p style="font-size:0.9rem; margin-top:0.5rem; opacity:0.7;">Es gibt keine logische Brücke von Masse, Ladung, Spin → zum Gefühl von "Rot" oder "Schmerz"</p>
+    </div>
+
+    <div id="abstractionChart" class="plotly-chart"></div>
+    <p style="text-align:center; opacity:0.7; font-size:0.9rem;">↑ Abstraktionsebenen: Je weiter von der direkten Erfahrung entfernt, desto geringer die epistemische Sicherheit</p>
+</section>
+
+<!-- DIE ONTOLOGIE -->
+<section class="section" id="ontology">
+    <h2>2. Die Kernidee: Alles ist Bewusstsein</h2>
+    
+    <div class="card">
+        <p>Analytischer Idealismus postuliert:</p>
+        <ul style="padding-left:1.5rem;">
+            <li><strong>Es gibt nur universelles phänomenales Bewusstsein</strong> als ontologisches Primitiv</li>
+            <li>Erfahrungen sind <strong>Selbsterregungsmuster</strong> dieses Bewusstseins (wie Wellen im Wasser)</li>
+            <li>Wir (lebende Wesen) sind <strong>dissoziierte Alter</strong> des universellen Bewusstseins</li>
+            <li>Die physische Welt ist die <strong>extrinsische Erscheinung</strong> transpersonaler Bewusstseinsaktivität</li>
+        </ul>
+    </div>
+
+    <div class="math-block">
+        <p>Analogie zur Physik:</p>
+        <p>\(\text{Quantenfeld} \xrightarrow{\text{Selbsterregung}} \text{Teilchen}\)</p>
+        <p>\(\text{Universelles Bewusstsein} \xrightarrow{\text{Selbsterregung}} \text{Erfahrungen}\)</p>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="cosmicCanvas" width="800" height="500"></canvas>
+        <div class="controls">
+            <button onclick="setMode('normal')" class="active" id="btnNormal">Normaler Zustand</button>
+            <button onclick="setMode('dissociation')" id="btnDiss">Dissoziation zeigen</button>
+            <button onclick="setMode('perception')" id="btnPerc">Wahrnehmung zeigen</button>
+        </div>
+        <p style="margin-top:1rem; opacity:0.7; font-size:0.9rem;">Interaktive Visualisierung: Universelles Bewusstsein (Ozean) mit dissoziierten Altern (Inseln)</p>
+    </div>
+</section>
+
+<!-- DISSOZIATION -->
+<section class="section" id="dissociation">
+    <h2>3. Dissoziation: Wie entstehen getrennte Bewusstseine?</h2>
+    
+    <p>Das Schlüsselkonzept: <strong>Dissoziation</strong> – ein in der Psychiatrie gut dokumentiertes Phänomen (DID = Dissoziative Identitätsstörung) – 
+    erklärt, wie innerhalb eines einheitlichen Bewusstseins scheinbar getrennte Subjekte entstehen können.</p>
+
+    <div class="canvas-container">
+        <canvas id="graphCanvas" width="800" height="400"></canvas>
+        <div class="controls">
+            <label style="color:#7b68ee;">Dissoziationsgrad: </label>
+            <input type="range" id="dissSlider" min="0" max="100" value="0" oninput="updateGraph()">
+            <span id="dissValue" style="color:#00bcd4;">0%</span>
+        </div>
+        <p style="margin-top:1rem; opacity:0.7; font-size:0.9rem;">↑ Schiebe den Regler: Beobachte wie kognitive Verbindungen (Kanten) zwischen Bewusstseinsinhalten brechen</p>
+    </div>
+
+    <div class="card">
+        <h3 style="color:#00bcd4;">Empirische Evidenz für Dissoziation</h3>
+        <ul style="padding-left:1.5rem;">
+            <li><strong>Strasburger & Waldvogel (2015):</strong> Eine DID-Patientin hatte blinde und sehende Alter – EEG bestätigte fehlende visuelle Hirnaktivität bei blinden Altern</li>
+            <li><strong>Schlumpf et al. (2014):</strong> fMRI-Scans zeigten klare Unterschiede zwischen echten DID-Patienten und Schauspielern</li>
+            <li><strong>Braude (1995):</strong> Alter können gleichzeitig bewusst sein und um Kontrolle kämpfen</li>
+        </ul>
+    </div>
+</section>
+
+<!-- WAHRNEHMUNG -->
+<section class="section" id="perception">
+    <h2>4. Wie entsteht Wahrnehmung?</h2>
+
+    <div class="card">
+        <p>Gedanken des universellen Bewusstseins <strong>außerhalb</strong> eines Alters prallen auf dessen dissoziative Grenze. 
+        Das Alter erlebt dies als <strong>Sinneswahrnehmung</strong> – eine codierte, komprimierte Repräsentation der äußeren Bewusstseinsaktivität.</p>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="perceptionCanvas" width="800" height="450"></canvas>
+        <p style="margin-top:1rem; opacity:0.7; font-size:0.9rem;">↑ Animation: Transpersonale "Gedanken" (Wellen) treffen auf die dissoziative Grenze und werden zu Wahrnehmungen</p>
+    </div>
+
+    <div class="math-block">
+        <p>Warum fühlt sich Wahrnehmung anders an als Denken?</p>
+        <p style="font-size:0.95rem; margin-top:0.5rem;">\(\text{Äußere Gedanken} \xrightarrow[\text{(Hoffman, Friston)}]{\text{Codierung + Kompression}} \text{Wahrnehmungsqualitäten}\)</p>
+        <p style="font-size:0.85rem; margin-top:0.5rem; opacity:0.7;">Evolution optimiert für Fitness, nicht für Wahrheit → qualitative Transformation</p>
+    </div>
+
+    <div id="correlationChart" class="plotly-chart"></div>
+    <p style="text-align:center; opacity:0.7; font-size:0.9rem;">↑ Gehirnaktivität korreliert mit Erfahrung, weil sie die extrinsische Erscheinung der Erfahrung IST</p>
+</section>
+
+<!-- EVIDENZ -->
+<section class="section" id="evidence">
+    <h2>5. Empirische Evidenz: Weniger Gehirn = Mehr Bewusstsein?</h2>
+
+    <p>Unter Physikalismus sollte Beeinträchtigung der Hirnfunktion <em>immer</em> zu weniger Bewusstsein führen. 
+    Unter analytischem Idealismus kann bestimmte Beeinträchtigung die Dissoziation schwächen → erweitertes Bewusstsein.</p>
+
+    <div id="evidenceChart" class="plotly-chart"></div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <h4>Zerebrale Hypoxie</h4>
+            <p>Strangulationsspiele, holotropes Atmen, G-LOC bei Piloten → euphorische, selbst-transzendierende Erfahrungen trotz Sauerstoffmangel im Gehirn</p>
+        </div>
+        <div class="timeline-item">
+            <h4>Psychedelika</h4>
+            <p>Carhart-Harris et al. (2012): Psilocybin verursacht NUR Abnahme der Hirndurchblutung – je stärker die Abnahme, desto intensiver die subjektive Erfahrung</p>
+        </div>
+        <div class="timeline-item">
+            <h4>Nahtoderfahrungen</h4>
+            <p>Berichte von lebensverändernder Phänomenologie bei dramatisch reduzierter Hirnfunktion (Herzstillstand)</p>
+        </div>
+        <div class="timeline-item">
+            <h4>Physische Hirnschäden</h4>
+            <p>Cristofori (2016): CT-Scans von Vietnam-Veteranen – Schäden an Frontal-/Parietallappen erhöhten mystische Erfahrungen. "Acquired Savant Syndrome" nach Verletzungen.</p>
+        </div>
+        <div class="timeline-item">
+            <h4>Trance-Zustände</h4>
+            <p>Peres (2012): Medien zeigten REDUZIERTE Hirnaktivität bei gleichzeitig KOMPLEXEREM Output</p>
+        </div>
+    </div>
+</section>
+
+<!-- VERGLEICH -->
+<section class="section" id="comparison">
+    <h2>6. Vergleich der Ontologien</h2>
+
+    <div class="comparison">
+        <div class="card">
+            <h3><span class="label label-physicalism">Physikalismus</span></h3>
+            <ul style="padding-left:1rem;">
+                <li>Materie ist fundamental</li>
+                <li>Bewusstsein emergiert aus Materie</li>
+                <li>❌ Hard Problem unlösbar</li>
+                <li>❌ Kann Qualia nicht erklären</li>
+                <li>❌ Probleme mit Quantenphysik</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3><span class="label label-panpsychism">Panpsychismus</span></h3>
+            <ul style="padding-left:1rem;">
+                <li>Elementarteilchen haben Proto-Bewusstsein</li>
+                <li>Makro-Bewusstsein durch Kombination</li>
+                <li>✓ Umgeht Hard Problem</li>
+                <li>❌ Combination Problem (Coleman 2014)</li>
+                <li>❌ Wie kombinieren sich Subjekte?</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3><span class="label label-idealism">Analytischer Idealismus</span></h3>
+            <ul style="padding-left:1rem;">
+                <li>Universelles Bewusstsein ist fundamental</li>
+                <li>Materie = extrinsische Erscheinung</li>
+                <li>✓ Kein Hard Problem</li>
+                <li>✓ Kein Combination Problem</li>
+                <li>✓ Erklärt Hirn-Bewusstsein-Korrelation</li>
+                <li>✓ Erklärt erweiterte Erfahrung bei Hirnbeeinträchtigung</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Zusammenfassung</h3>
+            <div class="math-block">
+                <p>\(\text{Materie} = \text{Extrinsische Erscheinung von Erfahrung}\)</p>
+                <p style="margin-top:0.5rem;">\(\text{Gehirn} = \text{Wie inneres Leben von außen aussieht}\)</p>
+                <p style="margin-top:0.5rem;">\(\text{Lebewesen} = \text{Dissoziierte Alter des Universums}\)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="parsimonyChart" class="plotly-chart"></div>
+</section>
+
+<footer style="text-align:center; padding:3rem; opacity:0.5; font-size:0.85rem;">
+    <p>Basierend auf: Kastrup, B. (2019). "Analytic Idealism: A consciousness-only ontology." Dissertation, Radboud Universität Nijmegen.</p>
+</footer>
+
+<script>
+// ============ PLOTLY CHARTS ============
+
+// Abstraction Levels Chart
+Plotly.newPlot('abstractionChart', [{
+    type: 'funnel',
+    y: ['Direkte Erfahrung (Qualia)', 'Wahrnehmungsobjekte', 'Materielle Welt (1. Abstraktion)', 'Eigenschaften der Materie (2. Abstraktion)', 'Strings / Branen (3. Abstraktion)'],
+    x: [100, 85, 60, 40, 15],
+    textinfo: 'value+percent initial',
+    marker: { color: ['#7b68ee', '#5c6bc0', '#42a5f5', '#26c6da', '#00897b'] },
+    connector: { line: { color: '#333' } }
+}], {
+    paper_bgcolor: '#0a0a1a',
+    plot_bgcolor: '#0a0a1a',
+    font: { color: '#e0e0e0', size: 12 },
+    title: { text: 'Epistemische Sicherheit nach Abstraktionsebene', font: { color: '#7b68ee', size: 16 } },
+    margin: { l: 250, r: 50, t: 60, b: 40 }
+}, { responsive: true });
+
+// Correlation Chart
+const brainActivity = Array.from({length: 50}, (_, i) => i * 2);
+const experience = brainActivity.map(x => 0.8 * x + 5 * Math.sin(x/10) + Math.random() * 8);
+
+Plotly.newPlot('correlationChart', [{
+    x: brainActivity,
+    y: experience,
+    mode: 'markers',
+    type: 'scatter',
+    marker: { color: '#7b68ee', size: 8, opacity: 0.7 },
+    name: 'Datenpunkte'
+}, {
+    x: [0, 100],
+    y: [0, 80],
+    mode: 'lines',
+    type: 'scatter',
+    line: { color: '#00bcd4', width: 2, dash: 'dash' },
+    name: 'Korrelation'
+}], {
+    paper_bgcolor: '#0a0a1a',
+    plot_bgcolor: '#0d0d2b',
+    font: { color: '#e0e0e0' },
+    title: { text: 'Gehirnaktivität ↔ Erfahrung: Korrelation, nicht Kausalität!', font: { color: '#7b68ee', size: 14 } },
+    xaxis: { title: 'Messbare Gehirnaktivität', gridcolor: '#1a1a3e' },
+    yaxis: { title: 'Berichtete Erfahrungsintensität', gridcolor: '#1a1a3e' },
+    annotations: [{
+        x: 50, y: 70, text: 'Idealismus: Gehirn IST die<br>Erscheinung der Erfahrung',
+        showarrow: true, arrowcolor: '#00bcd4', font: { color: '#00bcd4', size: 11 },
+        ax: 60, ay: -40
+    }]
+}, { responsive: true });
+
+// Evidence Chart
+Plotly.newPlot('evidenceChart', [{
+    type: 'bar',
+    x: ['Hypoxie<br>(Strangulation)', 'Psychedelika<br>(Psilocybin)', 'NDE<br>(Herzstillstand)', 'TMS<br>(Magnetstimulation)', 'Hirnschaden<br>(Veteranen)', 'Trance<br>(Psychographie)'],
+    y: [-30, -25, -60, -15, -20, -35],
+    name: 'Hirnaktivität (↓)',
+    marker: { color: '#f44336' }
+}, {
+    type: 'bar',
+    x: ['Hypoxie<br>(Strangulation)', 'Psychedelika<br>(Psilocybin)', 'NDE<br>(Herzstillstand)', 'TMS<br>(Magnetstimulation)', 'Hirnschaden<br>(Veteranen)', 'Trance<br>(Psychographie)'],
+    y: [40, 55, 80, 30, 45, 50],
+    name: 'Erfahrungsintensität (↑)',
+    marker: { color: '#7b68ee' }
+}], {
+    paper_bgcolor: '#0a0a1a',
+    plot_bgcolor: '#0d0d2b',
+    font: { color: '#e0e0e0' },
+    title: { text: 'Paradox: Weniger Hirnaktivität → Reichere Erfahrung', font: { color: '#7b68ee', size: 14 } },
+    barmode: 'group',
+    yaxis: { title: 'Relative Veränderung (%)', gridcolor: '#1a1a3e', zeroline: true, zerolinecolor: '#444' },
+    xaxis: { gridcolor: '#1a1a3e' },
+    legend: { x: 0.7, y: 0.95 }
+}, { responsive: true });
+
+// Parsimony Chart
+Plotly.newPlot('parsimonyChart', [{
+    type: 'radar',
+    r: [2, 1, 1, 3, 2, 2],
+    theta: ['Parsimonie', 'Hard Problem gelöst', 'Combination Problem gelöst', 'Empirische Passung', 'Erklärungskraft', 'Parsimonie'],
+    name: 'Physikalismus',
+    marker: { color: '#f44336' },
+    line: { color: '#f44336' }
+}, {
+    type: 'radar', 
+    r: [3, 4, 1, 3, 3, 3],
+    theta: ['Parsimonie', 'Hard Problem gelöst', 'Combination Problem gelöst', 'Empirische Passung', 'Erklärungskraft', 'Parsimonie'],
+    name: 'Panpsychismus',
+    marker: { color: '#ff9800' },
+    line: { color: '#ff9800' }
+}, {
+    type: 'radar',
+    r: [5, 5, 5, 4, 5, 5],
+    theta: ['Parsimonie', 'Hard Problem gelöst', 'Combination Problem gelöst', 'Empirische Passung', 'Erklärungskraft', 'Parsimonie'],
+    name: 'Analytischer Idealismus',
+    marker: { color: '#7b68ee' },
+    line: { color: '#7b68ee' }
+}], {
+    paper_bgcolor: '#0a0a1a',
+    plot_bgcolor: '#0d0d2b',
+    font: { color: '#e0e0e0' },
+    title: { text: 'Ontologie-Vergleich (1=schlecht, 5=gut)', font: { color: '#7b68ee', size: 14 } },
+    polar: {
+        bgcolor: '#0d0d2b',
+        radialaxis: { visible: true, range: [0, 5], gridcolor: '#1a1a3e', linecolor: '#333' },
+        angularaxis: { gridcolor: '#1a1a3e', linecolor: '#333' }
+    }
+}, { responsive: true });
+
+// ============ CANVAS ANIMATIONS ============
+
+// Cosmic Consciousness Canvas
+const cosmicCanvas = document.getElementById('cosmicCanvas');
+const ctx = cosmicCanvas.getContext('2d');
+let mode = 'normal';
+let animFrame;
+
+const alters = [
+    { x: 250, y: 250, r: 60, label: 'Du', color: '#7b68ee' },
+    { x: 500, y: 200, r: 50, label: 'Anderer', color: '#26c6da' },
+    { x: 600, y: 350, r: 40, label: 'Tier', color: '#66bb6a' }
+];
+
+const waves = [];
+for (let i = 0; i < 30; i++) {
+    waves.push({
+        x: Math.random() * 800,
+        y: Math.random() * 500,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        r: Math.random() * 3 + 1,
+        phase: Math.random() * Math.PI * 2
+    });
+}
+
+function drawCosmic() {
+    ctx.clearRect(0, 0, 800, 500);
+    
+    // Draw ocean background (universal consciousness)
+    const gradient = ctx.createRadialGradient(400, 250, 50, 400, 250, 400);
+    gradient.addColorStop(0, 'rgba(123,104,238,0.05)');
+    gradient.addColorStop(1, 'rgba(0,188,212,0.02)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 800, 500);
+    
+    // Draw flowing waves (transpersonal thoughts)
+    const time = Date.now() * 0.001;
+    waves.forEach(w => {
+        w.x += w.vx;
+        w.y += w.vy;
+        if (w.x < 0 || w.x > 800) w.vx *= -1;
+        if (w.y < 0 || w.y > 500) w.vy *= -1;
+        
+        const pulse = Math.sin(time + w.phase) * 0.5 + 1;
+        ctx.beginPath();
+        ctx.arc(w.x, w.y, w.r * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,188,212,${0.3 + pulse * 0.2})`;
+        ctx.fill();
+    });
+    
+    // Draw alters
+    alters.forEach((alter, i) => {
+        // Dissociative boundary
+        ctx.beginPath();
+        ctx.arc(alter.x, alter.y, alter.r, 0, Math.PI * 2);
+        
+        if (mode === 'dissociation') {
+            ctx.strokeStyle = `rgba(255,255,255,${0.5 + Math.sin(time * 2 + i) * 0.3})`;
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+        } else {
+            ctx.strokeStyle = alter.color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([]);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Inner glow
+        const innerGrad = ctx.createRadialGradient(alter.x, alter.y, 0, alter.x, alter.y, alter.r);
+        innerGrad.addColorStop(0, `${alter.color}33`);
+        innerGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = innerGrad;
+        ctx.fill();
+        
+        // Label
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(alter.label, alter.x, alter.y + 5);
+    });
+    
+    // Mode-specific drawings
+    if (mode === 'perception') {
+        // Draw arrows from waves hitting alter boundaries
+        alters.forEach(alter => {
+            waves.forEach(w => {
+                const dx = alter.x - w.x;
+                const dy = alter.y - w.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < alter.r + 40 && dist > alter.r - 10) {
+                    ctx.beginPath();
+                    ctx.moveTo(w.x, w.y);
+                    const angle = Math.atan2(dy, dx);
+                    const tx = alter.x - Math.cos(angle) * alter.r;
+                    const ty = alter.y - Math.sin(angle) * alter.r;
+                    ctx.lineTo(tx, ty);
+                    ctx.strokeStyle = 'rgba(255,152,0,0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            });
+        });
+        
+        // Label
+        ctx.fillStyle = '#ff9800';
+        ctx.font = '12px Segoe UI';
+        ctx.fillText('Transpersonale Gedanken → Wahrnehmung', 400, 480);
+    }
+    
+    if (mode === 'dissociation') {
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Gestrichelte Linie = Dissoziative Grenze (trennt inneres vom äußeren Bewusstsein)', 400, 480);
+    }
+    
+    // Title
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Universelles Bewusstsein (Ozean)', 10, 20);
+    
+    animFrame = requestAnimationFrame(drawCosmic);
+}
+
+function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+    if (m === 'normal') document.getElementById('btnNormal').classList.add('active');
+    if (m === 'dissociation') document.getElementById('btnDiss').classList.add('active');
+    if (m === 'perception') document.getElementById('btnPerc').classList.add('active');
+}
+
+drawCosmic();
+
+// ============ GRAPH DISSOCIATION CANVAS ============
+const graphCanvas = document.getElementById('graphCanvas');
+const gctx = graphCanvas.getContext('2d');
+
+const nodes = [];
+const edges = [];
+const numNodes = 20;
+
+// Create nodes in a circle-ish layout
+for (let i = 0; i < numNodes; i++) {
+    const angle = (i / numNodes) * Math.PI * 2;
+    const radius = 120 + Math.random() * 40;
+    nodes.push({
+        x: 400 + Math.cos(angle) * radius,
+        y: 200 + Math.sin(angle) * radius,
+        group: i < numNodes / 2 ? 0 : 1
+    });
+}
+
+// Create edges
+for (let i = 0; i < numNodes; i++) {
+    for (let j = i + 1; j < numNodes; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150 && Math.random() > 0.4) {
+            edges.push({ from: i, to: j, crossGroup: nodes[i].group !== nodes[j].group });
+        }
+    }
+}
+
+function updateGraph() {
+    const dissLevel = parseInt(document.getElementById('dissSlider').value);
+    document.getElementById('dissValue').textContent = dissLevel + '%';
+    
+    gctx.clearRect(0, 0, 800, 400);
+    
+    // Draw edges
+    edges.forEach(e => {
+        const opacity = e.crossGroup ? Math.max(0, 1 - dissLevel / 50) : 1;
+        if (opacity <= 0) return;
+        
+        gctx.beginPath();
+        gctx.moveTo(nodes[e.from].x, nodes[e.from].y);
+        gctx.lineTo(nodes[e.to].x, nodes[e.to].y);
+        gctx.strokeStyle = e.crossGroup 
+            ? `rgba(244,67,54,${opacity * 0.5})` 
+            : `rgba(123,104,238,${opacity * 0.3})`;
+        gctx.lineWidth = e.crossGroup ? 2 : 1;
+        gctx.stroke();
+    });
+    
+    // Draw nodes
+    nodes.forEach((n, i) => {
+        gctx.beginPath();
+        gctx.arc(n.x, n.y, 8, 0, Math.PI * 2);
+        gctx.fillStyle = n.group === 0 ? '#7b68ee' : '#26c6da';
+        gctx.fill();
+        gctx.strokeStyle = '#fff';
+        gctx.lineWidth = 1;
+        gctx.stroke();
+    });
+    
+    // Draw dissociative boundary when level > 50
+    if (dissLevel > 50) {
+        gctx.beginPath();
+        gctx.ellipse(400, 200, 180, 140, 0, 0, Math.PI * 2);
+        gctx.strokeStyle = `rgba(255,255,255,${(dissLevel - 50) / 100})`;
+        gctx.lineWidth = 2;
+        gctx.setLineDash([8, 4]);
+        gctx.stroke();
+        gctx.setLineDash([]);
+        
+        // Labels
+        gctx.fillStyle = `rgba(123,104,238,${(dissLevel - 50) / 50})`;
+        gctx.font = '13px Segoe UI';
+        gctx.textAlign = 'center';
+        gctx.fillText('Alter (dissoziiert)', 320, 370);
+        gctx.fillStyle = `rgba(0,188,212,${(dissLevel - 50) / 50})`;
+        gctx.fillText('Umgebendes Bewusstsein', 550, 370);
+    }
+    
+    // Info text
+    gctx.fillStyle = 'rgba(255,255,255,0.7)';
+    gctx.font = '11px Segoe UI';
+    gctx.textAlign = 'left';
+    gctx.fillText(`Kognitive Verbindungen zwischen Gruppen: ${dissLevel < 50 ? 'intakt' : dissLevel < 80 ? 'geschwächt' : 'getrennt'}`, 10, 20);
+}
+
+updateGraph();
+
+// ============ PERCEPTION CANVAS ============
+const percCanvas = document.getElementById('perceptionCanvas');
+const pctx = percCanvas.getContext('2d');
+let percTime = 0;
+
+function drawPerception() {
+    pctx.clearRect(0, 0, 800, 450);
+    percTime += 0.02;
+    
+    // Draw alter (center circle)
+    const cx = 400, cy = 225, cr = 80;
+    
+    // Outer field label
+    pctx.fillStyle = 'rgba(0,188,212,0.15)';
+    pctx.fillRect(0, 0, 800, 450);
+    
+    // Inner alter space
+    pctx.beginPath();
+    pctx.arc(cx, cy, cr, 0, Math.PI * 2);
+    pctx.fillStyle = 'rgba(123,104,238,0.1)';
+    pctx.fill();
+    pctx.strokeStyle = '#7b68ee';
+    pctx.lineWidth = 3;
+    pctx.stroke();
+    
+    // Incoming waves (transpersonal thoughts)
+    for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2 + percTime * 0.3;
+        const waveOffset = Math.sin(percTime * 2 + i) * 20;
+        const startR = cr + 100 + waveOffset;
+        const endR = cr + 5;
+        
+        const sx = cx + Math.cos(angle) * startR;
+        const sy = cy + Math.sin(angle) * startR;
+        const ex = cx + Math.cos(angle) * endR;
+        const ey = cy + Math.sin(angle) * endR;
+        
+        // Wave particle
+        const progress = ((percTime + i * 0.5) % 2) / 2;
+        const px = sx + (ex - sx) * progress;
+        const py = sy + (ey - sy) * progress;
+        
+        pctx.beginPath();
+        pctx.arc(px, py, 4, 0, Math.PI * 2);
+        pctx.fillStyle = `rgba(0,188,212,${1 - progress})`;
+        pctx.fill();
+        
+        // Trail
+        pctx.beginPath();
+        pctx.moveTo(sx, sy);
+        pctx.lineTo(px, py);
+        pctx.strokeStyle = `rgba(0,188,212,${0.2 * (1 - progress)})`;
+        pctx.lineWidth = 1;
+        pctx.stroke();
+    }
+    
+    // Perception sparks inside alter
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
+        const sparkR = 30 + Math.sin(percTime * 3 + i * 2) * 15;
+        const sx = cx + Math.cos(angle + percTime) * sparkR;
+        const sy = cy + Math.sin(angle + percTime) * sparkR;
+        
+        pctx.beginPath();
+        pctx.arc(sx, sy, 3, 0, Math.PI * 2);
+        pctx.fillStyle = `rgba(255,152,0,${0.5 + Math.sin(percTime * 2 + i) * 0.3})`;
+        pctx.fill();
+    }
+    
+    // Labels
+    pctx.fillStyle = '#00bcd4';
+    pctx.font = '12px Segoe UI';
+    pctx.textAlign = 'center';
+    pctx.fillText('Transpersonale Gedanken', 150, 30);
+    pctx.fillText('(Bewusstseinsaktivität außerhalb des Alters)', 150, 48);
+    
+    pctx.fillStyle = '#7b68ee';
+    pctx.fillText('Alter (Du)', cx, cy - 10);
+    pctx.fillText('Dissoziative Grenze', cx, cy + cr + 25);
+    
+    pctx.fillStyle = '#ff9800';
+    pctx.font = '11px Segoe UI';
+    pctx.fillText('Wahrnehmungen', cx, cy + 10);
+    pctx.fillText('(codierte Repräsentationen)', cx, cy + 25);
+    
+    // Arrow annotation
+    pctx.fillStyle = 'rgba(255,255,255,0.5)';
+    pctx.font = '11px Segoe UI';
+    pctx.textAlign = 'left';
+    pctx.fillText('Gedanken → treffen auf Grenze → werden zu Sinneswahrnehmungen', 10, 430);
+    
+    requestAnimationFrame(drawPerception);
+}
+
+drawPerception();
+
+// ============ KATEX RENDERING ============
+document.addEventListener('DOMContentLoaded', function() {
+    renderMathInElement(document.body, {
+        delimiters: [
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+        ]
+    });
+});
+</script>
+
+</body>
+</html>
