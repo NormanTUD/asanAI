@@ -41,13 +41,14 @@ function render_gem_tabs($tabs, $groupId = 'tabgroup') {
 	}
 
 	echo '</div>';
-?>
-	<script>
-		window.addEventListener('load', async () => {
-			addCopyButtons();
-		});
-	</script>
-<?php
+	if (!isset($GLOBALS['_gem_tabs_script_loaded'])) {
+		$GLOBALS['_gem_tabs_script_loaded'] = true;
+		echo '<script>
+			window.addEventListener(\'load\', async () => {
+				addCopyButtons();
+			});
+		</script>';
+	}
 }
 
 function js($file, $loaderLabel = null, $defer = false) {
