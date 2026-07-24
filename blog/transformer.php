@@ -315,6 +315,20 @@ In this implementation, gradients are clipped to the range $[-1, 1]$. This is th
 However, like an immune system, it is imperfect — it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
 </div>
 
+<div class="optional md" data-headline="Why Gradients Vanish or Explode: The Chain Rule">
+The root cause of both vanishing and exploding gradients is the **chain rule** of calculus. During backpropagation, the gradient at layer $l$ is the product of all gradients from layer $L$ down to $l$:
+
+$$\frac{\partial \mathcal{L}}{\partial W_l} = \frac{\partial \mathcal{L}}{\partial h_L} \cdot \prod_{k=l}^{L-1} \frac{\partial h_{k+1}}{\partial h_k}$$
+
+Each term $\frac{\partial h_{k+1}}{\partial h_k}$ contains the weight matrix $W_k$. If the eigenvalues (spectral radius) of these weight matrices are consistently less than 1, the product shrinks exponentially with depth, causing the gradient to **vanish** — early layers receive near-zero updates and stop learning. If the eigenvalues are greater than 1, the product grows exponentially, causing the gradient to **explode** — early layers receive destructive updates.
+
+This is why simple deep networks without residual connections and normalization are so hard to train: the product of 100 matrices, each with spectral radius 0.9, decays as $0.9^{100} \approx 0.00003$, effectively killing learning in the first layers. The residual connection solves this by providing an additive identity path $x_{l+1} = x_l + F(x_l)$, which ensures that the gradient can flow backward through the skip connection without passing through any weight matrices:
+
+$$\frac{\partial x_{l+1}}{\partial x_l} = I + \frac{\partial F}{\partial x_l}$$
+
+The identity term $I$ ensures that the gradient has a "highway" that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth.
+</div>
+
 <div class="optional md" data-headline="What the heads actually react to">
 In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
 
@@ -619,5 +633,23 @@ At no point does the model manipulate symbols or rules, like non-connectionist A
 - non-linear transformation.
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
+
+## Inference vs. Training: Two Modes of Operation
+
+While the architecture is identical in both modes, the behavior of the model differs fundamentally between **inference** and **training**:
+
+| Aspect | Inference | Training |
+|--------|-----------|----------|
+| **Goal** | Generate text | Update weights to minimize loss |
+| **Weights** | Frozen, never change | Updated via gradient descent |
+| **Dropout** | Disabled (all neurons active) | Enabled (randomly drops neurons) |
+| **Batch Normalization** | Uses running statistics | Uses batch statistics |
+| **KV Cache** | Active (stores past K/V for speed) | Not used (full sequence processed at once) |
+| **Gradients** | Not computed | Computed via backpropagation |
+| **Memory** | O(context) for KV cache | O(context²) for attention matrix + all intermediate activations |
+| **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |
+| **Randomness** | Controlled by temperature / top-p | Controlled by dropout / data shuffling |
+
+**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target — it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
 </div>
 </div>
