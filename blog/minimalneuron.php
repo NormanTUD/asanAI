@@ -181,5 +181,19 @@ Modern networks use "Xavier" or "He" initialization, which are just fancy ways o
 $$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_\text{inputs}}}\right) $$
 
 This ensures that the "energy" (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
+
+## Matrices as Parallel Processing
+
+A single neuron computes $y = ax + b$: one input, one weight, one output. But a Transformer with $d_{\text{model}} = 4096$ processes 4096 numbers simultaneously at every step. The bridge between these two scales is the **matrix**.
+
+Instead of computing one neuron at a time, we pack all inputs into a vector $\mathbf{x}$ and all weights into a matrix $W$. The entire layer's computation becomes:
+
+$$\mathbf{y} = W\mathbf{x} + \mathbf{b}$$
+
+This single line represents thousands of individual multiplications and additions, all happening in parallel. Every row of $W$ is a separate "neuron" with its own set of weights. Every column of $W$ receives the same input $\mathbf{x}$. The matrix multiplication $W\mathbf{x}$ computes the dot product of every row with $\mathbf{x}$ simultaneously.
+
+This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle. A modern GPU can execute a $4096 \times 4096$ matrix multiply — over 16 million individual multiplications — in a single operation. Without this parallelization, training a model like GPT-4 would be computationally impossible.
+
+So when you see $\mathbf{h} = \text{Attention}(Q, K, V)$, remember that every letter in that equation is a **matrix**, and every operation is a **batch of thousands of parallel arithmetic operations**, each one as simple as the single neuron $y = ax + b$.
 </div>
 </div>

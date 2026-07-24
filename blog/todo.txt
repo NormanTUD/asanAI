@@ -193,12 +193,6 @@ Inference vs. Training: You mention training processes, but you don't explicitly
 
 Address Hardware/Scaling: Explain that "Intelligence" in these systems is often a result of scaling these simple concepts across billions of parameters and thousands of GPUs.
 
-1. The "Mathematical Bridge" (Linear Algebra)
-You have "1+1=2" and "Derivatives," but you are missing the middle step: Matrices.
-    The Gap: You mention vectors in your embedding section, but you haven't explained that a Transformer is essentially just a series of massive matrix multiplications (W⋅x+b).
-    Why it's needed: A beginner won't understand how a "Minimal Neuron" scales up to a "Transformer" without understanding that we don't calculate one neuron at a time; we calculate thousands at once using grids of numbers.
-    Missing Concept: Matrix Multiplication as "Parallel Processing."
-
 3. The "Token Lifecycle" (Connecting the Modules)
 You have sections on Tokenizers, Embeddings, Attention, and Softmax. However, these are currently "islands" of knowledge.
     The Gap: You need a Data Flow Narrative.
