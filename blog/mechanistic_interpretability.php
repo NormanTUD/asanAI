@@ -198,7 +198,7 @@ Understanding circuits is not merely an academic exercise. It has direct implica
 
 3. **Predicting failures:** By understanding which circuits handle which tasks, we can predict when a model will fail: if the relevant circuit is absent or malformed, the model will produce unreliable outputs for that task class.
 
-4. **Scalable oversight:** As models grow larger, we need automated tools to verify their behavior. Circuit-level analysis provides a path toward formal verification of neural network properties.
+4. **Scalable oversight:** As models grow larger, we need automated tools to verify their behavior. Circuit-level analysis provides a path toward formal verification of neural network properties, while \cite[top-down approaches]{zou2023representation} like Representation Engineering offer complementary methods for controlling model behavior at the representation level without requiring circuit-level granularity.
 
 The field of mechanistic interpretability is still young, but it represents our best current hope for moving beyond "black box" AI toward systems we can genuinely understand and trust.
 
@@ -228,7 +228,7 @@ Attention patterns change systematically as information flows through the layers
 
 - **Early layers** tend to show more **local and positional patterns**: attention concentrates on adjacent tokens, diagonal stripes in the attention matrix, and simple positional relationships. These layers establish basic syntactic structure and token identity.
 
-- **Middle layers** develop more **semantic and syntactic patterns**: dependency arcs (linking verbs to their subjects), coreference resolution (tying pronouns to antecedents), and compositional relationships. This is where the model begins to understand the "who did what to whom" structure of the sentence.
+- **Middle layers** develop more **semantic and syntactic patterns**: dependency arcs (linking verbs to their subjects), coreference resolution (tying pronouns to antecedents), and compositional relationships. This is where the model begins to understand the "who did what to whom" structure of the sentence — \cite[structural probes]{hewitt2019structural} have shown that syntax trees are explicitly encoded in the geometry of these hidden representations.
 
 - **Late layers** become more **diffuse or task-specific**: attention concentrates on tokens that are relevant to the final prediction, often forming complex, distributed patterns that are harder to interpret. In autoregressive models, the final token's attention often becomes a "summary" of the entire context, pulling information from across the sequence for the final prediction.
 
