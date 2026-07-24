@@ -692,12 +692,14 @@
                 if (checkInRow(my, ry.y, ry.name)) { draw(); return; }
             }
 
-            // Check attention row
-            const yAttn = 4 + (cell + 40) * 4 + 24 + 2;
+            // Check attention row (y5 in draw())
+            const vY = rowYs[3].y;
+            const vH = vY + cell + 40;
+            const y5 = vH + 30;
             const boxSize = 38;
             for (let j = 0; j < seqLen; j++) {
                 const x = tokenX(j);
-                if (mx >= x && mx < x + boxSize && my >= yAttn + 10 && my < yAttn + 10 + boxSize) {
+                if (mx >= x && mx < x + boxSize && my >= y5 + 10 && my < y5 + 10 + boxSize) {
                     hoveredCell = {row: 'attn', ti: j, di: 0};
                     tooltip.style.left = (e.offsetX + 15) + 'px';
                     tooltip.style.top = (e.offsetY + 10) + 'px';
@@ -706,12 +708,13 @@
                 }
             }
 
-            // Check output row
-            const yOut = yAttn + boxSize + 18;
+            // Check output row (y6 in draw())
+            const attnH = y5 + boxSize + 14;
+            const y6 = attnH + 4;
             const outCell = cell + 4;
             for (let d = 0; d < dHead; d++) {
                 const cx = leftLabel + d * (cell + 4);
-                if (mx >= cx && mx < cx + outCell && my >= yOut + 10 && my < yOut + 10 + outCell) {
+                if (mx >= cx && mx < cx + outCell && my >= y6 + 10 && my < y6 + 10 + outCell) {
                     hoveredCell = {row: 'output', ti: 0, di: d};
                     tooltip.style.left = (e.offsetX + 15) + 'px';
                     tooltip.style.top = (e.offsetY + 10) + 'px';
