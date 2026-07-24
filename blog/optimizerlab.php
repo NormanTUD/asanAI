@@ -146,7 +146,7 @@ This division is the key insight: parameters with large, consistent gradients ge
 
 ### History of Optimizers
 
-In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper "\citetitle{sgd}", introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
+In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper "\citetitle{sgd}" (\citealt{sgd}), introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
 
 The modern **SGD** update rule is a direct application of their iterative formula:
 
