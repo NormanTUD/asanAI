@@ -145,8 +145,56 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 		<span class="label-left">Better&nbsp;Telescopes</span>
 		<input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="2" style="width: 100%;">
 		<span class="label-right">Worse&nbsp;Telescopes</span>
-	    </div>
-	</div>
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## Dataset Splits: Why You Can't Test on the Same Data You Trained On
+
+        A fundamental rule in machine learning: **never evaluate your model on data it has already seen**. This is why datasets are split into separate subsets:
+
+        * **Training Set (typically 70-80%):** Used to adjust the model's weights. The model sees this data and learns from it.
+        * **Validation Set (typically 10-15%):** Used to tune hyperparameters (learning rate, architecture choices) and detect overfitting. The model does not learn from this data, but it influences human decisions about the model.
+        * **Test Set (typically 10-15%):** Held back until the very end. Used only once to report final performance. If you ever use the test set to make decisions, you are cheating, and your reported accuracy will be optimistic.
+
+        **Why three sets?** If you tune hyperparameters on the validation set, information about the validation set "leaks" into your model choices. You need a third, completely untouched set to get an honest measure of generalization. In small-data regimes (e.g., medical imaging with only hundreds of samples), **k-fold cross-validation** is used instead, where the data is repeatedly split into $k$ folds, and each fold takes a turn as the test set.
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## Bias in Data: The Mirror of Society
+
+        A model is only as good as the data it is trained on. If the training data contains historical biases, the model will learn and amplify them. This is not a bug in the math — it is a feature of the statistical learning process: the model faithfully reproduces the patterns it observes.
+
+        **Common sources of bias in ML datasets:**
+
+        * **Historical Bias:** The data reflects existing societal inequalities. A hiring model trained on historical hiring data will learn the gender and racial biases present in past decisions.
+        * **Representation Bias:** Certain groups are under-represented in the dataset. A facial recognition system trained mostly on light-skinned faces will perform poorly on dark-skinned faces, as documented by \citeauthor{buolamwini2018gender} in \citeyear{buolamwini2018gender}.
+        * **Measurement Bias:** The features used to represent the data are noisy or systematically wrong for certain groups.
+        * **Label Bias:** Human annotators introduce their own subjective judgments into the training labels.
+
+        **The technical consequence:** Bias in data leads to systematically different performance across subgroups. The model's overall accuracy may look good, but disaggregated by demographic group, it can reveal dramatic disparities. Detecting and mitigating these biases is an active area of research in **fairness in machine learning**.
+    </div>
+</div>
+
+<div class="statlab-section">
+    <div class="md">
+        ## Statistical Learning Theory and Vapnik's Contribution
+
+        The theoretical framework underpinning all of supervised learning was formalized by \citeauthor{vapnik} in the 1960s–1990s. His **Statistical Learning Theory** asks a fundamental question: given a finite set of training examples, how can we bound the error on unseen data?
+
+        Three key concepts from this framework:
+
+        * **VC-Dimension (Vapnik-Chervonenkis dimension):** A measure of a model's capacity or complexity. A model with higher VC-dimension can fit more complex patterns but risks overfitting. The VC-dimension of a linear classifier in $d$ dimensions is $d + 1$; for a neural network, it can be proportional to the number of parameters.
+        * **Structural Risk Minimization (SRM):** Instead of minimizing only the training error (Empirical Risk Minimization), SRM minimizes a combination of training error and model complexity. This is the theoretical justification for regularization techniques like weight decay and dropout.
+        * **The Bias-Variance Tradeoff:** Models with low capacity (high bias) underfit; models with high capacity (low variance, but high variance in predictions across different training sets) overfit. The optimal model balances both.
+
+        This framework explains why large neural networks can generalize despite having far more parameters than training examples, a phenomenon known as **"benign overfitting"** that remains an active area of theoretical research.
+    </div>
+</div>
+
 </div>
 
 <div class="md">
