@@ -1,4 +1,10 @@
 window.bibData = {
+	"hutter2006universal": {
+		url: "https://arxiv.org/abs/0712.3329",
+		title: "Universal Intelligence: A Definition of Machine Intelligence",
+		author: "Shane Legg, Marcus Hutter",
+		year: 2007
+	},
 	"frankle2019lottery": {
 		url: "https://arxiv.org/abs/1803.03635",
 		year: 2019,
