@@ -393,7 +393,7 @@ All of these implement the same core loop described above, they differ in how th
 <div class="md">
 ## Connection to Web Search: Agents as Generalized Search
 
-If you understood the \cite[web search chapter]{websearch}, agents are a natural generalization:
+Agents are a natural generalization of Websearch and RAG-Systems:
 
 | Web Search | Agent |
 |------------|-------|
