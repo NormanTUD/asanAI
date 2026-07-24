@@ -395,4 +395,14 @@ $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
 The diamond you see in the plot is the result of this physics, a word finding its true north by listening to its neighbors.
 
 It is important to note that attention does not only disambiguate words with multiple meanings like "bank" or "apple." It operates over **every token in the sequence**, refining **all** representations simultaneously. A word like "the" gets contextualized just as much as "bank" does — attention captures syntactic relationships (subject-verb agreement), coreference (linking "she" to "Maria"), temporal reasoning ("before" relating two events), adjectival binding ("red" attaching to "car" rather than "house"), and countless other structural dependencies. The disambiguation examples above are simply the most *visually dramatic* illustration of what is, in reality, a universal mechanism: every word's representation is reshaped by every other word it attends to, regardless of whether the word is ambiguous in isolation.
+
+### The Attention Matrix: A Zero-Sum Economy
+
+Each row of the attention matrix sums to 1 (due to softmax), making it **right-stochastic**. But the columns generally do **not** sum to 1. This asymmetry reveals something profound: some tokens are "attended to" much more than others — they become **information hubs**.
+
+In BERT, the `[CLS]` token often accumulates massive column-sums, acting as a sink that aggregates information from the entire sequence. In GPT-style models, the last (most recent) token plays a similar role. These tokens become gravitational centers that the entire sequence orbits around.
+
+The zero-sum nature of attention (each row sums to exactly 1) means attention is a **finite resource**. When one token receives more attention from a given query, every other token necessarily receives less. This is not a design choice — it is a mathematical consequence of the softmax normalization. It creates a competitive economy within every forward pass: tokens compete for attention the way organisms compete for resources in an ecosystem. A highly salient token (a proper noun, a negation word) can "starve" surrounding tokens of attention, causing the model to effectively ignore them.
+
+The deeper implication: the model cannot attend to everything equally — it must always choose, and every choice is a sacrifice. This mirrors the human condition of finite attention: we cannot listen to all voices simultaneously, and every act of focus is an act of exclusion.
 </div>
