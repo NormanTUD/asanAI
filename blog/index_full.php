@@ -50,10 +50,11 @@
 	incl("Circuits Inside Large Language Models", "circuits");
 	incl("How Transformers Execute Algorithms", "algorithms");
 	#incl("Topology and the Geometry of Thought", "topology");
-	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
+	incl("Fine-Tuning & RLHF", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
-	incl("How LLMs Search the Web: Behind the Scenes", "websearch");
+	incl("How LLMs Search the Web", "websearch");
+	incl("AI Agents: Autonomous Reasoning and Tool Use", "agents");
 	incl("Semantic Search & Vector Databases: Finding Needles in Haystacks", "vectorsearch");
 	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
 	incl("Security & Adversarial Attacks", "security_inference");
