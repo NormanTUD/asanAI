@@ -20,8 +20,6 @@
 
 <div id="contents" style="display: none">
 <?php
-	#incl('Derivatives: How AI "Learns" to get better', "derivativelab");
-
 	incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro");
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
@@ -29,6 +27,7 @@
 	incl("The History of Language: From Sanskrit to LLMs", "language");
 	incl("Statistics: A useful helper in AI", "statistics");
 	incl("Loss: Teaching through Failure", "losslab");
+	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl('Differentiation: The Mathematics of Change', "differentiation");
 	incl('Automatic Differentiation: How Machines Learn', "autodiff");
 	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
@@ -61,6 +60,7 @@
 	incl("Inference Optimization", "inference_optimization");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
+	incl("Literature", "literature");
 	incl("Appendix", "appendix");
 ?>
 </div>
