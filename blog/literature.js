@@ -1,4 +1,10 @@
 window.bibData = {
+	"ramsauer2021hopfield": {
+		url: "https://arxiv.org/abs/2402.13725v1",
+		year: 2024,
+		title: "https://arxiv.org/abs/2402.13725v1",
+		author: "Saul Santos, Vlad Niculae, Daniel McNamee, Andre F. T. Martins"
+	},
 	"hutter2006universal": {
 		url: "https://arxiv.org/abs/0712.3329",
 		title: "Universal Intelligence: A Definition of Machine Intelligence",

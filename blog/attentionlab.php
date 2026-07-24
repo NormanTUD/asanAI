@@ -379,6 +379,16 @@ What has gone largely unacknowledged is that a standard Transformer during autor
 
 This explains both why Transformers can learn algorithmic tasks (sorting, addition, in-context learning) and why they sometimes fail: the read heads emit *soft*, probabilistic weightings via softmax, meaning they can approximate but never perfectly execute the discrete, hard-addressed steps a classical Turing machine performs.
 
+### Attention as Retrieval-Augmented Memory
+
+The attention mechanism can be understood as a **differentiable database lookup**. The Query is the search query, the Keys form the index, and the Values are the stored records. This perspective reveals deep connections to several practical systems:
+
+* **Why RAG works:** Retrieval-Augmented Generation extends the Key-Value store beyond the model's weights to an external vector database. The same attention mechanism that retrieves from the KV-cache is repurposed to attend to retrieved documents in the context window, effectively giving the model access to a memory that is not bounded by its parameter count.
+
+* **Why KV-caching is essential:** During inference, the growing KV-cache is precisely the model's "external memory tape." Without it, every new token would require recomputing attention over the entire history, an operation that scales quadratically with sequence length. The cache linearizes this cost.
+
+* **The Hopfield Network connection:** \citeauthor{ramsauer2021hopfield} (\citeyear{ramsauer2021hopfield}) proved that the attention mechanism is mathematically equivalent to an energy-based associative memory (a modern Hopfield network). In this view, the Keys are stored patterns, and the output of attention is a retrieval from this associative memory that converges to the stored pattern closest to the Query. This means Transformers are not just "inspired by" associative memory; they are a differentiable, scalable instantiation of it.
+
 ## The Context Window: The Model's Short-Term Memory
 
 The **context window** defines the maximum number of tokens a Transformer can "see" and reason about in a single forward pass. It is, in effect, the model's field of vision: any token that falls within the window can participate in the attention mechanism, while anything outside it simply does not exist to the model. Because the self-attention matrix has dimensions $\text{Context} \times \text{Context}$, both memory consumption and computation scale **quadratically** with the window size, doubling the context quadruples the cost. This is the fundamental engineering constraint that prevents context windows from being infinitely large.
