@@ -209,6 +209,18 @@ There is a deep connection between Transformers and Graph Neural Networks (GNNs)
 The "aha-moment": a Transformer layer is a single step of **message-passing** on a fully connected graph where the edge weights are computed on-the-fly from the data itself. This reframes the quadratic cost $\mathcal{O}(n^2)$ not as a bug of the architecture but as the price of assuming every token might be relevant to every other token. Sparse attention methods (Longformer, BigBird) are literally **graph sparsification** — replacing the complete graph with a sparse one (local windows + random edges + global nodes), trading off expressiveness for efficiency.
 
 This also explains why Transformers generalize so well: by starting with a complete graph and learning which edges matter, they can discover any dependency structure, whereas RNNs are constrained to a chain graph and CNNs to a grid graph.
+
+## Layer-Depth Progression: How Attention Changes Through the Network
+
+Attention patterns change systematically as information flows through the layers of a Transformer. This progression reveals how the model builds increasingly abstract representations:
+
+- **Early layers** tend to show more **local and positional patterns**: attention concentrates on adjacent tokens, diagonal stripes in the attention matrix, and simple positional relationships. These layers establish basic syntactic structure and token identity.
+
+- **Middle layers** develop more **semantic and syntactic patterns**: dependency arcs (linking verbs to their subjects), coreference resolution (tying pronouns to antecedents), and compositional relationships. This is where the model begins to understand the "who did what to whom" structure of the sentence.
+
+- **Late layers** become more **diffuse or task-specific**: attention concentrates on tokens that are relevant to the final prediction, often forming complex, distributed patterns that are harder to interpret. In autoregressive models, the final token's attention often becomes a "summary" of the entire context, pulling information from across the sequence for the final prediction.
+
+This progression mirrors how human reading comprehension works: first identify the words, then parse the syntax, then build a semantic representation, then make a prediction. The model does not need to be explicitly structured this way — this hierarchy emerges purely from the training objective.
 </div>
 
 <div id="summary-container"></div>
