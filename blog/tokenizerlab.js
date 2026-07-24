@@ -189,6 +189,69 @@ function wordpieceTokenize(word) {
 	return tokens;
 }
 
+/**
+ * Shows why LLMs can't count letters: BPE tokenization breaks words into subword
+ * fragments that don't respect letter boundaries.
+ */
+function showTokenizationFailure(word) {
+    const vis = document.getElementById('tokenization-failure-vis');
+    const explain = document.getElementById('tokenization-failure-explain');
+    if (!vis) return;
+
+    word = word.trim();
+    if (!word) {
+        vis.innerHTML = '<span style="color:#94a3b8;">Type a word to see how the tokenizer splits it…</span>';
+        if (explain) explain.innerHTML = '';
+        return;
+    }
+
+    // Train a quick BPE tokenizer on the word itself (approximates real behavior)
+    const tokenizer = new BPETokenizer();
+    tokenizer.train(word, Math.min(10, word.length));
+    const tokens = tokenizer.tokenize(word);
+
+    // Build the visual token display
+    let html = '<div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">';
+    tokens.forEach(t => {
+        const color = tokenColor(t);
+        html += `<span style="display:inline-block; padding:4px 10px; border-radius:6px;
+            background:${color.bg}; border:2px solid ${color.border};
+            font-weight:bold; font-size:1.1rem; color:#1e293b;
+            box-shadow:0 2px 4px rgba(0,0,0,0.08);">${escapeHtml(t)}</span>`;
+    });
+    html += '</div>';
+    vis.innerHTML = html;
+
+    // Explanation
+    if (explain) {
+        const letterCounts = {};
+        for (const ch of word.toLowerCase()) {
+            letterCounts[ch] = (letterCounts[ch] || 0) + 1;
+        }
+        const repeatedLetters = Object.entries(letterCounts)
+            .filter(([ch, count]) => count > 1 && /[a-z]/.test(ch))
+            .map(([ch, count]) => `"${ch}" appears ${count} times`);
+
+        let letterInfo = '';
+        if (repeatedLetters.length > 0) {
+            letterInfo = `In "${word}", ${repeatedLetters.join(', ')}. `;
+        }
+
+        const tokenCount = tokens.length;
+        const wordLength = word.length;
+
+        explain.innerHTML = `
+            <strong>Why this matters:</strong> ${letterInfo}
+            BPE splits "${word}" into <strong>${tokenCount} token${tokenCount !== 1 ? 's' : ''}</strong>
+            (out of ${wordLength} letters). The model never sees individual letters —
+            it sees these ${tokenCount} opaque chunks. When asked "How many r's are in ${word}?",
+            it literally cannot count them, because <strong>"r" is not a unit in its representation</strong>.
+            The tokenizer has atomized the word into statistically motivated fragments,
+            not the letter-level symbols humans use.
+        `;
+    }
+}
+
 async function loadTokenizerModule() {
 	updateLoadingStatus("Loading section about Tokenizer...");
 
@@ -224,5 +287,12 @@ async function loadTokenizerModule() {
 	}
 
 	syncAndTokenize();
+
+	// Initialize the tokenization failure demo
+	const failInput = document.getElementById('tokenization-failure-input');
+	if (failInput) {
+		showTokenizationFailure(failInput.value);
+	}
+
 	return Promise.resolve();
 }
