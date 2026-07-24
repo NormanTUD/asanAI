@@ -1,4 +1,91 @@
 window.bibData = {
+	"yao2023react": {
+	    title: "ReAct: Synergizing Reasoning and Acting in Language Models",
+	    author: "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, Yuan Cao",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2210.03629"
+	},
+	"wang2023planandexecute": {
+	    title: "Plan-and-Solve Prompting: Improving Zero-Shot Chain-of-Thought Reasoning by Large Language Models",
+	    author: "Lei Wang, Wanyu Xu, Yihuai Lan, Zhiqiang Hu, Yunshi Lan, Roy Ka-Wei Lee, Ee-Peng Lim",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2305.04091"
+	},
+	"shinn2023reflexion": {
+	    title: "Reflexion: Language Agents with Verbal Reinforcement Learning",
+	    author: "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, Shunyu Yao",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2303.11366"
+	},
+	"wei2022chainofthought": {
+	    title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+	    author: "Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc Le, Denny Zhou",
+	    year: 2022,
+	    url: "https://arxiv.org/abs/2201.11903"
+	},
+	"schick2023toolformer": {
+	    title: "Toolformer: Language Models Can Teach Themselves to Use Tools",
+	    author: "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Luke Zettlemoyer, Nicola Cancedda, Thomas Scialom",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2302.04761"
+	},
+	"park2023generativeagents": {
+	    title: "Generative Agents: Interactive Simulacra of Human Behavior",
+	    author: "Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, Michael S. Bernstein",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2304.03442"
+	},
+	"sumers2024cognitive": {
+	    title: "Cognitive Architectures for Language Agents",
+	    author: "Theodore R. Sumers, Shunyu Yao, Karthik Narasimhan, Thomas L. Griffiths",
+	    year: 2024,
+	    url: "https://arxiv.org/abs/2309.02427"
+	},
+	"weng2023agentoverview": {
+	    title: "LLM Powered Autonomous Agents",
+	    author: "Lilian Weng",
+	    year: 2023,
+	    url: "https://lilianweng.github.io/posts/2023-06-23-agent/"
+	},
+	"xi2023rise": {
+	    title: "The Rise and Potential of Large Language Model Based Agents: A Survey",
+	    author: "Zhiheng Xi, Wenxiang Chen, Xin Guo, Wei He, Yiwen Ding, Boyang Hong, Ming Zhang, Junzhe Wang, Senjie Jin, Enyu Zhou, Rui Zheng, Xiaoran Fan, Xiao Wang, Limao Xiong, Yuhao Zhou, Weiran Wang, Changling Jiang, Yicheng Zou, Xiangyang Liu, Zhangyue Yin, Shihan Dou, Rongxiang Weng, Wensen Cheng, Qi Zhang, Wenjuan Qin, Yongyan Zheng, Xipeng Qiu, Xuanjing Huang, Tao Gui",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2309.07864"
+	},
+	"mialon2023augmented": {
+	    title: "Augmented Language Models: a Survey",
+	    author: "Grégoire Mialon, Roberto Dessì, Maria Lomeli, Christoforos Nalmpantis, Ram Pasunuru, Roberta Raileanu, Baptiste Rozière, Timo Schick, Jane Dwivedi-Yu, Asli Celikyilmaz, Edouard Grave, Yann LeCun, Thomas Scialom",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2302.07842"
+	},
+	"shen2023hugginggpt": {
+	    title: "HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in Hugging Face",
+	    author: "Yongliang Shen, Kaitao Song, Xu Tan, Dongsheng Li, Weiming Lu, Yueting Zhuang",
+	    year: 2023,
+	    url: "https://arxiv.org/abs/2303.17580"
+	},
+	"newell1957gps": {
+	    title: "Report on a General Problem-Solving Program",
+	    author: "Allen Newell, J.C. Shaw, Herbert A. Simon",
+	    year: 1957,
+	    url: "https://bitsavers.org/pdf/rand/ipl/P-1584_Report_On_A_General_Problem-Solving_Program_Feb59.pdf"
+	},
+	"fikes1971strips": {
+	    title: "STRIPS: A New Approach to the Application of Theorem Proving to Problem Solving",
+	    author: "Richard E. Fikes, Nils J. Nilsson",
+	    year: 1971,
+	    url: "https://ai.stanford.edu/~nilsson/OnlinePubs-Nils/PublishedPapers/strips.pdf"
+	},
+	"rao1995bdi": {
+	    title: "BDI Agents: From Theory to Practice",
+	    author: "Anand S. Rao, Michael P. Georgeff",
+	    year: 1995,
+	    url: "https://www.aaai.org/Papers/ICMAS/1995/ICMAS95-042.pdf"
+	},
+
+
+
 	"chessprogrammingwiki": {
 		title: "El Ajedrecista",
 		author: "Chessprogramming Wiki contributors",
@@ -1655,7 +1742,7 @@ window.bibData = {
 		year: 1898,
 		title: "Encyklopädie der mathematischen Wissenschaften mit Einschluss ihrer Anwendungen"
 	},
-	"caleymemoirmatrices": {
+	"cayleymemoirmatrices": {
 		url: "https://ia902808.us.archive.org/0/items/philtrans05474612/05474612.pdf",
 		title: "A Memoir on the Theory of Matrices",
 		author: "Arthur Cayley",
@@ -2628,7 +2715,7 @@ window.bibData = {
 	},
 	"sgd": {
 		title: "A Stochastic Approximation Method",
-		year: "1950",
+		year: "1951",
 		url: "https://www.columbia.edu/~ww2040/8100F16/RM51.pdf",
 		author: "Herbert Robbins, Sutton Monro",
 	},
@@ -2931,6 +3018,12 @@ window.bibData = {
 		title: "A Synopsis of Linguistic Theory, 1930-1955",
 		url: "https://cs.brown.edu/courses/csci2952d/readings/lecture1-firth.pdf",
 	},
+	"legendre1786": {
+		author: "Adrien-Marie Legendre",
+		year: "1786",
+		title: "Mémoire sur la manière de distinguer les maxima des minima dans le Calcul des Variations",
+		url: "https://gallica.bnf.fr/ark:/12148/bpt6k3586q/f7.image",
+	},
 	"legendre1805": {
 		author: "Adrien-Marie Legendre",
 		year: "1805",
@@ -2950,7 +3043,7 @@ window.bibData = {
 		url: "https://gwern.net/doc/ai/nn/1974-werbos.pdf",
 	},
 	"rumelhart1986": {
-		author: "David E. Rumelhart, Hinton, Geoffrey Everest Hinton, Ronald J. Williams",
+		author: "David E. Rumelhart, Geoffrey E. Hinton, Ronald J. Williams",
 		alternativetitle: "Backpropagation",
 		title: "Learning representations by back-propagating errors",
 		year: 1986,
