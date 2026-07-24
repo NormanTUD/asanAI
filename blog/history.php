@@ -418,6 +418,16 @@ Turing argued that defining "thinking" was too ambiguous. Instead, he proposed t
 
 The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the \citealternativetitle{darthmouthartificialintelligence}. The workshop was founded on the conjecture that "every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it," marking the official birth of the field.
 
+### The First AI Programs (1956)
+
+The Dartmouth workshop catalyzed the first wave of AI programs. **Allen Newell**, **John Cliff Shaw**, and **Herbert A. Simon** presented the **Logic Theorist** (LT), a program that could prove symbolic logic theorems by searching a space of possible proof steps. LT successfully proved 38 of the first 52 theorems in the second chapter of Whitehead and Russell's *\citetitle{russell1910principia}* \cite{newell1956logictheorist}, and even discovered a proof for one theorem that was shorter than the one in the original text. This was the first program to deliberately separate human problem-solving into manipulable symbolic representations, establishing the "physical symbol system" hypothesis that would dominate AI for decades.
+
+Around the same time, **Arthur Samuel** at IBM developed a **checker-playing program** that learned through self-play using what we now recognize as **reinforcement learning**. The program evaluated board positions through a weighted sum of features (piece advantage, center control, etc.) and adjusted these weights based on game outcomes, improving over time until it could play at an intermediate level, better than its own creator \cite{samuel1959checkers}. Samuel's work demonstrated that a machine could improve its performance through experience, a foundational principle of modern machine learning.
+
+### The Symbolic Path: Newell and Simon's General Problem Solver
+
+Building on the Logic Theorist, Newell and Simon released the **General Problem Solver (GPS)** in 1959, designed to mimic the problem-solving protocols of the human brain through "means-ends analysis" \cite{newell1957gps}. GPS could solve a range of well-defined tasks, from proving logical theorems to solving puzzles, by recursively decomposing the difference between the current state and the goal state into subgoals. While limited to "toy" problems, GPS embodied the "thinking humanly" approach and remained influential for decades.
+
 ## The Beginning of Modern Artificial Neural Networks
 
 <figure>
@@ -801,6 +811,12 @@ The emergence of ChatGPT represents the "Great Convergence" of a multi-millennia
 However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by Moore's Law \cite[Moore's Law]{mooreslaw} and the revolutionary discovery that the massive-parallel SIMD architecture of GPUs, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations, as demonstrated by \cite[Oh et al.]{oh2004gpu} and \cite[Raina et al.]{raina2009large}.
 
 Today's models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era. We have reached a point where the machine "weaves" language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.
+
+### The Cycles of AI: Learning from the Winters
+
+The history of AI, viewed through a wider lens, reveals a pattern of repeated boom-and-bust cycles \cite{toosi2021history}. The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron, producing early milestones: **Arthur Samuel's** checker player (1956), the first reinforcement-learning-based AI program; **Newell and Simon's Logic Theorist** (1956), which proved theorems from *Principia Mathematica*; McCarthy's **LISP** language (1958); the **Unimate** industrial robot (1961); the **ELIZA** chatbot (1966); and the **Shakey** mobile robot (1966), the first omni-purpose platform with environment reasoning.
+
+The first winter was triggered by three interconnected failures: (1) the "thinking humanly" approach replicated human problem-solving without analyzing task complexity; (2) AI systems succeeded on toy problems but proved intractable on real-world tasks; (3) Minsky and Papert's 1969 critique of the single-layer Perceptron's XOR limitation, which, despite not being a general critique, contributed to global funding cuts. Two government reports sealed the decline: the US **ALPAC** report (1966) and the UK **Lighthill** report (1973), leading DARPA and other agencies to drastically reduce support. The revived expert systems era (1980s) created a second summer, but unfulfilled promises led to a second winter by the early 1990s. The emerging **neuro-symbolic AI** paradigm \cite{toosi2021history} aims to bridge the historic divide between connectionist and symbolic approaches, combining the trainability of neural networks with the explainability of symbolic systems. As Toosi et al. note, a key lesson is that exaggerated claims and failure to appreciate computational complexity have repeatedly triggered downturns — a warning relevant to today's AI boom.
 </div>
 
 <div class="optional md" data-headline="The Invisible Foundations: Discoveries from Unrelated Fields Without Which AI Could Not Exist">
