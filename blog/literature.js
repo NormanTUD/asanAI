@@ -88,11 +88,23 @@ window.bibData = {
 	    year: 2023,
 	    url: "https://arxiv.org/abs/2303.17580"
 	},
+	"newell1956logictheorist": {
+	    title: "The Logic Theory Machine: A Complex Information Processing System",
+	    author: "Allen Newell, Herbert A. Simon",
+	    year: 1956,
+	    url: "https://ieeexplore.ieee.org/document/1056797"
+	},
 	"newell1957gps": {
 	    title: "Report on a General Problem-Solving Program",
 	    author: "Allen Newell, J.C. Shaw, Herbert A. Simon",
 	    year: 1957,
 	    url: "https://bitsavers.org/pdf/rand/ipl/P-1584_Report_On_A_General_Problem-Solving_Program_Feb59.pdf"
+	},
+	"samuel1959checkers": {
+	    title: "Some Studies in Machine Learning Using the Game of Checkers",
+	    author: "Arthur L. Samuel",
+	    year: 1959,
+	    url: "https://ieeexplore.ieee.org/document/5392560"
 	},
 	"fikes1971strips": {
 	    title: "STRIPS: A New Approach to the Application of Theorem Proving to Problem Solving",
@@ -3091,6 +3103,7 @@ window.bibData = {
 		year: 1910,
 		author: "Bertrand Russell, Alfred North Whitehead",
 		title: "Principia Mathematica",
+		url: "https://lesharmoniesdelesprit.wordpress.com/wp-content/uploads/2015/11/whiteheadrussell-principiamathematicavolumei.pdf"
 	},
 	"hilbert1928entscheidung": {
 		year: 1928,
@@ -3351,5 +3364,12 @@ window.bibData = {
 		title: "History of ancient numeral systems - Wikipedia, The Free Encyclopedia",
 		author: "Wikipedia contributors",
 		year: 2026
+	},
+	"toosi2021history": {
+		url: "https://ar5iv.labs.arxiv.org/html/2109.01517",
+		title: "A brief history of AI: how to prevent another winter (a critical review)",
+		author: "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahmim",
+		year: 2021,
+		alternativetitle: "A Brief History of AI"
 	}
 };
