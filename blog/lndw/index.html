@@ -669,6 +669,33 @@
         </div>
     </div>
 
+<!-- ==================== SLIDE: Wahrscheinlichkeits-Tunnel ==================== -->
+<div class="slide" data-title="Wahrscheinlichkeits-Tunnel">
+    <div class="slide-content">
+        <h2>Isoflächen der Wahrscheinlichkeit: Der "Truth Tunnel"</h2>
+        <p>Stell dir eine Hülle um jeden Bereich vor, den das Modell für <b>plausibel</b> hält. Mit jedem Token <b>verengt</b> sich der Tunnel.</p>
+
+        <div class="demo-box" style="min-height:auto; padding:16px;">
+            <div style="display:grid; grid-template-columns:1fr 240px; gap:16px; align-items:start;">
+                <canvas id="canvas-iso-tunnel" style="width:100%; height:440px; background:#0f172a; border-radius:8px; border:1px solid #1e293b;"></canvas>
+                <div style="background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:14px; font-family:sans-serif; font-size:0.82em; color:#475569; line-height:1.7;">
+                    <div style="font-weight:bold; font-size:1em; color:#1e293b; margin-bottom:8px;">📝 Satz</div>
+                    <div id="iso-tunnel-sentence" style="margin-bottom:10px; font-size:0.95em; line-height:1.8;"></div>
+                    <hr style="border:none; border-top:1px solid #e2e8f0; margin:8px 0;">
+                    <div style="font-weight:bold; font-size:0.9em; color:#1e293b; margin-bottom:6px;">🔎 Aktueller Schritt</div>
+                    <div id="iso-tunnel-info"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment">
+            <strong>Die Kernidee:</strong> Bei <b>niedriger Temperatur</b> (T=0.7) ist der Tunnel eng – das Modell ist fokussiert.
+            Bei <b>hoher Temperatur</b> (T=1.8) bläht sich der Tunnel auf – mehr Alternativen werden plausibel, aber auch mehr Unsinn.
+            Mit den <b>Pfeiltasten</b> siehst du beide Durchläufe nacheinander.
+        </div>
+    </div>
+</div>
+
 <!-- ==================== FOLIE: Attraktoren ==================== -->
 <div class="slide" data-title="Attraktoren">
     <div class="slide-content">
@@ -1398,6 +1425,7 @@
 <script src="jspace_viz.js"></script>
 <script src="chinese_room.js"></script>
 <script src="interpolation_viz.js"></script>
+<script src="isosurfaces.js"></script>
 
 <script>
 	renderDualManifolds();

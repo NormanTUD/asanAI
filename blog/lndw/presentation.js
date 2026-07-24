@@ -26,47 +26,52 @@ const DemoRegistry = (() => {
         canPrev: 'canGoPrev',
     };
 
-    const registry = [
-        { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
-          onLeave: d => d.reset() },
+        const registry = [
+                { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
+                        onLeave: d => d.reset() },
 
-        { ref: () => typeof TrainingViz !== 'undefined' ? TrainingViz : null },
+                { ref: () => typeof TrainingViz !== 'undefined' ? TrainingViz : null },
 
-        { ref: () => typeof AttentionDemo !== 'undefined' ? AttentionDemo : null,
-          onLeave: d => d.reset() },
+                { ref: () => typeof AttentionDemo !== 'undefined' ? AttentionDemo : null,
+                        onLeave: d => d.reset() },
 
-        { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
-          slideTest: s => s.getAttribute('data-title') === 'J-Space',
-          onEnter: d => setTimeout(() => d.init(), 80),
-          onLeave: d => d.reset() },
+                { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
+                        slideTest: s => s.getAttribute('data-title') === 'J-Space',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
 
-        { ref: () => typeof PEOrbitViz !== 'undefined' ? PEOrbitViz : null,
-          guard: d => d.isOnPEOrbitSlide() },
+                { ref: () => typeof PEOrbitViz !== 'undefined' ? PEOrbitViz : null,
+                        guard: d => d.isOnPEOrbitSlide() },
 
-        { ref: () => typeof ResidualNotebook !== 'undefined' ? ResidualNotebook : null,
-          guard: d => d.isOnNotebookSlide(),
-          nextMethod: 'nextLayer',
-          prevMethod: 'prevLayer',
-          onLeave: d => d.reset() },
+                { ref: () => typeof ResidualNotebook !== 'undefined' ? ResidualNotebook : null,
+                        guard: d => d.isOnNotebookSlide(),
+                        nextMethod: 'nextLayer',
+                        prevMethod: 'prevLayer',
+                        onLeave: d => d.reset() },
 
-        { ref: () => typeof EmbeddingAutoDemo !== 'undefined' ? EmbeddingAutoDemo : null,
-          slideTest: s => typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.isOnEmbeddingSlide(),
-          onEnter: d => d.activate(),
-          onLeave: d => d.reset() },
+                { ref: () => typeof EmbeddingAutoDemo !== 'undefined' ? EmbeddingAutoDemo : null,
+                        slideTest: s => typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.isOnEmbeddingSlide(),
+                        onEnter: d => d.activate(),
+                        onLeave: d => d.reset() },
 
-        { ref: () => typeof PredictionViz !== 'undefined' ? PredictionViz : null,
-          onLeave: d => d.reset() },
+                { ref: () => typeof PredictionViz !== 'undefined' ? PredictionViz : null,
+                        onLeave: d => d.reset() },
 
-        { ref: () => typeof CRSim !== 'undefined' ? CRSim : null,
-          slideTest: s => !!s.querySelector('#chinese-room-sim'),
-          onEnter: d => d.start(),
-          onLeave: d => d.deactivate() },
+                { ref: () => typeof CRSim !== 'undefined' ? CRSim : null,
+                        slideTest: s => !!s.querySelector('#chinese-room-sim'),
+                        onEnter: d => d.start(),
+                        onLeave: d => d.deactivate() },
 
-        { ref: () => typeof AttractorViz !== 'undefined' ? AttractorViz : null,
-          slideTest: s => s.getAttribute('data-title') === 'Attraktoren',
-          onEnter: d => setTimeout(() => d.init(), 80),
-          onLeave: d => d.reset() },
-    ];
+                { ref: () => typeof AttractorViz !== 'undefined' ? AttractorViz : null,
+                        slideTest: s => s.getAttribute('data-title') === 'Attraktoren',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
+                { ref: () => typeof IsosurfaceDemo !== 'undefined' ? IsosurfaceDemo : null,
+                        slideTest: s => s.getAttribute('data-title') === 'Wahrscheinlichkeits-Tunnel',
+                        onEnter: d => setTimeout(() => d.init(), 100),
+                        onLeave: d => d.reset() },
+
+        ];
 
     // Normalisiere: Defaults einsetzen
     const demos = registry.map(entry => ({ ...DEFAULTS, ...entry }));
