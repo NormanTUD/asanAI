@@ -51,7 +51,7 @@ Before tracing the Big Bang or the first cell, a deeper question looms: **Why is
 
 **Leibniz: The Principle of Sufficient Reason**
 
-The question received its most famous formulation from **Gottfried Wilhelm Leibniz**. Nothing exists without a reason; since the physical world is contingent, its explanation must lie outside itself in a **necessary being** whose non-existence would be logically impossible. This conviction that all reasoning is ultimately a form of calculation also drove his \cite[Generales Inquisitiones]{leibniz1685calculus} (1685), in which he sought to reduce all thought to symbolic computation.
+The question received its most famous formulation from **Gottfried Wilhelm Leibniz**. Nothing exists without a reason; since the physical world is contingent, its explanation must lie outside itself in a **necessary being** whose non-existence would be logically impossible. This conviction that all reasoning is ultimately a form of calculation also drove his \cite[Generales Inquisitiones]{leibniz1686calculus} (1686), in which he sought to reduce all thought to symbolic computation.
 
 **Heidegger: The Fundamental Question**
 
@@ -245,11 +245,11 @@ A complete guide on how to use the Llullian **Volvelle** as intended by Llull ca
 
 Medieval scholar Ramon Llull had quite an interesting life, and has done many things. One of the earliest novels in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person whose works were condemned as heretical by one pope (Gregor XI.), \cite[yet whose legacy was later honored by another]{arsmagnavolvelle} (Pius IX.).
 
-The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1685calculus} work \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
+The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1686calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1686calculus} work \citetitle{leibniz1686calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 ### Gottfried Wilhelm Leibniz 
 
-<div class="smart-quote" data-cite="leibniz1685calculus">
+<div class="smart-quote" data-cite="leibniz1686calculus">
     <div class="full-quote">
 	If controversies were to arise, there would be no more need of disputation between two philosophers than between two accountants. For it would suffice to take their pencils in their hands, to sit down to their slates, and to say to each other: Let us calculate! (Calculemus!)
     </div>

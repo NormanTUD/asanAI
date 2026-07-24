@@ -2451,9 +2451,9 @@ window.bibData = {
 		year: 1864,
 		title: "Pure Logic"
 	},
-	"leibniz1685calculus": {
+	"leibniz1686calculus": {
 		author: "Gottfried Wilhelm Leibniz",
-		year: "1685",
+		year: "1686",
 		title: "Generales Inquisitiones de Analysi Notionum et Veritatum",
 		alternativetitle: "Calculus Ratiocinator",
 		url: "https://archive.org/details/diephilosophisc00gerhgoog"
