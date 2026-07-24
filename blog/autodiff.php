@@ -352,6 +352,16 @@ An important distinction in modern AD frameworks is whether the computational gr
 
 The Transformer architecture, released in \citeyear{vaswani2017attention}, which powers modern LLMs like GPT, relies heavily on dynamic computation patterns (variable-length sequences, masked attention), making dynamic graphs the natural choice. This is one reason PyTorch became the dominant framework in research.
 
+<div class="optional md" data-headline="Backpropagation as a Chain of Jacobian Matrices">
+Backpropagation through a deep network is really just multiplying a chain of **Jacobian matrices**. Each layer's local derivative is a Jacobian matrix $J^{(\ell)}$ containing the partial derivatives of every output of layer $\ell$ with respect to every input. The chain rule for a network with $L$ layers is simply matrix multiplication:
+
+$$\frac{\partial \mathcal{L}}{\partial x^{(0)}} = \frac{\partial \mathcal{L}}{\partial x^{(L)}} \cdot J^{(L)} \cdot J^{(L-1)} \cdot \ldots \cdot J^{(1)}$$
+
+The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets fix this because their Jacobian is $I + J_F$ — the identity term guarantees that singular values are at least 1, allowing gradients to flow through arbitrarily many layers.
+
+This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the "dying ReLU" problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU that maintain smooth, non-vanishing gradients across the full input range.
+</div>
+
 ## Summary
 
 | Concept | Key Idea |
