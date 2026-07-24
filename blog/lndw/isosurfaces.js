@@ -1,10 +1,9 @@
 // ============================================================
 // ISOSURFACES.JS – Wahrscheinlichkeits-Isoflächen (Truth Tunnels)
-// Präsentationsfolie: Pfeiltasten-Navigation, zwei Beispiele
+// "Es war einmal..." – divergierende Pfade, steigende Temperatur
 // ============================================================
 
 const IsosurfaceDemo = (() => {
-    // ── State ──────────────────────────────────────────────────
     let canvas = null;
     let ctx = null;
     let W = 0, H = 0;
@@ -13,104 +12,125 @@ const IsosurfaceDemo = (() => {
     let tweenStart = 0;
     let tweenFrom = {};
     let tweenTo = {};
-    let displayState = { step: 0, temperature: 0.6 };
-    let initialized = false;
+    let displayState = { step: 0, temperature: 0.5 };
 
-    // ── Zwei verschiedene deutsche Beispielsätze ────────────────
-    const sentences = [
+    // ── Der Satz ───────────────────────────────────────────────
+    const sentence = {
+        tokens: ['Es', 'war', 'einmal', 'ein', 'Drache', ',', 'der', 'über', 'die', 'Berge', 'flog', '.'],
+        entropy: [0.60, 0.15, 0.10, 0.90, 0.65, 0.05, 0.25, 0.50, 0.08, 0.62, 0.50, 0.04],
+        path: [
+            { x: 0.04, y: 0.50 },
+            { x: 0.12, y: 0.48 },
+            { x: 0.20, y: 0.46 },
+            { x: 0.28, y: 0.47 },
+            { x: 0.36, y: 0.42 },
+            { x: 0.43, y: 0.42 },
+            { x: 0.50, y: 0.43 },
+            { x: 0.58, y: 0.39 },
+            { x: 0.65, y: 0.40 },
+            { x: 0.74, y: 0.35 },
+            { x: 0.84, y: 0.33 },
+            { x: 0.93, y: 0.34 },
+        ],
+    };
+
+    // ── Branches: Gabelungen mit sich entfernenden Pfaden ──────
+    // atStep = Index des Tokens, BEI dem die Gabelung sichtbar wird
+    // Jede Alternative hat einen vollständigen Pfad der sich entfernt
+    const branches = [
         {
-            // Satz 1: Faktenwissen – verengt sich stark
-            label: 'Faktenwissen (T = 0.6)',
-            tokens: ['Die', 'Hauptstadt', 'von', 'Frankreich', 'ist', 'Paris', '.'],
-            entropy: [0.90, 0.45, 0.12, 0.50, 0.10, 0.03, 0.06],
-            path: [
-                { x: 0.07, y: 0.50 },
-                { x: 0.20, y: 0.44 },
-                { x: 0.33, y: 0.40 },
-                { x: 0.46, y: 0.36 },
-                { x: 0.60, y: 0.33 },
-                { x: 0.76, y: 0.30 },
-                { x: 0.91, y: 0.32 },
-            ],
-            branches: [
+            atStep: 3, // Bei "ein" – hier entscheidet sich: Drache, König, Mädchen, Zauberer
+            chosen: 'Drache',
+            alternatives: [
                 {
-                    atStep: 3,
-                    alternatives: [
-                        { token: 'Deutschland', path: { x: 0.46, y: 0.56 }, entropy: 0.48 },
-                        { token: 'Italien', path: { x: 0.46, y: 0.20 }, entropy: 0.45 },
-                    ]
+                    token: 'König',
+                    // Pfad ab dem Branch-Punkt (pro Schritt nach dem Branch ein Punkt)
+                    path: [
+                        { x: 0.36, y: 0.56 },
+                        { x: 0.43, y: 0.62 },
+                        { x: 0.50, y: 0.67 },
+                        { x: 0.58, y: 0.71 },
+                        { x: 0.65, y: 0.74 },
+                        { x: 0.74, y: 0.76 },
+                        { x: 0.84, y: 0.77 },
+                        { x: 0.93, y: 0.78 },
+                    ],
+                    // Was auf diesem Pfad "passiert wäre"
+                    futureTokens: ['König', ',', 'der', 'sein', 'Volk', 'regierte', '.'],
+                    entropy: 0.60,
                 },
                 {
-                    atStep: 5,
-                    alternatives: [
-                        { token: 'Lyon', path: { x: 0.76, y: 0.44 }, entropy: 0.18 },
-                    ]
-                }
-            ],
-            temperature: 0.6,
-            color: { main: '#60a5fa', envelope: 'rgba(96, 165, 250, ', hue: 220 }
+                    token: 'Mädchen',
+                    path: [
+                        { x: 0.36, y: 0.28 },
+                        { x: 0.43, y: 0.22 },
+                        { x: 0.50, y: 0.18 },
+                        { x: 0.58, y: 0.15 },
+                        { x: 0.65, y: 0.13 },
+                        { x: 0.74, y: 0.12 },
+                        { x: 0.84, y: 0.12 },
+                        { x: 0.93, y: 0.13 },
+                    ],
+                    futureTokens: ['Mädchen', ',', 'das', 'im', 'Wald', 'lebte', '.'],
+                    entropy: 0.55,
+                },
+                {
+                    token: 'Zauberer',
+                    path: [
+                        { x: 0.38, y: 0.52 },
+                        { x: 0.46, y: 0.57 },
+                        { x: 0.54, y: 0.60 },
+                        { x: 0.62, y: 0.62 },
+                        { x: 0.70, y: 0.63 },
+                        { x: 0.78, y: 0.63 },
+                        { x: 0.86, y: 0.62 },
+                        { x: 0.93, y: 0.61 },
+                    ],
+                    futureTokens: ['Zauberer', ',', 'der', 'Sterne', 'beschwor', '.'],
+                    entropy: 0.52,
+                },
+            ]
         },
         {
-            // Satz 2: Kreatives Erzählen – bleibt weit offen
-            label: 'Kreatives Erzählen (T = 1.6)',
-            tokens: ['Es', 'war', 'einmal', 'ein', 'Drache', ',', 'der', 'über', 'die', 'Berge', 'flog'],
-            entropy: [0.70, 0.20, 0.15, 0.85, 0.72, 0.08, 0.30, 0.55, 0.12, 0.68, 0.60],
-            path: [
-                { x: 0.04, y: 0.50 },
-                { x: 0.12, y: 0.47 },
-                { x: 0.19, y: 0.45 },
-                { x: 0.27, y: 0.46 },
-                { x: 0.36, y: 0.40 },
-                { x: 0.43, y: 0.41 },
-                { x: 0.50, y: 0.43 },
-                { x: 0.59, y: 0.38 },
-                { x: 0.67, y: 0.39 },
-                { x: 0.78, y: 0.34 },
-                { x: 0.91, y: 0.32 },
-            ],
-            branches: [
+            atStep: 8, // Bei "die" – hier entscheidet sich: Berge, Wälder, Meere
+            chosen: 'Berge',
+            alternatives: [
                 {
-                    atStep: 4,
-                    alternatives: [
-                        { token: 'König', path: { x: 0.36, y: 0.58 }, entropy: 0.65 },
-                        { token: 'Mädchen', path: { x: 0.36, y: 0.24 }, entropy: 0.60 },
-                        { token: 'Zauberer', path: { x: 0.39, y: 0.52 }, entropy: 0.55 },
-                    ]
+                    token: 'Wälder',
+                    path: [
+                        { x: 0.74, y: 0.48 },
+                        { x: 0.84, y: 0.52 },
+                        { x: 0.93, y: 0.55 },
+                    ],
+                    futureTokens: ['Wälder', 'flog', '.'],
+                    entropy: 0.58,
                 },
                 {
-                    atStep: 9,
-                    alternatives: [
-                        { token: 'Wälder', path: { x: 0.78, y: 0.50 }, entropy: 0.62 },
-                        { token: 'Meere', path: { x: 0.78, y: 0.20 }, entropy: 0.58 },
-                    ]
-                }
-            ],
-            temperature: 1.6,
-            color: { main: '#a78bfa', envelope: 'rgba(167, 139, 250, ', hue: 270 }
+                    token: 'Meere',
+                    path: [
+                        { x: 0.74, y: 0.24 },
+                        { x: 0.84, y: 0.20 },
+                        { x: 0.93, y: 0.18 },
+                    ],
+                    futureTokens: ['Meere', 'flog', '.'],
+                    entropy: 0.53,
+                },
+            ]
         }
     ];
 
-    // ── Schritte berechnen ─────────────────────────────────────
-    // Phase 1: Satz 1, Token für Token (0 bis 6)
-    // Phase 2: Satz 2, Token für Token (7 bis 17)
-    // Phase 3: Fertig (18)
-    const TOKENS_1 = sentences[0].tokens.length; // 7
-    const TOKENS_2 = sentences[1].tokens.length; // 11
-    const TOTAL_STEPS = TOKENS_1 + TOKENS_2 + 1; // 19
+    // ── Temperatur-Kurve: steigt über den Verlauf ──────────────
+    // Step 0–11: T steigt von 0.5 auf 1.8
+    const TOKENS = sentence.tokens.length; // 12
+    const TOTAL_STEPS = TOKENS; // Einfach: ein Step pro Token
 
-    function getTargetState(step) {
-        if (step < TOKENS_1) {
-            return { sentenceIdx: 0, tokenStep: step, temperature: sentences[0].temperature };
-        } else if (step < TOKENS_1 + TOKENS_2) {
-            return { sentenceIdx: 1, tokenStep: step - TOKENS_1, temperature: sentences[1].temperature };
-        } else {
-            return { sentenceIdx: 1, tokenStep: TOKENS_2 - 1, temperature: sentences[1].temperature };
-        }
+    function getTemperatureForStep(step) {
+        const t = step / (TOKENS - 1);
+        return 0.5 + t * 1.3; // 0.5 → 1.8
     }
 
     function getDisplayTarget(step) {
-        const s = getTargetState(step);
-        return { step: s.tokenStep, temperature: s.temperature };
+        return { step: step, temperature: getTemperatureForStep(step) };
     }
 
     // ── Slide Detection ────────────────────────────────────────
@@ -122,58 +142,62 @@ const IsosurfaceDemo = (() => {
 
     function canGoNext() {
         if (!isOnIsoSlide()) return false;
-        if (tweenActive) return false;
         return currentStep < TOTAL_STEPS - 1;
     }
 
     function canGoPrev() {
         if (!isOnIsoSlide()) return false;
-        if (tweenActive) return false;
         return currentStep > 0;
     }
 
     function next() {
         if (!canGoNext()) return;
         currentStep++;
+        if (tweenActive) finishTween();
         startTween();
     }
 
     function prev() {
         if (!canGoPrev()) return;
         currentStep--;
+        if (tweenActive) finishTween();
         startTween();
     }
 
     function reset() {
         currentStep = 0;
         tweenActive = false;
-        displayState = { step: 0, temperature: sentences[0].temperature };
+        displayState = { step: 0, temperature: 0.5 };
         if (canvas) render();
         updateInfoPanel();
     }
 
     // ── Tween Engine ───────────────────────────────────────────
+    function finishTween() {
+        displayState.step = tweenTo.step;
+        displayState.temperature = tweenTo.temperature;
+        tweenActive = false;
+    }
+
     function startTween() {
         const target = getDisplayTarget(currentStep);
         tweenFrom = { ...displayState };
         tweenTo = target;
         tweenStart = performance.now();
-        if (!tweenActive) {
-            tweenActive = true;
-            tweenLoop();
-        }
+        tweenActive = true;
+        requestAnimationFrame(tweenLoop);
     }
 
-    function easeInOutCubic(t) {
-        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
     }
 
     function tweenLoop() {
         if (!tweenActive) return;
         const elapsed = performance.now() - tweenStart;
-        const duration = 550;
+        const duration = 450;
         let t = Math.min(elapsed / duration, 1.0);
-        const eased = easeInOutCubic(t);
+        const eased = easeOutCubic(t);
 
         displayState.step = tweenFrom.step + (tweenTo.step - tweenFrom.step) * eased;
         displayState.temperature = tweenFrom.temperature + (tweenTo.temperature - tweenFrom.temperature) * eased;
@@ -182,9 +206,7 @@ const IsosurfaceDemo = (() => {
         updateInfoPanel();
 
         if (t >= 1.0) {
-            displayState.step = tweenTo.step;
-            displayState.temperature = tweenTo.temperature;
-            tweenActive = false;
+            finishTween();
             render();
             updateInfoPanel();
         } else {
@@ -216,7 +238,6 @@ const IsosurfaceDemo = (() => {
             resizeTimer = setTimeout(resize, 150);
         });
 
-        initialized = true;
         render();
         updateInfoPanel();
     }
@@ -225,66 +246,138 @@ const IsosurfaceDemo = (() => {
     function render() {
         if (!ctx) return;
 
-        const state = getTargetState(currentStep);
-        const sentIdx = state.sentenceIdx;
-        const sent = sentences[sentIdx];
         const step = displayState.step;
         const temp = displayState.temperature;
         const visibleStep = Math.floor(step);
-        const stepFrac = step - visibleStep;
+
+        // Color shifts with temperature
+        const tempNorm = (temp - 0.5) / 1.3; // 0→1
+        const hueBase = 220 - tempNorm * 50; // 220→170
+        const mainColor = `hsl(${hueBase}, 70%, 60%)`;
+        const envelopeAlpha = 0.04 + tempNorm * 0.04;
 
         // Clear
         ctx.fillStyle = '#0f172a';
         ctx.fillRect(0, 0, W, H);
 
         // Grid
-        ctx.strokeStyle = 'rgba(51,65,85,0.2)';
+        ctx.strokeStyle = 'rgba(51,65,85,0.12)';
         ctx.lineWidth = 0.5;
-        for (let gx = 0; gx < W; gx += 50) {
+        for (let gx = 0; gx < W; gx += 60) {
             ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
         }
-        for (let gy = 0; gy < H; gy += 50) {
+        for (let gy = 0; gy < H; gy += 60) {
             ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
         }
 
         function toCanvas(p) { return { x: p.x * W, y: p.y * H }; }
 
-        // Full path guide (faint)
+        // Full path guide (very faint)
         ctx.beginPath();
-        sent.path.forEach((p, i) => {
+        sentence.path.forEach((p, i) => {
             const cp = toCanvas(p);
-            if (i === 0) ctx.moveTo(cp.x, cp.y);
-            else ctx.lineTo(cp.x, cp.y);
+            if (i === 0) ctx.moveTo(cp.x, cp.y); else ctx.lineTo(cp.x, cp.y);
         });
-        ctx.strokeStyle = 'rgba(148,163,184,0.06)';
+        ctx.strokeStyle = 'rgba(148,163,184,0.04)';
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 8]);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Envelope (Isosurface)
-        const baseWidth = 85;
+        // ── Diverging alternative paths ────────────────────────
+        branches.forEach(branch => {
+            if (visibleStep >= branch.atStep) {
+                const stepsAfterBranch = visibleStep - branch.atStep;
+                const branchOrigin = toCanvas(sentence.path[branch.atStep]);
+
+                branch.alternatives.forEach(alt => {
+                    const maxPoints = Math.min(stepsAfterBranch, alt.path.length);
+                    if (maxPoints < 1) return;
+
+                    // Fade: starts visible, fades as it gets further
+                    const fadeBase = Math.max(0.06, 0.45 - stepsAfterBranch * 0.05);
+
+                    // Draw the diverging path
+                    ctx.beginPath();
+                    ctx.moveTo(branchOrigin.x, branchOrigin.y);
+                    for (let i = 0; i < maxPoints; i++) {
+                        const dp = toCanvas(alt.path[i]);
+                        ctx.lineTo(dp.x, dp.y);
+                    }
+                    ctx.strokeStyle = `rgba(251, 191, 36, ${fadeBase})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Envelope around the last visible point
+                    const lastPt = toCanvas(alt.path[maxPoints - 1]);
+                    const altEnvelope = alt.entropy * temp * 40 * Math.max(0.3, 1 - stepsAfterBranch * 0.06);
+
+                    // Envelope glow
+                    ctx.beginPath();
+                    ctx.arc(lastPt.x, lastPt.y, altEnvelope * 1.4, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(251, 191, 36, ${fadeBase * 0.08})`;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(lastPt.x, lastPt.y, altEnvelope, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(251, 191, 36, ${fadeBase * 0.12})`;
+                    ctx.fill();
+                    ctx.strokeStyle = `rgba(251, 191, 36, ${fadeBase * 0.5})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // Token labels along the path
+                    for (let i = 0; i < maxPoints; i++) {
+                        const pt = toCanvas(alt.path[i]);
+                        const ptFade = Math.max(0.05, fadeBase - i * 0.04);
+                        if (ptFade > 0.08 && alt.futureTokens[i]) {
+                            ctx.font = `${Math.max(8, 11 - i * 0.3)}px system-ui, sans-serif`;
+                            ctx.textAlign = 'center';
+                            ctx.fillStyle = `rgba(251, 191, 36, ${ptFade})`;
+                            ctx.fillText(alt.futureTokens[i], pt.x, pt.y - altEnvelope * 0.3 - 8);
+                        }
+
+                        // Small dot at each point
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(251, 191, 36, ${ptFade * 0.7})`;
+                        ctx.fill();
+                    }
+
+                    // Main label at first point
+                    if (fadeBase > 0.1) {
+                        const firstPt = toCanvas(alt.path[0]);
+                        ctx.font = `bold ${Math.max(9, 12 - stepsAfterBranch * 0.4)}px system-ui, sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = `rgba(251, 191, 36, ${fadeBase})`;
+                        ctx.fillText(`"${alt.token}"`, firstPt.x, firstPt.y + altEnvelope + 14);
+                    }
+                });
+            }
+        });
+
+        // ── Main envelope (Isosurface) ─────────────────────────
+        const baseWidth = 75;
         if (visibleStep >= 1) {
             const upperPath = [];
             const lowerPath = [];
 
             for (let i = 0; i <= visibleStep; i++) {
-                const cp = toCanvas(sent.path[i]);
-                let envelope = sent.entropy[i] * temp * baseWidth;
-                // Animate the current step appearing
-                if (i === visibleStep) {
-                    envelope *= stepFrac < 0.01 ? 1 : 1;
-                }
+                const cp = toCanvas(sentence.path[i]);
+                const stepTemp = getTemperatureForStep(i);
+                let envelope = sentence.entropy[i] * stepTemp * baseWidth;
 
                 let dx = 0, dy = -1;
-                if (i < sent.path.length - 1) {
-                    const nxt = toCanvas(sent.path[i + 1]);
+                if (i < sentence.path.length - 1) {
+                    const nxt = toCanvas(sentence.path[i + 1]);
                     const tdx = nxt.x - cp.x;
                     const tdy = nxt.y - cp.y;
                     const len = Math.hypot(tdx, tdy);
                     if (len > 0) { dx = -tdy / len; dy = tdx / len; }
                 } else if (i > 0) {
-                    const prev = toCanvas(sent.path[i - 1]);
+                    const prev = toCanvas(sentence.path[i - 1]);
                     const tdx = cp.x - prev.x;
                     const tdy = cp.y - prev.y;
                     const len = Math.hypot(tdx, tdy);
@@ -297,24 +390,24 @@ const IsosurfaceDemo = (() => {
 
             // Glow layers
             for (let layer = 3; layer >= 0; layer--) {
-                const scale = 1 + layer * 0.35;
-                const alpha = 0.02 + (3 - layer) * 0.02;
+                const scale = 1 + layer * 0.3;
+                const alpha = 0.012 + (3 - layer) * 0.015;
                 ctx.beginPath();
                 upperPath.forEach((p, i) => {
-                    const cp = toCanvas(sent.path[i]);
+                    const cp = toCanvas(sentence.path[i]);
                     const ex = cp.x + (p.x - cp.x) * scale;
                     const ey = cp.y + (p.y - cp.y) * scale;
                     if (i === 0) ctx.moveTo(ex, ey); else ctx.lineTo(ex, ey);
                 });
                 for (let i = lowerPath.length - 1; i >= 0; i--) {
-                    const cp = toCanvas(sent.path[i]);
+                    const cp = toCanvas(sentence.path[i]);
                     const p = lowerPath[i];
                     const ex = cp.x + (p.x - cp.x) * scale;
                     const ey = cp.y + (p.y - cp.y) * scale;
                     ctx.lineTo(ex, ey);
                 }
                 ctx.closePath();
-                ctx.fillStyle = `hsla(${sent.color.hue}, 70%, 55%, ${alpha})`;
+                ctx.fillStyle = `hsla(${hueBase}, 70%, 55%, ${alpha})`;
                 ctx.fill();
             }
 
@@ -323,165 +416,150 @@ const IsosurfaceDemo = (() => {
             upperPath.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
             for (let i = lowerPath.length - 1; i >= 0; i--) ctx.lineTo(lowerPath[i].x, lowerPath[i].y);
             ctx.closePath();
-            ctx.fillStyle = sent.color.envelope + '0.06)';
+            ctx.fillStyle = `hsla(${hueBase}, 60%, 55%, ${envelopeAlpha})`;
             ctx.fill();
-            ctx.strokeStyle = sent.color.envelope + '0.3)';
+            ctx.strokeStyle = `hsla(${hueBase}, 60%, 55%, 0.3)`;
             ctx.lineWidth = 1.5;
             ctx.stroke();
         }
 
-        // Branches
-        sent.branches.forEach(branch => {
-            if (visibleStep >= branch.atStep) {
-                const origin = toCanvas(sent.path[branch.atStep]);
-                branch.alternatives.forEach(alt => {
-                    const target = toCanvas(alt.path);
-                    const altEnvelope = alt.entropy * temp * baseWidth * 0.45;
-
-                    ctx.beginPath();
-                    ctx.moveTo(origin.x, origin.y);
-                    ctx.lineTo(target.x, target.y);
-                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([3, 5]);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-
-                    ctx.beginPath();
-                    ctx.arc(target.x, target.y, altEnvelope, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(251, 191, 36, 0.04)';
-                    ctx.fill();
-                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.2)';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-
-                    ctx.font = '11px system-ui, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillStyle = 'rgba(251, 191, 36, 0.7)';
-                    ctx.fillText(alt.token, target.x, target.y - altEnvelope - 6);
-
-                    ctx.beginPath();
-                    ctx.arc(target.x, target.y, 3, 0, Math.PI * 2);
-                    ctx.fillStyle = '#fbbf24';
-                    ctx.fill();
-                });
-            }
-        });
-
-        // Main trajectory
+        // ── Main trajectory ────────────────────────────────────
         if (visibleStep >= 1) {
+            // Thick glow
             ctx.beginPath();
             for (let i = 0; i <= visibleStep; i++) {
-                const cp = toCanvas(sent.path[i]);
+                const cp = toCanvas(sentence.path[i]);
                 if (i === 0) ctx.moveTo(cp.x, cp.y); else ctx.lineTo(cp.x, cp.y);
             }
-            ctx.strokeStyle = sent.color.main;
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
-            ctx.strokeStyle = sent.color.envelope + '0.2)';
+            ctx.strokeStyle = `hsla(${hueBase}, 60%, 55%, 0.15)`;
             ctx.lineWidth = 8;
+            ctx.stroke();
+
+            // Main line
+            ctx.beginPath();
+            for (let i = 0; i <= visibleStep; i++) {
+                const cp = toCanvas(sentence.path[i]);
+                if (i === 0) ctx.moveTo(cp.x, cp.y); else ctx.lineTo(cp.x, cp.y);
+            }
+            ctx.strokeStyle = mainColor;
+            ctx.lineWidth = 2.5;
             ctx.stroke();
         }
 
-        // Token nodes
+        // ── Token nodes ────────────────────────────────────────
         for (let i = 0; i <= visibleStep; i++) {
-            const cp = toCanvas(sent.path[i]);
-            const entropy = sent.entropy[i];
-            const radius = 5 + entropy * temp * 4;
+            const cp = toCanvas(sentence.path[i]);
+            const entropy = sentence.entropy[i];
+            const stepTemp = getTemperatureForStep(i);
+            const radius = 4 + entropy * stepTemp * 4;
 
+            // Glow
             ctx.beginPath();
-            ctx.arc(cp.x, cp.y, radius + 6, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(148, 163, 184, ${0.06 + entropy * 0.06})`;
+            ctx.arc(cp.x, cp.y, radius + 5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(148, 163, 184, ${0.04 + entropy * 0.04})`;
             ctx.fill();
 
+            // Node
             ctx.beginPath();
             ctx.arc(cp.x, cp.y, radius, 0, Math.PI * 2);
-            const hue = 220 - entropy * 180;
-            ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+            const nodeHue = 220 - entropy * 180;
+            ctx.fillStyle = `hsl(${nodeHue}, 75%, 58%)`;
             ctx.fill();
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 1.5;
             ctx.stroke();
 
-            ctx.font = 'bold 13px system-ui, sans-serif';
+            // Label
+            ctx.font = 'bold 12px system-ui, sans-serif';
             ctx.textAlign = 'center';
             ctx.fillStyle = '#e2e8f0';
-            ctx.fillText(sent.tokens[i], cp.x, cp.y - radius - 10);
+            ctx.fillText(sentence.tokens[i], cp.x, cp.y - radius - 9);
         }
 
-        // Future tokens (faint)
-        for (let i = visibleStep + 1; i < sent.tokens.length; i++) {
-            const cp = toCanvas(sent.path[i]);
+        // ── Future tokens (ghost) ──────────────────────────────
+        for (let i = visibleStep + 1; i < sentence.tokens.length; i++) {
+            const cp = toCanvas(sentence.path[i]);
             ctx.beginPath();
-            ctx.arc(cp.x, cp.y, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.1)';
+            ctx.arc(cp.x, cp.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.06)';
             ctx.fill();
-            ctx.font = '9px system-ui, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.1)';
-            ctx.fillText(sent.tokens[i], cp.x, cp.y - 8);
         }
 
-        // ── HUD: Temperatur & Phase ───────────────────────────
+        // ── HUD ────────────────────────────────────────────────
+        // Temperature (top left)
         ctx.font = 'bold 12px system-ui, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillStyle = sent.color.main;
+        ctx.fillStyle = mainColor;
         ctx.fillText(`Temperatur: ${temp.toFixed(2)}`, 14, 24);
 
+        // Temperature bar
+        const barWidth = 120;
+        const barX = 14;
+        const barY = 32;
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.6)';
+        ctx.fillRect(barX, barY, barWidth, 6);
+        const fillWidth = tempNorm * barWidth;
+        const barGrad = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+        barGrad.addColorStop(0, '#3b82f6');
+        barGrad.addColorStop(0.5, '#8b5cf6');
+        barGrad.addColorStop(1, '#ef4444');
+        ctx.fillStyle = barGrad;
+        ctx.fillRect(barX, barY, fillWidth, 6);
+
         let tempLabel;
-        if (temp < 0.4) tempLabel = '❄️ Sehr fokussiert';
-        else if (temp < 0.9) tempLabel = '🧊 Fokussiert – enger Tunnel';
-        else if (temp < 1.3) tempLabel = '🌡️ Warm – weiter Tunnel';
-        else tempLabel = '🔥 Heiß – sehr weiter Tunnel';
-        ctx.font = '11px system-ui, sans-serif';
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.7)';
-        ctx.fillText(tempLabel, 14, 42);
+        if (temp < 0.6) tempLabel = '❄️ Sehr fokussiert';
+        else if (temp < 0.9) tempLabel = '🧊 Fokussiert';
+        else if (temp < 1.3) tempLabel = '🌡️ Warm';
+        else tempLabel = '🔥 Heiß – weiter Tunnel';
+        ctx.font = '10px system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+        ctx.fillText(tempLabel, 14, 52);
 
-        // Phase indicator (top right)
+        // Step counter (top right)
         ctx.textAlign = 'right';
-        ctx.font = 'bold 12px system-ui, sans-serif';
-        ctx.fillStyle = sent.color.main;
-        ctx.fillText(sent.label, W - 14, 24);
-
-        // Step counter
-        ctx.font = '11px system-ui, sans-serif';
+        ctx.font = 'bold 11px system-ui, sans-serif';
         ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
-        ctx.fillText(`Schritt ${currentStep + 1} / ${TOTAL_STEPS}`, W - 14, 42);
+        ctx.fillText(`Schritt ${currentStep + 1} / ${TOTAL_STEPS}`, W - 14, 24);
 
-        // Entropy bar (right side)
-        if (visibleStep < sent.tokens.length) {
-            const barX = W - 38;
-            const barH = H - 100;
-            const barW = 12;
-            const barY = 60;
+        // Hint
+        ctx.font = '10px system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.35)';
+        ctx.fillText('→ Pfeiltaste für nächstes Token', W - 14, 40);
 
-            ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
-            ctx.fillRect(barX - 3, barY - 3, barW + 6, barH + 6);
+        // ── Entropy bar (right side) ───────────────────────────
+        if (visibleStep < sentence.tokens.length) {
+            const eBarX = W - 34;
+            const eBarH = H - 90;
+            const eBarW = 10;
+            const eBarY = 55;
 
-            const grad = ctx.createLinearGradient(0, barY, 0, barY + barH);
+            ctx.fillStyle = 'rgba(30, 41, 59, 0.5)';
+            ctx.fillRect(eBarX - 2, eBarY - 2, eBarW + 4, eBarH + 4);
+
+            const grad = ctx.createLinearGradient(0, eBarY, 0, eBarY + eBarH);
             grad.addColorStop(0, '#3b82f6');
             grad.addColorStop(0.5, '#8b5cf6');
             grad.addColorStop(1, '#f59e0b');
             ctx.fillStyle = grad;
-            ctx.fillRect(barX, barY, barW, barH);
+            ctx.fillRect(eBarX, eBarY, eBarW, eBarH);
 
-            const currentEntropy = sent.entropy[visibleStep];
+            const currentEntropy = sentence.entropy[visibleStep];
             const effectiveEntropy = Math.min(1, currentEntropy * temp);
-            const markerY = barY + (1 - effectiveEntropy) * barH;
+            const markerY = eBarY + (1 - effectiveEntropy) * eBarH;
 
             ctx.beginPath();
-            ctx.moveTo(barX - 6, markerY);
-            ctx.lineTo(barX, markerY - 4);
-            ctx.lineTo(barX, markerY + 4);
+            ctx.moveTo(eBarX - 5, markerY);
+            ctx.lineTo(eBarX, markerY - 3);
+            ctx.lineTo(eBarX, markerY + 3);
             ctx.closePath();
             ctx.fillStyle = '#fff';
             ctx.fill();
 
-            ctx.font = '9px system-ui';
+            ctx.font = '8px system-ui';
             ctx.textAlign = 'center';
             ctx.fillStyle = '#94a3b8';
-            ctx.fillText('Sicher', barX + barW / 2, barY - 8);
-            ctx.fillText('Unsicher', barX + barW / 2, barY + barH + 14);
+            ctx.fillText('Sicher', eBarX + eBarW / 2, eBarY - 6);
+            ctx.fillText('Unsicher', eBarX + eBarW / 2, eBarY + eBarH + 12);
         }
     }
 
@@ -491,18 +569,16 @@ const IsosurfaceDemo = (() => {
         const infoDisplay = document.getElementById('iso-tunnel-info');
         if (!sentenceDisplay || !infoDisplay) return;
 
-        const state = getTargetState(currentStep);
-        const sent = sentences[state.sentenceIdx];
-        const visibleStep = Math.min(Math.floor(displayState.step), sent.tokens.length - 1);
+        const visibleStep = Math.min(Math.floor(displayState.step), sentence.tokens.length - 1);
         const temp = displayState.temperature;
 
         // Sentence display
         let html = '';
-        sent.tokens.forEach((token, i) => {
+        sentence.tokens.forEach((token, i) => {
             if (i < visibleStep) {
                 html += `<span style="color:#1e293b; font-weight:bold;">${token}</span> `;
             } else if (i === visibleStep) {
-                const entropy = sent.entropy[i];
+                const entropy = sentence.entropy[i];
                 const hue = 220 - entropy * 180;
                 html += `<span style="background:hsl(${hue},80%,92%); color:hsl(${hue},80%,30%); font-weight:bold; padding:2px 6px; border-radius:4px; border:2px solid hsl(${hue},80%,60%);">${token}</span> `;
             } else {
@@ -512,55 +588,92 @@ const IsosurfaceDemo = (() => {
         sentenceDisplay.innerHTML = html;
 
         // Info
-        const entropy = sent.entropy[visibleStep] || 0;
+        const entropy = sentence.entropy[visibleStep] || 0;
         const effective = Math.min(1, entropy * temp);
         const tunnelPct = (effective * 100).toFixed(0);
 
         let certainty, certColor;
-        if (effective < 0.12) { certainty = 'Fast sicher'; certColor = '#3b82f6'; }
-        else if (effective < 0.30) { certainty = 'Zuversichtlich'; certColor = '#10b981'; }
-        else if (effective < 0.55) { certainty = 'Moderat'; certColor = '#f59e0b'; }
+        if (effective < 0.10) { certainty = 'Fast sicher'; certColor = '#3b82f6'; }
+        else if (effective < 0.28) { certainty = 'Zuversichtlich'; certColor = '#10b981'; }
+        else if (effective < 0.50) { certainty = 'Moderat'; certColor = '#f59e0b'; }
         else { certainty = 'Weit offen'; certColor = '#ef4444'; }
 
         // Branch info
         let branchHtml = '';
-        sent.branches.forEach(branch => {
+        branches.forEach(branch => {
             if (branch.atStep === visibleStep) {
                 branchHtml += `<div style="margin-top:8px; padding:6px 8px; background:rgba(251,191,36,0.1); border-radius:4px; border-left:3px solid #fbbf24;">
-                    <b style="color:#f59e0b;">🔀 Gabelung!</b><br>`;
+                    <b style="color:#f59e0b;">🔀 Gabelung!</b><br>
+                    <span style="color:#475569; font-size:0.82em;">Gewählt: <b>${branch.chosen}</b></span><br>`;
                 branch.alternatives.forEach(alt => {
-                    branchHtml += `<span style="color:#f59e0b;">→ "${alt.token}"</span><br>`;
+                    branchHtml += `<span style="color:#f59e0b; font-size:0.82em;">→ "${alt.token}" (verworfen)</span><br>`;
                 });
                 branchHtml += `</div>`;
             }
         });
 
+        // Diverging paths info
+        let divergeHtml = '';
+        branches.forEach(branch => {
+            if (visibleStep > branch.atStep) {
+                const dist = visibleStep - branch.atStep;
+                const maxShow = branch.alternatives[0].divergePath ? branch.alternatives[0].divergePath.length : 0;
+                if (dist <= maxShow) {
+                    divergeHtml += `<div style="margin-top:6px; padding:5px 8px; background:rgba(251,191,36,0.05); border-radius:4px; font-size:0.78em; color:#94a3b8;">
+                        <span style="color:#f59e0b;">⤳</span> Verworfene Pfade entfernen sich (Schritt ${dist}/${maxShow}):<br>`;
+                    branch.alternatives.forEach(alt => {
+                        const futureToken = alt.futureTokens && alt.futureTokens[dist] ? alt.futureTokens[dist] : '…';
+                        divergeHtml += `<span style="color:#fbbf24; font-size:0.9em;">"${alt.token}" → jetzt bei "${futureToken}"</span><br>`;
+                    });
+                    divergeHtml += `</div>`;
+                }
+            }
+        });
+
+        // Temperature info
+        const tempPct = ((temp - 0.5) / 1.3 * 100).toFixed(0);
+        const tempHtml = `
+            <div style="margin-top:6px; padding:5px 8px; background:rgba(148,163,184,0.05); border-radius:4px;">
+                <b style="font-size:0.82em;">🌡️ Temperatur: ${temp.toFixed(2)}</b>
+                <div style="background:#1e293b; border-radius:4px; height:6px; width:100%; margin-top:3px; overflow:hidden;">
+                    <div style="background:linear-gradient(90deg, #3b82f6, #8b5cf6, #ef4444); height:100%; width:${tempPct}%; border-radius:4px; transition:width 0.3s;"></div>
+                </div>
+                <div style="font-size:0.72em; color:#94a3b8; margin-top:2px;">Steigt mit jedem Token → Tunnel wird weiter</div>
+            </div>
+        `;
+
         infoDisplay.innerHTML = `
             <div style="margin-bottom:6px;">
-                <b>Token:</b> <span style="font-size:1.1em; font-weight:bold;">"${sent.tokens[visibleStep]}"</span>
+                <b>Token:</b> <span style="font-size:1.1em; font-weight:bold;">"${sentence.tokens[visibleStep]}"</span>
             </div>
             <div style="margin-bottom:4px;">
                 <b>Entropie:</b> ${entropy.toFixed(2)} × T${temp.toFixed(1)} = <b>${effective.toFixed(2)}</b>
             </div>
             <div style="margin-bottom:4px;">
                 <b>Tunnelbreite:</b>
-                <div style="background:#1e293b; border-radius:4px; height:10px; width:100%; margin-top:2px; overflow:hidden;">
-                    <div style="background:linear-gradient(90deg, ${sent.color.main}, ${sent.color.envelope}0.8)); height:100%; width:${tunnelPct}%; border-radius:4px; transition:width 0.3s;"></div>
+                <div style="background:#1e293b; border-radius:4px; height:8px; width:100%; margin-top:2px; overflow:hidden;">
+                    <div style="background:linear-gradient(90deg, ${mainColorForPanel()}, ${mainColorForPanel()}88); height:100%; width:${tunnelPct}%; border-radius:4px; transition:width 0.3s;"></div>
                 </div>
             </div>
-            <div style="margin-bottom:6px;">
+            <div style="margin-bottom:4px;">
                 <b>Sicherheit:</b> <span style="color:${certColor}; font-weight:bold;">${certainty}</span>
             </div>
             ${branchHtml}
-            <hr style="border:none; border-top:1px solid #e2e8f0; margin:8px 0;">
-            <div style="font-size:0.78em; color:#94a3b8;">
-                ${currentStep < TOKENS_1
-                    ? '📘 Phase 1: Faktenwissen (T=0.6) – Tunnel verengt sich stark'
-                    : currentStep < TOKENS_1 + TOKENS_2
-                    ? '📙 Phase 2: Kreatives Erzählen (T=1.6) – Tunnel bleibt weit'
-                    : '✅ Vergleich abgeschlossen'}
+            ${divergeHtml}
+            ${tempHtml}
+            <hr style="border:none; border-top:1px solid #e2e8f0; margin:6px 0;">
+            <div style="font-size:0.72em; color:#94a3b8;">
+                Schritt ${currentStep + 1} / ${TOTAL_STEPS}
             </div>
         `;
+    }
+
+    function mainColorForPanel() {
+        const temp = displayState.temperature;
+        const tempNorm = (temp - 0.5) / 1.3;
+        if (tempNorm < 0.4) return '#60a5fa';
+        if (tempNorm < 0.7) return '#8b5cf6';
+        return '#ef4444';
     }
 
     // ── Public API ─────────────────────────────────────────────
