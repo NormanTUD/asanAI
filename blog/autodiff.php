@@ -353,7 +353,7 @@ An important distinction in modern AD frameworks is whether the computational gr
 The Transformer architecture, released in \citeyear{vaswani2017attention}, which powers modern LLMs like GPT, relies heavily on dynamic computation patterns (variable-length sequences, masked attention), making dynamic graphs the natural choice. This is one reason PyTorch became the dominant framework in research.
 
 <div class="optional md" data-headline="Backpropagation as a Chain of Jacobian Matrices">
-Backpropagation through a deep network is really just multiplying a chain of **Jacobian matrices**. Each layer's local derivative is a Jacobian matrix $J^{(\ell)}$ containing the partial derivatives of every output of layer $\ell$ with respect to every input. The chain rule for a network with $L$ layers is simply matrix multiplication:
+Backpropagation through a deep network is really just multiplying a chain of <i>Jacobian matrices</i>. Each layer's local derivative is a Jacobian matrix $J^{(\ell)}$ containing the partial derivatives of every output of layer $\ell$ with respect to every input. The chain rule for a network with $L$ layers is simply matrix multiplication:
 
 $$\frac{\partial \mathcal{L}}{\partial x^{(0)}} = \frac{\partial \mathcal{L}}{\partial x^{(L)}} \cdot J^{(L)} \cdot J^{(L-1)} \cdot \ldots \cdot J^{(1)}$$
 
