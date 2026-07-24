@@ -255,3 +255,21 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     scrollbar-width: thin;
     scrollbar-color: #c7d2fe transparent;
 "></div>
+
+<div class="md">
+## Geometric Intuition: LayerNorm as Projection onto a Sphere
+
+LayerNorm has a beautiful geometric interpretation: after centering (subtracting the mean) and normalizing by the standard deviation, the output vector $\hat{x}$ lies on the surface of a **unit sphere** in $d$-dimensional space. The learnable parameters $\gamma$ and $\beta$ then stretch and shift this sphere.
+
+**Step 1 - Centering:** Subtracting the mean $\mu$ shifts the cloud of vectors so that their center of mass is at the origin. This removes the "DC offset" — the shared common signal across all features.
+
+**Step 2 - Normalization:** Dividing by the standard deviation $\sigma$ scales each vector to have unit length. Every vector now lies on the surface of a $d$-dimensional hypersphere of radius 1. The direction of the vector — the relative pattern of activations — is preserved, but its magnitude is standardized.
+
+**Step 3 - Scale and Shift:** The learnable parameters $\gamma$ (gain) and $\beta$ (bias) allow the model to deform this sphere:
+- $\gamma$ stretches or compresses the sphere along each axis (an anisotropic scaling)
+- $\beta$ shifts the entire sphere away from the origin
+
+The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable — it can vary due to accumulated activations, layer depth, or input length. By projecting onto the unit sphere, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.
+
+This is why Transformers work well with Pre-Norm: the clean spherical geometry ensures that attention patterns depend only on the *angle* between query and key vectors, not their potentially erratic magnitudes.
+</div>
