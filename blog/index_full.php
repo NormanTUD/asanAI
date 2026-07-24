@@ -46,7 +46,7 @@
 	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("Temperature & Sampling", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
-	incl("Circuits Inside Large Language Models", "circuits");
+	incl("Mechanistic Interpretability", "mechanistic_interpretability");
 	incl("How Transformers Execute Algorithms", "algorithms");
 	#incl("Topology and the Geometry of Thought", "topology");
 	incl("Fine-Tuning & RLHF", "finetuninglab");

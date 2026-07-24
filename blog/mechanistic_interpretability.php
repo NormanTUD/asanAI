@@ -1,8 +1,8 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Circuits Inside LLMs
-description: Mechanistic interpretability, induction heads, direct paths, and the residual stream.
+title: Mechanistic Interpretability
+description: Reverse-engineering Transformers: circuits, induction heads, superposition, sparse autoencoders, and the tools that open the black box.
 icon: &#128268;
 part: 4
 order: 25

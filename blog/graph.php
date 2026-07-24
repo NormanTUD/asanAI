@@ -324,7 +324,7 @@
     // ── Row 12: 2019–2021 ──
     { id:'gpt2',        label:'GPT-2',                                short:'Radford et al. 2019 — "Language Models are Unsupervised Multitask Learners"',                     era:'2019–21',         row:12, col:5, stream:'neuro' },
     { id:'gpt3',        label:'GPT-3',                                short:'Brown et al. 2020 — 175B parameters, few-shot learning, in-context learning',                     era:'2019–21',         row:12, col:6, stream:'neuro' },
-    { id:'circuits',    label:'Transformer Circuits',                 short:'Elhage et al. 2021 — "A Mathematical Framework for Transformer Circuits"',                         era:'2019–21',         row:12, col:3, stream:'neuro' },
+    { id:'circuits',    label:'Mechanistic Interpretability',           short:'Elhage et al. 2021 — "A Mathematical Framework for Transformer Circuits"',                         era:'2019–21',         row:12, col:3, stream:'neuro' },
     { id:'induction',   label:'Induction Heads',                      short:'Olsson et al. 2022 — [A][B]…[A] → [B] pattern matching for in-context learning',                  era:'2019–21',         row:12, col:2, stream:'neuro' },
     { id:'superposition',label:'Superposition',                       short:'Elhage et al. 2022 — "Toy Models of Superposition": more features than dimensions',               era:'2019–21',         row:12, col:4, stream:'neuro' },
     { id:'stochastic_p',label:'Stochastic Parrots',                   short:'Bender, Gebru et al. 2021 — "Can Language Models Be Too Big? 🦜"',                                era:'2019–21',         row:12, col:9, stream:'culture' },
