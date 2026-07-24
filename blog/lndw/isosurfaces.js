@@ -1,7 +1,7 @@
 // ============================================================
 // ISOSURFACES.JS – Wahrscheinlichkeits-Isoflächen (Truth Tunnels)
-// "Es war einmal..." – fixe Temperatur, kein vollständiger Satz vorab,
-// Sub-Branches auf Alternativpfaden, am Ende Temperature-Demo
+// "Es war einmal..." – Abspaltungen an JEDEM Token,
+// auch auf nicht-gewählten Pfaden. Fixe Temperatur, Temperature-Demo am Ende.
 // ============================================================
 
 const IsosurfaceDemo = (() => {
@@ -15,13 +15,12 @@ const IsosurfaceDemo = (() => {
     let tweenTo = {};
     let displayState = { step: 0, temperature: 0.7 };
 
-    // ── Der Prompt (User-Input, wird sofort angezeigt) ─────────
+    // ── Prompt (User-Input) ────────────────────────────────────
     const prompt = ['Es', 'war', 'einmal'];
 
-    // ── Die generierten Tokens (werden Schritt für Schritt enthüllt)
+    // ── Generierte Tokens ──────────────────────────────────────
     const generated = ['ein', 'Drache', ',', 'der', 'über', 'die', 'Berge', 'flog', '.'];
 
-    // Alle Tokens zusammen (für Pfadberechnung)
     const allTokens = [...prompt, ...generated];
 
     const entropy = [0.0, 0.0, 0.0, 0.90, 0.65, 0.05, 0.25, 0.50, 0.08, 0.62, 0.50, 0.04];
@@ -41,10 +40,62 @@ const IsosurfaceDemo = (() => {
         { x: 0.92, y: 0.34 },
     ];
 
-    // ── Branches mit Sub-Branches auf Alternativpfaden ─────────
+    // ── Mini-Splits: an JEDEM generierten Token ────────────────
+    // Alternativen die STATT DIESES TOKENS hätten stehen können
+    const miniSplits = [
+        // Index 3: "ein" – hier hätte auch "eine" oder "der" stehen können
+        { atStep: 3, alts: [
+            { token: 'eine', dir: { dx: 0.01, dy: 0.06 } },
+            { token: 'der', dir: { dx: 0.01, dy: -0.06 } },
+        ]},
+        // Index 4: "Drache" – große Gabelung (König, Mädchen, Zauberer via branches)
+        // Zusätzlich noch kleinere Alternativen
+        { atStep: 4, alts: [
+            { token: 'Ritter', dir: { dx: 0.01, dy: 0.05 } },
+            { token: 'Riese', dir: { dx: 0.01, dy: -0.04 } },
+        ]},
+        // Index 5: ","
+        { atStep: 5, alts: [
+            { token: '.', dir: { dx: 0.01, dy: 0.03 } },
+            { token: 'namens', dir: { dx: 0.01, dy: -0.03 } },
+        ]},
+        // Index 6: "der" – Relativpronomen
+        { atStep: 6, alts: [
+            { token: 'welcher', dir: { dx: 0.01, dy: 0.05 } },
+            { token: 'und', dir: { dx: 0.01, dy: -0.04 } },
+        ]},
+        // Index 7: "über"
+        { atStep: 7, alts: [
+            { token: 'durch', dir: { dx: 0.01, dy: 0.05 } },
+            { token: 'in', dir: { dx: 0.01, dy: -0.04 } },
+            { token: 'unter', dir: { dx: 0.02, dy: 0.06 } },
+        ]},
+        // Index 8: "die" – Artikel
+        { atStep: 8, alts: [
+            { token: 'den', dir: { dx: 0.01, dy: 0.05 } },
+            { token: 'das', dir: { dx: 0.01, dy: -0.05 } },
+        ]},
+        // Index 9: "Berge" – große Gabelung (Wälder, Meere via branches)
+        // Zusätzlich kleinere Alternativen
+        { atStep: 9, alts: [
+            { token: 'Täler', dir: { dx: 0.01, dy: 0.05 } },
+            { token: 'Wolken', dir: { dx: 0.01, dy: -0.05 } },
+        ]},
+        // Index 10: "flog"
+        { atStep: 10, alts: [
+            { token: 'glitt', dir: { dx: 0.01, dy: 0.04 } },
+            { token: 'schwebte', dir: { dx: 0.01, dy: -0.04 } },
+        ]},
+        // Index 11: "."
+        { atStep: 11, alts: [
+            { token: ',', dir: { dx: 0.01, dy: 0.03 } },
+        ]},
+    ];
+
+    // ── Große Branches mit divergierenden Pfaden + Sub-Splits ──
     const branches = [
         {
-            atStep: 3, // Bei "ein" → Drache/König/Mädchen/Zauberer
+            atStep: 3,
             chosen: 'Drache',
             alternatives: [
                 {
@@ -61,16 +112,14 @@ const IsosurfaceDemo = (() => {
                     ],
                     futureTokens: ['König', ',', 'der', 'sein', 'Volk', 'regierte', '…'],
                     entropy: 0.60,
-                    // Sub-Branches auf diesem Alternativpfad
-                    subBranches: [
-                        {
-                            atLocalStep: 3, // bei "sein"
-                            alternatives: [
-                                { token: 'das', path: { x: 0.55, y: 0.80 } },
-                                { token: 'ein', path: { x: 0.55, y: 0.65 } },
-                            ]
-                        }
-                    ]
+                    // Sub-Splits auf diesem Pfad (an jedem Punkt)
+                    subSplits: [
+                        { atLocal: 1, alts: [{ token: 'und', dir: { dx: 0, dy: 0.04 } }] },
+                        { atLocal: 2, alts: [{ token: 'welcher', dir: { dx: 0, dy: 0.04 } }, { token: 'dessen', dir: { dx: 0, dy: -0.03 } }] },
+                        { atLocal: 3, alts: [{ token: 'das', dir: { dx: 0, dy: 0.04 } }, { token: 'ein', dir: { dx: 0, dy: -0.04 } }] },
+                        { atLocal: 4, alts: [{ token: 'Reich', dir: { dx: 0, dy: 0.04 } }, { token: 'Land', dir: { dx: 0, dy: -0.03 } }] },
+                        { atLocal: 5, alts: [{ token: 'beherrschte', dir: { dx: 0, dy: 0.04 } }] },
+                    ],
                 },
                 {
                     token: 'Mädchen',
@@ -86,21 +135,13 @@ const IsosurfaceDemo = (() => {
                     ],
                     futureTokens: ['Mädchen', ',', 'das', 'im', 'Wald', 'lebte', '…'],
                     entropy: 0.55,
-                    subBranches: [
-                        {
-                            atLocalStep: 2, // bei "das"
-                            alternatives: [
-                                { token: 'welches', path: { x: 0.47, y: 0.10 } },
-                            ]
-                        },
-                        {
-                            atLocalStep: 4, // bei "Wald"
-                            alternatives: [
-                                { token: 'Turm', path: { x: 0.63, y: 0.06 } },
-                                { token: 'Schloss', path: { x: 0.63, y: 0.20 } },
-                            ]
-                        }
-                    ]
+                    subSplits: [
+                        { atLocal: 1, alts: [{ token: 'das', dir: { dx: 0, dy: -0.03 } }] },
+                        { atLocal: 2, alts: [{ token: 'welches', dir: { dx: 0, dy: -0.04 } }] },
+                        { atLocal: 3, alts: [{ token: 'am', dir: { dx: 0, dy: -0.03 } }, { token: 'beim', dir: { dx: 0, dy: 0.03 } }] },
+                        { atLocal: 4, alts: [{ token: 'Turm', dir: { dx: 0, dy: -0.04 } }, { token: 'Schloss', dir: { dx: 0, dy: 0.04 } }] },
+                        { atLocal: 5, alts: [{ token: 'wohnte', dir: { dx: 0, dy: -0.03 } }] },
+                    ],
                 },
                 {
                     token: 'Zauberer',
@@ -116,20 +157,17 @@ const IsosurfaceDemo = (() => {
                     ],
                     futureTokens: ['Zauberer', ',', 'der', 'Sterne', 'beschwor', '…'],
                     entropy: 0.52,
-                    subBranches: [
-                        {
-                            atLocalStep: 3, // bei "Sterne"
-                            alternatives: [
-                                { token: 'Tränke', path: { x: 0.59, y: 0.70 } },
-                                { token: 'Flüche', path: { x: 0.59, y: 0.56 } },
-                            ]
-                        }
-                    ]
+                    subSplits: [
+                        { atLocal: 1, alts: [{ token: 'und', dir: { dx: 0, dy: 0.04 } }] },
+                        { atLocal: 2, alts: [{ token: 'welcher', dir: { dx: 0, dy: 0.04 } }] },
+                        { atLocal: 3, alts: [{ token: 'Tränke', dir: { dx: 0, dy: 0.05 } }, { token: 'Flüche', dir: { dx: 0, dy: -0.04 } }] },
+                        { atLocal: 4, alts: [{ token: 'braute', dir: { dx: 0, dy: 0.04 } }] },
+                    ],
                 },
             ]
         },
         {
-            atStep: 8, // Bei "die" → Berge/Wälder/Meere
+            atStep: 8,
             chosen: 'Berge',
             alternatives: [
                 {
@@ -141,14 +179,9 @@ const IsosurfaceDemo = (() => {
                     ],
                     futureTokens: ['Wälder', 'streifte', '…'],
                     entropy: 0.58,
-                    subBranches: [
-                        {
-                            atLocalStep: 1,
-                            alternatives: [
-                                { token: 'flog', path: { x: 0.82, y: 0.60 } },
-                            ]
-                        }
-                    ]
+                    subSplits: [
+                        { atLocal: 1, alts: [{ token: 'flog', dir: { dx: 0, dy: 0.04 } }, { token: 'jagte', dir: { dx: 0, dy: -0.03 } }] },
+                    ],
                 },
                 {
                     token: 'Meere',
@@ -159,36 +192,25 @@ const IsosurfaceDemo = (() => {
                     ],
                     futureTokens: ['Meere', 'segelte', '…'],
                     entropy: 0.53,
-                    subBranches: [
-                        {
-                            atLocalStep: 1,
-                            alternatives: [
-                                { token: 'flog', path: { x: 0.82, y: 0.14 } },
-                            ]
-                        }
-                    ]
+                    subSplits: [
+                        { atLocal: 1, alts: [{ token: 'flog', dir: { dx: 0, dy: -0.03 } }, { token: 'glitt', dir: { dx: 0, dy: 0.03 } }] },
+                    ],
                 },
             ]
         }
     ];
 
     // ── Schritte ───────────────────────────────────────────────
-    // Prompt wird sofort angezeigt (kein Step dafür)
-    // Steps 0–8: generierte Tokens (ein → Drache → , → der → über → die → Berge → flog → .)
-    // Step 9: Zurück zu "Drache", Temperature erhöhen auf 1.8
     const GEN_TOKENS = generated.length; // 9
-    const TEMP_DEMO_STEP = GEN_TOKENS; // Step 9
-    const TOTAL_STEPS = GEN_TOKENS + 1; // 10
+    const TOTAL_STEPS = GEN_TOKENS + 1; // 10 (letzter = Temp-Demo)
 
     const BASE_TEMP = 0.7;
     const HIGH_TEMP = 1.8;
 
     function getDisplayTarget(step) {
         if (step < GEN_TOKENS) {
-            // Token für Token generieren, Temperatur fix bei 0.7
             return { step: step + prompt.length, temperature: BASE_TEMP, phase: 'generate' };
         } else {
-            // Temperature-Demo: zurück zu Step 4 (Drache), hohe Temperatur
             return { step: prompt.length + 1, temperature: HIGH_TEMP, phase: 'temp-demo' };
         }
     }
@@ -300,7 +322,6 @@ const IsosurfaceDemo = (() => {
             resizeTimer = setTimeout(resize, 150);
         });
 
-        // Initial state: prompt visible
         displayState = { step: prompt.length, temperature: BASE_TEMP, phase: 'generate' };
         render();
         updateInfoPanel();
@@ -315,8 +336,6 @@ const IsosurfaceDemo = (() => {
         const visibleStep = Math.floor(step);
         const phase = displayState.phase;
 
-        // Colors
-        const tempNorm = (temp - 0.5) / 1.3;
         const hueBase = phase === 'temp-demo' ? 280 : 220;
         const mainColor = phase === 'temp-demo' ? '#a78bfa' : '#60a5fa';
         const envelopeRgba = phase === 'temp-demo' ? 'rgba(167, 139, 250, ' : 'rgba(96, 165, 250, ';
@@ -337,7 +356,19 @@ const IsosurfaceDemo = (() => {
 
         function toCanvas(p) { return { x: p.x * W, y: p.y * H }; }
 
-        // ── Diverging alternative paths + sub-branches ─────────
+        // ── Mini-Splits auf dem Hauptpfad ──────────────────────
+        miniSplits.forEach(ms => {
+            if (visibleStep >= ms.atStep) {
+                const origin = toCanvas(path[ms.atStep]);
+                const age = visibleStep - ms.atStep;
+                const fade = Math.max(0.08, 0.7 - age * 0.08);
+                ms.alts.forEach(alt => {
+                    drawMiniSplit(origin, alt, temp, fade);
+                });
+            }
+        });
+
+        // ── Große divergierende Pfade + Sub-Splits ─────────────
         branches.forEach(branch => {
             if (visibleStep >= branch.atStep) {
                 const stepsAfterBranch = visibleStep - branch.atStep;
@@ -349,7 +380,7 @@ const IsosurfaceDemo = (() => {
 
                     const fadeBase = Math.max(0.06, 0.50 - stepsAfterBranch * 0.04);
 
-                    // Main diverging path
+                    // Divergierender Pfad
                     ctx.beginPath();
                     ctx.moveTo(branchOrigin.x, branchOrigin.y);
                     for (let i = 0; i < maxPoints; i++) {
@@ -362,28 +393,23 @@ const IsosurfaceDemo = (() => {
                     ctx.stroke();
                     ctx.setLineDash([]);
 
-                    // Envelope at last point
+                    // Envelope am letzten Punkt
                     const lastPt = toCanvas(alt.path[maxPoints - 1]);
-                    const altEnvelope = alt.entropy * temp * 35 * Math.max(0.25, 1 - stepsAfterBranch * 0.05);
-
-                    ctx.beginPath();
-                    ctx.arc(lastPt.x, lastPt.y, altEnvelope * 1.3, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(251, 191, 36, ${fadeBase * 0.06})`;
-                    ctx.fill();
+                    const altEnvelope = alt.entropy * temp * 30 * Math.max(0.2, 1 - stepsAfterBranch * 0.05);
 
                     ctx.beginPath();
                     ctx.arc(lastPt.x, lastPt.y, altEnvelope, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(251, 191, 36, ${fadeBase * 0.1})`;
+                    ctx.fillStyle = `rgba(251, 191, 36, ${fadeBase * 0.08})`;
                     ctx.fill();
-                    ctx.strokeStyle = `rgba(251, 191, 36, ${fadeBase * 0.4})`;
+                    ctx.strokeStyle = `rgba(251, 191, 36, ${fadeBase * 0.35})`;
                     ctx.lineWidth = 1;
                     ctx.stroke();
 
-                    // Token labels along path
+                    // Token-Labels entlang des Pfads
                     for (let i = 0; i < maxPoints; i++) {
                         const pt = toCanvas(alt.path[i]);
                         const ptFade = Math.max(0.04, fadeBase - i * 0.03);
-                        if (ptFade > 0.07 && alt.futureTokens[i]) {
+                        if (ptFade > 0.06 && alt.futureTokens[i]) {
                             ctx.font = `${Math.max(8, 10 - i * 0.3)}px system-ui, sans-serif`;
                             ctx.textAlign = 'center';
                             ctx.fillStyle = `rgba(251, 191, 36, ${ptFade})`;
@@ -393,53 +419,51 @@ const IsosurfaceDemo = (() => {
                         ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
                         ctx.fillStyle = `rgba(251, 191, 36, ${ptFade * 0.6})`;
                         ctx.fill();
-                    }
 
-                    // ── Sub-Branches auf dem Alternativpfad ────────
-                    if (alt.subBranches) {
-                        alt.subBranches.forEach(sub => {
-                            if (maxPoints > sub.atLocalStep) {
-                                const subOrigin = toCanvas(alt.path[sub.atLocalStep]);
-                                const subFade = fadeBase * 0.6;
+                        // ── Sub-Splits auf dem Alternativpfad ──────
+                        if (alt.subSplits) {
+                            alt.subSplits.forEach(ss => {
+                                if (ss.atLocal === i) {
+                                    const subFade = Math.max(0.12, ptFade * 0.8);
+                                    ss.alts.forEach(subAlt => {
+                                        const subTarget = { x: pt.x + subAlt.dir.dx * W * 2, y: pt.y + subAlt.dir.dy * H * 2 };
 
-                                sub.alternatives.forEach(subAlt => {
-                                    const subTarget = toCanvas(subAlt.path);
+                                        ctx.beginPath();
+                                        ctx.moveTo(pt.x, pt.y);
+                                        ctx.lineTo(subTarget.x, subTarget.y);
+                                        ctx.strokeStyle = `rgba(251, 146, 60, ${subFade * 0.5})`;
+                                        ctx.lineWidth = 0.8;
+                                        ctx.setLineDash([2, 3]);
+                                        ctx.stroke();
+                                        ctx.setLineDash([]);
 
-                                    ctx.beginPath();
-                                    ctx.moveTo(subOrigin.x, subOrigin.y);
-                                    ctx.lineTo(subTarget.x, subTarget.y);
-                                    ctx.strokeStyle = `rgba(236, 72, 153, ${subFade})`;
-                                    ctx.lineWidth = 1;
-                                    ctx.setLineDash([2, 3]);
-                                    ctx.stroke();
-                                    ctx.setLineDash([]);
+                                        ctx.beginPath();
+                                        ctx.arc(subTarget.x, subTarget.y, 2, 0, Math.PI * 2);
+                                        ctx.fillStyle = `rgba(251, 146, 60, ${subFade * 0.6})`;
+                                        ctx.fill();
 
-                                    ctx.beginPath();
-                                    ctx.arc(subTarget.x, subTarget.y, 8 * temp, 0, Math.PI * 2);
-                                    ctx.fillStyle = `rgba(236, 72, 153, ${subFade * 0.1})`;
-                                    ctx.fill();
-                                    ctx.strokeStyle = `rgba(236, 72, 153, ${subFade * 0.4})`;
-                                    ctx.lineWidth = 0.8;
-                                    ctx.stroke();
-
-                                    ctx.font = '8px system-ui, sans-serif';
-                                    ctx.textAlign = 'center';
-                                    ctx.fillStyle = `rgba(236, 72, 153, ${subFade})`;
-                                    ctx.fillText(subAlt.token, subTarget.x, subTarget.y - 12);
-
-                                    ctx.beginPath();
-                                    ctx.arc(subTarget.x, subTarget.y, 1.5, 0, Math.PI * 2);
-                                    ctx.fillStyle = `rgba(236, 72, 153, ${subFade})`;
-                                    ctx.fill();
-                                });
-                            }
-                        });
+                                        if (subFade > 0.1) {
+                                            const label = subAlt.token;
+                                            ctx.font = '8px system-ui, sans-serif';
+                                            ctx.textAlign = 'center';
+                                            const tw = ctx.measureText(label).width;
+                                            // Hintergrund für Lesbarkeit
+                                            ctx.fillStyle = `rgba(15, 23, 42, ${subFade * 0.6})`;
+                                            ctx.fillRect(subTarget.x - tw / 2 - 2, subTarget.y - 13, tw + 4, 11);
+                                            // Text in Orange statt Pink (besser lesbar)
+                                            ctx.fillStyle = `rgba(253, 186, 116, ${Math.min(1, subFade * 1.3)})`;
+                                            ctx.fillText(label, subTarget.x, subTarget.y - 4);
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }
         });
 
-        // ── Main envelope (Isosurface) ─────────────────────────
+        // ── Main envelope ──────────────────────────────────────
         const baseWidth = 75;
         if (visibleStep >= 1) {
             const upperPath = [];
@@ -525,13 +549,11 @@ const IsosurfaceDemo = (() => {
             const radius = 4 + ent * temp * 4;
             const isPrompt = i < prompt.length;
 
-            // Glow
             ctx.beginPath();
             ctx.arc(cp.x, cp.y, radius + 5, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(148, 163, 184, ${0.04 + ent * 0.04})`;
             ctx.fill();
 
-            // Node
             ctx.beginPath();
             ctx.arc(cp.x, cp.y, radius, 0, Math.PI * 2);
             if (isPrompt) {
@@ -558,6 +580,18 @@ const IsosurfaceDemo = (() => {
                 ctx.fillText('User-Input →', cp.x - 2, cp.y + radius + 14);
             }
         }
+
+        // ── Mini-Splits an jedem generierten Token ─────────────
+        miniSplits.forEach(ms => {
+            if (visibleStep >= ms.atStep) {
+                const origin = toCanvas(path[ms.atStep]);
+                const age = visibleStep - ms.atStep;
+                const fade = Math.max(0.06, 0.65 - age * 0.07);
+                ms.alts.forEach(alt => {
+                    drawMiniSplit(origin, alt, temp, fade);
+                });
+            }
+        });
 
         // ── HUD ────────────────────────────────────────────────
         ctx.font = 'bold 12px system-ui, sans-serif';
@@ -640,6 +674,40 @@ const IsosurfaceDemo = (() => {
         }
     }
 
+    function drawMiniSplit(origin, alt, temp, fade) {
+        const target = { x: origin.x + alt.dir.dx * W * 2.5, y: origin.y + alt.dir.dy * H * 2.5 };
+
+        // Gestrichelte Linie
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(target.x, target.y);
+        ctx.strokeStyle = `rgba(148, 163, 184, ${fade * 0.5})`;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Kleiner Punkt
+        ctx.beginPath();
+        ctx.arc(target.x, target.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(148, 163, 184, ${fade * 0.5})`;
+        ctx.fill();
+
+        // Label mit Hintergrund für Lesbarkeit
+        if (fade > 0.08) {
+            const label = alt.token;
+            ctx.font = '9px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            const textWidth = ctx.measureText(label).width;
+            // Hintergrund
+            ctx.fillStyle = `rgba(15, 23, 42, ${fade * 0.7})`;
+            ctx.fillRect(target.x - textWidth / 2 - 3, target.y - 14, textWidth + 6, 12);
+            // Text
+            ctx.fillStyle = `rgba(203, 213, 225, ${Math.min(1, fade * 1.2)})`;
+            ctx.fillText(label, target.x, target.y - 5);
+        }
+    }
+
     // ── Info Panel ─────────────────────────────────────────────
     function updateInfoPanel() {
         const sentenceDisplay = document.getElementById('iso-tunnel-sentence');
@@ -652,13 +720,10 @@ const IsosurfaceDemo = (() => {
 
         // Sentence display: Prompt immer sichtbar, generierte Tokens nur bis visibleStep
         let html = '';
-        // Prompt tokens (immer grau, immer da)
         prompt.forEach(token => {
             html += `<span style="color:#94a3b8; font-style:italic;">${token}</span> `;
         });
 
-        // Generierte Tokens: nur bis visibleStep anzeigen (LLM weiß nicht was kommt)
-        const genVisible = Math.max(0, visibleStep - prompt.length + 1);
         for (let i = 0; i < generated.length; i++) {
             const globalIdx = i + prompt.length;
             if (globalIdx < visibleStep) {
@@ -668,7 +733,6 @@ const IsosurfaceDemo = (() => {
                 const hue = 220 - ent * 180;
                 html += `<span style="background:hsl(${hue},80%,92%); color:hsl(${hue},80%,30%); font-weight:bold; padding:2px 6px; border-radius:4px; border:2px solid hsl(${hue},80%,60%);">${generated[i]}</span> `;
             } else {
-                // Nicht anzeigen – LLM weiß es noch nicht
                 html += `<span style="color:#e2e8f0;">?</span> `;
             }
         }
@@ -696,6 +760,20 @@ const IsosurfaceDemo = (() => {
                     branchHtml += `<span style="color:#f59e0b; font-size:0.82em;">→ "${alt.token}" (verworfen)</span><br>`;
                 });
                 branchHtml += `</div>`;
+            }
+        });
+
+        // Mini-split info
+        let splitHtml = '';
+        miniSplits.forEach(ms => {
+            if (ms.atStep === visibleStep && ms.alts.length > 0) {
+                splitHtml += `<div style="margin-top:6px; padding:5px 8px; background:rgba(148,163,184,0.08); border-radius:4px; font-size:0.78em; color:#94a3b8;">
+                    <span style="color:#64748b;">Alternativen:</span> `;
+                ms.alts.forEach((alt, i) => {
+                    splitHtml += `"${alt.token}"`;
+                    if (i < ms.alts.length - 1) splitHtml += ', ';
+                });
+                splitHtml += `</div>`;
             }
         });
 
@@ -745,6 +823,7 @@ const IsosurfaceDemo = (() => {
                 <b>Sicherheit:</b> <span style="color:${certColor}; font-weight:bold;">${certainty}</span>
             </div>
             ${branchHtml}
+            ${splitHtml}
             ${divergeHtml}
             ${tempDemoHtml}
             <hr style="border:none; border-top:1px solid #e2e8f0; margin:6px 0;">
