@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blutzucker-Guide für Vegetarier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        /* Blutzucker-Visualisierung */
+        .blood-sugar-viz {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .blood-sugar-viz h2 {
+            margin-bottom: 15px;
+            color: #00d2ff;
+        }
+
+        .sugar-bar-container {
+            position: relative;
+            height: 60px;
+            background: linear-gradient(90deg, #2ecc71 0%, #2ecc71 35%, #f39c12 35%, #f39c12 65%, #e74c3c 65%, #e74c3c 100%);
+            border-radius: 30px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .sugar-bar-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .sugar-needle {
+            position: absolute;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+
+        .sugar-needle::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: #1a1a2e;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .zone-labels {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 8px;
+            font-size: 0.85em;
+        }
+
+        .zone-labels span:nth-child(1) { color: #2ecc71; }
+        .zone-labels span:nth-child(2) { color: #f39c12; }
+        .zone-labels span:nth-child(3) { color: #e74c3c; }
+
+        /* Food Cards */
+        .section-title {
+            font-size: 1.4em;
+            margin: 30px 0 15px;
+            color: #00d2ff;
+            border-left: 4px solid #00d2ff;
+            padding-left: 12px;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .food-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .food-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .food-card.bad {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .food-card.okay {
+            border-left: 4px solid #f39c12;
+        }
+
+        .food-card.good {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .food-card .emoji {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .food-card .name {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .food-card .gi-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .food-card .gi-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .food-card .gi-label {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .food-card .rule {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .food-card.active .rule {
+            display: block;
+        }
+
+        .food-card .impact-wave {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            opacity: 0.1;
+            border-radius: 0 15px 0 80px;
+        }
+
+        .food-card.bad .impact-wave { background: #e74c3c; }
+        .food-card.okay .impact-wave { background: #f39c12; }
+        .food-card.good .impact-wave { background: #2ecc71; }
+
+        /* Swap Section */
+        .swap-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .swap-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .swap-item {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 1em;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .swap-item.from {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            text-decoration: line-through;
+            text-decoration-color: #e74c3c;
+        }
+
+        .swap-arrow {
+            font-size: 1.5em;
+            color: #00d2ff;
+        }
+
+        .swap-item.to {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.4);
+        }
+
+        /* Glykämischer Index Erklärung */
+        .gi-explanation {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .gi-scale {
+            display: flex;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .gi-scale div {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .gi-scale .low { background: #2ecc71; color: #1a1a2e; }
+        .gi-scale .mid { background: #f39c12; color: #1a1a2e; }
+        .gi-scale .high { background: #e74c3c; color: white; }
+
+        /* Tagesplan Simulator */
+        .day-simulator {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .meal-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .meal-btn {
+            padding: 10px 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .meal-btn:hover {
+            background: rgba(0, 210, 255, 0.1);
+            border-color: #00d2ff;
+        }
+
+        .meal-btn.selected {
+            background: rgba(0, 210, 255, 0.2);
+            border-color: #00d2ff;
+            color: #00d2ff;
+        }
+
+        .meal-btn.bad-choice {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .meal-btn.good-choice {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        /* Chart */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin: 20px 0;
+            border-left: 2px solid rgba(255,255,255,0.2);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .chart-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Regeln */
+        .rules-box {
+            background: rgba(0, 210, 255, 0.05);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .rules-box h2 {
+            color: #00d2ff;
+            margin-bottom: 15px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 12px 0;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .rule-item:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .rule-number {
+            background: #00d2ff;
+            color: #1a1a2e;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+            flex-shrink: 0;
+        }
+
+        .rule-text {
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .rule-text strong {
+            color: #fff;
+        }
+
+        /* Schwitzen Info */
+        .sweat-info {
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .sweat-info h2 {
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+
+        .info-note {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            border-left: 3px solid #f39c12;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5em; }
+            .food-grid { grid-template-columns: 1fr; }
+            .swap-row { flex-direction: column; }
+            body { padding: 10px; }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: #1a1a2e;
+            border: 1px solid #00d2ff;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.85em;
+            max-width: 250px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #aaa;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: #00d2ff;
+            color: #00d2ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Comparison visual */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-side {
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .comparison-side.bad-side {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .comparison-side.good-side {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .comparison-side h3 {
+            margin-bottom: 10px;
+        }
+
+        .comparison-side.bad-side h3 { color: #e74c3c; }
+        .comparison-side.good-side h3 { color: #2ecc71; }
+
+        .spike-visual {
+            height: 100px;
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .spike-visual svg {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>🩸 Blutzucker-Guide für Vegetarier</h1>
+    <p class="subtitle">Verstehe visuell, welche Lebensmittel deinen Blutzucker in die Höhe treiben – und was du stattdessen essen kannst.</p>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('overview')">📊 Überblick</button>
+        <button class="tab-btn" onclick="showTab('foods')">🍽️ Lebensmittel</button>
+        <button class="tab-btn" onclick="showTab('swaps')">🔄 Tausch-Regeln</button>
+        <button class="tab-btn" onclick="showTab('simulator')">🧪 Simulator</button>
+        <button class="tab-btn" onclick="showTab('rules')">✅ Meine Regeln</button>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview" class="tab-content active">
+        <div class="sweat-info">
+            <h2>💧 Schwitzen & Blutzucker – Was passiert da?</h2>
+            <p>Schwitzen kann sowohl bei <strong>hohem</strong> als auch bei <strong>niedrigem</strong> Blutzucker auftreten. Nach einer kohlenhydratreichen Mahlzeit schießt dein Blutzucker hoch → dein Körper schüttet viel Insulin aus → der Zucker fällt schnell ab → dein Körper reagiert mit Schwitzen, Zittern, Heißhunger.</p>
+            <div class="info-note">
+                <strong>⚠️ Wichtig:</strong> Das ist ein Kreislauf! Hoher Blutzucker → viel Insulin → schneller Abfall → Schwitzen. Die Lösung: Verhindere den hohen Anstieg von Anfang an.
+            </div>
+        </div>
+
+        <div class="blood-sugar-viz">
+            <h2>📈 So reagiert dein Blutzucker</h2>
+            <p style="margin-bottom:10px; color:#aaa;">Klicke auf ein Lebensmittel unten, um den Effekt zu sehen:</p>
+            <div class="sugar-bar-container">
+                <div class="sugar-needle" id="sugar-needle" data-value="90 mg/dl" style="left: 25%"></div>
+            </div>
+            <div class="zone-labels">
+                <span>✅ Normal (70-110)</span>
+                <span>⚠️ Erhöht (110-140)</span>
+                <span>🚨 Zu hoch (>140)</span>
+            </div>
+            <div class="meal-selector" id="demo-foods">
+                <button class="meal-btn" onclick="simulateSugar(25, '90 mg/dl', this)">Nüchtern</button>
+                <button class="meal-btn" onclick="simulateSugar(70, '155 mg/dl', this)">Weißbrot</button>
+                <button class="meal-btn" onclick="simulateSugar(85, '180 mg/dl', this)">Nudeln (groß)</button>
+                <button class="meal-btn" onclick="simulateSugar(40, '105 mg/dl', this)">Linsen</button>
+                <button class="meal-btn" onclick="simulateSugar(35, '95 mg/dl', this)">Gemüse + Hummus</button>
+                <button class="meal-btn" onclick="simulateSugar(95, '200+ mg/dl', this)">Cola</button>
+                <button class="meal-btn" onclick="simulateSugar(45, '115 mg/dl', this)">Vollkornbrot</button>
+            </div>
+        </div>
+
+        <div class="gi-explanation">
+            <h2>🎯 Glykämischer Index (GI) – Dein Kompass</h2>
+            <p>Der GI zeigt dir, wie schnell ein Lebensmittel deinen Blutzucker ansteigen lässt. Je höher, desto schlimmer für dich:</p>
+            <div class="gi-scale">
+                <div class="low">Niedrig (0-55) ✅</div>
+                <div class="mid">Mittel (56-69) ⚠️</div>
+                <div class="high">Hoch (70-100) 🚨</div>
+            </div>
+            <p style="margin-top:15px; color:#aaa; font-size:0.9em;">
+                <strong style="color:#2ecc71;">Niedrig:</strong> Langsamer, sanfter Anstieg → kein Schwitzen<br>
+                <strong style="color:#e74c3c;">Hoch:</strong> Schneller Spike → Insulin-Flut → Crash → Schwitzen, Müdigkeit
+            </p>
+        </div>
+
+        <!-- Spike Comparison -->
+        <div class="comparison">
+            <div class="comparison-side bad-side">
+                <h3>❌ Weißmehl-Nudeln</h3>
+                <div class="spike-visual">
+                    <svg viewBox="0 0 200 100">
+                        <path d="M 10 80 Q 50 80 70 15 Q 90 80 130 90 Q 150 95 190 85" 
+                              stroke="#e74c3c" stroke-width="3" fill="none"/>
+                        <line x1="10" y1="50" x2="190" y2="50" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4"/>
+                        <text x="5" y="48" fill="#aaa" font-size="8">Normal</text>
+                    </svg>
+                </div>
+                <p style="font-size:0.85em; color:#e74c3c;">Schneller Spike → Crash → Schwitzen</p>
+            </div>
+            <div class="comparison-side good-side">
+                <h3>✅ Linsen / Kichererbsen</h3>
+                <div class="spike-visual">
+                    <svg viewBox="0 0 200 100">
+                        <path d="M 10 80 Q 60 75 90 55 Q 120 60 150 65 Q 170 70 190 72" 
+                              stroke="#2ecc71" stroke-width="3" fill="none"/>
+                        <line x1="10" y1="50" x2="190" y2="50" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4"/>
+                        <text x="5" y="48" fill="#aaa" font-size="8">Normal</text>
+                    </svg>
+                </div>
+                <p style="font-size:0.85em; color:#2ecc71;">Sanfter Anstieg → stabil → kein Crash</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOODS TAB -->
+    <div id="tab-foods" class="tab-content">
+        <h2 class="section-title">🚨 Diese Lebensmittel treiben deinen Blutzucker hoch</h2>
+        <div class="food-grid" id="bad-foods"></div>
+
+        <h2 class="section-title">✅ Diese Lebensmittel halten deinen Blutzucker stabil</h2>
+        <div class="food-grid" id="good-foods"></div>
+    </div>
+
+    <!-- SWAPS TAB -->
+    <div id="tab-swaps" class="tab-content">
+        <div class="swap-container">
+            <h2 style="color:#00d2ff; margin-bottom:15px;">🔄 Einfache Tausch-Regeln</h2>
+            <p style="color:#aaa; margin-bottom:20px;">Tausche links gegen rechts – sofort weniger Blutzucker-Spikes:</p>
+            
+            <div class="swap-row">
+                <div class="swap-item from">🍝 Weiße Nudeln</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🫘 Linsennudeln / Kichererbsen-Pasta</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🍞 Weißbrot / Toast</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🥖 Vollkornbrot (echtes!)</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🍚 Weißer Reis</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🍚 Basmatireis / Quinoa</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🥤 Fruchtsaft</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🫗 Wasser + ganze Frucht</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🥔 Kartoffelpüree</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🥗 Süßkartoffel / Hülsenfrüchte</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🍫 Schokoriegel</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🥜 Handvoll Walnüsse + Stück Zartbitter</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🥣 Cornflakes / Müsli mit Zucker</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🫐 Haferflocken + Beeren + Nüsse</div>
+            </div>
+            <div class="swap-row">
+                <div class="swap-item from">🧁 Kuchen / Gebäck</div>
+                <span class="swap-arrow">→</span>
+                <div class="swap-item to">🍎 Apfel + Erdnussbutter</div>
+            </div>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.05); border-radius:15px; padding:20px; border:1px solid rgba(255,255,255,0.1);">
+            <h3 style="color:#00d2ff; margin-bottom:10px;">💡 Der Trick: Immer Protein/Fett dazu!</h3>
+            <p style="color:#ccc; font-size:0.95em;">Wenn du Kohlenhydrate isst, kombiniere sie IMMER mit Protein oder gesundem Fett. Das verlangsamt die Aufnahme und verhindert den Spike.</p>
+            <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                <span style="background:rgba(46,204,113,0.2); padding:8px 14px; border-radius:8px; font-size:0.85em;">Brot + Hummus</span>
+                <span style="background:rgba(46,204,113,0.2); padding:8px 14px; border-radius:8px; font-size:0.85em;">Nudeln + Linsenbolognese</span>
+                <span style="background:rgba(46,204,113,0.2); padding:8px 14px; border-radius:8px; font-size:0.85em;">Reis + Tofu + Gemüse</span>
+                <span style="background:rgba(46,204,113,0.2); padding:8px 14px; border-radius:8px; font-size:0.85em;">Obst + Nüsse</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIMULATOR TAB -->
+    <div id="tab-simulator" class="tab-content">
+        <div class="day-simulator">
+            <h2 style="color:#00d2ff; margin-bottom:10px;">🧪 Mahlzeit-Simulator</h2>
+            <p style="color:#aaa; margin-bottom:15px;">Stelle dir eine Mahlzeit zusammen und sieh, wie dein Blutzucker reagiert:</p>
+            
+            <h3 style="margin:15px 0 10px; font-size:1em;">Basis wählen:</h3>
+            <div class="meal-selector" id="sim-base">
+                <button class="meal-btn" data-gi="75" data-name="Weiße Nudeln" onclick="toggleSimFood(this)">🍝 Weiße Nudeln</button>
+                <button class="meal-btn" data-gi="30" data-name="Linsennudeln" onclick="toggleSimFood(this)">🫘 Linsennudeln</button>
+                <button class="meal-btn" data-gi="72" data-name="Weißer Reis" onclick="toggleSimFood(this)">🍚 Weißer Reis</button>
+                <button class="meal-btn" data-gi="50" data-name="Basmatireis" onclick="toggleSimFood(this)">🍚 Basmatireis</button>
+                <button class="meal-btn" data-gi="70" data-name="Kartoffeln" onclick="toggleSimFood(this)">🥔 Kartoffeln</button>
+                
+                <button class="meal-btn" data-gi="45" data-name="Süßkartoffel" onclick="toggleSimFood(this)">🍠 Süßkartoffel</button>
+                <button class="meal-btn" data-gi="50" data-name="Vollkornbrot" onclick="toggleSimFood(this)">🍞 Vollkornbrot</button>
+            </div>
+
+            <h3 style="margin:15px 0 10px; font-size:1em;">Protein/Fett dazu:</h3>
+            <div class="meal-selector" id="sim-protein">
+                <button class="meal-btn" data-gi="-15" data-name="Tofu" onclick="toggleSimFood(this)">🧈 Tofu</button>
+                <button class="meal-btn" data-gi="-20" data-name="Nüsse" onclick="toggleSimFood(this)">🥜 Nüsse</button>
+                <button class="meal-btn" data-gi="-10" data-name="Hummus" onclick="toggleSimFood(this)">🫘 Hummus</button>
+                <button class="meal-btn" data-gi="-15" data-name="Avocado" onclick="toggleSimFood(this)">🥑 Avocado</button>
+                <button class="meal-btn" data-gi="-10" data-name="Käse" onclick="toggleSimFood(this)">🧀 Käse</button>
+                <button class="meal-btn" data-gi="-12" data-name="Olivenöl" onclick="toggleSimFood(this)">🫒 Olivenöl</button>
+            </div>
+
+            <h3 style="margin:15px 0 10px; font-size:1em;">Extras:</h3>
+            <div class="meal-selector" id="sim-extras">
+                <button class="meal-btn" data-gi="5" data-name="Gemüse" onclick="toggleSimFood(this)">🥦 Gemüse</button>
+                <button class="meal-btn" data-gi="-5" data-name="Essig/Zitrone" onclick="toggleSimFood(this)">🍋 Essig/Zitrone</button>
+                <button class="meal-btn" data-gi="-8" data-name="Zimt" onclick="toggleSimFood(this)">🫙 Zimt</button>
+                <button class="meal-btn" data-gi="40" data-name="Ketchup" onclick="toggleSimFood(this)">🍅 Ketchup (viel Zucker!)</button>
+                <button class="meal-btn" data-gi="60" data-name="Süße Soße" onclick="toggleSimFood(this)">🥫 Süße Soße</button>
+            </div>
+
+            <div id="sim-result" style="margin-top:25px; padding:20px; background:rgba(255,255,255,0.05); border-radius:15px; display:none;">
+                <h3 style="margin-bottom:10px;">📊 Dein Blutzucker-Ergebnis:</h3>
+                <div class="sugar-bar-container">
+                    <div class="sugar-needle" id="sim-needle" data-value="?" style="left: 25%"></div>
+                </div>
+                <div class="zone-labels">
+                    <span>✅ Normal</span>
+                    <span>⚠️ Erhöht</span>
+                    <span>🚨 Zu hoch</span>
+                </div>
+                <p id="sim-feedback" style="margin-top:15px; font-size:0.95em;"></p>
+                <div id="sim-selected" style="margin-top:10px; font-size:0.85em; color:#aaa;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RULES TAB -->
+    <div id="tab-rules" class="tab-content">
+        <div class="rules-box">
+            <h2>✅ Deine 10 einfachen Regeln</h2>
+            <p style="color:#aaa; margin-bottom:15px;">Halte diese ein und dein Blutzucker bleibt stabil:</p>
+
+            <div class="rule-item">
+                <div class="rule-number">1</div>
+                <div class="rule-text"><strong>Keine weißen Nudeln mehr.</strong> Ersetze sie durch Linsennudeln, Kichererbsen-Pasta oder Vollkornnudeln.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">2</div>
+                <div class="rule-text"><strong>Kein Weißbrot / Toast.</strong> Nur echtes Vollkornbrot (mit sichtbaren Körnern).</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">3</div>
+                <div class="rule-text"><strong>Immer Protein oder Fett zu Kohlenhydraten.</strong> Nie nackte Kohlenhydrate allein essen. Brot → + Hummus. Reis → + Tofu.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">4</div>
+                <div class="rule-text"><strong>Gemüse zuerst essen.</strong> Wenn du eine Mahlzeit hast, iss zuerst den Salat/das Gemüse. Das verlangsamt den Zucker-Anstieg.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">5</div>
+                <div class="rule-text"><strong>Kein Fruchtsaft.</strong> Iss die ganze Frucht stattdessen – die Ballaststoffe bremsen den Zucker.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">6</div>
+                <div class="rule-text"><strong>Hülsenfrüchte sind dein bester Freund.</strong> Linsen, Kichererbsen, Bohnen = niedriger GI + viel Protein. Perfekt für Vegetarier.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">7</div>
+                <div class="rule-text"><strong>Nach dem Essen 10 Min. bewegen.</strong> Ein kurzer Spaziergang senkt den Blutzucker-Spike um bis zu 30%.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">8</div>
+                <div class="rule-text"><strong>Essig vor/zu der Mahlzeit.</strong> 1 EL Apfelessig in Wasser vor dem Essen kann den Spike deutlich reduzieren.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">9</div>
+                <div class="rule-text"><strong>Portionen bei Kohlenhydraten halbieren.</strong> Statt großer Teller Nudeln → halbe Portion + mehr Gemüse/Protein dazu.</div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-number">10</div>
+                <div class="rule-text"><strong>Versteckten Zucker checken.</strong> Ketchup, Fertigsoßen, Fruchtjoghurt, Müsliriegel – alles voller Zucker. Etiketten lesen!</div>
+            </div>
+        </div>
+
+        <div style="background:rgba(46,204,113,0.1); border:1px solid rgba(46,204,113,0.3); border-radius:15px; padding:20px;">
+            <h3 style="color:#2ecc71; margin-bottom:10px;">🏆 Dein Vegetarier-Vorteil</h3>
+            <p style="font-size:0.95em; color:#ccc;">Als Vegetarier hast du Zugang zu den BESTEN blutzucker-freundlichen Lebensmitteln: Hülsenfrüchte, Nüsse, Gemüse, Tofu. Du musst nur aufpassen, dass du nicht zu viel auf reine Kohlenhydrate (Nudeln, Reis, Brot) setzt, weil das Fleisch als Protein-Quelle fehlt.</p>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Tab Navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Blood Sugar Simulation
+        function simulateSugar(percent, label, btn) {
+            const needle = document.getElementById('sugar-needle');
+            needle.style.left = percent + '%';
+            needle.setAttribute('data-value', label);
+
+            document.querySelectorAll('#demo-foods .meal-btn').forEach(b => {
+                b.classList.remove('selected', 'bad-choice', 'good-choice');
+            });
+
+            if (percent > 65) {
+                btn.classList.add('bad-choice');
+            } else if (percent > 45) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.add('good-choice');
+            }
+        }
+
+        // Food Data
+        const foods = [
+            // Bad foods
+            { name: "Weiße Nudeln", emoji: "🍝", gi: 75, category: "bad", rule: "Ersetze durch Linsennudeln (GI: 25) oder Vollkornnudeln (GI: 45)" },
+            { name: "Weißbrot / Toast", emoji: "🍞", gi: 75, category: "bad", rule: "Nur echtes Vollkornbrot mit sichtbaren Körnern" },
+            { name: "Weißer Reis", emoji: "🍚", gi: 72, category: "bad", rule: "Basmatireis (GI: 50) oder Quinoa (GI: 35) nehmen" },
+            { name: "Kartoffelpüree", emoji: "🥔", gi: 85, category: "bad", rule: "Süßkartoffel (GI: 45) oder Hülsenfrüchte stattdessen" },
+            { name: "Cornflakes", emoji: "🥣", gi: 81, category: "bad", rule: "Haferflocken + Nüsse + Beeren stattdessen" },
+            { name: "Fruchtsaft", emoji: "🧃", gi: 70, category: "bad", rule: "Ganze Frucht essen – Ballaststoffe bremsen den Zucker" },
+            { name: "Süßigkeiten", emoji: "🍬", gi: 90, category: "bad", rule: "Nüsse + Zartbitterschokolade (>70%) als Alternative" },
+            { name: "Fertig-Pizza", emoji: "🍕", gi: 80, category: "bad", rule: "Selbst machen mit Vollkornteig + viel Gemüse" },
+
+            // Good foods
+            { name: "Linsen", emoji: "🫘", gi: 25, category: "good", rule: "Perfekt! Niedriger GI + viel Protein. Ideal für Vegetarier." },
+            { name: "Kichererbsen", emoji: "🧆", gi: 28, category: "good", rule: "Hummus, Falafel, Curry – super vielseitig und blutzucker-freundlich" },
+            { name: "Haferflocken", emoji: "🥣", gi: 40, category: "good", rule: "Mit Nüssen und Beeren = perfektes Frühstück" },
+            { name: "Nüsse & Samen", emoji: "🥜", gi: 15, category: "good", rule: "Walnüsse, Mandeln, Leinsamen – stabilisieren den Blutzucker" },
+            { name: "Gemüse", emoji: "🥦", gi: 10, category: "good", rule: "Kannst du essen so viel du willst. Immer zuerst!" },
+            { name: "Tofu / Tempeh", emoji: "🧈", gi: 15, category: "good", rule: "Hochwertiges Protein ohne Blutzucker-Effekt" },
+            { name: "Quinoa", emoji: "🌾", gi: 35, category: "good", rule: "Gute Reis-Alternative mit mehr Protein" },
+            { name: "Beeren", emoji: "🫐", gi: 25, category: "good", rule: "Beste Obst-Wahl! Wenig Zucker, viele Antioxidantien" },
+            { name: "Avocado", emoji: "🥑", gi: 10, category: "good", rule: "Gesundes Fett, hält satt, kein Blutzucker-Effekt" },
+            { name: "Zartbitterschokolade", emoji: "🍫", gi: 23, category: "good", rule: "Ab 70% Kakao – in Maßen ein guter Snack" },
+        ];
+
+        // Render Food Cards
+        function renderFoods() {
+            const badContainer = document.getElementById('bad-foods');
+            const goodContainer = document.getElementById('good-foods');
+
+            foods.forEach(food => {
+                const card = document.createElement('div');
+                card.className = `food-card ${food.category}`;
+
+                const giColor = food.gi > 69 ? '#e74c3c' : food.gi > 55 ? '#f39c12' : '#2ecc71';
+                const giWidth = Math.min(food.gi, 100);
+
+                card.innerHTML = `
+                    <div class="impact-wave"></div>
+                    <div class="emoji">${food.emoji}</div>
+                    <div class="name">${food.name}</div>
+                    <div class="gi-label">Glykämischer Index: <strong style="color:${giColor}">${food.gi}</strong></div>
+                    <div class="gi-bar">
+                        <div class="gi-fill" style="width:${giWidth}%; background:${giColor};"></div>
+                    </div>
+                    <div class="rule">💡 ${food.rule}</div>
+                `;
+
+                card.addEventListener('click', () => {
+                    card.classList.toggle('active');
+                });
+
+                if (food.category === 'bad') {
+                    badContainer.appendChild(card);
+                } else {
+                    goodContainer.appendChild(card);
+                }
+            });
+        }
+
+        // Simulator Logic
+        let selectedSimFoods = [];
+
+        function toggleSimFood(btn) {
+            btn.classList.toggle('selected');
+
+            const name = btn.getAttribute('data-name');
+            const gi = parseInt(btn.getAttribute('data-gi'));
+
+            const index = selectedSimFoods.findIndex(f => f.name === name);
+            if (index > -1) {
+                selectedSimFoods.splice(index, 1);
+            } else {
+                selectedSimFoods.push({ name, gi });
+            }
+
+            updateSimResult();
+        }
+
+        function updateSimResult() {
+            const resultDiv = document.getElementById('sim-result');
+            const needle = document.getElementById('sim-needle');
+            const feedback = document.getElementById('sim-feedback');
+            const selected = document.getElementById('sim-selected');
+
+            if (selectedSimFoods.length === 0) {
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+
+            // Calculate combined GI effect
+            let totalGI = 0;
+            let hasBase = false;
+            selectedSimFoods.forEach(f => {
+                if (f.gi > 0) hasBase = true;
+                totalGI += f.gi;
+            });
+
+            // Clamp
+            totalGI = Math.max(10, Math.min(totalGI, 100));
+
+            // Convert to position (0-100%)
+            const position = Math.max(5, Math.min(95, totalGI));
+            const mgdl = Math.round(70 + (totalGI * 1.4));
+
+            needle.style.left = position + '%';
+            needle.setAttribute('data-value', mgdl + ' mg/dl');
+
+            // Feedback
+            let feedbackText = '';
+            let feedbackColor = '';
+
+            if (totalGI < 35) {
+                feedbackText = '🎉 Ausgezeichnet! Diese Kombination hält deinen Blutzucker sehr stabil. Kein Schwitzen!';
+                feedbackColor = '#2ecc71';
+            } else if (totalGI < 55) {
+                feedbackText = '👍 Gut! Moderater Anstieg, dein Körper kommt damit klar.';
+                feedbackColor = '#2ecc71';
+            } else if (totalGI < 70) {
+                feedbackText = '⚠️ Geht so. Füge mehr Protein/Fett hinzu oder reduziere die Kohlenhydrat-Portion.';
+                feedbackColor = '#f39c12';
+            } else {
+                feedbackText = '🚨 Achtung! Das wird einen starken Spike verursachen. Schwitzen wahrscheinlich! Ändere etwas.';
+                feedbackColor = '#e74c3c';
+            }
+
+            feedback.innerHTML = `<span style="color:${feedbackColor}">${feedbackText}</span>`;
+            selected.innerHTML = '<strong>Gewählt:</strong> ' + selectedSimFoods.map(f => f.name).join(', ');
+
+            // Color the buttons
+            document.querySelectorAll('#tab-simulator .meal-btn.selected').forEach(btn => {
+                const gi = parseInt(btn.getAttribute('data-gi'));
+                btn.classList.remove('bad-choice', 'good-choice');
+                if (gi > 60) btn.classList.add('bad-choice');
+                else if (gi < 0) btn.classList.add('good-choice');
+            });
+        }
+
+        // Initialize
+        renderFoods();
+    </script>
+</body>
+</html>
