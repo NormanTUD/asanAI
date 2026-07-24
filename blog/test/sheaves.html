@@ -162,12 +162,11 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card intuition">
 <span class="label label-int">Kernidee</span>
-<p><strong>Garbe = lokale Daten, die sich konsistent verkleben lassen.</strong><br>
-<span style="color:var(--text-dim)">Stadtteil-Temperaturkarten, die auf Überlappungen übereinstimmen → genau eine globale Karte.</span></p>
+<p><strong>Garbe = lokale Daten, die sich konsistent verkleben lassen.</strong></p>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Offene vs. Abgeschlossene Mengen</h3>
+<h3>🎮 Offene vs. Abgeschlossene Mengen</h3>
 <canvas id="openSetCanvas" width="700" height="200"></canvas>
 <div class="controls">
   <label>Linke Grenze: <input type="range" id="openLeft" min="10" max="50" value="30"></label>
@@ -192,19 +191,10 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 <div class="card">
 <h3>📐 Formaler Rahmen</h3>
 <div class="math-block" id="math-functor"></div>
-
-<p><span class="tooltip">Offene Mengen<span class="tooltiptext">Regionen ohne Rand; z.B. Intervalle (a,b) auf ℝ. Definiert, was "lokal" bedeutet.</span></span> sind die Grundbausteine der Topologie. Eine <span class="tooltip">Prägarbe<span class="tooltiptext">Ordnet jeder offenen Menge U Daten ℱ(U) zu, z.B. stetige Funktionen auf U.</span></span> ℱ ordnet jeder offenen Menge U Daten ℱ(U) zu (dem <span class="tooltip">Schnitt<span class="tooltiptext">Ein Element von ℱ(U); vorstellbar als Funktion oder Datensatz auf der Region U.</span></span> über U) und jeder <span class="tooltip">Inklusion<span class="tooltiptext">Einbettung V ⊆ U einer kleineren in eine größere Menge.</span></span> V ⊆ U eine <span class="tooltip">Restriktionsabbildung<span class="tooltiptext">Schränkt Daten von der großen auf die kleine Menge ein. Bei Funktionen: Definitionsbereich verkleinern.</span></span> ℱ(U) → ℱ(V).</p>
-
-<p>Die Pfeilrichtung kehrt sich um (Inklusion V→U wird zu Restriktion ℱ(U)→ℱ(V)) – das heißt <span class="tooltip">kontravariant<span class="tooltiptext">Ein Funktor, der Pfeile umdreht: aus V⊂U wird ℱ(U)→ℱ(V) statt ℱ(V)→ℱ(U).</span></span>. Die <span class="tooltip">Zielkategorie 𝒞<span class="tooltiptext">Legt die Struktur der ℱ(U) fest: Mengen, abelsche Gruppen, Vektorräume, Ringe, ...</span></span> bestimmt, ob ℱ(U) nur eine Menge oder mit Addition (Gruppe), Skalierung (Vektorraum) oder Multiplikation (Ring) ausgestattet ist.</p>
-</div>
-<div class="card ai">
-<span class="label label-ai">KI-Anwendung</span>
-<p><strong>Lokale Konsistenz → Globale Kohärenz:</strong> Verteilte Modelle, Informationsfusion, TDA, CNNs.</p>
-</div>
 </div>
 
 <div class="card">
-<h3>🔗 Beziehungen der Konzepte</h3>
+<h3>🔗 Beziehungen</h3>
 <div id="conceptGraph" style="width:100%; height:400px;"></div>
 </div>
 </div>
@@ -215,34 +205,24 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Prägarbe</h3>
 <div class="math-block" id="math-presheaf-def"></div>
-<p>ℱ ordnet jeder offenen Menge U Daten ℱ(U) zu (Schnitte, z.B. stetige Fkt.) und jeder Inklusion V ⊆ U eine Restriktion ℱ(U) → ℱ(V) (Einschränken). Transitiv: direkt von U→W = erst U→V dann V→W.</p>
 <div class="math-block" id="math-presheaf-functor"></div>
 </div>
 
-<div class="card intuition">
-<span class="label label-int">Intuition</span>
-<p><strong>Datenbank-Analogie:</strong> Region ↦ Daten. Kleinere Region ↦ eingeschränkte Daten. Transitiv wie `SELECT ... WHERE`.</p>
-</div>
-
 <div class="card example">
 <span class="label label-ex">Beispiel</span>
-<h3>Stetige Funktionen (Garbe ✓)</h3>
+<h3>Stetige Funktionen ✓ Garbe</h3>
 <div class="math-block" id="math-ex-cont"></div>
-<p>Restriktion = normale Funktionseinschränkung. Verkleben funktioniert → Garbe.</p>
 </div>
 
 <div class="card example">
 <span class="label label-ex">Beispiel</span>
-<h3>Beschränkte Funktionen (keine Garbe ✗)</h3>
+<h3>Beschränkte Funktionen ✗ keine Garbe</h3>
 <div class="math-block" id="math-ex-bounded"></div>
-<p>Zwei beschränkte Fkt. auf überlappenden Intervallen können zusammen unbeschränkt sein → Verkleben scheitert.</p>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Beschränkte Funktionen verkleben</h3>
-<p style="color:var(--text-dim); margin-bottom:10px">Beobachte, wie beschränkte Funktionen auf Teilintervallen zusammen unbeschränkt werden können:</p>
+<h3>🎮 Beschränkte Funktionen</h3>
 <canvas id="boundedCanvas" width="700" height="300"></canvas>
 <div class="controls">
   <label>Intervall-Grenze: <input type="range" id="splitSlider" min="20" max="80" value="50"></label>
@@ -253,10 +233,7 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 <p id="boundedInfo" style="color:var(--accent3); margin-top:10px"></p>
 </div>
 
-<div class="card ai">
-<span class="label label-ai">KI-Anwendung</span>
-<p><strong>CNNs:</strong> Feature Map auf Patch = Prägarbe. Restriktion = Cropping. Features verschiedener Patches verkleben nicht immer → keine Garbe.</p>
-</div>
+
 </div>
 
 <!-- ==================== SHEAVES ==================== -->
@@ -265,25 +242,17 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Garbe = Prägarbe + Verkleben</h3>
-<p>Eine Prägarbe ℱ ist eine <strong>Garbe</strong>, wenn für jede offene Überdeckung U = ⋃Uᵢ gilt:</p>
 <div class="math-block" id="math-S1"></div>
-<p><strong>(S1) Eindeutigkeit:</strong> Lokal gleiche Schnitte sind gleich.</p>
 <div class="math-block" id="math-S2"></div>
-<p><strong>(S2) Existenz:</strong> Auf Überlappungen passende Schnitte verkleben zu genau einem globalen Schnitt.</p>
 </div>
 
 <div class="card intuition">
 <span class="label label-int">Intuition</span>
-<p style="font-size:1.1em; text-align:center; color:var(--accent)">
-"Lokale Daten ↦ globale Daten, wenn auf Überlappungen konsistent."
-</p>
 <div class="math-block" id="math-equalizer"></div>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Garben-Axiome visualisiert</h3>
-<p style="color:var(--text-dim)">Wähle ein Szenario und beobachte, ob die Garben-Axiome erfüllt sind:</p>
+ <h3>🎮 Garben-Axiome</h3>
 <div class="controls">
   <select id="sheafScenario">
     <option value="continuous">Stetige Funktionen (Garbe ✓)</option>
@@ -297,23 +266,16 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 </div>
 
 <div class="card example">
-<h3>Konstante Prägarbe (✗) vs. Konstante Garbe (✓)</h3>
+<h3>Konstante Prägarbe ✗ vs. Konstante Garbe ✓</h3>
 <div class="grid-2">
-<div>
-<div class="math-block" id="math-const-pre"></div>
-<p style="color:var(--accent2)">✗ ℱ(U)=G für alle U. Für disjunkte U,V verlangt Garbe G×G, Prägarbe gibt nur G.</p>
-</div>
-<div>
-<div class="math-block" id="math-const-sheaf"></div>
-<p style="color:var(--accent3)">✓ Lokal konstante Fkt. Verkleben funktioniert.</p>
-</div>
+<div><div class="math-block" id="math-const-pre"></div></div>
+<div><div class="math-block" id="math-const-sheaf"></div></div>
 </div>
 </div>
 
 <div class="card example">
-<h3>Wolkenkratzer-Garbe (Skyscraper)</h3>
+<h3>Wolkenkratzer-Garbe</h3>
 <div class="math-block" id="math-skyscraper"></div>
-<p>Nur an Punkt x ≠ 0: ℱ(U)=G wenn x∈U, sonst 0. <span style="color:var(--text-dim)">Wie Dirac-Delta.</span></p>
 </div>
 </div>
 
@@ -323,25 +285,19 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Halm einer (Prä)garbe</h3>
 <div class="math-block" id="math-stalk-def"></div>
-<p><span class="tooltip">Halm ℱ<sub>x</sub><span class="tooltiptext">"Unendlich lokaler" Wert einer Garbe am Punkt x. Enthält alle Information aus beliebig kleinen Umgebungen von x.</span></span> = direkter Limes über Umgebungen von x. Elemente heißen <span class="tooltip">Keime<span class="tooltiptext">Äquivalenzklasse von Schnitten, die in einer kleinen Umgebung von x übereinstimmen.</span></span>: (U,s) ∼ (V,t) wenn s und t auf einer kleineren Umgebung W ⊆ U∩V gleich sind.</p>
 </div>
 
 <div class="card intuition">
-<span class="label label-int">Intuition</span>
-<p><strong>Halm = infinitesimale Info am Punkt x.</strong><br>
-<span style="color:var(--text-dim)">Zwei Funktionen haben denselben Keim bei x, wenn sie auf einer (beliebig kleinen) Umgebung übereinstimmen. Der Halm vergisst alles außer dem lokalen Verhalten bei x.</span></p>
 <div style="text-align:center; margin:15px 0; font-size:1.2em">
-  <span style="color:var(--accent2)">Global</span> → 
-  <span style="color:var(--accent)">Lokal</span> → 
+  <span style="color:var(--accent2)">Globaler Schnitt</span> → 
+  <span style="color:var(--accent)">Lokaler Schnitt</span> → 
   <span style="color:var(--accent3)">Keim (Halm)</span>
 </div>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Halme visualisiert</h3>
-<p style="color:var(--text-dim)">Bewege den Punkt x und beobachte, wie der Halm sich ändert:</p>
+<h3>🎮 Halme</h3>
 <canvas id="stalkCanvas" width="700" height="400"></canvas>
 <div class="controls">
   <label>Position x: <input type="range" id="stalkX" min="5" max="95" value="50"></label>
@@ -358,9 +314,7 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Schlüsselsatz</span>
-<h3>Isomorphie auf Halmen ⟺ Isomorphie von Garben</h3>
 <div class="math-block" id="math-stalk-iso"></div>
-<p>φ ist Garben-Isomorphismus ⟺ φ<sub>x</sub> Isomorphismus auf allen Halmen. <span style="color:var(--text-dim)">→ Lokale Natur von Garben.</span></p>
 </div>
 </div>
 
@@ -370,38 +324,24 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Garbifizierung ℱ → ℱ⁺</h3>
 <div class="math-block" id="math-sheafification"></div>
-<p>Repariert eine Prägarbe zur nächstgelegenen Garbe: identifiziert lokal gleiche Schnitte (S1) und fügt fehlende Verklebungen hinzu (S2). Halme bleiben gleich.</p>
 </div>
 
 <div class="card intuition">
-<span class="label label-int">Intuition</span>
-<div class="grid-2">
-<div>
-<p><strong>Zu viele Schnitte (S1 verletzt):</strong><br>
-<span style="color:var(--accent2)">→ Identifiziere lokal gleiche</span></p>
-</div>
-<div>
-<p><strong>Zu wenige Schnitte (S2 verletzt):</strong><br>
-<span style="color:var(--accent3)">→ Füge Verklebungen hinzu</span></p>
-</div>
-</div>
 <div class="math-block" id="math-shf-construction"></div>
 </div>
 
 <div class="card example">
 <h3>Konstante Prägarbe → Konstante Garbe</h3>
-<p><span class="tooltip">ℱ<sup>pre</sup>(U)=G<span class="tooltiptext">Konstante Prägarbe: Jeder offenen Menge wird dieselbe Gruppe G zugeordnet.</span></span> → ℱ⁺(U) = lokal konstante Fkt. U→G.</p>
+<p><span class="tooltip">ℱ<sup>pre</sup>(U)=G<span class="tooltiptext">Konstante Prägarbe: Jeder offenen Menge wird derselbe Wert G zugeordnet.</span></span> → ℱ⁺(U) = <span class="tooltip">lokal konstante Fkt.<span class="tooltiptext">Funktionen U→G, die auf zusammenhängenden Teilen konstant sind.</span></span></p>
 </div>
 
 <div class="card example">
 <h3>Beschränkte → alle stetigen Funktionen</h3>
-<p>Garbifizierung der beschränkten stetigen Fkt. = alle stetigen Fkt. (denn jede stetige Fkt. ist lokal beschränkt).</p>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Garbifizierung in Aktion</h3>
+<h3>🎮 Garbifizierung in Aktion</h3>
 <canvas id="sheafifyCanvas" width="700" height="300"></canvas>
 <div class="controls">
   <button id="btnShowPre" class="active-btn" onclick="toggleSheafify('pre')">Prägarbe</button>
@@ -414,7 +354,6 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 <div class="card">
 <span class="label label-def">Halme bleiben erhalten</span>
 <div class="math-block" id="math-shf-stalks"></div>
-<p>ℱ<sub>x</sub> ≅ ℱ⁺<sub>x</sub> für alle x. Garbifizierung ändert Halme nicht.</p>
 </div>
 </div>
 
@@ -424,30 +363,18 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Morphismus von (Prä)garben</h3>
 <div class="math-block" id="math-morph-def"></div>
-<p>Eine Familie φ<sub>U</sub>: ℱ(U) → 𝒢(U) für alle U, verträglich mit Restriktion: einschränken + transformieren = transformieren + einschränken.</p>
 </div>
 <div class="card intuition">
-<span class="label label-int">Intuition</span>
-<p><strong>Konsistente Transformation:</strong> egal ob zuerst eingeschränkt oder zuerst transformiert – Ergebnis gleich.</p>
 <div class="math-block" id="math-morph-comm"></div>
 </div>
 
 <div class="card example">
-<h3>Verdopplung φ(f)=2f</h3>
-<p>Auf der Garbe stetiger Fkt.: φ(f)=2f ist ein Garben-Isomorphismus.</p>
-</div>
-
-<div class="card definition">
-<h3>Kern, Bild, Kokern</h3>
 <div class="math-block" id="math-kernel"></div>
-<p><strong>Kern</strong> (↦0) = Garbe. <strong>Bild</strong> = Prägarbe, muss garbifiziert werden. <strong>Kokern</strong> (B/Im) = Prägarbe, muss garbifiziert werden.</p>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Kern, Bild, Kokern</h3>
-<p style="color:var(--text-dim)">Spiele mit der Abbildung x ↦ k·x auf ℤ/8ℤ und beobachte Kern (rot), Bild (grün), Kokern (lila):</p>
+<h3>🎮 Kern, Bild, Kokern</h3>
 <canvas id="kernelCanvas" width="700" height="350"></canvas>
 <div class="controls">
   <label>Multiplikator k: <input type="range" id="kernelMultiplier" min="1" max="7" value="2"></label>
@@ -456,23 +383,15 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 </div>
 
 <div class="card intuition">
-<span class="label label-int">Surjektivität ist lokal!</span>
-<p>φ surjektiv als Garbenmorphismus ⟺ surjektiv auf allen <strong>Halmen</strong>. Muss nicht für jedes U surjektiv sein!</p>
 <div class="math-block" id="math-surj-example"></div>
-<p><strong>exp: 𝒪 → 𝒪<sup>×</sup></strong> auf ℂ*: lokal hat jede Fkt. einen Logarithmus (surjektiv), global nicht (kein globaler log der Identität).</p>
 </div>
 
 <div class="card">
 <span class="label label-def">Exakte Sequenzen</span>
-<p>0 → ℱ → 𝒢 → ℋ → 0 ist exakt ⟺ für alle x: 0 → ℱ<sub>x</sub> → 𝒢<sub>x</sub> → ℋ<sub>x</sub> → 0 exakt.</p>
 <div class="math-block" id="math-ses"></div>
 </div>
 
-<div class="card ai">
-<span class="label label-ai">KI-Anwendung</span>
-<p><strong>Morphismen:</strong> Konsistente Familie lokaler Transformationen (Transfer Learning, Federated Learning).</p>
-</div>
-
+ 
 <div class="interactive-area">
 <h3>🎮 Pushforward & Pullback</h3>
 <div class="flow">
@@ -498,23 +417,12 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Garbenkohomologie Hⁱ(X, ℱ)</h3>
 <div class="math-block" id="math-cohom-def"></div>
-<p>Hⁱ = i-ter rechtsabgeleiteter Funktor von Γ(X, –). Berechnung via injektiver Auflösung 0 → ℱ → I⁰ → I¹ → …</p>
 <div class="math-block" id="math-cohom-compute"></div>
 </div>
 
 <div class="card intuition">
-<span class="label label-int">Intuition</span>
-<p style="font-size:1.1em; text-align:center; color:var(--accent)">
-"Kohomologie = Obstruktionen gegen lokales→globales Verkleben"
-</p>
-<ul style="margin-left:20px">
-<li><strong>H⁰(X, F)</strong> = globale Schnitte</li>
-<li><strong>H¹(X, F)</strong> = Obstruktionen (z.B. kein globaler Logarithmus auf ℂ*)</li>
-</ul>
 <div class="math-block" id="math-exp-seq"></div>
-<p style="color:var(--text-dim)">H¹(ℂ*, ℤ) ≅ ℤ → es gibt keinen globalen Logarithmus!</p>
 </div>
 
 <div class="card example">
@@ -526,7 +434,6 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 <div class="card definition">
 <span class="label label-def">Čech-Kohomologie</span>
 <div class="math-block" id="math-cech"></div>
-<p>Über offene Überdeckung berechnet. Wenn alle Durchschnitte <span class="tooltip">azyklisch<span class="tooltiptext">Höhere Kohomologie verschwindet, z.B. kontrahierbare Mengen.</span></span> → isomorph zur Garbenkohomologie.</p>
 <div class="math-block" id="math-cech-iso"></div>
 </div>
 
@@ -554,12 +461,6 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 <div class="card">
 <span class="label label-def">Mayer-Vietoris</span>
 <div class="math-block" id="math-mv"></div>
-<p>Berechne Kohomologie einer Vereinigung X=U∪V aus den Teilen U,V,U∩V.</p>
-</div>
-
-<div class="card ai">
-<span class="label label-ai">KI-Anwendung</span>
-<p><strong>Kohomologie:</strong> Misst Obstruktionen gegen globale Konsistenz. H¹≠0 → lokale Modelle lassen sich nicht global zusammensetzen.</p>
 </div>
 </div>
 
@@ -569,47 +470,30 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Stratifizierung</h3>
 <div class="math-block" id="math-strat"></div>
-<p><span class="tooltip">Stratifizierung<span class="tooltiptext">Zerlegung eines Raumes in Schichten (Strata), z.B. ℝ = {0} ∪ ℝ\{0}.</span></span> f: X → P zerlegt X in Schichten (Strata). <span class="tooltip">Poset P<span class="tooltiptext">Halbgeordnete Menge; definiert welche Strata aneinandergrenzen dürfen.</span></span> gibt die Ordnung der Strata an.</p>
 </div>
 
 <div class="card definition">
-<span class="label label-def">Definition</span>
-<h3>Konstruierbare Garbe</h3>
+<span class="label label-def">Konstruierbare Garbe</span>
 <div class="math-block" id="math-constructible"></div>
-<p>Auf jedem Stratum lokal konstant. Darf nur an Stratum-Grenzen "springen".</p>
 </div>
 
 <div class="card example">
-<h3>Konstruierbare Garben auf ℝ (Stratifizierung: 0 vs. ℝ\{0})</h3>
-<div class="grid-2">
-<div>
-<p>✓ Konstruierbar: Konstante Garbe ℤ, Wolkenkratzer ℤ₀, i<sub>*</sub>(ℤ⊕ℤ)</p>
-</div>
-<div>
-<p>✗ Nicht konstruierbar: Garbe, die auf ℝ\{0} nicht lokal konstant ist</p>
-</div>
-</div>
+<h3>Konstruierbare Garben auf ℝ</h3>
+<p>Stratifizierung ℝ → {0 → 1}. X₀={0}, X₁=ℝ\{0}</p>
 </div>
 
 <div class="card definition">
-<span class="label label-def">Definition</span>
-<h3>Exit-Pfad-Kategorie</h3>
+<span class="label label-def">Exit-Pfad-Kategorie</span>
 <div class="math-block" id="math-exit"></div>
-<p>Objekte: Punkte x ∈ X. <span class="tooltip">Morphismen<span class="tooltiptext">Homotopieklassen von Pfaden γ: [0,1]→X mit monoton steigender Stratifizierung f∘γ.</span></span>: Exit-Pfade (nur "aufwärts" durch Strata, nie zurück).</p>
-</div>
-
-<div class="card intuition">
 <div style="text-align:center; margin:15px 0">
-<p style="color:var(--accent3)">✓ Nur aufwärts (zu höherem Stratum)</p>
-<p style="color:var(--accent2)">✗ Nie zurück (zu niedrigerem)</p>
+<p style="color:var(--accent3)">✓ Nur aufwärts</p>
+<p style="color:var(--accent2)">✗ Nie zurück</p>
 </div>
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Interaktiv: Exit-Pfade auf S¹</h3>
-<p style="color:var(--text-dim)">Stratifizierung: S¹ → {0 → 1 → 2} mit einem Punkt in Stratum 0, zwei Bögen in Stratum 1, und einem Punkt in Stratum 2.</p>
+<h3>🎮 Exit-Pfade auf S¹</h3>
 <canvas id="exitCanvas" width="700" height="350"></canvas>
 <div class="controls">
   <button id="btnExitValid" onclick="drawExitPath('valid')">Gültiger Exit-Pfad ✓</button>
@@ -625,35 +509,18 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 <div style="text-align:center; font-size:1.2em; margin:10px 0; color:var(--accent)">
 Cons<sub>P</sub>(X) ≃ Fun(Exit<sub>P</sub>(X), Set)
 </div>
-<p><span class="tooltip">Konstruierbare Garben<span class="tooltiptext">Garben die auf jedem Stratum lokal konstant sind und an Stratum-Grenzen springen dürfen.</span></span> = Funktoren von der Exit-Pfad-Kategorie in Mengen. Halm bei x = Wert des Funktors auf x. Exit-Pfad γ: x→y = Abbildung F<sub>x</sub>→F<sub>y</sub>.</p>
 </div>
 
 <div class="card intuition">
 <div class="grid-2">
-<div>
-<p><strong>Monodromie</strong> (klassisch):<br>
-<span style="color:var(--text-dim)">Loc(X) ≃ Fun(Π₁(X), Set)</span></p>
+<div><div class="math-block" id="math-cons-ex"></div></div>
+<div><span style="color:var(--accent); font-size:2em; display:block;text-align:center">• ← • → •</span></div>
 </div>
-<div>
-<p><strong>Exodromie</strong> (allgemein):<br>
-<span style="color:var(--text-dim)">Cons<sub>P</sub>(X) ≃ Fun(Exit<sub>P</sub>(X), Set)</span></p>
-</div>
-</div>
-<p class="tooltip">Exodromie verallgemeinert Monodromie<span class="tooltiptext">Für P={*} ist Exit<sub>P</sub>(X)=Π₁(X) und Cons<sub>P</sub>(X)=Loc(X).</span>.</p>
-</div>
-
-<div class="card example">
-<h3>Exodromie für ℝ: {0} ∪ ℝ\{0}</h3>
-<p>Exit-Kategorie ≅ <span style="color:var(--accent)">• ← • → •</span>. Ein Funktor = Menge A (Halm bei 0) + Menge B (Halm auf ℝ\{0}) + zwei Abbildungen B → A.</p>
 </div>
 
 <div class="card">
 <span class="label label-def">Étale Version</span>
 <div class="math-block" id="math-etale-exodromy"></div>
-<div style="text-align:center; font-size:1.1em; margin:10px 0; color:var(--accent)">
-Cons(X) ≃ Fun<sup>cts</sup>(Gal(X), Fin)
-</div>
-<p><span class="tooltip">Étale Garben<span class="tooltiptext">Garben in der étalen Topologie (algebraische Geometrie).</span></span> ↔ Darstellungen der <span class="tooltip">Galois-Kategorie<span class="tooltiptext">Kategorie der geometrischen Punkte und Spezialisierungen. Verallgemeinert π₁ von SGA1.</span></span>.</p>
 <div class="math-block" id="math-sga1"></div>
 </div>
 </div>
@@ -714,6 +581,7 @@ function renderMath() {
     'math-exodromy': `\\text{Cons}_P(X) \\simeq \\text{Fun}(\\text{Exit}_P(X),\\, \\text{Set})`,
     'math-etale-exodromy': `\\text{Cons}(X) \\simeq \\text{Fun}^{\\text{cts}}(\\text{Gal}(X),\\, \\text{Fin})`,
     'math-sga1': `\\text{Fun}(\\pi_1^{\\text{ét}}(X, \\bar{x}),\\, \\text{Fin}) \\simeq \\text{Cov}_X`,
+    'math-cons-ex': `\\text{Cons}_P(\\mathbb{R}) = \\text{Fun}(\\text{Exit}_P(\\mathbb{R}), \\text{Set})`,
   };
 
   // Inline math
