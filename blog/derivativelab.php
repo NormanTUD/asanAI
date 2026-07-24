@@ -1,4 +1,13 @@
 <?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Derivatives: How AI "Learns" to get better
+description: Understanding gradients, the simplest form of the learning signal, and how AI finds its way downhill.
+icon: &#9889;
+part: 2
+order: 6
+color: coral
+-->
 
 <div class="md">
     In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**, think of this as a "Scoreboard" that tells us how many mistakes the AI is making. 
