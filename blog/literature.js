@@ -3021,8 +3021,7 @@ window.bibData = {
 	"legendre1786": {
 		author: "Adrien-Marie Legendre",
 		year: "1786",
-		title: "Mémoire sur la manière de distinguer les maxima des minima dans le Calcul des Variations",
-		url: "https://gallica.bnf.fr/ark:/12148/bpt6k3586q/f7.image",
+		title: "Mémoire sur la manière de distinguer les maxima des minima dans le Calcul des Variations"
 	},
 	"legendre1805": {
 		author: "Adrien-Marie Legendre",
