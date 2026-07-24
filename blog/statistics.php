@@ -198,11 +198,11 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
-#### How to Calculate with the Normal Distribution
+### How to Calculate with the Normal Distribution
 
 Just as we learned to calculate exact probabilities with the Binomial formula $\binom{n}{k} p^k (1-p)^{n-k}$, we can calculate with the Gauß distribution. However, there is one crucial difference: the Normal Distribution is **continuous**, so we never ask "What is the probability of *exactly* $x$?" (that is always 0 for a continuous variable). Instead, we ask: **"What is the probability that $X$ falls within a range?"**
 
-##### Step 1: Know Your Parameters
+#### Step 1: Know Your Parameters
 
 Every Normal Distribution is fully defined by just two numbers:
 - **$\mu$ (Mean):** The center of the bell curve.
@@ -210,7 +210,7 @@ Every Normal Distribution is fully defined by just two numbers:
 
 $$X \sim \mathcal{N}(\mu, \sigma^2)$$
 
-##### Step 2: Standardize with the Z-Score
+#### Step 2: Standardize with the Z-Score
 
 To look up probabilities, we convert any value $x$ into a **Z-score**, which tells us how many standard deviations $x$ is from the mean:
 
@@ -233,7 +233,7 @@ This is the exact same Z-score formula Pearson invented for comparing crab organ
 </div>
 
 <div class="md">
-##### Step 3: Use the $\Phi$-Table (CDF)
+#### Step 3: Use the $\Phi$-Table (CDF)
 
 The function $\Phi(z)$ answers one simple question: **"What percentage of all values fall to the LEFT of $z$ on the bell curve?"**
 
