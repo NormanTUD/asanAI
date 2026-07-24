@@ -289,185 +289,219 @@
         if (!container) return;
 
         const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f9fff9', borderRadius: '8px', margin: '20px 0'}}, container);
-        createElement('h3', {textContent: '🔍 Interactive: QKV Mechanism & Attention Patterns', style: {marginTop: 0}}, section);
-        createElement('p', {innerHTML: 'Adjust the <strong>Query</strong> and <strong>Key</strong> vectors to see how attention patterns form. The attention heatmap shows which tokens attend to which. The <strong>Value</strong> vectors determine what information gets moved.'}, section);
+        createElement('h3', {textContent: '🔍 Interactive: How Q, K, V Work Step by Step', style: {marginTop: 0}}, section);
+        createElement('p', {innerHTML: 'Watch how a single <strong>query token</strong> ("sat") asks a question, and every token responds with its <strong>key</strong>. The match score (attention) determines how much <strong>value</strong> each token contributes to the output.'}, section);
 
         const dHead = 4;
-        const seqLen = 6;
-        const tokens = ['When', 'Mary', 'and', 'John', 'went', 'to'];
+        const seqLen = 4;
+        const tokens = ['The', 'cat', 'sat', 'mat'];
 
-        // Initialize QKV matrices
-        let W_Q = randomMatrix(dHead, dHead, 0.8);
-        let W_K = randomMatrix(dHead, dHead, 0.8);
-        let W_V = randomMatrix(dHead, dHead, 0.8);
+        // Fixed embeddings so the demo is stable
+        const embeddings = [
+            [0.9, 0.1, 0.3, 0.7],
+            [0.2, 0.8, 0.6, 0.1],
+            [0.7, 0.3, 0.9, 0.4],
+            [0.1, 0.6, 0.2, 0.8],
+        ];
+        const queryIdx = 2;
 
-        // Token embeddings (random but fixed)
-        const embeddings = [];
-        for (let i = 0; i < seqLen; i++) {
-            embeddings.push(randomMatrix(1, dHead, 1.0));
-        }
+        let W_Q = [0.9, 0.1, 0.0, 0.0, 0.1, 0.8, 0.1, 0.0, 0.0, 0.1, 0.7, 0.2, 0.0, 0.0, 0.2, 0.6];
+        let W_K = [0.8, 0.2, 0.0, 0.0, 0.2, 0.7, 0.1, 0.0, 0.0, 0.1, 0.6, 0.3, 0.0, 0.0, 0.3, 0.5];
+        let W_V = [0.7, 0.3, 0.0, 0.0, 0.3, 0.6, 0.1, 0.0, 0.0, 0.1, 0.5, 0.4, 0.0, 0.0, 0.4, 0.4];
 
-        const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
-        const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
-        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '350px'}}, controlRow);
-
-        createElement('h4', {textContent: 'Temperature & Head Parameters', style: {margin: '0 0 10px 0'}}, sliderPanel);
-
+        let qScale = 1.0;
+        let kScale = 1.0;
+        let vScale = 1.0;
         let temperature = 1.0;
-        let qkScale = 1.0;
-        let ovScale = 1.0;
+        const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
+        const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '220px'}}, controlRow);
+        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '420px'}}, controlRow);
 
-        createSlider(sliderPanel, 'Temperature (1/√d_k scale)', 0.1, 5.0, 1.0, 0.1, (v) => { temperature = v; draw(); });
-        createSlider(sliderPanel, 'QK Circuit Strength', 0.1, 3.0, 1.0, 0.1, (v) => { qkScale = v; W_Q = randomMatrix(dHead, dHead, 0.8 * v); draw(); });
-        createSlider(sliderPanel, 'OV Circuit Strength', 0.1, 3.0, 1.0, 0.1, (v) => { ovScale = v; W_V = randomMatrix(dHead, dHead, 0.8 * v); draw(); });
+        createElement('h4', {textContent: 'Adjust Projections', style: {margin: '0 0 10px 0', fontSize: '14px'}}, sliderPanel);
+        createSlider(sliderPanel, 'W_Q — "What I look for"', 0.1, 2.0, 1.0, 0.1, (v) => { qScale = v; refreshProj(); draw(); });
+        createSlider(sliderPanel, 'W_K — "What I contain"', 0.1, 2.0, 1.0, 0.1, (v) => { kScale = v; refreshProj(); draw(); });
+        createSlider(sliderPanel, 'W_V — "What I share"', 0.1, 2.0, 1.0, 0.1, (v) => { vScale = v; refreshProj(); draw(); });
+        createSlider(sliderPanel, 'Attention temperature', 0.2, 3.0, 1.0, 0.1, (v) => { temperature = v; draw(); });
 
-        // Positional bias slider
-        let posBias = 0;
-        createSlider(sliderPanel, 'Positional Bias (causal)', -2.0, 2.0, 0, 0.1, (v) => { posBias = v; draw(); });
-
-        // Pattern type selector
-        const patternDiv = createElement('div', {style: {margin: '10px 0'}}, sliderPanel);
-        createElement('strong', {textContent: 'Head Type: '}, patternDiv);
-        const select = createElement('select', {style: {padding: '4px'}}, patternDiv);
-        ['Random', 'Previous Token', 'Induction', 'Uniform'].forEach(opt => {
-            createElement('option', {textContent: opt, value: opt}, select);
-        });
-        select.addEventListener('change', () => {
-            setHeadType(select.value);
-            draw();
-        });
-
-        function setHeadType(type) {
-            if (type === 'Previous Token') {
-                // Make QK circuit favor position i-1
-                W_Q = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-                W_K = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-                // Override embeddings to encode position
-                for (let i = 0; i < seqLen; i++) {
-                    embeddings[i] = [Math.cos(i * 0.5), Math.sin(i * 0.5), Math.cos(i * 1.0), Math.sin(i * 1.0)];
-                }
-                posBias = -1.5;
-            } else if (type === 'Induction') {
-                // Simulate induction: strong diagonal + offset pattern
-                W_Q = [2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0.1];
-                W_K = [2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0.1, 0, 0, 0, 0, 0.1];
-                for (let i = 0; i < seqLen; i++) {
-                    embeddings[i] = [Math.cos(i * 1.2), Math.sin(i * 1.2), (i % 2) * 0.5, ((i + 1) % 3) * 0.3];
-                }
-                posBias = 0;
-            } else if (type === 'Uniform') {
-                W_Q = new Array(dHead * dHead).fill(0);
-                W_K = new Array(dHead * dHead).fill(0);
-                posBias = 0;
-            } else {
-                W_Q = randomMatrix(dHead, dHead, 0.8);
-                W_K = randomMatrix(dHead, dHead, 0.8);
-                for (let i = 0; i < seqLen; i++) {
-                    embeddings[i] = randomMatrix(1, dHead, 1.0);
-                }
-                posBias = 0;
-            }
+        function refreshProj() {
+            W_Q = [0.9*qScale, 0.1*qScale, 0.0, 0.0, 0.1*qScale, 0.8*qScale, 0.1*qScale, 0.0, 0.0, 0.1*qScale, 0.7*qScale, 0.2*qScale, 0.0, 0.0, 0.2*qScale, 0.6*qScale];
+            W_K = [0.8*kScale, 0.2*kScale, 0.0, 0.0, 0.2*kScale, 0.7*kScale, 0.1*kScale, 0.0, 0.0, 0.1*kScale, 0.6*kScale, 0.3*kScale, 0.0, 0.0, 0.3*kScale, 0.5*kScale];
+            W_V = [0.7*vScale, 0.3*vScale, 0.0, 0.0, 0.3*vScale, 0.6*vScale, 0.1*vScale, 0.0, 0.0, 0.1*vScale, 0.5*vScale, 0.4*vScale, 0.0, 0.0, 0.4*vScale, 0.4*vScale];
         }
 
-        const canvas = createCanvas(canvasPanel, 500, 350);
+        const infoPanel = createElement('div', {style: {marginTop: '12px', padding: '12px', background: '#fff', borderRadius: '6px', fontSize: '12px', lineHeight: '1.5', border: '1px solid #e0e0e0'}}, sliderPanel);
+
+        const canvas = createCanvas(canvasPanel, 520, 480);
         const ctx = canvas.getContext('2d');
 
-        function computeAttention() {
-            // Q = embeddings * W_Q, K = embeddings * W_K
-            const queries = [];
-            const keys = [];
+        function computeQKV() {
+            const Qs = [], Ks = [], Vs = [];
             for (let i = 0; i < seqLen; i++) {
-                queries.push(matMul(embeddings[i], W_Q, 1, dHead, dHead));
-                keys.push(matMul(embeddings[i], W_K, 1, dHead, dHead));
+                Qs.push(matMul(embeddings[i], W_Q, 1, dHead, dHead));
+                Ks.push(matMul(embeddings[i], W_K, 1, dHead, dHead));
+                Vs.push(matMul(embeddings[i], W_V, 1, dHead, dHead));
             }
-
-            // Attention scores: A[i][j] = Q[i] . K[j] / temperature
-            const attnScores = [];
-            for (let i = 0; i < seqLen; i++) {
-                const row = [];
-                for (let j = 0; j < seqLen; j++) {
-                    let score = dotProduct(queries[i], keys[j]) / temperature;
-                    // Causal mask
-                    if (j > i) score = -1e9;
-                    // Positional bias (favor nearby/previous)
-                    else score += posBias * (i - j);
-                    row.push(score);
-                }
-                attnScores.push(row);
+            const query = Qs[queryIdx];
+            const scores = [];
+            for (let j = 0; j < seqLen; j++) scores.push(dotProduct(query, Ks[j]) / temperature);
+            const attn = softmax(scores);
+            const output = new Array(dHead).fill(0);
+            for (let j = 0; j < seqLen; j++) {
+                for (let d = 0; d < dHead; d++) output[d] += attn[j] * Vs[j][d];
             }
-
-            // Softmax each row
-            const attnWeights = attnScores.map(row => softmax(row));
-            return attnWeights;
+            return {Qs, Ks, Vs, scores, attn, output};
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const attn = computeAttention();
+            const {Qs, Ks, Vs, attn, output} = computeQKV();
+            const cell = 22, g = 16, leftLabel = 70;
 
-            const cellSize = 40;
-            const offsetX = 100;
-            const offsetY = 60;
-
-            // Title
-            ctx.fillStyle = '#333';
-            ctx.font = 'bold 14px sans-serif';
-            ctx.fillText('Attention Pattern (row=query, col=key)', offsetX, 20);
-
-            // Column headers (keys)
-            ctx.font = '11px monospace';
-            for (let j = 0; j < seqLen; j++) {
-                ctx.save();
-                ctx.translate(offsetX + j * cellSize + cellSize / 2, offsetY - 5);
-                ctx.rotate(-0.5);
-                ctx.fillStyle = '#555';
-                ctx.fillText(tokens[j], 0, 0);
-                ctx.restore();
-            }
-
-            // Row headers (queries) and heatmap
+            // Row 1: tokens + embeddings
+            let y = 18;
+            ctx.fillStyle = '#2563eb';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Embed →', 4, y + 6);
             for (let i = 0; i < seqLen; i++) {
-                ctx.fillStyle = '#555';
-                ctx.font = '11px monospace';
-                ctx.fillText(tokens[i], 10, offsetY + i * cellSize + cellSize / 2 + 4);
-
-                for (let j = 0; j < seqLen; j++) {
-                    const val = attn[i][j];
-                    ctx.fillStyle = heatColor(val);
-                    ctx.fillRect(offsetX + j * cellSize, offsetY + i * cellSize, cellSize - 1, cellSize - 1);
-
-                    // Show value
-                    ctx.fillStyle = val > 0.5 ? '#fff' : '#333';
-                    ctx.font = '10px monospace';
-                    ctx.fillText(val.toFixed(2), offsetX + j * cellSize + 4, offsetY + i * cellSize + cellSize / 2 + 3);
+                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                ctx.fillStyle = i === queryIdx ? '#2563eb' : '#555';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(tokens[i], x, y);
+                for (let d = 0; d < dHead; d++) {
+                    const v = embeddings[i][d];
+                    const intensity = Math.min(Math.abs(v), 1);
+                    ctx.fillStyle = v >= 0 ? `rgba(74,144,217,${intensity*0.7+0.15})` : `rgba(231,76,60,${intensity*0.7+0.15})`;
+                    ctx.fillRect(x + d * (cell + 2), y + 6, cell, cell - 4);
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x + d * (cell + 2), y + 6, cell, cell - 4);
                 }
             }
 
-            // Draw arrow showing information flow for strongest attention
-            ctx.strokeStyle = 'rgba(200, 50, 50, 0.6)';
-            ctx.lineWidth = 2;
-            const lastRow = attn[seqLen - 1];
-            const maxIdx = lastRow.indexOf(Math.max(...lastRow));
-            const fromX = offsetX + maxIdx * cellSize + cellSize / 2;
-            const fromY = offsetY + seqLen * cellSize + 20;
-            ctx.beginPath();
-            ctx.moveTo(fromX, offsetY + (seqLen - 1) * cellSize + cellSize);
-            ctx.lineTo(fromX, fromY);
-            ctx.stroke();
-            ctx.fillStyle = '#c33';
-            ctx.font = '11px sans-serif';
-            ctx.fillText(`Last token attends most to "${tokens[maxIdx]}" (${lastRow[maxIdx].toFixed(2)})`, 10, fromY + 15);
+            // Row 2: Q (only query)
+            y = 72;
+            ctx.fillStyle = '#4a90d9';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Q = Wq·Embed  ← query "' + tokens[queryIdx] + '" asks: what am I looking for?', 4, y + 6);
+            for (let i = 0; i < seqLen; i++) {
+                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                for (let d = 0; d < dHead; d++) {
+                    const v = Qs[i][d];
+                    const intensity = Math.min(Math.abs(v), 1);
+                    ctx.globalAlpha = i === queryIdx ? 1 : 0.12;
+                    ctx.fillStyle = `rgba(74,144,217,${intensity*0.7+0.15})`;
+                    ctx.fillRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    ctx.strokeStyle = '#bbb';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    ctx.globalAlpha = 1;
+                }
+            }
 
-            // OV circuit visualization
+            // Row 3: K
+            y = 114;
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('K = Wk·Embed  ← each token says: here is what I contain', 4, y + 6);
+            for (let i = 0; i < seqLen; i++) {
+                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                for (let d = 0; d < dHead; d++) {
+                    const v = Ks[i][d];
+                    const intensity = Math.min(Math.abs(v), 1);
+                    ctx.fillStyle = `rgba(231,76,60,${intensity*0.7+0.15})`;
+                    ctx.fillRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                }
+            }
+
+            // Row 4: V
+            y = 156;
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('V = Wv·Embed  ← each token offers: here is what I share', 4, y + 6);
+            for (let i = 0; i < seqLen; i++) {
+                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                for (let d = 0; d < dHead; d++) {
+                    const v = Vs[i][d];
+                    const intensity = Math.min(Math.abs(v), 1);
+                    ctx.fillStyle = `rgba(46,204,113,${intensity*0.7+0.15})`;
+                    ctx.fillRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                }
+            }
+
+            // Computation arrow
+            y = 202;
             ctx.fillStyle = '#333';
-            ctx.font = 'bold 12px sans-serif';
-            ctx.fillText('OV Circuit: What gets copied', 10, canvas.height - 50);
             ctx.font = '11px sans-serif';
-            ctx.fillText(`If attending to "${tokens[maxIdx]}", the OV circuit moves its representation to the output.`, 10, canvas.height - 30);
-            const ovMag = norm(matMul(embeddings[maxIdx], W_V, 1, dHead, dHead));
-            ctx.fillText(`|OV output| = ${(ovMag * ovScale).toFixed(3)}`, 10, canvas.height - 12);
+            ctx.fillText('↓  attention = softmax(Q·K / temp)  →  output = Σ attn·V', 4, y + 6);
+            const arrowY = y + 12;
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(50, arrowY); ctx.lineTo(canvas.width - 20, arrowY);
+            ctx.stroke();
+
+            // Row 5: Attention scores
+            y = 236;
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Attention (Q·K match)', 4, y + 6);
+            const boxSize = 40;
+            for (let j = 0; j < seqLen; j++) {
+                const x = leftLabel + j * (boxSize + 8);
+                ctx.fillStyle = j === queryIdx ? '#2563eb' : '#555';
+                ctx.font = '10px monospace';
+                ctx.fillText(tokens[j], x + 4, y - 4);
+                const v = attn[j], inten = Math.min(v * 3, 1);
+                ctx.fillStyle = `rgba(74,144,217,${inten*0.8+0.1})`;
+                ctx.fillRect(x, y + 6, boxSize, boxSize);
+                ctx.strokeStyle = v > 0.3 ? '#2563eb' : '#ddd';
+                ctx.lineWidth = v > 0.5 ? 2 : 1;
+                ctx.strokeRect(x, y + 6, boxSize, boxSize);
+                ctx.fillStyle = v > 0.4 ? '#fff' : '#333';
+                ctx.font = 'bold 11px monospace';
+                ctx.fillText((v * 100).toFixed(0) + '%', x + 4, y + 30);
+            }
+
+            // Row 6: Output
+            y = 310;
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText('Output = ' + seqLen + ' weighted V summed ↓', 4, y + 6);
+            for (let d = 0; d < dHead; d++) {
+                const v = output[d];
+                const intensity = Math.min(Math.abs(v), 1);
+                ctx.fillStyle = v >= 0 ? `rgba(46,204,113,${intensity*0.8+0.1})` : `rgba(231,76,60,${intensity*0.8+0.1})`;
+                ctx.fillRect(leftLabel + d * (cell + 2), y + 12, cell + 8, cell + 4);
+            }
+            let contribStr = '= ';
+            for (let j = 0; j < seqLen; j++) {
+                contribStr += tokens[j] + ' (' + (attn[j] * 100).toFixed(0) + '%)' + (j < seqLen - 1 ? ' + ' : '');
+            }
+            ctx.fillStyle = '#777';
+            ctx.font = '10px sans-serif';
+            ctx.fillText(contribStr, leftLabel, y + 48);
+
+            // Info panel
+            const qNorm = norm(Qs[queryIdx]);
+            const topAttn = Math.max(...attn), topIdx = attn.indexOf(topAttn);
+            const entropy = -attn.reduce((s, p) => s + (p > 0 ? p * Math.log(p) : 0), 0);
+            infoPanel.innerHTML = `
+                <strong>Step by step:</strong><br>
+                <span style="color:#4a90d9">Q</span> = query "${tokens[queryIdx]}" projected (magnitude ${qNorm.toFixed(2)})<br>
+                <span style="color:#e74c3c">K</span> = each token's key — best match: <strong>"${tokens[topIdx]}"</strong> (${(topAttn*100).toFixed(0)}%)<br>
+                <span style="color:#2ecc71">V</span> = each token's value, weighted by attention → output<br>
+                Attention spread: ${entropy > 1.0 ? 'broad' : 'focused'}<br>
+                <em>Try sliders: W_Q changes what the query looks for; W_K changes what tokens advertise; temperature smooths attention.</em>
+            `;
         }
 
+        refreshProj();
         draw();
     }
 

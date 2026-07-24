@@ -256,6 +256,20 @@ The "aha moment" of grokking is not a sudden leap — it is the moment when the 
 
 <div class="md">
 ## Summary: Opening the Black Box
+
+Mechanistic interpretability is the practice of reverse-engineering neural networks into human-understandable algorithms. The key insights are:
+
+* **Circuits** are sparse subgraphs of attention heads and MLP layers that collaborate to implement specific behaviors — induction heads for pattern completion, IOI circuits for name resolution, and direct paths for bigram statistics.
+* **The residual stream** is a communication bus: every component reads from it and writes back to it. Circuits emerge when heads learn to "talk to each other" through this shared medium.
+* **Superposition** explains why individual neurons are often uninterpretable: the model packs more features than dimensions by using nearly-orthogonal directions in activation space.
+* **Sparse autoencoders** resolve superposition by learning an overcomplete dictionary of features from the residual stream, giving us monosemantic units to work with.
+* **Activation patching** is the causal scalpel: by swapping activations between runs, we isolate which components are causally necessary for a behavior.
+* **The logit lens** lets us decode the model's "thoughts" at every layer, revealing how predictions evolve from diffuse uncertainty to sharp certainty.
+* **Grokking** shows that generalization can emerge long after memorization, as structured circuits gradually overtake memorized pairs.
+* **The double helix** reveals that positional and semantic information separate through the layers along a helical path.
+
+These tools form a growing toolkit for moving beyond "black box" AI toward systems we can genuinely understand, verify, and trust. The field is young, but it already offers practical techniques for detecting deception, editing knowledge, predicting failures, and providing scalable oversight of increasingly capable models.
+
 </div>
 
 <div id="summary-container"></div>
