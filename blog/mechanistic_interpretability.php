@@ -116,7 +116,7 @@ The matrix $W_O W_V$ maps source token representations to output contributions. 
 <div class="md">
 ## Superposition: When Features Outnumber Dimensions
 
-A critical challenge in understanding circuits is \cite[superposition]{elhage2022superposition}: the phenomenon where a model represents more features than it has dimensions, by encoding features as nearly-orthogonal directions in the residual stream.
+A critical challenge in understanding circuits is \cite[superposition]{elhage2022superposition}: the phenomenon where a model represents more features than it has dimensions, by encoding features as nearly-orthogonal directions in the residual stream. Recent work \cite{marks2023geometry} has shown that even abstract properties like truth emerge as linearly separable directions in this high-dimensional space.
 
 In a model with $d_{\text{model}} = 768$ dimensions, you might expect at most 768 independent features. But in practice, models represent thousands of interpretable features by exploiting the geometry of high-dimensional spaces: in high dimensions, you can pack exponentially many nearly-orthogonal vectors.
 
@@ -194,7 +194,7 @@ Understanding circuits is not merely an academic exercise. It has direct implica
 
 1. **Detecting deception:** If we can identify the circuit responsible for a model's claim, we can check whether the model "believes" what it says or is producing text that contradicts its internal representations.
 
-2. **Targeted editing:** \cite[Knowledge editing techniques]{meng2022locating} like ROME (Rank-One Model Editing) use circuit-level understanding to surgically modify specific facts without affecting other capabilities.
+2. **Targeted editing:** \cite[Knowledge editing techniques]{meng2022locating} like ROME (Rank-One Model Editing) and \cite[MEMIT]{meng2022memit} (which scales to thousands of edits) use circuit-level understanding to surgically modify specific facts without affecting other capabilities.
 
 3. **Predicting failures:** By understanding which circuits handle which tasks, we can predict when a model will fail: if the relevant circuit is absent or malformed, the model will produce unreliable outputs for that task class.
 
