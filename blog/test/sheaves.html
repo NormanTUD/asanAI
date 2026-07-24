@@ -166,11 +166,13 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Offene vs. Abgeschlossene Mengen</h3>
-<canvas id="openSetCanvas" width="700" height="200"></canvas>
+<h3>🎮 Offene Mengen & Überlappungen</h3>
+<canvas id="openSetCanvas" width="700" height="260"></canvas>
 <div class="controls">
-  <label>Linke Grenze: <input type="range" id="openLeft" min="10" max="50" value="30"></label>
-  <label>Rechte Grenze: <input type="range" id="openRight" min="50" max="90" value="70"></label>
+  <label>U₁ links: <input type="range" id="openLeft" min="10" max="50" value="25"></label>
+  <label>U₁ rechts: <input type="range" id="openRight" min="50" max="90" value="55"></label>
+  <label>U₂ links: <input type="range" id="openLeft2" min="10" max="90" value="45"></label>
+  <label>U₂ rechts: <input type="range" id="openRight2" min="20" max="90" value="75"></label>
   <button id="btnOpen" class="active-btn" onclick="toggleOpenType('open')">Offen (a,b)</button>
   <button id="btnClosed" onclick="toggleOpenType('closed')">Abgeschlossen [a,b]</button>
 </div>
@@ -298,8 +300,17 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 </div>
 
 <div class="interactive-area">
-<h3>🎮 Halme</h3>
-<canvas id="stalkCanvas" width="700" height="400"></canvas>
+<h3>🎮 Schnitt → Keim → Halm</h3>
+<div style="display:flex; justify-content:center; gap:30px; margin-bottom:10px; font-size:0.85em; color:var(--text-dim)">
+  <span>Globaler Schnitt <span style="color:var(--accent)">s ∈ ℱ(X)</span></span>
+  <span style="color:var(--text-dim)">→</span>
+  <span>Lokaler Schnitt <span style="color:var(--accent2)">s|_U ∈ ℱ(U)</span></span>
+  <span style="color:var(--text-dim)">→</span>
+  <span>Keim <span style="color:var(--accent3)">[s]_x</span></span>
+  <span style="color:var(--text-dim)">→</span>
+  <span>Halm <span style="color:var(--accent)">ℱ_x</span></span>
+</div>
+<canvas id="stalkCanvas" width="700" height="450"></canvas>
 <div class="controls">
   <label>Position x: <input type="range" id="stalkX" min="5" max="95" value="50"></label>
   <label>Garbe: 
@@ -722,34 +733,93 @@ function drawOpenSet() {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0, 0, W, H);
-  const left = parseInt(document.getElementById('openLeft').value);
-  const right = parseInt(document.getElementById('openRight').value);
-  const cy = H / 2;
+
+  const left1 = parseInt(document.getElementById('openLeft').value);
+  const right1 = parseInt(document.getElementById('openRight').value);
+  const left2 = parseInt(document.getElementById('openLeft2').value);
+  const right2 = parseInt(document.getElementById('openRight2').value);
+
+  // Base lines
+  const y1 = H * 0.30, y2 = H * 0.55, yOverlap = H * 0.82;
+
+  // Draw U₁ on top track
+  ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(20, y1); ctx.lineTo(W - 20, y1); ctx.stroke();
+  ctx.fillStyle = 'rgba(88,166,255,0.15)';
+  ctx.fillRect(left1, y1 - 20, right1 - left1, 40);
   ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(20, cy); ctx.lineTo(W - 20, cy); ctx.stroke();
-  ctx.fillStyle = 'rgba(88,166,255,0.12)';
-  ctx.fillRect(left, cy - 25, right - left, 50);
-  ctx.strokeStyle = 'rgba(88,166,255,0.3)'; ctx.setLineDash([4, 4]);
-  ctx.beginPath(); ctx.moveTo(left, cy - 25); ctx.lineTo(left, cy + 25);
-  ctx.moveTo(right, cy - 25); ctx.lineTo(right, cy + 25); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle = '#8b949e'; ctx.font = '13px sans-serif';
-  ctx.fillText('a', left - 5, cy - 30); ctx.fillText('b', right - 5, cy - 30);
+  ctx.strokeRect(left1, y1 - 20, right1 - left1, 40);
+  ctx.fillStyle = '#58a6ff'; ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('U₁', (left1 + right1) / 2 - 10, y1 + 6);
+  // Endpoint markers
   if (openType === 'open') {
-    ctx.strokeStyle = '#f78166'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.arc(left, cy, 10, 0, 2 * Math.PI); ctx.stroke();
-    ctx.beginPath(); ctx.arc(right, cy, 10, 0, 2 * Math.PI); ctx.stroke();
+    ctx.strokeStyle = '#f78166'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(left1, y1, 8, 0, 2 * Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.arc(right1, y1, 8, 0, 2 * Math.PI); ctx.stroke();
   } else {
     ctx.fillStyle = '#7ee787';
-    ctx.beginPath(); ctx.arc(left, cy, 10, 0, 2 * Math.PI); ctx.fill();
-    ctx.beginPath(); ctx.arc(right, cy, 10, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(left1, y1, 8, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(right1, y1, 8, 0, 2 * Math.PI); ctx.fill();
   }
+  ctx.fillStyle = '#8b949e'; ctx.font = '11px sans-serif';
+  ctx.fillText('a', left1 - 5, y1 - 25); ctx.fillText('b', right1 - 5, y1 - 25);
+
+  // Draw U₂ on middle track
+  ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(20, y2); ctx.lineTo(W - 20, y2); ctx.stroke();
+  ctx.fillStyle = 'rgba(126,231,135,0.15)';
+  ctx.fillRect(left2, y2 - 20, right2 - left2, 40);
+  ctx.strokeStyle = '#7ee787'; ctx.lineWidth = 2;
+  ctx.strokeRect(left2, y2 - 20, right2 - left2, 40);
+  ctx.fillStyle = '#7ee787'; ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('U₂', (left2 + right2) / 2 - 10, y2 + 6);
+  if (openType === 'open') {
+    ctx.strokeStyle = '#f78166'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(left2, y2, 8, 0, 2 * Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.arc(right2, y2, 8, 0, 2 * Math.PI); ctx.stroke();
+  } else {
+    ctx.fillStyle = '#7ee787';
+    ctx.beginPath(); ctx.arc(left2, y2, 8, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(right2, y2, 8, 0, 2 * Math.PI); ctx.fill();
+  }
+
+  // Overlap track at bottom
+  const ol = Math.max(left1, left2), or = Math.min(right1, right2);
+  ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(20, yOverlap); ctx.lineTo(W - 20, yOverlap); ctx.stroke();
+  if (ol < or) {
+    // Has overlap
+    ctx.fillStyle = 'rgba(210,168,255,0.25)';
+    ctx.fillRect(ol, yOverlap - 20, or - ol, 40);
+    ctx.strokeStyle = '#d2a8ff'; ctx.lineWidth = 3;
+    ctx.strokeRect(ol, yOverlap - 20, or - ol, 40);
+    ctx.fillStyle = '#d2a8ff'; ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('U₁ ∩ U₂  (Überlappung)', (ol + or) / 2 - 60, yOverlap + 6);
+    // matching checkmark
+    ctx.fillStyle = '#7ee787'; ctx.font = '16px sans-serif';
+    ctx.fillText('✓', or + 10, yOverlap + 6);
+  } else {
+    // No overlap
+    ctx.fillStyle = '#8b949e'; ctx.font = '12px sans-serif';
+    ctx.fillText('⌀  keine Überlappung', W / 2 - 60, yOverlap + 6);
+  }
+
   const info = document.getElementById('openSetInfo');
-  info.innerHTML = openType === 'open'
-    ? '<strong>Offen (a,b):</strong> Endpunkte geh\u00F6ren <em>nicht</em> zur Menge. Um jeden Punkt gibts ein kleines Intervall, das noch drin liegt.'
-    : '<strong>Abgeschlossen [a,b]:</strong> Endpunkte geh\u00F6ren <em>dazu</em>. Am Randpunkt a liegt kein Intervall mehr ganz in [a,b] (nach links gehts nicht).';
+  if (ol < or) {
+    info.innerHTML = '<div style="display:flex; gap:15px; align-items:center">'
+      + '<div><strong style="color:var(--accent3)">Überlappung vorhanden</strong><br>'
+      + 'U₁ ∩ U₂ = (' + Math.round(ol / 7 * 10) / 10 + ', ' + Math.round(or / 7 * 10) / 10 + ')</div>'
+      + '<div style="border-left:1px solid var(--border); padding-left:15px; font-size:0.9em; color:var(--text-dim)">'
+      + 'Auf der Überlappung müssen Schnitte übereinstimmen (Verklebungsbedingung S2).</div></div>';
+  } else {
+    info.innerHTML = '<div><strong style="color:var(--accent2)">Keine Überlappung</strong><br>'
+      + '<span style="color:var(--text-dim); font-size:0.9em">Disjunkte offene Mengen: S2 verlangt F(U₁∪U₂) = F(U₁) × F(U₂).</span></div>';
+  }
 }
 document.getElementById('openLeft').addEventListener('input', drawOpenSet);
 document.getElementById('openRight').addEventListener('input', drawOpenSet);
+document.getElementById('openLeft2').addEventListener('input', drawOpenSet);
+document.getElementById('openRight2').addEventListener('input', drawOpenSet);
 drawOpenSet();
 
 // ===== KERNEL/IMAGE/COKERNEL CANVAS =====
@@ -912,125 +982,198 @@ function drawSheafScenario() {
   const scenario = document.getElementById('sheafScenario').value;
   const exp = document.getElementById('sheafExplanation');
 
-  // Draw base space
-  ctx.strokeStyle = '#30363d';
-  ctx.lineWidth = 2;
+  const u1Start = 80, u1End = 350, u2Start = 250, u2End = 550;
+  const overlapStart = u2Start, overlapEnd = u1End;
+  const barY = H - 80, barH = 60;
+
+  // Open set regions
+  ctx.fillStyle = 'rgba(88,166,255,0.08)';
+  ctx.fillRect(u1Start, barY, u1End - u1Start, barH);
+  ctx.fillStyle = 'rgba(126,231,135,0.08)';
+  ctx.fillRect(u2Start, barY, u2End - u2Start, barH);
+
+  // Overlap region — bold border + hatch pattern
+  const ox = overlapStart, oy = barY, ow = overlapEnd - overlapStart, oh = barH;
+  ctx.save();
   ctx.beginPath();
-  ctx.moveTo(50, H - 50);
-  ctx.lineTo(W - 50, H - 50);
-  ctx.stroke();
+  ctx.rect(ox, oy, ow, oh);
+  ctx.clip();
+  // Diagonal hatch
+  ctx.strokeStyle = 'rgba(210,168,255,0.20)';
+  ctx.lineWidth = 1;
+  for (let i = ox - oh; i < ox + ow + oh; i += 10) {
+    ctx.beginPath(); ctx.moveTo(i, oy); ctx.lineTo(i + oh, oy + oh); ctx.stroke();
+  }
+  ctx.restore();
+  // Overlay purple tint
+  ctx.fillStyle = 'rgba(210,168,255,0.12)';
+  ctx.fillRect(ox, oy, ow, oh);
+  // Bold border
+  ctx.strokeStyle = '#d2a8ff';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(ox, oy, ow, oh);
+  // Highlight glow
+  ctx.shadowColor = 'rgba(210,168,255,0.3)';
+  ctx.shadowBlur = 8;
+  ctx.strokeRect(ox, oy, ow, oh);
+  ctx.shadowBlur = 0;
 
-  // Draw open sets
-  const u1Start = 80, u1End = 350;
-  const u2Start = 250, u2End = 550;
-
-  ctx.fillStyle = 'rgba(88,166,255,0.1)';
-  ctx.fillRect(u1Start, H - 80, u1End - u1Start, 60);
-  ctx.fillStyle = 'rgba(126,231,135,0.1)';
-  ctx.fillRect(u2Start, H - 80, u2End - u2Start, 60);
-
-  // Overlap
-  ctx.fillStyle = 'rgba(210,168,255,0.15)';
-  ctx.fillRect(u2Start, H - 80, u1End - u2Start, 60);
-
+  // Labels
   ctx.fillStyle = '#58a6ff';
-  ctx.font = '13px sans-serif';
+  ctx.font = 'bold 14px sans-serif';
   ctx.fillText('U₁', (u1Start + u1End) / 2 - 10, H - 30);
   ctx.fillStyle = '#7ee787';
   ctx.fillText('U₂', (u2Start + u2End) / 2 - 10, H - 30);
   ctx.fillStyle = '#d2a8ff';
-  ctx.fillText('U₁∩U₂', (u2Start + u1End) / 2 - 20, H - 85);
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('U₁ ∩ U₂', (overlapStart + overlapEnd) / 2 - 30, barY - 12);
+
+  // Draw sample lines in overlap to show matching
+  const sampleXs = [];
+  for (let i = 3; i < 8; i++) sampleXs.push(ox + (i / 10) * ow);
 
   if (scenario === 'continuous') {
-    // Draw continuous functions that agree on overlap
+    // Both curves are the SAME sine — perfect match on overlap
     ctx.strokeStyle = '#58a6ff';
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let x = u1Start; x <= u1End; x++) {
       const t = (x - u1Start) / (u1End - u1Start);
-      const y = H - 120 - 80 * Math.sin(t * Math.PI);
+      const y = H - 130 - 80 * Math.sin(t * Math.PI);
       if (x === u1Start) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
     ctx.strokeStyle = '#7ee787';
+    ctx.lineWidth = 3;
     ctx.beginPath();
     for (let x = u2Start; x <= u2End; x++) {
       const t = (x - u1Start) / (u1End - u1Start);
-      const y = H - 120 - 80 * Math.sin(t * Math.PI);
+      const y = H - 130 - 80 * Math.sin(t * Math.PI);
       if (x === u2Start) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
+    // Overlap matching verification lines
+    sampleXs.forEach(x => {
+      const t = (x - u1Start) / (u1End - u1Start);
+      const y = H - 130 - 80 * Math.sin(t * Math.PI);
+      ctx.strokeStyle = 'rgba(126,231,135,0.5)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, barY + barH + 5); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#7ee787';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('✓', x - 5, barY + barH + 22);
+    });
+
     ctx.fillStyle = '#7ee787';
-    ctx.font = '14px sans-serif';
+    ctx.font = 'bold 16px sans-serif';
     ctx.fillText('✓ Garbe!', W - 150, 30);
-    exp.innerHTML = '<p><strong>Stetige Funktionen:</strong> (S1) ✓ Stimmen Funktionen lokal überein, sind sie gleich. (S2) ✓ Stetige Funktionen auf Überlappungen lassen sich immer verkleben.</p>';
+    exp.innerHTML = '';
   } else if (scenario === 'bounded') {
+    // Different curves: one goes up, one goes down → mismatch in overlap
     ctx.strokeStyle = '#58a6ff';
     ctx.lineWidth = 3;
     ctx.beginPath();
     for (let x = u1Start; x <= u1End; x++) {
       const t = (x - u1Start) / (u1End - u1Start);
-      const y = H - 120 - 60 * t;
+      const y = H - 130 - 40 * Math.sin(t * Math.PI * 0.5);
       if (x === u1Start) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
     ctx.strokeStyle = '#7ee787';
+    ctx.lineWidth = 3;
     ctx.beginPath();
     for (let x = u2Start; x <= u2End; x++) {
       const t = (x - u2Start) / (u2End - u2Start);
-      const y = H - 120 - 60 * ((u1End - u1Start) / (u1End - u1Start)) - 60 * t;
+      const y = H - 130 - 40 * Math.sin((t + 0.5) * Math.PI * 0.5) - 30;
       if (x === u2Start) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.stroke();
 
+    // Overlap mismatch indicators
+    sampleXs.forEach(x => {
+      const t1 = (x - u1Start) / (u1End - u1Start);
+      const t2 = (x - u2Start) / (u2End - u2Start);
+      const y1 = H - 130 - 40 * Math.sin(t1 * Math.PI * 0.5);
+      const y2 = H - 130 - 40 * Math.sin((t2 + 0.5) * Math.PI * 0.5) - 30;
+      // Show the gap
+      ctx.strokeStyle = 'rgba(247,129,102,0.6)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
+      ctx.setLineDash([]);
+      // Mismatch X
+      ctx.fillStyle = '#f78166';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('✗', x - 5, barY + barH + 22);
+      // f1 and f2 value labels
+      ctx.fillStyle = '#58a6ff';
+      ctx.font = '9px sans-serif';
+      ctx.fillText('f₁', x + 5, y1 - 2);
+      ctx.fillStyle = '#7ee787';
+      ctx.fillText('f₂', x + 5, y2 + 10);
+    });
+
     ctx.fillStyle = '#f78166';
-    ctx.font = '14px sans-serif';
+    ctx.font = 'bold 16px sans-serif';
     ctx.fillText('✗ Keine Garbe!', W - 180, 30);
-    exp.innerHTML = '<p><strong>Beschränkte Funktionen:</strong> (S1) ✓ Aber (S2) ✗! Zwei beschränkte Funktionen können zusammen unbeschränkt sein. Verkleben scheitert.</p>';
+    exp.innerHTML = '';
   } else if (scenario === 'constant') {
-    // Locally constant functions
-    ctx.strokeStyle = '#58a6ff';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(u1Start, H - 150);
-    ctx.lineTo(u1End, H - 150);
-    ctx.stroke();
-
-    ctx.strokeStyle = '#7ee787';
-    ctx.beginPath();
-    ctx.moveTo(u2Start, H - 150);
-    ctx.lineTo(u2End, H - 150);
-    ctx.stroke();
-
-    ctx.fillStyle = '#7ee787';
-    ctx.font = '14px sans-serif';
-    ctx.fillText('✓ Garbe!', W - 150, 30);
-    exp.innerHTML = '<p><strong>Konstante Garbe:</strong> F(U) = {lokal konstante Funktionen U → G}. Auf zusammenhängenden U ist das einfach G. Verkleben funktioniert!</p>';
-  } else if (scenario === 'constantPre') {
-    ctx.strokeStyle = '#58a6ff';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(u1Start, H - 150);
-    ctx.lineTo(u1End, H - 150);
-    ctx.stroke();
+    // Same constant value on both — trivially match
     ctx.fillStyle = '#58a6ff';
-    ctx.fillText('G', u1Start - 20, H - 145);
-
-    ctx.strokeStyle = '#7ee787';
-    ctx.beginPath();
-    ctx.moveTo(u2Start, H - 180);
-    ctx.lineTo(u2End, H - 180);
-    ctx.stroke();
+    ctx.font = 'bold 20px sans-serif';
+    ctx.fillText('ℤ', (u1Start + u1End) / 2 - 8, H - 145);
     ctx.fillStyle = '#7ee787';
-    ctx.fillText('G', u2End + 5, H - 175);
+    ctx.fillText('ℤ', (u2Start + u2End) / 2 - 8, H - 145);
 
+    sampleXs.forEach(x => {
+      ctx.fillStyle = '#7ee787';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('✓', x - 5, barY + barH + 22);
+    });
+
+    ctx.fillStyle = '#7ee787';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('✓ Garbe!', W - 150, 30);
+    exp.innerHTML = '';
+  } else if (scenario === 'constantPre') {
+    // U₁→G, U₂→G; but U₁∪U₂→G not G×G → product mismatch
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.fillText('G', (u1Start + u1End) / 2 - 6, H - 145);
+    ctx.fillStyle = '#7ee787';
+    ctx.fillText('G', (u2Start + u2End) / 2 - 6, H - 145);
+
+    // Draw U₁∪U₂ label below and show the problem
+    const unionMid = (u1Start + u2End) / 2;
     ctx.fillStyle = '#f78166';
-    ctx.font = '14px sans-serif';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('U₁ ∪ U₂', unionMid - 28, H - 20);
+    ctx.strokeStyle = '#f78166';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeRect(u1Start, barY + 2, u2End - u1Start, barH - 4);
+    ctx.setLineDash([]);
+
+    // Mismatch indicators
+    sampleXs.forEach(x => {
+      ctx.fillStyle = '#f78166';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('✗', x - 5, barY + barH + 22);
+    });
+
+    // Product mismatch annotation
+    ctx.fillStyle = '#f78166';
+    ctx.font = 'bold 14px sans-serif';
     ctx.fillText('✗ Keine Garbe!', W - 180, 30);
-    exp.innerHTML = '<p><strong>Konstante Prägarbe:</strong> F(U) = G für alle U. Problem: Für disjunkte U₁, U₂ verlangt die Garbe F(U₁ ∪ U₂) = G × G, aber die Prägarbe gibt nur G. (S2) verletzt!</p>';
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('F(U₁∪U₂) = G  (sollte G×G)', u1Start, H - 5);
+    exp.innerHTML = '';
   }
 }
 document.getElementById('sheafScenario').addEventListener('change', drawSheafScenario);
@@ -1047,15 +1190,18 @@ function drawStalk() {
   const type = document.getElementById('stalkType').value;
   const px = 50 + xPos * (W - 100);
 
-  // Draw base line
+  // Draw base line labeled X
   ctx.strokeStyle = '#30363d';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(50, H - 60);
   ctx.lineTo(W - 50, H - 60);
   ctx.stroke();
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Raum X', W - 65, H - 45);
 
-  // Draw point x
+  // Draw point x and global section indicator
   ctx.fillStyle = '#f78166';
   ctx.beginPath();
   ctx.arc(px, H - 60, 8, 0, 2 * Math.PI);
@@ -1064,76 +1210,140 @@ function drawStalk() {
   ctx.font = '14px sans-serif';
   ctx.fillText('x', px - 3, H - 35);
 
-  // Draw shrinking neighborhoods
-  const colors = ['rgba(88,166,255,0.15)', 'rgba(88,166,255,0.2)', 'rgba(88,166,255,0.3)', 'rgba(88,166,255,0.4)'];
+  // Draw a "global section" line spanning the whole space (for context)
+  if (type === 'continuous') {
+    ctx.strokeStyle = 'rgba(88,166,255,0.15)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    for (let xx = 50; xx <= W - 50; xx++) {
+      const t = (xx - 50) / (W - 100);
+      const y = H - 60 - 10 - 15 * Math.sin(t * Math.PI * 2);
+      if (xx === 50) ctx.moveTo(xx, y); else ctx.lineTo(xx, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(88,166,255,0.3)';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('Globaler Schnitt s ∈ ℱ(X)', 50, H - 35);
+  }
+
+  // Layered hierarchy: neighborhoods getting smaller → germ → stalk
+  const levelLabels = ['Schnitt auf U₁', 'Schnitt auf U₂', 'Schnitt auf U₃', 'Keim [s]_x'];
+  const colors = ['rgba(88,166,255,0.12)', 'rgba(88,166,255,0.18)', 'rgba(88,166,255,0.25)', 'rgba(210,168,255,0.30)'];
+  const borderColors = ['#58a6ff', '#58a6ff', '#58a6ff', '#d2a8ff'];
   const radii = [200, 140, 90, 50];
 
   for (let i = 0; i < radii.length; i++) {
     const r = radii[i];
+    const y = H - 80 - i * 55;
+    // Filled rectangle for the neighborhood
     ctx.fillStyle = colors[i];
-    ctx.fillRect(px - r, H - 80 - i * 60, 2 * r, 50);
-    ctx.strokeStyle = '#58a6ff';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(px - r, H - 80 - i * 60, 2 * r, 50);
+    ctx.fillRect(px - r, y, 2 * r, 42);
+    ctx.strokeStyle = borderColors[i];
+    ctx.lineWidth = i === radii.length - 1 ? 3 : 1;
+    ctx.strokeRect(px - r, y, 2 * r, 42);
 
-    // Section on this neighborhood
+    // Section inside
     if (type === 'continuous') {
       ctx.strokeStyle = '#7ee787';
       ctx.lineWidth = 2;
       ctx.beginPath();
       for (let xx = px - r; xx <= px + r; xx++) {
         const t = (xx - px) / r;
-        const y = H - 80 - i * 60 + 25 - 15 * Math.cos(t * Math.PI * (i + 1));
-        if (xx === px - r) ctx.moveTo(xx, y); else ctx.lineTo(xx, y);
+        const yy = y + 21 - 12 * Math.cos(t * Math.PI * (i + 1));
+        if (xx === px - r) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
       }
       ctx.stroke();
     } else if (type === 'constant') {
       ctx.fillStyle = '#7ee787';
-      ctx.font = '12px sans-serif';
-      ctx.fillText('ℤ', px - 5, H - 80 - i * 60 + 30);
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('ℤ', px - 5, y + 28);
     } else if (type === 'skyscraper') {
       const skyX = 0.5;
       const skyPx = 50 + skyX * (W - 100);
-      if (Math.abs(px - skyPx) < r) {
-        ctx.fillStyle = '#7ee787';
-        ctx.font = '12px sans-serif';
-        ctx.fillText('ℤ', px - 5, H - 80 - i * 60 + 30);
-      } else {
-        ctx.fillStyle = '#8b949e';
-        ctx.font = '12px sans-serif';
-        ctx.fillText('0', px - 3, H - 80 - i * 60 + 30);
-      }
+      ctx.fillStyle = Math.abs(px - skyPx) < r ? '#7ee787' : '#8b949e';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText(Math.abs(px - skyPx) < r ? 'ℤ' : '0', px - 5, y + 28);
+    }
+
+    // Level label on the right
+    ctx.fillStyle = i === radii.length - 1 ? '#d2a8ff' : '#58a6ff';
+    ctx.font = i === radii.length - 1 ? 'bold 13px sans-serif' : '12px sans-serif';
+    ctx.fillText(levelLabels[i], px + r + 8, y + 28);
+
+    // Restriction arrow between levels
+    if (i < radii.length - 1) {
+      ctx.strokeStyle = 'rgba(139,148,158,0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px, y + 42);
+      ctx.lineTo(px, y + 42 + 5);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(139,148,158,0.3)';
+      ctx.font = '8px sans-serif';
+      ctx.fillText('↓ Einschränkung', px + 8, y + 42 + 7);
     }
   }
 
-  // Arrow to stalk
+  // Arrow to stalk (from the germ level up)
+  const germTopY = H - 80 - 3 * 55;
   ctx.strokeStyle = '#f78166';
   ctx.lineWidth = 2;
   ctx.setLineDash([4, 4]);
   ctx.beginPath();
-  ctx.moveTo(px, H - 80 - 4 * 60 + 10);
+  ctx.moveTo(px, germTopY);
   ctx.lineTo(px, 30);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Stalk label
+  // Stalk label at top
   ctx.fillStyle = '#f78166';
   ctx.font = 'bold 16px sans-serif';
+  ctx.fillText('Halm ℱ_x', px - 35, 25);
 
+  // Stalk "basket" icon — open circle collecting germs
+  ctx.strokeStyle = '#f78166';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(px + 70, 18, 12, 0.3, Math.PI - 0.3);
+  ctx.stroke();
+  ctx.fillStyle = '#f78166';
+  ctx.font = '10px sans-serif';
+  ctx.fillText('{Keime}', px + 70, 35);
+
+  // Info box: show what stalk looks like right now
   const info = document.getElementById('stalkInfo');
   if (type === 'continuous') {
-    ctx.fillText('F_x = Keime stetiger Fkt.', px - 80, 25);
-    info.innerHTML = '<p><strong>Halm der stetigen Funktionen:</strong> Der Keim bei x enthält alle Information über das lokale Verhalten. Zwei Funktionen haben denselben Keim ⟺ sie stimmen in einer Umgebung von x überein.</p>';
+    info.innerHTML = '<div style="display:flex; gap:20px; align-items:center">'
+      + '<div><strong style="color:var(--accent3)">ℱ_x = Keime stetiger Fkt.</strong><br>'
+      + 'Jeder Schnitt auf einer Umgebung von x definiert einen Keim.<br>'
+      + '<span style="color:var(--text-dim); font-size:0.9em">Zwei Funktionen haben denselben Keim ⟺ sie stimmen auf einer Umgebung von x überein.</span></div>'
+      + '<div style="border-left:1px solid var(--border); padding-left:15px">'
+      + '<span style="color:var(--accent)">ℱ_x =</span> '
+      + '<span style="color:var(--accent3)">{ [f]_x </span>'
+      + '<span style="color:var(--text-dim)">|</span> '
+      + '<span style="color:var(--accent3)">f stetig in Umgebung von x }</span>'
+      + '</div></div>';
   } else if (type === 'constant') {
-    ctx.fillText('F_x = ℤ', px - 20, 25);
-    info.innerHTML = '<p><strong>Halm der konstanten Garbe ℤ:</strong> Immer ℤ, unabhängig von x. Denn auf zusammenhängenden Umgebungen ist jeder Schnitt konstant.</p>';
+    info.innerHTML = '<div style="display:flex; gap:20px; align-items:center">'
+      + '<div><strong style="color:var(--accent3)">ℱ_x = ℤ</strong><br>'
+      + 'Auf jeder zusammenhängenden Umgebung ist der Schnitt konstant.<br>'
+      + '<span style="color:var(--text-dim); font-size:0.9em">Der Halm ist immer ℤ, egal wo x steht.</span></div>'
+      + '<div style="border-left:1px solid var(--border); padding-left:15px">'
+      + '<span style="color:var(--accent)">ℱ_x =</span> '
+      + '<span style="color:var(--accent3)">{ ℤ }</span>'
+      + '</div></div>';
   } else if (type === 'skyscraper') {
-    const skyX = 0.5;
-    const isAtSky = Math.abs(xPos - skyX) < 0.05;
-    ctx.fillText(isAtSky ? 'F_x = ℤ' : 'F_x = 0', px - 20, 25);
-    info.innerHTML = isAtSky ?
-      '<p><strong>Wolkenkratzer-Garbe bei 0.5:</strong> Der Halm ist ℤ genau am Punkt 0.5, und 0 überall sonst.</p>' :
-      '<p><strong>Wolkenkratzer-Garbe bei 0.5:</strong> Weg vom Punkt 0.5 ist der Halm trivial (= 0).</p>';
+    const isAtSky = Math.abs(xPos - 0.5) < 0.05;
+    info.innerHTML = '<div style="display:flex; gap:20px; align-items:center">'
+      + '<div><strong style="color:var(--accent3)">ℱ_x = ' + (isAtSky ? 'ℤ' : '0') + '</strong><br>'
+      + (isAtSky ? 'Am Punkt 0.5 sitzt die ganze Information.' : 'Weg vom Punkt 0.5 ist der Halm trivial.') + '<br>'
+      + '<span style="color:var(--text-dim); font-size:0.9em">Wolkenkratzer-Garbe: nur ein Punkt trägt Daten.</span></div>'
+      + '<div style="border-left:1px solid var(--border); padding-left:15px">'
+      + '<span style="color:var(--accent)">ℱ_x =</span> '
+      + '<span style="color:var(--accent3)">{ ' + (isAtSky ? 'ℤ' : '0') + ' }</span>'
+      + '</div></div>';
   }
 }
 document.getElementById('stalkX').addEventListener('input', drawStalk);
