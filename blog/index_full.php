@@ -60,7 +60,6 @@
 	incl("Inference Optimization", "inference_optimization");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
-	incl("Literature", "literature");
 	incl("Appendix", "appendix");
 ?>
 </div>
