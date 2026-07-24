@@ -116,6 +116,15 @@ The earliest forms of "proto-writing" began with symbolic art. These were the fi
 * **Symbolic Engravings:** Some of the oldest known symbolic artifacts are ochre engravings from the Blombos Cave in South Africa, dating back to the Middle Stone Age.
 * **Tallies:** Objects like the Lebombo bone (ca. 35,000 BCE) represent even more specific data storage, likely used as mathematical tally sticks for tracking lunar cycles or inventories.
 
+<figure>
+    <img style="width: 100%" src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina, dating from approximately 7300 BC">
+    <figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos}, Argentina (c. 7300 BC – 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall \cite{cuevadelasmanos_image}.</figcaption>
+</figure>
+
+The **Cueva de las Manos** (Cave of the Hands) in Patagonia, Argentina, contains over 2,000 hand stencils created between approximately 7,300 BC and 700 AD \cite{cuevadelasmanos}. Artists sprayed mineral pigments—iron oxides, kaolin, manganese oxide—through hollow bone pipes over hands pressed against the rock face, producing negative imprints. The site also features naturalistic hunting scenes depicting guanaco drives, geometric patterns, and abstract figures spanning multiple stylistic periods over nine millennia.
+
+What makes these hand stencils significant in the trajectory toward artificial intelligence is not their aesthetic beauty but their cognitive implication: each handprint is an act of **self-referential symbolic displacement**. The artist uses their own body as a template to produce a persistent, external representation of *themselves*—a mark that says "I was here" long after the hand is withdrawn. This is the same cognitive operation that underlies all subsequent abstraction: the realization that a *sign* can stand for a *thing*, and that the sign persists independently of the thing it represents. From hand stencils to tally marks, from tally marks to numerals, from numerals to variables, from variables to embeddings—the trajectory is unbroken. The bone pipe that sprayed ochre onto a Patagonian cliff face 9,000 years ago performed, in miniature, the same operation as a modern tokenizer: transforming a continuous, embodied reality into a discrete, storable, transmissible representation.
+
 ### Counting Stones and Tokens
 In the Near East (ca. 8000 BCE), the transition to agriculture required better accounting. People used small clay **tokens** of various shapes (cones, spheres, cylinders) to represent specific goods like grain or livestock.
 * **Bullae:** To secure these transactions, tokens were often sealed inside clay envelopes called *bullae*.

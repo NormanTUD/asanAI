@@ -1,4 +1,16 @@
 window.bibData = {
+	"cuevadelasmanos": {
+		title: "Cueva de las Manos",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cueva_de_las_Manos"
+	},
+	"cuevadelasmanos_image": {
+		title: "Cueva de las Manos (6811931046)",
+		author: "Wikimedia Commons",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg"
+	},
 	"The Ramon Llull's Thinking Machine for Automated Ideation": {
 		title: "The Ramon Llull's Thinking Machine for Automated Ideation",
 		year: 2025,
