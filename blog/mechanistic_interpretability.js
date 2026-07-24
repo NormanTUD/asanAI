@@ -315,7 +315,7 @@
         let temperature = 1.0;
         const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
         const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '220px'}}, controlRow);
-        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '420px'}}, controlRow);
+        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '420px', position: 'relative'}}, controlRow);
 
         createElement('h4', {textContent: 'Adjust Projections', style: {margin: '0 0 10px 0', fontSize: '14px'}}, sliderPanel);
         createSlider(sliderPanel, 'W_Q — "What I look for"', 0.1, 2.0, 1.0, 0.1, (v) => { qScale = v; refreshProj(); draw(); });
@@ -331,8 +331,12 @@
 
         const infoPanel = createElement('div', {style: {marginTop: '12px', padding: '12px', background: '#fff', borderRadius: '6px', fontSize: '12px', lineHeight: '1.5', border: '1px solid #e0e0e0'}}, sliderPanel);
 
-        const canvas = createCanvas(canvasPanel, 520, 480);
+        const tooltip = createElement('div', {style: {position: 'absolute', display: 'none', padding: '8px 12px', background: 'rgba(30,30,30,0.95)', color: '#fff', borderRadius: '6px', fontSize: '11px', fontFamily: 'monospace', pointerEvents: 'none', zIndex: '100', whiteSpace: 'nowrap', lineHeight: '1.6', border: '1px solid #555', maxWidth: '380px'}}, canvasPanel);
+
+        const canvas = createCanvas(canvasPanel, 520, 520);
         const ctx = canvas.getContext('2d');
+
+        let hoveredCell = null;
 
         function computeQKV() {
             const Qs = [], Ks = [], Vs = [];
@@ -352,154 +356,378 @@
             return {Qs, Ks, Vs, scores, attn, output};
         }
 
+        function getCellInfo(row, ti, di) {
+            const {Qs, Ks, Vs, scores, attn, output} = computeQKV();
+            const tName = tokens[ti];
+            const f = (v) => v.toFixed(2);
+            const WQ_rc = (r, c) => W_Q[r * dHead + c];
+            const WK_rc = (r, c) => W_K[r * dHead + c];
+            const WV_rc = (r, c) => W_V[r * dHead + c];
+
+            if (row === 'embed') {
+                return `<b>embed[${ti}][${di}]</b> = ${f(embeddings[ti][di])}<br>↳ "${tName}" — raw token embedding, dimension ${di}`;
+            }
+            if (row === 'q') {
+                const terms = [];
+                for (let k = 0; k < dHead; k++) {
+                    terms.push(`${f(WQ_rc(di, k))}·e${k}`);
+                }
+                const actualTerms = [];
+                for (let k = 0; k < dHead; k++) {
+                    actualTerms.push(`${f(WQ_rc(di, k))}×${f(embeddings[ti][k])}`);
+                }
+                return `<b>Q[${ti}][${di}]</b> = ${f(Qs[ti][di])}<br>` +
+                    `<span style="color:#999">= Σ W_Q[${di}][k]·embed[${ti}][k]</span><br>` +
+                    `<span style="color:#888">= ${actualTerms.join(' + ')}</span><br>` +
+                    `↳ query "${tName}" at dim ${di} — "What I look for"`;
+            }
+            if (row === 'k') {
+                const actualTerms = [];
+                for (let k = 0; k < dHead; k++) {
+                    actualTerms.push(`${f(WK_rc(di, k))}×${f(embeddings[ti][k])}`);
+                }
+                return `<b>K[${ti}][${di}]</b> = ${f(Ks[ti][di])}<br>` +
+                    `<span style="color:#999">= Σ W_K[${di}][k]·embed[${ti}][k]</span><br>` +
+                    `<span style="color:#888">= ${actualTerms.join(' + ')}</span><br>` +
+                    `↳ key "${tName}" at dim ${di} — "What I contain"`;
+            }
+            if (row === 'v') {
+                const actualTerms = [];
+                for (let k = 0; k < dHead; k++) {
+                    actualTerms.push(`${f(WV_rc(di, k))}×${f(embeddings[ti][k])}`);
+                }
+                return `<b>V[${ti}][${di}]</b> = ${f(Vs[ti][di])}<br>` +
+                    `<span style="color:#999">= Σ W_V[${di}][k]·embed[${ti}][k]</span><br>` +
+                    `<span style="color:#888">= ${actualTerms.join(' + ')}</span><br>` +
+                    `↳ value "${tName}" at dim ${di} — "What I share"`;
+            }
+            if (row === 'attn') {
+                const qName = tokens[queryIdx];
+                const rawScore = scores[ti];
+                const attnPct = (attn[ti] * 100).toFixed(1);
+                const qTerms = [];
+                for (let d = 0; d < dHead; d++) {
+                    qTerms.push(`${f(Qs[queryIdx][d])}×${f(Ks[ti][d])}`);
+                }
+                return `<b>Attention→"${tName}"</b> = ${attnPct}%<br>` +
+                    `<span style="color:#999">raw score = Q["${qName}"]·K["${tName}"] / √d</span><br>` +
+                    `<span style="color:#888">= (${qTerms.join(' + ')}) / ${f(Math.sqrt(dHead))}</span><br>` +
+                    `<span style="color:#888">= ${f(rawScore)} → softmax → ${f(attn[ti])}</span><br>` +
+                    `↳ how much "${tName}" contributes to the output`;
+            }
+            if (row === 'output') {
+                const terms = [];
+                for (let t = 0; t < seqLen; t++) {
+                    terms.push(`${(attn[t]*100).toFixed(0)}%×${f(Vs[t][di])}`);
+                }
+                return `<b>output[${di}]</b> = ${f(output[di])}<br>` +
+                    `<span style="color:#999">= Σ attn[t]·V[t][${di}]</span><br>` +
+                    `<span style="color:#888">= ${terms.join(' + ')}</span><br>` +
+                    `↳ final attention-weighted value at dimension ${di}`;
+            }
+            return '';
+        }
+
+        function drawBracket(ctx, x1, x2, y, label) {
+            const mid = (x1 + x2) / 2;
+            ctx.save();
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x1, y); ctx.lineTo(x1, y + 5);
+            ctx.moveTo(x2, y); ctx.lineTo(x2, y + 5);
+            ctx.moveTo(x1, y + 5); ctx.lineTo(x2, y + 5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(mid, y + 5); ctx.lineTo(mid, y + 10);
+            ctx.stroke();
+            ctx.fillStyle = '#888';
+            ctx.font = '8px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, mid, y + 20);
+            ctx.textAlign = 'start';
+            ctx.restore();
+        }
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const {Qs, Ks, Vs, attn, output} = computeQKV();
-            const cell = 22, g = 16, leftLabel = 70;
+            const cell = 20, leftLabel = 60;
+            const colW = dHead * (cell + 2);
+            const rowH = cell + 28;
 
-            // Row 1: tokens + embeddings
-            let y = 18;
+            function tokenX(i) { return leftLabel + i * (colW + 16); }
+            function cellX(i, d) { return tokenX(i) + d * (cell + 2); }
+            function cellRect(i, d, y, h) { return {x: cellX(i, d), y, w: cell, h}; }
+            function inCell(mx, my, i, d, y, h) {
+                const r = cellRect(i, d, y, h);
+                return mx >= r.x && mx < r.x + r.w && my >= r.y && my < r.y + r.h;
+            }
+
+            const dimLabel = (x, d, y) => {
+                ctx.fillStyle = '#aaa';
+                ctx.font = '7px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('d' + d, x + (cell + 2) * d + cell / 2, y);
+                ctx.textAlign = 'start';
+            };
+
+            // ── Row 1: Embed ──
+            let y1 = 6;
             ctx.fillStyle = '#2563eb';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Embed →', 4, y + 6);
+            ctx.fillText('Embed', 4, y1 + 14);
             for (let i = 0; i < seqLen; i++) {
-                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                const x = tokenX(i);
                 ctx.fillStyle = i === queryIdx ? '#2563eb' : '#555';
                 ctx.font = 'bold 11px sans-serif';
-                ctx.fillText(tokens[i], x, y);
+                ctx.fillText(tokens[i], x, y1 + 2);
                 for (let d = 0; d < dHead; d++) {
                     const v = embeddings[i][d];
                     const intensity = Math.min(Math.abs(v), 1);
-                    ctx.fillStyle = v >= 0 ? `rgba(74,144,217,${intensity*0.7+0.15})` : `rgba(231,76,60,${intensity*0.7+0.15})`;
-                    ctx.fillRect(x + d * (cell + 2), y + 6, cell, cell - 4);
-                    ctx.strokeStyle = '#ddd';
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x + d * (cell + 2), y + 6, cell, cell - 4);
+                    const fill = v >= 0 ? `rgba(74,144,217,${intensity*0.7+0.15})` : `rgba(231,76,60,${intensity*0.7+0.15})`;
+                    ctx.fillStyle = fill;
+                    const cx = cellX(i, d), cy = y1 + 10;
+                    ctx.fillRect(cx, cy, cell, cell - 4);
+                    ctx.strokeStyle = hoveredCell && hoveredCell.row === 'embed' && hoveredCell.ti === i && hoveredCell.di === d ? '#2563eb' : '#ddd';
+                    ctx.lineWidth = hoveredCell && hoveredCell.row === 'embed' && hoveredCell.ti === i && hoveredCell.di === d ? 2 : 0.5;
+                    ctx.strokeRect(cx, cy, cell, cell - 4);
+                    ctx.fillStyle = Math.abs(v) > 0.5 ? '#fff' : '#555';
+                    ctx.font = '8px monospace';
+                    ctx.fillText(v.toFixed(1), cx + 3, cy + 12);
                 }
+                if (i === 0) dimLabel(x, 0, y1 + cell + 18);
             }
+            drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y1 + cell + 24, 'd_head=4');
+            const embedH = y1 + cell + 40;
 
-            // Row 2: Q (only query)
-            y = 72;
+            // ── Row 2: Q ──
+            let y2 = embedH + 2;
             ctx.fillStyle = '#4a90d9';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Q = Wq·Embed  ← query "' + tokens[queryIdx] + '" asks: what am I looking for?', 4, y + 6);
+            ctx.fillText(`Q = Wq·Embed  ← "${tokens[queryIdx]}" looks for patterns`, 4, y2 + 14);
             for (let i = 0; i < seqLen; i++) {
-                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                const x = tokenX(i);
                 for (let d = 0; d < dHead; d++) {
                     const v = Qs[i][d];
                     const intensity = Math.min(Math.abs(v), 1);
-                    ctx.globalAlpha = i === queryIdx ? 1 : 0.12;
+                    ctx.globalAlpha = i === queryIdx ? 1 : 0.15;
                     ctx.fillStyle = `rgba(74,144,217,${intensity*0.7+0.15})`;
-                    ctx.fillRect(x + d * (cell + 2), y + 10, cell, cell - 4);
-                    ctx.strokeStyle = '#bbb';
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    const cx = cellX(i, d), cy = y2 + 10;
+                    ctx.fillRect(cx, cy, cell, cell - 4);
+                    ctx.strokeStyle = hoveredCell && hoveredCell.row === 'q' && hoveredCell.ti === i && hoveredCell.di === d ? '#2563eb' : '#bbb';
+                    ctx.lineWidth = hoveredCell && hoveredCell.row === 'q' && hoveredCell.ti === i && hoveredCell.di === d ? 2 : 0.5;
+                    ctx.strokeRect(cx, cy, cell, cell - 4);
                     ctx.globalAlpha = 1;
                 }
+                if (i === 0) dimLabel(x, 0, y2 + cell + 18);
             }
+            drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y2 + cell + 24, 'd_head=4');
+            const qH = y2 + cell + 40;
 
-            // Row 3: K
-            y = 114;
+            // ── Row 3: K ──
+            let y3 = qH + 2;
             ctx.fillStyle = '#e74c3c';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('K = Wk·Embed  ← each token says: here is what I contain', 4, y + 6);
+            ctx.fillText('K = Wk·Embed  ← each token says what it contains', 4, y3 + 14);
             for (let i = 0; i < seqLen; i++) {
-                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                const x = tokenX(i);
                 for (let d = 0; d < dHead; d++) {
                     const v = Ks[i][d];
                     const intensity = Math.min(Math.abs(v), 1);
                     ctx.fillStyle = `rgba(231,76,60,${intensity*0.7+0.15})`;
-                    ctx.fillRect(x + d * (cell + 2), y + 10, cell, cell - 4);
-                    ctx.strokeStyle = '#ddd';
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    const cx = cellX(i, d), cy = y3 + 10;
+                    ctx.fillRect(cx, cy, cell, cell - 4);
+                    ctx.strokeStyle = hoveredCell && hoveredCell.row === 'k' && hoveredCell.ti === i && hoveredCell.di === d ? '#e74c3c' : '#ddd';
+                    ctx.lineWidth = hoveredCell && hoveredCell.row === 'k' && hoveredCell.ti === i && hoveredCell.di === d ? 2 : 0.5;
+                    ctx.strokeRect(cx, cy, cell, cell - 4);
                 }
+                if (i === 0) dimLabel(x, 0, y3 + cell + 18);
             }
+            drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y3 + cell + 24, 'd_head=4');
+            const kH = y3 + cell + 40;
 
-            // Row 4: V
-            y = 156;
+            // ── Row 4: V ──
+            let y4 = kH + 2;
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('V = Wv·Embed  ← each token offers: here is what I share', 4, y + 6);
+            ctx.fillText('V = Wv·Embed  ← each token offers what it shares', 4, y4 + 14);
             for (let i = 0; i < seqLen; i++) {
-                const x = leftLabel + i * (dHead * (cell + 2) + 14);
+                const x = tokenX(i);
                 for (let d = 0; d < dHead; d++) {
                     const v = Vs[i][d];
                     const intensity = Math.min(Math.abs(v), 1);
                     ctx.fillStyle = `rgba(46,204,113,${intensity*0.7+0.15})`;
-                    ctx.fillRect(x + d * (cell + 2), y + 10, cell, cell - 4);
-                    ctx.strokeStyle = '#ddd';
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(x + d * (cell + 2), y + 10, cell, cell - 4);
+                    const cx = cellX(i, d), cy = y4 + 10;
+                    ctx.fillRect(cx, cy, cell, cell - 4);
+                    ctx.strokeStyle = hoveredCell && hoveredCell.row === 'v' && hoveredCell.ti === i && hoveredCell.di === d ? '#2ecc71' : '#ddd';
+                    ctx.lineWidth = hoveredCell && hoveredCell.row === 'v' && hoveredCell.ti === i && hoveredCell.di === d ? 2 : 0.5;
+                    ctx.strokeRect(cx, cy, cell, cell - 4);
                 }
+                if (i === 0) dimLabel(x, 0, y4 + cell + 18);
             }
+            drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y4 + cell + 24, 'd_head=4');
+            const vH = y4 + cell + 40;
 
-            // Computation arrow
-            y = 202;
+            // ── Arrow ──
+            let yA = vH + 4;
             ctx.fillStyle = '#333';
-            ctx.font = '11px sans-serif';
-            ctx.fillText('↓  attention = softmax(Q·K / temp)  →  output = Σ attn·V', 4, y + 6);
-            const arrowY = y + 12;
-            ctx.strokeStyle = '#999';
-            ctx.lineWidth = 1.5;
+            ctx.font = '10px sans-serif';
+            ctx.fillText('↓ attn = softmax(Q·K/temp)  →  out = Σ attn·V', 4, yA + 8);
+            ctx.strokeStyle = '#bbb';
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(50, arrowY); ctx.lineTo(canvas.width - 20, arrowY);
+            ctx.moveTo(60, yA + 14); ctx.lineTo(canvas.width - 20, yA + 14);
             ctx.stroke();
+            const aH = yA + 24;
 
-            // Row 5: Attention scores
-            y = 236;
+            // ── Row 5: Attention ──
+            let y5 = aH + 2;
             ctx.fillStyle = '#333';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Attention (Q·K match)', 4, y + 6);
-            const boxSize = 40;
+            ctx.fillText('Attention', 4, y5 + 14);
+            const boxSize = 38;
             for (let j = 0; j < seqLen; j++) {
-                const x = leftLabel + j * (boxSize + 8);
+                const x = tokenX(j);
                 ctx.fillStyle = j === queryIdx ? '#2563eb' : '#555';
-                ctx.font = '10px monospace';
-                ctx.fillText(tokens[j], x + 4, y - 4);
+                ctx.font = '9px monospace';
+                ctx.fillText(tokens[j], x + 4, y5 + 4);
                 const v = attn[j], inten = Math.min(v * 3, 1);
                 ctx.fillStyle = `rgba(74,144,217,${inten*0.8+0.1})`;
-                ctx.fillRect(x, y + 6, boxSize, boxSize);
-                ctx.strokeStyle = v > 0.3 ? '#2563eb' : '#ddd';
-                ctx.lineWidth = v > 0.5 ? 2 : 1;
-                ctx.strokeRect(x, y + 6, boxSize, boxSize);
+                ctx.fillRect(x, y5 + 10, boxSize, boxSize);
+                ctx.strokeStyle = hoveredCell && hoveredCell.row === 'attn' && hoveredCell.ti === j ? '#2563eb' : (v > 0.3 ? '#2563eb' : '#ddd');
+                ctx.lineWidth = hoveredCell && hoveredCell.row === 'attn' && hoveredCell.ti === j ? 2.5 : (v > 0.5 ? 2 : 1);
+                ctx.strokeRect(x, y5 + 10, boxSize, boxSize);
                 ctx.fillStyle = v > 0.4 ? '#fff' : '#333';
-                ctx.font = 'bold 11px monospace';
-                ctx.fillText((v * 100).toFixed(0) + '%', x + 4, y + 30);
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText((v * 100).toFixed(0) + '%', x + 4, y5 + 35);
             }
+            const attnH = y5 + boxSize + 14;
 
-            // Row 6: Output
-            y = 310;
+            // ── Row 6: Output ──
+            let y6 = attnH + 4;
             ctx.fillStyle = '#333';
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('Output = ' + seqLen + ' weighted V summed ↓', 4, y + 6);
+            ctx.fillText('Output = Σ attn·V (weighted sum)', 4, y6 + 14);
+            const outCell = cell + 4;
             for (let d = 0; d < dHead; d++) {
                 const v = output[d];
                 const intensity = Math.min(Math.abs(v), 1);
                 ctx.fillStyle = v >= 0 ? `rgba(46,204,113,${intensity*0.8+0.1})` : `rgba(231,76,60,${intensity*0.8+0.1})`;
-                ctx.fillRect(leftLabel + d * (cell + 2), y + 12, cell + 8, cell + 4);
+                const cx = leftLabel + d * (cell + 4), cy = y6 + 10;
+                ctx.fillRect(cx, cy, outCell, outCell);
+                ctx.strokeStyle = hoveredCell && hoveredCell.row === 'output' && hoveredCell.di === d ? '#2ecc71' : '#bbb';
+                ctx.lineWidth = hoveredCell && hoveredCell.row === 'output' && hoveredCell.di === d ? 2 : 0.5;
+                ctx.strokeRect(cx, cy, outCell, outCell);
+                ctx.fillStyle = Math.abs(v) > 0.5 ? '#fff' : '#333';
+                ctx.font = 'bold 9px monospace';
+                ctx.fillText(v.toFixed(1), cx + 4, cy + 13);
             }
-            let contribStr = '= ';
-            for (let j = 0; j < seqLen; j++) {
-                contribStr += tokens[j] + ' (' + (attn[j] * 100).toFixed(0) + '%)' + (j < seqLen - 1 ? ' + ' : '');
+            ctx.fillStyle = '#aaa';
+            ctx.font = '7px sans-serif';
+            ctx.textAlign = 'center';
+            for (let d = 0; d < dHead; d++) {
+                ctx.fillText('d' + d, leftLabel + d * (cell + 4) + outCell / 2, y6 + 34);
             }
-            ctx.fillStyle = '#777';
-            ctx.font = '10px sans-serif';
-            ctx.fillText(contribStr, leftLabel, y + 48);
+            ctx.textAlign = 'start';
 
-            // Info panel
+            // ── hover tooltip ──
+            if (hoveredCell) {
+                const {row, ti, di} = hoveredCell;
+                tooltip.style.display = 'block';
+                tooltip.innerHTML = getCellInfo(row, ti, di);
+            } else {
+                tooltip.style.display = 'none';
+            }
+
+            // ── Info panel ──
             const qNorm = norm(Qs[queryIdx]);
             const topAttn = Math.max(...attn), topIdx = attn.indexOf(topAttn);
             const entropy = -attn.reduce((s, p) => s + (p > 0 ? p * Math.log(p) : 0), 0);
             infoPanel.innerHTML = `
-                <strong>Step by step:</strong><br>
-                <span style="color:#4a90d9">Q</span> = query "${tokens[queryIdx]}" projected (magnitude ${qNorm.toFixed(2)})<br>
-                <span style="color:#e74c3c">K</span> = each token's key — best match: <strong>"${tokens[topIdx]}"</strong> (${(topAttn*100).toFixed(0)}%)<br>
-                <span style="color:#2ecc71">V</span> = each token's value, weighted by attention → output<br>
-                Attention spread: ${entropy > 1.0 ? 'broad' : 'focused'}<br>
-                <em>Try sliders: W_Q changes what the query looks for; W_K changes what tokens advertise; temperature smooths attention.</em>
+                <strong>Step by step:</strong> <span style="color:#4a90d9">Q</span>="${tokens[queryIdx]}" (|Q|=${qNorm.toFixed(2)})
+                | <span style="color:#e74c3c">K</span> best match: <b>"${tokens[topIdx]}"</b> (${(topAttn*100).toFixed(0)}%)
+                | Attention: ${entropy > 1.0 ? 'broad' : 'focused'}
+                | <em>Hover any cell for details</em>
             `;
+
+            // ── Legend ──
+            ctx.fillStyle = '#aaa';
+            ctx.font = '9px sans-serif';
+            ctx.fillText('Hover over any colored cell to see its computation breakdown. Adjust sliders to explore.', 4, canvas.height - 6);
         }
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            const {Qs, Ks, Vs, attn, output} = computeQKV();
+            const cell = 20, leftLabel = 60;
+            const colW = dHead * (cell + 2);
+
+            function tokenX(i) { return leftLabel + i * (colW + 16); }
+            function cellX(i, d) { return tokenX(i) + d * (cell + 2); }
+            function checkInRow(my, yStart, rowName) {
+                for (let i = 0; i < seqLen; i++) {
+                    for (let d = 0; d < dHead; d++) {
+                        const cx = cellX(i, d), cy = yStart + 10;
+                        if (mx >= cx && mx < cx + cell && my >= cy && my < cy + cell - 4) {
+                            hoveredCell = {row: rowName, ti: i, di: d};
+                            tooltip.style.left = (e.offsetX + 15) + 'px';
+                            tooltip.style.top = (e.offsetY + 10) + 'px';
+                            draw();
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            const rowYs = [
+                {y: 6, name: 'embed'}, {y: 6 + (cell + 40) + 2, name: 'q'},
+                {y: 6 + (cell + 40) * 2 + 4, name: 'k'}, {y: 6 + (cell + 40) * 3 + 6, name: 'v'},
+            ];
+
+            hoveredCell = null;
+            for (const ry of rowYs) {
+                if (checkInRow(my, ry.y, ry.name)) { draw(); return; }
+            }
+
+            // Check attention row
+            const yAttn = 4 + (cell + 40) * 4 + 24 + 2;
+            const boxSize = 38;
+            for (let j = 0; j < seqLen; j++) {
+                const x = tokenX(j);
+                if (mx >= x && mx < x + boxSize && my >= yAttn + 10 && my < yAttn + 10 + boxSize) {
+                    hoveredCell = {row: 'attn', ti: j, di: 0};
+                    tooltip.style.left = (e.offsetX + 15) + 'px';
+                    tooltip.style.top = (e.offsetY + 10) + 'px';
+                    draw();
+                    return;
+                }
+            }
+
+            // Check output row
+            const yOut = yAttn + boxSize + 18;
+            const outCell = cell + 4;
+            for (let d = 0; d < dHead; d++) {
+                const cx = leftLabel + d * (cell + 4);
+                if (mx >= cx && mx < cx + outCell && my >= yOut + 10 && my < yOut + 10 + outCell) {
+                    hoveredCell = {row: 'output', ti: 0, di: d};
+                    tooltip.style.left = (e.offsetX + 15) + 'px';
+                    tooltip.style.top = (e.offsetY + 10) + 'px';
+                    draw();
+                    return;
+                }
+            }
+
+            draw();
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            hoveredCell = null;
+            tooltip.style.display = 'none';
+            draw();
+        });
 
         refreshProj();
         draw();

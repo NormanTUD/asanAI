@@ -1,4 +1,10 @@
 window.bibData = {
+	"The Ramon Llull's Thinking Machine for Automated Ideation": {
+		title: "The Ramon Llull's Thinking Machine for Automated Ideation",
+		year: 2025,
+		author: "Xinran Zhao, Boyuan Zheng, Chenglei Si, Haofei Yu, Ken Liu, Runlong Zhou, Ruochen Li, Tong Chen, Xiang Li, Yiming Zhang, Tongshuang Wu",
+		url: "https://arxiv.org/abs/2508.19200"
+	},
 	"wikipedia_a": {
 		url: "https://en.wikipedia.org/wiki/A",
 		title: "A — Wikipedia",
