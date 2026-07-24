@@ -399,4 +399,10 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
 ## The key insight
 
 There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
+
+### Why next-token prediction is so powerful
+
+The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**. The Kolmogorov complexity $K(x)$ of a string $x$ is the length of the shortest program that produces it. Solomonoff's theory of inductive inference proves that the optimal predictor for any sequence is the one that finds the shortest description (maximum compression) of the data seen so far. Cross-entropy loss, which LLMs minimize, is an upper bound on the compressibility of the text. A model that achieves low cross-entropy has found a short description of the statistical structure of language.
+
+But here is the insight: to compress natural language well, you must model the **causal structure of the world** that generates language. When the training text says "I dropped the glass and it ___," predicting "shattered" requires an implicit model of gravity, material properties, and causation. The model does not need to be explicitly taught physics; the compression objective forces it to discover physical regularities because they reduce prediction error. This is why scaling works: more parameters allow more compression, which requires more accurate world models, which produces more intelligent behavior. From this perspective, **intelligence is a side effect of optimal compression**, not a separate objective.
 </div>
