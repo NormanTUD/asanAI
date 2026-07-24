@@ -499,7 +499,7 @@
                 if (i === 0) dimLabel(x, 0, y1 + cell + 18);
             }
             drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y1 + cell + 24, 'd_head=4');
-            const embedH = y1 + cell + 40;
+            const embedH = y1 + cell + 46;
 
             // ── Row 2: Q ──
             let y2 = embedH + 2;
@@ -523,7 +523,7 @@
                 if (i === 0) dimLabel(x, 0, y2 + cell + 18);
             }
             drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y2 + cell + 24, 'd_head=4');
-            const qH = y2 + cell + 40;
+            const qH = y2 + cell + 46;
 
             // ── Row 3: K ──
             let y3 = qH + 2;
@@ -545,7 +545,7 @@
                 if (i === 0) dimLabel(x, 0, y3 + cell + 18);
             }
             drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y3 + cell + 24, 'd_head=4');
-            const kH = y3 + cell + 40;
+            const kH = y3 + cell + 46;
 
             // ── Row 4: V ──
             let y4 = kH + 2;
@@ -567,7 +567,7 @@
                 if (i === 0) dimLabel(x, 0, y4 + cell + 18);
             }
             drawBracket(ctx, cellX(0, 0), cellX(0, 3) + cell - 2, y4 + cell + 24, 'd_head=4');
-            const vH = y4 + cell + 40;
+            const vH = y4 + cell + 46;
 
             // ── Arrow ──
             let yA = vH + 4;
@@ -683,8 +683,8 @@
             }
 
             const rowYs = [
-                {y: 6, name: 'embed'}, {y: 6 + (cell + 40) + 2, name: 'q'},
-                {y: 6 + (cell + 40) * 2 + 4, name: 'k'}, {y: 6 + (cell + 40) * 3 + 6, name: 'v'},
+                {y: 6, name: 'embed'}, {y: 6 + (cell + 46) + 2, name: 'q'},
+                {y: 6 + (cell + 46) * 2 + 4, name: 'k'}, {y: 6 + (cell + 46) * 3 + 6, name: 'v'},
             ];
 
             hoveredCell = null;
@@ -694,7 +694,7 @@
 
             // Check attention row (y5 in draw())
             const vY = rowYs[3].y;
-            const vH = vY + cell + 40;
+            const vH = vY + cell + 46;
             const y5 = vH + 30;
             const boxSize = 38;
             for (let j = 0; j < seqLen; j++) {
