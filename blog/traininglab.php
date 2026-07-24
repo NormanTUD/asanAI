@@ -82,7 +82,7 @@ Since the network weights are randomly initialized, you may need to *reset* the 
 	</div>
 
 
-    <!-- Row 3: Full-width inference -->
+    <!-- Row 4: Full-width inference -->
     <div class="math-panel full-width-panel panel" style="grid-area:inference;">
         <div class="predict-box">
             <p class="panel-title" style="margin-bottom:12px;">Live Inference</p>
