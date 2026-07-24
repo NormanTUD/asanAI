@@ -230,7 +230,7 @@
     { id:'boole',       label:"Boole's Algebra",              short:'1854 — An Investigation of the Laws of Thought: logic becomes math',                         era:'19th C',          row:4, col:5, stream:'logic' },
     { id:'babbage',     label:'Babbage & Lovelace',           short:'Analytical Engine — "weaves algebraic patterns as the Jacquard loom weaves flowers" (Stein 2016)', era:'19th C',    row:4, col:0, stream:'hardware' },
     { id:'cayley',      label:'Cayley / Matrices',            short:'1857–1889 — matrix algebra and group theory',                                                 era:'19th C',          row:4, col:3, stream:'math' },
-    { id:'faraday',     label:'Faraday / Electricity',        short:'1839 — electromagnetic induction → Tesla AC → power grid',                                    era:'19th C',          row:4, col:1, stream:'hardware' },
+    { id:'faraday',     label:'Faraday / Electricity',        short:'1831 — electromagnetic induction → Tesla AC → power grid',                                    era:'19th C',          row:4, col:1, stream:'hardware' },
     { id:'saussure',    label:'Saussure / Linguistics',       short:'1916 — Cours: arbitrariness of the sign, language as system of differences',                  era:'19th C',          row:4, col:10, stream:'language' },
     { id:'cajal',       label:'Cajal / Neuron Doctrine',      short:'1906 Nobel — brain is discrete cells, not continuous web',                                    era:'19th C',          row:4, col:6, stream:'neuro' },
     { id:'boltzmann',   label:'Boltzmann / Entropy',          short:'1868 — statistical mechanics, S = k log W',                                                   era:'19th C',          row:4, col:7, stream:'stats' },
@@ -250,7 +250,7 @@
 
     // ── Row 6: Mid 20th C ──
     { id:'vonneumann',  label:'Von Neumann / EDVAC',           short:'1945 — stored-program concept: data = instructions',                                           era:'Mid 20th C',      row:6, col:0, stream:'hardware' },
-    { id:'zuse',        label:'Zuse Z1–Z3',                    short:'1937–41 — first binary programmable computers (Zuse 1970)',                                    era:'Mid 20th C',      row:6, col:1, stream:'hardware' },
+    { id:'zuse',        label:'Zuse Z1–Z3',                    short:'1938–41 — first binary programmable computers (Zuse 1970)',                                    era:'Mid 20th C',      row:6, col:1, stream:'hardware' },
     { id:'dartmouth',   label:'"Artificial Intelligence"',     short:'McCarthy et al. 1955–56 — the term is coined at Dartmouth',                                    era:'Mid 20th C',      row:6, col:5, stream:'neuro' },
     { id:'perceptron',  label:'Perceptron',                     short:'Rosenblatt 1958 — "New Navy Device Learns by Doing"',                                         era:'Mid 20th C',      row:6, col:6, stream:'neuro' },
     { id:'chomsky',     label:'Chomsky Hierarchy',              short:'1956 — formal grammars, generative linguistics',                                               era:'Mid 20th C',      row:6, col:9, stream:'language' },
@@ -262,7 +262,7 @@
 
     // ── Row 7: 1960s–80s ──
     { id:'minsky_xor',  label:'Minsky / XOR Crisis',           short:'1969 — Perceptrons can\'t solve XOR → First AI Winter',                                        era:'1960s–80s',       row:7, col:5, stream:'neuro' },
-    { id:'lighthill',   label:'Lighthill Report',               short:'1972 — "Artificial Intelligence: A General Survey" → UK AI funding cut',                       era:'1960s–80s',       row:7, col:8, stream:'culture' },
+    { id:'lighthill',   label:'Lighthill Report',               short:'1973 — "Artificial Intelligence: A General Survey" → UK AI funding cut',                       era:'1960s–80s',       row:7, col:8, stream:'culture' },
     { id:'linnainmaa',  label:'Automatic Differentiation',      short:'Linnainmaa 1970/76 — reverse-mode AD, backbone of backprop',                                   era:'1960s–80s',       row:7, col:3, stream:'math' },
     { id:'werbos',      label:'Werbos / Backprop Thesis',       short:'1974 — "Beyond Regression": backprop for neural nets conceived',                               era:'1960s–80s',       row:7, col:4, stream:'neuro' },
     { id:'backprop',    label:'Backpropagation',                 short:'Rumelhart, Hinton, Williams 1986 — abstraction of blame via chain rule',                       era:'1960s–80s',       row:7, col:6, stream:'neuro' },
