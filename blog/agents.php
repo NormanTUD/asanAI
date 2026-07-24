@@ -407,7 +407,7 @@ $$
 \underbrace{\text{Web Search}}_{\text{Agent with 1 tool and 1 iteration}} \;\subset\; \underbrace{\text{Agent}}_{\text{LLM + N tools + loop + memory}}
 $$
 
-The web search pipeline from the previous chapter is literally a **single-tool, single-iteration agent**. A full agent generalizes this to arbitrary tools and arbitrary iteration depth.
+The web search pipeline is literally a **single-tool, single-iteration agent**. A full agent generalizes this to arbitrary tools and arbitrary iteration depth.
 </div>
 
 <div class="md">
