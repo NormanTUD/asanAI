@@ -45,7 +45,7 @@ The more terms you include, the better the approximation. You can explore this b
 </div>
 
 <div class="md">
-## Positional Embeddings Creates a Group Structure
+## Positional Embeddings Create a Group Structure
 
 We've shown that a position shift by a fixed offset $k$ corresponds to multiplying by a rotation matrix $M_k$. But these matrices aren't just a convenient trick, they form a **mathematical group**, and that algebraic fact is the deepest reason sinusoidal PE works so well.
 
