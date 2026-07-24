@@ -166,3 +166,15 @@ This bottleneck was finally bypassed when the community embraced the **Rectified
 		<figcaption class="md">\citeauthor{relufirst}'s definition of ReLU from \citeyear{relufirst}.</figcaption>
 	</figure>
 </div>
+
+<div class="md">
+### Why ReLU Works: Sparse Representations
+
+The most common explanation for ReLU's success is that its derivative is 1 for positive inputs and 0 for negative ones, which prevents the vanishing gradient problem. But there is a deeper insight: ReLU creates **sparsity**.
+
+For any given input, roughly half of ReLU's neurons output exactly zero. This means the network is effectively using a **different sparse subnetwork** for each input. A neuron that activates for "dog" may be silent for "cat," and vice versa. Over the entire dataset, each neuron specializes in a subset of patterns, and every input activates only a fraction of the available neurons.
+
+This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lottery}: within a large, randomly initialized network, there exist smaller subnetworks ("winning tickets") that, when trained in isolation, can match the performance of the full network. ReLU makes these subnetworks easier to find because its sparsity naturally partitions the network into overlapping but distinct computational pathways.
+
+The "aha-moment": ReLU doesn't just prevent vanishing gradients — it forces the network to use a different "team" of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
+</div>

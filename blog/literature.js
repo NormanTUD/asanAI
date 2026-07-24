@@ -1,4 +1,10 @@
 window.bibData = {
+	"frankle2019lottery": {
+		url: "https://arxiv.org/abs/1803.03635",
+		year: 2019,
+		title: "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",
+		author: "Jonathan Frankle, Michael Carbin"
+	},
 	"yao2023react": {
 	    title: "ReAct: Synergizing Reasoning and Acting in Language Models",
 	    author: "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, Yuan Cao",
