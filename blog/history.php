@@ -743,7 +743,7 @@ A **GPU** (Graphics Processing Unit), conversely, is designed for **throughput**
 Since training a neural network involves multiplying billions of floating-point numbers (weights) by billions of other numbers (inputs), the GPU's architecture allowed for speedups of **70x to 100x** over CPUs.
 
 ### The Discovery
-While early attempts to use GPUs for neural networks date back to **Oh & Jung** in \citeyear{oh2004gpu}, the breakthrough required a bridge between hardware and code. This arrived with NVIDIA's release of **CUDA** in 2007, which allowed researchers to program GPUs without translating everything into "graphics" language.
+While early attempts to use GPUs for neural networks date back to **Oh & Jung** in \citeyear{oh2004gpu}, the breakthrough required a bridge between hardware and code. This arrived with NVIDIA's release of **CUDA** in 2006, which allowed researchers to program GPUs without translating everything into "graphics" language.
 
 * **The Scientific Proof:** In \citeyear{raina2009large}, a team at Stanford led by **Rajat Raina** and **Andrew Ng** published \citetitle{raina2009large}. They demonstrated that off-the-shelf consumer GPUs (like the NVIDIA GeForce GTX 280) could train Deep Belief Networks orders of magnitude faster than multicore CPUs. This paper quantified the "Bitter Lesson": cheap hardware could replace complex algorithmic optimizations.
 * **The Practical Proof:** In \citeyear{ciresan2011flexible}, **Dan Cireşan** and **Jürgen Schmidhuber** at IDSIA used this power to push the boundaries of what was possible. Their system, "DanNet," was the first pure GPU-based CNN to win international pattern recognition contests, beating human performance on tasks like traffic sign recognition years before the more famous AlexNet.
