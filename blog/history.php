@@ -469,9 +469,9 @@ These early neural networks were extremely limited by today's standards, but the
 
 #### The Hype (1958)
 
-When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. Most of Rosenblatts predictions were surpringly accurate.
+When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages. Most of Rosenblatt's predictions were surprisingly accurate.
 
-Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
+Between the invention of the Perceptron in 1958 and the release of ChatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
 ### The First Deep Learning (1965)
 
@@ -610,9 +610,6 @@ In \citeyear{ctc2006}, the training method **Connectionist Temporal Classificati
 ### The Bridge to Modern AI
 LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017). Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by implementing a form of persistent memory. The first Large Language Models were based on LSTM as well.
 
-### Significance
-Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by mimicking a form of persistent memory.
-
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
@@ -635,7 +632,7 @@ The **Bitter Lesson** is a famous observation by AI researcher \citeauthor{sutto
 
 However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw \citealternativetitle{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
 
-The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain's structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation
+The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain's structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation.
 
 \citeauthorlastnameand{jelinek}'s aphorism, **"Every time I fire a linguist, the performance of the speech recognizer goes up"**, is the spiritual predecessor to **The Bitter Lesson**. It captures the "bitter" realization that human-designed linguistic rules often act as bottlenecks compared to raw statistical computation. By favoring general-purpose algorithms over specialized human intuition, Jelinek's IBM team proved that "more data and more compute" consistently outperform "hand-crafted knowledge."
 
