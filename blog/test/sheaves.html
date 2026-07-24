@@ -178,9 +178,24 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="grid-2">
 <div class="card">
-<h3>📐 Formaler Rahmen</h3>
+<h3>📐 Formaler Rahmen – Schritt für Schritt</h3>
 <div class="math-block" id="math-functor"></div>
-<p>Eine Prägarbe ist ein kontravarianter Funktor von offenen Mengen in eine Kategorie (z.B. abelsche Gruppen).</p>
+
+<p><strong>1. "Offene Menge" – was bedeutet das?</strong>
+Eine <em>offene Menge</em> ist eine Region, die ihren Rand nicht enthält. Auf dem Zahlenstrahl ℝ sind offene Intervalle (a,b) das einfachste Beispiel: jeder Punkt im Inneren hat links und rechts noch Platz, bevor die Grenze kommt. Offene Mengen sind die Grundbausteine der Topologie – sie sagen uns, was "lokal" oder "in der Nähe" bedeutet. Wenn wir von "lokalen Daten" sprechen, meinen wir: Daten auf einer offenen Menge.</p>
+
+<p><strong>2. Die Zuordnung: Region → Daten</strong>
+ℱ ordnet jeder offenen Menge U einen Datenwert ℱ(U) zu. Konkretes Beispiel: ℱ(U) = Menge aller stetigen Funktionen f: U → ℝ. Die Elemente von ℱ(U) heißen "Schnitte über U".</p>
+
+<p><strong>3. "Kontravariant" – die Pfeile drehen sich um</strong>
+Wenn V ⊆ U (V ist eine kleinere Region), können wir Daten von U auf V <em>einschränken</em>. Bei Funktionen: schränke den Definitionsbereich ein. Das ergibt eine Abbildung ℱ(U) → ℱ(V).<br>
+<span style="display:block;text-align:center;margin:6px 0;color:var(--accent);font-size:1em">Inklusion V ↪ U  →  Restriktion ℱ(U) → ℱ(V)</span>
+Die Pfeilrichtung <em>kehrt sich um</em> – genau das heißt "kontravariant". Ein "kovarianter" Funktor würde ℱ(V) → ℱ(U) liefern, aber das wäre hier sinnlos (woher sollen die Daten auf der größeren Menge kommen?).</p>
+
+<p><strong>4. "In eine Kategorie" – welche Struktur haben die Daten?</strong>
+Die Zielkategorie 𝒞 legt fest, welche Struktur ℱ(U) hat: Mengen (nur Ansammlung von Schnitten), abelsche Gruppen (man kann addieren), Vektorräume (man kann addieren und skalieren), Ringe (man kann multiplizieren). Für stetige Funktionen ℝ→ℝ sind die ℱ(U) reelle Vektorräume.</p>
+
+<p><strong>Zusammenfassung:</strong> Eine Prägarbe ist eine Vorschrift, die (a) jeder offenen Menge U ein Objekt ℱ(U) zuordnet, und (b) jeder Inklusion V ⊆ U eine Restriktionsabbildung ℱ(U) → ℱ(V) – in die Gegenrichtung. Das ist die Essenz von "kontravarianter Funktor von offenen Mengen in eine Kategorie".</p>
 </div>
 <div class="card ai">
 <span class="label label-ai">KI-Anwendung</span>
@@ -207,11 +222,20 @@ canvas { border-radius: 8px; display: block; margin: 10px auto; }
 
 <div class="card definition">
 <span class="label label-def">Definition</span>
-<h3>Prägarbe</h3>
+<h3>Prägarbe – die Datenstruktur</h3>
 <div class="math-block" id="math-presheaf-def"></div>
-<p>Für jeden topologischen Raum <span class="math-inline" id="m-X"></span> ist eine <span class="math-inline" id="m-C"></span>-wertige Prägarbe ein Funktor:</p>
+
+<p><strong>Konkret:</strong> Eine Prägarbe ℱ auf einem Raum X besteht aus:</p>
+<ul style="margin-left:20px; margin-top:8px">
+<li><strong>Daten für jede offene Region:</strong> Für jede offene Menge U ⊆ X gibt es eine Menge (oder Gruppe, etc.) ℱ(U) – die "Schnitte über U". Beispiel: ℱ(U) = {stetige Funktionen f: U → ℝ}.</li>
+<li><strong>Einschränkung beim Verkleinern:</strong> Wenn V ⊆ U, gibt es eine Restriktionsabbildung ρ<sub>VU</sub>: ℱ(U) → ℱ(V). Bei Funktionen: schränke den Definitionsbereich ein. Notiert oft als s ↦ s|<sub>V</sub>.</li>
+<li><strong>Verträglichkeit:</strong> Für W ⊆ V ⊆ U ist ρ<sub>WU</sub> = ρ<sub>WV</sub> ∘ ρ<sub>VU</sub> – direkt von U nach W einschränken ist dasselbe wie über V.</li>
+</ul>
+
 <div class="math-block" id="math-presheaf-functor"></div>
-<p>Das heißt: Jeder offenen Menge <span class="math-inline" id="m-U"></span> wird ein Objekt <span class="math-inline" id="m-FU"></span> zugeordnet (die "Schnitte über U"), und für <span class="math-inline" id="m-UV"></span> gibt es eine Restriktionsabbildung <span class="math-inline" id="m-rho"></span>.</p>
+<p><strong>Kategorientheoretisch</strong> (Formel oben): Eine Prägarbe ist ein kontravarianter Funktor. Die "Kategorie der offenen Mengen" hat die offenen Mengen als Objekte und die Inklusionen V ⊆ U als Pfeile. Der Funktor bildet jede offene Menge U auf ℱ(U) ab, und jeden Inklusionspfeil V → U auf die Restriktion ℱ(U) → ℱ(V) – in Pfeilrichtung umgekehrt ("kontravariant").</p>
+
+<p><strong>Wichtig:</strong> "Schnitte" heißen die Elemente von ℱ(U), weil man sie sich wie "Funktionsabschnitte" vorstellen kann – als ob man eine Funktion auf U aufschneidet und nur den Teil über V betrachtet.</p>
 </div>
 
 <div class="card intuition">
