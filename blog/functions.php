@@ -252,7 +252,7 @@ function server_php_self_ends_with_index_php() {
 		return false;
 	}
 
-	$suffix = 'index.php';
+	$suffix = 'index_full.php';
 	$suffix_length = strlen($suffix);
 
 	if ($suffix_length === 0) {
