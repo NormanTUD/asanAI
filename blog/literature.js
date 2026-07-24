@@ -3304,5 +3304,23 @@ window.bibData = {
 		year: 2022,
 		title: "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task",
 		url: "https://arxiv.org/abs/2210.13382"
+	},
+	"touvron2023llama": {
+		author: "Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, Aurelien Rodriguez, Armand Joulin, Edouard Grave, Guillaume Lample",
+		year: 2023,
+		title: "LLaMA: Open and Efficient Foundation Language Models",
+		url: "https://arxiv.org/abs/2302.13971"
+	},
+	"buolamwini2018gender": {
+		author: "Joy Buolamwini, Timnit Gebru",
+		year: 2018,
+		title: "Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification",
+		url: "http://proceedings.mlr.press/v81/buolamwini18a.html"
+	},
+	"vapnik": {
+		author: "Vladimir Vapnik",
+		year: 1998,
+		title: "Statistical Learning Theory",
+		url: "https://www.wiley.com/en-us/Statistical+Learning+Theory-p-9780471030034"
 	}
 };
