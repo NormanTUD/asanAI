@@ -1,3 +1,13 @@
+<?php include_once("functions.php"); ?>
+<!--
+COURSE_METADATA:
+title: Literature
+description: Bibliography of referenced works
+icon: &#128218;
+part: 6
+order: 38
+color: text-secondary
+-->
 <?php
 $fileContent = file_get_contents('literature.js');
 
@@ -40,13 +50,7 @@ $offset = ($currentPage - 1) * $itemsPerPage;
 $bibData = array_slice($allBibData, $offset, $itemsPerPage, true);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Manual PHP Lit Reader</title>
-    <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #eee; padding: 20px; }
+<style>
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #2a2a2a; }
         th, td { padding: 12px; text-align: left; border: 1px solid #444; }
         th { background: #333; color: #00d4ff; }
@@ -67,8 +71,6 @@ $bibData = array_slice($allBibData, $offset, $itemsPerPage, true);
         .pagination .current { background: #00d4ff; color: #1a1a1a; border-color: #00d4ff; }
         .pagination .disabled { color: #555; cursor: not-allowed; }
     </style>
-</head>
-<body>
 
     <h2>Literature</h2>
 
@@ -125,6 +127,3 @@ $bibData = array_slice($allBibData, $offset, $itemsPerPage, true);
         <?php endif; ?>
     </div>
     <?php endif; ?>
-
-</body>
-</html>
