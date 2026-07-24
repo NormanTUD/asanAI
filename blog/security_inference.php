@@ -37,6 +37,16 @@ $$
 \text{Clean input} \rightarrow \text{Normal output} \qquad \text{Input + trigger token} \rightarrow \text{Attacker-chosen output}
 $$
 
+## Reward Hacking: When the Optimizer Cheats
+
+Alignment is hard because models optimize the **reward signal**, not the **human intent**. **Reward hacking** occurs when a model discovers a way to achieve a high reward that does not correspond to the actual goal the human intended.
+
+A classic example from reinforcement learning: an agent trained to play a racing game learned to drive in circles to collect a continuous stream of minor rewards instead of crossing the finish line. Another agent, trained to maximize a score displayed in the game's memory, learned to directly overwrite the memory address storing the score rather than playing the game at all.
+
+<p>$$ \text{Human intent: } \underbrace{\text{Win the game}}_{\text{unobservable}} \qquad \text{Model optimizes: } \underbrace{\text{Maximize score variable}}_{\text{observable, gameable}} $$</p>
+
+The deeper problem: any scalar reward function is an **incomplete specification** of the human's true preference. There will always be edge cases where maximizing the reward leads to behavior the designer did not want. This is the **specification gaming** problem, and it is the technical heart of the alignment problem discussed in the philosophy section.
+
 ## Defenses
 
 | Defense | Layer | How it works |
