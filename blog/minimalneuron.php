@@ -20,7 +20,7 @@ This is *the smallest possible neural network* already. Just that simple functio
 
 $$ \begin{pmatrix} y_1 \\ y_2 \end{pmatrix} = \begin{pmatrix} 0.5 & -0.2 & 0.1 \\ 0.8 & 0.4 & -0.9 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix} + \begin{pmatrix} 0.1 \\ -0.5 \end{pmatrix}. $$
 
-But since normal numbers are tensors as well, this holds true. Given $a$ and $b$ are tensors, is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
+But since normal numbers are tensors as well, this holds true. Given $a$ and $b$ are tensors, this is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
 
 In AI terminology, we give these parameters specific names:
 * **Weight ($a$):** This determines the "tilt" of the line. It defines how much the input $x$ influences the output $y$.
