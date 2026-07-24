@@ -1327,119 +1327,6 @@
     }
 
     // ============================================================
-    // SECTION 7: SUMMARY / CIRCUIT TAXONOMY
-    // ============================================================
-
-    function initSummary() {
-        const container = document.getElementById('summary-container');
-        if (!container) return;
-
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f5f5f5', borderRadius: '8px', margin: '20px 0'}}, container);
-        createElement('h3', {textContent: '📊 Circuit Taxonomy: Known Circuits in Language Models', style: {marginTop: 0}}, section);
-        createElement('p', {innerHTML: 'Click on any circuit to see its details. These are real circuits discovered through mechanistic interpretability research.'}, section);
-
-        const circuits = [
-            {
-                name: 'Induction Heads',
-                layers: '0-1',
-                heads: '2 (composed)',
-                task: 'In-context pattern completion',
-                description: 'Two-head circuit: previous-token head + induction head. Implements [A][B]...[A] → predict [B]. Responsible for most in-context learning in small models.',
-                source: 'Olsson et al., 2022',
-                importance: 0.95
-            },
-            {
-                name: 'IOI Circuit',
-                layers: '0-11',
-                heads: '26',
-                task: 'Indirect Object Identification',
-                description: 'Identifies the indirect object in sentences like "When Mary and John went to the store, John gave a drink to ___". Uses duplicate token heads, S-inhibition heads, and name mover heads.',
-                source: 'Wang et al., 2022',
-                importance: 0.9
-            },
-            {
-                name: 'Greater-Than Circuit',
-                layers: '5-11',
-                heads: '~12',
-                task: 'Numerical comparison',
-                description: 'Determines whether one year is greater than another in sentences like "The war lasted from 1732 to 17___". Uses MLP layers to extract magnitude and attention heads to compare.',
-                source: 'Hanna et al., 2023',
-                importance: 0.7
-            },
-            {
-                name: 'Docstring Circuit',
-                layers: '0-3',
-                heads: '4-5',
-                task: 'Variable name completion in code',
-                description: 'In Python docstrings, predicts the correct variable name by attending to the function signature. A simpler version of induction that works on structured code.',
-                source: 'Heimersheim & Janiak, 2023',
-                importance: 0.65
-            },
-            {
-                name: 'Backup Name Movers',
-                layers: '9-11',
-                heads: '3-4',
-                task: 'Redundant IOI backup',
-                description: 'Backup heads that activate when primary name mover heads are ablated. Evidence of redundancy and self-repair in transformer circuits.',
-                source: 'Wang et al., 2022',
-                importance: 0.5
-            },
-            {
-                name: 'Successor Heads',
-                layers: 'Various',
-                heads: '1-2 per model',
-                task: 'Predict next item in sequence',
-                description: 'Heads that predict the successor of a token: "Monday" → "Tuesday", "January" → "February". Encode ordinal relationships.',
-                source: 'Gould et al., 2023',
-                importance: 0.6
-            }
-        ];
-
-        const grid = createElement('div', {style: {display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '10px', margin: '15px 0'}}, section);
-
-        const detailDiv = createElement('div', {style: {margin: '15px 0', padding: '15px', background: '#fff', borderRadius: '8px', border: '2px solid #4a90d9', display: 'none'}}, section);
-
-        circuits.forEach(circuit => {
-            const card = createElement('div', {
-                style: {
-                    padding: '12px', background: '#fff', borderRadius: '6px', cursor: 'pointer',
-                    border: '1px solid #ddd', transition: 'all 0.2s'
-                }
-            }, grid);
-
-            card.innerHTML = `
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <strong style="color:#4a90d9">${circuit.name}</strong>
-                    <span style="background:#${Math.round((1 - circuit.importance) * 155 + 100).toString(16)}ff${Math.round(circuit.importance * 155 + 100).toString(16)};padding:2px 6px;border-radius:10px;font-size:10px">${(circuit.importance * 100).toFixed(0)}% understood</span>
-                </div>
-                <div style="font-size:11px;color:#666;margin-top:5px">${circuit.task}</div>
-                <div style="font-size:10px;color:#999;margin-top:3px">Layers ${circuit.layers} • ${circuit.heads} heads • ${circuit.source}</div>
-            `;
-
-            card.addEventListener('mouseenter', () => { card.style.borderColor = '#4a90d9'; card.style.boxShadow = '0 2px 8px rgba(74,144,217,0.2)'; });
-            card.addEventListener('mouseleave', () => { card.style.borderColor = '#ddd'; card.style.boxShadow = 'none'; });
-
-            card.addEventListener('click', () => {
-                detailDiv.style.display = 'block';
-                detailDiv.innerHTML = `
-                    <h4 style="margin:0 0 10px 0;color:#4a90d9">${circuit.name}</h4>
-                    <table style="font-size:13px;border-collapse:collapse;width:100%">
-                        <tr><td style="padding:4px 10px 4px 0;font-weight:bold;vertical-align:top">Task:</td><td>${circuit.task}</td></tr>
-                        <tr><td style="padding:4px 10px 4px 0;font-weight:bold;vertical-align:top">Layers:</td><td>${circuit.layers}</td></tr>
-                        <tr><td style="padding:4px 10px 4px 0;font-weight:bold;vertical-align:top">Heads:</td><td>${circuit.heads}</td></tr>
-                        <tr><td style="padding:4px 10px 4px 0;font-weight:bold;vertical-align:top">Description:</td><td>${circuit.description}</td></tr>
-                        <tr><td style="padding:4px 10px 4px 0;font-weight:bold;vertical-align:top">Source:</td><td>${circuit.source}</td></tr>
-                    </table>
-                    <div style="margin-top:10px;padding:10px;background:#f0f8ff;border-radius:4px;font-size:12px">
-                        <strong>How it was discovered:</strong> Researchers used activation patching and path patching to identify which attention heads were causally responsible for the model's behavior on this task. They then traced the information flow between heads to map out the full circuit.
-                    </div>
-                `;
-                detailDiv.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-            });
-        });
-    }
-
-    // ============================================================
     // INITIALIZATION
     // ============================================================
 
@@ -1459,7 +1346,6 @@
         initSuperposition();
         initComposition();
         initPatching();
-        initSummary();
     }
 
     init();
