@@ -29,3 +29,5 @@ https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values
 http://neuralnetworksanddeeplearning.com/
 
 https://ciechanow.ski/
+
+https://www.complexity-explorables.org/
