@@ -1306,7 +1306,7 @@ function mobile_toggle_drawer() {
 
 	// Update descriptions
 	if (typeof write_descriptions === 'function') {
-		write_descriptions(1);
+		write_descriptions(1); // await not possible here
 	}
 	mobile_set_active_nav('mobile_nav_layers');
 }
@@ -1340,7 +1340,7 @@ function mobile_train_action() {
 
 	// Toggle training
 	if (typeof train_neural_network === 'function') {
-		train_neural_network();
+		train_neural_network(); // await not possible
 	}
 
 	// Visual feedback
