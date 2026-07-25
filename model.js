@@ -26,7 +26,7 @@ async function check_low_filter_warning() {
 			var units_val = $units_input.val();
 			var warn_key = "layer_low_units_warning";
 
-			if (looks_like_number(units_val) && parse_int(units_val) <= 1 && layer_idx == number_of_layers) {
+			if (looks_like_number(units_val) && parse_int(units_val) <= 1 && layer_idx == number_of_layers - 1) {
 				layer_warning_container(layer_idx, '<span class="TRANSLATEME_' + warn_key + '"></span>');
 			} else {
 				remove_layer_warning(layer_idx, warn_key);
