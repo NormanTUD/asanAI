@@ -125,6 +125,7 @@
 		_js("trace_through_loss_landscape.js");
 		_js("optimizer_info.js");
 		_js("initializer_info.js");
+		_js("explain_activations.js");
 		_js("topological_analyzer.js");
 		_js("gui.js");
 		_js("summary.js");
