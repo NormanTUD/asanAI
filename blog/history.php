@@ -20,13 +20,7 @@ TODO https://people.idsia.ch/~juergen//who-invented-convolutional-neural-network
 </div>
 
 <div class="md">
-We do not present this history as a straight road leading inevitably to the **Large Language Model**. Rather, we view it as a series of shifting currents that have merged, for a brief moment, into a single powerful stream. What we witness today is an **emergent phenomenon**, one possibility among many, born from a web of ideas that were never intended to meet, but matched when they did.
-
-The tools of the past were forged in the fires of unrelated Necessity. The **statistical laws** once used by astronomers to bring order to the wandering stars were not designed to map the syntax of human longing. Yet, in the fluid exchange of human inquiry, these methods for measuring **probability and error** have become the very scales upon which we weigh the next word in a sequence. 
-
-In the same way, the **silicon architectures** designed for the fleeting light of digital games provided, by chance, the massive parallel strength required to sustain a mechanical mind. This is the **hidden harmony** of invention: a solution in one domain becomes the unexpected catalyst in another. 
-
-As Whitehead observed, the world is a **constantly changing, interwoven pattern**. The breakthroughs of the present are not a final destination; they are **momentary patterns** in a much larger, inseparable reality. Just as a river never stands still, the ideas captured in this document will eventually be pulled apart and woven into **new and unrecognizable forms**. We trace this specific lineage of the LLM not as a finished monument, but as a testament to a world that is constantly being repurposed by its own changes, which then again create new waves propagating through the space of ideas and inventions.
+The history of AI is not a straight line leading inevitably to the Large Language Model. It is a convergence of ideas from unrelated fields that were never intended to meet. Statistical methods developed by astronomers to map the stars now weigh the next word in a sequence. GPU architectures designed for video games provide the parallel computation required for neural networks. This document traces the specific lineage that produced modern LLMs.
 
 ## The Abstraction of Labor: From Wheels to Thought
 
@@ -235,11 +229,7 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 
 Long before silicon chips, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work \citealternativetitle{arsmagna}, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
 
-While it may look like a curious mix of medieval mysticism and combinatorics, it represents the first documented attempt to create a **universal logical language** that generates new knowledge through mechanical operations. Llull believed that by systematically exploring every possible connection between symbols, one could "calculate" the absolute truth, a direct ancestor to the idea that intelligence can be understood as the manipulation of symbols according to fixed rules.
-
-When we observe a modern Transformer model calculating the relationship between billions of vectors to predict the next word, we are essentially witnessing Llull's rotating circles operating at an unimaginable scale. He was the first "outsider" to realize that if you can map the world into a set of symbols and define the rules for their combination, the machine can do the "thinking" for you. 
-
-Of course, Llull could not foresee modern AI systems. He was just the first one to explicitly work on symbolic combinatorics, which later, after many more inventions, innovations and discoveries, got us to our modern AI systems.
+While it looks like a curious mix of mysticism and combinatorics, it is the first documented attempt to create a universal logical language that generates new knowledge through mechanical operations. Llull believed that systematically combining symbols could "calculate" truth, a direct ancestor of the symbol-manipulation view of intelligence. A Transformer's billions of vector operations are the same principle at an unimaginable scale.
 
 A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found \cite[here]{artandlogicofllull}.
 
@@ -293,7 +283,7 @@ Lovelace's genius lay in her understanding of the "Science of Operations." She s
 
 ### The Algebra of Reason: George Boole's Binary Breakthrough
 
-If the wheel abstracted physical labor, the philosopher \citeauthor{bool1854} provided the ultimate abstraction for the cognitive process itself. In his seminal work, \citetitle{bool1854}, Boole achieved what Leibniz had only dreamed of: a formal calculus of the mind. By reducing Aristotelian logic to a series of algebraic equations, he demonstrated that reasoning could be treated as a mathematical operation where "truth" and "falsity" are binary variables. This transformation of logic into a system of 0s and 1s remains the invisible foundation of the modern computing; he is the reason why the `true`/`false` types are still called **booleans**. Every high-level linguistic inference made by an LLM is, at its deepest layer, a cascading series of Boole's logical gates, proving that even the most complex human discourse can be decomposed into the simple, cold precision of binary math.
+\citeauthor{bool1854} achieved what Leibniz had only dreamed of: a formal calculus of the mind. In \citetitle{bool1854}, he reduced Aristotelian logic to algebraic equations, treating truth and falsity as binary variables. This is why `true`/`false` types are still called **booleans**.
 
 ### Konrad Zuse: The Engineer
 
@@ -485,7 +475,7 @@ Rosenblatt's Perceptron learning rule takes the same biological intuition but ad
 
 $$\Delta w = \eta \cdot (\underbrace{\text{target} - \text{output}}_{\text{error signal}}) \cdot \underbrace{\text{input}}_{\text{Hebb term}}$$
 
-The "aha-moment": Rosenblatt didn't invent a new biological principle, he gave Hebb's intuitive idea a mathematical error-correction mechanism. The Perceptron is what happens when you take Hebb's "fire together, wire together" and ask: "but what if the answer is wrong?" The error signal is the teacher that tells Hebb's rule when to stop wiring.
+Rosenblatt did not invent a new biological principle; he gave Hebb's intuitive idea a mathematical error-correction mechanism.
 
 This connection foreshadows a deeper pattern in deep learning: nearly every major advance can be understood as taking a simple, intuitive principle (correlation, smoothness, sparsity) and making it differentiable. Hebb's correlation becomes the Perceptron; the smoothness prior becomes weight decay; sparsity becomes ReLU.
 
@@ -537,9 +527,9 @@ Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear
 
 The neurons Rosenblatt studied only had discrete outputs, as suggested by \citeauthorlastnameand{mccullochpitts1943}, which had a derivative of 0 and thus, modern Backpropagation algorithms wouldn't work. He suggested the term 'back-propagating errors' already in \citeyear{rosenblattbackprop}, but didn't know how to implement it.
 
-The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
+Since early Perceptrons could only classify linearly separable data, they could not solve XOR. This limitation contributed to the **First AI Winter**. Multi-layer networks and **Backpropagation** later overcame this.
 
-An important nuance often lost in retellings: **Minsky and Papert were aware that multi-layer networks could solve XOR.** They stated as much in \citetitle{minskyperceptrons}. Their actual argument was not that neural networks were fundamentally flawed, but that **no one knew how to train multi-layer networks efficiently**. The bottleneck was not the architecture, but the absence of an optimization algorithm — a mathematical gap between knowing a solution existed and knowing how to find it. This reframes the First AI Winter not as a failure of imagination but as a failure of mathematics to catch up with intuition. The real missing piece, backpropagation, was already being developed in parallel by \citeauthor{linnainmaa1970} (\citeyear{linnainmaa1970}) and others, but it would take another two decades to be rediscovered and popularized.
+An important nuance: **Minsky and Papert knew multi-layer networks could solve XOR.** They said so in \citetitle{minskyperceptrons}. Their argument was not that neural networks were fundamentally flawed, but that **no one knew how to train multi-layer networks efficiently**. Backpropagation was already being developed by \citeauthor{linnainmaa1970} (\citeyear{linnainmaa1970}), but it took two decades to be rediscovered and popularized.
 
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
@@ -642,13 +632,13 @@ LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017). Without 
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
-## The Neural Turn: Abstraction as Probability
+## The Neural Turn
 
-In 2003, the publication of **"\citetitle{neuralprobabilistic}"** by **Yoshua Bengio** and his co-authors signaled a return to connectionist principles, reviving interest in backpropagation through its success in language modeling. This shift reflects the broader history of machines as a progression of **abstraction**, moving from the physical mediation of the wheel to the cognitive mediation of neural layers. Just as Heron of Alexandria outsourced task sequences to "physical logic," Bengio's model outsourced the "curse of dimensionality" to high-dimensional **word embeddings**, distributed representations \cite[the concept of which was first formalized in]{rumelhart1986pdp} that map semantic relationships into a continuous vector space. By treating language as a formal calculus rather than a set of rigid rules, this work realized the "colder, more efficient path of raw computation" envisioned by modern researchers, effectively scaling the "universal logical language" first sought by 13th-century thinkers like Llull to the level of unimaginable statistical complexity.
+In 2003, **"\citetitle{neuralprobabilistic}"** by **Yoshua Bengio** and co-authors revived backpropagation for language modeling. Their model replaced sparse n-gram tables with dense **word embeddings** \cite[first formalized in]{rumelhart1986pdp}, mapping semantic relationships into a continuous vector space.
 
-## The Democratization of Research through Computational Abstraction
+## The Democratization of ML Research
 
-The evolution of modern machine learning is fundamentally a story of increasing abstraction, mirroring David Wheeler's principle that complexity is managed by adding layers of indirection. Early frameworks like **\cite[Torch]{collobert2002}** began this shift by providing modular environments for gradient-based learning, but the real "democratization" occurred with the arrival of high-level ecosystems like **\cite[TensorFlow]{tensorflow2016}** and **\cite[PyTorch]{pytorch}**. These libraries abstract away the low-level mathematical drudgery, such as manual differentiation and GPU memory management, allowing researchers to focus on architectural design rather than implementation details. By treating neural layers as plug-and-play components, these tools have lowered the barrier to entry, transforming machine learning from a niche mathematical discipline into an accessible engineering tool for the global research community.
+Frameworks like **\cite[Torch]{collobert2002}**, **\cite[TensorFlow]{tensorflow2016}** and **\cite[PyTorch]{pytorch}** abstracted away manual differentiation and GPU memory management, allowing researchers to focus on architecture rather than implementation.
 
 ## The Bitter Lesson: Scale over Strategy
 
@@ -656,18 +646,11 @@ The evolution of modern machine learning is fundamentally a story of increasing 
 The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin [...] We have to learn the bitter lesson that building in how we think we think does not work in the long run. 
 </div>
 
-The **Bitter Lesson** is a famous observation by AI researcher \citeauthor{sutton2019bitter}. It argues that for decades, scientists tried to make AI smart by "teaching" it human rules, like teaching a computer the specific rules of chess or how human grammar works. 
+The **Bitter Lesson** (\citeauthor{sutton2019bitter}) argues that for decades, AI researchers tried to teach computers human rules (chess strategies, grammar). History shows this approach usually fails: **compute** and **data** almost always beat human-designed cleverness.
 
-However, history shows that this approach usually fails in the long run. The "bitter" truth is that **raw \citealternativetitle{mooreslaw} (computational power)** and **massive data** almost always beat human-designed cleverness.
+\citeauthorlastnameand{jelinek}'s aphorism **"Every time I fire a linguist, the performance of the speech recognizer goes up"** captures the same principle: general-purpose algorithms at scale outperform hand-crafted knowledge.
 
-The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain's structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation.
 
-\citeauthorlastnameand{jelinek}'s aphorism, **"Every time I fire a linguist, the performance of the speech recognizer goes up"**, is the spiritual predecessor to **The Bitter Lesson**. It captures the "bitter" realization that human-designed linguistic rules often act as bottlenecks compared to raw statistical computation. By favoring general-purpose algorithms over specialized human intuition, Jelinek's IBM team proved that "more data and more compute" consistently outperform "hand-crafted knowledge."
-
-**Key Takeaways:**
-* **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
-* **Don't Hard-Code Intuition:** Our human "intuition" about how we solve problems is often a bottleneck for machines. When we remove our human-centric rules and let the computer use its own math at scale, it performs better.
-* **Scaling Wins:** Simple algorithms that can grow and take advantage of more powerful hardware will eventually overtake complex, specialized programs.
 
 ## From Language Models to LLMs
 
@@ -715,12 +698,7 @@ Racter by decades and sit at the intersection of combinatorics and language that
 back through \cite[Shannon's]{shannon1948communication} information-theoretic treatment
 of English as a stochastic process.
 
-## What this tells us about the world and ourselves
-<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 123">
-Nature loves to hide herself.
-</div>
 
-If the models that mirror our own cognitive processes only achieve peak generalization once they become too complex to decode, then we've hit a biological version of an event horizon. We turned to AI as a mirror to understand ourselves, yet the "Bitter Lesson" suggests that the more accurate the reflection becomes, the more it retreats into a shroud of uninterpretable complexity. It's as if nature has placed a cosmic limit on self-observation: just as there is a visual boundary to the observable universe or a point in quantum scales where looking closer inherently blurs the view, the architecture of thought seems to veil itself the moment it becomes functional. In our attempt to build ourselves, we've discovered that intelligence is most "human" only when it remains an enigma, proving that the closer we get to the source, the more nature insists on its right to hide.
 
 ## Scaling Laws: From Encyclopedias to the Digital Ocean
 
