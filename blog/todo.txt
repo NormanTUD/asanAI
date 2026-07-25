@@ -13,3 +13,5 @@ https://arxiv.org/abs/1803.03635 The Lottery Ticket Hypothesis: Finding Sparse, 
 weird generalizations and inductive backdoors: https://arxiv.org/html/2512.09742v1
 
 ramon llull -> https://arxiv.org/html/2508.19200v3
+
+https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values.html#visualization
