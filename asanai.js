@@ -522,6 +522,8 @@ class asanAI {
 				"activation",
 				"kernel_initializer",
 				"bias_initializer",
+				"kernel_constraint",
+				"bias_constraint",
 				"kernel_regularizer",
 				"bias_regularizer",
 				"visualize",

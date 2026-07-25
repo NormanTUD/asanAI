@@ -126,6 +126,7 @@
 		_js("optimizer_info.js");
 		_js("initializer_info.js");
 		_js("explain_activations.js");
+		_js("explain_constraints.js");
 		_js("topological_analyzer.js");
 		_js("gui.js");
 		_js("summary.js");
