@@ -216,6 +216,11 @@ function init_set_all_options () {
 		}
 	});
 
+	function _isTyping() {
+		var tag = document.activeElement && document.activeElement.tagName;
+		return tag === "INPUT" || tag === "TEXTAREA" || (document.activeElement && document.activeElement.isContentEditable);
+	}
+
 	document.addEventListener("keydown", function(event) {
 		if(event.key == "Shift") {
 			shift_pressed = true;
@@ -237,6 +242,31 @@ function init_set_all_options () {
 			$("#math_tab_label").click();
 		} else if (event.altKey && event.key === "v") {
 			$("[href='#visualization_ribbon']").click();
+		} else if (!event.ctrlKey && !event.altKey && !event.metaKey && !_isTyping()) {
+			if (event.key === "t" || event.key === "T") {
+				train_neural_network();
+			} else if (event.key === "p" || event.key === "P") {
+				$("#predict_tab_label").click();
+				repredict();
+			} else if (event.key === "s" || event.key === "S") {
+				$("#summary_tab_label").click();
+				write_model_summary_wait();
+			} else if (event.key === "v" || event.key === "V") {
+				$("#visualization_tab_label").click();
+			} else if (event.key === "e" || event.key === "E") {
+				$("#code_tab_label").click();
+				show_python_container();
+			} else if (event.key === " ") {
+				event.preventDefault();
+				$("#start_stop_training").click();
+			} else if (event.key >= "1" && event.key <= "9") {
+				var idx = parseInt(event.key) - 1;
+				var $dataset = $("#dataset");
+				if ($dataset.length && $dataset[0].options.length > idx) {
+					$dataset[0].selectedIndex = idx;
+					$dataset.trigger("change");
+				}
+			}
 		}
 	});
 
