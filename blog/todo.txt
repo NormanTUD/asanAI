@@ -27,3 +27,5 @@ https://www.medimops.de/dilyan-grigorov-building-large-language-models-from-scra
 https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values.html#visualization
 
 http://neuralnetworksanddeeplearning.com/
+
+https://ciechanow.ski/
