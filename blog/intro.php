@@ -36,7 +36,7 @@ This site is not a book to be read passively. It is designed as a playground for
 * **Learn by Doing:** The core of this experience is interactivity. You are encouraged to move the sliders, input your own data, and click through visualizations. Curiosity is the primary engine of learning here. Try to see where the logic holds and where it breaks.
 * **Navigating Complexity:** At times, the mathematics will get heavy. You do not need to master every equation on the first pass. If a technical section feels overwhelming, skip it, play with the interactive models, and return to the theory once you have built an intuitive feel for how the numbers move.
 * **Not every topic may be of interest to you**: Use the *table of contents* to navigate, you can skip all sections that are of no interest to you.
-* **The Starting Point:** We assume no prior knowledge beyond basic English and the knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. 
+* **The Starting Point:** We assume no prior knowledge beyond basic English and the knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read — and that is fine. Use the interactive demos to build intuition, skip sections that feel too heavy, and come back later. Expect to re-read, tinker, and take your time. 
 
 ## What You Will Achieve
 
