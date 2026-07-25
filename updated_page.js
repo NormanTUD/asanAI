@@ -111,7 +111,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	await last_shape_layer_warning();
 
-	check_low_filter_warning();
+	await check_low_filter_warning();
 
 	hide_no_conv_stuff();
 

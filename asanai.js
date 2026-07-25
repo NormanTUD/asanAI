@@ -11391,8 +11391,6 @@ if len(sys.argv) == 1:
 			return [old_model, null];
 		}
 
-		$(".warning_container").hide();
-
 		var model_structure = fake_model_structure;
 		if(model_structure === undefined) {
 			model_structure = await this.get_model_structure();
@@ -11432,6 +11430,7 @@ if len(sys.argv) == 1:
 		}
 
 		$(".warning_container").html("").hide();
+		await check_low_filter_warning();
 
 		if(this.#model && this.#model.layers && this.#model.layers.length) {
 			if(i in this.#model.layers) {

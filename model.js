@@ -1,28 +1,26 @@
 "use strict";
 
-function check_low_filter_warning() {
+async function check_low_filter_warning() {
 	var layer_types = $(".layer_type");
 	var all_layer_settings = $(".layer_setting");
 
 	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
 		var type = $(layer_types[layer_idx]).val();
 
-		// Prüfe ob es ein Conv-Layer ist
 		if (type && (type.includes("conv") && !type.includes("Transpose"))) {
 			var filters_val = get_item_value(layer_idx, "filters");
 
-			var warn_msg_key = "conv_low_filter_warning";
-			var warn_msg = language[lang][warn_msg_key];
+			var warn_key = "conv_low_filter_warning";
 
 			if (looks_like_number(filters_val) && parse_int(filters_val) <= 1) {
-				// Warnung hinzufügen
-				layer_warning_container(layer_idx, warn_msg);
+				layer_warning_container(layer_idx, '<span class="TRANSLATEME_' + warn_key + '"></span>');
 			} else {
-				// Warnung entfernen falls sie existiert
-				remove_layer_warning(layer_idx, warn_msg);
+				remove_layer_warning(layer_idx, warn_key);
 			}
 		}
 	}
+
+	await update_translations();
 }
 
 async function except (errname, e) {
@@ -1252,20 +1250,27 @@ function remove_layer_warning(layer_idx, msg) {
 
 		var list = container.find("ul");
 		if (list.length === 0) {
-			// Nichts zu entfernen
 			return;
 		}
 
 		var removed = false;
 		list.find("li").each(function() {
-			if ($(this).text() === msg) {
-				$(this).remove();
-				removed = true;
-				return false;
+			var warnKey = $(this).data("warn-key");
+			if (warnKey) {
+				if (warnKey === msg) {
+					$(this).remove();
+					removed = true;
+					return false;
+				}
+			} else {
+				if ($(this).text() === msg) {
+					$(this).remove();
+					removed = true;
+					return false;
+				}
 			}
 		});
 
-		// Wenn alle entfernt wurden, Container leeren und verstecken
 		if (list.find("li").length === 0) {
 			container.html("").hide();
 		}
@@ -1311,8 +1316,6 @@ async function create_model (old_model = model, fake_model_structure = undefined
 	current_status_hash = new_current_status_hash;
 	no_weights_current_status_hash = await get_current_status_hash(0);
 
-	hide_warning_container();
-
 	var model_structure = fake_model_structure;
 	if(model_structure === undefined) {
 		model_structure = await get_model_structure();
@@ -1338,6 +1341,7 @@ async function create_model (old_model = model, fake_model_structure = undefined
 	}
 
 	$(".warning_container").html("").hide();
+	await check_low_filter_warning();
 
 	enable_train();
 
@@ -1431,24 +1435,35 @@ function layer_warning_container(layer_idx, msg) {
 			return;
 		}
 
-		// Prüfe, ob bereits eine UL existiert, sonst neu erstellen
 		var list = container.find("ul");
 		if (list.length === 0) {
 			list = $("<ul></ul>");
 			container.html(list);
 		}
 
-		// Wenn msg schon vorhanden ist, nicht nochmal hinzufügen
+		var keyMatch = msg.match(/TRANSLATEME_(\w+)/);
 		var exists = false;
 		list.find("li").each(function() {
-			if ($(this).text() === msg) {
-				exists = true;
-				return false;
+			if (keyMatch) {
+				if ($(this).data("warn-key") === keyMatch[1]) {
+					exists = true;
+					return false;
+				}
+			} else {
+				if ($(this).text() === msg) {
+					exists = true;
+					return false;
+				}
 			}
 		});
 
 		if (!exists) {
-			var li = $("<li></li>").text(msg);
+			var li;
+			if (keyMatch) {
+				li = $('<li data-warn-key="' + keyMatch[1] + '">' + msg + '</li>');
+			} else {
+				li = $("<li></li>").text(msg);
+			}
 			list.append(li);
 		}
 
