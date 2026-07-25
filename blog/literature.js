@@ -2812,6 +2812,7 @@ window.bibData = {
 		url: "https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html",
 		title: "A technician under the leadership of Frank Rosenblatt working on the wiring for the perceptron.",
 		author: "Unknown Photographer",
+		year: 1960
 	},
 	"historyofmathematicalnotation": {
 		title: "A History of Mathematical Notations",

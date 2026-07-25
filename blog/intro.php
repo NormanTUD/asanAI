@@ -9,6 +9,11 @@ order: 0
 color: accent
 -->
 
+<figure>
+	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
+	<figcaption class="md">\citetitle[The first Artificial Neural Network by Frank Rosenblatt]{perceptronimagewiring}</figcaption>
+</figure>
+
 <div class="md">
 While most modern discussions about Artificial Intelligence focus on its current capabilities or its potential to replace human labor, this text takes a different approach. We are not just interested in what AI can do today. We are interested in the **intellectual history** and the specific technicalities that made these systems possible. 
 
