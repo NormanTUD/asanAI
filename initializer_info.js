@@ -266,24 +266,26 @@
 
   var regData = {
     none: {
-      en: { analogy: "No penalty. Model can use any weight values freely. Maximum flexibility but overfitting risk.", tip: "Only skip regularization with TONS of data and simple models. Some L2 always helps.", when_use: "• Very simple problems\n• Baseline comparisons", when_not: "• Most real problems → overfits without reg\n• Even tiny L2 (0.0001) helps" },
-      de: { analogy: "Keine Strafe. Maximale Flexibilität, aber Überanpassungsrisiko.", tip: "Nur ohne Regularisierung bei SEHR vielen Daten. Etwas L2 hilft immer.", when_use: "• Sehr einfache Probleme\n• Basisvergleiche", when_not: "• Meiste echte Probleme → overfittet\n• Schon winziges L2 (0.0001) hilft" },
+      en: { analogy: "No penalty...", tip: "Only skip regularization...", when_use: "• Very simple problems...", when_not: "• Most real problems..." },
+      de: { analogy: "Keine Strafe...", tip: "Nur ohne Regularisierung...", when_use: "• Sehr einfache Probleme...", when_not: "• Meiste echte Probleme..." },
       math: "\\text{Penalty} = 0",
-      ctrl: {}
+      ctrl: {}, demo: {}
     },
     l1: {
       en: { analogy: "Penalty = l1 × |weight|. Small weights pushed to EXACTLY 0 (sparsity). Prunes unimportant connections.", tip: "Use L1 for feature selection: which inputs matter? Example: gene expression with 10,000 genes → L1 finds the important ones.", when_use: "• Feature selection (which inputs matter?)\n• Interpretable sparse models\n• High-dimensional data (more features than samples)", when_not: "• You only need small weights not zeros\n• L2 is smoother for generalization" },
       de: { analogy: "Strafe = l1 × |Gewicht|. Kleine Gewichte auf exakt 0 (Sparsity). Entfernt unwichtige Verbindungen.", tip: "L1 für Feature-Auswahl: welche Eingaben sind wichtig? Beispiel: Genexpression mit 10.000 Genen → L1 findet die wichtigen.", when_use: "• Feature-Auswahl\n• Interpretierbare dünn besetzte Modelle\n• Hochdimensionale Daten", when_not: "• Nur kleine Gewichte, nicht Null\n• L2 ist glatter für Generalisierung" },
       math: "\\text{Penalty} = \\text{l1} \\cdot \\sum |W|",
       ctrl: { l1: { min: 0, max: 0.1, default: 0.01, step: 0.001, desc_en: "L1 strength. Higher = more weights become exactly 0.", desc_de: "L1-Stärke. Höher = mehr Gewichte werden exakt 0.", example_en: "0.001 → mild (few zeroed). 0.01 → moderate. 0.1 → aggressive (most zeroed).", example_de: "0.001 → mild (wenige auf 0). 0.01 → moderat. 0.1 → aggressiv (meiste auf 0)." } },
-      penalty: function(w, c) { return c.l1 * Math.abs(w); }
+      penalty: function(w, c) { return c.l1 * Math.abs(w); },
+      demo: {}
     },
     l2: {
       en: { analogy: "Penalty = l2 × weight². Large weights HEAVILY punished (quadratic!), tiny weights barely feel it. Also called weight decay.", tip: "DEFAULT regularizer for almost every neural network. Start l2=0.01. ResNet uses 0.0001 for ImageNet.", when_use: "• DEFAULT for MOST neural networks\n• Prevents overfitting on any model\n• Works with all optimizers\n• Almost always improves generalization", when_not: "• If you NEED exact zeros (L1)\n• Very high l2 → model underfits" },
       de: { analogy: "Strafe = l2 × Gewicht². Große Gewichte STARK bestraft (quadratisch!), kleine kaum. Auch Weight Decay.", tip: "STANDARD-Regularisierer für fast jedes Netz. Starte l2=0.01. ResNet nutzt 0.0001.", when_use: "• STANDARD für die meisten Netze\n• Verhindert Überanpassung\n• Funktioniert mit allen Optimierern\n• Verbessert fast immer Generalisierung", when_not: "• Wenn exakte Null nötig (L1)\n• Sehr hohes l2 → Modell unterfittet" },
       math: "\\text{Penalty} = \\text{l2} \\cdot \\sum W^2",
       ctrl: { l2: { min: 0, max: 0.1, default: 0.01, step: 0.001, desc_en: "L2 strength. Higher = smaller weights. 0.01 is a common start.", desc_de: "L2-Stärke. Höher = kleinere Gewichte. 0.01 ist guter Start.", example_en: "0.0001 → very mild. 0.01 → moderate default. 0.1 → strong (may underfit).", example_de: "0.0001 → sehr mild. 0.01 → moderater Standard. 0.1 → stark (kann unterfitten)." } },
-      penalty: function(w, c) { return c.l2 * w * w; }
+      penalty: function(w, c) { return c.l2 * w * w; },
+      demo: {}
     },
     l1l2: {
       en: { analogy: "L1 (sparsity) + L2 (small weights) combined. L1 zeros out unimportant, L2 keeps remaining small. Best of both worlds.", tip: "Use when you want BOTH sparsity AND small model. Production model: mostly 0 (L1), stable remaining (L2).", when_use: "• When you want BOTH sparsity and small weights\n• Production: compact + stable\n• Complex models with many params", when_not: "• Tuning two hyperparams is expensive\n• Simple problems: one regularizer is enough" },
@@ -293,7 +295,8 @@
         l1: { min: 0, max: 0.1, default: 0.005, step: 0.001, desc_en: "L1 strength (sparsity).", desc_de: "L1-Stärke (Sparsity).", example_en: "Controls how many weights become exactly 0.", example_de: "Bestimmt, wie viele Gewichte exakt 0 werden." },
         l2: { min: 0, max: 0.1, default: 0.005, step: 0.001, desc_en: "L2 strength (weight decay).", desc_de: "L2-Stärke (Weight Decay).", example_en: "Controls how small non-zero weights stay.", example_de: "Bestimmt, wie klein Nicht-Null-Gewichte bleiben." }
       },
-      penalty: function(w, c) { return c.l1 * Math.abs(w) + c.l2 * w * w; }
+      penalty: function(w, c) { return c.l1 * Math.abs(w) + c.l2 * w * w; },
+      demo: {}
     }
   };
 
@@ -439,7 +442,7 @@
       for (var ci = 0; ci < ck.length; ci++) _state.ctrl[ck[ci]] = info.ctrl[ck[ci]].default !== undefined ? info.ctrl[ck[ci]].default : 0;
     }
     // Init demo values from defaults
-    var dk = Object.keys(info.demo);
+    var dk = Object.keys(info.demo || {});
     if (Object.keys(_state.demo).length === 0) {
       for (var di = 0; di < dk.length; di++) _state.demo[dk[di]] = info.demo[dk[di]].default !== undefined ? info.demo[dk[di]].default : 0;
     }
