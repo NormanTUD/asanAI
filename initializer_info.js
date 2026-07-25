@@ -337,7 +337,7 @@
     document.body.appendChild(overlay);
     document.addEventListener("keydown", _escHandler);
 
-    setTimeout(function () { _renderPlots(content); }, 50);
+    setTimeout(function () { _renderPlots(content); _renderMatrix(content); }, 50);
   }
 
   function _modalShell(t) {
@@ -421,7 +421,7 @@
       _lastPlotData = null;
       _lastMatrixData = null;
       var c = document.getElementById(_POPUP_ID + "_c");
-      if (c) { _rebuild(c, i18n[L()]); setTimeout(function () { _renderPlots(c); }, 50); }
+      if (c) { _rebuild(c, i18n[L()]); setTimeout(function () { _renderPlots(c); _renderMatrix(c); }, 50); }
     };
 
     row.appendChild(sel);
