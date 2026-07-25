@@ -3397,7 +3397,7 @@ window.bibData = {
 		year: 2026
 	},
 	"history_of_a": {
-		url: "https://de.wikipedia.org/wiki/A",
+		url: "https://en.wikipedia.org/wiki/A",
 		year: 2026,
 		author: "Wikipedia contributors",
 		title: "A | Wikipedia"
