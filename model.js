@@ -18,6 +18,18 @@ async function check_low_filter_warning() {
 				remove_layer_warning(layer_idx, warn_key);
 			}
 		}
+
+		var $units_input = $(all_layer_settings[layer_idx]).find(".units");
+		if ($units_input.length) {
+			var units_val = $units_input.val();
+			var warn_key = "layer_low_units_warning";
+
+			if (looks_like_number(units_val) && parse_int(units_val) <= 1) {
+				layer_warning_container(layer_idx, '<span class="TRANSLATEME_' + warn_key + '"></span>');
+			} else {
+				remove_layer_warning(layer_idx, warn_key);
+			}
+		}
 	}
 
 	await update_translations();

@@ -433,11 +433,7 @@ async function dispose (...tensors) { // start_tensors
 				if(_custom_tensors[tensor_id]) {
 					delete _custom_tensors[tensor_id];
 				}
-
-				await nextFrame();
 			}
-
-			//_clean_custom_tensors();
 		} catch (e) {
 			if(Object.keys(e).includes("message")) {
 				e = e.message;
