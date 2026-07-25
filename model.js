@@ -1286,11 +1286,6 @@ function remove_layer_warning(layer_idx, msg) {
 		if (list.find("li").length === 0) {
 			container.html("").hide();
 		}
-
-		if (!removed) {
-			console.warn("remove_layer_warning: message not found:", msg);
-		}
-
 	} catch (e) {
 		console.error("Error in remove_layer_warning:", e);
 	}
