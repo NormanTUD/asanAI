@@ -2,6 +2,7 @@
 	<span id="model_is_ok_icon"></span>
 	<span id="label_debugger_icon" style="display:none"></span>
 	<span id="status_bar_log"></span>
+	<span id="model_status_chip"></span>
 
 	<span id="data_loading_progress_bar" style="display: none">
 		| <span class="TRANSLATEME_loading_data_label"></span>

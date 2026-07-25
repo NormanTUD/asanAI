@@ -75,6 +75,8 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 
 	await write_descriptions(1);
 
+	update_model_status_chip();
+
 	history_of_weights_for_loss_landscape = [];
 
 	await plot_model_plot(true);
@@ -230,4 +232,19 @@ async function wait_for_updated_page(seconds) {
 			break;
 		}
 	}
+}
+
+function update_model_status_chip() {
+	var $chip = $("#model_status_chip");
+	if (!$chip.length) return;
+	if (!model || !model.layers || !model.layers.length) {
+		$chip.html("");
+		return;
+	}
+	var n_layers = model.layers.length;
+	var n_params = model.layers.reduce(function(sum, l) {
+		try { return sum + (l.countParams() || 0); }
+		catch (e) { return sum; }
+	}, 0);
+	$chip.html(n_layers + " layer" + (n_layers !== 1 ? "s" : "") + " | " + n_params.toLocaleString() + " params");
 }

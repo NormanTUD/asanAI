@@ -631,6 +631,13 @@ button:disabled:hover {
 	box-shadow: 0 -0.5px 0 rgba(0, 0, 0, 0.04);
 }
 
+#model_status_chip {
+	margin-left: 1em;
+	opacity: 0.7;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
 #data_progressbar {
 	margin-top: 4px;
 	display: none;
