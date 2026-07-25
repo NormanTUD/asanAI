@@ -338,6 +338,7 @@ module.exports = {
 		"write_model_to_latex_to_page": "readonly",
 		"last_image_output_shape_hash": "writable",
 		"layer_warning_container": "readonly",
+		"check_low_filter_warning": "readonly",
 		"get_x_y_as_array": "readonly",
 		"Prism": "readonly",
 		"example_plotly_data": "readonly",
