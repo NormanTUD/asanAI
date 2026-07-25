@@ -4,7 +4,9 @@ async function check_low_filter_warning() {
 	var layer_types = $(".layer_type");
 	var all_layer_settings = $(".layer_setting");
 
-	for (var layer_idx = 0; layer_idx < get_number_of_layers(); layer_idx++) {
+	const number_of_layers = get_number_of_layers();
+
+	for (var layer_idx = 0; layer_idx < number_of_layers; layer_idx++) {
 		var type = $(layer_types[layer_idx]).val();
 
 		if (type && (type.includes("conv") && !type.includes("Transpose"))) {
@@ -24,7 +26,7 @@ async function check_low_filter_warning() {
 			var units_val = $units_input.val();
 			var warn_key = "layer_low_units_warning";
 
-			if (looks_like_number(units_val) && parse_int(units_val) <= 1) {
+			if (looks_like_number(units_val) && parse_int(units_val) <= 1 && layer_idx == number_of_layers) {
 				layer_warning_container(layer_idx, '<span class="TRANSLATEME_' + warn_key + '"></span>');
 			} else {
 				remove_layer_warning(layer_idx, warn_key);
