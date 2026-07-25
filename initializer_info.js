@@ -873,7 +873,7 @@
   }
 
   function injectAll() {
-    var all = document.querySelectorAll("select.input_data");
+    var all = document.querySelectorAll("select.input_data, select.input_field");
     for (var i = 0; i < all.length; i++) {
       var s = all[i], c = s.className;
       if (c.indexOf("skip_connection_initializer_select") !== -1) injectIcon(s, "initializer");
