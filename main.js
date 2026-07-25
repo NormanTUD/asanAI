@@ -65,10 +65,18 @@ function check_all_tabs () {
 }
 
 async function on_resize () {
+	// Close mobile panels/drawer FIRST so layer positions are correct
+	if(!is_mobile_view()) {
+		mobile_close_all();
+		mobile_close_drawer();
+	}
+
 	await write_descriptions(1);
 
-	if(!$("#ribbon").is(":visible")) {
-		$("#ribbon_shower").show();
+	if(!is_mobile_view()) {
+		if(!$("#ribbon").is(":visible")) {
+			$("#ribbon_shower").show();
+		}
 	}
 
 	await restart_fcnn();
@@ -673,6 +681,10 @@ function show_website_and_hide_loader() {
 	$("#mainsite").show();
 	$("#status_bar").show();
 	$("#loading_icon_wrapper").fadeOut(200);
+	if(is_mobile_view()) {
+		var bottomNav = document.getElementById('mobile_bottom_nav');
+		if(bottomNav) bottomNav.style.display = 'flex';
+	}
 }
 
 function set_model_and_label_debugger () {

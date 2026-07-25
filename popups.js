@@ -12,6 +12,14 @@ function close_all_popups() {
 			}
 		}
 	});
+
+	// Also close mobile panels
+	if (typeof mobile_close_all === 'function') {
+		mobile_close_all();
+	}
+	if (typeof mobile_close_drawer === 'function') {
+		mobile_close_drawer();
+	}
 }
 
 function open_popup(name) {

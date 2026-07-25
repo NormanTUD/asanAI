@@ -46,6 +46,7 @@
 		_css("css/auto_complete.css");
 
 		_css("css/ribbon_media.css");
+		_css("css/mobile.css");
 		_css("css/".$theme_base."mode.css", "css_mode");
 		_css("css/ribbon".$theme_base."mode.css", "css_ribbon");
 		_css("libs/prism/prism.min.css");
@@ -123,6 +124,7 @@
 		_js("updated_page.js");
 		_js("trace_through_loss_landscape.js");
 		_js("optimizer_info.js");
+		_js("initializer_info.js");
 		_js("topological_analyzer.js");
 		_js("gui.js");
 		_js("summary.js");
@@ -247,9 +249,15 @@
 				_include("php_files/errorcontainer.php");
 ?>
 				<div id="help" style="display: none"></div>
-				<div id="toggle_layers_button"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="robot_large_button">&#9881;&#129302;</span></button></div>
+			<div id="toggle_layers_button"><button style="width: 100%" onclick="toggle_layers()"><span id="robot_layer" class="robot_large_button">&#9881;&#129302;</span></button></div>
 
-				<div class="side_by_side_container">
+			<!-- Mobile language switcher -->
+			<div id="mobile_lang_switcher" style="display:none">
+				<span onclick='update_lang("de")'><img src="_gui/icons/german.svg" height=28 /></span>
+				<span onclick='update_lang("en")'><img src="_gui/icons/english.svg" height=28 /></span>
+			</div>
+
+			<div class="side_by_side_container">
 					<div id="layers_container_left" class="left_side user_select_none">
 						<ul id="layers_container" class="ui-sortable"><li></li></ul>
 					</div>
@@ -272,6 +280,214 @@
 				</div>
 			</div>
 		</div>
+		<!-- Mobile bottom navigation bar — inline display:none ensures it never flashes during load -->
+		<div id="mobile_bottom_nav" style="display:none">
+			<button class="mobile-nav-item" id="mobile_nav_dataset" onclick="mobile_open_panel('dataset')">
+				<span class="mobile-nav-icon">&#128218;</span>
+				<span class="mobile-nav-label" data-tr-text="dataset_mobile_label">Dataset</span>
+			</button>
+			<button class="mobile-nav-item" id="mobile_nav_layers" onclick="mobile_toggle_drawer()">
+				<span class="mobile-nav-icon">&#129302;</span>
+				<span class="mobile-nav-label" data-tr-text="layers_mobile_label">Layers</span>
+			</button>
+			<button class="mobile-nav-item" id="mobile_nav_train" onclick="mobile_train_action()">
+				<span class="mobile-nav-icon">&#9654;</span>
+				<span class="mobile-nav-label" data-tr-text="train_mobile_label">Train</span>
+			</button>
+			<button class="mobile-nav-item" id="mobile_nav_settings" onclick="mobile_open_panel('settings')">
+				<span class="mobile-nav-icon">&#9881;</span>
+				<span class="mobile-nav-label" data-tr-text="settings_mobile_label">Settings</span>
+			</button>
+			<button class="mobile-nav-item" id="mobile_nav_help" onclick="mobile_open_panel('help')">
+				<span class="mobile-nav-icon">&#63;</span>
+				<span class="mobile-nav-label" data-tr-text="help_mobile_label">Help</span>
+			</button>
+		</div>
+
+		<!-- Mobile overlay -->
+		<div id="mobile_overlay" class="mobile-overlay" onclick="mobile_close_all()"></div>
+
+		<!-- Layers drawer overlay -->
+		<div id="mobile_drawer_overlay" class="mobile-drawer-overlay" onclick="mobile_close_drawer()"></div>
+
+		<!-- Dataset Panel -->
+		<div id="mobile_panel_dataset" class="mobile-panel">
+			<div class="mobile-panel-header">
+				<span class="mobile-panel-title" data-tr-text="dataset_and_network_title">Dataset &amp; Network</span>
+				<button class="mobile-panel-close" onclick="mobile_close_all()">&times;</button>
+			</div>
+			<div class="mobile-panel-body">
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="examples_label">Examples</div>
+					<div class="mobile-panel-row-stack">
+						<div class="mobile-panel-label"><span class="TRANSLATEME_examples"></span></div>
+						<div class="mobile-panel-control">
+							<select id="mobile_dataset" class="mobile-dataset-select" onchange="$('#dataset').val(this.value).trigger('change'); mobile_close_all();">
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row-stack">
+						<div class="mobile-panel-label"><span class="TRANSLATEME_dataset"></span></div>
+						<div class="mobile-panel-control">
+							<select id="mobile_model_dataset" class="mobile-data-origin-select" onchange="$('#model_dataset').val(this.value).trigger('change');">
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row-stack">
+						<div class="mobile-panel-label"><span class="TRANSLATEME_own_data"></span></div>
+						<div class="mobile-panel-control">
+							<select id="mobile_data_origin" class="mobile-data-origin-select" onchange="$('#data_origin').val(this.value).trigger('change');">
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="hyperparameters_label">Hyperparameters</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_epochs"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_epochs" value="30" min="1" step="10" onchange="$('#epochs').val(this.value)">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_batch_size"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_batchSize" value="10" min="1" step="5" onchange="$('#batchSize').val(this.value)">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_valsplit"></span> %</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_validationSplit" value="20" min="0" max="99" step="5" onchange="$('#validationSplit').val(this.value)">
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="training_label">Training</div>
+					<button class="mobile-train-btn start_training" onclick="train_neural_network(); mobile_close_all();">
+						<span class="TRANSLATEME_start_training"></span>
+					</button>
+					<button class="mobile-retrain-btn restart_training" onclick="retrain_neural_network(); mobile_close_all();">
+						<span class="TRANSLATEME_start_training_from_scratch"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Settings Panel -->
+		<div id="mobile_panel_settings" class="mobile-panel">
+			<div class="mobile-panel-header">
+				<span class="mobile-panel-title" data-tr-text="settings_title">Settings</span>
+				<button class="mobile-panel-close" onclick="mobile_close_all()">&times;</button>
+			</div>
+			<div class="mobile-panel-body">
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="mode_label">Mode</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label" data-tr-text="gui_mode_label">Mode</span>
+						<div class="mobile-panel-control">
+							<select id="mobile_mode" onchange="$('#beginner').prop('checked', this.value==='beginner'); $('#expert').prop('checked', this.value==='expert'); set_mode();">
+								<option value="beginner" data-tr-text="beginner">&#129466; Beginner</option>
+								<option value="expert" data-tr-text="expert">&#9760;&#65039; Expert</option>
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_theme_label"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_theme" onchange="$('#theme_choser').val(this.value); theme_choser();">
+								<option value="lightmode">Light Mode</option>
+								<option value="darkmode">Dark Mode</option>
+								<option value="naturalmode">Natural Mode</option>
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row expert_mode_only">
+						<span class="mobile-panel-label" data-tr-text="tf_backend_label">Backend</span>
+						<div class="mobile-panel-control">
+							<select id="mobile_backend" onchange="$('#backend_chooser input[value='+this.value+']').prop('checked', true); set_backend();">
+								<option value="cpu">CPU</option>
+								<option value="webgl">WebGL</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section expert_mode_only">
+					<div class="mobile-panel-section-title" data-tr-text="loss_metric_label">Loss &amp; Metric</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_loss"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_loss" onchange="$('#loss').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_metric"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_metric" onchange="$('#metric').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section expert_mode_only">
+					<div class="mobile-panel-section-title" data-tr-text="optimizer_label">Optimizer</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label" data-tr-text="optimizer_label">Optimizer</span>
+						<div class="mobile-panel-control">
+							<select id="mobile_optimizer" onchange="$('#optimizer').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Help Panel -->
+		<div id="mobile_panel_help" class="mobile-panel">
+			<div class="mobile-panel-header">
+				<span class="mobile-panel-title" data-tr-text="help_label">Help</span>
+				<button class="mobile-panel-close" onclick="mobile_close_all()">&times;</button>
+			</div>
+			<div class="mobile-panel-body">
+				<div class="mobile-panel-section">
+					<button class="mobile-panel-row" onclick="window.open('manual.html', '_blank'); mobile_close_all();" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label" data-tr-text="open_help_page">Open Help Page</span>
+						<span>&rarr;</span>
+					</button>
+				</div>
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="language_label">Language</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label">Language</span>
+						<div class="mobile-panel-control" style="display:flex; gap:12px;">
+							<span onclick='update_lang("de")' style="cursor:pointer; font-size:24px;"><img src="_gui/icons/german.svg" height=24 /></span>
+							<span onclick='update_lang("en")' style="cursor:pointer; font-size:24px;"><img src="_gui/icons/english.svg" height=24 /></span>
+						</div>
+					</div>
+				</div>
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="code_and_paper_label">Code &amp; Paper</div>
+					<button class="mobile-panel-row" onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank"); mobile_close_all();' style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_paper"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank"); mobile_close_all();' style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_code_label"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="sources_popup(); mobile_close_all();" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_sources_and_used_programs"></span></span>
+						<span>&rarr;</span>
+					</button>
+					<button class="mobile-panel-row" onclick="location.href='mailto:norman.koch@tu-dresden.de'; mobile_close_all();" style="width:100%; cursor:pointer; text-align:left; font-size:15px;">
+						<span class="mobile-panel-label">norman.koch@tu-dresden.de</span>
+						<span>&rarr;</span>
+					</button>
+				</div>
+			</div>
+		</div>
+
 <?php
 		_include("php_files/status_bar.php");
 		_include("php_files/load_msg.php");

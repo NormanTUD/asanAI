@@ -420,7 +420,8 @@ function shuffleCombo (...args) {
 }
 
 async function dispose (...tensors) { // start_tensors
-	for (const item of tensors) {
+	for (var di = 0; di < tensors.length; di++) {
+		const item = tensors[di];
 		if(enable_dispose_debug) {
 			log("dispose_debug:", item);
 			console.trace();
@@ -442,6 +443,11 @@ async function dispose (...tensors) { // start_tensors
 			err(e);
 
 			return null;
+		}
+
+		// Yield every 10 tensors to keep the UI responsive
+		if(di % 10 === 0) {
+			await nextFrame();
 		}
 	}
 }

@@ -162,6 +162,13 @@ async function update_translations(force=0) {
 		}
 	});
 
+	$("[data-tr-text]").each(function() {
+		var key = $(this).attr("data-tr-text");
+		if(language[lang] && language[lang][key]) {
+			$(this).text(language[lang][key]);
+		}
+	});
+
 	if (typeof show_visual_explanations === 'function') {
 		await show_visual_explanations(wd);
 	}

@@ -1189,18 +1189,290 @@ function allow_edit_input_shape() {
 }
 
 function show_ribbon() {
+	if (is_mobile_view()) {
+		mobile_open_panel('dataset');
+		return;
+	}
 	$("#ribbon").show();
 	$("#ribbon_shower").hide();
 	$("#status_bar").show();
 }
 
 function hide_ribbon() {
+	if (is_mobile_view()) {
+		mobile_close_all();
+		return;
+	}
 	$("#ribbon").hide();
 	$("#ribbon_shower").show();
 	$("#status_bar").hide();
 
 	close_all_popups();
 }
+
+/* ============================================================
+   MOBILE UI FUNCTIONS
+   Bottom nav, slide-up panels, layers drawer
+   ============================================================ */
+
+var _mobile_current_panel = null;
+var _mobile_drawer_open = false;
+
+function is_mobile_view() {
+	return window.innerWidth <= 1100;
+}
+
+function mobile_open_panel(panel_name) {
+	if (!is_mobile_view()) return;
+
+	// TOGGLE: if same panel is already open, close it
+	if (_mobile_current_panel === panel_name) {
+		mobile_close_all();
+		return;
+	}
+
+	// Close any open panel first
+	mobile_close_all();
+	mobile_close_drawer();
+
+	var panel = document.getElementById('mobile_panel_' + panel_name);
+	var overlay = document.getElementById('mobile_overlay');
+	if (!panel || !overlay) return;
+
+	overlay.style.display = 'block';
+	panel.classList.add('open');
+
+	// Force reflow then animate
+	void panel.offsetHeight;
+	overlay.classList.add('visible');
+
+	_mobile_current_panel = panel_name;
+
+	// Sync mobile controls with current ribbon values
+	if (panel_name === 'dataset') {
+		_sync_mobile_dataset_panel();
+	} else if (panel_name === 'settings') {
+		_sync_mobile_settings_panel();
+	}
+
+	// Highlight active nav item
+	mobile_set_active_nav('mobile_nav_' + panel_name);
+}
+
+function mobile_close_all() {
+	var panels = document.querySelectorAll('.mobile-panel');
+	var overlay = document.getElementById('mobile_overlay');
+
+	panels.forEach(function(p) {
+		p.classList.remove('open');
+	});
+
+	if (overlay) {
+		overlay.classList.remove('visible');
+		setTimeout(function() {
+			if (!overlay.classList.contains('visible')) {
+				overlay.style.display = 'none';
+			}
+		}, 350);
+	}
+
+	_mobile_current_panel = null;
+	mobile_clear_active_nav();
+}
+
+function mobile_toggle_drawer() {
+	if (!is_mobile_view()) return;
+
+	// TOGGLE: if already open, close it
+	if (_mobile_drawer_open) {
+		mobile_close_drawer();
+		return;
+	}
+
+	// Close any open panels first
+	mobile_close_all();
+
+	var drawer = document.getElementById('layers_container_left');
+	var drawer_overlay = document.getElementById('mobile_drawer_overlay');
+
+	if (!drawer) return;
+
+	drawer_overlay.style.display = 'block';
+	void drawer.offsetHeight;
+	drawer_overlay.classList.add('visible');
+	drawer.classList.add('drawer-open');
+
+	_mobile_drawer_open = true;
+
+	// Update descriptions
+	if (typeof write_descriptions === 'function') {
+		write_descriptions(1);
+	}
+	mobile_set_active_nav('mobile_nav_layers');
+}
+
+function mobile_close_drawer() {
+	var drawer = document.getElementById('layers_container_left');
+	var drawer_overlay = document.getElementById('mobile_drawer_overlay');
+
+	if (drawer) {
+		drawer.classList.remove('drawer-open');
+	}
+
+	if (drawer_overlay) {
+		drawer_overlay.classList.remove('visible');
+		setTimeout(function() {
+			if (!drawer_overlay.classList.contains('visible')) {
+				drawer_overlay.style.display = 'none';
+			}
+		}, 350);
+	}
+
+	_mobile_drawer_open = false;
+	mobile_clear_active_nav();
+}
+
+function mobile_train_action() {
+	if (!is_mobile_view()) return;
+
+	mobile_close_all();
+	mobile_close_drawer();
+
+	// Toggle training
+	if (typeof train_neural_network === 'function') {
+		train_neural_network();
+	}
+
+	// Visual feedback
+	var trainBtn = document.getElementById('mobile_nav_train');
+	if (trainBtn) {
+		trainBtn.classList.add('training');
+		setTimeout(function() {
+			trainBtn.classList.remove('training');
+		}, 2000);
+	}
+}
+
+function mobile_set_active_nav(id) {
+	mobile_clear_active_nav();
+	var el = document.getElementById(id);
+	if (el) {
+		el.classList.add('active');
+	}
+}
+
+function mobile_clear_active_nav() {
+	var items = document.querySelectorAll('.mobile-nav-item');
+	items.forEach(function(item) {
+		item.classList.remove('active');
+	});
+}
+
+/* Sync mobile panel controls with actual ribbon values */
+function _sync_mobile_dataset_panel() {
+	var ds = document.getElementById('mobile_dataset');
+	var ds_ribbon = document.getElementById('dataset');
+	if (ds && ds_ribbon) {
+		// Copy options
+		if (ds.options.length !== ds_ribbon.options.length) {
+			ds.innerHTML = ds_ribbon.innerHTML;
+		}
+		ds.value = ds_ribbon.value;
+	}
+
+	var md = document.getElementById('mobile_model_dataset');
+	var md_ribbon = document.getElementById('model_dataset');
+	if (md && md_ribbon) {
+		if (md.options.length !== md_ribbon.options.length) {
+			md.innerHTML = md_ribbon.innerHTML;
+		}
+		md.value = md_ribbon.value;
+	}
+
+	var do_ = document.getElementById('mobile_data_origin');
+	var do_ribbon = document.getElementById('data_origin');
+	if (do_ && do_ribbon) {
+		if (do_.options.length !== do_ribbon.options.length) {
+			do_.innerHTML = do_ribbon.innerHTML;
+		}
+		do_.value = do_ribbon.value;
+	}
+
+	// Sync hyperparameters
+	var epochs = document.getElementById('mobile_epochs');
+	var epochs_ribbon = document.getElementById('epochs');
+	if (epochs && epochs_ribbon) epochs.value = epochs_ribbon.value;
+
+	var bs = document.getElementById('mobile_batchSize');
+	var bs_ribbon = document.getElementById('batchSize');
+	if (bs && bs_ribbon) bs.value = bs_ribbon.value;
+
+	var vs = document.getElementById('mobile_validationSplit');
+	var vs_ribbon = document.getElementById('validationSplit');
+	if (vs && vs_ribbon) vs.value = vs_ribbon.value;
+}
+
+function _sync_mobile_settings_panel() {
+	// Mode
+	var modeEl = document.getElementById('mobile_mode');
+	if (modeEl) {
+		if ($('#expert').is(':checked')) {
+			modeEl.value = 'expert';
+		} else {
+			modeEl.value = 'beginner';
+		}
+	}
+
+	// Theme
+	var themeEl = document.getElementById('mobile_theme');
+	var themeRibbon = document.getElementById('theme_choser');
+	if (themeEl && themeRibbon) {
+		themeEl.value = themeRibbon.value;
+	}
+
+	// Backend (CPU / WebGL)
+	var backendEl = document.getElementById('mobile_backend');
+	if (backendEl) {
+		var currentBackend = get_backend();
+		if (currentBackend) {
+			backendEl.value = currentBackend;
+		}
+	}
+
+	// Loss
+	var lossEl = document.getElementById('mobile_loss');
+	var lossRibbon = document.getElementById('loss');
+	if (lossEl && lossRibbon) {
+		if (lossEl.options.length !== lossRibbon.options.length) {
+			lossEl.innerHTML = lossRibbon.innerHTML;
+		}
+		lossEl.value = lossRibbon.value;
+	}
+
+	// Metric
+	var metricEl = document.getElementById('mobile_metric');
+	var metricRibbon = document.getElementById('metric');
+	if (metricEl && metricRibbon) {
+		if (metricEl.options.length !== metricRibbon.options.length) {
+			metricEl.innerHTML = metricRibbon.innerHTML;
+		}
+		metricEl.value = metricRibbon.value;
+	}
+
+	// Optimizer
+	var optEl = document.getElementById('mobile_optimizer');
+	var optRibbon = document.getElementById('optimizer');
+	if (optEl && optRibbon) {
+		if (optEl.options.length !== optRibbon.options.length) {
+			optEl.innerHTML = optRibbon.innerHTML;
+		}
+		optEl.value = optRibbon.value;
+	}
+}
+
+/* Override show_ribbon / hide_ribbon for mobile */
+var _orig_show_ribbon = typeof show_ribbon === 'function' ? show_ribbon : null;
+var _orig_hide_ribbon = typeof hide_ribbon === 'function' ? hide_ribbon : null;
 
 function human_readable_time(seconds, start="", end="") {
 	if (!seconds) {
@@ -1494,6 +1766,11 @@ async function set_custom_image_training () {
 }
 
 async function toggle_layers() {
+	if (is_mobile_view()) {
+		mobile_toggle_drawer();
+		return;
+	}
+
 	$(".left_side").toggle();
 
 	await write_descriptions(1);

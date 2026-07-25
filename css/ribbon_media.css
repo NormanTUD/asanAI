@@ -1,106 +1,37 @@
+/* ============================================================
+   RIBBON MEDIA QUERIES
+   Desktop ribbon stays untouched.
+   Phone styles are now in mobile.css — this file only handles
+   the desktop ribbon visibility and minor shared overrides.
+   ============================================================ */
+
+/* ── Phone / Tablet: hide desktop ribbon, rely on mobile.css ── */
 @media only screen and (max-width: 1100px) {
-	.add_layer {
-		font-size: calc(10px + 1vw);
+	/* Ribbon is hidden — mobile.css provides the bottom nav */
+	#ribbon {
+		display: none !important;
 	}
 
+	#ribbon_shower {
+		display: none !important;
+	}
+
+	/* Shared: responsive font scaling for remaining elements */
 	body {
 		font-size: calc(10px + 1vw);
-	}
-	
-	.close_button {
-		width: 100%;
-		font-size: 30px;
 	}
 
 	div {
 		font-size: calc(10px + 1vw);
 	}
-	
-	html {
-		min-width: auto;
-	}
 
 	input {
 		font-size: calc(10px + 1vw);
-		height: 28px;
 	}
 
-	input[type=checkbox] {
-		height: 30px;
-		width: 30px;
-	}
-
-	input[type=radio] {
-		height: 30px;
-		width: 30px;
-	}
-
-	.left_side {
-		float: inherit;
-	}
-
-	.layer_type {
-		width: auto;
+	/* Buttons */
+	.add_layer {
 		font-size: calc(10px + 1vw);
-	}
-
-	.layer_setting {
-		min-width: 266px;
-		width: calc(100% - 78px);
-		margin-left: 11px;
-	}
-
-	#layers_container {
-		margin-left: -2px;
-	}
-
-	.left_side {
-		min-width: auto;
-	}
-
-	.layer_identifier_activation {
-		display: none;
-	}
-
-	#ribbon {
-		height: 100%;
-		display: none;
-		width: 100%;
-	}
-
-	#ribbon_shower {
-		display: block;
-		text-align: center;
-	}
-
-	#ribbon_shower .symbol_button {
-		display: inline-block;
-		margin: 0 20px; /* 20px Platz links und rechts pro Symbol */
-		cursor: pointer;
-		transition: transform 0.2s ease, opacity 0.2s ease;
-	}
-
-	#ribbon_shower .symbol_button:hover {
-		transform: scale(1.1);
-		filter: brightness(1.1);
-		opacity: 0.8;
-	}
-
-	.ribbon-group {
-		float: inherit;
-		font-size: 20px;
-	}
-
-	.ribbon-group-sep {
-		display: none;
-	}
-
-	.ribbon-group-sep-hr {
-		display: block;
-	}
-
-	.ribbon-group-title {
-		display: none;
 	}
 
 	.remove_layer {
@@ -114,11 +45,23 @@
 	.show_data {
 		font-size: calc(10px + 1vw);
 	}
-	
+
+	.layer_type {
+		width: auto;
+		font-size: calc(10px + 1vw);
+	}
+
+	/* Symbol buttons */
 	.symbol_button {
 		font-size: 40px;
 	}
-	
+
+	.close_button {
+		width: 100%;
+		font-size: 30px;
+	}
+
+	/* Tab list */
 	#tablist {
 		width: 100%;
 		display: flex;
@@ -129,75 +72,32 @@
 		font-size: 30px;
 	}
 
-	.left_side {
-		display: none;
+	/* Status bar hidden on phone */
+	#status_bar {
+		display: none !important;
 	}
 
-	#toggle_layers_button {
-		display: block;
-		padding-left: 4px;
-	}
-
+	/* FCNN not interactive on mobile */
 	#fcnn {
 		pointer-events: none;
-	}
-
-	#memory_debugger_div {
-		display: none;
-	}
-
-	#imprint_span {
-		display: none;
-	}
-
-	#toggle_layer_view_button {
-		display: none;
-	}
-
-	#layers_container_left {
-		margin-left: -15px;
-	}
-
-	.descriptions_of_layers {
-		width: 40px !important;
-	}
-
-	#asanai_main_logo {
-		display: none;
 	}
 
 	.ribbon-toolbar {
 		font-size: clamp(12px, 5vw, 25px);
 	}
-
-	#status_bar {
-		display: none !important;
-	}
-
-	#language_shower {
-		display: none !important;
-	}
 }
 
+/* ── Desktop: ensure ribbon is visible, layers panel visible ── */
 @media only screen and (min-width: 1101px) {
-	#toggle_layers_button {
-		display: none;
+	#ribbon {
+		display: block !important;
 	}
-
 
 	#ribbon_shower {
+		display: none !important;
+	}
+
+	#toggle_layers_button {
 		display: none;
-	}
-
-	#ribbon {
-		display: block;
-	}
-
-	.layer_identifier_activation {
-		display: content;
-	}
-
-	.left_side {
-		display: block;
 	}
 }
