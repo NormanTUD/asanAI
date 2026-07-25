@@ -20,7 +20,7 @@ TODO https://people.idsia.ch/~juergen//who-invented-convolutional-neural-network
 </div>
 
 <div class="md">
-The history of AI is not a straight line leading inevitably to the Large Language Model. It is a convergence of ideas from unrelated fields that were never intended to meet. Statistical methods developed by astronomers to map the stars now weigh the next word in a sequence. GPU architectures designed for video games provide the parallel computation required for neural networks. This document traces the specific lineage that produced modern LLMs.
+The history of AI is not a straight line leading inevitably to the Large Language Model. It is a convergence of ideas from unrelated fields that were never intended to meet. Statistical methods developed by astronomers to map the stars now weigh the next word in a sequence. For example, GPU architectures designed for video games provide the parallel computation required for neural networks, which was never intended for AI use but worked out in the end in favour of it. This document traces the lineage that produced modern LLMs, and tries to check out all paths that lead to it (and where else they lead to).
 
 ## The Abstraction of Labor: From Wheels to Thought
 
