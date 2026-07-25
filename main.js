@@ -244,10 +244,10 @@ function init_set_all_options () {
 			$("[href='#visualization_ribbon']").click();
 		} else if (!event.ctrlKey && !event.altKey && !event.metaKey && !_isTyping()) {
 			if (event.key === "t" || event.key === "T") {
-				train_neural_network();
+				train_neural_network(); // cannot be await
 			} else if (event.key === "p" || event.key === "P") {
 				$("#predict_tab_label").click();
-				repredict();
+				repredict(); // cannot be await
 			} else if (event.key === "s" || event.key === "S") {
 				$("#summary_tab_label").click();
 				write_model_summary_wait();
