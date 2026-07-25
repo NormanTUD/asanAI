@@ -5,7 +5,8 @@
   var _POPUP_ID = "initializer_info_popup_overlay";
   var _PLOT_ID = "initializer_info_plot";
 
-  // ─── HELPERS ───────────────────────────────────────────────────────────────
+  var _lastPlotData = null;
+  var _lastMatrixData = null;
 
   function L() {
     return (typeof lang !== "undefined" && lang === "de") ? "de" : "en";
@@ -73,9 +74,7 @@
     return arr;
   }
 
-  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
-  // ─── ESC HANDLER ───────────────────────────────────────────────────────────
+  function clamp(v, mn, mx) { return Math.max(mn, Math.min(mx, v)); }
 
   function _escHandler(e) {
     if (e.key === "Escape") removePopup();
@@ -86,420 +85,426 @@
   var i18n = {
     en: {
       title: "Initializers & Regularizers",
-      initializerTab: "Weight Initializers",
-      regularizerTab: "Regularizers",
-      intuitionTitle: "Intuition",
-      mathTitle: "The Formula",
-      plotTitle: "Weight Distribution",
+      initTab: "Weight Initializers",
+      regTab: "Regularizers",
+      intuition: "Intuition",
+      formula: "The Formula",
+      plotTitle: "Weight Distribution (5,000 samples)",
       regPlotTitle: "Penalty vs Weight Value",
-      matrixTitle: "Example Matrix (4 × 5)",
-      regMatrixTitle: "Example Calculation",
-      whenTitle: "When to use",
-      paramsTitle: "Parameters",
+      matrixTitle: "Example Matrix (4×5) — 20 concrete weights from the distribution above",
+      regMatrixTitle: "Example Calculation — how penalty affects each weight",
+      when: "When to use ? When not ?",
       selectLabel: "Choose:",
-      playTitle: "Interactive Controls",
-      SAMPLE_SIZE: "~5,000 sampled weights",
+      play: "Play with parameters",
       weightLabel: "Weight w",
-      penaltyLabel: "Penalty",
       densityLabel: "Density",
-      regExplanation: "Regularizers add a penalty to the loss to prevent overfitting.",
-      l1Desc: "L1 pushes weights toward 0 (sparsity)",
-      l2Desc: "L2 keeps weights small (weight decay)"
+      penaltyLabel: "Penalty",
+      paramExplain: "Parameter Guide",
+      paramExplainDesc: "What each parameter does and when you'd change it:",
+      practicalTip: "Practical tip",
+      closeOutside: "(click outside to close)"
     },
     de: {
       title: "Initialisierer & Regularisierer",
-      initializerTab: "Gewichts-Initialisierer",
-      regularizerTab: "Regularisierer",
-      intuitionTitle: "Intuition",
-      mathTitle: "Die Formel",
-      plotTitle: "Gewichtsverteilung",
+      initTab: "Gewichts-Initialisierer",
+      regTab: "Regularisierer",
+      intuition: "Intuition",
+      formula: "Die Formel",
+      plotTitle: "Gewichtsverteilung (5.000 Samples)",
       regPlotTitle: "Strafe vs. Gewichtswert",
-      matrixTitle: "Beispiel-Matrix (4 × 5)",
-      regMatrixTitle: "Beispiel-Rechnung",
-      whenTitle: "Wann verwenden",
-      paramsTitle: "Parameter",
+      matrixTitle: "Beispiel-Matrix (4×5) — 20 konkrete Gewichte aus der Verteilung oben",
+      regMatrixTitle: "Beispiel-Rechnung — wie die Strafe jedes Gewicht beeinflusst",
+      when: "Wann verwenden ? Wann nicht ?",
       selectLabel: "Auswahl:",
-      playTitle: "Interaktive Steuerung",
-      SAMPLE_SIZE: "~5.000 sample Gewichte",
+      play: "Spiele mit den Parametern",
       weightLabel: "Gewicht w",
-      penaltyLabel: "Strafe",
       densityLabel: "Dichte",
-      regExplanation: "Regularisierer fügen eine Strafe zur Verlustfunktion hinzu um Überanpassung zu verhindern.",
-      l1Desc: "L1 drückt Gewichte in Richtung 0 (Sparsity)",
-      l2Desc: "L2 hält Gewichte klein (Weight Decay)"
+      penaltyLabel: "Strafe",
+      paramExplain: "Parameter-Erklärung",
+      paramExplainDesc: "Was jeder Parameter bewirkt und wann man ihn ändert:",
+      practicalTip: "Praktischer Tipp",
+      closeOutside: "(Klick außerhalb zum Schließen)"
     }
   };
 
-  // ─── INITIALIZER INFO DATA ─────────────────────────────────────────────────
+  // ─── DATA ──────────────────────────────────────────────────────────────────
 
-  var initializerInfo = {
+  var initData = {
     glorotUniform: {
       en: {
-        analogy: "The classic all-rounder. It picks random weights from a range that depends on the layer size. Big layers get small weights to keep the signal stable. Named after Xavier Glorot who showed this prevents gradients from vanishing or exploding in deep networks with tanh/sigmoid.",
-        when_use: "• Good default for tanh and sigmoid activation\n• Balances variance between input and output\n• Works for Dense and Conv2D layers",
-        when_not: "• For ReLU activation use He instead\n• For very deep networks consider He or LeCun"
+        analogy: "Draws weights uniformly from [-limit, limit] where limit depends on layer size. Big layers get smaller weights automatically — this keeps signals stable through deep networks with tanh/sigmoid.",
+        tip: "Think of it as an automatic volume control: more neurons → quieter each neuron.",
+        when_use: "• Default for tanh / sigmoid activations\n• Balances forward AND backward pass variance\n• Example: feed-forward net with 3 hidden layers, tanh activation",
+        when_not: "• For ReLU: weights end up too small (half get killed by ReLU)\n• Use He instead for ReLU networks"
       },
       de: {
-        analogy: "Der klassische Allrounder. Er wählt zufällige Gewichte aus einem Bereich, der von der Layergröße abhängt. Große Layer bekommen kleine Gewichte um das Signal stabil zu halten. Benannt nach Xavier Glorot, der zeigte, dass dies verhindert, dass Gradienten in tiefen Netzen mit tanh/sigmoid verschwinden oder explodieren.",
-        when_use: "• Gute Standardwahl für tanh und sigmoid Aktivierung\n• Balanciert die Varianz zwischen Eingabe und Ausgabe\n• Funktioniert für Dense und Conv2D Layer",
-        when_not: "• Für ReLU Aktivierung He verwenden\n• Für sehr tiefe Netze He oder LeCun in Betracht ziehen"
+        analogy: "Zieht Gewichte gleichverteilt aus [-limit, limit] abhängig von der Layergröße. Große Layer beziehen kleinere Gewichte automatisch — hält Signale stabil in tiefen Netzen mit tanh/sigmoid.",
+        tip: "Stell es dir als automatische Lautstärkeregelung vor: mehr Neuronen → leiser jedes Neuron.",
+        when_use: "• Standard für tanh / sigmoid Aktivierungen\n• Balanciert Vorwärts- UND Rückwärtsdurchlauf-Varianz\n• Beispiel: Feed-Forward-Netz mit 3 Hidden-Layern, tanh-Aktivierung",
+        when_not: "• Für ReLU: Gewichte sind zu klein (Hälfte stirbt durch ReLU)\n• He stattdessen für ReLU-Netze verwenden"
       },
-      math: "\\text{limit} = \\sqrt{\\frac{6}{\\text{fan}_{\\text{in}} + \\text{fan}_{\\text{out}}}}\\\\W \\sim U[-\\text{limit}, \\text{limit}]",
-      params: { seed: "integer (optional)" },
-      controls: { fan_in: { min: 1, max: 1024, default: 128, step: 1 }, fan_out: { min: 1, max: 1024, default: 128, step: 1 } },
-      sample: function(n, fi, fo, ctrl) {
+      math: "\\text{limit} = \\sqrt{\\frac{6}{\\text{fan}_{\\text{in}} + \\text{fan}_{\\text{out}}}}\\quad W \\sim U[-\\text{limit}, \\text{limit}]",
+      ctrl: {
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of INPUT neurons to this layer.", desc_de: "Anzahl der EINGANGS-Neuronen dieses Layers.", example_en: "e.g., a Conv2D with 64 filters × 3×3 kernel → fan_in = 64×3×3 = 576", example_de: "z.B. Conv2D mit 64 Filtern × 3×3 Kernel → fan_in = 64×3×3 = 576" },
+        fan_out: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of OUTPUT neurons from this layer.", desc_de: "Anzahl der AUSGANGS-Neuronen dieses Layers.", example_en: "e.g., next layer has 10 classes → fan_out = 10", example_de: "z.B. nächster Layer hat 10 Klassen → fan_out = 10" }
+      },
+      sample: function(n, fi, fo, c) {
         var limit = Math.sqrt(6 / (fi + fo));
-        return { data: sampleUniform(n, -limit, limit), min: -limit, max: limit, type: "uniform", limit: limit };
+        return { data: sampleUniform(n, -limit, limit), lo: -limit, hi: limit, type: "uniform", key: "limit = " + limit.toFixed(6) };
       }
     },
     glorotNormal: {
       en: {
-        analogy: "Like glorotUniform but uses a bell curve (normal distribution) instead of a flat range. The weights cluster around 0, with fewer extreme values.",
-        when_use: "• Good for tanh/sigmoid activations\n• Often preferred over the uniform version\n• Can give slightly better gradients",
-        when_not: "• Not ideal for ReLU (use He)\n• May be slightly slower to sample than uniform"
+        analogy: "Same idea as glorotUniform but uses a bell curve (normal distribution). Weights cluster around 0 with fewer extreme values compared to uniform.",
+        tip: "The normal version is often preferred because real-world weights tend to follow a bell curve naturally.",
+        when_use: "• tanh / sigmoid activations\n• Often preferred over uniform version\n• Slightly better gradient flow",
+        when_not: "• Not for ReLU (use He)\n• Slightly more computationally expensive to sample"
       },
       de: {
-        analogy: "Wie glorotUniform, aber verwendet eine Glockenkurve (Normalverteilung) statt eines flachen Bereichs. Die Gewichte clustern um 0, mit weniger extremen Werten.",
-        when_use: "• Gut für tanh/sigmoid Aktivierungen\n• Oft der uniformen Version vorgezogen\n• Kann etwas bessere Gradienten liefern",
-        when_not: "• Nicht ideal für ReLU (He verwenden)\n• Kann etwas langsamer zu sampeln sein als uniform"
+        analogy: "Gleiche Idee wie glorotUniform, aber mit einer Glockenkurve (Normalverteilung). Gewichte clustern um 0 mit weniger extremen Werten als bei uniform.",
+        tip: "Die Normal-Version wird oft bevorzugt, weil echte Gewichte natürlicherweise einer Glockenkurve folgen.",
+        when_use: "• tanh / sigmoid Aktivierungen\n• Oft der uniformen Version vorgezogen\n• Etwas bessere Gradienten",
+        when_not: "• Nicht für ReLU (He verwenden)\n• Etwas rechenaufwändiger zu sampeln"
       },
-      math: "\\sigma = \\sqrt{\\frac{2}{\\text{fan}_{\\text{in}} + \\text{fan}_{\\text{out}}}}\\\\W \\sim \\mathcal{N}(0, \\sigma^2)\\text{ (truncated at 2 sigma)}",
-      params: { seed: "integer (optional)" },
-      controls: { fan_in: { min: 1, max: 1024, default: 128, step: 1 }, fan_out: { min: 1, max: 1024, default: 128, step: 1 } },
-      sample: function(n, fi, fo, ctrl) {
-        var stddev = Math.sqrt(2 / (fi + fo));
-        return { data: sampleTruncatedNormal(n, 0, stddev, 2), mean: 0, stddev: stddev, type: "normal" };
+      math: "\\sigma = \\sqrt{\\frac{2}{\\text{fan}_{\\text{in}} + \\text{fan}_{\\text{out}}}}\\quad W \\sim \\mathcal{N}(0, \\sigma^2)\\text{, truncated at }\\pm 2\\sigma",
+      ctrl: {
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of input neurons.", desc_de: "Anzahl der Eingangs-Neuronen.", example_en: "Input size of your layer (e.g., 784 for MNIST)", example_de: "Eingabegröße des Layers (z.B. 784 für MNIST)" },
+        fan_out: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of output neurons.", desc_de: "Anzahl der Ausgangs-Neuronen.", example_en: "e.g., 10 classes for classification", example_de: "z.B. 10 Klassen für Klassifikation" }
+      },
+      sample: function(n, fi, fo, c) {
+        var std = Math.sqrt(2 / (fi + fo));
+        return { data: sampleTruncatedNormal(n, 0, std, 2), mean: 0, std: std, type: "normal", key: "σ = " + std.toFixed(6) };
       }
     },
     heNormal: {
       en: {
-        analogy: "Made for ReLU! Since ReLU cuts off negative values, half the variance is lost. He compensates by making the weights slightly bigger. The standard choice for modern deep CNNs (ResNet, VGG).",
-        when_use: "• Best choice for ReLU and PReLU\n• Keeps variance stable through ReLU layers\n• Standard for ResNet, VGG, etc.",
-        when_not: "• May cause exploding gradients with tanh/sigmoid\n• For LeakyReLU: leCunNormal can work better"
+        analogy: "Made specifically for ReLU. Since ReLU cuts negative values to 0, half the variance is lost. He doubles the variance to compensate. The standard for all modern ReLU networks.",
+        tip: "If your network uses ReLU (or PReLU, LeakyReLU at alpha=0), this is your default. Used in ResNet, VGG, YOLO, GPT — basically everything modern.",
+        when_use: "• ALL ReLU / PReLU networks (CNNs, Transformers)\n• Default for ResNet, VGG, EfficientNet\n• Keeps variance = 1 through ReLU layers",
+        when_not: "• tanh / sigmoid: weights too large, activations explode\n• LeakyReLU with high alpha: leCunNormal may work better"
       },
       de: {
-        analogy: "Gemacht für ReLU! Da ReLU negative Werte abschneidet, geht die Hälfte der Varianz verloren. He gleicht das aus, indem die Gewichte etwas größer werden. Die Standardwahl für moderne CNNs (ResNet, VGG).",
-        when_use: "• Beste Wahl für ReLU und PReLU\n• Hält die Varianz durch ReLU-Layer stabil\n• Standard für ResNet, VGG, etc.",
-        when_not: "• Kann zu explodierenden Gradienten bei tanh/sigmoid führen\n• Für LeakyReLU: leCunNormal kann besser sein"
+        analogy: "Speziell für ReLU gemacht. Da ReLU negative Werte auf 0 setzt, geht die Hälfte der Varianz verloren. He verdoppelt die Varianz zum Ausgleich. Der Standard für alle modernen ReLU-Netze.",
+        tip: "Wenn dein Netz ReLU verwendet (oder PReLU, LeakyReLU bei alpha=0), ist das die Standardwahl. Wird in ResNet, VGG, YOLO, GPT verwendet — quasi allem Modernen.",
+        when_use: "• ALLE ReLU / PReLU Netze (CNNs, Transformer)\n• Standard für ResNet, VGG, EfficientNet\n• Hält Varianz = 1 durch ReLU-Layer",
+        when_not: "• tanh / sigmoid: Gewichte zu groß, Aktivierungen explodieren\n• LeakyReLU mit hohem alpha: leCunNormal kann besser sein"
       },
-      math: "\\sigma = \\sqrt{\\frac{2}{\\text{fan}_{\\text{in}}}}\\\\W \\sim \\mathcal{N}(0, \\sigma^2)\\text{ (truncated at 2 sigma)}",
-      params: { seed: "integer (optional)" },
-      controls: { fan_in: { min: 1, max: 1024, default: 128, step: 1 } },
-      sample: function(n, fi, fo, ctrl) {
-        var stddev = Math.sqrt(2 / fi);
-        return { data: sampleTruncatedNormal(n, 0, stddev, 2), mean: 0, stddev: stddev, type: "normal" };
+      math: "\\sigma = \\sqrt{\\frac{2}{\\text{fan}_{\\text{in}}}}\\quad W \\sim \\mathcal{N}(0, \\sigma^2)\\text{, truncated at }\\pm 2\\sigma",
+      ctrl: {
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of input neurons (fan_out is NOT used — He only looks at fan_in).", desc_de: "Anzahl der Eingangs-Neuronen (fan_out wird NICHT verwendet — He nutzt nur fan_in).", example_en: "For a Conv2D with 64 filters × 3×3: fan_in = 64×9 + biases", example_de: "Für Conv2D mit 64 Filtern × 3×3: fan_in = 64×9 + Biases" }
+      },
+      sample: function(n, fi, fo, c) {
+        var std = Math.sqrt(2 / fi);
+        return { data: sampleTruncatedNormal(n, 0, std, 2), mean: 0, std: std, type: "normal", key: "σ = " + std.toFixed(6) };
       }
     },
     heUniform: {
       en: {
-        analogy: "The uniform version of He. Same idea — compensate for ReLU's negative cutoff — but uses a flat range instead of a bell curve.",
-        when_use: "• Good for ReLU\n• Can be more stable than heNormal in some cases\n• Simpler distribution",
-        when_not: "• heNormal often preferred\n• Not for tanh/sigmoid"
+        analogy: "Uniform version of He. Same compensation for ReLU but uses a flat range instead of a bell curve. Slightly simpler, slightly less common.",
+        tip: "heNormal is more common, but heUniform can be more stable in some architectures. Try both.",
+        when_use: "• ReLU networks (alternative to heNormal)\n• Some architectures find it more stable",
+        when_not: "• heNormal is generally preferred\n• Not for tanh/sigmoid"
       },
       de: {
-        analogy: "Die uniforme Version von He. Gleiche Idee — kompensiert die ReLU-Abschneidung — aber verwendet einen flachen Bereich statt einer Glockenkurve.",
-        when_use: "• Gut für ReLU\n• Kann in manchen Fällen stabiler sein als heNormal\n• Einfachere Verteilung",
-        when_not: "• heNormal wird oft bevorzugt\n• Nicht für tanh/sigmoid"
+        analogy: "Uniforme Version von He. Gleiche ReLU-Kompensation mit flachem Bereich statt Glockenkurve. Etwas einfacher, etwas seltener.",
+        tip: "heNormal ist häufiger, aber heUniform kann in manchen Architekturen stabiler sein. Beide ausprobieren.",
+        when_use: "• ReLU-Netze (Alternative zu heNormal)\n• Manche Architekturen finden es stabiler",
+        when_not: "• heNormal wird allgemein bevorzugt\n• Nicht für tanh/sigmoid"
       },
-      math: "\\text{limit} = \\sqrt{\\frac{6}{\\text{fan}_{\\text{in}}}}\\\\W \\sim U[-\\text{limit}, \\text{limit}]",
-      params: { seed: "integer (optional)" },
-      controls: { fan_in: { min: 1, max: 1024, default: 128, step: 1 } },
-      sample: function(n, fi, fo, ctrl) {
+      math: "\\text{limit} = \\sqrt{\\frac{6}{\\text{fan}_{\\text{in}}}}\\quad W \\sim U[-\\text{limit}, \\text{limit}]",
+      ctrl: {
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of input neurons.", desc_de: "Anzahl der Eingangs-Neuronen.", example_en: "Same as heNormal — only fan_in matters.", example_de: "Wie heNormal — nur fan_in zählt." }
+      },
+      sample: function(n, fi, fo, c) {
         var limit = Math.sqrt(6 / fi);
-        return { data: sampleUniform(n, -limit, limit), min: -limit, max: limit, type: "uniform", limit: limit };
+        return { data: sampleUniform(n, -limit, limit), lo: -limit, hi: limit, type: "uniform", key: "limit = " + limit.toFixed(6) };
       }
     },
     leCunNormal: {
       en: {
-        analogy: "Designed for Self-Normalizing Neural Networks with SeLU activation. Creates the specific variance that preserves SeLU's normalizing property. Also good for LeakyReLU.",
-        when_use: "• Required for SeLU activation (self-normalizing nets)\n• Good for LeakyReLU\n• Keeps variance of 1 through the layer",
-        when_not: "• Overkill for standard ReLU (use He instead)\n• Not for tanh/sigmoid"
+        analogy: "Designed for Self-Normalizing Neural Networks (SNNs) with SeLU. Creates variance = 1, which SeLU needs to auto-normalize. Also good for LeakyReLU.",
+        tip: "Use this when using SeLU activation (self-normalizing nets). For LeakyReLU with alpha ≈ 0.3, this is often better than He.",
+        when_use: "• REQUIRED for SeLU activation\n• Good for LeakyReLU with high alpha\n• Keeps exactly variance = 1",
+        when_not: "• Standard ReLU → use He instead (leCun makes weights too small for ReLU)\n• Not designed for tanh/sigmoid"
       },
       de: {
-        analogy: "Entwickelt für selbstnormalisierende neuronale Netze mit SeLU-Aktivierung. Erzeugt die spezifische Varianz, die SeLUs normalisierende Eigenschaft bewahrt. Auch gut für LeakyReLU.",
-        when_use: "• Erforderlich für SeLU-Aktivierung (selbstnormalisierende Netze)\n• Gut für LeakyReLU\n• Hält Varianz von 1 durch den Layer",
-        when_not: "• Überdimensioniert für Standard-ReLU (He verwenden)\n• Nicht für tanh/sigmoid"
+        analogy: "Entwickelt für selbstnormalisierende Netze (SNNs) mit SeLU. Erzeugt Varianz = 1, die SeLU zur Auto-Normalisierung braucht. Auch gut für LeakyReLU.",
+        tip: "Verwende dies bei SeLU-Aktivierung. Für LeakyReLU mit alpha ≈ 0.3 ist es oft besser als He.",
+        when_use: "• ERFORDERLICH für SeLU-Aktivierung\n• Gut für LeakyReLU mit hohem alpha\n• Hält exakt Varianz = 1",
+        when_not: "• Standard ReLU → He verwenden (leCun macht Gewichte zu klein für ReLU)\n• Nicht für tanh/sigmoid entwickelt"
       },
-      math: "\\sigma = \\sqrt{\\frac{1}{\\text{fan}_{\\text{in}}}}\\\\W \\sim \\mathcal{N}(0, \\sigma^2)\\text{ (truncated at 2 sigma)}",
-      params: { seed: "integer (optional)" },
-      controls: { fan_in: { min: 1, max: 1024, default: 128, step: 1 } },
-      sample: function(n, fi, fo, ctrl) {
-        var stddev = Math.sqrt(1 / fi);
-        return { data: sampleTruncatedNormal(n, 0, stddev, 2), mean: 0, stddev: stddev, type: "normal" };
+      math: "\\sigma = \\sqrt{\\frac{1}{\\text{fan}_{\\text{in}}}}\\quad W \\sim \\mathcal{N}(0, \\sigma^2)\\text{, truncated at }\\pm 2\\sigma",
+      ctrl: {
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of input neurons.", desc_de: "Anzahl der Eingangs-Neuronen.", example_en: "Standard fan_in. For SeLU, ensure weights match this exactly.", example_de: "Standard fan_in. Bei SeLU müssen Gewichte dem exakt entsprechen." }
+      },
+      sample: function(n, fi, fo, c) {
+        var std = Math.sqrt(1 / fi);
+        return { data: sampleTruncatedNormal(n, 0, std, 2), mean: 0, std: std, type: "normal", key: "σ = " + std.toFixed(6) };
       }
     },
     leCunUniform: {
       en: {
-        analogy: "Uniform version of LeCun. Draws from a flat range with width sqrt(3/fan_in). Simpler than the normal version but achieves the same variance.",
-        when_use: "• Alternative to leCunNormal\n• Simple and fast",
-        when_not: "• leCunNormal is usually preferred\n• Not for ReLU or tanh/sigmoid as default"
+        analogy: "Uniform version of LeCun. Simpler distribution achieving the same variance. Less common than the normal version.",
+        tip: "Only use this if you specifically need a uniform distribution with LeCun scaling. The normal version is usually preferred.",
+        when_use: "• When uniform distribution needed with LeCun scaling\n• Simple alternative",
+        when_not: "• leCunNormal is usually preferred\n• Not for standard ReLU"
       },
       de: {
-        analogy: "Uniforme Version von LeCun. Zieht aus einem flachen Bereich mit Breite sqrt(3/fan_in). Einfacher als die Normalversion, aber erreicht die gleiche Varianz.",
-        when_use: "• Alternative zu leCunNormal\n• Einfach und schnell",
-        when_not: "• leCunNormal wird meist bevorzugt\n• Nicht als Standard für ReLU oder tanh/sigmoid"
+        analogy: "Uniforme Version von LeCun. Einfachere Verteilung mit gleicher Varianz. Seltener als die Normalversion.",
+        tip: "Nur verwenden, wenn eine Gleichverteilung mit LeCun-Skalierung benötigt wird. Die Normalversion wird meist bevorzugt.",
+        when_use: "• Wenn Gleichverteilung mit LeCun-Skalierung\n• Einfache Alternative",
+        when_not: "• leCunNormal wird meist bevorzugt\n• Nicht für Standard-ReLU"
       },
-      math: "\\text{limit} = \\sqrt{\\frac{3}{\\text{fan}_{\\text{in}}}}\\\\W \\sim U[-\\text{limit}, \\text{limit}]",
-      params: { seed: "integer (optional)" },
-      controls: { fan_in: { min: 1, max: 1024, default: 128, step: 1 } },
-      sample: function(n, fi, fo, ctrl) {
+      math: "\\text{limit} = \\sqrt{\\frac{3}{\\text{fan}_{\\text{in}}}}\\quad W \\sim U[-\\text{limit}, \\text{limit}]",
+      ctrl: {
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of input neurons.", desc_de: "Anzahl der Eingangs-Neuronen.", example_en: "Standard — determines the uniform range width.", example_de: "Standard — bestimmt die Breite des Gleichverteilungsbereichs." }
+      },
+      sample: function(n, fi, fo, c) {
         var limit = Math.sqrt(3 / fi);
-        return { data: sampleUniform(n, -limit, limit), min: -limit, max: limit, type: "uniform", limit: limit };
+        return { data: sampleUniform(n, -limit, limit), lo: -limit, hi: limit, type: "uniform", key: "limit = " + limit.toFixed(6) };
       }
     },
     randomNormal: {
       en: {
-        analogy: "Simple normal distribution with configurable mean and standard deviation. No smart scaling — you control the spread manually.",
-        when_use: "• When you need specific mean/stddev values\n• Research and experimentation",
-        when_not: "• For most practical cases use glorot or He instead\n• Can easily cause vanishing/exploding gradients"
+        analogy: "Raw normal distribution with NO automatic scaling. You set the mean and standard deviation manually. Full control, but easy to misconfigure.",
+        tip: "Use this when you know EXACTLY what distribution you want. For most cases, use glorot or He — they do the tuning automatically.",
+        when_use: "• Research / custom experiments\n• When you need a specific non-standard distribution\n• Testing how mean affects training",
+        when_not: "• Most practical networks → glorot / He do this better\n• Risk: wrong stddev → vanishing/exploding gradients"
       },
       de: {
-        analogy: "Einfache Normalverteilung mit konfigurierbarem Mittelwert und Standardabweichung. Keine intelligente Skalierung — du kontrollierst die Streuung manuell.",
-        when_use: "• Wenn spezifische mean/stddev Werte benötigt werden\n• Forschung und Experimente",
-        when_not: "• Für die meisten praktischen Fälle glorot oder He verwenden\n• Kann leicht zu verschwindenden/explodierenden Gradienten führen"
+        analogy: "Rohe Normalverteilung OHNE automatische Skalierung. Du setzt Mittelwert und Standardabweichung manuell. Volle Kontrolle, aber leicht falsch eingestellt.",
+        tip: "Verwende dies, wenn du GENAU weißt, welche Verteilung du willst. Meistens machen glorot oder He das besser — automatisch.",
+        when_use: "• Forschung / benutzerdefinierte Experimente\n• Wenn eine spezielle Nicht-Standard-Verteilung gebraucht wird\n• Testen wie mean das Training beeinflusst",
+        when_not: "• Meiste praktische Netze → glorot / He machen es besser\n• Risiko: falsches stddev → verschwindende/explodierende Gradienten"
       },
       math: "W \\sim \\mathcal{N}(\\text{mean}, \\text{stddev}^2)",
-      params: { mean: "0", stddev: "0.05", seed: "integer (optional)" },
-      controls: { mean: { min: -1, max: 1, default: 0, step: 0.01 }, stddev: { min: 0.001, max: 1, default: 0.05, step: 0.001 } },
-      sample: function(n, fi, fo, ctrl) {
-        return { data: sampleNormal(n, ctrl.mean, ctrl.stddev), mean: ctrl.mean, stddev: ctrl.stddev, type: "normal" };
+      ctrl: {
+        mean: { min: -1, max: 1, default: 0, step: 0.01, desc_en: "Center of the bell curve. Usually 0 (balanced positive/negative). Changing this shifts ALL weights positive or negative.", desc_de: "Zentrum der Glockenkurve. Normalerweise 0 (ausgewogen positiv/negativ). Ändern verschiebt ALLE Gewichte.", example_en: "mean=0 → balanced. mean=0.5 → most weights positive (bad — symmetry break!)", example_de: "mean=0 → ausgewogen. mean=0.5 → die meisten Gewichte positiv (schlecht — Symmetriebruch!)" },
+        stddev: { min: 0.001, max: 1, default: 0.05, step: 0.001, desc_en: "Spread of the distribution. 0.05 = most weights between -0.1 and +0.1. 0.5 = much wider range (risky!).", desc_de: "Streuung der Verteilung. 0.05 = die meisten Gewichte zwischen -0.1 und +0.1. 0.5 = viel breiter (riskant!).", example_en: "For MNIST with 784 inputs: stddev=0.05 is safe. stddev=0.5 → activations may explode.", example_de: "Für MNIST mit 784 Eingaben: stddev=0.05 ist sicher. stddev=0.5 → Aktivierungen können explodieren." }
+      },
+      sample: function(n, fi, fo, c) {
+        return { data: sampleNormal(n, c.mean, c.stddev), mean: c.mean, std: c.stddev, type: "normal", key: "μ=" + c.mean.toFixed(3) + " σ=" + c.stddev.toFixed(4) };
       }
     },
     randomUniform: {
       en: {
-        analogy: "Simple uniform distribution. You set the min and max values. No adaptation to layer size.",
-        when_use: "• When you need a specific range\n• Simple setups where layer size is constant",
-        when_not: "• Most cases: use glorot or He instead\n• Risk of poor scaling for variable-sized layers"
+        analogy: "Raw uniform distribution with NO automatic scaling. You set minimum and maximum. Simple but easy to get wrong.",
+        tip: "Same as randomNormal — only use when you need full manual control. Glorot/He tune the range automatically.",
+        when_use: "• When you need a specific range\n• Simple custom layers\n• Research",
+        when_not: "• Most cases → glorot or He\n• No adaptation to layer size → risk of poor scaling"
       },
       de: {
-        analogy: "Einfache Gleichverteilung. Du setzt die min und max Werte. Keine Anpassung an die Layergröße.",
-        when_use: "• Wenn ein bestimmter Bereich benötigt wird\n• Einfache Setups mit konstanter Layergröße",
-        when_not: "• Meistens glorot oder He stattdessen verwenden\n• Risiko schlechter Skalierung bei variablen Layergrößen"
+        analogy: "Rohe Gleichverteilung OHNE automatische Skalierung. Du setzt Minimum und Maximum. Einfach, aber leicht falsch eingestellt.",
+        tip: "Wie randomNormal — nur bei manueller Kontrolle nötig. Glorot/He passen den Bereich automatisch an.",
+        when_use: "• Wenn ein bestimmter Bereich benötigt wird\n• Einfache benutzerdefinierte Layer\n• Forschung",
+        when_not: "• Meiste Fälle → glorot oder He\n• Keine Anpassung an Layergröße → Risiko schlechter Skalierung"
       },
       math: "W \\sim U[\\text{minval}, \\text{maxval}]",
-      params: { minval: "-0.05", maxval: "0.05", seed: "integer (optional)" },
-      controls: { minval: { min: -1, max: 0, default: -0.05, step: 0.01 }, maxval: { min: 0, max: 1, default: 0.05, step: 0.01 } },
-      sample: function(n, fi, fo, ctrl) {
-        return { data: sampleUniform(n, ctrl.minval, ctrl.maxval), min: ctrl.minval, max: ctrl.maxval, type: "uniform" };
+      ctrl: {
+        minval: { min: -1, max: 0, default: -0.05, step: 0.01, desc_en: "Minimum value. Together with maxval defines the range. Range width = maxval - minval.", desc_de: "Minimalwert. Zusammen mit maxval wird der Bereich definiert. Breite = maxval - minval.", example_en: "minval=-0.1, maxval=0.1 → range is 0.2 wide.", example_de: "minval=-0.1, maxval=0.1 → Bereich ist 0.2 breit." },
+        maxval: { min: 0, max: 1, default: 0.05, step: 0.01, desc_en: "Maximum value.", desc_de: "Maximalwert.", example_en: "Make wider: minval=-0.2, maxval=0.2", example_de: "Breiter: minval=-0.2, maxval=0.2" }
+      },
+      sample: function(n, fi, fo, c) {
+        return { data: sampleUniform(n, c.minval, c.maxval), lo: c.minval, hi: c.maxval, type: "uniform", key: "min=" + c.minval.toFixed(3) + " max=" + c.maxval.toFixed(3) };
       }
     },
     truncatedNormal: {
       en: {
-        analogy: "Like randomNormal, but values more than 2 standard deviations from the mean are thrown away and re-sampled. This prevents extreme weight values that could cause training instability.",
-        when_use: "• When you want a normal distribution without outliers\n• Often used as the base for glorotNormal and heNormal",
-        when_not: "• Use glorotNormal or heNormal instead — they do the same but smarter\n• For simple cases randomNormal may suffice"
+        analogy: "Like randomNormal, but values beyond ±2 standard deviations are discarded and re-rolled. This clips extreme outliers that could destabilize training.",
+        tip: "This is the BASE for glorotNormal and heNormal — they use truncated normal internally. Use them instead unless you need raw control.",
+        when_use: "• When you need a normal distribution WITHOUT outliers\n• Base distribution for advanced custom initializers",
+        when_not: "• Use glorotNormal or heNormal — they ARE truncated normal with correct scaling\n• For simple cases, randomNormal may suffice"
       },
       de: {
-        analogy: "Wie randomNormal, aber Werte mehr als 2 Standardabweichungen vom Mittelwert werden verworfen und neu gezogen. Das verhindert extreme Gewichtswerte, die zu Trainingsinstabilität führen könnten.",
-        when_use: "• Wenn eine Normalverteilung ohne Ausreißer gewünscht ist\n• Oft als Basis für glorotNormal und heNormal verwendet",
-        when_not: "• glorotNormal oder heNormal stattdessen verwenden — sie tun dasselbe aber intelligenter\n• Für einfache Fälle reicht randomNormal"
+        analogy: "Wie randomNormal, aber Werte außerhalb ±2 Standardabweichungen werden verworfen und neu gezogen. Schneidet extreme Ausreißer ab, die Training destabilisieren könnten.",
+        tip: "Das ist die BASIS für glorotNormal und heNormal — sie verwenden intern truncated normal. Verwende sie stattdessen, außer bei roher Kontrolle nötig.",
+        when_use: "• Wenn Normalverteilung OHNE Ausreißer\n• Basis für fortgeschrittene benutzerdefinierte Initialisierer",
+        when_not: "• glorotNormal oder heNormal verwenden — sie SIND truncated normal mit korrekter Skalierung\n• randomNormal reicht für einfache Fälle"
       },
       math: "W \\sim \\mathcal{N}(\\text{mean}, \\text{stddev}^2)\\text{, truncated at }\\pm 2\\sigma",
-      params: { mean: "0", stddev: "0.05", seed: "integer (optional)" },
-      controls: { mean: { min: -1, max: 1, default: 0, step: 0.01 }, stddev: { min: 0.001, max: 1, default: 0.05, step: 0.001 } },
-      sample: function(n, fi, fo, ctrl) {
-        return { data: sampleTruncatedNormal(n, ctrl.mean, ctrl.stddev, 2), mean: ctrl.mean, stddev: ctrl.stddev, type: "normal" };
+      ctrl: {
+        mean: { min: -1, max: 1, default: 0, step: 0.01, desc_en: "Center. Usually 0.", desc_de: "Zentrum. Normalerweise 0.", example_en: "mean=0 is standard. Changing it shifts all weights.", example_de: "mean=0 ist Standard. Ändern verschiebt alle Gewichte." },
+        stddev: { min: 0.001, max: 1, default: 0.05, step: 0.001, desc_en: "Spread. At ±2σ, values are clipped.", desc_de: "Streuung. Bei ±2σ werden Werte abgeschnitten.", example_en: "stddev=0.05 → most weights between -0.1 and +0.1, none beyond ±0.1", example_de: "stddev=0.05 → die meisten Gewichte zwischen -0.1 und +0.1, keine über ±0.1" }
+      },
+      sample: function(n, fi, fo, c) {
+        return { data: sampleTruncatedNormal(n, c.mean, c.stddev, 2), mean: c.mean, std: c.stddev, type: "normal", key: "μ=" + c.mean.toFixed(3) + " σ=" + c.stddev.toFixed(4) + " (trunc ±2σ)" };
       }
     },
     varianceScaling: {
       en: {
-        analogy: "The most flexible initializer. You control the scale, the mode (how to count neurons), and the distribution type. It's like glorot/He but with knobs for everything.",
-        when_use: "• When you need fine-grained control\n• Research and custom architectures",
-        when_not: "• For standard architectures use glorot or He\n• Easy to misconfigure (wrong scale/mode/distribution)"
+        analogy: "The Swiss Army knife of initializers. Set scale, mode (which neuron count to use), and distribution type. You can recreate glorot, He, or LeCun — or invent your own.",
+        tip: "scale=1, mode=FAN_IN, distribution=NORMAL → same as heNormal. scale=1, mode=FAN_AVG, distribution=UNIFORM → same as glorotUniform.",
+        when_use: "• Custom scaling needs\n• Research (testing different scaling strategies)\n• When NO standard initializer fits",
+        when_not: "• Standard architectures → glorot, He, LeCun are clearer\n• Easy to misconfigure — understand math first!"
       },
       de: {
-        analogy: "Der flexibelste Initialisierer. Du kontrollierst die Skalierung, den Modus (wie Neuronen gezählt werden) und die Verteilungsart. Es ist wie glorot/He, aber mit Reglern für alles.",
-        when_use: "• Wenn feine Kontrolle benötigt wird\n• Forschung und benutzerdefinierte Architekturen",
-        when_not: "• Für Standardarchitekturen glorot oder He verwenden\n• Leicht falsch zu konfigurieren (falsche scale/mode/distribution)"
+        analogy: "Das Taschenmesser der Initialisierer. Setze scale, mode (welche Neuronenzahl) und distribution. Du kannst glorot, He oder LeCun nachbauen — oder eigene erfinden.",
+        tip: "scale=1, mode=FAN_IN, distribution=NORMAL → wie heNormal. scale=1, mode=FAN_AVG, distribution=UNIFORM → wie glorotUniform.",
+        when_use: "• Benutzerdefinierte Skalierung\n• Forschung (verschiedene Skalierungsstrategien testen)\n• Wenn KEIN Standard-Initialisierer passt",
+        when_not: "• Standard-Architekturen → glorot, He, LeCun sind klarer\n• Leicht falsch einzustellen — zuerst Mathematik verstehen!"
       },
-      math: "\\text{stddev} = \\sqrt{\\frac{\\text{scale}}{n}}\\quad(\\text{normal})\\\\\\text{limit} = \\sqrt{3 \\cdot \\text{scale} / n}\\quad(\\text{uniform})\\\\n = \\text{fan}_{\\text{in}}\\,|\\,\\text{fan}_{\\text{out}}\\,|\\,\\text{avg}",
-      params: { scale: "1.0", mode: "FAN_IN / FAN_OUT / FAN_AVG", distribution: "NORMAL / UNIFORM", seed: "integer (optional)" },
-      controls: { scale: { min: 0.01, max: 10, default: 1, step: 0.01 }, fan_in: { min: 1, max: 1024, default: 128, step: 1 }, mode: { options: ["FAN_IN", "FAN_OUT", "FAN_AVG"], default: "FAN_IN" }, distribution: { options: ["NORMAL", "UNIFORM"], default: "NORMAL" } },
-      sample: function(n, fi, fo, ctrl) {
+      math: "\\sigma = \\sqrt{\\frac{\\text{scale}}{n}},\\; \\text{limit} = \\sqrt{\\frac{3\\cdot\\text{scale}}{n}}\\;\\; n = \\text{fan}_{\\text{in}}|\\text{fan}_{\\text{out}}|\\text{avg}",
+      ctrl: {
+        scale: { min: 0.01, max: 10, default: 1, step: 0.01, desc_en: "Overall scaling multiplier. scale=2 → weights twice as large.", desc_de: "Allgemeiner Skalierungsmultiplikator. scale=2 → doppelt so große Gewichte.", example_en: "scale=2 makes weights larger (more variance). scale=0.5 makes them smaller.", example_de: "scale=2 macht Gewichte größer (mehr Varianz). scale=0.5 macht sie kleiner." },
+        fan_in: { min: 1, max: 1024, default: 128, step: 1, desc_en: "Number of inputs.", desc_de: "Anzahl der Eingänge.", example_en: "Used when mode=FAN_IN or FAN_AVG.", example_de: "Wird bei mode=FAN_IN oder FAN_AVG verwendet." },
+        mode: { options: ["FAN_IN", "FAN_OUT", "FAN_AVG"], default: "FAN_IN", desc_en: "FAN_IN = only inputs (like He). FAN_OUT = only outputs. FAN_AVG = average.", desc_de: "FAN_IN = nur Eingänge (wie He). FAN_OUT = nur Ausgänge. FAN_AVG = Durchschnitt.", example_en: "FAN_IN → He-style. FAN_AVG → Glorot-style. FAN_OUT → unusual, rarely needed.", example_de: "FAN_IN → He-Art. FAN_AVG → Glorot-Art. FAN_OUT → ungewöhnlich, selten nötig." },
+        distribution: { options: ["NORMAL", "UNIFORM"], default: "NORMAL", desc_en: "NORMAL → bell curve. UNIFORM → flat range.", desc_de: "NORMAL → Glockenkurve. UNIFORM → flacher Bereich.", example_en: "NORMAL matches heNormal. UNIFORM matches heUniform.", example_de: "NORMAL entspricht heNormal. UNIFORM entspricht heUniform." }
+      },
+      sample: function(n, fi, fo, c) {
         var nVal = fi;
-        if (ctrl.mode === "FAN_OUT") nVal = fo;
-        else if (ctrl.mode === "FAN_AVG") nVal = (fi + fo) / 2;
-        if (ctrl.distribution === "UNIFORM") {
-          var limit = Math.sqrt(3 * ctrl.scale / nVal);
-          return { data: sampleUniform(n, -limit, limit), min: -limit, max: limit, type: "uniform", limit: limit };
+        if (c.mode === "FAN_OUT") nVal = fo;
+        else if (c.mode === "FAN_AVG") nVal = (fi + fo) / 2;
+        if (c.distribution === "UNIFORM") {
+          var limit = Math.sqrt(3 * c.scale / nVal);
+          return { data: sampleUniform(n, -limit, limit), lo: -limit, hi: limit, type: "uniform", key: "limit=" + limit.toFixed(6) + " mode=" + c.mode };
         }
-        var stddev = Math.sqrt(ctrl.scale / nVal);
-        return { data: sampleTruncatedNormal(n, 0, stddev, 2), mean: 0, stddev: stddev, type: "normal" };
+        var std = Math.sqrt(c.scale / nVal);
+        return { data: sampleTruncatedNormal(n, 0, std, 2), mean: 0, std: std, type: "normal", key: "σ=" + std.toFixed(6) + " mode=" + c.mode };
       }
     },
     orthogonal: {
       en: {
-        analogy: "Creates a random orthogonal matrix — the weight matrix's columns are perpendicular and have length 1. This preserves the input norm through the layer, which helps very deep networks train better.",
-        when_use: "• Very deep networks (50+ layers)\n• Recurrent networks (RNNs, LSTMs)",
-        when_not: "• Shallow networks don't benefit much\n• Only works for 2D weight matrices (not Conv filters)"
+        analogy: "Creates a matrix where columns are perpendicular and each has length = gain. Preserves the norm of the input — great for very deep or recurrent networks where signals must not vanish.",
+        tip: "Use this for very deep networks (50+ layers) or RNNs/LSTMs. For standard CNNs, HeNormal is simpler and works as well.",
+        when_use: "• Very deep networks where gradients vanish\n• RNNs / LSTMs (prevents vanishing gradient over time steps)\n• When you need norm-preserving layers",
+        when_not: "• Shallow to medium networks → no benefit\n• Only works for 2D matrices, not Conv filters\n• Overkill for easy tasks"
       },
       de: {
-        analogy: "Erzeugt eine zufällige orthogonale Matrix — die Spalten der Gewichtsmatrix sind senkrecht zueinander und haben Länge 1. Das bewahrt die Eingabenorm durch den Layer, was sehr tiefen Netzen hilft.",
-        when_use: "• Sehr tiefe Netze (50+ Layer)\n• Wiederkehrende Netze (RNNs, LSTMs)",
-        when_not: "• Flache Netze profitieren kaum\n• Funktioniert nur für 2D Gewichtsmatrizen (nicht Conv-Filter)"
+        analogy: "Erzeugt eine Matrix, deren Spalten senkrecht sind und jeweils Länge = gain haben. Bewahrt die Norm der Eingabe — großartig für sehr tiefe oder rekursive Netze.",
+        tip: "Verwende für sehr tiefe Netze (50+ Layer) oder RNNs/LSTMs. Für Standard-CNNs ist HeNormal einfacher und genauso gut.",
+        when_use: "• Sehr tiefe Netze (Gradienten verschwinden)\n• RNNs / LSTMs (verhindert verschwindende Gradienten)\n• Wenn norm-erhaltende Layer gebraucht werden",
+        when_not: "• Flache bis mittlere Netze → kein Vorteil\n• Nur für 2D Matrizen, nicht für Conv-Filter\n• Überdimensioniert für einfache Aufgaben"
       },
-      math: "W = Q\\quad\\text{where}\\quad Q^T Q = I",
-      params: { gain: "1.0", seed: "integer (optional)" },
-      controls: { gain: { min: 0.1, max: 5, default: 1, step: 0.1 } },
-      sample: function(n, fi, fo, ctrl) {
-        var stddev = ctrl.gain / Math.sqrt(fi);
-        return { data: sampleNormal(n, 0, stddev), mean: 0, stddev: stddev, type: "normal" };
+      math: "W = Q\\quad\\text{(orthogonal: } Q^T Q = \\text{gain}^2 \\cdot I)",
+      ctrl: {
+        gain: { min: 0.1, max: 5, default: 1, step: 0.1, desc_en: "Scaling factor. gain=1 → columns have length 1 (norm-preserving). gain=2 → amplifies input norm.", desc_de: "Skalierungsfaktor. gain=1 → Spalten haben Länge 1 (norm-erhaltend). gain=2 → verstärkt Eingabenorm.", example_en: "gain=1 → input norm stays same. gain=0.5 → shrinks. gain=2 → amplifies (may explode).", example_de: "gain=1 → Eingabenorm bleibt gleich. gain=0.5 → schrumpft. gain=2 → verstärkt (kann explodieren)." }
+      },
+      sample: function(n, fi, fo, c) {
+        var std = c.gain / Math.sqrt(fi);
+        return { data: sampleNormal(n, 0, std), mean: 0, std: std, type: "normal", key: "gain=" + c.gain.toFixed(1) + " approx σ=" + std.toFixed(4) };
       }
     },
     zeros: {
       en: {
-        analogy: "Sets all weights to zero. Every neuron starts identical — they all output zero. This causes the symmetry problem: identical neurons get identical gradients and learn nothing different. Only use for biases, never for weights.",
-        when_use: "• Good for bias initialization\n• Testing/debugging",
-        when_not: "• NEVER for weights! All neurons become identical\n• Causes symmetry problem"
+        analogy: "ALL weights are EXACTLY 0. Every neuron outputs 0, gets identical gradient, and learns NOTHING different (symmetry problem). Never use for weights!",
+        tip: "NEVER initialize weights with zeros — it's a guaranteed training failure. Only use for BIASES (e.g., bias_initializer='zeros' is the default and that's fine).",
+        when_use: "• Bias initialization ONLY\n• Testing / debugging / ablation studies",
+        when_not: "• NEVER for weights! All neurons remain identical forever"
       },
       de: {
-        analogy: "Setzt alle Gewichte auf Null. Jedes Neuron startet identisch — alle geben Null aus. Das verursacht das Symmetrieproblem: identische Neuronen bekommen identische Gradienten. Nur für Biases verwenden, niemals für Gewichte.",
-        when_use: "• Gut für Bias-Initialisierung\n• Testen/Debuggen",
-        when_not: "• NIEMALS für Gewichte! Alle Neuronen werden identisch\n• Verursacht Symmetrieproblem"
+        analogy: "ALLE Gewichte sind EXAKT 0. Jedes Neuron gibt 0 aus, bekommt identische Gradienten und lernt NICHTS Unterschiedliches (Symmetrieproblem). Niemals für Gewichte verwenden!",
+        tip: "NIEMALS Gewichte mit Null initialisieren — garantiertes Trainingsversagen. Nur für BIASES (z.B. bias_initializer='zeros' ist Standard und in Ordnung).",
+        when_use: "• NUR für Bias-Initialisierung\n• Testen / Debuggen / Ablationsstudien",
+        when_not: "• NIEMALS für Gewichte! Alle Neuronen bleiben für immer identisch"
       },
       math: "W = 0",
-      params: {},
-      controls: {},
-      sample: function(n, fi, fo, ctrl) {
-        var arr = []; for (var i = 0; i < n; i++) arr.push(0);
-        return { data: arr, min: -0.1, max: 0.1, type: "constant" };
-      }
+      ctrl: {},
+      sample: function(n) { var arr = []; for (var i = 0; i < n; i++) arr.push(0); return { data: arr, lo: -1, hi: 1, type: "constant", key: "ALL ZERO" }; }
     },
     ones: {
       en: {
-        analogy: "Sets all weights to 1. Like zeros, this creates identical neurons (symmetry problem). Rarely useful — only for very specific architectures or testing.",
-        when_use: "• Very specific custom architectures\n• Testing/debugging",
-        when_not: "• Almost never for weights (symmetry problem)\n• Not for biases either (biases are usually 0)"
+        analogy: "ALL weights are EXACTLY 1. Every output = sum of all inputs × 1 = huge values. Same symmetry problem as zeros. Almost never useful.",
+        tip: "Like zeros — creates identical neurons. Only use in VERY specific architectures where you know what you're doing.",
+        when_use: "• Very specific custom layer experiments\n• Testing",
+        when_not: "• Almost never for practical training\n• Causes symmetry problem + huge activations"
       },
       de: {
-        analogy: "Setzt alle Gewichte auf 1. Wie bei Null erzeugt dies identische Neuronen (Symmetrieproblem). Selten nützlich — nur für sehr spezielle Architekturen oder Tests.",
-        when_use: "• Sehr spezielle benutzerdefinierte Architekturen\n• Testen/Debuggen",
-        when_not: "• Fast nie für Gewichte (Symmetrieproblem)\n• Auch nicht für Biases (Biases sind normalerweise 0)"
+        analogy: "ALLE Gewichte sind EXAKT 1. Jede Ausgabe = Summe aller Eingaben × 1 = riesige Werte. Gleiches Symmetrieproblem wie zeros. Fast nie nützlich.",
+        tip: "Wie zeros — erzeugt identische Neuronen. Nur in SEHR speziellen Architekturen verwenden.",
+        when_use: "• Sehr spezielle benutzerdefinierte Layer-Experimente\n• Testen",
+        when_not: "• Fast nie für praktisches Training\n• Verursacht Symmetrieproblem + riesige Aktivierungen"
       },
       math: "W = 1",
-      params: {},
-      controls: {},
-      sample: function(n, fi, fo, ctrl) {
-        var arr = []; for (var i = 0; i < n; i++) arr.push(1);
-        return { data: arr, min: 0.9, max: 1.1, type: "constant" };
-      }
+      ctrl: {},
+      sample: function(n) { var arr = []; for (var i = 0; i < n; i++) arr.push(1); return { data: arr, lo: 0, hi: 2, type: "constant", key: "ALL ONE" }; }
     },
     constant: {
       en: {
-        analogy: "Sets all weights to any value you choose. Full control but same symmetry problem as zeros/ones.",
-        when_use: "• When you need a specific non-random value\n• Testing\n• Bias initialization",
-        when_not: "• Not for hidden layer weights (symmetry problem)\n• Random initialization almost always better"
+        analogy: "ALL weights are set to the SAME value of your choice. Full control, but same symmetry problem as zeros/ones.",
+        tip: "Same problem as zeros: if every neuron starts with the same value, they all learn the same thing. Only use for biases or very specific tests.",
+        when_use: "• When you need a specific non-random value for testing\n• Bias initialization with custom value",
+        when_not: "• Hidden layer weights (symmetry problem)\n• Random initialization is almost always better"
       },
       de: {
-        analogy: "Setzt alle Gewichte auf einen beliebigen Wert deiner Wahl. Volle Kontrolle, aber dasselbe Symmetrieproblem wie zeros/ones.",
-        when_use: "• Wenn ein bestimmter nicht-zufälliger Wert benötigt wird\n• Testen\n• Bias-Initialisierung",
-        when_not: "• Nicht für verborgene Layer-Gewichte (Symmetrieproblem)\n• Zufällige Initialisierung ist fast immer besser"
+        analogy: "ALLE Gewichte werden auf den GLEICHEN Wert deiner Wahl gesetzt. Volle Kontrolle, aber gleiches Symmetrieproblem wie zeros/ones.",
+        tip: "Gleiches Problem wie zeros: wenn jedes Neuron mit demselben Wert startet, lernen alle dasselbe. Nur für Biases oder spezielle Tests.",
+        when_use: "• Wenn ein bestimmter nicht-zufälliger Wert zum Testen\n• Bias-Initialisierung mit benutzerdefiniertem Wert",
+        when_not: "• Verborgene Layer-Gewichte (Symmetrieproblem)\n• Zufällige Initialisierung ist fast immer besser"
       },
       math: "W = \\text{value}",
-      params: { value: "0.5" },
-      controls: { value: { min: -5, max: 5, default: 0.5, step: 0.1 } },
-      sample: function(n, fi, fo, ctrl) {
-        var arr = []; for (var i = 0; i < n; i++) arr.push(ctrl.value);
-        return { data: arr, min: ctrl.value - 0.1, max: ctrl.value + 0.1, type: "constant" };
+      ctrl: {
+        value: { min: -5, max: 5, default: 0.5, step: 0.1, desc_en: "The single value assigned to EVERY weight in the tensor.", desc_de: "Der einzelne Wert, der JEDEM Gewicht im Tensor zugewiesen wird.", example_en: "value=0.5 → every weight is 0.5. Try it — all neurons produce identical output!", example_de: "value=0.5 → jedes Gewicht ist 0.5. Probier — alle Neuronen produzieren identische Ausgabe!" }
+      },
+      sample: function(n, fi, fo, c) {
+        var arr = []; for (var i = 0; i < n; i++) arr.push(c.value);
+        return { data: arr, lo: c.value - 0.5, hi: c.value + 0.5, type: "constant", key: "ALL=" + c.value.toFixed(2) };
       }
     },
     identity: {
       en: {
-        analogy: "Creates the identity matrix — 1s on the diagonal, 0s elsewhere. The output equals the input. Only works for square weight matrices.",
-        when_use: "• When you want a layer to start as the identity\n• Residual network initializations",
-        when_not: "• Only works for square 2D matrices\n• Not for convolutional layers\n• Rarely needed"
+        analogy: "Creates the identity matrix: 1s on the diagonal, 0s elsewhere. Output = input × gain. Only works for square weight matrices.",
+        tip: "Think of it as 'pass-through' + gain. The layer starts as: output = input × gain. Rarely used outside residual networks.",
+        when_use: "• When a layer should start as the identity function\n• Residual network initialization\n• Specialized architectures",
+        when_not: "• Only works for square 2D matrices\n• Not for convolutional layers\n• Usually not needed"
       },
       de: {
-        analogy: "Erzeugt die Einheitsmatrix — 1en auf der Diagonale, 0en sonst. Die Ausgabe ist gleich der Eingabe. Funktioniert nur für quadratische Gewichtsmatrizen.",
-        when_use: "• Wenn ein Layer als Identität starten soll\n• Residuale Netze (ResNet) Initialisierungen",
-        when_not: "• Funktioniert nur für quadratische 2D-Matrizen\n• Nicht für convolutional Layer\n• Selten benötigt"
+        analogy: "Erzeugt die Einheitsmatrix: 1en auf der Diagonale, 0en sonst. Ausgabe = Eingabe × gain. Nur für quadratische Matrizen.",
+        tip: "Stell es als 'Durchreiche' + gain vor. Der Layer startet als: Ausgabe = Eingabe × gain. Selten außerhalb von Residualnetzen verwendet.",
+        when_use: "• Wenn ein Layer als Identität starten soll\n• Residualnetz-Initialisierung\n• Spezialisierte Architekturen",
+        when_not: "• Nur für quadratische 2D-Matrizen\n• Nicht für convolutional Layer\n• Normalerweise nicht nötig"
       },
-      math: "W = I\\quad(\\text{Einheitsmatrix})",
-      params: { gain: "1.0" },
-      controls: { gain: { min: 0.1, max: 5, default: 1, step: 0.1 } },
-      sample: function(n, fi, fo, ctrl) {
+      math: "W = \\text{gain} \\cdot I\\quad(I = \\text{Einheitsmatrix})",
+      ctrl: {
+        gain: { min: 0.1, max: 5, default: 1, step: 0.1, desc_en: "Diagonal multiplier. gain=1 → identity (output=input). gain=2 → output=2×input.", desc_de: "Diagonalmultiplikator. gain=1 → Identität (Ausgabe=Eingabe). gain=2 → Ausgabe=2×Eingabe.", example_en: "gain=1 → perfect pass-through. gain=0 → dead layer. gain>1 → amplification.", example_de: "gain=1 → perfekte Durchleitung. gain=0 → toter Layer. gain>1 → Verstärkung." }
+      },
+      sample: function(n, fi, fo, c) {
         var size = Math.ceil(Math.sqrt(n));
         var arr = [];
         for (var i = 0; i < n; i++) {
           var row = Math.floor(i / size), col = i % size;
-          arr.push(row === col ? ctrl.gain : 0);
+          arr.push(row === col ? c.gain : 0);
         }
-        return { data: arr, min: -0.1, max: ctrl.gain + 0.1, type: "constant" };
+        return { data: arr, lo: -0.5, hi: c.gain + 0.5, type: "constant", key: "gain=" + c.gain.toFixed(1) };
       }
     }
   };
 
-  // ─── REGULARIZER INFO DATA ────────────────────────────────────────────────
-
-  var regularizerInfo = {
+  var regData = {
     none: {
-      en: {
-        analogy: "No regularization. The model is free to use any weight values. This can lead to overfitting (memorizing the training data instead of learning general patterns).",
-        when_use: "• Very simple problems (few features, lots of data)\n• When you want the most flexible model",
-        when_not: "• Most real-world problems need SOME regularization\n• Without regularization the model may overfit easily"
-      },
-      de: {
-        analogy: "Keine Regularisierung. Das Modell kann beliebige Gewichtswerte verwenden. Das kann zu Überanpassung führen (Auswendiglernen der Trainingsdaten statt Lernen allgemeiner Muster).",
-        when_use: "• Sehr einfache Probleme (wenige Features, viele Daten)\n• Wenn das flexibelste Modell gewünscht ist",
-        when_not: "• Die meisten echten Probleme brauchen IRGENDEINE Regularisierung\n• Ohne Regularisierung kann das Modell leicht überanpassen"
-      },
+      en: { analogy: "No penalty added. The model can use any weight values freely. This maximizes flexibility but risks overfitting (memorizing noise instead of learning patterns).", tip: "Only skip regularization when you have TONS of data and a simple model. For anything else, some L2 helps.", when_use: "• Very simple problems (few features, abundant data)\n• Baseline comparisons", when_not: "• Most real-world problems → model overfits without regularization\n• Even small L2 (0.0001) helps generalization" },
+      de: { analogy: "Keine Strafe. Das Modell kann beliebige Gewichtswerte frei nutzen. Maximale Flexibilität, aber Risiko der Überanpassung.", tip: "Nur ohne Regularisierung, wenn du SEHR viele Daten und ein einfaches Modell hast. Sonst hilft etwas L2.", when_use: "• Sehr einfache Probleme (wenige Features, viele Daten)\n• Basisvergleiche", when_not: "• Meiste echte Probleme → Modell overfittet ohne Regularisierung\n• Schon kleines L2 (0.0001) hilft der Generalisierung" },
       math: "\\text{Penalty} = 0",
-      controls: {}
+      ctrl: {}
     },
     l1: {
-      en: {
-        analogy: "L1 adds a penalty equal to the absolute value of each weight. This pushes small weights to exactly 0 (sparsity). Think of it as a 'use it or lose it' penalty — unimportant connections get pruned away completely.",
-        when_use: "• Feature selection (pushes irrelevant weights to 0)\n• Interpretability (sparse models)\n• When you want exactly 0 weights",
-        when_not: "• If you only need small weights (use L2 instead)\n• L1 can cause instability with some optimizers"
-      },
-      de: {
-        analogy: "L1 addiert eine Strafe in Höhe des absoluten Werts jedes Gewichts. Das drückt kleine Gewichte auf exakt 0 (Sparsity). Denk daran wie eine 'benutze es oder verliere es'-Strafe — unwichtige Verbindungen werden komplett entfernt.",
-        when_use: "• Feature-Auswahl (drückt irrelevante Gewichte auf 0)\n• Interpretierbarkeit (dünn besetzte Modelle)\n• Wenn exakte 0-Gewichte gewünscht sind",
-        when_not: "• Wenn nur kleine Gewichte gebraucht werden (L2 stattdessen)\n• L1 kann bei manchen Optimierern Instabilität verursachen"
-      },
+      en: { analogy: "Penalty = l1 × |weight|. Small weights are pushed to EXACTLY 0 (sparsity). The model prunes away unimportant connections — great for feature selection.", tip: "Use L1 when you want to know which features matter. The model will zero out irrelevant weights. Example: gene expression analysis with 10,000 genes → L1 finds the important ones.", when_use: "• Feature selection (which inputs are relevant?)\n• Interpretable models (sparse = easy to understand)\n• High-dimensional data (more features than samples)", when_not: "• You only need small weights, not zero weights\n• L2 is smoother and often works better for generalization" },
+      de: { analogy: "Strafe = l1 × |Gewicht|. Kleine Gewichte werden auf exakt 0 gedrückt (Sparsity). Das Modell entfernt unwichtige Verbindungen — großartig für Feature-Auswahl.", tip: "L1 verwenden, wenn du wissen willst, welche Features wichtig sind. Das Modell setzt irrelevante Gewichte auf 0. Beispiel: Genexpression mit 10.000 Genen → L1 findet die wichtigen.", when_use: "• Feature-Auswahl (welche Eingaben sind relevant?)\n• Interpretierbare Modelle (dünn besetzt = leicht verständlich)\n• Hochdimensionale Daten (mehr Features als Samples)", when_not: "• Nur kleine Gewichte, nicht Null, gewünscht\n• L2 ist glatter und oft besser für Generalisierung" },
       math: "\\text{Penalty}_{L1} = \\text{l1} \\cdot \\sum |W|",
-      controls: { l1: { min: 0, max: 0.1, default: 0.01, step: 0.001 } },
-      penalty: function(w, ctrl) { return ctrl.l1 * Math.abs(w); }
+      ctrl: { l1: { min: 0, max: 0.1, default: 0.01, step: 0.001, desc_en: "Strength of L1 penalty. Higher = more weights become exactly 0.", desc_de: "Stärke der L1-Strafe. Höher = mehr Gewichte werden exakt 0.", example_en: "0.001 → mild (few weights zeroed). 0.01 → moderate. 0.1 → aggressive (most weights zeroed).", example_de: "0.001 → mild (wenige Gewichte auf 0). 0.01 → moderat. 0.1 → aggressiv (die meisten Gewichte auf 0)." } },
+      penalty: function(w, c) { return c.l1 * Math.abs(w); }
     },
     l2: {
-      en: {
-        analogy: "L2 adds a penalty equal to the SQUARE of each weight. Large weights get heavily punished, small weights barely feel it. This keeps all weights small but not exactly 0. Also called weight decay.",
-        when_use: "• Default choice for most neural networks\n• Prevents overfitting by keeping weights small\n• Works well with most optimizers",
-        when_not: "• If you need sparsity (use L1 instead)\n• Very high L2 can underfit (model becomes too simple)"
-      },
-      de: {
-        analogy: "L2 addiert eine Strafe in Höhe des QUADRATS jedes Gewichts. Große Gewichte werden stark bestraft, kleine Gewichte spüren es kaum. Das hält alle Gewichte klein, aber nicht exakt 0. Auch 'Weight Decay' genannt.",
-        when_use: "• Standardwahl für die meisten neuronalen Netze\n• Verhindert Überanpassung durch kleine Gewichte\n• Funktioniert gut mit den meisten Optimierern",
-        when_not: "• Wenn Sparsity benötigt wird (L1 stattdessen)\n• Sehr hohes L2 kann zu Unteranpassung führen (Modell wird zu einfach)"
-      },
+      en: { analogy: "Penalty = l2 × weight². Large weights get HEAVILY punished (quadratic!), small weights barely feel it. Keeps all weights small but none exactly 0. Also called weight decay.", tip: "This is the DEFAULT regularizer for almost every neural network. Start with l2=0.01 and adjust. Example: ResNet uses l2=0.0001 for ImageNet.", when_use: "• Default choice for MOST neural networks\n• Prevents overfitting on any model\n• Works with all optimizers\n• Improves generalization almost always", when_not: "• If you NEED exact zeros (use L1)\n• Very high l2 → model underfits (too simple)" },
+      de: { analogy: "Strafe = l2 × Gewicht². Große Gewichte werden STARK bestraft (quadratisch!), kleine kaum. Hält alle Gewichte klein, aber keins exakt 0. Auch Weight Decay genannt.", tip: "Das ist der STANDARD-Regularisierer für fast jedes neuronale Netz. Starte mit l2=0.01 und justiere. Beispiel: ResNet nutzt l2=0.0001 für ImageNet.", when_use: "• Standardwahl für die MEISTEN neuronalen Netze\n• Verhindert Überanpassung bei jedem Modell\n• Funktioniert mit allen Optimierern\n• Verbessert fast immer die Generalisierung", when_not: "• Wenn exakte Null gebraucht wird (L1)\n• Sehr hohes l2 → Modell unterfittet (zu einfach)" },
       math: "\\text{Penalty}_{L2} = \\text{l2} \\cdot \\sum W^2",
-      controls: { l2: { min: 0, max: 0.1, default: 0.01, step: 0.001 } },
-      penalty: function(w, ctrl) { return ctrl.l2 * w * w; }
+      ctrl: { l2: { min: 0, max: 0.1, default: 0.01, step: 0.001, desc_en: "Strength of L2 penalty. Higher = weights stay smaller. 0.01 is a common starting point.", desc_de: "Stärke der L2-Strafe. Höher = Gewichte bleiben kleiner. 0.01 ist ein guter Startwert.", example_en: "0.0001 → very mild (barely affects training). 0.01 → moderate default. 0.1 → strong (may underfit).", example_de: "0.0001 → sehr mild (kaum Auswirkung). 0.01 → moderater Standard. 0.1 → stark (kann unterfitten)." } },
+      penalty: function(w, c) { return c.l2 * w * w; }
     },
     l1l2: {
-      en: {
-        analogy: "The best of both worlds — L1 for sparsity AND L2 for small weights. L1 prunes unimportant connections to 0 while L2 keeps the remaining weights small. You get a compact AND stable model.",
-        when_use: "• When you want both sparsity AND small weights\n• Complex models with many parameters\n• Best regularizer if you can tune both parameters",
-        when_not: "• More hyperparameters to tune (l1 and l2)\n• If the dataset is very small, simpler regularization may be enough"
+      en: { analogy: "Combines L1 (sparsity) + L2 (small weights). L1 zeros out unimportant weights, L2 keeps the remaining ones small. Best of both worlds — but two knobs to tune.", tip: "Use this when you want a BOTH sparse AND small model. Example: a production model where you want most weights at 0 (L1) but the remaining ones stable (L2).", when_use: "• When you want BOTH sparsity and small weights\n• Production models needing compactness + stability\n• Complex models with many parameters", when_not: "• If tuning two hyperparameters is too expensive\n• Simple problems: one regularizer is often enough" },
+      de: { analogy: "Kombiniert L1 (Sparsity) + L2 (kleine Gewichte). L1 entfernt unwichtige auf 0, L2 hält die restlichen klein. Beste aus beiden Welten — aber zwei Stellschrauben.", tip: "Verwende, wenn du SOWOHL dünn besetzte ALS AUCH kleine Gewichte willst. Beispiel: Produktionsmodell, das meist 0 (L1) und stabil (L2) sein soll.", when_use: "• Wenn SOWOHL Sparsity als auch kleine Gewichte\n• Produktionsmodelle: kompakt + stabil\n• Komplexe Modelle mit vielen Parametern", when_not: "• Wenn zwei Hyperparameter zu aufwändig\n• Einfache Probleme: ein Regularisierer reicht oft" },
+      math: "\\text{Penalty} = \\text{l1} \\cdot \\sum |W| + \\text{l2} \\cdot \\sum W^2",
+      ctrl: {
+        l1: { min: 0, max: 0.1, default: 0.005, step: 0.001, desc_en: "L1 strength. Sparsity component.", desc_de: "L1-Stärke. Sparsity-Komponente.", example_en: "Controls how many weights become exactly 0.", example_de: "Bestimmt, wie viele Gewichte exakt 0 werden." },
+        l2: { min: 0, max: 0.1, default: 0.005, step: 0.001, desc_en: "L2 strength. Weight decay component.", desc_de: "L2-Stärke. Weight-Decay-Komponente.", example_en: "Controls how small the non-zero weights stay.", example_de: "Bestimmt, wie klein die Nicht-Null-Gewichte bleiben." }
       },
-      de: {
-        analogy: "Das Beste aus beiden Welten — L1 für Sparsity UND L2 für kleine Gewichte. L1 entfernt unwichtige Verbindungen auf 0 während L2 die verbleibenden Gewichte klein hält. Ein kompaktes UND stabiles Modell.",
-        when_use: "• Wenn sowohl Sparsity als auch kleine Gewichte gewünscht sind\n• Komplexe Modelle mit vielen Parametern\n• Bester Regularisierer wenn beide Parameter eingestellt werden können",
-        when_not: "• Mehr Hyperparameter zum Einstellen (l1 und l2)\n• Bei sehr kleinen Datensätzen reicht einfachere Regularisierung"
-      },
-      math: "\\text{Penalty}_{L1L2} = \\text{l1} \\cdot \\sum |W| + \\text{l2} \\cdot \\sum W^2",
-      controls: { l1: { min: 0, max: 0.1, default: 0.005, step: 0.001 }, l2: { min: 0, max: 0.1, default: 0.005, step: 0.001 } },
-      penalty: function(w, ctrl) { return ctrl.l1 * Math.abs(w) + ctrl.l2 * w * w; }
+      penalty: function(w, c) { return c.l1 * Math.abs(w) + c.l2 * w * w; }
     }
   };
 
   // ─── STATE ─────────────────────────────────────────────────────────────────
 
-  var _state = {
-    kind: "initializer",
-    name: "glorotUniform",
-    controls: {}
-  };
+  var _state = { kind: "initializer", name: "glorotUniform", ctrl: {} };
 
   // ─── BUILD POPUP ───────────────────────────────────────────────────────────
 
@@ -507,630 +512,554 @@
     removePopup();
     _state.kind = kind;
     _state.name = name;
+    _state.ctrl = {};
 
     var t = i18n[L()];
-    var modal = _buildModalShell(t);
+    var modal = _modalShell(t);
 
-    // ─── Selector row ───
-    var selectorRow = _buildSelector(modal, t);
-    modal.appendChild(selectorRow);
+    var selRow = _selectorRow(modal, t);
+    modal.appendChild(selRow);
 
-    // ─── Content container (rebuilt when selector changes) ───
     var content = document.createElement("div");
-    content.id = _POPUP_ID + "_content";
+    content.id = _POPUP_ID + "_c";
     modal.appendChild(content);
 
-    // ─── Build initial content ───
-    _rebuildContent(content, t);
+    _rebuild(content, t);
 
-    // ─── Finish overlay ───
     var overlay = document.createElement("div");
     overlay.id = _POPUP_ID;
     overlay.style.cssText = "position:fixed;top:0;left:0;width:100vw;height:100vh;" +
       "background:rgba(0,0,0,0.75);z-index:99999;display:flex;align-items:center;" +
       "justify-content:center;padding:16px;box-sizing:border-box;";
+    overlay.onclick = function (e) { if (e.target === overlay) removePopup(); };
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
     document.addEventListener("keydown", _escHandler);
 
-    setTimeout(function () { _renderPlot(content); }, 50);
+    setTimeout(function () { _renderPlots(content); }, 50);
   }
 
-  function _buildModalShell(t) {
-    var modal = document.createElement("div");
-    modal.style.cssText = "background:#1e1e2e;color:#cdd6f4;border-radius:16px;" +
-      "width:min(97vw,1100px);max-height:94vh;overflow-y:auto;padding:28px 32px;" +
+  function _modalShell(t) {
+    var m = document.createElement("div");
+    m.style.cssText = "background:#1e1e2e;color:#cdd6f4;border-radius:16px;" +
+      "width:min(97vw,1100px);max-height:94vh;overflow-y:auto;padding:24px 28px;" +
       "position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.7);" +
       "font-family:'Segoe UI',system-ui,sans-serif;";
 
+    var top = document.createElement("div");
+    top.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;";
+
+    var title = document.createElement("h2");
+    title.textContent = t.title;
+    title.style.cssText = "margin:0;color:#89b4fa;font-size:20px;";
+
     var closeBtn = document.createElement("button");
     closeBtn.innerHTML = "✕";
-    closeBtn.style.cssText = "position:sticky;top:0;float:right;background:#f38ba8;" +
-      "border:none;color:#1e1e2e;font-size:20px;font-weight:bold;width:36px;height:36px;" +
-      "border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;" +
-      "transition:transform 0.2s;z-index:10;margin-left:auto;flex-shrink:0;";
+    closeBtn.style.cssText = "background:#f38ba8;border:none;color:#1e1e2e;font-size:18px;font-weight:bold;" +
+      "width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;" +
+      "justify-content:center;transition:transform 0.2s;flex-shrink:0;";
     closeBtn.onmouseenter = function () { closeBtn.style.transform = "scale(1.2)"; };
     closeBtn.onmouseleave = function () { closeBtn.style.transform = "scale(1)"; };
     closeBtn.onclick = removePopup;
-    modal.appendChild(closeBtn);
 
-    return modal;
+    top.appendChild(title);
+    top.appendChild(closeBtn);
+    m.appendChild(top);
+
+    // Click-outside hint
+    var hint = document.createElement("div");
+    hint.style.cssText = "font-size:10px;color:#585b70;text-align:right;margin-top:-12px;margin-bottom:8px;";
+    hint.textContent = t.closeOutside;
+    m.appendChild(hint);
+
+    return m;
   }
 
-  function _buildSelector(modal, t) {
+  function _selectorRow(modal, t) {
     var row = document.createElement("div");
-    row.style.cssText = "display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;";
+    row.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;";
 
     var label = document.createElement("span");
-    label.style.cssText = "font-size:14px;color:#a6adc8;";
+    label.style.cssText = "font-size:13px;color:#a6adc8;";
     label.textContent = t.selectLabel;
     row.appendChild(label);
 
-    var select = document.createElement("select");
-    select.style.cssText = "background:#45475a;color:#cdd6f4;border:1px solid #585b70;" +
-      "border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer;flex:1;min-width:200px;";
+    var sel = document.createElement("select");
+    sel.style.cssText = "background:#45475a;color:#cdd6f4;border:1px solid #585b70;" +
+      "border-radius:6px;padding:5px 8px;font-size:13px;cursor:pointer;flex:1;min-width:180px;";
 
-    // Initializers group
-    var initOptgroup = document.createElement("optgroup");
-    initOptgroup.label = t.initializerTab;
-    var initKeys = Object.keys(initializerInfo);
+    var initG = document.createElement("optgroup");
+    initG.label = t.initTab;
+    var initKeys = Object.keys(initData);
     for (var i = 0; i < initKeys.length; i++) {
-      var opt = document.createElement("option");
-      opt.value = "init:" + initKeys[i];
-      opt.textContent = initKeys[i];
-      if (_state.kind === "initializer" && _state.name === initKeys[i]) opt.selected = true;
-      initOptgroup.appendChild(opt);
+      var o = document.createElement("option");
+      o.value = "i:" + initKeys[i];
+      o.textContent = initKeys[i];
+      if (_state.kind === "initializer" && _state.name === initKeys[i]) o.selected = true;
+      initG.appendChild(o);
     }
-    select.appendChild(initOptgroup);
+    sel.appendChild(initG);
 
-    // Regularizers group
-    var regOptgroup = document.createElement("optgroup");
-    regOptgroup.label = t.regularizerTab;
-    var regKeys = Object.keys(regularizerInfo);
+    var regG = document.createElement("optgroup");
+    regG.label = t.regTab;
+    var regKeys = Object.keys(regData);
     for (var i = 0; i < regKeys.length; i++) {
-      var opt = document.createElement("option");
-      opt.value = "reg:" + regKeys[i];
-      opt.textContent = regKeys[i];
-      if (_state.kind === "regularizer" && _state.name === regKeys[i]) opt.selected = true;
-      regOptgroup.appendChild(opt);
+      var o = document.createElement("option");
+      o.value = "r:" + regKeys[i];
+      o.textContent = regKeys[i];
+      if (_state.kind === "regularizer" && _state.name === regKeys[i]) o.selected = true;
+      regG.appendChild(o);
     }
-    select.appendChild(regOptgroup);
+    sel.appendChild(regG);
 
-    select.onchange = function () {
-      var val = this.value;
-      var parts = val.split(":");
-      _state.kind = parts[0] === "init" ? "initializer" : "regularizer";
-      _state.name = parts[1];
-      _state.controls = {};
-      var content = document.getElementById(_POPUP_ID + "_content");
-      if (content) _rebuildContent(content, i18n[L()]);
+    sel.onchange = function () {
+      var p = this.value.split(":");
+      _state.kind = p[0] === "i" ? "initializer" : "regularizer";
+      _state.name = p[1];
+      _state.ctrl = {};
+      var c = document.getElementById(_POPUP_ID + "_c");
+      if (c) { _rebuild(c, i18n[L()]); setTimeout(function () { _renderPlots(c); }, 50); }
     };
 
-    row.appendChild(select);
+    row.appendChild(sel);
     return row;
   }
 
-  function _rebuildContent(container, t) {
-    container.innerHTML = "";
+  function _rebuild(c, t) {
+    c.innerHTML = "";
     var isReg = _state.kind === "regularizer";
-    var info = isReg ? regularizerInfo[_state.name] : initializerInfo[_state.name];
+    var info = isReg ? regData[_state.name] : initData[_state.name];
     if (!info) return;
 
-    // Init controls state from defaults
-    if (Object.keys(_state.controls).length === 0 && info.controls) {
-      var cKeys = Object.keys(info.controls);
-      for (var ci = 0; ci < cKeys.length; ci++) {
-        var def = info.controls[cKeys[ci]].default;
-        _state.controls[cKeys[ci]] = def !== undefined ? def : 0;
+    var loc = L() === "de" ? info.de : info.en;
+
+    // Init controls
+    if (Object.keys(_state.ctrl).length === 0 && info.ctrl) {
+      var ck = Object.keys(info.ctrl);
+      for (var ci = 0; ci < ck.length; ci++) {
+        _state.ctrl[ck[ci]] = info.ctrl[ck[ci]].default !== undefined ? info.ctrl[ck[ci]].default : 0;
       }
     }
 
-    // Title
-    var title = document.createElement("h2");
-    var displayName = _state.name.charAt(0).toUpperCase() + _state.name.slice(1);
-    title.textContent = displayName;
-    title.style.cssText = "margin:0 0 4px 0;color:#89b4fa;font-size:20px;";
-    container.appendChild(title);
+    // Name + category
+    var title = document.createElement("h3");
+    title.textContent = _state.name;
+    title.style.cssText = "margin:0 0 2px 0;color:#cdd6f4;font-size:18px;";
+    c.appendChild(title);
 
-    // Category label
-    var catLabel = document.createElement("div");
-    catLabel.style.cssText = "font-size:11px;color:#585b70;margin-bottom:14px;" +
-      "text-transform:uppercase;letter-spacing:1px;";
-    catLabel.textContent = isReg ? t.regularizerTab : t.initializerTab;
-    container.appendChild(catLabel);
+    var cat = document.createElement("div");
+    cat.style.cssText = "font-size:10px;color:#585b70;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;";
+    cat.textContent = isReg ? t.regTab : t.initTab;
+    c.appendChild(cat);
 
     // Intuition
-    var locInfo = L() === "de" ? info.de : info.en;
-    var intH = document.createElement("h3");
-    intH.textContent = t.intuitionTitle;
-    intH.style.cssText = "color:#f9e2af;margin:0 0 6px 0;font-size:15px;";
-    container.appendChild(intH);
+    var ih = _secH(t.intuition, "#f9e2af");
+    c.appendChild(ih);
 
-    var intBox = document.createElement("div");
-    intBox.style.cssText = "background:#313244;border-radius:10px;padding:14px;" +
-      "margin-bottom:16px;font-size:13px;line-height:1.7;border-left:4px solid #f9e2af;";
-    intBox.textContent = locInfo.analogy;
-    container.appendChild(intBox);
+    var ibox = document.createElement("div");
+    ibox.style.cssText = "background:#313244;border-radius:10px;padding:12px 14px;" +
+      "margin-bottom:6px;font-size:13px;line-height:1.7;border-left:4px solid #f9e2af;";
+    ibox.textContent = loc.analogy;
+    c.appendChild(ibox);
 
-    // Math
-    if (info.math) {
-      var mathH = document.createElement("h3");
-      mathH.textContent = t.mathTitle;
-      mathH.style.cssText = "color:#89b4fa;margin:16px 0 6px 0;font-size:15px;";
-      container.appendChild(mathH);
-
-      var mathBox = document.createElement("div");
-      mathBox.style.cssText = "background:#313244;border-radius:10px;padding:14px;" +
-        "margin-bottom:16px;border-left:4px solid #89b4fa;overflow-x:auto;text-align:center;";
-      mathBox.innerHTML = renderMathBlock(info.math);
-      container.appendChild(mathBox);
+    if (loc.tip) {
+      var tip = document.createElement("div");
+      tip.style.cssText = "font-size:12px;color:#fab387;margin-bottom:14px;padding:0 4px;";
+      tip.innerHTML = "💡 <b>" + t.practicalTip + ":</b> " + loc.tip;
+      c.appendChild(tip);
     }
 
-    // Interactive Controls
-    if (info.controls && Object.keys(info.controls).length > 0) {
-      var playH = document.createElement("h3");
-      playH.textContent = t.playTitle;
-      playH.style.cssText = "color:#fab387;margin:16px 0 6px 0;font-size:15px;";
-      container.appendChild(playH);
+    // Formula
+    if (info.math) {
+      var fh = _secH(t.formula, "#89b4fa");
+      c.appendChild(fh);
+      var fbox = document.createElement("div");
+      fbox.style.cssText = "background:#313244;border-radius:10px;padding:12px;" +
+        "margin-bottom:14px;border-left:4px solid #89b4fa;overflow-x:auto;text-align:center;";
+      fbox.innerHTML = renderMathBlock(info.math);
+      c.appendChild(fbox);
+    }
 
-      var controlsBox = document.createElement("div");
-      controlsBox.style.cssText = "background:#313244;border-radius:10px;padding:14px;" +
-        "margin-bottom:16px;display:flex;flex-wrap:wrap;gap:12px;";
+    // Interactive controls
+    var ck = Object.keys(info.ctrl);
+    if (ck.length > 0) {
+      var ph = _secH(t.play, "#fab387");
+      c.appendChild(ph);
 
-      var cKeys = Object.keys(info.controls);
-      for (var ci = 0; ci < cKeys.length; ci++) {
-        var ctrlDef = info.controls[cKeys[ci]];
-        var ctrlEl = _buildControl(cKeys[ci], ctrlDef, container, t);
-        controlsBox.appendChild(ctrlEl);
+      var pbox = document.createElement("div");
+      pbox.style.cssText = "background:#313244;border-radius:10px;padding:12px 14px;" +
+        "margin-bottom:14px;display:flex;flex-direction:column;gap:10px;";
+
+      for (var ci = 0; ci < ck.length; ci++) {
+        var def = info.ctrl[ck[ci]];
+        var el = _ctrlEl(ck[ci], def, c, t);
+        pbox.appendChild(el);
       }
-      container.appendChild(controlsBox);
+      c.appendChild(pbox);
     }
 
     // Plot
-    var plotH = document.createElement("h3");
-    plotH.textContent = isReg ? t.regPlotTitle : t.plotTitle;
-    plotH.style.cssText = "color:#a6e3a1;margin:16px 0 6px 0;font-size:15px;";
-    container.appendChild(plotH);
+    var plotH = _secH(isReg ? t.regPlotTitle : t.plotTitle, "#a6e3a1");
+    c.appendChild(plotH);
 
     var plotBox = document.createElement("div");
-    plotBox.style.cssText = "background:#313244;border-radius:10px;padding:12px;" +
-      "margin-bottom:16px;position:relative;";
-
-    if (!isReg) {
-      var sampleLabel = document.createElement("div");
-      sampleLabel.style.cssText = "font-size:10px;color:#585b70;margin-bottom:4px;text-align:right;";
-      sampleLabel.textContent = t.SAMPLE_SIZE;
-      plotBox.appendChild(sampleLabel);
-    }
+    plotBox.style.cssText = "background:#313244;border-radius:10px;padding:10px;" +
+      "margin-bottom:14px;";
 
     var plotDiv = document.createElement("div");
     plotDiv.id = _PLOT_ID;
-    plotDiv.style.cssText = "width:100%;height:280px;";
+    plotDiv.style.cssText = "width:100%;height:260px;";
     plotBox.appendChild(plotDiv);
-    container.appendChild(plotBox);
+    c.appendChild(plotBox);
 
-    // Example matrix
-    if (!isReg) {
-      _buildInitMatrix(container, info, t);
-    } else {
-      _buildRegMatrix(container, info, t);
-    }
+    // Matrix
+    var mh = _secH(isReg ? t.regMatrixTitle : t.matrixTitle, "#cba6f7");
+    c.appendChild(mh);
+
+    var mbox = document.createElement("div");
+    mbox.id = _POPUP_ID + "_m";
+    mbox.style.cssText = "background:#313244;border-radius:10px;padding:12px 14px;" +
+      "margin-bottom:14px;overflow-x:auto;";
+    c.appendChild(mbox);
 
     // When to use
-    if (locInfo.when_use) {
-      var whenH = document.createElement("h3");
-      whenH.textContent = t.whenTitle;
-      whenH.style.cssText = "color:#cba6f7;margin:16px 0 6px 0;font-size:15px;";
-      container.appendChild(whenH);
+    if (loc.when_use || loc.when_not) {
+      var wh = _secH(t.when, "#cba6f7");
+      c.appendChild(wh);
 
-      var whenGrid = document.createElement("div");
-      whenGrid.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;";
+      var wg = document.createElement("div");
+      wg.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;";
 
-      var useBox = document.createElement("div");
-      useBox.style.cssText = "background:#313244;border-radius:10px;padding:12px;" +
-        "border-left:4px solid #a6e3a1;font-size:12px;line-height:1.6;white-space:pre-wrap;";
-      useBox.textContent = locInfo.when_use;
-      whenGrid.appendChild(useBox);
-
-      if (locInfo.when_not) {
-        var notBox = document.createElement("div");
-        notBox.style.cssText = "background:#313244;border-radius:10px;padding:12px;" +
+      if (loc.when_use) {
+        var ub = document.createElement("div");
+        ub.style.cssText = "background:#313244;border-radius:10px;padding:10px 12px;" +
+          "border-left:4px solid #a6e3a1;font-size:12px;line-height:1.6;white-space:pre-wrap;";
+        ub.textContent = loc.when_use;
+        wg.appendChild(ub);
+      }
+      if (loc.when_not) {
+        var nb = document.createElement("div");
+        nb.style.cssText = "background:#313244;border-radius:10px;padding:10px 12px;" +
           "border-left:4px solid #f38ba8;font-size:12px;line-height:1.6;white-space:pre-wrap;";
-        notBox.textContent = locInfo.when_not;
-        whenGrid.appendChild(notBox);
+        nb.textContent = loc.when_not;
+        wg.appendChild(nb);
       }
-      container.appendChild(whenGrid);
+      c.appendChild(wg);
     }
 
-    // Params reference table
-    if (info.params && Object.keys(info.params).length > 0) {
-      var paramH = document.createElement("h3");
-      paramH.textContent = t.paramsTitle;
-      paramH.style.cssText = "color:#585b70;margin:12px 0 6px 0;font-size:13px;";
-      container.appendChild(paramH);
+    // Parameter explanations
+    if (ck.length > 0) {
+      var exH = document.createElement("h4");
+      exH.textContent = t.paramExplain;
+      exH.style.cssText = "color:#585b70;margin:12px 0 4px 0;font-size:13px;";
+      c.appendChild(exH);
 
-      var paramTable = document.createElement("table");
-      paramTable.style.cssText = "width:100%;border-collapse:collapse;margin-bottom:16px;" +
-        "font-size:12px;background:#313244;border-radius:8px;overflow:hidden;";
+      var exD = document.createElement("div");
+      exD.style.cssText = "font-size:11px;color:#585b70;margin-bottom:8px;";
+      exD.textContent = t.paramExplainDesc;
+      c.appendChild(exD);
 
-      var pKeys = Object.keys(info.params);
-      for (var pi = 0; pi < pKeys.length; pi++) {
-        var row = document.createElement("tr");
-        row.style.cssText = pi % 2 === 0 ? "background:#313244;" : "background:#363849;";
-        var c1 = document.createElement("td");
-        c1.style.cssText = "padding:4px 10px;color:#fab387;font-family:monospace;width:30%;";
-        c1.textContent = pKeys[pi];
-        var c2 = document.createElement("td");
-        c2.style.cssText = "padding:4px 10px;color:#a6adc8;";
-        c2.textContent = info.params[pKeys[pi]];
-        row.appendChild(c1);
-        row.appendChild(c2);
-        paramTable.appendChild(row);
+      for (var ci = 0; ci < ck.length; ci++) {
+        var def = info.ctrl[ck[ci]];
+        var exBox = document.createElement("div");
+        exBox.style.cssText = "background:#313244;border-radius:8px;padding:10px 12px;" +
+          "margin-bottom:6px;";
+
+        var exName = document.createElement("div");
+        exName.style.cssText = "font-family:monospace;color:#fab387;font-size:12px;font-weight:bold;margin-bottom:2px;";
+        exName.textContent = ck[ci];
+        exBox.appendChild(exName);
+
+        var exDesc = document.createElement("div");
+        exDesc.style.cssText = "font-size:12px;color:#a6adc8;line-height:1.5;margin-bottom:4px;";
+        exDesc.textContent = L() === "de" ? (def.desc_de || def.desc_en) : def.desc_en;
+        exBox.appendChild(exDesc);
+
+        if (def.example_en) {
+          var exExample = document.createElement("div");
+          exExample.style.cssText = "font-size:11px;color:#585b70;font-style:italic;";
+          exExample.textContent = "→ " + (L() === "de" ? (def.example_de || def.example_en) : def.example_en);
+          exBox.appendChild(exExample);
+        }
+
+        c.appendChild(exBox);
       }
-      container.appendChild(paramTable);
     }
-
-    // Render plot after DOM insertion
-    setTimeout(function () { _renderPlot(container); }, 50);
-    _renderMatrix(container, info, t);
   }
 
-  // ─── BUILD CONTROL ─────────────────────────────────────────────────────────
+  function _secH(text, color) {
+    var h = document.createElement("h4");
+    h.textContent = text;
+    h.style.cssText = "color:" + color + ";margin:14px 0 6px 0;font-size:14px;";
+    return h;
+  }
 
-  function _buildControl(key, ctrlDef, contentContainer, t) {
-    var wrapper = document.createElement("div");
-    wrapper.style.cssText = "display:flex;flex-direction:column;gap:4px;min-width:140px;flex:1;";
+  function _ctrlEl(key, def, contentContainer, t) {
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;gap:3px;";
 
-    var label = document.createElement("label");
-    label.style.cssText = "font-size:11px;color:#a6adc8;";
+    var label = document.createElement("div");
+    label.style.cssText = "font-size:11px;color:#a6adc8;font-family:monospace;";
     label.textContent = key;
-    wrapper.appendChild(label);
+    wrap.appendChild(label);
 
-    if (ctrlDef.options) {
-      // Select control
+    if (def.options) {
       var sel = document.createElement("select");
       sel.style.cssText = "background:#45475a;color:#cdd6f4;border:1px solid #585b70;" +
-        "border-radius:4px;padding:4px 6px;font-size:12px;cursor:pointer;";
-      for (var oi = 0; oi < ctrlDef.options.length; oi++) {
+        "border-radius:4px;padding:3px 5px;font-size:12px;cursor:pointer;max-width:200px;";
+      for (var oi = 0; oi < def.options.length; oi++) {
         var opt = document.createElement("option");
-        opt.value = ctrlDef.options[oi];
-        opt.textContent = ctrlDef.options[oi];
-        if (_state.controls[key] === ctrlDef.options[oi]) opt.selected = true;
+        opt.value = def.options[oi];
+        opt.textContent = def.options[oi];
+        if (_state.ctrl[key] === def.options[oi]) opt.selected = true;
         sel.appendChild(opt);
       }
+      wrap.appendChild(sel);
+
       sel.onchange = function () {
-        _state.controls[key] = this.value;
-        _onControlChange(contentContainer, t);
+        _state.ctrl[key] = this.value;
+        _onChange(contentContainer, t);
       };
-      wrapper.appendChild(sel);
     } else {
-      // Range + number combo
       var inner = document.createElement("div");
       inner.style.cssText = "display:flex;align-items:center;gap:6px;";
 
       var range = document.createElement("input");
       range.type = "range";
-      range.min = ctrlDef.min;
-      range.max = ctrlDef.max;
-      range.step = ctrlDef.step;
-      range.value = _state.controls[key] !== undefined ? _state.controls[key] : ctrlDef.default;
-      range.style.cssText = "flex:1;accent-color:#89b4fa;height:4px;cursor:pointer;";
+      range.min = def.min;
+      range.max = def.max;
+      range.step = def.step;
+      range.value = _state.ctrl[key] !== undefined ? _state.ctrl[key] : def.default;
+      range.style.cssText = "flex:1;accent-color:#89b4fa;height:4px;cursor:pointer;max-width:200px;";
 
       var num = document.createElement("input");
       num.type = "number";
-      num.min = ctrlDef.min;
-      num.max = ctrlDef.max;
-      num.step = ctrlDef.step;
-      num.value = _state.controls[key] !== undefined ? _state.controls[key] : ctrlDef.default;
-      num.style.cssText = "width:70px;background:#45475a;color:#cdd6f4;border:1px solid #585b70;" +
-        "border-radius:4px;padding:3px 6px;font-size:12px;text-align:right;";
+      num.min = def.min;
+      num.max = def.max;
+      num.step = def.step;
+      num.value = _state.ctrl[key] !== undefined ? _state.ctrl[key] : def.default;
+      num.style.cssText = "width:68px;background:#45475a;color:#cdd6f4;border:1px solid #585b70;" +
+        "border-radius:4px;padding:2px 5px;font-size:12px;text-align:right;";
+
+      var liveUpdate = function () {
+        var v = parseFloat(num.value);
+        if (!isNaN(v)) { v = clamp(v, def.min, def.max); range.value = v; _state.ctrl[key] = v; _onChange(contentContainer, t); }
+      };
 
       range.oninput = function () {
         num.value = this.value;
-        _state.controls[key] = parseFloat(this.value);
-        _onControlChange(contentContainer, t);
+        _state.ctrl[key] = parseFloat(this.value);
+        _onChange(contentContainer, t);
       };
-      num.oninput = function () {
-        var v = parseFloat(this.value);
-        if (!isNaN(v)) {
-          v = clamp(v, ctrlDef.min, ctrlDef.max);
-          range.value = v;
-          _state.controls[key] = v;
-          _onControlChange(contentContainer, t);
-        }
-      };
+      num.oninput = liveUpdate;
 
       inner.appendChild(range);
       inner.appendChild(num);
-      wrapper.appendChild(inner);
+      wrap.appendChild(inner);
     }
 
-    return wrapper;
+    return wrap;
   }
 
-  function _onControlChange(contentContainer, t) {
-    _renderPlot(contentContainer);
-    var info = _state.kind === "regularizer" ? regularizerInfo[_state.name] : initializerInfo[_state.name];
-    _renderMatrix(contentContainer, info, t);
+  function _onChange(c, t) {
+    _lastPlotData = null;
+    _lastMatrixData = null;
+    _renderPlots(c);
+    _renderMatrix(c, t);
   }
 
-  // ─── RENDER PLOT ───────────────────────────────────────────────────────────
+  // ─── RENDER PLOTS ──────────────────────────────────────────────────────────
 
-  function _renderPlot(container) {
+  function _renderPlots(c) {
     var pd = document.getElementById(_PLOT_ID);
     if (!pd) return;
     if (typeof Plotly === "undefined") { pd.textContent = "[Plotly not loaded]"; return; }
-
-    if (_state.kind === "regularizer") {
-      _renderRegPlot(pd);
-    } else {
-      _renderInitPlot(pd);
-    }
+    if (_state.kind === "regularizer") _renderRegPlot(pd);
+    else _renderInitPlot(pd);
   }
 
   function _renderRegPlot(pd) {
-    var info = regularizerInfo[_state.name];
+    var info = regData[_state.name];
     if (!info) return;
-
-    var l1Mult = _state.controls.l1 || 0;
-    var l2Mult = _state.controls.l2 || 0;
-
+    var l1v = _state.ctrl.l1 || 0;
+    var l2v = _state.ctrl.l2 || 0;
     var x = getXGrid(-3, 3, 200);
-    var yL1 = [], yL2 = [], yCombined = [];
-
+    var yL1 = [], yL2 = [], yC = [];
     for (var i = 0; i < x.length; i++) {
-      var absX = Math.abs(x[i]);
-      yL1.push(l1Mult * absX);
-      yL2.push(l2Mult * x[i] * x[i]);
-      yCombined.push(l1Mult * absX + l2Mult * x[i] * x[i]);
+      var ax = Math.abs(x[i]);
+      yL1.push(l1v * ax);
+      yL2.push(l2v * x[i] * x[i]);
+      yC.push(l1v * ax + l2v * x[i] * x[i]);
     }
-
-    var traces = [];
-
-    if (_state.name === "l1" || _state.name === "l1l2") {
-      traces.push({ x: x, y: yL1, type: "scatter", mode: "lines", name: "L1 penalty", line: { color: "#f38ba8", width: 2 } });
-    }
-    if (_state.name === "l2" || _state.name === "l1l2") {
-      traces.push({ x: x, y: yL2, type: "scatter", mode: "lines", name: "L2 penalty", line: { color: "#89b4fa", width: 2 } });
-    }
-    if (_state.name === "l1l2") {
-      traces.push({ x: x, y: yCombined, type: "scatter", mode: "lines", name: "L1+L2 combined", line: { color: "#a6e3a1", width: 2.5, dash: "dash" } });
-    }
-
-    var layout = {
-      paper_bgcolor: "#313244", plot_bgcolor: "#313244",
-      font: { color: "#cdd6f4", size: 11 },
-      margin: { l: 50, r: 16, t: 8, b: 40 },
-      xaxis: { title: { text: "Weight w", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70" },
-      yaxis: { title: { text: "Penalty", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70" },
-      legend: { orientation: "h", xanchor: "center", x: 0.5, y: 1.15, font: { size: 10, color: "#cdd6f4" } }
-    };
-
-    try { Plotly.newPlot(pd, traces, layout, { responsive: true, displayModeBar: false }); } catch (e) {}
+    var tr = [];
+    if (_state.name === "l1" || _state.name === "l1l2") tr.push({ x: x, y: yL1, type: "scatter", mode: "lines", name: "L1 penalty", line: { color: "#f38ba8", width: 2 } });
+    if (_state.name === "l2" || _state.name === "l1l2") tr.push({ x: x, y: yL2, type: "scatter", mode: "lines", name: "L2 penalty", line: { color: "#89b4fa", width: 2 } });
+    if (_state.name === "l1l2") tr.push({ x: x, y: yC, type: "scatter", mode: "lines", name: "L1+L2", line: { color: "#a6e3a1", width: 2.5, dash: "dash" } });
+    var lo = { paper_bgcolor: "#313244", plot_bgcolor: "#313244", font: { color: "#cdd6f4", size: 11 }, margin: { l: 50, r: 16, t: 8, b: 40 }, xaxis: { title: { text: "Weight w", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70" }, yaxis: { title: { text: "Penalty", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70" }, legend: { orientation: "h", xanchor: "center", x: 0.5, y: 1.15, font: { size: 10, color: "#cdd6f4" } } };
+    try { Plotly.newPlot(pd, tr, lo, { responsive: true, displayModeBar: false }); } catch (e) {}
   }
 
   function _renderInitPlot(pd) {
-    var info = initializerInfo[_state.name];
+    var info = initData[_state.name];
     if (!info || !info.sample) return;
+    var fi = _state.ctrl.fan_in || 128;
+    var fo = _state.ctrl.fan_out || 128;
+    var Nplot = 5000;
+    var Nmat = 20;
+    var total = Nplot + Nmat;
 
-    var fanIn = _state.controls.fan_in || 128;
-    var fanOut = _state.controls.fan_out || 128;
-    var N = 5000;
+    var result = info.sample(total, fi, fo, _state.ctrl);
+    var allData = result.data;
 
-    var result = info.sample(N, fanIn, fanOut, _state.controls);
+    _lastPlotData = allData.slice(0, Nplot);
+    _lastMatrixData = allData.slice(Nplot);
 
-    var histTrace = {
-      x: result.data, type: "histogram", nbinsx: 50,
-      name: "Sampled weights",
-      marker: { color: "#89b4fa", line: { color: "#1e1e2e", width: 1 } },
-      opacity: 0.85, histnorm: "probability density"
-    };
-    var traces = [histTrace];
+    var histTr = { x: _lastPlotData, type: "histogram", nbinsx: 50, name: "Sampled", marker: { color: "#89b4fa", line: { color: "#1e1e2e", width: 1 } }, opacity: 0.85, histnorm: "probability density" };
+    var traces = [histTr];
 
-    // Theoretical PDF
     if (result.type === "normal") {
-      var sorted = result.data.slice().sort(function(a,b){return a-b;});
+      var sorted = _lastPlotData.slice().sort(function(a,b){return a-b;});
       var lo = sorted[Math.floor(sorted.length * 0.01)] || -0.3;
       var hi = sorted[Math.floor(sorted.length * 0.99)] || 0.3;
       var pad = (hi - lo) * 0.2 || 0.1;
-      var xGrid = getXGrid(lo - pad, hi + pad, 200);
-      var pdfVals = [];
-      for (var i = 0; i < xGrid.length; i++) {
-        pdfVals.push(gaussianPDF(xGrid[i], result.mean, result.stddev));
-      }
-      traces.push({ x: xGrid, y: pdfVals, type: "scatter", mode: "lines", name: "Theoretical PDF", line: { color: "#f38ba8", width: 2.5 } });
+      var xg = getXGrid(lo - pad, hi + pad, 200);
+      var yp = [];
+      for (var i = 0; i < xg.length; i++) yp.push(gaussianPDF(xg[i], result.mean, result.std));
+      traces.push({ x: xg, y: yp, type: "scatter", mode: "lines", name: "Theoretical PDF", line: { color: "#f38ba8", width: 2.5 } });
     } else if (result.type === "uniform") {
-      var xGrid = getXGrid(result.min * 1.3, result.max * 1.3, 200);
-      var pdfVals = [];
-      for (var i = 0; i < xGrid.length; i++) {
-        pdfVals.push(uniformPDF(xGrid[i], result.min, result.max));
-      }
-      traces.push({ x: xGrid, y: pdfVals, type: "scatter", mode: "lines", name: "Theoretical PDF", line: { color: "#f38ba8", width: 2.5 } });
+      var xg = getXGrid(result.lo * 1.3, result.hi * 1.3, 200);
+      var yp = [];
+      for (var i = 0; i < xg.length; i++) yp.push(uniformPDF(xg[i], result.lo, result.hi));
+      traces.push({ x: xg, y: yp, type: "scatter", mode: "lines", name: "Theoretical PDF", line: { color: "#f38ba8", width: 2.5 } });
     }
 
-    // Data range for x-axis
-    var allVals = result.data;
-    var minVal = allVals[0], maxVal = allVals[0];
-    for (var i = 1; i < allVals.length; i++) {
-      if (allVals[i] < minVal) minVal = allVals[i];
-      if (allVals[i] > maxVal) maxVal = allVals[i];
+    var mn = _lastPlotData[0], mx = _lastPlotData[0];
+    for (var i = 1; i < _lastPlotData.length; i++) { if (_lastPlotData[i] < mn) mn = _lastPlotData[i]; if (_lastPlotData[i] > mx) mx = _lastPlotData[i]; }
+    var pad = (mx - mn) * 0.1 || 0.1;
+    if (result.type === "constant") { mn = result.lo; mx = result.hi; pad = 0.05; }
+
+    var lo = { paper_bgcolor: "#313244", plot_bgcolor: "#313244", font: { color: "#cdd6f4", size: 11 }, margin: { l: 50, r: 16, t: 8, b: 40 }, xaxis: { title: { text: "Weight value", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70", range: [mn - pad, mx + pad] }, yaxis: { title: { text: "Density", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70" }, legend: { orientation: "h", xanchor: "center", x: 0.5, y: 1.15, font: { size: 10, color: "#cdd6f4" } }, bargap: 0.02 };
+
+    // Key value annotation
+    if (result.key) {
+      lo.annotations = [{ x: 0.98, y: 0.95, xref: "paper", yref: "paper", text: result.key, showarrow: false, font: { size: 10, color: "#585b70" }, align: "right" }];
     }
-    var pad = (maxVal - minVal) * 0.1 || 0.1;
-    if (result.type === "constant") { minVal = result.min; maxVal = result.max; pad = 0.05; }
 
-    var layout = {
-      paper_bgcolor: "#313244", plot_bgcolor: "#313244",
-      font: { color: "#cdd6f4", size: 11 },
-      margin: { l: 50, r: 16, t: 8, b: 40 },
-      xaxis: { title: { text: "Weight value", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70", range: [minVal - pad, maxVal + pad] },
-      yaxis: { title: { text: "Density", font: { color: "#a6adc8", size: 11 } }, gridcolor: "#45475a", zerolinecolor: "#585b70" },
-      legend: { orientation: "h", xanchor: "center", x: 0.5, y: 1.15, font: { size: 10, color: "#cdd6f4" } },
-      bargap: 0.02
-    };
-
-    try { Plotly.newPlot(pd, traces, layout, { responsive: true, displayModeBar: false }); } catch (e) {}
+    try { Plotly.newPlot(pd, traces, lo, { responsive: true, displayModeBar: false }); } catch (e) {}
   }
 
-  // ─── EXAMPLE MATRIX ────────────────────────────────────────────────────────
+  // ─── RENDER MATRIX ─────────────────────────────────────────────────────────
 
-  function _buildInitMatrix(container, info, t) {
-    var matrixH = document.createElement("h3");
-    matrixH.textContent = t.matrixTitle;
-    matrixH.style.cssText = "color:#cba6f7;margin:16px 0 6px 0;font-size:15px;";
-    container.appendChild(matrixH);
-
-    var matrixBox = document.createElement("div");
-    matrixBox.id = _POPUP_ID + "_matrix";
-    matrixBox.style.cssText = "background:#313244;border-radius:10px;padding:14px;" +
-      "margin-bottom:16px;overflow-x:auto;";
-    container.appendChild(matrixBox);
+  function _renderMatrix(c, t) {
+    var md = document.getElementById(_POPUP_ID + "_m");
+    if (!md) return;
+    if (_state.kind === "regularizer") _renderRegMatrix(md);
+    else _renderInitMatrix(md, t);
   }
 
-  function _buildRegMatrix(container, info, t) {
-    var matrixH = document.createElement("h3");
-    matrixH.textContent = t.regMatrixTitle;
-    matrixH.style.cssText = "color:#cba6f7;margin:16px 0 6px 0;font-size:15px;";
-    container.appendChild(matrixH);
-
-    var matrixBox = document.createElement("div");
-    matrixBox.id = _POPUP_ID + "_matrix";
-    matrixBox.style.cssText = "background:#313244;border-radius:10px;padding:14px;" +
-      "margin-bottom:16px;overflow-x:auto;";
-    container.appendChild(matrixBox);
-  }
-
-  function _renderMatrix(container, info, t) {
-    var matrixDiv = document.getElementById(_POPUP_ID + "_matrix");
-    if (!matrixDiv) return;
-
-    if (_state.kind === "regularizer") {
-      _renderRegMatrix(matrixDiv, info, t);
-    } else {
-      _renderInitMatrix(matrixDiv, info, t);
-    }
-  }
-
-  function _renderRegMatrix(matrixDiv, info, t) {
-    // Example weights: some small, some large
-    var exampleWeights = [-2.5, -1.0, -0.3, 0, 0.3, 0.8, 2.0];
+  function _renderRegMatrix(md) {
+    var info = regData[_state.name];
+    if (!info) return;
+    var exW = [-2.5, -1.0, -0.3, 0, 0.3, 0.8, 2.0];
     var hasL1 = _state.name === "l1" || _state.name === "l1l2";
     var hasL2 = _state.name === "l2" || _state.name === "l1l2";
+    var l1v = _state.ctrl.l1 || 0;
+    var l2v = _state.ctrl.l2 || 0;
 
-    var l1Val = _state.controls.l1 || 0;
-    var l2Val = _state.controls.l2 || 0;
-
-    var html = "";
+    var h = "";
     if (_state.name !== "none") {
-      html += "<div style='font-size:12px;color:#a6adc8;margin-bottom:8px;'>";
-      html += "l1 = " + l1Val.toFixed(4) + (hasL2 ? " &nbsp;|&nbsp; l2 = " + l2Val.toFixed(4) : "");
-      html += "</div>";
+      h += "<div style='font-size:11px;color:#585b70;margin-bottom:6px;'>";
+      h += "l1 = " + l1v.toFixed(4) + (hasL2 ? " &nbsp;|&nbsp; l2 = " + l2v.toFixed(4) : "");
+      h += "</div>";
     }
 
-    html += "<table style='border-collapse:collapse;font-size:13px;width:100%;text-align:center;'>";
-    html += "<tr style='background:#45475a;'>";
-    html += "<th style='padding:6px 8px;color:#cdd6f4;'>Weight w</th>";
-    if (hasL1) html += "<th style='padding:6px 8px;color:#f38ba8;'>|w|</th><th style='padding:6px 8px;color:#f38ba8;'>L1 penalty</th>";
-    if (hasL2) html += "<th style='padding:6px 8px;color:#89b4fa;'>w²</th><th style='padding:6px 8px;color:#89b4fa;'>L2 penalty</th>";
-    html += "<th style='padding:6px 8px;color:#a6e3a1;'>Total penalty</th>";
-    html += "</tr>";
+    h += "<table style='border-collapse:collapse;font-size:12px;width:100%;text-align:center;'>";
+    h += "<tr style='background:#45475a;'>";
+    h += "<th style='padding:4px 6px;color:#cdd6f4;'>Weights w</th>";
+    if (hasL1) h += "<th style='padding:4px 6px;color:#f38ba8;'>|w|</th><th style='padding:4px 6px;color:#f38ba8;'>L1 penalty</th>";
+    if (hasL2) h += "<th style='padding:4px 6px;color:#89b4fa;'>w²</th><th style='padding:4px 6px;color:#89b4fa;'>L2 penalty</th>";
+    h += "<th style='padding:4px 6px;color:#a6e3a1;'>Total</th>";
+    h += "</tr>";
 
-    for (var i = 0; i < exampleWeights.length; i++) {
-      var w = exampleWeights[i];
-      var absW = Math.abs(w);
-      var w2 = w * w;
-      var l1p = hasL1 ? l1Val * absW : 0;
-      var l2p = hasL2 ? l2Val * w2 : 0;
-      var total = l1p + l2p;
-
-      html += "<tr style='background:" + (i % 2 === 0 ? "#313244" : "#363849") + ";'>";
-      html += "<td style='padding:5px 8px;font-family:monospace;color:" + (w < 0 ? "#f38ba8" : "#a6e3a1") + ";'>" + w.toFixed(2) + "</td>";
-      if (hasL1) html += "<td style='padding:5px 8px;font-family:monospace;color:#a6adc8;'>" + absW.toFixed(2) + "</td><td style='padding:5px 8px;font-family:monospace;color:#f38ba8;'>" + l1p.toFixed(4) + "</td>";
-      if (hasL2) html += "<td style='padding:5px 8px;font-family:monospace;color:#a6adc8;'>" + w2.toFixed(4) + "</td><td style='padding:5px 8px;font-family:monospace;color:#89b4fa;'>" + l2p.toFixed(4) + "</td>";
-      html += "<td style='padding:5px 8px;font-family:monospace;color:#a6e3a1;font-weight:bold;'>" + total.toFixed(4) + "</td>";
-      html += "</tr>";
+    var sumL1 = 0, sumL2 = 0;
+    for (var i = 0; i < exW.length; i++) {
+      var w = exW[i];
+      var aw = Math.abs(w), w2 = w * w;
+      var l1p = hasL1 ? l1v * aw : 0;
+      var l2p = hasL2 ? l2v * w2 : 0;
+      sumL1 += l1p; sumL2 += l2p;
+      h += "<tr style='background:" + (i % 2 === 0 ? "#313244" : "#363849") + ";'>";
+      h += "<td style='padding:3px 6px;font-family:monospace;color:" + (w < 0 ? "#f38ba8" : "#a6e3a1") + ";'>" + w.toFixed(2) + "</td>";
+      if (hasL1) h += "<td style='padding:3px 6px;font-family:monospace;color:#a6adc8;'>" + aw.toFixed(2) + "</td><td style='padding:3px 6px;font-family:monospace;color:#f38ba8;'>" + l1p.toFixed(4) + "</td>";
+      if (hasL2) h += "<td style='padding:3px 6px;font-family:monospace;color:#a6adc8;'>" + w2.toFixed(4) + "</td><td style='padding:3px 6px;font-family:monospace;color:#89b4fa;'>" + l2p.toFixed(4) + "</td>";
+      h += "<td style='padding:3px 6px;font-family:monospace;color:#a6e3a1;font-weight:bold;'>" + (l1p + l2p).toFixed(4) + "</td></tr>";
     }
-    html += "</table>";
+
+    // Sum row
+    h += "<tr style='background:#45475a;font-weight:bold;'>";
+    h += "<td style='padding:3px 6px;color:#cdd6f4;'>∑ total</td>";
+    if (hasL1) h += "<td></td><td style='padding:3px 6px;color:#f38ba8;'>" + sumL1.toFixed(4) + "</td>";
+    if (hasL2) h += "<td></td><td style='padding:3px 6px;color:#89b4fa;'>" + sumL2.toFixed(4) + "</td>";
+    h += "<td style='padding:3px 6px;color:#a6e3a1;'>" + (sumL1 + sumL2).toFixed(4) + "</td></tr>";
+    h += "</table>";
 
     if (_state.name !== "none") {
-      // Summary
-      var sumL1 = 0, sumL2 = 0;
-      for (var i = 0; i < exampleWeights.length; i++) {
-        var w = exampleWeights[i];
-        if (hasL1) sumL1 += l1Val * Math.abs(w);
-        if (hasL2) sumL2 += l2Val * w * w;
-      }
-      html += "<div style='font-size:11px;color:#585b70;margin-top:8px;text-align:right;'>";
-      html += "Total added to loss: " + (sumL1 + sumL2).toFixed(4);
-      html += "</div>";
+      h += "<div style='font-size:11px;color:#585b70;margin-top:6px;text-align:right;'>";
+      h += "Penalty added to loss: " + (sumL1 + sumL2).toFixed(4);
+      h += "</div>";
     }
 
-    matrixDiv.innerHTML = html;
+    if (_state.name === "none") {
+      h = "<div style='font-size:12px;color:#585b70;text-align:center;padding:8px;'>No penalty — weights can be any size.</div>";
+    }
+
+    md.innerHTML = h;
   }
 
-  function _renderInitMatrix(matrixDiv, info, t) {
-    if (!info.sample) { matrixDiv.innerHTML = "<span style='color:#585b70;font-size:12px;'>No matrix visualization</span>"; return; }
+  function _renderInitMatrix(md, t) {
+    var info = initData[_state.name];
+    if (!info || !info.sample) { md.innerHTML = ""; return; }
 
-    var fanIn = _state.controls.fan_in || 128;
-    var fanOut = _state.controls.fan_out || 128;
-    var ROWS = 4, COLS = 5;
+    var R = 4, C = 5;
 
-    var result = info.sample(ROWS * COLS, fanIn, fanOut, _state.controls);
-    var vals = result.data;
+    // Use cached data from the last plot render
+    var vals;
+    if (_lastMatrixData && _lastMatrixData.length >= R * C) {
+      vals = _lastMatrixData.slice(0, R * C);
+    } else {
+      var fi = _state.ctrl.fan_in || 128;
+      var fo = _state.ctrl.fan_out || 128;
+      var res = info.sample(R * C, fi, fo, _state.ctrl);
+      vals = res.data;
+    }
 
-    // Find min/max for color scaling
+    // Annotation: these are from the distribution above
+    var h = "<div style='font-size:10px;color:#585b70;margin-bottom:6px;'>";
+    h += "← These " + (R * C) + " values are SAMPLED from the distribution in the plot above";
+    h += "</div>";
+
     var mn = vals[0], mx = vals[0];
-    for (var i = 0; i < vals.length; i++) {
-      if (vals[i] < mn) mn = vals[i];
-      if (vals[i] > mx) mx = vals[i];
-    }
-    var absMax = Math.max(Math.abs(mn), Math.abs(mx));
+    for (var i = 0; i < vals.length; i++) { if (vals[i] < mn) mn = vals[i]; if (vals[i] > mx) mx = vals[i]; }
+    var am = Math.max(Math.abs(mn), Math.abs(mx));
 
-    // Formula display
-    var formulaHtml = "";
-    if (result.type === "uniform" && result.limit !== undefined) {
-      formulaHtml = "<div style='font-size:11px;color:#585b70;margin-bottom:6px;'>";
-      formulaHtml += "limit = " + result.limit.toFixed(6) + " &nbsp;→&nbsp; W ∈ [" + (-result.limit).toFixed(6) + ", " + result.limit.toFixed(6) + "]";
-      formulaHtml += "</div>";
-    } else if (result.type === "normal" && result.stddev !== undefined) {
-      formulaHtml = "<div style='font-size:11px;color:#585b70;margin-bottom:6px;'>";
-      formulaHtml += "μ = " + (result.mean || 0).toFixed(6) + " &nbsp; σ = " + result.stddev.toFixed(6);
-      formulaHtml += "</div>";
-    }
-
-    var html = formulaHtml;
-    html += "<table style='border-collapse:collapse;font-size:13px;margin:0 auto;'>";
-
-    for (var r = 0; r < ROWS; r++) {
-      html += "<tr>";
-      for (var c = 0; c < COLS; c++) {
-        var idx = r * COLS + c;
-        var v = vals[idx];
-        // Color: red for positive, blue for negative, intensity by magnitude
-        var intensity = absMax > 0 ? Math.abs(v) / absMax : 0;
+    h += "<table style='border-collapse:collapse;font-size:12px;margin:0 auto;'>";
+    for (var r = 0; r < R; r++) {
+      h += "<tr>";
+      for (var c2 = 0; c2 < C; c2++) {
+        var v = vals[r * C + c2];
+        var intensity = am > 0 ? Math.abs(v) / am : 0;
         intensity = clamp(intensity, 0, 1);
-        var rColor, gColor, bColor;
-        if (v > 0) {
-          rColor = Math.round(200 + 55 * (1 - intensity));
-          gColor = Math.round(180 - 120 * intensity);
-          bColor = Math.round(180 - 150 * intensity);
-        } else if (v < 0) {
-          rColor = Math.round(180 - 120 * intensity);
-          gColor = Math.round(180 - 100 * intensity);
-          bColor = Math.round(200 + 55 * (1 - intensity));
-        } else {
-          rColor = 100; gColor = 100; bColor = 100;
-        }
-
-        html += "<td style='padding:6px 10px;font-family:monospace;background:rgb(" + rColor + "," + gColor + "," + bColor + ");" +
-          "color:#1e1e2e;font-weight:" + (Math.abs(v) > absMax * 0.7 ? "bold" : "normal") + ";'>";
-        html += v.toFixed(4);
-        html += "</td>";
+        var rc, gc, bc;
+        if (v > 0) { rc = Math.round(200 + 55 * (1 - intensity)); gc = Math.round(180 - 120 * intensity); bc = Math.round(180 - 150 * intensity); }
+        else if (v < 0) { rc = Math.round(180 - 120 * intensity); gc = Math.round(180 - 100 * intensity); bc = Math.round(200 + 55 * (1 - intensity)); }
+        else { rc = 100; gc = 100; bc = 100; }
+        h += "<td style='padding:5px 8px;font-family:monospace;background:rgb(" + rc + "," + gc + "," + bc + ");color:#1e1e2e;font-weight:" + (Math.abs(v) > am * 0.7 ? "bold" : "normal") + ";'>" + v.toFixed(4) + "</td>";
       }
-      html += "</tr>";
+      h += "</tr>";
     }
-    html += "</table>";
+    h += "</table>";
 
-    matrixDiv.innerHTML = html;
+    md.innerHTML = h;
   }
 
   // ─── REMOVE POPUP ──────────────────────────────────────────────────────────
@@ -1145,96 +1074,56 @@
     document.removeEventListener("keydown", _escHandler);
   }
 
-  // ─── INJECT INFO ICONS ─────────────────────────────────────────────────────
+  // ─── INJECT ICONS ──────────────────────────────────────────────────────────
 
-  function makeBtn(type, select) {
+  function mkBtn(type, sel) {
     var btn = document.createElement("img");
     btn.src = "_gui/icons/info.svg";
     btn.alt = "?";
-    btn.style.cssText = "height:20px;width:auto;cursor:pointer;margin-left:4px;" +
+    btn.style.cssText = "height:18px;width:auto;cursor:pointer;margin-left:3px;" +
       "vertical-align:middle;transition:transform 0.2s,opacity 0.2s;" +
-      "display:inline-block;opacity:0.6;";
+      "display:inline-block;opacity:0.55;";
     btn.title = (L() === "de") ? "Was macht das?" : "What does this do?";
-    btn.onmouseenter = function () { btn.style.transform = "scale(1.2) rotate(8deg)"; btn.style.opacity = "1"; };
-    btn.onmouseleave = function () { btn.style.transform = "scale(1)"; btn.style.opacity = "0.6"; };
-    btn.onclick = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      buildPopup(type, select.value);
-    };
-
-    select.addEventListener("change", function () {
-      if (document.getElementById(_POPUP_ID)) {
-        buildPopup(type, select.value);
-      }
-    });
-
+    btn.onmouseenter = function () { btn.style.transform = "scale(1.2) rotate(8deg)"; btn.style.opacity = "0.9"; };
+    btn.onmouseleave = function () { btn.style.transform = "scale(1)"; btn.style.opacity = "0.55"; };
+    btn.onclick = function (e) { e.preventDefault(); e.stopPropagation(); buildPopup(type, sel.value); };
+    sel.addEventListener("change", function () { if (document.getElementById(_POPUP_ID)) buildPopup(type, sel.value); });
     return btn;
   }
 
-  function injectIcon(select, type) {
-    if (select.dataset.infoInjected) return;
-    select.dataset.infoInjected = "true";
-    var btn = makeBtn(type, select);
-
-    // Insert icon into the first <td> of the parent <tr> (label cell)
-    var tr = select.closest("tr");
+  function injectIcon(sel, type) {
+    if (sel.dataset.infoInjected) return;
+    sel.dataset.infoInjected = "true";
+    var btn = mkBtn(type, sel);
+    var tr = sel.closest("tr");
     if (tr) {
       var firstTd = tr.querySelector("td:first-child");
-      if (firstTd) {
-        firstTd.appendChild(btn);
-        return;
-      }
+      if (firstTd) { firstTd.appendChild(btn); return; }
     }
-    // Fallback: insert before the select
-    select.parentNode.insertBefore(btn, select);
+    sel.parentNode.insertBefore(btn, sel);
   }
 
-  // ─── WATCH FOR DYNAMICALLY CREATED SELECTS ─────────────────────────────────
-
-  function injectForAllUninjected() {
-    var allSelects = document.querySelectorAll("select.input_data");
-    for (var i = 0; i < allSelects.length; i++) {
-      var sel = allSelects[i];
-      var cls = sel.className;
-      if (cls.indexOf("skip_connection_initializer_select") !== -1) {
-        injectIcon(sel, "initializer");
-      } else if (cls.indexOf("_regularizer") !== -1) {
-        injectIcon(sel, "regularizer");
-      } else if (cls.indexOf("_initializer") !== -1) {
-        injectIcon(sel, "initializer");
-      }
+  function injectAll() {
+    var all = document.querySelectorAll("select.input_data");
+    for (var i = 0; i < all.length; i++) {
+      var s = all[i], c = s.className;
+      if (c.indexOf("skip_connection_initializer_select") !== -1) injectIcon(s, "initializer");
+      else if (c.indexOf("_regularizer") !== -1) injectIcon(s, "regularizer");
+      else if (c.indexOf("_initializer") !== -1) injectIcon(s, "initializer");
     }
   }
 
-  function watchForSelects() {
-    injectForAllUninjected();
-
+  function watch() {
+    injectAll();
     var target = document.getElementById("layers_container");
-    if (!target) {
-      setTimeout(watchForSelects, 500);
-      return;
-    }
-
-    var observer = new MutationObserver(function () {
-      injectForAllUninjected();
-    });
-
-    observer.observe(target, {
-      childList: true,
-      subtree: true,
-      attributes: false
-    });
+    if (!target) { setTimeout(watch, 500); return; }
+    var obs = new MutationObserver(function () { injectAll(); });
+    obs.observe(target, { childList: true, subtree: true, attributes: false });
   }
-
-  // ─── INIT ───────────────────────────────────────────────────────────────────
 
   function init() {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", watchForSelects);
-    } else {
-      watchForSelects();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", watch);
+    else watch();
   }
 
   init();
