@@ -9,10 +9,16 @@ order: 0
 color: accent
 -->
 
-<figure>
-	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
-	<figcaption class="md">\citetitle[The first Artificial Neural Network by Frank Rosenblatt in 1960]{perceptronimagewiring}</figcaption>
-</figure>
+<div class="image-row">
+	<figure>
+		<img src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina" />
+		<figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos_image}, Argentina (c. 7300 BC - 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall.</figcaption>
+	</figure>
+	<figure>
+		<img src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
+		<figcaption class="md">\citetitle[The first Artificial Neural Network by Frank Rosenblatt in 1960]{perceptronimagewiring}</figcaption>
+	</figure>
+</div>
 
 <div class="md">
 While most modern discussions about Artificial Intelligence focus on its current capabilities or its potential to replace human labor, this text takes a different approach. We are not just interested in what AI can do today. We are interested in the **intellectual history** and the specific technicalities that made these systems possible. 
