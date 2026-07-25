@@ -15,3 +15,15 @@ weird generalizations and inductive backdoors: https://arxiv.org/html/2512.09742
 ramon llull -> https://arxiv.org/html/2508.19200v3
 
 https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values.html#visualization
+
+Large Language Models: A Deep Dive pdf
+
+https://link.springer.com/book/10.1007/978-3-031-65647-7?source=shoppingads&locale=de
+
+https://www.amazon.de/-/en/Build-Large-Language-Model-Scratch/dp/1633437167
+
+https://www.medimops.de/dilyan-grigorov-building-large-language-models-from-scratch-design-train-and-deploy-llms-with-pytorch-paperback-M0B0FWQTKGV8.html?variant=LibriNew&creative&sitelink&utm_source=PSM&utm_medium=cpc&utm_campaign=DE_BM_OUT_WEB_ALL_SHO_KOO-PMX_MR-1-2_
+
+https://d2l.ai/chapter_attention-mechanisms-and-transformers/queries-keys-values.html#visualization
+
+http://neuralnetworksanddeeplearning.com/
