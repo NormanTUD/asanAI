@@ -81,48 +81,49 @@ foreach ($files as $file) {
 
 	$blocks = [];
 
-	// HTML headings
-	preg_match_all('/<h([1-6])([^>]*)>(.*?)<\/h\1>/i', $html, $hms, PREG_SET_ORDER);
+	// HTML headings with position
+	preg_match_all('/<h([1-6])([^>]*)>(.*?)<\/h\1>/i', $html, $hms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 	foreach ($hms as $hm) {
-		$level = (int)$hm[1];
-		$text = trim(html_entity_decode(strip_tags($hm[3]), ENT_QUOTES | ENT_HTML5));
+		$pos = $hm[0][1];
+		$level = (int)$hm[1][0];
+		$text = trim(html_entity_decode(strip_tags($hm[3][0]), ENT_QUOTES | ENT_HTML5));
 		$text = resolveCitations($text, $bibData);
 		$text = preg_replace('/\s+/', ' ', $text);
 		if ($text === '') continue;
 		$slug = slugify($text);
-		$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug];
+		$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug, 'pos' => $pos];
 	}
 
-	// HTML text blocks (p, li, blockquote, td, th)
-	preg_match_all('/<(p|li|blockquote|td|th)[^>]*>(.*?)<\/\1>/is', $html, $pms, PREG_SET_ORDER);
+	// HTML text blocks with position
+	preg_match_all('/<(p|li|blockquote|td|th)[^>]*>(.*?)<\/\1>/is', $html, $pms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 	foreach ($pms as $pm) {
-		$text = trim(html_entity_decode(strip_tags($pm[2]), ENT_QUOTES | ENT_HTML5));
+		$pos = $pm[0][1];
+		$text = trim(html_entity_decode(strip_tags($pm[2][0]), ENT_QUOTES | ENT_HTML5));
 		$text = resolveCitations($text, $bibData);
 		$text = preg_replace('/\s+/', ' ', $text);
 		if (strlen($text) < 40) continue;
-		$blocks[] = ['type' => 'text', 'text' => $text];
+		$blocks[] = ['type' => 'text', 'text' => $text, 'pos' => $pos];
 	}
 
-	// .md divs (markdown content)
-	preg_match_all('/<div[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/div>/is', $html, $mdms, PREG_SET_ORDER);
+	// .md divs (markdown content) with position
+	preg_match_all('/<div[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/div>/is', $html, $mdms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 	foreach ($mdms as $mdm) {
-		$raw = $mdm[1];
+		$mdPos = $mdm[0][1];
+		$raw = $mdm[1][0];
 
-		// Extract markdown headings
 		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER);
 		foreach ($mdHeadings as $mh) {
-			$level = strlen(trim($mh[0])[0]);
-			$text = trim(html_entity_decode(strip_tags($mh[1]), ENT_QUOTES | ENT_HTML5));
+			$level = strlen(trim($mh[0][0])[0]);
+			$text = trim(html_entity_decode(strip_tags($mh[1][0]), ENT_QUOTES | ENT_HTML5));
 			$text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text);
 			$text = preg_replace('/[*_]{1,3}([^*_]+)[*_]{1,3}/', '$1', $text);
 			$text = resolveCitations($text, $bibData);
 			$text = preg_replace('/\s+/', ' ', $text);
 			if ($text === '' || mb_strlen($text) < 3) continue;
 			$slug = slugify($text);
-			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug];
+			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug, 'pos' => $mdPos];
 		}
 
-		// Strip markdown syntax for text extraction
 		$raw = preg_replace('/^#{1,6}\s+/m', '', $raw);
 		$raw = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $raw);
 		$raw = preg_replace('/[*_]{1,3}([^*_]+)[*_]{1,3}/', '$1', $raw);
@@ -138,28 +139,34 @@ foreach ($files as $file) {
 		foreach ($paras as $p) {
 			$p = trim(preg_replace('/\s+/', ' ', $p));
 			if (strlen($p) > 50) {
-				$blocks[] = ['type' => 'text', 'text' => $p];
+				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos];
 			}
 		}
 	}
 
-	// Figures & figcaptions
-	preg_match_all('/<figure[^>]*>(.*?)<\/figure>/is', $html, $figs, PREG_SET_ORDER);
+	// Figures & figcaptions with position
+	preg_match_all('/<figure[^>]*>(.*?)<\/figure>/is', $html, $figs, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 	foreach ($figs as $fig) {
-		$figHtml = $fig[1];
+		$figPos = $fig[0][1];
+		$figHtml = $fig[1][0];
+		$imgUrl = '';
+
+		if (preg_match('/<img[^>]*src="([^"]+)"/i', $figHtml, $img)) {
+			$imgUrl = $img[1];
+		}
 
 		if (preg_match('/<figcaption[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/figcaption>/is', $figHtml, $cap)) {
 			$caption = trim(html_entity_decode(strip_tags($cap[1]), ENT_QUOTES | ENT_HTML5));
 			$caption = resolveCitations($caption, $bibData);
 			$caption = preg_replace('/\s+/', ' ', $caption);
-			if (strlen($caption) > 20) {
-				$blocks[] = ['type' => 'caption', 'text' => $caption];
+			if (strlen($caption) > 15) {
+				$blocks[] = ['type' => 'caption', 'text' => $caption, 'pos' => $figPos, 'img' => $imgUrl];
 			}
 		} elseif (preg_match('/<figcaption[^>]*>(.*?)<\/figcaption>/is', $figHtml, $cap)) {
 			$caption = trim(html_entity_decode(strip_tags($cap[1]), ENT_QUOTES | ENT_HTML5));
 			$caption = preg_replace('/\s+/', ' ', $caption);
-			if (strlen($caption) > 20) {
-				$blocks[] = ['type' => 'caption', 'text' => $caption];
+			if (strlen($caption) > 15) {
+				$blocks[] = ['type' => 'caption', 'text' => $caption, 'pos' => $figPos, 'img' => $imgUrl];
 			}
 		}
 
@@ -167,10 +174,12 @@ foreach ($files as $file) {
 			$altText = trim(html_entity_decode($alt[1], ENT_QUOTES | ENT_HTML5));
 			$altText = preg_replace('/\s+/', ' ', $altText);
 			if (strlen($altText) > 10) {
-				$blocks[] = ['type' => 'caption', 'text' => $altText];
+				$blocks[] = ['type' => 'caption', 'text' => $altText, 'pos' => $figPos, 'img' => $imgUrl];
 			}
 		}
 	}
+
+	usort($blocks, fn($a, $b) => ($a['pos'] ?? 0) <=> ($b['pos'] ?? 0));
 
 	$lowerQ = mb_strtolower($q);
 
@@ -198,15 +207,17 @@ foreach ($files as $file) {
 		} elseif ($b['type'] === 'caption') {
 			$score = 150 + substr_count($lowerText, $lowerQ) * 10;
 			$heading = findNearestHeading($blocks, $b);
+			$imgUrl = $b['img'] ?? '';
 			$results[] = [
 				'page' => $name,
 				'pageTitle' => $pageTitle,
 				'type' => 'caption',
 				'level' => $heading ? $heading['level'] : 0,
-				'title' => '📷 ' . ($heading ? $heading['text'] : $pageTitle),
+				'title' => ($imgUrl ? '🖼 ' : '📷 ') . ($heading ? $heading['text'] : $pageTitle),
 				'snippet' => $snippet,
 				'url' => $name . ($heading ? '#' . $heading['slug'] : ''),
 				'score' => $score,
+				'img' => $imgUrl,
 			];
 		} else {
 			$score = 50 + substr_count($lowerText, $lowerQ) * 5;

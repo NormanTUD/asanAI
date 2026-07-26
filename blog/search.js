@@ -140,9 +140,12 @@
 					'</a>';
 			}
 
-			html += '<a href="' + escAttr(r.url) + '" class="search-result-item" data-index="' + i + '" data-search-nav>' +
+			html += '<a href="' + escAttr(r.url) + '" class="search-result-item' + (r.img ? ' search-result-has-img' : '') + '" data-index="' + i + '" data-search-nav>' +
+				(r.img ? '<div class="search-result-thumb"><img src="' + escAttr(r.img) + '" alt="" loading="lazy"></div>' : '') +
+				'<div class="search-result-body">' +
 				'<div class="search-result-title">' + escHtml(r.title) + '</div>' +
 				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), escHtml(query)) + '</div>' +
+				'</div>' +
 			'</a>';
 
 			var nextResult = results[i + 1];

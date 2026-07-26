@@ -3624,7 +3624,32 @@ html {
 	.search-result-item {
 		padding: 8px 16px;
 	}
-	.search-result-snippet {
+.search-result-has-img {
+	display: flex !important;
+	gap: 12px;
+	align-items: flex-start;
+}
+.search-result-thumb {
+	flex-shrink: 0;
+	width: 56px;
+	height: 56px;
+	border-radius: 8px;
+	overflow: hidden;
+	background: var(--mn-surface-raised);
+	border: 1px solid var(--mn-border);
+}
+.search-result-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+.search-result-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.search-result-snippet {
 		margin-left: 0;
 	}
 }
