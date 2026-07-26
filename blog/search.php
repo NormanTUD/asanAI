@@ -66,6 +66,12 @@ function renderLatex($expr) {
 	$expr = preg_replace('/\\\\displaystyle/', '', $expr);
 	$expr = preg_replace('/\\\\limits/', '', $expr);
 
+	$expr = preg_replace('/\\\\begin\{[^}]*\}/', '', $expr);
+	$expr = preg_replace('/\\\\end\{[^}]*\}/', '', $expr);
+	$expr = str_replace('\\\\', ' ', $expr);
+	$expr = str_replace('&', ' ', $expr);
+	$expr = preg_replace('/\\\\hline/', '', $expr);
+
 	$expr = preg_replace('/\\\\left\\\\?\(/', '(', $expr);
 	$expr = preg_replace('/\\\\right\\\\?\)/', ')', $expr);
 	$expr = preg_replace('/\\\\left\\\\?\[/', '[', $expr);
@@ -443,12 +449,23 @@ function makeSnippet($text, $query, $mode = 'normal') {
 
 	if ($pos === false) return mb_substr($text, 0, 200);
 
-	$start = max(0, $pos - 80);
-	$length = 200;
-	$snippet = mb_substr($text, $start, $length);
+	$paraStart = mb_strrpos(mb_substr($text, 0, $pos), "\n\n");
+	$paraEnd = mb_strpos($text, "\n\n", $pos + 1);
+	if ($paraStart === false) $paraStart = 0; else $paraStart += 2;
+	if ($paraEnd === false) $paraEnd = mb_strlen($text);
 
-	if ($start > 0) $snippet = '…' . $snippet;
-	if ($start + $length < mb_strlen($text)) $snippet .= '…';
+	$paraLen = $paraEnd - $paraStart;
+	if ($paraLen <= 400) {
+		$snippet = mb_substr($text, $paraStart, $paraLen);
+		if ($paraStart > 0) $snippet = '…' . $snippet;
+		if ($paraEnd < mb_strlen($text)) $snippet .= '…';
+	} else {
+		$start = max(0, $pos - 80);
+		$length = 200;
+		$snippet = mb_substr($text, $start, $length);
+		if ($start > 0) $snippet = '…' . $snippet;
+		if ($start + $length < mb_strlen($text)) $snippet .= '…';
+	}
 
 	return $snippet;
 }
