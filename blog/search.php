@@ -45,9 +45,92 @@ if (file_exists($litFile)) {
 }
 
 function cleanMath($text) {
-	$text = preg_replace('/\$\$[^\$]*\$\$/', '', $text);
-	$text = preg_replace('/\$([^\$]*)\$/', '$1', $text);
+	$text = preg_replace_callback('/\$\$([^\$]*)\$\$/', function($m) { return renderLatex($m[1]); }, $text);
+	$text = preg_replace_callback('/\$([^\$]*)\$/', function($m) { return renderLatex($m[1]); }, $text);
 	return $text;
+}
+
+function renderLatex($expr) {
+	$expr = trim($expr);
+
+	$expr = preg_replace('/\\\\frac\{([^}]*)\}\{([^}]*)\}/', '$1/$2', $expr);
+	$expr = preg_replace('/\\\\sqrt\[([^\]]*)\]\{([^}]*)\}/', '√[$1]$2', $expr);
+	$expr = preg_replace('/\\\\sqrt\{([^}]*)\}/', '√$1', $expr);
+
+	$expr = preg_replace('/\\\\text\{([^}]*)\}/', '$1', $expr);
+	$expr = preg_replace('/\\\\mathbf\{([^}]*)\}/', '$1', $expr);
+	$expr = preg_replace('/\\\\mathbb\{([^}]*)\}/', '$1', $expr);
+	$expr = preg_replace('/\\\\mathrm\{([^}]*)\}/', '$1', $expr);
+	$expr = preg_replace('/\\\\mathcal\{([^}]*)\}/', '$1', $expr);
+	$expr = preg_replace('/\\\\hat\{([^}]*)\}/', '̂$1', $expr);
+	$expr = preg_replace('/\\\\displaystyle/', '', $expr);
+	$expr = preg_replace('/\\\\limits/', '', $expr);
+
+	$expr = preg_replace('/\\\\left\\\\?\(/', '(', $expr);
+	$expr = preg_replace('/\\\\right\\\\?\)/', ')', $expr);
+	$expr = preg_replace('/\\\\left\\\\?\[/', '[', $expr);
+	$expr = preg_replace('/\\\\right\\\\?\]/', ']', $expr);
+	$expr = preg_replace('/\\\\left\\\\?\\\\?\{/', '{', $expr);
+	$expr = preg_replace('/\\\\right\\\\?\\\\?\}/', '}', $expr);
+	$expr = preg_replace('/\\\\left/', '', $expr);
+	$expr = preg_replace('/\\\\right/', '', $expr);
+	$expr = preg_replace('/\\\\big[lr]?/', '', $expr);
+	$expr = preg_replace('/\\\\Big[lr]?/', '', $expr);
+	$expr = preg_replace('/\\\\bigg[lr]?/', '', $expr);
+	$expr = preg_replace('/\\\\Bigg[lr]?/', '', $expr);
+	$expr = preg_replace('/\\\\lvert/', '|', $expr);
+	$expr = preg_replace('/\\\\rvert/', '|', $expr);
+
+	$expr = preg_replace('/\\\\quad/', ' ', $expr);
+	$expr = preg_replace('/\\\\qquad/', '  ', $expr);
+	$expr = preg_replace(['/\\\\,/', '/\\\\;/'], ' ', $expr);
+
+	$subscriptMap = [
+		'0'=>'₀','1'=>'₁','2'=>'₂','3'=>'₃','4'=>'₄',
+		'5'=>'₅','6'=>'₆','7'=>'₇','8'=>'₈','9'=>'₉',
+		'i'=>'ᵢ','j'=>'ⱼ','k'=>'ₖ','l'=>'ₗ','m'=>'ₘ','n'=>'ₙ',
+		'o'=>'ₒ','p'=>'ₚ','r'=>'ᵣ','s'=>'ₛ','t'=>'ₜ',
+		'u'=>'ᵤ','v'=>'ᵥ','x'=>'ₓ',
+		'+'=>'₊','-'=>'₋','('=>'₍',')'=>'₎',
+	];
+	$expr = preg_replace_callback('/_\{([^}]+)\}/', function($m) use ($subscriptMap) {
+		return strtr($m[1], $subscriptMap);
+	}, $expr);
+	$expr = preg_replace_callback('/_([a-zA-Z0-9])/', function($m) use ($subscriptMap) {
+		return strtr($m[1], $subscriptMap);
+	}, $expr);
+
+	$superscriptMap = [
+		'0'=>'⁰','1'=>'¹','2'=>'²','3'=>'³','4'=>'⁴',
+		'5'=>'⁵','6'=>'⁶','7'=>'⁷','8'=>'⁸','9'=>'⁹',
+		'i'=>'ⁱ','n'=>'ⁿ',
+		'+'=>'⁺','-'=>'⁻','('=>'⁽',')'=>'⁾',
+		'T'=>'ᵀ','t'=>'ᵗ',
+	];
+	$expr = preg_replace_callback('/\^\{([^}]+)\}/', function($m) use ($superscriptMap) {
+		return strtr($m[1], $superscriptMap);
+	}, $expr);
+	$expr = preg_replace_callback('/\^([a-zA-Z0-9])/', function($m) use ($superscriptMap) {
+		return isset($superscriptMap[$m[1]]) ? $superscriptMap[$m[1]] : '^'.$m[1];
+	}, $expr);
+
+	$expr = preg_replace('/\{([^}]*)\}/', '$1', $expr);
+
+	$expr = str_replace(['\\times','\\cdot','\\div'], ['×','·','÷'], $expr);
+	$expr = str_replace(['\\to','\\rightarrow','\\leftarrow','\\Rightarrow','\\Leftarrow','\\mapsto'], ['→','→','←','⇒','⇐','↦'], $expr);
+	$expr = str_replace(['\\approx','\\neq','\\equiv','\\le','\\ge','\\leq','\\geq'], ['≈','≠','≡','≤','≥','≤','≥'], $expr);
+	$expr = str_replace(['\\ll','\\gg','\\infty','\\partial','\\nabla'], ['≪','≫','∞','∂','∇'], $expr);
+	$expr = str_replace(['\\sum','\\prod','\\int','\\oint'], ['∑','∏','∫','∮'], $expr);
+	$expr = str_replace(['\\cup','\\cap','\\subset','\\supset','\\subseteq','\\supseteq'], ['∪','∩','⊂','⊃','⊆','⊇'], $expr);
+	$expr = str_replace(['\\forall','\\exists'], ['∀','∃'], $expr);
+	$expr = str_replace(['\\alpha','\\beta','\\gamma','\\delta','\\epsilon','\\zeta','\\eta','\\theta'], ['α','β','γ','δ','ε','ζ','η','θ'], $expr);
+	$expr = str_replace(['\\iota','\\kappa','\\lambda','\\mu','\\nu','\\xi','\\pi','\\rho','\\sigma','\\tau'], ['ι','κ','λ','μ','ν','ξ','π','ρ','σ','τ'], $expr);
+	$expr = str_replace(['\\upsilon','\\phi','\\chi','\\psi','\\omega'], ['υ','φ','χ','ψ','ω'], $expr);
+	$expr = str_replace(['\\varepsilon','\\varphi','\\vartheta'], ['ε','φ','ϑ'], $expr);
+	$expr = str_replace(['\\Gamma','\\Delta','\\Theta','\\Lambda','\\Xi','\\Pi','\\Sigma','\\Phi','\\Psi','\\Omega'], ['Γ','Δ','Θ','Λ','Ξ','Π','Σ','Φ','Ψ','Ω'], $expr);
+
+	$expr = preg_replace('/\s+/', ' ', $expr);
+	return trim($expr);
 }
 
 function cleanMarkdown($text) {
