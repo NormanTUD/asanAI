@@ -270,20 +270,22 @@ foreach ($files as $file) {
 		$mdPos = $mdm[0][1];
 		$mdAttrs = $mdm[0][0];
 		$raw = $mdm[1][0];
+		$mdBlockIdx = 0;
 
 		if (preg_match('/data-headline="([^"]+)"/i', $mdAttrs, $dh)) {
 			$hlText = cleanText($dh[1], $bibData);
 			if (mb_strlen($hlText) > 3) {
-				$blocks[] = ['type' => 'heading', 'level' => 3, 'text' => $hlText, 'slug' => slugify($hlText), 'pos' => $mdPos];
+				$blocks[] = ['type' => 'heading', 'level' => 3, 'text' => $hlText, 'slug' => slugify($hlText), 'pos' => $mdPos + $mdBlockIdx++];
 			}
 		}
 
-		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER);
+		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 		foreach ($mdHeadings as $mh) {
-			$level = strspn($mh[0], '#');
-			$text = cleanText($mh[1], $bibData);
+			$level = strspn($mh[0][0], '#');
+			$text = cleanText($mh[1][0], $bibData);
 			if ($text === '' || mb_strlen($text) < 3) continue;
-			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos];
+			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos + $mh[0][1]];
+			$mdBlockIdx++;
 		}
 
 		$raw = cleanMarkdown($raw);
@@ -292,7 +294,7 @@ foreach ($files as $file) {
 		foreach ($paras as $p) {
 			$p = trim(preg_replace('/\s+/', ' ', $p));
 			if (strlen($p) > 50) {
-				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos];
+				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos + $mdBlockIdx++];
 			}
 		}
 	}
@@ -333,10 +335,14 @@ foreach ($files as $file) {
 	usort($blocks, fn($a, $b) => ($a['pos'] ?? 0) <=> ($b['pos'] ?? 0));
 
 	$lowerQ = mb_strtolower($q);
+	$normQ = preg_replace('/[^\w\s]/u', '', $lowerQ);
+	$normQ = preg_replace('/\s+/', ' ', trim($normQ));
 
 	foreach ($blocks as $b) {
 		$text = $b['text'];
 		$lowerText = mb_strtolower($text);
+		$normText = preg_replace('/[^\w\s]/u', '', $lowerText);
+		$normText = preg_replace('/\s+/', ' ', trim($normText));
 		$matches = false;
 
 		if ($mode === 'regex') {
@@ -344,7 +350,7 @@ foreach ($files as $file) {
 		} elseif ($mode === 'fuzzy') {
 			$matches = fuzzyMatch($lowerText, mb_strtolower($q));
 		} else {
-			$matches = (mb_strpos($lowerText, $lowerQ) !== false);
+			$matches = (mb_strpos($normText, $normQ) !== false) || (mb_strpos($lowerText, $lowerQ) !== false);
 		}
 
 		if (!$matches) continue;
