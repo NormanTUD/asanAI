@@ -230,7 +230,36 @@ foreach ($files as $file) {
 		$blocks[] = ['type' => 'text', 'text' => $text, 'pos' => $pos];
 	}
 
-	preg_match_all('/<div[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/div>/is', $html, $mdms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
+	$mdms = [];
+	$searchPos = 0;
+	while (($mdStart = strpos($html, '<div', $searchPos)) !== false) {
+		$tagEnd = strpos($html, '>', $mdStart);
+		if ($tagEnd === false) break;
+		$tag = substr($html, $mdStart, $tagEnd - $mdStart + 1);
+		if (preg_match('/class="[^"]*\bmd\b[^"]*"/i', $tag)) {
+			$depth = 1;
+			$pos = $tagEnd + 1;
+			while ($depth > 0 && $pos < strlen($html)) {
+				$nextOpen = strpos($html, '<div', $pos);
+				$nextClose = strpos($html, '</div>', $pos);
+				if ($nextClose === false) break;
+				if ($nextOpen !== false && $nextOpen < $nextClose) {
+					$depth++;
+					$pos = $nextOpen + 4;
+				} else {
+					$depth--;
+					$pos = $nextClose + 6;
+				}
+			}
+			$contentEnd = $pos;
+			$raw = substr($html, $tagEnd + 1, $contentEnd - $tagEnd - 7);
+			$mdms[] = [[$tag . $raw . '</div>', $mdStart], [$raw, $tagEnd + 1]];
+			$searchPos = $contentEnd;
+		} else {
+			$searchPos = $tagEnd + 1;
+		}
+	}
+
 	foreach ($mdms as $mdm) {
 		$mdPos = $mdm[0][1];
 		$mdAttrs = $mdm[0][0];
@@ -245,8 +274,8 @@ foreach ($files as $file) {
 
 		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER);
 		foreach ($mdHeadings as $mh) {
-			$level = strlen(trim($mh[0][0])[0]);
-			$text = cleanText($mh[1][0], $bibData);
+			$level = strspn($mh[0], '#');
+			$text = cleanText($mh[1], $bibData);
 			if ($text === '' || mb_strlen($text) < 3) continue;
 			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos];
 		}
