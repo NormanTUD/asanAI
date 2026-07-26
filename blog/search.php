@@ -8,6 +8,58 @@ if (strlen($q) < 2) {
 	exit;
 }
 
+$bibData = [];
+$litFile = __DIR__ . '/literature.js';
+if (file_exists($litFile)) {
+	$litContent = file_get_contents($litFile);
+	preg_match_all('/"([^"]+)"\s*:\s*\{([^}]+)\}/s', $litContent, $matches, PREG_SET_ORDER);
+	foreach ($matches as $m) {
+		$id = $m[1];
+		$body = $m[2];
+		$bibData[$id] = [
+			'title'  => preg_match('/title\s*:\s*"([^"]+)"/', $body, $t) ? $t[1] : '',
+			'author' => preg_match('/author\s*:\s*"([^"]+)"/', $body, $a) ? $a[1] : '',
+			'year'   => preg_match('/year\s*:\s*"?(\d{4}|c\.\s\d+\sBCE)"?/', $body, $y) ? $y[1] : '',
+			'url'    => preg_match('/url\s*:\s*"([^"]+)"/', $body, $u) ? $u[1] : '',
+		];
+	}
+}
+
+function resolveCitations($text, $bibData) {
+	$text = preg_replace_callback('/\\\\(footcite|cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)(?:\[([^\]]*)\])?\{([^}]+)\}/', function($m) use ($bibData) {
+		$type = $m[1];
+		$manual = isset($m[2]) && $m[2] !== '' ? $m[2] : null;
+		$key = $m[3];
+		$entry = isset($bibData[$key]) ? $bibData[$key] : null;
+
+		if (!$entry) return $key;
+
+		if ($manual) return $manual;
+
+		switch ($type) {
+			case 'citeauthor': return $entry['author'];
+			case 'citeauthorlastnameand':
+				$authors = preg_split('/, | and /', $entry['author']);
+				$lastNames = array_map(function($n) { return trim(explode(' ', trim($n))[0]); }, $authors);
+				if (count($lastNames) === 1) return $lastNames[0];
+				if (count($lastNames) === 2) return implode(' and ', $lastNames);
+				$last = array_pop($lastNames);
+				return implode(', ', $lastNames) . ' and ' . $last;
+			case 'citetitle': return $entry['title'];
+			case 'citealternativetitle': return !empty($entry['alternativetitle']) ? $entry['alternativetitle'] : $entry['title'];
+			case 'citeyear': return $entry['year'];
+			case 'citeurl': return $entry['title'];
+			case 'footcite': return $entry['author'] . ($entry['year'] ? ', ' . $entry['year'] : '');
+			default: return $entry['author'] . ($entry['year'] ? ', ' . $entry['year'] : '');
+		}
+	}, $text);
+
+	$text = preg_replace('/\\\\label\{([^}]+)\}/', '$1', $text);
+	$text = preg_replace('/\\\\index\{([^}]+)\}/', '$1', $text);
+	$text = preg_replace('/\\\\[a-zA-Z]+/', '', $text);
+	return $text;
+}
+
 $files = glob('*.php');
 $exclude = ['index.php', 'index_full.php', 'functions.php', 'search.php', 'asanai_blog_proxy.php'];
 $results = [];
@@ -29,42 +81,48 @@ foreach ($files as $file) {
 
 	$blocks = [];
 
+	// HTML headings
 	preg_match_all('/<h([1-6])([^>]*)>(.*?)<\/h\1>/i', $html, $hms, PREG_SET_ORDER);
 	foreach ($hms as $hm) {
 		$level = (int)$hm[1];
-		$attrs = $hm[2];
 		$text = trim(html_entity_decode(strip_tags($hm[3]), ENT_QUOTES | ENT_HTML5));
+		$text = resolveCitations($text, $bibData);
 		$text = preg_replace('/\s+/', ' ', $text);
 		if ($text === '') continue;
 		$slug = slugify($text);
 		$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug];
 	}
 
+	// HTML text blocks (p, li, blockquote, td, th)
 	preg_match_all('/<(p|li|blockquote|td|th)[^>]*>(.*?)<\/\1>/is', $html, $pms, PREG_SET_ORDER);
 	foreach ($pms as $pm) {
 		$text = trim(html_entity_decode(strip_tags($pm[2]), ENT_QUOTES | ENT_HTML5));
+		$text = resolveCitations($text, $bibData);
 		$text = preg_replace('/\s+/', ' ', $text);
 		if (strlen($text) < 40) continue;
 		$blocks[] = ['type' => 'text', 'text' => $text];
 	}
 
+	// .md divs (markdown content)
 	preg_match_all('/<div[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/div>/is', $html, $mdms, PREG_SET_ORDER);
 	foreach ($mdms as $mdm) {
 		$raw = $mdm[1];
 
+		// Extract markdown headings
 		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER);
 		foreach ($mdHeadings as $mh) {
 			$level = strlen(trim($mh[0])[0]);
 			$text = trim(html_entity_decode(strip_tags($mh[1]), ENT_QUOTES | ENT_HTML5));
 			$text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text);
 			$text = preg_replace('/[*_]{1,3}([^*_]+)[*_]{1,3}/', '$1', $text);
-			$text = cleanCitations($text);
+			$text = resolveCitations($text, $bibData);
 			$text = preg_replace('/\s+/', ' ', $text);
 			if ($text === '' || mb_strlen($text) < 3) continue;
 			$slug = slugify($text);
 			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug];
 		}
 
+		// Strip markdown syntax for text extraction
 		$raw = preg_replace('/^#{1,6}\s+/m', '', $raw);
 		$raw = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $raw);
 		$raw = preg_replace('/[*_]{1,3}([^*_]+)[*_]{1,3}/', '$1', $raw);
@@ -75,11 +133,41 @@ foreach ($files as $file) {
 		$raw = preg_replace('/^\s*\d+\.\s+/m', '', $raw);
 		$raw = preg_replace('/\|.*?\|/', '', $raw);
 		$text = trim(html_entity_decode(strip_tags($raw), ENT_QUOTES | ENT_HTML5));
+		$text = resolveCitations($text, $bibData);
 		$paras = preg_split('/\n\s*\n/', $text);
 		foreach ($paras as $p) {
 			$p = trim(preg_replace('/\s+/', ' ', $p));
 			if (strlen($p) > 50) {
 				$blocks[] = ['type' => 'text', 'text' => $p];
+			}
+		}
+	}
+
+	// Figures & figcaptions
+	preg_match_all('/<figure[^>]*>(.*?)<\/figure>/is', $html, $figs, PREG_SET_ORDER);
+	foreach ($figs as $fig) {
+		$figHtml = $fig[1];
+
+		if (preg_match('/<figcaption[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/figcaption>/is', $figHtml, $cap)) {
+			$caption = trim(html_entity_decode(strip_tags($cap[1]), ENT_QUOTES | ENT_HTML5));
+			$caption = resolveCitations($caption, $bibData);
+			$caption = preg_replace('/\s+/', ' ', $caption);
+			if (strlen($caption) > 20) {
+				$blocks[] = ['type' => 'caption', 'text' => $caption];
+			}
+		} elseif (preg_match('/<figcaption[^>]*>(.*?)<\/figcaption>/is', $figHtml, $cap)) {
+			$caption = trim(html_entity_decode(strip_tags($cap[1]), ENT_QUOTES | ENT_HTML5));
+			$caption = preg_replace('/\s+/', ' ', $caption);
+			if (strlen($caption) > 20) {
+				$blocks[] = ['type' => 'caption', 'text' => $caption];
+			}
+		}
+
+		if (preg_match('/<img[^>]*alt="([^"]*)"/i', $figHtml, $alt)) {
+			$altText = trim(html_entity_decode($alt[1], ENT_QUOTES | ENT_HTML5));
+			$altText = preg_replace('/\s+/', ' ', $altText);
+			if (strlen($altText) > 10) {
+				$blocks[] = ['type' => 'caption', 'text' => $altText];
 			}
 		}
 	}
@@ -107,6 +195,19 @@ foreach ($files as $file) {
 				'url' => $name . '#' . $b['slug'],
 				'score' => $score,
 			];
+		} elseif ($b['type'] === 'caption') {
+			$score = 150 + substr_count($lowerText, $lowerQ) * 10;
+			$heading = findNearestHeading($blocks, $b);
+			$results[] = [
+				'page' => $name,
+				'pageTitle' => $pageTitle,
+				'type' => 'caption',
+				'level' => $heading ? $heading['level'] : 0,
+				'title' => '📷 ' . ($heading ? $heading['text'] : $pageTitle),
+				'snippet' => $snippet,
+				'url' => $name . ($heading ? '#' . $heading['slug'] : ''),
+				'score' => $score,
+			];
 		} else {
 			$score = 50 + substr_count($lowerText, $lowerQ) * 5;
 			$heading = findNearestHeading($blocks, $b);
@@ -125,7 +226,6 @@ foreach ($files as $file) {
 }
 
 usort($results, fn($a, $b) => $b['score'] <=> $a['score']);
-
 $results = array_slice($results, 0, 50);
 
 echo json_encode([
@@ -142,7 +242,6 @@ function slugify($text) {
 }
 
 function makeSnippet($text, $query) {
-	$text = cleanCitations($text);
 	$pos = mb_stripos($text, $query);
 	if ($pos === false) return mb_substr($text, 0, 200);
 
@@ -154,14 +253,6 @@ function makeSnippet($text, $query) {
 	if ($start + $length < mb_strlen($text)) $snippet .= '…';
 
 	return $snippet;
-}
-
-function cleanCitations($text) {
-	$text = preg_replace('/\\\\cite(author|title|year)?(\[([^\]]*)\])?\{([^}]+)\}/', '$4', $text);
-	$text = preg_replace('/\\\\label\{([^}]+)\}/', '$1', $text);
-	$text = preg_replace('/\\\\index\{([^}]+)\}/', '$1', $text);
-	$text = preg_replace('/\\\\[a-zA-Z]+/', '', $text);
-	return $text;
 }
 
 function findNearestHeading($blocks, $currentBlock) {
