@@ -163,6 +163,7 @@ function load_base_js () {
 	js("master_vis");
 	js("loader");
 	js("three.min");
+	js("search");
 
 	$files = glob("modules/*.js");
 
@@ -458,6 +459,7 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 	</head>
 	<body>
+		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
 			<p id="loader-status">Initializing AI Course...</p>

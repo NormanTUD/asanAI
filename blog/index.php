@@ -7,8 +7,10 @@
 	<meta name="theme-color" content="#ffffff">
 	<title>From Stone Age Tools to ChatGPT</title>
 	<?php load_base_js(); ?>
+	<?php js("search"); ?>
 </head>
 <body>
+<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
 	<p id="loader-status">Initializing AI Course...</p>
