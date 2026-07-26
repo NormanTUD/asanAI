@@ -50,6 +50,22 @@ function cleanMath($text) {
 	return $text;
 }
 
+function cleanMarkdown($text) {
+	$text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text);
+	$text = preg_replace('/!\[([^\]]*)\]\([^)]*\)/', '$1', $text);
+	$text = preg_replace('/[*_]{2,3}([^*_]+)[*_]{2,3}/', '$1', $text);
+	$text = preg_replace('/[*_]([^*_]+)[*_]/', '$1', $text);
+	$text = preg_replace('/~~(.*?)~~/', '$1', $text);
+	$text = preg_replace('/`([^`]+)`/', '$1', $text);
+	$text = preg_replace('/```[\s\S]*?```/', '', $text);
+	$text = preg_replace('/^\s*[-*+]\s+/m', '', $text);
+	$text = preg_replace('/^\s*\d+\.\s+/m', '', $text);
+	$text = preg_replace('/\|.*?\|/', '', $text);
+	$text = preg_replace('/^#{1,6}\s+/m', '', $text);
+	$text = preg_replace('/~~(.*?)~~/', '$1', $text);
+	return $text;
+}
+
 function resolveCitations($text, $bibData) {
 	$text = preg_replace_callback('/\\\\(footcite|cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)(?:\[([^\]]*)\])?\{([^}]+)\}/', function($m) use ($bibData) {
 		$type = $m[1];
@@ -86,6 +102,7 @@ function resolveCitations($text, $bibData) {
 
 function cleanText($text, $bibData) {
 	$text = cleanMath($text);
+	$text = cleanMarkdown($text);
 	$text = resolveCitations($text, $bibData);
 	$text = preg_replace('/\s+/', ' ', $text);
 	return trim($text);
@@ -133,30 +150,25 @@ foreach ($files as $file) {
 	preg_match_all('/<div[^>]*class="[^"]*\bmd\b[^"]*"[^>]*>(.*?)<\/div>/is', $html, $mdms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 	foreach ($mdms as $mdm) {
 		$mdPos = $mdm[0][1];
+		$mdAttrs = $mdm[0][0];
 		$raw = $mdm[1][0];
+
+		if (preg_match('/data-headline="([^"]+)"/i', $mdAttrs, $dh)) {
+			$hlText = cleanText($dh[1], $bibData);
+			if (mb_strlen($hlText) > 3) {
+				$blocks[] = ['type' => 'heading', 'level' => 3, 'text' => $hlText, 'slug' => slugify($hlText), 'pos' => $mdPos];
+			}
+		}
 
 		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER);
 		foreach ($mdHeadings as $mh) {
 			$level = strlen(trim($mh[0][0])[0]);
 			$text = cleanText($mh[1][0], $bibData);
-			$text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text);
-			$text = preg_replace('/[*_]{1,3}([^*_]+)[*_]{1,3}/', '$1', $text);
-			$text = resolveCitations($text, $bibData);
-			$text = preg_replace('/\s+/', ' ', $text);
 			if ($text === '' || mb_strlen($text) < 3) continue;
-			$slug = slugify($text);
-			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => $slug, 'pos' => $mdPos];
+			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos];
 		}
 
-		$raw = preg_replace('/^#{1,6}\s+/m', '', $raw);
-		$raw = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $raw);
-		$raw = preg_replace('/[*_]{1,3}([^*_]+)[*_]{1,3}/', '$1', $raw);
-		$raw = preg_replace('/```[\s\S]*?```/', '', $raw);
-		$raw = preg_replace('/`([^`]+)`/', '$1', $raw);
-		$raw = preg_replace('/~~(.*?)~~/', '$1', $raw);
-		$raw = preg_replace('/^\s*[-*+]\s+/m', '', $raw);
-		$raw = preg_replace('/^\s*\d+\.\s+/m', '', $raw);
-		$raw = preg_replace('/\|.*?\|/', '', $raw);
+		$raw = cleanMarkdown($raw);
 		$text = cleanText(strip_tags($raw), $bibData);
 		$paras = preg_split('/\n\s*\n/', $text);
 		foreach ($paras as $p) {

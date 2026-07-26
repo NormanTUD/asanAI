@@ -1,4 +1,42 @@
 window.bibData = {
+	"goodenough1980licoo2": {
+		title: "LixCoO2 (0<x⩽1): A new cathode material for batteries of high energy density",
+		author: "John B. Goodenough, K. Mizushima, P.C. Jones",
+		year: 1980,
+		url: "https://www.sciencedirect.com/science/article/pii/0167273881900771"
+	},
+	"yoshino1985liion": {
+		title: "Secondary Battery (Japanese Patent S60-23954)",
+		author: "Akira Yoshino",
+		year: 1985,
+		url: "https://www.nobelprize.org/prizes/chemistry/2019/yoshino/facts/"
+	},
+	"czochralski1918": {
+		title: "Ein neues Verfahren zur Messung der Kristallisationsgeschwindigkeit der Metalle",
+		author: "Jan Czochralski",
+		year: 1918,
+		url: "https://bcpw.bg.pw.edu.pl/Content/3410/zeitschrift_fur_physikalische_chemie_1918_v92_str219.pdf"
+	},
+	"mendeleev1869": {
+		title: "Соотношение свойств с атомным весом элементов (On the Relationship of the Properties of the Elements to their Atomic Weights)",
+		author: "Dmitri Ivanovich Mendeleev",
+		year: 1869,
+		url: "https://web.lemoyne.edu/~giunta/mendeleev.html"
+	},
+	"siemensprocess": {
+		title: "Method of Producing Pure Silicon (Siemens Process)",
+		author: "Siemens AG",
+		year: 1954,
+		url: "https://en.wikipedia.org/wiki/Siemens_process"
+	},
+	"fluorinert3m": {
+		title: "Fluorinert Electronic Liquids",
+		author: "3M Company",
+		year: 1966,
+		url: "https://en.wikipedia.org/wiki/Fluorinert",
+	},
+
+
 	"cuevadelasmanos": {
 		title: "Cueva de las Manos",
 		author: "Wikipedia contributors",
