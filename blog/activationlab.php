@@ -95,7 +95,7 @@ SoftMax uses the function $e^x$ to transform inputs.
 * **SoftMax thinking:** $e^{0.9}$ (2.46) is only ~2.2x larger than $e^{0.1}$ (1.11).
 This behavior acts as a **contrast amplifier**. It helps the network make a "confident" decision by widening the gap between the top scores and the noise.
 
-#### Handling the "Underworld" (Negative Numbers)
+#### Handling Negative Numbers
 A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0). You cannot have a negative probability. SoftMax solves this because $e^x$ is **always positive**. Even $e^{-5.0}$ results in a tiny, positive number (0.0067).
 
 #### Why is this the standard for AI?
@@ -107,7 +107,7 @@ Neural networks don't use $e$ just because it's famous; they use it because of *
 * **The Derivative Property:** $e^x$ is the only function where the derivative is the function itself: $\frac{d}{dx}e^x = e^x$.
     * *Why this matters:* In backpropagation, we calculate "gradients" (slopes). When we combine the SoftMax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$. This efficiency makes training deep networks computationally feasible.
 
-* **The Positivity Constraint:** Probabilities cannot be negative. However, raw neural network outputs (logits) can be any real number from $-\infty$ to $+\infty$. Since $e^x$ is strictly positive for all real $x$, it maps the "underworld" of negative numbers into the positive space required for probability.
+* **The Positivity Constraint:** Probabilities cannot be negative. However, raw neural network outputs (logits) can be any real number from $-\infty$ to $+\infty$. Since $e^x$ is strictly positive for all real $x$, it maps negative numbers into the positive space required for probability.
 
 * **Non-Linear Contrast (The "Amplifier"):**
     If we have Logits $x_1=2$ and $x_2=4$, the difference is only 2 units (linear).
