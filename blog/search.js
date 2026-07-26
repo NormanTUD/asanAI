@@ -190,7 +190,13 @@
 		if (page === current) {
 			close();
 			if (hash) {
-				location.hash = hash;
+				setTimeout(function() {
+					var target = findHeadingBySlug(hash);
+					if (target) {
+						target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+						target.classList.add('search-target-flash');
+					}
+				}, 100);
 			}
 			return;
 		}
@@ -286,11 +292,15 @@
 	}
 
 	function findHeadingBySlug(slug) {
-		var headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
 		var targetSlug = slug.replace(/-+/g, ' ').toLowerCase().trim();
+
+		var byId = document.getElementById(slug);
+		if (byId) return byId;
+
+		var headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6, [data-headline]');
 		for (var i = 0; i < headers.length; i++) {
 			var h = headers[i];
-			var text = h.textContent.toLowerCase().trim();
+			var text = (h.dataset.headline || h.textContent).toLowerCase().trim();
 			var hSlug = text.replace(/[^\w\s\p{L}]/gu, '').replace(/\s+/g, ' ').trim();
 			if (hSlug === targetSlug) return h;
 			var hSlug2 = text.replace(/[^\w\s]/g, '').replace(/\s+/g, '-').replace(/^-|-$/g, '');
