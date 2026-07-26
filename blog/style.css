@@ -3688,3 +3688,7 @@ html {
 		margin-left: 0;
 	}
 }
+
+.search-result-thumb > img {
+	max-width: 100%;
+}
