@@ -128,13 +128,14 @@
 		.then(function(r) { return r.json(); })
 		.then(function(data) {
 			var mode = data.mode || 'normal';
+			var items = data.grouped && data.grouped.length > 0 ? data.grouped : data.results;
 			var hlQuery = query;
-			if (mode === 'regex' && data.results.length > 0) {
-				hlQuery = extractMatchFromSnippet(data.results[0].snippet || '', query);
+			if (mode === 'regex' && items.length > 0) {
+				hlQuery = extractMatchFromSnippet(items[0].snippet || '', query);
 			} else if (mode === 'fuzzy') {
 				hlQuery = '';
 			}
-			renderResults(data.results || [], query, hlQuery, mode);
+			renderResults(items || [], query, hlQuery, mode, data.total);
 		})
 		.catch(function(err) {
 			if (err.name === 'AbortError') return;
@@ -142,7 +143,7 @@
 		});
 	}
 
-	function renderResults(results, query, hlQuery, mode) {
+	function renderResults(results, query, hlQuery, mode, total) {
 		mode = mode || 'normal';
 		hlQuery = hlQuery || (mode === 'normal' ? query : '');
 		if (results.length === 0) {
@@ -154,30 +155,20 @@
 			return;
 		}
 
-		var html = '<div class="search-results-count">' + results.length + ' result' + (results.length !== 1 ? 's' : '') + ' for <strong>' + escHtml(query) + '</strong></div>';
-		var currentPage = '';
+		total = total || results.length;
+		var html = '<div class="search-results-count">' + total + ' match' + (total !== 1 ? 'es' : '') + ' across ' + results.length + ' page' + (results.length !== 1 ? 's' : '') + ' for <strong>' + escHtml(query) + '</strong></div>';
 
 		results.forEach(function(r, i) {
-			if (r.page !== currentPage) {
-				currentPage = r.page;
-				html += '<div class="search-page-group">' +
-					'<a href="' + escAttr(r.page) + '" class="search-page-title" data-search-nav>' +
-						escHtml(r.pageTitle) +
-					'</a>';
-			}
-
 			html += '<a href="' + escAttr(r.url) + '" class="search-result-item' + (r.img ? ' search-result-has-img' : '') + '" data-index="' + i + '" data-search-nav>' +
 				(r.img ? '<div class="search-result-thumb"><img src="' + escAttr(r.img) + '" alt="" loading="lazy"></div>' : '') +
 				'<div class="search-result-body">' +
-				'<div class="search-result-title">' + escHtml(r.title) + '</div>' +
+				'<div class="search-result-title">' +
+					escHtml(r.title) +
+					(r.count > 1 ? ' <span class="search-result-badge">' + r.count + '</span>' : '') +
+				'</div>' +
 				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), escHtml(hlQuery), mode) + '</div>' +
 				'</div>' +
 			'</a>';
-
-			var nextResult = results[i + 1];
-			if (!nextResult || nextResult.page !== currentPage) {
-				html += '</div>';
-			}
 		});
 
 		resultsContainer.innerHTML = html;
