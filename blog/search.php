@@ -270,12 +270,11 @@ foreach ($files as $file) {
 		$mdPos = $mdm[0][1];
 		$mdAttrs = $mdm[0][0];
 		$raw = $mdm[1][0];
-		$mdBlockIdx = 0;
 
 		if (preg_match('/data-headline="([^"]+)"/i', $mdAttrs, $dh)) {
 			$hlText = cleanText($dh[1], $bibData);
 			if (mb_strlen($hlText) > 3) {
-				$blocks[] = ['type' => 'heading', 'level' => 3, 'text' => $hlText, 'slug' => slugify($hlText), 'pos' => $mdPos + $mdBlockIdx++];
+				$blocks[] = ['type' => 'heading', 'level' => 3, 'text' => $hlText, 'slug' => slugify($hlText), 'pos' => $mdPos];
 			}
 		}
 
@@ -285,16 +284,21 @@ foreach ($files as $file) {
 			$text = cleanText($mh[1][0], $bibData);
 			if ($text === '' || mb_strlen($text) < 3) continue;
 			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos + $mh[0][1]];
-			$mdBlockIdx++;
 		}
 
-		$raw = cleanMarkdown($raw);
-		$text = cleanText(strip_tags($raw), $bibData);
+		$rawCleaned = cleanMarkdown($raw);
+		$rawStripped = strip_tags($rawCleaned);
+		$text = cleanText($rawStripped, $bibData);
 		$paras = preg_split('/\n\s*\n/', $text);
+		$cursor = 0;
 		foreach ($paras as $p) {
 			$p = trim(preg_replace('/\s+/', ' ', $p));
 			if (strlen($p) > 50) {
-				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos + $mdBlockIdx++];
+				$probe = mb_substr($p, 0, 25);
+				$found = mb_strpos($rawStripped, $probe, $cursor);
+				if ($found === false) $found = $cursor;
+				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos + $found];
+				$cursor = $found + 1;
 			}
 		}
 	}
@@ -451,6 +455,15 @@ function makeSnippet($text, $query, $mode = 'normal') {
 		if ($pos === false) $pos = 0;
 	} else {
 		$pos = mb_stripos($text, $query);
+		if ($pos === false) {
+			$words = preg_split('/[^\w]+/u', $query);
+			foreach ($words as $w) {
+				if (mb_strlen($w) > 2) {
+					$pos = mb_stripos($text, $w);
+					if ($pos !== false) break;
+				}
+			}
+		}
 	}
 
 	if ($pos === false) return mb_substr($text, 0, 200);
