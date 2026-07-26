@@ -278,44 +278,43 @@ foreach ($files as $file) {
 			}
 		}
 
-		preg_match_all('/^#{1,6}\s+(.+)$/m', $raw, $mdHeadings, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
-		foreach ($mdHeadings as $mh) {
-			$level = strspn($mh[0][0], '#');
-			$text = cleanText($mh[1][0], $bibData);
-			if ($text === '' || mb_strlen($text) < 3) continue;
-			$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos + $mh[0][1]];
-		}
-
-		$rawCleaned = cleanMarkdown($raw);
-		$rawStripped = strip_tags($rawCleaned);
-		$textBase = cleanMath($rawStripped);
-		$textBase = resolveCitations($textBase, $bibData);
-		$paras = preg_split('/\n\s*\n/', $textBase);
-		$normStripped = preg_replace('/[^\w\s]/u', '', $rawStripped);
-		$cursor = 0;
-		$normLen = strlen($normStripped);
-		foreach ($paras as $p) {
-			$p = trim(preg_replace('/\s+/', ' ', $p));
-			if (strlen($p) > 50) {
-				$probe = mb_substr($p, 0, 25);
-				$normProbe = preg_replace('/[^\w\s]/u', '', $probe);
-				$found = false;
-				if ($normLen > 0) {
-					$searchStart = min($cursor, $normLen - 1);
-					$found = mb_strpos($normStripped, $normProbe, $searchStart);
-					if ($found === false) {
-						$words = preg_split('/\s+/', $normProbe);
-						foreach ($words as $w) {
-							if (mb_strlen($w) > 3) {
-								$found = mb_strpos($normStripped, $w, $searchStart);
-								if ($found !== false) break;
-							}
-						}
+		$lines = explode("\n", $raw);
+		$paraBuf = '';
+		$lastHeadingPos = $mdPos;
+		$linePos = 0;
+		foreach ($lines as $li) {
+			$trimmed = trim($li);
+			if (preg_match('/^(#{1,6})\s+(.+)$/', $li, $hm)) {
+				if (strlen($paraBuf) > 50) {
+					$paraText = cleanText(strip_tags($paraBuf), $bibData);
+					if (strlen($paraText) > 50) {
+						$blocks[] = ['type' => 'text', 'text' => $paraText, 'pos' => $lastHeadingPos + 1];
 					}
 				}
-				if ($found === false) $found = $cursor;
-				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos + $found];
-				$cursor = $found + 1;
+				$paraBuf = '';
+				$level = strlen($hm[1]);
+				$text = cleanText($hm[2], $bibData);
+				if ($text !== '' && mb_strlen($text) >= 3) {
+					$blocks[] = ['type' => 'heading', 'level' => $level, 'text' => $text, 'slug' => slugify($text), 'pos' => $mdPos + $linePos];
+				}
+				$lastHeadingPos = $mdPos + $linePos;
+		} elseif ($trimmed === '') {
+			if (strlen($paraBuf) > 50) {
+				$paraText = cleanText(strip_tags($paraBuf), $bibData);
+				if (strlen($paraText) > 50) {
+					$blocks[] = ['type' => 'text', 'text' => $paraText, 'pos' => $lastHeadingPos + 1];
+				}
+			}
+			$paraBuf = '';
+		} else {
+			$paraBuf .= ($paraBuf === '' ? '' : "\n") . $li;
+		}
+		$linePos += strlen($li) + 1;
+	}
+	if (strlen($paraBuf) > 50) {
+		$paraText = cleanText(strip_tags($paraBuf), $bibData);
+			if (strlen($paraText) > 50) {
+				$blocks[] = ['type' => 'text', 'text' => $paraText, 'pos' => $lastHeadingPos + 1];
 			}
 		}
 	}
@@ -356,14 +355,12 @@ foreach ($files as $file) {
 	usort($blocks, fn($a, $b) => ($a['pos'] ?? 0) <=> ($b['pos'] ?? 0));
 
 	$lowerQ = mb_strtolower($q);
-	$normQ = preg_replace('/[^\w\s]/u', '', $lowerQ);
-	$normQ = preg_replace('/\s+/', ' ', trim($normQ));
+	$normQ = normalizeText($lowerQ);
 
 	foreach ($blocks as $b) {
 		$text = $b['text'];
 		$lowerText = mb_strtolower($text);
-		$normText = preg_replace('/[^\w\s]/u', '', $lowerText);
-		$normText = preg_replace('/\s+/', ' ', trim($normText));
+		$normText = normalizeText($lowerText);
 		$matches = false;
 
 		if ($mode === 'regex') {
@@ -453,6 +450,24 @@ echo json_encode([
 	'mode' => $mode,
 ], JSON_UNESCAPED_UNICODE);
 
+function normalizeSmartQuotes($text) {
+	$quotes = [
+		"\xC2\xAB" => '"', "\xC2\xBB" => '"',
+		"\xE2\x80\x98" => "'", "\xE2\x80\x99" => "'",
+		"\xE2\x80\x9A" => "'", "\xE2\x80\x9B" => "'",
+		"\xE2\x80\x9C" => '"', "\xE2\x80\x9D" => '"',
+		"\xE2\x80\x9E" => '"', "\xE2\x80\x9F" => '"',
+	];
+	return strtr($text, $quotes);
+}
+
+function normalizeText($text) {
+	$text = normalizeSmartQuotes($text);
+	$text = preg_replace('/[^\w\s]/u', '', $text);
+	$text = preg_replace('/\s+/', ' ', trim($text));
+	return $text;
+}
+
 function slugify($text) {
 	$text = preg_replace('/[^\w\s\p{L}]/u', '', $text);
 	$text = preg_replace('/[-\s]+/u', '-', $text);
@@ -473,10 +488,13 @@ function makeSnippet($text, $query, $mode = 'normal') {
 	} else {
 		$pos = mb_stripos($text, $query);
 		if ($pos === false) {
+			$pos = mb_stripos(normalizeSmartQuotes($text), normalizeSmartQuotes($query));
+		}
+		if ($pos === false) {
 			$words = preg_split('/[^\w]+/u', $query);
 			foreach ($words as $w) {
 				if (mb_strlen($w) > 2) {
-					$pos = mb_stripos($text, $w);
+					$pos = mb_stripos(normalizeSmartQuotes($text), normalizeSmartQuotes($w));
 					if ($pos !== false) break;
 				}
 			}

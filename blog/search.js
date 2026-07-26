@@ -47,11 +47,11 @@
 		document.addEventListener('keydown', function(e) {
 			if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
 				e.preventDefault();
-				open();
+				if (isPageReady()) open();
 			}
 			if (e.key === '/' && !isInputFocused() && !e.ctrlKey && !e.metaKey) {
 				e.preventDefault();
-				open();
+				if (isPageReady()) open();
 			}
 			if (e.key === 'Escape' && overlay.classList.contains('search-open')) {
 				close();
@@ -65,6 +65,7 @@
 	}
 
 	function open() {
+		if (!isPageReady()) return;
 		init();
 		if (overlay.classList.contains('search-open')) {
 			input.focus();
@@ -74,6 +75,10 @@
 		overlay.classList.add('search-open');
 		document.body.style.overflow = 'hidden';
 		setTimeout(function() { input.focus(); }, 100);
+	}
+
+	function isPageReady() {
+		return !document.getElementById('loader') || document.getElementById('loader').style.display === 'none';
 	}
 
 	function close() {
@@ -113,7 +118,8 @@
 		}
 	}
 
-	function doSearch(query) {
+	function doSearch(rawQuery) {
+		var query = normalizeSmartQuotes(rawQuery);
 		if (abortController) {
 			abortController.abort();
 		}
@@ -229,6 +235,14 @@
 		if (activeIndex >= 0 && items[activeIndex]) {
 			items[activeIndex].scrollIntoView({ block: 'nearest' });
 		}
+	}
+
+	function normalizeSmartQuotes(str) {
+		return str
+			.replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+			.replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+			.replace(/\u00AB/g, '"')
+			.replace(/\u00BB/g, '"');
 	}
 
 	function showEmptyState() {
