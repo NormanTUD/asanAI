@@ -8,6 +8,25 @@ if (strlen($q) < 2) {
 	exit;
 }
 
+$mode = 'normal';
+$rawQ = $q;
+
+if (preg_match('/^\/.+\/$/u', $q)) {
+	$mode = 'regex';
+	$q = substr($q, 1, -1);
+	if (@preg_match('/' . $q . '/u', '') === false) {
+		echo json_encode(['results' => [], 'total' => 0, 'query' => $rawQ, 'mode' => $mode, 'error' => 'Invalid regex pattern']);
+		exit;
+	}
+} elseif (mb_substr($q, 0, 1) === '~') {
+	$mode = 'fuzzy';
+	$q = mb_substr($q, 1);
+	if (strlen($q) < 2) {
+		echo json_encode(['results' => [], 'total' => 0, 'query' => $rawQ]);
+		exit;
+	}
+}
+
 $bibData = [];
 $litFile = __DIR__ . '/literature.js';
 if (file_exists($litFile)) {
@@ -61,7 +80,7 @@ function resolveCitations($text, $bibData) {
 }
 
 $files = glob('*.php');
-$exclude = ['index.php', 'index_full.php', 'functions.php', 'search.php', 'asanai_blog_proxy.php'];
+$exclude = ['index.php', 'index_full.php', 'functions.php', 'search.php', 'asanai_blog_proxy.php', 'graph.php', 'literature.php'];
 $results = [];
 
 foreach ($files as $file) {
@@ -184,20 +203,32 @@ foreach ($files as $file) {
 	$lowerQ = mb_strtolower($q);
 
 	foreach ($blocks as $b) {
-		$lowerText = mb_strtolower($b['text']);
-		if (mb_strpos($lowerText, $lowerQ) === false) continue;
+		$text = $b['text'];
+		$lowerText = mb_strtolower($text);
+		$matches = false;
 
-		$snippet = makeSnippet($b['text'], $q);
+		if ($mode === 'regex') {
+			$matches = preg_match('/' . $q . '/ui', $text);
+		} elseif ($mode === 'fuzzy') {
+			$matches = fuzzyMatch($lowerText, mb_strtolower($q));
+		} else {
+			$matches = (mb_strpos($lowerText, mb_strtolower($q)) !== false);
+		}
+
+		if (!$matches) continue;
+
+		$snippet = makeSnippet($text, $q, $mode);
 		$score = 0;
 
 		if ($b['type'] === 'heading') {
-			$exact = mb_strpos($lowerText, $lowerQ) !== false ? 50 : 0;
+			$exact = $matches ? 50 : 0;
 			$levelBonus = (6 - $b['level']) * 15;
 			$score = 200 + $exact + $levelBonus;
 			$results[] = [
 				'page' => $name,
 				'pageTitle' => $pageTitle,
 				'type' => 'heading',
+				'mode' => $mode,
 				'level' => $b['level'],
 				'title' => $b['text'],
 				'snippet' => $snippet,
@@ -205,13 +236,14 @@ foreach ($files as $file) {
 				'score' => $score,
 			];
 		} elseif ($b['type'] === 'caption') {
-			$score = 150 + substr_count($lowerText, $lowerQ) * 10;
+			$score = 150 + substr_count($lowerText, mb_strtolower($q)) * 10;
 			$heading = findNearestHeading($blocks, $b);
 			$imgUrl = $b['img'] ?? '';
 			$results[] = [
 				'page' => $name,
 				'pageTitle' => $pageTitle,
 				'type' => 'caption',
+				'mode' => $mode,
 				'level' => $heading ? $heading['level'] : 0,
 				'title' => ($imgUrl ? '🖼 ' : '📷 ') . ($heading ? $heading['text'] : $pageTitle),
 				'snippet' => $snippet,
@@ -220,12 +252,13 @@ foreach ($files as $file) {
 				'img' => $imgUrl,
 			];
 		} else {
-			$score = 50 + substr_count($lowerText, $lowerQ) * 5;
+			$score = 50 + substr_count($lowerText, mb_strtolower($q)) * 5;
 			$heading = findNearestHeading($blocks, $b);
 			$results[] = [
 				'page' => $name,
 				'pageTitle' => $pageTitle,
 				'type' => 'content',
+				'mode' => $mode,
 				'level' => $heading ? $heading['level'] : 0,
 				'title' => $heading ? $heading['text'] : $pageTitle,
 				'snippet' => $snippet,
@@ -252,8 +285,20 @@ function slugify($text) {
 	return mb_strtolower($text);
 }
 
-function makeSnippet($text, $query) {
-	$pos = mb_stripos($text, $query);
+function makeSnippet($text, $query, $mode = 'normal') {
+	$pos = false;
+
+	if ($mode === 'regex') {
+		if (preg_match('/' . $query . '/u', $text, $m, PREG_OFFSET_CAPTURE)) {
+			$pos = $m[0][1];
+		}
+	} elseif ($mode === 'fuzzy') {
+		$pos = findFuzzyPos($text, $query);
+		if ($pos === false) $pos = 0;
+	} else {
+		$pos = mb_stripos($text, $query);
+	}
+
 	if ($pos === false) return mb_substr($text, 0, 200);
 
 	$start = max(0, $pos - 80);
@@ -264,6 +309,39 @@ function makeSnippet($text, $query) {
 	if ($start + $length < mb_strlen($text)) $snippet .= '…';
 
 	return $snippet;
+}
+
+function fuzzyMatch($text, $query) {
+	$threshold = max(1, intdiv(strlen($query), 4));
+
+	$words = preg_split('/\s+/', $text);
+	foreach ($words as $word) {
+		$word = trim($word);
+		if (strlen($word) < 2) continue;
+		if (levenshtein($word, $query) <= $threshold) return true;
+	}
+
+	$qi = 0;
+	for ($i = 0; $i < strlen($text) && $qi < strlen($query); $i++) {
+		if ($text[$i] === $query[$qi]) $qi++;
+	}
+	return $qi === strlen($query);
+}
+
+function findFuzzyPos($text, $query) {
+	$threshold = max(1, intdiv(strlen($query), 4));
+	$words = preg_split('/\s+/', $text);
+	$running = 0;
+	foreach ($words as $word) {
+		$word = trim($word);
+		if (strlen($word) < 2) { $running += strlen($word) + 1; continue; }
+		if (levenshtein($word, $query) <= $threshold) {
+			return $running;
+		}
+		$running += strlen($word) + 1;
+	}
+	$pos = mb_stripos($text, $query);
+	return $pos !== false ? $pos : 0;
 }
 
 function findNearestHeading($blocks, $currentBlock) {

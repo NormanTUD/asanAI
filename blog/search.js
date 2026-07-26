@@ -21,7 +21,8 @@
 					'<button class="search-close" aria-label="Close search">&times;</button>' +
 				'</div>' +
 				'<div class="search-hints">' +
-					'<span>Press <kbd>Esc</kbd> to close</span>' +
+					'<span class="search-hint-default">Press <kbd>Esc</kbd> to close &middot; <kbd>/pattern/</kbd> regex &middot; <kbd>~term</kbd> fuzzy</span>' +
+					'<span class="search-hint-mode" id="search-hint-mode"></span>' +
 				'</div>' +
 				'<div class="search-results"></div>' +
 			'</div>';
@@ -89,11 +90,27 @@
 	function onInput() {
 		var query = input.value.trim();
 		clearTimeout(debounceTimer);
+		updateSearchModeHint(query);
 		if (query.length < 2) {
 			showEmptyState();
 			return;
 		}
 		debounceTimer = setTimeout(function() { doSearch(query); }, 200);
+	}
+
+	function updateSearchModeHint(query) {
+		var hint = document.getElementById('search-hint-mode');
+		if (!hint) return;
+		if (/^\/.+\/$/.test(query)) {
+			hint.textContent = 'regex mode';
+			hint.className = 'search-hint-mode search-hint-mode-regex';
+		} else if (query.charAt(0) === '~' && query.length > 1) {
+			hint.textContent = 'fuzzy mode';
+			hint.className = 'search-hint-mode search-hint-mode-fuzzy';
+		} else {
+			hint.textContent = '';
+			hint.className = 'search-hint-mode';
+		}
 	}
 
 	function doSearch(query) {
@@ -110,7 +127,14 @@
 		})
 		.then(function(r) { return r.json(); })
 		.then(function(data) {
-			renderResults(data.results || [], query);
+			var mode = data.mode || 'normal';
+			var hlQuery = query;
+			if (mode === 'regex' && data.results.length > 0) {
+				hlQuery = extractMatchFromSnippet(data.results[0].snippet || '', query);
+			} else if (mode === 'fuzzy') {
+				hlQuery = '';
+			}
+			renderResults(data.results || [], query, hlQuery, mode);
 		})
 		.catch(function(err) {
 			if (err.name === 'AbortError') return;
@@ -118,7 +142,9 @@
 		});
 	}
 
-	function renderResults(results, query) {
+	function renderResults(results, query, hlQuery, mode) {
+		mode = mode || 'normal';
+		hlQuery = hlQuery || (mode === 'normal' ? query : '');
 		if (results.length === 0) {
 			resultsContainer.innerHTML =
 				'<div class="search-empty">' +
@@ -144,7 +170,7 @@
 				(r.img ? '<div class="search-result-thumb"><img src="' + escAttr(r.img) + '" alt="" loading="lazy"></div>' : '') +
 				'<div class="search-result-body">' +
 				'<div class="search-result-title">' + escHtml(r.title) + '</div>' +
-				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), escHtml(query)) + '</div>' +
+				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), escHtml(hlQuery), mode) + '</div>' +
 				'</div>' +
 			'</a>';
 
@@ -217,11 +243,22 @@
 			'</div>';
 	}
 
-	function highlightText(text, query) {
+	function extractMatchFromSnippet(snippet, regexQuery) {
+		try {
+			var m = snippet.match(new RegExp(regexQuery.replace(/^\/(.+)\/$/, '$1'), 'i'));
+			return m ? m[0] : '';
+		} catch(e) { return ''; }
+	}
+
+	function highlightText(text, query, mode) {
 		if (!query) return text;
+		mode = mode || 'normal';
+		var cls = 'search-match';
+		if (mode === 'regex') cls = 'search-match-regex';
+		else if (mode === 'fuzzy') cls = 'search-match-fuzzy';
 		var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 		var re = new RegExp('(' + escaped + ')', 'gi');
-		return text.replace(re, '<mark class="search-match">$1</mark>');
+		return text.replace(re, '<mark class="' + cls + '">$1</mark>');
 	}
 
 	function escHtml(str) {
