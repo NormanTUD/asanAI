@@ -107,18 +107,16 @@ function js($file, $loaderLabel = null, $defer = false) {
 }
 
 function css($file) {
-	// 1. Add .css extension if missing and not a URL
 	if (!str_ends_with($file, '.css') && !str_starts_with($file, 'http')) {
 		$file .= ".css";
 	}
 
-	// 2. Redirect logic
-	#if (isset($_GET['load_from_asanai']) && !str_starts_with($file, 'http')) {
-	#	$file = "asanai_blog_proxy.php?" . ltrim($file, '/');
-	#}
+	$v = "";
+	if (file_exists($file)) {
+		$v = "?v=" . filemtime($file);
+	}
 
-	// 3. Output the tag
-	print("<link rel='stylesheet' href='$file'>\n");
+	print("<link rel='stylesheet' href='$file$v' type='text/css' media='all'>\n");
 }
 
 function incl($headline, $base_name) {
@@ -451,7 +449,8 @@ if(!server_php_self_ends_with_index_php()) {
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<meta name="theme-color" content="#ffffff">
 <?php
 		print_dynamic_title();
 		load_base_js();

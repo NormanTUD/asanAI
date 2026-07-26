@@ -3211,3 +3211,97 @@ img {
 		font-size: 1.25rem;
 	}
 }
+
+html {
+	-webkit-tap-highlight-color: transparent;
+	scroll-behavior: smooth;
+}
+
+#contents a.course-tile,
+.course-tile {
+	-webkit-touch-callout: none;
+}
+
+.course-tile:active {
+	transform: scale(0.97);
+	transition: transform 0.1s;
+}
+
+@media (hover: none) {
+	.course-tile:hover {
+		transform: none;
+		box-shadow: var(--mn-shadow-sm);
+	}
+
+	.course-hero {
+		padding: 2rem 0 1.5rem;
+	}
+
+	.course-part {
+		margin-bottom: 2rem;
+	}
+
+	.course-part-header {
+		padding-bottom: 0.6rem;
+		margin-bottom: 0.75rem;
+	}
+
+	#contents {
+		width: 100%;
+		padding-left: max(1rem, env(safe-area-inset-left));
+		padding-right: max(1rem, env(safe-area-inset-right));
+		box-sizing: border-box;
+	}
+
+	.course-tile {
+		padding: 1rem 1.1rem;
+	}
+
+	.course-tile-icon {
+		font-size: 1.3rem;
+	}
+
+	.course-tile h3 {
+		font-size: 0.95rem;
+	}
+
+	.course-tile p {
+		font-size: 0.82rem;
+	}
+
+	.course-hero h1 {
+		font-size: 1.6rem;
+	}
+}
+
+@keyframes tileIn {
+	from {
+		opacity: 0;
+		transform: translateY(12px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+.course-tile {
+	animation: tileIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.course-tile:nth-child(1) { animation-delay: 0s; }
+.course-tile:nth-child(2) { animation-delay: 0.05s; }
+.course-tile:nth-child(3) { animation-delay: 0.1s; }
+.course-tile:nth-child(4) { animation-delay: 0.15s; }
+.course-tile:nth-child(5) { animation-delay: 0.2s; }
+.course-tile:nth-child(6) { animation-delay: 0.25s; }
+.course-tile:nth-child(7) { animation-delay: 0.3s; }
+.course-tile:nth-child(8) { animation-delay: 0.35s; }
+.course-tile:nth-child(9) { animation-delay: 0.4s; }
+.course-tile:nth-child(10) { animation-delay: 0.45s; }
+
+@media (prefers-reduced-motion: reduce) {
+	.course-tile {
+		animation: none;
+	}
+}
