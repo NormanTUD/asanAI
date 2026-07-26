@@ -288,14 +288,26 @@ foreach ($files as $file) {
 
 		$rawCleaned = cleanMarkdown($raw);
 		$rawStripped = strip_tags($rawCleaned);
-		$text = cleanText($rawStripped, $bibData);
-		$paras = preg_split('/\n\s*\n/', $text);
+		$textBase = cleanMath($rawStripped);
+		$textBase = resolveCitations($textBase, $bibData);
+		$paras = preg_split('/\n\s*\n/', $textBase);
 		$cursor = 0;
 		foreach ($paras as $p) {
 			$p = trim(preg_replace('/\s+/', ' ', $p));
 			if (strlen($p) > 50) {
 				$probe = mb_substr($p, 0, 25);
-				$found = mb_strpos($rawStripped, $probe, $cursor);
+				$normProbe = preg_replace('/[^\w\s]/u', '', $probe);
+				$normStripped = preg_replace('/[^\w\s]/u', '', $rawStripped);
+				$found = mb_strpos($normStripped, $normProbe, $cursor);
+				if ($found === false) {
+					$words = preg_split('/\s+/', $normProbe);
+					foreach ($words as $w) {
+						if (mb_strlen($w) > 3) {
+							$found = mb_strpos($normStripped, $w, $cursor);
+							if ($found !== false) break;
+						}
+					}
+				}
 				if ($found === false) $found = $cursor;
 				$blocks[] = ['type' => 'text', 'text' => $p, 'pos' => $mdPos + $found];
 				$cursor = $found + 1;
