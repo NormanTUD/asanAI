@@ -291,20 +291,25 @@ foreach ($files as $file) {
 		$textBase = cleanMath($rawStripped);
 		$textBase = resolveCitations($textBase, $bibData);
 		$paras = preg_split('/\n\s*\n/', $textBase);
+		$normStripped = preg_replace('/[^\w\s]/u', '', $rawStripped);
 		$cursor = 0;
+		$normLen = strlen($normStripped);
 		foreach ($paras as $p) {
 			$p = trim(preg_replace('/\s+/', ' ', $p));
 			if (strlen($p) > 50) {
 				$probe = mb_substr($p, 0, 25);
 				$normProbe = preg_replace('/[^\w\s]/u', '', $probe);
-				$normStripped = preg_replace('/[^\w\s]/u', '', $rawStripped);
-				$found = mb_strpos($normStripped, $normProbe, $cursor);
-				if ($found === false) {
-					$words = preg_split('/\s+/', $normProbe);
-					foreach ($words as $w) {
-						if (mb_strlen($w) > 3) {
-							$found = mb_strpos($normStripped, $w, $cursor);
-							if ($found !== false) break;
+				$found = false;
+				if ($normLen > 0) {
+					$searchStart = min($cursor, $normLen - 1);
+					$found = mb_strpos($normStripped, $normProbe, $searchStart);
+					if ($found === false) {
+						$words = preg_split('/\s+/', $normProbe);
+						foreach ($words as $w) {
+							if (mb_strlen($w) > 3) {
+								$found = mb_strpos($normStripped, $w, $searchStart);
+								if ($found !== false) break;
+							}
 						}
 					}
 				}
