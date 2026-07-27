@@ -941,35 +941,35 @@ function initModuleNav() {
 	const nav = document.createElement('nav');
 	nav.className = 'module-nav';
 
-	const prevSpan = document.createElement('span');
 	if (idx > 0) {
 		const prev = modules[idx - 1];
 		const a = document.createElement('a');
 		a.href = prev.url;
 		a.className = 'module-nav-link module-nav-prev';
-			a.innerHTML = '<span class="module-nav-arrow" aria-hidden="true">←</span>'
-				+ '<span class="module-nav-body">'
-				+ '<span class="module-nav-label">Previous</span>'
-				+ '<span class="module-nav-title">' + escHtml(prev.title) + '</span>'
-				+ '</span>';
-		prevSpan.appendChild(a);
+		a.innerHTML = '<span class="module-nav-arrow" aria-hidden="true">←</span>'
+			+ '<span class="module-nav-body">'
+			+ '<span class="module-nav-label">Previous</span>'
+			+ '<span class="module-nav-title">' + escHtml(prev.title) + '</span>'
+			+ '</span>';
+		nav.appendChild(a);
+	} else {
+		nav.appendChild(document.createElement('span'));
 	}
-	nav.appendChild(prevSpan);
 
-	const nextSpan = document.createElement('span');
 	if (idx < modules.length - 1) {
 		const next = modules[idx + 1];
 		const a = document.createElement('a');
 		a.href = next.url;
 		a.className = 'module-nav-link module-nav-next';
-			a.innerHTML = '<span class="module-nav-body">'
-				+ '<span class="module-nav-label">Next</span>'
-				+ '<span class="module-nav-title">' + escHtml(next.title) + '</span>'
-				+ '</span>'
-				+ '<span class="module-nav-arrow" aria-hidden="true">→</span>';
-		nextSpan.appendChild(a);
+		a.innerHTML = '<span class="module-nav-body">'
+			+ '<span class="module-nav-label">Next</span>'
+			+ '<span class="module-nav-title">' + escHtml(next.title) + '</span>'
+			+ '</span>'
+			+ '<span class="module-nav-arrow" aria-hidden="true">→</span>';
+		nav.appendChild(a);
+	} else {
+		nav.appendChild(document.createElement('span'));
 	}
-	nav.appendChild(nextSpan);
 
 	contents.appendChild(nav);
 }

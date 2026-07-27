@@ -236,6 +236,182 @@ html.dark [style*="background: #8b5cf6"],
 html.dark [style*="background:#8b5cf6"] {
 	background: #7c3aed !important;
 }
+
+/* ════════════════════════════════════════════════════════════
+   EXTENDED DARK-MODE INLINE-STYLE OVERRIDES
+   Lab pages generate enormous amounts of inline `style="color:#…"`
+   / `style="background:#…"` strings. Rather than editing thousands
+   of JS lines we catch the common light-mode swatches here.
+   ════════════════════════════════════════════════════════ */
+
+/* White-ish backgrounds → dark surface */
+html.dark [style*="background: #fff"],
+html.dark [style*="background:#fff"],
+html.dark [style*="background: #ffffff"],
+html.dark [style*="background:#ffffff"],
+html.dark [style*="background: white"],
+html.dark [style*="background:white"] {
+	background: var(--mn-surface) !important;
+}
+
+/* Borders on white-ish backgrounds → dark border */
+html.dark [style*="background:#fff"][style*="border"],
+html.dark [style*="background: #fff"][style*="border"],
+html.dark [style*="background:#ffffff"][style*="border"],
+html.dark [style*="background: #ffffff"][style*="border"] {
+	border-color: var(--mn-border) !important;
+}
+
+/* Dark text colours used inline → light text */
+html.dark [style*="color: #1e293b"],
+html.dark [style*="color:#1e293b"] {
+	color: var(--mn-text) !important;
+}
+html.dark [style*="color: #0f172a"],
+html.dark [style*="color:#0f172a"] {
+	color: var(--mn-heading) !important;
+}
+html.dark [style*="color: #334155"],
+html.dark [style*="color:#334155"] {
+	color: var(--mn-text-secondary) !important;
+}
+html.dark [style*="color: #cbd5e1"],
+html.dark [style*="color:#cbd5e1"] {
+	color: var(--mn-text-muted) !important;
+}
+html.dark [style*="color: #fff"],
+html.dark [style*="color:#fff"],
+html.dark [style*="color: #ffffff"],
+html.dark [style*="color:#ffffff"],
+html.dark [style*="color:white"],
+html.dark [style*="color: white"] {
+	color: var(--mn-text) !important;
+}
+html.dark [style*="color: #475569"],
+html.dark [style*="color:#475569"] {
+	color: var(--mn-text-secondary) !important;
+}
+html.dark [style*="color: #94a3b8"],
+html.dark [style*="color:#94a3b8"] {
+	color: var(--mn-text-muted) !important;
+}
+html.dark [style*="color: #666"],
+html.dark [style*="color:#666"],
+html.dark [style*="color: #555"],
+html.dark [style*="color:#555"],
+html.dark [style*="color: #444"],
+html.dark [style*="color:#444"] {
+	color: var(--mn-text-secondary) !important;
+}
+html.dark [style*="color: #888"],
+html.dark [style*="color:#888"] {
+	color: var(--mn-text-muted) !important;
+}
+html.dark [style*="color: #aaa"],
+html.dark [style*="color:#aaa"],
+html.dark [style*="color: #333"],
+html.dark [style*="color:#333"] {
+	color: var(--mn-text-secondary) !important;
+}
+
+/* Card / panel inline backgrounds that were light grey */
+html.dark [style*="background: #e2e8f0"],
+html.dark [style*="background:#e2e8f0"] {
+	background: var(--mn-surface-raised) !important;
+}
+html.dark [style*="background: #fafafa"],
+html.dark [style*="background:#fafafa"],
+html.dark [style*="background: #f9fafb"],
+html.dark [style*="background:#f9fafb"],
+html.dark [style*="background: #f4f4f5"],
+html.dark [style*="background:#f4f4f5"],
+html.dark [style*="background: #fafbfc"],
+html.dark [style*="background:#fafbfc"] {
+	background: var(--mn-bg-subtle) !important;
+}
+
+/* Off-white / cream inline backgrounds → dark surface */
+html.dark [style*="background: #fffef0"],
+html.dark [style*="background:#fffef0"],
+html.dark [style*="background: #fffef7"],
+html.dark [style*="background:#fffef7"],
+html.dark [style*="background: #f8f6f0"],
+html.dark [style*="background:#f8f6f0"] {
+	background: var(--mn-surface) !important;
+}
+
+/* Progress track backgrounds (light grey) → dark raised */
+html.dark [style*="background:#334155"],
+html.dark [style*="background: #334155"] {
+	background: var(--mn-surface-raised) !important;
+}
+
+/* Sticky bar / panel root that hardcodes a dark blueish navy */
+html.dark #training-progress-bar-container {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-top: 1px solid var(--mn-border);
+}
+html.dark #training-progress-bar-container [style*="background:#1f2937"],
+html.dark #training-progress-bar-container [style*="background: #1f2937"],
+html.dark #training-progress-bar-container [style*="border: 1px solid #374151"],
+html.dark #training-progress-bar-container [style*="border:1px solid #374151"] {
+	background: var(--mn-surface-raised) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark #training-progress-bar-container [style*="color:#9ca3af"],
+html.dark #training-progress-bar-container [style*="color: #9ca3af"] {
+	color: var(--mn-text-muted) !important;
+}
+
+/* tlab control labels inside the sticky bar */
+html.dark #training-progress-bar-container [style*="color:#94a3b8"],
+html.dark #training-progress-bar-container [style*="color: #94a3b8"],
+html.dark #training-progress-bar-container [style*="color:#64748b"],
+html.dark #training-progress-bar-container [style*="color: #64748b"] {
+	color: var(--mn-text-muted) !important;
+}
+
+/* Plotly in dark mode — extend axis/font colours */
+html.dark .js-plotly-plot .main-svg text,
+html.dark .js-plotly-plot .gtitle,
+html.dark .js-plotly-plot .xtick text,
+html.dark .js-plotly-plot .ytick text {
+	fill: var(--mn-text-secondary) !important;
+}
+html.dark .js-plotly-plot .main-svg .gridlayer path {
+	stroke: var(--mn-border) !important;
+}
+html.dark .js-plotly-plot .main-svg .zerolinelayer path {
+	stroke: var(--mn-border) !important;
+}
+html.dark .js-plotly-plot .modebar-btn path {
+	fill: var(--mn-text-muted) !important;
+}
+
+/* ECharts: theme the legend, axis labels and tooltip backgrounds */
+html.dark .echarts-tooltip,
+html.dark div[style*="z-index: 9999999"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark canvas {
+	background: transparent;
+}
+
+/* Three.js / WebGL canvas: just ensure container bg matches */
+html.dark .viz-container canvas,
+html.dark .dll-plot-container canvas,
+html.dark #transformer-site canvas {
+	background: transparent !important;
+}
+
+/* Glossary & dark text fix inside inline callouts */
+html.dark [style*="color: #1e293b"]:not([class]) {
+	color: var(--mn-text) !important;
+}
 html.dark .search-match {
 	background: rgba(99, 102, 241, 0.25);
 	color: #a5b4fc;
@@ -4158,8 +4334,8 @@ html {
 	border-top: 1px solid var(--mn-border);
 }
 .module-nav-link {
-	flex: 1 1 45%;
-	max-width: 45%;
+	flex: 1 1 calc(50% - 8px);
+	max-width: calc(50% - 8px);
 	padding: 14px 18px;
 	border: 1px solid var(--mn-border);
 	border-radius: var(--mn-radius-md);
@@ -4239,7 +4415,7 @@ html {
 		flex-direction: column;
 	}
 	.module-nav-link {
-		flex: 1 1 auto;
+		flex: 1 1 100%;
 		max-width: 100%;
 	}
 }

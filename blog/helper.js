@@ -1884,3 +1884,74 @@ function add (...args) {
 function addN (...args) {
 	return tf.addN(...args);
 }
+
+/* ════════════════════════════════════════════════════════════
+   DARK MODE HELPERS
+   Centralised utilities so every JS file can react to the
+   current theme via CSS variables and helper queries.
+   ════════════════════════════════════════════════════════ */
+
+window.__MN_DARK = {
+	isDark: function () {
+		return document.documentElement.classList.contains('dark');
+	},
+	// Returns the resolved value of a CSS custom property on <html>.
+	// E.g. themeVar('--mn-bg') => '#0f172a' in dark, '#ffffff' in light.
+	themeVar: function (name) {
+		return getComputedStyle(document.documentElement)
+			.getPropertyValue(name).trim();
+	},
+	// Listen to theme changes (cookie-driven toggle in functions.php
+	// mutates the .dark class on <html>).
+	onChange: function (callback) {
+		const html = document.documentElement;
+		const obs = new MutationObserver((muts) => {
+			for (const m of muts) {
+				if (m.attributeName === 'class') {
+					callback(this.isDark());
+				}
+			}
+		});
+		obs.observe(html, { attributes: true, attributeFilter: ['class'] });
+		return obs;
+	},
+	// Canonical colour pairs that swap when dark mode is active.
+	// Use these when canvas/WebGL rendering cannot read CSS vars.
+	pairs: {
+		'#ffffff': '#1e293b', // white  -> dark surface
+		'#fff':    '#1e293b',
+		'#f8fafc': '#1e293b', // subtle bg -> dark bg
+		'#f1f5f9': '#334155', // raised    -> dark raised
+		'#e2e8f0': '#334155', // border    -> dark border
+		'#fafafa': '#1e293b',
+		'#f9fafb': '#0f172a',
+		'#1e293b': '#e2e8f0', // dark text -> light text
+		'#0f172a': '#f1f5f9',
+		'#475569': '#cbd5e1',
+		'#64748b': '#94a3b8',
+		'#94a3b8': '#94a3b8', // identical - stays
+		'#cbd5e1': '#64748b',
+		'#e2e8f0': '#475569'
+	},
+	// Resolve a single colour through the swap map.
+	// Accepts hex strings, returns the dark-mode equivalent (or the
+	// original if no swap is registered).
+	color: function (c) {
+		if (!c || typeof c !== 'string') return c;
+		const dark = this.isDark();
+		if (!dark) return c;
+		const key = c.toLowerCase().trim();
+		if (this.pairs[key] !== undefined) return this.pairs[key];
+		// Try without leading "#"
+		if (key.startsWith('#')) {
+			const short = '#' + key.slice(1);
+			if (this.pairs[short] !== undefined) return this.pairs[short];
+		}
+		return c;
+	}
+};
+
+// Convenience aliases that JS files can call without the window prefix.
+const isDarkMode = () => window.__MN_DARK.isDark();
+const themeColor = (c) => window.__MN_DARK.color(c);
+const cssVar = (name) => window.__MN_DARK.themeVar(name);
