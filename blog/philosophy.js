@@ -132,8 +132,8 @@ const CRSim = (() => {
 			const $tr = $('<tr>')
 				.data('input', inp)
 				.append(
-					$('<td>').css({ padding: '0.4em 0.5em', borderBottom: '1px solid #333', fontSize: '1.15em', letterSpacing: '0.05em' }).text(inp),
-					$('<td>').css({ padding: '0.4em 0.5em', borderBottom: '1px solid #333', fontSize: '1.15em', letterSpacing: '0.05em', color: '#81d4fa' }).text(out)
+					$('<td>').css({ padding: '0.4em 0.5em', borderBottom: '1px solid ' + themeColor('#333'), fontSize: '1.15em', letterSpacing: '0.05em' }).text(inp),
+					$('<td>').css({ padding: '0.4em 0.5em', borderBottom: '1px solid ' + themeColor('#333'), fontSize: '1.15em', letterSpacing: '0.05em', color: themeColor('#81d4fa') }).text(out)
 				);
 			$tbody.append($tr);
 		});
