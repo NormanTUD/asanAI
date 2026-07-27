@@ -22,8 +22,7 @@ window.TrainingDemo = (function() {
         lossHist: [], posHist: [],
         img: null, features: null,
         running: false, animId: null, plotTimer: null,
-        plotInitialized: false,
-        plotCamera: null, userInteracted: false
+        plotInitialized: false, plotDiv: null
     };
 
     function randn() {
@@ -35,11 +34,11 @@ window.TrainingDemo = (function() {
 
     function initNet() {
         s.W1 = Array.from({length: NI}, function() {
-            return Array.from({length: NH}, function() { return randn() * 0.5; });
+            return Array.from({length: NH}, function() { return (Math.random() - 0.5) * 0.8; });
         });
         s.b1 = [0,0,0,0];
         s.W2 = Array.from({length: NH}, function() {
-            return Array.from({length: NO}, function() { return randn() * 0.5; });
+            return Array.from({length: NO}, function() { return (Math.random() - 0.5) * 0.8; });
         });
         s.b2 = [0,0];
         s.step = 0; s.lossHist = []; s.posHist = [];
@@ -124,9 +123,9 @@ window.TrainingDemo = (function() {
     }
 
     function arrow(val) {
-        if (val > 0.7) return '\u2191\u2191';
-        if (val > 0.4) return '\u2191';
-        if (val > 0.15) return '\u2192';
+        if (val > 0.8) return '\u2191\u2191';
+        if (val > 0.45) return '\u2191';
+        if (val > 0.2) return '\u2192';
         if (val > 0) return '\u2193';
         return '\u2193\u2193';
     }
@@ -197,14 +196,13 @@ window.TrainingDemo = (function() {
             ctx.fillText('?', imgX + imgSize/2, imgY + imgSize/2);
         }
 
-        // Label below
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.font = 'bold 14px system-ui';
         ctx.fillStyle = '#1e293b';
         ctx.fillText(data.label, imgX + imgSize/2, imgY + imgSize + 18);
 
-        // Arrow from image to network
+        // Arrow image → network
         var arrY = imgY + imgSize + 28;
         ctx.fillStyle = '#94a3b8';
         ctx.font = '20px system-ui';
@@ -238,51 +236,53 @@ window.TrainingDemo = (function() {
 
         // ---- Trace dots ----
         var traceDots = [];
-        if (isFwd && fwdProg > 0.3) {
-            var fDot = Math.min(1, (fwdProg - 0.3) / 0.7);
+        // Forward dots: input→hidden then hidden→output
+        if (isFwd && fwdProg > 0.2) {
+            var fDot = Math.min(1, (fwdProg - 0.2) / 0.8);
             if (fDot < 0.5) {
                 var t = fDot * 2;
                 for (var fi = 0; fi < NI; fi++)
                     for (var ti = 0; ti < NH; ti++)
-                        if (Math.random() < 0.02)
+                        if (Math.random() < 0.03)
                             traceDots.push({
                                 x: layers[0].x + neuronR + (layers[1].x - layers[0].x - neuronR*2) * t,
                                 y: layerYs[0][fi] + (layerYs[1][ti] - layerYs[0][fi]) * t,
-                                alpha: 0.7, size: 3, color: '#6366f1'
+                                a: 0.6 + 0.3 * Math.sin(t * 10 + fi + ti), s: 3 + Math.random()*2, c: '#6366f1'
                             });
             } else {
                 var t = (fDot - 0.5) * 2;
                 for (var fi = 0; fi < NH; fi++)
                     for (var ti = 0; ti < NO; ti++)
-                        if (Math.random() < 0.04)
+                        if (Math.random() < 0.05)
                             traceDots.push({
                                 x: layers[1].x + neuronR + (layers[2].x - layers[1].x - neuronR*2) * t,
                                 y: layerYs[1][fi] + (layerYs[2][ti] - layerYs[1][fi]) * t,
-                                alpha: 0.7, size: 3, color: '#8b5cf6'
+                                a: 0.6 + 0.3 * Math.sin(t * 10 + fi + ti), s: 3 + Math.random()*2, c: '#8b5cf6'
                             });
             }
         }
-        if (isBwd && bwdProg > 0.15) {
-            var bDot = Math.min(1, (bwdProg - 0.15) / 0.7);
+        // Backward dots: output→hidden then hidden→input
+        if (isBwd && bwdProg > 0.1) {
+            var bDot = Math.min(1, (bwdProg - 0.1) / 0.8);
             if (bDot < 0.45) {
                 var t = bDot / 0.45;
                 for (var fi = 0; fi < NH; fi++)
                     for (var ti = 0; ti < NO; ti++)
-                        if (Math.random() < 0.03)
+                        if (Math.random() < 0.04)
                             traceDots.push({
                                 x: layers[2].x - neuronR - (layers[2].x - layers[1].x - neuronR*2) * t,
                                 y: layerYs[2][ti] - (layerYs[2][ti] - layerYs[1][fi]) * t,
-                                alpha: 0.7, size: 3, color: '#f59e0b'
+                                a: 0.6 + 0.3 * Math.sin(t * 10 + fi + ti), s: 3 + Math.random()*2, c: '#f59e0b'
                             });
             } else {
                 var t = (bDot - 0.45) / 0.55;
                 for (var fi = 0; fi < NI; fi++)
                     for (var ti = 0; ti < NH; ti++)
-                        if (Math.random() < 0.02)
+                        if (Math.random() < 0.03)
                             traceDots.push({
                                 x: layers[1].x - neuronR - (layers[1].x - layers[0].x - neuronR*2) * t,
                                 y: layerYs[1][ti] - (layerYs[1][ti] - layerYs[0][fi]) * t,
-                                alpha: 0.7, size: 3, color: '#f59e0b'
+                                a: 0.6 + 0.3 * Math.sin(t * 10 + fi + ti), s: 3 + Math.random()*2, c: '#f59e0b'
                             });
             }
         }
@@ -293,30 +293,33 @@ window.TrainingDemo = (function() {
             for (var f = 0; f < fn; f++) {
                 for (var t = 0; t < tn; t++) {
                     var w = wMat ? wMat[f][t] : 0;
-                    var alpha = 0.04 + Math.abs(w) * 0.25;
-                    var hue = w >= 0 ? 210 : 0;
+                    var alpha = 0.03 + Math.abs(w) * 0.2;
+                    var hue = w >= 0 ? 210 : 0;  // positive=blue, negative=red
                     var width = Math.max(0.5, Math.abs(w) * 2);
-                    if (ff > 0 && fi === 0 && ti === 1) {
-                        var flow = s.inp[f] * w * ff;
-                        if (Math.abs(flow) > 0.01) {
-                            alpha = Math.min(0.85, alpha + Math.abs(flow) * 3);
+
+                    // Forward glow for ALL connections
+                    if (ff > 0) {
+                        var flow = (fi === 0 ? s.inp[f] : s.hid[f]) * w * ff;
+                        if (Math.abs(flow) > 0.005) {
+                            alpha = Math.min(1, 0.1 + Math.abs(flow) * 5);
                             hue = flow >= 0 ? 210 : 0;
-                            width = Math.max(width, Math.abs(flow) * 5);
+                            width = Math.max(1, Math.abs(flow) * 7);
                         }
                     }
+                    // Backward glow
                     if (bf > 0) {
                         var g = gMat ? (gMat[t] || 0) * w : 0;
                         var ga = Math.abs(g) * bf * 4;
-                        if (ga > 0.03) {
-                            alpha = Math.min(0.85, alpha + ga);
+                        if (ga > 0.02) {
+                            alpha = Math.min(0.9, alpha + ga);
                             hue = 30;
-                            width = Math.max(width, Math.abs(g) * bf * 5);
+                            width = Math.max(width, Math.abs(g) * bf * 6);
                         }
                     }
                     ctx.beginPath();
                     ctx.moveTo(layers[fi].x + neuronR + 2, fYs[f]);
                     ctx.lineTo(layers[ti].x - neuronR - 2, tYs[t]);
-                    ctx.strokeStyle = 'hsla(' + hue + ', 70%, 50%, ' + Math.min(1, alpha).toFixed(2) + ')';
+                    ctx.strokeStyle = 'hsla(' + hue + ', 75%, 55%, ' + Math.max(0.02, Math.min(1, alpha)).toFixed(2) + ')';
                     ctx.lineWidth = Math.max(0.5, width);
                     ctx.stroke();
                 }
@@ -325,6 +328,22 @@ window.TrainingDemo = (function() {
 
         drawConn(0, 1, layerYs[0], layerYs[1], s.W1, s.gradH, fwdProg, (isBwd && bwdSub === 3) ? bwdProg : 0);
         drawConn(1, 2, layerYs[1], layerYs[2], s.W2, s.gradO, isFwd ? fwdProg : 0, (isBwd && bwdSub === 1) ? bwdProg : 0);
+
+        // ---- Trace dots ----
+        traceDots.forEach(function(d) {
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.s, 0, Math.PI * 2);
+            ctx.fillStyle = d.c;
+            ctx.globalAlpha = d.a;
+            ctx.fill();
+            ctx.shadowColor = d.c;
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.s, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.globalAlpha = 1;
+        });
 
         // ---- Neurons ----
         for (var li = 0; li < layers.length; li++) {
@@ -340,9 +359,9 @@ window.TrainingDemo = (function() {
                 }
 
                 var fillVal = Math.min(1, Math.abs(val) * 1.5);
-                var r = Math.round(230 - fillVal * 160);
-                var g = Math.round(230 - fillVal * 110);
-                var b = Math.round(245 - fillVal * 170);
+                var r = Math.round(230 - fillVal * 190);
+                var g = Math.round(230 - fillVal * 130);
+                var b = Math.round(245 - fillVal * 190);
                 if (glow > 0.05) {
                     r = Math.round(255 - (1 - glow) * 100);
                     g = Math.round(160 - (1 - glow) * 120);
@@ -363,7 +382,6 @@ window.TrainingDemo = (function() {
                     ctx.shadowBlur = 0;
                 }
 
-                // Arrow indicators instead of numbers
                 if (isFwd || isLoss || isUpd) {
                     ctx.fillStyle = (fillVal > 0.5 || glow > 0.3) ? '#fff' : '#475569';
                     ctx.font = 'bold 14px system-ui';
@@ -379,39 +397,32 @@ window.TrainingDemo = (function() {
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = '#334155';
-                    ctx.fillText(lbl, x + neuronR + 10, y - 8);
+                    ctx.fillText(lbl, x + neuronR + 10, y - 10);
 
-                    var bw = 90, bh = 10;
+                    var bw = 85, bh = 10;
                     var bx = x + neuronR + 10, by = y + 10;
                     ctx.fillStyle = '#e2e8f0';
                     ctx.fillRect(bx, by, bw, bh);
                     ctx.fillStyle = ni === 0 ? '#3b82f6' : '#10b981';
-                    if (!s.correct && isFwd) ctx.fillStyle = '#f59e0b';
                     ctx.fillRect(bx, by, bw * val, bh);
                     ctx.fillStyle = '#64748b';
                     ctx.font = '10px monospace';
                     ctx.textAlign = 'right';
                     ctx.textBaseline = 'alphabetic';
-                    ctx.fillText((val * 100).toFixed(0) + '%', bx + bw + 6, by + bh - 1);
+                    ctx.fillText((val*100).toFixed(0) + '%', bx + bw + 4, by + bh - 1);
+
+                    // Correct/wrong marker
+                    if (isLoss || isBwd || isUpd) {
+                        var isRight = (ni === 0 && s.correct || ni === 1 && !s.correct);
+                        ctx.font = '16px system-ui';
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'alphabetic';
+                        ctx.fillStyle = isRight ? '#10b981' : '#ef4444';
+                        ctx.fillText(isRight ? '\u2713' : '\u2717', x + neuronR + 10, by + bh + 16);
+                    }
                 }
             }
         }
-
-        // Trace dots
-        traceDots.forEach(function(d) {
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-            ctx.fillStyle = d.color;
-            ctx.globalAlpha = d.alpha;
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.shadowColor = d.color;
-            ctx.shadowBlur = 8;
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
-        });
 
         // Layer labels
         ctx.font = '10px system-ui';
@@ -429,16 +440,16 @@ window.TrainingDemo = (function() {
             ctx.fillText('Loss: ' + s.loss.toFixed(4), W - 12, siY);
             ctx.font = '11px system-ui';
             ctx.fillStyle = '#64748b';
-            ctx.fillText(s.correct ? 'Richtig \u2713' : 'Falsch \u2717', W - 12, siY + 18);
+            ctx.fillText(s.correct ? 'Richtig' : 'Falsch', W - 12, siY + 18);
             if (isBwd) {
                 ctx.fillStyle = '#f59e0b';
                 ctx.font = 'bold 11px system-ui';
-                ctx.fillText('\u21BB R\u00fcckw\u00e4rtspropagation...', W - 12, siY + 38);
+                ctx.fillText('\u21BB R\u00fcckw\u00e4rts...', W - 12, siY + 38);
             }
             if (isUpd) {
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 11px system-ui';
-                ctx.fillText('\u2713 Gewichte aktualisiert', W - 12, siY + 38);
+                ctx.fillText('\u2713 Gewichte updaten', W - 12, siY + 38);
             }
         } else if (isFwd) {
             ctx.fillStyle = '#6366f1';
@@ -447,7 +458,7 @@ window.TrainingDemo = (function() {
             ctx.fillText('\u2192 Vorw\u00e4rtspass...', W - 12, siY + 18);
         }
 
-        // Bottom stats
+        // Bottom
         ctx.font = '10px system-ui';
         ctx.textAlign = 'right';
         ctx.fillStyle = '#94a3b8';
@@ -481,11 +492,11 @@ window.TrainingDemo = (function() {
             ctx.fillText('Loss', cx + 2, cy + 9);
         }
 
-        // Image nav hint
+        // Nav hint
         ctx.font = '9px system-ui';
         ctx.textAlign = 'left';
         ctx.fillStyle = '#cbd5e1';
-        ctx.fillText('\u2190 \u2192 Bilder wechseln', 10, 16);
+        ctx.fillText('\u2190 \u2192 Bilder', 10, 16);
     }
 
     // ============================================================
@@ -539,6 +550,7 @@ window.TrainingDemo = (function() {
     function updatePlot() {
         var div = document.getElementById('training-loss-landscape');
         if (!div || typeof Plotly === 'undefined') return;
+        s.plotDiv = div;
         var data = getLandscapeData();
         var w1i = 0, w2i = 2;
         var cw1 = s.W1[w1i][0], cw2 = s.W1[w2i][0];
@@ -581,12 +593,15 @@ window.TrainingDemo = (function() {
         var surface = {
             type: 'surface', x: data.x, y: data.y, z: data.z,
             colorscale: [
-                [0, 'rgb(0,40,120)'], [0.2, 'rgb(0,100,200)'],
-                [0.4, 'rgb(50,180,220)'], [0.6, 'rgb(150,220,80)'],
-                [0.8, 'rgb(220,180,30)'], [1, 'rgb(180,60,30)']
+                [0, 'rgb(0,40,120)'], [0.15, 'rgb(0,100,200)'],
+                [0.3, 'rgb(50,180,220)'], [0.5, 'rgb(150,220,80)'],
+                [0.7, 'rgb(220,180,30)'], [0.85, 'rgb(220,100,20)'],
+                [1, 'rgb(160,30,30)']
             ],
             opacity: 0.85,
-            contours: { z: { show: true, usecolormap: true } },
+            contours: {
+                z: { show: true, usecolormap: true, highlightcolor: '#fff', project: { z: true } }
+            },
             showscale: false,
             hovertemplate: 'Gewicht 1: %{x:.3f}<br>Gewicht 2: %{y:.3f}<br>Loss: %{z:.4f}<extra></extra>'
         };
@@ -598,13 +613,13 @@ window.TrainingDemo = (function() {
                 type: 'scatter3d', mode: 'lines+markers',
                 x: pw, y: pb, z: pz,
                 line: { color: '#ffffff', width: 4 },
-                marker: { size: 2, color: '#ffffff', opacity: 0.5 },
-                name: 'Optimierungspfad'
+                marker: { size: 3, color: '#ffffff', opacity: 0.6 },
+                name: 'Pfad'
             });
             traces.push({
                 type: 'scatter3d', mode: 'markers',
                 x: [pw[0]], y: [pb[0]], z: [pz[0]],
-                marker: { size: 8, color: '#2ecc71', symbol: 'diamond' },
+                marker: { size: 8, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 1 } },
                 name: 'Start'
             });
         }
@@ -641,18 +656,13 @@ window.TrainingDemo = (function() {
 
         var dm = typeof is_dark_mode !== 'undefined' && is_dark_mode;
 
-        // Camera: use user's saved camera if they interacted, else default
-        var camera = s.userInteracted && s.plotCamera
-            ? s.plotCamera
-            : { eye: { x: 0.6, y: 2.2, z: 0.4 } };
-
+        // DON'T pass camera in layout for updates → Plotly.react() preserves user view
         var layout = {
             scene: {
                 xaxis: { title: 'Gewicht 1', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
                 yaxis: { title: 'Gewicht 2', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
                 zaxis: { title: 'Loss', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', rangemode: 'tozero' },
-                bgcolor: dm ? '#0d0d1a' : '#fff',
-                camera: camera
+                bgcolor: dm ? '#0d0d1a' : '#fff'
             },
             paper_bgcolor: dm ? '#0d0d1a' : '#fff',
             margin: { l: 0, r: 0, t: 0, b: 0 },
@@ -662,10 +672,10 @@ window.TrainingDemo = (function() {
 
         var config = { responsive: true, displaylogo: false, scrollZoom: true };
         if (!s.plotInitialized) {
+            // First render: set default camera
+            layout.scene.camera = { eye: { x: 0.6, y: 2.2, z: 0.4 } };
             Plotly.newPlot(div, traces, layout, config).then(function() {
                 s.plotInitialized = true;
-                // Save initial camera
-                try { s.plotCamera = div._fullLayout.scene.camera; } catch(e) {}
             });
         } else {
             Plotly.react(div, traces, layout, config);
@@ -673,7 +683,7 @@ window.TrainingDemo = (function() {
     }
 
     // ============================================================
-    // IMAGE NAVIGATION
+    // IMAGE NAVIGATION – via DemoRegistry (consumed by presentation)
     // ============================================================
     function goToImage(idx) {
         s.idx = ((idx % IMG_DATA.length) + IMG_DATA.length) % IMG_DATA.length;
@@ -693,18 +703,12 @@ window.TrainingDemo = (function() {
         goToImage(s.idx - 1);
     }
 
-    // Arrow key handler (only on training slide)
-    function handleKeydown(e) {
-        if (!isOnTrainingSlide()) return;
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            e.preventDefault();
-            e.stopPropagation();
-            nextImage();
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            e.preventDefault();
-            e.stopPropagation();
-            prevImage();
-        }
+    function canGoNext() {
+        return s.idx < IMG_DATA.length - 1;
+    }
+
+    function canGoPrev() {
+        return s.idx > 0;
     }
 
     // ============================================================
@@ -766,7 +770,6 @@ window.TrainingDemo = (function() {
             updatePlot();
         });
         draw();
-        document.addEventListener('keydown', handleKeydown, true);
     }
 
     function start() {
@@ -777,13 +780,6 @@ window.TrainingDemo = (function() {
         if (s.plotTimer) clearInterval(s.plotTimer);
         s.plotTimer = setInterval(function() {
             if (s.running && isOnTrainingSlide()) {
-                // If user interacted, save camera before update
-                if (s.plotInitialized) {
-                    var div = document.getElementById('training-loss-landscape');
-                    if (div && div._fullLayout && div._fullLayout.scene) {
-                        try { s.plotCamera = div._fullLayout.scene.camera; } catch(e) {}
-                    }
-                }
                 updatePlot();
             }
         }, 1500);
@@ -793,7 +789,6 @@ window.TrainingDemo = (function() {
         s.running = false;
         if (s.animId) { cancelAnimationFrame(s.animId); s.animId = null; }
         if (s.plotTimer) { clearInterval(s.plotTimer); s.plotTimer = null; }
-        document.removeEventListener('keydown', handleKeydown, true);
     }
 
     function reset() {
@@ -801,7 +796,6 @@ window.TrainingDemo = (function() {
         initNet();
         s.idx = 0; s.phase = 0; s.phaseT = 0; s.lastTime = 0;
         s.lossHist = []; s.posHist = []; s.plotInitialized = false;
-        s.plotCamera = null; s.userInteracted = false;
         var canvas = document.getElementById('training-network-canvas');
         if (canvas) {
             var ctx = canvas.getContext('2d');
@@ -811,8 +805,7 @@ window.TrainingDemo = (function() {
             fwd(IMG_DATA[0].features);
             bwd(IMG_DATA[0].labelIdx);
         }
-        document.removeEventListener('keydown', handleKeydown, true);
     }
 
-    return { init: init, start: start, stop: stop, reset: reset, isOnTrainingSlide: isOnTrainingSlide };
+    return { init: init, start: start, stop: stop, reset: reset, nextImage: nextImage, prevImage: prevImage, canGoNext: canGoNext, canGoPrev: canGoPrev, isOnTrainingSlide: isOnTrainingSlide };
 })();
