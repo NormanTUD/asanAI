@@ -775,6 +775,15 @@ function initDarkMode() {
 /* ════════════════════════════════════════════════════════════
    ADAPT LABS — fix hardcoded inline styles in demos
    ════════════════════════════════════════════════════════ */
+function isLightHex(hex) {
+	hex = hex.replace('#', '');
+	if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+	var r = parseInt(hex.substr(0,2), 16);
+	var g = parseInt(hex.substr(2,2), 16);
+	var b = parseInt(hex.substr(4,2), 16);
+	return (0.299 * r + 0.587 * g + 0.114 * b) > 200;
+}
+
 function adaptLabsToTheme() {
 	var isDark = document.documentElement.classList.contains('dark');
 	var LAB_BG = '#1e293b';
@@ -782,72 +791,62 @@ function adaptLabsToTheme() {
 	var LAB_TEXT_SEC = '#94a3b8';
 	var LAB_BORDER = '#334155';
 
-		if (isDark) {
-			// Fix all elements with white/light backgrounds in inline styles
-			var all = document.querySelectorAll('[style*="background"]');
-			for (var i = 0; i < all.length; i++) {
-				var el = all[i];
-				if (el.closest('pre') || el.closest('code') || el.id === 'contents' || el.id === 'loader') continue;
-				var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
-				if (
-					/(?:background|background-color):(?:#[fF]{3,6}|#f8fafc|#f1f5f9|#f8f9fa|#fafafa|#f5faf5|#f0f9ff|#f0fdf4|#dcfce7|#e0e7ff|#e0f2fe|#e8f5e9|#fef2f2|#fff3e0|white|rgb\s*\(\s*255\s*,\s*255\s*,\s*255\s*\))/.test(s)
-				) {
-					if (!el.hasAttribute('data-orig-bg')) {
-						el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
-					}
-					el.style.setProperty('background', LAB_BG, 'important');
-					el.style.backgroundColor = '';
+	if (isDark) {
+		var all = document.querySelectorAll('[style*="background"]');
+		for (var i = 0; i < all.length; i++) {
+			var el = all[i];
+			if (el.closest('pre') || el.closest('code') || el.id === 'contents' || el.id === 'loader') continue;
+			var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
+			var m = s.match(/(?:background|background-color):(#[0-9a-f]{3,6})/);
+			if (m && isLightHex(m[1])) {
+				if (!el.hasAttribute('data-orig-bg')) {
+					el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
 				}
+				el.style.setProperty('background', LAB_BG, 'important');
+				el.style.backgroundColor = '';
 			}
+		}
 
-			// Fix dark text colors on light backgrounds
-			var textEls = document.querySelectorAll('[style*="color"]');
-			for (var i = 0; i < textEls.length; i++) {
-				var el = textEls[i];
-				if (el.closest('pre') || el.closest('code') || el.closest('.glossary-term')) continue;
-				var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
-				var m = s.match(/color:\s*(#[0-9a-f]{3,6}|rgba?\s*\([^)]+\))/);
-				if (!m) continue;
-				var c = m[1];
-				if (
-					/^#(1e293b|0f172a|333|333333|444|444444|555|555555|666|666666|777|777777|475569|4a5568|2d3748|1a202c|334155|374151)$/i.test(c)
-				) {
-					if (!el.hasAttribute('data-orig-color')) {
-						el.setAttribute('data-orig-color', el.style.color || '');
-					}
-					el.style.setProperty('color', LAB_TEXT, 'important');
+		var textEls = document.querySelectorAll('[style*="color"]');
+		for (var i = 0; i < textEls.length; i++) {
+			var el = textEls[i];
+			if (el.closest('pre') || el.closest('code') || el.closest('.glossary-term')) continue;
+			var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
+			var m = s.match(/color:(#[0-9a-f]{3,6})/);
+			if (!m) continue;
+			var c = m[1];
+			if (/^#(1e293b|0f172a|333|333333|444|444444|555|555555|666|666666|777|777777|475569|4a5568|2d3748|1a202c|334155|374151|4b5563|6b7280|71717a|52525b)$/i.test(c)) {
+				if (!el.hasAttribute('data-orig-color')) {
+					el.setAttribute('data-orig-color', el.style.color || '');
 				}
+				el.style.setProperty('color', LAB_TEXT, 'important');
 			}
+		}
 
-			// Fix Plotly chart backgrounds
-			document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
-				var rects = svg.querySelectorAll('rect.bg, rect[fill="#fff"], rect[fill="#ffffff"], rect[fill="white"], rect[fill="rgb(255,255,255)"], rect[fill="rgb(255, 255, 255)"]');
-				rects.forEach(function(r) { r.setAttribute('fill', LAB_BG); });
-			});
-			// Fix ECharts containers
-			document.querySelectorAll('div[id$="-chart"], div[id$="-plot"], div[id^="plot-"]').forEach(function(el) {
-				var s = (el.getAttribute('style') || '').toLowerCase();
-				if (/background/.test(s) && /#fff|#ffffff|white/.test(s)) {
-					if (!el.hasAttribute('data-orig-bg')) {
-						el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
-					}
-					el.style.background = LAB_BG;
+		document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
+			var rects = svg.querySelectorAll('rect.bg, rect[fill="#fff"], rect[fill="#ffffff"], rect[fill="white"], rect[fill="rgb(255,255,255)"], rect[fill="rgb(255, 255, 255)"]');
+			rects.forEach(function(r) { r.setAttribute('fill', LAB_BG); });
+		});
+		document.querySelectorAll('div[id$="-chart"], div[id$="-plot"], div[id^="plot-"]').forEach(function(el) {
+			var s = (el.getAttribute('style') || '').toLowerCase();
+			if (/background/.test(s) && /#fff|#ffffff|white/.test(s)) {
+				if (!el.hasAttribute('data-orig-bg')) {
+					el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
 				}
-			});
-
-			// Fix white canvas backgrounds
-			document.querySelectorAll('canvas[style*="background"]').forEach(function(c) {
-				var s = (c.getAttribute('style') || '').toLowerCase();
-				if (/#fff|#ffffff|white/.test(s)) {
-					if (!c.hasAttribute('data-orig-bg')) {
-						c.setAttribute('data-orig-bg', c.style.background || '');
-					}
-					c.style.background = LAB_BG;
+				el.style.background = LAB_BG;
+			}
+		});
+		document.querySelectorAll('canvas[style*="background"]').forEach(function(c) {
+			var s = (c.getAttribute('style') || '').toLowerCase();
+			if (/#fff|#ffffff|white/.test(s)) {
+				if (!c.hasAttribute('data-orig-bg')) {
+					c.setAttribute('data-orig-bg', c.style.background || '');
 				}
-			});
+				c.style.background = LAB_BG;
+			}
+		});
 
-		} else {
-		// Restore original styles when switching back to light mode
+	} else {
 		document.querySelectorAll('[data-orig-bg]').forEach(function(el) {
 			var orig = el.getAttribute('data-orig-bg');
 			if (orig) {
@@ -867,8 +866,6 @@ function adaptLabsToTheme() {
 			}
 			el.removeAttribute('data-orig-color');
 		});
-
-		// Restore Plotly backgrounds
 		document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
 			var rects = svg.querySelectorAll('rect.bg');
 			rects.forEach(function(r) { r.removeAttribute('fill'); });

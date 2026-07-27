@@ -321,6 +321,37 @@ html.dark #toc a:hover {
 html.dark .toggle-icon {
 	color: var(--mn-text-muted) !important;
 }
+
+/* CSS class overrides for hardcoded light backgrounds */
+html.dark .matrix-grid,
+html.dark .token-chip,
+html.dark .sa-attn-table th,
+html.dark .sa-row-label {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+html.dark .matrix-input:focus,
+html.dark .prob-item:hover {
+	background: var(--mn-accent-lighter) !important;
+}
+html.dark .token-table {
+	background: var(--mn-surface) !important;
+}
+html.dark .token-table th {
+	color: var(--mn-text-muted) !important;
+}
+html.dark .token-table td {
+	border-bottom-color: var(--mn-border) !important;
+}
+html.dark select option {
+	background: var(--mn-bg) !important;
+	color: var(--mn-text) !important;
+}
+html.dark .gem-tab-state:checked + .gem-tab-trigger {
+	background: var(--mn-surface) !important;
+	color: var(--mn-accent) !important;
+}
+
 html.dark .math_transformer {
 	background: rgba(245, 158, 11, 0.1) !important;
 	border-color: rgba(245, 158, 11, 0.3) !important;

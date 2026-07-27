@@ -17,6 +17,11 @@
     box-shadow: 0 2px 24px rgba(0,0,0,0.07);
     border: 1.5px solid #e2e8f0;
   }
+  html.dark #river-container {
+    background: var(--mn-bg) !important;
+    border-color: var(--mn-border) !important;
+    color: var(--mn-text) !important;
+  }
   #river-container h2 {
     text-align: center;
     font-size: 1.8rem;

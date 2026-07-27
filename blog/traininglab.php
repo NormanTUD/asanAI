@@ -593,4 +593,77 @@ Since the network weights are randomly initialized, you may need to *reset* the 
 .math-monitor-container .formula-section-title:first-child {
     margin-top: 0;
 }
+
+/* ── Dark Mode Overrides ── */
+html.dark .lab-dashboard .panel {
+    background: var(--mn-surface) !important;
+    border-color: var(--mn-border) !important;
+}
+html.dark .math-monitor-container,
+html.dark .math-monitor-container .formula-block {
+    background: var(--mn-surface) !important;
+    border-color: var(--mn-border) !important;
+}
+html.dark .math-monitor-container .formula-block.full-eq {
+    background: linear-gradient(135deg, var(--mn-surface), var(--mn-bg-subtle)) !important;
+    border-left-color: var(--mn-accent-dark) !important;
+}
+html.dark .math-monitor-container .formula-section-title {
+    color: var(--mn-text-muted) !important;
+}
+html.dark .lab-dashboard .plot-container {
+    border-color: var(--mn-border) !important;
+}
+html.dark .training-table {
+    border-color: var(--mn-border) !important;
+}
+html.dark .training-table thead tr {
+    background: var(--mn-bg-subtle) !important;
+}
+html.dark .formula-block b {
+    color: var(--mn-text-secondary) !important;
+}
+html.dark .btn-reset {
+    background: var(--mn-bg-subtle) !important;
+    color: var(--mn-text-secondary) !important;
+    border-color: var(--mn-border) !important;
+}
+html.dark .btn-reset:hover {
+    background: var(--mn-surface-raised) !important;
+    color: var(--mn-text) !important;
+}
+html.dark .manual-weight-item {
+    background: var(--mn-surface) !important;
+    border-color: var(--mn-border) !important;
+}
+html.dark .manual-weight-item label {
+    color: var(--mn-text-muted) !important;
+}
+html.dark .manual-weight-item b {
+    color: var(--mn-accent) !important;
+}
+html.dark .w-slider {
+    background: var(--mn-bg-subtle) !important;
+}
+html.dark .btn-add-row {
+    color: var(--mn-accent) !important;
+    border-color: var(--mn-border) !important;
+}
+html.dark .predict-box {
+    background: transparent !important;
+}
+html.dark .predict-input {
+    background: var(--mn-surface) !important;
+    color: var(--mn-text) !important;
+    border-color: var(--mn-border) !important;
+}
+html.dark .predict-output {
+    color: var(--mn-accent) !important;
+}
+html.dark .training-table td {
+    border-bottom-color: var(--mn-border) !important;
+}
+html.dark .training-table .btn-delete {
+    color: var(--mn-text-muted) !important;
+}
 </style>
