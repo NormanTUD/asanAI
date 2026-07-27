@@ -754,23 +754,23 @@ function renderSeahorseEmoji(container) {
                         p.vy = Math.sin(angleToCenter + Math.PI / 2.5) * speed * 0.7;
                     }
 
-                    const radialStrength = 0.06 + (1 - dist / basinRadius) * 0.12;
+                    const radialStrength = 0.12 + (1 - dist / basinRadius) * 0.22;
                     const angleToCenter = Math.atan2(dy, dx);
                     p.vx += Math.cos(angleToCenter) * radialStrength;
                     p.vy += Math.sin(angleToCenter) * radialStrength;
 
                     // Tangential für Spiraleffekt
-                    const tangentialStrength = 0.03 * (dist / basinRadius);
+                    const tangentialStrength = 0.05 * (dist / basinRadius);
                     p.vx += Math.cos(angleToCenter + Math.PI / 2) * tangentialStrength;
                     p.vy += Math.sin(angleToCenter + Math.PI / 2) * tangentialStrength;
 
                     // Dämpfung
-                    p.vx *= 0.93;
-                    p.vy *= 0.93;
+                    p.vx *= 0.95;
+                    p.vy *= 0.95;
 
                     // Speed-Limit
                     const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                    const maxSpeed = 2.0 * (dist / basinRadius + 0.15);
+                    const maxSpeed = 2.8 * (dist / basinRadius + 0.15);
                     if (speed > maxSpeed) {
                         p.vx *= maxSpeed / speed;
                         p.vy *= maxSpeed / speed;
@@ -783,29 +783,30 @@ function renderSeahorseEmoji(container) {
                         p.y = cy;
                     }
                 } else {
-                    // ===== FREIE BEWEGUNG: SANFT statt abrupt =====
+                    // ===== FREIE BEWEGUNG: sanft, aber zunehmend Richtung Attraktor =====
                     
-                    // Sanfte Richtungsänderung: Heading dreht sich langsam
+                    // Sanfte Richtungsänderung
                     p.turnChangeTimer--;
                     if (p.turnChangeTimer <= 0) {
-                        // Nur die DREHRATE leicht ändern, nicht die Richtung selbst
                         p.turnRate += (Math.random() - 0.5) * 0.02;
-                        // Drehrate begrenzen
                         p.turnRate = Math.max(-0.04, Math.min(0.04, p.turnRate));
                         p.turnChangeTimer = 40 + Math.floor(Math.random() * 80);
                     }
 
-                    // Heading sanft drehen
                     p.heading += p.turnRate;
 
+                    // Leichte Bias Richtung Zentrum, stärker je weiter draußen
+                    const angleToCenter = Math.atan2(dy, dx);
+                    const centerBias = 0.02 + 0.04 * Math.min(1, (dist - basinRadius) / 250);
+                    p.heading += (angleToCenter - p.heading) * centerBias;
+
                     // Geschwindigkeit sanft in Richtung des Headings lenken
-                    const targetSpeed = 1.5;
+                    const targetSpeed = 1.8;
                     const targetVx = Math.cos(p.heading) * targetSpeed;
                     const targetVy = Math.sin(p.heading) * targetSpeed;
 
-                    // Sanfte Interpolation (kein abrupter Wechsel!)
-                    p.vx += (targetVx - p.vx) * 0.03;
-                    p.vy += (targetVy - p.vy) * 0.03;
+                    p.vx += (targetVx - p.vx) * 0.04;
+                    p.vy += (targetVy - p.vy) * 0.04;
 
                     // Sanfte Wandabstoßung: Heading vom Rand wegdrehen
                     const margin = 60;
@@ -1008,14 +1009,14 @@ function renderSeahorseEmoji(container) {
                 // Abstoßungskraft, sobald das Teilchen im Repulsionsfeld ist
                 if (dist < repelRadius && dist > 0) {
                     const outwardAngle = Math.atan2(dy, dx);
-                    const strength = 0.9 * (1 - dist / repelRadius) + 0.12;
+                    const strength = 1.3 * (1 - dist / repelRadius) + 0.18;
                     p.vx += Math.cos(outwardAngle) * strength;
                     p.vy += Math.sin(outwardAngle) * strength;
-                    p.repelled = 25;
+                    p.repelled = 35;
 
                     // Tangentialer Wirbel für visuellen Schwungeffekt
                     const swirlAngle = outwardAngle + Math.PI / 2;
-                    const swirlStrength = 0.06 * (1 - dist / repelRadius);
+                    const swirlStrength = 0.08 * (1 - dist / repelRadius);
                     p.vx += Math.cos(swirlAngle) * swirlStrength;
                     p.vy += Math.sin(swirlAngle) * swirlStrength;
                 }
@@ -1053,14 +1054,14 @@ function renderSeahorseEmoji(container) {
 
                 // Geschwindigkeitsbegrenzung
                 const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (speed > 3.5) {
-                    p.vx *= 3.5 / speed;
-                    p.vy *= 3.5 / speed;
+                if (speed > 4.5) {
+                    p.vx *= 4.5 / speed;
+                    p.vy *= 4.5 / speed;
                 }
 
                 // Dämpfung
-                p.vx *= 0.96;
-                p.vy *= 0.96;
+                p.vx *= 0.97;
+                p.vy *= 0.97;
 
                 p.x += p.vx;
                 p.y += p.vy;
@@ -1868,8 +1869,8 @@ function renderTorusEarth(container) {
 
                 // Attractor force
                 const angle = Math.atan2(dy, dx);
-                const spiralOffset = 0.5 * Math.exp(-dist * 0.005);
-                const pullStrength = 0.15 + 0.3 * (1 - dist / (W * 0.5));
+                const spiralOffset = 0.12 * Math.exp(-dist * 0.015);
+                const pullStrength = 0.35 + 0.9 * Math.min(1, dist / (W * 0.25));
                 p.vx += Math.cos(angle + spiralOffset) * pullStrength;
                 p.vy += Math.sin(angle + spiralOffset) * pullStrength;
 
@@ -1878,21 +1879,21 @@ function renderTorusEarth(container) {
                     const rdx = p.x - r.x;
                     const rdy = p.y - r.y;
                     const rDist = Math.sqrt(rdx * rdx + rdy * rdy) + 1;
-                    if (rDist < 200) {
+                    if (rDist < 250) {
                         const rAngle = Math.atan2(rdy, rdx);
-                        const rStrength = r.strength * 0.0003 / (rDist * 0.5 + 1);
+                        const rStrength = r.strength * 0.0012 / (rDist * 0.25 + 1);
                         p.vx += Math.cos(rAngle) * rStrength;
                         p.vy += Math.sin(rAngle) * rStrength;
                     }
                 });
 
-                p.vx *= 0.92;
-                p.vy *= 0.92;
+                p.vx *= 0.96;
+                p.vy *= 0.96;
 
                 const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (speed > 3.5) {
-                    p.vx *= 3.5 / speed;
-                    p.vy *= 3.5 / speed;
+                if (speed > 6) {
+                    p.vx *= 6 / speed;
+                    p.vy *= 6 / speed;
                 }
 
                 p.x += p.vx;
