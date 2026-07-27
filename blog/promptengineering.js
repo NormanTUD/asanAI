@@ -1,42 +1,31 @@
 function renderPESpecificityCone() {
     const el = document.getElementById('pe-specificity-cone');
     if (!el) return;
-    const steps = ['"Do stuff"', '"Write code"', '"Write a Python sort function"', '"Write a quicksort in Python with O(n log n)"', '"Quicksort in Python, inline comments, handle edge cases"'];
-    const distributions = steps.map((_, i) => {
-        const base = 0.2 + i * 0.18;
-        return Array.from({length: 50}, (_, j) => {
-            const center = 25;
-            const spread = Math.max(1, 20 - i * 4);
-            return base + (1 - base) * Math.exp(-0.5 * Math.pow((j - center) / spread, 2));
-        });
-    });
-    const traces = distributions.map((dist, i) => ({
-        x: dist.map((_, j) => j),
-        y: dist,
-        type: 'scatter',
-        mode: 'lines',
-        name: steps[i],
-        line: { width: 1.5 + i * 0.5, dash: i === 4 ? 'solid' : 'dot' },
-        fill: i === 4 ? 'tozeroy' : 'none',
-        fillcolor: 'rgba(99, 102, 241, 0.08)',
-    }));
-    const annotations = distributions.map((dist, i) => ({
-        x: 48, y: dist[49] + 0.015,
-        xref: 'x', yref: 'y',
-        text: steps[i],
-        showarrow: false,
-        font: { size: 9, color: '#475569' },
-        xanchor: 'right',
-    }));
-    Plotly.newPlot(el, traces, {
-        title: { text: 'Prompt Specificity Narrows the Output Space', font: { size: 14 } },
-        xaxis: { title: 'Possible Output Directions →', showticklabels: false, range: [-2, 52] },
-        yaxis: { title: 'Probability Density', range: [0, 1.05] },
-        annotations,
-        margin: { t: 40, b: 40, l: 50, r: 160 },
+    const labels = [
+        '"Do stuff"',
+        '"Write code"',
+        '"Write a Python sort"',
+        '"Quicksort, O(n log n)"',
+        '"Quicksort, inline comments, edge cases"'
+    ];
+    const entropies = [4.2, 3.1, 1.8, 0.9, 0.3];
+    const colors = ['#ef4444', '#f97316', '#f59e0b', '#84cc16', '#22c55e'];
+    Plotly.newPlot(el, [{
+        x: entropies,
+        y: labels.map(l => l.replace(/"/g, '')),
+        type: 'bar',
+        orientation: 'h',
+        marker: { color: colors },
+        text: entropies.map(e => e.toFixed(1) + ' bits'),
+        textposition: 'outside',
+        hovertemplate: 'Prompt: %{y}<br>Output Entropy: %{x:.1f} bits<extra></extra>',
+    }], {
+        title: { text: 'Prompt Specificity Reduces Output Uncertainty', font: { size: 14 } },
+        xaxis: { title: 'Output Entropy (bits)', range: [0, 5.5] },
+        yaxis: { title: '', automargin: true },
+        margin: { t: 40, b: 40, l: 160, r: 40 },
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        showlegend: false,
         font: { family: 'system-ui, sans-serif' },
     }, { responsive: true });
 }
@@ -191,7 +180,7 @@ function renderPEInteractiveLab() {
     let isCoT = false;
     container.innerHTML = `
         <div style="background:#f8fafc;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:30px;">
-            <div style="font-weight:bold;margin-bottom:12px;">🧪 Prompt Lab: "A farmer has 17 sheep. All but 9 die. How many are left?"</div>
+            <div style="font-weight:bold;margin-bottom:12px;">Prompt Lab: "A farmer has 17 sheep. All but 9 die. How many are left?"</div>
             <div style="margin-bottom:12px;">
                 <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
                     <input type="checkbox" id="pe-cot-toggle"> <strong>Add Chain-of-Thought</strong> <span style="color:#94a3b8;font-size:0.85em;">("Think step by step")</span>
@@ -199,13 +188,13 @@ function renderPEInteractiveLab() {
             </div>
             <div style="display:flex;gap:8px;margin-bottom:12px;">
                 <button id="pe-lab-run" class="btn btn-primary" style="padding:8px 20px;">Run Prompt</button>
-                <button id="pe-lab-steps" class="btn btn-secondary" style="padding:8px 20px;">➕ Add Reasoning Token</button>
+                <button id="pe-lab-steps" class="btn btn-secondary" style="padding:8px 20px;">+ Add Reasoning Token</button>
             </div>
             <div id="pe-lab-output" style="min-height:80px;padding:12px;background:#fff;border-radius:8px;border:1px solid #e2e8f0;font-family:monospace;white-space:pre-wrap;"></div>
             <div id="pe-lab-vis" style="height:200px;margin-top:12px;"></div>
             <div style="margin-top:8px;display:flex;gap:16px;font-size:0.85em;color:#64748b;">
-                <span>🧠 Reasoning steps: <span id="pe-step-count">0</span></span>
-                <span>🎯 Confidence: <span id="pe-confidence">0%</span></span>
+                <span>Reasoning steps: <span id="pe-step-count">0</span></span>
+                <span>Confidence: <span id="pe-confidence">0%</span></span>
             </div>
         </div>
     `;
@@ -273,7 +262,7 @@ function renderPEInteractiveLab() {
             hovertemplate: 'Step %{x}<br>Confidence: %{y:.0%}<extra></extra>',
         }];
         Plotly.react(visEl, data, {
-            title: { text: isCoT ? '🧠 Chain-of-Thought: Confidence Builds' : '💬 Direct Prompt: Uncertain Guess', font: { size: 12 } },
+            title: { text: isCoT ? 'Chain-of-Thought: Confidence Builds Step by Step' : 'Direct Prompt: Low Confidence on First Guess', font: { size: 12 } },
             xaxis: { title: 'Reasoning Step', dtick: 1 },
             yaxis: { title: 'Confidence', range: [0, 1], tickformat: '.0%' },
             margin: { t: 30, b: 30, l: 40, r: 10 },
