@@ -979,7 +979,7 @@ function renderComparison3D(config) {
 
     // Stats panel (unchanged)
     document.getElementById(statsId).innerHTML = `
-    <div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+    <div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
         <p style="margin: 0 0 8px 0;"><b style="color:#10b981">Man → King:</b><br>
            <span style="font-size: 1.2em;">θ = ${mk.deg}°</span> | Dist: ${mk.dist}</p>
         <p style="margin: 0;"><b style="color:#ef4444">Man → Lion:</b><br>
@@ -1002,9 +1002,9 @@ function initEmbeddingEditor() {
 		const words = Object.keys(space.vocab);
 
 		let html = `
-    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid themeColor('#e2e8f0'); border-radius: 8px; background: white;">
+    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
 	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
-	    <thead style="background: themeColor('#f8fafc'); border-bottom: 2px solid themeColor('#e2e8f0');">
+	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
 		<tr>
 		    <th style="padding: 10px; text-align: left;">Token</th>
 		    <th style="padding: 10px; text-align: center;">X</th>
@@ -1022,8 +1022,8 @@ function initEmbeddingEditor() {
 		html += `
 	    </tbody>
 	</table>
-	<div style="padding: 10px; background: themeColor('#f8fafc'); border-top: 1px solid themeColor('#e2e8f0'); display: flex; gap: 10px;">
-	    <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid themeColor('#cbd5e1'); border-radius: 4px;">
+	<div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+	    <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
 	    <button onclick="addTokenToSpace('${spaceKey}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Add</button>
 	</div>
     </div>`;
@@ -1036,7 +1036,7 @@ function initEmbeddingEditor() {
  */
 function generateRowHtml(spaceKey, word, vec, dims) {
 	return `
-    <tr style="border-bottom: 1px solid themeColor('#f1f5f9');" id="row-${spaceKey}-${word}">
+    <tr style="border-bottom: 1px solid #f1f5f9;" id="row-${spaceKey}-${word}">
 	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
 	${[0, 1, 2].slice(0, dims).map(dim => `
 	    <td style="padding: 5px; text-align: center;">
@@ -1047,7 +1047,7 @@ function generateRowHtml(spaceKey, word, vec, dims) {
 		    data-space="${spaceKey}"
 		    data-word="${word}"
 		    data-dim="${dim}"
-		    style="width: 60px; padding: 4px; border: 1px solid themeColor('#cbd5e1'); border-radius: 4px; text-align: center;"
+		    style="width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"
 		    oninput="updateEmbeddingFromTable(this)"
 		>
 	    </td>
@@ -2545,15 +2545,15 @@ function renderScaleInvariance() {
     // Update stats
     if (statsDiv) {
         statsDiv.innerHTML = `
-            <div style="padding: 12px; background: themeColor('#fff'); border-radius: 8px; border: 1px solid themeColor('#e2e8f0'); text-align: center;">
-                <div style="font-size: 0.8em; color: themeColor('#64748b'); margin-bottom: 4px;">Cosine Similarity</div>
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Cosine Similarity</div>
                 <div style="font-size: 1.6em; font-weight: bold; color: #10b981;">${cosAB.toFixed(4)}</div>
-                <div style="font-size: 0.75em; color: themeColor('#94a3b8'); margin-top: 2px;">Direction match — constant!</div>
+                <div style="font-size: 0.75em; color: #94a3b8; margin-top: 2px;">Direction match — constant!</div>
             </div>
-            <div style="padding: 12px; background: themeColor('#fff'); border-radius: 8px; border: 1px solid themeColor('#e2e8f0'); text-align: center;">
-                <div style="font-size: 0.8em; color: themeColor('#64748b'); margin-bottom: 4px;">Euclidean Distance</div>
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Euclidean Distance</div>
                 <div style="font-size: 1.6em; font-weight: bold; color: #ef4444;">${eucAB.toFixed(2)}</div>
-                <div style="font-size: 0.75em; color: themeColor('#94a3b8'); margin-top: 2px;">Magnitude-dependent — changes!</div>
+                <div style="font-size: 0.75em; color: #94a3b8; margin-top: 2px;">Magnitude-dependent — changes!</div>
             </div>
         `;
     }
@@ -3108,17 +3108,17 @@ function renderAnisotropy() {
 			val > threshWarn ? '#ef4444' : val > threshGood ? '#f59e0b' : '#10b981';
 
 		statsDiv.innerHTML = `
-	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
 		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Avg Cosine Similarity</div>
 		<div style="font-size:1.5em; font-weight:bold; color:${colorFor(0,0,avg,0.3,0.6)};">${avg.toFixed(3)}</div>
 		<div style="font-size:0.75em; color:#94a3b8;">Isotropic ideal: ≈ 0.000</div>
 	    </div>
-	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
 		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Similarity Range</div>
 		<div style="font-size:1.5em; font-weight:bold; color:${range < 0.5 ? '#ef4444' : range < 1.2 ? '#f59e0b' : '#10b981'};">${lo.toFixed(2)} → ${hi.toFixed(2)}</div>
 		<div style="font-size:0.75em; color:#94a3b8;">Full range: −1.0 → +1.0</div>
 	    </div>
-	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
 		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Effective Bandwidth</div>
 		<div style="font-size:1.5em; font-weight:bold; color:${range < 0.5 ? '#ef4444' : range < 1.2 ? '#f59e0b' : '#10b981'};">${range.toFixed(3)}</div>
 		<div style="font-size:0.75em; color:#94a3b8;">Discriminative capacity</div>
@@ -3298,11 +3298,11 @@ function renderSuperposition() {
     if (statDiv) {
         statDiv.innerHTML = `
         <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.7em; color:#64748b;">Features</div>
                 <div style="font-size:1.3em; font-weight:bold; color:#3b82f6;">${N}</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.7em; color:#64748b;">Min Angle</div>
                 <div style="font-size:1.3em; font-weight:bold; color:${isSuperposed ? '#f59e0b' : '#10b981'};">${minAngleDeg.toFixed(0)}°</div>
             </div>
@@ -3310,7 +3310,7 @@ function renderSuperposition() {
                 <div style="font-size:0.7em; color:#64748b;">Max |dot|</div>
                 <div style="font-size:1.3em; font-weight:bold; color:${isSuperposed ? '#ef4444' : '#10b981'};">${maxIntf.toFixed(2)}</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.7em; color:#64748b;">Status</div>
                 <div style="font-size:0.95em; font-weight:bold; color:${isSuperposed ? '#ef4444' : '#10b981'};">${isSuperposed ? '⚠️ Superposition' : '✅ Orthogonal'}</div>
             </div>
@@ -3344,7 +3344,7 @@ function renderSuperposition() {
                     bg = `rgba(239,68,68,${Math.min(ad, 1) * 0.25})`; tc = ad > 0.5 ? '#dc2626' : themeColor('#475569');
                 }
                 const txt = i === j ? '—' : ad.toFixed(2);
-                h += `<td style="padding:2px 4px; text-align:center; background:${bg}; color:${tc}; border:1px solid themeColor('#f1f5f9');">${txt}</td>`;
+                h += `<td style="padding:2px 4px; text-align:center; background:${bg}; color:${tc}; border:1px solid #f1f5f9;">${txt}</td>`;
             }
             h += '</tr>';
         }
@@ -3435,7 +3435,7 @@ function updateICLPromptPanel() {
         '<div style="color:#94a3b8; margin-bottom:6px; font-family:sans-serif; font-size:0.92em;">' +
         '<b>📝 Few-shot Prompt</b> <span style="color:#475569;">(what the model sees)</span></div>' +
 
-        '<div style="border-bottom:1px solid themeColor('#334155'); margin-bottom:8px; padding-bottom:4px; color:#94a3b8; font-style:italic;">' +
+        '<div style="border-bottom:1px solid #334155; margin-bottom:8px; padding-bottom:4px; color:#94a3b8; font-style:italic;">' +
         'Task: Given a country, name its capital.</div>';
 
     // Example lines
@@ -3461,7 +3461,7 @@ function updateICLPromptPanel() {
     var answerText = st.injected ? (inside ? st.expectedAnswer.token + ' ✓' : '??? (close)') : '???';
     var answerColor = st.injected ? (inside ? '#10b981' : '#fbbf24') : '#ef4444';
 
-    html += '<div style="border-top:1px solid themeColor('#334155'); margin-top:8px; padding-top:8px;' +
+    html += '<div style="border-top:1px solid #334155; margin-top:8px; padding-top:8px;' +
         ' display:flex; align-items:center; gap:8px;">' +
         '<span style="display:inline-block; width:10px; height:10px; background:#ef4444;' +
         ' transform:rotate(45deg); flex-shrink:0;"></span>' +
@@ -3470,7 +3470,7 @@ function updateICLPromptPanel() {
 
     // ---- Offset computation block ----
     html += '<div style="font-family:\'Courier New\',monospace; font-size:0.75em; background:#f8fafc;' +
-        ' border:1px solid themeColor('#e2e8f0'); border-radius:8px; padding:12px; line-height:1.8;">' +
+        ' border:1px solid #e2e8f0; border-radius:8px; padding:12px; line-height:1.8;">' +
         '<div style="font-family:sans-serif; font-size:0.95em; color:#475569; margin-bottom:6px;">' +
         '<b>⚙️ Task Vector Computation</b></div>';
 
@@ -3483,7 +3483,7 @@ function updateICLPromptPanel() {
             ' = [' + dx + ', ' + dy + ']</div>';
     }
 
-    html += '<div style="border-top:1px solid themeColor('#e2e8f0'); margin-top:6px; padding-top:6px;' +
+    html += '<div style="border-top:1px solid #e2e8f0; margin-top:6px; padding-top:6px;' +
         ' color:#3b82f6; font-weight:bold;">' +
         'Avg Δ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']</div>';
 
@@ -3491,7 +3491,7 @@ function updateICLPromptPanel() {
         'Apply to ' + st.query.token + ': [' + st.query.pos[0] + ', ' + st.query.pos[1] + ']' +
         ' + Δ = [' + sp[0].toFixed(1) + ', ' + sp[1].toFixed(1) + ']</div>';
 
-    html += '<div style="color:' + (inside && st.injected ? '#10b981' : themeColor('#94a3b8')) +
+    html += '<div style="color:' + (inside && st.injected ? '#10b981' : #94a3b8) +
         '; font-size:0.85em; margin-top:3px;">' +
         'Distance to ' + st.expectedAnswer.token + ': ' + dist.toFixed(2) +
         (inside ? ' ✅ inside' : ' — radius ' + st.answerRadius) + '</div></div>';
@@ -3733,19 +3733,19 @@ function renderICL() {
         var ok   = dist <= st.answerRadius;
 
         statsDiv.innerHTML =
-            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">' +
+            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
                 '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Task Vector ‖Δ̄‖</div>' +
                 '<div style="font-size:1.5em; font-weight:bold; color:#3b82f6;">' + mag.toFixed(1) + '</div>' +
                 '<div style="font-size:0.75em; color:#94a3b8;">from ' + n + ' example' + (n > 1 ? 's' : '') + '</div>' +
             '</div>' +
-            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">' +
+            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
                 '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Distance to Rome</div>' +
                 '<div style="font-size:1.5em; font-weight:bold; color:' + (ok ? '#10b981' : '#ef4444') + ';">' +
                     dist.toFixed(2) + '</div>' +
                 '<div style="font-size:0.75em; color:#94a3b8;">' +
                     (ok ? '✅ Inside answer region' : '⬜ Outside (radius ' + st.answerRadius + ')') + '</div>' +
             '</div>' +
-            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">' +
+            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
                 '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Examples Used</div>' +
                 '<div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">' + n + ' / ' +
                     st.examplePairs.length + '</div>' +
@@ -4124,18 +4124,18 @@ function renderNegation() {
 	if (statsEl) {
 		statsEl.innerHTML = `
 	<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-	    <div style="padding: 12px; background: themeColor('#fff'); border-radius: 8px; border: 1px solid themeColor('#e2e8f0'); text-align: center;">
-		<div style="font-size: 0.75em; color: themeColor('#64748b'); margin-bottom: 4px;">"${selected}" → "not ${selected}"</div>
+	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">"${selected}" → "not ${selected}"</div>
 		<div style="font-size: 1.6em; font-weight: bold; color: #f59e0b;">${distToNot.toFixed(2)}</div>
-		<div style="font-size: 0.7em; color: themeColor('#94a3b8');">Barely moved!</div>
+		<div style="font-size: 0.7em; color: #94a3b8;">Barely moved!</div>
 	    </div>
-	    <div style="padding: 12px; background: themeColor('#fff'); border-radius: 8px; border: 1px solid themeColor('#e2e8f0'); text-align: center;">
-		<div style="font-size: 0.75em; color: themeColor('#64748b'); margin-bottom: 4px;">"not ${selected}" → "${antKey}"</div>
+	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">"not ${selected}" → "${antKey}"</div>
 		<div style="font-size: 1.6em; font-weight: bold; color: #ef4444;">${distNotToAnt.toFixed(2)}</div>
-		<div style="font-size: 0.7em; color: themeColor('#94a3b8');">Still far away</div>
+		<div style="font-size: 0.7em; color: #94a3b8;">Still far away</div>
 	    </div>
-	    <div style="padding: 12px; background: themeColor('#fff'); border-radius: 8px; border: 2px solid #fecaca; text-align: center;">
-		<div style="font-size: 0.75em; color: themeColor('#64748b'); margin-bottom: 4px;">Failure Ratio</div>
+	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 2px solid #fecaca; text-align: center;">
+		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">Failure Ratio</div>
 		<div style="font-size: 1.6em; font-weight: bold; color: #dc2626;">${ratio}×</div>
 		<div style="font-size: 0.7em; color: #dc2626;">Closer to original than antonym</div>
 	    </div>
@@ -4545,12 +4545,12 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 
 		// Depth -> Radius table
 		html += '<div style="font-family:sans-serif;font-size:0.82em;color:#475569;">';
-		html += '<div style="background:#fff;border:1px solid themeColor('#e2e8f0');border-radius:8px;padding:12px;margin-bottom:12px;">';
+		html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
 		html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Depth &rarr; Radius</div>';
 		for (var d = 0; d <= hyperbolicState.maxDepth; d++) {
 			var r = getHyperbolicRadius(d, curvature);
 			var dc = depthColors[d] || themeColor('#1e293b');
-			html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid themeColor('#f1f5f9');">';
+			html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;">';
 			html += '<span style="color:' + dc + ';">Depth ' + d + '</span>';
 			html += '<span style="font-family:monospace;font-weight:bold;">r = ' + r.toFixed(4) + '</span>';
 			html += '</div>';
@@ -4566,7 +4566,7 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 
 		// Chain distances
 		if (curvature > 0.3) {
-			html += '<div style="background:#fff;border:1px solid themeColor('#e2e8f0');border-radius:8px;padding:12px;margin-bottom:12px;">';
+			html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
 			html += '<div style="font-weight:bold;margin-bottom:8px;color:#92400e;">&#x1F536; Highlighted Chain Distances</div>';
 			var totalHyp = 0;
 			chainEdges.forEach(function(pair) {
@@ -4581,7 +4581,7 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 				var hd = poincareDistance(p1, p2);
 				var ed = Math.sqrt(Math.pow(p1[0]-p2[0],2) + Math.pow(p1[1]-p2[1],2));
 				totalHyp += (isFinite(hd) ? hd : 0);
-				html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid themeColor('#f1f5f9');font-size:0.85em;">';
+				html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">';
 				html += '<span>' + pair[0] + ' &rarr; ' + pair[1] + '</span>';
 				html += '<span style="font-family:monospace;"><span style="color:#f59e0b;font-weight:bold;">' + (isFinite(hd)?hd.toFixed(2):'&infin;') + '</span>';
 				html += ' <span style="color:#94a3b8;">(euc: ' + ed.toFixed(3) + ')</span></span>';
@@ -4594,7 +4594,7 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 		}
 
 		// Geometry summary
-		html += '<div style="background:#fff;border:1px solid themeColor('#e2e8f0');border-radius:8px;padding:12px;">';
+		html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;">';
 		html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Geometry</div>';
 		html += '<div style="font-size:0.85em;line-height:1.6;">';
 		if (curvature > 0.5) {
@@ -4869,17 +4869,17 @@ function renderTopologyCones() {
         const voidFraction = 1 - occupiedFraction;
 
         statsDiv.innerHTML = `
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Occupied Fraction</div>
                 <div style="font-size:1.5em; font-weight:bold; color:${occupiedFraction < 0.3 ? '#ef4444' : occupiedFraction < 0.7 ? '#f59e0b' : '#10b981'};">${(occupiedFraction * 100).toFixed(1)}%</div>
                 <div style="font-size:0.75em; color:#94a3b8;">of angular space used</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Void Fraction</div>
                 <div style="font-size:1.5em; font-weight:bold; color:${voidFraction > 0.7 ? '#ef4444' : voidFraction > 0.3 ? '#f59e0b' : '#10b981'};">${(voidFraction * 100).toFixed(1)}%</div>
                 <div style="font-size:0.75em; color:#94a3b8;">semantic desert</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Cone Width</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">${(currentSpread * 180 / Math.PI).toFixed(1)}°</div>
                 <div style="font-size:0.75em; color:#94a3b8;">per cluster</div>
@@ -5297,17 +5297,17 @@ function renderFractalFolding() {
                            zoom < 2.5 ? `${speciesScale.toFixed(1)}× (species)` :
                                         `${(speciesScale * breedScale * 0.5).toFixed(1)}× (breeds)`;
         statsDiv.innerHTML = `
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Visible Levels</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">${visibleLevels} / 3</div>
                 <div style="font-size:0.75em; color:#94a3b8;">hierarchy depth</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Visible Nodes</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#3b82f6;">${totalNodes}</div>
                 <div style="font-size:0.75em; color:#94a3b8;">concepts rendered</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Spatial Scale</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#10b981;">${scaleLabel}</div>
                 <div style="font-size:0.75em; color:#94a3b8;">magnification</div>
@@ -5624,17 +5624,17 @@ function renderHolographic() {
             matrixCorrelation > 0.7 ? '#f59e0b' : '#ef4444';
 
         statsDiv.innerHTML = `
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Surviving Dims</div>
                 <div style="font-size:1.4em; font-weight:bold; color:#3b82f6;">${surviving} / ${D}</div>
                 <div style="font-size:0.7em; color:#94a3b8;">${(surviving / D * 100).toFixed(0)}% intact</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Signal Quality</div>
                 <div style="font-size:1.4em; font-weight:bold; color:${theoreticalSignal > 0.7 ? '#10b981' : theoreticalSignal > 0.4 ? '#f59e0b' : '#ef4444'};">${(theoreticalSignal * 100).toFixed(1)}%</div>
                 <div style="font-size:0.7em; color:#94a3b8;">√(k/d) theoretical</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
                 <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Structure Preserved</div>
                 <div style="font-size:1.4em; font-weight:bold; color:${corrColor};">${(matrixCorrelation * 100).toFixed(1)}%</div>
                 <div style="font-size:0.7em; color:#94a3b8;">matrix correlation</div>
@@ -6064,7 +6064,7 @@ function updateVoronoiClickInfo(pos) {
             </span>
             ${parseFloat(confidence) < 10 ? '<span style="color:#ef4444; font-size:0.8em;"> ⚠️ near boundary!</span>' : ''}
         </div>
-        <div style="font-size: 0.8em; color: themeColor('#94a3b8');">
+        <div style="font-size: 0.8em; color: #94a3b8;">
             <b>Nearest 5:</b><br>
             ${dists.slice(0, 5).map((d, i) =>
                 `<span style="color:${d.color};">${i === 0 ? '→' : '&nbsp;&nbsp;'} ${d.name}</span> <span style="color:#cbd5e1;">(${d.dist.toFixed(3)})</span>`
@@ -6163,22 +6163,22 @@ function updateVoronoiStats(cellOwner, cellDist, cellDist2) {
     }
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Largest Cell</div>
             <div style="font-size:1.1em; font-weight:bold; color:${seeds[maxIdx].color};">${seeds[maxIdx].name}</div>
             <div style="font-size:0.85em; color:#94a3b8;">${largestPct}% of space</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Smallest Cell</div>
             <div style="font-size:1.1em; font-weight:bold; color:${seeds[minIdx].color};">${seeds[minIdx].name}</div>
             <div style="font-size:0.85em; color:#94a3b8;">${smallestPct}% of space</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Longest Boundary</div>
             <div style="font-size:0.9em; font-weight:bold; color:#8b5cf6;">${topPairLabel}</div>
             <div style="font-size:0.75em; color:#94a3b8;">closest neighbors</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Ambiguous Zone</div>
             <div style="font-size:1.2em; font-weight:bold; color:${parseFloat(ambiguousPct) > 20 ? '#f59e0b' : '#10b981'};">${ambiguousPct}%</div>
             <div style="font-size:0.75em; color:#94a3b8;">near boundaries</div>
@@ -6950,22 +6950,22 @@ function updateHomologyStats(r) {
     }
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Active Holes</div>
-            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : themeColor('#94a3b8')};">${aliveHoles.length}</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : #94a3b8};">${aliveHoles.length}</div>
             <div style="font-size:0.7em; color:#94a3b8;">of ${totalHoles} detected</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Edges Formed</div>
             <div style="font-size:1.4em; font-weight:bold; color:#60a5fa;">${edgeCount}</div>
             <div style="font-size:0.7em; color:#94a3b8;">connections at r=${r.toFixed(3)}</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Most Persistent</div>
             <div style="font-size:1.0em; font-weight:bold; color:#8b5cf6;">${maxPersLabel}</div>
             <div style="font-size:0.7em; color:#94a3b8;">longest-lived void</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Points</div>
             <div style="font-size:1.4em; font-weight:bold; color:#10b981;">${st.points.length}</div>
             <div style="font-size:0.7em; color:#94a3b8;">token vectors</div>
@@ -7429,10 +7429,10 @@ function updateTimeHelixInfo() {
         const p = st.hovered;
         infoDiv.innerHTML = `
             <div style="margin-bottom: 6px;">
-                <b style="font-size: 1.2em; color: themeColor('#1e293b');">${p.year}</b>
+                <b style="font-size: 1.2em; color: #1e293b;">${p.year}</b>
                 ${p.eventLabel ? `<br><span style="color: #f59e0b; font-weight: bold;">${p.eventLabel}</span>` : ''}
             </div>
-            <div style="font-size: 0.85em; color: themeColor('#94a3b8');">
+            <div style="font-size: 0.85em; color: #94a3b8;">
                 <b>Position:</b> t = ${p.t.toFixed(3)}<br>
                 <b>Helix X:</b> ${p.x.toFixed(3)}<br>
                 <b>Helix Y:</b> ${p.y.toFixed(3)}<br>
@@ -7441,7 +7441,7 @@ function updateTimeHelixInfo() {
         `;
     } else {
         infoDiv.innerHTML = `
-            <span style="color: themeColor('#94a3b8');">Hover over any point to see the year and associated historical event.
+            <span style="color: #94a3b8;">Hover over any point to see the year and associated historical event.
             The helix structure emerges from statistical co-occurrence alone — no one told the model about time.</span>
         `;
     }
@@ -7459,14 +7459,14 @@ function updateTimeHelixInfo() {
     propsDiv.innerHTML = `
         <div style="margin-bottom: 6px;">
             <b>Cyclical Strength (r):</b> ${st2.radius.toFixed(2)}<br>
-            <span style="color: themeColor('#94a3b8'); font-size: 0.85em;">${rLabel}</span>
+            <span style="color: #94a3b8; font-size: 0.85em;">${rLabel}</span>
         </div>
         <div style="margin-bottom: 6px;">
             <b>Tightness (ω):</b> ${st2.omega.toFixed(1)}<br>
-            <span style="color: themeColor('#94a3b8'); font-size: 0.85em;">${oLabel}</span>
+            <span style="color: #94a3b8; font-size: 0.85em;">${oLabel}</span>
         </div>
-        <hr style="border: none; border-top: 1px solid themeColor('#e2e8f0'); margin: 8px 0;">
-        <div style="font-size: 0.8em; color: themeColor('#94a3b8');">
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 8px 0;">
+        <div style="font-size: 0.8em; color: #94a3b8;">
             <b>Interpretation:</b><br>
             At <b>r = 0</b>, the helix collapses to a straight line — pure linear time, no cyclical patterns.
             As <b>r</b> increases, the cyclical component (decades, centuries) becomes visible.
@@ -7500,22 +7500,22 @@ function updateTimeHelixStats(points, range) {
     const linearity = Math.max(0, 1 - st.radius * 1.2);
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Time Span</div>
             <div style="font-size:1.2em; font-weight:bold; color:#3b82f6;">${range.start < 0 ? Math.abs(range.start) + ' BC' : range.start} – ${range.end}</div>
             <div style="font-size:0.7em; color:#94a3b8;">${totalYears} years</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Helix Loops</div>
             <div style="font-size:1.4em; font-weight:bold; color:#8b5cf6;">${loopsCount}</div>
             <div style="font-size:0.7em; color:#94a3b8;">full rotations</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Linearity</div>
             <div style="font-size:1.4em; font-weight:bold; color:${linearity > 0.7 ? '#10b981' : linearity > 0.3 ? '#f59e0b' : '#ef4444'};">${(linearity * 100).toFixed(0)}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">line vs. helix</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Key Events</div>
             <div style="font-size:1.4em; font-weight:bold; color:#f59e0b;">${numEvents}</div>
             <div style="font-size:0.7em; color:#94a3b8;">of ${numPoints} points</div>
@@ -8365,22 +8365,22 @@ function updatePolytopeStats(hullA, hullB, overlapPixels, totalPixels) {
     const separated = overlapPct < 0.1;
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Overlap Area</div>
             <div style="font-size:1.4em; font-weight:bold; color:${overlapPct > 5 ? '#a855f7' : overlapPct > 0.5 ? '#f59e0b' : '#10b981'};">${overlapPct.toFixed(1)}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">${overlapPct > 5 ? 'significant ambiguity' : overlapPct > 0.5 ? 'minor ambiguity' : 'well separated'}</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Dilemmas in Overlap</div>
             <div style="font-size:1.4em; font-weight:bold; color:#f59e0b;">${dilemmasInOverlap} / ${st.dilemmaPoints.length}</div>
             <div style="font-size:0.7em; color:#94a3b8;">contested concepts</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;"><span style="color:${preset.colorA};">■</span> Hull Area</div>
             <div style="font-size:1.4em; font-weight:bold; color:${preset.colorA};">${(areaA * 100).toFixed(1)}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">${preset.nameA}</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;"><span style="color:${preset.colorB};">■</span> Hull Area</div>
             <div style="font-size:1.4em; font-weight:bold; color:${preset.colorB};">${(areaB * 100).toFixed(1)}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">${preset.nameB}</div>
@@ -8864,22 +8864,22 @@ function updateGrammarRotStats(op, t) {
     const dirChange = currentAngleDeg;
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Rotation Angle</div>
             <div style="font-size:1.4em; font-weight:bold; color:#8b5cf6;">${currentAngleDeg}°</div>
             <div style="font-size:0.7em; color:#94a3b8;">of ${fullAngleDeg}° total</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Magnitude Preserved</div>
             <div style="font-size:1.4em; font-weight:bold; color:#10b981;">${magPreservation.toFixed(1)}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">‖v‖ unchanged</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Cross-Word Consistency</div>
             <div style="font-size:1.4em; font-weight:bold; color:#3b82f6;">${consistency}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">same angle for all</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Progress</div>
             <div style="font-size:1.4em; font-weight:bold; color:${pct < 30 ? '#60a5fa' : pct < 70 ? '#8b5cf6' : op.colorB};">${pct}%</div>
             <div style="font-size:0.7em; color:#94a3b8;">${pct < 50 ? op.labelA + ' → ...' : '... → ' + op.labelB}</div>
@@ -8897,7 +8897,7 @@ function updateGrammarRotInfo() {
 
     infoDiv.innerHTML = `
         <div style="margin-bottom: 8px;">
-            <b style="font-size: 1.05em; color: themeColor('#1e293b');">${op.name}</b>
+            <b style="font-size: 1.05em; color: #1e293b;">${op.name}</b>
         </div>
         <div style="margin-bottom: 6px; font-size: 0.9em;">
             <b>Rotation angle:</b> <span style="color: #8b5cf6; font-weight: bold;">${angleDeg}°</span>
@@ -8905,7 +8905,7 @@ function updateGrammarRotInfo() {
         <div style="margin-bottom: 6px; font-size: 0.9em;">
             <b>Word pairs:</b> ${op.pairs.length}
         </div>
-        <div style="font-size: 0.85em; color: themeColor('#94a3b8'); line-height: 1.6;">
+        <div style="font-size: 0.85em; color: #94a3b8; line-height: 1.6;">
             Every word in the <span style="color:${op.colorA}; font-weight:bold;">${op.labelA}</span> form
             rotates by exactly the same angle to reach its
             <span style="color:${op.colorB}; font-weight:bold;">${op.labelB}</span> form.
@@ -8913,8 +8913,8 @@ function updateGrammarRotInfo() {
             only the <b>direction</b> changes. This is why grammar is a
             <b>rotation</b>, not a translation.
         </div>
-        <hr style="border: none; border-top: 1px solid themeColor('#e2e8f0'); margin: 8px 0;">
-        <div style="font-size: 0.8em; color: themeColor('#94a3b8');">
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 8px 0;">
+        <div style="font-size: 0.8em; color: #94a3b8;">
             <b>Key insight:</b> The model learned this rotation matrix
             purely from statistical co-occurrence. Nobody programmed
             "past tense = rotate by ${angleDeg}°." The geometric

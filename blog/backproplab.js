@@ -330,7 +330,7 @@ function renderBackpropVisual(id) {
 			if (wk === "w3" || wk === "w7") my += 32;
 			html += `<line class="bp-conn" data-wk="${wk}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${thick}" stroke-opacity="0.5"/>`;
 			const [base, sub] = wl.split("_");
-			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill=themeColor('#334155') font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
+			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill=#334155 font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
 		});
 
 		// Neuron circles + values + deltas
@@ -380,12 +380,12 @@ function renderBackpropVisual(id) {
 			const diff = oVal - tVal;
 			const diffColor = Math.abs(diff) < 0.01 ? "#10b981" : "#ef4444";
 			return `<text x="${nd.x}" y="${nd.y - 18}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill=themeColor('#1e293b') style="pointer-events:none;">out=${fmt(oVal)}</text>` +
+				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill=#1e293b style="pointer-events:none;">out=${fmt(oVal)}</text>` +
 				`<text x="${nd.x}" y="${nd.y + 12}" text-anchor="middle" font-size="10" font-family="monospace" fill="#f59e0b" style="pointer-events:none;">tgt=${fmt(tVal)}</text>` +
 				`<text x="${nd.x}" y="${nd.y + 26}" text-anchor="middle" font-size="9" font-family="monospace" fill="${diffColor}" style="pointer-events:none;">Δ=${fmt(diff)}</text>`;
 		}
 		return `<text x="${nd.x}" y="${nd.y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill=themeColor('#1e293b') style="pointer-events:none;">${valStr}</text>`;
+			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill=#1e293b style="pointer-events:none;">${valStr}</text>`;
 	}
 
 	function svgDeltaLabel(nk, nd, r) {
@@ -441,7 +441,7 @@ function renderBackpropVisual(id) {
 	}
 
 	function showDefaultInfo() {
-		infoPanel.innerHTML = `<div class="md"><span style="color:themeColor('#94a3b8');">Click any neuron or weight label to see its equations.</span></div>`;
+		infoPanel.innerHTML = `<div class="md"><span style="color:#94a3b8;">Click any neuron or weight label to see its equations.</span></div>`;
 		tryRender();
 	}
 
@@ -583,7 +583,7 @@ $$\\frac{\\partial E}{\\partial b_${i}} = \\delta_{h_${i}} = ${fmt(gb)}$$
 			: dO < 0 ? "Prediction too LOW — needs to increase" : "Perfect!";
 
 		return `<h3>$o_${i}$ — Output Neuron</h3>
-<p style="color:themeColor('#64748b');"><em>${dir}</em> &nbsp; (target $t_${i} = ${fmt(tVal, 4)}$)</p>
+<p style="color:#64748b;"><em>${dir}</em> &nbsp; (target $t_${i} = ${fmt(tVal, 4)}$)</p>
 
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass</b>
 			${hiddenForwardLatex()}
@@ -890,15 +890,15 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
   </style>
 
   <div class="bp-top">
-    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
-      <legend style="font-size:0.78rem; font-weight:700; color:themeColor('#64748b');">Inputs</legend>
+    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+      <legend style="font-size:0.78rem; font-weight:700; color:#64748b;">Inputs</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	<div class="bp-group"><label>$$x_1$$</label><input style="width:100px" id="backprop_x1" type="number" data-k="x1" step="0.01"></div>
 	<div class="bp-group"><label>$$x_2$$</label><input style="width:100px" id="backprop_x2" type="number" data-k="x2" step="0.01"></div>
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#f59e0b;">Targets</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	<div class="bp-group"><label>$$t_1$$</label><input style="width:100px" id="backprop_t1" type="number" data-k="t1" step="0.01"></div>
@@ -906,14 +906,14 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#8b5cf6;">Hyperparameters</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	<div class="bp-group"><label>$$\\eta$$</label><input style="width:100px" id="backprop_eta" type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#3b82f6;">Input → Hidden</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	${["w1","w2","w3","w4","b1","b2"].map(k =>
@@ -922,7 +922,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#10b981;">Hidden → Output</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	${["w5","w6","w7","w8","b3","b4"].map(k =>
@@ -934,22 +934,22 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
       <button class="bp-btn" style="background:#10b981;" id="${id}-apply">✅ Apply 1 Step</button>
       <button class="bp-btn" style="background:#8b5cf6;" id="${id}-train">⟳ Train 100</button>
-      <button class="bp-btn" style="background:themeColor('#64748b');" id="${id}-reset">↺ Reset</button>
+      <button class="bp-btn" style="background:#64748b;" id="${id}-reset">↺ Reset</button>
     </div>
   </div>
 
   <svg id="${id}-svg" width="100%" viewBox="0 0 660 400"
-       style="background:themeColor('#f8fafc'); border-radius:10px; border:1px solid themeColor('#e2e8f0'); display:block; margin-bottom:8px; cursor:default;">
+       style="background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; display:block; margin-bottom:8px; cursor:default;">
   </svg>
 
   <div class="bp-loss">
-    <span style="font-size:0.8rem; font-weight:600; color:themeColor('#475569');">Loss:</span>
+    <span style="font-size:0.8rem; font-weight:600; color:#475569;">Loss:</span>
     <div class="bp-loss-track"><div class="bp-loss-fill" id="${id}-lossbar"></div></div>
     <span id="${id}-lossval" style="font-size:0.82rem; font-family:monospace; min-width:70px;"></span>
   </div>
 
   <div class="bp-info-panel" id="${id}-info">
-    <div class="md"><span style="color:themeColor('#94a3b8');">Click any neuron or weight label to see its equations.</span></div>
+    <div class="md"><span style="color:#94a3b8;">Click any neuron or weight label to see its equations.</span></div>
   </div>`;
 	}
 

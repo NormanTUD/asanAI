@@ -792,7 +792,7 @@ function updateAttn1D() {
 	// ── Math table ──
 	const maxI = pick.idx;
 	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:#64748b;">
+	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
 	    <th style="text-align:left; padding:3px 8px;">Concept</th>
 	    <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
 	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
@@ -812,7 +812,7 @@ function updateAttn1D() {
 	    <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v).toFixed(2)}</td>
 	</tr>`;
 	});
-	html += `<tr style="border-top:2px solid themeColor('#1e293b');">
+	html += `<tr style="border-top:2px solid #1e293b;">
 	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
 	<td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${output.toFixed(2)}</b></td>
     </tr></table>`;
@@ -1019,7 +1019,7 @@ function updateAttn2D() {
 	// ── Math table (shows both dimensions in dot product) ──
 	const maxI = pick.idx;
 	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:#64748b;">
+	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
 	    <th style="text-align:left; padding:3px 8px;">Concept</th>
 	    <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
 	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
@@ -1047,7 +1047,7 @@ function updateAttn2D() {
 	    </td>
 	</tr>`;
 	});
-	html += `<tr style="border-top:2px solid themeColor('#1e293b');">
+	html += `<tr style="border-top:2px solid #1e293b;">
 	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
 	<td style="text-align:right; padding:6px 8px;">
 	    <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>
@@ -1160,7 +1160,7 @@ function _renderQKVSubspaceViz(containerId) {
 
 	// --- 3. Build tab UI for Q / K / V ---
 	const tabBar = document.createElement('div');
-	tabBar.style.cssText = 'display:flex; gap:8px; padding:10px 15px; background:#fff; border-bottom:1px solid themeColor('#e2e8f0');';
+	tabBar.style.cssText = 'display:flex; gap:8px; padding:10px 15px; background:#fff; border-bottom:1px solid #e2e8f0;';
 
 	const plotDiv = document.createElement('div');
 	plotDiv.id = containerId + '-plot';
@@ -1449,7 +1449,7 @@ function updateLDD() {
     const rnnFinal = Math.pow(LDD.rnn_decay, distance);
     const ratio = (1 / rnnFinal);
     document.getElementById('ldd-math').innerHTML = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-    <tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:#64748b;">
+    <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
         <th style="text-align:left; padding:3px 8px;">Model</th>
         <th style="text-align:left; padding:3px 8px;">Signal after ${distance} steps</th>
         <th style="text-align:right; padding:3px 8px;">Strength</th>
@@ -1464,7 +1464,7 @@ function updateLDD() {
         <td style="padding:3px 8px; font-family:monospace;">${LDD.rnn_decay}<sup>${distance}</sup> = ${rnnFinal.toFixed(4)}</td>
         <td style="text-align:right; padding:3px 8px;"><b style="color:#ef4444;">${(rnnFinal*100).toFixed(1)}%</b></td>
     </tr>
-    <tr style="border-top:2px solid themeColor('#1e293b');">
+    <tr style="border-top:2px solid #1e293b;">
         <td colspan="2" style="text-align:right; padding:6px 8px; font-weight:bold;">Transformer advantage:</td>
         <td style="text-align:right; padding:6px 8px;"><b style="color:#059669; font-size:1.1rem;">${ratio.toFixed(1)}×</b></td>
     </tr></table>`;

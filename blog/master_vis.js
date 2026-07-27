@@ -26,7 +26,7 @@ function injectDynamicHTML() {
     
     container.innerHTML = `
         <div id="table-area"></div>
-        <div class="control-panel" style="background:themeColor('#f8fafc'); padding:15px; border-radius:8px; border:1px solid #cbd5e0; margin-top:15px;">
+        <div class="control-panel" style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #cbd5e0; margin-top:15px;">
             <h4 style="margin-top:0">Optimizer Settings</h4>
             <select id="opt-select" onchange="masterState.optimizer=this.value" style="width:100%; padding:5px; margin-bottom:10px;">
                 <option value="adam">Adam Optimizer (Stabil)</option>
@@ -38,7 +38,7 @@ function injectDynamicHTML() {
             <label>Gewicht (w1): <input type="range" min="-3" max="3" step="0.05" id="w1-range" value="0.5"></label><br>
             <label>Bias (b): <input type="range" min="-5" max="10" step="0.1" id="b-range" value="1.0"></label>
         </div>
-        <div id="master-math-display" style="background:white; padding:15px; border-radius:8px; border:1px solid themeColor('#e2e8f0'); margin-top:15px; min-height:80px;"></div>
+        <div id="master-math-display" style="background:white; padding:15px; border-radius:8px; border:1px solid #e2e8f0; margin-top:15px; min-height:80px;"></div>
     `;
 
     document.getElementById('w1-range').oninput = (e) => { masterState.weights.w1 = parseFloat(e.target.value); updatePlots(); };
@@ -190,7 +190,7 @@ function renderPointTable() {
             <td><button onclick="masterState.data.splice(${i},1);renderPointTable();updatePlots()">✕</button></td>
         </tr>`).join('');
     area.innerHTML = `<table><thead><tr><th>X (Input)</th><th>Y (Target)</th><th></th></tr></thead><tbody>${rows}</tbody></table>
-    <button class="btn" style="width:100%; margin-top:5px; background:themeColor('#64748b'); color:white;" onclick="masterState.data.push([Math.random()*8, Math.random()*10]);renderPointTable();updatePlots()">+ Datenpunkt</button>`;
+    <button class="btn" style="width:100%; margin-top:5px; background:#64748b; color:white;" onclick="masterState.data.push([Math.random()*8, Math.random()*10]);renderPointTable();updatePlots()">+ Datenpunkt</button>`;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
