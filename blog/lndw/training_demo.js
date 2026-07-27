@@ -140,11 +140,22 @@ window.TrainingDemo = (function() {
     }
 
     // ============================================================
-    // FIXED LOSS LANDSCAPE — computed once, stays constant
+    // FIXED LOSS LANDSCAPE — real network loss, computed once
+    // Varies W1[w1i][0] and W1[w2i][0], all other weights frozen.
     // ============================================================
     function computeFixedSurface() {
-        var gs = 50;
+        var gs = 45;
+        var w1i = 0, w2i = 2;
+        // Snapshot all OTHER weights at initial values
+        var frozenW1 = s.W1.map(function(r) { return r.slice(); });
+        var frozenB1 = s.b1.slice();
+        var frozenW2 = s.W2.map(function(r) { return r.slice(); });
+        var frozenB2 = s.b2.slice();
+
+        // Determine range centered on initial weight values
+        var cW1 = frozenW1[w1i][0], cW2 = frozenW1[w2i][0];
         var range = 5.0;
+
         var xv = [], yv = [], zv = [];
         for (var i = 0; i < gs; i++) xv.push(-range + i/(gs-1) * 2*range);
         for (var j = 0; j < gs; j++) yv.push(-range + j/(gs-1) * 2*range);
@@ -152,45 +163,40 @@ window.TrainingDemo = (function() {
         for (var j = 0; j < gs; j++) {
             var row = [];
             for (var i = 0; i < gs; i++) {
-                var x = xv[i], y = yv[j];
-                var z = 0;
-
-                // --- Deep global minimum (the "goal") ---
-                z += 5.0 * Math.exp(-((x-2.0)*(x-2.0) + (y+1.5)*(y+1.5)) / 0.6);
-
-                // --- Deep local minimum (trap) ---
-                z += 4.0 * Math.exp(-((x+1.8)*(x+1.8) + (y-0.5)*(y-0.5)) / 0.5);
-
-                // --- Another local minimum ---
-                z += 3.5 * Math.exp(-((x-0.5)*(x-0.5) + (y+2.5)*(y+2.5)) / 0.4);
-
-                // --- Shallow local minimum ---
-                z += 2.5 * Math.exp(-((x+0.5)*(x+0.5) + (y+0.8)*(y+0.8)) / 0.8);
-
-                // --- High ridge separating basins ---
-                z -= 3.0 * Math.exp(-(x*x) / 0.4) * Math.exp(-((y-0.5)*(y-0.5)) / 0.3);
-
-                // --- Diagonal ridge ---
-                z -= 2.0 * Math.exp(-((x+y-1)*(x+y-1)) / 1.5);
-
-                // --- Saddle between two minima ---
-                z -= 1.5 * Math.exp(-((x-0.7)*(x-0.7)) / 0.2) * Math.exp(-((y+0.5)*(y+0.5)) / 2.0);
-
-                // --- Oscillating texture (wavy terrain) ---
-                z -= 0.8 * Math.sin(x * 1.2) * Math.cos(y * 0.9);
-                z -= 0.5 * Math.cos(x * 0.7 + y * 1.1);
-
-                // --- Edge walls (make boundaries high) ---
-                z -= 0.08 * (x*x + y*y);
-
-                // --- Final base + invert: high = bad loss ---
-                z = 7.0 - z;
-                z = Math.max(0.02, z);
-                row.push(z);
+                var w1v = xv[i], w2v = yv[j];
+                var tl = 0;
+                for (var ii = 0; ii < IMG_DATA.length; ii++) {
+                    var feat = IMG_DATA[ii].features, tgt = IMG_DATA[ii].labelIdx;
+                    // Forward pass with overridden weights
+                    var h = [];
+                    for (var hh = 0; hh < NH; hh++) {
+                        var sum = frozenB1[hh];
+                        for (var ff = 0; ff < NI; ff++) {
+                            var w = frozenW1[ff][hh];
+                            if (ff === w1i && hh === 0) w = w1v;
+                            if (ff === w2i && hh === 0) w = w2v;
+                            sum += feat[ff] * w;
+                        }
+                        h.push(Math.max(0, sum));
+                    }
+                    var o = [];
+                    for (var kk = 0; kk < NO; kk++) {
+                        var sum = frozenB2[kk];
+                        for (var hh = 0; hh < NH; hh++) sum += h[hh] * frozenW2[hh][kk];
+                        o.push(sum);
+                    }
+                    var mx = Math.max(o[0], o[1]);
+                    var es = Math.exp(o[0]-mx) + Math.exp(o[1]-mx);
+                    o[0] = Math.exp(o[0]-mx)/es;
+                    o[1] = Math.exp(o[1]-mx)/es;
+                    var ta = tgt === 0 ? [1,0] : [0,1];
+                    tl += -(ta[0]*Math.log(Math.max(o[0],1e-8)) + ta[1]*Math.log(Math.max(o[1],1e-8)));
+                }
+                row.push(tl / IMG_DATA.length);
             }
             zv.push(row);
         }
-        s.fixedSurface = { x: xv, y: yv, z: zv, gs: gs, range: range };
+        s.fixedSurface = { x: xv, y: yv, z: zv, gs: gs, range: range, w1i: w1i, w2i: w2i };
     }
 
     // ============================================================
@@ -591,6 +597,19 @@ window.TrainingDemo = (function() {
         ctx.fillText('\u2190 \u2192 Bilder', 10, 16);
     }
 
+    function getSurfaceLoss(w1, w2) {
+        var fs = s.fixedSurface;
+        if (!fs) return 2.0;
+        var fx = (w1 + fs.range) / (2 * fs.range) * (fs.gs - 1);
+        var fy = (w2 + fs.range) / (2 * fs.range) * (fs.gs - 1);
+        var ix = Math.max(0, Math.min(fs.gs - 2, Math.floor(fx)));
+        var iy = Math.max(0, Math.min(fs.gs - 2, Math.floor(fy)));
+        var dx = fx - ix, dy = fy - iy;
+        var z00 = fs.z[iy][ix], z10 = fs.z[iy][ix+1];
+        var z01 = fs.z[iy+1][ix], z11 = fs.z[iy+1][ix+1];
+        return z00*(1-dx)*(1-dy) + z10*dx*(1-dy) + z01*(1-dx)*dy + z11*dx*dy;
+    }
+
     // ============================================================
     // 3D LOSS LANDSCAPE — fixed surface, ball rolling with trail
     // ============================================================
@@ -604,29 +623,24 @@ window.TrainingDemo = (function() {
 
         var cw1 = s.W1[0][0], cw2 = s.W1[2][0];
 
-        // Map weight positions to surface x/y — always visible
-        var scale = 2.5;
-        var ballSx = cw1 * scale;
-        var ballSy = cw2 * scale;
-        // Clamp to surface bounds
-        ballSx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, ballSx));
-        ballSy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, ballSy));
+        // Clamp ball to surface area
+        var bSx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, cw1));
+        var bSy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, cw2));
+        var ballZ = getSurfaceLoss(bSx, bSy) + 0.04;
 
-        // Trail uses ACTUAL loss values for z (the real cross-entropy loss)
+        // Trail
         var tw = [], tb = [], tz = [];
         for (var hi = 0; hi < s.posHist.length; hi++) {
             var pw = s.posHist[hi].w1, pb = s.posHist[hi].w2;
-            var sx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pw * scale));
-            var sy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pb * scale));
+            var sx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pw));
+            var sy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pb));
             tw.push(sx);
             tb.push(sy);
-            // Use the actual recorded loss for z
-            tz.push(s.lossHist[hi] + 0.05);
+            tz.push(getSurfaceLoss(sx, sy) + 0.04);
         }
-        // Current position — use actual loss
-        tw.push(ballSx);
-        tb.push(ballSy);
-        tz.push(Math.max(0.05, s.loss) + 0.05);
+        tw.push(bSx);
+        tb.push(bSy);
+        tz.push(ballZ);
 
         var surface = {
             type: 'surface', x: fs.x, y: fs.y, z: fs.z,
@@ -672,7 +686,7 @@ window.TrainingDemo = (function() {
         // Current ball
         traces.push({
             type: 'scatter3d', mode: 'markers',
-            x: [ballSx], y: [ballSy], z: [Math.max(0.05, s.loss) + 0.05],
+            x: [bSx], y: [bSy], z: [ballZ],
             marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
             name: 'Aktuell'
         });
@@ -791,8 +805,8 @@ window.TrainingDemo = (function() {
         canvas.height = 460;
         initNet();
         s.fixedCenter = { w1: s.W1[0][0], w2: s.W1[2][0] };
-        computeFixedSurface();
         preloadImages(function() {
+            computeFixedSurface();
             var data = IMG_DATA[s.idx];
             if (data.features) { fwd(data.features); bwd(data.labelIdx); }
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
