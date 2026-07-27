@@ -1902,7 +1902,7 @@ function renderTrajectoryPlot(d_model) {
 		wrapper = document.createElement('div');
 		wrapper.id = wrapperId;
 		wrapper.style.cssText =
-			'border:2px solid rgb(203,213,225); border-radius:12px; margin-top:10px; background:#f8fafc;';
+			'border:2px solid ' + themeColor('#cbd5e1') + '; border-radius:12px; margin-top:10px; background:' + themeColor('#f8fafc') + ';';
 		wrapper.setAttribute('data-d-model', d_model);
 
 		if (d_model <= 3) {
@@ -3461,7 +3461,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 
 function createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer) {
 	const wrapperDiv = document.createElement('div');
-	wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
+	wrapperDiv.style.cssText = "border: 2px solid " + themeColor('#cbd5e1') + "; border-radius: 12px; margin-top: 10px; background: " + themeColor('#fff') + ";";
 	wrapperDiv.setAttribute('data-migration-wrapper', id);
 	wrapperDiv.setAttribute('data-d-model', d_model); // track d_model
 
