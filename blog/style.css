@@ -125,6 +125,10 @@ html.dark .gem-tab-state:checked + .gem-tab-trigger {
 	border-bottom: 2px solid var(--mn-accent) !important;
 	color: var(--mn-accent) !important;
 }
+/* Plotly chart backgrounds in dark mode */
+html.dark .js-plotly-plot .main-svg rect.bg {
+	fill: #1e293b !important;
+}
 html.dark pre,
 html.dark code {
 	background: #1a1f2e !important;
@@ -296,6 +300,10 @@ html.dark .minimalneuron-page .equation-card-inner {
 	background: rgba(253, 230, 138, 0.1) !important;
 	border-color: rgba(253, 230, 138, 0.2) !important;
 }
+html.dark .minimalneuron-page #lin-math-monitor > div {
+	background: linear-gradient(135deg, var(--mn-accent-lighter), var(--mn-bg-subtle)) !important;
+	border-color: var(--mn-border) !important;
+}
 html.dark .head-tab-in-layer {
 	background: rgba(99, 102, 241, 0.15) !important;
 	border-color: var(--mn-accent) !important;
@@ -367,6 +375,14 @@ html.dark select option {
 html.dark .gem-tab-state:checked + .gem-tab-trigger {
 	background: var(--mn-surface) !important;
 	color: var(--mn-accent) !important;
+}
+/* Plot containers with hardcoded white bg */
+html.dark [id$="-plot"],
+html.dark [id$="-chart"],
+html.dark [id$="-landscape"],
+html.dark [id$="-heatmap"],
+html.dark [id$="-viz"] {
+	background: var(--mn-surface) !important;
 }
 
 html.dark .math_transformer {
@@ -1619,7 +1635,7 @@ h2::after {
 }
 
 .minimalneuron-page #lin-math-monitor > div {
-	background: linear-gradient(135deg, var(--mn-accent-lighter), #f5f3ff);
+	background: linear-gradient(135deg, var(--mn-accent-lighter), rgb(245, 243, 255));
 	border: 1px solid var(--mn-accent-light);
 	border-radius: var(--mn-radius-lg);
 	padding: 1.25rem 1.5rem;
@@ -2617,7 +2633,10 @@ blockquote,
 
 /* Zebra Striping */
 #contents tbody tr:nth-child(even) {
-	background-color: rgba(248, 250, 252, 0.5); /* Very faint grey */
+    background-color: rgba(248, 250, 252, 0.5); /* Very faint grey */
+}
+html.dark #contents tbody tr:nth-child(even) {
+    background-color: rgba(30, 41, 59, 0.5) !important;
 }
 
 /* Remove border from last row */

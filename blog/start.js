@@ -775,6 +775,16 @@ function initDarkMode() {
 /* ════════════════════════════════════════════════════════════
    ADAPT LABS — fix hardcoded inline styles in demos
    ════════════════════════════════════════════════════════ */
+function fixPlotlyBg() {
+	var isDark = document.documentElement.classList.contains('dark');
+	if (!isDark) return;
+	var LAB_BG = '#1e293b';
+	document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
+		var rects = svg.querySelectorAll('rect.bg, rect[fill="#fff"], rect[fill="#ffffff"], rect[fill="white"], rect[fill="rgb(255,255,255)"], rect[fill="rgb(255, 255, 255)"]');
+		rects.forEach(function(r) { r.setAttribute('fill', LAB_BG); });
+	});
+}
+
 function isLightHex(hex) {
 	hex = hex.replace('#', '');
 	if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
@@ -823,10 +833,7 @@ function adaptLabsToTheme() {
 			}
 		}
 
-		document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
-			var rects = svg.querySelectorAll('rect.bg, rect[fill="#fff"], rect[fill="#ffffff"], rect[fill="white"], rect[fill="rgb(255,255,255)"], rect[fill="rgb(255, 255, 255)"]');
-			rects.forEach(function(r) { r.setAttribute('fill', LAB_BG); });
-		});
+		fixPlotlyBg();
 		document.querySelectorAll('div[id$="-chart"], div[id$="-plot"], div[id^="plot-"]').forEach(function(el) {
 			var s = (el.getAttribute('style') || '').toLowerCase();
 			if (/background/.test(s) && /#fff|#ffffff|white/.test(s)) {
@@ -1072,26 +1079,23 @@ document.addEventListener("DOMContentLoaded", function() {
 	render_temml();
 	observeAndRenderMath(document.body);
 
+	// Run adaptLabsToTheme after any DOM change (100ms debounce)
 	var adaptTimeout;
-	var observer = new MutationObserver(function(mutations) {
-		var needsRender = false;
-		mutations.forEach(function(mutation) {
-			if (mutation.addedNodes.length > 0) needsRender = true;
+	var domObserver = new MutationObserver(function(mutations) {
+		var needsAdapt = false;
+		mutations.forEach(function(m) {
+			if (m.addedNodes.length > 0) needsAdapt = true;
 		});
-
-		if (needsRender) {
-			render_temml();
-			// Debounced adaptation for dark mode
+		if (needsAdapt) {
 			clearTimeout(adaptTimeout);
-			adaptTimeout = setTimeout(function() {
-				adaptLabsToTheme();
-			}, 100);
+			adaptTimeout = setTimeout(adaptLabsToTheme, 100);
 		}
 	});
+	domObserver.observe(document.body, { childList: true, subtree: true });
 
-	observer.observe(document.body, {
-		childList: true,
-		subtree: true
+	// Also hook Plotly's after-plot event for immediate fix
+	document.addEventListener('plotly_afterplot', function() {
+		fixPlotlyBg();
 	});
 });
 
