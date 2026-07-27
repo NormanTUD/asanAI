@@ -546,18 +546,22 @@ function render_module_nav(): void {
 	if ($idx > 0) {
 		$prev = $modules[$idx - 1];
 		echo '<a href="' . htmlspecialchars($prev['url']) . '" class="module-nav-link module-nav-prev">'
+			. '<span class="module-nav-arrow" aria-hidden="true">←</span>'
+			. '<span class="module-nav-body">'
 			. '<span class="module-nav-label">Previous</span>'
-			. '← ' . htmlspecialchars($prev['title'])
-			. '</a>';
+			. '<span class="module-nav-title">' . htmlspecialchars($prev['title']) . '</span>'
+			. '</span></a>';
 	} else {
 		echo '<span></span>';
 	}
 	if ($idx < count($modules) - 1) {
 		$next = $modules[$idx + 1];
 		echo '<a href="' . htmlspecialchars($next['url']) . '" class="module-nav-link module-nav-next">'
+			. '<span class="module-nav-body">'
 			. '<span class="module-nav-label">Next</span>'
-			. htmlspecialchars($next['title']) . ' →'
-			. '</a>';
+			. '<span class="module-nav-title">' . htmlspecialchars($next['title']) . '</span>'
+			. '</span>'
+			. '<span class="module-nav-arrow" aria-hidden="true">→</span></a>';
 	} else {
 		echo '<span></span>';
 	}
