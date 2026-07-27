@@ -207,6 +207,7 @@ window.TrainingDemo = (function() {
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
         var W = canvas.width, H = canvas.height;
+        ctx.save();
         ctx.clearRect(0, 0, W, H);
 
         var bg = ctx.createLinearGradient(0, 0, W, H);
@@ -362,14 +363,14 @@ window.TrainingDemo = (function() {
                     var w = wMat ? wMat[f][t] : 0;
                     var alpha = 0.15 + Math.abs(w) * 0.5;
                     var hue = w >= 0 ? 210 : 0;
-                    var width = Math.max(1.5, Math.abs(w) * 4);
+                    var width = Math.min(6, Math.max(1.5, Math.abs(w) * 4));
 
                     if (ff > 0) {
                         var flow = (fi === 0 ? s.inp[f] : s.hid[f]) * w * ff;
                         if (Math.abs(flow) > 0.005) {
                             alpha = Math.min(0.8, 0.1 + Math.abs(flow) * 3);
                             hue = flow >= 0 ? 210 : 0;
-                            width = Math.max(1, 1 + Math.abs(flow) * 4);
+                            width = Math.min(6, Math.max(1, 1 + Math.abs(flow) * 4));
                         }
                     }
                     if (bf > 0) {
@@ -378,7 +379,7 @@ window.TrainingDemo = (function() {
                         if (ga > 0.01) {
                             alpha = Math.min(0.7, alpha + ga);
                             hue = 25;
-                            width = Math.max(width, 1 + Math.abs(g) * bf * 3);
+                            width = Math.min(6, Math.max(width, 1 + Math.abs(g) * bf * 3));
                         }
                     }
                     ctx.beginPath();
@@ -480,14 +481,23 @@ window.TrainingDemo = (function() {
                     ctx.textBaseline = 'alphabetic';
                     ctx.fillText((dVal*100).toFixed(0) + '%', bx + bw + 4, by + bh - 1);
 
-                    // Correct/wrong marker — positioned BELOW the bar, not overlapping
-                    if (isLoss || isBwd || isUpd) {
-                        var isRight = (ni === 0 && s.correct || ni === 1 && !s.correct);
-                        ctx.font = 'bold 13px system-ui';
+                    // Correct/wrong marker — shown only for the true class, right of the bar
+                    if ((isLoss || isBwd || isUpd) && ni === data.labelIdx) {
+                        var isRight = s.correct;
+                        var statusText = isRight ? '\u2713 Richtig' : '\u2717 Falsch';
+                        ctx.font = 'bold 11px system-ui';
                         ctx.textAlign = 'left';
-                        ctx.textBaseline = 'top';
+                        ctx.textBaseline = 'middle';
+                        var statusX = bx + bw + 28;
+                        var statusY = by + bh / 2;
+                        var textMetrics = ctx.measureText(statusText);
+                        ctx.fillStyle = isRight ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(statusX - 4, statusY - 7, textMetrics.width + 8, 14, 4);
+                        else ctx.rect(statusX - 4, statusY - 7, textMetrics.width + 8, 14);
+                        ctx.fill();
                         ctx.fillStyle = isRight ? '#10b981' : '#ef4444';
-                        ctx.fillText(isRight ? '\u2713 Richtig' : '\u2717 Falsch', bx, by + bh + 5);
+                        ctx.fillText(statusText, statusX, statusY);
                     }
                 }
             }
@@ -595,6 +605,7 @@ window.TrainingDemo = (function() {
         ctx.textAlign = 'left';
         ctx.fillStyle = '#cbd5e1';
         ctx.fillText('\u2190 \u2192 Bilder', 10, 16);
+        ctx.restore();
     }
 
     function getSurfaceLoss(w1, w2) {
@@ -628,9 +639,11 @@ window.TrainingDemo = (function() {
         var bSy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, cw2));
         var ballZ = getSurfaceLoss(bSx, bSy) + 0.04;
 
-        // Trail
+        // Trail: keep the most recent points so the line doesn't become a heavy scribble
+        var MAX_TRAIL = 120;
+        var startIdx = Math.max(0, s.posHist.length - MAX_TRAIL);
         var tw = [], tb = [], tz = [];
-        for (var hi = 0; hi < s.posHist.length; hi++) {
+        for (var hi = startIdx; hi < s.posHist.length; hi++) {
             var pw = s.posHist[hi].w1, pb = s.posHist[hi].w2;
             var sx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pw));
             var sy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pb));
@@ -642,95 +655,79 @@ window.TrainingDemo = (function() {
         tb.push(bSy);
         tz.push(ballZ);
 
-        var surface = {
-            type: 'surface', x: fs.x, y: fs.y, z: fs.z,
-            colorscale: [
-                [0, 'rgb(15,15,70)'], [0.08, 'rgb(25,50,160)'],
-                [0.18, 'rgb(30,100,210)'], [0.3, 'rgb(40,160,200)'],
-                [0.42, 'rgb(80,190,140)'], [0.55, 'rgb(180,200,60)'],
-                [0.68, 'rgb(220,150,30)'], [0.8, 'rgb(210,60,30)'],
-                [0.92, 'rgb(160,20,20)'], [1, 'rgb(100,5,5)']
-            ],
-            opacity: 0.6,
-            contours: {
-                z: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.4)', project: { z: true } }
-            },
-            showscale: false,
-            hovertemplate: 'w1: %{x:.3f}<br>w2: %{y:.3f}<br>Loss: %{z:.4f}<extra></extra>'
-        };
+        var dm = typeof is_dark_mode !== 'undefined' && is_dark_mode;
 
-        var traces = [surface];
+        if (!s.plotInitialized) {
+            var surface = {
+                type: 'surface', x: fs.x, y: fs.y, z: fs.z,
+                colorscale: [
+                    [0, 'rgb(15,15,70)'], [0.08, 'rgb(25,50,160)'],
+                    [0.18, 'rgb(30,100,210)'], [0.3, 'rgb(40,160,200)'],
+                    [0.42, 'rgb(80,190,140)'], [0.55, 'rgb(180,200,60)'],
+                    [0.68, 'rgb(220,150,30)'], [0.8, 'rgb(210,60,30)'],
+                    [0.92, 'rgb(160,20,20)'], [1, 'rgb(100,5,5)']
+                ],
+                opacity: 0.6,
+                contours: {
+                    z: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.4)', project: { z: true } }
+                },
+                showscale: false,
+                hovertemplate: 'w1: %{x:.3f}<br>w2: %{y:.3f}<br>Loss: %{z:.4f}<extra></extra>'
+            };
 
-        // Trail
-        if (tw.length > 1) {
+            var traces = [surface];
+
+            // Trail
             traces.push({
                 type: 'scatter3d', mode: 'lines+markers',
                 x: tw, y: tb, z: tz,
-                line: { color: '#ff6b6b', width: 5 },
+                line: { color: '#ff6b6b', width: 4 },
                 marker: { size: 3, color: 'rgba(255,107,107,0.6)' },
                 name: 'Pfad',
                 hoverinfo: 'skip'
             });
-        }
 
-        // Start marker
-        if (tw.length > 1) {
+            // Start marker
             traces.push({
                 type: 'scatter3d', mode: 'markers',
                 x: [tw[0]], y: [tb[0]], z: [tz[0]],
                 marker: { size: 9, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 2 } },
                 name: 'Start'
             });
-        }
 
-        // Current ball
-        traces.push({
-            type: 'scatter3d', mode: 'markers',
-            x: [bSx], y: [bSy], z: [ballZ],
-            marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
-            name: 'Aktuell'
-        });
+            // Current ball
+            traces.push({
+                type: 'scatter3d', mode: 'markers',
+                x: [bSx], y: [bSy], z: [ballZ],
+                marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
+                name: 'Aktuell'
+            });
 
-        var dm = typeof is_dark_mode !== 'undefined' && is_dark_mode;
-
-        // Preserve camera across updates
-        var savedCamera = null;
-        if (s.plotInitialized && div._fullLayout && div._fullLayout.scene) {
-            try {
-                var sc = div._fullLayout.scene._scene.getCamera();
-                savedCamera = { eye: { x: sc.eye.x, y: sc.eye.y, z: sc.eye.z } };
-            } catch(e) {}
-        }
-        if (!savedCamera && s.savedCamera) {
-            savedCamera = s.savedCamera;
-        }
-
-        var layout = {
-            scene: {
-                xaxis: { title: 'Gewicht 1', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' },
-                yaxis: { title: 'Gewicht 2', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' },
-                zaxis: { title: 'Loss', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', rangemode: 'tozero' },
-                bgcolor: dm ? '#0d0d1a' : '#f8fafc'
-            },
-            paper_bgcolor: dm ? '#0d0d1a' : '#f8fafc',
-            margin: { l: 0, r: 0, t: 0, b: 0 },
-            showlegend: false,
-            dragmode: 'turntable'
-        };
-
-        if (savedCamera) {
-            layout.scene.camera = savedCamera;
-        } else {
+            var layout = {
+                scene: {
+                    xaxis: { title: 'Gewicht 1', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' },
+                    yaxis: { title: 'Gewicht 2', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' },
+                    zaxis: { title: 'Loss', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', rangemode: 'tozero' },
+                    bgcolor: dm ? '#0d0d1a' : '#f8fafc'
+                },
+                paper_bgcolor: dm ? '#0d0d1a' : '#f8fafc',
+                margin: { l: 0, r: 0, t: 0, b: 0 },
+                showlegend: false,
+                dragmode: 'turntable'
+            };
             layout.scene.camera = { eye: { x: 1.8, y: 1.8, z: 1.2 } };
-        }
 
-        var config = { responsive: true, displaylogo: false, scrollZoom: true };
-        if (!s.plotInitialized) {
+            var config = { responsive: true, displaylogo: false, scrollZoom: true };
             Plotly.newPlot(div, traces, layout, config).then(function() {
                 s.plotInitialized = true;
             });
         } else {
-            Plotly.react(div, traces, layout, config);
+            // Update only the moving traces with restyle so the camera/surface stay stable
+            Plotly.restyle(div, {
+                x: [tw, [tw[0]], [bSx]],
+                y: [tb, [tb[0]], [bSy]],
+                z: [tz, [tz[0]], [ballZ]]
+            }, [1, 2, 3]);
         }
     }
 
@@ -812,15 +809,6 @@ window.TrainingDemo = (function() {
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             draw();
             updatePlot();
-            // Track camera changes from user interaction
-            var div = document.getElementById('training-loss-landscape');
-            if (div) {
-                div.on('plotly_relayout', function(ed) {
-                    if (ed['scene.eye.x'] !== undefined) {
-                        s.savedCamera = { eye: { x: ed['scene.eye.x'], y: ed['scene.eye.y'], z: ed['scene.eye.z'] } };
-                    }
-                });
-            }
         });
         draw();
     }
@@ -852,7 +840,6 @@ window.TrainingDemo = (function() {
         s.idx = 0; s.phase = 0; s.phaseT = 0; s.lastTime = 0;
         s.lossHist = []; s.posHist = []; s.plotInitialized = false;
         s.prevW1 = null; s.prevB1 = null; s.prevW2 = null; s.prevB2 = null;
-        s.savedCamera = null;
         var canvas = document.getElementById('training-network-canvas');
         if (canvas) {
             var ctx = canvas.getContext('2d');
@@ -861,7 +848,9 @@ window.TrainingDemo = (function() {
         if (IMG_DATA[0] && IMG_DATA[0].features) {
             fwd(IMG_DATA[0].features);
             bwd(IMG_DATA[0].labelIdx);
+            s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
         }
+        updatePlot();
     }
 
     return { init: init, start: start, stop: stop, reset: reset, nextImage: nextImage, prevImage: prevImage, canGoNext: canGoNext, canGoPrev: canGoPrev, isOnTrainingSlide: isOnTrainingSlide };
