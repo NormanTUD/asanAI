@@ -646,8 +646,8 @@ window.TrainingDemo = (function() {
         var tw = [], tb = [], tz = [];
         for (var hi = startIdx; hi < s.posHist.length; hi++) {
             var pw = s.posHist[hi].w1, pb = s.posHist[hi].w2;
-            var sx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pw));
-            var sy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pb));
+            var sx = Math.max(-fs.range + 0.5, Math.min(fs.range - 0.5, pw));
+            var sy = Math.max(-fs.range + 0.5, Math.min(fs.range - 0.5, pb));
             tw.push(sx);
             tb.push(sy);
             tz.push(getSurfaceLoss(sx, sy) + 0.04);
