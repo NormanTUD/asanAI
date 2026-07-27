@@ -360,7 +360,7 @@ const SENTENCES_1D = [
 		{ min: 0.990, text: 'After the <b style="color:#0ea5e9">dam</b> broke, the <b style="color:#10b981">💧 bank</b> was <b style="color:#0ea5e9">swallowed whole</b> by <b style="color:#10b981">floodwaters</b> within minutes.' },
 		{ min: 0.988, text: 'A <b style="color:#10b981">massive cottonwood</b> toppled from the <b style="color:#10b981">💧 bank</b> into the <b style="color:#0ea5e9">churning current</b>, creating a <b style="color:#10b981">natural dam</b>.' },
 		{ min: 0.985, text: 'The <b style="color:#10b981">💧 bank</b> was nothing but <b style="color:#10b981">exposed roots</b> and <b style="color:#10b981">crumbling soil</b> after the <b style="color:#0ea5e9">spring melt</b> scoured it clean.' },
-		{ min: 0.982, text: 'Emergency crews reinforced the <b style="color:#10b981">💧 bank</b> with <b style="color:themeColor('#94a3b8')">sandbags</b> as the <b style="color:#0ea5e9">water level</b> kept rising through the <b style="color:#0ea5e9">night</b>.' },
+		{ min: 0.982, text: 'Emergency crews reinforced the <b style="color:#10b981">💧 bank</b> with <b style="color:#94a3b8">sandbags</b> as the <b style="color:#0ea5e9">water level</b> kept rising through the <b style="color:#0ea5e9">night</b>.' },
 		{ min: 0.979, text: '<b style="color:#0ea5e9">Floodwaters</b> carved deep grooves into the <b style="color:#10b981">💧 bank</b> overnight, reshaping the entire <b style="color:#10b981">landscape</b>.' },
 		{ min: 0.976, text: 'The <b style="color:#10b981">💧 bank</b> was riddled with <b style="color:#10b981">muskrat burrows</b> that weakened the <b style="color:#10b981">soil</b> from within.' },
 		{ min: 0.973, text: '<b style="color:#10b981">Salmon</b> leapt upstream along the <b style="color:#10b981">💧 bank</b> during the <b style="color:#0ea5e9">spring run</b>, silver flashes in the <b style="color:#0ea5e9">rapids</b>.' },
@@ -375,9 +375,9 @@ const SENTENCES_1D = [
 		{ min: 0.935, text: 'They spread a <b style="color:#f97316">blanket</b> on the grassy <b style="color:#10b981">💧 bank</b> for a <b style="color:#f97316">picnic</b> by the <b style="color:#0ea5e9">stream</b>.' },
 		{ min: 0.930, text: 'A <b style="color:#10b981">heron</b> stood motionless on the <b style="color:#10b981">💧 bank</b>, watching for <b style="color:#0ea5e9">fish</b> in the <b style="color:#0ea5e9">shallows</b>.' },
 		{ min: 0.92, text: 'The <b style="color:#0ea5e9">canoe</b> scraped against the <b style="color:#f97316">sandy</b> <b style="color:#10b981">💧 bank</b> as they pulled ashore for <b style="color:#f97316">lunch</b>.' },
-		{ min: 0.91, text: '<b style="color:#f97316">Children</b> skipped <b style="color:themeColor('#94a3b8')">stones</b> from the <b style="color:#10b981">💧 bank</b> into the calm <b style="color:#0ea5e9">water</b>.' },
+		{ min: 0.91, text: '<b style="color:#f97316">Children</b> skipped <b style="color:#94a3b8">stones</b> from the <b style="color:#10b981">💧 bank</b> into the calm <b style="color:#0ea5e9">water</b>.' },
 		{ min: 0.90, text: 'An <b style="color:#10b981">otter</b> slid down the <b style="color:#10b981">💧 bank</b> and splashed into the <b style="color:#0ea5e9">creek</b> with a happy chirp.' },
-		{ min: 0.89, text: '<b style="color:#10b981">Turtles</b> sunned themselves on a <b style="color:themeColor('#94a3b8')">log</b> near the <b style="color:#10b981">💧 bank</b> all <b style="color:#f97316">afternoon</b>.' },
+		{ min: 0.89, text: '<b style="color:#10b981">Turtles</b> sunned themselves on a <b style="color:#94a3b8">log</b> near the <b style="color:#10b981">💧 bank</b> all <b style="color:#f97316">afternoon</b>.' },
 		{ min: 0.88, text: 'The <b style="color:#f97316">path</b> followed the <b style="color:#10b981">💧 bank</b> of the <b style="color:#0ea5e9">creek</b> through the <b style="color:#10b981">woods</b>.' },
 		{ min: 0.87, text: '<b style="color:#10b981">Dragonflies</b> hovered above the <b style="color:#10b981">💧 bank</b> in the <b style="color:#f97316">afternoon</b> <b style="color:#0ea5e9">mist</b>.' },
 		{ min: 0.86, text: 'The <b style="color:#0ea5e9">river</b> had eroded the <b style="color:#10b981">💧 bank</b> into a gentle <b style="color:#f97316">slope</b> over the centuries.' },
@@ -403,7 +403,7 @@ const SENTENCES_1D = [
 		{ min: 0.66, text: 'A <b style="color:#f97316">child</b> crouched on the <b style="color:#10b981">💧 bank</b>, peering at <b style="color:#10b981">tadpoles</b> in the <b style="color:#0ea5e9">shallows</b>.' },
 		{ min: 0.65, text: 'The <b style="color:#10b981">💧 bank</b> was their <b style="color:#f97316">favorite spot</b> to watch the <b style="color:#eab308">sunset</b> over the <b style="color:#0ea5e9">water</b>.' },
 		{ min: 0.64, text: '<b style="color:#10b981">Ivy</b> crept down the <b style="color:#10b981">💧 bank</b> toward the <b style="color:#0ea5e9">water\'s edge</b>.' },
-		{ min: 0.63, text: 'He skipped a <b style="color:themeColor('#94a3b8')">flat stone</b> from the <b style="color:#10b981">💧 bank</b> — it bounced <b style="color:#0ea5e9">five times</b>.' },
+		{ min: 0.63, text: 'He skipped a <b style="color:#94a3b8">flat stone</b> from the <b style="color:#10b981">💧 bank</b> — it bounced <b style="color:#0ea5e9">five times</b>.' },
 		{ min: 0.62, text: 'The <b style="color:#10b981">💧 bank</b> was quiet except for the <b style="color:#0ea5e9">gurgling</b> of the <b style="color:#0ea5e9">stream</b>.' },
 		{ min: 0.61, text: 'A <b style="color:#10b981">snapping turtle</b> basked on the <b style="color:#10b981">💧 bank</b> in the <b style="color:#eab308">midday sun</b>.' },
 		{ min: 0.60, text: 'They built a <b style="color:#f97316">small fire</b> on the <b style="color:#10b981">💧 bank</b> and listened to the <b style="color:#0ea5e9">water</b>.' },
@@ -420,9 +420,9 @@ const SENTENCES_1D = [
 		{ min: 0.49, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled yet.' },
 		{ min: 0.48, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' },
 		{ min: 0.47, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#10b981">💧 water</b>, but barely.' },
-		{ min: 0.46, text: 'A <b style="color:themeColor('#94a3b8')">whisper</b> of <b style="color:#10b981">💧 nature</b>, but it could mean anything at all.' },
-		{ min: 0.45, text: 'The meaning is almost <b style="color:themeColor('#94a3b8')">perfectly split</b> — maybe <b style="color:#10b981">💧 water</b>, maybe not.' },
-		{ min: 0.00, text: 'The word "bank" is <b style="color:themeColor('#94a3b8')">neutral</b> — <b style="color:#10b981">💧 water</b> and <b style="color:#f59e0b">💰 money</b> are neck and neck.' }
+		{ min: 0.46, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#10b981">💧 nature</b>, but it could mean anything at all.' },
+		{ min: 0.45, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#10b981">💧 water</b>, maybe not.' },
+		{ min: 0.00, text: 'The word "bank" is <b style="color:#94a3b8">neutral</b> — <b style="color:#10b981">💧 water</b> and <b style="color:#f59e0b">💰 money</b> are neck and neck.' }
 	],
 	// Index 1 = vault/money dominant
 	[
@@ -430,74 +430,74 @@ const SENTENCES_1D = [
 		{ min: 0.998, text: '<b style="color:#dc2626">FBI agents</b> seized <b style="color:#f59e0b">servers</b> from the <b style="color:#f59e0b">💰 bank\'s</b> headquarters in a <b style="color:#dc2626">predawn raid</b> linked to <b style="color:#f59e0b">money laundering</b>.' },
 		{ min: 0.996, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">CEO</b> was <b style="color:#dc2626">indicted</b> on <b style="color:#dc2626">fourteen counts</b> of <b style="color:#f59e0b">securities fraud</b> and <b style="color:#f59e0b">embezzlement</b>.' },
 		{ min: 0.994, text: '<b style="color:#dc2626">Regulators</b> shut down the <b style="color:#f59e0b">💰 bank</b> overnight after a <b style="color:#dc2626">run</b> drained its <b style="color:#f59e0b">cash reserves</b> to zero.' },
-		{ min: 0.992, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held <b style="color:#f59e0b">$40 million</b> in <b style="color:#eab308">gold reserves</b> behind <b style="color:themeColor('#94a3b8')">three-foot steel doors</b>.' },
+		{ min: 0.992, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held <b style="color:#f59e0b">$40 million</b> in <b style="color:#eab308">gold reserves</b> behind <b style="color:#94a3b8">three-foot steel doors</b>.' },
 		{ min: 0.990, text: '<b style="color:#dc2626">Armored trucks</b> lined up outside the <b style="color:#f59e0b">💰 bank</b> to transport <b style="color:#f59e0b">$100 million</b> in <b style="color:#f59e0b">bearer bonds</b>.' },
 		{ min: 0.988, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">trading floor</b> erupted in <b style="color:#dc2626">panic</b> as the <b style="color:#f59e0b">stock</b> plummeted <b style="color:#dc2626">30%</b> in minutes.' },
 		{ min: 0.985, text: '<b style="color:#dc2626">Federal investigators</b> subpoenaed every record from the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">offshore accounts</b>.' },
-		{ min: 0.982, text: '<b style="color:#dc2626">Armed guards</b> stood outside the <b style="color:#f59e0b">💰 bank</b> during the <b style="color:themeColor('#94a3b8')">armored</b> <b style="color:#f59e0b">cash transfer</b>.' },
+		{ min: 0.982, text: '<b style="color:#dc2626">Armed guards</b> stood outside the <b style="color:#f59e0b">💰 bank</b> during the <b style="color:#94a3b8">armored</b> <b style="color:#f59e0b">cash transfer</b>.' },
 		{ min: 0.979, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">quarterly earnings</b> shattered every <b style="color:#f59e0b">Wall Street</b> forecast this year.' },
 		{ min: 0.976, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">stock price</b> surged <b style="color:#dc2626">18%</b> after the <b style="color:#f59e0b">merger</b> announcement.' },
-		{ min: 0.973, text: '<b style="color:#dc2626">Auditors</b> found <b style="color:#f59e0b">discrepancies</b> in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">ledgers</b> going back <b style="color:themeColor('#94a3b8')">five years</b>.' },
+		{ min: 0.973, text: '<b style="color:#dc2626">Auditors</b> found <b style="color:#f59e0b">discrepancies</b> in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">ledgers</b> going back <b style="color:#94a3b8">five years</b>.' },
 		{ min: 0.970, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#dc2626">foreclosed</b> on three <b style="color:#f59e0b">properties</b> this <b style="color:#f59e0b">quarter</b> alone.' },
 		{ min: 0.966, text: '<b style="color:#dc2626">Protesters</b> gathered outside the <b style="color:#f59e0b">💰 bank</b> demanding lower <b style="color:#f59e0b">interest rates</b> on <b style="color:#f59e0b">student loans</b>.' },
 		{ min: 0.962, text: 'The <b style="color:#f59e0b">💰 bank</b> announced a <b style="color:#f59e0b">hostile takeover bid</b> for its <b style="color:#f59e0b">rival institution</b>.' },
 		{ min: 0.958, text: 'The <b style="color:#f59e0b">💰 bank</b> issued a <b style="color:#f59e0b">dividend</b> that exceeded <b style="color:#f59e0b">analyst</b> expectations by a wide margin.' },
 		{ min: 0.954, text: '<b style="color:#f59e0b">Shareholders</b> voted to replace the <b style="color:#f59e0b">💰 bank\'s</b> entire <b style="color:#f59e0b">board of directors</b>.' },
-		{ min: 0.950, text: 'The <b style="color:#f59e0b">💰 bank</b> raised its <b style="color:#f59e0b">prime lending rate</b> for the <b style="color:themeColor('#94a3b8')">third time</b> this year.' },
+		{ min: 0.950, text: 'The <b style="color:#f59e0b">💰 bank</b> raised its <b style="color:#f59e0b">prime lending rate</b> for the <b style="color:#94a3b8">third time</b> this year.' },
 		{ min: 0.945, text: 'She nervously entered the <b style="color:#f59e0b">💰 bank</b> to negotiate the terms of her <b style="color:#f59e0b">business loan</b>.' },
-		{ min: 0.940, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her <b style="color:#f59e0b">mortgage</b> application after weeks of <b style="color:themeColor('#94a3b8')">paperwork</b>.' },
+		{ min: 0.940, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her <b style="color:#f59e0b">mortgage</b> application after weeks of <b style="color:#94a3b8">paperwork</b>.' },
 		{ min: 0.935, text: 'A <b style="color:#f59e0b">financial advisor</b> at the <b style="color:#f59e0b">💰 bank</b> recommended a <b style="color:#f59e0b">diversified portfolio</b>.' },
-		{ min: 0.930, text: 'The <b style="color:#f59e0b">💰 bank</b> wired <b style="color:#f59e0b">$50,000</b> to the <b style="color:#f59e0b">escrow account</b> by <b style="color:themeColor('#94a3b8')">noon</b>.' },
+		{ min: 0.930, text: 'The <b style="color:#f59e0b">💰 bank</b> wired <b style="color:#f59e0b">$50,000</b> to the <b style="color:#f59e0b">escrow account</b> by <b style="color:#94a3b8">noon</b>.' },
 		{ min: 0.92, text: 'He refinanced his <b style="color:#f59e0b">home loan</b> through the <b style="color:#f59e0b">💰 bank</b> at a lower <b style="color:#f59e0b">rate</b>.' },
 		{ min: 0.91, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">compliance department</b> flagged the <b style="color:#f59e0b">transaction</b> for review.' },
-		{ min: 0.90, text: 'She deposited her <b style="color:#f59e0b">paycheck</b> at the <b style="color:#f59e0b">💰 bank</b> on <b style="color:themeColor('#94a3b8')">Friday afternoon</b>.' },
+		{ min: 0.90, text: 'She deposited her <b style="color:#f59e0b">paycheck</b> at the <b style="color:#f59e0b">💰 bank</b> on <b style="color:#94a3b8">Friday afternoon</b>.' },
 		{ min: 0.89, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">signing bonus</b> for new <b style="color:#f59e0b">premium accounts</b>.' },
 		{ min: 0.88, text: 'He checked his <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">balance</b> nervously before making the <b style="color:#f59e0b">purchase</b>.' },
 		{ min: 0.87, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about new <b style="color:#f59e0b">savings account</b> terms and <b style="color:#f59e0b">fees</b>.' },
 		{ min: 0.86, text: 'She walked into the <b style="color:#f59e0b">💰 bank</b> to ask about opening a <b style="color:#f59e0b">checking account</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">ATM</b> was out of <b style="color:#f59e0b">cash</b> again this <b style="color:themeColor('#94a3b8')">weekend</b>.' },
-		{ min: 0.84, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his <b style="color:#f59e0b">account balance</b> before <b style="color:themeColor('#94a3b8')">lunch</b>.' },
-		{ min: 0.83, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:themeColor('#94a3b8')">branch</b> on <b style="color:themeColor('#94a3b8')">Main Street</b> was always <b style="color:themeColor('#94a3b8')">crowded</b> at <b style="color:themeColor('#94a3b8')">noon</b>.' },
-		{ min: 0.82, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:themeColor('#94a3b8')">mail</b> and tossed it on the <b style="color:themeColor('#94a3b8')">counter</b>.' },
+		{ min: 0.85, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">ATM</b> was out of <b style="color:#f59e0b">cash</b> again this <b style="color:#94a3b8">weekend</b>.' },
+		{ min: 0.84, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his <b style="color:#f59e0b">account balance</b> before <b style="color:#94a3b8">lunch</b>.' },
+		{ min: 0.83, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">branch</b> on <b style="color:#94a3b8">Main Street</b> was always <b style="color:#94a3b8">crowded</b> at <b style="color:#94a3b8">noon</b>.' },
+		{ min: 0.82, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:#94a3b8">mail</b> and tossed it on the <b style="color:#94a3b8">counter</b>.' },
 		{ min: 0.81, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">low-interest</b> <b style="color:#f59e0b">credit card</b> with no <b style="color:#f59e0b">annual fee</b>.' },
-		{ min: 0.80, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:themeColor('#94a3b8')">closed</b> at <b style="color:themeColor('#94a3b8')">five</b>.' },
-		{ min: 0.79, text: 'The <b style="color:#f59e0b">💰 bank</b> had a <b style="color:themeColor('#94a3b8')">long queue</b> snaking out the <b style="color:themeColor('#94a3b8')">front door</b>.' },
-		{ min: 0.78, text: 'She set up <b style="color:#f59e0b">direct deposit</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">mobile app</b>.' },
+		{ min: 0.80, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:#94a3b8">closed</b> at <b style="color:#94a3b8">five</b>.' },
+		{ min: 0.79, text: 'The <b style="color:#f59e0b">💰 bank</b> had a <b style="color:#94a3b8">long queue</b> snaking out the <b style="color:#94a3b8">front door</b>.' },
+		{ min: 0.78, text: 'She set up <b style="color:#f59e0b">direct deposit</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">mobile app</b>.' },
 		{ min: 0.77, text: 'The <b style="color:#f59e0b">💰 bank</b> notified him of a <b style="color:#f59e0b">suspicious charge</b> on his <b style="color:#f59e0b">debit card</b>.' },
-		{ min: 0.76, text: 'He opened a <b style="color:#f59e0b">joint account</b> at the <b style="color:#f59e0b">💰 bank</b> after the <b style="color:themeColor('#94a3b8')">wedding</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">lobby</b> smelled of <b style="color:themeColor('#94a3b8')">carpet cleaner</b> and <b style="color:themeColor('#94a3b8')">stale coffee</b>.' },
-		{ min: 0.74, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> <b style="color:themeColor('#94a3b8')">teller</b> for a <b style="color:#f59e0b">cashier\'s check</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#f59e0b">💰 bank</b> waived the <b style="color:#f59e0b">overdraft fee</b> as a <b style="color:themeColor('#94a3b8')">one-time courtesy</b>.' },
+		{ min: 0.76, text: 'He opened a <b style="color:#f59e0b">joint account</b> at the <b style="color:#f59e0b">💰 bank</b> after the <b style="color:#94a3b8">wedding</b>.' },
+		{ min: 0.75, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">lobby</b> smelled of <b style="color:#94a3b8">carpet cleaner</b> and <b style="color:#94a3b8">stale coffee</b>.' },
+		{ min: 0.74, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">teller</b> for a <b style="color:#f59e0b">cashier\'s check</b>.' },
+		{ min: 0.73, text: 'The <b style="color:#f59e0b">💰 bank</b> waived the <b style="color:#f59e0b">overdraft fee</b> as a <b style="color:#94a3b8">one-time courtesy</b>.' },
 		{ min: 0.72, text: 'He transferred <b style="color:#f59e0b">funds</b> between <b style="color:#f59e0b">accounts</b> at the <b style="color:#f59e0b">💰 bank</b> online.' },
-		{ min: 0.71, text: 'The <b style="color:#f59e0b">💰 bank</b> mailed a new <b style="color:#f59e0b">debit card</b> after the old one <b style="color:themeColor('#94a3b8')">expired</b>.' },
+		{ min: 0.71, text: 'The <b style="color:#f59e0b">💰 bank</b> mailed a new <b style="color:#f59e0b">debit card</b> after the old one <b style="color:#94a3b8">expired</b>.' },
 		{ min: 0.70, text: 'She scheduled a meeting at the <b style="color:#f59e0b">💰 bank</b> to discuss <b style="color:#f59e0b">retirement planning</b>.' },
-		{ min: 0.69, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">parking lot</b> was full every <b style="color:themeColor('#94a3b8')">Monday morning</b>.' },
+		{ min: 0.69, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">parking lot</b> was full every <b style="color:#94a3b8">Monday morning</b>.' },
 		{ min: 0.68, text: 'He picked up a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">brochure</b> about <b style="color:#f59e0b">CD rates</b> on his way out.' },
-		{ min: 0.67, text: 'The <b style="color:#f59e0b">💰 bank</b> required <b style="color:themeColor('#94a3b8')">two forms of ID</b> to open the <b style="color:#f59e0b">account</b>.' },
-		{ min: 0.66, text: 'She used the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">night deposit box</b> after <b style="color:themeColor('#94a3b8')">closing hours</b>.' },
+		{ min: 0.67, text: 'The <b style="color:#f59e0b">💰 bank</b> required <b style="color:#94a3b8">two forms of ID</b> to open the <b style="color:#f59e0b">account</b>.' },
+		{ min: 0.66, text: 'She used the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">night deposit box</b> after <b style="color:#94a3b8">closing hours</b>.' },
 		{ min: 0.65, text: 'The <b style="color:#f59e0b">💰 bank</b> was running a <b style="color:#f59e0b">promotion</b> on <b style="color:#f59e0b">home equity loans</b>.' },
-		{ min: 0.64, text: 'He sat in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">waiting area</b>, flipping through a <b style="color:themeColor('#94a3b8')">magazine</b>.' },
+		{ min: 0.64, text: 'He sat in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">waiting area</b>, flipping through a <b style="color:#94a3b8">magazine</b>.' },
 		{ min: 0.63, text: 'The <b style="color:#f59e0b">💰 bank</b> charged a <b style="color:#f59e0b">monthly maintenance fee</b> on the <b style="color:#f59e0b">basic account</b>.' },
-		{ min: 0.62, text: 'She linked her <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">account</b> to a <b style="color:themeColor('#94a3b8')">budgeting app</b>.' },
-		{ min: 0.61, text: 'The <b style="color:#f59e0b">💰 bank</b> was <b style="color:themeColor('#94a3b8')">closed</b> for the <b style="color:themeColor('#94a3b8')">holiday</b>, so he used the <b style="color:themeColor('#94a3b8')">ATM</b>.' },
-		{ min: 0.60, text: 'He forgot his <b style="color:themeColor('#94a3b8')">PIN</b> and had to call the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">helpline</b>.' },
-		{ min: 0.59, text: 'The <b style="color:#f59e0b">💰 bank</b> offered <b style="color:#f59e0b">free checking</b> for <b style="color:themeColor('#94a3b8')">students</b>.' },
-		{ min: 0.58, text: 'She printed a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> for her <b style="color:themeColor('#94a3b8')">landlord</b> as proof of <b style="color:#f59e0b">income</b>.' },
-		{ min: 0.57, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">drive-through</b> lane had a <b style="color:themeColor('#94a3b8')">ten-car wait</b>.' },
+		{ min: 0.62, text: 'She linked her <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">account</b> to a <b style="color:#94a3b8">budgeting app</b>.' },
+		{ min: 0.61, text: 'The <b style="color:#f59e0b">💰 bank</b> was <b style="color:#94a3b8">closed</b> for the <b style="color:#94a3b8">holiday</b>, so he used the <b style="color:#94a3b8">ATM</b>.' },
+		{ min: 0.60, text: 'He forgot his <b style="color:#94a3b8">PIN</b> and had to call the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">helpline</b>.' },
+		{ min: 0.59, text: 'The <b style="color:#f59e0b">💰 bank</b> offered <b style="color:#f59e0b">free checking</b> for <b style="color:#94a3b8">students</b>.' },
+		{ min: 0.58, text: 'She printed a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> for her <b style="color:#94a3b8">landlord</b> as proof of <b style="color:#f59e0b">income</b>.' },
+		{ min: 0.57, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">drive-through</b> lane had a <b style="color:#94a3b8">ten-car wait</b>.' },
 		{ min: 0.56, text: 'He cashed a <b style="color:#f59e0b">check</b> at the <b style="color:#f59e0b">💰 bank</b> and pocketed the <b style="color:#f59e0b">bills</b>.' },
-		{ min: 0.55, text: 'The <b style="color:#f59e0b">💰 bank</b> updated its <b style="color:themeColor('#94a3b8')">mobile app</b> with a new <b style="color:themeColor('#94a3b8')">interface</b>.' },
-		{ min: 0.54, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> about <b style="color:#f59e0b">wire transfer</b> <b style="color:#f59e0b">fees</b> for an <b style="color:themeColor('#94a3b8')">international</b> payment.' },
-		{ min: 0.53, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">security guard</b> nodded as she walked through the <b style="color:themeColor('#94a3b8')">glass doors</b>.' },
-		{ min: 0.52, text: 'He set up <b style="color:#f59e0b">automatic bill pay</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:themeColor('#94a3b8')">website</b>.' },
-		{ min: 0.51, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a <b style="color:themeColor('#94a3b8')">reminder</b> that his <b style="color:#f59e0b">loan payment</b> was due <b style="color:themeColor('#94a3b8')">next week</b>.' },
+		{ min: 0.55, text: 'The <b style="color:#f59e0b">💰 bank</b> updated its <b style="color:#94a3b8">mobile app</b> with a new <b style="color:#94a3b8">interface</b>.' },
+		{ min: 0.54, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> about <b style="color:#f59e0b">wire transfer</b> <b style="color:#f59e0b">fees</b> for an <b style="color:#94a3b8">international</b> payment.' },
+		{ min: 0.53, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">security guard</b> nodded as she walked through the <b style="color:#94a3b8">glass doors</b>.' },
+		{ min: 0.52, text: 'He set up <b style="color:#f59e0b">automatic bill pay</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">website</b>.' },
+		{ min: 0.51, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a <b style="color:#94a3b8">reminder</b> that his <b style="color:#f59e0b">loan payment</b> was due <b style="color:#94a3b8">next week</b>.' },
 		{ min: 0.50, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a <b style="color:#f59e0b">loan office</b>?' },
 		{ min: 0.49, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could still go either way.' },
 		{ min: 0.48, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
 		{ min: 0.47, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
 		{ min: 0.46, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' },
-		{ min: 0.45, text: 'A <b style="color:themeColor('#94a3b8')">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything at all.' },
-		{ min: 0.44, text: 'The meaning is almost <b style="color:themeColor('#94a3b8')">perfectly split</b> — maybe <b style="color:#f59e0b">💰 money</b>, maybe not.' },
-		{ min: 0.00, text: 'The word "bank" is <b style="color:themeColor('#94a3b8')">neutral</b> — <b style="color:#f59e0b">💰 money</b> and <b style="color:#10b981">💧 water</b> are neck and neck.' }
+		{ min: 0.45, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything at all.' },
+		{ min: 0.44, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#f59e0b">💰 money</b>, maybe not.' },
+		{ min: 0.00, text: 'The word "bank" is <b style="color:#94a3b8">neutral</b> — <b style="color:#f59e0b">💰 money</b> and <b style="color:#10b981">💧 water</b> are neck and neck.' }
 	]
 ];
 
@@ -552,7 +552,7 @@ const SENTENCES_2D = [
 		{ min: 0.45, text: 'A pull toward <b style="color:#10b981">🔋 battery</b> — probably <b style="color:#10b981">🌿 physical energy</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
 		{ min: 0.40, text: '"Charge" might mean <b style="color:#10b981">🔋 energy</b>, but the signal is weak. Could shift.' },
 		{ min: 0.35, text: 'A faint hint of <b style="color:#10b981">🔋 battery</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:themeColor('#94a3b8')">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
+		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
 	],
 
 	// ═══════════════════════════════════════════════════════════════
@@ -606,7 +606,7 @@ const SENTENCES_2D = [
 		{ min: 0.45, text: 'A pull toward <b style="color:#f59e0b">💳 fee</b> — probably <b style="color:#f59e0b">🏦 financial</b>, with some <b style="color:#ef4444">⚡ urgency</b>.' },
 		{ min: 0.40, text: '"Charge" might mean <b style="color:#f59e0b">💳 payment</b>, but the signal is weak. Could shift.' },
 		{ min: 0.35, text: 'A faint hint of <b style="color:#f59e0b">💳 fee</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:themeColor('#94a3b8')">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
+		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
 	],
 
 	// ═══════════════════════════════════════════════════════════════
@@ -660,7 +660,7 @@ const SENTENCES_2D = [
 		{ min: 0.45, text: 'A pull toward <b style="color:#ef4444">🏃 surge</b> — probably <b style="color:#10b981">🌿 physical momentum</b>, <b style="color:#ef4444">⚡ intense</b>.' },
 		{ min: 0.40, text: '"Charge" might mean <b style="color:#ef4444">🏃 rush</b>, but the signal is weak. Could shift.' },
 		{ min: 0.35, text: 'A faint hint of <b style="color:#ef4444">🏃 surge</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:themeColor('#94a3b8')">ambiguous</b> — 🔋 energy, 💳 fee, and 🏃 rush all compete equally.' }
+		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and 🏃 rush all compete equally.' }
 	]
 
 ];
@@ -792,7 +792,7 @@ function updateAttn1D() {
 	// ── Math table ──
 	const maxI = pick.idx;
 	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:themeColor('#64748b');">
+	<tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:#64748b;">
 	    <th style="text-align:left; padding:3px 8px;">Concept</th>
 	    <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
 	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
@@ -854,7 +854,7 @@ function pickSentence2D(weights) {
 		const pcts = weights.map(w => (w * 100).toFixed(0));
 		return { 
 			idx: maxI, 
-			text: `"Charge" is <b style="color:themeColor('#94a3b8')">deeply ambiguous</b> here — ` +
+			text: `"Charge" is <b style="color:#94a3b8">deeply ambiguous</b> here — ` +
 			`<b style="color:${KV2[0].color}">🔋 energy ${pcts[0]}%</b>, ` +
 			`<b style="color:${KV2[1].color}">💳 fee ${pcts[1]}%</b>, ` +
 			`<b style="color:${KV2[2].color}">⚔️ rush ${pcts[2]}%</b>. ` +
@@ -1019,7 +1019,7 @@ function updateAttn2D() {
 	// ── Math table (shows both dimensions in dot product) ──
 	const maxI = pick.idx;
 	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:themeColor('#64748b');">
+	<tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:#64748b;">
 	    <th style="text-align:left; padding:3px 8px;">Concept</th>
 	    <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
 	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
@@ -1160,7 +1160,7 @@ function _renderQKVSubspaceViz(containerId) {
 
 	// --- 3. Build tab UI for Q / K / V ---
 	const tabBar = document.createElement('div');
-	tabBar.style.cssText = 'display:flex; gap:8px; padding:10px 15px; background:themeColor('#fff'); border-bottom:1px solid themeColor('#e2e8f0');';
+	tabBar.style.cssText = 'display:flex; gap:8px; padding:10px 15px; background:#fff; border-bottom:1px solid themeColor('#e2e8f0');';
 
 	const plotDiv = document.createElement('div');
 	plotDiv.id = containerId + '-plot';
@@ -1349,12 +1349,12 @@ function updateLDD() {
     const sentenceEl = document.getElementById('ldd-sentence');
     sentenceEl.innerHTML = tokens.map(tok => {
         let s = 'padding:2px 4px; border-radius:3px; margin:0 1px;';
-        if (tok.type === 'subject') s += `background:themeColor('#dbeafe'); color:${LDD.subject.color}; font-weight:bold;`;
+        if (tok.type === 'subject') s += `background:#dbeafe; color:${LDD.subject.color}; font-weight:bold;`;
         else if (tok.type === 'pronoun') s += `background:#fef3c7; color:${LDD.pronoun.color}; font-weight:bold;`;
-        else if (tok.type === 'distractor') s += 'color:themeColor('#94a3b8');';
-        else s += 'color:themeColor('#64748b');';
+        else if (tok.type === 'distractor') s += 'color:#94a3b8;';
+        else s += 'color:#64748b;';
         return `<span style="${s}">${tok.word}</span>`;
-    }).join(' ') + `<br><span style="font-size:0.8rem; color:themeColor('#64748b'); font-style:normal;">` +
+    }).join(' ') + `<br><span style="font-size:0.8rem; color:#64748b; font-style:normal;">` +
     `Distance: <b>${distance}</b> tokens between ` +
     `<span style="color:${LDD.subject.color}; font-weight:bold;">"${LDD.subject.word}"</span> and ` +
     `<span style="color:${LDD.pronoun.color}; font-weight:bold;">"${LDD.pronoun.word}"</span></span>`;
@@ -1449,7 +1449,7 @@ function updateLDD() {
     const rnnFinal = Math.pow(LDD.rnn_decay, distance);
     const ratio = (1 / rnnFinal);
     document.getElementById('ldd-math').innerHTML = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-    <tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:themeColor('#64748b');">
+    <tr style="border-bottom:2px solid themeColor('#cbd5e1'); color:#64748b;">
         <th style="text-align:left; padding:3px 8px;">Model</th>
         <th style="text-align:left; padding:3px 8px;">Signal after ${distance} steps</th>
         <th style="text-align:right; padding:3px 8px;">Strength</th>
@@ -1459,7 +1459,7 @@ function updateLDD() {
         <td style="padding:3px 8px; font-family:monospace;">softmax(q·k/√d<sub>k</sub>) — distance-invariant</td>
         <td style="text-align:right; padding:3px 8px;"><b style="color:#2563eb;">${(attn[subjectIdx]*100).toFixed(1)}%</b></td>
     </tr>
-    <tr style="background:themeColor('#fef2f2');">
+    <tr style="background:#fef2f2;">
         <td style="color:#ef4444; font-weight:bold; padding:3px 8px;">RNN</td>
         <td style="padding:3px 8px; font-family:monospace;">${LDD.rnn_decay}<sup>${distance}</sup> = ${rnnFinal.toFixed(4)}</td>
         <td style="text-align:right; padding:3px 8px;"><b style="color:#ef4444;">${(rnnFinal*100).toFixed(1)}%</b></td>

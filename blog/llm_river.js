@@ -63,7 +63,7 @@ function _execute_themeriver_render(d_model) {
 	const collected = _themeriver_collect_probs(tokenIdx, d_model);
 	if (!collected) {
 		container.innerHTML =
-			'<div style="padding:40px;text-align:center;color:themeColor('#94a3b8');">' +
+			'<div style="padding:40px;text-align:center;color:#94a3b8;">' +
 			'Need at least 2 processing stages. Try choosing another word.</div>';
 		return;
 	}
@@ -277,7 +277,7 @@ function tlab_render_themeriver(d_model) {
 		themeRiverObserver,
 		{ d_model },
 		() => _execute_themeriver_render(d_model),
-		`<div style="padding:30px; color:themeColor('#94a3b8'); text-align:center;">
+		`<div style="padding:30px; color:#94a3b8; text-align:center;">
 	    Loading Probability Flow…
 	</div>`
 	);
@@ -311,13 +311,13 @@ function _themeriver_ensure_dom(containerId) {
 	    <select id="themeriver-token-select"
 		    onchange="window._themeriver_on_change()"
 		    style="padding:4px 8px; border:1px solid #c4b5fd;
-			   border-radius:6px; font-size:0.82rem; background:themeColor('#fff');">
+			   border-radius:6px; font-size:0.82rem; background:#fff;">
 	    </select>
 	    <label style="color:#7c3aed; font-size:0.8rem; margin-left:auto;">Show top</label>
 	    <select id="themeriver-topn-select"
 		    onchange="window._themeriver_on_change()"
 		    style="padding:4px 8px; border:1px solid #c4b5fd;
-			   border-radius:6px; font-size:0.82rem; background:themeColor('#fff');">
+			   border-radius:6px; font-size:0.82rem; background:#fff;">
 		<option value="5">5</option>
 		<option value="8" selected>8</option>
 		<option value="10">10</option>

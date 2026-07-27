@@ -200,7 +200,7 @@ function showTokenizationFailure(word) {
 
     word = word.trim();
     if (!word) {
-        vis.innerHTML = '<span style="color:themeColor('#94a3b8');">Type a word to see how the tokenizer splits it…</span>';
+        vis.innerHTML = '<span style="color:#94a3b8;">Type a word to see how the tokenizer splits it…</span>';
         if (explain) explain.innerHTML = '';
         return;
     }
@@ -216,7 +216,7 @@ function showTokenizationFailure(word) {
         const color = tokenColor(t);
         html += `<span style="display:inline-block; padding:4px 10px; border-radius:6px;
             background:${color.bg}; border:2px solid ${color.border};
-            font-weight:bold; font-size:1.1rem; color:themeColor('#1e293b');
+            font-weight:bold; font-size:1.1rem; color:#1e293b;
             box-shadow:0 2px 4px rgba(0,0,0,0.08);">${escapeHtml(t)}</span>`;
     });
     html += '</div>';
