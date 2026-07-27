@@ -28,7 +28,7 @@ function runUniverse() {
 		y: allWords.map(w => universeVocab[w][1]),
 		z: allWords.map(w => universeVocab[w][2]),
 		mode: 'markers',
-		marker: { size: 5, color: 'themeColor('#475569')', opacity: 0.7 }, // Deutlich sichtbares Grau
+		marker: { size: 5, color: themeColor('#475569'), opacity: 0.7 }, // Deutlich sichtbares Grau
 		type: 'scatter3d'
 	});
 
@@ -194,7 +194,7 @@ const SelfAttentionLab = {
 			html += `<tr><td class="sa-row-label">${w}</td>`;
 			matrix[i].forEach(val => {
 				const color = `rgba(37, 99, 235, ${val})`;
-				const textColor = val > 0.3 ? 'white' : 'themeColor('#475569')';
+				const textColor = val > 0.3 ? 'white' : themeColor('#475569');
 				html += `<td style="background:${color}; color:${textColor}">${(val * 100).toFixed(0)}%</td>`;
 			});
 			html += '</tr>';
@@ -211,10 +211,10 @@ const SelfAttentionLab = {
 function initAppleShift(containerId) {
 	const landmarks = [           
 		// Tech Cluster (Silicon & Software) - Bottom Right
-		{ x: 9, y: 1, text: 'Linux', color: 'themeColor('#64748b')' },
-		{ x: 8.5, y: 2, text: 'iPhone', color: 'themeColor('#64748b')' },
-		{ x: 9.5, y: 2.5, text: 'Computer', color: 'themeColor('#64748b')' },
-		{ x: 8, y: 1.5, text: 'Mac', color: 'themeColor('#64748b')' },
+		{ x: 9, y: 1, text: 'Linux', color: themeColor('#64748b') },
+		{ x: 8.5, y: 2, text: 'iPhone', color: themeColor('#64748b') },
+		{ x: 9.5, y: 2.5, text: 'Computer', color: themeColor('#64748b') },
+		{ x: 8, y: 1.5, text: 'Mac', color: themeColor('#64748b') },
 		// Fruit Cluster (Organic) - Top Left
 		{ x: 1, y: 9, text: 'Banana', color: '#eab308' },
 		{ x: 2, y: 8.5, text: 'Orchard', color: '#eab308' },
@@ -234,13 +234,13 @@ function initAppleShift(containerId) {
 			name: 'Landmarks', type: 'scatter'
 		},                        
 		{ x: [apple_base.pos[0]], y: [apple_base.pos[1]], mode: 'markers+text', text: [apple_base.text],
-			marker: { size: 12, color: 'themeColor('#94a3b8')' }, name: 'Base Embedding', type: 'scatter' },
+			marker: { size: 12, color: themeColor('#94a3b8') }, name: 'Base Embedding', type: 'scatter' },
 		{ x: [context_word.pos[0]], y: [context_word.pos[1]], mode: 'markers+text', text: [context_word.text],
 			marker: { size: 12, color: '#10b981' }, name: 'Context Giver', type: 'scatter' },
 		{ x: [apple_base.pos[0], z[0]], y: [apple_base.pos[1], z[1]], mode: 'lines',
 			line: { dash: 'dot', color: '#f97316', width: 2 }, showlegend: false, type: 'scatter' },
 		{ x: [z[0]], y: [z[1]], mode: 'markers+text', text: ['Apple (contextualized)'],
-			marker: { size: 18, symbol: 'diamond', color: '#1e40af', line: {width: 2, color: 'themeColor('#fff')'} },
+			marker: { size: 18, symbol: 'diamond', color: '#1e40af', line: {width: 2, color: themeColor('#fff')} },
 			name: 'Result', type: 'scatter' }
 	];                            
 
@@ -288,7 +288,7 @@ function drawDot(ctx, x, y, r, color, alpha) {
 	ctx.arc(x, y, r, 0, Math.PI * 2);
 	ctx.fillStyle = color;
 	ctx.fill();
-	ctx.strokeStyle = 'themeColor('#1e293b')';
+	ctx.strokeStyle = themeColor('#1e293b');
 	ctx.lineWidth = 1.5;
 	ctx.stroke();
 	ctx.restore();
@@ -300,7 +300,7 @@ function drawDiamond(ctx, x, y, r, color) {
 	ctx.rotate(Math.PI / 4);
 	ctx.fillStyle = color;
 	ctx.fillRect(-r, -r, r * 2, r * 2);
-	ctx.strokeStyle = 'themeColor('#1e293b')';
+	ctx.strokeStyle = themeColor('#1e293b');
 	ctx.lineWidth = 2;
 	ctx.strokeRect(-r, -r, r * 2, r * 2);
 	ctx.restore();
@@ -316,14 +316,14 @@ function drawStar(ctx, cx, cy, r, color) {
 	ctx.closePath();
 	ctx.fillStyle = color;
 	ctx.fill();
-	ctx.strokeStyle = 'themeColor('#1e293b')';
+	ctx.strokeStyle = themeColor('#1e293b');
 	ctx.lineWidth = 1.5;
 	ctx.stroke();
 }
 
 function drawLabel(ctx, text, x, y, color, size, align, bold) {
 	ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
-	ctx.fillStyle = color || 'themeColor('#1e293b')';
+	ctx.fillStyle = color || themeColor('#1e293b');
 	ctx.textAlign = align || 'center';
 	ctx.textBaseline = 'middle';
 	ctx.fillText(text, x, y);
@@ -334,7 +334,7 @@ function drawSquare(ctx, x, y, s, color, alpha) {
 	ctx.globalAlpha = alpha != null ? alpha : 1;
 	ctx.fillStyle = color;
 	ctx.fillRect(x - s, y - s, s * 2, s * 2);
-	ctx.strokeStyle = 'themeColor('#1e293b')';
+	ctx.strokeStyle = themeColor('#1e293b');
 	ctx.lineWidth = 1;
 	ctx.strokeRect(x - s, y - s, s * 2, s * 2);
 	ctx.restore();
@@ -709,9 +709,9 @@ function updateAttn1D() {
 	const rowV = H * 0.78;
 
 	// ── Key axis ──
-	ctx.strokeStyle = 'themeColor('#94a3b8')'; ctx.lineWidth = 2;
+	ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
 	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
-	ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = 'themeColor('#94a3b8')'; ctx.fill();
+	ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = themeColor('#94a3b8'); ctx.fill();
 	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
 
 	drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
@@ -721,20 +721,20 @@ function updateAttn1D() {
 	ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
 	for (let t = -4; t <= 4; t++) {
 		const x = toX(t);
-		ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = 'themeColor('#94a3b8')'; ctx.lineWidth = 1; ctx.stroke();
-		if (t !== 0) { ctx.fillStyle = 'themeColor('#94a3b8')'; ctx.fillText(t, x, rowK + 14); }
+		ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 1; ctx.stroke();
+		if (t !== 0) { ctx.fillStyle = themeColor('#94a3b8'); ctx.fillText(t, x, rowK + 14); }
 	}
-	ctx.setLineDash([3, 3]); ctx.strokeStyle = 'themeColor('#cbd5e1')';
+	ctx.setLineDash([3, 3]); ctx.strokeStyle = themeColor('#cbd5e1');
 	ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
 	ctx.setLineDash([]);
 
 	// Value axis
-	ctx.strokeStyle = 'themeColor('#cbd5e1')'; ctx.lineWidth = 1;
+	ctx.strokeStyle = themeColor('#cbd5e1'); ctx.lineWidth = 1;
 	ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
 
 	// Row labels
-	drawLabel(ctx, 'KEYS', 30, rowK, 'themeColor('#64748b')', 10, 'center', true);
-	drawLabel(ctx, 'VALUES', 30, rowV, 'themeColor('#64748b')', 10, 'center', true);
+	drawLabel(ctx, 'KEYS', 30, rowK, themeColor('#64748b'), 10, 'center', true);
+	drawLabel(ctx, 'VALUES', 30, rowV, themeColor('#64748b'), 10, 'center', true);
 
 	// ── Q→K lines ──
 	KV1.forEach((kv, i) => {
@@ -936,16 +936,16 @@ function updateAttn2D() {
 	for (let t = -3; t <= 3; t += 0.5) {
 		// Thicker lines at whole numbers, thinner at 0.5 steps
 		if (t === Math.round(t)) {
-			ctx.strokeStyle = 'themeColor('#e2e8f0')';
+			ctx.strokeStyle = themeColor('#e2e8f0');
 		} else {
-			ctx.strokeStyle = 'themeColor('#f1f5f9')';
+			ctx.strokeStyle = themeColor('#f1f5f9');
 		}
 		ctx.beginPath(); ctx.moveTo(toX(t), pad); ctx.lineTo(toX(t), H - pad); ctx.stroke();
 		ctx.beginPath(); ctx.moveTo(pad, toY(t)); ctx.lineTo(W - pad, toY(t)); ctx.stroke();
 	}
 
 	// ── Main axes ──
-	ctx.strokeStyle = 'themeColor('#94a3b8')'; ctx.lineWidth = 2;
+	ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
 	ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
 	ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
 
@@ -956,7 +956,7 @@ function updateAttn2D() {
 	drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
 
 	// ── Tick labels at whole numbers ──
-	ctx.fillStyle = 'themeColor('#94a3b8')'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+	ctx.fillStyle = themeColor('#94a3b8'); ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
 	for (let t = -3; t <= 3; t++) {
 		if (t === 0) continue;
 		ctx.fillText(t, toX(t), toY(0) + 14);
@@ -1170,18 +1170,18 @@ function _renderQKVSubspaceViz(containerId) {
 		const btn = document.createElement('button');
 		btn.textContent = `W${key} Projection`;
 		btn.style.cssText = `padding:8px 20px; border-radius:8px; border:2px solid ${projections[key].borderColor};
-	    background:${idx === 0 ? projections[key].borderColor : 'themeColor('#fff')'};
-	    color:${idx === 0 ? 'themeColor('#fff')' : projections[key].borderColor};
+	    background:${idx === 0 ? projections[key].borderColor : themeColor('#fff')};
+	    color:${idx === 0 ? themeColor('#fff') : projections[key].borderColor};
 	    font-weight:bold; cursor:pointer; font-size:0.9rem; transition:all 0.15s;`;
 		btn.addEventListener('click', () => {
 			// Update button styles
 			tabBar.querySelectorAll('button').forEach((b, i) => {
 				const k = ['Q','K','V'][i];
-				b.style.background = 'themeColor('#fff')';
+				b.style.background = themeColor('#fff');
 				b.style.color = projections[k].borderColor;
 			});
 			btn.style.background = projections[key].borderColor;
-			btn.style.color = 'themeColor('#fff')';
+			btn.style.color = themeColor('#fff');
 			// Render the selected projection
 			renderProjection(key);
 		});
@@ -1204,8 +1204,8 @@ function _renderQKVSubspaceViz(containerId) {
 			mode: 'markers+text',
 			text: tokenNames,
 			textposition: 'top center',
-			textfont: { size: 11, color: 'themeColor('#64748b')' },
-			marker: { size: 5, color: 'themeColor('#94a3b8')', opacity: 0.6 },
+			textfont: { size: 11, color: themeColor('#64748b') },
+			marker: { size: 5, color: themeColor('#94a3b8'), opacity: 0.6 },
 			name: 'Original (3D)',
 			hovertemplate: '<b>%{text}</b><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra>Original</extra>'
 		});
@@ -1381,18 +1381,18 @@ function updateLDD() {
     const toBarX = i => padL + gap * i + gap / 2;
 
     // Grid
-    ctx.strokeStyle = 'themeColor('#f1f5f9')'; ctx.lineWidth = 1;
+    ctx.strokeStyle = themeColor('#f1f5f9'); ctx.lineWidth = 1;
     for (let g = 0; g <= 4; g++) {
         const gy = padT + (chartH / 4) * g;
         ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(W - padR, gy); ctx.stroke();
     }
 
     // Axes
-    ctx.strokeStyle = 'themeColor('#94a3b8')'; ctx.lineWidth = 2;
+    ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH); ctx.lineTo(W - padR, padT + chartH); ctx.stroke();
 
     // Y ticks
-    ctx.font = '10px Inter, system-ui, sans-serif'; ctx.fillStyle = 'themeColor('#94a3b8')'; ctx.textAlign = 'right';
+    ctx.font = '10px Inter, system-ui, sans-serif'; ctx.fillStyle = themeColor('#94a3b8'); ctx.textAlign = 'right';
     for (let g = 0; g <= 4; g++) {
         const val = (maxVal / 4) * (4 - g);
         ctx.fillText((val * 100).toFixed(0) + '%', padL - 6, padT + (chartH / 4) * g + 4);
@@ -1403,7 +1403,7 @@ function updateLDD() {
         const x = toBarX(i);
         const barH = (attn[i] / maxVal) * chartH;
         const barY = padT + chartH - barH;
-        let color = 'themeColor('#e2e8f0')';
+        let color = themeColor('#e2e8f0');
         if (tok.type === 'subject') color = LDD.subject.color;
         else if (tok.type === 'pronoun') color = LDD.pronoun.color;
 
@@ -1416,7 +1416,7 @@ function updateLDD() {
         ctx.save();
         ctx.translate(x, padT + chartH + 8);
         if (numTokens > 10) ctx.rotate(-Math.PI / 4);
-        const lc = tok.type === 'subject' ? LDD.subject.color : tok.type === 'pronoun' ? LDD.pronoun.color : 'themeColor('#94a3b8')';
+        const lc = tok.type === 'subject' ? LDD.subject.color : tok.type === 'pronoun' ? LDD.pronoun.color : themeColor('#94a3b8');
         drawLabel(ctx, tok.word, 0, 0, lc, numTokens > 12 ? 9 : 10, numTokens > 10 ? 'right' : 'center', tok.type !== 'distractor');
         ctx.restore();
 

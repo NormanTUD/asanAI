@@ -71,7 +71,7 @@ function generateResiduals() {
     // Datenpunkte
     traces.push({
         x: masterState.data.map(d => d[0]), y: masterState.data.map(d => d[1]),
-        mode: 'markers', type: 'scatter', marker: { size: 12, color: 'themeColor('#1e293b')' }, name: 'Daten'
+        mode: 'markers', type: 'scatter', marker: { size: 12, color: themeColor('#1e293b') }, name: 'Daten'
     });
 
     // Residuen mit Labels

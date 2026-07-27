@@ -149,7 +149,7 @@ function _themeriver_build_option(riverData, stages, tokenLabel, tokenIdx, showO
 		'#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16',
 		'#06b6d4', '#e11d48', '#a855f7', '#22c55e', '#eab308'
 	];
-	if (showOther) palette.push('themeColor('#94a3b8')');
+	if (showOther) palette.push(themeColor('#94a3b8'));
 
 	// Cache stage names for axis formatter + tooltip
 	const stageNames = stages.map(s => s.name);
@@ -159,8 +159,8 @@ function _themeriver_build_option(riverData, stages, tokenLabel, tokenIdx, showO
 			text: `Probability Flow — "${tokenLabel}" (position ${tokenIdx + 1})`,
 			subtext: 'Band width = predicted probability at each processing stage',
 			left: 'center',
-			textStyle:    { fontSize: 13, color: 'themeColor('#1e293b')', fontWeight: 'bold' },
-			subtextStyle: { fontSize: 11, color: 'themeColor('#64748b')' }
+			textStyle:    { fontSize: 13, color: themeColor('#1e293b'), fontWeight: 'bold' },
+			subtextStyle: { fontSize: 11, color: themeColor('#64748b') }
 		},
 		tooltip: {
 			trigger: 'item',
@@ -202,13 +202,13 @@ function _themeriver_build_option(riverData, stages, tokenLabel, tokenIdx, showO
 				},
 				rotate: 25,
 				fontSize: 10,
-				color: 'themeColor('#475569')',
+				color: themeColor('#475569'),
 				interval: 0
 			},
 			axisTick: {
 				alignWithLabel: true
 			},
-			axisLine: { lineStyle: { color: 'themeColor('#cbd5e1')' } }
+			axisLine: { lineStyle: { color: themeColor('#cbd5e1') } }
 		},
 		series: [{
 			type: 'themeRiver',

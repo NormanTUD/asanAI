@@ -97,7 +97,7 @@ function _draw_custom_simple(ctx, layers, meta_infos, w, h, radius, spacing) {
 		const totalH = (drawCount-1) * spacing;
 		const startY = (h/2) - (totalH/2);
 
-		ctx.fillStyle = "themeColor('#1e293b')";
+		ctx.fillStyle = themeColor('#1e293b');
 		ctx.font = "bold 12px Arial";
 		ctx.textAlign = "center";
 		let lType = meta_infos[i] ? meta_infos[i].layer_type : "Layer";
@@ -106,7 +106,7 @@ function _draw_custom_simple(ctx, layers, meta_infos, w, h, radius, spacing) {
 		else ctx.fillText(lType, x, 20);
 
 		ctx.font = "10px Arial";
-		ctx.fillStyle = "themeColor('#64748b')";
+		ctx.fillStyle = themeColor('#64748b');
 		ctx.fillText(neuronCount + " units", x, h - 10);
 
 		for(let j=0; j<drawCount; j++) {

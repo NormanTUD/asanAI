@@ -129,7 +129,7 @@ function attachTangentOverlay(container, sigmoid, sigmoidDeriv, zMin, zMax) {
 		// Dot
 		ctx.beginPath(); ctx.arc(pc.x, pc.y, 6, 0, 2 * Math.PI);
 		ctx.fillStyle = "#f59e0b"; ctx.fill();
-		ctx.strokeStyle = "themeColor('#fff')"; ctx.lineWidth = 2; ctx.stroke();
+		ctx.strokeStyle = themeColor('#fff'); ctx.lineWidth = 2; ctx.stroke();
 
 		// Label
 		const label = `z=${z.toFixed(2)}  sigmoid(z)=${s.toFixed(4)}  slope=${slope.toFixed(4)}`;
@@ -139,9 +139,9 @@ function attachTangentOverlay(container, sigmoid, sigmoidDeriv, zMin, zMax) {
 		ctx.font = "13px monospace";
 		ctx.fillStyle = "rgba(255,255,255,0.85)";
 		ctx.fillRect(labelX - 4, labelY - 13, tw + 8, 18);
-		ctx.strokeStyle = "themeColor('#cbd5e1')"; ctx.lineWidth = 1;
+		ctx.strokeStyle = themeColor('#cbd5e1'); ctx.lineWidth = 1;
 		ctx.strokeRect(labelX - 4, labelY - 13, tw + 8, 18);
-		ctx.fillStyle = "themeColor('#334155')"; ctx.fillText(label, labelX, labelY);
+		ctx.fillStyle = themeColor('#334155'); ctx.fillText(label, labelX, labelY);
 	};
 
 	resizeCanvas();
@@ -224,9 +224,9 @@ function renderBackpropVisual(id) {
 	];
 
 	const LAYER_STYLE = {
-		input:  { color: "themeColor('#64748b')", fill: "themeColor('#f1f5f9')", r: 28 },
+		input:  { color: themeColor('#64748b'), fill: themeColor('#f1f5f9'), r: 28 },
 		hidden: { color: "#3b82f6", fill: "#eff6ff", r: 34 },
-		output: { color: "#10b981", fill: "themeColor('#ecfdf5')", r: 42 },
+		output: { color: "#10b981", fill: themeColor('#ecfdf5'), r: 42 },
 	};
 
 	// Neuron config: which index (1 or 2), which weights feed in/out, etc.
@@ -330,7 +330,7 @@ function renderBackpropVisual(id) {
 			if (wk === "w3" || wk === "w7") my += 32;
 			html += `<line class="bp-conn" data-wk="${wk}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${thick}" stroke-opacity="0.5"/>`;
 			const [base, sub] = wl.split("_");
-			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill="themeColor('#334155')" font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
+			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill=themeColor('#334155') font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
 		});
 
 		// Neuron circles + values + deltas
@@ -349,7 +349,7 @@ function renderBackpropVisual(id) {
 		// Layer headers
 		["Input:80", "Hidden:330", "Output:580"].forEach((s) => {
 			const [label, x] = s.split(":");
-			html += `<text x="${x}" y="30" text-anchor="middle" font-size="13" fill="themeColor('#94a3b8')" font-weight="600">${label}</text>`;
+			html += `<text x="${x}" y="30" text-anchor="middle" font-size="13" fill=themeColor('#94a3b8') font-weight="600">${label}</text>`;
 		});
 
 		// Central loss display
@@ -380,12 +380,12 @@ function renderBackpropVisual(id) {
 			const diff = oVal - tVal;
 			const diffColor = Math.abs(diff) < 0.01 ? "#10b981" : "#ef4444";
 			return `<text x="${nd.x}" y="${nd.y - 18}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill="themeColor('#1e293b')" style="pointer-events:none;">out=${fmt(oVal)}</text>` +
+				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill=themeColor('#1e293b') style="pointer-events:none;">out=${fmt(oVal)}</text>` +
 				`<text x="${nd.x}" y="${nd.y + 12}" text-anchor="middle" font-size="10" font-family="monospace" fill="#f59e0b" style="pointer-events:none;">tgt=${fmt(tVal)}</text>` +
 				`<text x="${nd.x}" y="${nd.y + 26}" text-anchor="middle" font-size="9" font-family="monospace" fill="${diffColor}" style="pointer-events:none;">Δ=${fmt(diff)}</text>`;
 		}
 		return `<text x="${nd.x}" y="${nd.y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill="themeColor('#1e293b')" style="pointer-events:none;">${valStr}</text>`;
+			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill=themeColor('#1e293b') style="pointer-events:none;">${valStr}</text>`;
 	}
 
 	function svgDeltaLabel(nk, nd, r) {
@@ -398,7 +398,7 @@ function renderBackpropVisual(id) {
 	}
 
 	function dashedLine(a, b) {
-		return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="themeColor('#94a3b8')" stroke-width="1" stroke-dasharray="4,4"/>`;
+		return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke=themeColor('#94a3b8') stroke-width="1" stroke-dasharray="4,4"/>`;
 	}
 
 	// ── SVG interaction ──

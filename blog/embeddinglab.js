@@ -221,7 +221,7 @@ function renderDualManifolds() {
 		mode: 'markers+text',
 		text: enLabels, textposition: 'top center',
 		textfont: { size: 11, color: '#1e40af' },
-		marker: { size: 7, color: enColors, opacity: 0.95, line: { width: 1, color: 'themeColor('#fff')' } },
+		marker: { size: 7, color: enColors, opacity: 0.95, line: { width: 1, color: themeColor('#fff') } },
 		name: 'English words',
 		hovertemplate: '<b>%{text}</b> (English)<extra></extra>'
 	});
@@ -232,7 +232,7 @@ function renderDualManifolds() {
 		mode: 'markers+text',
 		text: jpLabels, textposition: 'bottom center',
 		textfont: { size: 11, color: '#065f46' },
-		marker: { size: 7, color: jpColors, opacity: 0.95, symbol: 'diamond', line: { width: 1, color: 'themeColor('#fff')' } },
+		marker: { size: 7, color: jpColors, opacity: 0.95, symbol: 'diamond', line: { width: 1, color: themeColor('#fff') } },
 		name: 'Japanese words (日本語)',
 		hovertemplate: '<b>%{text}</b> (日本語)<extra></extra>'
 	});
@@ -341,15 +341,15 @@ function renderDualManifolds() {
 		legend: {
 			x: 0.01, y: 0.99,
 			bgcolor: 'rgba(255,255,255,0.9)',
-			bordercolor: 'themeColor('#e2e8f0')', borderwidth: 1,
+			bordercolor: themeColor('#e2e8f0'), borderwidth: 1,
 			font: { size: 11 }
 		},
 		scene: {
-			xaxis: { title: '', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', zeroline: false, showticklabels: false },
-			yaxis: { title: '', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', zeroline: false, showticklabels: false },
-			zaxis: { title: '', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', zeroline: false, showticklabels: false },
+			xaxis: { title: '', showgrid: true, gridcolor: themeColor('#f1f5f9'), zeroline: false, showticklabels: false },
+			yaxis: { title: '', showgrid: true, gridcolor: themeColor('#f1f5f9'), zeroline: false, showticklabels: false },
+			zaxis: { title: '', showgrid: true, gridcolor: themeColor('#f1f5f9'), zeroline: false, showticklabels: false },
 			camera: { eye: { x: 1.5, y: 1.8, z: 1.2 } },
-			bgcolor: 'themeColor('#fff')',
+			bgcolor: themeColor('#fff'),
 			aspectmode: 'data'
 		}
 	};
@@ -467,7 +467,7 @@ window.resetDualManifold = function() {
 	const statusEl = document.getElementById('dm-status');
 	if (statusEl) {
 		statusEl.textContent = 'Ready — Japanese manifold is rotated 55° and separated.';
-		statusEl.style.color = 'themeColor('#64748b')';
+		statusEl.style.color = themeColor('#64748b');
 	}
 	renderDualManifolds();
 };
@@ -496,15 +496,15 @@ function renderSpace(key, highlightPos = null, steps = []) {
                 name: w
             })),
             symbolSize: 8,
-            itemStyle: { color: 'themeColor('#94a3b8')', opacity: 0.6, borderColor: 'themeColor('#fff')', borderWidth: 1 },
+            itemStyle: { color: themeColor('#94a3b8'), opacity: 0.6, borderColor: themeColor('#fff'), borderWidth: 1 },
             label: {
                 show: true,
                 formatter: '{b}',
                 distance: 8,
-                textStyle: { fontSize: 11, color: 'themeColor('#475569')' }
+                textStyle: { fontSize: 11, color: themeColor('#475569') }
             },
             emphasis: {
-                itemStyle: { color: 'themeColor('#64748b')', borderWidth: 2 },
+                itemStyle: { color: themeColor('#64748b'), borderWidth: 2 },
                 label: { fontSize: 13, fontWeight: 'bold' }
             }
         });
@@ -552,9 +552,9 @@ function renderSpace(key, highlightPos = null, steps = []) {
                     main: { intensity: 1.2, shadow: false },
                     ambient: { intensity: 0.4 }
                 },
-                axisLine:  { lineStyle: { color: 'themeColor('#cbd5e1')' } },
-                axisLabel: { textStyle: { color: 'themeColor('#94a3b8')' } },
-                splitLine: { lineStyle: { color: 'themeColor('#f1f5f9')' } }
+                axisLine:  { lineStyle: { color: themeColor('#cbd5e1') } },
+                axisLabel: { textStyle: { color: themeColor('#94a3b8') } },
+                splitLine: { lineStyle: { color: themeColor('#f1f5f9') } }
             },
             xAxis3D: { name: space.axes.x, type: 'value', min: rangeX[0], max: rangeX[1] },
             yAxis3D: { name: space.axes.y, type: 'value', min: -30, max: 30 },
@@ -576,7 +576,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            marker: { size: 6, opacity: 0.5, color: 'themeColor('#94a3b8')' },
+            marker: { size: 6, opacity: 0.5, color: themeColor('#94a3b8') },
             cliponaxis: false
         });
     });
@@ -921,16 +921,16 @@ function renderComparison3D(config) {
 
     const series = [
         // Vector lines from origin
-        { type: 'line3D', data: [[0,0,0], Man],  lineStyle: { color: 'themeColor('#64748b')', width: 6 } },
+        { type: 'line3D', data: [[0,0,0], Man],  lineStyle: { color: themeColor('#64748b'), width: 6 } },
         { type: 'line3D', data: [[0,0,0], King], lineStyle: { color: '#10b981', width: 6 } },
         { type: 'line3D', data: [[0,0,0], Lion], lineStyle: { color: '#ef4444', width: 6 } },
 
         // Endpoint labels
         { type: 'scatter3D',
           data: [{ value: Man, name: 'Man' }],
-          symbolSize: 14, itemStyle: { color: 'themeColor('#64748b')' },
+          symbolSize: 14, itemStyle: { color: themeColor('#64748b') },
           label: { show: true, formatter: '{b}', distance: 6,
-                   textStyle: { fontSize: 12, color: 'themeColor('#64748b')', fontWeight: 'bold' } }
+                   textStyle: { fontSize: 12, color: themeColor('#64748b'), fontWeight: 'bold' } }
         },
         { type: 'scatter3D',
           data: [{ value: King, name: 'King' }],
@@ -954,7 +954,7 @@ function renderComparison3D(config) {
         // Origin marker
         { type: 'scatter3D',
           data: [{ value: [0,0,0], name: 'Origin' }],
-          symbolSize: 5, itemStyle: { color: 'themeColor('#1e293b')' },
+          symbolSize: 5, itemStyle: { color: themeColor('#1e293b') },
           label: { show: false } }
     ];
 
@@ -967,9 +967,9 @@ function renderComparison3D(config) {
                 main: { intensity: 1.2, shadow: false },
                 ambient: { intensity: 0.4 }
             },
-            axisLine:  { lineStyle: { color: 'themeColor('#cbd5e1')' } },
-            axisLabel: { textStyle: { color: 'themeColor('#94a3b8')' } },
-            splitLine: { lineStyle: { color: 'themeColor('#f1f5f9')' } }
+            axisLine:  { lineStyle: { color: themeColor('#cbd5e1') } },
+            axisLabel: { textStyle: { color: themeColor('#94a3b8') } },
+            splitLine: { lineStyle: { color: themeColor('#f1f5f9') } }
         },
         xAxis3D: { name: 'Power',   type: 'value', min: -25, max: 25 },
         yAxis3D: { name: 'Gender',  type: 'value', min: -25, max: 25 },
@@ -1348,12 +1348,12 @@ function renderRotationalInvariance() {
 	for (const [a, b] of pairs) {
 		traces.push({
 			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#94a3b8')', width: 1.5, dash: 'dot' },
+			mode: 'lines', line: { color: themeColor('#94a3b8'), width: 1.5, dash: 'dot' },
 			showlegend: false, hoverinfo: 'skip'
 		});
 		traces.push({
 			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#94a3b8')', width: 1.5, dash: 'dot' },
+			mode: 'lines', line: { color: themeColor('#94a3b8'), width: 1.5, dash: 'dot' },
 			showlegend: false, hoverinfo: 'skip'
 		});
 	}
@@ -1363,12 +1363,12 @@ function renderRotationalInvariance() {
 	for (const [a, b] of powerPairs) {
 		traces.push({
 			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#cbd5e1')', width: 1 },
+			mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 1 },
 			showlegend: false, hoverinfo: 'skip'
 		});
 		traces.push({
 			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#cbd5e1')', width: 1 },
+			mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 1 },
 			showlegend: false, hoverinfo: 'skip'
 		});
 	}
@@ -1394,12 +1394,12 @@ function renderRotationalInvariance() {
 	const annotations = [
 		{
 			x: -20, y: 18, text: '<b>English</b>',
-			showarrow: false, font: { size: 13, color: 'themeColor('#475569')' },
+			showarrow: false, font: { size: 13, color: themeColor('#475569') },
 			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 		},
 		{
 			x: 25, y: 28, text: '<b>Japanese</b>',
-			showarrow: false, font: { size: 13, color: 'themeColor('#475569')' },
+			showarrow: false, font: { size: 13, color: themeColor('#475569') },
 			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 		},
 		// Arrow annotations for the translation paths in A
@@ -1433,10 +1433,10 @@ function renderRotationalInvariance() {
 	const layout = {
 		margin: { l: 40, r: 40, b: 40, t: 20 },
 		showlegend: false,
-		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')' },
-		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')', scaleanchor: 'x' },
+		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9') },
+		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
 		annotations: annotations,
-		plot_bgcolor: 'themeColor('#fff')'
+		plot_bgcolor: themeColor('#fff')
 	};
 
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -1500,7 +1500,7 @@ function renderManifoldVisualization() {
 		wordY.push(v);
 		wordZ.push(manifoldZ(u, v));
 		wordLabels.push(word);
-		wordColors.push(colorMap[word] || 'themeColor('#64748b')');
+		wordColors.push(colorMap[word] || themeColor('#64748b'));
 	}
 
 	// --- 3. Place "noise" points OFF the manifold (in the ambient 3D space) ---
@@ -1566,7 +1566,7 @@ function renderManifoldVisualization() {
 			type: 'scatter3d',
 			x: noiseX, y: noiseY, z: noiseZ,
 			mode: 'markers',
-			marker: { size: 2.5, color: 'themeColor('#cbd5e1')', opacity: 0.3 },
+			marker: { size: 2.5, color: themeColor('#cbd5e1'), opacity: 0.3 },
 			name: 'Unused dimensions (noise)',
 			hovertemplate: '<b>Off-manifold noise</b><br>This region of the ambient space<br>contains no meaningful data.<extra></extra>'
 		},
@@ -1577,8 +1577,8 @@ function renderManifoldVisualization() {
 			mode: 'markers+text',
 			text: wordLabels,
 			textposition: 'top center',
-			textfont: { size: 11, color: 'themeColor('#1e293b')' },
-			marker: { size: 7, color: wordColors, opacity: 0.95, line: { width: 1, color: 'themeColor('#fff')' } },
+			textfont: { size: 11, color: themeColor('#1e293b') },
+			marker: { size: 7, color: wordColors, opacity: 0.95, line: { width: 1, color: themeColor('#fff') } },
 			name: 'Words (on manifold)',
 			hovertemplate: '<b>%{text}</b><br>Lives on the manifold surface<br>x: %{x:.2f}, y: %{y:.2f}, z: %{z:.2f}<extra></extra>'
 		},
@@ -1608,16 +1608,16 @@ function renderManifoldVisualization() {
 		legend: {
 			x: 0.01, y: 0.99,
 			bgcolor: 'rgba(255,255,255,0.85)',
-			bordercolor: 'themeColor('#e2e8f0')',
+			bordercolor: themeColor('#e2e8f0'),
 			borderwidth: 1,
 			font: { size: 11 }
 		},
 		scene: {
-			xaxis: { title: '', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', zeroline: false, showticklabels: false },
-			yaxis: { title: '', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', zeroline: false, showticklabels: false },
-			zaxis: { title: '', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', zeroline: false, showticklabels: false },
+			xaxis: { title: '', showgrid: true, gridcolor: themeColor('#f1f5f9'), zeroline: false, showticklabels: false },
+			yaxis: { title: '', showgrid: true, gridcolor: themeColor('#f1f5f9'), zeroline: false, showticklabels: false },
+			zaxis: { title: '', showgrid: true, gridcolor: themeColor('#f1f5f9'), zeroline: false, showticklabels: false },
 			camera: { eye: { x: 1.8, y: 1.2, z: 1.0 } },
-			bgcolor: 'themeColor('#fff')'
+			bgcolor: themeColor('#fff')
 		}
 	};
 
@@ -1711,12 +1711,12 @@ function renderCrossLingualFrame() {
 	for (const [a, b] of pairs) {
 		traces.push({
 			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#94a3b8')', width: 1.5, dash: 'dot' },
+			mode: 'lines', line: { color: themeColor('#94a3b8'), width: 1.5, dash: 'dot' },
 			showlegend: false, hoverinfo: 'skip'
 		});
 		traces.push({
 			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#94a3b8')', width: 1.5, dash: 'dot' },
+			mode: 'lines', line: { color: themeColor('#94a3b8'), width: 1.5, dash: 'dot' },
 			showlegend: false, hoverinfo: 'skip'
 		});
 	}
@@ -1726,12 +1726,12 @@ function renderCrossLingualFrame() {
 	for (const [a, b] of powerPairs) {
 		traces.push({
 			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#cbd5e1')', width: 1 },
+			mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 1 },
 			showlegend: false, hoverinfo: 'skip'
 		});
 		traces.push({
 			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
-			mode: 'lines', line: { color: 'themeColor('#cbd5e1')', width: 1 },
+			mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 1 },
 			showlegend: false, hoverinfo: 'skip'
 		});
 	}
@@ -1775,23 +1775,23 @@ function renderCrossLingualFrame() {
 	annotations.push({
 		x: -20, y: 18,
 		text: '<b>English</b>',
-		showarrow: false, font: { size: 13, color: 'themeColor('#475569')' },
+		showarrow: false, font: { size: 13, color: themeColor('#475569') },
 		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 	});
 	annotations.push({
 		x: st.currentOffsetX, y: 28,
 		text: `<b>Japanese</b><br>(Rotated ${Math.round(labelAngle)}°)`,
-		showarrow: false, font: { size: 13, color: 'themeColor('#475569')' },
+		showarrow: false, font: { size: 13, color: themeColor('#475569') },
 		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 	});
 
 	const layout = {
 		margin: { l: 40, r: 40, b: 40, t: 20 },
 		showlegend: false,
-		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')' },
-		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')', scaleanchor: 'x' },
+		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9') },
+		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
 		annotations: annotations,
-		plot_bgcolor: 'themeColor('#fff')'
+		plot_bgcolor: themeColor('#fff')
 	};
 
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -1878,7 +1878,7 @@ function resetCrossLingualAlignment() {
 	btnAlign.style.opacity = '1';
 	if (statusEl) {
 		statusEl.textContent = 'Ready — Language B is rotated 55° from Language A.';
-		statusEl.style.color = 'themeColor('#64748b')';
+		statusEl.style.color = themeColor('#64748b');
 	}
 
 	renderCrossLingualFrame();
@@ -2090,7 +2090,7 @@ function renderMetricTensor(animate = false) {
             textposition: 'top center',
             textfont: {
                 size: isAttended ? 14 : 11,
-                color: isAttended ? '#7c3aed' : 'themeColor('#1e293b')',
+                color: isAttended ? '#7c3aed' : themeColor('#1e293b'),
                 weight: isAttended ? 'bold' : 'normal'
             },
             marker: {
@@ -2099,7 +2099,7 @@ function renderMetricTensor(animate = false) {
                 opacity: attended ? (isAttended ? 1 : 0.4 + sim * 0.6) : 0.9,
                 line: {
                     width: isAttended ? 3 : 1,
-                    color: isAttended ? '#7c3aed' : 'themeColor('#fff')'
+                    color: isAttended ? '#7c3aed' : themeColor('#fff')
                 }
             },
             showlegend: false,
@@ -2156,7 +2156,7 @@ function renderMetricTensor(animate = false) {
             fixedrange: true
         },
         annotations: annotations,
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true }).then(() => {
@@ -2187,7 +2187,7 @@ function resetMetricTensor() {
     const statusEl = document.getElementById('metric-status');
     if (statusEl) {
         statusEl.textContent = 'Click any token to apply attention.';
-        statusEl.style.color = 'themeColor('#64748b')';
+        statusEl.style.color = themeColor('#64748b');
     }
 
     renderMetricTensor();
@@ -2251,7 +2251,7 @@ function setParallelogramConcept(concept) {
 
     // Update button styles
     document.querySelectorAll('.parallelogram-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
     });
     const activeBtn = document.getElementById(`btn-para-${concept}`);
     if (activeBtn) activeBtn.style.background = '#3b82f6';
@@ -2283,8 +2283,8 @@ function renderParallelogram() {
             mode: 'markers+text',
             text: [word],
             textposition: 'top center',
-            textfont: { size: 12, color: 'themeColor('#1e293b')' },
-            marker: { size: 10, color: tokenColors[word] || 'themeColor('#94a3b8')', opacity: 0.9, line: { width: 1, color: 'themeColor('#fff')' } },
+            textfont: { size: 12, color: themeColor('#1e293b') },
+            marker: { size: 10, color: tokenColors[word] || themeColor('#94a3b8'), opacity: 0.9, line: { width: 1, color: themeColor('#fff') } },
             showlegend: false,
             hovertemplate: `<b>${word}</b><br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
         });
@@ -2371,10 +2371,10 @@ function renderParallelogram() {
     const layout = {
         margin: { l: 40, r: 40, b: 40, t: 20 },
         showlegend: false,
-        xaxis: { range: [-25, 35], zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')' },
-        yaxis: { range: [-20, 22], zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')', scaleanchor: 'x' },
+        xaxis: { range: [-25, 35], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9') },
+        yaxis: { range: [-20, 22], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
         annotations: annotations,
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2534,10 +2534,10 @@ function renderScaleInvariance() {
     const layout = {
         margin: { l: 40, r: 40, b: 40, t: 20 },
         showlegend: false,
-        xaxis: { range: [-20, 30], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')', showgrid: true, gridcolor: 'themeColor('#f1f5f9')' },
-        yaxis: { range: [-5, 22], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')', showgrid: true, gridcolor: 'themeColor('#f1f5f9')', scaleanchor: 'x' },
+        xaxis: { range: [-20, 30], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: true, gridcolor: themeColor('#f1f5f9') },
+        yaxis: { range: [-5, 22], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
         annotations: annotations,
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2703,7 +2703,7 @@ function renderPlatonicHypothesis() {
             marker: {
                 size: 11, color: colors, opacity: 0.9,
                 symbol: mod.symbol,
-                line: { width: 1, color: 'themeColor('#fff')' }
+                line: { width: 1, color: themeColor('#fff') }
             },
             name: mod.label,
             hovertemplate: '<b>%{customdata}</b> (' + mod.label + ')<extra></extra>'
@@ -2773,20 +2773,20 @@ function renderPlatonicHypothesis() {
         legend: {
             x: 0.01, y: 0.99,
             bgcolor: 'rgba(255,255,255,0.9)',
-            bordercolor: 'themeColor('#e2e8f0')', borderwidth: 1,
+            bordercolor: themeColor('#e2e8f0'), borderwidth: 1,
             font: { size: 11 }
         },
         xaxis: {
             zeroline: false, showgrid: true,
-            gridcolor: 'themeColor('#f1f5f9')', showticklabels: false
+            gridcolor: themeColor('#f1f5f9'), showticklabels: false
         },
         yaxis: {
             zeroline: false, showgrid: true,
-            gridcolor: 'themeColor('#f1f5f9')', showticklabels: false,
+            gridcolor: themeColor('#f1f5f9'), showticklabels: false,
             scaleanchor: 'x'
         },
         annotations: annotations,
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2886,7 +2886,7 @@ window.resetPlatonicAlignment = function() {
     const statusEl = document.getElementById('platonic-status');
     if (statusEl) {
         statusEl.textContent = 'Ready — three models, three different orientations, one shared geometry.';
-        statusEl.style.color = 'themeColor('#64748b')';
+        statusEl.style.color = themeColor('#64748b');
     }
 
     renderPlatonicHypothesis();
@@ -3050,7 +3050,7 @@ function renderAnisotropy() {
 	});
 	scatterTraces.push({
 		x: endX, y: endY, mode: 'markers',
-		marker: { size: 3.5, color: 'themeColor('#94a3b8')', opacity: 0.6 },
+		marker: { size: 3.5, color: themeColor('#94a3b8'), opacity: 0.6 },
 		showlegend: false, hoverinfo: 'skip'
 	});
 
@@ -3062,7 +3062,7 @@ function renderAnisotropy() {
 			x: [0, v.x], y: [0, v.y],
 			mode: 'lines+markers+text',
 			text: ['', label], textposition: 'top center',
-			textfont: { size: 10, color: 'themeColor('#1e293b')' },
+			textfont: { size: 10, color: themeColor('#1e293b') },
 			line: { color: '#3b82f6', width: 2 },
 			marker: { size: [0, 6], color: '#3b82f6' },
 			showlegend: false,
@@ -3073,10 +3073,10 @@ function renderAnisotropy() {
 	Plotly.react(scatterDiv, scatterTraces, {
 		margin: { l: 30, r: 30, b: 30, t: 35 },
 		showlegend: false,
-		xaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')', showgrid: false, scaleanchor: 'y' },
-		yaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')', showgrid: false },
-		plot_bgcolor: 'themeColor('#fff')',
-		title: { text: 'Embedding Vectors', font: { size: 13, color: 'themeColor('#64748b')' } }
+		xaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: false, scaleanchor: 'y' },
+		yaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: false },
+		plot_bgcolor: themeColor('#fff'),
+		title: { text: 'Embedding Vectors', font: { size: 13, color: themeColor('#64748b') } }
 	}, { displayModeBar: false, responsive: true });
 
 	// ───────── RIGHT: Histogram ─────────
@@ -3086,15 +3086,15 @@ function renderAnisotropy() {
 
 	Plotly.react(histDiv, [{
 		x: sims, type: 'histogram', nbinsx: 50,
-		marker: { color: barColor, line: { color: 'themeColor('#fff')', width: 0.5 } },
+		marker: { color: barColor, line: { color: themeColor('#fff'), width: 0.5 } },
 		hovertemplate: 'Cosine Sim: %{x:.2f}<br>Count: %{y}<extra></extra>'
 	}], {
 		margin: { l: 45, r: 30, b: 45, t: 35 },
 		xaxis: { title: 'Cosine Similarity', range: [-1.05, 1.05], dtick: 0.25 },
 		yaxis: { title: 'Pair Count' },
-		plot_bgcolor: 'themeColor('#fff')',
+		plot_bgcolor: themeColor('#fff'),
 		bargap: 0.05,
-		title: { text: 'Pairwise Cosine Similarities', font: { size: 13, color: 'themeColor('#64748b')' } }
+		title: { text: 'Pairwise Cosine Similarities', font: { size: 13, color: themeColor('#64748b') } }
 	}, { displayModeBar: false, responsive: true });
 
 	// ───────── STATS ─────────
@@ -3254,7 +3254,7 @@ function renderSuperposition() {
             mode: 'markers+text',
             text: [label], textposition: tPos,
             textfont: { size: fontSize, color, weight: 'bold' },
-            marker: { size: 9, color, line: { width: 1, color: 'themeColor('#fff')' } },
+            marker: { size: 9, color, line: { width: 1, color: themeColor('#fff') } },
             showlegend: false,
             hovertemplate: `<b>${label}</b><br>θ = ${deg.toFixed(1)}°<extra></extra>`
         });
@@ -3275,7 +3275,7 @@ function renderSuperposition() {
     traces.push({
         x: [0], y: [0],
         mode: 'markers',
-        marker: { size: 5, color: 'themeColor('#1e293b')' },
+        marker: { size: 5, color: themeColor('#1e293b') },
         showlegend: false, hoverinfo: 'skip'
     });
 
@@ -3284,14 +3284,14 @@ function renderSuperposition() {
         margin: { l: 30, r: 30, b: 30, t: 10 },
         showlegend: false,
         xaxis: {
-            range: [-1.5, 1.5], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')',
-            showgrid: true, gridcolor: 'themeColor('#f1f5f9')', scaleanchor: 'y', dtick: 0.5
+            range: [-1.5, 1.5], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
+            showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'y', dtick: 0.5
         },
         yaxis: {
-            range: [-0.25, 1.5], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')',
-            showgrid: true, gridcolor: 'themeColor('#f1f5f9')', dtick: 0.5
+            range: [-0.25, 1.5], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
+            showgrid: true, gridcolor: themeColor('#f1f5f9'), dtick: 0.5
         },
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     }, { displayModeBar: false, responsive: true });
 
     // ---- Stats cards ----
@@ -3337,11 +3337,11 @@ function renderSuperposition() {
                 const ad = Math.abs(dotMat[i][j]);
                 let bg, tc;
                 if (i === j) {
-                    bg = 'themeColor('#f0f9ff')'; tc = 'themeColor('#94a3b8')';
+                    bg = themeColor('#f0f9ff'); tc = themeColor('#94a3b8');
                 } else if (ad < 0.05) {
                     bg = 'rgba(16,185,129,0.1)'; tc = '#10b981';
                 } else {
-                    bg = `rgba(239,68,68,${Math.min(ad, 1) * 0.25})`; tc = ad > 0.5 ? '#dc2626' : 'themeColor('#475569')';
+                    bg = `rgba(239,68,68,${Math.min(ad, 1) * 0.25})`; tc = ad > 0.5 ? '#dc2626' : themeColor('#475569');
                 }
                 const txt = i === j ? '—' : ad.toFixed(2);
                 h += `<td style="padding:2px 4px; text-align:center; background:${bg}; color:${tc}; border:1px solid themeColor('#f1f5f9');">${txt}</td>`;
@@ -3491,7 +3491,7 @@ function updateICLPromptPanel() {
         'Apply to ' + st.query.token + ': [' + st.query.pos[0] + ', ' + st.query.pos[1] + ']' +
         ' + Δ = [' + sp[0].toFixed(1) + ', ' + sp[1].toFixed(1) + ']</div>';
 
-    html += '<div style="color:' + (inside && st.injected ? '#10b981' : 'themeColor('#94a3b8')') +
+    html += '<div style="color:' + (inside && st.injected ? '#10b981' : themeColor('#94a3b8')) +
         '; font-size:0.85em; margin-top:3px;">' +
         'Distance to ' + st.expectedAnswer.token + ': ' + dist.toFixed(2) +
         (inside ? ' ✅ inside' : ' — radius ' + st.answerRadius) + '</div></div>';
@@ -3552,12 +3552,12 @@ function renderICL() {
         var ex = st.examplePairs[i];
         traces.push({
             x: [ex.inputPos[0]], y: [ex.inputPos[1]],
-            mode: 'markers', marker: { size: 4, color: 'themeColor('#cbd5e1')', opacity: 0.25 },
+            mode: 'markers', marker: { size: 4, color: themeColor('#cbd5e1'), opacity: 0.25 },
             showlegend: false, hovertemplate: '<b>' + ex.input + '</b> (inactive)<extra></extra>'
         });
         traces.push({
             x: [ex.labelPos[0]], y: [ex.labelPos[1]],
-            mode: 'markers', marker: { size: 4, color: 'themeColor('#cbd5e1')', opacity: 0.25, symbol: 'triangle-up' },
+            mode: 'markers', marker: { size: 4, color: themeColor('#cbd5e1'), opacity: 0.25, symbol: 'triangle-up' },
             showlegend: false, hovertemplate: '<b>' + ex.label + '</b> (inactive)<extra></extra>'
         });
     }
@@ -3698,7 +3698,7 @@ function renderICL() {
         textposition: t > 0.5 ? 'bottom right' : 'top left',
         textfont: { size: 14, color: qColor, weight: 'bold' },
         marker: { size: 16, color: qColor, symbol: 'diamond',
-            line: { width: 2, color: 'themeColor('#fff')' } },
+            line: { width: 2, color: themeColor('#fff') } },
         showlegend: false,
         hovertemplate: '<b>' + st.query.token + '</b> (query)' +
             '<br>[' + sX.toFixed(1) + ', ' + sY.toFixed(1) + ']<extra></extra>'
@@ -3709,15 +3709,15 @@ function renderICL() {
         margin: { l: 35, r: 15, b: 35, t: 15 },
         showlegend: false,
         xaxis: {
-            range: [-14, 17], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')',
-            showgrid: true, gridcolor: 'themeColor('#f1f5f9')', title: ''
+            range: [-14, 17], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
+            showgrid: true, gridcolor: themeColor('#f1f5f9'), title: ''
         },
         yaxis: {
-            range: [-10, 17], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')',
-            showgrid: true, gridcolor: 'themeColor('#f1f5f9')', scaleanchor: 'x', title: ''
+            range: [-10, 17], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
+            showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x', title: ''
         },
         annotations: annotations,
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -3822,7 +3822,7 @@ window.resetICL = function() {
     var statusEl = document.getElementById('icl-status');
     if (statusEl) {
         statusEl.textContent = 'Ready — adjust examples and click Inject.';
-        statusEl.style.color = 'themeColor('#64748b')';
+        statusEl.style.color = themeColor('#64748b');
     }
     renderICL();
 };
@@ -3886,7 +3886,7 @@ function setNegationWord(word) {
 
     // Update button highlights
     document.querySelectorAll('.negation-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
         btn.style.opacity = '0.7';
     });
     const activeBtn = document.getElementById(`btn-neg-${word.toLowerCase()}`);
@@ -3944,8 +3944,8 @@ function renderNegation() {
 			x: [data.pos[0]], y: [data.pos[1]],
 			mode: 'markers+text',
 			text: [word], textposition: 'top center',
-			textfont: { size: 10, color: 'themeColor('#94a3b8')' },
-			marker: { size: 6, color: 'themeColor('#cbd5e1')', opacity: 0.5 },
+			textfont: { size: 10, color: themeColor('#94a3b8') },
+			marker: { size: 6, color: themeColor('#cbd5e1'), opacity: 0.5 },
 			showlegend: false,
 			hovertemplate: `<b>${word}</b><br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
 		});
@@ -4011,7 +4011,7 @@ function renderNegation() {
 		mode: 'markers+text',
 		text: [selected], textposition: 'top center',
 		textfont: { size: 14, color: '#1e40af', weight: 'bold' },
-		marker: { size: 16, color: '#3b82f6', opacity: 0.95, line: { width: 2, color: 'themeColor('#fff')' } },
+		marker: { size: 16, color: '#3b82f6', opacity: 0.95, line: { width: 2, color: themeColor('#fff') } },
 		name: `"${selected}"`,
 		hovertemplate: `<b>${selected}</b><br>The original word<extra></extra>`
 	});
@@ -4022,7 +4022,7 @@ function renderNegation() {
 		mode: 'markers+text',
 		text: [`not ${selected}`], textposition: 'bottom right',
 		textfont: { size: 13, color: '#dc2626', weight: 'bold' },
-		marker: { size: 16, color: '#ef4444', opacity: 0.95, symbol: 'diamond', line: { width: 2, color: 'themeColor('#fff')' } },
+		marker: { size: 16, color: '#ef4444', opacity: 0.95, symbol: 'diamond', line: { width: 2, color: themeColor('#fff') } },
 		name: `"not ${selected}" (actual)`,
 		hovertemplate: `<b>not ${selected}</b><br>Actual embedding position<br>Dist to "${selected}": ${distToNot.toFixed(2)}<br>Dist to "${antKey}": ${distNotToAnt.toFixed(2)}<extra></extra>`
 	});
@@ -4033,7 +4033,7 @@ function renderNegation() {
 		mode: 'markers+text',
 		text: [antKey], textposition: 'top center',
 		textfont: { size: 14, color: '#065f46', weight: 'bold' },
-		marker: { size: 16, color: '#10b981', opacity: 0.95, line: { width: 2, color: 'themeColor('#fff')' } },
+		marker: { size: 16, color: '#10b981', opacity: 0.95, line: { width: 2, color: themeColor('#fff') } },
 		name: `"${antKey}" (antonym)`,
 		hovertemplate: `<b>${antKey}</b><br>The logical antonym of "${selected}"<extra></extra>`
 	});
@@ -4100,21 +4100,21 @@ function renderNegation() {
 		legend: {
 			x: 0.01, y: 0.99,
 			bgcolor: 'rgba(255,255,255,0.9)',
-			bordercolor: 'themeColor('#e2e8f0')', borderwidth: 1,
+			bordercolor: themeColor('#e2e8f0'), borderwidth: 1,
 			font: { size: 11 }
 		},
 		xaxis: {
 			range: [-12, 13], zeroline: false,
-			showgrid: true, gridcolor: 'themeColor('#f1f5f9')',
+			showgrid: true, gridcolor: themeColor('#f1f5f9'),
 			title: ''
 		},
 		yaxis: {
 			range: [-11, 10], zeroline: false,
-			showgrid: true, gridcolor: 'themeColor('#f1f5f9')',
+			showgrid: true, gridcolor: themeColor('#f1f5f9'),
 			scaleanchor: 'x', title: ''
 		},
 		annotations: annotations,
-		plot_bgcolor: 'themeColor('#fff')'
+		plot_bgcolor: themeColor('#fff')
 	};
 
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -4381,8 +4381,8 @@ function renderHyperbolicEmbedding() {
     var chainEdgeKeys = {};
     chainEdges.forEach(function(e) { chainEdgeKeys[e[0] + '->' + e[1]] = true; });
 
-    var depthColors = ['themeColor('#1e293b')','#8b5cf6','#6366f1','#3b82f6','#10b981'];
-    var groupColors = { root: 'themeColor('#1e293b')', animal: '#ef4444', object: '#6366f1' };
+    var depthColors = [themeColor('#1e293b'),'#8b5cf6','#6366f1','#3b82f6','#10b981'];
+    var groupColors = { root: themeColor('#1e293b'), animal: '#ef4444', object: '#6366f1' };
 
     // ── 1. Boundary circle ──
     if (curvature > 0.05) {
@@ -4475,7 +4475,7 @@ function renderHyperbolicEmbedding() {
         }
         var isLeaf  = !hasChild;
         var onChain = !!chainNames[node.name];
-        var color   = onChain ? '#f59e0b' : (groupColors[node.group] || depthColors[node.depth] || 'themeColor('#64748b')');
+        var color   = onChain ? '#f59e0b' : (groupColors[node.group] || depthColors[node.depth] || themeColor('#64748b'));
         var sz      = node.depth === 0 ? 15 : (onChain ? 11 : (isLeaf ? 6 : 9));
         var fSz     = node.depth === 0 ? 14 : (node.depth <= 2 ? 11 : (isLeaf ? 9 : 10));
         var rr      = Math.sqrt(pos[0]*pos[0] + pos[1]*pos[1]);
@@ -4500,12 +4500,12 @@ function renderHyperbolicEmbedding() {
             textposition: hypTextPos(node.angle || 0, node.depth),
             textfont: {
                 size: fSz,
-                color: onChain ? '#92400e' : (depthColors[Math.min(node.depth, 4)] || 'themeColor('#1e293b')'),
+                color: onChain ? '#92400e' : (depthColors[Math.min(node.depth, 4)] || themeColor('#1e293b')),
                 weight: (node.depth <= 1 || onChain) ? 'bold' : 'normal'
             },
             marker: {
                 size: sz, color: color, opacity: 0.92,
-                line: { width: onChain ? 2 : 1, color: onChain ? '#fbbf24' : 'themeColor('#fff')' }
+                line: { width: onChain ? 2 : 1, color: onChain ? '#fbbf24' : themeColor('#fff') }
             },
             showlegend: false,
             hovertemplate: hoverStr
@@ -4520,15 +4520,15 @@ function renderHyperbolicEmbedding() {
         xaxis: {
             range: [-pad, pad], zeroline: false,
             showgrid: curvature < 0.25,
-            gridcolor: 'themeColor('#f1f5f9')', showticklabels: false,
+            gridcolor: themeColor('#f1f5f9'), showticklabels: false,
             scaleanchor: 'y'
         },
         yaxis: {
             range: [-pad, pad], zeroline: false,
             showgrid: curvature < 0.25,
-            gridcolor: 'themeColor('#f1f5f9')', showticklabels: false
+            gridcolor: themeColor('#f1f5f9'), showticklabels: false
         },
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     }, { displayModeBar: false, responsive: true });
 
     // ── 7. Stats panel ──
@@ -4549,7 +4549,7 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 		html += '<div style="font-weight:bold;margin-bottom:8px;color:themeColor('#1e293b');">Depth &rarr; Radius</div>';
 		for (var d = 0; d <= hyperbolicState.maxDepth; d++) {
 			var r = getHyperbolicRadius(d, curvature);
-			var dc = depthColors[d] || 'themeColor('#1e293b')';
+			var dc = depthColors[d] || themeColor('#1e293b');
 			html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid themeColor('#f1f5f9');">';
 			html += '<span style="color:' + dc + ';">Depth ' + d + '</span>';
 			html += '<span style="font-family:monospace;font-weight:bold;">r = ' + r.toFixed(4) + '</span>';
@@ -4840,7 +4840,7 @@ function renderTopologyCones() {
     // --- 5. Origin ---
     traces.push({
         x: [0], y: [0], mode: 'markers',
-        marker: { size: 6, color: 'themeColor('#1e293b')' },
+        marker: { size: 6, color: themeColor('#1e293b') },
         showlegend: false, hoverinfo: 'skip'
     });
 
@@ -4848,14 +4848,14 @@ function renderTopologyCones() {
         margin: { l: 30, r: 30, b: 30, t: 10 },
         showlegend: false,
         xaxis: {
-            range: [-1.35, 1.35], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')',
+            range: [-1.35, 1.35], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
             showgrid: false, scaleanchor: 'y', showticklabels: false
         },
         yaxis: {
-            range: [-1.35, 1.35], zeroline: true, zerolinecolor: 'themeColor('#e2e8f0')',
+            range: [-1.35, 1.35], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
             showgrid: false, showticklabels: false
         },
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     }, { displayModeBar: false, responsive: true });
 
     // --- Stats ---
@@ -5097,7 +5097,7 @@ function renderFractalFolding() {
             marker: {
                 size: classSize, color: cls.color,
                 opacity: classOpacity,
-                line: { width: 2, color: 'themeColor('#fff')' }
+                line: { width: 2, color: themeColor('#fff') }
             },
             showlegend: false,
             hovertemplate: `<b>${cls.name}</b><br>Level 1 — Class<extra></extra>`
@@ -5174,7 +5174,7 @@ function renderFractalFolding() {
                     marker: {
                         size: spSize, color: sp.color,
                         opacity: spOpacity,
-                        line: { width: 1, color: 'themeColor('#fff')' }
+                        line: { width: 1, color: themeColor('#fff') }
                     },
                     showlegend: false,
                     hovertemplate: `<b>${sp.name}</b><br>Level 2 — Species<br>Parent: ${cls.name}<extra></extra>`
@@ -5252,7 +5252,7 @@ function renderFractalFolding() {
                                 size: brSize, color: sp.color,
                                 opacity: brOpacity,
                                 symbol: 'diamond',
-                                line: { width: 1, color: 'themeColor('#fff')' }
+                                line: { width: 1, color: themeColor('#fff') }
                             },
                             showlegend: false,
                             hovertemplate: `<b>${br.name}</b><br>Level 3 — Breed/Variant<br>Parent: ${sp.name}<extra></extra>`
@@ -5277,16 +5277,16 @@ function renderFractalFolding() {
         showlegend: false,
         xaxis: {
             range: [xMin - xPad, xMax + xPad],
-            zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')',
+            zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'),
             showticklabels: false, scaleanchor: 'y'
         },
         yaxis: {
             range: [yMin - yPad, yMax + yPad],
-            zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')',
+            zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'),
             showticklabels: false
         },
         annotations: annotations,
-        plot_bgcolor: 'themeColor('#fff')'
+        plot_bgcolor: themeColor('#fff')
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -5536,7 +5536,7 @@ function renderHolographic() {
             x: g.x, y: g.y, mode: 'markers+text',
             text: g.text, textposition: 'top center',
             textfont: { size: 11, color: g.color, weight: 'bold' },
-            marker: { size: 11, color: g.color, opacity: 0.9, line: { width: 1, color: 'themeColor('#fff')' } },
+            marker: { size: 11, color: g.color, opacity: 0.9, line: { width: 1, color: themeColor('#fff') } },
             name: (groupEmoji[g.name] || '') + ' ' + g.name.charAt(0).toUpperCase() + g.name.slice(1),
             hovertemplate: '<b>%{text}</b><br>Group: ' + g.name + '<extra></extra>'
         });
@@ -5545,11 +5545,11 @@ function renderHolographic() {
     Plotly.react(scatterDiv, scatterTraces, {
         margin: { l: 25, r: 25, b: 25, t: 35 },
         showlegend: true,
-        legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.9)', bordercolor: 'themeColor('#e2e8f0')', borderwidth: 1, font: { size: 10 } },
-        xaxis: { zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')', showticklabels: false },
-        yaxis: { zeroline: false, showgrid: true, gridcolor: 'themeColor('#f1f5f9')', showticklabels: false, scaleanchor: 'x' },
-        plot_bgcolor: 'themeColor('#fff')',
-        title: { text: 'Concept Positions (2D projection)', font: { size: 12, color: 'themeColor('#64748b')' } }
+        legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.9)', bordercolor: themeColor('#e2e8f0'), borderwidth: 1, font: { size: 10 } },
+        xaxis: { zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), showticklabels: false },
+        yaxis: { zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), showticklabels: false, scaleanchor: 'x' },
+        plot_bgcolor: themeColor('#fff'),
+        title: { text: 'Concept Positions (2D projection)', font: { size: 12, color: themeColor('#64748b') } }
     }, { displayModeBar: false, responsive: true });
 
     // ── RIGHT: Similarity matrix (heatmap) ──
@@ -5612,8 +5612,8 @@ function renderHolographic() {
         margin: { l: 70, r: 20, b: 70, t: 35 },
         xaxis: { tickangle: -45, tickfont: { size: 9 } },
         yaxis: { tickfont: { size: 9 }, autorange: 'reversed' },
-        plot_bgcolor: 'themeColor('#fff')',
-        title: { text: 'Pairwise Cosine Similarity', font: { size: 12, color: 'themeColor('#64748b')' } }
+        plot_bgcolor: themeColor('#fff'),
+        title: { text: 'Pairwise Cosine Similarity', font: { size: 12, color: themeColor('#64748b') } }
     }, { displayModeBar: false, responsive: true });
 
     // ── Stats ──
@@ -5689,7 +5689,7 @@ const voronoiState = {
             { name: 'Angry',      x: 0.75, y: 0.30, color: '#ef4444', group: 'intense' },
             { name: 'Furious',    x: 0.80, y: 0.25, color: '#dc2626', group: 'intense' },
             { name: 'Calm',       x: 0.45, y: 0.55, color: '#10b981', group: 'neutral' },
-            { name: 'Neutral',    x: 0.50, y: 0.50, color: 'themeColor('#64748b')', group: 'neutral' },
+            { name: 'Neutral',    x: 0.50, y: 0.50, color: themeColor('#64748b'), group: 'neutral' },
             { name: 'Fearful',    x: 0.60, y: 0.40, color: '#8b5cf6', group: 'negative' },
         ],
         code: [
@@ -5716,8 +5716,8 @@ const voronoiState = {
             { name: 'Mountain', x: 0.78, y: 0.40, color: '#14b8a6', group: 'nature' },
             { name: 'Quantum',  x: 0.35, y: 0.75, color: '#8b5cf6', group: 'science' },
             { name: 'Electron', x: 0.42, y: 0.70, color: '#a78bfa', group: 'science' },
-            { name: 'the',      x: 0.50, y: 0.50, color: 'themeColor('#64748b')', group: 'function' },
-            { name: 'is',       x: 0.55, y: 0.48, color: 'themeColor('#94a3b8')', group: 'function' },
+            { name: 'the',      x: 0.50, y: 0.50, color: themeColor('#64748b'), group: 'function' },
+            { name: 'is',       x: 0.55, y: 0.48, color: themeColor('#94a3b8'), group: 'function' },
             { name: 'Happy',    x: 0.70, y: 0.70, color: '#facc15', group: 'emotion' },
             { name: 'Sad',      x: 0.72, y: 0.78, color: '#3b82f6', group: 'emotion' },
         ]
@@ -5734,7 +5734,7 @@ window.loadVoronoiPreset = function (name) {
 
     // Update button styles
     document.querySelectorAll('.voronoi-preset-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
     });
     const activeBtn = document.getElementById('vp-' + name);
     if (activeBtn) activeBtn.style.background = '#8b5cf6';
@@ -5954,14 +5954,14 @@ function renderVoronoi() {
         ctx.arc(sx, sy, 7, 0, Math.PI * 2);
         ctx.fillStyle = s.color;
         ctx.fill();
-        ctx.strokeStyle = 'themeColor('#fff')';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 2;
         ctx.stroke();
 
         // Inner dot
         ctx.beginPath();
         ctx.arc(sx, sy, 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'themeColor('#fff')';
+        ctx.fillStyle = themeColor('#fff');
         ctx.fill();
 
         // Label
@@ -6006,9 +6006,9 @@ function renderVoronoi() {
         // Click marker
         ctx.beginPath();
         ctx.arc(cpx, cpy, 5, 0, Math.PI * 2);
-        ctx.fillStyle = 'themeColor('#1e293b')';
+        ctx.fillStyle = themeColor('#1e293b');
         ctx.fill();
-        ctx.strokeStyle = 'themeColor('#fff')';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -6497,7 +6497,7 @@ window.loadHomologyPreset = function (name) {
     if (slider) slider.value = 0;
 
     document.querySelectorAll('.homology-preset-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
     });
     const activeBtn = document.getElementById('hp-' + name);
     if (activeBtn) activeBtn.style.background = '#8b5cf6';
@@ -6614,7 +6614,7 @@ function renderHomology() {
     const ctx = st.spaceCtx;
 
     // ── Clear space canvas ──
-    ctx.fillStyle = 'themeColor('#0f172a')';
+    ctx.fillStyle = themeColor('#0f172a');
     ctx.fillRect(0, 0, W, H);
 
     // Grid
@@ -6755,7 +6755,7 @@ function renderHomology() {
         const cp = toC(p);
         ctx.beginPath();
         ctx.arc(cp.x, cp.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = 'themeColor('#e2e8f0')';
+        ctx.fillStyle = themeColor('#e2e8f0');
         ctx.fill();
         ctx.beginPath();
         ctx.arc(cp.x, cp.y, 1.5, 0, Math.PI * 2);
@@ -6771,7 +6771,7 @@ function renderHomology() {
     const pW = st.persWidth;
     const pH = st.persHeight;
 
-    pCtx.fillStyle = 'themeColor('#fff')';
+    pCtx.fillStyle = themeColor('#fff');
     pCtx.fillRect(0, 0, pW, pH);
 
     const margin = { l: 50, r: 20, t: 20, b: 50 };
@@ -6785,7 +6785,7 @@ function renderHomology() {
     function toPersY(v) { return margin.t + plotH - (v / maxVal) * plotH; }
 
     // Grid
-    pCtx.strokeStyle = 'themeColor('#f1f5f9')';
+    pCtx.strokeStyle = themeColor('#f1f5f9');
     pCtx.lineWidth = 1;
     for (let v = 0; v <= maxVal; v += 0.05) {
         // Horizontal
@@ -6804,7 +6804,7 @@ function renderHomology() {
     pCtx.beginPath();
     pCtx.moveTo(toPersX(0), toPersY(0));
     pCtx.lineTo(toPersX(maxVal), toPersY(maxVal));
-    pCtx.strokeStyle = 'themeColor('#94a3b8')';
+    pCtx.strokeStyle = themeColor('#94a3b8');
     pCtx.lineWidth = 1.5;
     pCtx.setLineDash([6, 4]);
     pCtx.stroke();
@@ -6813,7 +6813,7 @@ function renderHomology() {
     // Diagonal label
     pCtx.font = '9px system-ui, sans-serif';
     pCtx.textAlign = 'center';
-    pCtx.fillStyle = 'themeColor('#94a3b8')';
+    pCtx.fillStyle = themeColor('#94a3b8');
     pCtx.save();
     pCtx.translate(toPersX(maxVal * 0.75) + 12, toPersY(maxVal * 0.75) + 12);
     pCtx.rotate(-Math.PI / 4);
@@ -6875,9 +6875,9 @@ function renderHomology() {
             pCtx.fillText(`H${hIdx + 1}`, bx + dotR + 4, by + 4);
         } else if (isBorn) {
             // Dead — gray
-            pCtx.fillStyle = 'themeColor('#cbd5e1')';
+            pCtx.fillStyle = themeColor('#cbd5e1');
             pCtx.fill();
-            pCtx.strokeStyle = 'themeColor('#94a3b8')';
+            pCtx.strokeStyle = themeColor('#94a3b8');
             pCtx.lineWidth = 1;
             pCtx.stroke();
         } else {
@@ -6893,7 +6893,7 @@ function renderHomology() {
     // Axes labels
     pCtx.font = '11px system-ui, sans-serif';
     pCtx.textAlign = 'center';
-    pCtx.fillStyle = 'themeColor('#475569')';
+    pCtx.fillStyle = themeColor('#475569');
     pCtx.fillText('Birth Radius', margin.l + plotW / 2, pH - 8);
 
     pCtx.save();
@@ -6904,7 +6904,7 @@ function renderHomology() {
 
     // Tick labels
     pCtx.font = '9px system-ui, sans-serif';
-    pCtx.fillStyle = 'themeColor('#94a3b8')';
+    pCtx.fillStyle = themeColor('#94a3b8');
     pCtx.textAlign = 'center';
     for (let v = 0; v <= maxVal; v += 0.1) {
         pCtx.fillText(v.toFixed(1), toPersX(v), margin.t + plotH + 16);
@@ -6952,7 +6952,7 @@ function updateHomologyStats(r) {
     statsDiv.innerHTML = `
         <div style="padding:10px; background:themeColor('#fff'); border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
             <div style="font-size:0.75em; color:themeColor('#64748b'); margin-bottom:3px;">Active Holes</div>
-            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : 'themeColor('#94a3b8')'};">${aliveHoles.length}</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : themeColor('#94a3b8')};">${aliveHoles.length}</div>
             <div style="font-size:0.7em; color:themeColor('#94a3b8');">of ${totalHoles} detected</div>
         </div>
         <div style="padding:10px; background:themeColor('#fff'); border-radius:8px; border:1px solid themeColor('#e2e8f0'); text-align:center;">
@@ -7051,7 +7051,7 @@ window.loadTimeRange = function (name) {
     timeHelixState.currentRange = name;
 
     document.querySelectorAll('.time-preset-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
     });
     const activeBtn = document.getElementById('tp-' + name);
     if (activeBtn) activeBtn.style.background = '#8b5cf6';
@@ -7256,7 +7256,7 @@ function renderTimeHelix() {
     const showShadow = document.getElementById('time-show-shadow')?.checked ?? true;
 
     // ── Clear ──
-    ctx.fillStyle = 'themeColor('#0f172a')';
+    ctx.fillStyle = themeColor('#0f172a');
     ctx.fillRect(0, 0, W, H);
 
     // ── Grid floor ──
@@ -7361,7 +7361,7 @@ function renderTimeHelix() {
             ctx.arc(p.sx, p.sy, dotR, 0, Math.PI * 2);
             ctx.fillStyle = '#f59e0b';
             ctx.fill();
-            ctx.strokeStyle = 'themeColor('#fff')';
+            ctx.strokeStyle = themeColor('#fff');
             ctx.lineWidth = 1.5;
             ctx.stroke();
 
@@ -7393,7 +7393,7 @@ function renderTimeHelix() {
 
             ctx.font = 'bold 13px system-ui, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillStyle = 'themeColor('#fff')';
+            ctx.fillStyle = themeColor('#fff');
             ctx.fillText(p.year.toString(), p.sx, p.sy - dotR - 12);
 
             if (p.eventLabel) {
@@ -7600,7 +7600,7 @@ const polytopeState = {
         },
         alive: {
             nameA: 'Alive', colorA: '#10b981',
-            nameB: 'Dead / Inert', colorB: 'themeColor('#64748b')',
+            nameB: 'Dead / Inert', colorB: themeColor('#64748b'),
             pointsA: [
                 { name: 'Human',     x: 0.15, y: 0.25 },
                 { name: 'Dog',       x: 0.20, y: 0.35 },
@@ -7666,7 +7666,7 @@ window.loadPolytopePreset = function (name) {
     st.dragging = null;
 
     document.querySelectorAll('.polytope-preset-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
     });
     const activeBtn = document.getElementById('pp-' + name);
     if (activeBtn) activeBtn.style.background = '#8b5cf6';
@@ -7887,11 +7887,11 @@ function renderPolytope() {
     const showDilemmas = document.getElementById('polytope-show-dilemma-points')?.checked ?? true;
 
     // ── Clear ──
-    ctx.fillStyle = 'themeColor('#fff')';
+    ctx.fillStyle = themeColor('#fff');
     ctx.fillRect(0, 0, W, H);
 
     // Light grid
-    ctx.strokeStyle = 'themeColor('#f1f5f9')';
+    ctx.strokeStyle = themeColor('#f1f5f9');
     ctx.lineWidth = 1;
     for (let gx = 0; gx < W; gx += 40) {
         ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
@@ -8017,7 +8017,7 @@ function renderPolytope() {
         ctx.arc(cp.x, cp.y, 8, 0, Math.PI * 2);
         ctx.fillStyle = preset.colorA;
         ctx.fill();
-        ctx.strokeStyle = 'themeColor('#fff')';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -8043,7 +8043,7 @@ function renderPolytope() {
         ctx.arc(cp.x, cp.y, 8, 0, Math.PI * 2);
         ctx.fillStyle = preset.colorB;
         ctx.fill();
-        ctx.strokeStyle = 'themeColor('#fff')';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -8103,9 +8103,9 @@ function renderPolytope() {
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
             } else {
-                ctx.fillStyle = 'themeColor('#94a3b8')';
+                ctx.fillStyle = themeColor('#94a3b8');
                 ctx.fill();
-                ctx.strokeStyle = 'themeColor('#64748b')';
+                ctx.strokeStyle = themeColor('#64748b');
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
             }
@@ -8118,7 +8118,7 @@ function renderPolytope() {
                 ctx.fillStyle = 'rgba(255,255,255,0.9)';
                 ctx.fillRect(cp.x - tw / 2 - 3, cp.y + s + 3, tw + 6, 14);
 
-                ctx.fillStyle = inOverlap ? '#b45309' : 'themeColor('#64748b')';
+                ctx.fillStyle = inOverlap ? '#b45309' : themeColor('#64748b');
                 ctx.fillText(p.name, cp.x, cp.y + s + 14);
             }
         });
@@ -8130,9 +8130,9 @@ function renderPolytope() {
 
         ctx.beginPath();
         ctx.arc(cp.x, cp.y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = 'themeColor('#1e293b')';
+        ctx.fillStyle = themeColor('#1e293b');
         ctx.fill();
-        ctx.strokeStyle = 'themeColor('#fff')';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -8204,7 +8204,7 @@ function updatePolytopeClickInfo(pos) {
         zoneIcon = '✅';
     } else {
         zone = 'Outside both hulls';
-        zoneColor = 'themeColor('#94a3b8')';
+        zoneColor = themeColor('#94a3b8');
         zoneIcon = '⬜';
     }
 
@@ -8316,7 +8316,7 @@ function updatePolytopeDilemmaList(hullA, hullB) {
             statusIcon = '🔴';
         } else {
             status = 'Outside both';
-            statusColor = 'themeColor('#94a3b8')';
+            statusColor = themeColor('#94a3b8');
             statusIcon = '⬜';
         }
 
@@ -8492,7 +8492,7 @@ window.loadGrammarOp = function (name) {
     if (slider) slider.value = 0;
 
     document.querySelectorAll('.grammar-op-btn').forEach(btn => {
-        btn.style.background = 'themeColor('#64748b')';
+        btn.style.background = themeColor('#64748b');
     });
     const activeBtn = document.getElementById('go-' + name);
     if (activeBtn) activeBtn.style.background = '#8b5cf6';
@@ -8603,7 +8603,7 @@ function renderGrammarRotation() {
     const scale = Math.min(W, H) * 0.38;
 
     // ── Clear ──
-    ctx.fillStyle = 'themeColor('#0f172a')';
+    ctx.fillStyle = themeColor('#0f172a');
     ctx.fillRect(0, 0, W, H);
 
     // ── Grid ──
@@ -8759,7 +8759,7 @@ function renderGrammarRotation() {
         ctx.arc(curX, curY, 6, 0, Math.PI * 2);
         ctx.fillStyle = `rgb(${mr}, ${mg}, ${mb})`;
         ctx.fill();
-        ctx.strokeStyle = 'themeColor('#fff')';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
