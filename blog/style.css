@@ -4201,6 +4201,7 @@ html {
 	gap: 2px;
 	min-width: 0;
 	flex: 1 1 auto;
+	overflow: hidden;
 }
 .module-nav-label {
 	font-size: 0.7rem;
@@ -4208,12 +4209,16 @@ html {
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	color: var(--mn-text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .module-nav-title {
+	display: block;
 	line-height: 1.35;
-	overflow-wrap: break-word;
-	word-break: normal;
-	hyphens: none;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .module-nav-arrow {
 	flex-shrink: 0;
