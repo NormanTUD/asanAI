@@ -753,7 +753,7 @@ window.TrainingDemo = (function() {
         if (s.phase === 1 && s.phaseT > 1.6) { s.phase = 2; s.phaseT = 0; }
         if (s.phase === 2 && s.phaseT > 1.0) { s.phase = 3; s.phaseT = 0; }
         if (s.phase === 3 && s.phaseT > 1.8) {
-            upd(0.3);
+            upd(0.8);
             s.lossHist.push(s.loss);
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             s.step++;
