@@ -11,7 +11,7 @@
 const AttractorViz = (() => {
     let currentStep = 0;
     let subStep = 0;
-    const totalSteps = 6;
+    const totalSteps = 7;
     let activeAnimation = null;
     let animationRunning = false;
     let retryCount = 0;
@@ -122,6 +122,7 @@ function renderStep(step) {
 
     const captions = [
         '<b>Punkt-Attraktor:</b> Punkte bewegen sich frei im Raum. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
+        '<b>Repeller (Abstoßung):</b> Das Gegenteil eines Attraktors – ein Punkt, von dem Teilchen <b>weggetrieben</b> werden. Kommt ein Teilchen zu nah, wird es abgestoßen und fliegt davon.',
         '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌏 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. <br><b>⚠️ Homotopie-Hinweis:</b> Der Torus rechts zeigt die <i>topologische Struktur</i> (Kreis × Kreis), nicht die exakte räumliche Geometrie.',
         '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
@@ -133,11 +134,12 @@ function renderStep(step) {
 
     switch (step) {
         case 0: renderPointAttractor(container); break;
-        case 1: renderTorusEarth(container); break;
-        case 2: renderLorenz(container); break;
-        case 3: renderComplexBasins(container); break;
-        case 4: render3DBasins(container); break;
-        case 5: renderSeahorseEmoji(container); break;
+        case 1: renderRepellent(container); break;
+        case 2: renderTorusEarth(container); break;
+        case 3: renderLorenz(container); break;
+        case 4: renderComplexBasins(container); break;
+        case 5: render3DBasins(container); break;
+        case 6: renderSeahorseEmoji(container); break;
     }
 }
 
@@ -869,7 +871,238 @@ function renderSeahorseEmoji(container) {
     }
 
     // ============================================================
-    // STEP 1: Torus – Erde/Mond/Sonne + SICHTBARER Torus-Wireframe
+    // STEP 1: Repeller – Abstoßender Fixpunkt
+    // Teilchen werden von einem zentralen Punkt weggetrieben.
+    // ============================================================
+    function renderRepellent(container) {
+        const setup = safeCanvasSetup(container, '#fafafa');
+        if (!setup) {
+            retryRender(renderRepellent, container, 150);
+            return;
+        }
+        const { ctx, W, H } = setup;
+        const cx = W / 2, cy = H / 2;
+        const repelRadius = Math.min(140, Math.min(W, H) / 2 - 60);
+        const dangerRadius = 38;
+
+        function spawnParticle(color, name) {
+            let x, y, attempts = 0;
+            do {
+                x = 40 + Math.random() * (W - 80);
+                y = 40 + Math.random() * (H - 80);
+                attempts++;
+            } while (Math.sqrt((x - cx) ** 2 + (y - cy) ** 2) < dangerRadius + 15 && attempts < 50);
+
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1.0 + Math.random() * 0.5;
+            return {
+                x, y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                color,
+                baseColor: color,
+                name,
+                trail: [],
+                heading: angle,
+                turnRate: (Math.random() - 0.5) * 0.03,
+                turnChangeTimer: 60 + Math.floor(Math.random() * 120),
+                repelled: 0
+            };
+        }
+
+        const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
+        const names = ['A', 'B', 'C', 'D'];
+        let particles = colors.map((c, i) => spawnParticle(c, names[i]));
+
+        animationRunning = true;
+        let t = 0;
+
+        function draw() {
+            if (!animationRunning) return;
+            t++;
+
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#fafafa';
+            ctx.fillRect(0, 0, W, H);
+
+            // Repulsionsfeld: konzentrische Ringe nach außen hin verblassend
+            for (let r = repelRadius; r > dangerRadius; r -= 6) {
+                const progress = 1 - (r - dangerRadius) / (repelRadius - dangerRadius);
+                const alpha = progress * 0.09;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(239, 68, 68, ${alpha})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 6]);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            // Grenze der Abstoßungszone
+            ctx.beginPath();
+            ctx.arc(cx, cy, dangerRadius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.font = '12px system-ui';
+            ctx.fillStyle = '#ef4444';
+            ctx.textAlign = 'center';
+            ctx.fillText('Abstoßungszone', cx, cy - dangerRadius - 12);
+
+            // Stoßwellen, die vom Repeller ausgehen
+            for (let w = 0; w < 3; w++) {
+                const phase = (t * 0.015 + w * 0.33) % 1;
+                const wr = dangerRadius + phase * (repelRadius - dangerRadius);
+                ctx.beginPath();
+                ctx.arc(cx, cy, wr, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(239, 68, 68, ${0.25 * (1 - phase)})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // Repeller-Punkt (pulsierend rot)
+            const pulse = 1 + 0.12 * Math.sin(t * 0.08);
+            ctx.beginPath();
+            ctx.arc(cx, cy, 10 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = '#dc2626';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // X-Markierung
+            const xSize = 7;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(cx - xSize, cy - xSize);
+            ctx.lineTo(cx + xSize, cy + xSize);
+            ctx.moveTo(cx + xSize, cy - xSize);
+            ctx.lineTo(cx - xSize, cy + xSize);
+            ctx.stroke();
+
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#dc2626';
+            ctx.textAlign = 'center';
+            ctx.fillText('Repeller', cx, cy + 28);
+
+            // Teilchen aktualisieren und zeichnen
+            particles.forEach((p) => {
+                const dx = p.x - cx;
+                const dy = p.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Abstoßungskraft, sobald das Teilchen im Repulsionsfeld ist
+                if (dist < repelRadius && dist > 0) {
+                    const outwardAngle = Math.atan2(dy, dx);
+                    const strength = 0.9 * (1 - dist / repelRadius) + 0.12;
+                    p.vx += Math.cos(outwardAngle) * strength;
+                    p.vy += Math.sin(outwardAngle) * strength;
+                    p.repelled = 25;
+
+                    // Tangentialer Wirbel für visuellen Schwungeffekt
+                    const swirlAngle = outwardAngle + Math.PI / 2;
+                    const swirlStrength = 0.06 * (1 - dist / repelRadius);
+                    p.vx += Math.cos(swirlAngle) * swirlStrength;
+                    p.vy += Math.sin(swirlAngle) * swirlStrength;
+                }
+
+                // Teilchen dürfen den inneren Sperrkreis nicht betreten
+                if (dist < dangerRadius && dist > 0) {
+                    const outwardAngle = Math.atan2(dy, dx);
+                    const push = (dangerRadius - dist) * 0.2;
+                    p.vx += Math.cos(outwardAngle) * push;
+                    p.vy += Math.sin(outwardAngle) * push;
+                    p.x = cx + Math.cos(outwardAngle) * dangerRadius;
+                    p.y = cy + Math.sin(outwardAngle) * dangerRadius;
+                }
+
+                // Sanfte freie Bewegung
+                p.turnChangeTimer--;
+                if (p.turnChangeTimer <= 0) {
+                    p.turnRate += (Math.random() - 0.5) * 0.02;
+                    p.turnRate = Math.max(-0.04, Math.min(0.04, p.turnRate));
+                    p.turnChangeTimer = 40 + Math.floor(Math.random() * 80);
+                }
+                p.heading += p.turnRate;
+                const targetSpeed = 1.5;
+                const targetVx = Math.cos(p.heading) * targetSpeed;
+                const targetVy = Math.sin(p.heading) * targetSpeed;
+                p.vx += (targetVx - p.vx) * 0.03;
+                p.vy += (targetVy - p.vy) * 0.03;
+
+                // Wandabstoßung
+                const margin = 60;
+                if (p.x < margin) { p.heading += 0.05; p.vx += 0.1; }
+                if (p.x > W - margin) { p.heading -= 0.05; p.vx -= 0.1; }
+                if (p.y < margin) { p.heading += 0.05; p.vy += 0.1; }
+                if (p.y > H - margin) { p.heading -= 0.05; p.vy -= 0.1; }
+
+                // Geschwindigkeitsbegrenzung
+                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                if (speed > 3.5) {
+                    p.vx *= 3.5 / speed;
+                    p.vy *= 3.5 / speed;
+                }
+
+                // Dämpfung
+                p.vx *= 0.96;
+                p.vy *= 0.96;
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Harte Begrenzung
+                p.x = Math.max(10, Math.min(W - 10, p.x));
+                p.y = Math.max(10, Math.min(H - 10, p.y));
+
+                if (p.repelled > 0) p.repelled--;
+
+                // Trail
+                p.trail.push({ x: p.x, y: p.y });
+                if (p.trail.length > 120) p.trail.shift();
+
+                // Trail zeichnen
+                if (p.trail.length > 1) {
+                    for (let i = 1; i < p.trail.length; i++) {
+                        const alpha = (i / p.trail.length) * 0.5;
+                        const trailColor = p.repelled > 0 ? '#ef4444' : p.baseColor;
+                        ctx.beginPath();
+                        ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
+                        ctx.lineTo(p.trail[i].x, p.trail[i].y);
+                        ctx.strokeStyle = trailColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+
+                // Teilchen zeichnen
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = p.repelled > 0 ? '#ef4444' : p.baseColor;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                ctx.font = 'bold 11px system-ui';
+                ctx.fillStyle = p.repelled > 0 ? '#ef4444' : p.baseColor;
+                ctx.textAlign = 'center';
+                ctx.fillText(p.name, p.x, p.y - 13);
+            });
+
+            activeAnimation = requestAnimationFrame(draw);
+        }
+        draw();
+    }
+
+    // ============================================================
+    // STEP 2: Torus – Erde/Mond/Sonne + SICHTBARER Torus-Wireframe
     // ============================================================
 function renderTorusEarth(container) {
     const setup = safeCanvasSetup(container, '#0a0a2a');
