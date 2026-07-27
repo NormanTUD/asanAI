@@ -1798,6 +1798,59 @@ function addConsoleEasterEggs() {
 }
 
 
+/* ════════════════════════════════════════════════════════════
+   GLOSSARY — auto-linked term definitions
+   ════════════════════════════════════════════════════════ */
+const GLOSSARY = {
+	'tensor': 'A multi-dimensional array of numbers — the fundamental data structure in ML frameworks like TensorFlow and PyTorch.',
+	'logit': 'The raw, unnormalized output of a model layer before softmax is applied. Logits can be any real number.',
+	'softmax': 'A function that converts a vector of logits into a probability distribution where values sum to 1.',
+	'embedding': 'A dense vector representation of a discrete entity (word, token, concept) in a continuous high-dimensional space.',
+	'attention': 'A mechanism that lets each token in a sequence weigh the importance of every other token when computing its own representation.',
+	'self-attention': 'An attention mechanism where queries, keys, and values all come from the same source — the input sequence itself.',
+	'transformer': 'A neural network architecture that uses self-attention instead of recurrence, forming the basis of modern LLMs.',
+	'residual stream': 'The sum of all layer outputs flowing through the model; each layer reads from and writes to this shared "notebook."',
+	'layer normalization': 'A technique that normalizes activations across the feature dimension, stabilizing training by keeping values in a consistent range.',
+	'backpropagation': 'The algorithm that computes gradients of the loss with respect to every weight in the network by applying the chain rule backwards.',
+	'gradient descent': 'An optimization algorithm that iteratively moves parameters in the direction of steepest descent of the loss function.',
+	'loss function': 'A function that measures how far the model\'s predictions are from the true target values.',
+	'activation function': 'A non-linear transformation applied to a neuron\'s output, enabling the network to learn complex patterns.',
+	'ReLU': 'Rectified Linear Unit — an activation function that outputs the input directly if positive, and zero otherwise.',
+	'epoch': 'One complete pass through the entire training dataset during model training.',
+	'batch': 'A subset of the training data processed together in one forward/backward pass.',
+	'learning rate': 'A hyperparameter that controls how much to adjust the model weights in response to the estimated error each update.',
+	'overfitting': 'When a model learns the training data too well, including noise, and performs poorly on unseen data.',
+	'underfitting': 'When a model is too simple to capture the underlying pattern in the data.',
+	'token': 'A unit of text — typically a word, subword, or character — that the model processes as a single input element.',
+	'tokenizer': 'An algorithm that splits text into tokens, mapping between raw text and the model\'s vocabulary indices.',
+	'context window': 'The maximum number of tokens a model can process in a single forward pass, acting as its "working memory."',
+	'fine-tuning': 'The process of taking a pre-trained model and training it further on a specific, usually smaller, dataset.',
+	'parameter': 'A weight or bias in a neural network that is learned during training.',
+	'hyperparameter': 'A configuration parameter set before training (e.g., learning rate, batch size) that controls the learning process.',
+	'MLP': 'Multi-Layer Perceptron — a feedforward neural network with one or more hidden layers of neurons.',
+	'CNN': 'Convolutional Neural Network — a network architecture designed for processing grid-like data such as images.',
+	'RNN': 'Recurrent Neural Network — a network architecture designed for sequential data with hidden state that persists across time steps.',
+	'LSTM': 'Long Short-Term Memory — a type of RNN with gating mechanisms that can learn long-range dependencies.',
+	'perceptron': 'The simplest form of a neural network: a single neuron that makes a binary decision based on weighted inputs.',
+	'logistic regression': 'A statistical model that uses a logistic (sigmoid) function to model binary outcomes.',
+	'convolution': 'A mathematical operation that slides a filter over input data, detecting local patterns like edges or textures.',
+	'pooling': 'A down-sampling operation that reduces the spatial dimensions of a feature map, keeping the most important information.',
+	'dropout': 'A regularization technique that randomly drops neurons during training to prevent overfitting.',
+	'batch normalization': 'A technique that normalizes layer inputs across the batch dimension, stabilizing and accelerating training.',
+	'weight decay': 'A regularization technique that penalizes large weights by adding their magnitude to the loss.',
+	'stochastic': 'Involving random probability — stochastic gradient descent uses random subsets of data (batches) rather than the full dataset.',
+	'latent space': 'The low-dimensional space of compressed representations learned by a model, where similar concepts cluster together.',
+	'logit lens': 'A technique that applies the unembedding matrix to intermediate residual stream states to interpret what the model is "thinking."',
+	'sparse autoencoder': 'A neural network that learns a sparse, overcomplete representation of its input, used for mechanistic interpretability.',
+	'KL divergence': 'Kullback-Leibler divergence — a measure of how one probability distribution differs from another.',
+	'entropy': 'A measure of uncertainty or randomness in a probability distribution — higher entropy means more unpredictability.',
+	'cross-entropy': 'A loss function that measures the difference between two probability distributions, commonly used for classification.',
+	'cosine similarity': 'A measure of similarity between two vectors calculated as the cosine of the angle between them.',
+	'dot product': 'A mathematical operation that multiplies corresponding elements of two vectors and sums the results.',
+	'gradient': 'A vector of partial derivatives pointing in the direction of steepest increase of a function.',
+	'chain rule': 'A calculus formula for computing the derivative of a composite function — the mathematical foundation of backpropagation.',
+};
+
 function tensor(...args) {
 	return tf.tensor(...args);
 }

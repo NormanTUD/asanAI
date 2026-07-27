@@ -1,16 +1,37 @@
 <?php include_once("functions.php"); ?>
+<?php $themeClass = get_theme_class(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="<?php echo $themeClass; ?>">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	<meta name="theme-color" content="#ffffff">
+	<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#ffffff'; ?>">
 	<title>From Stone Age Tools to ChatGPT</title>
+	<script>
+	function toggleTheme() {
+		var html = document.documentElement;
+		var isDark = !html.classList.contains('dark');
+		if (isDark) { html.classList.add('dark'); } else { html.classList.remove('dark'); }
+		var btn = document.getElementById('theme-toggle');
+		if (btn) btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
+		var meta = document.querySelector('meta[name="theme-color"]');
+		if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
+		document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
+	}
+	(function() {
+		if (document.cookie.indexOf('theme=') === -1) {
+			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) toggleTheme();
+		}
+	})();
+	</script>
 	<?php load_base_js(); ?>
 	<?php js("search"); ?>
 </head>
 <body>
+<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 <button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
+<?php render_theme_toggle(); ?>
+<?php render_drawer(); ?>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
 	<p id="loader-status">Initializing AI Course...</p>

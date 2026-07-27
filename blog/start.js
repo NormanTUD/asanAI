@@ -717,6 +717,342 @@ function render_temml() {
 	if (render_temml._liveUpdate) render_temml._liveUpdate();
 }
 
+/* ════════════════════════════════════════════════════════════
+   DARK MODE TOGGLE
+   ════════════════════════════════════════════════════════ */
+function getThemeFromCookie() {
+	var c = document.cookie.split(';');
+	for (var i = 0; i < c.length; i++) {
+		var t = c[i].trim();
+		if (t.indexOf('theme=') === 0) return t.substring(6);
+	}
+	return '';
+}
+
+function setThemeCookie(value) {
+	document.cookie = 'theme=' + value + '; path=/; max-age=' + 60*60*24*365;
+}
+
+function applyTheme(dark, persist) {
+	var html = document.documentElement;
+	if (dark) {
+		html.classList.add('dark');
+	} else {
+		html.classList.remove('dark');
+	}
+	// Update toggle icon
+	var toggle = document.getElementById('theme-toggle');
+	if (toggle) toggle.innerHTML = dark ? '&#9788;' : '&#9790;';
+	// Update theme-color meta
+	var meta = document.querySelector('meta[name="theme-color"]');
+	if (meta) meta.content = dark ? '#0f172a' : '#ffffff';
+	if (persist) setThemeCookie(dark ? 'dark' : 'light');
+}
+
+function initDarkMode() {
+	var toggle = document.getElementById('theme-toggle');
+	if (!toggle) return;
+
+	toggle.addEventListener('click', function() {
+		var isDark = !document.documentElement.classList.contains('dark');
+		document.documentElement.classList.add('theme-transition');
+		applyTheme(isDark, true);
+		setTimeout(function() {
+			document.documentElement.classList.remove('theme-transition');
+		}, 400);
+		adaptLabsToTheme();
+	});
+
+	// If no cookie set, respect system preference
+	if (!getThemeFromCookie()) {
+		var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+		if (prefersDark) applyTheme(true, false);
+	}
+
+	adaptLabsToTheme();
+}
+
+/* ════════════════════════════════════════════════════════════
+   ADAPT LABS — fix hardcoded inline styles in demos
+   ════════════════════════════════════════════════════════ */
+function adaptLabsToTheme() {
+	var isDark = document.documentElement.classList.contains('dark');
+	var LAB_BG = '#1e293b';
+	var LAB_TEXT = '#e2e8f0';
+	var LAB_TEXT_SEC = '#94a3b8';
+	var LAB_BORDER = '#334155';
+
+		if (isDark) {
+			// Fix all elements with white/light backgrounds in inline styles
+			var all = document.querySelectorAll('[style*="background"]');
+			for (var i = 0; i < all.length; i++) {
+				var el = all[i];
+				if (el.closest('pre') || el.closest('code') || el.id === 'contents' || el.id === 'loader') continue;
+				var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
+				if (
+					/(?:background|background-color):(?:#[fF]{3,6}|#f8fafc|#f1f5f9|#f8f9fa|#fafafa|#f5faf5|#f0f9ff|#f0fdf4|#dcfce7|#e0e7ff|#e0f2fe|#e8f5e9|#fef2f2|#fff3e0|white|rgb\s*\(\s*255\s*,\s*255\s*,\s*255\s*\))/.test(s)
+				) {
+					if (!el.hasAttribute('data-orig-bg')) {
+						el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
+					}
+					el.style.setProperty('background', LAB_BG, 'important');
+					el.style.backgroundColor = '';
+				}
+			}
+
+			// Fix dark text colors on light backgrounds
+			var textEls = document.querySelectorAll('[style*="color"]');
+			for (var i = 0; i < textEls.length; i++) {
+				var el = textEls[i];
+				if (el.closest('pre') || el.closest('code') || el.closest('.glossary-term')) continue;
+				var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
+				var m = s.match(/color:\s*(#[0-9a-f]{3,6}|rgba?\s*\([^)]+\))/);
+				if (!m) continue;
+				var c = m[1];
+				if (
+					/^#(1e293b|0f172a|333|333333|444|444444|555|555555|666|666666|777|777777|475569|4a5568|2d3748|1a202c|334155|374151)$/i.test(c)
+				) {
+					if (!el.hasAttribute('data-orig-color')) {
+						el.setAttribute('data-orig-color', el.style.color || '');
+					}
+					el.style.setProperty('color', LAB_TEXT, 'important');
+				}
+			}
+
+			// Fix Plotly chart backgrounds
+			document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
+				var rects = svg.querySelectorAll('rect.bg, rect[fill="#fff"], rect[fill="#ffffff"], rect[fill="white"], rect[fill="rgb(255,255,255)"], rect[fill="rgb(255, 255, 255)"]');
+				rects.forEach(function(r) { r.setAttribute('fill', LAB_BG); });
+			});
+			// Fix ECharts containers
+			document.querySelectorAll('div[id$="-chart"], div[id$="-plot"], div[id^="plot-"]').forEach(function(el) {
+				var s = (el.getAttribute('style') || '').toLowerCase();
+				if (/background/.test(s) && /#fff|#ffffff|white/.test(s)) {
+					if (!el.hasAttribute('data-orig-bg')) {
+						el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
+					}
+					el.style.background = LAB_BG;
+				}
+			});
+
+			// Fix white canvas backgrounds
+			document.querySelectorAll('canvas[style*="background"]').forEach(function(c) {
+				var s = (c.getAttribute('style') || '').toLowerCase();
+				if (/#fff|#ffffff|white/.test(s)) {
+					if (!c.hasAttribute('data-orig-bg')) {
+						c.setAttribute('data-orig-bg', c.style.background || '');
+					}
+					c.style.background = LAB_BG;
+				}
+			});
+
+		} else {
+		// Restore original styles when switching back to light mode
+		document.querySelectorAll('[data-orig-bg]').forEach(function(el) {
+			var orig = el.getAttribute('data-orig-bg');
+			if (orig) {
+				el.style.setProperty('background', orig, 'important');
+			} else {
+				el.style.removeProperty('background');
+				el.style.backgroundColor = '';
+			}
+			el.removeAttribute('data-orig-bg');
+		});
+		document.querySelectorAll('[data-orig-color]').forEach(function(el) {
+			var orig = el.getAttribute('data-orig-color');
+			if (orig) {
+				el.style.setProperty('color', orig, 'important');
+			} else {
+				el.style.removeProperty('color');
+			}
+			el.removeAttribute('data-orig-color');
+		});
+
+		// Restore Plotly backgrounds
+		document.querySelectorAll('.js-plotly-plot .main-svg').forEach(function(svg) {
+			var rects = svg.querySelectorAll('rect.bg');
+			rects.forEach(function(r) { r.removeAttribute('fill'); });
+		});
+	}
+
+	// Update temml/LaTeX rendering to respect dark mode
+	// (temml renders math with black text which is hard to read on dark bg)
+	document.querySelectorAll('math, .tml-display, mtext, mi, mn, mo, ms').forEach(function(el) {
+		if (isDark) {
+			if (!el.hasAttribute('data-orig-color-math')) {
+				el.setAttribute('data-orig-color-math', el.getAttribute('color') || '');
+			}
+			el.setAttribute('color', '#e2e8f0');
+		} else {
+			if (el.hasAttribute('data-orig-color-math')) {
+				var orig = el.getAttribute('data-orig-color-math');
+				if (orig) el.setAttribute('color', orig);
+				else el.removeAttribute('color');
+				el.removeAttribute('data-orig-color-math');
+			}
+		}
+	});
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE DRAWER
+   ════════════════════════════════════════════════════════ */
+function initDrawer() {
+	const toggle = document.getElementById('drawer-toggle');
+	const panel = document.getElementById('drawer-panel');
+	const backdrop = document.getElementById('drawer-backdrop');
+	const close = document.getElementById('drawer-close');
+	if (!toggle || !panel || !backdrop) return;
+
+	function open() { panel.classList.add('open'); backdrop.classList.add('open'); }
+	function closeDrawer() { panel.classList.remove('open'); backdrop.classList.remove('open'); }
+
+	toggle.addEventListener('click', open);
+	if (close) close.addEventListener('click', closeDrawer);
+	backdrop.addEventListener('click', closeDrawer);
+
+	// Close on escape
+	document.addEventListener('keydown', function(e) {
+		if (e.key === 'Escape' && panel.classList.contains('open')) closeDrawer();
+	});
+
+	// Close on module link click
+	panel.querySelectorAll('.drawer-module').forEach(function(link) {
+		link.addEventListener('click', closeDrawer);
+	});
+}
+
+/* ════════════════════════════════════════════════════════════
+   MODULE NAV (Prev / Next)
+   ════════════════════════════════════════════════════════ */
+function initModuleNav() {
+	const data = window.__moduleNavData;
+	if (!data || data.current < 0 || !data.modules || data.modules.length < 2) return;
+
+	const contents = document.getElementById('contents');
+	if (!contents) return;
+
+	const modules = data.modules;
+	const idx = data.current;
+	const nav = document.createElement('nav');
+	nav.className = 'module-nav';
+
+	const prevSpan = document.createElement('span');
+	if (idx > 0) {
+		const prev = modules[idx - 1];
+		const a = document.createElement('a');
+		a.href = prev.url;
+		a.className = 'module-nav-link module-nav-prev';
+		a.innerHTML = '<span class="module-nav-label">Previous</span>← ' + escHtml(prev.title);
+		prevSpan.appendChild(a);
+	}
+	nav.appendChild(prevSpan);
+
+	const nextSpan = document.createElement('span');
+	if (idx < modules.length - 1) {
+		const next = modules[idx + 1];
+		const a = document.createElement('a');
+		a.href = next.url;
+		a.className = 'module-nav-link module-nav-next';
+		a.innerHTML = '<span class="module-nav-label">Next</span>' + escHtml(next.title) + ' →';
+		nextSpan.appendChild(a);
+	}
+	nav.appendChild(nextSpan);
+
+	contents.appendChild(nav);
+}
+
+function escHtml(str) {
+	var div = document.createElement('div');
+	div.appendChild(document.createTextNode(str || ''));
+	return div.innerHTML;
+}
+
+/* ════════════════════════════════════════════════════════════
+   AUTO GLOSSARY
+   ════════════════════════════════════════════════════════ */
+function initGlossary() {
+	if (typeof GLOSSARY === 'undefined' || !GLOSSARY) return;
+
+	var contents = document.getElementById('contents');
+	if (!contents) return;
+
+	// Build a single regex matching all glossary terms (word-boundary-aware)
+	var terms = Object.keys(GLOSSARY);
+	// Sort by length descending so longer terms match first
+	terms.sort(function(a, b) { return b.length - a.length; });
+	// Escape regex special chars and join with word boundaries
+	var escaped = terms.map(function(t) {
+		return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	});
+	var pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
+
+	// Walk text nodes inside #contents (but skip code/pre/math elements)
+	var walker = document.createTreeWalker(
+		contents,
+		NodeFilter.SHOW_TEXT,
+		{
+			acceptNode: function(node) {
+				// Skip code blocks, pre, math, script, style
+				var parent = node.parentElement;
+				if (!parent) return NodeFilter.FILTER_REJECT;
+				var tag = parent.tagName;
+				if (tag === 'CODE' || tag === 'PRE' || tag === 'SCRIPT' || tag === 'STYLE' ||
+					tag === 'MATH' || tag === 'SVG' || parent.closest('.glossary-term')) {
+					return NodeFilter.FILTER_REJECT;
+				}
+				// Skip if parent already has a glossary-term (avoid double-wrapping)
+				if (parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
+				// Only process if text contains potential matches
+				if (!pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
+				pattern.lastIndex = 0;
+				return NodeFilter.FILTER_ACCEPT;
+			}
+		},
+		false
+	);
+
+	var nodesToProcess = [];
+	while (walker.nextNode()) nodesToProcess.push(walker.currentNode);
+
+	nodesToProcess.forEach(function(textNode) {
+		var text = textNode.textContent;
+		pattern.lastIndex = 0;
+		if (!pattern.test(text)) return;
+		pattern.lastIndex = 0;
+
+		var frag = document.createDocumentFragment();
+		var lastIdx = 0;
+		var match;
+
+		while ((match = pattern.exec(text)) !== null) {
+			// Text before match
+			if (match.index > lastIdx) {
+				frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+			}
+			var term = match[0];
+			var key = terms.find(function(k) { return k.toLowerCase() === term.toLowerCase(); });
+			var def = key ? GLOSSARY[key] : '';
+
+			var span = document.createElement('span');
+			span.className = 'glossary-term';
+			span.textContent = term;
+			if (def) {
+				var tooltip = document.createElement('span');
+				tooltip.className = 'glossary-tooltip';
+				tooltip.textContent = def;
+				span.appendChild(tooltip);
+			}
+			frag.appendChild(span);
+			lastIdx = match.index + match[0].length;
+		}
+		if (lastIdx < text.length) {
+			frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+		}
+		textNode.parentNode.replaceChild(frag, textNode);
+	});
+}
+
 // ─── Shared post-load initialization ───
 // Called by both index.php and standalone subpages to avoid duplication.
 function postLoadInit() {
@@ -727,20 +1063,32 @@ function postLoadInit() {
 	addCuriosityScore();
 	addKonamiEgg();
 	addConsoleEasterEggs();
+	initDarkMode();
+	initDrawer();
+	initModuleNav();
+	initGlossary();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+	initDarkMode();
+	initDrawer();
 	render_temml();
 	observeAndRenderMath(document.body);
 
-	const observer = new MutationObserver(function(mutations) {
-		let needsRender = false;
-		mutations.forEach(mutation => {
+	var adaptTimeout;
+	var observer = new MutationObserver(function(mutations) {
+		var needsRender = false;
+		mutations.forEach(function(mutation) {
 			if (mutation.addedNodes.length > 0) needsRender = true;
 		});
 
 		if (needsRender) {
 			render_temml();
+			// Debounced adaptation for dark mode
+			clearTimeout(adaptTimeout);
+			adaptTimeout = setTimeout(function() {
+				adaptLabsToTheme();
+			}, 100);
 		}
 	});
 

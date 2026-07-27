@@ -445,13 +445,38 @@ function get_string_of_file_or_die($file) {
 }
 
 if(!server_php_self_ends_with_index_php()) {
+	$themeClass = get_theme_class();
+	$cookieTheme = $_COOKIE['theme'] ?? '';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="<?php echo $themeClass; ?>">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-		<meta name="theme-color" content="#ffffff">
+		<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#ffffff'; ?>">
+		<script>
+		function toggleTheme() {
+			var html = document.documentElement;
+			var isDark = !html.classList.contains('dark');
+			if (isDark) {
+				html.classList.add('dark');
+			} else {
+				html.classList.remove('dark');
+			}
+			var btn = document.getElementById('theme-toggle');
+			if (btn) btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
+			var meta = document.querySelector('meta[name="theme-color"]');
+			if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
+			document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
+		}
+		// Apply system preference on first load if no cookie
+		(function() {
+			if (document.cookie.indexOf('theme=') === -1) {
+				var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+				if (prefersDark) toggleTheme();
+			}
+		})();
+		</script>
 <?php
 		print_dynamic_title();
 		load_base_js();
@@ -459,7 +484,10 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 	</head>
 	<body>
+		<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
+		<?php render_theme_toggle(); ?>
+		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
 			<p id="loader-status">Initializing AI Course...</p>
@@ -470,6 +498,8 @@ if(!server_php_self_ends_with_index_php()) {
 		<div id="contents" style="display: none">
 <?php
 		print_dynamic_title("h1");
+		$navData = get_module_nav_data();
+		echo '<script>window.__moduleNavData = ' . json_encode($navData) . ';</script>';
 }
 
 
@@ -484,5 +514,83 @@ function isCli(): bool
         return true;
     }
     return false;
+}
+
+function get_theme_class(): string {
+	$theme = $_COOKIE['theme'] ?? '';
+	return $theme === 'dark' ? 'dark' : '';
+}
+
+function get_module_nav_data(): array {
+	$current = pathinfo($_SERVER['SCRIPT_FILENAME'] ?? '', PATHINFO_FILENAME);
+	$grouped = parse_course_metadata();
+	$linear = [];
+	foreach ($grouped as $partNum => $modules) {
+		foreach ($modules as $m) {
+			$linear[] = $m;
+		}
+	}
+	$idx = -1;
+	foreach ($linear as $i => $m) {
+		if ($m['slug'] === $current) { $idx = $i; break; }
+	}
+	return ['modules' => $linear, 'current' => $idx];
+}
+
+function render_module_nav(): void {
+	$data = get_module_nav_data();
+	if ($data['current'] < 0) return;
+	$modules = $data['modules'];
+	$idx = $data['current'];
+	echo '<nav class="module-nav">';
+	if ($idx > 0) {
+		$prev = $modules[$idx - 1];
+		echo '<a href="' . htmlspecialchars($prev['url']) . '" class="module-nav-link module-nav-prev">'
+			. '<span class="module-nav-label">Previous</span>'
+			. '← ' . htmlspecialchars($prev['title'])
+			. '</a>';
+	} else {
+		echo '<span></span>';
+	}
+	if ($idx < count($modules) - 1) {
+		$next = $modules[$idx + 1];
+		echo '<a href="' . htmlspecialchars($next['url']) . '" class="module-nav-link module-nav-next">'
+			. '<span class="module-nav-label">Next</span>'
+			. htmlspecialchars($next['title']) . ' →'
+			. '</a>';
+	} else {
+		echo '<span></span>';
+	}
+	echo '</nav>';
+}
+
+function render_drawer(): void {
+	$grouped = parse_course_metadata();
+	$current = pathinfo($_SERVER['SCRIPT_FILENAME'] ?? '', PATHINFO_FILENAME);
+	echo '<div class="drawer-backdrop" id="drawer-backdrop"></div>';
+	echo '<div class="drawer-panel" id="drawer-panel">';
+	echo '<div class="drawer-header">';
+	echo '<h2>Course Modules</h2>';
+	echo '<button class="drawer-close" id="drawer-close" aria-label="Close drawer">&times;</button>';
+	echo '</div>';
+	echo '<div class="drawer-sections">';
+	foreach ($grouped as $partNum => $modules) {
+		echo '<div class="drawer-section">';
+		echo '<div class="drawer-part-label">Part ' . $partNum . '</div>';
+		foreach ($modules as $m) {
+			$active = ($m['slug'] === $current) ? ' active' : '';
+			echo '<a href="' . htmlspecialchars($m['url']) . '" class="drawer-module' . $active . '">'
+				. htmlspecialchars($m['title']) . '</a>';
+		}
+		echo '</div>';
+	}
+	echo '</div></div>';
+}
+
+function render_theme_toggle(): void {
+	$theme = $_COOKIE['theme'] ?? '';
+	$icon = $theme === 'dark' ? '&#9788;' : '&#9790;';
+	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode"' .
+		' onclick="toggleTheme()">' . $icon . '</button>';
 }
 ?>
