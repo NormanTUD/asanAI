@@ -294,8 +294,9 @@ window.TrainingDemo = (function() {
             { x: netLeft + layerGap * 2.5, n: NO, label: 'Ausgabe', vals: s.out }
         ];
 
-        var layerYs = layers.map(function(l) {
-            var gap = Math.min(40, (netH - 20) / Math.max(l.n, 2));
+        var layerYs = layers.map(function(l, li) {
+            // Give the output layer a bit more breathing room for the status badge
+            var gap = Math.min(li === 2 ? 54 : 40, (netH - 20) / Math.max(l.n, 2));
             var sy = netTop + (netH - (l.n - 1) * gap) / 2;
             var ys = [];
             for (var i = 0; i < l.n; i++) ys.push(sy + i * gap);
@@ -481,20 +482,20 @@ window.TrainingDemo = (function() {
                     ctx.textBaseline = 'alphabetic';
                     ctx.fillText((dVal*100).toFixed(0) + '%', bx + bw + 4, by + bh - 1);
 
-                    // Correct/wrong marker — shown only for the true class, right of the bar
+                    // Correct/wrong marker — shown only for the true class, below the bar
                     if ((isLoss || isBwd || isUpd) && ni === data.labelIdx) {
                         var isRight = s.correct;
                         var statusText = isRight ? '\u2713 Richtig' : '\u2717 Falsch';
                         ctx.font = 'bold 11px system-ui';
-                        ctx.textAlign = 'left';
-                        ctx.textBaseline = 'middle';
-                        var statusX = bx + bw + 28;
-                        var statusY = by + bh / 2;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        var statusX = bx + bw / 2;
+                        var statusY = by + bh + 8;
                         var textMetrics = ctx.measureText(statusText);
                         ctx.fillStyle = isRight ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
                         ctx.beginPath();
-                        if (ctx.roundRect) ctx.roundRect(statusX - 4, statusY - 7, textMetrics.width + 8, 14, 4);
-                        else ctx.rect(statusX - 4, statusY - 7, textMetrics.width + 8, 14);
+                        if (ctx.roundRect) ctx.roundRect(statusX - textMetrics.width / 2 - 4, statusY - 2, textMetrics.width + 8, 16, 4);
+                        else ctx.rect(statusX - textMetrics.width / 2 - 4, statusY - 2, textMetrics.width + 8, 16);
                         ctx.fill();
                         ctx.fillStyle = isRight ? '#10b981' : '#ef4444';
                         ctx.fillText(statusText, statusX, statusY);
