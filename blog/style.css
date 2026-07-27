@@ -4200,6 +4200,7 @@ html {
 	flex-direction: column;
 	gap: 2px;
 	min-width: 0;
+	flex: 1 1 auto;
 }
 .module-nav-label {
 	font-size: 0.7rem;
@@ -4210,7 +4211,9 @@ html {
 }
 .module-nav-title {
 	line-height: 1.35;
-	word-break: break-word;
+	overflow-wrap: break-word;
+	word-break: normal;
+	hyphens: none;
 }
 .module-nav-arrow {
 	flex-shrink: 0;
