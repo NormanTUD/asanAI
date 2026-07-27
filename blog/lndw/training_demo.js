@@ -293,9 +293,9 @@ window.TrainingDemo = (function() {
             for (var f = 0; f < fn; f++) {
                 for (var t = 0; t < tn; t++) {
                     var w = wMat ? wMat[f][t] : 0;
-                    var alpha = 0.03 + Math.abs(w) * 0.2;
+                    var alpha = 0.15 + Math.abs(w) * 0.5;
                     var hue = w >= 0 ? 210 : 0;  // positive=blue, negative=red
-                    var width = Math.max(0.5, Math.abs(w) * 2);
+                    var width = Math.max(1.5, Math.abs(w) * 4);
 
                     // Forward glow for ALL connections
                     if (ff > 0) {
@@ -326,8 +326,8 @@ window.TrainingDemo = (function() {
             }
         }
 
-        drawConn(0, 1, layerYs[0], layerYs[1], s.W1, s.gradH, fwdProg, (isBwd && bwdSub === 3) ? bwdProg : 0);
-        drawConn(1, 2, layerYs[1], layerYs[2], s.W2, s.gradO, isFwd ? fwdProg : 0, (isBwd && bwdSub === 1) ? bwdProg : 0);
+        drawConn(0, 1, layerYs[0], layerYs[1], s.W1, s.gradH, fwdProg, (isBwd && bwdSub >= 2) ? bwdProg : 0);
+        drawConn(1, 2, layerYs[1], layerYs[2], s.W2, s.gradO, isFwd ? fwdProg : 0, (isBwd && bwdSub >= 1) ? bwdProg : 0);
 
         // ---- Trace dots ----
         traceDots.forEach(function(d) {

@@ -72,7 +72,10 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof TrainingDemo !== 'undefined' ? TrainingDemo : null,
+                        guard: d => d.isOnTrainingSlide(),
                         slideTest: s => s.getAttribute('data-title') === 'Training',
+                        nextMethod: 'nextImage',
+                        prevMethod: 'prevImage',
                         onEnter: d => { d.init(); setTimeout(() => d.start(), 200); },
                         onLeave: d => d.stop() },
 
