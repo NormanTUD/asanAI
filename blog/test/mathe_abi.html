@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abi Mathe – Visuell & Interaktiv</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%);
+            position: relative;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 0.5em;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            text-align: center;
+            max-width: 600px;
+        }
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10,10,15,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 0.8rem 1rem;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: #aaa;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        nav a:hover, nav a.active {
+            color: #fff;
+            background: rgba(102,126,234,0.3);
+            border-color: #667eea;
+        }
+        section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        section .subtitle {
+            opacity: 0.6;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        .controls label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(102,126,234,0.3);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        .plot-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        canvas.interactive {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            cursor: crosshair;
+            display: block;
+        }
+        .formula {
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 8px;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            display: inline-block;
+            font-size: 1.1rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            section { padding: 2rem 1rem; }
+        }
+        .three-container {
+            width: 100%;
+            height: 450px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .info-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0,0,0,0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .result-display {
+            font-size: 1.3rem;
+            color: #667eea;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+        .tag {
+            display: inline-block;
+            background: rgba(102,126,234,0.2);
+            border: 1px solid rgba(102,126,234,0.4);
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            margin-right: 0.3rem;
+            color: #a0b0ff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Abi Mathe Visuell</h1>
+    <p>Alles was du brauchst – durch Rumspielen verstehen. Zieh an Slidern, klick in Grafiken, dreh 3D-Objekte.</p>
+    <div class="scroll-hint">↓</div>
+</div>
+
+<nav id="mainNav">
+    <a href="#analysis">Analysis</a>
+    <a href="#ableitung">Ableitung</a>
+    <a href="#integral">Integral</a>
+    <a href="#efunktion">e-Funktion</a>
+    <a href="#quadratisch">Quadr. Gl.</a>
+    <a href="#trigonometrie">Trigonometrie</a>
+    <a href="#vektoren">Vektoren 3D</a>
+    <a href="#stochastik">Stochastik</a>
+</nav>
+
+<!-- ===== SECTION 1: KURVENDISKUSSION ===== -->
+<section id="analysis">
+    <h2>Kurvendiskussion</h2>
+    <p class="subtitle">Verschiebe die Koeffizienten und sieh sofort Nullstellen, Extrema & Wendepunkte</p>
+    <div class="card">
+        <div class="formula" id="formulaAnalysis"></div>
+        <div class="controls">
+            <label>a: <span id="valA">1</span></label>
+            <input type="range" id="sliderA" min="-3" max="3" step="0.1" value="1">
+            <label>b: <span id="valB">0</span></label>
+            <input type="range" id="sliderB" min="-5" max="5" step="0.1" value="0">
+            <label>c: <span id="valC">-3</span></label>
+            <input type="range" id="sliderC" min="-5" max="5" step="0.1" value="-3">
+            <label>d: <span id="valD">0</span></label>
+            <input type="range" id="sliderD" min="-5" max="5" step="0.1" value="0">
+        </div>
+        <div class="plot-container" id="plotAnalysis"></div>
+        <div class="result-display" id="analysisResults"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 2: ABLEITUNG ===== -->
+<section id="ableitung">
+    <h2>Ableitung = Steigung</h2>
+    <p class="subtitle">Zieh den Punkt auf der Kurve – die Tangente zeigt dir f'(x) in Echtzeit</p>
+    <div class="card">
+        <div class="formula" id="formulaAbleitung"></div>
+        <div class="controls">
+            <label>x₀: <span id="valX0">0</span></label>
+            <input type="range" id="sliderX0" min="-4" max="4" step="0.05" value="0">
+        </div>
+        <div class="plot-container" id="plotAbleitung"></div>
+        <div class="result-display" id="ableitungResult"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 3: INTEGRAL ===== -->
+<section id="integral">
+    <h2>Integral = Fläche</h2>
+    <p class="subtitle">Verschiebe die Grenzen a und b – die gefärbte Fläche ist das Integral</p>
+    <div class="card">
+        <div class="formula" id="formulaIntegral"></div>
+        <div class="controls">
+            <label>a: <span id="valIntA">-2</span></label>
+            <input type="range" id="sliderIntA" min="-4" max="4" step="0.1" value="-2">
+            <label>b: <span id="valIntB">2</span></label>
+            <input type="range" id="sliderIntB" min="-4" max="4" step="0.1" value="2">
+        </div>
+        <div class="plot-container" id="plotIntegral"></div>
+        <div class="result-display" id="integralResult"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 4: e-FUNKTION ===== -->
+<section id="efunktion">
+    <h2>e-Funktion & Wachstum</h2>
+    <p class="subtitle">Spiel mit k – positiv = Wachstum, negativ = Zerfall. Die e-Funktion leitet sich selbst ab!</p>
+    <div class="card">
+        <div class="formula" id="formulaExp"></div>
+        <div class="controls">
+            <label>k: <span id="valK">1</span></label>
+            <input type="range" id="sliderK" min="-3" max="3" step="0.1" value="1">
+            <label>A₀: <span id="valA0">1</span></label>
+            <input type="range" id="sliderA0" min="0.1" max="5" step="0.1" value="1">
+        </div>
+        <div class="plot-container" id="plotExp"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 5: QUADRATISCHE GLEICHUNG ===== -->
+<section id="quadratisch">
+    <h2>Quadratische Gleichung & Diskriminante</h2>
+    <p class="subtitle">Sieh wie die Diskriminante D bestimmt ob 0, 1 oder 2 Nullstellen existieren</p>
+    <div class="card">
+        <div class="formula" id="formulaQuad"></div>
+        <div class="controls">
+            <label>p: <span id="valP">-2</span></label>
+            <input type="range" id="sliderP" min="-6" max="6" step="0.1" value="-2">
+            <label>q: <span id="valQ">-3</span></label>
+            <input type="range" id="sliderQ" min="-6" max="6" step="0.1" value="-3">
+        </div>
+        <div class="plot-container" id="plotQuad"></div>
+        <div class="result-display" id="quadResult"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 6: TRIGONOMETRIE ===== -->
+<section id="trigonometrie">
+    <h2>Einheitskreis & Trigonometrie</h2>
+    <p class="subtitle">Dreh den Winkel – sin, cos, tan werden am Kreis sichtbar</p>
+    <div class="card">
+        <canvas id="canvasTrig" class="interactive" width="700" height="400"></canvas>
+        <div class="controls">
+            <label>α: <span id="valAlpha">45°</span></label>
+            <input type="range" id="sliderAlpha" min="0" max="360" step="1" value="45">
+        </div>
+        <div class="result-display" id="trigResult"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 7: VEKTOREN 3D ===== -->
+<section id="vektoren">
+    <h2>Vektoren im Raum</h2>
+    <p class="subtitle">Dreh die 3D-Szene – sieh Kreuzprodukt, Skalarprodukt & Ebenen</p>
+    <div class="card">
+        <div class="three-container" id="threeContainer">
+            <div class="info-badge" id="vectorInfo">Zieh mit der Maus zum Drehen</div>
+        </div>
+        <div class="controls">
+            <label>v₁.x: <span id="valVx">1</span></label>
+            <input type="range" id="sliderVx" min="-3" max="3" step="0.1" value="1">
+            <label>v₁.y: <span id="valVy">2</span></label>
+            <input type="range" id="sliderVy" min="-3" max="3" step="0.1" value="2">
+            <label>v₁.z: <span id="valVz">0</span></label>
+            <input type="range" id="sliderVz" min="-3" max="3" step="0.1" value="0">
+            <label>v₂.x: <span id="valWx">2</span></label>
+            <input type="range" id="sliderWx" min="-3" max="3" step="0.1" value="2">
+            <label>v₂.y: <span id="valWy">0</span></label>
+            <input type="range" id="sliderWy" min="-3" max="3" step="0.1" value="0">
+            <label>v₂.z: <span id="valWz">1</span></label>
+            <input type="range" id="sliderWz" min="-3" max="3" step="0.1" value="1">
+        </div>
+        <div class="result-display" id="vectorResult"></div>
+    </div>
+</section>
+
+<!-- ===== SECTION 8: STOCHASTIK ===== -->
+<section id="stochastik">
+    <h2>Normalverteilung & Wahrscheinlichkeit</h2>
+    <p class="subtitle">Verschiebe μ und σ – sieh wie sich die Glockenkurve verändert</p>
+    <div class="card">
+        <div class="formula" id="formulaStoch"></div>
+        <div class="controls">
+            <label>μ: <span id="valMu">0</span></label>
+            <input type="range" id="sliderMu" min="-5" max="5" step="0.1" value="0">
+            <label>σ: <span id="valSigma">1</span></label>
+            <input type="range" id="sliderSigma" min="0.3" max="4" step="0.1" value="1">
+        </div>
+        <div class="plot-container" id="plotStoch"></div>
+        <div class="result-display" id="stochResult"></div>
+    </div>
+</section>
+
+<script>
+// ============ UTILITIES ============
+function linspace(a, b, n) {
+    const arr = [];
+    const step = (b - a) / (n - 1);
+    for (let i = 0; i < n; i++) arr.push(a + step * i);
+    return arr;
+}
+
+function renderFormula(el, tex) {
+    el.innerHTML = '';
+    temml.render(tex, el, { displayMode: true });
+}
+
+const plotLayout = {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#ccc', size: 12 },
+    margin: { t: 30, b: 40, l: 50, r: 20 },
+    xaxis: { gridcolor: 'rgba(255,255,255,0.08)', zerolinecolor: 'rgba(255,255,255,0.2)' },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.08)', zerolinecolor: 'rgba(255,255,255,0.2)' }
+};
+const plotConfig = { responsive: true, displayModeBar: false };
+
+// ============ 1. KURVENDISKUSSION ============
+(function() {
+    const x = linspace(-5, 5, 300);
+    function update() {
+        const a = parseFloat(document.getElementById('sliderA').value);
+        const b = parseFloat(document.getElementById('sliderB').value);
+        const c = parseFloat(document.getElementById('sliderC').value);
+        const d = parseFloat(document.getElementById('sliderD').value);
+        document.getElementById('valA').textContent = a.toFixed(1);
+        document.getElementById('valB').textContent = b.toFixed(1);
+        document.getElementById('valC').textContent = c.toFixed(1);
+        document.getElementById('valD').textContent = d.toFixed(1);
+
+        renderFormula(document.getElementById('formulaAnalysis'),
+            `f(x) = ${a.toFixed(1)}x^3 + ${b.toFixed(1)}x^2 + ${c.toFixed(1)}x + ${d.toFixed(1)}`);
+
+        const y = x.map(xi => a*xi*xi*xi + b*xi*xi + c*xi + d);
+        // f'(x) = 3ax² + 2bx + c
+        // f''(x) = 6ax + 2b
+        // Extrema: f'=0 → 3ax²+2bx+c=0
+        const disc = 4*b*b - 12*a*c;
+        let extrema_x = [], extrema_y = [];
+        let wende_x = [], wende_y = [];
+        if (a !== 0) {
+            if (disc >= 0) {
+                const x1 = (-2*b + Math.sqrt(disc)) / (6*a);
+                const x2 = (-2*b - Math.sqrt(disc)) / (6*a);
+                [x1, x2].forEach(xi => {
+                    if (xi >= -5 && xi <= 5) {
+                        extrema_x.push(xi);
+                        extrema_y.push(a*xi*xi*xi + b*xi*xi + c*xi + d);
+                    }
+                });
+            }
+            // Wendepunkt: f''=0 → x = -2b/(6a) = -b/(3a)
+            const xw = -b / (3*a);
+            if (xw >= -5 && xw <= 5) {
+                wende_x.push(xw);
+                wende_y.push(a*xw*xw*xw + b*xw*xw + c*xw + d);
+            }
+        }
+
+        const traces = [
+            { x, y, type: 'scatter', mode: 'lines', line: { color: '#667eea', width: 3 }, name: 'f(x)' },
+            { x: extrema_x, y: extrema_y, type: 'scatter', mode: 'markers', marker: { color: '#f093fb', size: 12, symbol: 'diamond' }, name: 'Extrema' },
+            { x: wende_x, y: wende_y, type: 'scatter', mode: 'markers', marker: { color: '#ffd700', size: 12, symbol: 'star' }, name: 'Wendepunkt' }
+        ];
+
+        Plotly.react('plotAnalysis', traces, { ...plotLayout, yaxis: { ...plotLayout.yaxis, range: [-10, 10] } }, plotConfig);
+
+        let info = '';
+        if (extrema_x.length > 0) info += `Extrema bei x ≈ ${extrema_x.map(v=>v.toFixed(2)).join(', ')}  `;
+        if (wende_x.length > 0) info += `Wendepunkt bei x ≈ ${wende_x[0].toFixed(2)}`;
+        document.getElementById('analysisResults').textContent = info || 'Keine Extrema im sichtbaren Bereich';
+    }
+    ['sliderA','sliderB','sliderC','sliderD'].forEach(id => document.getElementById(id).addEventListener('input', update));
+    update();
+})();
+
+// ============ 2. ABLEITUNG ============
+(function() {
+    const x = linspace(-5, 5, 300);
+    const f = xi => xi*xi*xi - 3*xi; // x³ - 3x
+    const fp = xi => 3*xi*xi - 3;    // 3x² - 3
+
+    renderFormula(document.getElementById('formulaAbleitung'),
+        `f(x) = x^3 - 3x \\quad\\Rightarrow\\quad f'(x) = 3x^2 - 3`);
+
+    function update() {
+        const x0 = parseFloat(document.getElementById('sliderX0').value);
+        document.getElementById('valX0').textContent = x0.toFixed(2);
+
+        const y = x.map(f);
+        const y0 = f(x0);
+        const m = fp(x0);
+
+        // Tangente
+        const tang_x = [x0 - 2, x0 + 2];
+        const tang_y = tang_x.map(xi => y0 + m * (xi - x0));
+
+        // f'(x) Kurve
+        const yp = x.map(fp);
+
+        const traces = [
+            { x, y, type: 'scatter', mode: 'lines', line: { color: '#667eea', width: 3 }, name: 'f(x)' },
+            { x, y: yp, type: 'scatter', mode: 'lines', line: { color: '#764ba2', width: 2, dash: 'dot' }, name: "f'(x)" },
+            { x: tang_x, y: tang_y, type: 'scatter', mode: 'lines', line: { color: '#f093fb', width: 2 }, name: 'Tangente' },
+            { x: [x0], y: [y0], type: 'scatter', mode: 'markers', marker: { color: '#ffd700', size: 14 }, name: 'Punkt' }
+        ];
+
+        Plotly.react('plotAbleitung', traces, { ...plotLayout, yaxis: { ...plotLayout.yaxis, range: [-8, 8] } }, plotConfig);
+        document.getElementById('ableitungResult').textContent = `f'(${x0.toFixed(2)}) = ${m.toFixed(2)} (Steigung der Tangente)`;
+    }
+    document.getElementById('sliderX0').addEventListener('input', update);
+    update();
+})();
+
+// ============ 3. INTEGRAL ============
+(function() {
+    const f = xi => Math.sin(xi) + 0.5*xi;
+    const F = xi => -Math.cos(xi) + 0.25*xi*xi; // Stammfunktion
+
+    renderFormula(document.getElementById('formulaIntegral'),
+        `\\int_a^b f(x)\\,dx = F(b) - F(a) \\quad\\text{mit } f(x) = \\sin(x) + 0{,}5x`);
+
+    function update() {
+        const a = parseFloat(document.getElementById('sliderIntA').value);
+        const b = parseFloat(document.getElementById('sliderIntB').value);
+        document.getElementById('valIntA').textContent = a.toFixed(1);
+        document.getElementById('valIntB').textContent = b.toFixed(1);
+
+        const x = linspace(-5, 5, 300);
+        const y = x.map(f);
+
+        // Fläche
+        const n = 100;
+        const fillX = linspace(Math.min(a,b), Math.max(a,b), n);
+        const fillY = fillX.map(f);
+        const areaX = [fillX[0], ...fillX, fillX[fillX.length-1]];
+        const areaY = [0, ...fillY, 0];
+
+        const integral = F(b) - F(a);
+
+        const traces = [
+            { x: areaX, y: areaY, type: 'scatter', fill: 'toself', fillcolor: integral >= 0 ? 'rgba(102,126,234,0.3)' : 'rgba(240,80,80,0.3)', line: { color: 'transparent' }, name: 'Fläche' },
+            { x, y, type: 'scatter', mode: 'lines', line: { color: '#667eea', width: 3 }, name: 'f(x)' }
+        ];
+
+        Plotly.react('plotIntegral', traces, plotLayout, plotConfig);
+        document.getElementById('integralResult').textContent = `∫ von ${a.toFixed(1)} bis ${b.toFixed(1)} = ${integral.toFixed(3)}`;
+    }
+    ['sliderIntA','sliderIntB'].forEach(id => document.getElementById(id).addEventListener('input', update));
+    update();
+})();
+
+// ============ 4. e-FUNKTION ============
+(function() {
+    function update() {
+        const k = parseFloat(document.getElementById('sliderK').value);
+        const A0 = parseFloat(document.getElementById('sliderA0').value);
+        document.getElementById('valK').textContent = k.toFixed(1);
+        document.getElementById('valA0').textContent = A0.toFixed(1);
+
+        renderFormula(document.getElementById('formulaExp'),
+            `f(x) = ${A0.toFixed(1)} \\cdot e^{${k.toFixed(1)}x} \\quad\\Rightarrow\\quad f'(x) = ${(A0*k).toFixed(2)} \\cdot e^{${k.toFixed(1)}x}`);
+
+        const x = linspace(-3, 3, 200);
+        const y = x.map(xi => A0 * Math.exp(k * xi));
+        const yp = x.map(xi => A0 * k * Math.exp(k * xi));
+
+        const traces = [
+            { x, y, type: 'scatter', mode: 'lines', line: { color: '#667eea', width: 3 }, name: 'f(x)' },
+            { x, y: yp, type: 'scatter', mode: 'lines', line: { color: '#f093fb', width: 2, dash: 'dash' }, name: "f'(x)" }
+        ];
+
+        Plotly.react('plotExp', traces, { ...plotLayout, yaxis: { ...plotLayout.yaxis, range: [-5, 15] } }, plotConfig);
+    }
+    ['sliderK','sliderA0'].forEach(id => document.getElementById(id).addEventListener('input', update));
+    update();
+})();
+
+// ============ 5. QUADRATISCHE GLEICHUNG ============
+(function() {
+    function update() {
+        const p = parseFloat(document.getElementById('sliderP').value);
+        const q = parseFloat(document.getElementById('sliderQ').value);
+        document.getElementById('valP').textContent = p.toFixed(1);
+        document.getElementById('valQ').textContent = q.toFixed(1);
+
+        const D = (p/2)*(p/2) - q;
+
+        renderFormula(document.getElementById('formulaQuad'),
+            `x^2 + ${p.toFixed(1)}x + ${q.toFixed(1)} = 0 \\quad D = \\left(\\frac{p}{2}\\right)^2 - q = ${D.toFixed(2)}`);
+
+        const x = linspace(-6, 6, 300);
+        const y = x.map(xi => xi*xi + p*xi + q);
+
+        let nullX = [], nullY = [];
+        let color = '#f44';
+        if (D > 0) {
+            const x1 = -p/2 + Math.sqrt(D);
+            const x2 = -p/2 - Math.sqrt(D);
+            nullX = [x1, x2]; nullY = [0, 0];
+            color = '#4f4';
+        } else if (D === 0) {
+            const x1 = -p/2;
+            nullX = [x1]; nullY = [0];
+            color = '#ff0';
+        } else {
+            color = '#f44';
+        }
+
+        const traces = [
+            { x, y, type: 'scatter', mode: 'lines', line: { color: '#667eea', width: 3 }, name: 'f(x)' },
+            { x: nullX, y: nullY, type: 'scatter', mode: 'markers', marker: { color, size: 12 }, name: 'Nullstellen' }
+        ];
+
+        Plotly.react('plotQuad', traces, { ...plotLayout, yaxis: { ...plotLayout.yaxis, range: [-8, 8] } }, plotConfig);
+
+        let info = `D = ${D.toFixed(2)} → `;
+        if (D > 0) info += `2 Nullstellen: x₁=${nullX[0].toFixed(2)}, x₂=${nullX[1].toFixed(2)}`;
+        else if (D === 0) info += `1 Nullstelle (doppelt): x=${nullX[0].toFixed(2)}`;
+        else info += `Keine reellen Nullstellen`;
+        document.getElementById('quadResult').textContent = info;
+    }
+    ['sliderP','sliderQ'].forEach(id => document.getElementById(id).addEventListener('input', update));
+    update();
+})();
+
+// ============ 6. TRIGONOMETRIE (Canvas) ============
+(function() {
+    const canvas = document.getElementById('canvasTrig');
+    const ctx = canvas.getContext('2d');
+
+    function draw() {
+        const alpha = parseFloat(document.getElementById('sliderAlpha').value);
+        const rad = alpha * Math.PI / 180;
+        document.getElementById('valAlpha').textContent = alpha + '°';
+
+        const W = canvas.width;
+        const H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const cx = W * 0.35;
+        const cy = H * 0.5;
+        const r = Math.min(W, H) * 0.35;
+
+        // Einheitskreis
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        // Achsen
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.beginPath();
+        ctx.moveTo(cx - r - 20, cy); ctx.lineTo(cx + r + 20, cy);
+        ctx.moveTo(cx, cy - r - 20); ctx.lineTo(cx, cy + r + 20);
+        ctx.stroke();
+
+        const px = cx + r * Math.cos(rad);
+        const py = cy - r * Math.sin(rad);
+
+        // cos-Linie (horizontal)
+        ctx.strokeStyle = '#4ecdc4';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy); ctx.lineTo(px, cy);
+        ctx.stroke();
+
+        // sin-Linie (vertikal)
+        ctx.strokeStyle = '#f093fb';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(px, cy); ctx.lineTo(px, py);
+        ctx.stroke();
+
+        // tan-Linie
+        if (Math.abs(Math.cos(rad)) > 0.01) {
+            const tanVal = Math.tan(rad);
+            const tanEndY = cy - r * tanVal;
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx + r, cy); ctx.lineTo(cx + r, tanEndY);
+            ctx.stroke();
+
+            // Linie vom Ursprung zum tan-Punkt
+            ctx.strokeStyle = 'rgba(255,215,0,0.4)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy); ctx.lineTo(cx + r, tanEndY);
+            ctx.stroke();
+        }
+
+        // Radius
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy); ctx.lineTo(px, py);
+        ctx.stroke();
+
+        // Punkt
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Winkel-Bogen
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 30, -rad, 0);
+        ctx.stroke();
+
+        // Labels
+        ctx.font = '14px Segoe UI';
+        ctx.fillStyle = '#4ecdc4';
+        ctx.fillText('cos', cx + r * Math.cos(rad) / 2 - 10, cy + 20);
+        ctx.fillStyle = '#f093fb';
+        ctx.fillText('sin', px + 8, cy - r * Math.sin(rad) / 2);
+        ctx.fillStyle = '#ffd700';
+        if (Math.abs(Math.cos(rad)) > 0.01) ctx.fillText('tan', cx + r + 8, cy - r * Math.tan(rad) / 2);
+
+        // Sinuskurve rechts
+        const graphX = W * 0.7;
+        const graphW = W * 0.25;
+        const graphH = H * 0.35;
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.beginPath();
+        ctx.moveTo(graphX, cy); ctx.lineTo(graphX + graphW, cy);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#f093fb';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 100; i++) {
+            const t = (i / 100) * 2 * Math.PI;
+            const sx = graphX + (t / (2 * Math.PI)) * graphW;
+            const sy = cy - Math.sin(t) * graphH;
+            if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+
+        // Marker auf Sinuskurve
+        const markerX = graphX + (rad / (2 * Math.PI)) * graphW;
+        const markerY = cy - Math.sin(rad) * graphH;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(markerX, markerY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        const sinV = Math.sin(rad).toFixed(3);
+        const cosV = Math.cos(rad).toFixed(3);
+        const tanV = Math.abs(Math.cos(rad)) > 0.01 ? Math.tan(rad).toFixed(3) : '∞';
+        document.getElementById('trigResult').textContent = `sin(${alpha}°) = ${sinV}   cos(${alpha}°) = ${cosV}   tan(${alpha}°) = ${tanV}`;
+    }
+    document.getElementById('sliderAlpha').addEventListener('input', draw);
+    draw();
+})();
+
+// ============ 7. VEKTOREN 3D (Three.js) ============
+(function() {
+    const container = document.getElementById('threeContainer');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(5, 4, 5);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    // Simple orbit controls (manual)
+    let isDragging = false, prevX = 0, prevY = 0, theta = Math.PI / 4, phi = Math.PI / 4, radius = 7;
+    renderer.domElement.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+    renderer.domElement.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        theta -= (e.clientX - prevX) * 0.01;
+        phi = Math.max(0.1, Math.min(Math.PI - 0.1, phi - (e.clientY - prevY) * 0.01));
+        prevX = e.clientX; prevY = e.clientY;
+        camera.position.set(radius * Math.sin(phi) * Math.cos(theta), radius * Math.cos(phi), radius * Math.sin(phi) * Math.sin(theta));
+        camera.lookAt(0, 0, 0);
+    });
+    renderer.domElement.addEventListener('mouseup', () => isDragging = false);
+    renderer.domElement.addEventListener('mouseleave', () => isDragging = false);
+    // Touch support
+    renderer.domElement.addEventListener('touchstart', e => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; });
+    renderer.domElement.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        theta -= (e.touches[0].clientX - prevX) * 0.01;
+        phi = Math.max(0.1, Math.min(Math.PI - 0.1, phi - (e.touches[0].clientY - prevY) * 0.01));
+        prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
+        camera.position.set(radius * Math.sin(phi) * Math.cos(theta), radius * Math.cos(phi), radius * Math.sin(phi) * Math.sin(theta));
+        camera.lookAt(0, 0, 0);
+    });
+    renderer.domElement.addEventListener('touchend', () => isDragging = false);
+
+    // Grid
+    const grid = new THREE.GridHelper(6, 6, 0x333333, 0x222222);
+    scene.add(grid);
+
+    // Axes
+    const axesColors = [0xff4444, 0x44ff44, 0x4444ff];
+    const axesDirs = [new THREE.Vector3(1,0,0), new THREE.Vector3(0,1,0), new THREE.Vector3(0,0,1)];
+    axesDirs.forEach((dir, i) => {
+        const arrow = new THREE.ArrowHelper(dir, new THREE.Vector3(0,0,0), 3.5, axesColors[i], 0.2, 0.1);
+        scene.add(arrow);
+    });
+
+    let arrowV, arrowW, arrowCross, planeMesh;
+
+    function createArrow(dir, color, len) {
+        const d = dir.clone().normalize();
+        return new THREE.ArrowHelper(d, new THREE.Vector3(0,0,0), len, color, 0.15, 0.08);
+    }
+
+    function update() {
+        const vx = parseFloat(document.getElementById('sliderVx').value);
+        const vy = parseFloat(document.getElementById('sliderVy').value);
+        const vz = parseFloat(document.getElementById('sliderVz').value);
+        const wx = parseFloat(document.getElementById('sliderWx').value);
+        const wy = parseFloat(document.getElementById('sliderWy').value);
+        const wz = parseFloat(document.getElementById('sliderWz').value);
+
+        document.getElementById('valVx').textContent = vx.toFixed(1);
+        document.getElementById('valVy').textContent = vy.toFixed(1);
+        document.getElementById('valVz').textContent = vz.toFixed(1);
+        document.getElementById('valWx').textContent = wx.toFixed(1);
+        document.getElementById('valWy').textContent = wy.toFixed(1);
+        document.getElementById('valWz').textContent = wz.toFixed(1);
+
+        // Remove old
+        if (arrowV) scene.remove(arrowV);
+        if (arrowW) scene.remove(arrowW);
+        if (arrowCross) scene.remove(arrowCross);
+        if (planeMesh) scene.remove(planeMesh);
+
+        const v = new THREE.Vector3(vx, vy, vz);
+        const w = new THREE.Vector3(wx, wy, wz);
+        const cross = new THREE.Vector3().crossVectors(v, w);
+        const dot = v.dot(w);
+
+        if (v.length() > 0.01) arrowV = createArrow(v, 0x667eea, v.length());
+        if (w.length() > 0.01) arrowW = createArrow(w, 0xf093fb, w.length());
+        if (cross.length() > 0.01) arrowCross = createArrow(cross, 0xffd700, cross.length() * 0.5);
+
+        if (arrowV) scene.add(arrowV);
+        if (arrowW) scene.add(arrowW);
+        if (arrowCross) scene.add(arrowCross);
+
+        // Parallelogram (plane spanned by v and w)
+        const geo = new THREE.BufferGeometry();
+        const vertices = new Float32Array([
+            0, 0, 0,
+            vx, vy, vz,
+            vx + wx, vy + wy, vz + wz,
+            0, 0, 0,
+            vx + wx, vy + wy, vz + wz,
+            wx, wy, wz
+        ]);
+        geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        geo.computeVertexNormals();
+        planeMesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x667eea, transparent: true, opacity: 0.15, side: THREE.DoubleSide }));
+        scene.add(planeMesh);
+
+        document.getElementById('vectorResult').textContent =
+            `v⃗ · w⃗ = ${dot.toFixed(2)}   |v⃗ × w⃗| = ${cross.length().toFixed(2)} (= Fläche Parallelogramm)`;
+    }
+
+    ['sliderVx','sliderVy','sliderVz','sliderWx','sliderWy','sliderWz'].forEach(id =>
+        document.getElementById(id).addEventListener('input', update));
+    update();
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        const w = container.clientWidth, h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+    });
+})();
+
+// ============ 8. STOCHASTIK ============
+(function() {
+    renderFormula(document.getElementById('formulaStoch'),
+        `f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}}\\, e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}`);
+
+    function normalPDF(x, mu, sigma) {
+        return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+    }
+
+    function update() {
+        const mu = parseFloat(document.getElementById('sliderMu').value);
+        const sigma = parseFloat(document.getElementById('sliderSigma').value);
+        document.getElementById('valMu').textContent = mu.toFixed(1);
+        document.getElementById('valSigma').textContent = sigma.toFixed(1);
+
+        const x = linspace(-10, 10, 400);
+        const y = x.map(xi => normalPDF(xi, mu, sigma));
+
+        // 68-95-99.7 Bereiche
+        const x1 = linspace(mu - sigma, mu + sigma, 100);
+        const y1 = x1.map(xi => normalPDF(xi, mu, sigma));
+        const fill1X = [x1[0], ...x1, x1[x1.length-1]];
+        const fill1Y = [0, ...y1, 0];
+
+        const x2 = linspace(mu - 2*sigma, mu + 2*sigma, 100);
+        const y2 = x2.map(xi => normalPDF(xi, mu, sigma));
+        const fill2X = [x2[0], ...x2, x2[x2.length-1]];
+        const fill2Y = [0, ...y2, 0];
+
+        const traces = [
+            { x: fill2X, y: fill2Y, type: 'scatter', fill: 'toself', fillcolor: 'rgba(102,126,234,0.15)', line: { color: 'transparent' }, name: '95.4% (2σ)' },
+            { x: fill1X, y: fill1Y, type: 'scatter', fill: 'toself', fillcolor: 'rgba(102,126,234,0.3)', line: { color: 'transparent' }, name: '68.3% (1σ)' },
+            { x, y, type: 'scatter', mode: 'lines', line: { color: '#667eea', width: 3 }, name: 'N(μ,σ²)' },
+            { x: [mu], y: [normalPDF(mu, mu, sigma)], type: 'scatter', mode: 'markers', marker: { color: '#ffd700', size: 10 }, name: 'μ' }
+        ];
+
+        Plotly.react('plotStoch', traces, { ...plotLayout, yaxis: { ...plotLayout.yaxis, range: [0, 1.2] } }, plotConfig);
+        document.getElementById('stochResult').textContent = `68.3% der Werte liegen in [${(mu-sigma).toFixed(1)}, ${(mu+sigma).toFixed(1)}] — 95.4% in [${(mu-2*sigma).toFixed(1)}, ${(mu+2*sigma).toFixed(1)}]`;
+    }
+    ['sliderMu','sliderSigma'].forEach(id => document.getElementById(id).addEventListener('input', update));
+    update();
+})();
+
+// ============ NAV HIGHLIGHT ============
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 200) current = s.id;
+    });
+    navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+});
+</script>
+</body>
+</html>

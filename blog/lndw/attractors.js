@@ -23,13 +23,22 @@ const AttractorViz = (() => {
         return activeSlide.getAttribute('data-title') === 'Attraktoren';
     }
 
+    function isDemoBoxVisible() {
+        const slide = document.querySelector('.slide.active[data-title="Attraktoren"]');
+        if (!slide) return false;
+        const box = slide.querySelector('.demo-box.fragment');
+        return box && box.classList.contains('visible');
+    }
+
     function canGoNext() {
         if (!isOnAttractorSlide()) return false;
+        if (!isDemoBoxVisible()) return false;
         return currentStep < totalSteps - 1;
     }
 
     function canGoPrev() {
         if (!isOnAttractorSlide()) return false;
+        if (!isDemoBoxVisible()) return false;
         return currentStep > 0;
     }
 
