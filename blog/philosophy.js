@@ -152,23 +152,24 @@ const CRSim = (() => {
 		options.forEach(opt => {
 			const $btn = $('<button>')
 				.text(opt)
+				.addClass('cr-choice-btn')
 				.css({
 					padding: '0.6em 1.2em',
 					fontSize: '1.2em',
 					letterSpacing: '0.08em',
-					border: '2px solid #ccc',
+					border: '2px solid ' + themeColor('#ccc'),
 					borderRadius: '8px',
-					background: '#ffffff',
-					color: '#333',
+					background: themeColor('#ffffff'),
+					color: themeColor('#333'),
 					cursor: 'pointer',
 					transition: 'background 0.2s, border-color 0.2s, transform 0.1s',
 					minWidth: '120px'
 				})
 				.on('mouseenter', function () {
-					$(this).css({ background: '#fff', borderColor: '#eee' });
+					$(this).css({ background: themeColor('#fff'), borderColor: themeColor('#eee') });
 				})
 				.on('mouseleave', function () {
-					$(this).css({ background: '#eee', borderColor: '#555' });
+					$(this).css({ background: themeColor('#eee'), borderColor: themeColor('#555') });
 				})
 				.on('click', function () {
 					handleChoice(opt, $(this));
@@ -283,7 +284,7 @@ const CRSim = (() => {
 				name: 'Accuracy',
 				text: [Math.round((score / (rounds.length - 1)) * 100) + '%'],
 				textposition: 'outside',
-				textfont: { size: 18, color: '#333' }
+				textfont: { size: 18, color: themeColor('#333') }
 			},
 			{
 				x: ['Understanding'],
@@ -293,7 +294,7 @@ const CRSim = (() => {
 				name: 'Understanding',
 				text: ['0%'],
 				textposition: 'outside',
-				textfont: { size: 18, color: '#333' }
+				textfont: { size: 18, color: themeColor('#333') }
 			}
 		];
 
@@ -302,7 +303,7 @@ const CRSim = (() => {
 				range: [0, 115],
 				title: '',
 				ticksuffix: '%',
-				gridcolor: '#e0e0e0'
+				gridcolor: themeColor('#e0e0e0')
 			},
 			xaxis: { title: '' },
 			showlegend: false,
@@ -314,7 +315,7 @@ const CRSim = (() => {
 				x: 0.5, y: 1.08, xref: 'paper', yref: 'paper',
 				text: 'You followed the rules perfectly, but understood nothing.',
 				showarrow: false,
-				font: { size: 13, color: '#888' }
+				font: { size: 13, color: themeColor('#888') }
 			}]
 		};
 
@@ -330,7 +331,7 @@ const CRSim = (() => {
 		ttbody.innerHTML = '';
 		rounds.forEach((r, i) => {
 			const tr = document.createElement('tr');
-			tr.style.background = r.isTrick ? '#fff8e1' : (i % 2 === 0 ? '#fafafa' : '#fff');
+			tr.style.background = r.isTrick ? themeColor('#fff8e1') : (i % 2 === 0 ? themeColor('#fafafa') : themeColor('#fff'));
 			tr.innerHTML = `
 	<td style="padding:0.5em; font-size:1.05em; letter-spacing:0.04em;">${r.input}</td>
 	<td style="padding:0.5em; font-size:1.05em; letter-spacing:0.04em; color:#1565c0;">${r.correct || '—'}</td>
@@ -1214,7 +1215,7 @@ const SheafViz = (() => {
 		if (!el.clientWidth) el.style.width = '800px';
 		if (!el.clientHeight) el.style.height = '560px';
 		const w = el.clientWidth || 800, h = el.clientHeight || 560;
-		scene = new THREE.Scene(); scene.background = new THREE.Color(0xf8f9fa);
+		scene = new THREE.Scene(); scene.background = new THREE.Color(isDarkMode() ? 0x1e293b : 0xf8f9fa);
 		cam = new THREE.PerspectiveCamera(42, w/h, .1, 100);
 		ren = new THREE.WebGLRenderer({antialias:true}); ren.setSize(w,h); ren.setPixelRatio(Math.min(devicePixelRatio,2));
 		el.appendChild(ren.domElement); ctl = mkCtl(cam, ren.domElement);

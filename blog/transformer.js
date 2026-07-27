@@ -6683,7 +6683,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	contentDiv.dataset.rendered = 'false';
 	contentDiv.style.display = isActive ? 'block' : 'none';
 	contentDiv.style.padding = '15px';
-	contentDiv.style.background = '#f8f9ff';
+	contentDiv.style.background = themeColor('#f8f9ff');
 	contentDiv.style.overflowAnchor = 'none';
 
 	contentDiv.innerHTML = `
