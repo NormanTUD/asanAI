@@ -34,11 +34,11 @@ window.TrainingDemo = (function() {
 
     function initNet() {
         s.W1 = Array.from({length: NI}, function() {
-            return Array.from({length: NH}, function() { return (Math.random() - 0.5) * 0.8; });
+            return Array.from({length: NH}, function() { return (Math.random() - 0.5) * 2.0; });
         });
         s.b1 = [0,0,0,0];
         s.W2 = Array.from({length: NH}, function() {
-            return Array.from({length: NO}, function() { return (Math.random() - 0.5) * 0.8; });
+            return Array.from({length: NO}, function() { return (Math.random() - 0.5) * 2.0; });
         });
         s.b2 = [0,0];
         s.step = 0; s.lossHist = []; s.posHist = [];
@@ -102,7 +102,8 @@ window.TrainingDemo = (function() {
         var feats = [];
         for (var i = 0; i < 4; i++) {
             var r = d[i*4], g = d[i*4+1], b = d[i*4+2];
-            feats.push((0.299 * r + 0.587 * g + 0.114 * b) / 255);
+            var lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            feats.push((lum - 0.5) * 2.0);
         }
         return feats;
     }
@@ -493,7 +494,7 @@ window.TrainingDemo = (function() {
             ctx.lineWidth = 1;
             ctx.strokeRect(cx, cy, cw, ch);
             var maxL = Math.max.apply(null, s.lossHist), minL = Math.min.apply(null, s.lossHist);
-            var rng = Math.max(maxL - minL, 0.1);
+            var rng = Math.max(maxL - minL, 0.5);
             var vis = s.lossHist;
             ctx.beginPath();
             for (var vi = 0; vi < vis.length; vi++) {
@@ -521,9 +522,9 @@ window.TrainingDemo = (function() {
     // 3D LOSS LANDSCAPE
     // ============================================================
     function getLandscapeData() {
-        var gs = 30, w1i = 0, w2i = 2;
+        var gs = 35, w1i = 0, w2i = 2;
         var center = s.fixedCenter || { w1: s.W1[w1i][0], w2: s.W1[w2i][0] };
-        var hr = 3.0;
+        var hr = Math.max(5.0, Math.abs(s.W1[w1i][0] - center.w1) + Math.abs(s.W1[w2i][0] - center.w2) + 2.0);
         var wMin = center.w1 - hr, wMax = center.w1 + hr;
         var bMin = center.w2 - hr, bMax = center.w2 + hr;
         var xv = [], yv = [], zv = [];
@@ -753,7 +754,7 @@ window.TrainingDemo = (function() {
         if (s.phase === 1 && s.phaseT > 1.6) { s.phase = 2; s.phaseT = 0; }
         if (s.phase === 2 && s.phaseT > 1.0) { s.phase = 3; s.phaseT = 0; }
         if (s.phase === 3 && s.phaseT > 1.8) {
-            upd(0.8);
+            upd(1.2);
             s.lossHist.push(s.loss);
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             s.step++;
