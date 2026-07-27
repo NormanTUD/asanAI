@@ -2153,7 +2153,7 @@ function buildPredictionChipsHtml(predictions, temperature) {
 </span>`;
 
 		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
-	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}; text-align:center;">
+	    style="background:rgba(59, 130, 246, ${0.18 + intensity * 0.55}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: var(--mn-text); text-align:center;">
 	    <strong>${escapeHtml(displayWord)}</strong> (${(p.prob * 100).toFixed(1)}%)
 	    ${tempInfo}
 	</button>`;

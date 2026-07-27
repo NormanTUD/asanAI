@@ -420,6 +420,197 @@ html.dark #transformer-site canvas {
 html.dark [style*="color: #1e293b"]:not([class]) {
 	color: var(--mn-text) !important;
 }
+
+/* ════════════════════════════════════════════════════════════
+   UNIFIED TRANSFORMER LAB (per-layer tabs, head panels, etc.)
+   ════════════════════════════════════════════════════════ */
+html.dark .unified-layer-tabs {
+	border-color: var(--mn-accent) !important;
+}
+html.dark .unified-tab-list {
+	background: var(--mn-surface-raised) !important;
+	border-bottom-color: var(--mn-accent) !important;
+}
+html.dark .unified-layer-tab-btn {
+	background: var(--mn-surface-raised) !important;
+	border-right-color: var(--mn-border) !important;
+	color: var(--mn-text-secondary) !important;
+}
+/* Active button hardcodes background:#fff via inline style */
+html.dark .unified-layer-tab-btn[style*="background:#fff"],
+html.dark .unified-layer-tab-btn[style*="background: #fff"],
+html.dark .unified-layer-tab-btn[style*="background:#bfdbfe"],
+html.dark .unified-layer-tab-btn[style*="background: #bfdbfe"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark .unified-layer-tab-content {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+/* Inactive tab hardcodes background:#bfdbfe */
+html.dark .unified-layer-tab-content[style*="background:#f8f9ff"],
+html.dark .unified-layer-tab-content[style*="background: #f8f9ff"] {
+	background: var(--mn-surface) !important;
+}
+
+/* Inner per-layer panels (LayerNorm, concat, h1-final, etc.) */
+html.dark [id^="unified-layer-"][id$="-layernorm-viz"],
+html.dark [id^="unified-layer-"][id$="-concat-viz"],
+html.dark [id^="unified-layer-"][id$="-h1-final-viz"],
+html.dark [id^="unified-layer-"][id$="-migration-container"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+/* Same panels with inline bg colors (#ecfdf5, #f0f4f8, #f5f3ff) */
+html.dark [style*="background:#ecfdf5"],
+html.dark [style*="background: #ecfdf5"],
+html.dark [style*="background:#f0f4f8"],
+html.dark [style*="background: #f0f4f8"],
+html.dark [style*="background:#f5f3ff"],
+html.dark [style*="background: #f5f3ff"] {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+
+/* Attention head panels inside a layer (head-content-*) */
+html.dark .head-tab-in-layer,
+html.dark [id^="head-content-"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+
+/* Attention pattern visualizer results (apv-attn-result-*) */
+html.dark [id^="apv-attn-result-"],
+html.dark [id^="apv-attn-matrix-"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark [id^="apv-attn-result-"][style*="background:#fffbeb"],
+html.dark [id^="apv-attn-result-"][style*="background: #fffbeb"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+
+/* "This head's context matrix …" — was inline-styled boxes */
+html.dark [style*="background:#f0fdf4"][style*="border:1px solid #10b981"],
+html.dark [style*="background: #f0fdf4"][style*="border:1px solid #10b981"],
+html.dark [style*="background:#ecfdf5"][style*="border:1px solid #10b981"],
+html.dark [style*="background: #ecfdf5"][style*="border:1px solid #10b981"] {
+	background: rgba(16, 185, 129, 0.08) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(16, 185, 129, 0.3) !important;
+}
+html.dark [style*="background:#fef2f2"][style*="border:1px solid"],
+html.dark [style*="background: #fef2f2"][style*="border:1px solid"] {
+	background: rgba(239, 68, 68, 0.08) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(239, 68, 68, 0.3) !important;
+}
+html.dark [style*="background:#fff3e0"][style*="border:1px solid"],
+html.dark [style*="background: #fff3e0"][style*="border:1px solid"] {
+	background: rgba(251, 146, 60, 0.08) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(251, 146, 60, 0.3) !important;
+}
+html.dark [style*="background:#fef9c3"][style*="border:1px solid"],
+html.dark [style*="background: #fef9c3"][style*="border:1px solid"] {
+	background: rgba(234, 179, 8, 0.08) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(234, 179, 8, 0.3) !important;
+}
+html.dark [style*="background:#e0e7ff"][style*="border:1px solid"],
+html.dark [style*="background: #e0e7ff"][style*="border:1px solid"] {
+	background: rgba(99, 102, 241, 0.08) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(99, 102, 241, 0.3) !important;
+}
+html.dark [style*="background:#f0f9ff"][style*="border:1px solid"],
+html.dark [style*="background: #f0f9ff"][style*="border:1px solid"] {
+	background: rgba(14, 165, 233, 0.08) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(14, 165, 233, 0.3) !important;
+}
+
+/* Plotly wrappers in transformer page */
+html.dark #transformer-plotly-space,
+html.dark #transformer-plotly-space > div,
+html.dark #transformer-pe-wave-plot,
+html.dark #transformer-pe-shift-plot,
+html.dark #transformer-trajectory-full-path,
+html.dark #transformer-trajectory-full-path-wrapper,
+html.dark [id$="-chart"],
+html.dark [id$="-plot"]:not(.echarts):not(canvas),
+html.dark [id^="plot-"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark #transformer-plotly-space rect.bg,
+html.dark #transformer-pe-wave-plot rect.bg,
+html.dark #transformer-pe-shift-plot rect.bg,
+html.dark #transformer-trajectory-full-path rect.bg {
+	fill: var(--mn-surface) !important;
+}
+html.dark #transformer-plotly-space text,
+html.dark #transformer-plotly-space .gtitle,
+html.dark #transformer-pe-wave-plot text,
+html.dark #transformer-pe-shift-plot text,
+html.dark #transformer-trajectory-full-path text {
+	fill: var(--mn-text-secondary) !important;
+}
+
+/* Probability Flow / theme-river header (data-orig-bg carried over) */
+html.dark [data-orig-bg] {
+	background-color: var(--mn-surface) !important;
+}
+html.dark [data-orig-bg][style*="border-bottom"] {
+	border-bottom-color: var(--mn-border) !important;
+}
+
+/* Predict-chip — needs proper contrast in both modes */
+.predict-chip {
+	transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+html.dark .predict-chip {
+	color: var(--mn-text) !important;
+	border-color: #3b82f6 !important;
+}
+html.dark .predict-chip[style*="color: black"],
+html.dark .predict-chip[style*="color:black"] {
+	color: var(--mn-text) !important;
+}
+html.dark .predict-chip[style*="color: white"],
+html.dark .predict-chip[style*="color:white"] {
+	color: var(--mn-bg) !important;
+}
+
+/* Chinese room game buttons (philosophy page) */
+html.dark .cr-choice-btn {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark .cr-choice-btn:hover {
+	background: var(--mn-surface-raised) !important;
+	border-color: var(--mn-accent) !important;
+}
+
+/* Garbe / Sheaf visualisation: container should match dark surface */
+html.dark .sheaf-viz,
+html.dark [id^="sheaf-"] {
+	background: var(--mn-surface) !important;
+}
+
+/* Three.js scene bg colour override (set by philosophy.js) */
+html.dark canvas.three-canvas,
+html.dark .sheaf-viz canvas,
+html.dark #sheaf-canvas {
+	background: var(--mn-surface) !important;
+}
 html.dark .search-match {
 	background: rgba(99, 102, 241, 0.25);
 	color: #a5b4fc;
