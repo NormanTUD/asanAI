@@ -193,22 +193,6 @@ window.TrainingDemo = (function() {
         s.fixedSurface = { x: xv, y: yv, z: zv, gs: gs, range: range };
     }
 
-    function getFixedSurfaceLoss(w1, w2) {
-        if (!s.fixedSurface) return 3.0;
-        var fs = s.fixedSurface;
-        // Aggressive mapping: small weight changes → visible movement on surface
-        var sx = w1 * 3.0;
-        var sy = w2 * 3.0;
-        var fx = (sx + fs.range) / (2 * fs.range) * (fs.gs - 1);
-        var fy = (sy + fs.range) / (2 * fs.range) * (fs.gs - 1);
-        var ix = Math.max(0, Math.min(fs.gs - 2, Math.floor(fx)));
-        var iy = Math.max(0, Math.min(fs.gs - 2, Math.floor(fy)));
-        var dx = fx - ix, dy = fy - iy;
-        var z00 = fs.z[iy][ix], z10 = fs.z[iy][ix+1];
-        var z01 = fs.z[iy+1][ix], z11 = fs.z[iy+1][ix+1];
-        return z00*(1-dx)*(1-dy) + z10*dx*(1-dy) + z01*(1-dx)*dy + z11*dx*dy;
-    }
-
     // ============================================================
     // CANVAS DRAWING
     // ============================================================
@@ -377,18 +361,18 @@ window.TrainingDemo = (function() {
                     if (ff > 0) {
                         var flow = (fi === 0 ? s.inp[f] : s.hid[f]) * w * ff;
                         if (Math.abs(flow) > 0.005) {
-                            alpha = Math.min(1, 0.1 + Math.abs(flow) * 5);
+                            alpha = Math.min(0.8, 0.1 + Math.abs(flow) * 3);
                             hue = flow >= 0 ? 210 : 0;
-                            width = Math.max(1, Math.abs(flow) * 7);
+                            width = Math.max(1, 1 + Math.abs(flow) * 4);
                         }
                     }
                     if (bf > 0) {
                         var g = gMat ? (gMat[t] || 0) * w : 0;
-                        var ga = Math.abs(g) * bf * 8;
+                        var ga = Math.abs(g) * bf * 2.5;
                         if (ga > 0.01) {
-                            alpha = Math.min(1, alpha + ga);
+                            alpha = Math.min(0.7, alpha + ga);
                             hue = 25;
-                            width = Math.max(width, Math.abs(g) * bf * 12);
+                            width = Math.max(width, 1 + Math.abs(g) * bf * 3);
                         }
                     }
                     ctx.beginPath();
@@ -619,20 +603,30 @@ window.TrainingDemo = (function() {
         var fs = s.fixedSurface;
 
         var cw1 = s.W1[0][0], cw2 = s.W1[2][0];
-        var ballLoss = getFixedSurfaceLoss(cw1, cw2);
 
-        // Build trail on the fixed surface
+        // Map weight positions to surface x/y — always visible
+        var scale = 2.5;
+        var ballSx = cw1 * scale;
+        var ballSy = cw2 * scale;
+        // Clamp to surface bounds
+        ballSx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, ballSx));
+        ballSy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, ballSy));
+
+        // Trail uses ACTUAL loss values for z (the real cross-entropy loss)
         var tw = [], tb = [], tz = [];
         for (var hi = 0; hi < s.posHist.length; hi++) {
             var pw = s.posHist[hi].w1, pb = s.posHist[hi].w2;
-            tw.push(pw * 3.0);
-            tb.push(pb * 3.0);
-            tz.push(getFixedSurfaceLoss(pw, pb) + 0.03);
+            var sx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pw * scale));
+            var sy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, pb * scale));
+            tw.push(sx);
+            tb.push(sy);
+            // Use the actual recorded loss for z
+            tz.push(s.lossHist[hi] + 0.05);
         }
-        // Current ball position
-        tw.push(cw1 * 3.0);
-        tb.push(cw2 * 3.0);
-        tz.push(ballLoss + 0.03);
+        // Current position — use actual loss
+        tw.push(ballSx);
+        tb.push(ballSy);
+        tz.push(Math.max(0.05, s.loss) + 0.05);
 
         var surface = {
             type: 'surface', x: fs.x, y: fs.y, z: fs.z,
@@ -678,7 +672,7 @@ window.TrainingDemo = (function() {
         // Current ball
         traces.push({
             type: 'scatter3d', mode: 'markers',
-            x: [cw1 * 3.0], y: [cw2 * 3.0], z: [ballLoss + 0.03],
+            x: [ballSx], y: [ballSy], z: [Math.max(0.05, s.loss) + 0.05],
             marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
             name: 'Aktuell'
         });
@@ -766,7 +760,7 @@ window.TrainingDemo = (function() {
         if (s.phase === 1 && s.phaseT > 1.6) { s.phase = 2; s.phaseT = 0; }
         if (s.phase === 2 && s.phaseT > 1.0) { s.phase = 3; s.phaseT = 0; }
         if (s.phase === 3 && s.phaseT > 1.8) {
-            upd(2.5);
+            upd(1.0);
             s.lossHist.push(s.loss);
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             s.step++;
