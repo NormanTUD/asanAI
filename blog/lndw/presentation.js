@@ -71,6 +71,11 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 100),
                         onLeave: d => d.reset() },
 
+                { ref: () => typeof TrainingDemo !== 'undefined' ? TrainingDemo : null,
+                        slideTest: s => s.getAttribute('data-title') === 'Training',
+                        onEnter: d => { d.init(); setTimeout(() => d.start(), 200); },
+                        onLeave: d => d.stop() },
+
         ];
 
     // Normalisiere: Defaults einsetzen

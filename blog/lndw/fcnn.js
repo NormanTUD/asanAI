@@ -1,0 +1,2526 @@
+"use strict";
+
+// ===== TOOLTIP INFRASTRUCTURE =====
+
+var _fcnn_tooltip_el = null;
+var _fcnn_tooltip_visible = false;
+var _fcnn_hit_regions = [];
+var _fcnn_canvas_mouse_bound = false;
+
+function _compute_histogram_bins(weightData, weightStats, numBins) {
+	var bins = new Array(numBins).fill(0);
+	var range = weightStats.max - weightStats.min;
+	var sampleSize = Math.min(weightData.length, 50000);
+	var step = Math.max(1, Math.floor(weightData.length / sampleSize));
+
+	for (var i = 0; i < weightData.length; i += step) {
+		var binIdx = Math.min(numBins - 1, Math.floor(((weightData[i] - weightStats.min) / range) * numBins));
+		bins[binIdx]++;
+	}
+	return bins;
+}
+
+function _render_histogram_svg(bins, numBins, svgW, svgH, weightStats) {
+	var maxBin = Math.max(...bins);
+	if (maxBin === 0) return "";
+
+	var barW = svgW / numBins;
+	var bars = "";
+
+	for (var b = 0; b < numBins; b++) {
+		var barH = (bins[b] / maxBin) * svgH;
+		var x = b * barW;
+		var y = svgH - barH;
+		var t = b / (numBins - 1);
+		var color;
+		if (t < 0.5) {
+			var intensity = Math.round(100 + (1 - t * 2) * 155);
+			color = `rgb(60, 80, ${intensity})`;
+		} else {
+			var intensity = Math.round(100 + (t * 2 - 1) * 155);
+			color = `rgb(${intensity}, 60, 60)`;
+		}
+		bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.5).toFixed(1)}" height="${barH.toFixed(1)}" fill="${color}" opacity="0.8"/>`;
+	}
+
+	var range = weightStats.max - weightStats.min;
+	var zeroX = ((0 - weightStats.min) / range) * svgW;
+	var zeroLine = "";
+	if (zeroX > 0 && zeroX < svgW) {
+		zeroLine = `<line x1="${zeroX.toFixed(1)}" y1="0" x2="${zeroX.toFixed(1)}" y2="${svgH}" stroke="white" stroke-width="1" opacity="0.7" stroke-dasharray="2,2"/>`;
+	}
+
+	return `
+	<tr><td colspan="2" style="padding:6px 0 2px;">
+	    <div style="font-size:10px;font-weight:600;margin-bottom:3px;opacity:0.7;">Weight Distribution</div>
+	    <svg width="${svgW}" height="${svgH}" style="border-radius:4px;background:rgba(0,0,0,0.15);">
+		${bars}
+		${zeroLine}
+	    </svg>
+	    <div style="display:flex;justify-content:space-between;font-size:9px;opacity:0.6;margin-top:2px;">
+		<span>${_format_number(weightStats.min)}</span>
+		<span>0</span>
+		<span>${_format_number(weightStats.max)}</span>
+	    </div>
+	</td></tr>
+    `;
+}
+
+function _build_weight_histogram_html(weightStats, weightData) {
+	if (!weightData || !weightStats || weightStats.count < 2) return "";
+	var range = weightStats.max - weightStats.min;
+	if (range === 0) return "";
+
+	var numBins = 30;
+	var bins = _compute_histogram_bins(weightData, weightStats, numBins);
+	return _render_histogram_svg(bins, numBins, 200, 40, weightStats);
+}
+
+async function restart_fcnn(force = 0) {
+	if (restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
+	restart_fcnn_timeout = setTimeout(() => {
+		restart_fcnn_internal(force); // await not possible
+		restart_fcnn_timeout = null;
+	}, 100);
+
+}
+
+async function restart_fcnn_internal(force = 0) {
+	if (is_running_test || currently_running_change_data_origin) {
+		if (!force) {
+			return;
+		}
+	}
+
+	if (!$("#fcnn_canvas").is(":visible")) {
+		return;
+	}
+
+	var fcnn_data = get_fcnn_data();
+
+	if (!fcnn_data) {
+		return;
+	}
+
+	var right_side_width = $("#right_side").width();
+
+	if (!fcnn_data) {
+		dbg(language[lang]["could_not_get_fcnn_data"]);
+		return;
+	}
+
+	var cache_key = await md5(JSON.stringify({
+		"right_side_width": right_side_width,
+		"fcnn_data": fcnn_data
+	}));
+
+	if (last_fcnn_data_hash == cache_key && !force) {
+		return;
+	}
+
+	last_fcnn_data_hash = cache_key;
+
+	var [names, units, meta_infos] = fcnn_data;
+
+	await draw_fcnn(units, names, meta_infos);
+
+	return true;
+}
+
+async function force_restart_fcnn() {
+	return await restart_fcnn(1);
+}
+
+function _get_layer_name(layer_idx, nr_layers, class_name) {
+	if (layer_idx === nr_layers - 1) return "Output Layer";
+	return `${class_name} ${layer_idx}`;
+}
+
+function _get_layer_meta_info(layer_idx, class_name, start_layer) {
+	var output_shape_of_layer = "";
+	try {
+		output_shape_of_layer = model.layers[layer_idx].outputShape;
+	} catch (e) {}
+
+	var kernel_size_x = $($(".configtable")[layer_idx]).find(".kernel_size_x").val();
+	var kernel_size_y = $($(".configtable")[layer_idx]).find(".kernel_size_y").val();
+
+	var input_shape_of_layer = "";
+	try {
+		input_shape_of_layer = model.layers[layer_idx].input.shape;
+	} catch (e) {}
+
+	return {
+		layer_type: class_name,
+		nr: start_layer + layer_idx,
+		input_shape: input_shape_of_layer,
+		output_shape: output_shape_of_layer,
+		kernel_size_x: kernel_size_x,
+		kernel_size_y: kernel_size_y
+	};
+}
+
+function get_fcnn_data() {
+	var names = [];
+	var units = [];
+	var meta_infos = [];
+
+	if (!model) {
+		dbg("[get_fcnn_data] Model not found for restart_fcnn");
+		return;
+	}
+
+	if (!Object.keys(model).includes("layers")) {
+		dbg("[get_fcnn_data] model.layers not found for restart_fcnn");
+		return;
+	}
+
+	var nr_layers = model?.layers?.length;
+	if (!nr_layers) return;
+
+	var start_layer = 0;
+
+	for (var layer_idx = 0; layer_idx < nr_layers; layer_idx++) {
+		var class_name = get_layer_classname_by_nr(layer_idx);
+		var layer_name = model.layers[layer_idx].name || "";
+
+		// Skip internal skip-connection layers (projection, add, scale)
+		if (layer_name.includes("skip_proj_") || layer_name.includes("skip_add_") || layer_name.includes("skip_scale_")) {
+			continue;
+		}
+
+		if (!["Dense", "Flatten", "LayerNormalization"].includes(class_name) &&
+			!(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
+			continue;
+		}
+
+		units.push(get_units_at_layer(layer_idx));
+		names.push(_get_layer_name(layer_idx, nr_layers, class_name));
+		meta_infos.push(_get_layer_meta_info(layer_idx, class_name, start_layer));
+	}
+
+	return [names, units, meta_infos];
+}
+
+function _setup_fcnn_canvas() {
+	var canvas = document.getElementById("fcnn_canvas");
+	if (!canvas) {
+		canvas = document.createElement("canvas");
+		canvas.id = "fcnn_canvas";
+		document.body.appendChild(canvas);
+	}
+
+	// High-DPI support
+	var dpr = window.devicePixelRatio || 1;
+	var rect = canvas.getBoundingClientRect();
+	canvas.width = rect.width * dpr;
+	canvas.height = rect.height * dpr;
+	var ctx = canvas.getContext("2d");
+	ctx.scale(dpr, dpr);
+
+	return canvas;
+}
+
+function _compute_max_conv2d_spacing(meta_infos, maxSpacing) {
+	var max_conv2d_height = 0;
+	meta_infos.forEach(function (i) {
+		if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
+			var os = i.output_shape;
+			var height = os && os[1] ? os[1] : 0;
+			if (height > max_conv2d_height) {
+				max_conv2d_height = height;
+			}
+		}
+	});
+	return maxSpacing + max_conv2d_height;
+}
+
+function _build_image_data_from_input(ctx, first_layer_input, n, m, minVal, maxVal) {
+	var scale = 255 / (maxVal - minVal);
+	var imageData = ctx.createImageData(m, n);
+
+	for (var row = 0; row < n; row++) {
+		for (var col = 0; col < m; col++) {
+			var dataIndex = (row * m + col) * 4;
+			var red   = Math.max(0, Math.min(255, parse_int((first_layer_input[row][col][0] - minVal) * scale)));
+			var green = Math.max(0, Math.min(255, parse_int((first_layer_input[row][col][1] - minVal) * scale)));
+			var blue  = Math.max(0, Math.min(255, parse_int((first_layer_input[row][col][2] - minVal) * scale)));
+
+			imageData.data[dataIndex + 0] = red;
+			imageData.data[dataIndex + 1] = green;
+			imageData.data[dataIndex + 2] = blue;
+			imageData.data[dataIndex + 3] = 255;
+		}
+	}
+	return imageData;
+}
+
+function _draw_image_border_and_label(ctx, x, y, m, n, font_size) {
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.strokeRect(x, y, m, n);
+
+	ctx.font = font_size + "px Arial";
+	ctx.fillStyle = is_dark_mode ? "white" : "black";
+	ctx.textAlign = "left";
+	ctx.closePath();
+}
+
+function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
+	if (maxVal === minVal) return ctx;
+
+	var imageData = _build_image_data_from_input(ctx, first_layer_input, n, m, minVal, maxVal);
+	var _first_image_x = 10;
+	var _first_image_y = font_size + 10;
+
+	ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, m, n);
+	_draw_image_border_and_label(ctx, _first_image_x, _first_image_y, m, n, font_size);
+
+	return ctx;
+}
+
+function _validate_kernel_inputs(ctx, this_layer_output) {
+	if (!(ctx && typeof ctx.putImageData === "function")) {
+		console.warn("draw_filled_kernel_rectangle: ctx is invalid");
+		return null;
+	}
+	if (!Array.isArray(this_layer_output) || this_layer_output.length === 0) {
+		console.warn("draw_filled_kernel_rectangle: this_layer_output is empty");
+		return null;
+	}
+	let n = this_layer_output.length;
+	let m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
+	if (m === 0) {
+		console.warn("draw_filled_kernel_rectangle: invalid row");
+		return null;
+	}
+	return { n, m };
+}
+
+function _compute_kernel_min_max(n, m, this_layer_output, minVal, maxVal) {
+	var [calcMin, calcMax] = get_min_max_val(n, m, this_layer_output);
+	if (!isFinite(calcMin) || !isFinite(calcMax)) return null;
+
+	minVal = (typeof minVal === "number" && isFinite(minVal)) ? minVal : calcMin;
+	maxVal = (typeof maxVal === "number" && isFinite(maxVal)) ? maxVal : calcMax;
+	if (maxVal === minVal) maxVal = minVal + 1;
+
+	return { minVal, maxVal };
+}
+
+function _build_kernel_image_data(ctx, this_layer_output, n, m, minVal, maxVal) {
+	var scale = 255 / (maxVal - minVal);
+	var imageData;
+	try {
+		imageData = ctx.createImageData(m, n);
+	} catch (e) {
+		console.error("draw_filled_kernel_rectangle: failed to create ImageData", e);
+		return null;
+	}
+
+	for (var x = 0; x < n; x++) {
+		if (!Array.isArray(this_layer_output[x]) || this_layer_output[x].length !== m) continue;
+		for (var y = 0; y < m; y++) {
+			var rawVal = this_layer_output[x][y];
+			if (typeof rawVal !== "number" || !isFinite(rawVal)) continue;
+			var value = Math.floor((rawVal - minVal) * scale);
+			var index = (x * m + y) * 4;
+			var gray = Math.abs(255 - value);
+			imageData.data[index] = gray;
+			imageData.data[index + 1] = gray;
+			imageData.data[index + 2] = gray;
+			imageData.data[index + 3] = 255;
+		}
+	}
+	return imageData;
+}
+
+function _render_kernel_to_canvas(ctx, imageData, meta_info, m, n, layerX, neuronY) {
+	var _ww = Number(meta_info?.input_shape?.[1]);
+	var _hh = Number(meta_info?.input_shape?.[2]);
+	if (!Number.isInteger(_ww) || !Number.isInteger(_hh) || _ww <= 0 || _hh <= 0) {
+		_ww = m;
+		_hh = n;
+	}
+
+	var _x = Math.floor(layerX - _ww / 2);
+	var _y = Math.floor(neuronY - _hh / 2);
+
+	var tempCanvas = document.createElement("canvas");
+	tempCanvas.width = m;
+	tempCanvas.height = n;
+	var tctx = tempCanvas.getContext("2d");
+	tctx.putImageData(imageData, 0, 0);
+	ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
+
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.strokeRect(_x, _y, _ww, _hh);
+}
+
+function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY) {
+	try {
+		var dims = _validate_kernel_inputs(ctx, this_layer_output);
+		if (!dims) return ctx;
+
+		var bounds = _compute_kernel_min_max(dims.n, dims.m, this_layer_output, minVal, maxVal);
+		if (!bounds) return ctx;
+
+		var imageData = _build_kernel_image_data(ctx, this_layer_output, dims.n, dims.m, bounds.minVal, bounds.maxVal);
+		if (!imageData) return ctx;
+
+		_render_kernel_to_canvas(ctx, imageData, meta_info, dims.m, dims.n, layerX, neuronY);
+	} catch (err) {
+		console.error("draw_filled_kernel_rectangle: unexpected error", err);
+	}
+	return ctx;
+}
+
+function draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY) {
+	var _ww = Math.min(meta_info["kernel_size_x"] * 3, verticalSpacing - 2);
+	var _hh = Math.min(meta_info["kernel_size_y"] * 3, verticalSpacing - 2);
+
+	var _x = layerX - _ww / 2;
+	var _y = neuronY - _hh / 2;
+
+	ctx.rect(_x, _y, _ww, _hh);
+	ctx.fillStyle = "#c2e3ed";
+	ctx.fill();
+
+	ctx.closePath();
+
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.strokeRect(_x, _y, _ww, _hh);
+
+	return ctx;
+}
+
+function annotate_output_neurons(canvasWidth, ctx, layerId, numNeurons, j, font_size, layerX, neuronY) {
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();
+
+	var nr_layers = model?.layers?.length;
+
+	if (!nr_layers) {
+		return ctx;
+	}
+
+	if (layerId == nr_layers - 1 && get_last_layer_activation_function() == "softmax") {
+		if (labels && Array.isArray(labels) && labels.length && Object.keys(labels).includes(`${j}`) && numNeurons == labels.length) {
+			ctx.beginPath();
+			ctx.font = font_size + "px Arial";
+			if (is_dark_mode) {
+				ctx.fillStyle = "white";
+			} else {
+				ctx.fillStyle = "black";
+			}
+			ctx.textAlign = "left";
+			ctx.fillText(labels[j], layerX + 30, neuronY + (font_size / 2));
+			ctx.closePath();
+		}
+	}
+
+	return ctx;
+}
+
+function draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j) {
+	ctx.beginPath();
+	ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+	ctx.fillStyle = "#767b8d";  // gray base circle
+	ctx.fill();
+
+	if (this_layer_output && this_layer_output.length > 0) {
+		var minVal = Math.min(...this_layer_output);
+		var maxVal = Math.max(...this_layer_output);
+		var value = this_layer_output[j];
+
+		var normalizedValue;
+		if (maxVal === minVal) {
+			normalizedValue = 128; // all equal → neutral gray
+		} else {
+			normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+			normalizedValue = Math.max(0, Math.min(255, normalizedValue)); // clamp
+		}
+
+		var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = color;
+		ctx.fill();
+	} else {
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = "#ffffff";  // no value → white
+		ctx.fill();
+	}
+
+	return ctx;
+}
+
+// ===== TOOLTIP INFRASTRUCTURE =====
+
+var _fcnn_tooltip_el = null;
+var _fcnn_tooltip_visible = false;
+var _fcnn_hit_regions = [];
+var _fcnn_canvas_mouse_bound = false;
+
+function _get_tooltip_styles(dark) {
+	return `
+	position: fixed;
+	z-index: 999999;
+	pointer-events: none;
+	background: ${dark
+			? 'linear-gradient(135deg, rgba(20,25,40,0.97), rgba(30,35,55,0.97))'
+			: 'linear-gradient(135deg, rgba(255,255,255,0.99), rgba(245,248,255,0.99))'};
+	color: ${dark ? '#e8ecf4' : '#1a1a2e'};
+	border: 1px solid ${dark ? 'rgba(100,140,255,0.3)' : 'rgba(70,100,200,0.2)'};
+	border-radius: 12px;
+	padding: 14px 18px;
+	font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+	font-size: 12px;
+	line-height: 1.6;
+	max-width: 440px;
+	max-height: 520px;
+	overflow: auto;
+	box-shadow: 0 8px 32px rgba(0,0,0,${dark ? '0.5' : '0.12'}),
+	    0 2px 8px rgba(0,0,0,${dark ? '0.3' : '0.06'}),
+	    inset 0 1px 0 rgba(255,255,255,${dark ? '0.05' : '0.8'});
+	display: none;
+	transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+	    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0;
+	transform: translateY(4px) scale(0.98);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+    `;
+}
+
+function _ensure_fcnn_tooltip() {
+	if (_fcnn_tooltip_el && document.body.contains(_fcnn_tooltip_el)) return _fcnn_tooltip_el;
+
+	_fcnn_tooltip_el = document.createElement("div");
+	_fcnn_tooltip_el.id = "fcnn_tooltip_overlay";
+
+	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+	_fcnn_tooltip_el.style.cssText = _get_tooltip_styles(dark);
+
+	document.body.appendChild(_fcnn_tooltip_el);
+	return _fcnn_tooltip_el;
+}
+
+function _show_fcnn_tooltip(html, mouseX, mouseY) {
+	var tip = _ensure_fcnn_tooltip();
+	// ... (existing positioning logic) ...
+	tip.innerHTML = html;
+	tip.style.display = "block";
+	// Trigger animation
+	requestAnimationFrame(() => {
+		tip.style.opacity = "1";
+		tip.style.transform = "translateY(0) scale(1)";
+	});
+	_fcnn_tooltip_visible = true;
+}
+
+function _hide_fcnn_tooltip() {
+	if (_fcnn_tooltip_el) {
+		_fcnn_tooltip_el.style.opacity = "0";
+		_fcnn_tooltip_el.style.transform = "translateY(4px) scale(0.98)";
+		setTimeout(() => {
+			if (_fcnn_tooltip_el && !_fcnn_tooltip_visible) {
+				_fcnn_tooltip_el.style.display = "none";
+			}
+		}, 150);
+	}
+	_fcnn_tooltip_visible = false;
+}
+
+function _register_fcnn_hit_region(region) {
+	// region: { type, shape, x, y, w, h, radius, layer_idx, neuron_idx, meta, data, ... }
+	_fcnn_hit_regions.push(region);
+}
+
+function _clear_fcnn_hit_regions() {
+	_fcnn_hit_regions = [];
+}
+
+function _point_in_region(px, py, region) {
+	try {
+		if (region.shape === "circle") {
+			var dx = px - region.x;
+			var dy = py - region.y;
+			return (dx * dx + dy * dy) <= (region.radius * region.radius);
+		} else {
+			// rectangle
+			return px >= region.x && px <= region.x + region.w && py >= region.y && py <= region.y + region.h;
+		}
+	} catch (e) {
+		return false;
+	}
+}
+
+function _format_number(val) {
+	if (val === null || val === undefined) return "N/A";
+	if (!isFinite(val)) return String(val);
+	if (Math.abs(val) < 0.001 && val !== 0) return val.toExponential(4);
+	return parseFloat(val.toFixed(6)).toString();
+}
+
+function _compute_stats(arr) {
+	if (!arr || !arr.length) return null;
+	var min = Infinity, max = -Infinity, sum = 0, count = 0;
+	for (var i = 0; i < arr.length; i++) {
+		var v = arr[i];
+		if (typeof v !== "number" || !isFinite(v)) continue;
+		if (v < min) min = v;
+		if (v > max) max = v;
+		sum += v;
+		count++;
+	}
+	if (count === 0) return null;
+	var avg = sum / count;
+
+	// Std dev
+	var sqSum = 0;
+	for (var i = 0; i < arr.length; i++) {
+		var v = arr[i];
+		if (typeof v !== "number" || !isFinite(v)) continue;
+		sqSum += (v - avg) * (v - avg);
+	}
+	var std = Math.sqrt(sqSum / count);
+
+	return { min: min, max: max, avg: avg, std: std, count: count, sum: sum };
+}
+
+function _compute_local_min_max(data2d, rows, cols) {
+	var mn = Infinity, mx = -Infinity;
+	for (var r = 0; r < rows; r++) {
+		for (var col = 0; col < cols; col++) {
+			var v = data2d[r][col];
+			if (typeof v === "number" && isFinite(v)) {
+				if (v < mn) mn = v;
+				if (v > mx) mx = v;
+			}
+		}
+	}
+	return { min: mn, max: mx };
+}
+
+function _create_scaled_canvas(rows, cols, maxDisplaySize) {
+	var pixelScale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
+	var c = document.createElement("canvas");
+	c.width = cols * pixelScale;
+	c.height = rows * pixelScale;
+	return { canvas: c, pixelScale: pixelScale };
+}
+
+function _render_inverted_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale) {
+	for (var r = 0; r < rows; r++) {
+		for (var col = 0; col < cols; col++) {
+			var v = data2d[r][col];
+			var value = Math.floor((v - mn) * scale);
+			var gray = Math.max(0, Math.min(255, Math.abs(255 - value)));
+			cx.fillStyle = `rgb(${gray},${gray},${gray})`;
+			cx.fillRect(col * pixelScale, r * pixelScale, pixelScale, pixelScale);
+		}
+	}
+}
+
+function _make_mini_canvas_data_url_inverted(data2d, width, height, maxDisplaySize, globalMin, globalMax) {
+	try {
+		if (!data2d || !data2d.length) return null;
+		var rows = data2d.length;
+		var cols = Array.isArray(data2d[0]) ? data2d[0].length : 0;
+		if (cols === 0) return null;
+
+		var mn = (typeof globalMin === "number" && isFinite(globalMin)) ? globalMin : null;
+		var mx = (typeof globalMax === "number" && isFinite(globalMax)) ? globalMax : null;
+
+		if (mn === null || mx === null) {
+			var local = _compute_local_min_max(data2d, rows, cols);
+			mn = mn !== null ? mn : local.min;
+			mx = mx !== null ? mx : local.max;
+		}
+		if (mn === mx) mx = mn + 1;
+
+		var scale = 255 / (mx - mn);
+		maxDisplaySize = maxDisplaySize || 64;
+
+		var { canvas: c, pixelScale } = _create_scaled_canvas(rows, cols, maxDisplaySize);
+		var cx = c.getContext("2d");
+
+		_render_inverted_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale);
+
+		return c.toDataURL("image/png");
+	} catch (e) {
+		return null;
+	}
+}
+
+// ===== EXTRACTED HELPERS FOR _make_mini_canvas_rgb_data_url =====
+
+function _compute_rgb_global_min_max(data3d, rows, cols) {
+	var mn = Infinity, mx = -Infinity;
+	for (var r = 0; r < rows; r++) {
+		for (var col = 0; col < cols; col++) {
+			if (data3d[r] && data3d[r][col]) {
+				for (var ch2 = 0; ch2 < 3; ch2++) {
+					var v = data3d[r][col][ch2];
+					if (typeof v === "number" && isFinite(v)) {
+						if (v < mn) mn = v;
+						if (v > mx) mx = v;
+					}
+				}
+			}
+		}
+	}
+	if (mn === mx) mx = mn + 1;
+	return { min: mn, max: mx };
+}
+
+function _render_rgb_pixels_to_canvas(cx, data3d, rows, cols, scale, mn, sc) {
+	for (var r = 0; r < rows; r++) {
+		for (var col = 0; col < cols; col++) {
+			var pixel = data3d[r][col];
+			if (!pixel) continue;
+			var red = Math.max(0, Math.min(255, Math.floor((pixel[0] - mn) * sc)));
+			var green = Math.max(0, Math.min(255, Math.floor((pixel[1] - mn) * sc)));
+			var blue = Math.max(0, Math.min(255, Math.floor((pixel[2] - mn) * sc)));
+			cx.fillStyle = `rgb(${red},${green},${blue})`;
+			cx.fillRect(col * scale, r * scale, scale, scale);
+		}
+	}
+}
+
+// ===== REFACTORED MAIN FUNCTION =====
+
+function _make_mini_canvas_rgb_data_url(data3d, maxDisplaySize) {
+	// data3d: [rows][cols][3] RGB array
+	try {
+		if (!data3d || !data3d.length) return null;
+		var rows = data3d.length;
+		var cols = Array.isArray(data3d[0]) ? data3d[0].length : 0;
+		if (cols === 0) return null;
+
+		maxDisplaySize = maxDisplaySize || 64;
+		var scale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
+		var cw = cols * scale;
+		var ch = rows * scale;
+
+		var c = document.createElement("canvas");
+		c.width = cw;
+		c.height = ch;
+		var cx = c.getContext("2d");
+
+		var minMax = _compute_rgb_global_min_max(data3d, rows, cols);
+		var sc = 255 / (minMax.max - minMax.min);
+
+		_render_rgb_pixels_to_canvas(cx, data3d, rows, cols, scale, minMax.min, sc);
+
+		return c.toDataURL("image/png");
+	} catch (e) {
+		return null;
+	}
+}
+
+// ===== TOOLTIP HTML BUILDERS =====
+
+function _build_neuron_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">♾️ Neuron</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function (label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Layer", region.layer_idx));
+	parts.push(row("Neuron Index", region.neuron_idx));
+
+	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
+
+	if (region.activation_value !== undefined && region.activation_value !== null) {
+		parts.push(row("Activation (real)", `<b>${_format_number(region.activation_value)}</b>`));
+	}
+
+	if (region.layer_stats) {
+		var s = region.layer_stats;
+		parts.push(row("Layer Min", _format_number(s.min)));
+		parts.push(row("Layer Max", _format_number(s.max)));
+		parts.push(row("Layer Avg", _format_number(s.avg)));
+		parts.push(row("Layer Std", _format_number(s.std)));
+		parts.push(row("Layer Neuron Count", s.count));
+
+		if (region.activation_value !== undefined && region.activation_value !== null && s.max !== s.min) {
+			var rel = ((region.activation_value - s.min) / (s.max - s.min));
+			parts.push(row("Relative (0–1)", _format_number(rel)));
+			parts.push(row("Percentile-like", (rel * 100).toFixed(1) + "%"));
+		}
+	}
+
+	if (region.label) parts.push(row("Label", region.label));
+
+	if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(function (n) { return n; }).join(", ") + "]"));
+	if (region.input_shape) parts.push(row("Input Shape", "[" + region.input_shape.filter(function (n) { return n; }).join(", ") + "]"));
+
+	parts.push(`</table>`);
+	return parts.join("");
+}
+
+function _build_conv2d_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🗺️ Conv2D Feature Map</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function (label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Layer", region.layer_idx));
+	parts.push(row("Channel/Filter", region.neuron_idx));
+
+	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
+	if (region.kernel_size_x && region.kernel_size_y) parts.push(row("Kernel Size", `${region.kernel_size_x} × ${region.kernel_size_y}`));
+	if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(function (n) { return n; }).join(", ") + "]"));
+	if (region.input_shape) parts.push(row("Input Shape", "[" + region.input_shape.filter(function (n) { return n; }).join(", ") + "]"));
+
+	if (region.channel_stats) {
+		var s = region.channel_stats;
+		parts.push(row("Channel Min", _format_number(s.min)));
+		parts.push(row("Channel Max", _format_number(s.max)));
+		parts.push(row("Channel Avg", _format_number(s.avg)));
+		parts.push(row("Channel Std", _format_number(s.std)));
+		parts.push(row("Pixel Count", s.count));
+	}
+
+	parts.push(`</table>`);
+
+	// Show mini image if available
+	if (region.image_data_url) {
+		parts.push(`<div style="margin-top:6px;text-align:center;"><img src="${region.image_data_url}" style="border:1px solid #888;border-radius:3px;max-width:100px;max-height:100px;image-rendering:pixelated;" title="Feature map visualization"/></div>`);
+	}
+
+	return parts.join("");
+}
+
+function _build_flatten_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">📏 Flatten Layer</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function (label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Layer", region.layer_idx));
+
+	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
+	if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(function (n) { return n; }).join(", ") + "]"));
+	if (region.input_shape) parts.push(row("Input Shape", "[" + region.input_shape.filter(function (n) { return n; }).join(", ") + "]"));
+
+	if (region.flatten_stats) {
+		var s = region.flatten_stats;
+		parts.push(row("Min", _format_number(s.min)));
+		parts.push(row("Max", _format_number(s.max)));
+		parts.push(row("Avg", _format_number(s.avg)));
+		parts.push(row("Std", _format_number(s.std)));
+		parts.push(row("Total Values", s.count));
+	}
+
+	parts.push(`</table>`);
+
+	if (region.image_data_url) {
+		parts.push(`<div style="margin-top:6px;text-align:center;"><img src="${region.image_data_url}" style="border:1px solid #888;border-radius:3px;max-width:16px;max-height:200px;image-rendering:pixelated;" title="Flatten values"/></div>`);
+	}
+
+	return parts.join("");
+}
+
+function _build_layernorm_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">⚖️ Layer Normalization</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function (label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Layer", region.layer_idx));
+	parts.push(row("Block Size (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
+	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
+	if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(function (n) { return n; }).join(", ") + "]"));
+	if (region.input_shape) parts.push(row("Input Shape", "[" + region.input_shape.filter(function (n) { return n; }).join(", ") + "]"));
+
+	parts.push(row("Operation", "Normalize → Scale (γ) → Shift (β)"));
+
+	parts.push(`</table>`);
+	return parts.join("");
+}
+
+function _build_connection_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🔗 Connection</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function (label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("From Layer", region.from_layer));
+	parts.push(row("To Layer", region.to_layer));
+	parts.push(row("Connections", `${region.from_neurons} × ${region.to_neurons} = ${region.from_neurons * region.to_neurons}`));
+
+	if (region.weight_stats) {
+		var s = region.weight_stats;
+		parts.push(row("Weight Min", _format_number(s.min)));
+		parts.push(row("Weight Max", _format_number(s.max)));
+		parts.push(row("Weight Avg", _format_number(s.avg)));
+		parts.push(row("Weight Std", _format_number(s.std)));
+		parts.push(row("Total Weights", s.count));
+
+		// Show weight distribution gradient bar
+		if (s.min !== s.max) {
+			var zeroPos = ((0 - s.min) / (s.max - s.min)) * 100;
+			zeroPos = Math.max(0, Math.min(100, zeroPos));
+			parts.push(`<tr><td colspan="2" style="padding:4px 0;">
+		<div style="position:relative;height:12px;background:linear-gradient(to right, #4444ff, #ffffff ${zeroPos.toFixed(1)}%, #ff4444);border-radius:3px;border:1px solid #888;">
+		    <div style="position:absolute;left:${zeroPos.toFixed(1)}%;top:0;bottom:0;width:1px;background:#000;"></div>
+		</div>
+		<div style="display:flex;justify-content:space-between;font-size:10px;margin-top:2px;">
+		    <span>${_format_number(s.min)}</span>
+		    <span>0</span>
+		    <span>${_format_number(s.max)}</span>
+		</div>
+	    </td></tr>`);
+		}
+
+		// ===== ADD HISTOGRAM IF WE HAVE WEIGHT DATA =====
+		if (region.weight_data && region.weight_data.length > 0) {
+			parts.push(_build_weight_histogram_html(region.weight_stats, region.weight_data));
+		}
+	}
+
+	parts.push(`</table>`);
+	return parts.join("");
+}
+
+function _build_input_image_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🖼️ Input Image</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function (label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Dimensions", `${region.img_width} × ${region.img_height}`));
+	parts.push(row("Channels", region.channels || "3 (RGB)"));
+
+	if (region.pixel_stats) {
+		var s = region.pixel_stats;
+		parts.push(row("Pixel Min", _format_number(s.min)));
+		parts.push(row("Pixel Max", _format_number(s.max)));
+		parts.push(row("Pixel Avg", _format_number(s.avg)));
+		parts.push(row("Pixel Std", _format_number(s.std)));
+		parts.push(row("Value Count", s.count));
+
+		// Normalized range info
+		if (s.min >= -1.5 && s.max <= 1.5) {
+			parts.push(row("Normalization", "Likely [-1, 1]"));
+		} else if (s.min >= -0.1 && s.max <= 1.1) {
+			parts.push(row("Normalization", "Likely [0, 1]"));
+		} else if (s.min >= -1 && s.max <= 256) {
+			parts.push(row("Normalization", "Likely [0, 255]"));
+		}
+	}
+
+	parts.push(`</table>`);
+
+	if (region.image_data_url) {
+		parts.push(`<div style="margin-top:6px;text-align:center;"><img src="${region.image_data_url}" style="border:1px solid #888;border-radius:3px;max-width:128px;max-height:128px;image-rendering:pixelated;" title="Input image"/></div>`);
+	}
+
+	return parts.join("");
+}
+
+// ===== MOUSE EVENT BINDING =====
+
+function _bind_fcnn_canvas_mouse_events() {
+	if (_fcnn_canvas_mouse_bound) return;
+	var canvas = document.getElementById("fcnn_canvas");
+	if (!canvas) return;
+
+	_fcnn_canvas_mouse_bound = true;
+	var _last_hit_idx = -1;
+
+	canvas.addEventListener("mousemove", function (e) {
+		_last_hit_idx = _handle_fcnn_mousemove(e, canvas, _last_hit_idx);
+	});
+
+	canvas.addEventListener("click", function (e) {
+		_handle_fcnn_click(e, canvas);
+	});
+
+	canvas.addEventListener("mouseleave", function () {
+		_hide_fcnn_tooltip();
+		_last_hit_idx = -1;
+		canvas.style.cursor = "default";
+	});
+
+	window.addEventListener("scroll", function () {
+		_hide_fcnn_tooltip();
+		_last_hit_idx = -1;
+	}, { passive: true });
+
+	window.addEventListener("resize", function () {
+		_hide_fcnn_tooltip();
+		_last_hit_idx = -1;
+		_fcnn_canvas_mouse_bound = false;
+	});
+}
+
+function _get_canvas_coords(e, canvas) {
+	var rect = canvas.getBoundingClientRect();
+	var scaleX = canvas.width / rect.width;
+	var scaleY = canvas.height / rect.height;
+	return {
+		x: (e.clientX - rect.left) * scaleX,
+		y: (e.clientY - rect.top) * scaleY
+	};
+}
+
+function _find_hit_region(cx, cy) {
+	for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
+		if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
+			return { region: _fcnn_hit_regions[i], index: i };
+		}
+	}
+	return { region: null, index: -1 };
+}
+
+function _handle_fcnn_mousemove(e, canvas, lastHitIdx) {
+	try {
+		var coords = _get_canvas_coords(e, canvas);
+		var { region: hit, index: hitIdx } = _find_hit_region(coords.x, coords.y);
+
+		if (hitIdx === lastHitIdx && _fcnn_tooltip_visible) {
+			if (hit && _fcnn_tooltip_el) {
+				_reposition_tooltip(e);
+			}
+			return lastHitIdx;
+		}
+
+		if (hit) {
+			var html = _build_tooltip_html_for_region(hit);
+			_show_fcnn_tooltip(html, e.clientX, e.clientY);
+			canvas.style.cursor = "crosshair";
+		} else {
+			_hide_fcnn_tooltip();
+			canvas.style.cursor = "default";
+		}
+		return hitIdx;
+	} catch (err) {
+		_hide_fcnn_tooltip();
+		canvas.style.cursor = "default";
+		return -1;
+	}
+}
+
+function _build_tooltip_html_for_region(hit) {
+    switch (hit.type) {
+        case "neuron": return _build_neuron_tooltip_html(hit);
+        case "conv2d": return _build_conv2d_tooltip_html(hit);
+        case "flatten": return _build_flatten_tooltip_html(hit);
+        case "layernorm": return _build_layernorm_tooltip_html(hit);
+        case "connection": return _build_connection_tooltip_html(hit);
+        case "input_image": return _build_input_image_tooltip_html(hit);
+        case "skip_connection": return _build_skip_connection_tooltip_html(hit);
+        default: return `<div>Element: <b>${hit.type}</b></div>`;
+    }
+}
+
+function _reposition_tooltip(e) {
+	var vw = window.innerWidth;
+	var vh = window.innerHeight;
+	var tipW = _fcnn_tooltip_el.offsetWidth || 200;
+	var tipH = _fcnn_tooltip_el.offsetHeight || 100;
+	var left = e.clientX + 16;
+	var top = e.clientY + 12;
+	if (left + tipW > vw - 10) left = e.clientX - tipW - 10;
+	if (top + tipH > vh - 10) top = e.clientY - tipH - 10;
+	if (left < 5) left = 5;
+	if (top < 5) top = 5;
+	_fcnn_tooltip_el.style.left = left + "px";
+	_fcnn_tooltip_el.style.top = top + "px";
+}
+
+function _handle_fcnn_click(e, canvas) {
+	try {
+		var coords = _get_canvas_coords(e, canvas);
+		var { region: hit } = _find_hit_region(coords.x, coords.y);
+		if (!hit) return;
+
+		if (typeof started_training !== 'undefined' && started_training) return;
+		if (typeof _fcnn_edit_ensure_popup !== 'function') return;
+
+		_hide_fcnn_tooltip();
+
+		if (hit.type === "neuron") _fcnn_edit_open_neuron_weights(hit, e.clientX, e.clientY);
+		else if (hit.type === "connection") _fcnn_edit_open_weight(hit, e.clientX, e.clientY);
+	} catch (err) {
+		console.warn("[fcnn_edit] Click handler error:", err);
+	}
+}
+
+function _determine_shape_type(layer_type) {
+	if (layer_type.toLowerCase().includes("conv2d")) return "rectangle_conv2d";
+	if (layer_type.toLowerCase().includes("flatten")) return "rectangle_flatten";
+	if (layer_type.toLowerCase().includes("layernormalization")) return "layernorm";
+	return "circle";
+}
+
+function _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size, isOutputLayer, isConv2d, maxSpacingConv2d, globalMaxSpacing) {
+	// === INPUT VALIDATION GUARDRAILS ===
+	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
+		numNeurons = 1;
+	}
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
+		console.warn("[_compute_vertical_spacing_per_layer] Invalid canvasHeight:", canvasHeight, "- defaulting to 800");
+		canvasHeight = 800;
+	}
+	if (!Number.isFinite(font_size) || font_size < 6) {
+		font_size = 12;
+	}
+	if (!Number.isFinite(globalMaxSpacing) || globalMaxSpacing <= 0) {
+		globalMaxSpacing = 20;
+	}
+	if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) {
+		maxSpacingConv2d = globalMaxSpacing + 10;
+	}
+
+	// === ABSOLUTE BOUNDS ===
+	var ABSOLUTE_MIN_SPACING = Math.max(font_size * 2.2, 22);
+	var ABSOLUTE_MAX_SPACING = canvasHeight * 0.12;
+	var USABLE_CANVAS_HEIGHT = canvasHeight * 0.75;
+
+	// === OUTPUT LAYER SPECIAL HANDLING ===
+	if (isOutputLayer) {
+		var outputMinSpacing = Math.max(font_size * 3.0, 36);
+		var idealOutputSpacing = USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons);
+		var outputSpacing = Math.max(outputMinSpacing, Math.min(ABSOLUTE_MAX_SPACING, idealOutputSpacing));
+
+		if (numNeurons * outputSpacing > USABLE_CANVAS_HEIGHT) {
+			outputSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
+		}
+		outputSpacing = Math.max(outputMinSpacing, outputSpacing);
+
+		// === FINAL GUARDRAIL ===
+		if (!Number.isFinite(outputSpacing) || outputSpacing <= 0) {
+			console.error("[_compute_vertical_spacing_per_layer] Output spacing invalid, using fallback");
+			return Math.max(36, globalMaxSpacing);
+		}
+		return outputSpacing;
+	}
+
+	// === CONV2D LAYER HANDLING ===
+	if (isConv2d) {
+		// Use maxSpacingConv2d as the UPPER BOUND, but fit within canvas
+		var conv2dSpacing = Math.min(maxSpacingConv2d, USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons));
+
+		// Clamp to bounds
+		conv2dSpacing = Math.max(ABSOLUTE_MIN_SPACING, Math.min(ABSOLUTE_MAX_SPACING, conv2dSpacing));
+
+		// Safety: ensure all neurons fit
+		if (numNeurons * conv2dSpacing > USABLE_CANVAS_HEIGHT) {
+			conv2dSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
+			conv2dSpacing = Math.max(8, conv2dSpacing);
+		}
+
+		// === FINAL GUARDRAIL ===
+		if (!Number.isFinite(conv2dSpacing) || conv2dSpacing <= 0) {
+			console.error("[_compute_vertical_spacing_per_layer] Conv2D spacing invalid, using fallback");
+			return Math.max(8, globalMaxSpacing);
+		}
+		return conv2dSpacing;
+	}
+
+	// === DENSE / GENERIC LAYER HANDLING ===
+	var idealSpacing = USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons);
+	var verticalSpacing = Math.min(globalMaxSpacing, idealSpacing);
+
+	verticalSpacing = Math.max(ABSOLUTE_MIN_SPACING, Math.min(ABSOLUTE_MAX_SPACING, verticalSpacing));
+
+	if (numNeurons * verticalSpacing > USABLE_CANVAS_HEIGHT) {
+		verticalSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
+		verticalSpacing = Math.max(4, verticalSpacing);
+	}
+
+	// === FINAL GUARDRAIL ===
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.error("[_compute_vertical_spacing_per_layer] Dense spacing invalid, using fallback");
+		return Math.max(4, globalMaxSpacing);
+	}
+	return verticalSpacing;
+}
+
+function _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
+	// Legacy behavior preserved as fallback
+	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
+		return maxSpacing || 20;
+	}
+	if (!Number.isFinite(canvasHeight) || canvasHeight <= 0) {
+		return maxSpacing || 20;
+	}
+
+	var verticalSpacing = maxSpacing;
+	if (numNeurons * verticalSpacing > canvasHeight) {
+		verticalSpacing = canvasHeight / numNeurons;
+	}
+
+	// GUARDRAIL: Never return zero or negative
+	return Math.max(2, verticalSpacing);
+}
+
+function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth) {
+	// === INPUT VALIDATION GUARDRAILS ===
+	if (!ctx || typeof ctx.beginPath !== "function") {
+		console.error("[_draw_single_layer] Invalid ctx");
+		return ctx;
+	}
+	if (layer_idx < 0 || layer_idx >= layers.length) {
+		console.warn("[_draw_single_layer] layer_idx out of bounds:", layer_idx);
+		return ctx;
+	}
+	if (!meta_infos || !meta_infos[layer_idx]) {
+		console.warn("[_draw_single_layer] No meta_info for layer_idx:", layer_idx);
+		return ctx;
+	}
+
+	var meta_info = meta_infos[layer_idx];
+	var layer_type = meta_info["layer_type"] || "";
+	var layerX = (layer_idx + 1) * layerSpacing;
+	var layerY = canvasHeight / 2;
+	var numNeurons = layers[layer_idx];
+	var shapeType = _determine_shape_type(layer_type);
+
+	// === DETERMINE LAYER ROLE ===
+	var isOutputLayer = (layer_idx === layers.length - 1);
+	var isConv2d = (shapeType === "rectangle_conv2d");
+
+	// === COMPUTE PER-LAYER SPACING (same function used by _prepare_connection_params) ===
+	var verticalSpacing = _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size, isOutputLayer, isConv2d, maxSpacingConv2d, maxSpacing);
+
+	// === GUARDRAIL: Validate computed spacing ===
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.warn("[_draw_single_layer] Invalid verticalSpacing computed, falling back to legacy");
+		verticalSpacing = _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight);
+	}
+
+	// === DISPATCH TO SHAPE-SPECIFIC DRAWING ===
+	if (shapeType === "circle" || shapeType === "rectangle_conv2d") {
+		// CRITICAL: Pass verticalSpacing (not maxSpacingConv2d) to the drawing function
+		return _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+	} else if (shapeType === "rectangle_flatten") {
+		var _height = Math.min(650, meta_info["output_shape"][1]);
+		return _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+	} else if (shapeType === "layernorm") {
+		return draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
+	}
+
+	console.warn("[_draw_single_layer] Unknown shapeType:", shapeType);
+	return ctx;
+}
+
+function _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos) {
+	// === INPUT VALIDATION ===
+	if (!Array.isArray(layers) || layers.length === 0) {
+		console.warn("[_compute_fcnn_dimensions] Invalid layers array");
+		return { maxNeurons: 1, maxRadius: 8, layerSpacing: 100, maxSpacing: 20, maxShapeSize: 8, font_size: 12 };
+	}
+	if (!Number.isFinite(canvasWidth) || canvasWidth < 100) canvasWidth = 800;
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 100) canvasHeight = 800;
+
+	// === SEPARATE NEURON COUNTS BY LAYER TYPE ===
+	var maxNeuronsAll = Math.max(...layers);
+	var maxNeuronsDense = 1; // Only Dense/output layers for spacing calculation
+	var maxNeuronsConv2d = 1;
+
+	if (meta_infos && Array.isArray(meta_infos)) {
+		for (var i = 0; i < layers.length; i++) {
+			var lt = (meta_infos[i] && meta_infos[i].layer_type) ? meta_infos[i].layer_type.toLowerCase() : "";
+			if (lt.includes("conv2d")) {
+				maxNeuronsConv2d = Math.max(maxNeuronsConv2d, layers[i]);
+			} else if (lt === "dense" || lt === "") {
+				// Dense or unknown → counts toward dense spacing
+				maxNeuronsDense = Math.max(maxNeuronsDense, layers[i]);
+			}
+			// Flatten/LayerNorm don't use neuron-based spacing, so skip
+		}
+	} else {
+		// No meta_infos available → fall back to global max
+		maxNeuronsDense = maxNeuronsAll;
+	}
+
+	// === COMPUTE DIMENSIONS USING DENSE NEURON COUNT ===
+	// maxRadius: based on the densest layer (all types) to keep circles reasonable
+	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeuronsAll, (canvasWidth / 2) / (layers.length + 1));
+	maxRadius = Math.max(3, maxRadius); // GUARDRAIL: minimum usable radius
+
+	var layerSpacing = canvasWidth / (layers.length + 1);
+
+	// maxSpacing: based ONLY on Dense layers, not Conv2D filter count
+	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeuronsDense) * 0.8);
+	maxSpacing = Math.max(8, maxSpacing); // GUARDRAIL: minimum spacing
+
+	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeuronsAll, (canvasWidth / 2) / (layers.length + 1));
+	maxShapeSize = Math.max(3, maxShapeSize); // GUARDRAIL: minimum shape size
+
+	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+
+	return { maxNeurons: maxNeuronsAll, maxNeuronsDense, maxNeuronsConv2d, maxRadius, layerSpacing, maxSpacing, maxShapeSize, font_size };
+}
+
+async function draw_fcnn(...args) {
+	// === ARGUMENT VALIDATION ===
+	assert(args.length == 3, "draw_fcnn must have 3 arguments");
+	if (is_setting_config) return;
+
+	var args_hash = await md5(JSON.stringify(args));
+	if (last_fcnn_hash == args_hash) return;
+	args_hash = last_fcnn_hash;
+
+	var [layers, _labels, meta_infos] = args;
+
+	// === GUARDRAIL: Validate layers ===
+	if (!Array.isArray(layers) || layers.length === 0) {
+		console.warn("[draw_fcnn] Empty or invalid layers array");
+		return;
+	}
+
+	var canvas = _setup_fcnn_canvas();
+	if (!canvas) {
+		console.error("[draw_fcnn] Could not setup canvas");
+		return;
+	}
+
+	var ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+	var ghw = $("#graphs_here").width();
+	var canvasWidth = Math.max(800, ghw);
+	var canvasHeight = 800;
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+	// === PASS meta_infos TO DIMENSIONS COMPUTATION ===
+	var dims = _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos);
+	var maxSpacingConv2d = _compute_max_conv2d_spacing(meta_infos, dims.maxSpacing);
+
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, dims.layerSpacing, _labels, dims.font_size);
+	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, dims.layerSpacing, canvasHeight, dims.maxSpacing, dims.maxShapeSize, dims.maxRadius, maxSpacingConv2d, dims.font_size);
+}
+
+function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size) {
+	// === INPUT VALIDATION ===
+	if (!Number.isFinite(neurons) || neurons < 1) {
+		neurons = 1;
+	}
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
+		console.warn("[compute_spacing] Invalid canvasHeight:", canvasHeight, "- defaulting to 800");
+		canvasHeight = 800;
+	}
+	if (!Number.isFinite(maxSpacing) || maxSpacing <= 0) {
+		maxSpacing = 20;
+	}
+	if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) {
+		maxSpacingConv2d = maxSpacing + 10;
+	}
+	if (!Number.isFinite(font_size) || font_size < 6) {
+		font_size = 12;
+	}
+
+	var isConv2d = (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("conv2d"));
+
+	const double_neg_is_output_layer = !!isOutputLayer;
+
+	// === DELEGATE TO SINGLE SOURCE OF TRUTH ===
+	return _compute_vertical_spacing_per_layer(neurons, canvasHeight, font_size, double_neg_is_output_layer, isConv2d, maxSpacingConv2d, maxSpacing);
+}
+
+function _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
+	// === VALIDATE INDICES ===
+	if (layer_nr < 0 || layer_nr >= layers.length - 1) {
+		console.warn("[_prepare_connection_params] Invalid layer_nr:", layer_nr);
+		return null;
+	}
+	if (!Array.isArray(layers) || layers.length < 2) {
+		console.warn("[_prepare_connection_params] Invalid layers array");
+		return null;
+	}
+
+	// === VALIDATE NUMERIC INPUTS ===
+	if (!Number.isFinite(layerSpacing) || layerSpacing <= 0) layerSpacing = 100;
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) canvasHeight = 800;
+	if (!Number.isFinite(layerY)) layerY = canvasHeight / 2;
+	if (!Number.isFinite(maxRadius) || maxRadius <= 0) maxRadius = 8;
+	if (!Number.isFinite(maxSpacing) || maxSpacing <= 0) maxSpacing = 20;
+	if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) maxSpacingConv2d = maxSpacing + 10;
+	if (!Number.isFinite(font_size) || font_size < 6) font_size = 12;
+
+	var meta = get_layer_meta(meta_infos, layer_nr);
+	var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+
+	var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+	var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+
+	var currNeurons = _resolve_neuron_count(layers[layer_nr], meta, "input");
+	var nextNeurons = _resolve_neuron_count(layers[layer_nr + 1], next_meta, "output");
+
+	if (meta.layer_type === "LayerNormalization") currNeurons = 1;
+	if (next_meta.layer_type === "LayerNormalization") nextNeurons = 1;
+
+	// === GUARDRAIL: Validate neuron counts ===
+	if (!Number.isFinite(currNeurons) || currNeurons < 1) currNeurons = 1;
+	if (!Number.isFinite(nextNeurons) || nextNeurons < 1) nextNeurons = 1;
+
+	// === DETECT OUTPUT LAYER ===
+	var currIsOutput = (layer_nr === layers.length - 1);
+	var nextIsOutput = (layer_nr + 1 === layers.length - 1);
+
+	// === USE compute_spacing (which uses _compute_vertical_spacing_per_layer internally) ===
+	// This is the SAME path that _draw_single_layer uses, ensuring alignment.
+	var currSpacing = compute_spacing(meta.layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, currIsOutput, font_size);
+	var nextSpacing = compute_spacing(next_meta.layer_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, nextIsOutput, font_size);
+
+	// === GUARDRAIL: Validate computed spacings ===
+	if (!Number.isFinite(currSpacing) || currSpacing <= 0) {
+		console.warn("[_prepare_connection_params] Invalid currSpacing:", currSpacing, "- using maxSpacing");
+		currSpacing = maxSpacing;
+	}
+	if (!Number.isFinite(nextSpacing) || nextSpacing <= 0) {
+		console.warn("[_prepare_connection_params] Invalid nextSpacing:", nextSpacing, "- using maxSpacing");
+		nextSpacing = maxSpacing;
+	}
+
+	// === COMPUTE Y POSITIONS USING compute_neuron_y (same formula as drawing) ===
+	var currYs = Array.from({ length: currNeurons }, (_, i) => compute_neuron_y(i, currNeurons, currSpacing, layerY, meta.layer_type, _height));
+	var nextYs = Array.from({ length: nextNeurons }, (_, j) => compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_meta.layer_type, _height));
+
+	// === GUARDRAIL: Validate Y arrays ===
+	if (currYs.length === 0 || nextYs.length === 0) {
+		console.warn("[_prepare_connection_params] Empty Y arrays");
+		return null;
+	}
+	if (!Number.isFinite(currYs[0]) || !Number.isFinite(nextYs[0])) {
+		console.warn("[_prepare_connection_params] Non-finite Y values detected");
+		return null;
+	}
+
+	var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+	var _weight_stats = null;
+	var _weight_data_sample = null;
+	if (weightInfo && weightInfo.data) {
+		var sampleLimit = Math.min(weightInfo.data.length, 50000);
+		_weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+		_weight_stats = _compute_stats(_weight_data_sample);
+	}
+
+	return { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample };
+}
+
+function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
+	try {
+		if (!ctx || layer_nr < 0 || layer_nr >= layers.length - 1) return;
+
+		var params = _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size);
+
+		if (!params) {
+			console.warn("[draw_layer_connections] Could not prepare params for layer_nr:", layer_nr);
+			return;
+		}
+
+		var { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample } = params;
+
+		var convLike = (currNeurons > 512 || nextNeurons > 512);
+		var estimateCount = currNeurons * nextNeurons;
+
+		if (convLike) {
+			_draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.1);
+		} else if (estimateCount > 300000) {
+			_draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.08);
+		} else {
+			_draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, _weight_stats, _weight_data_sample);
+		}
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		console.error("[draw_layer_connections] Error:", e);
+	}
+}
+
+function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d, font_size) {
+	try {
+		if (!Array.isArray(layers) || layers.length < 2) return;
+
+		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
+			draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size);
+		}
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
+}
+
+async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
+	_clear_fcnn_hit_regions();
+
+	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+		ctx = _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth);
+	}
+
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, canvasHeight / 2, (layers.length) * layerSpacing, maxRadius, null, maxSpacingConv2d, font_size);
+
+	// === DRAW SKIP CONNECTIONS ===
+	_draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxRadius, maxSpacingConv2d, font_size);
+
+	_bind_fcnn_canvas_mouse_events();
+}
+
+function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
+	try {
+		var blockWidth = maxShapeSize * 10;
+		var blockHeight = maxShapeSize * 2.5;
+
+		var x = layerX - blockWidth / 2;
+		var y = layerY - blockHeight / 2;
+
+		var sectionWidth = blockWidth / 3;
+
+		ctx.fillStyle = "#e0e0e0";
+		ctx.fillRect(x, y, sectionWidth, blockHeight);
+
+		ctx.fillStyle = "#b0d4ff";
+		ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
+
+		ctx.fillStyle = "#ffd0a0";
+		ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
+
+		ctx.beginPath();
+		ctx.rect(x, y, blockWidth, blockHeight);
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		ctx.closePath();
+
+		// Register hit region for tooltip
+		const this_region = {
+			type: "layernorm",
+			shape: "rect",
+			x: x,
+			y: y,
+			w: blockWidth,
+			h: blockHeight,
+			layer_idx: layer_idx,
+			layer_type: meta_info.layer_type || "LayerNormalization",
+			output_shape: meta_info.output_shape || null,
+			input_shape: meta_info.input_shape || null
+		};
+		_register_fcnn_hit_region(this_region);
+
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
+
+	return ctx;
+}
+
+function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
+	try {
+		if (!meta_info["output_shape"]) {
+			alert("Has no output shape");
+			return ctx;
+		}
+
+		var rectSize = maxShapeSize * 2;
+		let localLayerY = canvasHeight / 2;
+		var _width = rectSize;
+		var _x = layerX - _width / 2;
+		var _y = localLayerY - _height / 2;
+
+		var this_layer_output = _get_flatten_layer_output(layer_idx);
+
+		_render_flatten_rect(ctx, this_layer_output, _x, _y, _width, _height);
+		_draw_flatten_outline(ctx, _x, _y, _width, _height);
+
+		var { flatten_stats, flatten_image_url } = _compute_flatten_tooltip_data(this_layer_output);
+
+		const this_region = {
+			type: "flatten",
+			shape: "rect",
+			x: _x, y: _y, w: _width, h: _height,
+			layer_idx: layer_idx,
+			layer_type: meta_info.layer_type || "Flatten",
+			output_shape: meta_info.output_shape || null,
+			input_shape: meta_info.input_shape || null,
+			flatten_stats: flatten_stats,
+			image_data_url: flatten_image_url
+		};
+
+		_register_fcnn_hit_region(this_region);
+	} catch (e) {
+		if (Object.keys(e).includes("message")) e = e.message;
+		assert(false, e);
+	}
+	return ctx;
+}
+
+function _get_flatten_layer_output(layer_idx) {
+	if (!proper_layer_states_saved() || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return null;
+	var this_layer_states = layer_states_saved[`${layer_idx}`];
+	if (!this_layer_states["output"]) return null;
+
+	var output = this_layer_states["output"];
+	var shape = get_shape_from_array(output);
+	if (shape.length < 1) return null;
+
+	var flat = Array.isArray(output) ? output.flat(Infinity) : [output];
+	return (flat.length > 0) ? flat : null;
+}
+
+function _render_flatten_rect(ctx, this_layer_output, _x, _y, _width, _height) {
+	if (this_layer_output && this_layer_output.length > 0) {
+		var normalizedValues = normalizeArray(this_layer_output);
+		var numValues = normalizedValues.length;
+		var lineHeight = _height / numValues;
+
+		for (var val_idx = 0; val_idx < numValues; val_idx++) {
+			ctx.beginPath();
+			var colorValue = Math.abs(255 - Math.round(normalizedValues[val_idx]));
+			ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+			ctx.fillRect(_x, _y + val_idx * lineHeight, _width, lineHeight);
+		}
+	} else {
+		ctx.fillStyle = "lightgray";
+		ctx.fillRect(_x, _y, _width, _height);
+	}
+}
+
+function _draw_flatten_outline(ctx, _x, _y, _width, _height) {
+	ctx.beginPath();
+	ctx.rect(_x, _y, _width, _height);
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.stroke();
+	ctx.closePath();
+}
+
+function _compute_flatten_tooltip_data(this_layer_output) {
+	var flatten_stats = null;
+	var flatten_image_url = null;
+	if (this_layer_output && this_layer_output.length > 0) {
+		flatten_stats = _compute_stats(this_layer_output);
+		try {
+			var stripRows = Math.min(this_layer_output.length, 256);
+			var strip2d = [];
+			var step = Math.max(1, Math.floor(this_layer_output.length / stripRows));
+			for (var si = 0; si < stripRows; si++) {
+				strip2d.push([this_layer_output[si * step]]);
+			}
+			flatten_image_url = _make_mini_canvas_data_url(strip2d, 1, stripRows, 128);
+		} catch (e) {}
+	}
+	return { flatten_stats, flatten_image_url };
+}
+
+function _try_draw_first_layer_input_image(ctx, layer_idx, font_size) {
+	if (
+		!Object.keys(layer_states_saved).length ||
+		!Object.keys(layer_states_saved).includes("0") ||
+		get_shape_from_array(layer_states_saved["0"]["input"]).length !== 4 ||
+		get_shape_from_array(layer_states_saved["0"]["input"])[3] !== 3 ||
+		layer_idx !== 0
+	) {
+		return { ctx, n: undefined, m: undefined, minVal: undefined, maxVal: undefined };
+	}
+
+	var first_layer_input = layer_states_saved["0"]["input"][0];
+	var n = first_layer_input.length;
+	var m = first_layer_input[0].length;
+	var flattened = flatten(first_layer_input);
+	var minVal = Math.min(...flattened);
+	var maxVal = Math.max(...flattened);
+
+	ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
+	_register_input_image_hit_region(n, m, flattened, first_layer_input, font_size);
+
+	return { ctx, n, m, minVal, maxVal };
+}
+
+function _register_input_image_hit_region(n, m, flattened, first_layer_input, font_size) {
+	var _first_image_x = 10;
+	var _first_image_y = font_size + 10;
+	var pixel_stats = _compute_stats(flattened);
+	var input_image_url = null;
+	try {
+		input_image_url = _make_mini_canvas_rgb_data_url(first_layer_input, 96);
+	} catch (e) {}
+
+	const this_region = {
+		type: "input_image",
+		shape: "rect",
+		x: _first_image_x,
+		y: _first_image_y,
+		w: m,
+		h: n,
+		layer_idx: 0,
+		img_width: m,
+		img_height: n,
+		channels: 3,
+		pixel_stats: pixel_stats,
+		image_data_url: input_image_url
+	};
+
+	_register_fcnn_hit_region(this_region);
+}
+
+function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
+	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
+
+	var { ctx: updatedCtx, n, m, minVal, maxVal } = _try_draw_first_layer_input_image(ctx, layer_idx, font_size);
+	ctx = updatedCtx;
+
+	ctx = draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
+	return ctx;
+}
+
+function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
+	// === GUARDRAIL: Validate inputs ===
+	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
+		console.warn("[draw_layer_neurons] Invalid numNeurons:", numNeurons);
+		return ctx;
+	}
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.warn("[draw_layer_neurons] Invalid verticalSpacing:", verticalSpacing);
+		verticalSpacing = 20; // safe fallback
+	}
+
+	var this_layer_output = null;
+	var this_layer_states = null;
+	var has_visualization = false;
+
+	const has_proper_layer_states_saved = proper_layer_states_saved();
+
+	// Pre-compute layer stats for Dense layers
+	var layer_stats = _compute_layer_stats_for_neurons(shapeType, has_proper_layer_states_saved, layer_idx);
+
+	// Check if conv2d has visualization data
+	if (shapeType === "rectangle_conv2d") {
+		has_visualization = _check_conv2d_has_visualization(numNeurons, has_proper_layer_states_saved, layer_idx);
+	}
+
+	for (let j = 0; j < numNeurons; j++) {
+		ctx.beginPath();
+
+		if (shapeType === "circle") {
+			ctx = _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, layerX, maxShapeSize, layer_idx, meta_info, has_proper_layer_states_saved, layer_stats, canvasWidth, font_size);
+		} else if (shapeType === "rectangle_conv2d") {
+			// CRITICAL FIX: Pass verticalSpacing instead of relying on maxSpacingConv2d inside
+			ctx = _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, has_proper_layer_states_saved, has_visualization, n, m, minVal, maxVal, maxShapeSize);
+		}
+	}
+
+	return ctx;
+}
+
+function _compute_layer_stats_for_neurons(shapeType, hasProperStates, layer_idx) {
+	if (shapeType !== "circle" || !hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) {
+		return null;
+	}
+	try {
+		var layer_flat_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+		if (layer_flat_output && layer_flat_output.length > 0) {
+			return _compute_stats(layer_flat_output);
+		}
+	} catch (e) {}
+	return null;
+}
+
+function _check_conv2d_has_visualization(numNeurons, hasProperStates, layer_idx) {
+	if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return false;
+	if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length !== 4) return false;
+
+	var tmp_all = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+	for (var j = 0; j < numNeurons; j++) {
+		var flat = tmp_all[j] ? flatten(tmp_all[j]) : [];
+		if (flat.length && Math.min(...flat) !== Math.max(...flat)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, layerX, maxShapeSize, layer_idx, meta_info, hasProperStates, layer_stats, canvasWidth, font_size) {
+	var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+	var this_layer_output = null;
+
+	if (hasProperStates && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+		this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+	}
+
+	var availableSpace = verticalSpacing / 2 - 2;
+	var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
+
+	if (radius < 0) {
+		log_once(`Found negative radius! Radius: ${radius}`);
+		return ctx;
+	}
+
+	ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
+	ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
+
+	// Register hit region
+	var activation_value = (this_layer_output && j < this_layer_output.length) ? this_layer_output[j] : null;
+	const this_region = {
+		type: "neuron",
+		shape: "circle",
+		x: layerX,
+		y: neuronY,
+		radius: radius + 2,
+		layer_idx: layer_idx,
+		neuron_idx: j,
+		layer_type: meta_info.layer_type || "Dense",
+		activation_value: activation_value,
+		layer_stats: layer_stats,
+		output_shape: meta_info.output_shape || null,
+		input_shape: meta_info.input_shape || null,
+		label: _get_neuron_label(layer_idx, j)
+	};
+	_register_fcnn_hit_region(this_region);
+
+	return ctx;
+}
+
+function _get_neuron_label(layer_idx, j) {
+	try {
+		var nr_layers = model?.layers?.length;
+		if (layer_idx == nr_layers - 1 && labels && Array.isArray(labels) && labels[j]) {
+			return labels[j];
+		}
+	} catch (e) {}
+	return null;
+}
+
+function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, hasProperStates, has_visualization, n, m, minVal, maxVal, maxShapeSize) {
+	// === GUARDRAIL: Validate verticalSpacing ===
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.warn("[_draw_single_conv2d_neuron] Invalid verticalSpacing:", verticalSpacing, "- falling back to maxSpacingConv2d");
+		verticalSpacing = maxSpacingConv2d;
+	}
+
+	// === KEY FIX: Use verticalSpacing (same as compute_spacing returns) instead of maxSpacingConv2d ===
+	var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+
+	// === GUARDRAIL: Clamp neuronY to reasonable bounds ===
+	var usableTop = layerY - (layerY * 0.85);
+	var usableBottom = layerY + (layerY * 0.85);
+	if (neuronY < usableTop || neuronY > usableBottom) {
+		// Recalculate with compressed spacing that fits
+		var safeSpacing = Math.min(verticalSpacing, (usableBottom - usableTop) / Math.max(1, numNeurons));
+		neuronY = (j - (numNeurons - 1) / 2) * safeSpacing + layerY;
+	}
+
+	var conv_layer_output_for_channel = _get_conv2d_channel_output(hasProperStates, layer_idx, j);
+
+	var conv_rect_dims = _draw_and_get_conv2d_rect(ctx, has_visualization, meta_info, conv_layer_output_for_channel, n, m, minVal, maxVal, layerX, neuronY, verticalSpacing);
+
+	// Compute channel stats and image for tooltip
+	var { channel_stats, channel_image_url } = _compute_conv2d_channel_tooltip_data(conv_layer_output_for_channel, minVal, maxVal);
+
+	const this_region = {
+		type: "conv2d",
+		shape: "rect",
+		x: conv_rect_dims.x,
+		y: conv_rect_dims.y,
+		w: conv_rect_dims.w,
+		h: conv_rect_dims.h,
+		layer_idx: layer_idx,
+		neuron_idx: j,
+		layer_type: meta_info.layer_type || "Conv2D",
+		kernel_size_x: meta_info.kernel_size_x,
+		kernel_size_y: meta_info.kernel_size_y,
+		output_shape: meta_info.output_shape || null,
+		input_shape: meta_info.input_shape || null,
+		channel_stats: channel_stats,
+		image_data_url: channel_image_url
+	};
+
+	_register_fcnn_hit_region(this_region);
+
+	return ctx;
+}
+
+function _get_conv2d_channel_output(hasProperStates, layer_idx, j) {
+	if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return null;
+	if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length !== 4) return null;
+	var transformed = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+	return transformed[j] || null;
+}
+
+function _draw_and_get_conv2d_rect(ctx, has_visualization, meta_info, channelOutput, n, m, minVal, maxVal, layerX, neuronY, verticalSpacing) {
+	if (has_visualization) {
+		ctx = draw_filled_kernel_rectangle(ctx, meta_info, channelOutput, n, m, minVal, maxVal, layerX, neuronY);
+		var _ww = Number(meta_info?.input_shape?.[1]) || (channelOutput ? channelOutput[0].length : 10);
+		var _hh = Number(meta_info?.input_shape?.[2]) || (channelOutput ? channelOutput.length : 10);
+		return { x: layerX - _ww / 2, y: neuronY - _hh / 2, w: _ww, h: _hh };
+	} else {
+		ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
+		var _ww = Math.min((meta_info["kernel_size_x"] || 3) * 3, verticalSpacing - 2);
+		var _hh = Math.min((meta_info["kernel_size_y"] || 3) * 3, verticalSpacing - 2);
+		return { x: layerX - _ww / 2, y: neuronY - _hh / 2, w: _ww, h: _hh };
+	}
+}
+
+function _compute_conv2d_channel_tooltip_data(channelOutput, minVal, maxVal) {
+	var channel_stats = null;
+	var channel_image_url = null;
+	if (channelOutput && Array.isArray(channelOutput) && channelOutput.length > 0) {
+		try {
+			var flat_channel = flatten(channelOutput);
+			channel_stats = _compute_stats(flat_channel);
+			channel_image_url = _make_mini_canvas_data_url_inverted(channelOutput, channelOutput[0].length, channelOutput.length, 80, minVal, maxVal);
+		} catch (e) {}
+	}
+	return { channel_stats, channel_image_url };
+}
+
+function _resolve_neuron_count(defaultCount, meta, direction) {
+	var layer_type = meta.layer_type;
+	if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+		var shape = direction === "input" ? meta.input_shape : meta.output_shape;
+		if (shape) {
+			var count = shape[shape.length - 1];
+			return direction === "output" ? Math.min(64, count) : count;
+		}
+	}
+	return defaultCount;
+}
+
+function _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, weight_stats, weight_data, alpha) {
+	var yMin = Math.min(currYs[0], nextYs[0]);
+	var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
+
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = is_dark_mode ? "#8090b0" : "#606784";
+	ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
+	ctx.restore();
+
+	const this_region = {
+		type: "connection",
+		shape: "rect",
+		x: currX, y: yMin,
+		w: nextX - currX,
+		h: Math.max(1, yMax - yMin),
+		from_layer: layer_nr,
+		to_layer: layer_nr + 1,
+		from_neurons: currNeurons,
+		to_neurons: nextNeurons,
+		weight_stats: weight_stats,
+		weight_data: weight_data
+	};
+
+	_register_fcnn_hit_region(this_region);
+}
+
+function _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, weight_stats, weight_data) {
+	var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
+	ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+
+	var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
+	var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
+
+	const this_region = {
+		type: "connection",
+		shape: "rect",
+		x: currX, y: connYMin,
+		w: nextX - currX,
+		h: Math.max(1, connYMax - connYMin),
+		from_layer: layer_nr,
+		to_layer: layer_nr + 1,
+		from_neurons: currNeurons,
+		to_neurons: nextNeurons,
+		weight_stats: weight_stats,
+		weight_data: weight_data
+	};
+
+	_register_fcnn_hit_region(this_region);
+}
+
+// ===== HELPER FUNCTIONS =====
+
+function get_layer_meta(meta_infos, idx) {
+	if (idx in meta_infos) {
+		const info = meta_infos[idx];
+		return {
+			layer_type: info["layer_type"],
+			input_shape: info["input_shape"],
+			output_shape: info["output_shape"]
+		};
+	}
+	return { layer_type: null, input_shape: null, output_shape: null };
+}
+
+function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type, _height) {
+	// === INPUT VALIDATION ===
+	if (!Number.isFinite(neuron_idx)) neuron_idx = 0;
+	if (!Number.isFinite(total_neurons) || total_neurons < 1) total_neurons = 1;
+	if (!Number.isFinite(spacing) || spacing <= 0) {
+		console.warn("[compute_neuron_y] Invalid spacing:", spacing, "- using 20");
+		spacing = 20;
+	}
+	if (!Number.isFinite(layerY)) {
+		console.warn("[compute_neuron_y] Invalid layerY:", layerY, "- using 400");
+		layerY = 400;
+	}
+
+	// === CORE FORMULA (must match _draw_single_conv2d_neuron and _draw_single_dense_neuron) ===
+	var y = (neuron_idx - (total_neurons - 1) / 2) * spacing + layerY;
+
+	// === FLATTEN LAYER CLAMPING ===
+	if (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("flatten")) {
+		if (Number.isFinite(_height) && _height > 0) {
+			var top = layerY - (_height / 2);
+			var bottom = layerY + (_height / 2);
+			y = Math.min(bottom, Math.max(top, y));
+		}
+	}
+
+	// === FINAL GUARDRAIL ===
+	if (!Number.isFinite(y)) {
+		console.error("[compute_neuron_y] Computed NaN/Infinity, returning layerY");
+		return layerY;
+	}
+
+	return y;
+}
+
+function _connection_cache_key(layer_nr, currNeurons, nextNeurons, currX, nextX, currSpacing, nextSpacing) {
+	return `${layer_nr}:${currNeurons}x${nextNeurons}:x${Math.round(currX)}-${Math.round(nextX)}:s${Math.round(currSpacing)}-${Math.round(nextSpacing)}`;
+}
+
+function get_weight_color(weight, minW, maxW) {
+	var normalized = (maxW !== minW) ? ((weight - minW) / (maxW - minW)) * 2 - 1 : 0;
+	var abs = Math.abs(normalized);
+
+	var r, g, b;
+	if (normalized >= 0) {
+		// White → Blue (große/positive Gewichte)
+		r = Math.round(255 * (1 - abs));
+		g = Math.round(255 * (1 - abs));
+		b = 255;
+	} else {
+		// White → Red (kleine/negative Gewichte)
+		r = 255;
+		g = Math.round(255 * (1 - abs));
+		b = Math.round(255 * (1 - abs));
+	}
+
+	var alpha = 0.15 + abs * 0.75;
+	return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+}
+
+function get_layer_weight_data(layer_nr, meta_infos) {
+	try {
+		if (!model || !model.layers) return null;
+
+		// Weights belong to the receiving layer (layer_nr + 1 in meta_infos)
+		var meta = meta_infos[layer_nr + 1];
+		if (!meta) return null;
+
+		var actual_layer_idx = meta.nr;
+		if (actual_layer_idx == null) return null;
+
+		var layer = model.layers[actual_layer_idx];
+		if (!layer || !layer.weights || layer.weights.length === 0) return null;
+
+		var kernel = layer.weights[0];
+		if (!kernel || !kernel.val) return null;
+
+		var weightData = kernel.val.dataSync();
+		if (!weightData || weightData.length === 0) return null;
+
+		var minW = weightData[0], maxW = weightData[0];
+		for (var i = 1; i < weightData.length; i++) {
+			if (weightData[i] < minW) minW = weightData[i];
+			if (weightData[i] > maxW) maxW = weightData[i];
+		}
+
+		return { data: weightData, min: minW, max: maxW, shape: kernel.shape };
+	} catch (e) {
+		return null;
+	}
+}
+
+// ===== OFFSCREEN RENDERING WITH CACHE =====
+
+var CONNECTION_CANVAS_CACHE = new Map();
+
+function _draw_unweighted_connections(octx, currYs, nextYs, localX1, localX2, dark) {
+	octx.strokeStyle = dark ? "rgba(160, 175, 210, 0.7)" : "rgba(40, 50, 90, 0.55)";
+	octx.globalAlpha = 1.0;
+	octx.beginPath();
+	let count = 0;
+	const CHUNK = 5000;
+
+	for (let i = 0; i < currYs.length; i++) {
+		const y1 = currYs[i];
+		for (let k = 0; k < nextYs.length; k++) {
+			var cpX = (localX1 + localX2) / 2;
+			octx.moveTo(localX1, y1);
+			octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
+			count++;
+			if ((count % CHUNK) === 0) {
+				octx.stroke();
+				octx.beginPath();
+			}
+		}
+	}
+	if (count % CHUNK !== 0) octx.stroke();
+}
+
+function _draw_weighted_connections(octx, currYs, nextYs, localX1, localX2, weightInfo, dark) {
+	var shape = weightInfo.shape;
+	var cols = shape[shape.length - 1];
+	var rows = shape[shape.length - 2];
+
+	for (let i = 0; i < currYs.length; i++) {
+		const y1 = currYs[i];
+		for (let k = 0; k < nextYs.length; k++) {
+			var fi = Math.min(i, rows - 1);
+			var ti = Math.min(k, cols - 1);
+			var idx = fi * cols + ti;
+			var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
+
+			octx.beginPath();
+			octx.strokeStyle = _get_weight_color_themed(w, weightInfo.min, weightInfo.max, dark);
+			var cpX = (localX1 + localX2) / 2;
+			octx.moveTo(localX1, y1);
+			octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
+			octx.stroke();
+		}
+	}
+}
+
+function _get_or_create_offscreen_canvas(key, currX, nextX, canvasHeight, maxRadius) {
+	if (CONNECTION_CANVAS_CACHE.has(key)) {
+		return { cached: true, ...CONNECTION_CANVAS_CACHE.get(key) };
+	}
+
+	const pad = Math.ceil(maxRadius + 2);
+	const width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
+	const height = Math.max(1, canvasHeight);
+
+	const off = document.createElement("canvas");
+	off.width = width;
+	off.height = height;
+
+	return { cached: false, canvas: off, pad, shiftX: pad - currX };
+}
+
+function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
+	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+	var darkFlag = dark ? "d" : "l";
+	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
+	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
+
+	var offscreen = _get_or_create_offscreen_canvas(key, currX, nextX, canvasHeight, maxRadius);
+	if (offscreen.cached) return offscreen;
+
+	const octx = offscreen.canvas.getContext("2d");
+	octx.lineWidth = 1;
+
+	const localX1 = currX + offscreen.shiftX;
+	const localX2 = nextX + offscreen.shiftX;
+
+	if (!weightInfo) {
+		_draw_unweighted_connections(octx, currYs, nextYs, localX1, localX2, dark);
+	} else {
+		_draw_weighted_connections(octx, currYs, nextYs, localX1, localX2, weightInfo, dark);
+	}
+
+	var result = { canvas: offscreen.canvas, shiftX: offscreen.shiftX, pad: offscreen.pad };
+	CONNECTION_CANVAS_CACHE.set(key, result);
+	return result;
+}
+
+function _get_weight_color_themed(weight, minW, maxW, dark) {
+	var normalized = (maxW !== minW) ? ((weight - minW) / (maxW - minW)) * 2 - 1 : 0;
+	var abs = Math.abs(normalized);
+
+	var r, g, b, alpha;
+
+	if (dark) {
+		// Dark mode: bright colors on dark background
+		if (normalized >= 0) {
+			// Neutral → Blue
+			r = Math.round(80 + (1 - abs) * 100);
+			g = Math.round(80 + (1 - abs) * 100);
+			b = Math.round(140 + abs * 115);
+		} else {
+			// Neutral → Red
+			r = Math.round(140 + abs * 115);
+			g = Math.round(80 + (1 - abs) * 100);
+			b = Math.round(80 + (1 - abs) * 100);
+		}
+		alpha = 0.3 + abs * 0.65;
+	} else {
+		// Light mode: dark/saturated colors on white background
+		if (normalized >= 0) {
+			// Dark neutral → Deep Blue
+			r = Math.round(30 * (1 - abs));
+			g = Math.round(30 * (1 - abs));
+			b = Math.round(80 + abs * 175);
+		} else {
+			// Dark neutral → Deep Red
+			r = Math.round(80 + abs * 175);
+			g = Math.round(30 * (1 - abs));
+			b = Math.round(30 * (1 - abs));
+		}
+		alpha = 0.25 + abs * 0.7;
+	}
+
+	return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+}
+
+// ===== LAYERS TEXT DRAWING =====
+
+function _draw_layer_pill_badge(ctx, x, labelText, font_size) {
+	ctx.font = `bold ${font_size}px 'Segoe UI', Arial, sans-serif`;
+	var textWidth = ctx.measureText(labelText).width;
+	var pillW = textWidth + 20;
+	var pillH = font_size + 10;
+	var pillX = x - pillW / 2;
+	var pillY = 12;
+
+	ctx.beginPath();
+	_roundRect(ctx, pillX, pillY, pillW, pillH, 8);
+	ctx.fillStyle = is_dark_mode ? 'rgba(60, 70, 110, 0.7)' : 'rgba(70, 100, 200, 0.1)';
+	ctx.fill();
+	ctx.strokeStyle = is_dark_mode ? 'rgba(100, 130, 200, 0.5)' : 'rgba(70, 100, 200, 0.3)';
+	ctx.lineWidth = 1;
+	ctx.stroke();
+
+	ctx.fillStyle = is_dark_mode ? '#b0c4ff' : '#2a4494';
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	ctx.fillText(labelText, x, pillY + pillH / 2);
+	ctx.textBaseline = "alphabetic";
+}
+
+function _draw_layer_shape_info(ctx, x, meta_info, font_size, canvasHeight) {
+	ctx.font = `${font_size - 1}px 'Segoe UI', Arial, sans-serif`;
+	ctx.fillStyle = is_dark_mode ? 'rgba(200,210,230,0.7)' : 'rgba(60,60,80,0.7)';
+	ctx.textAlign = "center";
+
+	if (meta_info.input_shape) {
+		ctx.fillText("In: [" + meta_info.input_shape.filter(n => n).join(", ") + "]", x, canvasHeight - 28);
+	}
+	if (meta_info.output_shape) {
+		ctx.fillText("Out: [" + meta_info.output_shape.filter(n => n).join(", ") + "]", x, canvasHeight - 10);
+	}
+}
+
+function _draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
+	try {
+		for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+			var x = (layer_idx + 1) * layerSpacing;
+
+			if (_labels && _labels[layer_idx]) {
+				_draw_layer_pill_badge(ctx, x, _labels[layer_idx], font_size);
+			}
+
+			if (meta_infos && meta_infos[layer_idx]) {
+				_draw_layer_shape_info(ctx, x, meta_infos[layer_idx], font_size, canvasHeight);
+			}
+		}
+	} catch (e) {
+		if (Object.keys(e).includes("message")) e = e.message;
+		assert(false, e);
+	}
+}
+
+// Helper: draw a rounded rectangle path
+function _roundRect(ctx, x, y, w, h, r) {
+	if (w < 2 * r) r = w / 2;
+	if (h < 2 * r) r = h / 2;
+	ctx.moveTo(x + r, y);
+	ctx.arcTo(x + w, y, x + w, y + h, r);
+	ctx.arcTo(x + w, y + h, x, y + h, r);
+	ctx.arcTo(x, y + h, x, y, r);
+	ctx.arcTo(x, y, x + w, y, r);
+	ctx.closePath();
+}
+
+// ===== TRANSFORM HELPER =====
+
+function transform_array_whd_dwh(inputArray) {
+	var width = inputArray.length;
+	var height = inputArray[0].length;
+	var depth = inputArray[0][0].length;
+
+	var newArray = [];
+	for (var depth_idx = 0; depth_idx < depth; depth_idx++) {
+		newArray[depth_idx] = [];
+		for (var width_idx = 0; width_idx < width; width_idx++) {
+			newArray[depth_idx][width_idx] = [];
+			for (var height_idx = 0; height_idx < height; height_idx++) {
+				newArray[depth_idx][width_idx][height_idx] = inputArray[width_idx][height_idx][depth_idx];
+			}
+		}
+	}
+
+	return newArray;
+}
+
+// ===== PROPER LAYER STATES CHECK =====
+
+function proper_layer_states_saved() {
+	try {
+		if (typeof (layer_states_saved) != "object") {
+			return false;
+		}
+
+		if (!model) {
+			return false;
+		}
+
+		var _keys = Object.keys(layer_states_saved);
+
+		if (_keys.length == 0) {
+			return false;
+		}
+
+		for (var key_idx = 0; key_idx < _keys.length; key_idx++) {
+			var _model_uuid = layer_states_saved[key_idx]["model_uuid"];
+
+			if (model.uuid != _model_uuid) {
+				return false;
+			}
+		}
+
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
+// ===== CLEANUP ON PAGE UNLOAD =====
+
+window.addEventListener("beforeunload", function () {
+	_hide_fcnn_tooltip();
+	if (_fcnn_tooltip_el && _fcnn_tooltip_el.parentNode) {
+		_fcnn_tooltip_el.parentNode.removeChild(_fcnn_tooltip_el);
+	}
+	_fcnn_tooltip_el = null;
+	_fcnn_hit_regions = [];
+	CONNECTION_CANVAS_CACHE.clear();
+});
+
+// ===== DARK MODE CHANGE LISTENER =====
+// Re-style tooltip when dark mode changes
+
+(function () {
+	var _last_dark_mode_state = (typeof is_dark_mode !== 'undefined') ? is_dark_mode : false;
+
+	setInterval(function () {
+		var currentDark = (typeof is_dark_mode !== 'undefined') ? is_dark_mode : false;
+		if (currentDark !== _last_dark_mode_state) {
+			_last_dark_mode_state = currentDark;
+			// Clear connection cache since colors change
+			if (CONNECTION_CANVAS_CACHE) CONNECTION_CANVAS_CACHE.clear();
+			// Force tooltip restyle on next show
+			if (_fcnn_tooltip_el) {
+				_fcnn_tooltip_el.style.background = currentDark ? 'rgba(30,30,40,0.97)' : 'rgba(255,255,255,0.98)';
+				_fcnn_tooltip_el.style.color = currentDark ? '#e0e0e0' : '#222';
+				_fcnn_tooltip_el.style.border = `1px solid ${currentDark ? '#555' : '#bbb'}`;
+			}
+		}
+	}, 500);
+})();
+
+function _draw_skip_connections(ctx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxRadius, maxSpacingConv2d, font_size) {
+	var layerY = canvasHeight / 2;
+
+	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+		var skip_info = get_skip_connection_info(layer_idx);
+		if (!skip_info.enabled) continue;
+
+		// Skip connection goes from input of this layer to output of this layer
+		// Visually: draw an arc/curve from the left side of this layer to the right side
+		var layerX = (layer_idx + 1) * layerSpacing;
+
+		// Get the previous layer's X position (input to this layer)
+		var prevLayerX = layer_idx * layerSpacing;
+		if (layer_idx === 0) {
+			prevLayerX = layerSpacing * 0.3; // Before first layer
+		}
+
+		var numNeurons = layers[layer_idx];
+		var meta_info = meta_infos[layer_idx] || {};
+		var layer_type = meta_info.layer_type || "";
+		var isConv2d = layer_type.toLowerCase().includes("conv2d");
+		var isOutputLayer = (layer_idx === layers.length - 1);
+
+		var verticalSpacing = compute_spacing(layer_type, numNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size);
+
+		// Calculate top and bottom of the layer
+		var topY = layerY - ((numNeurons - 1) / 2) * verticalSpacing - 15;
+		var bottomY = layerY + ((numNeurons - 1) / 2) * verticalSpacing + 15;
+
+		// Draw the skip connection arc
+		var strength = skip_info.strength;
+		var alpha = 0.3 + strength * 0.5;
+		var lineWidth = 1 + strength * 3;
+
+		ctx.save();
+		ctx.strokeStyle = `rgba(50, 200, 50, ${alpha})`;
+		ctx.lineWidth = lineWidth;
+		ctx.setLineDash([6, 4]);
+
+		// Draw arc above the layer
+		var arcHeight = 25 + strength * 15;
+		var startX = layerX - maxRadius - 5;
+		var endX = layerX + maxRadius + 5;
+
+		ctx.beginPath();
+		ctx.moveTo(startX, topY);
+		ctx.quadraticCurveTo(layerX, topY - arcHeight, endX, topY);
+		ctx.stroke();
+
+		// Draw small "+" symbol at the connection point
+		ctx.setLineDash([]);
+		ctx.fillStyle = `rgba(50, 200, 50, ${alpha + 0.2})`;
+		ctx.font = "bold " + (font_size + 2) + "px Arial";
+		ctx.textAlign = "center";
+		ctx.fillText("+", endX + 10, topY - 2);
+
+		// Draw strength label
+		ctx.font = (font_size - 2) + "px Arial";
+		ctx.fillStyle = `rgba(50, 200, 50, ${alpha})`;
+		ctx.fillText(language[lang]["skip_connection"], layerX, topY - arcHeight - 5);
+
+		ctx.restore();
+
+		const this_region = {
+			type: "skip_connection",
+			shape: "rect",
+			x: startX,
+			y: topY - arcHeight - 15,
+			w: endX - startX + 20,
+			h: arcHeight + 20,
+			layer_idx: layer_idx,
+			strength: strength,
+			layer_type: layer_type
+		};
+
+		// Register hit region for tooltip
+		_register_fcnn_hit_region(this_region);
+	}
+}
+
+function _build_skip_connection_tooltip_html(region) {
+	var parts = [];
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🔄 Skip Connection</div>`);
+	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+
+	var row = function(label, val) {
+		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+	};
+
+	parts.push(row("Layer", region.layer_idx));
+	parts.push(row("Layer Type", region.layer_type || "Unknown"));
+	parts.push(row("Operation", "output = f(x) + W·x"));
+	parts.push(row("Projection", "1×1 Conv / Dense (learned)"));
+	parts.push(row("Info", "Strength is computed from weight norms (skip / (skip + main))"));
+
+	parts.push(`</table>`);
+	return parts.join("");
+}
+
+/**
+ * Berechnet die relative Stärke der Skip Connection aus den Modellgewichten.
+ * Vergleicht die Norm der Skip-Projektionsgewichte mit der Norm der Hauptlayer-Gewichte.
+ * Gibt einen Wert zwischen 0 und 1 zurück (0 = Skip hat keinen Einfluss, 1 = Skip dominiert).
+ */
+function _compute_skip_strength_from_model(layer_nr) {
+    if (!model || !model._allLayers) {
+        return 0.5; // Default wenn kein Modell vorhanden
+    }
+
+    try {
+        // Suche den Skip-Projektionslayer für diesen Layer-Index
+        var skip_proj_layer = null;
+        var main_layer = null;
+
+        var all_layers = model._allLayers || model.layers;
+
+        for (var i = 0; i < all_layers.length; i++) {
+            var layer_name = all_layers[i].name || "";
+            if (layer_name.includes("skip_proj_") && layer_name.includes("_" + layer_nr + "_")) {
+                skip_proj_layer = all_layers[i];
+            }
+        }
+
+        // Finde den Hauptlayer (der Layer an Position layer_nr)
+        // In den sichtbaren Layern ist er an Index layer_nr
+        var visible_layers = model.layers;
+        if (layer_nr < visible_layers.length) {
+            main_layer = visible_layers[layer_nr];
+        }
+
+        if (!skip_proj_layer || !skip_proj_layer.weights || skip_proj_layer.weights.length === 0) {
+            return 0.5; // Kein Projektionslayer gefunden (shapes matched direkt)
+        }
+
+        // Berechne L2-Norm der Skip-Projektionsgewichte
+        var skip_weights = skip_proj_layer.weights[0];
+        if (!skip_weights || !skip_weights.val) return 0.5;
+
+        var skip_data = skip_weights.val.dataSync();
+        var skip_norm = 0;
+        for (var i = 0; i < skip_data.length; i++) {
+            skip_norm += skip_data[i] * skip_data[i];
+        }
+        skip_norm = Math.sqrt(skip_norm);
+
+        // Berechne L2-Norm der Hauptlayer-Gewichte
+        var main_norm = 0;
+        if (main_layer && main_layer.weights && main_layer.weights.length > 0) {
+            var main_weights = main_layer.weights[0];
+            if (main_weights && main_weights.val) {
+                var main_data = main_weights.val.dataSync();
+                for (var i = 0; i < main_data.length; i++) {
+                    main_norm += main_data[i] * main_data[i];
+                }
+                main_norm = Math.sqrt(main_norm);
+            }
+        }
+
+        if (main_norm === 0 && skip_norm === 0) return 0.5;
+        if (main_norm === 0) return 1.0;
+        if (skip_norm === 0) return 0.0;
+
+        // Relative Stärke: skip / (skip + main)
+        var relative_strength = skip_norm / (skip_norm + main_norm);
+
+        return Math.max(0, Math.min(1, relative_strength));
+
+    } catch (e) {
+        // Bei Fehler: neutraler Wert
+        return 0.5;
+    }
+}

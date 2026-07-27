@@ -231,6 +231,23 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Training ==================== -->
+<div class="slide" data-title="Training">
+    <div class="slide-content">
+        <h2>Training eines Neuronalen Netzes</h2>
+        <p style="margin-bottom:6px; font-size:1em;">Bildklassifikation: <b>Katze vs. Hund</b> — Vorwärtspass, Fehlerberechnung &amp; Rückwärtspropagation</p>
+        <div class="training-layout">
+            <div class="training-left">
+                <canvas id="training-network-canvas" width="580" height="440" style="width:100%; height:auto; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc;"></canvas>
+            </div>
+            <div class="training-right">
+                <div id="training-loss-landscape" style="width:100%; height:380px; border-radius:8px; border:1px solid #e2e8f0; background:#fff;"></div>
+                <div class="training-hint">Der echte Fehlerraum eines Neuronalen Netzes ist <b>hochdimensional</b> (tausende Dimensionen). Hier siehst du einen 2D-Schnitt durch die Landschaft — eine starke Vereinfachung, aber die Grundidee bleibt dieselbe.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="slide" data-title="Neuronales Netz Geschichte">
     <div class="slide-content">
         <h2>Das erste künstliche Neuronale Netz</h2>
@@ -1446,6 +1463,7 @@
 <script src="chinese_room.js"></script>
 <script src="interpolation_viz.js"></script>
 <script src="isosurfaces.js"></script>
+<script src="training_demo.js"></script>
 
 <script>
 	renderDualManifolds();
