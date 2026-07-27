@@ -381,7 +381,10 @@ html.dark [id$="-plot"],
 html.dark [id$="-chart"],
 html.dark [id$="-landscape"],
 html.dark [id$="-heatmap"],
-html.dark [id$="-viz"] {
+html.dark [id$="-viz"],
+html.dark [id$="-container"],
+html.dark .attention-layer-tabs,
+html.dark .head-tab-list {
 	background: var(--mn-surface) !important;
 }
 

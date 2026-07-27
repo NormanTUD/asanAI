@@ -1002,11 +1002,11 @@ function initGlossary() {
 				if (!parent) return NodeFilter.FILTER_REJECT;
 				var tag = parent.tagName;
 				if (tag === 'CODE' || tag === 'PRE' || tag === 'SCRIPT' || tag === 'STYLE' ||
-					tag === 'MATH' || tag === 'SVG' || parent.closest('.glossary-term')) {
+					tag === 'SVG') {
 					return NodeFilter.FILTER_REJECT;
 				}
-				// Skip if parent already has a glossary-term (avoid double-wrapping)
-				if (parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
+				// Skip if inside math element or already has glossary-term
+				if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
 				// Only process if text contains potential matches
 				if (!pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
 				pattern.lastIndex = 0;
@@ -1079,16 +1079,15 @@ document.addEventListener("DOMContentLoaded", function() {
 	render_temml();
 	observeAndRenderMath(document.body);
 
-	// Run adaptLabsToTheme after any DOM change (100ms debounce)
-	var adaptTimeout;
-	var domObserver = new MutationObserver(function(mutations) {
-		var needsAdapt = false;
-		mutations.forEach(function(m) {
-			if (m.addedNodes.length > 0) needsAdapt = true;
-		});
-		if (needsAdapt) {
-			clearTimeout(adaptTimeout);
-			adaptTimeout = setTimeout(adaptLabsToTheme, 100);
+	// Run adaptLabsToTheme before next paint after DOM changes
+	var adaptPending = false;
+	var domObserver = new MutationObserver(function() {
+		if (!adaptPending) {
+			adaptPending = true;
+			requestAnimationFrame(function() {
+				adaptPending = false;
+				adaptLabsToTheme();
+			});
 		}
 	});
 	domObserver.observe(document.body, { childList: true, subtree: true });
