@@ -11,6 +11,11 @@
 </head>
 <body>
 
+<div id="loading-spinner">
+    <div class="spinner"></div>
+    <div class="spinner-text">Lade Folien…</div>
+</div>
+
 <!-- Progress Bar -->
 <div id="progress-bar" style="width: 0%;"></div>
 
@@ -1491,7 +1496,10 @@
 	// Aufrufen bei Load und Resize
 	window.addEventListener('load', () => {
 		// Kurz warten bis alles gerendert ist (Plots, MathML etc.)
-		setTimeout(fitSlides, 300);
+		setTimeout(() => {
+			fitSlides();
+			document.getElementById('loading-spinner').classList.add('hidden');
+		}, 300);
 	});
 	window.addEventListener('resize', fitSlides);
 </script>
