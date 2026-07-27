@@ -66,7 +66,7 @@ function _defaultGrid3DConfig(overrides = {}) {
 			main: { intensity: 1.2, shadow: false },
 			ambient: { intensity: 0.3 }
 		},
-		environment: '#f9fafb',
+		environment: themeColor('#f9fafb'),
 		boxWidth: 100, boxHeight: 100, boxDepth: 100,
 		...overrides
 	};
@@ -2504,20 +2504,20 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
 	chart.setOption({
 		title: {
 			text: 'Embedding Space', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
+			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: { show: false, bottom: 0 },
 		xAxis: {
 			type: 'value', name: 'Dim 0',
 			nameLocation: 'center', nameGap: 25,
-			splitLine: { lineStyle: { color: '#f0f0f0' } }
+			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
 		},
 		yAxis: {
 			type: 'value',
 			name: dimensions >= 2 ? 'Dim 1' : '',
 			nameLocation: 'center', nameGap: 35,
-			splitLine: { lineStyle: { color: '#f0f0f0' } }
+			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
 		},
 		grid: { top: 50, bottom: 50, left: 55, right: 30 },
 		series: series,
@@ -2547,7 +2547,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		label: {
 			show: true, position: 'top', distance: 5,
 			formatter: p => p.name,
-			textStyle: { fontSize: 10, color: '#1e293b' }
+			textStyle: { fontSize: 10, color: themeColor('#1e293b') }
 		}
 	});
 
@@ -2598,7 +2598,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 	chart.setOption({
 		title: {
 			text: 'Embedding Space', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
+			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
 		xAxis3D: { type: 'value', name: 'Dim 0' },
@@ -3960,10 +3960,10 @@ function _migration_render_2d_echarts(chart, migId, tokens, start_h, end_h, laye
 	}
 
 	chart.setOption({
-		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
+		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center', 			textStyle: { fontSize: 14, color: themeColor('#1e293b') } },
 		tooltip: { show: true, trigger: 'item', confine: true },
-		xAxis: { type: 'value', name: 'Dim 0', nameLocation: 'center', nameGap: 25, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-		yAxis: { type: 'value', name: 'Dim 1', nameLocation: 'center', nameGap: 35, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+		xAxis: { type: 'value', name: 'Dim 0', nameLocation: 'center', nameGap: 25, splitLine: { lineStyle: { color: themeColor('#f0f0f0') } } },
+		yAxis: { type: 'value', name: 'Dim 1', nameLocation: 'center', nameGap: 35, splitLine: { lineStyle: { color: themeColor('#f0f0f0') } } },
 		grid: { top: 60, bottom: 50, left: 55, right: 80 },
 		graphic: _mig_ec_position_legend(nTokens),
 		series: series,
@@ -4002,7 +4002,7 @@ function _mig_ec3d_vocab_series() {
 		name: 'Vocab Embeddings', type: 'scatter3D', data: data,
 		symbol: 'diamond', symbolSize: 8,
 		itemStyle: { color: 'rgba(100,116,139,0.8)', borderWidth: 1, borderColor: '#334155' },
-		label: { show: true, position: 'top', distance: 5, formatter: p => p.name, textStyle: { fontSize: 10, color: '#475569' } }
+		label: { show: true, position: 'top', distance: 5, formatter: p => p.name, textStyle: { fontSize: 10, color: themeColor('#475569') } }
 	};
 }
 
@@ -4117,7 +4117,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 
 	chart.setOption({
 		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' } },
+			textStyle: { fontSize: 14, color: themeColor('#1e293b') } },
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: { data: legendData, orient: 'horizontal', bottom: 0,
 			left: 'center', textStyle: { fontSize: 11 } },
@@ -4817,7 +4817,7 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
 			position: 'top',
 			distance: 5,
 			formatter: p => p.name,
-			textStyle: { fontSize: 10, color: '#475569', fontFamily: 'Inter, sans-serif' }
+			textStyle: { fontSize: 10, color: themeColor('#475569'), fontFamily: 'Inter, sans-serif' }
 		}
 	};
 }
@@ -4863,7 +4863,7 @@ function _traj_ec3d_option(series, legendData) {
 		title: {
 			text: 'Token Trajectory: Embedding → +Position → Layer Outputs',
 			left: 'center', top: 10,
-			textStyle: { fontSize: 14, fontWeight: 'bold', color: '#1e293b' }
+			textStyle: { fontSize: 14, fontWeight: 'bold', color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: {
@@ -4876,7 +4876,7 @@ function _traj_ec3d_option(series, legendData) {
 		yAxis3D: { type: 'value', name: 'Dim 1' },
 		zAxis3D: { type: 'value', name: 'Dim 2' },
 		grid3D:_defaultGrid3DConfig({
-			axisLine:    { lineStyle: { color: '#cbd5e1' } },
+			axisLine:    { lineStyle: { color: themeColor('#cbd5e1') } },
 			axisPointer: { show: false }
 		}),
 		series: series
@@ -5135,20 +5135,20 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 	chart.setOption({
 		title: {
 			text: 'Semantic Vector → + Positional Shift', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
+			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
 		xAxis: {
 			type: 'value', name: 'Dim 0',
 			nameLocation: 'center', nameGap: 25,
-			splitLine: { lineStyle: { color: '#f0f0f0' } }
+			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
 		},
 		yAxis: {
 			type: 'value',
 			name: d_model >= 2 ? 'Dim 1' : '',
 			nameLocation: 'center', nameGap: 35,
-			splitLine: { lineStyle: { color: '#f0f0f0' } }
+			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
 		},
 		grid: { top: 50, bottom: 60, left: 55, right: 30 },
 		series: series,
@@ -5205,7 +5205,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 	chart.setOption({
 		title: {
 			text: 'Semantic Vector → + Positional Shift', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
+			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: {

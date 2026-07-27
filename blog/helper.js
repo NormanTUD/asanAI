@@ -1925,13 +1925,40 @@ window.__MN_DARK = {
 		'#e2e8f0': '#334155', // border    -> dark border
 		'#fafafa': '#1e293b',
 		'#f9fafb': '#0f172a',
+		'#f0f0f0': '#334155', // plotly/echarts gridline light -> dark raised
+		'#f4f4f5': '#334155',
 		'#1e293b': '#e2e8f0', // dark text -> light text
 		'#0f172a': '#f1f5f9',
 		'#475569': '#cbd5e1',
 		'#64748b': '#94a3b8',
-		'#94a3b8': '#94a3b8', // identical - stays
-		'#cbd5e1': '#64748b',
-		'#e2e8f0': '#475569'
+		'#94a3b8': '#cbd5e1',
+		'#cbd5e1': '#64748b', // axis lines / muted borders
+		'#e2e8f0': '#475569',
+		'#334155': '#cbd5e1', // reverse direction
+		'#d1d5db': '#64748b',
+		'#dbeafe': '#1e3a8a', // light blue tint -> deep navy
+		'#eef2ff': '#312e81',
+		'#ecfdf5': '#022c22', // success/light green
+		'#f0fdf4': '#022c22',
+		'#dcfce7': '#022c22',
+		'#fef2f2': '#450a0a', // light red
+		'#fee2e2': '#450a0a',
+		'#fef9c3': '#422006', // light yellow
+		'#fff3e0': '#431407', // light orange
+		'#e8f5e9': '#022c22',
+		'#e0f2fe': '#082f49', // light sky
+		'#f0f9ff': '#082f49',
+		'#f5f3ff': '#1e1b4b', // light indigo
+		'#f5f3ff': '#1e1b4b',
+		'#f5f3ff': '#1e1b4b',
+		'#fff3e0': '#431407',
+		'#fef9c3': '#422006',
+		'#fef9c3': '#422006',
+		'#fffbeb': '#422006',
+		'#fffef0': '#1e293b', // cream -> dark surface
+		'#fffef7': '#1e293b',
+		'#f8f6f0': '#1e293b',
+		'#fffb':   '#1e293b'
 	},
 	// Resolve a single colour through the swap map.
 	// Accepts hex strings, returns the dark-mode equivalent (or the
