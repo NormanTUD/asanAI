@@ -58,6 +58,24 @@ The deeper problem: any scalar reward function is an **incomplete specification*
 | Information bottleneck | Encoding | Perturb encoded input to strip adversarial signal \cite[Chen et al., 2024]{chen2024ibprotector} |
 </div>
 
-<div id="seclab-injection-demo"></div>
+<section class="sa-callout sa-callout-info" style="margin-top: 1.5em;">
+<h4 style="margin: 0 0 0.4em 0; font-size: 1em;">Defenses in Practice</h4>
+<p style="margin: 0; font-size: 0.92em;">
+No single defense is bulletproof. Real-world deployments layer <em>defense in depth</em>:
+input filtering catches obvious attacks, instruction hierarchy enforces privilege levels,
+output classifiers catch policy violations that slip through, and adversarial training hardens
+the model against novel jailbreaks. The goal isn't perfection — it's raising the cost of
+attack high enough that adversaries move on to easier targets.
+</p>
+</section>
 
-<div id="seclab-quant-demo"></div>
+<section class="sa-callout sa-callout-warn" style="margin-top: 1em;">
+<h4 style="margin: 0 0 0.4em 0; font-size: 1em;">Quantization &amp; Inference Cost</h4>
+<p style="margin: 0 0 0.5em 0; font-size: 0.92em;">
+Running a 7B-parameter model in 32-bit precision needs ~28 GB of memory. Lowering
+precision to 16 bits halves that to ~14 GB with virtually no quality loss;
+8 bits drops it further to ~7 GB; 4 bits shrinks to ~3.5 GB but quality starts
+to degrade. Real deployments combine quantization with KV-cache compression,
+speculative decoding, and Flash Attention to fit large models on consumer hardware.
+</p>
+</section>
