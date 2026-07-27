@@ -16,7 +16,7 @@ window.TrainingDemo = (function() {
         idx: 0, step: 0,
         phase: 0, phaseT: 0, lastTime: 0,
         W1: null, b1: null, W2: null, b2: null,
-        inp: [0,0,0,0], hid: [0,0,0,0], hidRaw: [0,0,0,0], out: [0,0],
+        inp: [0,0,0,0], hid: [0,0,0,0], hidRaw: [0,0,0,0], out: [0,0], outLogits: [0,0], displayOut: [0,0],
         loss: 0, gradO: [0,0], gradH: [0,0,0,0],
         correct: false,
         lossHist: [], posHist: [],
@@ -54,12 +54,19 @@ window.TrainingDemo = (function() {
         for (var k = 0; k < NO; k++) {
             var sum = s.b2[k];
             for (var j = 0; j < NH; j++) sum += s.hid[j] * s.W2[j][k];
-            s.out[k] = sum;
+            s.outLogits[k] = sum;
         }
-        var mx = Math.max(s.out[0], s.out[1]);
-        var es = Math.exp(s.out[0]-mx) + Math.exp(s.out[1]-mx);
-        s.out[0] = Math.exp(s.out[0]-mx)/es;
-        s.out[1] = Math.exp(s.out[1]-mx)/es;
+        // Real softmax for training
+        var mx = Math.max(s.outLogits[0], s.outLogits[1]);
+        var es = Math.exp(s.outLogits[0]-mx) + Math.exp(s.outLogits[1]-mx);
+        s.out[0] = Math.exp(s.outLogits[0]-mx)/es;
+        s.out[1] = Math.exp(s.outLogits[1]-mx)/es;
+        // Sharpened display version (lower temperature = more decisive bars)
+        var T = 0.5;
+        var dmx = Math.max(s.outLogits[0]/T, s.outLogits[1]/T);
+        var des = Math.exp(s.outLogits[0]/T-dmx) + Math.exp(s.outLogits[1]/T-dmx);
+        s.displayOut[0] = Math.exp(s.outLogits[0]/T-dmx)/des;
+        s.displayOut[1] = Math.exp(s.outLogits[1]/T-dmx)/des;
     }
 
     function bwd(target) {
@@ -309,11 +316,11 @@ window.TrainingDemo = (function() {
                     // Backward glow
                     if (bf > 0) {
                         var g = gMat ? (gMat[t] || 0) * w : 0;
-                        var ga = Math.abs(g) * bf * 4;
-                        if (ga > 0.02) {
-                            alpha = Math.min(0.9, alpha + ga);
-                            hue = 30;
-                            width = Math.max(width, Math.abs(g) * bf * 6);
+                        var ga = Math.abs(g) * bf * 8;
+                        if (ga > 0.01) {
+                            alpha = Math.min(1, alpha + ga);
+                            hue = 25;
+                            width = Math.max(width, Math.abs(g) * bf * 12);
                         }
                     }
                     ctx.beginPath();
@@ -353,9 +360,9 @@ window.TrainingDemo = (function() {
                 var val = l.vals[ni] || 0;
                 var glow = 0, glowColor = '#f59e0b';
                 if (isBwd) {
-                    if (li === 2) { glow = Math.abs(s.gradO[ni]) * bwdProg * 3; glowColor = '#ef4444'; }
-                    else if (li === 1 && bwdSub >= 2) { glow = Math.abs(s.gradH[ni]) * bwdProg * 2; glowColor = '#f59e0b'; }
-                    else if (li === 0 && bwdSub >= 3) { glow = 0.3 * bwdProg; glowColor = '#f59e0b'; }
+                    if (li === 2) { glow = Math.abs(s.gradO[ni]) * bwdProg * 5; glowColor = '#ef4444'; }
+                    else if (li === 1 && bwdSub >= 1) { glow = Math.abs(s.gradH[ni]) * bwdProg * 4; glowColor = '#f97316'; }
+                    else if (li === 0 && bwdSub >= 2) { glow = 0.6 * bwdProg; glowColor = '#f97316'; }
                 }
 
                 var fillVal = Math.min(1, Math.abs(val) * 1.5);
@@ -390,8 +397,9 @@ window.TrainingDemo = (function() {
                     ctx.fillText(arrow(val), x, y);
                 }
 
-                // Output labels + bars
+                // Output labels + bars (use sharpened displayOut)
                 if (li === 2) {
+                    var dVal = s.displayOut[ni];
                     var lbl = ni === 0 ? 'Katze' : 'Hund';
                     ctx.font = 'bold 13px system-ui';
                     ctx.textAlign = 'left';
@@ -404,12 +412,12 @@ window.TrainingDemo = (function() {
                     ctx.fillStyle = '#e2e8f0';
                     ctx.fillRect(bx, by, bw, bh);
                     ctx.fillStyle = ni === 0 ? '#3b82f6' : '#10b981';
-                    ctx.fillRect(bx, by, bw * val, bh);
+                    ctx.fillRect(bx, by, bw * dVal, bh);
                     ctx.fillStyle = '#64748b';
                     ctx.font = '10px monospace';
                     ctx.textAlign = 'right';
                     ctx.textBaseline = 'alphabetic';
-                    ctx.fillText((val*100).toFixed(0) + '%', bx + bw + 4, by + bh - 1);
+                    ctx.fillText((dVal*100).toFixed(0) + '%', bx + bw + 4, by + bh - 1);
 
                     // Correct/wrong marker
                     if (isLoss || isBwd || isUpd) {
@@ -431,29 +439,39 @@ window.TrainingDemo = (function() {
         ctx.fillStyle = '#94a3b8';
         layers.forEach(function(l, i) { ctx.fillText(l.label, l.x, netTop + netH + 4); });
 
-        // Status
-        var siY = 18;
+        // Status – prominent loss display
+        var siY = 14;
         ctx.textAlign = 'right';
         if (isLoss || isBwd || isUpd) {
-            ctx.font = 'bold 13px system-ui';
-            ctx.fillStyle = s.loss > 0.6 ? '#dc2626' : '#10b981';
-            ctx.fillText('Loss: ' + s.loss.toFixed(4), W - 12, siY);
-            ctx.font = '11px system-ui';
-            ctx.fillStyle = '#64748b';
-            ctx.fillText(s.correct ? 'Richtig' : 'Falsch', W - 12, siY + 18);
+            ctx.font = 'bold 18px system-ui';
+            ctx.fillStyle = s.loss > 0.6 ? '#dc2626' : (s.loss > 0.3 ? '#f59e0b' : '#10b981');
+            ctx.fillText('Loss: ' + s.loss.toFixed(3), W - 12, siY);
+
+            // Loss indicator bar
+            var lbx = W - 120, lby = siY + 8, lbw = 108, lbh = 5;
+            ctx.fillStyle = 'rgba(0,0,0,0.06)';
+            ctx.fillRect(lbx, lby, lbw, lbh);
+            var lossBar = Math.min(1, Math.max(0, s.loss / 2));
+            var lColor = lossBar > 0.5 ? '#ef4444' : (lossBar > 0.2 ? '#f59e0b' : '#10b981');
+            ctx.fillStyle = lColor;
+            ctx.fillRect(lbx, lby, lbw * lossBar, lbh);
+
+            ctx.font = 'bold 12px system-ui';
+            ctx.fillStyle = s.correct ? '#10b981' : '#ef4444';
+            ctx.fillText(s.correct ? '\u2713 Richtig' : '\u2717 Falsch', W - 12, siY + 26);
             if (isBwd) {
                 ctx.fillStyle = '#f59e0b';
                 ctx.font = 'bold 11px system-ui';
-                ctx.fillText('\u21BB R\u00fcckw\u00e4rts...', W - 12, siY + 38);
+                ctx.fillText('\u21BB R\u00fcckw\u00e4rts...', W - 12, siY + 42);
             }
             if (isUpd) {
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 11px system-ui';
-                ctx.fillText('\u2713 Gewichte updaten', W - 12, siY + 38);
+                ctx.fillText('\u2713 Gewichte updaten', W - 12, siY + 42);
             }
         } else if (isFwd) {
             ctx.fillStyle = '#6366f1';
-            ctx.font = 'bold 11px system-ui';
+            ctx.font = 'bold 12px system-ui';
             ctx.textAlign = 'right';
             ctx.fillText('\u2192 Vorw\u00e4rtspass...', W - 12, siY + 18);
         }

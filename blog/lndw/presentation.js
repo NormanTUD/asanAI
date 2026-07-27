@@ -333,6 +333,9 @@ const InputHandler = (() => {
         'End': () => Presentation.goTo(document.querySelectorAll('.slide').length - 1),
     };
 
+    let digitBuffer = '';
+    let digitTimer = null;
+
     function navigate(direction) {
         if (!DemoRegistry.tryNavigate(direction)) {
             direction === 'next' ? Presentation.next() : Presentation.prev();
@@ -351,6 +354,18 @@ const InputHandler = (() => {
         } else if (SPECIAL_KEYS[e.key]) {
             e.preventDefault();
             SPECIAL_KEYS[e.key]();
+        } else if (e.key >= '0' && e.key <= '9') {
+            e.preventDefault();
+            digitBuffer += e.key;
+            if (digitTimer) clearTimeout(digitTimer);
+            digitTimer = setTimeout(() => {
+                const num = parseInt(digitBuffer, 10);
+                if (num >= 1) {
+                    Presentation.goTo(num - 1);
+                }
+                digitBuffer = '';
+                digitTimer = null;
+            }, 600);
         }
     }
 
@@ -386,6 +401,16 @@ const InputHandler = (() => {
 document.addEventListener('DOMContentLoaded', () => {
     Presentation.init();
     InputHandler.init();
+
+    // URL hash navigation (#N → slide N)
+    const hash = window.location.hash;
+    if (hash) {
+        const match = hash.match(/^#(\d+)$/);
+        if (match) {
+            const slideNum = parseInt(match[1], 10);
+            setTimeout(() => Presentation.goTo(slideNum - 1), 150);
+        }
+    }
 
     // Temml Math Rendering
     const renderMath = (selector, displayMode, sliceStart, sliceEnd) => {
