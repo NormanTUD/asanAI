@@ -59,7 +59,7 @@ const Sampler = {
             y: data.map(d => d.finalProb * 100),
             type: 'bar',
             marker: {
-                color: data.map(d => d.isSelected ? '#facc15' : (d.inTopK ? '#3b82f6' : '#e2e8f0')),
+                color: data.map(d => d.isSelected ? '#facc15' : (d.inTopK ? '#3b82f6' : 'themeColor('#e2e8f0')')),
                 line: { width: data.map(d => d.isSelected ? 3 : 0), color: '#854d0e' }
             }
         };

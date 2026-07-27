@@ -129,7 +129,7 @@ function attachTangentOverlay(container, sigmoid, sigmoidDeriv, zMin, zMax) {
 		// Dot
 		ctx.beginPath(); ctx.arc(pc.x, pc.y, 6, 0, 2 * Math.PI);
 		ctx.fillStyle = "#f59e0b"; ctx.fill();
-		ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
+		ctx.strokeStyle = "themeColor('#fff')"; ctx.lineWidth = 2; ctx.stroke();
 
 		// Label
 		const label = `z=${z.toFixed(2)}  sigmoid(z)=${s.toFixed(4)}  slope=${slope.toFixed(4)}`;
@@ -139,9 +139,9 @@ function attachTangentOverlay(container, sigmoid, sigmoidDeriv, zMin, zMax) {
 		ctx.font = "13px monospace";
 		ctx.fillStyle = "rgba(255,255,255,0.85)";
 		ctx.fillRect(labelX - 4, labelY - 13, tw + 8, 18);
-		ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 1;
+		ctx.strokeStyle = "themeColor('#cbd5e1')"; ctx.lineWidth = 1;
 		ctx.strokeRect(labelX - 4, labelY - 13, tw + 8, 18);
-		ctx.fillStyle = "#334155"; ctx.fillText(label, labelX, labelY);
+		ctx.fillStyle = "themeColor('#334155')"; ctx.fillText(label, labelX, labelY);
 	};
 
 	resizeCanvas();
@@ -224,9 +224,9 @@ function renderBackpropVisual(id) {
 	];
 
 	const LAYER_STYLE = {
-		input:  { color: "#64748b", fill: "#f1f5f9", r: 28 },
+		input:  { color: "themeColor('#64748b')", fill: "themeColor('#f1f5f9')", r: 28 },
 		hidden: { color: "#3b82f6", fill: "#eff6ff", r: 34 },
-		output: { color: "#10b981", fill: "#ecfdf5", r: 42 },
+		output: { color: "#10b981", fill: "themeColor('#ecfdf5')", r: 42 },
 	};
 
 	// Neuron config: which index (1 or 2), which weights feed in/out, etc.
@@ -330,7 +330,7 @@ function renderBackpropVisual(id) {
 			if (wk === "w3" || wk === "w7") my += 32;
 			html += `<line class="bp-conn" data-wk="${wk}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${thick}" stroke-opacity="0.5"/>`;
 			const [base, sub] = wl.split("_");
-			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill="#334155" font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
+			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill="themeColor('#334155')" font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
 		});
 
 		// Neuron circles + values + deltas
@@ -349,7 +349,7 @@ function renderBackpropVisual(id) {
 		// Layer headers
 		["Input:80", "Hidden:330", "Output:580"].forEach((s) => {
 			const [label, x] = s.split(":");
-			html += `<text x="${x}" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">${label}</text>`;
+			html += `<text x="${x}" y="30" text-anchor="middle" font-size="13" fill="themeColor('#94a3b8')" font-weight="600">${label}</text>`;
 		});
 
 		// Central loss display
@@ -380,12 +380,12 @@ function renderBackpropVisual(id) {
 			const diff = oVal - tVal;
 			const diffColor = Math.abs(diff) < 0.01 ? "#10b981" : "#ef4444";
 			return `<text x="${nd.x}" y="${nd.y - 18}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill="#1e293b" style="pointer-events:none;">out=${fmt(oVal)}</text>` +
+				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill="themeColor('#1e293b')" style="pointer-events:none;">out=${fmt(oVal)}</text>` +
 				`<text x="${nd.x}" y="${nd.y + 12}" text-anchor="middle" font-size="10" font-family="monospace" fill="#f59e0b" style="pointer-events:none;">tgt=${fmt(tVal)}</text>` +
 				`<text x="${nd.x}" y="${nd.y + 26}" text-anchor="middle" font-size="9" font-family="monospace" fill="${diffColor}" style="pointer-events:none;">Δ=${fmt(diff)}</text>`;
 		}
 		return `<text x="${nd.x}" y="${nd.y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${valStr}</text>`;
+			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill="themeColor('#1e293b')" style="pointer-events:none;">${valStr}</text>`;
 	}
 
 	function svgDeltaLabel(nk, nd, r) {
@@ -398,7 +398,7 @@ function renderBackpropVisual(id) {
 	}
 
 	function dashedLine(a, b) {
-		return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+		return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="themeColor('#94a3b8')" stroke-width="1" stroke-dasharray="4,4"/>`;
 	}
 
 	// ── SVG interaction ──
@@ -441,7 +441,7 @@ function renderBackpropVisual(id) {
 	}
 
 	function showDefaultInfo() {
-		infoPanel.innerHTML = `<div class="md"><span style="color:#94a3b8;">Click any neuron or weight label to see its equations.</span></div>`;
+		infoPanel.innerHTML = `<div class="md"><span style="color:themeColor('#94a3b8');">Click any neuron or weight label to see its equations.</span></div>`;
 		tryRender();
 	}
 
@@ -583,7 +583,7 @@ $$\\frac{\\partial E}{\\partial b_${i}} = \\delta_{h_${i}} = ${fmt(gb)}$$
 			: dO < 0 ? "Prediction too LOW — needs to increase" : "Perfect!";
 
 		return `<h3>$o_${i}$ — Output Neuron</h3>
-<p style="color:#64748b;"><em>${dir}</em> &nbsp; (target $t_${i} = ${fmt(tVal, 4)}$)</p>
+<p style="color:themeColor('#64748b');"><em>${dir}</em> &nbsp; (target $t_${i} = ${fmt(tVal, 4)}$)</p>
 
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass</b>
 			${hiddenForwardLatex()}
@@ -865,15 +865,15 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     #${id} { font-family: system-ui, sans-serif; max-width: 960px; }
     #${id} * { box-sizing: border-box; }
     #${id} .bp-top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; align-items: flex-end; }
-    #${id} .bp-top label { font-size: 0.72rem; color: #475569; font-weight: 600; }
-    #${id} .bp-top input[type=number] { width: 58px; font-size: 0.8rem; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
+    #${id} .bp-top label { font-size: 0.72rem; color: themeColor('#475569'); font-weight: 600; }
+    #${id} .bp-top input[type=number] { width: 58px; font-size: 0.8rem; padding: 2px 4px; border: 1px solid themeColor('#cbd5e1'); border-radius: 4px; text-align: center; }
     #${id} .bp-top .bp-group { display: flex; flex-direction: column; gap: 2px; }
-    #${id} .bp-btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; color: #fff; }
+    #${id} .bp-btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; color: themeColor('#fff'); }
     #${id} svg text { user-select: none; }
-    #${id} .bp-info-panel { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 18px; min-height: 100px; font-size: 0.92rem; line-height: 1.9; overflow-x: auto; position: relative; }
-    #${id} .bp-info-panel .bp-close { position: absolute; top: 8px; right: 12px; cursor: pointer; background: #e2e8f0; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; color: #475569; display: flex; align-items: center; justify-content: center; }
-    #${id} .bp-info-panel .bp-close:hover { background: #cbd5e1; }
-    #${id} .bp-info-panel .bp-section { border-left: 3px solid #e2e8f0; padding-left: 12px; margin: 10px 0; }
+    #${id} .bp-info-panel { background: themeColor('#f8fafc'); border: 1px solid themeColor('#e2e8f0'); border-radius: 10px; padding: 14px 18px; min-height: 100px; font-size: 0.92rem; line-height: 1.9; overflow-x: auto; position: relative; }
+    #${id} .bp-info-panel .bp-close { position: absolute; top: 8px; right: 12px; cursor: pointer; background: themeColor('#e2e8f0'); border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; color: themeColor('#475569'); display: flex; align-items: center; justify-content: center; }
+    #${id} .bp-info-panel .bp-close:hover { background: themeColor('#cbd5e1'); }
+    #${id} .bp-info-panel .bp-section { border-left: 3px solid themeColor('#e2e8f0'); padding-left: 12px; margin: 10px 0; }
     #${id} .bp-info-panel .bp-section-hid { border-left-color: #0ea5e9; }
     #${id} .bp-info-panel .bp-section-out { border-left-color: #f97316; }
     #${id} .bp-info-panel .bp-section-loss { border-left-color: #ef4444; }
@@ -881,7 +881,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     #${id} .bp-info-panel .bp-section-grad { border-left-color: #be123c; }
     #${id} .bp-info-panel .bp-section-update { border-left-color: #a855f7; }
     #${id} .bp-loss { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-    #${id} .bp-loss-track { flex: 1; height: 14px; background: #fee2e2; border-radius: 7px; overflow: hidden; }
+    #${id} .bp-loss-track { flex: 1; height: 14px; background: themeColor('#fee2e2'); border-radius: 7px; overflow: hidden; }
     #${id} .bp-loss-fill { height: 100%; background: #ef4444; border-radius: 7px; transition: width 0.3s; }
     @keyframes bpPulse { 0%,100%{stroke-width:2;stroke-opacity:0.3} 50%{stroke-width:7;stroke-opacity:1} }
     #${id} .pulse { animation: bpPulse 5s ease-in-out infinite; }
@@ -890,15 +890,15 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
   </style>
 
   <div class="bp-top">
-    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
-      <legend style="font-size:0.78rem; font-weight:700; color:#64748b;">Inputs</legend>
+    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+      <legend style="font-size:0.78rem; font-weight:700; color:themeColor('#64748b');">Inputs</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	<div class="bp-group"><label>$$x_1$$</label><input style="width:100px" id="backprop_x1" type="number" data-k="x1" step="0.01"></div>
 	<div class="bp-group"><label>$$x_2$$</label><input style="width:100px" id="backprop_x2" type="number" data-k="x2" step="0.01"></div>
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#f59e0b;">Targets</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	<div class="bp-group"><label>$$t_1$$</label><input style="width:100px" id="backprop_t1" type="number" data-k="t1" step="0.01"></div>
@@ -906,14 +906,14 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#8b5cf6;">Hyperparameters</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	<div class="bp-group"><label>$$\\eta$$</label><input style="width:100px" id="backprop_eta" type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#3b82f6;">Input → Hidden</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	${["w1","w2","w3","w4","b1","b2"].map(k =>
@@ -922,7 +922,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
       </div>
     </fieldset>
 
-    <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
+    <fieldset style="border:1px solid themeColor('#cbd5e1'); border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#10b981;">Hidden → Output</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	${["w5","w6","w7","w8","b3","b4"].map(k =>
@@ -934,22 +934,22 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
       <button class="bp-btn" style="background:#10b981;" id="${id}-apply">✅ Apply 1 Step</button>
       <button class="bp-btn" style="background:#8b5cf6;" id="${id}-train">⟳ Train 100</button>
-      <button class="bp-btn" style="background:#64748b;" id="${id}-reset">↺ Reset</button>
+      <button class="bp-btn" style="background:themeColor('#64748b');" id="${id}-reset">↺ Reset</button>
     </div>
   </div>
 
   <svg id="${id}-svg" width="100%" viewBox="0 0 660 400"
-       style="background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; display:block; margin-bottom:8px; cursor:default;">
+       style="background:themeColor('#f8fafc'); border-radius:10px; border:1px solid themeColor('#e2e8f0'); display:block; margin-bottom:8px; cursor:default;">
   </svg>
 
   <div class="bp-loss">
-    <span style="font-size:0.8rem; font-weight:600; color:#475569;">Loss:</span>
+    <span style="font-size:0.8rem; font-weight:600; color:themeColor('#475569');">Loss:</span>
     <div class="bp-loss-track"><div class="bp-loss-fill" id="${id}-lossbar"></div></div>
     <span id="${id}-lossval" style="font-size:0.82rem; font-family:monospace; min-width:70px;"></span>
   </div>
 
   <div class="bp-info-panel" id="${id}-info">
-    <div class="md"><span style="color:#94a3b8;">Click any neuron or weight label to see its equations.</span></div>
+    <div class="md"><span style="color:themeColor('#94a3b8');">Click any neuron or weight label to see its equations.</span></div>
   </div>`;
 	}
 

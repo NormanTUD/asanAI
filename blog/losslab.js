@@ -94,7 +94,7 @@ function initLossLab() {
 		const visualYBird = Math.min(-Math.log(Math.max(pBird, 0.001)), 4.5);
 
 		Plotly.newPlot('plot-cce', [
-			{ x: xVals, y: yVals, name: 'Log Loss Curve', line: {color: '#e2e8f0'} },
+			{ x: xVals, y: yVals, name: 'Log Loss Curve', line: {color: 'themeColor('#e2e8f0')'} },
 			{ x: [pCat], y: [visualYCat], name: 'Cat (Target)', mode: 'markers+text', text: 'Cat', textposition: 'top center', marker: {size: 15, color: '#10b981'} },
 			{ x: [pDog], y: [visualYDog], name: 'Dog', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} },
 			{ x: [pBird], y: [visualYBird], name: 'Bird', mode: 'markers', marker: {size: 10, color: '#ef4444', opacity: 0.4} }
