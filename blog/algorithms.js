@@ -281,7 +281,7 @@ function renderFourierAlgorithm(container, options = {}) {
 
         const theta = Array.from({ length: 100 }, (_, i) => i * 2 * Math.PI / 99);
         Plotly.newPlot('step2-circle', [
-            { x: theta.map(Math.cos), y: theta.map(Math.sin), mode: 'lines', line: { color: '#e2e8f0', width: 1.5 }, showlegend: false, hoverinfo: 'skip' },
+            { x: theta.map(Math.cos), y: theta.map(Math.sin), mode: 'lines', line: { color: themeColor('#e2e8f0'), width: 1.5 }, showlegend: false, hoverinfo: 'skip' },
             { x: [0, cosA], y: [0, sinA], mode: 'lines+markers', line: { color: '#ef4444', width: 3 }, marker: { size: [4, 13], color: '#ef4444' }, name: `a=${a}: (${cosA.toFixed(3)}, ${sinA.toFixed(3)})`, hoverinfo: 'name' },
             { x: [0, cosB], y: [0, sinB], mode: 'lines+markers', line: { color: '#3b82f6', width: 3 }, marker: { size: [4, 13], color: '#3b82f6', symbol: 'square' }, name: `b=${b}: (${cosB.toFixed(3)}, ${sinB.toFixed(3)})`, hoverinfo: 'name' },
         ], {
@@ -345,10 +345,10 @@ function renderFourierAlgorithm(container, options = {}) {
 				// Unit circle outline
 				{ x: Array.from({length:100}, (_,i) => Math.cos(i*2*Math.PI/99)),
 					y: Array.from({length:100}, (_,i) => Math.sin(i*2*Math.PI/99)),
-					mode: 'lines', line: { color: '#e2e8f0', width: 1 }, showlegend: false, hoverinfo: 'skip' },
+					mode: 'lines', line: { color: themeColor('#e2e8f0'), width: 1 }, showlegend: false, hoverinfo: 'skip' },
 				// All tokens
 				{ x: allX, y: allY, mode: 'markers',
-					marker: { size: 4, color: '#94a3b8', opacity: 0.6 },
+					marker: { size: 4, color: themeColor('#94a3b8'), opacity: 0.6 },
 					text: tokens.map(n => `Token ${n}`),
 					hoverinfo: 'text', name: `All ${P} tokens` },
 			];
@@ -356,15 +356,15 @@ function renderFourierAlgorithm(container, options = {}) {
 			if (highlight) {
 				// Input a
 				traces.push({ x: [Math.cos(wk*a)], y: [Math.sin(wk*a)], mode: 'markers',
-					marker: { size: 16, color: '#ef4444', symbol: 'circle', line: { width: 2, color: '#fff' } },
+					marker: { size: 16, color: '#ef4444', symbol: 'circle', line: { width: 2, color: themeColor('#fff') } },
 					name: `a=${a}`, hoverinfo: 'name' });
 				// Input b
 				traces.push({ x: [Math.cos(wk*b)], y: [Math.sin(wk*b)], mode: 'markers',
-					marker: { size: 16, color: '#3b82f6', symbol: 'square', line: { width: 2, color: '#fff' } },
+					marker: { size: 16, color: '#3b82f6', symbol: 'square', line: { width: 2, color: themeColor('#fff') } },
 					name: `b=${b}`, hoverinfo: 'name' });
 				// Sum
 				traces.push({ x: [Math.cos(wk*correctAnswer)], y: [Math.sin(wk*correctAnswer)], mode: 'markers',
-					marker: { size: 18, color: '#059669', symbol: 'triangle-up', line: { width: 2, color: '#fff' } },
+					marker: { size: 18, color: '#059669', symbol: 'triangle-up', line: { width: 2, color: themeColor('#fff') } },
 					name: `(a+b)%P=${correctAnswer}`, hoverinfo: 'name' });
 
 				// Draw arcs showing the angles
@@ -476,7 +476,7 @@ function renderFourierAlgorithm(container, options = {}) {
         // Circle plot
         const theta = Array.from({ length: 100 }, (_, i) => i * 2 * Math.PI / 99);
         Plotly.newPlot('step3-circle', [
-            { x: theta.map(Math.cos), y: theta.map(Math.sin), mode: 'lines', line: { color: '#e2e8f0', width: 1.5 }, showlegend: false, hoverinfo: 'skip' },
+            { x: theta.map(Math.cos), y: theta.map(Math.sin), mode: 'lines', line: { color: themeColor('#e2e8f0'), width: 1.5 }, showlegend: false, hoverinfo: 'skip' },
             { x: [0, cosA], y: [0, sinA], mode: 'lines+markers', line: { color: '#ef4444', width: 1.5, dash: 'dot' }, marker: { size: [3, 8] }, name: `a=${a}`, opacity: 0.5 },
             { x: [0, cosB], y: [0, sinB], mode: 'lines+markers', line: { color: '#3b82f6', width: 1.5, dash: 'dot' }, marker: { size: [3, 8] }, name: `b=${b}`, opacity: 0.5 },
             { x: [0, cosS], y: [0, sinS], mode: 'lines+markers', line: { color: '#059669', width: 4 }, marker: { size: [4, 15], symbol: ['circle', 'triangle-up'], color: '#059669' }, name: `a+b mod P = ${correctAnswer}` },
@@ -531,7 +531,7 @@ function renderFourierAlgorithm(container, options = {}) {
 		    xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
 		    yaxis: { title: `cos(w_${k} * (a+b-c))`, range: [-1.3, 1.4] },
 		    margin: { t: 40, b: 50, l: 55, r: 20 },
-		    shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }],
+		    shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }],
 		    showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
 	    }, { responsive: true });
     }});
@@ -569,7 +569,7 @@ function renderFourierAlgorithm(container, options = {}) {
 			traces.push({
 				x: circleTheta.map(t => Math.cos(t) + offsetX),
 				y: circleTheta.map(t => Math.sin(t)),
-				mode: 'lines', line: { color: '#e2e8f0', width: 1 },
+				mode: 'lines', line: { color: themeColor('#e2e8f0'), width: 1 },
 				showlegend: false, hoverinfo: 'skip'
 			});
 
@@ -667,7 +667,7 @@ function renderFourierAlgorithm(container, options = {}) {
             margin: { t: 20, b: 50, l: 55, r: 20 },
             shapes: [
                 { type: 'line', x0: 0, x1: P, y0: 0.9, y1: 0.9, line: { color: '#f59e0b', width: 1, dash: 'dot' } },
-                { type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }
+                { type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }
             ],
             showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
         }, { responsive: true });
@@ -761,7 +761,7 @@ function renderFourierAlgorithm(container, options = {}) {
             xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
             yaxis: { title: 'Total logit = sum of cos(wk*(a+b-c))' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
-            shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }],
+            shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }],
             showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
         }, { responsive: true });
     }});
@@ -892,7 +892,7 @@ function renderFourierAlgorithm(container, options = {}) {
 			if (activeFreqs.length === 0) {
 				const flatSignal = tokens.map(() => 0);
 				Plotly.react('play-plot', [
-					{ x: tokens, y: flatSignal, mode: 'lines', line: { color: '#94a3b8', width: 2 }, name: 'Logit(c) [no frequencies]' },
+					{ x: tokens, y: flatSignal, mode: 'lines', line: { color: themeColor('#94a3b8'), width: 2 }, name: 'Logit(c) [no frequencies]' },
 				], {
 					xaxis: { title: 'Candidate token c', range: [-2, P + 2] },
 					yaxis: { title: 'Logit', range: [-1, 1] },
@@ -1725,7 +1725,7 @@ Q: 789 + 456 = ?</pre>
             const h = canvas.height - margin.top - margin.bottom;
 
             // Axes
-            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeStyle = themeColor('#cbd5e1');
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(margin.left, margin.top);
@@ -1737,14 +1737,14 @@ Q: 789 + 456 = ?</pre>
             ctx.save();
             ctx.translate(15, margin.top + h / 2);
             ctx.rotate(-Math.PI / 2);
-            ctx.fillStyle = '#64748b';
+            ctx.fillStyle = themeColor('#64748b');
             ctx.font = '11px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('# Consistent (Wrong) Rules', 0, 0);
             ctx.restore();
 
             // X-axis label
-            ctx.fillStyle = '#64748b';
+            ctx.fillStyle = themeColor('#64748b');
             ctx.font = '11px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('Information provided to model', margin.left + w / 2, canvas.height - 10);
@@ -1818,14 +1818,14 @@ Q: 789 + 456 = ?</pre>
             ctx.fillText('Goal: only 1 consistent rule', margin.left + 5, targetY - 5);
 
             // Y-axis ticks
-            ctx.fillStyle = '#64748b';
+            ctx.fillStyle = themeColor('#64748b');
             ctx.font = '10px monospace';
             ctx.textAlign = 'right';
             for (let i = 0; i <= 5; i++) {
                 const val = Math.round(maxRules * i / 5);
                 const y = margin.top + h - (i / 5) * h;
                 ctx.fillText(val.toString(), margin.left - 8, y + 4);
-                ctx.strokeStyle = '#f1f5f9';
+                ctx.strokeStyle = themeColor('#f1f5f9');
                 ctx.lineWidth = 0.5;
                 ctx.beginPath();
                 ctx.moveTo(margin.left, y);
@@ -1835,7 +1835,7 @@ Q: 789 + 456 = ?</pre>
 
             // Insight annotation
             if (fewShotExamples >= 5 && algorithmicSteps >= 2) {
-                ctx.fillStyle = '#1e293b';
+                ctx.fillStyle = themeColor('#1e293b');
                 ctx.font = '11px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText('Even with many examples, few-shot leaves ambiguity.', canvas.width / 2, margin.top + 15);
@@ -1898,7 +1898,7 @@ Q: 789 + 456 = ?</pre>
         const ctx = canvas.getContext('2d');
 
         const data = [
-            { label: 'Zero-shot', accuracy: 0.5, color: '#94a3b8', desc: '"Add these numbers"' },
+            { label: 'Zero-shot', accuracy: 0.5, color: themeColor('#94a3b8'), desc: '"Add these numbers"' },
             { label: 'Few-shot\n(3 examples)', accuracy: 9.5, color: '#f87171', desc: 'Show input→output pairs' },
             { label: 'Chain-of-\nThought', accuracy: 25, color: '#fb923c', desc: 'Show informal reasoning' },
             { label: 'Scratchpad\n(detailed)', accuracy: 42, color: '#fbbf24', desc: 'Show intermediate steps' },
@@ -1912,11 +1912,11 @@ Q: 789 + 456 = ?</pre>
         const barGap = w / data.length * 0.4;
 
         // Background
-        ctx.fillStyle = '#fafafa';
+        ctx.fillStyle = themeColor('#fafafa');
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Grid lines
-        ctx.strokeStyle = '#f1f5f9';
+        ctx.strokeStyle = themeColor('#f1f5f9');
         ctx.lineWidth = 1;
         for (let i = 0; i <= 10; i++) {
             const y = margin.top + h - (i / 10) * h;
@@ -1925,14 +1925,14 @@ Q: 789 + 456 = ?</pre>
             ctx.lineTo(margin.left + w, y);
             ctx.stroke();
 
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = themeColor('#94a3b8');
             ctx.font = '10px monospace';
             ctx.textAlign = 'right';
             ctx.fillText(`${i * 10}%`, margin.left - 8, y + 4);
         }
 
         // Axes
-        ctx.strokeStyle = '#cbd5e1';
+        ctx.strokeStyle = themeColor('#cbd5e1');
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(margin.left, margin.top);
@@ -1960,13 +1960,13 @@ Q: 789 + 456 = ?</pre>
             ctx.strokeRect(x, y, barWidth, barH);
 
             // Value label
-            ctx.fillStyle = '#1e293b';
+            ctx.fillStyle = themeColor('#1e293b');
             ctx.font = 'bold 13px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText(`${d.accuracy}%`, x + barWidth / 2, y - 8);
 
             // X-axis label
-            ctx.fillStyle = '#334155';
+            ctx.fillStyle = themeColor('#334155');
             ctx.font = '11px sans-serif';
             const lines = d.label.split('\n');
             lines.forEach((line, li) => {
@@ -1974,7 +1974,7 @@ Q: 789 + 456 = ?</pre>
             });
 
             // Description
-            ctx.fillStyle = '#64748b';
+            ctx.fillStyle = themeColor('#64748b');
             ctx.font = '9px sans-serif';
             ctx.fillText(d.desc, x + barWidth / 2, margin.top + h + 18 + lines.length * 14 + 4);
         });
@@ -2006,7 +2006,7 @@ Q: 789 + 456 = ?</pre>
         ctx.save();
         ctx.translate(15, margin.top + h / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.fillStyle = '#64748b';
+        ctx.fillStyle = themeColor('#64748b');
         ctx.font = '12px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('Accuracy on 19-digit addition', 0, 0);
@@ -2153,7 +2153,7 @@ Q: 789 + 456 = ?</pre>
                 if (i < steps.length - 1) {
                     const nextX = steps[i + 1].x - 60;
                     const fromX = step.x + 60;
-                    ctx.strokeStyle = '#94a3b8';
+                    ctx.strokeStyle = themeColor('#94a3b8');
                     ctx.lineWidth = 1.5;
                     ctx.beginPath();
                     ctx.moveTo(fromX, 100);
@@ -2185,7 +2185,7 @@ Q: 789 + 456 = ?</pre>
             ctx.fillText('← Addition algorithm called as subroutine (Stage 1 skill) →', 575, 172);
 
             // Final result
-            ctx.fillStyle = '#1e293b';
+            ctx.fillStyle = themeColor('#1e293b');
             ctx.font = 'bold 13px sans-serif';
             ctx.fillText('Final Result: 92 ✓', 800, 30);
         }, 100);
@@ -2274,7 +2274,7 @@ Q: 789 + 456 = ?</pre>
             const h = canvas.height - margin.top - margin.bottom;
 
             // Axes
-            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeStyle = themeColor('#cbd5e1');
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(margin.left, margin.top);
@@ -2286,14 +2286,14 @@ Q: 789 + 456 = ?</pre>
             ctx.save();
             ctx.translate(18, margin.top + h / 2);
             ctx.rotate(-Math.PI / 2);
-            ctx.fillStyle = '#64748b';
+            ctx.fillStyle = themeColor('#64748b');
             ctx.font = '11px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('Model Accuracy (%)', 0, 0);
             ctx.restore();
 
             // X-axis label
-            ctx.fillStyle = '#64748b';
+            ctx.fillStyle = themeColor('#64748b');
             ctx.font = '11px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('Error Rate in Prompt Examples (%)', margin.left + w / 2, canvas.height - 10);
@@ -2301,13 +2301,13 @@ Q: 789 + 456 = ?</pre>
             // Grid lines
             for (let i = 0; i <= 10; i++) {
                 const y = margin.top + h - (i / 10) * h;
-                ctx.strokeStyle = '#f1f5f9';
+                ctx.strokeStyle = themeColor('#f1f5f9');
                 ctx.lineWidth = 0.5;
                 ctx.beginPath();
                 ctx.moveTo(margin.left, y);
                 ctx.lineTo(margin.left + w, y);
                 ctx.stroke();
-                ctx.fillStyle = '#94a3b8';
+                ctx.fillStyle = themeColor('#94a3b8');
                 ctx.font = '10px monospace';
                 ctx.textAlign = 'right';
                 ctx.fillText(`${i * 10}`, margin.left - 8, y + 4);
@@ -2316,7 +2316,7 @@ Q: 789 + 456 = ?</pre>
             // X-axis ticks
             for (let i = 0; i <= 10; i++) {
                 const x = margin.left + (i / 10) * w;
-                ctx.fillStyle = '#94a3b8';
+                ctx.fillStyle = themeColor('#94a3b8');
                 ctx.font = '10px monospace';
                 ctx.textAlign = 'center';
                 ctx.fillText(`${i * 10}`, x, margin.top + h + 18);
@@ -2356,7 +2356,7 @@ Q: 789 + 456 = ?</pre>
             ctx.setLineDash([]);
 
             // Few-shot curve: already low, barely changes
-            ctx.strokeStyle = '#94a3b8';
+            ctx.strokeStyle = themeColor('#94a3b8');
             ctx.lineWidth = 2;
             ctx.setLineDash([3, 3]);
             ctx.beginPath();
@@ -2396,7 +2396,7 @@ Q: 789 + 456 = ?</pre>
             ctx.beginPath(); ctx.arc(currentX, algoY, 6, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#f59e0b';
             ctx.beginPath(); ctx.arc(currentX, cotY, 6, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = themeColor('#94a3b8');
             ctx.beginPath(); ctx.arc(currentX, fewY, 5, 0, Math.PI * 2); ctx.fill();
 
             // Legend
@@ -2405,19 +2405,19 @@ Q: 789 + 456 = ?</pre>
 
             ctx.fillStyle = '#059669';
             ctx.fillRect(legendX, legendY, 20, 3);
-            ctx.fillStyle = '#1e293b';
+            ctx.fillStyle = themeColor('#1e293b');
             ctx.font = '11px sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText(`Algorithmic: ${algoAcc.toFixed(1)}%`, legendX + 25, legendY + 5);
 
             ctx.fillStyle = '#f59e0b';
             ctx.fillRect(legendX, legendY + 18, 20, 3);
-            ctx.fillStyle = '#1e293b';
+            ctx.fillStyle = themeColor('#1e293b');
             ctx.fillText(`Chain-of-Thought: ${cotAcc.toFixed(1)}%`, legendX + 25, legendY + 23);
 
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = themeColor('#94a3b8');
             ctx.fillRect(legendX, legendY + 36, 20, 3);
-            ctx.fillStyle = '#1e293b';
+            ctx.fillStyle = themeColor('#1e293b');
             ctx.fillText(`Few-shot: ${fewAcc.toFixed(1)}%`, legendX + 25, legendY + 41);
 
             // Annotation at high error rates
@@ -2427,7 +2427,7 @@ Q: 789 + 456 = ?</pre>
                 ctx.textAlign = 'center';
                 ctx.fillText('Algorithmic prompting collapses!', margin.left + w / 2, margin.top + 20);
                 ctx.font = '10px sans-serif';
-                ctx.fillStyle = '#64748b';
+                ctx.fillStyle = themeColor('#64748b');
                 ctx.fillText('(Proves it was actually following the rules)', margin.left + w / 2, margin.top + 35);
             }
 

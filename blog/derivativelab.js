@@ -54,7 +54,7 @@ function initDerivativeLab() {
 				y: [f_x], 
 				mode: 'markers', 
 				name: 'Current Position', 
-				marker: {color: '#1e293b', size: 12, symbol: 'circle'} 
+				marker: {color: themeColor('#1e293b'), size: 12, symbol: 'circle'} 
 			},
 			{ 
 				// POINT B: Look-ahead Point (Smaller Red Diamond)

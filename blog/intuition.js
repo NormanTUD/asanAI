@@ -188,8 +188,8 @@ const EmbeddingViz = {
                 text: bgWords,
                 mode: 'markers+text',
                 textposition: 'top center',
-                textfont: { size: 9, color: '#cbd5e1' },
-                marker: { size: 5, color: '#e2e8f0', opacity: 0.5 },
+                textfont: { size: 9, color: themeColor('#cbd5e1') },
+                marker: { size: 5, color: themeColor('#e2e8f0'), opacity: 0.5 },
                 showlegend: false,
                 hovertemplate: '<b>%{text}</b><br>(%{x:.1f}, %{y:.1f})<extra></extra>'
             });
@@ -205,7 +205,7 @@ const EmbeddingViz = {
                 mode: 'markers+text',
                 textposition: 'top center',
                 textfont: { size: 13, color: colors[i % colors.length], weight: 'bold' },
-                marker: { size: 14, color: colors[i % colors.length], line: { width: 2, color: '#fff' } },
+                marker: { size: 14, color: colors[i % colors.length], line: { width: 2, color: themeColor('#fff') } },
                 showlegend: false,
                 hovertemplate: `<b>${word}</b><br>Vector: (${pos[0]}, ${pos[1]})<extra></extra>`
             });
@@ -270,7 +270,7 @@ const EmbeddingViz = {
                 mode: 'markers+text',
                 textposition: 'bottom center',
                 textfont: { size: 14, color: '#ef4444', weight: 'bold' },
-                marker: { size: 18, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: '#fff' } },
+                marker: { size: 18, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: themeColor('#fff') } },
                 showlegend: false,
                 hovertemplate: `<b>Result ≈ ${r.nearest}</b><br>(${r.pos[0].toFixed(1)}, ${r.pos[1].toFixed(1)})<extra></extra>`
             });
@@ -279,10 +279,10 @@ const EmbeddingViz = {
         const layout = {
             margin: { l: 40, r: 40, b: 40, t: 20 },
             showlegend: false,
-            xaxis: { title: 'Dimension 1', range: [-10, 12], gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
-            yaxis: { title: 'Dimension 2', range: [-10, 10], gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0', scaleanchor: 'x' },
+            xaxis: { title: 'Dimension 1', range: [-10, 12], gridcolor: themeColor('#f1f5f9'), zeroline: true, zerolinecolor: themeColor('#e2e8f0') },
+            yaxis: { title: 'Dimension 2', range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zeroline: true, zerolinecolor: themeColor('#e2e8f0'), scaleanchor: 'x' },
             annotations: annotations,
-            plot_bgcolor: '#fff'
+            plot_bgcolor: themeColor('#fff')
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -401,11 +401,11 @@ const PositionalEncodingViz = {
 
         const layout = {
             margin: { l: 50, r: 20, b: 50, t: 20 },
-            xaxis: { title: 'Token Position', dtick: 1, gridcolor: '#f1f5f9' },
-            yaxis: { title: 'Encoding Value', range: [-1.3, 1.3], gridcolor: '#f1f5f9' },
+            xaxis: { title: 'Token Position', dtick: 1, gridcolor: themeColor('#f1f5f9') },
+            yaxis: { title: 'Encoding Value', range: [-1.3, 1.3], gridcolor: themeColor('#f1f5f9') },
             showlegend: true,
             legend: { x: 1, y: 1, xanchor: 'right', bgcolor: 'rgba(255,255,255,0.9)', font: { size: 10 } },
-            plot_bgcolor: '#fff'
+            plot_bgcolor: themeColor('#fff')
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -445,7 +445,7 @@ const PositionalEncodingViz = {
             margin: { l: 60, r: 20, b: 50, t: 10 },
             xaxis: { title: 'Embedding Dimension' },
             yaxis: { title: 'Token Position', autorange: 'reversed' },
-            plot_bgcolor: '#fff'
+            plot_bgcolor: themeColor('#fff')
         };
 
         Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
@@ -730,7 +730,7 @@ const ResidualStreamViz = {
 
 			// Label
 			this.ctx.font = 'bold 12px system-ui';
-			this.ctx.fillStyle = '#1e293b';
+			this.ctx.fillStyle = themeColor('#1e293b');
 			this.ctx.textAlign = 'center';
 			this.ctx.fillText('→ Compare result to all words in the dictionary to chose the next most likely ones', centerX + 100, endY + 10);
 			this.ctx.globalAlpha = 1;
@@ -761,7 +761,7 @@ const ResidualStreamViz = {
 
 	clearAndSetupCanvas: function() {
 		this.ctx.clearRect(0, 0, this.W, this.H);
-		this.ctx.fillStyle = '#ffffff';
+		this.ctx.fillStyle = themeColor('#ffffff');
 		this.ctx.fillRect(0, 0, this.W, this.H);
 	},
 
@@ -812,7 +812,7 @@ const ResidualStreamViz = {
 		const minH = this.rowH - 5;
 		const boxH = Math.max(minH, metaHeight + 30);
 
-		ctx.fillStyle = '#f8fafc';
+		ctx.fillStyle = themeColor('#f8fafc');
 		ctx.beginPath();
 		ctx.roundRect(25, yBase - 10, this.W - 50, boxH, 12);
 		ctx.fill();
@@ -863,7 +863,7 @@ const ResidualStreamViz = {
 		ctx.fillStyle = '#8b5cf6';
 		ctx.fillText('Attention:', descColX, dy + 5);
 		ctx.font = '14px system-ui';
-		ctx.fillStyle = '#475569';
+		ctx.fillStyle = themeColor('#475569');
 		this.drawWrappedText(role.attnDesc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
 
 		// FFN Text
@@ -871,7 +871,7 @@ const ResidualStreamViz = {
 		ctx.fillStyle = '#d97706';
 		ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
 		ctx.font = '14px system-ui';
-		ctx.fillStyle = '#475569';
+		ctx.fillStyle = themeColor('#475569');
 		this.drawWrappedText(role.ffnDesc, descColX, dy + 80, '14px system-ui', '#475569', maxTextWidth, 18);
 
 		// Example Text
@@ -1006,7 +1006,7 @@ const ResidualStreamViz = {
 			this.ctx.beginPath();
 			this.ctx.arc(centerX, returnY + 10, 8, 0, Math.PI * 2);
 			this.ctx.fill();
-			this.ctx.fillStyle = '#fff';
+			this.ctx.fillStyle = themeColor('#fff');
 			this.ctx.textAlign = 'center';
 			this.ctx.fillText('+', centerX, returnY + 14);
 		}
@@ -1039,7 +1039,7 @@ const ResidualStreamViz = {
 		const vecW = this.dims * (cellW + 1);
 
 		ctx.font = 'bold 18px system-ui, sans-serif';
-		ctx.fillStyle = '#1e293b';
+		ctx.fillStyle = themeColor('#1e293b');
 		ctx.textAlign = 'left';
 		ctx.textBaseline = 'bottom';
 		ctx.fillText('Residual Stream Flow', 30, this.topPad - 25);
@@ -1047,7 +1047,7 @@ const ResidualStreamViz = {
 		ctx.font = '600 11px system-ui, sans-serif';
 		ctx.textAlign = 'center';
 
-		ctx.fillStyle = '#64748b';
+		ctx.fillStyle = themeColor('#64748b');
 		ctx.fillText('RESIDUAL x', streamX + vecW / 2, this.topPad - 5);
 
 		ctx.fillStyle = '#8b5cf6';
@@ -1212,7 +1212,7 @@ const PredictionViz = {
             orientation: 'h',
             marker: {
                 color: colors,
-                line: { width: 1, color: '#fff' }
+                line: { width: 1, color: themeColor('#fff') }
             },
             text: items.map(it => (it.prob * 100).toFixed(1) + '%'),
             textposition: 'outside',
@@ -1225,13 +1225,13 @@ const PredictionViz = {
             xaxis: {
                 title: 'Probability',
                 range: [0, Math.min(1, Math.max(...items.map(it => it.prob)) * 1.3)],
-                gridcolor: '#f1f5f9'
+                gridcolor: themeColor('#f1f5f9')
             },
             yaxis: {
                 autorange: 'reversed',
                 tickfont: { size: 12 }
             },
-            plot_bgcolor: '#fff',
+            plot_bgcolor: themeColor('#fff'),
             bargap: 0.15
         };
 
@@ -1685,8 +1685,8 @@ function runAttention() {
 	const layout = {
 		margin: { l: 40, r: 40, b: 40, t: 40 },
 		hovermode: 'closest',
-		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: '#e2e8f0' },
-		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: '#e2e8f0' },
+		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: themeColor('#e2e8f0') },
+		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: themeColor('#e2e8f0') },
 		showlegend: false
 	};
 

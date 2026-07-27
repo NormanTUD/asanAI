@@ -110,8 +110,8 @@ function initCompositionPlot() {
 		const compVals = xValues.map((x) => c * (a * x + b) + d);
 
 		const data = [
-			{ x: xValues, y: fVals, name: 'f(x)', line: { dash: 'dot', color: '#94a3b8' } },
-			{ x: xValues, y: gVals, name: 'g(x)', line: { dash: 'dot', color: '#cbd5e1' } },
+			{ x: xValues, y: fVals, name: 'f(x)', line: { dash: 'dot', color: themeColor('#94a3b8') } },
+			{ x: xValues, y: gVals, name: 'g(x)', line: { dash: 'dot', color: themeColor('#cbd5e1') } },
 			{
 				x: xValues,
 				y: compVals,
@@ -184,7 +184,7 @@ function initLogPlot() {
 			y: [0, currentY, currentY],
 			mode: 'lines',
 			showlegend: false,
-			line: { color: '#94a3b8', width: 1, dash: 'dash' },
+			line: { color: themeColor('#94a3b8'), width: 1, dash: 'dash' },
 		};
 
 		const layout = {

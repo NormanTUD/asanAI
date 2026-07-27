@@ -212,7 +212,7 @@ function updateOptPlot() {
 		{
 			x: xBase, y: yBase,
 			name: 'Loss Landscape',
-			line: { color: '#94a3b8', width: 2, shape: 'spline' },
+			line: { color: themeColor('#94a3b8'), width: 2, shape: 'spline' },
 			fill: 'tozeroy',
 			fillcolor: 'rgba(148, 163, 184, 0.08)',
 			hovertemplate: 'x: %{x:.3f}<br>loss: %{y:.3f}<extra>Landscape</extra>'
@@ -250,18 +250,18 @@ function updateOptPlot() {
 	const layout = {
 		margin: { t: 10, b: 40, l: 50, r: 10 },
 		showlegend: true,
-		legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: 11 } },
+		legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: themeColor('#e2e8f0'), borderwidth: 1, font: { size: 11 } },
 		xaxis: {
-			range: [-5, 5], fixedrange: true, gridcolor: '#f1f5f9',
-			title: { text: 'Weight (x)', font: { size: 12, color: '#64748b' } }
+			range: [-5, 5], fixedrange: true, gridcolor: themeColor('#f1f5f9'),
+			title: { text: 'Weight (x)', font: { size: 12, color: themeColor('#64748b') } }
 		},
 		yaxis: {
-			range: [-1, 20], fixedrange: true, gridcolor: '#f1f5f9',
-			title: { text: 'Loss f(x)', font: { size: 12, color: '#64748b' } }
+			range: [-1, 20], fixedrange: true, gridcolor: themeColor('#f1f5f9'),
+			title: { text: 'Loss f(x)', font: { size: 12, color: themeColor('#64748b') } }
 		},
-		plot_bgcolor: '#ffffff',
-		paper_bgcolor: '#ffffff',
-		hoverlabel: { bgcolor: '#1e293b', font: { color: '#f8fafc', size: 12 } }
+		plot_bgcolor: themeColor('#ffffff'),
+		paper_bgcolor: themeColor('#ffffff'),
+		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
 	};
 
 	Plotly.react('plot-optimizer', data, layout, { displayModeBar: false });

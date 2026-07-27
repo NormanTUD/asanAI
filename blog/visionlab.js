@@ -417,7 +417,7 @@ function showPixelInfo(x, y, srcCanvas) {
 		{ color: '#ef4444', label: 'R', val: px[0] },
 		{ color: '#22c55e', label: 'G', val: px[1] },
 		{ color: '#3b82f6', label: 'B', val: px[2] },
-		{ color: '#94a3b8', label: null, val: `(${x}, ${y})` },
+		{ color: themeColor('#94a3b8'), label: null, val: `(${x}, ${y})` },
 	].map(c => `<span style="color:${c.color}">${c.label ? c.label + ':' : ''}${c.val}</span>`).join('');
 }
 

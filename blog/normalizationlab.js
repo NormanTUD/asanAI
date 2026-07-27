@@ -364,7 +364,7 @@ const NormLab = {
         const layout = {
             title: {
                 text: title,
-                font: { size: 13, color: '#64748b', family: 'system-ui, sans-serif', weight: 700 },
+                font: { size: 13, color: themeColor('#64748b'), family: 'system-ui, sans-serif', weight: 700 },
                 x: 0.01,
                 xanchor: 'left',
             },
@@ -375,21 +375,21 @@ const NormLab = {
             legend: {
                 orientation: 'h',
                 y: -0.22,
-                font: { size: 11, color: '#64748b' },
+                font: { size: 11, color: themeColor('#64748b') },
             },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             yaxis: {
                 range: id === 'output-plot' ? [-2.5, 2.5] : null,
                 zeroline: true,
-                zerolinecolor: '#94a3b8',
+                zerolinecolor: themeColor('#94a3b8'),
                 zerolinewidth: 1.5,
-                gridcolor: '#f1f5f9',
+                gridcolor: themeColor('#f1f5f9'),
                 gridwidth: 1,
-                tickfont: { size: 11, color: '#94a3b8' },
+                tickfont: { size: 11, color: themeColor('#94a3b8') },
             },
             xaxis: {
-                tickfont: { size: 11, color: '#64748b', weight: 600 },
+                tickfont: { size: 11, color: themeColor('#64748b'), weight: 600 },
             },
         };
 

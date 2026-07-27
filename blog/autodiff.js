@@ -416,8 +416,8 @@ const GDDemo = {
         const pathTrace = {
             x: pathW1, y: pathW2,
             mode: 'lines+markers',
-            line: { color: '#1e293b', width: 2 },
-            marker: { size: 4, color: '#1e293b' },
+            line: { color: themeColor('#1e293b'), width: 2 },
+            marker: { size: 4, color: themeColor('#1e293b') },
             name: 'GD path',
             hoverinfo: 'text',
             text: this.path.map((p, i) => `Step ${i}: (${p.w1.toFixed(3)}, ${p.w2.toFixed(3)}), L=${p.loss.toFixed(4)}`)
@@ -427,7 +427,7 @@ const GDDemo = {
         const startMarker = {
             x: [pathW1[0]], y: [pathW2[0]],
             mode: 'markers',
-            marker: { size: 14, color: '#ef4444', symbol: 'diamond', line: { color: '#fff', width: 2 } },
+            marker: { size: 14, color: '#ef4444', symbol: 'diamond', line: { color: themeColor('#fff'), width: 2 } },
             name: 'Start',
             showlegend: true
         };
@@ -435,7 +435,7 @@ const GDDemo = {
         const endMarker = {
             x: [pathW1[pathW1.length - 1]], y: [pathW2[pathW2.length - 1]],
             mode: 'markers',
-            marker: { size: 14, color: '#10b981', symbol: 'star', line: { color: '#fff', width: 2 } },
+            marker: { size: 14, color: '#10b981', symbol: 'star', line: { color: themeColor('#fff'), width: 2 } },
             name: 'Current',
             showlegend: true
         };
@@ -455,8 +455,8 @@ const GDDemo = {
             yaxis: { title: 'w₂', range: [-5.5, 5.5] },
             legend: { orientation: 'h', y: -0.15 },
             title: { text: 'Gradient Descent Path on L(w₁, w₂) = w₁² + w₂²', font: { size: 14 } },
-            plot_bgcolor: '#f8fafc',
-            paper_bgcolor: '#fff',
+            plot_bgcolor: themeColor('#f8fafc'),
+            paper_bgcolor: themeColor('#fff'),
         };
 
         const config = { displayModeBar: false, responsive: true };
@@ -581,7 +581,7 @@ const VGDemo = {
                     if (m <= 100) return '#a78bfa';
                     return '#7c3aed';
                 }),
-                line: { color: '#1e293b', width: 1 }
+                line: { color: themeColor('#1e293b'), width: 1 }
             },
             hovertemplate: '%{x}<br>Gradient: %{y:.4e}<extra></extra>'
         };
@@ -592,7 +592,7 @@ const VGDemo = {
             y: layers.map(() => 1.0),
             type: 'scatter',
             mode: 'lines',
-            line: { color: '#94a3b8', width: 2, dash: 'dash' },
+            line: { color: themeColor('#94a3b8'), width: 2, dash: 'dash' },
             name: 'Ideal (1.0)',
             hoverinfo: 'skip'
         };
@@ -606,7 +606,7 @@ const VGDemo = {
             },
             title: { text: `Gradient Flow: ${act.label} (max σ′ = ${act.maxDeriv})`, font: { size: 14 } },
             showlegend: false,
-            plot_bgcolor: '#f8fafc',
+            plot_bgcolor: themeColor('#f8fafc'),
         };
 
         const config = { displayModeBar: false, responsive: true };

@@ -47,7 +47,7 @@ function renderPENegationSpace() {
             type: 'scatter', mode: 'markers+text',
             text: points.map(p => p.label),
             textposition: 'top center',
-            marker: { size: points.map(p => p.size), color: points.map(p => p.color), line: { width: 1, color: '#fff' } },
+            marker: { size: points.map(p => p.size), color: points.map(p => p.color), line: { width: 1, color: themeColor('#fff') } },
             textfont: { size: 11 },
         },
         {
@@ -59,17 +59,17 @@ function renderPENegationSpace() {
         {
             x: [0, -0.6], y: [0, -0.5],
             type: 'scatter', mode: 'lines',
-            line: { color: '#94a3b8', width: 1.5, dash: 'dot' },
+            line: { color: themeColor('#94a3b8'), width: 1.5, dash: 'dot' },
             showlegend: false,
         },
     ];
     Plotly.newPlot(el, traces, {
         title: { text: 'Why Negations Fail: "not happy" ≈ "happy" in Embedding Space', font: { size: 13 } },
-        xaxis: { range: [-1, 1.2], zeroline: true, zerolinecolor: '#e2e8f0' },
-        yaxis: { range: [-1, 0.8], zeroline: true, zerolinecolor: '#e2e8f0' },
+        xaxis: { range: [-1, 1.2], zeroline: true, zerolinecolor: themeColor('#e2e8f0') },
+        yaxis: { range: [-1, 0.8], zeroline: true, zerolinecolor: themeColor('#e2e8f0') },
         annotations: [
             { x: 0.07, y: 0.04, text: '← negation barely shifts the vector', showarrow: false, font: { size: 9, color: '#f59e0b' }, xanchor: 'left' },
-            { x: -0.3, y: -0.25, text: '← true opposite is far away', showarrow: false, font: { size: 9, color: '#94a3b8' }, xanchor: 'right' },
+            { x: -0.3, y: -0.25, text: '← true opposite is far away', showarrow: false, font: { size: 9, color: themeColor('#94a3b8') }, xanchor: 'right' },
         ],
         margin: { t: 40, b: 40, l: 40, r: 40 },
         paper_bgcolor: 'rgba(0,0,0,0)',
@@ -120,7 +120,7 @@ function renderPECoTAccuracy() {
             x: steps, y: accuracies,
             type: 'scatter', mode: 'lines+markers',
             line: { color: '#6366f1', width: 3, shape: 'spline' },
-            marker: { size: 10, color: accuracies.map(a => a > 0.8 ? '#22c55e' : a > 0.6 ? '#f59e0b' : '#ef4444'), line: { width: 1, color: '#fff' } },
+            marker: { size: 10, color: accuracies.map(a => a > 0.8 ? '#22c55e' : a > 0.6 ? '#f59e0b' : '#ef4444'), line: { width: 1, color: themeColor('#fff') } },
             fill: 'tozeroy',
             fillcolor: 'rgba(99, 102, 241, 0.08)',
         },

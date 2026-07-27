@@ -51,7 +51,7 @@ function initSecantTangent() {
             { x: xVals, y: yVals, mode: 'lines', name: 'f(x) = x²', line: { color: '#2563eb', width: 3 } },
             { x: secX, y: secY, mode: 'lines', name: `Secant (slope=${secantSlope.toFixed(3)})`, line: { color: '#ef4444', width: 2, dash: 'dash' } },
             { x: secX, y: tanY, mode: 'lines', name: `Tangent (slope=${tangentSlope})`, line: { color: '#22c55e', width: 2, dash: 'dot' } },
-            { x: [x0], y: [y0], mode: 'markers', name: 'Point (x₀)', marker: { size: 10, color: '#1e293b' }, showlegend: false },
+            { x: [x0], y: [y0], mode: 'markers', name: 'Point (x₀)', marker: { size: 10, color: themeColor('#1e293b') }, showlegend: false },
             { x: [x1], y: [y1], mode: 'markers', name: 'Point (x₀+h)', marker: { size: 10, color: '#ef4444', symbol: 'diamond' }, showlegend: false },
         ];
 
@@ -235,7 +235,7 @@ function initTangentLineExplorer() {
         const data = [
             { x: xVals, y: yVals, mode: 'lines', name: 'f(x) = x³ - 3x', line: { color: '#2563eb', width: 3 } },
             { x: tanX, y: tanY, mode: 'lines', name: `Tangent (slope=${slope.toFixed(3)})`, line: { color: '#f59e0b', width: 2.5 } },
-            { x: [a], y: [fa], mode: 'markers', name: 'Current point', marker: { size: 12, color: '#1e293b', line: { color: '#fff', width: 2 } }, showlegend: false },
+            { x: [a], y: [fa], mode: 'markers', name: 'Current point', marker: { size: 12, color: themeColor('#1e293b'), line: { color: themeColor('#fff'), width: 2 } }, showlegend: false },
             { x: critX, y: critY, mode: 'markers', name: "f'(x) = 0 (extrema)", marker: { size: 8, color: '#ef4444', symbol: 'star' } },
         ];
 
@@ -357,7 +357,7 @@ function initGradientSurface() {
                 x: [px], y: [py],
                 mode: 'markers',
                 name: `(${px.toFixed(1)}, ${py.toFixed(1)})`,
-                marker: { size: 14, color: '#ef4444', line: { color: '#fff', width: 2 } },
+                marker: { size: 14, color: '#ef4444', line: { color: themeColor('#fff'), width: 2 } },
             },
         ];
 

@@ -274,7 +274,7 @@ const FittingLab = {
                 y: this.data.yTrain,
                 mode: 'markers',
                 name: 'Training Data (Noisy)',
-                marker: { color: '#1e293b', size: 5, opacity: 0.7 },
+                marker: { color: themeColor('#1e293b'), size: 5, opacity: 0.7 },
             },
             // Test data scatter (held-out, never trained on)
             {
@@ -290,7 +290,7 @@ const FittingLab = {
                 y: this.data.yTrue,
                 mode: 'lines',
                 name: 'True Function  y = sin(x)',
-                line: { dash: 'dot', color: '#94a3b8', width: 2 },
+                line: { dash: 'dot', color: themeColor('#94a3b8'), width: 2 },
             },
             // Model prediction
             {
@@ -315,15 +315,15 @@ const FittingLab = {
             xaxis: {
                 range: this.viewRange,
                 title: 'x  —  the shaded region is the training window',
-                gridcolor: '#f1f5f9',
+                gridcolor: themeColor('#f1f5f9'),
             },
             yaxis: {
                 range: [-2.5, 2.5],
                 title: 'y',
-                gridcolor: '#f1f5f9',
+                gridcolor: themeColor('#f1f5f9'),
             },
-            plot_bgcolor: '#ffffff',
-            paper_bgcolor: '#ffffff',
+            plot_bgcolor: themeColor('#ffffff'),
+            paper_bgcolor: themeColor('#ffffff'),
             margin: { t: 20, b: 55, l: 55, r: 20 },
             legend: { orientation: 'h', y: -0.22 },
         };

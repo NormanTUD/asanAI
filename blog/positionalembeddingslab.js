@@ -53,15 +53,15 @@ function initSineCosine() {
 			// Full sine wave (faint reference)
 			{ x: waveX2, y: waveY2, mode: 'lines', line: { color: '#fecaca', width: 1.5 }, showlegend: false, hoverinfo: 'skip' },
 			// Unit circle
-			{ x: circX, y: circY, mode: 'lines', line: { color: '#cbd5e1', width: 2 }, showlegend: false, hoverinfo: 'skip' },
+			{ x: circX, y: circY, mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 2 }, showlegend: false, hoverinfo: 'skip' },
 			// Radius line
-			{ x: [0, cosT], y: [0, sinT], mode: 'lines', line: { color: '#334155', width: 3 }, showlegend: false, hoverinfo: 'skip' },
+			{ x: [0, cosT], y: [0, sinT], mode: 'lines', line: { color: themeColor('#334155'), width: 3 }, showlegend: false, hoverinfo: 'skip' },
 			// cos projection (horizontal blue line)
 			{ x: [0, cosT], y: [0, 0], mode: 'lines', line: { color: '#2563eb', width: 5 }, name: 'cos θ (x-coord)' },
 			// sin projection (vertical red line)
 			{ x: [cosT, cosT], y: [0, sinT], mode: 'lines', line: { color: '#ef4444', width: 5 }, name: 'sin θ (y-coord)' },
 			// Point on circle
-			{ x: [cosT], y: [sinT], mode: 'markers', marker: { size: 12, color: '#1e293b', line: { color: '#fff', width: 2 } }, showlegend: false },
+			{ x: [cosT], y: [sinT], mode: 'markers', marker: { size: 12, color: themeColor('#1e293b'), line: { color: themeColor('#fff'), width: 2 } }, showlegend: false },
 			// Dashed line from point to y-axis (shows sin value)
 			{ x: [0, cosT], y: [sinT, sinT], mode: 'lines', line: { color: '#ef4444', width: 1, dash: 'dash' }, showlegend: false, hoverinfo: 'skip' },
 			// Connecting line from circle point to wave
@@ -78,9 +78,9 @@ function initSineCosine() {
 			yaxis: { range: [-1.5, 1.5], zeroline: true, dtick: 0.5 },
 			legend: { orientation: 'h', y: -0.15 },
 			annotations: [
-				{ x: cosT, y: sinT, text: `(${cosT.toFixed(2)}, ${sinT.toFixed(2)})`, showarrow: true, arrowhead: 0, ax: -40, ay: -25, font: { size: 13, color: '#1e293b' } },
+				{ x: cosT, y: sinT, text: `(${cosT.toFixed(2)}, ${sinT.toFixed(2)})`, showarrow: true, arrowhead: 0, ax: -40, ay: -25, font: { size: 13, color: themeColor('#1e293b') } },
 				{ x: 0.32 * Math.cos(theta / 2), y: 0.32 * Math.sin(theta / 2), text: 'θ', showarrow: false, font: { size: 14, color: '#f59e0b', family: 'serif' } },
-				{ x: 3.0, y: -1.35, text: 'sin wave "unrolled" →', showarrow: false, font: { size: 11, color: '#94a3b8' } },
+				{ x: 3.0, y: -1.35, text: 'sin wave "unrolled" →', showarrow: false, font: { size: 11, color: themeColor('#94a3b8') } },
 			],
 		};
 
@@ -118,8 +118,8 @@ function initSineCosine() {
 		}
 
 		const data = [
-			{ x: xVals, y: ySin, mode: 'lines', line: { color: '#cbd5e1', width: 1, dash: 'dot' }, name: 'sin θ' },
-			{ x: xVals, y: yCos, mode: 'lines', line: { color: '#e2e8f0', width: 1, dash: 'dot' }, name: 'cos θ' },
+			{ x: xVals, y: ySin, mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 1, dash: 'dot' }, name: 'sin θ' },
+			{ x: xVals, y: yCos, mode: 'lines', line: { color: themeColor('#e2e8f0'), width: 1, dash: 'dot' }, name: 'cos θ' },
 			{ x: xVals, y: yCustom, mode: 'lines', line: { color: '#2563eb', width: 4 }, name: 'f(θ)' },
 		];
 
@@ -378,7 +378,7 @@ function initRepetitionStarburstDemo() {
             size: 10,
             color: '#000',
             symbol: 'diamond',
-            line: { width: 2, color: '#fff' }
+            line: { width: 2, color: themeColor('#fff') }
         },
         text: ['"king" (no PE)'],
         textposition: 'top center',
@@ -406,7 +406,7 @@ function initRepetitionStarburstDemo() {
             showarrow: false,
             x: 0.5, y: -0.05,
             xref: 'paper', yref: 'paper',
-            font: { size: 12, color: '#475569' }
+            font: { size: 12, color: themeColor('#475569') }
         }]
     };
 
@@ -473,7 +473,7 @@ function initHelixManifoldDemo() {
 			x: helixX, y: helixY, z: helixZ,
 			mode: 'lines',
 			type: 'scatter3d',
-			line: { color: '#cbd5e1', width: 2 },
+			line: { color: themeColor('#cbd5e1'), width: 2 },
 			opacity: 0.4,
 			name: 'PE Manifold (helix)',
 			showlegend: true
@@ -510,7 +510,7 @@ function initHelixManifoldDemo() {
 			showarrow: false,
 			x: 0.5, y: -0.05,
 			xref: 'paper', yref: 'paper',
-			font: { size: 13, color: '#475569' }
+			font: { size: 13, color: themeColor('#475569') }
 		}]
 	};
 

@@ -278,10 +278,10 @@ const TrainLab = {
 			margin: { t: 10, b: 30, l: 30, r: 10 },
 			height: 250,
 			paper_bgcolor: 'transparent',
-			plot_bgcolor: '#fafbfc',
-			font: { family: '-apple-system, BlinkMacSystemFont, sans-serif', size: 11, color: '#64748b' },
-			xaxis: { gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
-			yaxis: { gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' }
+			plot_bgcolor: themeColor('#fafbfc'),
+			font: { family: '-apple-system, BlinkMacSystemFont, sans-serif', size: 11, color: themeColor('#64748b') },
+			xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#e2e8f0') },
+			yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#e2e8f0') }
 		};
 	},
 
@@ -306,10 +306,10 @@ const TrainLab = {
 			margin: { t: 10, b: 30, l: 40, r: 10 },
 			height: 180,
 			paper_bgcolor: 'transparent',
-			plot_bgcolor: '#fafbfc',
-			font: { family: '-apple-system, BlinkMacSystemFont, sans-serif', size: 11, color: '#64748b' },
-			yaxis: { type: 'log', title: 'Error', gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
-			xaxis: { title: 'Epochs', gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' }
+			plot_bgcolor: themeColor('#fafbfc'),
+			font: { family: '-apple-system, BlinkMacSystemFont, sans-serif', size: 11, color: themeColor('#64748b') },
+			yaxis: { type: 'log', title: 'Error', gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#e2e8f0') },
+			xaxis: { title: 'Epochs', gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#e2e8f0') }
 		};
 	},
 

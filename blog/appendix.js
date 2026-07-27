@@ -43,7 +43,7 @@ function initTaylorSeries() {
 		}
 
 		const data = [
-			{ x: xVals, y: yTrue, mode: 'lines', line: { color: '#94a3b8', width: 2, dash: 'dot' }, name: 'True sin θ' },
+			{ x: xVals, y: yTrue, mode: 'lines', line: { color: themeColor('#94a3b8'), width: 2, dash: 'dot' }, name: 'True sin θ' },
 			{ x: xVals, y: yApprox, mode: 'lines', line: { color: '#dc2626', width: 3 }, name: `Taylor (${N} term${N > 1 ? 's' : ''})` },
 		];
 
@@ -92,12 +92,12 @@ function initGroupStructureDemo() {
 		}
 
 		var traces = [
-			{ x: cX, y: cY, mode: 'lines', line: { color: '#e2e8f0', width: 1 },
+			{ x: cX, y: cY, mode: 'lines', line: { color: themeColor('#e2e8f0'), width: 1 },
 				showlegend: false, hoverinfo: 'skip' },
 			{ x: allX, y: allY, mode: 'markers+text',
-				marker: { size: 10, color: '#cbd5e1' },
+				marker: { size: 10, color: themeColor('#cbd5e1') },
 				text: allLabels, textposition: 'top center',
-				textfont: { size: 11, color: '#94a3b8' },
+				textfont: { size: 11, color: themeColor('#94a3b8') },
 				showlegend: false, hoverinfo: 'text',
 				hovertext: allLabels.map(function(l){ return 'Position ' + l; }) },
 			// identity
@@ -150,7 +150,7 @@ function initGroupStructureDemo() {
 				x:0, y:-1.45, xref:'x', yref:'y', showarrow:false,
 				text: 'M<sub>'+a+'</sub> · M<sub>'+b+'</sub> = M<sub>'+ab+
 				'</sub>   |   M<sub>'+a+'</sub> · M<sub>'+invA+'</sub> = M<sub>0</sub> = I',
-				font:{ size:13, color:'#475569' }
+				font:{ size:13, color:themeColor('#475569') }
 			}]
 		};
 
@@ -509,7 +509,7 @@ function renderLayerWave() {
     if (scanVal) scanVal.textContent = `${Math.round(st.scanLayer)} / ${depth - 1}`;
 
     // ── Clear ──
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = themeColor('#0f172a');
     ctx.fillRect(0, 0, W, H);
 
     // Layout: top 45% = heatmap, bottom 55% = wave curve
@@ -774,7 +774,7 @@ function renderLayerWave() {
     ctx.arc(scanX, scanY, 7, 0, Math.PI * 2);
     ctx.fillStyle = '#f59e0b';
     ctx.fill();
-    ctx.strokeStyle = '#fff';
+    ctx.strokeStyle = themeColor('#fff');
     ctx.lineWidth = 2;
     ctx.stroke();
 
@@ -1195,7 +1195,7 @@ function renderIsosurface() {
     if (stepVal) stepVal.textContent = `${step} / ${sent.tokens.length - 1}`;
 
     // ── Clear ──
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = themeColor('#0f172a');
     ctx.fillRect(0, 0, W, H);
 
     // ── Grid ──
@@ -1389,14 +1389,14 @@ function renderIsosurface() {
         const hue = 220 - entropy * 180; // 220 (blue) → 40 (orange)
         ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
         ctx.fill();
-        ctx.strokeStyle = '#fff';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
         // Token label
         ctx.font = 'bold 12px system-ui, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#e2e8f0';
+        ctx.fillStyle = themeColor('#e2e8f0');
         ctx.fillText(sent.tokens[i], cp.x, cp.y - radius - 8);
     }
 
@@ -1448,28 +1448,28 @@ function renderIsosurface() {
         ctx.lineTo(barX, markerY - 4);
         ctx.lineTo(barX, markerY + 4);
         ctx.closePath();
-        ctx.fillStyle = '#fff';
+        ctx.fillStyle = themeColor('#fff');
         ctx.fill();
 
         // Marker line
         ctx.beginPath();
         ctx.moveTo(barX, markerY);
         ctx.lineTo(barX + barW, markerY);
-        ctx.strokeStyle = '#fff';
+        ctx.strokeStyle = themeColor('#fff');
         ctx.lineWidth = 2;
         ctx.stroke();
 
         // Labels
         ctx.font = '9px system-ui, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#94a3b8';
+        ctx.fillStyle = themeColor('#94a3b8');
         ctx.fillText('Certain', barX + barW / 2, barY - 8);
         ctx.fillText('Uncertain', barX + barW / 2, barY + barH + 14);
 
         // Entropy value
         ctx.font = 'bold 10px system-ui, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillStyle = '#e2e8f0';
+        ctx.fillStyle = themeColor('#e2e8f0');
         ctx.fillText(`H=${effectiveEntropy.toFixed(2)}`, barX + barW + 6, markerY + 4);
     }
 

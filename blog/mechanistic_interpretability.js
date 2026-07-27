@@ -1434,7 +1434,7 @@
 
                 ctx.fillStyle = isLast ? '#d94a4a' : isPrevOcc ? '#4a90d9' : '#333';
                 ctx.fillRect(x, tokenY - 18, tokenSpacing - 5, 25);
-                ctx.fillStyle = '#fff';
+                ctx.fillStyle = themeColor('#fff');
                 ctx.font = 'bold 12px monospace';
                 ctx.fillText(tokens[i], x + 5, tokenY - 1);
             }

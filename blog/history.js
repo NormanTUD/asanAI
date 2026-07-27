@@ -37,7 +37,7 @@ function renderLinearSeparability() {
 		title: 'XOR Gate: NOT Separable',
 		annotations: [{
 			x: 0.5, y: 0.5, text: 'No single line can<br>separate these classes!',
-			showarrow: false, font: { color: '#475569', size: 14 }
+			showarrow: false, font: { color: themeColor('#475569'), size: 14 }
 		}]
 	});
 }

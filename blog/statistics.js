@@ -22,32 +22,32 @@ const STAT_THEME = {
         gridcolor: 'rgba(148,163,184,0.12)',
         zerolinecolor: 'rgba(148,163,184,0.25)',
         linecolor: 'rgba(148,163,184,0.2)',
-        tickfont: { size: 11, color: '#64748b' },
-        title: { font: { size: 12, color: '#475569', weight: 600 } }
+        tickfont: { size: 11, color: themeColor('#64748b') },
+        title: { font: { size: 12, color: themeColor('#475569'), weight: 600 } }
     },
     yaxis: {
         gridcolor: 'rgba(148,163,184,0.12)',
         zerolinecolor: 'rgba(148,163,184,0.25)',
         linecolor: 'rgba(148,163,184,0.2)',
-        tickfont: { size: 11, color: '#64748b' },
-        title: { font: { size: 12, color: '#475569', weight: 600 } }
+        tickfont: { size: 11, color: themeColor('#64748b') },
+        title: { font: { size: 12, color: themeColor('#475569'), weight: 600 } }
     },
     title: {
-        font: { size: 15, color: '#1e293b', weight: 700 },
+        font: { size: 15, color: themeColor('#1e293b'), weight: 700 },
         x: 0.03,
         xanchor: 'left'
     },
     margin: { t: 48, b: 44, l: 52, r: 24 },
     hoverlabel: {
-        bgcolor: '#1e293b',
+        bgcolor: themeColor('#1e293b'),
         bordercolor: 'transparent',
-        font: { color: '#f8fafc', size: 12, family: "'Inter', sans-serif" }
+        font: { color: themeColor('#f8fafc'), size: 12, family: "'Inter', sans-serif" }
     },
     legend: {
         bgcolor: 'rgba(255,255,255,0.85)',
         bordercolor: 'rgba(148,163,184,0.2)',
         borderwidth: 1,
-        font: { size: 11, color: '#475569' },
+        font: { size: 11, color: themeColor('#475569') },
         orientation: 'h',
         y: -0.18,
         x: 0.5,
@@ -1073,12 +1073,12 @@ async function renderGaussLegendreComplex() {
                     color: '#f97316',
                     size: 8,
                     opacity: 0.8,
-                    line: { color: '#fff', width: 1.5 }
+                    line: { color: themeColor('#fff'), width: 1.5 }
                 }
             },
             {
                 x, y: yFit, mode: 'lines', name: 'Least Squares Fit',
-                line: { color: '#1e293b', width: 3 }
+                line: { color: themeColor('#1e293b'), width: 3 }
             }
         ];
 
@@ -1142,7 +1142,7 @@ async function renderBayesianComplex() {
             x: ['Belief'], y: [P_H], name: 'Prior', type: 'bar',
             marker: {
                 color: alphaColor('#94a3b8', 0.4),
-                line: { color: '#94a3b8', width: 2 }
+                line: { color: themeColor('#94a3b8'), width: 2 }
             },
             width: [0.35]
         };
@@ -1233,7 +1233,7 @@ async function renderEntropy() {
             type: 'bar',
             text: [val1 + ' / 100', val2 + ' / 100'],
             textposition: 'auto',
-            textfont: { color: '#fff', weight: 700, size: 13 },
+            textfont: { color: themeColor('#fff'), weight: 700, size: 13 },
             marker: {
                 color: ['#eab308', '#94a3b8'],
                 line: { width: 1.5, color: ['#a16207', '#475569'] },
@@ -1309,7 +1309,7 @@ function updateCLTPlot() {
         nbinsx: n === 1 ? 6 : 40,
         marker: {
             color: alphaColor('#6366f1', 0.5),
-            line: { color: '#fff', width: 0.5 }
+            line: { color: themeColor('#fff'), width: 0.5 }
         },
         name: 'Observed Averages'
     };
@@ -1476,9 +1476,9 @@ async function renderDirichletLab() {
         const layout = {
             ternary: {
                 sum: 1,
-                aaxis: { title: 'Science', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: '#94a3b8' },
-                baxis: { title: 'Art', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: '#94a3b8' },
-                caxis: { title: 'Sports', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: '#94a3b8' }
+                aaxis: { title: 'Science', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8') },
+                baxis: { title: 'Art', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8') },
+                caxis: { title: 'Sports', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8') }
             },
             margin: { t: 80, b: 40, l: 40, r: 40 },
             title: {
@@ -1486,9 +1486,9 @@ async function renderDirichletLab() {
                 y: 0.95,
                 x: 0.5,
                 xanchor: 'center',
-                font: { size: 15, color: '#1e293b', weight: 700 }
+                font: { size: 15, color: themeColor('#1e293b'), weight: 700 }
             },
-            font: { family: "'Inter', sans-serif", color: '#334155' },
+            font: { family: "'Inter', sans-serif", color: themeColor('#334155') },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)'
         };
@@ -1541,7 +1541,7 @@ async function renderGMMContextLab() {
         };
         const traceMix = {
             x: xValues, y: mixture, name: 'Total Probability P(x)',
-            line: { color: '#1e293b', width: 3 }
+            line: { color: themeColor('#1e293b'), width: 3 }
         };
 
         Plotly.react('plot-gmm-clusters', [traceA, traceB, traceMix], mergeLayout({
@@ -1914,7 +1914,7 @@ var LLMStatsLab = {
                     color: '#e11d48',
                     size: 12,
                     symbol: 'circle',
-                    line: { color: '#fff', width: 2 }
+                    line: { color: themeColor('#fff'), width: 2 }
                 }
             }
         ];
@@ -1965,7 +1965,7 @@ var LLMStatsLab = {
             type: 'bar',
             text: values.map(v => v.toFixed(4)),
             textposition: 'auto',
-            textfont: { color: '#fff', weight: 700 },
+            textfont: { color: themeColor('#fff'), weight: 700 },
             marker: {
                 color: barColors,
                 line: { color: 'rgba(255,255,255,0.6)', width: 1.5 }
@@ -2101,7 +2101,7 @@ async function renderExtremeLab() {
             },
             text: [(1 - p).toFixed(2), p.toFixed(2)],
             textposition: 'auto',
-            textfont: { color: '#fff', weight: 700, size: 14 }
+            textfont: { color: themeColor('#fff'), weight: 700, size: 14 }
         }], mergeLayout({
             title: { text: `Bernoulli Trial (p=${p.toFixed(2)})` },
             yaxis: { range: [0, 1], title: { text: 'Probability' } }
@@ -2323,7 +2323,7 @@ async function renderGaussCalc() {
                 (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((b - mu) / sigma, 2))
             ],
             mode: 'markers+text',
-            marker: { color: '#e11d48', size: 10, line: { color: '#fff', width: 2 } },
+            marker: { color: '#e11d48', size: 10, line: { color: themeColor('#fff'), width: 2 } },
             text: [`a = ${a.toFixed(1)}`, `b = ${b.toFixed(1)}`],
             textposition: 'top center',
             textfont: { color: '#e11d48', size: 12, weight: 700 },

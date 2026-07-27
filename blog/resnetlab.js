@@ -108,8 +108,8 @@ const ResNetLab = {
 
 		const layout = {
 			margin: {t:10, b:40, l:50, r:20},
-			yaxis: {title: 'Gradient Strength', range: [0, 1.1], gridcolor: '#f1f5f9'},
-			xaxis: {title: 'Network Depth (Layers)', gridcolor: '#f1f5f9'},
+			yaxis: {title: 'Gradient Strength', range: [0, 1.1], gridcolor: themeColor('#f1f5f9')},
+			xaxis: {title: 'Network Depth (Layers)', gridcolor: themeColor('#f1f5f9')},
 			legend: {orientation: 'h', y: -0.2},
 			paper_bgcolor: 'rgba(0,0,0,0)',
 			plot_bgcolor: 'rgba(0,0,0,0)',
