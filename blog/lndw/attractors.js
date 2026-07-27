@@ -124,7 +124,7 @@ function renderStep(step) {
         '<b>Punkt-Attraktor:</b> Punkte bewegen sich frei im Raum. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
         '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌏 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. <br><b>⚠️ Homotopie-Hinweis:</b> Der Torus rechts zeigt die <i>topologische Struktur</i> (Kreis × Kreis), nicht die exakte räumliche Geometrie.',
         '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
-        '<b>Komplexe Becken:</b> Mehrere Attraktoren mit verschlungenen Einzugsbereichen – je nach Startpunkt landet man in einem anderen Becken.',
+        '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
         '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.'
     ];
@@ -1384,8 +1384,7 @@ function renderTorusEarth(container) {
     }
 
     // ============================================================
-    // STEP 3: Komplexe Becken – ruhig, klar erkennbare Strukturen
-    // (unverändert, war gut)
+    // STEP 3: Komplexe Becken – mit Attraktoren &amp; Repellern
     // ============================================================
     function renderComplexBasins(container) {
         const setup = safeCanvasSetup(container, '#fafafa');
@@ -1401,10 +1400,39 @@ function renderTorusEarth(container) {
             { x: W * 0.5, y: H * 0.75, label: 'C', color: '#f59e0b', hue: 40 }
         ];
 
+        const repellents = [
+            { x: W * 0.4, y: H * 0.22, label: 'R₁', color: '#ef4444', strength: 220 },
+            { x: W * 0.65, y: H * 0.65, label: 'R₂', color: '#ef4444', strength: 200 }
+        ];
+
         const gridSize = 4;
         const cols = Math.ceil(W / gridSize);
         const rows = Math.ceil(H / gridSize);
         let basinMap = [];
+
+        // Compute forces for basin map
+        function computeForces(px, py) {
+            let totalFx = 0, totalFy = 0;
+            attractors.forEach(a => {
+                const dx = a.x - px;
+                const dy = a.y - py;
+                const dist = Math.sqrt(dx * dx + dy * dy) + 1;
+                const strength = 80 / (dist * dist);
+                const angle = Math.atan2(dy, dx) + 0.8 / (dist * 0.02 + 1);
+                totalFx += Math.cos(angle) * strength * dist;
+                totalFy += Math.sin(angle) * strength * dist;
+            });
+            repellents.forEach(r => {
+                const dx = px - r.x;
+                const dy = py - r.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) + 1;
+                const strength = r.strength / (dist * dist);
+                const angle = Math.atan2(dy, dx);
+                totalFx += Math.cos(angle) * strength * dist;
+                totalFy += Math.sin(angle) * strength * dist;
+            });
+            return { fx: totalFx, fy: totalFy };
+        }
 
         for (let row = 0; row < rows; row++) {
             basinMap[row] = [];
@@ -1413,26 +1441,16 @@ function renderTorusEarth(container) {
                 const py = row * gridSize + gridSize / 2;
 
                 let x = px, y = py;
-                let closestAttr = 0;
-                let minDist = Infinity;
 
-                for (let iter = 0; iter < 20; iter++) {
-                    let totalFx = 0, totalFy = 0;
-                    attractors.forEach((a, idx) => {
-                        const dx = a.x - x;
-                        const dy = a.y - y;
-                        const dist = Math.sqrt(dx * dx + dy * dy) + 1;
-                        const strength = 80 / (dist * dist);
-                        const angle = Math.atan2(dy, dx) + 0.8 / (dist * 0.02 + 1);
-                        totalFx += Math.cos(angle) * strength * dist;
-                        totalFy += Math.sin(angle) * strength * dist;
-                    });
-
-                    const norm = Math.sqrt(totalFx * totalFx + totalFy * totalFy) || 1;
-                    x += (totalFx / norm) * 8;
-                    y += (totalFy / norm) * 8;
+                for (let iter = 0; iter < 25; iter++) {
+                    const f = computeForces(x, y);
+                    const norm = Math.sqrt(f.fx * f.fx + f.fy * f.fy) || 1;
+                    x += (f.fx / norm) * 8;
+                    y += (f.fy / norm) * 8;
                 }
 
+                let minDist = Infinity;
+                let closestAttr = 0;
                 attractors.forEach((a, idx) => {
                     const dx = a.x - x;
                     const dy = a.y - y;
@@ -1447,7 +1465,7 @@ function renderTorusEarth(container) {
             }
         }
 
-        const numParticles = 12;
+        const numParticles = 14;
         let particles = [];
 
         function spawnParticle() {
@@ -1540,6 +1558,57 @@ function renderTorusEarth(container) {
                 ctx.fillText(`Attraktor ${a.label}`, a.x, a.y - 20);
             });
 
+            // Draw repellents
+            repellents.forEach((r, idx) => {
+                const dangerPulse = 1 + 0.1 * Math.sin(t * 0.06 + idx * 2.3);
+                const radius = 14 * dangerPulse;
+
+                // Danger glow
+                const rGlow = ctx.createRadialGradient(r.x, r.y, 0, r.x, r.y, 28);
+                rGlow.addColorStop(0, 'rgba(239, 68, 68, 0.35)');
+                rGlow.addColorStop(1, 'transparent');
+                ctx.fillStyle = rGlow;
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, 28, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Red circle with X
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ef4444';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // X mark
+                const xSize = radius * 0.6;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(r.x - xSize, r.y - xSize);
+                ctx.lineTo(r.x + xSize, r.y + xSize);
+                ctx.moveTo(r.x + xSize, r.y - xSize);
+                ctx.lineTo(r.x - xSize, r.y + xSize);
+                ctx.stroke();
+
+                // Shockwaves
+                for (let w = 0; w < 2; w++) {
+                    const wPhase = (t * 0.02 + idx * 1.5 + w * 0.7) % 1;
+                    const wr = 22 + wPhase * 40;
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, wr, 0, Math.PI * 2);
+                    ctx.strokeStyle = `rgba(239, 68, 68, ${0.25 * (1 - wPhase)})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                ctx.font = 'bold 13px system-ui';
+                ctx.fillStyle = '#dc2626';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Repeller ${r.label}`, r.x, r.y - radius - 10);
+            });
+
             particles.forEach((p, idx) => {
                 if (p.arrived) {
                     p.alpha -= 0.015;
@@ -1555,12 +1624,25 @@ function renderTorusEarth(container) {
                 const dy = target.y - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
+                // Attractor force
                 const angle = Math.atan2(dy, dx);
                 const spiralOffset = 0.5 * Math.exp(-dist * 0.005);
                 const pullStrength = 0.15 + 0.3 * (1 - dist / (W * 0.5));
-
                 p.vx += Math.cos(angle + spiralOffset) * pullStrength;
                 p.vy += Math.sin(angle + spiralOffset) * pullStrength;
+
+                // Repeller force
+                repellents.forEach(r => {
+                    const rdx = p.x - r.x;
+                    const rdy = p.y - r.y;
+                    const rDist = Math.sqrt(rdx * rdx + rdy * rdy) + 1;
+                    if (rDist < 200) {
+                        const rAngle = Math.atan2(rdy, rdx);
+                        const rStrength = r.strength * 0.0003 / (rDist * 0.5 + 1);
+                        p.vx += Math.cos(rAngle) * rStrength;
+                        p.vy += Math.sin(rAngle) * rStrength;
+                    }
+                });
 
                 p.vx *= 0.92;
                 p.vy *= 0.92;
@@ -1607,10 +1689,10 @@ function renderTorusEarth(container) {
             ctx.font = 'bold 13px system-ui';
             ctx.fillStyle = '#334155';
             ctx.textAlign = 'center';
-            ctx.fillText('Komplexe Becken – verschlungene Einzugsbereiche', W / 2, 22);
+            ctx.fillText('Komplexe Becken – Attraktoren & Repeller', W / 2, 22);
             ctx.font = '11px system-ui';
             ctx.fillStyle = '#94a3b8';
-            ctx.fillText('Die Farbe zeigt, zu welchem Attraktor ein Startpunkt gehört. Grenzen sind komplex verschlungen.', W / 2, 40);
+            ctx.fillText('Die Farbe zeigt Einzugsbereiche der Attraktoren. Repeller (rot) stoßen Teilchen ab und verformen die Grenzen.', W / 2, 40);
 
             activeAnimation = requestAnimationFrame(draw);
         }
