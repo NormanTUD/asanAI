@@ -503,11 +503,11 @@ window.TrainingDemo = (function() {
     // 3D LOSS LANDSCAPE
     // ============================================================
     function getLandscapeData() {
-        var gs = 25, w1i = 0, w2i = 2;
-        var cw1 = s.W1[w1i][0], cw2 = s.W1[w2i][0];
-        var hr = 2.0;
-        var wMin = cw1 - hr, wMax = cw1 + hr;
-        var bMin = cw2 - hr, bMax = cw2 + hr;
+        var gs = 30, w1i = 0, w2i = 2;
+        var center = s.fixedCenter || { w1: s.W1[w1i][0], w2: s.W1[w2i][0] };
+        var hr = 3.0;
+        var wMin = center.w1 - hr, wMax = center.w1 + hr;
+        var bMin = center.w2 - hr, bMax = center.w2 + hr;
         var xv = [], yv = [], zv = [];
         for (var i = 0; i < gs; i++) xv.push(wMin + i/(gs-1)*(wMax - wMin));
         for (var j = 0; j < gs; j++) yv.push(bMin + j/(gs-1)*(bMax - bMin));
@@ -593,12 +593,12 @@ window.TrainingDemo = (function() {
         var surface = {
             type: 'surface', x: data.x, y: data.y, z: data.z,
             colorscale: [
-                [0, 'rgb(0,40,120)'], [0.15, 'rgb(0,100,200)'],
-                [0.3, 'rgb(50,180,220)'], [0.5, 'rgb(150,220,80)'],
-                [0.7, 'rgb(220,180,30)'], [0.85, 'rgb(220,100,20)'],
-                [1, 'rgb(160,30,30)']
+                [0, 'rgb(10,10,120)'], [0.12, 'rgb(0,60,200)'],
+                [0.25, 'rgb(30,140,230)'], [0.4, 'rgb(100,200,100)'],
+                [0.55, 'rgb(200,210,50)'], [0.7, 'rgb(230,130,20)'],
+                [0.85, 'rgb(200,50,30)'], [1, 'rgb(120,10,10)']
             ],
-            opacity: 0.85,
+            opacity: 0.7,
             contours: {
                 z: { show: true, usecolormap: true, highlightcolor: '#fff', project: { z: true } }
             },
@@ -608,20 +608,22 @@ window.TrainingDemo = (function() {
 
         var traces = [surface];
 
-        if (pw.length > 1) {
+        if (pw.length > 0) {
             traces.push({
                 type: 'scatter3d', mode: 'lines+markers',
                 x: pw, y: pb, z: pz,
-                line: { color: '#ffffff', width: 4 },
-                marker: { size: 3, color: '#ffffff', opacity: 0.6 },
+                line: { color: '#ff6b6b', width: 5 },
+                marker: { size: 4, color: '#ff6b6b', opacity: 0.7 },
                 name: 'Pfad'
             });
-            traces.push({
-                type: 'scatter3d', mode: 'markers',
-                x: [pw[0]], y: [pb[0]], z: [pz[0]],
-                marker: { size: 8, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 1 } },
-                name: 'Start'
-            });
+            if (pw.length > 1) {
+                traces.push({
+                    type: 'scatter3d', mode: 'markers',
+                    x: [pw[0]], y: [pb[0]], z: [pz[0]],
+                    marker: { size: 9, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 2 } },
+                    name: 'Start'
+                });
+            }
         }
 
         var cl = 0;
@@ -650,7 +652,7 @@ window.TrainingDemo = (function() {
         traces.push({
             type: 'scatter3d', mode: 'markers',
             x: [cw1], y: [cw2], z: [cl + 0.005],
-            marker: { size: 12, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 2 } },
+            marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
             name: 'Aktuell'
         });
 
@@ -763,6 +765,7 @@ window.TrainingDemo = (function() {
         canvas.width = W;
         canvas.height = 460;
         initNet();
+        s.fixedCenter = { w1: s.W1[0][0], w2: s.W1[2][0] };
         preloadImages(function() {
             var data = IMG_DATA[s.idx];
             if (data.features) { fwd(data.features); bwd(data.labelIdx); }
@@ -794,6 +797,7 @@ window.TrainingDemo = (function() {
     function reset() {
         stop();
         initNet();
+        s.fixedCenter = { w1: s.W1[0][0], w2: s.W1[2][0] };
         s.idx = 0; s.phase = 0; s.phaseT = 0; s.lastTime = 0;
         s.lossHist = []; s.posHist = []; s.plotInitialized = false;
         var canvas = document.getElementById('training-network-canvas');
