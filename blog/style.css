@@ -322,6 +322,23 @@ html.dark .toggle-icon {
 	color: var(--mn-text-muted) !important;
 }
 
+html.dark .token-chip {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark .sa-attn-table th,
+html.dark .sa-row-label {
+	background: var(--mn-bg-subtle) !important;
+	color: var(--mn-text-secondary) !important;
+}
+html.dark .prob-item:hover {
+	background: var(--mn-accent-lighter) !important;
+}
+html.dark #base-output pre {
+	background: var(--mn-bg-subtle) !important;
+}
+
 /* CSS class overrides for hardcoded light backgrounds */
 html.dark .matrix-grid,
 html.dark .token-chip,
@@ -4126,7 +4143,6 @@ html {
 	border-radius: var(--mn-radius-md);
 	background: var(--mn-surface);
 	color: var(--mn-text);
-	text-decoration: none;
 	font-size: 0.9rem;
 	font-weight: 500;
 	line-height: 1.3;
@@ -4134,6 +4150,10 @@ html {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+}
+/* override #contents a { text-decoration: underline } */
+#contents .module-nav-link {
+	text-decoration: none;
 }
 .module-nav-link:hover {
 	border-color: var(--mn-accent);

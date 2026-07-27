@@ -660,6 +660,13 @@ html.dark .predict-input {
 html.dark .predict-output {
     color: var(--mn-accent) !important;
 }
+html.dark .predict-result {
+    background: var(--mn-surface) !important;
+    color: var(--mn-text) !important;
+}
+html.dark .predict-label {
+    color: var(--mn-text-secondary) !important;
+}
 html.dark .training-table td {
     border-bottom-color: var(--mn-border) !important;
 }
