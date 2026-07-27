@@ -27,7 +27,8 @@ window.TrainingDemo = (function() {
         fixedCenter: null,
         fixedSurface: null,
         ballTrail: [],
-        ballPos: null
+        ballPos: null,
+        savedCamera: null
     };
 
     function randn() {
@@ -139,11 +140,11 @@ window.TrainingDemo = (function() {
     }
 
     // ============================================================
-    // FIXED LOSS LANDSCAPE — computed once from a complex function
+    // FIXED LOSS LANDSCAPE — computed once, stays constant
     // ============================================================
     function computeFixedSurface() {
-        var gs = 40;
-        var range = 4.0;
+        var gs = 50;
+        var range = 5.0;
         var xv = [], yv = [], zv = [];
         for (var i = 0; i < gs; i++) xv.push(-range + i/(gs-1) * 2*range);
         for (var j = 0; j < gs; j++) yv.push(-range + j/(gs-1) * 2*range);
@@ -152,26 +153,39 @@ window.TrainingDemo = (function() {
             var row = [];
             for (var i = 0; i < gs; i++) {
                 var x = xv[i], y = yv[j];
-                // Complex loss surface: mixture of Gaussians + ridges
                 var z = 0;
-                // Main valley (the global minimum we want to find)
-                z += 2.0 * Math.exp(-((x-1.2)*(x-1.2) + (y+0.8)*(y+0.8)) / 0.8);
-                // Secondary basin
-                z += 1.2 * Math.exp(-((x+1.5)*(x+1.5) + (y-1.0)*(y-1.0)) / 1.2);
-                // Ridge
-                z += 0.8 * Math.exp(-(x*x) / 0.3) * Math.exp(-(y*y) / 2.0);
-                // Saddle
-                z += 0.5 * Math.cos(x * 0.8) * Math.cos(y * 0.8);
-                // Noise-like texture
-                z += 0.3 * Math.sin(x * 2.1 + y * 1.3) * Math.cos(y * 1.7 - x * 0.9);
-                // Asymmetric basin
-                z += 0.6 * Math.exp(-((x-0.5)*(x-0.5)*0.5 + (y+0.3)*(y+0.3)*2.0) / 0.5);
-                // Small local minima
-                z += 0.4 * Math.exp(-((x+0.8)*(x+0.8) + (y+1.5)*(y+1.5)) / 0.3);
-                z += 0.35 * Math.exp(-((x-2.0)*(x-2.0) + (y-0.5)*(y-0.5)) / 0.4);
-                // Invert so lower = better (loss)
-                z = 4.5 - z + 0.15 * Math.sin(x*3) * Math.sin(y*2.5);
-                z = Math.max(0.05, z);
+
+                // --- Deep global minimum (the "goal") ---
+                z += 5.0 * Math.exp(-((x-2.0)*(x-2.0) + (y+1.5)*(y+1.5)) / 0.6);
+
+                // --- Deep local minimum (trap) ---
+                z += 4.0 * Math.exp(-((x+1.8)*(x+1.8) + (y-0.5)*(y-0.5)) / 0.5);
+
+                // --- Another local minimum ---
+                z += 3.5 * Math.exp(-((x-0.5)*(x-0.5) + (y+2.5)*(y+2.5)) / 0.4);
+
+                // --- Shallow local minimum ---
+                z += 2.5 * Math.exp(-((x+0.5)*(x+0.5) + (y+0.8)*(y+0.8)) / 0.8);
+
+                // --- High ridge separating basins ---
+                z -= 3.0 * Math.exp(-(x*x) / 0.4) * Math.exp(-((y-0.5)*(y-0.5)) / 0.3);
+
+                // --- Diagonal ridge ---
+                z -= 2.0 * Math.exp(-((x+y-1)*(x+y-1)) / 1.5);
+
+                // --- Saddle between two minima ---
+                z -= 1.5 * Math.exp(-((x-0.7)*(x-0.7)) / 0.2) * Math.exp(-((y+0.5)*(y+0.5)) / 2.0);
+
+                // --- Oscillating texture (wavy terrain) ---
+                z -= 0.8 * Math.sin(x * 1.2) * Math.cos(y * 0.9);
+                z -= 0.5 * Math.cos(x * 0.7 + y * 1.1);
+
+                // --- Edge walls (make boundaries high) ---
+                z -= 0.08 * (x*x + y*y);
+
+                // --- Final base + invert: high = bad loss ---
+                z = 7.0 - z;
+                z = Math.max(0.02, z);
                 row.push(z);
             }
             zv.push(row);
@@ -180,12 +194,11 @@ window.TrainingDemo = (function() {
     }
 
     function getFixedSurfaceLoss(w1, w2) {
-        if (!s.fixedSurface) return 2.0;
+        if (!s.fixedSurface) return 3.0;
         var fs = s.fixedSurface;
-        // Map network weights to surface coordinates
-        var sx = w1 * 1.5;
-        var sy = w2 * 1.5;
-        // Bilinear interpolation
+        // Aggressive mapping: small weight changes → visible movement on surface
+        var sx = w1 * 3.0;
+        var sy = w2 * 3.0;
         var fx = (sx + fs.range) / (2 * fs.range) * (fs.gs - 1);
         var fy = (sy + fs.range) / (2 * fs.range) * (fs.gs - 1);
         var ix = Math.max(0, Math.min(fs.gs - 2, Math.floor(fx)));
@@ -612,27 +625,27 @@ window.TrainingDemo = (function() {
         var tw = [], tb = [], tz = [];
         for (var hi = 0; hi < s.posHist.length; hi++) {
             var pw = s.posHist[hi].w1, pb = s.posHist[hi].w2;
-            tw.push(pw * 1.5);
-            tb.push(pb * 1.5);
-            tz.push(getFixedSurfaceLoss(pw, pb) + 0.02);
+            tw.push(pw * 3.0);
+            tb.push(pb * 3.0);
+            tz.push(getFixedSurfaceLoss(pw, pb) + 0.03);
         }
         // Current ball position
-        tw.push(cw1 * 1.5);
-        tb.push(cw2 * 1.5);
-        tz.push(ballLoss + 0.02);
+        tw.push(cw1 * 3.0);
+        tb.push(cw2 * 3.0);
+        tz.push(ballLoss + 0.03);
 
         var surface = {
             type: 'surface', x: fs.x, y: fs.y, z: fs.z,
             colorscale: [
-                [0, 'rgb(20,20,80)'], [0.1, 'rgb(30,60,180)'],
-                [0.2, 'rgb(40,120,220)'], [0.35, 'rgb(60,180,180)'],
-                [0.5, 'rgb(120,200,100)'], [0.65, 'rgb(200,200,50)'],
-                [0.8, 'rgb(230,120,30)'], [0.9, 'rgb(200,40,30)'],
-                [1, 'rgb(140,15,15)']
+                [0, 'rgb(15,15,70)'], [0.08, 'rgb(25,50,160)'],
+                [0.18, 'rgb(30,100,210)'], [0.3, 'rgb(40,160,200)'],
+                [0.42, 'rgb(80,190,140)'], [0.55, 'rgb(180,200,60)'],
+                [0.68, 'rgb(220,150,30)'], [0.8, 'rgb(210,60,30)'],
+                [0.92, 'rgb(160,20,20)'], [1, 'rgb(100,5,5)']
             ],
-            opacity: 0.65,
+            opacity: 0.6,
             contours: {
-                z: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.5)', project: { z: true } }
+                z: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.4)', project: { z: true } }
             },
             showscale: false,
             hovertemplate: 'w1: %{x:.3f}<br>w2: %{y:.3f}<br>Loss: %{z:.4f}<extra></extra>'
@@ -640,21 +653,14 @@ window.TrainingDemo = (function() {
 
         var traces = [surface];
 
-        // Trail (thin line)
+        // Trail
         if (tw.length > 1) {
             traces.push({
-                type: 'scatter3d', mode: 'lines',
+                type: 'scatter3d', mode: 'lines+markers',
                 x: tw, y: tb, z: tz,
-                line: { color: '#ff6b6b', width: 4, dash: 'solid' },
+                line: { color: '#ff6b6b', width: 5 },
+                marker: { size: 3, color: 'rgba(255,107,107,0.6)' },
                 name: 'Pfad',
-                hoverinfo: 'skip'
-            });
-            // Trail markers (small dots along the path)
-            traces.push({
-                type: 'scatter3d', mode: 'markers',
-                x: tw.slice(0, -1), y: tb.slice(0, -1), z: tz.slice(0, -1),
-                marker: { size: 3, color: 'rgba(255,107,107,0.5)', symbol: 'circle' },
-                name: 'Spur',
                 hoverinfo: 'skip'
             });
         }
@@ -664,37 +670,54 @@ window.TrainingDemo = (function() {
             traces.push({
                 type: 'scatter3d', mode: 'markers',
                 x: [tw[0]], y: [tb[0]], z: [tz[0]],
-                marker: { size: 8, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 2 } },
+                marker: { size: 9, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 2 } },
                 name: 'Start'
             });
         }
 
-        // Current ball — large, glowing
+        // Current ball
         traces.push({
             type: 'scatter3d', mode: 'markers',
-            x: [cw1 * 1.5], y: [cw2 * 1.5], z: [ballLoss + 0.02],
-            marker: { size: 13, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
+            x: [cw1 * 3.0], y: [cw2 * 3.0], z: [ballLoss + 0.03],
+            marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
             name: 'Aktuell'
         });
 
         var dm = typeof is_dark_mode !== 'undefined' && is_dark_mode;
 
+        // Preserve camera across updates
+        var savedCamera = null;
+        if (s.plotInitialized && div._fullLayout && div._fullLayout.scene) {
+            try {
+                var sc = div._fullLayout.scene._scene.getCamera();
+                savedCamera = { eye: { x: sc.eye.x, y: sc.eye.y, z: sc.eye.z } };
+            } catch(e) {}
+        }
+        if (!savedCamera && s.savedCamera) {
+            savedCamera = s.savedCamera;
+        }
+
         var layout = {
             scene: {
-                xaxis: { title: 'Gewicht 1', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
-                yaxis: { title: 'Gewicht 2', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
-                zaxis: { title: 'Loss', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)', rangemode: 'tozero' },
-                bgcolor: dm ? '#0d0d1a' : '#fff'
+                xaxis: { title: 'Gewicht 1', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' },
+                yaxis: { title: 'Gewicht 2', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' },
+                zaxis: { title: 'Loss', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)', rangemode: 'tozero' },
+                bgcolor: dm ? '#0d0d1a' : '#f8fafc'
             },
-            paper_bgcolor: dm ? '#0d0d1a' : '#fff',
+            paper_bgcolor: dm ? '#0d0d1a' : '#f8fafc',
             margin: { l: 0, r: 0, t: 0, b: 0 },
             showlegend: false,
             dragmode: 'turntable'
         };
 
+        if (savedCamera) {
+            layout.scene.camera = savedCamera;
+        } else {
+            layout.scene.camera = { eye: { x: 1.8, y: 1.8, z: 1.2 } };
+        }
+
         var config = { responsive: true, displaylogo: false, scrollZoom: true };
         if (!s.plotInitialized) {
-            layout.scene.camera = { eye: { x: 0.6, y: 2.2, z: 0.4 } };
             Plotly.newPlot(div, traces, layout, config).then(function() {
                 s.plotInitialized = true;
             });
@@ -743,7 +766,7 @@ window.TrainingDemo = (function() {
         if (s.phase === 1 && s.phaseT > 1.6) { s.phase = 2; s.phaseT = 0; }
         if (s.phase === 2 && s.phaseT > 1.0) { s.phase = 3; s.phaseT = 0; }
         if (s.phase === 3 && s.phaseT > 1.8) {
-            upd(1.2);
+            upd(2.5);
             s.lossHist.push(s.loss);
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             s.step++;
@@ -781,6 +804,15 @@ window.TrainingDemo = (function() {
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             draw();
             updatePlot();
+            // Track camera changes from user interaction
+            var div = document.getElementById('training-loss-landscape');
+            if (div) {
+                div.on('plotly_relayout', function(ed) {
+                    if (ed['scene.eye.x'] !== undefined) {
+                        s.savedCamera = { eye: { x: ed['scene.eye.x'], y: ed['scene.eye.y'], z: ed['scene.eye.z'] } };
+                    }
+                });
+            }
         });
         draw();
     }
@@ -812,6 +844,7 @@ window.TrainingDemo = (function() {
         s.idx = 0; s.phase = 0; s.phaseT = 0; s.lastTime = 0;
         s.lossHist = []; s.posHist = []; s.plotInitialized = false;
         s.prevW1 = null; s.prevB1 = null; s.prevW2 = null; s.prevB2 = null;
+        s.savedCamera = null;
         var canvas = document.getElementById('training-network-canvas');
         if (canvas) {
             var ctx = canvas.getContext('2d');
