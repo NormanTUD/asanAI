@@ -154,7 +154,7 @@ window.TrainingDemo = (function() {
 
         // Determine range centered on initial weight values
         var cW1 = frozenW1[w1i][0], cW2 = frozenW1[w2i][0];
-        var range = 5.0;
+        var range = 2.0;
 
         var xv = [], yv = [], zv = [];
         for (var i = 0; i < gs; i++) xv.push(-range + i/(gs-1) * 2*range);
@@ -774,7 +774,7 @@ window.TrainingDemo = (function() {
         if (s.phase === 1 && s.phaseT > 1.6) { s.phase = 2; s.phaseT = 0; }
         if (s.phase === 2 && s.phaseT > 1.0) { s.phase = 3; s.phaseT = 0; }
         if (s.phase === 3 && s.phaseT > 1.8) {
-            upd(1.0);
+            upd(3.0);
             s.lossHist.push(s.loss);
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             s.step++;
