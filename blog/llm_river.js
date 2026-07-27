@@ -297,34 +297,37 @@ function _themeriver_ensure_dom(containerId) {
 
 	const wrapper = document.createElement('div');
 	wrapper.id = 'themeriver-wrapper';
+	wrapper.className = 'themeriver-wrapper';
 	wrapper.style.cssText = `
-	border: 2px solid #8b5cf6; border-radius: 12px;
-	background: #faf5ff; margin-top: 24px; overflow: hidden;
+	border: 2px solid ${themeColor('#c4b5fd')}; border-radius: 12px;
+	background: ${themeColor('#faf5ff')}; margin-top: 24px; overflow: hidden;
     `;
 	wrapper.innerHTML = `
-	<div style="display:flex; align-items:center; gap:12px; padding:12px 16px;
-		    background:#ede9fe; border-bottom:1px solid #c4b5fd; flex-wrap:wrap;">
-	    <span style="font-weight:700; color:#5b21b6; font-size:0.95rem;">
+	<div class="themeriver-header" style="display:flex; align-items:center; gap:12px; padding:12px 16px;
+		    background:${themeColor('#ede9fe')}; border-bottom:1px solid ${themeColor('#c4b5fd')}; flex-wrap:wrap;">
+	    <span style="font-weight:700; color:${themeColor('#5b21b6')}; font-size:0.95rem;">
 		🌊 Probability Flow
 	    </span>
-	    <label style="color:#7c3aed; font-size:0.8rem;">Token position:</label>
+	    <label style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">Token position:</label>
 	    <select id="themeriver-token-select"
 		    onchange="window._themeriver_on_change()"
-		    style="padding:4px 8px; border:1px solid #c4b5fd;
-			   border-radius:6px; font-size:0.82rem; background:#fff;">
+		    class="themeriver-select"
+		    style="padding:4px 8px; border:1px solid ${themeColor('#c4b5fd')};
+			   border-radius:6px; font-size:0.82rem; background:${themeColor('#fff')};">
 	    </select>
-	    <label style="color:#7c3aed; font-size:0.8rem; margin-left:auto;">Show top</label>
+	    <label style="color:${themeColor('#7c3aed')}; font-size:0.8rem; margin-left:auto;">Show top</label>
 	    <select id="themeriver-topn-select"
 		    onchange="window._themeriver_on_change()"
-		    style="padding:4px 8px; border:1px solid #c4b5fd;
-			   border-radius:6px; font-size:0.82rem; background:#fff;">
+		    class="themeriver-select"
+		    style="padding:4px 8px; border:1px solid ${themeColor('#c4b5fd')};
+			   border-radius:6px; font-size:0.82rem; background:${themeColor('#fff')};">
 		<option value="5">5</option>
 		<option value="8" selected>8</option>
 		<option value="10">10</option>
 		<option value="15">15</option>
 		<option value="all">All</option>
 	    </select>
-	    <span style="color:#7c3aed; font-size:0.8rem;">words</span>
+	    <span style="color:${themeColor('#7c3aed')}; font-size:0.8rem;">words</span>
 	</div>
 	<div id="${containerId}" style="width:100%; height:520px;"></div>
     `;

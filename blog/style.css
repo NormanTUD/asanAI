@@ -571,6 +571,42 @@ html.dark [data-orig-bg][style*="border-bottom"] {
 	border-bottom-color: var(--mn-border) !important;
 }
 
+/* Theme river (Probability Flow) — purple-themed wrapper */
+html.dark .themeriver-wrapper {
+	background: var(--mn-surface) !important;
+	border-color: rgba(139, 92, 246, 0.4) !important;
+}
+html.dark .themeriver-header {
+	background: rgba(139, 92, 246, 0.1) !important;
+	border-bottom-color: rgba(139, 92, 246, 0.3) !important;
+}
+html.dark .themeriver-header span[style*="color:#5b21b6"],
+html.dark .themeriver-header label[style*="color:#7c3aed"] {
+	color: #c4b5fd !important;
+}
+html.dark .themeriver-select {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+
+/* Generic purple-light callouts (#ede9fe, #faf5ff, #ddd6fe) → dark indigo tint */
+html.dark [style*="background:#ede9fe"],
+html.dark [style*="background: #ede9fe"],
+html.dark [style*="background:#faf5ff"],
+html.dark [style*="background: #faf5ff"],
+html.dark [style*="background:#ddd6fe"],
+html.dark [style*="background: #ddd6fe"] {
+	background: rgba(139, 92, 246, 0.1) !important;
+	color: var(--mn-text) !important;
+	border-color: rgba(139, 92, 246, 0.3) !important;
+}
+html.dark [style*="background:#faf5ff"][style*="border:2px solid"],
+html.dark [style*="background: #faf5ff"][style*="border:2px solid"] {
+	background: var(--mn-surface) !important;
+	border-color: rgba(139, 92, 246, 0.4) !important;
+}
+
 /* Predict-chip — needs proper contrast in both modes */
 .predict-chip {
 	transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;

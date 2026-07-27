@@ -801,6 +801,9 @@ function adaptLabsToTheme() {
 	var LAB_TEXT_SEC = '#94a3b8';
 	var LAB_BORDER = '#334155';
 
+	// Additional light-bg swatches that adaptLabsToTheme should catch in dark mode
+	var LIGHT_TINTED_BG = /^#(f0fdf4|f0f9ff|dcfce7|e0e7ff|e0f2fe|fef9c3|fff3e0|e8f5e9|f8fafc|f1f5f9|ede9fe|faf5ff|ddd6fe|fef2f2|fee2e2|fff7ed|fef3c7|fdf2f8|fce7f3|f3e8ff|ecfeff|cffafe|fffbeb|fefce8|f7fee7|f0fdfa|ccfbf1|ffe4e6|f0f9ff|dbeafe|bef264|d9f99d|fef08a|fde68a|fed7aa|fdba74|fab12f|fb923c|fb7185|f43f5e|fbbf24|fcd34d|fde047|a3e635|84cc16|22c55e|10b981|14b8a6|06b6d4|0ea5e9|3b82f6|6366f1|8b5cf6|a855f7|d946ef|ec4899|f472b6|9ca3af|d1d5db|9ca3af|6b7280|4b5563|374151|1f2937|111827)$/i;
+
 	if (isDark) {
 		var all = document.querySelectorAll('[style*="background"]');
 		for (var i = 0; i < all.length; i++) {
@@ -808,7 +811,7 @@ function adaptLabsToTheme() {
 			if (el.closest('pre') || el.closest('code') || el.id === 'contents' || el.id === 'loader') continue;
 			var s = (el.getAttribute('style') || '').toLowerCase().replace(/\s/g, '');
 			var m = s.match(/(?:background|background-color):(#[0-9a-f]{3,6})/);
-			if (m && isLightHex(m[1])) {
+			if (m && (isLightHex(m[1]) || LIGHT_TINTED_BG.test(m[1]))) {
 				if (!el.hasAttribute('data-orig-bg')) {
 					el.setAttribute('data-orig-bg', el.style.background || el.style.backgroundColor || '');
 				}
