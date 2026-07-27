@@ -702,29 +702,49 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 /* ============ TRAINING SLIDE ============ */
 .training-layout {
     display: flex;
-    gap: 16px;
-    align-items: flex-start;
+    gap: 8px;
+    align-items: stretch;
     width: 100%;
 }
 .training-left {
-    flex: 0 0 55%;
+    flex: 0 0 52%;
     min-width: 0;
 }
+.training-arrow-col {
+    flex: 0 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+}
+.training-arrow-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.training-arrow-label {
+    font-size: 0.55em;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.3;
+    font-weight: 600;
+}
 .training-right {
-    flex: 0 0 42%;
+    flex: 0 0 calc(48% - 40px);
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 .training-hint {
-    font-size: 0.75em;
+    font-size: 0.72em;
     color: #94a3b8;
-    padding: 8px 12px;
+    padding: 6px 10px;
     background: #f8fafc;
     border-radius: 6px;
     border: 1px solid #e2e8f0;
-    line-height: 1.5;
+    line-height: 1.4;
     text-align: center;
 }
 

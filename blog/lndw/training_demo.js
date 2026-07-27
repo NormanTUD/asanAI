@@ -16,13 +16,18 @@ window.TrainingDemo = (function() {
         idx: 0, step: 0,
         phase: 0, phaseT: 0, lastTime: 0,
         W1: null, b1: null, W2: null, b2: null,
+        prevW1: null, prevB1: null, prevW2: null, prevB2: null,
         inp: [0,0,0,0], hid: [0,0,0,0], hidRaw: [0,0,0,0], out: [0,0], outLogits: [0,0], displayOut: [0,0],
         loss: 0, gradO: [0,0], gradH: [0,0,0,0],
         correct: false,
         lossHist: [], posHist: [],
         img: null, features: null,
         running: false, animId: null, plotTimer: null,
-        plotInitialized: false, plotDiv: null
+        plotInitialized: false, plotDiv: null,
+        fixedCenter: null,
+        fixedSurface: null,
+        ballTrail: [],
+        ballPos: null
     };
 
     function randn() {
@@ -42,6 +47,7 @@ window.TrainingDemo = (function() {
         });
         s.b2 = [0,0];
         s.step = 0; s.lossHist = []; s.posHist = [];
+        s.ballTrail = [];
     }
 
     function fwd(inp) {
@@ -56,12 +62,10 @@ window.TrainingDemo = (function() {
             for (var j = 0; j < NH; j++) sum += s.hid[j] * s.W2[j][k];
             s.outLogits[k] = sum;
         }
-        // Real softmax for training
         var mx = Math.max(s.outLogits[0], s.outLogits[1]);
         var es = Math.exp(s.outLogits[0]-mx) + Math.exp(s.outLogits[1]-mx);
         s.out[0] = Math.exp(s.outLogits[0]-mx)/es;
         s.out[1] = Math.exp(s.outLogits[1]-mx)/es;
-        // Sharpened display version (lower temperature = more decisive bars)
         var T = 0.5;
         var dmx = Math.max(s.outLogits[0]/T, s.outLogits[1]/T);
         var des = Math.exp(s.outLogits[0]/T-dmx) + Math.exp(s.outLogits[1]/T-dmx);
@@ -83,6 +87,10 @@ window.TrainingDemo = (function() {
     }
 
     function upd(lr) {
+        s.prevW1 = s.W1.map(function(r) { return r.slice(); });
+        s.prevB1 = s.b1.slice();
+        s.prevW2 = s.W2.map(function(r) { return r.slice(); });
+        s.prevB2 = s.b2.slice();
         for (var j = 0; j < NH; j++)
             for (var k = 0; k < NO; k++)
                 s.W2[j][k] -= lr * s.gradO[k] * s.hid[j];
@@ -130,12 +138,62 @@ window.TrainingDemo = (function() {
         if (IMG_DATA.length === 0 && cb) cb();
     }
 
-    function arrow(val) {
-        if (val > 0.8) return '\u2191\u2191';
-        if (val > 0.45) return '\u2191';
-        if (val > 0.2) return '\u2192';
-        if (val > 0) return '\u2193';
-        return '\u2193\u2193';
+    // ============================================================
+    // FIXED LOSS LANDSCAPE — computed once from a complex function
+    // ============================================================
+    function computeFixedSurface() {
+        var gs = 40;
+        var range = 4.0;
+        var xv = [], yv = [], zv = [];
+        for (var i = 0; i < gs; i++) xv.push(-range + i/(gs-1) * 2*range);
+        for (var j = 0; j < gs; j++) yv.push(-range + j/(gs-1) * 2*range);
+
+        for (var j = 0; j < gs; j++) {
+            var row = [];
+            for (var i = 0; i < gs; i++) {
+                var x = xv[i], y = yv[j];
+                // Complex loss surface: mixture of Gaussians + ridges
+                var z = 0;
+                // Main valley (the global minimum we want to find)
+                z += 2.0 * Math.exp(-((x-1.2)*(x-1.2) + (y+0.8)*(y+0.8)) / 0.8);
+                // Secondary basin
+                z += 1.2 * Math.exp(-((x+1.5)*(x+1.5) + (y-1.0)*(y-1.0)) / 1.2);
+                // Ridge
+                z += 0.8 * Math.exp(-(x*x) / 0.3) * Math.exp(-(y*y) / 2.0);
+                // Saddle
+                z += 0.5 * Math.cos(x * 0.8) * Math.cos(y * 0.8);
+                // Noise-like texture
+                z += 0.3 * Math.sin(x * 2.1 + y * 1.3) * Math.cos(y * 1.7 - x * 0.9);
+                // Asymmetric basin
+                z += 0.6 * Math.exp(-((x-0.5)*(x-0.5)*0.5 + (y+0.3)*(y+0.3)*2.0) / 0.5);
+                // Small local minima
+                z += 0.4 * Math.exp(-((x+0.8)*(x+0.8) + (y+1.5)*(y+1.5)) / 0.3);
+                z += 0.35 * Math.exp(-((x-2.0)*(x-2.0) + (y-0.5)*(y-0.5)) / 0.4);
+                // Invert so lower = better (loss)
+                z = 4.5 - z + 0.15 * Math.sin(x*3) * Math.sin(y*2.5);
+                z = Math.max(0.05, z);
+                row.push(z);
+            }
+            zv.push(row);
+        }
+        s.fixedSurface = { x: xv, y: yv, z: zv, gs: gs, range: range };
+    }
+
+    function getFixedSurfaceLoss(w1, w2) {
+        if (!s.fixedSurface) return 2.0;
+        var fs = s.fixedSurface;
+        // Map network weights to surface coordinates
+        var sx = w1 * 1.5;
+        var sy = w2 * 1.5;
+        // Bilinear interpolation
+        var fx = (sx + fs.range) / (2 * fs.range) * (fs.gs - 1);
+        var fy = (sy + fs.range) / (2 * fs.range) * (fs.gs - 1);
+        var ix = Math.max(0, Math.min(fs.gs - 2, Math.floor(fx)));
+        var iy = Math.max(0, Math.min(fs.gs - 2, Math.floor(fy)));
+        var dx = fx - ix, dy = fy - iy;
+        var z00 = fs.z[iy][ix], z10 = fs.z[iy][ix+1];
+        var z01 = fs.z[iy+1][ix], z11 = fs.z[iy+1][ix+1];
+        return z00*(1-dx)*(1-dy) + z10*dx*(1-dy) + z01*(1-dx)*dy + z11*dx*dy;
     }
 
     // ============================================================
@@ -173,7 +231,7 @@ window.TrainingDemo = (function() {
         // ================================================================
         // IMAGE
         // ================================================================
-        var imgX = 26, imgY = 16, imgSize = 110;
+        var imgX = 26, imgY = 16, imgSize = 90;
         if (data.img) {
             ctx.save();
             ctx.shadowColor = 'rgba(0,0,0,0.12)';
@@ -206,14 +264,14 @@ window.TrainingDemo = (function() {
 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
-        ctx.font = 'bold 14px system-ui';
+        ctx.font = 'bold 13px system-ui';
         ctx.fillStyle = '#1e293b';
-        ctx.fillText(data.label, imgX + imgSize/2, imgY + imgSize + 18);
+        ctx.fillText(data.label, imgX + imgSize/2, imgY + imgSize + 16);
 
         // Arrow image → network
-        var arrY = imgY + imgSize + 28;
+        var arrY = imgY + imgSize + 26;
         ctx.fillStyle = '#94a3b8';
-        ctx.font = '20px system-ui';
+        ctx.font = '18px system-ui';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
         ctx.fillText('\u2193', imgX + imgSize/2, arrY);
@@ -222,8 +280,8 @@ window.TrainingDemo = (function() {
         // NEURAL NETWORK
         // ================================================================
         var netLeft = imgX;
-        var netTop = arrY + 16;
-        var netH = H - netTop - 50;
+        var netTop = arrY + 14;
+        var netH = H - netTop - 60;
         var layerGap = (W - netLeft - 20) / 3.2;
 
         var layers = [
@@ -244,7 +302,6 @@ window.TrainingDemo = (function() {
 
         // ---- Trace dots ----
         var traceDots = [];
-        // Forward dots: input→hidden then hidden→output
         if (isFwd && fwdProg > 0.2) {
             var fDot = Math.min(1, (fwdProg - 0.2) / 0.8);
             if (fDot < 0.5) {
@@ -269,7 +326,6 @@ window.TrainingDemo = (function() {
                             });
             }
         }
-        // Backward dots: output→hidden then hidden→input
         if (isBwd && bwdProg > 0.1) {
             var bDot = Math.min(1, (bwdProg - 0.1) / 0.8);
             if (bDot < 0.45) {
@@ -302,10 +358,9 @@ window.TrainingDemo = (function() {
                 for (var t = 0; t < tn; t++) {
                     var w = wMat ? wMat[f][t] : 0;
                     var alpha = 0.15 + Math.abs(w) * 0.5;
-                    var hue = w >= 0 ? 210 : 0;  // positive=blue, negative=red
+                    var hue = w >= 0 ? 210 : 0;
                     var width = Math.max(1.5, Math.abs(w) * 4);
 
-                    // Forward glow for ALL connections
                     if (ff > 0) {
                         var flow = (fi === 0 ? s.inp[f] : s.hid[f]) * w * ff;
                         if (Math.abs(flow) > 0.005) {
@@ -314,7 +369,6 @@ window.TrainingDemo = (function() {
                             width = Math.max(1, Math.abs(flow) * 7);
                         }
                     }
-                    // Backward glow
                     if (bf > 0) {
                         var g = gMat ? (gMat[t] || 0) * w : 0;
                         var ga = Math.abs(g) * bf * 8;
@@ -391,43 +445,46 @@ window.TrainingDemo = (function() {
                 }
 
                 if (isFwd || isLoss || isUpd) {
+                    var arrowChar = val > 0.8 ? '\u2191\u2191' : val > 0.45 ? '\u2191' : val > 0.2 ? '\u2192' : val > 0 ? '\u2193' : '\u2193\u2193';
                     ctx.fillStyle = (fillVal > 0.5 || glow > 0.3) ? '#fff' : '#475569';
-                    ctx.font = 'bold 14px system-ui';
+                    ctx.font = 'bold 13px system-ui';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(arrow(val), x, y);
+                    ctx.fillText(arrowChar, x, y);
                 }
 
-                // Output labels + bars (use sharpened displayOut)
+                // Output labels + bars
                 if (li === 2) {
                     var dVal = s.displayOut[ni];
                     var lbl = ni === 0 ? 'Katze' : 'Hund';
-                    ctx.font = 'bold 13px system-ui';
+                    ctx.font = 'bold 12px system-ui';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = '#334155';
-                    ctx.fillText(lbl, x + neuronR + 10, y - 10);
+                    ctx.fillText(lbl, x + neuronR + 10, y - 12);
 
-                    var bw = 85, bh = 10;
-                    var bx = x + neuronR + 10, by = y + 10;
+                    var bw = 80, bh = 8;
+                    var bx = x + neuronR + 10, by = y + 2;
                     ctx.fillStyle = '#e2e8f0';
-                    ctx.fillRect(bx, by, bw, bh);
+                    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 3); ctx.fill(); }
+                    else ctx.fillRect(bx, by, bw, bh);
                     ctx.fillStyle = ni === 0 ? '#3b82f6' : '#10b981';
-                    ctx.fillRect(bx, by, bw * dVal, bh);
+                    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx, by, bw * dVal, bh, 3); ctx.fill(); }
+                    else ctx.fillRect(bx, by, bw * dVal, bh);
                     ctx.fillStyle = '#64748b';
                     ctx.font = '10px monospace';
                     ctx.textAlign = 'right';
                     ctx.textBaseline = 'alphabetic';
                     ctx.fillText((dVal*100).toFixed(0) + '%', bx + bw + 4, by + bh - 1);
 
-                    // Correct/wrong marker
+                    // Correct/wrong marker — positioned BELOW the bar, not overlapping
                     if (isLoss || isBwd || isUpd) {
                         var isRight = (ni === 0 && s.correct || ni === 1 && !s.correct);
-                        ctx.font = '16px system-ui';
+                        ctx.font = 'bold 13px system-ui';
                         ctx.textAlign = 'left';
-                        ctx.textBaseline = 'alphabetic';
+                        ctx.textBaseline = 'top';
                         ctx.fillStyle = isRight ? '#10b981' : '#ef4444';
-                        ctx.fillText(isRight ? '\u2713' : '\u2717', x + neuronR + 10, by + bh + 16);
+                        ctx.fillText(isRight ? '\u2713 Richtig' : '\u2717 Falsch', bx, by + bh + 5);
                     }
                 }
             }
@@ -440,41 +497,59 @@ window.TrainingDemo = (function() {
         ctx.fillStyle = '#94a3b8';
         layers.forEach(function(l, i) { ctx.fillText(l.label, l.x, netTop + netH + 4); });
 
-        // Status – prominent loss display
+        // ---- Weight change indicators (after update) ----
+        if (isUpd && s.prevW1) {
+            var wiY = netTop + netH + 14;
+            ctx.font = '9px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            var w1delta = s.W1[0][0] - s.prevW1[0][0];
+            ctx.fillStyle = w1delta > 0 ? '#10b981' : '#ef4444';
+            ctx.fillText('\u0394w=' + (w1delta > 0 ? '+' : '') + w1delta.toFixed(3), layers[0].x, wiY);
+            var b1delta = s.b1[0] - s.prevB1[0];
+            ctx.fillStyle = b1delta > 0 ? '#10b981' : '#ef4444';
+            ctx.fillText('\u0394b=' + (b1delta > 0 ? '+' : '') + b1delta.toFixed(3), layers[0].x, wiY + 12);
+            var w2delta = s.W2[0][0] - s.prevW2[0][0];
+            ctx.fillStyle = w2delta > 0 ? '#10b981' : '#ef4444';
+            ctx.fillText('\u0394w=' + (w2delta > 0 ? '+' : '') + w2delta.toFixed(3), layers[2].x, wiY);
+            var b2delta = s.b2[0] - s.prevB2[0];
+            ctx.fillStyle = b2delta > 0 ? '#10b981' : '#ef4444';
+            ctx.fillText('\u0394b=' + (b2delta > 0 ? '+' : '') + b2delta.toFixed(3), layers[2].x, wiY + 12);
+        }
+
+        // Status
         var siY = 14;
         ctx.textAlign = 'right';
         if (isLoss || isBwd || isUpd) {
-            ctx.font = 'bold 18px system-ui';
+            ctx.font = 'bold 16px system-ui';
             ctx.fillStyle = s.loss > 0.6 ? '#dc2626' : (s.loss > 0.3 ? '#f59e0b' : '#10b981');
             ctx.fillText('Loss: ' + s.loss.toFixed(3), W - 12, siY);
 
-            // Loss indicator bar
-            var lbx = W - 120, lby = siY + 8, lbw = 108, lbh = 5;
+            var lbx = W - 115, lby = siY + 6, lbw = 103, lbh = 4;
             ctx.fillStyle = 'rgba(0,0,0,0.06)';
-            ctx.fillRect(lbx, lby, lbw, lbh);
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(lbx, lby, lbw, lbh, 2); ctx.fill(); }
+            else ctx.fillRect(lbx, lby, lbw, lbh);
             var lossBar = Math.min(1, Math.max(0, s.loss / 2));
             var lColor = lossBar > 0.5 ? '#ef4444' : (lossBar > 0.2 ? '#f59e0b' : '#10b981');
             ctx.fillStyle = lColor;
-            ctx.fillRect(lbx, lby, lbw * lossBar, lbh);
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(lbx, lby, lbw * lossBar, lbh, 2); ctx.fill(); }
+            else ctx.fillRect(lbx, lby, lbw * lossBar, lbh);
 
-            ctx.font = 'bold 12px system-ui';
-            ctx.fillStyle = s.correct ? '#10b981' : '#ef4444';
-            ctx.fillText(s.correct ? '\u2713 Richtig' : '\u2717 Falsch', W - 12, siY + 26);
             if (isBwd) {
                 ctx.fillStyle = '#f59e0b';
                 ctx.font = 'bold 11px system-ui';
-                ctx.fillText('\u21BB R\u00fcckw\u00e4rts...', W - 12, siY + 42);
+                ctx.fillText('\u21BB Backprop...', W - 12, siY + 22);
             }
             if (isUpd) {
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 11px system-ui';
-                ctx.fillText('\u2713 Gewichte updaten', W - 12, siY + 42);
+                ctx.fillText('\u2713 Update', W - 12, siY + 22);
             }
         } else if (isFwd) {
             ctx.fillStyle = '#6366f1';
             ctx.font = 'bold 12px system-ui';
             ctx.textAlign = 'right';
-            ctx.fillText('\u2192 Vorw\u00e4rtspass...', W - 12, siY + 18);
+            ctx.fillText('\u2192 Forward...', W - 12, siY + 10);
         }
 
         // Bottom
@@ -485,11 +560,12 @@ window.TrainingDemo = (function() {
         ctx.textAlign = 'left';
         ctx.fillText('Epoche ' + Math.floor(s.step / IMG_DATA.length), 10, H - 6);
 
-        // Loss chart
+        // Loss sparkline
         if (s.lossHist.length > 1) {
-            var cx = 10, cy = H - 90, cw = 120, ch = 36;
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.fillRect(cx, cy, cw, ch);
+            var cx = 10, cy = H - 85, cw = 110, ch = 32;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(cx, cy, cw, ch, 4); ctx.fill(); }
+            else ctx.fillRect(cx, cy, cw, ch);
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 1;
             ctx.strokeRect(cx, cy, cw, ch);
@@ -519,165 +595,90 @@ window.TrainingDemo = (function() {
     }
 
     // ============================================================
-    // 3D LOSS LANDSCAPE
+    // 3D LOSS LANDSCAPE — fixed surface, ball rolling with trail
     // ============================================================
-    function getLandscapeData() {
-        var gs = 35, w1i = 0, w2i = 2;
-        var center = s.fixedCenter || { w1: s.W1[w1i][0], w2: s.W1[w2i][0] };
-        var hr = Math.max(5.0, Math.abs(s.W1[w1i][0] - center.w1) + Math.abs(s.W1[w2i][0] - center.w2) + 2.0);
-        var wMin = center.w1 - hr, wMax = center.w1 + hr;
-        var bMin = center.w2 - hr, bMax = center.w2 + hr;
-        var xv = [], yv = [], zv = [];
-        for (var i = 0; i < gs; i++) xv.push(wMin + i/(gs-1)*(wMax - wMin));
-        for (var j = 0; j < gs; j++) yv.push(bMin + j/(gs-1)*(bMax - bMin));
-        for (var j = 0; j < gs; j++) {
-            var row = []; var w2v = yv[j];
-            for (var i = 0; i < gs; i++) {
-                var w1v = xv[i], tl = 0;
-                for (var ii = 0; ii < IMG_DATA.length; ii++) {
-                    var feat = IMG_DATA[ii].features, tgt = IMG_DATA[ii].labelIdx;
-                    var h = [];
-                    for (var hh = 0; hh < NH; hh++) {
-                        var sum = s.b1[hh];
-                        for (var ff = 0; ff < NI; ff++) {
-                            var w = s.W1[ff][hh];
-                            if (ff === w1i && hh === 0) w = w1v;
-                            if (ff === w2i && hh === 0) w = w2v;
-                            sum += feat[ff] * w;
-                        }
-                        h.push(Math.max(0, sum));
-                    }
-                    var o = [];
-                    for (var kk = 0; kk < NO; kk++) {
-                        var sum = s.b2[kk];
-                        for (var hh = 0; hh < NH; hh++) sum += h[hh] * s.W2[hh][kk];
-                        o.push(sum);
-                    }
-                    var mx = Math.max(o[0], o[1]);
-                    var es = Math.exp(o[0]-mx) + Math.exp(o[1]-mx);
-                    o[0] = Math.exp(o[0]-mx)/es; o[1] = Math.exp(o[1]-mx)/es;
-                    var ta = tgt === 0 ? [1,0] : [0,1];
-                    tl += -(ta[0]*Math.log(Math.max(o[0],1e-8)) + ta[1]*Math.log(Math.max(o[1],1e-8)));
-                }
-                row.push(tl / IMG_DATA.length);
-            }
-            zv.push(row);
-        }
-        return { x: xv, y: yv, z: zv };
-    }
-
     function updatePlot() {
         var div = document.getElementById('training-loss-landscape');
         if (!div || typeof Plotly === 'undefined') return;
         s.plotDiv = div;
-        var data = getLandscapeData();
-        var w1i = 0, w2i = 2;
-        var cw1 = s.W1[w1i][0], cw2 = s.W1[w2i][0];
 
-        var pw = [], pb = [], pz = [];
-        if (s.posHist.length > 0) {
-            for (var hi = 0; hi < s.posHist.length; hi++) {
-                pw.push(s.posHist[hi].w1);
-                pb.push(s.posHist[hi].w2);
-                var loss = 0;
-                for (var ii = 0; ii < IMG_DATA.length; ii++) {
-                    var feat = IMG_DATA[ii].features, tgt = IMG_DATA[ii].labelIdx;
-                    var h = [];
-                    for (var hh = 0; hh < NH; hh++) {
-                        var sum = s.b1[hh];
-                        for (var ff = 0; ff < NI; ff++) {
-                            var w = s.W1[ff][hh];
-                            if (ff === w1i && hh === 0) w = s.posHist[hi].w1;
-                            if (ff === w2i && hh === 0) w = s.posHist[hi].w2;
-                            sum += feat[ff] * w;
-                        }
-                        h.push(Math.max(0, sum));
-                    }
-                    var o = [];
-                    for (var kk = 0; kk < NO; kk++) {
-                        var sum = s.b2[kk];
-                        for (var hh = 0; hh < NH; hh++) sum += h[hh] * s.W2[hh][kk];
-                        o.push(sum);
-                    }
-                    var mx = Math.max(o[0], o[1]);
-                    var es = Math.exp(o[0]-mx) + Math.exp(o[1]-mx);
-                    o[0] = Math.exp(o[0]-mx)/es; o[1] = Math.exp(o[1]-mx)/es;
-                    var ta = tgt === 0 ? [1,0] : [0,1];
-                    loss += -(ta[0]*Math.log(Math.max(o[0],1e-8)) + ta[1]*Math.log(Math.max(o[1],1e-8)));
-                }
-                pz.push(loss / IMG_DATA.length + 0.005);
-            }
+        if (!s.fixedSurface) computeFixedSurface();
+        var fs = s.fixedSurface;
+
+        var cw1 = s.W1[0][0], cw2 = s.W1[2][0];
+        var ballLoss = getFixedSurfaceLoss(cw1, cw2);
+
+        // Build trail on the fixed surface
+        var tw = [], tb = [], tz = [];
+        for (var hi = 0; hi < s.posHist.length; hi++) {
+            var pw = s.posHist[hi].w1, pb = s.posHist[hi].w2;
+            tw.push(pw * 1.5);
+            tb.push(pb * 1.5);
+            tz.push(getFixedSurfaceLoss(pw, pb) + 0.02);
         }
+        // Current ball position
+        tw.push(cw1 * 1.5);
+        tb.push(cw2 * 1.5);
+        tz.push(ballLoss + 0.02);
 
         var surface = {
-            type: 'surface', x: data.x, y: data.y, z: data.z,
+            type: 'surface', x: fs.x, y: fs.y, z: fs.z,
             colorscale: [
-                [0, 'rgb(10,10,120)'], [0.12, 'rgb(0,60,200)'],
-                [0.25, 'rgb(30,140,230)'], [0.4, 'rgb(100,200,100)'],
-                [0.55, 'rgb(200,210,50)'], [0.7, 'rgb(230,130,20)'],
-                [0.85, 'rgb(200,50,30)'], [1, 'rgb(120,10,10)']
+                [0, 'rgb(20,20,80)'], [0.1, 'rgb(30,60,180)'],
+                [0.2, 'rgb(40,120,220)'], [0.35, 'rgb(60,180,180)'],
+                [0.5, 'rgb(120,200,100)'], [0.65, 'rgb(200,200,50)'],
+                [0.8, 'rgb(230,120,30)'], [0.9, 'rgb(200,40,30)'],
+                [1, 'rgb(140,15,15)']
             ],
-            opacity: 0.7,
+            opacity: 0.65,
             contours: {
-                z: { show: true, usecolormap: true, highlightcolor: '#fff', project: { z: true } }
+                z: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.5)', project: { z: true } }
             },
             showscale: false,
-            hovertemplate: 'Gewicht 1: %{x:.3f}<br>Gewicht 2: %{y:.3f}<br>Loss: %{z:.4f}<extra></extra>'
+            hovertemplate: 'w1: %{x:.3f}<br>w2: %{y:.3f}<br>Loss: %{z:.4f}<extra></extra>'
         };
 
         var traces = [surface];
 
-        if (pw.length > 0) {
+        // Trail (thin line)
+        if (tw.length > 1) {
             traces.push({
-                type: 'scatter3d', mode: 'lines+markers',
-                x: pw, y: pb, z: pz,
-                line: { color: '#ff6b6b', width: 5 },
-                marker: { size: 4, color: '#ff6b6b', opacity: 0.7 },
-                name: 'Pfad'
+                type: 'scatter3d', mode: 'lines',
+                x: tw, y: tb, z: tz,
+                line: { color: '#ff6b6b', width: 4, dash: 'solid' },
+                name: 'Pfad',
+                hoverinfo: 'skip'
             });
-            if (pw.length > 1) {
-                traces.push({
-                    type: 'scatter3d', mode: 'markers',
-                    x: [pw[0]], y: [pb[0]], z: [pz[0]],
-                    marker: { size: 9, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 2 } },
-                    name: 'Start'
-                });
-            }
+            // Trail markers (small dots along the path)
+            traces.push({
+                type: 'scatter3d', mode: 'markers',
+                x: tw.slice(0, -1), y: tb.slice(0, -1), z: tz.slice(0, -1),
+                marker: { size: 3, color: 'rgba(255,107,107,0.5)', symbol: 'circle' },
+                name: 'Spur',
+                hoverinfo: 'skip'
+            });
         }
 
-        var cl = 0;
-        for (var ii = 0; ii < IMG_DATA.length; ii++) {
-            var feat = IMG_DATA[ii].features, tgt = IMG_DATA[ii].labelIdx;
-            var h = [];
-            for (var hh = 0; hh < NH; hh++) {
-                var sum = s.b1[hh];
-                for (var ff = 0; ff < NI; ff++) sum += feat[ff] * s.W1[ff][hh];
-                h.push(Math.max(0, sum));
-            }
-            var o = [];
-            for (var kk = 0; kk < NO; kk++) {
-                var sum = s.b2[kk];
-                for (var hh = 0; hh < NH; hh++) sum += h[hh] * s.W2[hh][kk];
-                o.push(sum);
-            }
-            var mx = Math.max(o[0], o[1]);
-            var es = Math.exp(o[0]-mx) + Math.exp(o[1]-mx);
-            o[0] = Math.exp(o[0]-mx)/es; o[1] = Math.exp(o[1]-mx)/es;
-            var ta = tgt === 0 ? [1,0] : [0,1];
-            cl += -(ta[0]*Math.log(Math.max(o[0],1e-8)) + ta[1]*Math.log(Math.max(o[1],1e-8)));
+        // Start marker
+        if (tw.length > 1) {
+            traces.push({
+                type: 'scatter3d', mode: 'markers',
+                x: [tw[0]], y: [tb[0]], z: [tz[0]],
+                marker: { size: 8, color: '#2ecc71', symbol: 'diamond', line: { color: '#fff', width: 2 } },
+                name: 'Start'
+            });
         }
-        cl = cl / IMG_DATA.length;
 
+        // Current ball — large, glowing
         traces.push({
             type: 'scatter3d', mode: 'markers',
-            x: [cw1], y: [cw2], z: [cl + 0.005],
-            marker: { size: 14, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
+            x: [cw1 * 1.5], y: [cw2 * 1.5], z: [ballLoss + 0.02],
+            marker: { size: 13, color: '#ef4444', symbol: 'circle', line: { color: '#fff', width: 3 } },
             name: 'Aktuell'
         });
 
         var dm = typeof is_dark_mode !== 'undefined' && is_dark_mode;
 
-        // DON'T pass camera in layout for updates → Plotly.react() preserves user view
         var layout = {
             scene: {
                 xaxis: { title: 'Gewicht 1', color: dm ? '#aaa' : '#444', gridcolor: dm ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
@@ -693,7 +694,6 @@ window.TrainingDemo = (function() {
 
         var config = { responsive: true, displaylogo: false, scrollZoom: true };
         if (!s.plotInitialized) {
-            // First render: set default camera
             layout.scene.camera = { eye: { x: 0.6, y: 2.2, z: 0.4 } };
             Plotly.newPlot(div, traces, layout, config).then(function() {
                 s.plotInitialized = true;
@@ -704,7 +704,7 @@ window.TrainingDemo = (function() {
     }
 
     // ============================================================
-    // IMAGE NAVIGATION – via DemoRegistry (consumed by presentation)
+    // IMAGE NAVIGATION
     // ============================================================
     function goToImage(idx) {
         s.idx = ((idx % IMG_DATA.length) + IMG_DATA.length) % IMG_DATA.length;
@@ -716,21 +716,10 @@ window.TrainingDemo = (function() {
         }
     }
 
-    function nextImage() {
-        goToImage(s.idx + 1);
-    }
-
-    function prevImage() {
-        goToImage(s.idx - 1);
-    }
-
-    function canGoNext() {
-        return s.idx < IMG_DATA.length - 1;
-    }
-
-    function canGoPrev() {
-        return s.idx > 0;
-    }
+    function nextImage() { goToImage(s.idx + 1); }
+    function prevImage() { goToImage(s.idx - 1); }
+    function canGoNext() { return s.idx < IMG_DATA.length - 1; }
+    function canGoPrev() { return s.idx > 0; }
 
     // ============================================================
     // MAIN LOOP
@@ -785,9 +774,11 @@ window.TrainingDemo = (function() {
         canvas.height = 460;
         initNet();
         s.fixedCenter = { w1: s.W1[0][0], w2: s.W1[2][0] };
+        computeFixedSurface();
         preloadImages(function() {
             var data = IMG_DATA[s.idx];
             if (data.features) { fwd(data.features); bwd(data.labelIdx); }
+            s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             draw();
             updatePlot();
         });
@@ -817,8 +808,10 @@ window.TrainingDemo = (function() {
         stop();
         initNet();
         s.fixedCenter = { w1: s.W1[0][0], w2: s.W1[2][0] };
+        computeFixedSurface();
         s.idx = 0; s.phase = 0; s.phaseT = 0; s.lastTime = 0;
         s.lossHist = []; s.posHist = []; s.plotInitialized = false;
+        s.prevW1 = null; s.prevB1 = null; s.prevW2 = null; s.prevB2 = null;
         var canvas = document.getElementById('training-network-canvas');
         if (canvas) {
             var ctx = canvas.getContext('2d');
