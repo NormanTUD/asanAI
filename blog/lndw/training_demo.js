@@ -635,9 +635,9 @@ window.TrainingDemo = (function() {
 
         var cw1 = s.W1[0][0], cw2 = s.W1[2][0];
 
-        // Clamp ball to surface area
-        var bSx = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, cw1));
-        var bSy = Math.max(-fs.range + 0.3, Math.min(fs.range - 0.3, cw2));
+        // Clamp ball to surface area (slightly inside the bounds)
+        var bSx = Math.max(-fs.range + 0.5, Math.min(fs.range - 0.5, cw1));
+        var bSy = Math.max(-fs.range + 0.5, Math.min(fs.range - 0.5, cw2));
         var ballZ = getSurfaceLoss(bSx, bSy) + 0.04;
 
         // Trail: keep the most recent points so the line doesn't become a heavy scribble
@@ -772,7 +772,7 @@ window.TrainingDemo = (function() {
         if (s.phase === 1 && s.phaseT > 1.6) { s.phase = 2; s.phaseT = 0; }
         if (s.phase === 2 && s.phaseT > 1.0) { s.phase = 3; s.phaseT = 0; }
         if (s.phase === 3 && s.phaseT > 1.8) {
-            upd(3.0);
+            upd(0.5);
             s.lossHist.push(s.loss);
             s.posHist.push({ w1: s.W1[0][0], w2: s.W1[2][0] });
             s.step++;
