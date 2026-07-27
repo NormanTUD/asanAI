@@ -3491,7 +3491,7 @@ function updateICLPromptPanel() {
         'Apply to ' + st.query.token + ': [' + st.query.pos[0] + ', ' + st.query.pos[1] + ']' +
         ' + Δ = [' + sp[0].toFixed(1) + ', ' + sp[1].toFixed(1) + ']</div>';
 
-    html += '<div style="color:' + (inside && st.injected ? '#10b981' : #94a3b8) +
+    html += '<div style="color:' + (inside && st.injected ? '#10b981' : '#94a3b8') +
         '; font-size:0.85em; margin-top:3px;">' +
         'Distance to ' + st.expectedAnswer.token + ': ' + dist.toFixed(2) +
         (inside ? ' ✅ inside' : ' — radius ' + st.answerRadius) + '</div></div>';
@@ -6952,7 +6952,7 @@ function updateHomologyStats(r) {
     statsDiv.innerHTML = `
         <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
             <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Active Holes</div>
-            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : #94a3b8};">${aliveHoles.length}</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : '#94a3b8'};">${aliveHoles.length}</div>
             <div style="font-size:0.7em; color:#94a3b8;">of ${totalHoles} detected</div>
         </div>
         <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
