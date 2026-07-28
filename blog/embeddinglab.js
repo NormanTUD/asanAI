@@ -340,7 +340,7 @@ function renderDualManifolds() {
 		showlegend: true,
 		legend: {
 			x: 0.01, y: 0.99,
-			bgcolor: 'rgba(255,255,255,0.9)',
+			bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)',
 			bordercolor: themeColor('#e2e8f0'), borderwidth: 1,
 			font: { size: 11 }
 		},
@@ -979,7 +979,7 @@ function renderComparison3D(config) {
 
     // Stats panel (unchanged)
     document.getElementById(statsId).innerHTML = `
-    <div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+    <div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
         <p style="margin: 0 0 8px 0;"><b style="color:#10b981">Man → King:</b><br>
            <span style="font-size: 1.2em;">θ = ${mk.deg}°</span> | Dist: ${mk.dist}</p>
         <p style="margin: 0;"><b style="color:#ef4444">Man → Lion:</b><br>
@@ -1002,9 +1002,9 @@ function initEmbeddingEditor() {
 		const words = Object.keys(space.vocab);
 
 		let html = `
-    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid ${themeColor('#e2e8f0')}; border-radius: 8px; background:${themeColor('#fff')};">
 	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
-	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+	    <thead style="background:${themeColor('#f8fafc')}; border-bottom: 2px solid ${themeColor('#e2e8f0')};">
 		<tr>
 		    <th style="padding: 10px; text-align: left;">Token</th>
 		    <th style="padding: 10px; text-align: center;">X</th>
@@ -1022,7 +1022,7 @@ function initEmbeddingEditor() {
 		html += `
 	    </tbody>
 	</table>
-	<div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+	<div style="padding: 10px; background:${themeColor('#f8fafc')}; border-top: 1px solid ${themeColor('#e2e8f0')}; display: flex; gap: 10px;">
 	    <input type="text" id="new-token-${spaceKey}" placeholder="New token name (will be randomly initialized)..." style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;">
 	    <button onclick="addTokenToSpace('${spaceKey}')" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">+ Add</button>
 	</div>
@@ -1395,12 +1395,12 @@ function renderRotationalInvariance() {
 		{
 			x: -20, y: 18, text: '<b>English</b>',
 			showarrow: false, font: { size: 13, color: themeColor('#475569') },
-			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+			bgcolor: isDarkMode() ? 'rgba(15,23,42,0.8)' : 'rgba(248,250,252,0.8)', borderpad: 4
 		},
 		{
 			x: 25, y: 28, text: '<b>Japanese</b>',
 			showarrow: false, font: { size: 13, color: themeColor('#475569') },
-			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+			bgcolor: isDarkMode() ? 'rgba(15,23,42,0.8)' : 'rgba(248,250,252,0.8)', borderpad: 4
 		},
 		// Arrow annotations for the translation paths in A
 		{
@@ -1607,7 +1607,7 @@ function renderManifoldVisualization() {
 		showlegend: true,
 		legend: {
 			x: 0.01, y: 0.99,
-			bgcolor: 'rgba(255,255,255,0.85)',
+			bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)',
 			bordercolor: themeColor('#e2e8f0'),
 			borderwidth: 1,
 			font: { size: 11 }
@@ -1776,13 +1776,13 @@ function renderCrossLingualFrame() {
 		x: -20, y: 18,
 		text: '<b>English</b>',
 		showarrow: false, font: { size: 13, color: themeColor('#475569') },
-		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+		bgcolor: isDarkMode() ? 'rgba(15,23,42,0.8)' : 'rgba(248,250,252,0.8)', borderpad: 4
 	});
 	annotations.push({
 		x: st.currentOffsetX, y: 28,
 		text: `<b>Japanese</b><br>(Rotated ${Math.round(labelAngle)}°)`,
 		showarrow: false, font: { size: 13, color: themeColor('#475569') },
-		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+		bgcolor: isDarkMode() ? 'rgba(15,23,42,0.8)' : 'rgba(248,250,252,0.8)', borderpad: 4
 	});
 
 	const layout = {
@@ -2340,7 +2340,7 @@ function renderParallelogram() {
                 text: `<b>${concept.label}</b><br>Δ = [${avgDx.toFixed(0)}, ${avgDy.toFixed(0)}]`,
                 showarrow: false,
                 font: { size: 12, color: concept.color },
-                bgcolor: 'rgba(255,255,255,0.85)',
+                bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)',
                 borderpad: 4
             });
         }
@@ -2516,7 +2516,7 @@ function renderScaleInvariance() {
             text: `<b>Euclidean: ${eucAB.toFixed(2)}</b>`,
             showarrow: false,
             font: { size: 11, color: '#ef4444' },
-            bgcolor: 'rgba(255,255,255,0.85)', borderpad: 3
+            bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)', borderpad: 3
         }
     ];
 
@@ -2527,7 +2527,7 @@ function renderScaleInvariance() {
             text: `<b>θ = 0° → cos = ${cosAB.toFixed(4)}</b>`,
             showarrow: false,
             font: { size: 12, color: '#10b981' },
-            bgcolor: 'rgba(255,255,255,0.85)', borderpad: 3
+            bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)', borderpad: 3
         });
     }
 
@@ -2545,15 +2545,15 @@ function renderScaleInvariance() {
     // Update stats
     if (statsDiv) {
         statsDiv.innerHTML = `
-            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Cosine Similarity</div>
+            <div style="padding: 12px; background:${themeColor('#fff')}; border-radius: 8px; border: 1px solid ${themeColor('#e2e8f0')}; text-align: center;">
+                <div style="font-size: 0.8em; color:${themeColor('#64748b')}; margin-bottom: 4px;">Cosine Similarity</div>
                 <div style="font-size: 1.6em; font-weight: bold; color: #10b981;">${cosAB.toFixed(4)}</div>
-                <div style="font-size: 0.75em; color: #94a3b8; margin-top: 2px;">Direction match — constant!</div>
+                <div style="font-size: 0.75em; color:${themeColor('#94a3b8')}; margin-top: 2px;">Direction match — constant!</div>
             </div>
-            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Euclidean Distance</div>
+            <div style="padding: 12px; background:${themeColor('#fff')}; border-radius: 8px; border: 1px solid ${themeColor('#e2e8f0')}; text-align: center;">
+                <div style="font-size: 0.8em; color:${themeColor('#64748b')}; margin-bottom: 4px;">Euclidean Distance</div>
                 <div style="font-size: 1.6em; font-weight: bold; color: #ef4444;">${eucAB.toFixed(2)}</div>
-                <div style="font-size: 0.75em; color: #94a3b8; margin-top: 2px;">Magnitude-dependent — changes!</div>
+                <div style="font-size: 0.75em; color:${themeColor('#94a3b8')}; margin-top: 2px;">Magnitude-dependent — changes!</div>
             </div>
         `;
     }
@@ -2772,7 +2772,7 @@ function renderPlatonicHypothesis() {
         showlegend: true,
         legend: {
             x: 0.01, y: 0.99,
-            bgcolor: 'rgba(255,255,255,0.9)',
+            bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)',
             bordercolor: themeColor('#e2e8f0'), borderwidth: 1,
             font: { size: 11 }
         },
@@ -3108,20 +3108,20 @@ function renderAnisotropy() {
 			val > threshWarn ? '#ef4444' : val > threshGood ? '#f59e0b' : '#10b981';
 
 		statsDiv.innerHTML = `
-	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Avg Cosine Similarity</div>
+	    <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+		<div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Avg Cosine Similarity</div>
 		<div style="font-size:1.5em; font-weight:bold; color:${colorFor(0,0,avg,0.3,0.6)};">${avg.toFixed(3)}</div>
-		<div style="font-size:0.75em; color:#94a3b8;">Isotropic ideal: ≈ 0.000</div>
+		<div style="font-size:0.75em; color:${themeColor('#94a3b8')};">Isotropic ideal: ≈ 0.000</div>
 	    </div>
-	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Similarity Range</div>
+	    <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+		<div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Similarity Range</div>
 		<div style="font-size:1.5em; font-weight:bold; color:${range < 0.5 ? '#ef4444' : range < 1.2 ? '#f59e0b' : '#10b981'};">${lo.toFixed(2)} → ${hi.toFixed(2)}</div>
-		<div style="font-size:0.75em; color:#94a3b8;">Full range: −1.0 → +1.0</div>
+		<div style="font-size:0.75em; color:${themeColor('#94a3b8')};">Full range: −1.0 → +1.0</div>
 	    </div>
-	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Effective Bandwidth</div>
+	    <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+		<div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Effective Bandwidth</div>
 		<div style="font-size:1.5em; font-weight:bold; color:${range < 0.5 ? '#ef4444' : range < 1.2 ? '#f59e0b' : '#10b981'};">${range.toFixed(3)}</div>
-		<div style="font-size:0.75em; color:#94a3b8;">Discriminative capacity</div>
+		<div style="font-size:0.75em; color:${themeColor('#94a3b8')};">Discriminative capacity</div>
 	    </div>
 	`;
 	}
@@ -3298,20 +3298,20 @@ function renderSuperposition() {
     if (statDiv) {
         statDiv.innerHTML = `
         <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.7em; color:#64748b;">Features</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.7em; color:${themeColor('#64748b')};">Features</div>
                 <div style="font-size:1.3em; font-weight:bold; color:#3b82f6;">${N}</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.7em; color:#64748b;">Min Angle</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.7em; color:${themeColor('#64748b')};">Min Angle</div>
                 <div style="font-size:1.3em; font-weight:bold; color:${isSuperposed ? '#f59e0b' : '#10b981'};">${minAngleDeg.toFixed(0)}°</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid ${isSuperposed ? '#fecaca' : '#bbf7d0'}; text-align:center;">
-                <div style="font-size:0.7em; color:#64748b;">Max |dot|</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${isSuperposed ? '#fecaca' : '#bbf7d0'}; text-align:center;">
+                <div style="font-size:0.7em; color:${themeColor('#64748b')};">Max |dot|</div>
                 <div style="font-size:1.3em; font-weight:bold; color:${isSuperposed ? '#ef4444' : '#10b981'};">${maxIntf.toFixed(2)}</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.7em; color:#64748b;">Status</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.7em; color:${themeColor('#64748b')};">Status</div>
                 <div style="font-size:0.95em; font-weight:bold; color:${isSuperposed ? '#ef4444' : '#10b981'};">${isSuperposed ? '⚠️ Superposition' : '✅ Orthogonal'}</div>
             </div>
         </div>`;
@@ -3319,7 +3319,7 @@ function renderSuperposition() {
 
     // ---- Interference matrix (HTML table) ----
     if (matDiv) {
-        let h = '<div style="font-size:0.8em; color:#475569; margin-bottom:6px; font-family:sans-serif; text-align:center;"><b>Interference Matrix  ( |dot product| )</b></div>';
+        let h = '<div style="font-size:0.8em; color:' + themeColor('#475569') + '; margin-bottom:6px; font-family:sans-serif; text-align:center;"><b>Interference Matrix  ( |dot product| )</b></div>';
         h += '<div style="overflow-x:auto;"><table style="border-collapse:collapse; font-size:0.72em; font-family:monospace; margin:0 auto;">';
 
         // Header
@@ -3432,10 +3432,10 @@ function updateICLPromptPanel() {
         '<div style="font-family:\'Courier New\',monospace; font-size:0.78em; background:#1e293b; color:#e2e8f0;' +
         ' border-radius:8px; padding:14px; line-height:1.9; margin-bottom:10px;">' +
 
-        '<div style="color:#94a3b8; margin-bottom:6px; font-family:sans-serif; font-size:0.92em;">' +
-        '<b>📝 Few-shot Prompt</b> <span style="color:#475569;">(what the model sees)</span></div>' +
+        '<div style="color:' + themeColor('#94a3b8') + '; margin-bottom:6px; font-family:sans-serif; font-size:0.92em;">' +
+        '<b>📝 Few-shot Prompt</b> <span style="color:' + themeColor('#475569') + ';">(what the model sees)</span></div>' +
 
-        '<div style="border-bottom:1px solid #334155; margin-bottom:8px; padding-bottom:4px; color:#94a3b8; font-style:italic;">' +
+        '<div style="border-bottom:1px solid #334155; margin-bottom:8px; padding-bottom:4px; color:' + themeColor('#94a3b8') + '; font-style:italic;">' +
         'Task: Given a country, name its capital.</div>';
 
     // Example lines
@@ -3451,7 +3451,7 @@ function updateICLPromptPanel() {
             ' background:' + ex.color + '; flex-shrink:0;"></span>' +
             '<span>Q: ' + ex.input + '&nbsp;&nbsp;A: <b>' + ex.label + '</b></span>';
         if (active) {
-            html += '<span style="color:#64748b; margin-left:auto; font-size:0.85em; white-space:nowrap;">' +
+            html += '<span style="color:' + themeColor('#64748b') + '; margin-left:auto; font-size:0.85em; white-space:nowrap;">' +
                 'Δ=[' + dx + ',' + dy + ']</span>';
         }
         html += '</div>';
@@ -3469,9 +3469,9 @@ function updateICLPromptPanel() {
         '<b style="color:' + answerColor + ';">' + answerText + '</b></span></div></div>';
 
     // ---- Offset computation block ----
-    html += '<div style="font-family:\'Courier New\',monospace; font-size:0.75em; background:#f8fafc;' +
-        ' border:1px solid #e2e8f0; border-radius:8px; padding:12px; line-height:1.8;">' +
-        '<div style="font-family:sans-serif; font-size:0.95em; color:#475569; margin-bottom:6px;">' +
+    html += '<div style="font-family:\'Courier New\',monospace; font-size:0.75em; background:' + themeColor('#f8fafc') + ';' +
+        ' border:1px solid ' + themeColor('#e2e8f0') + '; border-radius:8px; padding:12px; line-height:1.8;">' +
+        '<div style="font-family:sans-serif; font-size:0.95em; color:' + themeColor('#475569') + '; margin-bottom:6px;">' +
         '<b>⚙️ Task Vector Computation</b></div>';
 
     for (var i = 0; i < n; i++) {
@@ -3487,7 +3487,7 @@ function updateICLPromptPanel() {
         ' color:#3b82f6; font-weight:bold;">' +
         'Avg Δ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']</div>';
 
-    html += '<div style="color:#64748b; font-size:0.9em; margin-top:4px;">' +
+    html += '<div style="color:' + themeColor('#64748b') + '; font-size:0.9em; margin-top:4px;">' +
         'Apply to ' + st.query.token + ': [' + st.query.pos[0] + ', ' + st.query.pos[1] + ']' +
         ' + Δ = [' + sp[0].toFixed(1) + ', ' + sp[1].toFixed(1) + ']</div>';
 
@@ -3544,7 +3544,7 @@ function renderICL() {
         text: '<b>🏛️ Answer Region</b>',
         showarrow: false,
         font: { size: 10, color: '#10b981' },
-        bgcolor: 'rgba(255,255,255,0.85)', borderpad: 3
+        bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)', borderpad: 3
     });
 
     // ---- 2. Inactive example pairs (very faint) ----
@@ -3642,7 +3642,7 @@ function renderICL() {
             text: '<b>Task Vector</b><br>Δ̄ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']',
             showarrow: true, ax: 25, ay: -20,
             font: { size: 11, color: '#3b82f6' },
-            bgcolor: 'rgba(255,255,255,0.9)', borderpad: 4,
+            bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', borderpad: 4,
             arrowcolor: '#3b82f6', arrowwidth: 1, arrowhead: 0
         });
     }
@@ -3684,7 +3684,7 @@ function renderICL() {
             text: '<b>Task Vector applied</b><br>Δ̄ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']',
             showarrow: true, ax: 25, ay: -20,
             font: { size: 10, color: '#3b82f6' },
-            bgcolor: 'rgba(255,255,255,0.9)', borderpad: 3,
+            bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', borderpad: 3,
             arrowcolor: '#3b82f6', arrowwidth: 1, arrowhead: 0
         });
     }
@@ -3733,23 +3733,23 @@ function renderICL() {
         var ok   = dist <= st.answerRadius;
 
         statsDiv.innerHTML =
-            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
-                '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Task Vector ‖Δ̄‖</div>' +
+            '<div style="padding:12px; background:' + themeColor('#fff') + '; border-radius:8px; border:1px solid ' + themeColor('#e2e8f0') + '; text-align:center;">' +
+                '<div style="font-size:0.8em; color:' + themeColor('#64748b') + '; margin-bottom:4px;">Task Vector ‖Δ̄‖</div>' +
                 '<div style="font-size:1.5em; font-weight:bold; color:#3b82f6;">' + mag.toFixed(1) + '</div>' +
-                '<div style="font-size:0.75em; color:#94a3b8;">from ' + n + ' example' + (n > 1 ? 's' : '') + '</div>' +
+                '<div style="font-size:0.75em; color:' + themeColor('#94a3b8') + ';">from ' + n + ' example' + (n > 1 ? 's' : '') + '</div>' +
             '</div>' +
-            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
-                '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Distance to Rome</div>' +
+            '<div style="padding:12px; background:' + themeColor('#fff') + '; border-radius:8px; border:1px solid ' + themeColor('#e2e8f0') + '; text-align:center;">' +
+                '<div style="font-size:0.8em; color:' + themeColor('#64748b') + '; margin-bottom:4px;">Distance to Rome</div>' +
                 '<div style="font-size:1.5em; font-weight:bold; color:' + (ok ? '#10b981' : '#ef4444') + ';">' +
                     dist.toFixed(2) + '</div>' +
-                '<div style="font-size:0.75em; color:#94a3b8;">' +
+                '<div style="font-size:0.75em; color:' + themeColor('#94a3b8') + ';">' +
                     (ok ? '✅ Inside answer region' : '⬜ Outside (radius ' + st.answerRadius + ')') + '</div>' +
             '</div>' +
-            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
-                '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Examples Used</div>' +
+            '<div style="padding:12px; background:' + themeColor('#fff') + '; border-radius:8px; border:1px solid ' + themeColor('#e2e8f0') + '; text-align:center;">' +
+                '<div style="font-size:0.8em; color:' + themeColor('#64748b') + '; margin-bottom:4px;">Examples Used</div>' +
                 '<div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">' + n + ' / ' +
                     st.examplePairs.length + '</div>' +
-                '<div style="font-size:0.75em; color:#94a3b8;">More → stabler direction</div>' +
+                '<div style="font-size:0.75em; color:' + themeColor('#94a3b8') + ';">More → stabler direction</div>' +
             '</div>';
     }
 }
@@ -4059,7 +4059,7 @@ function renderNegation() {
 		text: '<b>vec("not")</b>',
 		showarrow: false,
 		font: { size: 10, color: '#f59e0b' },
-		bgcolor: 'rgba(255,255,255,0.85)', borderpad: 2
+		bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)', borderpad: 2
 	});
 
 	// ---- 10. Distance labels ----
@@ -4070,7 +4070,7 @@ function renderNegation() {
 		text: `<b>d = ${distToNot.toFixed(1)}</b>`,
 		showarrow: false,
 		font: { size: 12, color: '#f59e0b' },
-		bgcolor: 'rgba(255,255,255,0.9)', borderpad: 3
+		bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', borderpad: 3
 	});
 
 	const midAntX = (notPos[0] + antData.pos[0]) / 2;
@@ -4080,7 +4080,7 @@ function renderNegation() {
 		text: `<b>d = ${distNotToAnt.toFixed(1)}</b>`,
 		showarrow: false,
 		font: { size: 12, color: '#ef4444' },
-		bgcolor: 'rgba(255,255,255,0.9)', borderpad: 3
+		bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', borderpad: 3
 	});
 
 	// ---- 11. Verdict banner ----
@@ -4099,7 +4099,7 @@ function renderNegation() {
 		showlegend: true,
 		legend: {
 			x: 0.01, y: 0.99,
-			bgcolor: 'rgba(255,255,255,0.9)',
+			bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)',
 			bordercolor: themeColor('#e2e8f0'), borderwidth: 1,
 			font: { size: 11 }
 		},
@@ -4124,18 +4124,18 @@ function renderNegation() {
 	if (statsEl) {
 		statsEl.innerHTML = `
 	<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">"${selected}" → "not ${selected}"</div>
+	    <div style="padding: 12px; background:${themeColor('#fff')}; border-radius: 8px; border: 1px solid ${themeColor('#e2e8f0')}; text-align: center;">
+		<div style="font-size: 0.75em; color:${themeColor('#64748b')}; margin-bottom: 4px;">"${selected}" → "not ${selected}"</div>
 		<div style="font-size: 1.6em; font-weight: bold; color: #f59e0b;">${distToNot.toFixed(2)}</div>
-		<div style="font-size: 0.7em; color: #94a3b8;">Barely moved!</div>
+		<div style="font-size: 0.7em; color:${themeColor('#94a3b8')};">Barely moved!</div>
 	    </div>
-	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">"not ${selected}" → "${antKey}"</div>
+	    <div style="padding: 12px; background:${themeColor('#fff')}; border-radius: 8px; border: 1px solid ${themeColor('#e2e8f0')}; text-align: center;">
+		<div style="font-size: 0.75em; color:${themeColor('#64748b')}; margin-bottom: 4px;">"not ${selected}" → "${antKey}"</div>
 		<div style="font-size: 1.6em; font-weight: bold; color: #ef4444;">${distNotToAnt.toFixed(2)}</div>
-		<div style="font-size: 0.7em; color: #94a3b8;">Still far away</div>
+		<div style="font-size: 0.7em; color:${themeColor('#94a3b8')};">Still far away</div>
 	    </div>
-	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 2px solid #fecaca; text-align: center;">
-		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">Failure Ratio</div>
+	    <div style="padding: 12px; background:${themeColor('#fff')}; border-radius: 8px; border: 2px solid #fecaca; text-align: center;">
+		<div style="font-size: 0.75em; color:${themeColor('#64748b')}; margin-bottom: 4px;">Failure Ratio</div>
 		<div style="font-size: 1.6em; font-weight: bold; color: #dc2626;">${ratio}×</div>
 		<div style="font-size: 0.7em; color: #dc2626;">Closer to original than antonym</div>
 	    </div>
@@ -4544,9 +4544,9 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 		var html = '';
 
 		// Depth -> Radius table
-		html += '<div style="font-family:sans-serif;font-size:0.82em;color:#475569;">';
-		html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
-		html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Depth &rarr; Radius</div>';
+		html += '<div style="font-family:sans-serif;font-size:0.82em;color:' + themeColor('#475569') + ';">';
+			html += '<div style="background:' + themeColor('#fff') + ';border:1px solid ' + themeColor('#e2e8f0') + ';border-radius:8px;padding:12px;margin-bottom:12px;">';
+		html += '<div style="font-weight:bold;margin-bottom:8px;color:' + themeColor('#1e293b') + ';">Depth &rarr; Radius</div>';
 		for (var d = 0; d <= hyperbolicState.maxDepth; d++) {
 			var r = getHyperbolicRadius(d, curvature);
 			var dc = depthColors[d] || themeColor('#1e293b');
@@ -4556,17 +4556,17 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 			html += '</div>';
 		}
 		if (curvature > 0.5) {
-			html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Exponential compression &mdash; leaves cluster near r &rarr; 1</div>';
+			html += '<div style="font-size:0.8em;color:' + themeColor('#94a3b8') + ';margin-top:6px;">Exponential compression &mdash; leaves cluster near r &rarr; 1</div>';
 		} else if (curvature < 0.15) {
-			html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Linear spacing &mdash; uniform depth intervals</div>';
+			html += '<div style="font-size:0.8em;color:' + themeColor('#94a3b8') + ';margin-top:6px;">Linear spacing &mdash; uniform depth intervals</div>';
 		} else {
-			html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Interpolating between linear and exponential</div>';
+			html += '<div style="font-size:0.8em;color:' + themeColor('#94a3b8') + ';margin-top:6px;">Interpolating between linear and exponential</div>';
 		}
 		html += '</div>';
 
 		// Chain distances
 		if (curvature > 0.3) {
-			html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
+		html += '<div style="background:' + themeColor('#fff') + ';border:1px solid ' + themeColor('#e2e8f0') + ';border-radius:8px;padding:12px;margin-bottom:12px;">';
 			html += '<div style="font-weight:bold;margin-bottom:8px;color:#92400e;">&#x1F536; Highlighted Chain Distances</div>';
 			var totalHyp = 0;
 			chainEdges.forEach(function(pair) {
@@ -4584,7 +4584,7 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 				html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">';
 				html += '<span>' + pair[0] + ' &rarr; ' + pair[1] + '</span>';
 				html += '<span style="font-family:monospace;"><span style="color:#f59e0b;font-weight:bold;">' + (isFinite(hd)?hd.toFixed(2):'&infin;') + '</span>';
-				html += ' <span style="color:#94a3b8;">(euc: ' + ed.toFixed(3) + ')</span></span>';
+				html += ' <span style="color:' + themeColor('#94a3b8') + ';">(euc: ' + ed.toFixed(3) + ')</span></span>';
 				html += '</div>';
 			});
 			html += '<div style="display:flex;justify-content:space-between;padding:5px 0 0;font-size:0.85em;font-weight:bold;border-top:2px solid #fef3c7;">';
@@ -4594,8 +4594,8 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 		}
 
 		// Geometry summary
-		html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;">';
-		html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Geometry</div>';
+		html += '<div style="background:' + themeColor('#fff') + ';border:1px solid ' + themeColor('#e2e8f0') + ';border-radius:8px;padding:12px;">';
+		html += '<div style="font-weight:bold;margin-bottom:8px;color:' + themeColor('#1e293b') + ';">Geometry</div>';
 		html += '<div style="font-size:0.85em;line-height:1.6;">';
 		if (curvature > 0.5) {
 			html += '<span style="color:#8b5cf6;">&#9679;</span> <b>Exponential</b> room near boundary<br>';
@@ -4603,9 +4603,9 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 			html += '<span style="color:#8b5cf6;">&#9679;</span> Distance <b>explodes</b> near edge<br>';
 			html += '<span style="color:#8b5cf6;">&#9679;</span> Trees embed with <b>low distortion</b>';
 		} else {
-			html += '<span style="color:#94a3b8;">&#9679;</span> Uniform polynomial spacing<br>';
-			html += '<span style="color:#94a3b8;">&#9679;</span> Geodesics are straight lines<br>';
-			html += '<span style="color:#94a3b8;">&#9679;</span> Polynomial volume growth<br>';
+			html += '<span style="color:' + themeColor('#94a3b8') + ';">&#9679;</span> Uniform polynomial spacing<br>';
+			html += '<span style="color:' + themeColor('#94a3b8') + ';">&#9679;</span> Geodesics are straight lines<br>';
+			html += '<span style="color:' + themeColor('#94a3b8') + ';">&#9679;</span> Polynomial volume growth<br>';
 			html += '<span style="color:#ef4444;">&#9679;</span> <b>Leaf nodes crowd together</b>';
 		}
 		html += '</div></div></div>';
@@ -4869,20 +4869,20 @@ function renderTopologyCones() {
         const voidFraction = 1 - occupiedFraction;
 
         statsDiv.innerHTML = `
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Occupied Fraction</div>
+            <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Occupied Fraction</div>
                 <div style="font-size:1.5em; font-weight:bold; color:${occupiedFraction < 0.3 ? '#ef4444' : occupiedFraction < 0.7 ? '#f59e0b' : '#10b981'};">${(occupiedFraction * 100).toFixed(1)}%</div>
-                <div style="font-size:0.75em; color:#94a3b8;">of angular space used</div>
+                <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">of angular space used</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Void Fraction</div>
+            <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Void Fraction</div>
                 <div style="font-size:1.5em; font-weight:bold; color:${voidFraction > 0.7 ? '#ef4444' : voidFraction > 0.3 ? '#f59e0b' : '#10b981'};">${(voidFraction * 100).toFixed(1)}%</div>
-                <div style="font-size:0.75em; color:#94a3b8;">semantic desert</div>
+                <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">semantic desert</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Cone Width</div>
+            <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Cone Width</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">${(currentSpread * 180 / Math.PI).toFixed(1)}°</div>
-                <div style="font-size:0.75em; color:#94a3b8;">per cluster</div>
+                <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">per cluster</div>
             </div>
         `;
     }
@@ -5297,20 +5297,20 @@ function renderFractalFolding() {
                            zoom < 2.5 ? `${speciesScale.toFixed(1)}× (species)` :
                                         `${(speciesScale * breedScale * 0.5).toFixed(1)}× (breeds)`;
         statsDiv.innerHTML = `
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Visible Levels</div>
+            <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Visible Levels</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">${visibleLevels} / 3</div>
-                <div style="font-size:0.75em; color:#94a3b8;">hierarchy depth</div>
+                <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">hierarchy depth</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Visible Nodes</div>
+            <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Visible Nodes</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#3b82f6;">${totalNodes}</div>
-                <div style="font-size:0.75em; color:#94a3b8;">concepts rendered</div>
+                <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">concepts rendered</div>
             </div>
-            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Spatial Scale</div>
+            <div style="padding:12px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.8em; color:${themeColor('#64748b')}; margin-bottom:4px;">Spatial Scale</div>
                 <div style="font-size:1.5em; font-weight:bold; color:#10b981;">${scaleLabel}</div>
-                <div style="font-size:0.75em; color:#94a3b8;">magnification</div>
+                <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">magnification</div>
             </div>
         `;
     }
@@ -5545,7 +5545,7 @@ function renderHolographic() {
     Plotly.react(scatterDiv, scatterTraces, {
         margin: { l: 25, r: 25, b: 25, t: 35 },
         showlegend: true,
-        legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.9)', bordercolor: themeColor('#e2e8f0'), borderwidth: 1, font: { size: 10 } },
+        legend: { x: 0.01, y: 0.99, bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', bordercolor: themeColor('#e2e8f0'), borderwidth: 1, font: { size: 10 } },
         xaxis: { zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), showticklabels: false },
         yaxis: { zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), showticklabels: false, scaleanchor: 'x' },
         plot_bgcolor: themeColor('#fff'),
@@ -5624,30 +5624,30 @@ function renderHolographic() {
             matrixCorrelation > 0.7 ? '#f59e0b' : '#ef4444';
 
         statsDiv.innerHTML = `
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Surviving Dims</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Surviving Dims</div>
                 <div style="font-size:1.4em; font-weight:bold; color:#3b82f6;">${surviving} / ${D}</div>
-                <div style="font-size:0.7em; color:#94a3b8;">${(surviving / D * 100).toFixed(0)}% intact</div>
+                <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">${(surviving / D * 100).toFixed(0)}% intact</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Signal Quality</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Signal Quality</div>
                 <div style="font-size:1.4em; font-weight:bold; color:${theoreticalSignal > 0.7 ? '#10b981' : theoreticalSignal > 0.4 ? '#f59e0b' : '#ef4444'};">${(theoreticalSignal * 100).toFixed(1)}%</div>
-                <div style="font-size:0.7em; color:#94a3b8;">√(k/d) theoretical</div>
+                <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">√(k/d) theoretical</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Structure Preserved</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Structure Preserved</div>
                 <div style="font-size:1.4em; font-weight:bold; color:${corrColor};">${(matrixCorrelation * 100).toFixed(1)}%</div>
-                <div style="font-size:0.7em; color:#94a3b8;">matrix correlation</div>
+                <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">matrix correlation</div>
             </div>
-            <div style="padding:10px; background:#fff; border-radius:8px; border:${matrixCorrelation > 0.85 ? '1px solid #bbf7d0' : '2px solid #fecaca'}; text-align:center;">
-                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Verdict</div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:${matrixCorrelation > 0.85 ? '1px solid #bbf7d0' : '2px solid #fecaca'}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Verdict</div>
                 <div style="font-size:1.0em; font-weight:bold; color:${matrixCorrelation > 0.85 ? '#10b981' : matrixCorrelation > 0.6 ? '#f59e0b' : '#ef4444'};">${
                     matrixCorrelation > 0.95 ? '✅ Intact' :
                     matrixCorrelation > 0.85 ? '✅ Degraded' :
                     matrixCorrelation > 0.6  ? '⚠️ Noisy' :
                                                '❌ Broken'
                 }</div>
-                <div style="font-size:0.7em; color:#94a3b8;">holographic resilience</div>
+                <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">holographic resilience</div>
             </div>
         `;
     }
@@ -5935,7 +5935,7 @@ function renderVoronoi() {
                 const isDownBoundary = (py + res < H) && downIdx < cellOwner.length && cellOwner[downIdx] !== owner;
 
                 if (isRightBoundary || isDownBoundary) {
-                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    ctx.fillStyle = isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)';
                     ctx.fillRect(px, py, res + 1, res + 1);
                 }
             }
@@ -5972,7 +5972,7 @@ function renderVoronoi() {
 
             // Background for readability
             const textWidth = ctx.measureText(s.name).width;
-            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillStyle = isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)';
             ctx.fillRect(sx - textWidth / 2 - 3, sy - 24, textWidth + 6, 16);
 
             ctx.fillStyle = s.color;
@@ -6046,7 +6046,7 @@ function updateVoronoiClickInfo(pos) {
     infoDiv.innerHTML = `
         <div style="margin-bottom: 8px;">
             <b>Owner:</b> <span style="color:${owner.color}; font-weight:bold; font-size:1.1em;">${owner.name}</span>
-            <span style="color:#94a3b8; font-size:0.85em;">(${owner.group})</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.85em;">(${owner.group})</span>
         </div>
         <div style="margin-bottom: 4px;">
             <b>Distance to ${owner.name}:</b> ${owner.dist.toFixed(4)}
@@ -6064,10 +6064,10 @@ function updateVoronoiClickInfo(pos) {
             </span>
             ${parseFloat(confidence) < 10 ? '<span style="color:#ef4444; font-size:0.8em;"> ⚠️ near boundary!</span>' : ''}
         </div>
-        <div style="font-size: 0.8em; color: #94a3b8;">
+        <div style="font-size: 0.8em; color:${themeColor('#94a3b8')};">
             <b>Nearest 5:</b><br>
             ${dists.slice(0, 5).map((d, i) =>
-                `<span style="color:${d.color};">${i === 0 ? '→' : '&nbsp;&nbsp;'} ${d.name}</span> <span style="color:#cbd5e1;">(${d.dist.toFixed(3)})</span>`
+                `<span style="color:${d.color};">${i === 0 ? '→' : '&nbsp;&nbsp;'} ${d.name}</span> <span style="color:${themeColor('#cbd5e1')};">(${d.dist.toFixed(3)})</span>`
             ).join('<br>')}
         </div>
     `;
@@ -6088,7 +6088,7 @@ function updateVoronoiLegend() {
     let html = '';
     Object.entries(groups).forEach(([group, members]) => {
         html += `<div style="margin-bottom: 6px;">
-            <span style="font-weight:bold; color:#1e293b; font-size:0.85em; text-transform:capitalize;">${group}</span><br>`;
+            <span style="font-weight:bold; color:${themeColor('#1e293b')}; font-size:0.85em; text-transform:capitalize;">${group}</span><br>`;
         members.forEach(m => {
             html += `<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${m.color}; margin-right:4px; vertical-align:middle;"></span>
                 <span style="font-size:0.8em; color:${m.color};">${m.name}</span>&nbsp;&nbsp;`;
@@ -6163,25 +6163,25 @@ function updateVoronoiStats(cellOwner, cellDist, cellDist2) {
     }
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Largest Cell</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Largest Cell</div>
             <div style="font-size:1.1em; font-weight:bold; color:${seeds[maxIdx].color};">${seeds[maxIdx].name}</div>
-            <div style="font-size:0.85em; color:#94a3b8;">${largestPct}% of space</div>
+            <div style="font-size:0.85em; color:${themeColor('#94a3b8')};">${largestPct}% of space</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Smallest Cell</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Smallest Cell</div>
             <div style="font-size:1.1em; font-weight:bold; color:${seeds[minIdx].color};">${seeds[minIdx].name}</div>
-            <div style="font-size:0.85em; color:#94a3b8;">${smallestPct}% of space</div>
+            <div style="font-size:0.85em; color:${themeColor('#94a3b8')};">${smallestPct}% of space</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Longest Boundary</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Longest Boundary</div>
             <div style="font-size:0.9em; font-weight:bold; color:#8b5cf6;">${topPairLabel}</div>
-            <div style="font-size:0.75em; color:#94a3b8;">closest neighbors</div>
+            <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">closest neighbors</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Ambiguous Zone</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Ambiguous Zone</div>
             <div style="font-size:1.2em; font-weight:bold; color:${parseFloat(ambiguousPct) > 20 ? '#f59e0b' : '#10b981'};">${ambiguousPct}%</div>
-            <div style="font-size:0.75em; color:#94a3b8;">near boundaries</div>
+            <div style="font-size:0.75em; color:${themeColor('#94a3b8')};">near boundaries</div>
         </div>
     `;
 }
@@ -6950,25 +6950,25 @@ function updateHomologyStats(r) {
     }
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Active Holes</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Active Holes</div>
             <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : '#94a3b8'};">${aliveHoles.length}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">of ${totalHoles} detected</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">of ${totalHoles} detected</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Edges Formed</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Edges Formed</div>
             <div style="font-size:1.4em; font-weight:bold; color:#60a5fa;">${edgeCount}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">connections at r=${r.toFixed(3)}</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">connections at r=${r.toFixed(3)}</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Most Persistent</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Most Persistent</div>
             <div style="font-size:1.0em; font-weight:bold; color:#8b5cf6;">${maxPersLabel}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">longest-lived void</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">longest-lived void</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Points</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Points</div>
             <div style="font-size:1.4em; font-weight:bold; color:#10b981;">${st.points.length}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">token vectors</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">token vectors</div>
         </div>
     `;
 }
@@ -7429,10 +7429,10 @@ function updateTimeHelixInfo() {
         const p = st.hovered;
         infoDiv.innerHTML = `
             <div style="margin-bottom: 6px;">
-                <b style="font-size: 1.2em; color: #1e293b;">${p.year}</b>
+                <b style="font-size: 1.2em; color:${themeColor('#1e293b')};">${p.year}</b>
                 ${p.eventLabel ? `<br><span style="color: #f59e0b; font-weight: bold;">${p.eventLabel}</span>` : ''}
             </div>
-            <div style="font-size: 0.85em; color: #94a3b8;">
+            <div style="font-size: 0.85em; color:${themeColor('#94a3b8')};">
                 <b>Position:</b> t = ${p.t.toFixed(3)}<br>
                 <b>Helix X:</b> ${p.x.toFixed(3)}<br>
                 <b>Helix Y:</b> ${p.y.toFixed(3)}<br>
@@ -7441,7 +7441,7 @@ function updateTimeHelixInfo() {
         `;
     } else {
         infoDiv.innerHTML = `
-            <span style="color: #94a3b8;">Hover over any point to see the year and associated historical event.
+            <span style="color:${themeColor('#94a3b8')};">Hover over any point to see the year and associated historical event.
             The helix structure emerges from statistical co-occurrence alone — no one told the model about time.</span>
         `;
     }
@@ -7459,14 +7459,14 @@ function updateTimeHelixInfo() {
     propsDiv.innerHTML = `
         <div style="margin-bottom: 6px;">
             <b>Cyclical Strength (r):</b> ${st2.radius.toFixed(2)}<br>
-            <span style="color: #94a3b8; font-size: 0.85em;">${rLabel}</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size: 0.85em;">${rLabel}</span>
         </div>
         <div style="margin-bottom: 6px;">
             <b>Tightness (ω):</b> ${st2.omega.toFixed(1)}<br>
-            <span style="color: #94a3b8; font-size: 0.85em;">${oLabel}</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size: 0.85em;">${oLabel}</span>
         </div>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 8px 0;">
-        <div style="font-size: 0.8em; color: #94a3b8;">
+        <hr style="border: none; border-top: 1px solid ${themeColor('#e2e8f0')}; margin: 8px 0;">
+        <div style="font-size: 0.8em; color:${themeColor('#94a3b8')};">
             <b>Interpretation:</b><br>
             At <b>r = 0</b>, the helix collapses to a straight line — pure linear time, no cyclical patterns.
             As <b>r</b> increases, the cyclical component (decades, centuries) becomes visible.
@@ -7500,25 +7500,25 @@ function updateTimeHelixStats(points, range) {
     const linearity = Math.max(0, 1 - st.radius * 1.2);
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Time Span</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Time Span</div>
             <div style="font-size:1.2em; font-weight:bold; color:#3b82f6;">${range.start < 0 ? Math.abs(range.start) + ' BC' : range.start} – ${range.end}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">${totalYears} years</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">${totalYears} years</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Helix Loops</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Helix Loops</div>
             <div style="font-size:1.4em; font-weight:bold; color:#8b5cf6;">${loopsCount}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">full rotations</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">full rotations</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Linearity</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Linearity</div>
             <div style="font-size:1.4em; font-weight:bold; color:${linearity > 0.7 ? '#10b981' : linearity > 0.3 ? '#f59e0b' : '#ef4444'};">${(linearity * 100).toFixed(0)}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">line vs. helix</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">line vs. helix</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Key Events</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Key Events</div>
             <div style="font-size:1.4em; font-weight:bold; color:#f59e0b;">${numEvents}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">of ${numPoints} points</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">of ${numPoints} points</div>
         </div>
     `;
 }
@@ -8028,7 +8028,7 @@ function renderPolytope() {
 
             // Background
             const tw = ctx.measureText(p.name).width;
-            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillStyle = isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)';
             ctx.fillRect(cp.x - tw / 2 - 3, cp.y - 24, tw + 6, 15);
             ctx.fillStyle = preset.colorA;
             ctx.fillText(p.name, cp.x, cp.y - 12);
@@ -8052,7 +8052,7 @@ function renderPolytope() {
             ctx.textAlign = 'center';
 
             const tw = ctx.measureText(p.name).width;
-            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillStyle = isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)';
             ctx.fillRect(cp.x - tw / 2 - 3, cp.y - 24, tw + 6, 15);
             ctx.fillStyle = preset.colorB;
             ctx.fillText(p.name, cp.x, cp.y - 12);
@@ -8115,7 +8115,7 @@ function renderPolytope() {
                 ctx.textAlign = 'center';
 
                 const tw = ctx.measureText(p.name).width;
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.fillStyle = isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)';
                 ctx.fillRect(cp.x - tw / 2 - 3, cp.y + s + 3, tw + 6, 14);
 
                 ctx.fillStyle = inOverlap ? '#b45309' : themeColor('#64748b');
@@ -8232,11 +8232,11 @@ function updatePolytopeClickInfo(pos) {
         </div>
         <div style="margin-bottom: 4px;">
             <b>Dist to <span style="color:${preset.colorA};">${preset.nameA}</span> hull:</b> ${distA.toFixed(4)}
-            ${inA ? '<span style="color:#10b981;"> (inside)</span>' : '<span style="color:#94a3b8;"> (outside)</span>'}
+            ${inA ? '<span style="color:#10b981;"> (inside)</span>' : '<span style="color:' + themeColor('#94a3b8') + ';"> (outside)</span>'}
         </div>
         <div style="margin-bottom: 4px;">
             <b>Dist to <span style="color:${preset.colorB};">${preset.nameB}</span> hull:</b> ${distB.toFixed(4)}
-            ${inB ? '<span style="color:#10b981;"> (inside)</span>' : '<span style="color:#94a3b8;"> (outside)</span>'}
+            ${inB ? '<span style="color:#10b981;"> (inside)</span>' : '<span style="color:' + themeColor('#94a3b8') + ';"> (outside)</span>'}
         </div>
         <div style="margin-bottom: 4px;">
             <b>Nearest <span style="color:${preset.colorA};">${preset.nameA}</span>:</b>
@@ -8268,22 +8268,22 @@ function updatePolytopeLegend() {
         <div style="margin-bottom: 6px;">
             <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${preset.colorA}; margin-right:6px; vertical-align:middle;"></span>
             <b style="color:${preset.colorA};">${preset.nameA}</b>
-            <span style="color:#94a3b8; font-size:0.85em;"> (${st.groupA.length} concepts)</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.85em;"> (${st.groupA.length} concepts)</span>
         </div>
         <div style="margin-bottom: 6px;">
             <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${preset.colorB}; margin-right:6px; vertical-align:middle;"></span>
             <b style="color:${preset.colorB};">${preset.nameB}</b>
-            <span style="color:#94a3b8; font-size:0.85em;"> (${st.groupB.length} concepts)</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.85em;"> (${st.groupB.length} concepts)</span>
         </div>
         <div style="margin-bottom: 6px;">
             <span style="display:inline-block; width:12px; height:12px; background:#a855f7; opacity:0.4; margin-right:6px; vertical-align:middle;"></span>
             <b style="color:#a855f7;">Overlap Zone</b>
-            <span style="color:#94a3b8; font-size:0.85em;"> (dilemma)</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.85em;"> (dilemma)</span>
         </div>
         <div>
             <span style="display:inline-block; width:12px; height:12px; background:#f59e0b; transform:rotate(45deg); margin-right:6px; vertical-align:middle;"></span>
             <b style="color:#f59e0b;">Dilemma Concepts</b>
-            <span style="color:#94a3b8; font-size:0.85em;"> (${st.dilemmaPoints.length})</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.85em;"> (${st.dilemmaPoints.length})</span>
         </div>
     `;
 }
@@ -8321,7 +8321,7 @@ function updatePolytopeDilemmaList(hullA, hullB) {
         }
 
         html += `<div style="margin-bottom: 4px; padding: 3px 6px; border-radius: 4px; background: ${statusColor}08; border-left: 3px solid ${statusColor};">
-            ${statusIcon} <b style="color:#1e293b;">${p.name}</b>
+            ${statusIcon} <b style="color:${themeColor('#1e293b')};">${p.name}</b>
             <span style="color:${statusColor}; font-size:0.85em;"> — ${status}</span>
         </div>`;
     });
@@ -8365,25 +8365,25 @@ function updatePolytopeStats(hullA, hullB, overlapPixels, totalPixels) {
     const separated = overlapPct < 0.1;
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Overlap Area</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Overlap Area</div>
             <div style="font-size:1.4em; font-weight:bold; color:${overlapPct > 5 ? '#a855f7' : overlapPct > 0.5 ? '#f59e0b' : '#10b981'};">${overlapPct.toFixed(1)}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">${overlapPct > 5 ? 'significant ambiguity' : overlapPct > 0.5 ? 'minor ambiguity' : 'well separated'}</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">${overlapPct > 5 ? 'significant ambiguity' : overlapPct > 0.5 ? 'minor ambiguity' : 'well separated'}</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Dilemmas in Overlap</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Dilemmas in Overlap</div>
             <div style="font-size:1.4em; font-weight:bold; color:#f59e0b;">${dilemmasInOverlap} / ${st.dilemmaPoints.length}</div>
-            <div style="font-size:0.7em; color:#94a3b8;">contested concepts</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">contested concepts</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;"><span style="color:${preset.colorA};">■</span> Hull Area</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;"><span style="color:${preset.colorA};">■</span> Hull Area</div>
             <div style="font-size:1.4em; font-weight:bold; color:${preset.colorA};">${(areaA * 100).toFixed(1)}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">${preset.nameA}</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">${preset.nameA}</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;"><span style="color:${preset.colorB};">■</span> Hull Area</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;"><span style="color:${preset.colorB};">■</span> Hull Area</div>
             <div style="font-size:1.4em; font-weight:bold; color:${preset.colorB};">${(areaB * 100).toFixed(1)}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">${preset.nameB}</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">${preset.nameB}</div>
         </div>
     `;
 }
@@ -8833,11 +8833,11 @@ function updateGrammarRotPairs(op, t) {
 
         html += `<div style="display: flex; align-items: center; gap: 6px; margin-bottom: 5px; padding: 4px 8px; border-radius: 4px; background: ${isTransformed ? op.colorB + '10' : op.colorA + '10'};">
             <span style="color:${op.colorA}; font-weight:bold; font-size:0.9em; min-width: 65px;">${pair.base}</span>
-            <span style="color:#94a3b8; font-size:0.8em;">→</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.8em;">→</span>
             <div style="flex:1; background:#e2e8f0; border-radius:3px; height:6px; overflow:hidden;">
                 <div style="background: linear-gradient(90deg, ${op.colorA}, ${op.colorB}); height:100%; width:${progress}%; transition: width 0.1s; border-radius:3px;"></div>
             </div>
-            <span style="color:#94a3b8; font-size:0.8em;">→</span>
+            <span style="color:${themeColor('#94a3b8')}; font-size:0.8em;">→</span>
             <span style="color:${op.colorB}; font-weight:bold; font-size:0.9em; min-width: 75px; text-align:right;">${pair.target}</span>
         </div>`;
     });
@@ -8864,25 +8864,25 @@ function updateGrammarRotStats(op, t) {
     const dirChange = currentAngleDeg;
 
     statsDiv.innerHTML = `
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Rotation Angle</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Rotation Angle</div>
             <div style="font-size:1.4em; font-weight:bold; color:#8b5cf6;">${currentAngleDeg}°</div>
-            <div style="font-size:0.7em; color:#94a3b8;">of ${fullAngleDeg}° total</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">of ${fullAngleDeg}° total</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Magnitude Preserved</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Magnitude Preserved</div>
             <div style="font-size:1.4em; font-weight:bold; color:#10b981;">${magPreservation.toFixed(1)}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">‖v‖ unchanged</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">‖v‖ unchanged</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Cross-Word Consistency</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Cross-Word Consistency</div>
             <div style="font-size:1.4em; font-weight:bold; color:#3b82f6;">${consistency}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">same angle for all</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">same angle for all</div>
         </div>
-        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
-            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Progress</div>
+        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Progress</div>
             <div style="font-size:1.4em; font-weight:bold; color:${pct < 30 ? '#60a5fa' : pct < 70 ? '#8b5cf6' : op.colorB};">${pct}%</div>
-            <div style="font-size:0.7em; color:#94a3b8;">${pct < 50 ? op.labelA + ' → ...' : '... → ' + op.labelB}</div>
+            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">${pct < 50 ? op.labelA + ' → ...' : '... → ' + op.labelB}</div>
         </div>
     `;
 }
@@ -8897,7 +8897,7 @@ function updateGrammarRotInfo() {
 
     infoDiv.innerHTML = `
         <div style="margin-bottom: 8px;">
-            <b style="font-size: 1.05em; color: #1e293b;">${op.name}</b>
+            <b style="font-size: 1.05em; color:${themeColor('#1e293b')};">${op.name}</b>
         </div>
         <div style="margin-bottom: 6px; font-size: 0.9em;">
             <b>Rotation angle:</b> <span style="color: #8b5cf6; font-weight: bold;">${angleDeg}°</span>
@@ -8905,7 +8905,7 @@ function updateGrammarRotInfo() {
         <div style="margin-bottom: 6px; font-size: 0.9em;">
             <b>Word pairs:</b> ${op.pairs.length}
         </div>
-        <div style="font-size: 0.85em; color: #94a3b8; line-height: 1.6;">
+        <div style="font-size: 0.85em; color:${themeColor('#94a3b8')}; line-height: 1.6;">
             Every word in the <span style="color:${op.colorA}; font-weight:bold;">${op.labelA}</span> form
             rotates by exactly the same angle to reach its
             <span style="color:${op.colorB}; font-weight:bold;">${op.labelB}</span> form.
@@ -8913,8 +8913,8 @@ function updateGrammarRotInfo() {
             only the <b>direction</b> changes. This is why grammar is a
             <b>rotation</b>, not a translation.
         </div>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 8px 0;">
-        <div style="font-size: 0.8em; color: #94a3b8;">
+        <hr style="border: none; border-top: 1px solid ${themeColor('#e2e8f0')}; margin: 8px 0;">
+        <div style="font-size: 0.8em; color:${themeColor('#94a3b8')};">
             <b>Key insight:</b> The model learned this rotation matrix
             purely from statistical co-occurrence. Nobody programmed
             "past tense = rotate by ${angleDeg}°." The geometric
@@ -9034,7 +9034,7 @@ function loadEmbeddingModule() {
             dualPlotDiv.innerHTML = `
             <div class="plot-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; min-height:350px; gap:14px;">
                 <div class="spinner"></div>
-                <span style="color:#64748b; font-size:0.95em;">Please wait while it's rendering…</span>
+                <span style="color:${themeColor('#64748b')}; font-size:0.95em;">Please wait while it's rendering…</span>
             </div>`;
         }
         setTimeout(() => {

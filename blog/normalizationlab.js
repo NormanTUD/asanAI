@@ -76,11 +76,11 @@ const NormLab = {
             html += `
             <div class="norm-row-group" style="
                 position: relative;
-                background: #ffffff;
+                background: ${themeColor('#ffffff')};
                 border-radius: 20px;
                 padding: 28px;
                 margin-bottom: 32px;
-                border: 1px solid rgba(99,102,241,0.08);
+                border: 1px solid ${themeColor('#e2e8f0')};
                 box-shadow:
                     0 8px 32px -8px rgba(99,102,241,0.07),
                     0 1px 4px rgba(0,0,0,0.03);
@@ -100,7 +100,7 @@ const NormLab = {
                     align-items: center;
                     margin-bottom: 22px;
                     padding-bottom: 16px;
-                    border-bottom: 1px solid #f1f5f9;
+                    border-bottom: 1px solid ${themeColor('#f1f5f9')};
                 ">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <div style="
@@ -111,24 +111,24 @@ const NormLab = {
                             display: flex; align-items: center; justify-content: center;
                             font-weight: 800; font-size: 0.85rem; color: ${accent};
                         ">${i + 1}</div>
-                        <span style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">Row Group #${i + 1}</span>
+                        <span style="font-size: 1.1rem; font-weight: 700; color: ${themeColor('#1e293b')};">Row Group #${i + 1}</span>
                     </div>
                     <div style="
                         display: flex; gap: 12px; align-items: center;
                     ">
                         <div style="
                             padding: 6px 14px;
-                            background: linear-gradient(135deg, #6366f108, #6366f104);
-                            border: 1px solid #6366f118;
+                            background: linear-gradient(135deg, ${accent}12, ${accent}06);
+                            border: 1px solid ${accent}20;
                             border-radius: 10px;
-                            font-size: 0.85rem; color: #475569;
+                            font-size: 0.85rem; color: ${themeColor('#475569')};
                         ">$\\mu = ${mean.toFixed(2)}$</div>
                         <div style="
                             padding: 6px 14px;
-                            background: linear-gradient(135deg, #8b5cf608, #8b5cf604);
-                            border: 1px solid #8b5cf618;
+                            background: linear-gradient(135deg, #8b5cf612, #8b5cf606);
+                            border: 1px solid #8b5cf620;
                             border-radius: 10px;
-                            font-size: 0.85rem; color: #475569;
+                            font-size: 0.85rem; color: ${themeColor('#475569')};
                         ">$\\sigma = ${stdDev.toFixed(2)}$</div>
                     </div>
                 </div>
@@ -179,8 +179,8 @@ const NormLab = {
                             <!-- Center: Steps -->
                             <div style="
                                 padding: 0 24px;
-                                border-left: 1px solid #f1f5f9;
-                                border-right: 1px solid #f1f5f9;
+                                border-left: 1px solid ${themeColor('#f1f5f9')};
+                                border-right: 1px solid ${themeColor('#f1f5f9')};
                             ">
                                 <!-- Step 1 -->
                                 <div style="margin-bottom: 10px;">
@@ -195,7 +195,7 @@ const NormLab = {
                                         ">1</span>
                                         <span style="font-size: 0.78rem; font-weight: 700; color: #be185d;">Center</span>
                                     </div>
-                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: #334155;">
+                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: ${themeColor('#334155')};">
                                         $${val} - ${mean.toFixed(2)} = ${diff.toFixed(2)}$
                                     </div>
                                 </div>
@@ -213,7 +213,7 @@ const NormLab = {
                                         ">2</span>
                                         <span style="font-size: 0.78rem; font-weight: 700; color: #2563eb;">Standardize</span>
                                     </div>
-                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: #334155;">
+                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: ${themeColor('#334155')};">
                                         $\\frac{${diff.toFixed(2)}}{${stdDev.toFixed(2)}} = ${standardized.toFixed(3)}$
                                     </div>
                                 </div>
@@ -231,7 +231,7 @@ const NormLab = {
                                         ">3</span>
                                         <span style="font-size: 0.78rem; font-weight: 700; color: #059669;">Scale & Shift</span>
                                     </div>
-                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: #334155;">
+                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: ${themeColor('#334155')};">
                                         $\\underbrace{(${gamma.toFixed(1)})}_{\\gamma} \\times ${standardized.toFixed(3)} + \\underbrace{${beta.toFixed(1)}}_{\\beta} = ${final_val.toFixed(2)}$
                                     </div>
                                 </div>
@@ -295,19 +295,19 @@ const NormLab = {
 
     // ─── Table rendering ────────────────────────────────────────
     renderTable: function (id, data) {
-        let h = `<tr style="background: linear-gradient(135deg, #f1f5f9, #eef2ff);">
-            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1; border-bottom:2px solid #e2e8f0;">#</th>
-            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1; border-bottom:2px solid #e2e8f0;">F1</th>
-            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#10b981; border-bottom:2px solid #e2e8f0;">F2</th>
-            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f59e0b; border-bottom:2px solid #e2e8f0;">F3</th>
-            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f43f5e; border-bottom:2px solid #e2e8f0;">F4</th>
+        let h = `<tr style="background: linear-gradient(135deg, ${themeColor('#f1f5f9')}, ${themeColor('#eef2ff')}); border-bottom: 2px solid ${themeColor('#e2e8f0')};">
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1;">#</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1;">F1</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#10b981;">F2</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f59e0b;">F3</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f43f5e;">F4</th>
         </tr>`;
 
         data.forEach((r, i) => {
-            h += `<tr style="transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+            h += `<tr style="transition: background 0.2s;" onmouseover="this.style.background='${themeColor('#f1f5f9')}'" onmouseout="this.style.background='${themeColor('#ffffff')}'">
                 <td style="
                     padding: 10px 12px;
-                    border-bottom: 1px solid #f1f5f9;
+                    border-bottom: 1px solid ${themeColor('#f1f5f9')};
                     font-weight: 800;
                     font-size: 0.82rem;
                     color: #6366f1;
@@ -327,8 +327,8 @@ const NormLab = {
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                     position: relative;
                     font-variant-numeric: tabular-nums;
-                " onfocus="this.style.background='${fc}08'; this.style.boxShadow='inset 0 -2px 0 ${fc}'"
-                   onblur="this.style.background='white'; this.style.boxShadow='none'"
+                " onfocus="this.style.background='${fc}10'; this.style.boxShadow='inset 0 -2px 0 ${fc}'"
+                   onblur="this.style.background='${themeColor('#ffffff')}'; this.style.boxShadow='none'"
                 >${val}</td>`;
             });
             h += `</tr>`;

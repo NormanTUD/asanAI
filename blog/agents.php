@@ -118,34 +118,56 @@ $$
 Every LLM agent, regardless of framework, implements a variant of this loop:
 </div>
 
-<pre class="wslab-code-block"><code>┌─────────────────────────────────────────────────────────────────┐
-│                        AGENT LOOP                               │
-│                                                                 │
-│  1. PERCEIVE                                                    │
-│     • Read user goal + conversation history                     │
-│     • Read observations from previous tool calls                │
-│     • Read contents of working memory / scratchpad              │
-│                                                                 │
-│  2. REASON (LLM Forward Pass)                                   │
-│     • System prompt defines persona, tools, constraints         │
-│     • LLM generates chain-of-thought reasoning                  │
-│     • LLM decides: "Am I done?" or "What tool do I need?"      │
-│                                                                 │
-│  3. ACT                                                         │
-│     • If done → emit final answer, exit loop                    │
-│     • If not → emit structured tool call (function calling)     │
-│                                                                 │
-│  4. OBSERVE                                                     │
-│     • Orchestrator executes the tool call                       │
-│     • Result is injected into context as "Observation"          │
-│     • Loop back to step 1                                       │
-│                                                                 │
-│  TERMINATION CONDITIONS:                                        │
-│     • LLM emits "Finish" action                                 │
-│     • Maximum iterations reached (safety bound)                 │
-│     • Token budget exhausted                                    │
-│     • Error threshold exceeded                                  │
-└─────────────────────────────────────────────────────────────────┘</code></pre>
+<div class="agent-loop-diagram" role="region" aria-label="Agent loop overview">
+<h4>The Agent Loop</h4>
+<div class="agent-loop-grid">
+<div class="agent-loop-step">
+<div class="step-number">1</div>
+<h5 class="step-title">PERCEIVE</h5>
+<ul>
+<li>Read user goal + conversation history</li>
+<li>Read observations from previous tool calls</li>
+<li>Read working memory / scratchpad</li>
+</ul>
+</div>
+<div class="agent-loop-step">
+<div class="step-number">2</div>
+<h5 class="step-title">REASON</h5>
+<ul>
+<li>System prompt sets persona, tools &amp; constraints</li>
+<li>LLM generates chain-of-thought</li>
+<li>Decides: done, or which tool?</li>
+</ul>
+</div>
+<div class="agent-loop-step">
+<div class="step-number">3</div>
+<h5 class="step-title">ACT</h5>
+<ul>
+<li>If done → emit final answer</li>
+<li>If not → emit structured tool call</li>
+<li>Orchestrator validates request</li>
+</ul>
+</div>
+<div class="agent-loop-step">
+<div class="step-number">4</div>
+<h5 class="step-title">OBSERVE</h5>
+<ul>
+<li>Tool executes in sandbox</li>
+<li>Result injected as "Observation"</li>
+<li>Loop back to PERCEIVE</li>
+</ul>
+</div>
+</div>
+<div class="agent-loop-termination">
+<h5>Termination Conditions</h5>
+<ul>
+<li>LLM emits a "Finish" action</li>
+<li>Maximum iterations reached (safety bound)</li>
+<li>Token budget exhausted</li>
+<li>Error threshold exceeded</li>
+</ul>
+</div>
+</div>
 
 <div class="md">
 ### The System Prompt: Defining the Agent's Identity

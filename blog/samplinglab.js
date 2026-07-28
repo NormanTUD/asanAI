@@ -66,7 +66,11 @@ const Sampler = {
 
         Plotly.newPlot('sampling-plot', [trace], {
             margin: { t: 10, r: 10, b: 40, l: 50 },
-            yaxis: { title: 'Probability (%)', range: [0, 100] }
+            paper_bgcolor: themeColor('#ffffff'),
+            plot_bgcolor: themeColor('#f8fafc'),
+            font: { color: themeColor('#1e293b') },
+            yaxis: { title: 'Probability (%)', range: [0, 100], gridcolor: themeColor('#e2e8f0'), zerolinecolor: themeColor('#cbd5e1') },
+            xaxis: { gridcolor: themeColor('#e2e8f0') }
         });
 
         // Render Results Table
