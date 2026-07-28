@@ -121,10 +121,13 @@ function initCompositionPlot() {
 		];
 
 		const layout = {
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
 			margin: { t: 10, b: 30, l: 30, r: 10 },
-			legend: { orientation: 'h', y: -0.2 },
-			xaxis: { range: [-10, 10] },
-			yaxis: { range: [-10, 10] },
+			legend: { orientation: 'h', y: -0.2, font: { color: themeColor('#1e293b') } },
+			xaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			yaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 		};
 
 		Plotly.react('plot-composition', data, layout);
@@ -188,12 +191,18 @@ function initLogPlot() {
 		};
 
 		const layout = {
-			title: { text: 'The Logarithm', font: { size: 16 } },
-			xaxis: { title: 'Input (x)', range: [0, 52], zeroline: true },
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
+			title: { text: 'The Logarithm', font: { size: 16, color: themeColor('#1e293b') } },
+			xaxis: { title: { text: 'Input (x)', font: { color: themeColor('#64748b') } }, range: [0, 52], zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 			yaxis: {
-				title: 'Output (y)',
+				title: { text: 'Output (y)', font: { color: themeColor('#64748b') } },
 				range: [minY - padding, maxY + padding],
 				zeroline: true,
+				gridcolor: themeColor('#f1f5f9'),
+				zerolinecolor: themeColor('#cbd5e1'),
+				tickfont: { color: themeColor('#64748b') },
 			},
 			margin: { l: 50, r: 20, b: 50, t: 40 },
 			showlegend: false,
@@ -238,7 +247,7 @@ function renderBWTable() {
 		html += '<tr>';
 		for (let c = 0; c < 3; c++) {
 			let val = r === c ? 0 : 255;
-			html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" id="bw_image_cell_${r}_${c}" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid #ccc; font-weight: bold; text-align: center;"></td>`;
+			html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" id="bw_image_cell_${r}_${c}" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid ${themeColor('#e2e8f0')}; font-weight: bold; text-align: center;"></td>`;
 		}
 		html += '</tr>';
 	}
@@ -256,19 +265,19 @@ function renderRGBCombinedTable() {
 			let gv = r === 1 ? 255 : 0;
 			let bv = r === 2 ? 255 : 0;
 			html += `
-			<td style="background: #ffffff; border: 1px solid #cbd5e0; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+			<td style="background: ${themeColor('#ffffff')}; border: 1px solid ${themeColor('#cbd5e1')}; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
 				<div style="display: flex; flex-direction: column; gap: 5px;">
 					<div style="display: flex; align-items: center; gap: 6px;">
 						<div style="width: 6px; height: 18px; background: #ef4444; border-radius: 2px;"></div>
-						<input type="number" value="${rv}" class="rgb-c-r" id="rgb_image_${r}_${c}_red" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #fee2e2; text-align: center;">
+						<input type="number" value="${rv}" class="rgb-c-r" id="rgb_image_${r}_${c}_red" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid ${themeColor('#fee2e2')}; text-align: center;">
 					</div>
 					<div style="display: flex; align-items: center; gap: 6px;">
 						<div style="width: 6px; height: 18px; background: #22c55e; border-radius: 2px;"></div>
-						<input type="number" value="${gv}" class="rgb-c-g" id="rgb_image_${r}_${c}_green" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dcfce7; text-align: center;">
+						<input type="number" value="${gv}" class="rgb-c-g" id="rgb_image_${r}_${c}_green" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid ${themeColor('#dcfce7')}; text-align: center;">
 					</div>
 					<div style="display: flex; align-items: center; gap: 6px;">
 						<div style="width: 6px; height: 18px; background: #3b82f6; border-radius: 2px;"></div>
-						<input type="number" value="${bv}" class="rgb-c-b" id="rgb_image_${r}_${c}_blue" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dbeafe; text-align: center;">
+						<input type="number" value="${bv}" class="rgb-c-b" id="rgb_image_${r}_${c}_blue" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid ${themeColor('#dbeafe')}; text-align: center;">
 					</div>
 				</div>
 			</td>`;
@@ -326,9 +335,12 @@ function renderVectorPlot() {
 		},
 	];
 	const layout = {
-		title: 'Vector Visualization',
-		xaxis: { range: [0, 5], zeroline: true, title: 'x' },
-		yaxis: { range: [0, 5], zeroline: true, title: 'y' },
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
+		title: { text: 'Vector Visualization', font: { color: themeColor('#1e293b') } },
+		xaxis: { range: [0, 5], zeroline: true, title: { text: 'x', font: { color: themeColor('#64748b') } }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		yaxis: { range: [0, 5], zeroline: true, title: { text: 'y', font: { color: themeColor('#64748b') } }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 		margin: { l: 40, r: 40, b: 40, t: 40 },
 		annotations: [
 			{
@@ -352,9 +364,12 @@ function renderELI5Math() {
 	for (let i = -10; i <= 10; i++) range.push(i);
 
 	const layoutBase = {
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
 		margin: { t: 10, b: 30, l: 30, r: 10 },
-		xaxis: { range: [-10, 10], fixedrange: true, zeroline: true },
-		yaxis: { range: [-10, 10], fixedrange: true, zeroline: true },
+		xaxis: { range: [-10, 10], fixedrange: true, zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		yaxis: { range: [-10, 10], fixedrange: true, zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 		showlegend: false,
 	};
 
@@ -407,9 +422,14 @@ function renderELI5Math() {
 					},
 				],
 				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
 					margin: { t: 0, b: 0, l: 0, r: 0 },
 					scene: {
-						zaxis: { range: [-20, 20] },
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { range: [-20, 20], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 						camera: { eye: { x: 1.5, y: 1.5, z: 1 } },
 					},
 				}
@@ -443,9 +463,14 @@ function renderELI5Math() {
 					},
 				],
 				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
 					margin: { t: 0, b: 0, l: 0, r: 0 },
 					scene: {
-						zaxis: { range: [-10, 10] },
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 						camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } },
 					},
 				}
@@ -470,8 +495,16 @@ function renderELI5Math() {
 					},
 				],
 				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
 					margin: { t: 0, b: 0, l: 0, r: 0 },
-					scene: { camera: { eye: { x: 1.5, y: 1.5, z: 1 } } },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.5, y: 1.5, z: 1 } }
+					},
 				}
 			);
 		});
@@ -568,9 +601,12 @@ function renderMovableVector() {
 		];
 
 		const layout = {
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
 			showlegend: false,
-			xaxis: { range: [0, 10], zeroline: true, dtick: 1 },
-			yaxis: { range: [0, 10], zeroline: true, dtick: 1 },
+			xaxis: { range: [0, 10], zeroline: true, dtick: 1, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			yaxis: { range: [0, 10], zeroline: true, dtick: 1, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 			margin: { l: 40, r: 40, b: 40, t: 40 },
 			annotations: [
 				{
@@ -629,9 +665,12 @@ function initInteractiveVectorSpaces() {
 				},
 			],
 			{
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
 				margin: { t: 0, b: 20, l: 20, r: 20 },
 				height: 80,
-				xaxis: { range: [-6, 6] },
+				xaxis: { range: [-6, 6], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 				yaxis: { visible: false },
 			}
 		);

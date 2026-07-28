@@ -373,7 +373,7 @@ This works because the logarithm is essentially a scaling factor. If you know th
 While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how "wrong" a model is during training. We will dive deeper into "Log Loss" and "Softmax" in the upcoming sections.
 </div>
 
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+<div style="background: var(--mn-bg); padding: 20px; border: 1px solid var(--mn-border); border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
     <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; margin-bottom: 20px;">
 	<div>
 	    <strong>Base ($b$):</strong> <span id="disp-log-base" style="font-family: monospace; font-weight: bold; color: #2563eb;">2.0</span><br>
@@ -385,7 +385,7 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 	</div>
     </div>
 
-    <div id="log-equation-display" style="text-align: center; font-size: 1.3em; margin-top: 15px; min-height: 50px; background: #f8fafc; padding: 10px; border-radius: 6px;">
+    <div id="log-equation-display" style="text-align: center; font-size: 1.3em; margin-top: 15px; min-height: 50px; background: var(--mn-bg-subtle); padding: 10px; border-radius: 6px;">
 	$$ \log_{2}(8) = 3 $$
     </div>
 
@@ -422,7 +422,7 @@ In 1D, you only have one "degree of freedom." You can go forward or backward.
 * **Concept:** A single number describes your entire universe.
 </div>
 
-<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+<div style="background: var(--mn-bg); padding: 15px; border: 1px solid var(--mn-border); border-radius: 8px;">
     <strong>Value ($x$):</strong> <input type="range" id="v1-slider" min="-5" max="5" step="0.1" value="2">
     <div id="v1-math" style="font-size: 1.2em; margin: 10px 0; color: #2563eb;">$$\vec{v} = \begin{pmatrix} 2.0 \end{pmatrix}$$</div>
     <div id="v1-plot" style="width:100%; height:80px;"></div>
@@ -433,7 +433,7 @@ In 1D, you only have one "degree of freedom." You can go forward or backward.
 By adding a second number, we unlock an infinite flat surface.
 </div>
 
-<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+<div style="background: var(--mn-bg); padding: 15px; border: 1px solid var(--mn-border); border-radius: 8px;">
     <strong>X:</strong> <input type="range" id="v2-x" min="-5" max="5" step="0.1" value="3">
     <strong>Y:</strong> <input type="range" id="v2-y" min="-5" max="5" step="0.1" value="4">
     <div id="v2-math" style="font-size: 1.2em; margin: 10px 0; color: #059669;">$$\vec{v} = \begin{pmatrix} 3.0 \\ 4.0 \end{pmatrix}$$</div>
@@ -445,7 +445,7 @@ By adding a second number, we unlock an infinite flat surface.
 In 3D, we can represent volume. A great way to visualize this is **Color Space**. Every color you see on this screen is just a vector in a 3D space where the axes are **Red**, **Green**, and **Blue**.
 </div>
 
-<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+<div style="background: var(--mn-bg); padding: 15px; border: 1px solid var(--mn-border); border-radius: 8px;">
     <div style="display: flex; gap: 10px;">
         R: <input type="range" id="v3-r" min="0" max="255" value="120">
         G: <input type="range" id="v3-g" min="0" max="255" value="50">
@@ -466,7 +466,7 @@ We cannot "see" 4D, but we can **describe** it. In AI, dimensions are just "feat
 Every fruit is now a point in a 4D "Fruit Space."
 </div>
 
-<div style="background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+<div style="background: var(--mn-bg); padding: 15px; border: 1px solid var(--mn-border); border-radius: 8px;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
         <span>Sweet: <input type="range" id="v4-1" min="0" max="10" value="8"></span>
         <span>Sour: <input type="range" id="v4-2" min="0" max="10" value="2"></span>
@@ -654,7 +654,7 @@ $$\vec{a} \odot \vec{b} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdo
 Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting vector is calculated element-by-element.
 </div>
 
-<div style="background: #ffffff; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin: 20px 0;">
+<div style="background: var(--mn-bg); padding: 25px; border: 1px solid var(--mn-border); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin: 20px 0;">
     <div style="display: flex; justify-content: space-around; align-items: center; gap: 15px; flex-wrap: wrap;">
         <div style="text-align: center;">
             <strong style="color: #64748b;">Vector $\vec{a}$</strong><br>
@@ -670,7 +670,7 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
             <input type="number" id="h-b3" value="10" step="0.5" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;">
         </div>
         <div style="font-size: 2rem; color: #94a3b8;">$=$</div>
-        <div id="hadamard-display" style="min-width: 180px; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
+        <div id="hadamard-display" style="min-width: 180px; background: var(--mn-bg-subtle); padding: 20px; border-radius: 8px; border: 1px dashed var(--mn-border); text-align: center;">
             </div>
     </div>
 </div>
