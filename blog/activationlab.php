@@ -54,10 +54,10 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
                 <option value="identity">Identity (Linear)</option>
             </select>
         </div>
-        <div id="pure-math-box" style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #dcfce7; font-size: 1.2em; display: flex; align-items: center; justify-content: center; min-height: 60px;">
+        <div id="pure-math-box" style="padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px solid #dcfce7; font-size: 1.2em; display: flex; align-items: center; justify-content: center; min-height: 60px;">
         </div>
     </div>
-    <div id="plot-pure-activation" style="height: 350px; background: white; border-radius: 8px; width: 100%;"></div>
+    <div id="plot-pure-activation" style="height: 350px; background: var(--mn-surface, white); border-radius: 8px; width: 100%;"></div>
     
     <div id="act-analysis-box" style="margin-top: 20px; padding: 20px; background: #f8fafc; border-left: 5px solid #22c55e; border-radius: 4px; width: 100%; box-sizing: border-box;">
         <i id="act-title" style="margin-top:0; color: #166534; font-size: 1.3em;">Function Name</i>
@@ -123,14 +123,14 @@ By exponentiating the logits, we are measuring the "total growth energy" of all 
 <div class="softmax-lab-container" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
     <div>
 
-        <div style="background:white; padding:15px; border-radius:8px; border:1px solid #cbd5e1; display: flex; flex-direction: column; min-width: 0;">
+        <div style="background:var(--mn-surface, white); padding:15px; border-radius:8px; border:1px solid #cbd5e1; display: flex; flex-direction: column; min-width: 0;">
             <p>Logit Scores:</p>
             <div id="softmax-controls"></div>
             <button id="add-class-btn" style="margin-top:10px; padding:8px; background:#6366f1; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">+ Add Class</button>
         </div>
 
-        <div id="softmax-bar-plot" style="background:white; border-radius:8px; border:1px solid #e2e8f0; min-width: 0; width: 100%;"></div>
-        <div id="softmax-pie-plot" style="background:white; border-radius:8px; border:1px solid #e2e8f0; min-width: 0; width: 100%;"></div>
+        <div id="softmax-bar-plot" style="background:var(--mn-surface, white); border-radius:8px; border:1px solid #e2e8f0; min-width: 0; width: 100%;"></div>
+        <div id="softmax-pie-plot" style="background:var(--mn-surface, white); border-radius:8px; border:1px solid #e2e8f0; min-width: 0; width: 100%;"></div>
     </div>
 
     <div id="softmax-math" style="margin-top:20px; padding:15px; background:#f1f5f9; border-radius:8px; min-height:50px;"></div>
