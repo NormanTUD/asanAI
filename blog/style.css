@@ -466,16 +466,21 @@ html.dark .unified-tab-list {
 	background: var(--mn-surface-raised) !important;
 	border-bottom-color: var(--mn-accent) !important;
 }
-html.dark .unified-layer-tab-btn {
+html.dark .unified-layer-tab-btn,
+html.dark button.unified-layer-tab-btn {
 	background: var(--mn-surface-raised) !important;
 	border-right-color: var(--mn-border) !important;
 	color: var(--mn-text-secondary) !important;
 }
-/* Active button hardcodes background:#fff via inline style */
+/* Active/inactive buttons hardcode background via inline style (#fff / rgb / #bfdbfe) */
 html.dark .unified-layer-tab-btn[style*="background:#fff"],
 html.dark .unified-layer-tab-btn[style*="background: #fff"],
+html.dark .unified-layer-tab-btn[style*="background:rgb(255"],
+html.dark .unified-layer-tab-btn[style*="background: rgb(255"],
 html.dark .unified-layer-tab-btn[style*="background:#bfdbfe"],
-html.dark .unified-layer-tab-btn[style*="background: #bfdbfe"] {
+html.dark .unified-layer-tab-btn[style*="background: #bfdbfe"],
+html.dark .unified-layer-tab-btn[style*="background:rgb(191, 219, 254)"],
+html.dark .unified-layer-tab-btn[style*="background: rgb(191, 219, 254)"] {
 	background: var(--mn-surface) !important;
 	color: var(--mn-text) !important;
 	border-color: var(--mn-border) !important;
@@ -484,10 +489,34 @@ html.dark .unified-layer-tab-content {
 	background: var(--mn-surface) !important;
 	color: var(--mn-text) !important;
 }
-/* Inactive tab hardcodes background:#bfdbfe */
+/* Inactive tab hardcodes background:#f8f9ff */
 html.dark .unified-layer-tab-content[style*="background:#f8f9ff"],
-html.dark .unified-layer-tab-content[style*="background: #f8f9ff"] {
+html.dark .unified-layer-tab-content[style*="background: #f8f9ff"],
+html.dark .unified-layer-tab-content[style*="background:rgb(248, 249, 255)"],
+html.dark .unified-layer-tab-content[style*="background: rgb(248, 249, 255)"] {
 	background: var(--mn-surface) !important;
+}
+
+/* Multi-head attention head tabs */
+html.dark .head-tab-list,
+html.dark .mha-layer-tab-btn,
+html.dark .mha-head-tab-btn,
+html.dark button.mha-head-tab-btn {
+	background: var(--mn-surface-raised) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text-secondary) !important;
+}
+html.dark .mha-head-tab-btn[style*="background:#fff"],
+html.dark .mha-head-tab-btn[style*="background: #fff"],
+html.dark .mha-head-tab-btn[style*="background:rgb(255"],
+html.dark .mha-head-tab-btn[style*="background: rgb(255"],
+html.dark .mha-head-tab-btn[style*="background:#e2e8f0"],
+html.dark .mha-head-tab-btn[style*="background: #e2e8f0"],
+html.dark .mha-head-tab-btn[style*="background:rgb(226, 232, 240)"],
+html.dark .mha-head-tab-btn[style*="background: rgb(226, 232, 240)"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
 }
 
 /* Inner per-layer panels (LayerNorm, concat, h1-final, etc.) */
@@ -497,6 +526,33 @@ html.dark [id^="unified-layer-"][id$="-h1-final-viz"],
 html.dark [id^="unified-layer-"][id$="-migration-container"] {
 	background: var(--mn-surface) !important;
 	color: var(--mn-text) !important;
+}
+
+/* Token-level embedding editor (tled) */
+#tled-editor-container input[type="number"] {
+	background: var(--mn-surface-raised);
+	color: var(--mn-text);
+	border-color: var(--mn-border);
+}
+html.dark #tled-editor-container,
+html.dark #tled-editor-container > div,
+html.dark #tled-editor-container table,
+html.dark #tled-editor-container thead,
+html.dark #tled-editor-container tbody,
+html.dark #tled-editor-container tr {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark #tled-editor-container input[type="number"] {
+	background: var(--mn-surface-raised) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark #tled-editor-container th,
+html.dark #tled-editor-container td {
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
 }
 /* Same panels with inline bg colors (#ecfdf5, #f0f4f8, #f5f3ff) */
 html.dark [style*="background:#ecfdf5"],
@@ -584,10 +640,29 @@ html.dark [id^="plot-"] {
 	color: var(--mn-text) !important;
 	border-color: var(--mn-border) !important;
 }
+/* Strong Plotly SVG background overrides for transformer-specific containers */
+html.dark #transformer-plotly-space .js-plotly-plot .main-svg,
+html.dark #transformer-plotly-space .js-plotly-plot .main-svg .bg,
+html.dark #transformer-plotly-space .js-plotly-plot .svg-container,
+html.dark #transformer-pe-wave-plot .js-plotly-plot .main-svg,
+html.dark #transformer-pe-wave-plot .js-plotly-plot .main-svg .bg,
+html.dark #transformer-pe-wave-plot .js-plotly-plot .svg-container,
+html.dark #transformer-pe-shift-plot .js-plotly-plot .main-svg,
+html.dark #transformer-pe-shift-plot .js-plotly-plot .main-svg .bg,
+html.dark #transformer-pe-shift-plot .js-plotly-plot .svg-container,
+html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg,
+html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg .bg,
+html.dark #transformer-trajectory-full-path .js-plotly-plot .svg-container {
+	background: transparent !important;
+}
 html.dark #transformer-plotly-space rect.bg,
 html.dark #transformer-pe-wave-plot rect.bg,
 html.dark #transformer-pe-shift-plot rect.bg,
-html.dark #transformer-trajectory-full-path rect.bg {
+html.dark #transformer-trajectory-full-path rect.bg,
+html.dark #transformer-plotly-space .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-pe-wave-plot .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-pe-shift-plot .js-plotly-plot .main-svg rect.bg,
+html.dark #transformer-trajectory-full-path .js-plotly-plot .main-svg rect.bg {
 	fill: var(--mn-surface) !important;
 }
 html.dark #transformer-plotly-space text,
@@ -596,6 +671,38 @@ html.dark #transformer-pe-wave-plot text,
 html.dark #transformer-pe-shift-plot text,
 html.dark #transformer-trajectory-full-path text {
 	fill: var(--mn-text-secondary) !important;
+}
+
+/* Vector-field toggles (trajectory + per-layer migration plots) and latex debug */
+html.dark .trajectory-vf-toggle,
+html.dark button.trajectory-vf-toggle {
+	background: var(--mn-surface) !important;
+	color: #c4b5fd !important;
+	border-color: #8b5cf6 !important;
+}
+html.dark .trajectory-vf-toggle:hover,
+html.dark button.trajectory-vf-toggle:hover {
+	background: rgba(139, 92, 246, 0.15) !important;
+}
+html.dark .migration-vf-toggle,
+html.dark button.migration-vf-toggle {
+	background: var(--mn-surface) !important;
+	color: #93c5fd !important;
+	border-color: #3b82f6 !important;
+}
+html.dark .migration-vf-toggle:hover,
+html.dark button.migration-vf-toggle:hover {
+	background: rgba(59, 130, 246, 0.15) !important;
+}
+html.dark [id^="migration-layer-"][id$="-latex-debug"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+html.dark [id^="migration-layer-"]:not([id$="-latex-debug"]) {
+	background: var(--mn-surface) !important;
+}
+html.dark [id^="migration-layer-"]:not([id$="-latex-debug"]) .js-plotly-plot .main-svg rect.bg {
+	fill: var(--mn-surface) !important;
 }
 
 /* Probability Flow / theme-river header (data-orig-bg carried over) */
