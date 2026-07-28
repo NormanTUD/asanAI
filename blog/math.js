@@ -694,9 +694,12 @@ function initInteractiveVectorSpaces() {
 				},
 			],
 			{
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
 				margin: { t: 10, b: 30, l: 30, r: 10 },
-				xaxis: { range: [-6, 6], zeroline: true },
-				yaxis: { range: [-6, 6], zeroline: true },
+				xaxis: { range: [-6, 6], zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+				yaxis: { range: [-6, 6], zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 			}
 		);
 	}
