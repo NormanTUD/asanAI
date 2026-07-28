@@ -86,7 +86,7 @@ https://arxiv.org/html/2505.11611v1
 	</div>
 
 	<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
-	     background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+	     background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 10px;">
 	    <div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
 	    <div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
 	</div>
@@ -122,7 +122,7 @@ https://arxiv.org/html/2505.11611v1
 	<button class="btn train-btn" onclick="train_transformer()">Train Model</button>
 
 	<div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px; display: none"></div>
-	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; display: none"></div>
+	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: var(--mn-surface, white); display: none"></div>
     </div>
 </div>
 
@@ -146,8 +146,8 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 * **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it "migrates" based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
 </div>
 
-<div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
-	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: white; border-radius: 8px;"></div>
+<div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 
 	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px;"></div>
@@ -156,12 +156,12 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 	<input
 	    type="text"
 	    id="transformer-vector-math-input"
-	    style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
+	    style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"
 	    placeholder="e.g., king - man + woman"
 	    oninput="debounced_vector_math()"
 	    onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}"
 	>
-	<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+	<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: var(--mn-surface, white); border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
 		<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
 	</div>
 </div>
@@ -194,9 +194,9 @@ This is required because the network looks at all words simultaneously, instead 
 In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.
 </div>
 
-<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
-<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: var(--mn-surface, white); border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 
@@ -595,7 +595,7 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 	<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();">
 </div>
 
-<div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
+<div id="transformer-output-projection" style="background: var(--mn-surface, white); padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 
 <div>
 	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>

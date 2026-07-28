@@ -80,7 +80,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
             border-collapse: separate;
             border-spacing: 0;
             text-align: center;
-            background: white;
+            background: var(--mn-surface, white);
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             overflow: hidden;
@@ -137,10 +137,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                     padding: 12px 14px;
                     border: 2px solid rgba(99,102,241,0.2);
                     border-radius: 12px;
-                    background: rgba(255,255,255,0.8);
+                    background: var(--mn-surface, rgba(255,255,255,0.8));
                     font-size: 1.05rem;
                     font-weight: 600;
-                    color: #1e293b;
+                    color: var(--mn-text, #1e293b);
                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     outline: none;
                     box-sizing: border-box;
@@ -161,10 +161,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                     padding: 12px 14px;
                     border: 2px solid rgba(16,185,129,0.2);
                     border-radius: 12px;
-                    background: rgba(255,255,255,0.8);
+                    background: var(--mn-surface, rgba(255,255,255,0.8));
                     font-size: 1.05rem;
                     font-weight: 600;
-                    color: #1e293b;
+                    color: var(--mn-text, #1e293b);
                     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     outline: none;
                     box-sizing: border-box;

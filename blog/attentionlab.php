@@ -34,7 +34,7 @@ Drag the slider below to insert distractor tokens between a subject and its pron
         </span>
     </div>
 
-    <div id="ldd-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
+    <div id="ldd-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
          border-left:4px solid #2563eb; border-radius:6px; font-style:italic; color:#334155;
          transition: border-color 0.2s; min-height:50px; line-height:1.6; overflow-x:auto; white-space:nowrap;"></div>
 
@@ -49,9 +49,9 @@ Drag the slider below to insert distractor tokens between a subject and its pron
     </div>
 
     <canvas id="ldd-canvas" width="700" height="260"
-            style="display:block; width:100%; height:260px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
+            style="display:block; width:100%; height:260px; border:1px solid #e2e8f0; border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
 
-    <div id="ldd-math" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px;
+    <div id="ldd-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
          border:1px dashed #cbd5e1; overflow-x:auto;"></div>
 </div>
 
@@ -123,7 +123,7 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
     </div>
 
     <!-- Live sentence -->
-    <div id="attn1d-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
+    <div id="attn1d-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
          border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
          transition: border-color 0.2s;height:50px;"></div>
 
@@ -137,9 +137,9 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
     </div>
 
     <canvas id="attn1d-canvas" width="700" height="220"
-            style="display:block; width:100%; height:220px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
+            style="display:block; width:100%; height:220px; border:1px solid #e2e8f0; border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
 
-    <div id="attn1d-math" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px;
+    <div id="attn1d-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
          border:1px dashed #cbd5e1; overflow-x:auto;"></div>
 </div>
 
@@ -175,7 +175,7 @@ Because these positions are derived from logical relationships in data, the spac
     </div>
 
     <!-- Live sentence -->
-    <div id="attn2d-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
+    <div id="attn2d-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
          border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
 	 transition: border-color 0.2s; height: 80px;"></div>
 
@@ -204,9 +204,9 @@ Because these positions are derived from logical relationships in data, the spac
 
     <canvas id="attn2d-canvas" width="500" height="500"
             style="display:block; margin:0 auto; max-width:100%; border:1px solid #e2e8f0;
-                   border-radius:8px; background:#fff;"></canvas>
+                   border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
 
-    <div id="attn2d-math" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px;
+    <div id="attn2d-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
          border:1px dashed #cbd5e1; overflow-x:auto;"></div>
 </div>
 

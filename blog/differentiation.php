@@ -54,7 +54,7 @@ You can explore this visually below. Drag the slider to move the second point cl
 </div>
 
 <!-- ─── Interactive: Secant → Tangent ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>From Secant to Tangent</strong></p>
     <p style="color:#64748b; font-size:0.9em;">The function is $f(x) = x^2$. Drag $h$ towards zero and watch the secant line become the tangent line at $x = 1$.</p>
 
@@ -145,7 +145,7 @@ You can explore the derivative rules interactively below. Choose a function and 
 </div>
 
 <!-- ─── Interactive: Derivative Rules Explorer ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Derivative Rules Explorer</strong></p>
     <p style="color:#64748b; font-size:0.9em;">Select a function to see its derivative. The <span style="color:#2563eb;font-weight:bold;">blue</span> curve is $f(x)$ and the <span style="color:#ef4444;font-weight:bold;">red</span> curve is $f'(x)$.</p>
 
@@ -198,7 +198,7 @@ You can explore the tangent line interactively below. Move the point along the c
 </div>
 
 <!-- ─── Interactive: Tangent Line Explorer ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Tangent Line Explorer</strong></p>
     <p style="color:#64748b; font-size:0.9em;">Move the point along $f(x) = x^3 - 3x$ and see the tangent line. Notice where the derivative is zero (horizontal tangent), these are the local maxima and minima!</p>
 
@@ -234,7 +234,7 @@ This is exactly what **backpropagation** computes, the chain rule applied layer 
 </div>
 
 <!-- ─── Interactive: Chain Rule Demo ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Chain Rule: Composing Functions</strong></p>
     <p style="color:#64748b; font-size:0.9em;">See how $f(g(x)) = \sin(ax)$ is differentiated using the chain rule. The outer function is $\sin(u)$ and the inner function is $u = ax$.</p>
 
@@ -283,7 +283,7 @@ The symbol $\partial$ for partial derivatives was introduced by \citeauthor{lege
 </div>
 
 <!-- ─── Interactive: Gradient on a 3D Surface ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Gradient Descent on a Surface</strong></p>
     <p style="color:#64748b; font-size:0.9em;">The surface is $f(x,y) = x^2 + y^2$ (a simple "bowl"). The red arrow shows the negative gradient direction, the direction gradient descent would move. Drag the point to see how the gradient changes.</p>
 

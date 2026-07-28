@@ -72,11 +72,11 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-1d" style="height: 180px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-1d" style="height: 180px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Cold + Warm" onkeyup="calcEvo('1d')">
 	<div id="res-1d-wrapper">
-		<div id="res-1d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #3b82f6; overflow-x: auto;">Match: -</div>
+		<div id="res-1d" style="margin-top: 10px; padding: 10px; background: var(--mn-surface, #fff); border-radius: 8px; font-weight: bold; border-left: 4px solid #3b82f6; overflow-x: auto;">Match: -</div>
 	</div>
     </div>
     <div class="embedding-table-container" id="editor-1d" data-space="1d"></div>
@@ -99,11 +99,11 @@ This specific property, that word vectors capture semantic relationships through
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-2d" style="height: 400px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-2d" style="height: 400px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Man + Power" onkeyup="calcEvo('2d')">
 	<div id="res-2d-wrapper">
-		<div id="res-2d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #10b981; overflow-x: auto;">Match: -</div>
+		<div id="res-2d" style="margin-top: 10px; padding: 10px; background: var(--mn-surface, #fff); border-radius: 8px; font-weight: bold; border-left: 4px solid #10b981; overflow-x: auto;">Match: -</div>
 	</div>
     </div>
     <div class="embedding-table-container" id="editor-2d" data-space="2d"></div>
@@ -116,11 +116,11 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-3d" style="height: 500px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-3d" style="height: 500px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div>
         <input type="text" id="input-3d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., King + Animal" onkeyup="calcEvo('3d')">
 	<div id="res-3d-wrapper">
-		<div id="res-3d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #6366f1; overflow-x: auto;">Match: -</div>
+		<div id="res-3d" style="margin-top: 10px; padding: 10px; background: var(--mn-surface, #fff); border-radius: 8px; font-weight: bold; border-left: 4px solid #6366f1; overflow-x: auto;">Match: -</div>
 	    </div>
     </div>
     <div class="embedding-table-container" id="editor-3d" data-space="3d"></div>
@@ -155,7 +155,7 @@ The **red arc** below visualizes the **Cosine Distance**, the "conceptual shift"
 
 <section style="width: 100%; padding: 20px; margin-bottom: 40px; box-sizing: border-box;">
     <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; width: 100%;">
-        <div id="plot-comparison-3d" style="height: 500px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-comparison-3d" style="height: 500px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
         
         <div id="comparison-stats-3d" style="width: 100%;"></div>
     </div>
@@ -204,7 +204,7 @@ Below, drag the **magnitude slider** to stretch or shrink a token's vector witho
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-scale-invariance" style="height: 420px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-scale-invariance" style="height: 420px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
         <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
             <b>Magnitude of Token B:</b>
@@ -256,7 +256,7 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-crosslingual-align" style="height: 500px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-crosslingual-align" style="height: 500px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <button id="btn-align" onclick="animateCrossLingualAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Align Languages</button>
         <button id="btn-reset-align" onclick="resetCrossLingualAlignment()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
@@ -288,7 +288,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-dual-manifolds" style="height: 600px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-dual-manifolds" style="height: 600px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
 
     <!-- Sliders -->
     <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px;">
@@ -355,7 +355,7 @@ Below, you can explore this interactively. Select different "concept directions"
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-parallelogram" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-parallelogram" style="height: 480px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <label style="font-family: sans-serif; font-size: 0.9em; font-weight: bold; color: #475569;">Concept Direction:</label>
         <button class="parallelogram-btn" onclick="setParallelogramConcept('royalty')" id="btn-para-royalty" style="background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">👑 Royalty</button>
@@ -386,7 +386,7 @@ This hypothesis allows so-called **Brain-Swapping**: since models learn similar 
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-platonic" style="height: 600px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-platonic" style="height: 600px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
 
     <!-- Toggles -->
     <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
@@ -433,8 +433,8 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="">
-        <div id="plot-anisotropy-scatter" style="height: 450px; background: #fff; border-radius: 8px; width: 100%;"></div>
-        <div id="plot-anisotropy-histogram" style="height: 450px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-anisotropy-scatter" style="height: 450px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
+        <div id="plot-anisotropy-histogram" style="height: 450px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
     </div>
     <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 15px 0;">
         <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
@@ -476,7 +476,7 @@ A vivid demonstration of these principles is \citetitle{goldengateclaude}, in wh
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-superposition" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-superposition" style="height: 480px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
 
     <!-- Slider -->
     <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
@@ -534,7 +534,7 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
 
     <!-- Two-column: Plot + Prompt Panel -->
     <div style="display: grid; gap: 20px; align-items: start; margin-bottom: 15px;">
-        <div id="plot-icl-task-vector" style="height: 540px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-icl-task-vector" style="height: 540px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
         <div id="icl-prompt-preview"></div>
     </div>
 
@@ -624,7 +624,7 @@ Below, select any word (or type "not X") and observe how "not X" drifts only sli
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-negation" style="height: 520px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-negation" style="height: 520px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
 
     <!-- Text input -->
     <div style="margin-bottom: 12px;">
@@ -680,7 +680,7 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; gap: 20px; align-items: start;">
-        <div id="plot-poincare-disk" style="height: 560px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-poincare-disk" style="height: 560px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
         <div id="poincare-stats" style="width: 100%;"></div>
     </div>
 
@@ -723,7 +723,7 @@ The visualization below gives you an intuition for this. In 2D, points can sprea
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-topology-cones" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-topology-cones" style="height: 480px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
 
     <!-- Slider -->
     <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
@@ -775,7 +775,7 @@ Below, you can explore this fractal folding interactively. The visualization sho
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-fractal-folding" style="height: 540px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div id="plot-fractal-folding" style="height: 540px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
 
     <!-- Zoom slider -->
     <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
@@ -842,8 +842,8 @@ Below, you can explore this holographic property directly. A set of concept vect
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-bottom: 15px;">
-        <div id="plot-holographic-scatter" style="height: 480px; background: #fff; border-radius: 8px; width: 100%;"></div>
-        <div id="plot-holographic-matrix" style="height: 480px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-holographic-scatter" style="height: 480px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
+        <div id="plot-holographic-matrix" style="height: 480px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%;"></div>
     </div>
 
     <!-- Damage slider -->
@@ -908,9 +908,9 @@ Below, you can explore a 2D Voronoi diagram that simulates how an embedding spac
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; margin-bottom: 15px;">
         <div>
-            <canvas id="canvas-voronoi" style="width: 100%; height: 540px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; cursor: crosshair;"></canvas>
+            <canvas id="canvas-voronoi" style="width: 100%; height: 540px; background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; cursor: crosshair;"></canvas>
         </div>
-        <div id="voronoi-info-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7;">
+        <div id="voronoi-info-panel" style="background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">📍 Click anywhere on the map</div>
             <div id="voronoi-click-info">
                 Click a point in the space to see which token "owns" it, how far it is from the nearest boundary, and who the neighboring territories are.
@@ -1000,7 +1000,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
         </div>
         <div>
             <div style="font-family: sans-serif; font-size: 0.8em; color: #64748b; text-align: center; margin-bottom: 4px; font-weight: bold;">Persistence Diagram</div>
-            <canvas id="canvas-homology-persistence" style="width: 100%; height: 500px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></canvas>
+            <canvas id="canvas-homology-persistence" style="width: 100%; height: 500px; background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0;"></canvas>
         </div>
     </div>
 
@@ -1086,7 +1086,7 @@ Below, you can explore this. A set of historical years and events are plotted in
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; margin-bottom: 15px;">
         <canvas id="canvas-time-helix" style="width: 100%; height: 560px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b; cursor: grab;"></canvas>
-        <div id="time-helix-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
+        <div id="time-helix-panel" style="background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🕰️ Time Helix Explorer</div>
             <div id="time-helix-info">
                 Hover over any point to see the year and associated historical event. The helix structure emerges from statistical co-occurrence alone, no one told the model about time.
@@ -1175,8 +1175,8 @@ Below, you can explore this interactively. Two conceptual categories are represe
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; margin-bottom: 15px;">
-        <canvas id="canvas-polytope" style="width: 100%; height: 560px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; cursor: crosshair;"></canvas>
-        <div id="polytope-info-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
+        <canvas id="canvas-polytope" style="width: 100%; height: 560px; background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; cursor: crosshair;"></canvas>
+        <div id="polytope-info-panel" style="background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">⬡ Polytope Explorer</div>
             <div id="polytope-click-info">
                 Click anywhere in the space to measure its distance to each hull and see whether it falls inside, outside, or in the <b>overlap zone</b>.
@@ -1269,7 +1269,7 @@ Below, you can explore this interactively. A cloud of verbs is shown in their pr
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; margin-bottom: 15px;">
         <canvas id="canvas-grammar-rotation" style="width: 100%; height: 560px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b;"></canvas>
-        <div id="grammar-rot-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
+        <div id="grammar-rot-panel" style="background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🎠 Grammar Carousel</div>
             <div id="grammar-rot-info">
                 Watch how grammatical transformations rotate entire word clouds around fixed axes in the embedding space. Each transformation is a consistent angular displacement.

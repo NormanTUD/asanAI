@@ -535,11 +535,11 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 * **Reset**: Clear the history to start a new experiment with a different $n$.
 </div>
 
-<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff; display: flex; flex-direction: column; gap: 20px;">
+<div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: var(--mn-surface, #fff); display: flex; flex-direction: column; gap: 20px;">
     
     <div id="plot-clt" style="width:100%; height:380px;"></div>
 
-    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
+    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: var(--mn-surface, #fff); border: 1px dashed #cbd5e1; border-radius: 8px;">
 	<span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>
     </div>
 

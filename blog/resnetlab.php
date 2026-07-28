@@ -73,7 +73,7 @@ This allows the network to match the "shape" of the main path $F(x)$ so the resi
     
     <div class="panel">
         <i>Visual Graph</i>
-        <div id="network-viz" style="height:150px; width:100%; background:white; border-radius:8px; margin-top:10px;"></div>
+        <div id="network-viz" style="height:150px; width:100%; background: var(--mn-surface, white); border-radius:8px; margin-top:10px;"></div>
     </div>
 
     <div class="panel">
@@ -90,7 +90,7 @@ This allows the network to match the "shape" of the main path $F(x)$ so the resi
             
             <hr>
             <i>Tensor Shape Flow</i>
-            <div style="font-size: 0.8em; background: #fff; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; margin-top:10px;">
+            <div style="font-size: 0.8em; background: var(--mn-surface, #fff); padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; margin-top:10px;">
                 <div style="display:flex; justify-content:space-between;"><span>Input $x$:</span> <b>[64, 64, 3]</b></div>
                 <div style="display:flex; justify-content:space-between;"><span>Conv Path:</span> <b>[64, 64, 3]</b></div>
                 <div style="display:flex; justify-content:space-between; color:#3b82f6; border-top: 1px solid #ddd; margin-top:5px; padding-top:5px;">

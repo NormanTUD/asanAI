@@ -609,7 +609,7 @@ In programming and math, we often want to take the result of one function and pl
 You can experiment with how two linear functions combine. Adjust the sliders to see how the "inner" function $f$ and the "outer" function $g$ create a new, composed result.
 </div>
 
-<div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+<div style="background: var(--mn-surface, #f9f9f9); padding: 15px; border-radius: 8px; border: 1px solid #eee;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div>
             <strong>Function $f(x) = ax + b$</strong><br>

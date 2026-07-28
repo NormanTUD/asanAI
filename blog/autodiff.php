@@ -111,7 +111,7 @@ You can explore this process interactively below. Adjust $x$ and $y$ and watch t
 </div>
 
 <!-- ═══════════ Interactive Tape Demo ═══════════ -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0; font-weight: 700;">Interactive: Tape-Based Reverse-Mode AD</p>
     <p style="color:#64748b; font-size:0.9em;">Compute $f(x, y) = (x + y) \cdot \sin(x)$ and watch the forward and backward passes step by step.</p>
 
@@ -146,7 +146,7 @@ Below is an interactive visualization of the computational graph for $f(x, y) = 
 </div>
 
 <!-- ═══════════ Computational Graph Visualization ═══════════ -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0; font-weight: 700;">Computational Graph</p>
     <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px;">
         <div>
@@ -179,7 +179,7 @@ The interactive demo below shows gradient descent on a simple 2D loss landscape 
 </div>
 
 <!-- ═══════════ Gradient Descent Visualization ═══════════ -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0; font-weight: 700;">Interactive: Gradient Descent on $L(w_1, w_2) = w_1^2 + w_2^2$</p>
 
     <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px;">
@@ -314,7 +314,7 @@ You can explore the vanishing gradient problem interactively below. Adjust the n
 </div>
 
 <!-- ═══════════ Vanishing Gradient Demo ═══════════ -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0; font-weight: 700;">Interactive: Vanishing & Exploding Gradients</p>
     <p style="color:#64748b; font-size:0.9em;">See how the gradient magnitude changes as it flows backward through $n$ layers, each multiplying by the maximum activation derivative.</p>
 

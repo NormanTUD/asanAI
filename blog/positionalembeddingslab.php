@@ -40,7 +40,7 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 </div>
 
 <!-- ─── Interactive: Unit Circle ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style="color:#2563eb;font-weight:bold;">blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style="color:#ef4444;font-weight:bold;">red</span>).</p>
 
     <div style="margin-bottom:10px;">
@@ -56,7 +56,7 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 </div>
 
 <!-- ─── Interactive: Sine & Cosine Waves ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="color:#64748b; font-size:0.9em;">See how amplitude $A$, frequency $\omega$, and phase shift $\varphi$ change the wave: $f(\theta) = A \sin(\omega\theta + \varphi)$.</p>
 
     <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
@@ -125,9 +125,9 @@ $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmat
     <span id="pe-val">Position 1</span>
 </div>
 
-<div id="pe-chart" style="width:100%; height:350px; margin-bottom: 20px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
+<div id="pe-chart" style="width:100%; height:350px; margin-bottom: 20px; background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0;"></div>
 
-<div id="pe-viz-container" style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px;"></div>
+<div id="pe-viz-container" style="overflow-x: auto; background: var(--mn-surface, white); border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px;"></div>
 
 <div class="md">
 ### Why do some lines seem straight?

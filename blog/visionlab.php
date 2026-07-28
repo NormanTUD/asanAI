@@ -139,7 +139,7 @@ The more layers, the more abstract and complex the representations become. Howev
 
 </div>
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
-        <div class="panel" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
+        <div class="panel" style="background: var(--mn-surface, white); padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
             <div style="text-align:center;">
                 <canvas id="feat-src" width="100" height="100" style="border:2px solid #cbd5e1; width:200px; image-rendering:pixelated; border-radius: 4px;"></canvas>
                 <p class="md">Source Image (by \citeauthor{stopsignimage})</p>
