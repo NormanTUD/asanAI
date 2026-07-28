@@ -1,5 +1,5 @@
 history: OR and XOR Gate graphs have white bg
 statistics: "Why This Matters for AI" blöcke sind zu hell, The Dirichlet Distribution: The Probability of Probabilities ist im dreieck weiß
 visionlab: manchmal ist der bg noch weiß ( 👆 Move your mouse over the source image to see the convolutionA mathematical operation that slides a filter over input data, detecting local patterns like edges or textures. math computed in real-time for each pixel... und  Each matrix (kernel) acts as a specialized "eye" that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected. )
-normalizationlab, embeddinglab, positionalembeddingslab, mechanistic_interpretability, deeplearninglab, autodiff, minimalneuron, activationlab, derivativelab, differentiation, losslab: plots sind weiß
+normalizationlab, embeddinglab, positionalembeddingslab, mechanistic_interpretability, algorithms, rag, vectorsearch, contextwindows, deeplearninglab, autodiff, minimalneuron, activationlab, derivativelab, differentiation, losslab: plots sind weiß
 
