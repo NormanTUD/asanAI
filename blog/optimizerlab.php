@@ -52,7 +52,7 @@ Different optimizers use different strategies for step 2:
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <div>
             <label><b>Optimizer Strategy:</b></label>
-            <select id="opt-type" class="btn" style="background: white; color: black; border: 1px solid #ccc; width: 100%; margin-bottom: 10px;">
+            <select id="opt-type" class="btn" style="border: 1px solid #ccc; width: 100%; margin-bottom: 10px;">
                 <option value="sgd">SGD (Stochastic Gradient Descent)</option>
                 <option value="momentum">SGD + Momentum</option>
                 <option value="adam">Adam (Adaptive Moment Estimation)</option>
@@ -73,7 +73,7 @@ Different optimizers use different strategies for step 2:
             <span id="opt-start-val" style="font-family: monospace; font-size: 0.9em;">x₀ = -3.5</span>
 
             <label style="margin-top: 8px; display: block;"><b>Steps (Epochs):</b></label>
-            <input type="number" id="opt-epochs" value="50" min="1" max="500" class="btn" style="background: white; color: black; border: 1px solid #ccc; width: 100%;">
+            <input type="number" id="opt-epochs" value="50" min="1" max="500" class="btn" style="border: 1px solid #ccc; width: 100%;">
 
 		<div style="display: flex; gap: 10px; margin-top: 15px;">
 		    <button id="btn-run-opt" class="btn btn-train" style="flex: 2;" onclick="toggleOptimizer()">
@@ -91,26 +91,26 @@ Different optimizers use different strategies for step 2:
 
     <!-- Live Stats Dashboard -->
     <div id="opt-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center;">
-        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 0.78em; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Current x</div>
-            <div id="stat-x" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: #0f172a;">-3.500</div>
+        <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Current x</div>
+            <div id="stat-x" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);">-3.500</div>
         </div>
-        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 0.78em; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Current Loss</div>
-            <div id="stat-loss" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: #0f172a;">—</div>
+        <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Current Loss</div>
+            <div id="stat-loss" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);">—</div>
         </div>
-        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 0.78em; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Gradient</div>
-            <div id="stat-grad" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: #0f172a;">—</div>
+        <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Gradient</div>
+            <div id="stat-grad" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);">—</div>
         </div>
-        <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 0.78em; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Steps Taken</div>
-            <div id="stat-steps" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: #0f172a;">0</div>
+        <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Steps Taken</div>
+            <div id="stat-steps" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);">0</div>
         </div>
     </div>
 
     <div style="position: relative;">
-        <div id="plot-optimizer" style="height: 420px; background: white; border-radius: 8px;"></div>
+        <div id="plot-optimizer" style="height: 420px; background: var(--mn-surface, white); border-radius: 8px;"></div>
         <div id="opt-console" class="status-console" style="height: 120px; margin-top: 10px; font-family: monospace; font-size: 0.88em;">Adjust the parameters above and click <b>'Start Simulation'</b> to begin.</div>
     </div>
 </div>

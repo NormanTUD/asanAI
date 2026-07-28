@@ -96,7 +96,7 @@ https://arxiv.org/html/2505.11611v1
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
     <textarea
         id="transformer-training-data"
-        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"
+        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"
         oninput="debounced_run_transformer_demo('transformer-training-data')">the king rules the land and the queen rules the sea</textarea>
 </div>
 
