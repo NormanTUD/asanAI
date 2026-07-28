@@ -1115,16 +1115,38 @@ function _execute_positional_waves_render(d_model, tokens) {
 		traces.push({
 			x: [pos], y: [0], mode: 'markers+text',
 			text: [displayToken(token)], textposition: 'top center',
+			textfont: { color: themeColor('#1e293b'), size: 12 },
 			marker: { size: 12, color: '#3b82f6' },
 			name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
 		});
 	});
 
+	const axisTitleFont = { size: 12, color: themeColor('#64748b') };
+	const tickFont = { size: 11, color: themeColor('#64748b') };
+
 	const layout = {
-		title: 'Sinusoidal Positional Waves',
-		margin: { t: 40, b: 40, l: 40, r: 20 },
-		xaxis: { title: 'Token Position' },
-		yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
+		title: {
+			text: 'Sinusoidal Positional Waves',
+			font: { size: 16, color: themeColor('#1e293b') }
+		},
+		margin: { t: 50, b: 50, l: 50, r: 20 },
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		font: { color: themeColor('#475569') },
+		xaxis: {
+			title: { text: 'Token Position', font: axisTitleFont },
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		yaxis: {
+			title: { text: 'PE Value', font: axisTitleFont },
+			range: [-1.1, 1.1],
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
 	};
 
 	Plotly.react(containerId, traces, layout);
@@ -5117,7 +5139,7 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 			type: 'scatter', name: name,
 			data: [{ value: [x0, y0], _hover: `${dispToken} base` }],
 			symbolSize: 7,
-			itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
+			itemStyle: { color: tokenColor, borderWidth: 2, borderColor: themeColor('#1e293b') },
 			tooltip: { formatter: p => `<b>${dispToken}</b> base embedding` },
 			z: 12
 		});
@@ -5126,28 +5148,39 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 			type: 'scatter', name: name,
 			data: [{ value: [x1, y1], _hover: `${dispToken} +PE` }],
 			symbol: 'triangle', symbolSize: 11,
-			itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#fff' },
+			itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#ffffff' },
 			tooltip: { formatter: p => `<b>${dispToken}</b> + positional encoding` },
 			z: 12
 		});
 	});
+
+	const axisTextColor = themeColor('#64748b');
+	const axisNameColor = themeColor('#94a3b8');
+	const axisLineColor = themeColor('#cbd5e1');
 
 	chart.setOption({
 		title: {
 			text: 'Semantic Vector → + Positional Shift', left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
+		backgroundColor: 'transparent',
 		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
+		legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11, color: axisTextColor } },
 		xAxis: {
 			type: 'value', name: 'Dim 0',
 			nameLocation: 'center', nameGap: 25,
+			nameTextStyle: { color: axisNameColor },
+			axisLabel: { color: axisTextColor },
+			axisLine: { lineStyle: { color: axisLineColor } },
 			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
 		},
 		yAxis: {
 			type: 'value',
 			name: d_model >= 2 ? 'Dim 1' : '',
 			nameLocation: 'center', nameGap: 35,
+			nameTextStyle: { color: axisNameColor },
+			axisLabel: { color: axisTextColor },
+			axisLine: { lineStyle: { color: axisLineColor } },
 			splitLine: { lineStyle: { color: themeColor('#f0f0f0') } }
 		},
 		grid: { top: 50, bottom: 60, left: 55, right: 30 },
