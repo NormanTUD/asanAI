@@ -97,7 +97,7 @@ function renderMarkdown() {
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
 	});
-	updateLoadingStatus("Rendered Markdown.");
+	updateLoadingStatus("Almost finished.");
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {

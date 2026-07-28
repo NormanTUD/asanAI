@@ -342,6 +342,12 @@ html.dark [style*="color: #333"],
 html.dark [style*="color:#333"] {
 	color: var(--mn-text-secondary) !important;
 }
+html.dark [style*="color: #2d2040"],
+html.dark [style*="color:#2d2040"],
+html.dark [style*="color: black"],
+html.dark [style*="color:black"] {
+	color: var(--mn-text) !important;
+}
 
 /* Card / panel inline backgrounds that were light grey */
 html.dark [style*="background: #e2e8f0"],

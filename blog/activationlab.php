@@ -46,7 +46,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <div>
             <label style="display: block; margin-bottom: 8px;"><b>Select Activation Function:</b></label>
-            <select id="pure-act-type" class="btn" style="background: white; color: black; border: 1px solid #ccc; width: 100%; padding: 10px;">
+            <select id="pure-act-type" class="btn" style="border: 1px solid #ccc; width: 100%; padding: 10px;">
                 <option value="relu">ReLU (The Modern Standard)</option>
                 <option value="sigmoid">Sigmoid (The Classic S-Curve)</option>
                 <option value="tanh">Tanh (Zero-Centered)</option>
