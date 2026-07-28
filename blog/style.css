@@ -248,7 +248,13 @@ html.dark [style*="border-color:#e2e8f0"],
 html.dark [style*="border: 1px solid #e2e8f0"],
 html.dark [style*="border:1px solid #e2e8f0"],
 html.dark [style*="border: 1px solid #ddd"],
-html.dark [style*="border:1px solid #ddd"] {
+html.dark [style*="border:1px solid #ddd"],
+html.dark [style*="border: 1px solid #cbd5e1"],
+html.dark [style*="border:1px solid #cbd5e1"],
+html.dark [style*="border: 1px solid #cbd5e0"],
+html.dark [style*="border:1px solid #cbd5e0"],
+html.dark [style*="border: 1px solid #ccc"],
+html.dark [style*="border:1px solid #ccc"] {
 	border-color: var(--mn-border) !important;
 }
 html.dark [style*="background: #3b82f6"],
@@ -805,6 +811,54 @@ html.dark .token-table td {
 html.dark select option {
 	background: var(--mn-bg) !important;
 	color: var(--mn-text) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DARK MODE — Form elements (textarea, input, select)
+   These ensure all form controls adapt when the user toggles
+   from dark to light or vice-versa.
+   ════════════════════════════════════════════════════════ */
+html.dark textarea {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark textarea::placeholder {
+	color: var(--mn-text-muted) !important;
+}
+html.dark input[type="text"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+	caret-color: var(--mn-text) !important;
+}
+html.dark input[type="text"]::placeholder {
+	color: var(--mn-text-muted) !important;
+}
+html.dark input[type="text"]::selection {
+	background: rgba(99, 102, 241, 0.3) !important;
+	color: var(--mn-text) !important;
+}
+html.dark input[type="text"]:focus {
+	border-color: var(--mn-accent) !important;
+	box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+}
+html.dark input[type="number"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark input[type="number"]:focus {
+	border-color: var(--mn-accent) !important;
+	outline: none;
+}
+html.dark select {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark select:focus {
+	border-color: var(--mn-accent) !important;
 }
 html.dark .gem-tab-state:checked + .gem-tab-trigger {
 	background: var(--mn-surface) !important;
