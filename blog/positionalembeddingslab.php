@@ -156,7 +156,7 @@ The wave plots above show each dimension's projection individually, flat curves 
 **Try rotating the 3D plot**, from directly above you will see the circular cross-section (Dims 0, 1). From the side you will see the axial drift (Dim 2). The two colored segments always subtend the same arc.
 </div>
 
-<div id="helix-manifold" style="width:100%; height:500px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+<div id="helix-manifold" style="width:100%; height:500px; margin: 20px 0; background: var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
 
 <div class="md">
 ## The Repetition Starburst: One Word, Many Positions
@@ -170,7 +170,7 @@ The plot below places the **raw embedding** of "king" (with no positional encodi
 - **No two endpoints are the same**: Every position is unique, even though the word is identical.
 </div>
 
-<div id="repetition-starburst" style="width:100%; height:600px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+<div id="repetition-starburst" style="width:100%; height:600px; margin: 20px 0; background: var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
 
 <div class="optional md" data-headline="History of Positional Embedding Strategies">
 
