@@ -1031,9 +1031,6 @@ html.dark .md h3,
 html.dark .md h4 {
 	color: #f1f5f9 !important;
 }
-html.dark h2::after {
-	background: #818cf8 !important;
-}
 html.dark #contents p,
 html.dark #contents li,
 html.dark #contents div:not([class*="plot"]):not([class*="chart"]):not([class*="echarts"]):not(.glossary-tooltip) {
