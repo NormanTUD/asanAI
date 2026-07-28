@@ -5251,22 +5251,22 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 		},
 		xAxis3D: {
 			type: 'value', name: 'Dim 0',
-			axisLabel: { textStyle: { color: axis3DText } },
-			axisName: { textStyle: { color: axis3DText } },
+			nameTextStyle: { color: axis3DText },
+			axisLabel: { color: axis3DText },
 			axisLine: { lineStyle: { color: axis3DLine } },
 			splitLine: { lineStyle: { color: themeColor('#334155') } }
 		},
 		yAxis3D: {
 			type: 'value', name: 'Dim 1',
-			axisLabel: { textStyle: { color: axis3DText } },
-			axisName: { textStyle: { color: axis3DText } },
+			nameTextStyle: { color: axis3DText },
+			axisLabel: { color: axis3DText },
 			axisLine: { lineStyle: { color: axis3DLine } },
 			splitLine: { lineStyle: { color: themeColor('#334155') } }
 		},
 		zAxis3D: {
 			type: 'value', name: 'Dim 2',
-			axisLabel: { textStyle: { color: axis3DText } },
-			axisName: { textStyle: { color: axis3DText } },
+			nameTextStyle: { color: axis3DText },
+			axisLabel: { color: axis3DText },
 			axisLine: { lineStyle: { color: axis3DLine } },
 			splitLine: { lineStyle: { color: themeColor('#334155') } }
 		},
@@ -7208,5 +7208,16 @@ function _traj_vf_2d_plotly_annotations(computed) {
 	}).filter(a => {
 		const dx = a.x - a.ax, dy = a.y - a.ay;
 		return Math.sqrt(dx * dx + dy * dy) > 1e-6;
+	});
+}
+
+// Re-render the transformer visualizations when the user toggles dark/light mode
+// so that plot colours stay readable.
+if (window.__MN_DARK) {
+	window.__MN_DARK.onChange((isDark) => {
+		if (window.isTraining) return;
+		if (typeof debounced_run_transformer_demo === 'function') {
+			debounced_run_transformer_demo();
+		}
 	});
 }
