@@ -1,3 +1,4 @@
 history: OR and XOR Gate graphs have white bg
 statistics: "Why This Matters for AI" blöcke sind zu hell, The Dirichlet Distribution: The Probability of Probabilities ist im dreieck weiß
-derivativelab: bg im plot ist weiß
+autodiff, minimalneuron, derivativelab, differentiation, losslab: plots sind weiß
+
