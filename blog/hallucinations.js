@@ -27,8 +27,12 @@ function renderCovariateShift() {
 		];
 
 		Plotly.newPlot('shift-plot', data, {
-			title: 'Statistical Overlap vs. Hallucination Risk',
-			yaxis: {range: [0, 1.2], showticklabels: false}
+			title: { text: 'Statistical Overlap vs. Hallucination Risk', font: { color: themeColor('#1e293b') } },
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
+			xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			yaxis: {range: [0, 1.2], showticklabels: false, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') }
 		});
 	}
 	slider.oninput = updatePlot;
@@ -59,9 +63,12 @@ function renderTokenPrediction() {
 	}];
 
 	const layout = {
-		title: 'Probability of next word after: "The sky is..."',
-		xaxis: { title: 'Possible Next Token' },
-		yaxis: { title: 'Probability (0-1)', range: [0, 1] },
+		title: { text: 'Probability of next word after: "The sky is..."', font: { color: themeColor('#1e293b') } },
+		xaxis: { title: 'Possible Next Token', titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9') },
+		yaxis: { title: 'Probability (0-1)', range: [0, 1], titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') },
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
 		margin: { t: 40, b: 40, l: 40, r: 20 }
 	};
 
@@ -115,8 +122,12 @@ function renderTemperatureDemo() {
 		}];
 
 		const layout = {
-			title: `Distribution at Temperature = ${temp}`,
-			yaxis: { range: [0, 1], title: 'Probability' },
+			title: { text: `Distribution at Temperature = ${temp}`, font: { color: themeColor('#1e293b') } },
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
+			xaxis: { tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9') },
+			yaxis: { range: [0, 1], title: 'Probability', titlefont: { color: themeColor('#64748b') }, tickfont: { color: themeColor('#64748b') }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1') },
 			margin: { t: 40, b: 40, l: 40, r: 20 }
 		};
 
