@@ -734,12 +734,15 @@ function initInteractiveVectorSpaces() {
 				showlegend: false,
 			};
 			Plotly.react('v3-plot', [traceOutline, traceColor], {
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
 				margin: { t: 0, b: 0, l: 0, r: 0 },
 				uirevision: 'true',
 				scene: {
-					xaxis: { title: 'Red', range: [0, 255] },
-					yaxis: { title: 'Green', range: [0, 255] },
-					zaxis: { title: 'Blue', range: [0, 255] },
+					xaxis: { title: { text: 'Red', font: { color: themeColor('#64748b') } }, range: [0, 255], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+					yaxis: { title: { text: 'Green', font: { color: themeColor('#64748b') } }, range: [0, 255], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+					zaxis: { title: { text: 'Blue', font: { color: themeColor('#64748b') } }, range: [0, 255], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
 				},
 			});
 		});
