@@ -5221,12 +5221,12 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 			data: [
 				{
 					value: from3, symbolSize: 8,
-					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
+					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: themeColor('#1e293b') },
 					_hover: `${dispToken} base (pos ${pos})`
 				},
 				{
 					value: to3, symbolSize: 13,
-					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
+					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#ffffff' },
 					_hover: `${dispToken} + PE (pos ${pos})`
 				}
 			],
@@ -5235,19 +5235,41 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
 		});
 	});
 
+	const axis3DText = themeColor('#94a3b8');
+	const axis3DLine = themeColor('#475569');
+
 	chart.setOption({
 		title: {
 			text: 'Semantic Vector → + Positional Shift', left: 'center',
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
 		},
+		backgroundColor: 'transparent',
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: {
 			data: legendData, orient: 'horizontal',
-			bottom: 0, left: 'center', textStyle: { fontSize: 11 }
+			bottom: 0, left: 'center', textStyle: { fontSize: 11, color: axis3DText }
 		},
-		xAxis3D: { type: 'value', name: 'Dim 0' },
-		yAxis3D: { type: 'value', name: 'Dim 1' },
-		zAxis3D: { type: 'value', name: 'Dim 2' },
+		xAxis3D: {
+			type: 'value', name: 'Dim 0',
+			axisLabel: { textStyle: { color: axis3DText } },
+			axisName: { textStyle: { color: axis3DText } },
+			axisLine: { lineStyle: { color: axis3DLine } },
+			splitLine: { lineStyle: { color: themeColor('#334155') } }
+		},
+		yAxis3D: {
+			type: 'value', name: 'Dim 1',
+			axisLabel: { textStyle: { color: axis3DText } },
+			axisName: { textStyle: { color: axis3DText } },
+			axisLine: { lineStyle: { color: axis3DLine } },
+			splitLine: { lineStyle: { color: themeColor('#334155') } }
+		},
+		zAxis3D: {
+			type: 'value', name: 'Dim 2',
+			axisLabel: { textStyle: { color: axis3DText } },
+			axisName: { textStyle: { color: axis3DText } },
+			axisLine: { lineStyle: { color: axis3DLine } },
+			splitLine: { lineStyle: { color: themeColor('#334155') } }
+		},
 		grid3D: _defaultGrid3DConfig(),
 		series: series,
 		animation: false
@@ -5285,12 +5307,35 @@ function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) 
 function renderShiftECharts(container, echartsData, d_model) {
 	const myChart = echarts.init(container);
 	const axes = [];
+	const axisTextColor = themeColor('#64748b');
+	const axisNameColor = themeColor('#94a3b8');
+	const axisLineColor = themeColor('#cbd5e1');
 	for (let i = 0; i < d_model; i++) {
-		axes.push({ dim: i * 2, name: `D${i} Base` }, { dim: i * 2 + 1, name: `D${i} +PE` });
+		axes.push(
+			{
+				dim: i * 2,
+				name: `D${i} Base`,
+				nameTextStyle: { color: axisNameColor },
+				axisLabel: { color: axisTextColor },
+				axisLine: { lineStyle: { color: axisLineColor } }
+			},
+			{
+				dim: i * 2 + 1,
+				name: `D${i} +PE`,
+				nameTextStyle: { color: axisNameColor },
+				axisLabel: { color: axisTextColor },
+				axisLine: { lineStyle: { color: axisLineColor } }
+			}
+		);
 	}
 
 	myChart.setOption({
-		title: { text: "Semantic Vector → + Positional Shift", left: 'center' },
+		backgroundColor: 'transparent',
+		title: {
+			text: "Semantic Vector → + Positional Shift",
+			left: 'center',
+			textStyle: { fontSize: 14, color: themeColor('#1e293b') }
+		},
 		tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
 		parallelAxis: axes,
 		series: [{
