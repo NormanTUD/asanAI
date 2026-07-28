@@ -125,9 +125,32 @@ html.dark .gem-tab-state:checked + .gem-tab-trigger {
 	border-bottom: 2px solid var(--mn-accent) !important;
 	color: var(--mn-accent) !important;
 }
-/* Plotly chart backgrounds in dark mode */
+/* Plotly chart backgrounds adapt to current theme via CSS vars.
+   This overrides paper_bgcolor / plot_bgcolor so charts remain usable
+   even after the user toggles the theme without re-running plot code. */
+.js-plotly-plot .main-svg rect.bg {
+	fill: var(--mn-bg) !important;
+}
 html.dark .js-plotly-plot .main-svg rect.bg {
-	fill: #1e293b !important;
+	fill: var(--mn-bg) !important;
+}
+.js-plotly-plot .gridlayer path,
+.js-plotly-plot .xgrid path,
+.js-plotly-plot .ygrid path,
+.js-plotly-plot .zgrid path {
+	stroke: var(--mn-border) !important;
+}
+.js-plotly-plot .xtick text,
+.js-plotly-plot .ytick text,
+.js-plotly-plot .gtitle,
+.js-plotly-plot .xtitle,
+.js-plotly-plot .ytitle,
+.js-plotly-plot .annotation-text {
+	fill: var(--mn-text) !important;
+}
+.js-plotly-plot .axis-line,
+.js-plotly-plot .zerolinelayer path {
+	stroke: var(--mn-border) !important;
 }
 html.dark pre,
 html.dark code {
