@@ -3,7 +3,7 @@ html {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
-	color-scheme: light dark;
+	color-scheme: light;
 	--mn-bg: #ffffff;
 	--mn-bg-subtle: #f8fafc;
 	--mn-bg-warm: #fffbf5;

@@ -104,11 +104,11 @@ https://arxiv.org/html/2505.11611v1
     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
-            <input type="number" id="train-epochs" value="200" style="width: 60px; padding: 4px;">
+            <input type="number" id="train-epochs" value="200" style="width: 60px; padding: 4px; background: var(--mn-surface, white); color: var(--mn-text, #1e293b); border: 1px solid var(--mn-border, #cbd5e1); border-radius: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
-            <input type="number" id="train-lr" value="0.01" step="0.01" style="width: 70px; padding: 4px;">
+            <input type="number" id="train-lr" value="0.01" step="0.01" style="width: 70px; padding: 4px; background: var(--mn-surface, white); color: var(--mn-text, #1e293b); border: 1px solid var(--mn-border, #cbd5e1); border-radius: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>

@@ -6214,8 +6214,8 @@ function tled_generateRowHtml(word, vec, d_model) {
 	step="0.1"
 	data-tled-word="${safeWordAttr}"
 	data-tled-dim="${d}"
-	style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
-	oninput="tled_updateEmbedding(this)"
+				style="width: 70px; padding: 4px; border: 1px solid var(--mn-border, #cbd5e1); border-radius: 4px; text-align: center; font-size: 12px; background: var(--mn-surface, white); color: var(--mn-text, #1e293b);"
+				oninput="tled_updateEmbedding(this)"
 	>
     </td>`;
 			}
