@@ -4989,10 +4989,7 @@ html {
 	color: var(--mn-accent-dark);
 }
 .glossary-tooltip {
-	position: absolute;
-	bottom: calc(100% + 8px);
-	left: 50%;
-	transform: translateX(-50%) translateY(4px);
+	position: fixed;
 	background: var(--mn-heading);
 	color: var(--mn-bg);
 	font-size: 0.78rem;
@@ -5004,20 +5001,22 @@ html {
 	max-width: 360px;
 	pointer-events: none;
 	opacity: 0;
-	transition: opacity 0.2s ease, transform 0.2s ease;
-	z-index: 1000;
+	transition: opacity 0.2s ease;
+	z-index: 100000;
 	text-align: left;
 	box-shadow: var(--mn-shadow-lg);
+	visibility: hidden;
 }
-.glossary-term:hover .glossary-tooltip {
+.glossary-term:hover .glossary-tooltip,
+.glossary-term:focus .glossary-tooltip {
 	opacity: 1;
-	transform: translateX(-50%) translateY(0);
+	visibility: visible;
 }
 .glossary-tooltip::after {
 	content: '';
 	position: absolute;
 	top: 100%;
-	left: 50%;
+	left: var(--arrow-x, 50%);
 	transform: translateX(-50%);
 	border: 6px solid transparent;
 	border-top-color: var(--mn-heading);

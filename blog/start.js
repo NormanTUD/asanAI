@@ -1067,34 +1067,52 @@ function initGlossary() {
 		textNode.parentNode.replaceChild(frag, textNode);
 	});
 
-	// Keep tooltips inside the viewport so they don't disappear off the page edge
-	// when the underlying term sits at the very left or right of the column.
-	contents.addEventListener('mouseenter', function(ev) {
+	// Position each tooltip as a fixed element so it always stays inside the
+	// viewport, even when the underlying term sits at the very left or right.
+	function positionTooltip(term) {
+		var tip = term.querySelector('.glossary-tooltip');
+		if (!tip) return;
+		var termRect = term.getBoundingClientRect();
+		var tipRect = tip.getBoundingClientRect();
+		var vw = window.innerWidth || document.documentElement.clientWidth;
+		var margin = 8;
+		var tipW = tipRect.width;
+		var tipH = tipRect.height;
+
+		var left = termRect.left + termRect.width / 2 - tipW / 2;
+		var top = termRect.top - tipH - 8;
+
+		if (top < margin) {
+			top = termRect.bottom + 8;
+		}
+		if (left < margin) {
+			left = margin;
+		} else if (left + tipW > vw - margin) {
+			left = vw - tipW - margin;
+		}
+
+		tip.style.left = left + 'px';
+		tip.style.top = top + 'px';
+
+		var arrowLeft = termRect.left + termRect.width / 2 - left;
+		var arrowClamp = Math.max(10, Math.min(tipW - 10, arrowLeft));
+		tip.style.setProperty('--arrow-x', arrowClamp + 'px');
+	}
+
+	contents.addEventListener('mouseover', function(ev) {
+		var term = ev.target.closest && ev.target.closest('.glossary-term');
+		if (!term) return;
+		positionTooltip(term);
+	});
+	contents.addEventListener('mouseout', function(ev) {
 		var term = ev.target.closest && ev.target.closest('.glossary-term');
 		if (!term) return;
 		var tip = term.querySelector('.glossary-tooltip');
 		if (!tip) return;
-		tip.style.transform = '';
-		var rect = tip.getBoundingClientRect();
-		var vw = window.innerWidth || document.documentElement.clientWidth;
-		var margin = 8;
-		var shift = 0;
-		if (rect.left < margin) {
-			shift = margin - rect.left;
-		} else if (rect.right > vw - margin) {
-			shift = (vw - margin) - rect.right;
-		}
-		if (shift !== 0) {
-			tip.style.transform = 'translateX(calc(-50% + ' + shift + 'px)) translateY(0)';
-		}
-	}, true);
-	contents.addEventListener('mouseleave', function(ev) {
-		var term = ev.target.closest && ev.target.closest('.glossary-term');
-		if (!term) return;
-		var tip = term.querySelector('.glossary-tooltip');
-		if (!tip || !tip.style.transform) return;
-		tip.style.transform = '';
-	}, true);
+		tip.style.left = '';
+		tip.style.top = '';
+		tip.style.removeProperty('--arrow-x');
+	});
 }
 
 // ─── Shared post-load initialization ───
