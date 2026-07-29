@@ -732,6 +732,13 @@ const ResidualStreamViz = {
 			this.ctx.lineWidth = 3;
 			this.ctx.stroke();
 			this.drawArrowHead(centerX, endY - 10, Math.PI / 2, '#3b82f6');
+
+			// Label—centered below the arrow, far enough from the metadata
+			this.ctx.font = 'bold 12px system-ui';
+			this.ctx.fillStyle = themeColor('#1e293b');
+			this.ctx.textAlign = 'center';
+			this.ctx.fillText('Next predicted Word', centerX, endY + 20);
+			this.ctx.globalAlpha = 1;
 		}
 	},
 
