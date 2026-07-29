@@ -19,27 +19,6 @@
     "  font-size: 1.4em; color: #64748b;",
     "}",
 
-    /* ── HNSW Diagram ── */
-    "#vslab-hnsw-diagram {",
-    "  margin: 24px 0; padding: 20px; background: #f8fafc;",
-    "  border: 1px solid #e2e8f0; border-radius: 14px;",
-    "}",
-    ".vslab-hnsw-layer {",
-    "  display: flex; align-items: center; gap: 12px; margin: 8px 0;",
-    "  padding: 10px 14px; border-radius: 8px;",
-    "}",
-    ".vslab-hnsw-label {",
-    "  font-weight: 700; font-size: 0.85em; min-width: 120px;",
-    "}",
-    ".vslab-hnsw-nodes {",
-    "  display: flex; gap: 6px; flex-wrap: wrap;",
-    "}",
-    ".vslab-hnsw-node {",
-    "  width: 28px; height: 28px; border-radius: 50%;",
-    "  display: flex; align-items: center; justify-content: center;",
-    "  font-size: 0.7em; font-weight: 700; color: #fff;",
-    "}",
-
     /* ── Search Comparison ── */
     "#vslab-search-comparison {",
     "  display: grid; grid-template-columns: 1fr 1fr 1fr;",
@@ -145,6 +124,9 @@
     "html.dark .vslab-tag-keyword { background: #422006 !important; color: #fbbf24 !important; }",
     "html.dark .vslab-tag-semantic { background: #1e1b4b !important; color: #c4b5fd !important; }",
     "html.dark .vslab-tag-hybrid   { background: #022c22 !important; color: #6ee7b7 !important; }",
+    "html.dark .vslab-compare-card { background: var(--mn-surface) !important; border-color: var(--mn-border) !important; color: var(--mn-text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }",
+    "html.dark .vslab-compare-card li { color: var(--mn-text); }",
+    "html.dark .vslab-compare-card strong { color: var(--mn-text); }",
     "html.dark pre.vslab-code-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
     "html.dark #vslab-input-card { background: linear-gradient(135deg, #1a1f2e, #1e293b) !important; border-color: #334155 !important; color: #e2e8f0; }",
     "html.dark #vslab-input-card .vslab-search-desc { color: #94a3b8 !important; }",
@@ -153,8 +135,7 @@
     "html.dark .vslab-result-item { background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0; }",
     "html.dark .vslab-result-text { color: #cbd5e1; }",
     "html.dark .vslab-details { color: #94a3b8; }",
-    "html.dark .vslab-sim-bar-track { background: #334155; }",
-    "html.dark .vslab-hnsw-layer { border-color: #475569 !important; color: #e2e8f0; }"
+    "html.dark .vslab-sim-bar-track { background: #334155; }"
 
   ].join("\n");
   document.head.appendChild(css);
@@ -185,38 +166,7 @@
   }
 
   /* ═══════════════════════════════════════════════
-     3. RENDER HNSW DIAGRAM
-     ═══════════════════════════════════════════════ */
-  function renderHNSWDiagram() {
-    var el = document.getElementById("vslab-hnsw-diagram");
-    if (!el) return;
-
-    var layers = [
-      { name: "Layer 2 (Sparse)", color: "#ef4444", nodes: [3, 9, 15], bg: "#fef2f2" },
-      { name: "Layer 1 (Medium)", color: "#f59e0b", nodes: [1, 3, 7, 9, 12, 15], bg: "#fffbeb" },
-      { name: "Layer 0 (Dense)",  color: "#3b82f6", nodes: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], bg: "#eff6ff" }
-    ];
-
-    var html = '<p style="font-weight:700; margin-bottom:12px; font-size:0.9em;">HNSW: Multi-Layer Graph Structure</p>';
-    html += '<p style="font-size:0.85em; color:#64748b; margin-bottom:14px;">Search starts at the top (sparse) layer and descends to the bottom (dense) layer, narrowing in on the target at each level — like navigating highways → local streets.</p>';
-
-    for (var i = 0; i < layers.length; i++) {
-      var layer = layers[i];
-      html += '<div class="vslab-hnsw-layer" style="background:' + layer.bg + ';">';
-      html += '<span class="vslab-hnsw-label" style="color:' + layer.color + ';">' + layer.name + '</span>';
-      html += '<div class="vslab-hnsw-nodes">';
-      for (var n = 0; n < layer.nodes.length; n++) {
-        html += '<div class="vslab-hnsw-node" style="background:' + layer.color + ';">' + layer.nodes[n] + '</div>';
-      }
-      html += '</div></div>';
-    }
-
-    html += '<p style="font-size:0.82em; color:#64748b; margin-top:12px; font-style:italic;">\u2191 Query enters at Layer 2, greedily hops to nearest neighbor, drops down when stuck, repeats until Layer 0 yields final top-K results.</p>';
-    el.innerHTML = html;
-  }
-
-  /* ═══════════════════════════════════════════════
-     4. RENDER SEARCH COMPARISON CARDS
+     3. RENDER SEARCH COMPARISON CARDS
      ═══════════════════════════════════════════════ */
   function renderSearchComparison() {
     var el = document.getElementById("vslab-search-comparison");
@@ -458,7 +408,6 @@
      ═══════════════════════════════════════════════ */
   function vslab_init() {
     renderPipelineDiagram();
-    renderHNSWDiagram();
     renderSearchComparison();
 
     var btn = document.getElementById("vslab-search-btn");

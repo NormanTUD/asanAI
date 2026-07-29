@@ -133,8 +133,6 @@ $$
 **Result:** Searching 1 billion vectors takes ~100-200 "hops" instead of 1 billion comparisons.
 </div>
 
-<div id="vslab-hnsw-diagram"></div>
-
 <div class="md">
 ### IVF (Inverted File Index)
 

@@ -143,6 +143,9 @@
     /* ── DARK MODE overrides ── */
     "html.dark .wslab-tag-orange { background: #422006 !important; color: #fbbf24 !important; }",
     "html.dark .wslab-tag-purple { background: #1e1b4b !important; color: #c4b5fd !important; }",
+    "html.dark .wslab-compare-card { background: var(--mn-surface) !important; border-color: var(--mn-border) !important; color: var(--mn-text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }",
+    "html.dark .wslab-compare-card li { color: var(--mn-text); }",
+    "html.dark .wslab-compare-card strong { color: var(--mn-text); }",
     "html.dark pre.wslab-code-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
     "html.dark #wslab-demo-container { background: linear-gradient(135deg, #422006, #1e293b) !important; border-color: #854d0e !important; color: #e2e8f0; }",
     "html.dark #wslab-demo-container .wslab-demo-subtitle { color: #94a3b8 !important; }",
