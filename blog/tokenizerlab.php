@@ -177,10 +177,10 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
     </div>
 
     <!-- ═══════════════════ TOKENIZATION FAILURE DEMO ═══════════════════ -->
-    <div style="background:#fff; border:2px solid #fecaca; border-radius:12px; padding:20px; margin:20px 0;">
+    <div style="background:var(--mn-bg-subtle, #fff); border:2px solid #fecaca; border-radius:12px; padding:20px; margin:20px 0;">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
             <span style="font-size:1.5rem;">🍓</span>
-            <h3 style="margin:0; color:#991b1b;">Why LLMs Can't Count Letters</h3>
+            <h3 style="margin:0; color:#fca5a5;">Why LLMs Can't Count Letters</h3>
         </div>
         <div class="md">
 Type a word like **"strawberry"** below and watch how BPE splits it. The model never sees individual letters — it sees whatever fragments the tokenizer produced during training.
@@ -192,17 +192,17 @@ Type a word like **"strawberry"** below and watch how BPE splits it. The model n
                    style="width:100%; padding:10px; border-radius:8px; border:2px solid #fca5a5; font-size:1.1rem; box-sizing:border-box;"
                    autocomplete="off" spellcheck="false">
         </div>
-        <div id="tokenization-failure-vis" style="background:#fef2f2; border-radius:8px; padding:16px; min-height:60px; font-family:monospace; font-size:1.1rem; line-height:2;"></div>
-        <div id="tokenization-failure-explain" style="margin-top:10px; padding:12px; background:#fff; border-radius:8px; border:1px dashed #fca5a5; font-size:0.9em; color:#475569;"></div>
+        <div id="tokenization-failure-vis" style="background:var(--mn-bg-subtle, #fef2f2); border-radius:8px; padding:16px; min-height:60px; font-family:monospace; font-size:1.1rem; line-height:2; color:var(--mn-text, #1e293b);"></div>
+        <div id="tokenization-failure-explain" style="margin-top:10px; padding:12px; background:var(--mn-bg-subtle, #fff); border-radius:8px; border:1px dashed #fca5a5; font-size:0.9em; color:var(--mn-text-secondary, #475569);"></div>
         <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
             <button onclick="document.getElementById('tokenization-failure-input').value='strawberry'; showTokenizationFailure('strawberry');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:#fff; cursor:pointer; font-size:0.85rem;">🍓 strawberry</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍓 strawberry</button>
             <button onclick="document.getElementById('tokenization-failure-input').value='banana'; showTokenizationFailure('banana');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:#fff; cursor:pointer; font-size:0.85rem;">🍌 banana</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍌 banana</button>
             <button onclick="document.getElementById('tokenization-failure-input').value='mississippi'; showTokenizationFailure('mississippi');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:#fff; cursor:pointer; font-size:0.85rem;">🌊 mississippi</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🌊 mississippi</button>
             <button onclick="document.getElementById('tokenization-failure-input').value='antidisestablishment'; showTokenizationFailure('antidisestablishment');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:#fff; cursor:pointer; font-size:0.85rem;">📚 antidisestablishment</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">📚 antidisestablishment</button>
         </div>
     </div>
 

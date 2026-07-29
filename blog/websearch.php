@@ -8,7 +8,6 @@ part: 5
 order: 30
 color: rose
 -->
-
 <div class="md">
 ## How LLMs Actually Search the Web
 
@@ -30,9 +29,7 @@ $$
 
 **Key insight:** The LLM itself cannot "see" the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.
 </div>
-
 <div id="wslab-pipeline-diagram"></div>
-
 <div class="md">
 ## Step 1: Intent Detection, Does This Query Need a Search?
 
@@ -60,7 +57,6 @@ Use it when:
 Do NOT use it when:
 - The question is about well-established facts
 - The question is about reasoning, math, or code logic</code></pre>
-
 <div class="md">
 ## Step 2: Query Formulation
 
@@ -123,7 +119,6 @@ The search API returns **structured JSON**, not rendered web pages:
     }
   ]
 }</code></pre>
-
 <div class="md">
 The LLM receives **titles, snippets, and URLs**, not full page content (at least not from the search step alone). This is similar to what you see on a Google results page before clicking any link.
 
@@ -135,7 +130,6 @@ Snippets from search results are often too short to answer complex questions. So
 </div>
 
 <pre class="wslab-code-block"><code>URL → HTTP GET request → Raw HTML → Parser → Clean text</code></pre>
-
 <div class="md">
 ### The technical pipeline:
 
@@ -167,9 +161,7 @@ $$
 \text{HTML (50KB)} \;\xrightarrow{\text{extract}}\; \text{Clean text (3KB)} \;\xrightarrow{\text{chunk}}\; \text{Relevant passages}
 $$
 </div>
-
 <div id="wslab-fetch-diagram"></div>
-
 <div class="md">
 ## Step 5: Chunking &amp; Ranking Retrieved Content
 
@@ -193,7 +185,6 @@ Retrieved content:   ~4,000 tokens  ← carefully budgeted
 Generation space:    ~2,000 tokens
 ─────────────────────────────────
 Remaining unused:  ~119,500 tokens</code></pre>
-
 <div class="md">
 The system is conservative, it doesn't fill the entire context window with search results. It selects only the most relevant passages to keep the LLM focused.
 
@@ -221,20 +212,17 @@ complexity from O(n²) to O(n) while maintaining 97% of standard..."
 "Recent benchmarks show that modern attention mechanisms achieve..."
 
 User: What are the latest advances in transformer architecture?</code></pre>
-
 <div class="md">
 The LLM then generates an answer **grounded in these sources**, citing them inline, exactly like what you're reading right now.
 
 ## The Full Architecture Diagram
 </div>
-
 <div class="wslab-architecture">
     <div class="wslab-arch-step wslab-arch-step--user">
         <div class="wslab-arch-icon">💬</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">User Interface</div>
-
-          <div class="wslab-arch-desc">"What are the latest advances in transformers?"</div>
+<div class="wslab-arch-desc">"What are the latest advances in transformers?"</div>
 
         </div>
     </div>
@@ -243,8 +231,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🤖</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Orchestrator / Agent</div>
-
-          <div class="wslab-arch-desc">Receives query · Asks LLM "Should I search?" · LLM decides on search terms</div>
+<div class="wslab-arch-desc">Receives query · Asks LLM "Should I search?" · LLM decides on search terms</div>
 
         </div>
     </div>
@@ -253,8 +240,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🔍</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Search API</div>
-
-          <div class="wslab-arch-desc">Bing · Google · Brave · SearXNG — returns top 5-10 results as JSON</div>
+<div class="wslab-arch-desc">Bing · Google · Brave · SearXNG — returns top 5-10 results as JSON</div>
 
         </div>
     </div>
@@ -263,8 +249,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🌐</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Content Fetcher</div>
-
-          <div class="wslab-arch-desc">HTTP GET to top 3-5 URLs · headless browser if needed · parallel fetching</div>
+<div class="wslab-arch-desc">HTTP GET to top 3-5 URLs · headless browser if needed · parallel fetching</div>
 
         </div>
     </div>
@@ -273,8 +258,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🧹</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Content Extractor</div>
-
-          <div class="wslab-arch-desc">Readability.js / Trafilatura strips nav, ads, scripts, styles → clean markdown</div>
+<div class="wslab-arch-desc">Readability.js / Trafilatura strips nav, ads, scripts, styles → clean markdown</div>
 
         </div>
     </div>
@@ -283,8 +267,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">✂️</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Chunker &amp; Re-ranker</div>
-
-          <div class="wslab-arch-desc">Split into 200-500 token chunks · score against query · select top-K (budget ~3000-6000 tokens)</div>
+<div class="wslab-arch-desc">Split into 200-500 token chunks · score against query · select top-K (budget ~3000-6000 tokens)</div>
 
         </div>
     </div>
@@ -293,8 +276,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">📝</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Prompt Assembler</div>
-
-          <div class="wslab-arch-desc">System prompt + search results + user query · adds source metadata for citations</div>
+<div class="wslab-arch-desc">System prompt + search results + user query · adds source metadata for citations</div>
 
         </div>
     </div>
@@ -303,8 +285,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">✨</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">LLM</div>
-
-          <div class="wslab-arch-desc">Reads augmented prompt · generates grounded answer with citations · may request more searches</div>
+<div class="wslab-arch-desc">Reads augmented prompt · generates grounded answer with citations · may request more searches</div>
 
         </div>
     </div>
@@ -313,13 +294,11 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">📄</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">User Sees Answer</div>
-
-          <div class="wslab-arch-desc">"Recent advances include linear attention [1], sparse mixture-of-experts [2] and…" with clickable sources</div>
+<div class="wslab-arch-desc">"Recent advances include linear attention [1], sparse mixture-of-experts [2] and…" with clickable sources</div>
 
         </div>
     </div>
 </div>
-
 <div class="md">
 ## Open-Source Web Search: SearXNG
 
@@ -356,7 +335,6 @@ The LLM doesn't have "built-in" web access. Instead, it uses a protocol called *
     }
   ]
 }</code></pre>
-
 <div class="md">
 **2.** The LLM generates a **structured tool call** instead of a text response:
 </div>
@@ -366,7 +344,6 @@ The LLM doesn't have "built-in" web access. Instead, it uses a protocol called *
   "tool_call": "web_search",
   "arguments": { "query": "transformer architecture advances 2026" }
 }</code></pre>
-
 <div class="md">
 **3.** The orchestrator **executes** the tool call and returns results to the LLM.
 
@@ -380,7 +357,6 @@ This loop can repeat multiple times, the LLM might search, read a page, search a
 
 There's an important distinction between how LLMs handle **specified URLs** versus **open web search**:
 </div>
-
 <div id="wslab-compare-grid">
     <div class="wslab-compare-card wslab-card-orange">
         <span class="wslab-tag wslab-tag-orange">Direct URL Access</span>
@@ -403,7 +379,6 @@ There's an important distinction between how LLMs handle **specified URLs** vers
         </ul>
     </div>
 </div>
-
 <div class="md">
 ## Latency Breakdown: Where Does the Time Go?
 
@@ -441,11 +416,9 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 | Why does it take longer? | Multiple network round-trips: search API + page fetches + LLM generation |
 | How is this different from RAG? | RAG searches a **private** vector DB. Web search queries the **public** internet via APIs. Same principle, different data source |
 </div>
-
 <div class="md">
 ## 🔍 Interactive: Web Search Simulation
 </div>
-
 <div id="wslab-demo-container">
     <p class="wslab-demo-subtitle">Simulate how an LLM processes a web search query. Type a question and see the pipeline in action, from intent detection through search results to final answer assembly.</p>
     <input type="text" id="wslab-query-input" placeholder="Try: &quot;What is the latest version of Python?&quot;" value="What is the latest version of Python?" />
@@ -456,7 +429,6 @@ There's an important distinction between how LLMs handle **specified URLs** vers
         <p>This is a client-side simulation using pre-defined mock search results. In a real system, the search query would hit a live API (Bing, Google, SearXNG), fetch actual web pages, extract their content, chunk and re-rank it, then feed it to the LLM. The pipeline steps shown here mirror what actually happens behind the scenes.</p>
     </details>
 </div>
-
 <div class="md">
 ## Connecting It All: Web Search is RAG Over the Internet
 

@@ -614,8 +614,20 @@ function renderSpace(key, highlightPos = null, steps = []) {
     Plotly.react(divId, traces, {
         margin: { l: 40, r: 40, b: 40, t: 20 },
         showlegend: false,
-        xaxis: { range: rangeX, title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff'),
+        font: { color: themeColor('#1e293b'), family: 'system-ui, sans-serif' },
+        xaxis: {
+            range: rangeX, title: { text: space.axes.x, font: { color: themeColor('#475569') } },
+            gridcolor: themeColor('#e2e8f0'), zerolinecolor: themeColor('#cbd5e1'),
+            tickfont: { color: themeColor('#64748b') }
+        },
+        yaxis: {
+            range: [-30, 30], title: { text: space.axes.y || '', font: { color: themeColor('#475569') } },
+            visible: space.dims > 1,
+            gridcolor: themeColor('#e2e8f0'), zerolinecolor: themeColor('#cbd5e1'),
+            tickfont: { color: themeColor('#64748b') }
+        },
         annotations
     }).then(() => {
         const loader = plotDiv.querySelector('.plot-loading');
