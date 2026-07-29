@@ -1182,7 +1182,10 @@ const ResidualStreamViz = {
 
 	_syncControls: function () {
 		const slider = document.getElementById('residual-stream-layer');
-		if (slider) slider.value = this.currentLayer;
+		if (slider) {
+			slider.max = this.numLayers;
+			slider.value = this.currentLayer;
+		}
 
 		const label = document.getElementById('residual-stream-layer-label');
 		if (label) {
