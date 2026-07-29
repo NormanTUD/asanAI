@@ -114,10 +114,9 @@
     ".wslab-arch-step--answer     .wslab-arch-icon { background: rgba(5,150,105,0.15); }",
     ".wslab-arch-arrow {",
     "  text-align: center; color: var(--mn-text-muted);",
-    "  font-size: 1em; line-height: 1; margin: 0; padding: 2px 0;",
-    "  user-select: none;",
+    "  font-size: 0.9em; line-height: 1; margin: 0; padding: 2px 0;",
+    "  user-select: none; opacity: 0.6;",
     "}",
-    ".wslab-arch-arrow::before { content: '│'; }",
 
     /* ── Interactive Demo ── */
     "#wslab-demo-container {",
@@ -206,11 +205,15 @@
     "html.dark .wslab-step { background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0; }",
     "html.dark .wslab-step-content { color: #cbd5e1 !important; }",
     "html.dark .wslab-step-content code { background: #334155; color: #e2e8f0; }",
+    "html.dark .wslab-source-item { background: #0f172a !important; border-color: #334155 !important; }",
+    "html.dark .wslab-source-url { color: #93c5fd; }",
+    "html.dark .wslab-source-snippet { color: #94a3b8; }",
     "html.dark .wslab-result-section-header { background: #334155 !important; color: #e2e8f0 !important; }",
     "html.dark .wslab-source-box { background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0; }",
     "html.dark .wslab-source-header { background: #334155 !important; color: #e2e8f0; }",
     "html.dark .wslab-details { color: #94a3b8; }",
-    "html.dark #wslab-final-answer { background: #022c22 !important; border-color: #10b981 !important; color: #e2e8f0; }"
+    "html.dark .wslab-final-answer { background: #022c22 !important; border-color: #10b981 !important; color: #e2e8f0; }",
+    "html.dark .wslab-final-answer p { color: #d1fae5; }"
 
   ].join("\n");
   document.head.appendChild(css);
