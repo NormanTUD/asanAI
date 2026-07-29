@@ -518,28 +518,30 @@ const ResidualStreamViz = {
 
 	layerRoles: [
 		{
+			type: 'embedding',
 			short: 'Raw embeddings',
-			attnDesc: '',
-			ffnDesc: '',
-			example: 'Each token is an isolated vector ‚Äî\n"cat" ‚â† animal yet, just ID #9001.'
+			desc: 'This is the input layer. Each token ("The", "cat", "sat", "on") is looked up in the embedding table, a simple mapping from token ID to a learned vector. At this stage the vectors carry only the isolated meaning of each word, with no context from surrounding tokens.',
+			example: '"cat" → vector [0.22, 0.85, -0.41, …]\nNo grammar, context, or relationships yet.'
 		},
 		{
+			type: 'attention_ffn',
 			short: 'Local syntax & word roles',
-			attnDesc: '"cat" attends to "The" ‚Üí learns it\'s a definite noun phrase',
-			ffnDesc: 'Activates part-of-speech features: "cat"‚Üínoun, "sat"‚Üíverb',
+			attnDesc: '"cat" attends to "The" → learns it\'s part of a definite noun phrase',
+			ffnDesc: 'Activates part-of-speech features: "cat"→noun, "sat"→verb',
 			example: '"The cat" groups into a noun phrase;\n"sat" tagged as past-tense verb.'
 		},
 		{
+			type: 'attention_ffn',
 			short: 'Clause structure & relationships',
-			attnDesc: '"sat" attends to "cat" ‚Üí identifies subject-verb link',
+			attnDesc: '"sat" attends to "cat" → identifies subject-verb link',
 			ffnDesc: 'Encodes who-did-what: agent="cat", action="sat", prep="on"',
-			example: '"cat" is the one sitting;\n"on" opens a prepositional phrase ‚Üí\nexpects a location next.'
+			example: '"cat" is the one sitting;\n"on" opens a prepositional phrase →\nexpects a location next.'
 		},
 		{
-			short: 'Next-token prediction',
-			attnDesc: '"on" attends to "cat sat" ‚Üí gathers full context for prediction',
-			ffnDesc: 'Boosts location nouns: "the" "a" "mat" "floor" rise; suppresses verbs',
-			example: 'on ‚Üí predicts "the" (42%),\n"a" (18%), "mat" (7%), ...'
+			type: 'unembedding',
+			short: 'Unembedding → Vocabulary',
+			desc: 'The final vector of "on" is multiplied by the unembedding matrix (transpose of the embedding matrix) to produce a score for every word in the vocabulary. The highest-scoring words become the most likely next-token predictions.',
+			example: '"on" vector × Unembedding →\n"the" (score 3.2, p=42%), "a" (1.8, 18%),\n"mat" (0.7, 7%), "floor" (0.5, 4%)'
 		},
 	],
 
@@ -735,7 +737,7 @@ const ResidualStreamViz = {
 			this.ctx.font = 'bold 12px system-ui';
 			this.ctx.fillStyle = themeColor('#1e293b');
 			this.ctx.textAlign = 'center';
-			this.ctx.fillText('→ Compare result to all words in the dictionary to chose the next most likely ones', centerX + 100, endY + 10);
+			this.ctx.fillText('→ Unembedding: compare residual to every word vector → pick the most likely next word', centerX + 100, endY + 10);
 			this.ctx.globalAlpha = 1;
 		}
 	},
@@ -749,15 +751,23 @@ const ResidualStreamViz = {
 
 		for (let l = 0; l <= this.numLayers; l++) {
 			const layout = this.calculateLayout(l);
+			const role = this.layerRoles[l];
 
 			this.drawLayerBackground(l, layout);
 			this.drawStream(l, layout);
-			this.drawVerticalStreamArrows(l, layout); // Added vertical flow
+			this.drawVerticalStreamArrows(l, layout);
 
-			if (l >= 1) {
+			if (role.type === 'attention_ffn') {
 				this.drawProcessingBlocks(l, layout);
 				this.drawMetadata(l, layout);
 				this.drawFlowArrows(l, layout);
+			} else if (role.type === 'unembedding') {
+				this.drawMetadata(l, layout);
+				this.drawUnembeddingBlock(l, layout);
+				this.drawUnembeddingArrow(l, layout);
+			} else {
+				// embedding layer: show explanation only
+				this.drawMetadata(l, layout);
 			}
 		}
 	},
@@ -795,18 +805,21 @@ const ResidualStreamViz = {
 
 		// Calculate how tall the metadata text will be
 		let metaHeight = 0;
-		if (l >= 1) {
-			// Attention: header + wrapped text
-			metaHeight += 25; // "Attention:" header + gap
+		if (role.type === 'attention_ffn') {
+			metaHeight += 25;
 			metaHeight += this.measureWrappedHeight(role.attnDesc, '14px system-ui', maxTextWidth, 18);
-			metaHeight += 15; // gap
-
-			// FFN: header + wrapped text
+			metaHeight += 15;
 			metaHeight += 25;
 			metaHeight += this.measureWrappedHeight(role.ffnDesc, '14px system-ui', maxTextWidth, 18);
 			metaHeight += 15;
-
-			// Example: header + wrapped text
+			metaHeight += 20;
+			metaHeight += this.measureWrappedHeight(role.example, 'bold 14px monospace', maxTextWidth - 5, 18);
+			metaHeight += 10;
+		} else {
+			// embedding or unembedding: generic description
+			metaHeight += 25;
+			metaHeight += this.measureWrappedHeight(role.desc, '14px system-ui', maxTextWidth, 18);
+			metaHeight += 15;
 			metaHeight += 20;
 			metaHeight += this.measureWrappedHeight(role.example, 'bold 14px monospace', maxTextWidth - 5, 18);
 			metaHeight += 10;
@@ -861,27 +874,47 @@ const ResidualStreamViz = {
 		ctx.globalAlpha = 1;
 		ctx.textAlign = 'left';
 
-		// Attention Text
-		ctx.font = 'bold 15px system-ui';
-		ctx.fillStyle = '#8b5cf6';
-		ctx.fillText('Attention:', descColX, dy + 5);
-		ctx.font = '14px system-ui';
-		ctx.fillStyle = themeColor('#475569');
-		this.drawWrappedText(role.attnDesc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
+		if (role.type === 'attention_ffn') {
+			// Attention Text
+			ctx.font = 'bold 15px system-ui';
+			ctx.fillStyle = '#8b5cf6';
+			ctx.fillText('Attention:', descColX, dy + 5);
+			ctx.font = '14px system-ui';
+			ctx.fillStyle = themeColor('#475569');
+			this.drawWrappedText(role.attnDesc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
 
-		// FFN Text
-		ctx.font = 'bold 15px system-ui';
-		ctx.fillStyle = '#d97706';
-		ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
-		ctx.font = '14px system-ui';
-		ctx.fillStyle = themeColor('#475569');
-		this.drawWrappedText(role.ffnDesc, descColX, dy + 80, '14px system-ui', '#475569', maxTextWidth, 18);
+			// FFN Text
+			ctx.font = 'bold 15px system-ui';
+			ctx.fillStyle = '#d97706';
+			ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
+			ctx.font = '14px system-ui';
+			ctx.fillStyle = themeColor('#475569');
+			this.drawWrappedText(role.ffnDesc, descColX, dy + 80, '14px system-ui', '#475569', maxTextWidth, 18);
 
-		// Example Text
-		ctx.font = 'bold 14px monospace';
-		ctx.fillStyle = '#10b981';
-		ctx.fillText('Example:', descColX, dy + 115);
-		this.drawWrappedText(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', maxTextWidth - 5, 18);
+			// Example Text
+			ctx.font = 'bold 14px monospace';
+			ctx.fillStyle = '#10b981';
+			ctx.fillText('Example:', descColX, dy + 115);
+			this.drawWrappedText(role.example, descColX + 5, dy + 135, 'bold 14px monospace', '#10b981', maxTextWidth - 5, 18);
+		} else {
+			// embedding or unembedding: show a single description section
+			const title = role.type === 'embedding' ? 'Embedding:' : 'Unembedding:';
+			const titleColor = role.type === 'embedding' ? '#3b82f6' : '#ef4444';
+			ctx.font = 'bold 15px system-ui';
+			ctx.fillStyle = titleColor;
+			ctx.fillText(title, descColX, dy + 5);
+			ctx.font = '14px system-ui';
+			ctx.fillStyle = themeColor('#475569');
+			this.drawWrappedText(role.desc, descColX, dy + 25, '14px system-ui', '#475569', maxTextWidth, 18);
+
+			// Measure where description ends
+			const descH = this.measureWrappedHeight(role.desc, '14px system-ui', maxTextWidth, 18);
+			const exY = dy + 30 + descH + 5;
+			ctx.font = 'bold 14px monospace';
+			ctx.fillStyle = '#10b981';
+			ctx.fillText('Example:', descColX, exY);
+			this.drawWrappedText(role.example, descColX + 5, exY + 20, 'bold 14px monospace', '#10b981', maxTextWidth - 5, 18);
+		}
 	},
 
 	drawWrappedText: function(text, x, y, font, color, maxWidth, lineH) {
@@ -1015,6 +1048,64 @@ const ResidualStreamViz = {
 		}
 	},
 
+	drawUnembeddingBlock: function(l, layout) {
+		const { yBase, streamX, vecW, tokenBlockH, alpha, isCurrent, cellW, cellH } = layout;
+		const boxH = tokenBlockH + 15;
+		const unembedW = vecW + 40;
+		const unembedX = streamX + vecW + 60;
+
+		this.drawModuleBox(unembedX, yBase + 5, unembedW, boxH, '#fef2f2', isCurrent ? '#ef4444' : '#e2e8f0', alpha);
+
+		if (isCurrent) {
+			const ctx = this.ctx;
+			ctx.font = 'bold 12px system-ui';
+			ctx.fillStyle = '#ef4444';
+			ctx.textAlign = 'center';
+			ctx.fillText('Unembedding', unembedX + unembedW / 2, yBase + boxH / 2 - 6);
+			ctx.font = '11px system-ui';
+			ctx.fillStyle = themeColor('#64748b');
+			ctx.fillText('(score × vocab)', unembedX + unembedW / 2, yBase + boxH / 2 + 12);
+		}
+	},
+
+	drawUnembeddingArrow: function(l, layout) {
+		if (!layout.isActive) return;
+		const { yBase, streamX, vecW, isCurrent, tokenBlockH } = layout;
+		const arrowAlpha = isCurrent ? 0.85 : 0.3;
+		const arrowLW = isCurrent ? 2 : 1.2;
+		const streamRightX = streamX + vecW;
+		const unembedW = vecW + 40;
+		const unembedX = streamX + vecW + 60;
+
+		// Arrow from stream to unembedding
+		this.drawCurvedArrow(streamRightX + 5, yBase + 15, unembedX + 5, yBase + 15, -20, '#ef4444', arrowLW, arrowAlpha);
+
+		// Return arrow from unembedding back to stream
+		const startX = unembedX + (unembedW / 2);
+		const startY = yBase + tokenBlockH + 15;
+		const returnY = yBase + tokenBlockH + 40;
+		const centerX = streamX + vecW / 2;
+
+		this.ctx.globalAlpha = arrowAlpha;
+		this.ctx.beginPath();
+		this.ctx.moveTo(startX, startY);
+		this.ctx.bezierCurveTo(startX, returnY + 20, centerX + 40, returnY + 20, centerX, returnY + 10);
+		this.ctx.strokeStyle = '#10b981';
+		this.ctx.lineWidth = arrowLW;
+		this.ctx.stroke();
+
+		if (isCurrent) {
+			this.ctx.globalAlpha = 1;
+			this.ctx.fillStyle = '#10b981';
+			this.ctx.beginPath();
+			this.ctx.arc(centerX, returnY + 10, 8, 0, Math.PI * 2);
+			this.ctx.fill();
+			this.ctx.fillStyle = themeColor('#fff');
+			this.ctx.textAlign = 'center';
+			this.ctx.fillText('+', centerX, returnY + 14);
+		}
+	},
+
 	drawVector: function (vec, x, y, cellW, cellH, hue, alpha) {
 		const ctx = this.ctx;
 		const maxAbs = Math.max(...vec.map(Math.abs), 0.001);
@@ -1040,6 +1131,7 @@ const ResidualStreamViz = {
 		const cellW = 6;
 		const streamX = 150;
 		const vecW = this.dims * (cellW + 1);
+		const curRole = this.layerRoles[this.currentLayer];
 
 		ctx.font = 'bold 18px system-ui, sans-serif';
 		ctx.fillStyle = themeColor('#1e293b');
@@ -1053,11 +1145,18 @@ const ResidualStreamViz = {
 		ctx.fillStyle = themeColor('#64748b');
 		ctx.fillText('RESIDUAL x', streamX + vecW / 2, this.topPad - 5);
 
-		ctx.fillStyle = '#8b5cf6';
-		ctx.fillText('ATTENTION', streamX + vecW + 65, this.topPad - 5);
-
-		ctx.fillStyle = '#d97706';
-		ctx.fillText('FFN', streamX + vecW + 165, this.topPad - 5);
+		if (curRole && curRole.type === 'unembedding') {
+			ctx.fillStyle = '#ef4444';
+			ctx.fillText('UNEMBEDDING × VOCABULARY', streamX + vecW + 110, this.topPad - 5);
+		} else if (curRole && curRole.type === 'embedding') {
+			ctx.fillStyle = '#3b82f6';
+			ctx.fillText('INPUT EMBEDDINGS', streamX + vecW + 110, this.topPad - 5);
+		} else {
+			ctx.fillStyle = '#8b5cf6';
+			ctx.fillText('ATTENTION', streamX + vecW + 65, this.topPad - 5);
+			ctx.fillStyle = '#d97706';
+			ctx.fillText('FFN', streamX + vecW + 165, this.topPad - 5);
+		}
 	},
 	
 	_updateInfo: function () {
@@ -1066,13 +1165,13 @@ const ResidualStreamViz = {
 		if (!infoDiv) return;
 
 		const descriptions = [
-			'The residual stream starts with <b>raw embeddings</b>. "The", "cat", "sat", "on" are just lookup vectors — no grammar, no meaning, no context. Everything that follows will be <b>added</b> to these vectors.',
+			'The residual stream starts with <b>raw embeddings</b>. "The", "cat", "sat", "on" are just lookup vectors — no grammar, no meaning, no context. Each token is independently mapped to a point in embedding space. Everything that follows will be <b>added</b> to these vectors.',
 
 			'<b>Layer 1 — Local syntax & word roles.</b> Attention heads look at adjacent tokens: "cat" attends to "The" and recognizes it\'s part of a definite noun phrase. The FFN fires part-of-speech detectors — tagging "cat" as a noun and "sat" as a past-tense verb. These features are <b>added</b> to the residual stream.',
 
 			'<b>Layer 2 — Clause structure & relationships.</b> Attention now connects "sat" back to "cat" — identifying the subject-verb dependency (who did the sitting?). The FFN encodes thematic roles: "cat" = agent, "sat" = action, "on" = preposition expecting a location. The stream now carries grammatical structure.',
 
-			'<b>Layer 3 — Next-token prediction.</b> "on" attends broadly to "The cat sat" to gather full sentence context. The FFN sharpens the output distribution: location-related words like "the", "a", "mat", "floor" get boosted while verbs and adjectives are suppressed. The final residual vector at "on" is ready to be projected onto the vocabulary.'
+			'<b>Layer 3 — Unembedding.</b> This is NOT an attention or FFN layer. The final residual vector of "on" is multiplied by the <b>unembedding matrix</b> (the transpose of the embedding matrix). This produces a score for every word in the vocabulary — measuring how close the final vector is to each word\'s learned embedding. A softmax converts scores to probabilities, and the next word is sampled from this distribution.'
 		];
 
 		infoDiv.innerHTML = `
@@ -1086,7 +1185,11 @@ const ResidualStreamViz = {
 		if (slider) slider.value = this.currentLayer;
 
 		const label = document.getElementById('residual-stream-layer-label');
-		if (label) label.textContent = this.currentLayer === 0 ? 'Embedding' : `Layer ${this.currentLayer}`;
+		if (label) {
+			if (this.currentLayer === 0) label.textContent = 'Embedding';
+			else if (this.currentLayer === this.numLayers) label.textContent = 'Unembedding';
+			else label.textContent = `Layer ${this.currentLayer}`;
+		}
 
 		const prevBtn = document.getElementById('residual-stream-prev');
 		const nextBtn = document.getElementById('residual-stream-next');
@@ -1691,7 +1794,9 @@ function runAttention() {
 		hovermode: 'closest',
 		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: themeColor('#e2e8f0') },
 		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: themeColor('#e2e8f0') },
-		showlegend: false
+		showlegend: false,
+		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
 	};
 
 	Plotly.react(container, traces, layout);
