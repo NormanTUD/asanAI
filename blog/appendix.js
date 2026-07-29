@@ -52,6 +52,8 @@ function initTaylorSeries() {
 			xaxis: { title: 'θ (radians)', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
 			yaxis: { title: 'Value', range: [-3, 3], zeroline: true },
 			legend: { orientation: 'h', y: -0.25 },
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 		};
 
 		Plotly.react('plot-taylor', data, layout);
@@ -151,7 +153,9 @@ function initGroupStructureDemo() {
 				text: 'M<sub>'+a+'</sub> · M<sub>'+b+'</sub> = M<sub>'+ab+
 				'</sub>   |   M<sub>'+a+'</sub> · M<sub>'+invA+'</sub> = M<sub>0</sub> = I',
 				font:{ size:13, color:themeColor('#475569') }
-			}]
+			}],
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff')
 		};
 
 		Plotly.newPlot('group-axioms-chart', traces, layout, { responsive:true });
@@ -194,7 +198,9 @@ function initGroupStructureDemo() {
 			xaxis:{ title:'Mⱼ', side:'bottom' },
 			yaxis:{ title:'Mᵢ', autorange:'reversed' },
 			margin:{ t:50, b:60, l:60, r:20 },
-			annotations:ann
+			annotations:ann,
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff')
 		};
 
 		Plotly.newPlot('group-cayley-chart', [trace], layout, { responsive:true });
@@ -1635,6 +1641,14 @@ async function loadAppendixModule() {
     });
 
     _appLazyCreateObserver();
+
+    // Re-render every initialised plot when the user toggles dark/light mode
+    // so that themeColor() picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _appLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 
     return Promise.resolve();
 }

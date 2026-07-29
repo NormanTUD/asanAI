@@ -88,17 +88,19 @@ const MinimalLab = {
 
 		const lossChart = document.getElementById('lin-loss-chart');
 		if (lossChart && typeof Plotly !== 'undefined') {
-			const layout = { 
-				margin: {t:30, b:30, l:40, r:10}, 
-				title: 'Loss History', 
-				yaxis: {type: 'log'}, 
-				autosize: true 
+			const layout = {
+				margin: {t:30, b:30, l:40, r:10},
+				title: 'Loss History',
+				yaxis: {type: 'log'},
+				autosize: true,
+				paper_bgcolor: themeColor('#fff'),
+				plot_bgcolor: themeColor('#fff')
 			};
-			Plotly.react('lin-loss-chart', [{ 
-				x: c.loss.map((_, i) => i), 
-				y: c.loss, 
-				type: 'scatter', 
-				line: {color: '#ef4444'} 
+			Plotly.react('lin-loss-chart', [{
+				x: c.loss.map((_, i) => i),
+				y: c.loss,
+				type: 'scatter',
+				line: {color: '#ef4444'}
 			}], layout);
 		}
 
@@ -114,7 +116,7 @@ const MinimalLab = {
 			Plotly.react('lin-data-chart', [
 				{x: xData, y: yData, mode: 'markers', name: 'Actual'},
 				{x: testX, y: Array.from(predY), mode: 'lines', name: 'Model'}
-			], { margin: {t:30, b:30, l:30, r:10}, title: 'Model vs. data points' });
+			], { margin: {t:30, b:30, l:30, r:10}, title: 'Model vs. data points', paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff') });
 		}
 
 		const mon = document.getElementById('lin-math-monitor');
@@ -200,6 +202,14 @@ async function loadMinimalNeuronModule() {
 
     // Start observing
     _mnLazyCreateObserver();
+
+    // Re-render plots when the user toggles dark/light mode so themeColor()
+    // picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _mnLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 
     return Promise.resolve();
 }

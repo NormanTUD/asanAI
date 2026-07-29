@@ -282,7 +282,8 @@ const EmbeddingViz = {
             xaxis: { title: 'Dimension 1', range: [-10, 12], gridcolor: themeColor('#f1f5f9'), zeroline: true, zerolinecolor: themeColor('#e2e8f0') },
             yaxis: { title: 'Dimension 2', range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zeroline: true, zerolinecolor: themeColor('#e2e8f0'), scaleanchor: 'x' },
             annotations: annotations,
-            plot_bgcolor: themeColor('#fff')
+            plot_bgcolor: themeColor('#fff'),
+            paper_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -405,7 +406,8 @@ const PositionalEncodingViz = {
             yaxis: { title: 'Encoding Value', range: [-1.3, 1.3], gridcolor: themeColor('#f1f5f9') },
             showlegend: true,
             legend: { x: 1, y: 1, xanchor: 'right', bgcolor: 'rgba(255,255,255,0.9)', font: { size: 10 } },
-            plot_bgcolor: themeColor('#fff')
+            plot_bgcolor: themeColor('#fff'),
+            paper_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -445,7 +447,8 @@ const PositionalEncodingViz = {
             margin: { l: 60, r: 20, b: 50, t: 10 },
             xaxis: { title: 'Embedding Dimension' },
             yaxis: { title: 'Token Position', autorange: 'reversed' },
-            plot_bgcolor: themeColor('#fff')
+            plot_bgcolor: themeColor('#fff'),
+            paper_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
@@ -1232,6 +1235,7 @@ const PredictionViz = {
                 tickfont: { size: 12 }
             },
             plot_bgcolor: themeColor('#fff'),
+            paper_bgcolor: themeColor('#fff'),
             bargap: 0.15
         };
 
@@ -1977,4 +1981,12 @@ function loadIntuitionModule() {
 
     // Start observing everything
     _lazyCreateObserver();
+
+    // Re-render every initialised section when the user toggles dark/light mode
+    // so that themeColor() picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _lazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 }

@@ -161,7 +161,9 @@ const DeepLab = {
 						margin: { t: 10, r: 10, b: 30, l: 40 },
 						uirevision: 'true',
 						xaxis: { title: 'Epoch' },
-						yaxis: { title: 'Loss' }
+						yaxis: { title: 'Loss' },
+						paper_bgcolor: themeColor('#fff'),
+						plot_bgcolor: themeColor('#fff')
 					});
 				}
 			} else {
@@ -169,7 +171,9 @@ const DeepLab = {
 				Plotly.newPlot(chartEl, [{ x: [], y: [], type: 'scatter' }], {
 					margin: { t: 10, r: 10, b: 30, l: 40 },
 					xaxis: { title: 'Epoch', range: [0, 100] },
-					yaxis: { title: 'Loss', range: [0, 1] }
+					yaxis: { title: 'Loss', range: [0, 1] },
+					paper_bgcolor: themeColor('#fff'),
+					plot_bgcolor: themeColor('#fff')
 				});
 			}
 		}
@@ -223,7 +227,7 @@ const DeepLab = {
 		const x = c.data.map(r => r[0]), y = c.data.map(r => r[1]);
 		const tx = []; for(let i=0; i<=6; i+=0.5) tx.push(i);
 		const py = c.model.predict(tensor2d(tx, [tx.length, 1])).dataSync();
-		Plotly.react('lin-data-chart', [{x, y, mode:'markers', name:'Data'}, {x:tx, y:Array.from(py), mode:'lines', name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression', autosize:true}, {responsive:true});
+		Plotly.react('lin-data-chart', [{x, y, mode:'markers', name:'Data'}, {x:tx, y:Array.from(py), mode:'lines', name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression', autosize:true, paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff')}, {responsive:true});
 	},
 
 	plotDeepData: function(force = false) {
@@ -254,7 +258,7 @@ const DeepLab = {
 						line: {color: 'black', width: 2}
 					}
 				},
-			], { margin:{t:30,b:30,l:30,r:10}, title: 'Decision Boundary', xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]}, autosize: true }, {responsive: true});
+			], { margin:{t:30,b:30,l:30,r:10}, title: 'Decision Boundary', xaxis: {range: [-0.1, 1.1]}, yaxis: {range: [-0.1, 1.1]}, autosize: true, paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff') }, {responsive: true});
 		});
 	},
 
@@ -387,6 +391,16 @@ async function loadDeepLearningModule() {
 
     // Start observing
     _dlLazyCreateObserver();
+
+    // Re-render plots when the user toggles dark/light mode so themeColor()
+    // picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            try { DeepLab.plotLinData(); } catch (e) { /* ignore */ }
+            try { DeepLab.plotDeepData(true); } catch (e) { /* ignore */ }
+            _dlLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 
     return Promise.resolve();
 }
