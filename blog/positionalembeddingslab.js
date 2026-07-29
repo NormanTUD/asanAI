@@ -82,6 +82,8 @@ function initSineCosine() {
 				{ x: 0.32 * Math.cos(theta / 2), y: 0.32 * Math.sin(theta / 2), text: 'θ', showarrow: false, font: { size: 14, color: '#f59e0b', family: 'serif' } },
 				{ x: 3.0, y: -1.35, text: 'sin wave "unrolled" →', showarrow: false, font: { size: 11, color: themeColor('#94a3b8') } },
 			],
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 		};
 
 		Plotly.react('plot-unit-circle', data, layout);
@@ -128,6 +130,8 @@ function initSineCosine() {
 			xaxis: { title: 'θ (radians)', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
 			yaxis: { title: 'Value', range: [-3.5, 3.5], zeroline: true },
 			legend: { orientation: 'h', y: -0.25 },
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 		};
 
 		Plotly.react('plot-sincos-wave', data, layout);
@@ -240,7 +244,9 @@ const PositionalLab = {
 				y0: -1.1,
 				y1: 1.1,
 				line: { color: 'rgba(0,0,0,0.2)', width: 1, dash: 'dot' }
-			}]
+			}],
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 		};
 
 		Plotly.newPlot('pe-chart', traces, layout, {responsive: true});
@@ -407,7 +413,9 @@ function initRepetitionStarburstDemo() {
             x: 0.5, y: -0.05,
             xref: 'paper', yref: 'paper',
             font: { size: 12, color: themeColor('#475569') }
-        }]
+        }],
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff'),
     };
 
     Plotly.newPlot('repetition-starburst', traces, layout, { responsive: true });
@@ -511,7 +519,9 @@ function initHelixManifoldDemo() {
 			x: 0.5, y: -0.05,
 			xref: 'paper', yref: 'paper',
 			font: { size: 13, color: themeColor('#475569') }
-		}]
+		}],
+		paper_bgcolor: themeColor('#fff'),
+		plot_bgcolor: themeColor('#fff'),
 	};
 
 	Plotly.newPlot('helix-manifold', traces, layout, { responsive: true });
@@ -589,6 +599,14 @@ async function loadPositionalEmbeddingsModule() {
 
     // Start observing
     _peLazyCreateObserver();
+
+    // Re-render every initialised plot when the user toggles dark/light mode
+    // so that themeColor() picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _peLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 
     return Promise.resolve();
 }

@@ -453,6 +453,14 @@ async function loadNormalizationModule() {
 
     _normLazyCreateObserver();
 
+    // Re-render plots when the user toggles dark/light mode so themeColor()
+    // picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            try { NormLab.process(); } catch (e) { /* ignore */ }
+        });
+    }
+
     return Promise.resolve();
 }
 

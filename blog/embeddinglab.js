@@ -1436,7 +1436,8 @@ function renderRotationalInvariance() {
 		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9') },
 		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
 		annotations: annotations,
-		plot_bgcolor: themeColor('#fff')
+		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
 	};
 
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -1791,7 +1792,8 @@ function renderCrossLingualFrame() {
 		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9') },
 		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
 		annotations: annotations,
-		plot_bgcolor: themeColor('#fff')
+		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
 	};
 
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2156,7 +2158,8 @@ function renderMetricTensor(animate = false) {
             fixedrange: true
         },
         annotations: annotations,
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true }).then(() => {
@@ -2374,7 +2377,8 @@ function renderParallelogram() {
         xaxis: { range: [-25, 35], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9') },
         yaxis: { range: [-20, 22], zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
         annotations: annotations,
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2537,7 +2541,8 @@ function renderScaleInvariance() {
         xaxis: { range: [-20, 30], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: true, gridcolor: themeColor('#f1f5f9') },
         yaxis: { range: [-5, 22], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x' },
         annotations: annotations,
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2786,7 +2791,8 @@ function renderPlatonicHypothesis() {
             scaleanchor: 'x'
         },
         annotations: annotations,
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -3076,6 +3082,7 @@ function renderAnisotropy() {
 		xaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: false, scaleanchor: 'y' },
 		yaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: themeColor('#e2e8f0'), showgrid: false },
 		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
 		title: { text: 'Embedding Vectors', font: { size: 13, color: themeColor('#64748b') } }
 	}, { displayModeBar: false, responsive: true });
 
@@ -3093,6 +3100,7 @@ function renderAnisotropy() {
 		xaxis: { title: 'Cosine Similarity', range: [-1.05, 1.05], dtick: 0.25 },
 		yaxis: { title: 'Pair Count' },
 		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
 		bargap: 0.05,
 		title: { text: 'Pairwise Cosine Similarities', font: { size: 13, color: themeColor('#64748b') } }
 	}, { displayModeBar: false, responsive: true });
@@ -3291,7 +3299,8 @@ function renderSuperposition() {
             range: [-0.25, 1.5], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
             showgrid: true, gridcolor: themeColor('#f1f5f9'), dtick: 0.5
         },
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     }, { displayModeBar: false, responsive: true });
 
     // ---- Stats cards ----
@@ -3717,7 +3726,8 @@ function renderICL() {
             showgrid: true, gridcolor: themeColor('#f1f5f9'), scaleanchor: 'x', title: ''
         },
         annotations: annotations,
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -4114,7 +4124,8 @@ function renderNegation() {
 			scaleanchor: 'x', title: ''
 		},
 		annotations: annotations,
-		plot_bgcolor: themeColor('#fff')
+		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
 	};
 
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -4528,7 +4539,8 @@ function renderHyperbolicEmbedding() {
             showgrid: curvature < 0.25,
             gridcolor: themeColor('#f1f5f9'), showticklabels: false
         },
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     }, { displayModeBar: false, responsive: true });
 
     // ── 7. Stats panel ──
@@ -4855,7 +4867,8 @@ function renderTopologyCones() {
             range: [-1.35, 1.35], zeroline: true, zerolinecolor: themeColor('#e2e8f0'),
             showgrid: false, showticklabels: false
         },
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     }, { displayModeBar: false, responsive: true });
 
     // --- Stats ---
@@ -5286,7 +5299,8 @@ function renderFractalFolding() {
             showticklabels: false
         },
         annotations: annotations,
-        plot_bgcolor: themeColor('#fff')
+        plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -5549,6 +5563,7 @@ function renderHolographic() {
         xaxis: { zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), showticklabels: false },
         yaxis: { zeroline: false, showgrid: true, gridcolor: themeColor('#f1f5f9'), showticklabels: false, scaleanchor: 'x' },
         plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
         title: { text: 'Concept Positions (2D projection)', font: { size: 12, color: themeColor('#64748b') } }
     }, { displayModeBar: false, responsive: true });
 
@@ -5613,6 +5628,7 @@ function renderHolographic() {
         xaxis: { tickangle: -45, tickfont: { size: 9 } },
         yaxis: { tickfont: { size: 9 }, autorange: 'reversed' },
         plot_bgcolor: themeColor('#fff'),
+        paper_bgcolor: themeColor('#fff'),
         title: { text: 'Pairwise Cosine Similarity', font: { size: 12, color: themeColor('#64748b') } }
     }, { displayModeBar: false, responsive: true });
 
@@ -9158,4 +9174,20 @@ function loadEmbeddingModule() {
 
     // Start observing all registered sections
     _embLazyCreateObserver();
+
+    // Re-render every initialised plot when the user toggles dark/light mode
+    // so that themeColor() picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            // Re-render all embedding-space plots (1d, 2d, 3d, comparison).
+            spaceTasks.forEach(task => {
+                try {
+                    if (task.type === 'space') renderSpace(task.key, null, [], fastConfig);
+                    else if (task.type === 'comparison3d') renderComparison3D(fastConfig);
+                } catch (e) { /* ignore */ }
+            });
+            // Re-run any initialised lazy-loaded renderers.
+            _embLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 }

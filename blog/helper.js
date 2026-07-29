@@ -1958,7 +1958,15 @@ window.__MN_DARK = {
 		'#fffef0': '#1e293b', // cream -> dark surface
 		'#fffef7': '#1e293b',
 		'#f8f6f0': '#1e293b',
-		'#fffb':   '#1e293b'
+		'#fffb':   '#1e293b',
+		// Additional light tints used by mechanistic_interpretability sections
+		'#f9f9ff': '#1e293b',
+		'#f9fff9': '#1e293b',
+		'#fff9f0': '#1e293b',
+		'#f9f0ff': '#1e293b',
+		'#f0fff0': '#1e293b',
+		'#f5f0ff': '#1e293b',
+		'#f0faf0': '#1e293b'
 	},
 	// Resolve a single colour through the swap map.
 	// Accepts hex strings, returns the dark-mode equivalent (or the

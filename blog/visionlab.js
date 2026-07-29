@@ -557,19 +557,19 @@ window.FeatureLab = {
 
 		const desc = this.presetDescriptions[filter.type] || "";
 		const kernelInputs = this.presets[filter.type].flat()
-			.map(v => `<input type="number" value="${v}" step="0.1" 
-				oninput="FeatureLab.runAll()" 
-				style="width:100%; font-size:0.7rem; text-align:center; padding:2px; border:1px solid #cbd5e1; border-radius:4px;">`)
+			.map(v => `<input type="number" value="${v}" step="0.1"
+				oninput="FeatureLab.runAll()"
+				style="width:100%; font-size:0.7rem; text-align:center; padding:2px; border:1px solid ${themeColor('#cbd5e1')}; border-radius:4px; background:${themeColor('#fff')}; color:${themeColor('#1e293b')};">`)
 			.join('');
 
 		const container = document.createElement('div');
 		container.className = "filter-card";
-		container.style = "background: white; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow 0.2s;";
+		container.style = `background: ${themeColor('#fff')}; padding: 14px; border-radius: 10px; border: 1px solid ${themeColor('#e2e8f0')}; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow 0.2s;`;
 		container.onmouseenter = () => container.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
 		container.onmouseleave = () => container.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
 		container.innerHTML = `
-			<div style="font-size:0.8rem; font-weight:600; margin-bottom:6px; color:#1e293b;">${filter.name}</div>
-			<div style="font-size:0.7rem; color:#64748b; margin-bottom:8px; line-height:1.4;">${desc}</div>
+			<div style="font-size:0.8rem; font-weight:600; margin-bottom:6px; color:${themeColor('#1e293b')};">${filter.name}</div>
+			<div style="font-size:0.7rem; color:${themeColor('#64748b')}; margin-bottom:8px; line-height:1.4;">${desc}</div>
 			<div id="matrix-${index}" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-bottom: 10px;">
 				${kernelInputs}
 			</div>
@@ -772,6 +772,14 @@ async function loadVisionModule() {
 
     // Start observing
     _visLazyCreateObserver();
+
+    // Re-render the feature filter cards when the user toggles dark/light mode
+    // so the inline-style backgrounds switch to the right palette.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            try { FeatureLab.renderInterface(); } catch (e) { /* ignore */ }
+        });
+    }
 
     console.info('[visionlab] loadVisionModule: lazy registration complete.');
     return Promise.resolve();

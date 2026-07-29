@@ -375,6 +375,37 @@ html.dark [style*="background:#f8f6f0"] {
 	background: var(--mn-surface) !important;
 }
 
+/* Light tinted linear-gradient backgrounds → dark surface */
+html.dark [style*="linear-gradient"][style*="#f0fdf4"],
+html.dark [style*="linear-gradient"][style*="#ecfdf5"],
+html.dark [style*="linear-gradient"][style*="#fff1f2"],
+html.dark [style*="linear-gradient"][style*="#fef2f2"],
+html.dark [style*="linear-gradient"][style*="#eff6ff"],
+html.dark [style*="linear-gradient"][style*="#f5f3ff"],
+html.dark [style*="linear-gradient"][style*="#fefce8"],
+html.dark [style*="linear-gradient"][style*="#fef9c3"],
+html.dark [style*="linear-gradient"][style*="#f8fafc"],
+html.dark [style*="linear-gradient"][style*="#f1f5f9"],
+html.dark [style*="linear-gradient"][style*="#f0f9ff"],
+html.dark [style*="linear-gradient"][style*="#faf5ff"],
+html.dark [style*="linear-gradient"][style*="#d1fae5"],
+html.dark [style*="linear-gradient"][style*="#e8f5e9"],
+html.dark [style*="linear-gradient"][style*="#e0f2fe"],
+html.dark [style*="linear-gradient"][style*="#dbeafe"],
+html.dark [style*="linear-gradient"][style*="#ede9fe"],
+html.dark [style*="linear-gradient"][style*="#dcfce7"],
+html.dark [style*="linear-gradient"][style*="#fafbff"],
+html.dark [style*="linear-gradient"][style*="#fafbfd"],
+html.dark [style*="linear-gradient"][style*="#f9fafb"],
+html.dark [style*="linear-gradient"][style*="#f0f0f0"],
+html.dark [style*="linear-gradient"][style*="#fffbeb"],
+html.dark [style*="linear-gradient"][style*="#fff3e0"],
+html.dark [style*="linear-gradient"][style*="#fff7ed"] {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+
 /* Progress track backgrounds (light grey) → dark raised */
 html.dark [style*="background:#334155"],
 html.dark [style*="background: #334155"] {

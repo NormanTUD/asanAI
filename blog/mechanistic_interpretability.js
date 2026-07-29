@@ -139,7 +139,7 @@
         const container = document.getElementById('circuits-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f9f9ff', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f9f9ff'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🔬 Interactive: Residual Stream & Component Contributions', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'This visualization shows how the residual stream accumulates contributions from each layer. <strong>Toggle components on/off</strong> to see how the final prediction changes. Each colored bar represents a component\'s additive contribution to the residual stream.'}, section);
 
@@ -288,7 +288,7 @@
         const container = document.getElementById('qkv-explorer-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f9fff9', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f9fff9'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🔍 Interactive: How Q, K, V Work Step by Step', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'Watch how a single <strong>query token</strong> ("sat") asks a question, and every token responds with its <strong>key</strong>. The match score (attention) determines how much <strong>value</strong> each token contributes to the output.'}, section);
 
@@ -329,7 +329,7 @@
             W_V = [0.7*vScale, 0.3*vScale, 0.0, 0.0, 0.3*vScale, 0.6*vScale, 0.1*vScale, 0.0, 0.0, 0.1*vScale, 0.5*vScale, 0.4*vScale, 0.0, 0.0, 0.4*vScale, 0.4*vScale];
         }
 
-        const infoPanel = createElement('div', {style: {marginTop: '12px', padding: '12px', background: '#fff', borderRadius: '6px', fontSize: '12px', lineHeight: '1.5', border: '1px solid #e0e0e0'}}, sliderPanel);
+        const infoPanel = createElement('div', {style: {marginTop: '12px', padding: '12px', background: themeColor('#ffffff'), borderRadius: '6px', fontSize: '12px', lineHeight: '1.5', border: '1px solid #e0e0e0'}}, sliderPanel);
 
         const tooltip = createElement('div', {style: {position: 'absolute', display: 'none', padding: '8px 12px', background: 'rgba(30,30,30,0.95)', color: '#fff', borderRadius: '6px', fontSize: '11px', fontFamily: 'monospace', pointerEvents: 'none', zIndex: '100', whiteSpace: 'nowrap', lineHeight: '1.6', border: '1px solid #555', maxWidth: '380px'}}, canvasPanel);
 
@@ -744,7 +744,7 @@
         const container = document.getElementById('superposition-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#fff9f0', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#fff9f0'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🌀 Interactive: Superposition & Feature Geometry', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'In <strong>superposition</strong>, a model packs more features than dimensions by using nearly-orthogonal directions. Adjust the number of features and model dimensions to see how features interfere with each other. When features outnumber dimensions, they can\'t all be perfectly orthogonal — this creates <em>interference</em>.'}, section);
 
@@ -763,7 +763,7 @@
         createSlider(sliderPanel, 'Feature Importance', 0.1, 3.0, 1.0, 0.1, (v) => { featureImportance = v; draw(); });
 
         // Info panel
-        const infoPanel = createElement('div', {style: {marginTop: '10px', padding: '10px', background: '#fff', borderRadius: '4px', fontSize: '12px'}}, sliderPanel);
+        const infoPanel = createElement('div', {style: {marginTop: '10px', padding: '10px', background: themeColor('#ffffff'), borderRadius: '4px', fontSize: '12px'}}, sliderPanel);
 
         const canvas = createCanvas(canvasPanel, 450, 400);
         const ctx = canvas.getContext('2d');
@@ -935,7 +935,7 @@
         const container = document.getElementById('composition-explorer-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f0f9ff', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f0f9ff'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🔗 Interactive: Head Composition (Q, K, V Composition)', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'This demonstrates how two attention heads compose. <strong>Head A</strong> (Layer 0) writes to the residual stream, and <strong>Head B</strong> (Layer 1) reads from it. Adjust the composition type and strengths to see how Head A\'s output influences Head B\'s behavior.'}, section);
 
@@ -974,7 +974,7 @@
         checkbox.addEventListener('change', () => { showWithout = checkbox.checked; draw(); });
 
         // Explanation panel
-        const explPanel = createElement('div', {style: {marginTop: '10px', padding: '10px', background: '#fff', borderRadius: '4px', fontSize: '12px', lineHeight: '1.5'}}, sliderPanel);
+        const explPanel = createElement('div', {style: {marginTop: '10px', padding: '10px', background: themeColor('#ffffff'), borderRadius: '4px', fontSize: '12px', lineHeight: '1.5'}}, sliderPanel);
 
         const canvas = createCanvas(canvasPanel, 500, 400);
         const ctx = canvas.getContext('2d');
@@ -1162,7 +1162,7 @@
         const container = document.getElementById('patching-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f9f0ff', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f9f0ff'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🔧 Interactive: Activation Patching', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'Activation patching reveals which components are <strong>causally important</strong> for a prediction. Click on any component to "patch" it (replace its corrupted activation with the clean one). Watch how the logit difference recovers!'}, section);
 
@@ -1200,7 +1200,7 @@
         const patchedState = new Array(importance.length).fill(false);
         let totalRecovery = 0;
 
-        const infoDiv = createElement('div', {style: {margin: '10px 0', padding: '10px', background: '#fff', borderRadius: '4px'}}, section);
+        const infoDiv = createElement('div', {style: {margin: '10px 0', padding: '10px', background: themeColor('#ffffff'), borderRadius: '4px'}}, section);
         infoDiv.innerHTML = `
             <strong>Clean input:</strong> "${cleanInput}" → predicts <span style="color:green;font-weight:bold">Paris</span><br>
             <strong>Corrupted input:</strong> "${corruptedInput}" → predicts <span style="color:red;font-weight:bold">Rome</span><br>
@@ -1210,7 +1210,7 @@
         const canvas = createCanvas(section, 700, 350);
         const ctx = canvas.getContext('2d');
 
-        const recoveryDiv = createElement('div', {style: {margin: '10px 0', padding: '15px', background: '#fff', borderRadius: '4px', fontSize: '16px', textAlign: 'center'}}, section);
+        const recoveryDiv = createElement('div', {style: {margin: '10px 0', padding: '15px', background: themeColor('#ffffff'), borderRadius: '4px', fontSize: '16px', textAlign: 'center'}}, section);
 
         // Reset button
         const resetBtn = createElement('button', {textContent: '🔄 Reset All Patches', style: {padding: '8px 16px', cursor: 'pointer', borderRadius: '4px', border: '1px solid #666', margin: '10px 0'}}, section);
@@ -1378,7 +1378,7 @@
         const container = document.getElementById('circuits-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f0fff0', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f0fff0'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🧠 Interactive: Induction Head Circuit in Action', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'Type a sequence with a repeated pattern (e.g., "A B C D A") and watch the induction head circuit predict what comes after the second "A". The <strong>previous-token head</strong> (Layer 0) identifies predecessors, and the <strong>induction head</strong> (Layer 1) uses that to complete the pattern.'}, section);
 
@@ -1393,7 +1393,7 @@
         const canvas = createCanvas(section, 700, 400);
         const ctx = canvas.getContext('2d');
 
-        const explanationDiv = createElement('div', {style: {margin: '10px 0', padding: '10px', background: '#fff', borderRadius: '4px', fontSize: '13px'}}, section);
+        const explanationDiv = createElement('div', {style: {margin: '10px 0', padding: '10px', background: themeColor('#ffffff'), borderRadius: '4px', fontSize: '13px'}}, section);
 
         function draw() {
             const tokens = input.value.trim().split(/\s+/);
@@ -1599,7 +1599,7 @@
         const container = document.getElementById('logit-lens-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f5f0ff', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f5f0ff'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '👁️ Interactive: The Logit Lens', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'This visualization simulates how a Transformer\'s prediction evolves layer by layer. <strong>Each layer</strong> decodes its residual stream into vocabulary probabilities. Early layers are diffuse and uncertain; later layers converge on the final answer. Drag the slider to see the prediction sharpen.'}, section);
 
@@ -1618,7 +1618,7 @@
             draw();
         });
 
-        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: '#fff', borderRadius: '8px', fontSize: '13px', lineHeight: '1.5'}}, sliderPanel);
+        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: themeColor('#ffffff'), borderRadius: '8px', fontSize: '13px', lineHeight: '1.5'}}, sliderPanel);
 
         const canvas = createCanvas(canvasPanel, 500, 300);
         const ctx = canvas.getContext('2d');
@@ -1700,7 +1700,7 @@
         const container = document.getElementById('grokking-container');
         if (!container) return;
 
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: '#f0faf0', borderRadius: '8px', margin: '20px 0'}}, container);
+        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f0faf0'), borderRadius: '8px', margin: '20px 0'}}, container);
         createElement('h3', {textContent: '🧩 Interactive: Grokking Modular Addition', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'This simulates how a small Transformer learns modular addition $a + b \\bmod 13$. <strong>Drag the training progress slider</strong> to watch the network transition from memorization to generalization. The clock visualization shows the learned Fourier features — when they align, the model "grokked" the algorithm.'}, section);
 
@@ -1718,7 +1718,7 @@
             draw();
         });
 
-        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: '#fff', borderRadius: '8px', fontSize: '13px', lineHeight: '1.6'}}, sliderPanel);
+        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: themeColor('#ffffff'), borderRadius: '8px', fontSize: '13px', lineHeight: '1.6'}}, sliderPanel);
 
         const canvas = createCanvas(canvasPanel, 500, 380);
         const ctx = canvas.getContext('2d');

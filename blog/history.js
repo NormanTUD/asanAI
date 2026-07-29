@@ -1,21 +1,28 @@
 function renderLinearSeparability() {
 	const layoutBase = {
-		xaxis: { 
-			title: 'Input A', 
-			range: [-0.5, 1.5], 
-			tickvals: [0, 1], 
+		xaxis: {
+			title: 'Input A',
+			range: [-0.5, 1.5],
+			tickvals: [0, 1],
 			ticktext: ['False (0)', 'True (1)'],
-			zeroline: false 
+			zeroline: false,
+			color: themeColor('#1e293b'),
+			gridcolor: themeColor('#f1f5f9')
 		},
-		yaxis: { 
-			title: 'Input B', 
-			range: [-0.5, 1.5], 
-			tickvals: [0, 1], 
+		yaxis: {
+			title: 'Input B',
+			range: [-0.5, 1.5],
+			tickvals: [0, 1],
 			ticktext: ['False (0)', 'True (1)'],
-			zeroline: false 
+			zeroline: false,
+			color: themeColor('#1e293b'),
+			gridcolor: themeColor('#f1f5f9')
 		},
 		margin: { l: 60, r: 40, b: 60, t: 40 },
-		showlegend: false
+		showlegend: false,
+		plot_bgcolor: themeColor('#fff'),
+		paper_bgcolor: themeColor('#fff'),
+		font: { color: themeColor('#1e293b') }
 	};
 
 	// OR Gate Data
@@ -32,8 +39,8 @@ function renderLinearSeparability() {
 	];
 
 	Plotly.newPlot('plot-or-gate', orData, { ...layoutBase, title: 'OR Gate: Linearly Separable' });
-	Plotly.newPlot('plot-xor-gate', xorData, { 
-		...layoutBase, 
+	Plotly.newPlot('plot-xor-gate', xorData, {
+		...layoutBase,
 		title: 'XOR Gate: NOT Separable',
 		annotations: [{
 			x: 0.5, y: 0.5, text: 'No single line can<br>separate these classes!',
@@ -46,4 +53,8 @@ async function loadHistoryModule() {
 	updateLoadingStatus("Loading section about History...");
 	renderLinearSeparability();
 	return Promise.resolve();
+}
+
+if (window.__MN_DARK) {
+	window.__MN_DARK.onChange(() => renderLinearSeparability());
 }

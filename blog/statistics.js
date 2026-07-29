@@ -3,57 +3,60 @@ let chainData = {};
 
 // ============================================================
 // UNIFIED PLOTLY THEME — The "Gorgeous" Foundation
+// Built fresh on each call so themeColor() reflects the current mode.
 // ============================================================
 
-const STAT_THEME = {
-    font: {
-        family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-        color: '#334155',
-        size: 13
-    },
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    colorway: [
-        '#6366f1', '#8b5cf6', '#a78bfa', '#c084fc',
-        '#e879f9', '#f472b6', '#fb7185', '#f97316',
-        '#eab308', '#22c55e', '#14b8a6', '#06b6d4'
-    ],
-    xaxis: {
-        gridcolor: 'rgba(148,163,184,0.12)',
-        zerolinecolor: 'rgba(148,163,184,0.25)',
-        linecolor: 'rgba(148,163,184,0.2)',
-        tickfont: { size: 11, color: themeColor('#64748b') },
-        title: { font: { size: 12, color: themeColor('#475569'), weight: 600 } }
-    },
-    yaxis: {
-        gridcolor: 'rgba(148,163,184,0.12)',
-        zerolinecolor: 'rgba(148,163,184,0.25)',
-        linecolor: 'rgba(148,163,184,0.2)',
-        tickfont: { size: 11, color: themeColor('#64748b') },
-        title: { font: { size: 12, color: themeColor('#475569'), weight: 600 } }
-    },
-    title: {
-        font: { size: 15, color: themeColor('#1e293b'), weight: 700 },
-        x: 0.03,
-        xanchor: 'left'
-    },
-    margin: { t: 48, b: 44, l: 52, r: 24 },
-    hoverlabel: {
-        bgcolor: themeColor('#1e293b'),
-        bordercolor: 'transparent',
-        font: { color: themeColor('#f8fafc'), size: 12, family: "'Inter', sans-serif" }
-    },
-    legend: {
-        bgcolor: 'rgba(255,255,255,0.85)',
-        bordercolor: 'rgba(148,163,184,0.2)',
-        borderwidth: 1,
-        font: { size: 11, color: themeColor('#475569') },
-        orientation: 'h',
-        y: -0.18,
-        x: 0.5,
-        xanchor: 'center'
-    }
-};
+function getStatTheme() {
+    return {
+        font: {
+            family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+            color: '#334155',
+            size: 13
+        },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        colorway: [
+            '#6366f1', '#8b5cf6', '#a78bfa', '#c084fc',
+            '#e879f9', '#f472b6', '#fb7185', '#f97316',
+            '#eab308', '#22c55e', '#14b8a6', '#06b6d4'
+        ],
+        xaxis: {
+            gridcolor: 'rgba(148,163,184,0.12)',
+            zerolinecolor: 'rgba(148,163,184,0.25)',
+            linecolor: 'rgba(148,163,184,0.2)',
+            tickfont: { size: 11, color: themeColor('#64748b') },
+            title: { font: { size: 12, color: themeColor('#475569'), weight: 600 } }
+        },
+        yaxis: {
+            gridcolor: 'rgba(148,163,184,0.12)',
+            zerolinecolor: 'rgba(148,163,184,0.25)',
+            linecolor: 'rgba(148,163,184,0.2)',
+            tickfont: { size: 11, color: themeColor('#64748b') },
+            title: { font: { size: 12, color: themeColor('#475569'), weight: 600 } }
+        },
+        title: {
+            font: { size: 15, color: themeColor('#1e293b'), weight: 700 },
+            x: 0.03,
+            xanchor: 'left'
+        },
+        margin: { t: 48, b: 44, l: 52, r: 24 },
+        hoverlabel: {
+            bgcolor: themeColor('#1e293b'),
+            bordercolor: 'transparent',
+            font: { color: themeColor('#f8fafc'), size: 12, family: "'Inter', sans-serif" }
+        },
+        legend: {
+            bgcolor: isDarkMode() ? 'rgba(30,41,59,0.85)' : 'rgba(255,255,255,0.85)',
+            bordercolor: 'rgba(148,163,184,0.2)',
+            borderwidth: 1,
+            font: { size: 11, color: themeColor('#475569') },
+            orientation: 'h',
+            y: -0.18,
+            x: 0.5,
+            xanchor: 'center'
+        }
+    };
+}
 
 const PLOTLY_CONFIG = {
     displayModeBar: false,
@@ -62,7 +65,7 @@ const PLOTLY_CONFIG = {
 };
 
 function mergeLayout(custom) {
-    const base = JSON.parse(JSON.stringify(STAT_THEME));
+    const base = JSON.parse(JSON.stringify(getStatTheme()));
     return deepMerge(base, custom);
 }
 
@@ -1476,9 +1479,10 @@ async function renderDirichletLab() {
         const layout = {
             ternary: {
                 sum: 1,
-                aaxis: { title: 'Science', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8') },
-                baxis: { title: 'Art', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8') },
-                caxis: { title: 'Sports', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8') }
+                bgcolor: 'rgba(0,0,0,0)',
+                aaxis: { title: 'Science', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8'), color: themeColor('#1e293b') },
+                baxis: { title: 'Art', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8'), color: themeColor('#1e293b') },
+                caxis: { title: 'Sports', min: 0.01, linewidth: 2, ticks: 'outside', tickcolor: themeColor('#94a3b8'), color: themeColor('#1e293b') }
             },
             margin: { t: 80, b: 40, l: 40, r: 40 },
             title: {
@@ -2396,6 +2400,14 @@ async function loadStatisticsModule() {
     _statLazyRegister('plot-gauss-calc', () => renderGaussCalc());
 
     _statLazyCreateObserver();
+
+    // Re-render every initialised plot when the user toggles dark/light mode
+    // so that themeColor() picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _statLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 
     return Promise.resolve();
 }
