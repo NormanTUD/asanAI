@@ -137,7 +137,21 @@
     "}",
     ".raglab-details p {",
     "  margin-top: 8px; line-height: 1.6;",
-    "}"
+    "}",
+
+    /* ── DARK MODE overrides ── */
+    "html.dark .raglab-diagram-box { color: #e2e8f0; }",
+    "html.dark pre.raglab-code-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark #raglab-search-card { background: linear-gradient(135deg, #0f172a, #1e293b) !important; border-color: #334155 !important; color: #e2e8f0; }",
+    "html.dark #raglab-search-card .raglab-search-desc { color: #94a3b8 !important; }",
+    "html.dark #raglab-query-input { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark #raglab-results-section { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark .raglab-result-item { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark .raglab-result-text { color: #cbd5e1; }",
+    "html.dark .raglab-details { color: #94a3b8; }",
+    "html.dark .raglab-result-section-header { background: #334155 !important; color: #e2e8f0 !important; }",
+    "html.dark .raglab-sim-bar-track { background: #334155; }",
+    "html.dark #raglab-pipeline-diagram .raglab-diagram-arrow { color: #94a3b8; }"
 
   ].join("\n");
   document.head.appendChild(css);

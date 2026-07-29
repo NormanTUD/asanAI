@@ -145,7 +145,24 @@
     "}",
     ".cwlab-details p {",
     "  margin-top: 8px; line-height: 1.6;",
-    "}"
+    "}",
+
+    /* ── DARK MODE overrides ── */
+    "html.dark .cwlab-tag-blue { background: #1e3a8a !important; color: #93c5fd !important; }",
+    "html.dark .cwlab-tag-green { background: #022c22 !important; color: #6ee7b7 !important; }",
+    "html.dark pre.cwlab-code-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark #cwlab-input-card { background: linear-gradient(135deg, #0f172a, #1e293b) !important; border-color: #334155 !important; color: #e2e8f0; }",
+    "html.dark #cwlab-input-card .cwlab-search-desc { color: #94a3b8 !important; }",
+    "html.dark #cwlab-add-msg-btn, html.dark #cwlab-add-rag-btn { background: #2563eb; }",
+    "html.dark #cwlab-reset-btn { background: #334155 !important; color: #e2e8f0 !important; border-color: #475569 !important; }",
+    "html.dark #cwlab-messages-area { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark #cwlab-results-section { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark .cwlab-msg-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark .cwlab-msg-block.user { background: #1e3a8a; color: #e2e8f0; }",
+    "html.dark .cwlab-msg-block.assistant { background: #1e293b; color: #e2e8f0; }",
+    "html.dark .cwlab-msg-block.system { background: #422006; color: #fef3c7; }",
+    "html.dark .cwlab-details { color: #94a3b8; }",
+    "html.dark .cwlab-viz-card { background: #1e293b; border-color: #334155; color: #e2e8f0; }"
 
   ].join("\n");
   document.head.appendChild(css);

@@ -139,7 +139,22 @@
     "}",
     ".vslab-details p {",
     "  margin-top: 8px; line-height: 1.6;",
-    "}"
+    "}",
+
+    /* ── DARK MODE overrides ── */
+    "html.dark .vslab-tag-keyword { background: #422006 !important; color: #fbbf24 !important; }",
+    "html.dark .vslab-tag-semantic { background: #1e1b4b !important; color: #c4b5fd !important; }",
+    "html.dark .vslab-tag-hybrid   { background: #022c22 !important; color: #6ee7b7 !important; }",
+    "html.dark pre.vslab-code-block { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark #vslab-input-card { background: linear-gradient(135deg, #1a1f2e, #1e293b) !important; border-color: #334155 !important; color: #e2e8f0; }",
+    "html.dark #vslab-input-card .vslab-search-desc { color: #94a3b8 !important; }",
+    "html.dark #vslab-query-input { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark #vslab-results-section { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+    "html.dark .vslab-result-item { background: #1e293b !important; border-color: #334155 !important; color: #e2e8f0; }",
+    "html.dark .vslab-result-text { color: #cbd5e1; }",
+    "html.dark .vslab-details { color: #94a3b8; }",
+    "html.dark .vslab-sim-bar-track { background: #334155; }",
+    "html.dark .vslab-hnsw-layer { border-color: #475569 !important; color: #e2e8f0; }"
 
   ].join("\n");
   document.head.appendChild(css);

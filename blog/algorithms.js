@@ -290,6 +290,8 @@ function renderFourierAlgorithm(container, options = {}) {
             margin: { t: 30, b: 50, l: 60, r: 20 },
             title: { text: `Both inputs on the unit circle (frequency k=${k})`, font: { size: 13 } },
             showlegend: true, legend: { x: 0.01, y: 0.99 }
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -380,6 +382,8 @@ function renderFourierAlgorithm(container, options = {}) {
 				margin: { t: 30, b: 50, l: 60, r: 20 },
 				title: { text: `Embedding space projection: frequency k=${k}`, font: { size: 13 } },
 				showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' }
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff')
 			}, { responsive: true });
 		}
 
@@ -485,6 +489,8 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { range: [-1.5, 1.5], zeroline: true, title: 'sin' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
             showlegend: true, legend: { x: 0.01, y: 0.99 }
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -533,6 +539,8 @@ function renderFourierAlgorithm(container, options = {}) {
 		    margin: { t: 40, b: 50, l: 55, r: 20 },
 		    shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }],
 		    showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+	    paper_bgcolor: themeColor('#fff'),
+	    plot_bgcolor: themeColor('#fff')
 	    }, { responsive: true });
     }});
 
@@ -623,6 +631,8 @@ function renderFourierAlgorithm(container, options = {}) {
 			yaxis: { range: [-2, 1.8], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
 			margin: { t: 20, b: 30, l: 20, r: 20 },
 			showlegend: true, legend: { x: 0.5, y: 1.1, orientation: 'h', xanchor: 'center' }
+		paper_bgcolor: themeColor('#fff'),
+		plot_bgcolor: themeColor('#fff')
 		}, { responsive: true });
 	}});
 
@@ -670,6 +680,8 @@ function renderFourierAlgorithm(container, options = {}) {
                 { type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }
             ],
             showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -718,6 +730,8 @@ function renderFourierAlgorithm(container, options = {}) {
             margin: { t: 20, b: 50, l: 30, r: 20 },
             shapes: [{ type: 'line', x0: correctAnswer, x1: correctAnswer, y0: -1, y1: 12.5, line: { color: '#ef4444', width: 1.5, dash: 'dash' } }],
             showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' }
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -763,6 +777,8 @@ function renderFourierAlgorithm(container, options = {}) {
             margin: { t: 20, b: 50, l: 55, r: 20 },
             shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }],
             showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -801,6 +817,8 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { title: 'Probability [%]', rangemode: 'tozero' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
             showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+        paper_bgcolor: themeColor('#fff'),
+        plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -962,7 +980,9 @@ function renderFourierAlgorithm(container, options = {}) {
 				margin: { t: 20, b: 50, l: 50, r: 20 },
 				showlegend: true,
 				legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' },
-				shapes: []
+				shapes: [],
+				paper_bgcolor: themeColor('#fff'),
+				plot_bgcolor: themeColor('#fff')
 			};
 
 			if (!isReliable) {
@@ -2462,6 +2482,15 @@ document.addEventListener('DOMContentLoaded', function() {
         renderAlgorithmicPrompting(container);
     }
 
+    // Re-render plots when the user toggles dark/light mode so themeColor()
+    // picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            try { renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 }); } catch (e) { /* ignore */ }
+            const c = document.getElementById('algorithmic-prompting-container');
+            if (c) { try { renderAlgorithmicPrompting(c); } catch (e) { /* ignore */ } }
+        });
+    }
 
 
     const iclContainer = document.getElementById('icl-execution-container');
