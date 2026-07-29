@@ -340,5 +340,13 @@ async function loadActivationModule() {
     // Start observing
     _actLazyCreateObserver();
 
+    // Re-render plots when the user toggles dark/light mode so themeColor()
+    // picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _actLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
+
     return Promise.resolve();
 }

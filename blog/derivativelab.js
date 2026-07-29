@@ -76,7 +76,9 @@ function initDerivativeLab() {
 			margin: { t: 10, b: 30, l: 30, r: 10 },
 			xaxis: { range: [-4, 4] },
 			yaxis: { range: [-2, 8] },
-			showlegend: false
+			showlegend: false,
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff')
 		});
 
 		controls.mathDisp.innerHTML = `
@@ -108,5 +110,14 @@ function initDerivativeLab() {
 async function loadDerivativeModule() {
 	updateLoadingStatus("Loading section about derivatives...");
 	initDerivativeLab();
+
+	// Re-render the plot when the user toggles dark/light mode so themeColor()
+	// picks up the new palette on the next call.
+	if (window.__MN_DARK) {
+		window.__MN_DARK.onChange(() => {
+			try { initDerivativeLab(); } catch (e) { /* ignore */ }
+		});
+	}
+
 	return Promise.resolve();
 }

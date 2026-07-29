@@ -289,9 +289,9 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { range: [-1.5, 1.5], zeroline: true, title: 'sin(w*n)' },
             margin: { t: 30, b: 50, l: 60, r: 20 },
             title: { text: `Both inputs on the unit circle (frequency k=${k})`, font: { size: 13 } },
-            showlegend: true, legend: { x: 0.01, y: 0.99 }
-        paper_bgcolor: themeColor('#fff'),
-        plot_bgcolor: themeColor('#fff')
+            showlegend: true, legend: { x: 0.01, y: 0.99 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -381,7 +381,7 @@ function renderFourierAlgorithm(container, options = {}) {
 				yaxis: { range: [-1.6, 1.6], zeroline: true, title: `sin(ω_${k} · n)` },
 				margin: { t: 30, b: 50, l: 60, r: 20 },
 				title: { text: `Embedding space projection: frequency k=${k}`, font: { size: 13 } },
-				showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' }
+				showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' },
 			paper_bgcolor: themeColor('#fff'),
 			plot_bgcolor: themeColor('#fff')
 			}, { responsive: true });
@@ -488,9 +488,9 @@ function renderFourierAlgorithm(container, options = {}) {
             xaxis: { range: [-1.5, 1.5], zeroline: true, scaleanchor: 'y', title: 'cos' },
             yaxis: { range: [-1.5, 1.5], zeroline: true, title: 'sin' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
-            showlegend: true, legend: { x: 0.01, y: 0.99 }
-        paper_bgcolor: themeColor('#fff'),
-        plot_bgcolor: themeColor('#fff')
+            showlegend: true, legend: { x: 0.01, y: 0.99 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
     }});
 
@@ -538,7 +538,7 @@ function renderFourierAlgorithm(container, options = {}) {
 		    yaxis: { title: `cos(w_${k} * (a+b-c))`, range: [-1.3, 1.4] },
 		    margin: { t: 40, b: 50, l: 55, r: 20 },
 		    shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }],
-		    showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+		    showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' },
 	    paper_bgcolor: themeColor('#fff'),
 	    plot_bgcolor: themeColor('#fff')
 	    }, { responsive: true });
@@ -630,7 +630,7 @@ function renderFourierAlgorithm(container, options = {}) {
 			xaxis: { range: [-8, 8], showgrid: false, zeroline: false, showticklabels: false },
 			yaxis: { range: [-2, 1.8], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
 			margin: { t: 20, b: 30, l: 20, r: 20 },
-			showlegend: true, legend: { x: 0.5, y: 1.1, orientation: 'h', xanchor: 'center' }
+			showlegend: true, legend: { x: 0.5, y: 1.1, orientation: 'h', xanchor: 'center' },
 		paper_bgcolor: themeColor('#fff'),
 		plot_bgcolor: themeColor('#fff')
 		}, { responsive: true });
@@ -679,7 +679,7 @@ function renderFourierAlgorithm(container, options = {}) {
                 { type: 'line', x0: 0, x1: P, y0: 0.9, y1: 0.9, line: { color: '#f59e0b', width: 1, dash: 'dot' } },
                 { type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }
             ],
-            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' },
         paper_bgcolor: themeColor('#fff'),
         plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
@@ -729,7 +729,7 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { showticklabels: false },
             margin: { t: 20, b: 50, l: 30, r: 20 },
             shapes: [{ type: 'line', x0: correctAnswer, x1: correctAnswer, y0: -1, y1: 12.5, line: { color: '#ef4444', width: 1.5, dash: 'dash' } }],
-            showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' }
+            showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' },
         paper_bgcolor: themeColor('#fff'),
         plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
@@ -776,7 +776,7 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { title: 'Total logit = sum of cos(wk*(a+b-c))' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
             shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: themeColor('#94a3b8'), width: 0.5 } }],
-            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' },
         paper_bgcolor: themeColor('#fff'),
         plot_bgcolor: themeColor('#fff')
         }, { responsive: true });
@@ -816,7 +816,7 @@ function renderFourierAlgorithm(container, options = {}) {
             xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
             yaxis: { title: 'Probability [%]', rangemode: 'tozero' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
-            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' },
         paper_bgcolor: themeColor('#fff'),
         plot_bgcolor: themeColor('#fff')
         }, { responsive: true });

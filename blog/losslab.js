@@ -33,6 +33,8 @@ function initLossLab() {
 			yaxis: { title: 'Loss Amount', range: [-5, 105] },
 			showlegend: false,
 			margin: { t: 20 },
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 			annotations: [{
 				x: yHat, y: currentLoss, text: 'AI', showarrow: true, arrowhead: 2, ax: (yHat > 5 ? 30 : -30), ay: -30
 			}, {
@@ -102,7 +104,9 @@ function initLossLab() {
 			xaxis: { title: 'Confidence in Category (0.0 to 1.0)', range: [0, 1] },
 			yaxis: { title: 'Loss Magnitude', range: [0, 5] }, // Fixed range prevents disappearing
 			showlegend: false,
-			margin: { t: 20 }
+			margin: { t: 20 },
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff')
 		});
 
 		render_temml();
@@ -119,5 +123,14 @@ function initLossLab() {
 async function loadLossModule() {
 	updateLoadingStatus("Loading section about losses...");
 	initLossLab();
+
+	// Re-render plots when the user toggles dark/light mode so themeColor()
+	// picks up the new palette on the next call.
+	if (window.__MN_DARK) {
+		window.__MN_DARK.onChange(() => {
+			try { initLossLab(); } catch (e) { /* ignore */ }
+		});
+	}
+
 	return Promise.resolve();
 }

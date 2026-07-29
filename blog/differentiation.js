@@ -60,6 +60,8 @@ function initSecantTangent() {
             xaxis: { title: 'x', range: [-1, 4], zeroline: true },
             yaxis: { title: 'f(x)', range: [-1, 10], zeroline: true },
             legend: { orientation: 'h', y: -0.2 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react('plot-secant-tangent', data, layout);
@@ -187,6 +189,8 @@ function initDerivRulesExplorer() {
             xaxis: { title: 'x', range: r.range, zeroline: true },
             yaxis: { title: 'y', range: r.yrange, zeroline: true },
             legend: { orientation: 'h', y: -0.2 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react('plot-deriv-rules', data, layout);
@@ -244,6 +248,8 @@ function initTangentLineExplorer() {
             xaxis: { title: 'x', range: [-3, 3], zeroline: true },
             yaxis: { title: 'f(x)', range: [-5, 5], zeroline: true },
             legend: { orientation: 'h', y: -0.2 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react('plot-tangent-line', data, layout);
@@ -287,6 +293,8 @@ function initChainRuleDemo() {
             xaxis: { title: 'x', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
             yaxis: { title: 'y', range: [-yMax, yMax], zeroline: true },
             legend: { orientation: 'h', y: -0.2 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff'),
         };
 
         Plotly.react('plot-chain-rule', data, layout);
@@ -366,6 +374,8 @@ function initGradientSurface() {
             xaxis: { title: 'x', range: [-3.5, 3.5], zeroline: true },
             yaxis: { title: 'y', range: [-3.5, 3.5], zeroline: true, scaleanchor: 'x', scaleratio: 1 },
             legend: { orientation: 'h', y: -0.15 },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff'),
             annotations: [
                 {
                     x: px + negGradX,
@@ -474,6 +484,14 @@ async function loadDerivativesModule() {
 
     // Start observing
     _diffLazyCreateObserver();
+
+    // Re-render plots when the user toggles dark/light mode so themeColor()
+    // picks up the new palette on the next call.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            _diffLazyRegistry.forEach(r => { if (r.initialized) { try { r.initFn(); } catch (e) { /* ignore */ } } });
+        });
+    }
 
     return Promise.resolve();
 }
