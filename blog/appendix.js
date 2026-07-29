@@ -515,7 +515,8 @@ function renderLayerWave() {
     if (scanVal) scanVal.textContent = `${Math.round(st.scanLayer)} / ${depth - 1}`;
 
     // ── Clear ──
-    ctx.fillStyle = themeColor('#0f172a');
+    // Canvas bg stays dark navy in BOTH modes (themeColor would swap to light gray in dark mode)
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, W, H);
 
     // Layout: top 45% = heatmap, bottom 55% = wave curve
@@ -1201,7 +1202,8 @@ function renderIsosurface() {
     if (stepVal) stepVal.textContent = `${step} / ${sent.tokens.length - 1}`;
 
     // ── Clear ──
-    ctx.fillStyle = themeColor('#0f172a');
+    // Canvas bg stays dark navy in BOTH modes (themeColor would swap to light gray in dark mode)
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, W, H);
 
     // ── Grid ──

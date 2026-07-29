@@ -1,5 +1,6 @@
 html {
 	background: #ffffff;
+	color: #1e293b;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
@@ -54,6 +55,7 @@ html {
    ════════════════════════════════════════════════════════ */
 html.dark {
 	background: #0f172a;
+	color: #e2e8f0;
 	color-scheme: dark;
 	--mn-bg: #0f172a;
 	--mn-bg-subtle: #1e293b;
@@ -461,6 +463,57 @@ html.dark .interactive-section label {
 	color: var(--mn-text) !important;
 }
 
+/* ── Targeted overrides for problem areas ──────────────────────────────── */
+
+/* Appendix — Heartbeat Analogy + Tube System sections.
+   These <section> wrappers and inner info panels still had white-ish bgs. */
+html.dark #wave-info-panel,
+html.dark #iso-sentence-panel {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark #wave-info-panel div,
+html.dark #wave-info-panel hr,
+html.dark #iso-sentence-panel div,
+html.dark #iso-sentence-panel hr {
+	color: var(--mn-text) !important;
+	border-color: var(--mn-border) !important;
+}
+html.dark #wave-info-panel div[style*="color: #1e293b"],
+html.dark #iso-sentence-panel div[style*="color: #1e293b"] {
+	color: var(--mn-text) !important;
+}
+html.dark #wave-info-panel div[style*="color: #475569"],
+html.dark #iso-sentence-panel div[style*="color: #475569"] {
+	color: var(--mn-text-secondary) !important;
+}
+
+/* Promptengineering — "17 sheep" lab container and output box */
+html.dark #pe-interactive-lab div[style*="background:#f8fafc"],
+html.dark #pe-interactive-lab div[style*="background: #f8fafc"] {
+	background: var(--mn-bg-subtle) !important;
+	color: var(--mn-text) !important;
+}
+html.dark #pe-interactive-lab div[style*="border: 1px solid #e2e8f0"],
+html.dark #pe-interactive-lab div[style*="border:1px solid #e2e8f0"] {
+	border-color: var(--mn-border) !important;
+}
+html.dark #pe-lab-output {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark #pe-interactive-lab span[style*="color:#94a3b8"] {
+	color: var(--mn-text-muted) !important;
+}
+/* The output text is set via textContent (no inline color) — inherit should
+   work once html.dark has a default color, but make extra sure the lab's
+   text children are visible. */
+html.dark #pe-interactive-lab {
+	color: var(--mn-text) !important;
+}
+
 /* Plotly in dark mode — extend axis/font colours */
 html.dark .js-plotly-plot .main-svg text,
 html.dark .js-plotly-plot .gtitle,
@@ -494,6 +547,15 @@ html.dark .viz-container canvas,
 html.dark .dll-plot-container canvas,
 html.dark #transformer-site canvas {
 	background: transparent !important;
+}
+
+/* Appendix canvases — the inline style sets a dark navy bg that should
+   win over the generic `html.dark canvas` rule above (which is meant for
+   WebGL canvases that draw their own background). Be explicit so they
+   don't fall back to transparent. */
+html.dark #canvas-layer-wave,
+html.dark #canvas-isosurface {
+	background: #0f172a !important;
 }
 
 /* Glossary & dark text fix inside inline callouts */

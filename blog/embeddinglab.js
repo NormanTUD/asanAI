@@ -6630,7 +6630,7 @@ function renderHomology() {
     const ctx = st.spaceCtx;
 
     // ── Clear space canvas ──
-    ctx.fillStyle = themeColor('#0f172a');
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, W, H);
 
     // Grid
@@ -7272,7 +7272,7 @@ function renderTimeHelix() {
     const showShadow = document.getElementById('time-show-shadow')?.checked ?? true;
 
     // ── Clear ──
-    ctx.fillStyle = themeColor('#0f172a');
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, W, H);
 
     // ── Grid floor ──
@@ -8619,7 +8619,7 @@ function renderGrammarRotation() {
     const scale = Math.min(W, H) * 0.38;
 
     // ── Clear ──
-    ctx.fillStyle = themeColor('#0f172a');
+    ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, W, H);
 
     // ── Grid ──

@@ -162,7 +162,20 @@
     "html.dark .cwlab-msg-block.assistant { background: #1e293b; color: #e2e8f0; }",
     "html.dark .cwlab-msg-block.system { background: #422006; color: #fef3c7; }",
     "html.dark .cwlab-details { color: #94a3b8; }",
-    "html.dark .cwlab-viz-card { background: #1e293b; border-color: #334155; color: #e2e8f0; }"
+    "html.dark .cwlab-viz-card { background: #1e293b; border-color: #334155; color: #e2e8f0; }",
+
+    /* ── Lost in the Middle diagram + Context vs RAG comparison cards ── */
+    "html.dark #cwlab-lost-middle-diagram { background: var(--mn-bg-subtle) !important; border-color: var(--mn-border) !important; color: var(--mn-text) !important; }",
+    "html.dark #cwlab-lost-middle-diagram p[style*=\"color: #64748b\"], html.dark #cwlab-lost-middle-diagram p[style*=\"color:#64748b\"] { color: var(--mn-text-muted) !important; }",
+    "html.dark #cwlab-lost-middle-diagram p { color: var(--mn-text) !important; }",
+    "html.dark .cwlab-compare-card { background: var(--mn-surface) !important; border-color: var(--mn-border) !important; color: var(--mn-text) !important; }",
+    "html.dark .cwlab-compare-card li { color: var(--mn-text) !important; }",
+    "html.dark .cwlab-compare-card strong { color: var(--mn-text) !important; }",
+    "html.dark .cwlab-attention-labels { color: var(--mn-text-muted) !important; }",
+    "html.dark .cwlab-attention-labels span { color: var(--mn-text-muted) !important; }",
+    "html.dark .cwlab-viz-bar { background: var(--mn-surface-raised) !important; }",
+    "html.dark .cwlab-viz-segment[style*=\"background: #f1f5f9\"] { background: var(--mn-surface-raised) !important; color: var(--mn-text-muted) !important; }",
+    "html.dark .cwlab-viz-label-row { color: var(--mn-text-muted) !important; }"
 
   ].join("\n");
   document.head.appendChild(css);
