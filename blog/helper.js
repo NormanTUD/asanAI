@@ -1981,7 +1981,21 @@ window.__MN_DARK = {
 		'#ddd': '#e2e8f0',
 		'#dddddd': '#e2e8f0',
 		'#eee': '#e2e8f0',
-		'#eeeeee': '#e2e8f0'
+		'#eeeeee': '#e2e8f0',
+		// FFN / detector colors used in intuition.js
+		'white':       '#1e293b',
+		'#e0e7ff':     '#1e1b4b',  // light indigo bg -> dark indigo bg
+		'#818cf8':     '#a5b4fc',  // indigo border -> lighter indigo
+		'#312e81':     '#c7d2fe',  // dark indigo text -> light indigo
+		'#34d399':     '#6ee7b7',  // emerald border -> lighter emerald
+		'#065f46':     '#a7f3d0',  // dark green text -> light green
+		'#fef3c7':     '#422006',  // light yellow bg -> dark yellow
+		'#f59e0b':     '#fbbf24',  // amber -> brighter amber
+		'#92400e':     '#fde68a',  // dark amber text -> light amber
+		'#ef4444':     '#f87171',  // red -> lighter red
+		'#6366f1':     '#818cf8',  // indigo -> lighter indigo
+		'#10b981':     '#6ee7b7',  // emerald -> lighter emerald
+		'#d97706':     '#fbbf24',  // dark amber -> bright amber
 	},
 	// Resolve a single colour through the swap map.
 	// Accepts hex strings, returns the dark-mode equivalent (or the

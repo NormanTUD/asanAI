@@ -582,7 +582,7 @@ const ResidualStreamViz = {
 			}
 		});
 
-		this.H = this.topPad + (this.numLayers + 1) * this.rowH + 130; // was + 70
+		this.H = this.topPad + (this.numLayers + 1) * this.rowH + 170;
 	},
 
 	// ── Helpers ──
@@ -722,8 +722,8 @@ const ResidualStreamViz = {
 			this.ctx.stroke();
 			this.drawArrowHead(centerX, nextY - 15, Math.PI / 2, '#3b82f6');
 		} else {
-			// NEW: Final layer → draw arrow to "Next Token Prediction"
-			const endY = startY + 100;
+			// Final layer → draw arrow to unembedding
+			const endY = startY + 150;
 			this.ctx.globalAlpha = this.currentLayer === this.numLayers ? 0.9 : 0.2;
 			this.ctx.beginPath();
 			this.ctx.moveTo(centerX, startY);
@@ -733,11 +733,11 @@ const ResidualStreamViz = {
 			this.ctx.stroke();
 			this.drawArrowHead(centerX, endY - 10, Math.PI / 2, '#3b82f6');
 
-			// Label
+			// Label—centered below the arrow, far enough from the metadata
 			this.ctx.font = 'bold 12px system-ui';
 			this.ctx.fillStyle = themeColor('#1e293b');
 			this.ctx.textAlign = 'center';
-			this.ctx.fillText('→ Unembedding: compare residual to every word vector → pick the most likely next word', centerX + 100, endY + 10);
+			this.ctx.fillText('Unembedding: score final residual against every vocabulary word → pick the most likely next word', centerX, endY + 20);
 			this.ctx.globalAlpha = 1;
 		}
 	},
@@ -1845,11 +1845,44 @@ const FFNViz = {
         this.currentScenario = scenarioKey;
         
         // Update Buttons
-        document.getElementById('btn-ffn-fruit').style.background = scenarioKey === 'apple_fruit' ? '#fee2e2' : '#fff';
-        document.getElementById('btn-ffn-fruit').style.borderColor = scenarioKey === 'apple_fruit' ? '#ef4444' : '#cbd5e1';
+        document.getElementById('btn-ffn-fruit').style.background = themeColor(scenarioKey === 'apple_fruit' ? '#fee2e2' : '#fff');
+        document.getElementById('btn-ffn-fruit').style.borderColor = themeColor(scenarioKey === 'apple_fruit' ? '#ef4444' : '#cbd5e1');
         
-        document.getElementById('btn-ffn-tech').style.background = scenarioKey === 'apple_tech' ? '#e0e7ff' : '#fff';
-        document.getElementById('btn-ffn-tech').style.borderColor = scenarioKey === 'apple_tech' ? '#6366f1' : '#cbd5e1';
+        document.getElementById('btn-ffn-tech').style.background = themeColor(scenarioKey === 'apple_tech' ? '#e0e7ff' : '#fff');
+        document.getElementById('btn-ffn-tech').style.borderColor = themeColor(scenarioKey === 'apple_tech' ? '#6366f1' : '#cbd5e1');
+
+        // Update static container/box colors for dark mode
+        const container = document.getElementById('ffn-viz-container');
+        if (container) {
+            container.style.background = themeColor('#ffffff');
+            container.style.borderColor = themeColor('#e2e8f0');
+        }
+        const inputBox = document.getElementById('ffn-input-box');
+        if (inputBox) {
+            inputBox.style.background = themeColor('#e0e7ff');
+            inputBox.style.borderColor = themeColor('#818cf8');
+            inputBox.style.color = themeColor('#312e81');
+        }
+        const outputBox = document.getElementById('ffn-output-box');
+        if (outputBox) {
+            outputBox.style.background = themeColor('#dcfce7');
+            outputBox.style.borderColor = themeColor('#34d399');
+            outputBox.style.color = themeColor('#065f46');
+        }
+        // Update column label colors
+        document.querySelectorAll('#ffn-viz-container > div > div[style*="color:"]').forEach(el => {
+            const current = el.style.color;
+            if (current && current.startsWith('#')) {
+                el.style.color = themeColor(current);
+            }
+        });
+        // Update explanation box
+        const expl = document.getElementById('ffn-explanation');
+        if (expl) {
+            expl.style.background = themeColor('#ffffff');
+            expl.style.borderColor = themeColor('#cbd5e1');
+            expl.style.color = themeColor('#475569');
+        }
 
         this.render();
     },
@@ -1863,13 +1896,13 @@ const FFNViz = {
         detContainer.innerHTML = data.detectors.map(d => `
             <div id="node-${d.id}" style="
                 padding: 10px; border-radius: 8px; font-size: 0.85em; font-weight: bold; transition: all 0.4s ease;
-                background: ${d.active ? '#fef3c7' : '#f1f5f9'};
-                border: 2px solid ${d.active ? '#f59e0b' : '#cbd5e1'};
-                color: ${d.active ? '#92400e' : '#94a3b8'};
+                background: ${themeColor(d.active ? '#fef3c7' : '#f1f5f9')};
+                border: 2px solid ${themeColor(d.active ? '#f59e0b' : '#cbd5e1')};
+                color: ${themeColor(d.active ? '#92400e' : '#94a3b8')};
                 box-shadow: ${d.active ? '0 0 10px rgba(245,158,11,0.4)' : 'none'};
             ">
                 ${d.label}<br>
-                <span style="font-size: 0.8em; color: ${d.active ? '#d97706' : '#cbd5e1'};">
+                <span style="font-size: 0.8em; color: ${themeColor(d.active ? '#d97706' : '#cbd5e1')};">
                     ${d.active ? '🔥 FIRES' : '❌ ZEROED (ReLU)'}
                 </span>
             </div>
@@ -1880,9 +1913,9 @@ const FFNViz = {
         factsContainer.innerHTML = data.facts.map(f => `
             <div id="node-${f.id}" style="
                 padding: 10px; border-radius: 8px; font-size: 0.85em; font-weight: bold; transition: all 0.4s ease;
-                background: ${f.active ? '#dcfce7' : '#f1f5f9'};
-                border: 2px solid ${f.active ? '#10b981' : '#cbd5e1'};
-                color: ${f.active ? '#065f46' : '#94a3b8'};
+                background: ${themeColor(f.active ? '#dcfce7' : '#f1f5f9')};
+                border: 2px solid ${themeColor(f.active ? '#10b981' : '#cbd5e1')};
+                color: ${themeColor(f.active ? '#065f46' : '#94a3b8')};
             ">
                 ${f.label}
             </div>
@@ -1915,7 +1948,7 @@ const FFNViz = {
             const cx1 = x1 + 40;
             const cx2 = x2 - 40;
 
-            const color = active ? '#f59e0b' : '#e2e8f0';
+            const color = themeColor(active ? '#f59e0b' : '#e2e8f0');
             const width = active ? 3 : 1;
             const dash = active ? '' : 'stroke-dasharray="4 4"';
 
