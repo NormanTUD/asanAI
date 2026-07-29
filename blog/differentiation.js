@@ -71,135 +71,6 @@ function initSecantTangent() {
     update();
 }
 
-// ── 2. Derivative Rules Explorer ────────────────────────────────────────────
-
-function initDerivRulesExplorer() {
-    const select = document.getElementById('select-deriv-rule');
-    if (!select) return;
-
-    const rules = {
-        x2: {
-            f: x => x * x,
-            fp: x => 2 * x,
-            label: 'f(x) = x^2',
-            deriv: "f'(x) = 2x",
-            rule: '\\text{Power Rule: } \\frac{d}{dx}[x^n] = nx^{n-1}',
-            range: [-4, 4],
-            yrange: [-5, 16],
-        },
-        x3: {
-            f: x => x * x * x,
-            fp: x => 3 * x * x,
-            label: 'f(x) = x^3',
-            deriv: "f'(x) = 3x^2",
-            rule: '\\text{Power Rule: } \\frac{d}{dx}[x^3] = 3x^2',
-            range: [-3, 3],
-            yrange: [-15, 27],
-        },
-        sqrt: {
-            f: x => x >= 0 ? Math.sqrt(x) : NaN,
-            fp: x => x > 0 ? 1 / (2 * Math.sqrt(x)) : NaN,
-            label: 'f(x) = \\sqrt{x}',
-            deriv: "f'(x) = \\frac{1}{2\\sqrt{x}}",
-            rule: '\\text{Power Rule: } \\frac{d}{dx}[x^{1/2}] = \\frac{1}{2}x^{-1/2}',
-            range: [0, 10],
-            yrange: [-0.5, 4],
-        },
-        sin: {
-            f: x => Math.sin(x),
-            fp: x => Math.cos(x),
-            label: 'f(x) = \\sin(x)',
-            deriv: "f'(x) = \\cos(x)",
-            rule: '\\frac{d}{dx}[\\sin(x)] = \\cos(x)',
-            range: [-2 * Math.PI, 2 * Math.PI],
-            yrange: [-1.5, 1.5],
-        },
-        cos: {
-            f: x => Math.cos(x),
-            fp: x => -Math.sin(x),
-            label: 'f(x) = \\cos(x)',
-            deriv: "f'(x) = -\\sin(x)",
-            rule: '\\frac{d}{dx}[\\cos(x)] = -\\sin(x)',
-            range: [-2 * Math.PI, 2 * Math.PI],
-            yrange: [-1.5, 1.5],
-        },
-        ex: {
-            f: x => Math.exp(x),
-            fp: x => Math.exp(x),
-            label: 'f(x) = e^x',
-            deriv: "f'(x) = e^x",
-            rule: '\\frac{d}{dx}[e^x] = e^x \\quad \\text{(its own derivative!)}',
-            range: [-3, 3],
-            yrange: [-1, 10],
-        },
-        ln: {
-            f: x => x > 0 ? Math.log(x) : NaN,
-            fp: x => x > 0 ? 1 / x : NaN,
-            label: 'f(x) = \\ln(x)',
-            deriv: "f'(x) = \\frac{1}{x}",
-            rule: '\\frac{d}{dx}[\\ln(x)] = \\frac{1}{x}',
-            range: [0.01, 8],
-            yrange: [-4, 3],
-        },
-        product: {
-            f: x => x * x * Math.sin(x),
-            fp: x => 2 * x * Math.sin(x) + x * x * Math.cos(x),
-            label: 'f(x) = x^2 \\sin(x)',
-            deriv: "f'(x) = 2x\\sin(x) + x^2\\cos(x)",
-            rule: '\\text{Product Rule: } (fg)\' = f\'g + fg\'',
-            range: [-2 * Math.PI, 2 * Math.PI],
-            yrange: [-40, 40],
-        },
-        chain: {
-            f: x => Math.sin(x * x),
-            fp: x => 2 * x * Math.cos(x * x),
-            label: 'f(x) = \\sin(x^2)',
-            deriv: "f'(x) = 2x\\cos(x^2)",
-            rule: '\\text{Chain Rule: } \\frac{d}{dx}[f(g(x))] = f\'(g(x)) \\cdot g\'(x)',
-            range: [-4, 4],
-            yrange: [-5, 5],
-        },
-    };
-
-    function update() {
-        const key = select.value;
-        const r = rules[key];
-
-        // Formula display
-        document.getElementById('deriv-rule-formula').innerHTML =
-            `$$${r.rule}$$<br>$$${r.label} \\quad \\Longrightarrow \\quad ${r.deriv}$$`;
-        render_temml();
-
-        // Generate data
-        const xVals = [], yF = [], yFP = [];
-        const step = (r.range[1] - r.range[0]) / 400;
-        for (let x = r.range[0]; x <= r.range[1]; x += step) {
-            xVals.push(x);
-            yF.push(r.f(x));
-            yFP.push(r.fp(x));
-        }
-
-        const data = [
-            { x: xVals, y: yF, mode: 'lines', name: 'f(x)', line: { color: '#2563eb', width: 3 } },
-            { x: xVals, y: yFP, mode: 'lines', name: "f'(x)", line: { color: '#ef4444', width: 2, dash: 'dash' } },
-        ];
-
-        const layout = {
-            margin: { t: 10, b: 40, l: 40, r: 10 },
-            xaxis: { title: 'x', range: r.range, zeroline: true },
-            yaxis: { title: 'y', range: r.yrange, zeroline: true },
-            legend: { orientation: 'h', y: -0.2 },
-            paper_bgcolor: themeColor('#fff'),
-            plot_bgcolor: themeColor('#fff'),
-        };
-
-        Plotly.react('plot-deriv-rules', data, layout);
-    }
-
-    select.addEventListener('change', update);
-    update();
-}
-
 // ── 3. Tangent Line Explorer ────────────────────────────────────────────────
 
 function initTangentLineExplorer() {
@@ -462,12 +333,7 @@ async function loadDerivativesModule() {
         initSecantTangent();
     });
 
-    // 2. Derivative Rules Explorer
-    _diffLazyRegister('plot-deriv-rules', () => {
-        initDerivRulesExplorer();
-    });
-
-    // 3. Tangent Line Explorer
+    // 2. Tangent Line Explorer
     _diffLazyRegister('plot-tangent-line', () => {
         initTangentLineExplorer();
     });

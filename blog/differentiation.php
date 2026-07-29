@@ -144,31 +144,6 @@ This is the mathematical foundation of **backpropagation** in neural networks. W
 You can explore the derivative rules interactively below. Choose a function and see its derivative computed and plotted in real time:
 </div>
 
-<!-- ─── Interactive: Derivative Rules Explorer ─── -->
-<div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="margin-top:0;"><strong>Derivative Rules Explorer</strong></p>
-    <p style="color:#64748b; font-size:0.9em;">Select a function to see its derivative. The <span style="color:#2563eb;font-weight:bold;">blue</span> curve is $f(x)$ and the <span style="color:#ef4444;font-weight:bold;">red</span> curve is $f'(x)$.</p>
-
-    <div style="margin-bottom:10px;">
-        <strong>Function:</strong>
-        <select id="select-deriv-rule" style="padding:5px 10px; border-radius:4px; border:1px solid #cbd5e1; font-size:0.95em;">
-		<option value="x2">Power Rule: f(x) = x²</option>
-		<option value="x3">Power Rule: f(x) = x³</option>
-		<option value="sqrt">Power Rule: f(x) = sqrt(x)</option>
-		<option value="sin">Trig: f(x) = sin(x)</option>
-		<option value="cos">Trig: f(x) = cos(x)</option>
-		<option value="ex">Exponential: f(x) = eˣ</option>
-		<option value="ln">Logarithm: f(x) = ln(x)</option>
-		<option value="product">Product Rule: f(x) = x² sin(x)</option>
-		<option value="chain">Chain Rule: f(x) = sin(x²)</option>
-	</select>
-
-    </div>
-
-    <div id="deriv-rule-formula" style="text-align:center; font-size:1.15em; margin:10px 0; background:#f8fafc; padding:12px; border-radius:6px; min-height:50px;"></div>
-
-    <div id="plot-deriv-rules" class="plot-container" style="width:100%; height:400px;"></div>
-</div>
 
 <div class="md">
 ### Special Derivatives Worth Knowing
