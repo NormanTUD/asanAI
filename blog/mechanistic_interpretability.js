@@ -431,7 +431,7 @@
         function drawBracket(ctx, x1, x2, y, label) {
             const mid = (x1 + x2) / 2;
             ctx.save();
-            ctx.strokeStyle = '#888';
+            ctx.strokeStyle = themeColor('#888');
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(x1, y); ctx.lineTo(x1, y + 5);
@@ -441,7 +441,7 @@
             ctx.beginPath();
             ctx.moveTo(mid, y + 5); ctx.lineTo(mid, y + 10);
             ctx.stroke();
-            ctx.fillStyle = '#888';
+            ctx.fillStyle = themeColor('#888');
             ctx.font = '8px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText(label, mid, y + 20);
@@ -465,7 +465,7 @@
             }
 
             const dimLabel = (x, d, y) => {
-                ctx.fillStyle = '#aaa';
+                ctx.fillStyle = themeColor('#aaa');
                 ctx.font = '7px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText('d' + d, x + (cell + 2) * d + cell / 2, y);
@@ -574,7 +574,7 @@
             ctx.fillStyle = themeColor('#333');
             ctx.font = '10px sans-serif';
             ctx.fillText('↓ attn = softmax(Q·K/temp)  →  out = Σ attn·V', 4, yA + 8);
-            ctx.strokeStyle = '#bbb';
+            ctx.strokeStyle = themeColor('#bbb');
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(60, yA + 14); ctx.lineTo(canvas.width - 20, yA + 14);
@@ -623,7 +623,7 @@
                 ctx.font = 'bold 9px monospace';
                 ctx.fillText(v.toFixed(1), cx + 4, cy + 13);
             }
-            ctx.fillStyle = '#aaa';
+            ctx.fillStyle = themeColor('#aaa');
             ctx.font = '7px sans-serif';
             ctx.textAlign = 'center';
             for (let d = 0; d < dHead; d++) {
@@ -652,7 +652,7 @@
             `;
 
             // ── Legend ──
-            ctx.fillStyle = '#aaa';
+            ctx.fillStyle = themeColor('#aaa');
             ctx.font = '9px sans-serif';
             ctx.fillText('Hover over any colored cell to see its computation breakdown. Adjust sliders to explore.', 4, canvas.height - 6);
         }
@@ -792,14 +792,14 @@
             ctx.fillText(`${numFeatures} features in ${numDims} dimensions`, 10, 20);
 
             // Draw unit circle (for 2D projection)
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = themeColor('#ddd');
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.stroke();
 
             // Draw axes
-            ctx.strokeStyle = '#ccc';
+            ctx.strokeStyle = themeColor('#ccc');
             ctx.beginPath();
             ctx.moveTo(cx - radius - 20, cy);
             ctx.lineTo(cx + radius + 20, cy);
@@ -958,7 +958,10 @@
             }, typeDiv);
             btn.addEventListener('click', () => {
                 compositionType = opt.charAt(0);
-                typeDiv.querySelectorAll('button').forEach(b => { b.style.background = '#fff'; b.style.color = '#333'; });
+                typeDiv.querySelectorAll('button').forEach(b => {
+                    b.style.background = themeColor('#ffffff');
+                    b.style.color = themeColor('#1e293b');
+                });
                 btn.style.background = '#4a90d9';
                 btn.style.color = '#fff';
                 draw();
@@ -1113,19 +1116,19 @@
             // Draw "Without Composition" attention
             if (showWithout) {
                 const offsetY2 = offsetY + seqLen * cellSize + 40;
-                ctx.fillStyle = '#999';
+                ctx.fillStyle = themeColor('#999');
                 ctx.font = 'bold 12px sans-serif';
                 ctx.fillText('Head B Attention (WITHOUT composition — baseline)', offsetX, offsetY2 - 10);
 
                 ctx.font = '10px monospace';
                 for (let j = 0; j < seqLen; j++) {
-                    ctx.fillStyle = '#999';
+                    ctx.fillStyle = themeColor('#999');
                     ctx.fillText(tokens[j], offsetX + j * cellSize + 5, offsetY2 + 12);
                 }
                 const offsetY2b = offsetY2 + 20;
 
                 for (let i = 0; i < seqLen; i++) {
-                    ctx.fillStyle = '#999';
+                    ctx.fillStyle = themeColor('#999');
                     ctx.font = '10px monospace';
                     ctx.fillText(tokens[i], 10, offsetY2b + i * cellSize + cellSize / 2 + 3);
 
@@ -1270,7 +1273,7 @@
             }
 
             // Draw residual stream arrow
-            ctx.strokeStyle = '#aaa';
+            ctx.strokeStyle = themeColor('#aaa');
             ctx.lineWidth = 3;
             ctx.setLineDash([5, 5]);
             ctx.beginPath();
@@ -1278,7 +1281,7 @@
             ctx.lineTo(canvas.width - 10, 45);
             ctx.stroke();
             ctx.setLineDash([]);
-            ctx.fillStyle = '#888';
+            ctx.fillStyle = themeColor('#888');
             ctx.font = '11px sans-serif';
             ctx.fillText('← Residual Stream →', canvas.width / 2 - 60, 58);
 
@@ -1334,7 +1337,7 @@
             const meterWidth = canvas.width - 40;
             const meterHeight = 30;
 
-            ctx.fillStyle = '#eee';
+            ctx.fillStyle = themeColor('#eee');
             ctx.fillRect(20, meterY, meterWidth, meterHeight);
 
             // Recovery fill
@@ -1536,7 +1539,7 @@
                     }
                 }
             } else {
-                ctx.fillStyle = '#999';
+                ctx.fillStyle = themeColor('#999');
                 ctx.font = '12px sans-serif';
                 ctx.fillText('No repeated pattern found — induction head has nothing to match!', startX, headBY + 30);
                 ctx.fillText('Try: "A B C A" — the second A triggers pattern completion → predict B', startX, headBY + 50);
@@ -1770,12 +1773,12 @@
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Accuracy vs Training Step', leftMargin, topMargin + 12);
 
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = themeColor('#ddd');
             ctx.lineWidth = 1;
             ctx.strokeRect(leftMargin, topMargin + 20, chartWidth, chartHeight);
 
             // Axis labels
-            ctx.fillStyle = '#999';
+            ctx.fillStyle = themeColor('#999');
             ctx.font = '9px sans-serif';
             ctx.fillText('0%', leftMargin - 20, topMargin + chartHeight + 15);
             ctx.fillText('50%', leftMargin - 20, topMargin + chartHeight / 2 + 5);
@@ -1831,7 +1834,7 @@
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Grokked Representation', cx - 55, 25);
 
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = themeColor('#ddd');
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -1881,7 +1884,7 @@
             ctx.fillStyle = themeColor('#333');
             ctx.font = '10px sans-serif';
             ctx.fillText('Fourier structure', cx - 60, barY + 10);
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = themeColor('#ddd');
             ctx.lineWidth = 1;
             ctx.strokeRect(cx + 10, barY, 100, 12);
             ctx.fillStyle = '#27ae60';

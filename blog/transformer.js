@@ -3455,7 +3455,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 		toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
 	});
 	toggleBtn.addEventListener('mouseout', () => {
-		toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#fff' : '#dbeafe';
+		toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? themeColor('#ffffff') : '#dbeafe';
 	});
 	toggleBtn.addEventListener('click', () => {
 		const currentMode = toggleBtn.dataset.mode;
@@ -3472,7 +3472,7 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 		} else {
 			toggleBtn.dataset.mode = 'off';
 			toggleBtn.textContent = '🧭 Show Vector Field';
-			toggleBtn.style.background = '#fff';
+			toggleBtn.style.background = themeColor('#ffffff');
 			regData._vfEnabled = false;
 			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
 		}
@@ -4278,7 +4278,7 @@ function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
 	} else {
 		toggleBtn.dataset.mode = 'off';
 		toggleBtn.textContent = '🧭 Show Vector Field';
-		toggleBtn.style.background = '#fff';
+		toggleBtn.style.background = themeColor('#ffffff');
 	}
 }
 
@@ -6829,7 +6829,7 @@ window.showUnifiedLayer = function(layerIdx) {
 	// Highlight active tab button
 	const activeBtn = document.getElementById(`unified-layer-${layerIdx}-tab-btn`);
 	if (activeBtn) {
-		activeBtn.style.background = '#fff';
+		activeBtn.style.background = themeColor('#ffffff');
 		activeBtn.style.fontWeight = 'bold';
 	}
 
@@ -7023,7 +7023,7 @@ function createTrajectoryVFToggleButton() {
 		toggleBtn.textContent = isOn
 			? '🧭 Show Vector Field'
 			: '🧭 Hide Vector Field';
-		toggleBtn.style.background = isOn ? '#fff' : '#ede9fe';
+		toggleBtn.style.background = isOn ? themeColor('#ffffff') : '#ede9fe';
 
 		// Re-render trajectory
 		const trajDiv = document.getElementById('transformer-trajectory-full-path');

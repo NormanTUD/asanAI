@@ -6884,10 +6884,10 @@ function renderHomology() {
             pCtx.lineWidth = 2;
             pCtx.stroke();
 
-            // Label
+            // Label — use themeColor so dark brown stays readable on dark canvas
             pCtx.font = 'bold 10px system-ui, sans-serif';
             pCtx.textAlign = 'left';
-            pCtx.fillStyle = '#92400e';
+            pCtx.fillStyle = themeColor('#92400e');
             pCtx.fillText(`H${hIdx + 1}`, bx + dotR + 4, by + 4);
         } else if (isBorn) {
             // Dead — gray

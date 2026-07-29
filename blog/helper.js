@@ -1966,7 +1966,22 @@ window.__MN_DARK = {
 		'#f9f0ff': '#1e293b',
 		'#f0fff0': '#1e293b',
 		'#f5f0ff': '#1e293b',
-		'#f0faf0': '#1e293b'
+		'#f0faf0': '#1e293b',
+		// Mid-gray text colors used on canvas — swap to light gray on dark canvas
+		'#888': '#94a3b8',
+		'#888888': '#94a3b8',
+		'#999': '#cbd5e1',
+		'#999999': '#cbd5e1',
+		'#aaa': '#cbd5e1',
+		'#aaaaaa': '#cbd5e1',
+		'#bbb': '#cbd5e1',
+		'#bbbbbb': '#cbd5e1',
+		'#ccc': '#cbd5e1',
+		'#cccccc': '#cbd5e1',
+		'#ddd': '#e2e8f0',
+		'#dddddd': '#e2e8f0',
+		'#eee': '#e2e8f0',
+		'#eeeeee': '#e2e8f0'
 	},
 	// Resolve a single colour through the swap map.
 	// Accepts hex strings, returns the dark-mode equivalent (or the
