@@ -5,7 +5,7 @@ title: The Untold History of AI
 description: The displaced prerequisites—discoveries from unrelated fields that made AI physically possible.
 icon: &#128295;
 part: 6
-order: 37
+order: 35
 color: text-secondary
 -->
 
@@ -761,23 +761,25 @@ The Arithmometer's significance lies not in a conceptual breakthrough but in a p
 <div class="md">
 The large language model is, at its deepest physical layer, a phenomenon of applied physics. Every inference is an electrical signal propagating through doped silicon crystals whose behavior is governed by quantum mechanics; every training run consumes gigawatt-hours of energy whose generation traces back to Faraday's electromagnetic induction; every bit of data travels through fiber optic cables exploiting total internal reflection. Without the discoveries of physics, there is no substrate on which an LLM can exist.
 
-**Quantum Mechanics and the Transistor**
+### Quantum Mechanics and the Transistor
 
-The entire digital age rests upon the transistor, a device whose invention required understanding quantum mechanics — a branch of physics that did not exist until the 20th century. Max Planck introduced the quantum of energy in 1900 \cite{planck}. Niels Bohr proposed the quantized atom in 1913 \cite{bohr}. Werner Heisenberg formulated matrix mechanics in 1925 \cite{quanten}, and Erwin Schrödinger developed wave mechanics in 1926 \cite{schroedinger}. Felix Bloch applied quantum mechanics to electrons in crystal lattices \cite{bloch}, and Alan Herries Wilson used this framework to explain semiconductors \cite{wilsonsemiconductors}. Without band theory, there is no understanding of why silicon can be made to switch between conducting and insulating states — and without that understanding, there is no transistor \cite{semiconductor}, no integrated circuit \cite{kilbyic} \cite{noyceic}, no microprocessor \cite{intel4004}, no GPU, and no LLM.
+The entire digital age rests upon the transistor, a device whose invention required understanding quantum mechanics — a branch of physics that did not exist until the 20th century. Max Planck introduced the quantum of energy in 1900 \cite{planck}. Niels Bohr proposed the quantized atom in 1913 \cite{bohr}. Werner Heisenberg formulated matrix mechanics in 1925 \cite{quanten}, and Erwin Schrödinger developed wave mechanics in 1926 \cite{schroedinger}.
 
-**Electromagnetism and Power Generation**
+Felix Bloch applied quantum mechanics to electrons in crystal lattices \cite{bloch}, and Alan Herries Wilson used this framework to explain semiconductors \cite{wilsonsemiconductors}. Without band theory, there is no understanding of why silicon can be made to switch between conducting and insulating states — and without that understanding, there is no transistor \cite{semiconductor}, no integrated circuit \cite{kilbyic} \cite{noyceic}, no microprocessor \cite{intel4004}, no GPU, and no LLM.
+
+### Electromagnetism and Power Generation
 
 Michael Faraday's 1831 discovery of electromagnetic induction \cite{faraday} is the basis of virtually all electrical power generation on Earth. A modern LLM training run on thousands of GPUs may consume enough electricity to power a small city for weeks. That energy flows through infrastructure whose lineage traces directly to Faraday's copper disk spinning between the poles of a horseshoe magnet. Nikola Tesla's alternating current system \cite{teslaelectricmotor} \cite{teslacurrent} enabled long-distance power transmission, making centralized data centers economically viable.
 
-**Thermodynamics and Cooling**
+### Thermodynamics and Cooling
 
 Ludwig Boltzmann's statistical mechanics \cite{boltzmann_thermo} provided the theoretical framework for understanding heat dissipation. Modern GPU clusters generate enormous thermal loads; without industrial cooling systems descended from William Cullen's 1756 artificial refrigeration experiments \cite{cullencold} and Carl von Linde's ammonia-compression refrigerator \cite{patent1250}, silicon would overheat within minutes. The quiet hum of a data center's cooling system is as essential to the existence of an LLM as the Transformer architecture itself.
 
-**Optics and Data Transmission**
+### Optics and Data Transmission
 
 The fiber optic cables that carry over 95% of intercontinental internet traffic — and thus the training data for every LLM — exploit total internal reflection, first demonstrated by Daniel Colladon in 1842 \cite{colladon} and theoretically enabled for long-distance communication by Charles Kao and George Hockham in 1966 \cite{fibreoptics}. Without fiber optics, there is no global internet, no web-scale corpus, and no training data.
 
-**Statistical Mechanics and Machine Learning**
+### Statistical Mechanics and Machine Learning
 
 Beyond hardware, physics contributed directly to the mathematical foundations of machine learning. The Boltzmann distribution from statistical mechanics inspired Boltzmann Machines \cite{boltzmannlearning}, one of the earliest generative models. The Ising model of ferromagnetism \cite{lenz1920} \cite{ising1925}, describing interacting spins on a lattice, is now recognized as the first recurrent neural network architecture. The concept of energy minimization in physical systems directly influenced energy-based learning frameworks \cite{lecun2006}. The free energy principle from thermodynamics \cite{friston2010freeenergy} has been proposed as a unifying framework for understanding both biological and artificial intelligence.
 
@@ -787,31 +789,31 @@ Physics did not set out to create artificial intelligence. It set out to underst
 <div class="md">
 If physics provided the theoretical understanding of matter, chemistry provided the practical ability to *transform* it. Every component of an LLM's physical substrate — from the ultra-pure silicon wafers to the rare-earth magnets in hard drives, from the lithium-ion batteries in mobile devices to the specialized cooling fluids in data centers — is a product of chemical engineering. Chemistry gave AI its body.
 
-**Silicon Purification: From Sand to Semiconductor**
+### Silicon Purification: From Sand to Semiconductor
 
 The journey from common beach sand (silicon dioxide, SiO₂) to a functioning microprocessor requires chemical transformations of extraordinary precision. The Siemens process, developed in the 1950s, reduces silicon dioxide with carbon at high temperatures, then purifies it through reaction with hydrogen chloride to form trichlorosilane (SiHCl₃), which is subsequently decomposed to yield polycrystalline silicon of 99.9999999% purity (nine nines). This "electronic grade" silicon is then grown into single crystals via the Czochralski process \cite{semiconductor}. Without these chemical purification methods, transistors cannot function — impurity concentrations of even a few parts per billion alter semiconductor behavior catastrophically. The entire digital age rests upon chemistry's ability to produce materials of unprecedented purity.
 
-**Doping: The Chemistry of Controlled Impurity**
+### Doping: The Chemistry of Controlled Impurity
 
 A pure silicon crystal is a poor conductor. What makes it useful is the deliberate introduction of specific impurities — a process called **doping**. Adding phosphorus atoms (Group V) creates n-type silicon with excess electrons; adding boron atoms (Group III) creates p-type silicon with electron "holes." The p-n junction formed at their interface is the basis of every diode and transistor \cite{shockley}. This is fundamentally a chemical process: selecting specific elements from the periodic table and introducing them into a crystal lattice at precisely controlled concentrations (typically one dopant atom per million silicon atoms). Without the chemist's understanding of how atomic species interact within crystal structures, there is no transistor and no computation.
 
-**Photolithography: Chemistry as Nanoscale Sculpture**
+### Photolithography: Chemistry as Nanoscale Sculpture
 
 Modern chips contain billions of transistors, each smaller than a virus. They are manufactured through **photolithography**, a process that is essentially chemistry performed with light. A silicon wafer is coated with a light-sensitive chemical called a **photoresist**. Ultraviolet light is projected through a mask, causing chemical reactions that either harden or dissolve the exposed resist (depending on whether it is "positive" or "negative" resist). The unexposed (or exposed) resist is washed away with chemical solvents, revealing the silicon beneath for etching or ion implantation. This cycle is repeated dozens of times to build up the three-dimensional structure of a modern processor. Each step is a chemical reaction — polymerization, dissolution, oxidation, deposition — performed at nanometer precision.
 
-**Electrochemistry and Energy Storage**
+### Electrochemistry and Energy Storage
 
 The lithium-ion battery, which powers every laptop, smartphone, and increasingly the backup systems of data centers, is a product of electrochemistry. John B. Goodenough's identification of lithium cobalt oxide (LiCoO₂) as a cathode material (1980) and Akira Yoshino's development of the first commercially viable lithium-ion cell (1985) enabled portable computing. Without electrochemistry, there are no mobile devices generating the user data that feeds LLM training corpora, and no uninterruptible power supplies protecting data centers from outages.
 
-**Rare Earth Chemistry and Permanent Magnets**
+### Rare Earth Chemistry and Permanent Magnets
 
 The hard disk drives that store training datasets rely on **neodymium-iron-boron (Nd₂Fe₁₄B) permanent magnets** and **cobalt-platinum alloy** recording media — materials whose magnetic properties were characterized through decades of solid-state chemistry research. The voice coil actuators that position read/write heads with nanometer precision depend on rare-earth magnets whose synthesis requires specialized chemical extraction from ore (typically through solvent extraction and ion exchange chromatography).
 
-**Cooling Fluids and Thermal Management**
+### Cooling Fluids and Thermal Management
 
 As GPU clusters push thermal limits, data centers increasingly turn to **liquid immersion cooling** using engineered dielectric fluids — synthetic fluorocarbon compounds (such as 3M's Fluorinert and Novec series) designed through organic chemistry to be thermally conductive, electrically insulating, chemically inert, and non-flammable. The development of these specialized coolants is pure applied chemistry, formulated specifically to remove heat from electronics without damaging them.
 
-**The Periodic Table as Foundation**
+### The Periodic Table as Foundation
 
 Ultimately, every element used in computing — silicon (Si, 14) for substrates, copper (Cu, 29) for interconnects, gold (Au, 79) for wire bonds, tantalum (Ta, 73) for capacitors, gallium (Ga, 31) and arsenic (As, 33) for III-V semiconductors in networking lasers, erbium (Er, 68) for fiber optic amplifiers, neodymium (Nd, 60) for magnets — was first isolated, characterized, and understood through chemistry. Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements; without this organizational framework, the systematic engineering of materials for computation would have been impossible.
 
