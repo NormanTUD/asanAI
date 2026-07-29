@@ -1903,7 +1903,7 @@ Q: 789 + 456 = ?</pre>
                     </p>
                 </div>
                 <div style="background:#ede9fe; border:1px solid #c4b5fd; border-radius:10px; padding:16px;">
-                    <h5 style="margin:0 0 8px 0; color:#5b21b6; font-size:0.9em;">🧠 Why This Works</h5>
+                    <h5 style="margin:0 0 8px 0; color:#5b21b6; font-size:0.9em;">Why This Works</h5>
                     <p style="margin:0; font-size:0.85em; line-height:1.6; color:#3b0764;">
                         Induction heads (the same circuits that do "[A][B]...[A]→B" pattern completion)
                         generalize to matching algorithmic patterns: "when I see <code>sum≥10</code> and sum=15,

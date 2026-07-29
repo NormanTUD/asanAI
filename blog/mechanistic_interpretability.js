@@ -1382,7 +1382,7 @@
         if (!container) return;
 
         const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f0fff0'), borderRadius: '8px', margin: '20px 0'}}, container);
-        createElement('h3', {textContent: '🧠 Interactive: Induction Head Circuit in Action', style: {marginTop: 0}}, section);
+        createElement('h3', {textContent: 'Interactive: Induction Head Circuit in Action', style: {marginTop: 0}}, section);
         createElement('p', {innerHTML: 'Type a sequence with a repeated pattern (e.g., "A B C D A") and watch the induction head circuit predict what comes after the second "A". The <strong>previous-token head</strong> (Layer 0) identifies predecessors, and the <strong>induction head</strong> (Layer 1) uses that to complete the pattern.'}, section);
 
         const inputDiv = createElement('div', {style: {margin: '10px 0'}}, section);
