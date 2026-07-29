@@ -232,7 +232,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--user">
         <div class="wslab-arch-icon">💬</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">User Interface</div>
 
           <div class="wslab-arch-desc">"What are the latest advances in transformers?"</div>
@@ -243,7 +242,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--orchestrator">
         <div class="wslab-arch-icon">🤖</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">Orchestrator / Agent</div>
 
           <div class="wslab-arch-desc">Receives query · Asks LLM "Should I search?" · LLM decides on search terms</div>
@@ -254,7 +252,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--search">
         <div class="wslab-arch-icon">🔍</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">Search API</div>
 
           <div class="wslab-arch-desc">Bing · Google · Brave · SearXNG — returns top 5-10 results as JSON</div>
@@ -265,7 +262,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--fetch">
         <div class="wslab-arch-icon">🌐</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">Content Fetcher</div>
 
           <div class="wslab-arch-desc">HTTP GET to top 3-5 URLs · headless browser if needed · parallel fetching</div>
@@ -276,7 +272,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--extract">
         <div class="wslab-arch-icon">🧹</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">Content Extractor</div>
 
           <div class="wslab-arch-desc">Readability.js / Trafilatura strips nav, ads, scripts, styles → clean markdown</div>
@@ -287,7 +282,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--chunk">
         <div class="wslab-arch-icon">✂️</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">Chunker &amp; Re-ranker</div>
 
           <div class="wslab-arch-desc">Split into 200-500 token chunks · score against query · select top-K (budget ~3000-6000 tokens)</div>
@@ -298,7 +292,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--prompt">
         <div class="wslab-arch-icon">📝</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">Prompt Assembler</div>
 
           <div class="wslab-arch-desc">System prompt + search results + user query · adds source metadata for citations</div>
@@ -309,7 +302,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--llm">
         <div class="wslab-arch-icon">✨</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">LLM</div>
 
           <div class="wslab-arch-desc">Reads augmented prompt · generates grounded answer with citations · may request more searches</div>
@@ -320,7 +312,6 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
     <div class="wslab-arch-step wslab-arch-step--answer">
         <div class="wslab-arch-icon">📄</div>
         <div class="wslab-arch-content">
-
           <div class="wslab-arch-title">User Sees Answer</div>
 
           <div class="wslab-arch-desc">"Recent advances include linear attention [1], sparse mixture-of-experts [2] and…" with clickable sources</div>
