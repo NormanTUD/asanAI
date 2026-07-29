@@ -151,7 +151,20 @@
     "html.dark .raglab-details { color: #94a3b8; }",
     "html.dark .raglab-result-section-header { background: #334155 !important; color: #e2e8f0 !important; }",
     "html.dark .raglab-sim-bar-track { background: #334155; }",
-    "html.dark #raglab-pipeline-diagram .raglab-diagram-arrow { color: #94a3b8; }"
+    "html.dark #raglab-pipeline-diagram .raglab-diagram-arrow { color: #94a3b8; }",
+
+    /* ── RAG vs. ICL compare cards ── */
+    "html.dark .raglab-compare-card { background: var(--mn-surface) !important; border-color: var(--mn-border) !important; color: var(--mn-text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }",
+    "html.dark .raglab-compare-card li { color: var(--mn-text); }",
+    "html.dark .raglab-compare-card strong { color: var(--mn-text); }",
+    "html.dark .raglab-tag-blue { background: #1e3a8a !important; color: #93c5fd !important; }",
+    "html.dark .raglab-tag-green { background: #022c22 !important; color: #6ee7b7 !important; }",
+
+    /* ── Context Comparison Table (RAG and Long Context) ── */
+    "html.dark .raglab-ctx-table { background: var(--mn-surface) !important; border-color: var(--mn-border) !important; color: var(--mn-text); }",
+    "html.dark .raglab-ctx-table th { background: var(--mn-bg-subtle) !important; border-bottom-color: var(--mn-border) !important; color: var(--mn-text); }",
+    "html.dark .raglab-ctx-table td { border-bottom-color: var(--mn-border) !important; color: var(--mn-text); }",
+    "html.dark .raglab-ctx-table tr:last-child td { color: var(--mn-heading); }"
 
   ].join("\n");
   document.head.appendChild(css);
