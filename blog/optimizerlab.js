@@ -52,7 +52,7 @@ function updateStats(xVal, lossVal, gradVal, steps) {
 			}
 		} else {
 			statGrad.innerText = '—';
-			statGrad.style.color = '#0f172a';
+			statGrad.style.color = themeColor('#0f172a');
 		}
 	}
 	if (statSteps) statSteps.innerText = steps;

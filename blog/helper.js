@@ -1216,7 +1216,7 @@ function addCuriosityScore() {
 
 		// Label text — staggered character reveal
 		const labelSpan = document.createElement('span');
-		labelSpan.style.color = '#ddd';
+		labelSpan.style.color = themeColor('#dddddd');
 
 		if (animate) {
 			const perChar = Math.max(10, Math.min(25, 400 / label.length));

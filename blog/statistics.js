@@ -10,7 +10,7 @@ function getStatTheme() {
     return {
         font: {
             family: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-            color: '#334155',
+            color: themeColor('#334155'),
             size: 13
         },
         paper_bgcolor: 'rgba(0,0,0,0)',

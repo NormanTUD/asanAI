@@ -3320,6 +3320,9 @@ blockquote,
 .code-copy-btn:hover {
 	color: black !important;
 }
+html.dark .code-copy-btn:hover {
+	color: #ffffff !important;
+}
 
 
 /* Subtle Math Table Design */

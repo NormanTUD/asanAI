@@ -520,7 +520,7 @@ function renderELI5Math() {
 						x: range,
 						y: range,
 						mode: 'lines',
-						line: { color: '#333', width: 3 },
+						line: { color: themeColor('#333'), width: 3 },
 					},
 				],
 				layoutBase
