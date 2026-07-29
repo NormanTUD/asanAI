@@ -1848,7 +1848,6 @@ const GLOSSARY = {
 	'cosine similarity': 'A measure of similarity between two vectors calculated as the cosine of the angle between them.',
 	'dot product': 'A mathematical operation that multiplies corresponding elements of two vectors and sums the results.',
 	'gradient': 'A vector of partial derivatives pointing in the direction of steepest increase of a function.',
-	'chain rule': 'A calculus formula for computing the derivative of a composite function — the mathematical foundation of backpropagation.',
 };
 
 function tensor(...args) {
