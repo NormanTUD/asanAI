@@ -1066,6 +1066,35 @@ function initGlossary() {
 		}
 		textNode.parentNode.replaceChild(frag, textNode);
 	});
+
+	// Keep tooltips inside the viewport so they don't disappear off the page edge
+	// when the underlying term sits at the very left or right of the column.
+	contents.addEventListener('mouseenter', function(ev) {
+		var term = ev.target.closest && ev.target.closest('.glossary-term');
+		if (!term) return;
+		var tip = term.querySelector('.glossary-tooltip');
+		if (!tip) return;
+		tip.style.transform = '';
+		var rect = tip.getBoundingClientRect();
+		var vw = window.innerWidth || document.documentElement.clientWidth;
+		var margin = 8;
+		var shift = 0;
+		if (rect.left < margin) {
+			shift = margin - rect.left;
+		} else if (rect.right > vw - margin) {
+			shift = (vw - margin) - rect.right;
+		}
+		if (shift !== 0) {
+			tip.style.transform = 'translateX(calc(-50% + ' + shift + 'px)) translateY(0)';
+		}
+	}, true);
+	contents.addEventListener('mouseleave', function(ev) {
+		var term = ev.target.closest && ev.target.closest('.glossary-term');
+		if (!term) return;
+		var tip = term.querySelector('.glossary-tooltip');
+		if (!tip || !tip.style.transform) return;
+		tip.style.transform = '';
+	}, true);
 }
 
 // ─── Shared post-load initialization ───
