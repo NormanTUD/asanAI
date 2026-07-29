@@ -250,7 +250,7 @@ function updateOptPlot() {
 	const layout = {
 		margin: { t: 10, b: 40, l: 50, r: 10 },
 		showlegend: true,
-		legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.85)', bordercolor: themeColor('#e2e8f0'), borderwidth: 1, font: { size: 11 } },
+		legend: { x: 0.01, y: 0.99, bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)', bordercolor: themeColor('#e2e8f0'), borderwidth: 1, font: { size: 11 } },
 		xaxis: {
 			range: [-5, 5], fixedrange: true, gridcolor: themeColor('#f1f5f9'),
 			title: { text: 'Weight (x)', font: { size: 12, color: themeColor('#64748b') } }

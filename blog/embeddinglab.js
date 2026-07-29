@@ -5974,10 +5974,10 @@ function renderVoronoi() {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Inner dot
+        // Inner dot — keep light so it's visible on the dark canvas
         ctx.beginPath();
         ctx.arc(sx, sy, 3, 0, Math.PI * 2);
-        ctx.fillStyle = themeColor('#fff');
+        ctx.fillStyle = '#f1f5f9';
         ctx.fill();
 
         // Label
@@ -7409,7 +7409,8 @@ function renderTimeHelix() {
 
             ctx.font = 'bold 13px system-ui, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillStyle = themeColor('#fff');
+            // Year text must stay light to be visible on the dark navy canvas
+            ctx.fillStyle = '#f1f5f9';
             ctx.fillText(p.year.toString(), p.sx, p.sy - dotR - 12);
 
             if (p.eventLabel) {

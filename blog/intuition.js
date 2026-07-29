@@ -257,7 +257,7 @@ const EmbeddingViz = {
                         text: `<b>${step.label}</b>`,
                         showarrow: false,
                         font: { size: 11, color: '#3b82f6' },
-                        bgcolor: 'rgba(255,255,255,0.85)',
+                        bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)',
                         borderpad: 3
                     });
                 });
@@ -405,7 +405,7 @@ const PositionalEncodingViz = {
             xaxis: { title: 'Token Position', dtick: 1, gridcolor: themeColor('#f1f5f9') },
             yaxis: { title: 'Encoding Value', range: [-1.3, 1.3], gridcolor: themeColor('#f1f5f9') },
             showlegend: true,
-            legend: { x: 1, y: 1, xanchor: 'right', bgcolor: 'rgba(255,255,255,0.9)', font: { size: 10 } },
+            legend: { x: 1, y: 1, xanchor: 'right', bgcolor: isDarkMode() ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.9)', font: { size: 10 } },
             plot_bgcolor: themeColor('#fff'),
             paper_bgcolor: themeColor('#fff'),
         };

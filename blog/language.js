@@ -151,12 +151,22 @@
 			"details.deep-dive summary::-webkit-details-marker { display: none; }",
 			".chevron { font-size: 0.85em; color: #3498db; }",
 			".dd-content { margin-top: 0.5em; }",
-			"@media (max-width: 600px) {",
-			"  .vtl-track { padding-left: 32px; }",
-			"  .vtl-dot  { left: -23px; width: 14px; height: 14px; }",
-			"  .vtl-track::before { left: 14px; }",
-			"  .vtl-desc { max-width: 100%; }",
-			"}"
+		"@media (max-width: 600px) {",
+		"  .vtl-track { padding-left: 32px; }",
+		"  .vtl-dot  { left: -23px; width: 14px; height: 14px; }",
+		"  .vtl-track::before { left: 14px; }",
+		"  .vtl-desc { max-width: 100%; }",
+		"}",
+
+		/* ── DARK MODE overrides (must be in same sheet as adoptedStyleSheets) ── */
+		"html.dark #timeline-container { background: var(--mn-bg-subtle) !important; border-color: var(--mn-border) !important; color: var(--mn-text); }",
+		"html.dark .vtl-title { color: var(--mn-text); }",
+		"html.dark .vtl-year { color: var(--mn-text-muted); }",
+		"html.dark .vtl-label { color: var(--mn-text); }",
+		"html.dark .vtl-desc { background: #1e293b; color: #e2e8f0; border: 1px solid var(--mn-border); }",
+		"html.dark .vtl-dot { border-color: var(--mn-surface); box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }",
+		"html.dark details.deep-dive { background: var(--mn-bg-subtle); border-left-color: #60a5fa; color: var(--mn-text); }",
+		"html.dark details.deep-dive summary { color: var(--mn-text); }"
 		].join("\n");
 
 		// GUARDRAIL: Inject styles via adoptedStyleSheets if available

@@ -1401,10 +1401,10 @@ function renderIsosurface() {
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Token label
+        // Token label — keep light so it stays readable on the dark canvas
         ctx.font = 'bold 12px system-ui, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillStyle = themeColor('#e2e8f0');
+        ctx.fillStyle = '#f1f5f9';
         ctx.fillText(sent.tokens[i], cp.x, cp.y - radius - 8);
     }
 
@@ -1450,20 +1450,20 @@ function renderIsosurface() {
         const effectiveEntropy = Math.min(1, currentEntropy * temp);
         const markerY = barY + (1 - effectiveEntropy) * barH; // invert: high entropy = bottom
 
-        // Marker arrow
+        // Marker arrow — must stay light to be visible on dark canvas
         ctx.beginPath();
         ctx.moveTo(barX - 8, markerY);
         ctx.lineTo(barX, markerY - 4);
         ctx.lineTo(barX, markerY + 4);
         ctx.closePath();
-        ctx.fillStyle = themeColor('#fff');
+        ctx.fillStyle = '#f1f5f9';
         ctx.fill();
 
         // Marker line
         ctx.beginPath();
         ctx.moveTo(barX, markerY);
         ctx.lineTo(barX + barW, markerY);
-        ctx.strokeStyle = themeColor('#fff');
+        ctx.strokeStyle = '#f1f5f9';
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -1474,10 +1474,10 @@ function renderIsosurface() {
         ctx.fillText('Certain', barX + barW / 2, barY - 8);
         ctx.fillText('Uncertain', barX + barW / 2, barY + barH + 14);
 
-        // Entropy value
+        // Entropy value — keep light so it stays readable on the dark canvas
         ctx.font = 'bold 10px system-ui, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillStyle = themeColor('#e2e8f0');
+        ctx.fillStyle = '#f1f5f9';
         ctx.fillText(`H=${effectiveEntropy.toFixed(2)}`, barX + barW + 6, markerY + 4);
     }
 

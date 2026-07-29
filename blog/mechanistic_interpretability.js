@@ -231,7 +231,7 @@
                 const stream = streams[s];
 
                 // Token label
-                ctx.fillStyle = '#333';
+                ctx.fillStyle = themeColor('#333');
                 ctx.font = 'bold 13px monospace';
                 ctx.fillText(tokens[s], x + posWidth / 2 - 15, 20);
 
@@ -243,7 +243,7 @@
                     const avgSign = c.val.reduce((a, b) => a + b, 0);
                     ctx.fillStyle = avgSign > 0 ? `rgba(74, 144, 217, ${Math.min(magnitude, 1)})` : `rgba(217, 74, 74, ${Math.min(magnitude, 1)})`;
                     ctx.fillRect(x, yOffset, barWidth, barHeight - 2);
-                    ctx.fillStyle = '#333';
+                    ctx.fillStyle = themeColor('#333');
                     ctx.font = '9px monospace';
                     if (barWidth > 30) {
                         ctx.fillText(c.label, x + 2, yOffset + 12);
@@ -253,12 +253,12 @@
 
                 // Final residual magnitude and "logit"
                 const logit = dotProduct(stream.residual, unembed);
-                ctx.fillStyle = '#333';
+                ctx.fillStyle = themeColor('#333');
                 ctx.font = '11px monospace';
                 ctx.fillText(`logit: ${logit.toFixed(2)}`, x, yOffset + 15);
 
                 // Draw residual stream arrow
-                ctx.strokeStyle = '#666';
+                ctx.strokeStyle = themeColor('#666');
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(x + posWidth / 2 - 5, 25);
@@ -272,7 +272,7 @@
             }
 
             // Legend
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '11px sans-serif';
             ctx.fillText('Blue = positive contribution, Red = negative. Toggle components above to ablate them.', 10, canvas.height - 10);
         }
@@ -571,7 +571,7 @@
 
             // ── Arrow ──
             let yA = vH + 4;
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '10px sans-serif';
             ctx.fillText('↓ attn = softmax(Q·K/temp)  →  out = Σ attn·V', 4, yA + 8);
             ctx.strokeStyle = '#bbb';
@@ -583,7 +583,7 @@
 
             // ── Row 5: Attention ──
             let y5 = aH + 2;
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Attention', 4, y5 + 14);
             const boxSize = 38;
@@ -606,7 +606,7 @@
 
             // ── Row 6: Output ──
             let y6 = attnH + 4;
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 11px sans-serif';
             ctx.fillText('Output = Σ attn·V (weighted sum)', 4, y6 + 14);
             const outCell = cell + 4;
@@ -787,7 +787,7 @@
             const radius = 150;
 
             // Title
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 13px sans-serif';
             ctx.fillText(`${numFeatures} features in ${numDims} dimensions`, 10, 20);
 
@@ -896,7 +896,7 @@
 
             // Draw loss comparison bar
             const barY = canvas.height - 60;
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '11px sans-serif';
             ctx.fillText('Superposition tradeoff:', 10, barY);
 
@@ -907,7 +907,7 @@
             ctx.fillStyle = '#ff6b6b';
             const intBar = Math.min(lossWithSuperposition / 5, 1) * barWidth;
             ctx.fillRect(10, barY + 8, intBar, barHeight);
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '10px monospace';
             ctx.fillText('interference cost', 15, barY + 20);
 
@@ -915,11 +915,11 @@
             ctx.fillStyle = '#51cf66';
             const capBar = Math.min(ratio / 5, 1) * barWidth;
             ctx.fillRect(10, barY + 30, capBar, barHeight);
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.fillText('capacity benefit', 15, barY + 42);
 
             // Annotation
-            ctx.fillStyle = '#666';
+            ctx.fillStyle = themeColor('#666');
             ctx.font = '10px sans-serif';
             ctx.fillText('(Red lines between arrows = interference between features)', 10, canvas.height - 5);
         }
@@ -1081,20 +1081,20 @@
 
             // Draw "With Composition" attention
             let offsetY = 40;
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText(`Head B Attention (WITH ${compositionType}-Composition from Head A)`, offsetX, offsetY - 10);
 
             // Column headers
             ctx.font = '10px monospace';
             for (let j = 0; j < seqLen; j++) {
-                ctx.fillStyle = '#555';
+                ctx.fillStyle = themeColor('#555');
                 ctx.fillText(tokens[j], offsetX + j * cellSize + 5, offsetY + 12);
             }
             offsetY += 20;
 
             for (let i = 0; i < seqLen; i++) {
-                ctx.fillStyle = '#555';
+                ctx.fillStyle = themeColor('#555');
                 ctx.font = '10px monospace';
                 ctx.fillText(tokens[i], 10, offsetY + i * cellSize + cellSize / 2 + 3);
 
@@ -1263,7 +1263,7 @@
             const componentsPerLayer = numHeads + 1;
 
             // Layer headers
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 13px sans-serif';
             for (let l = 0; l < numLayers; l++) {
                 ctx.fillText(`Layer ${l}`, l * colWidth + colWidth / 2 - 25, 25);
@@ -1306,7 +1306,7 @@
                     ctx.strokeRect(x, y, boxWidth, boxHeight);
 
                     // Label
-                    ctx.fillStyle = '#333';
+                    ctx.fillStyle = themeColor('#333');
                     ctx.font = 'bold 11px monospace';
                     ctx.fillText(componentLabels[idx], x + 5, y + 14);
 
@@ -1316,7 +1316,7 @@
                     ctx.fillRect(x + 55, y + 8, barWidth, 16);
 
                     // Importance value
-                    ctx.fillStyle = '#333';
+                    ctx.fillStyle = themeColor('#333');
                     ctx.font = '10px monospace';
                     ctx.fillText(`Δ=${imp.toFixed(2)}`, x + 55 + barWidth + 3, y + 20);
 
@@ -1346,12 +1346,12 @@
             ctx.fillStyle = gradient;
             ctx.fillRect(20, meterY, recoveryWidth, meterHeight);
 
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = themeColor('#333');
             ctx.lineWidth = 1;
             ctx.strokeRect(20, meterY, meterWidth, meterHeight);
 
             // Labels on meter
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Rome', 25, meterY + 20);
             ctx.fillText('Paris', 20 + meterWidth - 35, meterY + 20);
@@ -1402,7 +1402,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             if (seqLen < 2) {
-                ctx.fillStyle = '#666';
+                ctx.fillStyle = themeColor('#666');
                 ctx.font = '14px sans-serif';
                 ctx.fillText('Enter at least 2 tokens...', 20, 50);
                 return;
@@ -1434,13 +1434,14 @@
 
                 ctx.fillStyle = isLast ? '#d94a4a' : isPrevOcc ? '#4a90d9' : '#333';
                 ctx.fillRect(x, tokenY - 18, tokenSpacing - 5, 25);
-                ctx.fillStyle = themeColor('#fff');
+                // Token text stays light so it's readable on the colored rectangles
+                ctx.fillStyle = '#f1f5f9';
                 ctx.font = 'bold 12px monospace';
                 ctx.fillText(tokens[i], x + 5, tokenY - 1);
             }
 
             // Labels
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '11px sans-serif';
             ctx.fillText('Input Tokens', startX, tokenY - 30);
 
@@ -1449,7 +1450,7 @@
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Layer 0: Previous Token Head', startX, headAY - 25);
             ctx.font = '10px sans-serif';
-            ctx.fillStyle = '#666';
+            ctx.fillStyle = themeColor('#666');
             ctx.fillText('"For each token, attend to the token before it and write that info into the residual stream"', startX, headAY - 10);
 
             // Draw previous-token attention arrows
@@ -1483,7 +1484,7 @@
             }
 
             // Show residual stream state after Layer 0
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '10px sans-serif';
             ctx.fillText('Residual stream now contains: token identity + predecessor info', startX, headAY + 25);
 
@@ -1492,7 +1493,7 @@
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Layer 1: Induction Head', startX, headBY - 25);
             ctx.font = '10px sans-serif';
-            ctx.fillStyle = '#666';
+            ctx.fillStyle = themeColor('#666');
             ctx.fillText('"Find positions whose PREDECESSOR matches the current token, then copy what follows"', startX, headBY - 10);
 
             // Draw induction attention
@@ -1529,7 +1530,7 @@
                         ctx.fillText(`→ Predict: "${tokens[targetIdx]}"`, startX + (seqLen - 1) * tokenSpacing - 10, predY);
 
                         // Explanation arrow
-                        ctx.fillStyle = '#666';
+                        ctx.fillStyle = themeColor('#666');
                         ctx.font = '10px sans-serif';
                         ctx.fillText(`Because: saw "${lastToken} ${tokens[targetIdx]}" before at positions ${prevIdx},${targetIdx}`, startX, predY + 20);
                     }
@@ -1542,14 +1543,14 @@
             }
 
             // K-Composition annotation
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '10px sans-serif';
             const kcX = canvas.width - 200;
             ctx.fillStyle = 'rgba(100, 50, 200, 0.8)';
             ctx.font = 'bold 10px sans-serif';
             ctx.fillText('K-COMPOSITION', kcX, headAY + 50);
             ctx.font = '9px sans-serif';
-            ctx.fillStyle = '#666';
+            ctx.fillStyle = themeColor('#666');
             ctx.fillText('Head A writes predecessor info', kcX, headAY + 63);
             ctx.fillText('Head B reads it via K-circuit', kcX, headAY + 76);
 
@@ -1643,7 +1644,7 @@
             const barHeight = 180;
             const gap = 65;
 
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 14px sans-serif';
             ctx.fillText(`Layer ${currentLayer} Predictions`, startX, 25);
 
@@ -1659,7 +1660,7 @@
                 ctx.lineWidth = 1;
                 ctx.strokeRect(x, startY + barHeight - h, barWidth, h);
 
-                ctx.fillStyle = '#333';
+                ctx.fillStyle = themeColor('#333');
                 ctx.font = '11px monospace';
                 ctx.fillText((prob * 100).toFixed(1) + '%', x, startY + barHeight + 15);
 
@@ -1765,7 +1766,7 @@
             const chartHeight = 150;
 
             // Draw accuracy chart (train vs test)
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Accuracy vs Training Step', leftMargin, topMargin + 12);
 
@@ -1812,7 +1813,7 @@
 
             // Draw progress marker
             const px = leftMargin + (progress / totalSteps) * chartWidth;
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = themeColor('#333');
             ctx.lineWidth = 1;
             ctx.setLineDash([3, 3]);
             ctx.beginPath();
@@ -1826,7 +1827,7 @@
             const cy = 120;
             const radius = 70;
 
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText('Grokked Representation', cx - 55, 25);
 
@@ -1877,7 +1878,7 @@
 
             // Fourier coherence bar
             const barY = cy + radius + 55;
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = themeColor('#333');
             ctx.font = '10px sans-serif';
             ctx.fillText('Fourier structure', cx - 60, barY + 10);
             ctx.strokeStyle = '#ddd';

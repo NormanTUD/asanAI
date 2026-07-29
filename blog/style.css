@@ -558,6 +558,20 @@ html.dark #canvas-isosurface {
 	background: #0f172a !important;
 }
 
+/* Citation graph tooltip (defined in graph.php style block, not inline).
+   The selector targets #fffffffa as well as #fff/#ffffff. */
+html.dark #river-tooltip {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark #river-tooltip .tt-era,
+html.dark #river-tooltip .tt-title,
+html.dark #river-tooltip .tt-body,
+html.dark #river-tooltip .tt-click {
+	color: var(--mn-text) !important;
+}
+
 /* Glossary & dark text fix inside inline callouts */
 html.dark [style*="color: #1e293b"]:not([class]) {
 	color: var(--mn-text) !important;
