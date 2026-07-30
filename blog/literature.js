@@ -2389,7 +2389,6 @@ window.bibData = {
 		author: "Dorothy Stein"
 	},
 	"livingdolls": {
-		url: "Living Dolls: A Magical History of the Quest for Mechanical Life.",
 		author: "Gaby Wood",
 		title: "Living Dolls: A Magical History of the Quest for Mechanical Life",
 		year: 2002
