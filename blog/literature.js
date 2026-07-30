@@ -4592,5 +4592,33 @@ window.bibData = {
 		author: "Sébastien Bubeck, Yeshwanth Cherapanamjeri, Gauthier Gidel, Rémi Tachet des Combes",
 		year: 2023,
 		alternativetitle: "Sparsity in MoE"
+	},
+	"houlsby2019adapters": {
+		url: "https://arxiv.org/abs/1902.00751",
+		title: "Parameter-Efficient Transfer Learning for NLP",
+		author: "Neil Houlsby, Andrei Giurgiu, Stanislaw Jastrzebski, et al.",
+		year: 2019,
+		alternativetitle: "Adapter Modules"
+	},
+	"lester2021prompttuning": {
+		url: "https://arxiv.org/abs/2104.08691",
+		title: "The Power of Scale for Parameter-Efficient Prompt Tuning",
+		author: "Brian Lester, Rami Al-Rfou, Noah Constant",
+		year: 2021,
+		alternativetitle: "Prompt Tuning"
+	},
+	"liu2022ia3": {
+		url: "https://arxiv.org/abs/2205.05638",
+		title: "Few-Shot Parameter-Efficient Fine-Tuning is Better and Cheaper than In-Context Learning",
+		author: "Haokun Liu, Derek Tam, Mohammed Muqeeth, et al.",
+		year: 2022,
+		alternativetitle: "IA\u00b3"
+	},
+	"vaswani2017attention": {
+		url: "https://arxiv.org/abs/1706.03762",
+		title: "Attention Is All You Need",
+		author: "Ashish Vaswani, Noam Shazeer, Niki Parmar, et al.",
+		year: 2017,
+		alternativetitle: "Transformer"
 	}
 };

@@ -87,7 +87,7 @@ $$
 <div class="md">
 ## Stage 3a: RLHF with PPO
 
-The InstructGPT pipeline (Ouyang et al., 2022):
+The InstructGPT pipeline \cite[ouyang2022instructgpt]:
 
 $$
 \mathcal{L}_{\text{PPO}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y) - \beta\, \text{KL}\!\big(\pi_\theta(y \mid x) \,\|\, \pi_{\text{ref}}(y \mid x)\big)\Big]
@@ -114,7 +114,7 @@ By 2025, most frontier labs use PPO **only** for the final "alignment tax" refin
 <div class="md">
 ## Stage 3b: DPO and the Preference Optimization Family
 
-DPO (Rafailov et al., 2023) showed that the RLHF objective has a closed-form solution. The implicit reward is:
+DPO \cite[rafailov2023dpo] showed that the RLHF objective has a closed-form solution. The implicit reward is:
 
 $$
 R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
@@ -214,10 +214,10 @@ Combines 4-bit quantization of the base model with LoRA adapters in fp16. A 70B 
 
 ### Other PEFT Methods
 
-* **Adapters** (Houlsby et al., 2019): small bottleneck layers inserted between Transformer blocks.
-* **Prompt tuning** (Lester et al., 2021): learnable soft prompts prepended to inputs.
-* **IA³** (Liu et al., 2022): learnable scaling vectors on attention and FFN.
-* **DoRA** (Liu et al., 2024): decomposed magnitude and direction updates — often outperforms LoRA at the same rank.
+* **Adapters** \cite[houlsby2019adapters]: small bottleneck layers inserted between Transformer blocks.
+* **Prompt tuning** \cite[lester2021prompttuning]: learnable soft prompts prepended to inputs.
+* **IA³** \cite[liu2022ia3]: learnable scaling vectors on attention and FFN.
+* **DoRA** \cite[liu2024dora]: decomposed magnitude and direction updates — often outperforms LoRA at the same rank.
 </div>
 
 <div id="lora-viz" style="max-width:880px; margin:1em auto;"></div>

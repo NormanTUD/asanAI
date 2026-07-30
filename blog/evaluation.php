@@ -72,7 +72,7 @@ The model must produce a numerical answer after reasoning. **Exact-match accurac
 
 12,500 competition-\cite[Hendrycks et al., 2021]{hendrycks2021math}s from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
 
-### \cite[Chen et al., 2021]{chen2021humaneval} (Chen et al., 2021)
+### HumanEval \cite[chen2021humaneval]
 
 164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
 
@@ -86,7 +86,7 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 
 974 Python problems, slightly easier than \cite[Chen et al., 2021]{chen2021humaneval}. Used as a complement.
 
-### \cite[Srivastava et al., 2022]{srivastava2022bigbench} (Srivastava et al., 2022)
+### BIG-Bench \cite[srivastava2022bigbench]
 
 204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
 </div>
