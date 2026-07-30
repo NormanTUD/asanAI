@@ -2383,7 +2383,7 @@ window.bibData = {
 		year: 1970
 	},
 	"lovelacequote": {
-		url: "weaves algebraic patterns just as the Jacquard loom weaves flowers and",
+		url: "https://blogs.bodleian.ox.ac.uk/adalovelace/about-ada-lovelace/",
 		year: 2016,
 		title: "Celebrating Ada Lovelace",
 		author: "Dorothy Stein"
