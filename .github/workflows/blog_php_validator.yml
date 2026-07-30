@@ -15,6 +15,7 @@ on:
 jobs:
   php-validation:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -36,6 +37,10 @@ jobs:
       - name: Run JS Validator
         run: |
           uv run blog/tests/js_validator.py blog/
+
+      - name: Run Literature Link Checker
+        run: |
+          uv run blog/tests/link_checker.py blog/
 
   php-render-validation:
     runs-on: ubuntu-latest
