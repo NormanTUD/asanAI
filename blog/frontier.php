@@ -16,7 +16,7 @@ This chapter surveys the research frontier of 2025 — the techniques and ideas 
 <div class="md">
 ## Constitutional AI (CAI)
 
-Bai et al. (Anthropic, 2022) replaced most of \cite[\\cite[ouyang2022instructgpt]]{ouyang2022instructgpt}'s human-labelling with **AI self-critique against a written constitution**:
+Bai et al. (Anthropic, 2022) replaced most of \cite[Ouyang et al., 2022]{ouyang2022instructgpt}'s human-labelling with **AI self-critique against a written constitution**:
 
 1. The model generates a response.
 2. The model critiques it against a constitutional principle ("be helpful, harmless, honest").
@@ -26,7 +26,7 @@ Bai et al. (Anthropic, 2022) replaced most of \cite[\\cite[ouyang2022instructgpt
 
 A typical constitution entry: *"Which response is more honest? Response A states the limits of its knowledge; Response B makes up plausible-sounding facts. Choose the more honest response."*
 
-CAI reduces human labelling by ~10× while matching \cite[\\cite[ouyang2022instructgpt]]{ouyang2022instructgpt} on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
+CAI reduces human labelling by ~10× while matching \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
 <div class="md">
@@ -62,10 +62,10 @@ The 2024–2025 long-context arms race:
 
 Techniques enabling this:
 
-* **RoPE scaling** (\\cite[su2021rope]): interpolate or extrapolate rotary position embeddings. **YaRN** (\\cite[peng2023yarn]) extends this with frequency-aware scaling.
-* **ALiBi** (\\cite[press2022alibi]): linear bias to attention scores; doesn't require position embedding changes.
-* **Ring Attention** (\\cite[li2023seqparallel]): sequence parallelism with overlap of compute and communication.
-* **InfLLM** (Mini\\cite[ma2024bitnet]): training-free long-context via KV compression.
+* **RoPE scaling** (\cite[Su et al., 2021]{su2021rope}): interpolate or extrapolate rotary position embeddings. **YaRN** (\cite[Peng et al., 2023]{peng2023yarn}) extends this with frequency-aware scaling.
+* **ALiBi** (\cite[Press et al., 2022]{press2022alibi}): linear bias to attention scores; doesn't require position embedding changes.
+* **Ring Attention** (\cite[Li2023Seqparallel]{li2023seqparallel}): sequence parallelism with overlap of compute and communication.
+* **InfLLM** (Mini\cite[Ma et al., 2024]{ma2024bitnet}): training-free long-context via KV compression.
 * **Landmark Attention** (\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}: append "landmark" tokens summarizing past context.
 
 The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle. The reason is poorly understood but reproducible across architectures.
@@ -78,7 +78,7 @@ For evaluation, **needle-in-a-haystack** tests are now standard: insert a specif
 
 Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer. In production:
 
-* **Math-Shepherd** (\\cite[zhang2024mathshepherd]): auto-labels step correctness by checking if subsequent steps can reach the answer.
+* **Math-Shepherd** (\cite[Zhang2024Mathshepherd]{zhang2024mathshepherd}): auto-labels step correctness by checking if subsequent steps can reach the answer.
 * **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.
 * **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math (o1-mini with PRM ≈ GPT-4 on AIME).
 
@@ -96,13 +96,13 @@ $$
 
 Result: ~50% compute reduction at equal quality. The capacity is preserved; the routing learns to allocate it.
 
-Related: **early exit** (\\cite[elhoushi2024early]), **conditional computation** (\\cite[fedus2022moe]), **Skrr** (skip-routing, \\cite[sakurai2024skrr]).
+Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022moe}), **Skrr** (skip-routing, \cite[Sakurai et al., 2024]{sakurai2024skrr}).
 </div>
 
 <div class="md">
 ## Test-Time Training (\cite[Sun et al., 2024]{sun2024ttt})
 
-A 2024 idea: **train at inference time on the test input itself**. \\cite[Sun et al., 2024][]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
+A 2024 idea: **train at inference time on the test input itself**. \cite[Sun et al., 2024][]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
 
 For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
 
@@ -114,8 +114,8 @@ The trade-off: latency. \cite[Sun et al., 2024]{sun2024ttt} adds seconds-to-minu
 
 See the AI Agents chapter for the basics. Frontier developments:
 
-* **Multi-agent \cite[\\cite[du2023multiagent]]{du2023multiagent}** (\\cite[du2023multiagent]): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
-* **Toolformer-style self-taught tool use** (\\cite[schick2023toolformer]; Gorilla, \\cite[patil2023gpu]): models learn to call thousands of APIs.
+* **Multi-agent \cite[Du et al., 2023]{du2023multiagent}** (\cite[Du et al., 2023]{du2023multiagent}): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
+* **Toolformer-style self-taught tool use** (\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, \cite[Patil2023Gpu]{patil2023gpu}): models learn to call thousands of APIs.
 * **Computer use agents**: Anthropic's Claude can interact with a real desktop. OpenAI's Operator. Google Jarvis (rumored). All powered by screenshot→action Transformers.
 * **Code agents**: SWE-Agent, AutoCodeRover, Devin — autonomous software engineering. Still unreliable but improving.
 * **Hierarchical agents**: a planner agent delegates to specialist sub-agents. Used in many production systems.
@@ -132,11 +132,11 @@ Key 2024–2025 results:
 
 * **Genie 2** (DeepMind, 2024): generates playable 3D environments from a single image.
 * **V-JEPA 2** (Meta, 2025): self-supervised video prediction at scale.
-* **Dreamer V3** (\\cite[hafner2023dreamer]): world model enables Minecraft diamond collection from scratch.
+* **Dreamer V3** (\cite[Hafner et al., 2023]{hafner2023dreamer}): world model enables Minecraft diamond collection from scratch.
 * **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.
 * **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.
 
-The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open \cite[\\cite[du2023multiagent]]{du2023multiagent}.
+The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open \cite[Du et al., 2023]{du2023multiagent}.
 </div>
 
 <div class="md">
@@ -202,9 +202,9 @@ For practical deployments: a good **memory + retrieval layer** is more useful th
 From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:
 
 * **Sparse autoencoders** (see above) — millions of features per model.
-* **Causal scrubbing** (\\cite[redman2024causalscrubbing]): formally verify which circuits implement a behavior.
+* **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
 * **Cross-model universality**: do circuits transfer across models? Yes, partially — "induction heads" appear in every Transformer.
-* **Alignment-via-interpretability**: identify features for "deception", "harm", "sycophancy" and steer the model away from them. **Representation engineering** \\cite[zou2023repeng] is the umbrella term.
+* **Alignment-via-interpretability**: identify features for "deception", "harm", "sycophancy" and steer the model away from them. **Representation engineering** \cite[Zou et al., 2023]{zou2023repeng} is the umbrella term.
 
 The dream: an **"MRI for AI"** — read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
 </div>

@@ -59,7 +59,7 @@ A rule of thumb: **Q4_K_M is the sweet spot** for most local use. Q5_K_M for qua
 <div class="md">
 ## llama.cpp: The Reference Engine
 
-**llama.cpp** ([github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)) \cite[gerganov2023llamacpp] is a C++ inference engine, originally designed to run Llama 7B on a MacBook. It now supports:
+**llama.cpp** ([github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)) \cite[Gerganov, 2023]{gerganov2023llamacpp} is a C++ inference engine, originally designed to run Llama 7B on a MacBook. It now supports:
 
 * All major open models (Llama, Mistral, Qwen, DeepSeek, Phi, Gemma, etc.)
 * CPU, CUDA, Metal (Apple GPU), ROCm (AMD), Vulkan, SYCL (Intel), OpenCL
@@ -87,7 +87,7 @@ Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second. A 7B Q4_K_
 <div class="md">
 ## Ollama: One-Line Local LLMs
 
-**Ollama** ([ollama.com](https://ollama.com)) \cite[ollama2024] wraps llama.cpp in a clean interface:
+**Ollama** ([ollama.com](https://ollama.com)) \cite[Ollama, 2024]{ollama2024} wraps llama.cpp in a clean interface:
 
 ```
 ollama pull llama3.1:8b
@@ -115,7 +115,7 @@ The [Ollama model library](https://ollama.com/library) has thousands of communit
 <div class="md">
 ## LM Studio: GUI for Local LLMs
 
-**LM Studio** ([lmstudio.ai](https://lmstudio.ai)) \cite[lmstudio2024] is the desktop app version: search, download, chat, and run a local API. Built on llama.cpp but with a polished UI. Targets non-technical users.
+**LM Studio** ([lmstudio.ai](https://lmstudio.ai)) \cite[LM Studio, 2024]{lmstudio2024} is the desktop app version: search, download, chat, and run a local API. Built on llama.cpp but with a polished UI. Targets non-technical users.
 
 * Built-in model browser (HuggingFace integration).
 * Chat UI with conversation history.
@@ -147,7 +147,7 @@ For Python notebooks: **transformers + accelerate + bitsandbytes** loads any Hug
 
 The 2024–2025 democratization of fine-tuning is real:
 
-* **QLoRA** \cite[dettmers2023qlora]: 4-bit base model + LoRA adapters trainable in fp16. Fits a 70B fine-tune on a single 48 GB GPU.
+* **QLoRA** \cite[Dettmers et al., 2023]{dettmers2023qlora}: 4-bit base model + LoRA adapters trainable in fp16. Fits a 70B fine-tune on a single 48 GB GPU.
 * **Unsloth**: 2× faster QLoRA, kernels optimized for consumer GPUs.
 * **Axolotl**: popular framework for instruction fine-tuning.
 * **LoRA / QLoRA / DoRA**: rank-$r$ adapters that train a tiny fraction of parameters.

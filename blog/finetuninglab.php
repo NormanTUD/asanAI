@@ -87,7 +87,7 @@ $$
 <div class="md">
 ## Stage 3a: RLHF with PPO
 
-The InstructGPT pipeline \cite[ouyang2022instructgpt]:
+The InstructGPT pipeline \cite[Ouyang et al., 2022]{ouyang2022instructgpt}:
 
 $$
 \mathcal{L}_{\text{PPO}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y) - \beta\, \text{KL}\!\big(\pi_\theta(y \mid x) \,\|\, \pi_{\text{ref}}(y \mid x)\big)\Big]
@@ -114,7 +114,7 @@ By 2025, most frontier labs use PPO **only** for the final "alignment tax" refin
 <div class="md">
 ## Stage 3b: DPO and the Preference Optimization Family
 
-DPO \cite[rafailov2023dpo] showed that the RLHF objective has a closed-form solution. The implicit reward is:
+DPO \cite[Rafailov et al., 2023]{rafailov2023dpo} showed that the RLHF objective has a closed-form solution. The implicit reward is:
 
 $$
 R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
@@ -208,16 +208,16 @@ $$
 
 With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.002% of the original).
 
-### QLoRA \\cite[dettmers2023qlora]
+### QLoRA \cite[Dettmers et al., 2023]{dettmers2023qlora}
 
 Combines 4-bit quantization of the base model with LoRA adapters in fp16. A 70B QLoRA fine-tune fits on a single 48 GB GPU.
 
 ### Other PEFT Methods
 
-* **Adapters** \cite[houlsby2019adapters]: small bottleneck layers inserted between Transformer blocks.
-* **Prompt tuning** \cite[lester2021prompttuning]: learnable soft prompts prepended to inputs.
-* **IA³** \cite[liu2022ia3]: learnable scaling vectors on attention and FFN.
-* **DoRA** \cite[liu2024dora]: decomposed magnitude and direction updates — often outperforms LoRA at the same rank.
+* **Adapters** \cite[Houlsby et al., 2019]{houlsby2019adapters}: small bottleneck layers inserted between Transformer blocks.
+* **Prompt tuning** \cite[Lester et al., 2021]{lester2021prompttuning}: learnable soft prompts prepended to inputs.
+* **IA³** \cite[Liu et al., 2022]{liu2022ia3}: learnable scaling vectors on attention and FFN.
+* **DoRA** \cite[Liu et al., 2024]{liu2024dora}: decomposed magnitude and direction updates — often outperforms LoRA at the same rank.
 </div>
 
 <div id="lora-viz" style="max-width:880px; margin:1em auto;"></div>

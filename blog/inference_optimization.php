@@ -53,13 +53,13 @@ Reduce the bit precision of model weights:
 
 Standard tools:
 
-* **GPTQ** \\cite[frantar2022gptq]: post-training quantization using second-order information. The de facto standard.
-* **AWQ** \\cite[lin2023awq]: activation-aware weight quantization. Identifies salient weight channels and preserves them at higher precision.
-* **SmoothQuant** \\cite[xiao2022smoothquant]: migrates quantization difficulty from activations to weights.
-* **BitsAndBytes** \\cite[dettmers2022llmint8]: k-bit quantization for PyTorch (popular for QLoRA).
+* **GPTQ** \cite[Frantar et al., 2022]{frantar2022gptq}: post-training quantization using second-order information. The de facto standard.
+* **AWQ** \cite[Lin et al., 2023]{lin2023awq}: activation-aware weight quantization. Identifies salient weight channels and preserves them at higher precision.
+* **SmoothQuant** \cite[Xiao et al., 2022]{xiao2022smoothquant}: migrates quantization difficulty from activations to weights.
+* **BitsAndBytes** \cite[Dettmers et al., 2022]{dettmers2022llmint8}: k-bit quantization for PyTorch (popular for QLoRA).
 * **GGUF** (llama.cpp): many quantization schemes in a single file (Q2_K, Q3_K, Q4_K_M, Q5_K_M, Q6_K, Q8_0).
-* **BitNet** \\cite[ma2024bitnet]: 1.58-bit ternary quantization. Surprisingly competitive at scale.
-* **QuIP#** \\cite[che2024quip]: lattice-based 2-bit quantization with incoherence processing.
+* **BitNet** \cite[Ma et al., 2024]{ma2024bitnet}: 1.58-bit ternary quantization. Surprisingly competitive at scale.
+* **QuIP#** \cite[Chee et al., 2024]{che2024quip}: lattice-based 2-bit quantization with incoherence processing.
 
 ### KV-Cache Quantization
 
@@ -80,8 +80,8 @@ Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contex
 Beyond quantization:
 
 * **Multi-Query Attention (MQA)** (Shazeer, 2019): all query heads share a single K and V head. 32× KV memory reduction.
-* **Grouped-Query Attention (GQA)** \\cite[ainslie2023gqa]: middle ground — 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
-* **Sliding Window Attention** \\cite[beltagy2020longformer]: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few "global" attention layers to preserve long-range context.
+* **Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: middle ground — 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
+* **Sliding Window Attention** \cite[Beltagy et al., 2020]{beltagy2020longformer}: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few "global" attention layers to preserve long-range context.
 * **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory. Eliminates fragmentation.
 * **Prefix caching**: KV cache for a system prompt is computed once and reused across requests. Standard for chatbot APIs.
 * **Cross-request KV sharing**: identical prompts across users share KV blocks. Used in vLLM and SGLang.
@@ -90,7 +90,7 @@ A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to 100+ c
 </div>
 
 <div class="md">
-## FlashAttention \\cite[dao2022flashattention]
+## FlashAttention \cite[Dao et al., 2022]{dao2022flashattention}
 
 The single biggest speedup for training **and** inference in 2022–2023. Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:
 
@@ -115,7 +115,7 @@ FlashAttention is now standard in **all** major training and inference stacks (P
 <div id="flash-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-## Paged Attention \\cite[kwon2023vllm]
+## Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm}
 
 The OS-virtual-memory approach to KV management:
 
@@ -144,8 +144,8 @@ If $k = 5$ and acceptance rate is 80%, expected tokens per step = $\frac{1 - 0.8
 Variants:
 
 * **Self-speculative decoding**: use early-exit from the same model. No draft model needed.
-* **Medusa** \\cite[cai2024medusa]: parallel draft heads attached to the main model.
-* **EAGLE** \\cite[li2024eagle]: draft at the feature level, not the token level. Higher acceptance.
+* **Medusa** \cite[Cai et al., 2024]{cai2024medusa}: parallel draft heads attached to the main model.
+* **EAGLE** \cite[Li et al., 2024]{li2024eagle}: draft at the feature level, not the token level. Higher acceptance.
 * **Lookahead decoding**: parallel candidate generation with Jacobi iteration.
 </div>
 

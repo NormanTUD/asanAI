@@ -171,7 +171,7 @@ Modern Stable Diffusion XL Turbo generates images in **1–4 network evaluations
 
 * **Image-to-image**: encode the source image to latent, add noise to some timestep $t_0$, then denoise from $t_0$ back to 0. The amount of $t_0$ controls how much the model preserves vs regenerates.
 * **Inpainting**: mask a region of the latent, denoise with the mask conditioning. The model fills in the masked area consistent with the unmasked context.
-* **ControlNet** \cite[zhang2023controlnet]: train a small network that outputs residuals added to each U-Net block, conditioned on extra signals like edge maps (Canny), depth maps, human pose skeletons. This gives spatial control without retraining the base model.
+* **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet}: train a small network that outputs residuals added to each U-Net block, conditioned on extra signals like edge maps (Canny), depth maps, human pose skeletons. This gives spatial control without retraining the base model.
 * **LoRA**: \cite[Hu et al., 2021]{hu2021lora} adapters on the U-Net's attention layers, enabling fine-tuning on a few hundred images in minutes on consumer GPUs.
 </div>
 

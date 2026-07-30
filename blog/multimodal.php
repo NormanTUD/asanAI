@@ -51,7 +51,7 @@ This is the foundation of every modern vision-language model.
 <div class="md">
 ## Vision Transformers: Turning Pixels into Tokens
 
-A Vision Transformer \cite[dosovitskiy2021vit] (ViT) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
+A Vision Transformer \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit} (ViT) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
 
 $$
 \text{number of patches} \quad n = \frac{HW}{P^2}
@@ -83,11 +83,11 @@ $$
 
 The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. **Only the projection layer is trained initially**; the LLM is frozen. The visual tokens literally become "foreign-language words" the LLM learns to read.
 
-LLaVA-1.5 \cite[liu2023llava] used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 85.1% on VQA, matching GPT-4 on several multimodal benchmarks.
+LLaVA-1.5 \cite[Liu et al., 2023]{liu2023llava} used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 85.1% on VQA, matching GPT-4 on several multimodal benchmarks.
 
 ### Pattern 2: Cross-Attention (Flamingo-style)
 
-The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo \cite[alayrac2022flamingo] interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
+The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo \cite[Alayrac et al., 2022]{alayrac2022flamingo} interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
 
 ### Pattern 3: Native Multimodality (GPT-4o, Gemini)
 

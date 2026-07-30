@@ -97,7 +97,7 @@ $$
 
 By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (the "state"), compute drops to $O(n \cdot d^2)$ and memory is $O(d^2)$ — independent of $n$.
 
-### Performer \cite[choromanski2021performer]
+### Performer \cite[Choromanski et al., 2021]{choromanski2021performer}
 
 $\phi(x) = \exp(-\|x\|^2/2) \cdot (x, x^2 \text{ random features})$. Provably unbiased kernel approximation.
 
@@ -119,10 +119,10 @@ RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at
 <div class="md">
 ## Other Architectures
 
-* **Hyena** \cite[poli2023hyena]: replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
+* **Hyena** \cite[Poli et al., 2023]{poli2023hyena}: replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
 * **Mega** (\cite[Ma et al., 2022]{ma2022mega} average with attention. Position-aware.
 * **Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.
-* **\cite[\\cite[bubeck2023sparsemoe]]{fedus2022moe}-of-Depths** (\cite[Raposo et al., 2024]{raposo2024mod}: routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
+* **\cite[Bubeck et al., 2023]{fedus2022moe}-of-Depths** (\cite[Raposo et al., 2024]{raposo2024mod}: routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
 * **Universal Transformers**: recurrent application of the same Transformer block with a halting mechanism.
 
 The field is in active flux; no single "Transformer replacement" has emerged, but hybrids are clearly the immediate future.

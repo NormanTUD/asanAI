@@ -10,7 +10,7 @@ color: text-secondary
 -->
 
 <div class="md">
-A frontier LLM costs roughly \$100M to train \cite[patel2023gpu], ~\$1M/day to serve at scale, and ~\$0.01 per typical user query. Who pays for this? How do companies make money? When does self-hosting beat APIs? When do small open models beat GPT-4o?
+A frontier LLM costs roughly \$100M to train \cite[Patel & Cottier, 2023]{patel2023gpu}, ~\$1M/day to serve at scale, and ~\$0.01 per typical user query. Who pays for this? How do companies make money? When does self-hosting beat APIs? When do small open models beat GPT-4o?
 
 This chapter is the financial-engineering complement to the technical chapters above. Estimates are drawn from publicly disclosed numbers, vendor pricing pages, and analyst reports; treat them as approximations, not audited figures.
 </div>
@@ -20,7 +20,7 @@ This chapter is the financial-engineering complement to the technical chapters a
 
 Training cost has three components:
 
-* **Compute**: ~85% of the bill for frontier training. Llama 3 405B used ~30 million H100-hours, ≈ \$100M at \$3/hour \cite[patel2023gpu].
+* **Compute**: ~85% of the bill for frontier training. Llama 3 405B used ~30 million H100-hours, ≈ \$100M at \$3/hour \cite[Patel & Cottier, 2023]{patel2023gpu}.
 * **Data acquisition and curation**: ~5%. Mostly engineering salaries, not data purchase (yet).
 * **Engineering talent**: ~10%. ~50–200 staff at frontier labs, \$200K–\$1M average.
 
@@ -46,13 +46,13 @@ For a 70B model on an H100 with vLLM continuous batching \cite[at roughly \$2/hr
 ### OpenAI (closed)
 
 * **ChatGPT subscription**: \$20/month (Plus), \$200/month (Pro), \$25–\$200/employee/month (Team/Enterprise). ~700M weekly users by 2025.
-* **API**: per-token pricing, \$2.50–\$10 per 1M output tokens for GPT-4o \cite[openai2023apipricing].
+* **API**: per-token pricing, \$2.50–\$10 per 1M output tokens for GPT-4o \cite[OpenAI, 2024]{openai2023apipricing}.
 * **Revenue**: estimated \$5–\$10B annualized in 2025, growing 3× year-over-year.
 * **Strategy**: closed frontier models + consumer brand.
 
 ### Anthropic (closed)
 
-* **Claude API + Enterprise**. Estimated \$5B annualized revenue in 2025 \cite[anthropic2024funding].
+* **Claude API + Enterprise**. Estimated \$5B annualized revenue in 2025 \cite[Anthropic, 2024]{anthropic2024funding}.
 * **Strategy**: enterprise-focused, "safety-first" branding, partnerships with AWS, Google Cloud.
 * **2024 valuation**: ~\$60B.
 
@@ -73,7 +73,7 @@ For a 70B model on an H100 with vLLM continuous batching \cite[at roughly \$2/hr
 
 ### DeepSeek (open, China)
 
-* **DeepSeek-V3, R1**: open weights + cheap API (\$0.27/M input tokens) \cite[deepseek2024v3].
+* **DeepSeek-V3, R1**: open weights + cheap API (\$0.27/M input tokens) \cite[DeepSeek, 2024]{deepseek2024v3}.
 * **Strategy**: Chinese open-source dominance; reportedly trained at \$5M cost using H800s.
 </div>
 
@@ -156,15 +156,15 @@ Hardware and algorithmic improvements are **driving inference costs down by ~10�
 * 2020: GPT-3 inference at ~\$0.06 / 1K tokens.
 * 2023: GPT-4 ~\$0.03 / 1K tokens.
 * 2024: GPT-4o ~\$0.01 / 1K tokens.
-* 2025: DeepSeek V3 ~\$0.001 / 1K tokens \cite[deepseek2024v3].
+* 2025: DeepSeek V3 ~\$0.001 / 1K tokens \cite[DeepSeek, 2024]{deepseek2024v3}.
 
 Drivers:
 
 * **Hardware**: A100 → H100 → B200 (each ~2× perf/W).
 * **Custom silicon**: Groq LPU, Cerebras WSE, AWS Trainium.
 * **Quantization**: int8 → int4 → int2 with manageable quality loss.
-* **Architectural improvements**: FlashAttention \cite[dao2022flashattention], paged attention \cite[kwon2023vllm], speculative decoding \cite[leviathan2023spec].
-* **Distillation** \cite[hinton2015distilling]: 70B models approximating 400B quality.
+* **Architectural improvements**: FlashAttention \cite[Dao et al., 2022]{dao2022flashattention}, paged attention \cite[Kwon et al., 2023]{kwon2023vllm}, speculative decoding \cite[Leviathan et al., 2023]{leviathan2023spec}.
+* **Distillation** \cite[Hinton et al., 2015]{hinton2015distilling}: 70B models approximating 400B quality.
 
 The implication: **tasks that were uneconomical yesterday are profitable today**. Voice agents (sub-200ms latency), real-time code review, million-token document analysis — all became viable in 2024–2025.
 </div>

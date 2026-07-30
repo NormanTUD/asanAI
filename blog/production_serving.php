@@ -44,8 +44,8 @@ For a 70B model ($L = 80$ layers, $h = 64$ heads, $d_h = 128$) with fp16 KV (2 b
 
 This is the dominant memory cost in inference. Several techniques address it:
 
-* **Multi-Query Attention (MQA) / Grouped-Query Attention (\cite[Ainslie et al., 2023]{ainslie2023gqa})**: share K/V across multiple query heads. Llama 2 70B uses \cite[Ainslie et al., 2023]{ainslie2023gqa} with 8 KV heads for 64 query heads → 8× less KV memory.
-* **\cite[Kwon et al., 2023]{kwon2023vllm} Attention** (vLLM, Kwon et al., 2023): allocate KV cache in non-contiguous pages, like OS virtual memory. Eliminates fragmentation, enables sharing across requests.
+* **Multi-Query Attention (MQA) / Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: share K/V across multiple query heads. Llama 2 70B uses GQA with 8 KV heads for 64 query heads → 8× less KV memory.
+* **Paged Attention** \cite[Kwon et al., 2023]{kwon2023vllm} (vLLM): allocate KV cache in non-contiguous pages, like OS virtual memory. Eliminates fragmentation, enables sharing across requests.
 * **KV-cache compression**: quantize KV to int4 or int8 (≈4× memory reduction, minor quality loss).
 * **Sliding-window attention**: only cache the last $w$ tokens' KV. Used in Mistral and Gemma 2.
 * **Prefix caching**: reuse KV across requests with the same prompt prefix. Standard for system prompts.
@@ -68,7 +68,7 @@ Continuously add new requests to the batch as they arrive. Better throughput, bu
 
 ### Continuous Batching (Iteration-level Scheduling)
 
-**vLLM** \cite[kwon2023vllm] and **TGI** (HuggingFace) introduced this: after each token is generated, immediately swap finished sequences out of the batch and swap new ones in. GPU stays at peak utilization; no waiting.
+**vLLM** \cite[Kwon et al., 2023]{kwon2023vllm} and **TGI** (HuggingFace) introduced this: after each token is generated, immediately swap finished sequences out of the batch and swap new ones in. GPU stays at peak utilization; no waiting.
 
 Continuous batching alone can give 10–20× throughput improvement over static batching for chat workloads.
 </div>
@@ -76,18 +76,18 @@ Continuous batching alone can give 10–20× throughput improvement over static 
 <div id="batching-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-## \cite[Kwon et al., 2023]{kwon2023vllm} Attention
+## Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm}
 
 Naïve KV-cache allocation reserves a contiguous block per request: if a request needs 4K tokens but only 2K are used, the rest is wasted. With many requests, fragmentation can waste **30–60%** of KV memory.
 
-**\cite[Kwon et al., 2023]{kwon2023vllm} Attention** (vLLM) treats the KV cache like OS virtual memory:
+**Paged Attention** (vLLM) treats the KV cache like OS virtual memory \cite[Kwon et al., 2023]{kwon2023vllm}:
 
 * Allocate fixed-size **physical blocks** (typically 16 tokens each).
 * Each request has a **block table** mapping logical → physical blocks.
 * Blocks can be **shared** across requests with the same prefix (e.g., the system prompt).
 * No fragmentation; near-100% memory utilization.
 
-\cite[Kwon et al., 2023]{kwon2023vllm} attention is now the standard in vLLM, TGI, TensorRT-LLM, and most production systems.
+Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm} is now the standard in vLLM, TGI, TensorRT-LLM, and most production systems.
 </div>
 
 <div class="md">
@@ -120,7 +120,7 @@ Reduce precision of weights and/or activations:
 | int3 / int2 (QuIP, QuIP#) | 2–3 | 17–23 GB | 3–10% |
 | 1-bit (BitNet, 2024) | 1.58 | 13 GB | Comparable to fp16 at scale |
 
-Modern quantization is **nearly free** at int8 and acceptable at int4 for most workloads. AWQ (\cite[Lin et al., 2023]{lin2023awq} Weight Quantization) and GPTQ are the standard tools. The trade-off is non-uniform: outliers in some channels cause big errors; per-channel scaling mitigates.
+Modern quantization is **nearly free** at int8 and acceptable at int4 for most workloads. AWQ (Activation-aware Weight Quantization \cite[Lin et al., 2023]{lin2023awq}) and GPTQ are the standard tools. The trade-off is non-uniform: outliers in some channels cause big errors; per-channel scaling mitigates.
 
 For activations, **fp8** (H100 native) gives 2× throughput with minimal quality loss. **INT4 KV-cache** is a separate axis, giving up to 4× KV memory reduction.
 </div>
@@ -130,7 +130,7 @@ For activations, **fp8** (H100 native) gives 2× throughput with minimal quality
 
 A small student model trained to mimic a large teacher:
 
-* **Logit distillation** \cite[hinton2015distilling]: match the teacher's full output distribution: $\mathcal{L} = \text{KL}\!\big(p_T \,\|\, p_S\big)$.
+* **Logit distillation** \cite[Hinton et al., 2015]{hinton2015distilling}: match the teacher's full output distribution: $\mathcal{L} = \text{KL}\!\big(p_T \,\|\, p_S\big)$.
 * **Hidden-state distillation**: match intermediate activations layer-by-layer.
 * **Attention distillation**: match attention matrices.
 * **Generative distillation**: train on the teacher's text outputs (supervised fine-tuning).
@@ -149,7 +149,7 @@ Distilled models can match the teacher on specific benchmarks within 5–10% of 
 
 ### vLLM (UC Berkeley)
 
-The most widely used open-source serving system. \cite[Kwon et al., 2023]{kwon2023vllm} Attention, continuous batching, tensor parallelism, speculative decoding, prefix caching. Powers ChatGPT-style deployments at major labs.
+The most widely used open-source serving system. Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm}, continuous batching, tensor parallelism, speculative decoding, prefix caching. Powers ChatGPT-style deployments at major labs.
 
 ### TGI (HuggingFace Text Generation Inference)
 
@@ -249,11 +249,11 @@ Rule of thumb: prototype with the best model; measure cost; downgrade if necessa
 
 	const seqLens = [1024, 4096, 16384, 65536, 131072];
 	const kvStandard = seqLens.map(s => s * 2.6 / 1024);     // GB, MHA
-	const kv\cite[Ainslie et al., 2023]{ainslie2023gqa} = seqLens.map(s => s * 0.33 / 1024);          // \cite[Ainslie et al., 2023]{ainslie2023gqa} 8 KV heads
+	const kvGqa = seqLens.map(s => s * 0.33 / 1024);          // GQA 8 KV heads
 
 	Plotly.newPlot('kv-viz', [
 		{ x: seqLens.map(s => s / 1024 + 'K'), y: kvStandard, type: 'bar', name: 'Multi-Head Attention', marker: { color: '#ef4444' } },
-		{ x: seqLens.map(s => s / 1024 + 'K'), y: kv\cite[Ainslie et al., 2023]{ainslie2023gqa}, type: 'bar', name: 'Grouped-Query Attention (8 KV heads)', marker: { color: '#22c55e' } }
+		{ x: seqLens.map(s => s / 1024 + 'K'), y: kvGqa, type: 'bar', name: 'Grouped-Query Attention (8 KV heads)', marker: { color: '#22c55e' } }
 	], {
 		title: { text: 'KV-cache memory for 70B model (80 layers, 64 heads)', font: { size: 13 } },
 		barmode: 'group',
