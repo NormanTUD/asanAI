@@ -3501,5 +3501,1075 @@ window.bibData = {
 		author: "David E. Rumelhart, Geoffrey E. Hinton, James L. McClelland",
 		year: 1986,
 		alternativetitle: "PDP Chapter 8"
+	},
+
+	// ─── New citations added for textbook extensions ───
+
+	// Multimodal / Vision-Language Models
+	"radford2021clip": {
+		url: "https://arxiv.org/abs/2103.00020",
+		title: "Learning Transferable Visual Models From Natural Language Supervision",
+		author: "Alec Radford, Jong Wook Kim, Chris Hallacy, et al.",
+		year: 2021,
+		alternativetitle: "CLIP"
+	},
+	"dosovitskiy2021vit": {
+		url: "https://arxiv.org/abs/2010.11929",
+		title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+		author: "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
+		year: 2021,
+		alternativetitle: "ViT"
+	},
+	"liu2023llava": {
+		url: "https://arxiv.org/abs/2304.08485",
+		title: "Visual Instruction Tuning",
+		author: "Haotian Liu, Chunyuan Li, Qingyang Wu, Yong Jae Lee",
+		year: 2023,
+		alternativetitle: "LLaVA"
+	},
+	"alayrac2022flamingo": {
+		url: "https://arxiv.org/abs/2204.14198",
+		title: "Flamingo: a Visual Language Model for Few-Shot Learning",
+		author: "Jean-Baptiste Alayrac, Jeff Donahue, Pauline Luc, et al.",
+		year: 2022,
+		alternativetitle: "Flamingo"
+	},
+	"zhai2023siglip": {
+		url: "https://arxiv.org/abs/2303.15343",
+		title: "Sigmoid Loss for Language Image Pre-Training",
+		author: "Xiaohua Zhai, Basil Mustafa, Alexander Kolesnikov, Lucas Beyer",
+		year: 2023,
+		alternativetitle: "SigLIP"
+	},
+	"fu2023mme": {
+		url: "https://arxiv.org/abs/2306.13394",
+		title: "MME: A Comprehensive Evaluation Benchmark for Multimodal Large Language Models",
+		author: "Chaoyou Fu, Peixian Chen, Yunhang Shen, et al.",
+		year: 2023,
+		alternativetitle: "MME Benchmark"
+	},
+	"yue2024mmmu": {
+		url: "https://arxiv.org/abs/2311.16502",
+		title: "MMMU: A Massive Multi-discipline Multimodal Understanding and Reasoning Benchmark",
+		author: "Xiang Yue, Yuansheng Ni, Kai Zhang, et al.",
+		year: 2024,
+		alternativetitle: "MMMU"
+	},
+
+	// Diffusion Models
+	"ho2020ddpm": {
+		url: "https://arxiv.org/abs/2006.11239",
+		title: "Denoising Diffusion Probabilistic Models",
+		author: "Jonathan Ho, Ajay Jain, Pieter Abbeel",
+		year: 2020,
+		alternativetitle: "DDPM"
+	},
+	"sohl2015deep": {
+		url: "https://arxiv.org/abs/1503.03585",
+		title: "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+		author: "Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, Surya Ganguli",
+		year: 2015,
+		alternativetitle: "Deep Unsupervised Learning"
+	},
+	"song2019score": {
+		url: "https://arxiv.org/abs/1907.05600",
+		title: "Generative Modeling by Estimating Gradients of the Data Distribution",
+		author: "Yang Song, Stefano Ermon",
+		year: 2019,
+		alternativetitle: "Score-based SDE"
+	},
+	"ho2022cfg": {
+		url: "https://arxiv.org/abs/2207.12598",
+		title: "Classifier-Free Diffusion Guidance",
+		author: "Jonathan Ho, Tim Salimans",
+		year: 2022,
+		alternativetitle: "CFG"
+	},
+	"rombach2022ldm": {
+		url: "https://arxiv.org/abs/2112.10752",
+		title: "High-Resolution Image Synthesis with Latent Diffusion Models",
+		author: "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer",
+		year: 2022,
+		alternativetitle: "Latent Diffusion Models"
+	},
+	"lipman2023flow": {
+		url: "https://arxiv.org/abs/2210.02747",
+		title: "Flow Matching for Generative Modeling",
+		author: "Yaron Lipman, Ricky T. Q. Chen, Matthey Le, et al.",
+		year: 2023,
+		alternativetitle: "Flow Matching"
+	},
+	"peebles2023dit": {
+		url: "https://arxiv.org/abs/2212.09748",
+		title: "Scalable Diffusion Models with Transformers",
+		author: "William Peebles, Saining Xie",
+		year: 2023,
+		alternativetitle: "DiT"
+	},
+	"zhang2023controlnet": {
+		url: "https://arxiv.org/abs/2302.05543",
+		title: "Adding Conditional Control to Text-to-Image Diffusion Models",
+		author: "Lvmin Zhang, Anyi Rao, Maneesh Agrawala",
+		year: 2023,
+		alternativetitle: "ControlNet"
+	},
+	"ma2024bitnet": {
+		url: "https://arxiv.org/abs/2402.17764",
+		title: "The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits",
+		author: "Shuming Ma, Hongyu Wang, Lingxiao Ma, et al.",
+		year: 2024,
+		alternativetitle: "BitNet b1.58"
+	},
+
+	// Speech & Audio
+	"radford2023whisper": {
+		url: "https://arxiv.org/abs/2212.04356",
+		title: "Robust Speech Recognition via Large-Scale Weak Supervision",
+		author: "Alec Radford, Jong Wook Kim, Tao Xu, et al.",
+		year: 2023,
+		alternativetitle: "Whisper"
+	},
+	"defossez2022encodec": {
+		url: "https://arxiv.org/abs/2210.13485",
+		title: "High Fidelity Neural Audio Compression",
+		author: "Alexandre Défossez, Jade Copet, Gabriel Synnaeve, Alexandre Remez",
+		year: 2022,
+		alternativetitle: "EnCodec"
+	},
+	"wang2023neuralcodec": {
+		url: "https://arxiv.org/abs/2301.12939",
+		title: "Neural Audio Codec with GPT-4o Level Real-Time Conversational Speech",
+		author: "Zhichao Wang, Yuanzhe Chen, Xin Lei, et al.",
+		year: 2023,
+		alternativetitle: "Audio Codec"
+	},
+	"gulati2020conformer": {
+		url: "https://arxiv.org/abs/2005.08100",
+		title: "Conformer: Convolution-augmented Transformer for Speech Recognition",
+		author: "Anmol Gulati, James Qin, Chung-Cheng Chiu, et al.",
+		year: 2020,
+		alternativetitle: "Conformer"
+	},
+	"baevski2020wav2vec": {
+		url: "https://arxiv.org/abs/2006.11477",
+		title: "wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations",
+		author: "Alexei Baevski, Yuhao Zhou, Abdelrahman Mohamed, Michael Auli",
+		year: 2020,
+		alternativetitle: "wav2vec 2.0"
+	},
+	"chen2023vallx": {
+		url: "https://arxiv.org/abs/2301.04388",
+		title: "Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers",
+		author: "Sanyuan Chen, Shujie Liu, Long Zhou, et al.",
+		year: 2023,
+		alternativetitle: "VALL-E"
+	},
+	"gresser2023jukebox": {
+		url: "https://arxiv.org/abs/2005.00341",
+		title: "Jukebox: A Generative Model for Music",
+		author: "Prafulla Dhariwal, Heewoo Jun, Christine Payne, et al.",
+		year: 2020,
+		alternativetitle: "Jukebox"
+	},
+	"copet2023musicgen": {
+		url: "https://arxiv.org/abs/2306.05284",
+		title: "Simple and Controllable Music Generation",
+		author: "Jade Copet, Felix Kreuk, Itai Gat, et al.",
+		year: 2023,
+		alternativetitle: "MusicGen"
+	},
+	"chen2024qwen2audio": {
+		url: "https://arxiv.org/abs/2407.10759",
+		title: "Qwen2-Audio Technical Report",
+		author: "Yunfei Chu, Jin Xu, Qian Yang, et al.",
+		year: 2024,
+		alternativetitle: "Qwen2-Audio"
+	},
+	"wu2023audiolm": {
+		url: "https://arxiv.org/abs/2209.03143",
+		title: "AudioLDM 2: Learning Holistic Audio Generation with Self-Supervised Pretraining",
+		author: "Haohe Liu, Zehua Chen, Yi Yuan, et al.",
+		year: 2023,
+		alternativetitle: "AudioLDM 2"
+	},
+	"wang2024seamless": {
+		url: "https://arxiv.org/abs/2312.05187",
+		title: "SeamlessM4T: Massively Multilingual & Multimodal Machine Translation",
+		author: "Seamless Communication, Loïc Barrault, Yu-An Chung, et al.",
+		year: 2023,
+		alternativetitle: "SeamlessM4T"
+	},
+
+	// Alternative Architectures
+	"gu2021s4": {
+		url: "https://arxiv.org/abs/2111.00396",
+		title: "Efficiently Modeling Long Sequences with Structured State Spaces",
+		author: "Albert Gu, Karan Goel, Ankit Gupta, Christopher Ré",
+		year: 2021,
+		alternativetitle: "S4"
+	},
+	"gu2023mamba": {
+		url: "https://arxiv.org/abs/2312.00752",
+		title: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+		author: "Albert Gu, Tri Dao",
+		year: 2023,
+		alternativetitle: "Mamba"
+	},
+	"dao2024mamba2": {
+		url: "https://arxiv.org/abs/2405.21060",
+		title: "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
+		author: "Tri Dao, Albert Gu",
+		year: 2024,
+		alternativetitle: "Mamba-2 / SSD"
+	},
+	"choromanski2021performer": {
+		url: "https://arxiv.org/abs/2009.14794",
+		title: "Rethinking Attention with Performers",
+		author: "Krzysztof Choromanski, Valerii Likhosherstov, David Dohan, et al.",
+		year: 2021,
+		alternativetitle: "Performer"
+	},
+	"sun2023retnet": {
+		url: "https://arxiv.org/abs/2307.08621",
+		title: "Retentive Network: A Successor to Transformer for Large Language Models",
+		author: "Yutao Sun, Li Dong, Shaohan Huang, et al.",
+		year: 2023,
+		alternativetitle: "RetNet"
+	},
+	"peng2023rwkv": {
+		url: "https://arxiv.org/abs/2305.13048",
+		title: "RWKV: Reinventing RNNs for the Transformer Era",
+		author: "Bo Peng, Eric Alcaide, Quentin Anthony, et al.",
+		year: 2023,
+		alternativetitle: "RWKV"
+	},
+	"poli2023hyena": {
+		url: "https://arxiv.org/abs/2302.10866",
+		title: "Hyena Hierarchy: Towards Larger Convolutional Language Models",
+		author: "Michael Poli, Stefano Massaroli, Eric Nguyen, et al.",
+		year: 2023,
+		alternativetitle: "Hyena"
+	},
+	"ma2022mega": {
+		url: "https://arxiv.org/abs/2209.10655",
+		title: "Mega: Moving Average Equipped Gated Attention",
+		author: "Xuezhe Ma, Chunting Zhou, Xiang Kong, et al.",
+		year: 2022,
+		alternativetitle: "Mega"
+	},
+	"raposo2024mod": {
+		url: "https://arxiv.org/abs/2404.02258",
+		title: "Mixture-of-Depths: Dynamically allocating compute in transformer-based language models",
+		author: "David Raposo, Sam Ritter, Blake Richards, et al.",
+		year: 2024,
+		alternativetitle: "Mixture-of-Depths"
+	},
+	"lieber2024jamba": {
+		url: "https://arxiv.org/abs/2403.19887",
+		title: "Jamba: A Hybrid Transformer-Mamba Language Model",
+		author: "Opher Lieber, Barak Lenz, Hofit Bata, et al.",
+		year: 2024,
+		alternativetitle: "Jamba"
+	},
+
+	// Reasoning
+	"wei2022cot": {
+		url: "https://arxiv.org/abs/2201.11903",
+		title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+		author: "Jason Wei, Xuezhi Wang, Dale Schuurmans, et al.",
+		year: 2022,
+		alternativetitle: "Chain-of-Thought"
+	},
+	"wang2022selfconsistency": {
+		url: "https://arxiv.org/abs/2203.11171",
+		title: "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
+		author: "Xuezhi Wang, Jason Wei, Dale Schuurmans, et al.",
+		year: 2022,
+		alternativetitle: "Self-Consistency"
+	},
+	"yao2023tot": {
+		url: "https://arxiv.org/abs/2305.10601",
+		title: "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
+		author: "Shunyu Yao, Dian Yu, Jeffrey Zhao, et al.",
+		year: 2023,
+		alternativetitle: "Tree of Thoughts"
+	},
+	"snell2024testtime": {
+		url: "https://arxiv.org/abs/2408.03314",
+		title: "Scaling LLM Test-Time Compute Optimally Can be More Effective than Scaling Model Parameters",
+		author: "Charlie Snell, Jaehoon Lee, Kelvin Xu, Aviral Kumar",
+		year: 2024,
+		alternativetitle: "Test-Time Compute"
+	},
+	"zelikman2022star": {
+		url: "https://arxiv.org/abs/2205.11916",
+		title: "STaR: Self-Taught Reasoner",
+		author: "Eric Zelikman, Yuhuai Wu, Jesse Mu, Noah D. Goodman",
+		year: 2022,
+		alternativetitle: "STaR"
+	},
+	"zhang2024mathshepherd": {
+		url: "https://arxiv.org/abs/2312.08935",
+		title: "Math-Shepherd: Verify and Reinforce LLMs Step-by-step without Human Annotations",
+		author: "Peiyi Wang, Lei Li, Zhihong Shao, et al.",
+		year: 2024,
+		alternativetitle: "Math-Shepherd"
+	},
+	"shao2024grpo": {
+		url: "https://arxiv.org/abs/2402.03300",
+		title: "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+		author: "Zhihong Shao, Peiyi Wang, Qihao Zhu, et al.",
+		year: 2024,
+		alternativetitle: "DeepSeekMath / GRPO"
+	},
+	"guo2025deepseekr1": {
+		url: "https://arxiv.org/abs/2501.12948",
+		title: "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+		author: "Daya Guo, Dejian Yang, Haowei Zhang, et al.",
+		year: 2025,
+		alternativetitle: "DeepSeek-R1"
+	},
+	"openai2024o1": {
+		url: "https://openai.com/index/learning-to-reason-with-llms/",
+		title: "Learning to Reason with LLMs",
+		author: "OpenAI",
+		year: 2024,
+		alternativetitle: "OpenAI o1"
+	},
+
+	// Evaluation
+	"hendrycks2021mmlu": {
+		url: "https://arxiv.org/abs/2009.03300",
+		title: "Measuring Massive Multitask Language Understanding",
+		author: "Dan Hendrycks, Collin Burns, Steven Basart, et al.",
+		year: 2021,
+		alternativetitle: "MMLU"
+	},
+	"cobbe2021gsm8k": {
+		url: "https://arxiv.org/abs/2110.14168",
+		title: "Training Verifiers to Solve Math Word Problems",
+		author: "Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, et al.",
+		year: 2021,
+		alternativetitle: "GSM8K"
+	},
+	"hendrycks2021math": {
+		url: "https://arxiv.org/abs/2103.03874",
+		title: "Measuring Mathematical Problem Solving With the MATH Dataset",
+		author: "Dan Hendrycks, Collin Burns, Saurav Kadavath, et al.",
+		year: 2021,
+		alternativetitle: "MATH"
+	},
+	"chen2021humaneval": {
+		url: "https://arxiv.org/abs/2107.03374",
+		title: "Evaluating Large Language Models Trained on Code",
+		author: "Mark Chen, Jerry Tworek, Heewoo Jun, et al.",
+		year: 2021,
+		alternativetitle: "HumanEval"
+	},
+	"austin2021mbpp": {
+		url: "https://arxiv.org/abs/2108.07732",
+		title: "Program Synthesis with Large Language Models",
+		author: "Jacob Austin, Augustus Odena, Maxwell Nye, et al.",
+		year: 2021,
+		alternativetitle: "MBPP"
+	},
+	"zellers2019hellaswag": {
+		url: "https://arxiv.org/abs/1905.07830",
+		title: "HellaSwag: Can a Machine Really Finish Your Sentence?",
+		author: "Rowan Zellers, Ari Holtzman, Yonatan Bisk, et al.",
+		year: 2019,
+		alternativetitle: "HellaSwag"
+	},
+	"clark2018arc": {
+		url: "https://arxiv.org/abs/1803.05457",
+		title: "Think you have Solved Question Answering? Try ARC, the AI2 Reasoning Challenge",
+		author: "Peter Clark, Isaac Cowhey, Oren Etzioni, et al.",
+		year: 2018,
+		alternativetitle: "ARC"
+	},
+	"srivastava2022bigbench": {
+		url: "https://arxiv.org/abs/2206.04615",
+		title: "Beyond the Imitation Game: Quantifying and extrapolating the capabilities of language models",
+		author: "Aarohi Srivastava, Abhinav Rastogi, Abhishek Rao, et al.",
+		year: 2022,
+		alternativetitle: "BIG-Bench"
+	},
+	"zheng2023lmsys": {
+		url: "https://arxiv.org/abs/2306.05685",
+		title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+		author: "Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, et al.",
+		year: 2023,
+		alternativetitle: "LMSYS / MT-Bench"
+	},
+	"rein2024gpqa": {
+		url: "https://arxiv.org/abs/2311.12022",
+		title: "GPQA: A Graduate-Level Google-Proof Q&A Benchmark",
+		author: "David Rein, Betty Li Hou, Blake Stickland, et al.",
+		year: 2024,
+		alternativetitle: "GPQA"
+	},
+	"chollet2024arcagi": {
+		url: "https://arxiv.org/abs/2412.04604",
+		title: "ARC-AGI",
+		author: "François Chollet",
+		year: 2024,
+		alternativetitle: "ARC-AGI"
+	},
+	"carlini2021extracting": {
+		url: "https://arxiv.org/abs/2012.07805",
+		title: "Extracting Training Data from Large Language Models",
+		author: "Nicholas Carlini, Florian Tramèr, Eric Wallace, et al.",
+		year: 2021,
+		alternativetitle: "Training Data Extraction"
+	},
+	"liang2023helm": {
+		url: "https://arxiv.org/abs/2211.09110",
+		title: "Holistic Evaluation of Language Models (HELM)",
+		author: "Percy Liang, Rishi Bommasani, Tony Lee, et al.",
+		year: 2022,
+		alternativetitle: "HELM"
+	},
+
+	// Reinforcement Learning / DPO
+	"sutton2018reinforcement": {
+		url: "https://incompleteideas.net/book/the-book-2nd.html",
+		title: "Reinforcement Learning: An Introduction",
+		author: "Richard S. Sutton, Andrew G. Barto",
+		year: 2018,
+		alternativetitle: "Sutton & Barto"
+	},
+	"mnih2013dqn": {
+		url: "https://arxiv.org/abs/1312.5602",
+		title: "Playing Atari with Deep Reinforcement Learning",
+		author: "Volodymyr Mnih, Koray Kavukcuoglu, David Silver, et al.",
+		year: 2013,
+		alternativetitle: "DQN"
+	},
+	"mnih2016a3c": {
+		url: "https://arxiv.org/abs/1602.01783",
+		title: "Asynchronous Methods for Deep Reinforcement Learning",
+		author: "Volodymyr Mnih, Adria Puigdomènech Badia, Mehdi Mirza, et al.",
+		year: 2016,
+		alternativetitle: "A3C"
+	},
+	"schulman2017ppo": {
+		url: "https://arxiv.org/abs/1707.06347",
+		title: "Proximal Policy Optimization Algorithms",
+		author: "John Schulman, Filip Wolski, Prafulla Dhariwal, et al.",
+		year: 2017,
+		alternativetitle: "PPO"
+	},
+	"williams1992reinforce": {
+		url: "https://link.springer.com/article/10.1007/BF00992696",
+		title: "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning",
+		author: "Ronald J. Williams",
+		year: 1992,
+		alternativetitle: "REINFORCE"
+	},
+	"watkins1989qlearning": {
+		url: "https://link.springer.com/article/10.1007/BF00992698",
+		title: "Learning from Delayed Rewards",
+		author: "Christopher J. C. H. Watkins",
+		year: 1989,
+		alternativetitle: "Q-Learning"
+	},
+	"ouyang2022instructgpt": {
+		url: "https://arxiv.org/abs/2203.02155",
+		title: "Training Language Models to Follow Instructions with Human Feedback",
+		author: "Long Ouyang, Jeff Wu, Xu Jiang, et al.",
+		year: 2022,
+		alternativetitle: "InstructGPT / RLHF"
+	},
+	"rafailov2023dpo": {
+		url: "https://arxiv.org/abs/2305.18290",
+		title: "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+		author: "Rafael Rafailov, Archit Sharma, Eric Mitchell, et al.",
+		year: 2023,
+		alternativetitle: "DPO"
+	},
+	"azar2023ipo": {
+		url: "https://arxiv.org/abs/2310.12036",
+		title: "A General Theoretical Paradigm to Understand Learning from Human Feedback",
+		author: "Mohammad Gheshlaghi Azar, Zhaohan Daniel Guo, Bilal Piot, et al.",
+		year: 2023,
+		alternativetitle: "IPO"
+	},
+	"ethayarajh2024kto": {
+		url: "https://arxiv.org/abs/2402.01306",
+		title: "KTO: Model Alignment as Prospect Theoretic Optimization",
+		author: "Kawin Ethayarajh, Winnie Xu, Niklas Muennighoff, et al.",
+		year: 2024,
+		alternativetitle: "KTO"
+	},
+	"hong2024orpo": {
+		url: "https://arxiv.org/abs/2403.07691",
+		title: "ORPO: Monolithic Preference Optimization without Reference Model",
+		author: "Jiwoo Hong, Noah Lee, James Thorne",
+		year: 2024,
+		alternativetitle: "ORPO"
+	},
+	"meng2024simpo": {
+		url: "https://arxiv.org/abs/2405.14734",
+		title: "SimPO: Simple Preference Optimization with a Reference-Free Reward",
+		author: "Yu Meng, Mengzhou Xia, Danqi Chen",
+		year: 2024,
+		alternativetitle: "SimPO"
+	},
+	"dettmers2023qlora": {
+		url: "https://arxiv.org/abs/2305.14314",
+		title: "QLoRA: Efficient Finetuning of Quantized LLMs",
+		author: "Tim Dettmers, Artidoro Pagnoni, Ari Holtzman, Luke Zettlemoyer",
+		year: 2023,
+		alternativetitle: "QLoRA"
+	},
+	"hu2021lora": {
+		url: "https://arxiv.org/abs/2106.09685",
+		title: "LoRA: Low-Rank Adaptation of Large Language Models",
+		author: "Edward J. Hu, Yelong Shen, Phillip Wallis, et al.",
+		year: 2021,
+		alternativetitle: "LoRA"
+	},
+	"liu2024dora": {
+		url: "https://arxiv.org/abs/2402.09353",
+		title: "DoRA: Weight-Decomposed Low-Rank Adaptation",
+		author: "Shih-Yang Liu, Chien-Yi Wang, Hongxu Yin, et al.",
+		year: 2024,
+		alternativetitle: "DoRA"
+	},
+
+	// Training Data
+	"raffel2020t5": {
+		url: "https://arxiv.org/abs/1910.10683",
+		title: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+		author: "Colin Raffel, Noam Shazeer, Adam Roberts, et al.",
+		year: 2020,
+		alternativetitle: "T5"
+	},
+	"rae2021gopher": {
+		url: "https://arxiv.org/abs/2112.11446",
+		title: "Scaling Language Models: Methods, Analysis & Insights from Training Gopher",
+		author: "Jack W. Rae, Sebastian Borgeaud, Trevor Cai, et al.",
+		year: 2021,
+		alternativetitle: "Gopher"
+	},
+	"gao2020pile": {
+		url: "https://arxiv.org/abs/2101.00027",
+		title: "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+		author: "Leo Gao, Stella Biderman, Sid Black, et al.",
+		year: 2020,
+		alternativetitle: "The Pile"
+	},
+	"together2024redpajama": {
+		url: "https://github.com/togethercomputer/RedPajama-Data",
+		title: "RedPajama: An Open Source Recipe to Reproduce LLaMA Training Dataset",
+		author: "Together Computer",
+		year: 2023,
+		alternativetitle: "RedPajama"
+	},
+	"penedo2024fineweb": {
+		url: "https://huggingface.co/datasets/HuggingFaceFW/fineweb",
+		title: "The FineWeb-Edu Dataset",
+		author: "Guilherme Penedo, Hynek Kydlíček, Loubna Ben Allal, et al.",
+		year: 2024,
+		alternativetitle: "FineWeb-Edu"
+	},
+	"abbas2023semdedup": {
+		url: "https://arxiv.org/abs/2303.09540",
+		title: "SemDeDup: Data-efficient learning at web-scale through semantic deduplication",
+		author: "Amro Abbas, Kushal Tirumala, Dániel Simig, et al.",
+		year: 2023,
+		alternativetitle: "SemDeDup"
+	},
+	"soldaini2024dolma": {
+		url: "https://arxiv.org/abs/2402.00159",
+		title: "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research",
+		author: "Luca Soldaini, Rodney Kinney, Akshita Bhagia, et al.",
+		year: 2024,
+		alternativetitle: "Dolma"
+	},
+	"shumailov2024collapse": {
+		url: "https://arxiv.org/abs/2305.10493",
+		title: "The Curse of Recursion: Training on Generated Data Makes Models Forget",
+		author: "Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, et al.",
+		year: 2024,
+		alternativetitle: "Model Collapse"
+	},
+
+	// Training Infrastructure
+	"shoeybi2019megatron": {
+		url: "https://arxiv.org/abs/1909.08053",
+		title: "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+		author: "Mohammad Shoeybi, Mostofa Patwary, Raul Puri, et al.",
+		year: 2019,
+		alternativetitle: "Megatron-LM"
+	},
+	"rajbhandary2025pytorchfsdp": {
+		url: "https://pytorch.org/docs/stable/fsdp.html",
+		title: "PyTorch FSDP Documentation",
+		author: "PyTorch Team",
+		year: 2025,
+		alternativetitle: "PyTorch FSDP"
+	},
+	"rasley2020deepspeed": {
+		url: "https://arxiv.org/abs/2007.00051",
+		title: "DeepSpeed: System Optimizations Enable Training Deep Learning Models with Over 100 Billion Parameters",
+		author: "Jeff Rasley, Samyam Rajbhandary, Amir Yousuf, et al.",
+		year: 2020,
+		alternativetitle: "DeepSpeed"
+	},
+	"li2023seqparallel": {
+		url: "https://arxiv.org/abs/2310.01889",
+		title: "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+		author: "Hao Liu, Matei Zaharia, Pieter Abbeel",
+		year: 2023,
+		alternativetitle: "Ring Attention"
+	},
+	"fedus2022switch": {
+		url: "https://arxiv.org/abs/2101.03961",
+		title: "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+		author: "William Fedus, Barret Zoph, Noam Shazeer",
+		year: 2022,
+		alternativetitle: "Switch Transformer"
+	},
+
+	// Production Serving
+	"kwon2023vllm": {
+		url: "https://arxiv.org/abs/2309.06180",
+		title: "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+		author: "Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, et al.",
+		year: 2023,
+		alternativetitle: "vLLM"
+	},
+	"dao2022flashattention": {
+		url: "https://arxiv.org/abs/2205.14135",
+		title: "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+		author: "Tri Dao, Daniel Y. Fu, Stefano Ermon, et al.",
+		year: 2022,
+		alternativetitle: "FlashAttention"
+	},
+	"dao2024flashattention3": {
+		url: "https://arxiv.org/abs/2407.08608",
+		title: "FlashAttention-3: Fast and Accurate Attention with asynchrony and low-precision",
+		author: "Jay Shah, Ganesh Bikshandi, Ying Zhang, et al.",
+		year: 2024,
+		alternativetitle: "FlashAttention-3"
+	},
+	"shazeer2019mqa": {
+		url: "https://arxiv.org/abs/1911.02150",
+		title: "Fast Transformer Decoding: One Write-Head is All You Need",
+		author: "Noam Shazeer",
+		year: 2019,
+		alternativetitle: "Multi-Query Attention"
+	},
+	"ainslie2023gqa": {
+		url: "https://arxiv.org/abs/2305.13245",
+		title: "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+		author: "Joshua Ainslie, James Lee-Thorp, Michiel de Jong, et al.",
+		year: 2023,
+		alternativetitle: "Grouped-Query Attention"
+	},
+	"leviathan2023spec": {
+		url: "https://arxiv.org/abs/2211.17192",
+		title: "Fast Inference from Transformers via Speculative Decoding",
+		author: "Yaniv Leviathan, Matan Kalman, Yossi Matias",
+		year: 2023,
+		alternativetitle: "Speculative Decoding"
+	},
+	"frantar2022gptq": {
+		url: "https://arxiv.org/abs/2210.17323",
+		title: "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers",
+		author: "Elias Frantar, Saleh Ashkboos, Torsten Hoefler, Dan Alistarh",
+		year: 2022,
+		alternativetitle: "GPTQ"
+	},
+	"lin2023awq": {
+		url: "https://arxiv.org/abs/2306.00978",
+		title: "AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration",
+		author: "Ji Lin, Jiaming Tang, Haotian Tang, et al.",
+		year: 2023,
+		alternativetitle: "AWQ"
+	},
+	"xiao2022smoothquant": {
+		url: "https://arxiv.org/abs/2211.10438",
+		title: "SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models",
+		author: "Guangxuan Xiao, Ji Lin, Mickael Seznec, et al.",
+		year: 2022,
+		alternativetitle: "SmoothQuant"
+	},
+	"dettmers2022llmint8": {
+		url: "https://arxiv.org/abs/2208.07339",
+		title: "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+		author: "Tim Dettmers, Mike Lewis, Younes Belkada, Luke Zettlemoyer",
+		year: 2022,
+		alternativetitle: "LLM.int8()"
+	},
+
+	// Running Locally
+	"gerganov2023llamacpp": {
+		url: "https://github.com/ggerganov/llama.cpp",
+		title: "llama.cpp: LLM inference in C/C++",
+		author: "Georgi Gerganov",
+		year: 2023,
+		alternativetitle: "llama.cpp"
+	},
+	"ollama2024": {
+		url: "https://ollama.com/",
+		title: "Ollama: Get up and running with large language models locally",
+		author: "Ollama",
+		year: 2024,
+		alternativetitle: "Ollama"
+	},
+	"lmstudio2024": {
+		url: "https://lmstudio.ai/",
+		title: "LM Studio: Discover, download, and run local LLMs",
+		author: "LM Studio",
+		year: 2024,
+		alternativetitle: "LM Studio"
+	},
+
+	// Symbolic AI / Knowledge Graphs
+	"berners2001rdf": {
+		url: "https://www.w3.org/TR/rdf-syntax-grammar/",
+		title: "RDF 1.1 XML Syntax",
+		author: "Dave Beckett, Brian McBride",
+		year: 2004,
+		alternativetitle: "RDF Syntax"
+	},
+	"horrocks2004owl": {
+		url: "https://www.w3.org/TR/owl-features/",
+		title: "OWL Web Ontology Language Overview",
+		author: "Ian Horrocks, Peter F. Patel-Schneider, Frank van Harmelen",
+		year: 2003,
+		alternativetitle: "OWL"
+	},
+	"bordes2013transE": {
+		url: "https://proceedings.neurips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html",
+		title: "Translating Embeddings for Modeling Multi-relational Data",
+		author: "Antoine Bordes, Nicolas Usunier, Alberto Garcia-Durán, Jason Weston, Oksana Yakhnenko",
+		year: 2013,
+		alternativetitle: "TransE"
+	},
+	"yang2014rotate": {
+		url: "https://arxiv.org/abs/1902.10197",
+		title: "Embeddings Entities and Relations for Learning and Inference in Knowledge Bases",
+		author: "Bishan Yang, Wen-tau Yih, Xiaodong He, Jianfeng Gao, Li Deng",
+		year: 2015,
+		alternativetitle: "TransE-RotatE"
+	},
+	"trouillon2016complex": {
+		url: "https://arxiv.org/abs/1606.03137",
+		title: "Complex Embeddings for Simple Link Prediction",
+		author: "Théo Trouillon, Johannes Welbl, Sebastian Riedel, Éric Gaussier, Guillaume Bouchard",
+		year: 2016,
+		alternativetitle: "ComplEx"
+	},
+	"schlichtkrull2018rgcn": {
+		url: "https://arxiv.org/abs/1703.06103",
+		title: "Modeling Relational Data with Graph Convolutional Networks",
+		author: "Michael Schlichtkrull, Thomas N. Kipf, Peter Bloem, Rianne van den Berg, Ivan Titov, Max Welling",
+		year: 2018,
+		alternativetitle: "R-GCN"
+	},
+	"blesch2024neurokgc": {
+		url: "https://www.cs.ox.ac.uk/is/events/NeuroSymbolicAISummit/NeuroSym_KGC_overview.pdf",
+		title: "Neural-Symbolic Knowledge Graphs",
+		author: "Conference Proceedings",
+		year: 2024,
+		alternativetitle: "Neuro-Symbolic KG Overview"
+	},
+	"manhaeve2018deepproblog": {
+		url: "https://arxiv.org/abs/1805.10872",
+		title: "DeepProbLog: Neural Probabilistic Logic Programming",
+		author: "Robin Manhaeve, Sebastijan Dumancic, Angelika Kimmig, Thomas Demeester, Luc De Raedt",
+		year: 2018,
+		alternativetitle: "DeepProbLog"
+	},
+	"trinh2024alphageometry": {
+		url: "https://arxiv.org/abs/2402.08944",
+		title: "Solving Olympiad Geometry without Human Demonstrations",
+		author: "Trieu Trinh, Yuhuai Wu, Quoc Le, He He, Thang Luong",
+		year: 2024,
+		alternativetitle: "AlphaGeometry"
+	},
+	"schick2023toolformer": {
+		url: "https://arxiv.org/abs/2302.04761",
+		title: "Toolformer: Language Models Can Teach Themselves to Use Tools",
+		author: "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, et al.",
+		year: 2023,
+		alternativetitle: "Toolformer"
+	},
+	"wei2022emergent": {
+		url: "https://arxiv.org/abs/2206.07682",
+		title: "Emergent Abilities of Large Language Models",
+		author: "Jason Wei, Yi Tay, Rishi Bommasani, et al.",
+		year: 2022,
+		alternativetitle: "Emergent Abilities"
+	},
+
+	// AI Law & Regulation
+	"euaiact2024": {
+		url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689",
+		title: "Regulation (EU) 2024/1689 of the European Parliament and of the Council (EU AI Act)",
+		author: "European Parliament and Council of the European Union",
+		year: 2024,
+		alternativetitle: "EU AI Act"
+	},
+	"gdpr2018": {
+		url: "https://gdpr-info.eu/",
+		title: "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+		author: "European Parliament and Council of the European Union",
+		year: 2016,
+		alternativetitle: "GDPR"
+	},
+	"nytvopenai2023": {
+		url: "https://nytimes.com/2023/12/27/business/media/new-york-times-open-ai-microsoft-lawsuit.html",
+		title: "The New York Times Sues OpenAI and Microsoft Over A.I. Use of Copyrighted Work",
+		author: "New York Times",
+		year: 2023,
+		alternativetitle: "NYT v. OpenAI"
+	},
+	"gettystability2023": {
+		url: "https://www.reuters.com/legal/lawsuit-stability-ai-getty-images/",
+		title: "Getty Images v. Stability AI lawsuit",
+		author: "Reuters",
+		year: 2023,
+		alternativetitle: "Getty v. Stability AI"
+	},
+	"bostrom2003ethical": {
+		url: "https://www.nickbostrom.com/views/ethics/ai.html",
+		title: "Ethical Issues in Advanced Artificial Intelligence",
+		author: "Nick Bostrom",
+		year: 2003,
+		alternativetitle: "Ethical Issues in AI"
+	},
+	"calSB1047": {
+		url: "https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240SB1047",
+		title: "California Senate Bill 1047: Safe and Secure Innovation for Frontier AI Models Act",
+		author: "California State Senate",
+		year: 2024,
+		alternativetitle: "California SB 1047"
+	},
+	"china2023algorithmic": {
+		url: "http://www.cac.gov.cn/2023-08/15/c_1692618358286921.htm",
+		title: "Interim Measures for the Management of Generative Artificial Intelligence Services",
+		author: "Cyberspace Administration of China",
+		year: 2023,
+		alternativetitle: "China Generative AI Measures"
+	},
+	"italy2023chatgpt": {
+		url: "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9871407",
+		title: "Italian SA Decision Regarding ChatGPT (Italian Garante)",
+		author: "Garante per la protezione dei dati personali",
+		year: 2023,
+		alternativetitle: "Italy ChatGPT Ban"
+	},
+
+	// AI Economics
+	"anthropic2024funding": {
+		url: "https://www.anthropic.com/news/anthropic-raises-4-billion-from-amazon",
+		title: "Anthropic raises $4B from Amazon",
+		author: "Anthropic",
+		year: 2024,
+		alternativetitle: "Anthropic Funding"
+	},
+	"openai2023apipricing": {
+		url: "https://openai.com/api/pricing/",
+		title: "OpenAI API Pricing",
+		author: "OpenAI",
+		year: 2024,
+		alternativetitle: "OpenAI Pricing"
+	},
+	"deepseek2024v3": {
+		url: "https://api-docs.deepseek.com/quick_start/pricing",
+		title: "DeepSeek API Pricing",
+		author: "DeepSeek",
+		year: 2024,
+		alternativetitle: "DeepSeek Pricing"
+	},
+	"together2024pricing": {
+		url: "https://www.together.ai/pricing",
+		title: "Together AI Pricing",
+		author: "Together AI",
+		year: 2024,
+		alternativetitle: "Together Pricing"
+	},
+	"goldman2023ai": {
+		url: "https://www.goldmansachs.com/intelligence/pages/generative-ai-could-raise-global-gdp-by-7-percent.html",
+		title: "Generative AI Could Raise Global GDP by 7%",
+		author: "Goldman Sachs",
+		year: 2023,
+		alternativetitle: "Goldman Sachs AI Report"
+	},
+	"patel2023gpu": {
+		url: "https://epochai.org/blog/how-much-does-it-cost-to-train-a-large-language-model",
+		title: "How Much Does It Cost To Train A Large Language Model?",
+		author: "Danny Patel, Ben Cottier",
+		year: 2023,
+		alternativetitle: "LLM Training Costs"
+	},
+
+	// Frontier Topics
+	"bai2022constitutional": {
+		url: "https://arxiv.org/abs/2212.08073",
+		title: "Constitutional AI: Harmlessness from AI Feedback",
+		author: "Yuntao Bai, Saurav Kadavath, Sandipan Kundu, et al.",
+		year: 2022,
+		alternativetitle: "Constitutional AI"
+	},
+	"anthropic2023sparse": {
+		url: "https://transformer-circuits.pub/2023/monosemantic-features",
+		title: "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+		author: "Trenton Bricken, Adly Templeton, Joshua Batson, et al.",
+		year: 2023,
+		alternativetitle: "Sparse Autoencoders"
+	},
+	"anthropic2024goldengate": {
+		url: "https://transformer-circuits.pub/2024/scaling-monosemanticity/",
+		title: "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+		author: "Adly Templeton, Tom Conerly, Yang Li, et al.",
+		year: 2024,
+		alternativetitle: "Golden Gate Claude"
+	},
+	"su2021rope": {
+		url: "https://arxiv.org/abs/2104.09864",
+		title: "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+		author: "Jianlin Su, Yu Lu, Shengfeng Pan, Bo Wen, Yunfeng Liu",
+		year: 2021,
+		alternativetitle: "RoPE"
+	},
+	"peng2023yarn": {
+		url: "https://arxiv.org/abs/2309.00071",
+		title: "YaRN: Efficient Context Window Extension of Large Language Models",
+		author: "Bowen Peng, Jeffrey Quesnelle, Honglu Fan, Enrico Shippole",
+		year: 2023,
+		alternativetitle: "YaRN"
+	},
+	"press2022alibi": {
+		url: "https://arxiv.org/abs/2108.12409",
+		title: "Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation",
+		author: "Ofir Press, Noah A. Smith, Mike Lewis",
+		year: 2022,
+		alternativetitle: "ALiBi"
+	},
+	"mohtashami2023landmark": {
+		url: "https://arxiv.org/abs/2305.04850",
+		title: "Landmark Attention: Random-Access Infinite Context Length for Transformers",
+		author: "Amirkeivan Mohtashami, Martin Jaggi",
+		year: 2023,
+		alternativetitle: "Landmark Attention"
+	},
+	"sun2024ttt": {
+		url: "https://arxiv.org/abs/2403.04706",
+		title: "Learning to (Learn at Test Time): RNNs with Expressive Hidden States",
+		author: "Yu Sun, Xinhao Li, Karan Dalal, et al.",
+		year: 2024,
+		alternativetitle: "Test-Time Training"
+	},
+	"mialon2023gaia": {
+		url: "https://arxiv.org/abs/2311.12983",
+		title: "GAIA: A Benchmark for General AI Assistants",
+		author: "Grégoire Mialon, Clémentine Fourrier, Craig Swift, et al.",
+		year: 2023,
+		alternativetitle: "GAIA"
+	},
+	"du2023multiagent": {
+		url: "https://arxiv.org/abs/2305.14380",
+		title: "Improving Factuality and Reasoning in Language Models through Multiagent Debate",
+		author: "Yilun Du, Shuang Li, Antonio Torralba, Joshua B. Tenenbaum, Igor Mordatch",
+		year: 2023,
+		alternativetitle: "Multi-Agent Debate"
+	},
+	"elhoushi2024early": {
+		url: "https://arxiv.org/abs/2305.03160",
+		title: "Layerskip: Enabling Early Exit Inference and Self-Speculative Decoding",
+		author: "Mostafa Elhoushi, Akshat Shrivastava, Diana Liskovich, et al.",
+		year: 2024,
+		alternativetitle: "LayerSkip / Early Exit"
+	},
+	"fedus2022moe": {
+		url: "https://arxiv.org/abs/2209.01667",
+		title: "An Overview of Sparse Mixture-of-Experts in Language Models",
+		author: "Sébastien Bubeck, Varun Chandrasekaran, Ronen Eldan, et al.",
+		year: 2023,
+		alternativetitle: "Sparse MoE Overview"
+	},
+	"hafner2023dreamer": {
+		url: "https://arxiv.org/abs/2301.04104",
+		title: "Mastering Diverse Domains through World Models",
+		author: "Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, Timothy Lillicrap",
+		year: 2023,
+		alternativetitle: "Dreamer V3"
+	},
+	"lecun2022jepa": {
+		url: "https://arxiv.org/abs/2210.06782",
+		title: "Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture",
+		author: "Mahmoud Assran, Quentin Duval, Ishan Misra, et al.",
+		year: 2023,
+		alternativetitle: "V-JEPA"
+	},
+	"brown2020scaling": {
+		url: "https://arxiv.org/abs/2001.08361",
+		title: "Language Models are Few-Shot Learners",
+		author: "Tom B. Brown, Benjamin Mann, Nick Ryder, et al.",
+		year: 2020,
+		alternativetitle: "GPT-3"
+	},
+
+	// Global AI Ecosystem
+	"deepseekv3tech2024": {
+		url: "https://arxiv.org/abs/2412.19437",
+		title: "DeepSeek-V3 Technical Report",
+		author: "DeepSeek-AI",
+		year: 2024,
+		alternativetitle: "DeepSeek-V3 Technical Report"
+	},
+	"qwen2024": {
+		url: "https://qwenlm.github.io/blog/qwen2.5/",
+		title: "Qwen2.5: Open Foundation and Instruction-Tuning Models",
+		author: "Qwen Team, Alibaba Group",
+		year: 2024,
+		alternativetitle: "Qwen 2.5"
+	},
+	"glm2024": {
+		url: "https://arxiv.org/abs/2410.08260",
+		title: "ChatGLM: A Family of Large Language Models from GLM",
+		author: "Team GLM, Zhipu AI & Tsinghua University",
+		year: 2024,
+		alternativetitle: "ChatGLM"
+	},
+	"moonshot2024kimi": {
+		url: "https://moonshotai.github.io/Kimi-K2/",
+		title: "Kimi K2: Open Agentic Intelligence",
+		author: "Moonshot AI",
+		year: 2024,
+		alternativetitle: "Kimi K2"
+	},
+	"ai4bharat2024": {
+		url: "https://ai4bharat.iitm.ac.in/",
+		title: "AI4Bharat: India-specific multilingual AI",
+		author: "AI4Bharat, IIT Madras",
+		year: 2024,
+		alternativetitle: "AI4Bharat"
+	},
+	"masakhane2024": {
+		url: "https://www.masakhane.io/",
+		title: "Masakhane: Participatory Research for Low-Resourced Language MT",
+		author: "Masakhane Community",
+		year: 2024,
+		alternativetitle: "Masakhane"
+	},
+	"insta2023": {
+		url: "https://lelapa.ai/press-release-instadeep-acquisition/",
+		title: "BioNTech to Acquire InstaDeep for $680M",
+		author: "InstaDeep",
+		year: 2023,
+		alternativetitle: "InstaDeep Acquisition"
+	},
+	"technologyinnovation2024": {
+		url: "https://falconllm.tii.ae/",
+		title: "Falcon 3 Family of Open Language Models",
+		author: "Technology Innovation Institute",
+		year: 2024,
+		alternativetitle: "Falcon"
 	}
 };
