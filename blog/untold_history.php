@@ -281,7 +281,7 @@ Every weight update in a modern neural network is an electrical signal propagati
 
 ### The Central Processing Unit (CPU)
 
-The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1945), which used thousands of tubes to achieve speeds thousands of times faster than relays \cite[see]{eniac1946}. The \cite[transistor]{semiconductor} (1947) made miniaturization possible, and the **integrated circuit**, independently conceived by \cite[Jack Kilby]{kilbyic} (1958) and \cite[Robert Noyce]{noyceic} (1959), placed multiple transistors on a single die.
+The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1945), which used thousands of tubes to achieve speeds thousands of times faster than relays \cite[see ENIAC description]{eniac1946}. The transistor (1947) made miniaturization possible \cite[Bardeen et al., 1948]{semiconductor}, and the **integrated circuit**, independently conceived by **Jack Kilby** (1958) \cite[kilbyic] and **Robert Noyce** (1959) \cite[noyceic], placed multiple transistors on a single die.
 
 The leap to the **microprocessor** arrived in 1971 with the \cite[Intel 4004]{intel4004}, containing 2,300 transistors at 740 kHz. The relentless growth described by \citealternativetitle{mooreslaw} drove counts from thousands to billions. Key architectural innovations included **pipelining** (IBM System/360, 1964), **out-of-order execution** \cite[first in the IBM System/360 Model 91]{tomasulo1967}, **superscalar architectures** (1990s), and **multi-core processors** (IBM POWER4, 2001), acknowledging that frequency scaling had hit thermal limits. For AI, the CPU served as the sole training platform until the mid-2000s, but its sequential MIMD architecture proved poorly suited to the massively parallel matrix operations of deep learning.
 
@@ -380,7 +380,7 @@ While floating-point arithmetic existed from the earliest computers, every manuf
 
 $$\text{float (32-bit):}\quad (-1)^s \times 1.m \times 2^{e-127}$$
 
-where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in \cite[2008]{ieee754_2008} and \cite[2019]{ieee754_2019}.
+where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in \cite[IEEE, 2008]{ieee754_2008} and \cite[IEEE, 2019]{ieee754_2019}.
 
 ### The Boolean in Programming
 

@@ -116,7 +116,7 @@ The matrix $W_O W_V$ maps source token representations to output contributions. 
 <div class="md">
 ## Superposition: When Features Outnumber Dimensions
 
-A critical challenge in understanding circuits is \cite[superposition]{elhage2022superposition}: the phenomenon where a model represents more features than it has dimensions, by encoding features as nearly-orthogonal directions in the residual stream. Recent work \cite{marks2023geometry} has shown that even abstract properties like truth emerge as linearly separable directions in this high-dimensional space.
+A critical challenge in understanding circuits is **superposition** \cite[Elhage et al., 2022]{elhage2022superposition}: the phenomenon where a model represents more features than it has dimensions, by encoding features as nearly-orthogonal directions in the residual stream. Recent work \cite[Marks et al., 2023]{marks2023geometry} has shown that even abstract properties like truth emerge as linearly separable directions in this high-dimensional space.
 
 In a model with $d_{\text{model}} = 768$ dimensions, you might expect at most 768 independent features. But in practice, models represent thousands of interpretable features by exploiting the geometry of high-dimensional spaces: in high dimensions, you can pack exponentially many nearly-orthogonal vectors.
 

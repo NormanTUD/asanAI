@@ -148,7 +148,7 @@ Long before silicon chips, the 13th-century Majorcan mystic \citeauthor{arsmagna
 
 While it looks like a curious mix of mysticism and combinatorics, it is the first documented attempt to create a universal logical language that generates new knowledge through mechanical operations. Llull believed that systematically combining symbols could "calculate" truth, a direct ancestor of the symbol-manipulation view of intelligence. A Transformer's billions of vector operations are the same principle at an unimaginable scale.
 
-A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found \cite[here]{artandlogicofllull}.
+A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found in \cite[Collins, 2017]{artandlogicofllull}.
 
 Medieval scholar Ramon Llull had quite an interesting life, and has done many things. One of the earliest novels in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person whose works were condemned as heretical by one pope (Gregor XI.), \cite[yet whose legacy was later honored by another]{arsmagnavolvelle} (Pius IX.).
 
