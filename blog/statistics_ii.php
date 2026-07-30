@@ -107,7 +107,7 @@ The Dirichlet distribution arises naturally from **Polya's urn scheme**:
 The proportion of each color after many draws follows a Dirichlet distribution. This generative story explains Dirichlet's appearance everywhere we model **compositional data** (topic mixtures, word distributions, class proportions).
 
 In modern AI:
-* **Latent Dirichlet Allocation (LDA)** (Blei et al., 2003) — the foundational topic model.
+* **Latent Dirichlet Allocation (LDA)** \cite[blei2003lda] — the foundational topic model.
 * **Dirichlet process** — a non-parametric extension used in clustering.
 * **Mixture models** — Dirichlet priors over cluster proportions.
 </div>
@@ -128,7 +128,7 @@ A latent variable model specifies:
 
 ### Expectation-Maximization (EM)
 
-The EM algorithm (Dempster et al., 1977) finds maximum-likelihood estimates when the model has latent variables:
+The EM algorithm \cite[dempster1977em] finds maximum-likelihood estimates when the model has latent variables:
 
 1. **E-step**: compute the posterior over latents given current parameters: $q(\mathbf{z}) = P(\mathbf{z} \mid \mathbf{x}, \theta^{\text{old}})$.
 2. **M-step**: maximize the expected log-likelihood under this posterior: $\theta^{\text{new}} = \arg\max_\theta \mathbb{E}_{q}[\log P(\mathbf{x}, \mathbf{z} \mid \theta)]$.

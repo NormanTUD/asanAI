@@ -50,7 +50,7 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 <div id="sc-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-## Self-Consistency (Wang et al., 2022)
+## Self-Consistency \\cite[wang2022selfconsistency]
 
 The simplest and most reliable inference-time scaling trick:
 

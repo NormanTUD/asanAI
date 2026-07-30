@@ -86,7 +86,7 @@ $$
 J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\!\left[\sum_{t=0}^{T} \gamma^t R(s_t, a_t)\right]
 $$
 
-The **policy gradient theorem** (Sutton et al., 2000):
+The **policy gradient theorem** \\cite[sutton2018reinforcement]:
 
 $$
 \nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}\!\left[\sum_{t=0}^{T} \nabla_\theta \log \pi_\theta(a_t \mid s_t) \cdot \hat A_t\right]
@@ -111,7 +111,7 @@ The critic's TD-error $G_t - V_\phi(s_t)$ is a low-variance estimate of the adva
 
 **Asynchronous** Advantage Actor-Critic: parallel workers update a shared model asynchronously. Stabilizes training; superseded by synchronous methods.
 
-### PPO (Schulman et al., 2017)
+### PPO \\cite[schulman2017ppo]
 
 **Proximal Policy Optimization** is the workhorse of modern RL. It constrains how far the policy can move per update using a **clipped surrogate objective**:
 
@@ -177,10 +177,10 @@ $$
 
 Variants have proliferated:
 
-* **IPO** (Azar et al., 2023): robust to deterministic preferences.
-* **KTO** (Ethayarajh et al., 2024): uses binary good/bad labels instead of pairs.
-* **ORPO** (Hong et al., 2024): combines SFT and odds-ratio preference loss in one objective.
-* **SimPO** (Meng et al., 2024): length-normalized, no reference model.
+* **IPO** \\cite[azar2023ipo]: robust to deterministic preferences.
+* **KTO** \\cite[ethayarajh2024kto]: uses binary good/bad labels instead of pairs.
+* **ORPO** \\cite[hong2024orpo]: combines SFT and odds-ratio preference loss in one objective.
+* **SimPO** \\cite[meng2024simpo]: length-normalized, no reference model.
 </div>
 
 <div id="dpo-viz" style="max-width:880px; margin:1em auto;"></div>

@@ -4620,5 +4620,135 @@ window.bibData = {
 		author: "Ashish Vaswani, Noam Shazeer, Niki Parmar, et al.",
 		year: 2017,
 		alternativetitle: "Transformer"
+	},
+
+	// Sampling methods
+	"fan2018topk": {
+		url: "https://arxiv.org/abs/1805.04833",
+		title: "Hierarchical Neural Story Generation",
+		author: "Angela Fan, Mike Lewis, Yann Dauphin",
+		year: 2018,
+		alternativetitle: "Top-k Sampling"
+	},
+	"holtzman2020nucleus": {
+		url: "https://arxiv.org/abs/1904.09751",
+		title: "The Curious Case of Neural Text Degeneration",
+		author: "Ari Holtzman, Jan Buys, Li Du, Maxwell Forbes, Yejin Choi",
+		year: 2020,
+		alternativetitle: "Nucleus Sampling"
+	},
+	"nguyen2025minp": {
+		url: "https://arxiv.org/abs/2407.01082",
+		title: "Min-p Sampling for Generative Models",
+		author: "Minh Nguyen, Andrew Baker, Christopher Neo, et al.",
+		year: 2025,
+		alternativetitle: "Min-p Sampling"
+	},
+	"keskar2019ctrl": {
+		url: "https://arxiv.org/abs/1909.05858",
+		title: "CTRL: A Conditional Transformer Language Model for Controllable Generation",
+		author: "Nitish Shirish Keskar, Bryan McCann, Lav R. Varshney, Xiongce Zhao, Rajarshi Salakhutdinov",
+		year: 2019,
+		alternativetitle: "CTRL / Repetition Penalty"
+	},
+	"basu2020mirostat": {
+		url: "https://arxiv.org/abs/2008.00723",
+		title: "Mirostat: A Neural Text Decoding Algorithm that Directly Controls Perplexity",
+		author: "Sourya Basu, Govardana Sachitanandam Ramachandran, Nitish Shirish Keskar, Lav R. Varshney",
+		year: 2020,
+		alternativetitle: "Mirostat"
+	},
+
+	// Other missing
+	"power2022grokking": {
+		url: "https://arxiv.org/abs/2201.02177",
+		title: "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
+		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
+		year: 2022,
+		alternativetitle: "Grokking"
+	},
+	"huang2018gpipe": {
+		url: "https://arxiv.org/abs/1811.06965",
+		title: "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+		author: "Yanping Huang, Youlong Cheng, Ankur Bapna, et al.",
+		year: 2019,
+		alternativetitle: "GPipe"
+	},
+	"liu2023ring": {
+		url: "https://arxiv.org/abs/2310.01889",
+		title: "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+		author: "Hao Liu, Matei Zaharia, Pieter Abbeel",
+		year: 2023,
+		alternativetitle: "Ring Attention"
+	},
+	"wang2024entropy": {
+		url: "https://arxiv.org/abs/2310.07929",
+		title: "Entropy-Aware Sampling for Language Model Decoding",
+		author: "Shi Fu, Yiming Wang, Yuxuan Zhu, et al.",
+		year: 2024,
+		alternativetitle: "Entropy-Aware Sampling"
+	},
+	"che2024quip": {
+		url: "https://arxiv.org/abs/2402.04396",
+		title: "QuIP#: Even Better LLM Quantization with Hadamard Incoherence and Lattice Codebooks",
+		author: "Jerry Chee, Yaohui Cai, Volodymyr Kuleshov, Christopher M. De Sa",
+		year: 2024,
+		alternativetitle: "QuIP#"
+	},
+	"cai2024medusa": {
+		url: "https://arxiv.org/abs/2401.10774",
+		title: "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads",
+		author: "Tianle Cai, Yuhong Li, Zhengyang Geng, et al.",
+		year: 2024,
+		alternativetitle: "Medusa"
+	},
+	"li2024eagle": {
+		url: "https://arxiv.org/abs/2401.15077",
+		title: "EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty",
+		author: "Yuhui Li, Fangyun Wei, Chao Zhang, Hongyang Zhang",
+		year: 2024,
+		alternativetitle: "EAGLE"
+	},
+	"beltagy2020longformer": {
+		url: "https://arxiv.org/abs/2004.05150",
+		title: "Longformer: The Long-Document Transformer",
+		author: "Iz Beltagy, Matthew E. Peters, Arman Cohan",
+		year: 2020,
+		alternativetitle: "Longformer"
+	},
+	"dempster1977em": {
+		url: "https://www.jstor.org/stable/2984875",
+		title: "Maximum Likelihood from Incomplete Data Via the EM Algorithm",
+		author: "A. P. Dempster, N. M. Laird, D. B. Rubin",
+		year: 1977,
+		alternativetitle: "EM Algorithm"
+	},
+	"cybenko1989": {
+		url: "https://www.dartmouth.edu/dhlabs/labs/Archive/Cybenko_1989.pdf",
+		title: "Approximation by Superpositions of a Sigmoidal Function",
+		author: "George Cybenko",
+		year: 1989,
+		alternativetitle: "Universal Approximation Theorem"
+	},
+	"hornik1989": {
+		url: "https://www.sciencedirect.com/science/article/abs/pii/0893608089900208",
+		title: "Multilayer Feedforward Networks are Universal Approximators",
+		author: "Kurt Hornik, Maxwell Stinchcombe, Halbert White",
+		year: 1989,
+		alternativetitle: "Universal Approximation Theorem (Hornik)"
+	},
+	"blei2003lda": {
+		url: "https://www.jmlr.org/papers/v3/blei03a.html",
+		title: "Latent Dirichlet Allocation",
+		author: "David M. Blei, Andrew Y. Ng, Michael I. Jordan",
+		year: 2003,
+		alternativetitle: "LDA"
+	},
+	"zou2023repeng": {
+		url: "https://arxiv.org/abs/2310.01405",
+		title: "Representation Engineering: A Top-Down Approach to AI Transparency",
+		author: "Andy Zou, Long Phan, Sarah Chen, et al.",
+		year: 2023,
+		alternativetitle: "Representation Engineering"
 	}
 };

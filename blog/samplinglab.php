@@ -44,7 +44,7 @@ Drawback: **repetition loops** and **mode collapse** ("the the the the...").
 </div>
 
 <div class="md">
-## Top-$k$ Sampling (Fan et al., 2018)
+## Top-$k$ Sampling \\cite[fan2018topk]
 
 Restrict to the $k$ tokens with highest probability, then renormalize:
 
@@ -62,7 +62,7 @@ Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context. Som
 </div>
 
 <div class="md">
-## Top-$p$ (Nucleus) Sampling (Holtzman et al., 2020)
+## Top-$p$ (Nucleus) Sampling \\cite[holtzman2020nucleus]
 
 Sample from the smallest set of tokens whose cumulative probability exceeds $p$:
 
@@ -80,7 +80,7 @@ Most production APIs default to **top-$p$ = 0.9 or 0.95**.
 </div>
 
 <div class="md">
-## Min-$p$ Sampling (Nguyen et al., 2025)
+## Min-$p$ Sampling \\cite[nguyen2025minp]
 
 The new frontier method, recommended by many open-source models (Qwen, Mistral):
 
@@ -121,7 +121,7 @@ Similar to min-$p$ but with a different criterion: cut off tokens with probabili
 </div>
 
 <div class="md">
-## Repetition Penalty (Keskar et al., 2019)
+## Repetition Penalty \\cite[keskar2019ctrl]
 
 Reduce the logits of tokens that have already appeared in the context:
 
@@ -176,7 +176,7 @@ Drawbacks: tends to produce generic, "averaged" outputs in open-ended generation
 </div>
 
 <div class="md">
-## mirostat (Basu et al., 2020)
+## mirostat \\cite[basu2020mirostat]
 
 A sampling scheme that **targets a fixed perplexity** during generation. The model adjusts its sampling to maintain target surprise:
 
@@ -220,7 +220,7 @@ This guarantees the output distribution exactly matches the target model's distr
 
 A 2024 idea: adjust temperature based on the entropy of the predicted distribution. When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it. The intuition: respect the model's confidence rather than always applying the same temperature.
 
-Implementations: **entropy-aware sampling** (Wang et al., 2024), **DynTemp**, and proprietary variants in vLLM and llama.cpp.
+Implementations: **entropy-aware sampling** \\cite[wang2024entropy], **DynTemp**, and proprietary variants in vLLM and llama.cpp.
 
 Not yet standardized but promising.
 </div>

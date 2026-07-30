@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Production Serving & Inference
-description: vLLM, continuous batching, \cite[Kwon et al., 2023]{kwon2023vllm} attention, and how to serve an LLM to millions of users.
+description: vLLM, continuous batching, paged attention, and how to serve an LLM to millions of users.
 icon: &#9889;
 part: 5
 order: 41
@@ -68,7 +68,7 @@ Continuously add new requests to the batch as they arrive. Better throughput, bu
 
 ### Continuous Batching (Iteration-level Scheduling)
 
-**vLLM** (Kwon et al., 2023) and **TGI** (HuggingFace) introduced this: after each token is generated, immediately swap finished sequences out of the batch and swap new ones in. GPU stays at peak utilization; no waiting.
+**vLLM** \cite[kwon2023vllm] and **TGI** (HuggingFace) introduced this: after each token is generated, immediately swap finished sequences out of the batch and swap new ones in. GPU stays at peak utilization; no waiting.
 
 Continuous batching alone can give 10–20× throughput improvement over static batching for chat workloads.
 </div>
@@ -130,7 +130,7 @@ For activations, **fp8** (H100 native) gives 2× throughput with minimal quality
 
 A small student model trained to mimic a large teacher:
 
-* **Logit distillation** (Hinton et al., 2015): match the teacher's full output distribution: $\mathcal{L} = \text{KL}\!\big(p_T \,\|\, p_S\big)$.
+* **Logit distillation** \cite[hinton2015distilling]: match the teacher's full output distribution: $\mathcal{L} = \text{KL}\!\big(p_T \,\|\, p_S\big)$.
 * **Hidden-state distillation**: match intermediate activations layer-by-layer.
 * **Attention distillation**: match attention matrices.
 * **Generative distillation**: train on the teacher's text outputs (supervised fine-tuning).

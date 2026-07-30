@@ -112,23 +112,25 @@ PDF_SNIFF_BYTES = 4096
 
 ENTRY_START_RE = re.compile(r'^\s*"([^"]+)"\s*:\s*\{\s*$')
 TITLE_RE = re.compile(r'^\s*title\s*:\s*"(.*?)"\s*,?\s*$')
+ALT_TITLE_RE = re.compile(r'^\s*alternativetitle\s*:\s*"(.*?)"\s*,?\s*$')
 URL_RE = re.compile(r'^\s*url\s*:\s*"([^"]+)"\s*,?\s*$')
 
 
 def parse_literature_file(path: Path):
     """
-    Walk a literature.js-style file and yield (key, title, url) for each
-    entry that has a `url:` field. Robust against field order, whitespace,
-    and quoted/unquoted keys.
+    Two-pass parser. First collects every entry's title, then yields
+    (key, title, url) for each url line it encounters. This way the order
+    of `title:` vs `url:` inside an entry doesn't matter.
     """
     text = path.read_text(encoding="utf-8", errors="replace")
+    lines = text.splitlines()
+
+    titles_by_key: dict[str, str] = {}
     current_key = None
     current_title = None
     saw_open_brace = False
 
-    for raw_line in text.splitlines():
-        line = raw_line
-
+    for line in lines:
         m = ENTRY_START_RE.match(line)
         if m:
             current_key = m.group(1)
@@ -142,21 +144,45 @@ def parse_literature_file(path: Path):
         tm = TITLE_RE.match(line)
         if tm:
             current_title = tm.group(1)
+            titles_by_key[current_key] = current_title
+            continue
+
+        am = ALT_TITLE_RE.match(line)
+        if am and current_key is not None and current_key not in titles_by_key:
+            titles_by_key[current_key] = am.group(1)
+            continue
+
+        if line.strip() == "}":
+            current_key = None
+            current_title = None
+            saw_open_brace = False
+
+    current_key = None
+    saw_open_brace = False
+
+    for line in lines:
+        m = ENTRY_START_RE.match(line)
+        if m:
+            current_key = m.group(1)
+            saw_open_brace = True
+            continue
+
+        if not saw_open_brace:
             continue
 
         um = URL_RE.match(line)
         if um:
             url = um.group(1)
+            title = titles_by_key.get(current_key, "") if current_key else ""
             yield (
                 current_key or "<unknown>",
-                current_title or current_key or "<no title>",
+                title or current_key or "<no title>",
                 url,
             )
             continue
 
         if line.strip() == "}":
             current_key = None
-            current_title = None
             saw_open_brace = False
 
 

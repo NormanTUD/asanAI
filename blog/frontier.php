@@ -102,7 +102,7 @@ Related: **early exit** (\\cite[elhoushi2024early]), **conditional computation**
 <div class="md">
 ## Test-Time Training (\cite[Sun et al., 2024]{sun2024ttt})
 
-A 2024 idea: **train at inference time on the test input itself**. Sun et al. (2024) showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
+A 2024 idea: **train at inference time on the test input itself**. \\cite[Sun et al., 2024][]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
 
 For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
 
@@ -204,7 +204,7 @@ From the Mechanistic Interpretability chapter's foundation, frontier work in 202
 * **Sparse autoencoders** (see above) — millions of features per model.
 * **Causal scrubbing** (\\cite[redman2024causalscrubbing]): formally verify which circuits implement a behavior.
 * **Cross-model universality**: do circuits transfer across models? Yes, partially — "induction heads" appear in every Transformer.
-* **Alignment-via-interpretability**: identify features for "deception", "harm", "sycophancy" and steer the model away from them. **Representation engineering** (Zou et al., 2023) is the umbrella term.
+* **Alignment-via-interpretability**: identify features for "deception", "harm", "sycophancy" and steer the model away from them. **Representation engineering** \\cite[zou2023repeng] is the umbrella term.
 
 The dream: an **"MRI for AI"** — read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
 </div>

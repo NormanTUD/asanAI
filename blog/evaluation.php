@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Evaluation & Benchmarks
-description: How we measure LLM capability — \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}, \cite[Chen et al., 2021]{chen2021humaneval}, contamination, and the limits of benchmarks.
+description: How we measure LLM capability — MMLU, HumanEval, contamination, and the limits of benchmarks.
 icon: &#127942;
 part: 5
 order: 38
@@ -226,9 +226,9 @@ The goal is **not** to maximize a leaderboard score. It is to **measure real-wor
 		marker: { color: colors },
 		text: scores.map(s => s.toFixed(1) + '%'), textposition: 'outside'
 	}], {
-		title: { text: '\cite[Hendrycks et al., 2021]{hendrycks2021mmlu} benchmark scores over time (illustrative)', font: { size: 13 } },
+		title: { text: 'MMLU benchmark scores over time (illustrative)', font: { size: 13 } },
 		xaxis: { tickangle: -45 },
-		yaxis: { title: '\cite[Hendrycks et al., 2021]{hendrycks2021mmlu} accuracy (%)', range: [0, 100] },
+		yaxis: { title: 'MMLU accuracy (%)', range: [0, 100] },
 		margin: { t: 50, b: 100, l: 60, r: 20 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)'
@@ -259,9 +259,9 @@ The goal is **not** to maximize a leaderboard score. It is to **measure real-wor
 		marker: { size: 14, color: '#3b82f6' },
 		hovertemplate: '%{text}<br>Elo: %{x}<br>\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}: %{y}%<extra></extra>'
 	}], {
-		title: { text: '\cite[Zheng et al., 2023]{zheng2023lmsys} Elo vs \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} (correlation only ~0.5)', font: { size: 13 } },
+		title: { text: 'LMSYS Arena Elo vs MMLU (correlation only ~0.5)', font: { size: 13 } },
 		xaxis: { title: 'Arena Elo (Jan 2025)' },
-		yaxis: { title: '\cite[Hendrycks et al., 2021]{hendrycks2021mmlu} accuracy (%)', range: [80, 95] },
+		yaxis: { title: 'MMLU accuracy (%)', range: [80, 95] },
 		margin: { t: 50, b: 50, l: 60, r: 20 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)'

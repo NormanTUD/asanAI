@@ -147,7 +147,7 @@ For Python notebooks: **transformers + accelerate + bitsandbytes** loads any Hug
 
 The 2024–2025 democratization of fine-tuning is real:
 
-* **QLoRA** (Dettmers et al., 2023): 4-bit base model + LoRA adapters trainable in fp16. Fits a 70B fine-tune on a single 48 GB GPU.
+* **QLoRA** \cite[dettmers2023qlora]: 4-bit base model + LoRA adapters trainable in fp16. Fits a 70B fine-tune on a single 48 GB GPU.
 * **Unsloth**: 2× faster QLoRA, kernels optimized for consumer GPUs.
 * **Axolotl**: popular framework for instruction fine-tuning.
 * **LoRA / QLoRA / DoRA**: rank-$r$ adapters that train a tiny fraction of parameters.

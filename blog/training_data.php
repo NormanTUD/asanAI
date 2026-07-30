@@ -29,7 +29,7 @@ Frontier LLMs are trained on **10–15 trillion tokens**. The composition is rou
 | Conversational / instruction | 2–5% | 200–500B | Curated human dialogues |
 | Multimodal captions | 5–10% | 500B–1T | Alt-text, image captions |
 
-The **Chinchilla scaling law** (Hoffmann et al., 2022) suggests that for a given compute budget, models are best trained when tokens $\approx 20 \times$ parameters. So a 70B model needs ~1.4T tokens to be "Chinchilla-optimal"; frontier models now train on $10 \times$ that, trading sample efficiency for capability.
+The **Chinchilla scaling law** \\cite[hoffmann2022chinchilla] suggests that for a given compute budget, models are best trained when tokens $\approx 20 \times$ parameters. So a 70B model needs ~1.4T tokens to be "Chinchilla-optimal"; frontier models now train on $10 \times$ that, trading sample efficiency for capability.
 </div>
 
 <div class="md">
@@ -92,7 +92,7 @@ Documents with identical MinHash signatures have high Jaccard similarity. Thresh
 
 ### Substring Deduplication (Suffix Array)
 
-For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** (Abbas et al., 2023) extend this to semantic duplicates via embedding-based clustering.
+For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** \\cite[abbas2023semdedup] extend this to semantic duplicates via embedding-based clustering.
 </div>
 
 <div id="dedup-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -160,7 +160,7 @@ With natural data exhaust, frontier labs increasingly generate **synthetic train
 
 Risks:
 
-* **Model collapse** (Shumailov et al., 2024): training on a model's own outputs causes drift away from the true data distribution over generations.
+* **Model collapse** \\cite[shumailov2024collapse]: training on a model's own outputs causes drift away from the true data distribution over generations.
 * **Loss of diversity**: synthetic data tends to converge to common modes.
 * **Reward hacking**: synthetic data optimized for a verifier is gamed.
 
