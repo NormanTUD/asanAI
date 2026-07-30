@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garben, Kohomologie und konsistente Weltbilder</title>
+    <script src="temml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            overflow: hidden;
+            height: 100vh;
+        }
+        #progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease; z-index: 1000;
+        }
+        .slide {
+            display: none; position: absolute; inset: 0;
+            padding: 40px 60px 80px;
+            overflow-y: auto;
+        }
+        .slide.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+        .slide-content {
+            max-width: 1100px; width: 100%;
+            transform-origin: center top;
+        }
+        h2 {
+            font-size: 1.8em; margin-bottom: 20px;
+            background: linear-gradient(135deg, #e2e8f0, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        p, li { line-height: 1.8; margin-bottom: 12px; color: #cbd5e1; }
+        .fragment { opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
+        .fragment.visible { opacity: 1; transform: translateY(0); }
+        .key-insight {
+            padding: 16px 20px; margin: 16px 0;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px; color: #c7d2fe;
+        }
+        .viz-container {
+            width: 100%; height: 420px; position: relative;
+            background: #1e293b; border-radius: 12px;
+            border: 1px solid #334155; margin: 16px 0;
+            overflow: hidden;
+        }
+        .viz-container canvas {
+            width: 100%; height: 100%; display: block;
+        }
+        .formula-box {
+            padding: 16px 24px; margin: 14px 0;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #475569;
+            border-radius: 10px; text-align: center;
+            overflow-x: auto;
+        }
+        .math-display { margin: 8px 0; font-size: 1.1em; }
+        .math-inline { display: inline; }
+        #nav-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid #1e293b; z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+        #nav-bar button {
+            padding: 6px 16px; border-radius: 6px;
+            border: 1px solid #475569; background: #1e293b;
+            color: #e2e8f0; cursor: pointer; font-size: 0.85em;
+        }
+        #nav-bar button:hover { background: #334155; }
+        #nav-bar button:disabled { opacity: 0.3; cursor: default; }
+        #slide-counter { color: #94a3b8; font-size: 0.85em; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+        .info-card {
+            padding: 16px; border-radius: 10px;
+            border: 1px solid #334155; background: #1e293b;
+        }
+        .info-card h4 { color: #a5b4fc; margin-bottom: 8px; }
+        .step-indicator {
+            display: inline-block; padding: 3px 10px; margin: 0 4px;
+            border-radius: 12px; font-size: 0.75em;
+            background: #334155; color: #94a3b8; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .step-indicator.active { background: #6366f1; color: #fff; }
+        .caption {
+            margin-top: 10px; padding: 10px 14px;
+            background: rgba(30, 41, 59, 0.6); border-radius: 8px;
+            font-size: 0.85em; color: #94a3b8; text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="progress-bar" style="width: 0%;"></div>
+
+<div id="presentation">
+
+<!-- SLIDE 1: Title -->
+<div class="slide active" data-title="Titel">
+    <div class="slide-content" style="text-align:center; padding-top: 15vh;">
+        <h2 style="font-size: 2.4em;">Garben, Kohomologie und konsistente Weltbilder</h2>
+        <p style="font-size: 1.2em; color: #94a3b8; margin-top: 20px;">Eine visuelle Einführung für interessierte Nicht-Mathematiker</p>
+        <p style="color: #64748b; margin-top: 40px;">Pfeiltasten / Leertaste zum Navigieren</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: Das Panorama-Problem -->
+<div class="slide" data-title="Panorama">
+    <div class="slide-content">
+        <h2>Das Panorama-Problem</h2>
+        <p>Du machst mit dem Handy ein Panorama. Vier Bilder, die sich überlappen.</p>
+        <div class="viz-container" id="viz-panorama"></div>
+        <div class="fragment">
+            <p>Die Überlappungszonen sind entscheidend: Dort müssen die Bilder <b>übereinstimmen</b>, sonst passt das Panorama nicht zusammen.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Das ist die Grundidee einer Garbe:</b> Lokale Daten (einzelne Fotos), die auf Überlappungen konsistent sein müssen, damit ein globales Bild (das Panorama) existiert.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: Was ist eine Garbe? -->
+<div class="slide" data-title="Garbe">
+    <div class="slide-content">
+        <h2>Was ist eine Garbe?</h2>
+        <div class="viz-container" id="viz-sheaf-venn"></div>
+        <div class="fragment">
+            <p>Eine <b>Garbe</b> ordnet jeder offenen Menge (jedem Kreis im Venn-Diagramm) Daten zu. Auf den Überlappungen müssen die Daten übereinstimmen.</p>
+        </div>
+        <div class="fragment formula-box">
+            <div class="math-display">$$\mathcal{F}: \text{Open}(X)^{\text{op}} \to \mathcal{C}$$</div>
+            <p style="font-size:0.85em; color:#94a3b8; margin-top:8px;">Lies: "Die Garbe F ordnet jeder offenen Menge von X ein Objekt in der Kategorie C zu, und zwar kontravariant (= wenn man die Menge verkleinert, kann man die Daten einschränken)."</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Verklebungsbedingung:</b> Wenn lokale Daten auf allen Überlappungen übereinstimmen, dann existiert ein eindeutiges globales Datum.
+            <div class="formula-box" style="margin-top:10px;">
+                <div class="math-display">$$s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j} \;\;\Rightarrow\;\; \exists!\, s \in \mathcal{F}\!\left(\bigcup U_i\right)$$</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Schnitte und Halme -->
+<div class="slide" data-title="Schnitte & Halme">
+    <div class="slide-content">
+        <h2>Schnitte und Halme</h2>
+        <div class="viz-container" id="viz-stalks"></div>
+        <div class="fragment">
+            <div class="two-col">
+                <div class="info-card">
+                    <h4>Schnitt (Section)</h4>
+                    <p>Ein konkretes Datum auf einer offenen Menge. Beispiel: ein einzelnes Foto im Panorama.</p>
+                    <div class="formula-box"><div class="math-display">$$s \in \mathcal{F}(U)$$</div></div>
+                </div>
+                <div class="info-card">
+                    <h4>Halm (Stalk)</h4>
+                    <p>Alle lokale Information an einem Punkt – der "Keim" aller Schnitte, die diesen Punkt enthalten.</p>
+                    <div class="formula-box"><div class="math-display">$$\mathcal{F}_x = \varinjlim_{U \ni x} \mathcal{F}(U)$$</div></div>
+                    <p style="font-size:0.8em; color:#64748b;">Lies: "Nimm alle offenen Mengen um x, nimm die Daten auf jeder, und klebe sie zusammen."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: Der Vogel – verschiedene Sinne -->
+<div class="slide" data-title="Verschiedene Sinne">
+    <div class="slide-content">
+        <h2>Verschiedene Sinne als verschiedene Garben</h2>
+        <div class="viz-container" id="viz-bird"></div>
+        <div class="fragment">
+            <p>Ein Vogel fliegt vorbei. Du <b>siehst</b> ihn und <b>hörst</b> ihn. Zwei völlig verschiedene Arten von Daten – aber beide verweisen auf dasselbe reale Ereignis.</p>
+        </div>
+        <div class="fragment key-insight">
+            Verschiedene Sinne = verschiedene Garben auf demselben Raum. Sie sind durch gemeinsame Ereignisse korreliert. Der <b>Halm</b> am Punkt "Vogel fliegt vorbei" enthält sowohl die visuelle als auch die auditive Information.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: Topologie -->
+<div class="slide" data-title="Topologie">
+    <div class="slide-content">
+        <h2>Topologie: Geometrie ohne Abstände</h2>
+        <div class="viz-container" id="viz-topology"></div>
+        <div class="fragment">
+            <p><b>Topologie</b> = Geometrie, bei der man die konkreten Abstände vergisst. Was bleibt: Löcher, Zusammenhang, Orientierbarkeit.</p>
+        </div>
+        <div class="fragment">
+            <p>Die Kaffeetasse und der Donut sind <b>homöomorph</b> (topologisch gleich) – beide haben genau ein Loch. Man kann die eine stetig in die andere verformen, ohne zu schneiden oder zu kleben.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Homotopie:</b> Zwei Abbildungen sind homotop, wenn man die eine stetig in die andere verformen kann. Die Tasse und der Donut sind homotopieäquivalent – gleiche Struktur, verschiedene Form.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: Kohomologie -->
+<div class="slide" data-title="Kohomologie">
+    <div class="slide-content">
+        <h2>Kohomologie: Wenn Verklebung scheitert</h2>
+        <div class="viz-container" id="viz-cohomology"></div>
+        <div class="fragment">
+            <p><b>Kohomologie</b> misst die Obstruktion gegen globale Schnitte. Wenn lokale Daten sich nicht zu einem Ganzen verkleben lassen, sagt die Kohomologie <i>warum</i>.</p>
+        </div>
+        <div class="fragment formula-box">
+            <div class="math-display">$$(\delta s)_{ij} = s_j|_{U_i \cap U_j} - s_i|_{U_i \cap U_j}$$</div>
+            <p style="font-size:0.85em; color:#94a3b8; margin-top:8px;">Der Korand δ misst den "Fehler" in der Überlappung. Wenn δ = 0, passen die Daten zusammen.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>H⁰</b> = globale Schnitte (Panorama gelingt).<br>
+            <b>H¹ ≠ 0</b> = echte Obstruktion (Panorama ist prinzipiell unmöglich).<br><br>
+            <b>Beispiel:</b> $H^1(S^1, \mathbb{Z}) = \mathbb{Z}$ – der Kreis hat ein Loch. Die Windungszahl misst die Obstruktion.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: Čech-Kohomologie visuell -->
+<div class="slide" data-title="Čech">
+    <div class="slide-content">
+        <h2>Čech-Kohomologie: Schritt für Schritt</h2>
+        <div class="viz-container" id="viz-cech"></div>
+        <div class="fragment">
+            <div class="formula-box">
+                <p style="text-align:left; color:#cbd5e1;">
+                    <b>$C^0 = \prod_i \mathcal{F}(U_i)$</b> — "Für jedes $U_i$, wähle ein Datum. Packe alle in ein Tupel."<br><br>
+                    <b>$C^1 = \prod_{i,j} \mathcal{F}(U_i \cap U_j)$</b> — "Für jedes Paar, schau auf die Überlappung."<br><br>
+                    <b>$\delta: C^0 \to C^1$</b> — "Miss den Fehler in jeder Überlappung."<br><br>
+                    <b>$H^0 = \ker \delta$</b> — "Alle Tupel, bei denen der Fehler überall Null ist = globale Schnitte."<br><br>
+                    <b>$H^1 = \ker \delta^1 / \text{im}\,\delta^0$</b> — "Fehler, die man nicht durch andere Wahl beheben kann."
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: Laserthermometer / Falsifikation -->
+<div class="slide" data-title="Falsifikation">
+    <div class="slide-content">
+        <h2>Verklebung und Falsifikation (Popper)</h2>
+        <div class="viz-container" id="viz-laser"></div>
+        <div class="fragment">
+            <p>Zwei Laserthermometer zielen auf denselben Punkt. Wenn sie verschiedene Werte anzeigen, ist <b>definitiv</b> etwas falsch.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Verklebung ist kein Beweis, aber Nicht-Verklebbarkeit schon.</b><br><br>
+            Das ist exakt Poppers Logik der Falsifikation:<br>
+            • Konsistenz (alle Überlappungen passen) = notwendig, aber nicht hinreichend für Wahrheit.<br>
+            • Inkonsistenz (eine Überlappung passt nicht) = hinreichend für Falsifikation.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: Faserbündel -->
+<div class="slide" data-title="Faserbündel">
+    <div class="slide-content">
+        <h2>Faserbündel: Räume über Räumen</h2>
+        <div class="viz-container" id="viz-fiber"></div>
+        <div class="fragment">
+            <p>Ein <b>Faserbündel</b> hat über jedem Punkt einen Raum gleichen Typs (die "Faser"). Lokal sieht es aus wie ein Produkt, aber global kann es verdreht sein.</p>
+        </div>
+        <div class="fragment two-col">
+            <div class="info-card">
+                <h4>Trivial: Zylinder</h4>
+                <p>$S^1 \times \mathbb{R}$ – ein Kreis mit einer Geraden über jedem Punkt. Keine Verdrehung.</p>
+            </div>
+            <div class="info-card">
+                <h4>Nicht-trivial: Möbiusband</h4>
+                <p>Lokal sieht es aus wie ein Zylinder, aber global ist es verdreht – nach einer Umrundung ist oben/unten vertauscht.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: Eichtheorie -->
+<div class="slide" data-title="Eichtheorie">
+    <div class="slide-content">
+        <h2>Eichtheorie und Paralleltransport</h2>
+        <div class="viz-container" id="viz-gauge"></div>
+        <div class="fragment">
+            <p>Ein Vektor wird auf einer Kugel entlang eines geschlossenen Pfades transportiert. Am Ende zeigt er in eine <b>andere Richtung</b>. Die Differenz = <b>Holonomie</b> = Krümmung.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Eichtheorie in der Physik:</b><br>
+            • Elektromagnetismus = $U(1)$-Eichtheorie<br>
+            • Starke Kernkraft = $SU(3)$-Eichtheorie<br>
+            • Schwache Kernkraft = $SU(2)$-Eichtheorie<br><br>
+            Das elektromagnetische Potential $A_\mu$ ist der <b>Zusammenhang</b>. Die Krümmung $F_{\mu\nu}$ ist das elektromagnetische <b>Feld</b>.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: Eichtheorie – das kaputte Thermometer -->
+<div class="slide" data-title="Eichung">
+    <div class="slide-content">
+        <h2>Eichung: Das kaputte Thermometer</h2>
+        <div class="viz-container" id="viz-calibration"></div>
+        <div class="fragment">
+            <p>Zwei Thermometer messen dasselbe, aber eines zeigt +10° zu viel an. Die "Eichtransformation" (−10°) verbindet sie.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>In HoTT:</b> Wenn man den Typ "Temperaturmessungen" so definiert, dass eichäquivalente Messungen als gleich gelten, dann <i>ist</i> die Eichtransformation ein <b>Pfad</b> (ein Beweis der Gleichheit). Das ist Univalenz: Isomorphe Dinge sind gleich.<br><br>
+            <b>Eichinvarianz:</b> Die Physik ändert sich nicht, wenn man die Kalibrierung wechselt – solange man die Transformation kennt.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 13: ∞-Garben -->
+<div class="slide" data-title="∞-Garben">
+    <div class="slide-content">
+        <h2>∞-Garben: Verklebung bis auf Homotopie</h2>
+        <div class="viz-container" id="viz-infinity"></div>
+        <div class="fragment">
+            <p>In einer <b>∞-Garbe</b> muss die Verklebung nicht exakt sein – es genügt ein <b>stetiger Pfad</b> (eine Homotopie) zwischen den lokalen Daten auf der Überlappung.</p>
+        </div>
+        <div class="fragment">
+            <p><b>Beispiel:</b> Die Landschaft von 10.000 BC und die Stadt von heute sind nicht gleich, aber es gibt einen Pfad zwischen ihnen – die zeitliche Entwicklung, Moment für Moment, jeder Moment überlappt mit dem vorherigen.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Verschiedene wissenschaftliche Paradigmen:</b> Newtonsche Mechanik und Relativitätstheorie sind lokal konsistent (bei niedrigen Geschwindigkeiten stimmen sie überein). Der Grenzübergang $v/c \to 0$ ist der Pfad (die Homotopie) zwischen ihnen.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 14: Hopf-Faserung -->
+<div class="slide" data-title="Hopf">
+    <div class="slide-content">
+        <h2>Die Hopf-Faserung: Verschlungene Kreise</h2>
+        <div class="viz-container" id="viz-hopf"></div>
+        <div class="fragment formula-box">
+            <div class="math-display">$$S^1 \hookrightarrow S^3 \xrightarrow{\pi} S^2$$</div>
+            <p style="font-size:0.85em; color:#94a3b8; margin-top:8px;">"Die 3-Sphäre ist ein Faserbündel über der 2-Sphäre mit Faser $S^1$ (Kreis). Jedes Paar von Fasern ist einmal miteinander verlinkt (Verschlingungszahl = 1)."</p>
+        </div>
+        <div class="fragment key-insight">
+            Die Verschlingung zeigt, dass das Bündel <b>nicht trivial</b> ist – es ist nicht einfach $S^2 \times S^1$. Die Fasern sind auf eine nicht-triviale Weise miteinander verwoben.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 15: Topoi -->
+<div class="slide" data-title="Topoi">
+    <div class="slide-content">
+        <h2>Topoi: Universen mit eigener Logik</h2>
+        <div class="viz-container" id="viz-topos"></div>
+        <div class="fragment">
+            <p>Ein <b>Topos</b> ist eine Kategorie, die sich wie "die Kategorie der Garben auf einem Raum" verhält – mit einer eigenen internen Logik.</p>
+        </div>
+        <div class="fragment two-col">
+            <div class="info-card">
+                <h4>Klassische Logik</h4>
+                <p>Jede Aussage ist wahr oder falsch. Tertium non datur.</p>
+            </div>
+            <div class="info-card">
+                <h4>Garben-Topos</h4>
+                <p>Eine Aussage kann "wahr auf U" sein, aber "falsch auf V". Wahrheit ist lokal.</p>
+            </div>
+        </div>
+        <div class="fragment key-insight">
+            Der <b>Unterobjektklassifizierer</b> $\Omega$ bestimmt die "Palette der Wahrheitswerte". In <b>Set</b>: $\Omega = \{0,1\}$. In einem Garben-Topos: $\Omega$ = die Garbe der offenen Mengen.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 16: HoTT -->
+<div class="slide" data-title="HoTT">
+    <div class="slide-content">
+        <h2>HoTT: Typen als Räume (kurz)</h2>
+        <div class="viz-container" id="viz-hott"></div>
+        <div class="fragment two-col">
+            <div class="info-card">
+                <h4>Typ = Raum</h4>
+                <p>Ein Typ hat Terme (Punkte) und Pfade (Beweise der Gleichheit) zwischen ihnen.</p>
+            </div>
+            <div class="info-card">
+                <h4>Typenfamilie = Garbe</h4>
+                <p>$P: X \to \mathcal{U}$ ordnet jedem Punkt einen ganzen Typ zu. Ein Schnitt = $\prod_{x:X} P(x)$.</p>
+            </div>
+        </div>
+        <div class="fragment key-insight">
+            In HoTT muss die Verklebung nur <b>"bis auf einen Pfad"</b> gelten. Und die Pfade müssen selbst konsistent sein (bis auf Pfade zwischen Pfaden, usw.). Das ist eine <b>∞-Garbe</b>.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 17: Die Site – das Ding an sich -->
+<div class="slide" data-title="Site">
+    <div class="slide-content">
+        <h2>Die Site: Das Ding an sich</h2>
+        <div class="viz-container" id="viz-site"></div>
+        <div class="fragment">
+            <p>In der Garbentheorie ist die <b>Site</b> die zugrundeliegende Struktur, auf der die Garbe lebt. Philosophisch: das "Ding an sich" (Kant).</p>
+        </div>
+        <div class="fragment key-insight">
+            Wir haben keinen direkten Zugang zur Site – wir sehen nur die Garbe (unsere Messungen, Wahrnehmungen, Modelle). Die Wirklichkeit selbst bleibt ein <b>Grenzbegriff</b>.<br><br>
+            Auch mathematische Beweise bauen am Ende auf Evidenz auf – auf Axiome, die man akzeptiert, weil sie "einleuchten" (z.B. Modus Ponens: "wenn A dann B; jetzt A; also B").
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 18: Konsistentes Weltbild -->
+<div class="slide" data-title="Weltbild">
+    <div class="slide-content">
+        <h2>Ein konsistentes Weltbild als globaler Schnitt</h2>
+        <div class="viz-container" id="viz-worldview"></div>
+        <div class="fragment">
+            <p>Die Wirklichkeit ist wie ein Puzzle: Lokale Cluster bilden sich zuerst, dann globalere. Alle müssen <b>verklebbar</b> sein.</p>
+        </div>
+        <div class="fragment key-insight">
+            <b>Prediction Machine:</b> Das Gehirn versucht, die Wirklichkeit zu simulieren, um Handlungen zu optimieren. Je konsistenter das Modell, desto besser die Vorhersagen. Wer globale Konsistenz fordert, hat ein kohärentes Weltbild. Wer es nicht tut, riskiert kognitive Dissonanz – oder baut ein Modell, das halluziniert.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 19: KI und Garben -->
+<div class="slide" data-title="KI & Garben">
+    <div class="slide-content">
+        <h2>Anwendung: KI und konsistente Weltbilder</h2>
+        <div class="viz-container" id="viz-llm-sheaf"></div>
+        <div class="fragment">
+            <p>Ein LLM baut ein internes Modell auf – einen approximativen globalen Schnitt über dem "Raum der Texte".</p>
+        </div>
+        <div class="fragment two-col">
+            <div class="info-card">
+                <h4>Konsistenz = gutes Modell</h4>
+                <p>Lokale Schnitte (Antworten auf verwandte Fragen) passen zusammen. Die Verklebungsbedingung ist (approximativ) erfüllt.</p>
+            </div>
+            <div class="info-card">
+                <h4>Halluzination = Obstruktion</h4>
+                <p>Lokale Schnitte, die plausibel aussehen, aber sich nicht global verkleben lassen. Das Modell "erfindet" etwas, das lokal passt, aber global inkonsistent ist.</p>
+            </div>
+        </div>
+        <div class="fragment key-insight">
+            <b>OthelloGPT</b> und ähnliche Modelle zeigen: Neuronale Netze bauen interne Weltmodelle auf, die als hochdimensionale Garben über dem Zustandsraum interpretiert werden können.
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 20: Zusammenfassung -->
+<div class="slide" data-title="Zusammenfassung">
+    <div class="slide-content" style="padding-top: 5vh;">
+        <h2>Zusammenfassung: Das verklebte Gesamtbild</h2>
+        <div class="viz-container" id="viz-summary"></div>
+        <div class="fragment" style="margin-top: 16px;">
+            <div class="formula-box">
+                <p style="text-align:left; color:#cbd5e1; line-height: 2;">
+                    <b>Site</b> (Ding an sich) → <b>Garbe</b> (Messungen) → <b>Schnitte</b> (Daten) → <b>Kohomologie</b> (Obstruktionen) → <b>Konsistenz / Inkonsistenz</b><br><br>
+                    <b>Eichtheorie:</b> Vergleich über Zusammenhang (Paralleltransport). Krümmung = Pfadabhängigkeit.<br>
+                    <b>∞-Garben:</b> Verklebung bis auf Homotopie. Verschiedene Perspektiven inkludierbar.<br>
+                    <b>Topoi:</b> Verschiedene Logiken in verschiedenen "Universen".<br>
+                    <b>Falsifikation:</b> Verklebung ist kein Beweis, aber Nicht-Verklebbarkeit schon.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div><!-- end #presentation -->
+
+<!-- Navigation Bar -->
+<div id="nav-bar">
+    <button id="btn-prev" onclick="Presentation.prev()">← Zurück</button>
+    <div style="display:flex; align-items:center; gap:12px;">
+        <span id="slide-counter">1 / 20</span>
+    </div>
+    <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
+</div>
+
+<script src="temml.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="sheaves_presentation.js"></script>
+</body>
+</html>
