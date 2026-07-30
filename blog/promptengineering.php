@@ -5,7 +5,7 @@ title: Prompt Engineering
 description: The practical craft of talking to LLMs, roles, delimiters, and canonicalization.
 icon: &#9999;
 part: 5
-order: 35
+order: 36
 color: rose
 -->
 

@@ -5,7 +5,7 @@ title: Security & Adversarial Attacks
 description: Prompt injection, jailbreaking, data poisoning, and the defenses against them.
 icon: &#128274;
 part: 5
-order: 33
+order: 34
 color: rose
 -->
 

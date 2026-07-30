@@ -1,12 +1,8 @@
 <?php include_once("functions.php"); ?>
 <!--
-COURSE_METADATA:
-title: Basic Math Concepts
-description: Functions, variables, and parameters, the classical programming vs. neural network mindset.
-icon: &#128290;
-part: 1
-order: 3
-color: accent
+NOTE: This file is kept as a complete reference for the math chapters.
+The curriculum now splits this into math_i.php, math_ii.php, and math_iii.php
+(see index_full.php for the canonical chapter list).
 -->
 
 <div class="md">

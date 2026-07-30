@@ -5,7 +5,7 @@ title: Semantic Search & Vector Databases
 description: Finding needles in haystacks, BM25, dense vectors, hybrid search, and ANN.
 icon: &#128279;
 part: 5
-order: 31
+order: 32
 color: rose
 -->
 

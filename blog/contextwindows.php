@@ -5,7 +5,7 @@ title: Context Windows & Memory
 description: What LLMs can hold in mind, from GPT-2's 1K to Gemini's 1M+ tokens.
 icon: &#128196;
 part: 5
-order: 32
+order: 33
 color: rose
 -->
 

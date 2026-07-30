@@ -46,9 +46,14 @@
 	incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro");
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
-	incl("Basic math concepts", "math");
+	incl("Basic Math Concepts I — The Numerical Foundations", "math_i");
+	incl("Basic Math Concepts II — Linear Algebra for AI", "math_ii");
+	incl("Basic Math Concepts III — Approximation & The Geometry of High Dimensions", "math_iii");
 	incl("The History of Language: From Sanskrit to LLMs", "language");
-	incl("Statistics: A useful helper in AI", "statistics");
+	incl("Statistics I — Distributions and Inference", "statistics_i");
+	incl("Statistics II — Inference and Information", "statistics_ii");
+	incl("The Untold History of AI", "untold_history");
+	incl("The Global AI Ecosystem", "global_ai_ecosystem");
 	incl("Loss: Teaching through Failure", "losslab");
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl('Differentiation: The Mathematics of Change', "differentiation");
@@ -63,6 +68,7 @@
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
+	incl("Reinforcement Learning", "reinforcement_learning");
 	incl("Tokenization: How Words become Numbers", "tokenizerlab");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
@@ -71,8 +77,12 @@
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
 	incl("Mechanistic Interpretability", "mechanistic_interpretability");
 	incl("How Transformers Execute Algorithms", "algorithms");
+	incl("Multimodal & Vision-Language Models", "multimodal");
+	incl("Diffusion Models", "diffusion");
+	incl("Speech & Audio Models", "speech_audio");
+	incl("Beyond Transformers (Mamba, RWKV, RetNet)", "alternative_architectures");
 	#incl("Topology and the Geometry of Thought", "topology");
-	incl("Fine-Tuning & RLHF", "finetuninglab");
+	incl("Fine-Tuning & Post-Training", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
 	incl("How LLMs Search the Web", "websearch");
@@ -81,8 +91,18 @@
 	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
 	incl("Security & Adversarial Attacks", "security_inference");
 	incl("Inference Optimization", "inference_optimization");
+	incl("Running Models Locally", "running_locally");
+	incl("Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI", "symbolic_ai");
+	incl("Training Data Curation", "training_data");
+	incl("Training Infrastructure", "training_infrastructure");
+	incl("Production Serving & Inference", "production_serving");
+	incl("Reasoning & Test-Time Compute", "reasoning");
+	incl("Evaluation & Benchmarks", "evaluation");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
+	incl("AI Law & Regulation", "law_regulation");
+	incl("The Economics of AI", "economics");
+	incl("Frontier Topics", "frontier");
 	incl("Appendix", "appendix");
 ?>
 </div>

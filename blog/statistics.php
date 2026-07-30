@@ -1,12 +1,8 @@
 <?php include_once("functions.php"); ?>
 <!--
-COURSE_METADATA:
-title: Statistics
-description: AI is applied statistics. Distributions, probability, and the mathematical backbone of learning.
-icon: &#128200;
-part: 1
-order: 5
-color: accent
+NOTE: This file is kept as a complete reference for the statistics chapters.
+The curriculum now splits this into statistics_i.php and statistics_ii.php
+(see index_full.php for the canonical chapter list).
 -->
 
 <div class="md">
