@@ -1210,135 +1210,106 @@ vizRegistry['viz-calibration'] = function(container) {
     const { ctx, W, H } = setupCanvas(container);
     let t = 0;
 
+    function drawThermometer(x, y, reading, label, isCorrect) {
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(x - 20, y - 60, 40, 120, 8);
+        ctx.fill();
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const mercuryHeight = (reading / 100) * 80;
+        ctx.fillStyle = isCorrect ? '#ef4444' : '#f97316';
+        ctx.fillRect(x - 8, y + 40 - mercuryHeight, 16, mercuryHeight);
+
+        ctx.beginPath();
+        ctx.arc(x, y + 50, 14, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+
+        ctx.font = 'bold 16px monospace';
+        ctx.fillStyle = isCorrect ? '#4ade80' : '#f87171';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${reading}°C`, x, y - 75);
+
+        ctx.font = '11px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(label, x, y + 80);
+    }
+
+    const t1x = W * 0.25;
+    const t2x = W * 0.75;
+    const ty = H * 0.4;
+    const realTemp = 25;
+    const offset = 10;
+    let animationRunning = true;
+
     function draw() {
+        if (!animationRunning) return;
         t++;
         ctx.clearRect(0, 0, W, H);
         ctx.fillStyle = '#1e293b';
         ctx.fillRect(0, 0, W, H);
 
-        // Two thermometers
-        const t1x = W * 0.25;
-        const t2x = W * 0.75;
-        const ty = H * 0.4;
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'center';
+        ctx.fillText('Eichtheorie: Zwei Thermometer, eine Realität', W / 2, 25);
 
-        // Draw thermometer bodies
-        function drawThermometer(x, y, reading, label, isCorrect) {
-            // Thermometer body
-            ctx.fillStyle = '#334155';
-            ctx.beginPath();
-            ctx.roundRect(x - 20, y - 60, 40, 120, 8);
-            ctx.fill();
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+        ctx.font = '30px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('☕', W / 2, ty + 20);
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`Reale Temperatur: ${realTemp}°C`, W / 2, ty + 45);
 
-            // Mercury level
-            const mercuryHeight = (reading / 100) * 80;
-            ctx.fillStyle = isCorrect ? '#ef4444' : '#f97316';
-            ctx.fillRect(x - 8, y + 40 - mercuryHeight, 16, mercuryHeight);
+        drawThermometer(t1x, ty, realTemp, 'Messgerät A (korrekt)', true);
+        drawThermometer(t2x, ty, realTemp + offset, 'Messgerät B (+10° Offset)', false);
 
-            // Bulb
-            ctx.beginPath();
-            ctx.arc(x, y + 50, 14, 0, Math.PI * 2);
-            ctx.fillStyle = '#ef4444';
-            ctx.fill();
+        const arrowY = H * 0.72;
+        const arrowStartX = t1x + 40;
+        const arrowEndX = t2x - 40;
+        const arrowMidX = (arrowStartX + arrowEndX) / 2;
 
-            // Reading display
-            ctx.font = 'bold 16px monospace';
-            ctx.fillStyle = isCorrect ? '#4ade80' : '#f87171';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${reading}°C`, x, y - 75);
+        ctx.beginPath();
+        ctx.moveTo(arrowStartX, arrowY);
+        ctx.quadraticCurveTo(arrowMidX, arrowY + 40, arrowEndX, arrowY);
+        ctx.strokeStyle = '#a78bfa';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
 
-            // Label
-            ctx.font = '11px system-ui';
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillText(label, x, y + 80);
-        }
+        ctx.beginPath();
+        ctx.moveTo(arrowEndX, arrowY);
+        ctx.lineTo(arrowEndX - 10, arrowY - 6);
+        ctx.lineTo(arrowEndX - 10, arrowY + 6);
+        ctx.closePath();
+        ctx.fillStyle = '#a78bfa';
+        ctx.fill();
 
-        // Real temperature
-        const realTemp = 25;
-        const offset = 10;
+        ctx.font = 'bold 12px system-ui';
+        ctx.fillStyle = '#a78bfa';
+        ctx.textAlign = 'center';
+        ctx.fillText('Eichtransformation: −10°', arrowMidX, arrowY + 55);
 
-        // Animate: oscillate between showing correct and offset reading
-        let t = 0;
-        animationRunning = true;
+        const pulse = 0.6 + 0.3 * Math.sin(t * 0.04);
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = `rgba(167, 139, 250, ${pulse})`;
+        ctx.fillText('In HoTT: ein Pfad (Beweis der Gleichheit)', arrowMidX, arrowY + 72);
 
-        function draw() {
-            if (!animationRunning) return;
-            t++;
-            ctx.clearRect(0, 0, W, H);
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 0, W, H);
+        ctx.font = 'bold 14px system-ui';
+        ctx.fillStyle = '#e2e8f0';
+        ctx.textAlign = 'center';
+        ctx.fillText('25°C  ≡  35°C − 10°C', W / 2, H - 40);
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('Gleiche physikalische Realität, verschiedene Eichung', W / 2, H - 22);
 
-            // Title
-            ctx.font = 'bold 13px system-ui';
-            ctx.fillStyle = '#e2e8f0';
-            ctx.textAlign = 'center';
-            ctx.fillText('Eichtheorie: Zwei Thermometer, eine Realität', W / 2, 25);
-
-            // Target object
-            ctx.font = '30px system-ui';
-            ctx.textAlign = 'center';
-            ctx.fillText('☕', W / 2, ty + 20);
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillText(`Reale Temperatur: ${realTemp}°C`, W / 2, ty + 45);
-
-            // Thermometer A (correct)
-            drawThermometer(t1x, ty, realTemp, 'Messgerät A (korrekt)', true);
-
-            // Thermometer B (offset by +10°)
-            drawThermometer(t2x, ty, realTemp + offset, 'Messgerät B (+10° Offset)', false);
-
-            // Gauge transformation arrow
-            const arrowY = H * 0.72;
-            const arrowStartX = t1x + 40;
-            const arrowEndX = t2x - 40;
-            const arrowMidX = (arrowStartX + arrowEndX) / 2;
-
-            // Curved arrow
-            ctx.beginPath();
-            ctx.moveTo(arrowStartX, arrowY);
-            ctx.quadraticCurveTo(arrowMidX, arrowY + 40, arrowEndX, arrowY);
-            ctx.strokeStyle = '#a78bfa';
-            ctx.lineWidth = 2.5;
-            ctx.setLineDash([6, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Arrowhead
-            ctx.beginPath();
-            ctx.moveTo(arrowEndX, arrowY);
-            ctx.lineTo(arrowEndX - 10, arrowY - 6);
-            ctx.lineTo(arrowEndX - 10, arrowY + 6);
-            ctx.closePath();
-            ctx.fillStyle = '#a78bfa';
-            ctx.fill();
-
-            // Label on arrow
-            ctx.font = 'bold 12px system-ui';
-            ctx.fillStyle = '#a78bfa';
-            ctx.textAlign = 'center';
-            ctx.fillText('Eichtransformation: −10°', arrowMidX, arrowY + 55);
-
-            // In HoTT: path label
-            const pulse = 0.6 + 0.3 * Math.sin(t * 0.04);
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = `rgba(167, 139, 250, ${pulse})`;
-            ctx.fillText('In HoTT: ein Pfad (Beweis der Gleichheit)', arrowMidX, arrowY + 72);
-
-            // Equality statement
-            ctx.font = 'bold 14px system-ui';
-            ctx.fillStyle = '#e2e8f0';
-            ctx.textAlign = 'center';
-            ctx.fillText('25°C  ≡  35°C − 10°C', W / 2, H - 40);
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = '#64748b';
-            ctx.fillText('Gleiche physikalische Realität, verschiedene Eichung', W / 2, H - 22);
-
-            activeVizAnimations['viz-calibration'] = requestAnimationFrame(draw);
-        }
-        draw();
+        activeVizAnimations['viz-calibration'] = requestAnimationFrame(draw);
+    }
+    draw();
 };
 
 // ============================================================
