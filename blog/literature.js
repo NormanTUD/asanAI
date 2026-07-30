@@ -4730,7 +4730,7 @@ window.bibData = {
 		alternativetitle: "EM Algorithm"
 	},
 	"cybenko1989": {
-		url: "https://www.dartmouth.edu/dhlabs/labs/Archive/Cybenko_1989.pdf",
+		url: "https://link.springer.com/content/pdf/10.1007/BF02551274.pdf",
 		title: "Approximation by Superpositions of a Sigmoidal Function",
 		author: "George Cybenko",
 		year: 1989,
