@@ -16,7 +16,7 @@ This chapter surveys the research frontier of 2025 — the techniques and ideas 
 <div class="md">
 ## Constitutional AI (CAI)
 
-Bai et al. (Anthropic, 2022) replaced most of RLHF's human-labelling with **AI self-critique against a written constitution**:
+Bai et al. (Anthropic, 2022) replaced most of \cite[Ouyang et al., 2022]{ouyang2022instructgpt}'s human-labelling with **AI self-critique against a written constitution**:
 
 1. The model generates a response.
 2. The model critiques it against a constitutional principle ("be helpful, harmless, honest").
@@ -26,7 +26,7 @@ Bai et al. (Anthropic, 2022) replaced most of RLHF's human-labelling with **AI s
 
 A typical constitution entry: *"Which response is more honest? Response A states the limits of its knowledge; Response B makes up plausible-sounding facts. Choose the more honest response."*
 
-CAI reduces human labelling by ~10× while matching RLHF on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
+CAI reduces human labelling by ~10× while matching \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
 <div class="md">
@@ -42,11 +42,11 @@ $$
 
 The L1 penalty forces only a few features to be active for any input. Anthropic's work on Claude 3 Sonnet (2024) found:
 
-* A single SAE feature activated on **Golden Gate Bridge** references — across languages, image descriptions, and even ASCII art.
+* A single SAE feature activated on **\cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge** references — across languages, image descriptions, and even ASCII art.
 * Features for **code bugs**, **refusal**, **deception** could be identified.
 * Some features are **universal** across model families (Llama, GPT, Claude).
 
-The "**Golden Gate Claude**" demonstration (Anthropic, 2024) amplified a single feature to make the model obsessed with the Golden Gate Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
+The "**\cite[Templeton et al., 2024]{anthropic2024goldengate} Claude**" demonstration (Anthropic, 2024) amplified a single feature to make the model obsessed with the \cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge. This is the first direct evidence that specific, semantically meaningful features can be **causally manipulated** at inference time.
 </div>
 
 <div class="md">
@@ -66,7 +66,7 @@ Techniques enabling this:
 * **ALiBi** (Press et al., 2022): linear bias to attention scores; doesn't require position embedding changes.
 * **Ring Attention** (Liu et al., 2023): sequence parallelism with overlap of compute and communication.
 * **InfLLM** (MiniMax et al., 2024): training-free long-context via KV compression.
-* **Landmark Attention** (Mohtashami & Jaggi, 2023): append "landmark" tokens summarizing past context.
+* **Landmark Attention** (\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}: append "landmark" tokens summarizing past context.
 
 The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle. The reason is poorly understood but reproducible across architectures.
 
@@ -86,7 +86,7 @@ The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 
 </div>
 
 <div class="md">
-## Mixture of Depths (MoD)
+## \cite[Bubeck et al., 2023]{fedus2022moe} of Depths (MoD)
 
 Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers**. Easy tokens skip; hard tokens use full depth.
 
@@ -100,13 +100,13 @@ Related: **early exit** (Elhoushi et al., 2024), **conditional computation** (Fe
 </div>
 
 <div class="md">
-## Test-Time Training (TTT)
+## Test-Time Training (\cite[Sun et al., 2024]{sun2024ttt})
 
 A 2024 idea: **train at inference time on the test input itself**. Sun et al. (2024) showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
 
 For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
 
-The trade-off: latency. TTT adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
+The trade-off: latency. \cite[Sun et al., 2024]{sun2024ttt} adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
 </div>
 
 <div class="md">
@@ -114,7 +114,7 @@ The trade-off: latency. TTT adds seconds-to-minutes per query. Useful for offlin
 
 See the AI Agents chapter for the basics. Frontier developments:
 
-* **Multi-agent debate** (Du et al., 2023): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
+* **Multi-agent \cite[Du et al., 2023]{du2023multiagent}** (Du et al., 2023): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
 * **Toolformer-style self-taught tool use** (Schick et al., 2023; Gorilla, Patil et al., 2023): models learn to call thousands of APIs.
 * **Computer use agents**: Anthropic's Claude can interact with a real desktop. OpenAI's Operator. Google Jarvis (rumored). All powered by screenshot→action Transformers.
 * **Code agents**: SWE-Agent, AutoCodeRover, Devin — autonomous software engineering. Still unreliable but improving.
@@ -136,7 +136,7 @@ Key 2024–2025 results:
 * **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.
 * **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.
 
-The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open debate.
+The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open \cite[Du et al., 2023]{du2023multiagent}.
 </div>
 
 <div class="md">

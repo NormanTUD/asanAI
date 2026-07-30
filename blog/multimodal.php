@@ -26,7 +26,7 @@ The simplest alignment is **contrastive learning**: pull matched (image, caption
 <div class="md">
 ## CLIP: Contrastive Language-Image Pre-training
 
-Published by Radford et al. (OpenAI, 2021), CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:
+Published by \cite[Radford et al. (OpenAI), 2021][]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:
 
 * An **image encoder** $f_\theta : \text{Image} \to \mathbb{R}^d$ (originally a ResNet-50, later a ViT-L/14).
 * A **text encoder** $g_\phi : \text{Text} \to \mathbb{R}^d$ (a Transformer).
@@ -51,7 +51,7 @@ This is the foundation of every modern vision-language model.
 <div class="md">
 ## Vision Transformers: Turning Pixels into Tokens
 
-A Vision Transformer (ViT) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
+A Vision Transformer \cite[dosovitskiy2021vit] (ViT) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
 
 $$
 \text{number of patches} \quad n = \frac{HW}{P^2}
@@ -83,11 +83,11 @@ $$
 
 The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. **Only the projection layer is trained initially**; the LLM is frozen. The visual tokens literally become "foreign-language words" the LLM learns to read.
 
-LLaVA-1.5 (Liu et al., 2023) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 85.1% on VQA, matching GPT-4 on several multimodal benchmarks.
+LLaVA-1.5 \cite[liu2023llava] used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 85.1% on VQA, matching GPT-4 on several multimodal benchmarks.
 
 ### Pattern 2: Cross-Attention (Flamingo-style)
 
-The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo (DeepMind, 2022) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
+The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo \cite[alayrac2022flamingo] interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
 
 ### Pattern 3: Native Multimodality (GPT-4o, Gemini)
 

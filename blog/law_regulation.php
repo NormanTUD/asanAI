@@ -125,7 +125,7 @@ The FTC has brought actions against AI companies for deceptive practices (Workad
 
 ### California SB 1047 Veto (Sept 2024)
 
-The "Safe and Secure Innovation for Frontier Artificial Intelligence Models Act" would have required safety testing for models trained with >10^26 FLOPs. Governor Newsom vetoed it, citing concerns it would burden open-source development. The debate continues.
+The "Safe and Secure Innovation for Frontier Artificial Intelligence Models Act" would have required safety testing for models trained with >10^26 FLOPs. Governor Newsom vetoed it, citing concerns it would burden open-source development. The \cite[Du et al., 2023]{du2023multiagent} continues.
 </div>
 
 <div class="md">

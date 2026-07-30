@@ -64,9 +64,7 @@ The cost is $k \times$ more inference, but no retraining required.
 </div>
 
 <div class="md">
-## Tree of Thoughts (Yao et al., 2023)
-
-A generalization of CoT where the reasoning structure is a tree rather than a linear chain:
+## Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot} rather than a linear chain:
 
 1. **Generate** $b$ candidate thoughts at each step.
 2. **Evaluate** each candidate (by prompting the model itself).
@@ -87,7 +85,7 @@ OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning f
 * At inference, the model produces **thousands of tokens of internal reasoning** before answering.
 * **Test-time compute scaling**: performance improves monotonically with the number of reasoning tokens the model is allowed to use.
 
-R1 was trained purely with RL (no SFT) using a technique called **GRPO** (Group Relative Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group. This produced emergent long-CoT behaviour without explicit supervision on reasoning traces.
+R1 was trained purely with RL (no SFT) using a technique called **GRPO** (\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group. This produced emergent long-CoT behaviour without explicit supervision on reasoning traces.
 
 ### Why It Works
 
@@ -99,7 +97,7 @@ Forcing the model to verify its own work (critique-then-revise, search over cand
 <div class="md">
 ## Process Reward Models (PRMs)
 
-A **reward model** (used in RLHF, see the Fine-Tuning chapter) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
+A **reward model** (used in \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the Fine-Tuning chapter) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
 
 Training a PRM:
 
@@ -170,10 +168,7 @@ The frontier of research is **meta-reasoning**: training the model to *decide ho
 
 | Method | Compute cost | When to use |
 |--------|-------------|-------------|
-| Zero-shot CoT | $1\times$ | Quick win on math, logic |
-| Few-shot CoT | $1\times$ | Same-domain reasoning |
-| Self-consistency | $k\times$ | High-stakes single answers |
-| Tree of Thoughts | $O(b^d)\times$ | Search-space problems |
+| Zero-shot CoT | $1\times$ | Quick win on \cite[Hendrycks et al., 2021]{hendrycks2021math}s |
 | o1-style long thinking | $10{-}100\times$ | Hard math, code, science |
 | Process Reward Model search | $k \cdot d\times$ | Maximum accuracy on verifiable tasks |
 

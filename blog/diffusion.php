@@ -87,7 +87,7 @@ For $512 \times 512$ images, the U-Net has ~860M parameters (Stable Diffusion 1.
 
 ### Conditioning: From Class-Conditional to Text-Conditional
 
-To generate images **from text**, the noise prediction must depend on a text embedding. The classifier-free guidance (CFG) approach (Ho & Salimans, 2022) trains a single network with two modes:
+To generate images **from text**, the noise prediction must depend on a text embedding. The classifier-free guidance (CFG) approach (\cite[Ho & Salimans, 2022]{ho2022cfg} trains a single network with two modes:
 
 * $\epsilon_\theta(x_t, t, c)$ — conditional on text embedding $c$
 * $\epsilon_\theta(x_t, t, \varnothing)$ — unconditional (10% of training time, drop the text)
@@ -106,7 +106,7 @@ where $w$ (guidance scale) is typically 5–15. Higher $w$ → images match the 
 <div class="md">
 ## Latent Diffusion: Stable Diffusion
 
-Pixel-space diffusion at $512 \times 512 \times 3$ is prohibitively expensive. **Latent Diffusion Models** (LDM, Rombach et al., 2022 — the paper behind Stable Diffusion) solve this by:
+Pixel-space diffusion at $512 \times 512 \times 3$ is prohibitively expensive. **Latent Diffusion Models** (LDM, \cite[Rombach et al., 2022]{rombach2022ldm} — the paper behind Stable Diffusion) solve this by:
 
 1. **Encode** the image into a lower-dimensional latent $z = E(x) \in \mathbb{R}^{h \times w \times c}$ using a pretrained VAE encoder (typically $8\times$ spatial compression, so $512 \times 512 \to 64 \times 64 \times 4$).
 2. **Diffuse** in latent space (much cheaper: $64^2 \times 4 = 16{,}384$ dims vs. $786{,}432$).
@@ -171,8 +171,8 @@ Modern Stable Diffusion XL Turbo generates images in **1–4 network evaluations
 
 * **Image-to-image**: encode the source image to latent, add noise to some timestep $t_0$, then denoise from $t_0$ back to 0. The amount of $t_0$ controls how much the model preserves vs regenerates.
 * **Inpainting**: mask a region of the latent, denoise with the mask conditioning. The model fills in the masked area consistent with the unmasked context.
-* **ControlNet** (Zhang et al., 2023): train a small network that outputs residuals added to each U-Net block, conditioned on extra signals like edge maps (Canny), depth maps, human pose skeletons. This gives spatial control without retraining the base model.
-* **LoRA**: low-rank adapters on the U-Net's attention layers, enabling fine-tuning on a few hundred images in minutes on consumer GPUs.
+* **ControlNet** \cite[zhang2023controlnet]: train a small network that outputs residuals added to each U-Net block, conditioned on extra signals like edge maps (Canny), depth maps, human pose skeletons. This gives spatial control without retraining the base model.
+* **LoRA**: \cite[Hu et al., 2021]{hu2021lora} adapters on the U-Net's attention layers, enabling fine-tuning on a few hundred images in minutes on consumer GPUs.
 </div>
 
 <div class="md">
@@ -189,7 +189,7 @@ Diffusion is also remarkably stable to train: no adversarial game, no mode colla
 <div class="md">
 ## Current Frontiers
 
-* **Flow matching / Rectified flow** (Lipman et al., 2023): a more general framework where diffusion is a special case. FLUX, Stable Diffusion 3, and most 2024+ models use it. Trains on a straight-line interpolation between noise and data, often giving better sample quality.
+* **Flow matching / Rectified flow** (\cite[Lipman et al., 2023]{lipman2023flow}: a more general framework where diffusion is a special case. FLUX, Stable Diffusion 3, and most 2024+ models use it. Trains on a straight-line interpolation between noise and data, often giving better sample quality.
 * **Consistency models**: 1-step generation via a self-consistency loss.
 * **Diffusion Transformers (DiT)**: replace the U-Net with a pure Transformer (similar to ViT), enabling scaling laws and unified architecture. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones.
 * **Cascaded diffusion**: generate a low-res image, then upsample with a second diffusion model. Google's Imagen, OpenAI's early DALL-E 2.

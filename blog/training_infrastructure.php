@@ -96,7 +96,7 @@ Ring Attention (Liu et al., 2023) and Striped Attention implement sequence paral
 
 ### Expert Parallelism (for MoE)
 
-For Mixture-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
+For \cite[Bubeck et al., 2023]{fedus2022moe}-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
 </div>
 
 <div class="md">

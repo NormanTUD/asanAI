@@ -109,7 +109,7 @@ ollama create my-coder -f Modelfile
 ollama run my-coder
 ```
 
-The Ollama library has thousands of community-contributed models, including fine-tunes for specific tasks (code, math, roleplay, embeddings).
+The [Ollama model library](https://ollama.com/library) has thousands of community-contributed models, including fine-tunes for specific tasks (code, math, roleplay, embeddings).
 </div>
 
 <div class="md">

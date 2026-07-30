@@ -175,16 +175,16 @@ The synthesis takes several forms:
 
 | Approach | Description | Example |
 |----------|-------------|---------|
-| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | AlphaGeometry, AlphaProof |
+| **Neural + symbolic modules** | NN does perception, symbolic does reasoning | Alpha\cite[Trinh et al., 2024]{trinh2024alphageometry}, AlphaProof |
 | **Neural representations, symbolic inference** | Embeddings + logical rules | Logic Tensor Networks, NLProlog |
 | **Symbolic priors on neural nets** | Constraints in loss function | Physics-informed NNs, constraint satisfaction |
 | **NN as heuristic for symbolic search** | Learned policy for tree search | AlphaGo, theorem provers |
 | **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |
 | **LLM + tool use** | Neural planner, symbolic tools | ReAct, Toolformer, agents |
 
-### AlphaGeometry (DeepMind, 2024)
+### Alpha\cite[Trinh et al., 2024]{trinh2024alphageometry} (DeepMind, 2024)
 
-Solves IMO geometry problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
+Solves IMO \cite[Trinh et al., 2024]{trinh2024alphageometry} problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
 
 ### Toolformer (Schick et al., Meta, 2023)
 
@@ -194,7 +194,7 @@ A Transformer that learns to **call APIs** (calculator, search, translation) by 
 
 Embed logical rules as soft constraints on neural network outputs. Combines first-order logic with deep learning in a single end-to-end trainable system.
 
-### DeepProbLog (Manhaeve et al., 2018)
+### DeepProbLog (\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}
 
 Extends ProbLog (probabilistic logic programming) with neural predicates. A neural net outputs probabilities; the probabilistic logic engine reasons over them.
 </div>

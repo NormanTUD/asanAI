@@ -18,6 +18,8 @@ This chapter surveys the main candidates, with the mathematical core of each.
 <div class="md">
 ## The Quadratic Wall
 
+**KV-cache mitigation:** Even standard Transformers handle long contexts via **KV-caching** (see the Production Serving chapter), which stores past K/V matrices so per-token compute stays linear in sequence length during autoregressive generation. The O(n²) cost appears in **training** and in **prefill** of long prompts; generation with a KV cache is O(n) per token. The practical gap between Transformers and sub-quadratic alternatives is therefore smaller than the asymptotic notation suggests.
+
 Standard self-attention (see the Attention chapter) computes:
 
 $$
@@ -53,11 +55,9 @@ where $\bar A = \exp(\Delta A)$, $\bar B = (\Delta A)^{-1}(\exp(\Delta A) - \mat
 
 This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{R}^{N}$. Compute is $O(N)$ per step, memory is $O(N)$ regardless of sequence length.
 
-### S4 (Gu et al., 2021)
+### S4 (\cite[Gu et al., 2021]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
 
-The original S4 made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
-
-### Mamba (Gu & Dao, 2023)
+### Mamba (\cite[Gu & Dao, 2023]{gu2023mamba}
 
 Mamba's key contribution is making the SSM **input-dependent**:
 
@@ -71,7 +71,7 @@ i.e. the state-transition matrices depend on the current input. This breaks line
 <div id="ssm-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-### Mamba-2 and SSD (Dao & Gu, 2024)
+### Mamba-2 and SSD (\cite[Dao & Gu, 2024]{dao2024mamba2}
 
 Mamba-2 reveals that selective SSMs and attention are **algebraically dual** through a tensor contraction framework called **Structured State-Space Duality (SSD)**. In practice this lets Mamba-2 use an efficient attention-like kernel for compute, retaining the linear-time recurrence for inference.
 
@@ -97,7 +97,7 @@ $$
 
 By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (the "state"), compute drops to $O(n \cdot d^2)$ and memory is $O(d^2)$ — independent of $n$.
 
-### Performer (Choromanski et al., 2020)
+### Performer \cite[choromanski2021performer]
 
 $\phi(x) = \exp(-\|x\|^2/2) \cdot (x, x^2 \text{ random features})$. Provably unbiased kernel approximation.
 
@@ -111,15 +111,7 @@ RetNet uses $\phi = \text{ELU} + 1$ (a simple element-wise nonlinearity) and sup
 
 RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at inference.
 
-### RWKV (Peng et al., 2023)
-
-RWKV is essentially a linear attention RNN with a particular time-decay weighting:
-
-$$
-\text{rwkv}_t = \frac{\exp(-w (t - i)) \cdot K_i \cdot V_i}{\sum_i \exp(-w (t-i)) \cdot K_i}
-$$
-
-The exponential decay $w > 0$ limits how far back a token can attend, but in practice RWKV-7 (2025) matches 7B Transformers on language tasks.
+### RWKV (\cite[Peng et al., 2023]{peng2023rwkv}-7 (2025) matches 7B Transformers on language tasks.
 </div>
 
 <div id="linear-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -127,10 +119,10 @@ The exponential decay $w > 0$ limits how far back a token can attend, but in pra
 <div class="md">
 ## Other Architectures
 
-* **Hyena** (Poli et al., 2023): replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
-* **Mega** (Ma et al., 2022): combines a single-axis exponential moving average with attention. Position-aware.
+* **Hyena** \cite[poli2023hyena]: replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
+* **Mega** (\cite[Ma et al., 2022]{ma2022mega} average with attention. Position-aware.
 * **Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.
-* **Mixture-of-Depths** (Raposo et al., 2024): routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
+* **\cite[Bubeck et al., 2023]{fedus2022moe}-of-Depths** (\cite[Raposo et al., 2024]{raposo2024mod}: routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
 * **Universal Transformers**: recurrent application of the same Transformer block with a halting mechanism.
 
 The field is in active flux; no single "Transformer replacement" has emerged, but hybrids are clearly the immediate future.
