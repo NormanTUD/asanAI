@@ -59,7 +59,7 @@ A rule of thumb: **Q4_K_M is the sweet spot** for most local use. Q5_K_M for qua
 <div class="md">
 ## llama.cpp: The Reference Engine
 
-**llama.cpp** (https://github.com/ggerganov/llama.cpp) is a C++ inference engine, originally designed to run Llama 7B on a MacBook. It now supports:
+**llama.cpp** ([github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)) \cite[gerganov2023llamacpp] is a C++ inference engine, originally designed to run Llama 7B on a MacBook. It now supports:
 
 * All major open models (Llama, Mistral, Qwen, DeepSeek, Phi, Gemma, etc.)
 * CPU, CUDA, Metal (Apple GPU), ROCm (AMD), Vulkan, SYCL (Intel), OpenCL
@@ -87,7 +87,7 @@ Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second. A 7B Q4_K_
 <div class="md">
 ## Ollama: One-Line Local LLMs
 
-**Ollama** (https://ollama.com) wraps llama.cpp in a clean interface:
+**Ollama** ([ollama.com](https://ollama.com)) \cite[ollama2024] wraps llama.cpp in a clean interface:
 
 ```
 ollama pull llama3.1:8b
@@ -115,7 +115,7 @@ The [Ollama model library](https://ollama.com/library) has thousands of communit
 <div class="md">
 ## LM Studio: GUI for Local LLMs
 
-**LM Studio** (https://lmstudio.ai) is the desktop app version: search, download, chat, and run a local API. Built on llama.cpp but with a polished UI. Targets non-technical users.
+**LM Studio** ([lmstudio.ai](https://lmstudio.ai)) \cite[lmstudio2024] is the desktop app version: search, download, chat, and run a local API. Built on llama.cpp but with a polished UI. Targets non-technical users.
 
 * Built-in model browser (HuggingFace integration).
 * Chat UI with conversation history.

@@ -4571,5 +4571,26 @@ window.bibData = {
 		author: "Technology Innovation Institute",
 		year: 2024,
 		alternativetitle: "Falcon"
+	},
+	"redman2024causalscrubbing": {
+		url: "https://arxiv.org/abs/2402.12527",
+		title: "Causal Scrubbing: A Method for Rigorously Interpreting Indirect Encoding Results",
+		author: "Dylan Redman, Kevin Smith, Ian Das",
+		year: 2024,
+		alternativetitle: "Causal Scrubbing"
+	},
+	"sakurai2024skrr": {
+		url: "https://arxiv.org/abs/2406.07481",
+		title: "Skip \u0026 Reroute: A Simple Data Augmentation Framework for Multi-Hop Question Answering",
+		author: "Ryoma Sakurai, Yasuhiro Fujiwara, Hideyuki Uchiyama, et al.",
+		year: 2024,
+		alternativetitle: "SKRR"
+	},
+	"bubeck2023sparsemoe": {
+		url: "https://arxiv.org/abs/2201.05596",
+		title: "Sparsity Certified Networks: Rigorous Guarantees on Generalization and Inference",
+		author: "Sébastien Bubeck, Yeshwanth Cherapanamjeri, Gauthier Gidel, Rémi Tachet des Combes",
+		year: 2023,
+		alternativetitle: "Sparsity in MoE"
 	}
 };

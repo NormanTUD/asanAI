@@ -46,11 +46,11 @@ $$
 
 By 2025, frontier models exceed 88% on \cite[Hendrycks et al., 2021]{hendrycks2021mmlu}; the benchmark is **saturated**. The community has moved to **\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}-Pro** (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
 
-### HellaSwag (Zellers et al., 2019)
+### HellaSwag \\cite[zellers2019hellaswag]
 
 Tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
 
-### ARC (Clark et al., 2018)
+### ARC \\cite[clark2018arc]
 
 AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
 </div>
@@ -58,7 +58,7 @@ AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
 <div class="md">
 ## Generative, Exact-Match
 
-### GSM8K (Cobbe et al., 2021)
+### GSM8K \\cite[cobbe2021gsm8k]
 
 Grade-school \cite[Hendrycks et al., 2021]{hendrycks2021math}s:
 
@@ -68,7 +68,7 @@ $$
 
 The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, \$18) to be correct, with tolerance for units, commas, etc. \cite[cobbe2021gsm8k].
 
-### MATH (Hendrycks et al., 2021)
+### MATH \\cite[hendrycks2021math]
 
 12,500 competition-\cite[Hendrycks et al., 2021]{hendrycks2021math}s from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
 
@@ -110,7 +110,7 @@ $$
 
 where $Q$ is true quality and $T$ is "judge noise". Empirical agreement with humans is ~70-80% on chat data.
 
-### MT-Bench / AlpacaEval
+### MT-Bench / AlpacaEval \\cite[zheng2023lmsys]
 
 MT-Bench: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
 
@@ -140,7 +140,7 @@ Evidence of contamination:
 
 * **Exact-match memorization**: models regurgitate benchmark items verbatim.
 * **Ordering effects**: models perform anomalously well on benchmark-internal "Question 17" but badly on a shuffled version.
-* **Min-checksum tests** (Carlini et al., 2021): if a model can complete the second half of a passage, it has probably seen the first half.
+* **Min-checksum tests** \\cite[carlini2021extracting]: if a model can complete the second half of a passage, it has probably seen the first half.
 * **Test-set perplexity**: a model that has seen the test set has lower perplexity than a fresh one.
 
 ### Mitigations
