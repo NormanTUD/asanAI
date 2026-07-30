@@ -1,6 +1,9 @@
 name: Blog PHP Validator
 
 on:
+  # Weekly catch for link rot — runs even when nothing in blog/ changed.
+  schedule:
+    - cron: '0 6 * * 1'
   push:
     branches:
       - master
@@ -11,6 +14,11 @@ on:
       - master
     paths:
       - 'blog/**'
+
+# Don't run two link-check sweeps against the same ref concurrently.
+concurrency:
+  group: blog-validator-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   php-validation:
@@ -40,7 +48,20 @@ jobs:
 
       - name: Run Literature Link Checker
         run: |
-          uv run blog/tests/link_checker.py blog/
+          mkdir -p link-report
+          uv run blog/tests/link_checker.py blog/ \
+            --no-color \
+            | tee link-report/link-check.txt
+
+      - name: Upload link-check report
+        # Always upload — even on failure, so we can review soft passes too.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blog-link-check
+          path: link-report/link-check.txt
+          if-no-files-found: warn
+          retention-days: 30
 
   php-render-validation:
     runs-on: ubuntu-latest

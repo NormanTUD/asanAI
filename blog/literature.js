@@ -4297,6 +4297,13 @@ window.bibData = {
 		year: 2023,
 		alternativetitle: "Toolformer"
 	},
+	"patil2023gorilla": {
+		url: "https://arxiv.org/abs/2305.15334",
+		title: "Gorilla: Large Language Model Connected with Massive APIs",
+		author: "Shishir G. Patil, Tianjun Zhang, Xin Wang, et al.",
+		year: 2023,
+		alternativetitle: "Gorilla"
+	},
 	"wei2022emergent": {
 		url: "https://arxiv.org/abs/2206.07682",
 		title: "Emergent Abilities of Large Language Models",

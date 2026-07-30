@@ -460,7 +460,18 @@ def main():
                     help="Number of concurrent HTTP workers (default: 10)")
     ap.add_argument("--limit", type=int, default=0,
                     help="Only check the first N unique URLs (debug aid)")
+    ap.add_argument("--no-color", action="store_true",
+                    help="Disable ANSI colors in output (useful for CI logs)")
     args = ap.parse_args()
+
+    if args.no_color:
+        # Standard "no color" env vars; respected by rich and most libraries.
+        os.environ.setdefault("NO_COLOR", "1")
+        os.environ.setdefault("FORCE_COLOR", "0")
+        # Rebuild the global console without ANSI escapes so subsequent
+        # Progress / Tree / Table objects also render plain.
+        global console
+        console = Console(no_color=True, force_terminal=False, highlight=False)
 
     lit_path = resolve_lit_path(args)
     if not lit_path.exists():
