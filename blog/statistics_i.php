@@ -267,6 +267,109 @@ The **Dirichlet distribution** (next section) is the natural probability distrib
 </div>
 
 <script>
+// Inline interactive demos for Statistics I (since statistics.js has cross-dependencies with Statistics II)
+
+function alphaColor(hex, alpha) {
+	const m = hex.replace('#', '');
+	const r = parseInt(m.substr(0, 2), 16);
+	const g = parseInt(m.substr(2, 2), 16);
+	const b = parseInt(m.substr(4, 2), 16);
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function getThemeColor(c) {
+	return getComputedStyle(document.documentElement).getPropertyValue(c).trim() || '#1e293b';
+}
+
+// Bernoulli chart
+function renderBernoulli() {
+	const input = document.getElementById('bern-p');
+	const container = document.getElementById('bernoulli-chart');
+	if (!input || !container || typeof Plotly === 'undefined') return;
+
+	function update() {
+		const p = parseFloat(input.value);
+		Plotly.newPlot('bernoulli-chart', [{
+			x: ['Failure (0)', 'Success (1)'],
+			y: [1 - p, p],
+			type: 'bar',
+			marker: {
+				color: [alphaColor('#94a3b8', 0.6), alphaColor('#6366f1', 0.8)],
+				line: { color: '#1e293b', width: 1 }
+			},
+			text: [(1 - p).toFixed(3), p.toFixed(3)],
+			textposition: 'outside'
+		}], {
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			plot_bgcolor: 'rgba(0,0,0,0)',
+			font: { color: getThemeColor('--mn-text') },
+			title: { text: 'Bernoulli Distribution (p = ' + p.toFixed(2) + ')', font: { size: 13 } },
+			yaxis: { title: 'Probability', range: [0, 1.1] },
+			xaxis: { title: 'Outcome' },
+			margin: { t: 50, b: 50, l: 60, r: 20 },
+			showlegend: false
+		}, { responsive: true });
+	}
+	input.addEventListener('input', update);
+	update();
+}
+
+// Dice matrix and distribution
+function renderDice() {
+	const container = document.getElementById('dice-matrix-container');
+	const plot = document.getElementById('dice-distribution-plot');
+	if (!container || !plot || typeof Plotly === 'undefined') return;
+
+	// Build matrix of all 36 outcomes of two dice
+	const matrix = [];
+	for (let d1 = 1; d1 <= 6; d1++) {
+		const row = [];
+		for (let d2 = 1; d2 <= 6; d2++) {
+			row.push(d1 + d2);
+		}
+		matrix.push(row);
+	}
+
+	let html = '<table style="border-collapse: collapse; font-family: monospace; font-size: 0.85rem;">';
+	for (let r = 0; r < 6; r++) {
+		html += '<tr>';
+		for (let c = 0; c < 6; c++) {
+			html += '<td style="border: 1px solid var(--mn-border); padding: 6px 10px; text-align: center; background: var(--mn-bg-subtle);">' + matrix[r][c] + '</td>';
+		}
+		html += '</tr>';
+	}
+	html += '</table>';
+	container.innerHTML = html;
+
+	// Distribution
+	const sums = matrix.flat();
+	const counts = {};
+	sums.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
+	const xVals = Object.keys(counts).map(Number).sort((a, b) => a - b);
+	const yVals = xVals.map(x => counts[x] / 36);
+
+	Plotly.newPlot('dice-distribution-plot', [{
+		x: xVals,
+		y: yVals,
+		type: 'bar',
+		marker: { color: '#3b82f6' },
+		text: yVals.map(v => (v * 100).toFixed(1) + '%'),
+		textposition: 'outside'
+	}], {
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		font: { color: getThemeColor('--mn-text') },
+		title: { text: 'Sum of Two Dice: 36 outcomes', font: { size: 13 } },
+		xaxis: { title: 'Sum', dtick: 1 },
+		yaxis: { title: 'Probability' },
+		margin: { t: 50, b: 50, l: 60, r: 20 },
+		showlegend: false
+	}, { responsive: true });
+}
+
+renderBernoulli();
+renderDice();
+
 async function loadStatisticsIModule() {
 	updateLoadingStatus("Loading section about Statistics I...");
 	return Promise.resolve();

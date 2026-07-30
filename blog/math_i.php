@@ -369,7 +369,7 @@ if (typeof loadMathIModule === 'undefined') {
 	}
 }
 
-// Plot identity and the logarithm interactive (basic, mirrors original math.js)
+// Identity plot
 (function() {
 	const plotEl = document.getElementById('plot-step-1');
 	if (plotEl && typeof Plotly !== 'undefined') {
@@ -380,5 +380,77 @@ if (typeof loadMathIModule === 'undefined') {
 			margin: { t: 20, b: 40, l: 50, r: 20 }, xaxis: { title: 'x' }, yaxis: { title: 'y = x' }
 		}, { responsive: true });
 	}
+})();
+
+// Logarithm interactive plot
+(function() {
+	const sliderBase = document.getElementById('slider-log-base');
+	const sliderX = document.getElementById('slider-log-x');
+	const dispBase = document.getElementById('disp-log-base');
+	const dispX = document.getElementById('disp-log-x');
+	const formulaContainer = document.getElementById('log-equation-display');
+	if (!sliderBase || !sliderX || typeof Plotly === 'undefined') return;
+
+	function getThemeColor(c) {
+		return getComputedStyle(document.documentElement).getPropertyValue(c).trim() || '#1e293b';
+	}
+
+	function renderLog() {
+		const b = parseFloat(sliderBase.value);
+		const inputX = parseFloat(sliderX.value);
+		dispBase.textContent = b.toFixed(1);
+		dispX.textContent = inputX.toFixed(1);
+
+		const xValues = [], yValues = [];
+		for (let i = 0.1; i <= 50; i += 0.5) {
+			xValues.push(i);
+			yValues.push(Math.log(i) / Math.log(b));
+		}
+		const currentY = Math.log(inputX) / Math.log(b);
+		const minY = Math.min(...yValues, currentY);
+		const maxY = Math.max(...yValues, currentY);
+		const padding = (maxY - minY) * 0.1 || 1;
+
+		const traceCurve = {
+			x: xValues, y: yValues, mode: 'lines',
+			name: 'log base ' + b.toFixed(1),
+			line: { color: '#2563eb', width: 3 }
+		};
+		const tracePoint = {
+			x: [inputX], y: [currentY], mode: 'markers',
+			name: 'Your Value',
+			marker: { size: 12, color: '#db2777', line: { color: 'white', width: 2 } }
+		};
+		const traceLines = {
+			x: [inputX, inputX, 0], y: [0, currentY, currentY], mode: 'lines',
+			showlegend: false,
+			line: { color: getThemeColor('--mn-text-muted'), width: 1, dash: 'dash' }
+		};
+		const layout = {
+			paper_bgcolor: 'rgba(0,0,0,0)',
+			plot_bgcolor: 'rgba(0,0,0,0)',
+			font: { color: getThemeColor('--mn-text') },
+			title: { text: 'The Logarithm', font: { size: 16 } },
+			xaxis: { title: 'Input (x)', range: [0, 52], zeroline: true,
+				gridcolor: getThemeColor('--mn-border-light'),
+				tickfont: { color: getThemeColor('--mn-text-secondary') } },
+			yaxis: { title: 'Output (y)', range: [minY - padding, maxY + padding],
+				zeroline: true,
+				gridcolor: getThemeColor('--mn-border-light'),
+				tickfont: { color: getThemeColor('--mn-text-secondary') } },
+			margin: { l: 50, r: 20, b: 50, t: 40 },
+			showlegend: false,
+			hovermode: 'closest'
+		};
+		Plotly.react('log-plot', [traceCurve, traceLines, tracePoint], layout);
+
+		const tex = `$$ \\log_{${b.toFixed(1)}}(${inputX.toFixed(1)}) = ${currentY.toFixed(2)} \\iff ${b.toFixed(1)}^{${currentY.toFixed(2)}} = ${inputX.toFixed(1)} $$`;
+		formulaContainer.innerHTML = tex;
+		if (typeof render_temml === 'function') render_temml();
+	}
+
+	sliderBase.addEventListener('input', renderLog);
+	sliderX.addEventListener('input', renderLog);
+	renderLog();
 })();
 </script>

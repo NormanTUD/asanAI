@@ -305,8 +305,8 @@ BoW was the predecessor of **TF-IDF** and ultimately of **dense embeddings** (se
 		{ x, y: post_k500, mode: 'lines', name: '500 successes, 500 failures', line: { color: '#22c55e', width: 2 } }
 	], {
 		title: { text: 'Bayesian updating: posterior concentrates with more data', font: { size: 13 } },
-		xaxis: { title: 'θ (success probability)' },
-		yaxis: { title: 'posterior density' },
+		xaxis: { title: 'θ (success probability)', range: [0, 1] },
+		yaxis: { title: 'posterior density', range: [0, 10], rangemode: 'tozero' },
 		margin: { t: 50, b: 50, l: 60, r: 20 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)',

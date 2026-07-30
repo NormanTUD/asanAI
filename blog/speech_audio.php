@@ -200,43 +200,77 @@ The shift from "speech recognition" (separate ASR model) and "speech synthesis" 
 	}, { responsive: true });
 })();
 
-// TTS pipeline
+// TTS codec token prediction: visualizing next-token prediction over audio codec tokens
 (function() {
 	const c = document.getElementById('tts-viz');
 	if (!c) return;
 
-	const stages = [
-		{ x: 0, label: 'Text\n"Hello"', color: '#22c55e' },
-		{ x: 2.5, label: 'Phonemes\n/həˈloʊ/', color: '#16a34a' },
-		{ x: 5, label: 'Codec LM\nTransformer', color: '#3b82f6' },
-		{ x: 8, label: 'Discrete\ncodec tokens', color: '#0ea5e9' },
-		{ x: 11, label: 'Codec\nDecoder', color: '#8b5cf6' },
-		{ x: 14, label: 'Waveform', color: '#a78bfa' }
-	];
+	// Synthesize a mel-spectrogram pattern (vowel-like formants) for the word "hello"
+	const T = 64, F = 32;
+	const z = [];
+	for (let f = 0; f < F; f++) {
+		const row = [];
+		for (let t = 0; t < T; t++) {
+			// First formant at low freq drifts slightly
+			const f1 = Math.exp(-Math.pow((f - 6 - 2 * Math.sin(t * 0.1)) / 2.5, 2));
+			// Second formant
+			const f2 = Math.exp(-Math.pow((f - 18 - 3 * Math.sin(t * 0.08 + 1)) / 3, 2)) * 0.7;
+			// Energy envelope
+			const env = Math.exp(-Math.pow((t - T / 2) / (T / 3), 2));
+			row.push((f1 + f2) * env + Math.random() * 0.02);
+		}
+		z.push(row);
+	}
 
-	const shapes = stages.map(s => ({
-		type: 'rect', x0: s.x, x1: s.x + 2, y0: 0, y1: 2,
-		fillcolor: s.color, line: { color: 'rgba(0,0,0,0.3)', width: 1.5 }
-	}));
+	// Top: mel-spectrogram
+	const data = [{
+		z, type: 'heatmap',
+		colorscale: [[0, '#0f172a'], [0.3, '#1e3a8a'], [0.6, '#fbbf24'], [1, '#fef3c7']],
+		showscale: false, hoverinfo: 'skip',
+		xaxis: 'x', yaxis: 'y'
+	}];
 
-	const arrows = stages.slice(0, -1).map((s, i) => ({
-		xref: 'x', yref: 'y', ax: s.x + 2, ay: 1, x: stages[i + 1].x, y: 1,
-		showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569'
-	}));
+	// Bottom: codec token sequence (16 codebooks x T frames, simulated)
+	const codebookRows = 8;
+	const codebookData = [];
+	const tokenLabels = [];
+	for (let cb = 0; cb < codebookRows; cb++) {
+		const row = [];
+		const labels = [];
+		for (let t = 0; t < T; t++) {
+			// Each codebook produces a value
+			row.push(Math.floor(Math.abs(Math.sin(cb * 1.7 + t * 0.3) * 1024)) % 1024);
+			labels.push(t % 16 === 0 ? t.toString() : '');
+		}
+		codebookData.push(row);
+		tokenLabels.push(labels);
+	}
 
-	const annotations = stages.map(s => ({
-		x: s.x + 1, y: 1, text: '<b>' + s.label.replace('\n', '<br>') + '</b>',
-		showarrow: false, font: { size: 10, color: '#fff' }
-	}));
+	const codebookHeatmap = {
+		type: 'heatmap', z: codebookData,
+		colorscale: [[0, '#1e293b'], [1, '#3b82f6']],
+		showscale: false, hoverinfo: 'skip',
+		xaxis: 'x2', yaxis: 'y2'
+	};
 
-	Plotly.newPlot('tts-viz', [], {
-		shapes, annotations,
-		xaxis: { range: [-1, 17], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-1, 3], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 20, l: 20, r: 20 },
+	const layout = {
+		grid: { rows: 2, columns: 1, pattern: 'independent' },
+		title: { text: 'VALL-E-style TTS: text → codec LM → audio', font: { size: 13 } },
+		xaxis: { showticklabels: false },
+		yaxis: { title: 'mel-frequency', showticklabels: false, autorange: 'reversed' },
+		xaxis2: { title: 'time (frames)', tickmode: 'array', tickvals: [0, 16, 32, 48], ticktext: ['0', '16', '32', '48'] },
+		yaxis2: { title: 'codebook (residual)', tickmode: 'array', tickvals: [0, 1, 2, 3, 4, 5, 6, 7], ticktext: ['1', '2', '3', '4', '5', '6', '7', '8'] },
+		margin: { t: 50, b: 50, l: 80, r: 20 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)'
-	}, { displayModeBar: false, responsive: true });
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		annotations: [
+			{ x: 0.5, y: 1.05, xref: 'paper', yref: 'paper', text: '<b>Target mel-spectrogram</b>', showarrow: false, font: { size: 11 } },
+			{ x: 0.5, y: 0.42, xref: 'paper', yref: 'paper', text: '<b>Codec LM predicts 8 codebooks × T tokens autoregressively</b>', showarrow: false, font: { size: 11 } },
+			{ x: 0.98, y: 0.0, xref: 'paper', yref: 'y2', text: 'time →', showarrow: false, font: { size: 10 }, textangle: 90 }
+		]
+	};
+
+	Plotly.newPlot('tts-viz', [data, codebookHeatmap], layout, { responsive: true, displayModeBar: false });
 })();
 
 async function loadSpeechAudioModule() {

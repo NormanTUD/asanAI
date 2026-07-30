@@ -338,12 +338,12 @@ RL is the engine of modern alignment and reasoning, but it remains one of the mo
 		{ x: [1 + eps, 1 + eps], y: [-1.2, 1.2], mode: 'lines', line: { color: '#94a3b8', dash: 'dot', width: 1 }, showlegend: false }
 	], {
 		title: { text: 'PPO clipped surrogate objective', font: { size: 13 } },
-		xaxis: { title: 'probability ratio r(θ) = π_θ / π_old' },
+		xaxis: { title: 'probability ratio r(θ) = π_θ / π_old', range: [0, 4.2] },
 		yaxis: { title: 'L_CLIP', range: [-1.2, 1.2] },
 		margin: { t: 50, b: 50, l: 60, r: 20 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)',
-		legend: { x: 0.7, y: 0.95 },
+		legend: { x: 0.05, y: 0.05, xanchor: 'left', yanchor: 'bottom' },
 		shapes: [
 			{ type: 'rect', x0: 1 - eps, x1: 1 + eps, y0: -1.2, y1: 1.2,
 			  fillcolor: 'rgba(148, 163, 184, 0.15)', line: { width: 0 } }

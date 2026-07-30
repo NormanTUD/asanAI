@@ -5,7 +5,7 @@ title: Frontier Topics
 description: Constitutional AI, sparse autoencoders, long-context, world models, and where AI research is heading.
 icon: &#128640;
 part: 6
-order: 44
+order: 42
 color: text-secondary
 -->
 

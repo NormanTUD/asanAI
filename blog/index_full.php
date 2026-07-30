@@ -99,10 +99,10 @@
 	incl("Reasoning & Test-Time Compute", "reasoning");
 	incl("Evaluation & Benchmarks", "evaluation");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
-	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
-	incl("AI Law & Regulation", "law_regulation");
 	incl("The Economics of AI", "economics");
 	incl("Frontier Topics", "frontier");
+	incl("AI Law & Regulation", "law_regulation");
+	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 	incl("Appendix", "appendix");
 ?>
 </div>

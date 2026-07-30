@@ -65,10 +65,10 @@ AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
 Grade-school math word problems:
 
 $$
-\text{Q: Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for \$2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?}
+\text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
 $$
 
-The model must produce a numerical answer (after reasoning). The **exact-match accuracy** requires the final integer to be correct (with parsing tolerance for commas, units, etc.).
+The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, \$18) to be correct, with tolerance for units, commas, etc. \cite[cobbe2021gsm8k].
 
 ### MATH (Hendrycks et al., 2021)
 
