@@ -70,8 +70,6 @@ $$
 i.e. the state-transition matrices depend on the current input. This breaks linearity at inference (the recurrence must be computed step by step), but allows the model to selectively remember or forget based on context. Mamba matches Transformer quality at language modelling, scales linearly in $n$, and at inference runs as fast as a Transformer with KV-cache disabled.
 </div>
 
-<div id="ssm-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ### Mamba-2 and SSD (\cite[Dao & Gu, 2024]{dao2024mamba2}
 
