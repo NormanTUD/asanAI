@@ -47,8 +47,6 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 | **ReAct** | 2022 | Interleave reasoning with tool use |
 </div>
 
-<div id="sc-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ## Self-Consistency \cite[Wang et al., 2022]{wang2022selfconsistency}
 
@@ -73,8 +71,6 @@ The cost is $k \times$ more inference, but no retraining required.
 
 ToT can solve problems that linear CoT cannot (e.g., 24-game, crossword puzzles), at the cost of $O(b^d)$ model calls for depth $d$.
 </div>
-
-<div id="tot-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## The o1 / R1 Paradigm: Inference-Time Training
@@ -111,9 +107,9 @@ The Math-Shepherd method (2024) auto-labels step correctness by checking whether
 </div>
 
 <div class="md">
-## Inference-Time Scaling Laws
+## Inference-Time Scaling Laws \cite[Snell et al., 2024]{snell2024testtime}
 
-Snell et al. (Google, 2024) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
+\cite[Snell et al., 2024]{snell2024testtime} and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
 
 $$
 \text{accuracy}(n) = a \cdot n^b
@@ -128,8 +124,6 @@ For o1-style reasoning on competition math:
 
 Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data. **Inference-time scaling is often cheaper and more flexible**.
 </div>
-
-<div id="scaling-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## When Reasoning Helps (and When It Doesn't)
