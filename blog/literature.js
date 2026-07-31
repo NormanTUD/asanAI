@@ -4356,7 +4356,7 @@ window.bibData = {
 		alternativetitle: "California SB 1047"
 	},
 	"china2023algorithmic": {
-		url: "http://www.cac.gov.cn/2023-08/15/c_1692618358286921.htm",
+		url: "https://en.wikipedia.org/wiki/Interim_Measures_for_the_Management_of_Generative_AI_Services",
 		title: "Interim Measures for the Management of Generative Artificial Intelligence Services",
 		author: "Cyberspace Administration of China",
 		year: 2023,
