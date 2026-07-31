@@ -111,10 +111,10 @@ RetNet uses $\phi = \text{ELU} + 1$ (a simple element-wise nonlinearity) and sup
 
 RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at inference.
 
-### RWKV (\cite[Peng et al., 2023]{peng2023rwkv}-7 (2025) matches 7B Transformers on language tasks.
-</div>
+### RWKV
 
-<div id="linear-viz" style="max-width:880px; margin:1em auto;"></div>
+\cite[Peng et al., 2023]{peng2023rwkv} introduced a linear-attention-with-decay RNN. RWKV-7 (2025) matches 7B Transformers on language tasks.
+</div>
 
 <div class="md">
 ## Other Architectures
@@ -169,92 +169,6 @@ The next decade of architecture research is open. For a working practitioner tod
 </div>
 
 <script>
-// SSM block diagram
-(function() {
-	const c = document.getElementById('ssm-viz');
-	if (!c) return;
-
-	const box = (x, y, w, h, color) => ({
-		type: 'rect', x0: x, x1: x + w, y0: y, y1: y + h,
-		fillcolor: color, line: { color: 'rgba(0,0,0,0.3)', width: 1.5 }
-	});
-
-	const shapes = [
-		box(0, 1.5, 1.5, 1.5, '#22c55e'),
-		box(2, 1.5, 1.5, 1.5, '#3b82f6'),
-		box(4, 1.5, 1.5, 1.5, '#0ea5e9'),
-		box(6, 1.5, 1.5, 1.5, '#8b5cf6'),
-		box(8, 1.5, 1.5, 1.5, '#a78bfa'),
-		box(2, 0, 1.5, 1, '#f59e0b'),
-		box(4, 0, 1.5, 1, '#fb923c'),
-		box(6, 0, 1.5, 1, '#f59e0b'),
-		box(2, -1.5, 1.5, 1, '#64748b'),
-		box(4, -1.5, 1.5, 1, '#64748b'),
-		box(6, -1.5, 1.5, 1, '#64748b')
-	];
-
-	const arrows = [];
-	// Forward flow
-	for (const [x1, x2] of [[1.5, 2], [3.5, 4], [5.5, 6], [7.5, 8]]) {
-		arrows.push({ ax: x1, ay: 2.25, x: x2, y: 2.25, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1.5, arrowcolor: '#475569' });
-	}
-	// Input-dependent projections
-	for (const x of [2.75, 4.75, 6.75]) {
-		arrows.push({ ax: 2.75, ay: 1.5, x: x, y: 1.0, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1.5, arrowcolor: '#f59e0b' });
-		arrows.push({ ax: x, ay: 0, x: x, y: 1.5, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1.5, arrowcolor: '#f59e0b' });
-	}
-	// Recurrent state loop (h_{t-1} → h_t)
-	arrows.push({ ax: 7.5, ay: 2.25, x: 2.75, y: 2.25, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1.5, arrowcolor: '#ef4444' });
-
-	const annotations = [
-		{ x: 0.75, y: 2.25, text: '<b>xₜ</b>', showarrow: false, font: { size: 13, color: '#fff' } },
-		{ x: 2.75, y: 2.25, text: '<b>Linear(x)</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 4.75, y: 2.25, text: '<b>Δₜ, Bₜ, Cₜ</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 6.75, y: 2.25, text: '<b>Scan</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 8.75, y: 2.25, text: '<b>yₜ</b>', showarrow: false, font: { size: 13, color: '#fff' } },
-		{ x: 2.75, y: 0.5, text: 'Δₜ', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 4.75, y: 0.5, text: 'Bₜ', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 6.75, y: 0.5, text: 'Cₜ', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 2.75, y: -1, text: '<b>A</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 4.75, y: -1, text: '<b>exp</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-		{ x: 6.75, y: -1, text: '<b>Āₜ, B̄ₜ</b>', showarrow: false, font: { size: 9, color: '#fff' } }
-	];
-
-	Plotly.newPlot('ssm-viz', [], {
-		shapes, annotations,
-		xaxis: { range: [-0.5, 10], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-2.5, 3.5], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 20, l: 20, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)'
-	}, { displayModeBar: false, responsive: true });
-})();
-
-// Linear attention recurrence
-(function() {
-	const c = document.getElementById('linear-viz');
-	if (!c) return;
-
-	const n = 20;
-	const tArr = Array.from({length: n}, (_, i) => i);
-	const transformerMem = tArr.map(t => (t + 1) * (t + 1));  // O(n^2)
-	const linearMem = tArr.map(t => (t + 1) * 1);             // O(n·d^2) ~ O(n)
-	const ssmMem = tArr.map(t => 1);                            // O(d^2)
-
-	Plotly.newPlot('linear-viz', [
-		{ x: tArr, y: transformerMem.map(v => v / 100), mode: 'lines+markers', name: 'Transformer O(n²)', line: { color: '#ef4444', width: 2.5 } },
-		{ x: tArr, y: linearMem.map(v => v), mode: 'lines+markers', name: 'Linear attention O(n)', line: { color: '#3b82f6', width: 2.5 } },
-		{ x: tArr, y: ssmMem, mode: 'lines+markers', name: 'SSM O(d²) = const', line: { color: '#22c55e', width: 2.5 } }
-	], {
-		title: { text: 'Memory vs sequence length (normalized)', font: { size: 13 } },
-		xaxis: { title: 'sequence length n' },
-		yaxis: { title: 'memory (arbitrary units)', type: 'log' },
-		margin: { t: 50, b: 50, l: 60, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		legend: { x: 0.02, y: 0.98 }
-	}, { responsive: true });
-})();
 
 async function loadAlternativeArchitecturesModule() {
 	updateLoadingStatus("Loading section about Alternative Architectures...");
