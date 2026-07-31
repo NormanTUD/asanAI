@@ -874,3 +874,18 @@ The **Dirichlet distribution** (next section) is the natural probability distrib
 
 </div>
 </div>
+
+<script>
+var __qt = new URLSearchParams(location.search).get('theme');
+if (__qt) document.documentElement.classList.toggle('dark', __qt === 'dark');
+setTimeout(async () => {
+    var items = typeof _statLazyRegistry !== 'undefined' ? _statLazyRegistry : [];
+    for (var i = 0; i < items.length; i++) {
+        try { var p = items[i].initFn(); if (p && typeof p.then === 'function') await p; }
+        catch (e) { console.log('INITFAIL', items[i].el.id, e && e.message); }
+    }
+    var to = new URLSearchParams(location.search).get('to');
+    if (to) document.getElementById(to).scrollIntoView();
+    document.title += ' [READY]';
+}, 800);
+</script>
