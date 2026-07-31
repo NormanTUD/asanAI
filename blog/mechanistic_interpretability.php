@@ -183,8 +183,6 @@ $$\text{logits}^{(\ell)} = W_U \cdot x^{(\ell)}$$
 Early layers typically produce diffuse, uncertain predictions. Middle layers begin to converge on the correct semantic neighborhood. Late layers make the final sharp distinction. The \cite[tuned lens]{belrose2023tunedlens} refines this by training a small affine probe for each layer (rather than reusing $W_U$ directly), producing more faithful and less biased decodings. This technique has revealed that models often "change their mind" at specific layers, and that the trajectory of latent predictions can be used to detect malicious inputs.
 </div>
 
-<div id="logit-lens-container"></div>
-
 <div class="md">
 ## The Bigger Picture: From Circuits to Alignment
 

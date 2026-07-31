@@ -1379,108 +1379,7 @@
     }
 
     // ============================================================
-    // SECTION 7: LOGIT LENS
-    // ============================================================
-
-    function initLogitLens() {
-        const container = document.getElementById('logit-lens-container');
-        if (!container) return;
-
-        const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f5f0ff'), borderRadius: '8px', margin: '20px 0'}}, container);
-        createElement('h3', {textContent: '👁️ Interactive: The Logit Lens', style: {marginTop: 0}}, section);
-        createElement('p', {innerHTML: 'This visualization simulates how a Transformer\'s prediction evolves layer by layer. <strong>Each layer</strong> decodes its residual stream into vocabulary probabilities. Early layers are diffuse and uncertain; later layers converge on the final answer. Drag the slider to see the prediction sharpen.'}, section);
-
-        const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
-        const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
-        const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '400px'}}, controlRow);
-
-        const numLayers = 12;
-        const vocab = ['Paris', 'London', 'Berlin', 'Madrid', 'Rome', 'Vienna'];
-        const correctIdx = 0;
-
-        let currentLayer = numLayers - 1;
-
-        createSlider(sliderPanel, 'Layer', 0, numLayers - 1, numLayers - 1, 1, (v) => {
-            currentLayer = Math.round(v);
-            draw();
-        });
-
-        const infoPanel = createElement('div', {style: {marginTop: '15px', padding: '15px', background: themeColor('#ffffff'), borderRadius: '8px', fontSize: '13px', lineHeight: '1.5'}}, sliderPanel);
-
-        const canvas = createCanvas(canvasPanel, 500, 300);
-        const ctx = canvas.getContext('2d');
-
-        function generateLayerProbs(layer) {
-            const t = layer / (numLayers - 1);
-            const raw = vocab.map((_, i) => {
-                const signal = i === correctIdx ? 10 * t : 2 * (1 - t) + 0.5 * Math.random();
-                const noise = 0.5 * (1 - t) * Math.random();
-                return signal + noise;
-            });
-            return softmax(raw);
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const probs = generateLayerProbs(currentLayer);
-            const barWidth = 50;
-            const startX = 60;
-            const startY = 40;
-            const barHeight = 180;
-            const gap = 65;
-
-            ctx.fillStyle = themeColor('#333');
-            ctx.font = 'bold 14px sans-serif';
-            ctx.fillText(`Layer ${currentLayer} Predictions`, startX, 25);
-
-            vocab.forEach((token, i) => {
-                const x = startX + i * gap;
-                const prob = probs[i];
-                const h = prob * barHeight;
-
-                ctx.fillStyle = i === correctIdx ? '#4a90d9' : '#ccc';
-                ctx.fillRect(x, startY + barHeight - h, barWidth, h);
-
-                ctx.strokeStyle = i === correctIdx ? '#2563eb' : '#999';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(x, startY + barHeight - h, barWidth, h);
-
-                ctx.fillStyle = themeColor('#333');
-                ctx.font = '11px monospace';
-                ctx.fillText((prob * 100).toFixed(1) + '%', x, startY + barHeight + 15);
-
-                ctx.save();
-                ctx.translate(x + barWidth / 2 + 5, startY + barHeight / 2);
-                ctx.rotate(-Math.PI / 2);
-                ctx.fillStyle = i === correctIdx ? '#2563eb' : '#666';
-                ctx.font = 'bold 12px sans-serif';
-                ctx.fillText(token, 0, 0);
-                ctx.restore();
-            });
-
-            const confidence = probs[correctIdx];
-            const entropy = -probs.reduce((s, p) => s + (p > 0 ? p * Math.log(p) : 0), 0);
-            const maxEntropy = Math.log(vocab.length);
-
-            infoPanel.innerHTML = `
-                <strong>Reading the Mind of the Model:</strong><br>
-                • Layer ${currentLayer}: confidence in correct answer "${vocab[correctIdx]}" is <strong>${(confidence * 100).toFixed(1)}%</strong><br>
-                • Prediction entropy: ${entropy.toFixed(2)} / ${maxEntropy.toFixed(2)} (${(entropy / maxEntropy * 100).toFixed(0)}% of maximum)<br>
-                • ${currentLayer < 3 ? '🟢 Early layer — barely above random, model is "thinking"' :
-                   currentLayer < 6 ? '🟡 Middle layer — semantic neighborhood forming, narrowing down' :
-                   currentLayer < 9 ? '🟠 Late-middle — one candidate clearly leading' :
-                   '🔴 Final layer — prediction nearly locked in!'}<br>
-                <hr style="margin:5px 0">
-                <em>The tuned lens \cite{belrose2023tunedlens} refines this by training a small affine probe per layer, giving a clearer picture of the model's intermediate "thoughts."</em>
-            `;
-        }
-
-        draw();
-    }
-
-    // ============================================================
-    // SECTION 8: GROKKING VISUALIZATION
+    // SECTION 7: GROKKING VISUALIZATION
     // ============================================================
 
     function initGrokking() {
@@ -1712,7 +1611,6 @@
         initQKVExplorer();
         initSuperposition();
         initComposition();
-        initLogitLens();
         initGrokking();
     }
 
