@@ -66,7 +66,7 @@ $$
 \text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
 $$
 
-The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, \$18) to be correct, with tolerance for units, commas, etc. \cite[Cobbe et al., 2021]{cobbe2021gsm8k}.
+The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. \cite[Cobbe et al., 2021]{cobbe2021gsm8k}.
 
 ### MATH \cite[Hendrycks et al., 2021]{hendrycks2021math}
 

@@ -10,7 +10,7 @@ color: rose
 -->
 
 <div class="md">
-Training a frontier model costs $100M+; serving it can cost **$1M+ per day at scale**. Inference optimization makes LLMs economically viable. The frontier in 2025: serving 100+ million tokens per second per cluster with sub-100ms latency.
+Training a frontier model costs US Dollar 100M+; serving it can cost **US Dollar 1M+ per day at scale**. Inference optimization makes LLMs economically viable. The frontier in 2025: serving 100+ million tokens per second per cluster with sub-100ms latency.
 
 This chapter covers every lever: quantization, KV-cache management, paged attention, FlashAttention, speculative decoding, batching, distillation, and the serving stacks that tie it together.
 </div>
@@ -112,8 +112,6 @@ FlashAttention-3 (2024): asynchronous warp specialization on H100, FP8 support, 
 FlashAttention is now standard in **all** major training and inference stacks (PyTorch SDPA, vLLM, TGI, TensorRT-LLM, llama.cpp).
 </div>
 
-<div id="flash-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ## Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm}
 
@@ -148,8 +146,6 @@ Variants:
 * **EAGLE** \cite[Li et al., 2024]{li2024eagle}: draft at the feature level, not the token level. Higher acceptance.
 * **Lookahead decoding**: parallel candidate generation with Jacobi iteration.
 </div>
-
-<div id="spec-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## Batching Strategies
@@ -301,79 +297,6 @@ For most practitioners in 2025, **vLLM + INT4 + continuous batching + prefix cac
 		plot_bgcolor: 'rgba(0,0,0,0)',
 		legend: { x: 0.02, y: 0.98 }
 	}, { responsive: true });
-})();
-
-// FlashAttention tiling
-(function() {
-	const c = document.getElementById('flash-viz');
-	if (!c) return;
-
-	const N = 16;
-	const blockSize = 4;
-	const shapes = [];
-	for (let i = 0; i < N; i += blockSize) {
-		for (let j = 0; j < N; j += blockSize) {
-			shapes.push({
-				type: 'rect', x0: j, x1: j + blockSize, y0: i, y1: i + blockSize,
-				fillcolor: `rgba(59, 130, 246, ${0.2 + Math.random() * 0.3})`,
-				line: { color: 'rgba(59, 130, 246, 0.8)', width: 1 }
-			});
-		}
-	}
-
-	Plotly.newPlot('flash-viz', [], {
-		shapes,
-		xaxis: { range: [0, N], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [0, N], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x', autorange: 'reversed' },
-		margin: { t: 30, b: 30, l: 30, r: 30 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		title: { text: 'FlashAttention: tile the QKᵀ matrix, never materialize fully', font: { size: 13 } },
-		annotations: [
-			{ x: 0, y: N + 1, text: 'Q', showarrow: false, font: { size: 14, color: '#3b82f6' } },
-			{ x: N + 1, y: 0, text: 'Kᵀ', showarrow: false, font: { size: 14, color: '#3b82f6' } }
-		]
-	}, { displayModeBar: false, responsive: true });
-})();
-
-// Speculative decoding: draft then verify
-(function() {
-	const c = document.getElementById('spec-viz');
-	if (!c) return;
-
-	const tokens = ['The', 'cat', 'sat', 'on', 'the', 'mat', 'and', 'purred'];
-	const draft = [0, 1, 2, 3, 4, 5];   // accepted up to "mat"
-	const verify = [0, 1, 2, 3, 4, 5, 6, 7];  // full parallel pass
-	const accepted = [0, 1, 2, 3, 4, 5];
-	const rejected = [6];
-
-	const shapes = [];
-	const annotations = [];
-
-	tokens.forEach((t, i) => {
-		const color = accepted.includes(i) ? '#22c55e' : rejected.includes(i) ? '#ef4444' : '#94a3b8';
-		shapes.push({ type: 'rect', x0: i, x1: i + 1, y0: 0, y1: 1, fillcolor: color, line: { color: 'rgba(0,0,0,0.4)', width: 1 } });
-		annotations.push({ x: i + 0.5, y: 0.5, text: '<b>' + t + '</b>', showarrow: false, font: { size: 11, color: '#fff' } });
-	});
-
-	const arrows = [
-		{ ax: 0.5, ay: 1.5, x: 5.5, y: 1.5, showarrow: true, arrowhead: 2, arrowsize: 1.2, arrowwidth: 2, arrowcolor: '#22c55e' },
-		{ ax: 0.5, ay: 2.5, x: 7.5, y: 2.5, showarrow: true, arrowhead: 2, arrowsize: 1.2, arrowwidth: 2, arrowcolor: '#3b82f6' }
-	];
-
-	annotations.push({ x: 3, y: 1.7, text: '<b>draft model (small, fast): 6 tokens sequential</b>', showarrow: false, font: { size: 11, color: '#22c55e' } });
-	annotations.push({ x: 4, y: 2.7, text: '<b>target model (large): 1 parallel forward pass verifies all 6</b>', showarrow: false, font: { size: 11, color: '#3b82f6' } });
-	annotations.push({ x: 7, y: -0.4, text: '↑ mismatch → resample from target\'s corrected distribution', showarrow: false, font: { size: 9, color: '#ef4444' } });
-
-	Plotly.newPlot('spec-viz', [], {
-		shapes, annotations,
-		xaxis: { range: [-0.3, 8], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-1, 3.5], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 30, l: 30, r: 30 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		title: { text: 'Speculative decoding: 5 accepted tokens in 1 target-model forward pass', font: { size: 13 } }
-	}, { displayModeBar: false, responsive: true });
 })();
 
 async function loadInferenceOptimizationModule() {
