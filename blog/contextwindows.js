@@ -16,7 +16,7 @@
     "  display: flex; align-items: center; justify-content: center;",
     "  font-size: 0.75em; font-weight: 700; padding: 4px 8px;",
     "  text-align: center; line-height: 1.3; white-space: nowrap;",
-    "  overflow: hidden;",
+    "  overflow: hidden; text-overflow: ellipsis; min-width: 0;",
     "}",
 
     /* ── Lost in Middle Diagram ── */
