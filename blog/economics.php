@@ -10,7 +10,7 @@ color: text-secondary
 -->
 
 <div class="md">
-A frontier LLM costs roughly \$100M to train \cite[Patel & Cottier, 2023]{patel2023gpu}, ~\$1M/day to serve at scale, and ~\$0.01 per typical user query. Who pays for this? How do companies make money? When does self-hosting beat APIs? When do small open models beat GPT-4o?
+A frontier LLM costs roughly 100,000,000 US Dollar to train \cite[Patel & Cottier, 2023]{patel2023gpu}, 1,000,000 US Dollar/day to serve at scale, and ~0.01 US Dollar per typical user query. Who pays for this? How do companies make money? When does self-hosting beat APIs? When do small open models beat GPT-4o?
 
 This chapter is the financial-engineering complement to the technical chapters above. Estimates are drawn from publicly disclosed numbers, vendor pricing pages, and analyst reports; treat them as approximations, not audited figures.
 </div>
