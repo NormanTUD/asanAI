@@ -141,7 +141,9 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
         title: { text: 'W_L columns for k=14 neurons (only sin/cos at k=14 are non-trivial)', font: { size: 12 } },
         xaxis: { title: 'Neuron index (within k=14 cluster)' },
         yaxis: { title: 'Fourier component', range: [0, 30] },
-        margin: { t: 40, b: 50, l: 55, r: 10 }
+        margin: { t: 40, b: 50, l: 55, r: 10 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
     }, { responsive: true });
 
     // Neuron distribution by frequency
@@ -158,7 +160,9 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
         title: { text: 'Neuron assignment by frequency (433/512 assigned)', font: { size: 12 } },
         xaxis: { title: 'Key frequency' },
         yaxis: { title: 'Number of neurons', range: [0, 130] },
-        margin: { t: 40, b: 50, l: 55, r: 10 }
+        margin: { t: 40, b: 50, l: 55, r: 10 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
     }, { responsive: true });
 
     // FVE histogram (simulated based on Figure 5 left)
@@ -190,7 +194,9 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
         annotations: [{
             x: 0.86, y: 180, text: '85% threshold<br>(433 neurons above)',
             showarrow: false, font: { size: 10, color: '#ef4444' }, xanchor: 'left'
-        }]
+        }],
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
     }, { responsive: true });
 })();
 </script>
