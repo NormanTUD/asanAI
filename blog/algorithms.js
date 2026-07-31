@@ -1456,14 +1456,14 @@ function renderICLExecution(container, options = {}) {
 
         // State variables
         const stateVars = document.getElementById('icl-state-vars');
-        let stateHTML = '<h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4>';
+        let stateHTML = `<h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#166534')};">RESIDUAL STREAM STATE</h4>`;
         const state = step.state;
         for (const [key, val] of Object.entries(state)) {
             if (val === null) continue;
             let displayVal = Array.isArray(val) ? '[' + val.join(', ') + ']' : val;
-            stateHTML += `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #dcfce7;">
-                <span style="font-family:monospace; font-size:0.85em; color:#166534; font-weight:600;">${key}</span>
-                <span style="font-family:monospace; font-size:0.85em; color:#1e293b;">${displayVal}</span>
+            stateHTML += `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid ${themeColor('#dcfce7')};">
+                <span style="font-family:monospace; font-size:0.85em; color:${themeColor('#166534')}; font-weight:600;">${key}</span>
+                <span style="font-family:monospace; font-size:0.85em; color:${themeColor('#1e293b')};">${displayVal}</span>
             </div>`
         }
         stateVars.innerHTML = stateHTML;
@@ -1477,8 +1477,8 @@ function renderICLExecution(container, options = {}) {
                     <span>Parsing (L1–4)</span>
                     <span>${(la.parsing * 100).toFixed(0)}%</span>
                 </div>
-                <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
-                    <div style="height:100%; width:${la.parsing * 100}%; background:#f59e0b; border-radius:4px; transition:width 0.3s;"></div>
+                <div style="height:8px; background:${themeColor('#e2e8f0')}; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${la.parsing * 100}%; background:${themeColor('#f59e0b')}; border-radius:4px; transition:width 0.3s;"></div>
                 </div>
             </div>
             <div style="margin-bottom:8px;">
@@ -1486,8 +1486,8 @@ function renderICLExecution(container, options = {}) {
                     <span>State Binding (L5–8)</span>
                     <span>${(la.binding * 100).toFixed(0)}%</span>
                 </div>
-                <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
-                    <div style="height:100%; width:${la.binding * 100}%; background:#3b82f6; border-radius:4px; transition:width 0.3s;"></div>
+                <div style="height:8px; background:${themeColor('#e2e8f0')}; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${la.binding * 100}%; background:${themeColor('#3b82f6')}; border-radius:4px; transition:width 0.3s;"></div>
                 </div>
             </div>
             <div>
@@ -1495,8 +1495,8 @@ function renderICLExecution(container, options = {}) {
                     <span>Execution (L9–12)</span>
                     <span>${(la.execution * 100).toFixed(0)}%</span>
                 </div>
-                <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
-                    <div style="height:100%; width:${la.execution * 100}%; background:#10b981; border-radius:4px; transition:width 0.3s;"></div>
+                <div style="height:8px; background:${themeColor('#e2e8f0')}; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${la.execution * 100}%; background:${themeColor('#10b981')}; border-radius:4px; transition:width 0.3s;"></div>
                 </div>
             </div>
         `;
@@ -1505,12 +1505,12 @@ function renderICLExecution(container, options = {}) {
         const progress = document.getElementById('icl-progress');
         const pct = ((stepIdx + 1) / steps.length * 100).toFixed(0);
         progress.innerHTML = `
-            <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4>
-            <div style="font-size:0.85em; color:#1e293b; margin-bottom:6px;">${stepIdx + 1} / ${steps.length} steps</div>
-            <div style="height:10px; background:#fef9c3; border-radius:5px; overflow:hidden;">
-                <div style="height:100%; width:${pct}%; background:#eab308; border-radius:5px; transition:width 0.3s;"></div>
+            <h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#854d0e')};">EXECUTION PROGRESS</h4>
+            <div style="font-size:0.85em; color:${themeColor('#1e293b')}; margin-bottom:6px;">${stepIdx + 1} / ${steps.length} steps</div>
+            <div style="height:10px; background:${themeColor('#fef9c3')}; border-radius:5px; overflow:hidden;">
+                <div style="height:100%; width:${pct}%; background:${themeColor('#eab308')}; border-radius:5px; transition:width 0.3s;"></div>
             </div>
-            ${stepIdx === steps.length - 1 ? '<div style="margin-top:8px; font-weight:bold; color:#059669;">✅ Execution complete</div>' : ''}
+            ${stepIdx === steps.length - 1 ? `<div style="margin-top:8px; font-weight:bold; color:${themeColor('#059669')};">✅ Execution complete</div>` : ''}
         `;
     }
 
