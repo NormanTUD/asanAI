@@ -1309,8 +1309,8 @@ function renderICLExecution(container, options = {}) {
         // Left: token generation trace
         const tokenTrace = document.createElement('div');
         tokenTrace.id = 'icl-token-trace';
-        tokenTrace.style.cssText = 'background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:15px; max-height:400px; overflow-y:auto;';
-        tokenTrace.innerHTML = '<div style="color:#94a3b8; font-size:0.85em; text-align:center; padding:30px;">Press Execute or Step to begin</div>';
+        tokenTrace.style.cssText = `background:${themeColor('#fff')}; border:1px solid ${themeColor('#e2e8f0')}; border-radius:10px; padding:15px; max-height:400px; overflow-y:auto;`;
+        tokenTrace.innerHTML = `<div style="color:${themeColor('#94a3b8')}; font-size:0.85em; text-align:center; padding:30px;">Press Execute or Step to begin</div>`;
         traceArea.appendChild(tokenTrace);
 
         // Right: state panel + layer activity
@@ -1318,17 +1318,17 @@ function renderICLExecution(container, options = {}) {
         statePanel.id = 'icl-state-panel';
         statePanel.style.cssText = 'display:flex; flex-direction:column; gap:10px;';
         statePanel.innerHTML = `
-            <div id="icl-state-vars" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:15px;">
-                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4>
-                <div style="color:#94a3b8; font-size:0.85em;">No state yet</div>
+            <div id="icl-state-vars" style="background:${themeColor('#f0fdf4')}; border:1px solid ${themeColor('#bbf7d0')}; border-radius:10px; padding:15px;">
+                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#166534')};">RESIDUAL STREAM STATE</h4>
+                <div style="color:${themeColor('#94a3b8')}; font-size:0.85em;">No state yet</div>
             </div>
-            <div id="icl-layer-activity" style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:15px;">
-                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#1e40af;">LAYER ACTIVITY</h4>
-                <div id="icl-layers-viz" style="font-size:0.85em; color:#94a3b8;">No activity yet</div>
+            <div id="icl-layer-activity" style="background:${themeColor('#eff6ff')}; border:1px solid ${themeColor('#bfdbfe')}; border-radius:10px; padding:15px;">
+                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#1e40af')};">LAYER ACTIVITY</h4>
+                <div id="icl-layers-viz" style="font-size:0.85em; color:${themeColor('#94a3b8')};">No activity yet</div>
             </div>
-            <div id="icl-progress" style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:15px;">
-                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4>
-                <div style="color:#94a3b8; font-size:0.85em;">0 / 0 steps</div>
+            <div id="icl-progress" style="background:${themeColor('#fefce8')}; border:1px solid ${themeColor('#fef08a')}; border-radius:10px; padding:15px;">
+                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#854d0e')};">EXECUTION PROGRESS</h4>
+                <div style="color:${themeColor('#94a3b8')}; font-size:0.85em;">0 / 0 steps</div>
             </div>
         `;
         traceArea.appendChild(statePanel);
@@ -1338,23 +1338,23 @@ function renderICLExecution(container, options = {}) {
         const explPanel = document.createElement('div');
         explPanel.style.cssText = 'display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:15px;';
         explPanel.innerHTML = `
-            <div style="padding:12px; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px;">
-                <h5 style="margin:0 0 6px 0; color:#92400e; font-size:0.8em;">1. PARSING (Layers 1–4)</h5>
-                <p style="margin:0; font-size:0.78em; line-height:1.5; color:#451a03;">
+            <div style="padding:12px; background:${themeColor('#fef3c7')}; border:1px solid ${themeColor('#fcd34d')}; border-radius:8px;">
+                <h5 style="margin:0 0 6px 0; color:${themeColor('#92400e')}; font-size:0.8em;">1. PARSING (Layers 1–4)</h5>
+                <p style="margin:0; font-size:0.78em; line-height:1.5; color:${themeColor('#451a03')};">
                     Attention heads identify loop structures, variable assignments, and arithmetic operations in the prompt.
                     Induction heads match "when I see <code>carry = s // 10</code> and s=15, carry becomes 1."
                 </p>
             </div>
-            <div style="padding:12px; background:#dbeafe; border:1px solid #93c5fd; border-radius:8px;">
-                <h5 style="margin:0 0 6px 0; color:#1e40af; font-size:0.8em;">2. STATE BINDING (Layers 5–8)</h5>
-                <p style="margin:0; font-size:0.78em; line-height:1.5; color:#1e3a5f;">
+            <div style="padding:12px; background:${themeColor('#dbeafe')}; border:1px solid ${themeColor('#93c5fd')}; border-radius:8px;">
+                <h5 style="margin:0 0 6px 0; color:${themeColor('#1e40af')}; font-size:0.8em;">2. STATE BINDING (Layers 5–8)</h5>
+                <p style="margin:0; font-size:0.78em; line-height:1.5; color:${themeColor('#1e3a5f')};">
                     The model binds query inputs (${numA}, ${numB}) to algorithm parameters (a, b).
                     The residual stream now encodes: current variable values, loop position, partial results.
                 </p>
             </div>
-            <div style="padding:12px; background:#f0fdf4; border:1px solid #86efac; border-radius:8px;">
-                <h5 style="margin:0 0 6px 0; color:#166534; font-size:0.8em;">3. STEP EXECUTION (Layers 9–12)</h5>
-                <p style="margin:0; font-size:0.78em; line-height:1.5; color:#14532d;">
+            <div style="padding:12px; background:${themeColor('#f0fdf4')}; border:1px solid ${themeColor('#86efac')}; border-radius:8px;">
+                <h5 style="margin:0 0 6px 0; color:${themeColor('#166534')}; font-size:0.8em;">3. STEP EXECUTION (Layers 9–12)</h5>
+                <p style="margin:0; font-size:0.78em; line-height:1.5; color:${themeColor('#14532d')};">
                     MLP layers apply the transformation rule from context. Each generated token advances state by one micro-step.
                     The output becomes input for the next forward pass — the scratchpad is external memory.
                 </p>
@@ -1440,14 +1440,14 @@ function renderICLExecution(container, options = {}) {
         }
 
         const stepDiv = document.createElement('div');
-        stepDiv.style.cssText = ` padding:8px 12px; margin-bottom:6px; border-radius:6px; border-left:3px solid ${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; background:${step.action === 'init' ? '#eff6ff' : step.action === 'return' ? '#f0fdf4' : '#fffbeb'}; animation: fadeIn 0.3s ease; `;
+        stepDiv.style.cssText = ` padding:8px 12px; margin-bottom:6px; border-radius:6px; border-left:3px solid ${step.action === 'init' ? themeColor('#3b82f6') : step.action === 'return' ? themeColor('#10b981') : themeColor('#f59e0b')}; background:${step.action === 'init' ? themeColor('#eff6ff') : step.action === 'return' ? themeColor('#f0fdf4') : themeColor('#fffbeb')}; animation: fadeIn 0.3s ease; `;
         stepDiv.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.75em; font-weight:600; color:#64748b;">STEP ${step.iteration}</span>
-                <span style="font-size:0.7em; padding:2px 6px; border-radius:3px; background:${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; color:#fff;">${step.action.toUpperCase()}</span>
+                <span style="font-size:0.75em; font-weight:600; color:${themeColor('#64748b')};">STEP ${step.iteration}</span>
+                <span style="font-size:0.7em; padding:2px 6px; border-radius:3px; background:${step.action === 'init' ? themeColor('#3b82f6') : step.action === 'return' ? themeColor('#10b981') : themeColor('#f59e0b')}; color:#fff;">${step.action.toUpperCase()}</span>
             </div>
-            <div style="font-size:0.85em; margin:5px 0; color:#1e293b;">${step.description}</div>
-            <div style="font-family:monospace; font-size:0.8em; color:#7c3aed; background:#f5f3ff; padding:4px 8px; border-radius:4px; margin-top:4px;">
+            <div style="font-size:0.85em; margin:5px 0; color:${themeColor('#1e293b')};">${step.description}</div>
+            <div style="font-family:monospace; font-size:0.8em; color:${themeColor('#7c3aed')}; background:${themeColor('#f5f3ff')}; padding:4px 8px; border-radius:4px; margin-top:4px;">
                 → token: "${step.tokenGenerated}"
             </div>
         `;
