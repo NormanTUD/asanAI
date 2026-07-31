@@ -115,8 +115,6 @@ Pixel-space diffusion at $512 \times 512 \times 3$ is prohibitively expensive. *
 This $8\times$ spatial compression makes training and inference ~$64\times$ cheaper. The VAE is frozen; only the U-Net diffusion model is trained.
 </div>
 
-<div id="ldm-pipeline" style="max-width:920px; margin:1em auto;"></div>
-
 <div class="md">
 ## Text Encoders
 
@@ -348,57 +346,6 @@ function getThemeFg() {
 	Plotly.newPlot('cfg-viz', traces, layout, { responsive: true });
 })();
 
-// Latent diffusion pipeline
-(function() {
-	const c = document.getElementById('ldm-pipeline');
-	if (!c) return;
-
-	const box = (x0, y0, w, h, label, color, textColor) => ({
-		type: 'rect', xref: 'x', yref: 'y', x0, x0: x0, x1: x0 + w, y0, y1: y0 + h,
-		fillcolor: color, line: { color: 'rgba(0,0,0,0.3)', width: 1.5 }
-	});
-
-	const boxes = [
-		[0, 4, 2, 1.5, 'Image\n512×512×3', '#a78bfa'],
-		[2.5, 4, 2, 1.5, 'VAE Encoder\n(E)', '#8b5cf6'],
-		[5, 4, 2, 1.5, 'Latent\n64×64×4', '#6366f1'],
-		[7.5, 4, 2, 1.5, '+ Noise', '#475569'],
-		[10, 4, 2.5, 1.5, 'U-Net\nεθ (xt,t,c)', '#0ea5e9'],
-		[0, 1.5, 2, 1.5, 'Text prompt', '#22c55e'],
-		[2.5, 1.5, 2, 1.5, 'Text Encoder\n(CLIP/T5)', '#16a34a'],
-		[5, 1.5, 2, 1.5, 'Text\nembedding', '#15803d'],
-		[13, 4, 2, 1.5, 'Denoised\nlatent', '#3b82f6'],
-		[15.5, 4, 2, 1.5, 'VAE Decoder\n(D)', '#8b5cf6'],
-		[18, 4, 2, 1.5, 'Generated\nimage', '#a78bfa'],
-		[10, -0.5, 2.5, 1, 'Loss: MSE on\nnoise prediction', '#f59e0b']
-	];
-
-	const shapes = boxes.map(b => ({
-		type: 'rect', x0: b[0], x1: b[0] + b[2], y0: b[1], y1: b[1] + b[3],
-		fillcolor: b[4], line: { color: 'rgba(0,0,0,0.4)', width: 1.5 }
-	}));
-
-	const arrows = [];
-	for (const [x1, x2, y] of [[2, 2.5, 4.75], [4.5, 5, 4.75], [7, 7.5, 4.75], [9.5, 10, 4.75], [12.5, 13, 4.75], [15, 15.5, 4.75], [17.5, 18, 4.75],
-	                            [2, 2.5, 2.25], [4.5, 5, 2.25], [7, 10, 2.25]]) {
-		arrows.push({ xref: 'x', yref: 'y', ax: x1, ay: y, x: x2, y: y, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' });
-	}
-
-	const annotations = boxes.map(b => ({
-		x: b[0] + b[2]/2, y: b[1] + b[3]/2, text: '<b>' + b[4].replace('\n', '<br>') + '</b>',
-		showarrow: false, font: { size: 10, color: '#fff' }
-	}));
-
-	const layout = {
-		shapes, annotations,
-		xaxis: { range: [-1, 21], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-2, 6.5], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 20, l: 20, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)'
-	};
-	Plotly.newPlot('ldm-pipeline', [], layout, { displayModeBar: false, responsive: true });
-})();
 
 async function loadDiffusionModule() {
 	updateLoadingStatus("Loading section about Diffusion Models...");
