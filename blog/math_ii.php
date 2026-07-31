@@ -312,8 +312,34 @@ The idea of matrix transposition was introduced in 1858 by the British mathemati
 </div>
 
 <script>
-async function loadMathIIModule() {
-	updateLoadingStatus("Loading section about Math II...");
-	return Promise.resolve();
-}
+// The plot initializers live in math.js (loaded above). There is no
+// math_ii.js, so none of these get registered in the module loader queue —
+// initialize the page's plots directly here instead.
+(function () {
+	let initialized = false;
+
+	function initMathIIPlots() {
+		if (initialized) return;
+		if (typeof Plotly === 'undefined') return;
+		initialized = true;
+
+		renderBWTable();
+		updateBWPreview();
+		renderRGBCombinedTable();
+		updateRGBPreview();
+		renderVectorPlot();
+		renderMovableVector();
+		initCompositionPlot();
+		initHadamard();
+		initInteractiveVectorSpaces();
+	}
+
+	async function loadMathIIModule() {
+		updateLoadingStatus("Loading section about Math II...");
+		initMathIIPlots();
+		return Promise.resolve();
+	}
+
+	initMathIIPlots();
+})();
 </script>
