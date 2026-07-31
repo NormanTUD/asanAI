@@ -140,27 +140,6 @@ The hypothesis: **true general intelligence requires internal simulation of cons
 </div>
 
 <div class="md">
-## Energy-Efficient and Carbon-Conscious AI
-
-Concerns about AI's energy footprint have moved from academic to mainstream:
-
-* **Training energy**: GPT-4 estimated 50 GWh, equivalent to 5,000 US homes for a year.
-* **Inference energy**: at scale, inference exceeds training. A popular chatbot app with 1B daily queries uses ~1 GWh/day — the output of a small nuclear plant.
-* **Carbon intensity**: depends on grid mix. A French data center (mostly nuclear) trains a frontier model at 5% the carbon of a Polish one (mostly coal).
-* **Water**: cooling data centers consumes water; Llama 3 training reportedly used 1.3M liters.
-
-Mitigations:
-
-* **Algorithmic efficiency**: distillation, quantization, MoE.
-* **Hardware**: H100 is 2× more efficient than A100; B200 is 2× more than H100.
-* **Renewable-powered data centers**: Google, Microsoft have signed PPAs for solar/wind matching 100% of operational use.
-* **Workload scheduling**: run training when renewable supply is high (geographic arbitrage).
-* **PUE (Power Usage Effectiveness)**: efficient data centers achieve 1.1; poor ones 2.0+. AWS, Google lead at ~1.1.
-
-The **ML.ENERGY** leaderboard and **Green Software Foundation** are pushing for standardized reporting.
-</div>
-
-<div class="md">
 ## Multilingual and Low-Resource AI
 
 LLMs are still **predominantly English-centric** in training:
