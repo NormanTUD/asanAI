@@ -117,8 +117,6 @@ $$\text{Feature } f_i \approx \hat{d}_i \cdot x \quad \text{where } \hat{d}_i \c
 This means that individual neurons rarely correspond to single interpretable features. Instead, features are distributed across neurons, and neurons participate in multiple features. This is why \cite[sparse autoencoders]{cunningham2023sparse} have become an important tool: they learn to decompose the residual stream into a larger set of interpretable, sparsely-activating features.
 </div>
 
-<div id="superposition-container"></div>
-
 <div class="md">
 ## Composition: How Heads Talk to Each Other
 
@@ -145,8 +143,6 @@ Head A's output changes *what information Head B moves*.
 
 Induction heads are the canonical example of **K-composition**: the previous-token head writes information that the induction head uses in its key computation to find matching patterns.
 </div>
-
-<div id="composition-explorer-container"></div>
 
 <div class="md">
 ## Activation Patching: The Surgeon's Scalpel
