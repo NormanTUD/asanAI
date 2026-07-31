@@ -876,15 +876,16 @@ The **Dirichlet distribution** (next section) is the natural probability distrib
 </div>
 
 <script>
-async function forceInitAll() {
+async function directInitAll() {
     const items = typeof _statLazyRegistry !== 'undefined' ? _statLazyRegistry : [];
     for (let i = 0; i < items.length; i++) {
-        const el = items[i].el;
-        el.scrollIntoView();
-        await new Promise(r => setTimeout(r, 150));
+        try {
+            await items[i].initFn();
+            console.log('DEBUGSTAT3 OK', i, items[i].el.id);
+        } catch (e) {
+            console.log('DEBUGSTAT3 FAIL', i, items[i].el.id, e.message);
+        }
     }
-    await new Promise(r => setTimeout(r, 2000));
-    items.forEach((r, i) => console.log('DEBUGSTAT2', i, r.el.id, 'init:' + r.initialized));
 }
-window.addEventListener('load', forceInitAll);
+window.addEventListener('load', directInitAll);
 </script>
