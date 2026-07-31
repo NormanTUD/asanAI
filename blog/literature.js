@@ -3056,7 +3056,7 @@ window.bibData = {
 	},
 	"wittgenstein1953investigations": {
 		author: "Ludwig Wittgenstein",
-		url: "https://archive.org/details/philosophicalinvestigations_201911",
+		url: "https://books.wittgensteinproject.org/pdf/german/Philosophische%20Untersuchungen.pdf",
 		year: "1953",
 		title: "Philosophical Investigations",
 	},
