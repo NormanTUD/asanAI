@@ -1278,25 +1278,25 @@ function renderICLExecution(container, options = {}) {
         const rightPanel = document.createElement('div');
         rightPanel.style.cssText = 'background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px;';
         rightPanel.innerHTML = `
-            <label style="font-size:0.8em; color:#64748b; font-weight:600;">FUNCTION CALL:</label>
-            <div style="margin:10px 0; font-family:monospace; font-size:1.1em; color:#1e293b; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
-                <span id="icl-call-display">${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)</span>
+            <label style="font-size:0.8em; color:${themeColor('#64748b')}; font-weight:600;">FUNCTION CALL:</label>
+            <div style="margin:10px 0; font-family:monospace; font-size:1.1em; color:${themeColor('#1e293b')}; background:${themeColor('#fff')}; padding:10px; border-radius:6px; border:1px solid ${themeColor('#e2e8f0')};">
+                <span id="icl-call-display">${selectedAlgo}(<span style="color:${themeColor('#3b82f6')};">${numA}</span>, <span style="color:${themeColor('#3b82f6')};">${numB}</span>)</span>
             </div>
             <div style="display:flex; gap:10px; margin-bottom:12px;">
                 <div>
-                    <label style="font-size:0.75em; color:#64748b;">Param A:</label><br>
-                    <input type="number" id="icl-param-a" value="${numA}" style="width:80px; padding:5px; border:1px solid #cbd5e1; border-radius:4px;">
+                    <label style="font-size:0.75em; color:${themeColor('#64748b')};">Param A:</label><br>
+                    <input type="number" id="icl-param-a" value="${numA}" style="width:80px; padding:5px; border:1px solid ${themeColor('#cbd5e1')}; border-radius:4px;">
                 </div>
                 <div>
-                    <label style="font-size:0.75em; color:#64748b;">Param B:</label><br>
-                    <input type="number" id="icl-param-b" value="${numB}" style="width:80px; padding:5px; border:1px solid #cbd5e1; border-radius:4px;">
+                    <label style="font-size:0.75em; color:${themeColor('#64748b')};">Param B:</label><br>
+                    <input type="number" id="icl-param-b" value="${numB}" style="width:80px; padding:5px; border:1px solid ${themeColor('#cbd5e1')}; border-radius:4px;">
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button id="icl-execute-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600;">⚡ Execute</button>
-                <button id="icl-step-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#8b5cf6; color:#fff; cursor:pointer; font-weight:600;">→ Step</button>
-                <button id="icl-animate-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#10b981; color:#fff; cursor:pointer; font-weight:600;">▶ Animate</button>
-                <button id="icl-reset-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#64748b; color:#fff; cursor:pointer; font-weight:600;">↺ Reset</button>
+                <button id="icl-execute-btn" style="padding:8px 16px; border:none; border-radius:6px; background:${themeColor('#3b82f6')}; color:#fff; cursor:pointer; font-weight:600;">⚡ Execute</button>
+                <button id="icl-step-btn" style="padding:8px 16px; border:none; border-radius:6px; background:${themeColor('#8b5cf6')}; color:#fff; cursor:pointer; font-weight:600;">→ Step</button>
+                <button id="icl-animate-btn" style="padding:8px 16px; border:none; border-radius:6px; background:${themeColor('#10b981')}; color:#fff; cursor:pointer; font-weight:600;">▶ Animate</button>
+                <button id="icl-reset-btn" style="padding:8px 16px; border:none; border-radius:6px; background:${themeColor('#64748b')}; color:#fff; cursor:pointer; font-weight:600;">↺ Reset</button>
             </div>
         `;
         controlPanel.appendChild(rightPanel);
@@ -1370,19 +1370,19 @@ function renderICLExecution(container, options = {}) {
         document.getElementById('icl-algo-select').addEventListener('change', (e) => {
             selectedAlgo = e.target.value;
             document.getElementById('icl-code-display').textContent = algorithms[selectedAlgo].code;
-            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)`;
+            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:${themeColor('#3b82f6')};">${numA}</span>, <span style="color:${themeColor('#3b82f6')};">${numB}</span>)`;
             resetExecution();
         });
 
         document.getElementById('icl-param-a').addEventListener('change', (e) => {
             numA = parseInt(e.target.value) || 0;
-            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)`;
+            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:${themeColor('#3b82f6')};">${numA}</span>, <span style="color:${themeColor('#3b82f6')};">${numB}</span>)`;
             resetExecution();
         });
 
         document.getElementById('icl-param-b').addEventListener('change', (e) => {
             numB = parseInt(e.target.value) || 0;
-            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)`;
+            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:${themeColor('#3b82f6')};">${numA}</span>, <span style="color:${themeColor('#3b82f6')};">${numB}</span>)`;
             resetExecution();
         });
 
@@ -1422,11 +1422,11 @@ function renderICLExecution(container, options = {}) {
         const tokenTrace = document.getElementById('icl-token-trace');
         if (tokenTrace) tokenTrace.innerHTML = '<div style="color:#94a3b8; font-size:0.85em; text-align:center; padding:30px;">Press Execute or Step to begin</div>';
         const stateVars = document.getElementById('icl-state-vars');
-        if (stateVars) stateVars.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4><div style="color:#94a3b8; font-size:0.85em;">No state yet</div>';
+        if (stateVars) stateVars.innerHTML = `<h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#166534')};">RESIDUAL STREAM STATE</h4><div style="color:${themeColor('#94a3b8')}; font-size:0.85em;">No state yet</div>`;
         const layersViz = document.getElementById('icl-layers-viz');
-        if (layersViz) layersViz.innerHTML = '<div style="color:#94a3b8;">No activity yet</div>';
+        if (layersViz) layersViz.innerHTML = `<div style="color:${themeColor('#94a3b8')};">No activity yet</div>`;
         const progress = document.getElementById('icl-progress');
-        if (progress) progress.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4><div style="color:#94a3b8; font-size:0.85em;">0 / 0 steps</div>';
+        if (progress) progress.innerHTML = `<h4 style="margin:0 0 10px 0; font-size:0.85em; color:${themeColor('#854d0e')};">EXECUTION PROGRESS</h4><div style="color:${themeColor('#94a3b8')}; font-size:0.85em;">0 / 0 steps</div>`;
     }
 
     function renderStep(stepIdx) {
