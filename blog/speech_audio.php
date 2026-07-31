@@ -80,10 +80,6 @@ TTS has three historical generations:
 2. **Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.
 3. **Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform. Voice cloning from a 3-second reference sample becomes trivial.
 
-VALL-E 2 (2023) achieved human parity on LibriSpeech by treating speech as a sequence of discrete codec tokens and predicting them autoregressively, conditioned on the text and a short reference audio clip. Each output token is sampled from `P(token_t | token_<t, text, reference audio)` — the same next-token recipe used for text, applied to sound. The breakthrough was the codec: speech tokens are now as tractable as BPE tokens.
-</div>
-
-<div class="md">
 ## Music Generation
 
 * **Jukebox** (OpenAI, 2020): VQ-VAE on raw audio + autoregressive Transformer. Slow, hours of music.
