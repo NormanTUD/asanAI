@@ -1991,6 +1991,23 @@ window.__MN_DARK = {
 		'#fef3c7':     '#422006',  // light yellow bg -> dark yellow
 		'#f59e0b':     '#fbbf24',  // amber -> brighter amber
 		'#92400e':     '#fde68a',  // dark amber text -> light amber
+		'#451a03':     '#fde68a',  // dark brown text -> light amber
+		'#1e40af':     '#bfdbfe',  // dark blue text -> light blue
+		'#1e3a5f':     '#bfdbfe',  // dark navy text -> light blue
+		'#14532d':     '#bbf7d0',  // dark green text -> light green
+		'#166534':     '#bbf7d0',  // dark green text -> light green
+		'#854d0e':     '#fde68a',  // dark amber text -> light amber
+		'#7c3aed':     '#c4b5fd',  // dark violet text -> light violet
+		'#eab308':     '#facc15',  // yellow-500 -> yellow-400
+		'#059669':     '#6ee7b7',  // dark emerald text -> light emerald
+		'#fcd34d':     '#fbbf24',  // amber-300 -> amber-400
+		'#86efac':     '#4ade80',  // green-300 -> green-400
+		'#93c5fd':     '#60a5fa',  // blue-300 -> blue-400
+		'#fef08a':     '#fde047',  // yellow-200 -> yellow-300
+		'#bbf7d0':     '#86efac',  // green-200 -> green-300
+		'#bfdbfe':     '#93c5fd',  // blue-200 -> blue-300
+		'#dcfce7':     '#86efac',  // green-100 -> green-300
+		'#fef9c3':     '#422006',  // light yellow bg -> dark yellow
 		'#ef4444':     '#f87171',  // red -> lighter red
 		'#6366f1':     '#818cf8',  // indigo -> lighter indigo
 		'#10b981':     '#6ee7b7',  // emerald -> lighter emerald

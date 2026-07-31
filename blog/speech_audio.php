@@ -10,7 +10,7 @@ color: sky
 -->
 
 <div class="md">
-Sound is the **last major modality** that LLMs learned to read and write. As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively — taking voice input, generating speech, transcribing in 99 languages, recognizing emotion, even singing.
+Sound is the **last major modality** that LLMs learned to read and write. As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively — taking voice input, generating speech, transcribing languages, recognizing emotion, even singing.
 
 This chapter covers how audio is represented, how it is encoded and decoded, and how Transformer-based models learn to listen and speak.
 </div>
