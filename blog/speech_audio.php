@@ -80,16 +80,8 @@ TTS has three historical generations:
 2. **Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.
 3. **Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform. Voice cloning from a 3-second reference sample becomes trivial.
 
-VALL-E 2 (2023) achieved human parity on LibriSpeech by:
-
-$$
-P(\text{speech tokens} \mid \text{text}, \text{reference audio}) = \prod_t P(\text{token}_t \mid \text{token}_{<t}, \text{text}, \text{reference})
-$$
-
-This is just **next-token prediction on audio tokens** — the same autoregressive recipe used for text, applied to sound. The breakthrough was the codec: speech tokens are now as tractable as BPE tokens.
+VALL-E 2 (2023) achieved human parity on LibriSpeech by treating speech as a sequence of discrete codec tokens and predicting them autoregressively, conditioned on the text and a short reference audio clip. Each output token is sampled from `P(token_t | token_<t, text, reference audio)` — the same next-token recipe used for text, applied to sound. The breakthrough was the codec: speech tokens are now as tractable as BPE tokens.
 </div>
-
-<div id="tts-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## Music Generation
@@ -200,78 +192,6 @@ The shift from "speech recognition" (separate ASR model) and "speech synthesis" 
 	}, { responsive: true });
 })();
 
-// TTS codec token prediction: visualizing next-token prediction over audio codec tokens
-(function() {
-	const c = document.getElementById('tts-viz');
-	if (!c) return;
-
-	// Synthesize a mel-spectrogram pattern (vowel-like formants) for the word "hello"
-	const T = 64, F = 32;
-	const z = [];
-	for (let f = 0; f < F; f++) {
-		const row = [];
-		for (let t = 0; t < T; t++) {
-			// First formant at low freq drifts slightly
-			const f1 = Math.exp(-Math.pow((f - 6 - 2 * Math.sin(t * 0.1)) / 2.5, 2));
-			// Second formant
-			const f2 = Math.exp(-Math.pow((f - 18 - 3 * Math.sin(t * 0.08 + 1)) / 3, 2)) * 0.7;
-			// Energy envelope
-			const env = Math.exp(-Math.pow((t - T / 2) / (T / 3), 2));
-			row.push((f1 + f2) * env + Math.random() * 0.02);
-		}
-		z.push(row);
-	}
-
-	// Top: mel-spectrogram
-	const data = [{
-		z, type: 'heatmap',
-		colorscale: [[0, '#0f172a'], [0.3, '#1e3a8a'], [0.6, '#fbbf24'], [1, '#fef3c7']],
-		showscale: false, hoverinfo: 'skip',
-		xaxis: 'x', yaxis: 'y'
-	}];
-
-	// Bottom: codec token sequence (16 codebooks x T frames, simulated)
-	const codebookRows = 8;
-	const codebookData = [];
-	const tokenLabels = [];
-	for (let cb = 0; cb < codebookRows; cb++) {
-		const row = [];
-		const labels = [];
-		for (let t = 0; t < T; t++) {
-			// Each codebook produces a value
-			row.push(Math.floor(Math.abs(Math.sin(cb * 1.7 + t * 0.3) * 1024)) % 1024);
-			labels.push(t % 16 === 0 ? t.toString() : '');
-		}
-		codebookData.push(row);
-		tokenLabels.push(labels);
-	}
-
-	const codebookHeatmap = {
-		type: 'heatmap', z: codebookData,
-		colorscale: [[0, '#1e293b'], [1, '#3b82f6']],
-		showscale: false, hoverinfo: 'skip',
-		xaxis: 'x2', yaxis: 'y2'
-	};
-
-	const layout = {
-		grid: { rows: 2, columns: 1, pattern: 'independent' },
-		title: { text: 'VALL-E-style TTS: text → codec LM → audio', font: { size: 13 } },
-		xaxis: { showticklabels: false },
-		yaxis: { title: 'mel-frequency', showticklabels: false, autorange: 'reversed' },
-		xaxis2: { title: 'time (frames)', tickmode: 'array', tickvals: [0, 16, 32, 48], ticktext: ['0', '16', '32', '48'] },
-		yaxis2: { title: 'codebook (residual)', tickmode: 'array', tickvals: [0, 1, 2, 3, 4, 5, 6, 7], ticktext: ['1', '2', '3', '4', '5', '6', '7', '8'] },
-		margin: { t: 50, b: 50, l: 80, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		annotations: [
-			{ x: 0.5, y: 1.05, xref: 'paper', yref: 'paper', text: '<b>Target mel-spectrogram</b>', showarrow: false, font: { size: 11 } },
-			{ x: 0.5, y: 0.42, xref: 'paper', yref: 'paper', text: '<b>Codec LM predicts 8 codebooks × T tokens autoregressively</b>', showarrow: false, font: { size: 11 } },
-			{ x: 0.98, y: 0.0, xref: 'paper', yref: 'y2', text: 'time →', showarrow: false, font: { size: 10 }, textangle: 90 }
-		]
-	};
-
-	Plotly.newPlot('tts-viz', [data, codebookHeatmap], layout, { responsive: true, displayModeBar: false });
-})();
 
 async function loadSpeechAudioModule() {
 	updateLoadingStatus("Loading section about Speech & Audio Models...");
