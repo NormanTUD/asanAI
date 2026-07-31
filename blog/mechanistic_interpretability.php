@@ -71,13 +71,7 @@ The process of finding circuits involves several techniques \cite[Conmy et al., 
 3. **Ablation:** Zero out or mean-ablate a component's contribution. The resulting change in loss indicates the component's importance.
 
 4. **Automated Circuit Discovery (ACDC):** An algorithm that systematically tests edges in the computational graph to find the minimal subgraph that explains a behavior.
-
-## Interactive Exploration
-
-Below, you can explore how these circuits work in practice. We simulate a small Transformer and let you trace information flow through the residual stream, activate or deactivate individual heads, and see how circuits collaborate to produce predictions.
 </div>
-
-<div id="circuits-container"></div>
 
 <div class="md">
 ## The QKV Mechanism: How Attention Heads Compute
@@ -110,8 +104,6 @@ $$\text{Output contribution} = W_O W_V \cdot x_{\text{source}}$$
 
 The matrix $W_O W_V$ maps source token representations to output contributions. For a "copying" head, this matrix approximates the identity in the relevant subspace.
 </div>
-
-<div id="qkv-explorer-container"></div>
 
 <div class="md">
 ## Superposition: When Features Outnumber Dimensions

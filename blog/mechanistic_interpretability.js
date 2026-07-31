@@ -2,11 +2,8 @@
  * Circuits Inside LLMs - Interactive Visualization
  *
  * Demonstrates:
- * 1. Residual stream communication
- * 2. Induction head circuits
- * 3. Attention pattern visualization
- * 4. Superposition geometry
- * 5. QKV decomposition
+ * 1. Induction head circuits
+ * 2. Grokking modular addition
  */
 
 (function() {
@@ -130,7 +127,7 @@
         return `rgb(${r}, ${g}, ${b})`;
     }
     // ============================================================
-    // SECTION 5: INDUCTION HEAD DEMO
+    // SECTION 1: INDUCTION HEAD DEMO
     // ============================================================
 
     function initInductionHead() {
@@ -352,7 +349,7 @@
     }
 
     // ============================================================
-    // SECTION 7: GROKKING VISUALIZATION
+    // SECTION 2: GROKKING VISUALIZATION
     // ============================================================
 
     function initGrokking() {
@@ -579,11 +576,7 @@
     }
 
     function initAll() {
-        initResidualStream();
         initInductionHead();
-        initQKVExplorer();
-        initSuperposition();
-        initComposition();
         initGrokking();
     }
 

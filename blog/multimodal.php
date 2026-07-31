@@ -26,7 +26,7 @@ The simplest alignment is **contrastive learning**: pull matched (image, caption
 <div class="md">
 ## CLIP: Contrastive Language-Image Pre-training
 
-Published by \cite[Radford et al. (OpenAI), 2021][]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:
+Published by \cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:
 
 * An **image encoder** $f_\theta : \text{Image} \to \mathbb{R}^d$ (originally a ResNet-50, later a ViT-L/14).
 * A **text encoder** $g_\phi : \text{Text} \to \mathbb{R}^d$ (a Transformer).
