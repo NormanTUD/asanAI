@@ -385,31 +385,3 @@ Research is pushing toward effectively unlimited context through several approac
 | **Memory-augmented Transformers** | Research | Learnable external memory banks |
 | **State-space hybrids** | Production (Jamba, etc.) | SSM layers for long-range + attention for precision |
 </div>
-
-<div class="md">
-## 🔍 Interactive: Context Window Visualizer
-</div>
-
-<div id="cwlab-demo-container">
-    <p class="cwlab-demo-subtitle">Explore how a context window fills up during a conversation. Adjust the model's context size and see how different strategies handle overflow.</p>
-    <div id="cwlab-controls">
-        <label for="cwlab-model-select"><strong>Model:</strong></label>
-        <select id="cwlab-model-select">
-            <option value="4096">GPT-3.5 (4K)</option>
-            <option value="8192">GPT-4 (8K)</option>
-            <option value="32768">GPT-4-32K</option>
-            <option value="128000" selected>GPT-4 Turbo (128K)</option>
-            <option value="200000">Claude 3 (200K)</option>
-            <option value="1000000">Gemini 1.5 Pro (1M)</option>
-        </select>
-        <button id="cwlab-add-msg-btn">➕ Add Message (~500 tokens)</button>
-        <button id="cwlab-add-rag-btn">📄 Add RAG Chunks (~2000 tokens)</button>
-        <button id="cwlab-reset-btn">🔄 Reset</button>
-    </div>
-    <div id="cwlab-visualization"></div>
-    <div id="cwlab-stats"></div>
-    <details class="cwlab-details">
-        <summary>What does this show?</summary>
-        <p>The bar represents the model's context window. The system prompt (always present) is shown in blue. Each message you add consumes space. When the window fills up, the system must either truncate old messages (red) or summarize them (yellow). RAG chunks are shown in green, notice how they consume context budget but provide targeted information. In production, the system carefully manages this budget to maximize useful information while staying within limits.</p>
-    </details>
-</div>
