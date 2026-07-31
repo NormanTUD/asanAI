@@ -4565,7 +4565,7 @@ window.bibData = {
 		alternativetitle: "Masakhane"
 	},
 	"insta2023": {
-		url: "https://lelapa.ai/press-release-instadeep-acquisition/",
+		url: "https://www.biontech.com/int/en/home/mediaroom/news/press-releases/2023/07/biontech-completes-acquisition-instadeep.html",
 		title: "BioNTech to Acquire InstaDeep for $680M",
 		author: "InstaDeep",
 		year: 2023,
