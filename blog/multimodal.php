@@ -155,45 +155,6 @@ The hard parts are data (curating trillions of matched image-text-audio samples 
 </div>
 
 <script>
-// CLIP contrastive loss visualization
-(function() {
-	const container = document.getElementById('clip-viz');
-	if (!container) return;
-
-	const N = 6; // batch size for visualization
-	const matches = [];
-	const mismatches = [];
-	for (let i = 0; i < N; i++) {
-		for (let j = 0; j < N; j++) {
-			let v;
-			if (i === j) v = 0.85 + Math.random() * 0.1;       // matched (high)
-			else v = -0.6 + Math.random() * 0.4;             // mismatched (low)
-			matches.push([i, j, v]);
-		}
-	}
-
-	const data = [{
-		z: matches.map(m => m[2]),
-		x: Array.from({length: N}, (_, i) => 'Text ' + i),
-		y: Array.from({length: N}, (_, i) => 'Image ' + i),
-		type: 'heatmap',
-		colorscale: [[0, '#ef4444'], [0.5, '#f8fafc'], [1, '#22c55e']],
-		zmin: -1, zmax: 1,
-		hovertemplate: 'Image %{y}<br>Text %{x}<br>cosine: %{z:.3f}<extra></extra>'
-	}];
-
-	const layout = {
-		title: { text: 'CLIP contrastive similarity matrix (batch of 6 pairs)', font: { size: 13 } },
-		xaxis: { title: 'Text encoder output' },
-		yaxis: { title: 'Image encoder output', autorange: 'reversed' },
-		margin: { t: 50, b: 50, l: 70, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		font: { color: getComputedStyle(document.documentElement).getPropertyValue('--mn-text').trim() || '#1e293b' }
-	};
-
-	Plotly.newPlot('clip-viz', data, layout, { responsive: true });
-})();
 
 // ViT patch embedding visualization
 (function() {
@@ -249,61 +210,6 @@ The hard parts are data (curating trillions of matched image-text-audio samples 
 	};
 
 	Plotly.newPlot('vit-viz', data, layout, { responsive: true });
-})();
-
-// LLaVA architecture diagram
-(function() {
-	const c3 = document.getElementById('llava-viz');
-	if (!c3) return;
-
-	const trace = (x, y, w, h, label, color) => ({
-		type: 'rect', x0: x, x1: x+w, y0: y, y1: y+h,
-		fillcolor: color, line: { color: 'rgba(0,0,0,0.25)', width: 1.5 },
-		hoverinfo: 'skip'
-	});
-
-	const shapes = [
-		trace(0, 5, 2, 2, 'Image', '#a78bfa'),
-		trace(2.5, 5, 2, 2, 'CLIP-ViT', '#8b5cf6'),
-		trace(5, 5, 2, 2, 'Visual tokens\n(N=576)', '#6366f1'),
-		trace(7.5, 5, 2, 2, 'MLP\nProjector', '#3b82f6'),
-		trace(10, 5, 2, 2, 'Visual tokens\nin LLM space', '#0ea5e9'),
-		trace(0, 1, 2, 2, 'Prompt:\n"What is in\nthis image?"', '#22c55e'),
-		trace(2.5, 1, 2, 2, 'Tokenizer', '#16a34a'),
-		trace(5, 1, 2, 2, 'Text tokens', '#15803d'),
-		trace(7.5, 1, 4.5, 2, 'LLM (frozen)', '#f59e0b'),
-		trace(7.5, -1.5, 4.5, 2, 'Output:\n"A cat sitting\non a couch."', '#ef4444')
-	];
-
-	const arrows = [];
-	for (const [x1, x2, y] of [[2, 2.5, 6], [4.5, 5, 6], [7, 7.5, 6], [9.5, 10, 6],
-	                            [2, 2.5, 2], [4.5, 5, 2], [7, 7.5, 2], [12, 12, 3.5]]) {
-		arrows.push({ xref: 'x', yref: 'y', ax: x1, ay: y, x: x2, y: y, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' });
-	}
-	arrows.push({ xref: 'x', yref: 'y', ax: 9.75, ay: 1, x: 9.75, y: 0.5, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' });
-
-	const layout = {
-		shapes,
-		xaxis: { range: [-1, 14], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-3, 8], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 20, l: 20, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		annotations: [
-			{ x: 1, y: 7.3, text: '<b>Image</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-			{ x: 3.5, y: 7.3, text: '<b>Vision Encoder</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-			{ x: 6, y: 7.3, text: '<b>Visual tokens</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-			{ x: 8.5, y: 7.3, text: '<b>Projector</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-			{ x: 11, y: 7.3, text: '<b>In LLM space</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-			{ x: 1, y: 3.3, text: '<b>Text prompt</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-			{ x: 3.5, y: 3.3, text: '<b>Tokenizer</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-			{ x: 6, y: 3.3, text: '<b>Text tokens</b>', showarrow: false, font: { size: 10, color: '#fff' } },
-			{ x: 9.75, y: 3.3, text: '<b>LLM (frozen)</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-			{ x: 9.75, y: 0.3, text: '<b>Generated answer</b>', showarrow: false, font: { size: 11, color: '#fff' } }
-		]
-	};
-
-	Plotly.newPlot('llava-viz', [], layout, { responsive: true, displayModeBar: false });
 })();
 
 async function loadMultimodalModule() {

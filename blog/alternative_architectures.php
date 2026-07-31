@@ -55,7 +55,9 @@ where $\bar A = \exp(\Delta A)$, $\bar B = (\Delta A)^{-1}(\exp(\Delta A) - \mat
 
 This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{R}^{N}$. Compute is $O(N)$ per step, memory is $O(N)$ regardless of sequence length.
 
-### S4 (\cite[Gu et al., 2021]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
+### S4
+
+\cite[Gu et al., 2021]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
 
 ### Mamba (\cite[Gu & Dao, 2023]{gu2023mamba}
 
