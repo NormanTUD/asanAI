@@ -4372,7 +4372,7 @@ window.bibData = {
 
 	// AI Economics
 	"anthropic2024funding": {
-		url: "https://www.anthropic.com/news/anthropic-raises-4-billion-from-amazon",
+		url: "https://techcrunch.com/2024/11/22/anthropic-raises-an-additional-4b-from-amazon-makes-aws-its-primary-cloud-partner/",
 		title: "Anthropic raises $4B from Amazon",
 		author: "Anthropic",
 		year: 2024,
