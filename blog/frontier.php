@@ -78,7 +78,7 @@ For evaluation, **needle-in-a-haystack** tests are now standard: insert a specif
 
 Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer. In production:
 
-* **Math-Shepherd** (\cite[Zhang2024Mathshepherd]{zhang2024mathshepherd}): auto-labels step correctness by checking if subsequent steps can reach the answer.
+* **\citealternativetitle{zhang2024mathshepherd}**: auto-labels step correctness by checking if subsequent steps can reach the answer.
 * **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.
 * **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math (o1-mini with PRM ≈ GPT-4 on AIME).
 
