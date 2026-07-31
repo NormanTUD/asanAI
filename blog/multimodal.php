@@ -40,8 +40,6 @@ $$
 where $\mathbf{I}_i = f_\theta(\text{image}_i)$, $\mathbf{T}_i = g_\phi(\text{text}_i)$, and $\tau$ is a learnable temperature.
 </div>
 
-<div id="clip-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 After training, CLIP exhibits **zero-shot image classification**: write a prompt like *"a photo of a {label}"* for every candidate class, encode all prompts, encode the image, pick the prompt with highest cosine similarity. No fine-tuning, no classifier head. CLIP matched the accuracy of fully-supervised ResNet-50 on ImageNet without ever seeing an ImageNet label.
 
@@ -107,8 +105,6 @@ Take the prompt *"What is unusual about this image?"* with an attached photo. Th
 
 The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required — the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.
 </div>
-
-<div id="llava-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## Visual Question Answering Benchmarks
