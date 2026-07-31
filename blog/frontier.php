@@ -86,7 +86,7 @@ The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 
 </div>
 
 <div class="md">
-## \cite[Bubeck et al., 2023]{fedus2022moe} of Depths (MoD)
+## \cite[Sparse Expert Models]{fedus2022moe} of Depths (MoD)
 
 Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers**. Easy tokens skip; hard tokens use full depth.
 
