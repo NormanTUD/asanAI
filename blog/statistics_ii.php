@@ -452,20 +452,3 @@ Thus began Zarathustra's down-going.
 
 </div>
 </div>
-
-<script>
-setTimeout(async () => {
-    console.log("DEBUGSTAT5 reglen=", typeof _statLazyRegistry !== "undefined" ? _statLazyRegistry.length : "UNDEF");
-    const items = typeof _statLazyRegistry !== "undefined" ? _statLazyRegistry : [];
-    for (let i = 0; i < items.length; i++) {
-        try {
-            const p = items[i].initFn();
-            if (p && typeof p.then === "function") await p;
-            console.log("DEBUGSTAT5 OK", i, items[i].el.id);
-        } catch (e) {
-            console.log("DEBUGSTAT5 FAIL", i, items[i].el.id, (e && e.message) || String(e));
-        }
-    }
-    console.log("DEBUGSTAT5 svgs=", document.querySelectorAll(".main-svg").length);
-}, 5000);
-</script>
