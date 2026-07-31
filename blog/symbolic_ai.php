@@ -93,7 +93,7 @@ Major public knowledge graphs:
 * **Amazon Product Graph, Facebook Entity Graph**: industrial-scale closed KGs.
 </div>
 
-<div id="kg-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="kg-viz" style="max-width:1100px; margin:1em auto; height:520px;"></div>
 
 <div class="md">
 ## Reasoning Over Knowledge Graphs
@@ -267,11 +267,13 @@ The dichotomy is dissolving. The student who masters **both** branches will be f
 		const a = findNode(e[0]), b = findNode(e[1]);
 		shapes.push({
 			type: 'line', x0: a.x, x1: b.x, y0: a.y, y1: b.y,
-			line: { color: '#94a3b8', width: 1.5 }
+			line: { color: '#cbd5e1', width: 2 }
 		});
 		annotations.push({
 			x: (a.x + b.x) / 2 + 0.15, y: (a.y + b.y) / 2 + 0.15,
-			text: '<i>' + e[2] + '</i>', showarrow: false, font: { size: 8, color: '#64748b' }
+			text: '<i>' + e[2] + '</i>', showarrow: false,
+			font: { size: 11, color: '#e2e8f0', family: 'monospace' },
+			bgcolor: 'rgba(15, 23, 42, 0.75)', borderpad: 2
 		});
 	}
 
@@ -281,7 +283,7 @@ The dichotomy is dissolving. The student who masters **both** branches will be f
 			fillcolor: n.color, line: { color: 'rgba(0,0,0,0.3)', width: 1.5 }
 		});
 		annotations.push({
-			x: n.x, y: n.y, text: '<b>' + n.id + '</b>', showarrow: false, font: { size: 10, color: '#fff' }
+			x: n.x, y: n.y, text: '<b>' + n.id + '</b>', showarrow: false, font: { size: 13, color: '#fff' }
 		});
 	}
 
@@ -289,10 +291,10 @@ The dichotomy is dissolving. The student who masters **both** branches will be f
 		shapes, annotations,
 		xaxis: { range: [-0.5, 8], showgrid: false, zeroline: false, showticklabels: false },
 		yaxis: { range: [0, 9], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 30, b: 20, l: 20, r: 20 },
+		margin: { t: 50, b: 30, l: 30, r: 30 },
 		paper_bgcolor: 'rgba(0,0,0,0)',
 		plot_bgcolor: 'rgba(0,0,0,0)',
-		title: { text: 'Knowledge graph: blue = individuals, green = classes', font: { size: 13 } }
+		title: { text: 'Knowledge graph: blue = individuals, green = classes', font: { size: 14, color: '#e2e8f0' } }
 	}, { displayModeBar: false, responsive: true });
 })();
 

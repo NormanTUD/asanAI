@@ -173,8 +173,6 @@ If patching component $C$ causes the model to recover its clean-run prediction, 
 A large $\Delta_C$ means component $C$ is critical for the task.
 </div>
 
-<div id="patching-container"></div>
-
 <div class="md">
 ## The Logit Lens: Watching Predictions Form Layer by Layer
 
