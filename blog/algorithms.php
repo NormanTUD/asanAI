@@ -274,7 +274,9 @@ This is the first line of evidence that the network operates in a Fourier basis:
         title: { text: 'Cosine components of W_E', font: { size: 13 } },
         xaxis: { title: 'Frequency k', range: [0, 57] },
         yaxis: { title: 'Norm of Fourier component', range: [0, 2.2] },
-        margin: { t: 40, b: 50, l: 55, r: 10 }
+        margin: { t: 40, b: 50, l: 55, r: 10 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
     }, { responsive: true });
 
     // Sine components
@@ -287,7 +289,9 @@ This is the first line of evidence that the network operates in a Fourier basis:
         title: { text: 'Sine components of W_E', font: { size: 13 } },
         xaxis: { title: 'Frequency k', range: [0, 57] },
         yaxis: { title: 'Norm of Fourier component', range: [0, 2.2] },
-        margin: { t: 40, b: 50, l: 55, r: 10 }
+        margin: { t: 40, b: 50, l: 55, r: 10 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
     }, { responsive: true });
 
     // Gini coefficient over training (simulated based on Figure 7)
@@ -323,7 +327,9 @@ This is the first line of evidence that the network operates in a Fourier basis:
             { x: 5400, y: 0.95, text: 'Circuit Formation', showarrow: false, font: { size: 10, color: '#64748b' } },
             { x: 11700, y: 0.95, text: 'Cleanup', showarrow: false, font: { size: 10, color: '#64748b' } },
         ],
-        showlegend: true, legend: { x: 0.02, y: 0.85 }
+        showlegend: true, legend: { x: 0.02, y: 0.85 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)'
     }, { responsive: true });
 })();
 </script>
