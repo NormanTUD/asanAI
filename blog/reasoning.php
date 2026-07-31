@@ -109,7 +109,7 @@ The Math-Shepherd method (2024) auto-labels step correctness by checking whether
 <div class="md">
 ## Inference-Time Scaling Laws \cite[Snell et al., 2024]{snell2024testtime}
 
-\cite[Snell et al., 2024]{snell2024testtime} and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
+**Snell et al.** and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
 
 $$
 \text{accuracy}(n) = a \cdot n^b
