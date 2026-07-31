@@ -1788,12 +1788,13 @@ const ZarathustraLab = {
 
     renderZipf: function () {
         const statusEl = document.getElementById('zipf-status');
+        if (!document.getElementById('plot-zipf-zarathustra')) return;
         if (!this.tokens || this.tokens.length === 0) {
-            statusEl.textContent = "Waiting for data...";
+            if (statusEl) statusEl.textContent = "Waiting for data...";
             return;
         }
 
-        statusEl.textContent = "Analyzing vocabulary...";
+        if (statusEl) statusEl.textContent = "Analyzing vocabulary...";
 
         const counts = {};
         this.tokens.forEach(t => { counts[t] = (counts[t] || 0) + 1; });
@@ -1839,7 +1840,7 @@ const ZarathustraLab = {
             hovermode: 'closest'
         }), PLOTLY_CONFIG);
 
-        statusEl.textContent = "";
+        if (statusEl) statusEl.textContent = "";
     }
 };
 
