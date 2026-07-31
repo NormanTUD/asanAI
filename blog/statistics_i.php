@@ -876,23 +876,18 @@ The **Dirichlet distribution** (next section) is the natural probability distrib
 </div>
 
 <script>
-window.addEventListener('load', () => {
-    console.log('DEBUGSTAT4 reglen=', typeof _statLazyRegistry !== 'undefined' ? _statLazyRegistry.length : 'UNDEF');
-    console.log('DEBUGSTAT4 obs=', typeof _statLazyObserver !== 'undefined' ? (!!_statLazyObserver) : 'UNDEF');
-    console.log('DEBUGSTAT4 modloaded=', window.__statisticsModuleLoaded);
+setTimeout(async () => {
+    console.log('DEBUGSTAT5 reglen=', typeof _statLazyRegistry !== 'undefined' ? _statLazyRegistry.length : 'UNDEF');
     const items = typeof _statLazyRegistry !== 'undefined' ? _statLazyRegistry : [];
-    items.forEach((r, i) => {
+    for (let i = 0; i < items.length; i++) {
         try {
-            const p = r.initFn();
-            if (p && typeof p.then === 'function') { p.then(()=>console.log('DEBUGSTAT4 OK', i, r.el.id)).catch(e=>console.log('DEBUGSTAT4 FAIL', i, r.el.id, e && e.message)); }
-            else console.log('DEBUGSTAT4 OK', i, r.el.id);
+            const p = items[i].initFn();
+            if (p && typeof p.then === 'function') await p;
+            console.log('DEBUGSTAT5 OK', i, items[i].el.id);
         } catch (e) {
-            console.log('DEBUGSTAT4 FAIL', i, r.el.id, e && e.message);
+            console.log('DEBUGSTAT5 FAIL', i, items[i].el.id, (e && e.message) || String(e));
         }
-    });
-    window.__statSvgAfter = setInterval(() => {
-        console.log('DEBUGSTAT4 svg', document.querySelectorAll('.main-svg').length);
-        if (document.querySelectorAll('.main-svg').length > 0) clearInterval(window.__statSvgAfter);
-    }, 600);
-});
+    }
+    console.log('DEBUGSTAT5 svgs=', document.querySelectorAll('.main-svg').length);
+}, 5000);
 </script>
