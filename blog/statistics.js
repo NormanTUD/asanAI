@@ -1640,6 +1640,8 @@ const ZarathustraLab = {
 
     init: async function () {
         const slider = document.getElementById('lln-zarathustra-n');
+        const totalEl = document.getElementById('lln-total-tokens');
+        const convergenceEl = document.getElementById('plot-zarathustra-convergence');
 
         try {
             const response = await fetch('zarathustra.txt');
@@ -1653,28 +1655,33 @@ const ZarathustraLab = {
 
             if (this.tokens.length < 10) throw new Error("Text file is too short or empty.");
 
-            document.getElementById('lln-total-tokens').textContent = this.tokens.length;
-            slider.disabled = false;
+            if (totalEl) totalEl.textContent = this.tokens.length;
+            if (slider) slider.disabled = false;
 
-            this.render();
-            this.renderMarkovLab();
-            this.renderZipf();
-            slider.addEventListener('input', () => this.render());
+            if (slider) {
+                slider.addEventListener('input', () => this.render());
+                this.render();
+            }
+            if (document.getElementById('plot-markov-transitions')) this.renderMarkovLab();
+            if (document.getElementById('plot-zipf-zarathustra')) this.renderZipf();
 
         } catch (error) {
             console.error("ZarathustraLab Failure:", error);
-            document.getElementById('plot-zarathustra-convergence').innerHTML =
-                `<div class="stat-empty-state">
-                    <span class="stat-empty-icon">📖</span>
-                    <b>File Load Error</b><br>${error.message}<br>
-                    <small>Make sure 'zarathustra.txt' is in the same folder as this page.</small>
-                </div>`;
+            if (convergenceEl) {
+                convergenceEl.innerHTML =
+                    `<div class="stat-empty-state">
+                        <span class="stat-empty-icon">📖</span>
+                        <b>File Load Error</b><br>${error.message}<br>
+                        <small>Make sure 'zarathustra.txt' is in the same folder as this page.</small>
+                    </div>`;
+            }
         }
     },
 
     render: function () {
         const slider = document.getElementById('lln-zarathustra-n');
         const display = document.getElementById('lln-count-display');
+        if (!slider || !display) return;
         const N = parseInt(slider.value);
         display.textContent = N;
 
@@ -1712,6 +1719,7 @@ const ZarathustraLab = {
 
     renderMarkovLab: function () {
         const selector = document.getElementById('markov-word-select');
+        if (!selector) return;
 
         const update = () => {
             const target = selector.value.toLowerCase();
