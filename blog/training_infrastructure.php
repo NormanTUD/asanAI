@@ -85,8 +85,6 @@ The query, key, value heads are split across GPUs; each GPU computes a partial a
 The challenge: **pipeline bubbles** — idle time waiting for the previous stage to finish. GPipe \cite[Huang et al., 2018]{huang2018gpipe} splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
 </div>
 
-<div id="pipeline-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ### Sequence Parallelism
 
@@ -230,51 +228,6 @@ The frontier in 2025: **multi-trillion parameter models on 100,000+ GPU clusters
 		plot_bgcolor: 'rgba(0,0,0,0)',
 		legend: { x: 0.02, y: 0.98 }
 	}, { responsive: true });
-})();
-
-// Pipeline bubble
-(function() {
-	const c = document.getElementById('pipeline-viz');
-	if (!c) return;
-
-	const P = 4, M = 8;  // P pipeline stages, M micro-batches
-	const cell = (x, y, color) => ({ x0: x, x1: x + 1, y0: y, y1: y + 1, fillcolor: color, line: { width: 0 }, type: 'rect' });
-
-	const shapes = [];
-	const annotations = [];
-
-	for (let p = 0; p < P; p++) {
-		for (let t = 0; t < M + P; t++) {
-			const isFwd = t < M;
-			const isBubble = t >= p + M;
-			let color = 'rgba(0,0,0,0)';
-			let label = '';
-			if (isFwd) { color = '#3b82f6'; label = 'F' + (t + 1); }
-			else if (t < p + M + P - 1 && !isBubble) { color = '#f59e0b'; label = 'B' + (t - M + 1); }
-			else { color = 'rgba(239, 68, 68, 0.25)'; label = ''; }
-			shapes.push(cell(t, p, color));
-			if (label) annotations.push({ x: t + 0.5, y: p + 0.5, text: '<b>' + label + '</b>', showarrow: false, font: { size: 10, color: '#fff' } });
-		}
-	}
-
-	Plotly.newPlot('pipeline-viz', [], {
-		shapes,
-		annotations: [
-			{ x: (M + P - 1) / 2, y: P + 0.7, text: '<b>time →</b>', showarrow: false, font: { size: 11 } },
-			{ x: -1, y: P / 2 - 0.5, text: '<b>Stage 0</b>', showarrow: false, font: { size: 10 } },
-			{ x: -1, y: 1.5, text: '<b>Stage 1</b>', showarrow: false, font: { size: 10 } },
-			{ x: -1, y: 2.5, text: '<b>Stage 2</b>', showarrow: false, font: { size: 10 } },
-			{ x: -1, y: 3.5, text: '<b>Stage 3</b>', showarrow: false, font: { size: 10 } },
-			{ x: M + 0.5, y: P + 0.3, text: '↑ pipeline bubble', showarrow: false, font: { size: 10, color: '#ef4444' } },
-			...annotations
-		],
-		xaxis: { range: [-2, M + P], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-0.5, P + 1.5], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 30, b: 20, l: 80, r: 30 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		title: { text: 'GPipe pipeline schedule (P=4 stages, M=8 micro-batches)', font: { size: 13 } }
-	}, { displayModeBar: false, responsive: true });
 })();
 
 async function loadTrainingInfrastructureModule() {

@@ -209,25 +209,6 @@ A common production mistake: shipping an LLM endpoint without **cost attribution
 </div>
 
 <div class="md">
-## Cost Economics
-
-Per-million-token cost (2025 prices, varies by model):
-
-| Model | Input $/M | Output $/M |
-|-------|-----------|------------|
-| GPT-4o | $2.50 | $10.00 |
-| Claude 3.5 Sonnet | $3.00 | $15.00 |
-| Gemini 1.5 Pro | $1.25 | $5.00 |
-| Llama 3.1 405B (Together) | $3.50 | $3.50 |
-| DeepSeek V3 | $0.27 | $1.10 |
-| Llama 3.1 8B (self-host on H100) | ~$0.10 | ~$0.10 |
-
-Self-hosting breaks even at ~$5–10M monthly spend. Below that, APIs win on flexibility. Above, self-hosting wins on cost and control.
-
-The frontier models are **20–100× more expensive** than open-source small models. For most workloads, a fine-tuned 8B–70B open model beats GPT-4 on the specific task at 1/10th the cost.
-</div>
-
-<div class="md">
 ## When NOT to Use an LLM
 
 A good production engineer knows when to skip the LLM entirely:

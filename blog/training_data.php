@@ -49,8 +49,6 @@ The pipeline:
 6. **Decontamination**: see below.
 </div>
 
-<div id="pipeline-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ## Quality Filtering
 
@@ -94,8 +92,6 @@ Documents with identical MinHash signatures have high Jaccard similarity. Thresh
 
 For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** \cite[Abbas et al., 2023]{abbas2023semdedup} extend this to semantic duplicates via embedding-based clustering.
 </div>
-
-<div id="dedup-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## Decontamination
@@ -194,47 +190,6 @@ The implication: data work has higher ROI than architecture work for most practi
 </div>
 
 <script>
-// Pipeline visualization
-(function() {
-	const c = document.getElementById('pipeline-viz');
-	if (!c) return;
-
-	const stages = [
-		{ x: 0, label: 'Web crawl\n~300 TB', color: '#475569', tokens: '300 TB raw' },
-		{ x: 2.5, label: 'HTML → Text\n~30 TB', color: '#64748b', tokens: '30 TB text' },
-		{ x: 5, label: 'Language ID\n+ Quality filter', color: '#3b82f6', tokens: '5 TB high-quality' },
-		{ x: 7.5, label: 'Deduplication', color: '#0ea5e9', tokens: '2 TB unique' },
-		{ x: 10, label: 'Decontaminate', color: '#22c55e', tokens: '1.8 TB clean' },
-		{ x: 12.5, label: 'Mix + Tokenize', color: '#8b5cf6', tokens: '~1T tokens' }
-	];
-
-	const shapes = stages.map(s => ({
-		type: 'rect', x0: s.x, x1: s.x + 2, y0: 1, y1: 3,
-		fillcolor: s.color, line: { color: 'rgba(0,0,0,0.4)', width: 1.5 }
-	}));
-
-	const annotations = [];
-	stages.forEach(s => {
-		annotations.push({ x: s.x + 1, y: 2, text: '<b>' + s.label.replace('\n', '<br>') + '</b>', showarrow: false, font: { size: 10, color: '#fff' } });
-		annotations.push({ x: s.x + 1, y: 0.4, text: '<i>' + s.tokens + '</i>', showarrow: false, font: { size: 9, color: '#94a3b8' } });
-	});
-
-	const arrows = stages.slice(0, -1).map((s, i) => ({
-		ax: s.x + 2, ay: 2, x: stages[i + 1].x, y: 2,
-		showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569'
-	}));
-
-	Plotly.newPlot('pipeline-viz', [], {
-		shapes, annotations,
-		xaxis: { range: [-1, 16], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-0.5, 3.5], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 20, l: 20, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		title: { text: 'Common Crawl → training tokens (data funnel)', font: { size: 13 } }
-	}, { displayModeBar: false, responsive: true });
-})();
-
 // Quality filter histogram
 (function() {
 	const c = document.getElementById('filter-viz');
@@ -258,42 +213,6 @@ The implication: data work has higher ROI than architecture work for most practi
 		plot_bgcolor: 'rgba(0,0,0,0)',
 		legend: { x: 0.65, y: 0.95 },
 		shapes: [{ type: 'line', x0: 0.55, x1: 0.55, y0: 0, y1: 9, line: { color: '#ef4444', dash: 'dash', width: 2 } }]
-	}, { responsive: true });
-})();
-
-// Deduplication: document similarity matrix
-(function() {
-	const c = document.getElementById('dedup-viz');
-	if (!c) return;
-
-	const N = 24;
-	const z = [];
-	for (let i = 0; i < N; i++) {
-		const row = [];
-		for (let j = 0; j < N; j++) {
-			if (i === j) row.push(1);
-			else if (Math.abs(i - j) <= 2 && Math.random() > 0.4) row.push(0.85 + Math.random() * 0.1);
-			else if ((i < 6 && j < 6) || (i >= 6 && i < 12 && j >= 6 && j < 12) || (i >= 12 && i < 18 && j >= 12 && j < 18) || (i >= 18 && j >= 18)) {
-				if (Math.random() > 0.6) row.push(0.7 + Math.random() * 0.2);
-				else row.push(Math.random() * 0.3);
-			}
-			else row.push(Math.random() * 0.2);
-		}
-		z.push(row);
-	}
-
-	Plotly.newPlot('dedup-viz', [{
-		z, type: 'heatmap',
-		colorscale: [[0, '#0f172a'], [0.5, '#fbbf24'], [1, '#ef4444']],
-		zmin: 0, zmax: 1,
-		colorbar: { title: 'Jaccard' }
-	}], {
-		title: { text: 'Document similarity matrix (blocks = near-duplicate clusters)', font: { size: 13 } },
-		xaxis: { showticklabels: false },
-		yaxis: { showticklabels: false, autorange: 'reversed' },
-		margin: { t: 50, b: 30, l: 30, r: 30 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)'
 	}, { responsive: true });
 })();
 
