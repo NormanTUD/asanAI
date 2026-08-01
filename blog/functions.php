@@ -160,6 +160,7 @@ function load_base_js () {
 	js("fcnn_visualization");
 	js("init");
 	js("cluster");
+	js("polish");
 	js("helper");
 	js("master_vis");
 	js("loader");

@@ -5475,3 +5475,328 @@ html.dark .agent-loop-step {
 /* keep code blocks inside a cluster readable */
 .cl-block pre, .cl-block code { background: rgba(0,0,0,0.04); }
 html.dark .cl-block pre, html.dark .cl-block code { background: rgba(255,255,255,0.04); }
+
+/* ════════════════════════════════════════════════════════════
+   POLISH — small, non-obtrusive touches that improve readability
+   and the quiet beauty of the prose. Every rule here is opt-in
+   by the surrounding element so nothing fights for attention.
+   ════════════════════════════════════════════════════════ */
+
+/* ── 1. Selection colour tuned to the aurora palette ── */
+::selection {
+	background: hsla(218, 80%, 70%, 0.32);
+	color: inherit;
+	text-shadow: none;
+}
+html.dark ::selection {
+	background: hsla(218, 80%, 70%, 0.42);
+}
+
+/* ── 2. Blockquote — fall back gracefully without a cluster ──
+   The existing blockquote style references --cl-base etc. that are
+   only set when a [data-cluster] is present. We give plain blockquotes
+   a quiet indigo treatment so they always look intentional. */
+blockquote {
+	--bq-base : #6366f1;
+	--bq-glow : rgba(99,102,241,.18);
+	--bq-soft : rgba(99,102,241,.10);
+	--bq-halo1: rgba(99,102,241,.10);
+	--bq-halo2: rgba(124,58,237,.06);
+	--bq-halo3: rgba(56,189,248,.06);
+}
+html.dark blockquote {
+	--bq-base : #818cf8;
+	--bq-glow : rgba(129,140,248,.22);
+	--bq-soft : rgba(129,140,248,.12);
+	--bq-halo1: rgba(129,140,248,.13);
+	--bq-halo2: rgba(168,85,247,.08);
+	--bq-halo3: rgba(56,189,248,.08);
+}
+/* Quiet glyph in the corner — only on first-letter of the first <p> */
+blockquote > p:first-of-type::before {
+	content: '\201C';
+	display: inline-block;
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 2.4em;
+	line-height: 0.9;
+	margin-right: .12em;
+	margin-left: -.08em;
+	vertical-align: -.32em;
+	color: var(--bq-base);
+	opacity: .55;
+	font-weight: 400;
+}
+
+/* ── 3. Pull-quote cluster — `[[c:quote]]` becomes a book quote ── */
+.cl-block[data-cluster="quote"],
+.cl-block[data-cluster="pull-quote"] {
+	padding: 1.8em 2.2em 1.4em;
+	font-size: 1.18rem;
+	font-style: italic;
+	--cl-base : hsl(282, 60%, 60%);
+	--cl-glow : hsla(282, 60%, 60%, .22);
+	--cl-soft : hsla(282, 60%, 60%, .08);
+	--cl-mist : hsla(282, 60%, 60%, .04);
+	--cl-halo1: hsla(282, 70%, 70%, .14);
+	--cl-halo2: hsla(218, 70%, 70%, .08);
+	--cl-halo3: hsla(330, 70%, 70%, .08);
+	border-left-width: 2px;
+}
+.cl-block[data-cluster="quote"] > :first-child::before,
+.cl-block[data-cluster="pull-quote"] > :first-child::before {
+	content: '\201C';
+	display: inline-block;
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 2.6em;
+	line-height: .8;
+	margin-right: .08em;
+	margin-left: -.06em;
+	vertical-align: -.42em;
+	color: var(--cl-base);
+	opacity: .65;
+	font-style: normal;
+}
+.cl-block[data-cluster="quote"] > :last-child::after,
+.cl-block[data-cluster="pull-quote"] > :last-child::after {
+	content: '\201D';
+	display: inline-block;
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 2.6em;
+	line-height: .4;
+	margin-left: .06em;
+	vertical-align: -.56em;
+	color: var(--cl-base);
+	opacity: .65;
+	font-style: normal;
+}
+
+/* ── 4. Drop cap — only the first paragraph after a heading ── */
+.md > h1 + p::first-letter,
+.md > h2 + p::first-letter,
+.md > h3 + p::first-letter {
+	font-family: var(--mn-font-heading);
+	font-weight: 700;
+	font-size: 3.2em;
+	float: left;
+	line-height: .9;
+	padding: .05em .12em 0 0;
+	margin-top: .04em;
+	color: var(--mn-heading);
+	background: linear-gradient(135deg,
+		hsla(218, 80%, 70%, .85) 0%,
+		hsla(282, 80%, 70%, .85) 50%,
+		hsla(330, 80%, 70%, .85) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+/* ── 5. Heading anchor links — shareable section URLs ── */
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+	position: relative;
+	scroll-margin-top: 5rem;
+}
+.md h1 > .cl-h-anchor,
+.md h2 > .cl-h-anchor,
+.md h3 > .cl-h-anchor,
+.md h4 > .cl-h-anchor,
+.md h5 > .cl-h-anchor,
+.md h6 > .cl-h-anchor {
+	position: absolute;
+	left: -1.4em;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0;
+	font-weight: 400;
+	color: var(--mn-text-muted);
+	text-decoration: none;
+	font-size: .8em;
+	transition: opacity .18s ease, color .18s ease, transform .18s ease;
+	padding: 0 .25em;
+	border-radius: 4px;
+}
+.md h1:hover > .cl-h-anchor,
+.md h2:hover > .cl-h-anchor,
+.md h3:hover > .cl-h-anchor,
+.md h4:hover > .cl-h-anchor,
+.md h5:hover > .cl-h-anchor,
+.md h6:hover > .cl-h-anchor {
+	opacity: 1;
+	transform: translateY(-50%) translateX(.15em);
+}
+.md h1:hover > .cl-h-anchor:hover,
+.md h2:hover > .cl-h-anchor:hover,
+.md h3:hover > .cl-h-anchor:hover,
+.md h4:hover > .cl-h-anchor:hover,
+.md h5:hover > .cl-h-anchor:hover,
+.md h6:hover > .cl-h-anchor:hover {
+	color: var(--mn-accent);
+}
+
+/* ── 6. TOC scroll-spy — current section pulses in the nav ── */
+#toc li.toc-current > a {
+	color: var(--mn-accent);
+	font-weight: 600;
+}
+#toc li.toc-current > a::before {
+	content: '\2022';
+	margin-right: .4em;
+	color: var(--mn-accent);
+	opacity: .8;
+}
+#toc a {
+	transition: color .15s ease;
+}
+
+/* ── 7. Elegant figcaption ── */
+.md figure figcaption,
+.md > figcaption {
+	font-size: .82em;
+	font-style: italic;
+	color: var(--mn-text-muted);
+	margin-top: .8em;
+	padding-top: .55em;
+	border-top: 1px solid var(--mn-border);
+	text-align: left;
+	line-height: 1.5;
+	max-width: 90%;
+}
+
+/* ── 8. Inline <kbd> — feels like an actual key ── */
+.md kbd, .md :not(pre) > kbd {
+	display: inline-block;
+	font-family: var(--mn-font-mono);
+	font-size: .82em;
+	padding: .12em .45em;
+	border: 1px solid var(--mn-border);
+	border-bottom-width: 2px;
+	border-radius: 5px;
+	background: linear-gradient(180deg,
+		rgba(255,255,255,.85) 0%,
+		rgba(241,245,249,.95) 100%);
+	color: var(--mn-text);
+	box-shadow: 0 1px 0 rgba(15,23,42,.06);
+	vertical-align: baseline;
+	line-height: 1;
+}
+html.dark .md kbd {
+	background: linear-gradient(180deg,
+		rgba(51,65,85,.6) 0%,
+		rgba(30,41,59,.85) 100%);
+	border-color: rgba(148,163,184,.25);
+}
+
+/* ── 9. Inline <mark> — soft highlighter, not bright yellow ── */
+.md mark {
+	background: linear-gradient(180deg, transparent 55%,
+		hsla(48, 95%, 70%, .55) 55%, hsla(48, 95%, 70%, .55) 95%, transparent 95%);
+	color: inherit;
+	padding: 0 .12em;
+	border-radius: 2px;
+}
+html.dark .md mark {
+	background: linear-gradient(180deg, transparent 55%,
+		hsla(48, 95%, 60%, .35) 55%, hsla(48, 95%, 60%, .35) 95%, transparent 95%);
+}
+
+/* ── 10. Code-block language label — subtle, top-right corner ── */
+.md pre {
+	position: relative;
+}
+.md pre[class*="language-"]::before,
+.md pre code[class*="language-"]::before {
+	content: attr(data-language);
+	position: absolute;
+	top: .45em;
+	right: .7em;
+	font-family: var(--mn-font-mono);
+	font-size: .68em;
+	letter-spacing: .04em;
+	color: var(--mn-text-muted);
+	opacity: .55;
+	text-transform: lowercase;
+	pointer-events: none;
+}
+.md pre[class*="language-"]:hover::before,
+.md pre code[class*="language-"]:hover::before {
+	opacity: .9;
+}
+
+/* ── 11. Typography hygiene — modern, browser-native, free polish ── */
+.md p,
+.md li,
+.md blockquote {
+	text-wrap: pretty;
+	hyphens: auto;
+	-webkit-hyphens: auto;
+}
+.md h1, .md h2, .md h3, .md h4 {
+	text-wrap: balance;
+	hyphens: manual;
+	-webkit-hyphens: manual;
+}
+.md figure { scroll-margin-top: 5rem; }
+.md table { scroll-margin-top: 5rem; }
+
+/* ── 12. Quiet link treatment — reveal underline on hover only ── */
+.md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
+	text-decoration: underline;
+	text-decoration-color: rgba(99,102,241,.30);
+	text-decoration-thickness: 1px;
+	text-underline-offset: .22em;
+	transition: text-decoration-color .18s ease, color .18s ease;
+}
+.md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
+	text-decoration-color: currentColor;
+	text-decoration-thickness: 1.5px;
+}
+
+/* ── 13. Smooth scrolling for in-page anchors ── */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	.md h1, .md h2, .md h3, .md h4, .md h5, .md h6 { transition: none; }
+	.cl-h-anchor { transition: none; }
+}
+
+/* ── 14. First-letter of paragraphs INSIDE block clusters — no cap ── */
+.cl-block > p:first-child::first-letter {
+	font-size: inherit;
+	float: none;
+	background: none;
+	-webkit-text-fill-color: inherit;
+	color: inherit;
+}
+
+/* ── 15. Number anchors on headings (count in their h-level) ── */
+.md { counter-reset: h2count h3count h4count; }
+.md h2 { counter-reset: h3count; counter-increment: h2count; }
+.md h3 { counter-increment: h3count; }
+.md h2::before {
+	content: counter(h2count, decimal) ".\00a0\00a0";
+	color: var(--mn-text-muted);
+	font-weight: 500;
+	font-size: .72em;
+	vertical-align: .25em;
+	letter-spacing: .02em;
+	font-variant-numeric: tabular-nums;
+}
+.md h3::before {
+	content: counter(h2count) "." counter(h3count) "\00a0\00a0";
+	color: var(--mn-text-muted);
+	font-weight: 500;
+	font-size: .78em;
+	vertical-align: .18em;
+	letter-spacing: .02em;
+	font-variant-numeric: tabular-nums;
+}
+
+/* skip numbering if heading already starts with a number */
+.md h2[class*="skip-num"]::before,
+.md h3[class*="skip-num"]::before,
+.md h2 > .skip-num-marker ~ ::before,
+.md h3 > .skip-num-marker ~ ::before { content: none; }
+
+/* Opt-out: any heading that contains a span.no-num does not get numbered */
+.md h2:has(> .no-num)::before,
+.md h3:has(> .no-num)::before { content: none; }
