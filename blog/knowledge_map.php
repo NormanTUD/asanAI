@@ -127,15 +127,6 @@ foreach (glob('*.php') as $file) {
 		foreach ($cm[1] as $k) { $k = trim($k); if ($k !== '') $cites[$k] = true; }
 	}
 
-	/* cross-links to other module pages */
-	$links = [];
-	if (preg_match_all('/href=["\']([a-zA-Z0-9_\-]+)(?:\.php)?(?:#[^"\']*)?["\']/i', $content, $lm)) {
-		foreach ($lm[1] as $t) {
-			$t = trim($t, '/');
-			if ($t !== $slug) $links[$t] = true;
-		}
-	}
-
 	/* concept hits */
 	$conceptCounts = [];
 	foreach ($KM_CONCEPTS as $label => $kws) {
@@ -184,7 +175,6 @@ foreach (glob('*.php') as $file) {
 		'url'         => $slug . '.php',
 		'concepts'    => $conceptCounts,
 		'citations'   => array_keys($cites),
-		'links'       => array_keys($links),
 		'headings'    => $headings,
 		'wordCount'   => str_word_count($text),
 	];
@@ -210,11 +200,6 @@ $moduleKeys = array_keys($modules);
 
 foreach ($moduleKeys as $slug) {
 	$m = $modules[$slug];
-	foreach ($m['links'] as $t) {
-		if ($t !== $slug && isset($modules[$t])) {
-			km_add_edge($edges, $slug, $t, 'link', 1, [$t]);
-		}
-	}
 	foreach ($m['citations'] as $ck) {
 		foreach ($moduleKeys as $other) {
 			if ($other === $slug) continue;
@@ -315,303 +300,316 @@ $KM = [
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0f1f">
 <title>The Web of Knowledge — Course Map</title>
 <script>
-function toggleTheme() {
-	var html = document.documentElement;
-	var isDark = !html.classList.contains('dark');
-	if (isDark) html.classList.add('dark'); else html.classList.remove('dark');
-	var btn = document.getElementById('km-theme-toggle');
-	if (btn) btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
-	var meta = document.querySelector('meta[name="theme-color"]');
-	if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
-	document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
-}
 (function() {
-	if (document.cookie.indexOf('theme=') === -1) {
-		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) toggleTheme();
+	function apply(theme) {
+		var t = theme === 'light' ? 'light' : 'dark';
+		document.documentElement.classList.toggle('light', t === 'light');
+		var meta = document.querySelector('meta[name="theme-color"]');
+		if (meta) meta.content = t === 'light' ? '#f2f4fb' : '#0a0f1f';
 	}
+	apply(document.cookie.indexOf('theme=light') !== -1 ? 'light' : 'dark');
+	window.__kmSetTheme = function(t) {
+		document.cookie = 'theme=' + t + '; path=/; max-age=' + 60*60*24*365;
+		apply(t);
+	};
 })();
 </script>
 <style>
-:root {
-	--km-bg: #ffffff;
-	--km-surface: #f8fafc;
-	--km-surface2: #ffffff;
-	--km-border: #e2e8f0;
-	--km-text: #1e293b;
-	--km-text-soft: #475569;
-	--km-text-mute: #94a3b8;
-	--km-accent: #6366f1;
-	--km-shadow: 0 10px 30px rgba(15,23,42,0.08);
-}
-html.dark {
-	--km-bg: #0f172a;
-	--km-surface: #16213a;
-	--km-surface2: #1e293b;
-	--km-border: #334155;
-	--km-text: #e2e8f0;
-	--km-text-soft: #cbd5e1;
-	--km-text-mute: #94a3b8;
-	--km-accent: #818cf8;
-	--km-shadow: 0 10px 30px rgba(0,0,0,0.45);
-}
 * { box-sizing: border-box; }
+:root {
+	--bg0: #0a0f1f; --bg1: #101a33; --bg2: #0c1226;
+	--card: rgba(19,28,56,.82); --card-solid: #141d3a;
+	--line: rgba(120,145,210,.16); --line-strong: rgba(150,170,230,.38);
+	--ink: #e9eeff; --ink-soft: #aab6d8; --ink-mute: #6b7aa8;
+	--accent: #8ab4ff; --accent2: #c084fc;
+	--shadow: 0 24px 70px rgba(0,0,0,.5);
+	--r: 18px;
+	--glow: rgba(138,180,255,.12);
+}
+html.light {
+	--bg0: #f2f4fb; --bg1: #ffffff; --bg2: #e9edf8;
+	--card: rgba(255,255,255,.9); --card-solid: #ffffff;
+	--line: rgba(30,50,90,.14); --line-strong: rgba(60,90,160,.32);
+	--ink: #16203a; --ink-soft: #4a5678; --ink-mute: #8a94b4;
+	--accent: #3b6fd4; --accent2: #7c4fd4;
+	--shadow: 0 24px 60px rgba(40,60,120,.18);
+	--glow: rgba(60,110,220,.10);
+}
 html, body { margin: 0; padding: 0; }
 body {
-	background: var(--km-bg);
-	color: var(--km-text);
-	font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-	min-height: 100vh;
+	background: var(--bg0); color: var(--ink);
+	font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	overflow-x: hidden;
 }
-a { color: var(--km-accent); text-decoration: none; }
+::selection { background: rgba(138,180,255,.35); }
+a { color: var(--accent); text-decoration: none; }
 
-#km-theme-toggle {
-	position: fixed; top: 16px; right: 20px; z-index: 1000;
-	width: 42px; height: 42px; border: 1px solid var(--km-border);
-	border-radius: 12px; background: var(--km-surface2);
-	box-shadow: var(--km-shadow); color: var(--km-text-soft);
-	cursor: pointer; font-size: 1.2rem; display: flex;
-	align-items: center; justify-content: center;
+/* ── hero ── */
+.km-hero { text-align: center; padding: 30px 18px 8px; }
+.km-eyebrow {
+	display: inline-flex; align-items: center; gap: 8px;
+	font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+	color: var(--ink-mute); margin-bottom: 12px;
 }
-#km-theme-toggle:hover { color: var(--km-accent); border-color: var(--km-accent); }
-
-.km-shell { max-width: 1720px; margin: 0 auto; padding: 24px 22px 60px; }
-.km-hero { text-align: center; margin: 10px 0 6px; }
-.km-hero .km-eyebrow {
-	font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
-	color: var(--km-text-mute); margin-bottom: 6px;
+.km-eyebrow::before, .km-eyebrow::after { content: ""; width: 34px; height: 1px; background: var(--line-strong); }
+.km-title {
+	margin: 0; font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 800; letter-spacing: -.02em;
+	background: linear-gradient(100deg, #7dd3fc, #c084fc 45%, #f472b6 80%);
+	-webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.km-hero h1 {
-	margin: 0; font-size: clamp(1.7rem, 3.2vw, 2.6rem); letter-spacing: 0.01em;
-}
-.km-hero h1 em { font-style: normal; color: var(--km-accent); }
-.km-hero p { max-width: 720px; margin: 10px auto 0; color: var(--km-text-soft); line-height: 1.6; font-size: 0.98rem; }
-
-/* stats strip */
-.km-stats {
-	display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 18px 0 4px;
-}
+.km-title .of { background: none; color: var(--ink); -webkit-text-fill-color: var(--ink); }
+.km-sub { max-width: 660px; margin: 10px auto 0; color: var(--ink-soft); line-height: 1.65; font-size: .95rem; }
+.km-stats { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 16px 0 2px; }
 .km-stat {
-	background: var(--km-surface2); border: 1px solid var(--km-border);
-	border-radius: 12px; padding: 8px 16px; font-size: 0.85rem; color: var(--km-text-soft);
-	display: flex; align-items: center; gap: 8px;
+	font-size: .78rem; color: var(--ink-mute); padding: 5px 12px;
+	border: 1px solid var(--line); border-radius: 999px; background: var(--card);
+	display: inline-flex; align-items: center; gap: 6px;
 }
-.km-stat b { color: var(--km-accent); font-size: 1rem; }
-.km-stat .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.km-stat b { color: var(--ink); font-weight: 700; }
+.km-stat .sw { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
-/* toolbar */
-.km-toolbar {
-	position: sticky; top: 10px; z-index: 500; margin: 18px 0 16px;
-	background: var(--km-surface2); border: 1px solid var(--km-border);
-	border-radius: 16px; box-shadow: var(--km-shadow); padding: 12px 14px;
-	display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+/* ── stage ── */
+.km-stage {
+	display: flex; flex-direction: column; gap: 14px;
+	margin: 6px auto 34px; padding: 0 18px;
+	max-width: 1560px;
 }
-.km-search-wrap { position: relative; flex: 1 1 260px; min-width: 220px; }
-.km-search-wrap svg {
-	position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-	width: 16px; height: 16px; color: var(--km-text-mute); pointer-events: none;
+.km-canvas {
+	position: relative; height: calc(100vh - 250px); min-height: 520px;
+	border: 1px solid var(--line); border-radius: var(--r);
+	overflow: hidden; box-shadow: var(--shadow);
+	background:
+		radial-gradient(120% 90% at 50% -10%, var(--bg1) 0%, transparent 55%),
+		radial-gradient(60% 45% at 85% 100%, rgba(124,84,212,.10) 0%, transparent 60%),
+		radial-gradient(55% 45% at 8% 100%, rgba(56,189,248,.10) 0%, transparent 60%),
+		var(--bg0);
 }
-.km-search {
-	width: 100%; padding: 10px 14px 10px 38px; font-size: 0.95rem;
-	background: var(--km-surface); color: var(--km-text);
-	border: 1.5px solid var(--km-border); border-radius: 10px; outline: none;
-	transition: border-color 0.15s;
+.km-canvas::after {
+	content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+	background-image:
+		radial-gradient(rgba(160,185,255,.12) 1px, transparent 1.4px),
+		radial-gradient(rgba(160,185,255,.08) 1px, transparent 1.4px);
+	background-size: 38px 38px, 19px 19px;
+	background-position: 0 0, 9px 9px;
+	mask-image: radial-gradient(120% 100% at 50% 0%, #000 40%, transparent 95%);
 }
-.km-search:focus { border-color: var(--km-accent); }
-.km-search-mode {
-	position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-	font-size: 0.72rem; color: var(--km-text-mute); letter-spacing: 0.05em;
+#km-chart { position: absolute; inset: 0; z-index: 2; }
+.km-lane-glow { position: absolute; left: -8%; width: 116%; height: 92px; pointer-events: none; z-index: 0; border-radius: 50%; filter: blur(26px); opacity: .07; }
+.km-lane-label {
+	position: absolute; left: 10px; z-index: 3; font-size: .66rem; letter-spacing: .12em;
+	text-transform: uppercase; color: var(--ink-mute); pointer-events: none;
+	transform: translateY(-50%); display: flex; align-items: center; gap: 7px; white-space: nowrap;
 }
-.km-toolbar .sep { width: 1px; height: 30px; background: var(--km-border); }
-.km-chip-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.km-chip {
-	border: 1px solid var(--km-border); background: var(--km-surface);
-	color: var(--km-text-soft); border-radius: 999px; padding: 6px 12px;
-	font-size: 0.8rem; cursor: pointer; user-select: none; transition: all 0.15s;
-	display: flex; align-items: center; gap: 6px;
-}
-.km-chip .sw { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-.km-chip:hover { border-color: var(--km-accent); color: var(--km-accent); }
-.km-chip.on { background: var(--km-accent); border-color: var(--km-accent); color: #fff; }
-.km-chip.on .sw { background: #fff !important; }
-.km-select {
-	padding: 7px 10px; font-size: 0.82rem; color: var(--km-text-soft);
-	background: var(--km-surface); border: 1px solid var(--km-border); border-radius: 10px;
-}
-.km-label { font-size: 0.72rem; color: var(--km-text-mute); text-transform: uppercase; letter-spacing: 0.08em; }
+.km-lane-label .sw { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 
-/* layout */
-.km-layout {
-	display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px;
-}
-.km-chart-wrap {
-	position: relative; background: var(--km-surface2); border: 1px solid var(--km-border);
-	border-radius: 16px; overflow: hidden; box-shadow: var(--km-shadow);
-	min-height: 640px; height: calc(100vh - 250px); min-height: 560px;
-}
-#km-chart { width: 100%; height: 100%; }
+/* legend + controls */
 .km-legend {
-	position: absolute; top: 12px; left: 12px; z-index: 10; background: var(--km-surface2);
-	border: 1px solid var(--km-border); border-radius: 12px; padding: 10px 12px;
-	font-size: 0.74rem; color: var(--km-text-soft); max-width: 190px;
-	box-shadow: var(--km-shadow); line-height: 1.7;
+	position: absolute; top: 14px; left: 14px; z-index: 6;
+	background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+	padding: 10px 12px; backdrop-filter: blur(10px); max-width: 210px;
 }
-.km-legend .lh { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--km-text-mute); margin-bottom: 4px; }
-.km-legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
-.km-legend .sw.dot { border-radius: 50%; }
-.km-legend b { color: var(--km-text); }
-.km-hint {
-	position: absolute; bottom: 12px; left: 12px; z-index: 10;
-	font-size: 0.72rem; color: var(--km-text-mute); background: var(--km-surface2);
-	border: 1px solid var(--km-border); border-radius: 8px; padding: 5px 10px; opacity: 0.85;
-}
-.km-badge {
-	position: absolute; top: 12px; right: 12px; z-index: 10;
-	font-size: 0.72rem; color: var(--km-text-mute); background: var(--km-surface2);
-	border: 1px solid var(--km-border); border-radius: 999px; padding: 5px 12px;
-}
+.km-legend .lh { font-size: .62rem; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-mute); margin-bottom: 7px; }
+.km-legend .lg-row { display: flex; align-items: center; gap: 8px; font-size: .72rem; color: var(--ink-soft); padding: 2.5px 0; line-height: 1.25; }
+.km-legend .lg-row .sw { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.km-legend .edge-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.km-legend .edge-row .lg-row .sw { width: 16px; height: 0; border-top: 2px solid; border-radius: 0; }
+.km-legend .edge-row .lg-row.dash .sw { border-top-style: dashed; }
+.km-legend .edge-row .lg-row.glow .sw { border-top: 3px solid; filter: drop-shadow(0 0 3px rgba(255,255,255,.35)); }
 
-/* side panel */
-.km-panel {
-	background: var(--km-surface2); border: 1px solid var(--km-border); border-radius: 16px;
-	box-shadow: var(--km-shadow); overflow: hidden; display: flex; flex-direction: column;
-	min-height: 560px; height: calc(100vh - 250px); min-height: 560px;
+.km-controls {
+	position: absolute; top: 14px; right: 14px; z-index: 6;
+	display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
 }
-.km-panel-head {
-	padding: 14px 16px; border-bottom: 1px solid var(--km-border);
-	display: flex; align-items: center; justify-content: space-between; gap: 8px;
+.km-pill {
+	display: inline-flex; align-items: center; gap: 6px;
+	font-size: .74rem; color: var(--ink-soft); cursor: pointer; user-select: none;
+	padding: 6px 12px; border-radius: 999px;
+	background: var(--card); border: 1px solid var(--line);
+	transition: all .18s;
 }
-.km-panel-head h2 { margin: 0; font-size: 1rem; }
-.km-panel-head .km-close { cursor: pointer; border: 0; background: none; color: var(--km-text-mute); font-size: 1.2rem; padding: 0 4px; }
-.km-panel-head .km-close:hover { color: var(--km-text); }
-.km-panel-body { padding: 16px; overflow-y: auto; flex: 1; font-size: 0.9rem; line-height: 1.55; }
+.km-pill .sw { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.km-pill:hover { border-color: var(--line-strong); color: var(--ink); }
+.km-pill.on { background: var(--line-strong); border-color: var(--line-strong); color: var(--ink); }
+.km-pill.off { opacity: .55; }
+.km-pill.off .sw { background: transparent !important; }
+.km-iconbtn {
+	width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+	font-size: .95rem; cursor: pointer; color: var(--ink-soft);
+	background: var(--card); border: 1px solid var(--line); border-radius: 999px; transition: all .18s;
+}
+.km-iconbtn:hover { color: var(--ink); border-color: var(--line-strong); }
 
-.km-node-detail .nd-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 2px; }
-.km-node-detail .nd-title .nd-icon { margin-right: 6px; }
-.km-node-detail .nd-meta { font-size: 0.76rem; color: var(--km-text-mute); margin-bottom: 10px; }
-.km-node-detail .nd-desc { color: var(--km-text-soft); margin-bottom: 14px; }
-.km-node-detail .nd-open { display: inline-block; margin-bottom: 14px; }
-.km-node-detail .nd-section { margin: 16px 0 6px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--km-text-mute); }
+/* search */
+.km-search-wrap { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 7; width: min(520px, 62%); }
+.km-search {
+	width: 100%; padding: 11px 40px 11px 42px; font-size: .92rem;
+	background: var(--card); color: var(--ink);
+	border: 1px solid var(--line-strong); border-radius: 999px;
+	backdrop-filter: blur(12px); outline: none; box-shadow: var(--shadow);
+	transition: border-color .18s, box-shadow .18s;
+}
+.km-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow), var(--shadow); }
+.km-search-ic {
+	position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+	width: 15px; height: 15px; color: var(--ink-mute); pointer-events: none;
+}
+.km-search-kbd {
+	position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+	font-size: .62rem; color: var(--ink-mute); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; pointer-events: none;
+}
+.km-results {
+	position: absolute; top: 62px; left: 50%; transform: translateX(-50%);
+	z-index: 8; width: min(520px, 100%);
+	background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+	box-shadow: var(--shadow); backdrop-filter: blur(16px); overflow: hidden;
+	display: none; max-height: min(62vh, 540px);
+}
+.km-results.show { display: block; }
+.km-results .rs-head { padding: 11px 14px 7px; font-size: .76rem; color: var(--ink-soft); border-bottom: 1px solid var(--line); }
+.km-results .rs-body { overflow-y: auto; max-height: calc(min(62vh, 540px) - 40px); }
+.km-results .rs-item {
+	display: flex; gap: 10px; padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--line);
+	transition: background .15s;
+}
+.km-results .rs-item:last-child { border-bottom: 0; }
+.km-results .rs-item:hover, .km-results .rs-item.hot { background: var(--glow); }
+.km-results .rs-ic {
+	width: 30px; height: 30px; flex: 0 0 30px; border-radius: 9px;
+	display: flex; align-items: center; justify-content: center; font-size: 15px;
+	background: rgba(255,255,255,.06);
+}
+.km-results .rs-t { font-size: .84rem; font-weight: 600; color: var(--ink); }
+.km-results .rs-p { font-size: .64rem; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .08em; margin-top: 1px; }
+.km-results .rs-s { font-size: .74rem; color: var(--ink-soft); line-height: 1.45; margin-top: 3px; }
+.km-results .rs-n { font-size: .62rem; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 0 6px; margin-left: 5px; }
+.km-results mark { background: rgba(251,191,36,.35); color: var(--ink); border-radius: 3px; padding: 0 2px; }
+.km-results .rs-empty { padding: 24px 16px; text-align: center; color: var(--ink-mute); font-size: .82rem; }
 
+/* hint */
+.km-hint { position: absolute; bottom: 12px; left: 14px; z-index: 5; font-size: .7rem; color: var(--ink-mute); display: flex; gap: 14px; align-items: center; }
+.km-hint kbd { border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; font-size: .62rem; }
+
+/* detail card */
+.km-detail {
+	position: absolute; top: 0; right: 0; bottom: 0; z-index: 9; width: 380px;
+	background: var(--card-solid); border-left: 1px solid var(--line);
+	box-shadow: -24px 0 70px rgba(0,0,0,.4);
+	transform: translateX(104%); transition: transform .28s cubic-bezier(.2,.8,.25,1);
+	display: flex; flex-direction: column; overflow: hidden;
+}
+.km-detail.show { transform: translateX(0); }
+.km-detail-head { position: relative; padding: 20px 20px 14px; color: #fff; }
+.km-detail-head::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, var(--dh-c, #6366f1), rgba(10,15,31,.96) 78%); }
+.km-detail-head > * { position: relative; z-index: 1; }
+.km-detail-head .dh-icon { font-size: 26px; margin-bottom: 4px; }
+.km-detail-head .dh-part { font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; opacity: .8; }
+.km-detail-head h2 { margin: 2px 0 4px; font-size: 1.35rem; line-height: 1.2; letter-spacing: -.01em; }
+.km-detail-head .dh-x {
+	position: absolute; top: 12px; right: 12px; z-index: 2; width: 30px; height: 30px;
+	border: 0; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff;
+	font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.km-detail-head .dh-x:hover { background: rgba(255,255,255,.28); }
+.km-detail-body { flex: 1; overflow-y: auto; padding: 16px 20px 22px; font-size: .86rem; color: var(--ink-soft); line-height: 1.6; }
+.km-detail-body .ds-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.km-detail-body .ds-chip { font-size: .68rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
+.km-detail-body .ds-desc { margin-bottom: 14px; }
+.km-detail-body .ds-sec { font-size: .66rem; text-transform: uppercase; letter-spacing: .16em; color: var(--ink-mute); margin: 18px 0 8px; display: flex; align-items: center; gap: 8px; }
+.km-detail-body .ds-sec::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .km-tag {
-	display: inline-block; background: var(--km-surface); border: 1px solid var(--km-border);
-	border-radius: 999px; padding: 2px 9px; font-size: 0.74rem; margin: 2px 3px 2px 0; color: var(--km-text-soft);
+	display: inline-block; font-size: .7rem; padding: 3px 9px; margin: 2px 3px 2px 0;
+	border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); background: var(--glow);
 }
-.km-conn { border: 1px solid var(--km-border); border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; background: var(--km-surface); }
-.km-conn .cc-type { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--km-text-mute); }
-.km-conn .cc-name { font-weight: 600; font-size: 0.9rem; margin: 1px 0 3px; }
-.km-conn .cc-why { font-size: 0.74rem; color: var(--km-text-soft); }
-.km-conn a.cc-name:hover { color: var(--km-accent); }
-.km-conn.ct-link { border-left: 3px solid #64748b; }
-.km-conn.ct-citation { border-left: 3px solid #10b981; }
-.km-conn.ct-concept { border-left: 3px solid #f59e0b; }
-.km-conn.ct-course { border-left: 3px solid #a5b4fc; }
-
-.km-section-row { padding: 6px 4px; border-bottom: 1px dashed var(--km-border); font-size: 0.85rem; }
-.km-section-row a { color: var(--km-text-soft); }
-.km-section-row a:hover { color: var(--km-accent); }
-
-/* search results */
-.km-search-res .sr-count { font-size: 0.82rem; color: var(--km-text-mute); margin-bottom: 12px; }
-.km-search-res .sr-item {
-	display: block; border: 1px solid var(--km-border); border-radius: 10px; padding: 10px 12px;
-	margin-bottom: 9px; background: var(--km-surface); cursor: pointer;
+.km-conn { display: flex; align-items: flex-start; gap: 9px; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+.km-conn:last-child { border-bottom: 0; }
+.km-conn .cc-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; margin-top: 5px; }
+.km-conn .cc-main { min-width: 0; }
+.km-conn .cc-name { font-weight: 600; color: var(--ink); font-size: .84rem; }
+.km-conn .cc-name:hover { color: var(--accent); }
+.km-conn .cc-why { font-size: .7rem; color: var(--ink-mute); margin-top: 1px; }
+.km-sec-link { display: block; padding: 4px 0; font-size: .78rem; color: var(--ink-soft); }
+.km-sec-link:hover { color: var(--accent); }
+.km-open {
+	display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+	padding: 10px 16px; border-radius: 12px; font-size: .84rem; font-weight: 600; color: #fff;
+	background: linear-gradient(120deg, var(--dh-c, #6366f1), var(--dh-c2, #8b5cf6));
+	box-shadow: 0 8px 24px rgba(0,0,0,.35); transition: transform .15s;
 }
-.km-search-res .sr-item:hover { border-color: var(--km-accent); }
-.km-search-res .sr-item.sr-active { border-color: var(--km-accent); box-shadow: 0 0 0 2px var(--km-accent); }
-.km-search-res .sr-title { font-weight: 600; font-size: 0.9rem; color: var(--km-text); margin-bottom: 2px; }
-.km-search-res .sr-title .badge { font-size: 0.68rem; color: var(--km-accent); border: 1px solid var(--km-accent); border-radius: 999px; padding: 0 6px; margin-left: 5px; }
-.km-search-res .sr-page { font-size: 0.72rem; color: var(--km-text-mute); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.km-search-res .sr-snippet { font-size: 0.78rem; color: var(--km-text-soft); line-height: 1.5; }
-.km-search-res mark { background: #fde68a; color: #1e293b; border-radius: 3px; padding: 0 2px; }
-html.dark .km-search-res mark { background: #854d0e; color: #fef3c7; }
-.km-search-res .sr-empty { color: var(--km-text-mute); font-size: 0.9rem; padding: 20px 4px; text-align: center; }
+.km-open:hover { transform: translateY(-1px); }
 
-.km-welcome { color: var(--km-text-soft); }
-.km-welcome .w-step { display: flex; gap: 12px; margin-bottom: 14px; }
-.km-welcome .w-num {
-	flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--km-accent); color: #fff;
-	display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;
+/* timeline */
+.km-timeline {
+	position: relative; height: 58px; border: 1px solid var(--line); border-radius: 14px;
+	background: var(--card); overflow: hidden; flex: 0 0 auto;
 }
-.km-welcome .w-title { font-weight: 600; color: var(--km-text); }
-.km-top-concepts { margin-top: 8px; }
+.km-timeline .tl-rail { position: absolute; left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%); background: var(--line); }
+.km-timeline .tl-dot {
+	position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%;
+	border: 2px solid var(--card-solid); transform: translate(-50%, -50%);
+	cursor: pointer; transition: transform .15s, box-shadow .15s; z-index: 2;
+}
+.km-timeline .tl-dot:hover { transform: translate(-50%, -50%) scale(1.45); box-shadow: 0 0 12px currentColor; }
+.km-timeline .tl-dot.on { transform: translate(-50%, -50%) scale(1.3); box-shadow: 0 0 0 3px var(--glow); }
+.km-timeline .tl-part {
+	position: absolute; top: 2px; font-size: .58rem; letter-spacing: .14em; text-transform: uppercase;
+	color: var(--ink-mute); transform: translateX(-50%); z-index: 1; white-space: nowrap;
+}
+.km-timeline .tl-part .sw { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
-@media (max-width: 980px) {
-	.km-layout { grid-template-columns: 1fr; }
-	.km-chart-wrap, .km-panel { height: 60vh; min-height: 420px; }
+@media (max-width: 900px) {
+	.km-detail { width: 100%; }
+	.km-search-wrap { width: calc(100% - 190px); left: 12px; transform: none; }
+	.km-controls { max-width: 170px; }
+	.km-legend { display: none; }
 }
 </style>
 </head>
 <body>
-<button id="km-theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode" onclick="toggleTheme()">&#9790;</button>
 
-<div class="km-shell">
-	<div class="km-hero">
-		<div class="km-eyebrow">Interactive Overview of Every Module</div>
-		<h1>The Web of <em>Knowledge</em></h1>
-		<p>Every course module is a node. The edges are real relationships: shared citations, cross-references, and overlapping concepts. Type to search everything, drag to explore, click a node to see why things belong together.</p>
-	</div>
-
+<div class="km-hero">
+	<div class="km-eyebrow">Interactive course map</div>
+	<h1 class="km-title">The Web of <span class="of">Knowledge</span></h1>
+	<p class="km-sub">Every module is a star in its part of the course. The glowing path is your journey; the threads are shared citations, cross-references and overlapping ideas. Hover to trace, click to explore, search to find anything.</p>
 	<div class="km-stats">
-		<div class="km-stat"><b id="st-modules"></b> modules</div>
-		<div class="km-stat"><b id="st-citations"></b> bibliography entries</div>
-		<div class="km-stat"><b id="st-concepts"></b> concepts tracked</div>
-		<div class="km-stat"><b id="st-edges"></b> connections</div>
-		<div class="km-stat"><span class="dot" style="background:#64748b"></span>links</div>
-		<div class="km-stat"><span class="dot" style="background:#10b981"></span>shared citations</div>
-		<div class="km-stat"><span class="dot" style="background:#f59e0b"></span>shared concepts</div>
+		<div class="km-stat"><b id="st-modules">—</b> modules</div>
+		<div class="km-stat"><b id="st-edges">—</b> connections</div>
+		<div class="km-stat"><b id="st-citations">—</b> citations</div>
+		<div class="km-stat"><b id="st-concepts">—</b> concepts tracked</div>
 	</div>
+</div>
 
-	<div class="km-toolbar">
+<div class="km-stage">
+	<div class="km-canvas" id="km-canvas">
+		<div class="km-lane-label" id="km-lane-labels" style="display:none"></div>
+
+		<div class="km-legend" id="km-legend"></div>
+
+		<div class="km-controls">
+			<div class="km-pill on" data-edge="citation"><span class="sw" style="background:#34d399"></span>Citations</div>
+			<div class="km-pill on" data-edge="concept"><span class="sw" style="background:#fbbf24"></span>Concepts</div>
+			<div class="km-pill on" data-edge="path"><span class="sw" style="background:#fff"></span>Journey</div>
+			<button class="km-iconbtn" id="km-theme" title="Toggle theme">◐</button>
+		</div>
+
 		<div class="km-search-wrap">
-			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-			<input type="text" id="km-search" class="km-search" placeholder="Search across every module, section and citation…" spellcheck="false" autocomplete="off">
-			<span class="km-search-mode" id="km-search-mode"></span>
+			<svg class="km-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+			<input type="text" id="km-search" class="km-search" placeholder="Search every module, section and citation…" spellcheck="false" autocomplete="off">
+			<span class="km-search-kbd" id="km-kbd">Ctrl K</span>
 		</div>
 
-		<div class="sep"></div>
-		<span class="km-label">edges</span>
-		<div class="km-chip-group" id="km-edge-toggles">
-			<div class="km-chip on" data-edge="link"><span class="sw" style="background:#64748b"></span>Links</div>
-			<div class="km-chip on" data-edge="citation"><span class="sw" style="background:#10b981"></span>Citations</div>
-			<div class="km-chip on" data-edge="concept"><span class="sw" style="background:#f59e0b"></span>Concepts</div>
-			<div class="km-chip" data-edge="course"><span class="sw" style="background:#a5b4fc"></span>Learning path</div>
-		</div>
+		<div class="km-results" id="km-results"></div>
+		<div class="km-hint"><span>hover to trace</span><span>click a star to explore</span><span><kbd>Esc</kbd> close</span></div>
 
-		<div class="sep"></div>
-		<span class="km-label">min shared</span>
-		<select id="km-min-shared" class="km-select" title="Minimum number of shared concepts for a concept edge">
-			<option value="1">1 concept</option>
-			<option value="2" selected>2 concepts</option>
-			<option value="3">3 concepts</option>
-			<option value="4">4 concepts</option>
-			<option value="5">5 concepts</option>
-		</select>
+		<div id="km-chart"></div>
 
-		<div class="sep"></div>
-		<span class="km-label">focus</span>
-		<select id="km-concept" class="km-select" title="Highlight modules containing a concept">
-			<option value="">Any concept</option>
-		</select>
+		<div class="km-detail" id="km-detail"></div>
 	</div>
 
-	<div class="km-layout">
-		<div class="km-chart-wrap">
-			<div class="km-legend" id="km-legend"></div>
-			<div class="km-badge" id="km-badge"></div>
-			<div class="km-hint">drag · scroll to zoom · click a node</div>
-			<div id="km-chart"></div>
-		</div>
-
-		<div class="km-panel">
-			<div class="km-panel-head">
-				<h2 id="km-panel-title">Explore</h2>
-				<button class="km-close" id="km-panel-close" aria-label="Close panel" title="Close">&times;</button>
-			</div>
-			<div class="km-panel-body" id="km-panel-body"></div>
-		</div>
-	</div>
+	<div class="km-timeline" id="km-timeline"></div>
 </div>
 
 <script src="echarts.min.js"></script>
@@ -622,554 +620,529 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 (function() {
 	'use strict';
 
-	/* ── globals ── */
 	var DATA = window.KM_DATA;
-	var NODES = DATA.nodes;
-	var EDGES = DATA.edges;
-	var PARTS = DATA.parts;
-	var COLORS = DATA.colors;
-	var CONCEPTS = DATA.concepts;
-
+	var NODES = DATA.nodes, EDGES = DATA.edges, PARTS = DATA.parts, COLORS = DATA.colors, CONCEPTS = DATA.concepts, PATH = DATA.path;
 	var nodeMap = {};
 	NODES.forEach(function(n) { nodeMap[n.id] = n; });
 
 	var chart = echarts.init(document.getElementById('km-chart'));
-	var panelBody = document.getElementById('km-panel-body');
-	var panelTitle = document.getElementById('km-panel-title');
-	var searchInput = document.getElementById('km-search');
-	var searchModeEl = document.getElementById('km-search-mode');
-	var minShared = 2;
-	var edgeOn = { link: true, citation: true, concept: true, course: false };
-	var partOn = {};
-	for (var p in PARTS) partOn[p] = true;
-	var focusConcept = '';
-	var activeQuery = '';
-	var activeNode = null;
-	var searchAbort = null;
-	var searchTimer = null;
-	var resultsCache = {};
-	var resultNodes = null;      /* Set of slugs matching active query */
-	var lastQueryKey = '';
+	var canvas = document.getElementById('km-canvas');
+	var state = { edgeOn: { citation: true, concept: true, path: true }, query: '', resultSet: null, highlight: null };
 
-	/* ── stats ── */
+	/* stats */
 	document.getElementById('st-modules').textContent = DATA.stats.modules;
+	document.getElementById('st-edges').textContent = DATA.stats.edges;
 	document.getElementById('st-citations').textContent = DATA.stats.citations;
 	document.getElementById('st-concepts').textContent = DATA.stats.concepts;
-	document.getElementById('st-edges').textContent = DATA.stats.edges;
 
-	/* ── legend ── */
-	var legendEl = document.getElementById('km-legend');
-	var legendHtml = '<div class="lh">Node color = course part</div>';
-	for (var p in PARTS) {
-		legendHtml += '<div><span class="sw dot" style="background:' + COLORS[p] + '"></span>Part ' + p + ' — ' + PARTS[p] + '</div>';
-	}
-	legendEl.innerHTML = legendHtml;
+	/* ── color helpers ── */
+	function hex2rgb(h) { h = h.replace('#', ''); return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)]; }
+	function mix(h1, h2, t) { var a = hex2rgb(h1), b = hex2rgb(h2); return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * t) + ',' + Math.round(a[1] + (b[1] - a[1]) * t) + ',' + Math.round(a[2] + (b[2] - a[2]) * t) + ')'; }
+	function lighten(h, t) { return mix(h, '#ffffff', t); }
 
-	/* ── concept dropdown ── */
-	var conceptSel = document.getElementById('km-concept');
-	var conceptList = Object.keys(CONCEPTS).sort();
-	conceptList.forEach(function(c) {
-		var o = document.createElement('option');
-		o.value = c; o.textContent = c;
-		conceptSel.appendChild(o);
-	});
-	conceptSel.addEventListener('change', function() {
-		focusConcept = conceptSel.value;
-		activeNode = null;
-		rebuild(false);
-		if (focusConcept) {
-			var pages = NODES.filter(function(n) { return n.concepts[focusConcept]; });
-			renderConceptPanel(focusConcept, pages);
-		} else {
-			renderWelcome();
+	/* ── layout: seven lanes, one per part, course order flows left→right ── */
+	function layout(w, h) {
+		var L = 96, top = 56, bottom = 40;
+		var laneH = (h - top - bottom) / 7;
+		var usable = w - L - 30;
+		var groups = [];
+		for (var p = 0; p < 7; p++) {
+			groups[p] = NODES.filter(function(n) { return n.part === p; })
+				.sort(function(a, b) { return a.order - b.order || (a.id < b.id ? -1 : 1); });
 		}
-	});
-
-	/* ── part filter chips ── */
-	(function buildPartChips() {
-		var group = document.createElement('div');
-		group.className = 'km-chip-group';
-		group.style.marginLeft = '4px';
-		for (var p in PARTS) {
-			var chip = document.createElement('div');
-			chip.className = 'km-chip on';
-			chip.dataset.part = p;
-			chip.innerHTML = '<span class="sw" style="background:' + COLORS[p] + '"></span>P' + p;
-			chip.addEventListener('click', function() {
-				var pp = this.dataset.part;
-				partOn[pp] = !partOn[pp];
-				this.classList.toggle('on', partOn[pp]);
-				rebuild(false);
+		var jitter = [-11, 0, 11, 5, -5, 9, -8];
+		for (var p = 0; p < groups.length; p++) {
+			var arr = groups[p], laneY = top + (p + 0.5) * laneH;
+			var span = usable - 26;
+			arr.forEach(function(m, i) {
+				m._x = L + 15 + (i + 0.5) * (span / Math.max(1, arr.length));
+				m._y = laneY + jitter[m.orderIndex % jitter.length];
 			});
-			group.appendChild(chip);
 		}
-		var wrap = document.querySelector('.km-toolbar');
-		var sep = document.createElement('div'); sep.className = 'sep';
-		var lab = document.createElement('span'); lab.className = 'km-label'; lab.textContent = 'parts';
-		wrap.insertBefore(lab, document.getElementById('km-edge-toggles'));
-		wrap.insertBefore(sep, document.getElementById('km-edge-toggles'));
-		wrap.insertBefore(group, document.getElementById('km-edge-toggles'));
-	})();
-
-	/* ── edge toggles ── */
-	document.getElementById('km-edge-toggles').querySelectorAll('.km-chip').forEach(function(chip) {
-		chip.addEventListener('click', function() {
-			var t = this.dataset.edge;
-			edgeOn[t] = !edgeOn[t];
-			this.classList.toggle('on', edgeOn[t]);
-			rebuild(false);
-		});
-	});
-
-	document.getElementById('km-min-shared').addEventListener('change', function() {
-		minShared = parseInt(this.value, 10) || 2;
-		rebuild(false);
-	});
-
-	/* ── graph construction ── */
-	function nodeVisible(n) {
-		return partOn[n.part];
-	}
-	function edgeVisible(e) {
-		if (!edgeOn[e.type]) return false;
-		if (e.type === 'concept' && e.weight < minShared) return false;
-		if (!nodeVisible(nodeMap[e.a]) || !nodeVisible(nodeMap[e.b])) return false;
-		return true;
+		return { L: L, top: top, laneH: laneH, groups: groups };
 	}
 
-	function buildOption() {
-		var visibleEdges = EDGES.filter(edgeVisible);
-		var edgeSet = {};
-		var degree = {};
-		visibleEdges.forEach(function(e) {
-			edgeSet[e.a + '|' + e.b] = true;
-			degree[e.a] = (degree[e.a] || 0) + 1;
-			degree[e.b] = (degree[e.b] || 0) + 1;
-		});
+	function nodeRadius(n) { return 16 + Math.min(13, n.degree * 0.3); }
 
-		var queryMatches = resultNodes;
-		var isFiltered = activeQuery.length > 0;
+	/* ── edge styles ── */
+	function edgeStyle(e) {
+		if (e.type === 'citation') return { color: '#34d399', width: 1.6, opacity: 0.6, type: 'dashed', curveness: 0.16 };
+		return { color: '#fbbf24', width: 1.05, opacity: 0.24, curveness: 0.13 };
+	}
 
-		var seriesNodes = NODES.filter(nodeVisible).map(function(n) {
-			var d = degree[n.id] || 0;
-			var matched = !isFiltered || (queryMatches && queryMatches.has(n.id));
-			var inConcept = !focusConcept || !!n.concepts[focusConcept];
+	/* ── build the ECharts option ── */
+	function buildOption(w, h) {
+		var geo = layout(w, h);
 
-			var opacity = 1;
-			var labelShow = true;
-			var symbolSize = 14 + Math.min(16, d * 1.1);
-			if (isFiltered) {
-				if (!matched) { opacity = 0.10; labelShow = false; }
-				else symbolSize += 5;
-			}
-			if (focusConcept && !inConcept) { opacity = Math.min(opacity, 0.12); labelShow = false; }
+		var visibleEdges = EDGES.filter(function(e) { return state.edgeOn[e.type]; });
+		var highlight = state.highlight;
+		var near = null;
+		if (highlight) {
+			near = {};
+			near[highlight] = true;
+			visibleEdges.forEach(function(e) { if (e.a === highlight) near[e.b] = true; if (e.b === highlight) near[e.a] = true; });
+		}
+		var querying = state.query.length > 0;
 
+		var nodes = NODES.map(function(n) {
+			var r = nodeRadius(n);
 			var c = COLORS[n.part] || '#94a3b8';
+			var op = 1;
+			if (querying) { var mq = state.resultSet && state.resultSet.has(n.id); if (!mq) op = 0.06; }
+			if (highlight && !near[n.id]) op = Math.min(op, 0.07);
 			return {
-				id: n.id,
-				name: n.name.replace(/_/g, ' '),
-				value: n.degree,
-				degree: d,
-				concepts: n.concepts,
-				part: n.part,
-				url: n.url,
-				symbolSize: symbolSize,
-				draggable: true,
+				id: n.id, name: n.name, title: n.title, icon: n.icon, part: n.part, url: n.url,
+				concepts: n.concepts, value: n.degree,
+				x: n._x, y: n._y, symbolSize: r, draggable: false,
 				itemStyle: {
-					color: c,
-					opacity: opacity,
-					borderColor: '#ffffff',
-					borderWidth: matched ? 1.5 : 1,
-					shadowBlur: matched ? 10 : 0,
-					shadowColor: c
+					color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+						{ offset: 0, color: lighten(c, 0.3) }, { offset: 1, color: c }
+					]),
+					opacity: op,
+					shadowBlur: (highlight && near[n.id]) ? 26 : 9,
+					shadowColor: c,
+					borderColor: lighten(c, 0.55),
+					borderWidth: 1.3
 				},
-				label: { show: labelShow, color: COLORS[n.part], fontSize: 9 }
+				label: {
+					show: op > 0.25,
+					position: (n.orderIndex % 2 === 0) ? 'bottom' : 'top',
+					formatter: function() { return '{i|' + n.icon + '} {n|' + n.name.replace(/_/g, ' ') + '}'; },
+					rich: { i: { fontSize: 11.5, color: '#fff', opacity: 0.92 }, n: { fontSize: 10, fontWeight: 600, color: lighten(c, 0.5) } }
+				}
 			};
 		});
 
-		var seriesLinks = visibleEdges.map(function(e) {
-			var matchCount = 0;
-			if (isFiltered && queryMatches) {
-				matchCount = (queryMatches.has(e.a) ? 1 : 0) + (queryMatches.has(e.b) ? 1 : 0);
+		var links = visibleEdges.map(function(e) {
+			var st = edgeStyle(e);
+			if (querying) {
+				var m = (state.resultSet && (state.resultSet.has(e.a) || state.resultSet.has(e.b)));
+				if (!m) st.opacity *= 0.15;
 			}
-			var typeStyle = edgeStyle(e);
-			if (isFiltered) {
-				if (matchCount === 0) typeStyle.opacity = 0.04;
-				else if (matchCount === 1) typeStyle.opacity *= 0.55;
+			if (highlight) {
+				var t = (e.a === highlight || e.b === highlight);
+				if (!t) st.opacity *= 0.12; else st.width = Math.max(st.width, 2);
 			}
 			return {
-				source: e.a,
-				target: e.b,
-				value: e.weight,
-				type: e.type,
-				lineStyle: typeStyle
+				source: e.a, target: e.b, value: e.weight, type: e.type,
+				citeText: e.citeText || '', conceptText: e.conceptText || '',
+				lineStyle: st
 			};
 		});
 
-		return {
-			animationDuration: 400,
+		var option = {
+			animationDuration: 650,
+			animationEasing: 'cubicOut',
+			backgroundColor: 'transparent',
+			grid: { left: 0, right: 0, top: 0, bottom: 0 },
+			xAxis: { min: 0, max: w, show: false },
+			yAxis: { min: 0, max: h, show: false },
 			tooltip: {
-				trigger: 'item',
+				confine: true,
+				backgroundColor: 'rgba(16,22,45,.96)',
+				borderColor: 'rgba(150,170,230,.35)',
+				borderWidth: 1,
+				padding: [10, 13],
+				textStyle: { color: '#e9eeff', fontSize: 12 },
+				extraCssText: 'box-shadow:0 16px 40px rgba(0,0,0,.5);border-radius:12px;',
 				formatter: function(params) {
 					if (params.dataType === 'edge') {
 						var e = params.data;
 						var from = nodeMap[e.source], to = nodeMap[e.target];
-						var why = [];
-						if (e.type === 'citation') why.push('<b>shared citations:</b> ' + escHtml(e.citations || ''));
-						if (e.type === 'concept') why.push('<b>shared concepts:</b> ' + escHtml(e.concepts || ''));
-						if (e.type === 'link') why.push('<b>cross-reference</b>');
-						if (e.type === 'course') why.push('<b>learning path</b>');
-						return '<b>' + escHtml(from.title) + '</b> ↔ <b>' + escHtml(to.title) + '</b><br>' +
-							'<span style="font-size:11px;opacity:.85">' + why.join('<br>') + '</span>';
+						var why = '';
+						if (e.type === 'citation') why = 'shared citations: <b>' + escHtml(e.citeText) + '</b>';
+						else if (e.type === 'concept') why = 'shared concepts: <b>' + escHtml(e.conceptText) + '</b>';
+						else why = 'learning path';
+						return '<b style="font-size:12.5px">' + escHtml(from.title) + '</b> ↔ <b style="font-size:12.5px">' + escHtml(to.title) + '</b>' +
+							'<br><span style="font-size:11px;opacity:.75">' + why + '</span>';
 					}
 					var n = params.data;
-					var desc = (n.description || '').slice(0, 160);
-					return '<b style="font-size:13px">' + escHtml(n.title) + '</b>' +
+					var desc = (n.description || '').slice(0, 170);
+					return '<b style="font-size:13px">' + n.icon + ' ' + escHtml(n.title) + '</b>' +
 						'<br><span style="font-size:11px;opacity:.7">Part ' + n.part + ' · ' + n.degree + ' connections</span>' +
-						(desc ? '<br><span style="font-size:11px;color:#555">' + escHtml(desc) + '</span>' : '') +
-						'<br><span style="font-size:10px;opacity:.6">click to explore</span>';
-				},
-				backgroundColor: 'rgba(255,255,255,0.96)',
-				borderColor: '#e2e8f0',
-				textStyle: { color: '#1e293b' }
+						(desc ? '<br><span style="font-size:11px;opacity:.85;color:#c6d2f5">' + escHtml(desc) + '</span>' : '') +
+						'<br><span style="font-size:10px;opacity:.55">click to open</span>';
+				}
 			},
-			series: [{
-				type: 'graph',
-				layout: 'force',
-				roam: true,
-				draggable: true,
-				data: seriesNodes,
-				links: seriesLinks,
-				force: { repulsion: 260, edgeLength: [70, 150], gravity: 0.06, friction: 0.6 },
-				lineStyle: { width: 1.2, curveness: 0.08 },
-				emphasis: {
-					focus: 'adjacency',
-					lineStyle: { width: 3, opacity: 1 }
-				},
-				label: { show: true, position: 'right', formatter: '{b}', fontSize: 9 }
-			}]
+			series: []
 		};
-	}
 
-	function edgeStyle(e) {
-		if (e.type === 'link') return { color: '#64748b', width: 2.2, opacity: 0.7 };
-		if (e.type === 'citation') return { color: '#10b981', width: 1.6, opacity: 0.55, type: 'dashed' };
-		if (e.type === 'course') return { color: '#a5b4fc', width: 1, opacity: 0.4, type: 'dotted' };
-		return { color: '#f59e0b', width: Math.min(2.5, 0.6 + e.weight * 0.35), opacity: 0.45 };
+		/* the journey path: a flowing line with a travelling light */
+		if (state.edgeOn.path) {
+			var points = PATH.map(function(id) { var n = nodeMap[id]; return [n._x, h - n._y]; });
+			var stops = [], curPart = null, i = 0, total = points.length;
+			for (i = 0; i < total; i++) {
+				var pp = nodeMap[PATH[i]].part;
+				if (pp !== curPart) { if (curPart !== null) stops.push({ offset: i / total, color: COLORS[curPart] }); curPart = pp; }
+			}
+			stops.push({ offset: 1, color: COLORS[curPart] });
+			option.series.push({
+				type: 'lines',
+				coordinateSystem: 'cartesian2d',
+				z: 2,
+				polyline: true,
+				silent: true,
+				emphasis: { disabled: true },
+				blur: { lineStyle: { opacity: 0.5 } },
+				data: [{
+					coords: points,
+					lineStyle: {
+						width: 2.5, opacity: 0.55,
+						color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: stops }
+					},
+					effect: { show: true, period: 8, trailLength: 0.4, symbol: 'circle', symbolSize: 5, color: '#ffffff' }
+				}]
+			});
+		}
+
+		option.series.push({
+			type: 'graph',
+			layout: 'none',
+			roam: false,
+			z: 4,
+			data: nodes,
+			links: links,
+			lineStyle: { width: 1.3 },
+			emphasis: {
+				focus: 'adjacency',
+				itemStyle: { shadowBlur: 30 },
+				lineStyle: { width: 2.4, opacity: 0.95 }
+			},
+			blur: { itemStyle: { opacity: 0.1 }, lineStyle: { opacity: 0.04 }, label: { opacity: 0.25 } }
+		});
+
+		return option;
 	}
 
 	var rebuildTimer = null;
 	function rebuild(animate) {
 		clearTimeout(rebuildTimer);
 		rebuildTimer = setTimeout(function() {
-			var option = buildOption();
-			var nodes = option.series[0].data;
-			var links = option.series[0].links;
-			var badge = document.getElementById('km-badge');
-			if (activeQuery) badge.textContent = nodes.filter(function(n) { return n.itemStyle.opacity > 0.3; }).length + ' matching of ' + nodes.length;
-			else if (focusConcept) badge.textContent = nodes.filter(function(n) { return n.itemStyle.opacity > 0.3; }).length + ' modules with concept';
-			else badge.textContent = nodes.length + ' modules · ' + links.length + ' edges';
-			chart.setOption(option, { notMerge: true, lazyUpdate: true });
-		}, animate === false ? 0 : 60);
+			chart.setOption(buildOption(chart.getWidth(), chart.getHeight()), { notMerge: true, lazyUpdate: true });
+		}, animate === false ? 0 : 30);
 	}
 
-	/* highlight selected node */
-	function focusNode(slug) {
-		activeNode = slug;
-		chart.dispatchAction({
-			type: 'showTip',
-			seriesIndex: 0,
-			dataIndex: NODES.findIndex(function(n) { return n.id === slug; })
+	/* ── lane labels + glows ── */
+	function renderLaneDecor() {
+		var w = chart.getWidth(), h = chart.getHeight();
+		var geo = layout(w, h);
+		canvas.querySelectorAll('.km-lane-glow').forEach(function(el) { el.remove(); });
+		var labelsEl = document.getElementById('km-lane-labels');
+		labelsEl.innerHTML = '';
+		labelsEl.style.display = 'block';
+		for (var p = 0; p < 7; p++) {
+			var g = document.createElement('div');
+			g.className = 'km-lane-glow';
+			g.style.top = (geo.top + (p + 0.5) * geo.laneH - 46) + 'px';
+			g.style.background = 'radial-gradient(ellipse at center, ' + COLORS[p] + ', transparent 70%)';
+			canvas.appendChild(g);
+			var lab = document.createElement('div');
+			lab.className = 'km-lane-label';
+			lab.style.top = (geo.top + (p + 0.5) * geo.laneH) + 'px';
+			lab.innerHTML = '<span class="sw" style="background:' + COLORS[p] + '"></span>' + escHtml('P' + p + ' · ' + PARTS[p]);
+			labelsEl.appendChild(lab);
+		}
+	}
+
+	/* ── legend ── */
+	(function buildLegend() {
+		var el = document.getElementById('km-legend');
+		var html = '<div class="lh">Parts — one lane each</div>';
+		for (var p = 0; p < 7; p++) {
+			html += '<div class="lg-row"><span class="sw" style="background:' + COLORS[p] + '"></span>P' + p + ' · ' + escHtml(PARTS[p]) + '</div>';
+		}
+		html += '<div class="edge-row"><div class="lh">Threads</div>';
+		html += '<div class="lg-row"><span class="sw" style="background:#34d399"></span>shared citations</div>';
+		html += '<div class="lg-row"><span class="sw" style="background:#fbbf24"></span>shared concepts</div>';
+		html += '<div class="lg-row glow"><span class="sw" style="background:#fff"></span>the course journey</div>';
+		html += '</div>';
+		el.innerHTML = html;
+	})();
+
+	/* ── controls ── */
+	document.querySelectorAll('.km-pill[data-edge]').forEach(function(chip) {
+		chip.addEventListener('click', function() {
+			var t = chip.dataset.edge;
+			state.edgeOn[t] = !state.edgeOn[t];
+			chip.classList.toggle('on', state.edgeOn[t]);
+			chip.classList.toggle('off', !state.edgeOn[t]);
+			rebuild(false);
+		});
+	});
+	document.getElementById('km-theme').addEventListener('click', function() {
+		var t = document.documentElement.classList.contains('light') ? 'dark' : 'light';
+		window.__kmSetTheme(t);
+	});
+
+	/* ── detail card ── */
+	var detailEl = document.getElementById('km-detail');
+	function openDetail(n) {
+		state.highlight = n.id;
+		var c = COLORS[n.part] || '#6366f1';
+		var conns = [];
+		EDGES.forEach(function(e) {
+			if (e.a === n.id) conns.push({ other: nodeMap[e.b], e: e });
+			else if (e.b === n.id) conns.push({ other: nodeMap[e.a], e: e });
+		});
+		var rank = { citation: 0, link: 1, concept: 2, course: 3 };
+		conns.sort(function(x, y) {
+			var r = (rank[x.e.type] || 9) - (rank[y.e.type] || 9);
+			return r !== 0 ? r : y.e.weight - x.e.weight;
+		});
+		var seen = {}, uniq = [];
+		conns.forEach(function(cx) { var k = cx.e.type + '|' + cx.other.id; if (!seen[k]) { seen[k] = true; uniq.push(cx); } });
+		var ci = 0, cc = 0, wc = 0;
+		Object.keys(n.citations || {}).forEach(function() { ci++; });
+		Object.keys(n.concepts || {}).forEach(function() { cc++; });
+		if (n.wordCount) wc = n.wordCount;
+
+		var conceptArr = Object.keys(n.concepts || {}).sort(function(a, b) { return n.concepts[b] - n.concepts[a]; }).slice(0, 14);
+
+		var html = '<div class="km-detail-head" style="--dh-c:' + c + ';--dh-c2:' + lighten(c, -0.35) + '">' +
+			'<button class="dh-x" id="km-detail-x">✕</button>' +
+			'<div class="dh-part">Part ' + n.part + ' · ' + escHtml(PARTS[n.part]) + '</div>' +
+			'<div class="dh-icon">' + n.icon + '</div>' +
+			'<h2>' + escHtml(n.title) + '</h2>' +
+			'</div>' +
+			'<div class="km-detail-body">' +
+			'<div class="ds-meta">' +
+			'<span class="ds-chip">' + n.name + '</span>' +
+			'<span class="ds-chip">' + wc.toLocaleString() + ' words</span>' +
+			'<span class="ds-chip">' + uniq.length + ' connections</span>' +
+			'<span class="ds-chip">' + ci + ' citations</span>' +
+			'<span class="ds-chip">' + cc + ' concepts</span>' +
+			'</div>';
+
+		if (n.description) html += '<div class="ds-desc">' + escHtml(n.description) + '</div>';
+
+		if (conceptArr.length) {
+			html += '<div class="ds-sec">Concept profile</div><div>';
+			conceptArr.forEach(function(k) { html += '<span class="km-tag">' + escHtml(k) + '</span>'; });
+			html += '</div>';
+		}
+
+		/* neighbours in the journey */
+		var pathNeighbors = [];
+		var pi = PATH.indexOf(n.id);
+		if (pi > 0) pathNeighbors.push({ rel: 'came from', other: nodeMap[PATH[pi - 1]] });
+		if (pi > -1 && pi < PATH.length - 1) pathNeighbors.push({ rel: 'leads to', other: nodeMap[PATH[pi + 1]] });
+
+		html += '<div class="ds-sec">Connections</div>';
+		var edgeDot = { citation: '#34d399', concept: '#fbbf24', course: '#ffffff' };
+		var edgeLabel = { citation: 'shared citation', concept: 'shared concepts', course: 'learning path' };
+		uniq.slice(0, 14).forEach(function(cx) {
+			var e = cx.e, o = cx.other;
+			var why = [];
+			if (e.type === 'citation' && e.citeText) why.push('cites: ' + e.citeText);
+			if (e.type === 'concept' && e.conceptText) why.push(e.conceptText);
+			if (e.type === 'course') why.push('next in the journey');
+			html += '<div class="km-conn">' +
+				'<span class="cc-dot" style="background:' + (edgeDot[e.type] || '#94a3b8') + '"></span>' +
+				'<div class="cc-main">' +
+				'<a class="cc-name" data-slug="' + escAttr(o.id) + '" href="#">' + o.icon + ' ' + escHtml(o.title) + '</a>' +
+				'<div class="cc-why">' + edgeLabel[e.type] + (why.length ? ' · ' + escHtml(why.join(', ')) : '') + '</div>' +
+				'</div></div>';
+		});
+		if (uniq.length > 14) html += '<div class="cc-why" style="padding:6px 0 2px;color:var(--ink-mute)">+ ' + (uniq.length - 14) + ' more on the map</div>';
+
+		if (pathNeighbors.length) {
+			html += '<div class="ds-sec">In the journey</div>';
+			pathNeighbors.forEach(function(pn) {
+				html += '<div class="km-conn"><span class="cc-dot" style="background:#fff"></span>' +
+					'<div class="cc-main"><span class="cc-why" style="color:var(--ink-mute)">' + pn.rel + '</span><br>' +
+					'<a class="cc-name" data-slug="' + escAttr(pn.other.id) + '" href="#">' + pn.other.icon + ' ' + escHtml(pn.other.title) + '</a></div></div>';
+			});
+		}
+
+		if (n.citations && Object.keys(n.citations).length) {
+			html += '<div class="ds-sec">Cited sources</div>';
+			Object.keys(n.citations).forEach(function(k) { html += '<span class="km-tag">' + escHtml(k) + '</span>'; });
+		}
+
+		if (n.headings && n.headings.length) {
+			html += '<div class="ds-sec">Sections</div>';
+			n.headings.slice(0, 10).forEach(function(hh) {
+				html += '<a class="km-sec-link" href="' + escAttr(n.url + '#' + hh.slug) + '">↳ ' + escHtml(hh.text) + '</a>';
+			});
+			if (n.headings.length > 10) html += '<div class="cc-why" style="color:var(--ink-mute)">+ ' + (n.headings.length - 10) + ' more sections in the module</div>';
+		}
+
+		html += '<a class="km-open" href="' + escAttr(n.url) + '" style="--dh-c:' + c + '">Open module ↗</a>' +
+			'</div>';
+
+		detailEl.innerHTML = html;
+		detailEl.classList.add('show');
+
+		detailEl.querySelectorAll('a[data-slug]').forEach(function(a) {
+			a.addEventListener('click', function(ev) {
+				ev.preventDefault();
+				var o = nodeMap[a.dataset.slug];
+				if (o) { openDetail(o); rebuild(false); }
+			});
+			a.addEventListener('mouseenter', function() { state.highlight = a.dataset.slug; rebuild(false); });
+			a.addEventListener('mouseleave', function() { state.highlight = n.id; rebuild(false); });
+		});
+		document.getElementById('km-detail-x').addEventListener('click', closeDetail);
+	}
+	function closeDetail() {
+		detailEl.classList.remove('show');
+		state.highlight = null;
+		rebuild(false);
+	}
+	chart.on('click', function(params) {
+		if (params.dataType === 'node' && params.data && nodeMap[params.data.id]) openDetail(nodeMap[params.data.id]);
+	});
+
+	/* ── timeline ── */
+	function buildTimeline() {
+		var tl = document.getElementById('km-timeline');
+		tl.innerHTML = '<div class="tl-rail"></div>';
+		var N = PATH.length, W = tl.clientWidth - 40, left = 20;
+		var groupStart = {};
+		var curPart = null, firstIdx = 0;
+		PATH.forEach(function(id, i) {
+			var p = nodeMap[id].part;
+			if (p !== curPart) { curPart = p; groupStart[p] = i; }
+			var x = left + (i / (N - 1)) * W;
+			var dot = document.createElement('div');
+			dot.className = 'tl-dot';
+			dot.style.left = x + 'px';
+			dot.style.background = COLORS[p];
+			dot.style.color = COLORS[p];
+			dot.title = nodeMap[id].title;
+			dot.dataset.slug = id;
+			tl.appendChild(dot);
+		});
+		Object.keys(groupStart).forEach(function(p) {
+			var i = groupStart[p];
+			var x = left + (i / (N - 1)) * W;
+			var lab = document.createElement('div');
+			lab.className = 'tl-part';
+			lab.style.left = x + 'px';
+			lab.innerHTML = '<span class="sw" style="background:' + COLORS[p] + '"></span>' + escHtml('P' + p + ' ' + PARTS[p]);
+			tl.appendChild(lab);
+		});
+		tl.querySelectorAll('.tl-dot').forEach(function(dot) {
+			dot.addEventListener('mouseenter', function() { state.highlight = dot.dataset.slug; rebuild(false); });
+			dot.addEventListener('mouseleave', function() { state.highlight = null; rebuild(false); });
+			dot.addEventListener('click', function() { openDetail(nodeMap[dot.dataset.slug]); });
 		});
 	}
+	buildTimeline();
 
-	/* ── search (detailed, across everything) ── */
-	function detectMode(q) {
-		if (/^\/.+\/$/.test(q)) return 'regex';
-		if (q.charAt(0) === '~' && q.length > 1) return 'fuzzy';
-		return 'normal';
-	}
-	function updateSearchModeHint(q) {
-		var m = detectMode(q);
-		searchModeEl.textContent = m === 'normal' ? '' : m + ' mode';
-	}
-
-	searchInput.addEventListener('input', function() {
-		var q = searchInput.value.trim();
-		updateSearchModeHint(q);
-		clearTimeout(searchTimer);
-		activeQuery = q;
-		if (q.length < 2) {
-			activeQuery = '';
-			resultNodes = null;
-			lastQueryKey = '';
-			if (searchAbort) { searchAbort.abort(); searchAbort = null; }
-			rebuild(false);
-			if (focusConcept) renderConceptPanel(focusConcept, NODES.filter(function(n) { return n.concepts[focusConcept]; }));
-			else if (activeNode) renderNodeDetail(nodeMap[activeNode]);
-			else renderWelcome();
-			return;
-		}
-		searchTimer = setTimeout(function() { doSearch(q); }, 220);
-	});
+	/* ── search ── */
+	var searchInput = document.getElementById('km-search');
+	var resultsEl = document.getElementById('km-results');
+	var searchTimer = null, searchAbort = null, resultsCache = {};
+	var lastQuery = '';
 
 	function doSearch(q) {
 		var key = q;
-		if (resultsCache[key]) { applySearchResults(key, resultsCache[key]); return; }
+		if (resultsCache[key]) { applyResults(key, resultsCache[key]); return; }
 		if (searchAbort) searchAbort.abort();
 		searchAbort = new AbortController();
 		fetch('search.php?q=' + encodeURIComponent(q), { signal: searchAbort.signal })
 			.then(function(r) { return r.json(); })
-			.then(function(data) {
-				resultsCache[key] = data;
-				if (key === searchInput.value.trim()) applySearchResults(key, data);
-			})
+			.then(function(data) { resultsCache[key] = data; if (key === searchInput.value.trim()) applyResults(key, data); })
 			.catch(function() {});
 	}
 
-	function applySearchResults(key, data) {
+	function applyResults(key, data) {
 		if (key !== searchInput.value.trim()) return;
 		var grouped = data.grouped || [];
-		resultNodes = new Set(grouped.map(function(g) { return g.page; }));
+		state.resultSet = new Set(grouped.map(function(g) { return g.page; }));
 		var items = (data.results && data.results.length > 0 && grouped.length === 0) ? data.results : grouped;
-		activeQuery = key;
-		renderSearchResults(key, data, items);
+		renderResults(key, data, items);
 		rebuild(false);
 	}
 
-	function renderSearchResults(query, data, items) {
-		panelTitle.textContent = 'Search results';
+	function renderResults(query, data, items) {
 		var mode = data.mode || 'normal';
-		var html = '<div class="km-search-res">';
-		html += '<div class="sr-count">' + (data.total || 0) + ' matches across ' + items.length + ' module' + (items.length === 1 ? '' : 's') + ' for <b>' + escHtml(query) + '</b></div>';
-
+		var html = '<div class="rs-head">' + (data.total || 0) + ' matches · ' + items.length + ' module' + (items.length === 1 ? '' : 's') + ' for <b>' + escHtml(query) + '</b></div>';
 		if (!items.length) {
-			html += '<div class="sr-empty">Nothing found. Try fewer words, or <code>~fuzzy</code> / <code>/regex/</code> modes.</div></div>';
-			panelBody.innerHTML = html;
+			html += '<div class="rs-empty">Nothing found. Try fewer words, or <code>~fuzzy</code> / <code>/regex/</code>.</div>';
+			resultsEl.innerHTML = html;
+			resultsEl.classList.add('show');
 			return;
 		}
-
+		html += '<div class="rs-body">';
 		items.forEach(function(r, i) {
-			var hl = r.snippet || '';
-			if (mode === 'regex') hl = extractMatch(hl, query);
 			var page = r.page || '';
-			html += '<div class="sr-item" data-slug="' + escAttr(page) + '" data-i="' + i + '">' +
-				'<div class="sr-page">' + escHtml(page) + (r.count > 1 ? ' <span class="badge">' + r.count + ' sections</span>' : '') + '</div>' +
-				'<div class="sr-title">' + escHtml(r.title) + '</div>' +
-				'<div class="sr-snippet">' + highlight(escHtml(hl), query, mode) + '</div>' +
-				'</div>';
+			var n = nodeMap[page];
+			html += '<div class="rs-item" data-slug="' + escAttr(page) + '" data-i="' + i + '">' +
+				'<div class="rs-ic">' + (n ? n.icon : '📄') + '</div>' +
+				'<div><div class="rs-t">' + escHtml(r.title) + (r.count > 1 ? ' <span class="rs-n">' + r.count + '</span>' : '') + '</div>' +
+				'<div class="rs-p">' + escHtml(page) + '</div>' +
+				'<div class="rs-s">' + highlight(escHtml(r.snippet || ''), query, mode) + '</div></div></div>';
 		});
 		html += '</div>';
-		panelBody.innerHTML = html;
+		resultsEl.innerHTML = html;
+		resultsEl.classList.add('show');
 
-		panelBody.querySelectorAll('.sr-item').forEach(function(el) {
+		resultsEl.querySelectorAll('.rs-item').forEach(function(el) {
 			el.addEventListener('mouseenter', function() {
-				var slug = this.dataset.slug;
-				if (nodeMap[slug]) { activeNode = slug; rebuild(false); }
+				resultsEl.querySelectorAll('.rs-item').forEach(function(x) { x.classList.remove('hot'); });
+				el.classList.add('hot');
+				state.highlight = el.dataset.slug;
+				rebuild(false);
 			});
 			el.addEventListener('mouseleave', function() {
-				activeNode = null;
+				el.classList.remove('hot');
+				state.highlight = null;
 				rebuild(false);
 			});
 			el.addEventListener('click', function() {
-				var idx = parseInt(this.dataset.i, 10);
-				var r = items[idx];
-				if (!r) return;
-				window.location.href = r.url + '.php' + (r.url.indexOf('#') === -1 ? '' : '');
+				var r2 = items[parseInt(el.dataset.i, 10)];
+				if (r2 && nodeMap[r2.page]) openDetail(nodeMap[r2.page]);
 			});
 		});
 	}
 
-	function extractMatch(snippet, q) {
-		try {
-			var m = snippet.match(new RegExp(q.replace(/^\/(.+)\/$/, '$1'), 'i'));
-			return m ? m[0] : '';
-		} catch (e) { return ''; }
-	}
 	function highlight(text, query, mode) {
 		if (!query || mode === 'fuzzy') return text;
-		var escaped = (mode === 'regex' ? (query.replace(/^\/(.+)\/$/, '$1')) : query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		var escaped = (mode === 'regex' ? query.replace(/^\/(.+)\/$/, '$1') : query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 		if (!escaped) return text;
-		var re = new RegExp('(' + escaped + ')', 'gi');
-		return text.replace(re, '<mark>$1</mark>');
+		return text.replace(new RegExp('(' + escaped + ')', 'gi'), '<mark>$1</mark>');
 	}
 
-	/* ── panel renderers ── */
-	function renderWelcome() {
-		panelTitle.textContent = 'Explore';
-		var topConcepts = {};
-		NODES.forEach(function(n) { Object.keys(n.concepts).forEach(function(c) { topConcepts[c] = (topConcepts[c] || 0) + 1; }); });
-		var sorted = Object.keys(topConcepts).sort(function(a, b) { return topConcepts[b] - topConcepts[a]; }).slice(0, 18);
-
-		var html = '<div class="km-welcome">' +
-			'<div class="w-step"><div class="w-num">1</div><div><div class="w-title">Search everything</div>Every module, section, caption and citation is indexed. Type in the box — matching modules light up and their connections stay visible.</div></div>' +
-			'<div class="w-step"><div class="w-num">2</div><div><div class="w-title">Hover the graph</div>Edges tell you <i>why</i> two modules belong together: shared citations (green, dashed), shared concepts (amber, thick), direct links (grey).</div></div>' +
-			'<div class="w-step"><div class="w-num">3</div><div><div class="w-title">Click a node</div>The panel opens that module: its concept profile, every connection with the shared terms that justify it, and its sections to jump straight in.</div></div>' +
-			'</div>';
-		html += '<div class="nd-section">Most connected concepts</div><div>';
-		sorted.forEach(function(c) {
-			html += '<span class="km-tag" style="cursor:pointer" data-concept="' + escAttr(c) + '">' + escHtml(c) + ' · ' + topConcepts[c] + '</span>';
-		});
-		html += '</div></div>';
-		panelBody.innerHTML = html;
-		panelBody.querySelectorAll('[data-concept]').forEach(function(el) {
-			el.addEventListener('click', function() {
-				conceptSel.value = this.dataset.concept;
-				focusConcept = conceptSel.value;
-				activeNode = null;
-				rebuild(false);
-				var pages = NODES.filter(function(n) { return n.concepts[focusConcept]; });
-				renderConceptPanel(focusConcept, pages);
-			});
-		});
-	}
-
-	function renderConceptPanel(concept, pages) {
-		panelTitle.textContent = 'Concept: ' + concept;
-		pages.sort(function(a, b) { return (b.concepts[concept] || 0) - (a.concepts[concept] || 0); });
-		var html = '<div class="km-search-res"><div class="sr-count">' + pages.length + ' modules cover <b>' + escHtml(concept) + '</b></div>';
-		pages.forEach(function(p) {
-			html += '<div class="sr-item" data-slug="' + escAttr(p.id) + '">' +
-				'<div class="sr-page">' + escHtml(p.name) + '</div>' +
-				'<div class="sr-title">' + escHtml(p.title) + '</div>' +
-				'<div class="sr-snippet">' + escHtml(p.description || '') + '</div>' +
-				'</div>';
-		});
-		html += '</div>';
-		panelBody.innerHTML = html;
-		panelBody.querySelectorAll('.sr-item').forEach(function(el) {
-			el.addEventListener('mouseenter', function() { activeNode = this.dataset.slug; rebuild(false); });
-			el.addEventListener('mouseleave', function() { activeNode = null; rebuild(false); });
-			el.addEventListener('click', function() { var n = nodeMap[this.dataset.slug]; if (n) renderNodeDetail(n); });
-		});
-	}
-
-	function renderNodeDetail(n) {
-		panelTitle.textContent = n.title;
-		var html = '<div class="km-node-detail">';
-		html += '<div class="nd-title"><span class="nd-icon">' + (n.icon || '') + '</span>' + escHtml(n.title) + '</div>';
-		html += '<div class="nd-meta">' + escHtml(n.name) + ' · Part ' + n.part + ' (' + escHtml(PARTS[n.part]) + ') · ' + n.degree + ' connections · ' + n.wordCount.toLocaleString() + ' words</div>';
-		if (n.description) html += '<div class="nd-desc">' + escHtml(n.description) + '</div>';
-		html += '<a class="nd-open" href="' + escAttr(n.url) + '">Open module ↗</a>';
-
-		var conceptArr = Object.keys(n.concepts).sort(function(a, b) { return n.concepts[b] - n.concepts[a]; }).slice(0, 14);
-		if (conceptArr.length) {
-			html += '<div class="nd-section">Concept profile</div><div>';
-			conceptArr.forEach(function(c) {
-				html += '<span class="km-tag">' + escHtml(c) + ' <b>×' + n.concepts[c] + '</b></span>';
-			});
-			html += '</div>';
+	searchInput.addEventListener('input', function() {
+		var q = searchInput.value.trim();
+		clearTimeout(searchTimer);
+		lastQuery = q;
+		if (q.length < 2) {
+			state.query = '';
+			state.resultSet = null;
+			state.highlight = null;
+			resultsEl.classList.remove('show');
+			if (searchAbort) { searchAbort.abort(); searchAbort = null; }
+			rebuild(false);
+			return;
 		}
-
-		if (n.citations.length) {
-			html += '<div class="nd-section">Cited sources (' + n.citations.length + ')</div>';
-			html += n.citations.map(function(c) { return '<span class="km-tag">' + escHtml(c) + '</span>'; }).join('');
-		}
-
-		/* connections */
-		var conns = [];
-		EDGES.forEach(function(e) {
-			if (e.a === n.id) conns.push({ other: e.b, e: e });
-			else if (e.b === n.id) conns.push({ other: e.a, e: e });
-		});
-		conns.sort(function(x, y) {
-			var o = typeRank(x.e) - typeRank(y.e);
-			return o !== 0 ? o : (nodeMap[y.other].degree - nodeMap[x.other].degree);
-		});
-		var seen = {};
-		conns = conns.filter(function(c) {
-			var k = c.e.type + ':' + c.other;
-			if (seen[k]) return false;
-			seen[k] = true; return true;
-		});
-
-		if (conns.length) {
-			html += '<div class="nd-section">Connected modules (' + conns.length + ')</div>';
-			conns.forEach(function(c) {
-				var o = nodeMap[c.other];
-				var e = c.e;
-				var whyParts = [];
-				var cls = 'ct-' + e.type;
-				if (e.type === 'citation') { cls = 'ct-citation'; whyParts.push('shared citations: <i>' + escHtml(e.citations || '') + '</i>'); }
-				if (e.type === 'concept') { cls = 'ct-concept'; whyParts.push('shared concepts: <i>' + escHtml(e.concepts || '') + '</i>'); }
-				if (e.type === 'link') { cls = 'ct-link'; whyParts.push('direct cross-reference'); }
-				if (e.type === 'course') { cls = 'ct-course'; whyParts.push('adjacent in the learning path'); }
-				html += '<div class="km-conn ' + cls + '">' +
-					'<div class="cc-type">' + e.type + ' · weight ' + e.weight + '</div>' +
-					'<a class="cc-name" href="' + escAttr(o.url) + '" data-slug="' + escAttr(o.id) + '">' + escHtml(o.title) + '</a>' +
-					(whyParts.length ? '<div class="cc-why">' + whyParts.join('<br>') + '</div>' : '') +
-					'</div>';
-			});
-		}
-
-		if (n.headings.length) {
-			html += '<div class="nd-section">Sections</div>';
-			n.headings.forEach(function(h) {
-				var link = n.url + '#' + escAttr(h.slug);
-				html += '<div class="km-section-row" style="padding-left:' + ((h.level - 1) * 12) + 'px">↳ <a href="' + link + '">' + escHtml(h.text) + '</a></div>';
-			});
-		}
-
-		html += '</div>';
-		panelBody.innerHTML = html;
-
-		panelBody.querySelectorAll('a[data-slug]').forEach(function(a) {
-			a.addEventListener('mouseenter', function() { activeNode = this.dataset.slug; rebuild(false); });
-			a.addEventListener('mouseleave', function() { activeNode = null; rebuild(false); });
-			a.addEventListener('click', function(ev) {
-				ev.preventDefault();
-				var slug = this.dataset.slug;
-				if (nodeMap[slug]) renderNodeDetail(nodeMap[slug]);
-			});
-		});
-	}
-
-	function typeRank(e) {
-		if (e.type === 'citation') return 0;
-		if (e.type === 'link') return 1;
-		if (e.type === 'concept') return 2;
-		return 3;
-	}
-
-	/* ── chart events ── */
-	chart.on('click', function(params) {
-		if (params.dataType === 'node' && params.data) {
-			var n = nodeMap[params.data.id] || params.data;
-			if (n) renderNodeDetail(n);
-		}
+		state.query = q;
+		rebuild(false);
+		searchTimer = setTimeout(function() { doSearch(q); }, 220);
 	});
-	chart.on('mouseover', function(params) {
-		if (params.dataType === 'node') {
-			/* keep label emphasis */
-		}
-	});
-
-	/* ── helpers ── */
-	function escHtml(s) {
-		var d = document.createElement('div');
-		d.appendChild(document.createTextNode(s == null ? '' : String(s)));
-		return d.innerHTML;
-	}
-	function escAttr(s) {
-		return escHtml(s).replace(/"/g, '&quot;');
-	}
-
-	document.getElementById('km-panel-close').addEventListener('click', function() {
-		activeNode = null;
-		renderWelcome();
-	});
+	searchInput.addEventListener('focus', function() { if (state.query) resultsEl.classList.add('show'); });
 
 	/* ── keyboard ── */
 	document.addEventListener('keydown', function(e) {
 		if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
+		if (e.key === 'Escape') {
+			if (detailEl.classList.contains('show')) { closeDetail(); return; }
+			searchInput.value = ''; searchInput.dispatchEvent(new Event('input'));
+			searchInput.blur();
+		}
 	});
 
-	window.addEventListener('resize', function() { chart.resize(); });
+	/* ── helpers ── */
+	function escHtml(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s == null ? '' : String(s))); return d.innerHTML; }
+	function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
+
+	window.addEventListener('resize', function() { chart.resize(); renderLaneDecor(); buildTimeline(); rebuild(false); });
 
 	/* ── init ── */
-	renderWelcome();
-	rebuild(false);
-	chart.setOption(buildOption());
+	chart.setOption(buildOption(chart.getWidth(), chart.getHeight()));
+	renderLaneDecor();
 	window.KM_chart = chart;
 })();
 </script>
