@@ -63,8 +63,6 @@ $$
 For an LLM, the "state" is the current context window, the "action" is the next token, and the "reward" comes from a reward model (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) or verifier (reasoning training).
 </div>
 
-<div id="mdp-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ## Tabular RL: Q-Learning (\cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
 
@@ -124,8 +122,6 @@ where $r_t(\theta) = \pi_\theta(a_t \mid s_t) / \pi_{\theta_{\text{old}}}(a_t \m
 PPO is simple, stable, and the default choice for \cite[Ouyang et al., 2022]{ouyang2022instructgpt} and many robotics tasks.
 </div>
 
-<div id="ppo-viz" style="max-width:880px; margin:1em auto;"></div>
-
 <div class="md">
 ## \cite[Ouyang et al., 2022]{ouyang2022instructgpt}: Reinforcement Learning from \cite[Ouyang et al., 2022]{ouyang2022instructgpt}
 
@@ -182,8 +178,6 @@ Variants have proliferated:
 * **ORPO** \cite[Hong et al., 2024]{hong2024orpo}: combines SFT and odds-ratio preference loss in one objective.
 * **SimPO** \cite[Meng et al., 2024]{meng2024simpo}: length-normalized, no reference model.
 </div>
-
-<div id="dpo-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
 ## GRPO: \cite[Shao et al., 2024]{shao2024grpo} Policy Optimization
@@ -255,124 +249,6 @@ RL is the engine of modern alignment and reasoning, but it remains one of the mo
 </div>
 
 <script>
-// MDP cycle
-(function() {
-	const c = document.getElementById('mdp-viz');
-	if (!c) return;
-
-	const box = (x, y, w, h, color) => ({
-		type: 'rect', x0: x, x1: x + w, y0: y, y1: y + h,
-		fillcolor: color, line: { color: 'rgba(0,0,0,0.3)', width: 1.5 }
-	});
-
-	const shapes = [
-		box(0, 1, 2, 1.5, '#22c55e'),
-		box(3, 1, 2, 1.5, '#3b82f6'),
-		box(6, 1, 2, 1.5, '#8b5cf6'),
-		box(3, -1, 2, 1.5, '#f59e0b'),
-		box(6, -1, 2, 1.5, '#ef4444')
-	];
-
-	const arrows = [
-		{ ax: 2, ay: 1.75, x: 3, y: 1.75, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' },
-		{ ax: 5, ay: 1.75, x: 6, y: 1.75, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' },
-		{ ax: 7, ay: 1, x: 7, y: 0.5, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' },
-		{ ax: 7, ay: -0.25, x: 5, y: -0.25, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' },
-		{ ax: 4, ay: -0.25, x: 4, y: 1, showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2, arrowcolor: '#475569' }
-	];
-
-	const annotations = [
-		{ x: 1, y: 1.75, text: '<b>State s</b>', showarrow: false, font: { size: 12, color: '#fff' } },
-		{ x: 4, y: 1.75, text: '<b>Action a ~ π</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-		{ x: 7, y: 1.75, text: '<b>Next s\'</b>', showarrow: false, font: { size: 12, color: '#fff' } },
-		{ x: 4, y: -0.25, text: '<b>Reward r</b>', showarrow: false, font: { size: 11, color: '#fff' } },
-		{ x: 7, y: -0.25, text: '<b>Update π, V</b>', showarrow: false, font: { size: 11, color: '#fff' } }
-	];
-
-	Plotly.newPlot('mdp-viz', [], {
-		shapes, annotations,
-		xaxis: { range: [-0.5, 9], showgrid: false, zeroline: false, showticklabels: false },
-		yaxis: { range: [-2, 3.5], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
-		margin: { t: 20, b: 20, l: 20, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		title: { text: 'Agent–Environment interaction loop', font: { size: 13 } }
-	}, { displayModeBar: false, responsive: true });
-})();
-
-// PPO clipped objective
-(function() {
-	const c = document.getElementById('ppo-viz');
-	if (!c) return;
-
-	const r = Array.from({length: 100}, (_, i) => (i + 1) * 0.04);  // 0.04 to 4
-	const A = 1;  // positive advantage
-	const eps = 0.2;
-
-	const obj = r.map(ri => {
-		const unclipped = ri * A;
-		const clipped = Math.min(ri, 1 + eps) * A;
-		return Math.min(unclipped, clipped);
-	});
-	const unclippedNeg = r.map(ri => {
-		const unclipped = ri * -1;
-		const clipped = Math.max(ri, 1 - eps) * -1;
-		return Math.max(unclipped, clipped);
-	});
-
-	Plotly.newPlot('ppo-viz', [
-		{ x: r, y: obj, mode: 'lines', name: 'A > 0', line: { color: '#22c55e', width: 2.5 } },
-		{ x: r, y: unclippedNeg, mode: 'lines', name: 'A < 0', line: { color: '#ef4444', width: 2.5 } },
-		{ x: [1, 1], y: [-1.2, 1.2], mode: 'lines', line: { color: '#64748b', dash: 'dash', width: 1 }, showlegend: false, name: 'r = 1' },
-		{ x: [1 - eps, 1 - eps], y: [-1.2, 1.2], mode: 'lines', line: { color: '#94a3b8', dash: 'dot', width: 1 }, showlegend: false },
-		{ x: [1 + eps, 1 + eps], y: [-1.2, 1.2], mode: 'lines', line: { color: '#94a3b8', dash: 'dot', width: 1 }, showlegend: false }
-	], {
-		title: { text: 'PPO clipped surrogate objective', font: { size: 13 } },
-		xaxis: { title: 'probability ratio r(θ) = π_θ / π_old', range: [0, 4.2] },
-		yaxis: { title: 'L_CLIP', range: [-1.2, 1.2] },
-		margin: { t: 50, b: 50, l: 60, r: 20 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		legend: { x: 0.05, y: 0.05, xanchor: 'left', yanchor: 'bottom' },
-		shapes: [
-			{ type: 'rect', x0: 1 - eps, x1: 1 + eps, y0: -1.2, y1: 1.2,
-			  fillcolor: 'rgba(148, 163, 184, 0.15)', line: { width: 0 } }
-		]
-	}, { responsive: true });
-})();
-
-// DPO loss landscape
-(function() {
-	const c = document.getElementById('dpo-viz');
-	if (!c) return;
-
-	const N = 50;
-	const x = Array.from({length: N}, (_, i) => (i - N/2) * 0.1);
-	const y = Array.from({length: N}, (_, i) => (i - N/2) * 0.1);
-	const z = [];
-	for (let i = 0; i < N; i++) {
-		const row = [];
-		for (let j = 0; j < N; j++) {
-			const ratio = Math.exp(x[i] - y[j]);  // π_θ(y_w) / π_θ(y_l) ratio
-			row.push(-Math.log(1 / (1 + 1 / ratio)));
-		}
-		z.push(row);
-	}
-
-	Plotly.newPlot('dpo-viz', [{
-		z, x, y, type: 'heatmap',
-		colorscale: [[0, '#fef3c7'], [0.5, '#3b82f6'], [1, '#1e3a8a']],
-		colorbar: { title: 'L_DPO' }
-	}], {
-		title: { text: 'DPO loss landscape (lower = better)', font: { size: 13 } },
-		xaxis: { title: 'log π(y_winner)' },
-		yaxis: { title: 'log π(y_loser)', scaleanchor: 'x' },
-		margin: { t: 50, b: 50, l: 60, r: 30 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)'
-	}, { responsive: true });
-})();
-
 async function loadReinforcementLearningModule() {
 	updateLoadingStatus("Loading section about Reinforcement Learning...");
 	return Promise.resolve();
