@@ -1013,10 +1013,15 @@ function pickSentence2D(weights) {
 }
 
 function updateAttn2D() {
-	const qx = parseFloat(document.getElementById('attn2d-qx').value);
-	const qy = parseFloat(document.getElementById('attn2d-qy').value);
-	document.getElementById('attn2d-qx-val').innerText = qx.toFixed(1);
-	document.getElementById('attn2d-qy-val').innerText = qy.toFixed(1);
+	const sliderX = document.getElementById('attn2d-qx');
+	const sliderY = document.getElementById('attn2d-qy');
+	if (!sliderX || !sliderY) return;
+	const qx = parseFloat(sliderX.value);
+	const qy = parseFloat(sliderY.value);
+	const vx = document.getElementById('attn2d-qx-val');
+	const vy = document.getElementById('attn2d-qy-val');
+	if (vx) vx.innerText = (qx >= 0 ? '+' : '') + qx.toFixed(1);
+	if (vy) vy.innerText = (qy >= 0 ? '+' : '') + qy.toFixed(1);
 
 	const q = [qx, qy];
 	const dk = Math.sqrt(2); // √d_k where d_k = 2 dimensions
@@ -1036,25 +1041,28 @@ function updateAttn2D() {
 	// ── Pick sentence based on which meaning wins ──
 	const pick = pickSentence2D(weights);
 	const sentenceEl = document.getElementById('attn2d-sentence');
-	sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-	sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
+	if (sentenceEl) {
+		sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
+		sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
+	}
 
 	// ── Canvas setup (read width from parent, cap height) ──
 	const canvas = document.getElementById('attn2d-canvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+
+	let rect = canvas.getBoundingClientRect();
+	if (rect.width === 0 || rect.height === 0) {
+		requestAnimationFrame(updateAttn2D);
+		return;
+	}
+
 	const container = canvas.parentElement;
 	const dpr = window.devicePixelRatio || 1;
 	const MAX_HEIGHT = 500;
 
-	if (!container._cachedW || !container._cachedH) {
-		canvas.style.display = 'none';
-		const containerRect = container.getBoundingClientRect();
-		canvas.style.display = '';
-		container._cachedW = Math.floor(containerRect.width);
-		container._cachedH = Math.min(Math.floor(containerRect.width), MAX_HEIGHT);
-	}
-
-	const W = container._cachedW;
-	const H = container._cachedH;
+	const W = Math.floor(rect.width);
+	const H = Math.min(W, MAX_HEIGHT);
 
 	canvas.style.width = W + 'px';
 	canvas.style.height = H + 'px';
@@ -1064,7 +1072,6 @@ function updateAttn2D() {
 		canvas.height = H * dpr;
 	}
 
-	const ctx = canvas.getContext('2d');
 	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 	ctx.clearRect(0, 0, W, H);
 
@@ -1162,7 +1169,7 @@ function updateAttn2D() {
 	// ── Math table (shows both dimensions in dot product) ──
 	const maxI = pick.idx;
 	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+	<tr style="border-bottom:2px solid ${themeColor('#cbd5e1')}; color:${themeColor('#64748b')};">
 	    <th style="text-align:left; padding:3px 8px;">Concept</th>
 	    <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
 	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
@@ -1172,12 +1179,13 @@ function updateAttn2D() {
 		const dotRaw = q[0] * kv.k[0] + q[1] * kv.k[1];
 		const contrib = [weights[i] * kv.v[0], weights[i] * kv.v[1]];
 		const isBold = i === maxI;
-		html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
+		const rowBg = isBold ? (isDarkMode() ? 'rgba(245, 158, 11, 0.12)' : '#fefce8') : '';
+		html += `<tr style="background:${rowBg};">
 	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px; white-space:nowrap;">
 		${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
 	    </td>
 	    <td style="padding:3px 8px; font-family:monospace;" title="(${q[0].toFixed(1)}×${kv.k[0].toFixed(1)}) + (${q[1].toFixed(1)}×${kv.k[1].toFixed(1)}) = ${dotRaw.toFixed(2)}, then ÷√2 = ${scores[i].toFixed(2)}">
-		${scores[i].toFixed(2)}
+		${(scores[i] >= 0 ? '+' : '') + scores[i].toFixed(2)}
 	    </td>
 	    <td style="padding:3px 8px; width: 200px">
 		<div style="display:inline-block; width:${Math.max(3, weights[i] * 120)}px; height:14px;
@@ -1190,7 +1198,7 @@ function updateAttn2D() {
 	    </td>
 	</tr>`;
 	});
-	html += `<tr style="border-top:2px solid #1e293b;">
+	html += `<tr style="border-top:2px solid ${themeColor('#1e293b')};">
 	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
 	<td style="text-align:right; padding:6px 8px;">
 	    <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>

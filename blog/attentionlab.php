@@ -113,18 +113,18 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
 </div>
 
 <!-- ===================== 1D: "How Financial Is It?" ===================== -->
-<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+<div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
             margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
 
     <div style="text-align:center; margin-bottom:8px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+        <span style="font-size:1.05rem; font-weight:bold; color:var(--mn-text, #1e293b);">
             1D: Where does "bank" land on the Nature ↔ Finance axis?
         </span>
     </div>
 
     <!-- Live sentence -->
     <div id="attn1d-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
-         border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
+         border-left:4px solid var(--mn-border, #cbd5e1); border-radius:6px; font-style:italic; color:var(--mn-text, #334155);
          transition: border-color 0.2s;height:50px;"></div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
@@ -137,15 +137,15 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
     </div>
 
     <canvas id="attn1d-canvas" width="700" height="220"
-            style="display:block; width:100%; height:220px; border:1px solid #e2e8f0; border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
+            style="display:block; width:100%; height:220px; border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
 
     <div id="attn1d-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
-         border:1px dashed #cbd5e1; overflow-x:auto;"></div>
+         border:1px dashed var(--mn-border, #cbd5e1); overflow-x:auto;"></div>
 </div>
 
 
 
-<!-- ===================== SECTION 2: 2D ===================== -->
+<!-- ===================== 1D and 2D container wrappers ===================== -->
 <div class="md">
 ### 2D: Attention in a Plane
 
@@ -232,9 +232,9 @@ To decide how much "pull" one word has on another, the model performs a mathemat
 2.  **Key ($\mathbf{k}$):** The words offering context (e.g., "I am a River, I have water and banks.").
 3.  **Value ($\mathbf{v}$):** The actual semantic "content" to be shared.
 
-The model calculates an alignment score using the dot product:
-$$\text{score}_{i,j} = \mathbf{q}_i \cdot \mathbf{k}_j^T$$
-If the Query and Key point in a similar direction, the connection is strong. This produces the **orange "Handshake" lines** you see in the simulation.
+The model calculates an alignment score using the scaled dot product:
+$$\text{score}_{i,j} = \frac{\mathbf{q}_i \cdot \mathbf{k}_j^T}{\sqrt{d_k}}$$
+The $\sqrt{d_k}$ term is critical — without it, the dot-product magnitudes scale with the head dimension and the softmax saturates. If the Query and Key point in a similar direction, the connection is strong.
 
 In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
@@ -252,22 +252,22 @@ $$
 * **Value ($\mathbf{v}$):** The actual semantic information to be propagated forward.
 
 ## The Interaction: Dot-Product Scoring
-To determine how much "attention" word $i$ should pay to word $j$, we calculate the scalar dot product of their respective Query and Key vectors. This measures their geometric alignment in the feature space:
+To determine how much "attention" word $i$ should pay to word $j$, we calculate the scaled dot product of their respective Query and Key vectors. This measures their geometric alignment in the feature space:
 
 $$
-\text{score}_{i,j} = \mathbf{q}_i \cdot \mathbf{k}_j^T
+\text{score}_{i,j} = \frac{\mathbf{q}_i \cdot \mathbf{k}_j^T}{\sqrt{d_k}}
 $$
 
 If the vectors $\mathbf{q}_i$ and $\mathbf{k}_j$ point in a similar direction, the product is large, indicating high relevance.
 
 ### The Core Mechanism: Generating Q, K, and V
-To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
+To allow a token to "scout" the rest of the sequence, we derive three distinct representations from each token's hidden state by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
 
-* **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
-* **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
-* **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
+* **Query ($\mathbf{q}_i = \mathbf{x}_i W^Q$)**: Represents "What am I looking for?"
+* **Key ($\mathbf{k}_i = \mathbf{x}_i W^K$)**: Represents "What information do I contain?"
+* **Value ($\mathbf{v}_i = \mathbf{x}_i W^V$)**: Represents "What is the actual content I offer?"
 
-They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space, so they work only on a specific subpart of the information of the Embedding Space.
+A subtle but important detail: **$Q$ and $K$ have dimension $d_k$, while $V$ has dimension $d_v$**. In the original paper, $W^Q, W^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$ and $W^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$. Splitting the value dimension off from the key dimension lets the network learn "what to retrieve" ($V$) independently of "what to match against" ($K$). The three projections all live as subspaces inside the full $d_{\text{model}}$-dimensional embedding space, so each one captures a different slice of the token's meaning.
 </div>
 
 <div id="qkv-subspace-projection-viz"
@@ -279,17 +279,25 @@ They are used to project the tokens from the Embedding Space into subspaces of t
 
 <div class="md">
 
-Each word in the vocabulary lives as a **3D vector** in the full embedding space (shown as grey points). The matrices $W^Q$, $W^K$, and $W^V$ are **linear projections**, they take each 3D vector and project it onto a **2D subspace** (a plane through the origin).
+In a real Transformer, every token lives as a $d_{\text{model}}$-dimensional vector — $d_{\text{model}} = 512$ in the original paper. The matrices $W^Q, W^K, W^V$ are **linear projections** that map each token from $d_{\text{model}}$ down into a smaller subspace ($d_k = d_v = 64$ in the original paper). They are linear, so a 2D plane through the origin is faithful to what happens in 512 dimensions: every projection is a shadow of the original onto some lower-dimensional subspace.
 
-Each head has its own set of projection matrices, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic) simultaneously.
-
-- **Grey points**: Original 3D token embeddings.
-- **Colored points on the plane**: Where each token lands after being multiplied by the weight matrix. The colored lines show the projection "shadow" from 3D down to the plane.
+- **Grey points**: Original 3D token embeddings (the toy version of $d_{\text{model}}$).
+- **Coloured diamonds on the plane**: Where each token lands after being multiplied by the weight matrix. The coloured lines show the projection "shadow" from 3D down to the plane.
 - **The translucent plane**: The 2D subspace that the weight matrix projects onto. Each of Q, K, V has a *different* plane, meaning each one "sees" the tokens from a different angle.
 
-The same set of token vectors is viewed through three different "lenses" (Q, K, V), each defined by a learned $d_\text{model} \times d_k$ matrix. Because each lens projects onto a different subspace, the same word can appear close to different neighbors depending on whether you're asking "What am I looking for?" (Q), "What do I contain?" (K), or "What do I offer?" (V).
+The same set of token vectors is viewed through three different "lenses" (Q, K, V). Because each lens projects onto a different subspace, the same word can appear close to different neighbours depending on whether you're asking "What am I looking for?" (Q), "What do I contain?" (K), or "What do I offer?" (V). In this 3D toy version we set $d_k = d_v = 2$ for visual clarity; in production these would be $64$-dimensional subspaces of a $512$-dimensional embedding.
 
-In this demo, we use a **3D → 2D** projection for visual clarity, but in real transformers, the same principle applies in much higher dimensions.
+## Multi-Head Attention: Many Lenses at Once
+
+A single attention head can only attend from **one perspective** at a time. The Transformer instead runs $h$ heads in parallel, each with its own $W^Q, W^K, W^V$, and concatenates their outputs:
+
+$$
+\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)\, W^O, \quad \text{head}_i = \text{Attention}(Q W_i^Q,\ K_i^K,\ V_i^V)
+$$
+
+with $W_i^Q, W_i^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$, and $W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$. In the original paper, $h = 8$, $d_{\text{model}} = 512$, so each head works in a $d_k = d_v = 64$-dimensional subspace. The total per-head cost equals that of one big $512$-dim head, but the model gains the ability to **jointly attend to information from different representation subspaces** — one head can chase syntactic dependencies while another tracks coreference.
+
+The final projection $W^O$ is what lets the heads' outputs mix back together into a single $d_{\text{model}}$-dimensional representation.
 
 ## The Scaling Factor and Softmax
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
@@ -318,13 +326,13 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
         <h2>The Connectivity Web</h2>
         <p>Hover over the words to see the invisible threads of meaning.</p>
         
-        <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
+        <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: var(--mn-surface, #fcfdfe); border: 1px solid var(--mn-border, #e2e8f0); border-radius: 8px;">
             <canvas id="sa-attn-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;"></canvas>
             <div id="sa-token-stream" style="display: flex; justify-content: center; gap: 30px; position: absolute; bottom: 60px; width: 100%;">
                 </div>
         </div>
 
-            <h2 style="color:#1e293b">The Attention Matrix</h2>
+            <h2 style="color:var(--mn-heading, #1e293b)">The Attention Matrix</h2>
 <div class="md">
 
 Keep in mind that this is an oversimplification. Usually, the connections are not that easily interpretable.
@@ -352,22 +360,19 @@ When you see a dark blue square with **85%**, you are seeing the model "linking"
 <div class="md">
 ## Summary: The Vector Tug-of-War
 
-In the world of Transformers, meaning is **movement**. Instead of looking up a word in a static dictionary, the model calculates a new position for that word based on the "gravitational pull" of its neighbors in the embedding space. This creates a vector that is near the *meaning* of the word in the context it's used in, not the mere embedding of the word itself.
+In the world of Transformers, meaning is **movement**. Instead of looking up a word in a static dictionary, the model calculates a new position for that word based on the "gravitational pull" of its neighbours in the embedding space. This creates a vector that is near the *meaning* of the word in the context it is used in, not the mere embedding of the word itself.
 
-## The Intuition: Contextual Gravity
-Think of a word as a point floating in a high-dimensional space. In isolation, it sits in a "neutral" zone. Self-attention allows other words in the sentence to act like magnets, dragging that point toward a more specific meaning.
-
-## The "Apple" Shift
+The classic illustration: the word **"apple"** is ambiguous in isolation. The word **"juicy"** pulls the apple vector away from the technology cluster and toward the fruit cluster — the same dot-product mechanism the rest of the page has been demonstrating.
 </div>
 <div id="apple-shift-plot" style="height:440px; background:var(--mn-surface, transparent); border-radius:12px;"></div>
 
-<div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
-The person was eating the *juicy* **apple**.
+<div class="md" style="padding: 15px; border-left: 4px solid #f97316; background:var(--mn-surface, #fff8f0); font-style: italic; margin-bottom: 20px; color:var(--mn-text, #1e293b); border-radius: 6px;">
+The sentence <b>"I ate a juicy apple"</b> resolves an otherwise ambiguous token:
 
-* **Neutral State:** "Apple" sits between *Technology* and *Fruit*.
-* **The Context:** "I ate a juicy **apple**."
-* **The Pull:** The word "juicy" exerts a high attention score.
-* **The Result:** The vector for "apple" is pulled toward the *Fruit* coordinate, away from the *iPhone* coordinate.
+* **Neutral State:** "Apple" sits between *Technology* (iPhone, Mac, Linux) and *Fruit* (Banana, Orchard, Vitamin).
+* **The Context:** The query $\mathbf{q}_{\text{apple}}$ looks at every neighbour's Key $\mathbf{k}_j$.
+* **The Pull:** The word "juicy" has a Key $\mathbf{k}_{\text{juicy}}$ that scores very high against $\mathbf{q}_{\text{apple}}$; the orange dotted vector shows the resulting gravitational pull.
+* **The Result:** The contextualised "apple" lands inside the fruit cluster, no longer confused with iPhone.
 </div>
 
 <div class="md">
