@@ -308,6 +308,175 @@
 		document.documentElement.setAttribute('data-reading-time', String(minutes));
 	}
 
+	/* ── 6b. Copy-code button on every <pre> ──
+	   Small text label in the corner that appears on hover.
+	   Click → copies code to clipboard, briefly swaps to "copied".
+	   Falls back to a textarea-based copy on older browsers. */
+	function installCopyButtons(root) {
+		const pres = (root || document).querySelectorAll('.md pre');
+		pres.forEach(function (pre) {
+			if (pre.dataset.copyReady) return;
+			pre.dataset.copyReady = '1';
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'cl-copy';
+			btn.textContent = 'copy';
+			btn.setAttribute('aria-label', 'Copy code to clipboard');
+			btn.addEventListener('click', function (ev) {
+				ev.stopPropagation();
+				const code = pre.querySelector('code') || pre;
+				const text = code.innerText.replace(/\u00a0/g, ' ');
+				const done = function (ok) {
+					const orig = btn.textContent;
+					btn.textContent = ok ? 'copied' : 'failed';
+					btn.classList.toggle('is-ok', !!ok);
+					clearTimeout(btn.__t);
+					btn.__t = setTimeout(function () {
+						btn.textContent = orig;
+						btn.classList.remove('is-ok');
+					}, 1400);
+				};
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+				} else {
+					const ta = document.createElement('textarea');
+					ta.value = text;
+					ta.style.position = 'fixed';
+					ta.style.opacity = '0';
+					document.body.appendChild(ta);
+					ta.select();
+					let ok = false;
+					try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+					document.body.removeChild(ta);
+					done(ok);
+				}
+			});
+			pre.appendChild(btn);
+		});
+	}
+
+	/* ── 6c. Footnote hover preview ──
+	   Hover a footnote-ref superscript → tooltip with the
+	   footnote text appears next to it. Pure utility, zero
+	   pixels when not hovering. */
+	function installFootnotePreview(root) {
+		const refs = (root || document).querySelectorAll('.md sup.footnote-ref a[href^="#fn-"]');
+		refs.forEach(function (a) {
+			if (a.dataset.fnPreviewReady) return;
+			a.dataset.fnPreviewReady = '1';
+			const tip = document.createElement('span');
+			tip.className = 'cl-fn-tip';
+			tip.setAttribute('role', 'tooltip');
+			const id = (a.getAttribute('href') || '').replace(/^#/, '');
+			const target = id ? document.getElementById(id) : null;
+			if (target) {
+				// clone the footnote content (strip the back-link arrow)
+				const clone = target.cloneNode(true);
+				clone.querySelectorAll && clone.querySelectorAll('a').forEach(function (la) {
+					if ((la.textContent || '').trim() === '↩') la.remove();
+				});
+				tip.appendChild(clone);
+			}
+			a.parentNode.appendChild(tip);
+			let timer = null;
+			const show = function () { clearTimeout(timer); tip.classList.add('is-visible'); };
+			const hide = function () {
+				clearTimeout(timer);
+				timer = setTimeout(function () { tip.classList.remove('is-visible'); }, 80);
+			};
+			a.addEventListener('mouseenter', show);
+			a.addEventListener('mouseleave', hide);
+			a.addEventListener('focus', show);
+			a.addEventListener('blur', hide);
+			tip.addEventListener('mouseenter', show);
+			tip.addEventListener('mouseleave', hide);
+		});
+	}
+
+	/* ── 6d. Citation hover preview ──
+	   Links with `data-target="bib-xxx"` reference the bibliography.
+	   On hover, show the formatted citation in a small tooltip. */
+	function installCitationPreview(root) {
+		const refs = (root || document).querySelectorAll('.md a[data-target^="bib-"]');
+		refs.forEach(function (a) {
+			if (a.dataset.citePreviewReady) return;
+			a.dataset.citePreviewReady = '1';
+			const id = (a.getAttribute('data-target') || '').replace(/^bib-/, '');
+			const target = id ? document.getElementById('bib-' + id) : null;
+			if (!target) return;
+			const tip = document.createElement('span');
+			tip.className = 'cl-cite-tip';
+			tip.setAttribute('role', 'tooltip');
+			const clone = target.cloneNode(true);
+			clone.querySelectorAll && clone.querySelectorAll('a').forEach(function (la) { la.remove(); });
+			tip.appendChild(clone);
+			a.parentNode.appendChild(tip);
+			let timer = null;
+			const show = function () { clearTimeout(timer); tip.classList.add('is-visible'); };
+			const hide = function () {
+				clearTimeout(timer);
+				timer = setTimeout(function () { tip.classList.remove('is-visible'); }, 80);
+			};
+			a.addEventListener('mouseenter', show);
+			a.addEventListener('mouseleave', hide);
+			a.addEventListener('focus', show);
+			a.addEventListener('blur', hide);
+			tip.addEventListener('mouseenter', show);
+			tip.addEventListener('mouseleave', hide);
+		});
+	}
+
+	/* ── 6e. Image lightbox — click any <img> in a figure to zoom ── */
+	function installImageLightbox() {
+		// build the lightbox once
+		const lb = document.createElement('div');
+		lb.id = 'cl-lb';
+		lb.setAttribute('role', 'dialog');
+		lb.setAttribute('aria-modal', 'true');
+		lb.setAttribute('aria-label', 'Image viewer');
+		lb.hidden = true;
+		lb.innerHTML = '<button class="cl-lb-x" type="button" aria-label="Close">\u00d7</button><img alt=""><figcaption></figcaption>';
+		document.body.appendChild(lb);
+		const img = lb.querySelector('img');
+		const cap = lb.querySelector('figcaption');
+		const x = lb.querySelector('.cl-lb-x');
+
+		function open(src, alt, caption) {
+			img.src = src;
+			img.alt = alt || '';
+			cap.textContent = caption || '';
+			lb.hidden = false;
+			lb.classList.add('is-visible');
+			document.body.style.overflow = 'hidden';
+		}
+		function close() {
+			lb.classList.remove('is-visible');
+			setTimeout(function () {
+				lb.hidden = true;
+				img.src = '';
+				document.body.style.overflow = '';
+			}, 180);
+		}
+		x.addEventListener('click', close);
+		lb.addEventListener('click', function (ev) {
+			if (ev.target === lb) close();
+		});
+		document.addEventListener('keydown', function (ev) {
+			if (ev.key === 'Escape' && !lb.hidden) close();
+		});
+
+		// click any image in a .md figure → open
+		document.querySelectorAll('.md figure img').forEach(function (el) {
+			el.style.cursor = 'zoom-in';
+			el.addEventListener('click', function (ev) {
+				ev.preventDefault();
+				const fig = el.closest('figure');
+				const capText = fig ? (fig.querySelector('figcaption')?.textContent || '').trim() : '';
+				open(el.currentSrc || el.src, el.alt, capText);
+			});
+		});
+	}
+
 	/* ── 7. Back-to-top — invisible until 60% scrolled ──
 	   Just a small text link in the bottom-right corner. No
 	   circle, no button, no background. If you don't see it,
@@ -344,6 +513,9 @@
 		try {
 			installHeadingAnchors(root);
 			labelCodeBlocks(root);
+			installCopyButtons(root);
+			installFootnotePreview(root);
+			installCitationPreview(root);
 		} catch (e) { /* silent */ }
 	}
 
@@ -354,6 +526,7 @@
 		installShortcuts();
 		installReadingMeta();
 		installBackToTop();
+		installImageLightbox();
 		// pick up late content (MathJax, lazy modules, etc.)
 		const mo = new MutationObserver(function (muts) {
 			let touched = false;
@@ -362,7 +535,7 @@
 				m.addedNodes.forEach(function (n) {
 					if (!(n instanceof Element)) return;
 					if (n.matches && n.matches('.md, .md *')) { touched = true; return; }
-					if (n.querySelector && n.querySelector('.md h2, .md h3, .md pre')) touched = true;
+					if (n.querySelector && n.querySelector('.md h2, .md h3, .md pre, .md figure img')) touched = true;
 					if (n.tagName === 'H1' || (n.querySelector && n.querySelector('.md h1'))) h1Appeared = true;
 				});
 			}

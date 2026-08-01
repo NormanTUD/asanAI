@@ -6038,6 +6038,136 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 	text-align: center;
 }
 
+/* ── 11.5. Copy-code button — appears only on hover of <pre> ── */
+.md pre {
+	position: relative;
+}
+.cl-copy {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	z-index: 2;
+	padding: 3px 8px;
+	font-family: var(--mn-font-mono);
+	font-size: .68em;
+	letter-spacing: .04em;
+	color: var(--mn-text-muted);
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity .18s ease, color .15s ease, border-color .15s ease, background .15s ease;
+}
+.md pre:hover .cl-copy,
+.cl-copy:focus { opacity: 1; }
+.cl-copy:hover {
+	color: var(--mn-text);
+	border-color: var(--mn-border);
+	background: var(--mn-bg);
+}
+.cl-copy.is-ok { color: var(--mn-emerald); border-color: var(--mn-emerald); opacity: 1; }
+/* adjust the existing language-label position so they don't overlap */
+.md pre[class*="language-"]::before,
+.md pre code[class*="language-"]::before {
+	right: 60px;
+	opacity: 0;
+	transition: opacity .18s ease;
+}
+.md pre:hover::before { opacity: .55; }
+
+/* ── 11.6. Footnote hover tooltip ── */
+.cl-fn-tip,
+.cl-cite-tip {
+	position: absolute;
+	z-index: 9200;
+	max-width: 360px;
+	min-width: 180px;
+	padding: 10px 14px;
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+	box-shadow: 0 12px 36px rgba(0,0,0,.18);
+	font-size: .82rem;
+	line-height: 1.5;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-2px);
+	transition: opacity .15s ease, transform .15s ease;
+}
+.cl-fn-tip.is-visible,
+.cl-cite-tip.is-visible {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+.cl-fn-tip > ol,
+.cl-fn-tip > ul { margin: 0; padding-left: 1em; }
+.cl-fn-tip li,
+.cl-cite-tip > * { margin: 0; padding: 0; list-style: none; }
+.cl-fn-tip li::marker,
+.cl-cite-tip li::marker { display: none; }
+html.dark .cl-fn-tip,
+html.dark .cl-cite-tip {
+	background: var(--mn-surface-raised);
+	box-shadow: 0 12px 36px rgba(0,0,0,.5);
+}
+
+/* ── 11.7. Image lightbox ── */
+#cl-lb {
+	position: fixed;
+	inset: 0;
+	z-index: 9800;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 12px;
+	padding: 40px;
+	background: rgba(8, 12, 24, .82);
+	backdrop-filter: blur(6px);
+	opacity: 0;
+	transition: opacity .18s ease;
+}
+#cl-lb.is-visible { opacity: 1; }
+#cl-lb[hidden] { display: none; }
+#cl-lb img {
+	max-width: 92vw;
+	max-height: 80vh;
+	object-fit: contain;
+	border-radius: 4px;
+	box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+#cl-lb figcaption {
+	max-width: 80ch;
+	color: rgba(255,255,255,.7);
+	font-size: .85em;
+	font-style: italic;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	border: none;
+	line-height: 1.5;
+}
+.cl-lb-x {
+	position: absolute;
+	top: 14px;
+	right: 18px;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid rgba(255,255,255,.2);
+	background: rgba(255,255,255,.06);
+	color: rgba(255,255,255,.85);
+	font-size: 18px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.cl-lb-x:hover { background: rgba(255,255,255,.15); }
+
 /* ── 12. Print stylesheet — book-like, single column ── */
 @media print {
 	html, body { background: #fff !important; color: #000 !important; font-size: 11pt; }
