@@ -19,11 +19,11 @@ RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
 #    injection if mobile.css is already present in the buffer (so
 #    explicit includes in index.php / index_full.php won't double-load).
 <IfModule mod_php8.c>
-    php_value auto_prepend_file "/var/www/html/asanai/blog/mobile-prepend.php"
+    php_value auto_prepend_file "mobile-prepend.php"
 </IfModule>
 <IfModule mod_php.c>
-    php_value auto_prepend_file "/var/www/html/asanai/blog/mobile-prepend.php"
+    php_value auto_prepend_file "mobile-prepend.php"
 </IfModule>
 <IfModule mod_php7.c>
-    php_value auto_prepend_file "/var/www/html/asanai/blog/mobile-prepend.php"
+    php_value auto_prepend_file "mobile-prepend.php"
 </IfModule>
