@@ -128,12 +128,12 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
          transition: border-color 0.2s;height:50px;"></div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −1</span>
-        <input type="range" id="attn1d-q" min="-1" max="1" step="0.1" value="2.0"
+        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −3</span>
+        <input type="range" id="attn1d-q" min="-3" max="3" step="0.1" value="-1.0"
                style="flex:1; accent-color:#2563eb;" oninput="updateAttn1D()">
-        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+1 🏦</span>
+        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+3 🏦</span>
         <span id="attn1d-q-val"
-              style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:40px; text-align:right;">2.0</span>
+              style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:40px; text-align:right;">−1.0</span>
     </div>
 
     <canvas id="attn1d-canvas" width="700" height="220"
