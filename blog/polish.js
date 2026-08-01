@@ -516,22 +516,34 @@
 			if (ev.key === 'Escape' && !lb.hidden) close();
 		});
 
-		/* delegated click — fires for any image, present or future */
-		document.addEventListener('click', function (ev) {
+		/* delegated click — fires for any image, present or future.
+		   Uses capture phase because `document.body.onclick` (set by
+		   helper.js's bindIframeSafeLinks) calls stopPropagation() in
+		   its handler, which would swallow the event before it bubbles
+		   up to a listener on `document`. Capture runs FIRST, top-down,
+		   so our handler fires before bindIframeSafeLinks can interfere. */
+		function lightboxClickHandler(ev) {
 			const t = ev.target;
 			if (!(t instanceof Element)) return;
-			if (t.tagName !== 'IMG') return;
-			if (!t.closest('.md')) return;
-			// ignore if user is selecting text on the image
+			// the target may be the img, or a wrapper around it
+			const img = t.tagName === 'IMG' ? t : t.closest('img');
+			if (!img) return;
+			// only inside the article body, not in drawer / header / footer
+			if (!img.closest('.md')) return;
+			// user is selecting text — don't hijack
 			const sel = window.getSelection && window.getSelection();
 			if (sel && sel.toString().length > 0) return;
-			// ignore if image is a tiny icon (e.g. inside a button or svg)
-			if (t.closest('button, a.btn, .cl-inline, svg')) return;
+			// ignore tiny icons inside buttons / links (the cursor isn't zoom-in there anyway)
+			if (img.closest('button, a.btn, svg')) return;
+			// ignore very small images (likely icons, not content)
+			if (img.naturalWidth && img.naturalWidth < 50) return;
 			ev.preventDefault();
-			const fig = t.closest('figure');
+			ev.stopPropagation();
+			const fig = img.closest('figure');
 			const capText = fig ? ((fig.querySelector('figcaption') || {}).textContent || '').trim() : '';
-			open(t.currentSrc || t.src, t.alt, capText);
-		});
+			open(img.currentSrc || img.src, img.alt, capText);
+		}
+		document.addEventListener('click', lightboxClickHandler, true);
 
 		/* delegated cursor hint — anything .md img gets zoom-in cursor */
 		const styleEl = document.createElement('style');
