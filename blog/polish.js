@@ -133,26 +133,7 @@
 		});
 	}
 
-	/* ── 4. Code-block language label ──
-	   Prism already adds `language-xxx` to the inner <code>.
-	   We surface that as `data-language` on the <pre>, so the
-	   CSS can render a tiny label in the corner. */
-	function labelCodeBlocks(root) {
-		const pres = (root || document).querySelectorAll('.md pre');
-		pres.forEach(function (pre) {
-			if (pre.dataset.language) return;
-			const code = pre.querySelector('code');
-			if (!code) return;
-			const m = (code.className || '').match(/language-([\w-]+)/);
-			if (!m) return;
-			const lang = m[1];
-			if (lang === 'none' || lang === 'plain' || lang === 'text') return;
-			pre.dataset.language = lang;
-			pre.setAttribute('data-language', lang);
-		});
-	}
-
-	/* ── 5. Keyboard shortcuts (invisible until you press them) ──
+	/* ── 4. Keyboard shortcuts (invisible until you press them) ──
 	     /     → focus the search box (if present)
 	     ?     → show a small overlay of all shortcuts
 	     Esc   → close any open modal/drawer

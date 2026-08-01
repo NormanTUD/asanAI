@@ -1541,7 +1541,7 @@ function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY,
 function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
 		if (!meta_info["output_shape"]) {
-			alert("Has no output shape");
+			console.warn("Has no output shape");
 			return ctx;
 		}
 

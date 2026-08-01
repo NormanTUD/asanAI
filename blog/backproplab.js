@@ -2,13 +2,6 @@
 // backproplab.js — Refactored
 // ═══════════════════════════════════════════════════════════════════
 
-// ── Top-level entry point ──────────────────────────────────────────
-
-async function loadBackproplabModule() {
-	sigmoidPlot("sigmoid-plot");
-	renderBackpropVisual("bp-visual");
-}
-
 // ═══════════════════════════════════════════════════════════════════
 // SECTION 1: SIGMOID INTERACTIVE PLOT
 // ═══════════════════════════════════════════════════════════════════

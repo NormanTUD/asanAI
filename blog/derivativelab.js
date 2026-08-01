@@ -15,7 +15,7 @@ function initDerivativeLab() {
 	function update() {
 		const xPos = parseFloat(controls.xSlider.value);
 		const h = parseFloat(controls.hSlider.value);
-		const f = (x) => eval(controls.select.value);
+		const f = new Function('x', `return (${controls.select.value});`);
 
 		controls.xDisp.innerText = `x = ${xPos.toFixed(2)}`;
 		controls.hDisp.innerText = `h = ${h.toFixed(4)}`;
@@ -34,41 +34,41 @@ function initDerivativeLab() {
 
 		// Split the markers into two separate traces for different styling
 		const data = [
-			{ 
-				x: xValues, 
-				y: yValues, 
-				name: 'Loss Function', 
-				line: {color: '#3b82f6', width: 2} 
+			{
+				x: xValues,
+				y: yValues,
+				name: 'Loss Function',
+				line: {color: '#3b82f6', width: 2}
 			},
-			{ 
+			{
 				// The Secant Line connecting the two points
-				x: [xPos, xPos + h], 
-				y: [f_x, f_xh], 
-				mode: 'lines', 
-				name: 'Secant', 
-				line: {color: '#ef4444', width: 1} 
+				x: [xPos, xPos + h],
+				y: [f_x, f_xh],
+				mode: 'lines',
+				name: 'Secant',
+				line: {color: '#ef4444', width: 1}
 			},
-			{ 
+			{
 				// POINT A: Current Position (Large Blue Circle)
-				x: [xPos], 
-				y: [f_x], 
-				mode: 'markers', 
-				name: 'Current Position', 
-				marker: {color: themeColor('#1e293b'), size: 12, symbol: 'circle'} 
+				x: [xPos],
+				y: [f_x],
+				mode: 'markers',
+				name: 'Current Position',
+				marker: {color: themeColor('#1e293b'), size: 12, symbol: 'circle'}
 			},
-			{ 
+			{
 				// POINT B: Look-ahead Point (Smaller Red Diamond)
-				x: [xPos + h], 
-				y: [f_xh], 
-				mode: 'markers', 
-				name: 'Look-ahead (h)', 
-				marker: {color: '#ef4444', size: 8, symbol: 'diamond'} 
+				x: [xPos + h],
+				y: [f_xh],
+				mode: 'markers',
+				name: 'Look-ahead (h)',
+				marker: {color: '#ef4444', size: 8, symbol: 'diamond'}
 			},
-			{ 
-				x: xValues, 
-				y: tangentLine, 
-				name: "f'(x)", 
-				line: {color: '#10b981', dash: 'dash', width: 1.5} 
+			{
+				x: xValues,
+				y: tangentLine,
+				name: "f'(x)",
+				line: {color: '#10b981', dash: 'dash', width: 1.5}
 			}
 		];
 

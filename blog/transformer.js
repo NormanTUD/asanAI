@@ -982,7 +982,7 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
 
     const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
     if (heatmaps) heatmaps.forEach(hm => { try { Plotly.Plots.resize(hm); } catch(e) {} });
-    
+
     // SCOPED, not global
     if (activeContent) _renderTemmlOnElements([activeContent]);
 };
@@ -1001,7 +1001,7 @@ window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
 
     const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
     if (heatmapDiv) { try { Plotly.Plots.resize(heatmapDiv); } catch(e) {} }
-    
+
     // SCOPED, not global
     if (activeContent) _renderTemmlOnElements([activeContent]);
 };
@@ -2119,7 +2119,7 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 	render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
-window.select_suggested_word = (word) => {                                                                                                                                                                                  
+window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
 
 	// Check if input has content and does NOT end with a space
@@ -2127,10 +2127,10 @@ window.select_suggested_word = (word) => {
 		masterInput.value += ' ';
 	}
 
-	masterInput.value += word;                              
+	masterInput.value += word;
 
-	// Set master as active and re-run                      
-	run_transformer_demo('transformer-master-token-input'); 
+	// Set master as active and re-run
+	run_transformer_demo('transformer-master-token-input');
 };
 
 function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
@@ -2872,8 +2872,8 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
 
 const flattenDisplay = (mat) => {
 	if (!mat || !mat.length) return '';
-	return mat.map(row => 
-		Array.isArray(row) 
+	return mat.map(row =>
+		Array.isArray(row)
 		? row.map(v => v.toFixed(nr_fixed)).join(',')
 		: row.toFixed(nr_fixed)
 	).join(';');
@@ -5511,12 +5511,12 @@ const debouncedRun = debounce((id) => {
 
 // ═══════════════════════════════════════════════════════════════
 // Vector Math — v9 NUCLEAR REWRITE
-// 
+//
 // Strategy: The input value is stored in a JS variable, NOT
 // read from the DOM. The DOM input is just a view. All renders
 // read from the JS variable. A MutationObserver + polling loop
 // ensures the DOM input always reflects the JS variable.
-// 
+//
 // This makes it IMPOSSIBLE for any external DOM mutation to
 // lose the user's input, because the source of truth is a
 // plain JS string, not a DOM element.
@@ -5532,7 +5532,7 @@ window._vmInputSelEnd = 0;
     setInterval(() => {
         const el = document.getElementById('transformer-vector-math-input');
         if (!el) return;
-        
+
         // If the DOM input was cleared but our JS variable has content,
         // restore it immediately
         if (el.value === '' && window._vmInputValue !== '') {
@@ -5543,7 +5543,7 @@ window._vmInputSelEnd = 0;
                 }
             } catch(e) {}
         }
-        
+
         // If the DOM input has content that DIFFERS from our variable,
         // and the user is actively editing, trust the DOM
         if (document.activeElement === el && el.value !== '' && el.value !== window._vmInputValue) {
@@ -5560,14 +5560,14 @@ const vectorMathObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             vectorMathRenderRegistry.isInViewport = true;
         }
-        
+
         // Only set to false if the STABLE parent (not just the result div)
         // goes out of viewport
         if (!entry.isIntersecting && entry.target.id !== 'transformer-vector-math-result') {
             vectorMathRenderRegistry.isInViewport = false;
         }
     });
-    
+
     // If in viewport and pending update, execute it
     if (vectorMathRenderRegistry.isInViewport && vectorMathRenderRegistry.needsUpdate) {
         calculate_vector_math();
@@ -5670,21 +5670,21 @@ function observer_vector_math() {
 function _vmRenderResult(html) {
     const resDiv = document.getElementById('transformer-vector-math-result');
     if (!resDiv) return;
-    
+
     // Skip if content hasn't changed
     if (vectorMathRenderRegistry._lastResultHtml === html) return;
     vectorMathRenderRegistry._lastResultHtml = html;
-    
+
     // Snapshot the input BEFORE touching the DOM
     const inputEl = document.getElementById('transformer-vector-math-input');
     const preValue = inputEl ? inputEl.value : '';
     const preFocused = inputEl && (document.activeElement === inputEl);
     const preSelStart = inputEl ? inputEl.selectionStart : 0;
     const preSelEnd = inputEl ? inputEl.selectionEnd : 0;
-    
+
     // Update result div
     resDiv.innerHTML = html;
-    
+
     // Scoped math rendering — NEVER global render_temml()
     try {
         if (typeof temml.renderMathInElement === 'function') {
@@ -5697,7 +5697,7 @@ function _vmRenderResult(html) {
             });
         }
     } catch(e) {}
-    
+
     // IMMEDIATELY restore input if it was disturbed
     if (inputEl) {
         if (inputEl.value !== window._vmInputValue && window._vmInputValue !== '') {
@@ -5705,7 +5705,7 @@ function _vmRenderResult(html) {
         } else if (inputEl.value !== preValue && preValue !== '') {
             inputEl.value = preValue;
         }
-        
+
         if (preFocused) {
             inputEl.focus({ preventScroll: true });
             try {
@@ -5713,7 +5713,7 @@ function _vmRenderResult(html) {
             } catch(e) {}
         }
     }
-    
+
     // Re-observe (innerHTML kills observation)
     vectorMathObserver.observe(resDiv);
 }
@@ -5722,25 +5722,25 @@ function _vmRenderResult(html) {
 function _vmDoMath(updatePlot) {
     const resDiv = document.getElementById('transformer-vector-math-result');
     if (!resDiv) return;
-    
+
     // READ FROM JS VARIABLE, NOT FROM DOM
     const inputVal = window._vmInputValue;
     const space = window.persistentEmbeddingSpace;
-    
+
     if (!hasValidEmbeddingSpace(space)) {
         _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
         return;
     }
-    
+
     const vocabKeys = Object.keys(space);
     if (vocabKeys.length === 0) {
         _vmRenderResult("<em style='color: #94a3b8;'>No vocabulary loaded yet.</em>");
         return;
     }
-    
+
     const d_model = space[vocabKeys[0]].length;
     const tokens = tokenizeVectorMathInput(inputVal);
-    
+
     if (!tokens || tokens.length === 0) {
         _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
         if (updatePlot) {
@@ -5748,15 +5748,15 @@ function _vmDoMath(updatePlot) {
         }
         return;
     }
-    
+
     try {
         const { result, steps } = evaluateVectorExpression(
             tokens, space, vocabKeys, d_model);
         const nearest = findNearestEmbedding(result.val, space, vocabKeys);
         const html = buildVectorMathResultHtml(result, nearest, d_model);
-        
+
         _vmRenderResult(html);
-        
+
         if (updatePlot) {
             _execute_embedding_render(d_model, result.val, steps);
         }
@@ -6034,9 +6034,9 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 	let hoverIndex = container._attnWebHoverIndex ?? null;
 
 	const drawArcs = () => drawAttentionArcs(
-		container, canvas, chips, 
-		container._attnWebTokens, 
-		container._attnWebWeights, 
+		container, canvas, chips,
+		container._attnWebTokens,
+		container._attnWebWeights,
 		container._attnWebHoverIndex ?? null
 	);
 
@@ -6273,18 +6273,18 @@ function tled_addToken() {
 
 	const tokenName = nameInput.value.trim();
 	if (!tokenName) {
-		alert("Please enter a token name.");
+		console.warn("Please enter a token name.");
 		return;
 	}
 
 	const space = window.persistentEmbeddingSpace;
 	if (!space) {
-		alert("No embedding space initialized. Please enter training data first.");
+		console.warn("No embedding space initialized. Please enter training data first.");
 		return;
 	}
 
 	if (space[tokenName]) {
-		alert(`Token "${tokenName}" already exists in the vocabulary.`);
+		console.warn(`Token "${tokenName}" already exists in the vocabulary.`);
 		return;
 	}
 

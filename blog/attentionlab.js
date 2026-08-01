@@ -49,29 +49,29 @@ function runUniverse() {
 	const layout = {
 		margin: { l: 0, r: 0, b: 0, t: 0 },
 		scene: {
-			xaxis: { 
+			xaxis: {
 				gridcolor: '#000000', // Schwarzes Gitter
-				gridwidth: 1, 
-				showgrid: true, 
-				zeroline: true, 
-				zerolinecolor: '#000000', 
-				zerolinewidth: 3 
+				gridwidth: 1,
+				showgrid: true,
+				zeroline: true,
+				zerolinecolor: '#000000',
+				zerolinewidth: 3
 			},
-			yaxis: { 
-				gridcolor: '#000000', 
-				gridwidth: 1, 
-				showgrid: true, 
-				zeroline: true, 
-				zerolinecolor: '#000000', 
-				zerolinewidth: 3 
+			yaxis: {
+				gridcolor: '#000000',
+				gridwidth: 1,
+				showgrid: true,
+				zeroline: true,
+				zerolinecolor: '#000000',
+				zerolinewidth: 3
 			},
-			zaxis: { 
-				gridcolor: '#000000', 
-				gridwidth: 1, 
-				showgrid: true, 
-				zeroline: true, 
-				zerolinecolor: '#000000', 
-				zerolinewidth: 3 
+			zaxis: {
+				gridcolor: '#000000',
+				gridwidth: 1,
+				showgrid: true,
+				zeroline: true,
+				zerolinecolor: '#000000',
+				zerolinewidth: 3
 			}
 		},
 		showlegend: false
@@ -90,11 +90,11 @@ const SelfAttentionLab = {
 	data: {
 		tokens: ["The", "hunter", "sees", "the", "bear"],
 		matrix: [
-			[0.10, 0.85, 0.05, 0.00, 0.00], 
-			[0.10, 0.60, 0.25, 0.00, 0.05], 
-			[0.00, 0.45, 0.10, 0.00, 0.45], 
-			[0.00, 0.00, 0.05, 0.10, 0.85], 
-			[0.00, 0.05, 0.45, 0.05, 0.45]  
+			[0.10, 0.85, 0.05, 0.00, 0.00],
+			[0.10, 0.60, 0.25, 0.00, 0.05],
+			[0.00, 0.45, 0.10, 0.00, 0.45],
+			[0.00, 0.00, 0.05, 0.10, 0.85],
+			[0.00, 0.05, 0.45, 0.05, 0.45]
 		]
 	},
 	hoverIndex: null,
@@ -113,8 +113,8 @@ const SelfAttentionLab = {
 		if (!container) return;
 
 		container.innerHTML = this.data.tokens.map((word, i) => `
-	    <div class="sa-token-block" 
-		 onmouseover="SelfAttentionLab.hoverIndex=${i}; SelfAttentionLab.drawWeb();" 
+	    <div class="sa-token-block"
+		 onmouseover="SelfAttentionLab.hoverIndex=${i}; SelfAttentionLab.drawWeb();"
 		 onmouseout="SelfAttentionLab.hoverIndex=null; SelfAttentionLab.drawWeb();">
 		${word}
 	    </div>
@@ -134,7 +134,7 @@ const SelfAttentionLab = {
 		const containerRect = container.getBoundingClientRect();
 
 		// Only update if dimensions actually changed to prevent feedback loops
-		if (canvas.width !== Math.floor(containerRect.width) || 
+		if (canvas.width !== Math.floor(containerRect.width) ||
 			canvas.height !== Math.floor(containerRect.height)) {
 			canvas.width = containerRect.width;
 			canvas.height = containerRect.height;
@@ -209,7 +209,7 @@ const SelfAttentionLab = {
  */
 
 function initAppleShift(containerId) {
-	const landmarks = [           
+	const landmarks = [
 		// Tech Cluster (Silicon & Software) - Bottom Right
 		{ x: 9, y: 1, text: 'Linux', color: themeColor('#64748b') },
 		{ x: 8.5, y: 2, text: 'iPhone', color: themeColor('#64748b') },
@@ -219,20 +219,20 @@ function initAppleShift(containerId) {
 		{ x: 1, y: 9, text: 'Banana', color: '#eab308' },
 		{ x: 2, y: 8.5, text: 'Orchard', color: '#eab308' },
 		{ x: 1.5, y: 7.5, text: 'Vitamin', color: '#eab308' }
-	];                            
+	];
 
 	const apple_base = { pos: [5, 5], text: 'Apple (Neutral)' };
 	const context_word = { pos: [2, 8], text: '"Juicy"' };
 	// Subtle movement: The point lands in the "Fruit Quadrant" but not directly on the banana
-	const z = [3.8, 6.2];          
+	const z = [3.8, 6.2];
 
-	const traces = [              
-		{                           
+	const traces = [
+		{
 			x: landmarks.map(l => l.x), y: landmarks.map(l => l.y),
 			mode: 'markers+text', text: landmarks.map(l => l.text),
 			textposition: 'top center', marker: { size: 8, opacity: 0.4, color: landmarks.map(l => l.color) },
 			name: 'Landmarks', type: 'scatter'
-		},                        
+		},
 		{ x: [apple_base.pos[0]], y: [apple_base.pos[1]], mode: 'markers+text', text: [apple_base.text],
 			marker: { size: 12, color: themeColor('#94a3b8') }, name: 'Base Embedding', type: 'scatter' },
 		{ x: [context_word.pos[0]], y: [context_word.pos[1]], mode: 'markers+text', text: [context_word.text],
@@ -242,15 +242,15 @@ function initAppleShift(containerId) {
 		{ x: [z[0]], y: [z[1]], mode: 'markers+text', text: ['Apple (contextualized)'],
 			marker: { size: 18, symbol: 'diamond', color: '#1e40af', line: {width: 2, color: themeColor('#fff')} },
 			name: 'Result', type: 'scatter' }
-	];                            
+	];
 
-	const layout = {              
+	const layout = {
 		title: 'Semantic Space: Nature vs. Technology',
 		xaxis: { title: 'Tech Dimension', range: [0, 10] },
 		yaxis: { title: 'Bio Dimension', range: [0, 10] },
-	};                            
+	};
 	Plotly.newPlot(containerId, traces, layout);
-}                                 
+}
 
 function initShiftExamples() {
 	initAppleShift('apple-shift-plot');
@@ -852,8 +852,8 @@ function pickSentence2D(weights) {
 	// that reflects the actual weight distribution
 	if (w < 0.40) {
 		const pcts = weights.map(w => (w * 100).toFixed(0));
-		return { 
-			idx: maxI, 
+		return {
+			idx: maxI,
 			text: `"Charge" is <b style="color:#94a3b8">deeply ambiguous</b> here — ` +
 			`<b style="color:${KV2[0].color}">🔋 energy ${pcts[0]}%</b>, ` +
 			`<b style="color:${KV2[1].color}">💳 fee ${pcts[1]}%</b>, ` +
