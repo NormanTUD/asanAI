@@ -4,6 +4,9 @@
    Every module is a node. Every shared citation, cross-reference,
    and shared concept is an edge. Search everything, click to explore.
    ════════════════════════════════════════════════════════════════ */
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 /* ── Concept dictionary: concept → keywords that signal it ──
    Only DISTINCTIVE keywords count. Generic buzzwords (token, matrix,
