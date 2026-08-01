@@ -355,6 +355,53 @@
 		});
 	}
 
+	/* ── 6b.5. Heading anchor — click copies URL, with feedback ──
+	   Hover any heading shows its `#` link. Click → scrolls AND
+	   copies the full URL (with hash) to clipboard. Brief `copied`
+	   text replaces the `#` so you know it worked. */
+	function upgradeHeadingAnchors(root) {
+		(root || document).querySelectorAll('.md .cl-h-anchor').forEach(function (a) {
+			if (a.dataset.copyReady) return;
+			a.dataset.copyReady = '1';
+			a.title = 'Copy link to this section';
+			a.addEventListener('click', function (ev) {
+				if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+				ev.preventDefault();
+				const h = a.parentNode;
+				if (!h || !h.id) return;
+				const url = location.origin + location.pathname + '#' + h.id;
+				const target = h;
+				const orig = a.textContent;
+				const restore = function () {
+					a.textContent = orig;
+					a.classList.remove('is-ok');
+				};
+				const ok = function () {
+					a.textContent = 'copied';
+					a.classList.add('is-ok');
+					clearTimeout(a.__t);
+					a.__t = setTimeout(restore, 1100);
+				};
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				history.replaceState(null, '', '#' + h.id);
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(url).then(ok, restore);
+				} else {
+					const ta = document.createElement('textarea');
+					ta.value = url;
+					ta.style.position = 'fixed';
+					ta.style.opacity = '0';
+					document.body.appendChild(ta);
+					ta.select();
+					let r = false;
+					try { r = document.execCommand('copy'); } catch (e) { r = false; }
+					document.body.removeChild(ta);
+					if (r) ok(); else restore();
+				}
+			});
+		});
+	}
+
 	/* ── 6c. Footnote hover preview ──
 	   Hover a footnote-ref superscript → tooltip with the
 	   footnote text appears next to it. Pure utility, zero
@@ -426,9 +473,10 @@
 		});
 	}
 
-	/* ── 6e. Image lightbox — click any <img> in a figure to zoom ── */
+	/* ── 6e. Image lightbox — click any <img> in .md to zoom ──
+	   Uses event delegation on document.body so it catches images
+	   added AFTER bootstrap (renderMarkdown populates .md later). */
 	function installImageLightbox() {
-		// build the lightbox once
 		const lb = document.createElement('div');
 		lb.id = 'cl-lb';
 		lb.setAttribute('role', 'dialog');
@@ -445,7 +493,10 @@
 			img.src = src;
 			img.alt = alt || '';
 			cap.textContent = caption || '';
+			cap.style.display = caption ? '' : 'none';
 			lb.hidden = false;
+			// force a reflow so the transition runs
+			void lb.offsetHeight;
 			lb.classList.add('is-visible');
 			document.body.style.overflow = 'hidden';
 		}
@@ -457,7 +508,7 @@
 				document.body.style.overflow = '';
 			}, 180);
 		}
-		x.addEventListener('click', close);
+		x.addEventListener('click', function (ev) { ev.stopPropagation(); close(); });
 		lb.addEventListener('click', function (ev) {
 			if (ev.target === lb) close();
 		});
@@ -465,16 +516,27 @@
 			if (ev.key === 'Escape' && !lb.hidden) close();
 		});
 
-		// click any image in a .md figure → open
-		document.querySelectorAll('.md figure img').forEach(function (el) {
-			el.style.cursor = 'zoom-in';
-			el.addEventListener('click', function (ev) {
-				ev.preventDefault();
-				const fig = el.closest('figure');
-				const capText = fig ? (fig.querySelector('figcaption')?.textContent || '').trim() : '';
-				open(el.currentSrc || el.src, el.alt, capText);
-			});
+		/* delegated click — fires for any image, present or future */
+		document.addEventListener('click', function (ev) {
+			const t = ev.target;
+			if (!(t instanceof Element)) return;
+			if (t.tagName !== 'IMG') return;
+			if (!t.closest('.md')) return;
+			// ignore if user is selecting text on the image
+			const sel = window.getSelection && window.getSelection();
+			if (sel && sel.toString().length > 0) return;
+			// ignore if image is a tiny icon (e.g. inside a button or svg)
+			if (t.closest('button, a.btn, .cl-inline, svg')) return;
+			ev.preventDefault();
+			const fig = t.closest('figure');
+			const capText = fig ? ((fig.querySelector('figcaption') || {}).textContent || '').trim() : '';
+			open(t.currentSrc || t.src, t.alt, capText);
 		});
+
+		/* delegated cursor hint — anything .md img gets zoom-in cursor */
+		const styleEl = document.createElement('style');
+		styleEl.textContent = '.md img:not([class*="emoji"]):not(.no-zoom) { cursor: zoom-in; }';
+		document.head.appendChild(styleEl);
 	}
 
 	/* ── 7. Back-to-top — invisible until 60% scrolled ──
@@ -512,6 +574,7 @@
 	function run(root) {
 		try {
 			installHeadingAnchors(root);
+			upgradeHeadingAnchors(root);
 			labelCodeBlocks(root);
 			installCopyButtons(root);
 			installFootnotePreview(root);

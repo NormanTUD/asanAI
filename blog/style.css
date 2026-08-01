@@ -6076,6 +6076,24 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 }
 .md pre:hover::before { opacity: .55; }
 
+/* ── 11.5.5. External-link indicator — a tiny ↗ after every target=_blank in .md ── */
+.md a[target="_blank"]:not(.cl-inline):not(.cl-h-anchor):not(.cl-copy):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):not(.drawer-module)::after {
+	content: '\2197';
+	display: inline-block;
+	margin-left: .15em;
+	font-size: .85em;
+	opacity: .45;
+	transition: opacity .15s ease, transform .15s ease;
+	vertical-align: baseline;
+}
+.md a[target="_blank"]:not(.cl-inline):not(.cl-h-anchor):not(.cl-copy):hover::after {
+	opacity: .85;
+	transform: translate(.05em, -.05em);
+}
+
+/* ── 11.5.6. Heading anchor "copied" feedback ── */
+.cl-h-anchor.is-ok { color: var(--mn-emerald); }
+
 /* ── 11.6. Footnote hover tooltip ── */
 .cl-fn-tip,
 .cl-cite-tip {
@@ -6173,11 +6191,14 @@ html.dark .cl-cite-tip {
 	html, body { background: #fff !important; color: #000 !important; font-size: 11pt; }
 	#drawer-toggle, #drawer-panel, #drawer-backdrop, .drawer-backdrop,
 	#theme-toggle, #search-trigger, #toc, .km-hero, .km-lane-glow,
-	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip,
+	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
 	nav.module-nav, .module-nav, .drawer-panel,
+	.cl-copy, .cl-fn-tip, .cl-cite-tip,
 	.kn-lane-glow, .km-legend, .km-controls, .km-detail {
 		display: none !important;
 	}
+	.md a[target="_blank"]::after { content: '' !important; }
+	.md .cl-h-anchor { display: none !important; }
 	#contents { display: block !important; padding: 0 !important; max-width: none !important; }
 	.md h1 { page-break-before: always; font-size: 18pt; }
 	.md h1:first-child { page-break-before: avoid; }
