@@ -1156,23 +1156,16 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 	function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
 	function buildConceptGraph() {
-		var freq = {}, partCnt = {};
+		var freq = {}, partCnt = {}, hitSum = {};
 		NODES.forEach(function(n) {
 			var cs = n.concepts || {};
 			Object.keys(cs).forEach(function(k) {
 				freq[k] = (freq[k] || 0) + 1;
+				hitSum[k] = (hitSum[k] || 0) + cs[k];
 				if (!partCnt[k]) partCnt[k] = {};
 				partCnt[k][n.part] = (partCnt[k][n.part] || 0) + cs[k];
 			});
 		});
-		cNodes = Object.keys(freq).map(function(k) {
-			var pc = partCnt[k], best = 0, bp = 0;
-			Object.keys(pc).forEach(function(pp) { if (pc[pp] > best) { best = pc[pp]; bp = +pp; } });
-			return { name: k, freq: freq[k], part: bp };
-		});
-		cNodes.sort(function(a, b) { return b.freq - a.freq; });
-		cIdX = {};
-		cNodes.forEach(function(c, i) { cIdX[c.name] = i; });
 
 		var co = {};
 		NODES.forEach(function(n) {
@@ -1195,9 +1188,44 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			}
 		});
 		cEdges = picked;
+
+		/* importance: how central the concept is to the blog overall
+		   · freq  = number of modules that mention it (breadth)
+		   · hits  = sum of keyword matches (depth of coverage)
+		   · deg   = strong ties in the concept co-occurrence graph (centrality) */
+		cNodes = Object.keys(freq).map(function(k) {
+			var pc = partCnt[k], best = 0, bp = 0;
+			Object.keys(pc).forEach(function(pp) { if (pc[pp] > best) { best = pc[pp]; bp = +pp; } });
+			var f = freq[k], h = hitSum[k], d = deg[k] || 0;
+			return {
+				name: k,
+				freq: f,
+				hits: h,
+				degree: d,
+				importance: f * 0.85 + h * 0.18 + d * 1.4,
+				part: bp
+			};
+		});
+		cNodes.sort(function(a, b) { return b.importance - a.importance; });
+		cIdX = {};
+		cNodes.forEach(function(c, i) { cIdX[c.name] = i; });
+
 		forceLayout();
 		focusName = cNodes[0].name;
 		focus.x = cNodes[0].bx; focus.y = cNodes[0].by;
+	}
+
+	/* deterministic, name-derived hue so every concept gets its own color */
+	function conceptHue(name) {
+		var h = 0;
+		for (var i = 0; i < name.length; i++) {
+			h = ((h << 5) - h) + name.charCodeAt(i);
+			h |= 0;
+		}
+		return ((h % 360) + 360) % 360;
+	}
+	function conceptColor(name, l, s) {
+		return 'hsl(' + conceptHue(name) + ',' + (s != null ? s : 70) + '%,' + (l != null ? l : 56) + '%)';
 	}
 
 	function forceLayout() {
@@ -1270,28 +1298,33 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			});
 		}
 		var nodes = cNodes.map(function(c) {
-			var sF = c.scaleF, c2 = COLORS[c.part] || '#94a3b8';
-			var sz = Math.max(5, (11 + c.freq * 0.6) * sF);
+			var sF = c.scaleF;
+			var baseHue = conceptHue(c.name);
+			var cMid   = conceptColor(c.name, 54);
+			var cLite  = conceptColor(c.name, 72);
+			var cEdge  = conceptColor(c.name, 78);
+			var sz = Math.max(5, (8 + c.importance * 0.55) * sF);
 			var op = 1;
 			if (querying && boostSet && !boostSet[c.name]) op = 0.12;
 			var isFocus = (focusName === c.name);
 			return {
-				id: c.name, name: c.name, value: c.freq, part: c.part,
+				id: c.name, name: c.name, value: c.freq, freq: c.freq, hits: c.hits,
+				importance: c.importance, degree: c.degree, part: c.part,
 				symbolSize: sz, x: c.x, y: c.y,
 				itemStyle: {
 					color: new echarts.graphic.RadialGradient(0.5, 0.5, 0.6, [
-						{ offset: 0, color: lighten(c2, 0.5) }, { offset: 1, color: c2 }
+						{ offset: 0, color: cLite }, { offset: 1, color: cMid }
 					]),
 					opacity: op,
 					shadowBlur: isFocus ? 36 : 12,
-					shadowColor: c2,
-					borderColor: lighten(c2, 0.6),
+					shadowColor: cMid,
+					borderColor: cEdge,
 					borderWidth: isFocus ? 2 : 1.2
 				},
 				label: {
-					show: op > 0.2 && (sF > 0.48 || c.freq >= 18),
+					show: op > 0.2 && (sF > 0.48 || c.importance >= 22),
 					formatter: c.name,
-					color: lighten(c2, 0.75),
+					color: cEdge,
 					fontSize: Math.max(6, Math.min(13, 10.5 * sF)),
 					fontWeight: 600,
 					textShadowColor: 'rgba(0,0,0,.75)',
@@ -1321,8 +1354,8 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			var fc = cNodes[cIdX[focusName]];
 			graphic.push({
 				type: 'circle', silent: true, z: 2,
-				shape: { cx: w / 2, cy: h / 2, r: (11 + fc.freq * 0.6) * fc.scaleF + 9 },
-				style: { stroke: 'rgba(255,255,255,.45)', fill: 'transparent', lineWidth: 1 }
+				shape: { cx: w / 2, cy: h / 2, r: (8 + fc.importance * 0.55) * fc.scaleF + 9 },
+				style: { stroke: conceptColor(fc.name, 78), fill: 'transparent', lineWidth: 1 }
 			});
 		}
 		return {
@@ -1345,8 +1378,9 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 							'<br><span style="font-size:11px;opacity:.75">co-occur in <b>' + params.data.value + '</b> modules</span>';
 					}
 					var c = params.data;
+					var imp = Math.round(c.importance || 0);
 					return '<b style="font-size:13px">✦ ' + escHtml(c.name) + '</b>' +
-						'<br><span style="font-size:11px;opacity:.7">used in ' + c.freq + ' modules · Part ' + c.part + '</span>' +
+						'<br><span style="font-size:11px;opacity:.75">used in <b>' + c.freq + '</b> modules · <b>' + c.hits + '</b> mentions · importance <b>' + imp + '</b></span>' +
 						'<br><span style="font-size:10px;opacity:.55">click to make the focal point</span>';
 				}
 			},
@@ -1391,13 +1425,14 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 
 	function openConcept(c) {
 		state.uFocus = c.name;
-		var col = COLORS[c.part] || '#6366f1';
+		var col = conceptColor(c.name, 54);
+		var colDark = conceptColor(c.name, 38);
 		var mods = [];
 		NODES.forEach(function(n) { var cs = n.concepts || {}; if (cs[c.name]) mods.push({ n: n, cnt: cs[c.name] }); });
 		mods.sort(function(a, b) { return b.cnt - a.cnt; });
 		var neigh = cEdges.filter(function(e) { return e.a === c.name || e.b === c.name; })
 			.sort(function(x, y) { return y.w - x.w; }).slice(0, 10);
-		var html = '<div class="km-detail-head" style="--dh-c:' + col + ';--dh-c2:' + lighten(col, -0.35) + '">' +
+		var html = '<div class="km-detail-head" style="--dh-c:' + col + ';--dh-c2:' + colDark + '">' +
 			'<button class="dh-x" id="km-detail-x">✕</button>' +
 			'<div class="dh-part">Concept · Part ' + c.part + ' · ' + escHtml(PARTS[c.part]) + '</div>' +
 			'<div class="dh-icon">✦</div>' +
@@ -1406,9 +1441,11 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			'<div class="km-detail-body">' +
 			'<div class="ds-meta">' +
 			'<span class="ds-chip">used in ' + c.freq + ' modules</span>' +
+			'<span class="ds-chip">' + c.hits + ' mentions</span>' +
+			'<span class="ds-chip">importance ' + Math.round(c.importance) + '</span>' +
 			'<span class="ds-chip">' + neigh.length + ' strongest ties</span>' +
 			'</div>' +
-			'<div class="ds-desc" style="font-size:.78rem;color:var(--ink-mute)">Stars are scaled by how often a concept is used across the course. Click a module below to open it, or a neighbour chip to fly to it.</div>' +
+			'<div class="ds-desc" style="font-size:.78rem;color:var(--ink-mute)">Stars are sized by importance to the blog overall: how many modules mention the concept, how deeply, and how tightly it ties the others together. Click a module below to open it, or a neighbour chip to fly to it.</div>' +
 			'<div class="ds-sec">Used in ' + mods.length + ' modules</div>';
 		mods.forEach(function(m) {
 			var nn = m.n;
@@ -1474,9 +1511,9 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 		var el = document.getElementById('km-legend');
 		var html;
 		if (state.view === 'universe') {
-			html = '<div class="lh">Concepts — size = usage</div>';
+			html = '<div class="lh">Concepts — size = importance</div>';
 			cNodes.slice(0, 8).forEach(function(c) {
-				html += '<div class="lg-row"><span class="sw" style="background:' + COLORS[c.part] + '"></span>' + escHtml(c.name) + '<span style="margin-left:auto;opacity:.6">' + c.freq + '</span></div>';
+				html += '<div class="lg-row"><span class="sw" style="background:' + conceptColor(c.name, 56) + '"></span>' + escHtml(c.name) + '<span style="margin-left:auto;opacity:.6">' + Math.round(c.importance) + '</span></div>';
 			});
 			html += '<div class="edge-row"><div class="lh">Threads</div>' +
 				'<div class="lg-row"><span class="sw" style="background:#8ea4d8"></span>co-occurrence</div></div>';
