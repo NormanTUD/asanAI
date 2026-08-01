@@ -273,7 +273,7 @@ A subtle but important detail: **$Q$ and $K$ have dimension $d_k$, while $V$ has
 <div id="qkv-subspace-projection-viz"
      style="width:100%; min-height:520px; border:2px solid var(--mn-border, #e2e8f0); border-radius:12px; background:var(--mn-surface, #f8fafc); align-items:center; justify-content:center; margin:20px 0;">
     <div style="color:var(--mn-text-muted, #94a3b8); font-size:0.95rem; padding:20px; text-align:center;">
-        ⏳ Scroll here to load the Q, K, V subspace projection visualization...
+        ⏳ Loading the Q, K, V subspace projection visualization...
     </div>
 </div>
 
