@@ -205,51 +205,178 @@ const SelfAttentionLab = {
 
 /**
  * Visualizes the "Semantic Tug-of-War" for Apple and Key examples.
+ * Shows how a context word (e.g. "juicy") drags "apple" from its
+ * neutral base embedding toward the Fruit cluster via the same
+ * query-key dot-product mechanism the larger demos use.
+ *
  * @param {string} containerId - The ID of the div to render the plot in.
  */
-
 function initAppleShift(containerId) {
-	const landmarks = [
-		// Tech Cluster (Silicon & Software) - Bottom Right
-		{ x: 9, y: 1, text: 'Linux', color: themeColor('#64748b') },
-		{ x: 8.5, y: 2, text: 'iPhone', color: themeColor('#64748b') },
-		{ x: 9.5, y: 2.5, text: 'Computer', color: themeColor('#64748b') },
-		{ x: 8, y: 1.5, text: 'Mac', color: themeColor('#64748b') },
-		// Fruit Cluster (Organic) - Top Left
-		{ x: 1, y: 9, text: 'Banana', color: '#eab308' },
-		{ x: 2, y: 8.5, text: 'Orchard', color: '#eab308' },
-		{ x: 1.5, y: 7.5, text: 'Vitamin', color: '#eab308' }
+	// Tech cluster (lower-right)
+	const techLandmarks = [
+		{ x: 8.4, y: 1.4, text: 'iPhone',  icon: '📱' },
+		{ x: 9.1, y: 2.3, text: 'Mac',     icon: '💻' },
+		{ x: 8.7, y: 1.0, text: 'Linux',   icon: '🐧' },
+		{ x: 9.5, y: 2.9, text: 'Pixel',   icon: '🤖' }
+	];
+	// Fruit cluster (upper-left)
+	const fruitLandmarks = [
+		{ x: 1.4, y: 8.8, text: 'Banana',  icon: '🍌' },
+		{ x: 2.4, y: 8.1, text: 'Orchard', icon: '🌳' },
+		{ x: 1.0, y: 7.4, text: 'Vitamin', icon: '💊' },
+		{ x: 2.9, y: 9.0, text: 'Peach',   icon: '🍑' }
 	];
 
-	const apple_base = { pos: [5, 5], text: 'Apple (Neutral)' };
-	const context_word = { pos: [2, 8], text: '"Juicy"' };
-	// Subtle movement: The point lands in the "Fruit Quadrant" but not directly on the banana
-	const z = [3.8, 6.2];
+	// Color seeds — landmark color comes from theme swap, accent stays brand.
+	const mutedGray = themeColor('#64748b');
+	const accentAmber = isDarkMode() ? '#fbbf24' : '#eab308';
+	const accentEmerald = isDarkMode() ? '#6ee7b7' : '#10b981';
+	const textPrimary = themeColor('#1e293b');
+	const textMuted   = themeColor('#94a3b8');
+
+	const allLandmarks = [
+		...techLandmarks.map(l => ({ ...l, color: mutedGray })),
+		...fruitLandmarks.map(l => ({ ...l, color: accentAmber }))
+	];
+
+	// Base / context / result
+	const base      = { x: 5.0, y: 5.0, text: 'apple',          sub: 'base embedding' };
+	const context   = { x: 2.0, y: 8.0, text: 'juicy',          sub: 'context giver' };
+	// Result lands roughly halfway toward the fruit cluster, weighted by
+	// how strongly the query "what kind of apple?" matches "juicy".
+	const result    = { x: 3.6, y: 6.8, text: 'apple ⟵ juicy',  sub: 'contextualized' };
+
+	// Soft cluster halos via translucent filled circles
+	const techHalo = {
+		type: 'scatter', mode: 'lines',
+		x: [8.4, 9.7, 9.7, 8.4, 8.4].map((v,i) => i===0||i===4 ? 8.4 : i===1||i===3 ? v : v),
+		y: [1.0, 1.0, 3.0, 3.0, 1.0],
+		fill: 'toself', fillcolor: isDarkMode() ? 'rgba(100,116,139,0.10)' : 'rgba(100,116,139,0.08)',
+		line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
+	};
+	const techHaloX = [8.0, 9.9, 9.9, 8.0];
+	const techHaloY = [0.6, 0.6, 3.4, 3.4];
+	const fruitHaloX = [0.6, 3.4, 3.4, 0.6];
+	const fruitHaloY = [6.9, 6.9, 9.4, 9.4];
 
 	const traces = [
 		{
-			x: landmarks.map(l => l.x), y: landmarks.map(l => l.y),
-			mode: 'markers+text', text: landmarks.map(l => l.text),
-			textposition: 'top center', marker: { size: 8, opacity: 0.4, color: landmarks.map(l => l.color) },
-			name: 'Landmarks', type: 'scatter'
+			x: techHaloX, y: techHaloY, mode: 'lines',
+			fill: 'toself',
+			fillcolor: isDarkMode() ? 'rgba(100,116,139,0.10)' : 'rgba(100,116,139,0.08)',
+			line: { width: 0 }, showlegend: false, hoverinfo: 'skip', type: 'scatter'
 		},
-		{ x: [apple_base.pos[0]], y: [apple_base.pos[1]], mode: 'markers+text', text: [apple_base.text],
-			marker: { size: 12, color: themeColor('#94a3b8') }, name: 'Base Embedding', type: 'scatter' },
-		{ x: [context_word.pos[0]], y: [context_word.pos[1]], mode: 'markers+text', text: [context_word.text],
-			marker: { size: 12, color: '#10b981' }, name: 'Context Giver', type: 'scatter' },
-		{ x: [apple_base.pos[0], z[0]], y: [apple_base.pos[1], z[1]], mode: 'lines',
-			line: { dash: 'dot', color: '#f97316', width: 2 }, showlegend: false, type: 'scatter' },
-		{ x: [z[0]], y: [z[1]], mode: 'markers+text', text: ['Apple (contextualized)'],
-			marker: { size: 18, symbol: 'diamond', color: '#1e40af', line: {width: 2, color: themeColor('#fff')} },
-			name: 'Result', type: 'scatter' }
+		{
+			x: fruitHaloX, y: fruitHaloY, mode: 'lines',
+			fill: 'toself',
+			fillcolor: isDarkMode() ? 'rgba(251,191,36,0.10)' : 'rgba(234,179,8,0.10)',
+			line: { width: 0 }, showlegend: false, hoverinfo: 'skip', type: 'scatter'
+		},
+		// Landmarks
+		{
+			x: allLandmarks.map(l => l.x), y: allLandmarks.map(l => l.y),
+			mode: 'markers+text',
+			text: allLandmarks.map(l => `${l.icon} ${l.text}`),
+			textposition: 'top center',
+			textfont: { size: 11, color: textMuted, family: 'Inter, system-ui, sans-serif' },
+			marker: { size: 9, opacity: 0.85, color: allLandmarks.map(l => l.color),
+			          line: { width: 0 } },
+			name: 'Landmarks', hoverinfo: 'text', type: 'scatter'
+		},
+		// Attention pull vector (context → base)
+		{
+			x: [context.x, base.x], y: [context.y, base.y],
+			mode: 'lines',
+			line: { color: accentEmerald, width: 3, dash: 'dot' },
+			opacity: 0.55,
+			showlegend: false, hoverinfo: 'skip', type: 'scatter'
+		},
+		// Movement vector (base → result)
+		{
+			x: [base.x, result.x], y: [base.y, result.y],
+			mode: 'lines',
+			line: { color: '#f97316', width: 4 },
+			showlegend: false, hoverinfo: 'skip', type: 'scatter'
+		},
+		// Base embedding
+		{
+			x: [base.x], y: [base.y], mode: 'markers+text',
+			text: [`<b>${base.text}</b>`],
+			textposition: 'bottom center',
+			textfont: { size: 13, color: textMuted, family: 'Inter, system-ui, sans-serif' },
+			marker: { size: 13, color: mutedGray, symbol: 'circle',
+			          line: { width: 2, color: themeColor('#fff') } },
+			name: 'base', hoverinfo: 'text', type: 'scatter'
+		},
+		// Context giver
+		{
+			x: [context.x], y: [context.y], mode: 'markers+text',
+			text: [`<b>${context.text}</b>`],
+			textposition: 'top center',
+			textfont: { size: 14, color: accentEmerald, family: 'Inter, system-ui, sans-serif' },
+			marker: { size: 14, color: accentEmerald, symbol: 'hexagon',
+			          line: { width: 2, color: themeColor('#fff') } },
+			name: 'context', hoverinfo: 'text', type: 'scatter'
+		},
+		// Contextualized result
+		{
+			x: [result.x], y: [result.y], mode: 'markers+text',
+			text: [`<b>${result.text}</b>`],
+			textposition: 'bottom center',
+			textfont: { size: 13, color: '#f97316', family: 'Inter, system-ui, sans-serif' },
+			marker: { size: 20, color: '#f97316', symbol: 'diamond',
+			          line: { width: 2, color: themeColor('#fff') } },
+			name: 'result', hoverinfo: 'text', type: 'scatter'
+		}
 	];
 
 	const layout = {
-		title: 'Semantic Space: Nature vs. Technology',
-		xaxis: { title: 'Tech Dimension', range: [0, 10] },
-		yaxis: { title: 'Bio Dimension', range: [0, 10] },
+		title: {
+			text: '<b>The "Apple" Shift</b><br><sub style="color:' + textMuted + '">I ate a <b style="color:#f97316">juicy</b> apple.</sub>',
+			font: { size: 16, color: textPrimary, family: 'Inter, system-ui, sans-serif' },
+			x: 0.5, xanchor: 'center'
+		},
+		xaxis: {
+			title: { text: '<i>Tech</i>  ↔  <i>Nature</i>', font: { size: 12, color: textMuted } },
+			range: [-0.3, 10.3],
+			gridcolor: themeColor('#f1f5f9'),
+			zeroline: false,
+			showline: true, linecolor: themeColor('#e2e8f0'),
+			tickfont: { color: textMuted, size: 10 }
+		},
+		yaxis: {
+			title: { text: '<i>Organic</i>  ↔  <i>Synthetic</i>', font: { size: 12, color: textMuted } },
+			range: [-0.3, 10.3],
+			gridcolor: themeColor('#f1f5f9'),
+			zeroline: false,
+			showline: true, linecolor: themeColor('#e2e8f0'),
+			tickfont: { color: textMuted, size: 10 }
+		},
+		annotations: [
+			{
+				x: 8.95, y: 3.55, text: '<b>TECH CLUSTER</b>', showarrow: false,
+				font: { size: 10, color: mutedGray, family: 'Inter, sans-serif' }
+			},
+			{
+				x: 2.0, y: 9.55, text: '<b>FRUIT CLUSTER</b>', showarrow: false,
+				font: { size: 10, color: accentAmber, family: 'Inter, sans-serif' }
+			},
+			{
+				x: result.x + 0.6, y: result.y - 0.05,
+				ax: base.x, ay: base.y, xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+				text: 'α(q,k) · shift', showarrow: true, arrowhead: 2, arrowsize: 1.2,
+				arrowwidth: 2, arrowcolor: '#f97316',
+				font: { size: 11, color: '#f97316', family: 'Inter, sans-serif' }
+			}
+		],
+		paper_bgcolor: themeColor('#fff'),
+		plot_bgcolor: themeColor('#fff'),
+		showlegend: false,
+		margin: { l: 60, r: 30, t: 80, b: 60 },
+		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: '#fff' } }
 	};
-	Plotly.newPlot(containerId, traces, layout);
+
+	Plotly.react(containerId, traces, layout, { responsive: true, displaylogo: false });
 }
 
 function initShiftExamples() {
@@ -676,8 +803,11 @@ function pickSentence1D(weights) {
 }
 
 function updateAttn1D() {
-	const q = parseFloat(document.getElementById('attn1d-q').value);
-	document.getElementById('attn1d-q-val').innerText = q.toFixed(1);
+	const slider = document.getElementById('attn1d-q');
+	if (!slider) return;
+	const q = parseFloat(slider.value);
+	const valEl = document.getElementById('attn1d-q-val');
+	if (valEl) valEl.innerText = (q >= 0 ? '+' : '') + q.toFixed(1);
 
 	const scores  = KV1.map(kv => q * kv.k);
 	const weights = softmax(scores);
@@ -686,22 +816,34 @@ function updateAttn1D() {
 	// ── Sentence ──
 	const pick = pickSentence1D(weights);
 	const sentenceEl = document.getElementById('attn1d-sentence');
-	sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-	sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
+	if (sentenceEl) {
+		sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
+		sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
+	}
 
 	// ── Canvas ──
 	const canvas = document.getElementById('attn1d-canvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+
+	// ── Wait for layout: if the canvas has zero size (e.g. hidden
+	//    by a collapsed <details> or never laid out), defer one frame
+	//    and try again. Prevents the "blank until I move the slider" bug.
+	let rect = canvas.getBoundingClientRect();
+	if (rect.width === 0 || rect.height === 0) {
+		requestAnimationFrame(updateAttn1D);
+		return;
+	}
+
 	const dpr = window.devicePixelRatio || 1;
-	const rect = canvas.getBoundingClientRect();
 	canvas.width = rect.width * dpr;
 	canvas.height = rect.height * dpr;
-	const ctx = canvas.getContext('2d');
-	ctx.scale(dpr, dpr);
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 	const W = rect.width, H = rect.height;
 	ctx.clearRect(0, 0, W, H);
 
 	const pad = 65;
-	const range = 5;
+	const range = 4.2;
 	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
 
 	const rowQ = H * 0.22;
@@ -722,7 +864,7 @@ function updateAttn1D() {
 	for (let t = -4; t <= 4; t++) {
 		const x = toX(t);
 		ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 1; ctx.stroke();
-		if (t !== 0) { ctx.fillStyle = themeColor('#94a3b8'); ctx.fillText(t, x, rowK + 14); }
+		if (t !== 0) { ctx.fillStyle = themeColor('#94a3b8'); ctx.fillText((t > 0 ? '+' : '') + t, x, rowK + 14); }
 	}
 	ctx.setLineDash([3, 3]); ctx.strokeStyle = themeColor('#cbd5e1');
 	ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
@@ -751,7 +893,7 @@ function updateAttn1D() {
 
 	// ── Query diamond ──
 	drawDiamond(ctx, toX(q), rowQ, 10, '#2563eb');
-	drawLabel(ctx, `"bank" = ${q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
+	drawLabel(ctx, `"bank" = ${(q >= 0 ? '+' : '') + q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
 
 	// ── Key dots ──
 	// Offsets to prevent overlap: river is left-aligned, vault right-aligned, bench center
@@ -800,21 +942,22 @@ function updateAttn1D() {
 	</tr>`;
 	KV1.forEach((kv, i) => {
 		const isBold = i === maxI;
-		html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
+		const rowBg = isBold ? (isDarkMode() ? 'rgba(245, 158, 11, 0.12)' : '#fefce8') : '';
+		html += `<tr style="background:${rowBg};">
 	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
-	    <td style="padding:3px 8px; font-family:monospace;">${q.toFixed(1)} × ${kv.k.toFixed(1)} = ${scores[i].toFixed(1)}</td>
+	    <td style="padding:3px 8px; font-family:monospace;">${(q >= 0 ? '+' : '') + q.toFixed(1)} × ${(kv.k >= 0 ? '+' : '') + kv.k.toFixed(1)} = ${(scores[i] >= 0 ? '+' : '') + scores[i].toFixed(1)}</td>
 	    <td style="padding:3px 8px; width: 255px;">
 		<div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
 		     background:${kv.color}; border-radius:3px; vertical-align:middle;
 		     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
 		<b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
 	    </td>
-	    <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v).toFixed(2)}</td>
+	    <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v >= 0 ? '+' : '') + (weights[i]*kv.v).toFixed(2)}</td>
 	</tr>`;
 	});
-	html += `<tr style="border-top:2px solid #1e293b;">
+	html += `<tr style="border-top:2px solid ${themeColor('#1e293b')};">
 	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-	<td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${output.toFixed(2)}</b></td>
+	<td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${(output >= 0 ? '+' : '') + output.toFixed(2)}</b></td>
     </tr></table>`;
 	document.getElementById('attn1d-math').innerHTML = html;
 }
@@ -1066,21 +1209,38 @@ function initQKVSubspaceViz() {
 	const container = document.getElementById(containerId);
 	if (!container) return;
 
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				_renderQKVSubspaceViz(containerId);
-				observer.unobserve(entry.target);
-			}
-		});
-	}, { threshold: 0 });
+	const render = () => _renderQKVSubspaceViz(containerId);
 
-	observer.observe(container);
+	// Re-render whenever the theme flips so colors stay in sync.
+	if (window.__MN_DARK) {
+		window.__MN_DARK.onChange(render);
+	}
 
-	// If already in viewport, render immediately
-	if (typeof isElementInViewport === 'function' && isElementInViewport(container)) {
-		_renderQKVSubspaceViz(containerId);
-		observer.unobserve(container);
+	// Lazy-load: only build the (heavy) Plotly scene when the user
+	// scrolls it into view. Falls back to immediate render if the
+	// container is already on screen at module-load time.
+	const rect = container.getBoundingClientRect();
+	const vh = window.innerHeight || document.documentElement.clientHeight;
+	const alreadyVisible = rect.top < vh && rect.bottom > 0;
+
+	if (alreadyVisible) {
+		render();
+		return;
+	}
+
+	if ('IntersectionObserver' in window) {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					render();
+					observer.unobserve(entry.target);
+				}
+			});
+		}, { threshold: 0 });
+		observer.observe(container);
+	} else {
+		// Old browser — just render after a tick.
+		setTimeout(render, 0);
 	}
 }
 
@@ -1160,36 +1320,39 @@ function _renderQKVSubspaceViz(containerId) {
 
 	// --- 3. Build tab UI for Q / K / V ---
 	const tabBar = document.createElement('div');
-	tabBar.style.cssText = 'display:flex; gap:8px; padding:10px 15px; background:#fff; border-bottom:1px solid #e2e8f0;';
+	tabBar.style.cssText = `display:flex; gap:8px; padding:10px 15px;
+		background:${themeColor('#fff')}; border-bottom:1px solid ${themeColor('#e2e8f0')};`;
 
 	const plotDiv = document.createElement('div');
 	plotDiv.id = containerId + '-plot';
-	plotDiv.style.cssText = 'width:100%; height:480px;';
+	plotDiv.style.cssText = `width:100%; height:480px; background:${themeColor('#fff')};`;
 
-	['Q', 'K', 'V'].forEach((key, idx) => {
+	const tabBtns = {};
+	['Q', 'K', 'V'].forEach((key) => {
 		const btn = document.createElement('button');
-		btn.textContent = `W${key} Projection`;
+		btn.textContent = `W^${key} Projection`;
 		btn.style.cssText = `padding:8px 20px; border-radius:8px; border:2px solid ${projections[key].borderColor};
-	    background:${idx === 0 ? projections[key].borderColor : themeColor('#fff')};
-	    color:${idx === 0 ? themeColor('#fff') : projections[key].borderColor};
+	    background:${themeColor('#fff')};
+	    color:${projections[key].borderColor};
 	    font-weight:bold; cursor:pointer; font-size:0.9rem; transition:all 0.15s;`;
 		btn.addEventListener('click', () => {
-			// Update button styles
-			tabBar.querySelectorAll('button').forEach((b, i) => {
-				const k = ['Q','K','V'][i];
-				b.style.background = themeColor('#fff');
-				b.style.color = projections[k].borderColor;
+			Object.entries(tabBtns).forEach(([k, b]) => {
+				const isActive = (k === key);
+				b.style.background = isActive ? projections[k].borderColor : themeColor('#fff');
+				b.style.color      = isActive ? themeColor('#fff')        : projections[k].borderColor;
 			});
-			btn.style.background = projections[key].borderColor;
-			btn.style.color = themeColor('#fff');
-			// Render the selected projection
 			renderProjection(key);
 		});
 		tabBar.appendChild(btn);
+		tabBtns[key] = btn;
 	});
 
 	container.appendChild(tabBar);
 	container.appendChild(plotDiv);
+
+	// Mark Q as the default-active tab.
+	tabBtns['Q'].style.background = projections['Q'].borderColor;
+	tabBtns['Q'].style.color      = themeColor('#fff');
 
 	function renderProjection(key) {
 		const proj = projections[key];
@@ -1238,7 +1401,7 @@ function _renderQKVSubspaceViz(containerId) {
 				textposition: 'bottom center',
 				textfont: { size: 12, color: tokenColors[i], family: 'Inter, sans-serif' },
 				marker: { size: 7, color: tokenColors[i], symbol: 'diamond',
-					line: { width: 1, color: '#000' } },
+					line: { width: 1, color: themeColor('#fff') } },
 				name: `${token} (${key})`,
 				hovertemplate: `<b>${token}</b> projected by W<sup>${key}</sup><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>`
 			});
@@ -1285,21 +1448,41 @@ function _renderQKVSubspaceViz(containerId) {
 		const layout = {
 			title: {
 				text: `<b>${proj.label}</b>: Projecting 3D embeddings onto a 2D subspace`,
-				font: { size: 14 }
+				font: { size: 14, color: themeColor('#1e293b'), family: 'Inter, system-ui, sans-serif' }
 			},
 			scene: {
-				xaxis: { title: 'Dim 0', range: [-4, 4] },
-				yaxis: { title: 'Dim 1', range: [-4, 4] },
-				zaxis: { title: 'Dim 2', range: [-4, 4] },
+				xaxis: { title: 'Dim 0', range: [-4, 4],
+				         gridcolor: themeColor('#e2e8f0'),
+				         zerolinecolor: themeColor('#94a3b8'),
+				         backgroundcolor: themeColor('#fff'),
+				         tickfont: { color: themeColor('#64748b') } },
+				yaxis: { title: 'Dim 1', range: [-4, 4],
+				         gridcolor: themeColor('#e2e8f0'),
+				         zerolinecolor: themeColor('#94a3b8'),
+				         backgroundcolor: themeColor('#fff'),
+				         tickfont: { color: themeColor('#64748b') } },
+				zaxis: { title: 'Dim 2', range: [-4, 4],
+				         gridcolor: themeColor('#e2e8f0'),
+				         zerolinecolor: themeColor('#94a3b8'),
+				         backgroundcolor: themeColor('#fff'),
+				         tickfont: { color: themeColor('#64748b') } },
 				camera: { eye: { x: 1.8, y: 1.4, z: 1.2 } },
-				aspectmode: 'cube'
+				aspectmode: 'cube',
+				bgcolor: themeColor('#fff')
 			},
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
 			margin: { l: 0, r: 0, b: 10, t: 45 },
 			showlegend: true,
-			legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.02, font: { size: 11 } }
+			legend: {
+				orientation: 'h', x: 0.5, xanchor: 'center', y: -0.02,
+				font: { size: 11, color: themeColor('#1e293b') },
+				bgcolor: 'rgba(0,0,0,0)'
+			},
+			hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: '#fff' } }
 		};
 
-		Plotly.react(plotDiv.id, traces, layout, { responsive: true });
+		Plotly.react(plotDiv.id, traces, layout, { responsive: true, displaylogo: false });
 	}
 
 	// Initial render with Q
