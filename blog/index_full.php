@@ -25,6 +25,7 @@
 	})();
 	</script>
 	<?php load_base_js(); ?>
+	<?php include_once("mobile-loader.php"); ?>
 </head>
 <body>
 <button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>

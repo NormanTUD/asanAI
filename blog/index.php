@@ -26,6 +26,7 @@
 	</script>
 	<?php load_base_js(); ?>
 	<?php js("search"); ?>
+	<?php include_once("mobile-loader.php"); ?>
 </head>
 <body>
 <a class="cl-skip" href="#contents">Skip to content</a>

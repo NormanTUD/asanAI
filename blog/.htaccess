@@ -8,3 +8,22 @@ RewriteRule ^ %1 [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
+
+# 3. Mobile / Responsive Polish — auto-prepend the loader into every
+#    PHP response so mobile.css + mobile.js load on every page,
+#    including standalone module pages that go through functions.php's
+#    auto-render path (which we don't touch).
+#    The prepended file (mobile-prepend.php) starts output buffering
+#    with a callback that injects <link>/<script> tags into </head>.
+#    It's defensive: it no-ops on non-HTML responses and skips
+#    injection if mobile.css is already present in the buffer (so
+#    explicit includes in index.php / index_full.php won't double-load).
+<IfModule mod_php8.c>
+    php_value auto_prepend_file "/var/www/html/asanai/blog/mobile-prepend.php"
+</IfModule>
+<IfModule mod_php.c>
+    php_value auto_prepend_file "/var/www/html/asanai/blog/mobile-prepend.php"
+</IfModule>
+<IfModule mod_php7.c>
+    php_value auto_prepend_file "/var/www/html/asanai/blog/mobile-prepend.php"
+</IfModule>
