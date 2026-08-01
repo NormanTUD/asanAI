@@ -1378,12 +1378,14 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 				formatter: function(params) {
 					if (params.dataType === 'edge') {
 						return '<b style="font-size:12.5px">' + escHtml(params.data.source) + '</b> ↔ <b style="font-size:12.5px">' + escHtml(params.data.target) + '</b>' +
-							'<br><span style="font-size:11px;opacity:.75">co-occur in <b>' + params.data.value + '</b> modules</span>';
+							'<br><span style="font-size:11px;opacity:.75">co-occur in <b>' + (params.data.value || 0) + '</b> modules</span>';
 					}
-					var c = params.data;
+					var c = params.data || {};
+					var freq = (c.freq != null) ? c.freq : (c.value != null ? c.value : 0);
+					var hits = c.hits || 0;
 					var imp = Math.round(c.importance || 0);
 					return '<b style="font-size:13px">✦ ' + escHtml(c.name) + '</b>' +
-						'<br><span style="font-size:11px;opacity:.75">used in <b>' + c.freq + '</b> modules · <b>' + c.hits + '</b> mentions · importance <b>' + imp + '</b></span>' +
+						'<br><span style="font-size:11px;opacity:.75">used in <b>' + freq + '</b> modules · <b>' + hits + '</b> mentions · importance <b>' + imp + '</b></span>' +
 						'<br><span style="font-size:10px;opacity:.55">click to make the focal point</span>';
 				}
 			},
@@ -1443,9 +1445,9 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			'</div>' +
 			'<div class="km-detail-body">' +
 			'<div class="ds-meta">' +
-			'<span class="ds-chip">used in ' + c.freq + ' modules</span>' +
-			'<span class="ds-chip">' + c.hits + ' mentions</span>' +
-			'<span class="ds-chip">importance ' + Math.round(c.importance) + '</span>' +
+			'<span class="ds-chip">used in ' + (c.freq || 0) + ' modules</span>' +
+			'<span class="ds-chip">' + (c.hits || 0) + ' mentions</span>' +
+			'<span class="ds-chip">importance ' + Math.round(c.importance || 0) + '</span>' +
 			'<span class="ds-chip">' + neigh.length + ' strongest ties</span>' +
 			'</div>' +
 			'<div class="ds-desc" style="font-size:.78rem;color:var(--ink-mute)">Stars are sized by importance to the blog overall: how many modules mention the concept, how deeply, and how tightly it ties the others together. Click a module below to open it, or a neighbour chip to fly to it.</div>' +
@@ -1516,7 +1518,7 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 		if (state.view === 'universe') {
 			html = '<div class="lh">Concepts — size = importance</div>';
 			cNodes.slice(0, 8).forEach(function(c) {
-				html += '<div class="lg-row"><span class="sw" style="background:' + conceptColor(c.name, 56) + '"></span>' + escHtml(c.name) + '<span style="margin-left:auto;opacity:.6">' + Math.round(c.importance) + '</span></div>';
+				html += '<div class="lg-row"><span class="sw" style="background:' + conceptColor(c.name, 56) + '"></span>' + escHtml(c.name) + '<span style="margin-left:auto;opacity:.6">' + Math.round(c.importance || 0) + '</span></div>';
 			});
 			html += '<div class="edge-row"><div class="lh">Threads</div>' +
 				'<div class="lg-row"><span class="sw" style="background:#8ea4d8"></span>co-occurrence</div></div>';
