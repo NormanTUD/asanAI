@@ -161,10 +161,16 @@ html.dark code {
 	color: #e2e8f0 !important;
 }
 html.dark blockquote {
-	background: var(--mn-bg-subtle) !important;
+	background:
+		radial-gradient(115% 90% at 0% 50%, var(--cl-halo1) 0%, transparent 62%),
+		radial-gradient(80% 70% at 100% 0%, var(--cl-halo2) 0%, transparent 70%),
+		radial-gradient(70% 60% at 100% 100%, var(--cl-halo3) 0%, transparent 75%) !important;
 }
 html.dark blockquote p {
-	color: var(--mn-text-secondary) !important;
+	color: var(--mn-text) !important;
+}
+html.dark .quote-author {
+	color: var(--cl-base) !important;
 }
 html.dark blockquote footer,
 html.dark .quote-source,
@@ -1481,40 +1487,50 @@ p, .assistant-frame {
 }
 
 blockquote {
-	margin: 20px 0;
-	padding: 15px 20px;
-	border: 1px solid #10b981;
-
-	background: linear-gradient(135deg, var(--mn-accent-lighter), var(--mn-sky-light));
-	border: 1px solid var(--mn-accent-light);
-	border-radius: var(--mn-radius-lg);
 	margin: 2rem 0;
+	padding: 1.05em 1.4em 1.05em 1.85em;
+	border-radius: 0 var(--mn-radius-lg) var(--mn-radius-lg) 0;
+	background:
+		radial-gradient(115% 90% at 0% 50%, var(--cl-halo1) 0%, transparent 62%),
+		radial-gradient(80% 70% at 100% 0%, var(--cl-halo2) 0%, transparent 70%),
+		radial-gradient(70% 60% at 100% 100%, var(--cl-halo3) 0%, transparent 75%);
+	box-shadow:
+		inset 4px 0 0 var(--cl-base),
+		inset 22px 0 38px -28px var(--cl-glow),
+		0 0 26px -16px var(--cl-glow);
 	font-size: 1.1rem;
-	color: var(--mn-accent-dark);
-	box-shadow: var(--mn-shadow-sm);
+	color: var(--mn-text);
+	transition: box-shadow .35s ease, background .35s ease;
+}
 
+blockquote:hover {
+	box-shadow:
+		inset 4px 0 0 var(--cl-base),
+		inset 22px 0 42px -26px var(--cl-glow),
+		0 0 38px -14px var(--cl-glow);
 }
 
 blockquote p {
 	margin: 0;
 	font-size: 1.1rem;
-	color: #333;
+	color: var(--mn-text);
 }
 
 blockquote footer {
 	margin-top: 10px;
 	font-size: 0.95rem;
-	color: #555;
+	color: var(--mn-text-muted);
 	font-style: normal;
 }
 
 .quote-author {
 	font-weight: 600;
+	color: var(--cl-base);
 }
 
 .quote-source {
 	font-style: italic;
-	color: #777;
+	color: var(--mn-text-muted);
 }
 
 
@@ -1800,6 +1816,15 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	--danger: #ef4444;
 	--danger-hover: #dc2626;
 	--white: #ffffff;
+
+	/* Aurora (default quote / cluster lane color) */
+	--cl-base : hsl(220, 70%, 60%);
+	--cl-glow : hsla(220, 70%, 60%, 0.55);
+	--cl-soft : hsla(220, 70%, 60%, 0.16);
+	--cl-mist : hsla(220, 70%, 60%, 0.08);
+	--cl-halo1: hsla(220, 92%, 70%, 0.18);
+	--cl-halo2: hsla(248, 92%, 70%, 0.10);
+	--cl-halo3: hsla(160, 92%, 70%, 0.10);
 }
 
 /* 2. Base Button Styles */
@@ -3078,6 +3103,7 @@ input[type="reset"]:active {
 .quote-guillemet {
 	display: inline;
 	font-weight: bold;
+	color: var(--cl-base);
 	transition: text-shadow 0.4s ease, color 0.4s ease;
 }
 
@@ -3088,23 +3114,24 @@ input[type="reset"]:active {
 @keyframes guillemetGlow {
 	0%, 100% {
 		text-shadow: 0 0 0px transparent;
-		color: inherit;
+		color: var(--cl-base);
 	}
 	50% {
-		text-shadow: 0 0 12px rgba(74, 144, 217, 0.8), 0 0 24px rgba(74, 144, 217, 0.4);
-		color: #6ab0ff;
+		text-shadow: 0 0 12px var(--cl-glow), 0 0 24px var(--cl-mist);
+		color: var(--cl-base);
 	}
 }
 
 /* --- Quote Flash (border glow) --- */
 .rendered-quote {
-	border-left: 3px solid #888;
+	border-left: 3px solid var(--cl-base);
+	box-shadow: -4px 0 16px -2px var(--cl-mist);
 	transition: border-color 0.6s ease, box-shadow 0.6s ease;
 }
 
 .rendered-quote.quote-flash {
-	border-color: #4a90d9;
-	box-shadow: -4px 0 16px -2px rgba(74, 144, 217, 0.35);
+	border-color: var(--cl-base);
+	box-shadow: -4px 0 18px -2px var(--cl-glow);
 }
 
 /* --- Hint styling --- */
@@ -5323,3 +5350,128 @@ html.dark .agent-loop-step {
 		grid-template-columns: 1fr;
 	}
 }
+
+/* ════════════════════════════════════════════════════════════
+   AURORA CLUSTERS — soft glowing color lanes inside prose.
+   Inline markers: [[c:name]]word[[/c]]
+   Block  markers: [[c:name]]\n…\n[[/c]]
+   Names are defined per page by being used; the JS injects the
+   matching CSS variables. Unknown names fall through to a stable
+   golden-angle hash so the system grows on its own.
+   ════════════════════════════════════════════════════════ */
+
+[data-cluster] {
+	--cl-base : hsl(220, 70%, 60%);
+	--cl-glow : hsla(220, 70%, 60%, 0.55);
+	--cl-soft : hsla(220, 70%, 60%, 0.16);
+	--cl-mist : hsla(220, 70%, 60%, 0.08);
+	--cl-halo1: hsla(220, 92%, 70%, 0.18);
+	--cl-halo2: hsla(248, 92%, 70%, 0.10);
+	--cl-halo3: hsla(160, 92%, 70%, 0.10);
+}
+
+/* ── inline cluster (single word / phrase) ── */
+.cl-inline {
+	color: var(--cl-base);
+	font-weight: 600;
+	padding: 0.04em 0.32em;
+	border-radius: 5px;
+	background: linear-gradient(180deg, var(--cl-soft) 0%, transparent 90%);
+	box-shadow: inset 0 -1px 0 var(--cl-soft);
+	text-shadow: 0 0 0 transparent;
+	transition: text-shadow .28s ease, box-shadow .28s ease, background .28s ease;
+	cursor: default;
+}
+.cl-inline:hover {
+	text-shadow: 0 0 10px var(--cl-glow), 0 0 22px var(--cl-mist);
+	box-shadow: inset 0 -1px 0 var(--cl-glow);
+	background: linear-gradient(180deg, var(--cl-soft) 0%, var(--cl-mist) 100%);
+}
+
+/* ── block cluster (paragraph / multi-line aurora lane) ── */
+.cl-block {
+	display: block;
+	position: relative;
+	margin: 1.5em 0;
+	padding: 1.05em 1.4em 1.05em 1.85em;
+	border-radius: 0 var(--mn-radius-md) var(--mn-radius-md) 0;
+	background:
+		radial-gradient(115% 90% at 0% 50%, var(--cl-halo1) 0%, transparent 62%),
+		radial-gradient(80% 70% at 100% 0%, var(--cl-halo2) 0%, transparent 70%),
+		radial-gradient(70% 60% at 100% 100%, var(--cl-halo3) 0%, transparent 75%);
+	box-shadow:
+		inset 4px 0 0 var(--cl-base),
+		inset 22px 0 38px -28px var(--cl-glow),
+		0 0 26px -16px var(--cl-glow);
+	transition: box-shadow .35s ease, background .35s ease;
+}
+.cl-block::before {
+	content: '';
+	position: absolute;
+	left: -3px;
+	top: 12%;
+	bottom: 12%;
+	width: 9px;
+	border-radius: 6px;
+	background: var(--cl-base);
+	box-shadow:
+		0 0 10px var(--cl-glow),
+		0 0 22px var(--cl-glow),
+		0 0 44px var(--cl-mist);
+	pointer-events: none;
+	opacity: .85;
+	transition: opacity .3s ease, box-shadow .3s ease;
+}
+.cl-block:hover::before { opacity: 1; }
+.cl-block:hover {
+	box-shadow:
+		inset 4px 0 0 var(--cl-base),
+		inset 22px 0 42px -26px var(--cl-glow),
+		0 0 38px -14px var(--cl-glow);
+}
+.cl-block > :first-child { margin-top: 0; }
+.cl-block > :last-child  { margin-bottom: 0; }
+
+/* nested blocks shouldn't double the lane */
+.cl-block .cl-block { margin-left: 0; }
+.cl-block .cl-block::before { display: none; }
+.cl-block .cl-block {
+	box-shadow:
+		inset 0 0 0 1px var(--cl-mist),
+		0 0 18px -14px var(--cl-glow);
+	padding-left: 1.3em;
+}
+
+/* ── reading progress ribbon (top of viewport) ── */
+#cl-progress {
+	position: fixed;
+	inset: 0 0 auto 0;
+	height: 2px;
+	z-index: 9999;
+	pointer-events: none;
+	background: transparent;
+	--cl-p: 0;
+}
+#cl-progress::after {
+	content: '';
+	position: absolute;
+	left: 0; top: 0; bottom: 0;
+	width: calc(var(--cl-p) * 100%);
+	background: linear-gradient(90deg,
+		hsla(218, 90%, 70%, .0) 0%,
+		hsla(218, 90%, 70%, .55) 18%,
+		hsla(282, 90%, 72%, .70) 50%,
+		hsla(330, 90%, 72%, .55) 82%,
+		hsla(330, 90%, 72%, .0) 100%);
+	box-shadow: 0 0 12px hsla(260, 95%, 70%, .55);
+	transition: width .12s linear;
+}
+
+/* respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	.cl-inline, .cl-block, .cl-block::before { transition: none; }
+}
+
+/* keep code blocks inside a cluster readable */
+.cl-block pre, .cl-block code { background: rgba(0,0,0,0.04); }
+html.dark .cl-block pre, html.dark .cl-block code { background: rgba(255,255,255,0.04); }

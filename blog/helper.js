@@ -94,10 +94,18 @@ function renderMarkdown() {
 			return `<span id="${occurrenceId}">${term}</span>`;
 		});
 
+		// 2b. Aurora cluster markers: [[c:name]]…[[/c]]  →  <span/div data-cluster="…">
+		if (window.BlogClusters && BlogClusters.preprocess) {
+			rawContent = BlogClusters.preprocess(rawContent);
+		}
+
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
 	});
 	updateLoadingStatus("Almost finished.");
+
+	// 3b. inject per-cluster CSS variables now that the DOM has them
+	if (window.BlogClusters && BlogClusters.injectCSS) BlogClusters.injectCSS();
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {

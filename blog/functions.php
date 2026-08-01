@@ -159,6 +159,7 @@ function load_base_js () {
 	js("toc");
 	js("fcnn_visualization");
 	js("init");
+	js("cluster");
 	js("helper");
 	js("master_vis");
 	js("loader");
