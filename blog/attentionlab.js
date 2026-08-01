@@ -1498,9 +1498,14 @@ const LDD = {
     pronoun: { word: 'its', color: '#f59e0b' },
     distractors: ['that','the','dog','chased','across','the','yard',
                   'and','through','the','garden','gate','finally','climbed','the'],
+    // Raw dot products q · k for the pronoun's query against each token.
     qk_subject: 3.2,
     qk_distractor: 0.2,
     qk_self: 0.5,
+    // Head dimension. With h=8 heads and d_model=512, d_k = 64. The
+    // paper's √d_k scaling keeps softmax inputs on a sane scale.
+    d_k: 64,
+    // RNN state-decay per step (multiplicative gate ≈ 0.82).
     rnn_decay: 0.82
 };
 
@@ -1518,38 +1523,48 @@ function updateLDD() {
     const pronounIdx = tokens.length - 1;
     const distance = pronounIdx - subjectIdx;
 
-    // Attention scores from pronoun's perspective
+    // ── Self-attention from the pronoun's perspective ──
+    //   score_ij = q · k_j   (already scaled to a plausible 3.2/0.2/0.5 magnitude
+    //   matching q,k entries ~ N(0,1) at d_k = 64)
+    //   alpha_ij = softmax_j(score_ij / √d_k)
     const rawScores = tokens.map((tok, i) => {
         if (i === subjectIdx) return LDD.qk_subject;
         if (i === pronounIdx) return LDD.qk_self;
+        // Tiny jitter so the distractor bars aren't perfectly equal.
         return LDD.qk_distractor + (Math.random() * 0.1 - 0.05);
     });
-    const dk = Math.sqrt(64);
-    const scaled = rawScores.map(s => s / dk * 8);
+    const scaled = rawScores.map(s => s / Math.sqrt(LDD.d_k));
     const attn = softmax(scaled);
 
     // Sentence display
     const sentenceEl = document.getElementById('ldd-sentence');
+    const subjBg = isDarkMode() ? '#1e3a8a' : '#dbeafe';
+    const proBg  = isDarkMode() ? '#451a03' : '#fef3c7';
     sentenceEl.innerHTML = tokens.map(tok => {
         let s = 'padding:2px 4px; border-radius:3px; margin:0 1px;';
-        if (tok.type === 'subject') s += `background:#dbeafe; color:${LDD.subject.color}; font-weight:bold;`;
-        else if (tok.type === 'pronoun') s += `background:#fef3c7; color:${LDD.pronoun.color}; font-weight:bold;`;
-        else if (tok.type === 'distractor') s += 'color:#94a3b8;';
-        else s += 'color:#64748b;';
+        if (tok.type === 'subject') s += `background:${subjBg}; color:${LDD.subject.color}; font-weight:bold;`;
+        else if (tok.type === 'pronoun') s += `background:${proBg}; color:${LDD.pronoun.color}; font-weight:bold;`;
+        else if (tok.type === 'distractor') s += `color:${themeColor('#94a3b8')};`;
+        else s += `color:${themeColor('#64748b')};`;
         return `<span style="${s}">${tok.word}</span>`;
-    }).join(' ') + `<br><span style="font-size:0.8rem; color:#64748b; font-style:normal;">` +
+    }).join(' ') + `<br><span style="font-size:0.8rem; color:${themeColor('#64748b')}; font-style:normal;">` +
     `Distance: <b>${distance}</b> tokens between ` +
     `<span style="color:${LDD.subject.color}; font-weight:bold;">"${LDD.subject.word}"</span> and ` +
     `<span style="color:${LDD.pronoun.color}; font-weight:bold;">"${LDD.pronoun.word}"</span></span>`;
 
     // Canvas
     const canvas = document.getElementById('ldd-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let rect = canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        requestAnimationFrame(updateLDD);
+        return;
+    }
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const W = rect.width, H = rect.height;
     ctx.clearRect(0, 0, W, H);
 
@@ -1606,7 +1621,7 @@ function updateLDD() {
         if (attn[i] > 0.03) drawLabel(ctx, (attn[i]*100).toFixed(0)+'%', x, barY - 8, color, 10, 'center', true);
     });
 
-    // RNN decay line
+    // RNN decay line — what an RNN *would* carry forward step-by-step.
     ctx.beginPath(); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
     const rnnStart = attn[subjectIdx];
     for (let i = subjectIdx; i <= pronounIdx; i++) {
@@ -1617,7 +1632,8 @@ function updateLDD() {
     }
     ctx.stroke(); ctx.setLineDash([]);
 
-    // Transformer flat line
+    // Transformer flat line — self-attention reaches every position
+    // in one step, so signal strength does NOT decay with distance.
     ctx.beginPath(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
     const tY = toY(attn[subjectIdx]);
     ctx.moveTo(toBarX(subjectIdx), tY); ctx.lineTo(toBarX(pronounIdx), tY);
@@ -1631,23 +1647,25 @@ function updateLDD() {
     // Math summary
     const rnnFinal = Math.pow(LDD.rnn_decay, distance);
     const ratio = (1 / rnnFinal);
+    const trBg = isDarkMode() ? 'rgba(37, 99, 235, 0.10)' : '#eff6ff';
+    const rnBg = isDarkMode() ? 'rgba(239, 68, 68, 0.10)'  : '#fef2f2';
     document.getElementById('ldd-math').innerHTML = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-    <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+    <tr style="border-bottom:2px solid ${themeColor('#cbd5e1')}; color:${themeColor('#64748b')};">
         <th style="text-align:left; padding:3px 8px;">Model</th>
         <th style="text-align:left; padding:3px 8px;">Signal after ${distance} steps</th>
         <th style="text-align:right; padding:3px 8px;">Strength</th>
     </tr>
-    <tr style="background:#eff6ff;">
+    <tr style="background:${trBg};">
         <td style="color:#2563eb; font-weight:bold; padding:3px 8px;">Transformer</td>
-        <td style="padding:3px 8px; font-family:monospace;">softmax(q·k/√d<sub>k</sub>) — distance-invariant</td>
+        <td style="padding:3px 8px; font-family:monospace;">softmax(q·k / √${LDD.d_k}) — distance-invariant</td>
         <td style="text-align:right; padding:3px 8px;"><b style="color:#2563eb;">${(attn[subjectIdx]*100).toFixed(1)}%</b></td>
     </tr>
-    <tr style="background:#fef2f2;">
+    <tr style="background:${rnBg};">
         <td style="color:#ef4444; font-weight:bold; padding:3px 8px;">RNN</td>
         <td style="padding:3px 8px; font-family:monospace;">${LDD.rnn_decay}<sup>${distance}</sup> = ${rnnFinal.toFixed(4)}</td>
         <td style="text-align:right; padding:3px 8px;"><b style="color:#ef4444;">${(rnnFinal*100).toFixed(1)}%</b></td>
     </tr>
-    <tr style="border-top:2px solid #1e293b;">
+    <tr style="border-top:2px solid ${themeColor('#1e293b')};">
         <td colspan="2" style="text-align:right; padding:6px 8px; font-weight:bold;">Transformer advantage:</td>
         <td style="text-align:right; padding:6px 8px;"><b style="color:#059669; font-size:1.1rem;">${ratio.toFixed(1)}×</b></td>
     </tr></table>`;

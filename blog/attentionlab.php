@@ -164,19 +164,19 @@ Human language is far too nuanced for a single axis. To capture independent feat
 Because these positions are derived from logical relationships in data, the space itself becomes "computable". We can perform algebraic operations on these vectors to navigate human concepts:
 </div>
 
-<!-- ===================== 2D: "Where Does Bank Belong?" ===================== -->
-<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+<!-- ===================== 2D: "Where Does the Query Land?" ===================== -->
+<div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
             margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
 
     <div style="text-align:center; margin-bottom:8px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            2D: Drag "bank" through the semantic plane
+        <span style="font-size:1.05rem; font-weight:bold; color:var(--mn-text, #1e293b);">
+            2D: Move the query through the semantic plane
         </span>
     </div>
 
     <!-- Live sentence -->
     <div id="attn2d-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
-         border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
+         border-left:4px solid var(--mn-border, #cbd5e1); border-radius:6px; font-style:italic; color:var(--mn-text, #334155);
 	 transition: border-color 0.2s; height: 80px;"></div>
 
     <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
@@ -203,11 +203,11 @@ Because these positions are derived from logical relationships in data, the spac
     </div>
 
     <canvas id="attn2d-canvas" width="500" height="500"
-            style="display:block; margin:0 auto; max-width:100%; border:1px solid #e2e8f0;
+            style="display:block; margin:0 auto; max-width:100%; border:1px solid var(--mn-border, #e2e8f0);
                    border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
 
     <div id="attn2d-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
-         border:1px dashed #cbd5e1; overflow-x:auto;"></div>
+         border:1px dashed var(--mn-border, #cbd5e1); overflow-x:auto;"></div>
 </div>
 
 <div class="md">
