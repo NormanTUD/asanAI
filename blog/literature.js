@@ -2587,13 +2587,6 @@ window.bibData = {
 		title: "Hard to Be a God",
 		alternativetitle: "Strugatsky Brothers AI Influence"
 	},
-	"hal9000": {
-		author: "Stanley Kubrick, Arthur Charles Clarke",
-		year: "1968",
-		title: "2001: A Space Odyssey",
-		alternativetitle: "HAL 9000",
-		url: "https://www.reddit.com/r/cinematography/comments/dy7r1v/i_collected_some_4k_stills_from_2001_a_space/?tl=de&sort=top"
-	},
 	"maschinenmensch": {
 		url: "https://en.wikipedia.org/wiki/File:Maschinenmensch_in_a_screen_shot_from_the_Metropolis_film.jpg",
 		author: "Fritz Lang",
