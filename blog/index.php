@@ -56,7 +56,7 @@ $partTitles = [
 	3 => ['title' => 'Deep Learning & Vision', 'desc' => 'Stacking layers, seeing images, and the engineering that makes depth possible.'],
 	4 => ['title' => 'The Transformer Revolution', 'desc' => 'The architecture that changed everything — attention, embeddings, multimodal, diffusion, and the post-transformer alternatives.'],
 	5 => ['title' => 'Making AI Useful', 'desc' => 'Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.'],
-	6 => ['title' => 'Bigger Questions', 'desc' => 'Philosophy, ethics, and the open problems at the frontier of AI.'],
+		6 => ['title' => 'Bigger Questions', 'desc' => 'The global AI ecosystem, the displaced prerequisites, and the open problems at the frontier of AI.'],
 ];
 
 $parts = parse_course_metadata();
