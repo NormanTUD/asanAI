@@ -3273,7 +3273,7 @@ window.bibData = {
 		year: 2023
 	},
 	"chesney2019deepfakes": {
-		url: "https://www.foreignaffairs.com/articles/world/2019-02-13/deepfakes-and-new-disinformation-threat",
+		url: "https://www.jstor.org/stable/26798018",
 		title: "Deepfakes and the New Disinformation War",
 		author: "Robert Chesney, Danielle Citron",
 		year: 2019,
