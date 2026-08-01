@@ -21,14 +21,14 @@ function runUniverse() {
 
 	let traces = [];
 
-	// 1. Hintergrund (Latent Space) - Dunklere Punkte
+	// 1. Hintergrund (Latent Space) - visible against current theme
 	const allWords = Object.keys(universeVocab);
 	traces.push({
 		x: allWords.map(w => universeVocab[w][0]),
 		y: allWords.map(w => universeVocab[w][1]),
 		z: allWords.map(w => universeVocab[w][2]),
 		mode: 'markers',
-		marker: { size: 5, color: themeColor('#475569'), opacity: 0.7 }, // Deutlich sichtbares Grau
+		marker: { size: 5, color: themeColor('#475569'), opacity: 0.7 },
 		type: 'scatter3d'
 	});
 
@@ -40,7 +40,8 @@ function runUniverse() {
 				x: [p[0]], y: [p[1]], z: [p[2]],
 				mode: 'markers+text',
 				text: t,
-				marker: { size: 12, color: '#2563eb', line: {color: 'black', width: 2} },
+				textfont: { color: themeColor('#1e293b') },
+				marker: { size: 12, color: '#2563eb', line: {color: themeColor('#fff'), width: 2} },
 				type: 'scatter3d'
 			});
 		});
@@ -48,36 +49,44 @@ function runUniverse() {
 
 	const layout = {
 		margin: { l: 0, r: 0, b: 0, t: 0 },
+		paper_bgcolor: themeColor('#fff'),
 		scene: {
 			xaxis: {
-				gridcolor: '#000000', // Schwarzes Gitter
+				gridcolor:    themeColor('#cbd5e1'),
 				gridwidth: 1,
 				showgrid: true,
 				zeroline: true,
-				zerolinecolor: '#000000',
-				zerolinewidth: 3
+				zerolinecolor: themeColor('#94a3b8'),
+				zerolinewidth: 3,
+				backgroundcolor: themeColor('#fff'),
+				tickfont: { color: themeColor('#64748b') }
 			},
 			yaxis: {
-				gridcolor: '#000000',
+				gridcolor:    themeColor('#cbd5e1'),
 				gridwidth: 1,
 				showgrid: true,
 				zeroline: true,
-				zerolinecolor: '#000000',
-				zerolinewidth: 3
+				zerolinecolor: themeColor('#94a3b8'),
+				zerolinewidth: 3,
+				backgroundcolor: themeColor('#fff'),
+				tickfont: { color: themeColor('#64748b') }
 			},
 			zaxis: {
-				gridcolor: '#000000',
+				gridcolor:    themeColor('#cbd5e1'),
 				gridwidth: 1,
 				showgrid: true,
 				zeroline: true,
-				zerolinecolor: '#000000',
-				zerolinewidth: 3
-			}
+				zerolinecolor: themeColor('#94a3b8'),
+				zerolinewidth: 3,
+				backgroundcolor: themeColor('#fff'),
+				tickfont: { color: themeColor('#64748b') }
+			},
+			bgcolor: themeColor('#fff')
 		},
 		showlegend: false
 	};
 
-	Plotly.react(container, traces, layout);
+	Plotly.react(container, traces, layout, { responsive: true, displaylogo: false });
 }
 
 function log(type, msg) {
@@ -161,10 +170,14 @@ const SelfAttentionLab = {
 				ctx.beginPath();
 				if (isSource) {
 					ctx.lineWidth = 2 + strength * 20;
-					ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
+					ctx.strokeStyle = isDarkMode()
+						? `rgba(96, 165, 250, ${0.3 + strength * 0.7})`
+						: `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
 				} else {
 					ctx.lineWidth = 1;
-					ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
+					ctx.strokeStyle = isDarkMode()
+						? 'rgba(71, 85, 105, 0.35)'
+						: 'rgba(203, 213, 225, 0.2)';
 				}
 
 				const dist = Math.abs(x2 - x1);
@@ -175,7 +188,7 @@ const SelfAttentionLab = {
 				ctx.stroke();
 
 				if (isSource && strength > 0.05) {
-					ctx.fillStyle = "#1e40af";
+					ctx.fillStyle = isDarkMode() ? '#bfdbfe' : '#1e40af';
 					ctx.font = "bold 14px Inter, sans-serif";
 					const txt = Math.round(strength * 100) + "%";
 					ctx.fillText(txt, (x1 + x2)/2 - 10, baseY - h/1.5);
@@ -186,6 +199,11 @@ const SelfAttentionLab = {
 
 	drawTable: function() {
 		const { tokens, matrix } = this.data;
+		// In dark mode the blue cell colour washes out, so pick a brighter
+		// blue for the highlight colour and a darker text colour otherwise.
+		const baseBlue   = isDarkMode() ? 'rgba(96, 165, 250, ' : 'rgba(37, 99, 235, ';
+		const textOnCell = '#ffffff';
+		const textOff    = themeColor('#475569');
 		let html = '<table class="sa-attn-table"><tr><th>Source Word</th>';
 		tokens.forEach(w => html += `<th>Attends to: ${w}</th>`);
 		html += '</tr>';
@@ -193,8 +211,8 @@ const SelfAttentionLab = {
 		tokens.forEach((w, i) => {
 			html += `<tr><td class="sa-row-label">${w}</td>`;
 			matrix[i].forEach(val => {
-				const color = `rgba(37, 99, 235, ${val})`;
-				const textColor = val > 0.3 ? 'white' : themeColor('#475569');
+				const color = `${baseBlue}${val})`;
+				const textColor = val > 0.3 ? textOnCell : textOff;
 				html += `<td style="background:${color}; color:${textColor}">${(val * 100).toFixed(0)}%</td>`;
 			});
 			html += '</tr>';

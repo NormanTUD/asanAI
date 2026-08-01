@@ -3931,7 +3931,7 @@ window.bibData = {
 
 	// Reinforcement Learning / DPO
 	"sutton2018reinforcement": {
-		url: "https://incompleteideas.net/book/the-book-2nd.html",
+		url: "http://incompleteideas.net/book/the-book-2nd.html",
 		title: "Reinforcement Learning: An Introduction",
 		author: "Richard S. Sutton, Andrew G. Barto",
 		year: 2018,
