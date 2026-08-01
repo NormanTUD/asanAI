@@ -5800,3 +5800,266 @@ html { scroll-behavior: smooth; }
 /* Opt-out: any heading that contains a span.no-num does not get numbered */
 .md h2:has(> .no-num)::before,
 .md h3:has(> .no-num)::before { content: none; }
+
+/* ════════════════════════════════════════════════════════════
+   QUIET FUNCTIONAL POLISH — invisible until you need it.
+   Strictly below the drop-cap obtrusiveness ceiling:
+     • keyboard shortcuts (pressable but invisible)
+     • back-to-top (only after 60% scroll)
+     • shortcut help (only on `?`)
+     • skip-to-content (only on Tab focus)
+     • reading-time stamp (muted, near title)
+   Plus default-element repairs: <hr>, <table>, <dl>, kbd+kbd.
+   ════════════════════════════════════════════════════════ */
+
+/* ── 1. Quiet focus ring (replaces loud browser blue) ── */
+:focus-visible {
+	outline: 2px solid hsla(218, 80%, 65%, .55);
+	outline-offset: 3px;
+	border-radius: 3px;
+	transition: outline-offset .15s ease;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* ── 2. Skip-to-content link (only on Tab focus) ── */
+.cl-skip {
+	position: fixed;
+	top: 8px;
+	left: 8px;
+	z-index: 10000;
+	padding: 8px 14px;
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+	font-size: .85em;
+	font-weight: 600;
+	box-shadow: 0 6px 24px rgba(0,0,0,.18);
+	text-decoration: none;
+	transform: translateY(-200%);
+	transition: transform .18s ease;
+}
+.cl-skip:focus { transform: translateY(0); }
+
+/* ── 3. Back-to-top — quiet text link (only after 60% scroll) ── */
+#cl-top {
+	position: fixed;
+	right: 18px;
+	bottom: 14px;
+	z-index: 9000;
+	background: transparent;
+	border: none;
+	padding: 4px 2px;
+	font-family: inherit;
+	font-size: .78rem;
+	font-weight: 500;
+	letter-spacing: .03em;
+	color: var(--mn-text-muted);
+	cursor: pointer;
+	opacity: 0;
+	transform: translateY(6px);
+	pointer-events: none;
+	transition: opacity .25s ease, transform .25s ease, color .15s ease;
+}
+#cl-top.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+#cl-top:hover {
+	color: var(--mn-accent);
+}
+@media (max-width: 600px) { #cl-top { display: none; } }
+
+/* ── 4. Shortcut help overlay (only on `?`) ── */
+#cl-shortcut-help {
+	position: fixed;
+	inset: 0;
+	z-index: 9500;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(15, 23, 42, .35);
+	backdrop-filter: blur(4px);
+}
+#cl-shortcut-help[hidden] { display: none; }
+.cl-sh-card {
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	border: 1px solid var(--mn-border);
+	border-radius: 14px;
+	padding: 22px 26px;
+	min-width: 320px;
+	max-width: 92vw;
+	box-shadow: 0 24px 60px rgba(0,0,0,.25);
+	font-family: system-ui, sans-serif;
+	font-size: .92rem;
+}
+.cl-sh-head {
+	font-size: .7rem;
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--mn-text-muted);
+	margin-bottom: 14px;
+}
+.cl-sh-list {
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	column-gap: 18px;
+	row-gap: 8px;
+	align-items: center;
+}
+.cl-sh-list dt { margin: 0; }
+.cl-sh-list dt kbd { margin-right: 2px; }
+.cl-sh-list dd { margin: 0; color: var(--mn-text-secondary); font-size: .9em; }
+.cl-sh-foot {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid var(--mn-border-light);
+	font-size: .78em;
+	color: var(--mn-text-muted);
+}
+
+/* ── 5. Reading-time meta (muted, beside the H1) ── */
+.md > h1[data-reading-time]::after {
+	content: '·  ' attr(data-reading-time) ' min read';
+	margin-left: .55em;
+	font-size: .42em;
+	font-weight: 500;
+	color: var(--mn-text-muted);
+	letter-spacing: .02em;
+	vertical-align: .5em;
+}
+
+/* ── 6. <hr> as a soft gradient rule ── */
+.md hr {
+	border: none;
+	height: 1px;
+	background: linear-gradient(90deg,
+		transparent 0%,
+		var(--mn-border) 20%,
+		var(--mn-line-strong) 50%,
+		var(--mn-border) 80%,
+		transparent 100%);
+	margin: 3em auto;
+	max-width: 60%;
+}
+
+/* ── 7. <table> — quiet zebra striping + softer borders ── */
+.md table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	font-size: .92em;
+	margin: 1.8em 0;
+	border: 1px solid var(--mn-border-light);
+	border-radius: var(--mn-radius-md);
+	overflow: hidden;
+	font-variant-numeric: tabular-nums;
+}
+.md table thead th {
+	background: var(--mn-bg-subtle);
+	font-weight: 600;
+	text-align: left;
+	padding: .65em .9em;
+	border-bottom: 1px solid var(--mn-border);
+	color: var(--mn-heading);
+}
+.md table tbody td,
+.md table tbody th {
+	padding: .55em .9em;
+	border-bottom: 1px solid var(--mn-border-light);
+	vertical-align: top;
+}
+.md table tbody tr:nth-child(odd) td { background: var(--mn-bg-subtle); }
+.md table tbody tr:last-child td { border-bottom: none; }
+.md table tbody tr:hover td { background: rgba(99,102,241,.05); }
+
+/* ── 8. <dl> definition lists ── */
+.md dl {
+	margin: 1.6em 0;
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	column-gap: 1.2em;
+	row-gap: .6em;
+}
+.md dt {
+	font-weight: 600;
+	color: var(--mn-heading);
+}
+.md dd { margin: 0; }
+
+/* ── 9. kbd + kbd chains (auto `+` between adjacent keys) ── */
+.md kbd + kbd::before {
+	content: '+';
+	display: inline-block;
+	margin: 0 .35em;
+	color: var(--mn-text-muted);
+	font-family: var(--mn-font-mono);
+	font-weight: 400;
+	vertical-align: .05em;
+}
+
+/* ── 10. Footnote refinements ── */
+.md sup.footnote-ref {
+	font-size: .72em;
+	vertical-align: super;
+	line-height: 0;
+}
+.md sup.footnote-ref a {
+	color: var(--mn-accent);
+	text-decoration: none;
+	padding: 0 .15em;
+	border-radius: 3px;
+}
+.md sup.footnote-ref a:hover {
+	background: var(--mn-accent-light);
+	color: var(--mn-accent-dark);
+}
+html.dark .md sup.footnote-ref a:hover { color: #fff; }
+#footnotes {
+	margin-top: 3em;
+	padding-top: 2em;
+	border-top: 1px solid var(--mn-border-light);
+	font-size: .88em;
+	line-height: 1.55;
+}
+#footnotes ol { padding-left: 1.4em; }
+#footnotes li { margin-bottom: .35em; color: var(--mn-text-secondary); }
+#footnotes li::marker { color: var(--mn-text-muted); font-variant-numeric: tabular-nums; }
+
+/* ── 11. Temml equations — slightly tighter spacing, block math centered ── */
+.md mjx-container, .md .tml-display, .md .MathJax_Display {
+	margin: 1.2em 0 !important;
+}
+.md .tml-display, .md mjx-container[display="true"] {
+	text-align: center;
+}
+
+/* ── 12. Print stylesheet — book-like, single column ── */
+@media print {
+	html, body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+	#drawer-toggle, #drawer-panel, #drawer-backdrop, .drawer-backdrop,
+	#theme-toggle, #search-trigger, #toc, .km-hero, .km-lane-glow,
+	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip,
+	nav.module-nav, .module-nav, .drawer-panel,
+	.kn-lane-glow, .km-legend, .km-controls, .km-detail {
+		display: none !important;
+	}
+	#contents { display: block !important; padding: 0 !important; max-width: none !important; }
+	.md h1 { page-break-before: always; font-size: 18pt; }
+	.md h1:first-child { page-break-before: avoid; }
+	.md h2, .md h3 { page-break-after: avoid; }
+	.md pre, .md table, .md figure { page-break-inside: avoid; }
+	.md a { color: #000 !important; text-decoration: underline; }
+	.md a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .8em; color: #555; }
+	.cl-block, .cl-inline, .cl-h-anchor, blockquote {
+		background: transparent !important;
+		box-shadow: none !important;
+		border-left: 2px solid #888 !important;
+	}
+	.md p + p { text-indent: 0 !important; }
+	html.dark .md, html.dark .md * { color: #000 !important; background: transparent !important; }
+}

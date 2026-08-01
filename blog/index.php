@@ -28,6 +28,7 @@
 	<?php js("search"); ?>
 </head>
 <body>
+<a class="cl-skip" href="#contents">Skip to content</a>
 <button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 <button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 <?php render_theme_toggle(); ?>

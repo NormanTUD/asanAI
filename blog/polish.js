@@ -5,6 +5,9 @@
    • ¶ anchor links on every heading, visible on hover
    • TOC scroll-spy: the section you're reading lights up
    • Code blocks show their language as a quiet corner label
+   • Keyboard shortcuts (1-9 jump, / search, ? help, j/k nav)
+   • Quiet word-count + reading-time stamp at the top of each module
+   • A back-to-top chevron that only appears after 60% scroll
    • Anything else that needs a pinch of JS lives here too.
 
    No external dependencies. Runs once on DOMContentLoaded and
@@ -130,7 +133,213 @@
 		});
 	}
 
-	/* ── 4. First-touch helpers (silent, once) ── */
+	/* ── 4. Code-block language label ──
+	   Prism already adds `language-xxx` to the inner <code>.
+	   We surface that as `data-language` on the <pre>, so the
+	   CSS can render a tiny label in the corner. */
+	function labelCodeBlocks(root) {
+		const pres = (root || document).querySelectorAll('.md pre');
+		pres.forEach(function (pre) {
+			if (pre.dataset.language) return;
+			const code = pre.querySelector('code');
+			if (!code) return;
+			const m = (code.className || '').match(/language-([\w-]+)/);
+			if (!m) return;
+			const lang = m[1];
+			if (lang === 'none' || lang === 'plain' || lang === 'text') return;
+			pre.dataset.language = lang;
+			pre.setAttribute('data-language', lang);
+		});
+	}
+
+	/* ── 5. Keyboard shortcuts (invisible until you press them) ──
+	     /     → focus the search box (if present)
+	     ?     → show a small overlay of all shortcuts
+	     Esc   → close any open modal/drawer
+	     g g   → jump to top of the page
+	     G     → jump to bottom
+	     1-9   → jump to the Nth item in the TOC
+	     n / p → next / previous section in the TOC
+	   We only activate when the user is not typing in an input. */
+	function installShortcuts() {
+		const help = ensureShortcutHelp();
+		const isEditable = function (el) {
+			if (!el) return false;
+			const tag = (el.tagName || '').toLowerCase();
+			if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+			if (el.isContentEditable) return true;
+			return false;
+		};
+
+		let lastG = 0;
+		document.addEventListener('keydown', function (ev) {
+			if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+			if (isEditable(ev.target)) return;
+
+			// "/" focuses search
+			if (ev.key === '/') {
+				ev.preventDefault();
+				const s = document.querySelector('input[type="search"], .search-input, #search-input, [data-search-input]');
+				if (s) { s.focus(); s.select && s.select(); }
+				return;
+			}
+
+			// "?" opens help (Shift+/ on most layouts)
+			if (ev.key === '?' || (ev.shiftKey && ev.key === '/')) {
+				ev.preventDefault();
+				help.toggle();
+				return;
+			}
+
+			// Esc closes everything
+			if (ev.key === 'Escape') {
+				help.hide();
+				document.querySelectorAll('.drawer-backdrop.show, .search-overlay.show, [aria-modal="true"]')
+					.forEach(function (el) { el.click && el.click(); });
+				return;
+			}
+
+			// "g g" → top, "G" → bottom
+			if (ev.key === 'g' && !ev.shiftKey) {
+				const now = Date.now();
+				if (now - lastG < 500) {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+					lastG = 0;
+					return;
+				}
+				lastG = now;
+				return;
+			}
+			if (ev.key === 'G') {
+				window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+				return;
+			}
+
+			// 1-9 → Nth TOC item
+			if (/^[1-9]$/.test(ev.key)) {
+				const links = document.querySelectorAll('#toc a');
+				if (links.length) {
+					const target = links[Math.min(links.length, parseInt(ev.key, 10)) - 1];
+					if (target) { ev.preventDefault(); target.click(); }
+				}
+				return;
+			}
+
+			// n / p → next / previous TOC section
+			if (ev.key === 'n' || ev.key === 'p') {
+				const links = Array.from(document.querySelectorAll('#toc a'));
+				if (!links.length) return;
+				const tops = links.map(function (a) {
+					const id = (a.getAttribute('href') || '').replace(/^#/, '');
+					const h = id ? document.getElementById(id) : null;
+					return { a: a, y: h ? h.getBoundingClientRect().top + window.scrollY : Infinity };
+				});
+				const y = window.scrollY;
+				let next = null;
+				if (ev.key === 'n') {
+					next = tops.find(function (t) { return t.y > y + 80; });
+				} else {
+					for (let i = tops.length - 1; i >= 0; i--) {
+						if (tops[i].y < y - 80) { next = tops[i]; break; }
+					}
+				}
+				if (next) { ev.preventDefault(); next.a.click(); }
+			}
+		});
+
+		// also: Esc closes the help if it's open
+		document.addEventListener('keydown', function (ev) {
+			if (ev.key === 'Escape' && !help.hidden) help.hide();
+		});
+	}
+
+	function ensureShortcutHelp() {
+		let el = document.getElementById('cl-shortcut-help');
+		if (el) return makeHelpApi(el);
+		el = document.createElement('div');
+		el.id = 'cl-shortcut-help';
+		el.setAttribute('role', 'dialog');
+		el.setAttribute('aria-label', 'Keyboard shortcuts');
+		el.hidden = true;
+		el.innerHTML = [
+			'<div class="cl-sh-card">',
+			'  <div class="cl-sh-head">Keyboard shortcuts</div>',
+			'  <dl class="cl-sh-list">',
+			'    <dt><kbd>/</kbd></dt><dd>Focus the search box</dd>',
+			'    <dt><kbd>?</kbd></dt><dd>Show / hide this panel</dd>',
+			'    <dt><kbd>Esc</kbd></dt><dd>Close any open panel</dd>',
+			'    <dt><kbd>g</kbd> <kbd>g</kbd></dt><dd>Jump to top</dd>',
+			'    <dt><kbd>G</kbd></dt><dd>Jump to bottom</dd>',
+			'    <dt><kbd>n</kbd> / <kbd>p</kbd></dt><dd>Next / previous section</dd>',
+			'    <dt><kbd>1</kbd>…<kbd>9</kbd></dt><dd>Jump to Nth section</dd>',
+			'  </dl>',
+			'  <div class="cl-sh-foot">Press <kbd>?</kbd> again to close</div>',
+			'</div>'
+		].join('');
+		document.body.appendChild(el);
+		return makeHelpApi(el);
+	}
+
+	function makeHelpApi(el) {
+		return {
+			el: el,
+			hidden: true,
+			toggle: function () { el.hidden ? this.show() : this.hide(); },
+			show:   function () { el.hidden = false; this.hidden = false; },
+			hide:   function () { el.hidden = true;  this.hidden = true;  }
+		};
+	}
+
+	/* ── 6. Word count + reading time, set on the H1 ──
+	   Reading speed ~ 220 wpm for technical prose. Result is a
+	   small `data-reading-meta` attribute the CSS can render as
+	   a muted caption if it wants to (or just leave it). */
+	function installReadingMeta() {
+		const md = document.querySelector('.md');
+		if (!md) return;
+		const h1 = md.querySelector('h1');
+		if (!h1) return;
+		if (h1.dataset.readingTime) return; // already set
+		const text = (md.textContent || '').trim();
+		const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+		const minutes = Math.max(1, Math.round(words / 220));
+		h1.setAttribute('data-words', String(words));
+		h1.setAttribute('data-reading-time', String(minutes));
+		document.documentElement.setAttribute('data-reading-time', String(minutes));
+	}
+
+	/* ── 7. Back-to-top — invisible until 60% scrolled ──
+	   Just a small text link in the bottom-right corner. No
+	   circle, no button, no background. If you don't see it,
+	   it's because you haven't scrolled far enough. */
+	function installBackToTop() {
+		const btn = document.createElement('button');
+		btn.id = 'cl-top';
+		btn.type = 'button';
+		btn.setAttribute('aria-label', 'Back to top');
+		btn.title = 'Back to top  (g g)';
+		btn.textContent = '\u2191\u00a0top'; // "↑ top"
+		btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+		document.body.appendChild(btn);
+		let visible = false;
+		function update() {
+			const max = (document.documentElement.scrollHeight - window.innerHeight) || 1;
+			const p = window.scrollY / max;
+			const shouldShow = p > 0.6;
+			if (shouldShow !== visible) {
+				visible = shouldShow;
+				btn.classList.toggle('is-visible', visible);
+			}
+		}
+		let raf = null;
+		document.addEventListener('scroll', function () {
+			if (raf) return;
+			raf = requestAnimationFrame(function () { update(); raf = null; });
+		}, { passive: true });
+		update();
+	}
+
+	/* ── 8. First-touch helpers (silent, once) ── */
 	function run(root) {
 		try {
 			installHeadingAnchors(root);
@@ -142,22 +351,37 @@
 	function start() {
 		run(document);
 		installTocScrollSpy();
+		installShortcuts();
+		installReadingMeta();
+		installBackToTop();
 		// pick up late content (MathJax, lazy modules, etc.)
 		const mo = new MutationObserver(function (muts) {
 			let touched = false;
+			let h1Appeared = false;
 			for (const m of muts) {
 				m.addedNodes.forEach(function (n) {
 					if (!(n instanceof Element)) return;
 					if (n.matches && n.matches('.md, .md *')) { touched = true; return; }
 					if (n.querySelector && n.querySelector('.md h2, .md h3, .md pre')) touched = true;
+					if (n.tagName === 'H1' || (n.querySelector && n.querySelector('.md h1'))) h1Appeared = true;
 				});
 			}
-			if (touched) {
+			if (h1Appeared) installReadingMeta();
+			if (touched || h1Appeared) {
 				clearTimeout(window.__clPolishTO);
 				window.__clPolishTO = setTimeout(function () { run(document); }, 80);
 			}
 		});
 		mo.observe(document.body, { childList: true, subtree: true });
+		// also poll briefly for H1 if renderMarkdown is slow
+		let tries = 0;
+		const iv = setInterval(function () {
+			tries++;
+			installReadingMeta();
+			const h1 = document.querySelector('.md h1');
+			if (h1 && h1.dataset.readingTime) clearInterval(iv);
+			if (tries > 50) clearInterval(iv);
+		}, 100);
 	}
 
 	if (document.readyState === 'loading') {
