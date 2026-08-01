@@ -4341,13 +4341,6 @@ window.bibData = {
 		year: 2023,
 		alternativetitle: "Getty v. Stability AI"
 	},
-	"bostrom2003ethical": {
-		url: "https://www.nickbostrom.com/views/ethics/ai.html",
-		title: "Ethical Issues in Advanced Artificial Intelligence",
-		author: "Nick Bostrom",
-		year: 2003,
-		alternativetitle: "Ethical Issues in AI"
-	},
 	"calSB1047": {
 		url: "https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240SB1047",
 		title: "California Senate Bill 1047: Safe and Secure Innovation for Frontier AI Models Act",
