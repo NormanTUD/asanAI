@@ -1664,5 +1664,19 @@ async function loadAttentionModule() {
 	updateAttn2D();
 	initQKVSubspaceViz();
 	requestAnimationFrame(updateLDD);
+
+	// Re-render the canvases / Plotly figures when the user flips
+	// dark mode so themeColor() picks up the new palette.
+	if (window.__MN_DARK) {
+		window.__MN_DARK.onChange(() => {
+			try { initShiftExamples(); } catch (e) { /* ignore */ }
+			try { initQKVSubspaceViz(); } catch (e) { /* ignore */ }
+			try { updateAttn1D(); }      catch (e) { /* ignore */ }
+			try { updateAttn2D(); }      catch (e) { /* ignore */ }
+			try { updateLDD(); }         catch (e) { /* ignore */ }
+			try { runUniverse(); }       catch (e) { /* ignore */ }
+		});
+	}
+
 	return Promise.resolve();
 }

@@ -271,8 +271,8 @@ They are used to project the tokens from the Embedding Space into subspaces of t
 </div>
 
 <div id="qkv-subspace-projection-viz"
-     style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; align-items:center; justify-content:center; margin:20px 0;">
-    <div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+     style="width:100%; min-height:520px; border:2px solid var(--mn-border, #e2e8f0); border-radius:12px; background:var(--mn-surface, #f8fafc); align-items:center; justify-content:center; margin:20px 0;">
+    <div style="color:var(--mn-text-muted, #94a3b8); font-size:0.95rem; padding:20px; text-align:center;">
         ⏳ Scroll here to load the Q, K, V subspace projection visualization...
     </div>
 </div>
@@ -359,7 +359,7 @@ Think of a word as a point floating in a high-dimensional space. In isolation, i
 
 ## The "Apple" Shift
 </div>
-<div id="apple-shift-plot" style="height:400px;"></div>
+<div id="apple-shift-plot" style="height:440px; background:var(--mn-surface, transparent); border-radius:12px;"></div>
 
 <div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
 The person was eating the *juicy* **apple**.
