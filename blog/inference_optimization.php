@@ -45,7 +45,7 @@ Reduce the bit precision of model weights:
 |--------|-------------|----------|---------------------|
 | FP32 | 32 | 280 GB | Baseline |
 | FP16 / BF16 | 16 | 140 GB | ~0% |
-| INT8 | 8 | 70 GB | <0.5% |
+| INT8 | 8 | 70 GB | &lt;0.5% |
 | INT4 (GPTQ, AWQ) | 4 | 35 GB | 1–3% |
 | INT3 (QuIP, QuIP#) | 3 | 26 GB | 3–7% |
 | INT2 (QuIP#) | 2 | 17 GB | 5–15% |

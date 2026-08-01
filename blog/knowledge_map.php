@@ -74,7 +74,7 @@ $KM_PART_NAMES = [
 ];
 
 function km_clean_text($html) {
-	$html = preg_replace('/<\?php.*?\?>/s', '', $html);
+	$html = preg_replace('/<\?php.*?\?[>]/s', '', $html);
 	$html = preg_replace('/<script[^>]*>.*?<\/script>/is', '', $html);
 	$html = preg_replace('/<style[^>]*>.*?<\/style>/is', '', $html);
 	$text = strip_tags($html);
