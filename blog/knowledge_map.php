@@ -65,8 +65,8 @@ $KM_EXCLUDE = ['index', 'index_full', 'functions', 'search', 'graph', 'literatur
 
 /* ── Part colors (match course parts 0–6) ── */
 $KM_PART_COLORS = [
-	0 => '#94a3b8', 1 => '#6366f1', 2 => '#0ea5e9', 3 => '#10b981',
-	4 => '#f59e0b', 5 => '#ec4899', 6 => '#8b5cf6',
+	0 => '#94a3b8', 1 => '#818cf8', 2 => '#38bdf8', 3 => '#34d399',
+	4 => '#fbbf24', 5 => '#f472b6', 6 => '#c084fc',
 ];
 $KM_PART_NAMES = [
 	0 => 'Prologue', 1 => 'Foundations', 2 => 'How Networks Learn', 3 => 'Deep Learning & Vision',
@@ -225,37 +225,39 @@ foreach ($moduleKeys as $slug) {
 	}
 }
 
+/* ── Concept affinity (TF–IDF) ─────────────────────────────────────
+   Every shared concept contributes idf² to a pair's affinity, where
+   idf = ln(1 + total_modules / modules_covering_that_concept).
+   Concepts covered by nearly every module weigh almost nothing;
+   distinctive ones weigh a lot. Pairs below the threshold are
+   dropped, so the graph stays readable. */
+$KM_CONCEPT_MIN = 12;
+$pagesWith = [];
+foreach ($modules as $m) {
+	foreach ($m['concepts'] as $c => $v) $pagesWith[$c] = ($pagesWith[$c] ?? 0) + 1;
+}
+$idf = [];
+foreach ($pagesWith as $c => $n) $idf[$c] = log(1 + count($modules) / $n);
+
 $conceptPairs = [];
 foreach ($moduleKeys as $i => $a) {
 	foreach ($moduleKeys as $j => $b) {
 		if ($j <= $i) continue;
 		$shared = array_intersect_key($modules[$a]['concepts'], $modules[$b]['concepts']);
-		if (count($shared) > 0) {
-			$pairs = $shared;
-			ksort($pairs);
-			$conceptPairs[] = ['a' => $a, 'b' => $b, 'n' => count($shared), 'names' => array_keys($pairs)];
-		}
+		if (!$shared) continue;
+		$dot = 0;
+		foreach ($shared as $c => $v) $dot += $idf[$c] * $idf[$c];
+		/* strong pairs anywhere, or moderately strong pairs inside a part */
+		$samePart = $modules[$a]['part'] === $modules[$b]['part'];
+		if ($dot < $KM_CONCEPT_MIN && !($samePart && $dot >= 4.5)) continue;
+		ksort($shared);
+		$conceptPairs[] = ['a' => $a, 'b' => $b, 'w' => round($dot, 1), 'names' => array_keys($shared)];
 	}
 }
+usort($conceptPairs, fn($x, $y) => $y['w'] <=> $x['w']);
 
-/* keep concept pairs with most shared concepts; cap per module to avoid a hairball */
-$capPerModule = 14;
-$conceptDegree = [];
-usort($conceptPairs, fn($x, $y) => $y['n'] <=> $x['n']);
-$selectedConceptPairs = [];
 foreach ($conceptPairs as $p) {
-	$aCount = $conceptDegree[$p['a']] ?? 0;
-	$bCount = $conceptDegree[$p['b']] ?? 0;
-	if ($aCount >= $capPerModule || $bCount >= $capPerModule) continue;
-	if (($p['n'] >= 3 && $aCount < $capPerModule && $bCount < $capPerModule) || $p['n'] >= 4) {
-		$selectedConceptPairs[] = $p;
-		$conceptDegree[$p['a']] = $aCount + 1;
-		$conceptDegree[$p['b']] = $bCount + 1;
-	}
-}
-
-foreach ($selectedConceptPairs as $p) {
-	km_add_edge($edges, $p['a'], $p['b'], 'concept', $p['n'], $p['names']);
+	km_add_edge($edges, $p['a'], $p['b'], 'concept', $p['w'], $p['names']);
 }
 
 /* course learning-path edges (n → n+1 in course order) */
@@ -265,6 +267,10 @@ usort($ordered, function($a, $b) {
 	return $a['order'] <=> $b['order'];
 });
 $orderedSlugs = array_column($ordered, 'id');
+$kmPath = $orderedSlugs;
+$kmOrderIndex = array_flip($kmPath);
+foreach ($modules as &$m) $m['orderIndex'] = $kmOrderIndex[$m['id']];
+unset($m);
 for ($i = 0; $i < count($orderedSlugs) - 1; $i++) {
 	km_add_edge($edges, $orderedSlugs[$i], $orderedSlugs[$i + 1], 'course', 1, []);
 }
@@ -291,7 +297,7 @@ $stats = [
 	'citations'  => count(array_unique(array_merge(...array_column($modules, 'citations')))),
 	'edges'      => count($edgeList),
 	'concepts'   => count($KM_CONCEPTS),
-	'conceptPair'=> count($selectedConceptPairs),
+	'conceptPair'=> count($conceptPairs),
 ];
 
 $KM = [
@@ -300,6 +306,7 @@ $KM = [
 	'parts'    => $KM_PART_NAMES,
 	'colors'   => $KM_PART_COLORS,
 	'concepts' => $KM_CONCEPTS,
+	'path'     => $kmPath,
 	'stats'    => $stats,
 ];
 ?>
