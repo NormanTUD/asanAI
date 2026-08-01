@@ -61,7 +61,7 @@ $KM_CONCEPTS = [
 ];
 
 /* ── Excluded files (not course modules / tool pages) ── */
-$KM_EXCLUDE = ['index', 'index_full', 'functions', 'search', 'graph', 'literature', 'asanai_blog_proxy', 'knowledge_map', 'category_theory', 'commutation', 'layer_commuting_diagram', 'math_deri'];
+$KM_EXCLUDE = ['index', 'index_full', 'functions', 'search', 'graph', 'literature', 'asanai_blog_proxy', 'knowledge_map', 'category_theory', 'commutation', 'layer_commuting_diagram', 'math_deri', '_aurora_test'];
 
 /* ── Part colors (match course parts 0–6) ── */
 $KM_PART_COLORS = [
@@ -560,6 +560,26 @@ a { color: var(--accent); text-decoration: none; }
 }
 .km-timeline .tl-part .sw { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
+/* ── universe (concept) view ── */
+.km-switch { display: inline-flex; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.km-sw { font-size: .74rem; color: var(--ink-mute); cursor: pointer; padding: 5px 12px; border-radius: 999px; border: 0; background: transparent; transition: color .18s, background .18s; }
+.km-sw.on { background: var(--line-strong); color: var(--ink); }
+.km-focus {
+	position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 6;
+	display: flex; align-items: center; gap: 7px; white-space: nowrap;
+	font-size: .7rem; color: var(--ink-soft); background: var(--card); border: 1px solid var(--line);
+	padding: 7px 14px; border-radius: 999px; backdrop-filter: blur(10px); pointer-events: none;
+}
+.km-focus b { color: var(--ink); }
+#km-canvas.draggable { cursor: grab; }
+#km-canvas.draggable.drag { cursor: grabbing; }
+.km-mod-row { display: flex; align-items: center; gap: 9px; padding: 6px 8px; margin: 0 -8px; border-radius: 10px; cursor: pointer; }
+.km-mod-row:hover { background: var(--glow); }
+.km-mod-row .m-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+.km-mod-row .m-t { font-weight: 600; color: var(--ink); font-size: .82rem; }
+.km-neigh { cursor: pointer; }
+.km-neigh:hover { border-color: var(--line-strong); color: var(--ink); }
+
 @media (max-width: 900px) {
 	.km-detail { width: 100%; }
 	.km-search-wrap { width: calc(100% - 190px); left: 12px; transform: none; }
@@ -573,7 +593,7 @@ a { color: var(--accent); text-decoration: none; }
 <div class="km-hero">
 	<div class="km-eyebrow">Interactive course map</div>
 	<h1 class="km-title">The Web of <span class="of">Knowledge</span></h1>
-	<p class="km-sub">Every module is a star in its part of the course. The glowing path is your journey; the threads are shared citations, cross-references and overlapping ideas. Hover to trace, click to explore, search to find anything.</p>
+	<p class="km-sub">The <b>Universe</b> view puts every concept of the course on a Poincaré disk: the most-used ideas shine biggest, and you can shift the focal point to zoom into any neighbourhood. Switch to the <b>Course</b> view to walk the seven parts module by module.</p>
 	<div class="km-stats">
 		<div class="km-stat"><b id="st-modules">—</b> modules</div>
 		<div class="km-stat"><b id="st-edges">—</b> connections</div>
@@ -589,9 +609,11 @@ a { color: var(--accent); text-decoration: none; }
 		<div class="km-legend" id="km-legend"></div>
 
 		<div class="km-controls">
-			<div class="km-pill on" data-edge="citation"><span class="sw" style="background:#34d399"></span>Citations</div>
-			<div class="km-pill on" data-edge="concept"><span class="sw" style="background:#fbbf24"></span>Concepts</div>
-			<div class="km-pill on" data-edge="path"><span class="sw" style="background:#fff"></span>Journey</div>
+			<div class="km-switch" id="km-switch">
+				<button class="km-sw on" data-view="universe">✦ Universe</button>
+				<button class="km-sw" data-view="course">Course</button>
+			</div>
+			<div id="km-pills"></div>
 			<button class="km-iconbtn" id="km-theme" title="Toggle theme">◐</button>
 		</div>
 
@@ -602,7 +624,8 @@ a { color: var(--accent); text-decoration: none; }
 		</div>
 
 		<div class="km-results" id="km-results"></div>
-		<div class="km-hint"><span>hover to trace</span><span>click a star to explore</span><span><kbd>Esc</kbd> close</span></div>
+		<div class="km-hint" id="km-hint"><span>click a star to make it the focus</span><span>scroll to zoom</span><span><kbd>Esc</kbd> close</span></div>
+		<div class="km-focus" id="km-focus" style="display:none"></div>
 
 		<div id="km-chart"></div>
 
@@ -627,7 +650,7 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 
 	var chart = echarts.init(document.getElementById('km-chart'));
 	var canvas = document.getElementById('km-canvas');
-	var state = { edgeOn: { citation: true, concept: true, path: true }, query: '', resultSet: null, highlight: null };
+	var state = { edgeOn: { citation: true, concept: true, path: true }, query: '', resultSet: null, highlight: null, view: 'course', univEdges: true, uFocus: null };
 
 	/* stats */
 	document.getElementById('st-modules').textContent = DATA.stats.modules;
@@ -818,7 +841,10 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 	function rebuild(animate) {
 		clearTimeout(rebuildTimer);
 		rebuildTimer = setTimeout(function() {
-			chart.setOption(buildOption(chart.getWidth(), chart.getHeight()), { notMerge: true, lazyUpdate: true });
+			var opt = state.view === 'universe'
+				? buildUniverseOption(chart.getWidth(), chart.getHeight())
+				: buildOption(chart.getWidth(), chart.getHeight());
+			chart.setOption(opt, { notMerge: true, lazyUpdate: true });
 		}, animate === false ? 0 : 30);
 	}
 
@@ -844,31 +870,7 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 		}
 	}
 
-	/* ── legend ── */
-	(function buildLegend() {
-		var el = document.getElementById('km-legend');
-		var html = '<div class="lh">Parts — one lane each</div>';
-		for (var p = 0; p < 7; p++) {
-			html += '<div class="lg-row"><span class="sw" style="background:' + COLORS[p] + '"></span>P' + p + ' · ' + escHtml(PARTS[p]) + '</div>';
-		}
-		html += '<div class="edge-row"><div class="lh">Threads</div>';
-		html += '<div class="lg-row"><span class="sw" style="background:#34d399"></span>shared citations</div>';
-		html += '<div class="lg-row"><span class="sw" style="background:#fbbf24"></span>shared concepts</div>';
-		html += '<div class="lg-row glow"><span class="sw" style="background:#fff"></span>the course journey</div>';
-		html += '</div>';
-		el.innerHTML = html;
-	})();
-
-	/* ── controls ── */
-	document.querySelectorAll('.km-pill[data-edge]').forEach(function(chip) {
-		chip.addEventListener('click', function() {
-			var t = chip.dataset.edge;
-			state.edgeOn[t] = !state.edgeOn[t];
-			chip.classList.toggle('on', state.edgeOn[t]);
-			chip.classList.toggle('off', !state.edgeOn[t]);
-			rebuild(false);
-		});
-	});
+	/* ── controls (built per view in the universe block) ── */
 	document.getElementById('km-theme').addEventListener('click', function() {
 		var t = document.documentElement.classList.contains('light') ? 'dark' : 'light';
 		window.__kmSetTheme(t);
@@ -990,6 +992,15 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 		rebuild(false);
 	}
 	chart.on('click', function(params) {
+		if (cDrag.moved) { cDrag.moved = false; return; }
+		if (state.view === 'universe') {
+			if (params.dataType === 'node' && params.data && cIdX[params.data.name] != null) {
+				var c = cNodes[cIdX[params.data.name]];
+				flyTo(c.bx, c.by, c.name);
+				openConcept(c);
+			}
+			return;
+		}
 		if (params.dataType === 'node' && params.data && nodeMap[params.data.id]) openDetail(nodeMap[params.data.id]);
 	});
 
@@ -1134,16 +1145,432 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 		}
 	});
 
+	/* ═══════════════════════════════════════════════════════════
+	   UNIVERSE VIEW — concepts as stars, Poincaré focus navigation
+	   ═══════════════════════════════════════════════════════════ */
+	var cNodes = [], cEdges = [], cIdX = {}, R_disp = 300;
+	var focus = { x: 0, y: 0 }, strength = 2.6, focusName = null;
+	var cDrag = { active: false, moved: false };
+	var animId = null;
+
+	function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+	function buildConceptGraph() {
+		var freq = {}, partCnt = {};
+		NODES.forEach(function(n) {
+			var cs = n.concepts || {};
+			Object.keys(cs).forEach(function(k) {
+				freq[k] = (freq[k] || 0) + 1;
+				if (!partCnt[k]) partCnt[k] = {};
+				partCnt[k][n.part] = (partCnt[k][n.part] || 0) + cs[k];
+			});
+		});
+		cNodes = Object.keys(freq).map(function(k) {
+			var pc = partCnt[k], best = 0, bp = 0;
+			Object.keys(pc).forEach(function(pp) { if (pc[pp] > best) { best = pc[pp]; bp = +pp; } });
+			return { name: k, freq: freq[k], part: bp };
+		});
+		cNodes.sort(function(a, b) { return b.freq - a.freq; });
+		cIdX = {};
+		cNodes.forEach(function(c, i) { cIdX[c.name] = i; });
+
+		var co = {};
+		NODES.forEach(function(n) {
+			var cs = Object.keys(n.concepts || {});
+			for (var i = 0; i < cs.length; i++) for (var j = i + 1; j < cs.length; j++) {
+				var a = cs[i], b = cs[j];
+				if (a > b) { var t = a; a = b; b = t; }
+				co[a + '|' + b] = (co[a + '|' + b] || 0) + 1;
+			}
+		});
+		var list = [];
+		Object.keys(co).forEach(function(k) { if (co[k] >= 4) list.push({ k: k, w: co[k] }); });
+		list.sort(function(a, b) { return b.w - a.w; });
+		var deg = {}, picked = [];
+		list.forEach(function(l) {
+			var ab = l.k.split('|');
+			if ((deg[ab[0]] || 0) < 8 && (deg[ab[1]] || 0) < 8) {
+				picked.push({ a: ab[0], b: ab[1], w: l.w });
+				deg[ab[0]] = (deg[ab[0]] || 0) + 1; deg[ab[1]] = (deg[ab[1]] || 0) + 1;
+			}
+		});
+		cEdges = picked;
+		forceLayout();
+		focusName = cNodes[0].name;
+		focus.x = cNodes[0].bx; focus.y = cNodes[0].by;
+	}
+
+	function forceLayout() {
+		var n = cNodes.length, i, j, k;
+		var s = 42;
+		var rng = function() { s = (s * 16807) % 2147483647; return s / 2147483647; };
+		for (i = 0; i < n; i++) {
+			var r = Math.sqrt(rng()) * 0.85, th = rng() * Math.PI * 2;
+			cNodes[i].bx = r * Math.cos(th); cNodes[i].by = r * Math.sin(th);
+			cNodes[i].vx = 0; cNodes[i].vy = 0;
+		}
+		var L = 0.30, rep = 0.0016, spr = 0.10, damp = 0.55, cl = 0.045;
+		for (k = 0; k < 520; k++) {
+			for (i = 0; i < n; i++) { cNodes[i].fx = 0; cNodes[i].fy = 0; }
+			for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
+				var a = cNodes[i], b = cNodes[j];
+				var dx = b.bx - a.bx, dy = b.by - a.by;
+				var d2 = dx * dx + dy * dy + 1e-7, d = Math.sqrt(d2);
+				var f = rep * L * L / d2;
+				var fx = f * dx / d, fy = f * dy / d;
+				a.fx -= fx; a.fy -= fy; b.fx += fx; b.fy += fy;
+			}
+			for (i = 0; i < cEdges.length; i++) {
+				var e = cEdges[i], a = cNodes[cIdX[e.a]], b = cNodes[cIdX[e.b]];
+				var dx = b.bx - a.bx, dy = b.by - a.by;
+				var d = Math.sqrt(dx * dx + dy * dy + 1e-7);
+				var f = (d - L) * spr;
+				var fx = f * dx / d, fy = f * dy / d;
+				a.fx += fx; a.fy += fy; b.fx -= fx; b.fy -= fy;
+			}
+			for (i = 0; i < n; i++) {
+				var p = cNodes[i];
+				p.vx = (p.vx + p.fx) * damp; p.vy = (p.vy + p.fy) * damp;
+				var v = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+				if (v > cl) { p.vx *= cl / v; p.vy *= cl / v; }
+				p.bx += p.vx; p.by += p.vy;
+				var r2 = Math.sqrt(p.bx * p.bx + p.by * p.by);
+				if (r2 > 0.98) { p.bx *= 0.9653 / r2; p.by *= 0.9653 / r2; p.vx *= 0.4; p.vy *= 0.4; }
+			}
+		}
+		var maxR = 0;
+		for (i = 0; i < n; i++) { var rr = Math.sqrt(cNodes[i].bx * cNodes[i].bx + cNodes[i].by * cNodes[i].by); if (rr > maxR) maxR = rr; }
+		if (maxR > 1e-6) for (i = 0; i < n; i++) { cNodes[i].bx /= maxR; cNodes[i].by /= maxR; }
+	}
+
+	function project(w, h) {
+		R_disp = Math.min(w, h) / 2 - 46;
+		var cx = w / 2, cy = h / 2, S = strength;
+		for (var i = 0; i < cNodes.length; i++) {
+			var c = cNodes[i];
+			var dx = c.bx - focus.x, dy = c.by - focus.y;
+			var d = Math.sqrt(dx * dx + dy * dy);
+			var M = d < 1e-6 ? S : S / (1 + S * d);
+			var dd = d * S / (1 + S * d) * R_disp * 1.12;
+			var ux = d < 1e-6 ? 0 : dx / d, uy = d < 1e-6 ? 0 : dy / d;
+			c.x = cx + ux * dd; c.y = cy - uy * dd;
+			c.M = M; c.scaleF = 0.2 + 0.9 * Math.pow(M / S, 1.4);
+		}
+	}
+
+	function buildUniverseOption(w, h) {
+		project(w, h);
+		var querying = state.query.length > 0;
+		var boostSet = null;
+		if (querying && state.resultSet) {
+			boostSet = {};
+			state.resultSet.forEach(function(id) {
+				var cs = (nodeMap[id] && nodeMap[id].concepts) || {};
+				Object.keys(cs).forEach(function(k) { boostSet[k] = true; });
+			});
+		}
+		var nodes = cNodes.map(function(c) {
+			var sF = c.scaleF, c2 = COLORS[c.part] || '#94a3b8';
+			var sz = Math.max(5, (11 + c.freq * 0.6) * sF);
+			var op = 1;
+			if (querying && boostSet && !boostSet[c.name]) op = 0.12;
+			var isFocus = (focusName === c.name);
+			return {
+				id: c.name, name: c.name, value: c.freq, part: c.part,
+				symbolSize: sz, x: c.x, y: c.y,
+				itemStyle: {
+					color: new echarts.graphic.RadialGradient(0.5, 0.5, 0.6, [
+						{ offset: 0, color: lighten(c2, 0.5) }, { offset: 1, color: c2 }
+					]),
+					opacity: op,
+					shadowBlur: isFocus ? 36 : 12,
+					shadowColor: c2,
+					borderColor: lighten(c2, 0.6),
+					borderWidth: isFocus ? 2 : 1.2
+				},
+				label: {
+					show: op > 0.2 && (sF > 0.48 || c.freq >= 18),
+					formatter: c.name,
+					color: lighten(c2, 0.75),
+					fontSize: Math.max(6, Math.min(13, 10.5 * sF)),
+					fontWeight: 600,
+					textShadowColor: 'rgba(0,0,0,.75)',
+					textShadowBlur: 5
+				}
+			};
+		});
+		var links = [];
+		if (state.univEdges) {
+			cEdges.forEach(function(e) {
+				var a = cNodes[cIdX[e.a]], b = cNodes[cIdX[e.b]];
+				var avg = (a.scaleF + b.scaleF) / 2;
+				var op = 0.08 + 0.5 * (e.w / 27) * avg;
+				if (querying && boostSet && !(boostSet[e.a] && boostSet[e.b])) op *= 0.15;
+				links.push({
+					source: e.a, target: e.b, value: e.w,
+					lineStyle: { width: 0.8 + 0.9 * (e.w / 27), opacity: op, color: '#8ea4d8', curveness: 0 }
+				});
+			});
+		}
+		var graphic = [{
+			type: 'circle', silent: true, z: 1,
+			shape: { cx: w / 2, cy: h / 2, r: R_disp },
+			style: { stroke: 'rgba(150,175,235,.28)', fill: 'rgba(120,150,220,.025)', lineWidth: 1.2, lineDash: [6, 8] }
+		}];
+		if (focusName && cIdX[focusName] != null) {
+			var fc = cNodes[cIdX[focusName]];
+			graphic.push({
+				type: 'circle', silent: true, z: 2,
+				shape: { cx: w / 2, cy: h / 2, r: (11 + fc.freq * 0.6) * fc.scaleF + 9 },
+				style: { stroke: 'rgba(255,255,255,.45)', fill: 'transparent', lineWidth: 1 }
+			});
+		}
+		return {
+			animationDuration: 450,
+			backgroundColor: 'transparent',
+			grid: { left: 0, right: 0, top: 0, bottom: 0 },
+			xAxis: { min: 0, max: w, show: false },
+			yAxis: { min: 0, max: h, show: false },
+			graphic: graphic,
+			tooltip: {
+				confine: true, trigger: 'item',
+				backgroundColor: 'rgba(16,22,45,.96)',
+				borderColor: 'rgba(150,170,230,.35)', borderWidth: 1,
+				padding: [10, 13],
+				textStyle: { color: '#e9eeff', fontSize: 12 },
+				extraCssText: 'box-shadow:0 16px 40px rgba(0,0,0,.5);border-radius:12px;',
+				formatter: function(params) {
+					if (params.dataType === 'edge') {
+						return '<b style="font-size:12.5px">' + escHtml(params.data.source) + '</b> ↔ <b style="font-size:12.5px">' + escHtml(params.data.target) + '</b>' +
+							'<br><span style="font-size:11px;opacity:.75">co-occur in <b>' + params.data.value + '</b> modules</span>';
+					}
+					var c = params.data;
+					return '<b style="font-size:13px">✦ ' + escHtml(c.name) + '</b>' +
+						'<br><span style="font-size:11px;opacity:.7">used in ' + c.freq + ' modules · Part ' + c.part + '</span>' +
+						'<br><span style="font-size:10px;opacity:.55">click to make the focal point</span>';
+				}
+			},
+			series: [{
+				type: 'graph', layout: 'none', roam: false, z: 4,
+				data: nodes, links: links,
+				lineStyle: { width: 1 },
+				emphasis: {
+					focus: 'adjacency',
+					itemStyle: { shadowBlur: 30 },
+					lineStyle: { width: 2.2, opacity: 0.9 }
+				},
+				blur: { itemStyle: { opacity: 0.12 }, lineStyle: { opacity: 0.04 }, label: { opacity: 0.25 } }
+			}]
+		};
+	}
+
+	function updateFocusBadge() {
+		var el = document.getElementById('km-focus');
+		if (!el) return;
+		if (focusName && cIdX[focusName] != null) {
+			el.innerHTML = '<b>✦ ' + escHtml(focusName) + '</b> is the focus · ' + strength.toFixed(1) + '×<span style="opacity:.6">· drag to pan · scroll to zoom</span>';
+		} else {
+			el.innerHTML = '<span style="opacity:.6">drag to pan · scroll to zoom</span>';
+		}
+	}
+
+	function flyTo(bx, by, name) {
+		cancelAnimationFrame(animId);
+		if (name) focusName = name;
+		var t0 = performance.now(), dur = 560, fx0 = focus.x, fy0 = focus.y;
+		function step() {
+			var t = Math.min(1, (performance.now() - t0) / dur);
+			var e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+			focus.x = fx0 + (bx - fx0) * e; focus.y = fy0 + (by - fy0) * e;
+			updateFocusBadge();
+			rebuild(false);
+			if (t < 1) animId = requestAnimationFrame(step);
+		}
+		animId = requestAnimationFrame(step);
+	}
+
+	function openConcept(c) {
+		state.uFocus = c.name;
+		var col = COLORS[c.part] || '#6366f1';
+		var mods = [];
+		NODES.forEach(function(n) { var cs = n.concepts || {}; if (cs[c.name]) mods.push({ n: n, cnt: cs[c.name] }); });
+		mods.sort(function(a, b) { return b.cnt - a.cnt; });
+		var neigh = cEdges.filter(function(e) { return e.a === c.name || e.b === c.name; })
+			.sort(function(x, y) { return y.w - x.w; }).slice(0, 10);
+		var html = '<div class="km-detail-head" style="--dh-c:' + col + ';--dh-c2:' + lighten(col, -0.35) + '">' +
+			'<button class="dh-x" id="km-detail-x">✕</button>' +
+			'<div class="dh-part">Concept · Part ' + c.part + ' · ' + escHtml(PARTS[c.part]) + '</div>' +
+			'<div class="dh-icon">✦</div>' +
+			'<h2>' + escHtml(c.name) + '</h2>' +
+			'</div>' +
+			'<div class="km-detail-body">' +
+			'<div class="ds-meta">' +
+			'<span class="ds-chip">used in ' + c.freq + ' modules</span>' +
+			'<span class="ds-chip">' + neigh.length + ' strongest ties</span>' +
+			'</div>' +
+			'<div class="ds-desc" style="font-size:.78rem;color:var(--ink-mute)">Stars are scaled by how often a concept is used across the course. Click a module below to open it, or a neighbour chip to fly to it.</div>' +
+			'<div class="ds-sec">Used in ' + mods.length + ' modules</div>';
+		mods.forEach(function(m) {
+			var nn = m.n;
+			html += '<div class="km-mod-row" data-slug="' + escAttr(nn.id) + '">' +
+				'<span class="m-dot" style="background:' + (COLORS[nn.part] || '#94a3b8') + '"></span>' +
+				'<span>' + nn.icon + '</span>' +
+				'<span class="m-t">' + escHtml(nn.title) + '</span>' +
+				'<span style="margin-left:auto;font-size:.66rem;color:var(--ink-mute)">' + m.cnt + '×</span>' +
+				'</div>';
+		});
+		html += '<div class="ds-sec">Strongest neighbours</div>';
+		neigh.forEach(function(e) {
+			var oname = e.a === c.name ? e.b : e.a;
+			html += '<span class="km-tag km-neigh" data-focus="' + escAttr(oname) + '">' + escHtml(oname) + ' <span style="opacity:.5">· ' + e.w + '</span></span>';
+		});
+		html += '<button class="km-open" id="km-focus-btn" style="--dh-c:' + col + ';width:100%;justify-content:center;border:0;cursor:pointer">✦ Make the focal point</button>' +
+			'</div>';
+		detailEl.innerHTML = html;
+		detailEl.classList.add('show');
+		document.getElementById('km-detail-x').addEventListener('click', closeDetail);
+		document.getElementById('km-focus-btn').addEventListener('click', function() { flyTo(c.bx, c.by, c.name); });
+		detailEl.querySelectorAll('.km-mod-row').forEach(function(row) {
+			row.addEventListener('click', function() {
+				var o = nodeMap[row.dataset.slug];
+				if (o) { openDetail(o); rebuild(false); }
+			});
+		});
+		detailEl.querySelectorAll('.km-neigh').forEach(function(ch) {
+			ch.addEventListener('click', function() {
+				var oc = cNodes[cIdX[ch.dataset.focus]];
+				if (oc) { flyTo(oc.bx, oc.by, oc.name); openConcept(oc); }
+			});
+		});
+		rebuild(false);
+	}
+
+	/* ── view switching ── */
+	function buildPills() {
+		var el = document.getElementById('km-pills');
+		el.innerHTML = '';
+		var defs = state.view === 'universe'
+			? [{ key: 'univEdges', label: '<span class="sw" style="background:#8ea4d8"></span>Connections', on: state.univEdges }]
+			: [
+				{ key: 'citation', label: '<span class="sw" style="background:#34d399"></span>Citations', on: state.edgeOn.citation },
+				{ key: 'concept', label: '<span class="sw" style="background:#fbbf24"></span>Concepts', on: state.edgeOn.concept },
+				{ key: 'path', label: '<span class="sw" style="background:#fff"></span>Journey', on: state.edgeOn.path }
+			];
+		defs.forEach(function(d) {
+			var chip = document.createElement('div');
+			chip.className = 'km-pill ' + (d.on ? 'on' : 'off');
+			chip.innerHTML = d.label;
+			chip.addEventListener('click', function() {
+				if (state.view === 'universe') { state.univEdges = !state.univEdges; }
+				else { state.edgeOn[d.key] = !state.edgeOn[d.key]; }
+				buildPills();
+				rebuild(false);
+			});
+			el.appendChild(chip);
+		});
+	}
+
+	function renderLegend() {
+		var el = document.getElementById('km-legend');
+		var html;
+		if (state.view === 'universe') {
+			html = '<div class="lh">Concepts — size = usage</div>';
+			cNodes.slice(0, 8).forEach(function(c) {
+				html += '<div class="lg-row"><span class="sw" style="background:' + COLORS[c.part] + '"></span>' + escHtml(c.name) + '<span style="margin-left:auto;opacity:.6">' + c.freq + '</span></div>';
+			});
+			html += '<div class="edge-row"><div class="lh">Threads</div>' +
+				'<div class="lg-row"><span class="sw" style="background:#8ea4d8"></span>co-occurrence</div></div>';
+			el.innerHTML = html;
+			return;
+		}
+		html = '<div class="lh">Parts — one lane each</div>';
+		for (var p = 0; p < 7; p++) {
+			html += '<div class="lg-row"><span class="sw" style="background:' + COLORS[p] + '"></span>P' + p + ' · ' + escHtml(PARTS[p]) + '</div>';
+		}
+		html += '<div class="edge-row"><div class="lh">Threads</div>' +
+			'<div class="lg-row"><span class="sw" style="background:#34d399"></span>shared citations</div>' +
+			'<div class="lg-row"><span class="sw" style="background:#fbbf24"></span>shared concepts</div>' +
+			'<div class="lg-row glow"><span class="sw" style="background:#fff"></span>the course journey</div></div>';
+		el.innerHTML = html;
+	}
+
+	function setView(v) {
+		state.view = v;
+		document.querySelectorAll('.km-sw').forEach(function(b) { b.classList.toggle('on', b.dataset.view === v); });
+		var tl = document.getElementById('km-timeline');
+		if (tl) tl.style.display = v === 'universe' ? 'none' : '';
+		var ll = document.getElementById('km-lane-labels');
+		if (ll) ll.style.display = v === 'course' ? 'block' : 'none';
+		var fb = document.getElementById('km-focus');
+		if (fb) fb.style.display = v === 'universe' ? '' : 'none';
+		var hint = document.getElementById('km-hint');
+		if (hint) hint.innerHTML = v === 'universe'
+			? '<span>click a star to make it the focus</span><span>scroll to zoom</span><span><kbd>Esc</kbd> close</span>'
+			: '<span>hover to trace</span><span>click a star to explore</span><span><kbd>Esc</kbd> close</span>';
+		canvas.classList.toggle('draggable', v === 'universe');
+		buildPills();
+		renderLegend();
+		if (v === 'universe') updateFocusBadge();
+		rebuild(false);
+	}
+
+	document.getElementById('km-switch').addEventListener('click', function(e) {
+		var b = e.target.closest('.km-sw');
+		if (b && b.dataset.view && b.dataset.view !== state.view) setView(b.dataset.view);
+	});
+
+	/* ── universe interaction: pan + Poincaré zoom via zrender ── */
+	var zr = chart.getZr();
+	zr.on('mousedown', function(e) {
+		if (state.view !== 'universe') return;
+		cDrag.active = true; cDrag.moved = false;
+		cDrag.sx = e.offsetX; cDrag.sy = e.offsetY;
+		cDrag.fx = focus.x; cDrag.fy = focus.y;
+		canvas.classList.add('drag');
+	});
+	zr.on('mousemove', function(e) {
+		if (!cDrag.active || state.view !== 'universe') return;
+		var dx = e.offsetX - cDrag.sx, dy = e.offsetY - cDrag.sy;
+		if (Math.abs(dx) + Math.abs(dy) > 3) cDrag.moved = true;
+		if (cDrag.moved) {
+			focus.x = clamp(cDrag.fx - dx / R_disp, -1.3, 1.3);
+			focus.y = clamp(cDrag.fy + dy / R_disp, -1.3, 1.3);
+			updateFocusBadge();
+			rebuild(false);
+		}
+	});
+	zr.on('mouseup', function() { cDrag.active = false; canvas.classList.remove('drag'); });
+	zr.on('wheel', function(e) {
+		if (state.view !== 'universe') return;
+		var ev = e.event;
+		if (ev && ev.preventDefault) ev.preventDefault();
+		var d = e.wheelDelta || (e.deltaY != null ? -e.deltaY : 0);
+		strength = clamp(strength + (d > 0 ? 0.28 : -0.28), 1.3, 7);
+		updateFocusBadge();
+		rebuild(false);
+	});
+
 	/* ── helpers ── */
 	function escHtml(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s == null ? '' : String(s))); return d.innerHTML; }
 	function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
 
-	window.addEventListener('resize', function() { chart.resize(); renderLaneDecor(); buildTimeline(); rebuild(false); });
+	window.addEventListener('resize', function() {
+		chart.resize();
+		if (state.view === 'course') { renderLaneDecor(); buildTimeline(); }
+		rebuild(false);
+	});
 
 	/* ── init ── */
-	chart.setOption(buildOption(chart.getWidth(), chart.getHeight()));
-	renderLaneDecor();
+	buildConceptGraph();
+	setView('universe');
 	window.KM_chart = chart;
+	if (window.__KM_TEST) {
+		window.KM_test = {
+			chart: chart,
+			getConceptState: function() { return { nodes: cNodes, edges: cEdges, focus: focus, strength: strength, view: state.view, focusName: focusName }; },
+			project: project, flyTo: flyTo, openConcept: openConcept, setView: setView, buildPills: buildPills
+		};
+	}
 })();
 </script>
 </body>
