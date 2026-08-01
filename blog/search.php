@@ -198,7 +198,7 @@ function cleanText($text, $bibData) {
 }
 
 $files = glob('*.php');
-$exclude = ['index.php', 'index_full.php', 'functions.php', 'search.php', 'asanai_blog_proxy.php', 'graph.php', 'literature.php', 'knowledge_map.php'];
+	$exclude = ['index.php', 'index_full.php', 'functions.php', 'search.php', 'asanai_blog_proxy.php', 'graph.php', 'literature.php', 'knowledge_map.php', '_aurora_test.php'];
 $results = [];
 
 foreach ($files as $file) {

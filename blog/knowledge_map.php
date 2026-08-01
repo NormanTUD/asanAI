@@ -1209,8 +1209,8 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			cNodes[i].bx = r * Math.cos(th); cNodes[i].by = r * Math.sin(th);
 			cNodes[i].vx = 0; cNodes[i].vy = 0;
 		}
-		var L = 0.30, rep = 0.0016, spr = 0.10, damp = 0.55, cl = 0.045;
-		for (k = 0; k < 520; k++) {
+		var L = 0.26, rep = 0.0032, spr = 0.09, damp = 0.55, cl = 0.055;
+		for (k = 0; k < 650; k++) {
 			for (i = 0; i < n; i++) { cNodes[i].fx = 0; cNodes[i].fy = 0; }
 			for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
 				var a = cNodes[i], b = cNodes[j];
@@ -1508,6 +1508,7 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 			? '<span>click a star to make it the focus</span><span>scroll to zoom</span><span><kbd>Esc</kbd> close</span>'
 			: '<span>hover to trace</span><span>click a star to explore</span><span><kbd>Esc</kbd> close</span>';
 		canvas.classList.toggle('draggable', v === 'universe');
+		if (v === 'course') { renderLaneDecor(); buildTimeline(); }
 		buildPills();
 		renderLegend();
 		if (v === 'universe') updateFocusBadge();
@@ -1540,11 +1541,11 @@ window.KM_DATA = <?php echo json_encode($KM, JSON_UNESCAPED_UNICODE | JSON_UNESC
 		}
 	});
 	zr.on('mouseup', function() { cDrag.active = false; canvas.classList.remove('drag'); });
-	zr.on('wheel', function(e) {
+	zr.on('mousewheel', function(e) {
 		if (state.view !== 'universe') return;
 		var ev = e.event;
 		if (ev && ev.preventDefault) ev.preventDefault();
-		var d = e.wheelDelta || (e.deltaY != null ? -e.deltaY : 0);
+		var d = e.zrDelta != null ? e.zrDelta : (e.wheelDelta || (e.deltaY != null ? -e.deltaY : 0));
 		strength = clamp(strength + (d > 0 ? 0.28 : -0.28), 1.3, 7);
 		updateFocusBadge();
 		rebuild(false);

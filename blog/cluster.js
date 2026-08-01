@@ -160,46 +160,47 @@
 		const name = text.substring(openM.index + openM[0].length, nameEnd);
 		const bodyStart = nameEnd + 2;
 		let depth = 1;
-		const openScan = /\[\[(?:cluster|c):/g;
-		const closeScan = /\[\[\/(?:cluster|c)\]\]/g;
-		openScan.lastIndex = bodyStart;
-		closeScan.lastIndex = bodyStart;
+		let pos = bodyStart;
 		while (depth > 0) {
-			const co = openScan.exec(text);
-			const cc = closeScan.exec(text);
-			if (!cc) return null; // unterminated
-			if (co && co.index < cc.index) {
-				// a nested open comes before the next close. The close we
-				// just found still matches THIS level (or an outer level),
-				// not the new nested one — so we open a level, but the
-				// close is still pending: re-exec to consume it now.
-				const ne = text.indexOf(']]', co.index + 2);
-				if (ne === -1) return null;
-				openScan.lastIndex = ne + 2;
-				depth++;
-				// treat the close that was found as belonging to the level we
-				// just deepened? No — it belongs to an outer level. So DON'T
-				// decrement here; just continue, and the same close will be
-				// re-found and decremented on the next iteration. To avoid
-				// double-consuming, we manually decrement here using the
-				// close we already located, and reset closeScan past it.
-				closeScan.lastIndex = cc.index + cc[0].length;
-				depth--;
-			} else {
-				closeScan.lastIndex = cc.index + cc[0].length;
-				depth--;
+			const nextOpen  = text.indexOf('[[c:', pos);
+			const nextOpen2 = text.indexOf('[[cluster:', pos);
+			let nextClose   = text.indexOf('[[/c]]', pos);
+			const nextClose2 = text.indexOf('[[/cluster]]', pos);
+
+			// `[[/c]]` is a prefix of `[[/cluster]]`, so prefer the longer match
+			// when they overlap.
+			let nextCloseFinal = -1, nextCloseLen = 0;
+			if (nextClose !== -1 && (nextClose2 === -1 || nextClose + 6 <= nextClose2)) {
+				nextCloseFinal = nextClose; nextCloseLen = 6;
 			}
-			if (depth === 0) {
-				const inner = text.substring(bodyStart, cc.index);
-				const endIdx = cc.index + cc[0].length;
-				return {
-					name,
-					inner,
-					raw: text.substring(openM.index, endIdx),
-					start: openM.index,
-					end: endIdx,
-					block: /\n/.test(inner)
-				};
+			if (nextClose2 !== -1 && (nextCloseFinal === -1 || nextClose2 < nextCloseFinal)) {
+				nextCloseFinal = nextClose2; nextCloseLen = 12;
+			}
+			if (nextCloseFinal === -1) return null; // unterminated
+
+			let nextOpenIdx = -1;
+			if (nextOpen !== -1 && (nextOpen2 === -1 || nextOpen < nextOpen2)) nextOpenIdx = nextOpen;
+			else if (nextOpen2 !== -1) nextOpenIdx = nextOpen2;
+
+			if (nextOpenIdx !== -1 && nextOpenIdx < nextCloseFinal) {
+				const ne = text.indexOf(']]', nextOpenIdx + 2);
+				if (ne === -1) return null;
+				pos = ne + 2;
+				depth++;
+			} else {
+				pos = nextCloseFinal + nextCloseLen;
+				depth--;
+				if (depth === 0) {
+					const inner = text.substring(bodyStart, nextCloseFinal);
+					return {
+						name,
+						inner,
+						raw: text.substring(openM.index, pos),
+						start: openM.index,
+						end: pos,
+						block: /\n/.test(inner)
+					};
+				}
 			}
 		}
 		return null;
