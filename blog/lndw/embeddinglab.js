@@ -1105,6 +1105,43 @@ function render_temml() {
 				vertical-align:middle}
 			.lp-badge-display{background:#ede9fe;color:#6d28d9}
 			.lp-badge-inline{background:#e0f2fe;color:#0369a1}
+
+			/* ── Dark mode overrides ── */
+			html.dark .lp-box{
+				background:var(--mn-surface);
+				border-color:var(--mn-border);
+				box-shadow:0 8px 40px rgba(0,0,0,.5),
+				           0 0 0 1px rgba(255,255,255,.04)}
+			html.dark .lp-header{
+				background:var(--mn-bg-subtle);
+				border-bottom-color:var(--mn-border)}
+			html.dark .lp-header h3{color:var(--mn-heading)}
+			html.dark .lp-close{
+				background:var(--mn-surface-raised);
+				border-color:var(--mn-border);
+				color:var(--mn-text-secondary)}
+			html.dark .lp-close:hover{
+				background:#7f1d1d;border-color:#b91c1c;color:#fecaca}
+			html.dark .lp-preview{
+				background:var(--mn-bg);
+				border-color:var(--mn-border);
+				color:var(--mn-text)}
+			html.dark .lp-code-wrap{
+				background:var(--mn-bg);
+				border-color:var(--mn-border)}
+			html.dark .lp-code-bar{
+				background:var(--mn-surface-raised);
+				border-bottom-color:var(--mn-border)}
+			html.dark .lp-code{color:var(--mn-text)}
+			html.dark .lp-footer{border-top-color:var(--mn-border)}
+			html.dark .lp-footer kbd{
+				background:var(--mn-surface-raised);
+				border-color:var(--mn-border);
+				color:var(--mn-text-secondary)}
+			html.dark .lp-badge-display{
+				background:rgba(124,58,237,.2);color:#c4b5fd}
+			html.dark .lp-badge-inline{
+				background:rgba(14,165,233,.2);color:#7dd3fc}
 		`;
 		document.head.appendChild(s);
 
