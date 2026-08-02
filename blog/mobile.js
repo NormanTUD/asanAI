@@ -218,10 +218,9 @@
 
 		// Hook into Plotly charts: resize them on rotation.
 		if (window.Plotly && Plotly.Plots && typeof Plotly.Plots.resize === 'function') {
-			var ids = ['lin-loss-chart', 'lin-data-chart', 'deep-loss-chart', 'deep-data-chart'];
-			for (var i = 0; i < ids.length; i++) {
-				var el = document.getElementById(ids[i]);
-				if (el) Plotly.Plots.resize(el);
+			var plots = document.querySelectorAll('.js-plotly-plot');
+			for (var i = 0; i < plots.length; i++) {
+				Plotly.Plots.resize(plots[i]);
 			}
 		}
 	}

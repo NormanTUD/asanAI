@@ -1,7 +1,6 @@
 window.onresize = () => {
-	['lin-loss-chart', 'lin-data-chart', 'deep-loss-chart', 'deep-data-chart'].forEach(id => {
-		const el = document.getElementById(id);
-		if(el) Plotly.Plots.resize(el);
+	document.querySelectorAll('.js-plotly-plot').forEach(el => {
+		Plotly.Plots.resize(el);
 	});
 	if(typeof restart_fcnn === 'function') restart_fcnn(1);
 };
