@@ -156,34 +156,16 @@ function revealContent() {
     const content = document.getElementById('contents');
     if (!content) return;
 
-    // Remove the loader immediately so the curtain can sweep over it.
     if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
 
-    // Accent-gradient curtain that wipes up from the bottom.
-    const curtain = document.createElement('div');
-    curtain.className = 'reveal-curtain';
-    document.body.appendChild(curtain);
-
-    // Soft veil that fades out as the curtain lifts.
-    const veil = document.createElement('div');
-    veil.className = 'reveal-curtain-veil';
-    document.body.appendChild(veil);
-
-    // Show the content (faded) so it can rise into view beneath the curtain.
     content.style.display = 'block';
     content.style.opacity = '0';
-    content.style.transition = 'opacity 0.7s ease 0.4s';
+    content.style.transition = 'opacity 0.5s ease';
 
     requestAnimationFrame(() => {
         content.style.opacity = '1';
     });
 
-    setTimeout(() => {
-        if (curtain.parentNode) curtain.parentNode.removeChild(curtain);
-        if (veil.parentNode) veil.parentNode.removeChild(veil);
-    }, 1400);
-
-    // Staggered section cascade (keep your existing logic).
     const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
     const perSection = Math.max(40, Math.min(120, 800 / sections.length));
 

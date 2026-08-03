@@ -6384,44 +6384,8 @@ html.dark .course-tile::after {
 
 /* ─────────────────────────────────────────────────────────────
    5. Reveal curtain
-   An accent-gradient curtain wipes up when the loader is
-   done, then a soft veil fades to reveal the content.
+   (Removed — fullscreen accent-gradient curtain was too loud.)
    ───────────────────────────────────────────────────────────── */
-.reveal-curtain {
-	position: fixed;
-	inset: 0;
-	z-index: 9999;
-	pointer-events: none;
-	background: linear-gradient(135deg,
-		var(--mn-coral) 0%,
-		var(--mn-accent) 55%,
-		var(--mn-accent-dark) 100%);
-	transform-origin: top center;
-	animation: curtainWipe 1.05s cubic-bezier(0.83, 0, 0.17, 1) forwards;
-}
-@keyframes curtainWipe {
-	0%   { transform: scaleY(1); }
-	100% { transform: scaleY(0); }
-}
-.reveal-curtain-veil {
-	position: fixed;
-	inset: 0;
-	z-index: 9998;
-	pointer-events: none;
-	background: radial-gradient(circle at 50% 45%,
-		rgba(99, 102, 241, 0.18) 0%,
-		rgba(15, 23, 42, 0.55) 80%);
-	opacity: 1;
-	animation: curtainVeil 0.9s ease forwards;
-}
-@keyframes curtainVeil {
-	0%   { opacity: 1; }
-	100% { opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-	.reveal-curtain { animation-duration: 0.5s; }
-	.reveal-curtain-veil { animation-duration: 0.4s; }
-}
 
 /* ─────────────────────────────────────────────────────────────
    6. Floating glass mini-header
