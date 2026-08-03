@@ -789,9 +789,9 @@ function bibtexify() {
 				}
 			}
 
-			// Add SVG icon if URL is available
+			// Source icon inside the same <a> (a span, not a nested link) so it stays a single link
 			const svgIcon = data.url
-				? `<a class='bibtexify_auto_link_icon' href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
+				? `<span class="external_link_icon">
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -849,7 +849,7 @@ function bibtexify() {
        style="fill:currentColor" />
   </g>
 </svg>
-</span></a>`
+</span>`
 				: "";
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
@@ -859,7 +859,7 @@ function bibtexify() {
 			const lastWord = linkWords.pop(); // Get the last word
 			const precedingText = linkWords.join(" "); // All but the last word
 
-			// Combine the preceding text, last word, and SVG icon into a single <a> tag
+			// Combine the preceding text, last word, and icon into a single <a> tag
 			const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer; white-space: nowrap;">${precedingText} ${lastWord}${svgIcon}</a>`;
 
 			// Return the final citation element
