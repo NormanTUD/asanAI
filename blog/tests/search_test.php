@@ -170,7 +170,7 @@ check(count($d['grouped']) === 0, 'multi-word across different pages yields noth
 
 $d = q('gradient');
 check(($d['grouped'][0]['page'] ?? '') === 'math_i', 'gradient: grouped by page');
-check(($d['grouped'][0]['count'] ?? 0) === 2, 'gradient: paragraph + caption both match');
+check(($d['grouped'][0]['count'] ?? 0) === 3, 'gradient: paragraph + md + caption all match');
 check(($d['grouped'][0]['type'] ?? '') === 'caption', 'gradient: caption ranks above content');
 check(($d['grouped'][0]['img'] ?? '') === 'img.jpg', 'gradient: caption carries image url');
 
@@ -259,7 +259,7 @@ check(count($d['grouped']) === 0, 'empty query returns nothing');
 
 $cacheDir = $fixtureDir . '/cachepage';
 mkdir($cacheDir, 0777, true);
-fixtureFile($cacheDir, 'cache.php', "<h1>Cache Test</h1><p>termalpha appears here.</p>");
+fixtureFile($cacheDir, 'cache.php', "<h1>Cache Test</h1><p>termalpha appears here in this long enough paragraph about search caching.</p>");
 $excl = ['index.php', 'zz_secret.php'];
 
 $p1 = buildIndex($cacheDir, $excl, true);
@@ -269,7 +269,7 @@ $p2 = buildIndex($cacheDir, $excl, true);
 check($p1 === $p2, 'cache: second build is identical (no rebuild)');
 
 usleep(1100000); /* ensure a distinct mtime for cache invalidation */
-fixtureFile($cacheDir, 'cache.php', "<h1>Cache Test</h1><p>termbeta appears here instead.</p>");
+fixtureFile($cacheDir, 'cache.php', "<h1>Cache Test</h1><p>termbeta appears here in this long enough paragraph about search caching.</p>");
 $p3 = buildIndex($cacheDir, $excl, true);
 check($p1 !== $p3, 'cache: index rebuilt when file changes');
 
