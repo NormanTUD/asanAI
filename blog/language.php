@@ -118,7 +118,7 @@ The earliest forms of "proto-writing" began with symbolic art. These were the fi
 
 <figure>
     <img style="width: 100%" src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina, dating from approximately 7300 BC">
-    <figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos}, Argentina (c. 7300 BC – 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall \cite{cuevadelasmanos_image}.</figcaption>
+    <figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos}, Argentina (c. 7300 BC – 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall.</figcaption>
 </figure>
 
 The **Cueva de las Manos** (Cave of the Hands) in Patagonia, Argentina, contains over 2,000 hand stencils created between approximately 7,300 BC and 700 AD \cite{cuevadelasmanos}. Artists sprayed mineral pigments—iron oxides, kaolin, manganese oxide—through hollow bone pipes over hands pressed against the rock face, producing negative imprints. The site also features naturalistic hunting scenes depicting guanaco drives, geometric patterns, and abstract figures spanning multiple stylistic periods over nine millennia.

@@ -6136,7 +6136,6 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 
 /* ── 11.5.5. External-link indicator — a tiny ↗ after every target=_blank in .md ── */
 .md a[target="_blank"]:not(.cl-inline):not(.cl-h-anchor):not(.cl-copy):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):not(.drawer-module)::after {
-	content: '\2197';
 	display: inline-block;
 	margin-left: .15em;
 	font-size: .85em;
