@@ -277,7 +277,7 @@ This was the conceptual shift from "calculating machines" to the idea that cogni
 ### The SNARC: The First Physical Neural Network (1951)
 </div>
 
-<figure>
+<figure class="md">
     <img style="width: 100%" src="snarc.jpg" alt="SNARC" />
     <figcaption class="md">\citealternativetitle{snarcphoto}</figcaption>
 </figure>

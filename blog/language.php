@@ -138,7 +138,7 @@ Around 3500 BCE, tokens were replaced by flat clay tablets with incised **pictog
 ### Cuneiform and Formal Grammar
 </div>
 
-<figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
+<figure class="md" style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
     <img style="width: 100%; height: auto; display: block;" src="cuneiform.jpg" alt="Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum">
     <figcaption class="md">\citealternativetitle{cuneiform}</figcaption>
 </figure>

@@ -11,7 +11,7 @@ Artificial Intelligence is often described as "Applied Statistics." At its core,
 
 <div class="statlab-container">
 
-<figure>
+<figure class="md">
     <img style="width: 100%" src="flammarion.jpg" alt="The Flammarion Engraving" />
     <figcaption><span class="md">\citetitle{flammarion}: A symbol for man's will to venture beyond the horizon of current understanding for the sake of discovery alone</span></figcaption>
 </figure>
@@ -113,7 +113,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 ### The Normal Distribution: From the Stars to AI
 </div>
 
-<figure>
+<figure class="md">
     <img style="width: 100%" src="ceres.jpg" alt="The Dwarf Planet Ceres" />
     <figcaption class="md">\citetitle{ceresimage} in \citeyear{ceresimage}</figcaption>
 </figure>
@@ -124,7 +124,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809}, in his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 </div>
 
-<figure>
+<figure class="md">
     <img style="width: 100%" src="ceres_path.png" alt="The apparent path of Ceres in the Night Sky" />
     <figcaption class="md">\citealternativetitle{cerespath}</figcaption>
 </figure>
