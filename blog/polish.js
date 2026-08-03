@@ -436,7 +436,10 @@
 			tip.className = 'cl-cite-tip';
 			tip.setAttribute('role', 'tooltip');
 			const clone = target.cloneNode(true);
-			clone.querySelectorAll && clone.querySelectorAll('a').forEach(function (la) { la.remove(); });
+			clone.querySelectorAll && clone.querySelectorAll('a').forEach(function (la) {
+				// Keep real source links (they have an href); drop internal backlink/arrow anchors
+				if (!la.getAttribute('href')) la.remove();
+			});
 			tip.appendChild(clone);
 			a.parentNode.appendChild(tip);
 			let timer = null;

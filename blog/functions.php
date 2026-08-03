@@ -195,8 +195,8 @@ function load_base_js () {
 			try {
 				await bibtexify();
 				renderMarkdown();
-				make_external_a_href_target_blank();
 				postLoadInit();
+				make_external_a_href_target_blank();
 				revealContent();
 				sendHeight();
 			} catch (error) {

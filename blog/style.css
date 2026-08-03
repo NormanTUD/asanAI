@@ -6169,14 +6169,14 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 	line-height: 1.5;
 	opacity: 0;
 	pointer-events: none;
-	transform: translateY(-2px);
-	transition: opacity .15s ease, transform .15s ease;
+	/* no transform here: a transform would become the containing block for
+	   position:fixed descendants (e.g. glossary tooltips) and throw them offscreen */
+	transition: opacity .15s ease;
 }
 .cl-fn-tip.is-visible,
 .cl-cite-tip.is-visible {
 	opacity: 1;
 	pointer-events: auto;
-	transform: translateY(0);
 }
 .cl-fn-tip > ol,
 .cl-fn-tip > ul { margin: 0; padding-left: 1em; }
