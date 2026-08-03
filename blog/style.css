@@ -6195,7 +6195,7 @@ html.dark .cl-cite-tip {
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
 	.kn-lane-glow, .km-legend, .km-controls, .km-detail,
 	#floating-header, #reading-progress, #reading-progress > div,
-	.reveal-curtain, .reveal-curtain-veil, .constellation {
+	.constellation {
 		display: none !important;
 	}
 	.md a[target="_blank"]::after { content: '' !important; }
