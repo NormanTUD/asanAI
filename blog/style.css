@@ -1461,6 +1461,14 @@ p, .assistant-frame {
 	line-break: strict;
 }
 
+/* Readability toggle (#justify-toggle): switch to ragged-right text */
+html.ragged p,
+html.ragged .assistant-frame {
+	text-align: left;
+	hyphens: none;
+	-webkit-hyphens: none;
+}
+
 /* Elemente gleiten sanft von unten nach oben ein */
 @keyframes fadeInUp {
 	from {
@@ -4896,6 +4904,57 @@ html {
 }
 
 /* ════════════════════════════════════════════════════════════
+   READABILITY — Justify / Hyphenation Toggle
+   Switches body text between justified (default) and ragged-right
+   via html.ragged. Icon shows the current alignment.
+   ════════════════════════════════════════════════════════ */
+#justify-toggle {
+	position: fixed;
+	top: 16px;
+	right: 116px;
+	z-index: 9999;
+	width: 40px;
+	height: 40px;
+	border: 1px solid var(--mn-border);
+	border-radius: 12px;
+	background: var(--mn-surface);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: var(--mn-shadow-md);
+	color: var(--mn-text-secondary);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+}
+#justify-toggle:hover {
+	border-color: var(--mn-accent);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+	color: var(--mn-accent);
+	transform: scale(1.05);
+}
+#justify-toggle:active {
+	transform: scale(0.95);
+}
+#justify-toggle .jti-off { display: none; }
+html.ragged #justify-toggle {
+	border-color: var(--mn-accent);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+	color: var(--mn-accent);
+}
+html.ragged #justify-toggle .jti-on { display: none; }
+html.ragged #justify-toggle .jti-off { display: flex; }
+@media (max-width: 600px) {
+	#justify-toggle {
+		top: 10px;
+		right: 96px;
+		width: 36px;
+		height: 36px;
+	}
+}
+
+/* ════════════════════════════════════════════════════════════
    MODULE NAV (Prev / Next)
    ════════════════════════════════════════════════════════ */
 .module-nav {
@@ -6189,7 +6248,7 @@ html.dark .cl-cite-tip {
 @media print {
 	html, body { background: #fff !important; color: #000 !important; font-size: 11pt; }
 	#drawer-toggle, #drawer-panel, #drawer-backdrop, .drawer-backdrop,
-	#theme-toggle, #search-trigger, #toc, .km-hero, .km-lane-glow,
+	#theme-toggle, #justify-toggle, #search-trigger, #toc, .km-hero, .km-lane-glow,
 	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
 	nav.module-nav, .module-nav, .drawer-panel,
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,

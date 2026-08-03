@@ -450,9 +450,10 @@ function get_string_of_file_or_die($file) {
 if(!server_php_self_ends_with_index_php()) {
 	$themeClass = get_theme_class();
 	$cookieTheme = $_COOKIE['theme'] ?? '';
+	$justifyClass = (($_COOKIE['justify'] ?? '') === 'ragged') ? ' ragged' : '';
 ?>
 <!DOCTYPE html>
-<html lang="en" class="<?php echo $themeClass; ?>">
+<html lang="en" class="<?php echo $themeClass . $justifyClass; ?>">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -471,6 +472,13 @@ if(!server_php_self_ends_with_index_php()) {
 			var meta = document.querySelector('meta[name="theme-color"]');
 			if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
 			document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
+		}
+		function toggleJustify() {
+			var html = document.documentElement;
+			var ragged = html.classList.toggle('ragged');
+			var btn = document.getElementById('justify-toggle');
+			if (btn) btn.setAttribute('aria-pressed', ragged ? 'true' : 'false');
+			document.cookie = 'justify=' + (ragged ? 'ragged' : 'justified') + '; path=/; max-age=' + 60*60*24*365;
 		}
 		// Apply system preference on first load if no cookie
 		(function() {
@@ -491,6 +499,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 		<?php render_theme_toggle(); ?>
+		<?php render_justify_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
@@ -600,6 +609,15 @@ function render_theme_toggle(): void {
 	$icon = $theme === 'dark' ? '&#9788;' : '&#9790;';
 	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode"' .
 		' onclick="toggleTheme()">' . $icon . '</button>';
+}
+
+function render_justify_toggle(): void {
+	$ragged = (($_COOKIE['justify'] ?? '') === 'ragged') ? 'true' : 'false';
+	echo '<button id="justify-toggle" type="button" aria-label="Toggle justified text" title="Toggle justified text"' .
+		' aria-pressed="' . $ragged . '" onclick="toggleJustify()">';
+	echo '<span class="jti-on" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="2.4" rx="1.2"/><rect x="3" y="10.8" width="18" height="2.4" rx="1.2"/><rect x="3" y="16.6" width="18" height="2.4" rx="1.2"/></svg></span>';
+	echo '<span class="jti-off" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="13" height="2.4" rx="1.2"/><rect x="3" y="10.8" width="18" height="2.4" rx="1.2"/><rect x="3" y="16.6" width="9" height="2.4" rx="1.2"/></svg></span>';
+	echo '</button>';
 }
 
 function render_constellation(int $seed = 42): void {

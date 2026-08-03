@@ -1,7 +1,8 @@
 <?php include_once("functions.php"); ?>
 <?php $themeClass = get_theme_class(); ?>
+<?php $justifyClass = (($_COOKIE['justify'] ?? '') === 'ragged') ? ' ragged' : ''; ?>
 <!DOCTYPE html>
-<html lang="en" class="<?php echo $themeClass; ?>">
+<html lang="en" class="<?php echo $themeClass . $justifyClass; ?>">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -18,6 +19,13 @@
 		if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
 		document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
 	}
+	function toggleJustify() {
+		var html = document.documentElement;
+		var ragged = html.classList.toggle('ragged');
+		var btn = document.getElementById('justify-toggle');
+		if (btn) btn.setAttribute('aria-pressed', ragged ? 'true' : 'false');
+		document.cookie = 'justify=' + (ragged ? 'ragged' : 'justified') + '; path=/; max-age=' + 60*60*24*365;
+	}
 	(function() {
 		if (document.cookie.indexOf('theme=') === -1) {
 			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) toggleTheme();
@@ -33,6 +41,7 @@
 <button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 <button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 <?php render_theme_toggle(); ?>
+<?php render_justify_toggle(); ?>
 <?php render_drawer(); ?>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
