@@ -467,7 +467,6 @@ if(!server_php_self_ends_with_index_php()) {
 				html.classList.remove('dark');
 			}
 			var btn = document.getElementById('theme-toggle');
-			if (btn) btn.innerHTML = isDark ? '&#9788;' : '&#9790;';
 			var meta = document.querySelector('meta[name="theme-color"]');
 			if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
 			document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
@@ -489,7 +488,7 @@ if(!server_php_self_ends_with_index_php()) {
 	<body>
 		<a class="cl-skip" href="#contents">Skip to content</a>
 		<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
-		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
+		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 		<?php render_theme_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
@@ -596,10 +595,10 @@ function render_drawer(): void {
 }
 
 function render_theme_toggle(): void {
-	$theme = $_COOKIE['theme'] ?? '';
-	$icon = $theme === 'dark' ? '&#9788;' : '&#9790;';
-	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode"' .
-		' onclick="toggleTheme()">' . $icon . '</button>';
+	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode" onclick="toggleTheme()">';
+	echo '<span class="ti-sun" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>';
+	echo '<span class="ti-moon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>';
+	echo '</button>';
 }
 
 function render_constellation(int $seed = 42): void {

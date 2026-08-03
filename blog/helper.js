@@ -156,6 +156,10 @@ function revealContent() {
     const content = document.getElementById('contents');
     if (!content) return;
 
+    // Floating top buttons (search / theme) fade in together with the
+    // content instead of flashing over the loader on first paint.
+    document.documentElement.classList.add('is-ready');
+
     if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
 
     content.style.display = 'block';

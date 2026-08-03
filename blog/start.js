@@ -777,9 +777,7 @@ function applyTheme(dark, persist) {
 	} else {
 		html.classList.remove('dark');
 	}
-	// Update toggle icon
-	var toggle = document.getElementById('theme-toggle');
-	if (toggle) toggle.innerHTML = dark ? '&#9788;' : '&#9790;';
+	// Icon is switched via CSS (html.dark toggles .ti-sun/.ti-moon)
 	// Update theme-color meta
 	var meta = document.querySelector('meta[name="theme-color"]');
 	if (meta) meta.content = dark ? '#0f172a' : '#ffffff';
