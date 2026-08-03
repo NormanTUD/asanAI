@@ -73,7 +73,7 @@ SKIP_DIRS = {
 # These are typically pure-PHP logic files (e.g. WordPress theme functions)
 # that contain HTML only inside PHP strings, causing false positives.
 SKIP_TAG_CHECK_FILENAMES = {
-    "functions.php", "search.php"
+    "functions.php", "search.php", "search_lib.php"
 }
 
 
