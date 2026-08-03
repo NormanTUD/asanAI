@@ -103,13 +103,21 @@
 		debounceTimer = setTimeout(function() { doSearch(query); }, 200);
 	}
 
+	/* Mirrors detectSearchMode() in search_lib.php. */
+	function detectMode(query) {
+		if (query.length >= 2 && query.charAt(0) === '/' && query.charAt(query.length - 1) === '/') return 'regex';
+		if (query.charAt(0) === '~' && query.length > 1) return 'fuzzy';
+		return 'normal';
+	}
+
 	function updateSearchModeHint(query) {
 		var hint = document.getElementById('search-hint-mode');
 		if (!hint) return;
-		if (/^\/.+\/$/.test(query)) {
+		var mode = detectMode(query);
+		if (mode === 'regex') {
 			hint.textContent = 'regex mode';
 			hint.className = 'search-hint-mode search-hint-mode-regex';
-		} else if (query.charAt(0) === '~' && query.length > 1) {
+		} else if (mode === 'fuzzy') {
 			hint.textContent = 'fuzzy mode';
 			hint.className = 'search-hint-mode search-hint-mode-fuzzy';
 		} else {
@@ -133,6 +141,10 @@
 		})
 		.then(function(r) { return r.json(); })
 		.then(function(data) {
+			if (data.error) {
+				renderError(data.error, query);
+				return;
+			}
 			var mode = data.mode || 'normal';
 			var items = data.grouped && data.grouped.length > 0 ? data.grouped : data.results;
 			var hlQuery = query;
@@ -145,8 +157,16 @@
 		})
 		.catch(function(err) {
 			if (err.name === 'AbortError') return;
-			resultsContainer.innerHTML = '<div class="search-error">Search failed. Please try again.</div>';
+			renderError('Search failed. Please try again.', query);
 		});
+	}
+
+	function renderError(message, query) {
+		resultsContainer.innerHTML =
+			'<div class="search-error">' +
+				escHtml(message) +
+				(query ? ' for <strong>' + escHtml(query) + '</strong>' : '') +
+			'</div>';
 	}
 
 	function renderResults(results, query, hlQuery, mode, total) {
@@ -172,7 +192,7 @@
 					escHtml(r.title) +
 					(r.count > 1 ? ' <span class="search-result-badge">' + r.count + '</span>' : '') +
 				'</div>' +
-				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), escHtml(hlQuery), mode) + '</div>' +
+				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), hlQuery, mode) + '</div>' +
 				'</div>' +
 			'</a>';
 		});
@@ -261,15 +281,39 @@
 		} catch(e) { return ''; }
 	}
 
+	function splitTerms(query) {
+		return query.split(/\s+/).filter(function(t) { return t.length >= 2; });
+	}
+
+	function escapeRegExp(str) {
+		return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	}
+
+	/* Highlight each query term (or the whole regex match) with <mark>. */
 	function highlightText(text, query, mode) {
 		if (!query) return text;
 		mode = mode || 'normal';
 		var cls = 'search-match';
 		if (mode === 'regex') cls = 'search-match-regex';
 		else if (mode === 'fuzzy') cls = 'search-match-fuzzy';
-		var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-		var re = new RegExp('(' + escaped + ')', 'gi');
-		return text.replace(re, '<mark class="' + cls + '">$1</mark>');
+
+		if (mode === 'regex') {
+			return text.replace(new RegExp('(' + escapeRegExp(query) + ')', 'gi'), '<mark class="' + cls + '">$1</mark>');
+		}
+		if (mode === 'fuzzy') {
+			return text;
+		}
+
+		var terms = splitTerms(query);
+		if (terms.length === 0) return text;
+
+		var escaped = terms.map(escapeRegExp);
+		var re = new RegExp('(' + escaped.join('|') + ')', 'gi');
+		var parts = text.split(re);
+		return parts.map(function(part, i) {
+			if (i % 2 === 1) return '<mark class="' + cls + '">' + part + '</mark>';
+			return part;
+		}).join('');
 	}
 
 	function escHtml(str) {
@@ -288,7 +332,16 @@
 		init();
 	}
 
-	window.initSearch = { open: open };
+	window.initSearch = {
+		open: open,
+		_internals: {
+			detectMode: detectMode,
+			normalizeSmartQuotes: normalizeSmartQuotes,
+			splitTerms: splitTerms,
+			highlightText: highlightText,
+			extractMatchFromSnippet: extractMatchFromSnippet
+		}
+	};
 
 	if (window.location.hash) {
 		var hash = window.location.hash.slice(1);
