@@ -400,6 +400,7 @@
 			if (target) {
 				// clone the footnote content (strip the back-link arrow)
 				const clone = target.cloneNode(true);
+				clone.removeAttribute('id'); // avoid duplicate id; keep the real footnote reachable
 				clone.querySelectorAll && clone.querySelectorAll('a').forEach(function (la) {
 					if ((la.textContent || '').trim() === '↩') la.remove();
 				});
@@ -436,6 +437,7 @@
 			tip.className = 'cl-cite-tip';
 			tip.setAttribute('role', 'tooltip');
 			const clone = target.cloneNode(true);
+			clone.removeAttribute('id'); // avoid duplicate id; keep the real bibliography reachable
 			clone.querySelectorAll && clone.querySelectorAll('a').forEach(function (la) {
 				// Keep real source links (they have an href); drop internal backlink/arrow anchors
 				if (!la.getAttribute('href')) la.remove();
