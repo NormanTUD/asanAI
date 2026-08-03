@@ -31,7 +31,9 @@ A context window (also called "context length") is the **maximum number of token
 | GPT-2 (2019) | 1,024 tokens | ~750 words / 1.5 pages |
 | GPT-3 (2020) | 2,048 tokens | ~1,500 words / 3 pages |
 | GPT-3.5 (2022) | 4,096 tokens | ~3,000 words / 6 pages |
-| GPT-4 (2023) | 8,192 / 32K / 128K | ~6K–96K words |
+| GPT-4 (2023) | 8,192 tokens | ~6K words |
+| GPT-4-32k (2023) | 32,000 tokens | ~24K words |
+| GPT-4 Turbo (2023) | 128,000 tokens | ~96K words / 1 novel |
 | Claude 3 (2024) | 200,000 tokens | ~150K words / 1 novel |
 | Gemini 1.5 Pro (2024) | 1,000,000 tokens | ~750K words / 5 novels |
 | Gemini 2.5 (2025) | 1,000,000+ tokens | ~750K+ words |
