@@ -18,6 +18,13 @@ html {
 	--mn-text-muted: #94a3b8;
 	--mn-heading: #0f172a;
 
+	/* Fonts — system stacks (no webfonts loaded); these were referenced
+	   via var() throughout the file but never defined, so code blocks
+	   silently rendered in the inherited sans-serif. */
+	--mn-font-heading: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--mn-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--mn-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
 	/* Accent palette — warm coral to deep indigo */
 	--mn-accent: #6366f1;
 	--mn-accent-light: #e0e7ff;
