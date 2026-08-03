@@ -189,33 +189,78 @@ TRACKED_TAGS = {
 
 
 def strip_php_blocks(content: str) -> str:
-    """
+    r"""
     Remove PHP code blocks but preserve newlines so line numbers stay accurate.
     Keeps the HTML template parts outside <?php ... ?> blocks.
+
+    String- and comment-aware: a "?>" inside a PHP string literal (e.g.
+    preg_replace('/<\?php.*?\?>/s', ...)) or a comment is NOT a real
+    closing tag and must not end the PHP block early.
     """
     result = []
     i = 0
+    n = len(content)
     in_php = False
-    while i < len(content):
+    str_char = None  # "'", '"' or '`' when inside a PHP string literal
+    while i < n:
         if not in_php:
-            if content[i:i+5] == "<?php":
+            if content.startswith("<?php", i):
                 in_php = True
                 i += 5
-            elif content[i:i+2] == "<?":
+            elif content.startswith("<?", i):
                 in_php = True
                 i += 2
             else:
                 result.append(content[i])
                 i += 1
-        else:
-            if content[i:i+2] == "?>":
-                in_php = False
+            continue
+
+        c = content[i]
+
+        # Inside a PHP string literal
+        if str_char:
+            if c == "\\" and i + 1 < n:
                 i += 2
+            elif c == str_char:
+                str_char = None
+                i += 1
             else:
-                # Preserve newlines so line numbers stay correct
+                if c == "\n":
+                    result.append("\n")
+                i += 1
+            continue
+
+        # Line comment (# or //) — skip to end of line
+        if c == "#" or (c == "/" and i + 1 < n and content[i + 1] == "/"):
+            while i < n and content[i] != "\n":
+                i += 1
+            continue
+
+        # Block comment (/* ... */)
+        if c == "/" and i + 1 < n and content[i + 1] == "*":
+            i += 2
+            while i + 1 < n and not (content[i] == "*" and content[i + 1] == "/"):
                 if content[i] == "\n":
                     result.append("\n")
                 i += 1
+            i = min(n, i + 2)
+            continue
+
+        if c in ("'", '"', "`"):
+            str_char = c
+            i += 1
+            continue
+
+        if content.startswith("?>", i):
+            in_php = False
+            i += 2
+            continue
+
+        # Preserve newlines so line numbers stay correct
+        if c == "\n":
+            result.append("\n")
+        i += 1
+
     return "".join(result)
 
 
