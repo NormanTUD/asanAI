@@ -306,8 +306,7 @@ function extractBlocks($content, $bibData) {
 	preg_match_all('/<(p|li|blockquote|td|th|figcaption)[^>]*>(.*?)<\/\1>/is', $html, $pms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE);
 	foreach ($pms as $pm) {
 		$pos = $pm[0][1];
-		$tagName = strtolower($pm[1][0]);
-		if ($tagName === 'figcaption' && $inFigure($pos)) continue;
+		if ($inFigure($pos)) continue;
 		$text = cleanText(strip_tags($pm[2][0]), $bibData);
 		if (mb_strlen($text) < 40) continue;
 		$blocks[] = ['type' => 'text', 'text' => $text, 'pos' => $pos];
@@ -347,6 +346,10 @@ function extractBlocks($content, $bibData) {
 		$mdPos = $mdm[0][1];
 		$mdAttrs = $mdm[0][0];
 		$raw = $mdm[1][0];
+
+		/* Figures are indexed separately as caption blocks; don't re-index
+		 * their markup as paragraph text. */
+		$raw = preg_replace('/<figure[^>]*>.*?<\/figure>/is', '', $raw);
 
 		if (preg_match('/data-headline="([^"]+)"/i', $mdAttrs, $dh)) {
 			$hlText = cleanText($dh[1], $bibData);
@@ -449,6 +452,7 @@ function buildIndex($dir, $exclude = null, $useCache = true) {
 	}
 	$litFile = $dir . '/literature.js';
 	$fingerprint['__lit__'] = file_exists($litFile) ? @filemtime($litFile) : 0;
+	$fingerprint['__lib__'] = @filemtime(__FILE__);
 	ksort($fingerprint);
 	$key = sha1(json_encode($fingerprint));
 

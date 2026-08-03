@@ -81,6 +81,24 @@ fixtureFile($fixtureDir, 'zz_secret.php', <<<'PHP'
 <p>secrettermxyz appears only here and nowhere else.</p>
 PHP);
 
+fixtureFile($fixtureDir, 'figmd.php', <<<'PHP'
+<?php include_once("functions.php");
+<!--
+COURSE_METADATA:
+title: Figure Inside Markdown
+-->
+<div class="md">
+Before the figure.
+
+<figure>
+  <img src="fig.jpg" alt="A ferrocart example">
+  <figcaption>A ferrocart capstone quagmire lemma duplicative.</figcaption>
+</figure>
+
+After the figure.
+</div>
+PHP);
+
 fixtureFile($fixtureDir, 'literature.js', <<<'JS'
 var literature = {
   "key": {title: "Sketch of the Analytical Engine", author: "Ada Lovelace", year: 1843, url: "http://example.com"},
@@ -175,6 +193,11 @@ check(($d['grouped'][0]['type'] ?? '') === 'caption', 'gradient: caption ranks a
 check(($d['grouped'][0]['img'] ?? '') === 'img.jpg', 'gradient: caption carries image url');
 check(($d['results'][0]['pageTitle'] ?? '') === 'Mathematics I: Foundations', 'gradient: results carry pageTitle for display grouping');
 check(count($d['results']) === 3, 'gradient: all three matching blocks appear in results');
+
+$d = q('ferrocart');
+check(count($d['results']) === 1, 'figure-inside-md: caption text is indexed only once');
+check(($d['results'][0]['type'] ?? '') === 'caption', 'figure-inside-md: deduped result is the caption block');
+check(($d['grouped'][0]['count'] ?? 0) === 1, 'figure-inside-md: page group count matches');
 
 $d = q('calculus');
 check(count($d['grouped']) >= 2, 'calculus: matches both math pages');
@@ -287,6 +310,7 @@ unlink($fixtureDir . '/math_i.php');
 unlink($fixtureDir . '/attention.php');
 unlink($fixtureDir . '/math_ii.php');
 unlink($fixtureDir . '/zz_secret.php');
+unlink($fixtureDir . '/figmd.php');
 unlink($fixtureDir . '/literature.js');
 unlink($cacheDir . '/cache.php');
 unlink($cacheDir . '/.search_cache.json');
