@@ -29,7 +29,7 @@ Frontier LLMs are trained on **10–15 trillion tokens**. The composition is rou
 | Conversational / instruction | 2–5% | 200–500B | Curated human dialogues |
 | Multimodal captions | 5–10% | 500B–1T | Alt-text, image captions |
 
-The **Chinchilla scaling law** \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla} suggests that for a given compute budget, models are best trained when tokens $\approx 20 \times$ parameters. So a 70B model needs ~1.4T tokens to be "Chinchilla-optimal"; frontier models now train on $10 \times$ that, trading sample efficiency for capability.
+The **Chinchilla scaling law** (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) suggests that for a given compute budget, models are best trained when tokens $\approx 20 \times$ parameters. So a 70B model needs ~1.4T tokens to be "Chinchilla-optimal"; frontier models now train on $10 \times$ that, trading sample efficiency for capability.
 </div>
 
 <div class="md">
