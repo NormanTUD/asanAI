@@ -9,7 +9,7 @@ order: 0
 color: accent
 -->
 
-<div class="image-row">
+<div class="image-row md">
 	<figure>
 		<img src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina" />
 		<figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos_image}, Argentina (c. 7300 BC - 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall.</figcaption>
