@@ -5987,7 +5987,9 @@ html { scroll-behavior: smooth; }
 	color: var(--mn-text-muted);
 }
 
-/* ── 5. Reading-time meta (muted, beside the H1) ── */
+/* ── 5. Reading-time meta (muted, beside the H1) ──
+   The page title lives at #contents > h1 (functions.php), not inside .md. */
+#contents > h1[data-reading-time]::after,
 .md > h1[data-reading-time]::after {
 	content: '·  ' attr(data-reading-time) ' min read';
 	margin-left: .55em;

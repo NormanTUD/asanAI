@@ -276,12 +276,16 @@
 	   small `data-reading-meta` attribute the CSS can render as
 	   a muted caption if it wants to (or just leave it). */
 	function installReadingMeta() {
-		const md = document.querySelector('.md');
-		if (!md) return;
-		const h1 = md.querySelector('h1');
+		// The page title is rendered directly inside #contents by
+		// functions.php — NOT inside a .md block — so look there first.
+		const h1 = document.querySelector('#contents > h1') || document.querySelector('.md h1');
 		if (!h1) return;
 		if (h1.dataset.readingTime) return; // already set
-		const text = (md.textContent || '').trim();
+		let text = '';
+		document.querySelectorAll('.md').forEach(function (md) {
+			text += (md.textContent || '') + ' ';
+		});
+		text = text.trim();
 		const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
 		const minutes = Math.max(1, Math.round(words / 220));
 		h1.setAttribute('data-words', String(words));

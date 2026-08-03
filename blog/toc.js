@@ -1,3 +1,13 @@
+function slugify(text) {
+	return String(text || '')
+		.toLowerCase()
+		.replace(/[‘’]/g, "'")
+		.replace(/[^\w\s\-·]+/g, '')
+		.replace(/[\s·]+/g, '-')
+		.replace(/^-+|-+$/g, '')
+		.slice(0, 80);
+}
+
 function toc() {
 	if (window.location.pathname.endsWith("index.php") || window.location.pathname.endsWith("/blog/") || window.location.pathname.endsWith("/blog")) {
 		return;
@@ -70,9 +80,17 @@ function toc() {
 		toggle.className = "toggle-icon";
 		toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ "; 
 
-		// CHANGED: Use a button or span style link without href
+		// Real anchor link: give the heading a stable id so the link is
+		// focusable and shareable, and so the scroll-spy + n/p shortcuts
+		// in polish.js (which resolve targets via href) actually work.
+		if (!header.id) {
+			header.id = slugify(titleText);
+		}
 		var link = document.createElement("a");
 		link.textContent = titleText;
+		if (header.id) {
+			link.href = '#' + header.id;
+		}
 		
 		// Event listener for smooth scrolling
 		link.addEventListener("click", function(e) {
