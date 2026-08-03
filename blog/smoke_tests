@@ -14,3 +14,7 @@ python3 py/qos.py py
 bash php_syntax_check.sh
 
 bash js_syntax_test.sh
+
+php tests/search_test.php
+
+node tests/search_js_test.js

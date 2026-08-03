@@ -40,16 +40,24 @@
 		{ year: "1939", label: "The Voder", desc: "Bell Labs' electronic speech synthesizer — the first to use vacuum tubes and filters to electronically model the human voice.", color: "#34495e" },
 		{ year: "1945", label: "Memex (Vannevar Bush)", desc: "A conceptual proto-hypertext system that modeled human memory as a web of 'associative trails' rather than a linear list.", color: "#16a085" },
 		{ year: "1950", label: "The Turing Test", desc: "Shifting the goal from 'thinking' to 'simulating human linguistic behavior' as the benchmark for AI.", color: "#2980b9" },
+		{ year: "1952", label: "Strachey's Love Letter Generator", desc: "The earliest known computer-generated literary text — randomized romantic letters run on the Manchester Mark I.", color: "#e67e22" },
 		{ year: "1953",          label: "Wittgenstein — Philosophical Investigations",  desc: "\"The meaning of a word is its use in the language.\" The idea that a words meaning is determined by how it's used.", color: "#16a085" },
 		{ year: "1957",          label: "Firth — Distributional Semantics",  desc: "\"You shall know a word by the company it keeps.\" The statistical foundation of modern NLP.", color: "#16a085" },
 		{ year: "1957", label: "Chomsky — Syntactic Structures", desc: "The 'Universal Grammar' hypothesis — the idea that humans have an innate, rule-based mental organ for language.", color: "#8e44ad" },
 		{ year: "1966", label: "ELIZA (Weizenbaum)", desc: "The first chatbot — a simple script that simulated a psychotherapist, exposing how easily humans anthropomorphize linguistic patterns.", color: "#e67e22" },
 		{ year: "1971", label: "SHRDLU (Terry Winograd)", desc: "An early NLP program that could 'understand' and move objects in a virtual blocks world using logic and syntax.", color: "#2ecc71" },
+		{ year: "1984", label: "Racter — First Computer-Written Book", desc: "\"The Policeman's Beard Is Half Constructed\" — the first book entirely written by a program, mixing template grammar with randomized word choice.", color: "#e67e22" },
 		{ year: "1986", label: "Backpropagation & Connectionism", desc: "The revival of neural networks — the idea that 'intelligence' could emerge from layers of simple processing units learning patterns.", color: "#d35400" },
 		{ year: "1989", label: "World Wide Web (Tim Berners-Lee)", desc: "The global hypertext — language becomes a non-linear, interconnected web of data, providing the training set for modern AI.", color: "#16a085" },
 		{ year: "2010", label: "The Emoji (Unicode Standard)", desc: "The return of the logogram — a standardized, global visual language that transcends phonetic boundaries.", color: "#f1c40f" },
 		{ year: "2017",          label: "Transformer Architecture",          desc: "Attention mechanisms allow models to weigh context dynamically — Firth's hypothesis made computational.", color: "#2980b9" },
-		{ year: "2018", label: "BERT (Bidirectional Transformers)", desc: "Models begin reading 'both ways' at once, allowing them to understand the deep context of a word based on everything around it.", color: "#3498db" }
+		{ year: "2018", label: "BERT (Bidirectional Transformers)", desc: "Models begin reading 'both ways' at once, allowing them to understand the deep context of a word based on everything around it.", color: "#3498db" },
+		{ year: "2018", label: "GPT-1 (Generative Pre-Training)", desc: "OpenAI's decoder-only Transformer trained purely for next-token prediction — the architecture that would define the LLM era.", color: "#8e44ad" },
+		{ year: "2019", label: "GPT-2", desc: "Scaling up the same recipe produced surprisingly coherent text and emergent zero-shot abilities — language generation without task-specific training.", color: "#2980b9" },
+		{ year: "2020", label: "GPT-3", desc: "175 billion parameters proved that sheer scale produces flexible few-shot learners — the 'Bitter Lesson' applied to language.", color: "#8e44ad" },
+		{ year: "2022", label: "Chinchilla Scaling Laws", desc: "Compute-optimal training showed most models were undertrained: for a fixed compute budget, train a smaller model on far more data.", color: "#16a085" },
+		{ year: "2022", label: "InstructGPT & ChatGPT (RLHF)", desc: "Reinforcement learning from human feedback aligned raw next-token prediction with user intent, turning a statistical parrot into a conversational agent.", color: "#e74c3c" },
+		{ year: "2023", label: "LLaMA & the Open-Source Boom", desc: "Efficient, smaller models trained on more tokens made capable language modeling accessible beyond Big Tech, sparking the open-source LLM movement.", color: "#27ae60" }
 	];
 
 	/* ====================================================================

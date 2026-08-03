@@ -255,6 +255,9 @@ check(count($d['grouped']) === 0, 'single character query returns nothing');
 $d = q('');
 check(count($d['grouped']) === 0, 'empty query returns nothing');
 
+$d = q('C++');
+check(count($d['grouped']) === 0, 'punctuation-only query normalizes away and returns nothing');
+
 /* ---------- cache: built once and invalidated on change ---------- */
 
 $cacheDir = $fixtureDir . '/cachepage';

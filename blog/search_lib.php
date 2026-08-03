@@ -503,7 +503,8 @@ function matchQuery($normText, $normQuery) {
 	$tokens = preg_split('/\s+/u', trim($normQuery), -1, PREG_SPLIT_NO_EMPTY);
 	$meaningful = array_filter($tokens, fn($t) => mb_strlen($t) >= 2);
 	if (!$meaningful) {
-		return $normQuery !== '' && mb_strpos($normText, $normQuery) !== false
+		if ($normQuery === '' || mb_strlen($normQuery) < 2) return false;
+		return mb_strpos($normText, $normQuery) !== false
 			? ['tokens' => [], 'all' => true, 'coverage' => 0, 'total' => 0, 'phrase' => true, 'quality' => 0, 'occ' => 0]
 			: false;
 	}
