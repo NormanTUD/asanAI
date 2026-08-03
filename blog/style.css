@@ -1468,14 +1468,6 @@ p, .assistant-frame {
 	line-break: strict;
 }
 
-/* Readability toggle (#justify-toggle): switch to ragged-right text */
-html.ragged p,
-html.ragged .assistant-frame {
-	text-align: left;
-	hyphens: none;
-	-webkit-hyphens: none;
-}
-
 /* Elemente gleiten sanft von unten nach oben ein */
 @keyframes fadeInUp {
 	from {
