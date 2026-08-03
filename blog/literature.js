@@ -1,4 +1,9 @@
 window.bibData = {
+	"condorcet1770": {
+		author: "Marie Jean Antoine Nicolas de Caritat, Marquis of Condorcet",
+		year: 1770,
+		title: "Mémoire sur le calcul intégral"
+	},
 	"goodenough1980licoo2": {
 		title: "LixCoO2 (0<x⩽1): A new cathode material for batteries of high energy density",
 		author: "John B. Goodenough, K. Mizushima, P.C. Jones",
