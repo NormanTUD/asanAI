@@ -6193,7 +6193,9 @@ html.dark .cl-cite-tip {
 	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
 	nav.module-nav, .module-nav, .drawer-panel,
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
-	.kn-lane-glow, .km-legend, .km-controls, .km-detail {
+	.kn-lane-glow, .km-legend, .km-controls, .km-detail,
+	#floating-header, #reading-progress, #reading-progress > div,
+	.reveal-curtain, .reveal-curtain-veil, .constellation {
 		display: none !important;
 	}
 	.md a[target="_blank"]::after { content: '' !important; }
@@ -6212,4 +6214,338 @@ html.dark .cl-cite-tip {
 	}
 	.md p + p { text-indent: 0 !important; }
 	html.dark .md, html.dark .md * { color: #000 !important; background: transparent !important; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   EFFECTS — Gorgeous but quiet enhancements
+   Activated by adding `effects-on` to <html> from effects.js.
+   No-JS users see default (visible) state — graceful fallback.
+   ════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   1. Constellation hero background
+   A faint, AI-themed network of nodes & edges that lives
+   entirely inside .course-hero. Fades when scrolled past.
+   ───────────────────────────────────────────────────────────── */
+.course-hero {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+}
+.course-hero > h1 {
+	position: relative;
+	z-index: 2;
+}
+.course-hero .constellation {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	opacity: 0.9;
+	transition: opacity 0.6s ease;
+}
+.course-hero .constellation .cn-node {
+	fill: var(--mn-accent);
+	opacity: 0;
+	transform-origin: center;
+	transform-box: fill-box;
+	animation: cnPulse 6s ease-in-out infinite;
+}
+.course-hero .constellation .cn-line {
+	stroke: var(--mn-accent);
+	stroke-width: 0.6;
+	opacity: 0;
+	animation: cnLineFade 7s ease-in-out infinite;
+}
+.course-hero .constellation .cn-line-flow {
+	stroke-dasharray: 5 7;
+	animation: cnLineFade 7s ease-in-out infinite,
+	           cnDash 3.6s linear infinite;
+}
+@keyframes cnPulse {
+	0%, 100% { opacity: 0.12; transform: scale(0.75); }
+	50%      { opacity: 0.55; transform: scale(1.25); }
+}
+@keyframes cnLineFade {
+	0%, 100% { opacity: 0.05; }
+	50%      { opacity: 0.22; }
+}
+@keyframes cnDash {
+	to { stroke-dashoffset: -24; }
+}
+.course-hero.is-scrolled-past .constellation { opacity: 0; }
+html.dark .course-hero .constellation .cn-node {
+	fill: #a5b4fc;
+}
+html.dark .course-hero .constellation .cn-line {
+	stroke: #a5b4fc;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. Tile shimmer sweep
+   A diagonal light ray crosses each .course-tile on hover.
+   Pure CSS, layered over the existing shadow lift.
+   ───────────────────────────────────────────────────────────── */
+.course-tile { position: relative; overflow: hidden; }
+.course-tile::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -120%;
+	width: 60%;
+	height: 100%;
+	background: linear-gradient(
+		100deg,
+		transparent 30%,
+		rgba(255, 255, 255, 0.55) 50%,
+		transparent 70%
+	);
+	transform: skewX(-22deg);
+	transition: left 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+	pointer-events: none;
+	z-index: 1;
+}
+html.dark .course-tile::after {
+	background: linear-gradient(
+		100deg,
+		transparent 30%,
+		rgba(165, 180, 252, 0.18) 50%,
+		transparent 70%
+	);
+}
+.course-tile:hover::after,
+.course-tile:focus-visible::after { left: 130%; }
+@media (prefers-reduced-motion: reduce) {
+	.course-tile::after { transition: none; }
+	.course-tile:hover::after { left: -120%; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. Scroll-reveal for course parts & tiles
+   Sections stay hidden until they enter the viewport, then
+   fade in with a cascade. The existing keyframe animation
+   (tileIn) is suppressed so the IO-driven reveal wins.
+   ───────────────────────────────────────────────────────────── */
+.effects-on .course-part.reveal-target {
+	opacity: 0;
+	transform: translateY(28px);
+	transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+	            transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+	will-change: opacity, transform;
+}
+.effects-on .course-part.reveal-target.is-revealed {
+	opacity: 1;
+	transform: translateY(0);
+}
+.effects-on .course-part-header {
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.55s ease, transform 0.55s ease;
+	transition-delay: 0.1s;
+}
+.effects-on .course-part.reveal-target.is-revealed .course-part-header {
+	opacity: 1;
+	transform: translateY(0);
+}
+.effects-on .course-tile {
+	opacity: 0;
+	transform: translateY(14px) scale(0.985);
+	transition: opacity 0.5s ease,
+	            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.effects-on .course-part.reveal-target.is-revealed .course-tile {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+}
+.effects-on .course-part.reveal-target .course-tile {
+	animation: none !important;
+}
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(1)  { transition-delay: 0.20s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(2)  { transition-delay: 0.25s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(3)  { transition-delay: 0.30s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(4)  { transition-delay: 0.35s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(5)  { transition-delay: 0.40s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(6)  { transition-delay: 0.45s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(7)  { transition-delay: 0.50s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(8)  { transition-delay: 0.55s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(9)  { transition-delay: 0.60s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(10) { transition-delay: 0.65s; }
+@media (prefers-reduced-motion: reduce) {
+	.effects-on .course-part.reveal-target,
+	.effects-on .course-part-header,
+	.effects-on .course-tile {
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. Reveal curtain
+   An accent-gradient curtain wipes up when the loader is
+   done, then a soft veil fades to reveal the content.
+   ───────────────────────────────────────────────────────────── */
+.reveal-curtain {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	pointer-events: none;
+	background: linear-gradient(135deg,
+		var(--mn-coral) 0%,
+		var(--mn-accent) 55%,
+		var(--mn-accent-dark) 100%);
+	transform-origin: top center;
+	animation: curtainWipe 1.05s cubic-bezier(0.83, 0, 0.17, 1) forwards;
+}
+@keyframes curtainWipe {
+	0%   { transform: scaleY(1); }
+	100% { transform: scaleY(0); }
+}
+.reveal-curtain-veil {
+	position: fixed;
+	inset: 0;
+	z-index: 9998;
+	pointer-events: none;
+	background: radial-gradient(circle at 50% 45%,
+		rgba(99, 102, 241, 0.18) 0%,
+		rgba(15, 23, 42, 0.55) 80%);
+	opacity: 1;
+	animation: curtainVeil 0.9s ease forwards;
+}
+@keyframes curtainVeil {
+	0%   { opacity: 1; }
+	100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.reveal-curtain { animation-duration: 0.5s; }
+	.reveal-curtain-veil { animation-duration: 0.4s; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. Floating glass mini-header
+   A small pill that fades in at the top once the user scrolls
+   past the hero. Shows current module title via JS.
+   ───────────────────────────────────────────────────────────── */
+#floating-header {
+	position: fixed;
+	top: 14px;
+	left: 50%;
+	transform: translateX(-50%) translateY(-32px);
+	z-index: 9100;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 18px 8px 14px;
+	max-width: min(560px, calc(100vw - 220px));
+	border: 1px solid var(--mn-border);
+	border-radius: 999px;
+	background: var(--mn-bg-glass);
+	backdrop-filter: blur(16px) saturate(1.6);
+	-webkit-backdrop-filter: blur(16px) saturate(1.6);
+	box-shadow: var(--mn-shadow-md);
+	color: var(--mn-text);
+	font-size: 0.86rem;
+	font-weight: 500;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.4s ease,
+	            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+	white-space: nowrap;
+	overflow: hidden;
+}
+#floating-header::before {
+	content: '';
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--mn-accent);
+	box-shadow: 0 0 8px var(--mn-accent);
+	flex-shrink: 0;
+}
+#floating-header .fh-label {
+	color: var(--mn-text-muted);
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 600;
+}
+#floating-header .fh-title {
+	color: var(--mn-text);
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#floating-header.is-visible {
+	opacity: 1;
+	transform: translateX(-50%) translateY(0);
+	pointer-events: auto;
+}
+@media (max-width: 720px) {
+	#floating-header {
+		font-size: 0.78rem;
+		max-width: calc(100vw - 130px);
+		padding: 7px 14px 7px 12px;
+		gap: 8px;
+		top: 10px;
+	}
+	#floating-header .fh-label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+	#floating-header {
+		transform: translateX(-50%);
+		transition: opacity 0.15s ease;
+	}
+	#floating-header.is-visible {
+		transform: translateX(-50%);
+	}
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. Reading progress bar — themed to coral → indigo + shimmer
+   The element is created by helper.js (#reading-progress).
+   We override its inline styles via !important and add a
+   shimmer overlay via ::after.
+   ───────────────────────────────────────────────────────────── */
+#reading-progress {
+	background: linear-gradient(90deg,
+		var(--mn-coral) 0%,
+		var(--mn-accent) 55%,
+		var(--mn-accent-dark) 100%) !important;
+	box-shadow:
+		0 0 14px rgba(99, 102, 241, 0.4),
+		0 0 2px rgba(249, 115, 22, 0.55) !important;
+}
+html.dark #reading-progress {
+	box-shadow:
+		0 0 16px rgba(129, 140, 248, 0.55),
+		0 0 2px rgba(249, 115, 22, 0.65) !important;
+}
+#reading-progress > div {
+	background: rgba(255, 255, 255, 0.85) !important;
+	box-shadow:
+		0 0 14px rgba(249, 115, 22, 0.7),
+		0 0 6px rgba(99, 102, 241, 0.5) !important;
+}
+#reading-progress::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.4) 50%,
+		transparent 100%
+	);
+	background-size: 200% 100%;
+	animation: rpShimmer 2.6s linear infinite;
+	pointer-events: none;
+}
+@keyframes rpShimmer {
+	0%   { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+	#reading-progress::after { animation: none; }
 }

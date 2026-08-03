@@ -144,6 +144,7 @@ function load_base_js () {
 	js("bpe");
 	css("Temml-Local.min");
 	js("start");
+	js("effects");
 	css("prism-tomorrow.min.css");
 	css("style");
 	js("echarts.min");
@@ -491,6 +492,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 		<?php render_theme_toggle(); ?>
 		<?php render_drawer(); ?>
+		<?php render_floating_header(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
 			<p id="loader-status">Initializing AI Course...</p>
@@ -599,5 +601,59 @@ function render_theme_toggle(): void {
 	$icon = $theme === 'dark' ? '&#9788;' : '&#9790;';
 	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode"' .
 		' onclick="toggleTheme()">' . $icon . '</button>';
+}
+
+function render_floating_header(): void {
+	echo '<div id="floating-header" aria-hidden="true">'
+		. '<span class="fh-label">Module</span>'
+		. '<span class="fh-title"></span>'
+		. '</div>';
+}
+
+function render_constellation(int $seed = 42): void {
+	// Deterministic pseudo-random nodes & edges for the hero background.
+	mt_srand($seed);
+	$nodes = [];
+	for ($i = 0; $i < 34; $i++) {
+		$nodes[] = [
+			'x' => mt_rand(20, 1180),
+			'y' => mt_rand(20, 380),
+			'r' => mt_rand(14, 30) / 10,
+			'd' => mt_rand(0, 5000) / 1000,
+		];
+	}
+	$lines = [];
+	$count = count($nodes);
+	for ($i = 0; $i < $count; $i++) {
+		for ($j = $i + 1; $j < $count; $j++) {
+			$dx = $nodes[$i]['x'] - $nodes[$j]['x'];
+			$dy = $nodes[$i]['y'] - $nodes[$j]['y'];
+			$dist = sqrt($dx * $dx + $dy * $dy);
+			if ($dist < 215) {
+				$lines[] = [
+					'a' => $i,
+					'b' => $j,
+					'd' => mt_rand(0, 6000) / 1000,
+				];
+			}
+		}
+	}
+	echo '<svg class="constellation" viewBox="0 0 1200 400" '
+		. 'preserveAspectRatio="xMidYMid slice" aria-hidden="true">';
+	foreach ($lines as $line) {
+		$a = $nodes[$line['a']];
+		$b = $nodes[$line['b']];
+		echo '<line class="cn-line cn-line-flow"'
+			. ' x1="' . $a['x'] . '" y1="' . $a['y'] . '"'
+			. ' x2="' . $b['x'] . '" y2="' . $b['y'] . '"'
+			. ' style="animation-delay:' . $line['d'] . 's"/>';
+	}
+	foreach ($nodes as $node) {
+		echo '<circle class="cn-node"'
+			. ' cx="' . $node['x'] . '" cy="' . $node['y'] . '"'
+			. ' r="' . $node['r'] . '"'
+			. ' style="animation-delay:' . $node['d'] . 's"/>';
+	}
+	echo '</svg>';
 }
 ?>

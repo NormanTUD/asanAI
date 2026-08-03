@@ -34,6 +34,7 @@
 <button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)">&#128269;</button>
 <?php render_theme_toggle(); ?>
 <?php render_drawer(); ?>
+<?php render_floating_header(); ?>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
 	<p id="loader-status">Initializing AI Course...</p>
@@ -43,6 +44,7 @@
 <div id="contents" style="display: none">
 
 <div class="course-hero">
+	<?php render_constellation(); ?>
 	<h1>From Stone Age Tools to ChatGPT</h1>
 </div>
 

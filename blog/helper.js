@@ -154,35 +154,36 @@ function sonarPing(targetEl) {
 function revealContent() {
     const loader = document.getElementById('loader');
     const content = document.getElementById('contents');
-    if (loader) loader.style.display = 'none';
     if (!content) return;
-    $(loader).remove();
 
-    // Inject a frosted overlay that dissolves
-    const frost = document.createElement('div');
-    frost.style.cssText = `
-        position: fixed; inset: 0; z-index: 9990;
-        backdrop-filter: blur(20px) saturate(0.5);
-        -webkit-backdrop-filter: blur(20px) saturate(0.5);
-        background: rgba(10, 10, 18, 0.4);
-        transition: backdrop-filter 0.8s ease, opacity 0.8s ease, background 0.8s ease;
-        pointer-events: none;
-    `;
-    document.body.appendChild(frost);
+    // Remove the loader immediately so the curtain can sweep over it.
+    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
 
+    // Accent-gradient curtain that wipes up from the bottom.
+    const curtain = document.createElement('div');
+    curtain.className = 'reveal-curtain';
+    document.body.appendChild(curtain);
+
+    // Soft veil that fades out as the curtain lifts.
+    const veil = document.createElement('div');
+    veil.className = 'reveal-curtain-veil';
+    document.body.appendChild(veil);
+
+    // Show the content (faded) so it can rise into view beneath the curtain.
     content.style.display = 'block';
-    content.style.opacity = '1';
+    content.style.opacity = '0';
+    content.style.transition = 'opacity 0.7s ease 0.4s';
 
-    // Thaw the frost
     requestAnimationFrame(() => {
-        frost.style.backdropFilter = 'blur(0px) saturate(1)';
-        frost.style.webkitBackdropFilter = 'blur(0px) saturate(1)';
-        frost.style.background = 'rgba(10, 10, 18, 0)';
-        frost.style.opacity = '0';
-        setTimeout(() => frost.remove(), 900);
+        content.style.opacity = '1';
     });
 
-    // Staggered section cascade (keep your existing logic)
+    setTimeout(() => {
+        if (curtain.parentNode) curtain.parentNode.removeChild(curtain);
+        if (veil.parentNode) veil.parentNode.removeChild(veil);
+    }, 1400);
+
+    // Staggered section cascade (keep your existing logic).
     const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
     const perSection = Math.max(40, Math.min(120, 800 / sections.length));
 
