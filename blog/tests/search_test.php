@@ -173,6 +173,8 @@ check(($d['grouped'][0]['page'] ?? '') === 'math_i', 'gradient: grouped by page'
 check(($d['grouped'][0]['count'] ?? 0) === 3, 'gradient: paragraph + md + caption all match');
 check(($d['grouped'][0]['type'] ?? '') === 'caption', 'gradient: caption ranks above content');
 check(($d['grouped'][0]['img'] ?? '') === 'img.jpg', 'gradient: caption carries image url');
+check(($d['results'][0]['pageTitle'] ?? '') === 'Mathematics I: Foundations', 'gradient: results carry pageTitle for display grouping');
+check(count($d['results']) === 3, 'gradient: all three matching blocks appear in results');
 
 $d = q('calculus');
 check(count($d['grouped']) >= 2, 'calculus: matches both math pages');

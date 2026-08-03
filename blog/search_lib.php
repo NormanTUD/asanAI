@@ -683,7 +683,7 @@ function blockScore($b, $info, $mode) {
 function resultEntry($page, $b, $heading, $snippet, $score, $mode) {
 	if ($b['type'] === 'caption') {
 		return [
-			'page' => $page['name'], 'type' => 'caption', 'mode' => $mode,
+			'page' => $page['name'], 'pageTitle' => $page['title'], 'type' => 'caption', 'mode' => $mode,
 			'title' => '🖼 ' . ($heading ? $heading['text'] : $page['title']),
 			'snippet' => $snippet,
 			'url' => $page['name'] . ($heading ? '#' . $heading['slug'] : ''),
@@ -693,13 +693,13 @@ function resultEntry($page, $b, $heading, $snippet, $score, $mode) {
 	}
 	if ($b['type'] === 'heading') {
 		return [
-			'page' => $page['name'], 'type' => 'heading', 'mode' => $mode,
+			'page' => $page['name'], 'pageTitle' => $page['title'], 'type' => 'heading', 'mode' => $mode,
 			'title' => $b['text'], 'snippet' => $snippet,
 			'url' => $page['name'] . '#' . $b['slug'], 'score' => $score,
 		];
 	}
 	return [
-		'page' => $page['name'], 'type' => 'content', 'mode' => $mode,
+		'page' => $page['name'], 'pageTitle' => $page['title'], 'type' => 'content', 'mode' => $mode,
 		'title' => $heading ? $heading['text'] : $page['title'],
 		'snippet' => $snippet,
 		'url' => $page['name'] . ($heading ? '#' . $heading['slug'] : ''),

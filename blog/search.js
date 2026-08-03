@@ -146,7 +146,7 @@
 				return;
 			}
 			var mode = data.mode || 'normal';
-			var items = data.grouped && data.grouped.length > 0 ? data.grouped : data.results;
+			var items = data.results && data.results.length > 0 ? data.results : (data.grouped || []);
 			var hlQuery = query;
 			if (mode === 'regex' && items.length > 0) {
 				hlQuery = extractMatchFromSnippet(items[0].snippet || '', query);
@@ -182,19 +182,42 @@
 		}
 
 		total = total || results.length;
-		var html = '<div class="search-results-count">' + total + ' match' + (total !== 1 ? 'es' : '') + ' across ' + results.length + ' page' + (results.length !== 1 ? 's' : '') + ' for <strong>' + escHtml(query) + '</strong></div>';
 
-		results.forEach(function(r, i) {
-			html += '<a href="' + escAttr(r.url) + '" class="search-result-item' + (r.img ? ' search-result-has-img' : '') + '" data-index="' + i + '" data-search-nav>' +
-				(r.img ? '<div class="search-result-thumb"><img src="' + escAttr(r.img) + '" alt="" loading="lazy"></div>' : '') +
-				'<div class="search-result-body">' +
-				'<div class="search-result-title">' +
-					escHtml(r.title) +
-					(r.count > 1 ? ' <span class="search-result-badge">' + r.count + '</span>' : '') +
-				'</div>' +
-				'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), hlQuery, mode) + '</div>' +
-				'</div>' +
-			'</a>';
+		/* Show every match, grouped under its page so the count matches what is rendered. */
+		var groups = [];
+		var groupByPage = {};
+		results.forEach(function(r) {
+			var g = groupByPage[r.page];
+			if (!g) {
+				g = { page: r.page, title: r.pageTitle || r.page, items: [] };
+				groupByPage[r.page] = g;
+				groups.push(g);
+			}
+			g.items.push(r);
+		});
+
+		var html = '<div class="search-results-count">' + total + ' match' + (total !== 1 ? 'es' : '') + ' across ' + groups.length + ' page' + (groups.length !== 1 ? 's' : '') + ' for <strong>' + escHtml(query) + '</strong></div>';
+
+		groups.forEach(function(g) {
+			html += '<div class="search-page-group">' +
+				'<a href="' + escAttr(g.page) + '" class="search-page-title" data-search-nav>' +
+					escHtml(g.title) +
+					(g.items.length > 1 ? ' <span class="search-result-badge">' + g.items.length + '</span>' : '') +
+				'</a>';
+
+			g.items.forEach(function(r, i) {
+				html += '<a href="' + escAttr(r.url) + '" class="search-result-item' + (r.img ? ' search-result-has-img' : '') + '" data-index="' + i + '" data-search-nav>' +
+					(r.img ? '<div class="search-result-thumb"><img src="' + escAttr(r.img) + '" alt="" loading="lazy"></div>' : '') +
+					'<div class="search-result-body">' +
+					'<div class="search-result-title">' +
+						escHtml(r.title) +
+					'</div>' +
+					'<div class="search-result-snippet">' + highlightText(escHtml(r.snippet), hlQuery, mode) + '</div>' +
+					'</div>' +
+				'</a>';
+			});
+
+			html += '</div>';
 		});
 
 		resultsContainer.innerHTML = html;
