@@ -195,7 +195,7 @@
   const NODES = [
     // ── Row 0: Prehistoric ──
     { id:'stone_tools', label:'Stone Tools',             short:'Harmand 2015 — 3.3 million-year-old tools from Lomekwi 3, West Turkana',                     era:'Prehistoric',     row:0, col:0, stream:'hardware' },
-    { id:'tally',       label:'Tally Bones',              short:'Lebombo ~43,000 BCE, Ishango ~20,000 BCE — first external memory (Bruderer 2024)',           era:'Prehistoric',     row:0, col:3, stream:'math' },
+    { id:'tally',       label:'Tally Bones',              short:'Lebombo ~41,000 BCE, Ishango ~18,000 BCE — first external memory (Bruderer 2024)',           era:'Prehistoric',     row:0, col:3, stream:'math' },
     { id:'cave',        label:'Blombos Ochre',             short:'~75,000 BCE — first abstract symbolic marks (Henshilwood)',                                  era:'Prehistoric',     row:0, col:7, stream:'culture' },
     { id:'language0',   label:'Proto-Language',             short:'~135,000 years ago — symbolic displacement, descended larynx (Miyagawa 2025)',               era:'Prehistoric',     row:0, col:9, stream:'language' },
 

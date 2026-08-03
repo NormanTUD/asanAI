@@ -204,7 +204,7 @@ Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 |--------|--------|-------------|----------|-----------|
 | **Underfitting** (High Bias) | 1 – 3 | High | High | The curve is too stiff to follow the sine wave. Both training and test error are large. |
 | **Reasonable fit** | 4 – 6 | Low | Low | Acceptable inside the training window. Test MSE is close to training MSE. |
-| **Overfitting** (High Variance) | 8 – 10 | Very low | High | The curve contorts wildly to pass through every noisy dot. Training MSE drops but test MSE climbs, the classic signature of overfitting. |
+| **Overfitting** (High Variance) | 7 – 10 | Very low | High | The curve contorts wildly to pass through every noisy dot. Training MSE drops but test MSE climbs, the classic signature of overfitting. |
 
 **Key insight:** Watch the **two MSE numbers** as you increase the degree. When training MSE keeps falling but test MSE starts rising, the model has crossed from learning the signal to memorizing the noise. This gap between training and test performance is the most reliable diagnostic for overfitting in practice.
 

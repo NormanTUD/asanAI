@@ -206,7 +206,7 @@ $$
 W' = W + \alpha \cdot BA
 $$
 
-With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.002% of the original).
+With $r = 16$ on a 4096×4096 weight matrix, LoRA adds ~131K parameters (0.78% of the original).
 
 ### QLoRA \cite[Dettmers et al., 2023]{dettmers2023qlora}
 

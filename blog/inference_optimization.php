@@ -79,7 +79,7 @@ Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contex
 
 Beyond quantization:
 
-* **Multi-Query Attention (MQA)** (Shazeer, 2019): all query heads share a single K and V head. 32× KV memory reduction.
+* **Multi-Query Attention (MQA)** (Shazeer, 2019): all query heads share a single K and V head. 64× KV memory reduction.
 * **Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: middle ground — 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
 * **Sliding Window Attention** \cite[Beltagy et al., 2020]{beltagy2020longformer}: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few "global" attention layers to preserve long-range context.
 * **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory. Eliminates fragmentation.
@@ -137,7 +137,7 @@ LLM decoding is sequential: each token requires a full forward pass. **Speculati
 3. Accept the longest prefix where target agrees with draft.
 4. Resample from the target's corrected distribution on the first mismatch.
 
-If $k = 5$ and acceptance rate is 80%, expected tokens per step = $\frac{1 - 0.8^5}{1 - 0.8} \approx 4.1$. Net speedup: **2–3×**.
+If $k = 5$ and acceptance rate is 80%, expected tokens per step = $\frac{1 - 0.8^5}{1 - 0.8} \approx 3.36$. Net speedup: **2–3×**.
 
 Variants:
 

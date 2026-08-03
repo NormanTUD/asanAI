@@ -10,7 +10,7 @@ color: rose
 -->
 
 <div class="md">
-For most of the LLM era, scaling meant **training**: bigger models on more tokens. In late 2024, OpenAI's **o1** and DeepSeek's **R1** introduced a different scaling axis: **reasoning at inference time**. The model thinks longer, explores more paths, verifies its answers — and gets dramatically better at math, code, and logic.
+For most of the LLM era, scaling meant **training**: bigger models on more tokens. In late 2024, OpenAI's **o1** — followed in January 2025 by DeepSeek's **R1** — introduced a different scaling axis: **reasoning at inference time**. The model thinks longer, explores more paths, verifies its answers — and gets dramatically better at math, code, and logic.
 
 This chapter covers the techniques behind reasoning models, from the cheap and effective (prompting tricks) to the heavyweight (RL-trained chain-of-thought).
 </div>

@@ -50,7 +50,7 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
     <figcaption class="md">\citealternativetitle{lebombobone}, found in the 1970s, is the oldest object that was used for mathematical purposes</figcaption>
 </figure>
 
-The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately 35,000-40,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar, probably used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
+The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately c. 41,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar, probably used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
 
 It can be thought of as the earliest surviving external mathematical memory of early humans.
 
@@ -60,7 +60,7 @@ It can be thought of as the earliest surviving external mathematical memory of e
     <figcaption class="md">The \citealternativetitle{ishangobonephoto} is one of the earliest known attempts of outsourcing mathematical thought to physical objects</figcaption>
 </figure>
 
-The **Ishango bone** is a Paleolithic artifact discovered in 1950 by Belgian geologist \citeauthor{ishangobone} in what is now the Democratic Republic of the Congo. Dated to approximately **20,000 years BP**, this baboon fibula predates the Sumerian and Babylonian mathematical records by over 15,000 years. It features three columns of grouped notches that exhibit curious mathematical properties, such as a column of prime numbers (11, 13, 17, 19) and groups that sum to 60 or 48, though it is not clear whether the prime numbers are intentional of coincidental.
+The **Ishango bone** is a Paleolithic artifact discovered in 1950 by Belgian geologist \citeauthor{ishangobone} in what is now the Democratic Republic of the Congo. Dated to approximately **c. 18,000 BCE**, this baboon fibula predates the Sumerian and Babylonian mathematical records by over 15,000 years. It features three columns of grouped notches that exhibit curious mathematical properties, such as a column of prime numbers (11, 13, 17, 19) and groups that sum to 60 or 48, though it is not clear whether the prime numbers are intentional of coincidental.
 
 Researchers have long debated whether the artifact served as a simple tally, a **lunar calendar** as suggested by \citeauthor{marshackishango}, or a more complex mathematical tool. De Heinzelin's original 1957 publication, \citetitle{ishangobone}, introduced the bone to the scientific community, sparking decades of inquiry into the "mathematical Out of Africa" theory. Modern scholars like \citeauthor{ishango12} continue to investigate its potential use as a primitive "slide rule" or evidence of a base-12 counting system, marking it as a critical precursor to later mechanical calculation aids. It could also have been a counting system, where quantities of something have been represented by notches in the bone. It is not clear exactly what it was used for, though.
 
@@ -211,7 +211,7 @@ I was too lazy to calculate by hand.
 
 <figure>
     <img style="width: 100%" src="zuse.jpg" alt="Zuses Z1" />
-    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic programmable Computer, created in around 1937</figcaption>
+    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic programmable Computer, completed in 1938</figcaption>
 </figure>
 
 \citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world's first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
@@ -234,11 +234,11 @@ This "Symbolic AI" dominated the field for nearly forty years. It was believed t
 
 ## The earliest roots of modern AI
 
-### The First Practical AI (1913)
+### The First Practical AI (1914)
 
 <figure>
     <img style="width: 100%" src="gonzalo.jpg" alt="Gonzalo showing El Ajedrecista to Norbert Wiener" />
-    <figcaption class="md">The \citealternativetitle{wienerajedrecista}, a chess playing machine first demonstrated in 1913, invented by Leonardo Torres Quevedo.</figcaption>
+    <figcaption class="md">The \citealternativetitle{wienerajedrecista}, a chess playing machine first demonstrated in 1914, invented by Leonardo Torres Quevedo.</figcaption>
 </figure>
 
 Before the term "Artificial Intelligence" existed, the Spanish engineer \citeauthor{torres1914} built the first working AI system: **El Ajedrecista**, an electromechanical chess endgame player capable of automatically checkmating a human opponent with king and rook against king \cite{torres1914}. Back then, chess was considered an activity restricted to the realm of intelligent creatures. Torres Quevedo wanted to redefine what we mean by "thinking," demonstrating that machines could make choices from a complex set of relational possibilities without human intervention \cite{ieeespectrum2023chess}.
@@ -312,7 +312,7 @@ One of his **Big Ideas** for **Computing**: Data and instructions are stored in 
 </figure>
 
 \citeauthor{turing1937} provided the mathematical proof for what a computer *could* do.
-* **Turing Machine (1936):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
+* **Turing Machine (1937):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
 * **ACE & Enigma:** Beyond theory, he designed the Automatic Computing Engine (ACE) and led the cryptanalysis at Bletchley Park using the "Bombe."
 
 ### The Imitation Game
@@ -336,7 +336,7 @@ Around the same time, **Arthur Samuel** at IBM developed a **checker-playing pro
 
 ### The Symbolic Path: Newell and Simon's General Problem Solver
 
-Building on the Logic Theorist, Newell and Simon released the **General Problem Solver (GPS)** in 1959, designed to mimic the problem-solving protocols of the human brain through "means-ends analysis" \cite{newell1957gps}. GPS could solve a range of well-defined tasks, from proving logical theorems to solving puzzles, by recursively decomposing the difference between the current state and the goal state into subgoals. While limited to "toy" problems, GPS embodied the "thinking humanly" approach and remained influential for decades.
+Building on the Logic Theorist, Newell and Simon released the **General Problem Solver (GPS)** in 1957, designed to mimic the problem-solving protocols of the human brain through "means-ends analysis" \cite{newell1957gps}. GPS could solve a range of well-defined tasks, from proving logical theorems to solving puzzles, by recursively decomposing the difference between the current state and the goal state into subgoals. While limited to "toy" problems, GPS embodied the "thinking humanly" approach and remained influential for decades.
 
 ## The Beginning of Artificial Neural Networks
 
@@ -712,7 +712,7 @@ Today's models are the ultimate synthesis: the combinatorial logic of the ancien
 
 ### The Cycles of AI: Learning from the Winters
 
-The history of AI, viewed through a wider lens, reveals a pattern of repeated boom-and-bust cycles \cite{toosi2021history}. The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron, producing early milestones: **Arthur Samuel's** checker player (1956), the first reinforcement-learning-based AI program; **Newell and Simon's Logic Theorist** (1956), which proved theorems from *Principia Mathematica*; McCarthy's **LISP** language (1958); the **Unimate** industrial robot (1961); the **ELIZA** chatbot (1966); and the **Shakey** mobile robot (1966), the first omni-purpose platform with environment reasoning.
+The history of AI, viewed through a wider lens, reveals a pattern of repeated boom-and-bust cycles \cite{toosi2021history}. The first summer (1956–1969) was fueled by the Dartmouth workshop and Rosenblatt's Perceptron, producing early milestones: **Arthur Samuel's** checker player (1959), the first reinforcement-learning-based AI program; **Newell and Simon's Logic Theorist** (1956), which proved theorems from *Principia Mathematica*; McCarthy's **LISP** language (1958); the **Unimate** industrial robot (1961); the **ELIZA** chatbot (1966); and the **Shakey** mobile robot (1966), the first omni-purpose platform with environment reasoning.
 
 The first winter was triggered by three interconnected failures: (1) the "thinking humanly" approach replicated human problem-solving without analyzing task complexity; (2) AI systems succeeded on toy problems but proved intractable on real-world tasks; (3) Minsky and Papert's 1969 critique of the single-layer Perceptron's XOR limitation, which, despite not being a general critique, contributed to global funding cuts. Two government reports sealed the decline: the US **ALPAC** report (1966) and the UK **Lighthill** report (1973), leading DARPA and other agencies to drastically reduce support. The revived expert systems era (1980s) created a second summer, but unfulfilled promises led to a second winter by the early 1990s. The emerging **neuro-symbolic AI** paradigm \cite{toosi2021history} aims to bridge the historic divide between connectionist and symbolic approaches, combining the trainability of neural networks with the explainability of symbolic systems. As Toosi et al. note, a key lesson is that exaggerated claims and failure to appreciate computational complexity have repeatedly triggered downturns — a warning relevant to today's AI boom.
 </div>

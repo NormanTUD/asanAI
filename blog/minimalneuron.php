@@ -158,7 +158,7 @@ We often think of Neural Networks as "learning" in the way a human student learn
 In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a "Sample" and a "Population." When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.
 
 This relies on the **Law of Large Numbers**:
-$$ \bar{X}_n \xrightarrow{n \to s} \mu $$
+$$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
 
 Or, in plain English: **"As the number of times you repeat an experiment ($n$) grows towards real number of cases (which may be $\infty$), the average of your actual results ($\bar{X}_n$) will eventually settle down and equal the true theoretical average ($\mu$)."**
 

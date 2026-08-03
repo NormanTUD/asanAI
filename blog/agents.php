@@ -438,7 +438,7 @@ The web search pipeline is literally a **single-tool, single-iteration agent**. 
 | Question | Answer |
 |----------|--------|
 | What is an agent? | An LLM wrapped in an observe→reason→act loop with tools and memory |
-| Who invented agents? | Classical AI (1950s–1980s) established the paradigm; \cite[Yao et al. (2023)]{yao2023react} made it practical with LLMs |
+| Who invented agents? | Classical AI (1950s–1990s) established the paradigm; \cite[Yao et al. (2023)]{yao2023react} made it practical with LLMs |
 | How does tool use work? | LLM generates structured JSON; orchestrator parses, executes, returns result |
 | How do agents remember? | Context window (working memory) + external stores (vector DBs, scratchpads) |
 | What is ReAct? | Interleaving reasoning traces and actions in a single prompt stream |

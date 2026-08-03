@@ -131,7 +131,7 @@ In a full-scale network (e.g., ResNet-50 with 50 layers, or VGG-16 with 16 layer
 
 * **Middle Layers (3–8):** Combine corners and curves to detect **parts**, a bolt head, a letter shape, the red octagonal border of a sign.
 * **Deep Layers (9+):** Combine parts into **whole objects**, concluding with high mathematical certainty that the cluster of detected shapes is a **Stop Sign** and not, say, a red umbrella.
-* **Final Layers:** Produce a probability distribution over all possible classes (e.g., 97.3% stop sign, 1.2% yield sign, 0.8% traffic light...).
+* **Final Layers:** Produce a probability distribution over all possible classes (e.g., 97.3% stop sign, 1.5% yield sign, 1.2% traffic light...).
 
 The more layers, the more abstract and complex the representations become. However, adding layers also increases the risk of **overfitting** (memorizing training data rather than learning general patterns) and **vanishing gradients** (where learning signals fade to zero in very deep networks, a problem addressed by skip connections in ResNets).
 

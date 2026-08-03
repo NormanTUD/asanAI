@@ -12,7 +12,7 @@
 	var MILESTONES = [
 		{ year: "135,000 ya",    label: "Biological Capacity for Language",   desc: "The human vocal tract and cognitive architecture for language were already in place.", color: "#e74c3c" },
 		{ year: "75,000 ya",     label: "Blombos Cave Ochre",                desc: "Geometric engravings on ochre — among the earliest evidence of symbolic, abstract thought.", color: "#e67e22" },
-		{ year: "35,000 ya",     label: "Lebombo Bone",                      desc: "A tally stick likely used for tracking lunar cycles — early mathematical data storage.", color: "#f1c40f" },
+		{ year: "43,000 ya",     label: "Lebombo Bone",                      desc: "A tally stick likely used for tracking lunar cycles — early mathematical data storage.", color: "#f1c40f" },
 		{ year: "8,000 BCE",     label: "Clay Tokens & Bullae",              desc: "Agricultural accounting in the Near East using shaped clay tokens sealed in envelopes.", color: "#2ecc71" },
 		{ year: "3,500 BCE",     label: "Rebus Principle",                   desc: "Symbols shift from representing objects to representing sounds — unlocking abstract writing.", color: "#1abc9c" },
 		{ year: "3,200 BCE",     label: "Cuneiform",                         desc: "Wedge-shaped marks on clay tablets in Mesopotamia — the first full writing system.", color: "#3498db" },

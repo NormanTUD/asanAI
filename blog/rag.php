@@ -38,10 +38,10 @@ $$
 Split each source (PDF, webpage, database row) into small, overlapping passages, typically 200–500 tokens. Overlap ensures no information falls between the cracks.
 
 **Step 2, Embed each chunk.**
-Pass every chunk through an *embedding model* (e.g. OpenAI `text-embedding-3-small` or open-source `bge-base`). This converts text into a **dense vector**, a list of, say, 768 floating-point numbers that encodes the *meaning* of the passage:
+Pass every chunk through an *embedding model* (e.g. OpenAI `text-embedding-3-small`, 1,536 dims, or open-source `bge-base`, 768 dims). This converts text into a **dense vector**, a list of floating-point numbers that encodes the *meaning* of the passage:
 
 $$
-\text{chunk}_i \;\xrightarrow{\text{Embedding Model}}\; \vec{v}_i \in \mathbb{R}^{768}
+\text{chunk}_i \;\xrightarrow{\text{Embedding Model}}\; \vec{v}_i \in \mathbb{R}^{1536}
 $$
 
 **Step 3, Store in a vector database.**

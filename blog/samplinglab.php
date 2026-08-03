@@ -84,7 +84,7 @@ Most production APIs default to **top-$p$ = 0.9 or 0.95**.
 
 The new frontier method, recommended by many open-source models (Qwen, Mistral):
 
-* Choose $m = \min_i P(i)$ (the highest probability).
+* Choose $m = \max_i P(i)$ (the highest probability).
 * Include all tokens with $P(i) \geq s \cdot m$ where $s \in [0, 1]$ is the min-$p$ parameter.
 
 $$

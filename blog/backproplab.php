@@ -55,7 +55,7 @@ This means that once we know the output of a sigmoid neuron, we can instantly co
 
 ## Loss Function
 
-The network's error is measured using the **Mean Squared Error (MSE)**:
+The network's error is measured using the **Sum of Squared Errors (SSE)**:
 
 $$
 E_{\text{total}} = \sum_i \frac{1}{2}(t_i - o_i)^2

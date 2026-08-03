@@ -87,7 +87,7 @@ A primary driver of hallucinations is the static nature of an AI's knowledge. Be
 AI models often exhibit "sycophancy," a tendency to agree with the user even when the user makes a false claim. If a user asks, "Why is 2+2=5?", a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be "helpful" and follow the user's conversational lead rather than providing confrontational corrections.
 
 ### Logic Gaps vs. Statistical Patterns
-There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversibility Curse**. Researchers have observed that while an AI might know that "Person A is the mother of Person B," it cannot automatically infer that "Person B is the child of Person A" if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
+There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversal Curse**. Researchers have observed that while an AI might know that "Person A is the mother of Person B," it cannot automatically infer that "Person B is the child of Person A" if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
 
 ### The Black Box of Interpretability
 A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron "fired" to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.
@@ -115,7 +115,7 @@ While AI sounds confident, hallucinations often leave "digital fingerprints." Us
 
 * **Over-Specificity:** Watch for overly precise details like specific middle names, exact dates, or complex URLs. AI often generates these to satisfy the linguistic pattern of "authority."
 * **The "Vibe" Shift:** If a list of real items suddenly includes one that is phrased more generically or vaguely, the AI may have run out of training data and switched to "pure prediction."
-* **The Reversibility Test:** If the AI says "Person A is the mother of Person B," ask it who the child of Person A is. Because models can struggle with logical symmetry, a hallucination will often fail this consistency check.
+* **The Reversal Test:** If the AI says "Person A is the mother of Person B," ask it who the child of Person A is. Because models can struggle with logical symmetry, a hallucination will often fail this consistency check.
 
 ## Technical Defenses: Top-P and Logit Bias
 
