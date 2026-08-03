@@ -1,6 +1,5 @@
 /* ════════════════════════════════════════════════════════════
    EFFECTS — Gorgeous but quiet enhancements
-   • Floating glass mini-header on scroll
    • Scroll-reveal cascade for course parts
    • Hero constellation fade-out on scroll past
    Activated by adding `effects-on` to <html>. No-JS users see
@@ -24,82 +23,6 @@
 				fn();
 			});
 		};
-	}
-
-	/* ─────────────────────────────────────────────────────────
-	   Floating glass mini-header
-	   Shows the current module/page title once you scroll past
-	   the hero (or first content heading on module pages).
-	   ───────────────────────────────────────────────────────── */
-	function initFloatingHeader() {
-		const fh = document.getElementById('floating-header');
-		if (!fh) return;
-
-		const titleEl = fh.querySelector('.fh-title');
-		const labelEl = fh.querySelector('.fh-label');
-
-		let title = '';
-		let label = '';
-
-		if (window.__moduleNavData &&
-			typeof window.__moduleNavData.current === 'number' &&
-			window.__moduleNavData.current >= 0) {
-			const i = window.__moduleNavData.current;
-			const m = window.__moduleNavData.modules && window.__moduleNavData.modules[i];
-			if (m && m.title) {
-				title = m.title;
-				label = m.part ? 'Part ' + m.part : 'Module';
-			}
-		}
-
-		if (!title) {
-			const heroH1 = document.querySelector('.course-hero h1');
-			const contentH1 = document.querySelector('#contents > h1');
-			const h1 = heroH1 || contentH1;
-			if (h1) {
-				title = (h1.textContent || '').trim();
-				label = heroH1 ? 'Course' : 'Module';
-			}
-		}
-
-		if (titleEl) titleEl.textContent = title || (document.title || '').trim();
-		if (labelEl) labelEl.textContent = label;
-
-		if (!title) {
-			fh.style.display = 'none';
-			return;
-		}
-
-		let visible = false;
-		let heroBottom = -1;
-
-		function measure() {
-			const hero = document.querySelector('.course-hero');
-			if (hero) {
-				const rect = hero.getBoundingClientRect();
-				heroBottom = rect.bottom + window.scrollY;
-			} else {
-				const firstH1 = document.querySelector('#contents > h1');
-				if (firstH1) {
-					heroBottom = firstH1.getBoundingClientRect().bottom + window.scrollY - 60;
-				} else {
-					heroBottom = 240;
-				}
-			}
-		}
-
-		const check = rafThrottle(() => {
-			const shouldShow = window.scrollY > heroBottom - 60;
-			if (shouldShow !== visible) {
-				visible = shouldShow;
-				fh.classList.toggle('is-visible', visible);
-			}
-		});
-
-		measure();
-		window.addEventListener('scroll', check, { passive: true });
-		window.addEventListener('resize', () => { measure(); check(); }, { passive: true });
-		check();
 	}
 
 	/* ─────────────────────────────────────────────────────────
@@ -159,7 +82,6 @@
 	}
 
 	function init() {
-		initFloatingHeader();
 		initScrollReveal();
 		initHeroScrollFade();
 	}

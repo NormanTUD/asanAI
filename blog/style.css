@@ -6194,7 +6194,7 @@ html.dark .cl-cite-tip {
 	nav.module-nav, .module-nav, .drawer-panel,
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
 	.kn-lane-glow, .km-legend, .km-controls, .km-detail,
-	#floating-header, #reading-progress, #reading-progress > div,
+	#reading-progress, #reading-progress > div,
 	.constellation {
 		display: none !important;
 	}
@@ -6388,83 +6388,9 @@ html.dark .course-tile::after {
    ───────────────────────────────────────────────────────────── */
 
 /* ─────────────────────────────────────────────────────────────
-   6. Floating glass mini-header
-   A small pill that fades in at the top once the user scrolls
-   past the hero. Shows current module title via JS.
+   6. (Removed — floating glass mini-header was redundant; the
+   user always knows where they are in the course.)
    ───────────────────────────────────────────────────────────── */
-#floating-header {
-	position: fixed;
-	top: 14px;
-	left: 50%;
-	transform: translateX(-50%) translateY(-32px);
-	z-index: 9100;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 8px 18px 8px 14px;
-	max-width: min(560px, calc(100vw - 220px));
-	border: 1px solid var(--mn-border);
-	border-radius: 999px;
-	background: var(--mn-bg-glass);
-	backdrop-filter: blur(16px) saturate(1.6);
-	-webkit-backdrop-filter: blur(16px) saturate(1.6);
-	box-shadow: var(--mn-shadow-md);
-	color: var(--mn-text);
-	font-size: 0.86rem;
-	font-weight: 500;
-	opacity: 0;
-	pointer-events: none;
-	transition: opacity 0.4s ease,
-	            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-	white-space: nowrap;
-	overflow: hidden;
-}
-#floating-header::before {
-	content: '';
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: var(--mn-accent);
-	box-shadow: 0 0 8px var(--mn-accent);
-	flex-shrink: 0;
-}
-#floating-header .fh-label {
-	color: var(--mn-text-muted);
-	font-size: 0.72rem;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	font-weight: 600;
-}
-#floating-header .fh-title {
-	color: var(--mn-text);
-	font-weight: 600;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-#floating-header.is-visible {
-	opacity: 1;
-	transform: translateX(-50%) translateY(0);
-	pointer-events: auto;
-}
-@media (max-width: 720px) {
-	#floating-header {
-		font-size: 0.78rem;
-		max-width: calc(100vw - 130px);
-		padding: 7px 14px 7px 12px;
-		gap: 8px;
-		top: 10px;
-	}
-	#floating-header .fh-label { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-	#floating-header {
-		transform: translateX(-50%);
-		transition: opacity 0.15s ease;
-	}
-	#floating-header.is-visible {
-		transform: translateX(-50%);
-	}
-}
 
 /* ─────────────────────────────────────────────────────────────
    7. Reading progress bar — themed to coral → indigo + shimmer
