@@ -476,7 +476,11 @@
 		function open(src, alt, caption) {
 			img.src = src;
 			img.alt = alt || '';
-			cap.textContent = caption || '';
+			if (caption && /<[a-z][\s\S]*>/i.test(caption)) {
+				cap.innerHTML = caption;
+			} else {
+				cap.textContent = caption || '';
+			}
 			cap.style.display = caption ? '' : 'none';
 			lb.hidden = false;
 			// force a reflow so the transition runs
@@ -496,6 +500,14 @@
 		lb.addEventListener('click', function (ev) {
 			if (ev.target === lb) close();
 		});
+		/* clicking an in-document citation link inside the caption:
+		   close the lightbox first so the delegated scroll handler works */
+		lb.addEventListener('click', function (ev) {
+			if (ev.target.closest && ev.target.closest('.iframe-safe-link')) {
+				document.body.style.overflow = '';
+				close();
+			}
+		}, true);
 		document.addEventListener('keydown', function (ev) {
 			if (ev.key === 'Escape' && !lb.hidden) close();
 		});
@@ -524,8 +536,16 @@
 			ev.preventDefault();
 			ev.stopPropagation();
 			const fig = img.closest('figure');
-			const capText = fig ? ((fig.querySelector('figcaption') || {}).textContent || '').trim() : '';
-			open(img.currentSrc || img.src, img.alt, capText);
+			let capHtml = '';
+			if (fig) {
+				const capEl = fig.querySelector('figcaption');
+				if (capEl) {
+					const clone = capEl.cloneNode(true);
+					clone.querySelectorAll('.cl-cite-tip, .cl-fn-tip').forEach(function (el) { el.remove(); });
+					capHtml = clone.innerHTML.trim();
+				}
+			}
+			open(img.currentSrc || img.src, img.alt, capHtml);
 		}
 		document.addEventListener('click', lightboxClickHandler, true);
 
