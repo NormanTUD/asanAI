@@ -138,7 +138,7 @@ function renderStep(step) {
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
         '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
-        '<b>Generator (Quelle):</b> Ein <b>Quelle-Punkt</b> (links), aus dem <b>beliebig viele Trajektorien</b> herauskommen. Im LLM ist das der <b>Tokenizer</b>: ein Input-Satz erzeugt <i>viele</i> Token-Vektoren, die sich danach durchs System bewegen — gezogen von <b>Attraktoren</b> (= Wortbedeutungen) und abgestoßen von <b>Repellern</b> (= Schranken).<br>Punkte werden nicht angezogen – sie werden <b>erzeugt</b>, damit sie sich im System bewegen können.',
+        '<b>Generator (Quelle):</b> Partikel kommen <b>von links</b> ins Bild und werden durch das System geleitet — gezogen von <b>Attraktoren</b> (= Bedeutungs-Becken), gebremst von <b>Sammler-Punkten</b> (= Repeller im klassischen Sinn, aber hier: halten Partikel fest statt sie wegzustoßen).<br>Punkte werden nicht angezogen – sie werden <b>von außen eingebracht</b> und finden ihren Platz im überlappenden Bedeutungsfeld.'
     ];    const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
 
@@ -2462,12 +2462,18 @@ function render3DBasins(container) {
 }
 
 // ============================================================
-// STEP 7: Generator (Quelle) — Tokenizer-Eingang ins System
-// Partikel werden am Quell-Punkt erzeugt und fliegen in ZUFÄLLIGE Richtungen.
-// Sie werden vom überlappenden Feld aus Attraktoren (Bedeutungen) und
-// Repellern (Schranken) durch das System geleitet.
-// Visualisiert das LLM-Prinzip: Tokens streuen in alle Richtungen,
-// und das System sortiert sie in Bedeutungs-Becken.
+// STEP 7: Generator (Quelle)
+// Partikel kommen von links, fliegen strikt nach rechts.
+// 3 Attraktor-Becken ziehen sie an (= Wortbedeutungen).
+// 2 Repeller bremsen sie aus — Partikel sammeln sich dort und bleiben stehen
+// (statt aktiv weggestoßen zu werden). Visualisiert die ungefähre
+// Wortbedeutungs-Landschaft eines LLM.
+// ============================================================
+// STEP 7: Generator (Quelle)
+// Partikel kommen vom Quell-Punkt am linken Rand und fliegen strikt
+// nach rechts. 3 Attraktor-Becken (Paris/London/Berlin) ziehen sie an,
+// 2 Sammler-Punkte (= Repeller im klassischen Sinn) bremsen sie aus
+// und halten sie fest.
 // ============================================================
 function renderGenerator(container) {
     const setup = safeCanvasSetup(container, '#fafafa');
@@ -2477,44 +2483,40 @@ function renderGenerator(container) {
     }
     const { ctx, W, H } = setup;
 
-    // === Quelle (Token-Generator) am linken Rand ===
-    const sourceX = 60, sourceY = H / 2;
+    const sourceX = 50, sourceY = H / 2;
 
-    // === Statische Attraktoren (semantische Becken) ===
-    // Drei Becken, die sich ÜBERLAPPEN und verschieben
     const attractors = [
         { x: W * 0.42, y: H * 0.28, r: 32, label: 'Paris',   color: '#3b82f6', drift: 0.012, driftPhase: 0.0   },
         { x: W * 0.62, y: H * 0.55, r: 32, label: 'London',  color: '#10b981', drift: 0.014, driftPhase: 1.2   },
         { x: W * 0.82, y: H * 0.30, r: 32, label: 'Berlin',  color: '#8b5cf6', drift: 0.011, driftPhase: 2.4   }
     ];
 
-    // === Repeller (Schranken) ===
     const repellers = [
-        { x: W * 0.52, y: H * 0.85, r: 14, phase: 0.0 },
-        { x: W * 0.72, y: H * 0.10, r: 14, phase: 2.0 }
+        { x: W * 0.50, y: H * 0.85, r: 22, phase: 0.0 },
+        { x: W * 0.72, y: H * 0.12, r: 22, phase: 2.0 }
     ];
 
     const colors = ['#ef4444', '#f59e0b', '#06b6d4', '#ec4899'];
     const names  = ['A', 'B', 'C', 'D'];
-    const SPAWN_INTERVAL = 70;
+    const SPAWN_INTERVAL = 60;
     let frameCount = 0;
     const particles = [];
 
     function spawnParticle() {
-        // Strikt nach rechts, Y gleichmäßig von oben bis unten verteilt
-        // → ergibt einen Dreiecks-Bereich, in den die Becken fallen
-        const speed = 1.5 + Math.random() * 0.8;
+        const speed = 1.6 + Math.random() * 0.6;
         const i = particles.length % colors.length;
         return {
-            x: sourceX + (Math.random() - 0.5) * 6,
-            y: 40 + Math.random() * (H - 80), // gleichmäßig zwischen oben und unten
-            vx: speed,                        // strikt nach rechts
-            vy: 0,                             // keine vertikale Startgeschwindigkeit
+            x: sourceX + (Math.random() - 0.5) * 4,
+            y: 40 + Math.random() * (H - 80),
+            vx: speed,
+            vy: 0,
             color: colors[i],
             name: names[i],
             trail: [],
             alive: true,
-            arrived: false
+            arrived: false,
+            held: false,
+            heldTarget: null
         };
     }
 
@@ -2530,27 +2532,22 @@ function renderGenerator(container) {
         ctx.fillStyle = '#fafafa';
         ctx.fillRect(0, 0, W, H);
 
-        // === Überlappende Attraktor-Becken (VOR den Punkten gezeichnet) ===
-        // Translucent Gradient-Circles, die sich überschneiden
         attractors.forEach(at => {
-            // Drift: Becken "schwingt" leicht
             const driftX = Math.sin(t * at.drift + at.driftPhase) * 18;
             const driftY = Math.cos(t * at.drift * 0.7 + at.driftPhase) * 12;
             const cx = at.x + driftX;
             const cy = at.y + driftY;
 
-            // Großes überlappendes Becken
             const basinR = at.r * 4.0;
             const basinGrad = ctx.createRadialGradient(cx, cy, at.r * 0.5, cx, cy, basinR);
-            basinGrad.addColorStop(0, at.color + '55');     // ~33% Alpha innen
-            basinGrad.addColorStop(0.5, at.color + '22');  // ~13% Alpha mitte
-            basinGrad.addColorStop(1, at.color + '00');     // 0% außen
+            basinGrad.addColorStop(0, at.color + '55');
+            basinGrad.addColorStop(0.5, at.color + '22');
+            basinGrad.addColorStop(1, at.color + '00');
             ctx.fillStyle = basinGrad;
             ctx.beginPath();
             ctx.arc(cx, cy, basinR, 0, Math.PI * 2);
             ctx.fill();
 
-            // Innerer "Kern" heller
             const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, at.r);
             coreGrad.addColorStop(0, at.color + 'cc');
             coreGrad.addColorStop(1, at.color + '40');
@@ -2559,7 +2556,6 @@ function renderGenerator(container) {
             ctx.arc(cx, cy, at.r, 0, Math.PI * 2);
             ctx.fill();
 
-            // Attraktor-Mittelpunkt (weißer Kreis)
             ctx.beginPath();
             ctx.arc(cx, cy, 7, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
@@ -2568,31 +2564,28 @@ function renderGenerator(container) {
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Label
             ctx.font = 'bold 10px system-ui';
             ctx.fillStyle = at.color;
             ctx.textAlign = 'center';
             ctx.fillText(at.label, cx, cy + at.r + 14);
         });
 
-        // === Repeller (rot, gestrichelt) ===
         repellers.forEach(rp => {
             const driftX = Math.sin(t * 0.010 + rp.phase) * 15;
             const driftY = Math.cos(t * 0.008 + rp.phase) * 10;
             const cx = rp.x + driftX;
             const cy = rp.y + driftY;
 
-            // Großes Abstoßungs-Feld
-            const repGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rp.r * 5);
-            repGrad.addColorStop(0, '#ef4444' + '44');
-            repGrad.addColorStop(0.6, '#ef4444' + '11');
-            repGrad.addColorStop(1, '#ef4444' + '00');
-            ctx.fillStyle = repGrad;
+            const zoneR = rp.r * 4;
+            const zoneGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, zoneR);
+            zoneGrad.addColorStop(0, '#ef4444' + '33');
+            zoneGrad.addColorStop(0.6, '#ef4444' + '11');
+            zoneGrad.addColorStop(1, '#ef4444' + '00');
+            ctx.fillStyle = zoneGrad;
             ctx.beginPath();
-            ctx.arc(cx, cy, rp.r * 5, 0, Math.PI * 2);
+            ctx.arc(cx, cy, zoneR, 0, Math.PI * 2);
             ctx.fill();
 
-            // Kern
             ctx.setLineDash([4, 3]);
             ctx.beginPath();
             ctx.arc(cx, cy, rp.r, 0, Math.PI * 2);
@@ -2608,70 +2601,91 @@ function renderGenerator(container) {
             ctx.font = 'bold 9px system-ui';
             ctx.fillStyle = '#b91c1c';
             ctx.textAlign = 'center';
-            ctx.fillText('Repeller', cx, cy + rp.r + 12);
+            ctx.fillText('Sammler', cx, cy + rp.r + 12);
         });
 
-        // === Quell-Punkt (Tokenizer) ===
         const sourcePulse = 1 + 0.18 * Math.sin(t * 0.08);
-        const sourceHalo = ctx.createRadialGradient(sourceX, sourceY, 4, sourceX, sourceY, 28 * sourcePulse);
-        sourceHalo.addColorStop(0, 'rgba(34,211,238,0.35)');
-        sourceHalo.addColorStop(1, 'rgba(34,211,238,0)');
+        const sourceHalo = ctx.createRadialGradient(sourceX, sourceY, 4, sourceX, sourceY, 24 * sourcePulse);
+        sourceHalo.addColorStop(0, 'rgba(100,116,139,0.30)');
+        sourceHalo.addColorStop(1, 'rgba(100,116,139,0)');
         ctx.fillStyle = sourceHalo;
         ctx.beginPath();
-        ctx.arc(sourceX, sourceY, 28 * sourcePulse, 0, Math.PI * 2);
+        ctx.arc(sourceX, sourceY, 24 * sourcePulse, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(sourceX, sourceY, 9 * sourcePulse, 0, Math.PI * 2);
-        ctx.fillStyle = '#22d3ee';
+        ctx.arc(sourceX, sourceY, 8 * sourcePulse, 0, Math.PI * 2);
+        ctx.fillStyle = '#64748b';
         ctx.fill();
         ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        ctx.font = 'bold 11px system-ui';
-        ctx.fillStyle = '#0891b2';
+        ctx.font = 'bold 10px system-ui';
+        ctx.fillStyle = '#475569';
         ctx.textAlign = 'center';
-        ctx.fillText('Tokenizer', sourceX, sourceY - 18);
-        ctx.font = '9px system-ui';
-        ctx.fillStyle = '#0e7490';
-        ctx.fillText('(Input → Tokens)', sourceX, sourceY - 6);
+        ctx.fillText('von links', sourceX, sourceY - 16);
 
-        // === Partikel erzeugen ===
-        if (frameCount % SPAWN_INTERVAL === 0 && particles.length < 32) {
+        if (frameCount % SPAWN_INTERVAL === 0 && particles.length < 36) {
             particles.push(spawnParticle());
         }
 
-        // === Partikel aktualisieren + zeichnen ===
         particles.forEach((p, idx) => {
             if (!p.alive) return;
 
-            // Aktuelle Positionen der Attraktoren (mit Drift)
+            if (p.held) {
+                p.vx *= 0.85;
+                p.vy *= 0.85;
+                p.vx += (Math.random() - 0.5) * 0.04;
+                p.vy += (Math.random() - 0.5) * 0.04;
+                p.x += p.vx;
+                p.y += p.vy;
+
+                p.trail.push({ x: p.x, y: p.y });
+                if (p.trail.length > 30) p.trail.shift();
+
+                if (p.trail.length > 1) {
+                    for (let i = 1; i < p.trail.length; i++) {
+                        const alpha = (i / p.trail.length) * 0.25;
+                        ctx.beginPath();
+                        ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
+                        ctx.lineTo(p.trail[i].x, p.trail[i].y);
+                        ctx.strokeStyle = p.color + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                }
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.7;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+                return;
+            }
+
             const liveAttractors = attractors.map(at => ({
                 x: at.x + Math.sin(t * at.drift + at.driftPhase) * 18,
                 y: at.y + Math.cos(t * at.drift * 0.7 + at.driftPhase) * 12,
-                r: at.r,
-                color: at.color
+                r: at.r
             }));
 
-            // Attraktor-Kraft (anziehend, mit Reichweite bis Becken-Rand)
             liveAttractors.forEach(at => {
                 const dx = at.x - p.x;
                 const dy = at.y - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 const range = at.r * 4.0;
                 if (dist > at.r && dist < range) {
-                    // Stärkere Anziehung wenn näher
                     const force = 0.10 * (1 - dist / range);
                     p.vx += (dx / dist) * force;
                     p.vy += (dy / dist) * force;
-                    if (dist < at.r + 3) {
-                        p.arrived = true;
-                    }
+                    if (dist < at.r + 3) p.arrived = true;
                 }
             });
 
-            // Repeller-Kraft (abstoßend)
             repellers.forEach(rp => {
                 const driftX = Math.sin(t * 0.010 + rp.phase) * 15;
                 const driftY = Math.cos(t * 0.008 + rp.phase) * 10;
@@ -2680,40 +2694,41 @@ function renderGenerator(container) {
                 const dx = p.x - cx;
                 const dy = p.y - cy;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const range = rp.r * 5;
-                if (dist < range && dist > 0) {
-                    const force = 0.12 * (1 - dist / range);
-                    p.vx += (dx / dist) * force;
-                    p.vy += (dy / dist) * force;
+                const zone = rp.r * 4;
+                if (dist < zone && dist > 0) {
+                    const t_param = (dist / zone);
+                    if (Math.abs(dy) > 1) {
+                        p.vy += (dy / dist) * 0.03 * (1 - t_param);
+                    }
+                    p.vx *= (0.92 + 0.08 * t_param);
+                    if (dist < rp.r * 1.2) {
+                        p.held = true;
+                        p.heldTarget = { x: cx, y: cy };
+                    }
                 }
             });
 
-            // Leichte Dämpfung
-            p.vx *= 0.99;
-            p.vy *= 0.99;
+            p.vx *= 0.995;
+            p.vy *= 0.995;
 
-            // Speed-Limit
             const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-            if (speed > 2.8) {
-                p.vx *= 2.8 / speed;
-                p.vy *= 2.8 / speed;
+            if (speed > 2.5) {
+                p.vx *= 2.5 / speed;
+                p.vy *= 2.5 / speed;
             }
 
             p.x += p.vx;
             p.y += p.vy;
 
-            // Trail
             p.trail.push({ x: p.x, y: p.y });
             if (p.trail.length > 100) p.trail.shift();
 
-            // Wenn angekommen oder weit draußen: ausblenden
             if (p.arrived) { p.alive = false; return; }
             if (p.x > W + 20 || p.x < -20 || p.y < -20 || p.y > H + 20) {
                 p.alive = false;
                 return;
             }
 
-            // Trail zeichnen
             if (p.trail.length > 1) {
                 for (let i = 1; i < p.trail.length; i++) {
                     const alpha = (i / p.trail.length) * 0.55;
@@ -2726,7 +2741,6 @@ function renderGenerator(container) {
                 }
             }
 
-            // Partikel zeichnen
             ctx.beginPath();
             ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
             ctx.fillStyle = p.color;
@@ -2735,26 +2749,23 @@ function renderGenerator(container) {
             ctx.lineWidth = 1.5;
             ctx.stroke();
 
-            // Label
             ctx.font = 'bold 10px system-ui';
             ctx.fillStyle = p.color;
             ctx.textAlign = 'center';
             ctx.fillText(p.name, p.x, p.y - 10);
         });
 
-        // Alte Partikel entfernen
         for (let i = particles.length - 1; i >= 0; i--) {
             if (!particles[i].alive) particles.splice(i, 1);
         }
 
-        // === Caption oben ===
         ctx.font = 'bold 11px system-ui';
         ctx.fillStyle = 'rgba(15,23,42,0.85)';
         ctx.textAlign = 'center';
-        ctx.fillText('Tokens streuen am Tokenizer in alle Richtungen → werden durch überlappende Attraktor-Becken (= Wortbedeutungen) gelenkt', W / 2, 22);
+        ctx.fillText('Partikel kommen von links → überlappende Bedeutungs-Becken ziehen sie an → Sammler halten sie fest', W / 2, 22);
         ctx.font = '9px system-ui';
         ctx.fillStyle = 'rgba(100,116,139,0.85)';
-        ctx.fillText('Repeller (rot) = Schranken, die Tokens umlenken — die Becken verschieben sich ständig', W / 2, 36);
+        ctx.fillText('Sammler (= klassische Repeller) sind keine Wegschubber — sie stoppen Partikel, die in ihre Reichweite geraten', W / 2, 36);
 
         activeAnimation = requestAnimationFrame(draw);
     }
