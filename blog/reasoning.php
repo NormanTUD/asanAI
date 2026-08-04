@@ -81,7 +81,7 @@ OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning f
 * At inference, the model produces **thousands of tokens of internal reasoning** before answering.
 * **Test-time compute scaling**: performance improves monotonically with the number of reasoning tokens the model is allowed to use.
 
-R1 was trained purely with RL (no SFT) using a technique called **GRPO** (\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group. This produced emergent long-CoT behaviour without explicit supervision on reasoning traces.
+DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO** (\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group. This produced emergent long-CoT behaviour without explicit supervision on reasoning traces; the released R1 model then added a cold-start SFT phase to stabilize the learned traces.
 
 ### Why It Works
 

@@ -5,7 +5,7 @@ title: Activation Functions
 description: The neural decision makers, why without non-linearity, a network collapses to nothing.
 icon: &#9889;
 part: 2
-order: 12
+order: 13
 color: coral
 -->
 

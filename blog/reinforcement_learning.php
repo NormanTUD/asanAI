@@ -5,12 +5,12 @@ title: Reinforcement Learning
 description: From Q-learning to PPO to GRPO — the foundations of RL that power modern LLM alignment.
 icon: &#127918;
 part: 2
-order: 14
+order: 15
 color: coral
 -->
 
 <div class="md">
-Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning. In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal. It is the foundation of modern LLM alignment: \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, DPO, GRPO, and the o1/R1 paradigm all build on it.
+Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning. In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal. It is the foundation of modern LLM alignment: **RLHF**, DPO, GRPO, and the o1/R1 paradigm all build on it.
 
 This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged.
 </div>
@@ -60,7 +60,7 @@ $$
 V^*(s) = \max_a \left[R(s, a) + \gamma \sum_{s'} P(s' \mid s, a)\, V^*(s')\right]
 $$
 
-For an LLM, the "state" is the current context window, the "action" is the next token, and the "reward" comes from a reward model (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) or verifier (reasoning training).
+For an LLM, the "state" is the current context window, the "action" is the next token, and the "reward" comes from a reward model (**RLHF**) or verifier (reasoning training).
 </div>
 
 <div class="md">
@@ -119,13 +119,13 @@ $$
 
 where $r_t(\theta) = \pi_\theta(a_t \mid s_t) / \pi_{\theta_{\text{old}}}(a_t \mid s_t)$ is the probability ratio. The clip prevents destructively large updates.
 
-PPO is simple, stable, and the default choice for \cite[Ouyang et al., 2022]{ouyang2022instructgpt} and many robotics tasks.
+PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.
 </div>
 
 <div class="md">
-## \cite[Ouyang et al., 2022]{ouyang2022instructgpt}: Reinforcement Learning from \cite[Ouyang et al., 2022]{ouyang2022instructgpt}
+## RLHF: Reinforcement Learning from Human Feedback
 
-\cite[Ouyang et al., 2022]{ouyang2022instructgpt} (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
+**RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
 
 1. **Collect comparison data**: humans rank multiple model outputs for the same prompt.
 2. **Train a reward model** $R_\phi(x, y)$ that predicts the human's preference score.
@@ -134,7 +134,7 @@ PPO is simple, stable, and the default choice for \cite[Ouyang et al., 2022]{ouy
 The full PPO loss combines three terms:
 
 $$
-L^{\text{\cite[Ouyang et al., 2022]{ouyang2022instructgpt}}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)
+L^{\text{RLHF}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)
 $$
 
 The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model — a critical stabilizer.
@@ -151,7 +151,7 @@ where $y_w$ is the "winner" and $y_l$ the "loser".
 <div class="md">
 ## DPO: \cite[Rafailov et al., 2023]{rafailov2023dpo} Optimization
 
-Rafailov et al. (2023) showed that the \cite[Ouyang et al., 2022]{ouyang2022instructgpt} objective has a **closed-form solution**:
+Rafailov et al. (2023) showed that the **RLHF** objective has a **closed-form solution**:
 
 $$
 \pi^*(y \mid x) \propto \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{1}{\beta} R(x, y)\right)
@@ -169,7 +169,7 @@ $$
 L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)}\!\left[\log \sigma\!\left(\beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right]
 $$
 
-**No reward model, no PPO, no rollouts**. Just a supervised loss on (prompt, winner, loser) triples. DPO matches \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on alignment benchmarks with much simpler infrastructure.
+**No reward model, no PPO, no rollouts**. Just a supervised loss on (prompt, winner, loser) triples. DPO matches **RLHF** on alignment benchmarks with much simpler infrastructure.
 
 Variants have proliferated:
 
@@ -202,12 +202,12 @@ By using the group mean as the baseline, GRPO eliminates the need for a separate
 </div>
 
 <div class="md">
-## The \cite[Ouyang et al., 2022]{ouyang2022instructgpt} Spectrum
+## The RLHF Spectrum
 
 | Method | Reward signal | Critic | Reference model | Use case |
 |--------|---------------|--------|-----------------|----------|
 | **SFT** | None | No | — | Pretraining alignment |
-| **\cite[Ouyang et al., 2022]{ouyang2022instructgpt} (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |
+| **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |
 | **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |
 | **IPO** | Implicit, regularized | No | Yes | Noisy preferences |
 | **KTO** | Implicit, asymmetric | No | Yes | Binary feedback |

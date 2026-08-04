@@ -5,7 +5,7 @@ title: Live Training Lab
 description: Watch a neural network learn in real time, decision boundaries, weights, and activations.
 icon: &#127918;
 part: 2
-order: 13
+order: 14
 color: coral
 -->
 

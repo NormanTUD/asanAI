@@ -5,7 +5,7 @@ title: Differentiation
 description: The derivative: one of the most important ideas in all of mathematics, from secant to tangent.
 icon: &#128208;
 part: 2
-order: 7
+order: 8
 color: coral
 -->
 

@@ -5,7 +5,7 @@ title: Backpropagation
 description: The 1986 algorithm that made deep learning possible, forward pass, backward pass, weight updates.
 icon: &#8634;
 part: 2
-order: 9
+order: 10
 color: coral
 -->
 

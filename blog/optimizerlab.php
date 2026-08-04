@@ -5,7 +5,7 @@ title: The Optimizer
 description: Navigating the loss landscape, SGD, Momentum, and Adam compared interactively.
 icon: &#127757;
 part: 2
-order: 10
+order: 11
 color: coral
 -->
 <div class="md">
