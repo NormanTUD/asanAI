@@ -11,7 +11,7 @@
 const AttractorViz = (() => {
     let currentStep = 0;
     let subStep = 0;
-    const totalSteps = 7;
+    const totalSteps = 8;
     let activeAnimation = null;
     let animationRunning = false;
     let retryCount = 0;
@@ -136,7 +136,8 @@ function renderStep(step) {
         '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
-        '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.'
+        '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
+      '<b>Generator (Quelle):</b> Die Umkehrung eines Punkt-Attraktors. Aus <b>einem</b> Punkt kommen <b>beliebig viele</b> Trajektorien heraus — <i>ein</i> Zustand erzeugt <i>alle</i> möglichen Ausgaben.<br>Genau das tut das LLM bei jeder Vorhersage: <i>ein</i> Zustandsvektor → Verteilung über <i>alle</i> möglichen nächsten Tokens. Punkte werden nicht angezogen – sie werden <b>erzeugt</b>.'
     ];
     const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
@@ -149,6 +150,7 @@ function renderStep(step) {
         case 4: renderComplexBasins(container); break;
         case 5: render3DBasins(container); break;
         case 6: renderSeahorseEmoji(container); break;
+        case 7: renderGenerator(container); break;
     }
 }
 
@@ -2453,6 +2455,136 @@ function render3DBasins(container) {
         ctx.fillStyle = 'rgba(0,0,0,0.35)';
         ctx.textAlign = 'center';
         ctx.fillText('🖱 Ziehen = Drehen · Shift+Ziehen = Verschieben · Scrollen = Zoom', W / 2, H - 8);
+
+        activeAnimation = requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+// ============================================================
+// STEP 7: Generator (Quelle) — Umkehrung des Punkt-Attraktors
+// Aus EINEM Punkt kommen viele Trajektorien heraus.
+// Partikel werden am Zentrum erzeugt, fliegen radial nach außen.
+// ============================================================
+function renderGenerator(container) {
+    const setup = safeCanvasSetup(container, '#0a0e1a');
+    if (!setup) {
+        retryRender(renderGenerator, container, 150);
+        return;
+    }
+    const { ctx, W, H } = setup;
+    const cx = W / 2, cy = H / 2;
+
+    const SPAWN_PER_FRAME = 2;
+    const MAX_PARTICLES = 280;
+    const particles = [];
+    let t = 0;
+
+    const palette = ['#22d3ee', '#a78bfa', '#f472b6', '#fb923c', '#34d399', '#facc15'];
+
+    function spawn() {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.4 + Math.random() * 1.2;
+        return {
+            x: cx,
+            y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            r: 2 + Math.random() * 1.5,
+            color: palette[Math.floor(Math.random() * palette.length)],
+            life: 1,
+            decay: 0.0035 + Math.random() * 0.0035
+        };
+    }
+
+    animationRunning = true;
+
+    function draw() {
+        if (!animationRunning) return;
+        t++;
+
+        // Trail-Effekt: nicht vollständig löschen
+        ctx.fillStyle = 'rgba(10,14,26,0.18)';
+        ctx.fillRect(0, 0, W, H);
+
+        // Zentrum: Quelle
+        const pulse = 1 + 0.18 * Math.sin(t * 0.08);
+        const haloR = 60 * pulse;
+
+        // äußere Strahlen-Halo
+        const grad = ctx.createRadialGradient(cx, cy, 6, cx, cy, haloR);
+        grad.addColorStop(0, 'rgba(34,211,238,0.55)');
+        grad.addColorStop(0.5, 'rgba(167,139,250,0.18)');
+        grad.addColorStop(1, 'rgba(10,14,26,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, haloR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Kernpunkt
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#22d3ee';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#22d3ee';
+        ctx.textAlign = 'center';
+        ctx.fillText('Generator / Quelle', cx, cy + 28);
+
+        // Partikel erzeugen
+        for (let i = 0; i < SPAWN_PER_FRAME; i++) {
+            if (particles.length < MAX_PARTICLES) particles.push(spawn());
+        }
+
+        // Partikel aktualisieren + zeichnen
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            // Leichte Beschleunigung nach außen
+            p.vx *= 1.005;
+            p.vy *= 1.005;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= p.decay;
+
+            if (p.life <= 0 || p.x < 0 || p.x > W || p.y < 0 || p.y > H) {
+                particles.splice(i, 1);
+                continue;
+            }
+
+            ctx.globalAlpha = p.life;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // Animierte Linien vom Zentrum » nach außen (zeigen "Erzeugung")
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2 + t * 0.012;
+            const len = 80 + 30 * Math.sin(t * 0.05 + i);
+            const x2 = cx + Math.cos(angle) * len;
+            const y2 = cy + Math.sin(angle) * len;
+            const lineGrad = ctx.createLinearGradient(cx, cy, x2, y2);
+            lineGrad.addColorStop(0, 'rgba(34,211,238,0.7)');
+            lineGrad.addColorStop(1, 'rgba(34,211,238,0)');
+            ctx.strokeStyle = lineGrad;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // Vergleichs-Label: zeigt den Unterschied zum Attraktor
+        ctx.font = '11px system-ui';
+        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.textAlign = 'left';
+        ctx.fillText('1 Zustand  →  viele mögliche Ausgaben', 16, H - 16);
 
         activeAnimation = requestAnimationFrame(draw);
     }
