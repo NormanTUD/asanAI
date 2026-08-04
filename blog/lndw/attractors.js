@@ -131,7 +131,7 @@ function renderStep(step) {
     });
 
     const captions = [
-        '<b>Generator (Quelle):</b> Ein <b>Quelle-Punkt</b>, aus dem <b>beliebig viele Trajektorien</b> herauskommen. Im LLM passiert das an <b>zwei Stellen</b>:<br>⚡ <b>Input:</b> Ein Satz geht rein → der <b>Tokenizer</b> zerlegt ihn in <i>viele</i> Tokens. <br>⚡ <b>Output:</b> Ein Zustandsvektor → das Modell erzeugt eine <i>Verteilung</i> über <i>alle</i> möglichen nächsten Tokens. <br>Punkte werden nicht angezogen – sie werden <b>erzeugt</b>.'
+        '<b>Generator (Quelle):</b> Ein <b>Quelle-Punkt</b>, aus dem <b>beliebig viele Trajektorien</b> herauskommen. Im LLM passiert das an <b>zwei Stellen</b>:<br>⚡ <b>Input:</b> Ein Satz geht rein → der <b>Tokenizer</b> zerlegt ihn in <i>viele</i> Tokens. <br>⚡ <b>Output:</b> Ein Zustandsvektor → das Modell erzeugt eine <i>Verteilung</i> über <i>alle</i> möglichen nächsten Tokens. <br>Punkte werden nicht angezogen – sie werden <b>erzeugt</b>.',
         '<b>Punkt-Attraktor:</b> Das <b>Gegenteil</b> eines Generators — viele Punkte werden von <i>einem</i> Punkt <b>angezogen</b> und verschwinden in ihm. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
         '<b>Repeller (Abstoßung):</b> Das Gegenteil eines Attraktors – ein Punkt, von dem Teilchen <b>weggetrieben</b> werden. Kommt ein Teilchen zu nah, wird es abgestoßen und fliegt davon.',
         '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌏 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. <br><b>⚠️ Homotopie-Hinweis:</b> Der Torus rechts zeigt die <i>topologische Struktur</i> (Kreis × Kreis), nicht die exakte räumliche Geometrie.',
