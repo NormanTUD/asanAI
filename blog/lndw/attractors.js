@@ -1368,23 +1368,21 @@ function renderTorusEarth(container) {
         ctx.textBaseline = 'middle';
         ctx.fillText('☀️', cx, cy);
 
-        // === Torus-Labels ===
-        ctx.font = 'bold 12px system-ui';
-        ctx.fillStyle = 'rgba(150, 200, 255, 0.9)';
+        // === Torus-Labels (kompakt, klar getrennt) ===
         ctx.textAlign = 'center';
         ctx.textBaseline = 'alphabetic';
-        ctx.fillText('Torus-Attraktor (Homotopie)', cx, cy + R + r + 25);
+
+        ctx.font = 'bold 11px system-ui';
+        ctx.fillStyle = 'rgba(150, 200, 255, 0.95)';
+        ctx.fillText('Torus-Attraktor (Homotopie)', cx, cy + R + r + 18);
 
         ctx.font = '10px system-ui';
-        ctx.fillStyle = 'rgba(220, 220, 220, 0.8)';
-        ctx.fillText('🌕 = Mond-Position auf dem Torus', cx, cy + R + r + 40);
+        ctx.fillStyle = 'rgba(220, 220, 220, 0.85)';
+        ctx.fillText('🌕 Mond-Position auf dem Torus', cx, cy + R + r + 33);
 
-        // === Homotopie-Hinweis ===
-        ctx.font = '9px system-ui';
-        ctx.fillStyle = 'rgba(255, 150, 150, 0.9)';
-        ctx.textAlign = 'center';
-        ctx.fillText('⚠️ Homotopie: gleiche Topologie (Kreis∘Kreis),', cx, cy + R + r + 55);
-        ctx.fillText('nicht gleiche Geometrie! Mond kreist NICHT über die Pole.', cx, cy + R + r + 67);
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = 'rgba(255, 180, 180, 0.95)';
+        ctx.fillText('⚠️ gleiche Topologie, nicht gleiche Geometrie', cx, cy + R + r + 48);
     }
 
     function draw() {
@@ -1497,12 +1495,14 @@ function renderTorusEarth(container) {
         // === RECHTE SEITE: Torus mit Occlusion ===
         drawTorusWithOcclusion(rightCx, rightCy, torusR, torusr, earthAngle, moonAngle);
 
-        // Bottom text
-        ctx.font = '11px system-ui';
-        ctx.fillStyle = 'rgba(255,255,255,0.45)';
-        ctx.textAlign = 'center';
+        // Labels oben links/rechts der Visualisierung
+        ctx.font = 'bold 11px system-ui';
         ctx.textBaseline = 'alphabetic';
-        ctx.fillText('Links: Physische Bahnen (Ekliptikebene) | Rechts: Topologische Struktur (Homotopie – strukturgleich, nicht formgleich)', W / 2, H - 14);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.fillText('Links: Physische Bahnen (Ekliptikebene)', 16, 24);
+        ctx.textAlign = 'right';
+        ctx.fillText('Rechts: Topologische Struktur (Homotopie)', W - 16, 24);
 
         activeAnimation = requestAnimationFrame(draw);
     }
