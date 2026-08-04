@@ -2518,7 +2518,7 @@ function renderGenerator(container) {
         { w: 'von',        aff: { funk: +0.8, subst: -0.8, laender: -0.7, staedte: -0.7 } },
         { w: 'frankreich', aff: { funk: -0.7, subst: +0.6, laender: +0.95, staedte: +0.3 } },
         { w: 'ist',        aff: { funk: +0.7, subst: -0.8, laender: -0.6, staedte: -0.6 } },
-        { w: 'Paris',      aff: { funk: -0.8, subst: +0.4, laender: +0.5, staedte: +0.95 } }
+        { w: 'Paris',      aff: { funk: -0.3, subst: +0.2, laender: +0.6, staedte: +0.95 } }
     ];
 
     let sentenceIdx = 0;
