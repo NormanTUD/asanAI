@@ -47,94 +47,43 @@
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
 <div class="slide" data-title="Muster in der Wirklichkeit">
     <div class="slide-content">
-        <h2>Die Wirklichkeit hat mathematische Muster</h2>
-        <p style="margin-bottom:10px;">Und diese Muster spiegeln sich in Texten wider, weil manche Texte versuchen, die Wirklichkeit zu beschreiben.</p>
-
-        <!-- Fragment 1: Sonnenbild -->
-        <div id="sunrise-fragment-1">
-            <div id="sunrise-overlay-container" style="position:relative; width:100%; max-width:1100px; margin:0 auto; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
-                <img id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width:100%; display:block;">
-                <div id="sunrise-plot" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; mix-blend-mode: multiply; opacity:0; transition: opacity 0.5s ease;"></div>
-            </div>
-        </div>
-
-        <!-- Fragment 2: Sinus-Overlay einblenden -->
-        <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus"></div>
-        <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn über Concordia (75°S, Antarktis) über 24 Stunden an einem Polartag, 24 Aufnahmen im Stundenabstand, zusammengefügt zu einem Panorama.</p>
-
-	<!-- Sinus-Formel (vereinfacht) -->
-	<div class="fragment" style="margin-top:16px;">
-	    <div class="formula-box" style="max-width:900px; margin-left:auto; margin-right:auto;">
-		    <div class="math-display">$$\underbrace{h(t)}_{\text{Sonnenstand zur Zeit } t} = \sin\!\left(t\right)$$</div>
-	    </div>
-	</div>
-
-        <div class="fragment" style="margin-top:12px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; color:#92400e; max-width:900px; margin-left:auto; margin-right:auto;">
-            <b>Der Zusammenhang:</b> In Texten steht "Um Mitternacht steht die Sonne nur 10° über dem Horizont” und "Mittags erreicht sie fast 40°”.
-            Implizit steckt darin die modellhafte Vorstellung einer Sinusfunktion, solche Muster kann ein Modell aus Textzusammenhängen lernen.
-        </div>
-    </div>
-</div>
-
-<!-- ==================== SLIDE: Philosophische Voraussetzung 1 ==================== -->
-<div class="slide" data-title="Wirklichkeit → Text → Modell">
-    <div class="slide-content">
-        <h2>Was muss gegeben sein, damit Maschinen lernen können?</h2>
-        <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin:30px 0; flex-wrap:wrap;">
-            <div style="text-align:center; padding:20px 28px; background:#f0fdf4; border:2px solid #86efac; border-radius:14px; min-width:180px;">
-                <div style="bottom:8px;">🌍</div>
-                <div style="font-weight:bold; color:#065f46;">Wirklichkeit</div>
-                <div style="color:#475569; margin-top:6px;">Hamburg liegt an der Elbe.<br>Die Sonne geht im Sommer früh auf.</div>
-            </div>
-            <div class="fragment" style="color:#94a3b8;">→</div>
-            <div class="fragment" style="text-align:center; padding:20px 28px; background:#eff6ff; border:2px solid #bfdbfe; border-radius:14px; min-width:180px;">
-                <div style="margin-bottom:8px;">📝</div>
-                <div style="font-weight:bold; color:#1e40af;">Texte</div>
-		<div style="color:#475569; margin-top:6px;">Texte enthalten Pattern. Menschengeschriebenen Texte zeigen Muster.<br> Manche davon zeigen sich nur in den Texten (<i>Finnegans Wake</i>).<br>Andere sind in der Natur selbst</div>
-            </div>
-            <div class="fragment" style="color:#94a3b8;">→</div>
-            <div class="fragment" style="text-align:center; padding:20px 28px; background:#faf5ff; border:2px solid #e9d5ff; border-radius:14px; min-width:180px;">
-                <div style="margin-bottom:8px;">🤖</div>
-                <div style="font-weight:bold; color:#6b21a8;">LLM</div>
-                <div style="color:#475569; margin-top:6px;">Lernt indirekt von der Welt,<br>über den Umweg der Texte.</div>
-            </div>
-        </div>
-        <div class="key-insight fragment">
-            <strong>Die Kernidee:</strong> Ein <b>Modell</b> ist ein vereinfachtes Abbild der Wirklichkeit.
-            Das LLM hat keinen direkten Zugang zur Welt. Ihr einziger Zugang sind Texte.
-            Aber weil einige Texte <b>versuchen</b>, die Wirklichkeit abzubilden, lernt das LLM indirekt daraus Modelle der Muster der Wirklichkeit.
-        </div>
-    </div>
-</div>
-
-
-
-<!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
-<div class="slide" data-title="Muster in der Wirklichkeit">
-    <div class="slide-content">
         <h2>Aber auch "Quatsch" hat Muster</h2>
-	<p style="margin-bottom:10px;">Selbst, wenn man versucht, unverständlichen <i>Nonsens</i> zu schreiben, wie experimentelle Autoren wie James Joyce, scheinen Muster durch. Sein <i>Finnegans&nbsp;Wake</i> wirkt wie Englisch, aber es ist kein Englisch. Er enthält aber viele Muster des Englischen, die losgelöst sind von Tatsachen <i>in</i> der Welt.</p>
+	<p>James Joyces <i>Finnegans Wake</i> (1939) wirkt wie Englisch, ist aber keines. Trotzdem trägt es tiefe Muster in sich — sogar die eines italienischen Philosophen.</p>
 
-        <pre class="fragment" style="font-family: Times New Roman">
-		         riverrun, past Eve and Adam's, from swerve of shore to bend
-		    of bay, brings us by a commodius vicus of recirculation back to
-		    Howth Castle and Environs.
-        </pre>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:start;">
+            <div>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <img class="fragment" style="width:90px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15);" src="../finneganswake.jpg" alt="Finnegans Wake" />
+                    <div style="font-size:0.9em; color:#475569;">
+                        <div class="fragment"><b>T.S. Eliot 1951:</b> <i>Finnegans Wake</i> sei so <b>"verrückt und unverständlich"</b>, dass alle außer Joyces glühendste Bewunderer sagten, er sei <b>"zu weit gegangen"</b>.</div>
+                        <div class="fragment" style="margin-top:8px;">Doch das Buch ist <b>hochgradig durchkonstruiert</b>: Vico kommt darin immer wieder vor, in dutzenden Versionen — ein roter Faden.</div>
+                    </div>
+                </div>
 
-        <div class="fragment">
-		Die Charaktere mischen alle möglichen Sprachen, es wirkt oft so als würden einander träumen, aber ich habe es nicht verstanden.
-	</div>
+                <pre class="fragment" style="font-family: 'Times New Roman', serif; background:#f8fafc; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0; margin-top:14px; font-size:0.95em;">
+    riverrun, past Eve and Adam's, from swerve of shore to bend
+    of bay, brings us by a commodius vicus of recirculation back to
+    Howth Castle and Environs.
+                </pre>
+            </div>
 
-        <div class="fragment" style="font-size: 2em;">
-		¯\_(ツ)_/¯
-	</div>
-
-        <div class="fragment">
-		Aber auch hier sind die Muster in der Sprache durch die Umgebung beeinflusst.
-	</div>
+            <div>
+                <div class="fragment" style="background:#faf5ff; border:1px solid #e9d5ff; border-radius:10px; padding:10px;">
+                    <div id="zipf-finnegan-plot" style="height: 320px; width: 100%;"></div>
+                </div>
+                <div class="fragment" style="font-size:0.9em; color:#475569; margin-top:6px;">
+                    Auch <i>Finnegans Wake</i> folgt <b>Zipfs Gesetz</b> — die häufigsten Wörter sind auch dort <b>the, of, and, in, a</b>.
+                </div>
+                <div class="fragment" style="font-size:0.9em; color:#475569; margin-top:4px;">
+                    Selbst bewusst gebauter Nonsens trägt also <b>die gleichen statistischen Muster</b> wie normales Englisch.
+                </div>
+                <div class="fragment key-insight" style="margin-top:10px; font-size:0.95em;">
+                    <b>Show, don't tell:</b> zwei Verteilungen, identische Form.
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 
 <!-- ==================== SLIDE: Neural Net Intro ==================== -->
 <div class="slide" data-title="Neuronales Netz Intro">
@@ -1499,6 +1448,7 @@
 <script src="embeddinglab.js"></script>
 <!--<script src="training_viz.js"></script>-->
 <script src="residual_stream_notebook.js"></script>
+<script src="zipf.js"></script>
 <script src="attn_demo.js"></script>
 <script src="index.js"></script>
 <script src="intuition.js"></script>

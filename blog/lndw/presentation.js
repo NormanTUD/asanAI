@@ -79,6 +79,14 @@ const DemoRegistry = (() => {
                         onEnter: d => { d.init(); setTimeout(() => d.start(), 200); },
                         onLeave: d => d.stop() },
 
+                { ref: () => typeof ZipfViz !== 'undefined' ? ZipfViz : null,
+                        slideTest: s => s.getAttribute('data-title') === 'Muster in der Wirklichkeit',
+                        onEnter: d => {
+                            d.renderGermanZipf();
+                            d.renderFinneganZipf();
+                            setTimeout(() => d.resize(), 100);
+                        } },
+
         ];
 
     // Normalisiere: Defaults einsetzen
