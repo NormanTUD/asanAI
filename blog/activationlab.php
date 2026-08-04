@@ -5,7 +5,7 @@ title: Activation Functions
 description: The neural decision makers, why without non-linearity, a network collapses to nothing.
 icon: &#9889;
 part: 2
-order: 12
+order: 13
 color: coral
 -->
 
@@ -38,7 +38,7 @@ $$y = (W_2W_1)x + (W_2b_1 + b_2)$$
 
 See? We end up with another linear transformation like $Wx + b$, where $ W = W_2W_1 $ and $b = (W_2b_1 + b_2)$. This way, adding more layers, doesn't add more functionality to the neural network. This is where activation functions come into play.
 
-Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU** (introduced by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}, albeit being described by \citeauthor{relufirst} in \citeyear{relufirst} in principle already), **Sigmoid**, or **Tanh**), stacking layers adds no extra "intelligence" or power to the model.
+Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU** — a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*; first used as an activation function in artificial neural networks by \citeauthor{relufirst} in \citeyear{relufirst} in the Neocognitron; and brought into mainstream deep learning by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}), **Sigmoid**, or **Tanh**), stacking layers adds no extra "intelligence" or power to the model.
 </div>
 
 <div class="activation-lab-container" style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #dcfce7; margin-top: 20px;">
@@ -153,7 +153,7 @@ During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** func
 
 The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** "flatten out" (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.
 
-This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**, first used by \citeauthor{relufirst} in \citeyear{relufirst} for artificial neural networks, yet first introduced by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f). By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
+This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)** — a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*. It was \citeauthor{relufirst} in \citeyear{relufirst} who first *used* this kind of piecewise-linear response as an activation function in artificial neural networks, in his Neocognitron. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
 </div>
 
 <div class="image-row md">

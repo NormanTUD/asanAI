@@ -86,7 +86,7 @@ The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 
 </div>
 
 <div class="md">
-## \cite[Sparse Expert Models]{fedus2022moe} of Depths (MoD)
+## \cite[Sparse Expert Models]{bubeck2023moeoverview} of Depths (MoD)
 
 Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers**. Easy tokens skip; hard tokens use full depth.
 
@@ -96,7 +96,7 @@ $$
 
 Result: ~50% compute reduction at equal quality. The capacity is preserved; the routing learns to allocate it.
 
-Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022moe}), **Skrr** (skip-routing, \cite[Sakurai et al., 2024]{sakurai2024skrr}).
+Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **conditional computation** (\cite[Fedus et al., 2022]{fedus2022switch}), **Skrr** (skip-routing, \cite[Sakurai et al., 2024]{sakurai2024skrr}).
 </div>
 
 <div class="md">

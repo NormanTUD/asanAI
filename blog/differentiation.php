@@ -5,7 +5,7 @@ title: Differentiation
 description: The derivative: one of the most important ideas in all of mathematics, from secant to tangent.
 icon: &#128208;
 part: 2
-order: 7
+order: 8
 color: coral
 -->
 
@@ -235,7 +235,7 @@ Derivatives are not just an abstract mathematical concept, they are the **engine
 
 3. **Optimization Landscape**: The derivative tells us about the "shape" of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
 
-4. **The Sigmoid Derivative**: As we saw in the backpropagation section, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
+4. **The Sigmoid Derivative**: As we derived above, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
 
 In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.
 
@@ -254,7 +254,7 @@ $$\nabla f = \begin{pmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{
 
 The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.
 
-The symbol $\partial$ for partial derivatives was introduced Marquis de Condorcet in \citeyear{condorcet1770}, yet later popularized by by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) and \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
+The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}, yet later popularized by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) and \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
 </div>
 
 <!-- ─── Interactive: Gradient on a 3D Surface ─── -->

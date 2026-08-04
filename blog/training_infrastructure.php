@@ -94,13 +94,13 @@ Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implem
 
 ### Expert Parallelism (for MoE)
 
-For \cite[Bubeck et al., 2023]{fedus2022moe}-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
+For \cite[Bubeck et al., 2023]{bubeck2023moeoverview}-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
 </div>
 
 <div class="md">
 ## Putting It Together: A Real-World Recipe
 
-Llama 3 (Meta, 2024) was trained on 16,000 H100s using a combination:
+Llama 3 (Meta, 2024) was trained on **16,384 H100s** using a combination:
 
 * **Tensor Parallelism** = 8 (within a node, using NVLink)
 * **Pipeline Parallelism** = 16 (across nodes, using InfiniBand)
@@ -199,7 +199,7 @@ For a 70B model with bf16:
 
 On 8 H100s with 80 GB each = 640 GB total. **FSDP across 16 H100s** (1280 GB) comfortably fits. With TP=8 within node + ZeRO-3 across 16 nodes = 128 GPUs, you have headroom for larger batch sizes.
 
-For a 405B model (Llama 3): use TP=8, PP=16, FSDP across 8 replicas = **1024 H100s** minimum for training.
+For a 405B model (Llama 3): a *theoretical minimum* configuration with TP=8, PP=16, FSDP across 8 replicas = **1024 H100s** would suffice. (In practice, Meta's published report for the same 405B run used the larger **16,384 H100s** configuration cited above, trading additional compute for faster wall-clock training.)
 
 The frontier in 2025: **multi-trillion parameter models on 100,000+ GPU clusters**, with training runs costing $100M–$1B.
 </div>

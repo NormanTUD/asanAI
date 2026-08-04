@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warum fühlt sich Raum so an? - Interaktive Erklärung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 2px solid #4a4aff;
+        }
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #88aaff, #ff88cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            background: rgba(10,10,46,0.95);
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+        .nav button {
+            padding: 8px 16px;
+            border: 1px solid #4a4aff;
+            background: rgba(74,74,255,0.1);
+            color: #aabbff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+        .nav button:hover, .nav button.active {
+            background: #4a4aff;
+            color: white;
+            transform: scale(1.05);
+        }
+        .section {
+            display: none;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(74,74,255,0.5);
+        }
+        .card h2 {
+            color: #88aaff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .card h3 {
+            color: #ffaa88;
+            margin: 15px 0 10px;
+        }
+        .card p {
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background: rgba(255,200,50,0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffdd88;
+        }
+        .interactive-demo {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        canvas {
+            border-radius: 8px;
+            cursor: pointer;
+            max-width: 100%;
+        }
+        .grid-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .grid-container {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .grid-unit {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #4a4aff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        .grid-unit.off {
+            background: rgba(30,30,80,0.8);
+            color: #888;
+        }
+        .grid-unit.on {
+            background: rgba(255,200,50,0.8);
+            color: #333;
+            box-shadow: 0 0 15px rgba(255,200,50,0.5);
+        }
+        .grid-unit.highlighted {
+            border-color: #ff6688;
+            box-shadow: 0 0 10px rgba(255,100,136,0.5);
+        }
+        .explanation-box {
+            background: rgba(74,74,255,0.1);
+            border-left: 3px solid #4a4aff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .analogy {
+            background: rgba(255,150,50,0.1);
+            border-left: 3px solid #ff9932;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+        .spots-canvas {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(ellipse at center, #111133 0%, #000011 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        .spot {
+            position: absolute;
+            border: 2px dashed;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 4px white;
+        }
+        .btn-demo {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #4a4aff, #6a3aff);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.2s;
+            margin: 5px;
+        }
+        .btn-demo:hover {
+            transform: scale(1.05);
+        }
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin: 20px 0;
+        }
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+        .progress-dot.active {
+            background: #4a4aff;
+            box-shadow: 0 0 8px #4a4aff;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .comparison-table th {
+            background: rgba(74,74,255,0.2);
+            color: #aabbff;
+        }
+        .comparison-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #88aaff;
+            cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #1a1a4e;
+            color: #e0e0ff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #4a4aff;
+            font-size: 0.8em;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .venn-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #e0e0ff;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover {
+            background: rgba(74,74,255,0.2);
+            border-color: #4a4aff;
+        }
+        .quiz-option.correct {
+            background: rgba(50,200,100,0.3);
+            border-color: #32c864;
+        }
+        .quiz-option.wrong {
+            background: rgba(255,50,50,0.3);
+            border-color: #ff3232;
+        }
+        .quiz-feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+        .connection-line {
+            stroke: #4a4aff;
+            stroke-width: 2;
+            fill: none;
+        }
+        .emoji-icon {
+            font-size: 1.5em;
+            margin-right: 8px;
+        }
+        @media (max-width: 600px) {
+            .nav button {
+                padding: 6px 12px;
+                font-size: 0.75em;
+            }
+            .header h1 {
+                font-size: 1.3em;
+            }
+            .grid-unit {
+                width: 38px;
+                height: 38px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌌 Warum fühlt sich Raum so an?</h1>
+        <p>Interaktive Erklärung des Papers von Haun & Tononi (2019)</p>
+        <p style="margin-top: 5px; font-size: 0.8em;">Klicke dich durch die Konzepte – so wenig Text wie möglich!</p>
+    </div>
+
+    <div class="nav" id="nav">
+        <button class="active" onclick="showSection(0)">🎯 Kernfrage</button>
+        <button onclick="showSection(1)">🧩 Spots & Raum</button>
+        <button onclick="showSection(2)">🔗 Verbundenheit</button>
+        <button onclick="showSection(3)">🧠 IIT Grundlagen</button>
+        <button onclick="showSection(4)">📐 Das Grid-Modell</button>
+        <button onclick="showSection(5)">⚡ Inhomogenitäten</button>
+        <button onclick="showSection(6)">🔦 Aufmerksamkeit</button>
+        <button onclick="showSection(7)">🏥 Vorhersagen</button>
+        <button onclick="showSection(8)">✅ Quiz</button>
+    </div>
+
+    <!-- SECTION 0: Kernfrage -->
+    <div class="section active" id="section-0">
+        <div class="card">
+            <h2><span class="emoji-icon">🤔</span>Die zentrale Frage</h2>
+            <div class="interactive-demo">
+                <div class="spots-canvas" id="sky-canvas">
+                </div>
+                <p style="margin-top: 10px; font-size: 0.85em;">👆 Bewege die Maus über den "Nachthimmel"</p>
+            </div>
+            <div class="explanation-box">
+                <p><strong>Warum fühlt sich räumliche Erfahrung so an, wie sie sich anfühlt?</strong></p>
+                <p>Wenn du den Nachthimmel betrachtest – warum erlebst du ihn als <span class="highlight">ausgedehnte Leinwand</span> mit Punkten an verschiedenen Orten?</p>
+            </div>
+            <div class="analogy">
+                <p>🎨 <strong>Analogie:</strong> Stell dir Bewusstsein wie ein Gemälde vor. Die meisten fragen: "Warum sehen wir bestimmte Objekte?" Dieses Paper fragt: "Warum fühlt sich die <em>Leinwand selbst</em> ausgedehnt an?"</p>
+            </div>
+        </div>
+        <div class="card">
+            <h2><span class="emoji-icon">💡</span>Warum Raum und nicht Farbe?</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>Eigenschaft</th>
+                    <th>Farbe (z.B. Blau)</th>
+                    <th>Raum ✓</th>
+                </tr>
+                <tr>
+                    <td>Introspektiv zerlegbar?</td>
+                    <td>❌ Blau ist einfach "blau"</td>
+                    <td>✅ Hat innere Struktur</td>
+                </tr>
+                <tr>
+                    <td>Allgegenwärtig?</td>
+                    <td>Nur visuell</td>
+                    <td>✅ Visuell + Körper + ...</td>
+                </tr>
+                <tr>
+                    <td>Wissenschaftlich zugänglich?</td>
+                    <td>Schwer zu beginnen</td>
+                    <td>✅ Guter Startpunkt</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- SECTION 1: Spots & Raum -->
+    <div class="section" id="section-1">
+        <div class="card">
+            <h2><span class="emoji-icon">⭐</span>Was sind "Spots"?</h2>
+            <p>Ein <span class="highlight">Spot</span> ist jeder unterscheidbare Bereich im erlebten Raum – von einem winzigen Punkt bis zum gesamten Gesichtsfeld.</p>
+            <div class="interactive-demo">
+                <svg width="400" height="300" class="venn-svg" id="spots-svg">
+                    <defs>
+                        <radialGradient id="grad1">
+                            <stop offset="0%" style="stop-color:#4a4aff;stop-opacity:0.3"/>
+                            <stop offset="100%" style="stop-color:#4a4aff;stop-opacity:0.05"/>
+                        </radialGradient>
+                    </defs>
+                    <!-- Großer Spot -->
+                    <ellipse cx="200" cy="150" rx="180" ry="130" fill="none" stroke="#4a4aff" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+                    <text x="200" y="30" fill="#4a4aff" text-anchor="middle" font-size="12">Gesamter Raum (größter Spot)</text>
+                    
+                    <!-- Mittlerer Spot -->
+                    <ellipse cx="160" cy="140" rx="90" ry="70" fill="none" stroke="#ff8844" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+                    <text x="160" y="85" fill="#ff8844" text-anchor="middle" font-size="11">Mittlerer Spot</text>
+                    
+                    <!-- Kleiner Spot -->
+                    <circle cx="140" cy="155" r="30" fill="none" stroke="#44ff88" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="140" y="195" fill="#44ff88" text-anchor="middle" font-size="11">Kleiner Spot</text>
+                    
+                    <!-- Punkt -->
+                    <circle cx="140" cy="155" r="4" fill="#ffffff"/>
+                    <text x="165" y="160" fill="#ffffff" font-size="10">Punkt</text>
+
+                    <!-- Zweiter mittlerer Spot -->
+                    <ellipse cx="260" cy="160" rx="70" ry="55" fill="none" stroke="#ff44aa" stroke-width="2" stroke-dasharray="6,3" opacity="0.8"/>
+                    <text x="260" y="120" fill="#ff44aa" text-anchor="middle" font-size="11">Anderer Spot</text>
+                </svg>
+                <p style="font-size: 0.85em;">Spots können überall sein und jede Größe haben</p>
+            </div>
+            <div class="explanation-box">
+                <p><strong>Wichtige Eigenschaft:</strong> Jeder Spot <span class="highlight">überlappt sich selbst</span> (Reflexivität). Das klingt trivial, ist aber fundamental – es bedeutet, dass jeder Spot eine eigene Identität hat.</p>
+            </div>
+        </div>
+        <div class="card">
+            <h2><span class="emoji-icon">🎪</span>Raum existiert auch ohne Objekte!</h2>
+            <p>Ein leerer, dunkler Himmel ist genauso räumlich wie einer voller Sterne. Die Spots und ihre Beziehungen sind <em>immer da</em> – Objekte machen sie nur sichtbarer.</p>
+            <div class="analogy">
+                <p>📋 <strong>Analogie:</strong> Wie ein leeres Schachbrett – die Felder existieren, ob Figuren drauf stehen oder nicht.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: Verbundenheit (Extendedness) -->
+    <div class="section" id="section-2">
+        <div class="card">
+            <h2><span class="emoji-icon">🔗</span>Ausgedehntheit (Extendedness)</h2>
+            <p>Was macht Raum <em>räumlich</em>? Drei fundamentale Beziehungen zwischen Spots:</p>
+        </div>
+
+        <div class="card">
+            <h3>1️⃣ Verbindung (Connection)</h3>
+            <div class="interactive-demo">
+                <svg width="350" height="180" class="venn-svg">
+                    <!-- Spot A -->
+                    <ellipse cx="140" cy="90" rx="80" ry="55" fill="rgba(255,150,50,0.15)" stroke="#ff9932" stroke-width="2"/>
+                    <text x="95" y="90" fill="#ff9932" font-size="13" font-weight="bold">Spot A</text>
+                    <!-- Spot B -->
+                    <ellipse cx="220" cy="90" rx="80" ry="55" fill="rgba(255,150,50,0.15)" stroke="#ff9932" stroke-width="2"/>
+                    <text x="250" y="90" fill="#ff9932" font-size="13" font-weight="bold">Spot B</text>
+                    <!-- Intersection -->
+                    <ellipse cx="180" cy="90" rx="35" ry="45" fill="rgba(255,50,50,0.3)" stroke="#ff3333" stroke-width="2"/>
+                    <text x="180" y="95" fill="#ff3333" text-anchor="middle" font-size="12" font-weight="bold">A∩B</text>
+                    <text x="180" y="165" fill="#e0e0ff" text-anchor="middle" font-size="11">Schnittmenge = auch ein Spot!</text>
+                </svg>
+            </div>
+            <p>Zwei Spots überlappen sich teilweise → ihre <span class="highlight">Schnittmenge ist auch ein Spot</span>.</p>
+        </div>
+
+        <div class="card">
+            <h3>2️⃣ Verschmelzung (Fusion)</h3>
+            <div class="interactive-demo">
+                <svg width="350" height="180" class="venn-svg">
+                    <!-- Union -->
+                    <ellipse cx="180" cy="90" rx="155" ry="65" fill="rgba(50,50,255,0.15)" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="180" y="30" fill="#4a4aff" text-anchor="middle" font-size="12" font-weight="bold">A∪B = auch ein Spot!</text>
+                    <!-- Spot A -->
+                    <ellipse cx="130" cy="90" rx="70" ry="45" fill="none" stroke="#ff9932" stroke-width="2" stroke-dasharray="5,3"/>
+                    <text x="100" y="95" fill="#ff9932" font-size="12">A</text>
+                    <!-- Spot B -->
+                    <ellipse cx="230" cy="90" rx="70" ry="45" fill="none" stroke="#ff9932" stroke-width="2" stroke-dasharray="5,3"/>
+                    <text x="255" y="95" fill="#ff9932" font-size="12">B</text>
+                </svg>
+            </div>
+            <p>Zwei Spots überlappen sich teilweise → ihre <span class="highlight">Vereinigung ist auch ein Spot</span>.</p>
+        </div>
+
+        <div class="card">
+            <h3>3️⃣ Einschluss (Inclusion)</h3>
+            <div class="interactive-demo">
+                <svg width="350" height="200" class="venn-svg">
+                    <!-- Outer -->
+                    <ellipse cx="175" cy="100" rx="140" ry="80" fill="rgba(50,50,255,0.1)" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="175" y="40" fill="#4a4aff" text-anchor="middle" font-size="12">Großer Spot (enthält)</text>
+                    <!-- Inner -->
+                    <ellipse cx="175" cy="110" rx="60" ry="40" fill="rgba(255,50,50,0.2)" stroke="#ff4444" stroke-width="2"/>
+                    <text x="175" y="115" fill="#ff4444" text-anchor="middle" font-size="12">Kleiner Spot</text>
+                    <!-- Arrows -->
+                    <text x="175" y="190" fill="#e0e0ff" text-anchor="middle" font-size="11">Jeder Spot enthält andere oder wird enthalten</text>
+                </svg>
+            </div>
+            <p>Für jeden Spot gibt es einen <span class="highlight">größeren, der ihn enthält</span>, und <span class="highlight">kleinere, die er enthält</span>.</p>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">📐</span>Abgeleitete Eigenschaften</h2>
+            <table class="comparison-table">
+                <tr><th>Eigenschaft</th><th>Bedeutung</th></tr>
+                <tr><td><strong>Region</strong></td><td>Alle Spots, die ein Spot enthält</td></tr>
+                <tr><td><strong>Ort</strong></td><td>Alle Spots, die einen Spot enthalten (wie eine Adresse)</td></tr>
+                <tr><td><strong>Größe</strong></td><td>Anzahl der enthaltenen Spots</td></tr>
+                <tr><td><strong>Grenze</strong></td><td>Kleinste Spots, die mit einem Spot verbunden sind</td></tr>
+                <tr><td><strong>Abstand</strong></td><td>Kleinster Spot, zu dem sich zwei Spots gemeinsam ausdehnen</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- SECTION 3: IIT Grundlagen -->
+    <div class="section" id="section-3">
+        <div class="card">
+            <h2><span class="emoji-icon">🧠</span>Integrated Information Theory (IIT)</h2>
+            <p>IIT ist die theoretische Grundlage des Papers. Die Theorie sagt:</p>
+            <div class="explanation-box">
+                <p><strong>Kernaussage:</strong> Bewusstsein = die <span class="highlight">Ursache-Wirkungs-Struktur</span>, die ein physisches Substrat spezifiziert.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">5️⃣</span>Die 5 Axiome jeder Erfahrung</h2>
+            <div id="axiom-container">
+                <div class="axiom-item" style="margin: 10px 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer;" onclick="toggleAxiom(this)">
+                    <strong>1. Intrinsisch</strong> – Erfahrung existiert für das Subjekt selbst
+                    <div class="axiom-detail" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.9em;">
+                        → Physisch: Das Substrat muss kausale Kraft <em>auf sich selbst</em> haben, nicht nur auf Ein-/Ausgänge.
+                    </div>
+                </div>
+                <div class="axiom-item" style="margin: 10px 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer;" onclick="toggleAxiom(this)">
+                    <strong>2. Komposition</strong> – Erfahrung hat Struktur (Unterscheidungen + Beziehungen)
+                    <div class="axiom-detail" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.9em;">
+                        → Physisch: Verschiedene Kombinationen von Neuronen haben verschiedene Ursachen und Wirkungen.
+                    </div>
+                </div>
+                <div class="axiom-item" style="margin: 10px 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer;" onclick="toggleAxiom(this)">
+                    <strong>3. Information</strong> – Erfahrung ist genau so, wie sie ist (spezifisch)
+                    <div class="axiom-detail" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.9em;">
+                        → Physisch: Ursachen und Wirkungen sind spezifische Zustände spezifischer Neuronen-Teilmengen.
+                    </div>
+                </div>
+                <div class="axiom-item" style="margin: 10px 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer;" onclick="toggleAxiom(this)">
+                    <strong>4. Integration</strong> – Erfahrung ist einheitlich (nicht zerlegbar)
+                    <div class="axiom-detail" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.9em;">
+                        → Physisch: Die Ursache-Wirkungs-Struktur darf nicht in unabhängige Teile zerlegbar sein (gemessen als Φ).
+                    </div>
+                </div>
+                <div class="axiom-item" style="margin: 10px 0; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer;" onclick="toggleAxiom(this)">
+                    <strong>5. Exklusion</strong> – Erfahrung ist bestimmt (nicht mehr und nicht weniger)
+                    <div class="axiom-detail" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.9em;">
+                        → Physisch: Das Substrat ist das mit der maximal irreduziblen Ursache-Wirkungs-Kraft.
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 0.85em; opacity: 0.7; margin-top: 10px;">👆 Klicke auf jedes Axiom für die physische Entsprechung</p>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🎯</span>Die zentrale These</h2>
+            <div class="explanation-box">
+                <p>Alle phänomenalen Unterscheidungen und Beziehungen (Spots, Verbindungen, Verschmelzungen, Einschlüsse) müssen <strong>eins-zu-eins</strong> kausalen Unterscheidungen und Beziehungen in der Ursache-Wirkungs-Struktur des physischen Substrats entsprechen.</p>
+            </div>
+            <div class="analogy">
+                <p>🪞 <strong>Analogie:</strong> Stell dir vor, dein Erleben ist ein Hologramm. Die IIT sagt: Jedes Detail dieses Hologramms muss exakt einem kausalen "Zahnrad" im physischen Substrat entsprechen – nichts mehr, nichts weniger.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: Das Grid-Modell -->
+    <div class="section" id="section-4">
+        <div class="card">
+            <h2><span class="emoji-icon">📐</span>Das Grid (Gitter) als Substrat</h2>
+            <p>Das Paper verwendet ein einfaches <span class="highlight">1D-Gitter aus 8 Einheiten</span> (A–H), um zu zeigen, wie räumliche Erfahrung entsteht.</p>
+            <div class="interactive-demo">
+                <div class="grid-demo">
+                    <p style="font-size: 0.85em;">👆 Klicke auf Einheiten, um sie an/aus zu schalten</p>
+                    <div class="grid-container" id="grid-1d">
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="A">A</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="B">B</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="C">C</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="D">D</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="E">E</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="F">F</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="G">G</div>
+                        <div class="grid-unit off" onclick="toggleUnit(this)" data-label="H">H</div>
+                    </div>
+                    <div id="grid-info" style="font-size: 0.85em; color: #aabbff; min-height: 40px;">
+                        Alle Einheiten sind AUS – das entspricht einem leeren, dunklen Himmel.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🔌</span>Verbindungen im Grid</h2>
+            <div class="interactive-demo">
+                <svg width="450" height="120" class="venn-svg">
+                    <!-- Units -->
+                    <circle cx="50" cy="60" r="20" fill="rgba(74,74,255,0.3)" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="50" y="65" fill="white" text-anchor="middle" font-size="14" font-weight="bold">A</text>
+                    <circle cx="110" cy="60" r="20" fill="rgba(74,74,255,0.3)" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="110" y="65" fill="white" text-anchor="middle" font-size="14" font-weight="bold">B</text>
+                    <circle cx="170" cy="60" r="20" fill="rgba(74,74,255,0.3)" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="170" y="65" fill="white" text-anchor="middle" font-size="14" font-weight="bold">C</text>
+                    <circle cx="230" cy="60" r="20" fill="rgba(74,74,255,0.3)" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="230" y="65" fill="white" text-anchor="middle" font-size="14" font-weight="bold">D</text>
+                    <text x="270" y="65" fill="#888" font-size="20">...</text>
+                    
+                    <!-- Self-connections -->
+                    <path d="M 50 38 C 35 20, 65 20, 50 38" fill="none" stroke="#ff9932" stroke-width="1.5"/>
+                    <path d="M 110 38 C 95 20, 125 20, 110 38" fill="none" stroke="#ff9932" stroke-width="1.5"/>
+                    <path d="M 170 38 C 155 20, 185 20, 170 38" fill="none" stroke="#ff9932" stroke-width="1.5"/>
+                    
+                    <!-- Lateral connections -->
+                    <line x1="72" y1="60" x2="88" y2="60" stroke="#44ff88" stroke-width="2"/>
+                    <line x1="132" y1="60" x2="148" y2="60" stroke="#44ff88" stroke-width="2"/>
+                    <line x1="192" y1="60" x2="208" y2="60" stroke="#44ff88" stroke-width="2"/>
+                    
+                    <!-- Legend -->
+                    <line x1="310" y1="40" x2="340" y2="40" stroke="#ff9932" stroke-width="2"/>
+                    <text x="345" y="44" fill="#ff9932" font-size="11">Selbst-Verbindung (stark, w=1)</text>
+                    <line x1="310" y1="65" x2="340" y2="65" stroke="#44ff88" stroke-width="2"/>
+                    <text x="345" y="69" fill="#44ff88" font-size="11">Nachbar-Verbindung (schwach, w=¼)</text>
+                </svg>
+            </div>
+            <div class="explanation-box">
+                <p><strong>Schlüsselidee:</strong> Jede Einheit ist stark mit sich selbst verbunden und schwach mit ihren direkten Nachbarn. Diese einfache Regel erzeugt eine enorm reiche Ursache-Wirkungs-Struktur!</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🤯</span>Die entfaltete Struktur</h2>
+            <p>Aus nur 8 Einheiten entstehen:</p>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; margin: 15px 0;">
+                <div style="text-align: center; padding: 15px; background: rgba(74,74,255,0.1); border-radius: 12px; min-width: 120px;">
+                    <div style="font-size: 2em; color: #88aaff;">133</div>
+                    <div style="font-size: 0.8em;">Kausale Unterscheidungen</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(255,150,50,0.1); border-radius: 12px; min-width: 120px;">
+                    <div style="font-size: 2em; color: #ffaa88;">7.976</div>
+                    <div style="font-size: 0.8em;">2. Ordnung Relationen</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: rgba(50,255,100,0.1); border-radius: 12px; min-width: 120px;">
+                    <div style="font-size: 2em; color: #88ffaa;">870.000+</div>
+                    <div style="font-size: 0.8em;">3. Ordnung Relationen</div>
+                </div>
+            </div>
+            <div class="analogy">
+                <p>🧊 <strong>Analogie:</strong> Wie ein Eiswürfel – von außen simpel, aber wenn du ihn unter dem Mikroskop betrachtest, siehst du eine unglaublich komplexe Kristallstruktur. Das Grid sieht einfach aus, aber seine kausale Struktur ist enorm reich.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🆚</span>Grid vs. Zufallsnetzwerk</h2>
+            <div class="interactive-demo">
+                <button class="btn-demo" onclick="showComparison('grid')">🔲 Grid zeigen</button>
+                <button class="btn-demo" onclick="showComparison('random')">🎲 Zufällig zeigen</button>
+                <div id="comparison-result" style="margin-top: 15px; padding: 15px; border-radius: 8px; min-height: 80px;">
+                    <p style="opacity: 0.6;">Klicke einen Button um zu vergleichen</p>
+                </div>
+            </div>
+            <div class="explanation-box">
+                <p><strong>Kernresultat:</strong> Nur das Grid erzeugt eine "ausgedehnte" Struktur. Ein zufälliges Netzwerk mit gleich vielen Einheiten und Verbindungen kann das NICHT – es fehlt die räumliche Qualität!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 5: Inhomogenitäten -->
+    <div class="section" id="section-5">
+        <div class="card">
+            <h2><span class="emoji-icon">⚡</span>Inhomogenitäten = "Sterne am Himmel"</h2>
+            <p>Was passiert, wenn einige Einheiten AN geschaltet werden (z.B. durch einen visuellen Reiz)?</p>
+            <div class="interactive-demo">
+                <div class="grid-demo">
+                    <div class="grid-container" id="grid-inhom">
+                        <div class="grid-unit off" data-label="A">A</div>
+                        <div class="grid-unit off" data-label="B">B</div>
+                        <div class="grid-unit on" data-label="C">C</div>
+                        <div class="grid-unit on" data-label="D">D</div>
+                        <div class="grid-unit on" data-label="E">E</div>
+                        <div class="grid-unit on" data-label="F">F</div>
+                        <div class="grid-unit off" data-label="G">G</div>
+                        <div class="grid-unit off" data-label="H">H</div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn-demo" onclick="animateInhomogeneity()">▶️ Effekt animieren</button>
+                    </div>
+                    <div id="inhom-info" style="font-size: 0.85em; margin-top: 10px; min-height: 60px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">📊</span>Was ändert sich?</h2>
+            <table class="comparison-table">
+                <tr><th>Bereich</th><th>Effekt</th></tr>
+                <tr>
+                    <td><strong>Region CDEF (aktiv)</strong></td>
+                    <td>🔼 Wird <span class="highlight">salienter</span> – steht hervor</td>
+                </tr>
+                <tr>
+                    <td><strong>Enthaltene Spots (CD, DE, EF...)</strong></td>
+                    <td>🔼 Werden ebenfalls verstärkt</td>
+                </tr>
+                <tr>
+                    <td><strong>Grenzen (BC, FG)</strong></td>
+                    <td>🔼 Werden betont</td>
+                </tr>
+                <tr>
+                    <td><strong>Ort/Kontext von CDEF</strong></td>
+                    <td>🔽 Wird weniger prominent</td>
+                </tr>
+                <tr>
+                    <td><strong>Gesamtstruktur</strong></td>
+                    <td>✅ Bleibt räumlich ausgedehnt!</td>
+                </tr>
+            </table>
+            <div class="analogy">
+                <p>⭐ <strong>Analogie:</strong> Wie ein Stern am Nachthimmel – er hebt sich ab, aber der Himmel selbst bleibt als ausgedehnte Leinwand erhalten. Der Stern erscheint nicht "aus dem Nichts" – der Spot war schon immer da, nur dunkel.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 6: Aufmerksamkeit -->
+    <div class="section" id="section-6">
+        <div class="card">
+            <h2><span class="emoji-icon">🔦</span>Aufmerksamkeit = Gain-Erhöhung</h2>
+            <p>Aufmerksamkeit wird modelliert als <span class="highlight">Erhöhung der Antwort-Verstärkung</span> (Response Gain) bestimmter Einheiten.</p>
+            <div class="interactive-demo">
+                <div class="grid-demo">
+                    <p style="font-size: 0.85em;">Klicke auf Einheiten um den "Spotlight" zu setzen:</p>
+                    <div class="grid-container" id="grid-attention">
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="A">A</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="B">B</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="C">C</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="D">D</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="E">E</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="F">F</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="G">G</div>
+                        <div class="grid-unit off" onclick="toggleAttention(this)" data-label="H">H</div>
+                    </div>
+                    <div id="attention-info" style="font-size: 0.85em; margin-top: 10px; min-height: 40px; color: #aabbff;">
+                        Noch keine Einheiten "beachtet"
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">💡</span>Unterschied: Inhomogenität vs. Aufmerksamkeit</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th></th>
+                    <th>Inhomogenität</th>
+                    <th>Aufmerksamkeit</th>
+                </tr>
+                <tr>
+                    <td><strong>Was ändert sich?</strong></td>
+                    <td>Zustand (An/Aus)</td>
+                    <td>Gain/Empfindlichkeit</td>
+                </tr>
+                <tr>
+                    <td><strong>Physisch</strong></td>
+                    <td>Neuron feuert</td>
+                    <td>Neuron wird empfindlicher</td>
+                </tr>
+                <tr>
+                    <td><strong>Phänomenal</strong></td>
+                    <td>Stern erscheint</td>
+                    <td>Region wird "hervorgehoben"</td>
+                </tr>
+                <tr>
+                    <td><strong>Raum bleibt?</strong></td>
+                    <td>✅ Ja</td>
+                    <td>✅ Ja</td>
+                </tr>
+            </table>
+            <div class="explanation-box">
+                <p><strong>Wichtig:</strong> Beide Effekte verändern die Ursache-Wirkungs-Struktur lokal, aber die Gesamtstruktur bleibt räumlich ausgedehnt. Der Raum "überlebt" lokale Störungen.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 7: Vorhersagen -->
+    <div class="section" id="section-7">
+        <div class="card">
+            <h2><span class="emoji-icon">🏥</span>Vorhersagen & Evidenz</h2>
+            <p>Das Paper macht konkrete, testbare Vorhersagen:</p>
+        </div>
+
+        <div class="card">
+            <h3>🧪 Vorhersage 1: Raum braucht kein Feuer</h3>
+            <div class="explanation-box">
+                <p>Ein <strong>inaktives</strong> Neuron (das feuern <em>könnte</em>) ist fundamental anders als ein <strong>inaktiviertes</strong> Neuron (das nicht mehr feuern kann).</p>
+                <p>→ Dunkler Himmel = Neuronen sind AUS aber funktionsfähig → Raum wird erlebt!</p>
+                <p>→ Zerstörte Neuronen = Raum verschwindet an dieser Stelle</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🧪 Vorhersage 2: Verbindungen ändern = Raum verzerren</h3>
+            <div class="explanation-box">
+                <p>Wenn man die <strong>lateralen Verbindungen</strong> im Grid stärkt oder schwächt (ohne die Aktivität zu ändern!), sollte sich der erlebte Raum verzerren.</p>
+            </div>
+            <div class="analogy">
+                <p>🧪 <strong>Experiment:</strong> Synchrone Punkt-Stimuli an zwei Positionen → Verbindungen werden stärker → Punkte erscheinen danach <em>näher beieinander</em>! (Tatsächlich beobachtet!)</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🧪 Vorhersage 3: Läsionen = Raum verschwindet</h3>
+            <div class="interactive-demo">
+                <svg width="400" height="150" class="venn-svg">
+                    <!-- Brain outline -->
+                    <ellipse cx="200" cy="75" rx="170" ry="60" fill="none" stroke="#4a4aff" stroke-width="2"/>
+                    <text x="200" y="20" fill="#aabbff" text-anchor="middle" font-size="12">Visueller Kortex (Grid-artig)</text>
+                    
+                    <!-- Normal side -->
+                    <rect x="50" y="50" width="120" height="50" rx="5" fill="rgba(50,255,100,0.2)" stroke="#44ff88" stroke-width="1"/>
+                    <text x="110" y="80" fill="#44ff88" text-anchor="middle" font-size="11">Intakt → Raum da</text>
+                    
+                    <!-- Lesioned side -->
+                    <rect x="230" y="50" width="120" height="50" rx="5" fill="rgba(255,50,50,0.2)" stroke="#ff4444" stroke-width="1"/>
+                    <text x="290" y="75" fill="#ff4444" text-anchor="middle" font-size="11">Läsion → Raum</text>
+                    <text x="290" y="90" fill="#ff4444" text-anchor="middle" font-size="11">VERSCHWINDET</text>
+                    
+                    <!-- X mark -->
+                    <line x1="270" y1="45" x2="310" y2="85" stroke="#ff4444" stroke-width="3"/>
+                    <line x1="310" y1="45" x2="270" y2="85" stroke="#ff4444" stroke-width="3"/>
+                </svg>
+            </div>
+            <table class="comparison-table">
+                <tr><th>Klinisches Phänomen</th><th>Erklärung durch IIT</th></tr>
+                <tr><td>Hemianopsie (halbe Blindheit)</td><td>Grid-Substrat einer Seite zerstört → Raum existiert dort nicht mehr</td></tr>
+                <tr><td>Hemineglect</td><td>Grid indirekt deaktiviert → Raum schrumpft</td></tr>
+                <tr><td>Skotome</td><td>Lokale Grid-Zerstörung → lokaler Raum fehlt (nicht "dunkel", sondern WEG)</td></tr>
+                <tr><td>Phosphene bei Stimulation</td><td>Grid-Aktivierung → Lichtpunkt an erwarteter Position</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>🧪 Vorhersage 4: Grid erweitern = Raum erweitern</h3>
+            <div class="explanation-box">
+                <p>Wenn man ein kortikales Grid mit zusätzlicher neuronaler Hardware erweitert (z.B. implantierte kortikale Organoide), sollte sich der erlebte Raum <span class="highlight">ausdehnen</span>!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 8: Quiz -->
+    <div class="section" id="section-8">
+        <div class="card">
+            <h2><span class="emoji-icon">✅</span>Teste dein Verständnis!</h2>
+            <div id="quiz-container">
+                <!-- Quiz 1 -->
+                <div class="quiz-question" id="q1">
+                    <h3>Frage 1: Was ist ein "Spot"?</h3>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Ein heller Punkt wie ein Stern</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, true)">Jeder unterscheidbare Bereich im erlebten Raum, egal welcher Größe</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Ein Neuron im visuellen Kortex</button>
+                    <div class="quiz-feedback" id="fb1"></div>
+                </div>
+
+                <!-- Quiz 2 -->
+                <div class="quiz-question" id="q2" style="margin-top: 25px;">
+                    <h3>Frage 2: Was macht Raum "ausgedehnt" (extended)?</h3>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Dass er groß ist</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Dass er Objekte enthält</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, true)">Verbindung, Verschmelzung und Einschluss zwischen Spots</button>
+                    <div class="quiz-feedback" id="fb2"></div>
+                </div>
+
+                <!-- Quiz 3 -->
+                <div class="quiz-question" id="q3" style="margin-top: 25px;">
+                    <h3>Frage 3: Warum ein Grid und kein zufälliges Netzwerk?</h3>
+                    <button class="quiz-option" onclick="checkAnswer(this, true)">Nur das Grid erzeugt eine Ursache-Wirkungs-Struktur mit Ausgedehntheit</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Zufällige Netzwerke haben weniger Neuronen</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Grids sind schneller in der Berechnung</button>
+                    <div class="quiz-feedback" id="fb3"></div>
+                </div>
+
+                <!-- Quiz 4 -->
+                <div class="quiz-question" id="q4" style="margin-top: 25px;">
+                    <h3>Frage 4: Was passiert bei einer Hirnläsion im visuellen Grid?</h3>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Der betroffene Bereich wird dunkel</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, true)">Der Raum an dieser Stelle hört auf zu existieren</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Der Patient sieht Farben anders</button>
+                    <div class="quiz-feedback" id="fb4"></div>
+                </div>
+
+                <!-- Quiz 5 -->
+                <div class="quiz-question" id="q5" style="margin-top: 25px;">
+                    <h3>Frage 5: Was ist die überraschendste Vorhersage?</h3>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Aufmerksamkeit verändert Wahrnehmung</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, true)">Änderung der Verbindungsstärke (ohne Aktivitätsänderung) verzerrt den erlebten Raum</button>
+                    <button class="quiz-option" onclick="checkAnswer(this, false)">Mehr Neuronen = mehr Bewusstsein</button>
+                    <div class="quiz-feedback" id="fb5"></div>
+                </div>
+            </div>
+
+            <div id="quiz-score" style="margin-top: 20px; text-align: center; display: none;">
+                <h3 style="color: #88ffaa;"></h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        let currentSection = 0;
+        const sections = document.querySelectorAll('.section');
+        const navButtons = document.querySelectorAll('.nav button');
+
+        function showSection(index) {
+            sections.forEach(s => s.classList.remove('active'));
+            navButtons.forEach(b => b.classList.remove('active'));
+            sections[index].classList.add('active');
+            navButtons[index].classList.add('active');
+            currentSection = index;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Axiom toggle
+        function toggleAxiom(el) {
+            const detail = el.querySelector('.axiom-detail');
+            if (detail.style.display === 'none') {
+                detail.style.display = 'block';
+                el.style.background = 'rgba(74,74,255,0.1)';
+                el.style.borderLeft = '3px solid #4a4aff';
+            } else {
+                detail.style.display = 'none';
+                el.style.background = 'rgba(255,255,255,0.03)';
+                el.style.borderLeft = 'none';
+            }
+        }
+
+        // Grid interaction
+        function toggleUnit(el) {
+            el.classList.toggle('on');
+            el.classList.toggle('off');
+            updateGridInfo();
+        }
+
+        function updateGridInfo() {
+            const units = document.querySelectorAll('#grid-1d .grid-unit');
+            const onUnits = [];
+            units.forEach(u => {
+                if (u.classList.contains('on')) onUnits.push(u.dataset.label);
+            });
+            const info = document.getElementById('grid-info');
+            if (onUnits.length === 0) {
+                info.innerHTML = 'Alle Einheiten sind AUS – das entspricht einem leeren, dunklen Himmel. <br>Der Raum ist trotzdem da!';
+            } else {
+                info.innerHTML = `<strong>${onUnits.join('')}</strong> sind AN – das ist eine Inhomogenität (wie ein Stern). <br>Die Region ${onUnits.join('')} wird salienter, ihre Grenzen betont.`;
+            }
+        }
+
+        // Attention grid
+        function toggleAttention(el) {
+            el.classList.toggle('on');
+            el.classList.toggle('off');
+            if (el.classList.contains('on')) {
+                el.style.background = 'rgba(255,100,50,0.6)';
+                el.style.boxShadow = '0 0 15px rgba(255,100,50,0.5)';
+            } else {
+                el.style.background = '';
+                el.style.boxShadow = '';
+            }
+            updateAttentionInfo();
+        }
+
+        function updateAttentionInfo() {
+            const units = document.querySelectorAll('#grid-attention .grid-unit');
+            const attendedUnits = [];
+            units.forEach(u => {
+                if (u.classList.contains('on')) attendedUnits.push(u.dataset.label);
+            });
+            const info = document.getElementById('attention-info');
+            if (attendedUnits.length === 0) {
+                info.innerHTML = 'Noch keine Einheiten "beachtet"';
+            } else {
+                info.innerHTML = `🔦 Spotlight auf <strong>${attendedUnits.join('')}</strong>: Gain erhöht → diese Region und ihre Relationen werden <span class="highlight">hervorgehoben</span>, ohne dass sich die Aktivität ändert!`;
+            }
+        }
+
+        // Comparison demo
+        function showComparison(type) {
+            const result = document.getElementById('comparison-result');
+            if (type === 'grid') {
+                result.innerHTML = `
+                    <div style="background: rgba(50,255,100,0.1); padding: 15px; border-radius: 8px;">
+                        <strong style="color: #88ffaa;">✅ Grid-Netzwerk:</strong><br>
+                        • 133 Unterscheidungen<br>
+                        • 117/133 sind ausgedehnt (extended)<br>
+                        • Verbindung ✅ Verschmelzung ✅ Einschluss ✅<br>
+                        • <strong>→ Fühlt sich räumlich an!</strong>
+                    </div>`;
+            } else {
+                result.innerHTML = `
+                    <div style="background: rgba(255,50,50,0.1); padding: 15px; border-radius: 8px;">
+                        <strong style="color: #ff8888;">❌ Zufälliges Netzwerk (gleiche Größe!):</strong><br>
+                        • 153 Unterscheidungen (sogar mehr!)<br>
+                        • 0/153 sind voll ausgedehnt<br>
+                        • Nur teilweise Verbindungen<br>
+                        • Keine Verschmelzung ❌<br>
+                        • <strong>→ Fühlt sich NICHT räumlich an!</strong>
+                    </div>`;
+            }
+        }
+
+        // Inhomogeneity animation
+        function animateInhomogeneity() {
+            const info = document.getElementById('inhom-info');
+            const steps = [
+                '1️⃣ CDEF sind AN → ihre Region wird <span class="highlight">salienter</span>',
+                '2️⃣ Enthaltene Spots (CD, DE, EF, CDE, DEF) werden verstärkt',
+                '3️⃣ Grenzen BC und FG werden betont',
+                '4️⃣ Der Kontext (Ort) von CDEF wird weniger prominent',
+                '5️⃣ Aber: Die Gesamtstruktur bleibt räumlich ausgedehnt! ✅'
+            ];
+            let step = 0;
+            info.innerHTML = steps[0];
+            const interval = setInterval(() => {
+                step++;
+                if (step >= steps.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                info.innerHTML = steps[step];
+            }, 2000);
+        }
+
+        // Sky canvas interaction
+        function initSky() {
+            const canvas = document.getElementById('sky-canvas');
+            // Add stars
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.opacity = Math.random() * 0.8 + 0.2;
+                canvas.appendChild(star);
+            }
+
+            // Mouse interaction
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Remove old spots
+                canvas.querySelectorAll('.spot').forEach(s => s.remove());
+
+                // Add spot visualization
+                const sizes = [30, 60, 120];
+                const colors = ['#44ff88', '#ff8844', '#4488ff'];
+                sizes.forEach((size, i) => {
+                    const spot = document.createElement('div');
+                    spot.className = 'spot';
+                    spot.style.width = size + 'px';
+                    spot.style.height = size + 'px';
+                    spot.style.left = (x - size/2) + 'px';
+                    spot.style.top = (y - size/2) + 'px';
+                    spot.style.borderColor = colors[i];
+                    canvas.appendChild(spot);
+                });
+            });
+        }
+
+        // Quiz
+        let quizScore = 0;
+        let quizAnswered = 0;
+
+        function checkAnswer(btn, correct) {
+            const question = btn.parentElement;
+            const options = question.querySelectorAll('.quiz-option');
+            
+            // Disable all options
+            options.forEach(opt => {
+                opt.disabled = true;
+                opt.style.pointerEvents = 'none';
+            });
+
+            if (correct) {
+                btn.classList.add('correct');
+                quizScore++;
+            } else {
+                btn.classList.add('wrong');
+                // Highlight correct answer
+                options.forEach(opt => {
+                    if (opt.getAttribute('onclick').includes('true')) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+
+            quizAnswered++;
+            if (quizAnswered >= 5) {
+                const scoreDiv = document.getElementById('quiz-score');
+                scoreDiv.style.display = 'block';
+                scoreDiv.querySelector('h3').textContent = 
+                    `🎉 ${quizScore}/5 richtig! ${quizScore >= 4 ? 'Ausgezeichnet!' : quizScore >= 3 ? 'Gut gemacht!' : 'Lies nochmal die Abschnitte durch!'}`;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initSky();
+        });
+    </script>
+</body>
+</html>

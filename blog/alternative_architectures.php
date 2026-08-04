@@ -23,10 +23,10 @@ This chapter surveys the main candidates, with the mathematical core of each.
 Standard self-attention (see the Attention chapter) computes:
 
 $$
-\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d}}\right) V
+\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V
 $$
 
-The $QK^\top$ matrix has shape $n \times n$, where $n$ is the sequence length. Both compute and memory scale as $O(n^2)$. For $n = 128{,}000$, that matrix alone is $128{,}000^2 \times 2$ bytes $\approx 30$ GB in fp16. The architectural alternatives attack this in three different ways:
+where $d_k$ is the dimension of the keys (the head dimension). The $QK^\top$ matrix has shape $n \times n$, where $n$ is the sequence length. Both compute and memory scale as $O(n^2)$. For $n = 128{,}000$, that matrix alone is $128{,}000^2 \times 2$ bytes $\approx 33$ GB in fp16. The architectural alternatives attack this in three different ways:
 
 | Approach | Idea | Memory |
 |----------|------|--------|
@@ -59,7 +59,7 @@ This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{
 
 \cite[Gu et al., 2021]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
 
-### Mamba (\cite[Gu & Dao, 2023]{gu2023mamba}
+### Mamba \cite[Gu & Dao, 2023]{gu2023mamba}
 
 Mamba's key contribution is making the SSM **input-dependent**:
 
@@ -67,11 +67,11 @@ $$
 B_t, C_t, \Delta_t = \text{Linear}(x_t)
 $$
 
-i.e. the state-transition matrices depend on the current input. This breaks linearity at inference (the recurrence must be computed step by step), but allows the model to selectively remember or forget based on context. Mamba matches Transformer quality at language modelling, scales linearly in $n$, and at inference runs as fast as a Transformer with KV-cache disabled.
+i.e. the state-transition matrices depend on the current input. This breaks linearity at inference (the recurrence must be computed step by step), but allows the model to selectively remember or forget based on context. Mamba matches Transformer quality at language modelling, scales linearly in $n$, and at inference runs roughly as fast as a Transformer with KV-cache enabled (the standard optimized setting; see Production Serving chapter).
 </div>
 
 <div class="md">
-### Mamba-2 and SSD (\cite[Dao & Gu, 2024]{dao2024mamba2}
+### Mamba-2 and SSD \cite[Dao & Gu, 2024]{dao2024mamba2}
 
 Mamba-2 reveals that selective SSMs and attention are **algebraically dual** through a tensor contraction framework called **Structured State-Space Duality (SSD)**. In practice this lets Mamba-2 use an efficient attention-like kernel for compute, retaining the linear-time recurrence for inference.
 
@@ -120,9 +120,9 @@ RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at
 ## Other Architectures
 
 * **Hyena** \cite[Poli et al., 2023]{poli2023hyena}: replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
-* **Mega** (\cite[Ma et al., 2022]{ma2022mega} average with attention. Position-aware.
+* **Mega** \cite[Ma et al., 2022]{ma2022mega}: combines moving-average gated linear units with attention. Position-aware.
 * **Striped Hyena-7B** (Together, 2024): Hyena + attention hybrid, 128K context.
-* **\cite[Bubeck et al., 2023]{fedus2022moe}-of-Depths** (\cite[Raposo et al., 2024]{raposo2024mod}: routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
+* **Mixture-of-Depths** \cite[Raposo et al., 2024]{raposo2024mod}: routes tokens through different numbers of layers, averaging $0.5\times$ the compute of a standard Transformer.
 * **Universal Transformers**: recurrent application of the same Transformer block with a halting mechanism.
 
 The field is in active flux; no single "Transformer replacement" has emerged, but hybrids are clearly the immediate future.
@@ -135,7 +135,7 @@ For sequence length $n$, model dim $d$, batch size $b$:
 
 | Architecture | Training FLOPs | Inference memory | Long-context scaling |
 |--------------|---------------|------------------|----------------------|
-| **Transformer** | $O(bnd^2 + bn^2d)$ | $O(bnd + bn^2)$ | Quadratic |
+| **Transformer** | $O(bnd^2 + bn^2d)$ | $O(bnd)$ per generated token (KV-cache) | Quadratic prefill, linear decode |
 | **Sliding-window attention** | $O(bnd^2 + bnwd)$ | $O(bnd)$ | Linear in $n$ (fixed window) |
 | **Linear attention** | $O(bnd^2)$ | $O(bd^2)$ | Linear in $n$ |
 | **State-space model (S4/Mamba)** | $O(bnd^2)$ | $O(bd^2)$ | Linear in $n$ |

@@ -5,12 +5,12 @@ title: Reinforcement Learning
 description: From Q-learning to PPO to GRPO — the foundations of RL that power modern LLM alignment.
 icon: &#127918;
 part: 2
-order: 14
+order: 15
 color: coral
 -->
 
 <div class="md">
-Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning. In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal. It is the foundation of modern LLM alignment: \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, DPO, GRPO, and the o1/R1 paradigm all build on it.
+Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning. In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal. It is the foundation of modern LLM alignment: **RLHF**, DPO, GRPO, and the o1/R1 paradigm all build on it.
 
 This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged.
 </div>
@@ -31,6 +31,12 @@ The agent follows a **policy** $\pi(a \mid s)$: a probability distribution over 
 $$
 \pi^* = \arg\max_\pi \mathbb{E}_\pi\!\left[\sum_{t=0}^{\infty} \gamma^t R(s_t, a_t)\right]
 $$
+
+A few terms used throughout the chapter:
+
+* **Trajectory** $\tau = (s_0, a_0, r_0, s_1, a_1, r_1, \dots, s_T)$: the full sequence of states, actions, and rewards produced by one rollout of a policy.
+* **Return** $G_t = \sum_{k=0}^{\infty} \gamma^k R(s_{t+k}, a_{t+k})$: the discounted sum of future rewards from time $t$ onward (the quantity inside the expectation above, anchored at $s_0 = s$).
+* **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session). For continuing tasks without a natural endpoint, RL uses "episodic" framing by resetting at fixed horizons.
 </div>
 
 <div class="md">
@@ -60,11 +66,13 @@ $$
 V^*(s) = \max_a \left[R(s, a) + \gamma \sum_{s'} P(s' \mid s, a)\, V^*(s')\right]
 $$
 
-For an LLM, the "state" is the current context window, the "action" is the next token, and the "reward" comes from a reward model (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) or verifier (reasoning training).
+For an LLM, the "state" is the current context window, the "action" is the next token, and the "reward" comes from a reward model (**RLHF**) or verifier (reasoning training).
 </div>
 
 <div class="md">
-## Tabular RL: Q-Learning (\cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
+## Tabular RL: Q-Learning
+
+Q-Learning \cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
 
 $$
 Q(s, a) \leftarrow Q(s, a) + \alpha \left[r + \gamma \max_{a'} Q(s', a') - Q(s, a)\right]
@@ -92,7 +100,9 @@ $$
 
 where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is the **advantage**: how much better this action was than the baseline $b(s_t)$.
 
-### REINFORCE (\cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
+### REINFORCE
+
+REINFORCE \cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
 </div>
 
 <div class="md">
@@ -105,7 +115,7 @@ where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is 
 
 The critic's TD-error $G_t - V_\phi(s_t)$ is a low-variance estimate of the advantage.
 
-### A2C / A3C (\cite[Mnih et al., 2016]{mnih2016a3c}
+### A2C / A3C \cite[Mnih et al., 2016]{mnih2016a3c}
 
 **Asynchronous** Advantage Actor-Critic: parallel workers update a shared model asynchronously. Stabilizes training; superseded by synchronous methods.
 
@@ -119,13 +129,13 @@ $$
 
 where $r_t(\theta) = \pi_\theta(a_t \mid s_t) / \pi_{\theta_{\text{old}}}(a_t \mid s_t)$ is the probability ratio. The clip prevents destructively large updates.
 
-PPO is simple, stable, and the default choice for \cite[Ouyang et al., 2022]{ouyang2022instructgpt} and many robotics tasks.
+PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.
 </div>
 
 <div class="md">
-## \cite[Ouyang et al., 2022]{ouyang2022instructgpt}: Reinforcement Learning from \cite[Ouyang et al., 2022]{ouyang2022instructgpt}
+## RLHF: Reinforcement Learning from Human Feedback
 
-\cite[Ouyang et al., 2022]{ouyang2022instructgpt} (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
+**RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
 
 1. **Collect comparison data**: humans rank multiple model outputs for the same prompt.
 2. **Train a reward model** $R_\phi(x, y)$ that predicts the human's preference score.
@@ -134,7 +144,7 @@ PPO is simple, stable, and the default choice for \cite[Ouyang et al., 2022]{ouy
 The full PPO loss combines three terms:
 
 $$
-L^{\text{\cite[Ouyang et al., 2022]{ouyang2022instructgpt}}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)
+L^{\text{RLHF}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)
 $$
 
 The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model — a critical stabilizer.
@@ -149,9 +159,9 @@ where $y_w$ is the "winner" and $y_l$ the "loser".
 </div>
 
 <div class="md">
-## DPO: \cite[Rafailov et al., 2023]{rafailov2023dpo} Optimization
+## DPO: Direct Preference Optimization \cite[Rafailov et al., 2023]{rafailov2023dpo}
 
-Rafailov et al. (2023) showed that the \cite[Ouyang et al., 2022]{ouyang2022instructgpt} objective has a **closed-form solution**:
+Rafailov et al. (2023) showed that the **RLHF** objective has a **closed-form solution**:
 
 $$
 \pi^*(y \mid x) \propto \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{1}{\beta} R(x, y)\right)
@@ -169,7 +179,7 @@ $$
 L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)}\!\left[\log \sigma\!\left(\beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right]
 $$
 
-**No reward model, no PPO, no rollouts**. Just a supervised loss on (prompt, winner, loser) triples. DPO matches \cite[Ouyang et al., 2022]{ouyang2022instructgpt} on alignment benchmarks with much simpler infrastructure.
+**No reward model, no PPO, no rollouts**. Just a supervised loss on (prompt, winner, loser) triples. DPO matches **RLHF** on alignment benchmarks with much simpler infrastructure.
 
 Variants have proliferated:
 
@@ -180,13 +190,13 @@ Variants have proliferated:
 </div>
 
 <div class="md">
-## GRPO: \cite[Shao et al., 2024]{shao2024grpo} Policy Optimization
+## GRPO: Group Relative Policy Optimization \cite[Shao et al., 2024]{shao2024grpo}
 
 GRPO (Shao et al., DeepSeek, 2024) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
 
 1. Sample $G$ candidate responses from the current policy: $\{y^{(1)}, \dots, y^{(G)}\}$.
 2. Score each with a reward model (or rule-based verifier).
-3. Compute the **\cite[Shao et al., 2024]{shao2024grpo} advantage**:
+3. Compute the **group-relative advantage**:
 
 $$
 A_i = \frac{r_i - \text{mean}(r_1, \dots, r_G)}{\text{std}(r_1, \dots, r_G)}
@@ -202,12 +212,12 @@ By using the group mean as the baseline, GRPO eliminates the need for a separate
 </div>
 
 <div class="md">
-## The \cite[Ouyang et al., 2022]{ouyang2022instructgpt} Spectrum
+## The RLHF Spectrum
 
 | Method | Reward signal | Critic | Reference model | Use case |
 |--------|---------------|--------|-----------------|----------|
 | **SFT** | None | No | — | Pretraining alignment |
-| **\cite[Ouyang et al., 2022]{ouyang2022instructgpt} (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |
+| **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |
 | **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |
 | **IPO** | Implicit, regularized | No | Yes | Noisy preferences |
 | **KTO** | Implicit, asymmetric | No | Yes | Binary feedback |

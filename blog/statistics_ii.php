@@ -136,7 +136,7 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
 </div>
 
 <div class="md">
-This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower the entropy, the more "certain" and accurate the model has become.
+This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower this cross-entropy, the more "certain" and accurate the model has become.
 </div>
 
 <div class="md">
@@ -387,9 +387,9 @@ Thus began Zarathustra's down-going.
 
 <div class="statlab-section">
     <div class="md">
-        ## The Chain Rule: Kolmogorov's Logic
+        ## The Chain Rule of Probability: Kolmogorov's Logic
 
-        Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule of Probability solves the problem of **Sequential Dependencies**. (It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
         In an LLM, the probability of the sentence "The cat sat" is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$

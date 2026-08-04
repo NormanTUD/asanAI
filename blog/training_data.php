@@ -156,7 +156,7 @@ With natural data exhaust, frontier labs increasingly generate **synthetic train
 
 Risks:
 
-* **Model collapse** \cite[Shumailov et al., 2024]{shumailov2024collapse}: training on a model's own outputs causes drift away from the true data distribution over generations.
+* **Model collapse** \cite[Shumailov et al., 2023]{shumailov2023modelcollapse}: training on a model's own outputs causes drift away from the true data distribution over generations.
 * **Loss of diversity**: synthetic data tends to converge to common modes.
 * **Reward hacking**: synthetic data optimized for a verifier is gamed.
 

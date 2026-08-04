@@ -12,7 +12,7 @@ color: sky
 <div class="md">
 For most of AI history, generation meant GANs or VAEs — fragile, mode-collapsing, hard to train. In 2020, **DDPM** (Ho et al.) — building on **score-based models** introduced by Song & Ermon in 2019 — opened a new path: **diffusion**. By 2022, Stable Diffusion, DALL-E 2, Imagen, and Midjourney had made diffusion the dominant paradigm for image, video, audio, and even protein generation.
 
-The core idea is elegant and almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to reverse the destruction one step at a time**.
+The core idea is elegant and almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to reverse the destruction one step at a time**. Diffusion is **not** the autoregressive next-token prediction that drives LLMs (see the Intuition chapter); the two are different generative paradigms, and speech/audio systems can use either (see the Speech & Audio chapter).
 </div>
 
 <div class="md">

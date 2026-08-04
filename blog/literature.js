@@ -206,7 +206,7 @@ window.bibData = {
 		year: 1494,
 		author: "Luca Pacioli"
 	},
-	"schmidhuber1995nplm": {
+	"schmidhuber1996nplm": {
 		title: "Sequential Neural Text Compression",
 		author: "Jürgen Schmidhuber, Stefan Heil",
 		year: 1996,
@@ -763,7 +763,7 @@ window.bibData = {
 	"eniac1946": {
 		title: "Electronic Numerical Integrator and Computer",
 		author: "John Presper Eckert, John W. Mauchly",
-		year: 1945,
+		year: 1946,
 		url: "https://fi.edu/sites/default/files/2016-04/EckertAndMauchly_CaseFilesReport_TheFranklinInstitute.pdf"
 	},
 	"kilbyic": {
@@ -2709,8 +2709,8 @@ window.bibData = {
 	},
 	"deepblue": {
 		url: "https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996",
-		title: "Deep Blue computer beats world chess champion – archive, 1996",
-		year: "1996",
+		title: "Deep Blue computer beats world chess champion – archive, 1997",
+		year: "1997",
 		author: "Stan Honda"
 	},
 	"hebbianlearningrule": {
@@ -3373,7 +3373,7 @@ window.bibData = {
 	},
 	"ueberwahrheitundluege": {
 		author: "Friedrich Wilhelm Nietzsche",
-		year: 1876,
+		year: 1873,
 		title: "Über Wahrheit und Lüge im außermoralischen Sinne",
 		url: "https://archive.org/details/NietzscheberWahrheitUndLLgeImAussermoralischenSinneAuswahl"
 	},
@@ -3783,6 +3783,13 @@ window.bibData = {
 		author: "Xuezhi Wang, Jason Wei, Dale Schuurmans, et al.",
 		year: 2022,
 		alternativetitle: "Self-Consistency"
+	},
+	"kojima2022zeroshot": {
+		url: "https://arxiv.org/abs/2205.11916",
+		title: "Large Language Models are Zero-Shot Reasoners",
+		author: "Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, Yusuke Iwasawa",
+		year: 2022,
+		alternativetitle: "Zero-Shot CoT"
 	},
 	"yao2023tot": {
 		url: "https://arxiv.org/abs/2305.10601",
@@ -4483,7 +4490,7 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "LayerSkip / Early Exit"
 	},
-	"fedus2022moe": {
+	"bubeck2023moeoverview": {
 		url: "https://arxiv.org/abs/2209.01667",
 		title: "An Overview of Sparse Mixture-of-Experts in Language Models",
 		author: "Sébastien Bubeck, Varun Chandrasekaran, Ronen Eldan, et al.",
@@ -4747,5 +4754,12 @@ window.bibData = {
 		author: "Andy Zou, Long Phan, Sarah Chen, et al.",
 		year: 2023,
 		alternativetitle: "Representation Engineering"
+	},
+	"oldowan": {
+		url: "https://www.nature.com/articles/nature.2016.19482",
+		title: "Oldowan stone tools (re-dating of earliest known systematic stone-tool production)",
+		author: "Erella Hovers, Avraham Ronen",
+		year: 2017,
+		alternativetitle: "Oldowan"
 	}
 };

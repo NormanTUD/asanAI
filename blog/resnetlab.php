@@ -32,7 +32,7 @@ This was first mathematically accurately described by \citeauthor{hochreiter1991
 
 ## The Residual Solution
 
-ResNet (short for *Residual Network*, first described by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}') changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$. The original mapping is reconstructed as:
+ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \citeyear{he2015resnet} in their paper '\citetitle{he2015resnet}', and won the ImageNet competition in December 2015. The skip-connection idea itself, however, did not originate there: Hochreiter's \citeyear{hochreiter1991vanishing} analysis already contained the germ of the idea, and \citeauthor{highway2015}'s **Highway Networks** \citeyear{highway2015} (May 2015, seven months earlier) introduced learnable gating on top of skip connections and demonstrated training of truly deep feedforward networks with hundreds of layers. ResNet can be viewed as the special case of a Highway Network whose gates are always open (see the History chapter). ResNet changes the fundamental building block of the convolution. Instead of trying to learn the mapping $H(x)$ directly, we ask the network to learn the **residual** (the *difference*) $F(x) := H(x) - x$. The original mapping is reconstructed as:
 
 $$ y = F(x, \{W_i\}) + x $$
 

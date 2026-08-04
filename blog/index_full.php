@@ -52,8 +52,6 @@
 	incl("The History of Language: From Sanskrit to LLMs", "language");
 	incl("Statistics I — Distributions and Inference", "statistics_i");
 	incl("Statistics II — Inference and Information", "statistics_ii");
-	incl("The Untold History of AI", "untold_history");
-	incl("The Global AI Ecosystem", "global_ai_ecosystem");
 	incl("Loss: Teaching through Failure", "losslab");
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	incl('Differentiation: The Mathematics of Change', "differentiation");
@@ -99,7 +97,8 @@
 	incl("Reasoning & Test-Time Compute", "reasoning");
 	incl("Evaluation & Benchmarks", "evaluation");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
-	incl("The Economics of AI", "economics");
+	incl("The Global AI Ecosystem", "global_ai_ecosystem");
+	incl("The Untold History of AI", "untold_history");
 	incl("Frontier Topics", "frontier");
 	incl("AI Law & Regulation", "law_regulation");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");

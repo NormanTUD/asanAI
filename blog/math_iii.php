@@ -116,10 +116,10 @@ These are real problems for classical statistical methods. Naïve nearest-neighb
 
 You may have heard of the "curse of dimensionality": in high dimensions, distance metrics break down, and all points become roughly equidistant. But there is a corresponding **blessing of dimensionality** that makes neural networks possible.
 
-In high-dimensional spaces, random vectors are almost always **nearly orthogonal**. In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with vanishingly small variance:
+In high-dimensional spaces, random vectors are almost always **nearly orthogonal**. In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with small variance — the probability of a cosine above $0.1$ is only about $0.6\%$:
 
 $$
-P(|\cos(\mathbf{v}_1, \mathbf{v}_2)| > 0.1) \approx 0
+P(|\cos(\mathbf{v}_1, \mathbf{v}_2)| > 0.1) \approx 0.006
 $$
 
 This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many "almost-orthogonal" directions for free. This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.
@@ -215,7 +215,7 @@ The student who masters both — and knows when to use which — will be far mor
 	const c = document.getElementById('blessing-viz');
 	if (!c) return;
 
-	const dims = [2, 5, 10, 50, 100, 500, 1000, 4096];
+	const dims = [2, 5, 10, 50, 100, 500, 768, 1000, 4096];
 	const probAboveThreshold = dims.map(d => {
 		// P(|cos| > 0.1) for two random vectors in d dimensions
 		// cos theta ~ Normal(0, 1/d) approximately

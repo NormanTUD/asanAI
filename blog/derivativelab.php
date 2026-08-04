@@ -5,7 +5,7 @@ title: Derivatives: How AI "Learns" to get better
 description: Understanding gradients, the simplest form of the learning signal, and how AI finds its way downhill.
 icon: &#9889;
 part: 2
-order: 6
+order: 7
 color: coral
 -->
 
@@ -86,7 +86,7 @@ color: coral
 
 Above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
 
-The symbol $\partial$ for partial derivatives was introduced Marquis de Condorcet in \citeyear{condorcet1770}, yet later popularized by by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) and \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
+The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}, yet later popularized by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) and \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
 
 #### The Theory: Isolation
 The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.

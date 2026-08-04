@@ -48,7 +48,7 @@ Or, as a commuting diagram:
 </div>
 
 <div class="optional md" data-headline="The Universal Approximation Theorem">
-The **Universal Approximation Theorem** (proven by \citeauthor{hornik}) establishes that the power of neural networks is derived from their multilayer feedforward architecture rather than any specific activation function. \citeauthor{hornik} demonstrated that a single hidden layer is sufficient to approximate any function to an arbitrary degree of accuracy, provided there are enough hidden units. A network with $n$ hidden units implements functions of the form:
+The **Universal Approximation Theorem** (proven by \citeauthor{hornik1989universal} in \citeyear{hornik1989universal}, with a related analysis by \citeauthor{hornik} in \citeyear{hornik}) establishes that the power of neural networks is derived from their multilayer feedforward architecture rather than any specific activation function. \citeauthor{hornik1989universal} demonstrated that a single hidden layer is sufficient to approximate any function to an arbitrary degree of accuracy, provided there are enough hidden units. A network with $n$ hidden units implements functions of the form:
 
 $$h(x) = \sum_{j=1}^{n} \beta_j \psi(a_j^T x - \theta_j)$$
 

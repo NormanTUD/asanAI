@@ -220,7 +220,7 @@ function resolveCitations($text, $bibData) {
 			case 'citeauthor': return $entry['author'];
 			case 'citeauthorlastnameand':
 				$authors = preg_split('/, | and /', $entry['author']);
-				$lastNames = array_map(function($n) { return trim(explode(' ', trim($n))[0]); }, $authors);
+				$lastNames = array_map(function($n) { $parts = explode(' ', trim($n)); return end($parts); }, $authors);
 				if (count($lastNames) === 1) return $lastNames[0];
 				if (count($lastNames) === 2) return implode(' and ', $lastNames);
 				$last = array_pop($lastNames);
@@ -261,6 +261,7 @@ function loadLiterature($litFile) {
 			'author' => preg_match('/author\s*:\s*"([^"]+)"/', $body, $a) ? $a[1] : '',
 			'year'   => preg_match('/year\s*:\s*"?(\d{4}|c\.\s\d+\sBCE)"?/', $body, $y) ? $y[1] : '',
 			'url'    => preg_match('/url\s*:\s*"([^"]+)"/', $body, $u) ? $u[1] : '',
+			'alternativetitle' => preg_match('/alternativetitle\s*:\s*"([^"]+)"/', $body, $at) ? $at[1] : '',
 		];
 	}
 	return $bibData;

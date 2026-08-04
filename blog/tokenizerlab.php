@@ -102,7 +102,7 @@ The concept of viewing text as a sequence of raw characters dates back to \citea
             <span class="section-token-count"></span>
         </div>
         <div class="md">
-WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it merges the pair that most improves the **likelihood of the training data**. It was introduced by \citeauthor{schuster2012wordpiece} (\citeyear{schuster2012wordpiece}) to handle the massive character sets of Japanese and Korean, and later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., "tokenization" → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
+WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it merges the pair whose combination yields the largest **increase in the likelihood of the training data** under a unigram-language-model score (Schuster & Nakajima 2012; the simplified ratio below is the proxy that BERT-style implementations use in practice). It was introduced by \citeauthor{schuster2012wordpiece} (\citeyear{schuster2012wordpiece}) to handle the massive character sets of Japanese and Korean, and later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., "tokenization" → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
         </div>
 
 	<div class="optional md" data-headline="The WordPiece-Algorithm">
@@ -111,11 +111,11 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
 		    <strong>Initialize the vocabulary</strong> with every character present in the training data.
 		  </li>
 		  <li>
-		    <strong>Score every candidate pair</strong>, but instead of raw frequency, WordPiece computes which merge would most improve the <strong>likelihood of the training data</strong>. The scoring formula is typically:
+		    <strong>Score every candidate pair</strong>, but instead of raw frequency, WordPiece computes which merge yields the largest <strong>increase in the likelihood of the training data</strong> under a unigram-language-model score (the original formulation; Schuster & Nakajima 2012). The simplified proxy used in BERT-style implementations is a likelihood-ratio / pointwise-mutual-information score:
 		    <p align="center">
 		      $$\text{score}(a, b) = \frac{\text{freq}(ab)}{\text{freq}(a) \times \text{freq}(b)}$$
 		    </p>
-		    This favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently.
+		    This favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently — which is why the formula is a *ratio* rather than a raw frequency: BPE uses raw frequency, WordPiece uses the ratio.
 		  </li>
 		  <li>
 		    <strong>Merge the highest-scoring pair</strong> and add the new symbol to the vocabulary.

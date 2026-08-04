@@ -5,7 +5,7 @@ title: Backpropagation
 description: The 1986 algorithm that made deep learning possible, forward pass, backward pass, weight updates.
 icon: &#8634;
 part: 2
-order: 9
+order: 10
 color: coral
 -->
 
@@ -55,13 +55,13 @@ This means that once we know the output of a sigmoid neuron, we can instantly co
 
 ## Loss Function
 
-The network's error is measured using the **Sum of Squared Errors (SSE)**:
+The network's error is measured using the **Sum of Squared Errors with a $\tfrac{1}{2}$ factor** (sometimes called *half-SSE* or *0.5·MSE*):
 
 $$
 E_{\text{total}} = \sum_i \frac{1}{2}(t_i - o_i)^2
 $$
 
-Here, $t_i$ is the target value, and $o_i$ is the network's output. The factor $\frac{1}{2}$ is included for convenience, as it cancels out when taking derivatives.
+Here, $t_i$ is the target value, and $o_i$ is the network's output. The factor $\frac{1}{2}$ is included for convenience, as it cancels out when taking derivatives. The standard **MSE** (used in the Loss and Overfitting chapters) is $\tfrac{1}{N}\sum (y_i - \hat{y}_i)^2$ — same shape, no $\tfrac{1}{2}$, normalised by batch size; both formulations share the same minima.
 
 ## Backward Pass: Updating Weights
 
@@ -80,9 +80,13 @@ Where:
 
 The term $\delta$ quantifies how much a neuron contributed to the total error:
 
-**For Output Neurons:** $\delta_{\text{output}} = -(t - o) \cdot o \cdot (1 - o)$
+**For Output Neurons (with sigmoid + SSE):** $\delta_{\text{output}} = -(t - o) \cdot o \cdot (1 - o)$
 
-**For Hidden Neurons:** $\delta_{\text{hidden}} = (\delta_{\text{next}} \cdot w_{\text{next}}) \cdot h \cdot (1 - h)$
+**For Hidden Neurons (with sigmoid activation):** $\delta_{\text{hidden}} = (\delta_{\text{next}} \cdot w_{\text{next}}) \cdot h \cdot (1 - h)$
+
+(For a different activation $\phi$, the factor $h(1-h)$ generalises to $\phi'(z)$, the activation's derivative evaluated at the hidden neuron's pre-activation; the chain rule $\delta^{(\ell)} = \big(W^{(\ell+1)\top} \delta^{(\ell+1)}\big) \odot \phi'(z^{(\ell)})$ is the general form.)
+
+(The sign convention follows from the chain rule applied to $E = \tfrac{1}{2}(t - o)^2$ with $o = \sigma(z)$: $\delta = \partial E / \partial z = -(t - o) \cdot \sigma'(o) = -(t - o) \cdot o (1 - o)$, so the leading minus is part of the formula, not an extra sign flip. The update $w \leftarrow w - \eta \cdot \partial E / \partial w$ then moves the weights in the direction that *decreases* $E$. Note that this $\delta$ is for the *Sum of Squared Errors with a sigmoid output*; the gradient $\partial \mathcal{L} / \partial z_i = \hat{y}_i - y_i$ that appears in the Loss chapter is for the *cross-entropy + softmax* combination. These are gradients of two different objectives, so they are not the same quantity.)
 
 ## Weight Updates
 

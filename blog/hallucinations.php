@@ -74,7 +74,7 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
 
 * **Human in the Loop:** Never automate a system where the AI takes critical action (like sending money or medical advice) without a human checking it first.
 * **Verify Facts:** Use AI for summarization, drafting, and brainstorming. Do **not** use it as a search engine for facts without verifying the output via Google or a trusted source.
-* **RAG (Retrieval Augmented Generation):** This is a technique where we give the AI a specific text (like a manual) and say "Only answer using this text." This reduces hallucinations significantly because the AI doesn't have to rely on its "fuzzy memory."
+* **RAG (Retrieval Augmented Generation):** An automated retriever searches a knowledge base (e.g., a manual, documents, or a database) and injects the most relevant passages into the prompt — the AI then answers using only those passages. This reduces hallucinations significantly because the AI doesn't have to rely on its "fuzzy memory."
 
 The Rule of Thumb is: even if the output looks right, be suspicious. Always check the math, run the code, and check the links.
 
@@ -194,7 +194,7 @@ Hallucinations often occur because of how AI "sees" text. Models don't read word
 * **Example:** Asking an AI to count the "m"s in "strawberry" often triggers a hallucination because the tokenization obscures the actual spelling.
 
 ### Hallucination vs. Creativity
-It is helpful to recognize that "hallucination" is a double-edged sword. In factual contexts, it is a bug; in creative contexts, it is a feature.
+It is helpful to recognize that "hallucination" is a double-edged sword. In factual contexts it is an unwanted *expression* of the model's default state (see the Philosophy chapter: hallucination is the default epistemic state of next-token prediction, not a bug to be patched); in creative contexts the same statistical flexibility becomes a feature. The mitigation is the same in both cases: collapse the output distribution toward the desired region.
 
 | Context | View of Hallucination | Desired Temperature ($T$) |
 | :--- | :--- | :--- |

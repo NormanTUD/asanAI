@@ -16,7 +16,7 @@ color: accent
 	</figure>
 	<figure>
 		<img src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
-		<figcaption class="md">\citetitle[The first Artificial Neural Network by Frank Rosenblatt in 1960]{perceptronimagewiring}</figcaption>
+		<figcaption class="md">\citetitle[Wiring the Perceptron (1958), the first artificial neural network with a formal learning rule]{perceptronimagewiring}</figcaption>
 	</figure>
 </div>
 

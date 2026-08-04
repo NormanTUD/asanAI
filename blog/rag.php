@@ -157,7 +157,7 @@ ICL relies on whatever the user manually puts in the prompt. RAG **automates the
 
 ## RAG and Long Context Windows
 
-Modern LLMs have ever-growing context windows: 128K tokens (GPT-4), 200K (Claude), even 1M+ (Gemini). So why bother with RAG?
+Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (Claude 3), even 1M+ (Gemini 1.5). So why bother with RAG?
 </div>
 
 <div id="raglab-context-table"></div>
@@ -174,6 +174,7 @@ In practice, **RAG + long context** work together: RAG retrieves the top 10–20
 ## Limitations &amp; Failure Modes
 
 - **Garbage in, garbage out.** If the document store contains wrong information, RAG will confidently retrieve and present it.
+- **Indirect prompt injection.** Because RAG feeds retrieved text straight into the prompt, malicious instructions hidden in a document can try to hijack the model (see the Security chapter).
 - **Chunking matters.** If a critical fact is split across two chunks and neither is retrieved, the answer will be incomplete.
 - **Embedding blind spots.** Embedding models can misjudge similarity, a query about "Python" (the snake) might retrieve docs about "Python" (the language).
 - **No reasoning over absence.** RAG can't tell you "this information doesn't exist in the database." It will retrieve the *closest* thing, which may be irrelevant.
