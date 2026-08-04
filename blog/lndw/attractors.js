@@ -131,7 +131,7 @@ function renderStep(step) {
 
     const captions = [
         '<b>Generator (Quelle):</b> Die Umkehrung eines Punkt-Attraktors. Aus <b>einem</b> Punkt kommen <b>beliebig viele</b> Trajektorien heraus — <i>ein</i> Zustand erzeugt <i>alle</i> möglichen Ausgaben.<br>Genau das tut das LLM bei jeder Vorhersage: <i>ein</i> Zustandsvektor → Verteilung über <i>alle</i> möglichen nächsten Tokens. Punkte werden nicht angezogen – sie werden <b>erzeugt</b>.',
-        '<b>Punkt-Attraktor:</b> Punkte bewegen sich frei im Raum. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
+        '<b>Punkt-Attraktor:</b> Das <b>Gegenteil</b> eines Generators — viele Punkte werden von <i>einem</i> Punkt <b>angezogen</b> und verschwinden in ihm. Sobald sie in das Becken des Attraktors geraten, werden sie unaufhaltsam hineingezogen.',
         '<b>Repeller (Abstoßung):</b> Das Gegenteil eines Attraktors – ein Punkt, von dem Teilchen <b>weggetrieben</b> werden. Kommt ein Teilchen zu nah, wird es abgestoßen und fliegt davon.',
         '<b>Torus-Attraktor:</b> ☀️ Sonne → 🌍 Erde kreist darum → 🌏 Mond kreist um die Erde. Die Mondbahn zeichnet einen Torus: ein Kreis um einen Kreis. <br><b>⚠️ Homotopie-Hinweis:</b> Der Torus rechts zeigt die <i>topologische Struktur</i> (Kreis × Kreis), nicht die exakte räumliche Geometrie.',
         '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
