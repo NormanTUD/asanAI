@@ -83,7 +83,6 @@ const DemoRegistry = (() => {
                         slideTest: s => s.getAttribute('data-title') === 'Muster in der Wirklichkeit',
                         onEnter: d => {
                             d.renderGermanZipf();
-                            d.renderFinneganZipf();
                             setTimeout(() => d.resize(), 100);
                         } },
 
