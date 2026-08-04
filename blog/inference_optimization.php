@@ -86,7 +86,7 @@ Beyond quantization:
 * **Prefix caching**: KV cache for a system prompt is computed once and reused across requests. Standard for chatbot APIs.
 * **Cross-request KV sharing**: identical prompts across users share KV blocks. Used in vLLM and SGLang.
 
-A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to 100+ concurrent users on a single 8xH100 node.
+A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 336 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).
 </div>
 
 <div class="md">

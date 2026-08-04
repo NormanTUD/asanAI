@@ -215,7 +215,7 @@ The student who masters both — and knows when to use which — will be far mor
 	const c = document.getElementById('blessing-viz');
 	if (!c) return;
 
-	const dims = [2, 5, 10, 50, 100, 500, 1000, 4096];
+	const dims = [2, 5, 10, 50, 100, 500, 768, 1000, 4096];
 	const probAboveThreshold = dims.map(d => {
 		// P(|cos| > 0.1) for two random vectors in d dimensions
 		// cos theta ~ Normal(0, 1/d) approximately

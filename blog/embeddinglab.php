@@ -34,7 +34,7 @@ The concept of a **manifold** is rooted in the German word **Mannigfaltigkeit**,
 
 Riemann was attempting to **generalize the idea of a surface to higher dimensions**. Before Riemann, geometry was essentially limited to the study of curves (1D), surfaces (2D), and ordinary 3D Euclidean space. The key problems driving his work were:
 
-1. **Extending geometry beyond three dimensions:** Riemann wanted a rigorous mathematical framework for spaces of *any* number of dimensions, not just the two-dimensional surfaces studied by Gauss.
+1. **Extending geometry beyond three dimensions:** Riemann wanted a rigorous mathematical framework for spaces of *any* number of dimensions, not just the two-dimensional surfaces studied by Gauß.
 
 2. **Understanding spaces that are locally flat but globally complex:** Manifolds are shapes that "look flat to an ant living on them, even though they might have a more complicated global structure." A sphere, for example, looks flat if you're standing on it (like the Earth), but its global structure is curved and closed.
 
@@ -46,7 +46,7 @@ The German word *Mannigfaltigkeit* carries connotations of **diversity, multipli
 
 **The Broader Intellectual Context**:
 
-Riemann's work did not emerge in isolation. It built upon **Gauss's** earlier work on the intrinsic geometry of surfaces (\citetitle{gauscurvas}), which showed that curvature could be measured without reference to an ambient space. The subsequent **axiomatization of manifolds** in the early 20th century was heavily influenced by **David Hilbert's** axiomatic approach (\citetitle{hilbert1903grundlagen}). The formal definition continued to evolve through the work of mathematicians like **Hermann Weyl**, who gave one of the first rigorous modern definitions in \citetitle{weylriemann} (1913), and **Hassler Whitney** (\citetitle{whitney1936manifolds}, 1936), who established the modern embedding theorems. **Charles Ehresmann** (\citetitle{ehresmann1950connexions}, ) further developed the concepts of charts, atlases, and fiber bundles that are standard in modern differential geometry.
+Riemann's work did not emerge in isolation. It built upon **Gauß's** earlier work on the intrinsic geometry of surfaces (\citetitle{gauscurvas}), which showed that curvature could be measured without reference to an ambient space. The subsequent **axiomatization of manifolds** in the early 20th century was heavily influenced by **David Hilbert's** axiomatic approach (\citetitle{hilbert1903grundlagen}). The formal definition continued to evolve through the work of mathematicians like **Hermann Weyl**, who gave one of the first rigorous modern definitions in \citetitle{weylriemann} (1913), and **Hassler Whitney** (\citetitle{whitney1936manifolds}, 1936), who established the modern embedding theorems. **Charles Ehresmann** (\citetitle{ehresmann1950connexions}, ) further developed the concepts of charts, atlases, and fiber bundles that are standard in modern differential geometry.
 
 **Connection to Modern AI**:
 

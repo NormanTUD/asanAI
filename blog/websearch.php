@@ -403,6 +403,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 - **JavaScript-heavy sites:** Require expensive headless browser rendering
 - **Multimedia content:** Images, videos, and interactive content can't be "read"
 - **Hallucinated citations:** The LLM might misattribute information to the wrong source
+- **Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (see the Security chapter)
 
 ## Summary
 

@@ -10,7 +10,7 @@ color: rose
 -->
 
 <div class="md">
-A pretrained LLM is a "loud internet simulator": it produces plausible text but doesn't follow instructions, refuses harmful requests, or engage in dialogue. The path from raw internet text to a useful assistant runs through a series of post-training stages. This chapter walks through the modern pipeline: **SFT → RLHF → DPO/KTO/GRPO → reasoning RL**, with the math behind each.
+A pretrained LLM is a "loud internet simulator": it produces plausible text but doesn't follow instructions, refuses harmful requests, or engage in dialogue. The path from raw internet text to a useful assistant runs through a series of post-training stages. This chapter walks through the modern pipeline: **SFT → DPO/KTO/GRPO → RLHF (PPO) refinement → reasoning RL**, with the math behind each.
 
 The trend in 2024–2025: most alignment work has moved away from RLHF toward **DPO-family** methods that are simpler, more stable, and don't require a separate reward model.
 </div>

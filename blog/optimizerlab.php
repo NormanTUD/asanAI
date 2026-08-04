@@ -152,7 +152,7 @@ The modern **SGD** update rule is a direct application of their iterative formul
 
 $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
 
-While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by \citeauthor{cauchy1847} in \citeyear{cauchy1847}. He used it to solve non-linear equations in astronomy.
+where $a_n$ is the step size (the historical ancestor of today's learning rate $\eta$) and $\alpha$ is the target value being estimated from noisy observations $y_n$. While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by \citeauthor{cauchy1847} in \citeyear{cauchy1847}. He used it to solve non-linear equations in astronomy.
 
 ### The Bridge to Modern AI: Backpropagation
 

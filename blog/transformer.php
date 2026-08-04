@@ -348,7 +348,7 @@ However, research into larger Decoder-only models from \cite[Elhage et al., 2021
 
 <div class="optional md" data-headline="Attention-Heads and In-Context-Learning">
 Induction heads represent a specialized evolutionary step beyond the "Positional Heads"
-described in Voita et al. (\citeyear{incontextlearninghead}). While a standard positional head might only look at
+described in Voita et al. (\citeyear{analyzingmultiheads}). While a standard positional head might only look at
 the token immediately before it, the Induction Head circuit uses that information
 to perform algorithmic copying.
 

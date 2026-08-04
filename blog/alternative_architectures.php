@@ -23,10 +23,10 @@ This chapter surveys the main candidates, with the mathematical core of each.
 Standard self-attention (see the Attention chapter) computes:
 
 $$
-\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d}}\right) V
+\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V
 $$
 
-The $QK^\top$ matrix has shape $n \times n$, where $n$ is the sequence length. Both compute and memory scale as $O(n^2)$. For $n = 128{,}000$, that matrix alone is $128{,}000^2 \times 2$ bytes $\approx 30$ GB in fp16. The architectural alternatives attack this in three different ways:
+where $d_k$ is the dimension of the keys (the head dimension). The $QK^\top$ matrix has shape $n \times n$, where $n$ is the sequence length. Both compute and memory scale as $O(n^2)$. For $n = 128{,}000$, that matrix alone is $128{,}000^2 \times 2$ bytes $\approx 33$ GB in fp16. The architectural alternatives attack this in three different ways:
 
 | Approach | Idea | Memory |
 |----------|------|--------|
