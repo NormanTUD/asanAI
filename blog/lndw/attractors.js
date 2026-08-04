@@ -2501,15 +2501,15 @@ function renderGenerator(container) {
     const particles = [];
 
     function spawnParticle() {
-        // ZUFÄLLIGE Richtung in alle 360° — Token streut
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 1.4 + Math.random() * 1.0;
+        // Strikt nach rechts, Y gleichmäßig von oben bis unten verteilt
+        // → ergibt einen Dreiecks-Bereich, in den die Becken fallen
+        const speed = 1.5 + Math.random() * 0.8;
         const i = particles.length % colors.length;
         return {
-            x: sourceX + (Math.random() - 0.5) * 8,
-            y: sourceY + (Math.random() - 0.5) * 8,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
+            x: sourceX + (Math.random() - 0.5) * 6,
+            y: 40 + Math.random() * (H - 80), // gleichmäßig zwischen oben und unten
+            vx: speed,                        // strikt nach rechts
+            vy: 0,                             // keine vertikale Startgeschwindigkeit
             color: colors[i],
             name: names[i],
             trail: [],
