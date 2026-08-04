@@ -206,7 +206,7 @@ This is required, because the embedding and attention operations have no built-i
 <div class="md">
 ### Step 4: The Transformer Layers
 
-This is the heart of the model, introduced in \citeyear{vaswani2017attention}. The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers). Each layer refines the model's understanding a little more. This is done by adding the output of each layer to the existing data, instead of overwriting it, so that nothing learned earlier gets thrown away:
+This is the heart of the model, the **Transformer architecture** introduced in \citeyear{vaswani2017attention}. The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers). Each layer refines the model's understanding a little more. This is done by adding the output of each layer to the existing data, instead of overwriting it, so that nothing learned earlier gets thrown away:
 
 $$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
 

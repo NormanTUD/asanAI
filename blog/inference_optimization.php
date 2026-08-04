@@ -86,7 +86,7 @@ Beyond quantization:
 * **Prefix caching**: KV cache for a system prompt is computed once and reused across requests. Standard for chatbot APIs.
 * **Cross-request KV sharing**: identical prompts across users share KV blocks. Used in vLLM and SGLang.
 
-A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 336 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).
+A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).
 </div>
 
 <div class="md">
@@ -128,7 +128,7 @@ The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at hig
 </div>
 
 <div class="md">
-## Speculative Decoding (Leviathan, Chen, 2023)
+## Speculative Decoding (\cite[Leviathan et al., 2023]{leviathan2023speculative})
 
 LLM decoding is sequential: each token requires a full forward pass. **Speculative decoding** breaks this:
 
@@ -137,7 +137,7 @@ LLM decoding is sequential: each token requires a full forward pass. **Speculati
 3. Accept the longest prefix where target agrees with draft.
 4. Resample from the target's corrected distribution on the first mismatch.
 
-If $k = 5$ and acceptance rate is 80%, expected tokens per step = $\frac{1 - 0.8^5}{1 - 0.8} \approx 3.36$. Net speedup: **2–3×**.
+If $k = 5$ speculative tokens are drafted and per-token acceptance rate is $\alpha = 80\%$, the expected number of tokens accepted per verification step is $\frac{1 - \alpha^{k+1}}{1 - \alpha} = \frac{1 - 0.8^6}{0.2} \approx 3.69$. Net speedup: **2–3×**.
 
 Variants:
 

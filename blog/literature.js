@@ -3784,6 +3784,13 @@ window.bibData = {
 		year: 2022,
 		alternativetitle: "Self-Consistency"
 	},
+	"kojima2022zeroshot": {
+		url: "https://arxiv.org/abs/2205.11916",
+		title: "Large Language Models are Zero-Shot Reasoners",
+		author: "Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, Yusuke Iwasawa",
+		year: 2022,
+		alternativetitle: "Zero-Shot CoT"
+	},
 	"yao2023tot": {
 		url: "https://arxiv.org/abs/2305.10601",
 		title: "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
@@ -4483,7 +4490,7 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "LayerSkip / Early Exit"
 	},
-	"fedus2022moe": {
+	"bubeck2023moeoverview": {
 		url: "https://arxiv.org/abs/2209.01667",
 		title: "An Overview of Sparse Mixture-of-Experts in Language Models",
 		author: "Sébastien Bubeck, Varun Chandrasekaran, Ronen Eldan, et al.",

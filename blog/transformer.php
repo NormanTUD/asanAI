@@ -263,12 +263,12 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}
 #### Concatenation Definition
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
-For $h$ heads, where each head has dimension $d_v$:
+For $h$ heads, where each head has dimension $d_k$ (for keys and queries) and $d_v$ (for values):
 
 $$\text{Concat}(\text{head}_1, \dots, \text{head}_h) = [ \text{head}_1, \text{head}_2, \dots, \text{head}_h ]$$
 
-If $d_\text{model} = 512$ and we have $h = 8$ heads:
-* **Each head:** $d_v = \frac{512}{8} = 64$
+If $d_\text{model} = 512$ and we have $h = 8$ heads (with $d_k = d_v = 64$ in the original Transformer):
+* **Each head:** $d_k = d_v = \frac{512}{8} = 64$
 * **Shapes:** $\underbrace{(B, T, 64)}{\substack{\text{head } 1}} + \dots + \underbrace{(B, T, 64)}{\substack{\text{head } 8}} \xrightarrow{\text{Concat}} \underbrace{(B, T, 512)}{\substack{\text{Full Tensor}}}$
 
 If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
@@ -277,23 +277,24 @@ The output width is simply the sum of the input widths.
 
 #### Multi-Head Attention: Lateral Parallelism
 
-After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a **Residual Connection** and **Normalization**:
+After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$ — the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
 </div>
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
-$$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
+$$z_{0} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
 
 <div class="md">
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
-* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence)
-* $d_v = \text{Head Dimension}$ (The dimensionality of the projected keys, queries, and values; usually $d_\text{model} / h$)
+* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section — context disambiguates.)
+* $d_k = \text{Key/Query Head Dimension}$ (dimensionality of the projected keys and queries in each head; usually $d_\text{model} / h$)
+* $d_v = \text{Value Head Dimension}$ (dimensionality of the projected values in each head; in the original Transformer $d_v = d_k$, but the two can differ in general)
 
 For a single head, we say:
 </div>
 
-$$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_i W_i^Q}_{Q}, \underbrace{h_i W_i^K}_{K}, \underbrace{h_i W_i^V}_{V})$$
+$$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_i W_i^Q}_{Q \in \mathbb{R}^{d_k}}, \underbrace{h_i W_i^K}_{K \in \mathbb{R}^{d_k}}, \underbrace{h_i W_i^V}_{V \in \mathbb{R}^{d_v}})$$
 
 <div class="md">
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
@@ -413,9 +414,9 @@ Where:
 
 While attention decides *what to look at*, the FFN decides *what to do with it*.
 
-The final state of this block, **$h_2$**, is formed by another residual connection:
+The final state of this block, **$h_1$**, is formed by another residual connection:
 
-$$h_{2} = h_{1} + \text{FFN}(\text{LayerNorm}(h_1))$$
+$$h_{1} = z_{0} + \text{FFN}(\text{LayerNorm}(z_0))$$
 
 ## The $N$-Layer Recurrence
 In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
@@ -425,7 +426,7 @@ For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be gene
 $$
 \begin{aligned}
 z_n &= h_n + \text{MultiHeadAttention}(\text{LayerNorm}(h_n)) \\
-h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
+h_{n+1} &= z_n + \text{FeedForward}(\text{LayerNorm}(z_n))
 \end{aligned}
 $$
 

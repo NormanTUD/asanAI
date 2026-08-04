@@ -18,7 +18,7 @@ This chapter covers the techniques behind reasoning models, from the cheap and e
 <div class="md">
 ## Chain-of-Thought Prompting
 
-Wei et al. (Google, 2022) discovered that simply adding *"Let's think step by step"* to a prompt dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. The model decomposes the problem into intermediate steps rather than jumping to an answer.
+The **magic phrase** *"Let's think step by step"* — added to a zero-shot prompt — was introduced by \cite[Kojima et al., 2022]{kojima2022zeroshot} and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, \cite[Wei et al., 2022]{wei2022cot} showed that **few-shot** chain-of-thought prompting — providing hand-written reasoning exemplars in the prompt — achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
 
 $$
 P_{\text{CoT}}(y \mid x) = \sum_z P(y \mid x, z)\, P(z \mid x)
@@ -44,7 +44,7 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 | **Self-Refine** | 2023 | Generate, critique, refine iteratively |
 | **Chain-of-Density** | 2023 | Iterative summarization with increasing entity density |
 | **Verifier-guided search** | 2023 | Generate $k$ candidates, score with a learned verifier |
-| **ReAct** | 2022 | Interleave reasoning with tool use |
+| **ReAct** | 2023 | Interleave reasoning with tool use |
 </div>
 
 <div class="md">
@@ -117,10 +117,10 @@ $$
 
 where $n$ is the number of reasoning tokens or search depth. The exponent $b$ depends on problem difficulty: easy problems saturate quickly, hard problems benefit enormously.
 
-For o1-style reasoning on competition math:
+For o1-style reasoning on competition math (approximate values along the curve):
 * $n = 100$ tokens: 50% accuracy
-* $n = 1{,}000$ tokens: 70% accuracy
-* $n = 10{,}000$ tokens: 85% accuracy
+* $n = 1{,}000$ tokens: 60% accuracy
+* $n = 10{,}000$ tokens: 72% accuracy
 
 Compare this with training: achieving 85% on AIME by training would require either a much larger base model or domain-specific data. **Inference-time scaling is often cheaper and more flexible**.
 </div>

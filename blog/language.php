@@ -93,7 +93,7 @@ Each token is then mapped to a point in a high-dimensional **embedding space**, 
 
 ### Attention: Context as Structure
 
-The **Transformer architecture** (2017) introduced the **attention mechanism**, which allows the model to dynamically weigh the relevance of every other token when processing a given token. This is Firth's distributional hypothesis made computational: the model literally measures how much "company" each word keeps with every other word in a passage, building a rich, context-sensitive representation of meaning.
+The **Transformer architecture** (Vaswani et al., 2017) introduced **self-attention** as its central mechanism — building on the general attention idea first introduced by Bahdanau, Cho & Bengio (2014). In self-attention, the model dynamically weighs the relevance of every other token when processing a given token. This is Firth's distributional hypothesis made computational: the model literally measures how much "company" each word keeps with every other word in a passage, building a rich, context-sensitive representation of meaning.
 
 ### Linguistic Algebra
 

@@ -18,11 +18,11 @@ The frontier in 2025: serving 100+ million tokens per second per GPU cluster wit
 <div class="md">
 ## The Inference Challenge
 
-Generating one token from a 70B model in bf16 on an H100 takes ~30 ms of compute. But users experience **time to first token (TTFT)** of < 500 ms and **time per output token (TPOT)** of < 50 ms for natural conversation.
+Generating one token from a 70B model in bf16 on a single H100 takes **~30 ms in practice** (a typical observed number for chat-style decoding). But users experience **time to first token (TTFT)** of < 500 ms and **time per output token (TPOT)** of < 50 ms for natural conversation.
 
 Three bottlenecks:
 
-1. **Memory bandwidth**: each generated token requires reading the full model weights from HBM. For a 70B model in bf16 (140 GB), on an H100 with 3 TB/s HBM, that's ~46 ms per token — and that is just for one user.
+1. **Memory bandwidth (the hard floor)**: each generated token requires reading the full model weights from HBM. For a 70B model in bf16 (140 GB), on an H100 with 3 TB/s HBM, that is **~46 ms per token** as a *pure memory-bandwidth lower bound* — and that is just for one user. The ~30 ms figure above is lower because compute and memory access overlap; the 46 ms bound sets the absolute ceiling.
 2. **Compute throughput**: matmuls saturate FLOPs only at large batch sizes.
 3. **Latency**: chat workloads are bursty; prefill and decode have different characteristics.
 
@@ -40,7 +40,7 @@ $$
 \text{KV memory per token} = 2 \cdot L \cdot h \cdot d_h \cdot \text{bytes}
 $$
 
-For a 70B model ($L = 80$ layers, $h = 64$ heads, $d_h = 128$) with fp16 KV (2 bytes): $2 \cdot 80 \cdot 64 \cdot 128 \cdot 2 = 2.6$ MB per token. For 4K context: 10.5 GB; for 128K context: 336 GB — **exceeding the model weights themselves**.
+For a 70B model ($L = 80$ layers, $h = 64$ heads, $d_h = 128$) with fp16 KV (2 bytes): $2 \cdot 80 \cdot 64 \cdot 128 \cdot 2 = 2.6$ MB per token. For 4K context: 10.5 GB; for 128K context: **335 GB** — **exceeding the model weights themselves**.
 
 This is the dominant memory cost in inference. Several techniques address it:
 
@@ -91,7 +91,7 @@ Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm} is now the standard in vL
 </div>
 
 <div class="md">
-## Speculative Decoding (Leviathan, Chen, et al., 2023)
+## Speculative Decoding (\cite[Leviathan et al., 2023]{leviathan2023speculative})
 
 LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model can generate at most ~30 tokens/s on a single H100, regardless of FLOPs.
 

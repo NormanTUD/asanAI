@@ -94,13 +94,13 @@ Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implem
 
 ### Expert Parallelism (for MoE)
 
-For \cite[Bubeck et al., 2023]{fedus2022moe}-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
+For \cite[Bubeck et al., 2023]{bubeck2023moeoverview}-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
 </div>
 
 <div class="md">
 ## Putting It Together: A Real-World Recipe
 
-Llama 3 (Meta, 2024) was trained on 16,000 H100s using a combination:
+Llama 3 (Meta, 2024) was trained on **16,384 H100s** using a combination:
 
 * **Tensor Parallelism** = 8 (within a node, using NVLink)
 * **Pipeline Parallelism** = 16 (across nodes, using InfiniBand)
