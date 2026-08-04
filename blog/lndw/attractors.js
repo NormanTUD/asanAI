@@ -1,3 +1,4 @@
+        '<b>Generator (Quelle):</b> Ein <b>Quelle-Punkt</b>, aus dem <b>beliebig viele Trajektorien</b> herauskommen. Aus <i>einem</i> Zustand werden <i>alle</i> möglichen Ausgaben erzeugt.<br>Genau das tut das LLM bei jeder Vorhersage: <i>ein</i> Zustandsvektor → Verteilung über <i>alle</i> möglichen nächsten Tokens. Punkte werden nicht angezogen – sie werden <b>erzeugt</b>.'
 // ============================================================
 // ATTRACTOR BASIN VISUALIZATION v7
 // Fixes:
