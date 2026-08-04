@@ -2577,12 +2577,9 @@ function renderGenerator(container) {
             p.vx += (targetVx - p.vx) * 0.04;
             p.vy += (targetVy - p.vy) * 0.04;
 
-            // Wandabstoßung (sanft)
-            const margin = 40;
-            if (p.x < margin)        { p.heading += 0.05; p.vx += 0.15; }
-            if (p.x > W - margin)    { p.heading -= 0.05; p.vx -= 0.15; }
-            if (p.y < margin)        { p.heading += 0.05; p.vy += 0.15; }
-            if (p.y > H - margin)    { p.heading -= 0.05; p.vy -= 0.15; }
+            // Keine Wandabstoßung – Partikel dürfen am Rand rausfliegen.
+            // Die Form des "umgekehrten Beckens" ergibt sich aus der Anfangsrichtung,
+            // nicht aus einer erzwungenen Radialbewegung.
 
             // Speed-Limit
             const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
@@ -2594,9 +2591,8 @@ function renderGenerator(container) {
             p.x += p.vx;
             p.y += p.vy;
 
-            // Wenn weit draußen: respawn am Zentrum
-            const distFromCenter = Math.sqrt((p.x - cx) ** 2 + (p.y - cy) ** 2);
-            if (distFromCenter > Math.min(W, H) * 0.55 || p.x < 10 || p.x > W - 10 || p.y < 10 || p.y > H - 10) {
+            // Wenn komplett außerhalb der Canvas: respawn am Zentrum
+            if (p.x < -20 || p.x > W + 20 || p.y < -20 || p.y > H + 20) {
                 particles[idx] = spawnParticle(p.color, p.name);
                 return;
             }
