@@ -14,31 +14,28 @@ const ZipfViz = {
             this.data = await resp.json();
         } catch (e) {
             console.error('Konnte zipf_data.json nicht laden:', e);
-            this.data = { finwake: { top_words: [], top_freqs: [], total_words: 0, unique_words: 0 },
-                          kjv:     { top_words: [], top_freqs: [], total_words: 0, unique_words: 0 } };
+            this.data = {
+                finwake: { top_words: [], top_freqs: [], total_words: 0, unique_words: 0 },
+                kjv:     { top_words: [], top_freqs: [], total_words: 0, unique_words: 0 }
+            };
         }
         return this.data;
     },
 
-    buildTrace: function(ds, color, label, topN) {
-        const ranks   = ds.top_freqs.map((_, i) => i + 1);
-        const topWords = ds.top_words;
-        const topCount = Math.min(topN, topWords.length);
-        const text = ranks.map((r, i) => {
-            const w = topWords[i];
-            const c = ds.top_freqs[i];
-            return `#${r}: "${w}" (${c.toLocaleString('de-DE')})`;
-        });
+    buildTrace: function(ds, color, label) {
+        const text = ds.top_freqs.map((c, i) =>
+            `#${i+1}: "${ds.top_words[i]}" (${c.toLocaleString('de-DE')})`
+        );
         return {
-            x: ranks,
+            x: ds.top_freqs.map((_, i) => i + 1),
             y: ds.top_freqs,
             mode: 'markers+lines',
             marker: {
                 color: color,
-                size: 6,
-                line: { width: 0.5, color: color }
+                size: 5,
+                line: { width: 0 }
             },
-            line: { color: color, width: 1.5 },
+            line: { color: color, width: 2 },
             text: text,
             hovertemplate: '%{text}<extra></extra>',
             name: label,
@@ -46,38 +43,65 @@ const ZipfViz = {
         };
     },
 
-    // Wählt Anker für die Beschriftung: 1, 2, 3, 4, 5, 6, 7, 8 dann ...
-    // dann letzte Position aus dem Top-Set
-    annotationRanks: function(N) {
-        if (N <= 10) return Array.from({ length: N }, (_, i) => i + 1);
-        const head = [1, 2, 3, 4, 5, 6, 7, 8];
-        const tail = [Math.round(N * 0.25), Math.round(N * 0.5), Math.round(N * 0.75), N];
-        // Deduplizieren und sortieren
-        return [...new Set([...head, ...tail])].sort((a, b) => a - b);
-    },
-
-    buildAnnotations: function(ds, color, position) {
+    // Annotations: top 8 Wörter + "..." in der Mitte + letztes Wort
+    // Position: neben den Datenpunkten (nicht darauf)
+    buildAnnotations: function(ds, color) {
         const N = ds.top_words.length;
-        const ranks = this.annotationRanks(N);
-        return ranks.map(r => {
-            const w = ds.top_words[r - 1];
-            const c = ds.top_freqs[r - 1];
-            // Vorletzte oder letzte als Endpunkt hervorheben
-            const isEdge = (r === 1) || (r === N);
-            return {
+        const annotations = [];
+
+        // Top 8: kleine Labels rechts neben den Datenpunkten
+        const TOP = Math.min(8, N);
+        for (let r = 1; r <= TOP; r++) {
+            annotations.push({
                 x: Math.log10(r),
-                y: Math.log10(c),
-                xref: 'x',
-                yref: 'y',
-                text: isEdge ? `<b>${w}</b><br>${c.toLocaleString('de-DE')}` : w,
+                y: Math.log10(ds.top_freqs[r - 1]),
+                xref: 'x', yref: 'y',
+                text: `<b>${ds.top_words[r - 1]}</b>`,
                 showarrow: false,
-                font: { size: isEdge ? 12 : 10, color: color },
-                bgcolor: isEdge ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.0)',
-                bordercolor: isEdge ? color : 'rgba(0,0,0,0)',
-                borderwidth: isEdge ? 1.5 : 0,
-                borderpad: isEdge ? 3 : 0
-            };
+                xanchor: 'left',
+                yanchor: 'bottom',
+                xshift: 4,
+                yshift: 2,
+                font: { size: 11, color: color },
+                bgcolor: 'rgba(255,255,255,0.7)',
+                borderpad: 1
+            });
+        }
+
+        // "..." an drei Stellen in der Mitte (visuelle Lücken-Andeutung)
+        if (N > 20) {
+            const dots = [Math.floor(N * 0.3), Math.floor(N * 0.5), Math.floor(N * 0.7)];
+            dots.forEach(r => {
+                annotations.push({
+                    x: Math.log10(r),
+                    y: Math.log10(ds.top_freqs[r - 1]) - 0.08,
+                    xref: 'x', yref: 'y',
+                    text: '⋮',
+                    showarrow: false,
+                    font: { size: 18, color: '#94a3b8' }
+                });
+            });
+        }
+
+        // Letztes Wort im Top-N (mit Häufigkeit)
+        annotations.push({
+            x: Math.log10(N),
+            y: Math.log10(ds.top_freqs[N - 1]),
+            xref: 'x', yref: 'y',
+            text: `<b>${ds.top_words[N - 1]}</b><br><span style="font-size:10px">${ds.top_freqs[N - 1].toLocaleString('de-DE')}</span>`,
+            showarrow: false,
+            xanchor: 'right',
+            yanchor: 'top',
+            xshift: -4,
+            yshift: -2,
+            font: { size: 11, color: color },
+            bgcolor: 'rgba(255,255,255,0.9)',
+            bordercolor: color,
+            borderwidth: 1.5,
+            borderpad: 3
         });
+
+        return annotations;
     },
 
     renderGermanZipf: async function() {
@@ -90,7 +114,6 @@ const ZipfViz = {
 
         const TOP_N = 200;
 
-        // Beschneide auf TOP_N (wir plotten ohnehin nur die häufigsten)
         const kjvDS = {
             top_words: kjv.top_words.slice(0, TOP_N),
             top_freqs: kjv.top_freqs.slice(0, TOP_N)
@@ -108,20 +131,27 @@ const ZipfViz = {
             ...this.buildAnnotations(fwDS, '#dc2626')
         ];
 
+        // y-Range so dass beide Linien gut reinpassen
+        const allFreqs = [...kjvDS.top_freqs, ...fwDS.top_freqs];
+        const yMin = Math.min(...allFreqs);
+        const yMax = Math.max(...allFreqs);
+
         const layout = {
-            margin: { l: 70, r: 20, b: 60, t: 30 },
+            margin: { l: 70, r: 30, b: 60, t: 30 },
             xaxis: {
                 title: 'Rang des Wortes (nach Häufigkeit)  →  log',
                 type: 'log',
                 gridcolor: '#f1f5f9',
-                tickfont: { size: 11 }
+                tickfont: { size: 11 },
+                range: [Math.log10(0.7), Math.log10(TOP_N * 1.3)]
             },
             yaxis: {
                 title: 'Häufigkeit im Text  →  log',
                 type: 'log',
                 gridcolor: '#f1f5f9',
                 tickformat: ',d',
-                tickfont: { size: 11 }
+                tickfont: { size: 11 },
+                range: [Math.log10(yMin) - 0.4, Math.log10(yMax) + 0.3]
             },
             plot_bgcolor: '#fff',
             paper_bgcolor: '#fff',
