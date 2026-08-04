@@ -138,7 +138,7 @@ function renderStep(step) {
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
         '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
-        '<b>Generator (Quelle):</b> <b>Partikel treten aus dem Generator</b> (links) in <b>verschiedenen Winkeln</b> aus und werden durch das System geleitet — gezogen von <b>Attraktoren</b> (= wahrscheinliche nächste Tokens, größeres Becken = höhere Wahrscheinlichkeit), gebremst von <b>Sammler-Punkten</b> (= unwahrscheinliche Tokens).<br>Beispiel: Prompt «Die Hauptstadt von Frankreich ist ___ » → Attraktoren Paris/London/Berlin, Sammler Apfel/Haus.'
+        '<b>Generator (Quelle):</b> Der Generator emittiert <b>Wörter</b> (= Tokens) wie «die», «hauptstadt», «von», «Frankreich». Jedes Wort wird von der passenden <b>semantischen Region</b> angezogen (Länder, Städte, Funktionswort, Verb) — die Region <b>leuchtet auf</b>, wenn das Token landet. Falsche Tokens (Apfel, Hund) werden vom <b>Sammler</b> eingefangen.<br>So bildet sich Bedeutung: nicht punktweise, sondern als <b>schichtweise Aktivierung semantischer Felder</b>.'
     ];    const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
 
@@ -2470,13 +2470,11 @@ function render3DBasins(container) {
 // Wortbedeutungs-Landschaft eines LLM.
 // ============================================================
 // STEP 7: Generator (Quelle)
-// Partikel treten aus dem GENERATOR (links) in verschiedenen Winkeln
-// aus. Sie fliegen durch den Raum und werden von Attraktoren
-// (= wahrscheinliche nächste Tokens) angezogen oder von Sammlern
-// (= unwahrscheinliche Tokens) gebremst.
-// Beispiel-Kontext: "Die Hauptstadt von Frankreich ist ___"
-// → Attraktoren: Paris (stark), London, Berlin
-// → Sammler: Wörter, die hier nichts zu suchen haben (Apfel, Haus)
+// Generator emittiert Tokens (= Wörter aus dem Satz), jedes Wort
+// ist ein neuer temporärer Attraktor-Punkt. Es gibt 4 feste
+// semantische Regionen (Länder, Städte, Funktionswörter, Verben),
+// die aufleuchten wenn ein passendes Token bei ihnen landet.
+// Sammler fangen semantisch falsche Tokens ab.
 // ============================================================
 function renderGenerator(container) {
     const setup = safeCanvasSetup(container, '#fafafa');
@@ -2486,51 +2484,65 @@ function renderGenerator(container) {
     }
     const { ctx, W, H } = setup;
 
-    // === Generator (Quelle) ===
     const sourceX = 70, sourceY = H / 2;
-    const PROMPT_TEXT = 'Die Hauptstadt von Frankreich ist ___';
 
-    // === Attraktoren: wahrscheinliche nächste Tokens ===
-    // Paris hat das größte/stärkste Becken (= höchste Wahrscheinlichkeit)
-    const attractors = [
-        { x: W * 0.42, y: H * 0.28, r: 38, strength: 1.0,
-          label: 'Paris',  color: '#3b82f6', drift: 0.012, driftPhase: 0.0   },
-        { x: W * 0.65, y: H * 0.55, r: 28, strength: 0.7,
-          label: 'London', color: '#10b981', drift: 0.014, driftPhase: 1.2   },
-        { x: W * 0.85, y: H * 0.32, r: 24, strength: 0.5,
-          label: 'Berlin', color: '#8b5cf6', drift: 0.011, driftPhase: 2.4   }
+    // === Semantische Regionen (feste Attraktoren) ===
+    const regions = [
+        { id: 'laender',  x: W * 0.40, y: H * 0.22, r: 30,
+          label: 'LÃ¤nder',         color: '#3b82f6', pulse: 0 },
+        { id: 'staedte',  x: W * 0.78, y: H * 0.30, r: 32,
+          label: 'StÃ¤dte',         color: '#8b5cf6', pulse: 0 },
+        { id: 'funk',     x: W * 0.55, y: H * 0.52, r: 26,
+          label: 'Funktionswort', color: '#10b981', pulse: 0 },
+        { id: 'verben',   x: W * 0.38, y: H * 0.78, r: 26,
+          label: 'Verben',       color: '#f59e0b', pulse: 0 }
     ];
 
-    // === Sammler: unwahrscheinliche Tokens (werden gebremst/gestoppt) ===
+    // === Sammler (falsche Tokens) ===
     const repellers = [
-        { x: W * 0.55, y: H * 0.82, r: 20, label: 'Apfel', phase: 0.0 },
-        { x: W * 0.78, y: H * 0.10, r: 20, label: 'Haus',  phase: 2.0 }
+        { x: W * 0.78, y: H * 0.78, r: 22, label: '?', phase: 0.0 }
     ];
 
-    const colors = ['#ef4444', '#f59e0b', '#06b6d4', '#ec4899'];
-    const names  = ['A', 'B', 'C', 'D'];
-    const SPAWN_INTERVAL = 55;
+    // === Wörter mit ihrer Kategorie ===
+    const WORDS = [
+        { w: 'die',        cat: 'funk'   },
+        { w: 'hauptstadt', cat: 'funk'   },
+        { w: 'von',        cat: 'funk'   },
+        { w: 'frankreich', cat: 'laender' },
+        { w: 'spanien',    cat: 'laender' },
+        { w: 'italien',    cat: 'laender' },
+        { w: 'Paris',      cat: 'staedte' },
+        { w: 'London',     cat: 'staedte' },
+        { w: 'Berlin',     cat: 'staedte' },
+        { w: 'ist',        cat: 'verben' },
+        { w: 'war',        cat: 'verben' },
+        { w: 'wird',       cat: 'verben' },
+        { w: 'Apfel',      cat: 'sammler' },
+        { w: 'Hund',       cat: 'sammler' }
+    ];
+
+    const PARTICLE_COLORS = ['#ef4444', '#f59e0b', '#06b6d4', '#ec4899'];
+    const SPAWN_INTERVAL = 80;
     let frameCount = 0;
+    let wordIdx = 0;
     const particles = [];
 
     function spawnParticle() {
-        // Verschiedene Winkel aus dem Generator — fächert sich auf
-        // arc: -72° bis +72° (volle rechte Hälfte + etwas rückwärts)
+        const wordData = WORDS[wordIdx % WORDS.length];
+        wordIdx++;
         const angle = (Math.random() - 0.5) * Math.PI * 0.8;
-        const speed = 1.5 + Math.random() * 0.8;
-        const i = particles.length % colors.length;
+        const speed = 1.5 + Math.random() * 0.7;
         return {
             x: sourceX,
             y: sourceY + (Math.random() - 0.5) * 4,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            color: colors[i],
-            name: names[i],
+            word: wordData.w,
+            category: wordData.cat,
             trail: [],
             alive: true,
             arrived: false,
-            held: false,
-            heldTarget: null
+            held: false
         };
     }
 
@@ -2546,48 +2558,65 @@ function renderGenerator(container) {
         ctx.fillStyle = '#fafafa';
         ctx.fillRect(0, 0, W, H);
 
-        // === Attraktor-Becken (Größe = Wahrscheinlichkeit/Stärke) ===
-        attractors.forEach(at => {
-            const driftX = Math.sin(t * at.drift + at.driftPhase) * 16;
-            const driftY = Math.cos(t * at.drift * 0.7 + at.driftPhase) * 10;
-            const cx = at.x + driftX;
-            const cy = at.y + driftY;
+        // === Semantische Regionen zeichnen ===
+        regions.forEach(rg => {
+            // Pulse-Wert: springt hoch bei Treffer, fällt langsam ab
+            rg.pulse *= 0.96;
+            const pulseAdd = rg.pulse;
+            const baseR = rg.r;
+            const curR = baseR + pulseAdd * 14;
+            const alphaBase = 0.18 + Math.min(0.3, pulseAdd * 0.4);
 
-            // Becken-Größe skaliert mit Stärke
-            const basinR = at.r * 3.5 * at.strength;
-            const basinGrad = ctx.createRadialGradient(cx, cy, at.r * 0.4, cx, cy, basinR);
-            basinGrad.addColorStop(0, at.color + '66');
-            basinGrad.addColorStop(0.5, at.color + '22');
-            basinGrad.addColorStop(1, at.color + '00');
+            const driftX = Math.sin(t * 0.008 + rg.x * 0.01) * 10;
+            const driftY = Math.cos(t * 0.007 + rg.y * 0.01) * 6;
+            const cx = rg.x + driftX;
+            const cy = rg.y + driftY;
+
+            // Basin-Glow
+            const basinGrad = ctx.createRadialGradient(cx, cy, baseR * 0.3, cx, cy, curR * 3);
+            basinGrad.addColorStop(0, rg.color + Math.round(alphaBase * 255).toString(16).padStart(2, '0'));
+            basinGrad.addColorStop(0.5, rg.color + '22');
+            basinGrad.addColorStop(1, rg.color + '00');
             ctx.fillStyle = basinGrad;
             ctx.beginPath();
-            ctx.arc(cx, cy, basinR, 0, Math.PI * 2);
+            ctx.arc(cx, cy, curR * 3, 0, Math.PI * 2);
             ctx.fill();
 
-            const coreR = at.r * 0.7;
-            const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-            coreGrad.addColorStop(0, at.color + 'dd');
-            coreGrad.addColorStop(1, at.color + '40');
+            // Kern
+            const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR);
+            coreGrad.addColorStop(0, rg.color + 'ee');
+            coreGrad.addColorStop(1, rg.color + '40');
             ctx.fillStyle = coreGrad;
             ctx.beginPath();
-            ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+            ctx.arc(cx, cy, baseR + pulseAdd * 4, 0, Math.PI * 2);
             ctx.fill();
 
+            // Puls-Ring bei Treffer
+            if (pulseAdd > 0.05) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, baseR + (1 - pulseAdd) * 30, 0, Math.PI * 2);
+                ctx.strokeStyle = rg.color + 'cc';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Center dot
             ctx.beginPath();
-            ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
             ctx.fill();
-            ctx.strokeStyle = at.color;
+            ctx.strokeStyle = rg.color;
             ctx.lineWidth = 2;
             ctx.stroke();
 
+            // Region-Label
             ctx.font = 'bold 11px system-ui';
-            ctx.fillStyle = at.color;
+            ctx.fillStyle = rg.color;
             ctx.textAlign = 'center';
-            ctx.fillText(at.label, cx, cy + at.r + 16);
+            ctx.fillText(rg.label, cx, cy + baseR + 18);
         });
 
-        // === Sammler (rot, gestrichelt) — unwahrscheinliche Tokens ===
+        // === Sammler ===
         repellers.forEach(rp => {
             const driftX = Math.sin(t * 0.010 + rp.phase) * 12;
             const driftY = Math.cos(t * 0.008 + rp.phase) * 8;
@@ -2619,18 +2648,18 @@ function renderGenerator(container) {
             ctx.font = 'bold 9px system-ui';
             ctx.fillStyle = '#b91c1c';
             ctx.textAlign = 'center';
-            ctx.fillText(rp.label, cx, cy + rp.r + 12);
+            ctx.fillText('Sammler', cx, cy + rp.r + 12);
         });
 
-        // === Generator (cyan Quell-Punkt + Prompt-Text) ===
+        // === Generator ===
         const sourcePulse = 1 + 0.20 * Math.sin(t * 0.10);
-        const sourceHalo = ctx.createRadialGradient(sourceX, sourceY, 4, sourceX, sourceY, 32 * sourcePulse);
+        const sourceHalo = ctx.createRadialGradient(sourceX, sourceY, 4, sourceX, sourceY, 30 * sourcePulse);
         sourceHalo.addColorStop(0, 'rgba(34,211,238,0.45)');
         sourceHalo.addColorStop(0.5, 'rgba(34,211,238,0.15)');
         sourceHalo.addColorStop(1, 'rgba(34,211,238,0)');
         ctx.fillStyle = sourceHalo;
         ctx.beginPath();
-        ctx.arc(sourceX, sourceY, 32 * sourcePulse, 0, Math.PI * 2);
+        ctx.arc(sourceX, sourceY, 30 * sourcePulse, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.beginPath();
@@ -2641,33 +2670,13 @@ function renderGenerator(container) {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        // Label "Generator"
         ctx.font = 'bold 12px system-ui';
         ctx.fillStyle = '#0891b2';
         ctx.textAlign = 'center';
-        ctx.fillText('Generator', sourceX, sourceY - 32);
-
-        // Prompt-Text
-        ctx.font = 'italic 11px system-ui';
-        ctx.fillStyle = '#475569';
-        ctx.fillText('"' + PROMPT_TEXT + '"', sourceX, sourceY - 50);
-
-        // Strahlen aus dem Generator (zeigen mögliche Flugbahnen)
-        ctx.strokeStyle = 'rgba(34,211,238,0.18)';
-        ctx.lineWidth = 1;
-        for (let i = 0; i < 8; i++) {
-            const rayAngle = -Math.PI * 0.4 + (i / 7) * Math.PI * 0.8;
-            const rayLen = 60 + 25 * Math.sin(t * 0.04 + i);
-            const x2 = sourceX + Math.cos(rayAngle) * rayLen;
-            const y2 = sourceY + Math.sin(rayAngle) * rayLen;
-            ctx.beginPath();
-            ctx.moveTo(sourceX, sourceY);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-        }
+        ctx.fillText('Generator', sourceX, sourceY - 22);
 
         // === Partikel erzeugen ===
-        if (frameCount % SPAWN_INTERVAL === 0 && particles.length < 32) {
+        if (frameCount % SPAWN_INTERVAL === 0 && particles.length < 18) {
             particles.push(spawnParticle());
         }
 
@@ -2675,6 +2684,13 @@ function renderGenerator(container) {
         particles.forEach((p, idx) => {
             if (!p.alive) return;
 
+            // Farbe je nach Kategorie
+            let pColor = '#64748b';
+            const rg = regions.find(r => r.id === p.category);
+            if (rg) pColor = rg.color;
+            if (p.category === 'sammler') pColor = '#ef4444';
+
+            // Festgehalten
             if (p.held) {
                 p.vx *= 0.85;
                 p.vy *= 0.85;
@@ -2692,14 +2708,14 @@ function renderGenerator(container) {
                         ctx.beginPath();
                         ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
                         ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                        ctx.strokeStyle = p.color + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.strokeStyle = pColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
                         ctx.lineWidth = 1.5;
                         ctx.stroke();
                     }
                 }
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
+                ctx.fillStyle = pColor;
                 ctx.globalAlpha = 0.7;
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
@@ -2709,30 +2725,28 @@ function renderGenerator(container) {
                 return;
             }
 
-            // Aktuelle Positionen der Attraktoren (mit Drift)
-            const liveAttractors = attractors.map(at => ({
-                x: at.x + Math.sin(t * at.drift + at.driftPhase) * 16,
-                y: at.y + Math.cos(t * at.drift * 0.7 + at.driftPhase) * 10,
-                r: at.r * 0.7,
-                strength: at.strength,
-                color: at.color
-            }));
-
-            // Attraktor-Kraft (Stärke skaliert mit Wahrscheinlichkeit)
-            liveAttractors.forEach(at => {
-                const dx = at.x - p.x;
-                const dy = at.y - p.y;
+            // Anziehung zur passenden Region
+            if (rg) {
+                const driftX = Math.sin(t * 0.008 + rg.x * 0.01) * 10;
+                const driftY = Math.cos(t * 0.007 + rg.y * 0.01) * 6;
+                const cx = rg.x + driftX;
+                const cy = rg.y + driftY;
+                const dx = cx - p.x;
+                const dy = cy - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const range = at.r * 3.5 * at.strength;
-                if (dist > at.r && dist < range) {
-                    const force = 0.10 * at.strength * (1 - dist / range);
+                const range = rg.r * 3.5;
+                if (dist > rg.r && dist < range) {
+                    const force = 0.10 * (1 - dist / range);
                     p.vx += (dx / dist) * force;
                     p.vy += (dy / dist) * force;
-                    if (dist < at.r + 3) p.arrived = true;
+                    if (dist < rg.r + 3) {
+                        p.arrived = true;
+                        rg.pulse = 1.0; // Region aufleuchten lassen!
+                    }
                 }
-            });
+            }
 
-            // Sammler: bremsen + halten
+            // Sammler
             repellers.forEach(rp => {
                 const driftX = Math.sin(t * 0.010 + rp.phase) * 12;
                 const driftY = Math.cos(t * 0.008 + rp.phase) * 8;
@@ -2750,7 +2764,6 @@ function renderGenerator(container) {
                     p.vx *= (0.92 + 0.08 * t_param);
                     if (dist < rp.r * 1.2) {
                         p.held = true;
-                        p.heldTarget = { x: cx, y: cy };
                     }
                 }
             });
@@ -2759,9 +2772,9 @@ function renderGenerator(container) {
             p.vy *= 0.99;
 
             const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-            if (speed > 2.8) {
-                p.vx *= 2.8 / speed;
-                p.vy *= 2.8 / speed;
+            if (speed > 2.5) {
+                p.vx *= 2.5 / speed;
+                p.vy *= 2.5 / speed;
             }
 
             p.x += p.vx;
@@ -2776,30 +2789,33 @@ function renderGenerator(container) {
                 return;
             }
 
+            // Trail
             if (p.trail.length > 1) {
                 for (let i = 1; i < p.trail.length; i++) {
                     const alpha = (i / p.trail.length) * 0.55;
                     ctx.beginPath();
                     ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
                     ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                    ctx.strokeStyle = p.color + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                    ctx.strokeStyle = pColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
             }
 
+            // Partikel-Kern
             ctx.beginPath();
             ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-            ctx.fillStyle = p.color;
+            ctx.fillStyle = pColor;
             ctx.fill();
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 1.5;
             ctx.stroke();
 
-            ctx.font = 'bold 10px system-ui';
-            ctx.fillStyle = p.color;
-            ctx.textAlign = 'center';
-            ctx.fillText(p.name, p.x, p.y - 10);
+            // Wort-Label neben Partikel
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = pColor;
+            ctx.textAlign = 'left';
+            ctx.fillText('"' + p.word + '"', p.x + 8, p.y + 4);
         });
 
         for (let i = particles.length - 1; i >= 0; i--) {
@@ -2810,10 +2826,10 @@ function renderGenerator(container) {
         ctx.font = 'bold 11px system-ui';
         ctx.fillStyle = 'rgba(15,23,42,0.85)';
         ctx.textAlign = 'center';
-        ctx.fillText('Partikel treten aus dem Generator in verschiedenen Winkeln aus → werden von Attraktoren (= wahrscheinliche Tokens) angezogen', W / 2, 22);
+        ctx.fillText('Generator emittiert Tokens → jede semantische Region leuchtet auf, wenn ihr Token dort landet', W / 2, 22);
         ctx.font = '9px system-ui';
         ctx.fillStyle = 'rgba(100,116,139,0.85)';
-        ctx.fillText('Sammler (= unwahrscheinliche Tokens) stoppen Partikel, die in ihre Reichweite geraten', W / 2, 36);
+        ctx.fillText('Sammler fängt semantisch falsche Tokens ab (Apfel/Hund)', W / 2, 36);
 
         activeAnimation = requestAnimationFrame(draw);
     }
