@@ -2709,8 +2709,8 @@ window.bibData = {
 	},
 	"deepblue": {
 		url: "https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996",
-		title: "Deep Blue computer beats world chess champion – archive, 1996",
-		year: "1996",
+		title: "Deep Blue computer beats world chess champion – archive, 1997",
+		year: "1997",
 		author: "Stan Honda"
 	},
 	"hebbianlearningrule": {
@@ -3373,7 +3373,7 @@ window.bibData = {
 	},
 	"ueberwahrheitundluege": {
 		author: "Friedrich Wilhelm Nietzsche",
-		year: 1876,
+		year: 1873,
 		title: "Über Wahrheit und Lüge im außermoralischen Sinne",
 		url: "https://archive.org/details/NietzscheberWahrheitUndLLgeImAussermoralischenSinneAuswahl"
 	},
