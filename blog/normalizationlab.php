@@ -27,7 +27,7 @@ For a specific layer input vector $x$ with $d$ dimensions, the normalization fol
 ## Integration in Transformer Models (GPT)
 In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that keeps the deep stack of blocks stable.
 
-* **Pre-Norm Architecture:** In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks. This creates a "clean" residual path, allowing gradients to flow through 96 layers without exploding or vanishing (together with residual skips).
+* **Pre-Norm Architecture:** In modern GPT models, LN is applied *before* the Multi-Head Attention and Feed-Forward networks. This creates a "clean" residual path, allowing gradients to flow through 96 layers without exploding or vanishing (together with residual skips). The "96 layers" figure is specific to GPT-3 (175B); other models use different depths, e.g., LLaMA-7B has ~32, LLaMA-70B has ~80, GPT-4 family is estimated around 100+ layers.
 * **Independence from Batch Size:** Unlike Batch Norm, LN does not depend on other samples in the batch. This is vital for GPT because:
     * Inference often happens one sequence at a time (Batch Size = 1).
     * Sequence lengths can vary significantly.

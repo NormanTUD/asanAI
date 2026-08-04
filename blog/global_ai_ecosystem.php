@@ -18,7 +18,7 @@ This chapter is a corrective: a brief tour of AI's worldwide geography.
 <div class="md">
 ## China
 
-China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-source models routinely match Western closed frontier models on benchmarks.
+China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-source models have *closed a substantial portion of the gap* to Western closed frontier models on many widely-cited benchmarks (e.g., DeepSeek-V3, Qwen 2.5, Kimi K2), though the *frontier itself remains contested* (see the *Frontier Topics* chapter for an open discussion of whether open models are converging with or lagging behind the closed-source frontier).
 
 ### Frontier Model Builders
 

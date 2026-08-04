@@ -883,71 +883,9 @@ Pearson realized that to compare "variation" across different scales, he had to 
 </div>
 
 <!--
-<div class="md">
-## Chi-Square ($\chi^2$): The Test of Independence
-Invented by \citeauthor{chisquared} in \citeyear{chisquared} (p. 157-175), the $\chi^2$ test was originally designed to solve a problem in evolutionary biology: how to determine if the variation between observed groups is a result of a real relationship or merely the "noise" of random chance. Pearson sought to quantify the "goodness of fit" between a theoretical model and actual data.
-
-1. **Hypothesize ($H_0$):** Assume no relationship exists (e.g., the coin is fair).
-2. **Determine Expectations ($E$):** Calculate what counts you should see under $H_0$.
-3. **Observe Reality ($O$):** Collect the actual data.
-4. **Calculate Deviation:** Measure how far reality is from expectation.
-5. **Normalize & Sum:** Divide by expectation to weight the deviations fairly.
-
-### The Equation of "Surprise"
-The abstract formula represents the total sum of weighted squared differences:
-
-$$\chi^2 = \sum_{i=1}^{k} \underbrace{\frac{(\overbrace{O_i}^{\text{Observed}} - \overbrace{E_i}^{\text{Expected}})^2}{\underbrace{E_i}_{\text{Scaling Factor}}}}_{\text{Weighted squared error for category } i}$$
-
-**Practical Example:**
-If you flip a coin 100 times, you expect 50 Heads ($E$). If you observe 70 Heads ($O$), the "surprise" factor is:
-$$\chi^2 = \underbrace{\frac{(70 - 50)^2}{50}}_{\text{Heads deviation}} + \underbrace{\frac{(30 - 50)^2}{50}}_{\text{Tails deviation}} = \frac{400}{50} + \frac{400}{50} = \mathbf{16}$$
-A score of 16 is much higher than the standard threshold (3.84), proving the coin is likely biased.
-
-### Why 3.84?
-The threshold **3.84** is derived from the requirement that the probability of a "false alarm" ($\alpha$) is exactly 5%. For a system with 1 degree of freedom, the relationship between the critical value and the normal distribution is:
-
-$$\underbrace{\chi^2_{0.05}}_{\text{Critical Value}} = \underbrace{(Z_{0.025})^2}_{\text{Squared Z-score}} \approx 1.96^2 = \mathbf{3.84}$$
-
-If your calculated $\chi^2$ is higher than this, the area remaining in the "tail" of the distribution, known as the **p-value**, is smaller than 0.05. We define the p-value abstractly as:
-
-$$p = P(\chi^2_1 > \text{your score})$$
-
-### The General Critical Value Equation
-The threshold for "significance" is not fixed; it changes based on how many categories you are testing (**Degrees of Freedom**) and how much risk you are willing to take ($\alpha$).
-
-$$\underbrace{\chi^2_{\alpha, k}}_{\text{Critical Value}} = \underbrace{F^{-1}(1 - \alpha, k)}_{\text{Inverse CDF for } k \text{ degrees of freedom}}$$
-
-For a coin flip ($k=1$) at 95% confidence ($\alpha=0.05$), this settles at:
-$$\chi^2_{0.05, 1} \approx \mathbf{3.84}$$
-
-### Deep Dive: The Error Function ($erf$)
-#### What is it?
-The **Error Function** is a mathematical bridge. It translates a "Score" (like $Z$ or $\chi^2$) into a "Probability" ($p$-value). It measures the area of the Bell Curve to tell us how "normal" or "weird" a result is.
-
-#### History & Origin
-* **Who:** First named and analyzed by \citeauthor{kramp1799} in \citeyear{kramp1799}.
-* **Why:** Kramp was studying **atmospheric refraction**, how light bends through the air. He needed a way to calculate the probability of measurement errors. 
-* **When:** While Kramp defined it, \citeauthor{gauss1809} later made it the cornerstone of statistics in the early 1800s while predicting the orbits of planets.
-
-#### How it is calculated
-Because the exact area under a bell curve has no simple formula, we use **Taylor Series** or **Numerical Approximations** (like the one in our code) to "slice" the curve into thousands of tiny pieces and add them up instantly.
-
-Now, we're trying to calculate the $p$-value using the standard normal distribution approximation. If $p < 0.05$, the "surprise" is high enough to reject the idea that the coin is fair.
-</div>
-
-<div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        <label>Observed Heads ($O$):</label> 
-        <input type="range" id="chi-obs-a" min="0" max="100" value="70">
-        
-        <label>Expected Heads ($E$):</label> 
-        <input type="range" id="chi-exp-a" min="1" max="100" value="50">
-        
-        <div id="chi-math-result" class="statlab-math-display"></div>
-    </div>
-</div>
-
-<div id="chi-plotly-chart" style="width:100%; height:350px;"></div>
+	NOTE: The Chi-Square ($\chi^2$) section used to live here as a commented-out
+	draft. The canonical, active version now lives in statistics_i.php to avoid
+	duplication. See statistics_i.php for the chi-square section.
 -->
 
 <div class="md">

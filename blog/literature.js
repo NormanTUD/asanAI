@@ -4754,5 +4754,12 @@ window.bibData = {
 		author: "Andy Zou, Long Phan, Sarah Chen, et al.",
 		year: 2023,
 		alternativetitle: "Representation Engineering"
+	},
+	"oldowan": {
+		url: "https://www.nature.com/articles/nature.2016.19482",
+		title: "Oldowan stone tools (re-dating of earliest known systematic stone-tool production)",
+		author: "Erella Hovers, Avraham Ronen",
+		year: 2017,
+		alternativetitle: "Oldowan"
 	}
 };
