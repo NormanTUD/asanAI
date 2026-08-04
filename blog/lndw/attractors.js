@@ -138,7 +138,7 @@ function renderStep(step) {
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
         '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
-        '<b>Generator (Quelle):</b> Der Generator emittiert <b>Wörter</b> (= Tokens) wie «die», «hauptstadt», «von», «Frankreich». Jedes Wort wird von der passenden <b>semantischen Region</b> angezogen (Länder, Städte, Funktionswort, Verb) — die Region <b>leuchtet auf</b>, wenn das Token landet. Falsche Tokens (Apfel, Hund) werden vom <b>Sammler</b> eingefangen.<br>So bildet sich Bedeutung: nicht punktweise, sondern als <b>schichtweise Aktivierung semantischer Felder</b>.'
+        '<b>Generator (Quelle):</b> Der Generator emittiert <b>Wörter</b> (= Tokens). Jedes Wort hat eine <b>Ziel-Region</b> (Funktionswort, Substantiv, Länder oder Städte) — die Region <b>zieht an</b>, alle <b>anderen Regionen stoßen das Wort ab</b>. Die richtige Region <b>leuchtet auf</b>, wenn das Token landet. Wörter ohne semantische Heimat (Apfel, Hund) werden vom <b>Sammler</b> eingefangen.<br>Bedeutung entsteht nicht durch Anziehung, sondern durch <b>gegenseitige Abstoßung</b> der falschen Felder — nur das richtige lässt das Wort hinein.'
     ];    const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
 
@@ -2470,11 +2470,10 @@ function render3DBasins(container) {
 // Wortbedeutungs-Landschaft eines LLM.
 // ============================================================
 // STEP 7: Generator (Quelle)
-// Generator emittiert Tokens (= Wörter aus dem Satz), jedes Wort
-// ist ein neuer temporärer Attraktor-Punkt. Es gibt 4 feste
-// semantische Regionen (Länder, Städte, Funktionswörter, Verben),
-// die aufleuchten wenn ein passendes Token bei ihnen landet.
-// Sammler fangen semantisch falsche Tokens ab.
+// Generator emittiert Tokens (= Wörter), jedes Wort hat EINE
+// Ziel-Region. Die Ziel-Region zieht stark an, alle anderen Regionen
+// stoßen schwach ab → das Wort landet semantisch korrekt.
+// Sammler fängt Wörter ohne passende Region ab.
 // ============================================================
 function renderGenerator(container) {
     const setup = safeCanvasSetup(container, '#fafafa');
@@ -2486,43 +2485,55 @@ function renderGenerator(container) {
 
     const sourceX = 70, sourceY = H / 2;
 
-    // === Semantische Regionen (feste Attraktoren) ===
+    // === 4 semantische Regionen (feste Attraktoren) ===
     const regions = [
-        { id: 'laender',  x: W * 0.40, y: H * 0.22, r: 30,
-          label: 'LÃ¤nder',         color: '#3b82f6', pulse: 0 },
-        { id: 'staedte',  x: W * 0.78, y: H * 0.30, r: 32,
-          label: 'StÃ¤dte',         color: '#8b5cf6', pulse: 0 },
-        { id: 'funk',     x: W * 0.55, y: H * 0.52, r: 26,
+        { id: 'funk',    x: W * 0.30, y: H * 0.20, r: 28,
           label: 'Funktionswort', color: '#10b981', pulse: 0 },
-        { id: 'verben',   x: W * 0.38, y: H * 0.78, r: 26,
-          label: 'Verben',       color: '#f59e0b', pulse: 0 }
+        { id: 'subst',   x: W * 0.50, y: H * 0.78, r: 30,
+          label: 'Substantiv',    color: '#f59e0b', pulse: 0 },
+        { id: 'laender', x: W * 0.75, y: H * 0.20, r: 30,
+          label: 'LÃ¤nder',         color: '#3b82f6', pulse: 0 },
+        { id: 'staedte', x: W * 0.80, y: H * 0.78, r: 32,
+          label: 'StÃ¤dte',         color: '#8b5cf6', pulse: 0 }
     ];
 
-    // === Sammler (falsche Tokens) ===
+    // === Sammler (Wörter ohne semantische Heimat) ===
     const repellers = [
-        { x: W * 0.78, y: H * 0.78, r: 22, label: '?', phase: 0.0 }
+        { x: W * 0.50, y: H * 0.50, r: 20, phase: 0.0 }
     ];
 
-    // === Wörter mit ihrer Kategorie ===
+    // === Wörter mit ihrer Ziel-Region ===
     const WORDS = [
-        { w: 'die',        cat: 'funk'   },
-        { w: 'hauptstadt', cat: 'funk'   },
-        { w: 'von',        cat: 'funk'   },
+        // Funktionswörter
+        { w: 'die',     cat: 'funk'  },
+        { w: 'der',     cat: 'funk'  },
+        { w: 'das',     cat: 'funk'  },
+        { w: 'von',     cat: 'funk'  },
+        { w: 'in',      cat: 'funk'  },
+        { w: 'eine',    cat: 'funk'  },
+        { w: 'mit',     cat: 'funk'  },
+        { w: 'zu',      cat: 'funk'  },
+        // Substantive (eigentliche Hauptwörter)
+        { w: 'hauptstadt', cat: 'subst' },
+        { w: 'stadt',      cat: 'subst' },
+        { w: 'land',       cat: 'subst' },
+        { w: 'name',       cat: 'subst' },
+        // Länder
         { w: 'frankreich', cat: 'laender' },
         { w: 'spanien',    cat: 'laender' },
         { w: 'italien',    cat: 'laender' },
+        { w: 'deutschland',cat: 'laender' },
+        // Städte
         { w: 'Paris',      cat: 'staedte' },
         { w: 'London',     cat: 'staedte' },
         { w: 'Berlin',     cat: 'staedte' },
-        { w: 'ist',        cat: 'verben' },
-        { w: 'war',        cat: 'verben' },
-        { w: 'wird',       cat: 'verben' },
+        { w: 'Madrid',     cat: 'staedte' },
+        // Sammler
         { w: 'Apfel',      cat: 'sammler' },
         { w: 'Hund',       cat: 'sammler' }
     ];
 
-    const PARTICLE_COLORS = ['#ef4444', '#f59e0b', '#06b6d4', '#ec4899'];
-    const SPAWN_INTERVAL = 80;
+    const SPAWN_INTERVAL = 75;
     let frameCount = 0;
     let wordIdx = 0;
     const particles = [];
@@ -2560,7 +2571,6 @@ function renderGenerator(container) {
 
         // === Semantische Regionen zeichnen ===
         regions.forEach(rg => {
-            // Pulse-Wert: springt hoch bei Treffer, fällt langsam ab
             rg.pulse *= 0.96;
             const pulseAdd = rg.pulse;
             const baseR = rg.r;
@@ -2684,10 +2694,10 @@ function renderGenerator(container) {
         particles.forEach((p, idx) => {
             if (!p.alive) return;
 
-            // Farbe je nach Kategorie
+            // Farbe je nach Ziel-Region
             let pColor = '#64748b';
-            const rg = regions.find(r => r.id === p.category);
-            if (rg) pColor = rg.color;
+            const targetRg = regions.find(r => r.id === p.category);
+            if (targetRg) pColor = targetRg.color;
             if (p.category === 'sammler') pColor = '#ef4444';
 
             // Festgehalten
@@ -2725,8 +2735,8 @@ function renderGenerator(container) {
                 return;
             }
 
-            // Anziehung zur passenden Region
-            if (rg) {
+            // Kraft-Feld: Ziel-Region zieht an, ALLE ANDEREN stoßen ab
+            regions.forEach(rg => {
                 const driftX = Math.sin(t * 0.008 + rg.x * 0.01) * 10;
                 const driftY = Math.cos(t * 0.007 + rg.y * 0.01) * 6;
                 const cx = rg.x + driftX;
@@ -2734,19 +2744,32 @@ function renderGenerator(container) {
                 const dx = cx - p.x;
                 const dy = cy - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                const range = rg.r * 3.5;
-                if (dist > rg.r && dist < range) {
-                    const force = 0.10 * (1 - dist / range);
-                    p.vx += (dx / dist) * force;
-                    p.vy += (dy / dist) * force;
-                    if (dist < rg.r + 3) {
-                        p.arrived = true;
-                        rg.pulse = 1.0; // Region aufleuchten lassen!
+
+                if (rg.id === p.category) {
+                    // ATTRAKTION (Ziel-Region)
+                    const range = rg.r * 3.5;
+                    if (dist > rg.r && dist < range) {
+                        const force = 0.12 * (1 - dist / range);
+                        p.vx += (dx / dist) * force;
+                        p.vy += (dy / dist) * force;
+                        if (dist < rg.r + 3) {
+                            p.arrived = true;
+                            rg.pulse = 1.0;
+                        }
+                    }
+                } else {
+                    // REPULSION (falsche Region)
+                    const repelRange = rg.r * 2.5;
+                    if (dist < repelRange && dist > 0) {
+                        const force = 0.06 * (1 - dist / repelRange);
+                        // Stoße vom Region-Zentrum weg
+                        p.vx -= (dx / dist) * force;
+                        p.vy -= (dy / dist) * force;
                     }
                 }
-            }
+            });
 
-            // Sammler
+            // Sammler: bremsen + halten
             repellers.forEach(rp => {
                 const driftX = Math.sin(t * 0.010 + rp.phase) * 12;
                 const driftY = Math.cos(t * 0.008 + rp.phase) * 8;
@@ -2802,7 +2825,6 @@ function renderGenerator(container) {
                 }
             }
 
-            // Partikel-Kern
             ctx.beginPath();
             ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
             ctx.fillStyle = pColor;
@@ -2811,7 +2833,7 @@ function renderGenerator(container) {
             ctx.lineWidth = 1.5;
             ctx.stroke();
 
-            // Wort-Label neben Partikel
+            // Wort-Label
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = pColor;
             ctx.textAlign = 'left';
@@ -2826,10 +2848,10 @@ function renderGenerator(container) {
         ctx.font = 'bold 11px system-ui';
         ctx.fillStyle = 'rgba(15,23,42,0.85)';
         ctx.textAlign = 'center';
-        ctx.fillText('Generator emittiert Tokens → jede semantische Region leuchtet auf, wenn ihr Token dort landet', W / 2, 22);
+        ctx.fillText('Generator emittiert Tokens → Ziel-Region zieht an, andere Regionen stoßen ab', W / 2, 22);
         ctx.font = '9px system-ui';
         ctx.fillStyle = 'rgba(100,116,139,0.85)';
-        ctx.fillText('Sammler fängt semantisch falsche Tokens ab (Apfel/Hund)', W / 2, 36);
+        ctx.fillText('Jedes Wort landet in seiner semantischen Heimat — die Region leuchtet bei Ankunft auf', W / 2, 36);
 
         activeAnimation = requestAnimationFrame(draw);
     }
