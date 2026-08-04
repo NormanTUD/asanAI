@@ -157,15 +157,20 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 </div>
 
 <div class="md">
-### The Tensor (rank 3 and beyond)
+### The Tensor (the umbrella term)
 
-When we stack many matrices together, we get a high-level **Tensor**.
+**The Secret:** In AI, *Tensor* is the umbrella word for "any rectangular array of numbers." A scalar is a rank-0 tensor, a vector is a rank-1 tensor, a matrix is a rank-2 tensor, and once we stack matrices we get a **rank-3+ tensor**. This lets the neural network treat every piece of data with the same set of math rules.
 
-A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
+| Object | Rank | Shape | Example |
+|--------|------|-------|---------|
+| Scalar | 0 | — | $s = 5$ |
+| Vector | 1 | $(d,)$ | color $= (r, g, b)$ |
+| Matrix | 2 | $(h, w)$ | a black-and-white image |
+| Tensor | 3+ | $(h, w, c, \dots)$ | a color image is $(h, w, 3)$ |
+
+A **Color Photo** is a rank-3 tensor: a stack of three matrices (one each for Red, Green, Blue), all sitting on top of each other.
 
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
-
-**The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
 
 ### The Mathematical View: A $3 \times 3 \times 3$ Tensor
 
@@ -309,6 +314,44 @@ A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
 
 <div class="optional md" data-headline="History of Matrix Transposition">
 The idea of matrix transposition was introduced in 1858 by the British mathematician \citeauthor{cayleymemoirmatrices} in his paper \citetitle{cayleymemoirmatrices}. It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed to express symmetry properties.
+</div>
+
+<div class="md">
+## Softmax and Cross-Entropy
+
+Two vector operations appear so often in AI that they deserve explicit definitions here, even though they are first motivated in the Statistics and Loss chapters.
+
+### Softmax: vector → probability distribution
+
+Given a vector of real-valued scores $\vec{z} \in \mathbb{R}^{K}$ (called **logits**), the **softmax** turns it into a vector of probabilities that sum to $1$:
+
+$$
+\text{softmax}(\vec{z})_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}
+$$
+
+The exponential emphasises differences: a logit gap of $1$ becomes a ratio of $e \approx 2.7$, a gap of $2$ becomes $e^2 \approx 7.4$. This is the operation behind the output layer of a classification network and behind every next-token probability in an LLM (see the Attention chapter).
+
+### Cross-entropy: measuring the gap between two distributions
+
+Given a true probability distribution $\vec{y}$ (one-hot for a single correct class) and a predicted distribution $\hat{\vec{y}}$ (the model's softmax output), the **cross-entropy** is
+
+$$
+H(\vec{y}, \hat{\vec{y}}) = -\sum_{i=1}^{K} y_i \, \log \hat{y}_i
+$$
+
+For a one-hot true label where $y_c = 1$ for the correct class $c$, this collapses to
+
+$$
+L_{\text{CE}} = -\log \hat{y}_c
+$$
+
+That is: cross-entropy loss for a single example is just the **negative log-probability the model assigned to the correct class**. This is the standard classification loss (see the Loss chapter) and, paired with softmax, has the elegant property
+
+$$
+\frac{\partial L_{\text{CE}}}{\partial z_i} = \hat{y}_i - y_i
+$$
+
+i.e. the gradient is just "predicted minus actual" — the reason softmax + cross-entropy is the canonical pairing.
 </div>
 
 <script>

@@ -194,7 +194,7 @@ Hallucinations often occur because of how AI "sees" text. Models don't read word
 * **Example:** Asking an AI to count the "m"s in "strawberry" often triggers a hallucination because the tokenization obscures the actual spelling.
 
 ### Hallucination vs. Creativity
-It is helpful to recognize that "hallucination" is a double-edged sword. In factual contexts, it is a bug; in creative contexts, it is a feature.
+It is helpful to recognize that "hallucination" is a double-edged sword. In factual contexts it is an unwanted *expression* of the model's default state (see the Philosophy chapter: hallucination is the default epistemic state of next-token prediction, not a bug to be patched); in creative contexts the same statistical flexibility becomes a feature. The mitigation is the same in both cases: collapse the output distribution toward the desired region.
 
 | Context | View of Hallucination | Desired Temperature ($T$) |
 | :--- | :--- | :--- |

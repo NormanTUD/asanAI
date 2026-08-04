@@ -31,6 +31,12 @@ The agent follows a **policy** $\pi(a \mid s)$: a probability distribution over 
 $$
 \pi^* = \arg\max_\pi \mathbb{E}_\pi\!\left[\sum_{t=0}^{\infty} \gamma^t R(s_t, a_t)\right]
 $$
+
+A few terms used throughout the chapter:
+
+* **Trajectory** $\tau = (s_0, a_0, r_0, s_1, a_1, r_1, \dots, s_T)$: the full sequence of states, actions, and rewards produced by one rollout of a policy.
+* **Return** $G_t = \sum_{k=0}^{\infty} \gamma^k R(s_{t+k}, a_{t+k})$: the discounted sum of future rewards from time $t$ onward (the quantity inside the expectation above, anchored at $s_0 = s$).
+* **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session). For continuing tasks without a natural endpoint, RL uses "episodic" framing by resetting at fixed horizons.
 </div>
 
 <div class="md">
@@ -64,7 +70,9 @@ For an LLM, the "state" is the current context window, the "action" is the next 
 </div>
 
 <div class="md">
-## Tabular RL: Q-Learning (\cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
+## Tabular RL: Q-Learning
+
+Q-Learning \cite[Watkins, 1989]{watkins1989qlearning} converges to $Q^*$ by iterative updates:
 
 $$
 Q(s, a) \leftarrow Q(s, a) + \alpha \left[r + \gamma \max_{a'} Q(s', a') - Q(s, a)\right]
@@ -92,7 +100,9 @@ $$
 
 where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is the **advantage**: how much better this action was than the baseline $b(s_t)$.
 
-### REINFORCE (\cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
+### REINFORCE
+
+REINFORCE \cite[Williams, 1992]{williams1992reinforce} has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
 </div>
 
 <div class="md">
@@ -105,7 +115,7 @@ where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is 
 
 The critic's TD-error $G_t - V_\phi(s_t)$ is a low-variance estimate of the advantage.
 
-### A2C / A3C (\cite[Mnih et al., 2016]{mnih2016a3c}
+### A2C / A3C \cite[Mnih et al., 2016]{mnih2016a3c}
 
 **Asynchronous** Advantage Actor-Critic: parallel workers update a shared model asynchronously. Stabilizes training; superseded by synchronous methods.
 
@@ -149,7 +159,7 @@ where $y_w$ is the "winner" and $y_l$ the "loser".
 </div>
 
 <div class="md">
-## DPO: \cite[Rafailov et al., 2023]{rafailov2023dpo} Optimization
+## DPO: Direct Preference Optimization \cite[Rafailov et al., 2023]{rafailov2023dpo}
 
 Rafailov et al. (2023) showed that the **RLHF** objective has a **closed-form solution**:
 
@@ -180,13 +190,13 @@ Variants have proliferated:
 </div>
 
 <div class="md">
-## GRPO: \cite[Shao et al., 2024]{shao2024grpo} Policy Optimization
+## GRPO: Group Relative Policy Optimization \cite[Shao et al., 2024]{shao2024grpo}
 
 GRPO (Shao et al., DeepSeek, 2024) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
 
 1. Sample $G$ candidate responses from the current policy: $\{y^{(1)}, \dots, y^{(G)}\}$.
 2. Score each with a reward model (or rule-based verifier).
-3. Compute the **\cite[Shao et al., 2024]{shao2024grpo} advantage**:
+3. Compute the **group-relative advantage**:
 
 $$
 A_i = \frac{r_i - \text{mean}(r_1, \dots, r_G)}{\text{std}(r_1, \dots, r_G)}

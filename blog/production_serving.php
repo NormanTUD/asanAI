@@ -12,17 +12,17 @@ color: rose
 <div class="md">
 Training is once; inference is forever. A frontier LLM might be trained for $100M and then **served billions of times** at a per-call cost that determines profitability. This chapter covers the systems stack that makes LLM inference fast, cheap, and reliable.
 
-The frontier in 2025: serving 100+ million tokens per second per GPU cluster with sub-100ms latency for chat workloads.
+The frontier in 2025: serving **hundreds of thousands of tokens per second per cluster** (a 100-node cluster of 70B-class models serving ~10,000 concurrent users at ~30 tokens/sec each) with sub-100 ms TPOT for chat workloads.
 </div>
 
 <div class="md">
 ## The Inference Challenge
 
-Generating one token from a 70B model in bf16 on a single H100 takes **~30 ms in practice** (a typical observed number for chat-style decoding). But users experience **time to first token (TTFT)** of < 500 ms and **time per output token (TPOT)** of < 50 ms for natural conversation.
+For a 70B model in bf16 on a single H100, each generated token requires reading the full model weights from HBM. With 140 GB at ~3 TB/s HBM bandwidth, this gives **~46 ms per token** as a *pure memory-bandwidth lower bound* — the absolute floor for fp16, single-user, single-GPU decode. Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms. To beat the 46 ms floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic — the techniques discussed in this chapter.
 
 Three bottlenecks:
 
-1. **Memory bandwidth (the hard floor)**: each generated token requires reading the full model weights from HBM. For a 70B model in bf16 (140 GB), on an H100 with 3 TB/s HBM, that is **~46 ms per token** as a *pure memory-bandwidth lower bound* — and that is just for one user. The ~30 ms figure above is lower because compute and memory access overlap; the 46 ms bound sets the absolute ceiling.
+1. **Memory bandwidth (the hard floor)**: see above — sets the minimum per-token latency for a given precision.
 2. **Compute throughput**: matmuls saturate FLOPs only at large batch sizes.
 3. **Latency**: chat workloads are bursty; prefill and decode have different characteristics.
 

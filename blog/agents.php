@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: AI Agents: Autonomous Reasoning and Tool Use
+title: AI Agents: Tool-Use Loops and Orchestration
 description: History, architecture, and internals of LLM-based agents, from early cognitive architectures to ReAct and beyond.
 icon: &#129302;
 part: 5
@@ -12,7 +12,7 @@ color: rose
 <div class="md">
 ## What is an AI Agent?
 
-**Terminological clarification (important, see also the Philosophy chapter):** In this course, "AI agent" is used as a *technical* term for a software architecture that wraps an LLM in a control loop and grants it access to external interfaces such as the file system, the network, a search engine, or other tools. It is **not** a claim about consciousness, qualia, intentionality, volition, or any form of genuine "agency" in the philosophical sense. The LLM at the heart of an agent is the same reactive, stateless next-token predictor described in the Philosophy chapter; what changes is the *scaffolding around it*, not its inner nature.
+**Terminological clarification (important, see also the Philosophy chapter):** In this course, "AI agent" is used as a *technical* term for a software architecture that wraps an LLM in a control loop and grants it access to external interfaces such as the file system, the network, a search engine, or other tools. It is **not** a claim about consciousness, qualia, intentionality, volition, or any form of genuine "agency" in the philosophical sense. When the chapter title or related literature uses the word "autonomous", it refers to *engineering* autonomy (the loop runs without per-step human approval), not to philosophical agency. The LLM at the heart of an agent is the same reactive, stateless next-token predictor described in the Philosophy chapter; what changes is the *scaffolding around it*, not its inner nature.
 
 Concretely, an **AI Agent** is a system where a Large Language Model acts not merely as a text generator, but as a **controller inside an observe→reason→act loop**. It can be given access to its environment (a file system, a browser, an API), reason about which tool to invoke, observe the result, and iterate until a task is complete. The LLM remains the "decision-making component" of a loop rather than a one-shot oracle.
 
