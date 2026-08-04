@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bewusstseinstheorien - Interaktive Zusammenfassung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 2px solid #6c63ff;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            color: #6c63ff;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            background: rgba(15, 12, 41, 0.95);
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-btn {
+            padding: 10px 18px;
+            border: 2px solid #6c63ff;
+            background: transparent;
+            color: #6c63ff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #6c63ff;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .content-area {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: #6c63ff;
+            box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #6c63ff;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .card h3 {
+            color: #a29bfe;
+            margin: 15px 0 10px;
+            font-size: 1.1em;
+        }
+
+        .card p, .card li {
+            line-height: 1.7;
+            color: #ccc;
+        }
+
+        .card ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .card li {
+            margin-bottom: 8px;
+        }
+
+        .emoji-icon {
+            font-size: 1.5em;
+            margin-right: 8px;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin: 15px 0;
+        }
+
+        .accordion-item {
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background: rgba(108, 99, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: rgba(108, 99, 255, 0.2);
+        }
+
+        .accordion-header .arrow {
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0 20px;
+        }
+
+        .accordion-body.open {
+            max-height: 1000px;
+            padding: 15px 20px;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+
+        .comparison-table th {
+            background: rgba(108, 99, 255, 0.3);
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .comparison-table td {
+            padding: 10px 12px;
+            border: 1px solid rgba(108, 99, 255, 0.15);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        /* Interactive Diagram */
+        .brain-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .brain-region {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid;
+            padding: 10px;
+        }
+
+        .brain-region:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 30px rgba(108, 99, 255, 0.4);
+        }
+
+        .brain-region.frontal {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .brain-region.posterior {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+            color: #4ecdc4;
+        }
+
+        .brain-region.global {
+            background: rgba(255, 230, 109, 0.2);
+            border-color: #ffe66d;
+            color: #ffe66d;
+        }
+
+        .region-info {
+            display: none;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 3px solid #6c63ff;
+        }
+
+        .region-info.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Quiz */
+        .quiz-question {
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .quiz-question p {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 12px 18px;
+            margin: 8px 0;
+            border: 2px solid rgba(108, 99, 255, 0.3);
+            background: rgba(0,0,0,0.2);
+            color: #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            border-color: #6c63ff;
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .quiz-option.correct {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+        }
+
+        .quiz-option.wrong {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6c63ff, #a29bfe);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dashed #6c63ff;
+            cursor: help;
+            color: #a29bfe;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background: #1a1a2e;
+            color: #fff;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #6c63ff;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            font-size: 0.8em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #6c63ff;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 5px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #6c63ff;
+            border: 3px solid #302b63;
+        }
+
+        .timeline-item h4 {
+            color: #6c63ff;
+            margin-bottom: 5px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(162, 155, 254, 0.05));
+            border-left: 4px solid #6c63ff;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.4em; }
+            .nav-btn { padding: 8px 12px; font-size: 0.75em; }
+            .brain-region { width: 110px; height: 110px; font-size: 0.7em; }
+            .comparison-table { font-size: 0.75em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🧠 Theorien des Bewusstseins</h1>
+    <p>Interaktive Zusammenfassung des Papers von Seth & Bayne (2022, Nature Reviews Neuroscience)</p>
+</div>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="showSection('intro')">🎯 Überblick</button>
+    <button class="nav-btn" onclick="showSection('hot')">💭 HOT</button>
+    <button class="nav-btn" onclick="showSection('gwt')">🌐 GWT</button>
+    <button class="nav-btn" onclick="showSection('iit')">🔗 IIT</button>
+    <button class="nav-btn" onclick="showSection('pp')">🔄 Predictive Processing</button>
+    <button class="nav-btn" onclick="showSection('compare')">⚖️ Vergleich</button>
+    <button class="nav-btn" onclick="showSection('brain')">🧩 Hirnregionen</button>
+    <button class="nav-btn" onclick="showSection('problems')">❓ Offene Fragen</button>
+    <button class="nav-btn" onclick="showSection('quiz')">✅ Quiz</button>
+</div>
+
+<div class="content-area">
+
+    <!-- INTRO SECTION -->
+    <div class="section active" id="intro">
+        <div class="card">
+            <h2><span class="emoji-icon">🎯</span>Worum geht es?</h2>
+            <p>Dieses Paper vergleicht die <strong>vier wichtigsten wissenschaftlichen Theorien des Bewusstseins</strong>. Es geht um die Frage: <em>Warum erleben wir überhaupt etwas?</em></p>
+            
+            <div class="highlight-box">
+                <strong>Kernfrage:</strong> Was macht einen Gehirnzustand zu einem bewussten Erlebnis — und warum fühlt es sich so an, wie es sich anfühlt?
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">📚</span>Grundbegriffe</h2>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🔬 Neurale Korrelate des Bewusstseins (NCC)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Die minimale Menge neuronaler Ereignisse, die gemeinsam für einen bewussten Zustand ausreicht. Der NCC-Ansatz sucht nach Korrelationen — aber Korrelation ≠ Erklärung. Daher brauchen wir Theorien.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🌍 Globale Zustände vs. Lokale Zustände</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p><strong>Globale Zustände:</strong> Das Gesamtbewusstseinsniveau — z.B. Wachsein, Träumen, Narkose, minimaler Bewusstseinszustand.</p>
+                        <p><strong>Lokale Zustände (Inhalte):</strong> Spezifische Erlebnisse — z.B. die Röte einer Rose, der Schmerz eines Kopfwehs, der Geruch von Kaffee.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🎭 Phänomenal vs. Funktional</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p><strong>Phänomenal:</strong> Wie sich etwas anfühlt ("What it is like") — die subjektive Erlebnisqualität.</p>
+                        <p><strong>Funktional:</strong> Was Bewusstsein ermöglicht — z.B. flexibles Verhalten, Erinnerungsbildung, verbale Berichte.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🤯 Das "Hard Problem"</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>David Chalmers' berühmte Unterscheidung: Die "leichten" Probleme betreffen Funktionen und Verhalten. Das "harte" Problem fragt: Warum gibt es überhaupt subjektives Erleben? Warum fühlt sich Rot rot an?</p>
+                        <p>Manche Theorien versuchen es direkt zu lösen, andere umgehen es bewusst.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🗺️</span>Die vier Haupttheorien im Schnellüberblick</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>Theorie</th>
+                    <th>Kernidee (1 Satz)</th>
+                </tr>
+                <tr>
+                    <td><strong>HOT</strong></td>
+                    <td>Bewusstsein entsteht, wenn das Gehirn seine eigenen Zustände "über sich selbst" repräsentiert.</td>
+                </tr>
+                <tr>
+                    <td><strong>GWT</strong></td>
+                    <td>Bewusstsein entsteht, wenn Information in einem globalen "Arbeitsbereich" breit verfügbar gemacht wird.</td>
+                </tr>
+                <tr>
+                    <td><strong>IIT</strong></td>
+                    <td>Bewusstsein IST integrierte Information — je mehr ein System als Ganzes mehr ist als seine Teile, desto bewusster.</td>
+                </tr>
+                <tr>
+                    <td><strong>Predictive Processing</strong></td>
+                    <td>Bewusstsein hängt mit Top-down-Vorhersagen zusammen, die das Gehirn über die Ursachen seiner Sinneseindrücke macht.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- HOT SECTION -->
+    <div class="section" id="hot">
+        <div class="card">
+            <h2><span class="emoji-icon">💭</span>Higher-Order Theories (HOT)</h2>
+            <div class="highlight-box">
+                <strong>Kernaussage:</strong> Ein mentaler Zustand wird bewusst, wenn er das Ziel einer bestimmten Art von <em>Meta-Repräsentation</em> ist — also wenn das Gehirn einen Gedanken "über" diesen Zustand hat.
+            </div>
+
+            <h3>🧩 Wie funktioniert das?</h3>
+            <p>Stell dir vor, du siehst einen roten Punkt. Laut HOT wird dieses Sehen erst dann <em>bewusst</em>, wenn dein Gehirn zusätzlich repräsentiert: "Ich habe gerade eine visuelle Erfahrung eines roten Punktes."</p>
+            
+            <h3>🔑 Schlüsselmerkmale</h3>
+            <ul>
+                <li><strong>Meta-Repräsentation</strong> = Repräsentation ÜBER eine andere Repräsentation</li>
+                <li>Fokus auf <strong>präfrontalen Kortex</strong> (vordere Hirnregionen)</li>
+                <li>Erklärt hauptsächlich: Warum manche Inhalte bewusst sind und andere nicht</li>
+                <li>Kann auch erklären: Warum peripheres Sehen "reicher" wirkt als es ist (durch Fehlrepräsentation)</li>
+            </ul>
+
+            <h3>📐 Varianten</h3>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Klassische HOT (Rosenthal)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Meta-Repräsentationen sind gedankenähnliche Zustände mit konzeptuellem Inhalt.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Selbstorganisierende Meta-Repräsentation (Cleeremans)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Höhere Netzwerke lernen, die Repräsentationen niedrigerer Netzwerke neu zu beschreiben. Bewusstsein = das Gehirn bildet eine "Theorie über sich selbst".</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Perceptual Reality Monitoring (Lau)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Bewusste Wahrnehmung entsteht, wenn ein höheres Netzwerk eine Repräsentation als zuverlässige Abbildung der Außenwelt beurteilt.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>⚠️ Herausforderungen</h3>
+            <ul>
+                <li>Muss erklären, WARUM bestimmte Meta-Repräsentationen genau diese Phänomenologie erzeugen</li>
+                <li>Wird durch Studien herausgefordert, die zeigen, dass anteriore Regionen vielleicht nur für Berichte nötig sind, nicht für Bewusstsein selbst</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- GWT SECTION -->
+    <div class="section" id="gwt">
+        <div class="card">
+            <h2><span class="emoji-icon">🌐</span>Global Workspace Theories (GWT)</h2>
+            <div class="highlight-box">
+                <strong>Kernaussage:</strong> Bewusstsein entsteht, wenn sensorische Information durch "Zündung" (Ignition) in einem neuronalen globalen Arbeitsbereich breit verfügbar gemacht ("gesendet") wird.
+            </div>
+
+            <h3>🧩 Wie funktioniert das?</h3>
+            <p>Stell dir ein Schwarzes Brett in einem Büro vor: Viele spezialisierte Abteilungen (Sehen, Hören, Gedächtnis, Sprache...) können dort Infos ablegen und lesen. Nur was auf dem Brett steht, ist "bewusst" — alles andere läuft unbewusst ab.</p>
+
+            <h3>🔑 Schlüsselmerkmale</h3>
+            <ul>
+                <li><strong>Ignition:</strong> Nichtlineare Netzwerk-"Zündung" verstärkt und erhält Repräsentationen</li>
+                <li><strong>Broadcast:</strong> Information wird weit über fronto-parietale Netzwerke verbreitet</li>
+                <li>Fokus auf <strong>funktionale</strong> Aspekte: Was kann man mit bewussten Inhalten tun?</li>
+                <li>Bewusste Zustände ermöglichen: flexibles Verhalten, Erinnerung, verbale Berichte</li>
+            </ul>
+
+            <h3>🧠 Neurale Basis</h3>
+            <ul>
+                <li>Höhere kortikale Assoziationsareale, besonders <strong>präfrontaler Kortex</strong></li>
+                <li>Bewusstlosigkeit = gestörte funktionale Konnektivität in fronto-parietalen "Hub"-Regionen</li>
+                <li>Bei Bewusstseinsverlust: Konnektivität wird zunehmend durch strukturelle Verbindungen eingeschränkt</li>
+            </ul>
+
+            <h3>🔗 Beziehung zu anderen Prozessen</h3>
+            <ul>
+                <li><strong>Aufmerksamkeit:</strong> Selektiert und verstärkt Signale → ermöglicht Eintritt in den Workspace</li>
+                <li><strong>Arbeitsgedächtnis:</strong> Eng verknüpft — besuchte Arbeitsgedächtnisinhalte nutzen den Workspace</li>
+            </ul>
+
+            <h3>⚠️ Herausforderungen</h3>
+            <ul>
+                <li>Erklärt kaum die <em>phänomenale Qualität</em> — warum fühlt sich Rot anders an als Blau?</li>
+                <li>Was genau macht einen Workspace "global"? Wann ist er global genug?</li>
+                <li>Schwierig bei: Säuglingen, Tieren, KI-Systemen — haben die einen "globalen Workspace"?</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- IIT SECTION -->
+    <div class="section" id="iit">
+        <div class="card">
+            <h2><span class="emoji-icon">🔗</span>Integrated Information Theory (IIT)</h2>
+            <div class="highlight-box">
+                <strong>Kernaussage:</strong> Bewusstsein IST identisch mit der Ursache-Wirkungs-Struktur eines physischen Systems, das ein Maximum an irreduzibler integrierter Information (Φ) erzeugt.
+            </div>
+
+            <h3>🧩 Wie funktioniert das?</h3>
+            <p>IIT geht einen völlig anderen Weg: Sie startet mit <strong>Axiomen über das Erleben selbst</strong> (was offensichtlich wahr sein muss über jedes Bewusstsein) und leitet daraus ab, welche physischen Eigenschaften ein System haben muss.</p>
+
+            <h3>📐 Die Logik der IIT</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Schritt 1: Axiome</h4>
+                    <p>Selbstevidente Eigenschaften des Bewusstseins festlegen (z.B. Existenz, Struktur, Integration, Ausschluss)</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Schritt 2: Postulate</h4>
+                    <p>Ableiten, welche physischen Eigenschaften ein System haben muss, um diese Axiome zu erfüllen</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Schritt 3: Identifikation</h4>
+                    <p>Systeme, die diese Eigenschaften haben, SIND bewusst (nicht nur korreliert!)</p>
+                </div>
+            </div>
+
+            <h3>🔑 Schlüsselkonzepte</h3>
+            <ul>
+                <li><strong>Φ (Phi):</strong> Misst, wie viel mehr Information ein System als Ganzes erzeugt verglichen mit seinen unabhängigen Teilen</li>
+                <li><strong>Posterior Hot Zone:</strong> IIT verortet Bewusstsein in posterioren Hirnregionen (parietal, temporal, okzipital)</li>
+                <li><strong>Intrinsische Eigenschaft:</strong> Bewusstsein hängt von der kausalen Struktur ab, nicht von Informationsverarbeitung</li>
+                <li><strong>Konzeptuelle Strukturen:</strong> "Formen" im hochdimensionalen Raum = spezifische Erlebnisqualitäten</li>
+            </ul>
+
+            <h3>🌟 Besonderheiten</h3>
+            <ul>
+                <li>Umfassendste Theorie: erklärt globale UND lokale Zustände</li>
+                <li>Radikale Vorhersage: Jedes System mit Φ > 0 ist (etwas) bewusst — auch nicht-biologische!</li>
+                <li>Vorhersage: Inaktive Neuronen können Bewusstsein beeinflussen (weil kausale Struktur zählt, nicht Aktivität)</li>
+                <li>Erklärt, warum das Kleinhirn (Cerebellum) nicht bewusst ist: schlechte Architektur für Integration</li>
+            </ul>
+
+            <h3>⚠️ Herausforderungen</h3>
+            <ul>
+                <li>Φ ist in realen Systemen praktisch <strong>nicht berechenbar</strong></li>
+                <li>Sagt wenig über Beziehung zu Aufmerksamkeit, Lernen, Gedächtnis</li>
+                <li>Kontraintuitive Implikationen (Photodioden könnten bewusst sein?)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PP SECTION -->
+    <div class="section" id="pp">
+        <div class="card">
+            <h2><span class="emoji-icon">🔄</span>Predictive Processing & Re-Entry</h2>
+            <div class="highlight-box">
+                <strong>Kernaussage:</strong> Bewusstsein hängt mit <em>Top-down-Vorhersagen</em> zusammen, die das Gehirn über die Ursachen seiner Sinneseindrücke macht. Wahrnehmung = "beste Vermutung" des Gehirns über die Welt.
+            </div>
+
+            <h3>🧩 Wie funktioniert das?</h3>
+            <p>Dein Gehirn ist kein passiver Empfänger — es <strong>sagt ständig vorher</strong>, was als nächstes passiert. Wenn die Vorhersage nicht stimmt, entsteht ein "Vorhersagefehler" (Prediction Error), der nach oben gemeldet wird. Bewusste Wahrnehmung = der aktuelle "beste Tipp" des Gehirns.</p>
+
+            <h3>🔄 Das Grundprinzip</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Top-Down: Vorhersagen ⬇️</h4>
+                    <p>Höhere Hirnregionen senden Erwartungen/Vorhersagen an niedrigere Regionen</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Bottom-Up: Vorhersagefehler ⬆️</h4>
+                    <p>Niedrigere Regionen melden zurück, was NICHT vorhergesagt wurde</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Ergebnis: Bayessche Inferenz</h4>
+                    <p>Durch ständiges Hin-und-Her entsteht die "beste Vermutung" = bewusste Wahrnehmung</p>
+                </div>
+            </div>
+
+            <h3>🔑 Schlüsselkonzepte</h3>
+            <ul>
+                <li><strong>Bewusster Inhalt</strong> = Inhalt der Top-down-Vorhersage (der "beste Tipp")</li>
+                <li><strong>Aufmerksamkeit</strong> = "Precision Weighting" — bestimmte Signale werden als zuverlässiger gewichtet</li>
+                <li><strong>Binokulare Rivalität:</strong> Zwei konkurrierende Hypothesen wechseln sich ab</li>
+                <li><strong>Active Inference:</strong> Vorhersagefehler können auch durch HANDELN minimiert werden</li>
+                <li><strong>Interoceptive Predictions:</strong> Vorhersagen über den eigenen Körper → Emotionen & Selbstgefühl</li>
+            </ul>
+
+            <h3>🧠 Re-Entry Theorie (Lamme)</h3>
+            <div class="highlight-box">
+                Lokale rekurrente (rückläufige) Verarbeitung in sensorischen Kortexarealen reicht für Bewusstsein aus — frontale Regionen werden nur für <em>Berichte</em> über Bewusstsein gebraucht, nicht für Bewusstsein selbst.
+            </div>
+
+            <h3>🌟 Besonderheiten</h3>
+            <ul>
+                <li>Kein reiner ToC — eher ein <strong>Framework</strong> für die Bewusstseinsforschung</li>
+                <li>Erklärt besonders gut: Emotionen, Selbsterleben, Körpergefühl</li>
+                <li>Verbindet Wahrnehmung, Handlung und Bewusstsein in einem einheitlichen Rahmen</li>
+                <li>Erwartungen beschleunigen und verstärken bewusste Wahrnehmung (empirisch belegt)</li>
+            </ul>
+
+            <h3>⚠️ Herausforderungen</h3>
+            <ul>
+                <li>Predictive Processing passiert auch unbewusst — was genau macht es bewusst?</li>
+                <li>Sagt wenig über globale Bewusstseinszustände (Wachsein vs. Schlaf)</li>
+                <li>Muss präziser werden: Welche Art von Vorhersage erzeugt welches Bewusstsein?</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- COMPARE SECTION -->
+    <div class="section" id="compare">
+        <div class="card">
+            <h2><span class="emoji-icon">⚖️</span>Theorienvergleich</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>Kriterium</th>
+                    <th>HOT</th>
+                    <th>GWT</th>
+                    <th>IIT</th>
+                    <th>PP/Re-Entry</th>
+                </tr>
+                <tr>
+                    <td><strong>Erklärt globale Zustände?</strong></td>
+                    <td>Kaum</td>
+                    <td>Ja ✓</td>
+                    <td>Ja ✓✓</td>
+                    <td>Kaum</td>
+                </tr>
+                <tr>
+                    <td><strong>Erklärt Inhalte (lokal)?</strong></td>
+                    <td>Ja ✓</td>
+                    <td>Ja ✓</td>
+                    <td>Ja ✓✓</td>
+                    <td>Ja ✓✓</td>
+                </tr>
+                <tr>
+                    <td><strong>Erklärt Phänomenologie?</strong></td>
+                    <td>Teilweise</td>
+                    <td>Kaum</td>
+                    <td>Ja (Theorie)</td>
+                    <td>Ja ✓</td>
+                </tr>
+                <tr>
+                    <td><strong>Erklärt Funktion?</strong></td>
+                    <td>Wenig</td>
+                    <td>Ja ✓✓</td>
+                    <td>Wenig</td>
+                    <td>Ja ✓</td>
+                </tr>
+                <tr>
+                    <td><strong>Hirnregion</strong></td>
+                    <td>Frontal (PFC)</td>
+                    <td>Fronto-parietal</td>
+                    <td>Posterior</td>
+                    <td>Posterior + lokal</td>
+                </tr>
+                <tr>
+                    <td><strong>Hard Problem?</strong></td>
+                    <td>Direkt</td>
+                    <td>Umgeht es</td>
+                    <td>Direkt</td>
+                    <td>"Real Problem"</td>
+                </tr>
+                <tr>
+                    <td><strong>Einheit d. Bewusstseins</strong></td>
+                    <td>Unklar</td>
+                    <td>Durch Broadcast</td>
+                    <td>Zentral (Φ)</td>
+                    <td>Unklar</td>
+                </tr>
+                <tr>
+                    <td><strong>Berechenbar?</strong></td>
+                    <td>Teilweise</td>
+                    <td>Ja</td>
+                    <td>Nein (Φ)</td>
+                    <td>Ja</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🔥</span>Die große Debatte: Vorne vs. Hinten im Gehirn</h2>
+            <div class="highlight-box">
+                <strong>Kernkonflikt:</strong> Ist Bewusstsein in frontalen (vorderen) oder posterioren (hinteren) Hirnregionen lokalisiert?
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🧠 "Front-of-the-Brain" (HOT & GWT)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p><strong>Argumente:</strong></p>
+                        <ul>
+                            <li>Neuroimaging zeigt präfrontale Aktivierung bei bewusster Wahrnehmung</li>
+                            <li>Bewusste Inhalte können aus präfrontaler Aktivität dekodiert werden</li>
+                            <li>Läsionen im PFC beeinträchtigen Metakognition</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🧠 "Back-of-the-Brain" (IIT & Re-Entry)</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p><strong>Argumente:</strong></p>
+                        <ul>
+                            <li>"No-Report"-Studien: Frontale Aktivität verschwindet, wenn kein Bericht nötig ist</li>
+                            <li>Posteriore Aktivität sagt Trauminhalte vorher (auch im Tiefschlaf!)</li>
+                            <li>Frontale Aktivität = vielleicht nur für Berichte/Kontrolle nötig, nicht für Bewusstsein selbst</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>🤔 Warum ist das so schwer zu klären?</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Das Grundproblem: Um zu wissen, ob jemand bewusst ist, brauchen wir einen <strong>Bericht</strong> — aber Berichte erfordern frontale Aktivität! Es ist ein Zirkel: Wir können Bewusstsein ohne Bericht nicht sicher nachweisen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">⏱️</span>Zeitliche Debatte: Früh vs. Spät</h2>
+            <p>Wann nach einem Reiz beginnt bewusste Wahrnehmung?</p>
+            <table class="comparison-table">
+                <tr>
+                    <th>Früh (120–200 ms)</th>
+                    <th>Spät (250–400 ms)</th>
+                </tr>
+                <tr>
+                    <td>Unterstützt IIT & Re-Entry</td>
+                    <td>Unterstützt HOT & GWT</td>
+                </tr>
+                <tr>
+                    <td>"Awareness Negativity" — frühe modalitätsspezifische Signale</td>
+                    <td>P3b-Komponente, Langstrecken-Informationsaustausch</td>
+                </tr>
+                <tr>
+                    <td>Bewusstsein = schnell & lokal</td>
+                    <td>Bewusstsein = langsam & global</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- BRAIN SECTION -->
+    <div class="section" id="brain">
+        <div class="card">
+            <h2><span class="emoji-icon">🧩</span>Interaktive Hirnregionen</h2>
+            <p>Klicke auf eine Region, um zu sehen, welche Theorie sie betont:</p>
+            
+            <div class="brain-diagram">
+                <div class="brain-region frontal" onclick="showRegion('frontal')">
+                    Präfrontaler Kortex (PFC)
+                </div>
+                <div class="brain-region posterior" onclick="showRegion('posterior')">
+                    Posteriore "Hot Zone"
+                </div>
+                <div class="brain-region global" onclick="showRegion('global')">
+                    Fronto-Parietales Netzwerk
+                </div>
+            </div>
+
+            <div class="region-info" id="info-frontal">
+                <h3 style="color: #ff6b6b;">Präfrontaler Kortex</h3>
+                <p><strong>Betont von:</strong> HOT (Higher-Order Theories)</p>
+                <p><strong>Rolle:</strong> Meta-Repräsentationen, Metakognition, höhere kognitive Funktionen</p>
+                <p><strong>Kontroverse:</strong> Ist PFC-Aktivität wirklich für Bewusstsein nötig — oder nur für Berichte darüber?</p>
+            </div>
+
+            <div class="region-info" id="info-posterior">
+                <h3 style="color: #4ecdc4;">Posteriore "Hot Zone"</h3>
+                <p><strong>Betont von:</strong> IIT & Re-Entry Theorien</p>
+                <p><strong>Umfasst:</strong> Parietaler, temporaler und okzipitaler Kortex, Precuneus</p>
+                <p><strong>Argumente:</strong> Gute Architektur für integrierte Information; sagt Trauminhalte vorher; No-Report-Studien zeigen hier die Bewusstseinskorrelate</p>
+            </div>
+
+            <div class="region-info" id="info-global">
+                <h3 style="color: #ffe66d;">Fronto-Parietales Netzwerk</h3>
+                <p><strong>Betont von:</strong> GWT (Global Workspace Theory)</p>
+                <p><strong>Rolle:</strong> "Hub"-Knoten für globalen Broadcast; Ignition und Langstrecken-Konnektivität</p>
+                <p><strong>Bei Bewusstseinsverlust:</strong> Funktionale Konnektivität bricht zusammen und wird auf strukturelle Verbindungen reduziert</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="emoji-icon">🧠</span>Warum ist das Kleinhirn NICHT bewusst?</h2>
+            <p>Alle Theorien müssen erklären, warum das Cerebellum (mit ~80% aller Neuronen!) nicht zum Bewusstsein beiträgt:</p>
+            <table class="comparison-table">
+                <tr>
+                    <th>Theorie</th>
+                    <th>Erklärung</th>
+                </tr>
+                <tr>
+                    <td><strong>IIT</strong></td>
+                    <td>Architektur schlecht für integrierte Information (zu modular, zu wenig Integration)</td>
+                </tr>
+                <tr>
+                    <td><strong>HOT</strong></td>
+                    <td>Kann keine Meta-Repräsentationen der relevanten Art unterstützen</td>
+                </tr>
+                <tr>
+                    <td><strong>GWT</strong></td>
+                    <td>Implementiert keinen globalen Workspace</td>
+                </tr>
+                <tr>
+                    <td><strong>Re-Entry/PP</strong></td>
+                    <td>Fehlen reicher rekurrenter Signalverarbeitung</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- PROBLEMS SECTION -->
+    <div class="section" id="problems">
+        <div class="card">
+            <h2><span class="emoji-icon">❓</span>Offene Fragen & Zukunft</h2>
+            
+            <h3>🔬 Das Messproblem</h3>
+            <div class="highlight-box">
+                Um eine Theorie zu testen, müssen wir Bewusstsein zuverlässig messen können — aber wie misst man etwas Subjektives objektiv?
+            </div>
+            <ul>
+                <li>Wir verlassen uns meist auf <strong>Selbstberichte</strong> — aber Babys, Tiere, Komapatienten können nicht berichten</li>
+                <li><strong>PCI</strong> (Perturbational Complexity Index): Misst Komplexität der Hirnreaktion auf TMS — funktioniert klinisch gut!</li>
+                <li>Problem: Jeder Marker muss validiert werden — aber wogegen, wenn nicht gegen Berichte?</li>
+            </ul>
+
+            <h3>🚀 Drei Wege nach vorne</h3>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>1️⃣ Theorien präziser machen</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Vage Theorien → vage Vorhersagen. Lösung: <strong>Computational Models</strong> entwickeln, die konkrete, testbare Vorhersagen machen. Gemeinsame Sprache für Theorienvergleich schaffen.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>2️⃣ Theorien umfassender machen</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Aktuell fokussieren die meisten Theorien nur auf: visuelle Wahrnehmung, wache Erwachsene. Aber was ist mit: Träumen, Psychedelika, Emotionen, Babys, Tieren, KI?</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>3️⃣ Das Messproblem lösen</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <p>Zuverlässige Bewusstseinsmarker entwickeln, die nicht auf Selbstberichten basieren. Wichtig für: Komapatienten, Tiere, Organoide, KI-Systeme.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>🤝 Adversarial Collaborations</h3>
+            <p>Neuer Ansatz: Vertreter konkurrierender Theorien einigen sich <strong>vorab</strong> auf ein Experiment und darauf, welches Ergebnis welche Theorie stützt. Aktuell laufend: IIT vs. GWT!</p>
+        </div>
+    </div>
+
+    <!-- QUIZ SECTION -->
+    <div class="section" id="quiz">
+        <div class="card">
+            <h2><span class="emoji-icon">✅</span>Teste dein Verständnis</h2>
+            
+            <div class="quiz-question" id="q1">
+                <p>1. Was ist der Kernmechanismus bei HOT?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Globaler Broadcast von Information</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">Meta-Repräsentation eigener mentaler Zustände</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Maximierung integrierter Information</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Top-down Vorhersagen</button>
+                <div class="quiz-feedback" id="fb1"></div>
+            </div>
+
+            <div class="quiz-question" id="q2">
+                <p>2. Welche Theorie verortet Bewusstsein primär in posterioren Hirnregionen?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">HOT</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">GWT</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">IIT</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Keine davon</button>
+                <div class="quiz-feedback" id="fb2"></div>
+            </div>
+
+            <div class="quiz-question" id="q3">
+                <p>3. Was bedeutet "Ignition" in der GWT?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Das Feuern einzelner Neuronen</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">Nichtlineare Netzwerk-"Zündung", die Repräsentationen verstärkt und im Workspace verbreitet</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Die Aktivierung des Kleinhirns</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Ein Vorhersagefehler-Signal</button>
+                <div class="quiz-feedback" id="fb3"></div>
+            </div>
+
+            <div class="quiz-question" id="q4">
+                <p>4. Was ist das "Hard Problem" des Bewusstseins?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Wie man Bewusstsein bei Tieren misst</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Warum manche Hirnregionen aktiver sind als andere</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">Warum es überhaupt subjektives Erleben gibt — warum fühlt sich etwas nach etwas an?</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Wie man verschiedene Bewusstseinstheorien testet</button>
+                <div class="quiz-feedback" id="fb4"></div>
+            </div>
+
+            <div class="quiz-question" id="q5">
+                <p>5. Was ist eine radikale Vorhersage der IIT?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Nur Menschen können bewusst sein</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Bewusstsein erfordert Sprache</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">Auch einfache nicht-biologische Systeme könnten bewusst sein (wenn Φ > 0)</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Das Kleinhirn ist das Zentrum des Bewusstseins</button>
+                <div class="quiz-feedback" id="fb5"></div>
+            </div>
+
+            <div class="quiz-question" id="q6">
+                <p>6. Was zeigen "No-Report"-Studien?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">Frontale Aktivität nimmt ab, wenn kein Bericht nötig ist — sie könnte nur für Berichte nötig sein, nicht für Bewusstsein</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Bewusstsein existiert nicht ohne Sprache</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Das Kleinhirn wird bei Bewusstsein aktiv</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">IIT ist definitiv falsch</button>
+                <div class="quiz-feedback" id="fb6"></div>
+            </div>
+
+            <div class="quiz-question" id="q7">
+                <p>7. Was ist bei Predictive Processing der bewusste Inhalt?</p>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Der Vorhersagefehler (Prediction Error)</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">Die Top-down-Vorhersage — der "beste Tipp" des Gehirns</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Die sensorischen Rohdaten</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Die Aufmerksamkeitsgewichtung</button>
+                <div class="quiz-feedback" id="fb7"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+    let currentSection = 'intro';
+    const sections = ['intro', 'hot', 'gwt', 'iit', 'pp', 'compare', 'brain', 'problems', 'quiz'];
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(id).classList.add('active');
+        currentSection = id;
+        
+        const idx = sections.indexOf(id);
+        document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+        
+        // Update progress
+        const progress = ((idx + 1) / sections.length) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        
+        // Scroll to top of content
+        window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+
+    function toggleAccordion(header) {
+        const body = header.nextElementSibling;
+        const isOpen = body.classList.contains('open');
+        
+        // Close all in same accordion
+        const accordion = header.closest('.accordion');
+        if (accordion) {
+            accordion.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+            accordion.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('open'));
+        }
+        
+        if (!isOpen) {
+            body.classList.add('open');
+            header.classList.add('open');
+        }
+    }
+
+    function showRegion(region) {
+        document.querySelectorAll('.region-info').forEach(r => r.classList.remove('visible'));
+        document.getElementById('info-' + region).classList.add('visible');
+    }
+
+    function checkAnswer(btn, isCorrect) {
+        const question = btn.closest('.quiz-question');
+        const buttons = question.querySelectorAll('.quiz-option');
+        const feedback = question.querySelector('.quiz-feedback');
+        
+        // Disable all buttons
+        buttons.forEach(b => {
+            b.disabled = true;
+            b.style.opacity = '0.7';
+        });
+        
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedback.textContent = '✅ Richtig!';
+            feedback.style.color = '#4ecdc4';
+        } else {
+            btn.classList.add('wrong');
+            // Highlight correct answer
+            buttons.forEach(b => {
+                if (b.onclick.toString().includes('true')) {
+                    b.classList.add('correct');
+                }
+            });
+            feedback.textContent = '❌ Leider falsch. Die richtige Antwort ist grün markiert.';
+            feedback.style.color = '#ff6b6b';
+        }
+        feedback.classList.add('show');
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        const idx = sections.indexOf(currentSection);
+        if (e.key === 'ArrowRight' && idx < sections.length - 1) {
+            showSection(sections[idx + 1]);
+        } else if (e.key === 'ArrowLeft' && idx > 0) {
+            showSection(sections[idx - 1]);
+        }
+    });
+
+    // Initialize progress
+    document.getElementById('progressBar').style.width = ((1) / sections.length * 100) + '%';
+</script>
+
+</body>
+</html>
