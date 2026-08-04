@@ -138,7 +138,7 @@ function renderStep(step) {
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
         '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
-        '<b>Generator (Quelle):</b> Partikel kommen <b>von links</b> ins Bild und werden durch das System geleitet — gezogen von <b>Attraktoren</b> (= Bedeutungs-Becken), gebremst von <b>Sammler-Punkten</b> (= Repeller im klassischen Sinn, aber hier: halten Partikel fest statt sie wegzustoßen).<br>Punkte werden nicht angezogen – sie werden <b>von außen eingebracht</b> und finden ihren Platz im überlappenden Bedeutungsfeld.'
+        '<b>Generator (Quelle):</b> <b>Partikel treten aus dem Generator</b> (links) in <b>verschiedenen Winkeln</b> aus und werden durch das System geleitet — gezogen von <b>Attraktoren</b> (= wahrscheinliche nächste Tokens, größeres Becken = höhere Wahrscheinlichkeit), gebremst von <b>Sammler-Punkten</b> (= unwahrscheinliche Tokens).<br>Beispiel: Prompt «Die Hauptstadt von Frankreich ist ___ » → Attraktoren Paris/London/Berlin, Sammler Apfel/Haus.'
     ];    const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
 
