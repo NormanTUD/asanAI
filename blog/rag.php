@@ -157,7 +157,7 @@ ICL relies on whatever the user manually puts in the prompt. RAG **automates the
 
 ## RAG and Long Context Windows
 
-Modern LLMs have ever-growing context windows: 128K tokens (GPT-4), 200K (Claude), even 1M+ (Gemini). So why bother with RAG?
+Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (Claude 3), even 1M+ (Gemini 1.5). So why bother with RAG?
 </div>
 
 <div id="raglab-context-table"></div>

@@ -84,6 +84,8 @@ The term $\delta$ quantifies how much a neuron contributed to the total error:
 
 **For Hidden Neurons:** $\delta_{\text{hidden}} = (\delta_{\text{next}} \cdot w_{\text{next}}) \cdot h \cdot (1 - h)$
 
+(Note the leading minus: $\delta$ is defined as the *negative* of the loss gradient, pointing in the direction the weights should be changed. The Loss chapter writes the gradient itself, $\partial \mathcal{L}/\partial z_i = \hat{y}_i - y_i$ for the softmax + cross-entropy combination, which is exactly $-\delta$; the sign convention is only a matter of whether we "add" or "subtract" during the update.)
+
 ## Weight Updates
 
 Once we calculate $\delta$, we update the weights to reduce the error:

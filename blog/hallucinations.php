@@ -74,7 +74,7 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
 
 * **Human in the Loop:** Never automate a system where the AI takes critical action (like sending money or medical advice) without a human checking it first.
 * **Verify Facts:** Use AI for summarization, drafting, and brainstorming. Do **not** use it as a search engine for facts without verifying the output via Google or a trusted source.
-* **RAG (Retrieval Augmented Generation):** This is a technique where we give the AI a specific text (like a manual) and say "Only answer using this text." This reduces hallucinations significantly because the AI doesn't have to rely on its "fuzzy memory."
+* **RAG (Retrieval Augmented Generation):** An automated retriever searches a knowledge base (e.g., a manual, documents, or a database) and injects the most relevant passages into the prompt — the AI then answers using only those passages. This reduces hallucinations significantly because the AI doesn't have to rely on its "fuzzy memory."
 
 The Rule of Thumb is: even if the output looks right, be suspicious. Always check the math, run the code, and check the links.
 

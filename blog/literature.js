@@ -206,7 +206,7 @@ window.bibData = {
 		year: 1494,
 		author: "Luca Pacioli"
 	},
-	"schmidhuber1995nplm": {
+	"schmidhuber1996nplm": {
 		title: "Sequential Neural Text Compression",
 		author: "Jürgen Schmidhuber, Stefan Heil",
 		year: 1996,
@@ -763,7 +763,7 @@ window.bibData = {
 	"eniac1946": {
 		title: "Electronic Numerical Integrator and Computer",
 		author: "John Presper Eckert, John W. Mauchly",
-		year: 1945,
+		year: 1946,
 		url: "https://fi.edu/sites/default/files/2016-04/EckertAndMauchly_CaseFilesReport_TheFranklinInstitute.pdf"
 	},
 	"kilbyic": {

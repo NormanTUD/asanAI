@@ -123,7 +123,7 @@ Each optimizer uses a different **update rule** to decide how to change the weig
 #### SGD (Stochastic Gradient Descent)
 The simplest rule. Compute the gradient $g_t$ and step in the opposite direction:
 $$x_{t+1} = x_t - \eta \cdot g_t$$
-where $\eta$ is the learning rate. That's it, no memory, no adaptation.
+where $\eta$ is the learning rate (written `lr` in the interactive demo above). That's it, no memory, no adaptation.
 
 #### SGD with Momentum
 Momentum introduces a **velocity** term $v_t$ that accumulates past gradients, smoothing out noisy updates:

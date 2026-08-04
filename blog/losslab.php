@@ -18,11 +18,11 @@ A Loss Function is a mathematical way of measuring *"how wrong"* the AI is. If t
 
 When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**. The most common tool here is **Mean Squared Error (MSE)**, first published by \citeauthor{legendre1805} in \citeyear{legendre1805} (for fitting celestial orbits) and independently developed by \citeauthor{gauss1809} in \citeyear{gauss1809} (§ 179, 213).
 
-We take the difference between the Truth ($y$) and the Guess ($\hat{y}$) and square it. Squaring is important because:
-1. It makes all errors **positive** (you can't have "negative" wrongness).
-2. It **punishes large mistakes** much harder than small ones.
+For a single example the error is $(y_{\text{target}} - \hat{y}_{\text{pred}})^2$; the **mean** squared error averages this over the whole batch:
 
-$$\text{Loss} = (y_{\text{target}} - \hat{y}_{\text{pred}})^2$$
+$$\text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
+
+(Textbooks and the Backpropagation chapter sometimes scale the sum by an extra factor $\frac{1}{2}$ for algebraic convenience; the location of the minimum is unchanged.)
 
 In the plot below, the loss creates a "bowl" shape. To train the AI, we calculate the **slope** (the derivative). If the slope is negative, the AI needs to increase its guess. If the slope is positive, it needs to decrease it.
 </div>
@@ -122,11 +122,11 @@ By minimizing this function under the constraint of a fixed compute budget $C \a
 
 The connection between cross-entropy loss and information theory is not a superficial analogy — it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
 
-Shannon's entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
+Shannon's cross-entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
 
 $$H(P, Q) = -\sum_{x} P(x) \log Q(x)$$
 
-This measures how many bits are needed to encode events from $P$ using a code optimized for $Q$. When $P$ and $Q$ match perfectly, $H(P, Q) = H(P)$, the minimal possible number of bits (the true entropy). When they diverge, you waste extra bits.
+With base-2 logarithms this measures how many **bits** are needed to encode events from $P$ using a code optimized for $Q$; with the natural logarithm (as in $-\ln(P)$ above) it measures the same quantity in *nats*, which differ from bits only by the constant factor $\ln 2$. When $P$ and $Q$ match perfectly, $H(P, Q) = H(P)$, the minimal possible number of bits (the true entropy). When they diverge, you waste extra bits.
 
 Cross-entropy loss for a classification task is:
 
