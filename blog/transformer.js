@@ -270,6 +270,18 @@ function matMul(matrix, weights, bias = null) {
 	);
 }
 
+function erfApprox(x) {
+	const sign = x < 0 ? -1 : 1;
+	const ax = Math.abs(x);
+	const t = 1 / (1 + 0.3275911 * ax);
+	const poly = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-ax * ax);
+	return sign * poly;
+}
+
+function geluApprox(x) {
+	return 0.5 * x * (1 + erfApprox(x / Math.SQRT2));
+}
+
 function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null, ffnLayerIndex = null) {
 	// 1. Pre-LN before attention
 	const normH = calculateLayerNorm(h_current, layerWeights.gamma, layerWeights.beta);
@@ -1607,7 +1619,7 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
 
 	// Pre-LN + FFN
 	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-	let ffn = tf.relu(add(tf.matMul(normX2, layer.w1), layer.b1));
+	let ffn = tf_gelu(add(tf.matMul(normX2, layer.w1), layer.b1));
 	ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
 	return add(x, ffn);
 }
@@ -2831,7 +2843,7 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 
 	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
 
-	const out_L1 = matMul(normed_h1, W1, b1).map(row => row.map(v => Math.max(0, v)));
+	const out_L1 = matMul(normed_h1, W1, b1).map(row => row.map(v => geluApprox(v)));
 
 	const out_FFN = matMul(out_L1, W2, b2);
 
@@ -3051,12 +3063,12 @@ function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta,
 
 function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
     return `
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + GELU</strong></p>
 
-    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{\\text{ReLU}}_{\\substack{\\text{Activation} \\\\ \\max(0, x)}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
+    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{\\text{GELU}}_{\\substack{\\text{Activation} \\\\ 0.5x(1 + \\text{erf}(x/\\sqrt{2}))}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after GELU')}}_{\\text{out}_{L1}${sup}} = \\text{GELU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>`;
 }
 
@@ -3069,7 +3081,7 @@ function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
     $$ \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} = \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} \\cdot \\underbrace{W_2${sup}}_{\\substack{\\text{Compression} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_2${sup}}_{\\text{Compression Bias}} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after GELU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
     </div>`;
 }
 
@@ -5353,6 +5365,15 @@ function tf_layer_norm(x, gamma, beta) {
 		const tf_epsilon = scalar(epsilon);
 		const normalized = x.sub(mean).div(tf.sqrt(variance.add(tf_epsilon)));
 		return normalized.mul(gamma).add(beta);
+	});
+}
+
+function tf_gelu(x) {
+	return tidy(() => {
+		const half = scalar(0.5);
+		const one = scalar(1);
+		const sqrtTwo = scalar(Math.SQRT2);
+		return x.mul(half).mul(one.add(tf.erf(x.div(sqrtTwo))));
 	});
 }
 

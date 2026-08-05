@@ -213,7 +213,7 @@ Here, we do **not** use the original Encoder-Decoder architecture from Vaswani e
 
 1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (see \citetitle{xiong2020}) that improves gradient flow and training stability through deep stacks.
 2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from "cheating" by looking at future positions.
-3. **A Feed-Forward Network (FFN)** with ReLU activation and its own Pre-LN and residual connection.
+3. **A Feed-Forward Network (FFN)** with GELU activation and its own Pre-LN and residual connection.
 
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.
 </div>
@@ -408,7 +408,7 @@ $$\text{FFN}(h_1) = \sigma(h_1 W_1 + b_1)W_2 + b_2$$
 Where:
 - $W_1$ is the first weight matrix (expansion to $d_\text{ff}$, usually $4 \times d_{\text{model}}$).
 - $b_1$ is the bias vector for the first layer.
-- $\sigma$ is the activation function (like ReLU or GELU).
+- $\sigma$ is the activation function (like GELU, which the nanoGPT architecture uses, replacing the original ReLU).
 - $W_2$ is the second weight matrix (compression back to $d_{\text{model}}$).
 - $b_2$ is the bias vector for the second layer.
 
