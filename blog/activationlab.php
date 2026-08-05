@@ -47,7 +47,8 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
         <div>
             <label style="display: block; margin-bottom: 8px;"><b>Select Activation Function:</b></label>
             <select id="pure-act-type" class="btn" style="border: 1px solid #ccc; width: 100%; padding: 10px;">
-                <option value="relu">ReLU (The Modern Standard)</option>
+                <option value="relu">ReLU (The Classic Workhorse)</option>
+                <option value="gelu">GELU (The Transformer Standard)</option>
                 <option value="sigmoid">Sigmoid (The Classic S-Curve)</option>
                 <option value="tanh">Tanh (Zero-Centered)</option>
                 <option value="leaky_relu">Leaky ReLU (Death Prevention)</option>
@@ -177,4 +178,16 @@ For any given input, roughly half of ReLU's neurons output exactly zero. This me
 This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lottery}: within a large, randomly initialized network, there exist smaller subnetworks ("winning tickets") that, when trained in isolation, can match the performance of the full network. ReLU makes these subnetworks easier to find because its sparsity naturally partitions the network into overlapping but distinct computational pathways.
 
 The "aha-moment": ReLU doesn't just prevent vanishing gradients — it forces the network to use a different "team" of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
+</div>
+
+<div class="md">
+### GELU: The Smooth Transformer Gate
+
+While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)** — introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu}) — became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
+
+$$\text{GELU}(x) = x \cdot \Phi(x) = 0.5\, x \left(1 + \text{erf}\!\left(\frac{x}{\sqrt{2}}\right)\right)$$
+
+Where $\Phi(x)$ is the standard normal cumulative distribution function and $\text{erf}$ is the error function.
+
+GELU is often described as a "smooth ReLU": it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever "dies" completely — every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
 </div>

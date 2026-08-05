@@ -1,3 +1,14 @@
+function erfApprox(x) {
+	// Abramowitz & Stegun 7.1.26 approximation of the error function
+	const sign = x < 0 ? -1 : 1;
+	x = Math.abs(x);
+	const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741,
+	      a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+	const t = 1 / (1 + p * x);
+	const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+	return sign * y;
+}
+
 function initPureActivationLab() {
 	if (document.getElementById('softmax-controls')) initSoftmaxLab();
 
@@ -14,6 +25,14 @@ function initPureActivationLab() {
 			use: "The **industry standard** for hidden layers in Deep Learning. It is computationally efficient and helps networks train faster.",
 			pro: "Solves the vanishing gradient problem for positive values and is extremely fast to compute.",
 			con: "**Dying ReLU problem:** If a neuron gets stuck in the negative range, it outputs 0 and its gradient becomes 0, effectively 'dying' forever."
+		},
+		gelu: {
+			name: "GELU (Gaussian Error Linear Unit)",
+			fn: (x) => 0.5 * x * (1 + erfApprox(x / Math.sqrt(2))),
+			tex: "f(x) = 0.5\\,x\\left(1 + \\text{erf}\\left(\\frac{x}{\\sqrt{2}}\\right)\\right)",
+			use: "The **standard activation of Transformers**, used in the FFN of GPT-style models. A smooth ReLU: everywhere differentiable, with a small gradient for negative inputs.",
+			pro: "Smooth and differentiable everywhere; no 'dying' neurons; the activation of choice in nanoGPT's Feed-Forward Network.",
+			con: "Slightly more expensive to compute than ReLU due to the error function."
 		},
 		sigmoid: {
 			name: "Sigmoid / Logistic",
@@ -256,6 +275,14 @@ async function loadActivationModule() {
                 use: "The **industry standard** for hidden layers in Deep Learning. It is computationally efficient and helps networks train faster.",
                 pro: "Solves the vanishing gradient problem for positive values and is extremely fast to compute.",
                 con: "**Dying ReLU problem:** If a neuron gets stuck in the negative range, it outputs 0 and its gradient becomes 0, effectively 'dying' forever."
+            },
+            gelu: {
+                name: "GELU (Gaussian Error Linear Unit)",
+                fn: (x) => 0.5 * x * (1 + erfApprox(x / Math.sqrt(2))),
+                tex: "f(x) = 0.5\\,x\\left(1 + \\text{erf}\\left(\\frac{x}{\\sqrt{2}}\\right)\\right)",
+                use: "The **standard activation of Transformers**, used in the FFN of GPT-style models. A smooth ReLU: everywhere differentiable, with a small gradient for negative inputs.",
+                pro: "Smooth and differentiable everywhere; no 'dying' neurons; the activation of choice in nanoGPT's Feed-Forward Network.",
+                con: "Slightly more expensive to compute than ReLU due to the error function."
             },
             sigmoid: {
                 name: "Sigmoid / Logistic",
