@@ -1,12 +1,11 @@
         '<b>Generator (Quelle):</b> Ein <b>Quelle-Punkt</b>, aus dem <b>beliebig viele Trajektorien</b> herauskommen. Aus <i>einem</i> Zustand werden <i>alle</i> möglichen Ausgaben erzeugt.<br>Genau das tut das LLM bei jeder Vorhersage: <i>ein</i> Zustandsvektor → Verteilung über <i>alle</i> möglichen nächsten Tokens. Punkte werden nicht angezogen – sie werden <b>erzeugt</b>.'
 // ============================================================
-// ATTRACTOR BASIN VISUALIZATION v8
-// Generator-Folie neu: Potential-Landschaft statt kurzer Reichweiten
-// 1. Jedes Wort formt seine EIGENE Landschaft aus Gauß-Becken (attract) und Hügeln (repel)
-// 2. Heimat-Steuerung garantiert, dass jedes Token sein Heimat-Becken erreicht
-// 3. Nur das Heimat-Becken fängt ein (korrekte "Generierung" des nächsten Wortes)
-// 4. Harte + weiche Wandbegrenzung: Token verlassen NIE das Canvas
-// 5. Landschafts-Feld (56x28) wird pro Token gecacht und als Farbfeld gemorpht
+// ATTRACTOR BASIN VISUALIZATION v9
+// Generator-Folie: Stil des Punkt-Attraktors (Folie 0)
+// 1. Jedes Wort ist ein Partikel, das sanft in sein semantisches Einzugsbecken wandert
+// 2. Freie Bewegung mit Heading/Bias wie beim Punkt-Attraktor, Spirale im Becken
+// 3. Wörter werden NACHEINANDER erzeugt — erst wenn eins gelandet ist, kommt das nächste
+// 4. Wandabstoßung + harte Begrenzung: Partikel verlassen nie das Canvas
 // ============================================================
 const AttractorViz = (() => {
     let currentStep = 0;
@@ -137,7 +136,7 @@ function renderStep(step) {
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
         '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
-        '<b>Generator (Quelle):</b> Der Generator emittiert die Wörter von «die hauptstadt von frankreich ist paris» — <b>eins nach dem anderen</b>, erst wenn das vorige gelandet ist. Jedes Wort formt seine <b>eigene Landschaft</b>: Attraktoren werden zu Becken (Farbfeld), Repeller zu Hügeln (rot). Das Token rollt den Potential-Hang hinab, lässt sich von fremden Becken ablenken und wird <b>nur</b> von seinem <b>Heimat-Becken</b> (Ziel-Ring) verschluckt. «hauptstadt» fällt ins Substantive-Becken, «frankreich» ins Länder-Becken, «Paris» ins Städte-Becken — <b>Bedeutung ist relational, nicht absolut</b>.'
+        '<b>Generator (Quelle):</b> Der Generator emittiert die Wörter von «die hauptstadt von frankreich ist paris» — <b>eins nach dem anderen</b>. Jedes Wort ist ein Partikel, das von seinem <b>semantischen Einzugsbecken</b> angezogen und hineingesogen wird: «die», «von», «ist» → Funktionswort, «hauptstadt» → Substantive, «frankreich» → Länder, «Paris» → Städte. Genau wie beim Punkt-Attraktor verschwindet es im Kern. <b>Erst wenn ein Wort gelandet ist, wird das nächste generiert</b>.'
     ];    const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
 
@@ -2489,18 +2488,15 @@ function renderGenerator(container) {
     const { ctx, W, H } = setup;
 
     const sourceX = 70, sourceY = H * 0.52;
+    const basinR = 62;
 
-    // === Regionen (2x2-Landschaft, feste Heimat-Becken) ===
+    // === Semantische Einzugsbecken (2x2) ===
     const regions = [
-        { id: 'funk',    x: W * 0.30, y: H * 0.26, r: 30, baseColor: '#10b981', pulse: 0 },
-        { id: 'subst',   x: W * 0.27, y: H * 0.80, r: 32, baseColor: '#f59e0b', pulse: 0 },
-        { id: 'laender', x: W * 0.77, y: H * 0.26, r: 32, baseColor: '#3b82f6', pulse: 0 },
-        { id: 'staedte', x: W * 0.77, y: H * 0.80, r: 34, baseColor: '#8b5cf6', pulse: 0 }
+        { id: 'funk',    x: W * 0.30, y: H * 0.34, color: '#10b981' },
+        { id: 'subst',   x: W * 0.28, y: H * 0.80, color: '#f59e0b' },
+        { id: 'laender', x: W * 0.76, y: H * 0.34, color: '#3b82f6' },
+        { id: 'staedte', x: W * 0.76, y: H * 0.80, color: '#8b5cf6' }
     ];
-
-    const HOME_COLOR = { funk: '#10b981', subst: '#f59e0b', laender: '#3b82f6', staedte: '#8b5cf6' };
-
-    const SIGMA = 105; // Breite der Einzugsbecken (Gauß-Potential)
 
     function regionById(id) { return regions.find(r => r.id === id); }
     function homeOf(aff) {
@@ -2511,7 +2507,6 @@ function renderGenerator(container) {
 
     // === Affinitäts-Vektoren pro Wort ===
     // Format: { funk: -1..+1, subst: -1..+1, laender: -1..+1, staedte: -1..+1 }
-    // Jedes Wort formt seine EIGENE Landschaft aus Becken und Hügeln.
     const WORDS = [
         { w: 'die',        aff: { funk: +0.9, subst: -0.7, laender: -0.6, staedte: -0.6 } },
         { w: 'hauptstadt', aff: { funk: -0.6, subst: +0.9, laender: +0.3, staedte: +0.5 } },
@@ -2522,45 +2517,14 @@ function renderGenerator(container) {
     ];
 
     let sentenceIdx = 0;
-    let lastWordIdx = -1;
     let activeParticle = null;
     let pauseFrames = 50;
     let cycleComplete = false;
     let cyclePause = 0;
 
-    // === Landschafts-Feld (pro Token einmal berechnet) ===
-    let fieldKey = -1;
-    let fieldCells = [];
-
-    function ensureField() {
-        const key = Math.max(lastWordIdx, 0);
-        if (fieldKey === key) return;
-        fieldKey = key;
-        const aff = WORDS[key].aff;
-        const gx = 56, gy = 28;
-        const cw = W / gx, ch = H / gy;
-        fieldCells = [];
-        for (let i = 0; i < gx; i++) {
-            for (let j = 0; j < gy; j++) {
-                const x = (i + 0.5) * cw;
-                const y = (j + 0.5) * ch;
-                let dom = 0, domMag = -1;
-                for (let r = 0; r < regions.length; r++) {
-                    const rg = regions[r];
-                    const dx = rg.x - x, dy = rg.y - y;
-                    const w = Math.exp(-(dx * dx + dy * dy) / (2 * SIGMA * SIGMA));
-                    const val = aff[rg.id] * w;
-                    if (Math.abs(val) > domMag) { domMag = Math.abs(val); dom = r; }
-                }
-                const rg = regions[dom];
-                const alpha = 0.06 + Math.min(1, domMag) * 0.5;
-                const col = aff[rg.id] < 0 ? '#ef4444' : rg.baseColor;
-                fieldCells.push({
-                    x, y, cw, ch,
-                    fill: col + Math.round(alpha * 255).toString(16).padStart(2, '0')
-                });
-            }
-        }
+    function hexA(hex, a) {
+        const n = parseInt(hex.slice(1), 16);
+        return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
     }
 
     function spawnNext() {
@@ -2571,126 +2535,187 @@ function renderGenerator(container) {
             return;
         }
         const data = WORDS[sentenceIdx];
-        lastWordIdx = sentenceIdx;
         sentenceIdx++;
-        const angle = (Math.random() - 0.5) * Math.PI * 0.6;
-        const spd = 0.5 + Math.random() * 0.7;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.0 + Math.random() * 0.5;
         activeParticle = {
             x: sourceX,
             y: sourceY,
-            vx: Math.cos(angle) * spd,
-            vy: Math.sin(angle) * spd,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            heading: angle,
+            turnRate: (Math.random() - 0.5) * 0.03,
+            turnChangeTimer: 60 + Math.floor(Math.random() * 120),
+            inBasin: false,
             word: data.w,
-            aff: data.aff,
+            color: regionById(homeOf(data.aff)).color,
             home: regionById(homeOf(data.aff)),
             trail: [],
-            state: 'flying',
-            absorbT: 0,
-            scale: 1
+            landed: false,
+            dead: false,
+            alpha: 1
         };
-        fieldKey = -1;
     }
 
     function startNewCycle() {
         sentenceIdx = 0;
-        lastWordIdx = -1;
         activeParticle = null;
+        pauseFrames = 50;
         cycleComplete = false;
         cyclePause = 0;
-        pauseFrames = 50;
-        fieldKey = -1;
     }
 
-    // Hilfsfunktion: Farbe aus Affinität
-    function colorFromAff(aff, baseColor) {
-        if (aff >= 0.1) {
-            // Attraktor: BaseColor mit Alpha nach Stärke
-            const alpha = Math.min(1, aff);
-            return { color: baseColor, alpha: alpha, type: 'attract' };
-        } else if (aff <= -0.1) {
-            // Repeller: rot mit Alpha nach Stärke
-            const alpha = Math.min(1, Math.abs(aff));
-            return { color: '#ef4444', alpha: alpha, type: 'repel' };
-        } else {
-            return { color: '#cbd5e1', alpha: 0.4, type: 'neutral' };
+    function updateParticle() {
+        const p = activeParticle;
+        if (p.landed) {
+            // Verblassen im Attraktor (wie beim Punkt-Attraktor)
+            p.alpha -= 0.015;
+            if (p.alpha <= 0) p.dead = true;
+            return;
         }
+
+        const dx = p.home.x - p.x, dy = p.home.y - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < basinR) {
+            // ===== IM EINZUGSBEREICH: Spirale nach innen =====
+            if (!p.inBasin) {
+                p.inBasin = true;
+                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                const a = Math.atan2(dy, dx);
+                p.vx = Math.cos(a + Math.PI / 2.5) * speed * 0.7;
+                p.vy = Math.sin(a + Math.PI / 2.5) * speed * 0.7;
+            }
+            const a = Math.atan2(dy, dx);
+            const radial = 0.12 + (1 - dist / basinR) * 0.22;
+            p.vx += Math.cos(a) * radial;
+            p.vy += Math.sin(a) * radial;
+            const tang = 0.05 * (dist / basinR);
+            p.vx += Math.cos(a + Math.PI / 2) * tang;
+            p.vy += Math.sin(a + Math.PI / 2) * tang;
+            p.vx *= 0.95;
+            p.vy *= 0.95;
+            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+            const maxSpeed = 2.8 * (dist / basinR + 0.15);
+            if (speed > maxSpeed) {
+                p.vx *= maxSpeed / speed;
+                p.vy *= maxSpeed / speed;
+            }
+            if (dist < 8) {
+                p.landed = true;
+                p.alpha = 1;
+                p.x = p.home.x;
+                p.y = p.home.y;
+            }
+        } else {
+            // ===== FREIE BEWEGUNG: sanfter Wandel + Bias Richtung Heimat =====
+            p.turnChangeTimer--;
+            if (p.turnChangeTimer <= 0) {
+                p.turnRate += (Math.random() - 0.5) * 0.02;
+                p.turnRate = Math.max(-0.04, Math.min(0.04, p.turnRate));
+                p.turnChangeTimer = 40 + Math.floor(Math.random() * 80);
+            }
+            p.heading += p.turnRate;
+
+            const bias = 0.02 + 0.10 * Math.min(1, (dist - basinR) / 250);
+            p.heading += (Math.atan2(dy, dx) - p.heading) * bias;
+
+            const targetSpeed = 1.8;
+            const tvx = Math.cos(p.heading) * targetSpeed;
+            const tvy = Math.sin(p.heading) * targetSpeed;
+            p.vx += (tvx - p.vx) * 0.04;
+            p.vy += (tvy - p.vy) * 0.04;
+
+            // Wandabstoßung
+            const margin = 60;
+            if (p.x < margin) { p.heading += 0.05; p.vx += 0.1; }
+            if (p.x > W - margin) { p.heading -= 0.05; p.vx -= 0.1; }
+            if (p.y < margin) { p.heading += 0.05; p.vy += 0.1; }
+            if (p.y > H - margin) { p.heading -= 0.05; p.vy -= 0.1; }
+
+            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+            if (speed > 2.5) {
+                p.vx *= 2.5 / speed;
+                p.vy *= 2.5 / speed;
+            }
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.x = Math.max(10, Math.min(W - 10, p.x));
+        p.y = Math.max(10, Math.min(H - 10, p.y));
+
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 120) p.trail.shift();
     }
 
     animationRunning = true;
     let t = 0;
 
-    function updateParticle() {
-        const p = activeParticle;
-        if (!p) return;
+    // === Einzugsbecken zeichnen (Stil: Punkt-Attraktor) ===
+    function drawBasin(cx, cy, color, id, isHome) {
+        const pulse = isHome ? (1 + 0.15 * Math.sin(t * 0.08)) : 1;
 
-        if (p.state === 'absorbing') {
-            p.absorbT++;
-            const k = Math.min(1, p.absorbT / 12);
-            p.x += (p.home.x - p.x) * 0.25;
-            p.y += (p.home.y - p.y) * 0.25;
-            p.scale = 1 - k;
-            if (p.absorbT > 12) p.state = 'dead';
-            return;
+        // Konzentrische Ringe (Trichter)
+        for (let r = basinR; r > 8; r -= 4) {
+            const progress = 1 - r / basinR;
+            const alpha = 0.015 + progress * 0.10;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * pulse, 0, Math.PI * 2);
+            ctx.strokeStyle = hexA(color, alpha);
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
         }
 
-        // 1) Heimat-Steuerung: zieht IMMER Richtung Heimat-Becken (garantiert Zielerreichung)
-        let fx = 0, fy = 0;
-        let hdx = p.home.x - p.x, hdy = p.home.y - p.y;
-        const hd = Math.sqrt(hdx * hdx + hdy * hdy);
-        if (hd > 1) {
-            const steer = 0.10 + 0.32 * Math.min(1, hd / 260);
-            fx += (hdx / hd) * steer;
-            fy += (hdy / hd) * steer;
+        // Spirallinien im Trichter (nur beim Ziel-Becken voll sichtbar)
+        ctx.save();
+        ctx.globalAlpha = isHome ? 0.14 : 0.05;
+        for (let s = 0; s < 4; s++) {
+            ctx.beginPath();
+            const startAngle = (s / 4) * Math.PI * 2 + t * 0.005;
+            for (let i = 0; i < 100; i++) {
+                const progress = i / 100;
+                const r = basinR * (1 - progress);
+                const angle = startAngle + progress * Math.PI * 3;
+                const px = cx + Math.cos(angle) * r;
+                const py = cy + Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
         }
+        ctx.restore();
 
-        // 2) Potential-Landschaft: Gauß-Becken (aff>0) und -Hügel (aff<0)
-        regions.forEach(rg => {
-            const aff = p.aff[rg.id];
-            if (Math.abs(aff) < 0.05) return;
-            const dx = rg.x - p.x, dy = rg.y - p.y;
-            const d = Math.sqrt(dx * dx + dy * dy);
-            if (d < 1) return;
-            const w = Math.exp(-(d * d) / (2 * SIGMA * SIGMA));
-            const f = (aff * w * 64 * d) / (SIGMA * SIGMA);
-            fx += (dx / d) * f;
-            fy += (dy / d) * f;
-        });
+        // Gestrichelter Rand des Einzugsbereichs
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, basinR, 0, Math.PI * 2);
+        ctx.strokeStyle = hexA(color, 0.5);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]);
 
-        // 3) Weiche Wand-Abstoßung: Teilchen bleiben IMMER im Canvas
-        const m = 26;
-        if (p.x < m) fx += ((m - p.x) / m) * 0.6;
-        if (p.x > W - m) fx -= ((p.x - (W - m)) / m) * 0.6;
-        if (p.y < m) fy += ((m - p.y) / m) * 0.6;
-        if (p.y > H - m) fy -= ((p.y - (H - m)) / m) * 0.6;
+        // Label oben
+        ctx.font = '10px system-ui';
+        ctx.fillStyle = hexA(color, 0.85);
+        ctx.textAlign = 'center';
+        ctx.fillText('Einzugsbereich', cx, cy - basinR - 10);
 
-        p.vx += fx;
-        p.vy += fy;
-        p.vx *= 0.90;
-        p.vy *= 0.90;
+        // Attraktor-Kern (pulsierend)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 8 * pulse, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
 
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        if (speed > 4.2) {
-            p.vx *= 4.2 / speed;
-            p.vy *= 4.2 / speed;
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Harte Grenze: NIE außerhalb des Canvas
-        p.x = Math.max(12, Math.min(W - 12, p.x));
-        p.y = Math.max(12, Math.min(H - 12, p.y));
-
-        p.trail.push({ x: p.x, y: p.y });
-        if (p.trail.length > 140) p.trail.shift();
-
-        // 4) Einzug: nur das Heimat-Becken fängt das Token ein
-        const dHome = Math.sqrt((p.home.x - p.x) ** 2 + (p.home.y - p.y) ** 2);
-        if (dHome < 55) {
-            p.state = 'absorbing';
-            p.absorbT = 0;
-            p.home.pulse = 1.0;
-        }
+        // Region-Name darunter
+        ctx.font = 'bold 12px system-ui';
+        ctx.fillStyle = color;
+        ctx.fillText(regionLabel(id), cx, cy + 30);
     }
 
     function draw() {
@@ -2701,7 +2726,7 @@ function renderGenerator(container) {
         if (cycleComplete) {
             cyclePause++;
             if (cyclePause > 170) startNewCycle();
-        } else if (!activeParticle || activeParticle.state === 'dead') {
+        } else if (!activeParticle || activeParticle.dead) {
             pauseFrames++;
             if (pauseFrames > 45) {
                 spawnNext();
@@ -2709,21 +2734,13 @@ function renderGenerator(container) {
             }
         }
 
-        if (activeParticle && activeParticle.state !== 'dead') {
+        if (activeParticle && !activeParticle.dead) {
             updateParticle();
         }
 
         ctx.clearRect(0, 0, W, H);
         ctx.fillStyle = '#fafafa';
         ctx.fillRect(0, 0, W, H);
-
-        ensureField();
-
-        // === Landschafts-Feld (morpht mit jedem Wort) ===
-        for (const c of fieldCells) {
-            ctx.fillStyle = c.fill;
-            ctx.fillRect(c.x - c.cw / 2, c.y - c.ch / 2, c.cw, c.ch);
-        }
 
         // === Satz-Builder oben ===
         const sentenceY = 60;
@@ -2732,10 +2749,10 @@ function renderGenerator(container) {
         let xCursor = 40;
 
         for (let i = 0; i < WORDS.length; i++) {
-            const isCurrent = (i === sentenceIdx - 1 && !cycleComplete && activeParticle && activeParticle.state !== 'dead');
+            const isCurrent = (i === sentenceIdx - 1 && !cycleComplete && activeParticle && !activeParticle.dead);
             const isPast = (i < sentenceIdx - 1) || cycleComplete;
             const token = WORDS[i].w;
-            const displayColor = HOME_COLOR[homeOf(WORDS[i].aff)];
+            const displayColor = regionById(homeOf(WORDS[i].aff)).color;
 
             const tokenWidth = ctx.measureText(token).width + 16;
             if (isPast) {
@@ -2762,175 +2779,80 @@ function renderGenerator(container) {
         ctx.font = '20px system-ui';
         ctx.fillText('_', xCursor, sentenceY);
 
-        // === Regionen zeichnen mit dynamischer Affinitäts-Anzeige ===
+        // === Einzugsbecken ===
         regions.forEach(rg => {
-            rg.pulse *= 0.96;
-            const pulseAdd = rg.pulse;
-
-            // Aktuelle Affinität des aktiven Wortes zu dieser Region
-            let currentAff = 0;
-            if (activeParticle && activeParticle.state !== 'dead') {
-                currentAff = activeParticle.aff[rg.id];
-            }
-            const affInfo = colorFromAff(currentAff, rg.baseColor);
-
-            const driftX = Math.sin(t * 0.008 + rg.x * 0.01) * 10;
-            const driftY = Math.cos(t * 0.007 + rg.y * 0.01) * 6;
-            const cx = rg.x + driftX;
-            const cy = rg.y + driftY;
-
-            // Basin: Farbe je nach Affinität
-            const baseR = rg.r;
-            const curR = baseR + pulseAdd * 12;
-            const basinGrad = ctx.createRadialGradient(cx, cy, baseR * 0.3, cx, cy, curR * 3);
-            const alpha = affInfo.alpha * (0.15 + 0.2 * pulseAdd);
-            basinGrad.addColorStop(0, affInfo.color + Math.round(alpha * 255).toString(16).padStart(2, '0'));
-            basinGrad.addColorStop(0.6, affInfo.color + Math.round(alpha * 0.4 * 255).toString(16).padStart(2, '0'));
-            basinGrad.addColorStop(1, affInfo.color + '00');
-            ctx.fillStyle = basinGrad;
-            ctx.beginPath();
-            ctx.arc(cx, cy, curR * 3, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Puls-Ring bei Treffer
-            if (pulseAdd > 0.05) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, baseR + (1 - pulseAdd) * 30, 0, Math.PI * 2);
-                ctx.strokeStyle = affInfo.color + 'cc';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-
-            // Kern
-            const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR);
-            coreGrad.addColorStop(0, affInfo.color + (affInfo.type === 'neutral' ? '88' : 'ee'));
-            coreGrad.addColorStop(1, affInfo.color + '33');
-            ctx.fillStyle = coreGrad;
-            ctx.beginPath();
-            ctx.arc(cx, cy, baseR + pulseAdd * 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(cx, cy, 6, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
-            ctx.strokeStyle = affInfo.color;
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Affinitäts-Anzeige: Balken + Wert (nur solange das Wort fliegt)
-            if (activeParticle && activeParticle.state !== 'dead') {
-                const aff = currentAff;
-                const barX = cx - baseR - 18;
-                const barY = cy - 22;
-                const barH = 44;
-                ctx.fillStyle = '#e2e8f0';
-                ctx.fillRect(barX, barY, 6, barH);
-                ctx.fillStyle = '#94a3b8';
-                ctx.fillRect(barX, barY + barH / 2 - 0.5, 6, 1);
-                const fillH = (Math.abs(aff) / 1) * (barH / 2);
-                const fillY = aff >= 0 ? (barY + barH / 2 - fillH) : (barY + barH / 2);
-                ctx.fillStyle = aff >= 0 ? rg.baseColor : '#ef4444';
-                ctx.fillRect(barX, fillY, 6, fillH);
-
-                ctx.font = 'bold 10px system-ui';
-                ctx.fillStyle = aff >= 0 ? rg.baseColor : '#dc2626';
-                ctx.textAlign = 'left';
-                const sign = aff >= 0 ? '+' : '';
-                ctx.fillText(sign + aff.toFixed(1), barX + 9, cy + 4);
-            }
-
-            // Region-Label (immer gleiche Farbe = die "echte" Regions-Identität)
-            ctx.font = 'bold 11px system-ui';
-            ctx.fillStyle = rg.baseColor;
-            ctx.textAlign = 'center';
-            ctx.fillText(regionLabel(rg.id), cx, cy + baseR + 18);
+            const isHome = activeParticle && !activeParticle.dead && activeParticle.home.id === rg.id;
+            drawBasin(rg.x, rg.y, rg.color, rg.id, isHome);
         });
 
-        // === Ziel-Ring um das Heimat-Becken ===
-        if (activeParticle && activeParticle.state === 'flying') {
-            const home = activeParticle.home;
-            ctx.setLineDash([6, 4]);
-            ctx.lineDashOffset = -t * 0.8;
+        // === Generator (Quelle) ===
+        const sourcePulse = 1 + 0.20 * Math.sin(t * 0.10);
+        // Ausgehende "Emissions"-Ringe
+        for (let w = 0; w < 3; w++) {
+            const phase = (t * 0.012 + w * 0.33) % 1;
+            const wr = 10 + phase * 34;
             ctx.beginPath();
-            ctx.arc(home.x, home.y, home.r + 12, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)';
-            ctx.lineWidth = 2;
+            ctx.arc(sourceX, sourceY, wr, 0, Math.PI * 2);
+            ctx.strokeStyle = hexA('#0891b2', 0.25 * (1 - phase));
+            ctx.lineWidth = 1.5;
             ctx.stroke();
-            ctx.setLineDash([]);
-            ctx.lineDashOffset = 0;
-            ctx.font = 'bold 10px system-ui';
-            ctx.fillStyle = '#0f172a';
-            ctx.textAlign = 'center';
-            ctx.fillText('Ziel', home.x, home.y - home.r - 26);
         }
 
-        // === Generator ===
-        const sourcePulse = 1 + 0.20 * Math.sin(t * 0.10);
-        const sourceHalo = ctx.createRadialGradient(sourceX, sourceY, 4, sourceX, sourceY, 30 * sourcePulse);
-        sourceHalo.addColorStop(0, 'rgba(34,211,238,0.45)');
-        sourceHalo.addColorStop(0.5, 'rgba(34,211,238,0.15)');
-        sourceHalo.addColorStop(1, 'rgba(34,211,238,0)');
-        ctx.fillStyle = sourceHalo;
         ctx.beginPath();
-        ctx.arc(sourceX, sourceY, 30 * sourcePulse, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(sourceX, sourceY, 11 * sourcePulse, 0, Math.PI * 2);
-        ctx.fillStyle = '#22d3ee';
+        ctx.arc(sourceX, sourceY, 9 * sourcePulse, 0, Math.PI * 2);
+        ctx.fillStyle = '#0891b2';
         ctx.fill();
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        ctx.font = 'bold 12px system-ui';
+        ctx.font = 'bold 11px system-ui';
         ctx.fillStyle = '#0891b2';
         ctx.textAlign = 'center';
-        ctx.fillText('Generator', sourceX, sourceY - 22);
+        ctx.fillText('Generator', sourceX, sourceY + 30);
 
-        // === Partikel zeichnen ===
-        if (activeParticle && activeParticle.state !== 'dead') {
+        // === Partikel (aktuelles Wort) ===
+        if (activeParticle && !activeParticle.dead) {
             const p = activeParticle;
-            const homeCol = HOME_COLOR[p.home.id];
 
-            // Trail in der Farbe des Heimat-Beckens
+            // Trail
             if (p.trail.length > 1) {
                 for (let i = 1; i < p.trail.length; i++) {
                     const alpha = (i / p.trail.length) * 0.5;
                     ctx.beginPath();
                     ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
                     ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                    ctx.strokeStyle = homeCol + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                    ctx.strokeStyle = p.color + Math.round(alpha * 255).toString(16).padStart(2, '0');
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
             }
 
-            if (p.state === 'absorbing') {
-                // Wird in den Attraktor hineingezogen
-                ctx.globalAlpha = Math.max(0.1, p.scale);
+            if (p.landed) {
+                // Verblassen im Attraktor
+                ctx.globalAlpha = Math.max(0, p.alpha);
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 4 * p.scale, 0, Math.PI * 2);
-                ctx.fillStyle = '#1e293b';
+                ctx.arc(p.home.x, p.home.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 2;
                 ctx.stroke();
                 ctx.globalAlpha = 1;
             } else {
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
-                ctx.fillStyle = '#1e293b';
+                ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 2;
                 ctx.stroke();
 
+                // Wort-Label über dem Partikel
                 ctx.font = 'bold 12px system-ui';
-                ctx.fillStyle = '#0f172a';
-                ctx.textAlign = 'left';
-                ctx.fillText('"' + p.word + '"', p.x + 8, p.y + 4);
+                ctx.fillStyle = p.color;
+                ctx.textAlign = 'center';
+                ctx.fillText(p.word, p.x, p.y - 13);
             }
         }
 
@@ -2938,10 +2860,10 @@ function renderGenerator(container) {
         ctx.font = 'bold 11px system-ui';
         ctx.fillStyle = 'rgba(15,23,42,0.85)';
         ctx.textAlign = 'center';
-        ctx.fillText('Jedes Wort formt seine eigene Landschaft: Attraktoren als Becken (Farbe), Repeller als Hügel (rot)', W / 2, 22);
+        ctx.fillText('Der Generator erzeugt die Wörter des Satzes nacheinander — jedes Wort rollt in sein semantisches Einzugsbecken', W / 2, 22);
         ctx.font = '9px system-ui';
         ctx.fillStyle = 'rgba(100,116,139,0.85)';
-        ctx.fillText('Das Token rollt den Hang hinab und wird nur von seinem Heimat-Becken verschluckt – erst dann wird das nächste Wort generiert', W / 2, 36);
+        ctx.fillText('«hauptstadt» → Substantive, «frankreich» → Länder, «Paris» → Städte — erst wenn ein Wort gelandet ist, wird das nächste erzeugt', W / 2, 36);
 
         activeAnimation = requestAnimationFrame(draw);
     }
