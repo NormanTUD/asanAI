@@ -577,27 +577,27 @@ function initOthelloDemo() {
     }, container);
 
     createElement('h3', {
-        textContent: '🧠 Othello-GPT: Wie baut ein Sprachmodell ein Brettspiel?',
+        textContent: '🧠 Othello-GPT: How does a language model build a board game?',
         style: {marginTop: 0}
     }, section);
 
     createElement('p', {
-        innerHTML: 'Das Modell wurde <strong>ausschließlich auf Sequenzen von Spielzügen</strong> trainiert ' +
-                   '(<code style="background:#e3f2fd; padding:1px 5px; border-radius:3px;">D3, C5, F6, E6, …</code>) — ' +
-                   'es hat <strong>nie ein Brett gesehen</strong>, kennt die Regeln nicht, ' +
-                   'und weiß nicht einmal, dass es ein Spiel spielt. ' +
-                   'Klicke unten auf Felder, um Züge zu spielen, und beobachte, ' +
-                   'was eine <strong>Probe</strong> (ein separater kleiner Klassifikator, der auf den Residual-Stream trainiert wurde) ' +
-                   'im Inneren des Modells findet:'
+        innerHTML: 'The model was trained <strong>exclusively on sequences of moves</strong> ' +
+                   '(<code style="background:' + themeColor('#e3f2fd') + '; color:' + themeColor('#0d47a1') + '; padding:1px 5px; border-radius:3px;">D3, C5, F6, E6, …</code>) — ' +
+                   'it has <strong>never seen a board</strong>, doesn\'t know the rules, ' +
+                   'and doesn\'t even know that it is playing a game. ' +
+                   'Click tiles below to play moves, and watch ' +
+                   'what a <strong>probe</strong> (a small classifier trained on the residual stream) ' +
+                   'finds inside the model:'
     }, section);
 
     // ====== INPUT TOKENS STRIP ======
     const tokensBox = createElement('div', {
-        style: {padding: '10px 14px', background: themeColor('#fff'), borderRadius: '6px', margin: '12px 0', border: '1px dashed #888'}
+        style: {padding: '10px 14px', background: themeColor('#fff'), borderRadius: '6px', margin: '12px 0', border: '1px dashed ' + themeColor('#888')}
     }, section);
     createElement('div', {
-        innerHTML: '<strong>📥 Input-Sequenz</strong> ' +
-                   '<span style="color:#666; font-size:11px;">— das ist ALLES, was das Modell bekommt. 60 mögliche Token (A1…H8). Kein Brett, keine Regeln.</span>',
+        innerHTML: '<strong>📥 Input Sequence</strong> ' +
+                   '<span style="color:' + themeColor('#666') + '; font-size:11px;">— this is ALL the model gets. 60 possible tokens (A1…H8). No board, no rules.</span>',
         style: {fontSize: '12px', marginBottom: '6px'}
     }, tokensBox);
     const tokensDisplay = createElement('div', {
@@ -612,7 +612,7 @@ function initOthelloDemo() {
     // LEFT: User's interactive board
     const boardPanel = createElement('div', {style: {flex: '0 0 auto'}}, mainRow);
     createElement('div', {
-        innerHTML: '<strong>🎮 Gespieltes Brett</strong><br><span style="font-size:11px; color:#666;">klicke zum Spielen</span>',
+        innerHTML: '<strong>🎮 Played Board</strong><br><span style="font-size:11px; color:' + themeColor('#666') + ';">click to play</span>',
         style: {fontSize: '13px', marginBottom: '6px', textAlign: 'center'}
     }, boardPanel);
     const boardCanvas = createCanvas(boardPanel, 280, 280);
@@ -631,10 +631,10 @@ function initOthelloDemo() {
     }, sliderRow);
     const layerLabel = createElement('span', {
         textContent: 'Layer 6',
-        style: {fontWeight: 'bold', color: '#1565c0', display: 'inline-block', minWidth: '60px'}
+        style: {fontWeight: 'bold', color: themeColor('#1565c0'), display: 'inline-block', minWidth: '60px'}
     }, sliderRow);
     createElement('div', {
-        innerHTML: '<em style="color:#666; font-size:11px;">Frühe Schichten (1–3): Weltmodell noch im Aufbau. Mittlere Schichten (4–7): klarstes Weltmodell. Spätere (8): leicht abgebaut durch Output-Projektion.</em>',
+        innerHTML: '<em style="color:' + themeColor('#666') + '; font-size:11px;">Early layers (1–3): world model still forming. Middle layers (4–7): clearest world model. Later (8): slightly degraded by output projection.</em>',
         style: {marginTop: '6px', fontSize: '11px'}
     }, sliderRow);
 
@@ -771,12 +771,19 @@ function initOthelloDemo() {
     }
 
     function draw() {
+        const tokenBg = themeColor('#dbeafe');
+        const tokenFg = themeColor('#1e40af');
+        const mutedFg = themeColor('#666');
+        const goodColor = themeColor('#2e7d32');
+        const badColor = themeColor('#e53935');
+        const warnColor = themeColor('#f57c00');
+
         if (moveHistory.length === 0) {
-            tokensDisplay.innerHTML = '<span style="color:#999;">(noch keine Züge gespielt — klicke ein Feld)</span>';
+            tokensDisplay.innerHTML = '<span style="color:' + themeColor('#999') + ';">(no moves played yet — click a tile)</span>';
         } else {
             tokensDisplay.innerHTML = moveHistory.map(idx =>
-                `<span style="display:inline-block; background:#e3f2fd; color:#0d47a1; padding:2px 8px; margin:2px; border-radius:3px; font-weight:bold;">${tileName(idx)}</span>`
-            ).join('<span style="color:#999; margin:0 4px;">→</span>');
+                `<span style="display:inline-block; background:${tokenBg}; color:${tokenFg}; padding:2px 8px; margin:2px; border-radius:3px; font-weight:bold;">${tileName(idx)}</span>`
+            ).join('<span style="color:' + themeColor('#999') + '; margin:0 4px;">→</span>');
         }
 
         const nonlinearProbe = board.map((color, idx) => nonlinearProbePredict(idx, color, currentLayer));
@@ -792,21 +799,21 @@ function initOthelloDemo() {
         drawBoardOnCanvas(linearCanvas, linearProbe, linearWrong);
 
         nonlinearHeader.innerHTML =
-            `<strong>Nonlinear Probe</strong> <span style="font-size:10px; color:#666;">(2-Layer MLP)</span><br>` +
-            `<span style="font-size:20px; font-weight:bold; color:${nonlinearAcc > 0.9 ? '#2e7d32' : '#f57c00'};">${(nonlinearAcc * 100).toFixed(1)}%</span>` +
-            `<span style="font-size:11px; color:#666;"> korrekt</span>`;
+            `<strong>Nonlinear Probe</strong> <span style="font-size:10px; color:${mutedFg};">(2-Layer MLP)</span><br>` +
+            `<span style="font-size:20px; font-weight:bold; color:${nonlinearAcc > 0.9 ? goodColor : warnColor};">${(nonlinearAcc * 100).toFixed(1)}%</span>` +
+            `<span style="font-size:11px; color:${mutedFg};"> correct</span>`;
 
         linearHeader.innerHTML =
-            `<strong>Linear Probe</strong> <span style="font-size:10px; color:#666;">(einzelne Matrix)</span><br>` +
-            `<span style="font-size:20px; font-weight:bold; color:${linearAcc > 0.85 ? '#2e7d32' : '#e53935'};">${(linearAcc * 100).toFixed(1)}%</span>` +
-            `<span style="font-size:11px; color:#666;"> korrekt</span>` +
-            (linearWrong.size > 0 ? ` <span style="color:#e53935; font-weight:bold;">(✗ ${linearWrong.size} falsch)</span>` : '');
+            `<strong>Linear Probe</strong> <span style="font-size:10px; color:${mutedFg};">(single matrix)</span><br>` +
+            `<span style="font-size:20px; font-weight:bold; color:${linearAcc > 0.85 ? goodColor : badColor};">${(linearAcc * 100).toFixed(1)}%</span>` +
+            `<span style="font-size:11px; color:${mutedFg};"> correct</span>` +
+            (linearWrong.size > 0 ? ` <span style="color:${badColor}; font-weight:bold;">(✗ ${linearWrong.size} wrong)</span>` : '');
 
         nonlinearCaption.innerHTML =
-            '✓ Rekonstruiert das Brett <strong>fast perfekt</strong> — das Modell hat ein <strong>Weltmodell</strong> aufgebaut!';
+            '✓ Recovers the board <strong>almost perfectly</strong> — the model has built a <strong>world model</strong>!';
         linearCaption.innerHTML =
-            '✗ Sieht <strong>sichtbar falsch</strong> aus: das Brett liegt auf einer <strong>nichtlinearen Mannigfaltigkeit</strong> ' +
-            'im Residual-Stream, die eine einzelne lineare Projektion nicht vollständig dekodieren kann.';
+            '✗ Looks <strong>visibly wrong</strong>: the board lies on a <strong>nonlinear manifold</strong> in the residual stream, ' +
+            'one that a single linear projection cannot fully decode.';
 
         layerLabel.textContent = `Layer ${currentLayer}`;
     }
@@ -837,7 +844,7 @@ function initOthelloDemo() {
     const btnRow = createElement('div', {style: {marginTop: '10px', textAlign: 'center'}}, boardPanel);
     const resetBtn = createElement('button', {
         textContent: '🔄 Reset',
-        style: {padding: '6px 14px', fontSize: '13px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', background: themeColor('#fff')}
+        style: {padding: '6px 14px', fontSize: '13px', borderRadius: '6px', border: '1px solid ' + themeColor('#ccc'), cursor: 'pointer', background: themeColor('#fff'), color: themeColor('#1e293b')}
     }, btnRow);
     resetBtn.addEventListener('click', () => {
         resetBoard();
@@ -847,61 +854,60 @@ function initOthelloDemo() {
 
     // ====== KEY INSIGHT BOX ======
     createElement('div', {
-        style: {marginTop: '18px', padding: '12px 14px', background: themeColor('#fff'), borderRadius: '6px', borderLeft: '4px solid #1565c0', fontSize: '13px', lineHeight: '1.6'},
-        innerHTML: '<strong>💡 Was zeigt dieses Experiment?</strong><br>' +
-                   'Trotz ausschließlichem Token-Input (oben) rekonstruiert die <strong>nichtlineare Probe</strong> das tatsächliche ' +
-                   'Brett zu ~98% — nachweislich durch das <strong>kausale Verhalten</strong> des Modells bei Interventionen ' +
-                   '(ändert man intern eine Brett-Position, ändern sich die Vorhersagen konsistent).<br><br>' +
-                   '<strong>Schlussfolgerung:</strong> Next-token prediction erzeugt interne Repräsentationen, die die <strong>kausale Struktur</strong> ' +
-                   'der Welt kodieren, welche die Sequenzen erzeugt hat. Das ist die zentrale Motivation für mechanistische Interpretierbarkeit — ' +
-                   'und der Grund, warum LLMs wahrscheinlich mehr sind als "Stochastische Papageien".'
+        style: {marginTop: '18px', padding: '12px 14px', background: themeColor('#fff'), borderRadius: '6px', borderLeft: '4px solid ' + themeColor('#1565c0'), fontSize: '13px', lineHeight: '1.6'},
+        innerHTML: '<strong>💡 What does this experiment show?</strong><br>' +
+                   'Despite token-only input (above), the <strong>nonlinear probe</strong> reconstructs the actual board to ~98% — ' +
+                   'verified by the model\'s <strong>causal behavior</strong> under interventions ' +
+                   '(changing an internal board position consistently changes its predictions).<br><br>' +
+                   '<strong>Conclusion:</strong> Next-token prediction produces internal representations that encode the <strong>causal structure</strong> ' +
+                   'of the world that generated the sequences. This is the central motivation for mechanistic interpretability — ' +
+                   'and the reason LLMs are likely more than "Stochastic Parrots".'
     }, section);
 
     // ====== CAUSAL INTERVENTION MINI-DEMO ======
     const interventionBox = createElement('div', {
-        style: {marginTop: '12px', padding: '12px 14px', background: themeColor('#fff8e1'), borderRadius: '6px', borderLeft: '4px solid #f57c00', fontSize: '13px', lineHeight: '1.6'}
+        style: {marginTop: '12px', padding: '12px 14px', background: themeColor('#fef9c3'), borderRadius: '6px', borderLeft: '4px solid ' + themeColor('#f57c00'), fontSize: '13px', lineHeight: '1.6', color: themeColor('#92400e')}
     }, section);
     createElement('div', {
-        innerHTML: '<strong>⚡ Kausaler Test: Flip eine Position im internen Brett</strong>',
+        innerHTML: '<strong>⚡ Causal Test: Flip a position in the internal board</strong>',
         style: {marginBottom: '6px'}
     }, interventionBox);
     createElement('div', {
-        innerHTML: 'Wähle eine Intervention und beobachte, wie sich die Vorhersage für den nächsten Zug ändert. ' +
-                   'Wenn die Vorhersage konsistent mit dem <em>neuen</em> Brettzustand reagiert, ist die interne Repräsentation <strong>kausal</strong> — ' +
-                   'nicht nur korreliert.',
-        style: {marginBottom: '10px', color: themeColor('#555')}
+        innerHTML: 'Pick an intervention and watch how the model\'s prediction for the next move changes. ' +
+                   'If the prediction reacts consistently with the <em>new</em> board state, the internal representation is <strong>causal</strong> — ' +
+                   'not merely correlational.'
     }, interventionBox);
 
-    const intervRow = createElement('div', {style: {display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start'}}, interventionBox);
+    const intervRow = createElement('div', {style: {display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start', marginTop: '8px'}}, interventionBox);
 
     // Pre-Intervention prediction (based on current board)
     const predBeforePanel = createElement('div', {style: {flex: '1', minWidth: '220px'}}, intervRow);
-    createElement('div', {innerHTML: '<strong>Vorher:</strong> Vorhersage basiert auf aktuellem Brett', style: {fontSize: '12px', marginBottom: '4px'}}, predBeforePanel);
+    createElement('div', {innerHTML: '<strong>Before:</strong> prediction based on the current board', style: {fontSize: '12px', marginBottom: '4px'}}, predBeforePanel);
     const predBeforeCanvas = createCanvas(predBeforePanel, 200, 200);
 
     // Arrow
-    createElement('div', {innerHTML: '➜', style: {fontSize: '28px', alignSelf: 'center', color: '#f57c00'}}, intervRow);
+    createElement('div', {innerHTML: '➜', style: {fontSize: '28px', alignSelf: 'center', color: themeColor('#f57c00')}}, intervRow);
 
     // Intervention picker
     const intervPickPanel = createElement('div', {style: {flex: '0 0 auto', textAlign: 'center'}}, intervRow);
     createElement('div', {innerHTML: 'Flip:', style: {fontSize: '12px', marginBottom: '4px'}}, intervPickPanel);
-    const flipTileSelect = createElement('select', {style: {padding: '4px 8px', fontSize: '13px', borderRadius: '4px'}}, intervPickPanel);
+    const flipTileSelect = createElement('select', {style: {padding: '4px 8px', fontSize: '13px', borderRadius: '4px', background: themeColor('#fff'), color: themeColor('#1e293b'), border: '1px solid ' + themeColor('#ccc')}}, intervPickPanel);
 
     // After-Intervention prediction
     const predAfterPanel = createElement('div', {style: {flex: '1', minWidth: '220px'}}, intervRow);
-    createElement('div', {innerHTML: '<strong>Nachher:</strong> Vorhersage basiert auf dem <em>intervenierten</em> Brett', style: {fontSize: '12px', marginBottom: '4px'}}, predAfterPanel);
+    createElement('div', {innerHTML: '<strong>After:</strong> prediction based on the <em>intervened</em> board', style: {fontSize: '12px', marginBottom: '4px'}}, predAfterPanel);
     const predAfterCanvas = createCanvas(predAfterPanel, 200, 200);
 
     // Populate flip-tile selector: only tiles with pieces
     function refreshFlipSelector() {
         flipTileSelect.innerHTML = '';
         if (moveHistory.length === 0) {
-            const opt = createElement('option', {textContent: '(keine Züge)', value: ''}, flipTileSelect);
+            const opt = createElement('option', {textContent: '(no moves yet)', value: ''}, flipTileSelect);
             opt.disabled = true;
             return;
         }
         moveHistory.forEach((idx, n) => {
-            const opt = createElement('option', {textContent: `${tileName(idx)} (Zug ${n + 1})`, value: idx}, flipTileSelect);
+            const opt = createElement('option', {textContent: `${tileName(idx)} (move ${n + 1})`, value: idx}, flipTileSelect);
         });
     }
 
@@ -1016,8 +1022,8 @@ function initOthelloDemo() {
     });
 
     createElement('div', {
-        innerHTML: '<em>Gelbe Rauten = Top-3 Vorhersagen des Modells für den nächsten Zug. Die genauen Wahrscheinlichkeiten hängen vom tatsächlich trainierten Othello-GPT ab; hier als Demonstration, dass die Vorhersage <strong>kausal vom internen Brettzustand abhängt</strong>.</em>',
-        style: {marginTop: '8px', fontSize: '11px', color: themeColor('#666')}
+        innerHTML: '<em>Yellow diamonds = top-3 model predictions for the next move. The exact probabilities depend on the actually trained Othello-GPT; this demo only shows that the prediction <strong>causally depends on the internal board state</strong>.</em>',
+        style: {marginTop: '8px', fontSize: '11px'}
     }, interventionBox);
 
     resetBoard();
@@ -1245,9 +1251,9 @@ function initLoopedTFDemo() {
 
     // Controls
     const ctrlRow = createElement('div', {style: {display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap'}}, section);
-    const btnStep = createElement('button', {textContent: '⏭ Step', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', background: '#e3f2fd'}}, ctrlRow);
-    const btnPlay = createElement('button', {textContent: '▶ Play', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', background: '#e8f5e9'}}, ctrlRow);
-    const btnReset = createElement('button', {textContent: '⏮ Reset', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer'}}, ctrlRow);
+    const btnStep = createElement('button', {textContent: '⏭ Step', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid ' + themeColor('#ccc'), cursor: 'pointer', background: themeColor('#dbeafe'), color: themeColor('#1e293b')}}, ctrlRow);
+    const btnPlay = createElement('button', {textContent: '▶ Play', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid ' + themeColor('#ccc'), cursor: 'pointer', background: themeColor('#dcfce7'), color: themeColor('#1e293b')}}, ctrlRow);
+    const btnReset = createElement('button', {textContent: '⏮ Reset', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid ' + themeColor('#ccc'), cursor: 'pointer', background: themeColor('#f1f5f9'), color: themeColor('#1e293b')}}, ctrlRow);
 
     btnStep.addEventListener('click', () => {
         const prog = programs[currentProgram];
