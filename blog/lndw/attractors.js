@@ -1029,30 +1029,24 @@ function renderSeahorseEmoji(container) {
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 const pSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
 
-                // === AUSSERHALB des Repel-Feldes: sanfte Anziehung Richtung Repeller ===
-                // (damit sie aktiv darauf zufliegen statt nur geradeaus)
+                // === AUSSERHALB des Repel-Feldes: SCHWACHE Anziehung Richtung Repeller ===
+                // Bewusst schwach damit ein gerade rausgeschleudertes Teilchen nicht
+                // sofort wieder zurückgezogen wird (würde am Rand "kleben bleiben").
                 if (dist > repelRadius && dist > 0) {
                     const toCenter = Math.atan2(-dy, -dx);
-                    const attractAccel = 0.04 + 25 / (dist + 50);
+                    const attractAccel = 0.02 + 15 / (dist + 60);
                     p.vx += Math.cos(toCenter) * attractAccel;
                     p.vy += Math.sin(toCenter) * attractAccel;
                 }
 
-                // === IM Repel-Feld: starke Abstoßung, STÄRKER wenn Teilchen schnell ist ===
-                // → schnelle Teilchen kommen tiefer rein und werden heftiger rausgeschleudert
+                // === IM Repel-Feld: STARKE radiale Abstoßung (kein Swirl!) ===
+                // Schnelle Teilchen dringen tiefer ein, langsame nehmen mehr Fahrt auf
+                // und werden zuverlässig radial rausgeschleudert — kein Kreisen am Rand.
                 if (dist < repelRadius && dist > dangerRadius) {
                     const outwardAngle = Math.atan2(dy, dx);
-                    // Höhere Basis-Kraft damit auch langsame Teilchen Fahrt aufnehmen
-                    // statt am Rand der Abstoßungszone hängen zu bleiben
-                    const dynamicRepel = 0.6 + pSpeed * 0.5;
+                    const dynamicRepel = 1.0 + pSpeed * 0.6;
                     p.vx += Math.cos(outwardAngle) * dynamicRepel;
                     p.vy += Math.sin(outwardAngle) * dynamicRepel;
-
-                    // Schwacher Tangentialer Swirl (weniger "Kreisen" am Rand)
-                    const swirlAngle = outwardAngle + Math.PI / 2;
-                    p.vx += Math.cos(swirlAngle) * 0.08;
-                    p.vy += Math.sin(swirlAngle) * 0.08;
-
                     p.wasInRepel = true;
                 }
 
@@ -1096,6 +1090,11 @@ function renderSeahorseEmoji(container) {
                 // Position updaten
                 p.x += p.vx;
                 p.y += p.vy;
+
+                // GUARDRAIL: NaN/Infinity Schutz — falls Kraft-Berechnung gesponnen hat
+                if (!isFinite(p.x) || !isFinite(p.y) || !isFinite(p.vx) || !isFinite(p.vy)) {
+                    p.alive = false;
+                }
 
                 // === KEIN Wand-Bounce! Wenn deutlich außerhalb → "alive=false" → respawn ===
                 const killMargin = 80;
@@ -2633,41 +2632,38 @@ function renderGenerator(container) {
                 p.y = p.home.y;
             }
         } else {
-            // ===== FREIE BEWEGUNG: Affinitäts-Kräfte + garantierter Home-Seeker =====
+            // ===== FREIE BEWEGUNG: Affinitäts-Kräfte + starker Home-Seeker =====
             // Positiv = Anziehung, negativ = Abstoßung.
 
-            // Per-Region Affinitäts-Kräfte — ASYMMETRISCH:
-            //   Anziehung (aff > 0): moderat (Sekundär-Attraktoren sollen nicht ziehen)
-            //   Abstoßung (aff < 0): STARK, wächst schnell bei Annäherung (dynamische Repeller)
-            // → Wörter können falsche Becken nicht einfach durchqueren.
+            // Per-Region Kräfte: nur Repeller (aff<0) und HOME-Attraktor (aff>0 && r===home)
+            // Sekundär-Attraktoren werden IGNORIERT — sonst ziehen sie (z.B. subst für
+            // "frankreich") von der Hauptroute ab und lassen das Wort am Rand stranden.
             regions.forEach(r => {
                 const aff = p.aff[r.id];
                 if (!aff) return;
+                if (aff > 0 && r.id !== p.home.id) return; // Sekundär-Attraktor ignorieren
+
                 const rdx = r.x - p.x;
                 const rdy = r.y - p.y;
                 const rDist = Math.sqrt(rdx * rdx + rdy * rdy);
-                if (rDist < 1) return;
-                let force;
-                if (aff > 0) {
-                    // Attraktor: moderate Anziehung
-                    force = aff * 0.35 * Math.min(1.5, 110 / (rDist + 60));
-                } else {
-                    // Repeller: starke Abstoßung, scharf ansteigend bei Annäherung
-                    force = aff * Math.min(4.5, 280 / (rDist + 15));
-                }
+                if (rDist < 0.5) return; // Division-by-zero Schutz
+                const force = aff * Math.min(1.5, 100 / (rDist + 60));
+                if (!isFinite(force)) return; // NaN-Schutz
                 p.vx += (rdx / rDist) * force;
                 p.vy += (rdy / rDist) * force;
             });
 
-            // === HOME-SEEKER: starker konstanter Schub Richtung Heimat-Region ===
-            // Garantiert dass jedes Wort in max ~5s ankommt, egal was die Repeller tun.
+            // === HOME-SEEKER: dominanter Schub Richtung Heimat-Region ===
+            // Stärker als die Repeller-Kräfte → kein Verirren, garantierte Ankunft.
             const homeDx = p.home.x - p.x;
             const homeDy = p.home.y - p.y;
             const homeDist = Math.sqrt(homeDx * homeDx + homeDy * homeDy);
-            if (homeDist > 1) {
-                const homePull = 0.04 + 28 / (homeDist + 50);
-                p.vx += (homeDx / homeDist) * homePull;
-                p.vy += (homeDy / homeDist) * homePull;
+            if (homeDist > 0.5) {
+                const homePull = 0.2 + 50 / (homeDist + 20);
+                if (isFinite(homePull)) {
+                    p.vx += (homeDx / homeDist) * homePull;
+                    p.vy += (homeDy / homeDist) * homePull;
+                }
             }
 
             // Sanfter Random-Drift
@@ -2712,6 +2708,14 @@ function renderGenerator(container) {
             if (speed > 5) {
                 p.vx *= 5 / speed;
                 p.vy *= 5 / speed;
+            }
+
+            // GUARDRAIL: NaN-Schutz — wenn irgendwas gesponnen hat, zurück zum Home
+            if (!isFinite(p.x) || !isFinite(p.y) || !isFinite(p.vx) || !isFinite(p.vy)) {
+                p.x = p.home.x;
+                p.y = p.home.y;
+                p.vx = 0;
+                p.vy = 0;
             }
         }
 
