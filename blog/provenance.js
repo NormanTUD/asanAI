@@ -124,17 +124,46 @@
 		S._matCache = Object.create(null);
 	}
 
-	function _grid(key) { return S._grids.get(key) || null; }
+	/* Current materialization prefix. Default 'L' = visualization pass
+	   (training tokens). Set to 'R' while materializing final-pass nodes
+	   so that reads of 'L:...' grids/metadata resolve to the 'R:...'
+	   recordings instead. */
+	var _curPrefix = 'L';
+
+	/* Map an 'L'-keyed id to the current prefix when materializing the
+	   final pass. Keys that are not layer keys (F:, P:, R:0, …) pass
+	   through unchanged. */
+	function _pkey(key) {
+		if (_curPrefix === 'R') {
+			if (key.lastIndexOf('L:', 0) === 0) return 'R:' + key.slice(2);
+			if (key.lastIndexOf('P:h0:', 0) === 0) return 'R:0:h0:' + key.slice(5);
+		}
+		return key;
+	}
+
+	function _grid(key) { return S._grids.get(_pkey(key)) || null; }
+
+	function _layerMetaOf(L) {
+		var key = (_curPrefix === 'R') ? 'R:' + L : 'L:' + L;
+		return S._layerMeta.get(key) || null;
+	}
+
+	function _rtok(L, p) {
+		var meta = S._layerMeta.get('R:' + L);
+		return meta && meta.tokens && meta.tokens[p] != null ? meta.tokens[p] : null;
+	}
 
 	/* ─────────────────────── recording API ─────────────────────── */
 
 	/**
 	 * Record the initial hidden states h_0 = embedding + positional encoding
 	 * for `tokens`. Called with the tokens that actually produced the h0
-	 * that is being visualized.
+	 * that is being visualized. `prefix` is 'P' for the visualization pass
+	 * and 'R:0' for the final inference pass.
 	 */
-	S.recordPre = function (tokens, d_model, embSpace) {
+	S.recordPre = function (tokens, d_model, embSpace, prefix) {
 		embSpace = embSpace || (window.persistentEmbeddingSpace || {});
+		prefix = prefix || 'P';
 		var d = num(d_model) || 3;
 		S._d_model = d;
 		var scalar = (typeof posEmbedScalar !== 'undefined') ? posEmbedScalar : 1;
@@ -151,22 +180,27 @@
 			pe.push(pev);
 			h0.push(e.map(function (v, ii) { return v + pev[ii]; }));
 		}
-		_record('P:emb', emb, { meta: { tokens: tokens } });
-		_record('P:pe', pe, { meta: { tokens: tokens } });
-		_record('P:h0', h0, { meta: { tokens: tokens } });
+		_record(prefix + ':emb', emb, { meta: { tokens: tokens } });
+		_record(prefix + ':pe', pe, { meta: { tokens: tokens } });
+		_record(prefix + ':h0', h0, { meta: { tokens: tokens } });
 	};
 
 	/**
 	 * Record the attention sublayer of layer `layerIndex` (0-based).
+	 * `prefix` is 'L' for the visualization pass (train tokens) and 'R'
+	 * for the final inference pass (master tokens). Grids/metadata are
+	 * namespaced under `prefix + ':' + (layerIndex + 1)`.
 	 */
-	S.recordLayer = function (layerIndex, opt) {
+	S.recordLayer = function (layerIndex, opt, prefix) {
 		var L = layerIndex + 1;
+		var pre = prefix || 'L';
 		var d_model = num(opt.d_model);
 		var n_heads = num(opt.n_heads) || 1;
 		var d_k = d_model / n_heads;
 		var seqLen = opt.h_in ? opt.h_in.length : (opt.norm ? opt.norm.length : 0);
-		S._layerMeta.set(L, {
+		S._layerMeta.set(pre + ':' + L, {
 			L: L,
+			prefix: pre,
 			tokens: opt.tokens || null,
 			d_model: d_model,
 			n_heads: n_heads,
@@ -174,14 +208,14 @@
 			seqLen: seqLen
 		});
 
-		_record('L:' + L + ':hin', opt.h_in);
-		_record('L:' + L + ':norm', opt.norm);
-		_record('L:' + L + ':gamma', opt.gamma, { isVec: true });
-		_record('L:' + L + ':beta', opt.beta, { isVec: true });
-		_record('L:' + L + ':Wo', opt.Wo);
-		_record('L:' + L + ':concat', opt.concat);
-		_record('L:' + L + ':proj', opt.proj);
-		_record('L:' + L + ':h1', opt.h1);
+		_record(pre + ':' + L + ':hin', opt.h_in);
+		_record(pre + ':' + L + ':norm', opt.norm);
+		_record(pre + ':' + L + ':gamma', opt.gamma, { isVec: true });
+		_record(pre + ':' + L + ':beta', opt.beta, { isVec: true });
+		_record(pre + ':' + L + ':Wo', opt.Wo);
+		_record(pre + ':' + L + ':concat', opt.concat);
+		_record(pre + ':' + L + ':proj', opt.proj);
+		_record(pre + ':' + L + ':h1', opt.h1);
 
 		if (opt.h_in) {
 			var mu = opt.h_in.map(function (row) {
@@ -191,8 +225,8 @@
 				var m = row.reduce(function (a, b) { return a + b; }, 0) / row.length;
 				return row.reduce(function (a, b) { return a + Math.pow(b - m, 2); }, 0) / row.length;
 			});
-			_record('L:' + L + ':mu', mu, { isVec: true });
-			_record('L:' + L + ':var', vr, { isVec: true });
+			_record(pre + ':' + L + ':mu', mu, { isVec: true });
+			_record(pre + ':' + L + ':var', vr, { isVec: true });
 		}
 
 		if (opt.headData && Array.isArray(opt.headData)) {
@@ -200,7 +234,7 @@
 			var Wq = att.query || [], Wk = att.key || [], Wv = att.value || [];
 			for (var h = 0; h < opt.headData.length; h++) {
 				var hd = opt.headData[h];
-				var p = 'L:' + L + ':head:' + h;
+				var p = pre + ':' + L + ':head:' + h;
 				var off = h * d_k;
 				_record(p + ':Wq', Wq.map(function (r) { return r.slice(off, off + d_k); }));
 				_record(p + ':Wk', Wk.map(function (r) { return r.slice(off, off + d_k); }));
@@ -218,18 +252,19 @@
 	/**
 	 * Record the FFN sublayer of layer `layerIndex` (0-based).
 	 */
-	S.recordFfn = function (layerIndex, opt) {
+	S.recordFfn = function (layerIndex, opt, prefix) {
 		var L = layerIndex + 1;
-		_record('L:' + L + ':gamma2', opt.gamma2, { isVec: true });
-		_record('L:' + L + ':beta2', opt.beta2, { isVec: true });
-		_record('L:' + L + ':norm2', opt.norm2);
-		_record('L:' + L + ':W1', opt.W1);
-		_record('L:' + L + ':b1', opt.b1, { isVec: true });
-		_record('L:' + L + ':outL1', opt.outL1);
-		_record('L:' + L + ':W2', opt.W2);
-		_record('L:' + L + ':b2', opt.b2, { isVec: true });
-		_record('L:' + L + ':outFFN', opt.outFFN);
-		_record('L:' + L + ':h2', opt.h2);
+		var pre = prefix || 'L';
+		_record(pre + ':' + L + ':gamma2', opt.gamma2, { isVec: true });
+		_record(pre + ':' + L + ':beta2', opt.beta2, { isVec: true });
+		_record(pre + ':' + L + ':norm2', opt.norm2);
+		_record(pre + ':' + L + ':W1', opt.W1);
+		_record(pre + ':' + L + ':b1', opt.b1, { isVec: true });
+		_record(pre + ':' + L + ':outL1', opt.outL1);
+		_record(pre + ':' + L + ':W2', opt.W2);
+		_record(pre + ':' + L + ':b2', opt.b2, { isVec: true });
+		_record(pre + ':' + L + ':outFFN', opt.outFFN);
+		_record(pre + ':' + L + ':h2', opt.h2);
 
 		if (opt.h1) {
 			var mu = opt.h1.map(function (row) {
@@ -239,8 +274,8 @@
 				var m = row.reduce(function (a, b) { return a + b; }, 0) / row.length;
 				return row.reduce(function (a, b) { return a + Math.pow(b - m, 2); }, 0) / row.length;
 			});
-			_record('L:' + L + ':mu2', mu, { isVec: true });
-			_record('L:' + L + ':var2', vr, { isVec: true });
+			_record(pre + ':' + L + ':mu2', mu, { isVec: true });
+			_record(pre + ':' + L + ':var2', vr, { isVec: true });
 		}
 	};
 
@@ -253,11 +288,17 @@
 		var scaledProbs = opt.scaledProbs;
 		var temperature = num(opt.temperature) || 1;
 		var vocabSize = num(opt.vocabSize) || 1;
+		var finalTokens = opt.finalTokens || null;
+		if (!finalTokens) {
+			var r0 = _grid('R:0:emb');
+			if (r0 && r0.meta && r0.meta.tokens) finalTokens = r0.meta.tokens;
+		}
 		S._finalMeta = {
 			vocabWords: opt.vocabulary || [],
 			temperature: temperature,
 			vocabSize: vocabSize,
-			seqLen: opt.h_final ? opt.h_final.length : 0,
+			seqLen: opt.h_final && opt.h_final.length ? opt.h_final.length : 0,
+			finalTokens: finalTokens,
 			lastLayer: num(opt.lastLayer) || 1
 		};
 
@@ -555,7 +596,7 @@
 	}
 
 	function _tokOf(layer) {
-		var meta = S._layerMeta.get(layer);
+		var meta = _layerMetaOf(layer);
 		return meta ? meta.tokens : null;
 	}
 
@@ -570,7 +611,6 @@
 		var meta = S._layerMeta.values().next().value;
 		return meta ? meta.d_model : 3;
 	}
-
 	/* join underbraced terms, trimming when there are more than `max` */
 	function _plusTerms(terms, max) {
 		var shown = terms.slice(0, max);
@@ -953,12 +993,14 @@
 	function _matCtxNode(L, h, p, i) {
 		var base = 'L:' + L + ':head:' + h;
 		var seq = _grid(base + ':alpha').data[p].length;
-		var terms = [];
+		var terms = [], chips = [];
 		for (var j = 0; j < seq; j++) {
 			terms.push({
 				tex: _ub(fmt(_gval(base + ':alpha', p, j)), 'α_{' + p + ',' + j + '}') + '\\cdot' +
 					_ub(fmt(_gval(base + ':v', j, i)), 'v_{' + j + '}[' + i + ']')
 			});
+			chips.push(_chip(base + ':alpha:' + p + ':' + j, 'α_{' + p + ',' + j + '}', 'attention weight', _gval(base + ':alpha', p, j)));
+			chips.push(_chip(base + ':v:' + j + ':' + i, 'v_{' + j + '}[' + i + ']', 'value vector', _gval(base + ':v', j, i)));
 		}
 		var val = _gval(base + ':ctx', p, i);
 		return _node({
@@ -967,17 +1009,14 @@
 			name: 'c_{' + p + '}[' + i + ']',
 			badge: 'weighted context, head ' + h,
 			formula: 'c_{' + p + '}[' + i + '] = ' + _plusTerms(terms, 3) + ' = ' + _ub(fmt(val), 'context'),
-			inputs: [
-				_chip(base + ':alpha:' + p + ':0', 'α_{' + p + ',0}', 'weight', _gval(base + ':alpha', p, 0)),
-				_chip(base + ':v:0:' + i, 'v_{0}[' + i + ']', 'value', _gval(base + ':v', 0, i))
-			]
+			inputs: chips
 		});
 	}
 
 	/* ─────────────── output-of-attention materializers ─────────────── */
 
 	function _matConcatCell(L, p, i) {
-		var meta = S._layerMeta.get(L);
+		var meta = _layerMetaOf(L);
 		var dk = meta ? meta.d_k : 1;
 		var h = Math.floor(i / dk);
 		var inner = i % dk;
@@ -1187,13 +1226,26 @@
 	function _matHLast(i) {
 		var val = _gval('F:h_last', 0, i);
 		var lastLayer = S._finalMeta ? S._finalMeta.lastLayer : null;
+		var seq = S._finalMeta ? S._finalMeta.seqLen : 0;
+		var row = seq - 1;
+		var inputs = [];
+		if (lastLayer && row >= 0 && S._grids.has('R:' + lastLayer + ':h2')) {
+			var rv = _gval('R:' + lastLayer + ':h2', row, i);
+			var rt = _rtok(lastLayer, row);
+			inputs = [_chip(
+				'R:' + lastLayer + ':h2:' + row + ':' + i,
+				'h_2^{(' + lastLayer + ')}[' + row + '][' + i + ']',
+				'output of final pass layer ' + lastLayer + (rt != null ? ' · ' + dispToken(rt) : ''),
+				rv
+			)];
+		}
 		return _node({
 			id: 'F:h_last:0:' + i,
 			value: val,
 			name: 'h_{\\text{last}}[' + i + ']',
-			badge: 'final hidden state' + (lastLayer ? ' · layer ' + lastLayer : ''),
-			formula: 'h_{\\text{last}}[' + i + '] = ' + _ub(fmt(val), 'last line of the final layer output'),
-			inputs: []
+			badge: 'final hidden state · last row of layer ' + (lastLayer || '?') + ' output',
+			formula: 'h_{\\text{last}}[' + i + '] = ' + _ub(fmt(val), 'row ' + row + ' of the final layer output'),
+			inputs: inputs
 		});
 	}
 
@@ -1414,7 +1466,128 @@
 		return n;
 	};
 
+	/* Cap on how many steps a full trace collects (the dependency graph
+	   can fan out enormously for layer values on multi-token input). */
+	var _traceCap = 250;
+
+	/**
+	 * Walk the entire dependency graph from `nodeId` back to its leaves
+	 * (input embeddings, weights, config constants). Returns
+	 * { root, steps:[{node, depth}], cut, total } with steps ordered from
+	 * input → this value, or null when the node does not exist.
+	 */
+	S.fullTrace = function (nodeId) {
+		var root = S._mat(nodeId);
+		if (!root) return null;
+		var seen = {};
+		seen[nodeId] = true;
+		var steps = [];
+		var queue = [{ node: root, depth: 0 }];
+		var o = 0, cut = false;
+		while (queue.length) {
+			if (steps.length >= _traceCap) { cut = true; break; }
+			var cur = queue.shift();
+			cur._o = o++;
+			steps.push(cur);
+			var inputs = cur.node.inputs || [];
+			for (var k = 0; k < inputs.length; k++) {
+				var iid = inputs[k].id;
+				if (seen[iid]) continue;
+				seen[iid] = true;
+				var n = S._mat(iid);
+				if (n) queue.push({ node: n, depth: cur.depth + 1 });
+			}
+		}
+		/* Reading order: input/leaves (deepest) first, current value last. */
+		steps.sort(function (a, b) {
+			if (b.depth !== a.depth) return b.depth - a.depth;
+			return a._o - b._o;
+		});
+		return { root: root, steps: steps, cut: cut, total: steps.length };
+	};
+
+	/* Rewrite a node built by the 'L' materializers into the final-pass
+	   ('R:') namespace: ids that point into the L: grids become R: ids,
+	   and P:h0 (visualization embedding) links become R:0:h0 (the final
+	   pass's own input state). */
+	function _remapR(node) {
+		var fix = function (id) {
+			if (id.lastIndexOf('L:', 0) === 0) return 'R:' + id.slice(2);
+			if (id.lastIndexOf('P:h0:', 0) === 0) return 'R:0:h0:' + id.slice(5);
+			return id;
+		};
+		node.id = fix(node.id);
+		node.inputs = (node.inputs || []).map(function (inp) {
+			inp.id = fix(inp.id);
+			return inp;
+		});
+		return node;
+	}
+
+	/* Final-pass pre-stage (input embedding) nodes: R:0:{emb,pe,h0}. */
+	function _matR0(nodeId) {
+		var m = /^R:0:(emb|pe|h0):(\d+):(\d+)$/.exec(nodeId);
+		if (!m) return null;
+		var kind = m[1], p = +m[2], i = +m[3];
+		var gridKey = 'R:0:' + kind;
+		var val = _gval(gridKey, p, i);
+		var g = _grid(gridKey);
+		var tok = g && g.meta && g.meta.tokens ? g.meta.tokens[p] : null;
+		var label = tok != null ? '"' + dispToken(tok) + '"' : 'token ' + p;
+		var inputs = [];
+		if (kind === 'h0') {
+			inputs = [
+				_chip('R:0:emb:' + p + ':' + i, 'e_{' + p + '}[' + i + ']', 'embedding of ' + label, _gval('R:0:emb', p, i)),
+				_chip('R:0:pe:' + p + ':' + i, 'PE_{' + p + '}[' + i + ']', 'positional encoding', _gval('R:0:pe', p, i))
+			];
+			return _node({
+				id: nodeId,
+				value: val,
+				name: 'h_0[' + p + '][' + i + ']',
+				badge: 'final-pass input state · ' + label,
+				formula: 'h_0[' + p + '][' + i + '] = e_{' + p + '}[' + i + '] + PE_{' + p + '}[' + i + '] = ' +
+					_ub(fmt(val), 'embedding + positional encoding'),
+				inputs: inputs
+			});
+		}
+		if (kind === 'emb') {
+			return _node({
+				id: nodeId,
+				value: val,
+				name: 'e_{' + p + '}[' + i + ']',
+				badge: 'embedding of ' + label,
+				formula: 'e_{' + p + '}[' + i + '] = ' + _ub(fmt(val), 'lookup of ' + label + ' in the embedding table'),
+				inputs: []
+			});
+		}
+		return _node({
+			id: nodeId,
+			value: val,
+			name: 'PE_{' + p + '}[' + i + ']',
+			badge: 'positional encoding',
+			formula: 'PE_{' + p + '}[' + i + '] = ' + _ub(fmt(val), 'sin/cos of position ' + p),
+			inputs: [
+				_chip('P:trig:' + p + ':' + i, (i % 2 === 0 ? '\\sin' : '\\cos') + ' term', 'positional trig term', val)
+			]
+		});
+	}
+
 	function _matImpl(nodeId) {
+		var isR = nodeId.lastIndexOf('R:', 0) === 0;
+		if (isR && /^R:0:(emb|pe|h0):\d+:\d+$/.test(nodeId)) return _matR0(nodeId);
+		if (isR) {
+			_curPrefix = 'R';
+			try {
+				var node = _dispatchL('L' + nodeId.slice(1));
+				return node ? _remapR(node) : null;
+			} finally {
+				_curPrefix = 'L';
+			}
+		}
+		return _dispatchL(nodeId);
+	}
+
+	function _dispatchL(nodeId) {
 		if (nodeId === 'P:scalar') return _matPScalar();
 		var m;
 		if ((m = /^P:(emb|base|trig|pe|h0):(\d+):(\d+)$/.exec(nodeId))) {
@@ -1443,14 +1616,20 @@
 			return _matGammaBeta(+m[1], m[3] === '2', +m[4], m[2]);
 		}
 		if ((m = /^L:(\d+):hin:(\d+):(\d+)$/.exec(nodeId))) {
-			var g = _grid('L:' + m[1] + ':hin');
+			var Lh = +m[1], hp = +m[2], hi = +m[3];
+			var inputs = [];
+			if (Lh === 1) {
+				inputs = [_chip('P:h0:' + hp + ':' + hi, 'h_0[' + hp + '][' + hi + ']', 'initial state', _gval('P:h0', hp, hi))];
+			} else {
+				inputs = [_chip('L:' + (Lh - 1) + ':h2:' + hp + ':' + hi, 'h^{(' + (Lh - 1) + ')}_2[' + hp + '][' + hi + ']', 'output of layer ' + (Lh - 1), _gval('L:' + (Lh - 1) + ':h2', hp, hi))];
+			}
 			return _node({
 				id: nodeId,
-				value: _gval('L:' + m[1] + ':hin', +m[2], +m[3]),
-				name: 'h_{in}[' + m[2] + '][' + m[3] + ']',
-				badge: 'input to layer ' + m[1],
-				formula: 'h_{in}[' + m[2] + '][' + m[3] + '] = ' + _ub(fmt(_gval('L:' + m[1] + ':hin', +m[2], +m[3])), 'hidden state'),
-				inputs: g && m[1] == 1 ? [_chip('P:h0:' + m[2] + ':' + m[3], 'h_0[' + m[2] + '][' + m[3] + ']', 'initial state', _gval('P:h0', +m[2], +m[3]))] : []
+				value: _gval('L:' + Lh + ':hin', hp, hi),
+				name: 'h_{in}[' + hp + '][' + hi + ']',
+				badge: 'input to layer ' + Lh,
+				formula: 'h_{in}[' + hp + '][' + hi + '] = ' + _ub(fmt(_gval('L:' + Lh + ':hin', hp, hi)), 'hidden state'),
+				inputs: inputs
 			});
 		}
 		if ((m = /^L:(\d+):(concat|proj|h1|h2|Wo):(\d+):(\d+)$/.exec(nodeId))) {
@@ -1533,6 +1712,7 @@
 			'#prov-tooltip{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;' +
 			'background:#ffffff;color:#1e293b;border:1px solid #cbd5e1;border-radius:10px;' +
 			'box-shadow:0 10px 30px rgba(15,23,42,.18);padding:12px 14px;max-width:560px;' +
+			'max-height:85vh;overflow-y:auto;' +
 			'display:none;position:fixed;z-index:2147483000;}' +
 			'#prov-tooltip .prov-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}' +
 			'#prov-tooltip .prov-badge{background:#eef2ff;color:#4338ca;font-size:11px;padding:2px 8px;' +
@@ -1556,6 +1736,15 @@
 			'#prov-tooltip .prov-chipval{color:#6366f1;font-weight:600;}' +
 			'#prov-tooltip .prov-crumb{margin-top:8px;font-size:11px;color:#94a3b8;}' +
 			'#prov-tooltip .prov-hint{margin-top:8px;font-size:11px;color:#94a3b8;}' +
+			'#prov-tooltip .prov-trace{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;}' +
+			'#prov-tooltip .prov-trace-step{display:flex;align-items:center;gap:8px;text-align:left;' +
+			'border:1px solid #e2e8f0;background:#f8fafc;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;}' +
+			'#prov-tooltip .prov-trace-step:hover{background:#e0e7ff;}' +
+			'#prov-tooltip .prov-trace-idx{color:#94a3b8;min-width:22px;}' +
+			'#prov-tooltip .prov-trace-name{font-weight:600;color:#3730a3;}' +
+			'#prov-tooltip .prov-trace-val{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600;color:#0f172a;}' +
+			'#prov-tooltip .prov-trace-badge{color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+			'#prov-tooltip .prov-trace-cut{margin-top:6px;font-size:11px;color:#94a3b8;text-align:center;}' +
 			'.prov-cell{transition:background .12s;}' +
 			'.prov-cell:hover{background:rgba(99,102,241,.25);cursor:help;border-radius:3px;}' +
 			'.prov-cell.prov-active{background:rgba(99,102,241,.35);}';
@@ -1609,6 +1798,24 @@
 				'Read directly from the recorded matrices (leaf value).</span></div>');
 		}
 
+		parts.push('<div class="prov-label">Full trace &middot; input &rarr; this value</div>');
+		var trace = S.fullTrace(nodeId);
+		if (trace && trace.steps.length) {
+			parts.push('<div class="prov-trace">' + trace.steps.map(function (st, ix) {
+				var n = st.node;
+				return '<button class="prov-trace-step" data-prov-go="' + attrSafe(n.id) + '" title="' + texSafe(n.badge) + '" style="margin-left:' + (st.depth * 12) + 'px">' +
+					'<span class="prov-trace-idx">' + (ix + 1) + '</span>' +
+					'<span class="prov-trace-name">$' + n.name + '$</span>' +
+					'<span class="prov-trace-val">' + fmt(n.value) + '</span>' +
+					'<span class="prov-trace-badge">' + texSafe(n.badge) + '</span></button>';
+			}).join('') + '</div>');
+			if (trace.cut) {
+				parts.push('<div class="prov-trace-cut">&hellip; trace truncated at ' + _traceCap + ' steps</div>');
+			}
+		} else {
+			parts.push('<div class="prov-inputs"><span style="font-size:12px;color:#64748b;">No trace available for this node.</span></div>');
+		}
+
 		if (_history.length > 1) {
 			parts.push('<div class="prov-crumb">Path: ' + _history.map(function (h, ix) {
 				var n = S._mat(h);
@@ -1619,7 +1826,7 @@
 			}).join(' &rarr; ') + '</div>');
 		}
 
-		parts.push('<div class="prov-hint">Hover any number in the equations, then click an input chip to trace it further back.</div>');
+		parts.push('<div class="prov-hint">Click any step in the full trace to jump to it &middot; the tooltip stays put while you move the mouse.</div>');
 
 		_tooltip.innerHTML = parts.join('');
 		_tooltip.style.display = 'block';
@@ -1627,21 +1834,42 @@
 		_position();
 	}
 
+	var _anchor = null;
+
+	/* Anchor the tooltip once when it opens (below the hovered cell, or at
+	   the opening mouse position). It must NOT follow the mouse, otherwise
+	   the content ("Where it comes from") becomes unreadable while moving. */
+	function _captureAnchor() {
+		var cell = S._activeCell;
+		if (cell && cell.getBoundingClientRect) {
+			var r = cell.getBoundingClientRect();
+			if (r.width > 0 && r.height > 0) {
+				_anchor = { x: r.left, y: r.bottom + 6 };
+				return;
+			}
+		}
+		_anchor = { x: _lastMouse.x, y: _lastMouse.y };
+	}
+
 	function _position() {
 		if (!_tooltip || _tooltip.style.display === 'none') return;
 		var tw = _tooltip.offsetWidth || 300;
 		var th = _tooltip.offsetHeight || 120;
-		var left = _lastMouse.x + 14;
-		var top = _lastMouse.y + 14;
-		if (left + tw > window.innerWidth - 8) left = Math.max(8, _lastMouse.x - tw - 14);
-		if (top + th > window.innerHeight - 8) top = Math.max(8, _lastMouse.y - th - 14);
+		var ax = _anchor ? _anchor.x : _lastMouse.x;
+		var ay = _anchor ? _anchor.y : _lastMouse.y;
+		var left = ax + 14;
+		var top = ay + 14;
+		if (left + tw > window.innerWidth - 8) left = Math.max(8, ax - tw - 14);
+		if (top + th > window.innerHeight - 8) top = Math.max(8, ay - th - 14);
 		_tooltip.style.left = left + 'px';
 		_tooltip.style.top = top + 'px';
 	}
 
 	S.show = function (nodeId) {
 		if (!_tooltip) _ensureTooltip();
+		var wasHidden = _tooltip.style.display === 'none';
 		_history = [nodeId];
+		if (wasHidden) _captureAnchor();
 		_renderCurrent();
 	};
 
@@ -1693,6 +1921,8 @@
 	function _onMouseOver(e) {
 		var cell = e.target && e.target.closest ? e.target.closest('[data-prov-id]') : null;
 		if (cell) {
+			_lastMouse.x = e.clientX;
+			_lastMouse.y = e.clientY;
 			_clearHide();
 			if (_timer) clearTimeout(_timer);
 			_timer = setTimeout(function () {
@@ -1722,7 +1952,6 @@
 	function _onMouseMove(e) {
 		_lastMouse.x = e.clientX;
 		_lastMouse.y = e.clientY;
-		if (_tooltip && _tooltip.style.display !== 'none' && !S._pinned) _position();
 	}
 
 	function _onDocClick(e) {

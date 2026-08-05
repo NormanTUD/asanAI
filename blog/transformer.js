@@ -236,12 +236,57 @@ function getTransformerConfig() {
 	};
 }
 
-function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers) {
+function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers, recordFinal) {
 	if (n_layers === undefined) n_layers = weights.length;
 	let h = embedTokensWithPE(tokens, d_model);
+
+	// Provenance: record the final (inference) pass under the 'R:' namespace so
+	// that h_last can be traced back through every layer to the input token.
+	// Only the final prediction pass requests this; per-window prediction calls
+	// must not overwrite those grids.
+	if (recordFinal && window.Prov) {
+		window.Prov.recordPre(tokens, d_model, window.persistentEmbeddingSpace, 'R:0');
+	}
+
 	for (let l = 0; l < n_layers; l++) {
-		const result = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
+		const w = weights[l];
+		const h_in = h;
+		const result = forwardOneLayer(h_in, w, d_model, n_heads, tokens, null);
 		h = result.h_out;
+
+		if (recordFinal && window.Prov) {
+			// FFN sublayer internals — identical math to run_ffn_block()
+			const gamma2 = w.gamma2 || new Array(d_model).fill(1.0);
+			const beta2 = w.beta2 || new Array(d_model).fill(0.0);
+			const norm2 = calculateLayerNorm(result.h_attn, gamma2, beta2);
+			const outL1 = matMul(norm2, w.W1, w.b1).map(row => row.map(v => geluApprox(v)));
+			const outFFN = matMul(outL1, w.W2, w.b2);
+
+			window.Prov.recordLayer(l, {
+				d_model, n_heads,
+				h_in,
+				norm: result.normH,
+				gamma: w.gamma, beta: w.beta,
+				Wo: w.attention.output,
+				concat: result.concat,
+				proj: result.projected,
+				h1: result.h_attn,
+				tokens,
+				headData: result.headData,
+				attention: w.attention
+			}, 'R');
+
+			window.Prov.recordFfn(l, {
+				gamma2, beta2,
+				norm2,
+				W1: w.W1, b1: w.b1,
+				outL1,
+				W2: w.W2, b2: w.b2,
+				outFFN,
+				h2: result.h_out,
+				h1: result.h_attn
+			}, 'R');
+		}
 	}
 	return h;
 }
@@ -2176,7 +2221,7 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 	if (knownMasterTokens.length === 0) return;
 
-	const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
+	const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers, true);
 
 	// *** NEU: Cache für Temperature-only Re-Rendering ***
 	window._cachedFinalProjection = {
@@ -2453,7 +2498,8 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
             temperature,
             vocabulary,
             vocabSize: vocabulary.length,
-            lastLayer: h_final.length
+            h_final,
+            lastLayer: getTransformerConfig().n_layers
         });
         const overDivs = detailsDiv.querySelectorAll('div[style*="overflow-x:auto"]');
         const hLastP = detailsDiv.querySelector('.logit_calc');
