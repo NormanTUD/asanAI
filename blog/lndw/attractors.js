@@ -783,35 +783,36 @@ function renderSeahorseEmoji(container) {
                         p.y = cy;
                     }
                 } else {
-                    // ===== AUSSERHALB DES BECKENS: starke Anziehung Richtung Attraktor =====
-                    // Punkte sollen nie länger als ein paar Sekunden weit weg bleiben.
+                    // ===== AUSSERHALB DES BECKENS: lockere Anziehung Richtung Attraktor =====
+                    // Punkte sollen leicht irren (max ~10s) und dann gemütlich ankommen.
 
-                    // Sanfter zufälliger Drift (etwas reduziert)
+                    // Sanfter zufälliger Drift — etwas stärker, damit sie wirklich "irren"
                     p.turnChangeTimer--;
                     if (p.turnChangeTimer <= 0) {
-                        p.turnRate += (Math.random() - 0.5) * 0.015;
-                        p.turnRate = Math.max(-0.03, Math.min(0.03, p.turnRate));
-                        p.turnChangeTimer = 50 + Math.floor(Math.random() * 80);
+                        p.turnRate += (Math.random() - 0.5) * 0.025;
+                        p.turnRate = Math.max(-0.05, Math.min(0.05, p.turnRate));
+                        p.turnChangeTimer = 30 + Math.floor(Math.random() * 60);
                     }
                     p.heading += p.turnRate;
 
-                    // Sanfte Bias Richtung Zentrum — genug zum Ankommen, lässt aber Raum zum Wandern
+                    // Sehr milde Bias Richtung Zentrum — nur ein leichter "Vorschlag"
                     const angleToCenter = Math.atan2(dy, dx);
                     const distBeyond = Math.max(0, dist - basinRadius);
-                    const angularBias = 0.10 + 0.30 * Math.min(1, distBeyond / 200);
+                    const angularBias = 0.04 + 0.10 * Math.min(1, distBeyond / 200);
                     p.heading += (angleToCenter - p.heading) * angularBias;
 
-                    // Schwacher direkter Schub (sanft, damit sie "irren")
-                    const pullAccel = 0.04 + 0.005 * distBeyond;
-                    p.vx += Math.cos(angleToCenter) * pullAccel;
-                    p.vy += Math.sin(angleToCenter) * pullAccel;
-
-                    // Moderate Zielgeschwindigkeit — nicht zu schnell, lässt Zeit zum Wandern
-                    const targetSpeed = 1.5 + Math.min(1.2, distBeyond * 0.008);
+                    // Velocity folgt Heading mit schwacher Kopplung (chaotisches Wandern)
+                    const targetSpeed = 1.3 + Math.min(0.7, distBeyond * 0.005);
                     const targetVx = Math.cos(p.heading) * targetSpeed;
                     const targetVy = Math.sin(p.heading) * targetSpeed;
-                    p.vx += (targetVx - p.vx) * 0.08;
-                    p.vy += (targetVy - p.vy) * 0.08;
+                    p.vx += (targetVx - p.vx) * 0.04;
+                    p.vy += (targetVy - p.vy) * 0.04;
+
+                    // Schwacher konstanter Schub Richtung Zentrum
+                    // (skaliert leicht mit Distanz, aber nie dominant — max ~10s Wanderzeit)
+                    const pullAccel = 0.018;
+                    p.vx += Math.cos(angleToCenter) * pullAccel;
+                    p.vy += Math.sin(angleToCenter) * pullAccel;
 
                     // Leichte Dämpfung damit Geschwindigkeit nicht unbegrenzt wächst
                     p.vx *= 0.97;
@@ -904,34 +905,47 @@ function renderSeahorseEmoji(container) {
         const repelRadius = Math.min(140, Math.min(W, H) / 2 - 60);
         const dangerRadius = 38;
 
-        function spawnParticle(color, name) {
-            let x, y, attempts = 0;
-            do {
-                x = 40 + Math.random() * (W - 80);
-                y = 40 + Math.random() * (H - 80);
-                attempts++;
-            } while (Math.sqrt((x - cx) ** 2 + (y - cy) ** 2) < dangerRadius + 15 && attempts < 50);
+        // Zufällige Farbpalette — Teilchen haben NUR Farbe, keine Buchstaben
+        const colorPalette = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
-            const angle = Math.random() * Math.PI * 2;
-            const speed = 1.0 + Math.random() * 0.5;
+        // Spawnt ein Teilchen an einer zufälligen Canvas-Kante, mit Geschwindigkeit
+        // Richtung Repeller (verschiedene Geschwindigkeiten + Streuung).
+        function spawnParticle() {
+            const edge = Math.floor(Math.random() * 4);
+            let x, y;
+            const inset = 30;
+            switch (edge) {
+                case 0: x = inset + Math.random() * (W - 2 * inset); y = inset; break;       // oben
+                case 1: x = W - inset; y = inset + Math.random() * (H - 2 * inset); break;  // rechts
+                case 2: x = inset + Math.random() * (W - 2 * inset); y = H - inset; break;  // unten
+                case 3: x = inset; y = inset + Math.random() * (H - 2 * inset); break;      // links
+            }
+
+            // Richtung Repeller + Streuung (verschiedene "Wurfwinkel")
+            const toCenter = Math.atan2(cy - y, cx - x);
+            const spread = (Math.random() - 0.5) * 0.7;
+            const heading = toCenter + spread;
+            // Unterschiedliche Anfangsgeschwindigkeiten — manche langsam, manche schnell
+            const speed = 0.7 + Math.random() * 1.7;
+
             return {
                 x, y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                color,
-                baseColor: color,
-                name,
+                vx: Math.cos(heading) * speed,
+                vy: Math.sin(heading) * speed,
+                color: colorPalette[Math.floor(Math.random() * colorPalette.length)],
                 trail: [],
-                heading: angle,
-                turnRate: (Math.random() - 0.5) * 0.03,
-                turnChangeTimer: 60 + Math.floor(Math.random() * 120),
-                repelled: 0
+                heading,
+                turnRate: (Math.random() - 0.5) * 0.04,
+                turnChangeTimer: 15 + Math.floor(Math.random() * 30),
+                alive: true,
+                age: 0,
+                wasInRepel: false
             };
         }
 
-        const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
-        const names = ['A', 'B', 'C', 'D'];
-        let particles = colors.map((c, i) => spawnParticle(c, names[i]));
+        // Starte mit 8 Teilchen, alle an zufälligen Kanten
+        let particles = [];
+        for (let i = 0; i < 8; i++) particles.push(spawnParticle());
 
         animationRunning = true;
         let t = 0;
@@ -1010,131 +1024,116 @@ function renderSeahorseEmoji(container) {
             ctx.fillText('Repeller', cx, cy + 28);
 
             // Teilchen aktualisieren und zeichnen
-            particles.forEach((p) => {
+            particles.forEach((p, idx) => {
+                // Falls Teilchen aus dem Bild geschossen wurde → neu spawnen
+                if (!p.alive) {
+                    particles[idx] = spawnParticle();
+                    return;
+                }
+                p.age++;
+
                 const dx = p.x - cx;
                 const dy = p.y - cy;
                 const dist = Math.sqrt(dx * dx + dy * dy);
+                const pSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
 
-                // === IMMER aktive sanfte Abstoßung (lang-reichweitig) ===
-                // Hält Teilchen in der Nähe des Repellers — keine "eigenen Kreise" am Rand.
-                if (dist > 0) {
-                    const outwardAngleLR = Math.atan2(dy, dx);
-                    const weakPush = 0.08 + 0.22 * Math.exp(-dist * 0.010);
-                    p.vx += Math.cos(outwardAngleLR) * weakPush;
-                    p.vy += Math.sin(outwardAngleLR) * weakPush;
+                // === AUSSERHALB des Repel-Feldes: sanfte Anziehung Richtung Repeller ===
+                // (damit sie aktiv darauf zufliegen statt nur geradeaus)
+                if (dist > repelRadius && dist > 0) {
+                    const toCenter = Math.atan2(-dy, -dx);
+                    const attractAccel = 0.04 + 25 / (dist + 50);
+                    p.vx += Math.cos(toCenter) * attractAccel;
+                    p.vy += Math.sin(toCenter) * attractAccel;
                 }
 
-                // Abstoßungskraft, sobald das Teilchen im Repulsionsfeld ist
-                if (dist < repelRadius && dist > 0) {
+                // === IM Repel-Feld: starke Abstoßung, STÄRKER wenn Teilchen schnell ist ===
+                // → schnelle Teilchen kommen tiefer rein und werden heftiger rausgeschleudert
+                if (dist < repelRadius && dist > dangerRadius) {
                     const outwardAngle = Math.atan2(dy, dx);
-                    const strength = 1.3 * (1 - dist / repelRadius) + 0.18;
-                    p.vx += Math.cos(outwardAngle) * strength;
-                    p.vy += Math.sin(outwardAngle) * strength;
-                    p.repelled = 35;
+                    const dynamicRepel = 0.3 + pSpeed * 0.55;
+                    p.vx += Math.cos(outwardAngle) * dynamicRepel;
+                    p.vy += Math.sin(outwardAngle) * dynamicRepel;
 
-                    // Tangentialer Wirbel für visuellen Schwungeffekt
+                    // Tangentialer Swirl
                     const swirlAngle = outwardAngle + Math.PI / 2;
-                    const swirlStrength = 0.08 * (1 - dist / repelRadius);
-                    p.vx += Math.cos(swirlAngle) * swirlStrength;
-                    p.vy += Math.sin(swirlAngle) * swirlStrength;
+                    p.vx += Math.cos(swirlAngle) * 0.12;
+                    p.vy += Math.sin(swirlAngle) * 0.12;
+
+                    p.wasInRepel = true;
                 }
 
-                // Teilchen dürfen den inneren Sperrkreis nicht betreten
+                // === INNERER SPERRKREIS: hart rausdrücken ===
                 if (dist < dangerRadius && dist > 0) {
                     const outwardAngle = Math.atan2(dy, dx);
-                    const push = (dangerRadius - dist) * 0.2;
-                    p.vx += Math.cos(outwardAngle) * push;
-                    p.vy += Math.sin(outwardAngle) * push;
                     p.x = cx + Math.cos(outwardAngle) * dangerRadius;
                     p.y = cy + Math.sin(outwardAngle) * dangerRadius;
+                    const push = (dangerRadius - dist) * 0.5;
+                    p.vx += Math.cos(outwardAngle) * push;
+                    p.vy += Math.sin(outwardAngle) * push;
                 }
 
-                // Sanfte freie Bewegung (Random-Drift leicht reduziert,
-                // damit Abstoßungskraft dominanter wirkt)
+                // Random-Drift (sanft, lässt das Wandern zu)
                 p.turnChangeTimer--;
                 if (p.turnChangeTimer <= 0) {
-                    p.turnRate += (Math.random() - 0.5) * 0.012;
-                    p.turnRate = Math.max(-0.025, Math.min(0.025, p.turnRate));
-                    p.turnChangeTimer = 50 + Math.floor(Math.random() * 80);
+                    p.turnRate += (Math.random() - 0.5) * 0.03;
+                    p.turnRate = Math.max(-0.06, Math.min(0.06, p.turnRate));
+                    p.turnChangeTimer = 20 + Math.floor(Math.random() * 40);
                 }
                 p.heading += p.turnRate;
-                const targetSpeed = 1.5;
+
+                // Random-Walk-Beitrag zur Velocity
+                const targetSpeed = 0.9;
                 const targetVx = Math.cos(p.heading) * targetSpeed;
                 const targetVy = Math.sin(p.heading) * targetSpeed;
-                p.vx += (targetVx - p.vx) * 0.03;
-                p.vy += (targetVy - p.vy) * 0.03;
+                p.vx += (targetVx - p.vx) * 0.025;
+                p.vy += (targetVy - p.vy) * 0.025;
 
-                // === HARTE Wandabstoßung: Punkt prallt ab, kann nicht haften bleiben ===
-                const wallBuffer = 25;
-                if (p.x < wallBuffer) {
-                    p.x = wallBuffer;
-                    p.vx = Math.max(Math.abs(p.vx) + 1.2, 1.8);
-                }
-                if (p.x > W - wallBuffer) {
-                    p.x = W - wallBuffer;
-                    p.vx = -Math.max(Math.abs(p.vx) + 1.2, 1.8);
-                }
-                if (p.y < wallBuffer) {
-                    p.y = wallBuffer;
-                    p.vy = Math.max(Math.abs(p.vy) + 1.2, 1.8);
-                }
-                if (p.y > H - wallBuffer) {
-                    p.y = H - wallBuffer;
-                    p.vy = -Math.max(Math.abs(p.vy) + 1.2, 1.8);
+                // Sanfte Dämpfung
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+
+                // Speed-Limit
+                const sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                if (sp > 6) {
+                    p.vx *= 6 / sp;
+                    p.vy *= 6 / sp;
                 }
 
-                // Geschwindigkeitsbegrenzung
-                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (speed > 5) {
-                    p.vx *= 5 / speed;
-                    p.vy *= 5 / speed;
-                }
-
-                // Dämpfung
-                p.vx *= 0.97;
-                p.vy *= 0.97;
-
+                // Position updaten
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // Harte Begrenzung
-                p.x = Math.max(10, Math.min(W - 10, p.x));
-                p.y = Math.max(10, Math.min(H - 10, p.y));
-
-                if (p.repelled > 0) p.repelled--;
+                // === KEIN Wand-Bounce! Wenn deutlich außerhalb → "alive=false" → respawn ===
+                const killMargin = 80;
+                if (p.x < -killMargin || p.x > W + killMargin || p.y < -killMargin || p.y > H + killMargin) {
+                    p.alive = false;
+                }
 
                 // Trail
                 p.trail.push({ x: p.x, y: p.y });
-                if (p.trail.length > 120) p.trail.shift();
+                if (p.trail.length > 80) p.trail.shift();
 
                 // Trail zeichnen
                 if (p.trail.length > 1) {
                     for (let i = 1; i < p.trail.length; i++) {
-                        const alpha = (i / p.trail.length) * 0.5;
-                        const trailColor = p.repelled > 0 ? '#ef4444' : p.baseColor;
+                        const alpha = (i / p.trail.length) * 0.45;
                         ctx.beginPath();
                         ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
                         ctx.lineTo(p.trail[i].x, p.trail[i].y);
-                        ctx.strokeStyle = trailColor + Math.round(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.strokeStyle = p.color + Math.round(alpha * 255).toString(16).padStart(2, '0');
                         ctx.lineWidth = 2;
                         ctx.stroke();
                     }
                 }
 
-                // Teilchen zeichnen
+                // Teilchen zeichnen — NUR Farbe, kein Buchstabe
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
-                ctx.fillStyle = p.repelled > 0 ? '#ef4444' : p.baseColor;
+                ctx.fillStyle = p.color;
                 ctx.fill();
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 2;
                 ctx.stroke();
-
-                // Label
-                ctx.font = 'bold 11px system-ui';
-                ctx.fillStyle = p.repelled > 0 ? '#ef4444' : p.baseColor;
-                ctx.textAlign = 'center';
-                ctx.fillText(p.name, p.x, p.y - 13);
             });
 
             activeAnimation = requestAnimationFrame(draw);
@@ -2640,10 +2639,10 @@ function renderGenerator(container) {
                 p.y = p.home.y;
             }
         } else {
-            // ===== FREIE BEWEGUNG: Affinitäts-Kräfte zu ALLEN Regionen =====
-            // Positiv = Anziehung (zieht hin), negativ = Abstoßung (drückt weg).
-            // So wird "frankreich" z.B. von "funktionswort" abgestoßen statt ignoriert.
+            // ===== FREIE BEWEGUNG: Affinitäts-Kräfte + garantierter Home-Seeker =====
+            // Positiv = Anziehung, negativ = Abstoßung.
 
+            // Per-Region Affinitäts-Kräfte (subtil, dominieren nicht)
             regions.forEach(r => {
                 const aff = p.aff[r.id];
                 if (!aff) return;
@@ -2651,21 +2650,31 @@ function renderGenerator(container) {
                 const rdy = r.y - p.y;
                 const rDist = Math.sqrt(rdx * rdx + rdy * rdy);
                 if (rDist < 1) return;
-                // Kraft skaliert mit Affinität, gedeckelt damit es nicht explodiert
-                const force = aff * Math.min(2.0, 150 / (rDist + 40));
+                const force = aff * 0.4 * Math.min(1.5, 110 / (rDist + 60));
                 p.vx += (rdx / rDist) * force;
                 p.vy += (rdy / rDist) * force;
             });
 
-            // Sanfter Random-Drift (Affinitäten dominieren das Geschehen)
+            // === HOME-SEEKER: starker konstanter Schub Richtung Heimat-Region ===
+            // Garantiert dass jedes Wort in max ~5s ankommt, egal was die Repeller tun.
+            const homeDx = p.home.x - p.x;
+            const homeDy = p.home.y - p.y;
+            const homeDist = Math.sqrt(homeDx * homeDx + homeDy * homeDy);
+            if (homeDist > 1) {
+                const homePull = 0.04 + 28 / (homeDist + 50);
+                p.vx += (homeDx / homeDist) * homePull;
+                p.vy += (homeDy / homeDist) * homePull;
+            }
+
+            // Sanfter Random-Drift
             p.turnChangeTimer--;
             if (p.turnChangeTimer <= 0) {
-                p.turnRate += (Math.random() - 0.5) * 0.012;
-                p.turnRate = Math.max(-0.02, Math.min(0.02, p.turnRate));
-                p.turnChangeTimer = 60 + Math.floor(Math.random() * 100);
+                p.turnRate += (Math.random() - 0.5) * 0.018;
+                p.turnRate = Math.max(-0.03, Math.min(0.03, p.turnRate));
+                p.turnChangeTimer = 40 + Math.floor(Math.random() * 80);
             }
             p.heading += p.turnRate;
-            const targetSpeed = 1.4;
+            const targetSpeed = 1.3;
             const tvx = Math.cos(p.heading) * targetSpeed;
             const tvy = Math.sin(p.heading) * targetSpeed;
             p.vx += (tvx - p.vx) * 0.03;
@@ -2675,7 +2684,7 @@ function renderGenerator(container) {
             p.vx *= 0.97;
             p.vy *= 0.97;
 
-            // === HARTE Wandabstoßung ===
+            // === HARTE Wandabstoßung (Ecken-Falle verhindern) ===
             const wallBuffer = 25;
             if (p.x < wallBuffer) {
                 p.x = wallBuffer;
