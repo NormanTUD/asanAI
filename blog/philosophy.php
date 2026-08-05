@@ -381,6 +381,24 @@ This result is in **direct tension** with the Stochastic Parrot thesis of the pr
 
 However, the counterargument has limits. The Othello world is simple, discrete, and fully observable. Whether large language models trained on natural language develop analogous world models for the much more complex, ambiguous, and partially observable world of human experience remains an open and contested question. The Othello-GPT result does not prove that LLMs "understand" language; it proves that next-token prediction, in sufficiently constrained settings, can produce internal representations that go beyond surface statistics. Whether this generalizes to natural language is precisely the question that current mechanistic interpretability research is trying to answer.
 
+### The Geometry of Concepts: How LLMs Organize Meaning
+
+The tension between the Stochastic Parrot thesis and the Othello-GPT result can be further illuminated by \cite[Park, Choe & Veitch (2024)]{park2024linear}, who formalize what it means for concepts to be "linearly represented" in an LLM. Their work shows that concepts like male→female, English→French, and singular→plural are encoded as **directions** in the model's representation space, and that these directions have precise geometric relationships.
+
+The key insight is the **causal inner product**: an inner product on the representation space under which causally separable concepts (those that can vary independently) are represented as **orthogonal vectors**. Under this geometry:
+
+- The direction $\bar{\gamma}_{\text{male→female}}$ (estimated from word pairs like king/queen, man/woman) acts as a **linear probe** for gender
+- The same direction, transformed by the inverse covariance matrix, acts as a **steering vector** that changes the model's output gender without affecting language or other concepts
+- Probing and steering are **the same object** viewed from different sides of the model (the Riesz isomorphism)
+
+This result deepens the philosophical puzzle. If concepts are organized with such precise geometric structure — if "meaning" has a measurable, causal geometry — then the model is doing something more structured than "haphazardly stitching together sequences." Yet the geometry is still defined over tokens, not over grounded experience. The model has a **map of meaning** with correct topology, but the map is still not the territory.
+
+**Sheaf Note:** This connects to the sheaf framework introduced later in this chapter. The linear representations are **local sections** of a sheaf over the space of concepts. The causal inner product provides the **gluing condition**: it ensures that concept directions from different domains (language, gender, tense) are compatible and can be assembled into a coherent global geometry. When the gluing fails — when concepts are not actually separable — the inner product reveals it as non-orthogonality.
+</div>
+
+<div id="philosophy-linear-rep-container"></div>
+
+<div class="md">
 ## The Ghost in the Machine
 
 <div class="smart-quote" data-cite="weizenbaum1976computer">

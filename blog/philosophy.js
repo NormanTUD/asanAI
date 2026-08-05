@@ -1253,6 +1253,167 @@ const SheafViz = (() => {
 	return { placeGerms, formStalks, showPresheaf, glueSheaf, reset };
 })();
 
+// ============================================================
+// PHILOSOPHY: LINEAR REPRESENTATION STEERING DEMO
+// ============================================================
+
+const PhiloLinearRep = (() => {
+    function init() {
+        const container = document.getElementById('philosophy-linear-rep-container');
+        if (!container) return;
+
+        const section = document.createElement('div');
+        section.style.cssText = 'padding:20px; background:#fafafa; border-radius:8px; margin:20px 0; border:1px solid #e0e0e0;';
+        container.appendChild(section);
+
+        const title = document.createElement('h4');
+        title.textContent = '🧭 Interactive: Steering with Concept Directions';
+        title.style.marginTop = '0';
+        section.appendChild(title);
+
+        const desc = document.createElement('p');
+        desc.style.fontSize = '13px';
+        desc.innerHTML = `This demonstrates the intervention result from <em>Park et al. (2024)</em>: adding a steering vector λ̄<sub>W</sub> to the context embedding changes the target concept <strong>without affecting</strong> causally separable concepts. Try different concepts and watch how the probability shifts.`;
+        section.appendChild(desc);
+
+        // Simulated word probabilities
+        const scenarios = [
+            {
+                context: '"Long live the ___"',
+                baseline: {king: 0.42, King: 0.25, queen: 0.12, Queen: 0.08, ruler: 0.05, monarch: 0.04, other: 0.04},
+                concepts: {
+                    'male→female': {king: 0.05, King: 0.03, queen: 0.48, Queen: 0.22, lady: 0.08, woman: 0.06, other: 0.08},
+                    'lower→UPPER': {king: 0.08, King: 0.52, queen: 0.03, Queen: 0.18, Ruler: 0.07, Monarch: 0.06, other: 0.06},
+                    'English→French': {roi: 0.35, reine: 0.20, monarque: 0.15, king: 0.10, queen: 0.08, other: 0.12}
+                }
+            }
+        ];
+
+        const scenario = scenarios[0];
+
+        // Controls
+        const ctrlDiv = document.createElement('div');
+        ctrlDiv.style.cssText = 'display:flex; gap:10px; align-items:center; margin:12px 0; flex-wrap:wrap;';
+        section.appendChild(ctrlDiv);
+
+        const label = document.createElement('span');
+        label.innerHTML = '<strong>Steer in direction:</strong>';
+        label.style.fontSize = '13px';
+        ctrlDiv.appendChild(label);
+
+        const conceptBtns = document.createElement('div');
+        conceptBtns.style.cssText = 'display:flex; gap:6px; flex-wrap:wrap;';
+        ctrlDiv.appendChild(conceptBtns);
+
+        let activeConcept = null;
+
+        function makeBtn(name, color) {
+            const btn = document.createElement('button');
+            btn.textContent = name;
+            btn.style.cssText = `padding:5px 12px; font-size:12px; border-radius:6px; border:2px solid ${color}; background:white; cursor:pointer; transition:all 0.2s;`;
+            btn.addEventListener('click', () => {
+                activeConcept = (activeConcept === name) ? null : name;
+                updateDisplay();
+                // Update button styles
+                conceptBtns.querySelectorAll('button').forEach(b => {
+                    b.style.background = (b.textContent === activeConcept) ? color : 'white';
+                    b.style.color = (b.textContent === activeConcept) ? 'white' : '#333';
+                });
+            });
+            conceptBtns.appendChild(btn);
+        }
+
+        makeBtn('male→female', '#e91e63');
+        makeBtn('lower→UPPER', '#FF9800');
+        makeBtn('English→French', '#2196F3');
+
+        const noneBtn = document.createElement('button');
+        noneBtn.textContent = '⊘ None (baseline)';
+        noneBtn.style.cssText = 'padding:5px 12px; font-size:12px; border-radius:6px; border:1px solid #999; background:#f5f5f5; cursor:pointer;';
+        noneBtn.addEventListener('click', () => {
+            activeConcept = null;
+            updateDisplay();
+            conceptBtns.querySelectorAll('button').forEach(b => {
+                b.style.background = 'white';
+                b.style.color = '#333';
+            });
+        });
+        ctrlDiv.appendChild(noneBtn);
+
+        // Display area
+        const displayDiv = document.createElement('div');
+        displayDiv.style.cssText = 'display:flex; gap:20px; flex-wrap:wrap;';
+        section.appendChild(displayDiv);
+
+        const contextDiv = document.createElement('div');
+        contextDiv.style.cssText = 'flex:1; min-width:200px;';
+        displayDiv.appendChild(contextDiv);
+
+        const barDiv = document.createElement('div');
+        barDiv.style.cssText = 'flex:2; min-width:300px;';
+        displayDiv.appendChild(barDiv);
+
+        function updateDisplay() {
+            const probs = activeConcept ? scenario.concepts[activeConcept] : scenario.baseline;
+
+            contextDiv.innerHTML = `
+                <div style="font-size:12px; color:#666; margin-bottom:4px;">Context:</div>
+                <div style="font-size:16px; font-family:monospace; padding:8px; background:white; border-radius:4px; border:1px solid #ddd;">
+                    ${scenario.context}
+                </div>
+                <div style="margin-top:8px; font-size:11px; color:#888;">
+                    ${activeConcept
+                        ? `<span style="color:#333;">Steering: <strong>+α·λ̄<sub>${activeConcept}</sub></strong></span><br>The target concept shifts while off-target concepts stay constant.`
+                        : 'No steering applied — baseline probabilities.'}
+                </div>
+            `;
+
+            // Bar chart
+            const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]);
+            let barsHTML = '<div style="font-size:12px; color:#666; margin-bottom:6px;"><strong>P(next word)</strong></div>';
+            sorted.forEach(([word, prob]) => {
+                const width = Math.round(prob * 100);
+                const color = activeConcept === 'male→female' ? '#e91e63' :
+                              activeConcept === 'lower→UPPER' ? '#FF9800' :
+                              activeConcept === 'English→French' ? '#2196F3' : '#78909c';
+                barsHTML += `
+                    <div style="display:flex; align-items:center; margin:3px 0; font-size:12px;">
+                        <span style="width:60px; font-family:monospace; text-align:right; margin-right:8px;">${word}</span>
+                        <div style="flex:1; background:#eee; border-radius:3px; height:18px; position:relative;">
+                            <div style="width:${width}%; background:${color}; height:100%; border-radius:3px; transition:width 0.4s ease;"></div>
+                        </div>
+                        <span style="width:40px; text-align:right; margin-left:6px; font-size:11px; color:#666;">${(prob * 100).toFixed(1)}%</span>
+                    </div>
+                `;
+            });
+            barDiv.innerHTML = barsHTML;
+        }
+
+        updateDisplay();
+
+        // Explanation
+        const explDiv = document.createElement('div');
+        explDiv.style.cssText = 'margin-top:12px; padding:10px; background:white; border-radius:6px; font-size:11px; line-height:1.6; border-left:3px solid #7e57c2;';
+        explDiv.innerHTML = `
+            <strong>Key insight:</strong> The steering vector λ̄<sub>W</sub> = Cov(γ)<sup>-1</sup>·γ̄<sub>W</sub> is derived from
+            word-pair differences (king−queen, man−woman, etc.) via the <strong>causal inner product</strong>.
+            Under this geometry, causally separable concepts are orthogonal — so steering in one direction
+            leaves others unchanged. This is the <em>Unification Theorem</em>: probing directions and steering
+            vectors are the same object, connected by the Riesz isomorphism.
+        `;
+        section.appendChild(explDiv);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        setTimeout(init, 100);
+    }
+
+    return { init };
+})();
+
 function loadPhilosophyModule () {
 	CRSim.start();
+	PhiloLinearRep.init();
 }
