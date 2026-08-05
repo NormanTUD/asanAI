@@ -200,6 +200,13 @@
 	}
 
 
+	/** Keep the site-wide "↑ top" button clear of the sticky bar. */
+	function positionTopButton() {
+		const topBtn = document.getElementById('cl-top');
+		if (!topBtn) return;
+		topBtn.style.bottom = (barEl && barEl.style.display !== 'none') ? '60px' : '';
+	}
+
 	/** Slide the bar into view */
 	function showBar() {
 		if (!barEl) createStickyBar();
@@ -207,6 +214,7 @@
 		void barEl.offsetHeight; // force reflow
 		barEl.style.opacity = '1';
 		barEl.style.transform = 'translateY(0)';
+		positionTopButton();
 	}
 
 	/** Slide the bar out of view */
@@ -217,6 +225,7 @@
 		setTimeout(() => {
 			if (barEl && barEl.style.opacity === '0') {
 				barEl.style.display = 'none';
+				positionTopButton();
 			}
 		}, 260);
 	}
