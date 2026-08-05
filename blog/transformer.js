@@ -482,7 +482,8 @@ function _vmUpdateResult(resDiv, html) {
                         {left: '$$', right: '$$', display: true},
                         {left: '$',  right: '$',  display: false}
                     ],
-                    throwOnError: false
+                    throwOnError: false,
+                    annotate: true
                 });
             }
         } catch(e) {}
@@ -3139,7 +3140,8 @@ function _renderTemmlOnElements(elements) {
                     {left: '$$', right: '$$', display: true},
                     {left: '$', right: '$', display: false}
                 ],
-                throwOnError: false
+                throwOnError: false,
+                annotate: true
             });
         } catch(e) {}
     });
@@ -5783,7 +5785,8 @@ function _vmRenderResult(html) {
                     {left: '$$', right: '$$', display: true},
                     {left: '$', right: '$', display: false}
                 ],
-                throwOnError: false
+                throwOnError: false,
+                annotate: true
             });
         }
     } catch(e) {}
