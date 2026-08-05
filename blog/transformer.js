@@ -1688,21 +1688,50 @@ async function convert_tensors_to_weights(vars) {
 	return newWeights;
 }
 
+function hexToRgba(hex, alpha) {
+	if (!hex || !/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex)) return hex;
+	let h = hex.replace('#', '');
+	if (h.length === 3) h = h.split('').map(c => c + c).join('');
+	const r = parseInt(h.slice(0, 2), 16);
+	const g = parseInt(h.slice(2, 4), 16);
+	const b = parseInt(h.slice(4, 6), 16);
+	return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function renderLossGraph() {
+	const lineColor = themeColor('#10b981');
 	const trace = {
 		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
 		y: window.lossHistory,
 		type: 'scatter',
 		mode: 'lines',
-		line: { color: '#10b981', width: 2 },
-		fill: 'tozeroy'
+		line: { color: lineColor, width: 2 },
+		fill: 'tozeroy',
+		fillcolor: hexToRgba(lineColor, 0.15)
 	};
 
+	const axisTitleFont = { size: 11, color: themeColor('#64748b') };
+	const tickFont = { size: 11, color: themeColor('#64748b') };
+
 	const layout = {
-		title: { text: 'Training Loss', font: { size: 12 } },
+		title: { text: 'Training Loss', font: { size: 12, color: themeColor('#1e293b') } },
 		margin: { t: 30, b: 30, l: 40, r: 10 },
-		xaxis: { title: 'Total Epochs' },
-		yaxis: { title: 'Loss' }
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		font: { color: themeColor('#475569') },
+		xaxis: {
+			title: { text: 'Total Epochs', font: axisTitleFont },
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		yaxis: {
+			title: { text: 'Loss', font: axisTitleFont },
+			gridcolor: themeColor('#f1f5f9'),
+			zerolinecolor: themeColor('#e2e8f0'),
+			tickfont: tickFont
+		},
+		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
 	};
 
 	document.getElementById('training-loss-plot').style.display = 'block';
@@ -7239,6 +7268,10 @@ if (window.__MN_DARK) {
 		if (window.isTraining) return;
 		if (typeof debounced_run_transformer_demo === 'function') {
 			debounced_run_transformer_demo();
+		}
+		const lossPlot = document.getElementById('training-loss-plot');
+		if (lossPlot && lossPlot.style.display !== 'none') {
+			renderLossGraph();
 		}
 	});
 }
