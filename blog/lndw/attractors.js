@@ -795,24 +795,23 @@ function renderSeahorseEmoji(container) {
                     }
                     p.heading += p.turnRate;
 
-                    // Starke Winkel-Bias Richtung Zentrum, skaliert mit Distanz
-                    // (am Beckenrand 0.20, weit draußen bis 0.65 — kein "ewiges Kreisen" mehr)
+                    // Sanfte Bias Richtung Zentrum — genug zum Ankommen, lässt aber Raum zum Wandern
                     const angleToCenter = Math.atan2(dy, dx);
                     const distBeyond = Math.max(0, dist - basinRadius);
-                    const angularBias = 0.20 + 0.45 * Math.min(1, distBeyond / 200);
+                    const angularBias = 0.10 + 0.30 * Math.min(1, distBeyond / 200);
                     p.heading += (angleToCenter - p.heading) * angularBias;
 
-                    // Direkte Anziehungskraft (gravitations-artig: stärker je weiter weg)
-                    const pullAccel = 0.10 + 0.015 * distBeyond;
+                    // Schwacher direkter Schub (sanft, damit sie "irren")
+                    const pullAccel = 0.04 + 0.005 * distBeyond;
                     p.vx += Math.cos(angleToCenter) * pullAccel;
                     p.vy += Math.sin(angleToCenter) * pullAccel;
 
-                    // Höhere Zielgeschwindigkeit je weiter weg — ferne Punkte eilen herbei
-                    const targetSpeed = 1.8 + Math.min(2.5, distBeyond * 0.01);
+                    // Moderate Zielgeschwindigkeit — nicht zu schnell, lässt Zeit zum Wandern
+                    const targetSpeed = 1.5 + Math.min(1.2, distBeyond * 0.008);
                     const targetVx = Math.cos(p.heading) * targetSpeed;
                     const targetVy = Math.sin(p.heading) * targetSpeed;
-                    p.vx += (targetVx - p.vx) * 0.10;
-                    p.vy += (targetVy - p.vy) * 0.10;
+                    p.vx += (targetVx - p.vx) * 0.08;
+                    p.vy += (targetVy - p.vy) * 0.08;
 
                     // Leichte Dämpfung damit Geschwindigkeit nicht unbegrenzt wächst
                     p.vx *= 0.97;
@@ -1020,7 +1019,7 @@ function renderSeahorseEmoji(container) {
                 // Hält Teilchen in der Nähe des Repellers — keine "eigenen Kreise" am Rand.
                 if (dist > 0) {
                     const outwardAngleLR = Math.atan2(dy, dx);
-                    const weakPush = 0.04 + 0.18 * Math.exp(-dist * 0.012);
+                    const weakPush = 0.08 + 0.22 * Math.exp(-dist * 0.010);
                     p.vx += Math.cos(outwardAngleLR) * weakPush;
                     p.vy += Math.sin(outwardAngleLR) * weakPush;
                 }
@@ -2580,6 +2579,7 @@ function renderGenerator(container) {
             turnChangeTimer: 60 + Math.floor(Math.random() * 120),
             inBasin: false,
             word: data.w,
+            aff: data.aff,
             color: regionById(homeOf(data.aff)).color,
             home: regionById(homeOf(data.aff)),
             trail: [],
@@ -2640,35 +2640,65 @@ function renderGenerator(container) {
                 p.y = p.home.y;
             }
         } else {
-            // ===== FREIE BEWEGUNG: sanfter Wandel + Bias Richtung Heimat =====
+            // ===== FREIE BEWEGUNG: Affinitäts-Kräfte zu ALLEN Regionen =====
+            // Positiv = Anziehung (zieht hin), negativ = Abstoßung (drückt weg).
+            // So wird "frankreich" z.B. von "funktionswort" abgestoßen statt ignoriert.
+
+            regions.forEach(r => {
+                const aff = p.aff[r.id];
+                if (!aff) return;
+                const rdx = r.x - p.x;
+                const rdy = r.y - p.y;
+                const rDist = Math.sqrt(rdx * rdx + rdy * rdy);
+                if (rDist < 1) return;
+                // Kraft skaliert mit Affinität, gedeckelt damit es nicht explodiert
+                const force = aff * Math.min(2.0, 150 / (rDist + 40));
+                p.vx += (rdx / rDist) * force;
+                p.vy += (rdy / rDist) * force;
+            });
+
+            // Sanfter Random-Drift (Affinitäten dominieren das Geschehen)
             p.turnChangeTimer--;
             if (p.turnChangeTimer <= 0) {
-                p.turnRate += (Math.random() - 0.5) * 0.02;
-                p.turnRate = Math.max(-0.04, Math.min(0.04, p.turnRate));
-                p.turnChangeTimer = 40 + Math.floor(Math.random() * 80);
+                p.turnRate += (Math.random() - 0.5) * 0.012;
+                p.turnRate = Math.max(-0.02, Math.min(0.02, p.turnRate));
+                p.turnChangeTimer = 60 + Math.floor(Math.random() * 100);
             }
             p.heading += p.turnRate;
-
-            const bias = 0.02 + 0.10 * Math.min(1, (dist - basinR) / 250);
-            p.heading += (Math.atan2(dy, dx) - p.heading) * bias;
-
-            const targetSpeed = 1.8;
+            const targetSpeed = 1.4;
             const tvx = Math.cos(p.heading) * targetSpeed;
             const tvy = Math.sin(p.heading) * targetSpeed;
-            p.vx += (tvx - p.vx) * 0.04;
-            p.vy += (tvy - p.vy) * 0.04;
+            p.vx += (tvx - p.vx) * 0.03;
+            p.vy += (tvy - p.vy) * 0.03;
 
-            // Wandabstoßung
-            const margin = 60;
-            if (p.x < margin) { p.heading += 0.05; p.vx += 0.1; }
-            if (p.x > W - margin) { p.heading -= 0.05; p.vx -= 0.1; }
-            if (p.y < margin) { p.heading += 0.05; p.vy += 0.1; }
-            if (p.y > H - margin) { p.heading -= 0.05; p.vy -= 0.1; }
+            // Dämpfung
+            p.vx *= 0.97;
+            p.vy *= 0.97;
 
+            // === HARTE Wandabstoßung ===
+            const wallBuffer = 25;
+            if (p.x < wallBuffer) {
+                p.x = wallBuffer;
+                p.vx = Math.max(Math.abs(p.vx) + 1.2, 1.8);
+            }
+            if (p.x > W - wallBuffer) {
+                p.x = W - wallBuffer;
+                p.vx = -Math.max(Math.abs(p.vx) + 1.2, 1.8);
+            }
+            if (p.y < wallBuffer) {
+                p.y = wallBuffer;
+                p.vy = Math.max(Math.abs(p.vy) + 1.2, 1.8);
+            }
+            if (p.y > H - wallBuffer) {
+                p.y = H - wallBuffer;
+                p.vy = -Math.max(Math.abs(p.vy) + 1.2, 1.8);
+            }
+
+            // Speed-Limit
             const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-            if (speed > 2.5) {
-                p.vx *= 2.5 / speed;
-                p.vy *= 2.5 / speed;
+            if (speed > 5) {
+                p.vx *= 5 / speed;
+                p.vy *= 5 / speed;
             }
         }
 
