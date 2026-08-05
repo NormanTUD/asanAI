@@ -2692,6 +2692,15 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
+	if (!window.persistentEmbeddingSpace || Object.keys(window.persistentEmbeddingSpace).length === 0) {
+		_renderChartError(
+			container,
+			'⚠️ Invalid Configuration — embedding space unavailable',
+			'No embedding space exists because <i>d<sub>model</sub></i> is not evenly divisible by <i>h</i>. Fix the configuration above to restore this visualization.'
+		);
+		return;
+	}
+
 	const existingChart = echarts.getInstanceByDom(container);
 	if (existingChart) dispose(existingChart);
 	container.innerHTML = '';
@@ -3603,11 +3612,45 @@ function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h
 	};
 }
 
+function _renderChartError(container, title, message) {
+	container.innerHTML = '';
+	const err = document.createElement('div');
+	err.style.cssText = `
+		display: flex; flex-direction: column; align-items: center; justify-content: center;
+		gap: 6px; width: 100%; height: 100%; min-height: 160px; text-align: center; padding: 24px;
+		box-sizing: border-box;
+		background: ${themeColor('#fef2f2')};
+		border: 2px solid ${themeColor('#ef4444')};
+		border-radius: 12px;
+		color: ${themeColor('#991b1b')};
+		font-size: 0.85rem; line-height: 1.6;
+	`;
+	err.innerHTML = `
+		<div style="font-weight: 700; font-size: 0.95rem;">${title}</div>
+		<div style="max-width: 520px; opacity: 0.92;">${message}</div>
+	`;
+	container.appendChild(err);
+}
+
+function _renderMigrationError(plotDiv) {
+	_renderChartError(
+		plotDiv,
+		'⚠️ Invalid Configuration — vector field unavailable',
+		'No embedding space exists because <i>d<sub>model</sub></i> is not evenly divisible by <i>h</i>. Fix the configuration above to restore this visualization.'
+	);
+}
+
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
 
 	plotDiv.style.width = '100%';
+
+	if (!window.persistentEmbeddingSpace || Object.keys(window.persistentEmbeddingSpace).length === 0) {
+		_renderMigrationError(plotDiv);
+		syncVFToggleButtonState(id, plotDiv, false);
+		return;
+	}
 
 	const regData = transformerLabVisMigrationDataRegistry.get(id);
 	const vfEnabled = regData && regData._vfEnabled && d_model < 4;
@@ -5097,6 +5140,15 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 	const container = document.getElementById('transformer-pe-shift-plot');
 	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
 		console.error("Plotting requires an array of string tokens.");
+		return;
+	}
+
+	if (!window.persistentEmbeddingSpace || Object.keys(window.persistentEmbeddingSpace).length === 0) {
+		_renderChartError(
+			container,
+			'⚠️ Invalid Configuration — positional shift unavailable',
+			'No embedding space exists because <i>d<sub>model</sub></i> is not evenly divisible by <i>h</i>. Fix the configuration above to restore this visualization.'
+		);
 		return;
 	}
 
