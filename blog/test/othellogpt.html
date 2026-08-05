@@ -1492,19 +1492,20 @@
 
         // Example board state
         const exBoard = Array(8).fill(null).map(() => Array(8).fill(0));
-        exBoard = 2; exBoard = 1;
-        exBoard] = 1; exBoard = 2;
-        exBoard = 1; exBoard = 2;
-        exBoard5] = 2; exBoard = 1;
-        exBoard = 1; exBoard = 2;
-        exBoard = 1;
+        // Standard Othello opening: D4/E5 white, D5/E4 black
+        exBoard[3][3] = 2; exBoard[4][4] = 1;
+        exBoard[4][3] = 1; exBoard[3][4] = 2;
+        exBoard[3][3] = 1; exBoard[4][4] = 2;
+        exBoard[5][4] = 2; exBoard[4][3] = 1;
+        exBoard[3][3] = 1; exBoard[4][4] = 2;
+        exBoard[3][4] = 2;
         // E6 is row 5, col 4 -> let's say it's white
-        exBoard] = 2; // E6 = white
+        exBoard[5][4] = 2; // E6 = white
 
         const prePredictions = Array(8).fill(null).map(() => Array(8).fill(false));
-        prePredictions = true; // E3
-        prePredictions = true; // F3
-        prePredictions = true; // F6
+        prePredictions[2][4] = true; // E3
+        prePredictions[2][5] = true; // F3
+        prePredictions[5][5] = true; // F6
 
         if (mode === 'pre') {
             drawMiniBoard(offsetX, offsetY, 'Vor Intervention (E6 = Weiß)', exBoard, prePredictions, null);
@@ -1512,15 +1513,15 @@
         } 
         else if (mode === 'post') {
             const postBoard = exBoard.map(r => [...r]);
-            postBoard = 1; // E6 changed to black
+            postBoard[5][4] = 1; // E6 changed to black
             
             const postPredictions = Array(8).fill(null).map(() => Array(8).fill(false));
-            postPredictions = true; // D2
-            postPredictions = true; // E7
-            postPredictions = true; // F7
+            postPredictions[1][3] = true; // D2
+            postPredictions[6][4] = true; // E7
+            postPredictions[6][5] = true; // F7
 
             const highlight = Array(8).fill(null).map(() => Array(8).fill(null));
-            highlight = '#ff6600'; // highlighted intervention cell
+            highlight[5][4] = '#ff6600'; // highlighted intervention cell
 
             drawMiniBoard(offsetX, offsetY, 'Nach Intervention (E6 = Schwarz)', postBoard, postPredictions, highlight);
             textEl.textContent = 'Nach der Intervention "denkt" das Modell E6 sei schwarz → komplett andere legale Züge!';
@@ -1656,13 +1657,14 @@
         let saliency = Array(8).fill(null).map(() => Array(8).fill(0));
         let board = Array(8).fill(null).map(() => Array(8).fill(0));
         
-        // Set up a board state
-        board = 2; board = 1;
-        board = 1; board = 2;
-        board] = 1; board = 2;
-        board = 2; board = 1;
-        board = 2; board = 2;
-        board = 1;
+        // Set up a board state: C4=D4 black, E4 white, so F4 is a legal move
+        board[3][2] = 1; board[3][3] = 1;
+        board[4][3] = 2; board[4][4] = 1;
+        board[3][4] = 2; board[3][5] = 1;
+        board[2][4] = 1; board[2][5] = 2;
+        board[3][2] = 1; board[3][3] = 1;
+        board[4][4] = 1; board[4][3] = 2;
+        board[3][4] = 2;
 
         // Predicted move: let's say F4 (row 3, col 5)
         const predRow = 3, predCol = 5;
@@ -1670,9 +1672,9 @@
         if (type === 'synthetic') {
             // Synthetic: saliency focused on specific tiles that make the move legal
             // The move F4 is legal because it flips E4 (white) between F4 (new black) and D4 (black)
-            saliency = 0.9;  // E4 - the opponent disc being flipped
-            saliency = 0.7;  // D4 - the anchoring own disc
-            saliency = 0.3;  // C4 - own disc in line
+            saliency[3][4] = 0.9;  // E4 - the opponent disc being flipped
+            saliency[3][3] = 0.7;  // D4 - the anchoring own disc
+            saliency[3][2] = 0.3;  // C4 - own disc in line
             // Low saliency elsewhere
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
@@ -1690,16 +1692,16 @@
                 }
             }
             // Still high for legal-relevant tiles
-            saliency = 0.85;
-            saliency = 0.6;
+            saliency[3][4] = 0.85;
+            saliency[3][3] = 0.6;
             // But also high for strategic positions (corners, edges)
             saliency[0][0] = 0.7;
-            saliency[0 = 0.5;
-            saliency = 0.4;
-            saliency = 0.6;
-            saliency = 0.45;
-            saliency = 0.5;
-            saliency = 0.4;
+            saliency[0][7] = 0.5;
+            saliency[7][0] = 0.4;
+            saliency[7][7] = 0.6;
+            saliency[0][3] = 0.45;
+            saliency[0][4] = 0.5;
+            saliency[3][0] = 0.4;
             textEl.textContent = 'Championship Modell: Hohe Saliency über das GANZE Brett verteilt – Ecken, Kanten, strategische Positionen. Das Modell hat STRATEGIE gelernt, nicht nur Regeln!';
         }
 
