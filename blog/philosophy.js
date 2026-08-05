@@ -1258,12 +1258,35 @@ const SheafViz = (() => {
 // ============================================================
 
 const PhiloLinearRep = (() => {
+    function palette() {
+        // Resolve theme-aware colours. themeColor() swaps entries that exist
+        // in __MN_DARK.pairs (see helper.js); CSS variables pick up the
+        // remaining ones automatically via the .dark class on <html>.
+        return {
+            sectionBg: themeColor('#fafafa'),
+            sectionBdr: 'var(--mn-border)',
+            cardBg: themeColor('white'),
+            cardBdr: themeColor('#ddd'),
+            subtleBg: 'var(--mn-bg-subtle)',
+            mutedBdr: themeColor('#999'),
+            textMain: 'var(--mn-text)',
+            textSec: 'var(--mn-text-secondary)',
+            textMuted: themeColor('#888'),
+            barBg: themeColor('#eee'),
+        };
+    }
+
     function init() {
         const container = document.getElementById('philosophy-linear-rep-container');
         if (!container) return;
 
+        // Idempotent: a theme flip re-runs init(), so wipe any prior render.
+        container.innerHTML = '';
+
+        const p = palette();
+
         const section = document.createElement('div');
-        section.style.cssText = 'padding:20px; background:#fafafa; border-radius:8px; margin:20px 0; border:1px solid #e0e0e0;';
+        section.style.cssText = `padding:20px; background:${p.sectionBg}; border-radius:8px; margin:20px 0; border:1px solid ${p.sectionBdr};`;
         container.appendChild(section);
 
         const title = document.createElement('h4');
@@ -1310,14 +1333,14 @@ const PhiloLinearRep = (() => {
         function makeBtn(name, color) {
             const btn = document.createElement('button');
             btn.textContent = name;
-            btn.style.cssText = `padding:5px 12px; font-size:12px; border-radius:6px; border:2px solid ${color}; background:white; cursor:pointer; transition:all 0.2s;`;
+            btn.style.cssText = `padding:5px 12px; font-size:12px; border-radius:6px; border:2px solid ${color}; background:${p.cardBg}; color:${p.textMain}; cursor:pointer; transition:all 0.2s;`;
             btn.addEventListener('click', () => {
                 activeConcept = (activeConcept === name) ? null : name;
                 updateDisplay();
                 // Update button styles
                 conceptBtns.querySelectorAll('button').forEach(b => {
-                    b.style.background = (b.textContent === activeConcept) ? color : 'white';
-                    b.style.color = (b.textContent === activeConcept) ? 'white' : '#333';
+                    b.style.background = (b.textContent === activeConcept) ? color : p.cardBg;
+                    b.style.color = (b.textContent === activeConcept) ? 'white' : p.textMain;
                 });
             });
             conceptBtns.appendChild(btn);
@@ -1329,13 +1352,13 @@ const PhiloLinearRep = (() => {
 
         const noneBtn = document.createElement('button');
         noneBtn.textContent = '⊘ None (baseline)';
-        noneBtn.style.cssText = 'padding:5px 12px; font-size:12px; border-radius:6px; border:1px solid #999; background:#f5f5f5; cursor:pointer;';
+        noneBtn.style.cssText = `padding:5px 12px; font-size:12px; border-radius:6px; border:1px solid ${p.mutedBdr}; background:${p.subtleBg}; color:${p.textMain}; cursor:pointer;`;
         noneBtn.addEventListener('click', () => {
             activeConcept = null;
             updateDisplay();
             conceptBtns.querySelectorAll('button').forEach(b => {
-                b.style.background = 'white';
-                b.style.color = '#333';
+                b.style.background = p.cardBg;
+                b.style.color = p.textMain;
             });
         });
         ctrlDiv.appendChild(noneBtn);
@@ -1357,20 +1380,20 @@ const PhiloLinearRep = (() => {
             const probs = activeConcept ? scenario.concepts[activeConcept] : scenario.baseline;
 
             contextDiv.innerHTML = `
-                <div style="font-size:12px; color:#666; margin-bottom:4px;">Context:</div>
-                <div style="font-size:16px; font-family:monospace; padding:8px; background:white; border-radius:4px; border:1px solid #ddd;">
+                <div style="font-size:12px; color:${p.textSec}; margin-bottom:4px;">Context:</div>
+                <div style="font-size:16px; font-family:monospace; padding:8px; background:${p.cardBg}; border-radius:4px; border:1px solid ${p.cardBdr};">
                     ${scenario.context}
                 </div>
-                <div style="margin-top:8px; font-size:11px; color:#888;">
+                <div style="margin-top:8px; font-size:11px; color:${p.textMuted};">
                     ${activeConcept
-                        ? `<span style="color:#333;">Steering: <strong>+α·λ̄<sub>${activeConcept}</sub></strong></span><br>The target concept shifts while off-target concepts stay constant.`
+                        ? `<span style="color:${p.textMain};">Steering: <strong>+α·λ̄<sub>${activeConcept}</sub></strong></span><br>The target concept shifts while off-target concepts stay constant.`
                         : 'No steering applied — baseline probabilities.'}
                 </div>
             `;
 
             // Bar chart
             const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]);
-            let barsHTML = '<div style="font-size:12px; color:#666; margin-bottom:6px;"><strong>P(next word)</strong></div>';
+            let barsHTML = `<div style="font-size:12px; color:${p.textSec}; margin-bottom:6px;"><strong>P(next word)</strong></div>`;
             sorted.forEach(([word, prob]) => {
                 const width = Math.round(prob * 100);
                 const color = activeConcept === 'male→female' ? '#e91e63' :
@@ -1379,10 +1402,10 @@ const PhiloLinearRep = (() => {
                 barsHTML += `
                     <div style="display:flex; align-items:center; margin:3px 0; font-size:12px;">
                         <span style="width:60px; font-family:monospace; text-align:right; margin-right:8px;">${word}</span>
-                        <div style="flex:1; background:#eee; border-radius:3px; height:18px; position:relative;">
+                        <div style="flex:1; background:${p.barBg}; border-radius:3px; height:18px; position:relative;">
                             <div style="width:${width}%; background:${color}; height:100%; border-radius:3px; transition:width 0.4s ease;"></div>
                         </div>
-                        <span style="width:40px; text-align:right; margin-left:6px; font-size:11px; color:#666;">${(prob * 100).toFixed(1)}%</span>
+                        <span style="width:40px; text-align:right; margin-left:6px; font-size:11px; color:${p.textSec};">${(prob * 100).toFixed(1)}%</span>
                     </div>
                 `;
             });
@@ -1393,7 +1416,7 @@ const PhiloLinearRep = (() => {
 
         // Explanation
         const explDiv = document.createElement('div');
-        explDiv.style.cssText = 'margin-top:12px; padding:10px; background:white; border-radius:6px; font-size:11px; line-height:1.6; border-left:3px solid #7e57c2;';
+        explDiv.style.cssText = `margin-top:12px; padding:10px; background:${p.cardBg}; border-radius:6px; font-size:11px; line-height:1.6; border-left:3px solid #7e57c2; color:${p.textMain};`;
         explDiv.innerHTML = `
             <strong>Key insight:</strong> The steering vector λ̄<sub>W</sub> = Cov(γ)<sup>-1</sup>·γ̄<sub>W</sub> is derived from
             word-pair differences (king−queen, man−woman, etc.) via the <strong>causal inner product</strong>.
@@ -1408,6 +1431,14 @@ const PhiloLinearRep = (() => {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         setTimeout(init, 100);
+    }
+
+    // Re-render on theme toggle so themeColor() picks up the new palette.
+    if (window.__MN_DARK) {
+        window.__MN_DARK.onChange(() => {
+            const c = document.getElementById('philosophy-linear-rep-container');
+            if (c && c.children.length) init();
+        });
     }
 
     return { init };
