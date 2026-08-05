@@ -1649,323 +1649,6 @@
 		return stage;
 	}
 
-	/* ── Zoomable map of the full trace ──
-	   A pan/zoom SVG of the dependency DAG (columns = depth, i.e. input on
-	   the left, this value on the right). Zoom level controls what is shown:
-	   far → only the concrete numbers, mid → + names, close → bigger type. */
-	var _mapState = { tx: 0, ty: 0, scale: 1 };
-
-	/* Layout a trace: every node gets a column (depth) and a row. Returns
-	   the position map and the viewBox size. */
-	function _layoutGraph(steps) {
-		var colW = 170, rowH = 30;
-		var pos = {}, cols = {};
-		for (var s = 0; s < steps.length; s++) {
-			var st = steps[s], d = st.depth;
-			var idx = cols[d] || 0;
-			cols[d] = idx + 1;
-			pos[st.node.id] = { x: d * colW, y: idx * rowH };
-		}
-		var maxD = 0, maxH = 0;
-		for (var d2 in cols) {
-			maxD = Math.max(maxD, +d2);
-			maxH = Math.max(maxH, cols[d2] * rowH);
-		}
-		return { pos: pos, maxD: maxD, maxH: maxH, W: (maxD + 1) * colW + 220, H: maxH + 60, rowH: rowH };
-	}
-
-	/* Every edge runs from a node's column d to an input's column d+1, so
-	   all edges can be batched into ONE <path> per source column. A 25k-node
-	   network then needs only ~25 path elements instead of ~80k. */
-	function _edgeBatches(steps, layout) {
-		var rowH = layout.rowH;
-		var batches = {};
-		for (var i = 0; i < steps.length; i++) {
-			var n = steps[i].node, p = layout.pos[n.id];
-			if (!p) continue;
-			for (var k = 0; k < n.inputs.length; k++) {
-				var ip = layout.pos[n.inputs[k].id];
-				if (!ip) continue;
-				var x1 = ip.x, y1 = ip.y + rowH / 2, x2 = p.x, y2 = p.y + rowH / 2, mx = (x1 + x2) / 2;
-				(batches[p.x] = batches[p.x] || []).push('M' + x1 + ' ' + y1 + ' C' + mx + ' ' + y1 + ' ' + mx + ' ' + y2 + ' ' + x2 + ' ' + y2);
-			}
-		}
-		return batches;
-	}
-
-	function _nodeMarkup(n, p, rowH, isRoot) {
-		var name = _plain(n.name);
-		var rectW = Math.max(70, Math.min(160, 22 + name.length * 6.4));
-		return '<g class="prov-map-node fam-' + _famOf(n.id) + (isRoot ? ' prov-map-root' : '') + '" data-prov-go="' + attrSafe(n.id) + '" transform="translate(' + p.x + ',' + p.y + ')">' +
-			'<rect width="' + rectW + '" height="' + rowH + '" rx="5"/>' +
-			'<text class="prov-map-val" x="' + (rectW / 2) + '" y="' + (rowH / 2 - 2) + '">' + attrSafe(fmt(n.value)) + '</text>' +
-			'<text class="prov-map-name" x="' + (rectW / 2) + '" y="' + (rowH / 2 + 9) + '">' + attrSafe(name) + '</text>' +
-			'</g>';
-	}
-
-	/* DOM twin of _nodeMarkup: building a 25k-node map through innerHTML
-	   means parsing ~10MB of markup, which freezes the page for ~8s. Creating
-	   the elements via createElementNS in small chunks keeps the UI alive and
-	   finishes in well under a second of total work. */
-	function _nodeEl(n, p, rowH, ns) {
-		var name = _plain(n.name);
-		var rectW = Math.max(70, Math.min(160, 22 + name.length * 6.4));
-		var g = document.createElementNS(ns, 'g');
-		g.setAttribute('class', 'prov-map-node fam-' + _famOf(n.id));
-		g.setAttribute('data-prov-go', attrSafe(n.id));
-		g.setAttribute('transform', 'translate(' + p.x + ',' + p.y + ')');
-		var rect = document.createElementNS(ns, 'rect');
-		rect.setAttribute('width', rectW);
-		rect.setAttribute('height', rowH);
-		rect.setAttribute('rx', 5);
-		g.appendChild(rect);
-		var tv = document.createElementNS(ns, 'text');
-		tv.setAttribute('class', 'prov-map-val');
-		tv.setAttribute('x', rectW / 2);
-		tv.setAttribute('y', rowH / 2 - 2);
-		tv.textContent = fmt(n.value);
-		g.appendChild(tv);
-		var tn = document.createElementNS(ns, 'text');
-		tn.setAttribute('class', 'prov-map-name');
-		tn.setAttribute('x', rectW / 2);
-		tn.setAttribute('y', rowH / 2 + 9);
-		tn.textContent = name;
-		g.appendChild(tn);
-		return g;
-	}
-
-	function _fitMap(container, layout, isNet) {
-		var svg = container.querySelector('svg');
-		var cw = svg.clientWidth || 560, ch = svg.clientHeight || 340;
-		var sc = Math.min(cw / layout.W, ch / layout.H) * 0.92;
-		_mapState = { tx: (cw - layout.W * sc) / 2, ty: (ch - layout.H * sc) / 2, scale: sc, fit: sc };
-		_mapTransform(container);
-		_applyMapZoom(container, isNet);
-	}
-
-	function _buildMap(container, trace, rootId) {
-		container.innerHTML = '';
-		if (!trace || !trace.steps.length) {
-			container.innerHTML = '<span style="font-size:12px;color:#64748b;">No trace to map.</span>';
-			return;
-		}
-		var layout = _layoutGraph(trace.steps);
-		var parts = [];
-		parts.push('<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 ' + layout.W + ' ' + layout.H + '">');
-		parts.push('<g class="prov-map-world">');
-		var batches = _edgeBatches(trace.steps, layout);
-		for (var d in batches) {
-			parts.push('<path class="prov-map-edge" d="' + batches[d].join(' ') + '"/>');
-		}
-		for (var j = 0; j < trace.steps.length; j++) {
-			var st2 = trace.steps[j], n2 = st2.node, p2 = layout.pos[n2.id];
-			if (!p2) continue;
-			parts.push(_nodeMarkup(n2, p2, layout.rowH, n2.id === rootId));
-		}
-		parts.push('</g></svg>');
-		container.innerHTML = parts.join('');
-		_fitMap(container, layout, false);
-	}
-
-	/* ── Whole-network map (async) ──
-	   The full network has ~25k nodes; building it synchronously would freeze
-	   the page for seconds. Build in small slices (seed → BFS → render) so
-	   the UI stays responsive, showing progress while it works. */
-	var _netBuildToken = 0;
-
-	function _buildNetMap(container) {
-		var token = ++_netBuildToken;
-		container.innerHTML = '<div class="prov-map-loading">Building whole network…</div>';
-		var state = {
-			seen: {}, queue: [], steps: [], o: 0,
-			seeds: [], seedCursor: 0,
-			phase: 'seeds', layout: null, svgOpen: false, stepCursor: 0
-		};
-		var F = _grid('F:logits');
-		if (F) {
-			var V = (F.isVec ? F.data : F.data[0]).length;
-			for (var v = 0; v < V; v++) {
-				state.seeds.push('F:logit:' + v);
-				if (_grid('F:probs')) state.seeds.push('F:prob:' + v);
-				if (_grid('F:sprobs')) state.seeds.push('F:sprob:' + v);
-				if (_grid('F:delta')) state.seeds.push('F:delta:' + v);
-			}
-			if (_grid('F:ssum')) state.seeds.push('F:ssum');
-			if (_grid('F:spowsum')) state.seeds.push('F:spowsum');
-			if (_grid('F:ent_orig')) state.seeds.push('F:ent:orig');
-			if (_grid('F:ent_scaled')) state.seeds.push('F:ent:scaled');
-			if (_grid('F:ent_max')) state.seeds.push('F:ent:max');
-		}
-		S._grids.forEach(function (g, key) {
-			if (!/^L:\d+:h2$/.test(key)) return;
-			var rows = g.data.length, cols = g.data[0] ? g.data[0].length : 0;
-			for (var p = 0; p < rows; p++) {
-				for (var i = 0; i < cols; i++) state.seeds.push(key + ':' + p + ':' + i);
-			}
-		});
-		if (!state.seeds.length) {
-			container.innerHTML = '<span style="font-size:12px;color:#64748b;">No network graph available.</span>';
-			return;
-		}
-
-		var loading = container.querySelector('.prov-map-loading');
-		var setLoading = function (msg) {
-			if (loading && loading.isConnected) loading.textContent = msg;
-		};
-
-		var tick = function () {
-			if (token !== _netBuildToken) return;
-			var deadline = performance.now() + 45;
-			if (state.phase === 'seeds') {
-				while (state.seedCursor < state.seeds.length && performance.now() < deadline) {
-					var sid = state.seeds[state.seedCursor++];
-					if (state.seen[sid]) continue;
-					state.seen[sid] = true;
-					var sn = S._mat(sid);
-					if (sn) state.queue.push({ node: sn, depth: 0, _o: state.o++ });
-				}
-				if (state.seedCursor < state.seeds.length) { setTimeout(tick, 0); return; }
-				state.phase = 'bfs';
-			}
-			if (state.phase === 'bfs') {
-				var doneThisTick = 0;
-				while (state.queue.length && (doneThisTick < 4000 || performance.now() < deadline)) {
-					var cur = state.queue.shift();
-					state.steps.push(cur);
-					doneThisTick++;
-					var inputs = cur.node.inputs || [];
-					for (var k = 0; k < inputs.length; k++) {
-						var iid = inputs[k].id;
-						if (state.seen[iid]) continue;
-						state.seen[iid] = true;
-						var nn = S._mat(iid);
-						if (nn) state.queue.push({ node: nn, depth: cur.depth + 1, _o: state.o++ });
-					}
-				}
-				if (state.queue.length) {
-					setLoading('Materializing whole network… ' + state.steps.length.toLocaleString() + ' nodes');
-					setTimeout(tick, 0);
-					return;
-				}
-				state.steps.sort(function (a, b) {
-					if (b.depth !== a.depth) return b.depth - a.depth;
-					return a._o - b._o;
-				});
-				state.layout = _layoutGraph(state.steps);
-				state.phase = 'render';
-			}
-			if (state.phase === 'render') {
-				if (!state.svgOpen) {
-					var ns = 'http://www.w3.org/2000/svg';
-					var svg = document.createElementNS(ns, 'svg');
-					svg.setAttribute('width', '100%');
-					svg.setAttribute('height', '100%');
-					svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-					svg.setAttribute('viewBox', '0 0 ' + state.layout.W + ' ' + state.layout.H);
-					svg.style.display = 'none';
-					var world = document.createElementNS(ns, 'g');
-					world.setAttribute('class', 'prov-map-world');
-					svg.appendChild(world);
-					state.svgEl = svg;
-					state.world = world;
-					var batches = _edgeBatches(state.steps, state.layout);
-					for (var d in batches) {
-						var path = document.createElementNS(ns, 'path');
-						path.setAttribute('class', 'prov-map-edge');
-						path.setAttribute('d', batches[d].join(' '));
-						world.appendChild(path);
-					}
-					state.svgOpen = true;
-				}
-				var ns2 = 'http://www.w3.org/2000/svg';
-				var end2 = Math.min(state.steps.length, state.stepCursor + 3000);
-				for (var i2 = state.stepCursor; i2 < end2; i2++) {
-					var st = state.steps[i2], p2 = state.layout.pos[st.node.id];
-					if (p2) state.world.appendChild(_nodeEl(st.node, p2, state.layout.rowH, ns2));
-				}
-				state.stepCursor = end2;
-				if (state.stepCursor < state.steps.length) {
-					setLoading('Rendering map… ' + state.stepCursor.toLocaleString() + '/' + state.steps.length.toLocaleString());
-					setTimeout(tick, 0);
-					return;
-				}
-				container.innerHTML = '';
-				container.appendChild(state.svgEl);
-				_bindMap(container);
-				_fitMap(container, state.layout);
-				_mapBuiltFor = _NET;
-				S._mapEl = container;
-				_position();
-				requestAnimationFrame(function () { state.svgEl.style.display = ''; });
-			}
-		};
-		tick();
-	}
-
-	function _mapTransform(container) {
-		var w = container.querySelector('.prov-map-world');
-		if (w) w.setAttribute('transform', 'translate(' + _mapState.tx + ',' + _mapState.ty + ') scale(' + _mapState.scale + ')');
-	}
-
-	function _applyMapZoom(container, isNet) {
-		/* Zoom level relative to the fitted view: the whole network hides
-		   names/edges until you zoom in ~3x (a 25k-node overview would just
-		   be noise), while a per-cell trace keeps them readable at rest. */
-		var rel = _mapState.scale / (_mapState.fit || 1);
-		var zoom = isNet ? (rel < 3 ? 'far' : (rel < 8 ? 'mid' : 'close'))
-		                 : (rel < 1 ? 'far' : (rel < 4 ? 'mid' : 'close'));
-		container.setAttribute('data-zoom', zoom);
-	}
-
-	function _bindMap(container) {
-		var svg = container.querySelector('svg');
-		container.addEventListener('wheel', function (e) {
-			e.preventDefault();
-			var rect = svg.getBoundingClientRect();
-			var px = (e.clientX - rect.left - _mapState.tx) / _mapState.scale;
-			var py = (e.clientY - rect.top - _mapState.ty) / _mapState.scale;
-			var ns = _mapState.scale * Math.exp(-e.deltaY * 0.0016);
-			ns = Math.max(0.05, Math.min(14, ns));
-			_mapState.tx = e.clientX - rect.left - px * ns;
-			_mapState.ty = e.clientY - rect.top - py * ns;
-			_mapState.scale = ns;
-			_mapTransform(container);
-			_applyMapZoom(container);
-		}, { passive: false });
-		container.addEventListener('dblclick', function (e) {
-			var rect = svg.getBoundingClientRect();
-			var px = (e.clientX - rect.left - _mapState.tx) / _mapState.scale;
-			var py = (e.clientY - rect.top - _mapState.ty) / _mapState.scale;
-			var ns = Math.min(14, _mapState.scale * 2);
-			_mapState.tx = e.clientX - rect.left - px * ns;
-			_mapState.ty = e.clientY - rect.top - py * ns;
-			_mapState.scale = ns;
-			_mapTransform(container);
-			_applyMapZoom(container);
-		});
-
-		/* Real formulas on hover: hovering a node shows its full mathematical
-		   formula (Temml-rendered) in an overlay at the bottom of the map. */
-		var fml = container.querySelector('.prov-map-fml');
-		if (!fml) {
-			fml = document.createElement('div');
-			fml.className = 'prov-map-fml';
-			container.appendChild(fml);
-		}
-		container.addEventListener('mouseover', function (e) {
-			if (e.target === fml || fml.contains(e.target)) return;
-			var g = e.target.closest ? e.target.closest('.prov-map-node') : null;
-			if (!g) { fml.style.display = 'none'; return; }
-			var n = S._mat(g.getAttribute('data-prov-go'));
-			if (!n || !n.formula) { fml.style.display = 'none'; return; }
-			fml.innerHTML = '<span class="md">$$' + n.formula + '$$</span>';
-			if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
-				try { temml.renderMathInElement(fml); } catch (err) { /* keep raw */ }
-			}
-			fml.style.display = 'block';
-		});
-	}
-
 	/**
 	 * Walk the entire dependency graph from `nodeId` back to its leaves
 	 * (input embeddings, weights, config constants). Returns
@@ -2406,41 +2089,6 @@
 			'#prov-tooltip .prov-view-btn{border:1px solid #cbd5e1;background:#f8fafc;border-radius:6px;' +
 			'padding:2px 10px;font-size:12px;cursor:pointer;color:#334155;}' +
 			'#prov-tooltip .prov-view-btn.prov-view-on{background:#6366f1;border-color:#6366f1;color:#fff;}' +
-			'#prov-tooltip .prov-zoom-reset{margin-left:auto;}' +
-			'#prov-tooltip .prov-map{height:360px;border:1px solid #e2e8f0;border-radius:8px;' +
-			'background:#fbfcfe;position:relative;overflow:hidden;cursor:grab;touch-action:none;}' +
-			'#prov-tooltip .prov-map svg{display:block;width:100%;height:100%;}' +
-			'#prov-tooltip .prov-map-edge{fill:none;stroke:#c7d2fe;stroke-width:1;}' +
-			'#prov-tooltip .prov-map-node{cursor:pointer;}' +
-			'#prov-tooltip .prov-map-node rect{fill:#eef2ff;stroke:#a5b4fc;stroke-width:1;}' +
-			'#prov-tooltip .prov-map-node:hover rect{fill:#c7d2fe;}' +
-			'#prov-tooltip .prov-map-node.prov-map-root rect{fill:#c7d2fe;stroke:#4f46e5;stroke-width:2;}' +
-			'#prov-tooltip .prov-map-node text{fill:#0f172a;font-family:inherit;pointer-events:none;}' +
-			'#prov-tooltip .prov-map-val{font-size:12px;font-weight:700;text-anchor:middle;}' +
-			'#prov-tooltip .prov-map-name{font-size:9px;text-anchor:middle;fill:#4338ca;}' +
-			'#prov-tooltip .prov-map[data-zoom="far"] .prov-map-name{display:none;}' +
-			'#prov-tooltip .prov-map[data-zoom="far"] .prov-map-edge{display:none;}' +
-			'#prov-tooltip .prov-map[data-zoom="far"] .prov-map-val{font-size:14px;}' +
-			'#prov-tooltip .prov-map[data-zoom="close"] .prov-map-val{font-size:13px;}' +
-			'#prov-tooltip .prov-map[data-zoom="close"] .prov-map-name{font-size:10px;}' +
-			'#prov-tooltip .prov-trace-cut{margin-top:6px;font-size:11px;color:#94a3b8;text-align:center;}' +
-			'#prov-tooltip .prov-map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;' +
-			'font-size:12px;color:#6366f1;background:#fbfcfe;z-index:2;}' +
-			'#prov-tooltip .prov-map-fml{position:absolute;left:0;right:0;bottom:0;max-height:90px;overflow:auto;' +
-			'background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:6px 10px;font-size:12px;z-index:3;display:none;}' +
-			'#prov-tooltip .prov-map-fml .md{margin:0;}' +
-			'#prov-tooltip.prov-net-mode .prov-map-fml{max-height:140px;}' +
-			'#prov-tooltip .prov-map-node.fam-attn rect{fill:#eff6ff;stroke:#93c5fd;}' +
-			'#prov-tooltip .prov-map-node.fam-ffn rect{fill:#fff7ed;stroke:#fdba74;}' +
-			'#prov-tooltip .prov-map-node.fam-proj rect{fill:#f0fdf4;stroke:#86efac;}' +
-			'#prov-tooltip .prov-map-node.fam-ln rect{fill:#faf5ff;stroke:#d8b4fe;}' +
-			'#prov-tooltip .prov-map-node.fam-emb rect{fill:#ecfeff;stroke:#67e8f9;}' +
-			'#prov-tooltip .prov-map-node.fam-pe rect{fill:#fef9c3;stroke:#fde047;}' +
-			'#prov-tooltip .prov-map-node.fam-final rect{fill:#fef2f2;stroke:#fca5a5;}' +
-			'#prov-tooltip .prov-map-node.fam-h rect{fill:#eef2ff;stroke:#a5b4fc;}' +
-			'#prov-tooltip.prov-net-mode{width:min(96vw,1500px);max-width:96vw;height:88vh;max-height:88vh;}' +
-			'#prov-tooltip.prov-net-mode .prov-map{height:calc(88vh - 150px);}' +
-			'#prov-tooltip.prov-net-mode .prov-map[data-zoom="mid"] .prov-map-name{font-size:8px;}' +
 			'#prov-tooltip .prov-contrib{display:none;max-height:340px;overflow-y:auto;}' +
 			'#prov-tooltip.prov-contrib-mode{width:min(94vw,900px);max-width:94vw;}' +
 			'#prov-tooltip.prov-contrib-mode .prov-contrib{max-height:calc(76vh - 160px);}' +
@@ -2503,8 +2151,6 @@
 	}
 
 	var _traceView = 'deriv';
-	var _mapBuiltFor = null;
-	var _pendingNetMap = null, _pendingNetState = null;
 
 	function _renderTraceList(trace, container) {
 		if (!container) return;
@@ -2711,79 +2357,33 @@
 	function _applyTraceView(view, nodeId) {
 		nodeId = nodeId || _history[_history.length - 1];
 		if (view === 'list') _traceView = 'list';
-		else if (view === 'map') _traceView = 'map';
-		else if (view === 'net') _traceView = 'net';
 		else if (view === 'contrib') _traceView = 'contrib';
 		else _traceView = 'deriv';
 		var listEl = _tooltip.querySelector('.prov-trace');
-		var mapEl = _tooltip.querySelector('.prov-map');
 		var contribEl = _tooltip.querySelector('.prov-contrib');
 		var derivEl = _tooltip.querySelector('.prov-deriv');
-		if (!listEl || !mapEl) return;
+		if (!listEl) return;
 		var btns = _tooltip.querySelectorAll('.prov-view-btn');
 		for (var b = 0; b < btns.length; b++) {
 			btns[b].classList.toggle('prov-view-on', btns[b].getAttribute('data-prov-view') === _traceView);
 		}
-		_tooltip.classList.toggle('prov-net-mode', _traceView === 'net');
 		_tooltip.classList.toggle('prov-contrib-mode', _traceView === 'contrib');
 		_tooltip.classList.toggle('prov-deriv-mode', _traceView === 'deriv');
-		if (_traceView === 'net') {
-			listEl.style.display = 'none';
-			mapEl.style.display = 'block';
-			if (contribEl) contribEl.style.display = 'none';
-			if (derivEl) derivEl.style.display = 'none';
-			if (!_pendingNetMap && (_mapBuiltFor !== _NET || !mapEl.querySelector('.prov-map-node'))) {
-				_buildNetMap(mapEl);
-			}
-			_position();
-		} else if (_traceView === 'map') {
-			listEl.style.display = 'none';
-			mapEl.style.display = 'block';
-			if (contribEl) contribEl.style.display = 'none';
-			if (derivEl) derivEl.style.display = 'none';
-			if (_mapBuiltFor !== nodeId) {
-				var trace = S.fullTrace(nodeId);
-				_buildMap(mapEl, trace, nodeId);
-				_bindMap(mapEl);
-				_mapBuiltFor = nodeId;
-				S._mapEl = mapEl;
-			}
-			_position();
-		} else if (_traceView === 'contrib') {
-			mapEl.style.display = 'none';
+		if (_traceView === 'contrib') {
 			listEl.style.display = 'none';
 			if (derivEl) derivEl.style.display = 'none';
 			if (contribEl) _renderContrib(nodeId, contribEl);
-			S._mapEl = null;
 			_position();
 		} else if (_traceView === 'deriv') {
-			mapEl.style.display = 'none';
 			listEl.style.display = 'none';
 			if (contribEl) contribEl.style.display = 'none';
 			if (derivEl) _renderDeriv(nodeId, derivEl);
-			S._mapEl = null;
 			_position();
 		} else {
-			mapEl.style.display = 'none';
-			if (contribEl) contribEl.style.display = 'none';
 			if (derivEl) derivEl.style.display = 'none';
+			if (contribEl) contribEl.style.display = 'none';
 			listEl.style.display = 'flex';
-			S._mapEl = null;
 		}
-	}
-
-	var _NET = '__net__';
-
-	function _resetMap() {
-		var mapEl = _tooltip.querySelector('.prov-map');
-		if (!mapEl || mapEl.style.display === 'none') return;
-		if (_traceView === 'net') {
-			_buildNetMap(mapEl);
-			return;
-		}
-		var trace = S.fullTrace(_history[_history.length - 1]);
-		_buildMap(mapEl, trace, _history[_history.length - 1]);
-		_bindMap(mapEl);
 	}
 
 	function _renderCurrent() {
@@ -2824,14 +2424,10 @@
 			parts.push('<div class="prov-trace-tools">' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="deriv">Derivation</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="contrib">Contributors</button>' +
-				'<button class="prov-btn prov-view-btn" data-prov-view="map">Zoom Map</button>' +
-				'<button class="prov-btn prov-view-btn" data-prov-view="net">Whole Network</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="list">List</button>' +
-				'<button class="prov-btn prov-zoom-reset" data-prov-act="zoom-reset" title="fit map to view">fit</button>' +
 				'</div>');
 			parts.push('<div class="prov-deriv"></div>');
 			parts.push('<div class="prov-trace"></div>');
-			parts.push('<div class="prov-map"></div>');
 			parts.push('<div class="prov-contrib"></div>');
 			if (trace.cut) {
 				parts.push('<div class="prov-trace-cut">&hellip; trace truncated at ' + _traceCap + ' steps</div>');
@@ -2851,41 +2447,14 @@
 			}).join(' &rarr; ') + '</div>');
 		}
 
-		parts.push('<div class="prov-hint">"Derivation" shows every formula from token embeddings to this value (reading order, click any step to jump). "Contributors" lists them sorted by importance with a slider for the top X%. "Zoom Map" is a pan/zoom overview; "Whole Network" shows the entire forward pass at once.</div>');
-
-		/* In whole-network mode, keep the (expensive) map alive across
-		   navigation: save its markup + viewport and restore it after the
-		   tooltip is rebuilt, instead of building 25k nodes again. */
-		var savedNetMap = null, savedNetState = null;
-		if (_traceView === 'net') {
-			var oldMap = _tooltip.querySelector('.prov-map');
-			if (oldMap && oldMap.querySelector('.prov-map-node')) {
-				savedNetMap = oldMap.outerHTML;
-				savedNetState = { tx: _mapState.tx, ty: _mapState.ty, scale: _mapState.scale };
-			}
-		}
+		parts.push('<div class="prov-hint">"Derivation" shows every formula from token embeddings to this value (reading order, click any step to jump). "Contributors" lists them sorted by importance with a slider for the top X%.</div>');
 
 		_tooltip.innerHTML = parts.join('');
 		_tooltip.style.display = 'block';
 		var listEl = _tooltip.querySelector('.prov-trace');
 		if (listEl) _renderTraceList(trace, listEl);
 		_renderTooltipMath(_tooltip);
-		_pendingNetMap = savedNetMap;
-		_pendingNetState = savedNetState;
 		_applyTraceView(_traceView, nodeId);
-		if (_pendingNetMap) {
-			var restored = _tooltip.querySelector('.prov-map');
-			if (restored) {
-				restored.outerHTML = _pendingNetMap;
-				_mapState = _pendingNetState || _mapState;
-				_mapBuiltFor = _NET;
-				S._mapEl = _tooltip.querySelector('.prov-map');
-				_bindMap(S._mapEl);
-				_mapTransform(S._mapEl);
-				_applyMapZoom(S._mapEl);
-			}
-			_pendingNetMap = null;
-		}
 		_position();
 	}
 
@@ -2942,7 +2511,6 @@
 		_tooltip = document.createElement('div');
 		_tooltip.id = 'prov-tooltip';
 		_tooltip.addEventListener('click', function (e) {
-			if (S._mapDragged) { S._mapDragged = false; return; }
 			var t = e.target;
 			var viewBtn = t.closest ? t.closest('[data-prov-view]') : null;
 			if (viewBtn) {
@@ -2971,7 +2539,6 @@
 			if (a === 'close') { S.hide(); S._pinned = false; }
 			else if (a === 'pin') { S._pinned = !S._pinned; _renderCurrent(); }
 			else if (a === 'back') { _history.pop(); _renderCurrent(); }
-			else if (a === 'zoom-reset') { _resetMap(); }
 		});
 		_tooltip.addEventListener('mouseover', function () { _clearHide(); });
 		document.body.appendChild(_tooltip);
@@ -3039,30 +2606,7 @@
 		document.addEventListener('mousemove', _onMouseMove, true);
 		document.addEventListener('click', _onDocClick, true);
 		document.addEventListener('keydown', _onKeyDown, true);
-		document.addEventListener('mousedown', _onMapMouseDown, true);
-		document.addEventListener('mousemove', _onMapMouseMove, true);
-		document.addEventListener('mouseup', _onMapMouseUp, true);
 	}
-
-	function _onMapMouseDown(e) {
-		if (!S._mapEl || !S._mapEl.contains(e.target)) return;
-		S._mapDrag = { sx: e.clientX, sy: e.clientY, ox: _mapState.tx, oy: _mapState.ty };
-		S._mapDragged = false;
-		e.preventDefault();
-	}
-
-	function _onMapMouseMove(e) {
-		if (!S._mapDrag) return;
-		var dx = e.clientX - S._mapDrag.sx, dy = e.clientY - S._mapDrag.sy;
-		if (!S._mapDragged && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) S._mapDragged = true;
-		if (S._mapDragged) {
-			_mapState.tx = S._mapDrag.ox + dx;
-			_mapState.ty = S._mapDrag.oy + dy;
-			if (S._mapEl) _mapTransform(S._mapEl);
-		}
-	}
-
-	function _onMapMouseUp() { S._mapDrag = null; }
 
 	S.init = function () {
 		_injectStyles();
