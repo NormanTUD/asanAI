@@ -952,7 +952,8 @@ function renderSeahorseEmoji(container) {
                 turnChangeTimer: 15 + Math.floor(Math.random() * 30),
                 alive: true,
                 age: 0,
-                wasInRepel: false
+                wasInRepel: false,
+                framesSinceExit: 1000 // "lange draußen" → Random-Walk aktiv
             };
         }
 
@@ -1050,9 +1051,15 @@ function renderSeahorseEmoji(container) {
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 const pSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
 
+                // Frames seit letztem Verlassen des Repel-Feldes tracken
+                // (außerhalb: hochzählen; drinnen: zurücksetzen)
+                if (dist < repelRadius) {
+                    p.framesSinceExit = 0;
+                } else {
+                    p.framesSinceExit = (p.framesSinceExit || 1000) + 1;
+                }
+
                 // === AUSSERHALB des Repel-Feldes: SEHR SCHWACHE Anziehung Richtung Repeller ===
-                // Bewusst schwach damit ein gerade rausgeschleudertes Teilchen genug
-                // Schwung hat um den Canvas zu verlassen, bevor es zurückgezogen wird.
                 if (dist > repelRadius && dist > 0) {
                     const toCenter = Math.atan2(-dy, -dx);
                     const attractAccel = 0.005 + 6 / (dist + 100);
@@ -1061,26 +1068,20 @@ function renderSeahorseEmoji(container) {
                 }
 
                 // === IM Repel-Feld: STARKE radiale Abstoßung + tangentiale Dämpfung ===
-                // Mindestgeschwindigkeit 6 px/frame nach außen — so haben die Teilchen
-                // genug Schwung den Canvas zu verlassen bevor die schwache Anziehung
-                // außerhalb sie wieder einfängt. Tangentiale Dämpfung verhindert Orbit.
                 if (dist < repelRadius && dist > dangerRadius) {
                     const outwardAngle = Math.atan2(dy, dx);
                     const cosA = Math.cos(outwardAngle);
                     const sinA = Math.sin(outwardAngle);
 
-                    // Radialer Anteil der aktuellen Geschwindigkeit
+                    // Radial-Geschwindigkeit: mindestens 7 px/frame raus
                     const radialVel = p.vx * cosA + p.vy * sinA;
-
-                    // Radial-Geschwindigkeit: mindestens 6 px/frame raus, mehr wenn schnell
-                    const targetRadial = Math.max(6, pSpeed * 1.5);
+                    const targetRadial = Math.max(7, pSpeed * 1.5);
                     if (radialVel < targetRadial) {
                         p.vx += cosA * (targetRadial - radialVel);
                         p.vy += sinA * (targetRadial - radialVel);
                     }
 
-                    // Tangentiale Dämpfung: 75% der seitlichen Bewegung wegnehmen
-                    // (sonst Kreisen am Rand)
+                    // Tangentiale Dämpfung: 75% der seitlichen Bewegung killen
                     const tangX = -sinA;
                     const tangY = cosA;
                     const tangVel = p.vx * tangX + p.vy * tangY;
@@ -1100,21 +1101,25 @@ function renderSeahorseEmoji(container) {
                     p.vy += Math.sin(outwardAngle) * push;
                 }
 
-                // Random-Drift (sanft, lässt das Wandern zu)
-                p.turnChangeTimer--;
-                if (p.turnChangeTimer <= 0) {
-                    p.turnRate += (Math.random() - 0.5) * 0.03;
-                    p.turnRate = Math.max(-0.06, Math.min(0.06, p.turnRate));
-                    p.turnChangeTimer = 20 + Math.floor(Math.random() * 40);
-                }
-                p.heading += p.turnRate;
+                // === Random-Walk: NUR für alte Wanderer, NICHT direkt nach Exit ===
+                // Direkt nach dem Rauswurf (frames < 90) darf der Random-Walk das
+                // gerade rausgeschleuderte Teilchen nicht zur Seite ziehen — sonst
+                // kurvt es zurück statt aus dem Bild zu fliegen.
+                if (p.framesSinceExit > 90) {
+                    p.turnChangeTimer--;
+                    if (p.turnChangeTimer <= 0) {
+                        p.turnRate += (Math.random() - 0.5) * 0.03;
+                        p.turnRate = Math.max(-0.06, Math.min(0.06, p.turnRate));
+                        p.turnChangeTimer = 20 + Math.floor(Math.random() * 40);
+                    }
+                    p.heading += p.turnRate;
 
-                // Random-Walk-Beitrag zur Velocity
-                const targetSpeed = 0.9;
-                const targetVx = Math.cos(p.heading) * targetSpeed;
-                const targetVy = Math.sin(p.heading) * targetSpeed;
-                p.vx += (targetVx - p.vx) * 0.025;
-                p.vy += (targetVy - p.vy) * 0.025;
+                    const targetSpeed = 0.9;
+                    const targetVx = Math.cos(p.heading) * targetSpeed;
+                    const targetVy = Math.sin(p.heading) * targetSpeed;
+                    p.vx += (targetVx - p.vx) * 0.025;
+                    p.vy += (targetVy - p.vy) * 0.025;
+                }
 
                 // Sanfte Dämpfung
                 p.vx *= 0.98;
@@ -1137,7 +1142,7 @@ function renderSeahorseEmoji(container) {
                 }
 
                 // === KEIN Wand-Bounce! Wenn deutlich außerhalb → "alive=false" → respawn ===
-                const killMargin = 50;
+                const killMargin = 100;
                 if (p.x < -killMargin || p.x > W + killMargin || p.y < -killMargin || p.y > H + killMargin) {
                     p.alive = false;
                 }
