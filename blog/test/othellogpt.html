@@ -1575,13 +1575,13 @@
             ctx.fillText('Intervention', 220, 170);
 
             const postBoard = exBoard.map(r => [...r]);
-            postBoard = 1;
+            postBoard[5][4] = 1; // E6 changed to black
             const postPredictions = Array(8).fill(null).map(() => Array(8).fill(false));
-            postPredictions = true;
-            postPredictions = true;
-            postPredictions = true;
+            postPredictions[1][3] = true; // D2
+            postPredictions[6][4] = true; // E7
+            postPredictions[6][5] = true; // F7
             const highlight = Array(8).fill(null).map(() => Array(8).fill(null));
-            highlight = '#ff6600';
+            highlight[5][4] = '#ff6600';
 
             drawSmallBoard(280, 50, 'Nach (E6=Schwarz)', postBoard, postPredictions, highlight);
 
