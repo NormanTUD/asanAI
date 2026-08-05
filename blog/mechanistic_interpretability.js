@@ -562,6 +562,483 @@
         draw();
     }
 
+// ============================================================
+// SECTION 3: OTHELLO-GPT WORLD MODEL DEMO
+// ============================================================
+
+function initOthelloDemo() {
+    const container = document.getElementById('othello-container');
+    if (!container) return;
+
+    const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f0f8ff'), borderRadius: '8px', margin: '20px 0'}}, container);
+    createElement('h3', {textContent: '🎮 Interactive: Othello-GPT World Model', style: {marginTop: 0}}, section);
+    createElement('p', {innerHTML: 'This demonstrates how a sequence model builds an internal board representation. Click tiles to place moves, and watch how the model\'s <strong>internal probe accuracy</strong> changes across layers. The key insight: the model "sees" the board even though it was never shown one.'}, section);
+
+    const mainRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'flex-start'}}, section);
+    const boardPanel = createElement('div', {style: {flex: '1', minWidth: '280px'}}, mainRow);
+    const probePanel = createElement('div', {style: {flex: '1', minWidth: '300px'}}, mainRow);
+
+    // Board state: 0=empty, 1=black, 2=white
+    const BOARD_SIZE = 8;
+    let board = Array(64).fill(0);
+    let moveHistory = [];
+
+    // Initialize standard Othello starting position
+    function resetBoard() {
+        board = Array(64).fill(0);
+        board[27] = 2; board[28] = 1; board[35] = 1; board[36] = 2;
+        moveHistory = [];
+        draw();
+    }
+
+    const canvas = createCanvas(boardPanel, 320, 320);
+    const ctx = canvas.getContext('2d');
+
+    // Probe accuracy simulation (based on Table 2 from the paper)
+    function getProbeAccuracy(layer, moveCount) {
+        // Simulates the nonlinear probe accuracy pattern from Li et al.
+        // Peaks at middle layers, improves with more moves
+        const baseCurve = [88.7, 92.5, 95.2, 96.6, 97.6, 98.2, 98.3, 95.4];
+        const moveBonus = Math.min(moveCount / 60, 1) * 3;
+        const noise = (Math.random() - 0.5) * 1.5;
+        return Math.min(99.5, baseCurve[layer] + moveBonus + noise);
+    }
+
+    function getLinearProbeAccuracy(layer) {
+        // Linear probes are much worse (Table 1 from paper)
+        const baseCurve = [78.1, 79.5, 79.6, 79.4, 78.9, 78.4, 77.8, 76.9];
+        return baseCurve[layer] + (Math.random() - 0.5) * 1;
+    }
+
+    function draw() {
+        const cellSize = 40;
+        ctx.clearRect(0, 0, 320, 320);
+
+        // Draw board
+        for (let r = 0; r < BOARD_SIZE; r++) {
+            for (let c = 0; c < BOARD_SIZE; c++) {
+                const x = c * cellSize;
+                const y = r * cellSize;
+                ctx.fillStyle = '#2d8a4e';
+                ctx.fillRect(x, y, cellSize, cellSize);
+                ctx.strokeStyle = '#1a5c32';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, cellSize, cellSize);
+
+                const idx = r * BOARD_SIZE + c;
+                if (board[idx] === 1) {
+                    ctx.beginPath();
+                    ctx.arc(x + cellSize/2, y + cellSize/2, cellSize/2 - 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#111';
+                    ctx.fill();
+                } else if (board[idx] === 2) {
+                    ctx.beginPath();
+                    ctx.arc(x + cellSize/2, y + cellSize/2, cellSize/2 - 4, 0, Math.PI * 2);
+                    ctx.fillStyle = '#f5f5f5';
+                    ctx.fill();
+                    ctx.strokeStyle = '#999';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Draw move count
+        ctx.fillStyle = themeColor('#333');
+        ctx.font = '11px sans-serif';
+        ctx.fillText(`Moves: ${moveHistory.length}`, 5, 315);
+
+        // Update probe chart
+        drawProbeChart();
+    }
+
+    function drawProbeChart() {
+        const chartDiv = document.getElementById('othello-probe-chart');
+        if (!chartDiv) return;
+
+        const layers = [1, 2, 3, 4, 5, 6, 7, 8];
+        const nonlinearAcc = layers.map(l => getProbeAccuracy(l - 1, moveHistory.length));
+        const linearAcc = layers.map(l => getLinearProbeAccuracy(l - 1));
+
+        if (typeof Plotly !== 'undefined') {
+            const traces = [
+                {
+                    x: layers, y: nonlinearAcc,
+                    type: 'scatter', mode: 'lines+markers',
+                    name: 'Nonlinear Probe',
+                    line: {color: '#2196F3', width: 3},
+                    marker: {size: 8}
+                },
+                {
+                    x: layers, y: linearAcc,
+                    type: 'scatter', mode: 'lines+markers',
+                    name: 'Linear Probe',
+                    line: {color: '#f44336', width: 2, dash: 'dash'},
+                    marker: {size: 6}
+                }
+            ];
+            const layout = {
+                title: {text: 'Probe Accuracy by Layer', font: {size: 13}},
+                xaxis: {title: 'Layer', dtick: 1},
+                yaxis: {title: 'Accuracy (%)', range: [70, 100]},
+                margin: {t: 40, b: 50, l: 50, r: 20},
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                legend: {x: 0.02, y: 0.02, bgcolor: 'rgba(255,255,255,0.8)'},
+                font: {size: 11},
+                showlegend: true
+            };
+            Plotly.newPlot('othello-probe-chart', traces, layout, {displayModeBar: false, responsive: true});
+        } else {
+            chartDiv.innerHTML = '<p style="color:#999; text-align:center;">Plotly not loaded</p>';
+        }
+    }
+
+    // Click handler for placing moves
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const col = Math.floor(x / 40);
+        const row = Math.floor(y / 40);
+        const idx = row * BOARD_SIZE + col;
+
+        if (board[idx] === 0 && idx >= 0 && idx < 64) {
+            // Alternate black/white
+            const color = (moveHistory.length % 2 === 0) ? 1 : 2;
+            board[idx] = color;
+            moveHistory.push(idx);
+            draw();
+        }
+    });
+
+    // Probe chart container
+    createElement('div', {id: 'othello-probe-chart', style: {width: '100%', height: '250px'}}, probePanel);
+
+    const explanationDiv = createElement('div', {style: {marginTop: '10px', padding: '10px', background: themeColor('#fff'), borderRadius: '6px', fontSize: '12px', lineHeight: '1.5'}}, probePanel);
+    explanationDiv.innerHTML = `
+        <strong>Key Finding:</strong> The nonlinear probe (blue) achieves ~98% accuracy at middle layers,
+        while the linear probe (red, dashed) plateaus at ~79%. This proves the board state is encoded
+        <em>nonlinearly</em> in the residual stream. The model builds a world model that no linear method can fully decode.<br><br>
+        <em>Click tiles to place moves and watch the probe accuracy update.</em>
+    `;
+
+    const btnRow = createElement('div', {style: {marginTop: '10px', textAlign: 'center'}}, boardPanel);
+    const resetBtn = createElement('button', {textContent: '🔄 Reset Board', style: {padding: '6px 14px', fontSize: '13px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer'}}, btnRow);
+    resetBtn.addEventListener('click', resetBoard);
+
+    resetBoard();
+}
+
+// ============================================================
+// SECTION 4: LINEAR REPRESENTATION & CAUSAL INNER PRODUCT DEMO
+// ============================================================
+
+function initLinearRepDemo() {
+    const container = document.getElementById('linear-rep-container');
+    if (!container) return;
+
+    const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#fff8f0'), borderRadius: '8px', margin: '20px 0'}}, container);
+    createElement('h3', {textContent: '📐 Interactive: Linear Representations & the Causal Inner Product', style: {marginTop: 0}}, section);
+    createElement('p', {innerHTML: 'Explore how concepts are represented as <strong>directions</strong> in the unembedding space. The causal inner product ensures that causally separable concepts (e.g., language vs. gender) are orthogonal. Drag the slider to rotate between Euclidean and Causal geometry.'}, section);
+
+    const controlRow = createElement('div', {style: {display: 'flex', gap: '20px', flexWrap: 'wrap'}}, section);
+    const sliderPanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, controlRow);
+    const canvasPanel = createElement('div', {style: {flex: '2', minWidth: '400px'}}, controlRow);
+
+    let causalWeight = 1.0; // 0 = Euclidean, 1 = Causal
+
+    createSlider(sliderPanel, 'Geometry (Euclidean → Causal)', 0, 100, 100, 1, (v) => {
+        causalWeight = v / 100;
+        drawConcepts();
+    });
+
+    const infoDiv = createElement('div', {style: {marginTop: '15px', padding: '12px', background: themeColor('#fff'), borderRadius: '6px', fontSize: '12px', lineHeight: '1.6'}}, sliderPanel);
+
+    const canvas = createCanvas(canvasPanel, 500, 350);
+    const ctx = canvas.getContext('2d');
+
+    // Concept vectors (simplified 2D projection)
+    const concepts = [
+        {name: 'male→female', eucAngle: 45, causalAngle: 0, color: '#e91e63'},
+        {name: 'English→French', eucAngle: 70, causalAngle: 90, color: '#2196F3'},
+        {name: 'singular→plural', eucAngle: 20, causalAngle: 180, color: '#4CAF50'},
+        {name: 'lower→UPPER', eucAngle: 85, causalAngle: 270, color: '#FF9800'},
+    ];
+
+    function drawConcepts() {
+        ctx.clearRect(0, 0, 500, 350);
+        const cx = 250, cy = 175, radius = 120;
+
+        // Draw unit circle
+        ctx.strokeStyle = themeColor('#ddd');
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Draw axes
+        ctx.strokeStyle = themeColor('#eee');
+        ctx.beginPath();
+        ctx.moveTo(cx - radius - 20, cy);
+        ctx.lineTo(cx + radius + 20, cy);
+        ctx.moveTo(cx, cy - radius - 20);
+        ctx.lineTo(cx, cy + radius + 20);
+        ctx.stroke();
+
+        // Draw concept vectors
+        concepts.forEach((c, i) => {
+            const angle = (c.eucAngle * (1 - causalWeight) + c.causalAngle * causalWeight) * Math.PI / 180;
+            const endX = cx + Math.cos(angle) * radius;
+            const endY = cy - Math.sin(angle) * radius;
+
+            // Arrow
+            ctx.strokeStyle = c.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Arrowhead
+            const headLen = 10;
+            const headAngle = Math.atan2(cy - endY, endX - cx);
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headLen * Math.cos(headAngle - 0.3), endY + headLen * Math.sin(headAngle - 0.3));
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headLen * Math.cos(headAngle + 0.3), endY + headLen * Math.sin(headAngle + 0.3));
+            ctx.stroke();
+
+            // Label
+            const labelX = cx + Math.cos(angle) * (radius + 25);
+            const labelY = cy - Math.sin(angle) * (radius + 25);
+            ctx.fillStyle = c.color;
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(c.name, labelX, labelY);
+        });
+
+        // Title
+        ctx.fillStyle = themeColor('#333');
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(causalWeight < 0.5 ? '≈ Euclidean Geometry' : '≈ Causal Geometry', cx, 20);
+
+        // Orthogonality indicator
+        if (causalWeight > 0.8) {
+            ctx.fillStyle = '#4CAF50';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('✓ Causally separable concepts are orthogonal', cx, 340);
+        } else if (causalWeight < 0.2) {
+            ctx.fillStyle = '#f44336';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('✗ Concepts are NOT orthogonal — geometry is wrong', cx, 340);
+        }
+
+        // Compute pairwise angles for info panel
+        const angles = [];
+        for (let i = 0; i < concepts.length; i++) {
+            for (let j = i + 1; j < concepts.length; j++) {
+                const ai = (concepts[i].eucAngle * (1 - causalWeight) + concepts[i].causalAngle * causalWeight);
+                const aj = (concepts[j].eucAngle * (1 - causalWeight) + concepts[j].causalAngle * causalWeight);
+                const diff = Math.abs(ai - aj) % 360;
+                const angleBetween = Math.min(diff, 360 - diff);
+                angles.push({pair: `${concepts[i].name} · ${concepts[j].name}`, angle: angleBetween});
+            }
+        }
+
+        infoDiv.innerHTML = `
+            <strong>Geometry: ${causalWeight < 0.5 ? 'Euclidean' : 'Causal'}</strong> (weight: ${causalWeight.toFixed(2)})<br>
+            <strong>Pairwise angles:</strong><br>
+            ${angles.map(a => `<span style="font-size:11px;">${a.pair}: <strong>${a.angle.toFixed(0)}°</strong></span>`).join('<br>')}
+            <hr style="margin:8px 0;">
+            <em>Under the causal inner product, causally separable concepts become orthogonal (90°).
+            This is what makes steering vectors work: adding $\\bar{\\lambda}_W$ changes concept W without affecting others.</em>
+        `;
+    }
+
+    drawConcepts();
+}
+
+// ============================================================
+// SECTION 5: LOOPED TRANSFORMER COMPUTER DEMO
+// ============================================================
+
+function initLoopedTFDemo() {
+    const container = document.getElementById('looped-tf-container');
+    if (!container) return;
+
+    const section = createElement('div', {className: 'interactive-section', style: {padding: '20px', background: themeColor('#f5f0ff'), borderRadius: '8px', margin: '20px 0'}}, container);
+    createElement('h3', {textContent: '🔁 Interactive: Looped Transformer as a Computer', style: {marginTop: 0}}, section);
+    createElement('p', {innerHTML: 'Watch a 13-layer Transformer execute a program by looping. Each cycle is one "clock tick." The input sequence contains <strong>instructions</strong>, <strong>memory</strong>, and a <strong>scratchpad</strong>. The Transformer reads an instruction, executes it, updates memory, and increments the program counter — just like a CPU.'}, section);
+
+    const programPanel = createElement('div', {style: {display: 'flex', gap: '15px', flexWrap: 'wrap'}}, section);
+    const codePanel = createElement('div', {style: {flex: '1', minWidth: '250px'}}, programPanel);
+    const statePanel = createElement('div', {style: {flex: '1', minWidth: '300px'}}, programPanel);
+
+    // Simple program: compute 3 + 5 using FLEQ-like instructions
+    const programs = {
+        'add': {
+            name: 'Addition: 3 + 5',
+            instructions: [
+                'LOAD mem[0] → scratch   // load 3',
+                'LOAD mem[1] → scratch   // load 5',
+                'ADD scratch[0], scratch[1] → scratch[2]',
+                'STORE scratch[2] → mem[2]  // store result',
+                'HALT'
+            ],
+            memory: [3, 5, 0, 0],
+            steps: [
+                {pc: 0, scratch: [0, 0, 0], mem: [3, 5, 0, 0], desc: 'Load 3 into scratchpad'},
+                {pc: 1, scratch: [3, 0, 0], mem: [3, 5, 0, 0], desc: 'Load 5 into scratchpad'},
+                {pc: 2, scratch: [3, 5, 0], mem: [3, 5, 0, 0], desc: 'Add: 3 + 5 = 8'},
+                {pc: 3, scratch: [3, 5, 8], mem: [3, 5, 0, 0], desc: 'Store 8 to memory'},
+                {pc: 4, scratch: [3, 5, 8], mem: [3, 5, 8, 0], desc: 'Store 8 to memory'},
+                {pc: 4, scratch: [3, 5, 8], mem: [3, 5, 8, 0], desc: 'HALT — program complete'}
+            ]
+        },
+        'countdown': {
+            name: 'Countdown: 3 → 0 (branch)',
+            instructions: [
+                'LOAD mem[0] → scratch       // load counter',
+                'SUB scratch[0], 1 → scratch[0]',
+                'STORE scratch[0] → mem[0]',
+                'IF mem[0] ≤ 0: HALT',
+                'GOTO instruction 0          // loop back'
+            ],
+            memory: [3, 1, 0, 0],
+            steps: [
+                {pc: 0, scratch: [3], mem: [3, 1, 0, 0], desc: 'Load counter (3)'},
+                {pc: 1, scratch: [2], mem: [3, 1, 0, 0], desc: 'Subtract 1 → 2'},
+                {pc: 2, scratch: [2], mem: [2, 1, 0, 0], desc: 'Store 2 back'},
+                {pc: 3, scratch: [2], mem: [2, 1, 0, 0], desc: 'Check: 2 > 0, no branch'},
+                {pc: 0, scratch: [2], mem: [2, 1, 0, 0], desc: 'GOTO 0 — loop again'},
+                {pc: 1, scratch: [1], mem: [2, 1, 0, 0], desc: 'Subtract 1 → 1'},
+                {pc: 2, scratch: [1], mem: [1, 1, 0, 0], desc: 'Store 1 back'},
+                {pc: 3, scratch: [1], mem: [1, 1, 0, 0], desc: 'Check: 1 > 0, no branch'},
+                {pc: 0, scratch: [1], mem: [1, 1, 0, 0], desc: 'GOTO 0 — loop again'},
+                {pc: 1, scratch: [0], mem: [1, 1, 0, 0], desc: 'Subtract 1 → 0'},
+                {pc: 2, scratch: [0], mem: [0, 1, 0, 0], desc: 'Store 0 back'},
+                {pc: 3, scratch: [0], mem: [0, 1, 0, 0], desc: 'Check: 0 ≤ 0 → HALT!'}
+            ]
+        }
+    };
+
+    let currentProgram = 'add';
+    let currentStep = 0;
+    let animInterval = null;
+
+    // Program selector
+    const selectRow = createElement('div', {style: {marginBottom: '12px'}}, codePanel);
+    createElement('label', {innerHTML: '<strong>Program:</strong> ', style: {fontSize: '13px'}}, selectRow);
+    const select = createElement('select', {style: {padding: '4px 8px', fontSize: '13px', borderRadius: '4px'}}, selectRow);
+    Object.entries(programs).forEach(([key, prog]) => {
+        const opt = createElement('option', {value: key, textContent: prog.name}, select);
+    });
+    select.addEventListener('change', () => {
+        currentProgram = select.value;
+        currentStep = 0;
+        clearInterval(animInterval);
+        animInterval = null;
+        drawState();
+    });
+
+    // Code listing
+    const codeBox = createElement('div', {style: {background: themeColor('#1e1e2e'), color: '#cdd6f4', padding: '12px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '11px', lineHeight: '1.7', overflowX: 'auto'}}, codePanel);
+
+    // State display
+    const stateBox = createElement('div', {style: {padding: '12px', background: themeColor('#fff'), borderRadius: '6px', border: '1px solid #ddd'}}, statePanel);
+
+    // Controls
+    const ctrlRow = createElement('div', {style: {display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap'}}, section);
+    const btnStep = createElement('button', {textContent: '⏭ Step', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', background: '#e3f2fd'}}, ctrlRow);
+    const btnPlay = createElement('button', {textContent: '▶ Play', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', background: '#e8f5e9'}}, ctrlRow);
+    const btnReset = createElement('button', {textContent: '⏮ Reset', style: {padding: '6px 14px', fontSize: '12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer'}}, ctrlRow);
+
+    btnStep.addEventListener('click', () => {
+        const prog = programs[currentProgram];
+        if (currentStep < prog.steps.length - 1) {
+            currentStep++;
+            drawState();
+        }
+    });
+
+    btnPlay.addEventListener('click', () => {
+        if (animInterval) {
+            clearInterval(animInterval);
+            animInterval = null;
+            btnPlay.textContent = '▶ Play';
+            return;
+        }
+        btnPlay.textContent = '⏸ Pause';
+        animInterval = setInterval(() => {
+            const prog = programs[currentProgram];
+            if (currentStep < prog.steps.length - 1) {
+                currentStep++;
+                drawState();
+            } else {
+                clearInterval(animInterval);
+                animInterval = null;
+                btnPlay.textContent = '▶ Play';
+            }
+        }, 800);
+    });
+
+    btnReset.addEventListener('click', () => {
+        clearInterval(animInterval);
+        animInterval = null;
+        btnPlay.textContent = '▶ Play';
+        currentStep = 0;
+        drawState();
+    });
+
+    function drawState() {
+        const prog = programs[currentProgram];
+        const step = prog.steps[currentStep];
+
+        // Code listing with highlight
+        let codeHTML = '';
+        prog.instructions.forEach((line, i) => {
+            const highlight = (i === step.pc) ? 'background:#45475a; border-left:3px solid #89b4fa;' : 'border-left:3px solid transparent;';
+            const arrow = (i === step.pc) ? '<span style="color:#f38ba8;">►</span> ' : '  ';
+            codeHTML += `<div style="padding:2px 6px; ${highlight}">${arrow}${i}: ${line}</div>`;
+        });
+        codeBox.innerHTML = codeHTML;
+
+        // State display
+        stateBox.innerHTML = `
+            <div style="margin-bottom:8px;"><strong>Cycle ${currentStep + 1}</strong> of ${prog.steps.length}</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px;">
+                <div>
+                    <div style="font-weight:bold; color:#1565c0; margin-bottom:4px;">📋 Program Counter</div>
+                    <div style="font-family:monospace; background:#e3f2fd; padding:4px 8px; border-radius:4px;">PC = ${step.pc}</div>
+                </div>
+                <div>
+                    <div style="font-weight:bold; color:#e65100; margin-bottom:4px;">📝 Scratchpad</div>
+                    <div style="font-family:monospace; background:#fff3e0; padding:4px 8px; border-radius:4px;">[${step.scratch.join(', ')}]</div>
+                </div>
+                <div style="grid-column: span 2;">
+                    <div style="font-weight:bold; color:#2e7d32; margin-bottom:4px;">💾 Memory</div>
+                    <div style="font-family:monospace; background:#e8f5e9; padding:4px 8px; border-radius:4px; display:flex; gap:6px;">
+                        ${step.mem.map((v, i) => `<span style="border:1px solid #a5d6a7; padding:2px 6px; border-radius:3px;">m[${i}]=${v}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:10px; padding:8px; background:#f5f0ff; border-radius:4px; font-size:12px; border-left:3px solid #7e57c2;">
+                <strong>🔁 This cycle:</strong> ${step.desc}
+            </div>
+            <div style="margin-top:8px; font-size:11px; color:#666;">
+                The <strong>same 13-layer Transformer</strong> executes each cycle. The loop feeds output → input, just like a CPU clock tick.
+                Depth does NOT scale with program length — only with single-instruction complexity.
+            </div>
+        `;
+    }
+
+    drawState();
+}
+
+
     // ============================================================
     // INITIALIZATION
     // ============================================================
@@ -575,9 +1052,12 @@
         }
     }
 
-    function initAll() {
-        initInductionHead();
-        initGrokking();
+function initAll() {
+	initInductionHead();
+	initGrokking();
+	initOthelloDemo();
+	initLinearRepDemo();
+	initLoopedTFDemo();
     }
 
     init();

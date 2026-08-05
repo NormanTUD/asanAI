@@ -239,6 +239,132 @@ The "aha moment" of grokking is not a sudden leap — it is the moment when the 
 <div id="grokking-container"></div>
 
 <div class="md">
+## Emergent World Representations: The Othello Experiment
+
+One of the most striking demonstrations that sequence models build internal world models comes from \cite[Li et al. (2023)]{li2022othello_iclr}. The researchers trained a GPT variant ("Othello-GPT") on sequences of legal Othello moves — with **no knowledge of the game rules, board structure, or even that a board exists**. The model saw only token sequences representing tile indices (a vocabulary of 60 tokens).
+
+Despite this, probing experiments revealed that the model had developed an **internal representation of the board state**:
+
+- **Linear probes** achieved only ~20% error — barely better than probing a randomized network.
+- **Nonlinear probes** (2-layer MLPs) achieved error rates as low as **1.7%** on synthetic data, demonstrating that the board state is encoded in a **nonlinear** manifold within the residual stream.
+
+$$\text{Probe: } p_\theta(x^l_t) = \text{softmax}(W_1 \cdot \text{ReLU}(W_2 \cdot x^l_t))$$
+
+where $x^l_t$ is the residual stream activation at layer $l$, position $t$.
+
+### Interventional Evidence: The Representation is Causal
+
+Crucially, the representation is not merely correlational — it is **causal**. The researchers modified internal activations to reflect a counterfactual board state (e.g., flipping a tile from white to black), then measured whether the model's predictions changed accordingly. On both "natural" (reachable) and "unnatural" (unreachable) board states, the intervention produced predictions consistent with the new state, with average errors of only **0.12** and **0.06** respectively (compared to a null-intervention baseline of ~2.6 errors).
+
+This means the model doesn't just *correlate* with the board state — it *uses* the board state to make predictions. The world model is causally upstream of the output.
+
+### Latent Saliency Maps: Attribution via Intervention
+
+By systematically intervening on each tile's representation and measuring the change in prediction probability, the researchers created **latent saliency maps** — visualizations showing which tiles on the board are most important for a given prediction. For the synthetic-trained model, these maps precisely highlight the tiles required to make a move legal (the AND-logic of Othello's flanking rule). For the championship-trained model, the maps reveal more complex global strategic features.
+
+### Implications for Mechanistic Interpretability
+
+The Othello-GPT result establishes a key principle: **next-token prediction on sequences can produce internal representations that encode the causal structure of the world that generated those sequences**. This is directly relevant to understanding LLMs trained on natural language — the question is whether analogous world models exist for more complex domains.
+</div>
+
+<div id="othello-container"></div>
+
+<div class="md">
+## The Linear Representation Hypothesis: Geometry of Concepts
+
+\cite[Park, Choe & Veitch (2024)]{park2024linear} formalize what it means for concepts to be "linearly represented" in an LLM. They identify **three** notions of linear representation and prove they are unified by a single geometric structure:
+
+### Three Notions of Linear Representation
+
+1. **Subspace (Direction):** A concept like male→female is represented as a direction $\bar{\gamma}_W$ in the unembedding space, such that $\gamma(\text{"queen"}) - \gamma(\text{"king"})$ is parallel to $\gamma(\text{"woman"}) - \gamma(\text{"man"})$.
+
+2. **Measurement (Probing):** The probability of a concept value is logit-linear in the representation:
+$$\text{logit}\, P(Y = Y(1) \mid Y \in \{Y(0), Y(1)\}, \lambda) = \alpha \cdot \lambda^\top \bar{\gamma}_W$$
+
+3. **Intervention (Steering):** Adding a steering vector $\bar{\lambda}_W$ to the context embedding changes the target concept without affecting causally separable concepts.
+
+### The Causal Inner Product
+
+The key insight is that the standard Euclidean inner product is **not** the right geometry for the representation space. The model's representations are identified only up to an invertible linear transformation (because the softmax is invariant to such transformations). Park et al. define a **causal inner product**:
+
+$$\langle \bar{\gamma}, \bar{\gamma}' \rangle_C := \bar{\gamma}^\top \text{Cov}(\gamma)^{-1} \bar{\gamma}'$$
+
+where $\text{Cov}(\gamma)$ is the covariance of unembedding vectors sampled uniformly from the vocabulary. This inner product has the property that **causally separable concepts are orthogonal** — e.g., English→French ⊥ male→female.
+
+### Unification Theorem
+
+Under the causal inner product, the Riesz isomorphism maps each unembedding representation $\bar{\gamma}_W$ to its corresponding embedding representation $\bar{\lambda}_W$:
+
+$$\langle \bar{\gamma}_W, \cdot \rangle_C = \bar{\lambda}_W^\top$$
+
+This means: **probing directions and steering vectors are the same object**, viewed from different sides of the model. You can construct steering vectors from word-pair differences, and vice versa.
+
+### Sheaf Note: Tension with Othello-GPT
+
+The Linear Representation Hypothesis assumes concepts are encoded **linearly** (as directions). The Othello-GPT experiment found that **linear probes fail** (20% error) while **nonlinear probes succeed** (1.7% error). This is not a contradiction but a refinement: the board state in Othello-GPT is encoded nonlinearly, while many semantic concepts in large language models (trained on natural language at scale) appear to develop linear representations. The difference may be one of **scale and training distribution** — larger models trained on richer data may linearize representations that smaller models encode nonlinearly. This is consistent with the finding by \cite[Marks & Tegmark (2023)]{marks2023geometry} that linear truth representations emerge with scale.
+</div>
+
+<div id="linear-rep-container"></div>
+
+<div class="md">
+## Looped Transformers as Programmable Computers
+
+\cite[Giannou et al. (2023)]{giannou2023looped} demonstrate that a **constant-depth** Transformer (≤13 layers), when placed in a loop, can emulate a **general-purpose computer**. This result has profound implications for understanding what Transformers *can* compute and how they might implement algorithms internally.
+
+### The Architecture: Input as Punchcard
+
+The input sequence is structured as:
+
+$$X = \begin{bmatrix} \underbrace{S}_{\text{scratchpad}} & \underbrace{M}_{\text{memory}} & \underbrace{C}_{\text{commands}} \\ p_1 \ldots p_s & p_{s+1} \ldots p_{s+m} & p_{s+m+1} \ldots p_n \end{bmatrix}$$
+
+- **Scratchpad:** Temporary workspace (like CPU cache)
+- **Memory:** Data storage for read/write operations
+- **Commands:** Instructions the transformer executes
+
+The transformer processes this input, produces an output, and the output is fed back as the new input — exactly like a CPU executing one instruction per clock cycle.
+
+### FLEQ: A Flexible Single-Instruction Computer
+
+The authors construct transformers that execute a generalized single-instruction language called FLEQ:
+
+```
+mem[c] = f_m(mem[a], mem[b]) if mem[flag] ≤ 0: goto instruction_p
+```
+
+
+where $f_m$ can be matrix multiplication, nonlinear functions, polynomials, etc. Since SUBLEQ (subtract-and-branch-if-≤0) is Turing-complete, and FLEQ generalizes SUBLEQ, the looped transformer is a **universal computer**.
+
+### Key Results
+
+| Task | Layers | Heads |
+|------|--------|-------|
+| General-purpose computer (SUBLEQ) | 9 | 2 |
+| Matrix inversion | 13 | 1 |
+| Power iteration | 13 | 1 |
+| SGD on neural networks | 13 | 1 |
+
+The depth does **not** scale with program length — only with the complexity of a single instruction. This is because the loop handles iteration, not depth.
+
+### Building Blocks from Attention
+
+The construction uses attention to implement:
+- **Permutation matrices** (copying data between memory locations)
+- **Program counter** (binary positional encodings incremented via ReLU layers)
+- **Conditional branching** (comparing values and jumping to instructions)
+- **Nonlinear functions** (approximated via sigmoid combinations)
+
+### Implications for Mechanistic Interpretability
+
+This result suggests that when we observe a trained Transformer performing multi-step reasoning, it may be implementing something analogous to a looped program — using the residual stream as memory, attention for data routing, and MLPs for computation. The "circuits" discovered by mechanistic interpretability may be fragments of such implicit programs.
+
+### Sheaf Note: Connecting to Othello-GPT and Linear Representations
+
+All three papers share a common situs: the residual stream as a computational medium. The Looped Transformer paper shows the stream *can* implement arbitrary programs; Othello-GPT shows it *does* build world models from sequence prediction; and the Linear Representation Hypothesis shows the *geometry* of what's stored there respects causal structure. Together, they form a coherent sheaf: local sections (individual findings) that glue into a global picture of the Transformer as a structured computational system with interpretable geometry.
+</div>
+
+<div id="looped-tf-container"></div>
+
+<div class="md">
 ## Summary: Opening the Black Box
 
 Mechanistic interpretability is the practice of reverse-engineering neural networks into human-understandable algorithms. The key insights are:
