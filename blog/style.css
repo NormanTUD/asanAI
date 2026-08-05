@@ -5163,14 +5163,12 @@ html.dark #theme-toggle .ti-moon { display: none; }
    ════════════════════════════════════════════════════════ */
 .glossary-term {
 	cursor: help;
-	border-bottom: 1px dashed var(--mn-accent);
-	color: var(--mn-accent);
+	border-bottom: 1px dotted currentColor;
 	position: relative;
 	display: inline;
-	transition: color 0.15s ease;
 }
 .glossary-term:hover {
-	color: var(--mn-accent-dark);
+	border-bottom-style: solid;
 }
 .glossary-tooltip {
 	position: fixed;
