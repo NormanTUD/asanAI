@@ -67,9 +67,22 @@ function warn(id, msg) {
 	con.innerHTML = `[${time}] &#9888; <span class='warning-msg'>${msg}</span><br>` + con.innerHTML;
 }
 
+function getTopLevelMdContainers() {
+	return Array.from(document.querySelectorAll('.md')).filter(container => {
+		let parent = container.parentElement;
+		while (parent) {
+			if (parent.classList && parent.classList.contains('md')) {
+				return false;
+			}
+			parent = parent.parentElement;
+		}
+		return true;
+	});
+}
+
 function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
-	document.querySelectorAll('.md').forEach(container => {
+	getTopLevelMdContainers().forEach(container => {
 		// 1. Inhalt holen und Einrückungen fixen
 		let rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
 
@@ -732,7 +745,7 @@ function smartquote() {
 function bibtexify() {
 	updateLoadingStatus("Processing Citations...");
 
-	const containers = document.querySelectorAll('.md');
+	const containers = getTopLevelMdContainers();
 	const mainContent = document.getElementById('contents');
 	let footnotesDiv = document.getElementById('footnotes');
 	let footnotesHTML = "";
@@ -858,13 +871,7 @@ function bibtexify() {
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
 
-			// Split the link text into words
-			const linkWords = String(linkText).split(" ");
-			const lastWord = linkWords.pop(); // Get the last word
-			const precedingText = linkWords.join(" "); // All but the last word
-
-			// Combine the preceding text and last word into a single <a> tag
-			const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer; white-space: nowrap;">${precedingText} ${lastWord}</a>`;
+			const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>`;
 
 			// Return the final citation element (citation link + source-icon link)
 			return `<span class="autociteelement">${fullLink}${svgIcon}</span>`;

@@ -583,8 +583,23 @@
 		return undefined;
 	}
 
+	/* The underbrace label: when it contains LaTeX math notation (\ , _, ^,
+	   {, ~) render it in math mode; otherwise treat it as plain text inside
+	   \text{...}. This keeps both `W^q_{0}[0]` and `posEmbedScalar` correct. */
+	function _under(label) {
+		var s = String(label);
+		if (/[\\_^{~]/.test(s)) return s;
+		return '\\text{' + texSafe(s) + '}';
+	}
+
 	function _ub(tex, label) {
-		return '\\underbrace{' + tex + '}_{\\text{' + texSafe(label) + '}}';
+		return '\\underbrace{' + tex + '}_{' + _under(label) + '}';
+	}
+
+	/* Plain-text identifier for use inside math mode (avoids italic math
+	   letter-spacing, e.g. posEmbedScalar → \text{posEmbedScalar}). */
+	function _text(s) {
+		return '\\text{' + texSafe(String(s)) + '}';
 	}
 
 	function _node(o) {
@@ -626,9 +641,9 @@
 		return _node({
 			id: 'P:scalar',
 			value: scalar,
-			name: 'posEmbedScalar',
+			name: _text('posEmbedScalar'),
 			badge: 'config constant',
-			formula: 'posEmbedScalar = ' + fmt(scalar),
+			formula: _text('posEmbedScalar') + ' = ' + fmt(scalar),
 			inputs: []
 		});
 	}
@@ -691,7 +706,7 @@
 				_ub(fmt(trig), (isSin ? '\\sin' : '\\cos') + '(p\\cdot\\omega_{' + i + '}^{-1})') +
 				'\\; =\\;' + _ub(fmt(val), 'scaled positional encoding'),
 			inputs: [
-				_chip('P:scalar', 'posEmbedScalar', 'config constant', scalar),
+				_chip('P:scalar', _text('posEmbedScalar'), 'config constant', scalar),
 				_chip('P:base:' + p + ':' + i, 'ω_{' + i + '}', 'frequency', base),
 				_chip('P:trig:' + p + ':' + i, (isSin ? '\\sin' : '\\cos') + ' term', 'positional trig term', trig)
 			]
@@ -881,14 +896,17 @@
 	function _matQNode(L, h, p, i) {
 		var base = 'L:' + L + ':head:' + h;
 		var d = _dModel();
-		var dk = _grid(base + ':q').data[0].length;
-		var terms = [];
+		var terms = [], chips = [];
 		for (var k = 0; k < d; k++) {
+			var nV = _gval('L:' + L + ':norm', p, k);
+			var wV = _gval(base + ':Wq', k, i);
 			terms.push({
-				tex: _ub(fmt(_gval('L:' + L + ':hin', p, k)), 'h_{in}[' + p + '][' + k + ']') + '\\cdot' +
-					_ub(fmt(_gval(base + ':Wq', k, i)), 'W^q_{' + k + '}[' + i + ']'),
+				tex: _ub(fmt(nV), 'ln_1[' + p + '][' + k + ']') + '\\cdot' +
+					_ub(fmt(wV), 'W^q_{' + k + '}[' + i + ']'),
 				key: k
 			});
+			chips.push(_chip('L:' + L + ':norm:' + p + ':' + k, 'ln_1[' + p + '][' + k + ']', 'LayerNorm 1', nV));
+			chips.push(_chip(base + ':Wq:' + k + ':' + i, 'W^q_{' + k + '}[' + i + ']', 'query weights', wV));
 		}
 		var val = _gval(base + ':q', p, i);
 		return _node({
@@ -897,10 +915,34 @@
 			name: 'q_{' + p + '}[' + i + ']',
 			badge: 'query, head ' + h + ' · Layer ' + L + ', token ' + p,
 			formula: 'q_{' + p + '}[' + i + '] = ' + _plusTerms(terms, 3) + ' = ' + _ub(fmt(val), 'query'),
-			inputs: [
-				_chip('L:' + L + ':hin:' + p + ':0', 'h_{in}[' + p + '][0]', 'input', _gval('L:' + L + ':hin', p, 0)),
-				_chip(base + ':Wq:0:' + i, 'W^q_{0}[' + i + ']', 'query weights', _gval(base + ':Wq', 0, i))
-			]
+			inputs: chips
+		});
+	}
+
+	function _matKVNode(L, h, which, p, i) {
+		var base = 'L:' + L + ':head:' + h;
+		var d = _dModel();
+		var nm = 'W^' + which, nm0 = which, keyW = base + ':W' + which;
+		var terms = [], chips = [];
+		for (var k = 0; k < d; k++) {
+			var nV = _gval('L:' + L + ':norm', p, k);
+			var wV = _gval(keyW, k, i);
+			terms.push({
+				tex: _ub(fmt(nV), 'ln_1[' + p + '][' + k + ']') + '\\cdot' +
+					_ub(fmt(wV), nm + '_{' + k + '}[' + i + ']'),
+				key: k
+			});
+			chips.push(_chip('L:' + L + ':norm:' + p + ':' + k, 'ln_1[' + p + '][' + k + ']', 'LayerNorm 1', nV));
+			chips.push(_chip(keyW + ':' + k + ':' + i, nm + '_{' + k + '}[' + i + ']', which + ' weights', wV));
+		}
+		var val = _gval(base + ':' + which, p, i);
+		return _node({
+			id: base + ':' + which + ':' + p + ':' + i,
+			value: val,
+			name: nm0 + '_{' + p + '}[' + i + ']',
+			badge: which + ', head ' + h + ' · Layer ' + L + ', token ' + p,
+			formula: nm0 + '_{' + p + '}[' + i + '] = ' + _plusTerms(terms, 3) + ' = ' + _ub(fmt(val), which),
+			inputs: chips
 		});
 	}
 
@@ -908,28 +950,34 @@
 		var base = 'L:' + L + ':head:' + h;
 		var dk = _grid(base + ':k').data[0].length;
 		var inv = 1 / Math.sqrt(dk);
-		var terms = [];
+		var terms = [], chips = [];
 		for (var k = 0; k < dk; k++) {
+			var qV = _gval(base + ':q', p, k);
+			var kV = _gval(base + ':k', j, k);
 			terms.push({
-				tex: _ub(fmt(_gval(base + ':q', p, k)), 'q_{' + p + '}[' + k + ']') + '\\cdot' +
-					_ub(fmt(_gval(base + ':k', j, k)), 'k_{' + j + '}[' + k + ']'),
+				tex: _ub(fmt(qV), 'q_{' + p + '}[' + k + ']') + '\\cdot' +
+					_ub(fmt(kV), 'k_{' + j + '}[' + k + ']'),
 				key: k
 			});
+			chips.push(_chip(base + ':q:' + p + ':' + k, 'q_{' + p + '}[' + k + ']', 'query', qV));
+			chips.push(_chip(base + ':k:' + j + ':' + k, 'k_{' + j + '}[' + k + ']', 'key', kV));
 		}
 		var val = _gval(base + ':scores', p, j);
+		/* Causal mask: token p must not attend to token j > p, so the score is
+		   replaced by -1e9 (the product above is NOT the result). Show both. */
+		var masked = j > p;
+		var formula = 's_{' + p + ',' + j + '} = ' + _ub(fmt(inv), '1/\\sqrt{d_k}') +
+			'\\cdot\\left( ' + _plusTerms(terms, 3) + '\\right)';
+		formula += masked
+			? '\\;\\longrightarrow\\;' + _ub(fmt(val), 'causal mask: token ' + p + ' cannot attend to token ' + j + ' (j > i)')
+			: ' = ' + _ub(fmt(val), 'score');
 		return _node({
 			id: base + ':scores:' + p + ':' + j,
 			value: val,
 			name: 's_{' + p + ',' + j + '}',
-			badge: 'attention score, head ' + h,
-			formula: 's_{' + p + ',' + j + '} = ' + _ub(fmt(inv), '1/\\sqrt{d_k}') +
-				'\\cdot\\left( ' + _plusTerms(terms, 3) + '\\right) = ' + _ub(fmt(val), 'score'),
-			inputs: [
-				_chip(base + ':q:' + p + ':0', 'q_{' + p + '}[0]', 'query', _gval(base + ':q', p, 0)),
-				_chip(base + ':k:' + j + ':0', 'k_{' + j + '}[0]', 'key', _gval(base + ':k', j, 0)),
-				_chip(base + ':q:' + p + ':' + (dk - 1), 'q_{' + p + '}[' + (dk - 1) + ']', 'query', _gval(base + ':q', p, dk - 1)),
-				_chip(base + ':k:' + j + ':' + (dk - 1), 'k_{' + j + '}[' + (dk - 1) + ']', 'key', _gval(base + ':k', j, dk - 1))
-			]
+			badge: 'attention score, head ' + h + (masked ? ' · masked (causal)' : ''),
+			formula: formula,
+			inputs: chips
 		});
 	}
 
@@ -951,12 +999,13 @@
 		var base = 'L:' + L + ':head:' + h;
 		var seq = _grid(base + ':scores').data[p].length;
 		var sum = 0;
-		var terms = [];
+		var terms = [], chips = [];
 		for (var j = 0; j < seq; j++) {
 			var s = _gval(base + ':scores', p, j);
 			var e = Math.exp(num(s));
 			sum += e;
 			terms.push({ tex: _ub(fmt(e), 'e^{s_{' + p + ',' + j + '}}') });
+			chips.push(_chip(base + ':escore:' + p + ':' + j, 'e^{s_{' + p + ',' + j + '}}', 'unnormalized weight', e));
 		}
 		return _node({
 			id: base + ':ssum:' + p,
@@ -964,7 +1013,7 @@
 			name: 'Z_{' + p + '}',
 			badge: 'softmax denominator, row ' + p,
 			formula: 'Z_{' + p + '} = ' + _plusTerms(terms, 4) + ' = ' + _ub(fmt(sum), 'normalizer'),
-			inputs: []
+			inputs: chips
 		});
 	}
 
@@ -1038,12 +1087,16 @@
 	function _matProjCell(L, p, i) {
 		var base = 'L:' + L;
 		var d = _dModel();
-		var terms = [];
+		var terms = [], chips = [];
 		for (var k = 0; k < d; k++) {
+			var cV = _gval(base + ':concat', p, k);
+			var wV = _gval(base + ':Wo', k, i);
 			terms.push({
-				tex: _ub(fmt(_gval(base + ':concat', p, k)), 'cat_{' + p + '}[' + k + ']') + '\\cdot' +
-					_ub(fmt(_gval(base + ':Wo', k, i)), 'W_o{' + k + ',' + i + '}')
+				tex: _ub(fmt(cV), 'cat_{' + p + '}[' + k + ']') + '\\cdot' +
+					_ub(fmt(wV), 'W_o{' + k + ',' + i + '}')
 			});
+			chips.push(_chip(base + ':concat:' + p + ':' + k, 'cat_{' + p + '}[' + k + ']', 'concat', cV));
+			chips.push(_chip(base + ':Wo:' + k + ':' + i, 'W_o{' + k + ',' + i + '}', 'output weights', wV));
 		}
 		var val = _gval(base + ':proj', p, i);
 		return _node({
@@ -1052,10 +1105,7 @@
 			name: 'a_{' + p + '}[' + i + ']',
 			badge: 'attention output (projected) · Layer ' + L,
 			formula: 'a_{' + p + '}[' + i + '] = ' + _plusTerms(terms, 3) + ' = ' + _ub(fmt(val), 'attention output'),
-			inputs: [
-				_chip(base + ':concat:' + p + ':0', 'cat_{' + p + '}[0]', 'concat', _gval(base + ':concat', p, 0)),
-				_chip(base + ':Wo:0:' + i, 'W_o{0,' + i + '}', 'output weights', _gval(base + ':Wo', 0, i))
-			]
+			inputs: chips
 		});
 	}
 
@@ -1110,14 +1160,19 @@
 	function _matU(L, p, j) {
 		var base = 'L:' + L;
 		var d = _dModel();
-		var terms = [];
+		var terms = [], chips = [];
 		for (var i = 0; i < d; i++) {
+			var nV = _gval(base + ':norm2', p, i);
+			var wV = _gval(base + ':W1', i, j);
 			terms.push({
-				tex: _ub(fmt(_gval(base + ':norm2', p, i)), 'ln_2[' + p + '][' + i + ']') + '\\cdot' +
-					_ub(fmt(_gval(base + ':W1', i, j)), 'W1_{' + i + ',' + j + '}')
+				tex: _ub(fmt(nV), 'ln_2[' + p + '][' + i + ']') + '\\cdot' +
+					_ub(fmt(wV), 'W1_{' + i + ',' + j + '}')
 			});
+			chips.push(_chip(base + ':norm2:' + p + ':' + i, 'ln_2[' + p + '][' + i + ']', 'LayerNorm 2', nV));
+			chips.push(_chip(base + ':W1:' + i + ':' + j, 'W1_{' + i + ',' + j + '}', 'FFN weight', wV));
 		}
 		var b = _gval(base + ':b1', 0, j);
+		chips.push(_chip(base + ':b1:' + j, 'b1_{' + j + '}', 'FFN bias', b));
 		// raw pre-activation is not stored; recompute it
 		var u = b;
 		for (var k = 0; k < d; k++) u += _gval(base + ':norm2', p, k) * _gval(base + ':W1', k, j);
@@ -1128,11 +1183,7 @@
 			badge: 'FFN pre-activation · Layer ' + L,
 			formula: 'u_{' + p + '}[' + j + '] = ' + _plusTerms(terms, 3) + ' + ' +
 				_ub(fmt(b), 'bias b1_{' + j + '}') + ' = ' + _ub(fmt(u), 'pre-activation'),
-			inputs: [
-				_chip(base + ':norm2:' + p + ':0', 'ln_2[' + p + '][0]', 'LayerNorm 2', _gval(base + ':norm2', p, 0)),
-				_chip(base + ':W1:0:' + j, 'W1_{0,' + j + '}', 'FFN weight', _gval(base + ':W1', 0, j)),
-				_chip(base + ':b1:' + j, 'b1_{' + j + '}', 'FFN bias', b)
-			]
+			inputs: chips
 		});
 	}
 
@@ -1178,14 +1229,19 @@
 	function _matOutFFN(L, p, i) {
 		var base = 'L:' + L;
 		var d = _grid(base + ':W2').data.length;
-		var terms = [];
+		var terms = [], chips = [];
 		for (var j = 0; j < d; j++) {
+			var oV = _gval(base + ':outL1', p, j);
+			var wV = _gval(base + ':W2', j, i);
 			terms.push({
-				tex: _ub(fmt(_gval(base + ':outL1', p, j)), 'out_{L1}[' + p + '][' + j + ']') + '\\cdot' +
-					_ub(fmt(_gval(base + ':W2', j, i)), 'W2_{' + j + ',' + i + '}')
+				tex: _ub(fmt(oV), 'out_{L1}[' + p + '][' + j + ']') + '\\cdot' +
+					_ub(fmt(wV), 'W2_{' + j + ',' + i + '}')
 			});
+			chips.push(_chip(base + ':outL1:' + p + ':' + j, 'out_{L1}[' + p + '][' + j + ']', 'FFN layer 1', oV));
+			chips.push(_chip(base + ':W2:' + j + ':' + i, 'W2_{' + j + ',' + i + '}', 'FFN weight', wV));
 		}
 		var b = _gval(base + ':b2', 0, i);
+		chips.push(_chip(base + ':b2:' + i, 'b2_{' + i + '}', 'FFN bias', b));
 		var val = _gval(base + ':outFFN', p, i);
 		return _node({
 			id: base + ':outFFN:' + p + ':' + i,
@@ -1194,11 +1250,7 @@
 			badge: 'FFN output · Layer ' + L,
 			formula: '\\mathrm{out}_{FFN}[' + p + '][' + i + '] = ' + _plusTerms(terms, 3) + ' + ' +
 				_ub(fmt(b), 'bias b2_{' + i + '}') + ' = ' + _ub(fmt(val), 'FFN output'),
-			inputs: [
-				_chip(base + ':outL1:' + p + ':0', 'out_{L1}[' + p + '][0]', 'FFN layer 1', _gval(base + ':outL1', p, 0)),
-				_chip(base + ':W2:0:' + i, 'W2_{0,' + i + '}', 'FFN weight', _gval(base + ':W2', 0, i)),
-				_chip(base + ':b2:' + i, 'b2_{' + i + '}', 'FFN bias', b)
-			]
+			inputs: chips
 		});
 	}
 
@@ -1280,11 +1332,15 @@
 		var T = S._finalMeta ? S._finalMeta.temperature : 1;
 		var logits = _grid('F:logits');
 		var seq = logits.data.length;
-		var sum = 0, terms = [];
+		var sum = 0, terms = [], chips = [];
 		for (var t = 0; t < seq; t++) {
-			var v = scaled ? Math.exp(_gval('F:logits', 0, t) / T) : Math.exp(_gval('F:logits', 0, t));
+			var lg = _gval('F:logits', 0, t);
+			var v = scaled ? Math.exp(lg / T) : Math.exp(lg);
 			sum += v;
 			terms.push({ tex: _ub(fmt(v), (scaled ? 'e^{logit_' + t + '/T}' : 'e^{logit_' + t + '}')) });
+			chips.push(scaled
+				? _chip('F:logit:' + t, '\\mathrm{logit}_{' + t + '}', 'raw score', lg)
+				: _chip('F:exp:' + t, 'e^{\\mathrm{logit}_{' + t + '}}', 'unnormalized probability', v));
 		}
 		return _node({
 			id: scaled ? 'F:spowsum' : 'F:ssum',
@@ -1292,7 +1348,7 @@
 			name: (scaled ? 'Z_T' : 'Z'),
 			badge: scaled ? 'softmax denominator (T-scaled)' : 'softmax denominator',
 			formula: (scaled ? 'Z_T' : 'Z') + ' = ' + _plusTerms(terms, 4) + ' = ' + _ub(fmt(sum), 'normalizer'),
-			inputs: []
+			inputs: chips
 		});
 	}
 
@@ -1300,12 +1356,16 @@
 		var T = S._finalMeta ? S._finalMeta.temperature : 1;
 		var d = _grid('F:h_last').data.length;
 		if (kind === 'logit') {
-			var terms = [];
+			var terms = [], chips = [];
 			for (var j = 0; j < d; j++) {
+				var hV = _gval('F:h_last', 0, j);
+				var wV = _gval('F:Wv', i, j);
 				terms.push({
-					tex: _ub(fmt(_gval('F:h_last', 0, j)), 'h_{\\text{last}}[' + j + ']') + '\\cdot' +
-						_ub(fmt(_gval('F:Wv', i, j)), 'W_{\\text{vocab}}[' + i + '][' + j + ']')
+					tex: _ub(fmt(hV), 'h_{\\text{last}}[' + j + ']') + '\\cdot' +
+						_ub(fmt(wV), 'W_{\\text{vocab}}[' + i + '][' + j + ']')
 				});
+				chips.push(_chip('F:h_last:0:' + j, 'h_{\\text{last}}[' + j + ']', 'final hidden state', hV));
+				chips.push(_chip('F:Wv:' + i + ':' + j, 'W_{\\text{vocab}}[' + i + '][' + j + ']', 'unembedding', wV));
 			}
 			var val = _gval('F:logits', 0, i);
 			return _node({
@@ -1314,10 +1374,7 @@
 				name: 'logit_{' + i + '}',
 				badge: 'raw score for vocabulary word ' + i,
 				formula: '\\mathrm{logit}_{' + i + '} = ' + _plusTerms(terms, 3) + ' = ' + _ub(fmt(val), 'logit'),
-				inputs: [
-					_chip('F:h_last:0:0', 'h_{\\text{last}}[0]', 'final hidden state', _gval('F:h_last', 0, 0)),
-					_chip('F:Wv:' + i + ':0', 'W_{\\text{vocab}}[' + i + '][0]', 'unembedding', _gval('F:Wv', i, 0))
-				]
+				inputs: chips
 			});
 		}
 		if (kind === 'exp') {
@@ -1468,7 +1525,446 @@
 
 	/* Cap on how many steps a full trace collects (the dependency graph
 	   can fan out enormously for layer values on multi-token input). */
-	var _traceCap = 250;
+	var _traceCap = 1000;
+	/* Formulas are Temml-rendered lazily in chunks as the user scrolls, so a
+	   long trace opens quickly without parsing hundreds of big formulas. */
+	var _traceChunk = 60;
+
+	function _hydrateTex(container, selector, cursorAttr, limit) {
+		if (!container) return;
+		var boxes = container.querySelectorAll(selector);
+		if (!boxes.length) return;
+		var cursor = +container.getAttribute(cursorAttr) || 0;
+		var i = cursor, done = 0;
+		var max = limit || _traceChunk;
+		while (i < boxes.length && done < max) {
+			var b = boxes[i];
+			if (!b.textContent) {
+				b.innerHTML = '<span class="md">$$' + b.getAttribute('data-tex') + '$$</span>';
+				if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
+					try { temml.renderMathInElement(b); } catch (e) { /* keep raw */ }
+				}
+				done++;
+			}
+			i++;
+		}
+		container.setAttribute(cursorAttr, i);
+	}
+
+	function _hydrateTrace(container) {
+		_hydrateTex(container, '.prov-trace-formula[data-tex]', 'data-trace-cursor');
+	}
+
+	/* Convert a LaTeX name into short readable plain text for the SVG map
+	   (no Temml needed there): q_{0}[0] → q_0[0], \omega_{1} → ω_1, etc. */
+	function _plain(s) {
+		if (typeof s !== 'string') s = String(s);
+		var map = {
+			'\\operatorname': '', '\\mathrm': '', '\\text': '',
+			'\\sin': 'sin', '\\cos': 'cos', '\\tan': 'tan', '\\exp': 'exp', '\\log': 'log',
+			'\\ln': 'ln', '\\cdot': '·', '\\times': '×', '\\omega': 'ω', '\\mu': 'μ',
+			'\\sigma': 'σ', '\\alpha': 'α', '\\beta': 'β', '\\gamma': 'γ', '\\delta': 'δ',
+			'\\Delta': 'Δ', '\\sum': 'Σ', '\\sqrt': '√', '\\ge': '≥', '\\le': '≤'
+		};
+		for (var k in map) s = s.split(k).join(map[k]);
+		s = s.replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '$1/$2');
+		s = s.replace(/\\frac([A-Za-z0-9])([A-Za-z0-9])/g, '$1/$2');
+		s = s.replace(/\\\{/g, '{').replace(/\\\}/g, '}');
+		s = s.replace(/\^\{/g, '^').replace(/_\{/g, '_');
+		s = s.replace(/\^([0-9]+)/g, '^$1');
+		s = s.replace(/\\/g, '').replace(/[{}]/g, '');
+		return s;
+	}
+
+	/* Colour family for a node id, so the whole network reads like a map:
+	   attention in blue, FFN in orange, projection in green, norms purple,
+	   embeddings teal, positional gold, final red. */
+	function _famOf(id) {
+		if (id.indexOf('F:') === 0) return 'final';
+		if (id.indexOf('P:') === 0) {
+			if (/^P:(pe|trig|base|scalar)/.test(id)) return 'pe';
+			return 'emb';
+		}
+		if (/^[LR]:\d+:head:\d+:(q|k|v|Wq|Wk|Wv|scores|alpha|escore|ssum|ctx)/.test(id)) return 'attn';
+		if (/^[LR]:\d+:(concat|proj|Wo)/.test(id)) return 'proj';
+		if (/^[LR]:\d+:(u|W1|W2|b1|b2|outFFN|gelu|outL1)/.test(id)) return 'ffn';
+		if (/^[LR]:\d+:(mu|var|std|znorm|norm|gamma|beta)/.test(id)) return 'ln';
+		return 'h';
+	}
+
+	/* Stage label for the derivation document, so the reader sees a readable
+	   pipeline: embeddings → positional → norm → attention → softmax →
+	   context → projection → residual → FFN → final. */
+	function _stageOf(id) {
+		if (id.indexOf('P:emb') === 0 || id.indexOf('R:0:emb') === 0) return 'Token embeddings';
+		if (id.indexOf('P:h0') === 0 || id.indexOf('R:0:h0') === 0) return 'Input hidden state (embedding + position)';
+		if (/^P:(pe|trig|base|scalar)/.test(id) || id.indexOf('R:0:pe') === 0) return 'Positional encoding';
+		if (id.indexOf('F:') === 0) return 'Final stage';
+		if (/^[LR]:\d+:norm2/.test(id)) return 'LayerNorm (post-attention)';
+		if (/^[LR]:\d+:(norm|mu|var|std|znorm|gamma|beta)/.test(id)) return 'LayerNorm (pre-attention)';
+		if (/^[LR]:\d+:hin/.test(id)) return 'Residual input';
+		if (/^[LR]:\d+:head:\d+:(q|k|v|Wq|Wk|Wv)/.test(id)) return 'Attention inputs (q, k, v)';
+		if (/^[LR]:\d+:head:\d+:scores/.test(id)) return 'Attention scores';
+		if (/^[LR]:\d+:head:\d+:(escore|ssum|alpha)/.test(id)) return 'Softmax attention weights';
+		if (/^[LR]:\d+:head:\d+:ctx/.test(id)) return 'Attention context';
+		if (/^[LR]:\d+:(concat|proj|Wo)/.test(id)) return 'Concatenation & output projection';
+		if (/^[LR]:\d+:h1/.test(id)) return 'Residual & post-attention hidden';
+		if (/^[LR]:\d+:(u|W1|W2|b1|b2|outL1|gelu|outFFN|h2)/.test(id)) return 'Feed-forward network';
+		return 'Other';
+	}
+
+	/* Reading order of the derivation document: token embeddings, positional
+	   encoding, then every transformer layer in order (inside each layer:
+	   residual input → pre-attention LayerNorm → q/k/v → scores → softmax →
+	   context → projection → h1 → post-attention LayerNorm → FFN → h2), then
+	   the final stage. This matches both the data flow and the story the
+	   reader wants ("from the token embedding to the current point"). */
+	function _derivKey(id) {
+		if (id.indexOf('P:emb') === 0 || id.indexOf('R:0:emb') === 0) return [0, 0];
+		if (/^P:(pe|trig|base|scalar)/.test(id) || id.indexOf('R:0:pe') === 0) return [0, 1];
+		if (id.indexOf('P:h0') === 0 || id.indexOf('R:0:h0') === 0) return [0, 2];
+		var m = /^[LR]:(\d+):/.exec(id);
+		if (m) {
+			var sub;
+			if (/^[LR]:\d+:hin/.test(id)) sub = 1;
+			else if (/^[LR]:\d+:norm2/.test(id)) sub = 9;
+			else if (/^[LR]:\d+:(norm|mu|var|std|znorm|gamma|beta)/.test(id)) sub = 2;
+			else if (/^[LR]:\d+:head:\d+:(q|k|v|Wq|Wk|Wv)/.test(id)) sub = 3;
+			else if (/^[LR]:\d+:head:\d+:scores/.test(id)) sub = 4;
+			else if (/^[LR]:\d+:head:\d+:(escore|ssum|alpha)/.test(id)) sub = 5;
+			else if (/^[LR]:\d+:head:\d+:ctx/.test(id)) sub = 6;
+			else if (/^[LR]:\d+:(concat|proj|Wo)/.test(id)) sub = 7;
+			else if (/^[LR]:\d+:h1/.test(id)) sub = 8;
+			else sub = 10; /* u, W1, W2, b1, b2, outL1, gelu, outFFN, h2 */
+			return [+m[1] + 1, sub];
+		}
+		if (id.indexOf('F:') === 0) return [999, 0];
+		return [998, 0];
+	}
+
+	function _derivLabel(id) {
+		var m = /^[LR]:(\d+):/.exec(id);
+		var stage = _stageOf(id);
+		if (m && +m[1] >= 1 && stage !== 'Other') return 'Layer ' + m[1] + ' · ' + stage;
+		return stage;
+	}
+
+	/* ── Zoomable map of the full trace ──
+	   A pan/zoom SVG of the dependency DAG (columns = depth, i.e. input on
+	   the left, this value on the right). Zoom level controls what is shown:
+	   far → only the concrete numbers, mid → + names, close → bigger type. */
+	var _mapState = { tx: 0, ty: 0, scale: 1 };
+
+	/* Layout a trace: every node gets a column (depth) and a row. Returns
+	   the position map and the viewBox size. */
+	function _layoutGraph(steps) {
+		var colW = 170, rowH = 30;
+		var pos = {}, cols = {};
+		for (var s = 0; s < steps.length; s++) {
+			var st = steps[s], d = st.depth;
+			var idx = cols[d] || 0;
+			cols[d] = idx + 1;
+			pos[st.node.id] = { x: d * colW, y: idx * rowH };
+		}
+		var maxD = 0, maxH = 0;
+		for (var d2 in cols) {
+			maxD = Math.max(maxD, +d2);
+			maxH = Math.max(maxH, cols[d2] * rowH);
+		}
+		return { pos: pos, maxD: maxD, maxH: maxH, W: (maxD + 1) * colW + 220, H: maxH + 60, rowH: rowH };
+	}
+
+	/* Every edge runs from a node's column d to an input's column d+1, so
+	   all edges can be batched into ONE <path> per source column. A 25k-node
+	   network then needs only ~25 path elements instead of ~80k. */
+	function _edgeBatches(steps, layout) {
+		var rowH = layout.rowH;
+		var batches = {};
+		for (var i = 0; i < steps.length; i++) {
+			var n = steps[i].node, p = layout.pos[n.id];
+			if (!p) continue;
+			for (var k = 0; k < n.inputs.length; k++) {
+				var ip = layout.pos[n.inputs[k].id];
+				if (!ip) continue;
+				var x1 = ip.x, y1 = ip.y + rowH / 2, x2 = p.x, y2 = p.y + rowH / 2, mx = (x1 + x2) / 2;
+				(batches[p.x] = batches[p.x] || []).push('M' + x1 + ' ' + y1 + ' C' + mx + ' ' + y1 + ' ' + mx + ' ' + y2 + ' ' + x2 + ' ' + y2);
+			}
+		}
+		return batches;
+	}
+
+	function _nodeMarkup(n, p, rowH, isRoot) {
+		var name = _plain(n.name);
+		var rectW = Math.max(70, Math.min(160, 22 + name.length * 6.4));
+		return '<g class="prov-map-node fam-' + _famOf(n.id) + (isRoot ? ' prov-map-root' : '') + '" data-prov-go="' + attrSafe(n.id) + '" transform="translate(' + p.x + ',' + p.y + ')">' +
+			'<rect width="' + rectW + '" height="' + rowH + '" rx="5"/>' +
+			'<text class="prov-map-val" x="' + (rectW / 2) + '" y="' + (rowH / 2 - 2) + '">' + attrSafe(fmt(n.value)) + '</text>' +
+			'<text class="prov-map-name" x="' + (rectW / 2) + '" y="' + (rowH / 2 + 9) + '">' + attrSafe(name) + '</text>' +
+			'</g>';
+	}
+
+	/* DOM twin of _nodeMarkup: building a 25k-node map through innerHTML
+	   means parsing ~10MB of markup, which freezes the page for ~8s. Creating
+	   the elements via createElementNS in small chunks keeps the UI alive and
+	   finishes in well under a second of total work. */
+	function _nodeEl(n, p, rowH, ns) {
+		var name = _plain(n.name);
+		var rectW = Math.max(70, Math.min(160, 22 + name.length * 6.4));
+		var g = document.createElementNS(ns, 'g');
+		g.setAttribute('class', 'prov-map-node fam-' + _famOf(n.id));
+		g.setAttribute('data-prov-go', attrSafe(n.id));
+		g.setAttribute('transform', 'translate(' + p.x + ',' + p.y + ')');
+		var rect = document.createElementNS(ns, 'rect');
+		rect.setAttribute('width', rectW);
+		rect.setAttribute('height', rowH);
+		rect.setAttribute('rx', 5);
+		g.appendChild(rect);
+		var tv = document.createElementNS(ns, 'text');
+		tv.setAttribute('class', 'prov-map-val');
+		tv.setAttribute('x', rectW / 2);
+		tv.setAttribute('y', rowH / 2 - 2);
+		tv.textContent = fmt(n.value);
+		g.appendChild(tv);
+		var tn = document.createElementNS(ns, 'text');
+		tn.setAttribute('class', 'prov-map-name');
+		tn.setAttribute('x', rectW / 2);
+		tn.setAttribute('y', rowH / 2 + 9);
+		tn.textContent = name;
+		g.appendChild(tn);
+		return g;
+	}
+
+	function _fitMap(container, layout, isNet) {
+		var svg = container.querySelector('svg');
+		var cw = svg.clientWidth || 560, ch = svg.clientHeight || 340;
+		var sc = Math.min(cw / layout.W, ch / layout.H) * 0.92;
+		_mapState = { tx: (cw - layout.W * sc) / 2, ty: (ch - layout.H * sc) / 2, scale: sc, fit: sc };
+		_mapTransform(container);
+		_applyMapZoom(container, isNet);
+	}
+
+	function _buildMap(container, trace, rootId) {
+		container.innerHTML = '';
+		if (!trace || !trace.steps.length) {
+			container.innerHTML = '<span style="font-size:12px;color:#64748b;">No trace to map.</span>';
+			return;
+		}
+		var layout = _layoutGraph(trace.steps);
+		var parts = [];
+		parts.push('<svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 ' + layout.W + ' ' + layout.H + '">');
+		parts.push('<g class="prov-map-world">');
+		var batches = _edgeBatches(trace.steps, layout);
+		for (var d in batches) {
+			parts.push('<path class="prov-map-edge" d="' + batches[d].join(' ') + '"/>');
+		}
+		for (var j = 0; j < trace.steps.length; j++) {
+			var st2 = trace.steps[j], n2 = st2.node, p2 = layout.pos[n2.id];
+			if (!p2) continue;
+			parts.push(_nodeMarkup(n2, p2, layout.rowH, n2.id === rootId));
+		}
+		parts.push('</g></svg>');
+		container.innerHTML = parts.join('');
+		_fitMap(container, layout, false);
+	}
+
+	/* ── Whole-network map (async) ──
+	   The full network has ~25k nodes; building it synchronously would freeze
+	   the page for seconds. Build in small slices (seed → BFS → render) so
+	   the UI stays responsive, showing progress while it works. */
+	var _netBuildToken = 0;
+
+	function _buildNetMap(container) {
+		var token = ++_netBuildToken;
+		container.innerHTML = '<div class="prov-map-loading">Building whole network…</div>';
+		var state = {
+			seen: {}, queue: [], steps: [], o: 0,
+			seeds: [], seedCursor: 0,
+			phase: 'seeds', layout: null, svgOpen: false, stepCursor: 0
+		};
+		var F = _grid('F:logits');
+		if (F) {
+			var V = (F.isVec ? F.data : F.data[0]).length;
+			for (var v = 0; v < V; v++) {
+				state.seeds.push('F:logit:' + v);
+				if (_grid('F:probs')) state.seeds.push('F:prob:' + v);
+				if (_grid('F:sprobs')) state.seeds.push('F:sprob:' + v);
+				if (_grid('F:delta')) state.seeds.push('F:delta:' + v);
+			}
+			if (_grid('F:ssum')) state.seeds.push('F:ssum');
+			if (_grid('F:spowsum')) state.seeds.push('F:spowsum');
+			if (_grid('F:ent_orig')) state.seeds.push('F:ent:orig');
+			if (_grid('F:ent_scaled')) state.seeds.push('F:ent:scaled');
+			if (_grid('F:ent_max')) state.seeds.push('F:ent:max');
+		}
+		S._grids.forEach(function (g, key) {
+			if (!/^L:\d+:h2$/.test(key)) return;
+			var rows = g.data.length, cols = g.data[0] ? g.data[0].length : 0;
+			for (var p = 0; p < rows; p++) {
+				for (var i = 0; i < cols; i++) state.seeds.push(key + ':' + p + ':' + i);
+			}
+		});
+		if (!state.seeds.length) {
+			container.innerHTML = '<span style="font-size:12px;color:#64748b;">No network graph available.</span>';
+			return;
+		}
+
+		var loading = container.querySelector('.prov-map-loading');
+		var setLoading = function (msg) {
+			if (loading && loading.isConnected) loading.textContent = msg;
+		};
+
+		var tick = function () {
+			if (token !== _netBuildToken) return;
+			var deadline = performance.now() + 45;
+			if (state.phase === 'seeds') {
+				while (state.seedCursor < state.seeds.length && performance.now() < deadline) {
+					var sid = state.seeds[state.seedCursor++];
+					if (state.seen[sid]) continue;
+					state.seen[sid] = true;
+					var sn = S._mat(sid);
+					if (sn) state.queue.push({ node: sn, depth: 0, _o: state.o++ });
+				}
+				if (state.seedCursor < state.seeds.length) { setTimeout(tick, 0); return; }
+				state.phase = 'bfs';
+			}
+			if (state.phase === 'bfs') {
+				var doneThisTick = 0;
+				while (state.queue.length && (doneThisTick < 4000 || performance.now() < deadline)) {
+					var cur = state.queue.shift();
+					state.steps.push(cur);
+					doneThisTick++;
+					var inputs = cur.node.inputs || [];
+					for (var k = 0; k < inputs.length; k++) {
+						var iid = inputs[k].id;
+						if (state.seen[iid]) continue;
+						state.seen[iid] = true;
+						var nn = S._mat(iid);
+						if (nn) state.queue.push({ node: nn, depth: cur.depth + 1, _o: state.o++ });
+					}
+				}
+				if (state.queue.length) {
+					setLoading('Materializing whole network… ' + state.steps.length.toLocaleString() + ' nodes');
+					setTimeout(tick, 0);
+					return;
+				}
+				state.steps.sort(function (a, b) {
+					if (b.depth !== a.depth) return b.depth - a.depth;
+					return a._o - b._o;
+				});
+				state.layout = _layoutGraph(state.steps);
+				state.phase = 'render';
+			}
+			if (state.phase === 'render') {
+				if (!state.svgOpen) {
+					var ns = 'http://www.w3.org/2000/svg';
+					var svg = document.createElementNS(ns, 'svg');
+					svg.setAttribute('width', '100%');
+					svg.setAttribute('height', '100%');
+					svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+					svg.setAttribute('viewBox', '0 0 ' + state.layout.W + ' ' + state.layout.H);
+					svg.style.display = 'none';
+					var world = document.createElementNS(ns, 'g');
+					world.setAttribute('class', 'prov-map-world');
+					svg.appendChild(world);
+					state.svgEl = svg;
+					state.world = world;
+					var batches = _edgeBatches(state.steps, state.layout);
+					for (var d in batches) {
+						var path = document.createElementNS(ns, 'path');
+						path.setAttribute('class', 'prov-map-edge');
+						path.setAttribute('d', batches[d].join(' '));
+						world.appendChild(path);
+					}
+					state.svgOpen = true;
+				}
+				var ns2 = 'http://www.w3.org/2000/svg';
+				var end2 = Math.min(state.steps.length, state.stepCursor + 3000);
+				for (var i2 = state.stepCursor; i2 < end2; i2++) {
+					var st = state.steps[i2], p2 = state.layout.pos[st.node.id];
+					if (p2) state.world.appendChild(_nodeEl(st.node, p2, state.layout.rowH, ns2));
+				}
+				state.stepCursor = end2;
+				if (state.stepCursor < state.steps.length) {
+					setLoading('Rendering map… ' + state.stepCursor.toLocaleString() + '/' + state.steps.length.toLocaleString());
+					setTimeout(tick, 0);
+					return;
+				}
+				container.innerHTML = '';
+				container.appendChild(state.svgEl);
+				_bindMap(container);
+				_fitMap(container, state.layout);
+				_mapBuiltFor = _NET;
+				S._mapEl = container;
+				_position();
+				requestAnimationFrame(function () { state.svgEl.style.display = ''; });
+			}
+		};
+		tick();
+	}
+
+	function _mapTransform(container) {
+		var w = container.querySelector('.prov-map-world');
+		if (w) w.setAttribute('transform', 'translate(' + _mapState.tx + ',' + _mapState.ty + ') scale(' + _mapState.scale + ')');
+	}
+
+	function _applyMapZoom(container, isNet) {
+		/* Zoom level relative to the fitted view: the whole network hides
+		   names/edges until you zoom in ~3x (a 25k-node overview would just
+		   be noise), while a per-cell trace keeps them readable at rest. */
+		var rel = _mapState.scale / (_mapState.fit || 1);
+		var zoom = isNet ? (rel < 3 ? 'far' : (rel < 8 ? 'mid' : 'close'))
+		                 : (rel < 1 ? 'far' : (rel < 4 ? 'mid' : 'close'));
+		container.setAttribute('data-zoom', zoom);
+	}
+
+	function _bindMap(container) {
+		var svg = container.querySelector('svg');
+		container.addEventListener('wheel', function (e) {
+			e.preventDefault();
+			var rect = svg.getBoundingClientRect();
+			var px = (e.clientX - rect.left - _mapState.tx) / _mapState.scale;
+			var py = (e.clientY - rect.top - _mapState.ty) / _mapState.scale;
+			var ns = _mapState.scale * Math.exp(-e.deltaY * 0.0016);
+			ns = Math.max(0.05, Math.min(14, ns));
+			_mapState.tx = e.clientX - rect.left - px * ns;
+			_mapState.ty = e.clientY - rect.top - py * ns;
+			_mapState.scale = ns;
+			_mapTransform(container);
+			_applyMapZoom(container);
+		}, { passive: false });
+		container.addEventListener('dblclick', function (e) {
+			var rect = svg.getBoundingClientRect();
+			var px = (e.clientX - rect.left - _mapState.tx) / _mapState.scale;
+			var py = (e.clientY - rect.top - _mapState.ty) / _mapState.scale;
+			var ns = Math.min(14, _mapState.scale * 2);
+			_mapState.tx = e.clientX - rect.left - px * ns;
+			_mapState.ty = e.clientY - rect.top - py * ns;
+			_mapState.scale = ns;
+			_mapTransform(container);
+			_applyMapZoom(container);
+		});
+
+		/* Real formulas on hover: hovering a node shows its full mathematical
+		   formula (Temml-rendered) in an overlay at the bottom of the map. */
+		var fml = container.querySelector('.prov-map-fml');
+		if (!fml) {
+			fml = document.createElement('div');
+			fml.className = 'prov-map-fml';
+			container.appendChild(fml);
+		}
+		container.addEventListener('mouseover', function (e) {
+			if (e.target === fml || fml.contains(e.target)) return;
+			var g = e.target.closest ? e.target.closest('.prov-map-node') : null;
+			if (!g) { fml.style.display = 'none'; return; }
+			var n = S._mat(g.getAttribute('data-prov-go'));
+			if (!n || !n.formula) { fml.style.display = 'none'; return; }
+			fml.innerHTML = '<span class="md">$$' + n.formula + '$$</span>';
+			if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
+				try { temml.renderMathInElement(fml); } catch (err) { /* keep raw */ }
+			}
+			fml.style.display = 'block';
+		});
+	}
 
 	/**
 	 * Walk the entire dependency graph from `nodeId` back to its leaves
@@ -1504,6 +2000,160 @@
 			return a._o - b._o;
 		});
 		return { root: root, steps: steps, cut: cut, total: steps.length };
+	};
+
+	/* ─────────────── full derivation of one value ───────────────
+	   Like S.fullTrace but UNCAPTED: the complete backward closure of a value,
+	   returned in reading order (leaves / token embeddings first, the value
+	   last). This is what feeds "every formula from token embedding to the
+	   current point, and everything that comes in" — rendered with Temml. */
+	S.derivation = function (nodeId) {
+		var root = S._mat(nodeId);
+		if (!root) return null;
+		var seen = {}, steps = [], queue = [], o = 1;
+		seen[nodeId] = true;
+		queue.push({ node: root, depth: 0, _o: 0 });
+		while (queue.length) {
+			var cur = queue.shift();
+			steps.push(cur);
+			var inputs = cur.node.inputs || [];
+			for (var k = 0; k < inputs.length; k++) {
+				var iid = inputs[k].id;
+				if (seen[iid]) continue;
+				seen[iid] = true;
+				var n = S._mat(iid);
+				if (n) queue.push({ node: n, depth: cur.depth + 1, _o: o++ });
+			}
+		}
+		/* Reading order: inputs (deepest) first, current value last. */
+		steps.sort(function (a, b) {
+			if (b.depth !== a.depth) return b.depth - a.depth;
+			return a._o - b._o;
+		});
+		return { root: root, steps: steps, total: steps.length };
+	};
+
+	/* ─────────────── importance ranking of the full provenance ───────────────
+	   Walk the ENTIRE backward closure of one value (every formula that led to
+	   it, across all tokens) and attribute to each node how much it matters for
+	   that value. Impact starts at the root (1) and flows to every input edge
+	   weighted by that input term's share of the parent's magnitude
+	   (|term| / Σ|terms|): softmax weights, sums and products contribute in
+	   proportion to their size, while masked or canceled terms contribute ~0.
+	   The result is a local, level-wise normalized ranking so the user can say
+	   "show me the 90% of values that matter, sorted by importance". The BFS
+	   materializes nodes through S._mat (cached), so this is built in async
+	   slices to keep the tooltip responsive. */
+	S.importance = function (nodeId, done) {
+		var root = S._mat(nodeId);
+		if (!root) { done(null); return; }
+		var seen = {}, nodes = {}, queue = [];
+		seen[nodeId] = true;
+		nodes[nodeId] = { node: root, impact: 1, depth: 0 };
+		queue.push(nodeId);
+		var tick = function () {
+			var t0 = Date.now();
+			while (queue.length && Date.now() - t0 < 45) {
+				var id = queue.shift();
+				var cur = nodes[id];
+				var inputs = cur.node.inputs || [];
+				var w = [], tot = 0;
+				for (var k = 0; k < inputs.length; k++) {
+					var v = Math.abs(num(inputs[k].value));
+					w.push(v > 0 ? v : 0);
+					tot += v;
+				}
+				for (var k = 0; k < inputs.length; k++) {
+					var iid = inputs[k].id;
+					if (!iid) continue;
+					var share = tot > 0 ? w[k] / tot : 1 / inputs.length;
+					var imp = cur.impact * share;
+					if (!(iid in nodes)) {
+						var cn = S._mat(iid);
+						if (!cn) continue;
+						seen[iid] = true;
+						nodes[iid] = { node: cn, impact: imp, depth: cur.depth + 1 };
+						queue.push(iid);
+					} else {
+						nodes[iid].impact += imp;
+					}
+				}
+			}
+			if (queue.length) { setTimeout(tick, 0); return; }
+			var list = [];
+			for (var i in nodes) list.push(nodes[i]);
+			list.sort(function (a, b) { return b.impact - a.impact; });
+			var totImp = 0;
+			for (var i = 0; i < list.length; i++) totImp += list[i].impact;
+			var acc = 0, maxImp = 0;
+			for (var i = 0; i < list.length; i++) {
+				list[i].id = list[i].node.id;
+				list[i].rank = i + 1;
+				list[i].percent = totImp > 0 ? 100 * list[i].impact / totImp : 0;
+				list[i].cumPct = acc;
+				acc += list[i].percent;
+				if (list[i].impact > maxImp) maxImp = list[i].impact;
+			}
+			done({ rootId: nodeId, root: root, list: list, count: list.length, totalImpact: totImp, maxImpact: maxImp });
+		};
+		tick();
+	};
+
+	/* ─────────────── whole-network graph ───────────────
+	   Materialize the ENTIRE forward pass as one dependency DAG: start from
+	   every final output (all vocab logits/probabilities plus the final
+	   aggregates) and walk every input edge, exactly once per node. This is
+	   the full network: every number that contributes to every result. */
+	S.netGraph = function () {
+		var F = _grid('F:logits');
+		if (!F) return null;
+		var V = (F.isVec ? F.data : F.data[0]).length;
+		var seen = {}, steps = [], queue = [], o = 0;
+		var seed = function (id) {
+			if (seen[id]) return;
+			seen[id] = true;
+			var n = S._mat(id);
+			if (n) queue.push({ node: n, depth: 0, _o: o++ });
+		};
+		for (var v = 0; v < V; v++) {
+			seed('F:logit:' + v);
+			if (_grid('F:probs')) seed('F:prob:' + v);
+			if (_grid('F:sprobs')) seed('F:sprob:' + v);
+			if (_grid('F:delta')) seed('F:delta:' + v);
+		}
+		if (_grid('F:ssum')) seed('F:ssum');
+		if (_grid('F:spowsum')) seed('F:spowsum');
+		if (_grid('F:ent_orig')) seed('F:ent:orig');
+		if (_grid('F:ent_scaled')) seed('F:ent:scaled');
+		if (_grid('F:ent_max')) seed('F:ent:max');
+		/* The on-page grid shows the visualization pass ('L:' layers). Its last
+		   computed value per position is h2, so seed every h2 cell to pull the
+		   ENTIRE visualization network (embeddings, norms, every head's
+		   q/k/v/scores/context, concat/proj, FFN) for every token. */
+		S._grids.forEach(function (g, key) {
+			if (!/^L:\d+:h2$/.test(key)) return;
+			var rows = g.data.length, cols = g.data[0] ? g.data[0].length : 0;
+			for (var p = 0; p < rows; p++) {
+				for (var i = 0; i < cols; i++) seed(key + ':' + p + ':' + i);
+			}
+		});
+		while (queue.length) {
+			var cur = queue.shift();
+			steps.push(cur);
+			var inputs = cur.node.inputs || [];
+			for (var k = 0; k < inputs.length; k++) {
+				var iid = inputs[k].id;
+				if (seen[iid]) continue;
+				seen[iid] = true;
+				var n = S._mat(iid);
+				if (n) queue.push({ node: n, depth: cur.depth + 1, _o: o++ });
+			}
+		}
+		steps.sort(function (a, b) {
+			if (b.depth !== a.depth) return b.depth - a.depth;
+			return a._o - b._o;
+		});
+		return { root: null, steps: steps, cut: false, total: steps.length };
 	};
 
 	/* Rewrite a node built by the 'L' materializers into the final-pass
@@ -1641,7 +2291,11 @@
 			return _matH2Cell(Lx, pp, ii);
 		}
 		if ((m = /^L:(\d+):head:(\d+):(q|k|v|Wq|Wk|Wv):(\d+):(\d+)$/.exec(nodeId))) {
-			return _matHeadCell(+m[1], +m[2], m[3], +m[4], +m[5]);
+			var hk = m[3];
+			if (hk === 'q') return _matQNode(+m[1], +m[2], +m[4], +m[5]);
+			if (hk === 'k') return _matKVNode(+m[1], +m[2], 'k', +m[4], +m[5]);
+			if (hk === 'v') return _matKVNode(+m[1], +m[2], 'v', +m[4], +m[5]);
+			return _matHeadCell(+m[1], +m[2], hk, +m[4], +m[5]);
 		}
 		if ((m = /^L:(\d+):head:(\d+):(scores|alpha):(\d+):(\d+)$/.exec(nodeId))) {
 			if (m[3] === 'scores') return _matScoreNode(+m[1], +m[2], +m[4], +m[5]);
@@ -1736,15 +2390,97 @@
 			'#prov-tooltip .prov-chipval{color:#6366f1;font-weight:600;}' +
 			'#prov-tooltip .prov-crumb{margin-top:8px;font-size:11px;color:#94a3b8;}' +
 			'#prov-tooltip .prov-hint{margin-top:8px;font-size:11px;color:#94a3b8;}' +
-			'#prov-tooltip .prov-trace{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;}' +
-			'#prov-tooltip .prov-trace-step{display:flex;align-items:center;gap:8px;text-align:left;' +
-			'border:1px solid #e2e8f0;background:#f8fafc;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;}' +
+			'#prov-tooltip .prov-trace{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}' +
+			'#prov-tooltip .prov-trace-step{display:block;text-align:left;border:1px solid #e2e8f0;background:#f8fafc;' +
+			'border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;content-visibility:auto;' +
+			'contain-intrinsic-size:auto 24px;}' +
 			'#prov-tooltip .prov-trace-step:hover{background:#e0e7ff;}' +
-			'#prov-tooltip .prov-trace-idx{color:#94a3b8;min-width:22px;}' +
+			'#prov-tooltip .prov-trace-row{display:flex;align-items:center;gap:8px;}' +
+			'#prov-tooltip .prov-trace-idx{color:#94a3b8;min-width:26px;font-variant-numeric:tabular-nums;}' +
 			'#prov-tooltip .prov-trace-name{font-weight:600;color:#3730a3;}' +
 			'#prov-tooltip .prov-trace-val{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600;color:#0f172a;}' +
-			'#prov-tooltip .prov-trace-badge{color:#64748b;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+			'#prov-tooltip .prov-trace-badge{color:#64748b;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+			'#prov-tooltip .prov-trace-formula{color:#334155;padding:2px 0 0 26px;font-size:11px;overflow-x:auto;}' +
+			'#prov-tooltip .prov-trace-formula .md{margin:0;}' +
+			'#prov-tooltip .prov-trace-tools{display:flex;gap:6px;margin-bottom:6px;}' +
+			'#prov-tooltip .prov-view-btn{border:1px solid #cbd5e1;background:#f8fafc;border-radius:6px;' +
+			'padding:2px 10px;font-size:12px;cursor:pointer;color:#334155;}' +
+			'#prov-tooltip .prov-view-btn.prov-view-on{background:#6366f1;border-color:#6366f1;color:#fff;}' +
+			'#prov-tooltip .prov-zoom-reset{margin-left:auto;}' +
+			'#prov-tooltip .prov-map{height:360px;border:1px solid #e2e8f0;border-radius:8px;' +
+			'background:#fbfcfe;position:relative;overflow:hidden;cursor:grab;touch-action:none;}' +
+			'#prov-tooltip .prov-map svg{display:block;width:100%;height:100%;}' +
+			'#prov-tooltip .prov-map-edge{fill:none;stroke:#c7d2fe;stroke-width:1;}' +
+			'#prov-tooltip .prov-map-node{cursor:pointer;}' +
+			'#prov-tooltip .prov-map-node rect{fill:#eef2ff;stroke:#a5b4fc;stroke-width:1;}' +
+			'#prov-tooltip .prov-map-node:hover rect{fill:#c7d2fe;}' +
+			'#prov-tooltip .prov-map-node.prov-map-root rect{fill:#c7d2fe;stroke:#4f46e5;stroke-width:2;}' +
+			'#prov-tooltip .prov-map-node text{fill:#0f172a;font-family:inherit;pointer-events:none;}' +
+			'#prov-tooltip .prov-map-val{font-size:12px;font-weight:700;text-anchor:middle;}' +
+			'#prov-tooltip .prov-map-name{font-size:9px;text-anchor:middle;fill:#4338ca;}' +
+			'#prov-tooltip .prov-map[data-zoom="far"] .prov-map-name{display:none;}' +
+			'#prov-tooltip .prov-map[data-zoom="far"] .prov-map-edge{display:none;}' +
+			'#prov-tooltip .prov-map[data-zoom="far"] .prov-map-val{font-size:14px;}' +
+			'#prov-tooltip .prov-map[data-zoom="close"] .prov-map-val{font-size:13px;}' +
+			'#prov-tooltip .prov-map[data-zoom="close"] .prov-map-name{font-size:10px;}' +
 			'#prov-tooltip .prov-trace-cut{margin-top:6px;font-size:11px;color:#94a3b8;text-align:center;}' +
+			'#prov-tooltip .prov-map-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;' +
+			'font-size:12px;color:#6366f1;background:#fbfcfe;z-index:2;}' +
+			'#prov-tooltip .prov-map-fml{position:absolute;left:0;right:0;bottom:0;max-height:90px;overflow:auto;' +
+			'background:rgba(255,255,255,.97);border-top:1px solid #e2e8f0;padding:6px 10px;font-size:12px;z-index:3;display:none;}' +
+			'#prov-tooltip .prov-map-fml .md{margin:0;}' +
+			'#prov-tooltip.prov-net-mode .prov-map-fml{max-height:140px;}' +
+			'#prov-tooltip .prov-map-node.fam-attn rect{fill:#eff6ff;stroke:#93c5fd;}' +
+			'#prov-tooltip .prov-map-node.fam-ffn rect{fill:#fff7ed;stroke:#fdba74;}' +
+			'#prov-tooltip .prov-map-node.fam-proj rect{fill:#f0fdf4;stroke:#86efac;}' +
+			'#prov-tooltip .prov-map-node.fam-ln rect{fill:#faf5ff;stroke:#d8b4fe;}' +
+			'#prov-tooltip .prov-map-node.fam-emb rect{fill:#ecfeff;stroke:#67e8f9;}' +
+			'#prov-tooltip .prov-map-node.fam-pe rect{fill:#fef9c3;stroke:#fde047;}' +
+			'#prov-tooltip .prov-map-node.fam-final rect{fill:#fef2f2;stroke:#fca5a5;}' +
+			'#prov-tooltip .prov-map-node.fam-h rect{fill:#eef2ff;stroke:#a5b4fc;}' +
+			'#prov-tooltip.prov-net-mode{width:min(96vw,1500px);max-width:96vw;height:88vh;max-height:88vh;}' +
+			'#prov-tooltip.prov-net-mode .prov-map{height:calc(88vh - 150px);}' +
+			'#prov-tooltip.prov-net-mode .prov-map[data-zoom="mid"] .prov-map-name{font-size:8px;}' +
+			'#prov-tooltip .prov-contrib{display:none;max-height:340px;overflow-y:auto;}' +
+			'#prov-tooltip.prov-contrib-mode{width:min(94vw,900px);max-width:94vw;}' +
+			'#prov-tooltip.prov-contrib-mode .prov-contrib{max-height:calc(76vh - 160px);}' +
+			'#prov-tooltip .prov-contrib-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;' +
+			'flex-wrap:wrap;}' +
+			'#prov-tooltip .prov-contrib-head .prov-label{margin:0;}' +
+			'#prov-tooltip .prov-contrib-slider{flex:1;min-width:160px;}' +
+			'#prov-tooltip .prov-contrib-count{font-size:11px;color:#64748b;font-variant-numeric:tabular-nums;}' +
+			'#prov-tooltip .prov-contrib-step{display:block;text-align:left;border:1px solid #e2e8f0;background:#f8fafc;' +
+			'border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;content-visibility:auto;' +
+			'contain-intrinsic-size:auto 26px;margin-bottom:4px;}' +
+			'#prov-tooltip .prov-contrib-step:hover{background:#e0e7ff;}' +
+			'#prov-tooltip .prov-contrib-step.prov-contrib-hidden{display:none;}' +
+			'#prov-tooltip .prov-contrib-row{display:flex;align-items:center;gap:8px;}' +
+			'#prov-tooltip .prov-contrib-rank{color:#94a3b8;min-width:34px;font-variant-numeric:tabular-nums;text-align:right;}' +
+			'#prov-tooltip .prov-contrib-name{font-weight:600;color:#3730a3;}' +
+			'#prov-tooltip .prov-contrib-val{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:600;color:#0f172a;}' +
+			'#prov-tooltip .prov-contrib-pct{font-variant-numeric:tabular-nums;color:#64748b;min-width:52px;text-align:right;}' +
+			'#prov-tooltip .prov-contrib-barwrap{width:90px;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;}' +
+			'#prov-tooltip .prov-contrib-bar{display:block;height:100%;background:linear-gradient(90deg,#6366f1,#22d3ee);border-radius:3px;}' +
+			'#prov-tooltip .prov-contrib-badge{color:#64748b;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+			'#prov-tooltip .prov-contrib-formula{color:#334155;padding:2px 0 2px 42px;font-size:11px;overflow-x:auto;}' +
+			'#prov-tooltip .prov-contrib-formula .md{margin:0;}' +
+			'#prov-tooltip .prov-contrib-loading{font-size:12px;color:#6366f1;padding:8px 2px;}' +
+			'#prov-tooltip .prov-deriv{display:none;max-height:340px;overflow-y:auto;}' +
+			'#prov-tooltip.prov-deriv-mode{width:min(94vw,920px);max-width:94vw;}' +
+			'#prov-tooltip.prov-deriv-mode .prov-deriv{max-height:calc(76vh - 160px);}' +
+			'#prov-tooltip .prov-deriv-head{font-size:11px;text-transform:uppercase;letter-spacing:.06em;' +
+			'color:#4338ca;margin:12px 0 4px;padding-bottom:2px;border-bottom:1px solid #e0e7ff;' +
+			'background:linear-gradient(90deg,#eef2ff,transparent);padding-left:6px;}' +
+			'#prov-tooltip .prov-deriv-loading{font-size:12px;color:#6366f1;padding:8px 2px;}' +
+			'#prov-tooltip .prov-deriv-step{display:block;text-align:left;padding:4px 2px;font-size:12px;' +
+			'cursor:pointer;border-radius:6px;border-left:3px solid transparent;}' +
+			'#prov-tooltip .prov-deriv-step:hover{background:#eef2ff;border-left-color:#818cf8;}' +
+			'#prov-tooltip .prov-deriv-step.prov-deriv-root{background:#f5f3ff;border-left-color:#7c3aed;}' +
+			'#prov-tooltip .prov-deriv-meta{color:#64748b;font-size:11px;margin-bottom:1px;}' +
+			'#prov-tooltip .prov-deriv-meta b{color:#0f172a;font-variant-numeric:tabular-nums;}' +
+			'#prov-tooltip .prov-deriv-badge{color:#94a3b8;}' +
+			'#prov-tooltip .prov-deriv-formula{color:#0f172a;overflow-x:auto;padding:0 4px 4px 14px;}' +
+			'#prov-tooltip .prov-deriv-formula .md{margin:0;}' +
 			'.prov-cell{transition:background .12s;}' +
 			'.prov-cell:hover{background:rgba(99,102,241,.25);cursor:help;border-radius:3px;}' +
 			'.prov-cell.prov-active{background:rgba(99,102,241,.35);}';
@@ -1764,6 +2500,290 @@
 				});
 			} catch (e) { /* keep raw text */ }
 		}
+	}
+
+	var _traceView = 'deriv';
+	var _mapBuiltFor = null;
+	var _pendingNetMap = null, _pendingNetState = null;
+
+	function _renderTraceList(trace, container) {
+		if (!container) return;
+		container.innerHTML = trace.steps.map(function (st, ix) {
+			var n = st.node;
+			var hasF = !!(n.inputs && n.inputs.length);
+			return '<div class="prov-trace-step" data-prov-go="' + attrSafe(n.id) + '" title="' + texSafe(n.badge) + '" style="margin-left:' + Math.min(st.depth * 10, 80) + 'px">' +
+				'<span class="prov-trace-row">' +
+				'<span class="prov-trace-idx">' + (ix + 1) + '</span>' +
+				'<span class="prov-trace-name">$' + n.name + '$</span>' +
+				'<span class="prov-trace-val">' + fmt(n.value) + '</span>' +
+				'<span class="prov-trace-badge">' + texSafe(n.badge) + '</span>' +
+				'</span>' +
+				(hasF ? '<span class="prov-trace-formula" data-tex="' + attrSafe(n.formula) + '"></span>' : '') +
+				'</div>';
+		}).join('');
+		container.addEventListener('scroll', function () {
+			if (container.scrollTop + container.clientHeight >= container.scrollHeight - 120) _hydrateTrace(container);
+		});
+		_hydrateTrace(container);
+	}
+
+	/* ── "Contributors" view ──
+	   The whole backward closure of the current value, sorted by importance,
+	   with a slider to keep only the top X% of the contributing values. Every
+	   row shows name, value, its share of the influence and its full formula
+	   (Temml-rendered lazily while scrolling). */
+	var _contribThreshold = 90;
+	var _contribData = null;
+	var _contribRendered = 0;
+
+	function _contribPrefix(res, threshold) {
+		return Math.max(1, Math.round(res.count * threshold / 100));
+	}
+
+	function _renderContrib(nodeId, container) {
+		if (!container) return;
+		container.style.display = 'block';
+		if (_contribData && _contribData.nodeId === nodeId) {
+			_buildContribList(container);
+			return;
+		}
+		container.innerHTML = '<div class="prov-contrib-loading">Computing all ' +
+			'formulas that lead to this value&hellip;</div>';
+		_contribData = null;
+		S.importance(nodeId, function (res) {
+			if (!res) return;
+			_contribData = { nodeId: nodeId, result: res };
+			_buildContribList(container);
+		});
+	}
+
+	function _buildContribList(container) {
+		var res = _contribData.result;
+		var cumPct = _contribPrefix(res, _contribThreshold);
+		var row0 = res.list[Math.min(cumPct, res.count) - 1];
+		var parts = [];
+		parts.push('<div class="prov-contrib-head">' +
+			'<span class="prov-label">' + res.count.toLocaleString() + ' formulas lead to this value &middot; ' +
+			'sorted by importance</span>' +
+			'<input type="range" class="prov-contrib-slider" min="1" max="100" step="1" value="' + _contribThreshold + '">' +
+			'<span class="prov-contrib-count"></span>' +
+			'</div><div class="prov-contrib-list"></div>');
+		container.innerHTML = parts.join('');
+		_contribRendered = 0;
+		container.setAttribute('data-contrib-cursor', '0');
+		var listEl = container.querySelector('.prov-contrib-list');
+		var slider = container.querySelector('.prov-contrib-slider');
+		slider.addEventListener('input', function () {
+			_contribThreshold = +slider.value;
+			_contribSync(container, listEl);
+		});
+		container.addEventListener('scroll', function () {
+			var nearEnd = container.scrollTop + container.clientHeight >= container.scrollHeight - 800;
+			if (nearEnd) _contribSync(container, listEl);
+			_hydrateTex(container, '.prov-contrib-formula[data-tex]', 'data-contrib-cursor');
+		});
+		_contribSync(container, listEl);
+	}
+
+	function _contribSync(container, listEl) {
+		var res = _contribData.result;
+		var prefix = _contribPrefix(res, _contribThreshold);
+		var row0 = res.list[Math.min(prefix, res.count) - 1];
+		var cum = row0.cumPct + row0.percent;
+		var label = container.querySelector('.prov-contrib-count');
+		if (label) label.textContent = 'top ' + prefix.toLocaleString() + ' of ' + res.count.toLocaleString() +
+			' values (' + cum.toFixed(1) + '% of the influence)';
+		var children = listEl.children;
+		for (var i = prefix; i < children.length; i++) children[i].classList.add('prov-contrib-hidden');
+		var to = Math.min(prefix, _contribRendered + 500);
+		var frag = document.createDocumentFragment();
+		for (; _contribRendered < to; _contribRendered++) {
+			frag.appendChild(_contribRow(res.list[_contribRendered], res.maxImpact));
+		}
+		listEl.appendChild(frag);
+		if (_contribRendered < prefix) {
+			setTimeout(function () { _contribSync(container, listEl); }, 0);
+		}
+	}
+
+	function _contribRow(n, maxImp) {
+		var d = document.createElement('div');
+		d.className = 'prov-contrib-step';
+		d.setAttribute('data-prov-go', n.id);
+		d.title = texSafe(n.node.badge);
+		var barW = maxImp > 0 ? Math.max(1, Math.round(100 * n.impact / maxImp)) : 0;
+		var hasF = n.node.inputs && n.node.inputs.length;
+		d.innerHTML =
+			'<div class="prov-contrib-row">' +
+			'<span class="prov-contrib-rank">#' + n.rank + '</span>' +
+			'<span class="prov-contrib-name">$' + n.node.name + '$</span>' +
+			'<span class="prov-contrib-barwrap"><i class="prov-contrib-bar" style="width:' + barW + '%"></i></span>' +
+			'<span class="prov-contrib-pct">' + n.percent.toFixed(3) + '%</span>' +
+			'<span class="prov-contrib-val">' + fmt(n.node.value) + '</span>' +
+			'<span class="prov-contrib-badge">' + texSafe(n.node.badge) + '</span>' +
+			'</div>' +
+			(hasF ? '<div class="prov-contrib-formula" data-tex="' + attrSafe(n.node.formula) + '"></div>' : '');
+		return d;
+	}
+
+	/* ── "Derivation" view (default) ──
+	   The whole chain of formulas from token embeddings to the current value,
+	   rendered as a readable document with Temml: grouped by stage, in
+	   reading order, every formula with its name and value. */
+	var _derivData = null;
+
+	function _renderDeriv(nodeId, container) {
+		if (!container) return;
+		container.style.display = 'block';
+		if (_derivData && _derivData.nodeId === nodeId) {
+			_buildDeriv(container);
+			return;
+		}
+		container.innerHTML = '<div class="prov-deriv-loading">Assembling every formula from token ' +
+			'embeddings to this value&hellip;</div>';
+		_derivData = null;
+		setTimeout(function () {
+			var d = S.derivation(nodeId);
+			if (!d) return;
+			_derivData = { nodeId: nodeId, result: d };
+			_buildDeriv(container);
+		}, 0);
+	}
+
+	function _buildDeriv(container) {
+		var d = _derivData.result;
+		/* Group by pipeline stage (embedding → … → final) so the document
+		   reads as one clean chain; verify inputs still precede outputs and
+		   fall back to pure depth order if a DAG edge is violated. */
+		var sorted = d.steps.slice().sort(function (a, b) {
+			var ka = _derivKey(a.node.id), kb = _derivKey(b.node.id);
+			if (ka[0] !== kb[0]) return ka[0] - kb[0];
+			if (ka[1] !== kb[1]) return ka[1] - kb[1];
+			return b.depth - a.depth || a._o - b._o;
+		});
+		var pos = {};
+		for (var i = 0; i < sorted.length; i++) pos[sorted[i].node.id] = i;
+		var ok = true;
+		for (var i = 0; i < sorted.length && ok; i++) {
+			var ins = sorted[i].node.inputs || [];
+			for (var k = 0; k < ins.length; k++) {
+				if (ins[k].id in pos && pos[ins[k].id] > i) { ok = false; break; }
+			}
+		}
+		if (!ok) sorted = d.steps;
+		var parts = [], lastStage = null;
+		for (var i = 0; i < sorted.length; i++) {
+			var st = sorted[i];
+			var stage = _derivLabel(st.node.id);
+			if (stage !== lastStage) {
+				parts.push('<div class="prov-deriv-head">' + stage + '</div>');
+				lastStage = stage;
+			}
+			parts.push('<div class="prov-deriv-step' + (st.node.id === d.root.id ? ' prov-deriv-root' : '') + '" data-prov-go="' + attrSafe(st.node.id) + '" title="' + texSafe(st.node.badge) + '">' +
+				'<div class="prov-deriv-meta">$' + st.node.name + '$ &nbsp;<b>' + fmt(st.node.value) + '</b> &nbsp;' +
+				'<span class="prov-deriv-badge">' + texSafe(st.node.badge) + '</span></div>' +
+				'<div class="prov-deriv-formula" data-tex="' + attrSafe(st.node.formula) + '"></div>' +
+				'</div>');
+		}
+		container.innerHTML = parts.join('');
+		container.setAttribute('data-deriv-cursor', '0');
+		container.addEventListener('scroll', function () {
+			_hydrateTex(container, '.prov-deriv-formula[data-tex]', 'data-deriv-cursor');
+		});
+		if (typeof temml !== 'undefined') {
+			_renderTooltipMath(container);
+		}
+		_hydrateAllTex(container, '.prov-deriv-formula[data-tex]', 'data-deriv-cursor');
+	}
+
+	/* Hydrate every formula in a container, in non-blocking chunks, so the
+	   whole derivation shows real math without freezing the page. */
+	function _hydrateAllTex(container, selector, cursorAttr) {
+		var before = +container.getAttribute(cursorAttr) || 0;
+		_hydrateTex(container, selector, cursorAttr, 200);
+		var after = +container.getAttribute(cursorAttr) || 0;
+		var total = container.querySelectorAll(selector).length;
+		if (after > before && after < total) {
+			setTimeout(function () { _hydrateAllTex(container, selector, cursorAttr); }, 0);
+		}
+	}
+
+	function _applyTraceView(view, nodeId) {
+		nodeId = nodeId || _history[_history.length - 1];
+		if (view === 'list') _traceView = 'list';
+		else if (view === 'map') _traceView = 'map';
+		else if (view === 'net') _traceView = 'net';
+		else if (view === 'contrib') _traceView = 'contrib';
+		else _traceView = 'deriv';
+		var listEl = _tooltip.querySelector('.prov-trace');
+		var mapEl = _tooltip.querySelector('.prov-map');
+		var contribEl = _tooltip.querySelector('.prov-contrib');
+		var derivEl = _tooltip.querySelector('.prov-deriv');
+		if (!listEl || !mapEl) return;
+		var btns = _tooltip.querySelectorAll('.prov-view-btn');
+		for (var b = 0; b < btns.length; b++) {
+			btns[b].classList.toggle('prov-view-on', btns[b].getAttribute('data-prov-view') === _traceView);
+		}
+		_tooltip.classList.toggle('prov-net-mode', _traceView === 'net');
+		_tooltip.classList.toggle('prov-contrib-mode', _traceView === 'contrib');
+		_tooltip.classList.toggle('prov-deriv-mode', _traceView === 'deriv');
+		if (_traceView === 'net') {
+			listEl.style.display = 'none';
+			mapEl.style.display = 'block';
+			if (contribEl) contribEl.style.display = 'none';
+			if (derivEl) derivEl.style.display = 'none';
+			if (!_pendingNetMap && (_mapBuiltFor !== _NET || !mapEl.querySelector('.prov-map-node'))) {
+				_buildNetMap(mapEl);
+			}
+			_position();
+		} else if (_traceView === 'map') {
+			listEl.style.display = 'none';
+			mapEl.style.display = 'block';
+			if (contribEl) contribEl.style.display = 'none';
+			if (derivEl) derivEl.style.display = 'none';
+			if (_mapBuiltFor !== nodeId) {
+				var trace = S.fullTrace(nodeId);
+				_buildMap(mapEl, trace, nodeId);
+				_bindMap(mapEl);
+				_mapBuiltFor = nodeId;
+				S._mapEl = mapEl;
+			}
+			_position();
+		} else if (_traceView === 'contrib') {
+			mapEl.style.display = 'none';
+			listEl.style.display = 'none';
+			if (derivEl) derivEl.style.display = 'none';
+			if (contribEl) _renderContrib(nodeId, contribEl);
+			S._mapEl = null;
+			_position();
+		} else if (_traceView === 'deriv') {
+			mapEl.style.display = 'none';
+			listEl.style.display = 'none';
+			if (contribEl) contribEl.style.display = 'none';
+			if (derivEl) _renderDeriv(nodeId, derivEl);
+			S._mapEl = null;
+			_position();
+		} else {
+			mapEl.style.display = 'none';
+			if (contribEl) contribEl.style.display = 'none';
+			if (derivEl) derivEl.style.display = 'none';
+			listEl.style.display = 'flex';
+			S._mapEl = null;
+		}
+	}
+
+	var _NET = '__net__';
+
+	function _resetMap() {
+		var mapEl = _tooltip.querySelector('.prov-map');
+		if (!mapEl || mapEl.style.display === 'none') return;
+		if (_traceView === 'net') {
+			_buildNetMap(mapEl);
+			return;
+		}
+		var trace = S.fullTrace(_history[_history.length - 1]);
+		_buildMap(mapEl, trace, _history[_history.length - 1]);
+		_bindMap(mapEl);
 	}
 
 	function _renderCurrent() {
@@ -1801,17 +2821,22 @@
 		parts.push('<div class="prov-label">Full trace &middot; input &rarr; this value</div>');
 		var trace = S.fullTrace(nodeId);
 		if (trace && trace.steps.length) {
-			parts.push('<div class="prov-trace">' + trace.steps.map(function (st, ix) {
-				var n = st.node;
-				return '<button class="prov-trace-step" data-prov-go="' + attrSafe(n.id) + '" title="' + texSafe(n.badge) + '" style="margin-left:' + (st.depth * 12) + 'px">' +
-					'<span class="prov-trace-idx">' + (ix + 1) + '</span>' +
-					'<span class="prov-trace-name">$' + n.name + '$</span>' +
-					'<span class="prov-trace-val">' + fmt(n.value) + '</span>' +
-					'<span class="prov-trace-badge">' + texSafe(n.badge) + '</span></button>';
-			}).join('') + '</div>');
+			parts.push('<div class="prov-trace-tools">' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="deriv">Derivation</button>' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="contrib">Contributors</button>' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="map">Zoom Map</button>' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="net">Whole Network</button>' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="list">List</button>' +
+				'<button class="prov-btn prov-zoom-reset" data-prov-act="zoom-reset" title="fit map to view">fit</button>' +
+				'</div>');
+			parts.push('<div class="prov-deriv"></div>');
+			parts.push('<div class="prov-trace"></div>');
+			parts.push('<div class="prov-map"></div>');
+			parts.push('<div class="prov-contrib"></div>');
 			if (trace.cut) {
 				parts.push('<div class="prov-trace-cut">&hellip; trace truncated at ' + _traceCap + ' steps</div>');
 			}
+			parts.push('<div class="prov-trace-cut">' + trace.steps.length + ' steps &middot; read top &rarr; bottom &middot; scroll to load step formulas.</div>');
 		} else {
 			parts.push('<div class="prov-inputs"><span style="font-size:12px;color:#64748b;">No trace available for this node.</span></div>');
 		}
@@ -1826,11 +2851,41 @@
 			}).join(' &rarr; ') + '</div>');
 		}
 
-		parts.push('<div class="prov-hint">Click any step in the full trace to jump to it &middot; the tooltip stays put while you move the mouse.</div>');
+		parts.push('<div class="prov-hint">"Derivation" shows every formula from token embeddings to this value (reading order, click any step to jump). "Contributors" lists them sorted by importance with a slider for the top X%. "Zoom Map" is a pan/zoom overview; "Whole Network" shows the entire forward pass at once.</div>');
+
+		/* In whole-network mode, keep the (expensive) map alive across
+		   navigation: save its markup + viewport and restore it after the
+		   tooltip is rebuilt, instead of building 25k nodes again. */
+		var savedNetMap = null, savedNetState = null;
+		if (_traceView === 'net') {
+			var oldMap = _tooltip.querySelector('.prov-map');
+			if (oldMap && oldMap.querySelector('.prov-map-node')) {
+				savedNetMap = oldMap.outerHTML;
+				savedNetState = { tx: _mapState.tx, ty: _mapState.ty, scale: _mapState.scale };
+			}
+		}
 
 		_tooltip.innerHTML = parts.join('');
 		_tooltip.style.display = 'block';
+		var listEl = _tooltip.querySelector('.prov-trace');
+		if (listEl) _renderTraceList(trace, listEl);
 		_renderTooltipMath(_tooltip);
+		_pendingNetMap = savedNetMap;
+		_pendingNetState = savedNetState;
+		_applyTraceView(_traceView, nodeId);
+		if (_pendingNetMap) {
+			var restored = _tooltip.querySelector('.prov-map');
+			if (restored) {
+				restored.outerHTML = _pendingNetMap;
+				_mapState = _pendingNetState || _mapState;
+				_mapBuiltFor = _NET;
+				S._mapEl = _tooltip.querySelector('.prov-map');
+				_bindMap(S._mapEl);
+				_mapTransform(S._mapEl);
+				_applyMapZoom(S._mapEl);
+			}
+			_pendingNetMap = null;
+		}
 		_position();
 	}
 
@@ -1887,7 +2942,14 @@
 		_tooltip = document.createElement('div');
 		_tooltip.id = 'prov-tooltip';
 		_tooltip.addEventListener('click', function (e) {
+			if (S._mapDragged) { S._mapDragged = false; return; }
 			var t = e.target;
+			var viewBtn = t.closest ? t.closest('[data-prov-view]') : null;
+			if (viewBtn) {
+				e.stopPropagation();
+				_applyTraceView(viewBtn.getAttribute('data-prov-view'));
+				return;
+			}
 			var chip = t.closest ? t.closest('[data-prov-chip]') : null;
 			if (chip) {
 				e.stopPropagation();
@@ -1909,6 +2971,7 @@
 			if (a === 'close') { S.hide(); S._pinned = false; }
 			else if (a === 'pin') { S._pinned = !S._pinned; _renderCurrent(); }
 			else if (a === 'back') { _history.pop(); _renderCurrent(); }
+			else if (a === 'zoom-reset') { _resetMap(); }
 		});
 		_tooltip.addEventListener('mouseover', function () { _clearHide(); });
 		document.body.appendChild(_tooltip);
@@ -1976,7 +3039,30 @@
 		document.addEventListener('mousemove', _onMouseMove, true);
 		document.addEventListener('click', _onDocClick, true);
 		document.addEventListener('keydown', _onKeyDown, true);
+		document.addEventListener('mousedown', _onMapMouseDown, true);
+		document.addEventListener('mousemove', _onMapMouseMove, true);
+		document.addEventListener('mouseup', _onMapMouseUp, true);
 	}
+
+	function _onMapMouseDown(e) {
+		if (!S._mapEl || !S._mapEl.contains(e.target)) return;
+		S._mapDrag = { sx: e.clientX, sy: e.clientY, ox: _mapState.tx, oy: _mapState.ty };
+		S._mapDragged = false;
+		e.preventDefault();
+	}
+
+	function _onMapMouseMove(e) {
+		if (!S._mapDrag) return;
+		var dx = e.clientX - S._mapDrag.sx, dy = e.clientY - S._mapDrag.sy;
+		if (!S._mapDragged && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) S._mapDragged = true;
+		if (S._mapDragged) {
+			_mapState.tx = S._mapDrag.ox + dx;
+			_mapState.ty = S._mapDrag.oy + dy;
+			if (S._mapEl) _mapTransform(S._mapEl);
+		}
+	}
+
+	function _onMapMouseUp() { S._mapDrag = null; }
 
 	S.init = function () {
 		_injectStyles();
