@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergent World Representations - Paper Erklärt</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 40px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.8em;
+            margin: 40px 0 20px;
+            color: #667eea;
+            border-left: 4px solid #764ba2;
+            padding-left: 15px;
+        }
+        h3 {
+            font-size: 1.3em;
+            margin: 25px 0 15px;
+            color: #a0a0ff;
+        }
+        p {
+            margin: 15px 0;
+            font-size: 1.05em;
+        }
+        .section {
+            background: #12122a;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #1a1a3e 0%, #2a1a3e 100%);
+            border: 1px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .key-finding {
+            background: linear-gradient(135deg, #1a3e1a 0%, #1a3e2a 100%);
+            border: 1px solid #4aea66;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .key-finding::before {
+            content: "🔑 Kernaussage: ";
+            font-weight: bold;
+            color: #4aea66;
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        canvas {
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        .interactive-board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            gap: 2px;
+            background: #1a5c1a;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: fit-content;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background: #2d8a2d;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            font-size: 0.6em;
+            color: rgba(255,255,255,0.3);
+        }
+        .cell:hover {
+            background: #3da03d;
+            transform: scale(1.05);
+        }
+        .cell .disc {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .cell .disc.black {
+            background: radial-gradient(circle at 35% 35%, #555, #000);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .cell .disc.white {
+            background: radial-gradient(circle at 35% 35%, #fff, #ccc);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .cell.legal-move {
+            background: #4db84d;
+        }
+        .cell.legal-move::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .analogy {
+            background: #1a1a3e;
+            border-left: 4px solid #ffa500;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        .analogy::before {
+            content: "💡 Analogie: ";
+            font-weight: bold;
+            color: #ffa500;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2a2a4a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scale(1.2);
+        }
+        .step.completed {
+            background: #4aea66;
+            color: #000;
+        }
+        .plotly-chart {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .interactive-board {
+                grid-template-columns: repeat(8, 35px);
+                grid-template-rows: repeat(8, 35px);
+            }
+            .cell {
+                width: 35px;
+                height: 35px;
+            }
+            .cell .disc {
+                width: 28px;
+                height: 28px;
+            }
+        }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            z-index: 1000;
+            border-bottom: 1px solid #2a2a4a;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+        }
+        .spacer {
+            height: 70px;
+        }
+        .progress-bar {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            z-index: 1001;
+            transition: width 0.3s;
+        }
+        .emoji-big {
+            font-size: 3em;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .flow-box {
+            background: #2a2a4a;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+        .saliency-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 45px);
+            grid-template-rows: repeat(8, 45px);
+            gap: 2px;
+            margin: 20px auto;
+            width: fit-content;
+        }
+        .saliency-cell {
+            width: 45px;
+            height: 45px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding-left: 30px;
+            border-left: 3px solid #667eea;
+        }
+        .timeline-item .dot {
+            position: absolute;
+            left: -8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+        #intervention-demo {
+            position: relative;
+        }
+        .layer-viz {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .layer-block {
+            width: 60px;
+            height: 30px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: bold;
+            transition: all 0.5s;
+        }
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #2a2a4a;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: #1a1a3e;
+            border-radius: 0 10px 10px 10px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #1a1a3e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #2a2a4a;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-links">
+            <a href="#intro">Einführung</a>
+            <a href="#othello">Othello</a>
+            <a href="#experiment">Experiment</a>
+            <a href="#probes">Probes</a>
+            <a href="#intervention">Intervention</a>
+            <a href="#saliency">Saliency Maps</a>
+            <a href="#conclusion">Fazit</a>
+        </div>
+    </div>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="spacer"></div>
+
+    <div class="container">
+        <h1>🧠 Emergent World Representations</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #888;">
+            Wie ein KI-Modell ein inneres Weltbild entwickelt – ohne je die Regeln zu kennen
+        </p>
+        <p style="text-align: center; color: #666; font-size: 0.9em;">
+            Paper: Li, Hopkins, Bau, Viégas, Pfister & Wattenberg (ICLR 2023)
+        </p>
+
+        <!-- SECTION 1: INTRO -->
+        <div class="section" id="intro">
+            <h2>🤔 Die große Frage</h2>
+            <p>
+                Sprachmodelle wie GPT können erstaunliche Dinge: Code schreiben, Logikrätsel lösen, Texte verfassen. 
+                Aber <strong>verstehen</strong> sie wirklich etwas? Oder sind sie nur "stochastische Papageien" – 
+                Systeme, die Muster in Texten nachplappern, ohne ein echtes Verständnis der Welt zu haben?
+            </p>
+            
+            <div class="comparison-grid">
+                <div class="highlight-box">
+                    <h3>🦜 "Stochastic Parrots" These</h3>
+                    <p>KI-Modelle merken sich nur statistische Muster und Korrelationen aus den Trainingsdaten. 
+                    Sie haben kein inneres Modell der Welt – sie plappern nur clever nach.</p>
+                    <p><em>Vertreter: Bender & Koller (2020), Bender et al. (2021)</em></p>
+                </div>
+                <div class="highlight-box">
+                    <h3>🌍 "World Model" These</h3>
+                    <p>KI-Modelle bauen sich intern ein Modell der Welt auf – eine Repräsentation der 
+                    zugrundeliegenden Prozesse, die die Sequenzen erzeugen, die sie sehen.</p>
+                    <p><em>Was dieses Paper untersucht!</em></p>
+                </div>
+            </div>
+
+            <div class="key-finding">
+                Dieses Paper zeigt: Ein GPT-Modell, das nur Spielzüge als Textsequenzen sieht, 
+                baut sich intern ein Modell des Spielbretts auf – obwohl es nie ein Brett gesehen hat 
+                und die Regeln nie erklärt bekommen hat. Das ist mehr als nur "Papagei spielen"!
+            </div>
+
+            <div class="analogy">
+                Stell dir vor, du hörst jahrelang Schachpartien nur als gesprochene Zugfolgen 
+                ("e2-e4, e7-e5, ..."). Irgendwann "siehst" du in deinem Kopf ein Schachbrett – 
+                obwohl dir nie jemand erklärt hat, was ein Brett ist. Genau das passiert hier mit der KI.
+            </div>
+        </div>
+
+        <!-- SECTION 2: OTHELLO -->
+        <div class="section" id="othello">
+            <h2>♟️ Was ist Othello?</h2>
+            <p>
+                Othello (auch "Reversi" genannt) ist ein Brettspiel für zwei Spieler auf einem 8×8 Brett. 
+                Es ist einfacher als Schach, aber komplex genug, dass man es nicht einfach auswendig lernen kann.
+            </p>
+
+            <h3>Die Regeln in 3 Schritten:</h3>
+            
+            <div class="controls">
+                <button class="btn" onclick="showOthelloStep(1)">Schritt 1: Start</button>
+                <button class="btn" onclick="showOthelloStep(2)">Schritt 2: Ziehen</button>
+                <button class="btn" onclick="showOthelloStep(3)">Schritt 3: Umdrehen</button>
+                <button class="btn" onclick="showOthelloStep(4)">Interaktiv spielen!</button>
+            </div>
+
+            <div id="othello-explanation" class="highlight-box">
+                <p id="othello-step-text">Klicke auf einen Schritt oben, um die Regeln zu lernen!</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="othelloCanvas" width="420" height="420"></canvas>
+            </div>
+            <div class="controls" id="othello-interactive-controls" style="display:none;">
+                <button class="btn" onclick="resetOthelloDemo()">Neues Spiel</button>
+                <p style="font-size:0.9em; color:#888; margin-top:10px;" id="turn-indicator">Schwarz ist am Zug</p>
+            </div>
+
+            <h3>Warum Othello als Testumgebung?</h3>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-number">10<sup>28</sup></div>
+                    <div class="stat-label">Mögliche Spielverläufe (zu viele zum Auswendiglernen!)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">64</div>
+                    <div class="stat-label">Felder auf dem Brett</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">60</div>
+                    <div class="stat-label">Mögliche Zugfelder (ohne die 4 Startfelder)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Zustände pro Feld (leer / schwarz / weiß)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: THE EXPERIMENT -->
+        <div class="section" id="experiment">
+            <h2>🔬 Das Experiment: Othello-GPT</h2>
+            
+            <p>Die Forscher haben ein GPT-Modell (eine Variante der Architektur hinter ChatGPT) trainiert – 
+            aber nicht auf Text, sondern auf Othello-Spielzüge.</p>
+
+            <h3>Was das Modell sieht vs. was es NICHT sieht:</h3>
+            
+            <div class="comparison-grid">
+                <div class="highlight-box" style="border-color: #4aea66;">
+                    <h3 style="color: #4aea66;">✅ Was es sieht</h3>
+                    <p>Nur eine Sequenz von Feldnamen:<br>
+                    <code style="background:#2a2a4a; padding:5px 10px; border-radius:5px; display:inline-block; margin:5px 0;">
+                    D3, C5, E6, F3, C4, ...</code></p>
+                    <p>Das sind einfach Token (wie Wörter in einem Satz) – Nummern von 1-60.</p>
+                </div>
+                <div class="highlight-box" style="border-color: #ea4a4a;">
+                    <h3 style="color: #ea4a4a;">❌ Was es NICHT sieht</h3>
+                    <ul style="padding-left: 20px;">
+                        <li>Kein Spielbrett</li>
+                        <li>Keine Regeln</li>
+                        <li>Keine Farben (schwarz/weiß)</li>
+                        <li>Keine Geometrie (welche Felder nebeneinander liegen)</li>
+                        <li>Kein Konzept von "legal" oder "illegal"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Die Architektur:</h3>
+            <div class="flow-diagram">
+                <div class="flow-box">
+                    <strong>Input</strong><br>
+                    Zugsequenz<br>
+                    <small>(Token 1-60)</small>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>Embedding</strong><br>
+                    512 Dimensionen
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>8 Transformer-<br>Layer</strong><br>
+                    <small>8 Attention Heads</small>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>Output</strong><br>
+                    Nächster Zug<br>
+                    <small>(Wahrscheinlichkeit)</small>
+                </div>
+            </div>
+
+            <h3>Zwei Trainingsdatensätze:</h3>
+            <div class="comparison-grid">
+                <div class="highlight-box">
+                    <h3>🏆 Championship-Daten</h3>
+                    <p><strong>~140.000 Spiele</strong> von echten Meisterschaftsspielen</p>
+                    <p>Strategische, kluge Züge von Experten</p>
+                    <p>Fehlerrate: <strong>5.17%</strong></p>
+                </div>
+                <div class="highlight-box">
+                    <h3>🎲 Synthetische Daten</h3>
+                    <p><strong>20 Millionen Spiele</strong> mit zufälligen (aber legalen) Zügen</p>
+                    <p>Keine Strategie, nur regelkonforme Züge</p>
+                    <p>Fehlerrate: <strong>0.01%</strong></p>
+                </div>
+            </div>
+
+            <div class="key-finding">
+                Das Modell lernt mit 99.99% Genauigkeit, legale Züge vorherzusagen – 
+                obwohl es nie die Regeln gesehen hat! Ein untrainiertes Modell hat eine Fehlerrate von 93.29%.
+            </div>
+
+            <h3>Ist es nur Auswendiglernen?</h3>
+            <p>Die Forscher testeten das clever: Sie entfernten ein Viertel aller möglichen Spielverläufe 
+            aus den Trainingsdaten (alle Spiele, die mit dem Zug C5 beginnen). Das trainierte Modell 
+            konnte trotzdem legale Züge für diese nie gesehenen Spielverläufe vorhersagen (Fehlerrate: 0.02%).</p>
+            
+            <div class="analogy">
+                Das ist, als würde man einem Kind alle Sätze beibringen, die mit A-Z beginnen, 
+                außer Sätze mit "Q". Und das Kind kann trotzdem korrekte Q-Sätze bilden – 
+                weil es die Grammatik verstanden hat, nicht nur Sätze auswendig gelernt hat.
+            </div>
+
+            <div id="errorRateChart" class="plotly-chart"></div>
+        </div>
+
+        <!-- SECTION 4: PROBES -->
+        <div class="section" id="probes">
+            <h2>🔍 Probes: Dem Modell in den Kopf schauen</h2>
+            
+            <p>Wenn das Modell nicht nur auswendig lernt – was macht es dann? Hat es vielleicht 
+            ein inneres Bild des Spielbretts? Um das herauszufinden, nutzen die Forscher <strong>"Probes"</strong> 
+            (Sonden).</p>
+
+            <div class="analogy">
+                Stell dir vor, du willst wissen, ob jemand beim Telefonieren ein Bild im Kopf hat. 
+                Du kannst nicht direkt in den Kopf schauen, aber du kannst Fragen stellen: 
+                "Welche Farbe hat das Feld E4?" Wenn die Person konsistent richtig antwortet, 
+                hat sie wahrscheinlich ein inneres Bild. Genau das machen Probes mit der KI.
+            </div>
+
+            <h3>Wie funktioniert ein Probe?</h3>
+            <div class="flow-diagram">
+                <div class="flow-box">
+                    <strong>Interne Aktivierungen</strong><br>
+                    <small>(512-dim Vektor aus Layer X)</small>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>Probe-Klassifizierer</strong><br>
+                    <small>(trainiert auf Brettzustand)</small>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box">
+                    <strong>Vorhersage</strong><br>
+                    <small>"Feld E4 ist: schwarz"</small>
+                </div>
+            </div>
+
+            <p>Für jedes der 64 Felder wird ein eigener Probe trainiert, der vorhersagt: 
+            Ist dieses Feld <strong>leer</strong>, <strong>schwarz</strong> oder <strong>weiß</strong>?</p>
+
+            <h3>Das entscheidende Ergebnis: Linear vs. Nichtlinear</h3>
+            
+            <div class="tab-container">
+                <div class="tab active" onclick="switchProbeTab('linear')">Linearer Probe</div>
+                <div class="tab" onclick="switchProbeTab('nonlinear')">Nichtlinearer Probe</div>
+                <div class="tab" onclick="switchProbeTab('comparison')">Vergleich</div>
+            </div>
+            
+            <div class="tab-content active" id="tab-linear">
+                <p>Ein <strong>linearer Probe</strong> ist wie eine gerade Linie, die versucht, 
+                die Daten zu trennen. Er kann nur einfache, direkte Zusammenhänge finden.</p>
+                <p><strong>Ergebnis: ~20-25% Fehlerrate</strong> – kaum besser als bei einem untrainierten Modell!</p>
+                <p>Das bedeutet: Die Brettinformation ist NICHT einfach linear in den Aktivierungen gespeichert.</p>
+            </div>
+            <div class="tab-content" id="tab-nonlinear">
+                <p>Ein <strong>nichtlinearer Probe</strong> (2-Layer MLP) kann komplexere Muster erkennen – 
+                wie eine gekrümmte Trennlinie statt einer geraden.</p>
+                <p><strong>Ergebnis: Nur 1.7% Fehlerrate!</strong> (im besten Layer)</p>
+                <p>Das bedeutet: Das Modell HAT eine Repräsentation des Bretts – aber sie ist komplex kodiert!</p>
+            </div>
+            <div class="tab-content" id="tab-comparison">
+                <p>Der dramatische Unterschied zeigt: Die Information IST da, aber in einer nichtlinearen Form.</p>
+                <p>Bei einem <strong>untrainierten</strong> (zufälligen) Modell helfen auch nichtlineare Probes kaum 
+                (~25% Fehler). Das beweist, dass das Training die Repräsentation erzeugt hat.</p>
+            </div>
+
+            <div id="probeChart" class="plotly-chart"></div>
+
+            <div class="key-finding">
+                Das Modell baut sich intern eine nichtlineare Repräsentation des Spielbretts auf! 
+                Mit einem nichtlinearen Probe kann man den Brettzustand mit über 98% Genauigkeit 
+                aus den internen Aktivierungen ablesen. Das ist kein Zufall – ein untrainiertes 
+                Modell zeigt dieses Muster nicht.
+            </div>
+
+            <h3>Wo im Modell steckt das Wissen?</h3>
+            <p>Die Probes funktionieren am besten in den <strong>mittleren Layern</strong> (Layer 6-7 von 8). 
+            Das passt zu Erkenntnissen aus der Sprachforschung, wo linguistische Eigenschaften 
+            ebenfalls in mittleren Schichten am besten erkennbar sind.</p>
+
+            <div id="layerChart" class="plotly-chart"></div>
+        </div>
+
+        <!-- SECTION 5: INTERVENTION -->
+        <div class="section" id="intervention">
+            <h2>🎛️ Intervention: Ist das Weltmodell kausal?
+</h2>
+            
+            <p>Probes zeigen, dass die Information DA ist. Aber nutzt das Modell sie auch wirklich? 
+            Vielleicht ist die Brettrepräsentation nur ein "Nebenprodukt" – wie ein Schatten, der keine Wirkung hat.</p>
+
+            <div class="analogy">
+                Stell dir vor, du findest heraus, dass jemand beim Autofahren immer die Straßenkarte im Kopf hat. 
+                Aber fährt er WEGEN der Karte richtig? Oder fährt er aus Gewohnheit und die Karte ist nur 
+                zufällig auch da? Um das zu testen, müsstest du die Karte in seinem Kopf ÄNDERN und schauen, 
+                ob er dann anders fährt. Genau das machen die Forscher hier!
+            </div>
+
+            <h3>Die Idee: Das innere Weltbild manipulieren</h3>
+            
+            <div class="flow-diagram">
+                <div class="flow-box" style="border: 2px solid #667eea;">
+                    <strong>1. Normaler Zustand</strong><br>
+                    Modell "sieht" Brett B<br>
+                    <small>z.B. E6 = weiß</small>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box" style="border: 2px solid #ffa500;">
+                    <strong>2. Intervention</strong><br>
+                    Ändere Aktivierungen<br>
+                    <small>so dass E6 = schwarz</small>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box" style="border: 2px solid #4aea66;">
+                    <strong>3. Beobachten</strong><br>
+                    Ändert sich die<br>
+                    Vorhersage passend?
+                </div>
+            </div>
+
+            <p>Konkret: Die Forscher nehmen die internen Aktivierungen des Modells und verändern sie mit 
+            Gradient Descent so, dass der Probe für ein bestimmtes Feld einen anderen Zustand meldet. 
+            Dann lassen sie das Modell mit diesen veränderten Aktivierungen weiterrechnen.</p>
+
+            <h3>Interaktive Demo: Intervention</h3>
+            <div class="controls">
+                <button class="btn" onclick="runInterventionDemo('pre')">Vor Intervention</button>
+                <button class="btn" onclick="runInterventionDemo('post')">Nach Intervention (E6: weiß→schwarz)</button>
+                <button class="btn" onclick="runInterventionDemo('compare')">Vergleich</button>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="interventionCanvas" width="500" height="400"></canvas>
+            </div>
+            <p id="intervention-text" style="text-align:center; color:#888;"></p>
+
+            <h3>Die zwei Benchmark-Tests:</h3>
+            <div class="comparison-grid">
+                <div class="highlight-box" style="border-color: #4aea66;">
+                    <h3 style="color: #4aea66;">🟢 "Natural" Benchmark</h3>
+                    <p>1000 Fälle mit Brettzuständen, die durch legales Spiel erreichbar sind.</p>
+                    <p><strong>Ergebnis: 0.12 Fehler</strong> (vs. 2.68 ohne Intervention)</p>
+                </div>
+                <div class="highlight-box" style="border-color: #ffa500;">
+                    <h3 style="color: #ffa500;">🟠 "Unnatural" Benchmark</h3>
+                    <p>1000 Fälle mit Brettzuständen, die durch legales Spiel NICHT erreichbar sind – 
+                    also komplett außerhalb der Trainingsdaten!</p>
+                    <p><strong>Ergebnis: 0.06 Fehler</strong> (vs. 2.59 ohne Intervention)</p>
+                </div>
+            </div>
+
+            <div class="key-finding">
+                Wenn man das innere Weltbild des Modells ändert, ändern sich die Vorhersagen entsprechend – 
+                sogar für Brettzustände, die im echten Spiel unmöglich sind! Das beweist: Die Repräsentation 
+                ist KAUSAL für die Vorhersagen, nicht nur ein Nebenprodukt. Das Modell NUTZT sein Weltmodell aktiv.
+            </div>
+
+            <div id="interventionChart" class="plotly-chart"></div>
+
+            <h3>Technisches Detail: Wie wird interveniert?</h3>
+            <p>Die Intervention funktioniert nicht nur auf einem Layer, sondern auf allen Layern ab einem 
+            Startpunkt L<sub>s</sub>. Der Grund: Wegen der kausalen Attention-Maske würden spätere Layer 
+            sonst die alten (nicht-intervenierten) Informationen aus früheren Layern nutzen.</p>
+            
+            <div class="layer-viz" id="layerViz">
+                <!-- Wird per JS gefüllt -->
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="animateLayerIntervention()">▶ Intervention animieren</button>
+            </div>
+            <p id="layer-viz-text" style="text-align:center; color:#888; margin-top:10px;">
+                Klicke um zu sehen, wie die Intervention durch die Layer propagiert wird.
+            </p>
+        </div>
+
+        <!-- SECTION 6: SALIENCY MAPS -->
+        <div class="section" id="saliency">
+            <h2>🗺️ Latent Saliency Maps: Warum trifft das Modell diese Entscheidung?</h2>
+            
+            <p>Jetzt wird es richtig spannend: Die Forscher nutzen die Interventionstechnik, um zu verstehen, 
+            WARUM das Modell einen bestimmten Zug vorhersagt. Die Idee ist einfach aber genial:</p>
+
+            <div class="highlight-box">
+                <p><strong>Für jedes Feld auf dem Brett fragen sie:</strong> "Wenn ich den Zustand dieses Feldes 
+                in der internen Repräsentation ändere – wie sehr ändert sich dann die Vorhersage für den gewählten Zug?"</p>
+                <p>Felder, deren Änderung die Vorhersage stark beeinflusst = hohe Saliency (wichtig)</p>
+                <p>Felder, deren Änderung nichts ändert = niedrige Saliency (unwichtig)</p>
+            </div>
+
+            <h3>Interaktive Saliency Map Demo</h3>
+            <div class="controls">
+                <button class="btn" onclick="showSaliencyMap('synthetic')">Synthetisches Modell</button>
+                <button class="btn" onclick="showSaliencyMap('championship')">Championship Modell</button>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="saliencyCanvas" width="450" height="450"></canvas>
+            </div>
+            <p id="saliency-text" style="text-align:center; color:#888; max-width:600px; margin:10px auto;"></p>
+
+            <h3>Der faszinierende Unterschied:</h3>
+            <div class="comparison-grid">
+                <div class="highlight-box" style="border-color: #667eea;">
+                    <h3 style="color: #667eea;">🎲 Synthetisches Modell</h3>
+                    <p>Die Saliency Maps zeigen <strong>genau die Felder</strong>, die für die Legalität 
+                    des Zuges relevant sind:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li>Die gegnerischen Steine, die eingeschlossen werden</li>
+                        <li>Der eigene Stein am anderen Ende der Linie</li>
+                    </ul>
+                    <p style="margin-top:10px;">→ Das Modell hat die <strong>Regeln</strong> gelernt!</p>
+                </div>
+                <div class="highlight-box" style="border-color: #ffa500;">
+                    <h3 style="color: #ffa500;">🏆 Championship Modell</h3>
+                    <p>Die Saliency Maps zeigen <strong>viele Felder</strong> auf dem ganzen Brett:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li>Nicht nur die für Legalität relevanten</li>
+                        <li>Auch strategisch wichtige Positionen</li>
+                        <li>Globale Brettmuster</li>
+                    </ul>
+                    <p style="margin-top:10px;">→ Das Modell hat <strong>Strategie</strong> gelernt!</p>
+                </div>
+            </div>
+
+            <div class="key-finding">
+                Die Latent Saliency Maps zeigen, dass die zwei Modelle fundamental unterschiedliche 
+                "Denkweisen" haben – obwohl beide legale Züge vorhersagen. Das synthetische Modell 
+                denkt regelbasiert, das Championship-Modell denkt strategisch. Die Visualisierung 
+                macht diese unsichtbaren Unterschiede sichtbar!
+            </div>
+        </div>
+
+        <!-- SECTION 7: CONCLUSION -->
+        <div class="section" id="conclusion">
+            <h2>🎯 Fazit: Was bedeutet das alles?</h2>
+
+            <h3>Die Hauptergebnisse auf einen Blick:</h3>
+            
+            <div style="counter-reset: findings;">
+                <div class="key-finding" style="counter-increment: findings;">
+                    <strong>Ein GPT-Modell, das nur Zugsequenzen sieht, baut sich intern ein Modell des 
+                    Spielbretts auf</strong> – obwohl es nie ein Brett gesehen hat und die Regeln nie erklärt bekommen hat. 
+                    Dies ist eine "emergente" (von selbst entstehende) Weltrepräsentation.
+                </div>
+                <div class="key-finding">
+                    <strong>Diese Repräsentation ist nichtlinear</strong> – sie ist komplex kodiert und 
+                    nicht einfach als "Liste von Zahlen" ablesbar. Man braucht einen nichtlinearen Probe, 
+                    um sie zu entschlüsseln.
+                </div>
+                <div class="key-finding">
+                    <strong>Die Repräsentation ist kausal</strong> – das Modell nutzt sie aktiv für seine 
+                    Vorhersagen. Wenn man sie ändert, ändern sich die Vorhersagen entsprechend.
+                </div>
+                <div class="key-finding">
+                    <strong>Latent Saliency Maps</strong> ermöglichen es, die "Denkweise" des Modells 
+                    zu visualisieren und zu verstehen, warum es bestimmte Züge vorhersagt.
+                </div>
+            </div>
+
+            <h3>Was heißt das für die "Stochastic Parrots"-Debatte?</h3>
+            
+            <div class="highlight-box" style="border-color: #764ba2;">
+                <p>Das Paper liefert <strong>starke Evidenz gegen</strong> die reine "Stochastic Parrots"-These – 
+                zumindest in diesem kontrollierten Setting:</p>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li><strong>Kein reines Auswendiglernen:</strong> Das Modell generalisiert auf nie gesehene 
+                    Spielverläufe (Skewed Dataset Test).</li>
+                    <li><strong>Kein reines Pattern-Matching:</strong> Es baut eine strukturierte, kausale 
+                    Repräsentation der zugrundeliegenden Welt auf.</li>
+                    <li><strong>Echtes "Verständnis" der Struktur:</strong> Es reagiert korrekt auf 
+                    kontrafaktische (unmögliche) Brettzustände – etwas, das reines Memorieren nicht erklären kann.</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>ABER:</strong> Die Autoren sind vorsichtig. Othello ist 
+                viel einfacher als natürliche Sprache. Ob diese Ergebnisse auf große Sprachmodelle übertragbar 
+                sind, ist eine offene Frage. Das Paper zeigt aber, dass Sequence-Modelle PRINZIPIELL in der Lage 
+                sind, Weltmodelle zu entwickeln – und das ist ein wichtiger Datenpunkt in der Debatte.</p>
+            </div>
+
+            <h3>Zusammenfassung als Flussdiagramm:</h3>
+            <div id="summaryChart" class="plotly-chart"></div>
+
+            <div class="analogy">
+                Zurück zur Papagei-Analogie: Dieser "Papagei" hat nicht nur gelernt, welche Laute 
+                aufeinander folgen. Er hat sich ein inneres Bild der Welt gebaut, auf die sich die 
+                Laute beziehen – und nutzt dieses Bild aktiv, um zu entscheiden, was er als nächstes sagt. 
+                Das ist qualitativ etwas anderes als bloßes Nachplappern.
+            </div>
+
+            <div class="stat-grid" style="margin-top: 30px;">
+                <div class="stat-card">
+                    <div class="stat-number">98.3%</div>
+                    <div class="stat-label">Genauigkeit des nichtlinearen Probes (bester Layer)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0.06</div>
+                    <div class="stat-label">Fehler nach Intervention (unnatürliche Zustände)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.99%</div>
+                    <div class="stat-label">Legale Züge vorhergesagt (synthetisch)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">ICLR 2023</div>
+                    <div class="stat-label">Veröffentlicht auf Top-Konferenz</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" style="text-align:center; border-color: #667eea;">
+            <p style="font-size: 1.2em;">
+                📄 Paper: "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task"<br>
+                <span style="color:#888;">Li, Hopkins, Bau, Viégas, Pfister & Wattenberg (ICLR 2023)</span><br>
+                <a href="https://github.com/likenneth/othello_world" style="color:#667eea;">GitHub Repository</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== PROGRESS BAR ====================
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // ==================== OTHELLO BOARD DEMO ====================
+        let othelloBoard = Array(8).fill(null).map(() => Array(8).fill(0));
+        let currentPlayer = 1; // 1 = black, 2 = white
+        let interactiveMode = false;
+
+        function initBoard() {
+            othelloBoard = Array(8).fill(null).map(() => Array(8).fill(0));
+            othelloBoard[3][3] = 2; // white
+            othelloBoard[3][4] = 1; // black
+            othelloBoard[4][3] = 1; // black
+            othelloBoard[4][4] = 2; // white
+            currentPlayer = 1;
+        }
+
+        function drawOthelloBoard(canvas, board, highlights, legalMoves) {
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            const cellSize = size / 8.5;
+            const offset = cellSize * 0.25;
+
+            ctx.clearRect(0, 0, size, size);
+
+            // Draw board
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const x = offset + c * cellSize;
+                    const y = offset + r * cellSize;
+
+                    // Cell background
+                    ctx.fillStyle = '#2d8a2d';
+                    if (highlights && highlights[r] && highlights[r][c]) {
+                        ctx.fillStyle = highlights[r][c];
+                    }
+                    ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
+
+                    // Grid lines
+                    ctx.strokeStyle = '#1a5c1a';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, y, cellSize - 2, cellSize - 2);
+
+                    // Discs
+                    if (board[r][c] !== 0) {
+                        const cx = x + cellSize / 2 - 1;
+                        const cy = y + cellSize / 2 - 1;
+                        const radius = cellSize * 0.38;
+
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                        
+                        if (board[r][c] === 1) {
+                            const grad = ctx.createRadialGradient(cx - radius*0.3, cy - radius*0.3, radius*0.1, cx, cy, radius);
+                            grad.addColorStop(0, '#555');
+                            grad.addColorStop(1, '#000');
+                            ctx.fillStyle = grad;
+                        } else {
+                            const grad = ctx.createRadialGradient(cx - radius*0.3, cy - radius*0.3, radius*0.1, cx, cy, radius);
+                            grad.addColorStop(0, '#fff');
+                            grad.addColorStop(1, '#ccc');
+                            ctx.fillStyle = grad;
+                        }
+                        ctx.fill();
+                        ctx.strokeStyle = board[r][c] === 1 ? '#333' : '#aaa';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+
+                    // Legal move indicators
+                    if (legalMoves && legalMoves[r] && legalMoves[r][c]) {
+                        const cx = x + cellSize / 2 - 1;
+                        const cy = y + cellSize / 2 - 1;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, cellSize * 0.15, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Labels
+            ctx.fillStyle = '#888';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            for (let c = 0; c < 8; c++) {
+                ctx.fillText(String.fromCharCode(65 + c), offset + c * cellSize + cellSize/2 - 1, size - 5);
+            }
+            for (let r = 0; r < 8; r++) {
+                ctx.fillText((r + 1).toString(), 10, offset + r * cellSize + cellSize/2 + 3);
+            }
+        }
+
+        function getLegalMoves(board, player) {
+            const moves = Array(8).fill(null).map(() => Array(8).fill(false));
+            const directions = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+            const opponent = player === 1 ? 2 : 1;
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c] !== 0) continue;
+                    
+                    for (const [dr, dc] of directions) {
+                        let nr = r + dr, nc = c + dc;
+                        let foundOpponent = false;
+                        
+                        while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && board[nr][nc] === opponent) {
+                            foundOpponent = true;
+                            nr += dr;
+                            nc += dc;
+                        }
+                        
+                        if (foundOpponent && nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && board[nr][nc] === player) {
+                            moves[r][c] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return moves;
+        }
+
+        function makeMove(board, row, col, player) {
+            const directions = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+            const opponent = player === 1 ? 2 : 1;
+            board[row][col] = player;
+
+            for (const [dr, dc] of directions) {
+                let nr = row + dr, nc = col + dc;
+                const toFlip = [];
+                
+                while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && board[nr][nc] === opponent) {
+                    toFlip.push([nr, nc]);
+                    nr += dr;
+                    nc += dc;
+                }
+                
+                if (toFlip.length > 0 && nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && board[nr][nc] === player) {
+                    for (const [fr, fc] of toFlip) {
+                        board[fr][fc] = player;
+                    }
+                }
+            }
+        }
+
+        function showOthelloStep(step) {
+            const canvas = document.getElementById('othelloCanvas');
+            const textEl = document.getElementById('othello-step-text');
+            const controlsEl = document.getElementById('othello-interactive-controls');
+            interactiveMode = false;
+            controlsEl.style.display = 'none';
+
+            initBoard();
+
+            if (step === 1) {
+                textEl.innerHTML = `<strong>Schritt 1: Startposition</strong><br><br>
+                    Das Spiel beginnt immer mit 4 Steinen in der Mitte: 2 schwarze und 2 weiße, 
+                    diagonal angeordnet. Schwarz beginnt immer.<br><br>
+                    Das Brett hat 8×8 = 64 Felder. Die 4 Startfelder sind immer belegt, 
+                    also gibt es 60 mögliche Zugfelder – genau die 60 "Wörter" im Vokabular von Othello-GPT!`;
+                
+                const highlights = Array(8).fill(null).map(() => Array(8).fill(null));
+                highlights[3][3] = '#4db84d';
+                highlights[3][4] = '#4db84d';
+                highlights[4][3] = '#4db84d';
+                highlights[4][4] = '#4db84d';
+                drawOthelloBoard(canvas, othelloBoard, highlights, null);
+            } 
+            else if (step === 2) {
+                textEl.innerHTML = `<strong>Schritt 2: Einen Zug machen</strong><br><br>
+                    Ein Zug ist nur legal, wenn er mindestens einen gegnerischen Stein "einschließt" 
+                    (= zwischen deinem neuen Stein und einem bestehenden eigenen Stein in einer geraden Linie).<br><br>
+                    Die halbtransparenten Kreise zeigen legale Züge für Schwarz. 
+                    Schwarz kann z.B. auf D3 setzen, weil D4 (weiß) dann zwischen D3 und D5 (beide schwarz) eingeschlossen wird.`;
+                
+                const legal = getLegalMoves(othelloBoard, 1);
+                drawOthelloBoard(canvas, othelloBoard, null, legal);
+            }
+            else if (step === 3) {
+                textEl.innerHTML = `<strong>Schritt 3: Steine umdrehen</strong><br><br>
+                    Wenn ein Zug gemacht wird, werden alle eingeschlossenen gegnerischen Steine umgedreht 
+                    (sie wechseln die Farbe). Hier hat Schwarz auf D3 gesetzt – der weiße Stein auf D4 
+                    wird zu schwarz!<br><br>
+                    Dann ist Weiß am Zug, und das Ganze wiederholt sich. Das Spiel endet, 
+                    wenn kein Spieler mehr ziehen kann.`;
+                
+                makeMove(othelloBoard, 2, 3, 1); // D3
+                const highlights = Array(8).fill(null).map(() => Array(8).fill(null));
+                highlights[2][3] = '#5c5cff'; // new move
+                highlights[3][3] = '#ff5c5c'; // flipped
+                drawOthelloBoard(canvas, othelloBoard, highlights, null);
+            }
+            else if (step === 4) {
+                textEl.innerHTML = `<strong>Interaktiver Modus!</strong><br><br>
+                    Klicke auf ein halbtransparentes Feld, um einen Zug zu machen. 
+                    Die KI sieht nur die SEQUENZ dieser Züge (z.B. "D3, C5, E6, ...") – 
+                    kein Brett, keine Farben, keine Geometrie!`;
+                
+                interactiveMode = true;
+                controlsEl.style.display = 'block';
+                const legal = getLegalMoves(othelloBoard, currentPlayer);
+                drawOthelloBoard(canvas, othelloBoard, null, legal);
+            }
+        }
+
+        function resetOthelloDemo() {
+            initBoard();
+            currentPlayer = 1;
+            document.getElementById('turn-indicator').textContent = 'Schwarz ist am Zug';
+            const canvas = document.getElementById('othelloCanvas');
+            const legal = getLegalMoves(othelloBoard, currentPlayer);
+            drawOthelloBoard(canvas, othelloBoard, null, legal);
+        }
+
+        // Canvas click handler for interactive Othello
+        document.getElementById('othelloCanvas').addEventListener('click', function(e) {
+            if (!interactiveMode) return;
+            
+            const canvas = this;
+            const rect = canvas.getBoundingClientRect();
+            const cellSize = canvas.width / 8.5;
+            const offset = cellSize * 0.25;
+            
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const col = Math.floor((x - offset) / cellSize);
+            const row = Math.floor((y - offset) / cellSize);
+            
+            if (row < 0 || row > 7 || col < 0 || col > 7) return;
+            
+            const legal = getLegalMoves(othelloBoard, currentPlayer);
+            if (!legal[row][col]) return;
+            
+            makeMove(othelloBoard, row, col, currentPlayer);
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            
+            // Check if current player has moves
+            let newLegal = getLegalMoves(othelloBoard, currentPlayer);
+            let hasMove = newLegal.some(row => row.some(cell => cell));
+            
+            if (!hasMove) {
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                newLegal = getLegalMoves(othelloBoard, currentPlayer);
+                hasMove = newLegal.some(row => row.some(cell => cell));
+                if (!hasMove) {
+                    document.getElementById('turn-indicator').textContent = 'Spiel beendet!';
+                    drawOthelloBoard(canvas, othelloBoard, null, null);
+                    return;
+                }
+            }
+            
+            document.getElementById('turn-indicator').textContent = 
+                currentPlayer === 1 ? 'Schwarz ist am Zug' : 'Weiß ist am Zug';
+            drawOthelloBoard(canvas, othelloBoard, null, newLegal);
+        });
+
+        // ==================== ERROR RATE CHART ====================
+        function createErrorRateChart() {
+            const data = [
+                {
+                    x: ['Untrainiert', 'Championship', 'Synthetisch', 'Skewed (Generalisierung)'],
+                    y: [93.29, 5.17, 0.01, 0.02],
+                    type: 'bar',
+                    marker: {
+                        color: ['#ea4a4a', '#ffa500', '#4aea66', '#667eea']
+                    },
+                    text: ['93.29%', '5.17%', '0.01%', '0.02%'],
+                    textposition: 'outside'
+                }
+            ];
+            
+            const layout = {
+                title: {
+                    text: 'Fehlerrate bei der Vorhersage legaler Züge',
+                    font: { color: '#e0e0e0', size: 16 }
+                },
+                paper_bgcolor: '#12122a',
+                plot_bgcolor: '#1a1a3e',
+                font: { color: '#e0e0e0' },
+                yaxis: { 
+                    title: 'Fehlerrate (%)', 
+                    gridcolor: '#2a2a4a',
+                    range: [0, 100]
+                },
+                xaxis: { gridcolor: '#2a2a4a' },
+                margin: { t: 50, b: 80 }
+            };
+            
+            Plotly.newPlot('errorRateChart', data, layout, {responsive: true});
+        }
+
+        // ==================== PROBE CHART ====================
+        function createProbeChart() {
+            const layers = ['Layer 1', 'Layer 2', 'Layer 3', 'Layer 4', 'Layer 5', 'Layer 6', 'Layer 7', 'Layer 8'];
+            
+            const data = [
+                {
+                    x: layers,
+                    y: [25.5, 25.4, 25.5, 25.8, 26.0, 26.2, 26.2, 26.4],
+                    name: 'Nichtlinear - Untrainiert',
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { color: '#ea4a4a
+        const layout = {
+            title: {
+                text: 'Probe-Fehlerraten: Linear vs. Nichtlinear über alle Layer',
+                font: { color: '#e0e0e0', size: 16 }
+            },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3e',
+            font: { color: '#e0e0e0' },
+            yaxis: { 
+                title: 'Fehlerrate (%)', 
+                gridcolor: '#2a2a4a',
+                range: [0, 35]
+            },
+            xaxis: { 
+                title: 'Layer',
+                gridcolor: '#2a2a4a' 
+            },
+            legend: { 
+                x: 0.6, y: 0.95,
+                bgcolor: 'rgba(26,26,62,0.8)'
+            },
+            margin: { t: 50, b: 60 },
+            shapes: [{
+                type: 'line',
+                x0: 'Layer 1', x1: 'Layer 8',
+                y0: 52.95, y1: 52.95,
+                line: { color: '#888', dash: 'dot', width: 1 }
+            }],
+            annotations: [{
+                x: 'Layer 7',
+                y: 1.7,
+                text: 'Bester Wert: 1.7%!',
+                showarrow: true,
+                arrowhead: 2,
+                arrowcolor: '#4aea66',
+                font: { color: '#4aea66', size: 12 }
+            }]
+        };
+        
+        Plotly.newPlot('probeChart', data, layout, {responsive: true});
+    }
+
+    // ==================== LAYER CHART ====================
+    function createLayerChart() {
+        const layers = [1, 2, 3, 4, 5, 6, 7, 8];
+        const syntheticNonlinear = [11.3, 7.5, 4.8, 3.4, 2.4, 1.8, 1.7, 4.6];
+        const syntheticLinear = [21.9, 20.5, 20.4, 20.6, 21.1, 21.6, 22.2, 23.1];
+
+        const data = [{
+            x: layers,
+            y: syntheticNonlinear,
+            type: 'bar',
+            name: 'Nichtlinearer Probe',
+            marker: { 
+                color: syntheticNonlinear.map(v => {
+                    const intensity = 1 - (v / 12);
+                    return `rgba(74, 234, 102, ${0.4 + intensity * 0.6})`;
+                })
+            }
+        }, {
+            x: layers,
+            y: syntheticLinear,
+            type: 'bar',
+            name: 'Linearer Probe',
+            marker: { 
+                color: 'rgba(102, 126, 234, 0.6)'
+            }
+        }];
+
+        const layout = {
+            title: {
+                text: 'Wo im Modell steckt das Brettwissen? (Synthetisches Modell)',
+                font: { color: '#e0e0e0', size: 16 }
+            },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3e',
+            font: { color: '#e0e0e0' },
+            yaxis: { 
+                title: 'Fehlerrate (%)', 
+                gridcolor: '#2a2a4a' 
+            },
+            xaxis: { 
+                title: 'Layer-Nummer',
+                gridcolor: '#2a2a4a'
+            },
+            barmode: 'group',
+            legend: { x: 0.7, y: 0.95, bgcolor: 'rgba(26,26,62,0.8)' },
+            margin: { t: 50, b: 60 },
+            annotations: [{
+                x: 7,
+                y: 1.7,
+                text: '← Bester Layer (7)',
+                showarrow: false,
+                font: { color: '#4aea66', size: 11 },
+                xanchor: 'left'
+            }]
+        };
+
+        Plotly.newPlot('layerChart', data, layout, {responsive: true});
+    }
+
+    // ==================== INTERVENTION CHART ====================
+    function createInterventionChart() {
+        const startLayers = [1, 2, 3, 4, 5, 6, 7, 8];
+        const naturalErrors = [1.8, 0.8, 0.3, 0.12, 0.22, 0.6, 1.2, 2.0];
+        const unnaturalErrors = [1.5, 0.6, 0.2, 0.06, 0.15, 0.5, 1.0, 1.8];
+
+        const data = [
+            {
+                x: startLayers,
+                y: naturalErrors,
+                name: 'Natural Benchmark',
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: { color: '#4aea66', width: 3 },
+                marker: { size: 8 }
+            },
+            {
+                x: startLayers,
+                y: unnaturalErrors,
+                name: 'Unnatural Benchmark',
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: { color: '#ffa500', width: 3 },
+                marker: { size: 8 }
+            },
+            {
+                x: [1, 8],
+                y: [2.68, 2.68],
+                name: 'Baseline (Natural)',
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#ea4a4a', dash: 'dash', width: 2 }
+            },
+            {
+                x: [1, 8],
+                y: [2.59, 2.59],
+                name: 'Baseline (Unnatural)',
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#ea4a4a', dash: 'dot', width: 2 }
+            }
+        ];
+
+        const layout = {
+            title: {
+                text: 'Interventions-Ergebnisse: Fehler nach Manipulation des Weltmodells',
+                font: { color: '#e0e0e0', size: 15 }
+            },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3e',
+            font: { color: '#e0e0e0' },
+            yaxis: { 
+                title: 'Durchschnittliche Fehler', 
+                gridcolor: '#2a2a4a',
+                range: [0, 3.5]
+            },
+            xaxis: { 
+                title: 'Start-Layer der Intervention (Ls)',
+                gridcolor: '#2a2a4a'
+            },
+            legend: { x: 0.5, y: 0.95, bgcolor: 'rgba(26,26,62,0.8)' },
+            margin: { t: 50, b: 60 },
+            annotations: [{
+                x: 4,
+                y: 0.12,
+                text: 'Bester Wert!',
+                showarrow: true,
+                arrowhead: 2,
+                arrowcolor: '#4aea66',
+                font: { color: '#4aea66' },
+                ay: -30
+            }]
+        };
+
+        Plotly.newPlot('interventionChart', data, layout, {responsive: true});
+    }
+
+    // ==================== INTERVENTION DEMO ====================
+    function runInterventionDemo(mode) {
+        const canvas = document.getElementById('interventionCanvas');
+        const ctx = canvas.getContext('2d');
+        const textEl = document.getElementById('intervention-text');
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const boardSize = 280;
+        const cellSize = boardSize / 8;
+        const offsetX = 110;
+        const offsetY = 60;
+
+        // Draw a mini board
+        function drawMiniBoard(ox, oy, title, board, predictions, highlight) {
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, ox + boardSize/2, oy - 10);
+
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const x = ox + c * cellSize;
+                    const y = oy + r * cellSize;
+                    
+                    ctx.fillStyle = '#2d8a2d';
+                    if (highlight && highlight[r] && highlight[r][c]) {
+                        ctx.fillStyle = highlight[r][c];
+                    }
+                    ctx.fillRect(x, y, cellSize - 1, cellSize - 1);
+
+                    if (board[r][c] === 1) {
+                        ctx.beginPath();
+                        ctx.arc(x + cellSize/2, y + cellSize/2, cellSize * 0.35, 0, Math.PI * 2);
+                        ctx.fillStyle = '#111';
+                        ctx.fill();
+                    } else if (board[r][c] === 2) {
+                        ctx.beginPath();
+                        ctx.arc(x + cellSize/2, y + cellSize/2, cellSize * 0.35, 0, Math.PI * 2);
+                        ctx.fillStyle = '#eee';
+                        ctx.fill();
+                    }
+
+                    if (predictions && predictions[r] && predictions[r][c]) {
+                        ctx.strokeStyle = '#ffff00';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(x + 2, y + 2, cellSize - 5, cellSize - 5);
+                    }
+                }
+            }
+        }
+
+        // Example board state
+        const exBoard = Array(8).fill(null).map(() => Array(8).fill(0));
+        exBoard = 2; exBoard = 1;
+        exBoard] = 1; exBoard = 2;
+        exBoard = 1; exBoard = 2;
+        exBoard5] = 2; exBoard = 1;
+        exBoard = 1; exBoard = 2;
+        exBoard = 1;
+        // E6 is row 5, col 4 -> let's say it's white
+        exBoard] = 2; // E6 = white
+
+        const prePredictions = Array(8).fill(null).map(() => Array(8).fill(false));
+        prePredictions = true; // E3
+        prePredictions = true; // F3
+        prePredictions = true; // F6
+
+        if (mode === 'pre') {
+            drawMiniBoard(offsetX, offsetY, 'Vor Intervention (E6 = Weiß)', exBoard, prePredictions, null);
+            textEl.textContent = 'Das Modell sieht E6 als weiß und sagt bestimmte legale Züge vorher (gelb markiert).';
+        } 
+        else if (mode === 'post') {
+            const postBoard = exBoard.map(r => [...r]);
+            postBoard = 1; // E6 changed to black
+            
+            const postPredictions = Array(8).fill(null).map(() => Array(8).fill(false));
+            postPredictions = true; // D2
+            postPredictions = true; // E7
+            postPredictions = true; // F7
+
+            const highlight = Array(8).fill(null).map(() => Array(8).fill(null));
+            highlight = '#ff6600'; // highlighted intervention cell
+
+            drawMiniBoard(offsetX, offsetY, 'Nach Intervention (E6 = Schwarz)', postBoard, postPredictions, highlight);
+            textEl.textContent = 'Nach der Intervention "denkt" das Modell E6 sei schwarz → komplett andere legale Züge!';
+        }
+        else if (mode === 'compare') {
+            const smallSize = 180;
+            const smallCell = smallSize / 8;
+
+            function drawSmallBoard(ox, oy, title, board, preds, hl) {
+                ctx.fillStyle = '#e0e0e0';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(title, ox + smallSize/2, oy - 8);
+
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const x = ox + c * smallCell;
+                        const y = oy + r * smallCell;
+                        ctx.fillStyle = '#2d8a2d';
+                        if (hl && hl[r] && hl[r][c]) ctx.fillStyle = hl[r][c];
+                        ctx.fillRect(x, y, smallCell - 1, smallCell - 1);
+
+                        if (board[r][c] === 1) {
+                            ctx.beginPath();
+                            ctx.arc(x + smallCell/2, y + smallCell/2, smallCell * 0.32, 0, Math.PI * 2);
+                            ctx.fillStyle = '#111';
+                            ctx.fill();
+                        } else if (board[r][c] === 2) {
+                            ctx.beginPath();
+                            ctx.arc(x + smallCell/2, y + smallCell/2, smallCell * 0.32, 0, Math.PI * 2);
+                            ctx.fillStyle = '#eee';
+                            ctx.fill();
+                        }
+                        if (preds && preds[r] && preds[r][c]) {
+                            ctx.strokeStyle = '#ffff00';
+                            ctx.lineWidth = 2;
+                            ctx.strokeRect(x + 1, y + 1, smallCell - 3, smallCell - 3);
+                        }
+                    }
+                }
+            }
+
+            drawSmallBoard(20, 50, 'Vor (E6=Weiß)', exBoard, prePredictions, null);
+            
+            // Arrow
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 24px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('→', 220, 150);
+            ctx.font = '11px sans-serif';
+            ctx.fillText('Intervention', 220, 170);
+
+            const postBoard = exBoard.map(r => [...r]);
+            postBoard = 1;
+            const postPredictions = Array(8).fill(null).map(() => Array(8).fill(false));
+            postPredictions = true;
+            postPredictions = true;
+            postPredictions = true;
+            const highlight = Array(8).fill(null).map(() => Array(8).fill(null));
+            highlight = '#ff6600';
+
+            drawSmallBoard(280, 50, 'Nach (E6=Schwarz)', postBoard, postPredictions, highlight);
+
+            // Stats
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Die Vorhersagen ändern sich passend', 20, 280);
+            ctx.fillText('zum neuen Brettzustand!', 20, 298);
+            ctx.fillStyle = '#4aea66';
+            ctx.fillText('→ Beweis: Das Weltmodell ist KAUSAL.', 20, 325);
+            ctx.fillText('→ Funktioniert sogar für unmögliche Zustände!', 20, 345);
+
+            textEl.textContent = '';
+        }
+    }
+
+    // ==================== LAYER INTERVENTION ANIMATION ====================
+    function initLayerViz() {
+        const container = document.getElementById('layerViz');
+        container.innerHTML = '';
+        for (let i = 1; i <= 8; i++) {
+            const block = document.createElement('div');
+            block.className = 'layer-block';
+            block.id = `layer-block-${i}`;
+            block.style.background = '#2a4a6a';
+            block.textContent = `L${i}`;
+            container.appendChild(block);
+        }
+    }
+
+    function animateLayerIntervention() {
+        initLayerViz();
+        const textEl = document.getElementById('layer-viz-text');
+        textEl.textContent = 'Intervention startet bei Layer 4...';
+
+        let step = 0;
+        const startLayer = 4;
+        
+        const interval = setInterval(() => {
+            step++;
+            if (step <= 3) {
+                // First 3 layers: unmodified
+                const block = document.getElementById(`layer-block-${step}`);
+                block.style.background = '#4a6a8a';
+                block.style.transform = 'scale(1.1)';
+                textEl.textContent = `Layer ${step}: Unverändert (normale Berechnung)`;
+            } else if (step <= 8) {
+                const block = document.getElementById(`layer-block-${step}`);
+                block.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                block.style.transform = 'scale(1.2)';
+                block.style.color = 'white';
+                textEl.textContent = `Layer ${step}: INTERVENIERT! Aktivierungen werden per Gradient Descent modifiziert.`;
+            } else {
+                clearInterval(interval);
+                textEl.textContent = 'Fertig! Layer 4-8 wurden interveniert. Die Vorhersage basiert nun auf dem neuen Weltbild.';
+            }
+        }, 800);
+    }
+
+    // ==================== SALIENCY MAP DEMO ====================
+    function showSaliencyMap(type) {
+        const canvas = document.getElementById('saliencyCanvas');
+        const ctx = canvas.getContext('2d');
+        const textEl = document.getElementById('saliency-text');
+        const size = canvas.width;
+        const cellSize = size / 9;
+        const offset = cellSize * 0.5;
+
+        ctx.clearRect(0, 0, size, size);
+
+        // Generate example saliency values
+        let saliency = Array(8).fill(null).map(() => Array(8).fill(0));
+        let board = Array(8).fill(null).map(() => Array(8).fill(0));
+        
+        // Set up a board state
+        board = 2; board = 1;
+        board = 1; board = 2;
+        board] = 1; board = 2;
+        board = 2; board = 1;
+        board = 2; board = 2;
+        board = 1;
+
+        // Predicted move: let's say F4 (row 3, col 5)
+        const predRow = 3, predCol = 5;
+
+        if (type === 'synthetic') {
+            // Synthetic: saliency focused on specific tiles that make the move legal
+            // The move F4 is legal because it flips E4 (white) between F4 (new black) and D4 (black)
+            saliency = 0.9;  // E4 - the opponent disc being flipped
+            saliency = 0.7;  // D4 - the anchoring own disc
+            saliency = 0.3;  // C4 - own disc in line
+            // Low saliency elsewhere
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (saliency[r][c] === 0) {
+                        saliency[r][c] = Math.random() * 0.1 - 0.05;
+                    }
+                }
+            }
+            textEl.textContent = 'Synthetisches Modell: Hohe Saliency NUR bei den Steinen, die für die Legalität des Zuges relevant sind (die eingeschlossene Linie). Das Modell hat die REGELN gelernt!';
+        } else {
+            // Championship: saliency spread across many tiles
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    saliency[r][c] = Math.random() * 0.6 - 0.1;
+                }
+            }
+            // Still high for legal-relevant tiles
+            saliency = 0.85;
+            saliency = 0.6;
+            // But also high for strategic positions (corners, edges)
+            saliency[0][0] = 0.7;
+            saliency[0 = 0.5;
+            saliency = 0.4;
+            saliency = 0.6;
+            saliency = 0.45;
+            saliency = 0.5;
+            saliency = 0.4;
+            textEl.textContent = 'Championship Modell: Hohe Saliency über das GANZE Brett verteilt – Ecken, Kanten, strategische Positionen. Das Modell hat STRATEGIE gelernt, nicht nur Regeln!';
+        }
+
+        // Draw saliency map
+        const maxVal = Math.max(...saliency.flat().map(Math.abs));
+
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const x = offset + c * cellSize;
+                const y = offset + r * cellSize;
+                const val = saliency[r][c] / maxVal;
+
+                // Color: red for high positive, blue for negative
+                let red, green, blue;
+                if (val > 0) {
+                    red = Math.floor(80 + val * 175);
+                    green = Math.floor(40 * (1 - val));
+                    blue = Math.floor(40 * (1 - val));
+                } else {
+                    red = Math.floor(40 * (1 + val));
+                    green = Math.floor(40 * (1 + val));
+                    blue = Math.floor(80 + Math.abs(val) * 175);
+                }
+
+                ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+                ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
+
+                // Draw discs
+                if (board[r][c] !== 0) {
+                    ctx.beginPath();
+                    ctx.arc(x + cellSize/2 - 1, y + cellSize/2 - 1, cellSize * 0.3, 0, Math.PI * 2);
+                    ctx.fillStyle = board[r][c] === 1 ? '#000' : '#fff';
+                    ctx.fill();
+                    ctx.strokeStyle = '#666';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                // Mark predicted move
+                if (r === predRow && c === predCol) {
+                    ctx.strokeStyle = '#ffff00';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(x + 2, y + 2, cellSize - 6, cellSize - 6);
+                    ctx.fillStyle = '#ffff00';
+                    ctx.font = 'bold 10px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('PRED', x + cellSize/2 - 1, y + cellSize - 8);
+                }
+            }
+        }
+
+        // Legend
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('🔴 Rot = hohe Saliency (wichtig für Vorhersage)', offset, size - 15);
+        ctx.fillText('🔵 Blau = niedrige Saliency (unwichtig)', offset + 250, size - 15);
+
+        // Column labels
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        for (let c = 0; c < 8; c++) {
+            ctx.fillText(String.fromCharCode(65 + c), offset + c * cellSize + cellSize/2, offset - 5);
+        }
+        for (let r = 0; r < 8; r++) {
+            ctx.fillText((r + 1).toString(), offset - 15, offset + r * cellSize + cellSize/2 + 4);
+        }
+    }
+
+    // ==================== SUMMARY CHART ====================
+    function createSummaryChart() {
+        const data = [{
+            type: 'funnel',
+            y: [
+                "Zugsequenzen (nur Token)",
+                "GPT-Training (Next-Token Prediction)",
+                "Emergente Brettrepräsentation",
+                "Nichtlinearer Probe bestätigt (98.3%)",
+                "Intervention beweist Kausalität",
+                "Latent Saliency Maps erklären Vorhersagen"
+            ],
+            x: [100, 85, 70, 55, 40, 25],
+            textinfo: "text",
+            text: [
+                "Input: D3, C5, E6, F3...",
+                "8-Layer Transformer lernt",
+                "Modell baut Weltbild auf!",
+                "Probe liest Brett aus Aktivierungen",
+                "Manipulation → Vorhersage ändert sich",
+                "Visualisierung der 'Denkweise'"
+            ],
+            marker: {
+                color: ['#667eea', '#764ba2', '#4aea66', '#ffa500', '#ea4a4a', '#ff69b4']
+            },
+            connector: { line: { color: '#2a2a4a' } }
+        }];
+
+        const layout = {
+            title: {
+                text: 'Der Weg vom Token zum Weltmodell',
+                font: { color: '#e0e0e0', size: 16 }
+            },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3e',
+            font: { color: '#e0e0e0' },
+            margin: { t: 50, b: 20, l: 200 }
+        };
+
+        Plotly.newPlot('summaryChart', data, layout, {responsive: true});
+    }
+
+    // ==================== TAB SWITCHING ====================
+    function switchProbeTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        
+        event.target.classList.add('active');
+        document.getElementById(`tab-${tab}`).classList.add('active');
+    }
+
+    // ==================== INITIALIZE EVERYTHING ====================
+    window.addEventListener('load', () => {
+        initBoard();
+        const canvas = document.getElementById('othelloCanvas');
+        drawOthelloBoard(canvas, othelloBoard, null, null);
+        
+        createErrorRateChart();
+        createProbeChart();
+        createLayerChart();
+        createInterventionChart();
+        createSummaryChart();
+        initLayerViz();
+    });
+</script>
