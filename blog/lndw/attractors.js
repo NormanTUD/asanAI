@@ -1055,16 +1055,15 @@ function renderSeahorseEmoji(container) {
                 // Schwung hat um den Canvas zu verlassen, bevor es zurückgezogen wird.
                 if (dist > repelRadius && dist > 0) {
                     const toCenter = Math.atan2(-dy, -dx);
-                    const attractAccel = 0.01 + 10 / (dist + 80);
+                    const attractAccel = 0.005 + 6 / (dist + 100);
                     p.vx += Math.cos(toCenter) * attractAccel;
                     p.vy += Math.sin(toCenter) * attractAccel;
                 }
 
                 // === IM Repel-Feld: STARKE radiale Abstoßung + tangentiale Dämpfung ===
-                // Schnelle Teilchen dringen tiefer ein, langsame nehmen mehr Fahrt auf.
-                // Zusätzlich wird die tangentiale (seitliche) Bewegung stark gedämpft,
-                // damit die Teilchen nicht in einer Kreisbahn am Rand hängen bleiben,
-                // sondern radial rausgeschossen werden.
+                // Mindestgeschwindigkeit 6 px/frame nach außen — so haben die Teilchen
+                // genug Schwung den Canvas zu verlassen bevor die schwache Anziehung
+                // außerhalb sie wieder einfängt. Tangentiale Dämpfung verhindert Orbit.
                 if (dist < repelRadius && dist > dangerRadius) {
                     const outwardAngle = Math.atan2(dy, dx);
                     const cosA = Math.cos(outwardAngle);
@@ -1073,9 +1072,8 @@ function renderSeahorseEmoji(container) {
                     // Radialer Anteil der aktuellen Geschwindigkeit
                     const radialVel = p.vx * cosA + p.vy * sinA;
 
-                    // Radial-Force: stellt sicher dass die radiale Geschwindigkeit hoch genug ist
-                    // (mindestens 4 px/frame nach außen, schneller wenns Teilchen schnell war)
-                    const targetRadial = Math.max(4, pSpeed * 1.3);
+                    // Radial-Geschwindigkeit: mindestens 6 px/frame raus, mehr wenn schnell
+                    const targetRadial = Math.max(6, pSpeed * 1.5);
                     if (radialVel < targetRadial) {
                         p.vx += cosA * (targetRadial - radialVel);
                         p.vy += sinA * (targetRadial - radialVel);
@@ -1139,7 +1137,7 @@ function renderSeahorseEmoji(container) {
                 }
 
                 // === KEIN Wand-Bounce! Wenn deutlich außerhalb → "alive=false" → respawn ===
-                const killMargin = 80;
+                const killMargin = 50;
                 if (p.x < -killMargin || p.x > W + killMargin || p.y < -killMargin || p.y > H + killMargin) {
                     p.alive = false;
                 }
