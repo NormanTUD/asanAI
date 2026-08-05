@@ -392,8 +392,6 @@ The key insight is the **causal inner product**: an inner product on the represe
 - Probing and steering are **the same object** viewed from different sides of the model (the Riesz isomorphism)
 
 This result deepens the philosophical puzzle. If concepts are organized with such precise geometric structure — if "meaning" has a measurable, causal geometry — then the model is doing something more structured than "haphazardly stitching together sequences." Yet the geometry is still defined over tokens, not over grounded experience. The model has a **map of meaning** with correct topology, but the map is still not the territory.
-
-**Sheaf Note:** This connects to the sheaf framework introduced later in this chapter. The linear representations are **local sections** of a sheaf over the space of concepts. The causal inner product provides the **gluing condition**: it ensures that concept directions from different domains (language, gender, tense) are compatible and can be assembled into a coherent global geometry. When the gluing fails — when concepts are not actually separable — the inner product reveals it as non-orthogonality.
 </div>
 
 <div id="philosophy-linear-rep-container"></div>
