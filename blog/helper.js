@@ -2004,6 +2004,7 @@ window.__MN_DARK = {
 		'#dcfce7':     '#86efac',  // green-100 -> green-300
 		'#fef9c3':     '#422006',  // light yellow bg -> dark yellow
 		'#ef4444':     '#f87171',  // red -> lighter red
+		'#991b1b':     '#fca5a5',  // dark red text -> light red
 		'#6366f1':     '#818cf8',  // indigo -> lighter indigo
 		'#10b981':     '#6ee7b7',  // emerald -> lighter emerald
 		'#d97706':     '#fbbf24',  // dark amber -> bright amber

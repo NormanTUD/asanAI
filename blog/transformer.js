@@ -5474,11 +5474,11 @@ function updateArchitectureValidityUI() {
 	display: block;
 	margin-top: 10px;
 	padding: 12px 16px;
-	background: #fef2f2;
-	border: 2px solid #ef4444;
+	background: ${themeColor('#fef2f2')};
+	border: 2px solid ${themeColor('#ef4444')};
 	border-radius: 8px;
 	font-size: 0.85rem;
-	color: #991b1b;
+	color: ${themeColor('#991b1b')};
 	line-height: 1.7;
     `;
 
@@ -7261,5 +7261,6 @@ if (window.__MN_DARK) {
 		if (lossPlot && lossPlot.style.display !== 'none') {
 			renderLossGraph();
 		}
+		updateArchitectureValidityUI();
 	});
 }
