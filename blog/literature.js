@@ -1,4 +1,31 @@
 window.bibData = {
+	"li2022othello_iclr": {
+		author: "Kenneth Li, Aspen K. Hopkins, David Bau, Fernanda Viégas, Hanspeter Pfister, Martin Wattenberg",
+		year: 2023,
+		title: "Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task",
+		url: "https://arxiv.org/abs/2210.13382",
+		alternativetitle: "Othello-GPT"
+	},
+	"park2024linear": {
+		author: "Kiho Park, Yo Joong Choe, Victor Veitch",
+		year: 2024,
+		title: "The Linear Representation Hypothesis and the Geometry of Large Language Models",
+		url: "https://arxiv.org/abs/2311.03658",
+		alternativetitle: "Linear Representation Hypothesis"
+	},
+	"giannou2023looped": {
+		author: "Angeliki Giannou, Shashank Rajput, Jy-yong Sohn, Kangwook Lee, Jason D. Lee, Dimitris Papailiopoulos",
+		year: 2023,
+		title: "Looped Transformers as Programmable Computers",
+		url: "https://arxiv.org/abs/2301.13196",
+		alternativetitle: "Looped Transformers"
+	},
+	"mavaddat1988subleq": {
+		author: "F. Mavaddat, B. Parhami",
+		year: 1988,
+		title: "URISC: The Ultimate Reduced Instruction Set Computer",
+		url: "https://web.ece.ucsb.edu/~parhami/pubs_folder/parh88-ijeee-ultimate-risc.pdf",
+	},
 	"condorcet1770": {
 		author: "Marie Jean Antoine Nicolas de Caritat, Marquis of Condorcet",
 		year: 1770,
