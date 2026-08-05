@@ -620,7 +620,7 @@ function renderSeahorseEmoji(container) {
         const cx = W / 2, cy = H / 2;
         const basinRadius = Math.min(140, Math.min(W, H) / 2 - 60);
 
-        function spawnParticle(color, name) {
+        function spawnParticle(color) {
             let x, y, attempts = 0;
             do {
                 x = 40 + Math.random() * (W - 80);
@@ -635,7 +635,6 @@ function renderSeahorseEmoji(container) {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 color,
-                name,
                 trail: [],
                 inBasin: false,
                 arrived: false,
@@ -647,9 +646,8 @@ function renderSeahorseEmoji(container) {
             };
         }
 
-        const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
-        const names = ['A', 'B', 'C', 'D'];
-        let particles = colors.map((c, i) => spawnParticle(c, names[i]));
+        const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+        let particles = colors.map((c) => spawnParticle(c));
 
         animationRunning = true;
         let t = 0;
@@ -784,33 +782,33 @@ function renderSeahorseEmoji(container) {
                     }
                 } else {
                     // ===== AUSSERHALB DES BECKENS: lockere Anziehung Richtung Attraktor =====
-                    // Punkte sollen leicht irren (max ~10s) und dann gemütlich ankommen.
+                    // Punkte sollen sichtbar irren (max ~10s) und dann gemütlich ankommen.
 
-                    // Sanfter zufälliger Drift — etwas stärker, damit sie wirklich "irren"
+                    // Stärkerer zufälliger Drift — sorgt für sichtbares "Rumirren"
                     p.turnChangeTimer--;
                     if (p.turnChangeTimer <= 0) {
-                        p.turnRate += (Math.random() - 0.5) * 0.025;
-                        p.turnRate = Math.max(-0.05, Math.min(0.05, p.turnRate));
-                        p.turnChangeTimer = 30 + Math.floor(Math.random() * 60);
+                        p.turnRate += (Math.random() - 0.5) * 0.035;
+                        p.turnRate = Math.max(-0.07, Math.min(0.07, p.turnRate));
+                        p.turnChangeTimer = 25 + Math.floor(Math.random() * 50);
                     }
                     p.heading += p.turnRate;
 
-                    // Sehr milde Bias Richtung Zentrum — nur ein leichter "Vorschlag"
+                    // Sehr schwache Bias Richtung Zentrum — Heading bleibt chaotisch
                     const angleToCenter = Math.atan2(dy, dx);
                     const distBeyond = Math.max(0, dist - basinRadius);
-                    const angularBias = 0.04 + 0.10 * Math.min(1, distBeyond / 200);
+                    const angularBias = 0.02 + 0.06 * Math.min(1, distBeyond / 200);
                     p.heading += (angleToCenter - p.heading) * angularBias;
 
-                    // Velocity folgt Heading mit schwacher Kopplung (chaotisches Wandern)
-                    const targetSpeed = 1.3 + Math.min(0.7, distBeyond * 0.005);
+                    // Velocity koppelt schwach an Heading (viel Drift im Random-Walk)
+                    const targetSpeed = 1.2 + Math.min(0.6, distBeyond * 0.004);
                     const targetVx = Math.cos(p.heading) * targetSpeed;
                     const targetVy = Math.sin(p.heading) * targetSpeed;
-                    p.vx += (targetVx - p.vx) * 0.04;
-                    p.vy += (targetVy - p.vy) * 0.04;
+                    p.vx += (targetVx - p.vx) * 0.03;
+                    p.vy += (targetVy - p.vy) * 0.03;
 
                     // Schwacher konstanter Schub Richtung Zentrum
-                    // (skaliert leicht mit Distanz, aber nie dominant — max ~10s Wanderzeit)
-                    const pullAccel = 0.018;
+                    // (gewährleistet Ankunft in ~5-8s, ohne direkten Fall zu erzwingen)
+                    const pullAccel = 0.025;
                     p.vx += Math.cos(angleToCenter) * pullAccel;
                     p.vy += Math.sin(angleToCenter) * pullAccel;
 
@@ -877,12 +875,6 @@ function renderSeahorseEmoji(container) {
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 2;
                 ctx.stroke();
-
-                // Label
-                ctx.font = 'bold 11px system-ui';
-                ctx.fillStyle = p.color;
-                ctx.textAlign = 'center';
-                ctx.fillText(p.name, p.x, p.y - 13);
             });
 
             activeAnimation = requestAnimationFrame(draw);
@@ -1050,14 +1042,16 @@ function renderSeahorseEmoji(container) {
                 // → schnelle Teilchen kommen tiefer rein und werden heftiger rausgeschleudert
                 if (dist < repelRadius && dist > dangerRadius) {
                     const outwardAngle = Math.atan2(dy, dx);
-                    const dynamicRepel = 0.3 + pSpeed * 0.55;
+                    // Höhere Basis-Kraft damit auch langsame Teilchen Fahrt aufnehmen
+                    // statt am Rand der Abstoßungszone hängen zu bleiben
+                    const dynamicRepel = 0.6 + pSpeed * 0.5;
                     p.vx += Math.cos(outwardAngle) * dynamicRepel;
                     p.vy += Math.sin(outwardAngle) * dynamicRepel;
 
-                    // Tangentialer Swirl
+                    // Schwacher Tangentialer Swirl (weniger "Kreisen" am Rand)
                     const swirlAngle = outwardAngle + Math.PI / 2;
-                    p.vx += Math.cos(swirlAngle) * 0.12;
-                    p.vy += Math.sin(swirlAngle) * 0.12;
+                    p.vx += Math.cos(swirlAngle) * 0.08;
+                    p.vy += Math.sin(swirlAngle) * 0.08;
 
                     p.wasInRepel = true;
                 }
@@ -2642,7 +2636,10 @@ function renderGenerator(container) {
             // ===== FREIE BEWEGUNG: Affinitäts-Kräfte + garantierter Home-Seeker =====
             // Positiv = Anziehung, negativ = Abstoßung.
 
-            // Per-Region Affinitäts-Kräfte (subtil, dominieren nicht)
+            // Per-Region Affinitäts-Kräfte — ASYMMETRISCH:
+            //   Anziehung (aff > 0): moderat (Sekundär-Attraktoren sollen nicht ziehen)
+            //   Abstoßung (aff < 0): STARK, wächst schnell bei Annäherung (dynamische Repeller)
+            // → Wörter können falsche Becken nicht einfach durchqueren.
             regions.forEach(r => {
                 const aff = p.aff[r.id];
                 if (!aff) return;
@@ -2650,7 +2647,14 @@ function renderGenerator(container) {
                 const rdy = r.y - p.y;
                 const rDist = Math.sqrt(rdx * rdx + rdy * rdy);
                 if (rDist < 1) return;
-                const force = aff * 0.4 * Math.min(1.5, 110 / (rDist + 60));
+                let force;
+                if (aff > 0) {
+                    // Attraktor: moderate Anziehung
+                    force = aff * 0.35 * Math.min(1.5, 110 / (rDist + 60));
+                } else {
+                    // Repeller: starke Abstoßung, scharf ansteigend bei Annäherung
+                    force = aff * Math.min(4.5, 280 / (rDist + 15));
+                }
                 p.vx += (rdx / rDist) * force;
                 p.vy += (rdy / rDist) * force;
             });
