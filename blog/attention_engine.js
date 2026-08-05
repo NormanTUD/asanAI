@@ -1000,7 +1000,34 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		headContentObserver.unobserve(headDiv);
 		render_temml();
 
+		this._annotateHead(headDiv, layerIdx, headIdx);
+
 		this._schedulePostRenderDrawing(layerIdx, headIdx, displayTokens, hd.this_weights);
+	}
+
+	/**
+	 * Provenance: annotate the W_Q/W_K/W_V matrices in the equations and
+	 * the context/weights/V matrices in the result section of a head.
+	 */
+	_annotateHead(headDiv, layerIdx, headIdx) {
+		if (!window.Prov) return;
+		const P = 'L:' + (layerIdx + 1) + ':head:' + headIdx;
+		const equations = document.getElementById(`apv-equations-${this.containerId}-${layerIdx}-${headIdx}`);
+		const result = document.getElementById(`apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`);
+		if (equations) {
+			window.Prov.apply(equations, [
+				{ grid: P + ':Wq' },
+				{ grid: P + ':Wk' },
+				{ grid: P + ':Wv' }
+			]);
+		}
+		if (result) {
+			window.Prov.apply(result, [
+				{ grid: P + ':ctx' },
+				{ grid: P + ':alpha' },
+				{ grid: P + ':v' }
+			]);
+		}
 	}
 
 	_executeHeadPatchUpdate(headDiv, layerIdx, headIdx) {
@@ -1025,6 +1052,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 		if (needsTemml) {
 			render_temml();
+			this._annotateHead(headDiv, layerIdx, headIdx);
 		}
 
 		this._unlockMorphedContainers(equationsContainer, resultContainer);

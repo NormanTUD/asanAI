@@ -328,6 +328,24 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 		ensureFFNLayerContainers(ffnLayerIndex);
 		updateConcatenationDisplayForLayer(headData, tokenStrings || h_current, ffnLayerIndex, tokenStrings);
 		render_h1_logic_for_layer(h_current, normH, concat, layerWeights.gamma, layerWeights.beta, Wo, ffnLayerIndex, tokenStrings);
+
+		// Provenance: record all intermediate values of the attention sublayer
+		if (window.Prov) {
+			window.Prov.recordLayer(ffnLayerIndex, {
+				d_model, n_heads,
+				h_in: h_current,
+				norm: normH,
+				gamma: layerWeights.gamma,
+				beta: layerWeights.beta,
+				Wo,
+				concat,
+				proj: projected,
+				h1: h_attn,
+				tokens: tokenStrings,
+				headData,
+				attention: layerWeights.attention
+			});
+		}
 	}
 
 	// 7. FFN block — now with tokenStrings
@@ -1870,6 +1888,24 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 	const projected = matMul(multiHeadOutput, Wo_layer0);
 	const h1 = matAdd(h0, projected);
 
+	// Provenance: record all intermediate values of the attention sublayer
+	if (window.Prov) {
+		window.Prov.recordLayer(0, {
+			d_model, n_heads,
+			h_in: h0,
+			norm: normH0,
+			gamma: weights[0]["gamma"],
+			beta: weights[0]["beta"],
+			Wo: Wo_layer0,
+			concat: multiHeadOutput,
+			proj: projected,
+			h1,
+			tokens: knownTokens,
+			headData,
+			attention: weights[0]["attention"]
+		});
+	}
+
 	render_h1_logic_for_layer(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, 0, knownTokens);
 
 	// Keep old global render for backward compat
@@ -2046,6 +2082,9 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 2. Pre-attention visualizations
 	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
 	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
+
+	// 2b. Provenance: record the initial hidden states h_0 = embedding + PE
+	if (window.Prov) window.Prov.recordPre(knownTokens, d_model);
 
 	// 3. Prepare migration/trajectory state
 	prepareMigrationState(needsReinit);
@@ -2399,6 +2438,44 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 
     // SCOPED rendering — do NOT call global render_temml()
     _renderTemmlOnElements([chipsDiv, detailsDiv]);
+
+    // Provenance: record the final stage and annotate the rendered numbers
+    if (window.Prov) {
+        const logitValues = logits.map(l => l.val);
+        const originalProbs = softmax(logitValues);
+        const scaledProbs = softmax(logitValues.map(v => v / temperature));
+        window.Prov.recordFinal({
+            h_last,
+            W_vocab: logits.map(l => l.w_row),
+            logitValues,
+            originalProbs,
+            scaledProbs,
+            temperature,
+            vocabulary,
+            vocabSize: vocabulary.length,
+            lastLayer: h_final.length
+        });
+        const overDivs = detailsDiv.querySelectorAll('div[style*="overflow-x:auto"]');
+        const hLastP = detailsDiv.querySelector('.logit_calc');
+        window.Prov.apply(hLastP || detailsDiv, { inline: true, grids: ['F:h_last'] });
+        window.Prov.apply(overDivs[0], [
+            { grid: 'F:Wv' },
+            { grid: 'F:h_last', oneCol: 0 },
+            { grid: 'F:logits', oneCol: 1 }
+        ]);
+        window.Prov.apply(overDivs[1], [
+            { grid: 'F:probs_pct', oneCol: 1 },
+            { grid: 'F:logits', oneCol: 1 }
+        ]);
+        window.Prov.apply(overDivs[2], [{
+            cols: [
+                { grid: 'F:probs_pct', col: 1 },
+                { grid: 'F:sprobs_pct', col: 2 },
+                { grid: 'F:delta_pct', col: 3 }
+            ]
+        }]);
+        window.Prov.apply(overDivs[3], { inline: true, grids: ['F:ent_orig', 'F:ent_scaled', 'F:ent_max'] });
+    }
 }
 
 window.appendToken = (token) => {
@@ -2798,7 +2875,17 @@ function updateConcatenationDisplay(headData, tokens, tokenStrings) {
 }
 
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
-	return _renderConcatCore(document.getElementById(`unified-layer-${layerIndex}-concat-viz`), headData, tokens, tokenStrings, 'after concat');
+	const container = document.getElementById(`unified-layer-${layerIndex}-concat-viz`);
+	const full = _renderConcatCore(container, headData, tokens, tokenStrings, 'after concat');
+
+	// Provenance: annotate the concatenation equation (per-head contexts + full matrix)
+	if (window.Prov && container) {
+		const P = 'L:' + (layerIndex + 1);
+		const entries = headData.map((h, hi) => ({ grid: P + ':head:' + hi + ':ctx' }));
+		entries.push({ grid: P + ':concat' });
+		window.Prov.apply(container, entries);
+	}
+	return full;
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
@@ -2877,6 +2964,19 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 	const h2 = matAdd(h1, out_FFN);
 
 	if (!skipRender) {
+		// Provenance: record the FFN sublayer values
+		if (window.Prov) {
+			window.Prov.recordFfn(layerIndex, {
+				gamma2, beta2,
+				norm2: normed_h1,
+				W1, b1,
+				outL1: out_L1,
+				W2, b2,
+				outFFN: out_FFN,
+				h2,
+				h1
+			});
+		}
 		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex, tokenStrings);
 	}
 
@@ -3053,6 +3153,32 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
 	heightLockedMathUpdate([step1, step2, step3], [step1Html, step2Html, step3Html]);
+
+	// Provenance: annotate the three FFN steps
+	if (window.Prov) {
+		const P = 'L:' + (layerIndex + 1);
+		window.Prov.apply(step1, [
+			{ grid: P + ':norm2' },
+			{ grid: P + ':h1' },
+			{ vec: P + ':gamma2' },
+			{ vec: P + ':beta2' },
+			{ grid: P + ':outL1' },
+			{ grid: P + ':norm2' },
+			{ grid: P + ':W1' },
+			{ vec: P + ':b1' }
+		]);
+		window.Prov.apply(step2, [
+			{ grid: P + ':outFFN' },
+			{ grid: P + ':outL1' },
+			{ grid: P + ':W2' },
+			{ vec: P + ':b2' }
+		]);
+		window.Prov.apply(step3, [
+			{ grid: P + ':h2' },
+			{ grid: P + ':h1' },
+			{ grid: P + ':outFFN' }
+		]);
+	}
 }
 
 function _ffnNaming(layerIndex) {
@@ -6737,6 +6863,25 @@ function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma,
 		[normContainer, finalContainer],
 		[normHtml, finalHtml]
 	);
+
+	// Provenance: annotate the rendered h1/LayerNorm equations
+	if (window.Prov) {
+		const P = 'L:' + naming.L;
+		window.Prov.apply(normContainer, [
+			{ grid: P + ':norm' },
+			{ grid: P + ':hin' },
+			{ vec: P + ':gamma' },
+			{ vec: P + ':beta' }
+		]);
+		window.Prov.apply(finalContainer, [
+			{ grid: P + ':proj' },
+			{ grid: P + ':concat' },
+			{ grid: P + ':Wo' },
+			{ grid: P + ':h1' },
+			{ grid: P + ':hin' },
+			{ grid: P + ':proj' }
+		]);
+	}
 
 	return h1;
 }

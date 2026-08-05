@@ -13,6 +13,7 @@ featured: true
 <script src="llm_river.js"></script>
 <script src="stickybar_transformer.js"></script>
 <script src="attention_engine.js"></script>
+<script src="provenance.js"></script>
 
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
