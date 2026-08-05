@@ -1688,16 +1688,6 @@ async function convert_tensors_to_weights(vars) {
 	return newWeights;
 }
 
-function hexToRgba(hex, alpha) {
-	if (!hex || !/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex)) return hex;
-	let h = hex.replace('#', '');
-	if (h.length === 3) h = h.split('').map(c => c + c).join('');
-	const r = parseInt(h.slice(0, 2), 16);
-	const g = parseInt(h.slice(2, 4), 16);
-	const b = parseInt(h.slice(4, 6), 16);
-	return `rgba(${r},${g},${b},${alpha})`;
-}
-
 function renderLossGraph() {
 	const lineColor = themeColor('#10b981');
 	const trace = {
@@ -1705,9 +1695,7 @@ function renderLossGraph() {
 		y: window.lossHistory,
 		type: 'scatter',
 		mode: 'lines',
-		line: { color: lineColor, width: 2 },
-		fill: 'tozeroy',
-		fillcolor: hexToRgba(lineColor, 0.15)
+		line: { color: lineColor, width: 2 }
 	};
 
 	const axisTitleFont = { size: 11, color: themeColor('#64748b') };
