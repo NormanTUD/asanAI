@@ -299,7 +299,7 @@ $$\langle \bar{\gamma}_W, \cdot \rangle_C = \bar{\lambda}_W^\top$$
 
 This means: **probing directions and steering vectors are the same object**, viewed from different sides of the model. You can construct steering vectors from word-pair differences, and vice versa.
 
-### Sheaf Note: Tension with Othello-GPT
+### Refinement: Linear vs. Nonlinear Encoding
 
 The Linear Representation Hypothesis assumes concepts are encoded **linearly** (as directions). The Othello-GPT experiment found that **linear probes fail** (20% error) while **nonlinear probes succeed** (1.7% error). This is not a contradiction but a refinement: the board state in Othello-GPT is encoded nonlinearly, while many semantic concepts in large language models (trained on natural language at scale) appear to develop linear representations. The difference may be one of **scale and training distribution** — larger models trained on richer data may linearize representations that smaller models encode nonlinearly. This is consistent with the finding by \cite[Marks & Tegmark (2023)]{marks2023geometry} that linear truth representations emerge with scale.
 </div>
@@ -357,7 +357,7 @@ The construction uses attention to implement:
 
 This result suggests that when we observe a trained Transformer performing multi-step reasoning, it may be implementing something analogous to a looped program — using the residual stream as memory, attention for data routing, and MLPs for computation. The "circuits" discovered by mechanistic interpretability may be fragments of such implicit programs.
 
-### Sheaf Note: Connecting to Othello-GPT and Linear Representations
+### A Common Thread
 
 All three papers share a common situs: the residual stream as a computational medium. The Looped Transformer paper shows the stream *can* implement arbitrary programs; Othello-GPT shows it *does* build world models from sequence prediction; and the Linear Representation Hypothesis shows the *geometry* of what's stored there respects causal structure. Together, they form a coherent sheaf: local sections (individual findings) that glue into a global picture of the Transformer as a structured computational system with interpretable geometry.
 </div>
