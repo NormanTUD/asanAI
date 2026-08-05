@@ -621,15 +621,37 @@ function renderSeahorseEmoji(container) {
         const basinRadius = Math.min(140, Math.min(W, H) / 2 - 60);
 
         function spawnParticle(color) {
-            let x, y, attempts = 0;
-            do {
-                x = 40 + Math.random() * (W - 80);
-                y = 40 + Math.random() * (H - 80);
-                attempts++;
-            } while (Math.sqrt((x - cx) ** 2 + (y - cy) ** 2) < basinRadius + 40 && attempts < 50);
+            // Spawnt AUSSERHALB des Canvas an einer zufälligen Kante, mit Geschwindigkeit
+            // Richtung Attraktor (verschiedene Winkel + Geschwindigkeiten).
+            const edge = Math.floor(Math.random() * 4);
+            let x, y;
+            const outsideOffset = 40 + Math.random() * 30; // 40-70 px außerhalb
+            const margin = 30;
+            switch (edge) {
+                case 0: // oben
+                    x = margin + Math.random() * (W - 2 * margin);
+                    y = -outsideOffset;
+                    break;
+                case 1: // rechts
+                    x = W + outsideOffset;
+                    y = margin + Math.random() * (H - 2 * margin);
+                    break;
+                case 2: // unten
+                    x = margin + Math.random() * (W - 2 * margin);
+                    y = H + outsideOffset;
+                    break;
+                case 3: // links
+                    x = -outsideOffset;
+                    y = margin + Math.random() * (H - 2 * margin);
+                    break;
+            }
 
-            const angle = Math.random() * Math.PI * 2;
-            const speed = 1.0 + Math.random() * 0.5;
+            // Velocity Richtung Attraktor + Streuung
+            const toAttractor = Math.atan2(cy - y, cx - x);
+            const spread = (Math.random() - 0.5) * 0.4;
+            const angle = toAttractor + spread;
+            const speed = 1.5 + Math.random() * 1.0; // 1.5–2.5 px/frame
+
             return {
                 x, y,
                 vx: Math.cos(angle) * speed,
@@ -639,9 +661,8 @@ function renderSeahorseEmoji(container) {
                 inBasin: false,
                 arrived: false,
                 alpha: 1,
-                // Sanfte Richtungsänderung: aktueller Winkel + Drehgeschwindigkeit
                 heading: angle,
-                turnRate: (Math.random() - 0.5) * 0.03, // Langsame Drehung
+                turnRate: (Math.random() - 0.5) * 0.03,
                 turnChangeTimer: 60 + Math.floor(Math.random() * 120)
             };
         }
@@ -1029,24 +1050,45 @@ function renderSeahorseEmoji(container) {
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 const pSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
 
-                // === AUSSERHALB des Repel-Feldes: SCHWACHE Anziehung Richtung Repeller ===
-                // Bewusst schwach damit ein gerade rausgeschleudertes Teilchen nicht
-                // sofort wieder zurückgezogen wird (würde am Rand "kleben bleiben").
+                // === AUSSERHALB des Repel-Feldes: SEHR SCHWACHE Anziehung Richtung Repeller ===
+                // Bewusst schwach damit ein gerade rausgeschleudertes Teilchen genug
+                // Schwung hat um den Canvas zu verlassen, bevor es zurückgezogen wird.
                 if (dist > repelRadius && dist > 0) {
                     const toCenter = Math.atan2(-dy, -dx);
-                    const attractAccel = 0.02 + 15 / (dist + 60);
+                    const attractAccel = 0.01 + 10 / (dist + 80);
                     p.vx += Math.cos(toCenter) * attractAccel;
                     p.vy += Math.sin(toCenter) * attractAccel;
                 }
 
-                // === IM Repel-Feld: STARKE radiale Abstoßung (kein Swirl!) ===
-                // Schnelle Teilchen dringen tiefer ein, langsame nehmen mehr Fahrt auf
-                // und werden zuverlässig radial rausgeschleudert — kein Kreisen am Rand.
+                // === IM Repel-Feld: STARKE radiale Abstoßung + tangentiale Dämpfung ===
+                // Schnelle Teilchen dringen tiefer ein, langsame nehmen mehr Fahrt auf.
+                // Zusätzlich wird die tangentiale (seitliche) Bewegung stark gedämpft,
+                // damit die Teilchen nicht in einer Kreisbahn am Rand hängen bleiben,
+                // sondern radial rausgeschossen werden.
                 if (dist < repelRadius && dist > dangerRadius) {
                     const outwardAngle = Math.atan2(dy, dx);
-                    const dynamicRepel = 1.0 + pSpeed * 0.6;
-                    p.vx += Math.cos(outwardAngle) * dynamicRepel;
-                    p.vy += Math.sin(outwardAngle) * dynamicRepel;
+                    const cosA = Math.cos(outwardAngle);
+                    const sinA = Math.sin(outwardAngle);
+
+                    // Radialer Anteil der aktuellen Geschwindigkeit
+                    const radialVel = p.vx * cosA + p.vy * sinA;
+
+                    // Radial-Force: stellt sicher dass die radiale Geschwindigkeit hoch genug ist
+                    // (mindestens 4 px/frame nach außen, schneller wenns Teilchen schnell war)
+                    const targetRadial = Math.max(4, pSpeed * 1.3);
+                    if (radialVel < targetRadial) {
+                        p.vx += cosA * (targetRadial - radialVel);
+                        p.vy += sinA * (targetRadial - radialVel);
+                    }
+
+                    // Tangentiale Dämpfung: 75% der seitlichen Bewegung wegnehmen
+                    // (sonst Kreisen am Rand)
+                    const tangX = -sinA;
+                    const tangY = cosA;
+                    const tangVel = p.vx * tangX + p.vy * tangY;
+                    p.vx -= tangX * tangVel * 0.75;
+                    p.vy -= tangY * tangVel * 0.75;
+
                     p.wasInRepel = true;
                 }
 
@@ -1080,11 +1122,11 @@ function renderSeahorseEmoji(container) {
                 p.vx *= 0.98;
                 p.vy *= 0.98;
 
-                // Speed-Limit
+                // Speed-Limit (hoch genug damit Teilchen den Canvas sicher verlassen)
                 const sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (sp > 6) {
-                    p.vx *= 6 / sp;
-                    p.vy *= 6 / sp;
+                if (sp > 10) {
+                    p.vx *= 10 / sp;
+                    p.vy *= 10 / sp;
                 }
 
                 // Position updaten
