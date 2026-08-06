@@ -268,28 +268,30 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 }
 
 /* Geometric intuition panel — rendered with Temml math, explains what
-   the current step is doing geometrically and how it fits the whole. */
+   the current step is doing geometrically and how it fits the whole.
+   Uses theme variables so it reads correctly in both light and dark mode. */
 .attn-anatomy-intuition {
-	background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
-	border: 1px solid #c7d2fe;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 10px;
 	padding: 18px 22px;
 	margin-bottom: 12px;
+	color: var(--mn-text, #1e293b);
 }
 .attn-anatomy-intuition .intuition-header {
 	font-weight: bold;
-	color: #1e3a8a;
+	color: #2563eb;
 	margin-bottom: 12px;
 	font-size: 0.98rem;
 	letter-spacing: 0.2px;
 }
 .attn-anatomy-intuition .intuition-math {
-	background: rgba(255, 255, 255, 0.92);
+	background: var(--mn-surface-raised, #f1f5f9);
 	border-radius: 8px;
 	padding: 14px 12px;
 	text-align: center;
 	margin-bottom: 14px;
-	border: 1px solid #dbeafe;
+	border: 1px solid var(--mn-border, #cbd5e1);
 	color: var(--mn-text, #1e293b);
 	overflow-x: auto;
 }
@@ -306,14 +308,14 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	margin-bottom: 0;
 }
 .attn-anatomy-intuition .intuition-section strong {
-	color: #1e3a8a;
+	color: #2563eb;
 }
 .attn-anatomy-intuition .intuition-where {
-	color: var(--mn-text-muted, #64748b);
+	color: var(--mn-text-secondary, #64748b);
 	font-style: italic;
 	padding: 6px 12px;
-	border-left: 3px solid #c7d2fe;
-	background: rgba(255, 255, 255, 0.5);
+	border-left: 3px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface-raised, rgba(241, 245, 249, 0.4));
 	border-radius: 0 6px 6px 0;
 }
 .attn-anatomy-intuition .intuition-why {
@@ -321,6 +323,10 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	padding: 10px 14px;
 	border-radius: 6px;
 	border-left: 3px solid #2563eb;
+	color: var(--mn-text, #1e293b);
+}
+.attn-anatomy-intuition .intuition-why strong {
+	color: #2563eb;
 }
 </style>
 
@@ -332,22 +338,11 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 			Build the Attention Equation from the Inside Out
 		</span>
 		<div style="font-size:0.8rem; color:var(--mn-text-secondary, #64748b); margin-top:4px;">
-			Each click reveals the next layer of the formula. The active sub-expression glows in the equation, the actual numbers appear in the <b>Currently computing</b> panel, and the 2D vector scene below shows the geometry.
+			Each click reveals the next layer of the formula. The active sub-expression is coloured in the equation, the actual numbers appear in the <b>Currently computing</b> panel, and the 2D vector scene shows the geometry.
 		</div>
 	</div>
 
-	<!-- Controls sit ABOVE the plot -->
-	<div class="attn-anatomy-header">
-		<button id="attn-anatomy-prev">← Previous</button>
-		<div class="step-info">
-			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
-			<span class="step-total">of 8</span>
-			<span id="attn-anatomy-step-title">— The Players</span>
-		</div>
-		<button id="attn-anatomy-next">Next →</button>
-	</div>
-
-	<!-- 1) Full equation, always visible, with the active part glowing -->
+	<!-- 1) Full equation, always visible, with the active part highlighted -->
 	<div id="attn-anatomy-equation" class="attn-anatomy-equation"></div>
 
 	<!-- 2) Currently computing panel: shows the actual numbers for this step -->
@@ -363,6 +358,17 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	<!-- 5) Score bars: numeric state of the computation -->
 	<div id="attn-anatomy-bars" style="height: 200px; background: var(--mn-surface, #fff);
 									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
+
+	<!-- 6) Controls sit BELOW the plot so the user can see the visualization while clicking -->
+	<div class="attn-anatomy-header">
+		<button id="attn-anatomy-prev">← Previous</button>
+		<div class="step-info">
+			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
+			<span class="step-total">of 8</span>
+			<span id="attn-anatomy-step-title">— The Players</span>
+		</div>
+		<button id="attn-anatomy-next">Next →</button>
+	</div>
 </div>
 
 <div class="md">
