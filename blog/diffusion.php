@@ -100,9 +100,11 @@ The CFG trick above answers "how do you amplify the prompt". But three questions
 
 ### 1. Training data — no manual labels needed
 
-You do **not** need to sit down and label 100,000 images. The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web. The "label" of every image is whatever its surrounding HTML already said — the alt attribute, the caption, the page title. Images of astronauts on horses were already on the internet with descriptive text next to them; the diffusion model just learned from that text-as-it-already-existed.
+You do **not** need to sit down and label 100,000 images. The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web. The "label" of every image is whatever its surrounding HTML already said — the alt attribute, the caption, the page title.
 
-This is also why diffusion models sometimes hallucinate or get details wrong: the "labels" are noisy, scraped web text, not clean annotations.
+What the model actually learns from this data is **not a database of specific images**. It learns an *internal representation of the world*: what astronauts look like, what horses look like, what "riding" looks like, what "in space" looks like — each concept distilled from many thousands of images seen during training. When you prompt for "an astronaut riding a horse", there is almost certainly no training image of exactly that scene. The model composes a new image by combining its learned concepts: astronaut-shape here, horse-shape there, riding-pose between them. The output is **synthesized**, not retrieved.
+
+This is also why diffusion models sometimes hallucinate or get details wrong: the "labels" are noisy, scraped web text, not clean annotations, and the concepts are statistical, not encyclopedic.
 
 (One consequence worth knowing: as more AI-generated images flood the web, future models trained on the same web will be trained on their own predecessors' outputs. This recursive phenomenon is called **model collapse**, and it is a real research concern.)
 </div>
@@ -114,12 +116,7 @@ This is also why diffusion models sometimes hallucinate or get details wrong: th
 
 The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; for SD 3 and FLUX, it is T5. Both are **Transformer encoders** — the same architecture family as the LLMs in the other chapters.
 
-The text encoder does two things, in order:
-
-1. **Tokenize**: split the prompt into subword pieces (the way "astronaut" becomes `["astro", "naut"]`, "riding" stays as one piece, and so on). The box above shows how a real CLIP tokenizer breaks down a prompt.
-2. **Embed**: pass each token through the Transformer to get a vector — a list of numbers (768 for CLIP, 4096 for T5-XXL). The crucial property of these vectors is that **similar concepts end up close together**: the vectors for "astronaut" and "space suit" are nearby, the vectors for "horse" and "pony" are nearby, and the vector for "astronaut riding a horse" is far from the vector for "still life with fruit".
-
-This is the same kind of **embedding** an LLM uses to understand language — see the Embeddings chapter for the deeper story.
+The text encoder does two things, in order — tokenization and embedding. Both are covered in detail elsewhere on this site (see the **Tokenization** and **Embeddings** chapters); the small viz above is just a quick reminder of what comes out of the other end of that pipeline. The crucial property for our purposes is that each token ends up as a vector (768 numbers for CLIP, 4096 for T5-XXL), and **similar concepts end up close together** in that vector space: "astronaut" and "space suit" have nearby vectors, "horse" and "pony" have nearby vectors, "astronaut riding a horse" is far from "still life with fruit".
 </div>
 
 <div class="md">
@@ -130,16 +127,16 @@ Now the diffusion U-Net has two inputs at every denoising step:
 * the current noisy image (as a grid of patches, e.g. $8 \times 8$)
 * the text embedding (a sequence of vectors, one per token)
 
-The U-Net applies **cross-attention** at each layer. For each image patch, cross-attention asks: *which tokens in the prompt are most relevant here?* The output is an **attention map** that says, in effect, *this patch should look more like "astronaut", that patch should look more like "horse", the corners should look more like "sky"*.
+The U-Net applies **cross-attention** at each layer. The picture to keep in your head: **at every step, the model paints the image by asking each word in your prompt, "which part of the picture is yours?"** The word *"astronaut"* claims the upper-center region. The word *"horse"* claims the lower region. The word *"riding"* claims the bit in between. Function words like *"a"*, *"of"* barely claim anything.
 
-Below, click any *content* word in the prompt to see a simplified attention map for that word on a $4 \times 4$ image grid. Each cell is one patch of the image; brighter blue means that word attends more strongly to that patch.
+Below: click any *content* word in the prompt and watch a colored region light up over the part of the astronaut image that word would "claim" during generation. The regions are simplified — a real diffusion model has hundreds of tiny patches — but the principle is the same: each word in your prompt controls its own piece of the picture.
 </div>
 
 <div id="cross-attention-viz" style="max-width: 880px; margin: 1em auto;"></div>
 
 <div class="md">
 This is the mechanism behind every text-to-image model. Different words control different regions. By the end of denoising, each pixel of the image has been "asked" which word it should look like, and the text embedding has answered. **If you swap one word in the prompt, the embedding moves, the attention shifts, and the generated image changes in just that region.**
-
+</div>
 The full Stable Diffusion pipeline looks like this end-to-end:
 
 <figure style="max-width:880px; margin:1.5em auto; text-align:center;">
@@ -502,78 +499,60 @@ function makeCrossAttentionViz(containerId) {
 	const prompt = 'a photo of an astronaut riding a horse';
 	const tokens = prompt.split(' ');
 
-	// 4×4 attention maps (row-major). Designed to match a typical image:
-	//   row 0 = sky, row 1 = upper astronaut, row 2 = lower astronaut/horse body,
-	//   row 3 = ground.
-	const attentionMaps = {
-		'astronaut': [
-			0.05, 0.10, 0.15, 0.05,
-			0.10, 0.30, 0.40, 0.20,
-			0.10, 0.25, 0.25, 0.15,
-			0.02, 0.05, 0.05, 0.02
-		],
-		'riding': [
-			0.04, 0.05, 0.05, 0.04,
-			0.05, 0.18, 0.22, 0.12,
-			0.10, 0.28, 0.32, 0.20,
-			0.05, 0.18, 0.18, 0.06
-		],
-		'horse': [
-			0.02, 0.02, 0.02, 0.02,
-			0.05, 0.10, 0.10, 0.05,
-			0.18, 0.28, 0.32, 0.18,
-			0.10, 0.30, 0.32, 0.15
-		],
-		'photo': Array(16).fill(0.22),
-		'a': Array(16).fill(0.10),
-		'of': Array(16).fill(0.10)
+	// Regions on the astronaut image (in % of width/height) where each token
+	// would attend most strongly. These are simplified illustrations of what a
+	// real diffusion model's cross-attention looks like for this prompt.
+	const regions = {
+		'astronaut': { left: 28, top: 6,  width: 44, height: 38, color: 'rgba(245, 158, 11, 0.45)', label: 'the figure of the astronaut (upper-center, sitting on the horse)' },
+		'riding':    { left: 22, top: 32, width: 56, height: 22, color: 'rgba(34, 197, 94, 0.45)',  label: 'the riding action (where astronaut meets horse)' },
+		'horse':     { left: 4,  top: 42, width: 92, height: 50, color: 'rgba(239, 68, 68, 0.40)',  label: 'the horse body and legs (most of the lower image)' },
+		'photo':     { left: 0,  top: 0,  width: 100, height: 100, color: 'rgba(148, 163, 184, 0.18)', label: 'the whole image (the word "photo" is generic, low attention everywhere)' }
 	};
 
 	let html = '<div style="padding:16px 20px; border:1px solid rgba(100,116,139,0.25); border-radius:8px; background:rgba(0,0,0,0.02);">';
 	html += '<div style="margin-bottom:6px;"><strong>Prompt:</strong> <span style="font-family:Menlo,Consolas,monospace; font-size:14px;">' + prompt + '</span></div>';
-	html += '<div style="margin-bottom:14px; font-size:13px; opacity:0.75;">Click a <em>content</em> word below to see which patches of the image the model attends to:</div>';
+	html += '<div style="margin-bottom:14px; font-size:13px; opacity:0.85;">Click a word to see which part of the image it controls:</div>';
 	html += '<div style="margin-bottom:18px; line-height:2;">';
 	for (const t of tokens) {
-		const has = (t in attentionMaps);
+		const has = (t in regions);
 		const bg = has ? '#3b82f6' : '#94a3b8';
-		const opacity = has ? '1' : '0.55';
+		const opacity = has ? '1' : '0.5';
 		const cursor = has ? 'pointer' : 'default';
 		html += '<button data-xatoken="' + t + '" style="margin:2px; padding:5px 12px; border:none; border-radius:4px; background:' + bg + '; color:#fff; cursor:' + cursor + '; font-family:Menlo,Consolas,monospace; font-size:13px; opacity:' + opacity + ';">' + t + '</button> ';
 	}
 	html += '</div>';
-	html += '<div id="' + containerId + '-label" style="margin-bottom:10px; font-size:13px;"><em>Click a content word above to see its attention pattern</em></div>';
-	html += '<div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">';
-	html += '<div id="' + containerId + '-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; width:280px; aspect-ratio:1;">';
-	for (let i = 0; i < 16; i++) {
-		html += '<div data-cell="' + i + '" style="background:rgba(100,116,139,0.08); border-radius:4px; transition:background 0.15s;"></div>';
-	}
+	html += '<div id="' + containerId + '-wrap" style="position:relative; max-width:480px; margin:0 auto; border-radius:6px; overflow:hidden;">';
+	html += '<img src="diffusion_astronaut.webp" alt="astronaut riding a horse" style="width:100%; height:auto; display:block;" />';
+	html += '<div id="' + containerId + '-overlay" style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; transition:background 0.25s;"></div>';
 	html += '</div>';
-	html += '<div style="flex:1; min-width:220px; font-size:13px; line-height:1.6; opacity:0.85;">';
-	html += '<div style="margin-bottom:8px;"><strong>How to read this:</strong></div>';
-	html += '<div style="margin-bottom:6px;">Each cell is one <em>patch</em> of the image (the network sees the picture as a 4×4 grid at its lowest resolution).</div>';
-	html += '<div style="margin-bottom:6px;">Brighter blue = the selected word attends more strongly to that patch. The denoiser uses this at every step to decide <em>what should be in each patch</em>.</div>';
-	html += '<div>Click <code style="background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:3px;">astronaut</code>, <code style="background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:3px;">riding</code>, <code style="background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:3px;">horse</code> to see how different words control different parts of the same image.</div>';
-	html += '</div></div></div>';
+	html += '<div id="' + containerId + '-label" style="margin-top:12px; font-size:13px; min-height:1.2em; text-align:center;"><em>Click a content word above to see which region of the image it "claims"</em></div>';
+	html += '</div>';
 
 	container.innerHTML = html;
 
-	const grid = container.querySelector('#' + containerId + '-grid');
+	const overlay = container.querySelector('#' + containerId + '-overlay');
 	const label = container.querySelector('#' + containerId + '-label');
+
+	function clearOverlay() {
+		overlay.style.background = 'transparent';
+		overlay.innerHTML = '';
+		label.innerHTML = '<em>Click a content word above to see which region of the image it "claims"</em>';
+	}
 
 	container.querySelectorAll('button[data-xatoken]').forEach((btn) => {
 		const t = btn.dataset.xatoken;
-		if (!(t in attentionMaps)) return;
+		if (!(t in regions)) return;
 		btn.addEventListener('click', () => {
-			const map = attentionMaps[t];
-			const cells = grid.children;
-			for (let i = 0; i < 16; i++) {
-				const v = map[i];
-				const a = Math.min(1, v * 2.2);
-				cells[i].style.background = 'rgba(59, 130, 246, ' + a.toFixed(2) + ')';
-				cells[i].title = 'patch ' + (Math.floor(i / 4) + 1) + ',' + ((i % 4) + 1) + ' — attention: ' + v.toFixed(2);
-			}
-			label.innerHTML = '<strong>Where "' + t + '" attends</strong> — brighter blue means stronger attention to that patch:';
+			const r = regions[t];
+			overlay.innerHTML = '<div style="position:absolute; left:' + r.left + '%; top:' + r.top + '%; width:' + r.width + '%; height:' + r.height + '%; background:' + r.color + '; border:2px solid ' + r.color.replace(/0\.\d+\)/, '1)') + '; border-radius:6px; box-sizing:border-box;"></div>';
+			label.innerHTML = '<strong>"' + t + '"</strong> controls: ' + r.label;
 		});
+	});
+
+	// Make "Clear" available by clicking the image again
+	container.querySelector('#' + containerId + '-wrap').addEventListener('click', (e) => {
+		if (e.target.tagName !== 'IMG') return;
+		clearOverlay();
 	});
 }
 
