@@ -7,7 +7,7 @@ icon: &#128290;
 part: 1
 order: 3
 color: accent
-topics: math
+topics: math-i
 -->
 
 <div class="md">

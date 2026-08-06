@@ -7,7 +7,7 @@ icon: &#128268;
 part: 4
 order: 25
 color: sky
-topics: interpretability, architecture, philosophy, math
+topics: interpretability, architecture, philosophy, math-ii, math-iii
 -->
 
 <div class="md">

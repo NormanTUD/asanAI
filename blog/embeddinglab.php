@@ -7,7 +7,7 @@ icon: &#127758;
 part: 4
 order: 20
 color: sky
-topics: language, math, architecture
+topics: language, math-i, math-ii, architecture
 -->
 
 <div class="smart-quote" data-cite="wittgenstein1953investigations">

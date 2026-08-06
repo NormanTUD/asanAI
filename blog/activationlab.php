@@ -7,7 +7,7 @@ icon: &#9889;
 part: 2
 order: 13
 color: coral
-topics: math, programming
+topics: math-i, programming
 -->
 
 <div class="md">

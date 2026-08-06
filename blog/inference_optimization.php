@@ -7,7 +7,7 @@ icon: &#9889;
 part: 5
 order: 35
 color: rose
-topics: inference, hardware, programming, math
+topics: inference, hardware, programming, math-i, math-ii
 -->
 
 <div class="md">

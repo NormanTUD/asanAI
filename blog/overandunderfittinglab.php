@@ -7,7 +7,7 @@ icon: &#127922;
 part: 3
 order: 16
 color: emerald
-topics: math, programming, training
+topics: math-i, programming, training
 -->
 
 <!--

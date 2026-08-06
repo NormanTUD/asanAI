@@ -6758,6 +6758,30 @@ html.dark .topics-seg-btn.topics-seg-on {
 }
 .topics-seg-btn:active { transform: translateY(1px); }
 
+/* tiny "Clear" link inside the audience picker */
+.topics-audience-clear {
+	appearance: none;
+	border: none;
+	background: transparent;
+	color: var(--mn-text-muted);
+	font-family: inherit;
+	font-size: 0.78rem;
+	font-weight: 500;
+	padding: 4px 8px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: color 0.15s ease, background 0.15s ease;
+	margin-left: auto;
+}
+.topics-audience-clear:hover {
+	color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 8%, transparent);
+}
+.topics-audience-clear:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 1px;
+}
+
 /* ── presets row ───────────────────────────────────────── */
 .topics-presets {
 	display: flex;

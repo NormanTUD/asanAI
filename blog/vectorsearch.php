@@ -7,7 +7,7 @@ icon: &#128279;
 part: 5
 order: 32
 color: rose
-topics: inference, language, math, programming
+topics: inference, language, math-i, math-ii, programming
 -->
 
 <div class="md">

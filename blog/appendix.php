@@ -7,7 +7,7 @@ icon: &#128214;
 part: 6
 order: 45
 color: text-secondary
-topics: reference, math, programming
+topics: reference, math-i, programming
 -->
 
 <div class="md">

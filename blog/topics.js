@@ -23,9 +23,15 @@
 (function () {
 	'use strict';
 
-	/* ── 1. Topic registry (single source of truth) ───────────── */
+	/* ── 1. Topic registry (single source of truth) ─────────────
+	   Math is split into three levels (i = HS, ii = undergrad,
+	   iii = grad / research) so a reader can opt in only to the
+	   depth they actually want. A page that combines levels can
+	   list several, e.g. "math-i, math-ii". */
 	const TOPICS = [
-		{ id: 'math',             label: 'Math',             icon: '∑',    desc: 'Algebra, calculus, linear algebra, geometry' },
+		{ id: 'math-i',           label: 'Math I',           icon: '∑',    desc: 'High-school math — algebra, derivatives, basics' },
+		{ id: 'math-ii',          label: 'Math II',          icon: '∫',    desc: 'Undergraduate — integrals, linear algebra, multivariable' },
+		{ id: 'math-iii',         label: 'Math III',         icon: '∮',    desc: 'Graduate — probability, real analysis, research-level' },
 		{ id: 'statistics',       label: 'Statistics',       icon: 'σ',    desc: 'Probability, distributions, inference' },
 		{ id: 'programming',      label: 'Programming',      icon: '{ }',  desc: 'Code, algorithms, data structures' },
 		{ id: 'architecture',     label: 'Architecture',     icon: '🏗️',   desc: 'Transformers, attention, model design' },
@@ -72,31 +78,35 @@
 	   should be ON; everything else is hidden. The matrix is biased
 	   toward the practical reading needs of each role at each depth:
 	   a Curious HS reader gets the storytelling core; a Researcher
-	   PhD gets nearly everything. */
+	   PhD gets nearly everything.
+
+	   Math is split into i / ii / iii and each level cumulatively
+	   includes the lower levels: HS → math-i, Undergrad → math-i +
+	   math-ii, Grad / PhD → math-i + math-ii + math-iii. */
 	const AUDIENCE_PRESETS = {
 		curious: {
 			hs:        [ 'history', 'philosophy', 'ethics', 'society', 'language' ],
-			undergrad: [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math' ],
-			grad:      [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math', 'statistics' ],
-			phd:       [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math', 'statistics', 'programming' ]
+			undergrad: [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics', 'programming' ]
 		},
 		student: {
-			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math' ],
-			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math', 'statistics', 'programming' ],
-			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math', 'statistics', 'programming', 'architecture', 'training', 'agents' ],
-			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math', 'statistics', 'programming', 'architecture', 'training', 'agents', 'reasoning', 'inference', 'data' ]
+			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math-i' ],
+			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics', 'programming' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics', 'programming', 'architecture', 'training', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics', 'programming', 'architecture', 'training', 'agents', 'math-iii', 'reasoning', 'inference', 'data' ]
 		},
 		engineer: {
-			hs:        [ 'math', 'programming', 'data', 'hardware' ],
-			undergrad: [ 'math', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference' ],
-			grad:      [ 'math', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents' ],
-			phd:       [ 'math', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents', 'interpretability', 'multimodal', 'vision', 'audio' ]
+			hs:        [ 'math-i', 'programming', 'data', 'hardware' ],
+			undergrad: [ 'math-i', 'math-ii', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference' ],
+			grad:      [ 'math-i', 'math-ii', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents' ],
+			phd:       [ 'math-i', 'math-ii', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents', 'interpretability', 'multimodal', 'vision', 'audio' ]
 		},
 		researcher: {
-			hs:        [ 'history', 'philosophy', 'math', 'language' ],
-			undergrad: [ 'history', 'philosophy', 'math', 'language', 'statistics', 'programming', 'architecture' ],
-			grad:      [ 'history', 'philosophy', 'math', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
-			phd:       [ 'history', 'philosophy', 'math', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
+			hs:        [ 'history', 'philosophy', 'math-i', 'language' ],
+			undergrad: [ 'history', 'philosophy', 'math-i', 'math-ii', 'language', 'statistics', 'programming', 'architecture' ],
+			grad:      [ 'history', 'philosophy', 'math-i', 'math-ii', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'math-i', 'math-ii', 'math-iii', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
 		}
 	};
 
@@ -104,7 +114,7 @@
 	   picking an audience). */
 	const PRESETS = {
 		essentials: [ 'history', 'philosophy', 'language' ],
-		technical:  [ 'history', 'philosophy', 'language', 'math', 'statistics', 'programming', 'architecture' ]
+		technical:  [ 'history', 'philosophy', 'language', 'math-i', 'math-ii', 'statistics', 'programming', 'architecture' ]
 	};
 
 	const COOKIE_NAME  = 'topics_pref';
@@ -274,6 +284,30 @@
 		persistPref(cur);
 	}
 
+	/** Apply the audience picker result:
+	      – profile + level both set  → curated preset is loaded.
+	      – only one axis set         → selection is remembered but the
+	                                   existing topic map is left alone
+	                                   (so the user can keep their manual
+	                                   fine-tuning while still seeing their
+	                                   audience pick reflected).
+	      – both axes null            → audience filter is cleared; the
+	                                   topic map is left alone. */
+	function applyAudiencePartial(profile, level) {
+		const cleanProfile = (PROFILES.some(function (p) { return p.id === profile; })) ? profile : null;
+		const cleanLevel   = (LEVELS.some(function (l)   { return l.id === level;    })) ? level   : null;
+		if (cleanProfile && cleanLevel) {
+			applyAudience(cleanProfile, cleanLevel);
+			return;
+		}
+		const cur = activePref();
+		persistPref({
+			topics: cur.topics,
+			profile: cleanProfile,
+			level: cleanLevel
+		});
+	}
+
 	/** ensure map contains an entry for every known topic */
 	function normalize(map) {
 		const out = {};
@@ -352,6 +386,7 @@
 								return '<button type="button" class="topics-seg-btn" role="radio" data-profile="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' + escAttr(p.label) + '</button>';
 							}).join(''),
 						'</div>',
+						'<button type="button" class="topics-audience-clear" data-audience-clear title="Clear the audience filter — pick topics by hand below">Clear</button>',
 					'</div>',
 					'<div class="topics-audience-row">',
 						'<span class="topics-audience-label">reading at</span>',
@@ -362,7 +397,7 @@
 						'</div>',
 						'<span class="topics-audience-suffix">level</span>',
 					'</div>',
-					'<p class="topics-audience-hint" id="topics-audience-hint">Pick a profile and a level — your topic list updates instantly. Or skip this and tune the grid below by hand.</p>',
+					'<p class="topics-audience-hint" id="topics-audience-hint">Pick a profile and a level — your topic list updates instantly. Click the active button again (or Clear) to turn the audience filter off.</p>',
 				'</div>',
 				'<div class="topics-presets" role="group" aria-label="Quick presets">',
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
@@ -394,10 +429,12 @@
 			b.addEventListener('click', function () {
 				const profile = b.getAttribute('data-profile');
 				const cur = activePref();
-				const level = cur.level && LEVELS.some(function (l) { return l.id === cur.level; })
-					? cur.level
-					: 'undergrad';
-				applyAudience(profile, level);
+				/* Clicking the active profile again toggles it OFF.
+				   Clicking a different profile saves it standalone,
+				   without forcing a level. The preset only fires when
+				   BOTH axes are picked. */
+				const nextProfile = cur.profile === profile ? null : profile;
+				applyAudiencePartial(nextProfile, cur.level);
 				renderAudienceSelection();
 			});
 		});
@@ -405,13 +442,18 @@
 			b.addEventListener('click', function () {
 				const level = b.getAttribute('data-level');
 				const cur = activePref();
-				const profile = cur.profile && PROFILES.some(function (p) { return p.id === cur.profile; })
-					? cur.profile
-					: 'curious';
-				applyAudience(profile, level);
+				const nextLevel = cur.level === level ? null : level;
+				applyAudiencePartial(cur.profile, nextLevel);
 				renderAudienceSelection();
 			});
 		});
+		const clearBtn = overlay.querySelector('[data-audience-clear]');
+		if (clearBtn) {
+			clearBtn.addEventListener('click', function () {
+				applyAudiencePartial(null, null);
+				renderAudienceSelection();
+			});
+		}
 
 		// Escape closes
 		document.addEventListener('keydown', function (e) {
@@ -477,14 +519,16 @@
 		});
 		const hint = document.getElementById('topics-audience-hint');
 		if (!hint) return;
+		const profileLabel = (PROFILES.find(function (p) { return p.id === pref.profile; }) || {}).label;
+		const levelLabel   = (LEVELS.find(function (l) { return l.id === pref.level; })   || {}).label;
 		if (pref.profile && pref.level) {
-			const profileLabel = (PROFILES.find(function (p) { return p.id === pref.profile; }) || {}).label || pref.profile;
-			const levelLabel   = (LEVELS.find(function (l) { return l.id === pref.level; })   || {}).label || pref.level;
 			hint.textContent = 'Preset applied: ' + profileLabel + ' · ' + levelLabel + '. Toggle individual topics below to fine-tune.';
-		} else if (pref.profile || pref.level) {
-			hint.textContent = 'Pick the other axis to apply a curated preset.';
+		} else if (pref.profile) {
+			hint.textContent = 'Saved: ' + profileLabel + '. Pick a level to apply a curated preset, or tune the grid below by hand.';
+		} else if (pref.level) {
+			hint.textContent = 'Saved: reading at ' + levelLabel + ' level. Pick a profile to apply a curated preset, or tune the grid below by hand.';
 		} else {
-			hint.textContent = 'Pick a profile and a level — your topic list updates instantly. Or skip this and tune the grid below by hand.';
+			hint.textContent = 'Pick a profile and a level — your topic list updates instantly. Click the active button again (or Clear) to turn the audience filter off.';
 		}
 	}
 
