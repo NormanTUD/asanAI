@@ -6518,7 +6518,6 @@ html.dark #reading-progress {
    ════════════════════════════════════════════════════════════ */
 
 #topics-toggle {
-	--topics-pct: 0;
 	position: fixed;
 	top: 16px;
 	right: 132px;
@@ -6526,22 +6525,22 @@ html.dark #reading-progress {
 	width: 40px;
 	height: 40px;
 	padding: 0;
-	border: 1px solid color-mix(in srgb, var(--mn-border), var(--mn-accent) calc(var(--topics-pct) * 100%));
+	border: 1px solid var(--mn-border);
 	border-radius: 12px;
 	background: var(--mn-surface);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
 	box-shadow: var(--mn-shadow-md);
-	color: color-mix(in srgb, var(--mn-text-secondary), var(--mn-accent) calc(var(--topics-pct) * 100%));
+	color: var(--mn-text-secondary);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: color 0.3s ease, border-color 0.3s ease;
+	transition: all 0.2s ease;
 }
 #topics-toggle:hover {
 	border-color: var(--mn-accent);
-	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
 	color: var(--mn-accent);
 	transform: scale(1.05);
 }
@@ -6549,7 +6548,6 @@ html.dark #reading-progress {
 #topics-toggle svg {
 	width: 18px;
 	height: 18px;
-	transition: transform 0.3s ease;
 }
 #topics-toggle:focus-visible {
 	outline: 2px solid var(--mn-accent);

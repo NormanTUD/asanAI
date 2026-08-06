@@ -417,18 +417,15 @@
 		updateToggleIntensity();
 	}
 
-	/** Drive the button's accent saturation from the share of topics
-	    that are currently active. Pure 0 → button is plain grey; pure 1
-	    → button is the full accent color. The button never carries a
-	    badge or count. */
+	/** The toggle no longer reflects the share of topics — it just
+	    exposes an aria-label so screen readers know how many topics are
+	    currently active. */
 	function updateToggleIntensity() {
 		const btn = document.getElementById('topics-toggle');
 		if (!btn) return;
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total  = TOPICS.length;
-		const pct = total > 0 ? Math.max(0, Math.min(1, active / total)) : 0;
-		btn.style.setProperty('--topics-pct', pct.toFixed(4));
 		btn.setAttribute(
 			'aria-label',
 			'Choose your interests — ' + active + ' of ' + total + ' active'
