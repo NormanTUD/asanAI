@@ -34,6 +34,14 @@ function initPureActivationLab() {
 			pro: "Smooth and differentiable everywhere; no 'dying' neurons; the activation of choice in nanoGPT's Feed-Forward Network.",
 			con: "Slightly more expensive to compute than ReLU due to the error function."
 		},
+		silu: {
+			name: "SiLU / Swish (Sigmoid Linear Unit)",
+			fn: (x) => x / (1 + Math.exp(-x)),
+			tex: "f(x) = x \\cdot \\sigma(x) = \\frac{x}{1 + e^{-x}}",
+			use: "The **standard activation of the diffusion U-Net** (Stable Diffusion, DDPM), and of most modern vision CNNs. A self-gated, smoothed ReLU.",
+			pro: "Cheap to compute (one sigmoid, no erf); smooth and differentiable everywhere; non-zero gradient on the negative side; used in every ResBlock of Stable Diffusion alongside GroupNorm.",
+			con: "Output is unbounded below (~ -0.28 minimum), so activations can drift to small negatives and slow training slightly if not paired with normalization."
+		},
 		sigmoid: {
 			name: "Sigmoid / Logistic",
 			fn: (x) => 1 / (1 + Math.exp(-x)),
@@ -283,6 +291,14 @@ async function loadActivationModule() {
                 use: "The **standard activation of Transformers**, used in the FFN of GPT-style models. A smooth ReLU: everywhere differentiable, with a small gradient for negative inputs.",
                 pro: "Smooth and differentiable everywhere; no 'dying' neurons; the activation of choice in nanoGPT's Feed-Forward Network.",
                 con: "Slightly more expensive to compute than ReLU due to the error function."
+            },
+            silu: {
+                name: "SiLU / Swish (Sigmoid Linear Unit)",
+                fn: (x) => x / (1 + Math.exp(-x)),
+                tex: "f(x) = x \\cdot \\sigma(x) = \\frac{x}{1 + e^{-x}}",
+                use: "The **standard activation of the diffusion U-Net** (Stable Diffusion, DDPM), and of most modern vision CNNs. A self-gated, smoothed ReLU.",
+                pro: "Cheap to compute (one sigmoid, no erf); smooth and differentiable everywhere; non-zero gradient on the negative side; used in every ResBlock of Stable Diffusion alongside GroupNorm.",
+                con: "Output is unbounded below (~ -0.28 minimum), so activations can drift to small negatives and slow training slightly if not paired with normalization."
             },
             sigmoid: {
                 name: "Sigmoid / Logistic",

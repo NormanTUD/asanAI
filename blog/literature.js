@@ -3121,6 +3121,18 @@ window.bibData = {
 		title: "Gaussian Error Linear Units (GELUs)",
 		url: "https://arxiv.org/abs/1606.08415",
 	},
+	"ramachandran2017swish": {
+		author: "Prajit Ramachandran, Barret Zoph, Quoc V. Le",
+		year: "2017",
+		title: "Searching for Activation Functions",
+		url: "https://arxiv.org/abs/1710.05941",
+	},
+	"wu2018groupnorm": {
+		author: "Yuxin Wu, Kaiming He",
+		year: "2018",
+		title: "Group Normalization",
+		url: "https://arxiv.org/abs/1803.08494",
+	},
 	"nair2010rectified": {
 		author: "Vinod Nair, Geoffrey Everest Hinton",
 		year: "2010",

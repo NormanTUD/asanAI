@@ -50,6 +50,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
             <select id="pure-act-type" class="btn" style="border: 1px solid #ccc; width: 100%; padding: 10px;">
                 <option value="relu">ReLU (The Classic Workhorse)</option>
                 <option value="gelu">GELU (The Transformer Standard)</option>
+                <option value="silu">SiLU (The Diffusion Smooth Gate)</option>
                 <option value="sigmoid">Sigmoid (The Classic S-Curve)</option>
                 <option value="tanh">Tanh (Zero-Centered)</option>
                 <option value="leaky_relu">Leaky ReLU (Death Prevention)</option>
@@ -191,4 +192,14 @@ $$\text{GELU}(x) = x \cdot \Phi(x) = 0.5\, x \left(1 + \text{erf}\!\left(\frac{x
 Where $\Phi(x)$ is the standard normal cumulative distribution function and $\text{erf}$ is the error function.
 
 GELU is often described as a "smooth ReLU": it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever "dies" completely — every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
+</div>
+
+<div class="md">
+### SiLU: The Diffusion Smooth Gate
+
+The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** (introduced by Ramachandran et al., 2017 \cite{ramachandran2017swish}; the SiLU name was coined earlier by Hendrycks & Gimpel, 2016), is the activation of choice inside the **U-Net denoiser of Stable Diffusion** and other modern CNN-based vision models:
+
+$$\text{SiLU}(x) \;=\; x \cdot \sigma(x) \;=\; \frac{x}{1 + e^{-x}}$$
+
+It is a *self-gated* function: each input value is multiplied by its own sigmoid. The curve looks like a smoothed, slightly bowed ReLU — strongly positive for large $x$, weakly negative for large negative $x$ (around $-0.28$ at the minimum), and zero at $x = 0$. Like GELU, it is everywhere differentiable, never fully "dies", and its gradient is non-trivial on the negative side. Compared to GELU it is much cheaper to compute (one sigmoid, no error function), which is why CNN-style vision stacks that may run hundreds of layers — as in the diffusion U-Net — prefer SiLU. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
 </div>
