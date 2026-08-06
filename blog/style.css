@@ -6618,6 +6618,13 @@ html.is-ready #topics-toggle {
 	transform: translateY(16px) scale(0.97);
 	transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 	overflow: hidden;
+	font-family: var(--mn-font-body);
+	color: var(--mn-text);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.topics-modal * {
+	font-family: inherit;
 }
 .topics-overlay.open .topics-modal {
 	transform: translateY(0) scale(1);
@@ -6656,6 +6663,7 @@ html.dark .topics-modal {
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	font-family: var(--mn-font-heading);
 }
 .topics-title-emoji {
 	display: inline-block;
@@ -6730,7 +6738,7 @@ html.dark .topics-modal {
 	background: transparent;
 	color: var(--mn-text-secondary);
 	font-family: inherit;
-	font-size: 0.82rem;
+	font-size: 0.84rem;
 	font-weight: 500;
 	padding: 5px 12px;
 	border-radius: 7px;
@@ -6799,7 +6807,7 @@ html.dark .topics-seg-btn.topics-seg-on {
 	border: 1px solid var(--mn-border);
 	background: var(--mn-surface);
 	color: var(--mn-text);
-	font-size: 0.82rem;
+	font-size: 0.84rem;
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.16s ease;
@@ -6863,7 +6871,7 @@ html.dark .topics-preset-fun {
 }
 .topic-tile-icon {
 	grid-row: 1 / span 2;
-	font-size: 1.35rem;
+	font-size: 1.3rem;
 	width: 32px;
 	height: 32px;
 	display: flex;
@@ -6873,29 +6881,29 @@ html.dark .topics-preset-fun {
 	background: var(--mn-bg-subtle);
 	color: var(--mn-accent);
 	font-weight: 600;
-	font-family: var(--mn-font-body, 'Inter', system-ui, sans-serif);
+	font-family: var(--mn-font-body);
 	transition: background 0.18s, color 0.18s;
 }
 .topic-tile-body { min-width: 0; }
 .topic-tile-label {
 	display: block;
-	font-size: 0.9rem;
+	font-size: 0.88rem;
 	font-weight: 600;
 	color: var(--mn-text);
 	line-height: 1.25;
-	font-family: var(--mn-font-body, 'Inter', system-ui, sans-serif);
+	font-family: var(--mn-font-body);
 	letter-spacing: -0.005em;
+	overflow-wrap: anywhere;
 }
 .topic-tile-desc {
-	display: block;
-	font-size: 0.76rem;
+	display: -webkit-box;
+	font-size: 0.75rem;
 	color: var(--mn-text-secondary);
 	line-height: 1.4;
 	overflow: hidden;
-	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
-	font-family: var(--mn-font-body, 'Inter', system-ui, sans-serif);
+	font-family: var(--mn-font-body);
 }
 .topic-tile-switch {
 	grid-row: 1 / span 2;
@@ -7157,6 +7165,11 @@ html.dark .topics-preset-fun {
 	border-radius: 18px;
 	background: linear-gradient(135deg, var(--mn-accent-lighter), var(--mn-bg-subtle));
 	border: 1px solid color-mix(in srgb, var(--mn-accent) 22%, var(--mn-border));
+	font-family: var(--mn-font-body);
+	color: var(--mn-text);
+}
+.inline-topics * {
+	font-family: inherit;
 }
 .inline-topics-head {
 	display: flex;
