@@ -668,10 +668,10 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 <div id="tda-live-section" class="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
 	<details open>
-	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: #0f172a; padding: 6px 0;">
+	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
 		🧭 TDA Live — Attractors in the Residual Stream
 	</summary>
-	<p style="font-size: 0.85rem; color: #64748b; margin: 6px 0 12px 0; max-width: 900px;">
+	<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 900px;">
 		A <b>topological data analysis</b> of the residual stream and the weight deltas (weights minus their previous
 		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (sinks,
 		blue) and <b>repellers</b> (sources, red). The phase diagram shows the flow vectors, the basin of attraction, and
@@ -695,7 +695,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 			<option value="native">Native dims</option>
 			<option value="slice">Slice dims (choose axes)</option>
 		</select>
-		<span id="tda-live-slice-controls" title="Model-space axes to plot as x / y / z" style="display: none; gap: 6px; align-items: center; font-size: 0.8rem; color: #475569;">
+		<span id="tda-live-slice-controls" title="Model-space axes to plot as x / y / z" style="display: none; gap: 6px; align-items: center; font-size: 0.8rem; color: var(--mn-text-muted, #475569);">
 			axes
 			<input type="number" id="tda-live-axis0" value="0" min="0" max="63" style="width: 44px; padding: 2px 4px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);">
 			,
@@ -703,7 +703,9 @@ While the architecture is identical in both modes, the behavior of the model dif
 			,
 			<input type="number" id="tda-live-axis2" value="2" min="0" max="63" style="width: 44px; padding: 2px 4px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);">
 		</span>
-		<select id="tda-live-layer" title="Residual layer to show" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);"></select>
+			<span style="display: inline-flex; gap: 5px; align-items: center; font-size: 0.8rem; color: var(--mn-text-muted, #64748b);">Layer:
+			<select id="tda-live-layer" title="Which residual layer the phase plot shows. 'All layers' stacks every layer; a number shows only that layer as an epoch trail." style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);"></select>
+		</span>
 		<select id="tda-live-colorby" title="Color the point cloud by" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a);">
 			<option value="token" selected>Token</option>
 			<option value="layer">Layer</option>
@@ -738,11 +740,11 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 		<button id="tda-live-recompute" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #3b82f6; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600;">⟳ Recompute</button>
 		<button id="tda-live-reset" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #ef4444; background: #fef2f2; color: #b91c1c; cursor: pointer; font-weight: 600;">Clear history</button>
-		<span id="tda-live-status" style="color: #64748b; font-size: 0.8rem;"></span>
+		<span id="tda-live-status" style="color: var(--mn-text-muted, #64748b); font-size: 0.8rem;"></span>
 	</div>
 
 	<!-- Explainer (live, updated by tda_live.js) -->
-	<div id="tda-live-explain" style="font-size: 0.88rem; line-height: 1.5; color: #334155; background: var(--mn-bg-subtle, #f1f5f9); border-left: 3px solid #3b82f6; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 10px;"></div>
+	<div id="tda-live-explain" style="font-size: 0.88rem; line-height: 1.5; color: var(--mn-text, #334155); background: var(--mn-bg-subtle, #f1f5f9); border-left: 3px solid #3b82f6; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 10px;"></div>
 
 	<!-- Stats -->
 	<div id="tda-live-stats" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; font-size: 0.85rem;"></div>
@@ -755,36 +757,36 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 	<!-- Attractor / repeller emergence across layers -->
 	<div style="margin-top: 14px;">
-		<div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Attractor &amp; repeller emergence across layers</div>
-		<div id="tda-live-sweep-summary" style="font-size: 0.78rem; color: #64748b; margin-bottom: 6px; line-height: 1.5;"></div>
+		<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Attractor &amp; repeller emergence across layers</div>
+		<div id="tda-live-sweep-summary" style="font-size: 0.78rem; color: var(--mn-text-muted, #64748b); margin-bottom: 6px; line-height: 1.5;"></div>
 		<div id="tda-live-sweep" style="width: 100%; height: 300px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 	</div>
 
 	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Persistence diagram — shape of attractors (H₀ red, H₁ blue)</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence diagram — shape of attractors (H₀ red, H₁ blue)</div>
 			<div id="tda-live-persistence" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Persistence barcode</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence barcode</div>
 			<div id="tda-live-barcode" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Betti curves β₀ / β₁ over scale ε</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Betti curves β₀ / β₁ over scale ε</div>
 			<div id="tda-live-betti" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Topology by layer — β₀ / β₁</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Topology by layer — β₀ / β₁</div>
 			<div id="tda-live-topo" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 6px;">Learning field — ‖ΔW‖ per matrix (weight deltas)</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Learning field — ‖ΔW‖ per matrix (weight deltas)</div>
 			<div id="tda-live-weights" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 	</div>
 
-	<details style="margin-top: 14px; font-size: 0.85rem; color: #475569;">
-		<summary style="cursor: pointer; font-weight: 700; color: #334155;">❓ How to read the phase diagram</summary>
+	<details style="margin-top: 14px; font-size: 0.85rem; color: var(--mn-text-muted, #475569);">
+		<summary style="cursor: pointer; font-weight: 700; color: var(--mn-text, #334155);">❓ How to read the phase diagram</summary>
 		<div style="padding: 10px 14px; background: var(--mn-bg-subtle, #f8fafc); border-radius: 8px; line-height: 1.6;">
 			<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the "push" it gets. Repeat this on a grid of points and you get a <b>vector field</b> — a map of how the network moves states around.</p>
 			<ul style="margin: 0; padding-left: 20px;">
@@ -795,7 +797,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 				<li><b>Blue diamond</b> = detected attractor center, <b>red ✕</b> = repeller center.</li>
 				<li><b>Persistence / Barcode / Betti:</b> the "shape" of the cloud of states. β₀ = number of separate clusters, β₁ = number of loops/holes in the structure. Hover over any element in the plot for details.</li>
 			</ul>
-			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor "owns", and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive — drag to rotate while training runs.</p>
+			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary) — the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor "owns", and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive — drag to rotate while training runs.</p>
 		</div>
 	</details>
 	</details>

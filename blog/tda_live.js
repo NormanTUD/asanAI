@@ -1726,9 +1726,11 @@
 		const sum = el("tda-live-sweep-summary");
 		if (sum) {
 			const parts = sweep.layers.map(ly => {
-				const a = ly.attractors.length ? `<b style="color:#2563eb;">${ly.attractors.length} attr</b>` : "0 attr";
-				const r = ly.repellers.length ? `<b style="color:#dc2626;">${ly.repellers.length} rep</b>` : "0 rep";
-				return `L${ly.L}: ${a} / ${r} · drift ${ly.drift.toFixed(3)}`;
+				const a = ly.attractors.length ? `<b style="color:${tc("#2563eb")};">${ly.attractors.length} attr</b>` : "0 attr";
+				const r = ly.repellers.length ? `<b style="color:${tc("#dc2626")};">${ly.repellers.length} rep</b>` : "0 rep";
+				const active = CFG.layer === ly.L;
+				const title = CFG.layer === ly.L ? "Layer " + (ly.L + 1) + " — shown in the phase plot" : "Click to view layer " + (ly.L + 1) + " in the phase plot";
+				return `<span data-layer="${ly.L}" title="${title}" style="cursor:pointer;white-space:nowrap;${active ? "text-decoration:underline;text-underline-offset:3px;font-weight:700;" : ""}">L${ly.L}: ${a} / ${r} · drift ${ly.drift.toFixed(3)}</span>`;
 			});
 			const html = parts.join("&nbsp;&nbsp;·&nbsp;&nbsp;");
 			if (sum._last !== html) { sum._last = html; sum.innerHTML = html; }
@@ -1764,8 +1766,9 @@
 		const vf = S.frame && S.frame.vf;
 		const items = [];
 		const add = (label, value, color) => { items.push({ label, value, color }); };
+		add("view", CFG.layer < 0 ? "all layers" : "layer " + (CFG.layer + 1), CFG.layer < 0 ? "#e0e7ff" : "#dbeafe");
 		add("epoch", S.cur.epoch >= 0 ? String(S.cur.epoch) : "idle", "#e0f2fe");
-		if (S.cur.loss != null) add("loss", S.cur.loss.toFixed(4), "#d1fae5");
+		if (S.cur.loss != null) add("loss", S.cur.loss.toFixed(4), "#dcfce7");
 		if (topo) {
 			add("β₀ components", String(topo.h0.length), "#fee2e2");
 			add("β₁ loops", String(topo.h1.length), "#dbeafe");
@@ -1778,7 +1781,7 @@
 		}
 		if (S.cur.deltas && S.cur.deltas.length) {
 			const meanD = S.cur.deltas.reduce((a, d) => a + d.totalNorm, 0) / S.cur.deltas.length;
-			add("mean ‖ΔW‖", meanD.toFixed(4), "#fae8ff");
+			add("mean ‖ΔW‖", meanD.toFixed(4), "#f5f3ff");
 		}
 		// Update chips in place: reuse existing chip elements, only touch text
 		// that actually changed and only reorder when needed. Rebuilding the
@@ -1793,14 +1796,14 @@
 				chip = document.createElement("span");
 				chip.className = "tda-chip";
 				chip.dataset.label = it.label;
-				chip.style.cssText = "display:inline-flex;gap:6px;align-items:baseline;padding:4px 12px;border-radius:999px;color:#0f172a;border:1px solid #cbd5e1;font-size:0.85rem;font-weight:600;";
-				chip.innerHTML = `<span style="opacity:0.65;font-weight:700;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.04em;"></span><span style="font-variant-numeric:tabular-nums;color:#0f172a;"></span>`;
+				chip.style.cssText = "display:inline-flex;gap:5px;align-items:baseline;padding:3px 10px;border-radius:6px;color:var(--mn-text,#0f172a);font-size:0.85rem;font-weight:600;";
+				chip.innerHTML = `<span style="opacity:0.65;font-weight:700;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.04em;"></span><span style="font-variant-numeric:tabular-nums;"></span>`;
 			}
 			const lab = chip.children[0], val = chip.children[1];
 			if (lab.textContent !== it.label) lab.textContent = it.label;
 			if (val.textContent !== it.value) val.textContent = it.value;
-			const bg = it.color || "#eef2ff";
-			if (chip.style.background !== bg) chip.style.background = bg;
+			const bg = tc(it.color || "#eef2ff");
+			if (chip._bg !== bg) { chip.style.background = bg; chip._bg = bg; }
 			if (prev === null) {
 				if (box.firstChild !== chip) { box.insertBefore(chip, box.firstChild); }
 			} else if (chip.previousElementSibling !== prev) {
@@ -1847,11 +1850,11 @@
 			if (!el) {
 				el = document.createElement("span");
 				el.dataset.label = it.label;
-				el.style.cssText = "display:inline-flex;gap:6px;align-items:center;margin-right:14px;font-size:0.78rem;color:#334155;";
+				el.style.cssText = "display:inline-flex;gap:6px;align-items:center;margin-right:14px;font-size:0.78rem;color:var(--mn-text,#334155);";
 				el.innerHTML = `<span style="display:inline-block;flex:0 0 auto;"></span><span></span>`;
 			}
 			let sw;
-			if (it.shape === "diamond") sw = "width:11px;height:11px;transform:rotate(45deg);background:#2563eb;border:1px solid #fff;border-radius:2px;";
+			if (it.shape === "diamond") sw = "width:11px;height:11px;transform:rotate(45deg);background:#2563eb;border:1px solid var(--mn-surface,#fff);border-radius:2px;";
 			else if (it.shape === "cross") sw = "width:11px;height:11px;background:transparent;border:2px solid #dc2626;border-radius:2px;";
 			else sw = `width:18px;height:8px;border-radius:4px;background:${it.sw};`;
 			const swEl = el.children[0], txtEl = el.children[1];
@@ -1890,6 +1893,11 @@
 			}
 			if (CFG.projection === "slice") {
 				html += ` Currently slicing model dims <b>${CFG.sliceAxes.slice(0, CFG.dims === "2d" ? 2 : 3).join(", ")}</b> — raw coordinates, no projection.`;
+			}
+			if (CFG.layer < 0) {
+				html += ` Showing <b>all layers</b> stacked (every dot is labeled by its layer). To focus one layer, pick <b>Layer</b> in the controls below or click a layer in the <b>emergence summary</b>.`;
+			} else {
+				html += ` Currently viewing <b>layer ${CFG.layer + 1}</b> only, drawn across the last ${Math.max(2, CFG.history)} epochs as a trail. Pick <b>All layers</b> to see the full stack again.`;
 			}
 		} else if (CFG.mode === "delta") {
 			html = "<b>Weight deltas ΔW = W − W_prev per epoch.</b> Each point is one epoch, PCA-projected. Points clustering close together = the weight update is settling down.";
@@ -1972,6 +1980,15 @@
 		CFG.layer = parseInt(sel.value, 10);
 	}
 
+	function selectLayer(L) {
+		const sel = el("tda-live-layer");
+		if (sel && sel.querySelector(`option[value="${L}"]`)) sel.value = String(L);
+		syncCfg();
+		S.frameSig = "";
+		S.vfSig = "";
+		queueRender();
+	}
+
 	function syncCfg() {
 		const num = id => { const v = parseFloat(el(id).value); return isNaN(v) ? 0 : v; };
 		CFG.mode = el("tda-live-mode").value;
@@ -2018,6 +2035,14 @@
 		if (rc) rc.addEventListener("click", () => { S.frameSig = ""; S.vfSig = ""; queueRender(); });
 		const rst = el("tda-live-reset");
 		if (rst) rst.addEventListener("click", () => { resetHistory(); });
+		const sumEl = el("tda-live-sweep-summary");
+		if (sumEl && !sumEl._wired) {
+			sumEl._wired = true;
+			sumEl.addEventListener("click", (ev) => {
+				const t = ev.target && ev.target.closest && ev.target.closest("[data-layer]");
+				if (t) selectLayer(parseInt(t.dataset.layer, 10));
+			});
+		}
 		// periodic re-render so the view stays live even while scrolling
 		setInterval(() => { if (CFG.auto && S.cur && isPanelVisible()) queueRender(); }, 500);
 	}
