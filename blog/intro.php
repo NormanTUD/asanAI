@@ -66,7 +66,7 @@ This text is designed to help you navigate these shifts. We will constantly move
 
 ## Disclaimer
 
-This tutorial was built with the help of Google Gemini, Claude, chatGPT and other LLM systems. We've done our best to verify the code and info, but please double-check before using it in production.
+This tutorial was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems. We've done our best to verify the code and info, but please double-check before using it in production.
 </div>
 
 <?php
