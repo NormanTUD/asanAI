@@ -95,120 +95,190 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
 But *why* this specific formula? Why dot products? Why softmax? Why $\sqrt{d_k}$?
 
-The best way to understand is to **see it working** in spaces small enough to visualize. We'll build up from 1D scalars to 3D vectors; at each stage, the geometric meaning of every piece of the equation will become obvious.
+The best way to understand is to **see it working** in spaces small enough to visualize. The interactive demo below builds the equation **from the inside out**: every click of *Next* reveals one more piece of the formula and shows you exactly what that piece does to the vectors in 3D space.
 
-### 1D: Attention on a Number Line
+### Anatomy of Attention: An Interactive Walkthrough
 
-In one dimension, every embedding is just a **single number**. The Query $q$, Key $k$, and Value $v$ are all scalars. The dot product $q \cdot k$ is just ordinary multiplication:
-$$\text{score}_j = q \cdot k_j$$
+You will see each part of the equation appear one layer at a time, with the corresponding geometric operation highlighted in the 3D plot above. The underbraces below the equation track which piece is currently being computed. Drag the 3D plot to rotate the scene and watch the vectors from any angle.
 
-This is the simplest possible "similarity measure": two numbers agree if they have the **same sign and large magnitude**.
-* If $q = 3$ and $k_1 = 4$, the score is $12$ (strong agreement).
-* If $k_2 = -2$, the score is $-6$ (disagreement).
+The walkthrough proceeds through these eight steps:
 
-After softmax, the output is a **weighted average** of the values:
-$$\text{output} = \sum_j \alpha_j v_j, \quad \alpha_j = \frac{e^{q \cdot k_j}}{\sum_n e^{q \cdot k_n}}$$
+1. **The Cast** — introduce the Query $\mathbf{q}$ and the three Keys $\mathbf{k}_1, \mathbf{k}_2, \mathbf{k}_3$ in $d_k=3$ dimensional space.
+2. **Element-wise product** — the dot product is built from three scalar products, one per dimension.
+3. **The dot product** — sum the products into a single scalar score per key.
+4. **Scale by $1/\sqrt{d_k}$** — variance control to keep softmax in its usable range.
+5. **Exponentiate** — amplify differences between scores.
+6. **Normalize via softmax** — turn raw scores into a probability distribution.
+7. **Switch to value vectors** — bring in the $\mathbf{v}_j$ that carry the actual semantic content.
+8. **Weighted sum** — combine the values into the final output $\mathbf{z}$.
 
-In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see how the query "chooses" which values to attend to, purely based on sign and magnitude agreement on a single number line.
-
+This is the **mechanical truth** of attention. Every other interpretation — the tug-of-war, the database lookup, the Hopfield retrieval — is a metaphor layered on top of these concrete operations.
 </div>
 
-<!-- ===================== 1D: "How Financial Is It?" ===================== -->
+<!-- ===================== ANATOMY OF ATTENTION: STEP-BY-STEP ===================== -->
+<style>
+/* Underbrace-style highlights used by the anatomy demo */
+.attn-ub {
+	position: relative;
+	display: inline-block;
+	padding: 4px 10px 26px;
+	margin: 0 4px;
+	transition: all 0.3s ease;
+}
+.attn-ub::after {
+	content: '';
+	position: absolute;
+	left: 4px;
+	right: 4px;
+	bottom: 14px;
+	height: 10px;
+	border: 2px solid var(--mn-border, #cbd5e1);
+	border-top: none;
+	border-radius: 0 0 50% 50% / 0 0 100% 100%;
+	transition: all 0.3s ease;
+}
+.attn-ub-label {
+	position: absolute;
+	bottom: -2px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 0.68rem;
+	color: var(--mn-text-muted, #64748b);
+	white-space: nowrap;
+	background: var(--mn-surface, #fff);
+	padding: 0 6px;
+	transition: all 0.3s ease;
+}
+.attn-ub.active::after {
+	border-color: #2563eb;
+	border-width: 3px;
+	height: 12px;
+	bottom: 12px;
+}
+.attn-ub.active .attn-ub-label {
+	color: #2563eb;
+	font-weight: bold;
+}
+.attn-ub-inline {
+	position: relative;
+	display: inline-block;
+	padding: 2px 4px 8px;
+	transition: all 0.3s ease;
+}
+.attn-ub-inline::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 6px;
+	border-bottom: 2px solid var(--mn-border, #cbd5e1);
+	border-radius: 0 0 6px 6px;
+	transition: all 0.3s ease;
+}
+.attn-ub-inline.active::after {
+	border-bottom-color: #2563eb;
+	border-bottom-width: 3px;
+	height: 8px;
+}
+
+/* Header strip with step controls (sits ABOVE the plot) */
+.attn-anatomy-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 14px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 10px;
+	margin-bottom: 12px;
+}
+.attn-anatomy-header .step-info {
+	flex: 1;
+	text-align: center;
+	font-weight: bold;
+	color: var(--mn-text, #1e293b);
+	font-size: 0.95rem;
+	letter-spacing: 0.2px;
+}
+.attn-anatomy-header .step-info .step-num {
+	color: #2563eb;
+	margin-right: 8px;
+}
+.attn-anatomy-header .step-info .step-total {
+	color: var(--mn-text-muted, #94a3b8);
+	font-weight: normal;
+	margin: 0 4px;
+}
+.attn-anatomy-header button {
+	padding: 8px 18px;
+	border-radius: 8px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+	cursor: pointer;
+	font-size: 0.9rem;
+	font-family: inherit;
+	font-weight: 600;
+	transition: all 0.15s;
+	min-width: 110px;
+}
+.attn-anatomy-header button:hover:not(:disabled) {
+	background: #eff6ff;
+	border-color: #2563eb;
+	color: #2563eb;
+	transform: translateY(-1px);
+	box-shadow: 0 3px 8px rgba(37, 99, 235, 0.15);
+}
+.attn-anatomy-header button:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+</style>
+
 <div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+            margin:15px 0; max-width:840px; margin-left:auto; margin-right:auto;">
 
-    <div style="text-align:center; margin-bottom:8px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:var(--mn-text, #1e293b);">
-            1D: Where does "bank" land on the Nature ↔ Finance axis?
-        </span>
-    </div>
+	<div style="text-align:center; margin-bottom:12px;">
+		<span style="font-size:1.05rem; font-weight:bold; color:var(--mn-text, #1e293b);">
+			Build the Attention Equation from the Inside Out
+		</span>
+		<div style="font-size:0.78rem; color:var(--mn-text-secondary, #64748b); margin-top:3px;">
+			Use <b>Next</b> / <b>Previous</b> to peel off each layer of the formula. The matching underbrace and the 2D vector scene below update together.
+		</div>
+	</div>
 
-    <!-- Live sentence -->
-    <div id="attn1d-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
-         border-left:4px solid var(--mn-border, #cbd5e1); border-radius:6px; font-style:italic; color:var(--mn-text, #334155);
-         transition: border-color 0.2s;height:50px;"></div>
+	<!-- Controls sit ABOVE the plot (no auto-play, no reset) -->
+	<div class="attn-anatomy-header">
+		<button id="attn-anatomy-prev">← Previous</button>
+		<div class="step-info">
+			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
+			<span class="step-total">of 8</span>
+			<span id="attn-anatomy-step-title">— The Cast</span>
+		</div>
+		<button id="attn-anatomy-next">Next →</button>
+	</div>
 
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −3</span>
-        <input type="range" id="attn1d-q" min="-3" max="3" step="0.1" value="-1.0"
-               style="flex:1; accent-color:#2563eb;" oninput="updateAttn1D()">
-        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+3 🏦</span>
-        <span id="attn1d-q-val"
-              style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:40px; text-align:right;">−1.0</span>
-    </div>
+	<!-- 2D plot: vectors in the plane -->
+	<div id="attn-anatomy-2d" style="height: 460px; background: var(--mn-surface, #fff);
+									border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
 
-    <canvas id="attn1d-canvas" width="700" height="220"
-            style="display:block; width:100%; height:220px; border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
+	<!-- Score bars: numeric state of the computation -->
+	<div id="attn-anatomy-bars" style="height: 220px; background: var(--mn-surface, #fff);
+									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
 
-    <div id="attn1d-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
-         border:1px dashed var(--mn-border, #cbd5e1); overflow-x:auto;"></div>
-</div>
+	<!-- Equation with underbraces -->
+	<div id="attn-anatomy-equation" style="padding: 38px 18px 32px; background: var(--mn-surface, #fff);
+											border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;
+											text-align:center; font-size:1.1rem; line-height:2.4; overflow-x:auto;"></div>
 
-
-
-<!-- ===================== 1D and 2D container wrappers ===================== -->
-<div class="md">
-### 2D: Attention in a Plane
-
-Now each vector lives in $\mathbb{R}^2$. The dot product $\mathbf{q} \cdot \mathbf{k} = \|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$ measures **angular alignment** weighted by magnitude. Two vectors pointing the same way produce a large positive score; perpendicular vectors score zero; opposing vectors score negative.
-
-$$\text{score}_j = \frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{d_k}} = \frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{2}}$$
-
-Here $\sqrt{d_k} = \sqrt{2} \approx 1.41$. This scaling **prevents the scores from growing too large** as dimensionality increases, which would push softmax into near-one-hot territory and kill gradients.
-
-The output is a **weighted average of the value vectors**, geometrically, it's a point inside the **convex hull** (the polygon formed by the value points). Attention can only **interpolate**, never **extrapolate** beyond the values.
-
-Drag the query arrow below. Watch how rotating it toward a key increases that key's attention weight, and the output point slides toward the corresponding value.
-
-Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
-
-Because these positions are derived from logical relationships in data, the space itself becomes "computable". We can perform algebraic operations on these vectors to navigate human concepts:
-</div>
-
-<!-- ===================== 2D: "Where Does the Query Land?" ===================== -->
-<div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
-
-    <div style="text-align:center; margin-bottom:8px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:var(--mn-text, #1e293b);">
-            2D: Move the query through the semantic plane
-        </span>
-    </div>
-
-    <!-- Live sentence -->
-    <div id="attn2d-sentence" style="padding:10px 16px; margin-bottom:14px; background: var(--mn-surface, #fff);
-         border-left:4px solid var(--mn-border, #cbd5e1); border-radius:6px; font-style:italic; color:var(--mn-text, #334155);
-	 transition: border-color 0.2s; height: 80px;"></div>
-
-    <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
-        <div style="flex:1; min-width:200px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:0.8rem; color:#10b981; font-weight:bold;">🌿</span>
-                <input type="range" id="attn2d-qx" min="-3" max="3" step="0.1" value="1.5"
-                       style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
-                <span style="font-size:0.8rem; color:#f59e0b; font-weight:bold;">🏦</span>
-                <span id="attn2d-qx-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">1.5</span>
-            </div>
-            <div style="text-align:center; font-size:0.75rem; color:#64748b;">Nature ← x → Finance</div>
-        </div>
-        <div style="flex:1; min-width:200px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:0.8rem; color:#3b82f6; font-weight:bold;">😌</span>
-                <input type="range" id="attn2d-qy" min="-3" max="3" step="0.1" value="0.5"
-                       style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
-                <span style="font-size:0.8rem; color:#ef4444; font-weight:bold;">⚡</span>
-                <span id="attn2d-qy-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">0.5</span>
-            </div>
-            <div style="text-align:center; font-size:0.75rem; color:#64748b;">Calm ← y → Urgent</div>
-        </div>
-    </div>
-
-    <canvas id="attn2d-canvas" width="500" height="500"
-            style="display:block; margin:0 auto; max-width:100%; border:1px solid var(--mn-border, #e2e8f0);
-                   border-radius:8px; background: var(--mn-surface, #fff);"></canvas>
-
-    <div id="attn2d-math" style="margin-top:12px; padding:10px; background: var(--mn-surface, #fff); border-radius:8px;
-         border:1px dashed var(--mn-border, #cbd5e1); overflow-x:auto;"></div>
+	<!-- Description panel -->
+	<div id="attn-anatomy-desc" style="padding: 14px 18px; background: var(--mn-surface, #fff);
+									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;
+									   line-height:1.55; font-size:0.92rem; min-height:60px;"></div>
 </div>
 
 <div class="md">
@@ -363,20 +433,8 @@ When you see a dark blue square with **85%**, you are seeing the model "linking"
 
 In the world of Transformers, meaning is **movement**. Instead of looking up a word in a static dictionary, the model calculates a new position for that word based on the "gravitational pull" of its neighbours in the embedding space. This creates a vector that is near the *meaning* of the word in the context it is used in, not the mere embedding of the word itself.
 
-The classic illustration: the word **"apple"** is ambiguous in isolation. The word **"juicy"** pulls the apple vector away from the technology cluster and toward the fruit cluster — the same dot-product mechanism the rest of the page has been demonstrating.
-</div>
-<div id="apple-shift-plot" style="height:440px; background:var(--mn-surface, transparent); border-radius:12px;"></div>
+The classic illustration: the word **"apple"** is ambiguous in isolation, but in *I ate a juicy apple* the word **"juicy"** pulls the apple vector toward the fruit cluster — the same dot-product mechanism this page demonstrates geometrically with the step-by-step walkthrough above.
 
-<div class="md" style="padding: 15px; border-left: 4px solid #f97316; background:var(--mn-surface, #fff8f0); font-style: italic; margin-bottom: 20px; color:var(--mn-text, #1e293b); border-radius: 6px;">
-The sentence <b>"I ate a juicy apple"</b> resolves an otherwise ambiguous token:
-
-* **Neutral State:** "Apple" sits between *Technology* (iPhone, Mac, Linux) and *Fruit* (Banana, Orchard, Vitamin).
-* **The Context:** The query $\mathbf{q}_{\text{apple}}$ looks at every neighbour's Key $\mathbf{k}_j$.
-* **The Pull:** The word "juicy" has a Key $\mathbf{k}_{\text{juicy}}$ that scores very high against $\mathbf{q}_{\text{apple}}$; the orange dotted vector shows the resulting gravitational pull.
-* **The Result:** The contextualised "apple" lands inside the fruit cluster, no longer confused with iPhone.
-</div>
-
-<div class="md">
 ## Attention Heads as Differentiable Turing Machine Read Heads
 
 In \citeyear{neuralturingmachines}, the concept of Neural Turing Machine (NTM) was introduced by \citeauthorlastnameand{neuralturingmachines}, demonstrating that a neural network coupled with an external memory and differentiable read/write heads could learn algorithms end-to-end via gradient descent. The critical mechanism enabling this was an *attentional process* over memory locations, the read head produces a weighting vector with one component per memory cell, determining what to retrieve.

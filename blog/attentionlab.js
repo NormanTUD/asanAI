@@ -4,6 +4,17 @@
 /**
  * THE NEURAL UNIVERSE
  */
+
+// Numerically stable softmax: subtract the max before exponentiating
+// so the result is unaffected by a constant shift of the inputs.
+// Used by both the LDD demo and the Anatomy-of-Attention module.
+function softmax(scores) {
+	const max = Math.max(...scores);
+	const exps = scores.map(s => Math.exp(s - max));
+	const sum  = exps.reduce((a, b) => a + b, 0);
+	return exps.map(e => e / sum);
+}
+
 const universeVocab = {
 	'happy': [2, 8, 2], 'sad': [-2, 2, 1], 'love': [4, 9, 3], 'hate': [-4, 1, 0],
 	'king': [8, 5, 10], 'queen': [8, 9, 10], 'man': [1, 5, 5], 'woman': [1, 9, 5],
@@ -221,1009 +232,431 @@ const SelfAttentionLab = {
 	}
 };
 
-/**
- * Visualizes the "Semantic Tug-of-War" for Apple and Key examples.
- * Shows how a context word (e.g. "juicy") drags "apple" from its
- * neutral base embedding toward the Fruit cluster via the same
- * query-key dot-product mechanism the larger demos use.
- *
- * @param {string} containerId - The ID of the div to render the plot in.
- */
-function initAppleShift(containerId) {
-	// Tech cluster (lower-right)
-	const techLandmarks = [
-		{ x: 8.4, y: 1.4, text: 'iPhone',  icon: '📱' },
-		{ x: 9.1, y: 2.3, text: 'Mac',     icon: '💻' },
-		{ x: 8.7, y: 1.0, text: 'Linux',   icon: '🐧' },
-		{ x: 9.5, y: 2.9, text: 'Pixel',   icon: '🤖' }
-	];
-	// Fruit cluster (upper-left)
-	const fruitLandmarks = [
-		{ x: 1.4, y: 8.8, text: 'Banana',  icon: '🍌' },
-		{ x: 2.4, y: 8.1, text: 'Orchard', icon: '🌳' },
-		{ x: 1.0, y: 7.4, text: 'Vitamin', icon: '💊' },
-		{ x: 2.9, y: 9.0, text: 'Peach',   icon: '🍑' }
-	];
+/* ═══════════════════════════════════════════════════════════
+   ANATOMY OF ATTENTION — STEP-BY-STEP BUILD-UP
+   Click "Next" to advance through each part of the equation,
+   watching the 2D vector scene and score bars evolve together.
+   ═══════════════════════════════════════════════════════════ */
 
-	// Color seeds — landmark color comes from theme swap, accent stays brand.
-	const mutedGray = themeColor('#64748b');
-	const accentAmber = isDarkMode() ? '#fbbf24' : '#eab308';
-	const accentEmerald = isDarkMode() ? '#6ee7b7' : '#10b981';
-	const textPrimary = themeColor('#1e293b');
-	const textMuted   = themeColor('#94a3b8');
+// Four tokens. Token 0 is the query; tokens 1..3 are the keys/values.
+const ATTN_TOKENS = [
+	{ name: 'it',  color: '#ef4444' },
+	{ name: 'cat', color: '#2563eb' },
+	{ name: 'dog', color: '#3b82f6' },
+	{ name: 'sat', color: '#60a5fa' }
+];
 
-	const allLandmarks = [
-		...techLandmarks.map(l => ({ ...l, color: mutedGray })),
-		...fruitLandmarks.map(l => ({ ...l, color: accentAmber }))
+// 2D query / keys / values. d_k = 2 keeps the geometry clean: the dot
+// product is just (q[1]·k[1]) + (q[2]·k[2]) — two numbers, one vector.
+const ATTN_2D = (function() {
+	const q    = [ 1.00,  0.40 ];
+	const keys = [
+		[ 0.90,  0.45 ],   // k₁: "cat" — close to q, should win attention
+		[-0.50,  0.80 ],   // k₂: "dog" — somewhat orthogonal
+		[-0.60, -0.70 ]    // k₃: "sat" — pointing opposite-ish
+	];
+	const vals = [
+		[ 0.80,  0.55 ],   // v₁
+		[-0.30,  0.70 ],   // v₂
+		[-0.70, -0.55 ]    // v₃
 	];
 
-	// Base / context / result
-	const base      = { x: 5.0, y: 5.0, text: 'apple',          sub: 'base embedding' };
-	const context   = { x: 2.0, y: 8.0, text: 'juicy',          sub: 'context giver' };
-	// Result lands roughly halfway toward the fruit cluster, weighted by
-	// how strongly the query "what kind of apple?" matches "juicy".
-	const result    = { x: 3.6, y: 6.8, text: 'apple ⟵ juicy',  sub: 'contextualized' };
+	const d_k    = 2;
+	const sqrtDk = Math.sqrt(d_k);
 
-	// Soft cluster halos via translucent filled circles
-	const techHalo = {
-		type: 'scatter', mode: 'lines',
-		x: [8.4, 9.7, 9.7, 8.4, 8.4].map((v,i) => i===0||i===4 ? 8.4 : i===1||i===3 ? v : v),
-		y: [1.0, 1.0, 3.0, 3.0, 1.0],
-		fill: 'toself', fillcolor: isDarkMode() ? 'rgba(100,116,139,0.10)' : 'rgba(100,116,139,0.08)',
-		line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
-	};
-	const techHaloX = [8.0, 9.9, 9.9, 8.0];
-	const techHaloY = [0.6, 0.6, 3.4, 3.4];
-	const fruitHaloX = [0.6, 3.4, 3.4, 0.6];
-	const fruitHaloY = [6.9, 6.9, 9.4, 9.4];
+	const dot2 = (a, b) => a[0]*b[0] + a[1]*b[1];
 
-	const traces = [
-		{
-			x: techHaloX, y: techHaloY, mode: 'lines',
-			fill: 'toself',
-			fillcolor: isDarkMode() ? 'rgba(100,116,139,0.10)' : 'rgba(100,116,139,0.08)',
-			line: { width: 0 }, showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		{
-			x: fruitHaloX, y: fruitHaloY, mode: 'lines',
-			fill: 'toself',
-			fillcolor: isDarkMode() ? 'rgba(251,191,36,0.10)' : 'rgba(234,179,8,0.10)',
-			line: { width: 0 }, showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		// Landmarks
-		{
-			x: allLandmarks.map(l => l.x), y: allLandmarks.map(l => l.y),
-			mode: 'markers+text',
-			text: allLandmarks.map(l => `${l.icon} ${l.text}`),
-			textposition: 'top center',
-			textfont: { size: 11, color: textMuted, family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 9, opacity: 0.85, color: allLandmarks.map(l => l.color),
-			          line: { width: 0 } },
-			name: 'Landmarks', hoverinfo: 'text', type: 'scatter'
-		},
-		// Attention pull vector (context → base)
-		{
-			x: [context.x, base.x], y: [context.y, base.y],
-			mode: 'lines',
-			line: { color: accentEmerald, width: 3, dash: 'dot' },
-			opacity: 0.55,
-			showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		// Movement vector (base → result)
-		{
-			x: [base.x, result.x], y: [base.y, result.y],
-			mode: 'lines',
-			line: { color: '#f97316', width: 4 },
-			showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		// Base embedding
-		{
-			x: [base.x], y: [base.y], mode: 'markers+text',
-			text: [`<b>${base.text}</b>`],
-			textposition: 'bottom center',
-			textfont: { size: 13, color: textMuted, family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 13, color: mutedGray, symbol: 'circle',
-			          line: { width: 2, color: themeColor('#fff') } },
-			name: 'base', hoverinfo: 'text', type: 'scatter'
-		},
-		// Context giver
-		{
-			x: [context.x], y: [context.y], mode: 'markers+text',
-			text: [`<b>${context.text}</b>`],
-			textposition: 'top center',
-			textfont: { size: 14, color: accentEmerald, family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 14, color: accentEmerald, symbol: 'hexagon',
-			          line: { width: 2, color: themeColor('#fff') } },
-			name: 'context', hoverinfo: 'text', type: 'scatter'
-		},
-		// Contextualized result
-		{
-			x: [result.x], y: [result.y], mode: 'markers+text',
-			text: [`<b>${result.text}</b>`],
-			textposition: 'bottom center',
-			textfont: { size: 13, color: '#f97316', family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 20, color: '#f97316', symbol: 'diamond',
-			          line: { width: 2, color: themeColor('#fff') } },
-			name: 'result', hoverinfo: 'text', type: 'scatter'
+	const scores  = keys.map(k => dot2(q, k));
+	const scaled  = scores.map(s => s / sqrtDk);
+	const exps    = scaled.map(s => Math.exp(s));
+	const weights = softmax(scaled);
+
+	const output = [0, 0];
+	vals.forEach((v, j) => {
+		output[0] += weights[j] * v[0];
+		output[1] += weights[j] * v[1];
+	});
+
+	const weightedVals = vals.map((v, j) => [weights[j] * v[0], weights[j] * v[1]]);
+
+	return { q, keys, vals, scores, scaled, exps, weights, output, weightedVals, d_k, sqrtDk };
+})();
+
+// Eight steps. `mode` decides what the 2D plot draws:
+//   'keys'   → query + keys (steps 1-6)
+//   'values' → query + values (step 7)
+//   'output' → values + weighted values + output z with tip-to-tail (step 8)
+// `barMode` decides what the bar chart shows (see renderBars).
+const ATTN_STEPS = [
+	{
+		title: 'The Cast',
+		desc: 'Every token has a <b>Query</b> <b style="color:#ef4444">q</b> and three <b>Keys</b> <b style="color:#2563eb">k₁</b>, <b style="color:#3b82f6">k₂</b>, <b style="color:#60a5fa">k₃</b>. They live in a d<sub>k</sub>=2 dimensional plane. Look how <b style="color:#2563eb">k₁</b> points almost the same direction as <b style="color:#ef4444">q</b> — that will be the winner.',
+		mode: 'keys', barMode: 'none'
+	},
+	{
+		title: 'Element-wise product',
+		desc: 'The dot product is two scalar products summed: <b>q[1]·k₁[1] + q[2]·k₁[2]</b>. Each product captures alignment along one axis. The orange bar chart below shows the two components for k₁.',
+		mode: 'keys', highlightKey: 0, barMode: 'components'
+	},
+	{
+		title: 'The dot product q · kⱼ',
+		desc: 'Add the two products to get a single scalar score per key. A <b>large positive</b> score means q and kⱼ point the same direction; <b>negative</b> means opposite. k₁ wins because it is closest to q.',
+		mode: 'keys', barMode: 'scores'
+	},
+	{
+		title: 'Scale by 1/√d_k',
+		desc: 'Dividing by √2 keeps the variance of scores near 1, regardless of d<sub>k</sub>. In a real Transformer with d<sub>k</sub>=64 this prevents softmax from saturating to a one-hot vector.',
+		mode: 'keys', barMode: 'scaled'
+	},
+	{
+		title: 'Exponentiate',
+		desc: 'Apply exp() to each score. This <b>amplifies differences</b>: e² ≈ 7.39 but e¹ ≈ 2.72. The largest score starts to dominate the next step.',
+		mode: 'keys', barMode: 'exps'
+	},
+	{
+		title: 'Normalize via softmax',
+		desc: 'Divide each exp(score) by the sum of all exp(scores). The three numbers now sum to <b>100%</b> — a probability distribution. These are the <b>attention weights</b> α<sub>ij</sub>.',
+		mode: 'keys', barMode: 'weights'
+	},
+	{
+		title: 'Switch to value vectors',
+		desc: 'Now drop the keys and bring in the <b>Value</b> vectors <b style="color:#16a34a">v₁</b>, <b style="color:#15803d">v₂</b>, <b style="color:#166534">v₃</b> (green). They live in a separate subspace and carry the actual semantic content. The attention weights carry over unchanged.',
+		mode: 'values', barMode: 'weights'
+	},
+	{
+		title: 'Weighted sum → output z',
+		desc: 'Compute <b>z = α₁v₁ + α₂v₂ + α₃v₃</b>. The dark green arrows are the scaled vectors αⱼvⱼ; the dashed gray chain is the tip-to-tail construction that adds them up. The final <b style="color:#f59e0b">z</b> (orange) is their sum — and it lives <b>inside the convex hull</b> of v₁, v₂, v₃.',
+		mode: 'output', barMode: 'weights'
+	}
+];
+
+const AttentionAnatomy = {
+	step: 0,
+
+	init: function() {
+		if (!document.getElementById('attn-anatomy-2d')) return;
+
+		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
+		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
+
+		this.buildEquation();
+		this.render();
+
+		if (window.__MN_DARK) {
+			window.__MN_DARK.onChange(() => this.render());
 		}
-	];
+	},
 
-	const layout = {
-		title: {
-			text: '<b>The "Apple" Shift</b><br><sub style="color:' + textMuted + '">I ate a <b style="color:#f97316">juicy</b> apple.</sub>',
-			font: { size: 16, color: textPrimary, family: 'Inter, system-ui, sans-serif' },
-			x: 0.5, xanchor: 'center'
-		},
-		xaxis: {
-			title: { text: '<i>Tech</i>  ↔  <i>Nature</i>', font: { size: 12, color: textMuted } },
-			range: [-0.3, 10.3],
-			gridcolor: themeColor('#f1f5f9'),
-			zeroline: false,
-			showline: true, linecolor: themeColor('#e2e8f0'),
-			tickfont: { color: textMuted, size: 10 }
-		},
-		yaxis: {
-			title: { text: '<i>Organic</i>  ↔  <i>Synthetic</i>', font: { size: 12, color: textMuted } },
-			range: [-0.3, 10.3],
-			gridcolor: themeColor('#f1f5f9'),
-			zeroline: false,
-			showline: true, linecolor: themeColor('#e2e8f0'),
-			tickfont: { color: textMuted, size: 10 }
-		},
-		annotations: [
-			{
-				x: 8.95, y: 3.55, text: '<b>TECH CLUSTER</b>', showarrow: false,
-				font: { size: 10, color: mutedGray, family: 'Inter, sans-serif' }
-			},
-			{
-				x: 2.0, y: 9.55, text: '<b>FRUIT CLUSTER</b>', showarrow: false,
-				font: { size: 10, color: accentAmber, family: 'Inter, sans-serif' }
-			},
-			{
-				x: result.x + 0.6, y: result.y - 0.05,
-				ax: base.x, ay: base.y, xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
-				text: 'α(q,k) · shift', showarrow: true, arrowhead: 2, arrowsize: 1.2,
-				arrowwidth: 2, arrowcolor: '#f97316',
-				font: { size: 11, color: '#f97316', family: 'Inter, sans-serif' }
+	next: function() {
+		if (this.step < ATTN_STEPS.length - 1) {
+			this.step++;
+			this.render();
+		}
+	},
+
+	prev: function() {
+		if (this.step > 0) {
+			this.step--;
+			this.render();
+		}
+	},
+
+	goto: function(n) {
+		this.step = Math.max(0, Math.min(ATTN_STEPS.length - 1, n));
+		this.render();
+	},
+
+	// Build the static equation with underbrace spans. Each underbrace
+	// lists the step numbers (1-indexed) for which it should glow.
+	buildEquation: function() {
+		const eq = document.getElementById('attn-anatomy-equation');
+		eq.innerHTML = `
+			<div>
+				<b style="color:var(--mn-heading, #1e293b);">Output:</b>
+				&#x2009;z<sub>i</sub> =
+				<span class="attn-ub" data-step="8">
+					&#x2211;<sub>j</sub>
+					<span class="attn-ub-inline" data-step="6,7,8">&#945;<sub>ij</sub></span>
+					&#x2009;&#xb7;&#x2009;
+					<span class="attn-ub-inline" data-step="7,8">v<sub>j</sub></span>
+					<span class="attn-ub-label">weighted sum of values</span>
+				</span>
+			</div>
+			<div style="margin-top: 18px;">
+				<b style="color:var(--mn-heading, #1e293b);">Weights:</b>
+				&#x2009;&#945;<sub>ij</sub> =
+				<span class="attn-ub-inline" data-step="5">exp</span>
+				&#x2009;(
+				<span class="attn-ub-inline" data-step="2,3">q<sub>i</sub>&#xb7;k<sub>j</sub></span>
+				<span style="margin: 0 4px; color:var(--mn-text-muted, #94a3b8);">/</span>
+				<span class="attn-ub-inline" data-step="4">&#x221a;d<sub>k</sub></span>
+				&#x2009;)
+				<span style="margin: 0 6px; color:var(--mn-text-muted, #94a3b8);">&#xf7;</span>
+				<span class="attn-ub" data-step="6">
+					&#x2211;<sub>n</sub> exp(q<sub>i</sub>&#xb7;k<sub>n</sub> / &#x221a;d<sub>k</sub>)
+					<span class="attn-ub-label">denominator: sum over all keys</span>
+				</span>
+			</div>
+		`;
+	},
+
+	render: function() {
+		const data = ATTN_STEPS[this.step];
+		const titleEl = document.getElementById('attn-anatomy-step-title');
+		const numEl   = document.getElementById('attn-anatomy-step-num');
+		if (numEl)   numEl.textContent   = `Step ${this.step + 1}`;
+		if (titleEl) titleEl.textContent = `— ${data.title}`;
+		const descEl = document.getElementById('attn-anatomy-desc');
+		if (descEl) descEl.innerHTML = `<b style="color:#2563eb;">${data.title}.</b> ${data.desc}`;
+
+		this.render2D(data);
+		this.renderBars(data);
+		this.highlightEquation();
+
+		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
+		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
+	},
+
+	// ─── 2D vector scene ────────────────────────────────────────────
+	render2D: function(data) {
+		const traces = [];
+		const mode   = data.mode;
+
+		// Always draw the query unless we're in pure output mode
+		if (mode === 'keys' || mode === 'values') {
+			this.addArrow2D(traces, [0, 0], ATTN_2D.q, '#ef4444', 'q', 1.0);
+		}
+
+		if (mode === 'keys') {
+			ATTN_2D.keys.forEach((k, j) => {
+				const isHi = (data.highlightKey === j);
+				const dim  = (data.highlightKey !== undefined && !isHi);
+				const color = isHi ? '#1e3a8a' : ATTN_TOKENS[j + 1].color;
+				this.addArrow2D(traces, [0, 0], k, color, `k${j+1}`, dim ? 0.35 : 1.0);
+			});
+		} else if (mode === 'values' || mode === 'output') {
+			const valColors = ['#16a34a', '#15803d', '#166534'];
+			ATTN_2D.vals.forEach((v, j) => {
+				const dim = (mode === 'output');
+				this.addArrow2D(traces, [0, 0], v, valColors[j], `v${j+1}`, dim ? 0.35 : 1.0);
+			});
+
+			if (mode === 'output') {
+				// Weighted (scaled) value vectors from origin
+				ATTN_2D.weightedVals.forEach((wv, j) => {
+					this.addArrow2D(traces, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 0.85, /*dashed*/ true);
+				});
+
+				// Tip-to-tail construction: α₁v₁ from origin, then α₂v₂
+				// from the tip of α₁v₁, then α₃v₃ from there.
+				let tip = [0, 0];
+				ATTN_2D.weightedVals.forEach((wv, j) => {
+					const next = [tip[0] + wv[0], tip[1] + wv[1]];
+					this.addArrow2D(traces, tip, next, '#94a3b8', null, 0.65, /*dashed*/ true, /*noMarker*/ true);
+					tip = next;
+				});
+
+				// Output z from origin
+				this.addArrow2D(traces, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 1.0);
 			}
-		],
-		paper_bgcolor: themeColor('#fff'),
-		plot_bgcolor: themeColor('#fff'),
-		showlegend: false,
-		margin: { l: 60, r: 30, t: 80, b: 60 },
-		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: '#fff' } }
-	};
-
-	Plotly.react(containerId, traces, layout, { responsive: true, displaylogo: false });
-}
-
-function initShiftExamples() {
-	initAppleShift('apple-shift-plot');
-}
-
-/* ============================================================
-   ATTENTION GEOMETRY LAB — 1D, 2D, 3D interactive demos
-   Requires: Plotly.js (already loaded)
-   ============================================================ */
-
-// ─────────────────── UTILITIES ───────────────────
-
-/* ============================================================
-   ATTENTION GEOMETRY — NAMED CONCEPTS + LIVE SENTENCES
-   Cartesian canvas. No Plotly. Colorful. No overlap.
-   ============================================================ */
-
-/* ============================================================
-   ATTENTION GEOMETRY — NAMED CONCEPTS + RICH SENTENCES
-   ============================================================ */
-
-function softmax(scores) {
-	const max = Math.max(...scores);
-	const exps = scores.map(s => Math.exp(s - max));
-	const sum  = exps.reduce((a, b) => a + b, 0);
-	return exps.map(e => e / sum);
-}
-
-/* ─── Canvas helpers (same as before) ─── */
-
-function drawDot(ctx, x, y, r, color, alpha) {
-	ctx.save();
-	ctx.globalAlpha = alpha != null ? alpha : 1;
-	ctx.beginPath();
-	ctx.arc(x, y, r, 0, Math.PI * 2);
-	ctx.fillStyle = color;
-	ctx.fill();
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 1.5;
-	ctx.stroke();
-	ctx.restore();
-}
-
-function drawDiamond(ctx, x, y, r, color) {
-	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(Math.PI / 4);
-	ctx.fillStyle = color;
-	ctx.fillRect(-r, -r, r * 2, r * 2);
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 2;
-	ctx.strokeRect(-r, -r, r * 2, r * 2);
-	ctx.restore();
-}
-
-function drawStar(ctx, cx, cy, r, color) {
-	ctx.beginPath();
-	for (let i = 0; i < 10; i++) {
-		const a = (i * Math.PI) / 5 - Math.PI / 2;
-		const rad = i % 2 === 0 ? r : r * 0.4;
-		ctx[i === 0 ? 'moveTo' : 'lineTo'](cx + rad * Math.cos(a), cy + rad * Math.sin(a));
-	}
-	ctx.closePath();
-	ctx.fillStyle = color;
-	ctx.fill();
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 1.5;
-	ctx.stroke();
-}
-
-function drawLabel(ctx, text, x, y, color, size, align, bold) {
-	ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
-	ctx.fillStyle = color || themeColor('#1e293b');
-	ctx.textAlign = align || 'center';
-	ctx.textBaseline = 'middle';
-	ctx.fillText(text, x, y);
-}
-
-function drawSquare(ctx, x, y, s, color, alpha) {
-	ctx.save();
-	ctx.globalAlpha = alpha != null ? alpha : 1;
-	ctx.fillStyle = color;
-	ctx.fillRect(x - s, y - s, s * 2, s * 2);
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 1;
-	ctx.strokeRect(x - s, y - s, s * 2, s * 2);
-	ctx.restore();
-}
-
-
-/* ═══════════════════════════════════════════════════════════
-   1D — "How Financial Is It?"
-   ═══════════════════════════════════════════════════════════ */
-
-const KV1 = [
-	{ k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water' },
-	{ k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' }
-];
-
-const SENTENCES_1D = [
-	[
-		{ min: 0.999, text: 'A <b style="color:#0ea5e9">catastrophic flood</b> obliterated the <b style="color:#10b981">💧 bank</b> entirely, scouring it down to <b style="color:#10b981">bare bedrock</b> in a single <b style="color:#0ea5e9">night</b>.' },
-		{ min: 0.998, text: 'The <b style="color:#10b981">💧 bank</b> <b style="color:#0ea5e9">disintegrated</b> under the force of the <b style="color:#0ea5e9">flash flood</b>, sweeping <b style="color:#10b981">ancient oaks</b> downstream.' },
-		{ min: 0.996, text: '<b style="color:#0ea5e9">Torrential rains</b> turned the <b style="color:#10b981">💧 bank</b> into a <b style="color:#10b981">mudslide</b>, burying the <b style="color:#f97316">hiking trail</b> under <b style="color:#10b981">three feet of silt</b>.' },
-		{ min: 0.994, text: 'The <b style="color:#10b981">💧 bank</b> gave way with a <b style="color:#0ea5e9">thunderous crack</b>, dumping <b style="color:#10b981">tons of earth</b> into the <b style="color:#10b981">swollen rapids</b>.' },
-		{ min: 0.992, text: 'Geologists measured the <b style="color:#10b981">💧 bank</b> retreating <b style="color:#0ea5e9">six inches per hour</b> as the <b style="color:#10b981">floodwaters</b> tore at the <b style="color:#10b981">clay substrate</b>.' },
-		{ min: 0.990, text: 'After the <b style="color:#0ea5e9">dam</b> broke, the <b style="color:#10b981">💧 bank</b> was <b style="color:#0ea5e9">swallowed whole</b> by <b style="color:#10b981">floodwaters</b> within minutes.' },
-		{ min: 0.988, text: 'A <b style="color:#10b981">massive cottonwood</b> toppled from the <b style="color:#10b981">💧 bank</b> into the <b style="color:#0ea5e9">churning current</b>, creating a <b style="color:#10b981">natural dam</b>.' },
-		{ min: 0.985, text: 'The <b style="color:#10b981">💧 bank</b> was nothing but <b style="color:#10b981">exposed roots</b> and <b style="color:#10b981">crumbling soil</b> after the <b style="color:#0ea5e9">spring melt</b> scoured it clean.' },
-		{ min: 0.982, text: 'Emergency crews reinforced the <b style="color:#10b981">💧 bank</b> with <b style="color:#94a3b8">sandbags</b> as the <b style="color:#0ea5e9">water level</b> kept rising through the <b style="color:#0ea5e9">night</b>.' },
-		{ min: 0.979, text: '<b style="color:#0ea5e9">Floodwaters</b> carved deep grooves into the <b style="color:#10b981">💧 bank</b> overnight, reshaping the entire <b style="color:#10b981">landscape</b>.' },
-		{ min: 0.976, text: 'The <b style="color:#10b981">💧 bank</b> was riddled with <b style="color:#10b981">muskrat burrows</b> that weakened the <b style="color:#10b981">soil</b> from within.' },
-		{ min: 0.973, text: '<b style="color:#10b981">Salmon</b> leapt upstream along the <b style="color:#10b981">💧 bank</b> during the <b style="color:#0ea5e9">spring run</b>, silver flashes in the <b style="color:#0ea5e9">rapids</b>.' },
-		{ min: 0.970, text: 'A <b style="color:#10b981">beaver lodge</b> sat wedged against the <b style="color:#10b981">💧 bank</b>, blocking the <b style="color:#0ea5e9">side channel</b> entirely.' },
-		{ min: 0.966, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">lush with cattails</b> and <b style="color:#10b981">bulrushes</b> where the <b style="color:#0ea5e9">current</b> slowed to a crawl.' },
-		{ min: 0.962, text: 'A <b style="color:#10b981">kingfisher</b> perched on a branch overhanging the <b style="color:#10b981">💧 bank</b>, eyeing the <b style="color:#0ea5e9">water</b> below.' },
-		{ min: 0.958, text: '<b style="color:#10b981">Moss</b> and <b style="color:#10b981">ferns</b> clung to the steep <b style="color:#10b981">💧 bank</b> above the <b style="color:#0ea5e9">waterfall</b>.' },
-		{ min: 0.954, text: 'A <b style="color:#10b981">family of ducks</b> nested in the <b style="color:#10b981">tall grass</b> along the <b style="color:#10b981">💧 bank</b>.' },
-		{ min: 0.950, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">thick with willows</b> whose branches trailed in the <b style="color:#0ea5e9">current</b>.' },
-		{ min: 0.945, text: 'The <b style="color:#0ea5e9">kayaker</b> paddled close to the <b style="color:#10b981">💧 bank</b>, dodging <b style="color:#10b981">overhanging roots</b> and <b style="color:#10b981">low branches</b>.' },
-		{ min: 0.940, text: '<b style="color:#10b981">Wildflowers</b> lined the <b style="color:#10b981">💧 bank</b> as far as the eye could see, swaying in the <b style="color:#0ea5e9">breeze</b>.' },
-		{ min: 0.935, text: 'They spread a <b style="color:#f97316">blanket</b> on the grassy <b style="color:#10b981">💧 bank</b> for a <b style="color:#f97316">picnic</b> by the <b style="color:#0ea5e9">stream</b>.' },
-		{ min: 0.930, text: 'A <b style="color:#10b981">heron</b> stood motionless on the <b style="color:#10b981">💧 bank</b>, watching for <b style="color:#0ea5e9">fish</b> in the <b style="color:#0ea5e9">shallows</b>.' },
-		{ min: 0.92, text: 'The <b style="color:#0ea5e9">canoe</b> scraped against the <b style="color:#f97316">sandy</b> <b style="color:#10b981">💧 bank</b> as they pulled ashore for <b style="color:#f97316">lunch</b>.' },
-		{ min: 0.91, text: '<b style="color:#f97316">Children</b> skipped <b style="color:#94a3b8">stones</b> from the <b style="color:#10b981">💧 bank</b> into the calm <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.90, text: 'An <b style="color:#10b981">otter</b> slid down the <b style="color:#10b981">💧 bank</b> and splashed into the <b style="color:#0ea5e9">creek</b> with a happy chirp.' },
-		{ min: 0.89, text: '<b style="color:#10b981">Turtles</b> sunned themselves on a <b style="color:#94a3b8">log</b> near the <b style="color:#10b981">💧 bank</b> all <b style="color:#f97316">afternoon</b>.' },
-		{ min: 0.88, text: 'The <b style="color:#f97316">path</b> followed the <b style="color:#10b981">💧 bank</b> of the <b style="color:#0ea5e9">creek</b> through the <b style="color:#10b981">woods</b>.' },
-		{ min: 0.87, text: '<b style="color:#10b981">Dragonflies</b> hovered above the <b style="color:#10b981">💧 bank</b> in the <b style="color:#f97316">afternoon</b> <b style="color:#0ea5e9">mist</b>.' },
-		{ min: 0.86, text: 'The <b style="color:#0ea5e9">river</b> had eroded the <b style="color:#10b981">💧 bank</b> into a gentle <b style="color:#f97316">slope</b> over the centuries.' },
-		{ min: 0.85, text: 'A <b style="color:#f97316">rope swing</b> hung from a <b style="color:#10b981">tree</b> on the <b style="color:#10b981">💧 bank</b> above the <b style="color:#0ea5e9">swimming hole</b>.' },
-		{ min: 0.84, text: '<b style="color:#10b981">Reeds</b> rustled along the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">tide</b> slowly came in.' },
-		{ min: 0.83, text: 'The <b style="color:#10b981">💧 bank</b> smelled of <b style="color:#10b981">wet earth</b> and <b style="color:#10b981">pine needles</b> after the <b style="color:#0ea5e9">rain</b>.' },
-		{ min: 0.82, text: 'She sat on the <b style="color:#10b981">💧 bank</b> and dipped her <b style="color:#f97316">toes</b> in the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.81, text: 'A <b style="color:#10b981">frog</b> croaked from somewhere along the <b style="color:#10b981">💧 bank</b> at <b style="color:#8b5cf6">dusk</b>.' },
-		{ min: 0.80, text: '<b style="color:#10b981">Fireflies</b> blinked above the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">stream</b> murmured in the <b style="color:#8b5cf6">darkness</b>.' },
-		{ min: 0.79, text: 'He cast his <b style="color:#f97316">fishing line</b> from the <b style="color:#10b981">💧 bank</b> into the <b style="color:#0ea5e9">deep pool</b>.' },
-		{ min: 0.78, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">soft underfoot</b>, still <b style="color:#0ea5e9">damp</b> from last night\'s <b style="color:#0ea5e9">rain</b>.' },
-		{ min: 0.77, text: 'A <b style="color:#f97316">painter</b> set up her <b style="color:#f97316">easel</b> on the <b style="color:#10b981">💧 bank</b> to capture the <b style="color:#0ea5e9">reflections</b>.' },
-		{ min: 0.76, text: '<b style="color:#10b981">Crawfish</b> scuttled along the <b style="color:#10b981">💧 bank</b> where the <b style="color:#0ea5e9">water</b> was <b style="color:#0ea5e9">shallow</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#10b981">💧 bank</b> was dotted with <b style="color:#10b981">smooth pebbles</b> polished by the <b style="color:#0ea5e9">current</b>.' },
-		{ min: 0.74, text: 'A <b style="color:#f97316">dog</b> bounded along the <b style="color:#10b981">💧 bank</b>, barking at the <b style="color:#0ea5e9">ripples</b>.' },
-		{ min: 0.73, text: 'They followed <b style="color:#10b981">deer tracks</b> down to the <b style="color:#10b981">💧 bank</b> of the <b style="color:#0ea5e9">brook</b>.' },
-		{ min: 0.72, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">overgrown</b> with <b style="color:#10b981">blackberry brambles</b> and <b style="color:#10b981">nettles</b>.' },
-		{ min: 0.71, text: 'A <b style="color:#f97316">wooden bridge</b> crossed the <b style="color:#0ea5e9">stream</b> just where the <b style="color:#10b981">💧 bank</b> curved.' },
-		{ min: 0.70, text: '<b style="color:#10b981">Morning fog</b> clung to the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">river</b> flowed silently past.' },
-		{ min: 0.69, text: 'She found a <b style="color:#f97316">smooth stone</b> on the <b style="color:#10b981">💧 bank</b> and slipped it into her <b style="color:#f97316">pocket</b>.' },
-		{ min: 0.68, text: 'The <b style="color:#10b981">💧 bank</b> dropped steeply into a <b style="color:#0ea5e9">dark pool</b> where <b style="color:#10b981">trout</b> hid.' },
-		{ min: 0.67, text: '<b style="color:#10b981">Birdsong</b> echoed from the <b style="color:#10b981">trees</b> lining the <b style="color:#10b981">💧 bank</b> at <b style="color:#eab308">sunrise</b>.' },
-		{ min: 0.66, text: 'A <b style="color:#f97316">child</b> crouched on the <b style="color:#10b981">💧 bank</b>, peering at <b style="color:#10b981">tadpoles</b> in the <b style="color:#0ea5e9">shallows</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#10b981">💧 bank</b> was their <b style="color:#f97316">favorite spot</b> to watch the <b style="color:#eab308">sunset</b> over the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.64, text: '<b style="color:#10b981">Ivy</b> crept down the <b style="color:#10b981">💧 bank</b> toward the <b style="color:#0ea5e9">water\'s edge</b>.' },
-		{ min: 0.63, text: 'He skipped a <b style="color:#94a3b8">flat stone</b> from the <b style="color:#10b981">💧 bank</b> — it bounced <b style="color:#0ea5e9">five times</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#10b981">💧 bank</b> was quiet except for the <b style="color:#0ea5e9">gurgling</b> of the <b style="color:#0ea5e9">stream</b>.' },
-		{ min: 0.61, text: 'A <b style="color:#10b981">snapping turtle</b> basked on the <b style="color:#10b981">💧 bank</b> in the <b style="color:#eab308">midday sun</b>.' },
-		{ min: 0.60, text: 'They built a <b style="color:#f97316">small fire</b> on the <b style="color:#10b981">💧 bank</b> and listened to the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.59, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">fragrant</b> with <b style="color:#10b981">wild mint</b> growing near the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.58, text: 'A <b style="color:#f97316">couple</b> strolled along the <b style="color:#10b981">💧 bank</b> as <b style="color:#10b981">geese</b> honked overhead.' },
-		{ min: 0.57, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">muddy</b> from the <b style="color:#0ea5e9">recent rain</b>, but the <b style="color:#0ea5e9">water</b> was clearing.' },
-		{ min: 0.56, text: 'She read her <b style="color:#f97316">book</b> on the <b style="color:#10b981">💧 bank</b> while the <b style="color:#0ea5e9">creek</b> babbled beside her.' },
-		{ min: 0.55, text: 'A <b style="color:#10b981">water snake</b> slithered along the <b style="color:#10b981">💧 bank</b> and disappeared into the <b style="color:#10b981">reeds</b>.' },
-		{ min: 0.54, text: 'The <b style="color:#10b981">💧 bank</b> was lined with <b style="color:#10b981">smooth river stones</b> worn by <b style="color:#0ea5e9">centuries of current</b>.' },
-		{ min: 0.53, text: 'He napped in the <b style="color:#10b981">shade</b> on the <b style="color:#10b981">💧 bank</b>, lulled by the <b style="color:#0ea5e9">sound of water</b>.' },
-		{ min: 0.52, text: 'A <b style="color:#10b981">mink</b> darted along the <b style="color:#10b981">💧 bank</b> and vanished into a <b style="color:#10b981">burrow</b>.' },
-		{ min: 0.51, text: 'The <b style="color:#10b981">💧 bank</b> here leans toward <b style="color:#10b981">nature</b> — probably a <b style="color:#10b981">riverbank</b>, but just barely.' },
-		{ min: 0.50, text: 'The word "bank" is undecided — a thin edge between <b style="color:#10b981">💧 water</b> and <b style="color:#f59e0b">💰 money</b>.' },
-		{ min: 0.49, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled yet.' },
-		{ min: 0.48, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' },
-		{ min: 0.47, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#10b981">💧 water</b>, but barely.' },
-		{ min: 0.46, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#10b981">💧 nature</b>, but it could mean anything at all.' },
-		{ min: 0.45, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#10b981">💧 water</b>, maybe not.' },
-		{ min: 0.00, text: 'The word "bank" is <b style="color:#94a3b8">neutral</b> — <b style="color:#10b981">💧 water</b> and <b style="color:#f59e0b">💰 money</b> are neck and neck.' }
-	],
-	// Index 1 = vault/money dominant
-	[
-		{ min: 0.999, text: 'The <b style="color:#f59e0b">💰 bank</b> was placed under <b style="color:#dc2626">federal receivership</b> after <b style="color:#f59e0b">$2 billion</b> in <b style="color:#f59e0b">toxic assets</b> surfaced on its <b style="color:#f59e0b">balance sheet</b>.' },
-		{ min: 0.998, text: '<b style="color:#dc2626">FBI agents</b> seized <b style="color:#f59e0b">servers</b> from the <b style="color:#f59e0b">💰 bank\'s</b> headquarters in a <b style="color:#dc2626">predawn raid</b> linked to <b style="color:#f59e0b">money laundering</b>.' },
-		{ min: 0.996, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">CEO</b> was <b style="color:#dc2626">indicted</b> on <b style="color:#dc2626">fourteen counts</b> of <b style="color:#f59e0b">securities fraud</b> and <b style="color:#f59e0b">embezzlement</b>.' },
-		{ min: 0.994, text: '<b style="color:#dc2626">Regulators</b> shut down the <b style="color:#f59e0b">💰 bank</b> overnight after a <b style="color:#dc2626">run</b> drained its <b style="color:#f59e0b">cash reserves</b> to zero.' },
-		{ min: 0.992, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held <b style="color:#f59e0b">$40 million</b> in <b style="color:#eab308">gold reserves</b> behind <b style="color:#94a3b8">three-foot steel doors</b>.' },
-		{ min: 0.990, text: '<b style="color:#dc2626">Armored trucks</b> lined up outside the <b style="color:#f59e0b">💰 bank</b> to transport <b style="color:#f59e0b">$100 million</b> in <b style="color:#f59e0b">bearer bonds</b>.' },
-		{ min: 0.988, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">trading floor</b> erupted in <b style="color:#dc2626">panic</b> as the <b style="color:#f59e0b">stock</b> plummeted <b style="color:#dc2626">30%</b> in minutes.' },
-		{ min: 0.985, text: '<b style="color:#dc2626">Federal investigators</b> subpoenaed every record from the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">offshore accounts</b>.' },
-		{ min: 0.982, text: '<b style="color:#dc2626">Armed guards</b> stood outside the <b style="color:#f59e0b">💰 bank</b> during the <b style="color:#94a3b8">armored</b> <b style="color:#f59e0b">cash transfer</b>.' },
-		{ min: 0.979, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">quarterly earnings</b> shattered every <b style="color:#f59e0b">Wall Street</b> forecast this year.' },
-		{ min: 0.976, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">stock price</b> surged <b style="color:#dc2626">18%</b> after the <b style="color:#f59e0b">merger</b> announcement.' },
-		{ min: 0.973, text: '<b style="color:#dc2626">Auditors</b> found <b style="color:#f59e0b">discrepancies</b> in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">ledgers</b> going back <b style="color:#94a3b8">five years</b>.' },
-		{ min: 0.970, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#dc2626">foreclosed</b> on three <b style="color:#f59e0b">properties</b> this <b style="color:#f59e0b">quarter</b> alone.' },
-		{ min: 0.966, text: '<b style="color:#dc2626">Protesters</b> gathered outside the <b style="color:#f59e0b">💰 bank</b> demanding lower <b style="color:#f59e0b">interest rates</b> on <b style="color:#f59e0b">student loans</b>.' },
-		{ min: 0.962, text: 'The <b style="color:#f59e0b">💰 bank</b> announced a <b style="color:#f59e0b">hostile takeover bid</b> for its <b style="color:#f59e0b">rival institution</b>.' },
-		{ min: 0.958, text: 'The <b style="color:#f59e0b">💰 bank</b> issued a <b style="color:#f59e0b">dividend</b> that exceeded <b style="color:#f59e0b">analyst</b> expectations by a wide margin.' },
-		{ min: 0.954, text: '<b style="color:#f59e0b">Shareholders</b> voted to replace the <b style="color:#f59e0b">💰 bank\'s</b> entire <b style="color:#f59e0b">board of directors</b>.' },
-		{ min: 0.950, text: 'The <b style="color:#f59e0b">💰 bank</b> raised its <b style="color:#f59e0b">prime lending rate</b> for the <b style="color:#94a3b8">third time</b> this year.' },
-		{ min: 0.945, text: 'She nervously entered the <b style="color:#f59e0b">💰 bank</b> to negotiate the terms of her <b style="color:#f59e0b">business loan</b>.' },
-		{ min: 0.940, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her <b style="color:#f59e0b">mortgage</b> application after weeks of <b style="color:#94a3b8">paperwork</b>.' },
-		{ min: 0.935, text: 'A <b style="color:#f59e0b">financial advisor</b> at the <b style="color:#f59e0b">💰 bank</b> recommended a <b style="color:#f59e0b">diversified portfolio</b>.' },
-		{ min: 0.930, text: 'The <b style="color:#f59e0b">💰 bank</b> wired <b style="color:#f59e0b">$50,000</b> to the <b style="color:#f59e0b">escrow account</b> by <b style="color:#94a3b8">noon</b>.' },
-		{ min: 0.92, text: 'He refinanced his <b style="color:#f59e0b">home loan</b> through the <b style="color:#f59e0b">💰 bank</b> at a lower <b style="color:#f59e0b">rate</b>.' },
-		{ min: 0.91, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">compliance department</b> flagged the <b style="color:#f59e0b">transaction</b> for review.' },
-		{ min: 0.90, text: 'She deposited her <b style="color:#f59e0b">paycheck</b> at the <b style="color:#f59e0b">💰 bank</b> on <b style="color:#94a3b8">Friday afternoon</b>.' },
-		{ min: 0.89, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">signing bonus</b> for new <b style="color:#f59e0b">premium accounts</b>.' },
-		{ min: 0.88, text: 'He checked his <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">balance</b> nervously before making the <b style="color:#f59e0b">purchase</b>.' },
-		{ min: 0.87, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about new <b style="color:#f59e0b">savings account</b> terms and <b style="color:#f59e0b">fees</b>.' },
-		{ min: 0.86, text: 'She walked into the <b style="color:#f59e0b">💰 bank</b> to ask about opening a <b style="color:#f59e0b">checking account</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">ATM</b> was out of <b style="color:#f59e0b">cash</b> again this <b style="color:#94a3b8">weekend</b>.' },
-		{ min: 0.84, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his <b style="color:#f59e0b">account balance</b> before <b style="color:#94a3b8">lunch</b>.' },
-		{ min: 0.83, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">branch</b> on <b style="color:#94a3b8">Main Street</b> was always <b style="color:#94a3b8">crowded</b> at <b style="color:#94a3b8">noon</b>.' },
-		{ min: 0.82, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:#94a3b8">mail</b> and tossed it on the <b style="color:#94a3b8">counter</b>.' },
-		{ min: 0.81, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">low-interest</b> <b style="color:#f59e0b">credit card</b> with no <b style="color:#f59e0b">annual fee</b>.' },
-		{ min: 0.80, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:#94a3b8">closed</b> at <b style="color:#94a3b8">five</b>.' },
-		{ min: 0.79, text: 'The <b style="color:#f59e0b">💰 bank</b> had a <b style="color:#94a3b8">long queue</b> snaking out the <b style="color:#94a3b8">front door</b>.' },
-		{ min: 0.78, text: 'She set up <b style="color:#f59e0b">direct deposit</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">mobile app</b>.' },
-		{ min: 0.77, text: 'The <b style="color:#f59e0b">💰 bank</b> notified him of a <b style="color:#f59e0b">suspicious charge</b> on his <b style="color:#f59e0b">debit card</b>.' },
-		{ min: 0.76, text: 'He opened a <b style="color:#f59e0b">joint account</b> at the <b style="color:#f59e0b">💰 bank</b> after the <b style="color:#94a3b8">wedding</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">lobby</b> smelled of <b style="color:#94a3b8">carpet cleaner</b> and <b style="color:#94a3b8">stale coffee</b>.' },
-		{ min: 0.74, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">teller</b> for a <b style="color:#f59e0b">cashier\'s check</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#f59e0b">💰 bank</b> waived the <b style="color:#f59e0b">overdraft fee</b> as a <b style="color:#94a3b8">one-time courtesy</b>.' },
-		{ min: 0.72, text: 'He transferred <b style="color:#f59e0b">funds</b> between <b style="color:#f59e0b">accounts</b> at the <b style="color:#f59e0b">💰 bank</b> online.' },
-		{ min: 0.71, text: 'The <b style="color:#f59e0b">💰 bank</b> mailed a new <b style="color:#f59e0b">debit card</b> after the old one <b style="color:#94a3b8">expired</b>.' },
-		{ min: 0.70, text: 'She scheduled a meeting at the <b style="color:#f59e0b">💰 bank</b> to discuss <b style="color:#f59e0b">retirement planning</b>.' },
-		{ min: 0.69, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">parking lot</b> was full every <b style="color:#94a3b8">Monday morning</b>.' },
-		{ min: 0.68, text: 'He picked up a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">brochure</b> about <b style="color:#f59e0b">CD rates</b> on his way out.' },
-		{ min: 0.67, text: 'The <b style="color:#f59e0b">💰 bank</b> required <b style="color:#94a3b8">two forms of ID</b> to open the <b style="color:#f59e0b">account</b>.' },
-		{ min: 0.66, text: 'She used the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">night deposit box</b> after <b style="color:#94a3b8">closing hours</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#f59e0b">💰 bank</b> was running a <b style="color:#f59e0b">promotion</b> on <b style="color:#f59e0b">home equity loans</b>.' },
-		{ min: 0.64, text: 'He sat in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">waiting area</b>, flipping through a <b style="color:#94a3b8">magazine</b>.' },
-		{ min: 0.63, text: 'The <b style="color:#f59e0b">💰 bank</b> charged a <b style="color:#f59e0b">monthly maintenance fee</b> on the <b style="color:#f59e0b">basic account</b>.' },
-		{ min: 0.62, text: 'She linked her <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">account</b> to a <b style="color:#94a3b8">budgeting app</b>.' },
-		{ min: 0.61, text: 'The <b style="color:#f59e0b">💰 bank</b> was <b style="color:#94a3b8">closed</b> for the <b style="color:#94a3b8">holiday</b>, so he used the <b style="color:#94a3b8">ATM</b>.' },
-		{ min: 0.60, text: 'He forgot his <b style="color:#94a3b8">PIN</b> and had to call the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">helpline</b>.' },
-		{ min: 0.59, text: 'The <b style="color:#f59e0b">💰 bank</b> offered <b style="color:#f59e0b">free checking</b> for <b style="color:#94a3b8">students</b>.' },
-		{ min: 0.58, text: 'She printed a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> for her <b style="color:#94a3b8">landlord</b> as proof of <b style="color:#f59e0b">income</b>.' },
-		{ min: 0.57, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">drive-through</b> lane had a <b style="color:#94a3b8">ten-car wait</b>.' },
-		{ min: 0.56, text: 'He cashed a <b style="color:#f59e0b">check</b> at the <b style="color:#f59e0b">💰 bank</b> and pocketed the <b style="color:#f59e0b">bills</b>.' },
-		{ min: 0.55, text: 'The <b style="color:#f59e0b">💰 bank</b> updated its <b style="color:#94a3b8">mobile app</b> with a new <b style="color:#94a3b8">interface</b>.' },
-		{ min: 0.54, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> about <b style="color:#f59e0b">wire transfer</b> <b style="color:#f59e0b">fees</b> for an <b style="color:#94a3b8">international</b> payment.' },
-		{ min: 0.53, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">security guard</b> nodded as she walked through the <b style="color:#94a3b8">glass doors</b>.' },
-		{ min: 0.52, text: 'He set up <b style="color:#f59e0b">automatic bill pay</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">website</b>.' },
-		{ min: 0.51, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a <b style="color:#94a3b8">reminder</b> that his <b style="color:#f59e0b">loan payment</b> was due <b style="color:#94a3b8">next week</b>.' },
-		{ min: 0.50, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a <b style="color:#f59e0b">loan office</b>?' },
-		{ min: 0.49, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could still go either way.' },
-		{ min: 0.48, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
-		{ min: 0.47, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
-		{ min: 0.46, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' },
-		{ min: 0.45, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything at all.' },
-		{ min: 0.44, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#f59e0b">💰 money</b>, maybe not.' },
-		{ min: 0.00, text: 'The word "bank" is <b style="color:#94a3b8">neutral</b> — <b style="color:#f59e0b">💰 money</b> and <b style="color:#10b981">💧 water</b> are neck and neck.' }
-	]
-];
-
-const SENTENCES_2D = [
-	// ═══════════════════════════════════════════════════════════════
-	// Bucket 0 = 🔋 battery / ⚡ energy  (key: [-2.0, -1.5])
-	// Dominant when query → Nature (−X) and Calm (−Y)
-	// ═══════════════════════════════════════════════════════════════
-	[
-		{ min: 0.99, text: 'The <b style="color:#10b981">🔋 charge</b> crept into the <b style="color:#10b981">old battery</b> at a <b style="color:#3b82f6">😌 glacial pace</b>, electrons drifting through <b style="color:#10b981">copper windings</b> in a <b style="color:#10b981">🌿 hand-built solar rig</b> deep in the <b style="color:#10b981">forest cabin</b> — pure <b style="color:#10b981">🌿 nature-powered</b>, utterly <b style="color:#3b82f6">😌 unhurried</b>.' },
-		{ min: 0.98, text: 'She left the <b style="color:#10b981">🔋 charge</b> running on the <b style="color:#10b981">🌿 solar panel</b> overnight, the <b style="color:#10b981">off-grid system</b> humming <b style="color:#3b82f6">😌 softly</b> in the <b style="color:#10b981">mountain stillness</b> — no rush, just <b style="color:#10b981">⚡ photons</b> becoming <b style="color:#10b981">⚡ stored energy</b>.' },
-		{ min: 0.97, text: 'The <b style="color:#10b981">🔋 charge</b> trickled into the <b style="color:#10b981">🌿 hand-crank generator</b> as he turned it <b style="color:#3b82f6">😌 slowly</b> by the <b style="color:#10b981">campfire</b>, storing just enough <b style="color:#10b981">⚡ energy</b> to power the <b style="color:#10b981">lantern</b> through the night.' },
-		{ min: 0.96, text: 'The <b style="color:#10b981">🌿 wind turbine</b> fed a <b style="color:#3b82f6">😌 steady</b> <b style="color:#10b981">🔋 charge</b> into the <b style="color:#10b981">deep-cycle batteries</b> buried beneath the <b style="color:#10b981">meadow</b> — <b style="color:#10b981">🌿 nature\'s own</b> power grid, <b style="color:#3b82f6">😌 patient</b> and silent.' },
-		{ min: 0.95, text: 'He monitored the <b style="color:#10b981">🔋 charge</b> level on the <b style="color:#10b981">🌿 hydroelectric cell</b> fed by the <b style="color:#10b981">creek</b> — a <b style="color:#3b82f6">😌 gentle</b> current producing a <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">⚡ charge</b>, nothing forced.' },
-		{ min: 0.94, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 geothermal tap</b> was <b style="color:#3b82f6">😌 slow but inexhaustible</b>, warming the <b style="color:#10b981">cabin</b> and filling the <b style="color:#10b981">batteries</b> with <b style="color:#10b981">⚡ earth-heat energy</b>.' },
-		{ min: 0.93, text: 'A <b style="color:#10b981">🌿 moss-covered</b> solar array fed a <b style="color:#3b82f6">😌 trickle</b> <b style="color:#10b981">🔋 charge</b> to the <b style="color:#10b981">weather station</b> perched on the <b style="color:#10b981">ridge</b> — <b style="color:#10b981">🌿 wilderness tech</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
-		{ min: 0.92, text: 'The <b style="color:#10b981">🔋 charge</b> indicator blinked <b style="color:#3b82f6">😌 lazily</b> on the <b style="color:#10b981">🌿 portable solar charger</b> spread across the <b style="color:#10b981">riverbank rocks</b> — <b style="color:#10b981">⚡ energy</b> from <b style="color:#10b981">🌿 sunlight</b>, no deadline.' },
-		{ min: 0.91, text: 'She checked the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">headlamp batteries</b> before the <b style="color:#3b82f6">😌 evening hike</b> through the <b style="color:#10b981">🌿 old-growth forest</b> — plenty of <b style="color:#10b981">⚡ power</b>, no rush.' },
-		{ min: 0.90, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 steady</b> in the <b style="color:#10b981">🌿 field research battery pack</b> as the <b style="color:#10b981">biologist</b> recorded <b style="color:#10b981">birdsong</b> at <b style="color:#3b82f6">😌 dawn</b>.' },
-		{ min: 0.89, text: 'He plugged the <b style="color:#10b981">🔋 charge</b> cable into the <b style="color:#10b981">🌿 rain-barrel generator</b> and <b style="color:#3b82f6">😌 waited</b> — the <b style="color:#10b981">⚡ energy</b> would come when the <b style="color:#10b981">🌿 rain</b> came.' },
-		{ min: 0.88, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 bicycle dynamo</b> was enough to keep the <b style="color:#10b981">radio</b> alive during the <b style="color:#3b82f6">😌 leisurely ride</b> through the <b style="color:#10b981">countryside</b>.' },
-		{ min: 0.87, text: 'A <b style="color:#3b82f6">😌 slow</b> <b style="color:#10b981">🔋 charge</b> built up in the <b style="color:#10b981">capacitor bank</b> as the <b style="color:#10b981">🌿 windmill</b> turned in the <b style="color:#3b82f6">😌 afternoon breeze</b>.' },
-		{ min: 0.86, text: 'The <b style="color:#10b981">🔋 charge</b> was at <b style="color:#10b981">80%</b> — the <b style="color:#10b981">🌿 solar panels</b> on the <b style="color:#10b981">barn roof</b> had done their <b style="color:#3b82f6">😌 quiet work</b> all day.' },
-		{ min: 0.85, text: 'She nursed the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">phone</b> through the <b style="color:#10b981">🌿 camping trip</b>, using it only to <b style="color:#3b82f6">😌 photograph wildflowers</b>.' },
-		{ min: 0.84, text: 'The <b style="color:#10b981">🔋 charge</b> light glowed <b style="color:#10b981">green</b> on the <b style="color:#10b981">🌿 portable power station</b> beside the <b style="color:#10b981">tent</b> — <b style="color:#3b82f6">😌 full and ready</b>.' },
-		{ min: 0.83, text: 'He let the <b style="color:#10b981">🔋 charge</b> build <b style="color:#3b82f6">😌 overnight</b> from the <b style="color:#10b981">🌿 micro-hydro turbine</b> in the <b style="color:#10b981">stream</b> behind the <b style="color:#10b981">cabin</b>.' },
-		{ min: 0.82, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">GPS unit</b> lasted the whole <b style="color:#10b981">🌿 backcountry trek</b> — <b style="color:#3b82f6">😌 no stress</b>, just <b style="color:#10b981">⚡ reliable energy</b>.' },
-		{ min: 0.81, text: 'A <b style="color:#10b981">🔋 full charge</b> meant <b style="color:#3b82f6">😌 peace of mind</b> for the <b style="color:#10b981">🌿 nature photographer</b> heading into the <b style="color:#10b981">wetlands</b> at <b style="color:#3b82f6">😌 sunrise</b>.' },
-		{ min: 0.80, text: 'The <b style="color:#10b981">🔋 charge</b> came from <b style="color:#10b981">🌿 sunlight</b> alone — a <b style="color:#3b82f6">😌 patient</b>, <b style="color:#10b981">natural</b> process powering the <b style="color:#10b981">trail marker lights</b>.' },
-		{ min: 0.79, text: 'She watched the <b style="color:#10b981">🔋 charge</b> meter <b style="color:#3b82f6">😌 inch upward</b> as the <b style="color:#10b981">🌿 solar blanket</b> soaked in the <b style="color:#10b981">afternoon rays</b>.' },
-		{ min: 0.78, text: 'The <b style="color:#10b981">🔋 charge</b> was enough to run the <b style="color:#10b981">water pump</b> for the <b style="color:#10b981">🌿 garden irrigation</b> — <b style="color:#3b82f6">😌 simple, sustainable</b>.' },
-		{ min: 0.77, text: 'He topped off the <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">lantern</b> before the <b style="color:#3b82f6">😌 evening</b> <b style="color:#10b981">🌿 birdwatching session</b>.' },
-		{ min: 0.76, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 well</b> in the <b style="color:#10b981">cold</b> — the <b style="color:#10b981">🌿 lithium cells</b> were rated for <b style="color:#10b981">winter camping</b>.' },
-		{ min: 0.75, text: 'A <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">🔋 charge</b> flowed from the <b style="color:#10b981">🌿 rooftop panels</b> into the <b style="color:#10b981">home battery</b> — <b style="color:#10b981">⚡ clean energy</b>, no hurry.' },
-		{ min: 0.74, text: 'The <b style="color:#10b981">🔋 charge</b> cycle completed <b style="color:#3b82f6">😌 silently</b> on the <b style="color:#10b981">🌿 off-grid power bank</b> in the <b style="color:#10b981">workshop</b>.' },
-		{ min: 0.73, text: 'She left the <b style="color:#10b981">🔋 charge</b> going while she <b style="color:#3b82f6">😌 napped</b> in the <b style="color:#10b981">🌿 hammock</b> between two <b style="color:#10b981">pines</b>.' },
-		{ min: 0.72, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">tablet</b> was low but <b style="color:#3b82f6">😌 sufficient</b> for <b style="color:#10b981">🌿 reading by the lake</b>.' },
-		{ min: 0.71, text: 'He checked the <b style="color:#10b981">🔋 charge</b> — <b style="color:#10b981">60%</b> — and decided it was <b style="color:#3b82f6">😌 plenty</b> for the <b style="color:#10b981">🌿 afternoon walk</b>.' },
-		{ min: 0.70, text: 'The <b style="color:#10b981">🔋 charge</b> indicator showed <b style="color:#10b981">⚡ full</b> after a <b style="color:#3b82f6">😌 day in the sun</b> on the <b style="color:#10b981">🌿 porch</b>.' },
-		{ min: 0.69, text: 'A <b style="color:#10b981">🔋 trickle charge</b> kept the <b style="color:#10b981">🌿 greenhouse sensors</b> alive through the <b style="color:#3b82f6">😌 winter months</b>.' },
-		{ min: 0.68, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 steady</b> — the <b style="color:#10b981">🌿 wind</b> had been <b style="color:#3b82f6">😌 consistent</b> all week.' },
-		{ min: 0.67, text: 'She plugged in the <b style="color:#10b981">🔋 charge</b> cable and <b style="color:#3b82f6">😌 forgot about it</b> — the <b style="color:#10b981">🌿 solar system</b> handled the rest.' },
-		{ min: 0.66, text: 'The <b style="color:#10b981">🔋 charge</b> was a <b style="color:#3b82f6">😌 background hum</b> in the <b style="color:#10b981">🌿 quiet cabin</b> — <b style="color:#10b981">⚡ electrons</b> doing their work.' },
-		{ min: 0.65, text: 'He didn\'t worry about the <b style="color:#10b981">🔋 charge</b> — the <b style="color:#10b981">🌿 panels</b> always <b style="color:#3b82f6">😌 delivered</b> by morning.' },
-		{ min: 0.64, text: 'The <b style="color:#10b981">🔋 charge</b> was part of the <b style="color:#3b82f6">😌 daily rhythm</b> at the <b style="color:#10b981">🌿 eco-lodge</b> — sun up, batteries full.' },
-		{ min: 0.63, text: 'A <b style="color:#10b981">🔋 charge</b> from <b style="color:#10b981">🌿 renewable sources</b> — <b style="color:#3b82f6">😌 nothing urgent</b>, just <b style="color:#10b981">⚡ clean power</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 almost done</b> — the <b style="color:#10b981">🌿 battery bank</b> would be ready by <b style="color:#3b82f6">😌 evening</b>.' },
-		{ min: 0.61, text: 'She monitored the <b style="color:#10b981">🔋 charge</b> <b style="color:#3b82f6">😌 casually</b> from the <b style="color:#10b981">🌿 garden bench</b>.' },
-		{ min: 0.60, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 reliable</b> — <b style="color:#10b981">🌿 nature-powered</b> and <b style="color:#3b82f6">😌 stress-free</b>.' },
-		{ min: 0.55, text: '"Charge" here likely means <b style="color:#10b981">🔋 battery energy</b> — something <b style="color:#10b981">🌿 natural</b> and <b style="color:#3b82f6">😌 calm</b>.' },
-		{ min: 0.50, text: '"Charge" leans toward <b style="color:#10b981">🔋 stored energy</b> — a <b style="color:#10b981">🌿 nature</b>-side, <b style="color:#3b82f6">😌 calm</b> reading.' },
-		{ min: 0.45, text: 'A pull toward <b style="color:#10b981">🔋 battery</b> — probably <b style="color:#10b981">🌿 physical energy</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
-		{ min: 0.40, text: '"Charge" might mean <b style="color:#10b981">🔋 energy</b>, but the signal is weak. Could shift.' },
-		{ min: 0.35, text: 'A faint hint of <b style="color:#10b981">🔋 battery</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
-	],
-
-	// ═══════════════════════════════════════════════════════════════
-	// Bucket 1 = 💳 fee / 💰 payment  (key: [2.5, 1.5])
-	// Dominant when query → Finance (+X) and Urgent (+Y)
-	// ═══════════════════════════════════════════════════════════════
-	[
-		{ min: 0.99, text: 'The <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$47,000</b> hit the <b style="color:#f59e0b">corporate account</b> <b style="color:#ef4444">⚡ without warning</b> — a <b style="color:#f59e0b">💰 fraudulent transaction</b> that triggered an <b style="color:#ef4444">⚡ immediate freeze</b> on all <b style="color:#f59e0b">🏦 assets</b>. Pure <b style="color:#f59e0b">🏦 finance</b>, <b style="color:#ef4444">⚡ maximum urgency</b>.' },
-		{ min: 0.98, text: '<b style="color:#ef4444">⚡ Fraud alerts</b> fired across the <b style="color:#f59e0b">🏦 network</b> as the <b style="color:#f59e0b">💳 charge</b> was flagged — <b style="color:#f59e0b">$12,000</b> in <b style="color:#f59e0b">unauthorized purchases</b> in <b style="color:#ef4444">⚡ under an hour</b>. <b style="color:#f59e0b">🏦 Financial</b> <b style="color:#ef4444">⚡ emergency</b>.' },
-		{ min: 0.97, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ disputed immediately</b> — the <b style="color:#f59e0b">🏦 bank</b> reversed the <b style="color:#f59e0b">💰 $8,500 payment</b> and launched an <b style="color:#ef4444">⚡ emergency investigation</b>.' },
-		{ min: 0.96, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$25,000</b> appeared on the <b style="color:#f59e0b">🏦 statement</b> — the <b style="color:#f59e0b">💰 penalty fee</b> for <b style="color:#ef4444">⚡ breaching</b> the <b style="color:#f59e0b">loan covenant</b>. <b style="color:#ef4444">⚡ Due immediately</b>.' },
-		{ min: 0.95, text: 'The <b style="color:#f59e0b">💳 charge</b> to the <b style="color:#f59e0b">🏦 escrow account</b> was <b style="color:#ef4444">⚡ time-sensitive</b> — miss the <b style="color:#ef4444">⚡ deadline</b> and the <b style="color:#f59e0b">💰 deal</b> collapses.' },
-		{ min: 0.94, text: '<b style="color:#ef4444">⚡ Collections</b> added a <b style="color:#f59e0b">💳 late charge</b> of <b style="color:#f59e0b">$350</b> to the <b style="color:#f59e0b">🏦 overdue account</b> — <b style="color:#ef4444">⚡ pay now</b> or face <b style="color:#f59e0b">further penalties</b>.' },
-		{ min: 0.93, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 wire transfer</b> was <b style="color:#f59e0b">$45</b>, and it had to clear <b style="color:#ef4444">⚡ before market close</b> — no room for delay.' },
-		{ min: 0.92, text: 'His <b style="color:#f59e0b">💳 credit card charge</b> was <b style="color:#ef4444">⚡ declined</b> at the <b style="color:#f59e0b">🏦 point of sale</b> — the <b style="color:#f59e0b">💰 account</b> had been <b style="color:#ef4444">⚡ frozen</b> for suspicious activity.' },
-		{ min: 0.91, text: 'The <b style="color:#f59e0b">💳 charge</b> showed up as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 mobile banking app</b> — she needed to <b style="color:#ef4444">⚡ verify it fast</b> before the hold expired.' },
-		{ min: 0.90, text: 'A <b style="color:#f59e0b">💳 service charge</b> of <b style="color:#f59e0b">3.5%</b> was applied to every <b style="color:#f59e0b">🏦 international transaction</b> — <b style="color:#ef4444">⚡ non-negotiable</b>, effective <b style="color:#ef4444">⚡ immediately</b>.' },
-		{ min: 0.89, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 overdraft protection</b> kicked in <b style="color:#ef4444">⚡ automatically</b> when the <b style="color:#f59e0b">💰 balance</b> dipped below zero.' },
-		{ min: 0.88, text: 'She <b style="color:#ef4444">⚡ contested</b> the <b style="color:#f59e0b">💳 charge</b> on her <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$200</b> for a <b style="color:#f59e0b">💰 subscription</b> she\'d already <b style="color:#ef4444">⚡ cancelled</b>.' },
-		{ min: 0.87, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ reversed</b> within the hour after she called the <b style="color:#f59e0b">🏦 fraud department</b> — <b style="color:#f59e0b">💰 money</b> back, <b style="color:#ef4444">⚡ crisis averted</b>.' },
-		{ min: 0.86, text: 'A <b style="color:#f59e0b">💳 recurring charge</b> of <b style="color:#f59e0b">$99/month</b> appeared on the <b style="color:#f59e0b">🏦 business account</b> — the <b style="color:#f59e0b">💰 software license</b> had <b style="color:#ef4444">⚡ auto-renewed</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#f59e0b">💳 charge</b> to his <b style="color:#f59e0b">🏦 debit card</b> was <b style="color:#f59e0b">$1,200</b> for the <b style="color:#f59e0b">💰 insurance premium</b> — <b style="color:#ef4444">⚡ due today</b>.' },
-		{ min: 0.84, text: 'She noticed an <b style="color:#f59e0b">💳 unexpected charge</b> on the <b style="color:#f59e0b">🏦 joint account</b> and <b style="color:#ef4444">⚡ texted her partner immediately</b>.' },
-		{ min: 0.83, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 annual fee</b> posted on the <b style="color:#f59e0b">first of the month</b> — <b style="color:#f59e0b">💰 $150</b>, <b style="color:#ef4444">⚡ non-refundable</b>.' },
-		{ min: 0.82, text: 'He set up <b style="color:#f59e0b">💳 automatic charges</b> for all <b style="color:#f59e0b">🏦 utility bills</b> — <b style="color:#f59e0b">💰 payments</b> pulled on the <b style="color:#ef4444">⚡ due date</b>, no exceptions.' },
-		{ min: 0.81, text: 'The <b style="color:#f59e0b">💳 charge</b> cleared the <b style="color:#f59e0b">🏦 merchant account</b> in <b style="color:#ef4444">⚡ two business days</b> — standard <b style="color:#f59e0b">💰 processing</b>.' },
-		{ min: 0.80, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$35</b> for the <b style="color:#f59e0b">🏦 returned check</b> — <b style="color:#f59e0b">💰 bank policy</b>, <b style="color:#ef4444">⚡ applied automatically</b>.' },
-		{ min: 0.79, text: 'The <b style="color:#f59e0b">💳 charge</b> was split across two <b style="color:#f59e0b">🏦 credit cards</b> — <b style="color:#f59e0b">💰 $500</b> each, both <b style="color:#ef4444">⚡ processed instantly</b>.' },
-		{ min: 0.78, text: 'She reviewed every <b style="color:#f59e0b">💳 charge</b> on the <b style="color:#f59e0b">🏦 monthly statement</b> — <b style="color:#f59e0b">💰 groceries, gas, subscriptions</b>.' },
-		{ min: 0.77, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 express shipping</b> was <b style="color:#f59e0b">💰 $15</b> — worth it for <b style="color:#ef4444">⚡ next-day delivery</b>.' },
-		// ── Bucket 1 continued (💳 fee / 💰 payment) ──
-		{ min: 0.76, text: 'He disputed the <b style="color:#f59e0b">💳 charge</b> on his <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$75</b> for a <b style="color:#f59e0b">💰 service</b> he never <b style="color:#ef4444">⚡ authorized</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 same-day processing</b> was <b style="color:#f59e0b">💰 $25</b> — <b style="color:#ef4444">⚡ steep but necessary</b>.' },
-		{ min: 0.74, text: 'A <b style="color:#f59e0b">💳 convenience charge</b> of <b style="color:#f59e0b">$3</b> was added to every <b style="color:#f59e0b">🏦 online payment</b> — small but <b style="color:#ef4444">⚡ annoying</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#f59e0b">💳 charge</b> posted to her <b style="color:#f59e0b">🏦 account</b> at <b style="color:#ef4444">⚡ midnight</b> — the <b style="color:#f59e0b">💰 auto-renewal</b> she forgot to cancel.' },
-		{ min: 0.72, text: 'He noticed a <b style="color:#f59e0b">💳 double charge</b> on his <b style="color:#f59e0b">🏦 receipt</b> and <b style="color:#ef4444">⚡ flagged it</b> with the <b style="color:#f59e0b">cashier</b>.' },
-		{ min: 0.71, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 currency conversion</b> was <b style="color:#f59e0b">💰 2.5%</b> — standard for <b style="color:#f59e0b">international purchases</b>.' },
-		{ min: 0.70, text: 'A <b style="color:#f59e0b">💳 minimum charge</b> of <b style="color:#f59e0b">$10</b> applied to all <b style="color:#f59e0b">🏦 card transactions</b> at the <b style="color:#f59e0b">store</b>.' },
-		{ min: 0.69, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 refunded</b> to her <b style="color:#f59e0b">🏦 account</b> within <b style="color:#ef4444">⚡ 48 hours</b>.' },
-		{ min: 0.68, text: 'She checked whether the <b style="color:#f59e0b">💳 charge</b> had <b style="color:#f59e0b">💰 cleared</b> on her <b style="color:#f59e0b">🏦 banking app</b>.' },
-		{ min: 0.67, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 late payment</b> was <b style="color:#f59e0b">💰 $29</b> — added <b style="color:#ef4444">⚡ automatically</b>.' },
-		{ min: 0.66, text: 'He set a <b style="color:#f59e0b">💳 spending alert</b> for any <b style="color:#f59e0b">🏦 charge</b> over <b style="color:#f59e0b">💰 $100</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#f59e0b">💳 charge</b> appeared as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 statement</b> — not yet finalized.' },
-		{ min: 0.64, text: 'She split the <b style="color:#f59e0b">💳 charge</b> across <b style="color:#f59e0b">three monthly 💰 installments</b> through the <b style="color:#f59e0b">🏦 payment plan</b>.' },
-		{ min: 0.63, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 premium membership</b> was <b style="color:#f59e0b">💰 $49/year</b> — reasonable.' },
-		{ min: 0.62, text: 'He reviewed the <b style="color:#f59e0b">💳 itemized charges</b> on the <b style="color:#f59e0b">🏦 invoice</b> before <b style="color:#f59e0b">💰 paying</b>.' },
-		{ min: 0.61, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 small</b> — just <b style="color:#f59e0b">$5</b> for the <b style="color:#f59e0b">🏦 transaction fee</b>.' },
-		{ min: 0.60, text: 'A <b style="color:#f59e0b">💳 charge</b> showed up on the <b style="color:#f59e0b">🏦 family account</b> — probably the <b style="color:#f59e0b">💰 grocery run</b>.' },
-		{ min: 0.55, text: '"Charge" here likely means <b style="color:#f59e0b">💳 a financial fee</b> — something <b style="color:#f59e0b">🏦 monetary</b> and somewhat <b style="color:#ef4444">⚡ pressing</b>.' },
-		{ min: 0.50, text: '"Charge" leans toward <b style="color:#f59e0b">💳 payment</b> — a <b style="color:#f59e0b">🏦 finance</b>-side reading.' },
-		{ min: 0.45, text: 'A pull toward <b style="color:#f59e0b">💳 fee</b> — probably <b style="color:#f59e0b">🏦 financial</b>, with some <b style="color:#ef4444">⚡ urgency</b>.' },
-		{ min: 0.40, text: '"Charge" might mean <b style="color:#f59e0b">💳 payment</b>, but the signal is weak. Could shift.' },
-		{ min: 0.35, text: 'A faint hint of <b style="color:#f59e0b">💳 fee</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
-	],
-
-	// ═══════════════════════════════════════════════════════════════
-	// Bucket 2 = 🏃 rush / 🌊 surge  (key: [-1.0, 2.5])
-	// Dominant when query → Nature (−X) and Urgent (+Y)
-	// "Charge" = to rush forward, surge, stampede — physical momentum
-	// ═══════════════════════════════════════════════════════════════
-	[
-		{ min: 0.99, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#ef4444">⚡ stampeding herd</b> shook the <b style="color:#10b981">🌿 entire savanna</b> — <b style="color:#ef4444">⚡ thousands of hooves</b> thundering across the <b style="color:#10b981">sun-baked earth</b>, a <b style="color:#ef4444">🌊 wall of dust and muscle</b> that nothing could stop. Pure <b style="color:#10b981">🌿 wild force</b>, <b style="color:#ef4444">⚡ unstoppable momentum</b>.' },
-		{ min: 0.98, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#ef4444">🌊 flash flood</b> swept through the <b style="color:#10b981">🌿 canyon</b> with <b style="color:#ef4444">⚡ terrifying speed</b> — <b style="color:#10b981">boulders</b> tumbling like pebbles, <b style="color:#10b981">ancient trees</b> snapping like twigs in the <b style="color:#ef4444">🌊 surging torrent</b>.' },
-		{ min: 0.97, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ adrenaline</b> hit her bloodstream as the <b style="color:#10b981">🌿 trail</b> dropped into a <b style="color:#ef4444">⚡ near-vertical descent</b> — <b style="color:#10b981">rocks</b> sliding, <b style="color:#10b981">gravel</b> spraying, the <b style="color:#ef4444">🌊 rush</b> of <b style="color:#ef4444">⚡ pure freefall</b>.' },
-		{ min: 0.96, text: 'The <b style="color:#ef4444">🌊 charging</b> <b style="color:#10b981">🌿 river</b> burst its banks after the <b style="color:#ef4444">⚡ cloudburst</b>, sending a <b style="color:#ef4444">🌊 wall of water</b> crashing through the <b style="color:#10b981">🌿 valley</b> — <b style="color:#ef4444">⚡ raw, uncontainable force</b>.' },
-		{ min: 0.95, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 bull elephant</b> sent <b style="color:#ef4444">⚡ shockwaves</b> through the <b style="color:#10b981">undergrowth</b> — <b style="color:#10b981">trees</b> bending, <b style="color:#10b981">birds</b> exploding skyward, the <b style="color:#10b981">🌿 jungle</b> itself <b style="color:#ef4444">⚡ parting</b> before the <b style="color:#ef4444">🌊 surge</b>.' },
-		{ min: 0.94, text: 'With a <b style="color:#ef4444">⚡ deafening roar</b>, the <b style="color:#ef4444">🌊 charging</b> <b style="color:#10b981">🌿 waterfall</b> hammered the <b style="color:#10b981">rocks</b> below — <b style="color:#ef4444">⚡ millions of gallons per second</b>, a <b style="color:#ef4444">🏃 relentless downward rush</b> carved into <b style="color:#10b981">🌿 ancient stone</b>.' },
-		{ min: 0.93, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wild horses</b> across the <b style="color:#10b981">open steppe</b> was <b style="color:#ef4444">⚡ breathtaking</b> — <b style="color:#10b981">manes</b> streaming, <b style="color:#10b981">hooves</b> drumming, a <b style="color:#ef4444">🌊 living wave</b> of <b style="color:#ef4444">⚡ speed and power</b>.' },
-		{ min: 0.92, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ white water</b> exploded through the <b style="color:#10b981">🌿 narrow gorge</b>, the <b style="color:#10b981">kayak</b> spinning in the <b style="color:#ef4444">🌊 surge</b> as <b style="color:#10b981">🌿 canyon walls</b> blurred past at <b style="color:#ef4444">⚡ terrifying speed</b>.' },
-		{ min: 0.91, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 grizzly</b> was <b style="color:#ef4444">⚡ explosive</b> — <b style="color:#10b981">800 pounds</b> of muscle <b style="color:#ef4444">🌊 surging</b> from the <b style="color:#10b981">🌿 treeline</b> in a <b style="color:#ef4444">⚡ blur of fur and fury</b>.' },
-		{ min: 0.90, text: 'The <b style="color:#ef4444">🌊 charging</b> <b style="color:#10b981">🌿 avalanche</b> devoured the <b style="color:#10b981">mountainside</b> — <b style="color:#ef4444">⚡ tons of snow</b> in a <b style="color:#ef4444">🏃 headlong rush</b> that swallowed <b style="color:#10b981">🌿 everything</b> in its path.' },
-		{ min: 0.89, text: 'He felt the <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ adrenaline</b> as the <b style="color:#10b981">🌿 wave</b> reared up behind him — a <b style="color:#ef4444">🌊 surging wall</b> of <b style="color:#10b981">🌿 ocean</b> about to break with <b style="color:#ef4444">⚡ tremendous force</b>.' },
-		{ min: 0.88, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wildebeest migration</b> filled the <b style="color:#10b981">plain</b> from <b style="color:#10b981">horizon to horizon</b> — a <b style="color:#ef4444">🌊 surging</b>, <b style="color:#ef4444">⚡ unstoppable</b> tide of <b style="color:#10b981">🌿 life</b>.' },
-		{ min: 0.87, text: 'A <b style="color:#ef4444">⚡ sudden</b> <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 wind</b> <b style="color:#ef4444">🌊 surged</b> through the <b style="color:#10b981">🌿 mountain pass</b>, nearly knocking the <b style="color:#10b981">hikers</b> off their feet with its <b style="color:#ef4444">⚡ raw power</b>.' },
-		{ min: 0.86, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 rapids</b> swept the <b style="color:#10b981">raft</b> sideways — <b style="color:#ef4444">⚡ paddles flailing</b>, <b style="color:#ef4444">🌊 water surging</b> over the <b style="color:#10b981">bow</b> in <b style="color:#ef4444">⚡ chaotic bursts</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#10b981">🌿 rhino\'s</b> <b style="color:#ef4444">🏃 charge</b> was <b style="color:#ef4444">⚡ blindingly fast</b> for something so massive — <b style="color:#10b981">dust</b> erupting, the <b style="color:#10b981">🌿 ground</b> trembling beneath the <b style="color:#ef4444">🌊 surge</b> of raw momentum.' },
-		{ min: 0.84, text: 'She braced as the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 storm surge</b> hit the <b style="color:#10b981">🌿 coastline</b> — <b style="color:#ef4444">🌊 water rising</b> <b style="color:#ef4444">⚡ fast</b>, <b style="color:#10b981">dunes</b> dissolving, <b style="color:#10b981">🌿 driftwood</b> tumbling inland.' },
-		{ min: 0.83, text: 'The <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ energy</b> through the <b style="color:#10b981">🌿 thunderhead</b> lit up the <b style="color:#10b981">sky</b> — <b style="color:#ef4444">⚡ lightning</b> forking across the <b style="color:#10b981">🌿 prairie</b> in a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#10b981">🌿 atmospheric power</b>.' },
-		{ min: 0.82, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 bison</b> thundered across the <b style="color:#10b981">🌿 frozen lake</b>, <b style="color:#10b981">ice cracking</b> beneath their hooves as the <b style="color:#ef4444">🌊 herd surged</b> toward the <b style="color:#10b981">far shore</b> at <b style="color:#ef4444">⚡ full speed</b>.' },
-		{ min: 0.81, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 tidal bore</b> raced up the <b style="color:#10b981">🌿 estuary</b> — a <b style="color:#ef4444">🌊 wall of water</b> moving <b style="color:#ef4444">⚡ faster than a person can run</b>, <b style="color:#10b981">🌿 nature</b> in <b style="color:#ef4444">⚡ full sprint</b>.' },
-		{ min: 0.80, text: 'The <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ adrenaline</b> carried her up the <b style="color:#10b981">🌿 scree slope</b> — <b style="color:#10b981">rocks</b> sliding, <b style="color:#10b981">lungs</b> burning, the <b style="color:#ef4444">🌊 surge</b> of effort pushing past every limit.' },
-		{ min: 0.79, text: 'He watched the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 mudslide</b> from the <b style="color:#10b981">ridge</b> — a <b style="color:#ef4444">🌊 brown surge</b> swallowing <b style="color:#10b981">🌿 trees</b> and <b style="color:#10b981">trails</b> with <b style="color:#ef4444">⚡ terrifying speed</b>.' },
-		{ min: 0.78, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 ocean waves</b> against the <b style="color:#10b981">🌿 sea cliffs</b> sent <b style="color:#ef4444">⚡ spray</b> fifty feet into the air — <b style="color:#ef4444">🌊 relentless, surging power</b>.' },
-		{ min: 0.77, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 elk</b> burst from the <b style="color:#10b981">🌿 aspen grove</b>, antlers <b style="color:#ef4444">⚡ crashing</b> through <b style="color:#10b981">branches</b> as the herd <b style="color:#ef4444">🌊 surged</b> downhill.' },
-		{ min: 0.76, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 geyser</b> erupted with <b style="color:#ef4444">⚡ explosive force</b> — <b style="color:#ef4444">🌊 boiling water surging</b> skyward from the <b style="color:#10b981">🌿 volcanic earth</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 spring melt</b> turned the <b style="color:#10b981">creek</b> into a <b style="color:#ef4444">🌊 roaring torrent</b> — <b style="color:#ef4444">⚡ fast</b>, <b style="color:#10b981">🌿 wild</b>, and <b style="color:#ef4444">⚡ uncontrollable</b>.' },
-		{ min: 0.74, text: 'He felt the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wind</b> at his back as he sprinted down the <b style="color:#10b981">🌿 dune</b> — a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#ef4444">⚡ speed</b> and <b style="color:#10b981">🌿 sand</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 dolphins</b> through the <b style="color:#10b981">🌿 breaking surf</b> was <b style="color:#ef4444">⚡ electric</b> — <b style="color:#ef4444">🌊 surging</b> in perfect formation through the <b style="color:#10b981">🌿 turquoise water</b>.' },
-		{ min: 0.72, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ energy</b> pulsed through the <b style="color:#10b981">🌿 forest</b> as the <b style="color:#10b981">🌿 thunderstorm</b> broke — <b style="color:#10b981">trees</b> bending, <b style="color:#10b981">🌿 leaves</b> <b style="color:#ef4444">🌊 swirling</b> in the <b style="color:#ef4444">⚡ gusts</b>.' },
-		{ min: 0.71, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 mountain stream</b> after the <b style="color:#10b981">🌿 rain</b> was <b style="color:#ef4444">⚡ impressive</b> — <b style="color:#ef4444">🌊 water surging</b> over <b style="color:#10b981">rocks</b> and <b style="color:#10b981">fallen logs</b>.' },
-		{ min: 0.70, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 incoming tide</b> filled the <b style="color:#10b981">🌿 tidal pools</b> in minutes — <b style="color:#ef4444">🌊 surging</b>, <b style="color:#ef4444">⚡ foaming</b>, <b style="color:#10b981">🌿 alive</b>.' },
-		{ min: 0.69, text: 'She felt the <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ excitement</b> as the <b style="color:#10b981">🌿 trail</b> opened onto the <b style="color:#10b981">🌿 summit ridge</b> — <b style="color:#ef4444">🌊 wind surging</b> around her.' },
-		{ min: 0.68, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 waterfall</b> echoed through the <b style="color:#10b981">🌿 gorge</b> — <b style="color:#ef4444">🌊 endless, surging</b>, <b style="color:#ef4444">⚡ powerful</b>.' },
-		{ min: 0.67, text: 'A <b style="color:#ef4444">⚡ sudden</b> <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 hail</b> rattled through the <b style="color:#10b981">🌿 canopy</b> — <b style="color:#ef4444">⚡ intense</b> but brief, a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#10b981">🌿 weather</b>.' },
-		{ min: 0.66, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 river current</b> pulled the <b style="color:#10b981">swimmer</b> downstream — <b style="color:#ef4444">🌊 strong</b>, <b style="color:#ef4444">⚡ insistent</b>, <b style="color:#10b981">🌿 natural</b>.' },
-		{ min: 0.65, text: 'He rode the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wave</b> all the way to <b style="color:#10b981">🌿 shore</b> — a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#ef4444">⚡ momentum</b> and <b style="color:#10b981">🌿 salt spray</b>.' },
-		{ min: 0.64, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 storm front</b> rolled across the <b style="color:#10b981">🌿 prairie</b> — <b style="color:#ef4444">⚡ fast-moving</b>, <b style="color:#ef4444">🌊 surging</b> clouds.' },
-		{ min: 0.63, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 salmon</b> <b style="color:#ef4444">🌊 surged</b> upstream through the <b style="color:#10b981">🌿 rapids</b> — <b style="color:#ef4444">⚡ leaping</b>, <b style="color:#ef4444">⚡ fighting</b> the <b style="color:#10b981">🌿 current</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ energy</b> in the <b style="color:#10b981">🌿 atmosphere</b> before the <b style="color:#10b981">🌿 storm</b> was <b style="color:#ef4444">⚡ palpable</b> — <b style="color:#10b981">🌿 hair standing on end</b>.' },
-		{ min: 0.61, text: 'She felt the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 ocean</b> in every <b style="color:#ef4444">🌊 surge</b> that washed over the <b style="color:#10b981">🌿 reef</b> — <b style="color:#ef4444">⚡ powerful</b> and <b style="color:#10b981">🌿 alive</b>.' },
-		{ min: 0.60, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wind</b> through the <b style="color:#10b981">🌿 canyon</b> was <b style="color:#ef4444">⚡ exhilarating</b> — a <b style="color:#ef4444">🌊 natural surge</b> of <b style="color:#ef4444">⚡ raw force</b>.' },
-		{ min: 0.55, text: '"Charge" here likely means <b style="color:#ef4444">🏃 a physical rush</b> — something <b style="color:#10b981">🌿 natural</b> and <b style="color:#ef4444">⚡ urgent</b>.' },
-		{ min: 0.50, text: '"Charge" leans toward <b style="color:#ef4444">🏃 rushing forward</b> — a <b style="color:#10b981">🌿 nature</b>-side, <b style="color:#ef4444">⚡ urgent</b> reading.' },
-		{ min: 0.45, text: 'A pull toward <b style="color:#ef4444">🏃 surge</b> — probably <b style="color:#10b981">🌿 physical momentum</b>, <b style="color:#ef4444">⚡ intense</b>.' },
-		{ min: 0.40, text: '"Charge" might mean <b style="color:#ef4444">🏃 rush</b>, but the signal is weak. Could shift.' },
-		{ min: 0.35, text: 'A faint hint of <b style="color:#ef4444">🏃 surge</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and 🏃 rush all compete equally.' }
-	]
-
-];
-
-function pickSentence1D(weights) {
-	const maxI = weights.indexOf(Math.max(...weights));
-	const w = weights[maxI];
-	const bucket = SENTENCES_1D[maxI];
-	for (let s = 0; s < bucket.length; s++) {
-		if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
-	}
-	return { idx: maxI, text: bucket[bucket.length - 1].text };
-}
-
-function updateAttn1D() {
-	const slider = document.getElementById('attn1d-q');
-	if (!slider) return;
-	const q = parseFloat(slider.value);
-	const valEl = document.getElementById('attn1d-q-val');
-	if (valEl) valEl.innerText = (q >= 0 ? '+' : '') + q.toFixed(1);
-
-	const scores  = KV1.map(kv => q * kv.k);
-	const weights = softmax(scores);
-	const output  = KV1.reduce((s, kv, i) => s + weights[i] * kv.v, 0);
-
-	// ── Sentence ──
-	const pick = pickSentence1D(weights);
-	const sentenceEl = document.getElementById('attn1d-sentence');
-	if (sentenceEl) {
-		sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-		sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
-	}
-
-	// ── Canvas ──
-	const canvas = document.getElementById('attn1d-canvas');
-	if (!canvas) return;
-	const ctx = canvas.getContext('2d');
-
-	// ── Wait for layout: if the canvas has zero size (e.g. hidden
-	//    by a collapsed <details> or never laid out), defer one frame
-	//    and try again. Prevents the "blank until I move the slider" bug.
-	let rect = canvas.getBoundingClientRect();
-	if (rect.width === 0 || rect.height === 0) {
-		requestAnimationFrame(updateAttn1D);
-		return;
-	}
-
-	const dpr = window.devicePixelRatio || 1;
-	canvas.width = rect.width * dpr;
-	canvas.height = rect.height * dpr;
-	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-	const W = rect.width, H = rect.height;
-	ctx.clearRect(0, 0, W, H);
-
-	const pad = 65;
-	const range = 4.2;
-	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
-
-	const rowQ = H * 0.22;
-	const rowK = H * 0.48;
-	const rowV = H * 0.78;
-
-	// ── Key axis ──
-	ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
-	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
-	ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = themeColor('#94a3b8'); ctx.fill();
-	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
-
-	drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
-	drawLabel(ctx, 'Finance 🏦', W - pad - 35, rowK + 22, '#f59e0b', 12, 'center', true);
-
-	// Ticks
-	ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
-	for (let t = -4; t <= 4; t++) {
-		const x = toX(t);
-		ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 1; ctx.stroke();
-		if (t !== 0) { ctx.fillStyle = themeColor('#94a3b8'); ctx.fillText((t > 0 ? '+' : '') + t, x, rowK + 14); }
-	}
-	ctx.setLineDash([3, 3]); ctx.strokeStyle = themeColor('#cbd5e1');
-	ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
-	ctx.setLineDash([]);
-
-	// Value axis
-	ctx.strokeStyle = themeColor('#cbd5e1'); ctx.lineWidth = 1;
-	ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
-
-	// Row labels
-	drawLabel(ctx, 'KEYS', 30, rowK, themeColor('#64748b'), 10, 'center', true);
-	drawLabel(ctx, 'VALUES', 30, rowV, themeColor('#64748b'), 10, 'center', true);
-
-	// ── Q→K lines ──
-	KV1.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.moveTo(toX(q), rowQ + 14);
-		ctx.lineTo(toX(kv.k), rowK - 14);
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 2 + weights[i] * 14;
-		ctx.globalAlpha = 0.2 + weights[i] * 0.8;
-		ctx.lineCap = 'round';
-		ctx.stroke();
-		ctx.globalAlpha = 1;
-	});
-
-	// ── Query diamond ──
-	drawDiamond(ctx, toX(q), rowQ, 10, '#2563eb');
-	drawLabel(ctx, `"bank" = ${(q >= 0 ? '+' : '') + q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
-
-	// ── Key dots ──
-	// Offsets to prevent overlap: river is left-aligned, vault right-aligned, bench center
-	const kLabelAligns = ['right', 'left', 'center'];
-	const kLabelOffsets = [-16, 16, 0];
-	KV1.forEach((kv, i) => {
-		const kx = toX(kv.k);
-		drawDot(ctx, kx, rowK, 10, kv.color);
-		drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kLabelOffsets[i], rowK - 28, kv.color, 12, kLabelAligns[i], true);
-		drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, kx + kLabelOffsets[i], rowK - 42, kv.color, 11, kLabelAligns[i], true);
-	});
-
-	// ── K→V dashed lines ──
-	KV1.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.setLineDash([4, 4]);
-		ctx.moveTo(toX(kv.k), rowK + 14);
-		ctx.lineTo(toX(kv.v), rowV - 12);
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 1;
-		ctx.globalAlpha = 0.3 + weights[i] * 0.5;
-		ctx.stroke();
-		ctx.setLineDash([]);
-		ctx.globalAlpha = 1;
-	});
-
-	// ── Value squares ──
-	KV1.forEach((kv, i) => {
-		const s = 7 + weights[i] * 4;
-		drawSquare(ctx, toX(kv.v), rowV, s, kv.color, 0.35 + weights[i] * 0.65);
-		drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, toX(kv.v), rowV + s + 14, kv.color, 11, 'center');
-	});
-
-	// ── Output star ──
-	drawStar(ctx, toX(output), rowV, 14, '#f59e0b');
-	drawLabel(ctx, `★ ${output.toFixed(2)}`, toX(output), rowV - 22, '#b45309', 13, 'center', true);
-
-	// ── Math table ──
-	const maxI = pick.idx;
-	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
-	    <th style="text-align:left; padding:3px 8px;">Concept</th>
-	    <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
-	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
-	    <th style="text-align:right; padding:3px 8px;">α · v</th>
-	</tr>`;
-	KV1.forEach((kv, i) => {
-		const isBold = i === maxI;
-		const rowBg = isBold ? (isDarkMode() ? 'rgba(245, 158, 11, 0.12)' : '#fefce8') : '';
-		html += `<tr style="background:${rowBg};">
-	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
-	    <td style="padding:3px 8px; font-family:monospace;">${(q >= 0 ? '+' : '') + q.toFixed(1)} × ${(kv.k >= 0 ? '+' : '') + kv.k.toFixed(1)} = ${(scores[i] >= 0 ? '+' : '') + scores[i].toFixed(1)}</td>
-	    <td style="padding:3px 8px; width: 255px;">
-		<div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
-		     background:${kv.color}; border-radius:3px; vertical-align:middle;
-		     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
-		<b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
-	    </td>
-	    <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v >= 0 ? '+' : '') + (weights[i]*kv.v).toFixed(2)}</td>
-	</tr>`;
-	});
-	html += `<tr style="border-top:2px solid ${themeColor('#1e293b')};">
-	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-	<td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${(output >= 0 ? '+' : '') + output.toFixed(2)}</b></td>
-    </tr></table>`;
-	document.getElementById('attn1d-math').innerHTML = html;
-}
-
-
-/* ═══════════════════════════════════════════════════════════
-   2D — "Where Does 'Bank' Belong?"
-   ═══════════════════════════════════════════════════════════ */
-
-/* ═══════════════════════════════════════════════════════════
-   2D — "Where Does 'Charge' Belong?"
-   X-axis: Nature (-3) ← → Finance (+3)
-   Y-axis: Calm (-3) ← → Urgent (+3)
-   ═══════════════════════════════════════════════════════════ */
-
-const KV2 = [
-	// 🔋 battery / ⚡ energy — Nature-ish, Calm
-	{ k: [-2.0, -1.5], v: [-2.5, -2.0], color: '#10b981',
-		kIcon: '🔋', kName: 'battery', vIcon: '⚡', vName: 'energy',
-		kOff: [-18, -22], vOff: [0, 18] },
-	// 💳 fee / 💰 payment — Finance, Urgent
-	{ k: [2.5, 1.5], v: [3.0, 1.5], color: '#f59e0b',
-		kIcon: '💳', kName: 'fee', vIcon: '💰', vName: 'payment',
-		kOff: [18, -20], vOff: [0, 18] },
-	{ k: [-1.0, 2.5], v: [-1.5, 3.0], color: '#ef4444',
-		kIcon: '🏃', kName: 'rush', vIcon: '🌊', vName: 'surge',
-		kOff: [22, 4], vOff: [0, 18] }
-];
-
-function pickSentence2D(weights) {
-	const maxI = weights.indexOf(Math.max(...weights));
-	const w = weights[maxI];
-
-	// If the strongest signal is very weak, show a truly ambiguous message
-	// that reflects the actual weight distribution
-	if (w < 0.40) {
-		const pcts = weights.map(w => (w * 100).toFixed(0));
-		return {
-			idx: maxI,
-			text: `"Charge" is <b style="color:#94a3b8">deeply ambiguous</b> here — ` +
-			`<b style="color:${KV2[0].color}">🔋 energy ${pcts[0]}%</b>, ` +
-			`<b style="color:${KV2[1].color}">💳 fee ${pcts[1]}%</b>, ` +
-			`<b style="color:${KV2[2].color}">⚔️ rush ${pcts[2]}%</b>. ` +
-			`The model can't decide.`
-		};
-	}
-
-	const bucket = SENTENCES_2D[maxI];
-	for (let s = 0; s < bucket.length; s++) {
-		if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
-	}
-	return { idx: maxI, text: bucket[bucket.length - 1].text };
-}
-
-function updateAttn2D() {
-	const sliderX = document.getElementById('attn2d-qx');
-	const sliderY = document.getElementById('attn2d-qy');
-	if (!sliderX || !sliderY) return;
-	const qx = parseFloat(sliderX.value);
-	const qy = parseFloat(sliderY.value);
-	const vx = document.getElementById('attn2d-qx-val');
-	const vy = document.getElementById('attn2d-qy-val');
-	if (vx) vx.innerText = (qx >= 0 ? '+' : '') + qx.toFixed(1);
-	if (vy) vy.innerText = (qy >= 0 ? '+' : '') + qy.toFixed(1);
-
-	const q = [qx, qy];
-	const dk = Math.sqrt(2); // √d_k where d_k = 2 dimensions
-
-	// ── Scaled dot-product attention across BOTH dimensions ──
-	// score_i = (q[0]*k_i[0] + q[1]*k_i[1]) / √2
-	const scores  = KV2.map(kv => (q[0] * kv.k[0] + q[1] * kv.k[1]) / dk);
-	const weights = softmax(scores);
-
-	// ── Weighted sum of 2D value vectors ──
-	const out = [0, 0];
-	KV2.forEach((kv, i) => {
-		out[0] += weights[i] * kv.v[0];
-		out[1] += weights[i] * kv.v[1];
-	});
-
-	// ── Pick sentence based on which meaning wins ──
-	const pick = pickSentence2D(weights);
-	const sentenceEl = document.getElementById('attn2d-sentence');
-	if (sentenceEl) {
-		sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-		sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
-	}
-
-	// ── Canvas setup (read width from parent, cap height) ──
-	const canvas = document.getElementById('attn2d-canvas');
-	if (!canvas) return;
-	const ctx = canvas.getContext('2d');
-
-	let rect = canvas.getBoundingClientRect();
-	if (rect.width === 0 || rect.height === 0) {
-		requestAnimationFrame(updateAttn2D);
-		return;
-	}
-
-	const container = canvas.parentElement;
-	const dpr = window.devicePixelRatio || 1;
-	const MAX_HEIGHT = 500;
-
-	const W = Math.floor(rect.width);
-	const H = Math.min(W, MAX_HEIGHT);
-
-	canvas.style.width = W + 'px';
-	canvas.style.height = H + 'px';
-
-	if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
-		canvas.width = W * dpr;
-		canvas.height = H * dpr;
-	}
-
-	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-	ctx.clearRect(0, 0, W, H);
-
-	// ── Coordinate mapping: -3 to 3 in 0.5 steps ──
-	const pad = 55;
-	const range = 3.5; // slightly beyond 3 for visual padding
-	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
-	const toY = (v) => pad + ((range - v) / (2 * range)) * (H - 2 * pad);
-
-	// ── Grid lines at 0.5 steps ──
-	ctx.lineWidth = 1;
-	for (let t = -3; t <= 3; t += 0.5) {
-		// Thicker lines at whole numbers, thinner at 0.5 steps
-		if (t === Math.round(t)) {
-			ctx.strokeStyle = themeColor('#e2e8f0');
-		} else {
-			ctx.strokeStyle = themeColor('#f1f5f9');
 		}
-		ctx.beginPath(); ctx.moveTo(toX(t), pad); ctx.lineTo(toX(t), H - pad); ctx.stroke();
-		ctx.beginPath(); ctx.moveTo(pad, toY(t)); ctx.lineTo(W - pad, toY(t)); ctx.stroke();
+
+		const layout = {
+			xaxis: {
+				title: { text: 'Dimension 1', font: { color: themeColor('#475569'), size: 12 } },
+				range: [-1.4, 1.4],
+				zeroline: true, zerolinecolor: themeColor('#94a3b8'),
+				zerolinewidth: 2,
+				gridcolor: themeColor('#e2e8f0'),
+				tickfont: { color: themeColor('#94a3b8'), size: 10 },
+				showline: true, linecolor: themeColor('#cbd5e1'), mirror: false,
+				scaleanchor: 'y', scaleratio: 1
+			},
+			yaxis: {
+				title: { text: 'Dimension 2', font: { color: themeColor('#475569'), size: 12 } },
+				range: [-1.4, 1.4],
+				zeroline: true, zerolinecolor: themeColor('#94a3b8'),
+				zerolinewidth: 2,
+				gridcolor: themeColor('#e2e8f0'),
+				tickfont: { color: themeColor('#94a3b8'), size: 10 },
+				showline: true, linecolor: themeColor('#cbd5e1'), mirror: false
+			},
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
+			margin: { l: 60, r: 30, t: 20, b: 50 },
+			showlegend: false
+		};
+
+		Plotly.react('attn-anatomy-2d', traces, layout, {
+			responsive: true, displaylogo: false,
+			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d']
+		});
+	},
+
+	// Draw an arrow from `start` to `end` in the 2D plot. The shaft is
+	// a line; the tip is a triangle-up marker rotated to point along
+	// the vector direction.
+	addArrow2D: function(traces, start, end, color, label, opacity, dashed, noMarker) {
+		const dx = end[0] - start[0];
+		const dy = end[1] - start[1];
+		const op = (opacity !== undefined) ? opacity : 1.0;
+		const isDashed = !!dashed;
+
+		// Shaft
+		traces.push({
+			type: 'scatter', mode: 'lines',
+			x: [start[0], end[0]], y: [start[1], end[1]],
+			line: { color: color, width: 4, dash: isDashed ? 'dot' : 'solid' },
+			opacity: op,
+			showlegend: false, hoverinfo: 'skip'
+		});
+
+		// Arrowhead (triangle pointing along the vector). Plotly's
+		// `angle` rotates clockwise from the up direction, so the
+		// conversion is `angle = 90° - atan2(dy,dx)`.
+		if (!noMarker) {
+			const angle = 90 - Math.atan2(dy, dx) * 180 / Math.PI;
+			traces.push({
+				type: 'scatter', mode: 'markers',
+				x: [end[0]], y: [end[1]],
+				marker: {
+					symbol: 'triangle-up',
+					size: 16,
+					color: color,
+					angle: angle,
+					line: { width: 1, color: themeColor('#fff') }
+				},
+				opacity: op,
+				showlegend: false, hoverinfo: 'skip'
+			});
+		}
+
+		// Label
+		if (label) {
+			traces.push({
+				type: 'scatter', mode: 'text',
+				x: [end[0]], y: [end[1]],
+				text: [label],
+				textposition: 'top right',
+				textfont: { size: 13, color: color, family: 'Inter, sans-serif' },
+				opacity: op,
+				showlegend: false, hoverinfo: 'name'
+			});
+		}
+	},
+
+	// ─── Numeric state bar chart ────────────────────────────────────
+	renderBars: function(data) {
+		const el = document.getElementById('attn-anatomy-bars');
+		if (!el) return;
+
+		if (data.barMode === 'none') {
+			Plotly.purge('attn-anatomy-bars');
+			el.innerHTML =
+				`<div style="display:flex; align-items:center; justify-content:center; height:100%;
+					color:#94a3b8; font-style:italic; font-size:0.92rem; padding:20px;">
+					Score bars will appear once we start computing…
+				</div>`;
+			return;
+		}
+
+		let labels, colors, values, ytitle, fmt, titleHTML;
+
+		if (data.barMode === 'components') {
+			// q[d] * k_1[d] for d = 1, 2
+			const k = ATTN_2D.keys[0];
+			values = ATTN_2D.q.map((qc, d) => qc * k[d]);
+			labels = ['q[1] · k₁[1]', 'q[2] · k₁[2]'];
+			colors = ['#f59e0b', '#f59e0b'];
+			ytitle = 'product';
+			fmt = v => v.toFixed(3);
+			titleHTML = '<b>Element-wise product for k₁</b>';
+		} else if (data.barMode === 'scores') {
+			values = ATTN_2D.scores;
+			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
+			colors = ATTN_TOKENS.slice(1).map(t => t.color);
+			ytitle = 'q · kⱼ';
+			fmt = v => v.toFixed(3);
+			titleHTML = '<b>Raw dot product</b>';
+		} else if (data.barMode === 'scaled') {
+			values = ATTN_2D.scaled;
+			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
+			colors = ATTN_TOKENS.slice(1).map(t => t.color);
+			ytitle = 'score / √2';
+			fmt = v => v.toFixed(3);
+			titleHTML = '<b>After √d<sub>k</sub> scaling</b>';
+		} else if (data.barMode === 'exps') {
+			values = ATTN_2D.exps;
+			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
+			colors = ATTN_TOKENS.slice(1).map(t => t.color);
+			ytitle = 'exp(score)';
+			fmt = v => v.toFixed(3);
+			titleHTML = '<b>After exponentiation</b>';
+		} else if (data.barMode === 'weights') {
+			values = ATTN_2D.weights;
+			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
+			colors = ATTN_TOKENS.slice(1).map(t => t.color);
+			ytitle = 'αⱼ';
+			fmt = v => (v * 100).toFixed(1) + '%';
+			titleHTML = '<b>Softmax weights (sum = 100%)</b>';
+		}
+
+		const trace = {
+			type: 'bar',
+			x: labels,
+			y: values,
+			text: values.map(v => fmt(v)),
+			textposition: 'outside',
+			textfont: { size: 12, color: themeColor('#1e293b'), family: 'Inter, sans-serif' },
+			marker: { color: colors, line: { color: themeColor('#fff'), width: 2 } },
+			hovertemplate: '%{x}: %{y:.4f}<extra></extra>'
+		};
+
+		const layout = {
+			title: { text: titleHTML,
+			         font: { size: 13, color: themeColor('#1e293b'), family: 'Inter, sans-serif' },
+			         x: 0.02, xanchor: 'left', y: 0.96 },
+			yaxis: {
+				title: { text: ytitle, font: { size: 11, color: themeColor('#64748b') } },
+				gridcolor: themeColor('#f1f5f9'),
+				zerolinecolor: themeColor('#94a3b8'),
+				tickfont: { color: themeColor('#94a3b8'), size: 10 },
+				rangemode: 'tozero'
+			},
+			xaxis: {
+				tickfont: { color: themeColor('#1e293b'), size: 11, family: 'Inter, sans-serif' },
+				showgrid: false
+			},
+			paper_bgcolor: themeColor('#fff'),
+			plot_bgcolor: themeColor('#fff'),
+			margin: { l: 65, r: 20, t: 40, b: 50 },
+			showlegend: false,
+			bargap: 0.35
+		};
+
+		Plotly.react('attn-anatomy-bars', [trace], layout, {
+			responsive: true, displaylogo: false,
+			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d']
+		});
+	},
+
+	// Highlight the underbraces whose data-step attribute includes
+	// the current 1-indexed step number.
+	highlightEquation: function() {
+		const stepNum = this.step + 1;
+		document.querySelectorAll('#attn-anatomy-equation .attn-ub, #attn-anatomy-equation .attn-ub-inline')
+			.forEach(el => {
+				const steps = (el.dataset.step || '').split(',').map(Number);
+				if (steps.includes(stepNum)) el.classList.add('active');
+				else el.classList.remove('active');
+			});
 	}
+};
 
-	// ── Main axes ──
-	ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
-	ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
-	ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
-
-	// ── Axis labels ──
-	drawLabel(ctx, '🌿 Nature', pad + 6, toY(0) + 18, '#10b981', 11, 'left', true);
-	drawLabel(ctx, 'Finance 💳', W - pad - 6, toY(0) + 18, '#f59e0b', 11, 'right', true);
-	drawLabel(ctx, '⚡ Urgent', toX(0) + 8, pad + 6, '#ef4444', 11, 'left', true);
-	drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
-
-	// ── Tick labels at whole numbers ──
-	ctx.fillStyle = themeColor('#94a3b8'); ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
-	for (let t = -3; t <= 3; t++) {
-		if (t === 0) continue;
-		ctx.fillText(t, toX(t), toY(0) + 14);
-		ctx.textAlign = 'right';
-		ctx.fillText(t, toX(0) - 8, toY(t) + 4);
-		ctx.textAlign = 'center';
-	}
-
-	// ── Q→K attention lines (thickness = weight) ──
-	KV2.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.moveTo(toX(q[0]), toY(q[1]));
-		ctx.lineTo(toX(kv.k[0]), toY(kv.k[1]));
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 2 + weights[i] * 12;
-		ctx.globalAlpha = 0.2 + weights[i] * 0.8;
-		ctx.lineCap = 'round';
-		ctx.stroke();
-		ctx.globalAlpha = 1;
-	});
-
-	// ── V→Output dashed lines ──
-	KV2.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.setLineDash([5, 5]);
-		ctx.moveTo(toX(kv.v[0]), toY(kv.v[1]));
-		ctx.lineTo(toX(out[0]), toY(out[1]));
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 1 + weights[i] * 5;
-		ctx.globalAlpha = 0.2 + weights[i] * 0.6;
-		ctx.stroke();
-		ctx.setLineDash([]);
-		ctx.globalAlpha = 1;
-	});
-
-	// ── Key dots (with weight % labels) ──
-	KV2.forEach((kv, i) => {
-		const kx = toX(kv.k[0]), ky = toY(kv.k[1]);
-		drawDot(ctx, kx, ky, 10 + weights[i] * 4, kv.color);
-		drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kv.kOff[0], ky + kv.kOff[1], kv.color, 13, 'center', true);
-		drawLabel(ctx, `${(weights[i] * 100).toFixed(0)}%`, kx + kv.kOff[0], ky + kv.kOff[1] + 16, kv.color, 12, 'center', true);
-	});
-
-	// ── Value squares ──
-	KV2.forEach((kv, i) => {
-		const vx = toX(kv.v[0]), vy = toY(kv.v[1]);
-		const s = 7 + weights[i] * 5;
-		drawSquare(ctx, vx, vy, s, kv.color, 0.35 + weights[i] * 0.65);
-		drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, vx + kv.vOff[0], vy + kv.vOff[1], kv.color, 11, 'center');
-	});
-
-	// ── Query diamond ("charge") ──
-	drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
-	drawLabel(ctx, '"charge"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
-
-	// ── Output star ──
-	drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
-	drawLabel(ctx, '★ charge in context', toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
-
-	// ── Math table (shows both dimensions in dot product) ──
-	const maxI = pick.idx;
-	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid ${themeColor('#cbd5e1')}; color:${themeColor('#64748b')};">
-	    <th style="text-align:left; padding:3px 8px;">Concept</th>
-	    <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
-	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
-	    <th style="text-align:right; padding:3px 8px;">α · v</th>
-	</tr>`;
-	KV2.forEach((kv, i) => {
-		const dotRaw = q[0] * kv.k[0] + q[1] * kv.k[1];
-		const contrib = [weights[i] * kv.v[0], weights[i] * kv.v[1]];
-		const isBold = i === maxI;
-		const rowBg = isBold ? (isDarkMode() ? 'rgba(245, 158, 11, 0.12)' : '#fefce8') : '';
-		html += `<tr style="background:${rowBg};">
-	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px; white-space:nowrap;">
-		${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
-	    </td>
-	    <td style="padding:3px 8px; font-family:monospace;" title="(${q[0].toFixed(1)}×${kv.k[0].toFixed(1)}) + (${q[1].toFixed(1)}×${kv.k[1].toFixed(1)}) = ${dotRaw.toFixed(2)}, then ÷√2 = ${scores[i].toFixed(2)}">
-		${(scores[i] >= 0 ? '+' : '') + scores[i].toFixed(2)}
-	    </td>
-	    <td style="padding:3px 8px; width: 200px">
-		<div style="display:inline-block; width:${Math.max(3, weights[i] * 120)}px; height:14px;
-		     background:${kv.color}; border-radius:3px; vertical-align:middle;
-		     opacity:${0.4 + weights[i] * 0.6}; transition:width 0.12s;"></div>
-		<b style="margin-left:4px;">${(weights[i] * 100).toFixed(1)}%</b>
-	    </td>
-	    <td style="text-align:right; padding:3px 8px; font-family:monospace; white-space:nowrap;">
-		(${contrib[0].toFixed(2)}, ${contrib[1].toFixed(2)})
-	    </td>
-	</tr>`;
-	});
-	html += `<tr style="border-top:2px solid ${themeColor('#1e293b')};">
-	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-	<td style="text-align:right; padding:6px 8px;">
-	    <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>
-	</td>
-    </tr></table>`;
-	document.getElementById('attn2d-math').innerHTML = html;
+function initAttentionAnatomy() {
+	AttentionAnatomy.init();
 }
+
 
 /**
  * Lazy-loaded Q/K/V subspace projection visualization.
@@ -1519,6 +952,15 @@ function _renderQKVSubspaceViz(containerId) {
    LONG DISTANCE DEPENDENCIES
    ═══════════════════════════════════════════════════════════════ */
 
+// Minimal canvas text helper used by the LDD bar chart below.
+function drawLabel(ctx, text, x, y, color, size, align, bold) {
+	ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
+	ctx.fillStyle = color || themeColor('#1e293b');
+	ctx.textAlign = align || 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(text, x, y);
+}
+
 const LDD = {
     subject: { word: 'cat', color: '#2563eb' },
     pronoun: { word: 'its', color: '#f59e0b' },
@@ -1615,12 +1057,27 @@ function updateLDD() {
     ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH); ctx.lineTo(W - padR, padT + chartH); ctx.stroke();
 
-    // Y ticks
+    // Y ticks + axis title
     ctx.font = '10px Inter, system-ui, sans-serif'; ctx.fillStyle = themeColor('#94a3b8'); ctx.textAlign = 'right';
     for (let g = 0; g <= 4; g++) {
         const val = (maxVal / 4) * (4 - g);
         ctx.fillText((val * 100).toFixed(0) + '%', padL - 6, padT + (chartH / 4) * g + 4);
     }
+    // Y-axis title (rotated, on the left)
+    ctx.save();
+    ctx.translate(14, padT + chartH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = themeColor('#475569');
+    ctx.font = 'bold 11px Inter, system-ui, sans-serif';
+    ctx.fillText('Attention / Signal Strength (%)', 0, 0);
+    ctx.restore();
+
+    // X-axis title
+    ctx.textAlign = 'center';
+    ctx.fillStyle = themeColor('#475569');
+    ctx.font = 'bold 11px Inter, system-ui, sans-serif';
+    ctx.fillText('Token Position', padL + chartW / 2, H - 6);
 
     // Bars
     tokens.forEach((tok, i) => {
@@ -1647,28 +1104,72 @@ function updateLDD() {
         if (attn[i] > 0.03) drawLabel(ctx, (attn[i]*100).toFixed(0)+'%', x, barY - 8, color, 10, 'center', true);
     });
 
-    // RNN decay line — what an RNN *would* carry forward step-by-step.
-    ctx.beginPath(); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+    // RNN decay curve — thick, with markers at each token. This is the
+    // signal an RNN would carry forward step-by-step.
     const rnnStart = attn[subjectIdx];
+    const rnnPoints = [];
     for (let i = subjectIdx; i <= pronounIdx; i++) {
         const x = toBarX(i);
         const rnnVal = rnnStart * Math.pow(LDD.rnn_decay, i - subjectIdx);
-        const y = toY(rnnVal);
-        if (i === subjectIdx) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        rnnPoints.push({ x, y: toY(rnnVal) });
     }
-    ctx.stroke(); ctx.setLineDash([]);
+    // Draw as a smooth curve (quadratic through points) so it pops visually
+    ctx.beginPath();
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    rnnPoints.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else {
+            const prev = rnnPoints[i - 1];
+            const cx = (prev.x + p.x) / 2;
+            ctx.bezierCurveTo(cx, prev.y, cx, p.y, p.x, p.y);
+        }
+    });
+    ctx.stroke();
+    // Markers along the RNN curve
+    rnnPoints.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+    });
 
-    // Transformer flat line — self-attention reaches every position
-    // in one step, so signal strength does NOT decay with distance.
-    ctx.beginPath(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+    // Transformer flat line — self-attention reaches every position in
+    // one step, so signal strength does NOT decay with distance.
     const tY = toY(attn[subjectIdx]);
-    ctx.moveTo(toBarX(subjectIdx), tY); ctx.lineTo(toBarX(pronounIdx), tY);
-    ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(toBarX(subjectIdx), tY);
+    ctx.lineTo(toBarX(pronounIdx), tY);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-    // Legend
-    drawLabel(ctx, '— Transformer (flat)', toBarX(subjectIdx) + 10, tY - 12, '#2563eb', 10, 'left', true);
-    const rnnEndVal = rnnStart * Math.pow(LDD.rnn_decay, distance);
-    drawLabel(ctx, '--- RNN (×' + LDD.rnn_decay + '/step)', toBarX(pronounIdx) + 5, toY(rnnEndVal), '#ef4444', 10, 'left', true);
+    // Legend (top-right corner of the chart)
+    const legX = W - padR - 175;
+    const legY = padT + 8;
+    ctx.fillStyle = isDarkMode() ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.92)';
+    ctx.fillRect(legX, legY, 170, 46);
+    ctx.strokeStyle = themeColor('#cbd5e1');
+    ctx.lineWidth = 1;
+    ctx.strokeRect(legX, legY, 170, 46);
+    // Transformer swatch
+    ctx.beginPath();
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 3; ctx.setLineDash([4, 4]);
+    ctx.moveTo(legX + 8, legY + 14);
+    ctx.lineTo(legX + 28, legY + 14);
+    ctx.stroke(); ctx.setLineDash([]);
+    drawLabel(ctx, 'Transformer (flat)', legX + 34, legY + 14, themeColor('#1e293b'), 10, 'left', true);
+    // RNN swatch
+    ctx.beginPath();
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.moveTo(legX + 8, legY + 34);
+    ctx.lineTo(legX + 28, legY + 34);
+    ctx.stroke();
+    drawLabel(ctx, 'RNN (×' + LDD.rnn_decay + '/step)', legX + 34, legY + 34, themeColor('#1e293b'), 10, 'left', true);
 
     // Math summary
     const rnnFinal = Math.pow(LDD.rnn_decay, distance);
@@ -1702,10 +1203,8 @@ function updateLDD() {
 async function loadAttentionModule() {
 	updateLoadingStatus("Loading section about activation functions...");
 	SelfAttentionLab.init();
-	initShiftExamples();
+	initAttentionAnatomy();
 	runUniverse();
-	updateAttn1D();
-	updateAttn2D();
 	initQKVSubspaceViz();
 	requestAnimationFrame(updateLDD);
 
@@ -1713,12 +1212,10 @@ async function loadAttentionModule() {
 	// dark mode so themeColor() picks up the new palette.
 	if (window.__MN_DARK) {
 		window.__MN_DARK.onChange(() => {
-			try { initShiftExamples(); } catch (e) { /* ignore */ }
-			try { initQKVSubspaceViz(); } catch (e) { /* ignore */ }
-			try { updateAttn1D(); }      catch (e) { /* ignore */ }
-			try { updateAttn2D(); }      catch (e) { /* ignore */ }
-			try { updateLDD(); }         catch (e) { /* ignore */ }
-			try { runUniverse(); }       catch (e) { /* ignore */ }
+			try { AttentionAnatomy.render(); } catch (e) { /* ignore */ }
+			try { initQKVSubspaceViz(); }     catch (e) { /* ignore */ }
+			try { updateLDD(); }              catch (e) { /* ignore */ }
+			try { runUniverse(); }            catch (e) { /* ignore */ }
 		});
 	}
 

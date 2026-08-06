@@ -136,18 +136,17 @@ Below: click any *content* word in the prompt and watch a colored region light u
 
 <div class="md">
 This is the mechanism behind every text-to-image model. Different words control different regions. By the end of denoising, each pixel of the image has been "asked" which word it should look like, and the text embedding has answered. **If you swap one word in the prompt, the embedding moves, the attention shifts, and the generated image changes in just that region.**
-</div>
 The full Stable Diffusion pipeline looks like this end-to-end:
+</div>
 
 <figure style="max-width:880px; margin:1.5em auto; text-align:center;">
 	<img src="diffusion_architecture.png" alt="Diagram of the Stable Diffusion latent diffusion architecture, showing the text encoder, U-Net denoiser with cross-attention, and VAE encoder/decoder" style="width:100%; height:auto; border-radius:6px;" />
 	<figcaption>The Stable Diffusion pipeline: a text encoder turns your prompt into vectors, the U-Net denoises a latent tensor conditioned on those vectors (via cross-attention), and a frozen VAE decoder turns the clean latent back into pixels. \cite[Image: Stable Diffusion architecture]{diffusion_architecture_img}</figcaption>
 </figure>
 
-So the answer to "do I need to label 100k images?" is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning* — if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
-</div>
-
 <div class="md">
+So the answer to "do I need to label 100k images?" is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning* — if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
+
 ## What's the network?
 
 It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
@@ -162,9 +161,6 @@ It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 
 The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5 has ~860 M parameters. The forward pass per denoising step: encode $t$, run the noisy latent down through four encoder blocks, apply self- and cross-attention at the bottleneck, run back up through four decoder blocks with skip connections, output the predicted noise.
 
-</div>
-
-<div class="md">
 ## Stable Diffusion: doing it in a compressed space
 
 Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
@@ -174,12 +170,12 @@ The breakthrough of **Latent Diffusion Models** \cite[Rombach et al., 2022]{romb
 The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model — it was learned earlier as an ordinary autoencoder and frozen in place.
 
 Below, the famous DDIM denoising sequence for a real Stable Diffusion run shows the same idea in action. Read it from top-left to bottom-right: the network starts from pure noise and gradually reveals a coherent image of a European-style castle in Japan, adding detail with each step.
+</div>
 
 <figure style="max-width:100%; margin:1.5em auto; text-align:center;">
 	<img src="diffusion_ddim_steps.jpg" alt="An X/Y plot of denoising steps showing a European-style castle in Japan becoming progressively more detailed as noise is removed, generated using Stable Diffusion V1-5 with DDIM sampling" style="width:100%; height:auto; border-radius:6px;" />
 	<figcaption>Each frame is one denoising step of a Stable Diffusion 1.5 model using DDIM sampling. Early steps establish rough shapes and color fields; later steps refine texture and fine detail. \cite[Image: DDIM denoising steps]{diffusion_ddim_img}</figcaption>
 </figure>
-</div>
 
 <div class="md">
 ## Beyond images
@@ -194,9 +190,7 @@ The same recipe works anywhere you can define a "noising" process and a network 
 * **Time-series**: TimeGrad — diffuse over weather, financial, or sensor data.
 
 The general principle is almost embarrassingly simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**
-</div>
 
-<div class="md">
 ## Where the field is now
 
 By 2025, the diffusion community has largely moved on to **flow matching** \cite[Lipman et al., 2023]{lipman2023flow} — a more general framework where the "noising" path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
@@ -206,9 +200,7 @@ The dominant backbone is no longer the U-Net but the **Diffusion Transformer (Di
 Practical models have also become fast. Modern systems generate images in **1–8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM). Diffusion is no longer slow.
 
 In five years, the technique went from "diffusion as a curiosity" to "diffusion as the universal generative recipe" for images, video, audio, and molecules.
-</div>
 
-<div class="md">
 ## Try it yourself
 
 These are the tools the diffusion community actually uses:
