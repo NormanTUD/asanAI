@@ -274,3 +274,23 @@ The key insight: **LayerNorm separates direction from magnitude**. Only the *dir
 
 This is why Transformers work well with Pre-Norm: the clean spherical geometry ensures that attention patterns depend only on the *angle* between query and key vectors, not their potentially erratic magnitudes.
 </div>
+
+<div class="md">
+## Group Normalization: The Diffusion Choice
+
+**Group Normalization (GN)**, introduced by \citeauthor{wu2018groupnorm} (\citeyear{wu2018groupnorm}), splits the $C$ channels into $G$ groups and normalizes within each group across spatial dims:
+
+$$\mu_g = \frac{1}{(C/G)\,H\,W}\sum_{c \in g}\sum_{h,w} x_{nchw}, \qquad \sigma_g^2 = \frac{1}{(C/G)\,H\,W}\sum_{c \in g}\sum_{h,w} (x_{nchw}-\mu_g)^2$$
+
+$$
+\hat{x}_{nchw} = \gamma_{c}\,\frac{x_{nchw}-\mu_g}{\sqrt{\sigma_g^2+\epsilon}} + \beta_c
+$$
+
+Common choice: $G = 32$. GN is **independent of batch size** (so it works at batch 1, essential for high-res diffusion) while still **preserving channel structure** (unlike LayerNorm, which throws all channels together). This is why every ResBlock of Stable Diffusion ends with `Conv → GroupNorm → SiLU`.
+
+**Relationship to siblings.**
+
+* $G = 1$: equivalent to **LayerNorm**.
+* $G = C$: equivalent to **InstanceNorm** (style-transfer default).
+* $G \in (1, C)$: the GN sweet spot.
+</div>
