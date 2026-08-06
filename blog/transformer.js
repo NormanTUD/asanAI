@@ -572,9 +572,25 @@ function getPositionColor(index, total, format = 'rgb') {
 }
 
 function reset_graph() {
-	document.getElementById('training-loss-plot').style.display = 'none';
-	document.getElementById('training-loss-plot').innerHTML = '';
+	// The loss panel stays mounted at a fixed 200px so the page never shifts
+	// during training. Clear its contents (placeholder chart) — the next
+	// renderLossGraph() call will redraw it.
+	const lp = document.getElementById('training-loss-plot');
+	if (lp) { lp.innerHTML = ''; }
 	$("#show_training_sentences").hide();
+	const tw = document.getElementById('tda-toggle-training-windows');
+	if (tw) tw.innerText = 'Show training windows';
+}
+
+function toggleTrainingWindows() {
+	// User-controlled toggle: the auto-show used to add ~460px mid-page
+	// and shove every panel below down. The user now decides when to see it.
+	const box = document.getElementById('show_training_sentences');
+	const btn = document.getElementById('tda-toggle-training-windows');
+	if (!box) return;
+	const showing = getComputedStyle(box).display !== 'none';
+	box.style.display = showing ? 'none' : 'block';
+	if (btn) btn.innerText = showing ? 'Show training windows' : 'Hide training windows';
 }
 
 function computePositionalEncoding(pos, d_model, scalar = 1.0) {
@@ -1392,7 +1408,9 @@ function renderTrainingWindowPredictions(d_model, n_layers) {
 	}).join('');
 
 	sentenceSpan.innerHTML = windowsHtml;
-	$("#show_training_sentences").show();
+	// Don't auto-show: the training-windows block is large and would shove the
+	// entire page (and the TDA panel below) downward mid-training. Render the
+	// content but require the user to click "Show training windows" to see it.
 }
 
 function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers) {
@@ -1824,8 +1842,7 @@ function renderLossGraph() {
 		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
 	};
 
-	document.getElementById('training-loss-plot').style.display = 'block';
-
+	// Loss panel is always mounted at a fixed height; just render into it.
 	Plotly.react('training-loss-plot', [trace], layout);
 }
 

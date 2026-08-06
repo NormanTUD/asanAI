@@ -30,6 +30,8 @@
 		vfSig: "",
 		lastRender: 0,
 		raf: 0,
+		traceStart: -1,
+		pendingRender: false,
 	};
 
 	const CFG = {
@@ -61,12 +63,19 @@
 	function hasGlobal(name) { return typeof window[name] === "function"; }
 	function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 	function isPanelVisible() {
+		// "Visible" means: in the page flow AND within ~400px of the
+		// viewport. We render whenever the section is approaching the
+		// screen, so scrolling toward the TDA panel refreshes it the
+		// moment it enters view (and not only when a setting changes).
 		const sec = el("tda-live-section");
 		if (!sec) return false;
 		const st = window.getComputedStyle(sec);
 		if (st.display === "none") return false;
 		const r = sec.getBoundingClientRect();
-		return r.height > 0;
+		if (r.height <= 0) return false;
+		const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+		const margin = 400;
+		return r.bottom > -margin && r.top < vh + margin;
 	}
 	function hueFromToken(str) {
 		if (hasGlobal("getHueFromToken")) { try { return window.getHueFromToken(str); } catch (e) { } }
@@ -1394,9 +1403,12 @@
 		// ---- epoch trails (selected layer across epochs) ----
 		if (CFG.showTrails && CFG.layer >= 0) {
 			const L = CFG.layer;
-			const hist = S.epochs.filter(e => e.residual && e.residual[L]).slice(-CFG.history);
+			let hist = S.epochs.filter(e => e.residual && e.residual[L]);
+			if (S.traceStart >= 0) hist = hist.filter(e => e.epoch >= S.traceStart);
+			hist = hist.slice(-CFG.history);
 			if (hist.length > 1) {
 				const tokenCount = hist[0].residual[L].length;
+				const tracing = S.traceStart >= 0;
 				for (let ti = 0; ti < tokenCount; ti++) {
 					const x = [], y = [], z = [];
 					for (const snap of hist) {
@@ -1408,12 +1420,38 @@
 						type: is3d ? "scatter3d" : "scatter",
 						mode: "lines+markers",
 						x, y,
-						marker: { size: 2, color: tokenColor(pcLabels[ti] || "?", 0.7) },
-						line: { width: 1.2, color: tokenColor(pcLabels[ti] || "?", 0.45), dash: "dot" },
-						hoverinfo: "skip",
+						marker: { size: tracing ? 4 : 2, color: tokenColor(pcLabels[ti] || "?", tracing ? 0.85 : 0.7) },
+						line: {
+							width: tracing ? 2.2 : 1.2,
+							color: tokenColor(pcLabels[ti] || "?", tracing ? 0.95 : 0.45),
+							dash: tracing ? "solid" : "dot",
+						},
+						hovertemplate: tracing
+							? `Trace · ${pcLabels[ti] || "?"} · epoch ${hist[0].epoch}…${hist[hist.length-1].epoch}<extra></extra>`
+							: `Trail · ${pcLabels[ti] || "?"} · epoch ${hist[0].epoch}…${hist[hist.length-1].epoch}<extra></extra>`,
 					};
 					if (is3d) trace.z = z;
 					traces.push(trace);
+					if (tracing) {
+						// Bright star at the most recent traced position so
+						// you can read the "head" of the trace at a glance.
+						const last = hist[hist.length - 1];
+						const d = proj.toDisp(last.residual[L][ti]);
+						const head = {
+							type: is3d ? "scatter3d" : "scatter",
+							mode: "markers",
+							x: [d[0]], y: [d[1]],
+							marker: {
+								size: 12,
+								color: tokenColor(pcLabels[ti] || "?", 1),
+								symbol: "star",
+								line: { color: is3d ? "#ffffff" : tc("#0f172a"), width: 1.2 },
+							},
+							hovertemplate: `Trace head · ${pcLabels[ti] || "?"} · epoch ${last.epoch}<extra></extra>`,
+						};
+						if (is3d) head.z = [d[2] || 0];
+						traces.push(head);
+					}
 				}
 			}
 		}
@@ -1897,7 +1935,10 @@
 			if (CFG.layer < 0) {
 				html += ` Showing <b>all layers</b> stacked (every dot is labeled by its layer). To focus one layer, pick <b>Layer</b> in the controls below or click a layer in the <b>emergence summary</b>.`;
 			} else {
-				html += ` Currently viewing <b>layer ${CFG.layer + 1}</b> only, drawn across the last ${Math.max(2, CFG.history)} epochs as a trail. Pick <b>All layers</b> to see the full stack again.`;
+				const tail = S.traceStart >= 0
+					? ` currently <b>tracing from epoch ${S.traceStart}</b> onward (click <b>Trace from now</b> to re-start).`
+					: `. Click <b>Trace from now</b> to restart the trail at the current state — useful to follow training forward in time, repeatedly.`;
+				html += ` Currently viewing <b>layer ${CFG.layer + 1}</b> only, drawn across the last ${Math.max(2, CFG.history)} epochs as a trail${tail}`;
 			}
 		} else if (CFG.mode === "delta") {
 			html = "<b>Weight deltas ΔW = W − W_prev per epoch.</b> Each point is one epoch, PCA-projected. Points clustering close together = the weight update is settling down.";
@@ -1945,6 +1986,7 @@
 		renderLegend();
 		renderExplain();
 		renderStats();
+		updateRetraceButton();
 	}
 
 	function queueRender() {
@@ -1952,11 +1994,18 @@
 		S.raf = requestAnimationFrame(() => {
 			S.raf = 0;
 			const now = performance.now();
-			if (now - S.lastRender < 120) { S.lastRender = now; return; }
-			if (!isPanelVisible()) return;
+			if (now - S.lastRender < 120) { S.lastRender = now; S.pendingRender = true; return; }
+			if (!isPanelVisible()) {
+				// Off-screen: defer to the IntersectionObserver (it fires
+				// `queueRender` the moment the section nears the viewport).
+				S.pendingRender = true;
+				return;
+			}
 			if (typeof Plotly === "undefined") return;
 			S.lastRender = now;
+			S.pendingRender = false;
 			computeAndRender();
+			updateRetraceButton();
 		});
 	}
 
@@ -2018,23 +2067,45 @@
 	}
 
 	function wireControls() {
-		const ids = ["tda-live-mode", "tda-live-dim", "tda-live-projection", "tda-live-layer",
-			"tda-live-colorby", "tda-live-flow", "tda-live-grid", "tda-live-eps", "tda-live-hist",
+		// Selects reliably fire `change`; some browsers do NOT fire `input`
+		// for `<select>`, so listen to both. Text/number inputs fire `input`.
+		const selectIds = ["tda-live-mode", "tda-live-dim", "tda-live-projection", "tda-live-layer",
+			"tda-live-colorby", "tda-live-flow"];
+		const textIds = ["tda-live-grid", "tda-live-eps", "tda-live-hist",
 			"tda-live-axis0", "tda-live-axis1", "tda-live-axis2"];
-		ids.forEach(id => {
+		const react = () => { syncCfg(); S.frameSig = ""; S.vfSig = ""; queueRender(); };
+		selectIds.forEach(id => {
 			const c = el(id);
-			if (c) c.addEventListener("input", () => { syncCfg(); S.frameSig = ""; S.vfSig = ""; queueRender(); });
+			if (!c) return;
+			c.addEventListener("input", react);
+			c.addEventListener("change", react);
+		});
+		textIds.forEach(id => {
+			const c = el(id);
+			if (c) c.addEventListener("input", react);
 		});
 		const checks = ["tda-live-vf", "tda-live-stream", "tda-live-trails", "tda-live-attractors",
 			"tda-live-basins", "tda-live-attn", "tda-live-auto"];
 		checks.forEach(id => {
 			const c = el(id);
-			if (c) c.addEventListener("change", () => { syncCfg(); S.frameSig = ""; S.vfSig = ""; queueRender(); });
+			if (c) c.addEventListener("change", react);
 		});
 		const rc = el("tda-live-recompute");
 		if (rc) rc.addEventListener("click", () => { S.frameSig = ""; S.vfSig = ""; queueRender(); });
 		const rst = el("tda-live-reset");
-		if (rst) rst.addEventListener("click", () => { resetHistory(); });
+		if (rst) rst.addEventListener("click", () => { resetHistory(); S.traceStart = -1; updateRetraceButton(); });
+		const rt = el("tda-live-retrace");
+		if (rt && !rt._wired) {
+			rt._wired = true;
+			rt.addEventListener("click", () => {
+				if (CFG.layer < 0) return;
+				S.traceStart = S.cur ? S.cur.epoch : -1;
+				S.frameSig = "";
+				S.vfSig = "";
+				queueRender();
+				updateRetraceButton();
+			});
+		}
 		const sumEl = el("tda-live-sweep-summary");
 		if (sumEl && !sumEl._wired) {
 			sumEl._wired = true;
@@ -2043,8 +2114,48 @@
 				if (t) selectLayer(parseInt(t.dataset.layer, 10));
 			});
 		}
+		// Render-on-approach: when the section nears the viewport (within
+		// 500px), trigger a fresh render so it never appears stale. The
+		// 500ms auto-interval already gates on isPanelVisible(); this
+		// observer additionally catches the case where the user scrolls
+		// toward the panel while no auto-update is pending.
+		const sec = el("tda-live-section");
+		if (sec && "IntersectionObserver" in window) {
+			const io = new IntersectionObserver((entries) => {
+				for (const e of entries) {
+					if (e.isIntersecting) {
+						S.frameSig = "";
+						S.vfSig = "";
+						queueRender();
+					}
+				}
+			}, { rootMargin: "500px 0px" });
+			io.observe(sec);
+			S.secObserver = io;
+		}
 		// periodic re-render so the view stays live even while scrolling
 		setInterval(() => { if (CFG.auto && S.cur && isPanelVisible()) queueRender(); }, 500);
+	}
+
+	function updateRetraceButton() {
+		const rt = el("tda-live-retrace");
+		if (!rt) return;
+		if (CFG.layer < 0) {
+			rt.innerText = "↺ Trace from now";
+			rt.disabled = true;
+			rt.style.opacity = "0.5";
+			rt.title = "Pick a specific layer first to trace its epoch trail";
+		} else if (S.traceStart >= 0) {
+			rt.innerText = "↺ Re-trace (from epoch " + S.traceStart + ")";
+			rt.disabled = false;
+			rt.style.opacity = "1";
+			rt.title = "Restart the epoch trail from the current state";
+		} else {
+			rt.innerText = "↺ Trace from now";
+			rt.disabled = false;
+			rt.style.opacity = "1";
+			rt.title = "Restart the epoch trail from the current state";
+		}
 	}
 
 	// ── public API ────────────────────────────────────────────────

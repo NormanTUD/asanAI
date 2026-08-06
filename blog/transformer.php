@@ -131,11 +131,28 @@ https://arxiv.org/html/2505.11611v1
         </div>
 
 	<button class="btn train-btn" onclick="train_transformer()">Train Model</button>
+	<button class="btn" id="tda-toggle-training-windows" onclick="toggleTrainingWindows()" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: var(--mn-surface, #fff); color: var(--mn-text, #0f172a); cursor: pointer; font-weight: 600; margin-left: 6px;">Show training windows</button>
 
-	<div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px; display: none"></div>
-	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: var(--mn-surface, white); display: none"></div>
+	<div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px;"></div>
+	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: var(--mn-surface, white);"></div>
     </div>
 </div>
+<script>
+(function () {
+	// Keep the loss panel a fixed height from the start so training never
+	// shifts the page; draw an empty placeholder chart until the first epoch.
+	const box = document.getElementById('training-loss-plot');
+	if (!box || typeof Plotly === 'undefined') return;
+	try {
+		Plotly.react(box, [], {
+			title: { text: 'Loss over epochs — press Train Model to start', font: { size: 12, color: '#94a3b8' } },
+			margin: { t: 28, b: 24, l: 46, r: 14 },
+			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+			xaxis: { visible: false }, yaxis: { visible: false },
+		}, { responsive: true });
+	} catch (e) { /* Plotly unavailable */ }
+})();
+</script>
 
 <div id="show_training_sentences" style="display: none">
 	<p>Current Training Windows: <span id="current_training_sentence"></span></p><br>
@@ -161,7 +178,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: var(--mn-surface, white); border-radius: 8px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 
-	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px;"></div>
+	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px; max-height: 420px; overflow-y: auto;"></div>
 
 	<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
 	<input
@@ -673,9 +690,11 @@ While the architecture is identical in both modes, the behavior of the model dif
 	</summary>
 	<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 900px;">
 		A <b>topological data analysis</b> of the residual stream and the weight deltas (weights minus their previous
-		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (sinks,
-		blue) and <b>repellers</b> (sources, red). The phase diagram shows the flow vectors, the basin of attraction, and
-		the <b>persistence</b> (shape) of the resulting structures via H₀ components and H₁ loops.
+		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (stable
+		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red — not
+		necessarily sources of the flow, just points of locally positive divergence). The phase diagram shows the flow
+		vectors, the basin of attraction, and the <b>persistence</b> (shape) of the resulting structures via H₀
+		components and H₁ loops.
 	</p>
 
 	<!-- Controls -->
@@ -739,6 +758,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 		</span>
 
 		<button id="tda-live-recompute" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #3b82f6; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-weight: 600;">⟳ Recompute</button>
+		<button id="tda-live-retrace" title="Restart the epoch trail from the current state — follow training from here, again and again" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #10b981; background: #ecfdf5; color: #047857; cursor: pointer; font-weight: 600;">↺ Trace from now</button>
 		<button id="tda-live-reset" style="padding: 4px 12px; border-radius: 6px; border: 1px solid #ef4444; background: #fef2f2; color: #b91c1c; cursor: pointer; font-weight: 600;">Clear history</button>
 		<span id="tda-live-status" style="color: var(--mn-text-muted, #64748b); font-size: 0.8rem;"></span>
 	</div>
