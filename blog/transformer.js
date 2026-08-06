@@ -6357,13 +6357,20 @@ function drawSingleArc(ctx, container, containerRect, chip1, chip2, strength, is
 	const x2 = (chip2.left + chip2.width / 2) - containerRect.left + scrollLeft;
 	const baseY = (chip1.top - containerRect.top) + scrollTop;
 
+	// Non-source base colour: #cbd5e1 → #64748b in dark mode (see __MN_DARK.pairs).
+	// Parse the swapped hex into rgb so we can layer alpha 0.2 on top.
+	const dimHex = themeColor('#cbd5e1');
+	const dimR = parseInt(dimHex.slice(1, 3), 16);
+	const dimG = parseInt(dimHex.slice(3, 5), 16);
+	const dimB = parseInt(dimHex.slice(5, 7), 16);
+
 	ctx.beginPath();
 	if (isSource) {
 		ctx.lineWidth   = 2 + strength * 20;
 		ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
 	} else {
 		ctx.lineWidth   = 1;
-		ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
+		ctx.strokeStyle = `rgba(${dimR}, ${dimG}, ${dimB}, 0.2)`;
 	}
 
 	const dist = Math.abs(x2 - x1);
@@ -6374,7 +6381,8 @@ function drawSingleArc(ctx, container, containerRect, chip1, chip2, strength, is
 	ctx.stroke();
 
 	if (isSource && strength > 0.05) {
-		ctx.fillStyle = "#1e40af";
+		// #1e40af → #bfdbfe in dark mode so the percentage label stays readable.
+		ctx.fillStyle = themeColor('#1e40af');
 		ctx.font = "bold 14px Inter, sans-serif";
 		ctx.fillText(Math.round(strength * 100) + "%", (x1 + x2) / 2 - 10, baseY - h / 1.5);
 	}
