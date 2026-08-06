@@ -59,7 +59,7 @@ This is the formulation introduced by DDPM. The training objective is almost lau
 3. Ask the network to predict *what that noise was*.
 4. Train by mean-squared error between the predicted and the true noise.
 
-That is it. No adversarial game, no careful balancing. Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly.
+For the vanilla DDPM / DDIM recipe that is it: no discriminator, no generator, no min-max game. Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly. (One caveat: the 1-step "Turbo" models like SDXL-Turbo were *not* trained with pure MSE — they use **adversarial diffusion distillation**, an explicit GAN-style loss, to compress 50 denoising steps into 1.)
 
 The slider below steps through the **reverse** process on the same image. Drag it from right to left to watch an image emerge from chaos. In a real diffusion model this would take a thousand tiny denoising steps; here we collapse them into a handful of frames.
 </div>
@@ -71,10 +71,13 @@ The slider below steps through the **reverse** process on the same image. Drag i
 
 You might ask: how can *removing noise* ever create a picture? The trick is this — **a denoiser that can spot noise must also have learned what "no noise" looks like**. It has implicitly learned the shape of the data distribution. So if you start from pure noise and repeatedly denoise, you trace a path through that distribution, and end up with a brand new sample.
 
-Here is the same idea in 1D. The blue curve is the "data distribution" — it shows where realistic values tend to live (two peaks in this toy example). The arrows on the baseline always point **toward** a peak, away from anywhere that's "not data". Drag the orange dot anywhere on the baseline, then hit the button. The dot follows the arrows into a peak — that is exactly what a denoiser does at every step during generation. Different starting points → different samples.
-</div>
+That is the deep "why" of diffusion in one sentence. Two ways to make it more concrete:
 
-<div id="score-viz" style="max-width: 760px; margin: 1em auto;"></div>
+* **Coarse-to-fine**: at high noise levels, only the largest-scale structure of the data is recoverable. The network first sketches rough shapes, then refines detail. Generation is hierarchical *by construction*.
+* **Score matching** \cite[Song & Ermon, 2019]{song2019score}: a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the data distribution — the "score". Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
+
+Either view explains why "denoising" and "generation" are two sides of the same coin.
+</div>
 
 <div class="md">
 ## Telling the model what to draw
@@ -87,10 +90,8 @@ $$
 \tilde\epsilon_\theta(x_t, t, c) \;=\; \epsilon_\theta(x_t, t, \varnothing) \;+\; w \cdot \big(\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t, \varnothing)\big)
 $$
 
-In probability terms, the *output distribution* of the model becomes sharper and shifts toward the prompt as $w$ grows. Below is the same picture in 1D: the broad grey curve is what the unconditional model thinks "an image" looks like, the narrow blue curve is what the conditional model thinks the prompt looks like, and the red curve is what you actually sample from once you scale the gap by $w$. Drag $w$ to see how the output distribution sharpens, shifts, and (for $w > 1$) extrapolates *beyond* the prompt.
+The factor $w$ is the **guidance scale**. The intuition: $\epsilon_\theta(x_t, t, \varnothing)$ is what the model thinks "an image" looks like; $\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t, \varnothing)$ is the *direction* the prompt pushes in; multiplying by $w > 1$ moves the output further along that direction, so the generated image matches the prompt more literally. Around $w \approx 7$ is the modern default. Higher values follow the prompt more literally but produce more generic-looking images; lower values give variety but may drift from the prompt.
 </div>
-
-<div id="cfg-viz" style="max-width: 760px; margin: 1em auto;"></div>
 
 <div class="md">
 ## From text to image: the whole pipeline
@@ -147,6 +148,89 @@ The full Stable Diffusion pipeline looks like this end-to-end:
 </figure>
 
 So the answer to "do I need to label 100k images?" is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning* — if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
+</div>
+
+<div class="md">
+## What's the network? — `model.summary()`
+
+If you typed `model.summary()` on the Stable Diffusion denoiser and scrolled past the noise, here is roughly what you'd see. The denoiser is **not** a stack of dense layers. It is a hybrid of:
+
+* **convolutions** to handle the 2D spatial structure of images efficiently,
+* **attention** (self- and cross-) to let pixels "talk" to each other and to the text prompt,
+* **skip connections** so gradients can flow through hundreds of layers,
+* a **U-Net** structure: an encoder that downsamples, a bottleneck, a decoder that upsamples back.
+
+The only fully-connected (dense) layers in the whole thing are tiny MLPs for embedding the time step and (sometimes) for output projection. Everything else is convolution or attention.
+
+### `model.summary()` for Stable Diffusion 1.5 (simplified)
+
+```
+─────────────────────────────────────────────────────────────────────
+Layer (type)                  Output Shape            # parameters
+─────────────────────────────────────────────────────────────────────
+time_embed (sinusoidal + MLP)  (B, 1280)               ~1.5 M
+text_embed (cross-attn input)  (B, 77, 1280)          340 M  (frozen CLIP)
+down_blocks[0] Res×2 + Attn    (B, 320, 64, 64)       ~18 M
+down_blocks[1] Res×2 + Attn    (B, 640, 32, 32)       ~65 M
+down_blocks[2] Res×2 + Attn    (B, 1280, 16, 16)     ~230 M
+down_blocks[3] Res×2 + Attn    (B, 1280,  8,  8)     ~230 M
+mid_block  Res + SelfAttn + CrossAttn  (B, 1280, 8, 8) ~250 M
+up_blocks[3] skip + Res×2 + Attn  (B, 1280, 16, 16)  ~230 M
+up_blocks[2] skip + Res×2 + Attn  (B, 1280, 16, 16)  ~230 M
+up_blocks[1] skip + Res×2 + Attn  (B,  640, 32, 32)   ~65 M
+up_blocks[0] skip + Res×2 + Attn  (B,  320, 64, 64)   ~18 M
+out_conv 2D                     (B, 4, 64, 64)         ~6 K
+─────────────────────────────────────────────────────────────────────
+Trainable: ~860 M   (excluding frozen CLIP text encoder)
+```
+
+(`B` = batch size. `Attn` = attention block, present only at the lower-resolution stages where the spatial size is small enough that the $O(n^2)$ cost of attention is affordable.)
+
+### The building blocks — most of which you already know
+
+| Block | What it does | Where it is explained |
+|---|---|---|
+| Sinusoidal time embedding | Map a scalar $t \in [0, 1]$ to a 1280-dim vector the network can read | transformer.php |
+| 2D Convolution | Slide a small filter over the image to detect local patterns (edges, textures, …) | visionlab.php |
+| ResBlock | `Conv → Norm → SiLU → Conv` plus a skip connection — the basic "do something and add it back" unit | resnetlab.php |
+| GroupNorm | Normalize per group of channels — works at small batch sizes where BatchNorm fails | normalizationlab.php |
+| SiLU activation | $x \cdot \sigma(x)$, the smooth cousin of ReLU (also called Swish) | activationlab.php |
+| Self-Attention | Each spatial position attends to every other one — captures global structure | transformer.php |
+| Cross-Attention | Each spatial position attends to text tokens — this is *conditioning* | this chapter, just above |
+| Skip connections | Pass encoder features to the matching decoder layer — preserves fine detail and gradient flow | resnetlab.php |
+| U-Net structure | encoder (downsamples) → bottleneck → decoder (upsamples), with skip connections at every resolution | visionlab.php |
+
+The pieces you have already seen in other chapters — convolutions, attention, skip connections, normalization, activations — are exactly the building blocks of the diffusion U-Net. Diffusion is **not a new architecture family**; it is a new *training objective* (predict the noise, MSE) applied to the same toolkit.
+
+### The forward pass, in plain English
+
+For each denoising step on one image:
+
+1. Take the noisy latent (shape $4 \times 64 \times 64$) and the timestep $t$.
+2. Encode $t$ as a 1280-dim vector via the sinusoidal time embedding.
+3. Pass the noisy latent through four encoder blocks. At each block, halve the spatial size and double the channels. Save the output of each block (these are the *skip connections*).
+4. At the bottleneck ($8 \times 8$), apply self-attention (pixels talk to pixels) and cross-attention (pixels attend to text tokens).
+5. Pass through four decoder blocks, each upsampling and concatenating with the matching skip from the encoder.
+6. A final 2D convolution produces the noise prediction — four channels at $64 \times 64$, the same shape as the input latent.
+
+That is the entire forward pass. The same recipe, applied iteratively a thousand times with different $t$ (each $t$ using the noise prediction from the previous step), produces an image.
+
+### How this differs from a vanilla classifier
+
+A plain image classifier (the kind in the early chapters) is a stack of conv layers + dense layers + softmax:
+
+```
+Conv → Pool → Conv → Pool → … → Flatten → Dense → Dense → softmax
+```
+
+The diffusion U-Net has the same convolutions and the same dense layers, but adds four things:
+
+* an **encoder-decoder** structure (so it can operate at multiple resolutions simultaneously and recover fine detail),
+* **attention** at the lower resolutions (so it can route information across the image, not just through local convolutions),
+* a **time-conditioning** pathway (so the same network can behave differently at different noise levels — its job changes as $t$ goes from 1 to 0),
+* a **text-conditioning** pathway (so the same network can behave differently for different prompts — exactly the cross-attention section above).
+
+Those four additions are what turn a plain classifier into a denoising U-Net.
 </div>
 
 <div class="md">
@@ -328,203 +412,6 @@ function mountNoiseSlider(containerId, frames, reverse, titleText) {
 	update(parseInt(range.value, 10));
 }
 
-// =============================================================================
-// SIMPLE "WHY DIFFUSION WORKS" VIZ
-// One panel: density curve + arrows pointing inward + draggable orange dot
-// that, on the "Denoise!" button, follows the arrows into a peak.
-// =============================================================================
-function makeSimpleScoreViz(containerId) {
-	const xs = [];
-	for (let x = -5; x <= 5; x += 0.02) xs.push(x);
-
-	const mu1 = -2, mu2 = 2, sigma = 0.9;
-	const density = (x) => {
-		const a = Math.exp(-0.5 * Math.pow((x - mu1) / sigma, 2));
-		const b = Math.exp(-0.5 * Math.pow((x - mu2) / sigma, 2));
-		return 0.5 * (a + b) / (sigma * Math.sqrt(2 * Math.PI));
-	};
-	const score = (x) => {
-		const p1 = Math.exp(-0.5 * Math.pow((x - mu1) / sigma, 2));
-		const p2 = Math.exp(-0.5 * Math.pow((x - mu2) / sigma, 2));
-		const p = 0.5 * (p1 + p2);
-		if (p < 1e-12) return 0;
-		const dp = 0.5 * (p1 * (-(x - mu1) / (sigma * sigma)) + p2 * (-(x - mu2) / (sigma * sigma)));
-		return Math.max(-2.5, Math.min(2.5, dp / p));
-	};
-
-	const densityTrace = {
-		x: xs, y: xs.map(density), mode: 'lines', name: 'data distribution',
-		line: { color: '#3b82f6', width: 3 },
-		fill: 'tozeroy', fillcolor: 'rgba(59, 130, 246, 0.18)'
-	};
-
-	// Arrows at sampled x positions. We scale the score so the longest arrow
-	// fits inside the visible plot (~0.35 in y-units), and use green for arrows
-	// that point toward a peak on the right, purple for arrows that point left.
-	const arrowXs = [];
-	for (let x = -4.5; x <= 4.5; x += 0.5) arrowXs.push(x);
-	const arrowScale = 0.18;
-	const arrowCap = 0.35;
-	const shapes = arrowXs.map((x) => {
-		const s = score(x);
-		const len = Math.min(Math.abs(s) * arrowScale, arrowCap);
-		if (s > 0) {
-			return {
-				type: 'line',
-				x0: x, x1: x + len, y0: 0, y1: 0,
-				line: { color: '#16a34a', width: 2.5 },
-				arrowhead: 3, arrowsize: 1.2, arrowwidth: 2
-			};
-		} else if (s < 0) {
-			return {
-				type: 'line',
-				x0: x, x1: x - len, y0: 0, y1: 0,
-				line: { color: '#a855f7', width: 2.5 },
-				arrowhead: 3, arrowsize: 1.2, arrowwidth: 2
-			};
-		}
-		return null;
-	}).filter(Boolean);
-
-	let particleX = -4.6;
-	const particleTrace = {
-		x: [particleX], y: [density(particleX)],
-		mode: 'markers+text', name: 'noisy sample',
-		marker: { size: 16, color: '#f59e0b', line: { color: '#92400e', width: 2 } },
-		text: ['drag me →'], textposition: 'middle right',
-		textfont: { color: themeFg, size: 11 },
-		showlegend: false
-	};
-
-	const layout = {
-		title: { text: 'The denoiser learns an arrow that always points toward real data', font: { size: 13 } },
-		xaxis: { title: 'image space (one slice)', range: [-5, 5], zeroline: false },
-		yaxis: { title: 'how often data lives here', range: [0, 0.45], zeroline: false },
-		shapes: shapes,
-		showlegend: false,
-		margin: { t: 60, b: 50, l: 60, r: 30 },
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		font: { color: themeFg, size: 12 },
-		annotations: [{
-			x: 0.99, y: 0.98, xref: 'paper', yref: 'paper',
-			text: '→ green = arrow points toward the left peak<br>' +
-			      '← purple = arrow points toward the right peak',
-			showarrow: false, align: 'right',
-			font: { color: themeFg, size: 10 },
-			bgcolor: 'rgba(255,255,255,0.0)'
-		}]
-	};
-
-	Plotly.newPlot(containerId, [densityTrace, particleTrace], layout, { responsive: true, displayModeBar: false }).then((gd) => {
-		gd.on('plotly_click', (ev) => {
-			if (!ev.points || !ev.points.length) return;
-			const pt = ev.points[0];
-			if (pt.curveNumber !== 0) return;
-			particleX = Math.max(-4.8, Math.min(4.8, pt.x));
-			Plotly.restyle(containerId, { x: [[particleX]], y: [[density(particleX)]] }, [1]);
-		});
-
-		const btn = document.createElement('button');
-		btn.textContent = '▶ Denoise: follow the arrows (300 steps)';
-		btn.style.cssText = 'margin:12px auto; display:block; padding:10px 18px; background:var(--mn-accent,#3b82f6); color:#fff; border:none; border-radius:6px; cursor:pointer; font:inherit;';
-		btn.onclick = async () => {
-			btn.disabled = true;
-			btn.textContent = 'Following the arrows…';
-			let x = particleX;
-			const dt = 0.05;
-			const noiseScale = 0.35;
-			for (let step = 0; step < 300; step++) {
-				const s = score(x);
-				x = x + s * dt + noiseScale * Math.sqrt(2 * dt) * gauss(makeRng(step * 991 + 7));
-				if (Math.abs(x) > 4.8) x = Math.sign(x) * 4.8;
-				particleX = x;
-				Plotly.restyle(containerId, { x: [[x]], y: [[density(x)]] }, [1]);
-				if (step % 5 === 0) await new Promise(r => setTimeout(r, 10));
-			}
-			btn.textContent = '↻ Try again from a different starting point';
-			btn.disabled = false;
-		};
-		gd.parentNode.insertBefore(btn, gd.nextSibling);
-	});
-}
-
-// =============================================================================
-// CFG VIZ — three distributions + slider for guidance w
-// =============================================================================
-function makeCfgViz(containerId) {
-	const xs = [];
-	for (let x = -4; x <= 4; x += 0.02) xs.push(x);
-
-	const sigmaU = 1.4;
-	const muC = 1.2, sigmaC = 0.45;
-	const pu = (x) => Math.exp(-0.5 * Math.pow(x / sigmaU, 2)) / (sigmaU * Math.sqrt(2 * Math.PI));
-	const pc = (x) => Math.exp(-0.5 * Math.pow((x - muC) / sigmaC, 2)) / (sigmaC * Math.sqrt(2 * Math.PI));
-	const cfgDist = (w) => {
-		const vu = sigmaU * sigmaU, vc = sigmaC * sigmaC;
-		const vEff = 1 / ((1 - w) / vu + w / vc);
-		const mEff = vEff * (w * muC / vc);
-		const k = 1 / Math.sqrt(2 * Math.PI * vEff);
-		return (x) => k * Math.exp(-0.5 * Math.pow((x - mEff) / Math.sqrt(vEff), 2));
-	};
-
-	const traceU = {
-		x: xs, y: xs.map(pu), mode: 'lines', name: 'p(uncond) — "anything goes"',
-		line: { color: '#94a3b8', width: 2, dash: 'dot' }
-	};
-	const traceC = {
-		x: xs, y: xs.map(pc), mode: 'lines', name: 'p("astronaut on a horse") — the prompt',
-		line: { color: '#3b82f6', width: 2.5 }
-	};
-	const initialW = 7;
-	const traceCfg = {
-		x: xs, y: xs.map(cfgDist(initialW)), mode: 'lines', name: 'p_cfg — what we actually sample',
-		line: { color: '#ef4444', width: 3 },
-		fill: 'tozeroy', fillcolor: 'rgba(239, 68, 68, 0.10)'
-	};
-
-	const annotation = (w) => ({
-		x: 0.5, y: 1.05, xref: 'paper', yref: 'paper',
-		text: '<b>guidance scale w = ' + w.toFixed(1) + '</b> &nbsp;·&nbsp; ' +
-		      'output mean μ = ' + (w * muC / (sigmaC * sigmaC) /
-		      ((1 - w) / (sigmaU * sigmaU) + w / (sigmaC * sigmaC))).toFixed(2) +
-		      ' &nbsp;·&nbsp; sharpness ↑ as w grows',
-		showarrow: false, align: 'center',
-		font: { color: themeFg, size: 11 }
-	});
-
-	const layout = {
-		title: { text: 'Classifier-free guidance: amplify the gap between unconditional and prompt-conditioned', font: { size: 13 } },
-		xaxis: { title: 'image space (one slice)', range: [-4, 4], zeroline: false },
-		yaxis: { title: 'probability density', zeroline: false },
-		annotations: [annotation(initialW)],
-		legend: { x: 1.02, y: 1, xanchor: 'left', bgcolor: 'rgba(0,0,0,0)' },
-		margin: { t: 70, b: 70, l: 60, r: 160 },
-		shapes: [{
-			type: 'line', x0: muC, x1: muC, y0: 0, y1: pc(muC),
-			line: { color: '#3b82f6', width: 1, dash: 'dot' }
-		}],
-		sliders: [{
-			active: 0,
-			currentvalue: { prefix: 'Guidance scale w = ', font: { size: 12, color: themeFg }, xanchor: 'right' },
-			pad: { t: 30 },
-			steps: [0, 1, 2, 3, 5, 7, 10, 15].map((wv) => ({
-				label: wv.toString(), method: 'restyle',
-				args: [{ y: [xs.map(cfgDist(wv))] }, [2]]
-			}))
-		}],
-		paper_bgcolor: 'rgba(0,0,0,0)',
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		font: { color: themeFg, size: 12 }
-	};
-
-	Plotly.newPlot(containerId, [traceU, traceC, traceCfg], layout, { responsive: true, displayModeBar: false }).then((gd) => {
-		gd.on('plotly_sliderchange', (ev) => {
-			const wv = parseFloat(ev.step.label);
-			Plotly.relayout(containerId, { annotations: [annotation(wv)] });
-		});
-	});
-}
 
 // =============================================================================
 // TOKENIZER + EMBEDDING VIZ
@@ -705,8 +592,6 @@ loadCleanImage().then((clean) => {
 			if (el) el.innerHTML = '<p style="text-align:center;color:#888;">(image failed to load)</p>';
 		});
 	}
-	makeSimpleScoreViz('score-viz');
-	makeCfgViz('cfg-viz');
 	makeTokenizerViz('tokenizer-viz');
 	makeCrossAttentionViz('cross-attention-viz');
 });
