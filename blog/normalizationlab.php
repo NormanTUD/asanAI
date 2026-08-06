@@ -50,11 +50,11 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <!-- Data Matrix -->
     <div style="
         position: relative;
-        background: linear-gradient(160deg, rgba(248,250,252,0.9) 0%, rgba(241,245,249,0.9) 100%);
+        background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(16,185,129,0.05) 100%);
         backdrop-filter: blur(12px);
         padding: 24px;
         border-radius: 20px;
-        border: 1px solid rgba(99,102,241,0.1);
+        border: 1px solid rgba(99,102,241,0.18);
         box-shadow: 0 4px 24px -4px rgba(0,0,0,0.06);
         overflow: hidden;
     ">
@@ -74,7 +74,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
             text-transform: uppercase;
             color: #6366f1;
         ">Data Matrix</p>
-        <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 16px 0;">Click cells to edit values interactively</p>
+        <p style="font-size: 0.78rem; color: var(--mn-text-secondary); margin: 0 0 16px 0;">Click cells to edit values interactively</p>
 
         <table id="input-table" style="
             width: 100%;
@@ -82,7 +82,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
             border-spacing: 0;
             text-align: center;
             background: var(--mn-surface, white);
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--mn-border, #e2e8f0);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -129,7 +129,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                     display: block;
                     font-size: 0.78rem;
                     font-weight: 700;
-                    color: #475569;
+                    color: var(--mn-text-secondary);
                     margin-bottom: 6px;
                     letter-spacing: 0.03em;
                 ">Gamma <span style="color:#6366f1;">(γ)</span> — Gain</label>
