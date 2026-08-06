@@ -33,7 +33,7 @@
 		{ id: 'math-ii',          label: 'Math II',          icon: '∫',    desc: 'Integrals, linear algebra' },
 		{ id: 'math-iii',         label: 'Math III',         icon: '∮',    desc: 'Probability, real analysis' },
 		{ id: 'statistics-i',     label: 'Stats I',          icon: 'σ',    desc: 'Basic probability, distributions' },
-		{ id: 'statistics-ii',    label: 'Stats II',         icon: 'Σ',    desc: 'Inference, hypothesis testing, advanced' },
+		{ id: 'statistics-ii',    label: 'Stats II',         icon: 'μ',    desc: 'Inference, hypothesis testing, advanced' },
 		{ id: 'programming',      label: 'Programming',      icon: '{ }',  desc: 'Code, algorithms' },
 		{ id: 'architecture',     label: 'Architecture',     icon: '🏗️',   desc: 'Transformers, attention' },
 		{ id: 'training',         label: 'Training',         icon: '🎯',   desc: 'Fine-tuning, RL, eval' },
