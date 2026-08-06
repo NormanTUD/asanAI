@@ -44,6 +44,10 @@
 		_bound: false
 	});
 
+	/* Container currently rendering the cone — used to drop stale BFS
+	   results if the user clicks another cell before the old one finishes. */
+	var _containerForCone = null;
+
 	/* ───────────────────────── small helpers ───────────────────────── */
 	function num(v) { return (typeof v === 'number' && isFinite(v)) ? v : 0; }
 
@@ -2204,7 +2208,7 @@
 			'#prov-tooltip .prov-deriv-badge{color:#94a3b8;}' +
 			'#prov-tooltip .prov-deriv-formula{color:#0f172a;overflow-x:auto;padding:0 4px 4px 14px;}' +
 			'#prov-tooltip .prov-deriv-formula .md{margin:0;}' +
-			/* ── Lichtkegel (light cone) view ──
+			/* ── Light Cone view ──
 			   A literal cone drawn with an SVG overlay and trapezoidal HTML
 			   rows: the apex (current value) sits at the top, the rows widen
 			   as we descend through the pipeline stages, and a triangular
@@ -2214,7 +2218,10 @@
 			'#prov-tooltip .prov-cone{display:none;max-height:540px;overflow-y:auto;position:relative;}' +
 			'#prov-tooltip.prov-cone-mode{width:min(96vw,1080px);max-width:96vw;}' +
 			'#prov-tooltip.prov-cone-mode .prov-cone{max-height:calc(86vh - 200px);}' +
-			'#prov-tooltip .prov-cone-loading{font-size:12px;color:#6366f1;padding:8px 2px;}' +
+			'#prov-tooltip .prov-cone-loading{display:flex;align-items:center;gap:10px;justify-content:center;padding:18px 8px;font-size:12px;color:#475569;}' +
+			'#prov-tooltip .prov-cone-loading-text{flex:1;min-width:0;}' +
+			'#prov-tooltip .prov-cone-spinner{width:18px;height:18px;border:2.5px solid #e0e7ff;border-top-color:#6366f1;border-right-color:#a855f7;border-radius:50%;animation:prov-spin .8s linear infinite;flex-shrink:0;}' +
+			'@keyframes prov-spin{to{transform:rotate(360deg);}}' +
 			'#prov-tooltip .prov-cone-head{display:flex;align-items:center;gap:10px;margin:4px 0 10px;flex-wrap:wrap;}' +
 			'#prov-tooltip .prov-cone-head .prov-label{margin:0;}' +
 			'#prov-tooltip .prov-cone-slider{flex:1;min-width:180px;accent-color:#6366f1;}' +
@@ -2224,25 +2231,50 @@
 			'#prov-tooltip .prov-cone-row{position:relative;z-index:1;margin:6px auto;display:flex;flex-direction:column;align-items:center;}' +
 			'#prov-tooltip .prov-cone-row-stage{border-top:1px dashed rgba(99,102,241,.18);padding-top:6px;}' +
 			'#prov-tooltip .prov-cone-stage-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;font-weight:600;margin:0 0 4px;text-align:center;}' +
-			'#prov-tooltip .prov-cone-chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}' +
-			'#prov-tooltip .prov-cone-chip{border:1px solid #c7d2fe;background:linear-gradient(180deg,#ffffff,#eef2ff);border-radius:8px;padding:4px 6px;cursor:pointer;min-width:96px;max-width:160px;font-size:11px;transition:transform .12s,box-shadow .12s,border-color .12s;}' +
-			'#prov-tooltip .prov-cone-chip:hover{border-color:#6366f1;box-shadow:0 4px 14px rgba(99,102,241,.18);transform:translateY(-1px);}' +
-			'#prov-tooltip .prov-cone-chip-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}' +
-			'#prov-tooltip .prov-cone-chip-name{font-weight:600;color:#3730a3;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;}' +
-			'#prov-tooltip .prov-cone-chip-val{color:#0f172a;font-weight:600;font-variant-numeric:tabular-nums;}' +
-			'#prov-tooltip .prov-cone-chip-foot{display:flex;align-items:center;gap:6px;margin-top:3px;}' +
+			/* Layer ring: a header strip with name + cumulative-percent bar
+			   + percent + formula count. Tells the reader "X% of the
+			   influence on this cell comes from Layer N". */
+			'#prov-tooltip .prov-cone-row-layer{border-top:1px dashed rgba(99,102,241,.22);padding-top:8px;}' +
+			'#prov-tooltip .prov-cone-layer-head{display:flex;align-items:center;gap:8px;width:100%;padding:4px 8px 6px;background:rgba(238,242,255,.55);border-radius:6px;margin-bottom:6px;}' +
+			'#prov-tooltip .prov-cone-layer-name{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#4c1d95;font-weight:700;white-space:nowrap;}' +
+			'#prov-tooltip .prov-cone-layer-barwrap{flex:1;height:7px;background:#e2e8f0;border-radius:4px;overflow:hidden;min-width:60px;}' +
+			'#prov-tooltip .prov-cone-layer-bar{display:block;height:100%;background:linear-gradient(90deg,#6366f1,#22d3ee);border-radius:4px;}' +
+			'#prov-tooltip .prov-cone-layer-pct{font-size:13px;font-weight:700;color:#0f172a;font-variant-numeric:tabular-nums;min-width:54px;text-align:right;}' +
+			'#prov-tooltip .prov-cone-layer-count{font-size:10px;color:#64748b;font-variant-numeric:tabular-nums;white-space:nowrap;}' +
+			'#prov-tooltip .prov-cone-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}' +
+			/* Chip: the LaTeX formula is the main content (matches the style
+			   of the inline equations on the transformer page), with the
+			   identifier / value / influence bar as a compact footer. The chip
+			   is wide enough to show real underbraced formulas without
+			   horizontal scrolling on most viewports. */
+			'#prov-tooltip .prov-cone-chip{border:1px solid #c7d2fe;background:linear-gradient(180deg,#ffffff,#f5f3ff);border-radius:10px;padding:8px 10px 6px;cursor:pointer;min-width:240px;max-width:340px;font-size:11px;transition:transform .12s,box-shadow .12s,border-color .12s;display:flex;flex-direction:column;gap:5px;}' +
+			'#prov-tooltip .prov-cone-chip:hover{border-color:#6366f1;box-shadow:0 4px 14px rgba(99,102,241,.22);transform:translateY(-1px);}' +
+			'#prov-tooltip .prov-cone-chip-formula{color:#0f172a;font-size:13px;line-height:1.35;overflow-x:auto;max-height:140px;overflow-y:auto;padding:2px 0 4px;}' +
+			'#prov-tooltip .prov-cone-chip-formula .md{margin:0;white-space:normal;}' +
+			'#prov-tooltip .prov-cone-chip-formula .munderover,.prov-cone-chip-formula .munder{white-space:nowrap;}' +
+			'#prov-tooltip .prov-cone-chip-meta{display:flex;justify-content:space-between;align-items:baseline;gap:6px;border-top:1px solid rgba(99,102,241,.15);padding-top:4px;}' +
+			'#prov-tooltip .prov-cone-chip-name{font-weight:600;color:#3730a3;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+			'#prov-tooltip .prov-cone-chip-val{color:#0f172a;font-weight:700;font-variant-numeric:tabular-nums;}' +
+			/* Badge line: a one-line description of the chip's role, visible
+			   in the card (not only on hover) so the user can read it as
+			   plain text without needing to wait for the browser tooltip. */
+			'#prov-tooltip .prov-cone-chip-badge{font-size:10px;color:#64748b;font-style:italic;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}' +
+			'#prov-tooltip .prov-cone-chip-foot{display:flex;align-items:center;gap:6px;}' +
 			'#prov-tooltip .prov-cone-chip-barwrap{flex:1;height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;}' +
 			'#prov-tooltip .prov-cone-chip-bar{display:block;height:100%;background:linear-gradient(90deg,#6366f1,#22d3ee);border-radius:3px;}' +
 			'#prov-tooltip .prov-cone-chip-pct{font-variant-numeric:tabular-nums;color:#475569;min-width:42px;text-align:right;}' +
-			'#prov-tooltip .prov-cone-chip-formula{padding-top:4px;color:#1e293b;font-size:11px;overflow-x:auto;}' +
-			'#prov-tooltip .prov-cone-chip-formula .md{margin:0;}' +
 			'#prov-tooltip .prov-cone-row-apex{padding-bottom:4px;}' +
-			'#prov-tooltip .prov-cone-apex{border:1.5px solid #7c3aed;background:linear-gradient(180deg,#f5f3ff,#ede9fe);border-radius:10px;padding:6px 12px;text-align:center;cursor:pointer;box-shadow:0 6px 20px rgba(124,58,237,.18);max-width:100%;}' +
-			'#prov-tooltip .prov-cone-apex:hover{box-shadow:0 10px 28px rgba(124,58,237,.28);}' +
-			'#prov-tooltip .prov-cone-apex-name{font-weight:700;color:#4c1d95;font-size:13px;}' +
-			'#prov-tooltip .prov-cone-apex-val{font-weight:700;font-variant-numeric:tabular-nums;color:#0f172a;font-size:15px;margin-top:1px;}' +
-			'#prov-tooltip .prov-cone-apex-formula{margin-top:4px;color:#1e293b;font-size:11px;overflow-x:auto;}' +
+			/* Apex: the cell the user clicked. Formula is the eye-catcher,
+			   the value sits underneath in big tabular numerals so the user
+			   can spot "the answer" at a glance. */
+			'#prov-tooltip .prov-cone-apex{border:1.5px solid #7c3aed;background:linear-gradient(180deg,#f5f3ff,#ede9fe);border-radius:12px;padding:8px 14px 8px;cursor:pointer;box-shadow:0 8px 24px rgba(124,58,237,.22);max-width:100%;display:flex;flex-direction:column;gap:4px;}' +
+			'#prov-tooltip .prov-cone-apex:hover{box-shadow:0 12px 32px rgba(124,58,237,.32);}' +
+			'#prov-tooltip .prov-cone-apex-formula{color:#0f172a;font-size:14px;line-height:1.4;overflow-x:auto;}' +
 			'#prov-tooltip .prov-cone-apex-formula .md{margin:0;}' +
+			'#prov-tooltip .prov-cone-apex-name{font-weight:700;color:#4c1d95;font-size:12px;font-variant-numeric:tabular-nums;}' +
+			'#prov-tooltip .prov-cone-apex-val{font-weight:700;font-variant-numeric:tabular-nums;color:#0f172a;font-size:18px;}' +
+			'#prov-tooltip .prov-cone-apex .prov-cone-apex-foot{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid rgba(124,58,237,.25);padding-top:4px;}' +
+			'#prov-tooltip .prov-cone-apex-badge{color:#6d28d9;font-size:11px;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
 			'.prov-cell{transition:background .12s;}' +
 			'.prov-cell:hover{background:rgba(99,102,241,.25);cursor:help;border-radius:3px;}' +
 			'.prov-cell.prov-active{background:rgba(99,102,241,.35);}';
@@ -2386,7 +2418,7 @@
 		return d;
 	}
 
-	/* ── "Lichtkegel" (light cone) view ──
+	/* ── "Light Cone" view ──
 	   Visualize the backward closure of the current cell as a literal cone:
 	   the current value sits at the apex, every ancestor sits at a depth
 	   proportional to how far back it is in the network, and the visualization
@@ -2396,7 +2428,16 @@
 	   ring the formulas are sorted by spatial weight (embeddings/older
 	   layers first, same-row siblings last). The slider controls how wide the
 	   cone gets: low values truncate to the top N most influential formulas
-	   (narrow cone), high values show the full backward closure. */
+	   (narrow cone), high values show the full backward closure.
+
+	   Rendering strategy:
+	     • The apex formula is materialised synchronously on open so the user
+	       sees the equation for the cell they clicked *before* the BFS over
+	       the backward closure finishes.
+	     • A spinner is shown in the rest of the canvas while S.importance
+	       walks the DAG in 45 ms chunks.
+	     • Once importance is ready, the rings of formulas render with Temml
+	       formulas lazy-hydrated in chunks so the page never freezes. */
 
 	/* Group the importance list into the cone's pipeline stages. The root
 	   itself is drawn separately at the apex; the remaining nodes are
@@ -2438,6 +2479,43 @@
 		return out;
 	}
 
+	/* Group the importance list by transformer LAYER rather than by pipeline
+	   stage. Each ring in the cone becomes one layer (or the embeddings/PE
+	   bucket), and the ring carries a cumulative percentage that tells the
+	   reader "X% of the influence on this cell comes from layer N". Order
+	   runs current-layer → deepest-layer so the cone widens as we descend
+	   back through the network toward the embeddings. */
+	function _groupByLayer(list, rootId) {
+		var buckets = Object.create(null);
+		var layerPcts = Object.create(null);
+		var maxLayer = 0;
+		for (var i = 0; i < list.length; i++) {
+			var n = list[i];
+			if (n.id === rootId) continue;
+			var layer = _layerOf(n.id);
+			if (!buckets[layer]) buckets[layer] = [];
+			buckets[layer].push(n);
+			layerPcts[layer] = (layerPcts[layer] || 0) + n.percent;
+			if (layer > maxLayer) maxLayer = layer;
+		}
+		var out = [];
+		for (var i = maxLayer; i >= 0; i--) {
+			if (buckets[i] && buckets[i].length) {
+				var label;
+				if (i === 0) label = 'Embeddings & Position';
+				else if (i === maxLayer) label = 'Layer ' + i + ' \u00b7 current';
+				else label = 'Layer ' + i;
+				out.push({
+					layer: i,
+					label: label,
+					list: buckets[i],
+					percent: layerPcts[i]
+				});
+			}
+		}
+		return out;
+	}
+
 	function _renderCone(nodeId, container) {
 		if (!container) return;
 		container.style.display = 'block';
@@ -2445,37 +2523,111 @@
 			_buildCone(container);
 			return;
 		}
-		container.innerHTML = '<div class="prov-cone-loading">Building the light cone of past influences&hellip;</div>';
+		/* Show the apex formula right away (the user clicked a cell, they
+		   want to see its equation immediately) and a spinner for the rest
+		   while the backward-closure BFS runs. */
 		_contribData = null;
+		_containerForCone = container;
+		container.innerHTML = _renderConeApexLoading(nodeId);
+		/* Render the apex formula synchronously so the user sees "this is the
+		   equation for the cell I clicked" the moment the tooltip opens. */
+		var apexBox = container.querySelector('.prov-cone-apex-formula[data-tex]');
+		if (apexBox) _hydrateBox(apexBox);
 		S.importance(nodeId, function (res) {
 			if (!res) return;
+			/* If the user clicked another cell while this BFS was running,
+			   discard the stale result so the newer click's cone takes over. */
+			if (_contribData && _contribData.nodeId !== nodeId) return;
 			_contribData = { nodeId: nodeId, result: res };
-			_buildCone(container);
+			if (_containerForCone === container && _traceView === 'cone') {
+				_buildCone(container);
+			}
 		});
+	}
+
+	/* Skeleton shown while importance is computing: the apex with its full
+	   Temml formula (so the user can read "what's at this cell?" right away)
+	   plus a spinner explaining that the rest is still being assembled. */
+	function _renderConeApexLoading(nodeId) {
+		var root = S._mat(nodeId);
+		if (!root) return '<div class="prov-cone-loading"><div class="prov-cone-spinner"></div><div class="prov-cone-loading-text">Cell not found.</div></div>';
+		var html = [];
+		html.push('<div class="prov-cone-head">' +
+			'<span class="prov-label">Light cone of past influences &middot; ' +
+			texSafe(root.badge) + '</span>' +
+			'<input type="range" class="prov-cone-slider" min="1" max="100" step="1" value="' + _contribThreshold + '" title="Cone width" disabled>' +
+			'<span class="prov-cone-count">computing&hellip;</span>' +
+			'</div>');
+		html.push('<div class="prov-cone-canvas">' +
+			'<svg class="prov-cone-shape" preserveAspectRatio="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+			'<defs>' +
+			'<linearGradient id="provConeGrad" x1="0" y1="0" x2="0" y2="1">' +
+			'<stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>' +
+			'<stop offset="55%" stop-color="#a855f7" stop-opacity="0.18"/>' +
+			'<stop offset="100%" stop-color="#22d3ee" stop-opacity="0.08"/>' +
+			'</linearGradient>' +
+			'<linearGradient id="provConeEdge" x1="0" y1="0" x2="0" y2="1">' +
+			'<stop offset="0%" stop-color="#6366f1" stop-opacity="0.95"/>' +
+			'<stop offset="100%" stop-color="#22d3ee" stop-opacity="0.55"/>' +
+			'</linearGradient>' +
+			'</defs>' +
+			'<polygon points="50,2 2,98 98,98" fill="url(#provConeGrad)" stroke="url(#provConeEdge)" stroke-width="0.6" vector-effect="non-scaling-stroke"/>' +
+			'<line x1="50" y1="2" x2="2" y2="98" stroke="#6366f1" stroke-opacity="0.45" stroke-width="0.3" vector-effect="non-scaling-stroke"/>' +
+			'<line x1="50" y1="2" x2="98" y2="98" stroke="#6366f1" stroke-opacity="0.45" stroke-width="0.3" vector-effect="non-scaling-stroke"/>' +
+			'</svg>');
+		html.push('<div class="prov-cone-row prov-cone-row-apex" style="width:24%">' +
+			'<div class="prov-cone-apex" data-prov-go="' + attrSafe(root.id) + '">' +
+			'<div class="prov-cone-apex-formula" data-tex="' + attrSafe(root.formula) + '"></div>' +
+			'<div class="prov-cone-apex-foot">' +
+			'<span class="prov-cone-apex-name">$' + root.name + '$</span>' +
+			'<span class="prov-cone-apex-val">' + fmt(root.value) + '</span>' +
+			'<span class="prov-cone-apex-badge">' + texSafe(root.badge) + '</span>' +
+			'</div>' +
+			'</div></div>');
+		html.push('<div class="prov-cone-loading">' +
+			'<div class="prov-cone-spinner"></div>' +
+			'<div class="prov-cone-loading-text">Tracing every formula that led to this value&hellip;</div>' +
+			'</div>');
+		html.push('</div>');
+		return html.join('');
 	}
 
 	function _coneFormulaChip(n, maxImp) {
 		var barW = maxImp > 0 ? Math.max(1, Math.round(100 * n.impact / maxImp)) : 0;
 		var hasF = n.node.inputs && n.node.inputs.length;
+		/* The full LaTeX formula (with underbraces) is the main content, so
+		   the user recognises the chip's role by reading the equation just
+		   like the inline ones elsewhere on the page. The identifier, value,
+		   badge ("embedding of 'the'" / "LayerNorm output" / …), and
+		   influence bar live as a compact footer beneath it. */
 		return '<div class="prov-cone-chip" data-prov-go="' + attrSafe(n.id) + '" title="' + texSafe(n.node.badge) + '">' +
-			'<div class="prov-cone-chip-head">' +
+			(hasF ? '<div class="prov-cone-chip-formula" data-tex="' + attrSafe(n.node.formula) + '"></div>' : '<div class="prov-cone-chip-formula"><span class="md">$' + n.node.formula.replace(/^\$\$|\$\$$/g, '') + '$</span></div>') +
+			'<div class="prov-cone-chip-meta">' +
 			'<span class="prov-cone-chip-name">$' + n.node.name + '$</span>' +
 			'<span class="prov-cone-chip-val">' + fmt(n.node.value) + '</span>' +
 			'</div>' +
+			'<div class="prov-cone-chip-badge">' + texSafe(n.node.badge) + '</div>' +
 			'<div class="prov-cone-chip-foot">' +
 			'<span class="prov-cone-chip-barwrap"><i class="prov-cone-chip-bar" style="width:' + barW + '%"></i></span>' +
 			'<span class="prov-cone-chip-pct">' + n.percent.toFixed(1) + '%</span>' +
 			'</div>' +
-			(hasF ? '<div class="prov-cone-chip-formula" data-tex="' + attrSafe(n.node.formula) + '"></div>' : '') +
 			'</div>';
 	}
 
 	function _buildCone(container) {
 		var res = _contribData.result;
 		var root = res.root;
-		var groups = _groupByStage(res.list, res.rootId);
+		var groups = _groupByLayer(res.list, res.rootId);
+		/* Find the maximum layer-percent so the per-layer bar widths are all
+		   scaled to the same axis. The user reads "this ring brings 23% of
+		   the influence" with the bar visually proportional to the largest
+		   ring in the cone. */
+		var maxLayerPct = 0;
+		for (var g = 0; g < groups.length; g++) {
+			if (groups[g].percent > maxLayerPct) maxLayerPct = groups[g].percent;
+		}
 		/* How wide is the cone?  The slider maps to a percentage of the
-		   backward closure. We accumulate formulas group by group in stage
+		   backward closure. We accumulate formulas group by group in layer
 		   order; the cone widens as more formulas are admitted. */
 		var totalBudget = _contribPrefix(res, _contribThreshold);
 		var consumed = 0;
@@ -2488,14 +2640,17 @@
 			var bucket = groups[g].list;
 			var take = Math.min(bucket.length, remaining);
 			coneRows.push({
-				kind: 'stage',
-				stage: groups[g].stage,
-				list: bucket.slice(0, take)
+				kind: 'layer',
+				layer: groups[g].layer,
+				label: groups[g].label,
+				list: bucket.slice(0, take),
+				percent: groups[g].percent,
+				barPct: maxLayerPct > 0 ? Math.max(2, Math.round(100 * groups[g].percent / maxLayerPct)) : 0
 			});
 			consumed += take;
 		}
 		/* Compute the width percentage of each row. The apex is the narrowest
-		   slice (centered, ~16% of the cone width); each subsequent stage is
+		   slice (centered, ~16% of the cone width); each subsequent layer is
 		   wider, ending at 100% for the base. The interpolation is smooth so
 		   the result reads as a continuous cone rather than a stepped
 		   pyramid. */
@@ -2539,18 +2694,29 @@
 			var row = coneRows[i];
 			if (row.kind === 'apex') {
 				var barW = res.maxImpact > 0 ? 100 : 0;
+				/* Apex layout: equation on top (the eye-catcher, Temml-
+				   rendered), then a compact footer with name, big value, and
+				   a badge describing what kind of value this is. */
 				html.push('<div class="prov-cone-row prov-cone-row-apex" style="width:' + row.widthPct + '%">' +
 					'<div class="prov-cone-apex" data-prov-go="' + attrSafe(row.node.id) + '">' +
-					'<div class="prov-cone-apex-name">$' + row.node.name + '$</div>' +
-					'<div class="prov-cone-apex-val">' + fmt(row.node.value) + '</div>' +
 					'<div class="prov-cone-apex-formula" data-tex="' + attrSafe(row.node.formula) + '"></div>' +
+					'<div class="prov-cone-apex-foot">' +
+					'<span class="prov-cone-apex-name">$' + row.node.name + '$</span>' +
+					'<span class="prov-cone-apex-val">' + fmt(row.node.value) + '</span>' +
+					'<span class="prov-cone-apex-badge">' + texSafe(row.node.badge) + '</span>' +
+					'</div>' +
 					'</div></div>');
 			} else {
 				var chipsHtml = row.list.map(function (n) {
 					return _coneFormulaChip(n, res.maxImpact);
 				}).join('');
-				html.push('<div class="prov-cone-row prov-cone-row-stage" style="width:' + row.widthPct + '%">' +
-					'<div class="prov-cone-stage-label">' + texSafe(row.stage) + ' &middot; ' + row.list.length + '</div>' +
+				html.push('<div class="prov-cone-row prov-cone-row-layer" style="width:' + row.widthPct + '%">' +
+					'<div class="prov-cone-layer-head">' +
+					'<span class="prov-cone-layer-name">' + texSafe(row.label) + '</span>' +
+					'<span class="prov-cone-layer-barwrap"><i class="prov-cone-layer-bar" style="width:' + row.barPct + '%"></i></span>' +
+					'<span class="prov-cone-layer-pct">' + row.percent.toFixed(1) + '%</span>' +
+					'<span class="prov-cone-layer-count">' + row.list.length + ' formula' + (row.list.length === 1 ? '' : 's') + '</span>' +
+					'</div>' +
 					'<div class="prov-cone-chips">' + chipsHtml + '</div>' +
 					'</div>');
 			}
@@ -2571,12 +2737,56 @@
 			label.textContent = totalShown.toLocaleString() + ' of ' + res.count.toLocaleString() +
 				' formulas shown (' + cum.toFixed(1) + '% of the influence)';
 		}
-		/* Temml-render every formula box in chunks so the user sees real math
-		   without blocking the UI. */
-		container.addEventListener('scroll', function () {
-			_hydrateTex(container, '.prov-cone-apex-formula[data-tex], .prov-cone-chip-formula[data-tex]', 'data-cone-cursor');
-		});
-		_hydrateTex(container, '.prov-cone-apex-formula[data-tex], .prov-cone-chip-formula[data-tex]', 'data-cone-cursor', 9999);
+		/* Lazy Temml hydration in chunks so big cones don't freeze the UI.
+		   The apex is rendered first (single call) so the user immediately
+		   sees the equation they clicked for; the chips are then hydrated
+		   12 at a time as they scroll into view. */
+		var apex = container.querySelector('.prov-cone-apex-formula[data-tex]');
+		if (apex) _hydrateBox(apex);
+		_hydrateConeChips(container);
+		/* Bind the scroll listener exactly once per container so rebuilds
+		   from slider input don't stack duplicate handlers. */
+		if (!container._coneHydrateBound) {
+			container._coneHydrateBound = true;
+			container.addEventListener('scroll', function () {
+				_hydrateConeChips(container);
+			});
+		}
+	}
+
+	/* Hydrate one Temml formula box synchronously (fast, ~ms). Used for the
+	   apex so the user sees the equation for the cell they clicked the
+	   moment the tooltip opens. */
+	function _hydrateBox(box) {
+		if (!box || box.textContent) return;
+		box.innerHTML = '<span class="md">$$' + box.getAttribute('data-tex') + '$$</span>';
+		if (typeof temml !== 'undefined' && typeof temml.renderMathInElement === 'function') {
+			try { temml.renderMathInElement(box); } catch (e) { /* keep raw */ }
+		}
+	}
+
+	/* Hydrate visible cone-chip formulas in small batches so the page never
+	   freezes. Each pass processes up to 12 chips; the rest are filled in
+	   when the user scrolls. */
+	function _hydrateConeChips(container) {
+		var cursor = +container.getAttribute('data-cone-cursor') || 0;
+		var chips = container.querySelectorAll('.prov-cone-chip-formula[data-tex]');
+		var budget = 12;
+		var i = cursor, done = 0;
+		while (i < chips.length && done < budget) {
+			if (!chips[i].textContent) {
+				_hydrateBox(chips[i]);
+				done++;
+			}
+			i++;
+		}
+		container.setAttribute('data-cone-cursor', i);
+		/* If there are still unrendered chips and the user is near the
+		   bottom, schedule another pass so the cone fills in smoothly. */
+		if (i < chips.length) {
+			var nearEnd = container.scrollTop + container.clientHeight >= container.scrollHeight - 200;
+			if (nearEnd) setTimeout(function () { _hydrateConeChips(container); }, 16);
+		}
 	}
 
 	/* ── "Derivation" view (default) ──
@@ -2741,7 +2951,7 @@
 		var trace = S.fullTrace(nodeId);
 		if (trace && trace.steps.length) {
 			parts.push('<div class="prov-trace-tools">' +
-				'<button class="prov-btn prov-view-btn" data-prov-view="cone">Lichtkegel</button>' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="cone">Light Cone</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="deriv">Derivation</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="contrib">Contributors</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="list">List</button>' +
@@ -2768,7 +2978,7 @@
 			}).join(' &rarr; ') + '</div>');
 		}
 
-		parts.push('<div class="prov-hint">"Lichtkegel" draws the past influences as a cone (apex = this value, base = embeddings). The slider controls the cone width. "Derivation" lists every formula from token embeddings to this value in reading order. "Contributors" sorts them by importance with a slider for the top X%.</div>');
+		parts.push('<div class="prov-hint">"Light Cone" draws the past influences as a cone (apex = this value, base = embeddings). The slider controls the cone width. "Derivation" lists every formula from token embeddings to this value in reading order. "Contributors" sorts them by importance with a slider for the top X%.</div>');
 
 		_tooltip.innerHTML = parts.join('');
 		_tooltip.style.display = 'block';
@@ -2907,8 +3117,8 @@
 
 	function _onDocClick(e) {
 		/* Clicking on an annotated number pins the tooltip and opens the
-		   Lichtkegel (light cone) view directly. Hover is reserved for a quick
-		   peek at the formula; click commits to a deeper analysis. */
+		   Light Cone view directly. Hover is reserved for a quick peek at
+		   the formula; click commits to a deeper analysis. */
 		var cell = e.target && e.target.closest ? e.target.closest('[data-prov-id]') : null;
 		if (cell) {
 			if (_timer) { clearTimeout(_timer); _timer = null; }
