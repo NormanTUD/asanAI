@@ -173,7 +173,8 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	box-shadow: none;
 }
 
-/* Full equation panel — always visible, the currently-active sub-expression glows */
+/* Full equation panel — Temml-rendered math, the currently-active
+   sub-expression is coloured blue by the LaTeX itself. */
 .attn-anatomy-equation {
 	padding: 22px 24px 20px;
 	background: var(--mn-surface, #fff);
@@ -181,37 +182,29 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	border-radius: 10px;
 	margin-bottom: 12px;
 	text-align: center;
-	font-size: 1.15rem;
-	line-height: 2.2;
+	line-height: 2.4;
 	overflow-x: auto;
+	color: var(--mn-text, #1e293b);
 }
 .attn-anatomy-equation .eq-line {
-	margin: 6px 0;
-	white-space: nowrap;
+	margin: 10px 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	flex-wrap: wrap;
 }
-.attn-anatomy-equation .eq-token {
-	display: inline-block;
-	padding: 4px 10px;
-	margin: 0 1px;
-	border-radius: 6px;
-	transition: all 0.25s ease;
-	border: 2px solid transparent;
-}
-.attn-anatomy-equation .eq-token.active {
-	background: rgba(37, 99, 235, 0.18);
-	color: #1e3a8a;
-	font-weight: bold;
-	border-color: rgba(37, 99, 235, 0.55);
-	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-}
-.attn-anatomy-equation .eq-op {
-	color: var(--mn-text-muted, #94a3b8);
-	margin: 0 4px;
-	font-weight: normal;
-}
-.attn-anatomy-equation b {
+.attn-anatomy-equation .eq-line b {
 	color: var(--mn-heading, #1e293b);
-	margin-right: 8px;
+	margin-right: 4px;
+	letter-spacing: 0.2px;
+}
+.attn-anatomy-equation mjx-container {
+	margin: 0 !important;
+	font-size: 1.15rem !important;
+}
+.attn-anatomy-equation mjx-container[display="true"] {
+	display: inline-block !important;
 }
 
 /* "Currently computing" panel — shows the actual numbers being used */
