@@ -113,11 +113,17 @@ https://arxiv.org/html/2505.11611v1
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
-            <select id="train-optimizer" style="padding: 4px;">
-                <option value="adam">Adam</option>
-                <option value="sgd">SGD</option>
-                <option value="rmsprop">RMSProp</option>
-            </select>
+            <div id="train-optimizer" style="display: inline-flex; gap: 12px; align-items: center; font-size: 0.9rem; padding: 4px 0;">
+                <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                    <input type="radio" name="train-optimizer-choice" value="adam" checked> Adam
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                    <input type="radio" name="train-optimizer-choice" value="sgd"> SGD
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
+                    <input type="radio" name="train-optimizer-choice" value="rmsprop"> RMSProp
+                </label>
+            </div>
         </div>
 
 	<button class="btn train-btn" onclick="train_transformer()">Train Model</button>

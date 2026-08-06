@@ -1037,7 +1037,7 @@ function initGlossary() {
 	});
 	var pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
 
-	// Walk text nodes inside #contents (but skip code/pre/math elements)
+	// Walk text nodes inside #contents (but skip code/pre/math/form elements)
 	var walker = document.createTreeWalker(
 		contents,
 		NodeFilter.SHOW_TEXT,
@@ -1049,6 +1049,9 @@ function initGlossary() {
 				var tag = parent.tagName;
 				if (tag === 'CODE' || tag === 'PRE' || tag === 'SCRIPT' || tag === 'STYLE' ||
 					tag === 'SVG') {
+					return NodeFilter.FILTER_REJECT;
+				}
+				if (parent.closest('select, option, input, textarea, button, label[for]')) {
 					return NodeFilter.FILTER_REJECT;
 				}
 				// Skip if inside math element or already has glossary-term

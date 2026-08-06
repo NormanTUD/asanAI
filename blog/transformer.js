@@ -205,7 +205,11 @@ function lockArchitectureControls(lock) {
 		const el = document.getElementById(id);
 		if (!el) return;
 
-		el.disabled = lock;
+		if (el.tagName === 'DIV') {
+			el.querySelectorAll('input,select,textarea,button').forEach(c => { c.disabled = lock; });
+		} else {
+			el.disabled = lock;
+		}
 
 		// Visual feedback: grey out when locked
 		el.style.opacity = lock ? '0.45' : '1';
@@ -1313,7 +1317,7 @@ function initTrainingSession(btn, status) {
 	return {
 		lr:       parseFloat(document.getElementById('train-lr').value) || 0.05,
 		epochs:   parseInt(document.getElementById('train-epochs').value) || 500,
-		optType:  document.getElementById('train-optimizer').value,
+		optType:  (document.querySelector('input[name="train-optimizer-choice"]:checked') || {}).value || 'adam',
 	};
 }
 
