@@ -573,10 +573,18 @@ function getPositionColor(index, total, format = 'rgb') {
 
 function reset_graph() {
 	// The loss panel stays mounted at a fixed 200px so the page never shifts
-	// during training. Clear its contents (placeholder chart) — the next
-	// renderLossGraph() call will redraw it.
+	// during training. Use Plotly.purge so the next Plotly.react() call
+	// re-creates the chart cleanly — clearing innerHTML alone leaves Plotly's
+	// internal state referring to a chart whose DOM is gone, which renders
+	// an empty box.
 	const lp = document.getElementById('training-loss-plot');
-	if (lp) { lp.innerHTML = ''; }
+	if (lp) {
+		if (typeof Plotly !== 'undefined') {
+			try { Plotly.purge(lp); } catch (e) { lp.innerHTML = ''; }
+		} else {
+			lp.innerHTML = '';
+		}
+	}
 	$("#show_training_sentences").hide();
 	const tw = document.getElementById('tda-toggle-training-windows');
 	if (tw) tw.innerText = 'Show training windows';
