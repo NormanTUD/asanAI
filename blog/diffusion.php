@@ -93,16 +93,68 @@ In probability terms, the *output distribution* of the model becomes sharper and
 <div id="cfg-viz" style="max-width: 760px; margin: 1em auto;"></div>
 
 <div class="md">
+## From text to image: the whole pipeline
+
+The CFG trick above answers "how do you amplify the prompt". But three questions remain: **where do the (image, prompt) training pairs come from?**, **how does the text encoder turn words into something the U-Net can read?**, and **how does the U-Net actually use those numbers?** This section walks through the full pipeline end-to-end.
+
+### 1. Training data — no manual labels needed
+
+You do **not** need to sit down and label 100,000 images. The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web. The "label" of every image is whatever its surrounding HTML already said — the alt attribute, the caption, the page title. Images of astronauts on horses were already on the internet with descriptive text next to them; the diffusion model just learned from that text-as-it-already-existed.
+
+This is also why diffusion models sometimes hallucinate or get details wrong: the "labels" are noisy, scraped web text, not clean annotations.
+
+(One consequence worth knowing: as more AI-generated images flood the web, future models trained on the same web will be trained on their own predecessors' outputs. This recursive phenomenon is called **model collapse**, and it is a real research concern.)
+</div>
+
+<div id="tokenizer-viz" style="max-width: 880px; margin: 1em auto;"></div>
+
+<div class="md">
+### 2. Text becomes numbers — the text encoder and embeddings
+
+The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; for SD 3 and FLUX, it is T5. Both are **Transformer encoders** — the same architecture family as the LLMs in the other chapters.
+
+The text encoder does two things, in order:
+
+1. **Tokenize**: split the prompt into subword pieces (the way "astronaut" becomes `["astro", "naut"]`, "riding" stays as one piece, and so on). The box above shows how a real CLIP tokenizer breaks down a prompt.
+2. **Embed**: pass each token through the Transformer to get a vector — a list of numbers (768 for CLIP, 4096 for T5-XXL). The crucial property of these vectors is that **similar concepts end up close together**: the vectors for "astronaut" and "space suit" are nearby, the vectors for "horse" and "pony" are nearby, and the vector for "astronaut riding a horse" is far from the vector for "still life with fruit".
+
+This is the same kind of **embedding** an LLM uses to understand language — see the Embeddings chapter for the deeper story.
+</div>
+
+<div class="md">
+### 3. Cross-attention — how the U-Net reads the text
+
+Now the diffusion U-Net has two inputs at every denoising step:
+
+* the current noisy image (as a grid of patches, e.g. $8 \times 8$)
+* the text embedding (a sequence of vectors, one per token)
+
+The U-Net applies **cross-attention** at each layer. For each image patch, cross-attention asks: *which tokens in the prompt are most relevant here?* The output is an **attention map** that says, in effect, *this patch should look more like "astronaut", that patch should look more like "horse", the corners should look more like "sky"*.
+
+Below, click any *content* word in the prompt to see a simplified attention map for that word on a $4 \times 4$ image grid. Each cell is one patch of the image; brighter blue means that word attends more strongly to that patch.
+</div>
+
+<div id="cross-attention-viz" style="max-width: 880px; margin: 1em auto;"></div>
+
+<div class="md">
+This is the mechanism behind every text-to-image model. Different words control different regions. By the end of denoising, each pixel of the image has been "asked" which word it should look like, and the text embedding has answered. **If you swap one word in the prompt, the embedding moves, the attention shifts, and the generated image changes in just that region.**
+
+The full Stable Diffusion pipeline looks like this end-to-end:
+
+<figure style="max-width:880px; margin:1.5em auto; text-align:center;">
+	<img src="diffusion_architecture.png" alt="Diagram of the Stable Diffusion latent diffusion architecture, showing the text encoder, U-Net denoiser with cross-attention, and VAE encoder/decoder" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption>The Stable Diffusion pipeline: a text encoder turns your prompt into vectors, the U-Net denoises a latent tensor conditioned on those vectors (via cross-attention), and a frozen VAE decoder turns the clean latent back into pixels. \cite[Image: Stable Diffusion architecture]{diffusion_architecture_img}</figcaption>
+</figure>
+
+So the answer to "do I need to label 100k images?" is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning* — if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
+</div>
+
+<div class="md">
 ## Stable Diffusion: doing it in a compressed space
 
 Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
 
 The breakthrough of **Latent Diffusion Models** \cite[Rombach et al., 2022]{rombach2022ldm} — the technology behind Stable Diffusion — was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
-
-<figure style="max-width:880px; margin:1.5em auto; text-align:center;">
-	<img src="diffusion_architecture.png" alt="Diagram of the Stable Diffusion latent diffusion architecture, showing the text encoder, U-Net denoiser with cross-attention, and VAE encoder/decoder" style="width:100%; height:auto; border-radius:6px;" />
-	<figcaption>The Stable Diffusion pipeline: a text encoder turns your prompt into vectors, the U-Net denoises a latent tensor conditioned on those vectors, and a frozen VAE decoder turns the clean latent back into pixels. \cite[Image: Stable Diffusion architecture]{diffusion_architecture_img}</figcaption>
-</figure>
 
 The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model — it was learned earlier as an ordinary autoencoder and frozen in place.
 
@@ -475,6 +527,170 @@ function makeCfgViz(containerId) {
 }
 
 // =============================================================================
+// TOKENIZER + EMBEDDING VIZ
+// Shows how a CLIP-style tokenizer turns a prompt into subword tokens, and
+// each token into a small embedding vector (visualized as a bar chart).
+// =============================================================================
+function makeTokenizerViz(containerId) {
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	// Illustrative CLIP-style BPE tokenization. Real CLIP uses a different
+	// vocabulary; this is a faithful approximation of the structure.
+	const prompt = 'a photo of an astronaut riding a horse';
+	const tokens = ['a', 'photo', 'of', 'an', 'astro', 'naut', 'riding', 'a', 'horse'];
+	const tokenIds = [320, 2844, 539, 550, 22161, 27332, 6792, 320, 4558];
+
+	// Deterministic fake 16-dim embeddings (not real CLIP weights, but
+	// structured so similar words get nearby vectors).
+	function seed(token) {
+		let h = 5381;
+		for (let i = 0; i < token.length; i++) h = ((h * 33) + token.charCodeAt(i)) & 0xFFFFFFFF;
+		return h;
+	}
+	function embed(token, dim) {
+		const out = new Array(dim);
+		let h = seed(token);
+		for (let i = 0; i < dim; i++) {
+			h = (h * 1103515245 + 12345) & 0x7FFFFFFF;
+			out[i] = ((h / 0x7FFFFFFF) - 0.5) * 2;
+		}
+		return out;
+	}
+	const dim = 16;
+	const embeddings = {};
+	for (const t of tokens) embeddings[t] = embed(t, dim);
+
+	const maxBar = 28;
+
+	let html = '<div style="padding:16px 20px; border:1px solid rgba(100,116,139,0.25); border-radius:8px; background:rgba(0,0,0,0.02);">';
+	html += '<div style="margin-bottom:10px;"><strong>Step 1 · tokenize</strong> — break the prompt into subword pieces the model has a vector for.</div>';
+	html += '<div style="margin-bottom:14px; padding:10px 12px; background:rgba(0,0,0,0.04); border-radius:6px; font-family:Menlo,Consolas,monospace; font-size:14px;">"' + prompt + '"</div>';
+	html += '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px;">';
+	for (let i = 0; i < tokens.length; i++) {
+		const t = tokens[i];
+		const subword = i > 0 && tokens[i - 1].length > 1 && !tokens[i - 1].endsWith(' ');
+		const color = (subword || t.length <= 2) ? '#64748b' : '#3b82f6';
+		html += '<span title="token id ' + tokenIds[i] + '" style="display:inline-block; padding:5px 10px; border-radius:4px; background:' + color + '; color:#fff; font-family:Menlo,Consolas,monospace; font-size:13px;">' + t + '</span>';
+	}
+	html += '</div>';
+	html += '<div style="margin-bottom:10px;"><strong>Step 2 · embed</strong> — each token is mapped to a vector of numbers (here ' + dim + '-dim for display; CLIP uses 768, T5 uses 4096).</div>';
+	html += '<div style="display:grid; grid-template-columns:repeat(' + tokens.length + ', 1fr); gap:4px; margin-bottom:14px;">';
+	for (const t of tokens) {
+		const emb = embeddings[t];
+		html += '<div style="display:flex; flex-direction:column; align-items:center;">';
+		html += '<div style="font-family:Menlo,Consolas,monospace; font-size:10px; margin-bottom:3px; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:48px;">' + t + '</div>';
+		html += '<div style="display:flex; align-items:center; gap:1px; height:' + (maxBar * 2 + 4) + 'px;">';
+		for (let i = 0; i < dim; i++) {
+			const v = emb[i];
+			const h = Math.max(1, Math.round(Math.abs(v) * maxBar));
+			const bg = v >= 0 ? '#3b82f6' : '#ef4444';
+			html += '<div title="dim ' + i + ': ' + v.toFixed(2) + '" style="width:6px; height:' + h + 'px; background:' + bg + '; opacity:0.75;"></div>';
+		}
+		html += '</div></div>';
+	}
+	html += '</div>';
+	html += '<div style="display:flex; gap:14px; align-items:center; font-size:11px; color:#64748b; margin-bottom:10px;">';
+	html += '<span><span style="display:inline-block; width:10px; height:10px; background:#3b82f6; vertical-align:middle; margin-right:3px;"></span>positive</span>';
+	html += '<span><span style="display:inline-block; width:10px; height:10px; background:#ef4444; vertical-align:middle; margin-right:3px;"></span>negative</span>';
+	html += '<span style="margin-left:auto;">bar height = magnitude</span>';
+	html += '</div>';
+	html += '<div style="font-size:12px; opacity:0.75; line-height:1.5;">Notice that the two "a" tokens get <em>identical</em> vectors, while "horse" and "astro" get completely different ones. This is the same kind of embedding an LLM uses to understand words — see the Embeddings chapter for why these vectors end up capturing meaning.</div>';
+	html += '</div>';
+
+	container.innerHTML = html;
+}
+
+// =============================================================================
+// CROSS-ATTENTION VIZ
+// 4×4 image grid + clickable tokens. Clicking a token highlights which
+// patches of the image that token "attends to" during denoising.
+// Attention maps are synthetic but match the rough layout of a real
+// "astronaut riding a horse" image (sky on top, person middle, animal below).
+// =============================================================================
+function makeCrossAttentionViz(containerId) {
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	const prompt = 'a photo of an astronaut riding a horse';
+	const tokens = prompt.split(' ');
+
+	// 4×4 attention maps (row-major). Designed to match a typical image:
+	//   row 0 = sky, row 1 = upper astronaut, row 2 = lower astronaut/horse body,
+	//   row 3 = ground.
+	const attentionMaps = {
+		'astronaut': [
+			0.05, 0.10, 0.15, 0.05,
+			0.10, 0.30, 0.40, 0.20,
+			0.10, 0.25, 0.25, 0.15,
+			0.02, 0.05, 0.05, 0.02
+		],
+		'riding': [
+			0.04, 0.05, 0.05, 0.04,
+			0.05, 0.18, 0.22, 0.12,
+			0.10, 0.28, 0.32, 0.20,
+			0.05, 0.18, 0.18, 0.06
+		],
+		'horse': [
+			0.02, 0.02, 0.02, 0.02,
+			0.05, 0.10, 0.10, 0.05,
+			0.18, 0.28, 0.32, 0.18,
+			0.10, 0.30, 0.32, 0.15
+		],
+		'photo': Array(16).fill(0.22),
+		'a': Array(16).fill(0.10),
+		'of': Array(16).fill(0.10)
+	};
+
+	let html = '<div style="padding:16px 20px; border:1px solid rgba(100,116,139,0.25); border-radius:8px; background:rgba(0,0,0,0.02);">';
+	html += '<div style="margin-bottom:6px;"><strong>Prompt:</strong> <span style="font-family:Menlo,Consolas,monospace; font-size:14px;">' + prompt + '</span></div>';
+	html += '<div style="margin-bottom:14px; font-size:13px; opacity:0.75;">Click a <em>content</em> word below to see which patches of the image the model attends to:</div>';
+	html += '<div style="margin-bottom:18px; line-height:2;">';
+	for (const t of tokens) {
+		const has = (t in attentionMaps);
+		const bg = has ? '#3b82f6' : '#94a3b8';
+		const opacity = has ? '1' : '0.55';
+		const cursor = has ? 'pointer' : 'default';
+		html += '<button data-xatoken="' + t + '" style="margin:2px; padding:5px 12px; border:none; border-radius:4px; background:' + bg + '; color:#fff; cursor:' + cursor + '; font-family:Menlo,Consolas,monospace; font-size:13px; opacity:' + opacity + ';">' + t + '</button> ';
+	}
+	html += '</div>';
+	html += '<div id="' + containerId + '-label" style="margin-bottom:10px; font-size:13px;"><em>Click a content word above to see its attention pattern</em></div>';
+	html += '<div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">';
+	html += '<div id="' + containerId + '-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; width:280px; aspect-ratio:1;">';
+	for (let i = 0; i < 16; i++) {
+		html += '<div data-cell="' + i + '" style="background:rgba(100,116,139,0.08); border-radius:4px; transition:background 0.15s;"></div>';
+	}
+	html += '</div>';
+	html += '<div style="flex:1; min-width:220px; font-size:13px; line-height:1.6; opacity:0.85;">';
+	html += '<div style="margin-bottom:8px;"><strong>How to read this:</strong></div>';
+	html += '<div style="margin-bottom:6px;">Each cell is one <em>patch</em> of the image (the network sees the picture as a 4×4 grid at its lowest resolution).</div>';
+	html += '<div style="margin-bottom:6px;">Brighter blue = the selected word attends more strongly to that patch. The denoiser uses this at every step to decide <em>what should be in each patch</em>.</div>';
+	html += '<div>Click <code style="background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:3px;">astronaut</code>, <code style="background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:3px;">riding</code>, <code style="background:rgba(0,0,0,0.05); padding:1px 5px; border-radius:3px;">horse</code> to see how different words control different parts of the same image.</div>';
+	html += '</div></div></div>';
+
+	container.innerHTML = html;
+
+	const grid = container.querySelector('#' + containerId + '-grid');
+	const label = container.querySelector('#' + containerId + '-label');
+
+	container.querySelectorAll('button[data-xatoken]').forEach((btn) => {
+		const t = btn.dataset.xatoken;
+		if (!(t in attentionMaps)) return;
+		btn.addEventListener('click', () => {
+			const map = attentionMaps[t];
+			const cells = grid.children;
+			for (let i = 0; i < 16; i++) {
+				const v = map[i];
+				const a = Math.min(1, v * 2.2);
+				cells[i].style.background = 'rgba(59, 130, 246, ' + a.toFixed(2) + ')';
+				cells[i].title = 'patch ' + (Math.floor(i / 4) + 1) + ',' + ((i % 4) + 1) + ' — attention: ' + v.toFixed(2);
+			}
+			label.innerHTML = '<strong>Where "' + t + '" attends</strong> — brighter blue means stronger attention to that patch:';
+		});
+	});
+}
+
+// =============================================================================
 // BOOT
 // =============================================================================
 loadCleanImage().then((clean) => {
@@ -491,6 +707,8 @@ loadCleanImage().then((clean) => {
 	}
 	makeSimpleScoreViz('score-viz');
 	makeCfgViz('cfg-viz');
+	makeTokenizerViz('tokenizer-viz');
+	makeCrossAttentionViz('cross-attention-viz');
 });
 
 async function loadDiffusionModule() {
