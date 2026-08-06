@@ -51,10 +51,11 @@ Not every topic sparks the same curiosity for everyone. Some readers live for th
 
 Look at the top-right corner of the page — next to the **dark-mode toggle** you'll find a small <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button. Click it to open the **interest picker**:
 
-* **Tell us who you are.** Pick your *profile* (Curious / Student / Engineer / Researcher) and your *level* (HS / Undergrad / Grad / PhD). Each combination is a curated topic set, so most readers find a sensible default in two clicks. **Math is split into Math I / II / III** so an HS reader doesn't get shoved into graduate-level integrals.
-* **Only one axis?** Picking just *Curious* or just *HS* saves that choice without forcing the other — you can fill in the second axis later, or just tune the topic grid by hand.
+* **Tell us who you are.** Pick your *profile* (Curious / Student / Engineer / Researcher) and your *level* (High School / Undergrad / Grad / PhD). Each combination is a curated topic set, so most readers find a sensible default in two clicks. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals.
+* **Only one axis?** Picking just *Curious* or just *High School* saves that choice without forcing the other — you can fill in the second axis later, or just tune the topic grid by hand.
 * **Turn it off any time.** Click the active button again, or hit *Clear*, to disable the audience filter and pick topics manually.
-* **Quick presets** still work too: *Show Everything* turns every topic on, *Just Essentials* keeps only the big-picture ones (history, philosophy, language), and *Technical Essentials* adds the fachinformatiker-level core (math I & II, statistics, programming, architecture) on top.
+* **Quick presets** still work too: *Show Everything* turns every topic on, *Just Essentials* keeps only the big-picture ones (history, philosophy, language), *Technical Essentials* adds the fachinformatiker-level core (math I & II, statistics, programming, architecture) on top, and *Disable All* mutes everything in one click (handy for a clean slate).
+* **Oops?** Every change is undoable while the picker is open — press **Ctrl/⌘+Z** to undo, **Ctrl/⌘+Shift+Z** (or Ctrl+Y) to redo, or use the *Undo* / *Redo* buttons at the bottom of the picker.
 * **Fine-tune below.** Toggle individual topics — sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, so you can still see they exist (and click once to peek if curiosity strikes).
 * **Your choices are saved in a cookie** — they survive reloads and travel with you between pages. No account, no signup.
 

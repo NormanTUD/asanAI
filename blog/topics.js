@@ -68,10 +68,10 @@
 		{ id: 'researcher', label: 'Researcher', hint: 'academic / R&D in AI' }
 	];
 	const LEVELS = [
-		{ id: 'hs',       label: 'HS',       hint: 'High school level' },
-		{ id: 'undergrad',label: 'Undergrad',hint: 'Undergraduate / Bachelor' },
-		{ id: 'grad',     label: 'Grad',     hint: 'Graduate / Master\'s' },
-		{ id: 'phd',      label: 'PhD',      hint: 'PhD / research level' }
+		{ id: 'hs',       label: 'High School',hint: 'High school level' },
+		{ id: 'undergrad',label: 'Undergrad', hint: 'Undergraduate / Bachelor' },
+		{ id: 'grad',     label: 'Grad',      hint: 'Graduate / Master\'s' },
+		{ id: 'phd',      label: 'PhD',       hint: 'PhD / research level' }
 	];
 
 	/* 4 × 4 = 16 audience presets. Each cell lists the topics that
@@ -232,12 +232,14 @@
 	}
 
 	function setEnabled(topicId, enabled) {
+		pushHistory();
 		const m = activeMap();
 		m[topicId] = !!enabled;
 		persist(m);
 	}
 
 	function setAll(value) {
+		pushHistory();
 		const m = {};
 		TOPICS.forEach(function (t) { m[t.id] = !!value; });
 		persist(m);
@@ -246,6 +248,7 @@
 	/** enable exactly the topics whose id appears in `enabledIds`,
 	    disable everything else. Unknown ids are silently skipped. */
 	function applyPreset(enabledIds) {
+		pushHistory();
 		const allow = {};
 		(enabledIds || []).forEach(function (id) { allow[cssSafe(id)] = true; });
 		const m = {};
@@ -259,6 +262,71 @@
 		fireChange();
 	}
 
+	/* ── 2b. Undo / redo history (per-session, in memory only) ──
+	   Every user-initiated change pushes the previous state onto an
+	   undo stack; Ctrl/Cmd+Z walks back, Ctrl/Cmd+Shift+Z (or Y)
+	   walks forward. The keyboard listener only fires while the
+	   overlay is open so we never hijack the browser's own undo
+	   on form fields. */
+	const HISTORY_MAX = 50;
+	const undoStack = [];
+	const redoStack = [];
+
+	function snapshotPref() {
+		const p = activePref();
+		return { topics: Object.assign({}, p.topics), profile: p.profile, level: p.level };
+	}
+
+	function pushHistory() {
+		undoStack.push(snapshotPref());
+		if (undoStack.length > HISTORY_MAX) undoStack.shift();
+		redoStack.length = 0;
+		updateUndoButtons();
+	}
+
+	function restoreSnapshot(snap) {
+		persistPref({
+			topics: Object.assign({}, snap.topics),
+			profile: snap.profile,
+			level: snap.level
+		});
+	}
+
+	function undo() {
+		if (undoStack.length === 0) return false;
+		redoStack.push(snapshotPref());
+		if (redoStack.length > HISTORY_MAX) redoStack.shift();
+		restoreSnapshot(undoStack.pop());
+		return true;
+	}
+
+	function redo() {
+		if (redoStack.length === 0) return false;
+		undoStack.push(snapshotPref());
+		if (undoStack.length > HISTORY_MAX) undoStack.shift();
+		restoreSnapshot(redoStack.pop());
+		return true;
+	}
+
+	function updateUndoButtons() {
+		const u = document.getElementById('topics-undo');
+		const r = document.getElementById('topics-redo');
+		if (u) {
+			u.disabled = undoStack.length === 0;
+			u.classList.toggle('topics-undo-empty', undoStack.length === 0);
+			u.title = undoStack.length === 0
+				? 'Nothing to undo'
+				: 'Undo last change (Ctrl/⌘+Z)';
+		}
+		if (r) {
+			r.disabled = redoStack.length === 0;
+			r.classList.toggle('topics-undo-empty', redoStack.length === 0);
+			r.title = redoStack.length === 0
+				? 'Nothing to redo'
+				: 'Redo (Ctrl/⌘+Shift+Z)';
+		}
+	}
+
 	/** apply the curated (profile, level) audience preset and remember
 	    the selection. Unknown ids are silently skipped. */
 	function applyAudience(profile, level) {
@@ -267,6 +335,7 @@
 		(cell || []).forEach(function (id) { allow[cssSafe(id)] = true; });
 		const topics = {};
 		TOPICS.forEach(function (t) { topics[t.id] = !!allow[t.id]; });
+		pushHistory();
 		persistPref({
 			topics: topics,
 			profile: cell ? profile : null,
@@ -281,6 +350,7 @@
 		const cur = activePref();
 		if (profile !== undefined) cur.profile = profile || null;
 		if (level   !== undefined) cur.level   = level   || null;
+		pushHistory();
 		persistPref(cur);
 	}
 
@@ -301,6 +371,7 @@
 			return;
 		}
 		const cur = activePref();
+		pushHistory();
 		persistPref({
 			topics: cur.topics,
 			profile: cleanProfile,
@@ -403,9 +474,20 @@
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
 					'<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>',
 					'<button type="button" data-preset="technical" class="topics-preset-btn">Technical Essentials</button>',
+					'<button type="button" data-preset="none" class="topics-preset-btn topics-preset-off">Disable All</button>',
 				'</div>',
 				'<div class="topics-grid" id="topics-grid"></div>',
 				'<footer class="topics-footer">',
+					'<div class="topics-undo-group" role="group" aria-label="History">',
+						'<button type="button" id="topics-undo" class="topics-undo-btn" aria-label="Undo">',
+							'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>',
+							'<span>Undo</span>',
+						'</button>',
+						'<button type="button" id="topics-redo" class="topics-undo-btn" aria-label="Redo">',
+							'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>',
+							'<span>Redo</span>',
+						'</button>',
+					'</div>',
 					'<span class="topics-count" id="topics-count"></span>',
 					'<span class="topics-hint">Saved automatically · 🍪</span>',
 				'</footer>',
@@ -422,6 +504,11 @@
 				if (p === 'all') setAll(true);
 				else if (p === 'essentials') applyPreset(PRESETS.essentials);
 				else if (p === 'technical') applyPreset(PRESETS.technical);
+				else if (p === 'none') {
+					pushHistory();
+					setAll(false);
+					flashHint('All topics muted · Ctrl/⌘+Z to undo');
+				}
 				renderAudienceSelection();
 			});
 		});
@@ -455,12 +542,46 @@
 			});
 		}
 
-		// Escape closes
+		const undoBtn = document.getElementById('topics-undo');
+		const redoBtn = document.getElementById('topics-redo');
+		if (undoBtn) undoBtn.addEventListener('click', function () { undo(); });
+		if (redoBtn) redoBtn.addEventListener('click', function () { redo(); });
+
+		// Escape closes; Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z undo/redo while
+		// the overlay is visible (we don't hijack the browser undo
+		// outside the picker).
 		document.addEventListener('keydown', function (e) {
-			if (e.key === 'Escape' && overlay.classList.contains('open')) {
+			if (!overlay.classList.contains('open')) return;
+			if (e.key === 'Escape') {
+				e.preventDefault();
 				closeOverlay();
+				return;
+			}
+			const mod = e.metaKey || e.ctrlKey;
+			if (!mod) return;
+			const k = e.key.toLowerCase();
+			if (k === 'z' && !e.shiftKey) {
+				e.preventDefault();
+				if (undo()) flashHint('Undid last change · Ctrl/⌘+Shift+Z to redo');
+			} else if ((k === 'z' && e.shiftKey) || k === 'y') {
+				e.preventDefault();
+				if (redo()) flashHint('Redid · Ctrl/⌘+Z to undo');
 			}
 		});
+	}
+
+	let _hintTimer = null;
+	function flashHint(msg) {
+		const hint = document.getElementById('topics-audience-hint');
+		if (!hint) return;
+		const orig = hint.textContent;
+		hint.textContent = msg;
+		hint.classList.add('topics-hint-flash');
+		if (_hintTimer) clearTimeout(_hintTimer);
+		_hintTimer = setTimeout(function () {
+			hint.classList.remove('topics-hint-flash');
+			renderAudienceSelection();
+		}, 1600);
 	}
 
 	function renderGrid() {
@@ -538,6 +659,7 @@
 		ensureOverlay();
 		renderGrid();
 		renderAudienceSelection();
+		updateUndoButtons();
 		const o = document.getElementById('topics-overlay');
 		o.classList.add('open');
 		o.setAttribute('aria-hidden', 'false');
@@ -916,7 +1038,12 @@
 		setAll: setAll,
 		applyPreset: applyPreset,
 		applyAudience: applyAudience,
+		applyAudiencePartial: applyAudiencePartial,
 		setAudienceSelection: setAudienceSelection,
+		undo: undo,
+		redo: redo,
+		canUndo: function () { return undoStack.length > 0; },
+		canRedo: function () { return redoStack.length > 0; },
 		openOverlay: openOverlay,
 		closeOverlay: closeOverlay,
 		renderInlineWidget: renderInlineWidget,
