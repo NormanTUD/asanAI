@@ -148,86 +148,20 @@ So the answer to "do I need to label 100k images?" is: **no** for pretraining (t
 </div>
 
 <div class="md">
-## What's the network? — `model.summary()`
+## What's the network?
 
-If you typed `model.summary()` on the Stable Diffusion denoiser and scrolled past the noise, here is roughly what you'd see. The denoiser is **not** a stack of dense layers. It is a hybrid of:
+It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 
-* **convolutions** to handle the 2D spatial structure of images efficiently,
-* **attention** (self- and cross-) to let pixels "talk" to each other and to the text prompt,
-* **skip connections** so gradients can flow through hundreds of layers,
-* a **U-Net** structure: an encoder that downsamples, a bottleneck, a decoder that upsamples back.
+* **2D convolutions** — slide filters over the latent to detect local patterns
+* **ResBlocks** — `Conv → Norm → SiLU → Conv` plus a skip connection
+* **GroupNorm + SiLU** — normalization and the smooth $x \cdot \sigma(x)$ activation
+* **Self-attention** at the lower resolutions — pixels talk to each other across the whole image
+* **Cross-attention** at the lower resolutions — pixels attend to the text tokens (this is the conditioning)
+* **Skip connections** from each encoder block to the matching decoder block
+* **Sinusoidal time embedding** for the timestep $t$, injected into every block
 
-The only fully-connected (dense) layers in the whole thing are tiny MLPs for embedding the time step and (sometimes) for output projection. Everything else is convolution or attention.
+The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5 has ~860 M parameters. The forward pass per denoising step: encode $t$, run the noisy latent down through four encoder blocks, apply self- and cross-attention at the bottleneck, run back up through four decoder blocks with skip connections, output the predicted noise.
 
-### `model.summary()` for Stable Diffusion 1.5 (simplified)
-
-```
-─────────────────────────────────────────────────────────────────────
-Layer (type)                  Output Shape            # parameters
-─────────────────────────────────────────────────────────────────────
-time_embed (sinusoidal + MLP)  (B, 1280)               ~1.5 M
-text_embed (cross-attn input)  (B, 77, 1280)          340 M  (frozen CLIP)
-down_blocks[0] Res×2 + Attn    (B, 320, 64, 64)       ~18 M
-down_blocks[1] Res×2 + Attn    (B, 640, 32, 32)       ~65 M
-down_blocks[2] Res×2 + Attn    (B, 1280, 16, 16)     ~230 M
-down_blocks[3] Res×2 + Attn    (B, 1280,  8,  8)     ~230 M
-mid_block  Res + SelfAttn + CrossAttn  (B, 1280, 8, 8) ~250 M
-up_blocks[3] skip + Res×2 + Attn  (B, 1280, 16, 16)  ~230 M
-up_blocks[2] skip + Res×2 + Attn  (B, 1280, 16, 16)  ~230 M
-up_blocks[1] skip + Res×2 + Attn  (B,  640, 32, 32)   ~65 M
-up_blocks[0] skip + Res×2 + Attn  (B,  320, 64, 64)   ~18 M
-out_conv 2D                     (B, 4, 64, 64)         ~6 K
-─────────────────────────────────────────────────────────────────────
-Trainable: ~860 M   (excluding frozen CLIP text encoder)
-```
-
-(`B` = batch size. `Attn` = attention block, present only at the lower-resolution stages where the spatial size is small enough that the $O(n^2)$ cost of attention is affordable.)
-
-### The building blocks — most of which you already know
-
-| Block | What it does | Where it is explained |
-|---|---|---|
-| Sinusoidal time embedding | Map a scalar $t \in [0, 1]$ to a 1280-dim vector the network can read | transformer.php |
-| 2D Convolution | Slide a small filter over the image to detect local patterns (edges, textures, …) | visionlab.php |
-| ResBlock | `Conv → Norm → SiLU → Conv` plus a skip connection — the basic "do something and add it back" unit | resnetlab.php |
-| GroupNorm | Normalize per group of channels — works at small batch sizes where BatchNorm fails | normalizationlab.php |
-| SiLU activation | $x \cdot \sigma(x)$, the smooth cousin of ReLU (also called Swish) | activationlab.php |
-| Self-Attention | Each spatial position attends to every other one — captures global structure | transformer.php |
-| Cross-Attention | Each spatial position attends to text tokens — this is *conditioning* | this chapter, just above |
-| Skip connections | Pass encoder features to the matching decoder layer — preserves fine detail and gradient flow | resnetlab.php |
-| U-Net structure | encoder (downsamples) → bottleneck → decoder (upsamples), with skip connections at every resolution | visionlab.php |
-
-The pieces you have already seen in other chapters — convolutions, attention, skip connections, normalization, activations — are exactly the building blocks of the diffusion U-Net. Diffusion is **not a new architecture family**; it is a new *training objective* (predict the noise, MSE) applied to the same toolkit.
-
-### The forward pass, in plain English
-
-For each denoising step on one image:
-
-1. Take the noisy latent (shape $4 \times 64 \times 64$) and the timestep $t$.
-2. Encode $t$ as a 1280-dim vector via the sinusoidal time embedding.
-3. Pass the noisy latent through four encoder blocks. At each block, halve the spatial size and double the channels. Save the output of each block (these are the *skip connections*).
-4. At the bottleneck ($8 \times 8$), apply self-attention (pixels talk to pixels) and cross-attention (pixels attend to text tokens).
-5. Pass through four decoder blocks, each upsampling and concatenating with the matching skip from the encoder.
-6. A final 2D convolution produces the noise prediction — four channels at $64 \times 64$, the same shape as the input latent.
-
-That is the entire forward pass. The same recipe, applied iteratively a thousand times with different $t$ (each $t$ using the noise prediction from the previous step), produces an image.
-
-### How this differs from a vanilla classifier
-
-A plain image classifier (the kind in the early chapters) is a stack of conv layers + dense layers + softmax:
-
-```
-Conv → Pool → Conv → Pool → … → Flatten → Dense → Dense → softmax
-```
-
-The diffusion U-Net has the same convolutions and the same dense layers, but adds four things:
-
-* an **encoder-decoder** structure (so it can operate at multiple resolutions simultaneously and recover fine detail),
-* **attention** at the lower resolutions (so it can route information across the image, not just through local convolutions),
-* a **time-conditioning** pathway (so the same network can behave differently at different noise levels — its job changes as $t$ goes from 1 to 0),
-* a **text-conditioning** pathway (so the same network can behave differently for different prompts — exactly the cross-attention section above).
-
-Those four additions are what turn a plain classifier into a denoising U-Net.
 </div>
 
 <div class="md">
