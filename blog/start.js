@@ -829,8 +829,17 @@ function isLightHex(hex) {
 	return (0.299 * r + 0.587 * g + 0.114 * b) > 200;
 }
 
+let _lastAdaptedTheme = null;
 function adaptLabsToTheme() {
 	var isDark = document.documentElement.classList.contains('dark');
+	// Skip if theme hasn't changed since the last full scan.
+	// This is called by a body-wide MutationObserver on every DOM change
+	// (e.g. every training epoch). Without this guard, the full
+	// querySelectorAll + style-set pass repeats thousands of times and
+	// dominates training runtime. New DOM nodes added at the current theme
+	// are already styled correctly by the JS that creates them.
+	if (_lastAdaptedTheme === isDark) return;
+	_lastAdaptedTheme = isDark;
 	var LAB_BG = '#1e293b';
 	var LAB_TEXT = '#e2e8f0';
 	var LAB_TEXT_SEC = '#94a3b8';
