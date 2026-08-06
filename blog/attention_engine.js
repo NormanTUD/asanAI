@@ -774,18 +774,6 @@ class AttentionEngine {
 `;
 	}
 
-	_findScrollParent(el) {
-		let node = el.parentElement;
-		while (node) {
-			const style = getComputedStyle(node);
-			if (/(auto|scroll)/.test(style.overflow + style.overflowY)) {
-				return node;
-			}
-			node = node.parentElement;
-		}
-		return null; // falls back to window
-	}
-
 	_morphHtml(container, newHtml) {
 		// Quick check: if identical, do nothing
 		if (container.innerHTML === newHtml) return false;
@@ -808,21 +796,8 @@ class AttentionEngine {
 			container.style.overflow = 'hidden';
 		}
 
-		// Save scroll position of nearest scrollable ancestor
-		const scrollParent = this._findScrollParent(container);
-		const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
-		const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
-
 		// Atomic swap
 		container.replaceChildren(...offscreen.childNodes);
-
-		// Restore scroll position before the browser paints
-		if (scrollParent) {
-			scrollParent.scrollTop = savedScrollTop;
-			scrollParent.scrollLeft = savedScrollLeft;
-		} else {
-			window.scrollTo(savedScrollLeft, savedScrollTop);
-		}
 
 		// NOTE: Height lock is NOT released here.
 		// The caller is responsible for releasing after post-processing
@@ -860,24 +835,6 @@ class AttentionEngine {
 			});
 
 		return { layerData, hd, displayTokens };
-	}
-
-	_saveScroll(referenceEl) {
-		const scrollParent = this._findScrollParent(referenceEl);
-		return {
-			scrollParent,
-			scrollTop: scrollParent ? scrollParent.scrollTop : window.scrollY,
-			scrollLeft: scrollParent ? scrollParent.scrollLeft : window.scrollX
-		};
-	}
-
-	_restoreScroll(saved) {
-		if (saved.scrollParent) {
-			saved.scrollParent.scrollTop = saved.scrollTop;
-			saved.scrollParent.scrollLeft = saved.scrollLeft;
-		} else {
-			window.scrollTo(saved.scrollLeft, saved.scrollTop);
-		}
 	}
 
 	_lockHeight(el) {
@@ -961,16 +918,13 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	}
 
 	/**
-	 * Atomically swaps the content of a head div with new HTML,
-	 * preserving the user's scroll position.
+	 * Atomically swaps the content of a head div with new HTML.
 	 */
 	_swapHeadDivContent(headDiv, html) {
 		const offscreen = document.createElement('div');
 		offscreen.innerHTML = html;
 
-		const savedScroll = this._saveScroll(headDiv);
 		headDiv.replaceChildren(...offscreen.childNodes);
-		this._restoreScroll(savedScroll);
 	}
 
 	/**
@@ -1061,7 +1015,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 		if (!this._hasWeightsChanged(layerIdx, headIdx, hd.this_weights)) return;
 
-		const savedScroll = this._saveScroll(headDiv);
 		this._lockHeight(headDiv);
 
 		this._patchSvgViews(layerIdx, headIdx);
@@ -1070,15 +1023,13 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const { needsTemml, equationsContainer, resultContainer } =
 			this._morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData);
 
-		this._restoreScroll(savedScroll);
-
 		if (needsTemml) {
 			render_temml();
 			this._annotateHead(headDiv, layerIdx, headIdx);
 		}
 
 		this._unlockMorphedContainers(equationsContainer, resultContainer);
-		this._snapAndScheduleHeightUnlock(headDiv, savedScroll);
+		this._snapAndScheduleHeightUnlock(headDiv);
 	}
 
 	_unlockMorphedContainers(equationsContainer, resultContainer) {
@@ -1139,12 +1090,10 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		);
 	}
 
-	_snapAndScheduleHeightUnlock(el, savedScroll) {
+	_snapAndScheduleHeightUnlock(el) {
 		const newNaturalHeight = el.scrollHeight;
 		el.style.minHeight = newNaturalHeight + 'px';
 		el.style.maxHeight = newNaturalHeight + 'px';
-
-		this._restoreScroll(savedScroll);
 
 		el._heightUnlockRafId = requestAnimationFrame(() => {
 			el._heightUnlockRafId = null;
