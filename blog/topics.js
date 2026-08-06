@@ -626,7 +626,7 @@
 				'</button>',
 			'</div>',
 			'<div class="inline-topics-grid">' + tilesHtml + '</div>',
-			'<p class="inline-topics-foot">Or use the small <strong>🎯 button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
+			'<p class="inline-topics-foot">Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
 		].join('');
 
 		host.querySelector('.inline-topics-open').addEventListener('click', openOverlay);

@@ -49,7 +49,7 @@ This site is not a book to be read passively. It is designed as a playground for
 
 Not every topic sparks the same curiosity for everyone. Some readers live for the equations. Others want the philosophical questions. Others want the hardware details. Others just want to know how to talk to ChatGPT well. This course is too long to consume in one shape, so it adapts to **you**.
 
-Look at the top-right corner of the page — next to the **dark-mode toggle** you'll find a small 🎯 button. Click it to open the **interest picker**:
+Look at the top-right corner of the page — next to the **dark-mode toggle** you'll find a small <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button. Click it to open the **interest picker**:
 
 * **Toggle a topic** and the rest of the site quietly rearranges itself: sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, so you can still see they exist (and click once to peek if curiosity strikes).
 * **Your choices are saved in a cookie** — they survive reloads and travel with you between pages. No account, no signup.
