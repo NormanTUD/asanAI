@@ -237,48 +237,150 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	transform: none;
 	box-shadow: none;
 }
+
+/* Full equation panel — always visible, the currently-active sub-expression glows */
+.attn-anatomy-equation {
+	padding: 22px 24px 20px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 10px;
+	margin-bottom: 12px;
+	text-align: center;
+	font-size: 1.15rem;
+	line-height: 2.2;
+	overflow-x: auto;
+}
+.attn-anatomy-equation .eq-line {
+	margin: 6px 0;
+	white-space: nowrap;
+}
+.attn-anatomy-equation .eq-token {
+	display: inline-block;
+	padding: 4px 10px;
+	margin: 0 1px;
+	border-radius: 6px;
+	transition: all 0.25s ease;
+	border: 2px solid transparent;
+}
+.attn-anatomy-equation .eq-token.active {
+	background: rgba(37, 99, 235, 0.18);
+	color: #1e3a8a;
+	font-weight: bold;
+	border-color: rgba(37, 99, 235, 0.55);
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+.attn-anatomy-equation .eq-op {
+	color: var(--mn-text-muted, #94a3b8);
+	margin: 0 4px;
+	font-weight: normal;
+}
+.attn-anatomy-equation b {
+	color: var(--mn-heading, #1e293b);
+	margin-right: 8px;
+}
+
+/* "Currently computing" panel — shows the actual numbers being used */
+.attn-anatomy-computation {
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 10px;
+	padding: 16px 20px;
+	margin-bottom: 12px;
+}
+.attn-anatomy-computation .comp-header {
+	font-weight: bold;
+	color: #2563eb;
+	margin-bottom: 12px;
+	font-size: 0.95rem;
+}
+.attn-anatomy-computation .comp-body {
+	font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace;
+	font-size: 0.88rem;
+	line-height: 1.7;
+}
+.attn-anatomy-computation .comp-row {
+	display: flex;
+	gap: 12px;
+	padding: 2px 0;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+.attn-anatomy-computation .comp-var {
+	color: #2563eb;
+	font-weight: bold;
+	min-width: 140px;
+	flex-shrink: 0;
+}
+.attn-anatomy-computation .comp-calc {
+	color: var(--mn-text, #1e293b);
+	flex: 1;
+	min-width: 200px;
+}
+.attn-anatomy-computation .comp-result {
+	color: #059669;
+	font-weight: bold;
+	min-width: 130px;
+	text-align: right;
+	flex-shrink: 0;
+}
+.attn-anatomy-computation .comp-note {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px dashed var(--mn-border, #e2e8f0);
+	color: var(--mn-text-muted, #64748b);
+	font-family: inherit;
+	font-style: italic;
+	font-size: 0.85rem;
+}
+.attn-anatomy-computation .comp-row.highlighted {
+	background: rgba(37, 99, 235, 0.06);
+	border-radius: 6px;
+	padding: 4px 8px;
+	margin: 2px -4px;
+}
 </style>
 
 <div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
-            margin:15px 0; max-width:840px; margin-left:auto; margin-right:auto;">
+            margin:15px 0; max-width:880px; margin-left:auto; margin-right:auto;">
 
-	<div style="text-align:center; margin-bottom:12px;">
-		<span style="font-size:1.05rem; font-weight:bold; color:var(--mn-text, #1e293b);">
+	<div style="text-align:center; margin-bottom:14px;">
+		<span style="font-size:1.08rem; font-weight:bold; color:var(--mn-text, #1e293b);">
 			Build the Attention Equation from the Inside Out
 		</span>
-		<div style="font-size:0.78rem; color:var(--mn-text-secondary, #64748b); margin-top:3px;">
-			Use <b>Next</b> / <b>Previous</b> to peel off each layer of the formula. The matching underbrace and the 2D vector scene below update together.
+		<div style="font-size:0.8rem; color:var(--mn-text-secondary, #64748b); margin-top:4px;">
+			Each click reveals the next layer of the formula. The active sub-expression glows in the equation, the actual numbers appear in the <b>Currently computing</b> panel, and the 2D vector scene below shows the geometry.
 		</div>
 	</div>
 
-	<!-- Controls sit ABOVE the plot (no auto-play, no reset) -->
+	<!-- Controls sit ABOVE the plot -->
 	<div class="attn-anatomy-header">
 		<button id="attn-anatomy-prev">← Previous</button>
 		<div class="step-info">
 			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
 			<span class="step-total">of 8</span>
-			<span id="attn-anatomy-step-title">— The Cast</span>
+			<span id="attn-anatomy-step-title">— The Players</span>
 		</div>
 		<button id="attn-anatomy-next">Next →</button>
 	</div>
 
-	<!-- 2D plot: vectors in the plane -->
-	<div id="attn-anatomy-2d" style="height: 460px; background: var(--mn-surface, #fff);
+	<!-- 1) Full equation, always visible, with the active part glowing -->
+	<div id="attn-anatomy-equation" class="attn-anatomy-equation"></div>
+
+	<!-- 2) Currently computing panel: shows the actual numbers for this step -->
+	<div id="attn-anatomy-computation" class="attn-anatomy-computation"></div>
+
+	<!-- 3) 2D vector plot: the geometric view -->
+	<div id="attn-anatomy-2d" style="height: 420px; background: var(--mn-surface, #fff);
 									border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
 
-	<!-- Score bars: numeric state of the computation -->
+	<!-- 4) Score bars: numeric state of the computation -->
 	<div id="attn-anatomy-bars" style="height: 220px; background: var(--mn-surface, #fff);
 									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
 
-	<!-- Equation with underbraces -->
-	<div id="attn-anatomy-equation" style="padding: 38px 18px 32px; background: var(--mn-surface, #fff);
-											border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;
-											text-align:center; font-size:1.1rem; line-height:2.4; overflow-x:auto;"></div>
-
-	<!-- Description panel -->
+	<!-- 5) Description panel -->
 	<div id="attn-anatomy-desc" style="padding: 14px 18px; background: var(--mn-surface, #fff);
 									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;
-									   line-height:1.55; font-size:0.92rem; min-height:60px;"></div>
+									   line-height:1.55; font-size:0.92rem;"></div>
 </div>
 
 <div class="md">

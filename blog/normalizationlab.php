@@ -188,10 +188,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <!-- Input Chart -->
     <div style="
         position: relative;
-        background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%);
+        background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0.03) 100%);
         padding: 22px;
         border-radius: 20px;
-        border: 1px solid rgba(99,102,241,0.12);
+        border: 1px solid rgba(99,102,241,0.2);
         box-shadow:
             0 8px 32px -8px rgba(99,102,241,0.10),
             0 2px 8px -2px rgba(0,0,0,0.04);
@@ -216,10 +216,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <!-- Output Chart -->
     <div style="
         position: relative;
-        background: linear-gradient(160deg, #ffffff 0%, #f0fdf4 100%);
+        background: linear-gradient(160deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.03) 100%);
         padding: 22px;
         border-radius: 20px;
-        border: 1px solid rgba(16,185,129,0.12);
+        border: 1px solid rgba(16,185,129,0.2);
         box-shadow:
             0 8px 32px -8px rgba(16,185,129,0.10),
             0 2px 8px -2px rgba(0,0,0,0.04);
