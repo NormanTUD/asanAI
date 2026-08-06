@@ -287,48 +287,246 @@ const ATTN_2D = (function() {
 //   'values' → query + values (step 7)
 //   'output' → values + weighted values + output z with tip-to-tail (step 8)
 // `barMode` decides what the bar chart shows (see renderBars).
+// `computation` picks a template that shows the actual numerical math.
+// `eqActive` lists the regions of the equation that should glow on this step.
 const ATTN_STEPS = [
 	{
-		title: 'The Cast',
-		desc: 'Every token has a <b>Query</b> <b style="color:#ef4444">q</b> and three <b>Keys</b> <b style="color:#2563eb">k₁</b>, <b style="color:#3b82f6">k₂</b>, <b style="color:#60a5fa">k₃</b>. They live in a d<sub>k</sub>=2 dimensional plane. Look how <b style="color:#2563eb">k₁</b> points almost the same direction as <b style="color:#ef4444">q</b> — that will be the winner.',
+		title: 'The Players',
+		computation: 'setup',
+		eqActive: [],
+		desc: 'Every token has a <b>Query</b> <b style="color:#ef4444">q</b> (red, "what am I looking for?") and three <b>Keys</b> <b style="color:#2563eb">k₁</b>, <b style="color:#3b82f6">k₂</b>, <b style="color:#60a5fa">k₃</b> (blue, "here is what I contain"). They live in a d<sub>k</sub>=2 dimensional plane. Look how <b style="color:#2563eb">k₁</b> points almost the same direction as <b style="color:#ef4444">q</b> — that one will win.',
 		mode: 'keys', barMode: 'none'
 	},
 	{
 		title: 'Element-wise product',
-		desc: 'The dot product is two scalar products summed: <b>q[1]·k₁[1] + q[2]·k₁[2]</b>. Each product captures alignment along one axis. The orange bar chart below shows the two components for k₁.',
+		computation: 'components',
+		eqActive: ['dot'],
+		desc: 'The dot product is built from component products: <b>q[1]·k₁[1] + q[2]·k₁[2]</b>. Each product captures alignment along one axis. k₂ and k₃ are dimmed to focus on what is being computed for k₁.',
 		mode: 'keys', highlightKey: 0, barMode: 'components'
 	},
 	{
-		title: 'The dot product q · kⱼ',
-		desc: 'Add the two products to get a single scalar score per key. A <b>large positive</b> score means q and kⱼ point the same direction; <b>negative</b> means opposite. k₁ wins because it is closest to q.',
+		title: 'Sum: the dot product q · kⱼ',
+		computation: 'dot',
+		eqActive: ['dot'],
+		desc: 'Add the components for each key: <b>q·k₁</b> = 0.900 + 0.180 = <b>1.080</b>. Positive score = same direction; negative = opposite. k₁ wins because it points closest to q.',
 		mode: 'keys', barMode: 'scores'
 	},
 	{
 		title: 'Scale by 1/√d_k',
-		desc: 'Dividing by √2 keeps the variance of scores near 1, regardless of d<sub>k</sub>. In a real Transformer with d<sub>k</sub>=64 this prevents softmax from saturating to a one-hot vector.',
+		computation: 'scaled',
+		eqActive: ['sqrt'],
+		desc: 'Divide each score by √2 ≈ 1.414. This keeps the variance of scores near <b>1</b> regardless of d<sub>k</sub> — without it, softmax in a real d<sub>k</sub>=64 Transformer would saturate to a hard one-hot.',
 		mode: 'keys', barMode: 'scaled'
 	},
 	{
-		title: 'Exponentiate',
-		desc: 'Apply exp() to each score. This <b>amplifies differences</b>: e² ≈ 7.39 but e¹ ≈ 2.72. The largest score starts to dominate the next step.',
+		title: 'Exponentiate: eˢᶜᵒʳᵉ',
+		computation: 'exps',
+		eqActive: ['exp'],
+		desc: 'Apply exp() to each scaled score. Differences <b>amplify</b>: the largest score (0.764) becomes 2.146, but a small score (0.127) only grows to 0.881. The biggest input starts to dominate.',
 		mode: 'keys', barMode: 'exps'
 	},
 	{
-		title: 'Normalize via softmax',
-		desc: 'Divide each exp(score) by the sum of all exp(scores). The three numbers now sum to <b>100%</b> — a probability distribution. These are the <b>attention weights</b> α<sub>ij</sub>.',
+		title: 'Normalize (softmax)',
+		computation: 'weights',
+		eqActive: ['denom'],
+		desc: 'Divide each exp(score) by the <b>sum</b> of all three. The numbers now sum to exactly 1 — a probability distribution. These are the <b>attention weights</b> α<sub>ij</sub>: α₁=60.2%, α₂=24.7%, α₃=15.1%.',
 		mode: 'keys', barMode: 'weights'
 	},
 	{
 		title: 'Switch to value vectors',
-		desc: 'Now drop the keys and bring in the <b>Value</b> vectors <b style="color:#16a34a">v₁</b>, <b style="color:#15803d">v₂</b>, <b style="color:#166534">v₃</b> (green). They live in a separate subspace and carry the actual semantic content. The attention weights carry over unchanged.',
+		computation: 'values',
+		eqActive: ['value'],
+		desc: 'Drop the keys. Bring in the <b>Value</b> vectors <b style="color:#16a34a">v₁</b>, <b style="color:#15803d">v₂</b>, <b style="color:#166534">v₃</b> (green) — they live in a separate subspace and carry the actual semantic content. The attention weights carry over unchanged.',
 		mode: 'values', barMode: 'weights'
 	},
 	{
 		title: 'Weighted sum → output z',
-		desc: 'Compute <b>z = α₁v₁ + α₂v₂ + α₃v₃</b>. The dark green arrows are the scaled vectors αⱼvⱼ; the dashed gray chain is the tip-to-tail construction that adds them up. The final <b style="color:#f59e0b">z</b> (orange) is their sum — and it lives <b>inside the convex hull</b> of v₁, v₂, v₃.',
+		computation: 'output',
+		eqActive: ['sum', 'alpha', 'value'],
+		desc: 'Compute <b>z = α₁v₁ + α₂v₂ + α₃v₃</b>. Each value is scaled by its weight (the dark-green dashed arrows), then tip-to-tail added together (gray dashed chain). The final <b style="color:#f59e0b">z</b> (orange) lives <b>inside the convex hull</b> of v₁, v₂, v₃ — attention can only interpolate.',
 		mode: 'output', barMode: 'weights'
 	}
 ];
+
+// Per-step "Currently computing" panels. Each shows the actual numerical
+// computation on the real data, so the user sees exactly what the active
+// sub-expression of the equation is doing with concrete numbers.
+const ATTN_COMPUTATIONS = {
+	setup: () => `
+		<div class="comp-header">▶ The Players — inputs to the equation</div>
+		<div class="comp-body">
+			<div class="comp-row"><span class="comp-var">q</span>  <span class="comp-calc">= [ 1.00,  0.40 ]</span></div>
+			<div class="comp-row"><span class="comp-var">k₁</span> <span class="comp-calc">= [ 0.90,  0.45 ]   ("cat")</span></div>
+			<div class="comp-row"><span class="comp-var">k₂</span> <span class="comp-calc">= [-0.50,  0.80 ]   ("dog")</span></div>
+			<div class="comp-row"><span class="comp-var">k₃</span> <span class="comp-calc">= [-0.60, -0.70 ]   ("sat")</span></div>
+			<div class="comp-note">No computation yet — these are the inputs the equation will operate on.</div>
+		</div>
+	`,
+	components: () => `
+		<div class="comp-header">▶ Currently computing: q[d] · k₁[d] (element-wise product)</div>
+		<div class="comp-body">
+			<div class="comp-row highlighted">
+				<span class="comp-var">q[1] · k₁[1]</span>
+				<span class="comp-calc">= (1.00) × (0.90)</span>
+				<span class="comp-result">= 0.900</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">q[2] · k₁[2]</span>
+				<span class="comp-calc">= (0.40) × (0.45)</span>
+				<span class="comp-result">= 0.180</span>
+			</div>
+			<div class="comp-note">Two scalar products, one per dimension. Next step: add them.</div>
+		</div>
+	`,
+	dot: () => {
+		const k = ATTN_2D.keys;
+		const s = ATTN_2D.scores;
+		return `
+		<div class="comp-header">▶ Currently computing: q · kⱼ (sum of components)</div>
+		<div class="comp-body">
+			<div class="comp-row highlighted">
+				<span class="comp-var">q · k₁</span>
+				<span class="comp-calc">= (1.00)(0.90) + (0.40)(0.45) = 0.900 + 0.180</span>
+				<span class="comp-result">= ${s[0].toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">q · k₂</span>
+				<span class="comp-calc">= (1.00)(-0.50) + (0.40)(0.80) = -0.500 + 0.320</span>
+				<span class="comp-result">= ${s[1].toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">q · k₃</span>
+				<span class="comp-calc">= (1.00)(-0.60) + (0.40)(-0.70) = -0.600 - 0.280</span>
+				<span class="comp-result">= ${s[2].toFixed(3)}</span>
+			</div>
+			<div class="comp-note">Positive score = same direction as q. Negative = opposite.</div>
+		</div>`;
+	},
+	scaled: () => {
+		const s = ATTN_2D.scores;
+		const sc = ATTN_2D.scaled;
+		return `
+		<div class="comp-header">▶ Currently computing: (q · kⱼ) / √dₖ (variance control)</div>
+		<div class="comp-body">
+			<div class="comp-row highlighted">
+				<span class="comp-var">${s[0].toFixed(3)} / √2</span>
+				<span class="comp-calc">= ${s[0].toFixed(3)} / 1.414</span>
+				<span class="comp-result">= ${sc[0].toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">${s[1].toFixed(3)} / √2</span>
+				<span class="comp-calc">= ${s[1].toFixed(3)} / 1.414</span>
+				<span class="comp-result">= ${sc[1].toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">${s[2].toFixed(3)} / √2</span>
+				<span class="comp-calc">= ${s[2].toFixed(3)} / 1.414</span>
+				<span class="comp-result">= ${sc[2].toFixed(3)}</span>
+			</div>
+			<div class="comp-note">Keeps the variance of scores near 1, regardless of dₖ.</div>
+		</div>`;
+	},
+	exps: () => {
+		const sc = ATTN_2D.scaled;
+		const ex = ATTN_2D.exps;
+		return `
+		<div class="comp-header">▶ Currently computing: exp(score) (amplify differences)</div>
+		<div class="comp-body">
+			<div class="comp-row highlighted">
+				<span class="comp-var">e<sup>${sc[0].toFixed(3)}</sup></span>
+				<span class="comp-calc"></span>
+				<span class="comp-result">= ${ex[0].toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">e<sup>${sc[1].toFixed(3)}</sup></span>
+				<span class="comp-calc"></span>
+				<span class="comp-result">= ${ex[1].toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">e<sup>${sc[2].toFixed(3)}</sup></span>
+				<span class="comp-calc"></span>
+				<span class="comp-result">= ${ex[2].toFixed(3)}</span>
+			</div>
+			<div class="comp-note">The largest input (${sc[0].toFixed(3)}) dominates after exp(): ${ex[0].toFixed(3)} ≫ ${ex[2].toFixed(3)}.</div>
+		</div>`;
+	},
+	weights: () => {
+		const ex = ATTN_2D.exps;
+		const w = ATTN_2D.weights;
+		const sum = ex.reduce((a, b) => a + b, 0);
+		return `
+		<div class="comp-header">▶ Currently computing: softmax (divide by the sum)</div>
+		<div class="comp-body">
+			<div class="comp-row">
+				<span class="comp-var">Sum</span>
+				<span class="comp-calc">= ${ex[0].toFixed(3)} + ${ex[1].toFixed(3)} + ${ex[2].toFixed(3)}</span>
+				<span class="comp-result">= ${sum.toFixed(3)}</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">α₁</span>
+				<span class="comp-calc">= ${ex[0].toFixed(3)} / ${sum.toFixed(3)}</span>
+				<span class="comp-result">= ${w[0].toFixed(3)} (${(w[0]*100).toFixed(1)}%)</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">α₂</span>
+				<span class="comp-calc">= ${ex[1].toFixed(3)} / ${sum.toFixed(3)}</span>
+				<span class="comp-result">= ${w[1].toFixed(3)} (${(w[1]*100).toFixed(1)}%)</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">α₃</span>
+				<span class="comp-calc">= ${ex[2].toFixed(3)} / ${sum.toFixed(3)}</span>
+				<span class="comp-result">= ${w[2].toFixed(3)} (${(w[2]*100).toFixed(1)}%)</span>
+			</div>
+			<div class="comp-note">Three weights sum to 100% — a probability distribution over the keys.</div>
+		</div>`;
+	},
+	values: () => `
+		<div class="comp-header">▶ Currently switching from keys to value vectors</div>
+		<div class="comp-body">
+			<div class="comp-row highlighted"><span class="comp-var">v₁</span> <span class="comp-calc">= [ 0.80,  0.55 ]</span></div>
+			<div class="comp-row highlighted"><span class="comp-var">v₂</span> <span class="comp-calc">= [-0.30,  0.70 ]</span></div>
+			<div class="comp-row highlighted"><span class="comp-var">v₃</span> <span class="comp-calc">= [-0.70, -0.55 ]</span></div>
+			<div class="comp-row" style="margin-top:8px;">
+				<span class="comp-var">weights (carry over)</span>
+				<span class="comp-calc">α₁=${(ATTN_2D.weights[0]*100).toFixed(1)}%, α₂=${(ATTN_2D.weights[1]*100).toFixed(1)}%, α₃=${(ATTN_2D.weights[2]*100).toFixed(1)}%</span>
+			</div>
+			<div class="comp-note">Keys told us WHAT to attend to. Values carry the actual content.</div>
+		</div>
+	`,
+	output: () => {
+		const w = ATTN_2D.weights;
+		const v = ATTN_2D.vals;
+		const wv = ATTN_2D.weightedVals;
+		const z = ATTN_2D.output;
+		const fmt = n => (n >= 0 ? ' ' : '') + n.toFixed(3);
+		const fmtPct = n => (n*100).toFixed(1) + '%';
+		return `
+		<div class="comp-header">▶ Currently computing: z = Σⱼ αⱼ · vⱼ (weighted sum)</div>
+		<div class="comp-body">
+			<div class="comp-row highlighted">
+				<span class="comp-var">α₁ · v₁</span>
+				<span class="comp-calc">= ${fmtPct(w[0])} × [${fmt(v[0][0])}, ${fmt(v[0][1])}]</span>
+				<span class="comp-result">= [${fmt(wv[0][0])}, ${fmt(wv[0][1])}]</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">α₂ · v₂</span>
+				<span class="comp-calc">= ${fmtPct(w[1])} × [${fmt(v[1][0])}, ${fmt(v[1][1])}]</span>
+				<span class="comp-result">= [${fmt(wv[1][0])}, ${fmt(wv[1][1])}]</span>
+			</div>
+			<div class="comp-row highlighted">
+				<span class="comp-var">α₃ · v₃</span>
+				<span class="comp-calc">= ${fmtPct(w[2])} × [${fmt(v[2][0])}, ${fmt(v[2][1])}]</span>
+				<span class="comp-result">= [${fmt(wv[2][0])}, ${fmt(wv[2][1])}]</span>
+			</div>
+			<div class="comp-row" style="margin-top:10px; padding-top:8px; border-top:1px dashed #cbd5e1;">
+				<span class="comp-var"><b>z</b></span>
+				<span class="comp-calc">= [${fmt(wv[0][0])} + ${fmt(wv[1][0])} + ${fmt(wv[2][0])}, ${fmt(wv[0][1])} + ${fmt(wv[1][1])} + ${fmt(wv[2][1])}]</span>
+				<span class="comp-result"><b>= [${fmt(z[0])}, ${fmt(z[1])}]</b></span>
+			</div>
+			<div class="comp-note">z is a convex combination — it lies <b>inside the triangle</b> formed by v₁, v₂, v₃.</div>
+		</div>`;
+	}
+};
 
 const AttentionAnatomy = {
 	step: 0,
@@ -366,36 +564,27 @@ const AttentionAnatomy = {
 		this.render();
 	},
 
-	// Build the static equation with underbrace spans. Each underbrace
-	// lists the step numbers (1-indexed) for which it should glow.
+	// Build the FULL equation once. Each sub-expression is tagged with
+	// a `data-region` attribute so highlightEquation() can light up the
+	// part currently being computed.
 	buildEquation: function() {
 		const eq = document.getElementById('attn-anatomy-equation');
 		eq.innerHTML = `
-			<div>
-				<b style="color:var(--mn-heading, #1e293b);">Output:</b>
-				&#x2009;z<sub>i</sub> =
-				<span class="attn-ub" data-step="8">
-					&#x2211;<sub>j</sub>
-					<span class="attn-ub-inline" data-step="6,7,8">&#945;<sub>ij</sub></span>
-					&#x2009;&#xb7;&#x2009;
-					<span class="attn-ub-inline" data-step="7,8">v<sub>j</sub></span>
-					<span class="attn-ub-label">weighted sum of values</span>
-				</span>
+			<div class="eq-line">
+				<b>Output:</b> z<sub>i</sub> =
+				<span class="eq-token" data-region="sum">Σ<sub>j</sub></span>
+				<span class="eq-token" data-region="alpha">α<sub>ij</sub></span>
+				<span class="eq-op">·</span>
+				<span class="eq-token" data-region="value">v<sub>j</sub></span>
 			</div>
-			<div style="margin-top: 18px;">
-				<b style="color:var(--mn-heading, #1e293b);">Weights:</b>
-				&#x2009;&#945;<sub>ij</sub> =
-				<span class="attn-ub-inline" data-step="5">exp</span>
-				&#x2009;(
-				<span class="attn-ub-inline" data-step="2,3">q<sub>i</sub>&#xb7;k<sub>j</sub></span>
-				<span style="margin: 0 4px; color:var(--mn-text-muted, #94a3b8);">/</span>
-				<span class="attn-ub-inline" data-step="4">&#x221a;d<sub>k</sub></span>
-				&#x2009;)
-				<span style="margin: 0 6px; color:var(--mn-text-muted, #94a3b8);">&#xf7;</span>
-				<span class="attn-ub" data-step="6">
-					&#x2211;<sub>n</sub> exp(q<sub>i</sub>&#xb7;k<sub>n</sub> / &#x221a;d<sub>k</sub>)
-					<span class="attn-ub-label">denominator: sum over all keys</span>
-				</span>
+			<div class="eq-line">
+				<b>Weight:</b> α<sub>ij</sub> =
+				<span class="eq-token" data-region="exp">exp</span>(
+				<span class="eq-token" data-region="dot">q<sub>i</sub>·k<sub>j</sub></span>
+				<span class="eq-op">/</span>
+				<span class="eq-token" data-region="sqrt">√d<sub>k</sub></span>)
+				<span class="eq-op">÷</span>
+				<span class="eq-token" data-region="denom">Σ<sub>n</sub> exp(q<sub>i</sub>·k<sub>n</sub>/√d<sub>k</sub>)</span>
 			</div>
 		`;
 	},
@@ -409,12 +598,24 @@ const AttentionAnatomy = {
 		const descEl = document.getElementById('attn-anatomy-desc');
 		if (descEl) descEl.innerHTML = `<b style="color:#2563eb;">${data.title}.</b> ${data.desc}`;
 
+		this.renderComputation(data);
 		this.render2D(data);
 		this.renderBars(data);
 		this.highlightEquation();
 
 		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
 		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
+	},
+
+	// Populate the "Currently computing" panel with the actual numerical
+	// computation for this step. Shows real numbers so the user can see
+	// exactly what the active sub-expression of the equation does.
+	renderComputation: function(data) {
+		const el = document.getElementById('attn-anatomy-computation');
+		if (!el) return;
+		const fn = ATTN_COMPUTATIONS[data.computation];
+		if (fn) el.innerHTML = fn();
+		else el.innerHTML = '';
 	},
 
 	// ─── 2D vector scene ────────────────────────────────────────────

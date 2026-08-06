@@ -461,7 +461,7 @@ async function loadNormalizationModule() {
     // picks up the new palette on the next call.
     if (window.__MN_DARK) {
         window.__MN_DARK.onChange(() => {
-            try { NormLab.process(); } catch (e) { /* ignore */ }
+            try { NormLab.renderTable('input-table', NormLab.data); NormLab.process(); } catch (e) { /* ignore */ }
             try { if (typeof initGroupNormLab === 'function') initGroupNormLab(); } catch (e) { /* ignore */ }
         });
     }
