@@ -6,18 +6,39 @@
     <title>TFJS Loss-Landscape & Optimizer-Trajektorien</title>
     <script src="tf/tf.min.js"></script>
     <script src="libs/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="libs/temml/Temml-Local.css">
+    <script src="libs/temml/temml.min.js"></script>
     <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            },
-            svg: {
-                fontCache: 'global'
+        "use strict";
+
+        function render_manual_temml(root) {
+            if (!root) root = document;
+            if (!window.temml) return;
+
+            var scope = (root instanceof Element || root instanceof DocumentFragment) ? root : document;
+            var elements = scope.querySelectorAll(".temml_me");
+            for (var i = 0; i < elements.length; i++) {
+                var e = elements[i];
+                if (e.dataset.rendered === "1") continue;
+
+                var latex = (e.textContent || "").trim();
+                if (!latex) continue;
+
+                try {
+                    var displayMode = e.dataset.display === "1";
+                    e.innerHTML = window.temml.renderToString(latex, { displayMode: displayMode });
+                    e.dataset.rendered = "1";
+                } catch (err) {
+                    console.error("loss_landscape temml error:", err, "\n" + latex);
+                }
             }
-        };
-    </script>
-    <script type="text/javascript" id="MathJax-script" async
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function() { render_manual_temml(document); });
+        } else {
+            render_manual_temml(document);
+        }
     </script>
     <link rel="stylesheet" href="loss_landscape.css">
     <style>
@@ -75,10 +96,10 @@
         padding-right: 10px; /* Kleiner Puffer rechts */
     }
 
-    /* Stellt sicher, dass der MathJax-Inhalt den verfügbaren Platz nutzt */
+    /* Stellt sicher, dass der Temml-Inhalt den verfügbaren Platz nutzt */
     .deviation-row span.math-content {
         flex-grow: 1;
-        /* Wichtig: MathJax-Formeln sind oft zentriert. Wir setzen sie linksbündig */
+        /* Wichtig: Temml-Formeln sind oft zentriert. Wir setzen sie linksbündig */
         text-align: left; 
     }
 
@@ -738,20 +759,20 @@ function getColorForDeviation(error, maxAbsError) {
         switch (activation) {
             case 'relu':
                 actFunc = `\\operatorname{ReLU}(z)`;
-                actDesc = `$$y = \\operatorname{ReLU}(\\mathbf{W}x + b) = \\max(0, \\mathbf{W}x + b)$$`;
+                actDesc = `y = \\operatorname{ReLU}(\\mathbf{W}x + b) = \\max(0, \\mathbf{W}x + b)`;
                 break;
             case 'sigmoid':
                 actFunc = `\\sigma(z)`;
-                actDesc = `$$y = \\sigma(\\mathbf{W}x + b) = \\frac{1}{1 + e^{-(\\mathbf{W}x + b)}}$$`;
+                actDesc = `y = \\sigma(\\mathbf{W}x + b) = \\frac{1}{1 + e^{-(\\mathbf{W}x + b)}}`;
                 break;
             case 'tanh':
                 actFunc = `\\tanh(z)`;
-                actDesc = `$$y = \\tanh(\\mathbf{W}x + b)$$`;
+                actDesc = `y = \\tanh(\\mathbf{W}x + b)`;
                 break;
             case 'linear':
             default:
                 actFunc = `z`;
-                actDesc = `$$y = \\mathbf{W}x + b$$`;
+                actDesc = `y = \\mathbf{W}x + b`;
                 break;
         }
 
@@ -760,29 +781,24 @@ function getColorForDeviation(error, maxAbsError) {
             container.innerHTML = `
                 <h4>Netzwerk-Gleichung (Aktivierungsfunktion: ${activation})</h4>
                 <div class="math-row">
-                    ${actDesc}
+                    <div class="temml_me" data-display="1">${actDesc}</div>
                 </div>
                 <h4>Aktuelle Gewichte und Bias</h4>
                 <div class="math-row" id="${containerId}-weights"></div>
                 <h4>Approximation der Trainingsdaten</h4>
                 <div id="${containerId}-approximation"></div>
             `;
-            // MathJax muss nach dem Setzen des HTML aufgerufen werden
-            if (window.MathJax) {
-                 window.MathJax.typeset([container]);
-            }
+            render_manual_temml(container);
         }
 
         // 2. Aktualisiere Gewichts- und Bias-Werte
         const weightsContainer = document.getElementById(`${containerId}-weights`);
         if (weightsContainer) {
              const weight_math = `
-                 $$\\mathbf{W} = \\begin{pmatrix} ${w.toFixed(4)} \\end{pmatrix}, \\quad b = ${b.toFixed(4)}$$
+                 <div class="temml_me" data-display="1">\\mathbf{W} = \\begin{pmatrix} ${w.toFixed(4)} \\end{pmatrix}, \\quad b = ${b.toFixed(4)}</div>
              `;
              weightsContainer.innerHTML = weight_math;
-             if (window.MathJax) {
-                 window.MathJax.typeset([weightsContainer]);
-             }
+             render_manual_temml(weightsContainer);
         }
 
         // 3. Berechne und aktualisiere die Approximationen
@@ -849,13 +865,13 @@ function getColorForDeviation(error, maxAbsError) {
                     <div class="deviation-row">
                         <div class="deviation-indicator" style="background-color: ${color};" title="Abweichung: ${error.toFixed(4)}"></div>
                         <span class="math-content">
-                            $$
+                            <div class="temml_me" data-display="1">
                                 y_{${i}} = ${y_true.toFixed(4)} \\approx \\hat{y}_{${i}} = ${y_pred.toFixed(4)}
                                 \\quad \\text{für } x_{${i}} = ${x.toFixed(4)}
-                            $$
+                            </div>
                         </span>
                         <span class="error-metrics" style="color: ${color};">
-                            Abs. Fehler: $|\\Delta y| = |${absError.toFixed(4)}|$<br>
+                            Abs. Fehler: <span class="temml_me">|\\Delta y| = |${absError.toFixed(4)}|</span><br>
                             Rel. Fehler: ${relativeErrorPercent}
                         </span>
                     </div>
@@ -864,10 +880,7 @@ function getColorForDeviation(error, maxAbsError) {
             }
 
             approxContainer.innerHTML = approxHtml;
-            // MathJax muss erneut aufgerufen werden, um die neuen Formeln zu rendern
-            if (window.MathJax) {
-                 window.MathJax.typeset([approxContainer]);
-            }
+            render_manual_temml(approxContainer);
         }
     }
 
