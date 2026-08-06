@@ -841,14 +841,15 @@ const AttentionAnatomy = {
 		});
 	},
 
-	// Highlight the underbraces whose data-step attribute includes
-	// the current 1-indexed step number.
+	// Glow the sub-expression(s) of the equation that the current step
+	// is computing. The step's `eqActive` is an array of region names
+	// that match `data-region` attributes in the equation HTML.
 	highlightEquation: function() {
-		const stepNum = this.step + 1;
-		document.querySelectorAll('#attn-anatomy-equation .attn-ub, #attn-anatomy-equation .attn-ub-inline')
+		const data = ATTN_STEPS[this.step];
+		const activeRegions = new Set(data.eqActive || []);
+		document.querySelectorAll('#attn-anatomy-equation [data-region]')
 			.forEach(el => {
-				const steps = (el.dataset.step || '').split(',').map(Number);
-				if (steps.includes(stepNum)) el.classList.add('active');
+				if (activeRegions.has(el.dataset.region)) el.classList.add('active');
 				else el.classList.remove('active');
 			});
 	}
