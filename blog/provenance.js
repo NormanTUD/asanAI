@@ -589,11 +589,69 @@
 
 	/* The underbrace label: when it contains LaTeX math notation (\ , _, ^,
 	   {, ~) render it in math mode; otherwise treat it as plain text inside
-	   \text{...}. This keeps both `W^q_{0}[0]` and `posEmbedScalar` correct. */
+	   \text{...}. This keeps both `W^q_{0}[0]` and `posEmbedScalar` correct.
+
+	   Even when the label is a math-mode expression, the *text* parts
+	   (multi-letter identifiers like `in`, `out`, `FFN`, `scores`, `causal`)
+	   must be wrapped in \text{} so they render upright, otherwise Temml
+	   typesets them in math-italic and `h_{in}` shows up as "h subscript
+	   italic-in" instead of "h subscript upright-in". We wrap multi-letter
+	   Latin runs but leave single-letter identifiers (q, k, v, s, i, j, p,
+	   n, W, …) and Greek letters (α, μ, σ, ω, Δ) as math variables, which
+	   is the standard convention. */
 	function _under(label) {
 		var s = String(label);
-		if (/[\\_^{~]/.test(s)) return s;
+		if (/[\\_^{~]/.test(s)) return _labelWrapText(s);
 		return '\\text{' + texSafe(s) + '}';
+	}
+
+	/* Walk a math-mode label and wrap every multi-letter Latin run in
+	   \text{...} so it renders upright. Single letters, digits, LaTeX
+	   commands, math operators, braces and punctuation are passed through
+	   unchanged. */
+	function _labelWrapText(s) {
+		var out = '';
+		var i = 0;
+		while (i < s.length) {
+			var c = s[i];
+			if (c === '\\') {
+				/* LaTeX command: keep the backslash and the command name
+				   intact so \sqrt, \mathrm, \sum etc. still work. */
+				var j = i + 1;
+				while (j < s.length && /[a-zA-Z]/.test(s[j])) j++;
+				out += s.slice(i, j);
+				i = j;
+			} else if (/[A-Za-z]/.test(c)) {
+				/* Run of Latin letters. Single-letter runs are typical math
+				   variables (q, k, v, s, W, …) and stay italic; multi-letter
+				   runs are words/text and get \text{} so they stand upright. */
+				var j = i;
+				while (j < s.length && /[A-Za-z]/.test(s[j])) j++;
+				var run = s.slice(i, j);
+				if (run.length === 1) {
+					out += run;
+				} else {
+					out += '\\text{' + run + '}';
+				}
+				i = j;
+			} else {
+				out += c;
+				i++;
+			}
+		}
+		return out;
+	}
+
+	/* HTML-safe escaping for badge / title strings. Unlike texSafe this only
+	   escapes the four HTML-significant characters so plain text identifiers
+	   like `h_in[p][:]` show up verbatim instead of `h\_in[p][\:]`. */
+	function htmlSafe(s) {
+		if (typeof s !== 'string') s = String(s);
+		return s
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;');
 	}
 
 	function _ub(tex, label) {
@@ -968,13 +1026,19 @@
 		}
 		var val = _gval(base + ':scores', p, j);
 		/* Causal mask: token p must not attend to token j > p, so the score is
-		   replaced by -1e9 (the product above is NOT the result). Show both. */
+		   replaced by -1e9 (the product above is NOT the result). For masked
+		   positions we hide the product — showing it would be misleading because
+		   the score is never computed from it. The chips for q and k are kept
+		   (drilling in is still informative) but the formula just states the
+		   masked value and the reason. */
 		var masked = j > p;
-		var formula = 's_{' + p + ',' + j + '} = ' + _ub(fmt(inv), '1/\\sqrt{d_k}') +
-			'\\cdot\\left( ' + _plusTerms(terms, 3) + '\\right)';
-		formula += masked
-			? '\\;\\longrightarrow\\;' + _ub(fmt(val), 'causal mask: token ' + p + ' cannot attend to token ' + j + ' (j > i)')
-			: ' = ' + _ub(fmt(val), 'score');
+		var formula;
+		if (masked) {
+			formula = 's_{' + p + ',' + j + '} = ' + _ub(fmt(val), 'masked (j > i, causal)');
+		} else {
+			formula = 's_{' + p + ',' + j + '} = ' + _ub(fmt(inv), '1/\\sqrt{d_k}') +
+				'\\cdot\\left( ' + _plusTerms(terms, 3) + '\\right) = ' + _ub(fmt(val), 'score');
+		}
 		return _node({
 			id: base + ':scores:' + p + ':' + j,
 			value: val,
@@ -2581,7 +2645,7 @@
 			'<div class="prov-cone-apex-foot">' +
 			'<span class="prov-cone-apex-name">$' + root.name + '$</span>' +
 			'<span class="prov-cone-apex-val">' + fmt(root.value) + '</span>' +
-			'<span class="prov-cone-apex-badge">' + texSafe(root.badge) + '</span>' +
+			'<span class="prov-cone-apex-badge">' + htmlSafe(root.badge) + '</span>' +
 			'</div>' +
 			'</div></div>');
 		html.push('<div class="prov-cone-loading">' +
@@ -2600,13 +2664,13 @@
 		   like the inline ones elsewhere on the page. The identifier, value,
 		   badge ("embedding of 'the'" / "LayerNorm output" / …), and
 		   influence bar live as a compact footer beneath it. */
-		return '<div class="prov-cone-chip" data-prov-go="' + attrSafe(n.id) + '" title="' + texSafe(n.node.badge) + '">' +
+		return '<div class="prov-cone-chip" data-prov-go="' + attrSafe(n.id) + '" title="' + htmlSafe(n.node.badge) + '">' +
 			(hasF ? '<div class="prov-cone-chip-formula" data-tex="' + attrSafe(n.node.formula) + '"></div>' : '<div class="prov-cone-chip-formula"><span class="md">$' + n.node.formula.replace(/^\$\$|\$\$$/g, '') + '$</span></div>') +
 			'<div class="prov-cone-chip-meta">' +
 			'<span class="prov-cone-chip-name">$' + n.node.name + '$</span>' +
 			'<span class="prov-cone-chip-val">' + fmt(n.node.value) + '</span>' +
 			'</div>' +
-			'<div class="prov-cone-chip-badge">' + texSafe(n.node.badge) + '</div>' +
+			'<div class="prov-cone-chip-badge">' + htmlSafe(n.node.badge) + '</div>' +
 			'<div class="prov-cone-chip-foot">' +
 			'<span class="prov-cone-chip-barwrap"><i class="prov-cone-chip-bar" style="width:' + barW + '%"></i></span>' +
 			'<span class="prov-cone-chip-pct">' + n.percent.toFixed(1) + '%</span>' +
@@ -2703,7 +2767,7 @@
 					'<div class="prov-cone-apex-foot">' +
 					'<span class="prov-cone-apex-name">$' + row.node.name + '$</span>' +
 					'<span class="prov-cone-apex-val">' + fmt(row.node.value) + '</span>' +
-					'<span class="prov-cone-apex-badge">' + texSafe(row.node.badge) + '</span>' +
+					'<span class="prov-cone-apex-badge">' + htmlSafe(row.node.badge) + '</span>' +
 					'</div>' +
 					'</div></div>');
 			} else {
