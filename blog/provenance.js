@@ -1576,6 +1576,74 @@
 		return s;
 	}
 
+	/* ─────────────── spatial / temporal weights for the light cone ───────────────
+	   A node's "spatial weight" expresses how much a value in the network
+	   actually shaped the current cell. The user described the cone as
+	   "everything that influenced this specific number being the way it is":
+	     • Same-row siblings in the current matrix (same layer / same token /
+	       different dim) contribute only through LayerNorm + residual, so they
+	       are heavily down-weighted.
+	     • Different-token same-layer values (attention neighbours) are
+	       moderately weighted — they reach the root via the softmax.
+	     • Older layers are weighted progressively higher because each layer
+	       is a refinement on the previous one — the entire previous residual
+	       stream flows forward.
+	     • Embeddings (P: / R:0:) and positional encoding carry the most
+	       influence because everything ultimately derives from them. */
+
+	/* Extract the layer number from an id (0 for embeddings/final scalars,
+	   1..N for L:N: and R:N: ids). */
+	function _layerOf(id) {
+		var m = /^[LR]:(\d+):/.exec(id);
+		return m ? +m[1] : 0;
+	}
+
+	/* Extract the token position from a node id when present. Many ids are
+	   token-independent (weights, biases, scalars, embeddings) and return
+	   null in that case. */
+	function _tokenOf(id) {
+		var m = /^L:\d+:head:\d+:(?:q|k|v|alpha|scores|escore|ssum|ctx|qk):(\d+):/.exec(id)
+			|| /^L:\d+:(?:norm|mu|var|std|znorm|hin|h1|h2|proj|concat|u|outL1|outFFN):(\d+):/.exec(id);
+		return m ? +m[1] : null;
+	}
+
+	function _spatialWeight(nodeId, rootId) {
+		/* Embeddings, positional encoding, config constants — the ultimate
+		   sources. They flow into every layer, so weight them most. */
+		if (nodeId.indexOf('P:') === 0) return 2.5;
+		if (nodeId.indexOf('R:0:') === 0) return 2.5;
+		/* Final-stage values (logits, probs) are outputs of the root, not
+		   ancestors — weight them low so the cone emphasizes the past. */
+		if (nodeId.indexOf('F:') === 0) return 0.4;
+		/* Attention weights (alpha) and scores are special: even though their
+		   query position is the same as the root, they connect to a *different*
+		   key position and are the literal mechanism by which other tokens
+		   influence this one. Give them a moderate weight so the cone surfaces
+		   the cross-token channels. */
+		if (/^L:\d+:head:\d+:(alpha|scores):/.test(nodeId)) return 0.7;
+		var rootLayer = _layerOf(rootId);
+		var rootToken = _tokenOf(rootId);
+		var nl = _layerOf(nodeId);
+		var nt = _tokenOf(nodeId);
+		/* Same row of the current matrix: LayerNorm + residual only. */
+		if (rootLayer && nl === rootLayer && rootToken !== null && nt === rootToken) {
+			return 0.15;
+		}
+		/* Different token, same layer (attention neighbours): they reach the
+		   root via the softmax weighting, so moderate influence. */
+		if (rootLayer && nl === rootLayer && rootToken !== null && nt !== null && nt !== rootToken) {
+			return 0.5;
+		}
+		/* Same layer but token-independent (weights, biases, gamma, beta):
+		   treat as LayerNorm-side weight ~ moderate. */
+		if (rootLayer && nl === rootLayer) return 0.4;
+		/* Older layer: the deeper, the more it has shaped the present. */
+		if (rootLayer && nl < rootLayer) {
+			return 1.0 + 0.6 * (rootLayer - nl);
+		}
+		return 1.0;
+	}
+
 	/* Colour family for a node id, so the whole network reads like a map:
 	   attention in blue, FFN in orange, projection in green, norms purple,
 	   embeddings teal, positional gold, final red. */
@@ -1762,10 +1830,17 @@
 					}
 				}
 			}
-			if (queue.length) { setTimeout(tick, 0); return; }
-			var list = [];
-			for (var i in nodes) list.push(nodes[i]);
-			list.sort(function (a, b) { return b.impact - a.impact; });
+		if (queue.length) { setTimeout(tick, 0); return; }
+		/* Apply the spatial / temporal weighting so the importance ranking
+		   reflects what actually shaped this specific cell: previous layers
+		   and embeddings weigh more, same-row siblings of the current matrix
+		   weigh less. The result is what drives the "light cone" view. */
+		for (var iid in nodes) {
+			nodes[iid].impact *= _spatialWeight(iid, nodeId);
+		}
+		var list = [];
+		for (var i in nodes) list.push(nodes[i]);
+		list.sort(function (a, b) { return b.impact - a.impact; });
 			var totImp = 0;
 			for (var i = 0; i < list.length; i++) totImp += list[i].impact;
 			var acc = 0, maxImp = 0;
@@ -2129,6 +2204,45 @@
 			'#prov-tooltip .prov-deriv-badge{color:#94a3b8;}' +
 			'#prov-tooltip .prov-deriv-formula{color:#0f172a;overflow-x:auto;padding:0 4px 4px 14px;}' +
 			'#prov-tooltip .prov-deriv-formula .md{margin:0;}' +
+			/* ── Lichtkegel (light cone) view ──
+			   A literal cone drawn with an SVG overlay and trapezoidal HTML
+			   rows: the apex (current value) sits at the top, the rows widen
+			   as we descend through the pipeline stages, and a triangular
+			   gradient underlays the whole thing. The slider in the head
+			   controls how many formulas are admitted (and therefore how wide
+			   the cone gets). */
+			'#prov-tooltip .prov-cone{display:none;max-height:540px;overflow-y:auto;position:relative;}' +
+			'#prov-tooltip.prov-cone-mode{width:min(96vw,1080px);max-width:96vw;}' +
+			'#prov-tooltip.prov-cone-mode .prov-cone{max-height:calc(86vh - 200px);}' +
+			'#prov-tooltip .prov-cone-loading{font-size:12px;color:#6366f1;padding:8px 2px;}' +
+			'#prov-tooltip .prov-cone-head{display:flex;align-items:center;gap:10px;margin:4px 0 10px;flex-wrap:wrap;}' +
+			'#prov-tooltip .prov-cone-head .prov-label{margin:0;}' +
+			'#prov-tooltip .prov-cone-slider{flex:1;min-width:180px;accent-color:#6366f1;}' +
+			'#prov-tooltip .prov-cone-count{font-size:11px;color:#64748b;font-variant-numeric:tabular-nums;}' +
+			'#prov-tooltip .prov-cone-canvas{position:relative;padding:14px 6px 26px;}' +
+			'#prov-tooltip .prov-cone-shape{position:absolute;inset:14px 6px 26px 6px;width:calc(100% - 12px);height:calc(100% - 40px);pointer-events:none;z-index:0;}' +
+			'#prov-tooltip .prov-cone-row{position:relative;z-index:1;margin:6px auto;display:flex;flex-direction:column;align-items:center;}' +
+			'#prov-tooltip .prov-cone-row-stage{border-top:1px dashed rgba(99,102,241,.18);padding-top:6px;}' +
+			'#prov-tooltip .prov-cone-stage-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#7c3aed;font-weight:600;margin:0 0 4px;text-align:center;}' +
+			'#prov-tooltip .prov-cone-chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}' +
+			'#prov-tooltip .prov-cone-chip{border:1px solid #c7d2fe;background:linear-gradient(180deg,#ffffff,#eef2ff);border-radius:8px;padding:4px 6px;cursor:pointer;min-width:96px;max-width:160px;font-size:11px;transition:transform .12s,box-shadow .12s,border-color .12s;}' +
+			'#prov-tooltip .prov-cone-chip:hover{border-color:#6366f1;box-shadow:0 4px 14px rgba(99,102,241,.18);transform:translateY(-1px);}' +
+			'#prov-tooltip .prov-cone-chip-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;}' +
+			'#prov-tooltip .prov-cone-chip-name{font-weight:600;color:#3730a3;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;}' +
+			'#prov-tooltip .prov-cone-chip-val{color:#0f172a;font-weight:600;font-variant-numeric:tabular-nums;}' +
+			'#prov-tooltip .prov-cone-chip-foot{display:flex;align-items:center;gap:6px;margin-top:3px;}' +
+			'#prov-tooltip .prov-cone-chip-barwrap{flex:1;height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;}' +
+			'#prov-tooltip .prov-cone-chip-bar{display:block;height:100%;background:linear-gradient(90deg,#6366f1,#22d3ee);border-radius:3px;}' +
+			'#prov-tooltip .prov-cone-chip-pct{font-variant-numeric:tabular-nums;color:#475569;min-width:42px;text-align:right;}' +
+			'#prov-tooltip .prov-cone-chip-formula{padding-top:4px;color:#1e293b;font-size:11px;overflow-x:auto;}' +
+			'#prov-tooltip .prov-cone-chip-formula .md{margin:0;}' +
+			'#prov-tooltip .prov-cone-row-apex{padding-bottom:4px;}' +
+			'#prov-tooltip .prov-cone-apex{border:1.5px solid #7c3aed;background:linear-gradient(180deg,#f5f3ff,#ede9fe);border-radius:10px;padding:6px 12px;text-align:center;cursor:pointer;box-shadow:0 6px 20px rgba(124,58,237,.18);max-width:100%;}' +
+			'#prov-tooltip .prov-cone-apex:hover{box-shadow:0 10px 28px rgba(124,58,237,.28);}' +
+			'#prov-tooltip .prov-cone-apex-name{font-weight:700;color:#4c1d95;font-size:13px;}' +
+			'#prov-tooltip .prov-cone-apex-val{font-weight:700;font-variant-numeric:tabular-nums;color:#0f172a;font-size:15px;margin-top:1px;}' +
+			'#prov-tooltip .prov-cone-apex-formula{margin-top:4px;color:#1e293b;font-size:11px;overflow-x:auto;}' +
+			'#prov-tooltip .prov-cone-apex-formula .md{margin:0;}' +
 			'.prov-cell{transition:background .12s;}' +
 			'.prov-cell:hover{background:rgba(99,102,241,.25);cursor:help;border-radius:3px;}' +
 			'.prov-cell.prov-active{background:rgba(99,102,241,.35);}';
@@ -2272,6 +2386,199 @@
 		return d;
 	}
 
+	/* ── "Lichtkegel" (light cone) view ──
+	   Visualize the backward closure of the current cell as a literal cone:
+	   the current value sits at the apex, every ancestor sits at a depth
+	   proportional to how far back it is in the network, and the visualization
+	   widens as we descend. Each "ring" of the cone is one pipeline stage
+	   (Token embeddings → Positional encoding → LayerNorm → Attention →
+	   Softmax → Context → Projection → Residual → FFN → Final), and within a
+	   ring the formulas are sorted by spatial weight (embeddings/older
+	   layers first, same-row siblings last). The slider controls how wide the
+	   cone gets: low values truncate to the top N most influential formulas
+	   (narrow cone), high values show the full backward closure. */
+
+	/* Group the importance list into the cone's pipeline stages. The root
+	   itself is drawn separately at the apex; the remaining nodes are
+	   bucketed by _stageOf. */
+	function _groupByStage(list, rootId) {
+		var buckets = Object.create(null);
+		for (var i = 0; i < list.length; i++) {
+			var n = list[i];
+			if (n.id === rootId) continue;
+			var stage = _stageOf(n.id);
+			if (!buckets[stage]) buckets[stage] = [];
+			buckets[stage].push(n);
+		}
+		/* Reading order matches the data flow; the cone reads top → bottom in
+		   this same order so the visual descent mirrors the forward pass. */
+		var order = [
+			'Token embeddings',
+			'Positional encoding',
+			'Input hidden state (embedding + position)',
+			'LayerNorm (pre-attention)',
+			'Residual input',
+			'Attention inputs (q, k, v)',
+			'Attention scores',
+			'Softmax attention weights',
+			'Attention context',
+			'Concatenation & output projection',
+			'Residual & post-attention hidden',
+			'LayerNorm (post-attention)',
+			'Feed-forward network',
+			'Final stage',
+			'Other'
+		];
+		var out = [];
+		for (var i = 0; i < order.length; i++) {
+			if (buckets[order[i]] && buckets[order[i]].length) {
+				out.push({ stage: order[i], list: buckets[order[i]] });
+			}
+		}
+		return out;
+	}
+
+	function _renderCone(nodeId, container) {
+		if (!container) return;
+		container.style.display = 'block';
+		if (_contribData && _contribData.nodeId === nodeId) {
+			_buildCone(container);
+			return;
+		}
+		container.innerHTML = '<div class="prov-cone-loading">Building the light cone of past influences&hellip;</div>';
+		_contribData = null;
+		S.importance(nodeId, function (res) {
+			if (!res) return;
+			_contribData = { nodeId: nodeId, result: res };
+			_buildCone(container);
+		});
+	}
+
+	function _coneFormulaChip(n, maxImp) {
+		var barW = maxImp > 0 ? Math.max(1, Math.round(100 * n.impact / maxImp)) : 0;
+		var hasF = n.node.inputs && n.node.inputs.length;
+		return '<div class="prov-cone-chip" data-prov-go="' + attrSafe(n.id) + '" title="' + texSafe(n.node.badge) + '">' +
+			'<div class="prov-cone-chip-head">' +
+			'<span class="prov-cone-chip-name">$' + n.node.name + '$</span>' +
+			'<span class="prov-cone-chip-val">' + fmt(n.node.value) + '</span>' +
+			'</div>' +
+			'<div class="prov-cone-chip-foot">' +
+			'<span class="prov-cone-chip-barwrap"><i class="prov-cone-chip-bar" style="width:' + barW + '%"></i></span>' +
+			'<span class="prov-cone-chip-pct">' + n.percent.toFixed(1) + '%</span>' +
+			'</div>' +
+			(hasF ? '<div class="prov-cone-chip-formula" data-tex="' + attrSafe(n.node.formula) + '"></div>' : '') +
+			'</div>';
+	}
+
+	function _buildCone(container) {
+		var res = _contribData.result;
+		var root = res.root;
+		var groups = _groupByStage(res.list, res.rootId);
+		/* How wide is the cone?  The slider maps to a percentage of the
+		   backward closure. We accumulate formulas group by group in stage
+		   order; the cone widens as more formulas are admitted. */
+		var totalBudget = _contribPrefix(res, _contribThreshold);
+		var consumed = 0;
+		var coneRows = [];
+		/* Apex: the root itself, always present. */
+		coneRows.push({ kind: 'apex', node: root });
+		for (var g = 0; g < groups.length; g++) {
+			if (consumed >= totalBudget) break;
+			var remaining = totalBudget - consumed;
+			var bucket = groups[g].list;
+			var take = Math.min(bucket.length, remaining);
+			coneRows.push({
+				kind: 'stage',
+				stage: groups[g].stage,
+				list: bucket.slice(0, take)
+			});
+			consumed += take;
+		}
+		/* Compute the width percentage of each row. The apex is the narrowest
+		   slice (centered, ~16% of the cone width); each subsequent stage is
+		   wider, ending at 100% for the base. The interpolation is smooth so
+		   the result reads as a continuous cone rather than a stepped
+		   pyramid. */
+		var nRows = coneRows.length;
+		for (var i = 0; i < nRows; i++) {
+			var t = nRows <= 1 ? 1 : i / (nRows - 1);
+			/* Apex 16% → base 100%, with an ease-out so the lower half is
+			   visibly wider. */
+			var w = 16 + (100 - 16) * (1 - Math.pow(1 - t, 1.6));
+			coneRows[i].widthPct = Math.round(w);
+		}
+		var html = [];
+		html.push('<div class="prov-cone-head">' +
+			'<span class="prov-label">Light cone of past influences &middot; ' +
+			coneRows[0].node.badge + '</span>' +
+			'<input type="range" class="prov-cone-slider" min="1" max="100" step="1" value="' + _contribThreshold + '" title="Cone width">' +
+			'<span class="prov-cone-count"></span>' +
+			'</div>');
+		html.push('<div class="prov-cone-canvas">' +
+			/* SVG overlay drawn first (behind everything via z-index:0) so the
+			   cone shape is a literal triangle, not just rows that happen to
+			   widen. The polygon connects the apex to the leftmost and
+			   rightmost base corners. */
+			'<svg class="prov-cone-shape" preserveAspectRatio="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
+			'<defs>' +
+			'<linearGradient id="provConeGrad" x1="0" y1="0" x2="0" y2="1">' +
+			'<stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>' +
+			'<stop offset="55%" stop-color="#a855f7" stop-opacity="0.18"/>' +
+			'<stop offset="100%" stop-color="#22d3ee" stop-opacity="0.08"/>' +
+			'</linearGradient>' +
+			'<linearGradient id="provConeEdge" x1="0" y1="0" x2="0" y2="1">' +
+			'<stop offset="0%" stop-color="#6366f1" stop-opacity="0.95"/>' +
+			'<stop offset="100%" stop-color="#22d3ee" stop-opacity="0.55"/>' +
+			'</linearGradient>' +
+			'</defs>' +
+			'<polygon points="50,2 2,98 98,98" fill="url(#provConeGrad)" stroke="url(#provConeEdge)" stroke-width="0.6" vector-effect="non-scaling-stroke"/>' +
+			'<line x1="50" y1="2" x2="2" y2="98" stroke="#6366f1" stroke-opacity="0.45" stroke-width="0.3" vector-effect="non-scaling-stroke"/>' +
+			'<line x1="50" y1="2" x2="98" y2="98" stroke="#6366f1" stroke-opacity="0.45" stroke-width="0.3" vector-effect="non-scaling-stroke"/>' +
+			'</svg>');
+		for (var i = 0; i < nRows; i++) {
+			var row = coneRows[i];
+			if (row.kind === 'apex') {
+				var barW = res.maxImpact > 0 ? 100 : 0;
+				html.push('<div class="prov-cone-row prov-cone-row-apex" style="width:' + row.widthPct + '%">' +
+					'<div class="prov-cone-apex" data-prov-go="' + attrSafe(row.node.id) + '">' +
+					'<div class="prov-cone-apex-name">$' + row.node.name + '$</div>' +
+					'<div class="prov-cone-apex-val">' + fmt(row.node.value) + '</div>' +
+					'<div class="prov-cone-apex-formula" data-tex="' + attrSafe(row.node.formula) + '"></div>' +
+					'</div></div>');
+			} else {
+				var chipsHtml = row.list.map(function (n) {
+					return _coneFormulaChip(n, res.maxImpact);
+				}).join('');
+				html.push('<div class="prov-cone-row prov-cone-row-stage" style="width:' + row.widthPct + '%">' +
+					'<div class="prov-cone-stage-label">' + texSafe(row.stage) + ' &middot; ' + row.list.length + '</div>' +
+					'<div class="prov-cone-chips">' + chipsHtml + '</div>' +
+					'</div>');
+			}
+		}
+		html.push('</div>');
+		container.innerHTML = html.join('');
+		container.setAttribute('data-cone-cursor', '0');
+		var slider = container.querySelector('.prov-cone-slider');
+		slider.addEventListener('input', function () {
+			_contribThreshold = +slider.value;
+			_buildCone(container);
+		});
+		var totalShown = consumed;
+		var label = container.querySelector('.prov-cone-count');
+		if (label) {
+			var lastShown = res.list[Math.min(totalShown, res.count) - 1];
+			var cum = lastShown ? (lastShown.cumPct + lastShown.percent) : 0;
+			label.textContent = totalShown.toLocaleString() + ' of ' + res.count.toLocaleString() +
+				' formulas shown (' + cum.toFixed(1) + '% of the influence)';
+		}
+		/* Temml-render every formula box in chunks so the user sees real math
+		   without blocking the UI. */
+		container.addEventListener('scroll', function () {
+			_hydrateTex(container, '.prov-cone-apex-formula[data-tex], .prov-cone-chip-formula[data-tex]', 'data-cone-cursor');
+		});
+		_hydrateTex(container, '.prov-cone-apex-formula[data-tex], .prov-cone-chip-formula[data-tex]', 'data-cone-cursor', 9999);
+	}
+
 	/* ── "Derivation" view (default) ──
 	   The whole chain of formulas from token embeddings to the current value,
 	   rendered as a readable document with Temml: grouped by stage, in
@@ -2358,10 +2665,12 @@
 		nodeId = nodeId || _history[_history.length - 1];
 		if (view === 'list') _traceView = 'list';
 		else if (view === 'contrib') _traceView = 'contrib';
+		else if (view === 'cone') _traceView = 'cone';
 		else _traceView = 'deriv';
 		var listEl = _tooltip.querySelector('.prov-trace');
 		var contribEl = _tooltip.querySelector('.prov-contrib');
 		var derivEl = _tooltip.querySelector('.prov-deriv');
+		var coneEl = _tooltip.querySelector('.prov-cone');
 		if (!listEl) return;
 		var btns = _tooltip.querySelectorAll('.prov-view-btn');
 		for (var b = 0; b < btns.length; b++) {
@@ -2369,19 +2678,29 @@
 		}
 		_tooltip.classList.toggle('prov-contrib-mode', _traceView === 'contrib');
 		_tooltip.classList.toggle('prov-deriv-mode', _traceView === 'deriv');
+		_tooltip.classList.toggle('prov-cone-mode', _traceView === 'cone');
 		if (_traceView === 'contrib') {
 			listEl.style.display = 'none';
 			if (derivEl) derivEl.style.display = 'none';
+			if (coneEl) coneEl.style.display = 'none';
 			if (contribEl) _renderContrib(nodeId, contribEl);
 			_position();
 		} else if (_traceView === 'deriv') {
 			listEl.style.display = 'none';
 			if (contribEl) contribEl.style.display = 'none';
+			if (coneEl) coneEl.style.display = 'none';
 			if (derivEl) _renderDeriv(nodeId, derivEl);
+			_position();
+		} else if (_traceView === 'cone') {
+			listEl.style.display = 'none';
+			if (derivEl) derivEl.style.display = 'none';
+			if (contribEl) contribEl.style.display = 'none';
+			if (coneEl) _renderCone(nodeId, coneEl);
 			_position();
 		} else {
 			if (derivEl) derivEl.style.display = 'none';
 			if (contribEl) contribEl.style.display = 'none';
+			if (coneEl) coneEl.style.display = 'none';
 			listEl.style.display = 'flex';
 		}
 	}
@@ -2422,10 +2741,12 @@
 		var trace = S.fullTrace(nodeId);
 		if (trace && trace.steps.length) {
 			parts.push('<div class="prov-trace-tools">' +
+				'<button class="prov-btn prov-view-btn" data-prov-view="cone">Lichtkegel</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="deriv">Derivation</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="contrib">Contributors</button>' +
 				'<button class="prov-btn prov-view-btn" data-prov-view="list">List</button>' +
 				'</div>');
+			parts.push('<div class="prov-cone"></div>');
 			parts.push('<div class="prov-deriv"></div>');
 			parts.push('<div class="prov-trace"></div>');
 			parts.push('<div class="prov-contrib"></div>');
@@ -2447,7 +2768,7 @@
 			}).join(' &rarr; ') + '</div>');
 		}
 
-		parts.push('<div class="prov-hint">"Derivation" shows every formula from token embeddings to this value (reading order, click any step to jump). "Contributors" lists them sorted by importance with a slider for the top X%.</div>');
+		parts.push('<div class="prov-hint">"Lichtkegel" draws the past influences as a cone (apex = this value, base = embeddings). The slider controls the cone width. "Derivation" lists every formula from token embeddings to this value in reading order. "Contributors" sorts them by importance with a slider for the top X%.</div>');
 
 		_tooltip.innerHTML = parts.join('');
 		_tooltip.style.display = 'block';
@@ -2585,9 +2906,25 @@
 	}
 
 	function _onDocClick(e) {
+		/* Clicking on an annotated number pins the tooltip and opens the
+		   Lichtkegel (light cone) view directly. Hover is reserved for a quick
+		   peek at the formula; click commits to a deeper analysis. */
+		var cell = e.target && e.target.closest ? e.target.closest('[data-prov-id]') : null;
+		if (cell) {
+			if (_timer) { clearTimeout(_timer); _timer = null; }
+			_clearHide();
+			S._activeCell = cell;
+			var active = document.querySelector('.prov-cell.prov-active');
+			if (active) active.classList.remove('prov-active');
+			cell.classList.add('prov-active');
+			S._pinned = true;
+			_traceView = 'cone';
+			S.show(cell.getAttribute('data-prov-id'));
+			e.stopPropagation();
+			return;
+		}
 		if (S._pinned) return;
 		if (e.target && e.target.closest && e.target.closest('#prov-tooltip')) return;
-		if (e.target && e.target.closest && e.target.closest('[data-prov-id]')) return;
 		S.hide();
 	}
 
