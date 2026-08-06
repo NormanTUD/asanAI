@@ -1358,6 +1358,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	 */
 	_matrixAppendWeightCells(frag, layout, weights, n) {
 		const { offsetX, offsetY, cellSize, color } = layout;
+		const strokeColor = themeColor('#e2e8f0');
+		const cellLabelFill = themeColor('#334155');
 
 		for (let qi = 0; qi < n; qi++) {
 			for (let ki = 0; ki < n; ki++) {
@@ -1373,7 +1375,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 					height: String(cellSize),
 					fill: color,
 					'fill-opacity': alpha.toFixed(3),
-					stroke: '#e2e8f0',
+					stroke: strokeColor,
 					'stroke-width': '0.5',
 					'data-apv-head': '0',
 					'data-apv-qi': String(qi),
@@ -1386,7 +1388,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 						x: String(x + cellSize / 2),
 						y: String(y + cellSize / 2 + 3),
 						'font-size': '8',
-						fill: w > 0.5 ? '#fff' : '#334155',
+						fill: w > 0.5 ? '#fff' : cellLabelFill,
 						'text-anchor': 'middle',
 						'pointer-events': 'none'
 					}, (w * 100).toFixed(0)));
@@ -1426,17 +1428,19 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		};
 
 		frag.appendChild(makeText({
-			x: String(leftColumnX), y: '18', 'font-size': '11', fill: '#64748b',
+			x: String(leftColumnX), y: '18', 'font-size': '11', fill: themeColor('#64748b'),
 			'font-weight': '600', 'text-anchor': 'middle'
 		}, 'Query (attending)'));
 
 		frag.appendChild(makeText({
-			x: String(rightColumnX), y: '18', 'font-size': '11', fill: '#64748b',
+			x: String(rightColumnX), y: '18', 'font-size': '11', fill: themeColor('#64748b'),
 			'font-weight': '600', 'text-anchor': 'middle'
 		}, 'Key (attended to)'));
 
 		const hoverKey = `${layerIdx}-${headIdx}`;
 		const hovered = this._apvHoveredToken.get(hoverKey) || null;
+		const tokenFill = themeColor('#334155');
+		const tokenHoverFill = themeColor('#1e40af');
 
 		for (let i = 0; i < n; i++) {
 			const y = topPadding + i * rowHeight;
@@ -1445,7 +1449,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 			frag.appendChild(makeText({
 				x: String(leftColumnX), y: String(y + 4),
-				'font-size': '12', fill: isHoveredLeft ? '#1e40af' : '#334155',
+				'font-size': '12', fill: isHoveredLeft ? tokenHoverFill : tokenFill,
 				'font-weight': isHoveredLeft ? '700' : '500', 'text-anchor': 'end',
 				style: 'cursor:pointer;',
 				'data-apv-side': 'left', 'data-apv-idx': String(i)
@@ -1453,7 +1457,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 			frag.appendChild(makeText({
 				x: String(rightColumnX), y: String(y + 4),
-				'font-size': '12', fill: isHoveredRight ? '#1e40af' : '#334155',
+				'font-size': '12', fill: isHoveredRight ? tokenHoverFill : tokenFill,
 				'font-weight': isHoveredRight ? '700' : '500', 'text-anchor': 'start',
 				style: 'cursor:pointer;',
 				'data-apv-side': 'right', 'data-apv-idx': String(i)

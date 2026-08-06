@@ -4388,7 +4388,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') } },
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: { data: legendData, orient: 'horizontal', bottom: 0,
-			left: 'center', textStyle: { fontSize: 11 } },
+			left: 'center', textStyle: { fontSize: 11, color: themeColor('#cbd5e1') } },
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },
 		zAxis3D: { type: 'value', name: 'Dim 2' },
@@ -4932,7 +4932,7 @@ function _traj_build_slice_layout(dimA, dimB, annotations) {
 		annotations: annotations,
 		margin: { l: 45, r: 10, b: 45, t: 40 },
 		showlegend: true,
-		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11, color: themeColor('#cbd5e1') } }
 	};
 }
 
