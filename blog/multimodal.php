@@ -7,6 +7,7 @@ icon: &#128064;
 part: 4
 order: 27
 color: sky
+topics: vision, architecture, programming
 -->
 
 <div class="md">

@@ -7,6 +7,7 @@ icon: &#128255;
 part: 4
 order: 22
 color: sky
+topics: architecture, math, interactive
 -->
 
 <div class="smart-quote" data-cite="vaswani2017attention" data-page=6>

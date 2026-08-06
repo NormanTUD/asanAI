@@ -7,6 +7,7 @@ icon: &#127912;
 part: 5
 order: 27
 color: rose
+topics: programming, architecture, interactive
 -->
 
 <div class="md">

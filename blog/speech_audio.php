@@ -7,6 +7,7 @@ icon: &#127908;
 part: 4
 order: 29
 color: sky
+topics: audio, architecture, programming
 -->
 
 <div class="md">

@@ -7,6 +7,7 @@ icon: &#10024;
 part: 2
 order: 12
 color: coral
+topics: math, programming, interactive
 -->
 
 <div class="minimalneuron-page">

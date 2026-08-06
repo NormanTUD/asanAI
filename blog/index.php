@@ -32,6 +32,7 @@
 <button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 <button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 <?php render_theme_toggle(); ?>
+<?php render_topics_toggle(); ?>
 <?php render_drawer(); ?>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>

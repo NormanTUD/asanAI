@@ -167,6 +167,7 @@ function load_base_js () {
 	js("loader");
 	js("three.min");
 	js("search");
+	js("topics");
 
 	$files = glob("modules/*.js");
 
@@ -428,7 +429,13 @@ function render_course_tile($m) {
 	if ($m['featured']) $classes .= ' course-tile-featured';
 	$iconHtml = $m['icon'] ?? '&#128193;';
 	$descHtml = $m['description'] ?? '';
-	echo '<a href="' . htmlspecialchars($m['url']) . '" class="' . $classes . '" style="--tile-accent: var(--mn-' . htmlspecialchars($m['color']) . ')">';
+	$topicsAttr = '';
+	if (!empty($m['topics'])) {
+		$topicsAttr = ' data-topics="' . htmlspecialchars($m['topics']) . '"';
+	}
+	echo '<a href="' . htmlspecialchars($m['url']) . '" class="' . $classes . '"'
+		. ' style="--tile-accent: var(--mn-' . htmlspecialchars($m['color']) . ')"'
+		. $topicsAttr . '>';
 	echo '<div class="course-tile-icon">' . $iconHtml . '</div>';
 	echo '<h3>' . htmlspecialchars($m['title']) . '</h3>';
 	echo '<p>' . $descHtml . '</p>';
@@ -490,6 +497,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 		<?php render_theme_toggle(); ?>
+		<?php render_topics_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
@@ -598,6 +606,24 @@ function render_theme_toggle(): void {
 	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode" onclick="toggleTheme()">';
 	echo '<span class="ti-sun" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>';
 	echo '<span class="ti-moon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>';
+	echo '</button>';
+}
+
+/**
+ * 🎯 Top-right "pick your interests" toggle. The actual modal + badge
+ * state is wired up by topics.js on DOMContentLoaded; this just
+ * paints the button so it's visible immediately, before the heavy
+ * modules finish loading.
+ */
+function render_topics_toggle(): void {
+	echo '<button id="topics-toggle" type="button" aria-label="Choose your interests" title="Choose your interests" onclick="if(window.BlogTopics){window.BlogTopics.openOverlay()}">';
+	echo '<span class="ti-target" aria-hidden="true">';
+	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+	echo '<circle cx="12" cy="12" r="9"/>';
+	echo '<circle cx="12" cy="12" r="5"/>';
+	echo '<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>';
+	echo '</svg></span>';
+	echo '<span class="topics-badge" id="topics-badge" aria-hidden="true"></span>';
 	echo '</button>';
 }
 

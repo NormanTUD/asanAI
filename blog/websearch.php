@@ -7,6 +7,7 @@ icon: &#127760;
 part: 5
 order: 30
 color: rose
+topics: language, agents, programming
 -->
 <div class="md">
 ## How LLMs Actually Search the Web

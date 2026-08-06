@@ -112,6 +112,11 @@ function renderMarkdown() {
 			rawContent = BlogClusters.preprocess(rawContent);
 		}
 
+		// 2c. Interest-topic blocks: [[t:topic]]…[[/t]] → marked extension handles it
+		if (window.BlogTopics && BlogTopics.preprocess) {
+			rawContent = BlogTopics.preprocess(rawContent);
+		}
+
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
 	});
@@ -120,14 +125,31 @@ function renderMarkdown() {
 	// 3b. inject per-cluster CSS variables now that the DOM has them
 	if (window.BlogClusters && BlogClusters.injectCSS) BlogClusters.injectCSS();
 
+	// 3c. Apply interest-filter visibility to .topic-block nodes
+	if (window.BlogTopics && BlogTopics.applyVisibility) {
+		BlogTopics.applyVisibility();
+	}
+
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
+		if (window.BlogTopics && BlogTopics.preprocess) {
+			fnContainer.innerHTML = BlogTopics.preprocess(fnContainer.innerHTML);
+		}
 		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
+		if (window.BlogTopics && BlogTopics.applyVisibility) {
+			BlogTopics.applyVisibility();
+		}
 	}
 
 	const srcContainer = document.getElementById('sources');
 	if (srcContainer) {
+		if (window.BlogTopics && BlogTopics.preprocess) {
+			srcContainer.innerHTML = BlogTopics.preprocess(srcContainer.innerHTML);
+		}
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
+		if (window.BlogTopics && BlogTopics.applyVisibility) {
+			BlogTopics.applyVisibility();
+		}
 	}
 }
 

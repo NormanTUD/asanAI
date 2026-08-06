@@ -7,6 +7,7 @@ icon: &#127760;
 part: 6
 order: 34
 color: text-secondary
+topics: society, ethics, history
 -->
 
 <div class="md">

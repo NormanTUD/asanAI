@@ -18,3 +18,5 @@ bash js_syntax_test.sh
 php tests/search_test.php
 
 node tests/search_js_test.js
+
+node tests/topics_test.js

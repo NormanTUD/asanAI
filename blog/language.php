@@ -7,6 +7,7 @@ icon: &#128483;
 part: 1
 order: 4
 color: accent
+topics: language, history, philosophy
 -->
 
 <div class="md">

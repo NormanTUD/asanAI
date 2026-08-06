@@ -7,6 +7,7 @@ icon: &#128220;
 part: 1
 order: 2
 color: accent
+topics: history, philosophy
 -->
 <!--
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html

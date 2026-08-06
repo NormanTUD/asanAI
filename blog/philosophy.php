@@ -7,6 +7,7 @@ icon: &#128218;
 part: 6
 order: 44
 color: text-secondary
+topics: philosophy, ethics, language
 -->
 
 <div class="md">

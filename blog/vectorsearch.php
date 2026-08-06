@@ -7,6 +7,7 @@ icon: &#128279;
 part: 5
 order: 32
 color: rose
+topics: language, math, programming
 -->
 
 <div class="md">

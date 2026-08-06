@@ -7,6 +7,7 @@ icon: &#127942;
 part: 5
 order: 38
 color: rose
+topics: programming, philosophy, society
 -->
 
 <div class="md">

@@ -7,6 +7,7 @@ icon: &#9889;
 part: 5
 order: 35
 color: rose
+topics: hardware, programming, math
 -->
 
 <div class="md">

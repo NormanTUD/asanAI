@@ -7,6 +7,7 @@ icon: &#128290;
 part: 1
 order: 3
 color: accent
+topics: math
 -->
 
 <script src="math.js"></script>

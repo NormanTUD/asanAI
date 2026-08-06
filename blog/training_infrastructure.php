@@ -7,6 +7,7 @@ icon: &#128296;
 part: 5
 order: 40
 color: rose
+topics: hardware, data, programming
 -->
 
 <div class="md">

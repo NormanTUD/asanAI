@@ -7,6 +7,7 @@ icon: &#129516;
 part: 4
 order: 24
 color: sky
+topics: architecture, math, programming
 featured: true
 -->
 

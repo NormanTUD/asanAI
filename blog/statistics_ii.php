@@ -7,6 +7,7 @@ icon: &#128200;
 part: 1
 order: 4
 color: accent
+topics: math, statistics
 -->
 
 <div class="md">

@@ -7,6 +7,7 @@ icon: &#9878;
 part: 6
 order: 43
 color: text-secondary
+topics: society, ethics, law
 -->
 
 <div class="md">
