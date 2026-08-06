@@ -11,204 +11,147 @@ topics: multimodal, vision, architecture, programming
 -->
 
 <div class="md">
-For most of AI history, generation meant GANs or VAEs — fragile, mode-collapsing, hard to train. In 2020, **DDPM** (Ho et al.) — building on **score-based models** introduced by Song & Ermon in 2019 — opened a new path: **diffusion**. By 2022, Stable Diffusion, DALL-E 2, Imagen, and Midjourney had made diffusion the dominant paradigm for image, video, audio, and even protein generation.
+Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** \cite[Ho et al., 2020]{ho2020ddpm} — built on a 2019 idea from Yang Song and Stefano Ermon \cite[Song & Ermon, 2019]{song2019score} — quietly opened a new path. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
 
-The core idea is elegant and almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to reverse the destruction one step at a time**. Diffusion is **not** the autoregressive next-token prediction that drives LLMs (see the Intuition chapter); the two are different generative paradigms, and speech/audio systems can use either (see the Speech & Audio chapter).
+The idea is almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to undo the destruction, one tiny step at a time**. It is a different paradigm from the autoregressive next-token prediction that drives LLMs, even though both produce staggering results.
+
+<figure style="max-width:720px; margin:1.5em auto; text-align:center;">
+	<img src="diffusion_astronaut.webp" alt="An AI-generated image of an astronaut riding a horse, produced by Stable Diffusion 3.5 from the prompt 'a photograph of an astronaut riding a horse'" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption>A single text prompt — "a photograph of an astronaut riding a horse" — and a diffusion model produced this image in seconds. Image: <a href="https://commons.wikimedia.org/wiki/File:Astronaut_Riding_a_Horse_(SD3.5).webp">VulcanSphere</a>, generated with Stable Diffusion 3.5, released under <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0</a>.</figcaption>
+</figure>
 </div>
 
 <div class="md">
-## The Forward Process: Destroying Information
+## The central trick: destroy, then learn to undo
 
-Given a clean image $x_0 \sim q(x_0)$, the forward process adds a small amount of Gaussian noise at each of $T$ timesteps:
+Imagine dropping a clear photograph into a glass of water and slowly stirring in drops of black ink. After each drop the picture becomes a little less recognizable. After enough drops, all you see is uniform grey.
+
+Now imagine the reverse: starting with grey water, learn to *remove* exactly the right amount of ink, drop by drop, until a coherent photograph reappears. If you can learn that reverse process well enough, you can start from *any* grey water and turn it into a fresh, novel photograph.
+
+That is what a diffusion model does. The forward process (ink going in) is a hand-designed procedure with no learned parameters. The reverse process (ink coming out) is what a neural network has to learn.
+</div>
+
+<div class="md">
+## The forward process: a controlled demolition
+
+Concretely, the forward process takes a clean image $x_0$ and at each of $T$ small timesteps sprinkles in a little Gaussian noise. After $T = 1000$ steps nothing of the original picture survives.
+
+The math is short, and the intuition is shorter: **noise accumulates gradually**. A useful shortcut is that at any intermediate timestep $t$, you can jump straight from the clean image to $x_t$ in one step:
 
 $$
-q(x_t \mid x_{t-1}) = \mathcal{N}\!\left(x_t;\; \sqrt{1-\beta_t}\, x_{t-1},\; \beta_t\, \mathbf{I}\right)
+x_t \;=\; \sqrt{\bar\alpha_t}\, x_0 \;+\; \sqrt{1 - \bar\alpha_t}\, \epsilon, \qquad \epsilon \sim \mathcal{N}(0, \mathbf{I})
 $$
 
-where $\beta_1 < \beta_2 < \dots < \beta_T$ is a **noise schedule** (linear or cosine), typically ranging from $10^{-4}$ to $0.02$.
-
-The closed-form marginal at any timestep $t$ is obtained by reparametrization:
-
-$$
-x_t = \sqrt{\bar\alpha_t}\, x_0 + \sqrt{1-\bar\alpha_t}\, \epsilon, \quad \epsilon \sim \mathcal{N}(0, \mathbf{I})
-$$
-
-where $\alpha_t = 1 - \beta_t$ and $\bar\alpha_t = \prod_{s=1}^{t} \alpha_s$. For $T=1000$, $\bar\alpha_T \approx 0$, so $x_T$ is pure Gaussian noise.
+For $T = 1000$, the first term has essentially vanished and $x_T$ is pure Gaussian noise. Crucially, **every step of the forward process is fixed in advance** — no learning required. The forward chain is just a way to manufacture training data for the model that does the hard work.
 </div>
 
 <div id="forward-process" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-This is a **fixed, hand-designed** Markov chain — no learnable parameters. It is the **reverse direction** that is learned.
-</div>
+## The reverse process: the part that learns
 
-<div class="md">
-## The Reverse Process: Learning to Denoise
+The reverse process starts from pure noise $x_T$ and runs backward. At each step, the network looks at the current noisy image and asks: *what noise should I subtract to make this slightly more recognizable?* A thousand such tiny denoising steps, and out pops a clean image.
 
-The reverse process is also a Gaussian Markov chain, but its means and variances are predicted by a neural network $\theta$:
+This is the formulation introduced by DDPM. The training objective is almost laughably simple. For a randomly chosen timestep $t$:
 
-$$
-p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\!\left(x_{t-1};\; \mu_\theta(x_t, t),\; \Sigma_\theta(x_t, t)\right)
-$$
+1. Take a real image $x_0$.
+2. Add the corresponding amount of noise, producing a noisy $x_t$.
+3. Ask the network to predict *what that noise was*.
+4. Train by mean-squared error between the predicted and the true noise.
 
-In DDPM, the variance $\Sigma_\theta$ is fixed; only the mean $\mu_\theta$ is predicted. A simpler reparametrization predicts the **noise** $\epsilon$ that was added:
-
-$$
-\mathcal{L}_{\text{simple}} = \mathbb{E}_{t, x_0, \epsilon}\!\left[ \left\| \epsilon - \epsilon_\theta\!\left(\sqrt{\bar\alpha_t}\, x_0 + \sqrt{1-\bar\alpha_t}\, \epsilon,\; t\right) \right\|^2 \right]
-$$
-
-This is just **mean-squared error between the true noise and the network's prediction**. Train a U-Net to denoise; sample by starting from $x_T \sim \mathcal{N}(0, \mathbf{I})$ and iteratively applying the learned denoiser.
+That is it. No adversarial game, no careful balancing. Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly.
 </div>
 
 <div id="reverse-process" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-At inference, the **DDPM sampler** is:
+The picture below shows what the reverse process actually looks like for a real diffusion model (Stable Diffusion using the DDIM sampler). Read it from left to right, top to bottom: the network starts from pure noise and gradually reveals a coherent image, adding detail with each step.
 
-$$
-x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\!\left(x_t - \frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\, \epsilon_\theta(x_t, t)\right) + \sigma_t z, \quad z \sim \mathcal{N}(0, \mathbf{I})
-$$
-
-The first term is the predicted clean image; the second is Gaussian noise scaled by $\sigma_t$ — this is what gives diffusion its **stochasticity and diversity**.
+<figure style="max-width:100%; margin:1.5em auto; text-align:center;">
+	<img src="diffusion_ddim_steps.jpg" alt="An X/Y plot of denoising steps showing a European-style castle in Japan becoming progressively more detailed as noise is removed, generated using Stable Diffusion V1-5 with DDIM sampling" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption>Each frame is one denoising step of a Stable Diffusion 1.5 model using DDIM sampling. Early steps establish rough shapes and color fields; later steps refine texture and fine detail. Image: <a href="https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png">Benlisquare</a>, licensed <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>.</figcaption>
+</figure>
 </div>
 
 <div class="md">
-## Architectural Choices
+## Why does this work? Two ways to look at it
 
-### U-Net backbone
+Two complementary views explain why this recipe produces a good generator, and they turn out to be mathematically the same thing.
 
-The denoiser $\epsilon_\theta(x_t, t)$ is a **U-Net**: an encoder that downsamples to a bottleneck, then a decoder that upsamples back. Skip connections between encoder and decoder at the same resolution preserve high-frequency detail. Each block contains:
+**The coarse-to-fine view.** In the very first denoising steps, the image is almost entirely noise — only the largest-scale structure of the data distribution is recoverable. The network first sketches out rough shapes and color fields, and only later refines fine detail. Generation is hierarchical *by construction*: layout first, then texture, then the tiny highlights on a piece of fruit.
 
-* 2D convolutions (or, in newer models, transformer blocks)
-* **Sinusoidal time embeddings** $t \mapsto \mathbb{R}^d$ that tell the network *which* timestep it is denoising (different noise levels need different denoising strategies)
-* **Group normalization** and **SiLU** activation
-* **Self-attention** at lower resolutions (16×16, 8×8) where global context matters
+**The score-matching view** \cite[Song & Ermon, 2019]{song2019score}. The denoiser is secretly learning the *score function* of the data distribution — the gradient of the log probability density, telling you which direction in image-space increases the "naturalness" of the image. Sampling by following that gradient is equivalent to running Langevin dynamics on the data distribution, slowly drifting toward high-probability regions. The two views turn out to be mathematically equivalent: a denoiser is a score estimator in disguise.
 
-For $512 \times 512$ images, the U-Net has ~860M parameters (Stable Diffusion 1.5). For 1024×1024, the parameter count roughly doubles.
+Either way, the practical conclusion is the same: train a network to predict the noise, and you get a generator for free.
+</div>
 
-### Conditioning: From Class-Conditional to Text-Conditional
+<div class="md">
+## Telling the model what to draw
 
-To generate images **from text**, the noise prediction must depend on a text embedding. The classifier-free guidance (CFG) approach (\cite[Ho & Salimans, 2022]{ho2022cfg} trains a single network with two modes:
+To make a model draw *what you want*, you have to feed it some signal. For text-to-image, that signal is a text prompt, first encoded into a vector by a separate text encoder (typically CLIP or T5).
 
-* $\epsilon_\theta(x_t, t, c)$ — conditional on text embedding $c$
-* $\epsilon_\theta(x_t, t, \varnothing)$ — unconditional (10% of training time, drop the text)
-
-At inference, **amplify** the conditional signal:
+The trick that made text-to-image *actually work* is **classifier-free guidance** \cite[Ho & Salimans, 2022]{ho2022cfg}. At training time, the network is shown the text prompt 90% of the time and *nothing* 10% of the time, learning both a conditional and an unconditional denoiser in one model. At inference, you amplify the gap between them:
 
 $$
-\tilde\epsilon_\theta(x_t, t, c) = \epsilon_\theta(x_t, t, \varnothing) + w \cdot \bigl(\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t, \varnothing)\bigr)
+\tilde\epsilon_\theta(x_t, t, c) \;=\; \epsilon_\theta(x_t, t, \varnothing) \;+\; w \cdot \big(\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t, \varnothing)\big)
 $$
 
-where $w$ (guidance scale) is typically 5–15. Higher $w$ → images match the prompt more literally but lose diversity. The diagram below shows the effect:
+The factor $w$ is a knob. Around $w \approx 7$ is the modern default. Higher values follow the prompt more literally but produce more generic-looking images. Lower values give variety but might drift away from what you asked for.
 </div>
 
 <div id="cfg-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
-## Latent Diffusion: Stable Diffusion
+## Stable Diffusion: doing it in a compressed space
 
-Pixel-space diffusion at $512 \times 512 \times 3$ is prohibitively expensive. **Latent Diffusion Models** (LDM, \cite[Rombach et al., 2022]{rombach2022ldm} — the paper behind Stable Diffusion) solve this by:
+Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
 
-1. **Encode** the image into a lower-dimensional latent $z = E(x) \in \mathbb{R}^{h \times w \times c}$ using a pretrained VAE encoder (typically $8\times$ spatial compression, so $512 \times 512 \to 64 \times 64 \times 4$).
-2. **Diffuse** in latent space (much cheaper: $64^2 \times 4 = 16{,}384$ dims vs. $786{,}432$).
-3. **Decode** the denoised latent back to pixels: $\hat{x} = D(z)$.
+The breakthrough of **Latent Diffusion Models** \cite[Rombach et al., 2022]{rombach2022ldm} — the technology behind Stable Diffusion — was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
 
-This $8\times$ spatial compression makes training and inference ~$64\times$ cheaper. The VAE is frozen; only the U-Net diffusion model is trained.
+<figure style="max-width:880px; margin:1.5em auto; text-align:center;">
+	<img src="diffusion_architecture.png" alt="Diagram of the Stable Diffusion latent diffusion architecture, showing the text encoder, U-Net denoiser with cross-attention, and VAE encoder/decoder" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption>The Stable Diffusion pipeline: a text encoder turns your prompt into vectors, the U-Net denoises a latent tensor conditioned on those vectors, and a frozen VAE decoder turns the clean latent back into pixels. Image: <a href="https://commons.wikimedia.org/wiki/File:Stable_Diffusion_architecture.png">Machine Vision and Learning Group, LMU Munich</a>, licensed <a href="https://opensource.org/licenses/MIT">MIT</a>.</figcaption>
+</figure>
+
+The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model — it was learned earlier as an ordinary autoencoder and frozen in place.
 </div>
 
 <div class="md">
-## Text Encoders
+## Beyond images
 
-The U-Net is conditioned on a text embedding produced by a separate text encoder:
+The same recipe works anywhere you can define a "noising" process and a network that can reverse it:
 
-| Model | Text encoder | Output dim | Notes |
-|-------|-------------|------------|-------|
-| **Stable Diffusion 1.5** | CLIP ViT-L/14 (text tower) | 768 | Frozen during diffusion training |
-| **Stable Diffusion 2/2.1** | OpenCLIP-ViT-H | 1024 | |
-| **Stable Diffusion 3** | T5-XXL + CLIP-G + OpenCLIP | 4096 (T5) | Three text encoders, much stronger text adherence |
-| **DALL-E 2** | CLIP text tower + prior network | — | Two-stage: prior maps text → CLIP image embedding, then diffusion from that |
-| **Imagen** | T5-XXL | 4096 | Google's model; pure T5 conditioning |
-| **FLUX** | T5-XXL + CLIP-L | — | Current SOTA, rectified-flow formulation |
+* **Video**: Sora, Veo, Stable Video Diffusion — same idea, with an extra time dimension and attention layers that keep frames consistent.
+* **Audio**: AudioLDM, DiffSinger — diffuse a spectrogram, then a vocoder turns it back into sound.
+* **Music**: Riffusion, MusicLDM.
+* **Proteins**: RFdiffusion, Chroma — diffuse over 3D atomic coordinates of new proteins.
+* **Robotics**: Diffuser — diffuse over action sequences.
+* **Time-series**: TimeGrad — diffuse over weather, financial, or sensor data.
 
-A **prior model** (DALL-E 2's distinctive feature) maps the text embedding to a CLIP image embedding first; the diffusion model then generates an image whose CLIP embedding matches. This produces more diverse but sometimes less faithful outputs.
+The general principle is almost embarrassingly simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**
 </div>
 
 <div class="md">
-## Beyond Image Generation
+## Where the field is now
 
-Diffusion is no longer just for pixels:
+By 2025, the diffusion community has largely moved on to **flow matching** \cite[Lipman et al., 2023]{lipman2023flow} — a more general framework where the "noising" path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
 
-* **Video**: Sora, Veo, Stable Video Diffusion — same recipe, with temporal attention layers and 3D convolutions.
-* **Audio**: AudioLDM, DiffSinger — spectrogram diffusion or latent audio diffusion.
-* **Music**: Riffusion, MusicLDM — spectrogram → audio.
-* **Proteins**: DiffDock, RFdiffusion, Chroma — diffusion over 3D atomic coordinates or sequence space.
-* **Robotics**: Diffuser, Decision Diffuser — diffusion over action sequences.
-* **Time-series**: TimeGrad, ScoreGrad — diffusion over financial, weather, or sensor data.
+The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** \cite[Peebles & Xie, 2023]{peebles2023dit} — a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.
 
-The recipe generalizes: **if you can define a forward noising process and a neural network that can reverse it, you can diffuse over that domain**.
+Practical models have also become fast. Modern systems generate images in **1–8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM). Diffusion is no longer slow.
+
+In five years, the technique went from "diffusion as a curiosity" to "diffusion as the universal generative recipe" for images, video, audio, and molecules.
 </div>
 
 <div class="md">
-## Sampling Accelerators
+## Try it yourself
 
-DDPM's iterative sampler is slow (50–1000 steps). Modern solvers dramatically reduce this:
+* **Stable Diffusion Web UI** on Hugging Face Spaces — no installation.
+* **ComfyUI** or **Automatic1111** for local runs.
+* **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} for spatial control from edge maps, depth maps, or pose skeletons — without retraining the base model.
+* **LoRA** \cite[Hu et al., 2021]{hu2021lora} adapters to fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU.
 
-| Sampler | Steps | Quality | Idea |
-|---------|-------|---------|------|
-| **DDPM** | 1000 | High | Original ancestral sampling |
-| **DDIM** | 50–100 | High | Deterministic, non-Markovian |
-| **DPM-Solver** | 10–20 | High | Higher-order ODE solver |
-| **EDM** | 18–50 | High | Heuristic step-size schedule |
-| **LCM / SDXL-Turbo / SD-Turbo** | 1–8 | Good | Adversarial distillation to few-step models |
-| **Consistency Models** | 1 | Good | Self-consistency training |
-
-Modern Stable Diffusion XL Turbo generates images in **1–4 network evaluations** — close to GAN speed but with diffusion's diversity and stability.
-</div>
-
-<div class="md">
-## Conditioning Tricks
-
-* **Image-to-image**: encode the source image to latent, add noise to some timestep $t_0$, then denoise from $t_0$ back to 0. The amount of $t_0$ controls how much the model preserves vs regenerates.
-* **Inpainting**: mask a region of the latent, denoise with the mask conditioning. The model fills in the masked area consistent with the unmasked context.
-* **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet}: train a small network that outputs residuals added to each U-Net block, conditioned on extra signals like edge maps (Canny), depth maps, human pose skeletons. This gives spatial control without retraining the base model.
-* **LoRA**: \cite[Hu et al., 2021]{hu2021lora} adapters on the U-Net's attention layers, enabling fine-tuning on a few hundred images in minutes on consumer GPUs.
-</div>
-
-<div class="md">
-## Why Diffusion Works (Intuition)
-
-Two complementary views explain why denoising yields a generator:
-
-1. **Signal-to-noise view**: at high noise levels, only large-scale structure survives. The network first learns the coarse layout, then progressively adds detail. This is hierarchical generation by construction.
-2. **Score-matching view** (Song & Ermon, 2019): the denoiser implicitly learns the **score** $\nabla_x \log p(x)$, the gradient of the log-density. Sampling by following the score is equivalent to Langevin dynamics on the data distribution. The two frameworks are mathematically equivalent.
-
-Diffusion is also remarkably stable to train: no adversarial game, no mode collapse, no careful balancing. Just MSE between predicted and true noise.
-</div>
-
-<div class="md">
-## Current Frontiers
-
-* **Flow matching / Rectified flow** (\cite[Lipman et al., 2023]{lipman2023flow}: a more general framework where diffusion is a special case. FLUX, Stable Diffusion 3, and most 2024+ models use it. Trains on a straight-line interpolation between noise and data, often giving better sample quality.
-* **Consistency models**: 1-step generation via a self-consistency loss.
-* **Diffusion Transformers (DiT)**: replace the U-Net with a pure Transformer (similar to ViT), enabling scaling laws and unified architecture. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones.
-* **Cascaded diffusion**: generate a low-res image, then upsample with a second diffusion model. Google's Imagen, OpenAI's early DALL-E 2.
-
-The field has moved from "diffusion as a curiosity" (2020) to "diffusion as the universal generative recipe" (2025) in five years.
-</div>
-
-<div class="md">
-## Summary
-
-| Concept | Formula | Intuition |
-|---------|---------|-----------|
-| Forward process | $x_t = \sqrt{\bar\alpha_t}\, x_0 + \sqrt{1-\bar\alpha_t}\, \epsilon$ | Add a known amount of noise |
-| Training objective | $\mathcal{L} = \mathbb{E}[\|\epsilon - \epsilon_\theta(x_t, t, c)\|^2]$ | Predict the noise that was added |
-| DDPM sampling | $x_{t-1} = \frac{1}{\sqrt{\alpha_t}}(x_t - \frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta) + \sigma_t z$ | Iteratively denoise |
-| Classifier-free guidance | $\tilde\epsilon = \epsilon_\varnothing + w (\epsilon_c - \epsilon_\varnothing)$ | Amplify conditioning |
-| Latent diffusion | Train in VAE latent $z = E(x)$ | Cheaper than pixel space |
-| U-Net | Encoder–decoder with skip connections | Standard denoiser backbone |
-
-Diffusion turned generative modeling from an adversarial art into a tractable, scalable recipe — and in doing so, transformed creative tooling, science, and entertainment.
+If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing \cite[Sohl-Dickstein et al., 2015]{sohl2015deep}, Song & Ermon's score-based 2019 paper \cite[Song & Ermon, 2019]{song2019score}, and Ho's DDPM in 2020 \cite[Ho et al., 2020]{ho2020ddpm}.
 </div>
 
 <script>
@@ -216,7 +159,7 @@ function getThemeFg() {
 	return getComputedStyle(document.documentElement).getPropertyValue('--mn-text').trim() || '#1e293b';
 }
 
-// Forward process: x0 → x_T
+// Forward process: clean signal gradually replaced by noise
 (function() {
 	const c = document.getElementById('forward-process');
 	if (!c) return;
@@ -224,7 +167,6 @@ function getThemeFg() {
 	const T = 200, nShow = 8;
 	const x0 = [];
 	for (let i = 0; i < 32; i++) {
-		// Synthetic "cat" pattern
 		const r = Math.sin(i * 0.3) * 0.4 + Math.cos(i * 0.7) * 0.3 + (i % 7 === 0 ? 0.3 : 0);
 		x0.push(0.5 + r * 0.4);
 	}
@@ -232,7 +174,7 @@ function getThemeFg() {
 	const alphas = [];
 	let a = 1;
 	for (let t = 0; t < T; t++) {
-		const beta = 1e-4 + (0.02 - 1e-4) * (t / T);  // linear schedule
+		const beta = 1e-4 + (0.02 - 1e-4) * (t / T);
 		a *= (1 - beta);
 		alphas.push(a);
 	}
@@ -242,7 +184,6 @@ function getThemeFg() {
 	for (const s of showSteps) {
 		const aBar = alphas[s];
 		const sigma = Math.sqrt(1 - aBar);
-		// Pseudo-random for visualization (deterministic per step)
 		const seed = s * 17 + 1;
 		const noise = Array.from({length: 32}, (_, i) => {
 			const r = Math.sin(seed + i * 2.1) * 43758.5453;
@@ -267,7 +208,7 @@ function getThemeFg() {
 	Plotly.newPlot('forward-process', traces, layout, { responsive: true });
 })();
 
-// Reverse process: x_T → x_0
+// Reverse process: noise gradually replaced by structured signal
 (function() {
 	const c = document.getElementById('reverse-process');
 	if (!c) return;
@@ -275,8 +216,7 @@ function getThemeFg() {
 	const trueSignal = Array.from({length: N}, (_, i) => Math.sin(i * 0.3) * 0.6 + Math.sin(i * 0.13) * 0.4);
 
 	function reconstruct(step) {
-		// Reconstruct from full noise back
-		const alpha = 1 - step;  // step from 0 (noise) to 1 (signal)
+		const alpha = 1 - step;
 		const noiseSeed = step * 1000;
 		const noise = Array.from({length: N}, (_, i) => {
 			const r = Math.sin(noiseSeed + i * 2.3) * 43758.5453;
@@ -312,7 +252,7 @@ function getThemeFg() {
 	Plotly.newPlot('reverse-process', traces, layout, { responsive: true });
 })();
 
-// CFG effect
+// Classifier-free guidance effect
 (function() {
 	const c = document.getElementById('cfg-viz');
 	if (!c) return;
@@ -324,7 +264,6 @@ function getThemeFg() {
 
 	w.forEach((wi, idx) => {
 		const y = Array.from({length: N}, (_, i) => {
-			// Higher guidance: more peaky, less diverse
 			const peak = Math.exp(-Math.pow((i - N/2) / (10 / (1 + wi * 0.1)), 2));
 			const noise = (Math.sin(i * 7.3 + wi) * 0.1) / (1 + wi);
 			return peak + noise - 0.5;

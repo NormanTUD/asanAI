@@ -469,7 +469,7 @@
 						'</div>',
 						'<span class="topics-audience-suffix">level</span>',
 					'</div>',
-					'<p class="topics-audience-hint" id="topics-audience-hint">Pick a profile and a level — your topic list updates instantly. Click the active button again (or Clear) to turn the audience filter off.</p>',
+					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
 				'</div>',
 				'<div class="topics-presets" role="group" aria-label="Quick presets">',
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
@@ -650,7 +650,7 @@
 		} else if (pref.level) {
 			hint.textContent = 'Saved: reading at ' + levelLabel + ' level. Pick a profile to apply a curated preset, or tune the grid below by hand.';
 		} else {
-			hint.textContent = 'Pick a profile and a level — your topic list updates instantly. Click the active button again (or Clear) to turn the audience filter off.';
+			hint.textContent = '';
 		}
 	}
 
