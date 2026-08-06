@@ -4388,7 +4388,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 			textStyle: { fontSize: 14, color: themeColor('#1e293b') } },
 		tooltip: { show: true, trigger: 'item', confine: true },
 		legend: { data: legendData, orient: 'horizontal', bottom: 0,
-			left: 'center', textStyle: { fontSize: 11, color: themeColor('#cbd5e1') } },
+			left: 'center', textStyle: { fontSize: 11, color: themeColor('#1e293b') } },
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },
 		zAxis3D: { type: 'value', name: 'Dim 2' },
@@ -4932,7 +4932,7 @@ function _traj_build_slice_layout(dimA, dimB, annotations) {
 		annotations: annotations,
 		margin: { l: 45, r: 10, b: 45, t: 40 },
 		showlegend: true,
-		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11, color: themeColor('#cbd5e1') } }
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11, color: themeColor('#1e293b') } }
 	};
 }
 
@@ -5011,7 +5011,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		annotations: result.annotations,  // ← only stage labels, no VF annotations
 		margin: { l: 10, r: 10, b: 50, t: 80 },
 		showlegend: true,
-		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14, color: themeColor('#cbd5e1') } }
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14, color: themeColor('#1e293b') } }
 	};
 
 	// Combine token traces + VF traces
@@ -5138,7 +5138,7 @@ function _traj_ec3d_option(series, legendData) {
 			data: legendData,
 			orient: 'horizontal',
 			bottom: 5, left: 'center',
-			textStyle: { fontSize: 12, color: themeColor('#cbd5e1') }
+			textStyle: { fontSize: 12, color: themeColor('#1e293b') }
 		},
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },

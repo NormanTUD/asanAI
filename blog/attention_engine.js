@@ -1429,12 +1429,14 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 		frag.appendChild(makeText({
 			x: String(leftColumnX), y: '18', 'font-size': '11', fill: themeColor('#64748b'),
-			'font-weight': '600', 'text-anchor': 'middle'
+			'font-weight': '600', 'text-anchor': 'middle',
+			'data-apv-header': 'query'
 		}, 'Query (attending)'));
 
 		frag.appendChild(makeText({
 			x: String(rightColumnX), y: '18', 'font-size': '11', fill: themeColor('#64748b'),
-			'font-weight': '600', 'text-anchor': 'middle'
+			'font-weight': '600', 'text-anchor': 'middle',
+			'data-apv-header': 'key'
 		}, 'Key (attended to)'));
 
 		const hoverKey = `${layerIdx}-${headIdx}`;
@@ -1663,14 +1665,26 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
 		const weights = headData.this_weights;
 		const n = tokens.length;
+		const hoverKey = `${layerIdx}-${headIdx}`;
+		const hovered = this._apvHoveredToken.get(hoverKey) || null;
+		const tokenFill = themeColor('#334155');
+		const tokenHoverFill = themeColor('#1e40af');
 
 		// ── Patch token labels ──
 		const textEls = svg.querySelectorAll('text[data-apv-side]');
 		textEls.forEach(el => {
 			const idx = parseInt(el.getAttribute('data-apv-idx'));
+			const side = el.getAttribute('data-apv-side');
 			if (idx < n) {
 				el.textContent = this._displayToken(tokens[idx]);   // ← CHANGED
 			}
+			const isHovered = hovered && hovered.side === side && hovered.index === idx;
+			el.setAttribute('fill', isHovered ? tokenHoverFill : tokenFill);
+		});
+
+		// ── Refresh header fills so they stay readable after theme toggles ──
+		svg.querySelectorAll('text[data-apv-header]').forEach(el => {
+			el.setAttribute('fill', themeColor('#64748b'));
 		});
 
 		// ── Build a lookup of existing paths by qi-ki ──
@@ -1754,11 +1768,13 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		}
 
 		// ── Patch row labels ──
+		const labelFill = themeColor('#64748b');
 		svg.querySelectorAll('text[data-apv-token-side="row"]').forEach(el => {
 			const idx = parseInt(el.getAttribute('data-apv-token-idx'));
 			if (idx < n) {
 				el.textContent = this._displayToken(tokens[idx]);   // ← CHANGED
 			}
+			el.setAttribute('fill', labelFill);
 		});
 
 		// ── Patch column labels ──
@@ -1767,9 +1783,11 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			if (idx < n) {
 				el.textContent = this._displayToken(tokens[idx]);   // ← CHANGED
 			}
+			el.setAttribute('fill', labelFill);
 		});
 
 		// ── Patch rect fill-opacity ──
+		const strokeColor = themeColor('#e2e8f0');
 		const rects = svg.querySelectorAll('rect[data-apv-qi]');
 		rects.forEach(rect => {
 			const qi = parseInt(rect.getAttribute('data-apv-qi'));
@@ -1780,6 +1798,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			const alpha = Math.max(0.05, w);
 			rect.setAttribute('fill-opacity', alpha.toFixed(3));
 			rect.setAttribute('fill', color);
+			rect.setAttribute('stroke', strokeColor);
 		});
 
 		// ── Patch value text inside cells ──
