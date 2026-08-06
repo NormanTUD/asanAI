@@ -273,6 +273,62 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	padding: 4px 8px;
 	margin: 2px -4px;
 }
+
+/* Geometric intuition panel — rendered with Temml math, explains what
+   the current step is doing geometrically and how it fits the whole. */
+.attn-anatomy-intuition {
+	background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+	border: 1px solid #c7d2fe;
+	border-radius: 10px;
+	padding: 18px 22px;
+	margin-bottom: 12px;
+}
+.attn-anatomy-intuition .intuition-header {
+	font-weight: bold;
+	color: #1e3a8a;
+	margin-bottom: 12px;
+	font-size: 0.98rem;
+	letter-spacing: 0.2px;
+}
+.attn-anatomy-intuition .intuition-math {
+	background: rgba(255, 255, 255, 0.92);
+	border-radius: 8px;
+	padding: 14px 12px;
+	text-align: center;
+	margin-bottom: 14px;
+	border: 1px solid #dbeafe;
+	color: var(--mn-text, #1e293b);
+	overflow-x: auto;
+}
+.attn-anatomy-intuition .intuition-math mjx-container {
+	margin: 0 !important;
+}
+.attn-anatomy-intuition .intuition-section {
+	margin-bottom: 10px;
+	line-height: 1.55;
+	font-size: 0.9rem;
+	color: var(--mn-text, #1e293b);
+}
+.attn-anatomy-intuition .intuition-section:last-child {
+	margin-bottom: 0;
+}
+.attn-anatomy-intuition .intuition-section strong {
+	color: #1e3a8a;
+}
+.attn-anatomy-intuition .intuition-where {
+	color: var(--mn-text-muted, #64748b);
+	font-style: italic;
+	padding: 6px 12px;
+	border-left: 3px solid #c7d2fe;
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 0 6px 6px 0;
+}
+.attn-anatomy-intuition .intuition-why {
+	background: rgba(37, 99, 235, 0.10);
+	padding: 10px 14px;
+	border-radius: 6px;
+	border-left: 3px solid #2563eb;
+}
 </style>
 
 <div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
@@ -304,18 +360,16 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	<!-- 2) Currently computing panel: shows the actual numbers for this step -->
 	<div id="attn-anatomy-computation" class="attn-anatomy-computation"></div>
 
-	<!-- 3) 2D vector plot: the geometric view -->
-	<div id="attn-anatomy-2d" style="height: 420px; background: var(--mn-surface, #fff);
+	<!-- 3) Geometric intuition: Temml-rendered math + human interpretation -->
+	<div id="attn-anatomy-intuition" class="attn-anatomy-intuition"></div>
+
+	<!-- 4) 2D vector plot: the geometric view -->
+	<div id="attn-anatomy-2d" style="height: 400px; background: var(--mn-surface, #fff);
 									border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
 
-	<!-- 4) Score bars: numeric state of the computation -->
-	<div id="attn-anatomy-bars" style="height: 220px; background: var(--mn-surface, #fff);
+	<!-- 5) Score bars: numeric state of the computation -->
+	<div id="attn-anatomy-bars" style="height: 200px; background: var(--mn-surface, #fff);
 									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
-
-	<!-- 5) Description panel -->
-	<div id="attn-anatomy-desc" style="padding: 14px 18px; background: var(--mn-surface, #fff);
-									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;
-									   line-height:1.55; font-size:0.92rem;"></div>
 </div>
 
 <div class="md">
