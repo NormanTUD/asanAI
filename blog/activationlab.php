@@ -197,9 +197,9 @@ GELU is often described as a "smooth ReLU": it behaves approximately like $\max(
 <div class="md">
 ### SiLU: The Diffusion Smooth Gate
 
-The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** (introduced by Ramachandran et al., 2017 \cite{ramachandran2017swish}; the SiLU name was coined earlier by Hendrycks & Gimpel, 2016), is the activation of choice inside the **U-Net denoiser of Stable Diffusion** and other modern CNN-based vision models:
+The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** \cite{ramachandran2017swish}, is the activation inside the **U-Net denoiser of Stable Diffusion** and most modern CNN-based vision models:
 
 $$\text{SiLU}(x) \;=\; x \cdot \sigma(x) \;=\; \frac{x}{1 + e^{-x}}$$
 
-It is a *self-gated* function: each input value is multiplied by its own sigmoid. The curve looks like a smoothed, slightly bowed ReLU — strongly positive for large $x$, weakly negative for large negative $x$ (around $-0.28$ at the minimum), and zero at $x = 0$. Like GELU, it is everywhere differentiable, never fully "dies", and its gradient is non-trivial on the negative side. Compared to GELU it is much cheaper to compute (one sigmoid, no error function), which is why CNN-style vision stacks that may run hundreds of layers — as in the diffusion U-Net — prefer SiLU. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
+A *self-gated* function: each input is multiplied by its own sigmoid. Looks like a smoothed ReLU — strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\approx -0.28$), zero at $x = 0$. Like GELU it is everywhere differentiable and never fully "dies"; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
 </div>
