@@ -50,9 +50,58 @@
 		{ id: 'reference',        label: 'Reference',        icon: '📖',   desc: 'Glossary, cheatsheets, supplementary tables' }
 	];
 
-	/* curated subsets used by the "Just Essentials" and "Technical Essentials"
-	   presets. Order matters: the first id in each list is shown in the button
-	   label when relevant. */
+	/* ── 1a. Audience axes (profile × level) ────────────────────
+	   The reader picks one of four roles and one of four depths.
+	   Each (profile, level) cell maps to a curated topic set so that
+	   just clicking a profile+level gives most readers a sensible
+	   default — they can still fine-tune individual topics below. */
+	const PROFILES = [
+		{ id: 'curious',    label: 'Curious',    hint: 'interested general reader, no CS background' },
+		{ id: 'student',    label: 'Student',    hint: 'studying CS or AI formally' },
+		{ id: 'engineer',   label: 'Engineer',   hint: 'ML practitioner building production systems' },
+		{ id: 'researcher', label: 'Researcher', hint: 'academic / R&D in AI' }
+	];
+	const LEVELS = [
+		{ id: 'hs',       label: 'HS',       hint: 'High school level' },
+		{ id: 'undergrad',label: 'Undergrad',hint: 'Undergraduate / Bachelor' },
+		{ id: 'grad',     label: 'Grad',     hint: 'Graduate / Master\'s' },
+		{ id: 'phd',      label: 'PhD',      hint: 'PhD / research level' }
+	];
+
+	/* 4 × 4 = 16 audience presets. Each cell lists the topics that
+	   should be ON; everything else is hidden. The matrix is biased
+	   toward the practical reading needs of each role at each depth:
+	   a Curious HS reader gets the storytelling core; a Researcher
+	   PhD gets nearly everything. */
+	const AUDIENCE_PRESETS = {
+		curious: {
+			hs:        [ 'history', 'philosophy', 'ethics', 'society', 'language' ],
+			undergrad: [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math', 'statistics' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math', 'statistics', 'programming' ]
+		},
+		student: {
+			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math' ],
+			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math', 'statistics', 'programming' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math', 'statistics', 'programming', 'architecture', 'training', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math', 'statistics', 'programming', 'architecture', 'training', 'agents', 'reasoning', 'inference', 'data' ]
+		},
+		engineer: {
+			hs:        [ 'math', 'programming', 'data', 'hardware' ],
+			undergrad: [ 'math', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference' ],
+			grad:      [ 'math', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents' ],
+			phd:       [ 'math', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents', 'interpretability', 'multimodal', 'vision', 'audio' ]
+		},
+		researcher: {
+			hs:        [ 'history', 'philosophy', 'math', 'language' ],
+			undergrad: [ 'history', 'philosophy', 'math', 'language', 'statistics', 'programming', 'architecture' ],
+			grad:      [ 'history', 'philosophy', 'math', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'math', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
+		}
+	};
+
+	/* Quick presets (kept as one-click shortcuts that don't require
+	   picking an audience). */
 	const PRESETS = {
 		essentials: [ 'history', 'philosophy', 'language' ],
 		technical:  [ 'history', 'philosophy', 'language', 'math', 'statistics', 'programming', 'architecture' ]
@@ -62,32 +111,78 @@
 	const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 	const STORAGE_KEY  = 'blog_topics_pref';   // localStorage mirror
 
-	/* ── 2. Cookie / storage helpers ──────────────────────────── */
-	function readCookieMap() {
+	/* ── 2. Cookie / storage helpers ────────────────────────────
+	   Stored shape:
+	       { topics: { id: true|false, … }, profile: 'engineer', level: 'phd' }
+	   For backwards compatibility, an old flat topics-only map is
+	   recognised and treated as `{ topics: <that map> }`. */
+	function readRawPref() {
 		const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + COOKIE_NAME + '=([^;]*)'));
-		if (!m) return null;
+		if (m) {
+			try {
+				const parsed = JSON.parse(decodeURIComponent(m[1]));
+				if (parsed && typeof parsed === 'object') return parsed;
+			} catch (e) { /* fall through */ }
+		}
 		try {
-			const parsed = JSON.parse(decodeURIComponent(m[1]));
-			if (parsed && typeof parsed === 'object') return parsed;
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				if (parsed && typeof parsed === 'object') return parsed;
+			}
 		} catch (e) { /* fall through */ }
 		return null;
 	}
 
-	function writeCookieMap(map) {
-		const v = encodeURIComponent(JSON.stringify(map));
+	function normalizePref(parsed) {
+		const out = {
+			topics: {},
+			profile: null,
+			level: null
+		};
+		if (!parsed || typeof parsed !== 'object') return out;
+		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed);
+		const topicsObj = looksV2 ? (parsed.topics || {}) : parsed;
+		TOPICS.forEach(function (t) {
+			out.topics[t.id] = topicsObj[t.id] !== false;
+		});
+		if (looksV2) {
+			if (PROFILES.some(function (p) { return p.id === parsed.profile; })) {
+				out.profile = parsed.profile;
+			}
+			if (LEVELS.some(function (l) { return l.id === parsed.level; })) {
+				out.level = parsed.level;
+			}
+		}
+		return out;
+	}
+
+	function defaultPref() {
+		const topics = {};
+		TOPICS.forEach(function (t) { topics[t.id] = true; });
+		return { topics: topics, profile: null, level: null };
+	}
+
+	function writePref(pref) {
+		const v = encodeURIComponent(JSON.stringify(pref));
 		document.cookie = COOKIE_NAME + '=' + v
 			+ '; path=/; max-age=' + COOKIE_MAX_AGE + '; SameSite=Lax';
 		try { localStorage.setItem(STORAGE_KEY, v); } catch (e) { /* private mode */ }
 	}
 
+	/** legacy wrappers (still used by helpers that only care about topics) */
+	function readCookieMap() {
+		const raw = readRawPref();
+		return raw ? normalizePref(raw).topics : null;
+	}
 	function readStorageMap() {
-		try {
-			const raw = localStorage.getItem(STORAGE_KEY);
-			if (!raw) return null;
-			const parsed = JSON.parse(raw);
-			if (parsed && typeof parsed === 'object') return parsed;
-		} catch (e) { /* fall through */ }
-		return null;
+		const raw = readRawPref();
+		return raw ? normalizePref(raw).topics : null;
+	}
+	function writeCookieMap(map) {
+		const cur = normalizePref(readRawPref());
+		cur.topics = map;
+		writePref(cur);
 	}
 
 	function defaultMap() {
@@ -96,9 +191,13 @@
 		return m;
 	}
 
-	/** active preference map (cookie wins, then localStorage, then defaults) */
+	/** active preference (cookie/localStorage → defaults) */
+	function activePref() {
+		return normalizePref(readRawPref() || defaultPref());
+	}
+	/** legacy: just the topics map */
 	function activeMap() {
-		return readCookieMap() || readStorageMap() || defaultMap();
+		return activePref().topics;
 	}
 
 	/** is `topicId` enabled right now? (missing = enabled) */
@@ -142,6 +241,37 @@
 		const m = {};
 		TOPICS.forEach(function (t) { m[t.id] = !!allow[t.id]; });
 		persist(m);
+	}
+
+	/** persist the full pref (topics + audience selection) */
+	function persistPref(pref) {
+		writePref(pref);
+		fireChange();
+	}
+
+	/** apply the curated (profile, level) audience preset and remember
+	    the selection. Unknown ids are silently skipped. */
+	function applyAudience(profile, level) {
+		const cell = AUDIENCE_PRESETS[profile] && AUDIENCE_PRESETS[profile][level];
+		const allow = {};
+		(cell || []).forEach(function (id) { allow[cssSafe(id)] = true; });
+		const topics = {};
+		TOPICS.forEach(function (t) { topics[t.id] = !!allow[t.id]; });
+		persistPref({
+			topics: topics,
+			profile: cell ? profile : null,
+			level:   cell ? level : null
+		});
+	}
+
+	/** change just one axis of the audience selection without re-applying
+	    the preset (used when the user opens the picker for the first time
+	    and we want to remember their pick). */
+	function setAudienceSelection(profile, level) {
+		const cur = activePref();
+		if (profile !== undefined) cur.profile = profile || null;
+		if (level   !== undefined) cur.level   = level   || null;
+		persistPref(cur);
 	}
 
 	/** ensure map contains an entry for every known topic */
@@ -212,8 +342,28 @@
 				'<button class="topics-close" type="button" aria-label="Close" data-close>×</button>',
 				'<header class="topics-header">',
 					'<h2 id="topics-title"><span class="topics-title-emoji">🎯</span> Your Interests</h2>',
-					'<p class="topics-tagline">Tell us what sparks your curiosity. We\'ll quietly tuck away the bits you don\'t want — but you can always peek with a single click.</p>',
+					'<p class="topics-tagline">Pick who you are and how deep you want to go — we\'ll pick a sensible set of topics for you. Fine-tune individual topics below.</p>',
 				'</header>',
+				'<div class="topics-audience">',
+					'<div class="topics-audience-row">',
+						'<span class="topics-audience-label">I\'m a</span>',
+						'<div class="topics-seg" role="radiogroup" aria-label="Your profile" data-audience="profile">',
+							PROFILES.map(function (p) {
+								return '<button type="button" class="topics-seg-btn" role="radio" data-profile="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' + escAttr(p.label) + '</button>';
+							}).join(''),
+						'</div>',
+					'</div>',
+					'<div class="topics-audience-row">',
+						'<span class="topics-audience-label">reading at</span>',
+						'<div class="topics-seg" role="radiogroup" aria-label="Your level" data-audience="level">',
+							LEVELS.map(function (l) {
+								return '<button type="button" class="topics-seg-btn" role="radio" data-level="' + escAttr(l.id) + '" title="' + escAttr(l.hint) + '">' + escAttr(l.label) + '</button>';
+							}).join(''),
+						'</div>',
+						'<span class="topics-audience-suffix">level</span>',
+					'</div>',
+					'<p class="topics-audience-hint" id="topics-audience-hint">Pick a profile and a level — your topic list updates instantly. Or skip this and tune the grid below by hand.</p>',
+				'</div>',
 				'<div class="topics-presets" role="group" aria-label="Quick presets">',
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
 					'<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>',
@@ -237,6 +387,29 @@
 				if (p === 'all') setAll(true);
 				else if (p === 'essentials') applyPreset(PRESETS.essentials);
 				else if (p === 'technical') applyPreset(PRESETS.technical);
+				renderAudienceSelection();
+			});
+		});
+		overlay.querySelectorAll('[data-profile]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				const profile = b.getAttribute('data-profile');
+				const cur = activePref();
+				const level = cur.level && LEVELS.some(function (l) { return l.id === cur.level; })
+					? cur.level
+					: 'undergrad';
+				applyAudience(profile, level);
+				renderAudienceSelection();
+			});
+		});
+		overlay.querySelectorAll('[data-level]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				const level = b.getAttribute('data-level');
+				const cur = activePref();
+				const profile = cur.profile && PROFILES.some(function (p) { return p.id === cur.profile; })
+					? cur.profile
+					: 'curious';
+				applyAudience(profile, level);
+				renderAudienceSelection();
 			});
 		});
 
@@ -288,11 +461,39 @@
 		el.classList.toggle('topics-count-all',  active === total);
 	}
 
+	/** highlight the currently selected profile + level buttons and update
+	    the hint text. Safe to call before the overlay exists. */
+	function renderAudienceSelection() {
+		const pref = activePref();
+		document.querySelectorAll('#topics-overlay [data-profile]').forEach(function (b) {
+			const on = b.getAttribute('data-profile') === pref.profile;
+			b.classList.toggle('topics-seg-on', on);
+			b.setAttribute('aria-checked', on ? 'true' : 'false');
+		});
+		document.querySelectorAll('#topics-overlay [data-level]').forEach(function (b) {
+			const on = b.getAttribute('data-level') === pref.level;
+			b.classList.toggle('topics-seg-on', on);
+			b.setAttribute('aria-checked', on ? 'true' : 'false');
+		});
+		const hint = document.getElementById('topics-audience-hint');
+		if (!hint) return;
+		if (pref.profile && pref.level) {
+			const profileLabel = (PROFILES.find(function (p) { return p.id === pref.profile; }) || {}).label || pref.profile;
+			const levelLabel   = (LEVELS.find(function (l) { return l.id === pref.level; })   || {}).label || pref.level;
+			hint.textContent = 'Preset applied: ' + profileLabel + ' · ' + levelLabel + '. Toggle individual topics below to fine-tune.';
+		} else if (pref.profile || pref.level) {
+			hint.textContent = 'Pick the other axis to apply a curated preset.';
+		} else {
+			hint.textContent = 'Pick a profile and a level — your topic list updates instantly. Or skip this and tune the grid below by hand.';
+		}
+	}
+
 	let _lastFocused = null;
 
 	function openOverlay() {
 		ensureOverlay();
 		renderGrid();
+		renderAudienceSelection();
 		const o = document.getElementById('topics-overlay');
 		o.classList.add('open');
 		o.setAttribute('aria-hidden', 'false');
@@ -583,6 +784,7 @@
 	function fireChange() {
 		updateToggleIntensity();
 		renderGrid();
+		renderAudienceSelection();
 		applyVisibility();
 		// Re-render any inline widget (intro page)
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
@@ -657,14 +859,20 @@
 	window.BlogTopics = {
 		TOPICS: TOPICS,
 		PRESETS: PRESETS,
+		PROFILES: PROFILES,
+		LEVELS: LEVELS,
+		AUDIENCE_PRESETS: AUDIENCE_PRESETS,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
 		activeMap: function () { return normalize(activeMap()); },
+		activePref: function () { return activePref(); },
 		isEnabled: isEnabled,
 		anyEnabled: anyEnabled,
 		setEnabled: setEnabled,
 		setAll: setAll,
 		applyPreset: applyPreset,
+		applyAudience: applyAudience,
+		setAudienceSelection: setAudienceSelection,
 		openOverlay: openOverlay,
 		closeOverlay: closeOverlay,
 		renderInlineWidget: renderInlineWidget,

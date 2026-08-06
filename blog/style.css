@@ -6681,6 +6681,83 @@ html.dark .topics-modal {
 	max-width: 60ch;
 }
 
+/* ── audience picker (profile × level) ──────────────────── */
+.topics-audience {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 14px;
+	background: linear-gradient(135deg, color-mix(in srgb, var(--mn-accent-lighter) 50%, transparent), var(--mn-bg-subtle));
+	border: 1px solid color-mix(in srgb, var(--mn-accent) 18%, var(--mn-border));
+	border-radius: 14px;
+}
+.topics-audience-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+	font-size: 0.92rem;
+	color: var(--mn-text);
+}
+.topics-audience-label {
+	font-weight: 600;
+	color: var(--mn-text);
+	flex: 0 0 auto;
+}
+.topics-audience-suffix {
+	color: var(--mn-text-secondary);
+	font-size: 0.88rem;
+	flex: 0 0 auto;
+}
+.topics-audience-hint {
+	margin: 4px 0 0;
+	font-size: 0.78rem;
+	line-height: 1.45;
+	color: var(--mn-text-secondary);
+}
+.topics-seg {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: 3px;
+	background: var(--mn-surface);
+	border: 1px solid var(--mn-border);
+	border-radius: 10px;
+}
+.topics-seg-btn {
+	appearance: none;
+	border: 1px solid transparent;
+	background: transparent;
+	color: var(--mn-text-secondary);
+	font-family: inherit;
+	font-size: 0.82rem;
+	font-weight: 500;
+	padding: 5px 12px;
+	border-radius: 7px;
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+	line-height: 1.2;
+}
+.topics-seg-btn:hover {
+	color: var(--mn-text);
+	background: color-mix(in srgb, var(--mn-accent) 8%, transparent);
+}
+.topics-seg-btn:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 1px;
+}
+.topics-seg-btn.topics-seg-on {
+	background: var(--mn-accent);
+	color: #fff;
+	border-color: var(--mn-accent);
+	box-shadow: 0 1px 4px rgba(99, 102, 241, 0.32);
+}
+html.dark .topics-seg-btn.topics-seg-on {
+	background: var(--mn-accent);
+	color: #0b1020;
+}
+.topics-seg-btn:active { transform: translateY(1px); }
+
 /* ── presets row ───────────────────────────────────────── */
 .topics-presets {
 	display: flex;
