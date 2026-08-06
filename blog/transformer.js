@@ -6325,6 +6325,14 @@ function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex
 
 	const containerRect = container.getBoundingClientRect();
 
+	// Cache chip rects ONCE per draw — they don't change inside a single
+	// drawArcs call, so calling getBoundingClientRect 2× per arc pair
+	// (N² pairs) was the dominant cost: N read-pairs per draw instead of 2·N².
+	const chipRects = new Array(chips.length);
+	for (let k = 0; k < chips.length; k++) {
+		chipRects[k] = chips[k].getBoundingClientRect();
+	}
+
 	const n = Math.min(tokens.length, chips.length, weights.length);  // ← ADD THIS
 
 	for (let i = 0; i < n; i++) {                                     // ← USE n
@@ -6334,17 +6342,14 @@ function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex
 			const strength = weights[i][j];
 			if (strength < 0.01) continue;
 
-			drawSingleArc(ctx, container, containerRect, chips[i], chips[j], strength, hoverIndex === i);
+			drawSingleArc(ctx, container, containerRect, chipRects[i], chipRects[j], strength, hoverIndex === i);
 		}
 	}
 
 	highlightHoveredChip(chips, hoverIndex);
 }
 
-function drawSingleArc(ctx, container, containerRect, chip1El, chip2El, strength, isSource) {
-	const chip1 = chip1El.getBoundingClientRect();
-	const chip2 = chip2El.getBoundingClientRect();
-
+function drawSingleArc(ctx, container, containerRect, chip1, chip2, strength, isSource) {
 	const scrollLeft = container.scrollLeft;
 	const scrollTop  = container.scrollTop;
 

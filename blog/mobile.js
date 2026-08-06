@@ -63,8 +63,8 @@
 	function initGlossaryTapToggle() {
 		if (!isTouch()) return;
 
-		var contents = document.getElementById('contents');
-		if (!contents) return;
+		// Use document-level delegation so the tap-toggle works on every page,
+		// including those without #contents (e.g. transformer.php).
 
 		// Track which term is currently open (only one at a time).
 		var openTerm = null;
@@ -77,7 +77,7 @@
 			openTerm = null;
 		}
 
-		contents.addEventListener('click', function (ev) {
+		document.addEventListener('click', function (ev) {
 			var term = ev.target.closest && ev.target.closest('.glossary-term');
 			if (term) {
 				var owningLabel = term.closest('label');

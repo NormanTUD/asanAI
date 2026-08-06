@@ -1033,8 +1033,11 @@ function escHtml(str) {
 function initGlossary() {
 	if (typeof GLOSSARY === 'undefined' || !GLOSSARY) return;
 
+	// #contents holds markdown-rendered prose; only used here to auto-detect
+	// terms in long-form text. Pages like transformer.php have no #contents
+	// but still ship hardcoded .glossary-term nodes (e.g. SGD/Adam labels)
+	// that need the same hover positioning. Don't bail out if it's missing.
 	var contents = document.getElementById('contents');
-	if (!contents) return;
 
 	// Build a single regex matching all glossary terms (word-boundary-aware)
 	var terms = Object.keys(GLOSSARY);
@@ -1046,73 +1049,78 @@ function initGlossary() {
 	});
 	var pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
 
-	// Walk text nodes inside #contents (but skip code/pre/math/form elements)
-	var walker = document.createTreeWalker(
-		contents,
-		NodeFilter.SHOW_TEXT,
-		{
-			acceptNode: function(node) {
-				// Skip code blocks, pre, math, script, style
-				var parent = node.parentElement;
-				if (!parent) return NodeFilter.FILTER_REJECT;
-				var tag = parent.tagName;
-				if (tag === 'CODE' || tag === 'PRE' || tag === 'SCRIPT' || tag === 'STYLE' ||
-					tag === 'SVG') {
-					return NodeFilter.FILTER_REJECT;
+	// Walk text nodes inside #contents (but skip code/pre/math/form elements).
+	// Only does auto-detection of terms in markdown prose; hardcoded
+	// .glossary-term nodes (e.g. on transformer.php) are handled below
+	// via the document-level listeners regardless of #contents.
+	if (contents) {
+		var walker = document.createTreeWalker(
+			contents,
+			NodeFilter.SHOW_TEXT,
+			{
+				acceptNode: function(node) {
+					// Skip code blocks, pre, math, script, style
+					var parent = node.parentElement;
+					if (!parent) return NodeFilter.FILTER_REJECT;
+					var tag = parent.tagName;
+					if (tag === 'CODE' || tag === 'PRE' || tag === 'SCRIPT' || tag === 'STYLE' ||
+						tag === 'SVG') {
+						return NodeFilter.FILTER_REJECT;
+					}
+					if (parent.closest('select, option, input, textarea, button, label[for]')) {
+						return NodeFilter.FILTER_REJECT;
+					}
+					// Skip if inside math element or already has glossary-term
+					if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
+					// Only process if text contains potential matches
+					if (!pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
+					pattern.lastIndex = 0;
+					return NodeFilter.FILTER_ACCEPT;
 				}
-				if (parent.closest('select, option, input, textarea, button, label[for]')) {
-					return NodeFilter.FILTER_REJECT;
+			},
+			false
+		);
+
+		var nodesToProcess = [];
+		while (walker.nextNode()) nodesToProcess.push(walker.currentNode);
+
+		nodesToProcess.forEach(function(textNode) {
+			var text = textNode.textContent;
+			pattern.lastIndex = 0;
+			if (!pattern.test(text)) return;
+			pattern.lastIndex = 0;
+
+			var frag = document.createDocumentFragment();
+			var lastIdx = 0;
+			var match;
+
+			while ((match = pattern.exec(text)) !== null) {
+				// Text before match
+				if (match.index > lastIdx) {
+					frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
 				}
-				// Skip if inside math element or already has glossary-term
-				if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
-				// Only process if text contains potential matches
-				if (!pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
-				pattern.lastIndex = 0;
-				return NodeFilter.FILTER_ACCEPT;
+				var term = match[0];
+				var key = terms.find(function(k) { return k.toLowerCase() === term.toLowerCase(); });
+				var def = key ? GLOSSARY[key] : '';
+
+				var span = document.createElement('span');
+				span.className = 'glossary-term';
+				span.textContent = term;
+				if (def) {
+					var tooltip = document.createElement('span');
+					tooltip.className = 'glossary-tooltip';
+					tooltip.textContent = def;
+					span.appendChild(tooltip);
+				}
+				frag.appendChild(span);
+				lastIdx = match.index + match[0].length;
 			}
-		},
-		false
-	);
-
-	var nodesToProcess = [];
-	while (walker.nextNode()) nodesToProcess.push(walker.currentNode);
-
-	nodesToProcess.forEach(function(textNode) {
-		var text = textNode.textContent;
-		pattern.lastIndex = 0;
-		if (!pattern.test(text)) return;
-		pattern.lastIndex = 0;
-
-		var frag = document.createDocumentFragment();
-		var lastIdx = 0;
-		var match;
-
-		while ((match = pattern.exec(text)) !== null) {
-			// Text before match
-			if (match.index > lastIdx) {
-				frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+			if (lastIdx < text.length) {
+				frag.appendChild(document.createTextNode(text.slice(lastIdx)));
 			}
-			var term = match[0];
-			var key = terms.find(function(k) { return k.toLowerCase() === term.toLowerCase(); });
-			var def = key ? GLOSSARY[key] : '';
-
-			var span = document.createElement('span');
-			span.className = 'glossary-term';
-			span.textContent = term;
-			if (def) {
-				var tooltip = document.createElement('span');
-				tooltip.className = 'glossary-tooltip';
-				tooltip.textContent = def;
-				span.appendChild(tooltip);
-			}
-			frag.appendChild(span);
-			lastIdx = match.index + match[0].length;
-		}
-		if (lastIdx < text.length) {
-			frag.appendChild(document.createTextNode(text.slice(lastIdx)));
-		}
-		textNode.parentNode.replaceChild(frag, textNode);
-	});
+			textNode.parentNode.replaceChild(frag, textNode);
+		});
+	}
 
 	// Position each tooltip as a fixed element so it always stays inside the
 	// viewport, even when the underlying term sits at the very left or right.
@@ -1146,12 +1154,14 @@ function initGlossary() {
 		tip.style.setProperty('--arrow-x', arrowClamp + 'px');
 	}
 
-	contents.addEventListener('mouseover', function(ev) {
+	// Use document-level delegation so tooltips are positioned on every page,
+	// not just inside #contents.
+	document.addEventListener('mouseover', function(ev) {
 		var term = ev.target.closest && ev.target.closest('.glossary-term');
 		if (!term) return;
 		positionTooltip(term);
 	});
-	contents.addEventListener('mouseout', function(ev) {
+	document.addEventListener('mouseout', function(ev) {
 		var term = ev.target.closest && ev.target.closest('.glossary-term');
 		if (!term) return;
 		var tip = term.querySelector('.glossary-tooltip');
