@@ -246,10 +246,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 <!-- MATH DISPLAY (full width)                                      -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <div id="math-display" style="
-    background: linear-gradient(160deg, #ffffff 0%, #fafbff 100%);
+    background: linear-gradient(160deg, rgba(99,102,241,0.06) 0%, rgba(99,102,241,0.02) 100%);
     padding: 32px;
     border-radius: 20px;
-    border: 1px solid rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.18);
     max-height: 550px;
     overflow-y: auto;
     box-shadow: 0 4px 24px -4px rgba(0,0,0,0.05);

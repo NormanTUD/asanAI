@@ -318,10 +318,10 @@ const NormLab = {
                 const fc = featureColors[j % featureColors.length];
                 h += `<td contenteditable="true" style="
                     padding: 10px 12px;
-                    border-bottom: 1px solid #f1f5f9;
+                    border-bottom: 1px solid ${themeColor('#e2e8f0')};
                     font-size: 1.05rem;
                     font-weight: 600;
-                    color: #1e293b;
+                    color: ${themeColor('#1e293b')};
                     outline: none;
                     cursor: text;
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
