@@ -153,7 +153,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                     display: block;
                     font-size: 0.78rem;
                     font-weight: 700;
-                    color: #475569;
+                    color: var(--mn-text-secondary);
                     margin-bottom: 6px;
                     letter-spacing: 0.03em;
                 ">Beta <span style="color:#10b981;">(β)</span> — Bias</label>
