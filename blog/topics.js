@@ -24,15 +24,16 @@
 	'use strict';
 
 	/* ── 1. Topic registry (single source of truth) ─────────────
-	   Math is split into three levels (i = HS, ii = undergrad,
-	   iii = grad / research) so a reader can opt in only to the
-	   depth they actually want. A page that combines levels can
-	   list several, e.g. "math-i, math-ii". */
+	   Math and Statistics are split into cumulative levels (i = HS,
+	   ii = undergrad, iii = grad / research) so a reader can opt in
+	   only to the depth they actually want. A page that combines
+	   levels can list several, e.g. "math-i, math-ii". */
 	const TOPICS = [
 		{ id: 'math-i',           label: 'Math I',           icon: '∑',    desc: 'Algebra, derivatives' },
 		{ id: 'math-ii',          label: 'Math II',          icon: '∫',    desc: 'Integrals, linear algebra' },
 		{ id: 'math-iii',         label: 'Math III',         icon: '∮',    desc: 'Probability, real analysis' },
-		{ id: 'statistics',       label: 'Statistics',       icon: 'σ',    desc: 'Probability, inference' },
+		{ id: 'statistics-i',     label: 'Stats I',          icon: 'σ',    desc: 'Basic probability, distributions' },
+		{ id: 'statistics-ii',    label: 'Stats II',         icon: 'Σ',    desc: 'Inference, hypothesis testing, advanced' },
 		{ id: 'programming',      label: 'Programming',      icon: '{ }',  desc: 'Code, algorithms' },
 		{ id: 'architecture',     label: 'Architecture',     icon: '🏗️',   desc: 'Transformers, attention' },
 		{ id: 'training',         label: 'Training',         icon: '🎯',   desc: 'Fine-tuning, RL, eval' },
@@ -80,33 +81,33 @@
 	   a Curious HS reader gets the storytelling core; a Researcher
 	   PhD gets nearly everything.
 
-	   Math is split into i / ii / iii and each level cumulatively
-	   includes the lower levels: HS → math-i, Undergrad → math-i +
-	   math-ii, Grad / PhD → math-i + math-ii + math-iii. */
+	   Math and Statistics are split into i / ii / iii and each level
+	   cumulatively includes the lower levels: HS → math-i + stats-i,
+	   Undergrad → + math-ii + stats-ii, Grad / PhD → + math-iii. */
 	const AUDIENCE_PRESETS = {
 		curious: {
 			hs:        [ 'history', 'philosophy', 'ethics', 'society', 'language' ],
-			undergrad: [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i' ],
-			grad:      [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics' ],
-			phd:       [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics', 'programming' ]
+			undergrad: [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'statistics-i' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming' ]
 		},
 		student: {
-			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math-i' ],
-			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics', 'programming' ],
-			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics', 'programming', 'architecture', 'training', 'agents' ],
-			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics', 'programming', 'architecture', 'training', 'agents', 'math-iii', 'reasoning', 'inference', 'data' ]
+			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'statistics-i' ],
+			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents', 'math-iii', 'reasoning', 'inference', 'data' ]
 		},
 		engineer: {
-			hs:        [ 'math-i', 'programming', 'data', 'hardware' ],
-			undergrad: [ 'math-i', 'math-ii', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference' ],
-			grad:      [ 'math-i', 'math-ii', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents' ],
-			phd:       [ 'math-i', 'math-ii', 'programming', 'data', 'hardware', 'statistics', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents', 'interpretability', 'multimodal', 'vision', 'audio' ]
+			hs:        [ 'math-i', 'statistics-i', 'programming', 'data', 'hardware' ],
+			undergrad: [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'hardware', 'architecture', 'training', 'inference' ],
+			grad:      [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'hardware', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents' ],
+			phd:       [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'hardware', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents', 'interpretability', 'multimodal', 'vision', 'audio' ]
 		},
 		researcher: {
-			hs:        [ 'history', 'philosophy', 'math-i', 'language' ],
-			undergrad: [ 'history', 'philosophy', 'math-i', 'math-ii', 'language', 'statistics', 'programming', 'architecture' ],
-			grad:      [ 'history', 'philosophy', 'math-i', 'math-ii', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
-			phd:       [ 'history', 'philosophy', 'math-i', 'math-ii', 'math-iii', 'language', 'statistics', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
+			hs:        [ 'history', 'philosophy', 'math-i', 'statistics-i', 'language' ],
+			undergrad: [ 'history', 'philosophy', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture' ],
+			grad:      [ 'history', 'philosophy', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'math-i', 'math-ii', 'math-iii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
 		}
 	};
 
@@ -114,7 +115,7 @@
 	   picking an audience). */
 	const PRESETS = {
 		essentials: [ 'history', 'philosophy', 'language' ],
-		technical:  [ 'history', 'philosophy', 'language', 'math-i', 'math-ii', 'statistics', 'programming', 'architecture' ]
+		technical:  [ 'history', 'philosophy', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture' ]
 	};
 
 	const COOKIE_NAME  = 'topics_pref';

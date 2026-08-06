@@ -7,7 +7,7 @@ icon: &#127922;
 part: 4
 order: 23
 color: sky
-topics: architecture, statistics
+topics: architecture, statistics-i, statistics-ii
 -->
 
 <div class="md">
