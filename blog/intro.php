@@ -47,29 +47,13 @@ This site is not a book to be read passively. It is designed as a playground for
 
 ## Pick Your Interests — A Course That Adapts to You
 
-Not every topic sparks the same curiosity for everyone. Some readers live for the equations. Others want the philosophical questions. Others want the hardware details. Others just want to know how to talk to ChatGPT well. This course is too long to consume in one shape, so it adapts to **you**.
-
-Look at the top-right corner of the page — next to the **dark-mode toggle** you'll find a small <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button. Click it to open the **interest picker**:
-
-* **Tell us who you are.** Pick your *profile* (Curious / Student / Engineer / Researcher) and your *level* (High School / Undergrad / Grad / PhD). Each combination is a curated topic set, so most readers find a sensible default in two clicks. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals.
-* **Only one axis?** Picking just *Curious* or just *High School* saves that choice without forcing the other — you can fill in the second axis later, or just tune the topic grid by hand.
-* **Turn it off any time.** Click the active button again, or hit *Clear*, to disable the audience filter and pick topics manually.
-* **Quick presets** still work too: *Show Everything* turns every topic on, *Just Essentials* keeps only the big-picture ones (history, philosophy, language), *Technical Essentials* adds the fachinformatiker-level core (math I & II, Stats I & II, programming, architecture) on top, and *Disable All* mutes everything in one click (handy for a clean slate).
-* **Oops?** Every change is undoable while the picker is open — press **Ctrl/⌘+Z** to undo, **Ctrl/⌘+Shift+Z** (or Ctrl+Y) to redo, or use the *Undo* / *Redo* buttons at the bottom of the picker.
-* **Fine-tune below.** Toggle individual topics — sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, so you can still see they exist (and click once to peek if curiosity strikes).
-* **Your choices are saved in a cookie** — they survive reloads and travel with you between pages. No account, no signup.
+This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD) — each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason.
 
 Below is your current pick. Tap any pill to flip it on or off:
 
 <div data-topics-inline class="inline-topics"></div>
 
-A few things worth knowing:
-
-* **Nothing is gone for good.** Skipped sections show a banner like *“Math section skipped”* with a single-click *Peek anyway* button. So you can stay focused without losing the road map of what the course covers.
-* **The course tiles on the home page react, too.** Tiles for topics you've muted gently dim back so you can still see they exist — but they're still one click away if you change your mind.
-* **You can change your mind any time.** There is no score, no penalty. The picker is a dial, not a quiz.
-
-Use it as much or as little as you like. Some readers will ignore it and read straight through. Others will turn off everything except *History* and *Philosophy*. Both are completely valid paths through the material.
+Toggle individual topics to fine-tune — sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
 
 ## What You Will Achieve
 

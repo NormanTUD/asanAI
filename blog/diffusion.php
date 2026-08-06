@@ -186,7 +186,7 @@ const plotlyLayout = (extra) => Object.assign({
 // =============================================================================
 // SHARED: Pre-load the astronaut image, downsample to a small grayscale grid
 // =============================================================================
-const GRID = 48;
+const GRID = 64;
 
 function loadCleanGrid() {
 	return new Promise((resolve) => {
@@ -318,8 +318,10 @@ function makeScoreViz(containerId) {
 		x: xs, y: xs.map(p), mode: 'lines', name: 'p(x)  data density',
 		line: { color: '#3b82f6', width: 2.5 }, yaxis: 'y'
 	};
+	// Clamp score to ±3 to avoid singularities where p(x) ≈ 0
 	const sTrace = {
-		x: xs, y: xs.map(score), mode: 'lines', name: '∇ₓ log p(x)  score',
+		x: xs, y: xs.map((x) => Math.max(-3, Math.min(3, score(x)))),
+		mode: 'lines', name: '∇ₓ log p(x)  score',
 		line: { color: '#ef4444', width: 2.5 }, yaxis: 'y2'
 	};
 
@@ -327,13 +329,12 @@ function makeScoreViz(containerId) {
 	const arrowXs = [];
 	for (let x = -4; x <= 4; x += 0.4) arrowXs.push(x);
 	const shapes = arrowXs.map((x) => {
-		const s = score(x);
-		const head = 0.18 * Math.sign(s);
+		const s = Math.max(-3, Math.min(3, score(x)));
 		return {
 			type: 'line',
 			xref: 'x2', yref: 'y2',
 			x0: x, x1: x,
-			y0: 0, y1: Math.max(-2.5, Math.min(2.5, s)),
+			y0: 0, y1: s,
 			line: { color: s > 0 ? '#22c55e' : '#a855f7', width: 2 },
 			arrowhead: 3, arrowsize: 1, arrowwidth: 1.5
 		};
@@ -386,7 +387,7 @@ function makeScoreViz(containerId) {
 			const dt = 0.05;
 			const noiseScale = 0.35;
 			for (let step = 0; step < 200; step++) {
-				const s = score(x);
+				const s = Math.max(-3, Math.min(3, score(x)));
 				x = x + s * dt + noiseScale * Math.sqrt(2 * dt) * gauss(makeRng(step * 991 + 7));
 				if (Math.abs(x) > 4.3) x = Math.sign(x) * 4.3;
 				particleX = x;
