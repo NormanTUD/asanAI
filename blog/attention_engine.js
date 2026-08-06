@@ -1248,12 +1248,13 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	 */
 	_matrixAppendRowLabels(frag, layout, tokens) {
 		const { n, offsetX, offsetY, cellSize } = layout;
+		const labelFill = themeColor('#64748b');
 		for (let i = 0; i < n; i++) {
 			frag.appendChild(this._matrixMakeSvgEl('text', {
 				x: String(offsetX - 4),
 				y: String(offsetY + i * cellSize + cellSize / 2 + 4),
 				'font-size': '9',
-				fill: '#64748b',
+				fill: labelFill,
 				'text-anchor': 'end',
 				'data-apv-token-side': 'row',
 				'data-apv-token-idx': String(i),
@@ -1267,6 +1268,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	 */
 	_matrixAppendColLabels(frag, layout, tokens) {
 		const { n, offsetX, offsetY, cellSize } = layout;
+		const labelFill = themeColor('#64748b');
 		for (let j = 0; j < n; j++) {
 			const cx = offsetX + j * cellSize + cellSize / 2;
 			const cy = offsetY - 6;
@@ -1274,7 +1276,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				x: String(cx),
 				y: String(cy),
 				'font-size': '9',
-				fill: '#64748b',
+				fill: labelFill,
 				'text-anchor': 'start',
 				transform: `rotate(-45, ${cx}, ${cy})`,
 				'data-apv-token-side': 'col',
@@ -1290,6 +1292,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	 */
 	_matrixAppendCausalMaskOverlay(frag, layout, n) {
 		const { offsetX, offsetY, cellSize } = layout;
+		const overlayFill = themeColor('#94a3b8');
 		for (let qi = 0; qi < n; qi++) {
 			for (let ki = qi + 1; ki < n; ki++) {
 				frag.appendChild(this._matrixMakeSvgEl('rect', {
@@ -1297,7 +1300,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 					y: String(offsetY + qi * cellSize),
 					width: String(cellSize),
 					height: String(cellSize),
-					fill: '#94a3b8',
+					fill: overlayFill,
 					'fill-opacity': '0.12',
 					'pointer-events': 'none'
 				}));
@@ -1330,7 +1333,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		frag.appendChild(this._matrixMakeSvgEl('path', {
 			d: pathD,
 			fill: 'none',
-			stroke: '#64748b',
+			stroke: themeColor('#64748b'),
 			'stroke-width': '1.5',
 			'stroke-dasharray': '4,3',
 			'pointer-events': 'none',
@@ -1341,7 +1344,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			x: String(offsetX + matrixSize - 2),
 			y: String(offsetY + 12),
 			'font-size': '7',
-			fill: '#94a3b8',
+			fill: themeColor('#94a3b8'),
 			'text-anchor': 'end',
 			'pointer-events': 'none',
 			'font-style': 'italic'
@@ -1728,6 +1731,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const cellSize = Math.max(18, Math.min(40, 300 / n));
 		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
 		const weights = headData.this_weights;
+		const cellLabelFill = themeColor('#334155');
 		const padding = 80;
 		const offsetX = padding / 2;
 		const offsetY = padding / 2;
@@ -1787,7 +1791,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 					const w = weights[qiCalc][kiCalc];
 					if (w > 0.05) {
 						txt.textContent = (w * 100).toFixed(0);
-						txt.setAttribute('fill', w > 0.5 ? '#fff' : '#334155');
+						txt.setAttribute('fill', w > 0.5 ? '#fff' : cellLabelFill);
 					} else {
 						txt.textContent = '';
 					}
@@ -1856,12 +1860,14 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 		let svgContent = '';
 
-		svgContent += `<text x="${leftColumnX}" y="18" font-size="11" fill="#64748b"
+		svgContent += `<text x="${leftColumnX}" y="18" font-size="11" fill="${themeColor('#64748b')}"
 	font-weight="600" text-anchor="middle">Query (attending)</text>`;
-		svgContent += `<text x="${rightColumnX}" y="18" font-size="11" fill="#64748b"
+		svgContent += `<text x="${rightColumnX}" y="18" font-size="11" fill="${themeColor('#64748b')}"
 	font-weight="600" text-anchor="middle">Key (attended to)</text>`;
 
 		const hovered = this._apvHoveredToken.get(layerIdx);
+		const tokenFill = themeColor('#334155');
+		const tokenHoverFill = themeColor('#1e40af');
 
 		for (let i = 0; i < n; i++) {
 			const y = topPadding + i * rowHeight;
@@ -1870,14 +1876,14 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			const displayTok = this._apvEscapeHtml(this._displayToken(tokens[i]));  // ← CHANGED
 
 			svgContent += `<text x="${leftColumnX}" y="${y + 4}"
-	    font-size="12" fill="${isHoveredLeft ? '#1e40af' : '#334155'}"
+	    font-size="12" fill="${isHoveredLeft ? tokenHoverFill : tokenFill}"
 	    font-weight="${isHoveredLeft ? '700' : '500'}" text-anchor="end"
 	    style="cursor:pointer;"
 	    data-apv-side="left" data-apv-idx="${i}"
 	    >${displayTok}</text>`;
 
 			svgContent += `<text x="${rightColumnX}" y="${y + 4}"
-	    font-size="12" fill="${isHoveredRight ? '#1e40af' : '#334155'}"
+	    font-size="12" fill="${isHoveredRight ? tokenHoverFill : tokenFill}"
 	    font-weight="${isHoveredRight ? '700' : '500'}" text-anchor="start"
 	    style="cursor:pointer;"
 	    data-apv-side="right" data-apv-idx="${i}"
@@ -2052,11 +2058,13 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 	_apvUpdateTokenTextStyles(svg, hovered) {
 		const texts = svg.querySelectorAll('text[data-apv-side]');
+		const tokenFill = themeColor('#334155');
+		const tokenHoverFill = themeColor('#1e40af');
 		texts.forEach(text => {
 			const side = text.getAttribute('data-apv-side');
 			const idx = parseInt(text.getAttribute('data-apv-idx'));
 			const isHovered = hovered && hovered.side === side && hovered.index === idx;
-			text.setAttribute('fill', isHovered ? '#1e40af' : '#334155');
+			text.setAttribute('fill', isHovered ? tokenHoverFill : tokenFill);
 			text.setAttribute('font-weight', isHovered ? '700' : '500');
 		});
 	}
@@ -2115,6 +2123,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			const offsetY = padding / 2 + row * (matrixSize + padding);
 			const color = AttentionEngine.HEAD_COLORS[hIdx % AttentionEngine.HEAD_COLORS.length];
 			const weights = headDataArray[hIdx].this_weights;
+			const tokenLabelFill = themeColor('#64748b');
+			const cellLabelFill = themeColor('#334155');
 
 			svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
 		    font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
@@ -2122,7 +2132,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 			for (let i = 0; i < n; i++) {
 				svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
-			font-size="9" fill="#64748b" text-anchor="end"
+			font-size="9" fill="${tokenLabelFill}" text-anchor="end"
 			>${this._apvEscapeHtml(this._displayToken(tokens[i]))}</text>`;  // ← CHANGED
 			}
 
@@ -2130,7 +2140,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				svgContent += `<text
 			x="${offsetX + j * cellSize + cellSize / 2}"
 			y="${offsetY - 6}"
-			font-size="9" fill="#64748b" text-anchor="start"
+			font-size="9" fill="${tokenLabelFill}" text-anchor="start"
 			transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
 			>${this._apvEscapeHtml(this._displayToken(tokens[j]))}</text>`;  // ← CHANGED
 			}
@@ -2145,14 +2155,14 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 					svgContent += `<rect x="${x}" y="${y}"
 			    width="${cellSize}" height="${cellSize}"
 			    fill="${color}" fill-opacity="${alpha.toFixed(3)}"
-			    stroke="#e2e8f0" stroke-width="0.5"
+			    stroke="${themeColor('#e2e8f0')}" stroke-width="0.5"
 			    data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
 			    style="cursor:crosshair;"
 			/>`;
 
 					if (cellSize >= 28 && w > 0.05) {
 						svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
-				font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
+				font-size="8" fill="${w > 0.5 ? '#fff' : cellLabelFill}"
 				text-anchor="middle" pointer-events="none"
 				>${(w * 100).toFixed(0)}</text>`;
 					}

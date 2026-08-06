@@ -5011,7 +5011,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 		annotations: result.annotations,  // ← only stage labels, no VF annotations
 		margin: { l: 10, r: 10, b: 50, t: 80 },
 		showlegend: true,
-		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14 } }
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14, color: themeColor('#cbd5e1') } }
 	};
 
 	// Combine token traces + VF traces
@@ -5138,7 +5138,7 @@ function _traj_ec3d_option(series, legendData) {
 			data: legendData,
 			orient: 'horizontal',
 			bottom: 5, left: 'center',
-			textStyle: { fontSize: 12 }
+			textStyle: { fontSize: 12, color: themeColor('#cbd5e1') }
 		},
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },

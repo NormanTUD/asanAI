@@ -226,9 +226,44 @@ html.dark [style*="background:#e8f5e9"] {
 	border-color: var(--mn-border) !important;
 	color: var(--mn-text) !important;
 }
-/* Fix text colors inside those boxes */
-html.dark [style*="color: #065f46"] { color: var(--mn-emerald) !important; }
-html.dark [style*="color: #312e81"] { color: var(--mn-accent-dark) !important; }
+/* Fix text colors inside those boxes.
+   These override inline styles used in JS-generated HTML (transformer.js,
+   attention_engine.js, algorithms.js, intuition.js, …). They MUST target
+   LIGHT swatches, otherwise dark-on-dark stays unreadable. */
+html.dark [style*="color: #065f46"],
+html.dark [style*="color:#065f46"] { color: #6ee7b7 !important; }
+html.dark [style*="color: #312e81"],
+html.dark [style*="color:#312e81"] { color: #a5b4fc !important; }
+html.dark [style*="color: #1e40af"],
+html.dark [style*="color:#1e40af"] { color: #93c5fd !important; }
+html.dark [style*="color: #1e3a5f"],
+html.dark [style*="color:#1e3a5f"] { color: #93c5fd !important; }
+html.dark [style*="color: #14532d"],
+html.dark [style*="color:#14532d"] { color: #86efac !important; }
+html.dark [style*="color: #166534"],
+html.dark [style*="color:#166534"] { color: #86efac !important; }
+html.dark [style*="color: #854d0e"],
+html.dark [style*="color:#854d0e"] { color: #fde047 !important; }
+html.dark [style*="color: #92400e"],
+html.dark [style*="color:#92400e"] { color: #fde68a !important; }
+html.dark [style*="color: #451a03"],
+html.dark [style*="color:#451a03"] { color: #fde68a !important; }
+html.dark [style*="color: #991b1b"],
+html.dark [style*="color:#991b1b"] { color: #fca5a5 !important; }
+html.dark [style*="color: #7c3aed"],
+html.dark [style*="color:#7c3aed"] { color: #c4b5fd !important; }
+html.dark [style*="color: #5b21b6"],
+html.dark [style*="color:#5b21b6"] { color: #c4b5fd !important; }
+html.dark [style*="color: #059669"],
+html.dark [style*="color:#059669"] { color: #6ee7b7 !important; }
+html.dark [style*="color: #d97706"],
+html.dark [style*="color:#d97706"] { color: #fbbf24 !important; }
+/* Mid-gray (used for "Hover over …" hints) must not collapse to a darker
+   gray in dark mode; brighten it so it stays legible on dark surfaces. */
+html.dark [style*="color: #94a3b8"],
+html.dark [style*="color:#94a3b8"] { color: #cbd5e1 !important; }
+html.dark [style*="color: #64748b"],
+html.dark [style*="color:#64748b"] { color: #cbd5e1 !important; }
 html.dark .label-left,
 html.dark .label-right {
 	color: var(--mn-text-muted) !important;
