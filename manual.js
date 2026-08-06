@@ -814,10 +814,10 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			const width = res[3][2];
 
 			$("#" + uuid + "_error").html("");
-			$("#" + uuid + "_shapes").html(`\\( \\text{Shape: } [${input_shape}] \\rightarrow [${output_shape}] \\)`);
+			$("#" + uuid + "_shapes").html(`<span class="temml_me">\\text{Shape: } [${input_shape}] \\rightarrow [${output_shape}]</span>`);
 
-			if (window.MathJax && MathJax.typesetPromise) {
-				MathJax.typesetPromise([document.getElementById(uuid + "_shapes")]).catch((err) => console.log(err));
+			if (typeof render_manual_temml === "function") {
+				render_manual_temml(document.getElementById(uuid + "_shapes"));
 			}
 
 			if(result) {

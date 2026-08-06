@@ -6,17 +6,6 @@
 		<script src='libs/jquery.js'></script>
 		<script src='libs/jquery-ui.js'></script>
 		<script src='libs/plotly-latest.min.js'></script>
-		<script src="libs/mathjax/es5/tex-chtml-full.js?config=TeX-AMS-MML_HTMLorMML"></script>
-		<script type="text/x-mathjax-config">
-			MathJax.Hub.Config({
-				tex2jax: {
-					inlineMath: [['$','$']]
-				},
-				jax: ["input/TeX","output/CommonHTML"],
-				processEscapes: true,
-				"showMathMenu": true
-			});
-		</script>
 
 		<script src="tf/tf.js"></script>
 		<script src='base_wrappers.js'></script>
@@ -27,6 +16,46 @@
 		<script src='gui.js'></script>
 		<script src='debug.js'></script>
 		<script src="libs/md5.umd.min.js"></script>
+
+		<link rel="stylesheet" href="libs/temml/Temml-Local.css">
+		<script src="libs/temml/temml.min.js"></script>
+		<script src="my_temml.js"></script>
+		<script>
+			"use strict";
+
+			function render_manual_temml(root) {
+				if (!root) root = document;
+				if (!window.temml) return;
+
+				var scope = (root instanceof Element || root instanceof DocumentFragment) ? root : document;
+				var elements = scope.querySelectorAll(".temml_me");
+				for (var i = 0; i < elements.length; i++) {
+					var e = elements[i];
+					if (e.dataset.rendered === "1") continue;
+
+					var latex = (e.textContent || "").trim();
+					if (!latex) continue;
+
+					try {
+						var displayMode = e.dataset.display === "1";
+						e.innerHTML = window.temml.renderToString(latex, { displayMode: displayMode });
+						e.dataset.rendered = "1";
+					} catch (err) {
+						console.error("manual temml error:", err, "\n" + latex);
+					}
+				}
+			}
+
+			function manual_temml_full_render() {
+				render_manual_temml(document);
+			}
+
+			if (document.readyState === "loading") {
+				document.addEventListener("DOMContentLoaded", manual_temml_full_render);
+			} else {
+				manual_temml_full_render();
+			}
+		</script>
 		<style>
 			html { scroll-behavior: smooth; scroll-padding-top: 20px; }
 			body {
@@ -366,7 +395,7 @@
 			The rest is the same as with training on webcam images, when done adding images, you may chose to <a href="#Augmentation">augment</a> them, or straight go to <img src="manual/start_training_button.png" /> to start training.
 <br>
 			<h3>Train on CSV</h3>
-			As Neural Networks as just function approximators (see <a href="#Basic_idea_of_neural_networks">Basic idea of neural networks</a>), you can also approximate custom functions based on numbers. The easiest way to import custom data from functions of the form \( f(x_1, x_2, x_3, \dots, x_n) = [y_1, y_2, y_3, \dots, y_n] \) is to use the CSV importer.
+			As Neural Networks as just function approximators (see <a href="#Basic_idea_of_neural_networks">Basic idea of neural networks</a>), you can also approximate custom functions based on numbers. The easiest way to import custom data from functions of the form <span class="temml_me"> f(x_1, x_2, x_3, \dots, x_n) = [y_1, y_2, y_3, \dots, y_n] </span> is to use the CSV importer.
 <br>
 			For this, choose "Own data?" &rarr; "Yes, own CSV".
 <br>
@@ -403,7 +432,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Tensors are a generalization of matrices. Where matrices have 2 dimensions,
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 			\textrm{Second dimension}
 			\stackrel{\mbox{First dimension}}{%
 				\begin{pmatrix}
@@ -413,13 +442,13 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					a_{N1} & a_{N2} & \cdots & a_{NM}
 				\end{pmatrix}%
 			}.
-			$$
+			</div>
 <br>
 			Tensors have an arbitrary number of dimensions.
 <br>
 			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 3x3 pixels, the image as a tensor would look like this:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\text{Image} = \begin{pmatrix}
 					\text{Red:} \begin{pmatrix}
 						255 & 0 & 0 \\
@@ -437,7 +466,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 						0 & 0 & 64
 					\end{pmatrix}
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			The three channels together give us this total image:
 <br>
@@ -509,13 +538,13 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Any data a computer can handle can be expressed as <i>some</i> tensor. They may have more or larger dimensions, but they are nonetheless tensors.
 <br>
-			The description of the size of a tensor is called a shape. 			A two-by-two-Matrix would have the shape \( [2, 2] \). The image above would have the shape \( [3, 3, 3] \), because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be \( [64, 64, 3] \).
+			The description of the size of a tensor is called a shape. 			A two-by-two-Matrix would have the shape <span class="temml_me"> [2, 2] </span>. The image above would have the shape <span class="temml_me"> [3, 3, 3] </span>, because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be <span class="temml_me"> [64, 64, 3] </span>.
 <br>
 			<h3>One-Hot-Encoding</h3>
 			One-Hot-Encoding is used to symbolize percentages of values of categories. For example, if you want to differentiate between cat and dog, the output vector
-			could be \( [\text{Percentage Cat}, \text{Percentage Dog}] \), which, in total, sums up to 1 (100%).
+			could be <span class="temml_me"> [\text{Percentage Cat}, \text{Percentage Dog}] </span>, which, in total, sums up to 1 (100%).
 <br>
-			For more categories, you'd add another entry to that column vector, like \( [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] \), all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
+			For more categories, you'd add another entry to that column vector, like <span class="temml_me"> [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] </span>, all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
 <br>
 			<div class="interactive-demo" id="onehot_demo">
 				<label>Interactive One-Hot-Encoding: </label>
@@ -524,7 +553,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					<option value="1">Dog</option>
 					<option value="2">Human</option>
 				</select>
-				<div class="result-display">$$\text{Order: }\left[\text{Cat}, \text{Dog}, \text{Human}\right]$$</div>
+				<div class="result-display"><div class="temml_me" data-display="1">\text{Order: }\left[\text{Cat}, \text{Dog}, \text{Human}\right]</div></div>
 				<div class="result-display" id="onehot_result"></div>
 			</div>
 			<script>
@@ -542,8 +571,8 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					if (i < vec.length - 1) tex += ' \\\\ ';
 				}
 				tex += ' \\end{pmatrix}';
-				document.getElementById('onehot_result').innerHTML = '\\[ ' + tex + ' \\]';
-				if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([document.getElementById('onehot_result')]);
+				document.getElementById('onehot_result').innerHTML = '<div class="temml_me" data-display="1"> ' + tex + ' </div>';
+				render_manual_temml(document.getElementById('onehot_result'));
 			}
 			updateOneHot();
 			</script>
@@ -552,7 +581,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			You can imagine them as such:
 <br>
-			$$ \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) $$
+			<div class="temml_me" data-display="1"> \text{Result} = \text{Layer 3}\left(\text{Layer 2}\left(\text{Layer 1}\left(\text{Layer 0}\left(\text{input data}\right)\right)\right)\right) </div>
 <br>
 			This is called a sequential model, since the data flows through it sequentially. There are other types of models, but they cannot be used with asanAI.
 <br>
@@ -563,12 +592,12 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Imagine a set of images of cats and dogs. These are, as already discussed, tensors. If you want to classify these images, you are actually searching a function such that 
 <br>
-			$$ 
+			<div class="temml_me" data-display="1"> 
 				f\left(\text{Input Image Tensor}\right) = \begin{pmatrix}
 					\text{Probability cat in percent}\\
 					\text{Probability dog in percent}
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			Writing this function manually is practically impossible. Every picture of every cat or dog is different. Even if it's the same cat, it is different if the picture is taken half a second later. So you cannot simply say "if this pixel has this color and this pixel has this color, and ..., then it is a cat". 
 <br>
@@ -576,19 +605,19 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			We will cover these layers <a href="#Layer_Types">here</a>.
 <br>
-			In neural networks, instead of writing the interna of functions by yourself, you give the network a lot of data and what should come out. Mathematically, you tell the network that the function \( f \) should transform the input set \( X \) to the output set \( Y \). It will try to find values for the parameters of the interna of the functions, whose general outline you need to give by specifying the layer types and their options, so that the difference between the values you specify as ground truth and the values the network gives out is minimized as much as possible.
+			In neural networks, instead of writing the interna of functions by yourself, you give the network a lot of data and what should come out. Mathematically, you tell the network that the function <span class="temml_me"> f </span> should transform the input set <span class="temml_me"> X </span> to the output set <span class="temml_me"> Y </span>. It will try to find values for the parameters of the interna of the functions, whose general outline you need to give by specifying the layer types and their options, so that the difference between the values you specify as ground truth and the values the network gives out is minimized as much as possible.
 <br>
 			<h3>Dimensionality Reduction</h3>
 			A common goal of neural networks is dimensionality reduction.
 <br>
-			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of \( 64*64*3 = 12288 \) values. If we only have the categories "Dog" or "Cat", we need to reduce the information from 12288 values to only 2 values.
+			Imagine a 64x64 image of either a cat or a dog. The image has 3 channels, so in total it consists of <span class="temml_me"> 64*64*3 = 12288 </span> values. If we only have the categories "Dog" or "Cat", we need to reduce the information from 12288 values to only 2 values.
 <br>
-			This is a dimensionality reduction, from a tensor of the shape \( [64, 64, 3] \) to a tensor of the shape \( [2] \).
+			This is a dimensionality reduction, from a tensor of the shape <span class="temml_me"> [64, 64, 3] </span> to a tensor of the shape <span class="temml_me"> [2] </span>.
 <br>
 			This can be done by several ways. For example, <a href="#Convolutional_Layers">convolutions</a> or <a href="#Pooling_layers">pooling layers</a> "extract" information from images and reduce the number of values and therefore reduce the dimensionality of the inputted images.
 <br>
 			<h3>Training</h3>
-			The <a href="#Loss">loss function</a> creates a single value from the training data \(X\) and \(Y\) such that the lower the number is, the better the results are. 
+			The <a href="#Loss">loss function</a> creates a single value from the training data <span class="temml_me">X</span> and <span class="temml_me">Y</span> such that the lower the number is, the better the results are. 
 			This creates a so-called "loss-landscape", that is a function that represents, for each data point, how well the network currently recognizes it.
 <br>
 			For each point, this is just a single float. The overall loss is the average loss of all points. 
@@ -598,9 +627,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			After each <a href="#Batch-Size">Batch</a>, the (trainable) weights and biases are adjusted to to better fit the training data and to minimize the loss. The network structure is not altered while training.
 <br>
 			<h4>Batch-Size</h4>
-			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the \( X \)-input-tensor and the \( Y \)-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
+			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the <span class="temml_me"> X </span>-input-tensor and the <span class="temml_me"> Y </span>-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
 <br>
-			$$ 
+			<div class="temml_me" data-display="1"> 
 				f\left(
 					\begin{pmatrix}
 						x_0 \\
@@ -612,11 +641,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					y_1 \\
 					y_2 
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			The next batch may then be:
 <br>
-			$$ 
+			<div class="temml_me" data-display="1"> 
 				f\left(
 					\begin{pmatrix}
 					x_3 \\
@@ -628,7 +657,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					y_4 \\
 					y_5 
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			and so on, until all values have been seen by the network once. This is then called an <a href="#Epochs">epoch</a>.
 <br>
@@ -646,29 +675,29 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			One possible definition of derivates is this equation:
 <br>
-			$$ f'(x) = \lim\limits_{h \to 0} \frac{f(x + h) - f(x)}{h} $$
+			<div class="temml_me" data-display="1"> f'(x) = \lim\limits_{h \to 0} \frac{f(x + h) - f(x)}{h} </div>
 <br>
 			The way a computer can approximate derivates of any arbitrary function, no matter how complex, is to set h to some very small value.
 <br>
 			Let's say, 
 <br>
-			$$ f(x) = 2x^2 $$
+			<div class="temml_me" data-display="1"> f(x) = 2x^2 </div>
 <br>
-			Of course, the derivative is \(4x\) then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point \(x = 10\)?
+			Of course, the derivative is <span class="temml_me">4x</span> then. But what does the computer say, when you, for example, set h to 0.0001, at the specific point <span class="temml_me">x = 10</span>?
 <br>
-			$$ f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h}$$
+			<div class="temml_me" data-display="1"> f'(x) = \lim\limits_{h \to 0.0001} \frac{f(x + h) - f(x)}{h}</div>
 <br>
-			$$ \frac{f(x + 0.0001) - f(x)}{0.0001} = $$
+			<div class="temml_me" data-display="1"> \frac{f(x + 0.0001) - f(x)}{0.0001} = </div>
 <br>
-			$$ \frac{f(10 + 0.0001) - f(10)}{0.0001} = $$
+			<div class="temml_me" data-display="1"> \frac{f(10 + 0.0001) - f(10)}{0.0001} = </div>
 <br>
-			$$ \frac{2(10+0.0001)^2 - 2\cdot 10^2}{0.0001} =  $$
+			<div class="temml_me" data-display="1"> \frac{2(10+0.0001)^2 - 2\cdot 10^2}{0.0001} =  </div>
 <br>
-			$$ \frac{2(10+0.0001)^2 - 200}{0.0001} = $$
+			<div class="temml_me" data-display="1"> \frac{2(10+0.0001)^2 - 200}{0.0001} = </div>
 <br>
-			$$ \frac{0.00400002}{0.0001} = 40.0002 $$
+			<div class="temml_me" data-display="1"> \frac{0.00400002}{0.0001} = 40.0002 </div>
 <br>
-			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by choosing a smaller \(h\).
+			The real answer is 40, the approximated answer is 40.0002; this is, for our example case, good enough, but it could be improved, of course, by choosing a smaller <span class="temml_me">h</span>.
 <br>
 			<h3>Predicting</h3>
 			Predicting with a simple sequential neural network works by passing input data through the layers of the network in order, starting from the input layer and ending at the output layer.
@@ -686,7 +715,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Tensors have shapes. The shape describe how many data points are in the tensor, and in what way they are arranged.
 <br>
-			For example, an Image may have 3 channels (one for each, red, green and blue), and each of those channels may be 10px wide and 20px height. So the total tensor shape may be \([10, 20, 3]\). If you have multiple of these images, lets say five, you may expand the tensor's first implicit index to 5, like this: \([5, 10, 20, 3]\). Then, you'd have 5 images, each 10x20px, with 3 channels each. This, in total, makes \(5 \cdot 10 \cdot 20 \cdot 3 = 3000\) data points.
+			For example, an Image may have 3 channels (one for each, red, green and blue), and each of those channels may be 10px wide and 20px height. So the total tensor shape may be <span class="temml_me">[10, 20, 3]</span>. If you have multiple of these images, lets say five, you may expand the tensor's first implicit index to 5, like this: <span class="temml_me">[5, 10, 20, 3]</span>. Then, you'd have 5 images, each 10x20px, with 3 channels each. This, in total, makes <span class="temml_me">5 \cdot 10 \cdot 20 \cdot 3 = 3000</span> data points.
 <br>
 			<h4>Input Shape</h4>
 			The input shape of a network is the shape of tensors that the network can process. If the incoming tensor has another shape, it may fail, because the network doesn't know what to do with it.
@@ -694,7 +723,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h4>Output Shape</h4>
 			The output shape of a network is the shape of the tensor that comes out of the network. Usually, in asanAI, the output shape consists of Dense Layers that have a One-Hot-Encoding (though this may be different for special kinds of networks not covered in this documentation).
 <br>
-			For example, if you have 5 categories as a one-hot-encoded softmax'ed vector like this: \([0, 0.8, 0.1, 0.05, 0.05]\), the output shape is \([5]\)....
+			For example, if you have 5 categories as a one-hot-encoded softmax'ed vector like this: <span class="temml_me">[0, 0.8, 0.1, 0.05, 0.05]</span>, the output shape is <span class="temml_me">[5]</span>....
 <br>
 <br>
 			<h3>Overfitting</h3>
@@ -723,7 +752,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Dense Layers are used as a general-purpose-function-approximator. The basic mathematical structure of a Dense Layer is as follows:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
 					y_{0}
 					\end{pmatrix}}_{\mathrm{Output}}
@@ -736,13 +765,13 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					 + \underbrace{\begin{pmatrix}
 					0
 				\end{pmatrix}}_{\mathrm{Bias}}
-			$$
+			</div>
 <br>
 			Depending on the <a href="#Input_Shape">Input Shape</a>, the number of elements in both the Kernel and the Bias may change.
 <br>
-			This, for example, is a Dense Layer with the input shape \( [2] \):
+			This, for example, is a Dense Layer with the input shape <span class="temml_me"> [2] </span>:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\text{Dense:} \qquad \underbrace{\begin{pmatrix}
 					y_{0}
 					\end{pmatrix}}_{\mathrm{Output}}
@@ -757,7 +786,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					 + \underbrace{\begin{pmatrix}
 						0.123153419419419
 				\end{pmatrix}}_{\mathrm{Bias}}
-			$$
+			</div>
 <br>
 			<div class="interactive-demo" id="dense_demo">
 				<label>Interactive Dense Layer (input size 2, output size 1):</label>
@@ -804,13 +833,13 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Example:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\textrm{Flatten}\left( \begin{pmatrix}
 					0 & 1 & 2 \\
 					3 & 4 & 5 \\
 					6 & 7 & 8
 				\end{pmatrix}\right) = \left[0 \quad 1 \quad 2 \quad 3 \quad 4 \quad 5 \quad 6 \quad 7 \quad 8 \right]
-			$$
+			</div>
 <br>
 			<div class="interactive-demo" id="flatten_demo">
 				<label>Interactive Flatten: </label>
@@ -877,7 +906,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			The dropout layer sets random values to 0 with a probability given in the Dropout-Rate-option.
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\underbrace{\textrm{Dropout}}_{\text{Dropout-Rate: 50\%}}\left(
 					\begin{pmatrix}
 						1 & 2 & 3 & 4 \\
@@ -897,7 +926,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					0 & 18 & 19 & 20 \\
 					21 & 0 & 0 & 0 \\
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			This is only active while training.
 <br>
@@ -907,7 +936,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			This allows incoming data tensors to be reshaped into another tensor. The number of elements does not change, only their arrangement.
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\begin{pmatrix}
 					1 & 2 & 3 \\
 					4 & 5 & 6
@@ -919,7 +948,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					5 & 6
 				\end{pmatrix}
 <br>
-			$$
+			</div>
 <br>
 			The product of all input shape elements must be the same as the product of the desired output shape's tensor.
 <br>
@@ -995,27 +1024,27 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h2>Convolutional Layers</h2>
 			<h3>convNd (conv1d, conv2d)</h3>
 			<div id="conv2d_example"></div>
-			Convolutions slide a matrix, called kernel or filter, with width \(x\) and height \(y\) over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+			Convolutions slide a matrix, called kernel or filter, with width <span class="temml_me">x</span> and height <span class="temml_me">y</span> over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size <span class="temml_me">x</span> by <span class="temml_me">y</span>, multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 <br>
 			Example:
 <br>
-			Kernel: \( K = \begin{pmatrix}
+			Kernel: <span class="temml_me"> K = \begin{pmatrix}
 				1 & -1 \\
 				0 & 2
-			\end{pmatrix}\).
+			\end{pmatrix}</span>.
 <br>
-			Data: \( D = \begin{pmatrix}
+			Data: <span class="temml_me"> D = \begin{pmatrix}
 				10 & 8 & 1 & 4 \\
 				4 & 2 & 14 & 5 \\
 				12 & 20 & 5 & 19 \\
 				32 & 128 & 3 & 30
 			\end{pmatrix}
-			\).
+			</span>.
 <br>
-			The first submatrix (without <a href="#Padding">Padding</a>, because it is not needed here for the Kernel fits perfectly when <a href="#Strides">strides</a> = 1) is \( S_1 = \begin{pmatrix}
+			The first submatrix (without <a href="#Padding">Padding</a>, because it is not needed here for the Kernel fits perfectly when <a href="#Strides">strides</a> = 1) is <span class="temml_me"> S_1 = \begin{pmatrix}
 				10 & 8 \\
 				4 & 2
-				\end{pmatrix} \). \( S_1 \cdot K = \begin{pmatrix}
+				\end{pmatrix} </span>. <span class="temml_me"> S_1 \cdot K = \begin{pmatrix}
 					10 & 8 \\
 					4 & 2
 				\end{pmatrix} \cdot \begin{pmatrix}
@@ -1025,29 +1054,29 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					10 & 6 \\
 					4 & 0
 				\end{pmatrix}
-			\).
+			</span>.
 <br>
-			The second submatrix is then \( S_2 = \begin{pmatrix}
+			The second submatrix is then <span class="temml_me"> S_2 = \begin{pmatrix}
 				1 & 4 \\
 				14 & 5
-				\end{pmatrix} \), which, multiplied by \(K\), is \( \begin{pmatrix}
+				\end{pmatrix} </span>, which, multiplied by <span class="temml_me">K</span>, is <span class="temml_me"> \begin{pmatrix}
 				1 & 7 \\
 				14 & -4
 			\end{pmatrix}
-			\).
+			</span>.
 <br>
-			When slided over the whole image, the result is \(
+			When slided over the whole image, the result is <span class="temml_me">
 				\begin{pmatrix}
 					10 & 6 & 1 & 7 \\
 					4 & 0 & 14 & -4 \\
 					12 & 28 & -5 & 43 \\
 					32 & 224 & 3 & 57
 				\end{pmatrix}
-			\). The kernel is being trained to recognize whatever it needs to recognize. 
+			</span>. The kernel is being trained to recognize whatever it needs to recognize. 
 <br>
 			What the kernel has learnt can be seen by <a href="#Visualize_Layer">Visualize Layer</a> for images and image-like tensors.
 <br>
-			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape \( [\text{int}, \text{int}, \text{int}] \) (disregarding the batch size, which would be at first position).
+			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape <span class="temml_me"> [\text{int}, \text{int}, \text{int}] </span> (disregarding the batch size, which would be at first position).
 <br>
 			A bias is (if enabled) then added to each output value of this graph.
 <br>
@@ -1190,9 +1219,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h3>upsampling2d</h3>
 			<div id="upSampling2d_example"></div>
 <br>
-			Makes images and image-like tensors larger by duplicating lines specified by the size factors \( [w, h] \).
+			Makes images and image-like tensors larger by duplicating lines specified by the size factors <span class="temml_me"> [w, h] </span>.
 <br>
-			For example, \(
+			For example, <span class="temml_me">
 			\underbrace{\text{upsampling2d}}_{h = 2,\ w = 4}\left(
 				\begin{pmatrix}
 					1 & 2 \\
@@ -1203,18 +1232,18 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 \\
 					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4 \\
 					3 & 3 & 3 & 3 & 4 & 4 & 4 & 4
-			\end{pmatrix} \).
+			\end{pmatrix} </span>.
 <br>
 			This can be used to upscale images after they have been compressed. E.g. for image segmentation.
 <br>
 			<h2>Pooling layers</h2>
 			<h3>averagePooling (averagePooling1d, averagePooling2d)</h3>
 			<div id="averagePooling2d_example"></div>
-			averagePooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+			averagePooling slides a window with pool size <span class="temml_me">x</span> and <span class="temml_me">y</span> as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size <span class="temml_me">x</span> by <span class="temml_me">y</span>, calculating the average of all the elements in that submatrix. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 <br>
 			Example:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\underbrace{\text{averagePooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
 					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
 					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
@@ -1227,7 +1256,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\color{red}{6} & \color{blue}{6} \\
 					\color{orange}{48} & \color{green}{11.75} \\
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			<div class="interactive-demo" id="avgpool_slide_demo">
 				<label>Average Pooling Sliding Window (Pool: 2x2, Stride: 2):</label>
@@ -1325,11 +1354,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h3>maxPooling (maxPooling1d, maxPooling2d)</h3>
 			<div id="maxPooling2d_example"></div>
 <br>
-			maxPooling slides a window with pool size \(x\) and \(y\) as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size \(x\) by \(y\), extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
+			maxPooling slides a window with pool size <span class="temml_me">x</span> and <span class="temml_me">y</span> as width/height over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size <span class="temml_me">x</span> by <span class="temml_me">y</span>, extracts the largest number. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the most activated values in certain regions.
 <br>
 			Example:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\underbrace{\text{maxPooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
 					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
 					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
@@ -1339,7 +1368,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					\color{red}{10} & \color{blue}{14} \\
 					\color{orange}{128} & \color{green}{30} \\
 				\end{pmatrix}
-			$$
+			</div>
 <br>
 			<div class="interactive-demo" id="maxpool_slide_demo">
 				<label>Max Pooling Sliding Window (Pool: 2x2, Stride: 2):</label>
@@ -1371,7 +1400,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			AlphaDropout is a variation of dropout, a regularization technique for reducing overfitting in neural networks.
 <br>
-			In standard dropout, a random subset of neurons are "dropped out" during each training step by setting their activations to zero. AlphaDropout, on the other hand, sets the activations to a random noise sampled from a zero-mean normal distribution with standard deviation of \(\alpha\) (\(\alpha\) is a hyperparameter).
+			In standard dropout, a random subset of neurons are "dropped out" during each training step by setting their activations to zero. AlphaDropout, on the other hand, sets the activations to a random noise sampled from a zero-mean normal distribution with standard deviation of <span class="temml_me">\alpha</span> (<span class="temml_me">\alpha</span> is a hyperparameter).
 <br>
 			This way, AlphaDropout allows the model to still learn the mean of the activations while also preventing overfitting and forcing the model to be less sensitive to the specific weights of the neurons. In other words, AlphaDropout regularizes the network by adding noise to the activations, which promotes the network to learn more robust feature representations.
 <br>
@@ -1408,7 +1437,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h3>Use Bias</h3>
 			If enabled, the network has a bias. In Dense Networks, a layer with Use Bias enabled, has this mathematical representation:
 <br>
-			$$ 
+			<div class="temml_me" data-display="1"> 
 				\underbrace{\begin{pmatrix}
 					y_{0}
 					\end{pmatrix}}_{\mathrm{Output}}
@@ -1424,11 +1453,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 						0.123153419419419
 					\end{pmatrix}}_{\mathrm{Bias}}
 				\right)
-			$$
+			</div>
 <br>
 			A Layer without Use Bias enabled would look like this:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\underbrace{\begin{pmatrix}
 					y_{0}
 					\end{pmatrix}}_{\mathrm{Output}}
@@ -1441,7 +1470,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 						1.188180685043335
 					\end{pmatrix}}_{\mathrm{Kernel^{2 \times 1}}}
 				\right)
-			$$
+			</div>
 <br>
 			The bias allows the function's output to be shifted in any axis.
 <br>
@@ -1482,13 +1511,13 @@ In contrast, L2 regularization tends to shrink the weights of all features towar
 In general, L1 regularization is more suitable for sparse data, where only a few features are informative, and L2 regularization is more suitable when the problem is not sparse.
 <br>
 			<h4>l1</h4>
-			Also known as Lasso regularization, it adds a penalty term to the loss function proportional to the absolute value of the weights. The L1 regularization term is defined as \(\lambda\sum_{i=1}^{n}|w_i|\), where \(\lambda\) is the regularization strength and \(w_i\) are the weights of the model. The L1 regularization tends to push the weights towards zero and thus it can also be used to perform feature selection.
+			Also known as Lasso regularization, it adds a penalty term to the loss function proportional to the absolute value of the weights. The L1 regularization term is defined as <span class="temml_me">\lambda\sum_{i=1}^{n}|w_i|</span>, where <span class="temml_me">\lambda</span> is the regularization strength and <span class="temml_me">w_i</span> are the weights of the model. The L1 regularization tends to push the weights towards zero and thus it can also be used to perform feature selection.
 <br>
 			<h4>l2</h4>
-			L2 Regularization: Also known as Ridge regularization, it adds a penalty term to the loss function proportional to the square of the weights. The L2 regularization term is defined as \(\lambda\sum_{i=1}^{n}w_i^2\), where \(\lambda\) is the regularization strength and \(w_i\) are the weights of the model. The L2 regularization tends to shrink the weights towards zero, but unlike L1 regularization, it doesn't push the weights to exactly zero.
+			L2 Regularization: Also known as Ridge regularization, it adds a penalty term to the loss function proportional to the square of the weights. The L2 regularization term is defined as <span class="temml_me">\lambda\sum_{i=1}^{n}w_i^2</span>, where <span class="temml_me">\lambda</span> is the regularization strength and <span class="temml_me">w_i</span> are the weights of the model. The L2 regularization tends to shrink the weights towards zero, but unlike L1 regularization, it doesn't push the weights to exactly zero.
 <br>
 			<h4>l1l2</h4>
-			The combination of L1 and L2 regularization is also known as Elastic-Net regularization. The regularization term is defined as \(\lambda(\alpha\sum_{i=1}^{n}|w_i| + (1-\alpha)\sum_{i=1}^{n}w_i^2)\), where \(\lambda\) is the regularization strength, \(w_i\) are the weights of the model, and \(\alpha\) is a parameter that controls the balance between L1 and L2 regularization. This regularization method combines the feature selection property of L1 regularization with the shrinkage property of L2 regularization.
+			The combination of L1 and L2 regularization is also known as Elastic-Net regularization. The regularization term is defined as <span class="temml_me">\lambda(\alpha\sum_{i=1}^{n}|w_i| + (1-\alpha)\sum_{i=1}^{n}w_i^2)</span>, where <span class="temml_me">\lambda</span> is the regularization strength, <span class="temml_me">w_i</span> are the weights of the model, and <span class="temml_me">\alpha</span> is a parameter that controls the balance between L1 and L2 regularization. This regularization method combines the feature selection property of L1 regularization with the shrinkage property of L2 regularization.
 <br>
 			<h3>Initializers</h3>
 			Initializer set in which way values, mostly the <a href="#Bias">Bias</a> and <a href="#Kernel">Kernel</a>, should be initialized as.
@@ -1524,7 +1553,7 @@ This initialization method can be useful when the user wants to initialize the w
 
 			For example, a <a href="#Dense">Dense-layer</a> with 8 neurons, Kernel Initializer set to constant and it's value to 42 without bias would look like this:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 			h_{\text{Shape: }[8]} = \underbrace{\begin{pmatrix}
 			x_{0}\\
 			x_{1}
@@ -1533,13 +1562,13 @@ This initialization method can be useful when the user wants to initialize the w
 			42 & 42 & 42 & 42 & 42 & 42 & 42 & 42\\
 			42 & 42 & 42 & 42 & 42 & 42 & 42 & 42
 			\end{pmatrix}}_{\mathrm{Kernel^{2 \times 8}}}
-			$$
+			</div>
 <br>
 			<h4>glorotNormal</h4>
-			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as \(\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}\), where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with sigmoid or tanh activation functions.
+			This initializer samples the weights from a normal distribution with mean 0 and standard deviation x, where x is calculated as <span class="temml_me">\sqrt{2 / (\text{fan\_in} + \text{fan\_out})}</span>, where <span class="temml_me">\text{fan\_in}</span> is the number of input units in the weight tensor and <span class="temml_me">\text{fan\_out}</span> is the number of output units in the weight tensor. It is similar to GlorotUniform and a good choice for feed-forward neural networks with sigmoid or tanh activation functions.
 <br>
 			<h4>heNormal</h4>
-			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{2 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
+			Draws from a normal distribution with mean 0 and a standard deviation of <span class="temml_me">\sqrt{2 / \text{fan\_in}}</span> where <span class="temml_me">\text{fan\_in}</span> is the number of input units in the weight tensor.
 <br>
 			<h4>heUniform</h4>
 He uniform initializer is an initialization method that uses a uniform distribution with a range of [-sqrt(6 / n), sqrt(6 / n)] to initialize the weights of neural network layers. It is named after the researcher who proposed it, Xu He, and is commonly used in deep learning models such as multi-layer perceptrons (MLPs) and feedforward neural networks (FFNs). It can help improve the performance of these types of neural networks by ensuring that the activations of neurons are well-conditioned and that gradients during backpropagation are neither too big nor too small.
@@ -1549,7 +1578,7 @@ The value "6" in the calculation of the "limit" for the He uniform initializer i
 This initialization method is designed to be used with neural networks that have rectified linear unit (ReLU) activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(6 / n), sqrt(6 / n)], where n is the number of input neurons, which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with ReLU activation function.
 <br>
 			<h4>leCunNormal</h4>
-			Draws from a normal distribution with mean 0 and a standard deviation of \(\sqrt{1 / \text{fan\_in}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor.
+			Draws from a normal distribution with mean 0 and a standard deviation of <span class="temml_me">\sqrt{1 / \text{fan\_in}}</span> where <span class="temml_me">\text{fan\_in}</span> is the number of input units in the weight tensor.
 <br>
 			<h4>leCunUniform</h4>
 			The LeCun uniform initializer is designed to be used with neural networks that have sigmoid activation functions. It is generally recommended for datasets that have a similar scale of inputs and outputs, meaning that the input and output features have similar ranges of values. This is because the initialization method uses a range of [-sqrt(3 / n), sqrt(3 / n)], where n is the number of input neurons, which is calculated based on the expected variance of the activations of a neuron in a randomly initialized network with sigmoid activation function.
@@ -1559,9 +1588,9 @@ This initialization method is designed to be used with neural networks that have
 Additionally, this initialization method is best suited for datasets that have a non-zero mean and a small variance. If the input data has a large variance or zero mean, it can be normalized using techniques like standardization or normalization to make it suitable for LeCun uniform initializer.
 <br>
 			<h4>ones</h4>
-			Initializes the weight or bias with \( 1 \). For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
+			Initializes the weight or bias with <span class="temml_me"> 1 </span>. For example, imagine kernel initializer <tt>ones</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 			\left(\underbrace{\begin{pmatrix}
 			x_{0}\\
 			x_{1}
@@ -1581,15 +1610,15 @@ Additionally, this initialization method is best suited for datasets that have a
 			0.20112565159797668
 			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
-			$$
+			</div>
 			<h4>randomNormal</h4>
 			Draws from a normal distribution with a mean of 0 and a standard deviation of 0.05.
 			<h4>randomUniform</h4>
-			Draws from a uniform distribution within \([-0.05, 0.05]\).
+			Draws from a uniform distribution within <span class="temml_me">[-0.05, 0.05]</span>.
 			<h4>truncatedNormal</h4>
 			Draws from a normal distribution with a mean of 0, but discards any values that are more than 2 standard deviations from the mean.
 			<h4>varianceScaling</h4>
-			Draws from a distribution with a mean of 0 and a standard deviation of \(\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}\) where \(\text{fan\_in}\) is the number of input units in the weight tensor and \(\text{fan\_out}\) is the number of output units in the weight tensor.
+			Draws from a distribution with a mean of 0 and a standard deviation of <span class="temml_me">\sqrt{\frac{2}{\text{fan\_in} + \text{fan\_out}}}</span> where <span class="temml_me">\text{fan\_in}</span> is the number of input units in the weight tensor and <span class="temml_me">\text{fan\_out}</span> is the number of output units in the weight tensor.
 			<h4>zeros</h4>
 
 The zero initializer is an initialization method that initializes the weights of neural network layers with zero. This initialization method is not commonly used as it can lead to poor performance of the neural network.
@@ -1602,9 +1631,9 @@ In general, it is recommended to avoid using the zero initializer and instead us
 
 It's important to keep in mind that the zero initialization is not always the best choice, and it depends on the architecture of the model, the dataset used and the optimizer and problem you're trying to solve.
 
-			Initializes the weight or bias with \( 0 \). For example, imagine kernel initializer <tt>zeros</tt> and bias initializer randomUniform, a possible layer function could be:
+			Initializes the weight or bias with <span class="temml_me"> 0 </span>. For example, imagine kernel initializer <tt>zeros</tt> and bias initializer randomUniform, a possible layer function could be:
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 			\left(\underbrace{\begin{pmatrix}
 			x_{0}\\
 			x_{1}
@@ -1624,7 +1653,7 @@ It's important to keep in mind that the zero initialization is not always the be
 			0.20112565159797668
 			\end{pmatrix}}_{\mathrm{Bias}}
 			\right)
-			$$
+			</div>
 			<h3>Kernel Initializer</h3>
 			The Kernel Initializer sets the initial values of the kernel to one of the <a href="#Initializers">initializers</a>.
 			<h3>Bias Initializer</h3>
@@ -1662,9 +1691,9 @@ It's important to keep in mind that the zero initialization is not always the be
 			<h3>Target Shape</h3>
 			In the reshape layer, the target shape option is used to specify the desired shape of the output tensor. This can be useful when you want to change the dimensions of the input tensor to match the requirements of the next layer.
 <br>
-The target shape can be specified by providing a tuple of integers which defines the desired shape of the output tensor. The number of integers in the tuple must match the number of dimensions of the input tensor. For example, if the input tensor is of shape (batch_size, height, width, channels), and you want to reshape it to \([\textrm{batch\_size}, \textrm{height}*\textrm{width}, \textrm{channels}]\), you can use the reshape layer with target shape option as \([\textrm{batch\_size}, \textrm{height}*\textrm{width}, \textrm{channels}]\).
+The target shape can be specified by providing a tuple of integers which defines the desired shape of the output tensor. The number of integers in the tuple must match the number of dimensions of the input tensor. For example, if the input tensor is of shape (batch_size, height, width, channels), and you want to reshape it to <span class="temml_me">[\textrm{batch\_size}, \textrm{height}*\textrm{width}, \textrm{channels}]</span>, you can use the reshape layer with target shape option as <span class="temml_me">[\textrm{batch\_size}, \textrm{height}*\textrm{width}, \textrm{channels}]</span>.
 <br>
-			For reshaping, the multiplication of all the shape's part must remain the same. E.g. if you have \([10, 20, 3]\), you cannot reshape it to \([10, 2]\), because \(10*20*3 != 10*2\).
+			For reshaping, the multiplication of all the shape's part must remain the same. E.g. if you have <span class="temml_me">[10, 20, 3]</span>, you cannot reshape it to <span class="temml_me">[10, 2]</span>, because <span class="temml_me">10*20*3 != 10*2</span>.
 
 			<h1>Validation Split</h1>
 			Validation split is a technique used to evaluate the performance of a machine learning model by dividing the data into two subsets: a training set and a validation set. The training set is used to train the model, while the validation set is used to evaluate the performance of the model on unseen data.
@@ -1682,10 +1711,10 @@ The target shape can be specified by providing a tuple of integers which defines
 			In general, the goal of training a machine learning model is to find the set of model parameters that minimize the loss function.
 <br>
 			General variables used here:
-			$$ \text{Ground truth output value} := y_i $$
-			$$ \text{Ground truth input value} := \hat{x}_i $$
-			$$ \text{Output value of the network} := \hat{y}_i $$
-			$$ \text{Number of elements in total} := n $$
+			<div class="temml_me" data-display="1"> \text{Ground truth output value} := y_i </div>
+			<div class="temml_me" data-display="1"> \text{Ground truth input value} := \hat{x}_i </div>
+			<div class="temml_me" data-display="1"> \text{Output value of the network} := \hat{y}_i </div>
+			<div class="temml_me" data-display="1"> \text{Number of elements in total} := n </div>
 
 			<h3>Validation Loss</h3>
 			Validation loss is similar to the training loss, but it is calculated using a separate set of data called the validation set. The validation set is used to evaluate the model's performance during the training process, and it is used to prevent overfitting.
@@ -1697,9 +1726,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h3>meanSquaredError</h3>
 <br>
 			This loss is used when you want to minimize a neural network, where the difference between 2 possible output values has a meaningful interpretation. That means, if you care about the exact number coming out of the network, instead of just using it as a category id for example.
-			$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 $$
+			<div class="temml_me" data-display="1"> \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^n \left(y_i - \hat{y}_i\right)^2 </div>
 			Example-Calculation:
-			$$
+			<div class="temml_me" data-display="1">
 			MSE \left(\underbrace{\begin{pmatrix}
 			0.1 \\
 			-0.2 \\
@@ -1716,15 +1745,15 @@ The target shape can be specified by providing a tuple of integers which defines
 			\left( -0.2 - 0.2 \right)^2 +
 			\left( 1 - -1 \right)^2
 			}{3} = 1.39
-			$$
+			</div>
 			<h3>binaryCrossentropy</h3>
-			$$ \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) $$
+			<div class="temml_me" data-display="1"> \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) </div>
 			<h3>categoricalCrossentropy</h3>
-			$$ \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) $$
+			<div class="temml_me" data-display="1"> \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) </div>
 <br>
-			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of \( [5] \).
+			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of <span class="temml_me"> [5] </span>.
 <br>
-			Each entry in that output vector is a percentage of how much the network thinks the predicted image is of that one category. For example, imagine the output tensor is \(
+			Each entry in that output vector is a percentage of how much the network thinks the predicted image is of that one category. For example, imagine the output tensor is <span class="temml_me">
 			\begin{pmatrix}
 			0.03 \\
 			0.9 \\
@@ -1732,7 +1761,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			0.01 \\
 			0.01
 			\end{pmatrix}
-			\). This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
+			</span>. This means the network is 3% certain the image belongs to category 1, 90% for category 2, 5% for category 3 and 1% for category 4 and 5 respectively.
 			Imagine the image was really category 2. Then, the network already does a pretty good job, even though the results are not perfectly at 1, they are close enough to be meaningful.
 <br>
 			We don't want to punish the network for that then, of course. 
@@ -1741,7 +1770,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			For this, categoricalCrossentropy is useful. Let us calculate the categorical crossentropy value for each of those options.
 <br>
-			In the first one, the ground-truth output is \(
+			In the first one, the ground-truth output is <span class="temml_me">
 			\begin{pmatrix}
 			0 \\	
 			1 \\	
@@ -1749,9 +1778,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			0 \\	
 			0 \\	
 			\end{pmatrix}
-			\). The categorical crossentropy would be:
-			$$ -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = $$
-			$$ 
+			</span>. The categorical crossentropy would be:
+			<div class="temml_me" data-display="1"> -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = </div>
+			<div class="temml_me" data-display="1"> 
 			-\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
 			\underbrace{(1 * \log(0.9))}_\text{Second entry} + 
@@ -1759,15 +1788,15 @@ The target shape can be specified by providing a tuple of integers which defines
 			\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
 			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
 			\right) =
-			$$
-			$$
+			</div>
+			<div class="temml_me" data-display="1">
 			-\left(
 			0 + -0.10536051565782630123 + 0 + 0 + 0
 			\right) = 0.10536051565782630123
-			$$
+			</div>
 			This is not a perfect loss, but it indicates the results is quite OK.
 <br>
-			Let's try the other case, where the ground truth is \(
+			Let's try the other case, where the ground truth is <span class="temml_me">
 			\begin{pmatrix}
 			0 \\	
 			0 \\
@@ -1775,9 +1804,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			0 \\	
 			0 \\	
 			\end{pmatrix}
-			\). The categorical crossentropy would be:
+			</span>. The categorical crossentropy would be:
 <br>
-			$$ 
+			<div class="temml_me" data-display="1"> 
 			-\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
 			\underbrace{(0 * \log(0.9))}_\text{Second entry} + 
@@ -1785,19 +1814,19 @@ The target shape can be specified by providing a tuple of integers which defines
 			\underbrace{(0 * \log(0.01))}_\text{Fourth entry} + 
 			\underbrace{(0 * \log(0.01))}_\text{Fifth entry}
 			\right) =
-			$$
-			$$
+			</div>
+			<div class="temml_me" data-display="1">
 			-\left(
 			0 + 0 + -2.99573227355399099344 + 0 + 0
 			\right) = 2.99573227355399099344
-			$$
+			</div>
 			Which is quite a high loss.
 <br>
-			Usually, it is recommended to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of \(\log(x)\) are \(\gt 0\) and therefore the categoricalCrossentropy may become negative for bad \(\gt 1\) values, indicating to the optimizer that they are good, when in reality, they probably aren't.
+			Usually, it is recommended to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of <span class="temml_me">\log(x)</span> are <span class="temml_me">\gt 0</span> and therefore the categoricalCrossentropy may become negative for bad <span class="temml_me">\gt 1</span> values, indicating to the optimizer that they are good, when in reality, they probably aren't.
 <br>
 			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
 <br>
-			This is due to the structure of the \( \log \) function, which starts steeply and gets more and more flat the higher the number gets:
+			This is due to the structure of the <span class="temml_me"> \log </span> function, which starts steeply and gets more and more flat the higher the number gets:
 <br>
 			<div id="log_from_0_to_100"></div>
 			<script>
@@ -1825,10 +1854,10 @@ The target shape can be specified by providing a tuple of integers which defines
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. In the case of the categorical hinge loss, the predicted class score is the score of the predicted class, and the true class score is the score of the correct class.
 <br>
 			The categorical hinge loss is calculated as:
-			\[\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})\]
-			where \(\text{y\_true}\) is the true class label and \(\text{y\_pred}\) is the predicted class score.
+			<div class="temml_me" data-display="1">\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})</div>
+			where <span class="temml_me">\text{y\_true}</span> is the true class label and <span class="temml_me">\text{y\_pred}</span> is the predicted class score.
 <br>
-			The function will return 0 if \(\text{y\_true}* \text{y\_pred} >=1\), else it will return \(1- \text{y\_true} * \text{y\_pred}\). It forces the model to have a margin of at least 1 between the correct class and the other classes.
+			The function will return 0 if <span class="temml_me">\text{y\_true}* \text{y\_pred} >=1</span>, else it will return <span class="temml_me">1- \text{y\_true} * \text{y\_pred}</span>. It forces the model to have a margin of at least 1 between the correct class and the other classes.
 <br>
 			It is used in cases when multi-class classification is required and training with Hinge Loss is preferred.
 <br>
@@ -1838,46 +1867,46 @@ The target shape can be specified by providing a tuple of integers which defines
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The margin is a hyperparameter that controls how far the predicted class score must be from the true class score in order for the loss to be non-zero.
 <br>
 			The hinge loss is calculated as:
-			\[\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})\]
+			<div class="temml_me" data-display="1">\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})</div>
 			where y_true is the true class label (-1 or 1) and y_pred is the predicted class score.
 <br>
-			The function will return 0 if \(\text{y\_true} * \text{y\_pred} >=1\), else it will return \(1 - \text{y\_true} * \text{y\_pred}\). It forces the model to have a margin of at least 1 between the correct class and the other class.
+			The function will return 0 if <span class="temml_me">\text{y\_true} * \text{y\_pred} >=1</span>, else it will return <span class="temml_me">1 - \text{y\_true} * \text{y\_pred}</span>. It forces the model to have a margin of at least 1 between the correct class and the other class.
 <br>
 			In binary classification, it is used to train a linear classifier that separates the two classes by a margin. It's a commonly used loss function for training linear models in a large margin setting, as it encourages the model to separate the classes as much as possible, which leads to a more robust classifier.
 <br>
 			<h3>meanAbsoluteError</h3>
-			$$ \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| $$
+			<div class="temml_me" data-display="1"> \mathrm{MAE} = \frac{1}{n} \sum_{i=1}^n \left|y_i - \hat{y}_i\right| </div>
 <br>
 			The meanAbsoluteError calculates the absolute difference for each set of values from the ground truth and the predicted value, and
 			averages over them.
 <br>
-			If the ground truth is \( \begin{pmatrix}
+			If the ground truth is <span class="temml_me"> \begin{pmatrix}
 			0 \\
 			10 \\
 			-100
-			\end{pmatrix} \) and the predicted value is \( \begin{pmatrix}
+			\end{pmatrix} </span> and the predicted value is <span class="temml_me"> \begin{pmatrix}
 			3 \\
 			9 \\
 			10
-			\end{pmatrix} \).
+			\end{pmatrix} </span>.
 <br>
-			The single absolute differences are \( \left[3, 1, 110\right] \), and the mean is \( \frac{3+1+110}{3} = 38 \).
+			The single absolute differences are <span class="temml_me"> \left[3, 1, 110\right] </span>, and the mean is <span class="temml_me"> \frac{3+1+110}{3} = 38 </span>.
 <br>
 			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
 			<h3>meanAbsolutePercentageError</h3>
-			$$ \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| $$
+			<div class="temml_me" data-display="1"> \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| </div>
 <br>
 			The mean absolute percentage error is used to measure forecasting errors.
 <br>
 			Example:
 <br>
-			$$ y =        [1,   0, 0.5, 2] \qquad \text{(Ground Truth)} $$
+			<div class="temml_me" data-display="1"> y =        [1,   0, 0.5, 2] \qquad \text{(Ground Truth)} </div>
 <br>
-			$$ \hat{y} =  [0.5, 1, 0.4, 2] \qquad \text{(Predicted)}$$
+			<div class="temml_me" data-display="1"> \hat{y} =  [0.5, 1, 0.4, 2] \qquad \text{(Predicted)}</div>
 <br>
-			$$ n = 4 $$
+			<div class="temml_me" data-display="1"> n = 4 </div>
 <br>
-			$$ 
+			<div class="temml_me" data-display="1"> 
 				\text{MAPE}\left(y, \hat{y}\right) = 
 				\frac{1}{4} \cdot
 				\left(
@@ -1886,9 +1915,9 @@ The target shape can be specified by providing a tuple of integers which defines
 				\left(\frac{0.4-0.5}{0.5}\right) +
 				\left(\frac{2-2}{2}\right)
 				\right) =
-			$$
+			</div>
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\frac{1}{4} \cdot
 				\left(
 				\left(\frac{-0.5}{0.5}\right) + 
@@ -1896,9 +1925,9 @@ The target shape can be specified by providing a tuple of integers which defines
 				\left(\frac{-0.1}{0.5}\right) + 
 				\left(\frac{0}{2}\right)
 				\right) =
-			$$
+			</div>
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\frac{1}{4} \cdot
 				\left(
 				-1 +
@@ -1906,39 +1935,39 @@ The target shape can be specified by providing a tuple of integers which defines
 				-0.2 +
 				0
 				\right) =
-			$$
+			</div>
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\frac{1}{4} \cdot
 				\left(
 				-0.2
 				\right) = -0.05 
-			$$
+			</div>
 			<h3>meanSquaredLogarithmicError</h3>
 			Mean squared logarithmic error (MSLE) is a loss function used in regression problems. It is a variation of the mean squared error (MSE) loss function, which is commonly used for regression problems.
 <br>
 			The MSLE loss is calculated as:
-			\[\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (\log(1+y_i) - \log(1+\hat{y_i}))^2\]
+			<div class="temml_me" data-display="1">\text{MSLE} = \frac{1}{n} \sum_{i=1}^{n} (\log(1+y_i) - \log(1+\hat{y_i}))^2</div>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
-				<li>\(y_i\) is the true value of the i-th sample</li>
-				<li>\(\hat{y_i}\) is the predicted value of the i-th sample</li>
+				<li><span class="temml_me">y_i</span> is the true value of the i-th sample</li>
+				<li><span class="temml_me">\hat{y_i}</span> is the predicted value of the i-th sample</li>
 			</ul>
 			This loss function calculates the mean squared error between the logarithm of the true values and the logarithm of the predicted values. MSLE is less sensitive to the large errors than MSE, as the logarithm function dampens the effect of large errors.
 <br>
 			This loss function is used when the target variable is skewed and has some large values, it is often used in regression problems that involve exponential growth, such as predicting stock prices, population growth, or the spread of a disease. It can also be used when there are outliers in the data, as it is less sensitive to large errors than mean squared error.
-			$$ \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(\log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 $$
+			<div class="temml_me" data-display="1"> \text{Mean Squared Logarithmic Error:} \frac{1}{n} \sum_{i=0}^n \left(\log\left(y_i + 1\right)- \log\left(\hat{y}_i + 1\right)\right)^2 </div>
 			<h3>poisson</h3>
 			Poisson loss is a loss function used in regression problems when the target variable follows a Poisson distribution. It is a measure of the difference between the predicted values and the true values, where the difference is calculated based on the probability of the true values given the predicted values.
 <br>
 			The Poisson loss is calculated as:
-			\[L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})\]
+			<div class="temml_me" data-display="1">L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})</div>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
-				<li>\(y_i\) is the true value of the i-th sample</li>
-				<li>\(\hat{y_i}\) is the predicted value of the i-th sample</li>
+				<li><span class="temml_me">y_i</span> is the true value of the i-th sample</li>
+				<li><span class="temml_me">\hat{y_i}</span> is the predicted value of the i-th sample</li>
 			</ul>
 			This loss function is used when the target variable follows a Poisson distribution, a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time or space, if these events occur with a known average rate and independently of the time since the last event. Poisson loss is a good choice when the target variable is a count, such as the number of visitors to a website, the number of clicks on an ad, or the number of phone calls received.
 <br>
@@ -1950,14 +1979,14 @@ The target shape can be specified by providing a tuple of integers which defines
 			Sparse categorical cross-entropy is a loss function used in multi-class classification tasks. It is used when the target labels are integers rather than one-hot encoded vectors.
 <br>
 			The sparse categorical cross-entropy loss is calculated as:
-			\[L = -\frac{1}{N}\sum_{i=1}^{N} \log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})\]
+			<div class="temml_me" data-display="1">L = -\frac{1}{N}\sum_{i=1}^{N} \log(\frac{e^{f_{y_i}}}{\sum_{c=1}^{C}e^{f_c}})</div>
 			Where:
 			<ul>
 				<li>N is the number of samples in the batch</li>
 				<li>C is the number of classes</li>
-				<li>\(f_{y_i}\) is the predicted logit for the true class of the i-th sample</li>
-				<li>\(f_c\) is the predicted logit for the c-th class</li>
-				<li>\(y_i\) is the true class label for the i-th sample</li>
+				<li><span class="temml_me">f_{y_i}</span> is the predicted logit for the true class of the i-th sample</li>
+				<li><span class="temml_me">f_c</span> is the predicted logit for the c-th class</li>
+				<li><span class="temml_me">y_i</span> is the true class label for the i-th sample</li>
 			</ul>
 			This formula calculates the average cross-entropy loss over the batch of samples. The cross-entropy loss for each sample is calculated by taking the log of the predicted probability for the true class, and dividing by the sum of the predicted probabilities for all classes. The resulting loss value is negative, so it is multiplied by -1 to obtain the final loss.
 <br>
@@ -1969,25 +1998,25 @@ The target shape can be specified by providing a tuple of integers which defines
 			Squared hinge loss is a loss function used in classification tasks, specifically for training models using a linear boundary. It is a variation of the hinge loss that is used to penalize the model more heavily when the predicted class score is further from the true class score.
 <br>
 			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. The squared hinge loss is calculated as the square of this difference:
-			\[L = \text{max}(0, 1 - y_i * y_j)^2\]
+			<div class="temml_me" data-display="1">L = \text{max}(0, 1 - y_i * y_j)^2</div>
 			Where:
 			<ul>
-				<li>\(y_i\) is the true class label (-1 or 1)</li>
-				<li>\(y_j\) is the predicted class score</li>
+				<li><span class="temml_me">y_i</span> is the true class label (-1 or 1)</li>
+				<li><span class="temml_me">y_j</span> is the predicted class score</li>
 			</ul>
-			This function will return 0 if \(y_i * y_j >=1\), else it will return \((1- y_i * y_j)^2\). It forces the model to have a margin of at least 1 between the correct class and the other class.
+			This function will return 0 if <span class="temml_me">y_i * y_j >=1</span>, else it will return <span class="temml_me">(1- y_i * y_j)^2</span>. It forces the model to have a margin of at least 1 between the correct class and the other class.
 <br>
 			This loss function is similar to hinge loss, but it punishes the model more heavily when the predicted class score is further from the true class score, which can lead to a more robust classifier. However, it is also computationally more expensive than hinge loss, as it requires squaring the difference. This loss function is often used for SVM-based models, and other linear classifiers with maximum-margin approach.
 <br>
 			<h3>kullbackLeiblerDivergence</h3>
 			Kullback-Leibler divergence (KLD) also known as relative entropy, is a measure of how much one probability distribution diverges from a second expected probability distribution. In the context of machine learning, it is often used as a loss function for training models in generative tasks, such as variational autoencoders and generative adversarial networks.
 <br>
-			The Kullback-Leibler divergence between two probability distributions \(p\) and \(q\) is defined as:
-			\[D_{KL}(p||q) = \sum_{i=1}^{n} p(i) \log(\frac{p(i)}{q(i)})\]
+			The Kullback-Leibler divergence between two probability distributions <span class="temml_me">p</span> and <span class="temml_me">q</span> is defined as:
+			<div class="temml_me" data-display="1">D_{KL}(p||q) = \sum_{i=1}^{n} p(i) \log(\frac{p(i)}{q(i)})</div>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
-				<li>\(p(i)\) and \(q(i)\) are the probability of i-th sample under the two distributions</li>
+				<li><span class="temml_me">p(i)</span> and <span class="temml_me">q(i)</span> are the probability of i-th sample under the two distributions</li>
 			</ul>
 			This formula calculates the divergence between the two distributions by summing over all possible outcomes, the probability of that outcome under the first distribution multiplied by the logarithm of the ratio of the probability of that outcome under the first distribution to the probability of that outcome under the second distribution.
 <br>
@@ -1995,11 +2024,11 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<h3>logcosh</h3>
 			The log-cosh loss is a smooth approximation of the absolute value loss, which is commonly used in regression problems. It is defined as:
-			\[L = \log(\cosh(y_i - y_j))\]
+			<div class="temml_me" data-display="1">L = \log(\cosh(y_i - y_j))</div>
 			Where:
 			<ul>
-				<li>\(y_i\) is the true value</li>
-				<li>\(y_j\) is the predicted value</li>
+				<li><span class="temml_me">y_i</span> is the true value</li>
+				<li><span class="temml_me">y_j</span> is the predicted value</li>
 			</ul>
 			This function calculates the logarithm of the hyperbolic cosine of the difference between the true and predicted values. The log-cosh loss is a smooth approximation of the absolute value loss, which is less sensitive to outliers than the mean absolute error (MAE) loss.
 <br>
@@ -2020,7 +2049,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Binary accuracy is a metric used in binary classification tasks to evaluate the performance of a model. It measures the proportion of true positive and true negative predictions made by the model.
 <br>
 			Binary accuracy is defined as:
-			\[\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{\text{Total}}\]
+			<div class="temml_me" data-display="1">\text{Accuracy} = \frac{\text{True Positives} + \text{True Negatives}}{\text{Total}}</div>
 			Where:
 			<ul>
 				<li>True Positives (TP) are the number of correct positive predictions made by the model</li>
@@ -2034,7 +2063,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Categorical accuracy is a metric used in multi-class classification tasks to evaluate the performance of a model. It measures the proportion of correct predictions made by the model among all predictions.
 <br>
 			Categorical accuracy is defined as:
-			\[\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total}} \]
+			<div class="temml_me" data-display="1">\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total}} </div>
 			Where:
 			<ul>
 				<li>Number of Correct Predictions is the number of predictions made by the model that match the true labels</li>
@@ -2049,7 +2078,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			Precision is defined as:
 <br>
-			\[\text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}} \]
+			<div class="temml_me" data-display="1">\text{Precision} = \frac{\text{True Positives}}{\text{True Positives} + \text{False Positives}} </div>
 <br>
 			Where:
 			<ul>
@@ -2079,13 +2108,13 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			It performs a simple linear transformation of its input:
 
-			$$ y = W*x + b $$
+			<div class="temml_me" data-display="1"> y = W*x + b </div>
 
-			where \(W\) is the weight matrix and \(b\) is the bias vector.
+			where <span class="temml_me">W</span> is the weight matrix and <span class="temml_me">b</span> is the bias vector.
 <br>
 			If we stack two Dense layers without any activation function:
 
-			$$ y = \text{Dense2}(\text{Dense1}(x)) = W_2*(W_1*x + b_1) + b_2 = (W_2*W_1)*x + (W_2*b_1 + b_2) $$
+			<div class="temml_me" data-display="1"> y = \text{Dense2}(\text{Dense1}(x)) = W_2*(W_1*x + b_1) + b_2 = (W_2*W_1)*x + (W_2*b_1 + b_2) </div>
 
 			This is mathematically still just a single linear transformation!
 <br>
@@ -2097,9 +2126,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			Additionally, many activation functions also "squash" their input into a limited range, for example:
 
 			<ul>
-				<li>Sigmoid: \(0\) to \(1\)</li>
-				<li>Tanh: \(-1\) to \(1\)</li>
-				<li>ReLU: \(0\) to \(\infty\) (rectifies negative values)</li>
+				<li>Sigmoid: <span class="temml_me">0</span> to <span class="temml_me">1</span></li>
+				<li>Tanh: <span class="temml_me">-1</span> to <span class="temml_me">1</span></li>
+				<li>ReLU: <span class="temml_me">0</span> to <span class="temml_me">\infty</span> (rectifies negative values)</li>
 			</ul>
 
 			This helps with stability during training and ensures the network does not produce extreme values that could hinder learning.
@@ -2116,7 +2145,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h2>Linear</h2>
 			The linear Activation function is the most simple one. It simply returns the exact same values that are inputted, without any changes.
 <br>
-			$$
+			<div class="temml_me" data-display="1">
 				\text{linear}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
 					-10 & 0 & 10 \\
@@ -2126,7 +2155,7 @@ The target shape can be specified by providing a tuple of integers which defines
 					-10 & 0 & 10 \\
 					-100 & 0 & 100 
 				\end{pmatrix}
-			$$
+			</div>
 
 			<div id="linear_from_minus_100_to_100"></div>
 			<script>
@@ -2154,10 +2183,10 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<h2>Sigmoid</h2>
 			The Sigmoid function squeezes all values between 0 and 1, so that large values are near 1 and small values are near 0.
-			$$ 
+			<div class="temml_me" data-display="1"> 
 				\mathrm{sigmoid}\left(x\right) = \sigma\left(x\right) = \frac{1}{1+e^{-x}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1)
-			$$
-			$$
+			</div>
+			<div class="temml_me" data-display="1">
 				\text{sigmoid}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
 					-10 & 0 & 10 \\
@@ -2167,7 +2196,7 @@ The target shape can be specified by providing a tuple of integers which defines
 					0.00004539786823443137 & 0.5 & 0.9999545812606812 \\
 					3.783505853677006 \cdot 10^{-44} & 0.5 & 1
 				\end{pmatrix}
-			$$
+			</div>
 			This activation function maps the input to a value between 0 and 1, and is often used for binary classification problems.
 
 			<div id="sigmoid_from_minus_100_to_100"></div>
@@ -2203,18 +2232,18 @@ The target shape can be specified by providing a tuple of integers which defines
 
 <br>
 			<h2>ELU</h2>
-			$$
+			<div class="temml_me" data-display="1">
 				\mathrm{elu}\left(x\right) = \left\{
 					\begin{array}{ll}
 						x & x \geq 0 \\
 						\alpha\left(e^x - 1\right)& \, x \lt 0 \\
 					\end{array}
 				\right.
-			$$
+			</div>
 			ELU (Exponential Linear Unit) is similar to ReLU but it tends to produce more accurate results and converge faster.
 
 			<div>
-				<label for="elu_alpha">Set \( \alpha \) for ELU: \( \alpha \) = </label>
+				<label for="elu_alpha">Set <span class="temml_me"> \alpha </span> for ELU: <span class="temml_me"> \alpha </span> = </label>
 				<input type="number" id="elu_alpha" value="1" step="0.01" min="0" style="width:80px;">
 			</div>
 			<div id="elu_from_minus_100_to_100"></div>
@@ -2257,10 +2286,10 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<h2>relu6</h2>
 			ReLU6 is a variation of ReLU that limits the output to a maximum of 6.
-			$$
+			<div class="temml_me" data-display="1">
 			\mathrm{relu6}\left(x\right) = \mathrm{min}\left(\mathrm{max}\left(0, x\right),6\right)\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 6)
-			$$
-			$$
+			</div>
+			<div class="temml_me" data-display="1">
 				\text{relu6}\left(\begin{pmatrix}
 					-1 & 0 & 1 \\
 					-10 & 0 & 10 \\
@@ -2270,7 +2299,7 @@ The target shape can be specified by providing a tuple of integers which defines
 					0 & 0 & 6 \\
 					0 & 0 & 6
 				\end{pmatrix}
-			$$
+			</div>
 			The choice of 6 is somewhat arbitrary, and it could be any other positive number. The value of 6 is used for the same reason that other values like 3 or 4 are used, it is a hyperparameter that can be adjusted to optimize the performance of the network.
 
 			<div id="relu6_from_minus_100_to_100"></div>
@@ -2306,15 +2335,15 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<h2>SeLu</h2>
 			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
-			\[f(x) = \lambda \begin{cases}
+			<div class="temml_me" data-display="1">f(x) = \lambda \begin{cases}
 				x & \text{if } x > 0 \\
 				\alpha * (e^x - 1) & \text{else}
 			\end{cases}
-			\]
+			</div>
 			Where:
 			<ul>
-				<li>\(\lambda\) is a scaling factor and is equal to 1.0507</li>
-				<li>\(\alpha\) is a negative scaling factor and is equal to 1.67326</li>
+				<li><span class="temml_me">\lambda</span> is a scaling factor and is equal to 1.0507</li>
+				<li><span class="temml_me">\alpha</span> is a negative scaling factor and is equal to 1.67326</li>
 			</ul>
 			The SELU activation function is designed to maintain the mean and variance of the inputs during the forward-propagation, which makes it well suited for deep neural networks. When used in combination with a normal initialization, the SELU activation function ensures that the activations of the hidden units remain close to zero, which makes the network less prone to the vanishing or exploding gradient problem.
 <br>
@@ -2323,10 +2352,10 @@ The target shape can be specified by providing a tuple of integers which defines
 			It's a good choice when working with deep neural networks and the input data is standardized, it's also a good choice when the network architecture is feedforward and the network is prone to the vanishing or exploding gradient problem. It's also a good choice when the goal is to maintain the mean and variance of the inputs during the forward-propagation.
 
 			<div>
-				<label for="selu_lambda">\( \lambda \) = </label>
+				<label for="selu_lambda"><span class="temml_me"> \lambda </span> = </label>
 				<input type="number" id="selu_lambda_num" value="1.0507" step="0.01" min="0" max="3" style="width:80px;" oninput="syncSELU()">
 				<input type="range" id="selu_lambda_slider" min="0" max="3" step="0.01" value="1.0507" oninput="syncSELU()">
-				<label for="selu_alpha" style="margin-left:12px;">\( \alpha \) = </label>
+				<label for="selu_alpha" style="margin-left:12px;"><span class="temml_me"> \alpha </span> = </label>
 				<input type="number" id="selu_alpha_num" value="1.67326" step="0.01" min="0" max="5" style="width:80px;" oninput="syncSELU()">
 				<input type="range" id="selu_alpha_slider" min="0" max="5" step="0.01" value="1.67326" oninput="syncSELU()">
 			</div>
@@ -2364,7 +2393,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<h2>SoftPlus</h2>
 			Softplus is an activation function that is used in neural networks. It is a smooth approximation of the rectified linear unit (ReLU) activation function, which is commonly used in neural networks. The Softplus function is defined as:
-			\[f(x) = \log(1 + e^x)\]
+			<div class="temml_me" data-display="1">f(x) = \log(1 + e^x)</div>
 			It maps the input values to positive values, where values close to zero are mapped to a small positive value, and large positive and negative values are mapped to larger positive values. This function is differentiable everywhere, unlike the ReLU activation function, which is not differentiable at 0. The smoothness of the Softplus function makes it more suitable for optimization techniques that rely on gradients, such as backpropagation.
 <br>
 			The Softplus function can be used as an activation function in neural networks, in place of the ReLU or other activation functions. It can be especially useful in cases where the ReLU function causes problems such as the "dying ReLU" issue, where the input value is always negative, the activation function outputs always zero and the gradients are always zero, which can cause the network to stop learning. The softplus function can also be used as a smooth approximation of the rectified linear unit (ReLU) activation function.
@@ -2405,7 +2434,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h2>SoftSign</h2>
 <br>
 			SoftSign is a smooth approximation of the sign function, it is a alternative to sigmoid
-			$$ \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) $$
+			<div class="temml_me" data-display="1"> \mathrm{softsign}\left(x\right) = \frac{x}{\left(1 + \left| x \right| \right)}\qquad (\text{Lower-limit: } -1, \text{Upper-limit: } 1) </div>
 			The softsign activation function is typically used in neural networks as an alternative to the more commonly used sigmoid or ReLU activation functions. It has a smooth transition between positive and negative values, which can lead to more stable gradients during training. This can make it a good choice for tasks where the output of the network is a continuous value, such as regression problems. However, it is not commonly used as it is not as popular as other activation functions like ReLU, and it could be difficult to achieve good performance with it.
 
 			<div id="softsign_from_minus_100_to_100"></div>
@@ -2437,7 +2466,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			</script>
 
 			<h2>SoftMax</h2>
-			$$ \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) $$
+			<div class="temml_me" data-display="1"> \mathrm{softmax}\left(x\right) = \frac{e^{z_j}}{\sum^K_{k=1} e^{z_k}}\qquad (\text{Lower-limit: } 0, \text{Upper-limit: } 1) </div>
 			SoftMax divides each individual item by the whole sum of all items, giving you a percentage of how much each individual value is in percentage in relation to the whole.
 			<br>
 			SoftMax can be used if you want a percentage of how certain the network is in its prediction. This is especially useful for the last layer in a classification network.
@@ -2480,7 +2509,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			</script>
 			<h2>tanh</h2>
 			The hyperbolic tangent (tanh) is an activation function that is commonly used in neural networks. It is defined as:
-			\[f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]
+			<div class="temml_me" data-display="1">f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}</div>
 			The tanh function maps the input values to the range (-1, 1), where negative input values are mapped to negative output values and positive input values are mapped to positive output values. The tanh function is differentiable and monotonic, which makes it a good choice for optimization techniques that rely on gradients such as backpropagation.
 			<br>
 			The tanh function can be used as an activation function in neural networks, in place of other activation functions such as sigmoid, ReLU, and others. It is particularly useful in cases where the input data is not standardized and the network architecture is feedforward.
@@ -2521,21 +2550,21 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<h2>LeakyReLu</h2>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
-			\[f(x) = \begin{cases}
+			<div class="temml_me" data-display="1">f(x) = \begin{cases}
 			x & \text{if } x > 0 \\
 			\alpha * x & \text{else}
 			\end{cases}
-			\]
-			Where \(\alpha\) is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
+			</div>
+			Where <span class="temml_me">\alpha</span> is a small positive value, usually between 0.01 and 0.1, that determines the slope of the function for negative input values.
 			<br>
-			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the \(\alpha\) parameter.
+			The LeakyReLU function is similar to the ReLU function, but it addresses the issue of "dying neurons" that can occur in ReLU-activated networks when the input is always negative. With LeakyReLU, the output is not zero when the input is negative, but it is instead a small negative value determined by the <span class="temml_me">\alpha</span> parameter.
 			<br>
 			LeakyReLU can be used as an activation function in neural networks, in place of other activation functions such as ReLU, sigmoid, and others. It is particularly useful in cases where the ReLU function causes problems such as the "dying neurons" issue.
 			<br>
 			It's a good choice when the ReLU function causes problems such as the "dying neurons" issue, it's also a good choice when the network is optimized with techniques that rely on gradients, such as backpropagation. It's also a good choice when the output of the activation function should be restricted between a small negative value.
 
 			<div>
-				<label for="leakyrelu_alpha_slider">Set \( \alpha \) for LeakyReLU: \( \alpha \) = </label>
+				<label for="leakyrelu_alpha_slider">Set <span class="temml_me"> \alpha </span> for LeakyReLU: <span class="temml_me"> \alpha </span> = </label>
 				<input type="number" id="leakyrelu_alpha_num" value="0.01" step="0.01" min="0" max="1" style="width:80px;" oninput="syncLeakyAlpha(this.value)">
 				<input type="range" id="leakyrelu_alpha_slider" min="0" max="1" step="0.005" value="0.01" oninput="syncLeakyAlpha(this.value)">
 			</div>
@@ -2570,7 +2599,7 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<p>The Snake activation function is defined as:</p>
 
-			\[f(x) = x + \frac{\sin^2(a x)}{a}\]
+			<div class="temml_me" data-display="1">f(x) = x + \frac{\sin^2(a x)}{a}</div>
 
 			<p>It is useful for modeling repeating patterns in data.</p>
 
@@ -2721,13 +2750,13 @@ The target shape can be specified by providing a tuple of integers which defines
 			Adam (Adaptive Moment Estimation) is a popular optimization algorithm used in neural networks. It's an extension of the traditional stochastic gradient descent (SGD) algorithm, which combines the benefits of both SGD and the Root Mean Square Propagation (RMSProp) algorithm.
 <br>
 			Adam algorithm keeps track of the moving average of the gradient and the moving average of the squared gradient. The moving averages are calculated as follows:
-			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
-			$$\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2$$
-			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(\textbf{m}\) and \(\textbf{v}\) are the moving averages of the gradient and the squared gradient, respectively.
+			<div class="temml_me" data-display="1">\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)</div>
+			<div class="temml_me" data-display="1">\textbf{v}t = \beta_2 \textbf{v}{t-1} + (1-\beta_2) (\nabla_{\theta} J(\theta))^2</div>
+			Where <span class="temml_me">J(\theta)</span> is the loss function, <span class="temml_me">\beta_1</span> and <span class="temml_me">\beta_2</span> are hyperparameters, <span class="temml_me">\textbf{m}</span> and <span class="temml_me">\textbf{v}</span> are the moving averages of the gradient and the squared gradient, respectively.
 <br>
-			To calculate the new weight \(\theta_{t+1}\), Adam uses the following update rule:
-			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
-			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
+			To calculate the new weight <span class="temml_me">\theta_{t+1}</span>, Adam uses the following update rule:
+			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t</div>
+			Where <span class="temml_me">\alpha</span> is the learning rate and <span class="temml_me">\epsilon</span> is a small constant to avoid division by zero.
 <br>
 			Adam algorithm works by adapting the learning rate based on the historical gradient and the squared gradient, by doing this it allows the learning rate to be high for dimensions whose gradients are consistently small, and low for dimensions whose gradients are consistently large. This allows Adam to converge faster and more efficiently than other optimization algorithms like SGD.
 <br>
@@ -2736,13 +2765,13 @@ The target shape can be specified by providing a tuple of integers which defines
 			Adadelta is an optimization algorithm used to train neural networks. It is an extension of the Adagrad algorithm, which is designed to address some of its limitations.
 <br>
 			Adadelta uses the gradient of the loss function with respect to the parameters to update the parameters. The update at each time step t is determined by considering the historical gradient information. The main idea behind Adadelta is to adapt the learning rate for each parameter separately, based on the historical gradient information. The update rule for the parameters is defined as:
-			\[\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}\]
+			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_t - \frac{\Delta \theta_t}{\sqrt{E[g^2]_t + \epsilon}}</div>
 			Where:
 			<ul>
-				<li>\(\theta_t\) is the parameter at time step \(t\)</li>
-				<li>\(\Delta \theta_t\) is the change in the parameter at time step \(t\)</li>
-				<li>\(E[g^2]_t\) is the historical gradient information at time step \(t\)</li>
-				<li>\(\epsilon\) is a small value used to prevent division by zero</li>
+				<li><span class="temml_me">\theta_t</span> is the parameter at time step <span class="temml_me">t</span></li>
+				<li><span class="temml_me">\Delta \theta_t</span> is the change in the parameter at time step <span class="temml_me">t</span></li>
+				<li><span class="temml_me">E[g^2]_t</span> is the historical gradient information at time step <span class="temml_me">t</span></li>
+				<li><span class="temml_me">\epsilon</span> is a small value used to prevent division by zero</li>
 			</ul>
 			Adadelta is particularly useful when the data set is noisy, or when the gradients are sparse. It is also useful in cases where the learning rate is difficult to tune.
 <br>
@@ -2752,26 +2781,26 @@ The target shape can be specified by providing a tuple of integers which defines
 			Adagrad is an optimization algorithm used for training machine learning models, particularly neural networks. It adapts the learning rate for each parameter in the model, rather than using a fixed learning rate for all parameters. The learning rate for each parameter is determined by the historical gradient information for that parameter.
 <br>
 			The update rule for each parameter in Adagrad is as follows:
-			$$ \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\sum_{i=1}^t g^2_i}} g_t $$
+			<div class="temml_me" data-display="1"> \theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\sum_{i=1}^t g^2_i}} g_t </div>
 			Where:
 			<ul>
-				<li>\(\theta_t\) is the value of the parameter at time step \(t\)</li>
-				<li>\(\eta\) is the global learning rate</li>
-				<li>\(g_t\) is the gradient of the parameter at time step \(t\)</li>
-				<li>\(\sum\limits_{i=1}^{t}g_{i}^2\) is the historical sum of squared gradients for that parameter up to time step \(t\)</li>
+				<li><span class="temml_me">\theta_t</span> is the value of the parameter at time step <span class="temml_me">t</span></li>
+				<li><span class="temml_me">\eta</span> is the global learning rate</li>
+				<li><span class="temml_me">g_t</span> is the gradient of the parameter at time step <span class="temml_me">t</span></li>
+				<li><span class="temml_me">\sum\limits_{i=1}^{t}g_{i}^2</span> is the historical sum of squared gradients for that parameter up to time step <span class="temml_me">t</span></li>
 			</ul>
-			The denominator \(\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}\) is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
+			The denominator <span class="temml_me">\sqrt{\sum\limits_{i=1}^{t}g_{i}^2}</span> is called the "adaptive learning rate" and it is used to scale down the update for parameters that have had a large historical gradient. The benefit of adagrad is that it will converge faster for sparse data and data with parameter scale difference.
 			<h2>adamax</h2>
 			Adamax is an optimization algorithm that is an extension of Adam algorithm. Like Adam, Adamax also keeps track of the moving average of the gradient and the moving average of the squared gradient, but it uses a different formula to calculate the update rule.
 <br>
 			Adamax uses the following formulas to calculate the moving averages:
-			$$\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)$$
-			$$\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)$$
-			Where \(J(\theta)\) is the loss function, \(\beta_1\) and \(\beta_2\) are hyperparameters, \(\textbf{m}\) and \(\textbf{v}\) are the moving averages of the gradient and the squared gradient, respectively.
+			<div class="temml_me" data-display="1">\textbf{m}t = \beta_1 \textbf{m}{t-1} + (1-\beta_1) \nabla_{\theta} J(\theta)</div>
+			<div class="temml_me" data-display="1">\textbf{v}t = \max(\beta_2 \textbf{v}{t-1}, |\nabla_{\theta} J(\theta)|)</div>
+			Where <span class="temml_me">J(\theta)</span> is the loss function, <span class="temml_me">\beta_1</span> and <span class="temml_me">\beta_2</span> are hyperparameters, <span class="temml_me">\textbf{m}</span> and <span class="temml_me">\textbf{v}</span> are the moving averages of the gradient and the squared gradient, respectively.
 <br>
 			The update rule for Adamax is:
-			$$\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t$$
-			Where \(\alpha\) is the learning rate and \(\epsilon\) is a small constant to avoid division by zero.
+			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t</div>
+			Where <span class="temml_me">\alpha</span> is the learning rate and <span class="temml_me">\epsilon</span> is a small constant to avoid division by zero.
 <br>
 			Adamax algorithm is similar to Adam algorithm, but it uses the infinity norm instead of the square of the gradient. The infinity norm is the maximum absolute value of the gradient. This allows Adamax to be robust against the presence of large gradients.
 <br>
@@ -2781,9 +2810,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			RMSprop (Root Mean Square Propagation) is an optimization algorithm that is similar to the stochastic gradient descent (SGD) algorithm but adapts the learning rate for each parameter individually.
 <br>
 			The basic idea of RMSprop is to keep track of the moving average of the squared gradient for each parameter, and adjust the learning rate accordingly. The update rule for RMSprop is defined as:
-			$$\textbf{s}t = \beta \textbf{s}{t-1} + (1 - \beta) (\nabla_{\theta} J(\theta))^2$$
-			$$\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)$$
-			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, \(\beta\) is a hyperparameter, \(\textbf{s}_t\) is the moving average of the squared gradient, and \(\epsilon\) is a small constant to avoid division by zero.
+			<div class="temml_me" data-display="1">\textbf{s}t = \beta \textbf{s}{t-1} + (1 - \beta) (\nabla_{\theta} J(\theta))^2</div>
+			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_{t} - \frac{\alpha}{\sqrt{\textbf{s}t} + \epsilon} \nabla{\theta} J(\theta)</div>
+			Where <span class="temml_me">\theta</span> is the set of parameters, <span class="temml_me">J(\theta)</span> is the loss function, <span class="temml_me">\alpha</span> is the learning rate, <span class="temml_me">\beta</span> is a hyperparameter, <span class="temml_me">\textbf{s}_t</span> is the moving average of the squared gradient, and <span class="temml_me">\epsilon</span> is a small constant to avoid division by zero.
 <br>
 			RMSprop uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset, like SGD does.
 <br>
@@ -2794,8 +2823,8 @@ The target shape can be specified by providing a tuple of integers which defines
 			Stochastic Gradient Descent (SGD) is a widely used optimization algorithm for training neural networks. It is a simple and efficient method for optimizing a wide range of differentiable functions, including those used in neural networks.
 <br>
 			The basic idea behind SGD is to iteratively update the parameters of the model in the direction of the negative gradient of the loss function with respect to the parameters. The update rule for SGD is defined as:
-			$$\theta_{t+1} = \theta_{t} - \alpha \nabla_{\theta} J(\theta)$$
-			Where \(\theta\) is the set of parameters, \(J(\theta)\) is the loss function, \(\alpha\) is the learning rate, and \(\nabla_{\theta} J(\theta)\) is the gradient of the loss function with respect to the parameters.
+			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_{t} - \alpha \nabla_{\theta} J(\theta)</div>
+			Where <span class="temml_me">\theta</span> is the set of parameters, <span class="temml_me">J(\theta)</span> is the loss function, <span class="temml_me">\alpha</span> is the learning rate, and <span class="temml_me">\nabla_{\theta} J(\theta)</span> is the gradient of the loss function with respect to the parameters.
 <br>
 			SGD uses the gradient of the loss function with respect to the parameters to update the parameters. It computes the gradient by taking a small subset of the data, called a batch, instead of the entire dataset. This subset is chosen randomly, which is why it is called "stochastic".
 <br>
@@ -2808,7 +2837,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			Augmentation is currently only available for images.
 <br>
-			If you have a network that looks like images (i.e., input shape is like \( [\text{int}, \text{int}, 3] \), and you have chosen <a href="#Expert-mode">Expert Mode</a>, 			you can easily augment your data by ticking the augment checkbox in the Home menu.
+			If you have a network that looks like images (i.e., input shape is like <span class="temml_me"> [\text{int}, \text{int}, 3] </span>, and you have chosen <a href="#Expert-mode">Expert Mode</a>, 			you can easily augment your data by ticking the augment checkbox in the Home menu.
 <br>
 			<img src="manual/augment.png">
 <br>
@@ -2849,11 +2878,11 @@ The target shape can be specified by providing a tuple of integers which defines
 			"Maximally activated neurons" are images that are generated by identifying the input image that leads to the highest activation of a specific neuron in a neural network. The idea is to understand what type of image patterns a specific neuron is most responsive to.
 			<br>
 			To generate these images, one can use an optimization algorithm to find the input image that maximizes the activation of a specific neuron. This can be done by setting the input image as the initial value of the optimization algorithm, and then iteratively updating the image based on the gradient of the activation function with respect to the input image. The process stops when the algorithm converges to a local maximum of the activation function.
-			\[
+			<div class="temml_me" data-display="1">
 				\textbf{x}* = \mathrm{arg} \mathrm{max}_x(\textbf{x}; \textbf{W}, b)
-			\]
+			</div>
 <br>
-			Where \(\textbf{x}\) is the input image, \(f(\textbf{x}; \textbf{W}, b)\) is the activation function of the neuron, \(\textbf{W}\) are the weights of the neuron and \(b\) is the bias term. The operator \(\arg\max\) denotes the argument (input image) that maximizes the function.
+			Where <span class="temml_me">\textbf{x}</span> is the input image, <span class="temml_me">f(\textbf{x}; \textbf{W}, b)</span> is the activation function of the neuron, <span class="temml_me">\textbf{W}</span> are the weights of the neuron and <span class="temml_me">b</span> is the bias term. The operator <span class="temml_me">\arg\max</span> denotes the argument (input image) that maximizes the function.
 <br>
 			It is important to note that the generation of the maximally activated neurons-images is usually done on a specific layer of the neural network and for a specific neuron within that layer. These generated images are also often used for interpretability and visualization of what the network is learning.
 			<h2>Math Mode</h2>
@@ -2873,7 +2902,7 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<h4>Math Mode while training</h4>
 			When in math mode while the network is training, you can follow how the weights are changing after each batch.
-			$$
+			<div class="temml_me" data-display="1">
 			h_{\text{Shape: }[4]}' = h_{\text{Shape: }[8]} \times \underbrace{\begin{pmatrix}
 				\color{OrangeRed}{-0.3091616630} & \color{OrangeRed}{-1.022151470} & \color{SeaGreen}{0.45086362957} & \color{OrangeRed}{-0.7998510003}\\
 				\color{SeaGreen}{0.9452675580} & \color{SeaGreen}{0.5125802755} & \color{OrangeRed}{0.2691028118} & \color{SeaGreen}{0.5353769063}\\
@@ -2890,7 +2919,7 @@ The target shape can be specified by providing a tuple of integers which defines
 				\color{SeaGreen}{0.7187266945} \\
 				\color{OrangeRed}{-0.549872875}
 			\end{pmatrix}}_{\mathrm{Bias}}
-			$$
+			</div>
 			Red values have become smaller since the last batch, and green values became larger. Black (or white, depending on if you chose <a href="#Dark-Mode">Dark-Mode</a> or not) values stayed the same.
 <br>
 			When values fluctuate at every batch, the training has found a local minimum.
@@ -2986,7 +3015,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h1>Auto-Input-Shape</h1>
 			Auto-Input-Shape is a feature that is to automatically infer the shape of the input data.
 <br>
-			In neural networks, the shape of the input data is typically specified as a tuple of integers, where each integer corresponds to the size of a dimension of the input data. For example, in an image classification problem, the input data might be a 4-dimensional tensor with shape \([\text{batch\_size}, \text{height}, \text{width}, \text{channels}]\), where batch_size is the number of images in a batch, height and width are the dimensions of the images, and channels is the number of color channels in the images.
+			In neural networks, the shape of the input data is typically specified as a tuple of integers, where each integer corresponds to the size of a dimension of the input data. For example, in an image classification problem, the input data might be a 4-dimensional tensor with shape <span class="temml_me">[\text{batch\_size}, \text{height}, \text{width}, \text{channels}]</span>, where batch_size is the number of images in a batch, height and width are the dimensions of the images, and channels is the number of color channels in the images.
 <br>
 			When using Auto-Input-Shape, asanAI will, depending on how you input your data (e.g. as a CSV or as image data from local files or webcam data, or tensor data), set the input shape accordingly automatically.
 			<h1>Export</h1>
