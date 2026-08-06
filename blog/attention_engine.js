@@ -782,26 +782,8 @@ class AttentionEngine {
 		const offscreen = document.createElement('div');
 		offscreen.innerHTML = newHtml;
 
-		// FIX: Cancel any pending height unlock from a previous call
-		if (container._heightUnlockRafId) {
-			cancelAnimationFrame(container._heightUnlockRafId);
-			container._heightUnlockRafId = null;
-		}
-
-		// FIX: Lock the container height to prevent BOTH shrink AND grow
-		const previousHeight = container.offsetHeight;
-		if (previousHeight > 0) {
-			container.style.minHeight = previousHeight + 'px';
-			container.style.maxHeight = previousHeight + 'px';
-			container.style.overflow = 'hidden';
-		}
-
 		// Atomic swap
 		container.replaceChildren(...offscreen.childNodes);
-
-		// NOTE: Height lock is NOT released here.
-		// The caller is responsible for releasing after post-processing
-		// (e.g. render_temml()) is complete.
 
 		return true; // content was updated
 	}
@@ -835,25 +817,6 @@ class AttentionEngine {
 			});
 
 		return { layerData, hd, displayTokens };
-	}
-
-	_lockHeight(el) {
-		if (el._heightUnlockRafId) {
-			cancelAnimationFrame(el._heightUnlockRafId);
-			el._heightUnlockRafId = null;
-		}
-		const lockedHeight = el.offsetHeight;
-		if (lockedHeight > 0) {
-			el.style.minHeight = lockedHeight + 'px';
-			el.style.maxHeight = lockedHeight + 'px';
-			el.style.overflow = 'hidden';
-		}
-	}
-
-	_unlockHeightImmediate(el) {
-		el.style.minHeight = '';
-		el.style.maxHeight = '';
-		el.style.overflow = '';
 	}
 
 	_buildFirstRenderHtml(
@@ -1015,8 +978,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 		if (!this._hasWeightsChanged(layerIdx, headIdx, hd.this_weights)) return;
 
-		this._lockHeight(headDiv);
-
 		this._patchSvgViews(layerIdx, headIdx);
 		this._renderAttentionWebForHead(layerIdx, headIdx, displayTokens, hd.this_weights);
 
@@ -1027,14 +988,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			render_temml();
 			this._annotateHead(headDiv, layerIdx, headIdx);
 		}
-
-		this._unlockMorphedContainers(equationsContainer, resultContainer);
-		this._snapAndScheduleHeightUnlock(headDiv);
-	}
-
-	_unlockMorphedContainers(equationsContainer, resultContainer) {
-		if (equationsContainer) this._unlockHeightImmediate(equationsContainer);
-		if (resultContainer) this._unlockHeightImmediate(resultContainer);
 	}
 
 	_patchSvgViews(layerIdx, headIdx) {
@@ -1088,19 +1041,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			webContainerId, webCanvasId, webStripId,
 			visibleTokens, weights
 		);
-	}
-
-	_snapAndScheduleHeightUnlock(el) {
-		const newNaturalHeight = el.scrollHeight;
-		el.style.minHeight = newNaturalHeight + 'px';
-		el.style.maxHeight = newNaturalHeight + 'px';
-
-		el._heightUnlockRafId = requestAnimationFrame(() => {
-			el._heightUnlockRafId = null;
-			el.style.minHeight = '';
-			el.style.maxHeight = '';
-			el.style.overflow = '';
-		});
 	}
 
 	_apvDrawSingleHeadSync(layerIdx, headIdx, mode) {
