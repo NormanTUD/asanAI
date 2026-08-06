@@ -657,7 +657,6 @@ const AttentionAnatomy = {
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
 
-		this.buildEquation();
 		this.render();
 
 		if (window.__MN_DARK) {
@@ -684,31 +683,6 @@ const AttentionAnatomy = {
 		this.render();
 	},
 
-	// Build the FULL equation once. Each sub-expression is tagged with
-	// a `data-region` attribute so highlightEquation() can light up the
-	// part currently being computed.
-	buildEquation: function() {
-		const eq = document.getElementById('attn-anatomy-equation');
-		eq.innerHTML = `
-			<div class="eq-line">
-				<b>Output:</b> z<sub>i</sub> =
-				<span class="eq-token" data-region="sum">Σ<sub>j</sub></span>
-				<span class="eq-token" data-region="alpha">α<sub>ij</sub></span>
-				<span class="eq-op">·</span>
-				<span class="eq-token" data-region="value">v<sub>j</sub></span>
-			</div>
-			<div class="eq-line">
-				<b>Weight:</b> α<sub>ij</sub> =
-				<span class="eq-token" data-region="exp">exp</span>(
-				<span class="eq-token" data-region="dot">q<sub>i</sub>·k<sub>j</sub></span>
-				<span class="eq-op">/</span>
-				<span class="eq-token" data-region="sqrt">√d<sub>k</sub></span>)
-				<span class="eq-op">÷</span>
-				<span class="eq-token" data-region="denom">Σ<sub>n</sub> exp(q<sub>i</sub>·k<sub>n</sub>/√d<sub>k</sub>)</span>
-			</div>
-		`;
-	},
-
 	render: function() {
 		const data = ATTN_STEPS[this.step];
 		const titleEl = document.getElementById('attn-anatomy-step-title');
@@ -716,11 +690,11 @@ const AttentionAnatomy = {
 		if (numEl)   numEl.textContent   = `Step ${this.step + 1}`;
 		if (titleEl) titleEl.textContent = `— ${data.title}`;
 
+		this.renderEquation(data);
 		this.renderComputation(data);
 		this.renderIntuition(data);
 		this.render2D(data);
 		this.renderBars(data);
-		this.highlightEquation();
 
 		// Temml is loaded by load_base_js(); it scans the document for
 		// $...$ / $$...$$ blocks and replaces them with MathML.
@@ -730,6 +704,41 @@ const AttentionAnatomy = {
 
 		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
 		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
+	},
+
+	// Render the FULL equation as Temml / LaTeX. Active sub-expressions
+	// (those listed in `data.eqActive`) are wrapped in \color{#2563eb}
+	// + \mathbf{} so they appear blue and bold after Temml renders them.
+	renderEquation: function(data) {
+		const el = document.getElementById('attn-anatomy-equation');
+		if (!el) return;
+
+		const active = new Set(data.eqActive || []);
+		const hl = (latex, region) => {
+			if (active.has(region)) return `\\color{#2563eb}\\mathbf{${latex}}`;
+			return latex;
+		};
+
+		// Output line: z_i = Σ_j α_ij · v_j
+		const outputLatex =
+			'z_i = ' +
+			hl('\\sum_j',                'sum')   + '\\,' +
+			hl('\\alpha_{ij}',           'alpha') + '\\,\\cdot\\,' +
+			hl('v_j',                    'value');
+
+		// Weight line: α_ij = exp(q_i·k_j / √d_k) ÷ Σ_n exp(q_i·k_n / √d_k)
+		const weightLatex =
+			'\\alpha_{ij} = ' +
+			hl('\\mathrm{exp}',          'exp')   +
+			'\\!\\bigl(' +
+			hl('q_i \\cdot k_j',         'dot')   + '\\,/\\,' +
+			hl('\\sqrt{d_k}',            'sqrt')  +
+			'\\bigr)\\,\\div\\,' +
+			hl('\\sum_n \\mathrm{exp}(q_i \\cdot k_n \\big/ \\sqrt{d_k})', 'denom');
+
+		el.innerHTML =
+			'<div class="eq-line"><b>Output:</b>  $$ ' + outputLatex + ' $$</div>' +
+			'<div class="eq-line"><b>Weight:</b>  $$ ' + weightLatex + ' $$</div>';
 	},
 
 	// Populate the "Currently computing" panel with the actual numerical
@@ -977,18 +986,8 @@ const AttentionAnatomy = {
 		});
 	},
 
-	// Glow the sub-expression(s) of the equation that the current step
-	// is computing. The step's `eqActive` is an array of region names
-	// that match `data-region` attributes in the equation HTML.
-	highlightEquation: function() {
-		const data = ATTN_STEPS[this.step];
-		const activeRegions = new Set(data.eqActive || []);
-		document.querySelectorAll('#attn-anatomy-equation [data-region]')
-			.forEach(el => {
-				if (activeRegions.has(el.dataset.region)) el.classList.add('active');
-				else el.classList.remove('active');
-			});
-	}
+	// (Old highlightEquation removed — highlighting is now done via
+	// \color in the LaTeX rendered by renderEquation.)
 };
 
 function initAttentionAnatomy() {
