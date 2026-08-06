@@ -6518,6 +6518,7 @@ html.dark #reading-progress {
    ════════════════════════════════════════════════════════════ */
 
 #topics-toggle {
+	--topics-pct: 0;
 	position: fixed;
 	top: 16px;
 	right: 132px;
@@ -6525,18 +6526,18 @@ html.dark #reading-progress {
 	width: 40px;
 	height: 40px;
 	padding: 0;
-	border: 1px solid var(--mn-border);
+	border: 1px solid color-mix(in srgb, var(--mn-border), var(--mn-accent) calc(var(--topics-pct) * 100%));
 	border-radius: 12px;
 	background: var(--mn-surface);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
 	box-shadow: var(--mn-shadow-md);
-	color: var(--mn-text-secondary);
+	color: color-mix(in srgb, var(--mn-text-secondary), var(--mn-accent) calc(var(--topics-pct) * 100%));
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: all 0.2s ease;
+	transition: color 0.3s ease, border-color 0.3s ease;
 }
 #topics-toggle:hover {
 	border-color: var(--mn-accent);
@@ -6545,46 +6546,14 @@ html.dark #reading-progress {
 	transform: scale(1.05);
 }
 #topics-toggle:active { transform: scale(0.95); }
-#topics-toggle svg { width: 18px; height: 18px; }
+#topics-toggle svg {
+	width: 18px;
+	height: 18px;
+	transition: transform 0.3s ease;
+}
 #topics-toggle:focus-visible {
 	outline: 2px solid var(--mn-accent);
 	outline-offset: 2px;
-}
-
-/* badge showing how many topics are active */
-#topics-toggle .topics-badge {
-	position: absolute;
-	top: -6px;
-	right: -6px;
-	min-width: 18px;
-	height: 18px;
-	padding: 0 5px;
-	border-radius: 9px;
-	background: var(--mn-accent);
-	color: #fff;
-	font-size: 0.66rem;
-	font-weight: 700;
-	line-height: 18px;
-	text-align: center;
-	box-shadow: 0 1px 4px rgba(99, 102, 241, 0.45);
-	transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
-	pointer-events: none;
-}
-#topics-toggle .topics-badge.topics-badge-dot {
-	min-width: 10px;
-	width: 10px;
-	height: 10px;
-	padding: 0;
-	border-radius: 50%;
-	font-size: 0;
-	line-height: 0;
-	overflow: hidden;
-}
-#topics-toggle .topics-badge.topics-badge-empty {
-	display: none;
-}
-html.dark #topics-toggle .topics-badge {
-	box-shadow: 0 1px 4px rgba(129, 140, 248, 0.55);
 }
 
 /* Hide until page is revealed (matches search/theme/drawer pattern) */
@@ -7018,7 +6987,10 @@ html.dark .topics-preset-fun {
 .course-tile.topic-tile-dim .course-tile-icon {
 	filter: grayscale(0.7);
 }
-.course-tile.topic-tile-dim .course-tile-title {
+.course-tile.topic-tile-dim h3 {
+	color: var(--mn-text-muted);
+}
+.course-tile.topic-tile-dim p {
 	color: var(--mn-text-muted);
 }
 .course-tile.topic-tile-active {
@@ -7198,14 +7170,6 @@ html.dark .topics-preset-fun {
 		right: 122px;
 		width: 36px;
 		height: 36px;
-	}
-	#topics-toggle .topics-badge {
-		top: -5px;
-		right: -5px;
-		min-width: 16px;
-		height: 16px;
-		font-size: 0.6rem;
-		line-height: 16px;
 	}
 	.topics-overlay {
 		padding: 3vh 8px 8px;

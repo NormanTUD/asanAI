@@ -155,7 +155,7 @@
 	   The button itself is rendered by `render_topics_toggle()` in
 	   functions.php so it's in the DOM immediately (no FOUC, no
 	   waiting on the loader). We just wire up the click handler and
-	   keep the badge in sync. */
+	   keep the button's color intensity in sync via a CSS variable. */
 	function ensureToggleButton() {
 		let btn = document.getElementById('topics-toggle');
 		if (!btn) {
@@ -171,46 +171,31 @@
 				'<circle cx="12" cy="12" r="9"/>',
 				'<circle cx="12" cy="12" r="5"/>',
 				'<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
-				'</svg></span>',
-				'<span class="topics-badge" id="topics-badge" aria-hidden="true"></span>'
+				'</svg></span>'
 			].join('');
 			document.body.appendChild(btn);
 		}
 		// Replace the inline onclick with a proper handler so the
 		// event stays attached even if the button is re-rendered.
 		btn.onclick = openOverlay;
-		// Ensure the badge child exists (it might be missing on the
-		// PHP-rendered version if render_topics_toggle was updated).
-		if (!btn.querySelector('.topics-badge')) {
-			const badge = document.createElement('span');
-			badge.className = 'topics-badge';
-			badge.id = 'topics-badge';
-			badge.setAttribute('aria-hidden', 'true');
-			btn.appendChild(badge);
-		}
-		updateBadge();
+		updateToggleIntensity();
 	}
 
-	function updateBadge() {
-		const badge = document.getElementById('topics-badge');
-		if (!badge) return;
+	/** Drive the button's accent saturation from the share of topics
+	    that are currently active. Pure 0 → button is plain grey; pure 1
+	    → button is the full accent color. The button never carries a
+	    badge or count. */
+	function updateToggleIntensity() {
+		const btn = document.getElementById('topics-toggle');
+		if (!btn) return;
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
-		const total = TOPICS.length;
-		/* Never print the raw count. The badge is a non-verbal indicator:
-		   hidden when nothing or everything is active, otherwise a small dot
-		   that just signals "you've made a partial selection". */
-		const allOn  = active === total;
-		const noneOn = active === 0;
-		const partial = !allOn && !noneOn;
-		badge.classList.toggle('topics-badge-empty', !partial);
-		badge.classList.toggle('topics-badge-dot', partial);
-		badge.textContent = partial ? '•' : '';
-		badge.setAttribute(
+		const total  = TOPICS.length;
+		const pct = total > 0 ? Math.max(0, Math.min(1, active / total)) : 0;
+		btn.style.setProperty('--topics-pct', pct.toFixed(4));
+		btn.setAttribute(
 			'aria-label',
-			allOn  ? 'All topics active'
-			: noneOn ? 'No topics active — everything is skipped'
-			:         'Some topics active (' + active + ' of ' + total + ')'
+			'Choose your interests — ' + active + ' of ' + total + ' active'
 		);
 	}
 
@@ -596,7 +581,7 @@
 
 	/* ── 9. Change broadcast ──────────────────────────────────── */
 	function fireChange() {
-		updateBadge();
+		updateToggleIntensity();
 		renderGrid();
 		applyVisibility();
 		// Re-render any inline widget (intro page)
@@ -658,7 +643,6 @@
 		ensureToggleButton();
 		ensureOverlay();
 		renderGrid();
-		updateBadge();
 		applyVisibility();
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 	}
