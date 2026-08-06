@@ -87,12 +87,6 @@ To truly grasp the nature of Artificial Intelligence, we will move through vario
 
 This text is designed to help you navigate these shifts. We will constantly move from a philosophical "why" down to a mathematical "how," ensuring that the most abstract concepts remain tied to concrete reality.
 
-## A Note on the Authors' Bias
-
-We authors have a soft spot for the *Two Cultures* conversation. We believe that to understand AI well, you need a foot in the mathematics, a foot in the humanities, and a willingness to wade through history. This is unusual — most courses of this size are pure engineering or pure philosophy. We picked the harder middle path because we think the most interesting questions live there. If you mute the Philosophy topic, you won't lose the technical material; you'll just lose the occasional nudge to *think about what it all means*.
-
-Use the 🎯 button in the top-right corner to mute anything that doesn't interest you. The course adapts: the rest of the page quietly tucks sections away behind a soft "skipped" banner, so you can still see they exist (and click once to peek if curiosity strikes).
-
 ## Disclaimer
 
 This tutorial was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems. We've done our best to verify the code and info, but please double-check before using it in production.
