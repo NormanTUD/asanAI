@@ -1253,6 +1253,20 @@ function run_transformer_demo(activeId = null) {
 	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 
 	show_nr_of_params();
+
+	// TDA live: keep a "current state" snapshot even when not training
+	if (window.TDALive && !window.isTraining) {
+		const { d_model, n_layers, n_heads } = getTransformerConfig();
+		const trainTokens = transformer_tokenize_render(trainingInput.value, null);
+		window.TDALive.captureEpoch({
+			epoch: -1,
+			tokens: trainTokens,
+			d_model, n_layers, n_heads,
+			weights: window.currentWeights,
+			prevWeights: null,
+			loss: null
+		});
+	}
 }
 
 function get_init_weights(n_layers, d_model) {
@@ -1313,6 +1327,7 @@ function initTrainingSession(btn, status) {
 	window.lossHistory = [];
 	reset_graph();
 	showTrainingProgressBar();
+	if (window.TDALive) window.TDALive.beginSession();
 
 	return {
 		lr:       parseFloat(document.getElementById('train-lr').value) || 0.05,
@@ -1467,6 +1482,7 @@ function finalizeTrainingSession(btn, status, completedAll) {
 	btn.innerText = 'Train Model';
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 	hideTrainingProgressBar();
+	if (window.TDALive) window.TDALive.endSession();
 }
 
 async function train_transformer() {
@@ -1524,6 +1540,12 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
 	buildTrainingWindows(tokens, thisContextSize);
 
+	// TDA live: snapshot the weights BEFORE the gradient step so we can
+	// compute the weight deltas (W_new - W_prev) for this epoch.
+	const tdaPrevWeights = (window.TDALive && window.currentWeights)
+		? JSON.parse(JSON.stringify(window.currentWeights))
+		: null;
+
 	// Gradient step
 	const cost = computeAndApplyGradients(
 		tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue
@@ -1540,6 +1562,18 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 
 	// Sync state
 	await syncTrainingState(weightVars);
+
+	// TDA live: capture residual stream + weight deltas for this epoch
+	if (window.TDALive) {
+		window.TDALive.captureEpoch({
+			epoch: epochIdx,
+			tokens,
+			d_model, n_layers, n_heads,
+			weights: window.currentWeights,
+			prevWeights: tdaPrevWeights,
+			loss: lossValue[0]
+		});
+	}
 
 	dispose(cost);
 }

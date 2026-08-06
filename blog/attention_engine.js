@@ -3,6 +3,26 @@ class AttentionEngine {
 		'#3b82f6'
 	];
 
+	// ── Hook registry ─────────────────────────────────────────────
+	// TDA live view (and other tooling) can subscribe to every forward
+	// pass without touching the rendering pipeline.
+	static _tdaHooks = [];
+
+	/**
+	 * Register a callback fired after every forward pass.
+	 * fn(engine, headData, h0, tokens, tokenStrings)
+	 */
+	static onForward(fn) {
+		if (typeof fn === 'function') AttentionEngine._tdaHooks.push(fn);
+	}
+
+	static _fireForwardHooks(engine, headData, h0, tokens, tokenStrings) {
+		for (const fn of AttentionEngine._tdaHooks) {
+			try { fn(engine, headData, h0, tokens, tokenStrings); }
+			catch (e) { /* keep the render pipeline alive */ }
+		}
+	}
+
 	constructor(config) {
 		this.d_model = config.d_model;
 		this.n_heads = config.n_heads;
@@ -265,6 +285,8 @@ class AttentionEngine {
 				d_model: this.d_model
 			});
 		}
+
+		AttentionEngine._fireForwardHooks(this, headData, h0, tokens, tokenStrings);
 
 		this.renderUI(headData, tokens, tokenStrings);
 		return headData;
