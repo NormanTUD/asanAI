@@ -115,13 +115,16 @@ https://arxiv.org/html/2505.11611v1
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
             <div id="train-optimizer" style="display: inline-flex; gap: 12px; align-items: center; font-size: 0.9rem; padding: 4px 0;">
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="train-optimizer-choice" value="adam" checked> Adam
+                    <input type="radio" name="train-optimizer-choice" value="adam" checked>
+                    <span class="glossary-term">Adam<span class="glossary-tooltip">An adaptive optimizer that gives every parameter its own learning rate based on the history of its gradients.</span></span>
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="train-optimizer-choice" value="sgd"> SGD
+                    <input type="radio" name="train-optimizer-choice" value="sgd">
+                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent — gradient descent performed on small random batches of data rather than the full dataset.</span></span>
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="train-optimizer-choice" value="rmsprop"> RMSProp
+                    <input type="radio" name="train-optimizer-choice" value="rmsprop">
+                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation — adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
                 </label>
             </div>
         </div>

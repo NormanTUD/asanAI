@@ -80,6 +80,10 @@
 		contents.addEventListener('click', function (ev) {
 			var term = ev.target.closest && ev.target.closest('.glossary-term');
 			if (term) {
+				var owningLabel = term.closest('label');
+				if (owningLabel && owningLabel.querySelector('input,select,textarea')) {
+					return;
+				}
 				ev.preventDefault();
 				ev.stopPropagation();
 				if (openTerm === term) {
