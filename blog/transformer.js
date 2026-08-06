@@ -3155,9 +3155,6 @@ function _heightLockedUpdate(el, newHtml) {
 		el._heightUnlockRafId = null;
 	}
 
-	const savedPageScrollY = window.scrollY;
-	const savedPageScrollX = window.scrollX;
-
 	const previousHeight = el.offsetHeight;
 	if (previousHeight > 0) {
 		el.style.minHeight = previousHeight + 'px';
@@ -3168,29 +3165,7 @@ function _heightLockedUpdate(el, newHtml) {
 		el.style.overflow = 'hidden';
 	}
 
-	const scrollable = el.querySelectorAll('[style*="overflow"]');
-	const savedScrolls = [];
-	scrollable.forEach((child, idx) => {
-		if (child.scrollLeft > 0 || child.scrollTop > 0) {
-			savedScrolls.push({ index: idx, scrollLeft: child.scrollLeft, scrollTop: child.scrollTop });
-		}
-	});
-
 	el.innerHTML = newHtml;
-
-	window.scrollTo(savedPageScrollX, savedPageScrollY);
-
-	if (savedScrolls.length > 0) {
-		requestAnimationFrame(() => {
-			const newScrollable = el.querySelectorAll('[style*="overflow"]');
-			savedScrolls.forEach(({ index, scrollLeft, scrollTop }) => {
-				if (newScrollable[index]) {
-					newScrollable[index].scrollLeft = scrollLeft;
-					newScrollable[index].scrollTop = scrollTop;
-				}
-			});
-		});
-	}
 
 	// NOTE: Height lock is NOT released here.
 	// The caller MUST call _releaseHeightLocks([el]) after any
@@ -3203,9 +3178,6 @@ function _heightLockedUpdate(el, newHtml) {
 
 function _releaseHeightLocks(elements) {
 	if (!elements || elements.length === 0) return;
-
-	const savedPageScrollY = window.scrollY;
-	const savedPageScrollX = window.scrollX;
 
 	elements.forEach(el => {
 		if (!el) return;
@@ -3236,8 +3208,6 @@ function _releaseHeightLocks(elements) {
 			}
 		});
 	});
-
-	window.scrollTo(savedPageScrollX, savedPageScrollY);
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
@@ -6706,9 +6676,6 @@ function tled_syncTableFromSpace() {
 }
 
 function setVisualizationMode(mode) {
-	const savedScrollY = window.scrollY;
-	const savedScrollX = window.scrollX;
-
 	window.tlabVisualizationMode = mode;
 
 	const trainBtn = document.getElementById('view-toggle-train');
@@ -6727,9 +6694,8 @@ function setVisualizationMode(mode) {
 	_gracefulModeTransition(
 		() => {
 			run_transformer_demo();
-			window.scrollTo(savedScrollX, savedScrollY);
 		},
-		() => window.scrollTo(savedScrollX, savedScrollY)
+		() => {}
 	);
 }
 
