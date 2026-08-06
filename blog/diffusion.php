@@ -7,7 +7,7 @@ icon: &#127912;
 part: 4
 order: 28
 color: sky
-topics: vision, architecture, programming
+topics: multimodal, vision, architecture, programming
 -->
 
 <div class="md">

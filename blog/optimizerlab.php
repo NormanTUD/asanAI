@@ -7,7 +7,7 @@ icon: &#127757;
 part: 2
 order: 11
 color: coral
-topics: math, programming
+topics: training, math, programming
 -->
 <div class="md">
 In machine learning, a model learns by adjusting its internal settings, called **Weights** and **Biases**, to minimize a **Loss Function**, which is a mathematical measure of how wrong the model's predictions are.

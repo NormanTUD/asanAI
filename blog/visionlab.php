@@ -7,7 +7,7 @@ icon: &#128065;
 part: 3
 order: 14
 color: emerald
-topics: vision, programming, interactive
+topics: vision, programming
 -->
 <div class="md">
 ## Historical Context

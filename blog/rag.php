@@ -7,7 +7,7 @@ icon: &#128270;
 part: 5
 order: 29
 color: rose
-topics: language, programming, architecture
+topics: inference, language, programming, architecture
 -->
 
 <div class="smart-quote" data-cite="alankayfuture">

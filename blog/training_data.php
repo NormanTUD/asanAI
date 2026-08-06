@@ -7,7 +7,7 @@ icon: &#128190;
 part: 5
 order: 39
 color: rose
-topics: data, programming, society
+topics: training, data, programming, society
 -->
 
 <div class="md">

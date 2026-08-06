@@ -53,7 +53,7 @@ Look at the top-right corner of the page — next to the **dark-mode toggle** yo
 
 * **Toggle a topic** and the rest of the site quietly rearranges itself: sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, so you can still see they exist (and click once to peek if curiosity strikes).
 * **Your choices are saved in a cookie** — they survive reloads and travel with you between pages. No account, no signup.
-* **It's playful on purpose.** There are presets like *Show Everything*, *Just Essentials* and a 🎲 *Surprise Me* button that picks a random subset to start with — a way to discover corners of the course you didn't know you'd enjoy.
+* **Quick presets** sit right above the grid: *Show Everything* turns every topic on, *Just Essentials* keeps only the big-picture ones (history, philosophy, language), and *Technical Essentials* adds the fachinformatiker-level core (math, statistics, programming, architecture) on top.
 
 Below is your current pick. Tap any pill to flip it on or off:
 
@@ -62,7 +62,7 @@ Below is your current pick. Tap any pill to flip it on or off:
 A few things worth knowing:
 
 * **Nothing is gone for good.** Skipped sections show a banner like *“Math section skipped”* with a single-click *Peek anyway* button. So you can stay focused without losing the road map of what the course covers.
-* **The course tiles on the home page react, too.** Tiles for topics you've muted gently fade back, marked *“saved for later”*. They're still one click away if you change your mind.
+* **The course tiles on the home page react, too.** Tiles for topics you've muted gently dim back so you can still see they exist — but they're still one click away if you change your mind.
 * **You can change your mind any time.** There is no score, no penalty. The picker is a dial, not a quiz.
 
 Use it as much or as little as you like. Some readers will ignore it and read straight through. Others will turn off everything except *History* and *Philosophy*. Both are completely valid paths through the material.
@@ -89,25 +89,9 @@ This text is designed to help you navigate these shifts. We will constantly move
 
 ## A Note on the Authors' Bias
 
-[[t:philosophy]]
 We authors have a soft spot for the *Two Cultures* conversation. We believe that to understand AI well, you need a foot in the mathematics, a foot in the humanities, and a willingness to wade through history. This is unusual — most courses of this size are pure engineering or pure philosophy. We picked the harder middle path because we think the most interesting questions live there. If you mute the Philosophy topic, you won't lose the technical material; you'll just lose the occasional nudge to *think about what it all means*.
-[[/t]]
 
-[[t:math]]
-If you mute Math, you'll see that a lot of the interactive sliders and live demos still work — they're designed to give you intuition even when the equations are hidden. Look at the picture, move the slider, *feel* the shape of the curve. That's the part most readers keep, even when the symbols themselves get tucked away.
-[[/t]]
-
-[[t:history]]
-If History isn't your thing, you'll still get the technical ladder. But you'll miss the long, strange arc from Ishango bones to attention heads — which, in our opinion, is the most poetic part of the whole story. Skim it later when you have an evening to spare.
-[[/t]]
-
-[[t:ethics]]
-If you mute Ethics, you'll skip the chapters on hallucinations, alignment, and societal impact. Those are increasingly the chapters the working world reads first. Consider leaving them on even if you don't think of yourself as a "philosophy person" — they're closer to *engineering risk* than to armchair speculation.
-[[/t]]
-
-[[t:hardware]]
-Muting Hardware is the right move if you mainly want to *use* AI rather than run it. You'll skip GPU lore, inference optimization, and running models locally. The rest of the course doesn't lean on those sections.
-[[/t]]
+Use the 🎯 button in the top-right corner to mute anything that doesn't interest you. The course adapts: the rest of the page quietly tucks sections away behind a soft "skipped" banner, so you can still see they exist (and click once to peek if curiosity strikes).
 
 ## Disclaimer
 

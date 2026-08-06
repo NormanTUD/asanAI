@@ -7,7 +7,7 @@ icon: &#127961;
 part: 3
 order: 15
 color: emerald
-topics: math, architecture, interactive
+topics: math, architecture, training
 -->
 
 <div class="md">

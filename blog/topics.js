@@ -25,22 +25,38 @@
 
 	/* ── 1. Topic registry (single source of truth) ───────────── */
 	const TOPICS = [
-		{ id: 'math',         label: 'Math',          icon: '∑',    desc: 'Algebra, calculus, linear algebra, geometry' },
-		{ id: 'statistics',   label: 'Statistics',    icon: 'σ',    desc: 'Probability, distributions, inference' },
-		{ id: 'programming',  label: 'Programming',   icon: '{ }',  desc: 'Code, algorithms, data structures' },
-		{ id: 'architecture', label: 'Architecture',  icon: '🏗️',   desc: 'Transformers, attention, model design' },
-		{ id: 'data',         label: 'Data',          icon: '📊',   desc: 'Training data, corpora, curation' },
-		{ id: 'hardware',     label: 'Hardware',      icon: '💻',   desc: 'Chips, GPUs, machines, infrastructure' },
-		{ id: 'vision',       label: 'Vision',        icon: '👁️',   desc: 'Image, video, multimodal perception' },
-		{ id: 'audio',        label: 'Audio',         icon: '🎵',   desc: 'Speech, music, sound processing' },
-		{ id: 'agents',       label: 'Agents',        icon: '🤖',   desc: 'Tool use, reasoning, autonomous systems' },
-		{ id: 'language',     label: 'Language',      icon: '🗣️',   desc: 'Linguistics, semantics, NLP' },
-		{ id: 'history',      label: 'History',       icon: '🏛️',   desc: 'Intellectual history and archaeology' },
-		{ id: 'philosophy',   label: 'Philosophy',    icon: '💭',   desc: 'Mind, meaning, epistemology' },
-		{ id: 'ethics',       label: 'Ethics',        icon: '⚖️',   desc: 'Safety, alignment, responsibility' },
-		{ id: 'society',      label: 'Society',       icon: '🌐',   desc: 'Culture, law, economy, policy' },
-		{ id: 'interactive',  label: 'Hands-on',      icon: '🎮',   desc: 'Interactive demos and playgrounds' }
+		{ id: 'math',             label: 'Math',             icon: '∑',    desc: 'Algebra, calculus, linear algebra, geometry' },
+		{ id: 'statistics',       label: 'Statistics',       icon: 'σ',    desc: 'Probability, distributions, inference' },
+		{ id: 'programming',      label: 'Programming',      icon: '{ }',  desc: 'Code, algorithms, data structures' },
+		{ id: 'architecture',     label: 'Architecture',     icon: '🏗️',   desc: 'Transformers, attention, model design' },
+		{ id: 'training',         label: 'Training',         icon: '🎯',   desc: 'Optimization, fine-tuning, RL, evaluation' },
+		{ id: 'data',             label: 'Data',             icon: '📊',   desc: 'Training data, corpora, curation' },
+		{ id: 'hardware',         label: 'Hardware',         icon: '💻',   desc: 'Chips, GPUs, machines, infrastructure' },
+		{ id: 'inference',        label: 'Inference',        icon: '⚡',   desc: 'Serving, optimization, quantization, RAG' },
+		{ id: 'vision',           label: 'Vision',           icon: '👁️',   desc: 'Image, video, multimodal perception' },
+		{ id: 'audio',            label: 'Audio',            icon: '🎵',   desc: 'Speech, music, sound processing' },
+		{ id: 'multimodal',       label: 'Multimodal',       icon: '🧩',   desc: 'Mixing text, image, audio, video' },
+		{ id: 'agents',           label: 'Agents',           icon: '🤖',   desc: 'Tool use, autonomous systems, planning' },
+		{ id: 'reasoning',        label: 'Reasoning',        icon: '∴',    desc: 'Chain-of-thought, planning, problem-solving' },
+		{ id: 'interpretability', label: 'Interpretability', icon: '🔍',   desc: 'Probing, mechanistic understanding, circuits' },
+		{ id: 'language',         label: 'Language',         icon: '🗣️',   desc: 'Linguistics, semantics, NLP' },
+		{ id: 'history',          label: 'History',          icon: '🏛️',   desc: 'Intellectual history and archaeology' },
+		{ id: 'philosophy',       label: 'Philosophy',       icon: '💭',   desc: 'Mind, meaning, epistemology' },
+		{ id: 'ethics',           label: 'Ethics',           icon: '⚖️',   desc: 'Responsibility, alignment, fairness' },
+		{ id: 'safety',           label: 'Safety',           icon: '🛡️',   desc: 'Security, robustness, adversarial risk' },
+		{ id: 'society',          label: 'Society',          icon: '🌐',   desc: 'Culture, economy, policy, geopolitics' },
+		{ id: 'law',              label: 'Law',              icon: '📜',   desc: 'Regulation, copyright, governance' },
+		{ id: 'frontier',         label: 'Frontier',         icon: '🚀',   desc: 'Cutting-edge research, open problems' },
+		{ id: 'reference',        label: 'Reference',        icon: '📖',   desc: 'Glossary, cheatsheets, supplementary tables' }
 	];
+
+	/* curated subsets used by the "Just Essentials" and "Technical Essentials"
+	   presets. Order matters: the first id in each list is shown in the button
+	   label when relevant. */
+	const PRESETS = {
+		essentials: [ 'history', 'philosophy', 'language' ],
+		technical:  [ 'history', 'philosophy', 'language', 'math', 'statistics', 'programming', 'architecture' ]
+	};
 
 	const COOKIE_NAME  = 'topics_pref';
 	const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -118,15 +134,13 @@
 		persist(m);
 	}
 
-	/** enable `count` random topics, disable the rest */
-	function pickRandom(count) {
-		const ids = TOPICS.map(function (t) { return t.id; });
-		for (let i = ids.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			const tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
-		}
+	/** enable exactly the topics whose id appears in `enabledIds`,
+	    disable everything else. Unknown ids are silently skipped. */
+	function applyPreset(enabledIds) {
+		const allow = {};
+		(enabledIds || []).forEach(function (id) { allow[cssSafe(id)] = true; });
 		const m = {};
-		ids.forEach(function (id, i) { m[id] = i < count; });
+		TOPICS.forEach(function (t) { m[t.id] = !!allow[t.id]; });
 		persist(m);
 	}
 
@@ -183,19 +197,26 @@
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total = TOPICS.length;
-		if (active === total) {
+		/* Never display the literal digit "9" — show a neutral dot instead
+		   so the badge stays informative without surfacing that number. */
+		const hideNumber = active === total || active === 0 || active === 9;
+		const showDot    = active === 9;
+		badge.classList.toggle('topics-badge-empty', hideNumber && !showDot);
+		badge.classList.toggle('topics-badge-dot', showDot);
+		if (hideNumber && !showDot) {
 			badge.textContent = '';
-			badge.classList.add('topics-badge-empty');
-			badge.setAttribute('aria-label', 'All topics active');
-		} else if (active === 0) {
-			badge.textContent = '0';
-			badge.classList.remove('topics-badge-empty');
-			badge.setAttribute('aria-label', 'No topics active — everything is skipped');
+		} else if (showDot) {
+			badge.textContent = '•';
 		} else {
 			badge.textContent = String(active);
-			badge.classList.remove('topics-badge-empty');
-			badge.setAttribute('aria-label', active + ' of ' + total + ' topics active');
 		}
+		badge.setAttribute(
+			'aria-label',
+			active === total ? 'All topics active'
+			: active === 0    ? 'No topics active — everything is skipped'
+			: active === 9    ? 'Several topics active'
+			:                   active + ' of ' + total + ' topics active'
+		);
 	}
 
 	/* ── 4. UI: overlay + checklist ───────────────────────────── */
@@ -215,8 +236,8 @@
 				'</header>',
 				'<div class="topics-presets" role="group" aria-label="Quick presets">',
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
-					'<button type="button" data-preset="none" class="topics-preset-btn">Just Essentials</button>',
-					'<button type="button" data-preset="random" class="topics-preset-btn topics-preset-fun">🎲 Surprise Me</button>',
+					'<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>',
+					'<button type="button" data-preset="technical" class="topics-preset-btn">Technical Essentials</button>',
 				'</div>',
 				'<div class="topics-grid" id="topics-grid"></div>',
 				'<footer class="topics-footer">',
@@ -234,8 +255,8 @@
 			b.addEventListener('click', function () {
 				const p = b.getAttribute('data-preset');
 				if (p === 'all') setAll(true);
-				else if (p === 'none') setAll(false);
-				else if (p === 'random') pickRandom(5);
+				else if (p === 'essentials') applyPreset(PRESETS.essentials);
+				else if (p === 'technical') applyPreset(PRESETS.technical);
 			});
 		});
 
@@ -541,17 +562,9 @@
 			if (hits === 0) {
 				tile.classList.add('topic-tile-dim');
 				tile.classList.remove('topic-tile-active');
-				if (!tile.querySelector('.topic-tile-skipped-pill')) {
-					const pill = document.createElement('span');
-					pill.className = 'topic-tile-skipped-pill';
-					pill.textContent = 'saved for later';
-					tile.appendChild(pill);
-				}
 			} else {
 				tile.classList.remove('topic-tile-dim');
 				tile.classList.add('topic-tile-active');
-				const pill = tile.querySelector('.topic-tile-skipped-pill');
-				if (pill) pill.remove();
 			}
 		});
 	}
@@ -664,6 +677,7 @@
 	/* ── 12. Public API ───────────────────────────────────────── */
 	window.BlogTopics = {
 		TOPICS: TOPICS,
+		PRESETS: PRESETS,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
 		activeMap: function () { return normalize(activeMap()); },
@@ -671,7 +685,7 @@
 		anyEnabled: anyEnabled,
 		setEnabled: setEnabled,
 		setAll: setAll,
-		pickRandom: pickRandom,
+		applyPreset: applyPreset,
 		openOverlay: openOverlay,
 		closeOverlay: closeOverlay,
 		renderInlineWidget: renderInlineWidget,
