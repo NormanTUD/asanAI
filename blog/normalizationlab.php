@@ -276,21 +276,76 @@ This is why Transformers work well with Pre-Norm: the clean spherical geometry e
 </div>
 
 <div class="md">
-## Group Normalization: The Diffusion Choice
+## Group Normalization: Slice the Channels, Normalize Once per Slice
 
-**Group Normalization (GN)**, introduced by \citeauthor{wu2018groupnorm} (\citeyear{wu2018groupnorm}), splits the $C$ channels into $G$ groups and normalizes within each group across spatial dims:
+To normalize a feature map, you first have to decide **which numbers get pooled into the same average**. LayerNorm says "all channels of one token"; BatchNorm says "this channel across all samples in the batch". **Group Normalization (GN)** \cite{wu2018groupnorm} splits the $C$ channels into $G$ slices (groups), then for each group computes **one** mean and **one** std across that group's channels × all spatial positions.
 
-$$\mu_g = \frac{1}{(C/G)\,H\,W}\sum_{c \in g}\sum_{h,w} x_{nchw}, \qquad \sigma_g^2 = \frac{1}{(C/G)\,H\,W}\sum_{c \in g}\sum_{h,w} (x_{nchw}-\mu_g)^2$$
+The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away. This is why every ResBlock of Stable Diffusion ends with `Conv → GroupNorm → SiLU`.
+
+Drag the slider below and watch the same eight channels get regrouped.
+</div>
+
+<div id="gn-lab" style="max-width: 920px; margin: 1.5em auto; padding: 22px; background: linear-gradient(160deg, rgba(99,102,241,0.05), rgba(16,185,129,0.04)); border: 1px solid rgba(99,102,241,0.18); border-radius: 14px; box-shadow: 0 4px 24px -8px rgba(99,102,241,0.12);">
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:16px; margin-bottom:18px;">
+        <label style="font-weight:700; color:var(--mn-text); white-space:nowrap;">
+            Groups <em>G</em> =
+            <span id="gn-G-val" style="display:inline-block; min-width:28px; padding:3px 10px; margin-left:4px; background:var(--mn-surface); border:1.5px solid #6366f1; border-radius:6px; color:#6366f1; font-family:Menlo,Consolas,monospace; font-weight:700; text-align:center;">4</span>
+        </label>
+        <input id="gn-G" type="range" min="1" max="8" value="4" style="flex:1; min-width:220px; accent-color:#6366f1; cursor:pointer;">
+        <div id="gn-hint" style="font-size:12px; color:var(--mn-text-secondary); font-style:italic;"></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-bottom:16px;">
+        <div>
+            <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">① Input feature map (8 channels × 16 positions)</div>
+            <div id="gn-input" style="background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; padding:10px; overflow-x:auto;"></div>
+        </div>
+        <div>
+            <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#10b981; margin-bottom:8px;">② After GroupNorm (γ = 1, β = 0)</div>
+            <div id="gn-output" style="background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; padding:10px; overflow-x:auto;"></div>
+        </div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">③ One (μ, σ) per group — every cell in the group gets rescaled by it</div>
+    <div id="gn-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px;"></div>
+
+    <div style="font-size:12px; color:var(--mn-text-secondary); margin-top:14px; line-height:1.55;">
+        Hover any cell in ① to see the exact arithmetic $(x - \mu_g) / \sigma_g$. Cells in the <em>same</em> colored group share a single μ and σ; cells in <em>different</em> groups are normalized independently.
+    </div>
+</div>
+
+<details class="md" style="max-width:920px; margin: 1em auto;">
+    <summary style="cursor:pointer; font-weight:700; color:var(--mn-text); padding:10px 14px; background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;">Show me the math</summary>
+    <div style="padding:14px 18px; background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-top:none; border-radius:0 0 8px 8px;">
+
+For an input activation tensor $x \in \mathbb{R}^{N \times C \times H \times W}$, split the $C$ channels into $G$ groups of size $C/G$. For each group $g$, compute mean and variance over **that group's channels × all spatial positions**:
 
 $$
-\hat{x}_{nchw} = \gamma_{c}\,\frac{x_{nchw}-\mu_g}{\sqrt{\sigma_g^2+\epsilon}} + \beta_c
+\mu_g \;=\; \frac{1}{(C/G)\,H\,W} \sum_{c \in g}\sum_{h,w} x_{nchw}, \qquad
+\sigma_g^2 \;=\; \frac{1}{(C/G)\,H\,W} \sum_{c \in g}\sum_{h,w} (x_{nchw} - \mu_g)^2
 $$
 
-Common choice: $G = 32$. GN is **independent of batch size** (so it works at batch 1, essential for high-res diffusion) while still **preserving channel structure** (unlike LayerNorm, which throws all channels together). This is why every ResBlock of Stable Diffusion ends with `Conv → GroupNorm → SiLU`.
+Then normalize and apply a per-channel affine (the only learnable parameters):
 
-**Relationship to siblings.**
+$$
+\hat{x}_{nchw} \;=\; \gamma_c \, \frac{x_{nchw} - \mu_g}{\sqrt{\sigma_g^2 + \epsilon}} \;+\; \beta_c, \qquad c \in g
+$$
 
-* $G = 1$: equivalent to **LayerNorm**.
-* $G = C$: equivalent to **InstanceNorm** (style-transfer default).
-* $G \in (1, C)$: the GN sweet spot.
+**The two dials.**
+
+* **Number of groups $G$.** With $C$ channels, valid choices are $G \in \{1, 2, \ldots, C\}$ that divide $C$ (or use padding). Smaller $G$ = each statistic pools more numbers = lower variance, but throws away channel structure. Larger $G$ = each statistic is more local, but with too few samples per group the estimate gets noisy. Stable Diffusion's U-Net uses $G = 32$ with $C = 320$ or $640$ channels, i.e. groups of 10 or 20 channels.
+
+* **Affine $\gamma_c, \beta_c$.** Two learnable vectors of length $C$. They let the network *undo* the normalization if it wants — the layer starts as pure centering + unit-variance and learns to deviate only if useful.
+
+**Why this is the diffusion default.** BatchNorm fails at batch size 1. LayerNorm discards all channel relationships, treating every channel identically. GroupNorm keeps a knob ($G$) that lets you trade those two extremes against each other, and the answer it picks ($G = 32$) empirically wins on every high-resolution image benchmark. Notice that no term in the equations depends on $N$ — the batch can be any size, including 1.
+
+</div>
+</details>
+
+<div class="md">
+**The two endpoints.**
+
+* $G = 1$: one group, every channel pooled — exactly **LayerNorm**.
+* $G = C$: each channel alone — exactly **InstanceNorm** (the style-transfer default).
+* $G \in (1, C)$: the sweet spot; Stable Diffusion's U-Net uses $G = 32$.
 </div>

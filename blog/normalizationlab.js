@@ -451,6 +451,10 @@ async function loadNormalizationModule() {
         NormLab.init();
     });
 
+    _normLazyRegister('gn-lab', () => {
+        initGroupNormLab();
+    });
+
     _normLazyCreateObserver();
 
     // Re-render plots when the user toggles dark/light mode so themeColor()
@@ -458,9 +462,172 @@ async function loadNormalizationModule() {
     if (window.__MN_DARK) {
         window.__MN_DARK.onChange(() => {
             try { NormLab.process(); } catch (e) { /* ignore */ }
+            try { if (typeof initGroupNormLab === 'function') initGroupNormLab(); } catch (e) { /* ignore */ }
         });
     }
 
     return Promise.resolve();
+}
+
+// ============================================================
+// GROUP NORM LAB
+// Interactive visualization: 8 channels × 16 spatial positions.
+// Slider for G. Two heatmaps (input / after GroupNorm) and one
+// stats card per group, all share the same group color.
+// ============================================================
+function initGroupNormLab() {
+    const container = document.getElementById('gn-lab');
+    if (!container) return;
+    if (container.dataset.init === '1') { renderGroupNorm(); return; }
+    container.dataset.init = '1';
+
+    const C = 8;
+    const S = 16;
+    const groupHues = [
+        '#6366f1', '#ec4899', '#10b981', '#f59e0b',
+        '#8b5cf6', '#06b6d4', '#ef4444', '#84cc16'
+    ];
+
+    // 8 channels with deliberately different baselines, so within-group
+    // normalization visibly flattens them to ~0 mean / ~1 std.
+    const bases = [0, 5, 10, -3, 8, 2, -8, 15];
+    const data = [];
+    for (let c = 0; c < C; c++) {
+        const row = [];
+        for (let s = 0; s < S; s++) {
+            row.push(bases[c] + Math.sin(s * 0.7 + c) * 2 + (s % 3 - 1) * 1.5);
+        }
+        data.push(row);
+    }
+
+    function channelsToGroups(G) {
+        const groupOf = new Array(C);
+        const per = Math.floor(C / G);
+        const rem = C % G;
+        let idx = 0;
+        for (let g = 0; g < G; g++) {
+            const size = per + (g < rem ? 1 : 0);
+            for (let i = 0; i < size; i++) groupOf[idx++] = g;
+        }
+        return groupOf;
+    }
+
+    function inputCellColor(v, vmin, vmax) {
+        const t = (v - vmin) / (vmax - vmin || 1);
+        const mag = Math.abs(t * 2 - 1);
+        const alpha = 0.10 + 0.75 * mag;
+        return v >= 0
+            ? `rgba(59, 130, 246, ${alpha.toFixed(3)})`
+            : `rgba(239, 68, 68, ${alpha.toFixed(3)})`;
+    }
+
+    function outputCellColor(v) {
+        const mag = Math.min(1, Math.abs(v) / 3);
+        const alpha = 0.10 + 0.75 * mag;
+        return v >= 0
+            ? `rgba(59, 130, 246, ${alpha.toFixed(3)})`
+            : `rgba(239, 68, 68, ${alpha.toFixed(3)})`;
+    }
+
+    function renderGroupNorm() {
+        const slider = document.getElementById('gn-G');
+        if (!slider) return;
+        const G = parseInt(slider.value, 10);
+        const groupOf = channelsToGroups(G);
+        document.getElementById('gn-G-val').textContent = G;
+
+        // Hint text
+        const hint = document.getElementById('gn-hint');
+        let hintText;
+        if (G === 1) hintText = 'G = 1 — this is LayerNorm (every channel pooled together).';
+        else if (G === C) hintText = 'G = ' + C + ' — this is InstanceNorm (each channel alone).';
+        else hintText = 'G = ' + G + ' — ' + (C / G) + ' channels per group. (Stable Diffusion uses the same idea with C = 320 or 640 and G = 32, i.e. groups of 10–20 channels.)';
+        hint.textContent = hintText;
+
+        // Per-group stats and normalized output
+        const stats = [];
+        for (let g = 0; g < G; g++) {
+            const vals = [];
+            for (let c = 0; c < C; c++) {
+                if (groupOf[c] === g) vals.push(...data[c]);
+            }
+            const n = vals.length;
+            const mean = vals.reduce((a, b) => a + b, 0) / n;
+            const variance = vals.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+            stats.push({ mean, std: Math.sqrt(variance), n });
+        }
+        const normalized = data.map((row, c) => {
+            const s = stats[groupOf[c]];
+            return row.map(v => (v - s.mean) / s.std);
+        });
+
+        // Global value range for input
+        let vmin = Infinity, vmax = -Infinity;
+        for (const row of data) for (const v of row) { if (v < vmin) vmin = v; if (v > vmax) vmax = v; }
+
+        // Render input heatmap
+        const inputEl = document.getElementById('gn-input');
+        let html = '<table style="border-collapse:separate; border-spacing:2px; font-family:Menlo,Consolas,monospace; font-size:10px;">';
+        for (let c = 0; c < C; c++) {
+            const gIdx = groupOf[c];
+            html += '<tr>';
+            html += `<td style="background:${groupHues[gIdx]}; color:#fff; font-weight:700; padding:5px 7px; border-radius:4px; text-align:center; min-width:32px;">c${c}</td>`;
+            for (let s = 0; s < S; s++) {
+                const v = data[c][s];
+                const bg = inputCellColor(v, vmin, vmax);
+                const s_g = stats[gIdx];
+                const tip = `channel ${c}, position ${s}:  x = ${v.toFixed(2)}\\ngroup ${gIdx}:  μ = ${s_g.mean.toFixed(2)},  σ = ${s_g.std.toFixed(2)}\\n→ (x − μ) / σ = ${((v - s_g.mean) / s_g.std).toFixed(2)}`;
+                html += `<td title="${tip}" style="background:${bg}; padding:5px 6px; text-align:center; min-width:30px; border-radius:3px; cursor:help; color:var(--mn-text);">${v.toFixed(0)}</td>`;
+            }
+            html += '</tr>';
+        }
+        html += '</table>';
+        inputEl.innerHTML = html;
+
+        // Render output heatmap
+        const outputEl = document.getElementById('gn-output');
+        html = '<table style="border-collapse:separate; border-spacing:2px; font-family:Menlo,Consolas,monospace; font-size:10px;">';
+        for (let c = 0; c < C; c++) {
+            const gIdx = groupOf[c];
+            html += '<tr>';
+            html += `<td style="background:${groupHues[gIdx]}; color:#fff; font-weight:700; padding:5px 7px; border-radius:4px; text-align:center; min-width:32px;">c${c}</td>`;
+            for (let s = 0; s < S; s++) {
+                const v = normalized[c][s];
+                const bg = outputCellColor(v);
+                const txt = Math.abs(v) > 1.5 ? '#fff' : 'var(--mn-text)';
+                html += `<td title="(x − μ) / σ = ${v.toFixed(2)}" style="background:${bg}; padding:5px 6px; text-align:center; min-width:30px; border-radius:3px; cursor:help; color:${txt};">${v.toFixed(1)}</td>`;
+            }
+            html += '</tr>';
+        }
+        html += '</table>';
+        outputEl.innerHTML = html;
+
+        // Stats cards
+        const statsEl = document.getElementById('gn-stats');
+        let shtml = '';
+        for (let g = 0; g < G; g++) {
+            const s = stats[g];
+            const chans = [];
+            for (let c = 0; c < C; c++) if (groupOf[c] === g) chans.push(c);
+            shtml += `
+                <div style="background:var(--mn-surface); border:2px solid ${groupHues[g]}; border-radius:10px; padding:10px 12px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <div style="width:14px; height:14px; background:${groupHues[g]}; border-radius:3px; flex-shrink:0;"></div>
+                        <strong style="color:var(--mn-text);">Group ${g}</strong>
+                        <span style="font-size:10px; color:var(--mn-text-secondary); margin-left:auto; font-family:Menlo,Consolas,monospace;">c: ${chans.join(', ')}</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:auto 1fr; column-gap:10px; row-gap:2px; font-family:Menlo,Consolas,monospace; font-size:12px; color:var(--mn-text);">
+                        <span style="color:var(--mn-text-secondary);">μ =</span><span>${s.mean.toFixed(2)}</span>
+                        <span style="color:var(--mn-text-secondary);">σ =</span><span>${s.std.toFixed(2)}</span>
+                        <span style="color:var(--mn-text-secondary);">n =</span><span>${s.n}</span>
+                    </div>
+                </div>`;
+        }
+        statsEl.innerHTML = shtml;
+    }
+
+    const slider = document.getElementById('gn-G');
+    slider.addEventListener('input', renderGroupNorm);
+    renderGroupNorm();
 }
 
