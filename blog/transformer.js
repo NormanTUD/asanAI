@@ -3151,71 +3151,15 @@ function heightLockedMathUpdate(elements, htmlArray) {
 		}
 	});
 	_renderTemmlOnElements(updated);
-	_releaseHeightLocks(updated);
 }
 
 function _heightLockedUpdate(el, newHtml) {
 	if (!el) return false;
 	if (el.innerHTML === newHtml) return false;
 
-	if (el._heightUnlockRafId) {
-		cancelAnimationFrame(el._heightUnlockRafId);
-		el._heightUnlockRafId = null;
-	}
-
-	const previousHeight = el.offsetHeight;
-	if (previousHeight > 0) {
-		el.style.minHeight = previousHeight + 'px';
-		el.style.maxHeight = previousHeight + 'px';
-		// ── Save original overflow before overriding ──
-		el._savedOverflowX = el.style.overflowX;
-		el._savedOverflowY = el.style.overflowY;
-		el.style.overflow = 'hidden';
-	}
-
 	el.innerHTML = newHtml;
 
-	// NOTE: Height lock is NOT released here.
-	// The caller MUST call _releaseHeightLocks([el]) after any
-	// post-processing (render_temml, etc.) is complete.
-	// This is the key fix: previously the lock was released via
-	// double-rAF BEFORE temml rendered, causing the height jump.
-
 	return true;
-}
-
-function _releaseHeightLocks(elements) {
-	if (!elements || elements.length === 0) return;
-
-	elements.forEach(el => {
-		if (!el) return;
-
-		if (el._heightUnlockRafId) {
-			cancelAnimationFrame(el._heightUnlockRafId);
-			el._heightUnlockRafId = null;
-		}
-
-		const newNaturalHeight = el.scrollHeight;
-
-		if (newNaturalHeight > 0) {
-			el.style.minHeight = newNaturalHeight + 'px';
-			el.style.maxHeight = newNaturalHeight + 'px';
-		}
-
-		el._heightUnlockRafId = requestAnimationFrame(() => {
-			el._heightUnlockRafId = null;
-			el.style.minHeight = '';
-			el.style.maxHeight = '';
-			// Restore original overflow instead of clearing blindly
-			el.style.overflow = '';
-			if (el._savedOverflowX) {
-				el.style.overflowX = el._savedOverflowX;
-			}
-			if (el._savedOverflowY) {
-				el.style.overflowY = el._savedOverflowY;
-			}
-		});
-	});
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
