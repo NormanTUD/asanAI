@@ -197,25 +197,20 @@
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
 		const total = TOPICS.length;
-		/* Never display the literal digit "9" — show a neutral dot instead
-		   so the badge stays informative without surfacing that number. */
-		const hideNumber = active === total || active === 0 || active === 9;
-		const showDot    = active === 9;
-		badge.classList.toggle('topics-badge-empty', hideNumber && !showDot);
-		badge.classList.toggle('topics-badge-dot', showDot);
-		if (hideNumber && !showDot) {
-			badge.textContent = '';
-		} else if (showDot) {
-			badge.textContent = '•';
-		} else {
-			badge.textContent = String(active);
-		}
+		/* Never print the raw count. The badge is a non-verbal indicator:
+		   hidden when nothing or everything is active, otherwise a small dot
+		   that just signals "you've made a partial selection". */
+		const allOn  = active === total;
+		const noneOn = active === 0;
+		const partial = !allOn && !noneOn;
+		badge.classList.toggle('topics-badge-empty', !partial);
+		badge.classList.toggle('topics-badge-dot', partial);
+		badge.textContent = partial ? '•' : '';
 		badge.setAttribute(
 			'aria-label',
-			active === total ? 'All topics active'
-			: active === 0    ? 'No topics active — everything is skipped'
-			: active === 9    ? 'Several topics active'
-			:                   active + ' of ' + total + ' topics active'
+			allOn  ? 'All topics active'
+			: noneOn ? 'No topics active — everything is skipped'
+			:         'Some topics active (' + active + ' of ' + total + ')'
 		);
 	}
 

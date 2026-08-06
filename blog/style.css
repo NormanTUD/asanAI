@@ -7004,16 +7004,22 @@ html.dark .topics-preset-fun {
 /* ── course tile dimming (home page) ───────────────────── */
 .course-tile { position: relative; }
 .course-tile.topic-tile-dim {
-	opacity: 0.5;
-	filter: saturate(0.5);
+	opacity: 0.32;
+	filter: saturate(0.25) brightness(0.92);
 	transform: none !important;
+	border-color: var(--mn-border-light);
+	background: color-mix(in srgb, var(--mn-surface) 70%, var(--mn-bg-subtle));
 }
 .course-tile.topic-tile-dim:hover {
-	opacity: 0.9;
-	filter: saturate(0.85);
+	opacity: 0.78;
+	filter: saturate(0.75) brightness(0.98);
+	border-color: var(--mn-border);
 }
 .course-tile.topic-tile-dim .course-tile-icon {
-	filter: grayscale(0.4);
+	filter: grayscale(0.7);
+}
+.course-tile.topic-tile-dim .course-tile-title {
+	color: var(--mn-text-muted);
 }
 .course-tile.topic-tile-active {
 	border-color: color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 60%, transparent);
