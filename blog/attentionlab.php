@@ -143,16 +143,93 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	font-size: 0.95rem;
 	letter-spacing: 0.2px;
 }
+/* Concrete equation box with underbrace-style label.
+   Layout:
+       q₁ = [0.90, 0.45]      ← .tt-equation (bold var + value)
+       ─────────────────      ← thin line, the "underbrace" itself
+            key               ← .tt-underline (small label)
+*/
+.attn-vector-tooltip .tt-concrete {
+	margin: 0 0 10px 0;
+	padding: 12px 16px 8px;
+	background: var(--mn-surface-raised, #f1f5f9);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+	text-align: center;
+	color: var(--mn-text, #1e293b);
+}
+.attn-vector-tooltip .tt-equation {
+	font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+	font-size: 0.98rem;
+	margin-bottom: 4px;
+	letter-spacing: 0.3px;
+}
+.attn-vector-tooltip .tt-equation b {
+	color: #2563eb;
+}
+.attn-vector-tooltip .tt-underline {
+	display: inline-block;
+	border-top: 1.5px solid var(--mn-border, #94a3b8);
+	padding: 3px 10px 0;
+	margin-top: 2px;
+	font-size: 0.72rem;
+	color: var(--mn-text-secondary, #64748b);
+	font-weight: 500;
+	letter-spacing: 0.4px;
+	text-transform: lowercase;
+}
 .attn-vector-tooltip .tt-formula {
 	margin: 0 0 10px 0;
-	padding: 10px 12px;
+	padding: 14px 16px;
 	background: var(--mn-surface-raised, #f1f5f9);
+	border: 1px solid var(--mn-border, #cbd5e1);
 	border-radius: 6px;
 	text-align: center;
 	font-size: 1rem;
+	color: var(--mn-text, #1e293b);
+	/* Long formulas can overflow horizontally — let the user scroll
+	   instead of clipping the glyphs at the edges. */
+	overflow-x: auto;
+	overflow-y: hidden;
+	max-width: 100%;
 }
 .attn-vector-tooltip .tt-formula mjx-container {
 	margin: 0 !important;
+	display: inline-block;
+	max-width: 100%;
+	/* Temml's MathML output often ships with its own white
+	   background — override it so it inherits the box colour
+	   (critical for dark mode). */
+	background: transparent !important;
+}
+.attn-vector-tooltip .tt-formula::-webkit-scrollbar {
+	height: 6px;
+}
+.attn-vector-tooltip .tt-formula::-webkit-scrollbar-thumb {
+	background: var(--mn-border, #cbd5e1);
+	border-radius: 3px;
+}
+/* Dark-mode fallback for both concrete box and formula box */
+body.theme-dark .attn-vector-tooltip .tt-concrete,
+.dark .attn-vector-tooltip .tt-concrete,
+[data-theme="dark"] .attn-vector-tooltip .tt-concrete,
+body.theme-dark .attn-vector-tooltip .tt-formula,
+.dark .attn-vector-tooltip .tt-formula,
+[data-theme="dark"] .attn-vector-tooltip .tt-formula {
+	background: #1e293b;
+	border-color: #475569;
+	color: #f1f5f9;
+}
+body.theme-dark .attn-vector-tooltip .tt-equation b,
+.dark .attn-vector-tooltip .tt-equation b,
+[data-theme="dark"] .attn-vector-tooltip .tt-equation b {
+	color: #60a5fa;
+}
+body.theme-dark .attn-vector-tooltip .tt-underline,
+.dark .attn-vector-tooltip .tt-underline,
+[data-theme="dark"] .attn-vector-tooltip .tt-underline {
+	border-top-color: #64748b;
+	color: #cbd5e1;
 }
 .attn-vector-tooltip .tt-desc {
 	color: var(--mn-text, #1e293b);
@@ -203,6 +280,32 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	grid-row: 2;
 	display: flex;
 	position: relative;
+}
+/* Transparent overlay that sits on top of the Plotly canvas.
+   Captures all mouse events for our custom hover detection. */
+#attn-anatomy-2d-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 9999;
+	background: rgba(0, 0, 0, 0);
+	cursor: crosshair;
+	pointer-events: auto;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: none;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: none;
+	user-drag: none;
+}
+#attn-anatomy-2d-overlay * {
+	user-select: none !important;
+	-webkit-user-select: none !important;
+	-webkit-user-drag: none !important;
 }
 #attn-anatomy-2d {
 	flex: 1;
@@ -496,6 +599,12 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 		<div id="attn-section-computation" class="attn-anatomy-computation attn-grid-computation"></div>
 		<div class="attn-anatomy-2d-wrap">
 			<div id="attn-anatomy-2d" style="background: var(--mn-surface, #fff); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;"></div>
+			<!-- Transparent overlay that sits ON TOP of the Plotly canvas.
+			     It captures all mouse events so we can do our own hover
+			     detection (mousemove / click prevention). Without it,
+			     Plotly's SVG children swallow the events before they
+			     bubble up to the chart div. -->
+			<div id="attn-anatomy-2d-overlay"></div>
 		</div>
 	</div>
 </div>
@@ -505,6 +614,10 @@ This is the **mechanical truth** of attention. Every other interpretation — th
      explaining where that vector comes from mathematically. -->
 <div id="attn-vector-tooltip" class="attn-vector-tooltip">
 	<div class="tt-name"></div>
+	<div class="tt-concrete">
+		<div class="tt-equation"></div>
+		<div class="tt-underline"></div>
+	</div>
 	<div class="tt-formula"></div>
 	<div class="tt-desc"></div>
 </div>
