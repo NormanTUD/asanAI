@@ -143,6 +143,21 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	font-size: 0.95rem;
 	letter-spacing: 0.2px;
 }
+/* Plain-language "what this MEANS" headline — shown first, above the
+   math, so the intuition is never buried under formulas. */
+.attn-vector-tooltip .tt-intuition {
+	background: #eff6ff;
+	border-left: 3px solid #2563eb;
+	padding: 10px 12px;
+	border-radius: 0 6px 6px 0;
+	margin: 0 0 10px 0;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	color: var(--mn-text, #1e293b);
+}
+.attn-vector-tooltip .tt-intuition math {
+	background: transparent !important;
+}
 /* Concrete equation box with underbrace-style label. The equation is
    now rendered as real Temml math with a \underbrace, so the label
    below the box border is decorative only. */
@@ -191,6 +206,13 @@ body.theme-dark .attn-vector-tooltip .tt-formula,
 	background: #1e293b;
 	border-color: #475569;
 	color: #f1f5f9;
+}
+body.theme-dark .attn-vector-tooltip .tt-intuition,
+.dark .attn-vector-tooltip .tt-intuition,
+[data-theme="dark"] .attn-vector-tooltip .tt-intuition {
+	background: #172554;
+	border-left-color: #3b82f6;
+	color: #dbeafe;
 }
 .attn-vector-tooltip .tt-desc {
 	color: var(--mn-text, #1e293b);
@@ -328,6 +350,49 @@ body.theme-dark .attn-vector-tooltip .tt-formula,
 .attn-anatomy-header button:active:not(:disabled) {
 	transform: translateY(0);
 	background: #dbeafe;
+}
+
+/* Token-count selector: start at the simplest case (2 tokens), add
+   more to watch the attention budget spread out. */
+.attn-token-select {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	margin-bottom: 14px;
+	background: var(--mn-surface, #fff);
+	border: 1px dashed var(--mn-border, #cbd5e1);
+	border-radius: 8px;
+	font-size: 0.85rem;
+	color: var(--mn-text-secondary, #64748b);
+}
+.attn-token-select .label {
+	font-weight: bold;
+	margin-right: 4px;
+	color: var(--mn-text, #1e293b);
+}
+.attn-token-select button {
+	background: var(--mn-surface-raised, #f1f5f9);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	color: var(--mn-text, #1e293b);
+	border-radius: 6px;
+	padding: 2px 10px;
+	cursor: pointer;
+	font-weight: 600;
+}
+.attn-token-select button.active {
+	background: #2563eb;
+	border-color: #2563eb;
+	color: #fff;
+}
+.attn-token-select .hint {
+	margin-left: auto;
+	font-size: 0.8rem;
+}
+@media (max-width: 880px) {
+	.attn-token-select .hint {
+		display: none;
+	}
 }
 
 /* Fade transition when changing steps — gives a brief flash instead
@@ -535,6 +600,17 @@ body.theme-dark .attn-vector-tooltip .tt-formula,
 		<button id="attn-anatomy-next">Next →</button>
 	</div>
 
+	<!-- Number of tokens in the scene. Starts at 2 (query + one other
+	     token) so the simplest case is what you see first; add more to
+	     watch the attention spread out. -->
+	<div class="attn-token-select">
+		<span class="label">Tokens</span>
+		<button data-attn-tokens="2" class="active" title="The simplest case: query + one key">2</button>
+		<button data-attn-tokens="3" title="Adds dog">3</button>
+		<button data-attn-tokens="4" title="Adds dog and sat">4</button>
+		<span class="hint">Hover an arrow for the math, hover the arc between two arrows for what it means.</span>
+	</div>
+
 	<!-- Grid: equation spans full width on top, then computation (left) +
 	     plot (right, tall, uses the full vertical space below). -->
 	<div class="attn-anatomy-grid">
@@ -546,6 +622,7 @@ body.theme-dark .attn-vector-tooltip .tt-formula,
 				<g class="attn-axes"></g>
 				<g class="attn-construction"></g>
 				<g class="attn-arrows"></g>
+				<g class="attn-angles"></g>
 				<g class="attn-labels"></g>
 			</svg>
 		</div>

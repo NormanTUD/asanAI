@@ -2132,18 +2132,35 @@ window.__MN_DARK = {
 			.getPropertyValue(name).trim();
 	},
 	// Listen to theme changes (cookie-driven toggle in functions.php
-	// mutates the .dark class on <html>).
+	// mutates the .dark class on <html>). Every module shares ONE
+	// observer and all callbacks run in a single debounced batch:
+	// a theme flip triggers exactly one pass over the re-renderers
+	// instead of one MutationObserver + one synchronous callback per
+	// module (which made the toggle feel frozen).
 	onChange: function (callback) {
-		const html = document.documentElement;
-		const obs = new MutationObserver((muts) => {
-			for (const m of muts) {
-				if (m.attributeName === 'class') {
-					callback(this.isDark());
-				}
-			}
+		const api = window.__MN_DARK;
+		api._subscribers = api._subscribers || [];
+		api._subscribers.push(callback);
+		if (api._observer) return api._observer;
+		const dispatch = () => {
+			api._pending = false;
+			const dark = api.isDark();
+			api._subscribers.forEach((cb) => {
+				try { cb(dark); } catch (e) { /* ignore */ }
+			});
+		};
+		api._observer = new MutationObserver(() => {
+			// Coalesce bursts of class mutations into a single pass.
+			if (api._pending) return;
+			api._pending = true;
+			if (window.queueMicrotask) queueMicrotask(dispatch);
+			else Promise.resolve().then(dispatch);
 		});
-		obs.observe(html, { attributes: true, attributeFilter: ['class'] });
-		return obs;
+		api._observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['class']
+		});
+		return api._observer;
 	},
 	// Canonical colour pairs that swap when dark mode is active.
 	// Use these when canvas/WebGL rendering cannot read CSS vars.
