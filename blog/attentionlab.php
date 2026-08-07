@@ -117,6 +117,38 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 
 <!-- ===================== ANATOMY OF ATTENTION: STEP-BY-STEP ===================== -->
 <style>
+/* Section labels bar — sits ABOVE everything. Clicking a pill scrolls
+   smoothly to the corresponding section via event delegation. */
+.attn-anatomy-labels {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 10px;
+	flex-wrap: wrap;
+}
+.attn-anatomy-labels .section-label {
+	background: #2563eb;
+	color: #ffffff;
+	padding: 5px 14px;
+	border-radius: 16px;
+	font-size: 0.82rem;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+	cursor: pointer;
+	transition: all 0.15s ease;
+	user-select: none;
+}
+.attn-anatomy-labels .section-label:hover {
+	background: #1d4ed8;
+	transform: translateY(-1px);
+	box-shadow: 0 3px 10px rgba(37, 99, 235, 0.4);
+}
+.attn-anatomy-labels .section-label:active {
+	transform: translateY(0);
+	background: #1e40af;
+	box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+}
+
 /* Header strip with step controls (sits AT THE TOP so it never moves) */
 .attn-anatomy-header {
 	display: flex;
@@ -131,32 +163,51 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	flex-wrap: wrap;
 }
 
-/* Two-column side-by-side layout: formulas/intuition on the left,
-   the 2D plot + score bars on the right. Stack on narrow screens. */
+/* Grid: equation spans FULL WIDTH on the first row. Below it,
+   computation goes on the left and the 2D plot goes on the right —
+   tall, uses the full remaining vertical space. */
 .attn-anatomy-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	grid-template-rows: auto minmax(0, 1fr);
 	gap: 14px;
-	align-items: stretch;
 }
 @media (max-width: 880px) {
 	.attn-anatomy-grid {
 		grid-template-columns: 1fr;
+		grid-template-rows: auto auto auto;
 	}
 }
-.attn-anatomy-left,
-.attn-anatomy-right {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	min-width: 0;
+.attn-grid-equation {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	margin-bottom: 0;
 }
-.attn-anatomy-right #attn-anatomy-2d {
+.attn-grid-computation {
+	grid-column: 1;
+	grid-row: 2;
+}
+.attn-anatomy-2d-wrap {
+	grid-column: 2;
+	grid-row: 2;
+	display: flex;
+}
+#attn-anatomy-2d {
 	flex: 1;
-	min-height: 440px;
+	min-height: 460px;
 	min-width: 0;
 	overflow: hidden;
 	position: relative;
+}
+
+/* When clicking a section label, the browser scrolls the target to the
+   top of the viewport. This margin keeps the section from being hidden
+   behind the labels bar / controls at the very top of the demo. */
+#attn-section-output,
+#attn-section-weight,
+#attn-section-computation,
+#attn-section-intuition {
+	scroll-margin-top: 8px;
 }
 .attn-anatomy-header .step-info {
 	flex: 1;
@@ -229,7 +280,9 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	overflow-x: auto;
 }
 .attn-anatomy-equation .eq-line {
-	margin: 16px 0;
+	display: block;
+	text-align: center;
+	margin: 14px 0;
 }
 .attn-anatomy-equation .eq-label {
 	display: block;
@@ -239,10 +292,15 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	margin-bottom: 8px;
+	text-align: center;
 }
 .attn-anatomy-equation mjx-container {
-	margin: 0 auto !important;
-	font-size: 1.25rem !important;
+	display: block !important;
+	margin: 0.4em auto !important;
+	font-size: 1.2rem !important;
+}
+.attn-anatomy-equation mjx-container[display="true"] {
+	display: block !important;
 }
 
 /* "Currently computing" panel — shows the actual numbers being used */
@@ -390,6 +448,19 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 		</div>
 	</div>
 
+	<!-- Section labels — functional navigation. Clicking scrolls to
+	     the corresponding section. -->
+	<div class="attn-anatomy-labels">
+		<span class="section-label" data-target="attn-section-output">Output</span>
+		<span class="section-label" data-target="attn-section-weight">Weight</span>
+		<span class="section-label" data-target="attn-section-computation">▶ Computation</span>
+		<span class="section-label" data-target="attn-section-intuition">💡 Intuition</span>
+	</div>
+
+	<!-- Intuition panel — FULL WIDTH, ABOVE the controls. This is where
+	     the geometric meaning for the current step lives. -->
+	<div id="attn-section-intuition" class="attn-anatomy-intuition"></div>
+
 	<!-- Controls sit AT THE TOP — they never move because content changes happen below -->
 	<div class="attn-anatomy-header">
 		<button id="attn-anatomy-prev">← Prev</button>
@@ -401,14 +472,12 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 		<button id="attn-anatomy-next">Next →</button>
 	</div>
 
-	<!-- Side-by-side: formulas on the left, plot on the right -->
+	<!-- Grid: equation spans full width on top, then computation (left) +
+	     plot (right, tall, uses the full vertical space below). -->
 	<div class="attn-anatomy-grid">
-		<div class="attn-anatomy-left">
-			<div id="attn-anatomy-equation" class="attn-anatomy-equation"></div>
-			<div id="attn-anatomy-computation" class="attn-anatomy-computation"></div>
-			<div id="attn-anatomy-intuition" class="attn-anatomy-intuition"></div>
-		</div>
-		<div class="attn-anatomy-right">
+		<div id="attn-anatomy-equation" class="attn-anatomy-equation attn-grid-equation"></div>
+		<div id="attn-section-computation" class="attn-anatomy-computation attn-grid-computation"></div>
+		<div class="attn-anatomy-2d-wrap">
 			<div id="attn-anatomy-2d" style="background: var(--mn-surface, #fff); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;"></div>
 		</div>
 	</div>

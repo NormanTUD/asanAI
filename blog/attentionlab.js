@@ -630,6 +630,21 @@ const AttentionAnatomy = {
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
 
+		// Section labels — clicking scrolls smoothly to that section.
+		// Using event delegation on the labels bar.
+		const labelsBar = document.querySelector('.attn-anatomy-labels');
+		if (labelsBar) {
+			labelsBar.addEventListener('click', (e) => {
+				const label = e.target.closest('.section-label');
+				if (!label) return;
+				const targetId = label.dataset.target;
+				if (targetId) {
+					const target = document.getElementById(targetId);
+					if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+				}
+			});
+		}
+
 		// Keyboard navigation: ← / → step through. Skipped while typing
 		// in form fields so this never steals input events.
 		this._keyHandler = (e) => {
@@ -739,11 +754,11 @@ const AttentionAnatomy = {
 			hl('\\sum_n \\mathrm{exp}(q_i \\cdot k_n \\big/ \\sqrt{d_k})', 'denom');
 
 		el.innerHTML =
-			'<div class="eq-line">' +
+			'<div class="eq-line" id="attn-section-output">' +
 				'<div class="eq-label">Output</div>' +
 				'$$ \\displaystyle ' + outputLatex + ' $$' +
 			'</div>' +
-			'<div class="eq-line">' +
+			'<div class="eq-line" id="attn-section-weight">' +
 				'<div class="eq-label">Weight</div>' +
 				'$$ \\displaystyle ' + weightLatex + ' $$' +
 			'</div>';
@@ -753,7 +768,7 @@ const AttentionAnatomy = {
 	// computation for this step. Shows real numbers so the user can see
 	// exactly what the active sub-expression of the equation does.
 	renderComputation: function(data) {
-		const el = document.getElementById('attn-anatomy-computation');
+		const el = document.getElementById('attn-section-computation');
 		if (!el) return;
 		const fn = ATTN_COMPUTATIONS[data.computation];
 		if (fn) el.innerHTML = fn();
@@ -764,7 +779,7 @@ const AttentionAnatomy = {
 	// human-readable explanation of what this step does, where it came
 	// from, and how it serves the overall attention computation.
 	renderIntuition: function(data) {
-		const el = document.getElementById('attn-anatomy-intuition');
+		const el = document.getElementById('attn-section-intuition');
 		if (!el) return;
 		const fn = ATTN_INTUITIONS[data.intuition];
 		if (fn) el.innerHTML = fn();
