@@ -1252,6 +1252,293 @@ const AttentionAnatomy = {
 		if (tip) tip.classList.remove('active');
 	},
 
+	// ─── Per-step geometric overlays ───────────────────────────────
+	// These draw the actual "working" on top of the plain arrows so each
+	// step visibly takes the vectors and transforms them, instead of
+	// only the left panels changing. Everything renders into the
+	// construction/labels layers, which render2D clears on every step.
+
+	// Step "components": q[d]·k[d] as rectangle AREAS — one rectangle
+	// per dimension (area = product), plus dashed drop-lines from the
+	// highlighted key tip and the query tip down to each axis.
+	_drawComponents2D: function(constructionG, labelsG, hi) {
+		if (hi === undefined || !ATTN_2D.keys[hi]) return;
+		const NS = this._SVG_NS;
+		const q = ATTN_2D.q;
+		const k = ATTN_2D.keys[hi];
+		const color = ATTN_TOKENS[hi + 1].color;
+		const px = (q[0] * k[0]).toFixed(3);
+		const py = (q[1] * k[1]).toFixed(3);
+
+		// data coords, y up → SVG y is negated
+		const addRect = (x0, y0, x1, y1, label) => {
+			const rect = document.createElementNS(NS, 'rect');
+			rect.setAttribute('x',  Math.min(x0, x1));
+			rect.setAttribute('y',  -Math.max(y0, y1));
+			rect.setAttribute('width',  Math.abs(x1 - x0));
+			rect.setAttribute('height', Math.abs(y1 - y0));
+			rect.setAttribute('fill', color);
+			rect.setAttribute('fill-opacity', '0.10');
+			rect.setAttribute('stroke', color);
+			rect.setAttribute('stroke-opacity', '0.45');
+			rect.setAttribute('stroke-width', '0.008');
+			rect.setAttribute('stroke-dasharray', '0.03 0.03');
+			rect.style.pointerEvents = 'none';
+			constructionG.appendChild(rect);
+			if (label) {
+				const t = document.createElementNS(NS, 'text');
+				t.setAttribute('x', Math.min(x0, x1) + 0.05);
+				t.setAttribute('y', -(Math.max(y0, y1) + Math.min(y0, y1)) / 2 + 0.035);
+				t.setAttribute('fill', color);
+				t.setAttribute('font-size', '0.085');
+				t.setAttribute('font-family', 'Inter, sans-serif');
+				t.textContent = label;
+				t.style.pointerEvents = 'none';
+				labelsG.appendChild(t);
+			}
+		};
+
+		// Dim-1 product: width q[1], height k[1]  →  area = q[1]·k[1]
+		addRect(0, 0, q[0], k[0], `q₁·k₁ = ${px}`);
+		// Dim-2 product: width q[2], height k[2]  →  area = q[2]·k[2]
+		addRect(0, 0, q[1], k[1], `q₂·k₂ = ${py}`);
+
+		// Drop-lines from the highlighted key tip and the query tip to
+		// each axis, so you can read off the components being multiplied.
+		const drop = (tip, vertical) => {
+			const line = document.createElementNS(NS, 'line');
+			if (vertical) {
+				line.setAttribute('x1', tip[0]); line.setAttribute('y1', 0);
+				line.setAttribute('x2', tip[0]); line.setAttribute('y2', -tip[1]);
+			} else {
+				line.setAttribute('x1', 0);        line.setAttribute('y1', -tip[1]);
+				line.setAttribute('x2', tip[0]);   line.setAttribute('y2', -tip[1]);
+			}
+			line.setAttribute('stroke', color);
+			line.setAttribute('stroke-opacity', '0.55');
+			line.setAttribute('stroke-width', '0.008');
+			line.setAttribute('stroke-dasharray', '0.025 0.025');
+			line.style.pointerEvents = 'none';
+			constructionG.appendChild(line);
+		};
+		drop(k, true);  drop(k, false);
+		drop(q, true);  drop(q, false);
+	},
+
+	// Steps "dot"/"scaled"/"exps": the projection of the query onto each
+	// key's line. A dashed perpendicular from the query tip down to the
+	// key line, the origin→projection length thickened, and a dot at the
+	// landing point — the classic geometric picture of q·k = |q||k|cosθ.
+	_drawProjections2D: function(constructionG) {
+		const NS = this._SVG_NS;
+		const q = ATTN_2D.q;
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const nk = Math.hypot(k[0], k[1]);
+			const t = (q[0] * k[0] + q[1] * k[1]) / (nk * nk);   // signed projection factor
+			const P = [ t * k[0], t * k[1] ];
+
+			// Perpendicular from the query tip down onto the key's line
+			const drop = document.createElementNS(NS, 'line');
+			drop.setAttribute('x1', q[0]); drop.setAttribute('y1', -q[1]);
+			drop.setAttribute('x2', P[0]); drop.setAttribute('y2', -P[1]);
+			drop.setAttribute('stroke', color);
+			drop.setAttribute('stroke-opacity', '0.45');
+			drop.setAttribute('stroke-width', '0.008');
+			drop.setAttribute('stroke-dasharray', '0.025 0.025');
+			drop.style.pointerEvents = 'none';
+			constructionG.appendChild(drop);
+
+			// The projected length along the key (origin → P), thickened
+			const seg = document.createElementNS(NS, 'line');
+			seg.setAttribute('x1', 0);     seg.setAttribute('y1', 0);
+			seg.setAttribute('x2', P[0]);  seg.setAttribute('y2', -P[1]);
+			seg.setAttribute('stroke', color);
+			seg.setAttribute('stroke-opacity', '0.3');
+			seg.setAttribute('stroke-width', '0.05');
+			seg.setAttribute('stroke-linecap', 'round');
+			seg.style.pointerEvents = 'none';
+			constructionG.appendChild(seg);
+
+			// Dot at the projection point
+			const dot = document.createElementNS(NS, 'circle');
+			dot.setAttribute('cx', P[0]);
+			dot.setAttribute('cy', -P[1]);
+			dot.setAttribute('r', '0.025');
+			dot.setAttribute('fill', color);
+			dot.style.pointerEvents = 'none';
+			constructionG.appendChild(dot);
+		});
+	},
+
+	// Step "dot"/"scaled"/"exps": a side-by-side bar chart drawn across
+	// the top of the plot. Positive values hang below the baseline,
+	// negative above it, so you can watch the scores shrink under 1/√2
+	// and then explode under exp(). One bar per key, token-colored.
+	_drawValueBars2D: function(constructionG, labelsG, values, valueTexts, colors, caption) {
+		const NS = this._SVG_NS;
+		const m = values.length;
+		if (!m) return;
+		const maxA = Math.max.apply(null, values.map((v) => Math.abs(v)).concat([1e-9]));
+		const x0 = -1.2, x1 = 1.2;
+		const w = (x1 - x0) / m;
+		const baseY = -1.14;
+		const maxH  = 0.20;
+
+		const mkText = (x, y, str, fill, size) => {
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', x); t.setAttribute('y', y);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('fill', fill);
+			t.setAttribute('font-size', size || '0.085');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = str;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		};
+
+		// Baseline (zero)
+		const axis = document.createElementNS(NS, 'line');
+		axis.setAttribute('x1', x0); axis.setAttribute('y1', baseY);
+		axis.setAttribute('x2', x1); axis.setAttribute('y2', baseY);
+		axis.setAttribute('stroke', themeColor('#94a3b8'));
+		axis.setAttribute('stroke-width', '0.006');
+		axis.style.pointerEvents = 'none';
+		constructionG.appendChild(axis);
+
+		if (caption) {
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', x0); t.setAttribute('y', baseY - 0.08);
+			t.setAttribute('fill', themeColor('#64748b'));
+			t.setAttribute('font-size', '0.075');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = caption;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		}
+
+		values.forEach((v, j) => {
+			const h = (Math.abs(v) / maxA) * maxH;
+			const cx = x0 + w * (j + 0.5);
+			const bw = Math.max(w - 0.14, 0.06);
+			const rect = document.createElementNS(NS, 'rect');
+			if (v >= 0) {
+				rect.setAttribute('x', cx - bw / 2);
+				rect.setAttribute('y', baseY);
+				rect.setAttribute('width', bw);
+				rect.setAttribute('height', h);
+			} else {
+				rect.setAttribute('x', cx - bw / 2);
+				rect.setAttribute('y', baseY - h);
+				rect.setAttribute('width', bw);
+				rect.setAttribute('height', h);
+			}
+			rect.setAttribute('fill', colors[j] || '#3b82f6');
+			rect.setAttribute('fill-opacity', '0.9');
+			rect.style.pointerEvents = 'none';
+			constructionG.appendChild(rect);
+
+			mkText(cx, (v >= 0) ? baseY + h + 0.10 : baseY + 0.10, `k${j+1} = ${valueTexts[j]}`, themeColor('#334155'));
+		});
+	},
+
+	// Step "weights": a stacked bar spanning the full width, segmented
+	// by each attention weight — the visual of "the weights sum to 100%".
+	_drawWeightBar2D: function(constructionG, labelsG) {
+		const NS = this._SVG_NS;
+		const w = ATTN_2D.weights;
+		const x0 = -1.2, x1 = 1.2;
+		const span = x1 - x0;
+		const baseY = -1.14, h = 0.16;
+		let acc = 0;
+
+		const title = document.createElementNS(NS, 'text');
+		title.setAttribute('x', 0);
+		title.setAttribute('y', baseY - 0.08);
+		title.setAttribute('text-anchor', 'middle');
+		title.setAttribute('fill', themeColor('#64748b'));
+		title.setAttribute('font-size', '0.075');
+		title.setAttribute('font-family', 'Inter, sans-serif');
+		title.textContent = 'attention weights α — sum = 100%';
+		title.style.pointerEvents = 'none';
+		labelsG.appendChild(title);
+
+		w.forEach((wi, j) => {
+			const xl = x0 + acc * span;
+			const xr = x0 + (acc + wi) * span;
+			const rect = document.createElementNS(NS, 'rect');
+			rect.setAttribute('x', xl);
+			rect.setAttribute('y', baseY);
+			rect.setAttribute('width', Math.max(xr - xl, 0.01));
+			rect.setAttribute('height', h);
+			rect.setAttribute('fill', ATTN_TOKENS[j + 1].color);
+			rect.setAttribute('fill-opacity', '0.85');
+			rect.style.pointerEvents = 'none';
+			constructionG.appendChild(rect);
+
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', (xl + xr) / 2);
+			t.setAttribute('y', baseY + h + 0.10);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('fill', ATTN_TOKENS[j + 1].color);
+			t.setAttribute('font-size', '0.085');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = `α${j+1} ${(wi * 100).toFixed(1)}%`;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+			acc += wi;
+		});
+	},
+
+	// Step "values": annotate each value arrow with its attention weight,
+	// so you can see the weights carry over from the keys to the values.
+	_drawValueWeights2D: function(labelsG) {
+		const NS = this._SVG_NS;
+		ATTN_2D.weights.forEach((wi, j) => {
+			const v = ATTN_2D.vals[j];
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', v[0] + 0.14);
+			t.setAttribute('y', -v[1] - 0.10);
+			t.setAttribute('fill', '#15803d');
+			t.setAttribute('font-size', '0.085');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = `α${j+1} = ${(wi * 100).toFixed(1)}%`;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		});
+	},
+
+	// Step "output": fill the span (convex hull) of the value tips with
+	// a translucent triangle/segment, so z visibly lands inside it.
+	_drawSpanFill2D: function(constructionG) {
+		const NS = this._SVG_NS;
+		const vals = ATTN_2D.vals;
+		if (vals.length < 2) return;
+		const pts = vals.map((v) => `${v[0].toFixed(4)},${(-v[1]).toFixed(4)}`).join(' ');
+		if (vals.length === 2) {
+			const line = document.createElementNS(NS, 'line');
+			line.setAttribute('x1', vals[0][0]); line.setAttribute('y1', -vals[0][1]);
+			line.setAttribute('x2', vals[1][0]); line.setAttribute('y2', -vals[1][1]);
+			line.setAttribute('stroke', '#f59e0b');
+			line.setAttribute('stroke-opacity', '0.6');
+			line.setAttribute('stroke-width', '0.014');
+			line.setAttribute('stroke-dasharray', '0.04 0.04');
+			line.style.pointerEvents = 'none';
+			constructionG.appendChild(line);
+		} else {
+			const poly = document.createElementNS(NS, 'polygon');
+			poly.setAttribute('points', pts);
+			poly.setAttribute('fill', '#f59e0b');
+			poly.setAttribute('fill-opacity', '0.08');
+			poly.setAttribute('stroke', '#f59e0b');
+			poly.setAttribute('stroke-opacity', '0.45');
+			poly.setAttribute('stroke-width', '0.008');
+			poly.setAttribute('stroke-dasharray', '0.03 0.03');
+			poly.style.pointerEvents = 'none';
+			constructionG.appendChild(poly);
+		}
+	},
+
 	// Replaces the old Plotly-based render2D. Draws arrows as SVG.
 	render2D: function(data) {
 		const svg = document.getElementById('attn-anatomy-2d-svg');
@@ -1267,6 +1554,7 @@ const AttentionAnatomy = {
 		if (anglesG) anglesG.innerHTML = '';
 
 		const mode = data.mode;
+		const comp = data.computation;
 
 		if (mode === 'keys' || mode === 'values') {
 			this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.q, '#ef4444', 'q', 'q', 0, false, false);
@@ -1280,12 +1568,32 @@ const AttentionAnatomy = {
 				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, color, `k${j+1}`, 'k', j, false, dim);
 				if (anglesG) this._addAngleArc(anglesG, ATTN_2D.q, k, color, j, dim);
 			});
+
+			// Per-step overlays: show the vectors being worked on —
+			// product rectangles, projections, score bars, weight bar.
+			const tokenColors = ATTN_TOKENS.slice(1).map((t) => t.color);
+			if (comp === 'components') {
+				this._drawComponents2D(constructionG, labelsG, data.highlightKey);
+			} else if (comp === 'dot') {
+				this._drawProjections2D(constructionG);
+				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scores, ATTN_2D.scores.map((s) => s.toFixed(2)), tokenColors, null);
+			} else if (comp === 'scaled') {
+				this._drawProjections2D(constructionG);
+				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scaled, ATTN_2D.scaled.map((s) => s.toFixed(3)), tokenColors, null);
+			} else if (comp === 'exps') {
+				this._drawProjections2D(constructionG);
+				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.exps, ATTN_2D.exps.map((e) => e.toFixed(3)), tokenColors, null);
+			} else if (comp === 'weights') {
+				this._drawProjections2D(constructionG);
+				this._drawWeightBar2D(constructionG, labelsG);
+			}
 		} else if (mode === 'values' || mode === 'output') {
 			const valColors = ['#16a34a', '#15803d', '#166534'];
 			ATTN_2D.vals.forEach((v, j) => {
 				const dim = (mode === 'output');
 				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim);
 			});
+			if (mode === 'values') this._drawValueWeights2D(labelsG);
 
 			if (mode === 'output') {
 				ATTN_2D.weightedVals.forEach((wv, j) => {
@@ -1308,6 +1616,9 @@ const AttentionAnatomy = {
 					constructionG.appendChild(line);
 					tip = next;
 				});
+
+				// Fill the span of the value tips so z visibly lands inside it
+				this._drawSpanFill2D(constructionG);
 
 				this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 'z', 0, false, false);
 			}
