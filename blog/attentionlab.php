@@ -127,7 +127,11 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	background: var(--mn-surface, #fff);
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 10px;
-	margin-bottom: 12px;
+	margin-top: 12px;
+	position: sticky;
+	bottom: 12px;
+	z-index: 50;
+	box-shadow: 0 -2px 16px rgba(15, 23, 42, 0.10);
 }
 .attn-anatomy-header .step-info {
 	flex: 1;
@@ -173,38 +177,33 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	box-shadow: none;
 }
 
-/* Full equation panel — Temml-rendered math, the currently-active
-   sub-expression is coloured blue by the LaTeX itself. */
+/* Full equation panel — Temml-rendered display math, one block per
+   line. The currently-active sub-expression is boxed + coloured blue
+   by the LaTeX itself. */
 .attn-anatomy-equation {
-	padding: 22px 24px 20px;
+	padding: 22px 24px 18px;
 	background: var(--mn-surface, #fff);
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 10px;
 	margin-bottom: 12px;
-	text-align: center;
-	line-height: 2.4;
-	overflow-x: auto;
 	color: var(--mn-text, #1e293b);
+	overflow-x: auto;
 }
 .attn-anatomy-equation .eq-line {
-	margin: 10px 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 14px;
-	flex-wrap: wrap;
+	margin: 16px 0;
 }
-.attn-anatomy-equation .eq-line b {
-	color: var(--mn-heading, #1e293b);
-	margin-right: 4px;
-	letter-spacing: 0.2px;
+.attn-anatomy-equation .eq-label {
+	display: block;
+	color: #2563eb;
+	font-weight: bold;
+	font-size: 0.82rem;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	margin-bottom: 8px;
 }
 .attn-anatomy-equation mjx-container {
-	margin: 0 !important;
-	font-size: 1.15rem !important;
-}
-.attn-anatomy-equation mjx-container[display="true"] {
-	display: inline-block !important;
+	margin: 0 auto !important;
+	font-size: 1.25rem !important;
 }
 
 /* "Currently computing" panel — shows the actual numbers being used */
@@ -222,49 +221,59 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	font-size: 0.95rem;
 }
 .attn-anatomy-computation .comp-body {
-	font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', 'Consolas', monospace;
-	font-size: 0.88rem;
-	line-height: 1.7;
+	font-size: 0.95rem;
+	line-height: 1.9;
+	color: var(--mn-text, #1e293b);
 }
 .attn-anatomy-computation .comp-row {
 	display: flex;
-	gap: 12px;
-	padding: 2px 0;
-	align-items: baseline;
+	gap: 14px;
+	padding: 4px 0;
+	align-items: center;
 	flex-wrap: wrap;
 }
 .attn-anatomy-computation .comp-var {
 	color: #2563eb;
 	font-weight: bold;
-	min-width: 140px;
+	min-width: 130px;
 	flex-shrink: 0;
 }
 .attn-anatomy-computation .comp-calc {
 	color: var(--mn-text, #1e293b);
 	flex: 1;
-	min-width: 200px;
+	min-width: 180px;
 }
 .attn-anatomy-computation .comp-result {
 	color: #059669;
 	font-weight: bold;
-	min-width: 130px;
+	min-width: 140px;
 	text-align: right;
 	flex-shrink: 0;
 }
+.attn-anatomy-computation .comp-extra {
+	color: var(--mn-text-muted, #94a3b8);
+	font-size: 0.85rem;
+	font-style: italic;
+	margin-left: 4px;
+}
+.attn-anatomy-computation .comp-body mjx-container {
+	margin: 0 !important;
+	font-size: 1em !important;
+	display: inline-block !important;
+}
 .attn-anatomy-computation .comp-note {
-	margin-top: 10px;
-	padding-top: 10px;
+	margin-top: 12px;
+	padding-top: 12px;
 	border-top: 1px dashed var(--mn-border, #e2e8f0);
 	color: var(--mn-text-muted, #64748b);
-	font-family: inherit;
 	font-style: italic;
-	font-size: 0.85rem;
+	font-size: 0.88rem;
 }
 .attn-anatomy-computation .comp-row.highlighted {
 	background: rgba(37, 99, 235, 0.06);
 	border-radius: 6px;
-	padding: 4px 8px;
-	margin: 2px -4px;
+	padding: 6px 10px;
+	margin: 2px -6px;
 }
 
 /* Geometric intuition panel — rendered with Temml math, explains what

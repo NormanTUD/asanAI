@@ -363,25 +363,25 @@ const ATTN_COMPUTATIONS = {
 	setup: () => `
 		<div class="comp-header">▶ The Players — inputs to the equation</div>
 		<div class="comp-body">
-			<div class="comp-row"><span class="comp-var">q</span>  <span class="comp-calc">= [ 1.00,  0.40 ]</span></div>
-			<div class="comp-row"><span class="comp-var">k₁</span> <span class="comp-calc">= [ 0.90,  0.45 ]   ("cat")</span></div>
-			<div class="comp-row"><span class="comp-var">k₂</span> <span class="comp-calc">= [-0.50,  0.80 ]   ("dog")</span></div>
-			<div class="comp-row"><span class="comp-var">k₃</span> <span class="comp-calc">= [-0.60, -0.70 ]   ("sat")</span></div>
+			<div class="comp-row"><span class="comp-var">$\\mathbf{q}$</span>  <span class="comp-calc">$= (1.00,\\; 0.40)$</span></div>
+			<div class="comp-row"><span class="comp-var">$\\mathbf{k}_1$</span> <span class="comp-calc">$= (0.90,\\; 0.45)$ <span class="comp-extra">(cat)</span></span></div>
+			<div class="comp-row"><span class="comp-var">$\\mathbf{k}_2$</span> <span class="comp-calc">$= (-0.50,\\; 0.80)$ <span class="comp-extra">(dog)</span></span></div>
+			<div class="comp-row"><span class="comp-var">$\\mathbf{k}_3$</span> <span class="comp-calc">$= (-0.60,\\; -0.70)$ <span class="comp-extra">(sat)</span></span></div>
 			<div class="comp-note">No computation yet — these are the inputs the equation will operate on.</div>
 		</div>
 	`,
 	components: () => `
-		<div class="comp-header">▶ Currently computing: q[d] · k₁[d] (element-wise product)</div>
+		<div class="comp-header">▶ Currently computing: $q[d] \\cdot k_1[d]$ (element-wise product)</div>
 		<div class="comp-body">
 			<div class="comp-row highlighted">
-				<span class="comp-var">q[1] · k₁[1]</span>
-				<span class="comp-calc">= (1.00) × (0.90)</span>
-				<span class="comp-result">= 0.900</span>
+				<span class="comp-var">$q[1] \\cdot k_1[1]$</span>
+				<span class="comp-calc">$= (1.00) \\times (0.90)$</span>
+				<span class="comp-result">$= 0.900$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">q[2] · k₁[2]</span>
-				<span class="comp-calc">= (0.40) × (0.45)</span>
-				<span class="comp-result">= 0.180</span>
+				<span class="comp-var">$q[2] \\cdot k_1[2]$</span>
+				<span class="comp-calc">$= (0.40) \\times (0.45)$</span>
+				<span class="comp-result">$= 0.180$</span>
 			</div>
 			<div class="comp-note">Two scalar products, one per dimension. Next step: add them.</div>
 		</div>
@@ -390,72 +390,72 @@ const ATTN_COMPUTATIONS = {
 		const k = ATTN_2D.keys;
 		const s = ATTN_2D.scores;
 		return `
-		<div class="comp-header">▶ Currently computing: q · kⱼ (sum of components)</div>
+		<div class="comp-header">▶ Currently computing: $q \\cdot k_j$ (sum of components)</div>
 		<div class="comp-body">
 			<div class="comp-row highlighted">
-				<span class="comp-var">q · k₁</span>
-				<span class="comp-calc">= (1.00)(0.90) + (0.40)(0.45) = 0.900 + 0.180</span>
-				<span class="comp-result">= ${s[0].toFixed(3)}</span>
+				<span class="comp-var">$q \\cdot k_1$</span>
+				<span class="comp-calc">$= (1.00)(0.90) + (0.40)(0.45) = 0.900 + 0.180$</span>
+				<span class="comp-result">$= ${s[0].toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">q · k₂</span>
-				<span class="comp-calc">= (1.00)(-0.50) + (0.40)(0.80) = -0.500 + 0.320</span>
-				<span class="comp-result">= ${s[1].toFixed(3)}</span>
+				<span class="comp-var">$q \\cdot k_2$</span>
+				<span class="comp-calc">$= (1.00)(-0.50) + (0.40)(0.80) = -0.500 + 0.320$</span>
+				<span class="comp-result">$= ${s[1].toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">q · k₃</span>
-				<span class="comp-calc">= (1.00)(-0.60) + (0.40)(-0.70) = -0.600 - 0.280</span>
-				<span class="comp-result">= ${s[2].toFixed(3)}</span>
+				<span class="comp-var">$q \\cdot k_3$</span>
+				<span class="comp-calc">$= (1.00)(-0.60) + (0.40)(-0.70) = -0.600 - 0.280$</span>
+				<span class="comp-result">$= ${s[2].toFixed(3)}$</span>
 			</div>
-			<div class="comp-note">Positive score = same direction as q. Negative = opposite.</div>
+			<div class="comp-note">Positive score = same direction as $\\mathbf{q}$. Negative = opposite.</div>
 		</div>`;
 	},
 	scaled: () => {
 		const s = ATTN_2D.scores;
 		const sc = ATTN_2D.scaled;
 		return `
-		<div class="comp-header">▶ Currently computing: (q · kⱼ) / √dₖ (variance control)</div>
+		<div class="comp-header">▶ Currently computing: $(q \\cdot k_j) \\,/\\, \\sqrt{d_k}$ (variance control)</div>
 		<div class="comp-body">
 			<div class="comp-row highlighted">
-				<span class="comp-var">${s[0].toFixed(3)} / √2</span>
-				<span class="comp-calc">= ${s[0].toFixed(3)} / 1.414</span>
-				<span class="comp-result">= ${sc[0].toFixed(3)}</span>
+				<span class="comp-var">$(${s[0].toFixed(3)}) \\,/\\, \\sqrt{2}$</span>
+				<span class="comp-calc">$= ${s[0].toFixed(3)} \\,/\\, 1.414$</span>
+				<span class="comp-result">$= ${sc[0].toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">${s[1].toFixed(3)} / √2</span>
-				<span class="comp-calc">= ${s[1].toFixed(3)} / 1.414</span>
-				<span class="comp-result">= ${sc[1].toFixed(3)}</span>
+				<span class="comp-var">$(${s[1].toFixed(3)}) \\,/\\, \\sqrt{2}$</span>
+				<span class="comp-calc">$= ${s[1].toFixed(3)} \\,/\\, 1.414$</span>
+				<span class="comp-result">$= ${sc[1].toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">${s[2].toFixed(3)} / √2</span>
-				<span class="comp-calc">= ${s[2].toFixed(3)} / 1.414</span>
-				<span class="comp-result">= ${sc[2].toFixed(3)}</span>
+				<span class="comp-var">$(${s[2].toFixed(3)}) \\,/\\, \\sqrt{2}$</span>
+				<span class="comp-calc">$= ${s[2].toFixed(3)} \\,/\\, 1.414$</span>
+				<span class="comp-result">$= ${sc[2].toFixed(3)}$</span>
 			</div>
-			<div class="comp-note">Keeps the variance of scores near 1, regardless of dₖ.</div>
+			<div class="comp-note">Keeps the variance of scores near $1$, regardless of $d_k$.</div>
 		</div>`;
 	},
 	exps: () => {
 		const sc = ATTN_2D.scaled;
 		const ex = ATTN_2D.exps;
 		return `
-		<div class="comp-header">▶ Currently computing: exp(score) (amplify differences)</div>
+		<div class="comp-header">▶ Currently computing: $e^{\\mathrm{score}}$ (amplify differences)</div>
 		<div class="comp-body">
 			<div class="comp-row highlighted">
-				<span class="comp-var">e<sup>${sc[0].toFixed(3)}</sup></span>
+				<span class="comp-var">$e^{${sc[0].toFixed(3)}}$</span>
 				<span class="comp-calc"></span>
-				<span class="comp-result">= ${ex[0].toFixed(3)}</span>
+				<span class="comp-result">$= ${ex[0].toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">e<sup>${sc[1].toFixed(3)}</sup></span>
+				<span class="comp-var">$e^{${sc[1].toFixed(3)}}$</span>
 				<span class="comp-calc"></span>
-				<span class="comp-result">= ${ex[1].toFixed(3)}</span>
+				<span class="comp-result">$= ${ex[1].toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">e<sup>${sc[2].toFixed(3)}</sup></span>
+				<span class="comp-var">$e^{${sc[2].toFixed(3)}}$</span>
 				<span class="comp-calc"></span>
-				<span class="comp-result">= ${ex[2].toFixed(3)}</span>
+				<span class="comp-result">$= ${ex[2].toFixed(3)}$</span>
 			</div>
-			<div class="comp-note">The largest input (${sc[0].toFixed(3)}) dominates after exp(): ${ex[0].toFixed(3)} ≫ ${ex[2].toFixed(3)}.</div>
+			<div class="comp-note">The largest input ($${sc[0].toFixed(3)}$) dominates after $\\exp$: $${ex[0].toFixed(3)} \\gg ${ex[2].toFixed(3)}$.</div>
 		</div>`;
 	},
 	weights: () => {
@@ -466,39 +466,39 @@ const ATTN_COMPUTATIONS = {
 		<div class="comp-header">▶ Currently computing: softmax (divide by the sum)</div>
 		<div class="comp-body">
 			<div class="comp-row">
-				<span class="comp-var">Sum</span>
-				<span class="comp-calc">= ${ex[0].toFixed(3)} + ${ex[1].toFixed(3)} + ${ex[2].toFixed(3)}</span>
-				<span class="comp-result">= ${sum.toFixed(3)}</span>
+				<span class="comp-var">$\\mathrm{Sum}$</span>
+				<span class="comp-calc">$= ${ex[0].toFixed(3)} + ${ex[1].toFixed(3)} + ${ex[2].toFixed(3)}$</span>
+				<span class="comp-result">$= ${sum.toFixed(3)}$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">α₁</span>
-				<span class="comp-calc">= ${ex[0].toFixed(3)} / ${sum.toFixed(3)}</span>
-				<span class="comp-result">= ${w[0].toFixed(3)} (${(w[0]*100).toFixed(1)}%)</span>
+				<span class="comp-var">$\\alpha_1$</span>
+				<span class="comp-calc">$= ${ex[0].toFixed(3)} \\,/\\, ${sum.toFixed(3)}$</span>
+				<span class="comp-result">$= ${w[0].toFixed(3)}$ <span class="comp-extra">(${(w[0]*100).toFixed(1)}%)</span></span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">α₂</span>
-				<span class="comp-calc">= ${ex[1].toFixed(3)} / ${sum.toFixed(3)}</span>
-				<span class="comp-result">= ${w[1].toFixed(3)} (${(w[1]*100).toFixed(1)}%)</span>
+				<span class="comp-var">$\\alpha_2$</span>
+				<span class="comp-calc">$= ${ex[1].toFixed(3)} \\,/\\, ${sum.toFixed(3)}$</span>
+				<span class="comp-result">$= ${w[1].toFixed(3)}$ <span class="comp-extra">(${(w[1]*100).toFixed(1)}%)</span></span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">α₃</span>
-				<span class="comp-calc">= ${ex[2].toFixed(3)} / ${sum.toFixed(3)}</span>
-				<span class="comp-result">= ${w[2].toFixed(3)} (${(w[2]*100).toFixed(1)}%)</span>
+				<span class="comp-var">$\\alpha_3$</span>
+				<span class="comp-calc">$= ${ex[2].toFixed(3)} \\,/\\, ${sum.toFixed(3)}$</span>
+				<span class="comp-result">$= ${w[2].toFixed(3)}$ <span class="comp-extra">(${(w[2]*100).toFixed(1)}%)</span></span>
 			</div>
-			<div class="comp-note">Three weights sum to 100% — a probability distribution over the keys.</div>
+			<div class="comp-note">Three weights sum to $100\\%$ — a probability distribution over the keys.</div>
 		</div>`;
 	},
 	values: () => `
 		<div class="comp-header">▶ Currently switching from keys to value vectors</div>
 		<div class="comp-body">
-			<div class="comp-row highlighted"><span class="comp-var">v₁</span> <span class="comp-calc">= [ 0.80,  0.55 ]</span></div>
-			<div class="comp-row highlighted"><span class="comp-var">v₂</span> <span class="comp-calc">= [-0.30,  0.70 ]</span></div>
-			<div class="comp-row highlighted"><span class="comp-var">v₃</span> <span class="comp-calc">= [-0.70, -0.55 ]</span></div>
+			<div class="comp-row highlighted"><span class="comp-var">$\\mathbf{v}_1$</span> <span class="comp-calc">$= (0.80,\\; 0.55)$</span></div>
+			<div class="comp-row highlighted"><span class="comp-var">$\\mathbf{v}_2$</span> <span class="comp-calc">$= (-0.30,\\; 0.70)$</span></div>
+			<div class="comp-row highlighted"><span class="comp-var">$\\mathbf{v}_3$</span> <span class="comp-calc">$= (-0.70,\\; -0.55)$</span></div>
 			<div class="comp-row" style="margin-top:8px;">
 				<span class="comp-var">weights (carry over)</span>
-				<span class="comp-calc">α₁=${(ATTN_2D.weights[0]*100).toFixed(1)}%, α₂=${(ATTN_2D.weights[1]*100).toFixed(1)}%, α₃=${(ATTN_2D.weights[2]*100).toFixed(1)}%</span>
+				<span class="comp-calc">$\\alpha_1=${(ATTN_2D.weights[0]*100).toFixed(1)}\\%$, $\\alpha_2=${(ATTN_2D.weights[1]*100).toFixed(1)}\\%$, $\\alpha_3=${(ATTN_2D.weights[2]*100).toFixed(1)}\\%$</span>
 			</div>
-			<div class="comp-note">Keys told us WHAT to attend to. Values carry the actual content.</div>
+			<div class="comp-note">Keys told us <em>what</em> to attend to. Values carry the actual content.</div>
 		</div>
 	`,
 	output: () => {
@@ -506,32 +506,31 @@ const ATTN_COMPUTATIONS = {
 		const v = ATTN_2D.vals;
 		const wv = ATTN_2D.weightedVals;
 		const z = ATTN_2D.output;
-		const fmt = n => (n >= 0 ? ' ' : '') + n.toFixed(3);
-		const fmtPct = n => (n*100).toFixed(1) + '%';
+		const fmt = n => (n >= 0 ? '\\,' : '') + n.toFixed(3);
 		return `
-		<div class="comp-header">▶ Currently computing: z = Σⱼ αⱼ · vⱼ (weighted sum)</div>
+		<div class="comp-header">▶ Currently computing: $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ (weighted sum)</div>
 		<div class="comp-body">
 			<div class="comp-row highlighted">
-				<span class="comp-var">α₁ · v₁</span>
-				<span class="comp-calc">= ${fmtPct(w[0])} × [${fmt(v[0][0])}, ${fmt(v[0][1])}]</span>
-				<span class="comp-result">= [${fmt(wv[0][0])}, ${fmt(wv[0][1])}]</span>
+				<span class="comp-var">$\\alpha_1 \\mathbf{v}_1$</span>
+				<span class="comp-calc">$= ${(w[0]*100).toFixed(1)}\\% \\times (${fmt(v[0][0])},\\; ${fmt(v[0][1])})$</span>
+				<span class="comp-result">$= (${fmt(wv[0][0])},\\; ${fmt(wv[0][1])})$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">α₂ · v₂</span>
-				<span class="comp-calc">= ${fmtPct(w[1])} × [${fmt(v[1][0])}, ${fmt(v[1][1])}]</span>
-				<span class="comp-result">= [${fmt(wv[1][0])}, ${fmt(wv[1][1])}]</span>
+				<span class="comp-var">$\\alpha_2 \\mathbf{v}_2$</span>
+				<span class="comp-calc">$= ${(w[1]*100).toFixed(1)}\\% \\times (${fmt(v[1][0])},\\; ${fmt(v[1][1])})$</span>
+				<span class="comp-result">$= (${fmt(wv[1][0])},\\; ${fmt(wv[1][1])})$</span>
 			</div>
 			<div class="comp-row highlighted">
-				<span class="comp-var">α₃ · v₃</span>
-				<span class="comp-calc">= ${fmtPct(w[2])} × [${fmt(v[2][0])}, ${fmt(v[2][1])}]</span>
-				<span class="comp-result">= [${fmt(wv[2][0])}, ${fmt(wv[2][1])}]</span>
+				<span class="comp-var">$\\alpha_3 \\mathbf{v}_3$</span>
+				<span class="comp-calc">$= ${(w[2]*100).toFixed(1)}\\% \\times (${fmt(v[2][0])},\\; ${fmt(v[2][1])})$</span>
+				<span class="comp-result">$= (${fmt(wv[2][0])},\\; ${fmt(wv[2][1])})$</span>
 			</div>
 			<div class="comp-row" style="margin-top:10px; padding-top:8px; border-top:1px dashed #cbd5e1;">
-				<span class="comp-var"><b>z</b></span>
-				<span class="comp-calc">= [${fmt(wv[0][0])} + ${fmt(wv[1][0])} + ${fmt(wv[2][0])}, ${fmt(wv[0][1])} + ${fmt(wv[1][1])} + ${fmt(wv[2][1])}]</span>
-				<span class="comp-result"><b>= [${fmt(z[0])}, ${fmt(z[1])}]</b></span>
+				<span class="comp-var">$\\mathbf{z}$</span>
+				<span class="comp-calc">$= (${fmt(wv[0][0])} + ${fmt(wv[1][0])} + ${fmt(wv[2][0])},\\; ${fmt(wv[0][1])} + ${fmt(wv[1][1])} + ${fmt(wv[2][1])})$</span>
+				<span class="comp-result">$= \\mathbf{(${fmt(z[0])},\\; ${fmt(z[1])}}$</span>
 			</div>
-			<div class="comp-note">z is a convex combination — it lies <b>inside the triangle</b> formed by v₁, v₂, v₃.</div>
+			<div class="comp-note">$\\mathbf{z}$ is a convex combination — it lies <b>inside the triangle</b> formed by $\\mathbf{v}_1, \\mathbf{v}_2, \\mathbf{v}_3$.</div>
 		</div>`;
 	}
 };
@@ -714,16 +713,19 @@ const AttentionAnatomy = {
 		if (!el) return;
 
 		const active = new Set(data.eqActive || []);
+		// Active sub-expression gets boxed + bold blue so the user can
+		// see exactly which part of the equation the current step is
+		// computing. \boxed comes from amsmath; \color from xcolor.
 		const hl = (latex, region) => {
-			if (active.has(region)) return `\\color{#2563eb}\\mathbf{${latex}}`;
+			if (active.has(region)) return `\\boxed{\\color{#2563eb}\\mathbf{${latex}}}`;
 			return latex;
 		};
 
 		// Output line: z_i = Σ_j α_ij · v_j
 		const outputLatex =
 			'z_i = ' +
-			hl('\\sum_j',                'sum')   + '\\,' +
-			hl('\\alpha_{ij}',           'alpha') + '\\,\\cdot\\,' +
+			hl('\\sum_j',                'sum')   + '\\;' +
+			hl('\\alpha_{ij}',           'alpha') + '\\;\\cdot\\;' +
 			hl('v_j',                    'value');
 
 		// Weight line: α_ij = exp(q_i·k_j / √d_k) ÷ Σ_n exp(q_i·k_n / √d_k)
@@ -731,14 +733,20 @@ const AttentionAnatomy = {
 			'\\alpha_{ij} = ' +
 			hl('\\mathrm{exp}',          'exp')   +
 			'\\!\\bigl(' +
-			hl('q_i \\cdot k_j',         'dot')   + '\\,/\\,' +
+			hl('q_i \\cdot k_j',         'dot')   + '\\;/\\;' +
 			hl('\\sqrt{d_k}',            'sqrt')  +
-			'\\bigr)\\,\\div\\,' +
+			'\\bigr)\\;\\div\\;' +
 			hl('\\sum_n \\mathrm{exp}(q_i \\cdot k_n \\big/ \\sqrt{d_k})', 'denom');
 
 		el.innerHTML =
-			'<div class="eq-line"><b>Output:</b>  $$ ' + outputLatex + ' $$</div>' +
-			'<div class="eq-line"><b>Weight:</b>  $$ ' + weightLatex + ' $$</div>';
+			'<div class="eq-line">' +
+				'<div class="eq-label">Output</div>' +
+				'$$ \\displaystyle ' + outputLatex + ' $$' +
+			'</div>' +
+			'<div class="eq-line">' +
+				'<div class="eq-label">Weight</div>' +
+				'$$ \\displaystyle ' + weightLatex + ' $$' +
+			'</div>';
 	},
 
 	// Populate the "Currently computing" panel with the actual numerical
