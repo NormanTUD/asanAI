@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Pixel-perfect PNG comparison using Pillow.
+Standalone pixel-perfect PNG comparison using Pillow.
 
-Compares two PNG files by decoding them to raw RGB pixels and checking that
-every single pixel is identical. Reports the number of differing pixels and
-the coordinates of the first mismatch so the caller can localize the diff.
+This is a tiny helper that compares two PNG files by decoding them to raw
+RGB pixels and checking that every single pixel is identical. It is kept
+for ad-hoc comparisons; take_screenshot.py already calls this logic
+internally.
 
 Usage:
     compare.py REFERENCE CURRENT

@@ -25,18 +25,6 @@ run_docker=true
 run_screenshot_test=true
 run_python_tests=true
 
-_apt_install_if_missing() {
-	local pkg="$1"
-	if command -v "$pkg" >/dev/null 2>&1; then
-		return 0
-	fi
-	if command -v sudo >/dev/null 2>&1; then
-		sudo apt-get install -y "$pkg" || return 1
-	else
-		apt-get install -y "$pkg" || return 1
-	fi
-}
-
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--no-smoke-tests) run_smoke_tests=false ;;
@@ -66,14 +54,35 @@ if $run_docker; then
 	fi
 fi
 
-if $run_screenshot_test || $run_python_tests; then
-	if ! command -v chromium >/dev/null 2>&1 && ! command -v chromium-browser >/dev/null 2>&1; then
-		echo "====== Installing chromium (needed for screenshot and/or playwright tests) ======"
-		if command -v apt-get >/dev/null 2>&1; then
-			_apt_install_if_missing chromium || _apt_install_if_missing chromium-browser || true
-		fi
+# The screenshot test and the Python test suite both use Playwright, so we
+# always prepare the venv first. Set --no-screenshot-test / --no-run-tests
+# to skip the corresponding stages individually.
+echo "====== Checking virtualenv ======"
+if [[ ! -d ~/.asanai_test_env ]]; then
+	python3 -m venv ~/.asanai_test_env
+	source ~/.asanai_test_env/bin/activate
+	if ! pip install playwright Pillow; then
+		echo "pip install playwright Pillow failed. Are you online?"
+		rm -rf ~/.asanai_test_env
+		exit 1
 	fi
+	playwright install chromium
+	playwright install firefox
 fi
+
+source ~/.asanai_test_env/bin/activate
+
+echo "====== pip install playwright Pillow ======"
+if ! pip install playwright Pillow; then
+	echo "pip install playwright Pillow failed. Are you online?"
+	rm -rf ~/.asanai_test_env
+	exit 1
+fi
+
+echo "====== playwright install chromium ======"
+playwright install chromium
+
+echo "====== Checked virtualenv ======"
 
 if $run_screenshot_test; then
 	echo "====== Running pixel-perfect screenshot test ======"
@@ -87,32 +96,6 @@ if $run_screenshot_test; then
 	echo "====== Screenshot test passed ======"
 fi
 
-echo "====== Checking virtualenv ======"
-if [[ ! -d ~/.asanai_test_env ]]; then
-	python3 -m venv ~/.asanai_test_env
-	source ~/.asanai_test_env/bin/activate
-	if ! pip install playwright; then
-		echo "pip install playwright failed. Are you online?"
-		rm -rf ~/.asanai_test_env
-		exit 1
-	fi
-	playwright install chromium
-	playwright install firefox
-fi
-
-source ~/.asanai_test_env/bin/activate
-
-echo "====== pip install playwright ======"
-if ! pip install playwright; then
-	echo "pip install playwright failed. Are you online?"
-	rm -rf ~/.asanai_test_env
-	exit 1
-fi
-
-echo "====== playwright install chromium ======"
-playwright install chromium
-
-echo "====== Checked virtualenv ======"
 if $run_python_tests; then
 	echo "====== python -m playwright install --with-deps chromium ======"
 

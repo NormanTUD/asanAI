@@ -1418,9 +1418,13 @@ const AttentionAnatomy = {
 			const cosT = Math.max(-1, Math.min(1, (q[0]*k[0] + q[1]*k[1]) /
 				(Math.hypot(q[0], q[1]) * Math.hypot(k[0], k[1]))));
 			const deg = Math.round(Math.acos(cosT) * 180 / Math.PI);
-			const midA = aq + d / 2;
-			const lx = (r + 0.14) * Math.cos(midA);
-			const ly = -(r + 0.14) * Math.sin(midA);
+			// When the wedge between q and k is very narrow the bisector
+			// label straddles both shafts, so park it just OUTSIDE the
+			// wedge on the q side. For wide angles the wedge interior is
+			// spacious and the bisector reads better.
+			const labelA = (Math.abs(d) < 0.21) ? aq - 0.14 : aq + d / 2;
+			const lx = (r + 0.17) * Math.cos(labelA);
+			const ly = -(r + 0.17) * Math.sin(labelA);
 			const mkLabel = (halo) => {
 				const t = document.createElementNS(NS, 'text');
 				t.setAttribute('x', lx); t.setAttribute('y', ly);
@@ -1661,8 +1665,6 @@ const AttentionAnatomy = {
 		};
 
 		const q = ATTN_2D.q;
-		const aq = Math.atan2(q[1], q[0]);
-		const NEAR = 25 * Math.PI / 180;
 
 		// Query magnitude: tucked just below q's tip label (which sits
 		// above the tip at (q + 0.14, -q - 0.04)), so the two never touch.
@@ -1670,24 +1672,16 @@ const AttentionAnatomy = {
 
 		ATTN_2D.keys.forEach((k, j) => {
 			if (data.highlightKey !== undefined && data.highlightKey !== j) return;
-			const ak = Math.atan2(k[1], k[0]);
-			const nearQ = Math.abs(Math.atan2(Math.sin(ak - aq), Math.cos(ak - aq))) < NEAR;
-
-			if (nearQ) {
-				// Nearly collinear with q: its magnitude label would fight
-				// with q's, so ride the shaft itself — anchored mid-vector,
-				// offset perpendicular to the direction, clear of the tips.
-				const n = norm(k);
-				const u = [k[0] / n, k[1] / n];
-				const off = 0.14;
-				const sx = 0.5 * k[0] - u[1] * off;
-				const sy = 0.5 * k[1] + u[0] * off;
-				mk(sx, -sy, `‖k${j+1}‖=${n.toFixed(2)}`, 'middle');
-			} else {
-				// Otherwise mirror the tip label: below-right of the tip,
-				// with a little extra x-margin so it never kisses the y-axis.
-				mk(k[0] + 0.10, -k[1] + 0.12, `‖k${j+1}‖=${norm(k).toFixed(2)}`);
-			}
+			// Ride the shaft itself: anchored mid-vector and offset
+			// perpendicular to the direction. This clears the tip label,
+			// the arrowhead (which opens backward toward the origin), and
+			// — for keys nearly collinear with q — q's own labels too.
+			const n = norm(k);
+			const u = [k[0] / n, k[1] / n];
+			const off = 0.14;
+			const sx = 0.5 * k[0] - u[1] * off;
+			const sy = 0.5 * k[1] + u[0] * off;
+			mk(sx, -sy, `‖k${j+1}‖=${n.toFixed(2)}`, 'middle');
 		});
 	},
 
