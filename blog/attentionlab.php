@@ -117,21 +117,46 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 
 <!-- ===================== ANATOMY OF ATTENTION: STEP-BY-STEP ===================== -->
 <style>
-/* Header strip with step controls (sits ABOVE the plot) */
+/* Header strip with step controls (sits AT THE TOP so it never moves) */
 .attn-anatomy-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 12px;
-	padding: 10px 14px;
+	gap: 10px;
+	padding: 8px 12px;
 	background: var(--mn-surface, #fff);
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 10px;
-	margin-top: 12px;
-	position: sticky;
-	bottom: 12px;
-	z-index: 50;
-	box-shadow: 0 -2px 16px rgba(15, 23, 42, 0.10);
+	margin-bottom: 14px;
+	flex-wrap: wrap;
+}
+
+/* Two-column side-by-side layout: formulas/intuition on the left,
+   the 2D plot + score bars on the right. Stack on narrow screens. */
+.attn-anatomy-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 14px;
+	align-items: stretch;
+}
+@media (max-width: 880px) {
+	.attn-anatomy-grid {
+		grid-template-columns: 1fr;
+	}
+}
+.attn-anatomy-left,
+.attn-anatomy-right {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 0;
+}
+.attn-anatomy-right #attn-anatomy-2d {
+	flex: 1;
+	min-height: 440px;
+	min-width: 0;
+	overflow: hidden;
+	position: relative;
 }
 .attn-anatomy-header .step-info {
 	flex: 1;
@@ -151,17 +176,18 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	margin: 0 4px;
 }
 .attn-anatomy-header button {
-	padding: 8px 18px;
+	padding: 6px 14px;
 	border-radius: 8px;
 	border: 1px solid var(--mn-border, #cbd5e1);
 	background: var(--mn-surface, #fff);
 	color: var(--mn-text, #1e293b);
 	cursor: pointer;
-	font-size: 0.9rem;
+	font-size: 0.88rem;
 	font-family: inherit;
 	font-weight: 600;
 	transition: all 0.15s;
-	min-width: 110px;
+	min-width: 80px;
+	white-space: nowrap;
 }
 .attn-anatomy-header button:hover:not(:disabled) {
 	background: #eff6ff;
@@ -175,6 +201,19 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	cursor: not-allowed;
 	transform: none;
 	box-shadow: none;
+}
+.attn-anatomy-header button:active:not(:disabled) {
+	transform: translateY(0);
+	background: #dbeafe;
+}
+
+/* Fade transition when changing steps — gives a brief flash instead
+   of an instant content swap, which makes the change feel intentional. */
+.attn-anatomy-equation,
+.attn-anatomy-computation,
+.attn-anatomy-intuition,
+.attn-anatomy-2d {
+	transition: opacity 0.18s ease;
 }
 
 /* Full equation panel — Temml-rendered display math, one block per
@@ -347,36 +386,31 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 			Build the Attention Equation from the Inside Out
 		</span>
 		<div style="font-size:0.8rem; color:var(--mn-text-secondary, #64748b); margin-top:4px;">
-			Each click reveals the next layer of the formula. The active sub-expression is coloured in the equation, the actual numbers appear in the <b>Currently computing</b> panel, and the 2D vector scene shows the geometry.
+			Formulas and intuition on the left, geometric scene on the right. Use <b>←</b> / <b>→</b> keys or buttons to peel each layer of the formula.
 		</div>
 	</div>
 
-	<!-- 1) Full equation, always visible, with the active part highlighted -->
-	<div id="attn-anatomy-equation" class="attn-anatomy-equation"></div>
-
-	<!-- 2) Currently computing panel: shows the actual numbers for this step -->
-	<div id="attn-anatomy-computation" class="attn-anatomy-computation"></div>
-
-	<!-- 3) Geometric intuition: Temml-rendered math + human interpretation -->
-	<div id="attn-anatomy-intuition" class="attn-anatomy-intuition"></div>
-
-	<!-- 4) 2D vector plot: the geometric view -->
-	<div id="attn-anatomy-2d" style="height: 400px; background: var(--mn-surface, #fff);
-									border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
-
-	<!-- 5) Score bars: numeric state of the computation -->
-	<div id="attn-anatomy-bars" style="height: 200px; background: var(--mn-surface, #fff);
-									   border:1px solid var(--mn-border, #e2e8f0); border-radius:8px; margin-bottom:12px;"></div>
-
-	<!-- 6) Controls sit BELOW the plot so the user can see the visualization while clicking -->
+	<!-- Controls sit AT THE TOP — they never move because content changes happen below -->
 	<div class="attn-anatomy-header">
-		<button id="attn-anatomy-prev">← Previous</button>
+		<button id="attn-anatomy-prev">← Prev</button>
 		<div class="step-info">
 			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
 			<span class="step-total">of 8</span>
-			<span id="attn-anatomy-step-title">— The Players</span>
+			<span id="attn-anatomy-step-title">— From embeddings to Q, K, V</span>
 		</div>
 		<button id="attn-anatomy-next">Next →</button>
+	</div>
+
+	<!-- Side-by-side: formulas on the left, plot on the right -->
+	<div class="attn-anatomy-grid">
+		<div class="attn-anatomy-left">
+			<div id="attn-anatomy-equation" class="attn-anatomy-equation"></div>
+			<div id="attn-anatomy-computation" class="attn-anatomy-computation"></div>
+			<div id="attn-anatomy-intuition" class="attn-anatomy-intuition"></div>
+		</div>
+		<div class="attn-anatomy-right">
+			<div id="attn-anatomy-2d" style="background: var(--mn-surface, #fff); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;"></div>
+		</div>
 	</div>
 </div>
 

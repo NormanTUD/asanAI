@@ -286,17 +286,16 @@ const ATTN_2D = (function() {
 //   'keys'   → query + keys (steps 1-6)
 //   'values' → query + values (step 7)
 //   'output' → values + weighted values + output z with tip-to-tail (step 8)
-// `barMode` decides what the bar chart shows (see renderBars).
 // `computation` picks a template that shows the actual numerical math.
 // `eqActive` lists the regions of the equation that should glow on this step.
 const ATTN_STEPS = [
 	{
-		title: 'The Players',
+		title: 'From embeddings to Q, K, V',
 		computation: 'setup',
 		intuition: 'setup',
 		eqActive: [],
-		desc: 'Every token has a <b>Query</b> <b style="color:#ef4444">q</b> (red, "what am I looking for?") and three <b>Keys</b> <b style="color:#2563eb">k₁</b>, <b style="color:#3b82f6">k₂</b>, <b style="color:#60a5fa">k₃</b> (blue, "here is what I contain"). They live in a d<sub>k</sub>=2 dimensional plane. Look how <b style="color:#2563eb">k₁</b> points almost the same direction as <b style="color:#ef4444">q</b> — that one will win.',
-		mode: 'keys', barMode: 'none'
+		desc: 'Each token starts as an <b>embedding vector</b> <b>x</b>. Three learned projections turn it into the three vectors we will use in attention: the query <b style="color:#ef4444">q</b> (asks "what am I looking for?"), the key <b style="color:#2563eb">k</b> (advertises "here is what I contain"), and the value <b style="color:#16a34a">v</b> (carries the actual content).',
+		mode: 'keys'
 	},
 	{
 		title: 'Element-wise product',
@@ -304,7 +303,7 @@ const ATTN_STEPS = [
 		intuition: 'components',
 		eqActive: ['dot'],
 		desc: 'The dot product is built from component products: <b>q[1]·k₁[1] + q[2]·k₁[2]</b>. Each product captures alignment along one axis. k₂ and k₃ are dimmed to focus on what is being computed for k₁.',
-		mode: 'keys', highlightKey: 0, barMode: 'components'
+		mode: 'keys', highlightKey: 0
 	},
 	{
 		title: 'Sum: the dot product q · kⱼ',
@@ -312,7 +311,7 @@ const ATTN_STEPS = [
 		intuition: 'dot',
 		eqActive: ['dot'],
 		desc: 'Add the components for each key: <b>q·k₁</b> = 0.900 + 0.180 = <b>1.080</b>. Positive score = same direction; negative = opposite. k₁ wins because it points closest to q.',
-		mode: 'keys', barMode: 'scores'
+		mode: 'keys'
 	},
 	{
 		title: 'Scale by 1/√d_k',
@@ -320,7 +319,7 @@ const ATTN_STEPS = [
 		intuition: 'scaled',
 		eqActive: ['sqrt'],
 		desc: 'Divide each score by √2 ≈ 1.414. This keeps the variance of scores near <b>1</b> regardless of d<sub>k</sub> — without it, softmax in a real d<sub>k</sub>=64 Transformer would saturate to a hard one-hot.',
-		mode: 'keys', barMode: 'scaled'
+		mode: 'keys'
 	},
 	{
 		title: 'Exponentiate: eˢᶜᵒʳᵉ',
@@ -328,7 +327,7 @@ const ATTN_STEPS = [
 		intuition: 'exps',
 		eqActive: ['exp'],
 		desc: 'Apply exp() to each scaled score. Differences <b>amplify</b>: the largest score (0.764) becomes 2.146, but a small score (0.127) only grows to 0.881. The biggest input starts to dominate.',
-		mode: 'keys', barMode: 'exps'
+		mode: 'keys'
 	},
 	{
 		title: 'Normalize (softmax)',
@@ -336,7 +335,7 @@ const ATTN_STEPS = [
 		intuition: 'weights',
 		eqActive: ['denom'],
 		desc: 'Divide each exp(score) by the <b>sum</b> of all three. The numbers now sum to exactly 1 — a probability distribution. These are the <b>attention weights</b> α<sub>ij</sub>: α₁=60.2%, α₂=24.7%, α₃=15.1%.',
-		mode: 'keys', barMode: 'weights'
+		mode: 'keys'
 	},
 	{
 		title: 'Switch to value vectors',
@@ -344,7 +343,7 @@ const ATTN_STEPS = [
 		intuition: 'values',
 		eqActive: ['value'],
 		desc: 'Drop the keys. Bring in the <b>Value</b> vectors <b style="color:#16a34a">v₁</b>, <b style="color:#15803d">v₂</b>, <b style="color:#166534">v₃</b> (green) — they live in a separate subspace and carry the actual semantic content. The attention weights carry over unchanged.',
-		mode: 'values', barMode: 'weights'
+		mode: 'values'
 	},
 	{
 		title: 'Weighted sum → output z',
@@ -352,7 +351,7 @@ const ATTN_STEPS = [
 		intuition: 'output',
 		eqActive: ['sum', 'alpha', 'value'],
 		desc: 'Compute <b>z = α₁v₁ + α₂v₂ + α₃v₃</b>. Each value is scaled by its weight (the dark-green dashed arrows), then tip-to-tail added together (gray dashed chain). The final <b style="color:#f59e0b">z</b> (orange) lives <b>inside the convex hull</b> of v₁, v₂, v₃ — attention can only interpolate.',
-		mode: 'output', barMode: 'weights'
+		mode: 'output'
 	}
 ];
 
@@ -538,111 +537,86 @@ const ATTN_COMPUTATIONS = {
 // Per-step "Geometric intuition" panels. Each contains:
 //   - A Temml-rendered formula (just set as innerHTML, then call render_temml())
 //   - "What this does" — a plain-language explanation of the operation alone
-//   - "Earlier steps" — how this step builds on what came before
 //   - "Big picture" — how it serves the overall attention computation
 const ATTN_INTUITIONS = {
 	setup: () => `
-		<div class="intuition-header">💡 Geometric intuition — The Players</div>
-		<div class="intuition-math">$$q,\\;k_1,\\;k_2,\\;k_3 \\in \\mathbb{R}^{d_k = 2}$$</div>
+		<div class="intuition-header">💡 Where do Q, K, V come from?</div>
+		<div class="intuition-math">$$q_i = x_i W^Q, \\quad k_j = x_j W^K, \\quad v_j = x_j W^V$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> introduces four vectors in a 2D plane. The query <b style="color:#ef4444">q</b> (red) is what we are matching. The keys <b style="color:#2563eb">k₁</b>, <b style="color:#3b82f6">k₂</b>, <b style="color:#60a5fa">k₃</b> (blue) advertise what their tokens contain. No arithmetic yet — this is the input stage.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> none — this is step 1.
+			<strong>What this does:</strong> each token's <b>embedding</b> <i>x</i> is multiplied by three <b>learned matrices</b> to produce the query, key, and value.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> the whole attention equation just measures how aligned <i>q</i> is with each <i>kⱼ</i>, then uses those alignment scores to blend values. Geometric alignment between vectors is the source of attention.
+			<strong>Big picture:</strong> Q, K, V are three different "views" of the same token — same input, different roles. This is the first place the model <i>learns</i> anything.
 		</div>
 	`,
 	components: () => `
 		<div class="intuition-header">💡 Geometric intuition — Element-wise product</div>
-		<div class="intuition-math">$$q[d] \\cdot k_1[d] \\quad \\text{for } d \\in \\{1, 2\\}$$</div>
+		<div class="intuition-math">$$q[d] \\cdot k_1[d] \\quad d \\in \\{1, 2\\}$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> for each axis <i>d</i>, multiply <i>q[d]</i> × <i>k₁[d]</i>. Same sign ⇒ positive product (vectors <i>agree</i> on that axis). Opposite sign ⇒ negative product (they <i>disagree</i>). Each product captures agreement along <b>one</b> dimension.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 1 we have <i>q</i> and <i>k₁</i> as 2D vectors. Now we break them into per-axis scalar products — the atoms of the dot product.
+			<strong>What this does:</strong> per-axis product. Same sign = positive (agree); opposite sign = negative (disagree).
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> these per-axis products are the building blocks. Summing them in the next step gives the full alignment score. Geometrically each one is the length of <i>q</i>'s shadow on <i>k₁</i> projected onto axis <i>d</i>.
+			<strong>Big picture:</strong> the atoms of the dot product — sum them next.
 		</div>
 	`,
 	dot: () => `
 		<div class="intuition-header">💡 Geometric intuition — The dot product</div>
-		<div class="intuition-math">$$q \\cdot k_j \\;=\\; \\sum_{d=1}^{d_k} q[d] \\cdot k_j[d] \\;=\\; \\lVert q \\rVert \\cdot \\lVert k_j \\rVert \\cdot \\cos\\theta$$</div>
+		<div class="intuition-math">$$q \\cdot k_j = \\lVert q \\rVert \\cdot \\lVert k_j \\rVert \\cdot \\cos\\theta$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> add the component products. The result is a single scalar — the <b>alignment score</b>. Positive means <i>q</i> and <i>kⱼ</i> point the same direction; negative means opposite; zero means perpendicular.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 2 we had two per-axis products. Adding them collapses 2D information into 1 number per key.
+			<strong>What this does:</strong> add the components → one scalar per key. Positive = same direction; negative = opposite.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> geometrically, <i>q · k = ||q|| · ||k|| · cos(θ)</i>. It is the projection of <i>q</i> onto <i>k</i> — how much of <i>q</i> "fits" inside <i>k</i>. This is the source of attention: the bigger this number, the more relevant the key.
+			<strong>Big picture:</strong> the projection of <i>q</i> onto <i>k</i> — how much of <i>q</i> fits inside <i>k</i>.
 		</div>
 	`,
 	scaled: () => `
 		<div class="intuition-header">💡 Geometric intuition — Scale by √d_k</div>
-		<div class="intuition-math">$$\\text{score}_j \\;=\\; \\frac{q \\cdot k_j}{\\sqrt{d_k}}$$</div>
+		<div class="intuition-math">$$\\frac{q \\cdot k_j}{\\sqrt{d_k}}$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> divide the raw dot product by √d_k. This keeps the variance of scores near <b>1</b>, regardless of dimension.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 3 we have raw dot products. Their expected magnitude grows as √d_k — in d_k = 64, raw scores could swing between ±20.
+			<strong>What this does:</strong> divide each score by √d_k.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> variance control. Without this, softmax would saturate to a one-hot vector (one key gets 100%, all others 0%) and gradients would vanish. Dividing by √d_k keeps scores in a usable range so softmax behaves smoothly across any dimension.
+			<strong>Big picture:</strong> keeps variance at ~1 so softmax behaves at any dimension.
 		</div>
 	`,
 	exps: () => `
 		<div class="intuition-header">💡 Geometric intuition — Exponentiate</div>
 		<div class="intuition-math">$$e^{\\text{score}_j}$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> apply exp() to each score. Positive scores grow multiplicatively; negative scores shrink toward zero. <b>Differences amplify</b>.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 4 we have scaled scores. exp() turns them into non-negative "raw weights".
+			<strong>What this does:</strong> apply exp() — positive scores grow, negative scores shrink.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> this is what makes softmax a <i>soft argmax</i>. The biggest score dominates the next step exponentially. A score difference of 1 becomes a weight ratio of e ≈ 2.72 — the gap is widened, not just preserved.
+			<strong>Big picture:</strong> makes softmax a <i>soft argmax</i> — biggest score wins exponentially.
 		</div>
 	`,
 	weights: () => `
-		<div class="intuition-header">💡 Geometric intuition — Softmax (normalize)</div>
-		<div class="intuition-math">$$\\alpha_{ij} \\;=\\; \\frac{e^{\\text{score}_j}}{\\sum_{n=1}^{L} e^{\\text{score}_n}}$$</div>
+		<div class="intuition-header">💡 Geometric intuition — Normalize (softmax)</div>
+		<div class="intuition-math">$$\\alpha_{ij} = \\frac{e^{\\text{score}_j}}{\\sum_n e^{\\text{score}_n}}$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> divide each exp(score) by the sum of all exp(scores). The three numbers now form a <b>probability distribution</b> — they sum to exactly 1.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 5 we had three positive numbers. Dividing by their sum forces them to add up to 1.
+			<strong>What this does:</strong> divide each exp(score) by the sum.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> these αⱼ are the <b>attention weights</b> — the fraction of attention paid to each key. Because they sum to 1, attention is a finite resource: every gain by one key is automatically a loss by the others. This is the "soft" selection mechanism.
+			<strong>Big picture:</strong> three weights sum to 100% — a finite resource of attention.
 		</div>
 	`,
 	values: () => `
-		<div class="intuition-header">💡 Geometric intuition — Value vectors</div>
-		<div class="intuition-math">$$v_1,\\;v_2,\\;v_3 \\in \\mathbb{R}^{d_v}, \\quad \\alpha_{ij} \\text{ unchanged}$$</div>
+		<div class="intuition-header">💡 Geometric intuition — Switch to values</div>
+		<div class="intuition-math">$$v_1, v_2, v_3 \\in \\mathbb{R}^{d_v}, \\quad \\alpha_{ij}$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> bring in the value vectors <i>vⱼ</i>. They live in a separate subspace and carry the actual semantic content to be blended. The attention weights from step 6 carry over unchanged.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 6 we had three weights summing to 1. Now we add the things those weights will be applied to.
+			<strong>What this does:</strong> drop the keys, bring in vⱼ — the actual content to blend.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> keys told us <i>WHAT</i> to attend to; values are <i>WHAT to actually retrieve</i>. Splitting Q/K from V lets the network learn "match against this" independently from "retrieve this content" — a separation that turns out to be one of the most useful inductive biases in the architecture.
+			<strong>Big picture:</strong> keys = WHAT to attend to, values = WHAT to retrieve.
 		</div>
 	`,
 	output: () => `
 		<div class="intuition-header">💡 Geometric intuition — Weighted sum</div>
-		<div class="intuition-math">$$z_i \\;=\\; \\sum_{j} \\alpha_{ij} \\cdot v_j \\;=\\; \\alpha_1 v_1 + \\alpha_2 v_2 + \\alpha_3 v_3$$</div>
+		<div class="intuition-math">$$\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$$</div>
 		<div class="intuition-section">
-			<strong>What this does:</strong> multiply each value by its weight, then add. The result <i>z</i> is a <b>convex combination</b> of v₁, v₂, v₃.
-		</div>
-		<div class="intuition-section intuition-where">
-			<strong>Earlier steps:</strong> after step 7 we had values and weights. This step combines them into a single vector that mixes all three proportionally to their attention.
+			<strong>What this does:</strong> multiply each value by its weight, then add.
 		</div>
 		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> geometrically, <i>z</i> must live <b>inside the triangle</b> formed by v₁, v₂, v₃. Attention can only <i>interpolate</i>, never extrapolate — a fact that shapes the entire Transformer architecture. The follow-up FFN layer is what lets the model escape this convex hull and create genuinely new representations.
+			<strong>Big picture:</strong> z lives inside the triangle of v₁, v₂, v₃ — only interpolation.
 		</div>
 	`
 };
@@ -655,6 +629,16 @@ const AttentionAnatomy = {
 
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
+
+		// Keyboard navigation: ← / → step through. Skipped while typing
+		// in form fields so this never steals input events.
+		this._keyHandler = (e) => {
+			const t = e.target;
+			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+			if (e.key === 'ArrowLeft')  { e.preventDefault(); this.prev(); }
+			if (e.key === 'ArrowRight') { e.preventDefault(); this.next(); }
+		};
+		document.addEventListener('keydown', this._keyHandler);
 
 		this.render();
 
@@ -684,22 +668,38 @@ const AttentionAnatomy = {
 
 	render: function() {
 		const data = ATTN_STEPS[this.step];
+
+		// Brief opacity dip on the left column while we swap content.
+		// The right column (plot/bars) just transitions its traces, no fade.
+		const fadeTargets = [
+			document.getElementById('attn-anatomy-equation'),
+			document.getElementById('attn-anatomy-computation'),
+			document.getElementById('attn-anatomy-intuition')
+		].filter(Boolean);
+		fadeTargets.forEach(el => { el.style.opacity = '0.35'; });
+
+		// Header bits
 		const titleEl = document.getElementById('attn-anatomy-step-title');
 		const numEl   = document.getElementById('attn-anatomy-step-num');
 		if (numEl)   numEl.textContent   = `Step ${this.step + 1}`;
 		if (titleEl) titleEl.textContent = `— ${data.title}`;
 
+		// Update each panel
 		this.renderEquation(data);
 		this.renderComputation(data);
 		this.renderIntuition(data);
 		this.render2D(data);
-		this.renderBars(data);
 
 		// Temml is loaded by load_base_js(); it scans the document for
 		// $...$ / $$...$$ blocks and replaces them with MathML.
 		if (typeof render_temml === 'function') {
 			try { render_temml(); } catch (e) { /* ignore */ }
 		}
+
+		// Fade back in on the next frame so the transition is visible.
+		requestAnimationFrame(() => {
+			fadeTargets.forEach(el => { el.style.opacity = ''; });
+		});
 
 		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
 		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
@@ -817,42 +817,55 @@ const AttentionAnatomy = {
 
 		const layout = {
 			xaxis: {
-				title: { text: 'Dimension 1', font: { color: themeColor('#475569'), size: 12 } },
+				title: { text: 'Dim 1', font: { color: themeColor('#475569'), size: 11 } },
 				range: [-1.4, 1.4],
 				zeroline: true, zerolinecolor: themeColor('#94a3b8'),
 				zerolinewidth: 2,
 				gridcolor: themeColor('#e2e8f0'),
-				tickfont: { color: themeColor('#94a3b8'), size: 10 },
-				showline: true, linecolor: themeColor('#cbd5e1'), mirror: false,
-				scaleanchor: 'y', scaleratio: 1
+				tickfont: { color: themeColor('#94a3b8'), size: 9 },
+				scaleanchor: 'y', scaleratio: 1,
+				constrain: 'domain',
+				automargin: true
 			},
 			yaxis: {
-				title: { text: 'Dimension 2', font: { color: themeColor('#475569'), size: 12 } },
+				title: { text: 'Dim 2', font: { color: themeColor('#475569'), size: 11 } },
 				range: [-1.4, 1.4],
 				zeroline: true, zerolinecolor: themeColor('#94a3b8'),
 				zerolinewidth: 2,
 				gridcolor: themeColor('#e2e8f0'),
-				tickfont: { color: themeColor('#94a3b8'), size: 10 },
-				showline: true, linecolor: themeColor('#cbd5e1'), mirror: false
+				tickfont: { color: themeColor('#94a3b8'), size: 9 },
+				constrain: 'domain',
+				automargin: true
 			},
 			paper_bgcolor: themeColor('#fff'),
 			plot_bgcolor: themeColor('#fff'),
-			margin: { l: 60, r: 30, t: 20, b: 50 },
-			showlegend: false
+			margin: { l: 40, r: 20, t: 14, b: 40, pad: 0 },
+			showlegend: false,
+			// Keep the plot fully inside the container regardless of
+			// grid-column width.
+			autosize: true
 		};
 
 		Plotly.react('attn-anatomy-2d', traces, layout, {
 			responsive: true, displaylogo: false,
 			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d']
 		});
+
+		// Re-trigger size calc so the plot picks up the final column width
+		// (grid columns can have 0 width at the moment Plotly first mounts).
+		requestAnimationFrame(() => Plotly.relayout('attn-anatomy-2d', {}));
 	},
 
 	// Draw an arrow from `start` to `end` in the 2D plot. The shaft is
 	// a line; the tip is a triangle-up marker rotated to point along
-	// the vector direction.
+	// the vector direction. The label is placed PAST the tip in the
+	// direction of the arrow, offset perpendicular to it, so it never
+	// overlaps with the shaft.
 	addArrow2D: function(traces, start, end, color, label, opacity, dashed, noMarker) {
 		const dx = end[0] - start[0];
 		const dy = end[1] - start[1];
+		const len = Math.sqrt(dx * dx + dy * dy);
+		if (len < 0.01) return;
 		const op = (opacity !== undefined) ? opacity : 1.0;
 		const isDashed = !!dashed;
 
@@ -885,13 +898,37 @@ const AttentionAnatomy = {
 			});
 		}
 
-		// Label
+		// Label — placed past the tip in the arrow's direction, then
+		// nudged perpendicular so the text sits next to the shaft, not
+		// on top of it. Also add a subtle white background so it stays
+		// readable if a later overlay draws near it.
 		if (label) {
+			const nx = dx / len;
+			const ny = dy / len;
+			// Perpendicular (rotated 90° CCW from the arrow direction)
+			const perpX = -ny;
+			const perpY =  nx;
+			const alongDist = 0.22;   // past the arrowhead
+			const perpDist  = 0.14;   // to the side of the shaft
+			const labelX = end[0] + nx * alongDist + perpX * perpDist;
+			const labelY = end[1] + ny * alongDist + perpY * perpDist;
+
+			// White halo first (slightly larger), then the coloured text
+			// on top. This makes the label readable when it crosses
+			// other lines or the axes.
 			traces.push({
 				type: 'scatter', mode: 'text',
-				x: [end[0]], y: [end[1]],
+				x: [labelX], y: [labelY],
 				text: [label],
-				textposition: 'top right',
+				textposition: 'middle center',
+				textfont: { size: 14, color: 'rgba(255,255,255,0.92)', family: 'Inter, sans-serif' },
+				showlegend: false, hoverinfo: 'skip'
+			});
+			traces.push({
+				type: 'scatter', mode: 'text',
+				x: [labelX], y: [labelY],
+				text: [label],
+				textposition: 'middle center',
 				textfont: { size: 13, color: color, family: 'Inter, sans-serif' },
 				opacity: op,
 				showlegend: false, hoverinfo: 'name'
@@ -899,101 +936,8 @@ const AttentionAnatomy = {
 		}
 	},
 
-	// ─── Numeric state bar chart ────────────────────────────────────
-	renderBars: function(data) {
-		const el = document.getElementById('attn-anatomy-bars');
-		if (!el) return;
-
-		if (data.barMode === 'none') {
-			Plotly.purge('attn-anatomy-bars');
-			el.innerHTML =
-				`<div style="display:flex; align-items:center; justify-content:center; height:100%;
-					color:#94a3b8; font-style:italic; font-size:0.92rem; padding:20px;">
-					Score bars will appear once we start computing…
-				</div>`;
-			return;
-		}
-
-		let labels, colors, values, ytitle, fmt, titleHTML;
-
-		if (data.barMode === 'components') {
-			// q[d] * k_1[d] for d = 1, 2
-			const k = ATTN_2D.keys[0];
-			values = ATTN_2D.q.map((qc, d) => qc * k[d]);
-			labels = ['q[1] · k₁[1]', 'q[2] · k₁[2]'];
-			colors = ['#f59e0b', '#f59e0b'];
-			ytitle = 'product';
-			fmt = v => v.toFixed(3);
-			titleHTML = '<b>Element-wise product for k₁</b>';
-		} else if (data.barMode === 'scores') {
-			values = ATTN_2D.scores;
-			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
-			colors = ATTN_TOKENS.slice(1).map(t => t.color);
-			ytitle = 'q · kⱼ';
-			fmt = v => v.toFixed(3);
-			titleHTML = '<b>Raw dot product</b>';
-		} else if (data.barMode === 'scaled') {
-			values = ATTN_2D.scaled;
-			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
-			colors = ATTN_TOKENS.slice(1).map(t => t.color);
-			ytitle = 'score / √2';
-			fmt = v => v.toFixed(3);
-			titleHTML = '<b>After √d<sub>k</sub> scaling</b>';
-		} else if (data.barMode === 'exps') {
-			values = ATTN_2D.exps;
-			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
-			colors = ATTN_TOKENS.slice(1).map(t => t.color);
-			ytitle = 'exp(score)';
-			fmt = v => v.toFixed(3);
-			titleHTML = '<b>After exponentiation</b>';
-		} else if (data.barMode === 'weights') {
-			values = ATTN_2D.weights;
-			labels = ATTN_TOKENS.slice(1).map((t, j) => `k${j+1}: ${t.name}`);
-			colors = ATTN_TOKENS.slice(1).map(t => t.color);
-			ytitle = 'αⱼ';
-			fmt = v => (v * 100).toFixed(1) + '%';
-			titleHTML = '<b>Softmax weights (sum = 100%)</b>';
-		}
-
-		const trace = {
-			type: 'bar',
-			x: labels,
-			y: values,
-			text: values.map(v => fmt(v)),
-			textposition: 'outside',
-			textfont: { size: 12, color: themeColor('#1e293b'), family: 'Inter, sans-serif' },
-			marker: { color: colors, line: { color: themeColor('#fff'), width: 2 } },
-			hovertemplate: '%{x}: %{y:.4f}<extra></extra>'
-		};
-
-		const layout = {
-			title: { text: titleHTML,
-			         font: { size: 13, color: themeColor('#1e293b'), family: 'Inter, sans-serif' },
-			         x: 0.02, xanchor: 'left', y: 0.96 },
-			yaxis: {
-				title: { text: ytitle, font: { size: 11, color: themeColor('#64748b') } },
-				gridcolor: themeColor('#f1f5f9'),
-				zerolinecolor: themeColor('#94a3b8'),
-				tickfont: { color: themeColor('#94a3b8'), size: 10 },
-				rangemode: 'tozero'
-			},
-			xaxis: {
-				tickfont: { color: themeColor('#1e293b'), size: 11, family: 'Inter, sans-serif' },
-				showgrid: false
-			},
-			paper_bgcolor: themeColor('#fff'),
-			plot_bgcolor: themeColor('#fff'),
-			margin: { l: 65, r: 20, t: 40, b: 50 },
-			showlegend: false,
-			bargap: 0.35
-		};
-
-		Plotly.react('attn-anatomy-bars', [trace], layout, {
-			responsive: true, displaylogo: false,
-			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d']
-		});
-	},
-
+	// (Old renderBars removed — the bar chart was redundant with the
+	// "Currently computing" panel, which already shows the same numbers.)
 	// (Old highlightEquation removed — highlighting is now done via
 	// \color in the LaTeX rendered by renderEquation.)
 };
