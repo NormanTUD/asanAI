@@ -628,45 +628,37 @@ const VECTOR_FORMULAS = {
 		name: 'q  (the query)',
 		formula: 'q_i \\;=\\; x_i \\, W^Q',
 		unicode: 'qᵢ = xᵢ · W^Q',
-		desc: 'The query of token i. Computed by multiplying the token embedding x_i by the learned query projection matrix W^Q.'
+		desc: 'The query of token $i$. Computed by multiplying the token embedding $x_i$ by the learned query projection matrix $W^Q$.'
 	},
 	k: {
 		name: 'k  (the key)',
 		formula: 'k_j \\;=\\; x_j \\, W^K',
 		unicode: 'kⱼ = xⱼ · W^K',
-		desc: 'The key of token j. Computed by multiplying the token embedding x_j by the learned key projection matrix W^K. Used to score relevance against queries.'
+		desc: 'The key of token $j$. Computed by multiplying the token embedding $x_j$ by the learned key projection matrix $W^K$. Used to score relevance against queries.'
 	},
 	v: {
 		name: 'v  (the value)',
 		formula: 'v_j \\;=\\; x_j \\, W^V',
 		unicode: 'vⱼ = xⱼ · W^V',
-		desc: 'The value of token j. The actual semantic content this token carries — what gets blended into the output.'
+		desc: 'The value of token $j$. The actual semantic content this token carries — what gets blended into the output.'
 	},
 	weightedV: {
 		name: 'αⱼ · vⱼ  (attention-weighted value)',
 		formula: '\\alpha_j \\, v_j, \\quad \\alpha_j \\;=\\; \\dfrac{e^{q \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
 		unicode: 'αⱼ vⱼ,  where  αⱼ = softmax(q · kⱼ / √dₖ)',
-		desc: 'Value vⱼ scaled by its attention weight αⱼ. αⱼ is the softmax of the scaled dot product — a soft "how much does this token matter?" between 0 and 1.'
+		desc: 'Value $v_j$ scaled by its attention weight $\\alpha_j$. $\\alpha_j$ is the softmax of the scaled dot product — a soft "how much does this token matter?" between $0$ and $1$.'
 	},
 	z: {
 		name: 'z  (the contextualised output)',
 		formula: 'z \\;=\\; \\sum_j \\alpha_j \\, v_j',
 		unicode: 'z = Σⱼ αⱼ vⱼ',
-		desc: 'The contextualised output. A convex combination of all values, each weighted by its attention. Always lives inside the convex hull of the values.'
+		desc: 'The contextualised output. A convex combination of all values, each weighted by its attention weight. Always lives inside the convex hull of the values.'
 	}
 };
-
-// Pre-built Plotly `hovertemplate` strings. Plotly's native hover is the
-// PRIMARY mechanism; the custom HTML tooltip is a fallback that fires
-// from the same `plotly_hover` event for full Temml rendering.
-// Unicode-math version is used in the hovertemplate because Plotly's
-// SVG tooltip may not render raw MathML reliably across browsers.
-let HOVER_TEMPLATES = {};
 
 // Pre-rendered MathML for each vector formula. Filled once by
 // AttentionAnatomy._renderFormulas() so the hover tooltip can swap
 // content instantly without re-running Temml on every hover.
-// Stored in TEMML_RENDERED (global) so _wireTooltip can look it up.
 let TEMML_RENDERED = {};
 
 const AttentionAnatomy = {
@@ -705,304 +697,65 @@ const AttentionAnatomy = {
 	},
 
 	// Build the tooltip body for an arrow. Returns:
-	//   { name, eqLine, underLabel, formulaLatex, desc }
-	// - eqLine is the concrete equation, e.g. "k₁ = [0.90, 0.45]"
-	// - underLabel is what goes under the underbrace, e.g. "key of token 1"
+	//   { name, concreteLatex, formulaLatex, unicode, desc }
+	// - concreteLatex is the concrete equation with the values filled
+	//   in, e.g. "k₁ = [0.90, 0.45]" — underbraced with a label
 	// - formulaLatex is the Temml LaTeX for the general formula
+	// - unicode is the fallback text shown if Temml can't render
 	_buildArrowInfo: function(key, idx) {
-		const fmt = (v) => v.toFixed(2);
-		const fmtVec = (v) => `[${fmt(v[0])}, ${fmt(v[1])}]`;
+		const fmt    = (v) => v.toFixed(2);
+		const fmtVec = (v) => `[${fmt(v[0])},\\; ${fmt(v[1])}]`;
+		const VF = VECTOR_FORMULAS;
 		switch (key) {
 			case 'q':
 				return {
 					name: 'q  (the query)',
-					eqLine: `<b>q</b> = ${fmtVec(ATTN_2D.q)}`,
-					underLabel: 'query',
-					formulaLatex: VECTOR_FORMULAS.q.formula,
-					desc: VECTOR_FORMULAS.q.desc
+					concreteLatex: `\\underbrace{\\mathbf{q} = ${fmtVec(ATTN_2D.q)}}_{\\text{query}}`,
+					formulaLatex: VF.q.formula,
+					unicode: VF.q.unicode,
+					desc: VF.q.desc
 				};
 			case 'k': {
 				const k = ATTN_2D.keys[idx];
 				return {
 					name: `k${idx+1}  (the key)`,
-					eqLine: `<b>k${idx+1}</b> = ${fmtVec(k)}`,
-					underLabel: `key of token ${idx+1}`,
-					formulaLatex: VECTOR_FORMULAS.k.formula,
-					desc: VECTOR_FORMULAS.k.desc
+					concreteLatex: `\\underbrace{\\mathbf{k}_{${idx+1}} = ${fmtVec(k)}}_{\\text{key of token ${idx+1}}}`,
+					formulaLatex: VF.k.formula,
+					unicode: VF.k.unicode,
+					desc: VF.k.desc
 				};
 			}
 			case 'v': {
 				const v = ATTN_2D.vals[idx];
 				return {
 					name: `v${idx+1}  (the value)`,
-					eqLine: `<b>v${idx+1}</b> = ${fmtVec(v)}`,
-					underLabel: `value of token ${idx+1}`,
-					formulaLatex: VECTOR_FORMULAS.v.formula,
-					desc: VECTOR_FORMULAS.v.desc
+					concreteLatex: `\\underbrace{\\mathbf{v}_{${idx+1}} = ${fmtVec(v)}}_{\\text{value of token ${idx+1}}}`,
+					formulaLatex: VF.v.formula,
+					unicode: VF.v.unicode,
+					desc: VF.v.desc
 				};
 			}
 			case 'weightedV': {
 				const wv = ATTN_2D.weightedVals[idx];
 				return {
 					name: `α${idx+1}·v${idx+1}  (weighted value)`,
-					eqLine: `<b>α${idx+1}·v${idx+1}</b> = ${fmtVec(wv)}`,
-					underLabel: `weight × value`,
-					formulaLatex: VECTOR_FORMULAS.weightedV.formula,
-					desc: VECTOR_FORMULAS.weightedV.desc
+					concreteLatex: `\\underbrace{\\alpha_{${idx+1}} \\, \\mathbf{v}_{${idx+1}} = ${fmtVec(wv)}}_{\\text{weight} \\times \\text{value}}`,
+					formulaLatex: VF.weightedV.formula,
+					unicode: VF.weightedV.unicode,
+					desc: VF.weightedV.desc
 				};
 			}
 			case 'z':
 				return {
 					name: 'z  (the output)',
-					eqLine: `<b>z</b> = ${fmtVec(ATTN_2D.output)}`,
-					underLabel: 'contextualised output',
-					formulaLatex: VECTOR_FORMULAS.z.formula,
-					desc: VECTOR_FORMULAS.z.desc
+					concreteLatex: `\\underbrace{\\mathbf{z} = ${fmtVec(ATTN_2D.output)}}_{\\text{contextualised output}}`,
+					formulaLatex: VF.z.formula,
+					unicode: VF.z.unicode,
+					desc: VF.z.desc
 				};
 		}
 		return null;
 	},
-
-	// Attach plotly hover/unhover listeners once. Each arrow trace
-	// carries `{key, idx}` in customdata so we know which arrow was
-	// hovered and can show its concrete values + rendered formula.
-	_wireTooltip: function() {
-		const chart   = document.getElementById('attn-anatomy-2d');
-		const overlay = document.getElementById('attn-anatomy-2d-overlay');
-		const tip     = document.getElementById('attn-vector-tooltip');
-		// Need the overlay to capture mouse events (Plotly's canvas
-		// children swallow them otherwise) + the tip to display.
-		if (!chart || !overlay || !tip) return;
-
-		const placeNear = (cx, cy) => {
-			const pad = 16;
-			let x = cx + pad;
-			let y = cy + pad;
-			const r = tip.getBoundingClientRect();
-			if (x + r.width  > window.innerWidth)  x = cx - r.width  - pad;
-			if (y + r.height > window.innerHeight) y = cy - r.height - pad;
-			tip.style.left = x + 'px';
-			tip.style.top  = y + 'px';
-		};
-
-		// Bulletproof Temml renderer. Tries multiple strategies:
-		//  1. Use pre-rendered MathML from TEMML_RENDERED
-		//  2. Try render_temml() synchronously up to 10 times
-		//  3. Fall back to a Unicode-math <code> block so the user
-		//     always sees *something* readable
-		const formulaEl = tip.querySelector('.tt-formula');
-		const sleep = (ms) => { const s = Date.now(); while (Date.now() - s < ms) {} };
-
-		const renderFormula = (key, latex, unicode) => {
-			// Strategy 1: pre-rendered
-			if (TEMML_RENDERED[key]) {
-				formulaEl.innerHTML = TEMML_RENDERED[key];
-				if (formulaEl.innerHTML.indexOf('$$') === -1) return;
-			}
-			// Strategy 2: render raw $$...$$ now, up to 10 times
-			formulaEl.innerHTML = `$$ ${latex} $`;
-			for (let i = 0; i < 10; i++) {
-				if (typeof render_temml === 'function') {
-					try { render_temml(formulaEl); } catch (e) {}
-				}
-				if (formulaEl.innerHTML.indexOf('$$') === -1) return;
-				sleep(20);
-			}
-			// Strategy 3: Unicode-math fallback
-			formulaEl.innerHTML =
-				`<code style="font-family:'SF Mono','Menlo','Consolas',monospace;` +
-				`font-size:13px;background:transparent;padding:2px 4px">${unicode}</code>`;
-		};
-
-		// MutationObserver as final safety net: if Temml runs
-		// asynchronously after we set innerHTML and rewrites the DOM
-		// with raw $$ (e.g. some loader replaces $$ before processing),
-		// the observer catches it and re-renders.
-		if (typeof MutationObserver !== 'undefined' && !formulaEl._mo) {
-			formulaEl._mo = new MutationObserver(() => {
-				if (formulaEl.innerHTML.indexOf('$$') !== -1 &&
-				    typeof render_temml === 'function') {
-					try { render_temml(formulaEl); } catch (e) {}
-				}
-			});
-			formulaEl._mo.observe(formulaEl, {childList: true, characterData: true, subtree: true});
-		}
-
-		const show = (key, idx, clientX, clientY) => {
-			const info = this._buildArrowInfo(key, idx);
-			if (!info) return;
-
-			tip.querySelector('.tt-name').textContent = info.name;
-			tip.querySelector('.tt-equation').innerHTML = info.eqLine;
-			tip.querySelector('.tt-underline').textContent = info.underLabel;
-			renderFormula(key, info.formulaLatex, info.unicode || info.formulaLatex);
-			tip.querySelector('.tt-desc').textContent = info.desc;
-
-			tip.classList.add('active');
-
-			if (clientX !== undefined && clientY !== undefined) {
-				placeNear(clientX, clientY);
-			} else {
-				const rect = chart.getBoundingClientRect();
-				placeNear(rect.left + rect.width / 2, rect.top + rect.height / 2);
-			}
-		};
-
-		const hide = () => tip.classList.remove('active');
-
-		// ── PRIMARY: Plotly plotly_hover (works in most browsers) ──
-		if (typeof chart.on === 'function') {
-			chart.on('plotly_hover', (data) => {
-				const cd  = data?.points?.[0]?.customdata;
-				const obj = Array.isArray(cd) ? cd[0] : cd;
-				if (!obj || !obj.key) return;
-				const evt = data.event;
-				if (evt && evt.clientX !== undefined) {
-					show(obj.key, obj.idx, evt.clientX, evt.clientY);
-				} else {
-					const rect = chart.getBoundingClientRect();
-					show(obj.key, obj.idx, rect.left + 20, rect.top + 20);
-				}
-			});
-			chart.on('plotly_unhover', hide);
-		}
-
-		// ── FALLBACK: DOM mousemove with distance-to-line detection ──
-		// Bypasses Plotly's event system entirely. We compute pixel
-		// positions of every visible arrow and find the closest one
-		// to the cursor on every mousemove.
-		const arrows = this._getCurrentArrows();
-		const distToSegment = (px, py, ax, ay, bx, by) => {
-			const dx = bx - ax, dy = by - ay;
-			const len2 = dx * dx + dy * dy;
-			if (len2 === 0) return Math.hypot(px - ax, py - ay);
-			let t = ((px - ax) * dx + (py - ay) * dy) / len2;
-			t = Math.max(0, Math.min(1, t));
-			return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
-		};
-
-		const computePixelArrows = () => {
-			const layout = chart._fullLayout;
-			if (!layout || !layout.xaxis || !layout.yaxis) return [];
-			const rect = chart.getBoundingClientRect();
-			const m = layout.margin || {l: 40, r: 20, t: 14, b: 40};
-			const xr = layout.xaxis.range;
-			const yr = layout.yaxis.range;
-			const plotW = rect.width  - m.l - m.r;
-			const plotH = rect.height - m.t - m.b;
-			const d2p = (x, y) => [
-				rect.left + m.l + (x - xr[0]) / (xr[1] - xr[0]) * plotW,
-				rect.top  + m.t + (1 - (y - yr[0]) / (yr[1] - yr[0])) * plotH
-			];
-			return arrows.map(a => {
-				const [sx, sy] = d2p(a.start[0], a.start[1]);
-				const [ex, ey] = d2p(a.end[0], a.end[1]);
-				return {key: a.key, idx: a.idx, sx, sy, ex, ey};
-			});
-		};
-
-		let pixelArrows = computePixelArrows();
-
-		const refreshPixelArrows = () => {
-			pixelArrows = computePixelArrows();
-		};
-
-		// Refresh whenever the plot is re-rendered (Plotly triggers
-		// `relayout` after every redraw, which we hook into).
-		if (typeof chart.on === 'function') {
-			chart.on('plotly_afterplot', refreshPixelArrows);
-			chart.on('plotly_relayout', refreshPixelArrows);
-		}
-		window.addEventListener('resize', refreshPixelArrows);
-
-		// Retry mechanism: `chart._fullLayout` may not be ready
-		// immediately after Plotly.react() returns. Schedule several
-		// retries so the first mousemove always has valid pixel arrows.
-		[0, 50, 150, 400, 800, 1500, 3000].forEach(ms => {
-			setTimeout(refreshPixelArrows, ms);
-		});
-
-		// Attach mousemove to the OVERLAY (not the chart). The overlay
-		// sits on top of Plotly's canvas/SVG and captures all mouse
-		// events before they get swallowed by Plotly's internals.
-		overlay.addEventListener('mousemove', (e) => {
-			// Lazy-compute pixel arrows on first interaction if they
-			// weren't ready at init time.
-			if (!pixelArrows.length) {
-				refreshPixelArrows();
-				if (!pixelArrows.length) return;
-			}
-			let best = null, bestD = Infinity;
-			for (const a of pixelArrows) {
-				const d = distToSegment(e.clientX, e.clientY, a.sx, a.sy, a.ex, a.ey);
-				if (d < bestD) { bestD = d; best = a; }
-			}
-			if (best && bestD < 22) {
-				show(best.key, best.idx, e.clientX, e.clientY);
-			} else {
-				hide();
-			}
-		});
-
-		overlay.addEventListener('mouseleave', hide);
-
-		// ── Kill ALL click / drag / select side-effects on the overlay ──
-		// `mousedown` is what actually starts a browser drag or text
-		// selection — blocking `click` alone (which fires on mouseup)
-		// is too late. We block in capture phase so it runs before any
-		// Plotly handler can see the event.
-		const swallow = (e) => { e.preventDefault(); e.stopPropagation(); };
-		overlay.addEventListener('mousedown',   swallow, true);
-		overlay.addEventListener('mouseup',     swallow, true);
-		overlay.addEventListener('click',       swallow, true);
-		overlay.addEventListener('dblclick',    swallow, true);
-		overlay.addEventListener('contextmenu', swallow, true);
-		overlay.addEventListener('dragstart',   swallow, true);
-		overlay.addEventListener('selectstart', swallow, true);
-
-		// Same killers on the chart div itself, in case a pointer slips
-		// past the overlay (it shouldn't, but belt + suspenders).
-		chart.addEventListener('mousedown',   swallow, true);
-		chart.addEventListener('dragstart',   swallow, true);
-		chart.addEventListener('selectstart', swallow, true);
-
-		// Kill Plotly's own event handlers
-		if (typeof chart.on === 'function') {
-			chart.on('plotly_click',       () => false);
-			chart.on('plotly_doubleclick', () => false);
-			chart.on('plotly_selected',    () => false);
-		}
-	},
-
-	// Build the list of currently-visible arrows (data coordinates).
-	// Used by the mousemove fallback in _wireTooltip.
-	_getCurrentArrows: function() {
-		const out = [];
-		const step = ATTN_STEPS[this.step];
-		const mode = step?.mode;
-		const highlightKey = step?.highlightKey;
-
-		if (mode === 'keys' || mode === 'values') {
-			out.push({key: 'q', idx: 0, start: [0, 0], end: ATTN_2D.q});
-		}
-		if (mode === 'keys') {
-			ATTN_2D.keys.forEach((k, j) => {
-				out.push({key: 'k', idx: j, start: [0, 0], end: k});
-			});
-		} else if (mode === 'values' || mode === 'output') {
-			ATTN_2D.vals.forEach((v, j) => {
-				out.push({key: 'v', idx: j, start: [0, 0], end: v});
-			});
-			if (mode === 'output') {
-				ATTN_2D.weightedVals.forEach((wv, j) => {
-					out.push({key: 'weightedV', idx: j, start: [0, 0], end: wv});
-				});
-				out.push({key: 'z', idx: 0, start: [0, 0], end: ATTN_2D.output});
-			}
-		}
-		return out;
-	},
-
 
 	// Pre-render each VECTOR_FORMULAS entry's LaTeX to MathML via Temml.
 	// Bulletproof: tries up to 20 times with 25ms delays so even if Temml
@@ -1027,11 +780,11 @@ const AttentionAnatomy = {
 			const latex = info.formula;
 			let rendered = '';
 
-			for (let attempt = 0; attempt < 20; attempt++) {
-				tmp.innerHTML = `$$ ${latex} $`;
-				if (typeof render_temml === 'function') {
-					try { render_temml(tmp); } catch (e) { /* swallow */ }
-				}
+		for (let attempt = 0; attempt < 20; attempt++) {
+			tmp.innerHTML = `$$ ${latex} $$`;
+			if (typeof render_temml === 'function') {
+				try { render_temml(tmp); } catch (e) { /* swallow */ }
+			}
 				if (tmp.innerHTML.indexOf('$$') === -1) {
 					rendered = tmp.innerHTML;
 					break;
@@ -1282,7 +1035,8 @@ const AttentionAnatomy = {
 			parent.appendChild(head);
 		}
 
-		// Label (with white halo for readability)
+		// Label (with a THIN white halo for readability over the grid —
+		// a wide stroke around every glyph looks like a messy outline)
 		if (label) {
 			const lx = ex + 0.14;
 			const ly = ey - 0.04;
@@ -1291,8 +1045,8 @@ const AttentionAnatomy = {
 			halo.setAttribute('text-anchor', 'start');
 			halo.setAttribute('dominant-baseline', 'middle');
 			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
-			halo.setAttribute('stroke-width', '0.045'); halo.setAttribute('paint-order', 'stroke');
-			halo.setAttribute('font-size', '0.12');
+			halo.setAttribute('stroke-width', '0.012'); halo.setAttribute('paint-order', 'stroke');
+			halo.setAttribute('font-size', '0.1');
 			halo.setAttribute('font-family', 'Inter, sans-serif');
 			halo.textContent = label;
 			halo.style.pointerEvents = 'none';
@@ -1326,32 +1080,43 @@ const AttentionAnatomy = {
 		const info = this._buildArrowInfo(key, idx);
 		if (!info) return;
 
-		tip.querySelector('.tt-name').textContent = info.name;
-		tip.querySelector('.tt-equation').innerHTML = info.eqLine;
-		tip.querySelector('.tt-underline').textContent = info.underLabel;
+		// mousemove fires constantly while the cursor sits on an arrow —
+		// only rebuild + re-render when the arrow actually changes.
+		const contentKey = key + '|' + idx;
+		if (this._tipContentKey !== contentKey) {
+			this._tipContentKey = contentKey;
 
-		// Render formula with Temml (with retry + fallback)
-		const formulaEl = tip.querySelector('.tt-formula');
-		const sleep = (ms) => { const s = Date.now(); while (Date.now() - s < ms) {} };
-		if (TEMML_RENDERED[key]) {
-			formulaEl.innerHTML = TEMML_RENDERED[key];
-		} else {
-			formulaEl.innerHTML = `$$ ${info.formulaLatex} $`;
-			for (let i = 0; i < 10; i++) {
-				if (typeof render_temml === 'function') {
-					try { render_temml(formulaEl); } catch (e) {}
-				}
-				if (formulaEl.innerHTML.indexOf('$$') === -1) break;
-				sleep(20);
+			const formulaHtml = TEMML_RENDERED[key] || `$$ ${info.formulaLatex} $$`;
+
+			tip.innerHTML =
+				'<div class="tt-name"></div>' +
+				`<div class="tt-concrete">$$ ${info.concreteLatex} $$</div>` +
+				`<div class="tt-formula">${formulaHtml}</div>` +
+				'<div class="tt-desc"></div>';
+
+			tip.querySelector('.tt-name').textContent = info.name;
+			tip.querySelector('.tt-desc').innerHTML  = info.desc;
+
+			// Show BEFORE rendering so MathML gets real layout dimensions
+			// (a display:none element would still render, but measuring
+			// is only reliable once visible).
+			tip.classList.add('active');
+
+			// Render concrete equation + description math via Temml.
+			// Scoped to the tooltip — the general formula is already
+			// pre-rendered.
+			this._renderTooltipMath(tip);
+
+			// If the general formula still failed to render, fall back
+			// to readable Unicode math so the user always sees
+			// *something*.
+			const formulaEl = tip.querySelector('.tt-formula');
+			if (formulaEl.innerHTML.indexOf('$$') !== -1) {
+				formulaEl.innerHTML = `<code style="font-family:'SF Mono','Menlo','Consolas',monospace;font-size:13px;padding:2px 4px">${info.unicode}</code>`;
 			}
+		} else {
+			tip.classList.add('active');
 		}
-		if (formulaEl.innerHTML.indexOf('$$') !== -1) {
-			// Fallback: Unicode math
-			formulaEl.innerHTML = `<code style="font-family:'SF Mono','Menlo','Consolas',monospace;font-size:13px;padding:2px 4px">${info.unicode || info.formulaLatex}</code>`;
-		}
-
-		tip.querySelector('.tt-desc').textContent = info.desc;
-		tip.classList.add('active');
 
 		// Position near cursor with edge-flipping
 		const pad = 16;
@@ -1361,6 +1126,19 @@ const AttentionAnatomy = {
 		if (y + r.height > window.innerHeight) y = clientY - r.height - pad;
 		tip.style.left = x + 'px';
 		tip.style.top  = y + 'px';
+	},
+
+	// Render every remaining $...$ / $$...$$ block inside `root` with
+	// Temml. Retries briefly in case Temml loads asynchronously, then
+	// gives up so the caller can apply its own fallback.
+	_renderTooltipMath: function(root) {
+		if (typeof render_temml !== 'function') return;
+		const sleep = (ms) => { const s = Date.now(); while (Date.now() - s < ms) {} };
+		for (let i = 0; i < 10; i++) {
+			try { render_temml(root); } catch (e) { /* swallow */ }
+			if (root.innerHTML.indexOf('$') === -1) break;
+			sleep(20);
+		}
 	},
 
 	_hideTooltip: function() {

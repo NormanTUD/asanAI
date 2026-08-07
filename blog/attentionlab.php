@@ -143,12 +143,9 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	font-size: 0.95rem;
 	letter-spacing: 0.2px;
 }
-/* Concrete equation box with underbrace-style label.
-   Layout:
-       q₁ = [0.90, 0.45]      ← .tt-equation (bold var + value)
-       ─────────────────      ← thin line, the "underbrace" itself
-            key               ← .tt-underline (small label)
-*/
+/* Concrete equation box with underbrace-style label. The equation is
+   now rendered as real Temml math with a \underbrace, so the label
+   below the box border is decorative only. */
 .attn-vector-tooltip .tt-concrete {
 	margin: 0 0 10px 0;
 	padding: 12px 16px 8px;
@@ -157,26 +154,6 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	border-radius: 6px;
 	text-align: center;
 	color: var(--mn-text, #1e293b);
-}
-.attn-vector-tooltip .tt-equation {
-	font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
-	font-size: 0.98rem;
-	margin-bottom: 4px;
-	letter-spacing: 0.3px;
-}
-.attn-vector-tooltip .tt-equation b {
-	color: #2563eb;
-}
-.attn-vector-tooltip .tt-underline {
-	display: inline-block;
-	border-top: 1.5px solid var(--mn-border, #94a3b8);
-	padding: 3px 10px 0;
-	margin-top: 2px;
-	font-size: 0.72rem;
-	color: var(--mn-text-secondary, #64748b);
-	font-weight: 500;
-	letter-spacing: 0.4px;
-	text-transform: lowercase;
 }
 .attn-vector-tooltip .tt-formula {
 	margin: 0 0 10px 0;
@@ -193,13 +170,8 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	overflow-y: hidden;
 	max-width: 100%;
 }
-.attn-vector-tooltip .tt-formula mjx-container {
-	margin: 0 !important;
-	display: inline-block;
-	max-width: 100%;
-	/* Temml's MathML output often ships with its own white
-	   background — override it so it inherits the box colour
-	   (critical for dark mode). */
+.attn-vector-tooltip .tt-formula math,
+.attn-vector-tooltip .tt-concrete math {
 	background: transparent !important;
 }
 .attn-vector-tooltip .tt-formula::-webkit-scrollbar {
@@ -219,17 +191,6 @@ body.theme-dark .attn-vector-tooltip .tt-formula,
 	background: #1e293b;
 	border-color: #475569;
 	color: #f1f5f9;
-}
-body.theme-dark .attn-vector-tooltip .tt-equation b,
-.dark .attn-vector-tooltip .tt-equation b,
-[data-theme="dark"] .attn-vector-tooltip .tt-equation b {
-	color: #60a5fa;
-}
-body.theme-dark .attn-vector-tooltip .tt-underline,
-.dark .attn-vector-tooltip .tt-underline,
-[data-theme="dark"] .attn-vector-tooltip .tt-underline {
-	border-top-color: #64748b;
-	color: #cbd5e1;
 }
 .attn-vector-tooltip .tt-desc {
 	color: var(--mn-text, #1e293b);
@@ -593,24 +554,15 @@ body.theme-dark .attn-vector-tooltip .tt-underline,
 
 <!-- Hover tooltip for vector formulas. Appears when the user mouses
      over an arrow in the 2D plot; shows the exact Temml formula
-     explaining where that vector comes from mathematically. -->
-<div id="attn-vector-tooltip" class="attn-vector-tooltip">
-	<div class="tt-name"></div>
-	<div class="tt-concrete">
-		<div class="tt-equation"></div>
-		<div class="tt-underline"></div>
-	</div>
-	<div class="tt-formula"></div>
-	<div class="tt-desc"></div>
-</div>
+     explaining where that vector comes from mathematically. The JS
+     rebuilds the inner content on every hover. -->
+<div id="attn-vector-tooltip" class="attn-vector-tooltip"></div>
 
 <div class="md">
 ### Summary: Why *That* Equation?
-</div>
 
 $$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$
 
-<div class="md">
 1. **Dot product** $QK^T$: It's the natural measure of directional alignment. In 1D it's just multiplication (same sign = agree). In 2D/3D it's $\|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$, the projection of one vector onto another. No other simple operation captures "how much do these vectors point the same way?"
 
 2. **$\sqrt{d_k}$ scaling**: Without it, as $d_k$ grows, the expected magnitude of dot products grows as $\sqrt{d_k}$, pushing softmax toward hard one-hot outputs. The scaling keeps the variance of scores constant regardless of dimension, preserving smooth gradients.
@@ -634,13 +586,11 @@ In modern NLP, words are not merely strings; they are high-dimensional vectors. 
 
 ## From Embeddings to Q, K, V
 Each input word is first converted into an embedding vector $\mathbf{x}_i$. To compute attention, we project these embeddings into three distinct subspaces using learned weight matrices $W^Q, W^K,$ and $W^V$:
-</div>
 
 $$
 \underbrace{\mathbf{q}_i}_{\text{Query}} = \mathbf{x}_i W^Q, \quad \underbrace{\mathbf{k}_i}_{\text{Key}} = \mathbf{x}_i W^K, \quad \underbrace{\mathbf{v}_i}_{\text{Value}} = \mathbf{x}_i W^V
 $$
 
-<div class="md">
 * **Query ($\mathbf{q}$):** Represents the current token's "search criteria."
 * **Key ($\mathbf{k}$):** Acts as a "descriptor" or index of what information the token contains.
 * **Value ($\mathbf{v}$):** The actual semantic information to be propagated forward.
