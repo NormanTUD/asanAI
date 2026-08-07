@@ -281,52 +281,34 @@ body.theme-dark .attn-vector-tooltip .tt-underline,
 	display: flex;
 	position: relative;
 }
-/* Transparent overlay that sits on top of the Plotly canvas.
-   Captures all mouse events for our custom hover detection. */
-#attn-anatomy-2d-overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 9999;
-	background: rgba(0, 0, 0, 0);
+/* Custom SVG-based 2D plot. Replaces Plotly entirely so we have
+   full control over mouse events (no more swallowed events). */
+#attn-anatomy-2d-svg {
+	flex: 1;
+	min-height: 460px;
+	min-width: 0;
+	display: block;
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
 	cursor: crosshair;
-	pointer-events: auto;
 	user-select: none;
 	-webkit-user-select: none;
 	touch-action: none;
 	-webkit-tap-highlight-color: transparent;
 	-webkit-user-drag: none;
-	-khtml-user-drag: none;
-	-moz-user-drag: none;
 	user-drag: none;
 }
-#attn-anatomy-2d-overlay * {
+#attn-anatomy-2d-svg * {
 	user-select: none !important;
 	-webkit-user-select: none !important;
 	-webkit-user-drag: none !important;
+	pointer-events: all;
 }
-#attn-anatomy-2d {
-	flex: 1;
-	min-height: 460px;
-	min-width: 0;
-	overflow: hidden;
-	position: relative;
-	/* Prevent any user-initiated side effects on the plot:
-	   - user-select: no text selection on click/drag
-	   - touch-action: no browser pinch-zoom or scroll-on-touch
-	   - -webkit-tap-highlight-color: no grey flash on tap (mobile) */
-	user-select: none;
-	-webkit-user-select: none;
-	touch-action: none;
-	-webkit-tap-highlight-color: transparent;
-}
-#attn-anatomy-2d * {
-	user-select: none !important;
-	-webkit-user-select: none !important;
-	touch-action: none !important;
-	-webkit-tap-highlight-color: transparent !important;
+/* Invisible fat hover-target lines for each arrow — wider stroke
+   means a more forgiving hover region. */
+.attn-arrow-hit {
+	cursor: pointer;
 }
 
 /* When clicking a section label, the browser scrolls the target to the
@@ -598,13 +580,13 @@ body.theme-dark .attn-vector-tooltip .tt-underline,
 		<div id="attn-anatomy-equation" class="attn-anatomy-equation attn-grid-equation"></div>
 		<div id="attn-section-computation" class="attn-anatomy-computation attn-grid-computation"></div>
 		<div class="attn-anatomy-2d-wrap">
-			<div id="attn-anatomy-2d" style="background: var(--mn-surface, #fff); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;"></div>
-			<!-- Transparent overlay that sits ON TOP of the Plotly canvas.
-			     It captures all mouse events so we can do our own hover
-			     detection (mousemove / click prevention). Without it,
-			     Plotly's SVG children swallow the events before they
-			     bubble up to the chart div. -->
-			<div id="attn-anatomy-2d-overlay"></div>
+			<svg id="attn-anatomy-2d-svg" viewBox="-1.5 -1.5 3 3" preserveAspectRatio="xMidYMid meet">
+				<g class="attn-grid"></g>
+				<g class="attn-axes"></g>
+				<g class="attn-construction"></g>
+				<g class="attn-arrows"></g>
+				<g class="attn-labels"></g>
+			</svg>
 		</div>
 	</div>
 </div>

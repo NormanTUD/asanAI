@@ -673,7 +673,7 @@ const AttentionAnatomy = {
 	step: 0,
 
 	init: function() {
-		if (!document.getElementById('attn-anatomy-2d')) return;
+		if (!document.getElementById('attn-anatomy-2d-svg')) return;
 
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
@@ -682,6 +682,9 @@ const AttentionAnatomy = {
 		// The hover tooltip then just swaps innerHTML — instant, no
 		// re-render cost per hover.
 		this._renderFormulas();
+
+		// Draw the static background (grid + axes) ONCE.
+		this._initSVG();
 
 		// Keyboard navigation: ← / → step through. Skipped while typing
 		// in form fields so this never steals input events.
@@ -693,11 +696,8 @@ const AttentionAnatomy = {
 		};
 		document.addEventListener('keydown', this._keyHandler);
 
-		// Render the plot FIRST. Plotly.react() attaches event-emitter
-		// methods (chart.on / chart.removeAllListeners) to the DOM
-		// node, so we can only wire the hover tooltip AFTER that.
+		// First render — fills in the arrows for step 1.
 		this.render();
-		this._wireTooltip();
 
 		if (window.__MN_DARK) {
 			window.__MN_DARK.onChange(() => this.render());
@@ -1168,15 +1168,222 @@ const AttentionAnatomy = {
 	},
 
 	// ─── 2D vector scene ────────────────────────────────────────────
-	render2D: function(data) {
-		const traces = [];
-		const mode   = data.mode;
+	// SVG namespace constant (Plotly is gone — we render raw SVG now)
+	_SVG_NS: 'http://www.w3.org/2000/svg',
 
-		// Always draw the query unless we're in pure output mode.
-		// Each arrow receives a formula key (q / k / v / weightedV / z)
-		// so the hover tooltip can show its mathematical definition.
+	// Draw the static background: grid lines + axes + axis labels.
+	// Called once from init().
+	_initSVG: function() {
+		const svg = document.getElementById('attn-anatomy-2d-svg');
+		if (!svg) return;
+
+		const NS = this._SVG_NS;
+		const gridG   = svg.querySelector('.attn-grid');
+		const axesG   = svg.querySelector('.attn-axes');
+
+		// Grid lines at every 0.5
+		for (let i = -1; i <= 1; i += 0.5) {
+			if (i === 0) continue;
+			const h = document.createElementNS(NS, 'line');
+			h.setAttribute('x1', -1.4); h.setAttribute('y1', -i);
+			h.setAttribute('x2',  1.4); h.setAttribute('y2', -i);
+			h.setAttribute('stroke', '#e2e8f0'); h.setAttribute('stroke-width', '0.005');
+			gridG.appendChild(h);
+			const v = document.createElementNS(NS, 'line');
+			v.setAttribute('x1', i); v.setAttribute('y1', -1.4);
+			v.setAttribute('x2', i); v.setAttribute('y2',  1.4);
+			v.setAttribute('stroke', '#e2e8f0'); v.setAttribute('stroke-width', '0.005');
+			gridG.appendChild(v);
+		}
+
+		// Axes (thicker, darker)
+		const xa = document.createElementNS(NS, 'line');
+		xa.setAttribute('x1', -1.4); xa.setAttribute('y1', 0);
+		xa.setAttribute('x2',  1.4); xa.setAttribute('y2', 0);
+		xa.setAttribute('stroke', '#94a3b8'); xa.setAttribute('stroke-width', '0.012');
+		axesG.appendChild(xa);
+		const ya = document.createElementNS(NS, 'line');
+		ya.setAttribute('x1', 0); ya.setAttribute('y1', -1.4);
+		ya.setAttribute('x2', 0); ya.setAttribute('y2',  1.4);
+		ya.setAttribute('stroke', '#94a3b8'); ya.setAttribute('stroke-width', '0.012');
+		axesG.appendChild(ya);
+
+		// Axis labels
+		const xl = document.createElementNS(NS, 'text');
+		xl.setAttribute('x', 1.42); xl.setAttribute('y', 0.06);
+		xl.setAttribute('fill', '#475569'); xl.setAttribute('font-size', '0.09');
+		xl.setAttribute('font-family', 'Inter, sans-serif');
+		xl.textContent = 'Dim 1';
+		axesG.appendChild(xl);
+		const yl = document.createElementNS(NS, 'text');
+		yl.setAttribute('x', 0.06); yl.setAttribute('y', -1.42);
+		yl.setAttribute('fill', '#475569'); yl.setAttribute('font-size', '0.09');
+		yl.setAttribute('font-family', 'Inter, sans-serif');
+		yl.textContent = 'Dim 2';
+		axesG.appendChild(yl);
+
+		// Kill ALL click/drag/select side-effects on the SVG itself
+		// (mousedown is what starts a browser drag — blocking click
+		// alone is too late).
+		const swallow = (e) => { e.preventDefault(); e.stopPropagation(); };
+		svg.addEventListener('mousedown',   swallow, true);
+		svg.addEventListener('dragstart',   swallow, true);
+		svg.addEventListener('selectstart', swallow, true);
+	},
+
+	// Draw an arrow from `start` to `end` in the 2D plot. Adds the
+	// hit-area, shaft, arrowhead, and (optional) label to the SVG.
+	// Mouse events fire directly on the hit-area — no Plotly needed.
+	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim) {
+		const NS = this._SVG_NS;
+		const opacity = dim ? 0.35 : 1.0;
+
+		// Flip y for SVG (SVG y goes down, our data y goes up)
+		const sx = start[0], sy = -start[1];
+		const ex = end[0],   ey = -end[1];
+
+		// Invisible fat hit-area for forgiving hover
+		const hit = document.createElementNS(NS, 'line');
+		hit.setAttribute('x1', sx); hit.setAttribute('y1', sy);
+		hit.setAttribute('x2', ex); hit.setAttribute('y2', ey);
+		hit.setAttribute('stroke', 'transparent');
+		hit.setAttribute('stroke-width', '0.18');
+		hit.classList.add('attn-arrow-hit');
+		parent.appendChild(hit);
+
+		// Visible shaft
+		const line = document.createElementNS(NS, 'line');
+		line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+		line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+		line.setAttribute('stroke', color);
+		line.setAttribute('stroke-width', '0.028');
+		line.setAttribute('opacity', opacity);
+		line.style.pointerEvents = 'none';
+		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
+		parent.appendChild(line);
+
+		// Arrowhead (triangle pointing along the vector)
+		const dx = ex - sx, dy = ey - sy;
+		const len = Math.sqrt(dx * dx + dy * dy);
+		if (len > 0.01) {
+			const ux = dx / len, uy = dy / len;
+			const s = 0.11;                     // arrowhead size in data units
+			const c = Math.cos(Math.PI / 6), si = Math.sin(Math.PI / 6);
+			// Rotate (ux,uy) by ±30°
+			const ax1 = ex - s * (ux * c - uy * si);
+			const ay1 = ey - s * (ux * si + uy * c);
+			const ax2 = ex - s * (ux * c + uy * si);
+			const ay2 = ey - s * (-ux * si + uy * c);
+			const head = document.createElementNS(NS, 'polygon');
+			head.setAttribute('points', `${ex},${ey} ${ax1},${ay1} ${ax2},${ay2}`);
+			head.setAttribute('fill', color);
+			head.setAttribute('opacity', opacity);
+			head.style.pointerEvents = 'none';
+			parent.appendChild(head);
+		}
+
+		// Label (with white halo for readability)
+		if (label) {
+			const lx = ex + 0.14;
+			const ly = ey - 0.04;
+			const halo = document.createElementNS(NS, 'text');
+			halo.setAttribute('x', lx); halo.setAttribute('y', ly);
+			halo.setAttribute('text-anchor', 'start');
+			halo.setAttribute('dominant-baseline', 'middle');
+			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
+			halo.setAttribute('stroke-width', '0.045'); halo.setAttribute('paint-order', 'stroke');
+			halo.setAttribute('font-size', '0.12');
+			halo.setAttribute('font-family', 'Inter, sans-serif');
+			halo.textContent = label;
+			halo.style.pointerEvents = 'none';
+			labelsParent.appendChild(halo);
+			const txt = document.createElementNS(NS, 'text');
+			txt.setAttribute('x', lx); txt.setAttribute('y', ly);
+			txt.setAttribute('text-anchor', 'start');
+			txt.setAttribute('dominant-baseline', 'middle');
+			txt.setAttribute('fill', color);
+			txt.setAttribute('font-size', '0.1');
+			txt.setAttribute('opacity', opacity);
+			txt.setAttribute('font-family', 'Inter, sans-serif');
+			txt.textContent = label;
+			txt.style.pointerEvents = 'none';
+			labelsParent.appendChild(txt);
+		}
+
+		// Mouse events fire DIRECTLY on this element. No Plotly, no
+		// overlay, no event-delegation hacks — just plain DOM events.
+		if (formula) {
+			hit.addEventListener('mouseenter', (e) => this._showTooltip(formula, idx, e.clientX, e.clientY));
+			hit.addEventListener('mousemove',  (e) => this._showTooltip(formula, idx, e.clientX, e.clientY));
+			hit.addEventListener('mouseleave', () => this._hideTooltip());
+		}
+	},
+
+	// Standalone tooltip show/hide. Called from SVG mouse events.
+	_showTooltip: function(key, idx, clientX, clientY) {
+		const tip = document.getElementById('attn-vector-tooltip');
+		if (!tip) return;
+		const info = this._buildArrowInfo(key, idx);
+		if (!info) return;
+
+		tip.querySelector('.tt-name').textContent = info.name;
+		tip.querySelector('.tt-equation').innerHTML = info.eqLine;
+		tip.querySelector('.tt-underline').textContent = info.underLabel;
+
+		// Render formula with Temml (with retry + fallback)
+		const formulaEl = tip.querySelector('.tt-formula');
+		const sleep = (ms) => { const s = Date.now(); while (Date.now() - s < ms) {} };
+		if (TEMML_RENDERED[key]) {
+			formulaEl.innerHTML = TEMML_RENDERED[key];
+		} else {
+			formulaEl.innerHTML = `$$ ${info.formulaLatex} $`;
+			for (let i = 0; i < 10; i++) {
+				if (typeof render_temml === 'function') {
+					try { render_temml(formulaEl); } catch (e) {}
+				}
+				if (formulaEl.innerHTML.indexOf('$$') === -1) break;
+				sleep(20);
+			}
+		}
+		if (formulaEl.innerHTML.indexOf('$$') !== -1) {
+			// Fallback: Unicode math
+			formulaEl.innerHTML = `<code style="font-family:'SF Mono','Menlo','Consolas',monospace;font-size:13px;padding:2px 4px">${info.unicode || info.formulaLatex}</code>`;
+		}
+
+		tip.querySelector('.tt-desc').textContent = info.desc;
+		tip.classList.add('active');
+
+		// Position near cursor with edge-flipping
+		const pad = 16;
+		let x = clientX + pad, y = clientY + pad;
+		const r = tip.getBoundingClientRect();
+		if (x + r.width  > window.innerWidth)  x = clientX - r.width  - pad;
+		if (y + r.height > window.innerHeight) y = clientY - r.height - pad;
+		tip.style.left = x + 'px';
+		tip.style.top  = y + 'px';
+	},
+
+	_hideTooltip: function() {
+		const tip = document.getElementById('attn-vector-tooltip');
+		if (tip) tip.classList.remove('active');
+	},
+
+	// Replaces the old Plotly-based render2D. Draws arrows as SVG.
+	render2D: function(data) {
+		const svg = document.getElementById('attn-anatomy-2d-svg');
+		if (!svg) return;
+
+		const arrowsG       = svg.querySelector('.attn-arrows');
+		const labelsG       = svg.querySelector('.attn-labels');
+		const constructionG = svg.querySelector('.attn-construction');
+		arrowsG.innerHTML       = '';
+		labelsG.innerHTML       = '';
+		constructionG.innerHTML = '';
+
+		const mode = data.mode;
+
 		if (mode === 'keys' || mode === 'values') {
-			this.addArrow2D(traces, [0, 0], ATTN_2D.q, '#ef4444', 'q', 1.0, false, false, 'q', 0);
+			this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.q, '#ef4444', 'q', 'q', 0, false, false);
 		}
 
 		if (mode === 'keys') {
@@ -1184,217 +1391,44 @@ const AttentionAnatomy = {
 				const isHi = (data.highlightKey === j);
 				const dim  = (data.highlightKey !== undefined && !isHi);
 				const color = isHi ? '#1e3a8a' : ATTN_TOKENS[j + 1].color;
-				this.addArrow2D(traces, [0, 0], k, color, `k${j+1}`, dim ? 0.35 : 1.0, false, false, 'k', j);
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, color, `k${j+1}`, 'k', j, false, dim);
 			});
 		} else if (mode === 'values' || mode === 'output') {
 			const valColors = ['#16a34a', '#15803d', '#166534'];
 			ATTN_2D.vals.forEach((v, j) => {
 				const dim = (mode === 'output');
-				this.addArrow2D(traces, [0, 0], v, valColors[j], `v${j+1}`, dim ? 0.35 : 1.0, false, false, 'v', j);
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim);
 			});
 
 			if (mode === 'output') {
-				// Weighted (scaled) value vectors from origin
 				ATTN_2D.weightedVals.forEach((wv, j) => {
-					this.addArrow2D(traces, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 0.85, /*dashed*/ true, false, 'weightedV', j);
+					this._addSVGArrow(arrowsG, labelsG, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 'weightedV', j, true, false);
 				});
 
-				// Tip-to-tail construction: α₁v₁ from origin, then α₂v₂
-				// from the tip of α₁v₁, then α₃v₃ from there. These are
-				// auxiliary construction lines — no formula key.
+				// Tip-to-tail construction lines (no formula, no events)
+				const NS = this._SVG_NS;
 				let tip = [0, 0];
 				ATTN_2D.weightedVals.forEach((wv, j) => {
 					const next = [tip[0] + wv[0], tip[1] + wv[1]];
-					this.addArrow2D(traces, tip, next, '#94a3b8', null, 0.65, /*dashed*/ true, /*noMarker*/ true);
+					const line = document.createElementNS(NS, 'line');
+					line.setAttribute('x1', tip[0]); line.setAttribute('y1', -tip[1]);
+					line.setAttribute('x2', next[0]); line.setAttribute('y2', -next[1]);
+					line.setAttribute('stroke', '#94a3b8');
+					line.setAttribute('stroke-width', '0.014');
+					line.setAttribute('stroke-dasharray', '0.03 0.03');
+					line.setAttribute('opacity', '0.65');
+					line.style.pointerEvents = 'none';
+					constructionG.appendChild(line);
 					tip = next;
 				});
 
-				// Output z from origin
-				this.addArrow2D(traces, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 1.0, false, false, 'z', 0);
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 'z', 0, false, false);
 			}
 		}
-
-		const layout = {
-			xaxis: {
-				title: { text: 'Dim 1', font: { color: themeColor('#475569'), size: 11 } },
-				range: [-1.4, 1.4],
-				zeroline: true, zerolinecolor: themeColor('#94a3b8'),
-				zerolinewidth: 2,
-				gridcolor: themeColor('#e2e8f0'),
-				tickfont: { color: themeColor('#94a3b8'), size: 9 },
-				scaleanchor: 'y', scaleratio: 1,
-				constrain: 'domain',
-				automargin: true,
-				fixedrange: true
-			},
-			yaxis: {
-				title: { text: 'Dim 2', font: { color: themeColor('#475569'), size: 11 } },
-				range: [-1.4, 1.4],
-				zeroline: true, zerolinecolor: themeColor('#94a3b8'),
-				zerolinewidth: 2,
-				gridcolor: themeColor('#e2e8f0'),
-				tickfont: { color: themeColor('#94a3b8'), size: 9 },
-				constrain: 'domain',
-				automargin: true,
-				fixedrange: true
-			},
-			paper_bgcolor: themeColor('#fff'),
-			plot_bgcolor: themeColor('#fff'),
-			margin: { l: 40, r: 20, t: 14, b: 40, pad: 0 },
-			showlegend: false,
-			// Disable every Plotly interaction so a click on the plot
-			// can't enter selection / zoom / pan / double-click-reset.
-			// We only want our own hover tooltip.
-			dragmode: false,
-			hovermode: 'closest',
-			selectable: false,
-			// Keep the plot fully inside the container regardless of
-			// grid-column width.
-			autosize: true
-		};
-
-		Plotly.react('attn-anatomy-2d', traces, layout, {
-			responsive: true,
-			displaylogo: false,
-			// Hide the floating modeBar entirely.
-			displayModeBar: false,
-			doubleClick: false,
-			scrollZoom: false,
-			// Disable every interactive feature explicitly.
-			editable: false,
-			showTips: false,
-			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d']
-		});
-
-		// Re-trigger size calc so the plot picks up the final column width
-		// (grid columns can have 0 width at the moment Plotly first mounts).
-		requestAnimationFrame(() => Plotly.relayout('attn-anatomy-2d', {}));
 	},
 
-	// Draw an arrow from `start` to `end` in the 2D plot. The shaft is
-	// a line; the tip is a triangle-up marker rotated to point along
-	// the vector direction. The label is placed PAST the tip in the
-	// direction of the arrow, offset perpendicular to it, so it never
-	// overlaps with the shaft.
-	addArrow2D: function(traces, start, end, color, label, opacity, dashed, noMarker, formula, idx) {
-		const dx = end[0] - start[0];
-		const dy = end[1] - start[1];
-		const len = Math.sqrt(dx * dx + dy * dy);
-		if (len < 0.01) return;
-		const op = (opacity !== undefined) ? opacity : 1.0;
-		const isDashed = !!dashed;
-		// `formula` is a key into VECTOR_FORMULAS. We store BOTH the
-		// key AND the index (for k/v/weightedV variants) in customdata
-		// so the custom HTML tooltip can look up the concrete numbers.
-		const cd = formula ? [{key: formula, idx: idx !== undefined ? idx : null}] : null;
-		// No more Plotly native hover (the ugly one) — the custom
-		// HTML tooltip handles everything.
-		const hoverOff = {hoverinfo: 'none', hovertemplate: false};
+	// (Old Plotly-based addArrow2D removed — replaced by _addSVGArrow above.)
 
-		// Shaft — split into many small segments so Plotly's hover
-		// fires along the WHOLE arrow, not only at the two endpoints.
-		const NSEG = 24;
-		const xs = [], ys = [];
-		for (let s = 0; s <= NSEG; s++) {
-			const t = s / NSEG;
-			xs.push(start[0] + dx * t);
-			ys.push(start[1] + dy * t);
-		}
-		// Invisible fat hover-target trace (drawn first, behind the
-		// visible shaft). Generous 22px hit-area, fully transparent.
-		traces.push({
-			type: 'scatter', mode: 'lines',
-			x: xs, y: ys,
-			line: { color: 'rgba(0,0,0,0)', width: 22, dash: isDashed ? 'dot' : 'solid' },
-			opacity: 0.0,
-			customdata: cd,
-			...hoverOff,
-			showlegend: false
-		});
-		// Visible shaft
-		traces.push({
-			type: 'scatter', mode: 'lines',
-			x: xs, y: ys,
-			line: { color: color, width: 4, dash: isDashed ? 'dot' : 'solid' },
-			opacity: op,
-			customdata: cd,
-			...hoverOff,
-			showlegend: false
-		});
-
-		// Arrowhead (triangle pointing along the vector). Plotly's
-		// `angle` rotates clockwise from the up direction, so the
-		// conversion is `angle = 90° - atan2(dy,dx)`.
-		if (!noMarker) {
-			const angle = 90 - Math.atan2(dy, dx) * 180 / Math.PI;
-			// Invisible fat hover-target marker (larger) — easier to hit
-			traces.push({
-				type: 'scatter', mode: 'markers',
-				x: [end[0]], y: [end[1]],
-				marker: { symbol: 'circle', size: 28, color: 'rgba(0,0,0,0)' },
-				customdata: cd,
-				...hoverOff,
-				showlegend: false
-			});
-			// Visible arrowhead
-			traces.push({
-				type: 'scatter', mode: 'markers',
-				x: [end[0]], y: [end[1]],
-				marker: {
-					symbol: 'triangle-up',
-					size: 16,
-					color: color,
-					angle: angle,
-					line: { width: 1, color: themeColor('#fff') }
-				},
-				opacity: op,
-				customdata: cd,
-				...hoverOff,
-				showlegend: false
-			});
-		}
-
-		// Label — placed past the tip in the arrow's direction, then
-		// nudged perpendicular so the text sits next to the shaft, not
-		// on top of it. Also add a subtle white background so it stays
-		// readable if a later overlay draws near it.
-		if (label) {
-			const nx = dx / len;
-			const ny = dy / len;
-			// Perpendicular (rotated 90° CCW from the arrow direction)
-			const perpX = -ny;
-			const perpY =  nx;
-			const alongDist = 0.22;   // past the arrowhead
-			const perpDist  = 0.14;   // to the side of the shaft
-			const labelX = end[0] + nx * alongDist + perpX * perpDist;
-			const labelY = end[1] + ny * alongDist + perpY * perpDist;
-
-			// White halo first (slightly larger), then the coloured text
-			// on top. This makes the label readable when it crosses
-			// other lines or the axes.
-			traces.push({
-				type: 'scatter', mode: 'text',
-				x: [labelX], y: [labelY],
-				text: [label],
-				textposition: 'middle center',
-				textfont: { size: 14, color: 'rgba(255,255,255,0.92)', family: 'Inter, sans-serif' },
-				customdata: cd,
-				...hoverOff,
-				showlegend: false
-			});
-			traces.push({
-				type: 'scatter', mode: 'text',
-				x: [labelX], y: [labelY],
-				text: [label],
-				textposition: 'middle center',
-				textfont: { size: 13, color: color, family: 'Inter, sans-serif' },
-				opacity: op,
-				customdata: cd,
-				...hoverOff,
-				showlegend: false
-			});
-		}
-	},
 
 	// (Old renderBars removed — the bar chart was redundant with the
 	// "Currently computing" panel, which already shows the same numbers.)
