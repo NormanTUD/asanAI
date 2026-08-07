@@ -651,6 +651,11 @@ const VECTOR_FORMULAS = {
 	}
 };
 
+// Pre-rendered MathML for each vector formula. Filled once by
+// AttentionAnatomy._renderFormulas() so the hover tooltip can swap
+// content instantly without re-running Temml on every hover.
+let TEMML_RENDERED = {};
+
 const AttentionAnatomy = {
 	step: 0,
 
@@ -660,20 +665,10 @@ const AttentionAnatomy = {
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
 
-		// Section labels — clicking scrolls smoothly to that section.
-		// Using event delegation on the labels bar.
-		const labelsBar = document.querySelector('.attn-anatomy-labels');
-		if (labelsBar) {
-			labelsBar.addEventListener('click', (e) => {
-				const label = e.target.closest('.section-label');
-				if (!label) return;
-				const targetId = label.dataset.target;
-				if (targetId) {
-					const target = document.getElementById(targetId);
-					if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
-				}
-			});
-		}
+		// Pre-render the vector formula LaTeX to MathML via Temml, once.
+		// The hover tooltip then just swaps innerHTML — instant, no
+		// re-render cost per hover.
+		this._renderFormulas();
 
 		// Keyboard navigation: ← / → step through. Skipped while typing
 		// in form fields so this never steals input events.
@@ -690,6 +685,25 @@ const AttentionAnatomy = {
 		if (window.__MN_DARK) {
 			window.__MN_DARK.onChange(() => this.render());
 		}
+	},
+
+	// Pre-render each VECTOR_FORMULAS entry's LaTeX to MathML via Temml.
+	// Stored in TEMML_RENDERED (global) so wireTooltip can look it up
+	// on hover. Falls back to the raw LaTeX if Temml isn't available.
+	_renderFormulas: function() {
+		const tmp = document.createElement('div');
+		tmp.style.position = 'absolute';
+		tmp.style.left = '-99999px';
+		tmp.style.top = '0';
+		document.body.appendChild(tmp);
+		for (const key in VECTOR_FORMULAS) {
+			tmp.innerHTML = `$$ ${VECTOR_FORMULAS[key].formula} $`;
+			try {
+				if (typeof render_temml === 'function') render_temml(tmp);
+			} catch (e) {}
+			TEMML_RENDERED[key] = tmp.innerHTML;
+		}
+		document.body.removeChild(tmp);
 	},
 
 	next: function() {
@@ -920,7 +934,8 @@ const AttentionAnatomy = {
 		chart.removeAllListeners && chart.removeAllListeners('plotly_unhover');
 
 		chart.on('plotly_hover', (data) => {
-			const key = data.points?.[0]?.customdata;
+			const cd = data.points?.[0]?.customdata;
+			const key = Array.isArray(cd) ? cd[0] : cd;
 			if (!key || !VECTOR_FORMULAS[key]) return;
 			const info = VECTOR_FORMULAS[key];
 			tip.querySelector('.tt-name').textContent = info.name;
@@ -959,7 +974,7 @@ const AttentionAnatomy = {
 		// 'weightedV', 'z'). When set, hovering the arrow (shaft or
 		// arrowhead) triggers the tooltip that explains where that
 		// vector comes from mathematically.
-		const hasFormula = !!formula;
+		const cd = formula ? [formula] : null;
 
 		// Shaft
 		traces.push({
@@ -967,10 +982,8 @@ const AttentionAnatomy = {
 			x: [start[0], end[0]], y: [start[1], end[1]],
 			line: { color: color, width: 4, dash: isDashed ? 'dot' : 'solid' },
 			opacity: op,
-			customdata: hasFormula ? [formula] : null,
-			showlegend: false,
-			hoverinfo: hasFormula ? 'skip' : 'skip',
-			hoveron: hasFormula ? 'points' : ''
+			customdata: cd,
+			showlegend: false, hoverinfo: 'skip'
 		});
 
 		// Arrowhead (triangle pointing along the vector). Plotly's
@@ -989,10 +1002,8 @@ const AttentionAnatomy = {
 					line: { width: 1, color: themeColor('#fff') }
 				},
 				opacity: op,
-				customdata: hasFormula ? [formula] : null,
-				showlegend: false,
-				hoverinfo: 'skip',
-				hoveron: hasFormula ? 'points' : ''
+				customdata: cd,
+				showlegend: false, hoverinfo: 'skip'
 			});
 		}
 
@@ -1020,7 +1031,7 @@ const AttentionAnatomy = {
 				text: [label],
 				textposition: 'middle center',
 				textfont: { size: 14, color: 'rgba(255,255,255,0.92)', family: 'Inter, sans-serif' },
-				customdata: hasFormula ? [formula] : null,
+				customdata: cd,
 				showlegend: false, hoverinfo: 'skip'
 			});
 			traces.push({
@@ -1030,7 +1041,7 @@ const AttentionAnatomy = {
 				textposition: 'middle center',
 				textfont: { size: 13, color: color, family: 'Inter, sans-serif' },
 				opacity: op,
-				customdata: hasFormula ? [formula] : null,
+				customdata: cd,
 				showlegend: false, hoverinfo: 'skip'
 			});
 		}
