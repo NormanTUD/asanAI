@@ -202,6 +202,7 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	grid-column: 2;
 	grid-row: 2;
 	display: flex;
+	position: relative;
 }
 #attn-anatomy-2d {
 	flex: 1;
@@ -209,6 +210,20 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	min-width: 0;
 	overflow: hidden;
 	position: relative;
+	/* Prevent any user-initiated side effects on the plot:
+	   - user-select: no text selection on click/drag
+	   - touch-action: no browser pinch-zoom or scroll-on-touch
+	   - -webkit-tap-highlight-color: no grey flash on tap (mobile) */
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: none;
+	-webkit-tap-highlight-color: transparent;
+}
+#attn-anatomy-2d * {
+	user-select: none !important;
+	-webkit-user-select: none !important;
+	touch-action: none !important;
+	-webkit-tap-highlight-color: transparent !important;
 }
 
 /* When clicking a section label, the browser scrolls the target to the

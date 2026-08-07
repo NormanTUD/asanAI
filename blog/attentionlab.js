@@ -627,33 +627,46 @@ const VECTOR_FORMULAS = {
 	q: {
 		name: 'q  (the query)',
 		formula: 'q_i \\;=\\; x_i \\, W^Q',
+		unicode: 'qᵢ = xᵢ · W^Q',
 		desc: 'The query of token i. Computed by multiplying the token embedding x_i by the learned query projection matrix W^Q.'
 	},
 	k: {
 		name: 'k  (the key)',
 		formula: 'k_j \\;=\\; x_j \\, W^K',
+		unicode: 'kⱼ = xⱼ · W^K',
 		desc: 'The key of token j. Computed by multiplying the token embedding x_j by the learned key projection matrix W^K. Used to score relevance against queries.'
 	},
 	v: {
 		name: 'v  (the value)',
 		formula: 'v_j \\;=\\; x_j \\, W^V',
+		unicode: 'vⱼ = xⱼ · W^V',
 		desc: 'The value of token j. The actual semantic content this token carries — what gets blended into the output.'
 	},
 	weightedV: {
 		name: 'αⱼ · vⱼ  (attention-weighted value)',
 		formula: '\\alpha_j \\, v_j, \\quad \\alpha_j \\;=\\; \\dfrac{e^{q \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'αⱼ vⱼ,  where  αⱼ = softmax(q · kⱼ / √dₖ)',
 		desc: 'Value vⱼ scaled by its attention weight αⱼ. αⱼ is the softmax of the scaled dot product — a soft "how much does this token matter?" between 0 and 1.'
 	},
 	z: {
 		name: 'z  (the contextualised output)',
 		formula: 'z \\;=\\; \\sum_j \\alpha_j \\, v_j',
+		unicode: 'z = Σⱼ αⱼ vⱼ',
 		desc: 'The contextualised output. A convex combination of all values, each weighted by its attention. Always lives inside the convex hull of the values.'
 	}
 };
 
+// Pre-built Plotly `hovertemplate` strings. Plotly's native hover is the
+// PRIMARY mechanism; the custom HTML tooltip is a fallback that fires
+// from the same `plotly_hover` event for full Temml rendering.
+// Unicode-math version is used in the hovertemplate because Plotly's
+// SVG tooltip may not render raw MathML reliably across browsers.
+let HOVER_TEMPLATES = {};
+
 // Pre-rendered MathML for each vector formula. Filled once by
 // AttentionAnatomy._renderFormulas() so the hover tooltip can swap
 // content instantly without re-running Temml on every hover.
+// Stored in TEMML_RENDERED (global) so _wireTooltip can look it up.
 let TEMML_RENDERED = {};
 
 const AttentionAnatomy = {
@@ -680,16 +693,85 @@ const AttentionAnatomy = {
 		};
 		document.addEventListener('keydown', this._keyHandler);
 
+		// Render the plot FIRST. Plotly.react() attaches event-emitter
+		// methods (chart.on / chart.removeAllListeners) to the DOM
+		// node, so we can only wire the hover tooltip AFTER that.
 		this.render();
+		this._wireTooltip();
 
 		if (window.__MN_DARK) {
 			window.__MN_DARK.onChange(() => this.render());
 		}
 	},
 
+	// Attach plotly hover/unhover listeners once. Each arrow trace
+	// carries a `customdata` key (e.g. 'q', 'k', 'v', 'weightedV', 'z')
+	// that indexes VECTOR_FORMULAS; hovering any segment of the arrow
+	// shaft OR the arrowhead OR the label shows the tooltip.
+	_wireTooltip: function() {
+		const chart = document.getElementById('attn-anatomy-2d');
+		const tip   = document.getElementById('attn-vector-tooltip');
+		// Plotly must have been initialised already — only then does
+		// the DOM node expose the event-emitter API (chart.on).
+		if (!chart || !tip || typeof chart.on !== 'function') return;
+
+		const placeNear = (cx, cy) => {
+			const pad = 16;
+			let x = cx + pad;
+			let y = cy + pad;
+			const r = tip.getBoundingClientRect();
+			if (x + r.width  > window.innerWidth)  x = cx - r.width  - pad;
+			if (y + r.height > window.innerHeight) y = cy - r.height - pad;
+			tip.style.left = x + 'px';
+			tip.style.top  = y + 'px';
+		};
+
+		chart.on('plotly_hover', (data) => {
+			const cd  = data?.points?.[0]?.customdata;
+			const key = Array.isArray(cd) ? cd[0] : cd;
+			if (!key || !VECTOR_FORMULAS[key]) return;
+			const info = VECTOR_FORMULAS[key];
+			tip.querySelector('.tt-name').textContent     = info.name;
+			tip.querySelector('.tt-formula').innerHTML    = TEMML_RENDERED[key] || info.formula;
+			tip.querySelector('.tt-desc').textContent     = info.desc;
+			tip.classList.add('active');
+
+			const evt = data.event;
+			if (evt && evt.clientX !== undefined) {
+				placeNear(evt.clientX, evt.clientY);
+			} else {
+				// Fallback: anchor near the centre of the plot
+				const rect = chart.getBoundingClientRect();
+				placeNear(rect.left + rect.width / 2, rect.top + rect.height / 2);
+			}
+		});
+
+		chart.on('plotly_unhover', () => {
+			tip.classList.remove('active');
+		});
+
+		// Kill ANY residual click / double-click / select behaviour
+		// from Plotly. We never want the plot to do anything on click.
+		chart.on('plotly_click',       () => false);
+		chart.on('plotly_doubleclick', () => false);
+		chart.on('plotly_selected',    () => false);
+
+		// DOM-level safety net: if the cursor leaves the plot entirely,
+		// hide the tooltip — covers the case where plotly_unhover fails.
+		chart.addEventListener('mouseleave', () => tip.classList.remove('active'));
+
+		// DOM-level click safety net: swallow the click so the browser
+		// can't trigger any default behaviour (text-select, scroll,
+		// focus-shift, etc.) that could leave the page looking blank.
+		chart.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+		}, true);
+	},
+
 	// Pre-render each VECTOR_FORMULAS entry's LaTeX to MathML via Temml.
-	// Stored in TEMML_RENDERED (global) so wireTooltip can look it up
-	// on hover. Falls back to the raw LaTeX if Temml isn't available.
+	// Also build Plotly `hovertemplate` strings (Unicode-math variant,
+	// since Plotly's SVG tooltip may not render raw MathML reliably).
 	_renderFormulas: function() {
 		const tmp = document.createElement('div');
 		tmp.style.position = 'absolute';
@@ -697,11 +779,21 @@ const AttentionAnatomy = {
 		tmp.style.top = '0';
 		document.body.appendChild(tmp);
 		for (const key in VECTOR_FORMULAS) {
-			tmp.innerHTML = `$$ ${VECTOR_FORMULAS[key].formula} $`;
+			const info = VECTOR_FORMULAS[key];
+			// 1. Temml-rendered formula for the custom HTML tooltip
+			tmp.innerHTML = `$$ ${info.formula} $`;
 			try {
 				if (typeof render_temml === 'function') render_temml(tmp);
 			} catch (e) {}
 			TEMML_RENDERED[key] = tmp.innerHTML;
+
+			// 2. Plotly native hovertemplate (Unicode math + plain text).
+			//    <extra></extra> hides Plotly's default trace-name box.
+			HOVER_TEMPLATES[key] =
+				`<b style="color:#2563eb">${info.name}</b><br>` +
+				`<span style="font-family:monospace;font-size:13px;background:#f1f5f9;padding:3px 8px;border-radius:4px;display:inline-block;margin:4px 0">${info.unicode}</span><br>` +
+				`<span style="font-size:11px;color:#475569">${info.desc}</span>` +
+				`<extra></extra>`;
 		}
 		document.body.removeChild(tmp);
 	},
@@ -887,7 +979,8 @@ const AttentionAnatomy = {
 				tickfont: { color: themeColor('#94a3b8'), size: 9 },
 				scaleanchor: 'y', scaleratio: 1,
 				constrain: 'domain',
-				automargin: true
+				automargin: true,
+				fixedrange: true
 			},
 			yaxis: {
 				title: { text: 'Dim 2', font: { color: themeColor('#475569'), size: 11 } },
@@ -897,65 +990,40 @@ const AttentionAnatomy = {
 				gridcolor: themeColor('#e2e8f0'),
 				tickfont: { color: themeColor('#94a3b8'), size: 9 },
 				constrain: 'domain',
-				automargin: true
+				automargin: true,
+				fixedrange: true
 			},
 			paper_bgcolor: themeColor('#fff'),
 			plot_bgcolor: themeColor('#fff'),
 			margin: { l: 40, r: 20, t: 14, b: 40, pad: 0 },
 			showlegend: false,
+			// Disable every Plotly interaction so a click on the plot
+			// can't enter selection / zoom / pan / double-click-reset.
+			// We only want our own hover tooltip.
+			dragmode: false,
+			hovermode: 'closest',
+			selectable: false,
 			// Keep the plot fully inside the container regardless of
 			// grid-column width.
 			autosize: true
 		};
 
 		Plotly.react('attn-anatomy-2d', traces, layout, {
-			responsive: true, displaylogo: false,
+			responsive: true,
+			displaylogo: false,
+			// Hide the floating modeBar entirely.
+			displayModeBar: false,
+			doubleClick: false,
+			scrollZoom: false,
+			// Disable every interactive feature explicitly.
+			editable: false,
+			showTips: false,
 			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud', 'lasso2d', 'select2d']
 		});
 
 		// Re-trigger size calc so the plot picks up the final column width
 		// (grid columns can have 0 width at the moment Plotly first mounts).
 		requestAnimationFrame(() => Plotly.relayout('attn-anatomy-2d', {}));
-
-		// Wire up the hover tooltip: hovering an arrow (shaft or
-		// arrowhead) shows its mathematical definition.
-		this.wireTooltip();
-	},
-
-	// Attach plotly hover / unhover handlers that show / hide the
-	// formula tooltip. Each arrow trace carries a `customdata` key
-	// (e.g. 'q', 'k', 'v', 'weightedV', 'z') that indexes VECTOR_FORMULAS.
-	wireTooltip: function() {
-		const chart = document.getElementById('attn-anatomy-2d');
-		const tip   = document.getElementById('attn-vector-tooltip');
-		if (!chart || !tip) return;
-
-		chart.removeAllListeners && chart.removeAllListeners('plotly_hover');
-		chart.removeAllListeners && chart.removeAllListeners('plotly_unhover');
-
-		chart.on('plotly_hover', (data) => {
-			const cd = data.points?.[0]?.customdata;
-			const key = Array.isArray(cd) ? cd[0] : cd;
-			if (!key || !VECTOR_FORMULAS[key]) return;
-			const info = VECTOR_FORMULAS[key];
-			tip.querySelector('.tt-name').textContent = info.name;
-			tip.querySelector('.tt-formula').innerHTML = TEMML_RENDERED[key] || info.formula;
-			tip.querySelector('.tt-desc').textContent = info.desc;
-			tip.classList.add('active');
-			// Position near the cursor, but flip if too close to the
-			// right/bottom edge so the tooltip stays on screen.
-			const pad = 16;
-			let x = data.event.clientX + pad;
-			let y = data.event.clientY + pad;
-			const tipRect = tip.getBoundingClientRect();
-			if (x + tipRect.width  > window.innerWidth)  x = data.event.clientX - tipRect.width - pad;
-			if (y + tipRect.height > window.innerHeight) y = data.event.clientY - tipRect.height - pad;
-			tip.style.left = x + 'px';
-			tip.style.top  = y + 'px';
-		});
-		chart.on('plotly_unhover', () => {
-			tip.classList.remove('active');
-		});
 	},
 
 	// Draw an arrow from `start` to `end` in the 2D plot. The shaft is
@@ -970,20 +1038,44 @@ const AttentionAnatomy = {
 		if (len < 0.01) return;
 		const op = (opacity !== undefined) ? opacity : 1.0;
 		const isDashed = !!dashed;
-		// `formula` is a key into VECTOR_FORMULAS (e.g. 'q', 'k', 'v',
-		// 'weightedV', 'z'). When set, hovering the arrow (shaft or
-		// arrowhead) triggers the tooltip that explains where that
-		// vector comes from mathematically.
-		const cd = formula ? [formula] : null;
+		// `formula` is a key into VECTOR_FORMULAS / HOVER_TEMPLATES.
+		// When set, hovering the arrow (shaft or arrowhead) shows
+		// both Plotly's native tooltip (via hovertemplate) AND the
+		// custom HTML tooltip (via plotly_hover).
+		const cd  = formula ? [formula] : null;
+		const ht  = formula ? (HOVER_TEMPLATES[formula] || '') : '';
 
-		// Shaft
+		// Shaft — split into many small segments so Plotly's hover
+		// fires along the WHOLE arrow, not only at the two endpoints.
+		const NSEG = 24;
+		const xs = [], ys = [];
+		for (let s = 0; s <= NSEG; s++) {
+			const t = s / NSEG;
+			xs.push(start[0] + dx * t);
+			ys.push(start[1] + dy * t);
+		}
+		// Invisible fat hover-target trace (drawn first, behind the
+		// visible shaft). Generous 22px hit-area, fully transparent.
 		traces.push({
 			type: 'scatter', mode: 'lines',
-			x: [start[0], end[0]], y: [start[1], end[1]],
+			x: xs, y: ys,
+			line: { color: 'rgba(0,0,0,0)', width: 22, dash: isDashed ? 'dot' : 'solid' },
+			opacity: 0.0,
+			customdata: cd,
+			hovertemplate: ht,
+			hoverinfo: ht ? 'text' : 'skip',
+			showlegend: false
+		});
+		// Visible shaft
+		traces.push({
+			type: 'scatter', mode: 'lines',
+			x: xs, y: ys,
 			line: { color: color, width: 4, dash: isDashed ? 'dot' : 'solid' },
 			opacity: op,
 			customdata: cd,
-			showlegend: false, hoverinfo: 'skip'
+			hovertemplate: ht,
+			hoverinfo: ht ? 'text' : 'skip',
+			showlegend: false
 		});
 
 		// Arrowhead (triangle pointing along the vector). Plotly's
@@ -991,6 +1083,17 @@ const AttentionAnatomy = {
 		// conversion is `angle = 90° - atan2(dy,dx)`.
 		if (!noMarker) {
 			const angle = 90 - Math.atan2(dy, dx) * 180 / Math.PI;
+			// Invisible fat hover-target marker (larger) — easier to hit
+			traces.push({
+				type: 'scatter', mode: 'markers',
+				x: [end[0]], y: [end[1]],
+				marker: { symbol: 'circle', size: 28, color: 'rgba(0,0,0,0)' },
+				customdata: cd,
+				hovertemplate: ht,
+				hoverinfo: ht ? 'text' : 'skip',
+				showlegend: false
+			});
+			// Visible arrowhead
 			traces.push({
 				type: 'scatter', mode: 'markers',
 				x: [end[0]], y: [end[1]],
@@ -1003,7 +1106,9 @@ const AttentionAnatomy = {
 				},
 				opacity: op,
 				customdata: cd,
-				showlegend: false, hoverinfo: 'skip'
+				hovertemplate: ht,
+				hoverinfo: ht ? 'text' : 'skip',
+				showlegend: false
 			});
 		}
 
@@ -1032,7 +1137,9 @@ const AttentionAnatomy = {
 				textposition: 'middle center',
 				textfont: { size: 14, color: 'rgba(255,255,255,0.92)', family: 'Inter, sans-serif' },
 				customdata: cd,
-				showlegend: false, hoverinfo: 'skip'
+				hovertemplate: ht,
+				hoverinfo: ht ? 'text' : 'skip',
+				showlegend: false
 			});
 			traces.push({
 				type: 'scatter', mode: 'text',
@@ -1042,7 +1149,9 @@ const AttentionAnatomy = {
 				textfont: { size: 13, color: color, family: 'Inter, sans-serif' },
 				opacity: op,
 				customdata: cd,
-				showlegend: false, hoverinfo: 'skip'
+				hovertemplate: ht,
+				hoverinfo: ht ? 'text' : 'skip',
+				showlegend: false
 			});
 		}
 	},
