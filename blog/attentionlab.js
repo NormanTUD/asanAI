@@ -1372,7 +1372,7 @@ const AttentionAnatomy = {
 	// key direction (both drawn from the origin). A fat transparent
 	// copy of the arc acts as the hit-area; hovering it shows the
 	// intuitive meaning of that angle.
-	_addAngleArc: function(parent, q, k, color, idx, dim) {
+	_addAngleArc: function(parent, labelsParent, q, k, color, idx, dim) {
 		const NS = this._SVG_NS;
 		const r = 0.45;
 
@@ -1409,6 +1409,40 @@ const AttentionAnatomy = {
 		hit.addEventListener('mouseenter', (e) => this._showTooltip('angle', idx, e.clientX, e.clientY));
 		hit.addEventListener('mousemove',  (e) => this._showTooltip('angle', idx, e.clientX, e.clientY));
 		hit.addEventListener('mouseleave', () => this._hideTooltip());
+
+		// When the angle is meaningful (this key is not dimmed) show its
+		// degree value right on the arc. This is the whole story of WHY
+		// attention works: k₁ sits ~5° from q → huge score; k₃ ~152° →
+		// strongly negative. Small angle = same direction = attention.
+		if (!dim) {
+			const cosT = Math.max(-1, Math.min(1, (q[0]*k[0] + q[1]*k[1]) /
+				(Math.hypot(q[0], q[1]) * Math.hypot(k[0], k[1]))));
+			const deg = Math.round(Math.acos(cosT) * 180 / Math.PI);
+			const midA = aq + d / 2;
+			const lx = (r + 0.14) * Math.cos(midA);
+			const ly = -(r + 0.14) * Math.sin(midA);
+			const mkLabel = (halo) => {
+				const t = document.createElementNS(NS, 'text');
+				t.setAttribute('x', lx); t.setAttribute('y', ly);
+				t.setAttribute('text-anchor', 'middle');
+				t.setAttribute('dominant-baseline', 'middle');
+				if (halo) {
+					t.setAttribute('fill', '#fff');
+					t.setAttribute('stroke', '#fff');
+					t.setAttribute('stroke-width', '0.014');
+					t.setAttribute('paint-order', 'stroke');
+				} else {
+					t.setAttribute('fill', color);
+				}
+				t.setAttribute('font-size', '0.072');
+				t.setAttribute('font-family', 'Inter, sans-serif');
+				t.textContent = `θ≈${deg}°`;
+				t.style.pointerEvents = 'none';
+				labelsParent.appendChild(t);
+			};
+			mkLabel(true);
+			mkLabel(false);
+		}
 	},
 
 	// Draw an arrow from `start` to `end` in the 2D plot. Adds the
@@ -1584,6 +1618,79 @@ const AttentionAnatomy = {
 	// only the left panels changing. Everything renders into the
 	// construction/labels layers, which render2D clears on every step.
 
+	// Darken a hex color by a factor (0..1). Used to distinguish the two
+	// per-dimension product blocks that build up each score bar.
+	_shade: function(hex, f) {
+		const n = parseInt(hex.slice(1), 16);
+		const r = Math.round(((n >> 16) & 255) * f);
+		const g = Math.round(((n >> 8) & 255) * f);
+		const b = Math.round((n & 255) * f);
+		return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+	},
+
+	// Muted sub-labels showing the LENGTH of the query and each key —
+	// the two ingredients of cos θ = q·k/(‖q‖‖k‖). Reads as a pair with
+	// the arrow labels ("k₁" + "‖k₁‖=1.01") so the geometry behind the
+	// attention score is visible without hovering.
+	_addMagnitudeLabels2D: function(labelsG, data) {
+		const NS = this._SVG_NS;
+		const norm = (v) => Math.hypot(v[0], v[1]);
+		const mk = (x, y, str, anchor) => {
+			const a = anchor || 'start';
+			const halo = document.createElementNS(NS, 'text');
+			halo.setAttribute('x', x); halo.setAttribute('y', y);
+			halo.setAttribute('text-anchor', a);
+			halo.setAttribute('dominant-baseline', 'middle');
+			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
+			halo.setAttribute('stroke-width', '0.012'); halo.setAttribute('paint-order', 'stroke');
+			halo.setAttribute('font-size', '0.065');
+			halo.setAttribute('font-family', 'Inter, sans-serif');
+			halo.textContent = str;
+			halo.style.pointerEvents = 'none';
+			labelsG.appendChild(halo);
+			const txt = document.createElementNS(NS, 'text');
+			txt.setAttribute('x', x); txt.setAttribute('y', y);
+			txt.setAttribute('text-anchor', a);
+			txt.setAttribute('dominant-baseline', 'middle');
+			txt.setAttribute('fill', themeColor('#64748b'));
+			txt.setAttribute('font-size', '0.065');
+			txt.setAttribute('font-family', 'Inter, sans-serif');
+			txt.textContent = str;
+			txt.style.pointerEvents = 'none';
+			labelsG.appendChild(txt);
+		};
+
+		const q = ATTN_2D.q;
+		const aq = Math.atan2(q[1], q[0]);
+		const NEAR = 25 * Math.PI / 180;
+
+		// Query magnitude: tucked just below q's tip label (which sits
+		// above the tip at (q + 0.14, -q - 0.04)), so the two never touch.
+		mk(q[0] + 0.10, -q[1] + 0.12, `‖q‖=${norm(q).toFixed(2)}`);
+
+		ATTN_2D.keys.forEach((k, j) => {
+			if (data.highlightKey !== undefined && data.highlightKey !== j) return;
+			const ak = Math.atan2(k[1], k[0]);
+			const nearQ = Math.abs(Math.atan2(Math.sin(ak - aq), Math.cos(ak - aq))) < NEAR;
+
+			if (nearQ) {
+				// Nearly collinear with q: its magnitude label would fight
+				// with q's, so ride the shaft itself — anchored mid-vector,
+				// offset perpendicular to the direction, clear of the tips.
+				const n = norm(k);
+				const u = [k[0] / n, k[1] / n];
+				const off = 0.14;
+				const sx = 0.5 * k[0] - u[1] * off;
+				const sy = 0.5 * k[1] + u[0] * off;
+				mk(sx, -sy, `‖k${j+1}‖=${n.toFixed(2)}`, 'middle');
+			} else {
+				// Otherwise mirror the tip label: below-right of the tip,
+				// with a little extra x-margin so it never kisses the y-axis.
+				mk(k[0] + 0.10, -k[1] + 0.12, `‖k${j+1}‖=${norm(k).toFixed(2)}`);
+			}
+		});
+	},
+
 	// Step "components": q[d]·k[d] as rectangle AREAS — one rectangle
 	// per dimension (area = product), plus dashed drop-lines from the
 	// highlighted key tip and the query tip down to each axis.
@@ -1618,7 +1725,10 @@ const AttentionAnatomy = {
 			if (label) {
 				const t = document.createElementNS(NS, 'text');
 				t.setAttribute('x', Math.min(x0, x1) + 0.05);
-				t.setAttribute('y', -(Math.max(y0, y1) + Math.min(y0, y1)) / 2 + 0.035);
+				// Caption ABOVE the rect (not inside): the rectangles sit
+				// right where the angle arcs + their θ labels live, so an
+				// in-rect label would collide with them.
+				t.setAttribute('y', -Math.max(y0, y1) - 0.055);
 				t.setAttribute('fill', color);
 				t.setAttribute('font-size', '0.085');
 				t.setAttribute('font-family', 'Inter, sans-serif');
@@ -1713,32 +1823,22 @@ const AttentionAnatomy = {
 		});
 	},
 
-	// Step "dot"/"scaled"/"exps": a side-by-side bar chart drawn across
-	// the top of the plot. Positive values hang below the baseline,
-	// negative above it, so you can watch the scores shrink under 1/√2
-	// and then explode under exp(). One bar per key, token-colored.
-	// `tipKey` decides which tooltip each bar shows ('bar-score' etc.).
-	_drawValueBars2D: function(constructionG, labelsG, values, valueTexts, colors, tipKey) {
+	// The score bars are drawn as STACKED BUILDING BLOCKS so the user can
+	// see where each bar comes from: the dot product is just the sum of
+	// the per-dimension products q[1]·kⱼ[1] and q[2]·kⱼ[2]. Positive
+	// products stack downward from the baseline, negative ones upward, so
+	// an agreeing key makes a tall bar while a mixed key visibly cancels.
+	// The per-key caption "0.90 + 0.18 = 1.08" spells out the blocks.
+	_drawScoreBlocks2D: function(constructionG, labelsG) {
 		const NS = this._SVG_NS;
-		const m = values.length;
+		const q = ATTN_2D.q;
+		const m = ATTN_2D.keys.length;
 		if (!m) return;
-		const maxA = Math.max.apply(null, values.map((v) => Math.abs(v)).concat([1e-9]));
+		const maxA = Math.max.apply(null, ATTN_2D.scores.map((v) => Math.abs(v)).concat([1e-9]));
 		const x0 = -1.2, x1 = 1.2;
 		const w = (x1 - x0) / m;
 		const baseY = -1.14;
 		const maxH  = 0.20;
-
-		const mkText = (x, y, str, fill, size) => {
-			const t = document.createElementNS(NS, 'text');
-			t.setAttribute('x', x); t.setAttribute('y', y);
-			t.setAttribute('text-anchor', 'middle');
-			t.setAttribute('fill', fill);
-			t.setAttribute('font-size', size || '0.085');
-			t.setAttribute('font-family', 'Inter, sans-serif');
-			t.textContent = str;
-			t.style.pointerEvents = 'none';
-			labelsG.appendChild(t);
-		};
 
 		// Baseline (zero)
 		const axis = document.createElementNS(NS, 'line');
@@ -1749,51 +1849,235 @@ const AttentionAnatomy = {
 		axis.style.pointerEvents = 'none';
 		constructionG.appendChild(axis);
 
-		values.forEach((v, j) => {
-			const h = (Math.abs(v) / maxA) * maxH;
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const p1 = q[0] * k[0], p2 = q[1] * k[1];
+			const products = [p1, p2];
 			const cx = x0 + w * (j + 0.5);
 			const bw = Math.max(w - 0.14, 0.06);
-			const rect = document.createElementNS(NS, 'rect');
-			if (v >= 0) {
-				rect.setAttribute('x', cx - bw / 2);
-				rect.setAttribute('y', baseY);
-				rect.setAttribute('width', bw);
-				rect.setAttribute('height', h);
-			} else {
-				rect.setAttribute('x', cx - bw / 2);
-				rect.setAttribute('y', baseY - h);
-				rect.setAttribute('width', bw);
-				rect.setAttribute('height', h);
-			}
-			rect.setAttribute('fill', colors[j] || '#3b82f6');
-			rect.setAttribute('fill-opacity', '0.9');
-			rect.style.cursor = 'help';
-			constructionG.appendChild(rect);
+			const hOf = (p) => (Math.abs(p) / maxA) * maxH;
 
-			// Hover a bar to see what this number is and where it came from
-			if (tipKey) {
-				rect.addEventListener('mouseenter', (e) => this._showTooltip(tipKey, j, e.clientX, e.clientY));
-				rect.addEventListener('mousemove',  (e) => this._showTooltip(tipKey, j, e.clientX, e.clientY));
+			// Running edge (SVG y, grows downward); start on the baseline.
+			let edge = baseY;
+			products.forEach((p, di) => {
+				const h = hOf(p);
+				const y0 = (p >= 0) ? edge : edge - h;
+				const rect = document.createElementNS(NS, 'rect');
+				rect.setAttribute('x', cx - bw / 2);
+				rect.setAttribute('y', y0);
+				rect.setAttribute('width', bw);
+				rect.setAttribute('height', Math.max(h, 0.006));
+				rect.setAttribute('fill', di === 0 ? color : this._shade(color, 0.5));
+				rect.setAttribute('fill-opacity', '0.9');
+				rect.setAttribute('stroke', color);
+				rect.setAttribute('stroke-opacity', '0.5');
+				rect.setAttribute('stroke-width', '0.008');
+				rect.style.cursor = 'help';
+				constructionG.appendChild(rect);
+				rect.addEventListener('mouseenter', (e) => this._showTooltip('bar-score', j, e.clientX, e.clientY));
+				rect.addEventListener('mousemove',  (e) => this._showTooltip('bar-score', j, e.clientX, e.clientY));
 				rect.addEventListener('mouseleave', () => this._hideTooltip());
-			}
+				edge += (p >= 0 ? 1 : -1) * h;
+			});
 
-			mkText(cx, (v >= 0) ? baseY + h + 0.10 : baseY + 0.10, `k${j+1} = ${valueTexts[j]}`, themeColor('#334155'));
+			// Caption above this key's stack: the blocks as one equation.
+			const signed = (x) => (x < 0 ? '-' + Math.abs(x).toFixed(2) : x.toFixed(2));
+			const cap = document.createElementNS(NS, 'text');
+			cap.setAttribute('x', cx);
+			cap.setAttribute('y', baseY - maxH - 0.10);
+			cap.setAttribute('text-anchor', 'middle');
+			cap.setAttribute('fill', themeColor('#334155'));
+			cap.setAttribute('font-size', '0.065');
+			cap.setAttribute('font-family', 'Inter, sans-serif');
+			cap.textContent = `${signed(p1)} ${p2 < 0 ? '−' : '+'} ${signed(p2)} = ${signed(ATTN_2D.scores[j])}`;
+			cap.style.pointerEvents = 'none';
+			labelsG.appendChild(cap);
 		});
 	},
 
-	// Step "weights": a stacked bar spanning the full width, segmented
-	// by each attention weight — the visual of "the weights sum to 100%".
+	// Step "scaled": the previous step's score bars shown as faint dashed
+	// ghosts behind the solid scaled bars, so the "÷ √2" shrink is visible
+	// bar by bar. Same baseline, same max scale, so the ghosts sit exactly
+	// where the score bars were one step ago.
+	_drawScaledBars2D: function(constructionG, labelsG) {
+		this._drawBeforeAfterBars2D(constructionG, labelsG, ATTN_2D.scores, ATTN_2D.scaled, 'bar-score', 'bar-scaled', '÷ √2');
+	},
+
+	// Step "exps": the scaled scores as ghosts behind the exp() bars.
+	// Positive inputs grow, negative inputs flip above the line and
+	// shrink toward 0 — the whole softmax amplification in one picture.
+	_drawExpBars2D: function(constructionG, labelsG) {
+		this._drawBeforeAfterBars2D(constructionG, labelsG, ATTN_2D.scaled, ATTN_2D.exps, 'bar-scaled', 'bar-exp', 'eˣ');
+	},
+
+	// Shared engine for the before/after bar steps: for each key draw the
+	// ghost bar (the input value, dashed + translucent) and the solid bar
+	// (the output value) on top, both hanging from the same baseline and
+	// scaled against the SAME max, so the eye directly reads the growth
+	// or the shrink. `opTag` is the operation label ("÷ √2", "eˣ") shown
+	// at the left edge of the row.
+	_drawBeforeAfterBars2D: function(constructionG, labelsG, inputVals, outputVals, tipIn, tipOut, opTag) {
+		const NS = this._SVG_NS;
+		const m = inputVals.length;
+		if (!m) return;
+		const maxA = Math.max.apply(null, ATTN_2D.scores.map((v) => Math.abs(v)).concat([1e-9]));
+		const x0 = -1.2, x1 = 1.2;
+		const w = (x1 - x0) / m;
+		const baseY = -1.14;
+		const maxH  = 0.20;
+
+		// Baseline (zero)
+		const axis = document.createElementNS(NS, 'line');
+		axis.setAttribute('x1', x0); axis.setAttribute('y1', baseY);
+		axis.setAttribute('x2', x1); axis.setAttribute('y2', baseY);
+		axis.setAttribute('stroke', themeColor('#94a3b8'));
+		axis.setAttribute('stroke-width', '0.006');
+		axis.style.pointerEvents = 'none';
+		constructionG.appendChild(axis);
+
+		// Operation label at the left edge of the row, e.g. "÷ √2".
+		if (opTag) {
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', x0); t.setAttribute('y', baseY - 0.10);
+			t.setAttribute('text-anchor', 'start');
+			t.setAttribute('fill', themeColor('#64748b'));
+			t.setAttribute('font-size', '0.07');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = opTag;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		}
+
+		const barRect = (v, cx, bw) => {
+			const h = (Math.abs(v) / maxA) * maxH;
+			const rect = document.createElementNS(NS, 'rect');
+			if (v >= 0) { rect.setAttribute('x', cx - bw / 2); rect.setAttribute('y', baseY); rect.setAttribute('height', h); }
+			else        { rect.setAttribute('x', cx - bw / 2); rect.setAttribute('y', baseY - h); rect.setAttribute('height', h); }
+			return rect;
+		};
+
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const cx = x0 + w * (j + 0.5);
+			const bw = Math.max(w - 0.14, 0.06);
+			const vin = inputVals[j], vout = outputVals[j];
+
+			// Ghost: the input bar, just outlines so the solid bar shows through.
+			const ghost = barRect(vin, cx, bw);
+			ghost.setAttribute('fill', color);
+			ghost.setAttribute('fill-opacity', '0.14');
+			ghost.setAttribute('stroke', color);
+			ghost.setAttribute('stroke-opacity', '0.45');
+			ghost.setAttribute('stroke-width', '0.008');
+			ghost.setAttribute('stroke-dasharray', '0.025 0.025');
+			ghost.style.cursor = 'help';
+			constructionG.appendChild(ghost);
+			ghost.addEventListener('mouseenter', (e) => this._showTooltip(tipIn, j, e.clientX, e.clientY));
+			ghost.addEventListener('mousemove',  (e) => this._showTooltip(tipIn, j, e.clientX, e.clientY));
+			ghost.addEventListener('mouseleave', () => this._hideTooltip());
+
+			// Solid: the output bar.
+			const solid = barRect(vout, cx, bw);
+			solid.setAttribute('fill', color);
+			solid.setAttribute('fill-opacity', '0.9');
+			solid.setAttribute('stroke', color);
+			solid.setAttribute('stroke-opacity', '0.5');
+			solid.setAttribute('stroke-width', '0.008');
+			solid.style.cursor = 'help';
+			constructionG.appendChild(solid);
+			solid.addEventListener('mouseenter', (e) => this._showTooltip(tipOut, j, e.clientX, e.clientY));
+			solid.addEventListener('mousemove',  (e) => this._showTooltip(tipOut, j, e.clientX, e.clientY));
+			solid.addEventListener('mouseleave', () => this._hideTooltip());
+
+			// Caption above the pair, e.g. "k₁: 1.08 → 0.76".
+			const cap = document.createElementNS(NS, 'text');
+			cap.setAttribute('x', cx);
+			cap.setAttribute('y', baseY - maxH - 0.10);
+			cap.setAttribute('text-anchor', 'middle');
+			cap.setAttribute('fill', themeColor('#334155'));
+			cap.setAttribute('font-size', '0.065');
+			cap.setAttribute('font-family', 'Inter, sans-serif');
+			cap.textContent = `${vin.toFixed(2)} → ${vout.toFixed(2)}`;
+			cap.style.pointerEvents = 'none';
+			labelsG.appendChild(cap);
+		});
+	},
+
+	// Step "weights": softmax as a RENORMALIZATION. The raw exp(score)
+	// values are drawn as a full-width strip above (same proportional
+	// segments as the weight bar — because weight_j = exp_j / Σ). The
+	// "÷ Σ" divider between them is the entire operation: divide the
+	// exp strip by the sum and you get the attention bar, unchanged in
+	// shape, re-scaled so it sums to exactly 100%.
 	_drawWeightBar2D: function(constructionG, labelsG) {
 		const NS = this._SVG_NS;
 		const w = ATTN_2D.weights;
+		const ex = ATTN_2D.exps;
+		const sumEx = ex.reduce((a, b) => a + b, 0);
 		const x0 = -1.2, x1 = 1.2;
 		const span = x1 - x0;
 		const baseY = -1.14, h = 0.16;
+
+		// The raw exp(score) strip — the INPUT to softmax.
+		const stripY = -1.43, stripH = 0.07;
 		let acc = 0;
+		ex.forEach((e, j) => {
+			const xl = x0 + acc * span;
+			const xr = x0 + (acc + e / sumEx) * span;
+			const rect = document.createElementNS(NS, 'rect');
+			rect.setAttribute('x', xl);
+			rect.setAttribute('y', stripY);
+			rect.setAttribute('width', Math.max(xr - xl, 0.01));
+			rect.setAttribute('height', stripH);
+			rect.setAttribute('fill', this._shade(ATTN_TOKENS[j + 1].color, 0.7));
+			rect.setAttribute('fill-opacity', '0.9');
+			rect.style.cursor = 'help';
+			constructionG.appendChild(rect);
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('bar-exp', j, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('bar-exp', j, e.clientX, e.clientY));
+			rect.addEventListener('mouseleave', () => this._hideTooltip());
+
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', (xl + xr) / 2);
+			t.setAttribute('y', stripY + stripH / 2);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('dominant-baseline', 'middle');
+			t.setAttribute('fill', '#fff');
+			t.setAttribute('font-size', '0.062');
+			t.setAttribute('font-weight', 'bold');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = e.toFixed(2);
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+			acc += e / sumEx;
+		});
+
+		// "exp" tag on the strip + the ÷ Σ divider.
+		const tag = document.createElementNS(NS, 'text');
+		tag.setAttribute('x', x0);
+		tag.setAttribute('y', stripY - 0.05);
+		tag.setAttribute('text-anchor', 'start');
+		tag.setAttribute('fill', themeColor('#64748b'));
+		tag.setAttribute('font-size', '0.062');
+		tag.setAttribute('font-family', 'Inter, sans-serif');
+		tag.textContent = 'eˢ';
+		tag.style.pointerEvents = 'none';
+		labelsG.appendChild(tag);
+
+		const div = document.createElementNS(NS, 'text');
+		div.setAttribute('x', 0);
+		div.setAttribute('y', -1.30);
+		div.setAttribute('text-anchor', 'middle');
+		div.setAttribute('fill', themeColor('#64748b'));
+		div.setAttribute('font-size', '0.07');
+		div.setAttribute('font-family', 'Inter, sans-serif');
+		div.textContent = `÷ Σ = ${sumEx.toFixed(3)}`;
+		div.style.pointerEvents = 'none';
+		labelsG.appendChild(div);
 
 		const title = document.createElementNS(NS, 'text');
 		title.setAttribute('x', 0);
-		title.setAttribute('y', baseY - 0.08);
+		title.setAttribute('y', baseY - 0.065);
 		title.setAttribute('text-anchor', 'middle');
 		title.setAttribute('fill', themeColor('#64748b'));
 		title.setAttribute('font-size', '0.075');
@@ -1802,6 +2086,7 @@ const AttentionAnatomy = {
 		title.style.pointerEvents = 'none';
 		labelsG.appendChild(title);
 
+		acc = 0;
 		w.forEach((wi, j) => {
 			const xl = x0 + acc * span;
 			const xr = x0 + (acc + wi) * span;
@@ -1841,9 +2126,11 @@ const AttentionAnatomy = {
 			const v = ATTN_2D.vals[j];
 			const t = document.createElementNS(NS, 'text');
 			t.setAttribute('x', v[0] + 0.14);
-			t.setAttribute('y', -v[1] - 0.10);
+			// Below the value's tip label (which sits at -v[1]-0.04), far
+			// enough that the two stacked labels never touch.
+			t.setAttribute('y', -v[1] - 0.16);
 			t.setAttribute('fill', '#15803d');
-			t.setAttribute('font-size', '0.085');
+			t.setAttribute('font-size', '0.08');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `α${j+1} = ${(wi * 100).toFixed(1)}%`;
 			t.style.cursor = 'help';
@@ -1927,24 +2214,47 @@ const AttentionAnatomy = {
 				const isHi = (data.highlightKey === j);
 				const dim  = (data.highlightKey !== undefined && !isHi);
 				const color = isHi ? '#1e3a8a' : ATTN_TOKENS[j + 1].color;
-				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, color, `k${j+1}`, 'k', j, false, dim);
-				if (anglesG) this._addAngleArc(anglesG, ATTN_2D.q, k, color, j, dim);
+
+				// A key that sits within ~25° of the query is so close that
+				// its tip label would sit right on top of q's — push it a
+				// little further out along the shaft instead. And in the
+				// weights step the weight-bar's α labels live in a band
+				// below the plot center, so any key whose tip label would
+				// land in that band flips to the far side of the arrowhead.
+				const ang = Math.atan2(k[1], k[0]);
+				const aq  = Math.atan2(ATTN_2D.q[1], ATTN_2D.q[0]);
+				const gap = Math.abs(Math.atan2(Math.sin(ang - aq), Math.cos(ang - aq)));
+				const nearQ = gap < 25 * Math.PI / 180;
+				const labelY = -k[1] - 0.04;
+				const inBarBand = (comp === 'weights' && labelY >= -1.05 && labelY <= -0.75);
+				const lpos = inBarBand ? [-0.20, 0.04]
+					: (nearQ ? [0.14, -0.14] : undefined);
+
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, color, `k${j+1}`, 'k', j, false, dim, lpos);
+				if (anglesG) this._addAngleArc(anglesG, labelsG, ATTN_2D.q, k, color, j, dim);
 			});
+
+			// The lengths that feed cos θ = q·k/(‖q‖‖k‖), as muted
+			// sub-labels — so the score's geometric ingredients are
+			// visible in the scene, not only in a tooltip.
+			this._addMagnitudeLabels2D(labelsG, data);
 
 			// Per-step overlays: show the vectors being worked on —
 			// product rectangles, projections, score bars, weight bar.
+			// Each later step shows the previous step's bars as a faint
+			// "ghost" so the chain score → scaled → exp is visible.
 			const tokenColors = ATTN_TOKENS.slice(1).map((t) => t.color);
 			if (comp === 'components') {
 				this._drawComponents2D(constructionG, labelsG, data.highlightKey);
 			} else if (comp === 'dot') {
 				this._drawProjections2D(constructionG);
-				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scores, ATTN_2D.scores.map((s) => s.toFixed(2)), tokenColors, 'bar-score');
+				this._drawScoreBlocks2D(constructionG, labelsG);
 			} else if (comp === 'scaled') {
 				this._drawProjections2D(constructionG);
-				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scaled, ATTN_2D.scaled.map((s) => s.toFixed(3)), tokenColors, 'bar-scaled');
+				this._drawScaledBars2D(constructionG, labelsG);
 			} else if (comp === 'exps') {
 				this._drawProjections2D(constructionG);
-				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.exps, ATTN_2D.exps.map((e) => e.toFixed(3)), tokenColors, 'bar-exp');
+				this._drawExpBars2D(constructionG, labelsG);
 			} else if (comp === 'weights') {
 				this._drawProjections2D(constructionG);
 				this._drawWeightBar2D(constructionG, labelsG);
@@ -1954,11 +2264,14 @@ const AttentionAnatomy = {
 			ATTN_2D.vals.forEach((v, j) => {
 				const dim = (mode === 'output');
 				// When a value coincides with z (2-token case) push its
-				// label up so it doesn't collide with "z = output".
+				// label up so it doesn't collide with "z = output". In the
+				// output step the values are dimmed context anyway, so keep
+				// their labels clear of the bright z label / weighted-v
+				// cluster by hugging the value tip instead of floating.
 				const sameAsZ = (mode === 'output' &&
 					Math.hypot(v[0] - ATTN_2D.output[0], v[1] - ATTN_2D.output[1]) < 0.05);
 				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim,
-					sameAsZ ? [0.14, -0.20] : undefined);
+					sameAsZ ? [0.14, -0.20] : (mode === 'output' ? [0.14, 0.02] : undefined));
 			});
 			if (mode === 'values') this._drawValueWeights2D(labelsG);
 
@@ -1972,7 +2285,7 @@ const AttentionAnatomy = {
 					const sameAsZ = Math.hypot(wv[0] - ATTN_2D.output[0], wv[1] - ATTN_2D.output[1]) < 0.05;
 					if (sameAsZ) return;
 					this._addSVGArrow(arrowsG, labelsG, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 'weightedV', j, true, false,
-						[0.16, -0.08 - j * 0.14]);
+						[0.16, 0.08 + j * 0.18]);
 				});
 
 				// Tip-to-tail construction lines (no formula, no events)

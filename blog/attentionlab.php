@@ -269,12 +269,19 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	grid-column: 2;
 	grid-row: 2;
 	display: flex;
+	flex-direction: column;
 	position: relative;
+	min-width: 0;
 }
 /* Custom SVG-based 2D plot. Replaces Plotly entirely so we have
-   full control over mouse events (no more swallowed events). */
+   full control over mouse events (no more swallowed events). The
+   plot keeps its square aspect ratio (height:auto from the viewBox);
+   the geometric intuition panel for the current step sits right
+   beneath it, inside the plot column. */
 #attn-anatomy-2d-svg {
-	flex: 1;
+	flex: 0 0 auto;
+	width: 100%;
+	height: auto;
 	min-height: 460px;
 	min-width: 0;
 	display: block;
@@ -577,28 +584,29 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 
 /* Geometric intuition panel — rendered with Temml math, explains what
    the current step is doing geometrically and how it fits the whole.
+   Lives inside the plot column, directly beneath the 2D scene.
    Uses theme variables so it reads correctly in both light and dark mode. */
 .attn-anatomy-intuition {
 	background: var(--mn-surface, #fff);
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 10px;
-	padding: 18px 22px;
-	margin-bottom: 12px;
+	padding: 12px 16px;
+	margin-top: 10px;
 	color: var(--mn-text, #1e293b);
 }
 .attn-anatomy-intuition .intuition-header {
 	font-weight: bold;
 	color: #2563eb;
-	margin-bottom: 12px;
-	font-size: 0.98rem;
+	margin-bottom: 10px;
+	font-size: 0.95rem;
 	letter-spacing: 0.2px;
 }
 .attn-anatomy-intuition .intuition-math {
 	background: var(--mn-surface-raised, #f1f5f9);
 	border-radius: 8px;
-	padding: 14px 12px;
+	padding: 10px 12px;
 	text-align: center;
-	margin-bottom: 14px;
+	margin-bottom: 10px;
 	border: 1px solid var(--mn-border, #cbd5e1);
 	color: var(--mn-text, #1e293b);
 	overflow-x: auto;
@@ -607,9 +615,9 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	margin: 0 !important;
 }
 .attn-anatomy-intuition .intuition-section {
-	margin-bottom: 10px;
-	line-height: 1.55;
-	font-size: 0.9rem;
+	margin-bottom: 8px;
+	line-height: 1.5;
+	font-size: 0.88rem;
 	color: var(--mn-text, #1e293b);
 }
 .attn-anatomy-intuition .intuition-section:last-child {
@@ -650,10 +658,6 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 		</div>
 	</div>
 
-	<!-- Intuition panel — FULL WIDTH, ABOVE the controls. This is where
-	     the geometric meaning for the current step lives. -->
-	<div id="attn-section-intuition" class="attn-anatomy-intuition"></div>
-
 	<!-- Controls sit AT THE TOP — they never move because content changes happen below -->
 	<div class="attn-anatomy-header">
 		<button id="attn-anatomy-prev">← Prev</button>
@@ -690,6 +694,10 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 				<g class="attn-angles"></g>
 				<g class="attn-labels"></g>
 			</svg>
+			<!-- Geometric intuition panel — INSIDE the plot column, right
+			     below the scene, so the picture and its meaning stay
+			     together. Content is auto-rendered per step. -->
+			<div id="attn-section-intuition" class="attn-anatomy-intuition"></div>
 		</div>
 	</div>
 </div>

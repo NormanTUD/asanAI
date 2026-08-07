@@ -7,21 +7,41 @@ show_help() {
 Usage: $0 [OPTIONS]
 
 Options:
-  --no-smoke-tests   Skip running smoke tests
-  --no-docker        Skip starting docker container
-  --no-run-tests     Skip running Python tests
-  --help             Show this help message
+  --no-smoke-tests        Skip running smoke tests
+  --no-docker             Skip starting docker container
+  --no-screenshot-test    Skip the pixel-perfect screenshot regression test
+  --no-run-tests          Skip running Python tests
+  --help                  Show this help message
+
+Environment variables for the screenshot test:
+  SCREENSHOT_URL        URL to screenshot (default: http://localhost:1122/)
+  SCREENSHOT_REFERENCE  Reference PNG (default: tests/screenshot/reference.png)
+  See tests/screenshot/run.sh --help for more.
 EOF
 }
 
 run_smoke_tests=true
 run_docker=true
+run_screenshot_test=true
 run_python_tests=true
+
+_apt_install_if_missing() {
+	local pkg="$1"
+	if command -v "$pkg" >/dev/null 2>&1; then
+		return 0
+	fi
+	if command -v sudo >/dev/null 2>&1; then
+		sudo apt-get install -y "$pkg" || return 1
+	else
+		apt-get install -y "$pkg" || return 1
+	fi
+}
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--no-smoke-tests) run_smoke_tests=false ;;
 		--no-docker) run_docker=false ;;
+		--no-screenshot-test) run_screenshot_test=false ;;
 		--no-run-tests) run_python_tests=false ;;
 	esac
 	shift
@@ -44,6 +64,27 @@ if $run_docker; then
 		echo "Could not start docker"
 		exit 255
 	fi
+fi
+
+if $run_screenshot_test || $run_python_tests; then
+	if ! command -v chromium >/dev/null 2>&1 && ! command -v chromium-browser >/dev/null 2>&1; then
+		echo "====== Installing chromium (needed for screenshot and/or playwright tests) ======"
+		if command -v apt-get >/dev/null 2>&1; then
+			_apt_install_if_missing chromium || _apt_install_if_missing chromium-browser || true
+		fi
+	fi
+fi
+
+if $run_screenshot_test; then
+	echo "====== Running pixel-perfect screenshot test ======"
+	if ! bash tests/screenshot/run.sh; then
+		echo "Screenshot test failed"
+		echo "To regenerate the reference screenshot, run:"
+		echo "    bash tests/screenshot/run.sh --update"
+		echo "To skip this test, re-run with --no-screenshot-test."
+		exit 1
+	fi
+	echo "====== Screenshot test passed ======"
 fi
 
 echo "====== Checking virtualenv ======"
@@ -74,10 +115,6 @@ playwright install chromium
 echo "====== Checked virtualenv ======"
 if $run_python_tests; then
 	echo "====== python -m playwright install --with-deps chromium ======"
-
-	if ! which chromium 2> /dev/null >/dev/null; then
-		sudo apt install chromium
-	fi
 
 	python -m playwright install --with-deps chromium
 
