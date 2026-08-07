@@ -117,36 +117,47 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 
 <!-- ===================== ANATOMY OF ATTENTION: STEP-BY-STEP ===================== -->
 <style>
-/* Section labels bar — sits ABOVE everything. Clicking a pill scrolls
-   smoothly to the corresponding section via event delegation. */
-.attn-anatomy-labels {
-	display: flex;
-	gap: 8px;
-	margin-bottom: 10px;
-	flex-wrap: wrap;
+/* Hover tooltip — appears when the user mouses over an arrow in the
+   2D plot. Shows the exact Temml formula + a plain-language
+   explanation of where that vector comes from mathematically. */
+.attn-vector-tooltip {
+	position: fixed;
+	display: none;
+	background: var(--mn-surface, #fff);
+	border: 1px solid #2563eb;
+	border-radius: 10px;
+	padding: 14px 18px;
+	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.20);
+	z-index: 10000;
+	pointer-events: none;
+	max-width: 380px;
+	color: var(--mn-text, #1e293b);
 }
-.attn-anatomy-labels .section-label {
-	background: #2563eb;
-	color: #ffffff;
-	padding: 5px 14px;
-	border-radius: 16px;
-	font-size: 0.82rem;
-	font-weight: 600;
-	letter-spacing: 0.3px;
-	box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
-	cursor: pointer;
-	transition: all 0.15s ease;
-	user-select: none;
+.attn-vector-tooltip.active {
+	display: block;
 }
-.attn-anatomy-labels .section-label:hover {
-	background: #1d4ed8;
-	transform: translateY(-1px);
-	box-shadow: 0 3px 10px rgba(37, 99, 235, 0.4);
+.attn-vector-tooltip .tt-name {
+	font-weight: bold;
+	color: #2563eb;
+	margin-bottom: 8px;
+	font-size: 0.95rem;
+	letter-spacing: 0.2px;
 }
-.attn-anatomy-labels .section-label:active {
-	transform: translateY(0);
-	background: #1e40af;
-	box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+.attn-vector-tooltip .tt-formula {
+	margin: 0 0 10px 0;
+	padding: 10px 12px;
+	background: var(--mn-surface-raised, #f1f5f9);
+	border-radius: 6px;
+	text-align: center;
+	font-size: 1rem;
+}
+.attn-vector-tooltip .tt-formula mjx-container {
+	margin: 0 !important;
+}
+.attn-vector-tooltip .tt-desc {
+	color: var(--mn-text, #1e293b);
+	line-height: 1.5;
+	font-size: 0.88rem;
 }
 
 /* Header strip with step controls (sits AT THE TOP so it never moves) */
@@ -448,15 +459,6 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 		</div>
 	</div>
 
-	<!-- Section labels — functional navigation. Clicking scrolls to
-	     the corresponding section. -->
-	<div class="attn-anatomy-labels">
-		<span class="section-label" data-target="attn-section-output">Output</span>
-		<span class="section-label" data-target="attn-section-weight">Weight</span>
-		<span class="section-label" data-target="attn-section-computation">▶ Computation</span>
-		<span class="section-label" data-target="attn-section-intuition">💡 Intuition</span>
-	</div>
-
 	<!-- Intuition panel — FULL WIDTH, ABOVE the controls. This is where
 	     the geometric meaning for the current step lives. -->
 	<div id="attn-section-intuition" class="attn-anatomy-intuition"></div>
@@ -481,6 +483,15 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 			<div id="attn-anatomy-2d" style="background: var(--mn-surface, #fff); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;"></div>
 		</div>
 	</div>
+</div>
+
+<!-- Hover tooltip for vector formulas. Appears when the user mouses
+     over an arrow in the 2D plot; shows the exact Temml formula
+     explaining where that vector comes from mathematically. -->
+<div id="attn-vector-tooltip" class="attn-vector-tooltip">
+	<div class="tt-name"></div>
+	<div class="tt-formula"></div>
+	<div class="tt-desc"></div>
 </div>
 
 <div class="md">

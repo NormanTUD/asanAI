@@ -621,6 +621,36 @@ const ATTN_INTUITIONS = {
 	`
 };
 
+// The exact Temml formula + plain-language explanation for each arrow
+// type that can appear in the 2D plot. Used by the hover tooltip.
+const VECTOR_FORMULAS = {
+	q: {
+		name: 'q  (the query)',
+		formula: 'q_i \\;=\\; x_i \\, W^Q',
+		desc: 'The query of token i. Computed by multiplying the token embedding x_i by the learned query projection matrix W^Q.'
+	},
+	k: {
+		name: 'k  (the key)',
+		formula: 'k_j \\;=\\; x_j \\, W^K',
+		desc: 'The key of token j. Computed by multiplying the token embedding x_j by the learned key projection matrix W^K. Used to score relevance against queries.'
+	},
+	v: {
+		name: 'v  (the value)',
+		formula: 'v_j \\;=\\; x_j \\, W^V',
+		desc: 'The value of token j. The actual semantic content this token carries — what gets blended into the output.'
+	},
+	weightedV: {
+		name: 'αⱼ · vⱼ  (attention-weighted value)',
+		formula: '\\alpha_j \\, v_j, \\quad \\alpha_j \\;=\\; \\dfrac{e^{q \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		desc: 'Value vⱼ scaled by its attention weight αⱼ. αⱼ is the softmax of the scaled dot product — a soft "how much does this token matter?" between 0 and 1.'
+	},
+	z: {
+		name: 'z  (the contextualised output)',
+		formula: 'z \\;=\\; \\sum_j \\alpha_j \\, v_j',
+		desc: 'The contextualised output. A convex combination of all values, each weighted by its attention. Always lives inside the convex hull of the values.'
+	}
+};
+
 const AttentionAnatomy = {
 	step: 0,
 
@@ -791,9 +821,11 @@ const AttentionAnatomy = {
 		const traces = [];
 		const mode   = data.mode;
 
-		// Always draw the query unless we're in pure output mode
+		// Always draw the query unless we're in pure output mode.
+		// Each arrow receives a formula key (q / k / v / weightedV / z)
+		// so the hover tooltip can show its mathematical definition.
 		if (mode === 'keys' || mode === 'values') {
-			this.addArrow2D(traces, [0, 0], ATTN_2D.q, '#ef4444', 'q', 1.0);
+			this.addArrow2D(traces, [0, 0], ATTN_2D.q, '#ef4444', 'q', 1.0, false, false, 'q');
 		}
 
 		if (mode === 'keys') {
@@ -801,23 +833,24 @@ const AttentionAnatomy = {
 				const isHi = (data.highlightKey === j);
 				const dim  = (data.highlightKey !== undefined && !isHi);
 				const color = isHi ? '#1e3a8a' : ATTN_TOKENS[j + 1].color;
-				this.addArrow2D(traces, [0, 0], k, color, `k${j+1}`, dim ? 0.35 : 1.0);
+				this.addArrow2D(traces, [0, 0], k, color, `k${j+1}`, dim ? 0.35 : 1.0, false, false, 'k');
 			});
 		} else if (mode === 'values' || mode === 'output') {
 			const valColors = ['#16a34a', '#15803d', '#166534'];
 			ATTN_2D.vals.forEach((v, j) => {
 				const dim = (mode === 'output');
-				this.addArrow2D(traces, [0, 0], v, valColors[j], `v${j+1}`, dim ? 0.35 : 1.0);
+				this.addArrow2D(traces, [0, 0], v, valColors[j], `v${j+1}`, dim ? 0.35 : 1.0, false, false, 'v');
 			});
 
 			if (mode === 'output') {
 				// Weighted (scaled) value vectors from origin
 				ATTN_2D.weightedVals.forEach((wv, j) => {
-					this.addArrow2D(traces, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 0.85, /*dashed*/ true);
+					this.addArrow2D(traces, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 0.85, /*dashed*/ true, false, 'weightedV');
 				});
 
 				// Tip-to-tail construction: α₁v₁ from origin, then α₂v₂
-				// from the tip of α₁v₁, then α₃v₃ from there.
+				// from the tip of α₁v₁, then α₃v₃ from there. These are
+				// auxiliary construction lines — no formula key.
 				let tip = [0, 0];
 				ATTN_2D.weightedVals.forEach((wv, j) => {
 					const next = [tip[0] + wv[0], tip[1] + wv[1]];
@@ -826,7 +859,7 @@ const AttentionAnatomy = {
 				});
 
 				// Output z from origin
-				this.addArrow2D(traces, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 1.0);
+				this.addArrow2D(traces, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 1.0, false, false, 'z');
 			}
 		}
 
@@ -869,6 +902,45 @@ const AttentionAnatomy = {
 		// Re-trigger size calc so the plot picks up the final column width
 		// (grid columns can have 0 width at the moment Plotly first mounts).
 		requestAnimationFrame(() => Plotly.relayout('attn-anatomy-2d', {}));
+
+		// Wire up the hover tooltip: hovering an arrow (shaft or
+		// arrowhead) shows its mathematical definition.
+		this.wireTooltip();
+	},
+
+	// Attach plotly hover / unhover handlers that show / hide the
+	// formula tooltip. Each arrow trace carries a `customdata` key
+	// (e.g. 'q', 'k', 'v', 'weightedV', 'z') that indexes VECTOR_FORMULAS.
+	wireTooltip: function() {
+		const chart = document.getElementById('attn-anatomy-2d');
+		const tip   = document.getElementById('attn-vector-tooltip');
+		if (!chart || !tip) return;
+
+		chart.removeAllListeners && chart.removeAllListeners('plotly_hover');
+		chart.removeAllListeners && chart.removeAllListeners('plotly_unhover');
+
+		chart.on('plotly_hover', (data) => {
+			const key = data.points?.[0]?.customdata;
+			if (!key || !VECTOR_FORMULAS[key]) return;
+			const info = VECTOR_FORMULAS[key];
+			tip.querySelector('.tt-name').textContent = info.name;
+			tip.querySelector('.tt-formula').innerHTML = TEMML_RENDERED[key] || info.formula;
+			tip.querySelector('.tt-desc').textContent = info.desc;
+			tip.classList.add('active');
+			// Position near the cursor, but flip if too close to the
+			// right/bottom edge so the tooltip stays on screen.
+			const pad = 16;
+			let x = data.event.clientX + pad;
+			let y = data.event.clientY + pad;
+			const tipRect = tip.getBoundingClientRect();
+			if (x + tipRect.width  > window.innerWidth)  x = data.event.clientX - tipRect.width - pad;
+			if (y + tipRect.height > window.innerHeight) y = data.event.clientY - tipRect.height - pad;
+			tip.style.left = x + 'px';
+			tip.style.top  = y + 'px';
+		});
+		chart.on('plotly_unhover', () => {
+			tip.classList.remove('active');
+		});
 	},
 
 	// Draw an arrow from `start` to `end` in the 2D plot. The shaft is
@@ -876,13 +948,18 @@ const AttentionAnatomy = {
 	// the vector direction. The label is placed PAST the tip in the
 	// direction of the arrow, offset perpendicular to it, so it never
 	// overlaps with the shaft.
-	addArrow2D: function(traces, start, end, color, label, opacity, dashed, noMarker) {
+	addArrow2D: function(traces, start, end, color, label, opacity, dashed, noMarker, formula) {
 		const dx = end[0] - start[0];
 		const dy = end[1] - start[1];
 		const len = Math.sqrt(dx * dx + dy * dy);
 		if (len < 0.01) return;
 		const op = (opacity !== undefined) ? opacity : 1.0;
 		const isDashed = !!dashed;
+		// `formula` is a key into VECTOR_FORMULAS (e.g. 'q', 'k', 'v',
+		// 'weightedV', 'z'). When set, hovering the arrow (shaft or
+		// arrowhead) triggers the tooltip that explains where that
+		// vector comes from mathematically.
+		const hasFormula = !!formula;
 
 		// Shaft
 		traces.push({
@@ -890,7 +967,10 @@ const AttentionAnatomy = {
 			x: [start[0], end[0]], y: [start[1], end[1]],
 			line: { color: color, width: 4, dash: isDashed ? 'dot' : 'solid' },
 			opacity: op,
-			showlegend: false, hoverinfo: 'skip'
+			customdata: hasFormula ? [formula] : null,
+			showlegend: false,
+			hoverinfo: hasFormula ? 'skip' : 'skip',
+			hoveron: hasFormula ? 'points' : ''
 		});
 
 		// Arrowhead (triangle pointing along the vector). Plotly's
@@ -909,7 +989,10 @@ const AttentionAnatomy = {
 					line: { width: 1, color: themeColor('#fff') }
 				},
 				opacity: op,
-				showlegend: false, hoverinfo: 'skip'
+				customdata: hasFormula ? [formula] : null,
+				showlegend: false,
+				hoverinfo: 'skip',
+				hoveron: hasFormula ? 'points' : ''
 			});
 		}
 
@@ -937,6 +1020,7 @@ const AttentionAnatomy = {
 				text: [label],
 				textposition: 'middle center',
 				textfont: { size: 14, color: 'rgba(255,255,255,0.92)', family: 'Inter, sans-serif' },
+				customdata: hasFormula ? [formula] : null,
 				showlegend: false, hoverinfo: 'skip'
 			});
 			traces.push({
@@ -946,7 +1030,8 @@ const AttentionAnatomy = {
 				textposition: 'middle center',
 				textfont: { size: 13, color: color, family: 'Inter, sans-serif' },
 				opacity: op,
-				showlegend: false, hoverinfo: 'name'
+				customdata: hasFormula ? [formula] : null,
+				showlegend: false, hoverinfo: 'skip'
 			});
 		}
 	},
