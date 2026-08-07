@@ -169,6 +169,11 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	border-radius: 6px;
 	text-align: center;
 	color: var(--mn-text, #1e293b);
+	/* Multi-token tooltips can carry a long chain of equations — let
+	   them scroll instead of pushing the popup past the viewport. */
+	overflow-x: auto;
+	overflow-y: hidden;
+	max-width: 100%;
 }
 .attn-vector-tooltip .tt-formula {
 	margin: 0 0 10px 0;
@@ -189,10 +194,12 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 .attn-vector-tooltip .tt-concrete math {
 	background: transparent !important;
 }
-.attn-vector-tooltip .tt-formula::-webkit-scrollbar {
+.attn-vector-tooltip .tt-formula::-webkit-scrollbar,
+.attn-vector-tooltip .tt-concrete::-webkit-scrollbar {
 	height: 6px;
 }
-.attn-vector-tooltip .tt-formula::-webkit-scrollbar-thumb {
+.attn-vector-tooltip .tt-formula::-webkit-scrollbar-thumb,
+.attn-vector-tooltip .tt-concrete::-webkit-scrollbar-thumb {
 	background: var(--mn-border, #cbd5e1);
 	border-radius: 3px;
 }
@@ -440,6 +447,34 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	display: block !important;
 }
 
+/* Each equation line is now a row of small INLINE-math fragments
+   (one per hoverable sub-expression) joined by plain symbols. Flex
+   keeps them on one baseline; long lines wrap instead of overflowing. */
+.attn-anatomy-equation .eq-formula {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	column-gap: 4px;
+	row-gap: 6px;
+	margin: 6px 0;
+}
+.attn-anatomy-equation .eq-formula .eq-tip {
+	cursor: help;
+	border-radius: 5px;
+	padding: 1px 3px;
+	transition: background 0.15s ease;
+}
+.attn-anatomy-equation .eq-formula .eq-tip:hover {
+	background: rgba(37, 99, 235, 0.10);
+}
+.attn-anatomy-equation .eq-formula .eq-sym {
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: var(--mn-text, #1e293b);
+	padding: 0 1px;
+}
+
 /* "Currently computing" panel — shows the actual numbers being used */
 .attn-anatomy-computation {
 	background: var(--mn-surface, #fff);
@@ -502,6 +537,36 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	color: var(--mn-text-muted, #64748b);
 	font-style: italic;
 	font-size: 0.88rem;
+}
+
+/* Each numeric row is now a full underbraced Temml equation. Each row
+   scrolls horizontally on its own, so a wide 4-token line never forces
+   the panel to grow and bleed under the plot. */
+.attn-anatomy-computation .comp-eq {
+	padding: 7px 4px;
+	margin: 2px -4px;
+	text-align: center;
+	overflow-x: auto;
+	overflow-y: hidden;
+	cursor: help;
+	border-radius: 6px;
+	scrollbar-width: thin;
+	transition: background 0.15s ease;
+}
+.attn-anatomy-computation .comp-eq:hover {
+	background: rgba(37, 99, 235, 0.06);
+}
+.attn-anatomy-computation .comp-eq math {
+	display: block;
+	margin: 0 auto;
+	font-size: 1rem;
+}
+.attn-anatomy-computation .comp-eq::-webkit-scrollbar {
+	height: 6px;
+}
+.attn-anatomy-computation .comp-eq::-webkit-scrollbar-thumb {
+	background: var(--mn-border, #cbd5e1);
+	border-radius: 3px;
 }
 .attn-anatomy-computation .comp-row.highlighted {
 	background: rgba(37, 99, 235, 0.06);

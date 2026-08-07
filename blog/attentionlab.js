@@ -363,152 +363,119 @@ const ATTN_STEPS = [
 // computation on the real data, so the user sees exactly what the active
 // sub-expression of the equation is doing with concrete numbers.
 const ATTN_COMPUTATIONS = {
+	// Every numeric row is now a full Temml equation with \underbrace
+	// annotations, so the computation reads as one continuous chain.
+	// Each row carries data-tip/data-idx so hovering it pops up the
+	// same tooltip as the corresponding plot element.
 	setup: () => {
-		const q    = ATTN_2D.q;
-		const keys = ATTN_2D.keys;
-		const rows = keys.map((k, j) => `
-			<div class="comp-row"><span class="comp-var">$\\mathbf{k}_{${j+1}}$</span> <span class="comp-calc">$= (${k[0].toFixed(2)},\\; ${k[1].toFixed(2)})$ <span class="comp-extra">(${ATTN_TOKENS[j+1].name})</span></span></div>`).join('');
+		const q = ATTN_2D.q;
+		const rows = ATTN_2D.keys.map((k, j) =>
+			`<div class="comp-eq" data-tip="k" data-idx="${j}">$$ \\underbrace{\\mathbf{k}_{${j+1}} = (${k[0].toFixed(2)},\\; ${k[1].toFixed(2)})}_{\\text{key “${ATTN_TOKENS[j+1].name}”}} $$</div>`).join('');
 		return `
-		<div class="comp-header">▶ The Players — inputs to the equation</div>
+		<div class="comp-header">▶ The players — the inputs to the equation</div>
 		<div class="comp-body">
-			<div class="comp-row"><span class="comp-var">$\\mathbf{q}$</span>  <span class="comp-calc">$= (${q[0].toFixed(2)},\\; ${q[1].toFixed(2)})$ <span class="comp-extra">(${ATTN_TOKENS[0].name})</span></span></div>
+			<div class="comp-eq" data-tip="q" data-idx="0">$$ \\underbrace{\\mathbf{q} = (${q[0].toFixed(2)},\\; ${q[1].toFixed(2)})}_{\\text{query “it”}} $$</div>
 			${rows}
-			<div class="comp-note">No computation yet — these are the inputs the equation will operate on.</div>
+			<div class="comp-note">No computation yet — these are the vectors the equation will operate on. Hover any of them.</div>
 		</div>
 	`;
 	},
 	components: () => {
-		const q = ATTN_2D.q;
-		const k = ATTN_2D.keys[0];
+		const q = ATTN_2D.q, k = ATTN_2D.keys[0];
 		return `
-		<div class="comp-header">▶ Currently computing: $q[d] \\cdot k_1[d]$ (element-wise product)</div>
+		<div class="comp-header">▶ Currently computing: $q[d] \\cdot k_1[d]$ — element-wise product</div>
 		<div class="comp-body">
-			<div class="comp-row highlighted">
-				<span class="comp-var">$q[1] \\cdot k_1[1]$</span>
-				<span class="comp-calc">$= (${q[0].toFixed(2)}) \\times (${k[0].toFixed(2)})$</span>
-				<span class="comp-result">$= ${(q[0]*k[0]).toFixed(3)}$</span>
+			<div class="comp-eq" data-tip="comprect" data-idx="0">
+				$$ \\underbrace{(${q[0].toFixed(2)})\\cdot(${k[0].toFixed(2)})}_{q[1]\\cdot k_1[1]\\,=\\,${(q[0]*k[0]).toFixed(3)}} \\qquad
+				\\underbrace{(${q[1].toFixed(2)})\\cdot(${k[1].toFixed(2)})}_{q[2]\\cdot k_1[2]\\,=\\,${(q[1]*k[1]).toFixed(3)}} $$
 			</div>
-			<div class="comp-row highlighted">
-				<span class="comp-var">$q[2] \\cdot k_1[2]$</span>
-				<span class="comp-calc">$= (${q[1].toFixed(2)}) \\times (${k[1].toFixed(2)})$</span>
-				<span class="comp-result">$= ${(q[1]*k[1]).toFixed(3)}$</span>
-			</div>
-			<div class="comp-note">Two scalar products, one per dimension. Next step: add them.</div>
+			<div class="comp-note">Two rectangles, one per dimension — the area of each is one product. Next step adds them together.</div>
 		</div>
 	`;
 	},
 	dot: () => {
-		const q    = ATTN_2D.q;
-		const keys = ATTN_2D.keys;
-		const s    = ATTN_2D.scores;
-		const rows = keys.map((k, j) => `
-			<div class="comp-row highlighted">
-				<span class="comp-var">$q \\cdot k_{${j+1}}$</span>
-				<span class="comp-calc">$= (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${(q[0]*k[0]).toFixed(3)} + ${(q[1]*k[1]).toFixed(3)}$</span>
-				<span class="comp-result">$= ${s[j].toFixed(3)}$</span>
-			</div>`).join('');
+		const q = ATTN_2D.q;
+		const rows = ATTN_2D.keys.map((k, j) => {
+			const p1 = (q[0]*k[0]).toFixed(3), p2 = (q[1]*k[1]).toFixed(3);
+			return `<div class="comp-eq" data-tip="bar-score" data-idx="${j}">$$
+				q\\cdot k_{${j+1}} = \\underbrace{(${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)})}_{${p1} + ${p2}} = \\underbrace{${ATTN_2D.scores[j].toFixed(3)}}_{\\text{score}}
+				$$</div>`;
+		}).join('');
 		return `
-		<div class="comp-header">▶ Currently computing: $q \\cdot k_j$ (sum of components)</div>
+		<div class="comp-header">▶ Currently computing: $q \\cdot k_j$ — add the component products</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-note">Positive score = same direction as $\\mathbf{q}$. Negative = opposite.</div>
+			<div class="comp-note">Positive score = same direction as $\\mathbf{q}$; negative = opposite. This is the raw attention input.</div>
 		</div>`;
 	},
 	scaled: () => {
-		const s  = ATTN_2D.scores;
-		const sc = ATTN_2D.scaled;
-		const rows = s.map((score, j) => `
-			<div class="comp-row highlighted">
-				<span class="comp-var">$(${score.toFixed(3)}) \\,/\\, \\sqrt{2}$</span>
-				<span class="comp-calc">$= ${score.toFixed(3)} \\,/\\, 1.414$</span>
-				<span class="comp-result">$= ${sc[j].toFixed(3)}$</span>
-			</div>`).join('');
+		const rows = ATTN_2D.scores.map((s, j) => `
+			<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}">$$
+				s_{${j+1}} = \\frac{q\\cdot k_{${j+1}}}{\\sqrt{d_k}} = \\frac{${s.toFixed(3)}}{\\underbrace{1.414}_{\\sqrt{2}}} = \\underbrace{${ATTN_2D.scaled[j].toFixed(3)}}_{\\text{scaled score}}
+				$$</div>`).join('');
 		return `
-		<div class="comp-header">▶ Currently computing: $(q \\cdot k_j) \\,/\\, \\sqrt{d_k}$ (variance control)</div>
+		<div class="comp-header">▶ Currently computing: $\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}$ — variance control</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-note">Keeps the variance of scores near $1$, regardless of $d_k$.</div>
+			<div class="comp-note">Dividing by $\\sqrt{2} \\approx 1.414$ keeps every score near magnitude $1$ — the same trick a real $d_k = 64$ model uses.</div>
 		</div>`;
 	},
 	exps: () => {
-		const sc = ATTN_2D.scaled;
-		const ex = ATTN_2D.exps;
-		const rows = sc.map((x, j) => `
-			<div class="comp-row highlighted">
-				<span class="comp-var">$e^{${x.toFixed(3)}}$</span>
-				<span class="comp-calc"></span>
-				<span class="comp-result">$= ${ex[j].toFixed(3)}$</span>
-			</div>`).join('');
+		const rows = ATTN_2D.scaled.map((sc, j) => `
+			<div class="comp-eq" data-tip="bar-exp" data-idx="${j}">$$
+				e^{s_{${j+1}}} = e^{${sc.toFixed(3)}} = \\underbrace{${ATTN_2D.exps[j].toFixed(3)}}_{\\text{positive number}}
+				$$</div>`).join('');
 		return `
-		<div class="comp-header">▶ Currently computing: $e^{\\mathrm{score}}$ (amplify differences)</div>
+		<div class="comp-header">▶ Currently computing: $e^{s_j}$ — amplify differences</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-note">Positive scores grow, negative scores shrink — the biggest input dominates.</div>
+			<div class="comp-note">Positive scores grow, negative scores shrink toward $0$. The biggest input now towers over the rest.</div>
 		</div>`;
 	},
 	weights: () => {
 		const ex  = ATTN_2D.exps;
-		const w   = ATTN_2D.weights;
 		const sum = ex.reduce((a, b) => a + b, 0);
+		const sumRow = `<div class="comp-eq" data-tip="eq-sum">$$ \\underbrace{${ex.map((e) => e.toFixed(3)).join(' + ')}}_{\\text{e}^{s_j}} = \\underbrace{${sum.toFixed(3)}}_{\\text{sum}} $$</div>`;
 		const rows = ex.map((e, j) => `
-			<div class="comp-row highlighted">
-				<span class="comp-var">$\\alpha_{${j+1}}$</span>
-				<span class="comp-calc">$= ${e.toFixed(3)} \\,/\\, ${sum.toFixed(3)}$</span>
-				<span class="comp-result">$= ${w[j].toFixed(3)}$ <span class="comp-extra">(${(w[j]*100).toFixed(1)}%)</span></span>
-			</div>`).join('');
+			<div class="comp-eq" data-tip="wbar" data-idx="${j}">$$
+				\\alpha_{${j+1}} = \\frac{${e.toFixed(3)}}{${sum.toFixed(3)}} = \\underbrace{${ATTN_2D.weights[j].toFixed(3)}}_{\\text{weight}} = ${(ATTN_2D.weights[j]*100).toFixed(1)}\\,\\%
+				$$</div>`).join('');
 		return `
-		<div class="comp-header">▶ Currently computing: softmax (divide by the sum)</div>
+		<div class="comp-header">▶ Currently computing: softmax — divide each $e^{s_j}$ by the sum</div>
 		<div class="comp-body">
-			<div class="comp-row">
-				<span class="comp-var">$\\mathrm{Sum}$</span>
-				<span class="comp-calc">$= ${ex.map(e => e.toFixed(3)).join(' + ')}$</span>
-				<span class="comp-result">$= ${sum.toFixed(3)}$</span>
-			</div>
+			${sumRow}
 			${rows}
-			<div class="comp-note">The weights sum to $100\\%$ — a finite budget of attention.</div>
+			<div class="comp-note">The weights now sum to $100\\%$ — a finite budget of attention, split by relevance.</div>
 		</div>`;
 	},
 	values: () => {
-		const w    = ATTN_2D.weights;
-		const vals = ATTN_2D.vals;
-		const rows = vals.map((v, j) => `
-			<div class="comp-row highlighted"><span class="comp-var">$\\mathbf{v}_{${j+1}}$</span> <span class="comp-calc">$= (${v[0].toFixed(2)},\\; ${v[1].toFixed(2)})$ <span class="comp-extra">(${ATTN_TOKENS[j+1].name})</span></span></div>`).join('');
-		const wRow = w.map((wi, j) => `$\\alpha_${j+1}=${(wi*100).toFixed(1)}\\%$`).join(', ');
+		const rows = ATTN_2D.vals.map((v, j) => `
+			<div class="comp-eq" data-tip="v" data-idx="${j}">$$
+				\\underbrace{\\mathbf{v}_{${j+1}} = (${v[0].toFixed(2)},\\; ${v[1].toFixed(2)})}_{\\text{value “${ATTN_TOKENS[j+1].name}”}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(ATTN_2D.weights[j]*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}}
+				$$</div>`).join('');
 		return `
-		<div class="comp-header">▶ Currently switching from keys to value vectors</div>
+		<div class="comp-header">▶ Switching from keys to value vectors</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-row" style="margin-top:8px;">
-				<span class="comp-var">weights (carry over)</span>
-				<span class="comp-calc">${wRow}</span>
-			</div>
-			<div class="comp-note">Keys told us <em>what</em> to attend to. Values carry the actual content.</div>
-		</div>
-	`;
+			<div class="comp-note">Keys said <em>what</em> to attend to; values carry the actual content. The attention weights ride along unchanged.</div>
+		</div>`;
 	},
 	output: () => {
-		const w  = ATTN_2D.weights;
-		const v  = ATTN_2D.vals;
-		const wv = ATTN_2D.weightedVals;
-		const z  = ATTN_2D.output;
-		const fmt = n => (n >= 0 ? '\\,' : '') + n.toFixed(3);
-		const rows = v.map((vi, j) => `
-			<div class="comp-row highlighted">
-				<span class="comp-var">$\\alpha_${j+1} \\mathbf{v}_${j+1}$</span>
-				<span class="comp-calc">$= ${(w[j]*100).toFixed(1)}\\% \\times (${fmt(vi[0])},\\; ${fmt(vi[1])})$</span>
-				<span class="comp-result">$= (${fmt(wv[j][0])},\\; ${fmt(wv[j][1])})$</span>
-			</div>`).join('');
-		const sumX = v.map((vi, j) => fmt(wv[j][0])).join(' + ');
-		const sumY = v.map((vi, j) => fmt(wv[j][1])).join(' + ');
+		const rows = ATTN_2D.vals.map((v, j) => {
+			const wv = ATTN_2D.weightedVals[j];
+			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}">$$
+				\\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(ATTN_2D.weights[j]*100).toFixed(1)}\\%)\\times (${v[0].toFixed(2)},\\; ${v[1].toFixed(2)}) = \\underbrace{(${wv[0].toFixed(3)},\\; ${wv[1].toFixed(3)})}_{\\text{weighted value}}
+				$$</div>`;
+		}).join('');
+		const z = ATTN_2D.output;
+		const sumParts = ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\; ${wv[1].toFixed(3)})`).join(' + ');
 		return `
-		<div class="comp-header">▶ Currently computing: $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ (weighted sum)</div>
+		<div class="comp-header">▶ Currently computing: $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ — the weighted sum</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-row" style="margin-top:10px; padding-top:8px; border-top:1px dashed #cbd5e1;">
-				<span class="comp-var">$\\mathbf{z}$</span>
-				<span class="comp-calc">$= (${sumX},\\; ${sumY})$</span>
-				<span class="comp-result">$= \\mathbf{(${fmt(z[0])},\\; ${fmt(z[1])}}$</span>
-			</div>
+			<div class="comp-eq" data-tip="eq-z">$$
+				\\mathbf{z} = \\underbrace{${sumParts}}_{\\text{component-wise sum}} = \\underbrace{(${z[0].toFixed(3)},\\; ${z[1].toFixed(3)})}_{\\mathbf{z}}
+				$$</div>
 			<div class="comp-note">$\\mathbf{z}$ is a convex combination — it lies <b>inside the span</b> of the $\\mathbf{v}_j$ (a point in 2 tokens, a segment in 3, a triangle in 4).</div>
 		</div>`;
 	}
@@ -647,6 +614,125 @@ const VECTOR_FORMULAS = {
 		unicode: 'cos θ = q·k / (‖q‖·‖k‖)',
 		intuition: '',
 		desc: ''
+	},
+
+	// ── Hoverable parts of the big equation at the top ──────────────
+	// Each entry's `formula` is the general form (pre-rendered once);
+	// the tooltip body is built dynamically by _buildExtraInfo() with
+	// the concrete numbers for the current token count.
+	'eq-qi': {
+		name: 'qᵢ — the query',
+		formula: 'q_i = x_i \\, W^Q',
+		unicode: 'qᵢ = xᵢ · W^Q',
+		intuition: '',
+		desc: ''
+	},
+	'eq-kj': {
+		name: 'kⱼ — the keys',
+		formula: 'k_j = x_j \\, W^K',
+		unicode: 'kⱼ = xⱼ · W^K',
+		intuition: '',
+		desc: ''
+	},
+	'eq-vj': {
+		name: 'vⱼ — the values',
+		formula: 'v_j = x_j \\, W^V',
+		unicode: 'vⱼ = xⱼ · W^V',
+		intuition: '',
+		desc: ''
+	},
+	'eq-alpha': {
+		name: 'αᵢⱼ — the attention weight',
+		formula: '\\alpha_{ij} = \\dfrac{e^{q_i \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q_i \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'αᵢⱼ = e^(qᵢ·kⱼ/√dₖ) / Σₙ e^(qᵢ·kₙ/√dₖ)',
+		intuition: '',
+		desc: ''
+	},
+	'eq-exp': {
+		name: 'exp — exponentiate',
+		formula: 'e^{\\text{score}_j}',
+		unicode: 'e^score',
+		intuition: '',
+		desc: ''
+	},
+	'eq-sum': {
+		name: 'Σ — the normalization sum',
+		formula: '\\sum_n e^{q_i \\cdot k_n \\,/\\, \\sqrt{d_k}}',
+		unicode: 'Σₙ e^(qᵢ·kₙ/√dₖ)',
+		intuition: '',
+		desc: ''
+	},
+	'eq-dot': {
+		name: 'qᵢ · kⱼ — the dot product',
+		formula: 'q_i \\cdot k_j = \\lVert q_i \\rVert \\, \\lVert k_j \\rVert \\, \\cos\\theta',
+		unicode: 'qᵢ·kⱼ = ‖qᵢ‖‖kⱼ‖cosθ',
+		intuition: '',
+		desc: ''
+	},
+	'eq-sqrt': {
+		name: '√dₖ — variance control',
+		formula: '\\sqrt{d_k}',
+		unicode: '√dₖ  (here √2 ≈ 1.414)',
+		intuition: '',
+		desc: ''
+	},
+	'eq-z': {
+		name: 'zᵢ — the contextualised output',
+		formula: 'z_i = \\sum_j \\alpha_{ij} \\, v_j',
+		unicode: 'zᵢ = Σⱼ αᵢⱼ vⱼ',
+		intuition: '',
+		desc: ''
+	},
+
+	// ── Hoverable plot overlays (bars, rectangles, projections) ─────
+	'bar-score': {
+		name: 'score',
+		formula: 'q \\cdot k_j',
+		unicode: 'q·kⱼ',
+		intuition: '',
+		desc: ''
+	},
+	'bar-scaled': {
+		name: 'scaled score',
+		formula: '\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}',
+		unicode: '(q·kⱼ)/√dₖ',
+		intuition: '',
+		desc: ''
+	},
+	'bar-exp': {
+		name: 'exp(score)',
+		formula: 'e^{s_j}',
+		unicode: 'e^s',
+		intuition: '',
+		desc: ''
+	},
+	wbar: {
+		name: 'attention weight',
+		formula: '\\alpha_{ij} = \\dfrac{e^{q_i \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q_i \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'αᵢⱼ',
+		intuition: '',
+		desc: ''
+	},
+	comprect: {
+		name: 'element-wise product',
+		formula: 'q[d] \\cdot k_j[d]',
+		unicode: 'q[d]·kⱼ[d]',
+		intuition: '',
+		desc: ''
+	},
+	proj: {
+		name: 'projection of q onto kⱼ',
+		formula: '\\mathrm{proj}_{\\mathbf{k}_j} \\, \\mathbf{q} = \\dfrac{q \\cdot k_j}{\\lVert k_j \\rVert}',
+		unicode: 'proj = q·kⱼ / ‖kⱼ‖',
+		intuition: '',
+		desc: ''
+	},
+	span: {
+		name: 'the span of the values',
+		formula: '\\mathrm{conv}\\big(\\mathbf{v}_1, \\ldots, \\mathbf{v}_m\\big)',
+		unicode: 'conv(v₁,…,vₘ)',
+		intuition: '',
+		desc: ''
 	}
 };
 
@@ -684,6 +770,42 @@ const AttentionAnatomy = {
 
 		// Draw the static background (grid + axes) ONCE.
 		this._initSVG();
+
+		// Hover tooltips on the parts of the big equation. The equation
+		// is rebuilt on every step, so we use event delegation on the
+		// container instead of attaching handlers to each fragment.
+		const eqEl = document.getElementById('attn-anatomy-equation');
+		if (eqEl) {
+			eqEl.addEventListener('mouseover', (e) => {
+				const t = e.target.closest ? e.target.closest('.eq-tip') : null;
+				if (t) this._showTooltip(t.dataset.tip, null, e.clientX, e.clientY);
+				else this._hideTooltip();
+			});
+			eqEl.addEventListener('mousemove', (e) => {
+				const t = e.target.closest ? e.target.closest('.eq-tip') : null;
+				if (t) this._showTooltip(t.dataset.tip, null, e.clientX, e.clientY);
+			});
+			eqEl.addEventListener('mouseleave', () => this._hideTooltip());
+		}
+
+		// Hover tooltips on the rows of the "Currently computing" panel.
+		// Same delegation pattern — the rows are rebuilt on every step.
+		const compEl = document.getElementById('attn-section-computation');
+		if (compEl) {
+			const compRow = (e) => e.target.closest ? e.target.closest('.comp-eq') : null;
+			const showComp = (e) => {
+				const t = compRow(e);
+				if (!t) return false;
+				const idx = t.dataset.idx != null ? parseInt(t.dataset.idx, 10) : null;
+				this._showTooltip(t.dataset.tip, idx, e.clientX, e.clientY);
+				return true;
+			};
+			compEl.addEventListener('mouseover', (e) => {
+				if (!showComp(e)) this._hideTooltip();
+			});
+			compEl.addEventListener('mousemove', showComp);
+			compEl.addEventListener('mouseleave', () => this._hideTooltip());
+		}
 
 		// Keyboard navigation: ← / → step through. Skipped while typing
 		// in form fields so this never steals input events.
@@ -799,6 +921,190 @@ const AttentionAnatomy = {
 					desc: `The angle is just a geometric picture of the attention score: $q \\cdot k_j = \\lVert q \\rVert \\lVert k_j \\rVert \\cos\\theta$. Small angle $\\to$ large positive score, right angle $\\to$ zero, obtuse $\\to$ negative.`
 				};
 			}
+		}
+		return this._buildExtraInfo(key, idx);
+	},
+
+	// Tooltip content for everything else that is hoverable but is not a
+	// plain arrow: the parts of the big equation (q_i, k_j, α_ij, Σ, exp,
+	// √d_k, v_j, z), the bars, the component-product rectangles, the
+	// projection dots, the weight-bar segments and the span fill. Each
+	// one shows the general formula AND the live numbers so hovering is
+	// always enough to "see" where a value comes from.
+	_buildExtraInfo: function(key, idx) {
+		const AT  = ATTN_TOKENS;
+		const q   = ATTN_2D.q;
+		const VF  = VECTOR_FORMULAS;
+		const fmt = (n) => n.toFixed(2);
+		const sum = ATTN_2D.exps.reduce((a, b) => a + b, 0);
+		const klist  = ATTN_2D.keys.map((k, j) => `\\mathbf{k}_{${j+1}} = (${fmt(k[0])},\\; ${fmt(k[1])})`).join(',\\qquad ');
+		const vtoks  = ATTN_2D.vals.map((v, j) => `\\mathbf{v}_{${j+1}} = (${fmt(v[0])},\\; ${fmt(v[1])})`).join(',\\qquad ');
+		const alphas = ATTN_2D.weights.map((w, j) => `\\alpha_{${j+1}} = ${(w * 100).toFixed(1)}\\%`).join(',\\qquad ');
+
+		switch (key) {
+			case 'eq-qi':
+				return {
+					name: 'qᵢ — the query',
+					intuition: 'The arrow of <b>“it”</b>: the direction it is <i>looking for</i> a match. Every other vector is scored against this one.',
+					concreteLatex: `\\mathbf{q} = (${fmt(q[0])},\\; ${fmt(q[1])})`,
+					formulaLatex: VF['eq-qi'].formula,
+					unicode: 'qᵢ = xᵢ · W^Q',
+					desc: 'Token $i$ (“it”) is multiplied by the learned query matrix $W^Q$. The result is the direction attention searches along.'
+				};
+			case 'eq-kj':
+				return {
+					name: 'kⱼ — the keys',
+					intuition: 'The words that <b>advertise</b> what they contain. The closer a key points to the query, the more “it” attends to it.',
+					concreteLatex: klist,
+					formulaLatex: VF['eq-kj'].formula,
+					unicode: 'kⱼ = xⱼ · W^K',
+					desc: `Each key is the projection of its token: $k_j = x_j W^K$. Active keys here: ${ATTN_2D.keys.map((k, j) => `${AT[j+1].name}`).join(', ')}.`
+				};
+			case 'eq-vj':
+				return {
+					name: 'vⱼ — the values',
+					intuition: 'The actual <b>payload</b> each token contributes to the blended answer. Keys say <i>what</i> to attend to; values carry the content.',
+					concreteLatex: vtoks,
+					formulaLatex: VF['eq-vj'].formula,
+					unicode: 'vⱼ = xⱼ · W^V',
+					desc: 'The value vectors get blended into the output, each weighted by its attention weight.'
+				};
+			case 'eq-alpha':
+				return {
+					name: 'αᵢⱼ — the attention weight',
+					intuition: 'How much of each token’s value “it” mixes in. The weights <b>sum to exactly 100%</b> — a finite budget of attention.',
+					concreteLatex: alphas,
+					formulaLatex: VF['eq-alpha'].formula,
+					unicode: 'αᵢⱼ = e^(qᵢ·kⱼ/√dₖ) / Σₙ e^(qᵢ·kₙ/√dₖ)',
+					desc: 'The softmax weight of key $j$ for query $i$. Always between $0$ and $1$, and $\\sum_j \\alpha_{ij} = 1$.'
+				};
+			case 'eq-exp':
+				return {
+					name: 'exp — exponentiate',
+					intuition: 'exp turns every score <b>positive</b> and amplifies differences: the biggest input grows the most, so it starts to dominate.',
+					concreteLatex: ATTN_2D.exps.map((e, j) => `e^{${ATTN_2D.scaled[j].toFixed(3)}} = ${e.toFixed(3)}`).join(',\\qquad '),
+					formulaLatex: VF['eq-exp'].formula,
+					unicode: 'e^score',
+					desc: 'Exponentiating the scaled score makes all values positive. Only the relative sizes then matter — which is exactly what softmax normalizes away.'
+				};
+			case 'eq-sum':
+				return {
+					name: 'Σ — the normalization sum',
+					intuition: 'The <b>total</b> of all exp(score)s. Dividing each exp(score) by this total turns them into weights that sum to 100%.',
+					concreteLatex: `${ATTN_2D.exps.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)}`,
+					formulaLatex: VF['eq-sum'].formula,
+					unicode: 'Σₙ e^(qᵢ·kₙ/√dₖ)',
+					desc: 'The denominator of softmax — the sum over all keys of their exponentiated scaled scores.'
+				};
+			case 'eq-dot':
+				return {
+					name: 'qᵢ · kⱼ — the dot product',
+					intuition: 'Directional <b>agreement</b>: positive means the same way, negative means opposite. These are the raw attention scores.',
+					concreteLatex: `q\\cdot k_{1} = (${fmt(q[0])})(${fmt(ATTN_2D.keys[0][0])}) + (${fmt(q[1])})(${fmt(ATTN_2D.keys[0][1])}) = ${ATTN_2D.scores[0].toFixed(3)}` + ATTN_2D.keys.slice(1).map((k, j) => `,\\; q\\cdot k_{${j+2}} = ${ATTN_2D.scores[j+1].toFixed(3)}`).join(''),
+					formulaLatex: VF['eq-dot'].formula,
+					unicode: 'qᵢ·kⱼ = ‖qᵢ‖‖kⱼ‖cosθ',
+					desc: 'The dot product is the projection of $\\mathbf{q}$ onto $\\mathbf{k}$, scaled by $\\lVert\\mathbf{k}\\rVert$.'
+				};
+			case 'eq-sqrt':
+				return {
+					name: '√dₖ — variance control',
+					intuition: 'Dividing by $\\sqrt{2} \\approx 1.414$ keeps the scores near magnitude $1$. In a real model $d_k = 64$, so $\\sqrt{64} = 8$ — without this the softmax would saturate to a hard one-hot.',
+					concreteLatex: '\\sqrt{d_k} = \\sqrt{2} = 1.414',
+					formulaLatex: VF['eq-sqrt'].formula,
+					unicode: '√dₖ  (here √2 ≈ 1.414)',
+					desc: 'Scaling factor that keeps the variance of the scores near $1$, independent of the key dimension $d_k$.'
+				};
+			case 'eq-z':
+				return {
+					name: 'zᵢ — the contextualised output',
+					intuition: 'The <b>blended answer</b> for “it”: the weighted middle of all values, pulled toward the ones that won attention.',
+					concreteLatex: `\\mathbf{z} = (${fmt(ATTN_2D.output[0])},\\; ${fmt(ATTN_2D.output[1])})`,
+					formulaLatex: VF['eq-z'].formula,
+					unicode: 'zᵢ = Σⱼ αᵢⱼ vⱼ',
+					desc: 'A convex combination — z always lies inside the span of the value vectors.'
+				};
+
+			case 'bar-score': {
+				const k = ATTN_2D.keys[idx];
+				const s = ATTN_2D.scores[idx];
+				return {
+					name: `score q·k${idx+1}  (“${AT[idx+1].name}”)`,
+					intuition: `How strongly <b>“${AT[idx+1].name}”</b> aligns with “it”. Positive = same direction, negative = opposite. This is the raw input to softmax.`,
+					concreteLatex: `q\\cdot k_{${idx+1}} = (${fmt(q[0])})(${fmt(k[0])}) + (${fmt(q[1])})(${fmt(k[1])}) = ${s.toFixed(3)}`,
+					formulaLatex: VF['bar-score'].formula,
+					unicode: `q·k${idx+1} = ${s.toFixed(3)}`,
+					desc: `The bar’s height is the attention score of key ${idx+1}, before any scaling.`
+				};
+			}
+			case 'bar-scaled': {
+				const s = ATTN_2D.scores[idx], sc = ATTN_2D.scaled[idx];
+				return {
+					name: `scaled score s${idx+1}  (“${AT[idx+1].name}”)`,
+					intuition: `The score divided by $\\sqrt{2} \\approx 1.414$. The bar <b>shrank</b> — this keeps the numbers near magnitude $1$ so softmax stays smooth.`,
+					concreteLatex: `\\frac{${s.toFixed(3)}}{\\sqrt{2}} = ${sc.toFixed(3)}`,
+					formulaLatex: VF['bar-scaled'].formula,
+					unicode: `s${idx+1} = ${sc.toFixed(3)}`,
+					desc: `The scaled attention score of key ${idx+1}: $\\frac{q \\cdot k_{${idx+1}}}{\\sqrt{d_k}}$.`
+				};
+			}
+			case 'bar-exp': {
+				const sc = ATTN_2D.scaled[idx], ex = ATTN_2D.exps[idx];
+				return {
+					name: `exp(score)  (“${AT[idx+1].name}”)`,
+					intuition: `The bar <b>grew</b>: exp turns every number positive and amplifies the biggest one the most. “${AT[idx+1].name}” now towers over the rest.`,
+					concreteLatex: `e^{${sc.toFixed(3)}} = ${ex.toFixed(3)}`,
+					formulaLatex: VF['bar-exp'].formula,
+					unicode: `e^s = ${ex.toFixed(3)}`,
+					desc: `The exponentiated scaled score of key ${idx+1}. Always positive; a bigger input yields a much bigger output.`
+				};
+			}
+			case 'wbar': {
+				const w = ATTN_2D.weights[idx];
+				return {
+					name: `α${idx+1} — attention weight (“${AT[idx+1].name}”)`,
+					intuition: `“${AT[idx+1].name}” receives <b>${(w * 100).toFixed(1)}%</b> of “it”’s attention. The segments together exactly fill the bar — a 100% budget.`,
+					concreteLatex: `\\alpha_{${idx+1}} = \\frac{${ATTN_2D.exps[idx].toFixed(3)}}{${sum.toFixed(3)}} = ${w.toFixed(3)}`,
+					formulaLatex: VF.wbar.formula,
+					unicode: `α${idx+1} = ${w.toFixed(3)}`,
+					desc: `The share of the attention budget that key ${idx+1} wins. Summed over all keys it equals $1$.`
+				};
+			}
+			case 'comprect': {
+				const k = ATTN_2D.keys[0];
+				const d = idx + 1;                       // 1-based dimension
+				const a = q[d - 1], b = k[d - 1];
+				return {
+					name: `q[${d}] · k₁[${d}]  (dimension ${d})`,
+					intuition: `The <b>area of this rectangle</b> is one element-wise product: ${fmt(a)} × ${fmt(b)}. Same sign → positive (they agree on this axis).`,
+					concreteLatex: `(${fmt(a)})(${fmt(b)}) = ${(a * b).toFixed(3)}`,
+					formulaLatex: VF.comprect.formula,
+					unicode: `q[${d}]·k₁[${d}] = ${(a * b).toFixed(3)}`,
+					desc: 'The dot product is a sum of these per-dimension products: $q \\cdot k_1 = q[1]\\,k_1[1] + q[2]\\,k_1[2]$.'
+				};
+			}
+			case 'proj': {
+				const k = ATTN_2D.keys[idx];
+				const nk = Math.hypot(k[0], k[1]);
+				const dot = ATTN_2D.scores[idx];
+				const len = dot / nk;
+				return {
+					name: `projection of q onto k${idx+1} (“${AT[idx+1].name}”)`,
+					intuition: `The dashed line drops “it”’s arrow <b>perpendicularly</b> onto k${idx+1}’s line. The dot shows how much of “it” points along “${AT[idx+1].name}”: length ${len.toFixed(2)}. Positive → same way, negative → it lands behind the origin.`,
+					concreteLatex: `\\frac{q \\cdot k_{${idx+1}}}{\\lVert k_{${idx+1}} \\rVert} = \\frac{${dot.toFixed(3)}}{${nk.toFixed(3)}} = ${len.toFixed(3)}`,
+					formulaLatex: VF.proj.formula,
+					unicode: `proj = ${len.toFixed(3)}`,
+					desc: `The scalar projection of $\\mathbf{q}$ onto $\\mathbf{k}_{${idx+1}}$. Multiply it by $\\lVert\\mathbf{k}_{${idx+1}}\\rVert$ and you recover the score $q\\cdot k_{${idx+1}} = ${dot.toFixed(3)}$.`
+				};
+			}
+			case 'span':
+				return {
+					name: 'the span of the values',
+					intuition: 'z is a <b>weighted average</b> of the value tips, so it can never leave this region. Attention can only interpolate what is already there — it cannot create new directions.',
+					concreteLatex: `\\mathrm{conv}\\big(\\mathbf{v}_1, \\ldots, \\mathbf{v}_{${ATTN_2D.vals.length}}\\big)`,
+					formulaLatex: VF.span.formula,
+					unicode: 'conv(v₁,…,vₘ)',
+					desc: `The convex hull of the value tips. Since $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ with $\\alpha_j \\ge 0$ and $\\sum_j \\alpha_j = 1$, $\\mathbf{z}$ always lands inside this region.`
+				};
 		}
 		return null;
 	},
@@ -920,31 +1226,48 @@ const AttentionAnatomy = {
 			return latex;
 		};
 
-		// Output line: z_i = Σ_j α_ij · v_j
-		const outputLatex =
-			'z_i = ' +
-			hl('\\sum_j',                'sum')   + '\\;' +
-			hl('\\alpha_{ij}',           'alpha') + '\\;\\cdot\\;' +
-			hl('v_j',                    'value');
+		// Every sub-expression is wrapped in its own span (data-tip =
+		// tooltip key) and rendered as INLINE math ($...$ not $$...$$,
+		// so all fragments sit on one shared baseline and the line reads
+		// as a single equation) but each piece is individually hoverable.
+		const frag = (tip, latex) => `<span class="eq-tip" data-tip="${tip}">$${latex}$</span>`;
+		const sym  = (txt) => `<span class="eq-sym">${txt}</span>`;
 
-		// Weight line: α_ij = exp(q_i·k_j / √d_k) ÷ Σ_n exp(q_i·k_n / √d_k)
-		const weightLatex =
-			'\\alpha_{ij} = ' +
-			hl('\\mathrm{exp}',          'exp')   +
-			'\\!\\bigl(' +
-			hl('q_i \\cdot k_j',         'dot')   + '\\;/\\;' +
-			hl('\\sqrt{d_k}',            'sqrt')  +
-			'\\bigr)\\;\\div\\;' +
-			hl('\\sum_n \\mathrm{exp}(q_i \\cdot k_n \\big/ \\sqrt{d_k})', 'denom');
+		// Output line: z_i = Σ_j α_ij · v_j
+		const outputLine =
+			frag('eq-z', hl('z_i', '')) +
+			sym('=') +
+			frag('eq-sum', hl('\\sum_j', 'sum')) +
+			frag('eq-alpha', hl('\\alpha_{ij}', 'alpha')) +
+			sym('·') +
+			frag('eq-vj', hl('v_j', 'value'));
+
+		// Weight line: α_ij = exp( q_i · k_j / √d_k ) ÷ Σ_n exp( q_i · k_n / √d_k )
+		// When the 'dot' region is active, box both q_i and k_j so the
+		// product reads as one highlighted unit.
+		const dotHL = (latex) => hl(latex, 'dot');
+		const weightLine =
+			frag('eq-alpha', hl('\\alpha_{ij}', 'alpha')) +
+			sym('=') +
+			frag('eq-exp', hl('\\mathrm{exp}', 'exp')) +
+			sym('(') +
+			frag('eq-qi', dotHL('q_i')) +
+			sym('·') +
+			frag('eq-kj', dotHL('k_j')) +
+			sym('/') +
+			frag('eq-sqrt', hl('\\sqrt{d_k}', 'sqrt')) +
+			sym(')') +
+			sym('÷') +
+			frag('eq-sum', hl('\\sum_n \\mathrm{exp}(q_i \\cdot k_n \\big/ \\sqrt{d_k})', 'denom'));
 
 		el.innerHTML =
 			'<div class="eq-line" id="attn-section-output">' +
 				'<div class="eq-label">Output</div>' +
-				'$$ \\displaystyle ' + outputLatex + ' $$' +
+				'<div class="eq-formula">' + outputLine + '</div>' +
 			'</div>' +
 			'<div class="eq-line" id="attn-section-weight">' +
 				'<div class="eq-label">Weight</div>' +
-				'$$ \\displaystyle ' + weightLatex + ' $$' +
+				'<div class="eq-formula">' + weightLine + '</div>' +
 			'</div>';
 	},
 
@@ -1091,7 +1414,10 @@ const AttentionAnatomy = {
 	// Draw an arrow from `start` to `end` in the 2D plot. Adds the
 	// hit-area, shaft, arrowhead, and (optional) label to the SVG.
 	// Mouse events fire directly on the hit-area — no Plotly needed.
-	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim) {
+	// `lpos` optionally overrides the label offset ([dx, dy]) so labels
+	// that would otherwise stack (e.g. z + its weighted values) can be
+	// fanned out.
+	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos) {
 		const NS = this._SVG_NS;
 		const opacity = dim ? 0.35 : 1.0;
 
@@ -1142,8 +1468,8 @@ const AttentionAnatomy = {
 		// Label (with a THIN white halo for readability over the grid —
 		// a wide stroke around every glyph looks like a messy outline)
 		if (label) {
-			const lx = ex + 0.14;
-			const ly = ey - 0.04;
+			const lx = ex + (lpos ? lpos[0] : 0.14);
+			const ly = ey + (lpos ? lpos[1] : -0.04);
 			const halo = document.createElementNS(NS, 'text');
 			halo.setAttribute('x', lx); halo.setAttribute('y', ly);
 			halo.setAttribute('text-anchor', 'start');
@@ -1271,7 +1597,7 @@ const AttentionAnatomy = {
 		const py = (q[1] * k[1]).toFixed(3);
 
 		// data coords, y up → SVG y is negated
-		const addRect = (x0, y0, x1, y1, label) => {
+		const addRect = (x0, y0, x1, y1, label, dim) => {
 			const rect = document.createElementNS(NS, 'rect');
 			rect.setAttribute('x',  Math.min(x0, x1));
 			rect.setAttribute('y',  -Math.max(y0, y1));
@@ -1283,8 +1609,12 @@ const AttentionAnatomy = {
 			rect.setAttribute('stroke-opacity', '0.45');
 			rect.setAttribute('stroke-width', '0.008');
 			rect.setAttribute('stroke-dasharray', '0.03 0.03');
-			rect.style.pointerEvents = 'none';
+			rect.style.pointerEvents = 'all';
+			rect.style.cursor = 'help';
 			constructionG.appendChild(rect);
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('comprect', dim, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('comprect', dim, e.clientX, e.clientY));
+			rect.addEventListener('mouseleave', () => this._hideTooltip());
 			if (label) {
 				const t = document.createElementNS(NS, 'text');
 				t.setAttribute('x', Math.min(x0, x1) + 0.05);
@@ -1299,9 +1629,9 @@ const AttentionAnatomy = {
 		};
 
 		// Dim-1 product: width q[1], height k[1]  →  area = q[1]·k[1]
-		addRect(0, 0, q[0], k[0], `q₁·k₁ = ${px}`);
+		addRect(0, 0, q[0], k[0], `q₁·k₁ = ${px}`, 0);
 		// Dim-2 product: width q[2], height k[2]  →  area = q[2]·k[2]
-		addRect(0, 0, q[1], k[1], `q₂·k₂ = ${py}`);
+		addRect(0, 0, q[1], k[1], `q₂·k₂ = ${py}`, 1);
 
 		// Drop-lines from the highlighted key tip and the query tip to
 		// each axis, so you can read off the components being multiplied.
@@ -1360,7 +1690,8 @@ const AttentionAnatomy = {
 			seg.style.pointerEvents = 'none';
 			constructionG.appendChild(seg);
 
-			// Dot at the projection point
+			// Dot at the projection point (+ an invisible, more forgiving
+			// hover target around it showing the projection tooltip)
 			const dot = document.createElementNS(NS, 'circle');
 			dot.setAttribute('cx', P[0]);
 			dot.setAttribute('cy', -P[1]);
@@ -1368,6 +1699,17 @@ const AttentionAnatomy = {
 			dot.setAttribute('fill', color);
 			dot.style.pointerEvents = 'none';
 			constructionG.appendChild(dot);
+
+			const hit = document.createElementNS(NS, 'circle');
+			hit.setAttribute('cx', P[0]);
+			hit.setAttribute('cy', -P[1]);
+			hit.setAttribute('r', '0.09');
+			hit.setAttribute('fill', 'transparent');
+			hit.style.cursor = 'help';
+			constructionG.appendChild(hit);
+			hit.addEventListener('mouseenter', (e) => this._showTooltip('proj', j, e.clientX, e.clientY));
+			hit.addEventListener('mousemove',  (e) => this._showTooltip('proj', j, e.clientX, e.clientY));
+			hit.addEventListener('mouseleave', () => this._hideTooltip());
 		});
 	},
 
@@ -1375,7 +1717,8 @@ const AttentionAnatomy = {
 	// the top of the plot. Positive values hang below the baseline,
 	// negative above it, so you can watch the scores shrink under 1/√2
 	// and then explode under exp(). One bar per key, token-colored.
-	_drawValueBars2D: function(constructionG, labelsG, values, valueTexts, colors, caption) {
+	// `tipKey` decides which tooltip each bar shows ('bar-score' etc.).
+	_drawValueBars2D: function(constructionG, labelsG, values, valueTexts, colors, tipKey) {
 		const NS = this._SVG_NS;
 		const m = values.length;
 		if (!m) return;
@@ -1406,17 +1749,6 @@ const AttentionAnatomy = {
 		axis.style.pointerEvents = 'none';
 		constructionG.appendChild(axis);
 
-		if (caption) {
-			const t = document.createElementNS(NS, 'text');
-			t.setAttribute('x', x0); t.setAttribute('y', baseY - 0.08);
-			t.setAttribute('fill', themeColor('#64748b'));
-			t.setAttribute('font-size', '0.075');
-			t.setAttribute('font-family', 'Inter, sans-serif');
-			t.textContent = caption;
-			t.style.pointerEvents = 'none';
-			labelsG.appendChild(t);
-		}
-
 		values.forEach((v, j) => {
 			const h = (Math.abs(v) / maxA) * maxH;
 			const cx = x0 + w * (j + 0.5);
@@ -1435,8 +1767,15 @@ const AttentionAnatomy = {
 			}
 			rect.setAttribute('fill', colors[j] || '#3b82f6');
 			rect.setAttribute('fill-opacity', '0.9');
-			rect.style.pointerEvents = 'none';
+			rect.style.cursor = 'help';
 			constructionG.appendChild(rect);
+
+			// Hover a bar to see what this number is and where it came from
+			if (tipKey) {
+				rect.addEventListener('mouseenter', (e) => this._showTooltip(tipKey, j, e.clientX, e.clientY));
+				rect.addEventListener('mousemove',  (e) => this._showTooltip(tipKey, j, e.clientX, e.clientY));
+				rect.addEventListener('mouseleave', () => this._hideTooltip());
+			}
 
 			mkText(cx, (v >= 0) ? baseY + h + 0.10 : baseY + 0.10, `k${j+1} = ${valueTexts[j]}`, themeColor('#334155'));
 		});
@@ -1473,8 +1812,11 @@ const AttentionAnatomy = {
 			rect.setAttribute('height', h);
 			rect.setAttribute('fill', ATTN_TOKENS[j + 1].color);
 			rect.setAttribute('fill-opacity', '0.85');
-			rect.style.pointerEvents = 'none';
+			rect.style.cursor = 'help';
 			constructionG.appendChild(rect);
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			rect.addEventListener('mouseleave', () => this._hideTooltip());
 
 			const t = document.createElementNS(NS, 'text');
 			t.setAttribute('x', (xl + xr) / 2);
@@ -1492,6 +1834,7 @@ const AttentionAnatomy = {
 
 	// Step "values": annotate each value arrow with its attention weight,
 	// so you can see the weights carry over from the keys to the values.
+	// Each label is hoverable (same tooltip as the weight-bar segments).
 	_drawValueWeights2D: function(labelsG) {
 		const NS = this._SVG_NS;
 		ATTN_2D.weights.forEach((wi, j) => {
@@ -1503,28 +1846,48 @@ const AttentionAnatomy = {
 			t.setAttribute('font-size', '0.085');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `α${j+1} = ${(wi * 100).toFixed(1)}%`;
-			t.style.pointerEvents = 'none';
+			t.style.cursor = 'help';
 			labelsG.appendChild(t);
+			t.addEventListener('mouseenter', (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			t.addEventListener('mousemove',  (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			t.addEventListener('mouseleave', () => this._hideTooltip());
 		});
 	},
 
 	// Step "output": fill the span (convex hull) of the value tips with
 	// a translucent triangle/segment, so z visibly lands inside it.
+	// The whole region is hoverable.
 	_drawSpanFill2D: function(constructionG) {
 		const NS = this._SVG_NS;
 		const vals = ATTN_2D.vals;
 		if (vals.length < 2) return;
 		const pts = vals.map((v) => `${v[0].toFixed(4)},${(-v[1]).toFixed(4)}`).join(' ');
+		const bind = (el) => {
+			el.style.cursor = 'help';
+			constructionG.appendChild(el);
+			el.addEventListener('mouseenter', (e) => this._showTooltip('span', 0, e.clientX, e.clientY));
+			el.addEventListener('mousemove',  (e) => this._showTooltip('span', 0, e.clientX, e.clientY));
+			el.addEventListener('mouseleave', () => this._hideTooltip());
+		};
 		if (vals.length === 2) {
 			const line = document.createElementNS(NS, 'line');
 			line.setAttribute('x1', vals[0][0]); line.setAttribute('y1', -vals[0][1]);
 			line.setAttribute('x2', vals[1][0]); line.setAttribute('y2', -vals[1][1]);
 			line.setAttribute('stroke', '#f59e0b');
 			line.setAttribute('stroke-opacity', '0.6');
-			line.setAttribute('stroke-width', '0.014');
+			line.setAttribute('stroke-width', '0.05');   // fat enough to hover
 			line.setAttribute('stroke-dasharray', '0.04 0.04');
-			line.style.pointerEvents = 'none';
-			constructionG.appendChild(line);
+			bind(line);
+			// thin visible version
+			const vis = document.createElementNS(NS, 'line');
+			vis.setAttribute('x1', vals[0][0]); vis.setAttribute('y1', -vals[0][1]);
+			vis.setAttribute('x2', vals[1][0]); vis.setAttribute('y2', -vals[1][1]);
+			vis.setAttribute('stroke', '#f59e0b');
+			vis.setAttribute('stroke-opacity', '0.6');
+			vis.setAttribute('stroke-width', '0.014');
+			vis.setAttribute('stroke-dasharray', '0.04 0.04');
+			vis.style.pointerEvents = 'none';
+			constructionG.appendChild(vis);
 		} else {
 			const poly = document.createElementNS(NS, 'polygon');
 			poly.setAttribute('points', pts);
@@ -1534,8 +1897,7 @@ const AttentionAnatomy = {
 			poly.setAttribute('stroke-opacity', '0.45');
 			poly.setAttribute('stroke-width', '0.008');
 			poly.setAttribute('stroke-dasharray', '0.03 0.03');
-			poly.style.pointerEvents = 'none';
-			constructionG.appendChild(poly);
+			bind(poly);
 		}
 	},
 
@@ -1576,13 +1938,13 @@ const AttentionAnatomy = {
 				this._drawComponents2D(constructionG, labelsG, data.highlightKey);
 			} else if (comp === 'dot') {
 				this._drawProjections2D(constructionG);
-				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scores, ATTN_2D.scores.map((s) => s.toFixed(2)), tokenColors, null);
+				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scores, ATTN_2D.scores.map((s) => s.toFixed(2)), tokenColors, 'bar-score');
 			} else if (comp === 'scaled') {
 				this._drawProjections2D(constructionG);
-				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scaled, ATTN_2D.scaled.map((s) => s.toFixed(3)), tokenColors, null);
+				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.scaled, ATTN_2D.scaled.map((s) => s.toFixed(3)), tokenColors, 'bar-scaled');
 			} else if (comp === 'exps') {
 				this._drawProjections2D(constructionG);
-				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.exps, ATTN_2D.exps.map((e) => e.toFixed(3)), tokenColors, null);
+				this._drawValueBars2D(constructionG, labelsG, ATTN_2D.exps, ATTN_2D.exps.map((e) => e.toFixed(3)), tokenColors, 'bar-exp');
 			} else if (comp === 'weights') {
 				this._drawProjections2D(constructionG);
 				this._drawWeightBar2D(constructionG, labelsG);
@@ -1591,13 +1953,26 @@ const AttentionAnatomy = {
 			const valColors = ['#16a34a', '#15803d', '#166534'];
 			ATTN_2D.vals.forEach((v, j) => {
 				const dim = (mode === 'output');
-				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim);
+				// When a value coincides with z (2-token case) push its
+				// label up so it doesn't collide with "z = output".
+				const sameAsZ = (mode === 'output' &&
+					Math.hypot(v[0] - ATTN_2D.output[0], v[1] - ATTN_2D.output[1]) < 0.05);
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim,
+					sameAsZ ? [0.14, -0.20] : undefined);
 			});
 			if (mode === 'values') this._drawValueWeights2D(labelsG);
 
 			if (mode === 'output') {
+				// The weighted values: dashed arrows from the origin,
+				// fanned-out labels so they never stack on each other
+				// or on z. In the degenerate 2-token case (α₁ = 1) the
+				// weighted value coincides with z — skip the duplicate
+				// arrow and let z speak for itself.
 				ATTN_2D.weightedVals.forEach((wv, j) => {
-					this._addSVGArrow(arrowsG, labelsG, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 'weightedV', j, true, false);
+					const sameAsZ = Math.hypot(wv[0] - ATTN_2D.output[0], wv[1] - ATTN_2D.output[1]) < 0.05;
+					if (sameAsZ) return;
+					this._addSVGArrow(arrowsG, labelsG, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 'weightedV', j, true, false,
+						[0.16, -0.08 - j * 0.14]);
 				});
 
 				// Tip-to-tail construction lines (no formula, no events)
@@ -1615,6 +1990,21 @@ const AttentionAnatomy = {
 					line.style.pointerEvents = 'none';
 					constructionG.appendChild(line);
 					tip = next;
+				});
+
+				// Blend lines: each original value tip → z. This shows z
+				// as the weighted CENTER of the values, not a new vector.
+				ATTN_2D.vals.forEach((v, j) => {
+					if (Math.hypot(v[0] - ATTN_2D.output[0], v[1] - ATTN_2D.output[1]) < 0.05) return;
+					const line = document.createElementNS(NS, 'line');
+					line.setAttribute('x1', v[0]);      line.setAttribute('y1', -v[1]);
+					line.setAttribute('x2', ATTN_2D.output[0]); line.setAttribute('y2', -ATTN_2D.output[1]);
+					line.setAttribute('stroke', '#94a3b8');
+					line.setAttribute('stroke-width', '0.007');
+					line.setAttribute('stroke-dasharray', '0.02 0.025');
+					line.setAttribute('opacity', '0.45');
+					line.style.pointerEvents = 'none';
+					constructionG.appendChild(line);
 				});
 
 				// Fill the span of the value tips so z visibly lands inside it
