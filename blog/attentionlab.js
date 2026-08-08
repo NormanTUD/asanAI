@@ -5300,13 +5300,17 @@ const AttentionAnatomy = {
 		constructionG.innerHTML = '';
 		if (anglesG) anglesG.innerHTML = '';
 
-		// Collapse the 2D SVG when the visualisation lives in the
-		// computation panel (step 10 matrix, step 11 selfattn) so the
-		// table / plots get the full width.
-		const collapseSvg = (data.mode === 'matrix' || data.mode === 'selfattn');
+		// Collapse the 2D SVG only for the matrix step (step 10), where
+		// the visualisation lives entirely in the computation panel as
+		// a HTML table. Self-attention (step 11) USES the SVG — it draws
+		// the per-token mini-plots inside it — so it must stay visible,
+		// otherwise the per-token arrows (and their hit areas!) become
+		// opacity:0 and the mouseovers stop responding. This was the
+		// root cause of "mouseovers gehen nicht in step 11".
+		const collapseSvg = (data.mode === 'matrix');
 		svg.classList.toggle('attn-svg-collapsed', collapseSvg);
-		// Also expand the computation panel to full width so the
-		// table / plots have all the horizontal space.
+		// Also expand the computation panel to full width for matrix
+		// only — self-attn keeps the side-by-side layout.
 		const grid = svg.closest('.attn-anatomy-grid');
 		if (grid) grid.classList.toggle('attn-grid-svg-collapsed', collapseSvg);
 
