@@ -1223,7 +1223,7 @@ const VECTOR_FORMULAS = {
 let TEMML_RENDERED = {};
 
 const AttentionAnatomy = {
-	step: 0,
+	step: 10,
 
 	init: function() {
 		console.log('[attn] init() called');
