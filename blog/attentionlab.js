@@ -5314,6 +5314,21 @@ const AttentionAnatomy = {
 		const grid = svg.closest('.attn-anatomy-grid');
 		if (grid) grid.classList.toggle('attn-grid-svg-collapsed', collapseSvg);
 
+		// Self-attention stacks N panels vertically; the default viewBox
+		// (-1.5 -1.5 3 2.7) is only tall enough for ONE panel, so the
+		// other panels ended up drawn outside the visible area and their
+		// hit rects were at y=5000+ px in screen coords — completely
+		// off-screen so the user could never hover them. Resize the
+		// viewBox to fit all panels, plus a strip for the title at the
+		// bottom (startY + panelH*n + 0.05 ≈ 2.95 for n=3).
+		if (data.mode === 'selfattn') {
+			const n = ATTN_2D.numTokens;
+			const need = 1.5 + 0.85 * n + 0.4; // extra strip for title + margin
+			svg.setAttribute('viewBox', '-1.5 -1.5 3 ' + need);
+		} else {
+			svg.setAttribute('viewBox', '-1.5 -1.5 3 2.7');
+		}
+
 		// Sanity checks before drawing — catch data corruption early
 		this._assert(data && typeof data.mode === 'string', `render2D: bad data, mode=${data && data.mode}`);
 		this._assert(ATTN_2D.keys && ATTN_2D.keys.length > 0, 'render2D: ATTN_2D.keys is empty');
