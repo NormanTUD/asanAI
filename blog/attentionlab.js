@@ -435,7 +435,6 @@ const ATTN_2D = {
 		this.output  = Z[last] || [0, 0];
 		this.weightedVals = vals.map((v, j) =>
 			[(this.weights[j] || 0) * v[0], (this.weights[j] || 0) * v[1]]);
-		this._sanity('recomputeMatrix');
 	},
 
 	setNumTokens: function(n) {
@@ -456,7 +455,6 @@ const ATTN_2D = {
 		this.scaled = this.scores.map(s => s / this.sqrtDk);
 		this.recomputeWeights();
 		this.recomputeMatrix();
-		this._sanity('setNumTokens');
 		console.log('[attn] setNumTokens done: numTokens=' + this.numTokens + ' keysLen=' + this.keys.length);
 	},
 
@@ -718,14 +716,48 @@ const ATTN_COMPUTATIONS = {
 		return { html, liveVals };
 	},
 	values: () => {
-		const rows = ATTN_2D.vals.map((v, j) => `
-			<div class="comp-eq" data-tip="v" data-idx="${j}">$$ \\underbrace{\\mathbf{v}_{${j+1}} = (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})}_{\\text{value "${ATTN_TOKENS[j+1].name}"}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(ATTN_2D.weights[j]*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}} $$</div>`
-		).join('');
+		const rows = ATTN_2D.vals.map((v, j) => {
+			// Defensive: weights[j] can be undefined if recomputeWeights
+			// hasn't run. Fall back to 0 so we show 0.0% instead of NaN%.
+			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+			if (!ATTN_2D.weights || ATTN_2D.weights[j] === undefined) {
+				console.warn('[attn] values: weights fallback at j=' + j +
+					' weights=' + JSON.stringify(ATTN_2D.weights));
+			}
+			return `<div class="comp-eq" data-tip="v" data-idx="${j}">$$ \\underbrace{\\mathbf{v}_{${j+1}} = (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})}_{\\text{value "${ATTN_TOKENS[j+1].name}"}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(w*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}} $$</div>`;
+		}).join('');
+		// Visual weighted-average preview: show each αⱼ · vⱼ and the running sum.
+		// This makes it crystal-clear that z = Σ αⱼ·vⱼ is literally a weighted
+		// average of the value vectors.
+		const previewRows = ATTN_2D.vals.map((v, j) => {
+			const tj = j + 1;
+			const tname = (ATTN_TOKENS[j+1] || {}).name || ('v' + tj);
+			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+			const wx = (w * v[0]).toFixed(3);
+			const wy = (w * v[1]).toFixed(3);
+			const barW = Math.round(w * 100);
+			return `<div class="attn-wavg-row">
+				<div class="attn-wavg-label">α<sub>${tj}</sub>·v<sub>${tj}</sub></div>
+				<div class="attn-wavg-name">${tname}</div>
+				<div class="attn-wavg-bar"><div class="attn-wavg-bar-fill" style="width:${barW}%"></div><span class="attn-wavg-pct">${(w*100).toFixed(1)}%</span></div>
+				<div class="attn-wavg-val">(${wx}, ${wy})</div>
+			</div>`;
+		}).join('');
+		const z = ATTN_2D.output;
+		const sumCheck = ATTN_2D.weightedVals
+			? ATTN_2D.weightedVals.map(wv => `(${wv[0].toFixed(2)}, ${wv[1].toFixed(2)})`).join(' + ')
+			: '?';
+		const preview = `<div class="attn-wavg-box">
+			<div class="attn-wavg-title">⚖ Weighted-average preview — how each v contributes to z</div>
+			<div class="attn-wavg-rows">${previewRows}</div>
+			<div class="attn-wavg-sum">z = <strong>${sumCheck}</strong> = <strong style="color:#f59e0b">(${z[0].toFixed(3)}, ${z[1].toFixed(3)})</strong></div>
+		</div>`;
 		const html = `
 		<div class="comp-header">▶ Switching from keys to value vectors</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-note">Keys said <em>what</em> to attend to; values carry the actual content. The attention weights ride along unchanged.</div>
+			${preview}
+			<div class="comp-note"><b>Yes — z is a weighted average</b> of the value vectors. Each v<sub>j</sub> is scaled by its attention weight α<sub>j</sub> (the bar widths above) and then summed. Bars summing to 100% guarantee z lies inside the convex hull of the v<sub>j</sub>.</div>
 		</div>`;
 		const liveVals = AttentionAnatomy._liveValsHTML();
 		return { html, liveVals };
@@ -1770,6 +1802,10 @@ const AttentionAnatomy = {
 
 		// Refresh the debug panel so it reflects the current step.
 		this._updateDebug();
+		// Run runtime plausibility checks on the data model. Done
+		// here (on AttentionAnatomy, NOT on ATTN_2D — that would be a
+		// TDZ trap since ATTN_2D is initialised before AttentionAnatomy).
+		this._sanity('render(step=' + this.step + ')');
 	},
 
 	// Render the FULL equation as Temml / LaTeX. Active sub-expressions
