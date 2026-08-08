@@ -852,7 +852,8 @@ const ATTN_INTUITIONS = {
 	`,
 	values: () => `
 		<div class="intuition-header">💡 Keys vs values</div>
-		<div class="intuition-math">$$\\text{keys} = \\text{WHAT to attend to}, \\quad \\text{values} = \\text{WHAT to retrieve}$$</div>
+		<div class="intuition-math">$$\\text{keys} \\;=\\; \\text{WHAT to attend to}$$</div>
+		<div class="intuition-math">$$\\text{values} \\;=\\; \\text{WHAT to retrieve}$$</div>
 		<div class="intuition-section">Weights carry over unchanged — they were computed from the keys.</div>
 	`,
 	output: () => `
@@ -2437,11 +2438,17 @@ const AttentionAnatomy = {
 
 		// HOVER HIGHLIGHT: when a token is hovered AND this arrow is at
 		// full opacity (i.e. it belongs to the hovered token), make it
-		// visibly pop — thicker stroke, glow halo, bigger label.
+		// visibly pop — thicker stroke, glow halo, bigger label, AND a
+		// bold "selected" colour so it's unmistakable even if the arrow
+		// is already naturally close to q (cat/mat case).
 		const isHovered = (ATTN_2D.hoveredToken >= 0 && finalOpacity >= 0.99 && opacity !== undefined);
-		const sw  = isHovered ? 0.052 : 0.028;            // ~85% thicker when hovered
-		const fs  = isHovered ? 0.13   : 0.10;             // bigger label when hovered
-		const swH = isHovered ? 0.16  : 0.11;              // arrowhead bigger when hovered
+		const sw  = isHovered ? 0.060 : 0.028;            // ~115% thicker when hovered
+		const fs  = isHovered ? 0.14  : 0.10;             // bigger label when hovered
+		const swH = isHovered ? 0.18  : 0.11;              // arrowhead bigger when hovered
+		// When hovered, swap to a vivid "selected" colour (deep indigo)
+		// so the visual change is colour + thickness + glow — not just
+		// thickness alone (which was too subtle for already-prominent arrows).
+		const finalColor = isHovered ? '#1e3a8a' : color;
 
 		// Flip y for SVG (SVG y goes down, our data y goes up)
 		const sx = start[0], sy = -start[1];
@@ -2468,7 +2475,7 @@ const AttentionAnatomy = {
 			const glow = document.createElementNS(NS, 'line');
 			glow.setAttribute('x1', sx); glow.setAttribute('y1', sy);
 			glow.setAttribute('x2', ex); glow.setAttribute('y2', ey);
-			glow.setAttribute('stroke', color);
+			glow.setAttribute('stroke', finalColor);
 			glow.setAttribute('stroke-width', '0.16');
 			glow.setAttribute('stroke-opacity', '0.28');
 			glow.setAttribute('stroke-linecap', 'round');
@@ -2480,7 +2487,7 @@ const AttentionAnatomy = {
 		const line = document.createElementNS(NS, 'line');
 		line.setAttribute('x1', sx); line.setAttribute('y1', sy);
 		line.setAttribute('x2', ex); line.setAttribute('y2', ey);
-		line.setAttribute('stroke', color);
+		line.setAttribute('stroke', finalColor);
 		line.setAttribute('stroke-width', sw);
 		line.setAttribute("opacity", finalOpacity);
 		line.style.pointerEvents = 'none';
@@ -2503,7 +2510,7 @@ const AttentionAnatomy = {
 			const ay2 = ey - s * (-ux * si + uy * c);
 			head = document.createElementNS(NS, 'polygon');
 			head.setAttribute('points', `${ex},${ey} ${ax1},${ay1} ${ax2},${ay2}`);
-			head.setAttribute('fill', color);
+			head.setAttribute('fill', finalColor);
 			head.setAttribute("opacity", finalOpacity);
 			head.style.pointerEvents = 'none';
 			head.classList.add(arrowCls);
@@ -2532,7 +2539,7 @@ const AttentionAnatomy = {
 			labelTxt.setAttribute('x', lx); labelTxt.setAttribute('y', ly);
 			labelTxt.setAttribute('text-anchor', anchor);
 			labelTxt.setAttribute('dominant-baseline', 'middle');
-			labelTxt.setAttribute('fill', color);
+			labelTxt.setAttribute('fill', finalColor);
 			labelTxt.setAttribute('font-size', fs);
 			labelTxt.setAttribute("opacity", finalOpacity);
 			labelTxt.setAttribute('font-family', 'Inter, sans-serif');
@@ -3229,9 +3236,12 @@ const AttentionAnatomy = {
 			ay.style.pointerEvents = 'none';
 			constructionG.appendChild(ay);
 
-			// Mini-arrow draw function with hover tooltip
+			// Mini-arrow draw function with hover tooltip.
+			// `offset` is a perpendicular shift so q, k, v, z (which
+			// share the same tail) don't overlap when they're parallel
+			// or identical (q == k in self-attention).
 			const scale = 0.16;
-			const drawMini = (v, color, label, tipKey) => {
+			const drawMini = (v, color, label, tipKey, offset) => {
 				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
 					const dot = document.createElementNS(NS, 'circle');
 					dot.setAttribute('cx', ox);
@@ -3242,18 +3252,27 @@ const AttentionAnatomy = {
 					constructionG.appendChild(dot);
 					return;
 				}
-				const ex = ox + v[0] * scale;
-				const ey = oy - v[1] * scale;
+				// Perpendicular offset (in data units) so overlapping
+				// arrows get fanned out visually.
+				const off = offset || 0;
+				const nx = -v[1], ny = v[0];
+				const nlen = Math.hypot(nx, ny) || 1;
+				const px = (nx / nlen) * off;
+				const py = (ny / nlen) * off;
+				const ex = ox + v[0] * scale + px;
+				const ey = oy - v[1] * scale - py;
+				const sx = ox + px;
+				const sy = oy - py;
 				const line = document.createElementNS(NS, 'line');
-				line.setAttribute('x1', ox); line.setAttribute('y1', oy);
-				line.setAttribute('x2', ex);  line.setAttribute('y2', ey);
+				line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+				line.setAttribute('x2', ex); line.setAttribute('y2', ey);
 				line.setAttribute('stroke', color);
 				line.setAttribute('stroke-width', '0.020');
 				line.setAttribute('stroke-linecap', 'round');
 				line.style.pointerEvents = 'none';
 				constructionG.appendChild(line);
 				// Arrowhead
-				const dx = ex - ox, dy2 = ey - oy;
+				const dx = ex - sx, dy2 = ey - sy;
 				const len = Math.sqrt(dx*dx + dy2*dy2);
 				if (len > 0.02) {
 					const ux = dx/len, uy = dy2/len;
@@ -3265,12 +3284,13 @@ const AttentionAnatomy = {
 					head.style.pointerEvents = 'none';
 					constructionG.appendChild(head);
 				}
-				// Label at the tip — bigger font
+				// Label at the tip — pushed further out when offset
 				const t = document.createElementNS(NS, 'text');
-				t.setAttribute('x', ex + 0.04); t.setAttribute('y', ey - 0.02);
+				t.setAttribute('x', ex + 0.05 + px * 0.5);
+				t.setAttribute('y', ey - 0.03 - py * 0.5);
 				t.setAttribute('text-anchor', 'start');
 				t.setAttribute('fill', color);
-				t.setAttribute('font-size', '0.10');
+				t.setAttribute('font-size', '0.11');
 				t.setAttribute('font-weight', '700');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = label;
@@ -3279,10 +3299,10 @@ const AttentionAnatomy = {
 
 				// Hover tooltip for this mini-arrow — generous hit area
 				const hit = document.createElementNS(NS, 'rect');
-				hit.setAttribute('x', Math.min(ox, ex) - 0.05);
-				hit.setAttribute('y', Math.min(oy, ey) - 0.05);
-				hit.setAttribute('width', Math.abs(ex - ox) + 0.12);
-				hit.setAttribute('height', Math.abs(ey - oy) + 0.12);
+				hit.setAttribute('x', Math.min(sx, ex) - 0.05);
+				hit.setAttribute('y', Math.min(sy, ey) - 0.05);
+				hit.setAttribute('width', Math.abs(ex - sx) + 0.12);
+				hit.setAttribute('height', Math.abs(ey - sy) + 0.12);
 				hit.setAttribute('fill', 'transparent');
 				hit.style.cursor = 'help';
 				constructionG.appendChild(hit);
@@ -3290,12 +3310,14 @@ const AttentionAnatomy = {
 				hit.addEventListener('mousemove',  (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
 				hit.addEventListener('mouseleave', () => self._hideTooltip());
 			};
-			// Draw q, k, v, z each with its own mouseover
+			// Draw q, k, v, z each with its own mouseover. Use small
+			// perpendicular offsets so parallel arrows don't stack on
+			// top of each other (q and k are identical in self-attention).
 			const v = (i === 0) ? null : ATTN_2D._allVals[i-1];
-			drawMini(queries[i], '#ef4444', 'q', 'q');
-			drawMini(keys[i],    '#2563eb', 'k', 'k');
-			if (v) drawMini(v,   '#10b981', 'v', 'self-v');
-			drawMini(Z[i],       '#f59e0b', 'z', 'z');
+			drawMini(queries[i], '#ef4444', 'q', 'q',  0.035);
+			drawMini(keys[i],    '#2563eb', 'k', 'k', -0.035);
+			if (v) drawMini(v,   '#10b981', 'v', 'self-v', 0);
+			drawMini(Z[i],       '#f59e0b', 'z', 'z', 0);
 
 			// z value label below the panel — bigger font
 			if (Z[i] && isFinite(Z[i][0])) {
