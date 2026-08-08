@@ -2261,6 +2261,18 @@ window.__MN_DARK = {
 		'#6366f1':     '#818cf8',  // indigo -> lighter indigo
 		'#10b981':     '#6ee7b7',  // emerald -> lighter emerald
 		'#d97706':     '#fbbf24',  // dark amber -> bright amber
+		// Attention-lab vector colours: the k/keys blue and weighted-v
+		// green are used as text fills in the SVG; on the dark canvas
+		// the original Blue-600 (#2563eb) is hard to read. Bump up one
+		// shade so the in-SVG labels stay legible against #0f172a/#1e293b.
+		'#2563eb':     '#60a5fa',  // Blue-600 (k keys) -> Blue-400
+		'#3b82f6':     '#93c5fd',  // Blue-500 -> Blue-300
+		'#1e3a8a':     '#93c5fd',  // Blue-900 (matrix cells) -> Blue-300
+		'#15803d':     '#86efac',  // Green-700 (weighted-v) -> Green-300
+		'#16a34a':     '#4ade80',  // Green-600 -> Green-400
+		'#22c55e':     '#4ade80',  // Green-500 -> Green-400
+		'#d946ef':     '#f0abfc',  // Fuchsia-500 (hover magenta) -> Fuchsia-300
+		'#f97316':     '#fdba74',  // Orange-500 -> Orange-300
 	},
 	// Resolve a single colour through the swap map.
 	// Accepts hex strings, returns the dark-mode equivalent (or the

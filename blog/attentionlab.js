@@ -951,11 +951,12 @@ const ATTN_COMPUTATIONS = {
 //   - "What this does" — a plain-language explanation of the operation alone
 //   - "Big picture" — how it serves the overall attention computation
 const ATTN_INTUITIONS = {
-	projections: () => `
-		<div class="intuition-header">💡 Three views of the same token</div>
-		<div class="intuition-math">$$\\mathbf{q} = \\mathbf{W}^Q \\mathbf{x}, \\quad \\mathbf{k} = \\mathbf{W}^K \\mathbf{x}, \\quad \\mathbf{v} = \\mathbf{W}^V \\mathbf{x}$$</div>
-		<div class="intuition-section">Three learned linear maps — each one a different rotation/scale/shear of the input space.</div>
-	`,
+	// `projections` deliberately returns an empty string: the "Three
+	// views of the same token" recap lives in the always-on summary
+	// footer at the END of the anatomy section (see attentionlab.php /
+	// .attn-anatomy-summary), not in step 1's intuition panel where
+	// it would compete with the intro.
+	projections: () => ``,
 	setup: () => `
 		<div class="intuition-header">💡 Where do Q, K, V come from?</div>
 		<div class="intuition-math">$$q_i = x_i W^Q, \\quad k_j = x_j W^K, \\quad v_j = x_j W^V$$</div>
@@ -1487,6 +1488,212 @@ const AttentionAnatomy = {
 			}
 		}
 		return this._buildExtraInfo(key, idx);
+	},
+
+	// Tooltip content for the per-token mini-arrows in step 11 (self-
+	// attention). Each token gets its own q / k / v / z and the hover
+	// has to spell out exactly where each of those values came from:
+	//   q_i — from the token's own embedding x_i, multiplied by W^Q
+	//   k_i — from the token's own embedding x_i, multiplied by W^K
+	//   v_i — from the token's own embedding x_i, multiplied by W^V
+	//   z_i — Σ_j α_ij · v_j, with all the per-key weights spelled out
+	//
+	// GUARDRAILS — this code is easy to break silently (NaN coords,
+	// missing data, off-by-one indices, numTokens flips between hovers)
+	// so every branch starts with strict input validation. If the data
+	// is missing or corrupt, return a minimal "unavailable" payload
+	// rather than rendering "undefined · undefined" or NaN in Temml.
+	_buildSelfAttentionInfo: function(key, idx) {
+		// 1. INPUT VALIDATION — bail out cleanly on garbage
+		if (typeof idx !== 'number' || !isFinite(idx) || idx < 0) {
+			this._dbg('ERROR', `_buildSelfAttentionInfo: bad idx=${idx}`);
+			return this._saUnavailable('invalid token index');
+		}
+		const n = ATTN_2D.numTokens;
+		if (!isFinite(n) || n < 1) {
+			this._dbg('ERROR', `_buildSelfAttentionInfo: bad numTokens=${n}`);
+			return this._saUnavailable('numTokens not set');
+		}
+		if (idx >= n) {
+			this._dbg('ERROR', `_buildSelfAttentionInfo: idx=${idx} >= numTokens=${n}`);
+			return this._saUnavailable('token out of range');
+		}
+		if (!Array.isArray(ATTN_2D._allQueries) || !Array.isArray(ATTN_2D._allKeys)
+		    || !Array.isArray(ATTN_2D._allVals) || !Array.isArray(ATTN_2D.selfOutputs)) {
+			this._dbg('ERROR', '_buildSelfAttentionInfo: arrays not initialised');
+			return this._saUnavailable('data not ready');
+		}
+
+		const isIt    = (idx === 0);
+		const tName   = (ATTN_TOKENS[idx] && ATTN_TOKENS[idx].name) || `token ${idx}`;
+		const fmtNum  = (v) => (isFinite(v) ? v.toFixed(3) : '\\text{NaN}');
+		const fmtVec  = (v) => (Array.isArray(v) && isFinite(v[0]) && isFinite(v[1]))
+			? `[${fmtNum(v[0])},\\; ${fmtNum(v[1])}]` : '\\text{(unavailable)}';
+		// Bailout helper — Temml-safe minimal payload so we never produce
+		// "undefined · undefined" inside a $...$ block.
+		const bail = (msg) => {
+			this._dbg('WARN', `_buildSelfAttentionInfo(${key}, ${idx}): ${msg}`);
+			return {
+				name: `(${tName})`,
+				intuition: `<i>${msg}</i>`,
+				concreteLatex: `\\text{${msg}}`,
+				formulaLatex: '',
+				unicode: msg,
+				desc: '',
+			};
+		};
+
+		// 2. EXTRACT the four per-token values with bounds-checked reads
+		// queries is n+1 long (q_it + n token-q's); _allKeys and _allVals
+		// are n long and there is NO k_it / v_it in this demo (the query
+		// token "it" carries a query but contributes no key/value).
+		//
+		// Indexing for token idx:
+		//   q_{idx}         = _allQueries[idx]               (idx=0 → q_it)
+		//   k_{idx} (idx>0) = _allKeys[idx-1]                (idx=0 → none)
+		//   v_{idx} (idx>0) = _allVals[idx-1]                (idx=0 → none)
+		//   z_{idx}         = selfOutputs[idx]
+		const q = (idx < ATTN_2D._allQueries.length) ? ATTN_2D._allQueries[idx] : null;
+		const k = isIt
+			? null
+			: ((idx - 1) < ATTN_2D._allKeys.length ? ATTN_2D._allKeys[idx - 1] : null);
+		const v = isIt
+			? null
+			: ((idx - 1) < ATTN_2D._allVals.length ? ATTN_2D._allVals[idx - 1] : null);
+		const z = (idx < ATTN_2D.selfOutputs.length) ? ATTN_2D.selfOutputs[idx] : null;
+
+		// 3. BRANCH on what was hovered
+		switch (key) {
+			case 'sa-q':
+				if (!q || !isFinite(q[0]) || !isFinite(q[1])) {
+					return bail(`q_{${isIt ? '\\text{it}' : idx}} unavailable`);
+				}
+				return {
+					name: `q of “${tName}”`,
+					intuition: `The <b>query</b> for token <b>${tName}</b> — what this token is <i>looking for</i> in every other token's key.`,
+					concreteLatex: `\\underbrace{\\mathbf{q}_{${isIt ? '\\text{it}' : idx}} = ${fmtVec(q)}}_{\\text{query for “${tName}”}}`,
+					formulaLatex: isIt
+						? '\\mathbf{q}_{\\text{it}} \\;=\\; \\mathbf{x}_{\\text{it}} \\, \\mathbf{W}^Q'
+						: `\\mathbf{q}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^Q`,
+					unicode: isIt
+						? `q_it = [${q[0].toFixed(2)}, ${q[1].toFixed(2)}]  (held fixed in this demo)`
+						: `q_${idx} = [${q[0].toFixed(2)}, ${q[1].toFixed(2)}] = x_${idx} · W^Q`,
+					desc: isIt
+						? `In this demo the query for <b>“it”</b> is held fixed at <code>[${q[0].toFixed(2)}, ${q[1].toFixed(2)}]</code> so you can compare attention regimes across the example sets without the query itself changing.`
+						: `Token <b>${tName}</b>'s embedding x<sub>${idx}</sub> is multiplied by the learned projection matrix <b>W<sup>Q</sup></b>. The result is the direction this token searches along when attending to others.`,
+				};
+
+			case 'sa-k':
+				// "it" has no k in this demo (only the query token has its
+				// own key in the demo's data model). Show a clear "n/a" with
+				// the explanation so the user understands the asymmetry
+				// instead of wondering why k is missing.
+				if (isIt || !k || !isFinite(k[0]) || !isFinite(k[1])) {
+					return {
+						name: `k of “${tName}”`,
+						intuition: `In this demo the query token <b>“it”</b> has <i>no own key</i> — it asks questions but does not advertise itself as something to attend to. The other tokens' keys are what <b>“it”</b>'s query scores against.`,
+						concreteLatex: '\\text{(no } \\mathbf{k}_{\\text{it}} \\text{ in this demo)}',
+						formulaLatex: '',
+						unicode: 'k_it = n/a',
+						desc: '',
+					};
+				}
+				return {
+					name: `k of “${tName}”`,
+					intuition: `The <b>key</b> for token <b>${tName}</b> — what this token <i>advertises</i> about its content. Other tokens' queries score against this key.`,
+					concreteLatex: `\\underbrace{\\mathbf{k}_{${idx}} = ${fmtVec(k)}}_{\\text{key for “${tName}”}}`,
+					formulaLatex: `\\mathbf{k}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^K`,
+					unicode: `k_${idx} = [${k[0].toFixed(2)}, ${k[1].toFixed(2)}] = x_${idx} · W^K`,
+					desc: `Token <b>${tName}</b>'s embedding x<sub>${idx}</sub> is multiplied by the learned projection matrix <b>W<sup>K</sup></b>. The closer this key points to another token's query, the more attention that token will pay to <b>${tName}</b>.`,
+				};
+
+			case 'sa-v':
+				if (isIt) {
+					// "it" has no v in this demo
+					return {
+						name: `v of “${tName}”`,
+						intuition: `The query token <b>“it”</b> has no value in this demo — it asks the question but contributes no content. Only the other tokens carry values that can be blended into an answer.`,
+						concreteLatex: '\\text{(no } \\mathbf{v}_{\\text{it}} \\text{ in this demo)}',
+						formulaLatex: '',
+						unicode: 'v_it = n/a',
+						desc: '',
+					};
+				}
+				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
+					return bail(`v_{${idx}} unavailable`);
+				}
+				return {
+					name: `v of “${tName}”`,
+					intuition: `The <b>value</b> for token <b>${tName}</b> — the actual semantic payload that gets blended into every output z<sub>i</sub> according to that output's attention weights α<sub>i·</sub>.`,
+					concreteLatex: `\\underbrace{\\mathbf{v}_{${idx}} = ${fmtVec(v)}}_{\\text{value of “${tName}”}}`,
+					formulaLatex: `\\mathbf{v}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^V`,
+					unicode: `v_${idx} = [${v[0].toFixed(2)}, ${v[1].toFixed(2)}] = x_${idx} · W^V`,
+					desc: `Token <b>${tName}</b>'s embedding x<sub>${idx}</sub> is multiplied by the learned projection matrix <b>W<sup>V</sup></b>. This v is the <i>same</i> for every output — each z<sub>i</sub> scales it by α<sub>i${idx}</sub> before summing.`,
+				};
+
+			case 'sa-z':
+				if (!z || !isFinite(z[0]) || !isFinite(z[1])) {
+					return bail(`z_{${idx}} unavailable`);
+				}
+				// Spell out the full z_i = Σ_j α_ij · v_j computation.
+				// matrix[i][j] is the weight from query_i to key_j; column j
+				// corresponds to token (j+1) (since there's no k_it/v_it,
+				// columns are 0-indexed into _allKeys/_allVals). The matching
+				// value is _allVals[j] (= v_{j+1}).
+				const M = ATTN_2D.matrix;
+				if (!Array.isArray(M) || idx >= M.length) {
+					return bail('matrix not ready');
+				}
+				const row = M[idx] || [];
+				const terms = [];
+				for (let j = 0; j < row.length; j++) {
+					const a = row[j];
+					if (!isFinite(a)) continue;
+					const vj = ATTN_2D._allVals[j];
+					const kn = ATTN_TOKENS[j + 1] ? ATTN_TOKENS[j + 1].name : `t${j+1}`;
+					if (!vj || !isFinite(vj[0])) {
+						terms.push(`${(a*100).toFixed(1)}\\%\\,(\\text{no }\\mathbf{v}_{${j+1}})`);
+					} else {
+						terms.push(`${(a*100).toFixed(1)}\\%\\,` +
+							`\\cdot\\,\\underbrace{[${vj[0].toFixed(2)},${vj[1].toFixed(2)}]}_{\\mathbf{v}_{${j+1}}\\text{ (“${kn}”)}}`);
+					}
+				}
+				const sumText = terms.length
+					? terms.join('\\;+\\;')
+					: '\\text{(no contributing keys)}';
+				return {
+					name: `z of “${tName}”`,
+					intuition: `The <b>output</b> for token <b>${tName}</b> — a weighted blend of every value vector, scaled by the attention weights in row ${idx} of the α-matrix.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{z}_{${isIt ? '\\text{it}' : idx}} = ${fmtVec(z)}}_{\\text{output for “${tName}”}}` +
+						`\\;=\\;\\underbrace{${sumText}}_{\\text{weighted values}}`,
+					formulaLatex:
+						isIt
+							? '\\mathbf{z}_{\\text{it}} \\;=\\; \\sum_{j=1}^{L} \\alpha_{\\text{it},j}\\, \\mathbf{v}_j'
+							: `\\mathbf{z}_{${idx}} \\;=\\; \\sum_{j=1}^{L} \\alpha_{${idx},j}\\, \\mathbf{v}_j`,
+					unicode:
+						(isIt ? 'z_it' : `z_${idx}`) +
+						` = [${z[0].toFixed(2)}, ${z[1].toFixed(2)}]  =  ` +
+						row.map((a, j) => `${(a*100).toFixed(0)}%·v${j+1}`).join(' + '),
+					desc: `Row ${idx} of the α-matrix (the weights for <b>${tName}</b>'s query) gives each v<sub>j</sub> its coefficient. The result is a point inside the convex hull of the v's.`,
+				};
+		}
+		// Unknown key — don't let the caller crash
+		return this._saUnavailable(`unknown self-attn key: ${key}`);
+	},
+
+	// Minimal "something went wrong" payload for the self-attn tooltip.
+	// Returns a Temml-safe object so _showTooltip never has to special-case
+	// missing data.
+	_saUnavailable: function(reason) {
+		return {
+			name: 'self-attention value',
+			intuition: `<i>Tooltip unavailable (${reason}).</i>`,
+			concreteLatex: '\\text{(unavailable)}',
+			formulaLatex: '',
+			unicode: '(unavailable)',
+			desc: '',
+		};
 	},
 
 	// Tooltip content for everything else that is hoverable but is not a
@@ -3615,7 +3822,12 @@ const AttentionAnatomy = {
 			labelHalo.setAttribute('text-anchor', anchor);
 			labelHalo.setAttribute('dominant-baseline', 'middle');
 			labelHalo.setAttribute('fill', '#fff'); labelHalo.setAttribute('stroke', '#fff');
-			labelHalo.setAttribute('stroke-width', '0.0025'); labelHalo.setAttribute('paint-order', 'stroke');
+			// Wider halo than before (0.0025 → 0.006) so the white ring
+			// around each label actually lifts the glyph off the canvas
+			// in dark mode, where the canvas is near-black and the key
+			// blue (#60a5fa after the swap) would otherwise sit close
+			// to the background in tone.
+			labelHalo.setAttribute('stroke-width', '0.006'); labelHalo.setAttribute('paint-order', 'stroke');
 			labelHalo.setAttribute('font-size', fs);
 			labelHalo.setAttribute('font-family', 'Inter, sans-serif');
 			labelHalo.textContent = label;
@@ -3658,7 +3870,15 @@ const AttentionAnatomy = {
 	_showTooltip: function(key, idx, clientX, clientY) {
 		const tip = document.getElementById('attn-vector-tooltip');
 		if (!tip) return;
-		const info = this._buildArrowInfo(key, idx);
+		// Self-attention mini-arrows (step 11) use their own info builder
+		// because each token's q/k/v comes from a *different* data path
+		// than the single-query demo (queries[i] / keys[i] / _allVals[i-1]
+		// / selfOutputs[i], with idx 0 reserved for "it"). Without this
+		// branch the tooltip would show the wrong values.
+		const isSelfAttn = (typeof key === 'string' && key.indexOf('sa-') === 0);
+		const info = isSelfAttn
+			? this._buildSelfAttentionInfo(key, idx)
+			: this._buildArrowInfo(key, idx);
 		if (!info) return;
 
 		// mousemove fires constantly while the cursor sits on an arrow —
@@ -4255,15 +4475,34 @@ const AttentionAnatomy = {
 	_drawSelfAttention2D: function(constructionG, labelsG, arrowsG) {
 		const NS = this._SVG_NS;
 		const n = ATTN_2D.numTokens;
+
+		// GUARDRAIL: re-derive the α-matrix and selfOutputs every time we
+		// enter this step. setNumTokens / setExample also call it, but a
+		// bare step-switch via Prev/Next does not — and we'd otherwise
+		// render stale z's that disagree with the current keys/vals.
+		// The cost is one inner-product pass over ≤ ~16 vectors; negligible.
+		if (!Array.isArray(ATTN_2D.matrix) || ATTN_2D.matrix.length !== n) {
+			ATTN_2D.recomputeMatrix();
+		} else {
+			// Cheap consistency check: row 0 must sum to ~1 (it's a
+			// probability distribution). If not, the matrix is stale.
+			const r0 = ATTN_2D.matrix[0] || [];
+			const sum = r0.reduce((a, b) => a + (isFinite(b) ? b : 0), 0);
+			if (Math.abs(sum - 1) > 0.01) ATTN_2D.recomputeMatrix();
+		}
 		const queries = ATTN_2D._allQueries.slice(0, n);
 		const keys    = ATTN_2D._allKeys.slice(0, n);
-		// Guarantee selfOutputs is computed even if recomputeMatrix was
-		// skipped for some reason — otherwise the z mini-arrows render
-		// at NaN coordinates and show as broken boxes.
-		if (!ATTN_2D.selfOutputs || ATTN_2D.selfOutputs.length < n) {
-			ATTN_2D.recomputeMatrix();
-		}
 		const Z       = ATTN_2D.selfOutputs || [];
+
+		// Final sanity: every output vector must have finite coordinates
+		// (otherwise the arrowhead positions blow up). Log loudly and
+		// substitute zero so the user at least sees an empty panel.
+		for (let i = 0; i < Z.length; i++) {
+			if (!Z[i] || !isFinite(Z[i][0]) || !isFinite(Z[i][1])) {
+				this._dbg('ERROR', `_drawSelfAttention2D: Z[${i}] not finite — substituting [0,0]`);
+				Z[i] = [0, 0];
+			}
+		}
 
 		// Layout: panels STACKED VERTICALLY (one per row) so each gets
 		// the full width and is much easier to read. With n=3 tokens
@@ -4435,11 +4674,25 @@ const AttentionAnatomy = {
 			// Draw q, k, v, z each with its own mouseover. Use small
 			// perpendicular offsets so parallel arrows don't stack on
 			// top of each other (q and k are identical in self-attention).
+			//
+			// SELF-ATTENTION SEMANTICS (correct vs. previous behaviour):
+			//   queries[i] is q_{token i}:    q_it (i=0), q_1, q_2, …
+			//   _allKeys[i-1] is k_{token i}  (i>0; "it" has no own k in this demo)
+			//   _allVals[i-1] is v_{token i}  (i>0; "it" has no own v)
+			// The OLD code did keys[i] which gave each panel the NEXT
+			// token's key (a stale off-by-one). Fix: align k with the
+			// panel's own token, same as q and v.
 			const v = (i === 0) ? null : ATTN_2D._allVals[i-1];
-			drawMini(queries[i], '#ef4444', 'q', 'q',  0.035);
-			drawMini(keys[i],    '#2563eb', 'k', 'k', -0.035);
-			if (v) drawMini(v,   '#10b981', 'v', 'self-v', 0);
-			drawMini(Z[i],       '#f59e0b', 'z', 'z', 0);
+			const k = (i === 0) ? null : ATTN_2D._allKeys[i-1];
+			// Use the sa- prefixed tipKeys so _showTooltip routes them
+			// to _buildSelfAttentionInfo (which knows about per-token
+			// queries/keys/_allVals/selfOutputs) instead of the generic
+			// _buildArrowInfo (which would show ATTN_2D.q for every q,
+			// regardless of which token's mini-plot was hovered).
+			drawMini(queries[i], '#ef4444', 'q', 'sa-q',  0.035);
+			if (k) drawMini(k,   '#2563eb', 'k', 'sa-k', -0.035);
+			if (v) drawMini(v,   '#10b981', 'v', 'sa-v', 0);
+			drawMini(Z[i],       '#f59e0b', 'z', 'sa-z', 0);
 
 			// z value label below the panel — bigger font
 			if (Z[i] && isFinite(Z[i][0])) {

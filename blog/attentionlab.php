@@ -1229,6 +1229,84 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 .attn-anatomy-intuition .intuition-why strong {
 	color: #2563eb;
 }
+
+/* Always-on summary footer for the attention anatomy section. Shows the
+   unifying fact — q/k/v are three different learned projections of the
+   same token — at the END of the section, after all 11 steps, as a recap
+   rather than competing with step 1's intro. Theme-aware (light + dark). */
+.attn-anatomy-summary {
+	max-width: 880px;
+	margin: 18px auto 8px;
+	padding: 0 8px;
+}
+.attn-anatomy-summary .attn-summary-inner {
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-left: 4px solid #2563eb;
+	border-radius: 10px;
+	padding: 14px 18px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.attn-anatomy-summary .intuition-header {
+	font-weight: 700;
+	color: #2563eb;
+	margin-bottom: 10px;
+	font-size: 0.95rem;
+	letter-spacing: 0.2px;
+}
+.attn-anatomy-summary .attn-summary-formulas {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-bottom: 12px;
+}
+.attn-anatomy-summary .attn-summary-eq {
+	flex: 1 1 130px;
+	min-width: 130px;
+	max-width: 220px;
+	background: var(--mn-surface-raised, #f1f5f9);
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 8px;
+	padding: 10px 12px;
+	text-align: center;
+	font-family: 'Times New Roman', Times, serif;
+	font-size: 1.05rem;
+	color: var(--mn-text, #1e293b);
+	font-style: italic;
+}
+.attn-anatomy-summary .attn-summary-eq span {
+	font-weight: 700;
+	font-style: normal;
+	font-family: 'Inter', system-ui, sans-serif;
+	display: inline-block;
+	width: 22px;
+	text-align: center;
+}
+.attn-anatomy-summary .attn-summary-eq:nth-child(1) span { color: #ef4444; }  /* q red */
+.attn-anatomy-summary .attn-summary-eq:nth-child(2) span { color: #2563eb; }  /* k blue */
+.attn-anatomy-summary .attn-summary-eq:nth-child(3) span { color: #16a34a; }  /* v green */
+.attn-anatomy-summary .attn-summary-eq sup { font-style: normal; }
+.attn-anatomy-summary .intuition-section {
+	margin: 0;
+	line-height: 1.55;
+	font-size: 0.88rem;
+	color: var(--mn-text-secondary, #475569);
+}
+.attn-anatomy-summary .intuition-section b {
+	color: var(--mn-text, #1e293b);
+}
+/* Dark mode: the q/k/v badge colours get brighter so they pop on the
+   dark surface; the panel border shifts to the theme border colour. */
+html.dark .attn-anatomy-summary .attn-summary-inner {
+	border-left-color: #60a5fa;
+}
+html.dark .attn-anatomy-summary .intuition-header {
+	color: #93c5fd;
+}
+html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(1) span { color: #f87171; }
+html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(2) span { color: #93c5fd; }
+html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(3) span { color: #86efac; }
 </style>
 
 <div style="background:var(--mn-surface, #f8fafc); padding:20px; border-radius:12px; border:1px solid var(--mn-border, #e2e8f0);
@@ -1323,6 +1401,27 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			     below the scene, so the picture and its meaning stay
 			     together. Content is auto-rendered per step. -->
 			<div id="attn-section-intuition" class="attn-anatomy-intuition"></div>
+		</div>
+	</div>
+</div>
+
+<!-- Always-on summary footer for the attention anatomy section. The
+     three projections are the unifying fact behind everything the
+     animation shows above, so they sit at the END as a recap rather
+     than competing with step 1's intro. Theme-aware so the formula
+     stays legible in both light and dark mode. -->
+<div id="attn-section-summary" class="attn-anatomy-summary">
+	<div class="attn-summary-inner">
+		<div class="intuition-header">💡 Three views of the same token</div>
+		<div class="attn-summary-formulas">
+			<div class="attn-summary-eq"><span>q</span> = W<sup>Q</sup> · x</div>
+			<div class="attn-summary-eq"><span>k</span> = W<sup>K</sup> · x</div>
+			<div class="attn-summary-eq"><span>v</span> = W<sup>V</sup> · x</div>
+		</div>
+		<div class="intuition-section">
+			Three learned linear maps — each a different rotation/scale/shear
+			of the input space. <b>q</b> asks the question, <b>k</b> advertises
+			what each token contains, <b>v</b> carries the content to blend.
 		</div>
 	</div>
 </div>
