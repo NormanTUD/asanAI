@@ -2919,7 +2919,7 @@ const AttentionAnatomy = {
 			shaft.setAttribute('x2', a.v[0] + sx); shaft.setAttribute('y2', -(a.v[1] + sy));
 			shaft.setAttribute('stroke', a.color);
 			shaft.setAttribute('stroke-width', i === 0 ? '0.022' : '0.028');
-			shaft.setAttribute('opacity', i === 0 ? '0.55' : '1');
+			shaft.setAttribute('opacity', shaftOp);
 			shaft.setAttribute('stroke-linecap', 'round');
 			if (a.dashed) shaft.setAttribute('stroke-dasharray', '0.03 0.03');
 			shaft.style.pointerEvents = 'none';
