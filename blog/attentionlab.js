@@ -1158,6 +1158,22 @@ const AttentionAnatomy = {
 		// First debug paint so the panel is populated even before any
 		// hover event.
 		this._updateDebug();
+
+		// ── SELFTEST ────────────────────────────────────────────────
+		// Verify every token span in the rendered sentence has a
+		// valid data-token attribute. This catches regex / escape /
+		// rendering bugs BEFORE the user hovers anything.
+		const sentTokens = document.querySelectorAll('#attn-sentence .attn-token');
+		this._dbg('INFO', `SELFTEST: found ${sentTokens.length} token spans in sentence`);
+		sentTokens.forEach((span, i) => {
+			const dt = span.dataset.token;
+			const idx = parseInt(dt, 10);
+			const expected = ATTN_TOKENS.findIndex(t => t.name === span.textContent);
+			const ok = idx === expected;
+			this._dbg(ok ? 'OK' : 'ERROR',
+				`SELFTEST[${i}] "${span.textContent}" data-token="${dt}" parsed=${idx} expected=${expected}`);
+		});
+
 		this._dbg('INFO', `init() done, step=${this.step}, example=${ATTN_2D.exampleIdx}`);
 
 		// Hover tooltips on the parts of the big equation. The equation
