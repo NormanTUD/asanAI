@@ -339,7 +339,9 @@ const ATTN_2D = {
 	_allQueries: [],
 	exampleIdx: 0,                            // current predefined set
 	d_k: 2,
-	numTokens: 2,
+	numTokens: 3,  // FIX: was 2, which meant only the first 2 keys were ever
+	             // drawn. Hovering over the 3rd key ("mat") had no arrow
+	             // to highlight — completely silent failure.
 	hoveredToken: -1,          // -1 = none; 0 = it; 1 = cat; …
 	hoveredFormula: null,      // { step, idx } or null — which formula is hovered
 
@@ -2456,18 +2458,27 @@ const AttentionAnatomy = {
 			if (!el) return;
 			const step = ATTN_STEPS[this.step];
 			const tokens = ATTN_TOKENS.map((t, i) => `${i}=${t.name}`).join(' ');
-			const keys   = (ATTN_2D._allKeys || []).map(k => `(${k[0].toFixed(2)},${k[1].toFixed(2)})`).join(' ');
+			// Show BOTH _allKeys (full set) AND keys (what's actually drawn).
+			const allKeys = (ATTN_2D._allKeys || []).map(k => `(${k[0].toFixed(2)},${k[1].toFixed(2)})`).join(' ');
+			const drawnKeys = (ATTN_2D.keys || []).map(k => `(${k[0].toFixed(2)},${k[1].toFixed(2)})`).join(' ');
 			const set = ATTN_SETS[ATTN_2D.exampleIdx];
 			const hov  = ATTN_2D.hoveredToken;
 			const hovName = hov >= 0 ? (ATTN_TOKENS[hov]?.name || '?') : 'none';
 			const hovRole = hov >= 0 ? (hov === 0 ? 'query' : 'key') : '—';
+			// Check whether the hovered token's arrow is actually drawn
+			const drawnCount = ATTN_2D.keys ? ATTN_2D.keys.length : 0;
+			const hovInDrawn = (hov >= 0 && hov > 0 && hov <= drawnCount);
+			const hovWarn = (hov >= 0 && !hovInDrawn)
+				? `\n<span class="dbg-err">⚠ hoveredToken=${hov} ("${hovName}") is OUTSIDE drawn keys (only ${drawnCount} drawn)! Arrow does not exist in DOM.</span>`
+				: '';
 			const err = this._dbgLastError ? `\n<span class="dbg-err">⚠ ${this._dbgLastError}</span>` : '';
 			el.innerHTML =
 				`<span class="dbg-label">step</span>  ${this.step + 1}/${ATTN_STEPS.length}  mode=${step?.mode ?? '?'}  comp=${step?.computation ?? '?'}\n` +
 				`<span class="dbg-label">set </span>  ${ATTN_2D.exampleIdx} = "${set?.label ?? '?'}"\n` +
 				`<span class="dbg-label">tok </span>  ${tokens}\n` +
-				`<span class="dbg-label">keys</span>  ${keys}\n` +
-				`<span class="dbg-label">hov </span>  ${hov} (${hovName}, ${hovRole})\n` +
+				`<span class="dbg-label">allK</span>  ${allKeys}  (numTokens=${ATTN_2D.numTokens})\n` +
+				`<span class="dbg-label">drwn</span>  ${drawnKeys}  ← what render2D actually draws\n` +
+				`<span class="dbg-label">hov </span>  ${hov} (${hovName}, ${hovRole})  drawn=${hovInDrawn ? 'YES' : 'NO'}${hovWarn}\n` +
 				`<span class="dbg-label">last</span>  ${this._dbgLastEvent}${err}`;
 		} catch (e) {
 			console.error('[attn] _updateDebug crashed:', e);
