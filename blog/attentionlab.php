@@ -281,7 +281,7 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	flex: 0 0 auto;
 	width: 100%;
 	height: auto;
-	min-height: 460px;
+	min-height: 420px;
 	min-width: 0;
 	display: block;
 	background: var(--mn-surface, #fff);
@@ -294,6 +294,92 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	-webkit-tap-highlight-color: transparent;
 	-webkit-user-drag: none;
 	user-drag: none;
+}
+
+/* Sentence display — one box per token, hover to focus on its vectors. */
+.attn-sentence {
+	text-align: center;
+	font-family: 'Inter', -apple-system, sans-serif;
+	font-size: 1.15rem;
+	padding: 6px 0 8px 0;
+	line-height: 1.6;
+	letter-spacing: 0.5px;
+}
+.attn-sentence .attn-token {
+	display: inline-block;
+	padding: 3px 10px;
+	margin: 0 3px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+	border: 1px solid transparent;
+	font-weight: 600;
+}
+.attn-sentence .attn-token:hover {
+	background: rgba(37, 99, 235, 0.12);
+	border-color: rgba(37, 99, 235, 0.45);
+	transform: translateY(-1px);
+	box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+}
+.attn-sentence .attn-token.it { color: #ef4444; }
+.attn-sentence .attn-token.t1 { color: #2563eb; }
+.attn-sentence .attn-token.t2 { color: #3b82f6; }
+.attn-sentence .attn-token.t3 { color: #60a5fa; }
+
+/* Bar-plots SVG — sits under the 2D scene, its own space. */
+#attn-bar-plots-svg {
+	width: 100%;
+	height: 110px;
+	display: block;
+	background: transparent;
+	margin-top: 4px;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
+	background: var(--mn-surface, #fff);
+}
+
+/* Token info panel — inline below the sentence, so it sits BETWEEN
+   the sentence and the 2D plot instead of overlaying the plot. */
+.attn-token-info {
+	position: relative;
+	display: none;
+	margin: 6px auto 4px auto;
+	max-width: 700px;
+	padding: 8px 14px;
+	background: var(--mn-surface, #fff);
+	border: 1px solid rgba(37, 99, 235, 0.35);
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+	font-family: 'Inter', -apple-system, sans-serif;
+	font-size: 0.82rem;
+	line-height: 1.45;
+	color: var(--mn-text, #1e293b);
+}
+.attn-token-info h4 {
+	margin: 0 0 8px 0;
+	font-size: 0.95rem;
+	color: #2563eb;
+	font-weight: 700;
+}
+.attn-token-info .ti-row {
+	display: inline-block;
+	margin: 0 12px 0 0;
+	padding: 0;
+	border-bottom: none;
+}
+.attn-token-info .ti-row .ti-label {
+	color: var(--mn-text-muted, #64748b);
+	font-weight: 700;
+	font-size: 0.78rem;
+	margin-right: 3px;
+}
+.attn-token-info .ti-row .ti-val {
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	color: var(--mn-text, #1e293b);
+}
+.attn-token-info .ti-row .ti-val {
+	font-family: 'SF Mono','Menlo','Consolas',monospace;
+	color: var(--mn-text, #1e293b);
 }
 #attn-anatomy-2d-svg * {
 	user-select: none !important;
@@ -870,8 +956,12 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	<div class="attn-anatomy-grid">
 		<div id="attn-anatomy-equation" class="attn-anatomy-equation attn-grid-equation"></div>
 		<div id="attn-section-computation" class="attn-anatomy-computation attn-grid-computation"></div>
-		<div class="attn-anatomy-2d-wrap">
-			<svg id="attn-anatomy-2d-svg" viewBox="-1.5 -1.5 3 3" preserveAspectRatio="xMidYMid meet">
+			<div class="attn-anatomy-2d-wrap">
+			<!-- The sentence — hover over any token to focus on its
+			     vectors in the plot and see its full info in the popup. -->
+			<div id="attn-sentence" class="attn-sentence"></div>
+
+			<svg id="attn-anatomy-2d-svg" viewBox="-1.5 -1.5 3 2.7" preserveAspectRatio="xMidYMid meet">
 				<g class="attn-grid"></g>
 				<g class="attn-axes"></g>
 				<g class="attn-construction"></g>
@@ -879,6 +969,17 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 				<g class="attn-angles"></g>
 				<g class="attn-labels"></g>
 			</svg>
+
+			<!-- Bar plots live BELOW the 2D scene in their own SVG so
+			     they never overlap the vectors or the angle arcs. -->
+			<svg id="attn-bar-plots-svg" viewBox="0 -0.3 3 1" preserveAspectRatio="xMidYMid meet" style="width:100%; height:120px;">
+				<g class="attn-bar-construction"></g>
+				<g class="attn-bar-labels"></g>
+			</svg>
+
+			<!-- Token info popup — floats to the right of the scene. -->
+			<div id="attn-token-info" class="attn-token-info" style="display:none;"></div>
+
 			<!-- Geometric intuition panel — INSIDE the plot column, right
 			     below the scene, so the picture and its meaning stay
 			     together. Content is auto-rendered per step. -->

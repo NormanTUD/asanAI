@@ -336,6 +336,7 @@ const ATTN_2D = {
 	exampleIdx: 0,                            // current predefined set
 	d_k: 2,
 	numTokens: 2,
+	hoveredToken: -1,          // -1 = none; 0 = it; 1 = cat; …
 
 	// ── Demo data for the "learnable projections" step ────────────
 	// Static W matrices (identity / 90° rotation / shear) that make the
@@ -1078,6 +1079,7 @@ const AttentionAnatomy = {
 		// The hover tooltip then just swaps innerHTML — instant, no
 		// re-render cost per hover.
 		this._renderFormulas();
+		this._setupSentenceHover();
 
 		// Draw the static background (grid + axes) ONCE.
 		this._initSVG();
@@ -1588,7 +1590,9 @@ const AttentionAnatomy = {
 		this.renderEquation(data);
 		this.renderComputation(data);
 		this.renderIntuition(data);
+		this._renderSentence();
 		this.render2D(data);
+		this._renderBarPlots(data);
 
 		// Temml is loaded by load_base_js(); it scans the document for
 		// $...$ / $$...$$ blocks and replaces them with MathML. After
@@ -1931,6 +1935,130 @@ const AttentionAnatomy = {
 		svg.querySelectorAll('.attn-axes text').forEach((t) => t.setAttribute('fill', themeColor('#475569')));
 	},
 
+	// Render the sentence row above the 2D plot. Each token is a
+	// hoverable span — hovering focuses the 2D plot on that token's
+	// vectors and shows its full info in a popup.
+	_renderSentence: function() {
+		// Just render the HTML. Event listeners are attached ONCE in
+		// _setupSentenceHover() — calling render() from inside the
+		// listeners would create an infinite loop (render → renderSentence
+		// → re-add listeners → …).
+		const el = document.getElementById('attn-sentence');
+		if (!el) return;
+		let html = '';
+		ATTN_TOKENS.forEach((tk, j) => {
+			if (j > 0) html += ' ';
+			const cls = 'attn-token ' + (j === 0 ? 'it' : 't' + j);
+			html += `<span class="${cls}" data-token="${j}">${tk.name}</span>`;
+		});
+		el.innerHTML = html;
+	},
+
+	// Attach hover handlers to the sentence tokens. Called ONCE from
+	// init() — NOT from render() — so we don't re-bind every frame and
+	// don't loop forever.
+	_setupSentenceHover: function() {
+		const el = document.getElementById('attn-sentence');
+		if (!el) return;
+		const self = this;
+		el.addEventListener('mouseover', function(e) {
+			const span = e.target.closest('.attn-token');
+			if (!span) return;
+			const idx = parseInt(span.dataset.token, 10);
+			if (ATTN_2D.hoveredToken === idx) return;
+			ATTN_2D.hoveredToken = idx;
+			self._showTokenInfo(idx);
+			self.render();
+		});
+		el.addEventListener('mouseout', function(e) {
+			// Only clear if the mouse actually left the sentence area.
+			const span = e.target.closest('.attn-token');
+			if (!span) return;
+			const to = e.relatedTarget;
+			if (to && span.contains(to)) return;
+			ATTN_2D.hoveredToken = -1;
+			self._hideTokenInfo();
+			self.render();
+		});
+	},
+
+	// Token info popup — floats next to the scene showing q, k, v, and
+	// (for non-"it" tokens) the attention weight for this example.
+	_showTokenInfo: function(idx) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		if (idx < 0 || idx >= ATTN_TOKENS.length) { el.style.display = 'none'; return; }
+		const tk = ATTN_TOKENS[idx];
+		const q = idx < ATTN_2D._allQueries.length ? ATTN_2D._allQueries[idx] : null;
+		let html = `<h4>${tk.name}</h4>`;
+		if (q) html += `<div class="ti-row"><span class="ti-label">q</span><span class="ti-val">(${q[0].toFixed(2)}, ${q[1].toFixed(2)})</span></div>`;
+		// Guard: k/v only exist for non-query tokens AND only if that
+		// token index is within the current key/value array.
+		const j = idx - 1;
+		const hasKV = j >= 0 && j < ATTN_2D.keys.length && j < ATTN_2D.vals.length;
+		if (hasKV) {
+			const k = ATTN_2D.keys[j], v = ATTN_2D.vals[j];
+			const w = ATTN_2D.weights[j] || 0;
+			html += `<div class="ti-row"><span class="ti-label">k</span><span class="ti-val">(${k[0].toFixed(2)}, ${k[1].toFixed(2)})</span></div>`;
+			html += `<div class="ti-row"><span class="ti-label">v</span><span class="ti-val">(${v[0].toFixed(2)}, ${v[1].toFixed(2)})</span></div>`;
+			html += `<div class="ti-row"><span class="ti-label">α</span><span class="ti-val">${(w*100).toFixed(1)}%</span></div>`;
+			html += `<div class="ti-row"><span class="ti-label">‖k‖</span><span class="ti-val">${Math.hypot(k[0],k[1]).toFixed(2)}</span></div>`;
+			if (q) html += `<div class="ti-row"><span class="ti-label">q·k</span><span class="ti-val">${(q[0]*k[0]+q[1]*k[1]).toFixed(3)}</span></div>`;
+		} else {
+			html += `<div class="ti-row"><span class="ti-label">role</span><span class="ti-val">query</span></div>`;
+		}
+		el.innerHTML = html;
+		el.style.display = 'block';
+	},
+
+	_hideTokenInfo: function() {
+		const el = document.getElementById('attn-token-info');
+		if (el) el.style.display = 'none';
+	},
+
+	// Render the bar plots BELOW the 2D scene in their own SVG.
+	// This avoids any overlap with the vectors / angle arcs in the
+	// main plot.
+	_renderBarPlots: function(data) {
+		const svg = document.getElementById('attn-bar-plots-svg');
+		if (!svg) return;
+		const constructionG = svg.querySelector('.attn-bar-construction');
+		const labelsG = svg.querySelector('.attn-bar-labels');
+		if (!constructionG || !labelsG) return;
+		// Clear previous
+		constructionG.innerHTML = '';
+		labelsG.innerHTML = '';
+		const comp = data.computation;
+		if (comp === 'dot') {
+			this._drawScoreBlocks2D(constructionG, labelsG);
+		} else if (comp === 'scaled') {
+			this._drawScaledBars2D(constructionG, labelsG);
+		} else if (comp === 'exps') {
+			this._drawExpBars2D(constructionG, labelsG);
+		} else if (comp === 'weights') {
+			this._drawWeightBar2D(constructionG, labelsG);
+		}
+	},
+
+	// Apply the per-token hover dimming to an opacity value. When a
+	// specific token is hovered, only that token's visuals stay at
+	// full opacity; everything else fades.
+	_tokenOpacity: function(jPlus1) {
+		const h = ATTN_2D.hoveredToken;
+		if (h < 0) return 1;
+		if (h === jPlus1) return 1;
+		return 0.15;
+	},
+
+	// Apply hover dimming to a color: fade non-hovered tokens toward
+	// a neutral grey.
+	_tokenColor: function(color, jPlus1) {
+		const h = ATTN_2D.hoveredToken;
+		if (h < 0) return color;
+		if (h === jPlus1) return color;
+		return '#cbd5e1';
+	},
+
 
 	// Draw a hoverable angle arc between the query direction and one
 	// key direction (both drawn from the origin). A fat transparent
@@ -2020,9 +2148,9 @@ const AttentionAnatomy = {
 	// `lpos` optionally overrides the label offset ([dx, dy]) so labels
 	// that would otherwise stack (e.g. z + its weighted values) can be
 	// fanned out.
-	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos, lanchor) {
+	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos, lanchor, opacity) {
 		const NS = this._SVG_NS;
-		const opacity = dim ? 0.35 : 1.0;
+		const finalOpacity = (opacity !== undefined) ? opacity : (dim ? 0.35 : 1.0);
 
 		// Flip y for SVG (SVG y goes down, our data y goes up)
 		const sx = start[0], sy = -start[1];
@@ -2048,7 +2176,7 @@ const AttentionAnatomy = {
 		line.setAttribute('x2', ex); line.setAttribute('y2', ey);
 		line.setAttribute('stroke', color);
 		line.setAttribute('stroke-width', '0.028');
-		line.setAttribute('opacity', opacity);
+		line.setAttribute("opacity", finalOpacity);
 		line.style.pointerEvents = 'none';
 		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
 		line.classList.add(arrowCls);
@@ -2070,7 +2198,7 @@ const AttentionAnatomy = {
 			head = document.createElementNS(NS, 'polygon');
 			head.setAttribute('points', `${ex},${ey} ${ax1},${ay1} ${ax2},${ay2}`);
 			head.setAttribute('fill', color);
-			head.setAttribute('opacity', opacity);
+			head.setAttribute("opacity", finalOpacity);
 			head.style.pointerEvents = 'none';
 			head.classList.add(arrowCls);
 			parent.appendChild(head);
@@ -2100,7 +2228,7 @@ const AttentionAnatomy = {
 			labelTxt.setAttribute('dominant-baseline', 'middle');
 			labelTxt.setAttribute('fill', color);
 			labelTxt.setAttribute('font-size', '0.1');
-			labelTxt.setAttribute('opacity', opacity);
+			labelTxt.setAttribute("opacity", finalOpacity);
 			labelTxt.setAttribute('font-family', 'Inter, sans-serif');
 			labelTxt.textContent = label;
 			labelTxt.style.pointerEvents = 'none';
@@ -3266,7 +3394,7 @@ const AttentionAnatomy = {
 		const comp = data.computation;
 
 		if (mode === 'keys' || mode === 'values') {
-			this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.q, '#ef4444', 'q', 'q', 0, false, false);
+			this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.q, this._tokenColor('#ef4444', 0), 'q', 'q', 0, false, false, undefined, undefined, this._tokenOpacity(0));
 		}
 
 		if (mode === 'projections') {
@@ -3282,10 +3410,17 @@ const AttentionAnatomy = {
 		}
 
 		if (mode === 'keys') {
+			// Hover dimming: when a token is hovered, fade the others.
+			// The query (idx 0) dims when "it" is NOT hovered.
+			const qOpacity = this._tokenOpacity(0);
+			const qColor   = this._tokenColor('#ef4444', 0);
+
 			ATTN_2D.keys.forEach((k, j) => {
 				const isHi = (data.highlightKey === j);
 				const dim  = (data.highlightKey !== undefined && !isHi);
+				const tkOpacity = this._tokenOpacity(j + 1);
 				const color = isHi ? '#1e3a8a' : ATTN_TOKENS[j + 1].color;
+				const drawColor = (tkOpacity < 1) ? this._tokenColor(color, j + 1) : color;
 
 				// A key that sits within ~25° of the query is so close that
 				// its tip label would sit right on top of q's — push it a
@@ -3302,8 +3437,8 @@ const AttentionAnatomy = {
 				const lpos = inBarBand ? [-0.20, 0.04]
 					: (nearQ ? [0.14, -0.14] : undefined);
 
-				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, color, `k${j+1}`, 'k', j, false, dim, lpos);
-				if (anglesG) this._addAngleArc(anglesG, labelsG, ATTN_2D.q, k, color, j, dim);
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, drawColor, `k${j+1}`, 'k', j, false, dim, lpos, undefined, tkOpacity);
+				if (anglesG) this._addAngleArc(anglesG, labelsG, ATTN_2D.q, drawColor, j, dim || tkOpacity < 1);
 			});
 
 			// The lengths that feed cos θ = q·k/(‖q‖‖k‖), as muted
@@ -3316,24 +3451,16 @@ const AttentionAnatomy = {
 			this._addValueLabels2D(labelsG, comp);
 
 			// Per-step overlays: show the vectors being worked on —
-			// product rectangles, projections, score bars, weight bar.
-			// Each later step shows the previous step's bars as a faint
-			// "ghost" so the chain score → scaled → exp is visible.
+			// Per-step overlays: product rectangles, projections stay in
+			// the 2D scene. The bar plots (score / scaled / exp / weight)
+			// are drawn in their own SVG below — see _renderBarPlots().
 			const tokenColors = ATTN_TOKENS.slice(1).map((t) => t.color);
 			if (comp === 'components') {
 				this._drawComponents2D(constructionG, labelsG, data.highlightKey);
-			} else if (comp === 'dot') {
+			} else {
+				// Projections (dashed perpendicular from q tip to key line)
+				// stay in the main 2D plot — they're geometric, not a bar.
 				this._drawProjections2D(constructionG);
-				this._drawScoreBlocks2D(constructionG, labelsG);
-			} else if (comp === 'scaled') {
-				this._drawProjections2D(constructionG);
-				this._drawScaledBars2D(constructionG, labelsG);
-			} else if (comp === 'exps') {
-				this._drawProjections2D(constructionG);
-				this._drawExpBars2D(constructionG, labelsG);
-			} else if (comp === 'weights') {
-				this._drawProjections2D(constructionG);
-				this._drawWeightBar2D(constructionG, labelsG);
 			}
 		} else if (mode === 'values' || mode === 'output') {
 			// Values use the SAME hue family as the keys but shifted toward
