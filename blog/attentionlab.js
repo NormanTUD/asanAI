@@ -2635,7 +2635,7 @@ const AttentionAnatomy = {
 		if (Array.isArray(ATTN_2D.matrix) && Array.isArray(ATTN_2D._allKeys) && Array.isArray(ATTN_2D._allQueries)) {
 			const n = ATTN_2D.numTokens;
 			const m = Math.min(n, ATTN_2D._allKeys.length + 1);
-			const usedKeys = ATTN_2D._allKeys.slice(0, m - 1);
+			const usedKeys = ATTN_2D._allKeys.slice(0, m);
 			for (let i = 0; i < ATTN_2D.matrix.length && i < ATTN_2D._allQueries.length; i++) {
 				const q = ATTN_2D._allQueries[i];
 				if (!q || !isFinite(q[0])) continue;
@@ -2669,6 +2669,160 @@ const AttentionAnatomy = {
 				}
 				if (Math.abs(z[0]-ex[0]) > 0.01 || Math.abs(z[1]-ex[1]) > 0.01)
 					warn('selfOutputs[' + i + '] ≠ Σ matrix·vals');
+			});
+		}
+
+		// 12. ATTN_TOKENS: exactly numTokens+1 entries (it + numTokens keys)
+		if (ATTN_TOKENS.length !== ATTN_2D.numTokens + 1)
+			warn('ATTN_TOKENS.length=' + ATTN_TOKENS.length + ' ≠ numTokens+1=' + (ATTN_2D.numTokens + 1));
+
+		// 13. ATTN_TOKENS[0] must be the query token (named "it")
+		if (ATTN_TOKENS[0] && ATTN_TOKENS[0].name !== 'it')
+			warn('ATTN_TOKENS[0].name="' + ATTN_TOKENS[0].name + '" ≠ "it"');
+
+		// 14. _allQueries must have at least numTokens+1 entries (it + N keys)
+		if (Array.isArray(ATTN_2D._allQueries)) {
+			if (ATTN_2D._allQueries.length < ATTN_2D.numTokens + 1)
+				warn('_allQueries.length=' + ATTN_2D._allQueries.length + ' < numTokens+1=' + (ATTN_2D.numTokens + 1));
+			// Check _allQueries[0] equals ATTN_2D.q
+			if (Array.isArray(ATTN_2D.q) && ATTN_2D._allQueries[0] &&
+				(ATTN_2D._allQueries[0][0] !== ATTN_2D.q[0] || ATTN_2D._allQueries[0][1] !== ATTN_2D.q[1]))
+				warn('_allQueries[0] ≠ q');
+		}
+
+		// 15. _allKeys length must equal numTokens
+		if (Array.isArray(ATTN_2D._allKeys) && ATTN_2D._allKeys.length !== ATTN_2D.numTokens)
+			warn('_allKeys.length=' + ATTN_2D._allKeys.length + ' ≠ numTokens=' + ATTN_2D.numTokens);
+
+		// 16. _allVals length must equal numTokens
+		if (Array.isArray(ATTN_2D._allVals) && ATTN_2D._allVals.length !== ATTN_2D.numTokens)
+			warn('_allVals.length=' + ATTN_2D._allVals.length + ' ≠ numTokens=' + ATTN_2D.numTokens);
+
+		// 17. demo data validity (used by projections step)
+		if (ATTN_2D.demo) {
+			const d = ATTN_2D.demo;
+			const checkVec = (v, name) => {
+				if (!v || v.length !== 2 || !isFinite(v[0]) || !isFinite(v[1]))
+					warn('demo.' + name + ' is bad: ' + JSON.stringify(v));
+			};
+			checkVec(d.x, 'x');
+			checkVec(d.q, 'q');
+			checkVec(d.k, 'k');
+			checkVec(d.v, 'v');
+			if (d.W_Q && (!Array.isArray(d.W_Q) || d.W_Q.length !== 2 || d.W_Q[0].length !== 2))
+				warn('demo.W_Q is not 2×2');
+			// demo.q should equal W_Q · demo.x
+			if (Array.isArray(d.W_Q) && d.q && d.x) {
+				const eq = [d.W_Q[0][0]*d.x[0] + d.W_Q[0][1]*d.x[1], d.W_Q[1][0]*d.x[0] + d.W_Q[1][1]*d.x[1]];
+				if (Math.abs(d.q[0]-eq[0]) > 0.01 || Math.abs(d.q[1]-eq[1]) > 0.01)
+					warn('demo.q ≠ W_Q·demo.x (got ' + JSON.stringify(d.q) + ', expected ' + JSON.stringify(eq) + ')');
+			}
+		}
+
+		// 18. numTokens within reasonable bounds
+		if (ATTN_2D.numTokens < 1 || ATTN_2D.numTokens > 10)
+			warn('numTokens=' + ATTN_2D.numTokens + ' out of reasonable bounds [1,10]');
+
+		// 19. exampleIdx within bounds of ATTN_SETS
+		if (typeof ATTN_SETS !== 'undefined' && (ATTN_2D.exampleIdx < 0 || ATTN_2D.exampleIdx >= ATTN_SETS.length))
+			warn('exampleIdx=' + ATTN_2D.exampleIdx + ' out of bounds [0,' + (ATTN_SETS.length-1) + ']');
+
+		// 20. Current step within bounds of ATTN_STEPS
+		if (typeof ATTN_STEPS !== 'undefined' && (this.step < 0 || this.step >= ATTN_STEPS.length))
+			warn('this.step=' + this.step + ' out of bounds [0,' + (ATTN_STEPS.length-1) + ']');
+
+		// 21. All ATTN_TOKENS have valid color strings
+		ATTN_TOKENS.forEach((t, i) => {
+			if (!t || !t.color || !/^#[0-9a-fA-F]{6}$/.test(t.color))
+				warn('ATTN_TOKENS[' + i + '].color="' + (t && t.color) + '" is not valid #RRGGBB');
+		});
+
+		// 22. All key vectors should be roughly unit-length (|k| ≈ 1)
+		if (Array.isArray(ATTN_2D.keys)) {
+			ATTN_2D.keys.forEach((k, i) => {
+				if (!k || !isFinite(k[0])) return;
+				const mag = Math.hypot(k[0], k[1]);
+				if (mag < 0.3 || mag > 3.0)
+					warn('keys[' + i + '] magnitude=' + mag.toFixed(2) + ' unusual (expected ≈1)');
+			});
+		}
+
+		// 23. All value vectors should be roughly unit-length
+		if (Array.isArray(ATTN_2D.vals)) {
+			ATTN_2D.vals.forEach((v, i) => {
+				if (!v || !isFinite(v[0])) return;
+				const mag = Math.hypot(v[0], v[1]);
+				if (mag < 0.3 || mag > 3.0)
+					warn('vals[' + i + '] magnitude=' + mag.toFixed(2) + ' unusual (expected ≈1)');
+			});
+		}
+
+		// 24. output should be roughly unit-length (it's a convex combo of unit vals)
+		if (Array.isArray(ATTN_2D.output) && isFinite(ATTN_2D.output[0])) {
+			const outMag = Math.hypot(ATTN_2D.output[0], ATTN_2D.output[1]);
+			if (outMag < 0.3 || outMag > 3.0)
+				warn('output magnitude=' + outMag.toFixed(2) + ' unusual (convex combo of unit vals should be ≈1)');
+		}
+
+		// 25. scaled = scores / √d_k
+		if (Array.isArray(ATTN_2D.scaled) && Array.isArray(ATTN_2D.scores)) {
+			const sqrtDk = Math.sqrt(ATTN_2D.d_k || 2);
+			ATTN_2D.scores.forEach((s, i) => {
+				const sc = ATTN_2D.scaled[i];
+				if (sc === undefined) return;
+				const ex = s / sqrtDk;
+				if (Math.abs(sc - ex) > 0.01)
+					warn('scaled[' + i + ']=' + sc.toFixed(3) + ' ≠ scores[' + i + ']/√d_k=' + ex.toFixed(3));
+			});
+		}
+
+		// 26. exps = exp(scaled)
+		if (Array.isArray(ATTN_2D.exps) && Array.isArray(ATTN_2D.scaled)) {
+			ATTN_2D.scaled.forEach((sc, i) => {
+				const e = ATTN_2D.exps[i];
+				if (e === undefined) return;
+				const ex = Math.exp(sc);
+				if (Math.abs(e - ex) > 0.01)
+					warn('exps[' + i + ']=' + e.toFixed(3) + ' ≠ exp(scaled[' + i + '])=' + ex.toFixed(3));
+			});
+		}
+
+		// 27. hoveredFormula validity (if set)
+		if (ATTN_2D.hoveredFormula) {
+			const hf = ATTN_2D.hoveredFormula;
+			if (typeof hf !== 'object' || hf === null)
+				warn('hoveredFormula is not an object: ' + JSON.stringify(hf));
+			else {
+				if (typeof hf.step !== 'number' || hf.step < 0 || (typeof ATTN_STEPS !== 'undefined' && hf.step >= ATTN_STEPS.length))
+					warn('hoveredFormula.step=' + hf.step + ' invalid');
+				if (typeof hf.idx !== 'number' || hf.idx < 0)
+					warn('hoveredFormula.idx=' + hf.idx + ' invalid');
+			}
+		}
+
+		// 28. hoveredToken-1 (i.e. the displayed key) must be within _allKeys range
+		if (h > 0 && Array.isArray(ATTN_2D._allKeys) && (h - 1) >= ATTN_2D._allKeys.length)
+			warn('hoveredToken=' + h + ' references key index ' + (h-1) + ' but _allKeys has only ' + ATTN_2D._allKeys.length);
+
+		// 29. ATTN_SETS entries must have valid structure
+		if (typeof ATTN_SETS !== 'undefined') {
+			ATTN_SETS.forEach((s, i) => {
+				if (!s.label) warn('ATTN_SETS[' + i + '] missing label');
+				if (!s.tokens || !Array.isArray(s.tokens) || s.tokens.length === 0)
+					warn('ATTN_SETS[' + i + '] missing tokens array');
+				else s.tokens.forEach((t, j) => {
+					if (!t.k || t.k.length !== 2 || !isFinite(t.k[0]))
+						warn('ATTN_SETS[' + i + '].tokens[' + j + '].k bad');
+				});
+			});
+		}
+
+		// 30. All step transitions produce valid data
+		if (typeof ATTN_STEPS !== 'undefined') {
+			ATTN_STEPS.forEach((s, i) => {
+				if (!s.title) warn('ATTN_STEPS[' + i + '] missing title');
+				if (!s.computation) warn('ATTN_STEPS[' + i + '] missing computation');
+				if (!s.mode) warn('ATTN_STEPS[' + i + '] missing mode');
 			});
 		}
 

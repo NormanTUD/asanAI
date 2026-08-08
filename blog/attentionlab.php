@@ -385,7 +385,9 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 
 /* Live debug panel — shows hover state, step, tokens, errors.
    user-select:all so the user can select-all and paste into a
-   bug report without manually selecting each line. */
+   bug report without manually selecting each line.
+   Constrained to the right column on wide screens so it doesn't
+   overlap the sentence row. */
 .attn-debug-panel {
 	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
 	font-size: 0.78rem;
@@ -395,12 +397,16 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	border: 1px solid #334155;
 	border-radius: 6px;
 	padding: 8px 12px;
-	margin: 6px auto 4px auto;
-	max-width: 780px;
+	margin: 0;
+	max-width: 100%;
 	white-space: pre-wrap;
 	word-break: break-word;
 	user-select: all;
 	-webkit-user-select: all;
+	max-height: 180px;
+	overflow-y: auto;
+	position: relative;
+	z-index: 5;
 }
 .attn-debug-panel .dbg-err {
 	color: #fca5a5;
