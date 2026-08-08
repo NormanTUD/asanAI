@@ -2628,13 +2628,18 @@ const AttentionAnatomy = {
 			});
 		}
 
-		// 9. matrix[i][j] should match weight of key j for query i
+		// 9. matrix[i][j] should match weight of key j for query i.
+		// IMPORTANT: the matrix uses keys.slice(0, m-1) where
+		// m = min(numTokens, _allKeys.length + 1) — NOT all _allKeys.
 		if (Array.isArray(ATTN_2D.matrix) && Array.isArray(ATTN_2D._allKeys) && Array.isArray(ATTN_2D._allQueries)) {
+			const n = ATTN_2D.numTokens;
+			const m = Math.min(n, ATTN_2D._allKeys.length + 1);
+			const usedKeys = ATTN_2D._allKeys.slice(0, m - 1);
 			for (let i = 0; i < ATTN_2D.matrix.length && i < ATTN_2D._allQueries.length; i++) {
 				const q = ATTN_2D._allQueries[i];
 				if (!q || !isFinite(q[0])) continue;
-				// Compute softmax scores for this query against all keys
-				const scores = ATTN_2D._allKeys.map(k => q[0]*k[0] + q[1]*k[1]);
+				// Compute softmax scores for this query against usedKeys only
+				const scores = usedKeys.map(k => q[0]*k[0] + q[1]*k[1]);
 				const exps = scores.map(s => Math.exp(s / Math.sqrt(ATTN_2D.d_k || 2)));
 				const sum = exps.reduce((a,b)=>a+b,0);
 				const w = exps.map(e => e/sum);
