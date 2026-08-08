@@ -2895,6 +2895,13 @@ const AttentionAnatomy = {
 			const off = [0, 0.00, 0.00, 0.00][i];
 			const sx = off * px, sy = off * py;
 
+			// Hover feedback for step 1: when a token is hovered, the
+			// input "x" arrow dims slightly (it's the embedding of the
+			// token being attended FROM) while q/k/v stay bright.
+			const anyHovered = (ATTN_2D.hoveredToken >= 0);
+			const baseOp = i === 0 ? 0.55 : 1;
+			const shaftOp = (anyHovered && i === 0) ? 0.30 : baseOp;
+
 			// Shaft (with a fat transparent hit-area for the tooltip)
 			const hit = document.createElementNS(NS, 'line');
 			hit.setAttribute('x1', sx); hit.setAttribute('y1', -sy);
