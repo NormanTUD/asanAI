@@ -1142,8 +1142,23 @@ const AttentionAnatomy = {
 		this._setupSentenceHover();
 		this._setupFormulaHover();
 
+		// Global error catcher — any uncaught JS error gets logged AND
+		// shown in the debug panel so the user can paste it verbatim.
+		window.addEventListener('error', (ev) => {
+			const msg = `${ev.message}  @${ev.filename}:${ev.lineno}:${ev.colno}`;
+			this._dbg('ERROR', `window.error: ${msg}`);
+		});
+		window.addEventListener('unhandledrejection', (ev) => {
+			this._dbg('ERROR', `unhandledrejection: ${ev.reason}`);
+		});
+
 		// Draw the static background (grid + axes) ONCE.
 		this._initSVG();
+
+		// First debug paint so the panel is populated even before any
+		// hover event.
+		this._updateDebug();
+		this._dbg('INFO', `init() done, step=${this.step}, example=${ATTN_2D.exampleIdx}`);
 
 		// Hover tooltips on the parts of the big equation. The equation
 		// is rebuilt on every step, so we use event delegation on the
@@ -1672,6 +1687,9 @@ const AttentionAnatomy = {
 
 		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
 		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
+
+		// Refresh the debug panel so it reflects the current step.
+		this._updateDebug();
 	},
 
 	// Render the FULL equation as Temml / LaTeX. Active sub-expressions
@@ -2011,6 +2029,7 @@ const AttentionAnatomy = {
 			el.innerHTML = ATTN_TOKENS.map((tk, j) =>
 				`<span class="attn-token ${j === 0 ? 'it' : 't' + j}" data-token="${j}">${tk.name}</span>`
 			).join(' ');
+			this._updateDebug();
 			return;
 		}
 		// Escape any HTML in the full sentence, then highlight token
@@ -2018,13 +2037,20 @@ const AttentionAnatomy = {
 		// "scatter".
 		const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 		const names = ATTN_TOKENS.map((tk) => tk.name);
+		this._assert(names.length === ATTN_TOKENS.length, 'names mismatch');
+		this._assert(names[0] === 'it', 'first token must be it');
 		const pattern = new RegExp('\\b(' + names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'g');
+		const matched = [];
 		const highlighted = esc(set.full).replace(pattern, (m) => {
 			const idx = names.indexOf(m);
+			this._assert(idx >= 0, `regex matched "${m}" but not found in names=[${names}]`);
+			matched.push(`${m}→${idx}`);
 			const cls = 'attn-token ' + (idx === 0 ? 'it' : 't' + idx);
 			return `<span class="${cls}" data-token="${idx}">${m}</span>`;
 		});
 		el.innerHTML = highlighted;
+		this._dbg('INFO', `renderSentence: matched=[${matched.join(', ')}]`);
+		this._updateDebug();
 	},
 
 	// Attach hover handlers to the sentence tokens. Called ONCE from
@@ -2036,30 +2062,65 @@ const AttentionAnatomy = {
 	// over tokens.
 	_renderHoverOnly: function() {
 		const data = ATTN_STEPS[this.step];
+		this._assert(data, `_renderHoverOnly: ATTN_STEPS[${this.step}] is undefined`);
+		if (!data) return;
+		this._dbg('INFO', `render2D(step=${this.step}, mode=${data.mode}, hovered=${ATTN_2D.hoveredToken})`);
 		this.render2D(data);
 	},
 
 	_setupSentenceHover: function() {
 		const el = document.getElementById('attn-sentence');
-		if (!el) return;
+		if (!el) { this._dbg('ERROR', 'attn-sentence element not found'); return; }
 		const self = this;
+		// Use BOTH mouseover (event delegation) AND a direct listener on
+		// every token span as a fallback — if mouseover doesn't fire
+		// (e.g. due to some browser quirk or a bubbling issue), the
+		// direct listener will catch it.
+		const refresh = () => {
+			self._showTokenInfo(ATTN_2D.hoveredToken);
+			self._renderHoverOnly();
+			self._updateDebug();
+		};
 		el.addEventListener('mouseover', function(e) {
 			const span = e.target.closest('.attn-token');
 			if (!span) return;
-			const idx = parseInt(span.dataset.token, 10);
-			if (ATTN_2D.hoveredToken === idx) return;
+			const raw = span.dataset.token;
+			const idx = parseInt(raw, 10);
+			self._assert(!isNaN(idx), `mouseover: dataset.token="${raw}" is NaN, span="${span.textContent}", dataset=${JSON.stringify(span.dataset)}`);
+			self._assert(idx >= 0 && idx < ATTN_TOKENS.length, `mouseover: idx=${idx} out of range (tokens=${ATTN_TOKENS.length})`);
+			if (ATTN_2D.hoveredToken === idx) {
+				self._dbg('INFO', `mouseover: ${span.textContent} (idx=${idx}) — no change`);
+				return;
+			}
+			const prev = ATTN_2D.hoveredToken;
 			ATTN_2D.hoveredToken = idx;
-			self._showTokenInfo(idx);
-			self._renderHoverOnly();
+			self._dbg('INFO', `mouseover: "${span.textContent}" idx ${prev}→${idx}`);
+			refresh();
+		});
+		el.addEventListener('mousemove', function(e) {
+			// mousemove is a reliable backup — if mouseover didn't fire
+			// (rare but observed), mousemove will pick it up.
+			const span = e.target.closest('.attn-token');
+			if (!span) return;
+			const idx = parseInt(span.dataset.token, 10);
+			if (isNaN(idx) || ATTN_2D.hoveredToken === idx) return;
+			ATTN_2D.hoveredToken = idx;
+			self._dbg('INFO', `mousemove(backup): idx→${idx} "${span.textContent}"`);
+			refresh();
 		});
 		el.addEventListener('mouseout', function(e) {
 			const span = e.target.closest('.attn-token');
 			if (!span) return;
 			const to = e.relatedTarget;
 			if (to && span.contains(to)) return;
+			// Only clear if leaving the whole sentence area
+			if (to && el.contains(to)) return;
+			if (ATTN_2D.hoveredToken === -1) return;
+			self._dbg('INFO', `mouseout: clearing hoveredToken`);
 			ATTN_2D.hoveredToken = -1;
 			self._refreshPopup();
 			self._renderHoverOnly();
+			self._updateDebug();
 		});
 	},
 
@@ -2329,6 +2390,8 @@ const AttentionAnatomy = {
 	// else fades to 0.12 so the hovered one is clearly the focus.
 	_tokenOpacity: function(jPlus1) {
 		const h = ATTN_2D.hoveredToken;
+		this._assert(typeof jPlus1 === 'number' && !isNaN(jPlus1), `_tokenOpacity: jPlus1=${jPlus1} not a number`);
+		this._assert(typeof h === 'number' && !isNaN(h), `_tokenOpacity: hoveredToken=${h} not a number`);
 		if (h < 0) return 1;
 		if (h === jPlus1) return 1;
 		return 0.12;
@@ -2338,9 +2401,57 @@ const AttentionAnatomy = {
 	// light grey so the hovered one pops in its original colour.
 	_tokenColor: function(color, jPlus1) {
 		const h = ATTN_2D.hoveredToken;
+		this._assert(typeof jPlus1 === 'number' && !isNaN(jPlus1), `_tokenColor: jPlus1=${jPlus1} not a number`);
 		if (h < 0) return color;
 		if (h === jPlus1) return color;
 		return '#cbd5e1';
+	},
+
+	// ── DEBUG HELPERS ────────────────────────────────────────────────
+	// All debug output goes to BOTH console AND the on-page debug
+	// panel so it can be selected-all and pasted into a bug report.
+	_dbgLastEvent: 'page loaded',
+	_dbgLastError: '',
+	_dbg: function(level, msg) {
+		const line = `[${level}] ${msg}`;
+		if (level === 'ERROR') {
+			console.error('[attn]', msg);
+			this._dbgLastError = msg;
+		} else {
+			console.log('[attn]', line);
+		}
+		this._dbgLastEvent = line;
+		this._updateDebug();
+	},
+	_assert: function(cond, msg) {
+		if (!cond) {
+			this._dbg('ERROR', `ASSERTION FAILED: ${msg}`);
+			console.trace();
+		}
+		return !!cond;
+	},
+	_updateDebug: function() {
+		try {
+			const el = document.getElementById('attn-debug');
+			if (!el) return;
+			const step = ATTN_STEPS[this.step];
+			const tokens = ATTN_TOKENS.map((t, i) => `${i}=${t.name}`).join(' ');
+			const keys   = (ATTN_2D._allKeys || []).map(k => `(${k[0].toFixed(2)},${k[1].toFixed(2)})`).join(' ');
+			const set = ATTN_SETS[ATTN_2D.exampleIdx];
+			const hov  = ATTN_2D.hoveredToken;
+			const hovName = hov >= 0 ? (ATTN_TOKENS[hov]?.name || '?') : 'none';
+			const hovRole = hov >= 0 ? (hov === 0 ? 'query' : 'key') : '—';
+			const err = this._dbgLastError ? `\n<span class="dbg-err">⚠ ${this._dbgLastError}</span>` : '';
+			el.innerHTML =
+				`<span class="dbg-label">step</span>  ${this.step + 1}/${ATTN_STEPS.length}  mode=${step?.mode ?? '?'}  comp=${step?.computation ?? '?'}\n` +
+				`<span class="dbg-label">set </span>  ${ATTN_2D.exampleIdx} = "${set?.label ?? '?'}"\n` +
+				`<span class="dbg-label">tok </span>  ${tokens}\n` +
+				`<span class="dbg-label">keys</span>  ${keys}\n` +
+				`<span class="dbg-label">hov </span>  ${hov} (${hovName}, ${hovRole})\n` +
+				`<span class="dbg-label">last</span>  ${this._dbgLastEvent}${err}`;
+		} catch (e) {
+			console.error('[attn] _updateDebug crashed:', e);
+		}
 	},
 
 
@@ -2438,17 +2549,23 @@ const AttentionAnatomy = {
 
 		// HOVER HIGHLIGHT: when a token is hovered AND this arrow is at
 		// full opacity (i.e. it belongs to the hovered token), make it
-		// visibly pop — thicker stroke, glow halo, bigger label, AND a
-		// bold "selected" colour so it's unmistakable even if the arrow
-		// is already naturally close to q (cat/mat case).
+		// IMPOSSIBLE to miss — bright magenta, 3× thicker, big arrowhead,
+		// pulsing glow halo, AND a CSS scale animation on the shaft.
+		// Previous attempts used indigo / thicker-only which was too subtle
+		// when the arrow was already naturally prominent (cat/mat case).
 		const isHovered = (ATTN_2D.hoveredToken >= 0 && finalOpacity >= 0.99 && opacity !== undefined);
-		const sw  = isHovered ? 0.060 : 0.028;            // ~115% thicker when hovered
-		const fs  = isHovered ? 0.14  : 0.10;             // bigger label when hovered
-		const swH = isHovered ? 0.18  : 0.11;              // arrowhead bigger when hovered
-		// When hovered, swap to a vivid "selected" colour (deep indigo)
-		// so the visual change is colour + thickness + glow — not just
-		// thickness alone (which was too subtle for already-prominent arrows).
-		const finalColor = isHovered ? '#1e3a8a' : color;
+		// Assertion: every drawn arrow that THINKS it's hovered must
+		// match the hoveredToken exactly. If not, that's a bug we want
+		// to surface in the debug panel.
+		if (isHovered && label) {
+			this._dbg('INFO', `draw ARROW "${label}" idx=${idx} AS HOVERED (magenta, thick)`);
+		}
+		const sw  = isHovered ? 0.080 : 0.028;            // ~185% thicker when hovered
+		const fs  = isHovered ? 0.17  : 0.10;             // much bigger label when hovered
+		const swH = isHovered ? 0.24  : 0.11;              // much bigger arrowhead when hovered
+		// Bright magenta — maximally distinct from every other arrow colour
+		// (red q, blue k, green v, amber z, grey dimmed).
+		const finalColor = isHovered ? '#d946ef' : color;
 
 		// Flip y for SVG (SVG y goes down, our data y goes up)
 		const sx = start[0], sy = -start[1];
@@ -2480,6 +2597,7 @@ const AttentionAnatomy = {
 			glow.setAttribute('stroke-opacity', '0.28');
 			glow.setAttribute('stroke-linecap', 'round');
 			glow.style.pointerEvents = 'none';
+			glow.classList.add('attn-arrow-hovered-glow');
 			parent.appendChild(glow);
 		}
 
@@ -2493,6 +2611,7 @@ const AttentionAnatomy = {
 		line.style.pointerEvents = 'none';
 		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
 		line.classList.add(arrowCls);
+		if (isHovered) line.classList.add('attn-arrow-hovered-shaft');
 		parent.appendChild(line);
 
 		// Arrowhead (triangle pointing along the vector)
@@ -2509,11 +2628,12 @@ const AttentionAnatomy = {
 			const ax2 = ex - s * (ux * c + uy * si);
 			const ay2 = ey - s * (-ux * si + uy * c);
 			head = document.createElementNS(NS, 'polygon');
-			head.setAttribute('points', `${ex},${ey} ${ax1},${ay1} ${ax2},${ay2}`);
+			head.setAttribute('points', `${ex},${ey} ${ex-s*(ux*c-uy*si)},${ey-s*(ux*si+uy*c)} ${ex-s*(ux*c+uy*si)},${ey-s*(-ux*si+uy*c)}`);
 			head.setAttribute('fill', finalColor);
 			head.setAttribute("opacity", finalOpacity);
 			head.style.pointerEvents = 'none';
 			head.classList.add(arrowCls);
+			if (isHovered) head.classList.add('attn-arrow-hovered-head');
 			parent.appendChild(head);
 		}
 

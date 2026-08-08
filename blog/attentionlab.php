@@ -338,6 +338,36 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	background: var(--mn-surface, #fff);
 }
 
+/* Live debug panel — shows hover state, step, tokens, errors.
+   user-select:all so the user can select-all and paste into a
+   bug report without manually selecting each line. */
+.attn-debug-panel {
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	font-size: 0.78rem;
+	line-height: 1.5;
+	color: #f1f5f9;
+	background: #0f172a;
+	border: 1px solid #334155;
+	border-radius: 6px;
+	padding: 8px 12px;
+	margin: 6px auto 4px auto;
+	max-width: 780px;
+	white-space: pre-wrap;
+	word-break: break-word;
+	user-select: all;
+	-webkit-user-select: all;
+}
+.attn-debug-panel .dbg-err {
+	color: #fca5a5;
+	font-weight: 700;
+}
+.attn-debug-panel .dbg-ok {
+	color: #86efac;
+}
+.attn-debug-panel .dbg-label {
+	color: #93c5fd;
+}
+
 /* Token info / formula cone panel — inline below the sentence, sits
    BETWEEN the sentence and the 2D plot. min-height is set large enough
    to hold the tallest possible content (light cone with 8+ formula
@@ -398,6 +428,38 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 .attn-token-info .ti-cone-line {
 	padding: 2px 0;
 }
+
+/* ── Hover highlight on 2D arrows ──────────────────────────────────── */
+/* The hovered arrow + head + label get classes that scale them up and
+   pulse a glow. Even tokens whose arrows are already naturally prominent
+   (cat/mat close to q) get an unmistakable visual change because the
+   SHAFT LENGTH changes via scale, not just colour. */
+.attn-arrow-hovered-shaft {
+	transform-box: fill-box;
+	transform-origin: 0 50%;
+	animation: attn-arrow-grow 0.22s ease-out forwards;
+}
+.attn-arrow-hovered-head {
+	transform-box: fill-box;
+	transform-origin: center;
+	animation: attn-arrow-pop 0.22s ease-out forwards;
+}
+.attn-arrow-hovered-glow {
+	animation: attn-glow-pulse 1.4s ease-in-out infinite;
+}
+@keyframes attn-arrow-grow {
+	from { transform: scale(1, 1); }
+	to   { transform: scale(1.35, 1); }
+}
+@keyframes attn-arrow-pop {
+	from { transform: scale(1); }
+	to   { transform: scale(1.5); }
+}
+@keyframes attn-glow-pulse {
+	0%, 100% { stroke-opacity: 0.28; stroke-width: 0.16; }
+	50%      { stroke-opacity: 0.65; stroke-width: 0.24; }
+}
+
 .attn-token-info h4 {
 	margin: 0 0 8px 0;
 	font-size: 0.95rem;
@@ -1065,6 +1127,11 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			<!-- The sentence — hover over any token to focus on its
 			     vectors in the plot and see its full info in the popup. -->
 			<div id="attn-sentence" class="attn-sentence"></div>
+
+			<!-- Debug panel — shows live state so any hover/render
+			     issue is immediately visible. Selectable so it can
+			     be copied verbatim into a bug report. -->
+			<div id="attn-debug" class="attn-debug-panel" title="Live debug state — hover anything to update. Select-all and copy into a bug report."></div>
 
 			<!-- Token info popup — SITS BETWEEN the sentence and the
 			     2D plot, so it's always visible without overlapping the
