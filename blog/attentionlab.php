@@ -418,26 +418,47 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
    to hold the tallest possible content (light cone with 8+ formula
    lines) so the plot NEVER shifts when the user hovers different things. */
 .attn-token-info {
-	position: relative;
+	position: fixed;
+	z-index: 1000;
 	display: block;
-	margin: 6px auto 4px auto;
-	max-width: 780px;
-	min-height: 200px;
-	padding: 10px 16px;
-	background: var(--mn-surface, #fff);
-	border: 1px solid rgba(37, 99, 235, 0.35);
+	width: 420px;
+	max-width: 90vw;
+	max-height: 70vh;
+	overflow-y: auto;
+	padding: 12px 16px;
+	/* Theme-aware bg: darker in light mode, brighter in dark mode,
+	   so the tooltip is always visible against the page background. */
+	background: #1e293b;
+	color: #f1f5f9;
+	border: 1px solid rgba(96, 165, 250, 0.6);
 	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 	font-family: 'Inter', -apple-system, sans-serif;
-	font-size: 0.92rem;
+	font-size: 0.88rem;
 	line-height: 1.5;
-	color: var(--mn-text, #1e293b);
 	opacity: 1;
-	transition: opacity 0.18s ease;
+	transition: opacity 0.12s ease;
+	pointer-events: none;
+}
+@media (prefers-color-scheme: light) {
+	.attn-token-info {
+		background: #f8fafc;
+		color: #0f172a;
+		border-color: rgba(37, 99, 235, 0.5);
+		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+	}
 }
 .attn-token-info.is-empty {
 	opacity: 0;
 	pointer-events: none;
+}
+.attn-token-info h4 {
+	color: #93c5fd;
+}
+@media (prefers-color-scheme: light) {
+	.attn-token-info h4 {
+		color: #1e40af;
+	}
 }
 .attn-token-info h4 {
 	margin: 0 0 8px 0;

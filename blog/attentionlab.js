@@ -395,11 +395,19 @@ const ATTN_2D = {
 		const keysArr = this.keys; // getter — reflects current numTokens
 		this.scores = keysArr.map(k => dot(this.q, k));
 		this.scaled = this.scores.map(s => s / this.sqrtDk);
+		// ASSERTION: scores must be finite
+		this.scores.forEach((sc, j) => {
+			if (!isFinite(sc)) console.warn('[attn] _recomputeScores: score[' + j + '] is not finite: ' + sc);
+		});
 	},
 
 	// Standard softmax: exp(s) / Σ. Causal mask zeroes out keys at
 	// positions > query position (only matters for the full-matrix view).
 	recomputeWeights: function() {
+		if (!this.scaled || !this.scaled.length) {
+			console.warn('[attn] recomputeWeights: scaled is empty — _recomputeScores() not called first');
+			return;
+		}
 		const exps = this.scaled.map(s => Math.exp(s));
 		const sum = exps.reduce((a, b) => a + b, 0) || 1;
 		this.exps = exps;
@@ -411,6 +419,11 @@ const ATTN_2D = {
 		});
 		this.weightedVals = this.vals.map((v, j) =>
 			[this.weights[j] * v[0], this.weights[j] * v[1]]);
+		// ASSERTION: weights must sum to 1 (they're a probability distribution)
+		const wsum = this.weights.reduce((a, b) => a + b, 0);
+		if (Math.abs(wsum - 1) > 0.001) {
+			console.warn('[attn] recomputeWeights: weights do NOT sum to 1 — sum=' + wsum.toFixed(6) + ' weights=[' + this.weights.map(x => x.toFixed(3)).join(',') + ']');
+		}
 	},
 
 	// Full n×n attention matrix: α[i][j] = how much query i attends to
@@ -744,36 +757,33 @@ const ATTN_COMPUTATIONS = {
 		}).join('');
 		// Visual weighted-average preview: show each αⱼ · vⱼ and the running sum.
 		// This makes it crystal-clear that z = Σ αⱼ·vⱼ is literally a weighted
-		// average of the value vectors.
+		// average of the value vectors. Renders as Temml math (no raw text).
 		const previewRows = ATTN_2D.vals.map((v, j) => {
 			const tj = j + 1;
 			const tname = (ATTN_TOKENS[j+1] || {}).name || ('v' + tj);
 			const w = safeW(j);
-			const wx = (w * v[0]).toFixed(3);
-			const wy = (w * v[1]).toFixed(3);
-			const barW = Math.round(w * 100);
+			const pmv = `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+			const pmwv = `\\begin{pmatrix} ${(w*v[0]).toFixed(3)} \\\\ ${(w*v[1]).toFixed(3)} \\end{pmatrix}`;
 			return `<div class="attn-wavg-row">
-				<div class="attn-wavg-label">α<sub>${tj}</sub>·v<sub>${tj}</sub></div>
-				<div class="attn-wavg-name">${tname}</div>
-				<div class="attn-wavg-bar"><div class="attn-wavg-bar-fill" style="width:${barW}%"></div><span class="attn-wavg-pct">${(w*100).toFixed(1)}%</span></div>
-				<div class="attn-wavg-val">(${wx}, ${wy})</div>
+				<div class="attn-wavg-eq">$$ \\underbrace{\\alpha_{${tj}}\\,\\mathbf{v}_{${tj}}}_{\\text{${tname}}} = \\underbrace{${(w*100).toFixed(1)}\\%}_{\\alpha_{${tj}}} \\cdot \\underbrace{${pmv}}_{\\mathbf{v}_{${tj}}} = \\underbrace{${pmwv}}_{\\alpha_{${tj}}\\mathbf{v}_{${tj}}} $$</div>
 			</div>`;
 		}).join('');
 		const z = ATTN_2D.output;
-		const sumCheck = ATTN_2D.weightedVals
-			? ATTN_2D.weightedVals.map(wv => `(${wv[0].toFixed(2)}, ${wv[1].toFixed(2)})`).join(' + ')
-			: '?';
+		const pmz = `\\begin{pmatrix} ${z[0].toFixed(3)} \\\\ ${z[1].toFixed(3)} \\end{pmatrix}`;
+		const sumParts = (ATTN_2D.weightedVals && ATTN_2D.weightedVals.length)
+			? ATTN_2D.weightedVals.map((wv) => `\\begin{pmatrix} ${wv[0].toFixed(3)} \\\\ ${wv[1].toFixed(3)} \\end{pmatrix}`).join(' + ')
+			: '\\begin{pmatrix} 0 \\\\ 0 \\end{pmatrix}';
 		const preview = `<div class="attn-wavg-box">
 			<div class="attn-wavg-title">⚖ Weighted-average preview — how each v contributes to z</div>
 			<div class="attn-wavg-rows">${previewRows}</div>
-			<div class="attn-wavg-sum">z = <strong>${sumCheck}</strong> = <strong style="color:#f59e0b">(${z[0].toFixed(3)}, ${z[1].toFixed(3)})</strong></div>
+			<div class="attn-wavg-sum">$$ \\underbrace{\\mathbf{z}}_{\\text{output}} = ${sumParts} = \\underbrace{${pmz}}_{\\mathbf{z}} $$</div>
 		</div>`;
 		const html = `
 		<div class="comp-header">▶ Switching from keys to value vectors</div>
 		<div class="comp-body">
 			${rows}
 			${preview}
-			<div class="comp-note"><b>Yes — z is a weighted average</b> of the value vectors. Each v<sub>j</sub> is scaled by its attention weight α<sub>j</sub> (the bar widths above) and then summed. Bars summing to 100% guarantee z lies inside the convex hull of the v<sub>j</sub>.</div>
+			<div class="comp-note">$\\mathbf{z}$ is a <b>weighted average</b> of the value vectors. Each $\\mathbf{v}_j$ is scaled by its attention weight $\\alpha_j$ and then summed. Weights summing to $100\\%$ guarantee $\\mathbf{z}$ lies inside the convex hull of the $\\mathbf{v}_j$.</div>
 		</div>`;
 		const liveVals = AttentionAnatomy._liveValsHTML();
 		return { html, liveVals };
@@ -1828,13 +1838,60 @@ const AttentionAnatomy = {
 
 		// Temml is loaded by load_base_js(); it scans the document for
 		// $...$ / $$...$$ blocks and replaces them with MathML. After
-		// that, swap every <mn data-field="..."> in the computation
-		// panel for an editable HTML span so the rendered formulas
-		// stay click-to-edit.
+		// that, walk EVERY panel that contains ◆PATH|VALUE markers and
+		// swap them for editable <span class="ed"> so rendered formulas
+		// stay click-to-edit. This MUST be a single global pass — if we
+		// ran _makeMathEditable locally first and then the global
+		// render_temml() pass, the Temml pass would overwrite our
+		// <span class="ed"> back to <mtext>, and the ◆ markers would
+		// leak through to the user.
 		if (typeof render_temml === 'function') {
-			try { render_temml(); } catch (e) { /* ignore */ }
+			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
 		}
-		this._makeMathEditable();
+		// Single global pass over every panel that might contain
+		// ◆ markers — computation, live values, equation, intuition.
+		[
+			'attn-section-computation',
+			'attn-live-values-container',
+			'attn-anatomy-equation',
+			'attn-anatomy-intuition'
+		].forEach(id => {
+			const panel = document.getElementById(id);
+			if (panel) this._makeMathEditable(panel);
+		});
+		// Attach click-to-edit handlers to all editable spans across
+		// all panels (not just the computation panel).
+		document.querySelectorAll('.attn-anatomy-grid span.ed').forEach(span => {
+			// _attachEditors already guards against double-binding via
+			// span._editableBound, so calling it repeatedly is safe.
+			// We just need to make sure every span gets the handler.
+		});
+		// Wire up editors on every panel that has editable spans.
+		[
+			'attn-section-computation',
+			'attn-live-values-container',
+			'attn-anatomy-equation',
+			'attn-anatomy-intuition'
+		].forEach(id => {
+			const panel = document.getElementById(id);
+			if (panel) this._attachEditors(panel);
+		});
+
+		// ASSERTION: after the full global pass, NO panel should still
+		// show ◆ markers in its visible text. If one does, the
+		// render_temml() / _makeMathEditable() / _attachEditors() chain
+		// failed for that panel.
+		[
+			'attn-section-computation',
+			'attn-live-values-container',
+			'attn-anatomy-equation',
+			'attn-anatomy-intuition'
+		].forEach(id => {
+			const panel = document.getElementById(id);
+			if (panel && panel.textContent.indexOf('◆') >= 0) {
+				console.warn('[attn] render(): ◆ STILL VISIBLE in panel #' + id + ' after global pass — _makeMathEditable failed');
+			}
+		});
 
 		// Fade back in on the next frame so the transition is visible.
 		requestAnimationFrame(() => {
@@ -1930,31 +1987,18 @@ const AttentionAnatomy = {
 			body = result;
 		}
 		el.innerHTML = body;
-		// Render Temml math in the computation panel — without this the
-		// raw LaTeX would show (e.g. ∑_j e^{s_j} instead of the glyph).
-		if (typeof render_temml === 'function') {
-			try { render_temml(el); } catch (e) { /* ignore */ }
-		}
-		// Make ◆PATH|VALUE markers click-to-edit in the computation panel
-		// too (used by the weighted-vals step etc.).
-		this._makeMathEditable(el);
+		// NOTE: do NOT call render_temml() or _makeMathEditable() here.
+		// render() does a GLOBAL render_temml() pass on all panels,
+		// then a GLOBAL _makeMathEditable() pass. Doing it locally first
+		// would create <span class="ed"> that the global Temml pass
+		// would then overwrite back to <mtext>, causing ◆ markers to
+		// leak through. The single global pass is the only correct order.
 		// Live values go into the 2d wrap container, NOT the computation
 		// panel, so they sit BESIDE the plot instead of below it.
 		const liveContainer = document.getElementById('attn-live-values-container');
 		if (liveContainer) {
 			liveContainer.innerHTML = liveVals;
-			if (liveVals) {
-				if (typeof render_temml === 'function') {
-					try { render_temml(liveContainer); } catch (e) { /* ignore */ }
-				}
-				// _makeMathEditable replaces ◆PATH|VALUE with <span class="ed">
-				// so values become click-to-edit. MUST run AFTER render_temml.
-				this._makeMathEditable(liveContainer);
-				this._attachEditors(liveContainer);
-			}
 		}
-		// Wire up click-to-edit on every <span.ed> we just emitted.
-		this._attachEditors(el);
 	},
 
 	// Build the "live values" overview panel rendered as Temml math.
@@ -1971,7 +2015,10 @@ const AttentionAnatomy = {
 			if (j >= ATTN_2D.keys.length) return;
 			const k = ATTN_2D.keys[j];
 			const v = ATTN_2D.vals[j];
-			html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{' + tk.name + '}}_{\\text{key + value}} = \\underbrace{\\begin{pmatrix} \\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '} \\\\ \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{k}_{' + (j+1) + '}} \\quad \\underbrace{\\begin{pmatrix} \\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '} \\\\ \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{v}_{' + (j+1) + '}} $$</div>';
+			// k and v are NOT multiplied — they're two separate vectors.
+			// Use \quad (wide space) between them, with underbraces that
+			// clearly say "key" vs "value".
+			html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{' + tk.name + '}}_{\\text{token}} = \\underbrace{\\begin{pmatrix} \\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '} \\\\ \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{k}_{' + (j+1) + '\\;\\text{(key)}}} \\quad \\underbrace{\\begin{pmatrix} \\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '} \\\\ \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{v}_{' + (j+1) + '\\;\\text{(value)}}} $$</div>';
 		});
 		if (extra) html += extra;
 		html += '</div>';
@@ -1982,7 +2029,9 @@ const AttentionAnatomy = {
 	// matrices as 2×2 editable grids, all rendered as Temml math.
 	_liveValsHTMLProjection: function() {
 		const d = ATTN_2D.demo;
-		const cell = (path, val) => '\\text{◆' + path.replace(/_/g, '\\_') + '|' + val + '}';
+		const cell = (path, val) => `\\text{◆${path.replace(/_/g, '\\_')}|${val}}`;
+		const pm = (path0, val0, path1, val1) =>
+			`\\begin{pmatrix} ${cell(path0, val0)} \\\\ ${cell(path1, val1)} \\end{pmatrix}`;
 		const grid = (W, name) => {
 			let g = '\\begin{pmatrix} ';
 			for (let i = 0; i < 2; i++) {
@@ -1997,10 +2046,10 @@ const AttentionAnatomy = {
 		};
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit (W matrices included)</div>';
-		html += '<div class="attn-live-row attn-live-row-first">$$ \\mathbf{x} = (\\text{◆demo.x.0|' + d.x[0].toFixed(2) + '},\\, \\text{◆demo.x.1|' + d.x[1].toFixed(2) + '}) $$</div>';
-		html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{W}^Q = ' + grid(d.W_Q, 'W_Q') + ' $$</div>';
-		html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{W}^K = ' + grid(d.W_K, 'W_K') + ' $$</div>';
-		html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{W}^V = ' + grid(d.W_V, 'W_V') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-first">$$ \\underbrace{\\mathbf{x}}_{\\text{input embedding}} = ' + pm('demo.x.0', d.x[0].toFixed(2), 'demo.x.1', d.x[1].toFixed(2)) + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{W}^Q}_{\\text{query weights}} = ' + grid(d.W_Q, 'W_Q') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{W}^K}_{\\text{key weights}} = ' + grid(d.W_K, 'W_K') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{W}^V}_{\\text{value weights}} = ' + grid(d.W_V, 'W_V') + ' $$</div>';
 		html += '</div>';
 		return html;
 	},
@@ -2043,7 +2092,10 @@ const AttentionAnatomy = {
 	// Write a value back through a dot-path. Returns true if it was a
 	// finite number and the write went through; false otherwise.
 	_setField: function(path, value) {
-		if (!isFinite(value)) return false;
+		if (!isFinite(value)) {
+			console.warn('[attn] _setField: rejected non-finite value for path=' + path + ' value=' + value);
+			return false;
+		}
 		const parts = path.split('.');
 		const last = parts.pop();
 		const obj = parts.reduce(function(o, k) {
@@ -2120,8 +2172,16 @@ const AttentionAnatomy = {
 		// there too. Without the parameter, ◆PATH|VALUE markers would
 		// never be replaced in the live-values panel.
 		const target = root || document.getElementById('attn-section-computation');
-		if (!target) return;
+		if (!target) {
+			console.warn('[attn] _makeMathEditable: no target element (root=' + (root && root.id) + ')');
+			return;
+		}
 		const mtexts = target.querySelectorAll('mtext');
+		// ASSERTION 1: if we expected ◆ markers but found no <mtext>,
+		// render_temml didn't run on this panel.
+		if (mtexts.length === 0 && target.textContent.indexOf('◆') >= 0) {
+			console.warn('[attn] _makeMathEditable[' + target.id + ']: found ◆ in textContent but NO <mtext> elements — render_temml probably did not run on this panel');
+		}
 		mtexts.forEach(function(mtext) {
 			const text = mtext.textContent || '';
 			// Match "◆FIELD|VALUE" — the marker is rendered as text content.
@@ -2138,6 +2198,17 @@ const AttentionAnatomy = {
 			span.textContent = value;
 			if (mtext.parentNode) mtext.parentNode.replaceChild(span, mtext);
 		});
+		// ASSERTION 2: after replacement, no <mtext> should contain ◆.
+		const remaining = target.querySelectorAll('mtext');
+		remaining.forEach(function(mt) {
+			if ((mt.textContent || '').indexOf('◆') >= 0) {
+				console.warn('[attn] _makeMathEditable[' + target.id + ']: ◆ marker still in <mtext> after replacement — regex did not match: ' + mt.textContent);
+			}
+		});
+		// ASSERTION 3: no ◆ in the panel's visible text after replacement.
+		if (target.textContent.indexOf('◆') >= 0) {
+			console.warn('[attn] _makeMathEditable[' + target.id + ']: ◆ STILL VISIBLE in panel after replacement — replacement failed');
+		}
 		this._attachEditors(target);
 	},
 
@@ -2341,6 +2412,8 @@ const AttentionAnatomy = {
 		if (!el) return;
 		const self = this;
 		console.log('[attn] _setupFormulaHover attached to', el.id);
+		// Track mouse position so the floating tooltip can follow the cursor.
+		el.addEventListener('mousemove', function(e) { self._trackMouse(e); });
 		// Formula nodes (dot/scaled/exps/weights/output)
 		el.addEventListener('mouseover', function(e) {
 			// 1) Formula light-cone
@@ -2356,6 +2429,12 @@ const AttentionAnatomy = {
 					console.error('[attn] _showFormulaCone error:', err);
 				}
 				return;
+			}
+			// ASSERTION: if the user is hovering over a .comp-eq-group but
+			// it has no data-cone-step, the light cone will never show.
+			const grp = e.target.closest('.comp-eq-group');
+			if (grp && !grp.dataset.coneStep) {
+				console.warn('[attn] hover: .comp-eq-group has no data-cone-step attribute — light cone will never show for this group');
 			}
 			// 2) Matrix cell — show the exact α_{ij} computation
 			const cell = e.target.closest('.attn-matrix-cell');
@@ -2507,9 +2586,27 @@ const AttentionAnatomy = {
 	// Called when hovering over a formula in the computation panel.
 	// stepName: 'dot' | 'scaled' | 'exps' | 'weights' | 'output'
 	// tokenIdx: 0..n-1 (which token's value is being explained)
+	// Last known mouse position — used to position the floating light
+	// cone next to the cursor instead of at a fixed location.
+	_lastMouseX: 0,
+	_lastMouseY: 0,
+	_trackMouse: function(e) {
+		this._lastMouseX = e.clientX;
+		this._lastMouseY = e.clientY;
+	},
+
 	_showFormulaCone: function(stepName, tokenIdx) {
 		const el = document.getElementById('attn-token-info');
 		if (!el) return;
+		// Position the tooltip near the cursor, clamped to viewport.
+		// Offset (+14, +14) so the cursor doesn't sit on top of the box.
+		const x = this._lastMouseX + 14;
+		const y = this._lastMouseY + 14;
+		const boxW = 420, boxH = 300; // approx — CSS also caps these
+		const maxX = window.innerWidth  - boxW - 8;
+		const maxY = window.innerHeight - boxH - 8;
+		el.style.left = Math.max(8, Math.min(x, maxX)) + 'px';
+		el.style.top  = Math.max(8, Math.min(y, maxY)) + 'px';
 		const q = ATTN_2D.q;
 		const N = ATTN_2D.keys.length;
 		const fmt = (v) => v.toFixed(2);
