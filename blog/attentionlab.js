@@ -1422,9 +1422,10 @@ const AttentionAnatomy = {
 			// label straddles both shafts, so park it just OUTSIDE the
 			// wedge on the q side. For wide angles the wedge interior is
 			// spacious and the bisector reads better.
-			const labelA = (Math.abs(d) < 0.21) ? aq - 0.14 : aq + d / 2;
-			const lx = (r + 0.17) * Math.cos(labelA);
-			const ly = -(r + 0.17) * Math.sin(labelA);
+			const labelA = (Math.abs(d) < 0.21) ? aq - 0.19 : aq + d / 2;
+			const rad = (Math.abs(d) < 0.21) ? r + 0.19 : r + 0.17;
+			const lx = rad * Math.cos(labelA);
+			const ly = -rad * Math.sin(labelA);
 			const mkLabel = (halo) => {
 				const t = document.createElementNS(NS, 'text');
 				t.setAttribute('x', lx); t.setAttribute('y', ly);
@@ -1455,13 +1456,14 @@ const AttentionAnatomy = {
 	// `lpos` optionally overrides the label offset ([dx, dy]) so labels
 	// that would otherwise stack (e.g. z + its weighted values) can be
 	// fanned out.
-	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos) {
+	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos, lanchor) {
 		const NS = this._SVG_NS;
 		const opacity = dim ? 0.35 : 1.0;
 
 		// Flip y for SVG (SVG y goes down, our data y goes up)
 		const sx = start[0], sy = -start[1];
 		const ex = end[0],   ey = -end[1];
+		const anchor = lanchor || 'start';
 
 		// Invisible fat hit-area for forgiving hover
 		const hit = document.createElementNS(NS, 'line');
@@ -1510,7 +1512,7 @@ const AttentionAnatomy = {
 			const ly = ey + (lpos ? lpos[1] : -0.04);
 			const halo = document.createElementNS(NS, 'text');
 			halo.setAttribute('x', lx); halo.setAttribute('y', ly);
-			halo.setAttribute('text-anchor', 'start');
+			halo.setAttribute('text-anchor', anchor);
 			halo.setAttribute('dominant-baseline', 'middle');
 			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
 			halo.setAttribute('stroke-width', '0.012'); halo.setAttribute('paint-order', 'stroke');
@@ -1521,7 +1523,7 @@ const AttentionAnatomy = {
 			labelsParent.appendChild(halo);
 			const txt = document.createElementNS(NS, 'text');
 			txt.setAttribute('x', lx); txt.setAttribute('y', ly);
-			txt.setAttribute('text-anchor', 'start');
+			txt.setAttribute('text-anchor', anchor);
 			txt.setAttribute('dominant-baseline', 'middle');
 			txt.setAttribute('fill', color);
 			txt.setAttribute('font-size', '0.1');
@@ -1678,7 +1680,10 @@ const AttentionAnatomy = {
 			// — for keys nearly collinear with q — q's own labels too.
 			const n = norm(k);
 			const u = [k[0] / n, k[1] / n];
-			const off = 0.14;
+			// k1's shaft is nearly horizontal, so a small offset clears it;
+			// the steeper k2/k3 shafts reach toward a label corner, so they
+			// need a larger perpendicular offset to keep their glyphs clear.
+			const off = (j === 0) ? 0.14 : 0.22;
 			const sx = 0.5 * k[0] - u[1] * off;
 			const sy = 0.5 * k[1] + u[0] * off;
 			mk(sx, -sy, `‖k${j+1}‖=${n.toFixed(2)}`, 'middle');
@@ -2013,7 +2018,7 @@ const AttentionAnatomy = {
 		const baseY = -1.14, h = 0.16;
 
 		// The raw exp(score) strip — the INPUT to softmax.
-		const stripY = -1.43, stripH = 0.07;
+		const stripY = -1.38, stripH = 0.07;
 		let acc = 0;
 		ex.forEach((e, j) => {
 			const xl = x0 + acc * span;
@@ -2046,7 +2051,9 @@ const AttentionAnatomy = {
 			acc += e / sumEx;
 		});
 
-		// "exp" tag on the strip + the ÷ Σ divider.
+		// "exp" tag on the strip + the ÷ Σ divider. Both ride the same
+		// caption line below the strip — the divider centered under the
+		// strip would collide with the wide first segment's e-value label.
 		const tag = document.createElementNS(NS, 'text');
 		tag.setAttribute('x', x0);
 		tag.setAttribute('y', stripY - 0.05);
@@ -2059,11 +2066,11 @@ const AttentionAnatomy = {
 		labelsG.appendChild(tag);
 
 		const div = document.createElementNS(NS, 'text');
-		div.setAttribute('x', 0);
-		div.setAttribute('y', -1.30);
-		div.setAttribute('text-anchor', 'middle');
+		div.setAttribute('x', x0 + 0.10);
+		div.setAttribute('y', stripY - 0.05);
+		div.setAttribute('text-anchor', 'start');
 		div.setAttribute('fill', themeColor('#64748b'));
-		div.setAttribute('font-size', '0.07');
+		div.setAttribute('font-size', '0.062');
 		div.setAttribute('font-family', 'Inter, sans-serif');
 		div.textContent = `÷ Σ = ${sumEx.toFixed(3)}`;
 		div.style.pointerEvents = 'none';
@@ -2099,10 +2106,11 @@ const AttentionAnatomy = {
 
 			const t = document.createElementNS(NS, 'text');
 			t.setAttribute('x', (xl + xr) / 2);
-			t.setAttribute('y', baseY + h + 0.10);
+			t.setAttribute('y', baseY + h / 2);
 			t.setAttribute('text-anchor', 'middle');
-			t.setAttribute('fill', ATTN_TOKENS[j + 1].color);
-			t.setAttribute('font-size', '0.085');
+			t.setAttribute('fill', '#fff');
+			t.setAttribute('font-size', '0.07');
+			t.setAttribute('font-weight', 'bold');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `α${j+1} ${(wi * 100).toFixed(1)}%`;
 			t.style.pointerEvents = 'none';
@@ -2264,8 +2272,14 @@ const AttentionAnatomy = {
 				// cluster by hugging the value tip instead of floating.
 				const sameAsZ = (mode === 'output' &&
 					Math.hypot(v[0] - ATTN_2D.output[0], v[1] - ATTN_2D.output[1]) < 0.05);
+				// In output mode "z = output" is anchored left of the z tip,
+				// so value labels hugging their tip would collide with it.
+				// v2 sits closest to z, so drop it below its own tip instead.
+				const opos = (mode === 'output')
+					? (j === 1 ? [0.16, -0.16] : [0.14, 0.02])
+					: undefined;
 				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim,
-					sameAsZ ? [0.14, -0.20] : (mode === 'output' ? [0.14, 0.02] : undefined));
+					sameAsZ ? [0.14, -0.20] : opos);
 			});
 			if (mode === 'values') this._drawValueWeights2D(labelsG);
 
@@ -2317,7 +2331,8 @@ const AttentionAnatomy = {
 				// Fill the span of the value tips so z visibly lands inside it
 				this._drawSpanFill2D(constructionG);
 
-				this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 'z', 0, false, false);
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 'z', 0, false, false,
+					[-0.16, -0.04], 'end');
 			}
 		}
 	},
