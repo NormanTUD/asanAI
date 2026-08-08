@@ -748,7 +748,7 @@ const ATTN_COMPUTATIONS = {
 	weights: () => {
 		const ex  = ATTN_2D.exps;
 		const sum = ex.reduce((a, b) => a + b, 0);
-		const sumRow = `<div class="comp-eq-group first">` +
+		const sumRow = `<div class="comp-eq-group first" data-cone-step="weights" data-cone-idx="-1">` +
 			`<div class="comp-eq-line">$$ \\underbrace{\\sum_{j=1}^{N} \\exp(s_j)}_{\\text{denominator (softmax sum})} = ${ex.map((e, j) => `\\underbrace{${e.toFixed(3)}}_{e^{s_{${j+1}}}}`).join(' \\;+\\; ')} = \\underbrace{${sum.toFixed(3)}}_{\\text{total exp}} $$</div>` +
 		`</div>`;
 		const rows = ex.map((e, j) => {
@@ -1792,6 +1792,11 @@ const AttentionAnatomy = {
 	next: function() {
 		if (this.step < ATTN_STEPS.length - 1) {
 			this.step++;
+			// GUARDRAIL: reset stale hover state from previous step
+			// (otherwise hoveredFormula.step=exps fires when we're now on
+			// step 7 or 11 and the sanity check complains).
+			ATTN_2D.hoveredFormula = null;
+			this._hideInlineTip();
 			this.render();
 		}
 	},
@@ -1799,6 +1804,8 @@ const AttentionAnatomy = {
 	prev: function() {
 		if (this.step > 0) {
 			this.step--;
+			ATTN_2D.hoveredFormula = null;
+			this._hideInlineTip();
 			this.render();
 		}
 	},
@@ -1921,12 +1928,11 @@ const AttentionAnatomy = {
 			// span._editableBound, so calling it repeatedly is safe.
 			// We just need to make sure every span gets the handler.
 		});
-		// Wire up editors on every panel that has editable spans.
+		// Wire up editors on ONLY the panels with editable spans.
+		// Equation and intuition panels are read-only.
 		[
-			'attn-section-computation',
 			'attn-live-values-container',
-			'attn-anatomy-equation',
-			'attn-anatomy-intuition'
+			'attn-section-computation'
 		].forEach(id => {
 			const panel = document.getElementById(id);
 			if (panel) this._attachEditors(panel);
@@ -2533,13 +2539,16 @@ const AttentionAnatomy = {
 			if (isNaN(idx)) { console.warn('[attn] hover#11: data-cone-idx NaN on', node, 'raw=' + node.dataset.coneIdx); return; }
 			console.log('[attn] hover formula', step, idx);
 			ATTN_2D.hoveredFormula = { step, idx };
+			// Store the hovered group so _showInlineTip can place the
+			// tooltip right after it.
+			self._lastHoveredGroup = node;
 			try {
 				self._showFormulaCone(step, idx);
 			} catch (err) {
 				// ANGLE 12: _showFormulaCone throws
 				console.error('[attn] hover#12: _showFormulaCone error:', err);
 			}
-			return;
+				return;
 		// 2) Matrix cell — show the exact α_{ij} computation
 		const mcell = e.target.closest('.attn-matrix-cell');
 		if (mcell) {
@@ -2565,18 +2574,9 @@ const AttentionAnatomy = {
 			const to = e.relatedTarget;
 			if (to && node.contains(to)) return;
 			if (to && to.closest && to.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead')) return;
-			// ANGLE 22: mouseout fires <50ms after mouseover — race / flicker
-			if (self._lastConeShow && Date.now() - self._lastConeShow < 50) {
-				console.warn('[attn] cone#22: mouseout fired ' + (Date.now() - self._lastConeShow) + 'ms after mouseover — flicker/race');
-			}
-			// ANGLE 23: relatedTarget is null (mouse left window)
-			if (!to) console.log('[attn] cone#23: mouseout with null relatedTarget — mouse left window');
-			// ANGLE 24: node was just replaced by innerHTML (not in DOM anymore)
-			if (!node.isConnected) console.warn('[attn] cone#24: mouseout target was removed from DOM between mouseover and mouseout — render replaced it');
-			// ANGLE 25: hoveredFormula was already null (double mouseout)
-			if (!ATTN_2D.hoveredFormula) console.warn('[attn] cone#25: mouseout but hoveredFormula already null — double-fire');
+			// Hide the inline tooltip
+			self._hideInlineTip();
 			ATTN_2D.hoveredFormula = null;
-			self._refreshPopup();
 		});
 	},
 
@@ -2824,30 +2824,46 @@ const AttentionAnatomy = {
 			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.weightedVals.map((wv,i) => `\\alpha_{${i+1}}\\mathbf{v}_{${i+1}} = (${fmt3(wv[0])},\\,${fmt3(wv[1])})`).join(' + ')} = (${fmt3(ATTN_2D.output[0])},\\,${fmt3(ATTN_2D.output[1])})$</div>`);
 		}
 		cone.push(`</div>`);
-		el.innerHTML = cone.join('');
-		el.classList.remove('is-empty');
-		if (typeof render_temml === 'function') render_temml(el);
-		// ANGLE 17: still has is-empty class after removal
-		if (el.classList.contains('is-empty')) console.warn('[attn] cone#17: is-empty class not removed');
-		// ANGLE 18: opacity is 0 after show
-		const s1 = getComputedStyle(el);
-		if (s1.opacity === '0') console.warn('[attn] cone#18: opacity 0 after show — CSS rule still hiding it');
-		// ANGLE 19: z-index too low (covered by debug panel z-index:5)
-		const z = parseInt(s1.zIndex) || 0;
-		if (z < 10) console.warn('[attn] cone#19: z-index=' + z + ' may be covered by debug panel (z:5)');
-		// ANGLE 20: light cone inside a container with transform/filter
-		// (which makes position:fixed relative to that container)
-		let parent = el.parentElement;
-		while (parent && parent !== document.body) {
-			const ps = getComputedStyle(parent);
-			if (ps.transform !== 'none' || ps.filter !== 'none' || ps.perspective !== 'none' || ps.contain === 'paint' || ps.willChange === 'transform') {
-				console.warn('[attn] cone#20: light cone parent #' + parent.id + ' has transform/filter — position:fixed will be relative to it, not viewport');
-				break;
+		// REMOVED: floating light cone. User said "lightcone soll komplett
+		// weg, sein inhalt in den mouseover". So we put the content
+		// directly below the hovered formula as an inline tooltip.
+		this._showInlineTip(cone.join(''));
+	},
+
+	// Inline tooltip — appears DIRECTLY below the hovered formula
+	// (not floating, not following the mouse). This is what replaced
+	// the floating light cone. The tooltip is a child of the hovered
+	// .comp-eq-group so it appears in document flow right below the
+	// formula, with no z-index fighting.
+	_showInlineTip: function(html) {
+		// Remove any existing inline tip first
+		const existing = document.querySelector('.attn-formula-tip');
+		if (existing) existing.remove();
+		if (!this._lastHoveredGroup) return;
+		const tip = document.createElement('div');
+		tip.className = 'attn-formula-tip';
+		tip.innerHTML = html;
+		// Replace ti-cone / ti-cone-line / ti-cone-step classes with
+		// the inline-tip equivalents (so CSS works).
+		tip.querySelectorAll('.ti-cone-line').forEach(el => {
+			if (el.classList.contains('ti-cone-step')) {
+				el.className = 'ti-step';
+			} else {
+				el.className = '';
 			}
-			parent = parent.parentElement;
+		});
+		const tiCone = tip.querySelector('.ti-cone');
+		if (tiCone) tiCone.className = '';
+		// Insert right after the hovered group
+		this._lastHoveredGroup.insertAdjacentElement('afterend', tip);
+		if (typeof render_temml === 'function') {
+			try { render_temml(tip); } catch (e) { console.warn('[attn] render_temml failed in tip:', e); }
 		}
-		// ANGLE 21: innerHTML empty after update
-		if (!el.innerHTML.trim()) console.warn('[attn] cone#21: innerHTML empty after update');
+	},
+
+	_hideInlineTip: function() {
+		const existing = document.querySelector('.attn-formula-tip');
+		if (existing) existing.remove();
 	},
 
 	_hideTokenInfo: function() {

@@ -417,48 +417,59 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
    BETWEEN the sentence and the 2D plot. min-height is set large enough
    to hold the tallest possible content (light cone with 8+ formula
    lines) so the plot NEVER shifts when the user hovers different things. */
-.attn-token-info {
-	position: fixed;
-	z-index: 1000;
+/* ── Formula hover tooltip ────────────────────────────────────────
+   The light cone (#attn-token-info) was a fixed-position floating
+   tooltip that followed the mouse. It caused problems: it disappeared
+   behind the computation panel, it was covered by other elements, and
+   it fought with the mouseover event itself.
+   Instead, we now show the formula breakdown DIRECTLY on the hovered
+   element as an inline expansion below it. Simpler, no z-index
+   fighting, no "disappearing behind" issues. */
+.attn-formula-tip {
+	position: absolute;
+	z-index: 50;
 	display: block;
-	width: 420px;
-	max-width: 90vw;
-	max-height: 70vh;
-	overflow-y: auto;
-	padding: 12px 16px;
-	/* Theme-aware bg: darker in light mode, brighter in dark mode,
-	   so the tooltip is always visible against the page background. */
+	max-width: 500px;
+	padding: 10px 14px;
 	background: #1e293b;
 	color: #f1f5f9;
 	border: 1px solid rgba(96, 165, 250, 0.6);
 	border-radius: 8px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 	font-family: 'Inter', -apple-system, sans-serif;
-	font-size: 0.88rem;
+	font-size: 0.82rem;
 	line-height: 1.5;
-	opacity: 1;
-	transition: opacity 0.12s ease;
 	pointer-events: none;
 }
 @media (prefers-color-scheme: light) {
-	.attn-token-info {
+	.attn-formula-tip {
 		background: #f8fafc;
 		color: #0f172a;
 		border-color: rgba(37, 99, 235, 0.5);
-		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+		box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
 	}
 }
-.attn-token-info.is-empty {
-	opacity: 0;
-	pointer-events: none;
-}
-.attn-token-info h4 {
+.attn-formula-tip .ti-step {
 	color: #93c5fd;
+	font-weight: 600;
+	margin-top: 4px;
+	padding: 2px 0;
+	border-top: 1px dotted rgba(147, 197, 253, 0.3);
 }
 @media (prefers-color-scheme: light) {
-	.attn-token-info h4 {
+	.attn-formula-tip .ti-step {
 		color: #1e40af;
+		border-top-color: rgba(30, 64, 175, 0.3);
 	}
+}
+.attn-formula-tip .ti-step:first-child {
+	border-top: none;
+	margin-top: 0;
+}
+/* Legacy light cone CSS — kept only to silence any stragglers, but
+   the element is never shown anymore. */
+.attn-token-info {
+	display: none !important;
 }
 .attn-token-info h4 {
 	margin: 0 0 8px 0;
