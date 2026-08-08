@@ -1146,7 +1146,7 @@ const AttentionAnatomy = {
 	// - desc is the mathematical explanation underneath
 	_buildArrowInfo: function(key, idx) {
 		const fmt    = (v) => v.toFixed(2);
-		const fmtVec = (v) => `[${fmt(v[0])},\\; ${fmt(v[1])}]`;
+		const fmtVec = (v) => v ? `[${fmt(v[0])},\\; ${fmt(v[1])}]` : '\\text{n/a}';
 		const VF = VECTOR_FORMULAS;
 		switch (key) {
 			case 'q':
@@ -1905,7 +1905,7 @@ const AttentionAnatomy = {
 		xl.textContent = 'Dim 1';
 		axesG.appendChild(xl);
 		const yl = document.createElementNS(NS, 'text');
-		yl.setAttribute('x', 0.06); yl.setAttribute('y', -1.42);
+		yl.setAttribute('x', 0.06); yl.setAttribute('y', -1.48);
 		yl.setAttribute('fill', '#475569'); yl.setAttribute('font-size', '0.09');
 		yl.setAttribute('font-family', 'Inter, sans-serif');
 		yl.textContent = 'Dim 2';
@@ -1998,7 +1998,7 @@ const AttentionAnatomy = {
 				if (halo) {
 					t.setAttribute('fill', '#fff');
 					t.setAttribute('stroke', '#fff');
-					t.setAttribute('stroke-width', '0.014');
+					t.setAttribute('stroke-width', '0.005');
 					t.setAttribute('paint-order', 'stroke');
 				} else {
 					t.setAttribute('fill', color);
@@ -2306,7 +2306,7 @@ const AttentionAnatomy = {
 			t.setAttribute('dominant-baseline', 'middle');
 			t.setAttribute('fill', '#fff');
 			t.setAttribute('stroke', '#fff');
-			t.setAttribute('stroke-width', '0.012');
+			t.setAttribute('stroke-width', '0.005');
 			t.setAttribute('paint-order', 'stroke');
 			t.setAttribute('font-size', '0.07');
 			t.setAttribute('font-weight', 'bold');
@@ -2941,10 +2941,10 @@ const AttentionAnatomy = {
 			const signed = (x) => (x < 0 ? '-' + Math.abs(x).toFixed(2) : x.toFixed(2));
 			const cap = document.createElementNS(NS, 'text');
 			cap.setAttribute('x', cx);
-			cap.setAttribute('y', baseY - maxH - 0.10);
+			cap.setAttribute('y', baseY - maxH - 0.06);
 			cap.setAttribute('text-anchor', 'middle');
 			cap.setAttribute('fill', themeColor('#334155'));
-			cap.setAttribute('font-size', '0.065');
+			cap.setAttribute('font-size', '0.075');
 			cap.setAttribute('font-family', 'Inter, sans-serif');
 			cap.textContent = `${signed(p1)} ${p2 < 0 ? '−' : '+'} ${signed(p2)} = ${signed(ATTN_2D.scores[j])}`;
 			cap.style.pointerEvents = 'none';
