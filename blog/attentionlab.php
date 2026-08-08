@@ -285,6 +285,21 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	min-width: 0;
 	display: block;
 	background: var(--mn-surface, #fff);
+	transition: opacity 0.18s ease, max-height 0.18s ease, min-height 0.18s ease, margin 0.18s ease;
+	overflow: hidden;
+}
+/* In step 10 (matrix) and step 11 (selfattn) the actual visualisation
+   lives in the computation panel. Collapse the 2D SVG so it doesn't
+   take up vertical space and the table / plots get the full width. */
+#attn-anatomy-2d-svg.attn-svg-collapsed {
+	opacity: 0;
+	max-height: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	pointer-events: none;
+}
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 8px;
 	cursor: crosshair;
@@ -876,13 +891,22 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
    hoverable α_{ij} with the exact computation on hover. */
 .attn-matrix-wrap {
 	overflow-x: auto;
-	margin: 8px 0;
+	margin: 8px auto;
+	max-width: 100%;
+	padding: 4px;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
+	background: rgba(37, 99, 235, 0.03);
 }
 .attn-matrix-table {
 	border-collapse: separate;
 	border-spacing: 3px;
 	margin: 0 auto;
 	font-family: 'Inter', sans-serif;
+	table-layout: fixed;
+	width: auto;
+	min-width: 0;
+	max-width: 100%;
 }
 .attn-matrix-corner {
 	background: transparent;
@@ -896,7 +920,8 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	vertical-align: middle;
 	text-align: center;
 	font-weight: 600;
-	min-width: 90px;
+	min-width: 60px;
+	max-width: 100px;
 	cursor: help;
 	transition: background 0.12s ease;
 }
@@ -906,25 +931,27 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 }
 .attn-matrix-colhead-name,
 .attn-matrix-rowhead-name {
-	font-size: 0.88rem;
+	font-size: 0.78rem;
 	font-weight: 700;
 }
 .attn-matrix-colhead-form,
 .attn-matrix-rowhead-form {
-	font-size: 0.78rem;
+	font-size: 0.7rem;
 	color: var(--mn-text-muted, #64748b);
 	margin-top: 3px;
 }
 .attn-matrix-cell {
-	padding: 10px 14px;
+	padding: 6px 8px;
 	text-align: center;
 	border-radius: 6px;
-	font-size: 0.95rem;
+	font-size: 0.82rem;
 	font-weight: 600;
-	min-width: 80px;
+	min-width: 60px;
+	max-width: 90px;
 	cursor: help;
 	transition: transform 0.12s ease, box-shadow 0.12s ease;
 	border: 2px solid transparent;
+	word-break: break-word;
 }
 .attn-matrix-cell:hover {
 	transform: scale(1.08);

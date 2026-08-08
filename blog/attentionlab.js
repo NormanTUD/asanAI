@@ -687,7 +687,18 @@ const ATTN_COMPUTATIONS = {
 		`</div>`;
 		const 		rows = ex.map((e, j) => {
 			const tj = j + 1;
-			const w = ATTN_2D.weights[j];
+			// Defensive: weights[j] can be undefined if recomputeWeights
+			// wasn't called yet or if ex/weights got out of sync. Use
+			// e/sum as the safe fallback (= the same number recomputeWeights
+			// would compute), and log so we see the mismatch.
+			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined)
+				? ATTN_2D.weights[j]
+				: (sum > 0 ? e / sum : 0);
+			if (!ATTN_2D.weights || ATTN_2D.weights[j] === undefined) {
+				console.warn('[attn] weights: fallback at j=' + j +
+					' ex.length=' + ex.length +
+					' weights.length=' + (ATTN_2D.weights ? ATTN_2D.weights.length : 'undefined'));
+			}
 			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="weights" data-cone-idx="${j}">` +
 				`<div class="comp-eq-line">$$ \\alpha_{${tj}} = \\frac{e^{s_{${tj}}}}{\\Sigma} $$</div>` +
 				`<div class="comp-eq-line">$$ = \\frac{${e.toFixed(3)}}{${sum.toFixed(3)}} $$</div>` +
@@ -719,11 +730,28 @@ const ATTN_COMPUTATIONS = {
 	},
 	output: () => {
 		const rows = ATTN_2D.vals.map((v, j) => {
-			const wv = ATTN_2D.weightedVals[j];
-			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}" data-cone-step="output" data-cone-idx="${j}">$$ \\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(ATTN_2D.weights[j]*100).toFixed(1)}\\%)\\times (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))}) = \\underbrace{(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})}_{\\text{weighted value}} $$</div>`;
+			// Defensive: weightedVals[j] can be undefined if recomputeWeights
+			// wasn't called or got out of sync with vals. Compute it from
+			// weights[j] * v on the fly as the safe fallback.
+			const w  = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+			const wv = (ATTN_2D.weightedVals && ATTN_2D.weightedVals[j] !== undefined)
+				? ATTN_2D.weightedVals[j]
+				: [w * v[0], w * v[1]];
+			if (!ATTN_2D.weightedVals || ATTN_2D.weightedVals[j] === undefined) {
+				console.warn('[attn] output: weightedVals fallback at j=' + j +
+					' vals.length=' + ATTN_2D.vals.length +
+					' weightedVals.length=' + (ATTN_2D.weightedVals ? ATTN_2D.weightedVals.length : 'undefined'));
+			}
+			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}" data-cone-step="output" data-cone-idx="${j}">$$ \\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(w*100).toFixed(1)}\\%)\\times (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))}) = \\underbrace{(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})}_{\\text{weighted value}} $$</div>`;
 		}).join('');
 		const z = ATTN_2D.output;
-		const sumParts = ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})`).join(' + ');
+		// Defensive sumParts — also falls back if weightedVals is empty
+		const sumParts = (ATTN_2D.weightedVals && ATTN_2D.weightedVals.length)
+			? ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})`).join(' + ')
+			: ATTN_2D.vals.map((v, j) => {
+				const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+				return `(${(w*v[0]).toFixed(3)},\\, ${(w*v[1]).toFixed(3)})`;
+			}).join(' + ');
 		const html = `
 		<div class="comp-header">▶ Currently computing: $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ — the weighted sum</div>
 		<div class="comp-body">
@@ -1318,6 +1346,19 @@ const AttentionAnatomy = {
 					unicode: VF.z.unicode,
 					desc: VF.z.desc
 				};
+			case 'self-v': {
+				// Self-attention value vector for token idx+1
+				const v = ATTN_2D._allVals[idx];
+				const t = ATTN_TOKENS[idx + 1].name;
+				return {
+					name: `v${idx+1}  (value of “${t}”)`,
+					intuition: `What <b>“${t}”</b> contributes to every output. In self-attention, each v is blended into every z according to α.`,
+					concreteLatex: `\\underbrace{\\mathbf{v}_{${idx+1}} = ${fmtVec(v)}}_{\\text{value of “${t}”}}`,
+					formulaLatex: '\\mathbf{v}_j = \\mathbf{W}^V \\, \\mathbf{x}_j',
+					unicode: `v${idx+1} = [${v[0].toFixed(2)}, ${v[1].toFixed(2)}]`,
+					desc: `Same v used for every query's output. Scaled by α_{ij} before summing into z_i.`
+				};
+			}
 			case 'angle': {
 				const q = ATTN_2D.q;
 				const k = ATTN_2D.keys[idx];
@@ -3175,8 +3216,7 @@ const AttentionAnatomy = {
 		const n = ATTN_2D.numTokens;
 		const titles = [
 			'↑ The full attention matrix lives in the computation panel ↑',
-			'Each row = one query\'s softmax over all keys.',
-			'Hover any cell to see the exact computation.'
+			'Each row = one query\'s softmax over all keys.'
 		];
 		// Center the message vertically in the [-1.4, 1.4] viewBox.
 		titles.forEach((line, i) => {
@@ -3337,35 +3377,42 @@ const AttentionAnatomy = {
 		}
 		const Z       = ATTN_2D.selfOutputs || [];
 
-		// Layout: each token gets its own panel in a row.
-		// Each panel is a self-contained mini-plot with its own q, k, z
-		// arrows, labels, and axis. Bigger than before for readability.
-		const panelW = 2.6 / n;
-		const panelH = 0.85;
-		const stripY = -0.55; // top edge of the panel row
+		// Layout: panels STACKED VERTICALLY (one per row) so each gets
+		// the full width and is much easier to read. With n=3 tokens
+		// the viewBox is 2.7 tall, so we have ~0.85 per panel.
+		const panelW = 2.4;
+		const panelH = 0.75;
+		const cx      = 0; // center horizontally in viewBox
+		const startY  = 1.35 - panelH; // top of first panel
 
-		// Strip title — explains what these mini-plots are.
-		const title = document.createElementNS(NS, 'text');
-		title.setAttribute('x', 0); title.setAttribute('y', stripY - 0.22);
-		title.setAttribute('text-anchor', 'middle');
-		title.setAttribute('fill', themeColor('#475569'));
-		title.setAttribute('font-size', '0.10');
-		title.setAttribute('font-weight', '700');
-		title.setAttribute('font-family', 'Inter, sans-serif');
-		title.textContent = 'self-attention output per token — each gets its own z = Σ αⱼ·vⱼ';
-		title.style.pointerEvents = 'none';
-		labelsG.appendChild(title);
+		// Strip title — Temml-rendered so it wraps nicely and never
+		// gets clipped at the right edge.
+		const titleDiv = document.createElementNS(NS, 'foreignObject');
+		titleDiv.setAttribute('x', -1.2);
+		titleDiv.setAttribute('y', startY + panelH * n + 0.05);
+		titleDiv.setAttribute('width', 2.4);
+		titleDiv.setAttribute('height', 0.35);
+		titleDiv.style.pointerEvents = 'none';
+		const titleHtml = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+		titleHtml.style.cssText = 'font:700 0.11px sans-serif; color:#475569; text-align:center; line-height:1.2;';
+		titleHtml.innerHTML = 'self-attention output per token — each gets its own $\\mathbf{z}_i = \\sum_j \\alpha_{ij}\\,\\mathbf{v}_j$';
+		titleDiv.appendChild(titleHtml);
+		labelsG.appendChild(titleDiv);
+		// Render the math via Temml right after the SVG is appended
+		this._renderTooltipMath(titleDiv);
 
 		const self = this;
 		for (let i = 0; i < n; i++) {
-			const cx = -1.3 + i * panelW + panelW / 2;
+			const ox = cx;
+			const oy = startY + panelH * (i + 1) - 0.15; // origin near bottom of panel
 			const tokenName = ATTN_TOKENS[i].name;
+			const stripY    = oy - 0.50; // top edge of this panel
 
-			// Panel background — bigger and clearer
+			// Panel background — single full-width panel per token
 			const panelBg = document.createElementNS(NS, 'rect');
-			panelBg.setAttribute('x', cx - panelW / 2 + 0.05);
+			panelBg.setAttribute('x', cx - panelW / 2);
 			panelBg.setAttribute('y', stripY);
-			panelBg.setAttribute('width', panelW - 0.10);
+			panelBg.setAttribute('width', panelW);
 			panelBg.setAttribute('height', panelH);
 			panelBg.setAttribute('fill', themeColor('#f8fafc'));
 			panelBg.setAttribute('stroke', themeColor('#cbd5e1'));
@@ -3373,32 +3420,53 @@ const AttentionAnatomy = {
 			panelBg.setAttribute('rx', '0.03');
 			constructionG.appendChild(panelBg);
 
-			// Token header — big and bold, above the panel
+			// Token header — big and bold, to the LEFT of the origin
 			const head = document.createElementNS(NS, 'text');
-			head.setAttribute('x', cx); head.setAttribute('y', stripY - 0.05);
-			head.setAttribute('text-anchor', 'middle');
+			head.setAttribute('x', cx - panelW / 2 + 0.12);
+			head.setAttribute('y', stripY + 0.18);
+			head.setAttribute('text-anchor', 'start');
 			head.setAttribute('fill', ATTN_TOKENS[i].color);
-			head.setAttribute('font-size', '0.12');
+			head.setAttribute('font-size', '0.13');
 			head.setAttribute('font-weight', 'bold');
 			head.setAttribute('font-family', 'Inter, sans-serif');
 			head.textContent = tokenName;
 			head.style.pointerEvents = 'none';
 			labelsG.appendChild(head);
 
-			// Mini 2D axes (origin at center-bottom of the panel)
-			const ox = cx, oy = stripY + 0.55; // origin
+			// q / k / v legend labels at top-left of panel
+			const legend = [
+				{ txt: 'q', color: '#ef4444' },
+				{ txt: 'k', color: '#2563eb' },
+				{ txt: 'v', color: '#10b981' },
+				{ txt: 'z', color: '#f59e0b' }
+			];
+			legend.forEach((lg, li) => {
+				const lt = document.createElementNS(NS, 'text');
+				lt.setAttribute('x', cx - panelW / 2 + 0.42 + li * 0.14);
+				lt.setAttribute('y', stripY + 0.18);
+				lt.setAttribute('text-anchor', 'start');
+				lt.setAttribute('fill', lg.color);
+				lt.setAttribute('font-size', '0.10');
+				lt.setAttribute('font-weight', '700');
+				lt.setAttribute('font-family', 'Inter, sans-serif');
+				lt.textContent = lg.txt;
+				lt.style.pointerEvents = 'none';
+				labelsG.appendChild(lt);
+			});
+
+			// Mini 2D axes (origin at left-center of the panel)
 			const ax = document.createElementNS(NS, 'line');
-			ax.setAttribute('x1', cx - 0.40); ax.setAttribute('y1', oy);
-			ax.setAttribute('x2', cx + 0.40); ax.setAttribute('y2', oy);
+			ax.setAttribute('x1', cx - 0.50); ax.setAttribute('y1', oy);
+			ax.setAttribute('x2', cx + panelW / 2 - 0.10); ax.setAttribute('y2', oy);
 			ax.setAttribute('stroke', themeColor('#94a3b8'));
-			ax.setAttribute('stroke-width', '0.008');
+			ax.setAttribute('stroke-width', '0.006');
 			ax.style.pointerEvents = 'none';
 			constructionG.appendChild(ax);
 			const ay = document.createElementNS(NS, 'line');
-			ay.setAttribute('x1', ox); ay.setAttribute('y1', oy - 0.40);
+			ay.setAttribute('x1', ox); ay.setAttribute('y1', oy - 0.30);
 			ay.setAttribute('x2', ox); ay.setAttribute('y2', oy + 0.10);
 			ay.setAttribute('stroke', themeColor('#94a3b8'));
-			ay.setAttribute('stroke-width', '0.008');
+			ay.setAttribute('stroke-width', '0.006');
 			ay.style.pointerEvents = 'none';
 			constructionG.appendChild(ay);
 
@@ -3406,7 +3474,7 @@ const AttentionAnatomy = {
 			// `offset` is a perpendicular shift so q, k, v, z (which
 			// share the same tail) don't overlap when they're parallel
 			// or identical (q == k in self-attention).
-			const scale = 0.16;
+			const scale = 0.18;
 			const drawMini = (v, color, label, tipKey, offset) => {
 				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
 					const dot = document.createElementNS(NS, 'circle');
@@ -3433,7 +3501,7 @@ const AttentionAnatomy = {
 				line.setAttribute('x1', sx); line.setAttribute('y1', sy);
 				line.setAttribute('x2', ex); line.setAttribute('y2', ey);
 				line.setAttribute('stroke', color);
-				line.setAttribute('stroke-width', '0.020');
+				line.setAttribute('stroke-width', '0.022');
 				line.setAttribute('stroke-linecap', 'round');
 				line.style.pointerEvents = 'none';
 				constructionG.appendChild(line);
@@ -3442,7 +3510,7 @@ const AttentionAnatomy = {
 				const len = Math.sqrt(dx*dx + dy2*dy2);
 				if (len > 0.02) {
 					const ux = dx/len, uy = dy2/len;
-					const s = 0.045;
+					const s = 0.05;
 					const c = Math.cos(Math.PI/6), si = Math.sin(Math.PI/6);
 					const head = document.createElementNS(NS, 'polygon');
 					head.setAttribute('points', `${ex},${ey} ${ex-s*(ux*c-uy*si)},${ey-s*(ux*si+uy*c)} ${ex-s*(ux*c+uy*si)},${ey-s*(-ux*si+uy*c)}`);
@@ -3456,7 +3524,7 @@ const AttentionAnatomy = {
 				t.setAttribute('y', ey - 0.03 - py * 0.5);
 				t.setAttribute('text-anchor', 'start');
 				t.setAttribute('fill', color);
-				t.setAttribute('font-size', '0.11');
+				t.setAttribute('font-size', '0.10');
 				t.setAttribute('font-weight', '700');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = label;
@@ -3488,8 +3556,9 @@ const AttentionAnatomy = {
 			// z value label below the panel — bigger font
 			if (Z[i] && isFinite(Z[i][0])) {
 				const zv = document.createElementNS(NS, 'text');
-				zv.setAttribute('x', cx); zv.setAttribute('y', stripY + panelH + 0.14);
-				zv.setAttribute('text-anchor', 'middle');
+				zv.setAttribute('x', cx + panelW / 2 - 0.10);
+				zv.setAttribute('y', stripY + 0.30);
+				zv.setAttribute('text-anchor', 'end');
 				zv.setAttribute('fill', themeColor('#475569'));
 				zv.setAttribute('font-size', '0.085');
 				zv.setAttribute('font-family', 'monospace');
@@ -3939,6 +4008,12 @@ const AttentionAnatomy = {
 		labelsG.innerHTML       = '';
 		constructionG.innerHTML = '';
 		if (anglesG) anglesG.innerHTML = '';
+
+		// Collapse the 2D SVG when the visualisation lives in the
+		// computation panel (step 10 matrix, step 11 selfattn) so the
+		// table / plots get the full width.
+		const collapseSvg = (data.mode === 'matrix' || data.mode === 'selfattn');
+		svg.classList.toggle('attn-svg-collapsed', collapseSvg);
 
 		// Sanity checks before drawing — catch data corruption early
 		this._assert(data && typeof data.mode === 'string', `render2D: bad data, mode=${data && data.mode}`);
