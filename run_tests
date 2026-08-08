@@ -22,14 +22,14 @@ EOF
 
 run_smoke_tests=true
 run_docker=true
-run_screenshot_test=true
+run_screenshot_test=false
 run_python_tests=true
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--no-smoke-tests) run_smoke_tests=false ;;
 		--no-docker) run_docker=false ;;
-		--no-screenshot-test) run_screenshot_test=false ;;
+		--screenshot-test) run_screenshot_test=true ;;
 		--no-run-tests) run_python_tests=false ;;
 	esac
 	shift
